@@ -1,16 +1,14 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2021 all rights reserved
-#
 
 
 # superclass
 from .Constraint import Constraint
 
 
-# declaration
+# op|
 class Or(Constraint):
     """
     Given a set of constraints, a candidate satisfies this iff it satisfies any of the constraints
@@ -28,7 +26,7 @@ class Or(Constraint):
             try:
                 # the first one that is satisfied
                 return constraint.validate(value=value, **kwds)
-            # if this one did not
+            # if this one was not
             except constraint.ConstraintViolationError:
                 # check the next
                 continue
@@ -36,7 +34,7 @@ class Or(Constraint):
         return super().validate(value=value, **kwds)
 
 
-    # meta-methods
+    # metamethods
     def __init__(self, *constraints, **kwds):
         # chain up
         super().__init__(**kwds)
@@ -47,7 +45,10 @@ class Or(Constraint):
 
 
     def __str__(self):
-        return " or ".join("({})".format(constraint) for constraint in self.constraints)
+        # build the list of constraint representations
+        reps = ( f"({constraint})" for constraint in self.constraints )
+        # assemble and return
+        return " or ".join(reps)
 
 
 # end of file

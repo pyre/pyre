@@ -1,16 +1,14 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2021 all rights reserved
-#
 
 
 # superclass
 from .Constraint import Constraint
 
 
-# declaration
+# logical and
 class And(Constraint):
     """
     Meta-constraint that is satisfied when all of its constraints are satisfied
@@ -28,7 +26,7 @@ class And(Constraint):
         return value
 
 
-    # meta-methods
+    # metamethods
     def __init__(self, *constraints, **kwds):
         # chain up
         super().__init__(**kwds)
@@ -39,7 +37,10 @@ class And(Constraint):
 
 
     def __str__(self):
-        return " and ".join("({})".format(constraint) for constraint in self.constraints)
+        # build the list of constraint representations
+        reps = ( f"({constraint})" for constraint in self.constraints )
+        # assemble and return
+        return " and ".join(reps)
 
 
 # end of file

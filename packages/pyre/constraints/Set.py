@@ -1,16 +1,14 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2021 all rights reserved
-#
 
 
 # superclass
 from .Constraint import Constraint
 
 
-# declaration
+# set membership
 class Set(Constraint):
     """
     Check whether the candidate is a member of a given set
@@ -30,7 +28,7 @@ class Set(Constraint):
         return super().validate(value=value, **kwds)
 
 
-    # meta-methods
+    # metamethods
     def __init__(self, *choices, **kwds):
         # chain up
         super().__init__(**kwds)
@@ -41,7 +39,8 @@ class Set(Constraint):
 
 
     def __str__(self):
-        return "a member of {!r}".format(self.choices)
+        # build the representation
+        return f"a member of {self.choices}"
 
 
 # end of file

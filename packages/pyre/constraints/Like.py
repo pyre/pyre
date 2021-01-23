@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2021 all rights reserved
-#
 
 
 # externals
@@ -12,10 +10,10 @@ import re
 from .Constraint import Constraint
 
 
-# declaration
+# match against a regex
 class Like(Constraint):
     """
-    Given a regular expression, a string satisfies this constraint if it matches the regular
+    Given a regular expression, a string satisfies this constraint if it matches my regular
     expression
     """
 
@@ -33,7 +31,7 @@ class Like(Constraint):
         return super().validate(value=value, **kwds)
 
 
-    # meta-methods
+    # metamethods
     def __init__(self, regexp, **kwds):
         # chain up
         super().__init__(**kwds)
@@ -44,7 +42,8 @@ class Like(Constraint):
 
 
     def __str__(self):
-        return "like {!r}".format(self.regexp.pattern)
+        # build the representation
+        return f"like '{self.regexp.pattern}'"
 
 
 # end of file

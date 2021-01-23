@@ -1,24 +1,23 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2021 all rights reserved
-#
 
 
 # superclass
 from .Constraint import Constraint
 
 
-# declaration
+# base class for all comparison constraints
 class Comparison(Constraint):
     """
     Base class for constraints that compare candidates against values
     """
 
-    # my comparison operator and its textual representation
-    tag = None
+    # my comparison operator
     compare = None
+    # and its textual representation
+    tag = None
 
 
     # interface
@@ -34,7 +33,7 @@ class Comparison(Constraint):
         return super().validate(value=value, **kwds)
 
 
-    # meta-methods
+    # metamethods
     def __init__(self, value, **kwds):
         # chain up
         super().__init__(**kwds)
@@ -45,7 +44,8 @@ class Comparison(Constraint):
 
 
     def __str__(self):
-        return "{0.tag} {0.value!r}".format(self)
+        # build the representation
+        return f"{self.tag} '{self.value}'"
 
 
 # end of file

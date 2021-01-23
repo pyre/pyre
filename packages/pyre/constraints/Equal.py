@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2021 all rights reserved
-#
 
 
 # externals
@@ -12,7 +10,7 @@ import operator
 from .Comparison import Comparison
 
 
-# declaration
+# op=
 class Equal(Comparison):
     """
     Constraint that checks whether the candidate is equal to some value

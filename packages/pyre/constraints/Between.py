@@ -1,16 +1,14 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2021 all rights reserved
-#
 
 
 # superclass
 from .Constraint import Constraint
 
 
-# declaration
+# open ended interval check
 class Between(Constraint):
     """
     Given {a} and {b} from a set with an ordering principle, this constraint is satisfied if
@@ -31,7 +29,7 @@ class Between(Constraint):
         return super().validate(value=value, **kwds)
 
 
-    # meta-methods
+    # metamethods
     def __init__(self, low, high, **kwds):
         # chain up
         super().__init__(**kwds)
@@ -43,7 +41,8 @@ class Between(Constraint):
 
 
     def __str__(self):
-        return "between {0.low} and {0.high}".format(self)
+        # build the representation
+        return f"between {self.low} and {self.high}"
 
 
 # end of file

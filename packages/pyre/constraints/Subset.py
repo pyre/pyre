@@ -1,16 +1,14 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2021 all rights reserved
-#
 
 
 # superclass
 from .Constraint import Constraint
 
 
-# declaration
+# subset check
 class Subset(Constraint):
     """
     Constraint that is satisfied when the candidate is a subset of a given set
@@ -30,7 +28,7 @@ class Subset(Constraint):
         return super().validate(value=value, **kwds)
 
 
-    # meta-methods
+    # metamethods
     def __init__(self, choices, **kwds):
         # chain up
         super().__init__(**kwds)
@@ -41,7 +39,8 @@ class Subset(Constraint):
 
 
     def __str__(self):
-        return "a subset of {!r}".format(self.choices)
+        # build the representation
+        return f"a subset of {self.choices}"
 
 
 # end of file

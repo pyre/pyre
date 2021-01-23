@@ -1,16 +1,14 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2021 all rights reserved
-#
 
 
 # superclass
 from .Constraint import Constraint
 
 
-# declaration
+# op!
 class Not(Constraint):
     """
     Constraint that is satisfied when the candidate fails to satisfy a given constraint
@@ -34,7 +32,7 @@ class Not(Constraint):
         return super().validate(value=value, **kwds)
 
 
-    # meta-methods
+    # metamethods
     def __init__(self, constraint, **kwds):
         # chain up
         super().__init__(**kwds)
@@ -45,7 +43,8 @@ class Not(Constraint):
 
 
     def __str__(self):
-        return "not {0.constraint}".format(self)
+        # build the representation
+        return f"not {self.constraint}"
 
 
 # end of file

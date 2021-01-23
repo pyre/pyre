@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2021 all rights reserved
-#
 
 
 """
@@ -11,12 +9,11 @@ Definitions for all the exceptions raised by this package
 """
 
 
-# violation notification
-# constraints throw exceptions rather than return True|False
+# the base exception
 from ..framework.exceptions import FrameworkError
 
 
-# declaration
+# base exception
 class ConstraintViolationError(FrameworkError):
     """
     Exception used to indicate that a constraint is violated
@@ -27,10 +24,12 @@ class ConstraintViolationError(FrameworkError):
     to handle the failure.
     """
 
+
     # public data
     description  = "{0.value!r} is not {0.constraint}"
 
-    # meta-methods
+
+    # metamethods
     def __init__(self, constraint, value, **kwds):
         # chain  up
         super().__init__(**kwds)
