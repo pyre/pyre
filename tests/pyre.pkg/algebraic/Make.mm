@@ -25,6 +25,7 @@ structural:
 algebra:
 	${PYTHON} ./arithmetic.py
 	${PYTHON} ./ordering.py
+	${PYTHON} ./ordering_containers.py
 	${PYTHON} ./boolean.py
 
 graph:
