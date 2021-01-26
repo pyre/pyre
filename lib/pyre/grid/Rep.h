@@ -59,10 +59,6 @@ public:
     Rep(Rep &&) = default;
     Rep & operator=(const Rep &) = default;
     Rep & operator=(Rep &&) = default;
-
-    // implementation details: data
-private:
-    // container_type _rep;
 };
 
 
