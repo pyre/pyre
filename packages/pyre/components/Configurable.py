@@ -428,6 +428,8 @@ class Configurable(Dashboard):
         is False, a thorough check of all traits will be performed resulting in a detailed
         compatibility report.
         """
+        # get the generic trait type that everybody is compatible with
+        from pyre.traits.properties import identity
         # get the report factory
         from .CompatibilityReport import CompatibilityReport
         # to build an empty one
@@ -450,17 +452,30 @@ class Configurable(Dashboard):
                 # move on to the next trait
                 continue
 
-            # are the two traits instances of compatible classes?
-            if not issubclass(type(mine), type(hers)):
-                # build an error description
-                error = cls.CategoryMismatchError(configurable=cls, target=spec, name=hers.name)
-                # add it to the report
-                report.incompatibilities[hers].append(error)
-                # if we are in fast mode, we have done enough
-                if fast: return report
-                # otherwise move on to the next trait. N.B. the superfluous {continue} is here
-                # in case more checking is added after this paragraph
+            # get the traits types
+            myType = type(mine)
+            herType = type(hers)
+
+            # if the two traits are instance of compatible classes
+            if issubclass(myType, herType):
+                # move on
                 continue
+
+            # if {hers} is a generic trait
+            if herType is identity:
+                # move on
+                continue
+
+            # if we get this far, we have an incompatibility; build an error description
+            error = cls.CategoryMismatchError(configurable=cls, target=spec, name=hers.name)
+            # add it to the report
+            report.incompatibilities[hers].append(error)
+            # if we are in fast mode
+            if fast:
+                # we have done enough
+                return report
+            # otherwise move on to the next trait
+            continue
 
         # all done
         return report
