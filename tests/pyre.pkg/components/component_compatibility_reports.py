@@ -18,19 +18,19 @@ def test():
     # declare a couple of components
     class base(pyre.component):
         """the base component"""
-        common = pyre.property()
+        common = pyre.properties.int()
 
     class derived(base):
         """a derived one, so automatically compatible"""
-        extra = pyre.property()
+        extra = pyre.properties.int()
 
     class ok(pyre.component):
         """one that doesn't derive but has the right public component"""
-        common = pyre.property()
+        common = pyre.properties.int()
 
     class notok(pyre.component):
         """one that doesn't provide the right public component"""
-        what = pyre.property()
+        what = pyre.properties.int()
 
     class badtype(pyre.component):
         """one that has the right trait but of the wrong type"""
