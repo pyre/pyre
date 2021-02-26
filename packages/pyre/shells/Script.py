@@ -60,7 +60,6 @@ class Script(Executive, family="pyre.shells.script"):
             status = 2
         # if the framework complained about something
         except self.PyreError as error:
-            print(type(error).mro())
             # if we are in debug mode
             if application.DEBUG:
                 # let the error through
