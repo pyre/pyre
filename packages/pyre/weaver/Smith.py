@@ -131,6 +131,7 @@ class Smith(pyre.application, family='pyre.applications.smith'):
             f"cd {project}",
             "git add .",
             "git commit -q -m 'automatically generated source'",
+            "git tag v0.0.1", # tag it
             "cd ..",
             ]
         # execute
