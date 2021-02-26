@@ -239,6 +239,17 @@ from .Project import Project as project
 
 # the templated project implementations
 @foundry(implements=project)
+def react():
+    """
+    The react project type
+    """
+    # grab the component class
+    from .React import React as react
+    # and return it
+    return react
+
+# the templated project implementations
+@foundry(implements=project)
 def django():
     """
     The django project type
