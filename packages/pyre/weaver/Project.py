@@ -37,12 +37,11 @@ class Project(pyre.protocol, family='pyre.weaver.projects'):
 
 
     # interface
+    @pyre.provides
     def blacklisted(self, filename):
         """
         Check whether {filename} is on the list of files to not expand
         """
-        # nothing is blacklisted, by default
-        return False
 
 
     # framework obligations
