@@ -1,0 +1,15 @@
+{
+    "spellright.language": [
+        "en"
+    ],
+    "spellright.documentTypes": [
+        "cpp",
+        "javascriptreact",
+        "makefile",
+        "markdown",
+        "latex",
+        "plaintext",
+        "python",
+        "html"
+    ]
+}

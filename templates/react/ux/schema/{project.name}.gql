@@ -1,0 +1,58 @@
+# -*- graphql -*-
+#
+# {project.authors}
+# (c) {project.span} all rights reserved
+
+schema {{
+  query: Query
+}}
+
+
+# the top level query
+type Query {{
+  # server version information
+  version: Version
+  # the set of protocols for products and factories in a given package
+  catalog(package: String = "{project.name}"): Catalog
+}}
+
+
+# server version
+type Version {{
+  major: Int!
+  minor: Int!
+  micro: Int!
+  revid: String!
+}}
+
+
+# the full set of known specifications and producers in a given package
+type Catalog {{
+  # the package name
+  package: String!
+  # known product specifications
+  specifications: [Specification!]!
+  # known factory descriptions
+  producers: [Producer!]!
+}}
+
+
+# the protocol implemented by data products
+type Specification {{
+  # specifications have family names
+  family: String!
+}}
+
+
+# the protocol implemented by factories
+type Producer {{
+  # producers have family names
+  family: String!
+  # inputs
+  inputs: [Specification!]!
+  # and outputs
+  outputs: [Specification!]!
+}}
+
+
+# end of file

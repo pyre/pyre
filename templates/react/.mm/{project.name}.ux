@@ -1,0 +1,12 @@
+# -*- makefile -*-
+#
+# {project.authors}
+# (c) {project.span} all rights reserved
+
+
+# metadata for the ux bundle
+# its path relative to the project
+{project.name}.ux.root := ux/
+
+
+# end of file
