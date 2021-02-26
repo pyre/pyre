@@ -1,0 +1,37 @@
+{{
+    "name": "{project.name}",
+    "version": "0.0.1",
+    "description": "{project.name} embedded ux",
+    "license": "BSD-2-Clause",
+    "repository": "https://github.com/aivazis/{project.name}",
+    "author": "Michael Aivazis <michael.aivazis@para-sim.com>",
+    "scripts": {{
+        "build": "webpack --mode development",
+        "dev": "webpack --mode development",
+        "relay": "relay-compiler --src ./client --schema ./schema/{project.name}.gql"
+    }},
+    "devDependencies": {{
+        "@babel/core": "latest",
+        "@babel/preset-env": "latest",
+        "@babel/preset-react": "latest",
+        "@babel/plugin-proposal-export-default-from": "latest",
+        "babel-loader": "latest",
+        "babel-plugin-relay": "latest",
+        "html-webpack-plugin": "latest",
+        "relay-compiler": "latest",
+        "webpack": "latest",
+        "webpack-cli": "latest"
+    }},
+    "dependencies": {{
+        "graphql": "latest",
+        "lazysizes": "latest",
+        "lodash": "latest",
+        "path-browserify": "latest",
+        "react": "experimental",
+        "react-dom": "experimental",
+        "react-relay": "experimental",
+        "react-router": "latest",
+        "react-router-dom": "latest",
+        "regenerator-runtime": "latest"
+    }}
+}}

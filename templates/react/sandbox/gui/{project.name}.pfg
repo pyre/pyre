@@ -1,0 +1,23 @@
+; -*- pyre -*-
+;
+; {project.authors}
+; (c) {project.span} all rights reserved
+
+
+; overall application configuration
+{project.name}.plexus:
+    ; run as a web app
+    shell = web
+
+    ; the {{web}} shell
+    pyre.shells.web # shell:
+        ; spawn a new browser tab every time the server starts?
+        auto = no
+
+    ; the web server
+    nexus.services.web:
+        ; pin the port for serving web content to some number in user space
+        address=ip4:0.0.0.0:8000
+
+
+; end of file
