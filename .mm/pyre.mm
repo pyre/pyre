@@ -18,6 +18,9 @@ pyre.docker-images := \
 # and test suites
 pyre.tests := pyre.python.tests pyre.pkg.tests pyre.lib.tests pyre.ext.tests sqlite.pkg.tests
 
+# we also some files that get moved verbatim
+pyre.verbatim := pyre.templates
+
 
 # if we have {libpq}, build the {postgres} extension and test it
 ${if ${findstring libpq,$(extern.available)},\
@@ -84,6 +87,10 @@ pyre.focal-clang.name := focal-clang
 # groovy
 pyre.groovy-cuda.name := groovy-cuda
 pyre.groovy-cuda.launch.mounts := mm pyre
+
+
+# the templates
+pyre.templates.root := templates/
 
 
 # get the testsuites
