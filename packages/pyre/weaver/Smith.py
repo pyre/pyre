@@ -55,14 +55,14 @@ class Smith(pyre.application, family='pyre.applications.smith'):
         # if the target path exists already
         if project in cwd:
             # complain
-            self.error.log("the folder {!r} exists already".format(project))
+            self.error.log(f"the folder '{project}' exists already")
             # report failure
             return 1
 
         # show me
-        self.info.log('building the bzr repository')
+        self.info.log("building the git repository")
         # have {bazaar} create the directory
-        os.system("bzr init -q {}".format(project))
+        os.system(f"git init -q -b main {project}")
 
         self.info.log('generating the source tree')
         # initialize the workload
@@ -70,7 +70,7 @@ class Smith(pyre.application, family='pyre.applications.smith'):
         # as long as there are folders to visit
         for destination, name, source in todo:
             # show me
-            # self.info.log('creating the folder {!r}'.format(name))
+            # self.info.log(f"creating the folder '{name}'")
             # create the new folder
             folder = cwd.mkdir(parent=destination, name=name, exist_ok=True)
             # go through the folder contents
@@ -82,11 +82,11 @@ class Smith(pyre.application, family='pyre.applications.smith'):
                 # if anything goes wrong
                 except self.FrameworkError as error:
                     # generate an error message
-                    self.error.log('could not process {}: {}'.format(entry, error))
+                    self.error.log(f"could not process '{entry}': {error}")
                     # and move on
                     continue
                 # show me
-                # self.info.log('generating {!r}'.format(entry))
+                # self.info.log(f"generating '{entry}'")
                 # if the {child} is a folder
                 if child.isFolder:
                     # add it to the workload
@@ -111,7 +111,7 @@ class Smith(pyre.application, family='pyre.applications.smith'):
                     # if anything goes wrong
                     except self.FrameworkError as error:
                         # generate an error message
-                        self.error.log('while processing {}: {}'.format(entry, error))
+                        self.error.log(f"while processing '{entry}': {error}")
                         # and move on
                         continue
                     # create the file
@@ -126,14 +126,15 @@ class Smith(pyre.application, family='pyre.applications.smith'):
         # tell me
         self.info.log('committing the initial revision')
         # build the commit command
-        command = (
-            "unset CDPATH; " # just in case the user has strange tastes
-            "cd {}; "
-            "bzr add -q; "
-            "bzr commit -q -m 'automatically generated source'; "
-            "cd ..").format(project)
+        command = [
+            "unset CDPATH", # just in case the user has strange tastes
+            f"cd {project}",
+            "git add .",
+            "git commit -q -m 'automatically generated source'",
+            "cd ..",
+            ]
         # execute
-        os.system(command)
+        os.system("; ".join(command))
 
         # return success
         return 0
