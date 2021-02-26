@@ -27,6 +27,7 @@ class Plexus(ProjectTemplate, family='pyre.weaver.projects.plexus'):
 
 
     # interface
+    @pyre.export
     def blacklisted(self, filename):
         """
         Check whether {filename} is on the list of files to not expand
