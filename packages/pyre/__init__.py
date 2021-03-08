@@ -149,9 +149,9 @@ def boot():
     # check the version of python
     import sys
     major, minor, micro, _, _ = sys.version_info
-    if major < 3 or (major == 3 and minor < 2):
+    if major < 3 or (major == 3 and minor < 6):
         from .framework.exceptions import PyreError
-        raise PyreError(description="pyre needs python 3.2 or newer")
+        raise PyreError(description="pyre needs python 3.6 or newer")
 
     # check whether the user has indicated we should skip booting
     try:
