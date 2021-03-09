@@ -175,4 +175,22 @@ class File(Document):
         return
 
 
+class Javascript(File):
+    """
+    A javascript file
+    """
+
+    # public data
+    encoding = 'utf-8' # the encoding to use when converting to bytes
+
+    # metamethods
+    def __init__(self, **kwds):
+        # chain up
+        super().__init__(**kwds)
+        # mark as javascript
+        self.headers['Content-Type'] = f'text/javascript; charset={self.encoding}'
+        # all done
+        return
+
+
 # end of file
