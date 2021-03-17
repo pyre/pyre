@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2020 all rights reserved
+# (c) 1998-2021 all rights reserved
 #
 
 # project defaults
@@ -11,10 +11,9 @@ include pyre.def
 PACKAGE = timers
 # the python modules
 EXPORT_PYTHON_MODULES = \
-    AbstractTimer.py \
-    NativeTimer.py \
-    PythonTimer.py \
-    Registrar.py \
+    ProcessTimer.py \
+    Timer.py \
+    WallTimer.py \
     __init__.py
 
 # standard targets

@@ -2,12 +2,12 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2020 all rights reserved
+# (c) 1998-2021 all rights reserved
 #
 
 
 # externals
-import collections
+import collections.abc
 # superclass
 from .Schema import Schema
 
@@ -38,7 +38,7 @@ class Array(Schema):
             # otherwise, ask python to process
             value = eval(value)
         # if {value} is an iterable, convert it to a tuple and return it
-        if isinstance(value, collections.Iterable): return tuple(value)
+        if isinstance(value, collections.abc.Iterable): return tuple(value)
         # otherwise flag it as bad input
         raise self.CastingError(value=value, description=self.complaint)
 

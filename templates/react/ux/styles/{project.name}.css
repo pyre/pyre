@@ -1,0 +1,135 @@
+/*  -*- CSS -*-  */
+/*
+ * {project.authors}
+ * (c) {project.span} all rights reserved
+ */
+
+/* the anchor for the react content */
+#{project.name} {{
+    width: 100%;
+    height: 100%;
+}}
+
+
+/* placeholder while the react components load*/
+div#placeholder {{
+    /* color: #f37f19; */
+
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    display: flex;
+    flex-direction: column;
+}}
+
+svg#placeholder_logo {{
+    margin: 1.0em auto;
+    width: 216px;
+    height: 301px;
+
+    animation-name: fadeInOut;
+    animation-duration: 3s;
+    animation-iteration-count: infinite;
+}}
+
+p#placeholder_text {{
+    font-family: "inconsolata";
+    font-size: 120%;
+    text-align: center;
+}}
+
+* {{
+    margin: 0.0em;
+    padding: 0.0em;
+}}
+
+html {{
+    /* defaults */
+    font-family: "geneva", "arial", "helvetica", sans-serif;
+    /* 1.0 rem = 20 pixels */
+    font-size: 20px;
+
+    /* placement */
+    height: 100%;
+    width: 100%;
+}}
+
+body {{
+    /* placement */
+    height: 100%;
+    width: 100%;
+    margin: 0em;;
+    padding: 0em;
+
+    /* clip to my extent */
+    overflow: clip;
+    /* colors */
+    color: #666;
+    background-color: #1b1b1b;
+}}
+
+a:link {{
+    color: #666;
+    text-decoration: none;
+}}
+
+a:visited {{
+    color: #666;
+    text-decoration: none;
+}}
+
+a:hover {{
+    color: #666;
+    text-decoration: none;
+}}
+
+a:active {{
+    color: #666;
+    text-decoration: none;
+}}
+
+/* fonts */
+@font-face {{
+   font-family: "inconsolata";
+   src: url("/fonts/inconsolata-regular.ttf");
+}}
+
+
+/* animations */
+@keyframes fadeIn {{
+    from {{
+        opacity: 0.0;
+    }}
+
+    to {{
+        opacity: 1.0;
+    }}
+}}
+
+@keyframes fadeOut {{
+    from {{
+        opacity: 1.0;
+    }}
+
+    to {{
+        opacity: 0.0;
+    }}
+}}
+
+@keyframes fadeInOut {{
+    from {{
+        opacity: 0.0;
+    }}
+
+    50% {{
+        opacity: 1.0;
+    }}
+
+    to {{
+        opacity: 0.0;
+    }}
+}}
+
+/* end of file */

@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2020 all rights reserved
+# (c) 1998-2021 all rights reserved
 #
 
 
@@ -19,6 +19,7 @@ import itertools, collections
 from .Named import Named as named
 from .Observable import Observable as observable
 from .Singleton import Singleton as singleton
+from .Unique import Unique as unique
 
 
 # utilities
@@ -64,17 +65,6 @@ def vivify(levels=1, atom=dict):
     if levels < 2: return collections.defaultdict(atom)
     # otherwise, build a {defaultdict} that is shallower by one level
     return collections.defaultdict(lambda: vivify(levels=levels-1, atom=atom))
-
-
-# factories
-def newPathHash(**kwds):
-    """
-    Build a hashing functor for name hierarchies
-    """
-    # get the factory
-    from .PathHash import PathHash
-    # and invoke it
-    return PathHash(**kwds)
 
 
 # cofunctors

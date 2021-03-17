@@ -1,0 +1,19 @@
+// -*- javascript -*-
+//
+// {project.authors}
+// (c) {project.span} all rights reserved
+
+{{
+    "presets": [
+        "@babel/preset-env",
+        "@babel/preset-react"
+    ],
+
+
+    "plugins": [
+        "relay",
+        "@babel/plugin-proposal-export-default-from",
+    ],
+}}
+
+// end of file

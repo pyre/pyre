@@ -1,7 +1,7 @@
 // -*- c++ -*-
 //
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
-// (c) 1998-2020 all rights reserved
+// (c) 1998-2021 all rights reserved
 
 
 // external support
@@ -60,7 +60,7 @@ Console() :
         _palette["debug"] = ansi_t::x11("cornflower blue");
         _palette["firewall"] = ansi_t::x11("fuchsia");
         // the page body
-        _palette["body"] = "";
+        _palette["body"] = ansi_t::x11("normal");
     }
 }
 

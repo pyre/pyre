@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2020 all rights reserved
+# (c) 1998-2021 all rights reserved
 #
 
 # project defaults
@@ -11,17 +11,18 @@ include pyre.def
 PACKAGE = patterns
 # the python modules
 EXPORT_PYTHON_MODULES = \
-    AbstractMetaclass.py \
     Accumulator.py \
     AttributeClassifier.py \
+    AttributeFilter.py \
     CoFunctor.py \
-    ExtentAware.py \
+    Extent.py \
     Named.py \
     Observable.py \
-    PathHash.py \
     Printer.py \
     Singleton.py \
     Tee.py \
+    Type.py \
+    Unique.py \
     __init__.py
 
 # standard targets

@@ -2,15 +2,15 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2020 all rights reserved
+# (c) 1998-2021 all rights reserved
 #
 
 
 # externals
 import re
 import operator
-import collections
-from .. import patterns
+import collections.abc
+from .. import primitives
 # my base class
 from .SymbolTable import SymbolTable
 
@@ -118,6 +118,11 @@ class Hierarchical(SymbolTable):
         # have been registered originally
         aliasKey = baseKey.alias(target=targetKey, alias=alias)
 
+        # if {alias} was not previously known
+        if aliasKey is None:
+            # we are done
+            return
+
         # now that the two names are aliases of each other, we must resolve the potential node
         # conflict: only one of these is accessible by name any more
         return self.merge(source=aliasKey, canonical=target, destination=targetKey, name=alias)
@@ -138,7 +143,7 @@ class Hierarchical(SymbolTable):
             # hash it
             return context.hash(items=self.split(name=name))
         # if it is an iterable
-        if isinstance(name, collections.Iterable):
+        if isinstance(name, collections.abc.Iterable):
             # skip the split, just hash
             return context.hash(items=name)
         # otherwise
@@ -254,7 +259,7 @@ class Hierarchical(SymbolTable):
         # record my separator
         self.separator = separator
         # initialize my name hash
-        self._hash = patterns.newPathHash()
+        self._hash = primitives.pathhash()
         # and the node metadata
         self._metadata = {}
         # all done

@@ -1,7 +1,7 @@
 // -*- c++ -*-
 //
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
-// (c) 1998-2020 all rights reserved
+// (c) 1998-2021 all rights reserved
 
 // code guard
 #if !defined(pyre_journal_Alert_h)
@@ -20,6 +20,11 @@ public:
 protected:
     virtual void header(palette_type &, linebuf_type &, const entry_type &) const override;
     virtual void body(palette_type &, linebuf_type &, const entry_type &) const override;
+
+    // configuration
+    // MGA: currently hardwired until we have a good solution
+private:
+    const char * _marker = "";
 
     // disallow
 private:

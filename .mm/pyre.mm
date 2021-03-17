@@ -1,7 +1,7 @@
 # -*- Makefile -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
-# (c) 1998-2020 all rights reserved
+# (c) 1998-2021 all rights reserved
 
 
 # pyre builds a python package
@@ -9,11 +9,17 @@ pyre.packages := pyre.pkg
 # libraries
 pyre.libraries := pyre.lib
 # the mandatory extensions
-pyre.extensions := host.ext timers.ext
+pyre.extensions := pyre.ext host.ext
 # docker image
-pyre.docker-images := pyre.eoan-gcc pyre.eoan-clang pyre.focal-gcc pyre.focal-clang
+pyre.docker-images := \
+    pyre.eoan-gcc pyre.eoan-clang \
+    pyre.focal-gcc pyre.focal-clang \
+    pyre.groovy-cuda
 # and test suites
-pyre.tests := pyre.python.tests pyre.pkg.tests pyre.lib.tests sqlite.pkg.tests
+pyre.tests := pyre.python.tests pyre.pkg.tests pyre.lib.tests pyre.ext.tests sqlite.pkg.tests
+
+# we also some files that get moved verbatim
+pyre.verbatim := pyre.templates
 
 
 # if we have {libpq}, build the {postgres} extension and test it
@@ -40,6 +46,15 @@ pyre.lib.c++.flags += $($(compiler.c++).std.c++17)
 
 
 # the pyre extensions
+# {libpyre} bindings
+pyre.ext.root := extensions/pyre/
+pyre.ext.stem := pyre
+pyre.ext.pkg := pyre.pkg
+pyre.ext.wraps := pyre.lib
+pyre.ext.capsule :=
+pyre.ext.extern := pyre.lib journal.lib pybind11 python
+pyre.ext.lib.c++.flags += $($(compiler.c++).std.c++17)
+pyre.ext.lib.prerequisites += journal.lib # pyre.lib is added automatically
 # host info
 host.ext.root := extensions/host/
 host.ext.stem := host
@@ -49,15 +64,6 @@ host.ext.capsule :=
 host.ext.extern := pyre.lib journal.lib python
 host.ext.lib.c++.flags += $($(compiler.c++).std.c++17)
 host.ext.lib.prerequisites += journal.lib # pyre.lib is added automatically
-# timers
-timers.ext.root := extensions/timers/
-timers.ext.stem := timers
-timers.ext.pkg := pyre.pkg
-timers.ext.wraps := pyre.lib
-timers.ext.capsule :=
-timers.ext.extern := pyre.lib journal.lib python
-timers.ext.lib.c++.flags += $($(compiler.c++).std.c++17)
-timers.ext.lib.prerequisites += journal.lib # pyre.lib is added automatically
 
 
 # postgres
@@ -72,10 +78,19 @@ postgres.ext.lib.prerequisites += journal.lib # pyre.lib is added automatically
 
 
 # the docker images
-pyre.focal-gcc.name := focal-gcc
-pyre.focal-clang.name := focal-clang
+# eoan
 pyre.eoan-gcc.name := eoan-gcc
 pyre.eoan-clang.name := eoan-clang
+# focal
+pyre.focal-gcc.name := focal-gcc
+pyre.focal-clang.name := focal-clang
+# groovy
+pyre.groovy-cuda.name := groovy-cuda
+pyre.groovy-cuda.launch.mounts := mm pyre
+
+
+# the templates
+pyre.templates.root := templates/
 
 
 # get the testsuites

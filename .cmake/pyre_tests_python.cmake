@@ -1,7 +1,7 @@
 # -*- cmake -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
-# (c) 1998-2020 all rights reserved
+# (c) 1998-2021 all rights reserved
 #
 
 
@@ -19,7 +19,6 @@ pyre_test_python_testcase(python/dict_in.py)
 pyre_test_python_testcase(python/dict_update.py)
 pyre_test_python_testcase(python/functions.py)
 pyre_test_python_testcase(python/initialization.py)
-pyre_test_python_testcase(python/locale_codec.py)
 pyre_test_python_testcase(python/inheritance_shadow.py)
 pyre_test_python_testcase(python/inheritance_multiple.py)
 pyre_test_python_testcase(python/inheritance_properties.py)

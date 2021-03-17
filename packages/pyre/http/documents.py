@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2020 all rights reserved
+# (c) 1998-2021 all rights reserved
 #
 
 
@@ -171,6 +171,24 @@ class File(Document):
         super().__init__(**kwds)
         # save the uri
         self.uri = uri
+        # all done
+        return
+
+
+class Javascript(File):
+    """
+    A javascript file
+    """
+
+    # public data
+    encoding = 'utf-8' # the encoding to use when converting to bytes
+
+    # metamethods
+    def __init__(self, **kwds):
+        # chain up
+        super().__init__(**kwds)
+        # mark as javascript
+        self.headers['Content-Type'] = f'text/javascript; charset={self.encoding}'
         # all done
         return
 

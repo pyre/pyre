@@ -2,12 +2,12 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2020 all rights reserved
+# (c) 1998-2021 all rights reserved
 #
 
 
 # externals
-import collections
+import collections.abc
 
 
 # superclass
@@ -38,7 +38,7 @@ class Complex(Numeric):
                 # get the interpreter to evaluate simple expressions
                 value = eval(value, self.context)
             # if it is an iterable
-            if isinstance(value, collections.Iterable):
+            if isinstance(value, collections.abc.Iterable):
                 # unpack it and instantiate it
                 return complex(*value)
             # otherwise, just invoke the constructor

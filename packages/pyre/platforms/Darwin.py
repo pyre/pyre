@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2020 all rights reserved
+# (c) 1998-2021 all rights reserved
 #
 
 
@@ -89,6 +89,11 @@ class Darwin(POSIX, family='pyre.platforms.darwin'):
     # private data
     # the known code names
     codenames = {
+        # big sur is has multiple personality disorder...
+        '11.1': 'big sur',
+        '11.0': 'big sur',
+        '10.16': 'big sur',
+        # older releases
         '10.15': 'catalina',
         '10.14': 'mojave',
         '10.13': 'high sierra',

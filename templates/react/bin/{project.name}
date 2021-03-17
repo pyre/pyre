@@ -1,0 +1,19 @@
+#! /usr/bin/env python3
+# -*- coding: utf-8 -*-
+#
+# {project.authors}
+# (c) 2020-2021 all rights reserved
+
+
+# get the package
+import {project.name}
+
+# build an instance of the plexus
+app = {project.name}.shells.{project.name}(name='{project.name}.plexus')
+# and run it
+status = app.run()
+# pass the status on to the shell
+raise SystemExit(status)
+
+
+# end of file

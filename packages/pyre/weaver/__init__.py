@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2020 all rights reserved
+# (c) 1998-2021 all rights reserved
 #
 
 
@@ -237,17 +237,8 @@ def smith(**kwds):
 # the protocol that captures the project metadata
 from .Project import Project as project
 
-# the templated project implementations
-@foundry(implements=project)
-def django():
-    """
-    The django project type
-    """
-    # grab the component class
-    from .Django import Django as django
-    # and return it
-    return django
 
+# bare bones command line interface
 @foundry(implements=project)
 def plexus():
     """
@@ -255,8 +246,19 @@ def plexus():
     """
     # grab the component class
     from .Plexus import Plexus as plexus
-    # and return it
+    # and publish
     return plexus
+
+# {react} based ux
+@foundry(implements=project)
+def react():
+    """
+    The react project type
+    """
+    # grab the component class
+    from .React import React as react
+    # and publish
+    return react
 
 
 # end of file

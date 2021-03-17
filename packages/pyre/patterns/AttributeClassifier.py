@@ -2,18 +2,18 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2020 all rights reserved
+# (c) 1998-2021 all rights reserved
 #
 
 
 # externals
 import collections
 # superclass
-from .AbstractMetaclass import AbstractMetaclass
+from .Type import Type
 
 
 # class declaration
-class AttributeClassifier(AbstractMetaclass):
+class AttributeClassifier(Type):
     """
     A base metaclass that enables attribute categorization.
 

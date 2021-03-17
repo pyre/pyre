@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2020 all rights reserved
+# (c) 1998-2021 all rights reserved
 #
 
 # project defaults
@@ -12,6 +12,7 @@ PACKAGE = primitives
 # the python modules
 EXPORT_PYTHON_MODULES = \
     Path.py \
+    PathHash.py \
     URI.py \
     exceptions.py \
     __init__.py

@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # california institute of technology
-# (c) 1998-2020 all rights reserved
+# (c) 1998-2021 all rights reserved
 #
 
 

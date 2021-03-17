@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2020 all rights reserved
+# (c) 1998-2021 all rights reserved
 #
 
 
@@ -149,9 +149,9 @@ def boot():
     # check the version of python
     import sys
     major, minor, micro, _, _ = sys.version_info
-    if major < 3 or (major == 3 and minor < 2):
+    if major < 3 or (major == 3 and minor < 6):
         from .framework.exceptions import PyreError
-        raise PyreError(description="pyre needs python 3.2 or newer")
+        raise PyreError(description="pyre needs python 3.6 or newer")
 
     # check whether the user has indicated we should skip booting
     try:
@@ -161,6 +161,26 @@ def boot():
     except:
         # just ignore it and carry on
         pass
+
+    # now, check whether
+    try:
+        # the user has prohibited loading the extension module
+        without_libpyre = __main__.pyre_without_libpyre
+    # if there is no such setting
+    except AttributeError:
+        # assume that this means we should try
+        without_libpyre = False
+
+    # access the module level variable
+    global libpyre
+    # if we are not supposed to load the bindings
+    if without_libpyre:
+        # mark it
+        libpyre = None
+    # otherwise
+    else:
+        # pull the bindings, if they exist
+        from .extensions import libpyre
 
     # grab the executive factory
     from . import framework
@@ -206,6 +226,7 @@ def debug():
 
 
 # kickstart
+libpyre = None
 # invoke the debug method in case the user asked for debugging support
 debug()
 

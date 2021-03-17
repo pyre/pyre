@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2020 all rights reserved
+# (c) 1998-2021 all rights reserved
 #
 
 
@@ -39,6 +39,15 @@ class ProjectTemplate(pyre.component, implements=Project):
 
     live = Installation()
     live.doc = "information about the remote host"
+
+
+    @pyre.export
+    def blacklisted(self, filename):
+        """
+        Check whether {filename} is on the list of files to not expand
+        """
+        # nothing is blacklisted by default
+        return False
 
 
 # end of file

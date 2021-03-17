@@ -1,0 +1,13 @@
+# -*- makefile -*-
+#
+# {project.authors}
+# (c) {project.span} all rights reserved
+
+
+# the testsuite for the {project.name} package
+{project.name}.pkg.tests.stem := {project.name}.pkg
+# depends on
+{project.name}.pkg.tests.prerequisites := {project.name}.pkg
+
+
+# end of file

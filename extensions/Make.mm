@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2020 all rights reserved
+# (c) 1998-2021 all rights reserved
 #
 
 
@@ -11,8 +11,7 @@ include pyre.def
 # my subdirectories
 RECURSE_DIRS = \
     host \
-    journal \
-    timers
+    journal
 
 # the optional packages
 # cuda
