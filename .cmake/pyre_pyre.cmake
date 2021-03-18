@@ -66,11 +66,14 @@ function(pyre_pyreLib)
     @ONLY
     )
   # copy the pyre headers over to the staging area
-  file(
-    COPY pyre
-    DESTINATION ${CMAKE_CURRENT_BINARY_DIR}
-    FILES_MATCHING PATTERN *.h PATTERN *.icc
-    )
+  file(GLOB_RECURSE files
+       RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}/pyre
+       CONFIGURE_DEPENDS
+       *.h *.icc
+       )
+  foreach(file ${files})
+    configure_file(pyre/${file} pyre/${file} COPYONLY)
+  endforeach()
 
   # the libpyre target
   add_library(pyre SHARED)
@@ -113,7 +116,7 @@ endfunction(pyre_pyreLib)
 # build the pyre extension modules
 function(pyre_pyreModule)
   # the pyre bindings
-  Python3_add_library(pyremodule MODULE)
+  Python_add_library(pyremodule MODULE)
   # adjust the name to match what python expects
   set_target_properties(pyremodule PROPERTIES LIBRARY_OUTPUT_NAME pyre)
   set_target_properties(pyremodule PROPERTIES SUFFIX ${PYTHON3_SUFFIX})
@@ -128,7 +131,7 @@ function(pyre_pyreModule)
     )
 
   # host
-  Python3_add_library(hostmodule MODULE)
+  Python_add_library(hostmodule MODULE)
   # adjust the name to match what python expects
   set_target_properties(hostmodule PROPERTIES LIBRARY_OUTPUT_NAME host)
   set_target_properties(hostmodule PROPERTIES SUFFIX ${PYTHON3_SUFFIX})
@@ -159,7 +162,7 @@ function(pyre_pyreBin)
     python.cc
     )
   # and libraries
-  target_link_libraries(python.pyre Python3::Python)
+  target_link_libraries(python.pyre Python::Python)
 
   # install the custom python
   install(

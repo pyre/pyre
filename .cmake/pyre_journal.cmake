@@ -32,18 +32,21 @@ endfunction(pyre_journalPackage)
 # build libjournal
 function(pyre_journalLib)
   # copy the journal headers over to the staging area
-  file(
-    COPY journal
-    DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/pyre
-    FILES_MATCHING
-    PATTERN *.h PATTERN *.icc
-    PATTERN journal/journal.h EXCLUDE
-    )
+  file(GLOB_RECURSE files
+       RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}/journal
+       CONFIGURE_DEPENDS
+       *.h *.icc
+       )
+  foreach(file ${files})
+    # skip the special header
+    if("${file}" STREQUAL "journal.h")
+      continue()
+    endif()
+    configure_file(journal/${file} pyre/journal/${file} COPYONLY)
+  endforeach()
+
   # and the journal master header within the pyre directory
-  file(
-    COPY journal/journal.h
-    DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/pyre
-    )
+  configure_file(journal/journal.h pyre/journal.h COPYONLY)
 
   # the libjournal target
   add_library(journal SHARED)
@@ -73,7 +76,7 @@ function(pyre_journalLib)
     journal/debuginfo.cc
     journal/firewalls.cc
     )
-  target_link_libraries(journal PUBLIC std::filesystem)
+  target_link_libraries(journal PRIVATE std::filesystem)
 
   # libpyre and libjournal
   install(
@@ -89,7 +92,7 @@ endfunction(pyre_journalLib)
 # build the journal python extension
 function(pyre_journalModule)
   # journal
-  Python3_add_library(journalmodule MODULE)
+  Python_add_library(journalmodule MODULE)
   # turn on the core macro
   set_target_properties(journalmodule PROPERTIES COMPILE_DEFINITIONS PYRE_CORE)
   # adjust the name to match what python expects

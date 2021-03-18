@@ -46,18 +46,20 @@ function(pyre_mpiLib)
       )
     add_library(pyre::mpi ALIAS mpi)
 
-    file(
-      COPY mpi
-      DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/pyre
-      FILES_MATCHING
-      PATTERN *.h PATTERN *.icc
-      PATTERN mpi/mpi.h EXCLUDE
-      )
+    file(GLOB_RECURSE
+         RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}/mpi
+         CONFIGURE_DEPENDS
+         *.h *.icc
+         )
+    foreach(file ${files})
+      # skip the special header
+      if("${file}" STREQUAL "mpi.h")
+        continue()
+      endif()
+      configure_file(mpi/${file} pyre/mpi/${file} COPYONLY)
+    endforeach()
     # and the mpi master header with the pyre directory
-    file(
-      COPY mpi/mpi.h
-      DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/pyre
-      )
+    configure_file(mpi/mpi.h pyre/mpi.h COPYONLY)
   endif(MPI_FOUND)
   # all done
 endfunction(pyre_mpiLib)
@@ -67,7 +69,7 @@ endfunction(pyre_mpiLib)
 function(pyre_mpiModule)
   # if we have mpi
   if (${MPI_FOUND})
-    Python3_add_library(mpimodule MODULE)
+    Python_add_library(mpimodule MODULE)
     # adjust the name to match what python expects
     set_target_properties(mpimodule PROPERTIES LIBRARY_OUTPUT_NAME mpi)
     set_target_properties(mpimodule PROPERTIES SUFFIX ${PYTHON3_SUFFIX})
@@ -86,20 +88,17 @@ function(pyre_mpiModule)
       mpi/startup.cc
       )
     # copy the capsule definitions to the staging area
-    file(
-      COPY mpi/capsules.h
-      DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/../lib/pyre/mpi
-      )
+    configure_file(mpi/capsules.h ../lib/pyre/mpi/ COPYONLY)
     # install the extension
     install(
       TARGETS mpimodule
       LIBRARY
-      DESTINATION ${CMAKE_INSTALL_PREFIX}/${PYRE_DEST_PACKAGES}/mpi
+      DESTINATION ${PYRE_DEST_PACKAGES}/mpi
       )
     # and publish the capsules
     install(
       FILES ${CMAKE_CURRENT_SOURCE_DIR}/mpi/capsules.h
-      DESTINATION ${CMAKE_INSTALL_PREFIX}/include/pyre/mpi
+      DESTINATION ${PYRE_DEST_INCLUDE}/pyre/mpi
       )
   endif()
   # all done

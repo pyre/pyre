@@ -16,8 +16,6 @@ ARG mm="${python} ${srcdir}/mm/mm.py"
 # environment
 # colorize (for fun)
 ENV TERM=xterm-256color
-# set up the dynamic linker path
-ENV LD_LIBRARY_PATH=${prefix}/lib
 # export the python choice
 ENV PYTHON=${python}
 # and the path to {mm}

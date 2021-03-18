@@ -6,18 +6,7 @@
 #
 
 # cmake setup
-cmake_minimum_required(VERSION 3.12 FATAL_ERROR)
-# policies
-if (POLICY CMP0048)
-  cmake_policy(SET CMP0048 NEW)
-endif(POLICY CMP0048)
-cmake_policy(SET CMP0060 NEW)
-if (POLICY CMP0074)
-  cmake_policy(SET CMP0074 NEW)
-endif(POLICY CMP0074)
-if (POLICY CMP0076)
-  cmake_policy(SET CMP0076 NEW)
-endif(POLICY CMP0076)
+cmake_minimum_required(VERSION 3.12...3.18)
 
 # options
 option(WITH_CUDA "enable support for CUDA" OFF)
@@ -26,6 +15,57 @@ option(WITH_CUDA "enable support for CUDA" OFF)
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/.cmake)
 # get support
 include(pyre_init)
+
+if(NOT PYRE_VERSION)
+    if(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/.git)
+        message(FATAL_ERROR "git auto-versioning requires cloned repo! "
+                            "provide a version with -DPYRE_VERSION=X.Y.Z")
+    endif()
+
+    # ask git for the pyre version
+    pyre_getVersion()
+endif()
+
+# set up the project
+project(PYRE VERSION "${PYRE_VERSION}" LANGUAGES CXX)
+set(MAJOR ${PROJECT_VERSION_MAJOR})
+set(MINOR ${PROJECT_VERSION_MINOR})
+set(MICRO ${PROJECT_VERSION_PATCH})
+
+# is this the topmost project? (not added via e.g. add_subdirectory)
+if(PROJECT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
+  set(PYRE_IS_ROOT_PROJECT TRUE)
+else()
+  set(PYRE_IS_ROOT_PROJECT FALSE)
+endif()
+
+# default to build tests only when root project, but allow user to choose
+option(PYRE_BUILD_TESTING "Build pyre's test suite" ${PYRE_IS_ROOT_PROJECT})
+
+# hmmmmm
+include(GNUInstallDirs)
+
+# RPATH handling
+# https://gitlab.kitware.com/cmake/community/-/wikis/doc/cmake/RPATH-handling
+# use, i.e. don't skip the full RPATH for the build tree
+set(CMAKE_SKIP_BUILD_RPATH FALSE)
+
+# when building, don't use the install RPATH already
+# (but later on when installing)
+set(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
+
+set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_FULL_LIBDIR}")
+
+# add the automatically determined parts of the RPATH
+# which point to directories outside the build tree to the install RPATH
+set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+
+# the RPATH to be used when installing, but only if it's not a system directory
+if(NOT (CMAKE_INSTALL_FULL_LIBDIR IN_LIST
+        CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES))
+    set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_FULL_LIBDIR}")
+endif()
+
 include(pyre_journal)
 include(pyre_pyre)
 include(pyre_merlin)
@@ -33,14 +73,6 @@ include(pyre_cuda)
 include(pyre_mpi)
 include(pyre_gsl)
 include(pyre_postgres)
-
-# ask git for the pyre version
-pyre_getVersion()
-
-# set up the project
-project(PYRE VERSION ${REPO_MAJOR}.${REPO_MINOR}.${REPO_MICRO} LANGUAGES CXX C)
-# hmmmm
-include(GNUInstallDirs)
 
 # programs
 find_program(BASH_PROGRAM bash)
@@ -53,10 +85,15 @@ find_package(MPI)
 # postgres
 find_package(PostgreSQL)
 # python
-find_package(Python3 COMPONENTS Interpreter Development NumPy)
+find_package(Python 3.6 COMPONENTS Interpreter Development NumPy)
 # for building bindings
+# require c++17
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 set(PYBIND11_CPP_STANDARD -std=c++17)
-set(PYBIND11_PYTHON_VERSION ${Python3_VERSION})
+set(PYBIND11_PYTHON_VERSION ${Python_VERSION})
+set(PYBIND11_FINDPYTHON ON) # Use new FindPython if available
 find_package(pybind11)
 
 # pybind11 pre-2.5 C++17 compilation is broken under Clang
@@ -67,8 +104,6 @@ endif()
 
 # set up cmake
 pyre_cmakeInit()
-# set up c++
-pyre_cxxInit()
 # set up python
 pyre_pythonInit()
 
@@ -78,6 +113,7 @@ pyre_stagingInit()
 pyre_destinationInit()
 
 find_package(Filesystem REQUIRED)
+link_libraries(std::filesystem)
 
 # visit subdirectories
 add_subdirectory(packages)
@@ -122,7 +158,11 @@ add_library(pyre::journal ALIAS journal)
 
 
 # if we are building to test
-if(BUILD_TESTING)
+if(PYRE_BUILD_TESTING)
+
+  # needed by some {journal} test cases
+  enable_language(C)
+
   # get support
   include(CTest)
   # and my functions

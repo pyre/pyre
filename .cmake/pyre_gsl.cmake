@@ -25,12 +25,12 @@ endfunction(pyre_gslPackage)
 function(pyre_gslModule)
   # if we have gsl
   if (${GSL_FOUND})
-    Python3_add_library(gslmodule MODULE)
+    Python_add_library(gslmodule MODULE)
     # adjust the name to match what python expects
     set_target_properties(gslmodule PROPERTIES LIBRARY_OUTPUT_NAME gsl)
     set_target_properties(gslmodule PROPERTIES SUFFIX ${PYTHON3_SUFFIX})
     # set the include directories
-    target_include_directories(gslmodule PRIVATE ${GSL_INCLUDE_DIRS} ${Python3_NumPy_INCLUDE_DIRS})
+    target_include_directories(gslmodule PRIVATE ${GSL_INCLUDE_DIRS} ${Python_NumPy_INCLUDE_DIRS})
     # set the libraries to link against
     target_link_libraries(
       gslmodule PRIVATE
@@ -63,7 +63,7 @@ function(pyre_gslModule)
       target_link_libraries(gslmodule PRIVATE ${MPI_CXX_LIBRARIES})
     endif()
 
-    if (${Python3_NumPy_FOUND})
+    if (${Python_NumPy_FOUND})
       # add the numpy aware sources to the pile
       target_sources(gslmodule PRIVATE gsl/numpy.cc)
       # add the MPI presence indicator
@@ -71,20 +71,17 @@ function(pyre_gslModule)
     endif()
 
     # copy the capsule definitions to the staging area
-    file(
-      COPY gsl/capsules.h
-      DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/../lib/pyre/gsl
-      )
+    configure_file(gsl/capsules.h ../lib/pyre/gsl/ COPYONLY)
     # install the extension
     install(
       TARGETS gslmodule
       LIBRARY
-      DESTINATION ${CMAKE_INSTALL_PREFIX}/${PYRE_DEST_PACKAGES}/gsl
+      DESTINATION ${PYRE_DEST_PACKAGES}/gsl
       )
     # and publish the capsules
     install(
       FILES ${CMAKE_CURRENT_SOURCE_DIR}/gsl/capsules.h
-      DESTINATION ${CMAKE_INSTALL_PREFIX}/include/pyre/gsl
+      DESTINATION ${PYRE_DEST_INCLUDE}/pyre/gsl
       )
   endif()
   # all done

@@ -10,7 +10,7 @@
 function(pyre_postgresModule)
   # if we have postgres
   if (${PostgreSQL_FOUND})
-    Python3_add_library(postgresmodule MODULE)
+    Python_add_library(postgresmodule MODULE)
     # adjust the name to match what python expects
     set_target_properties(postgresmodule PROPERTIES LIBRARY_OUTPUT_NAME postgres)
     set_target_properties(postgresmodule PROPERTIES SUFFIX ${PYTHON3_SUFFIX})
@@ -37,7 +37,7 @@ function(pyre_postgresModule)
     install(
       TARGETS postgresmodule
       LIBRARY
-      DESTINATION ${CMAKE_INSTALL_PREFIX}/${PYRE_DEST_PACKAGES}/pyre/extensions
+      DESTINATION ${PYRE_DEST_PACKAGES}/pyre/extensions
       )
   endif()
   # all done
