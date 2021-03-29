@@ -12,7 +12,7 @@ module-whatis "pyre is an open source application framework"
 
 # help
 proc ModulesHelp { } {
-    puts stderr "pyre is an open source application frameowrk"
+    puts stderr "pyre is an open source application framework"
 }
 
 # geometry
@@ -24,6 +24,7 @@ prepend-path PYRE_LIBDIR "EXPORT_LIBDIR"
 
 # access
 prepend-path PATH "EXPORT_BINDIR"
+prepend-path LD_LIBRARY_PATH "EXPORT_LIBDIR"
 prepend-path PYTHONPATH "EXPORT_PKGDIR"
 
 # end of file
