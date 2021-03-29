@@ -16,6 +16,8 @@ ARG mm="${python} ${srcdir}/mm/mm.py"
 # environment
 # colorize (for fun)
 ENV TERM=xterm-256color
+# set up the dynamic linker path
+ENV LD_LIBRARY_PATH=${prefix}/lib
 # export the python choice
 ENV PYTHON=${python}
 # and the path to {mm}
@@ -31,7 +33,7 @@ RUN apt dist-upgrade -y
 #  - {vim} is for interactive use
 #  - {openssh}, {zip}, {unzip} are needed for some of the tests
 RUN DEBIAN_FRONTEND=noninteractive \
-    apt install -y \
+        apt install -y \
         git vim unzip zip \
         openssh-server \
         g++ gfortran make \
