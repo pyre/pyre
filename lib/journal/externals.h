@@ -21,7 +21,6 @@
 #include <fstream>
 #include <sstream>
 #include <iomanip>
-#include <filesystem>
 
 
 // aliases for fundamental types that define implementation choices
@@ -36,7 +35,7 @@ namespace pyre::journal {
     // file streams; careful here: we already have a {file_t} that's an alias to the file device
     using filestream_t = std::ofstream;
     // paths
-    using path_t = std::filesystem::path;
+    using path_t = std::string;
 
     // generic names
     using name_t = string_t;

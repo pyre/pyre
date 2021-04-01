@@ -77,7 +77,6 @@ function(pyre_journalLib)
     journal/debuginfo.cc
     journal/firewalls.cc
     )
-  target_link_libraries(journal PRIVATE std::filesystem)
 
   # libpyre and libjournal
   install(
