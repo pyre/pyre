@@ -36,7 +36,7 @@ namespace pyre::memory {
     // names of things
     using name_t = string_t;
     // filenames
-    using uri_t = std::filesystem::path;
+    using uri_t = std::string;
     // file information
     using info_t = struct stat;
 }
