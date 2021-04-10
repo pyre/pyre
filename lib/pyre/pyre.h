@@ -13,6 +13,7 @@
 #include "timers.h"
 #include "memory.h"
 #include "grid.h"
+#include "error.h"
 
 #endif
 

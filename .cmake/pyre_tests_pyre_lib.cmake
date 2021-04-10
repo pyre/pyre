@@ -12,6 +12,9 @@
 # algebra
 pyre_test_driver(pyre.lib/algebra/bcd.cc)
 
+# error
+pyre_test_driver(pyre.lib/error/source_location.cc)
+
 # geometry
 pyre_test_driver(pyre.lib/geometry/point.cc)
 pyre_test_driver(pyre.lib/geometry/pointcloud.cc)
