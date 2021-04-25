@@ -8,6 +8,7 @@
 
 # externals
 import itertools
+import uuid
 from .. import tracking
 # superclass
 from .Configurable import Configurable
@@ -331,8 +332,10 @@ class Component(Configurable, metaclass=Actor, internal=True):
 
 
     def __init__(self, name, locator, implicit, **kwds):
-        # only needed to swallow the extra arguments
+        # chain up, but first swallow the extra arguments that are used by my metaclass
         super().__init__(**kwds)
+        # make me an id
+        self.pyre_id = uuid.uuid1()
         # all done
         return
 
