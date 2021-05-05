@@ -66,7 +66,7 @@ class Flow(Producer, family="pyre.flow"):
             # and the priority
             priority = info.priority
             # ask the executive to look for configuration sources based on the flow name
-            executive.configure(stem=value, locator=locator, priority=type(priority))
+            executive.configure(stem=value, locator=locator, priority=ns.priority.package)
             # instantiate the workflow and return it
             return workflow(name=value, locator=locator)
 
