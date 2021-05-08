@@ -83,7 +83,7 @@ class Local(Filesystem):
         """
         # maybe it's all about me after all
         if parent is None: parent = self
-        # assemble the new folder uri
+        # assemble the new node uri
         uri = parent.uri / name
         # create the file
         uri.open(mode='w').close()
