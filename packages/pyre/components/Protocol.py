@@ -391,7 +391,6 @@ class Protocol(Configurable, metaclass=Role, internal=True):
                     if protocol.pyre_isCompatible(spec=cls, fast=True):
                         # in which case, invoke the foundry
                         component = entity()
-                        print(f"{component}: internal={component.pyre_internal}")
                         # if it's not marked as an implementation detail
                         if component.pyre_internal is False:
                             # pass it along
