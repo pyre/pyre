@@ -372,7 +372,11 @@ class Protocol(Configurable, metaclass=Role, internal=True):
         for name, entity in cls.pyre_executive.retrieveComponents(uri=uri):
             # if the entity is a component
             if isinstance(entity, cls.actor):
-                # and it is compatible with me
+                # check whether it is marked as an implementation detail
+                if entity.pyre_internal is True:
+                    # in which case just skip it
+                    continue
+                # if it is compatible with me
                 if entity.pyre_isCompatible(spec=cls, fast=True):
                     # pass it along
                     yield uri, name, entity
@@ -385,8 +389,13 @@ class Protocol(Configurable, metaclass=Role, internal=True):
                 for protocol in entity.pyre_implements:
                     # is compatible with me
                     if protocol.pyre_isCompatible(spec=cls, fast=True):
-                        # in which case, invoke the foundry and pass along the component
-                        yield uri, name, entity()
+                        # in which case, invoke the foundry
+                        component = entity()
+                        print(f"{component}: internal={component.pyre_internal}")
+                        # if it's not marked as an implementation detail
+                        if component.pyre_internal is False:
+                            # pass it along
+                            yield uri, name, component
                         # stop checking other protocols
                         break
                 # grab the next one
