@@ -43,6 +43,8 @@ class Configurable(Dashboard):
     pyre_isProtocol = False
     pyre_isComponent = False
 
+    pyre_doc = None
+    pyre_tip = None
 
     # basic support for the help system
     def pyre_help(self, indent=' '*4, **kwds):
