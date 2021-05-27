@@ -385,8 +385,8 @@ class Protocol(Configurable, metaclass=Role, internal=True):
                 for protocol in entity.pyre_implements:
                     # is compatible with me
                     if protocol.pyre_isCompatible(spec=cls, fast=True):
-                        # in which case, pass it along
-                        yield uri, name, entity
+                        # in which case, invoke the foundry and pass along the component
+                        yield uri, name, entity()
                         # stop checking other protocols
                         break
                 # grab the next one
