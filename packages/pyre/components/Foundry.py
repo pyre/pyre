@@ -69,8 +69,12 @@ class Foundry:
 
 
     def __call__(self, *args, **kwds):
-        # invoke the factory and return the result
-        return self.pyre_factory(*args, **kwds)
+        # invoke the factory
+        component = self.pyre_factory(*args, **kwds)
+        # decorate it with my tip
+        component.pyre_tip = self.pyre_tip
+        # and return it
+        return component
 
 
     # implementation details
