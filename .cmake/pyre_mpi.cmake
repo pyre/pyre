@@ -41,7 +41,7 @@ function(pyre_mpiLib)
     add_library(mpi INTERFACE)
     target_link_libraries(mpi INTERFACE pyre MPI::MPI_CXX)
     target_include_directories(mpi INTERFACE
-      $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/mpi>
+      $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
       $<INSTALL_INTERFACE:${PYRE_DEST_INCLUDE}>
       )
     add_library(pyre::mpi ALIAS mpi)
