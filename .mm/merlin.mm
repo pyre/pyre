@@ -18,6 +18,7 @@ merlin.tests := merlin.pkg.tests
 merlin.pkg.root := packages/merlin/
 merlin.pkg.stem := merlin
 merlin.pkg.ext :=
+merlin.pkg.drivers := merlin
 
 
 # get the testsuites
