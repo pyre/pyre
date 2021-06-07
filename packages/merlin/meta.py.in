@@ -1,9 +1,7 @@
-# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis <michael.aivazis@orthologue.com>
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2021 all rights reserved
-#
 
 # expansion placeholders
 date = "@TODAY@"
@@ -26,8 +24,8 @@ banner = f"""
 """
 
 header = banner + """
-author:
-    Michael Aïvázis     <michael.aivazis@orthologue.com>
+authors:
+    Michael Aïvázis     <michael.aivazis@para-sim.com>
 """
 
 usage = header + """
