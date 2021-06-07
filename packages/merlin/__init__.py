@@ -1,20 +1,43 @@
-# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2021 all rights reserved
-#
 
 
 """
-merlin is a package intended as a replacement to {make}
+merlin is a configuration management tool
 """
+
+
+# import and publish pyre symbols
+from pyre import (
+    # protocols, components, traits, and their infrastructure
+    schemata, constraints, properties, protocol, component, foundry,
+    # decorators
+    export, provides,
+    # the manager of the pyre runtime
+    executive,
+    # shells
+    application, plexus,
+)
+
+# register the package
+package = executive.registerPackage(name='merlin', file=__file__)
+# attach the geography
+home, prefix, defaults = package.layout()
+
+
+# publish the local modules
+from . import meta
+from . import exceptions
+# user interfaces
+from . import shells         # the supported application shells
+from . import cli            # the command line interface
 
 
 def main():
     """
-    This is the main entry point in the package. It is invoked by the {merlin} script.  Its job
+    This is the main entry point in the package. It is invoked by the {merlin} script. Its job
     is to boot pyre, examine the command line to deduce which actor the user would like to
     invoke, instantiate it, and call its main entry point with the supplied command line
     arguments.
@@ -26,6 +49,14 @@ def main():
 
 
 # administrative
+def built():
+    """
+    Return the build timestamp
+    """
+    # pull and return the meta-data
+    return meta.date
+
+
 def credits():
     """
     Print the acknowledgments
@@ -57,87 +88,5 @@ def version():
     # return the version
     return meta.version
 
-
-# bootstrapping
-def boot():
-    # check whether
-    try:
-        # the user
-        import __main__
-        # has indicated we should skip booting
-        if __main__.merlin_noboot:
-            # in which case, do not build a plexus
-            return None
-    # if anything goes wrong
-    except:
-        # just ignore it and carry on
-        pass
-
-    # externals
-    import weakref
-    # access the plexus factory
-    from .components import merlin
-    # build one and return it
-    plexus = merlin(name='merlin.plexus')
-
-    # get the dashboard
-    from .components import dashboard
-    # attach the singletons
-    dashboard.merlin = weakref.proxy(plexus)
-
-    # all done
-    return plexus
-
-
-# convenience
-def error(message):
-    """
-    Generate an error message
-    """
-    # get the logging mechanism
-    import journal
-    # build an error message object in my namespace
-    error = journal.error('merlin')
-    # log and return
-    return error.log(message)
-
-def warning(message):
-    """
-    Generate a warning
-    """
-    # get the logging mechanism
-    import journal
-    # build a warning object in my namespace
-    warning = journal.warning('merlin')
-    # log and return
-    return warning.log(message)
-
-def info(message):
-    """
-    Generate an informational message
-    """
-    # get the logging mechanism
-    import journal
-    # build an informational message object in my namespace
-    info = journal.info('merlin')
-    # log and return
-    return info.log(message)
-
-
-# package registration
-import pyre
-# register the package
-package = pyre.executive.registerPackage(name='merlin', file=__file__)
-# attach the geography
-home, prefix, defaults = package.layout()
-
-# pull the meta-data
-from . import meta
-# the framework entities
-from pyre import foundry, export, properties, protocol
-from .components import component, action, spell
-
-# boot the singleton
-merlin = boot()
 
 # end of file
