@@ -49,7 +49,7 @@ public:
 
     // constructor that forwards its extra arguments to the storage strategy
     template <typename... Args>
-    constexpr Grid(packing_const_reference, Args&&...);
+    constexpr Grid(packing_const_reference, Args &&...);
 
     // accessors
 public:
@@ -88,7 +88,7 @@ public:
     // achieved by zeroing out the ranks to be skipped in the shape specification
 public:
     template <int sliceRank = packing_type::rank()>
-    constexpr auto slice(index_const_reference, shape_const_reference);
+    constexpr auto slice(index_const_reference, shape_const_reference) const;
 
     // implementation details: data
 private:
