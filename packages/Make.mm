@@ -15,8 +15,6 @@ RECURSE_DIRS = \
 PACKAGES = \
     pyre \
     journal \
-    merlin \
-    opal \
 
 # the optional packages
 # cuda
