@@ -43,6 +43,16 @@ def help():
     return Help
 
 
+@foundry(implements=action, tip="information about project entities")
+def info():
+    # get the action
+    from .Info import Info
+    # borrow its docstring
+    __doc__ = Info.__doc__
+    # and publish it
+    return Info
+
+
 # debugging support
 @foundry(implements=action, tip="debugging information")
 def debug():
