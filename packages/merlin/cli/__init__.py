@@ -33,6 +33,17 @@ def config():
     return Config
 
 
+@foundry(implements=action, tip="helpful information")
+def help():
+    # get the action
+    from .Help import Help
+    # borrow its docstring
+    __doc__ = Help.__doc__
+    # and publish it
+    return Help
+
+
+# debugging support
 @foundry(implements=action, tip="debugging information")
 def debug():
     # get the action
