@@ -6,14 +6,6 @@
 #
 
 
-# the spell protocol
-from .Action import Action as action
-# the spell component
-from .Spell import Spell as spell
-# the locally enhanced component base class
-from .Component import Component as component
-# the singletons
-from .Dashboard import Dashboard as dashboard
 # the executive
 from .Merlin import Merlin as merlin
 
