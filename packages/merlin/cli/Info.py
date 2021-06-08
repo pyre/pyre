@@ -27,11 +27,11 @@ class Info(merlin.shells.command, family='merlin.cli.info'):
         # make a channel
         channel = journal.info("merlin.info.host")
         # report
-        channel.line(f"         name: {host.hostname}")
-        channel.line(f"     nickname: {host.nickname}")
-        channel.line(f"           os: {host.platform} {host.release} ({host.codename})")
-        channel.line(f"         arch: {host.cpus.architecture}")
-        channel.line(f"        cores: {host.cpus.cores}")
+        channel.line(f"          name: {host.hostname}")
+        channel.line(f"      nickname: {host.nickname}")
+        channel.line(f"            os: {host.platform} {host.release} ({host.codename})")
+        channel.line(f"          arch: {host.cpus.architecture}")
+        channel.line(f"         cores: {host.cpus.cores}")
         # flush
         channel.log()
 
@@ -50,11 +50,11 @@ class Info(merlin.shells.command, family='merlin.cli.info'):
         # make a channel
         channel = journal.info("merlin.info.user")
         # report
-        channel.line(f"     username: {user.username} ({user.uid})")
-        channel.line(f"         home: {user.home}")
-        channel.line(f"         name: {user.name}")
-        channel.line(f"        email: {user.email}")
-        channel.line(f"  affiliation: {user.affiliation}")
+        channel.line(f"          user: {user.username} ({user.uid})")
+        channel.line(f"          home: {user.home}")
+        channel.line(f"          name: {user.name}")
+        channel.line(f"         email: {user.email}")
+        channel.line(f"   affiliation: {user.affiliation}")
         # flush
         channel.log()
 
