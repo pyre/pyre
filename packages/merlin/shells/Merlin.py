@@ -27,7 +27,7 @@ class Merlin(pyre.plexus, family='merlin.shells.plexus'):
         Generate the help banner
         """
         # show the license header
-        return merlin.meta.license
+        return merlin.meta.header
 
 
     # interactive session management
