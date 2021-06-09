@@ -1,0 +1,35 @@
+{
+    "configurations": [
+        {
+            "name": "mm: linux",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "${env:USER_TOOLS_DIR}/mm/${env:mm_abi}/include/**",
+                "/usr/include/python3.8/**"
+            ],
+            "defines": [],
+            "compilerPath": "/usr/bin/${env:mm_compiler}",
+            "cStandard": "c17",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "linux-${env:mm_compiler}-${env:vsarch}"
+        },
+        {
+            "name": "mm: mac",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "${env:USER_TOOLS_DIR}/mm/${env:mm_abi}/**",
+                "/opt/local/Library/Frameworks/Python.framework/Versions/3.9/include/**",
+                "/opt/local/include/**"
+            ],
+            "defines": [],
+            "macFrameworkPath": [
+                "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/System/Library/Frameworks"
+            ],
+            "compilerPath": "/opt/local/bin/${env:mm_compiler}",
+            "cStandard": "c17",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "macos-${env:mm_compiler}-${env:vsarch}"
+        }
+    ],
+    "version": 4
+}
