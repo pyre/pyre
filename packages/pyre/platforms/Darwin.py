@@ -89,6 +89,7 @@ class Darwin(POSIX, family='pyre.platforms.darwin'):
     # private data
     # the known code names
     codenames = {
+        '12.0': 'monterey',
         # big sur is has multiple personality disorder...
         '11.5': 'big sur',
         '11.4': 'big sur',
