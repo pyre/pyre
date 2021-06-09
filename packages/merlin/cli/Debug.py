@@ -33,7 +33,7 @@ class Debug(merlin.shells.command, family='merlin.cli.debug'):
         return 0
 
 
-    @merlin.export(tip="dump the application configuration namespace")
+    @merlin.export(tip="dump the application virtual filesystem")
     def vfs(self, plexus, **kwds):
         """
         Dump the application virtual filesystem
