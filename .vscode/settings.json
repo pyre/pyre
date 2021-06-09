@@ -11,6 +11,5 @@
         "plaintext",
         "python",
         "html"
-    ],
-    "python.formatting.provider": "none"
+    ]
 }
