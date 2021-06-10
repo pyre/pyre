@@ -41,7 +41,7 @@ class Debug(merlin.shells.command, family='merlin.cli.debug'):
         # get the prefix
         prefix = self.prefix or '/merlin'
         # build the report
-        report = '\n'.join(plexus.vfs[prefix].dump())
+        report = '\n'.join(plexus.vfs[prefix].dump(indent=1))
         # sign in
         plexus.info.line('vfs: prefix={!r}'.format(prefix))
         # dump
