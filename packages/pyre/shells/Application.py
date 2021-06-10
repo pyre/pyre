@@ -437,6 +437,25 @@ class Application(pyre.component, metaclass=Director):
         return
 
 
+    def pyre_locateParentWith(self, marker, folder=None):
+        """
+        Locate the directory that contains {marker}, starting with {folder} of the {cwd} and
+        moving upwards
+        """
+        # if the caller has not expressed an opinion start with the current working directory
+        folder = pyre.primitives.path.cwd() if folder is None else folder
+        # go through folders on the way to the root of the filesystem
+        for candidate in folder.crumbs:
+            # form the filename
+            target = candidate / marker
+            # if it exists
+            if target.exists():
+                # we are done
+                return candidate
+        # if we get this far, the marker could not be fund
+        return None
+
+
     def pyre_resolveDependencies(self):
         """
         Go through my list of required package categories and resolve them
