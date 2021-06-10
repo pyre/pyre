@@ -360,7 +360,7 @@ class Application(pyre.component, metaclass=Director):
         # look for
         try:
             # the folder with my configurations
-            cfgdir = prefix['defaults/{}'.format(namespace)]
+            cfgdir = prefix[f"defaults/{namespace}"]
         # if it is not there
         except pfs.NotFoundError:
             # make an empty folder; must use {pfs} to do this to guarantee filesystem consistency
@@ -387,8 +387,8 @@ class Application(pyre.component, metaclass=Director):
         # get my namespace
         namespace = self.pyre_namespace
         # sign in
-        # print("Application.pyre_mountPrivateFolder:")
-        # print("  looking for: {.uri}/{}/{}".format(prefix, folder, namespace))
+        # print(f"Application.pyre_mountPrivateFolder:")
+        # print(f"  looking for: {prefix.uri}/{folder}/{namespace}")
         # give me the context
 
         # check whether the parent folder exists
@@ -422,11 +422,11 @@ class Application(pyre.component, metaclass=Director):
                 # bail
                 return
             # and show me
-            # print("  created {.uri}".format(mine))
+            # print(f"  created {mine.uri}")
         # if all went well
         else:
             # show me
-            # print("  mounted {.uri}".format(mine))
+            # print(f"  mounted {mine.uri}")
             # look carefully; there may be large subdirectories beneath
             mine.discover(levels=1)
 
@@ -509,10 +509,10 @@ class Application(pyre.component, metaclass=Director):
 
         yield from self.pyre_showSummary(indent=indent, **kwds)
         # usage
-        yield 'usage:'
-        yield ''
-        yield '    {} [options]'.format(self.pyre_name)
-        yield ''
+        yield "usage:"
+        yield ""
+        yield f"    {self.pyre_name} [options]"
+        yield ""
 
         # my public state
         yield from self.pyre_showConfigurables(indent=indent, **kwds)
@@ -535,10 +535,10 @@ class Application(pyre.component, metaclass=Director):
         # grab my debug channel
         channel = self.debug
         # print the top line
-        channel.line("responding to HTTP request:")
-        channel.line("  app: {}".format(self))
-        channel.line("  nexus: {.nexus}".format(self))
-        channel.line("  server: {}".format(server))
+        channel.line(f"responding to HTTP request:")
+        channel.line(f"  app: {self}")
+        channel.line(f"  nexus: {self.nexus}")
+        channel.line(f"  server: {server}")
         # dump the request contents
         request.dump(channel=channel, indent='  ')
         # flush
@@ -547,7 +547,7 @@ class Application(pyre.component, metaclass=Director):
         # build a default response
         response = server.responses.NotFound(
             server=server,
-            description="{.pyre_name} does not support web deployment".format(self))
+            description=f"{self.pyre_name} does not support web deployment")
         # and return it
         return response
 
