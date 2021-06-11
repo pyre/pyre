@@ -57,16 +57,14 @@ class Flow(Producer, family="pyre.flow"):
         if isinstance(workflow, cls.actor):
             # get the executive
             executive = cls.pyre_executive
-            # and the nameserver
+            # and the name server
             ns = executive.nameserver
             # grab the node meta-data
             info = ns.getInfo(node.key)
             # extract the locator
             locator = info.locator
-            # and the priority
-            priority = info.priority
             # ask the executive to look for configuration sources based on the flow name
-            executive.configure(stem=value, locator=locator, priority=ns.priority.package)
+            executive.configureStem(stem=value, locator=locator)
             # instantiate the workflow and return it
             return workflow(name=value, locator=locator)
 
