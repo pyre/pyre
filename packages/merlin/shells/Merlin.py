@@ -16,6 +16,8 @@ class Merlin(pyre.plexus, family='merlin.shells.plexus'):
     The main action dispatcher
     """
 
+    # constants
+    METAFOLDER = ".merlin"
     # types
     from .Action import Action as pyre_action
 
@@ -49,16 +51,32 @@ class Merlin(pyre.plexus, family='merlin.shells.plexus'):
         Explore the application installation folders and construct my private filespace
         """
         # chain up; bypass the rest of the logic here until the UX is enabled
-        return super().pyre_mountApplicationFolders(pfs=pfs, prefix=prefix, **kwds)
+        super().pyre_mountApplicationFolders(pfs=pfs, prefix=prefix, **kwds)
+
+        # N.B
+        # this is early times, so {prefix} may not be explored; tread carefully
 
         # get my namespace
         namespace = self.pyre_namespace
 
-        #
-        # this is early times, so {prefix} may not be explored; tread carefully
-        #
+        # find the root of the workspace
+        workspacePath = self.pyre_locateParentWith(marker=self.METAFOLDER)
+        # if there is one
+        if workspacePath:
+            # grab the fileserver
+            vfs = self.vfs
+            # anchor a filesystem
+            workspace = vfs.retrieveFilesystem(root=workspacePath)
+            # mount it within the global filesystem
+            vfs["workspace"] = workspace
+            # and mount the metadata directory in my private filesystem
+            pfs["workspace"] = workspace[self.METAFOLDER].discover()
 
-        # gingerly, look for the web document root, but avoid expanding parts of the local
+        # go no further, for now
+        return pfs
+
+        # UX
+        # look for the web document root, but avoid expanding parts of the local
         # filesystem that we don't care about and getting trapped in deep directory structures
         # start at the top
         docroot = prefix
