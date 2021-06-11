@@ -93,10 +93,8 @@ class Package(Named):
         """
         Locate and ask the executive to load my configuration files
         """
-        # my configuration priority
-        priority = executive.priority.package
-        # get the executive to do the rest
-        return executive.configure(stem=self.name, priority=priority, locator=self.locator)
+        # load configurations with my name as the {namespace}
+        return executive.configure(namespace=self.name, locator=self.locator)
 
 
     # meta-methods
