@@ -25,7 +25,7 @@ class Darwin(POSIX, family='pyre.platforms.darwin'):
 
     # constants
     platform = 'darwin'
-    distribution = 'osx'
+    distribution = 'macos'
 
     prefix_library = 'lib'
     extension_staticLibrary = '.a'
