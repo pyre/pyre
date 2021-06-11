@@ -94,7 +94,49 @@ class Executive:
 
 
     # support for internal requests
-    def configure(self, stem, locator, priority):
+    def configure(self, namespace, locator):
+        """
+        Locate and load all accessible configuration files for the given {namespace}
+        """
+        # first up, package level configuration based on the raw {namespace}
+        stem = namespace
+        # locate and load
+        self.configureStem(stem=stem, locator=locator, priority=self.priority.package)
+
+        # next, we look for platform, machine, and user specific settings
+        # get the host
+        host = self.host
+        # if it hasn't been identified yet
+        if host is None:
+            # none of what follows can be done, so bail
+            return
+
+        # look for platform specific settings
+        stem = f"{namespace}/platforms/{host.distribution}"
+        # mark
+        here = tracking.simple('while discovering the host characteristics')
+        # attempt to load any matching configuration files
+        self.configureStem(stem=stem, priority=self.priority.user, locator=here)
+
+        # look for host specific settings
+        stem = f"{namespace}/hosts/{host.nickname}"
+        # mark
+        here = tracking.simple('while discovering the host characteristics')
+        # attempt to load any matching configuration files
+        self.configureStem(stem=stem, priority=self.priority.user, locator=here)
+
+        # finally, look for a {user@host} configuration files
+        stem = f"{namespace}/users/{self.user.username}@{host.nickname}"
+        # mark
+        here = tracking.simple('while loading the user specific configuration')
+        # attempt to load any matching configuration files
+        self.configureStem(stem=stem, priority=self.priority.user, locator=here)
+
+        # all done
+        return
+
+
+    def configureStem(self, stem, locator, priority=priority.package):
         """
         Locate and load all accessible configuration files for the given {stem}
         """
@@ -102,9 +144,7 @@ class Executive:
         # print(f"    stem={stem}")
         # print(f"    locator={locator}")
         # print(f"    priority={priority}")
-        # access the fileserver
-        fs = self.fileserver
-        # the nameserver
+        # the name server
         ns = self.nameserver
         # and the configurator
         cfg = self.configurator
@@ -114,6 +154,7 @@ class Executive:
         for root, filename, extension in scope:
             # build the uri
             uri = f"{root.uri}/{filename}.{extension}"
+            # show me
             # print(f" ++ looking for '{uri}'")
             # load the settings from the associated file
             self.loadConfiguration(uri=uri, priority=priority, locator=locator)
@@ -503,15 +544,6 @@ class Executive:
         # get the host class record; the default value already contains all we could discover
         # about the type of machine we are running on
         host = platform().default()
-
-        # hunt down the distribution configuration file and load it
-        # make a locator
-        here = tracking.simple('while discovering the platform characteristics')
-        # set the stem
-        stem = f'pyre/platforms/{host.distribution}'
-        # attempt to load any matching configuration files
-        self.configure(stem=stem, priority=self.priority.user, locator=here)
-
         # set up an iterator over the map of known hosts, in priority order
         knownHosts = nameserver.find(pattern=self.hostmapkey, key=operator.attrgetter('priority'))
         # go through them
@@ -546,14 +578,6 @@ class Executive:
         else:
             # make the hostname be the nickname
             host.nickname = host.hostname
-
-        # hunt down the host specific configuration file and load it
-        # make a locator
-        here = tracking.simple('while discovering the host characteristics')
-        # set the stem
-        stem = f'pyre/hosts/{host.nickname}'
-        # attempt to load any matching configuration files
-        self.configure(stem=stem, priority=self.priority.user, locator=here)
 
         # get the host information
         self.host = host(name='pyre.host')
