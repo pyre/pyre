@@ -44,7 +44,7 @@ def resolve(uri):
 
 def loadConfiguration(uri):
     """
-    Open {uri} and attempt to load its contents into the configaration model
+    Open {uri} and attempt to load its contents into the configuration model
     """
     # build a locator for these settings
     here = tracking.here(level=1)
@@ -256,18 +256,10 @@ from .framework.exceptions import PyreError
 executive = boot()
 # if the framework booted properly
 if executive:
-    # turn on the executive
-    executive.activate()
-    # register this package
-    package = executive.registerPackage(name='pyre', file=__file__)
-    # record its geography
-    home, prefix, defaults = package.layout()
     # package managers
     from . import externals
     # platform managers
     from . import platforms
-    # discover information about the runtime environment
-    executive.discover()
     # application shells
     from .shells import application, action, plexus, command, panel
     # support for filesystems
@@ -278,6 +270,16 @@ if executive:
     from . import weaver
     # the interprocess communication mechanisms
     from . import ipc, nexus, services
+
+    # discover information about the runtime environment
+    executive.discover()
+    # and turn on the executive
+    executive.activate()
+
+    # register this package
+    package = executive.registerPackage(name='pyre', file=__file__)
+    # and record its geography
+    home, prefix, defaults = package.layout()
 
 
 # clean up the executive instance when the interpreter shuts down
