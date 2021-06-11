@@ -54,12 +54,10 @@ class Director(pyre.actor):
         if name:
             # get the executive
             executive = self.pyre_executive
-            # set up the priority
-            priority = executive.priority.package
             # build a locator
             initloc = pyre.tracking.simple('while initializing application {!r}'.format(name))
             # ask the executive to hunt down the application INSTANCE configuration file
-            executive.configure(stem=name, priority=priority, locator=initloc)
+            executive.configure(namespace=name, locator=initloc)
 
         # record the caller's location
         locator = pyre.tracking.here(1) if locator is None else locator
