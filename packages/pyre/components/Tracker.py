@@ -34,7 +34,7 @@ class Tracker(Monitor):
         history = self.history
         # get the component inventory so that we can store the current value of its traits
         inventory = component.pyre_inventory
-        # and its nameserver, so we can grab the value meta-data
+        # and its name server, so we can grab the value metadata
         nameserver = component.pyre_nameserver
         # go through the slots that store the value of its traits
         for slot in inventory.getSlots():
@@ -44,7 +44,7 @@ class Tracker(Monitor):
             if key is None:
                 # move on
                 continue
-            # ask the name server for the slot meta-data
+            # ask the name server for the slot metadata
             info = nameserver.getInfo(key)
             # save the info
             revision = Revision(value=slot.value, locator=info.locator, priority=info.priority)
@@ -76,7 +76,7 @@ class Tracker(Monitor):
             key = observable.key
             # ask it for its value
             value = observable.value
-            # and the meta-data maintained by the nameserver
+            # and the metadata maintained by the name server
             info = observable.pyre_nameserver.getInfo(key)
             # save the info
             revision = Revision(value, locator=info.locator, priority=info.priority)
