@@ -46,12 +46,11 @@ class NameServer(Hierarchical):
         Add {configurable} to the model under {name}
         """
         # add the {configurable} to the store
-        # N.B: let {insert} choose the slot factory; this uses to specify a {literal} as the
+        # N.B: let {insert} choose the slot factory; this used to specify a {literal} as the
         # slot factory, but this appears to have been misguided: there are paths when replacing
         # an existing node that invoked the slot factory with more arguments than
         # {self.literal} could handle...
-        key, _, _ = self.insert(name=name, value=configurable,
-                                priority=priority, locator=locator)
+        key, _, _ = self.insert(name=name, value=configurable, priority=priority, locator=locator)
         # and return the key
         return key
 
@@ -165,18 +164,17 @@ class NameServer(Hierarchical):
 
         # look for the node registered under this key
         old = self._nodes.get(key, None)
-        # and
-        try:
-            # its meta-data
-            meta = self._metadata[key]
+        # and its metadata
+        meta = self._metadata.get(key)
+
         # if this is the first time this name was encountered
-        except KeyError:
-            # if we have no meta-data, we shouldn't have an old node either
+        if meta is None:
+            # we shouldn't have an {old} node either
             if old is not None:
                 # if we do, it's a bug, so get the journal
                 import journal
                 # build a bug report
-                bug = f"{name}: found a node with no meta-data"
+                bug = f"{name}: found a node with no metadata"
                 # and complain
                 raise journal.firewall("pyre.nameserver").log(bug)
 
@@ -184,20 +182,21 @@ class NameServer(Hierarchical):
             if factory is None:
                 # use instance slots for a generic trait
                 factory = properties.identity(name=name).instanceSlot
-
-            # build the info node
-            meta = self.info(name=name, split=split, key=key,
-                             priority=priority, locator=locator, factory=factory)
-            # attach it to the meta-data store
-            self._metadata[key] = meta
-            # build the new node
+            # try to build the new node before we do any damage to the local indices; this way,
+            # values that would end up getting rejected do not leave behind dangling keys
             new = factory(key=key, value=value)
             # and attach it
             self._nodes[key] = new
+            # build the info node
+            meta = self.info(name=name, split=split, key=key,
+                             priority=priority, locator=locator, factory=factory)
+            # and attach it to the meta-data store
+            self._metadata[key] = meta
             # all done
             return key, new, old
 
-        # if a factory were prescribed
+        # getting this far implies we've bumped into this key before;  if the caller has supplied
+        # a specific factory
         if factory:
             # install it
             meta.factory = factory
@@ -223,22 +222,20 @@ class NameServer(Hierarchical):
             # and register it; no need to adjust the graph since the slot factory now takes
             # care of this
             self._nodes[key] = new
-
             # and we are done
             return key, new, old
 
         # if the new assignment is higher priority than the existing one
         if priority > meta.priority:
+            # make a new node using the registered node factory; do this early so that a {value}
+            # that is rejected by {factory} doesn't leave behind dangling keys
+            new = meta.factory(key=key, value=value, current=old)
+            # register it
+            self._nodes[key] = new
             # record the assignment priority
             meta.priority = priority
             # and its locator
             meta.locator = locator
-
-            # make a new node using the registered node factory
-            new = meta.factory(key=key, value=value, current=old)
-            # register it
-            self._nodes[key] = new
-
             # and we are done
             return key, new, old
 
