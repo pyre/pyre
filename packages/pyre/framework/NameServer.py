@@ -138,11 +138,13 @@ class NameServer(Hierarchical):
         # attempt to
         try:
             # evaluate the expression
-            return self.node.interpolation.expand(model=self, expression=expression)
+            node = self.node.interpolation.expand(model=self, expression=expression)
         # with empty expressions
         except self.EmptyExpressionError as error:
             # return the expanded text, since it the input may have contained escaped braces
-            return error.expression
+            node = error.expression
+        # all done
+        return node
 
 
     # override superclass methods
@@ -150,6 +152,15 @@ class NameServer(Hierarchical):
         """
         Add {value} to the store
         """
+        # N.B.: presenting a {value} to be inserted into the model under {key} involves using
+        # the {factory} to create a slot. the {factory} used is either the one supplied by the
+        # caller, or whatever is registered as metadata for this {key}. the metadata, i.e. the
+        # locator and the assignment priority must be correctly associated with the key before
+        # the {factory} is invoked because the {tracker}, and other observers, may query the
+        # name server for it as part of the slot creation. if the call to the {factory} throws
+        # an exception, the metadata must be rolled back to what it was before the failed node
+        # insertion.
+
         # figure out the node info
         name, split, key = self.info.fillNodeId(model=self, key=key, split=split, name=name)
 
@@ -182,20 +193,30 @@ class NameServer(Hierarchical):
             if factory is None:
                 # use instance slots for a generic trait
                 factory = properties.identity(name=name).instanceSlot
-            # try to build the new node before we do any damage to the local indices; this way,
-            # values that would end up getting rejected do not leave behind dangling keys
-            new = factory(key=key, value=value)
-            # and attach it
-            self._nodes[key] = new
+
+            # speculative: update the metadata
             # build the info node
             meta = self.info(name=name, split=split, key=key,
                              priority=priority, locator=locator, factory=factory)
             # and attach it to the meta-data store
             self._metadata[key] = meta
-            # all done
+
+            # gingerly
+            try:
+                # build the new node
+                new = factory(key=key, value=value)
+            # if anything wrong happens
+            except Exception:
+                # clear out the metadata
+                self._metadata[key] = None
+                # and raise the same exception
+                raise
+            # otherwise, we are all good; attach the node
+            self._nodes[key] = new
+            # and return the insertion info
             return key, new, old
 
-        # getting this far implies we've bumped into this key before;  if the caller has supplied
+        # getting this far implies we've bumped into this key before; if the caller has supplied
         # a specific factory
         if factory:
             # install it
@@ -227,15 +248,27 @@ class NameServer(Hierarchical):
 
         # if the new assignment is higher priority than the existing one
         if priority > meta.priority:
-            # make a new node using the registered node factory; do this early so that a {value}
-            # that is rejected by {factory} doesn't leave behind dangling keys
-            new = meta.factory(key=key, value=value, current=old)
-            # register it
-            self._nodes[key] = new
-            # record the assignment priority
+            # save the current metadata so we can roll it back if we have to
+            mark = self.info(name=name, split=split, key=key,
+                             priority=meta.priority, locator=meta.locator, factory=meta.factory)
+            # record the assignment metadata so whoever is watching for this assignment
+            # has access to the current information; save the priority
             meta.priority = priority
-            # and its locator
+            # and the assignment locator
             meta.locator = locator
+            # now, gingerly
+            try:
+                # make a new node using the registered node factory
+                new = meta.factory(key=key, value=value, current=old)
+            # if anything goes wrong
+            except Exception:
+                # roll back the metadata
+                meta.locator = mark.locator
+                meta.priority = mark.priority
+                # and raise the same exception
+                raise
+            # otherwise, we are all good; register the new node
+            self._nodes[key] = new
             # and we are done
             return key, new, old
 
