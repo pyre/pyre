@@ -25,10 +25,32 @@ class Debug(merlin.shells.command, family='merlin.cli.debug'):
         """
         Dump the application configuration namespace
         """
+        # make a channel
+        channel = plexus.info
+        # set up the indentation level
+        indent = " " * 2
+
         # get the prefix
         prefix = self.prefix or "merlin"
-        # show me
-        plexus.pyre_nameserver.dump(prefix)
+        # and the name server
+        nameserver = plexus.pyre_nameserver
+
+        # get all nodes that match my {prefix}
+        for info, node in nameserver.find(pattern=prefix):
+            # attempt to
+            try:
+                # get the node value
+                value = node.value
+            # if anything goes wrong
+            except nameserver.NodeError as error:
+                # use the error message as the value
+                value = f" ** ERROR: {error}"
+            # inject
+            channel.line(f"{indent}{info.name}: {value}")
+
+        # flush
+        channel.log()
+
         # all done
         return 0
 
@@ -38,14 +60,20 @@ class Debug(merlin.shells.command, family='merlin.cli.debug'):
         """
         Dump the application virtual filesystem
         """
+        # make a channel
+        channel = plexus.info
         # get the prefix
         prefix = self.prefix or '/merlin'
         # build the report
         report = '\n'.join(plexus.vfs[prefix].dump(indent=1))
+
         # sign in
-        plexus.info.line('vfs: prefix={!r}'.format(prefix))
+        channel.line(f"vfs: prefix='{prefix}'")
         # dump
-        plexus.info.log(report)
+        channel.line(report)
+        # flush
+        channel.log()
+
         # all done
         return 0
 
