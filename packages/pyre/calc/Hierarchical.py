@@ -375,15 +375,17 @@ class Hierarchical(SymbolTable):
         """
         List my contents
         """
+        # set the indent marker
+        indent = " " * 4
         # sign on
         print("model '{}':".format(self))
         print("  nodes:")
         # for all node that match {pattern}
         for info, node in self.find(pattern):
             # print the node information
-            node.dump(indent=' '*4, name=info.name)
+            node.dump(indent=indent, name=info.name)
             # and the slot type
-            print("      slot: {}".format(type(node).__name__))
+            # print("      slot: {}".format(type(node).__name__))
         # all done
         return
 
