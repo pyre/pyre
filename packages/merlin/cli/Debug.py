@@ -20,6 +20,30 @@ class Debug(merlin.shells.command, family='merlin.cli.debug'):
     prefix.tip = "specify the portion of the namespace to display"
 
 
+    @merlin.export(tip="list the encountered configuration files")
+    def config(self, plexus, **kwds):
+        """
+        Generate a list of encountered configuration files
+        """
+        # make a channel
+        channel = plexus.info
+        # set up the indentation level
+        indent = " " * 2
+
+        # get the configurator
+        cfg = self.pyre_configurator
+        # go through its list of sources
+        for uri, priority in cfg.sources:
+            # tell me
+            channel.line(f"{indent}{uri}, priority '{priority.name}'")
+
+        # flush
+        channel.log()
+
+        # all done
+        return 0
+
+
     @merlin.export(tip="dump the application configuration namespace")
     def nfs(self, plexus, **kwds):
         """
@@ -33,7 +57,7 @@ class Debug(merlin.shells.command, family='merlin.cli.debug'):
         # get the prefix
         prefix = self.prefix or "merlin"
         # and the name server
-        nameserver = plexus.pyre_nameserver
+        nameserver = self.pyre_nameserver
 
         # get all nodes that match my {prefix}
         for info, node in nameserver.find(pattern=prefix):
