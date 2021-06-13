@@ -136,20 +136,29 @@ class Executive:
         return
 
 
-    def configureStem(self, stem, locator, priority=priority.package):
+    def configureStem(self, stem, locator, cfgpath=None, priority=priority.package):
         """
         Locate and load all accessible configuration files for the given {stem}
         """
+        # show me
         # print("Executive.configure:")
         # print(f"    stem={stem}")
+        # print(f"    cfgpath={cfgpath}")
         # print(f"    locator={locator}")
         # print(f"    priority={priority}")
-        # the name server
+
+        # get the name server
         ns = self.nameserver
         # and the configurator
         cfg = self.configurator
+
+        # if the caller didn't supply a specific path of interest
+        if cfgpath is None:
+            # use the default
+            cfgpath = reversed(ns.configpath)
+
         # form all possible combinations of filename fragments for the configuration sources
-        scope = itertools.product(reversed(ns.configpath), [stem], cfg.encodings())
+        scope = itertools.product(cfgpath, [stem], cfg.encodings())
         # look for each one
         for root, filename, extension in scope:
             # build the uri
