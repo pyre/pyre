@@ -208,7 +208,7 @@ class NameServer(Hierarchical):
             # if anything wrong happens
             except Exception:
                 # clear out the metadata
-                self._metadata[key] = None
+                del self._metadata[key]
                 # and raise the same exception
                 raise
             # otherwise, we are all good; attach the node
