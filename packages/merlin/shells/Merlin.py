@@ -23,28 +23,6 @@ class Merlin(pyre.plexus, family='merlin.shells.plexus'):
 
 
     # pyre framework hooks
-    # support for the help system
-    def pyre_banner(self):
-        """
-        Generate the help banner
-        """
-        # show the license header
-        return merlin.meta.header
-
-
-    # interactive session management
-    def pyre_interactiveSessionContext(self, context=None):
-        """
-        Go interactive
-        """
-        # prime the execution context
-        context = context or {}
-        # grant access to my package
-        context['merlin'] = merlin  # my package
-        # and chain up
-        return super().pyre_interactiveSessionContext(context=context)
-
-
     # virtual filesystem configuration
     def pyre_mountApplicationFolders(self, pfs, prefix, **kwds):
         """
@@ -53,31 +31,38 @@ class Merlin(pyre.plexus, family='merlin.shells.plexus'):
         # chain up; bypass the rest of the logic here until the UX is enabled
         super().pyre_mountApplicationFolders(pfs=pfs, prefix=prefix, **kwds)
 
-        # N.B
-        # this is early times, so {prefix} may not be explored; tread carefully
+        # N.B: this is early times, so {prefix} may not have been explored; tread carefully
 
-        # get my namespace
-        namespace = self.pyre_namespace
-
+        # grab the fileserver
+        vfs = self.vfs
         # find the root of the workspace
         workspacePath = self.pyre_locateParentWith(marker=self.METAFOLDER)
         # if there is one
         if workspacePath:
-            # grab the fileserver
-            vfs = self.vfs
-            # anchor a filesystem
-            workspace = vfs.retrieveFilesystem(root=workspacePath)
-            # mount it within the global filesystem
-            vfs["workspace"] = workspace
-            # and mount the metadata directory in my private filesystem
-            pfs["workspace"] = workspace[self.METAFOLDER].discover()
+            # anchor a filesystem on this path
+            ws = vfs.retrieveFilesystem(root=workspacePath)
+            # and grab the metadata directory
+            wsmeta = ws[self.METAFOLDER].discover()
+        # otherwise
+        else:
+            # make an empty folder for both the workspace
+            ws = vfs.folder()
+            # and the meta directory
+            wsmeta = pfs.folder()
+
+        # mount the workspace within the global filesystem
+        vfs["workspace"] = ws
+        # and the metadata directory within my private filesystem
+        pfs["workspace"] = wsmeta
 
         # go no further, for now
         return pfs
 
         # UX
-        # look for the web document root, but avoid expanding parts of the local
-        # filesystem that we don't care about and getting trapped in deep directory structures
+        # get my namespace
+        namespace = self.pyre_namespace
+        # look for the web document root, but avoid expanding parts of the local  filesystem
+        # that we don't care about and getting trapped in deep directory structures
         # start at the top
         docroot = prefix
         # and descend where we think the main static asset is
@@ -110,6 +95,28 @@ class Merlin(pyre.plexus, family='merlin.shells.plexus'):
         return pfs
 
 
+    # instance configuration
+    def pyre_loadConfiguration(self, locator):
+        """
+        Load my configuration files
+        """
+        # chain up to get files named after me; unlikely to exist while my name continues to
+        # be {merlin.plexus}, but whatever...
+        super().pyre_loadConfiguration(locator=locator)
+
+        # grab my namespace
+        namespace = self.pyre_namespace
+        # and my metadata folder
+        meta = self.pfs["workspace"]
+        # and ask the executive
+        executive = self.pyre_executive
+        # to load any global configuration files from the workspace metadata folder
+        executive.configureStem(stem=namespace, cfgpath=[meta], locator=locator)
+
+        # all done
+        return
+
+
     # main entry point for the web shell
     def pyre_respond(self, server, request):
         """
@@ -124,6 +131,28 @@ class Merlin(pyre.plexus, family='merlin.shells.plexus'):
 
         # otherwise, ask the dispatcher to do its thing
         return ux.dispatch(plexus=self, server=server, request=request)
+
+
+    # support for the help system
+    def pyre_banner(self):
+        """
+        Generate the help banner
+        """
+        # show the license header
+        return merlin.meta.header
+
+
+    # interactive session management
+    def pyre_interactiveSessionContext(self, context=None):
+        """
+        Go interactive
+        """
+        # prime the execution context
+        context = context or {}
+        # grant access to my package
+        context['merlin'] = merlin  # my package
+        # and chain up
+        return super().pyre_interactiveSessionContext(context=context)
 
 
     # private data
