@@ -155,6 +155,8 @@ class Application(pyre.component, metaclass=Director):
         # chain up
         super().__init__(name=name, **kwds)
 
+        # get the executive
+        executive = self.pyre_executive
         # set up my nickname
         nickname = self.pyre_namespace or name
 
@@ -180,6 +182,14 @@ class Application(pyre.component, metaclass=Director):
         self.layout = self.pyre_loadLayout()
         # mount my folders
         self.pfs = self.pyre_mountPrivateFilespace()
+
+        # if i have a name
+        if name is not None:
+            # build a locator
+            loc = pyre.tracking.simple(f"while initializing application '{nickname}'")
+            # load my configuration files
+            self.pyre_loadConfiguration(locator=loc)
+
         # go through my requirements and build my dependency map
         # self.dependencies = self.pyre_resolveDependencies()
 
@@ -205,6 +215,20 @@ class Application(pyre.component, metaclass=Director):
         from .Layout import Layout
         # build one and return it
         return Layout()
+
+
+    def pyre_loadConfiguration(self, locator):
+        """
+        Load my configuration files
+        """
+        # get my name
+        name = self.pyre_name
+        # and the executive
+        executive = self.pyre_executive
+        # ask it to hunt down configuration files derived from my name
+        executive.configure(namespace=name, locator=locator)
+        # all done
+        return
 
 
     def pyre_explore(self):
@@ -266,7 +290,7 @@ class Application(pyre.component, metaclass=Director):
         Build the private filesystem
         """
         # get the file server
-        vfs = self.pyre_fileserver
+        vfs = self.vfs
         # get the namespace
         namespace = self.pyre_namespace
         # if i don't have a namespace

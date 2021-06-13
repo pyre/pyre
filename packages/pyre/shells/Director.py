@@ -49,16 +49,6 @@ class Director(pyre.actor):
         """
         Instantiate one of my classes
         """
-        # if I have a name for the application instance, use it to hunt down configuration
-        # files for this particular instance
-        if name:
-            # get the executive
-            executive = self.pyre_executive
-            # build a locator
-            initloc = pyre.tracking.simple('while initializing application {!r}'.format(name))
-            # ask the executive to hunt down the application INSTANCE configuration file
-            executive.configure(namespace=name, locator=initloc)
-
         # record the caller's location
         locator = pyre.tracking.here(1) if locator is None else locator
         # chain up to create the instance
