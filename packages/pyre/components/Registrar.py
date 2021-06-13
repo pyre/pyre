@@ -96,8 +96,12 @@ class Registrar:
         """
         # go through the registered name generators
         for namegen in self.nameGenerators:
-            # ask for a name
-            return namegen.nameInstance(componentClass=componentClass)
+            # ask each one for a name
+            name = namegen.nameInstance(componentClass=componentClass)
+            # the first one that returns something non-trivial
+            if name is not None:
+                # gets to decide the name of the component instance
+                return name
         # out of ideas
         return None
 
