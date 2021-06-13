@@ -105,17 +105,24 @@ class Actor(Requirement):
         """
         Build an instance of one of my classes
         """
-        # ask the component class for any opinions on the name of this instance
-        name = self.pyre_normalizeInstanceName(name)
         # get the registrar
         registrar = self.pyre_registrar
+        # if the caller didn't supply a name
+        if name is None:
+            # try asking the component registrar for ideas
+            name = registrar.nameInstance(componentClass=self)
 
-        # if I know the name
+        # ask the component class for any opinions on the name of this instance
+        name = self.pyre_normalizeInstanceName(name)
+
+        # if I know the name after all
         if name:
             # look for this name among my instances
             instance = registrar.retrieveComponentByName(componentClass=self, name=name)
-            # if found, return it
-            if instance: return instance
+            # if the registrar knows an instance by this name
+            if instance:
+                # no need to go any further
+                return instance
             # otherwise, we are making a new instance under this name; if i were asked to alias
             # its traits globally
             if globalAliases:
@@ -127,10 +134,6 @@ class Actor(Requirement):
                 aliases = { alias for trait in traits for alias in trait.aliases }
                 # merge global settings
                 nameserver.pullGlobalIntoScope(scope=name, symbols=aliases)
-        # if not
-        else:
-            # ask the component registrar for help
-            name = registrar.nameInstance(componentClass=self)
 
         # in any case, record the caller's location
         locator = tracking.here(1) if locator is None else locator
