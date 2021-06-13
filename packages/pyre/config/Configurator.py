@@ -8,7 +8,7 @@
 
 # externals
 import weakref # for access to my executive
-import collections # for defaultdict and OrderedDict
+import collections # for defaultdict
 from .. import tracking
 
 
@@ -23,10 +23,8 @@ class Configurator:
     from . import events
     from . import exceptions
 
-
     # constants
     locator = tracking.simple('during pyre startup') # the default locator
-
 
     # public data
     codecs = None
@@ -38,9 +36,11 @@ class Configurator:
         Use {uri} to find a codec that can process {source} into a stream of configuration
         events
         """
+        # record the attempt to load this configuration
+        self.sources.append((uri, priority))
+
         # initialize the pile of encountered errors
         errors = []
-
         # get the address
         address = uri.address
         # deduce the encoding
@@ -332,6 +332,9 @@ class Configurator:
         self.commands = []
         self.deferred = collections.defaultdict(list)
 
+        # the record of configuration sources in the order they were encountered
+        self.sources = []
+
         # all done
         return
 
@@ -342,7 +345,7 @@ class Configurator:
         Initialize the codec index
         """
         # make an empty index
-        index = collections.OrderedDict()
+        index = {}
 
         # add the {pfg} codec
         from .pfg import pfg
