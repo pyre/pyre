@@ -45,26 +45,4 @@ class Director(pyre.actor):
         return
 
 
-    def __call__(self, name=None, globalAliases=True, locator=None, **kwds):
-        """
-        Instantiate one of my classes
-        """
-        # record the caller's location
-        locator = pyre.tracking.here(1) if locator is None else locator
-        # chain up to create the instance
-        app = super().__call__(name=name, globalAliases=globalAliases, locator=locator, **kwds)
-
-        # get the dashboard
-        from ..framework.Dashboard import Dashboard as dashboard
-        # check whether there is already an app registered with the dashboard
-        if dashboard.pyre_application is not None:
-            # generate a warning
-            app.warning.log('the app {.pyre_application} is already registered'.format(self))
-        # in any case, attach this instance to the dashboard
-        dashboard.pyre_application = app
-
-        # and return it
-        return app
-
-
 # end of file
