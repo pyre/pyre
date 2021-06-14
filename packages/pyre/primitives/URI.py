@@ -23,19 +23,17 @@ class URI:
         """
         Assemble a string from my parts
         """
-        parts = []
-        # if I have a scheme
-        if self.scheme: parts.append('{}:'.format(self.scheme))
-        # if I have an authority
-        if self.authority: parts.append('//{}'.format(self.authority))
-        # if I have an address
-        if self.address: parts.append('{}'.format(self.address))
-        # if I have a query
-        if self.query: parts.append('?{}'.format(self.query))
-        # if I have a fragment
-        if self.fragment: parts.append('#{}'.format(self.fragment))
+        # make a pile
+        parts = filter(None, [
+            # my scheme
+            f"{self.scheme}:" if self.scheme else "",
+            f"//{self.authority}" if self.authority else "",
+            f"{self.address}" if self.address else "",
+            f"?{self.query}" if self.query else "",
+            f"#{self.fragment}" if self.fragment else "",
+        ])
         # assemble and return
-        return ''.join(parts)
+        return "".join(parts)
 
 
     # interface
@@ -108,6 +106,24 @@ class URI:
         new = str(self) + other
         # coerce that into a uri and return it
         return self.parse(new)
+
+
+    def __truediv__(self, other):
+        """
+        Syntactic sugar for assembling paths
+        """
+        # splice {other} into my address
+        self.address /= other
+        # and done
+        return self
+
+
+    def __rtruediv__(self, other):
+        """
+        Syntactic sugar for assembling paths
+        """
+        # delegate to the left
+        return self / other
 
 
     def __str__(self):
