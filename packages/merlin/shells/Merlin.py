@@ -107,7 +107,7 @@ class Merlin(pyre.plexus, family='merlin.shells.plexus'):
         # grab my namespace
         namespace = self.pyre_namespace
         # and my metadata folder
-        meta = self.pfs["workspace"]
+        meta = f"pfs:/workspace"
         # and ask the executive
         executive = self.pyre_executive
         # to load any global configuration files from the workspace metadata folder
