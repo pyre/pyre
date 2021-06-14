@@ -160,6 +160,19 @@ class Application(pyre.component, metaclass=Director):
         # set up my nickname
         nickname = self.pyre_namespace or name
 
+        # get the dashboard
+        dashboard = executive.dashboard
+        # check whether there is already an app registered with the dashboard
+        if dashboard.pyre_application is not None:
+            # make a channel
+            channel = journal.warning(f"{nickname}")
+            # complain
+            channel.line(f"while registering {self}:")
+            channel.line(f"another app, {dashboard.pyre_application}, is already registered")
+            channel.log()
+        # in any case, attach me to the dashboard
+        dashboard.pyre_application = self
+
         # if i have one
         if nickname:
             # register it with the journal
