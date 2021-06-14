@@ -93,6 +93,16 @@ class FileServer(Filesystem):
                 # complain
                 raise self.IsFolderError(filesystem=self, node=None, uri=uri)
 
+        # translate application private file space uris
+        if scheme == 'pfs':
+            # find the registered app
+            app = self.executive.dashboard.pyre_application
+            # adjust the scheme
+            scheme = 'vfs'
+            # and the uri
+            uri.scheme = 'vfs'
+            uri.address = f"{app.pfs.uri}/{uri.address}"
+
         # if the scheme is {vfs}
         if scheme == 'vfs':
             # assuming the uri is within my virtual filesystem
