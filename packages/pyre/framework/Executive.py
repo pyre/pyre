@@ -161,8 +161,8 @@ class Executive:
         scope = itertools.product(cfgpath, [stem], cfg.encodings())
         # look for each one
         for root, filename, extension in scope:
-            # build the uri
-            uri = f"{root.uri}/{filename}.{extension}"
+            # build the {uri}
+            uri = f"{root}/{filename}.{extension}"
             # show me
             # print(f" ++ looking for '{uri}'")
             # load the settings from the associated file
@@ -206,7 +206,7 @@ class Executive:
 
             vfs:/local/shapes.py/box
 
-        implies that the fileserver can resolve the address {local/shapes.py} into a valid file
+        implies that the file server can resolve the address {local/shapes.py} into a valid file
         within the virtual filesystem that forms the application namespace. The referenced
         {symbol} must be a callable that can produce component class records when called. For
         example, the file {shapes.py} might contain
@@ -229,13 +229,13 @@ class Executive:
         # print(f'    protocol: {protocol}')
         # force a uri
         uri = self.uri().coerce(uri)
-        # grab my nameserver
+        # grab my name server
         nameserver = self.nameserver
 
         # if the {uri} contains a fragment, treat it as the name of the component
         name = uri.fragment
         # is there anything registered under it? check carefully: do not to disturb the symbol
-        # table of the nameserver, in case the name is junk
+        # table of the name server, in case the name is junk
         if name and name in nameserver:
             # the name is known; attempt to
             try:
@@ -313,7 +313,7 @@ class Executive:
         """
         The component resolution workhorse
         """
-        # grab my nameserver
+        # grab my name server
         nameserver = self.nameserver
         # get the uri scheme
         scheme = uri.scheme
@@ -337,7 +337,7 @@ class Executive:
             if protocol:
                 # build the new address
                 extended = nameserver.join(protocol.pyre_family(), address)
-                # does the nameserver recognize it?
+                # does the name server recognize it?
                 if extended in nameserver:
                     # look it up
                     try:
@@ -375,7 +375,7 @@ class Executive:
         key = self.nameserver.configurable(name=family, configurable=protocol,
                                            priority=priority, locator=locator)
 
-        # and return the nameserver registration key
+        # and return the name server registration key
         return key
 
 
@@ -422,7 +422,7 @@ class Executive:
         """
         # build a locator
         locator = tracking.here(level=1)
-        # get the nameserver to build one
+        # get the name server to build one
         package = self.nameserver.createPackage(name=name, locator=locator)
         # register it
         package.register(executive=self, file=primitives.path(file).resolve())
@@ -543,9 +543,9 @@ class Executive:
         """
         Discover what is known about the runtime environment
         """
-        # grab my nameserver
+        # grab my name server
         nameserver = self.nameserver
-        # and my fileserver
+        # and my file server
         fileserver = self.fileserver
 
         # access the platform protocol
@@ -614,7 +614,7 @@ class Executive:
         """
         Create and initialize the default namespace entries
         """
-        # initialize my fileserver
+        # initialize my file server
         self.fileserver.initializeNamespace()
         # initialize my configurator
         self.configurator.initializeNamespace()
