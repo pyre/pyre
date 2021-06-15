@@ -22,7 +22,7 @@ class Info(merlin.shells.command, family='merlin.cli.info'):
         Display information about the host
         """
         # get the host
-        host = plexus.pyre_host
+        host = self.pyre_host
 
         # make a channel
         channel = journal.info("merlin.info.host")
@@ -39,13 +39,41 @@ class Info(merlin.shells.command, family='merlin.cli.info'):
         return
 
 
+    @merlin.export(tip="display information about the platform")
+    def platform(self, plexus, **kwds):
+        """
+        Display information about the platform
+        """
+        # get the host
+        host = self.pyre_host
+
+        # unpack
+        platform = host.platform
+        release = host.release
+        codename = host.codename
+        arch = host.cpus.architecture
+        tag = f"{host.tag}"
+
+        # make a channel
+        channel = journal.info("merlin.info.platform")
+        # report
+        channel.line(f"            os: {platform} {release} ({codename})")
+        channel.line(f"          arch: {arch}")
+        channel.line(f"           tag: {tag}")
+        # flush
+        channel.log()
+
+        # all done
+        return
+
+
     @merlin.export(tip="display information about the user")
     def user(self, plexus, **kwds):
         """
         Display information about the host
         """
         # get the host
-        user = plexus.pyre_user
+        user = self.pyre_user
 
         # make a channel
         channel = journal.info("merlin.info.user")
