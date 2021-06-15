@@ -20,6 +20,12 @@ class Panel(Command):
     A command that interprets its secondary arguments as method names and invokes them
     """
 
+    # constants
+    SUCCESS = 0
+    ERROR_GENERIC = 1
+    ERROR_EXECUTION = 2
+    ERROR_UNRECOGNIZED_COMMAND = 3
+
 
     # interface
     @pyre.export
@@ -48,12 +54,11 @@ class Panel(Command):
             try:
                 # look each one up
                 method = getattr(self, command)
-            # if there was a typo
+            # if there was some kind of typo
             except AttributeError:
-                # show an error message
-                plexus.error.log(f"{self.pyre_spec}: unrecognized command '{command}'")
-                # and my help screen
-                return self.help(plexus=plexus)
+                # handle the error
+                return self.pyre_unrecognizedCommand(plexus=plexus, command=command, argv=argv)
+
             # otherwise, all is well; attempt to
             try:
                 # execute the command; hand it a reference to me, so that it has access to the
@@ -68,7 +73,8 @@ class Panel(Command):
             except journal.exceptions.JournalError:
                 # unless explicitly suppressed, this has been reported already; in either case,
                 # leave it alone and just indicate a failure
-                return 2
+                return self.ERROR_GENERIC
+
             # if anything else goes wrong
             except Exception as error:
                 # if we are in debug mode
@@ -81,10 +87,23 @@ class Panel(Command):
                 plexus.error.line(f"while executing '{self.pyre_spec} {command}':")
                 plexus.error.log(f"    {category}: {error}")
                 # and bail
-                return 1
+                return self.ERROR_EXECUTION
 
         # all done
         return status
+
+
+    # failure modes
+    def pyre_unrecognizedCommand(self, plexus, command, **kwds):
+        """
+        Handler invoked when the {panel} does not recognize a command
+        """
+        # show an error message
+        plexus.error.log(f"{self.pyre_spec}: unrecognized command '{command}'")
+        # and my help screen
+        return self.help(plexus=plexus)
+        # indicate failure
+        return self.ERROR_UNRECOGNIZED_COMMAND
 
 
 # end of file
