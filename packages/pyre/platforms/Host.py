@@ -47,6 +47,14 @@ class Host(pyre.component, family='pyre.platforms.generic', implements=Platform)
         # all done
         return self._cpus
 
+    @property
+    def tag(self):
+        """
+        Build a tag for this host that pairs the platform name with the cpu architecture
+        """
+        # easy enough
+        return f"{self.platform}-{self.cpus.architecture}"
+
     # user configurable state
     externals = pyre.properties.dict(schema=pyre.properties.str())
     externals.doc = 'a map of package categories to installation instances'
