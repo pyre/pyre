@@ -17,6 +17,7 @@ class Debug(merlin.shells.command, family='merlin.cli.debug'):
 
     # user configurable state
     prefix = merlin.properties.str()
+    prefix.default = None
     prefix.tip = "specify the portion of the namespace to display"
 
 
@@ -55,7 +56,7 @@ class Debug(merlin.shells.command, family='merlin.cli.debug'):
         indent = " " * 2
 
         # get the prefix
-        prefix = self.prefix or "merlin"
+        prefix = "merlin" if self.prefix is None else self.prefix
         # and the name server
         nameserver = self.pyre_nameserver
 
@@ -87,7 +88,7 @@ class Debug(merlin.shells.command, family='merlin.cli.debug'):
         # make a channel
         channel = plexus.info
         # get the prefix
-        prefix = self.prefix or '/merlin'
+        prefix = '/merlin' if self.prefix is None else self.prefix
         # build the report
         report = '\n'.join(plexus.vfs[prefix].dump(indent=1))
 
