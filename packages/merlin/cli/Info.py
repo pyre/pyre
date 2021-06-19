@@ -90,4 +90,35 @@ class Info(merlin.shells.command, family='merlin.cli.info'):
         return
 
 
+    @merlin.export(tip="display the list of projects in the current workspace")
+    def workspace(self, plexus, **kwds):
+        """
+        Display information about the platform
+        """
+        # get the virtual filesystems; they are guaranteed to exist, but may be trivial
+        ws = plexus.vfs["/workspace"].uri
+        cfg = plexus.pfs["/workspace"].uri
+
+        # if they are trivial
+        if str(ws) == "/workspace":
+            # we were unable to locate the workspace root
+            ws = "not found"
+            cfg = "not found"
+
+        # get the list of projects
+        projects = ", ".join(str(project) for project in plexus.projects)
+
+        # make a channel
+        channel = journal.info("merlin.info.workspace")
+        # report
+        channel.line(f"     workspace: {ws}")
+        channel.line(f"        config: {cfg}")
+        channel.line(f"      projects: {projects}")
+        # flush
+        channel.log()
+
+        # all done
+        return
+
+
 # end of file
