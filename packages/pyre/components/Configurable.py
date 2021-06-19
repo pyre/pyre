@@ -414,6 +414,24 @@ class Configurable(Dashboard):
         return cls
 
 
+    # additional configuration support
+    @classmethod
+    def pyre_pullGlobalSettingsIntoScope(cls, scope):
+        """
+        Alias global settings whose names match my configurables into the given scope
+        """
+        # get the name server
+        nameserver = cls.pyre_nameserver
+        # my configurable traits
+        traits = cls.pyre_configurables()
+        # build the set of names
+        aliases = { alias for trait in traits for alias in trait.aliases }
+        # merge global settings
+        nameserver.pullGlobalIntoScope(scope=scope, symbols=aliases)
+        # and done
+        return
+
+
     # compatibility check
     @classmethod
     def pyre_isCompatible(cls, spec, fast=True):
