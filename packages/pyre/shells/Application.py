@@ -202,6 +202,8 @@ class Application(pyre.component, metaclass=Director):
             loc = pyre.tracking.simple(f"while initializing application '{nickname}'")
             # load my configuration files
             self.pyre_loadConfiguration(locator=loc)
+            # pull global symbols whose name matches my traits into my scope
+            self.pyre_pullGlobalSettingsIntoScope(scope=name)
 
         # go through my requirements and build my dependency map
         # self.dependencies = self.pyre_resolveDependencies()
@@ -227,7 +229,7 @@ class Application(pyre.component, metaclass=Director):
         # access the factory
         from .Layout import Layout
         # build one and return it
-        return Layout()
+        return Layout(name=f"{self.pyre_name}.layout")
 
 
     def pyre_loadConfiguration(self, locator):
