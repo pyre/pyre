@@ -185,7 +185,19 @@ class Component(Configurable, metaclass=Actor, internal=True):
         """
         Pre-instantiation hook invoked right before the instance is created
         """
-        # by default, nothing to do
+        # grab my protocol
+        protocol = cls.pyre_implements
+        # if i don't have one
+        if protocol is None:
+            # bail
+            return cls
+
+        # if the instance that's about to be created is named and was requested explicitly
+        if name and not implicit:
+            # ask my protocol to load any {name} specific configuration files
+            protocol.pyre_configure(name=name, locator=locator)
+
+        # and nothing further
         return cls
 
 
