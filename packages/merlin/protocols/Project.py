@@ -25,4 +25,22 @@ class Project(merlin.protocol, family="merlin.projects.basic"):
         return merlin.projects.project
 
 
+    @classmethod
+    def pyre_configure(cls, name, locator, **kwds):
+        """
+        Locate and load configuration files for a component that is about to be instantiated
+        given its {name}
+        """
+        # chain up
+        super().pyre_configure(name=name, locator=locator, **kwds)
+
+        # grab the executive
+        executive = cls.pyre_executive
+        # ask it to hunt down and load any project configuration files
+        executive.configureStem(stem=name, cfgpath=["pfs:/workspace"], locator=locator)
+
+        # all done
+        return cls
+
+
 # end of file
