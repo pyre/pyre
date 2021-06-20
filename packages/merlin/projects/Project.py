@@ -10,10 +10,15 @@ import merlin
 
 # class declaration
 class Project(merlin.component,
-              family="merlin.projects.basic", implements=merlin.protocols.project):
+              family="merlin.projects.project", implements=merlin.protocols.project):
     """
     A high level container of assets
     """
+
+
+    # required state
+    libraries = merlin.properties.tuple(schema=merlin.protocols.library())
+    libraries.doc = "the collection of project libraries"
 
 
 # end of file
