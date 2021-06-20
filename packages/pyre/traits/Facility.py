@@ -79,7 +79,7 @@ class Facility(Slotted, schemata.component):
         """
         # run the value through my regular coercion
         value = self.process(value=value, node=node, **kwds)
-        # if {value} results in {None} after initial processing, leave it alone too
+        # if {value} results in {None} after initial processing, leave it alone
         if value is None: return None
         # if what I got back is a component instance, we are all done
         if isinstance(value, self.protocol.component): return value
@@ -88,7 +88,7 @@ class Facility(Slotted, schemata.component):
         key = node.key
         # if it has one
         if key:
-            # get the nameserver
+            # get the name server
             nameserver = self.pyre_nameserver
             # decide what I am supposed to name the new component
             name = nameserver.getName(key) if not incognito else None
@@ -101,7 +101,7 @@ class Facility(Slotted, schemata.component):
             # and no locator
             locator = None
 
-        # instantiate and return; mark as implicit to denote that this instance was created
+        # instantiate and return; mark as {implicit} to denote that this instance was created
         # during facility processing, rather than explicitly
         return value(name=name, locator=locator, implicit=True)
 
