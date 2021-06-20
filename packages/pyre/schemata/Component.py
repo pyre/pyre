@@ -52,7 +52,7 @@ class Component(Schema):
         # and the factory of its default value
         default = protocol.pyre_default
 
-        # if {value} is my protocol's {pyre_default} classmethod
+        # if {value} is my protocol's {pyre_default} class method
         if value == default:
             # evaluate it
             value = value()
@@ -81,7 +81,7 @@ class Component(Schema):
 
         # ask the protocol
         try:
-            # to have a pass at resolving the uri into a compatible component; this handles
+            # to have a pass at resolving the {uri} into a compatible component; this handles
             # both uris that point to a retrievable component and uris that point to existing
             # instances known to the executive
             return protocol.pyre_resolveSpecification(spec=value, **kwds)
@@ -97,7 +97,7 @@ class Component(Schema):
         # this is interpreted as a request to instantiate the default facility value with the
         # given name
 
-        # convert the {value} into a uri; if the conversion is not successful, the {uri} schema
+        # convert the {value} into a {uri}; if the conversion is not successful, the {uri} schema
         # will complain
         uri = self.uri().coerce(value)
         # extract the fragment, which we use as the instance name; it's ok if it's {None}
