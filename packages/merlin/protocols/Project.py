@@ -6,20 +6,27 @@
 
 # support
 import merlin
+# pull the protocols that define my state requirements
+from .Library import Library as library
 
 
 # class declaration
-class Project(merlin.protocol, family="merlin.projects.basic"):
+class Project(merlin.protocol, family="merlin.projects.projects"):
     """
     A high level container of assets
     """
+
+
+    # required state
+    libraries = merlin.properties.tuple(schema=library())
+    libraries.doc = "the collection of project libraries"
 
 
     # framework hooks
     @classmethod
     def pyre_default(cls, **kwds):
         """
-        Provide a default implementation of the {project} protocol
+        Specify the default implementation
         """
         # grab the basic project foundry and return it
         return merlin.projects.project
