@@ -5,6 +5,7 @@
 
 
 # export
+from .Library import Library as library
 from .Project import Project as project
 
 
