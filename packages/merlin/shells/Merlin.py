@@ -4,14 +4,12 @@
 # (c) 1998-2021 all rights reserved
 
 
-# access the pyre framework
-import pyre
-# and my package
+# support
 import merlin
 
 
 # declaration
-class Merlin(pyre.plexus, family='merlin.shells.plexus'):
+class Merlin(merlin.plexus, family='merlin.shells.plexus'):
     """
     The main action dispatcher
     """
@@ -21,8 +19,12 @@ class Merlin(pyre.plexus, family='merlin.shells.plexus'):
     # types
     from .Action import Action as pyre_action
 
+    # configurable state
+    projects = merlin.properties.tuple(schema=merlin.protocols.project())
+    projects.doc = "the list of projects in the current workspace"
 
-    # pyre framework hooks
+
+    # framework hooks
     # virtual filesystem configuration
     def pyre_mountApplicationFolders(self, pfs, prefix, **kwds):
         """
