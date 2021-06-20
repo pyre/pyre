@@ -106,7 +106,7 @@ class Info(merlin.shells.command, family='merlin.cli.info'):
             cfg = "not found"
 
         # get the list of projects
-        projects = ", ".join(str(project) for project in plexus.projects)
+        projects = ", ".join(project.pyre_name for project in plexus.projects)
 
         # make a channel
         channel = journal.info("merlin.info.workspace")
