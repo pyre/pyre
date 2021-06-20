@@ -38,19 +38,6 @@ from . import shells         # the supported application shells
 from . import cli            # the command line interface
 
 
-def main():
-    """
-    This is the main entry point in the package. It is invoked by the {merlin} script. Its job
-    is to boot pyre, examine the command line to deduce which actor the user would like to
-    invoke, instantiate it, and call its main entry point with the supplied command line
-    arguments.
-
-    There are other possible ways to invoke merlin. See the package documentation.
-    """
-    # let the plexus do its thing
-    return merlin.run()
-
-
 # administrative
 def built():
     """
