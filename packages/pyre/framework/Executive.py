@@ -258,6 +258,7 @@ class Executive:
         # load the component recognizers
         from ..components.Actor import Actor as actor
         from ..components.Component import Component as component
+        from ..components.Foundry import Foundry as foundry
         # make a locator
         locator = tracking.simple(f"while resolving '{uri.uri}'")
 
@@ -267,20 +268,11 @@ class Executive:
         # the easy things didn't work out; look for matching descriptors
         for candidate in self.retrieveComponentDescriptor(
                 uri=uri, protocol=protocol, locator=locator, **kwds):
-            # if the candidate is neither a component class nor a component instance
-            if not (isinstance(candidate, actor) or isinstance(candidate, component)):
-                # it must be a foundry
-                try:
-                    # so invoke it
-                    candidate = candidate()
-                # if this fails
-                except TypeError:
-                    # move on to the next candidate
-                    continue
-                # if it succeeded, verify it is a component
-                if not (isinstance(candidate, actor) or isinstance(candidate, component)):
-                    # and if not, move on
-                    continue
+            # if the candidate is a foundry
+            if isinstance(candidate, foundry):
+                # invoke it
+                candidate = candidate()
+
             # if it is a component class and we have been asked to instantiate it
             if name and isinstance(candidate, actor):
                 # build it
