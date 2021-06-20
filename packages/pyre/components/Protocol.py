@@ -47,6 +47,17 @@ class Protocol(Configurable, metaclass=Role, internal=True):
         return None
 
 
+    # configuration hooks
+    @classmethod
+    def pyre_configure(cls, **kwds):
+        """
+        Load configuration files derivable from {name} for a component that is about to
+        be instantiated after a specification {uri} has been resolved
+        """
+        # do nothing; subclasses may override
+        return
+
+
     # value processing hooks
     # specifications
     @classmethod
