@@ -105,15 +105,30 @@ class Info(merlin.shells.command, family='merlin.cli.info'):
             ws = "not found"
             cfg = "not found"
 
-        # get the list of projects
-        projects = ", ".join(project.pyre_name for project in plexus.projects)
+        indent = " " * 4
 
         # make a channel
         channel = journal.info("merlin.info.workspace")
         # report
-        channel.line(f"     workspace: {ws}")
-        channel.line(f"        config: {cfg}")
-        channel.line(f"      projects: {projects}")
+        channel.line(f"workspace: {ws}")
+        channel.line(f"config: {cfg}")
+
+        # get the list of projects
+        projects = plexus.projects
+        # if there are any
+        if projects:
+            # start a new section
+            channel.line(f"projects:")
+            # go through them
+            for project in projects:
+                # show the name
+                channel.line(f"{indent*1}{project.pyre_name}")
+                # get its libraries
+                libraries = ", ".join(library.pyre_name for library in project.libraries)
+                # if there are any
+                if libraries:
+                    # display
+                    channel.line(f"{indent*2}libraries: {libraries}")
         # flush
         channel.log()
 
