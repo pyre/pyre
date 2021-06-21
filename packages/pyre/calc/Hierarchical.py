@@ -82,7 +82,7 @@ class Hierarchical(SymbolTable):
         if not self._nodes: return
         # build the name recognizer
         regex = re.compile(pattern)
-        # we need a key, since slots are not orderable
+        # we need a sort key, since slots do not have a natural ordering
         key = operator.attrgetter('name') if key is None else key
         # iterate over my nodes
         for info in sorted(self._metadata.values(), key=key):
@@ -132,7 +132,7 @@ class Hierarchical(SymbolTable):
         """
         Split a multilevel {name} into its parts and return its hash
         """
-        # if we were not given a hashin context, use my root
+        # if we were not given a hashing context, use my root
         context = self._hash if context is None else context
         # if {name} is already a hash key
         if isinstance(name, type(context)):
