@@ -46,7 +46,7 @@ class ColorTable(pyre.application):
 # main
 if __name__ == "__main__":
     # build one
-    app = ColorTable('colors')
+    app = ColorTable(name='colors')
     # runt it
     status = app.run()
     # and pass the result on
