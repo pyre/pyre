@@ -43,16 +43,17 @@ class Typed(Schema):
         for converter in self.converters:
             # by asking each register converter to prep the value
             value = converter(descriptor=self, value=value, **kwds)
-        # cast
+        # invoke my schema to coerce the {value}
         value = self.coerce(value=value, **kwds)
         # normalize
         for normalizer in self.normalizers:
-            # by asking each normalizer to bring {value} in normal form
+            # by asking each normalizer to bring {value} to normal form
             value = normalizer(descriptor=self, value=value, **kwds)
         # validate
         for validator in self.validators:
             # by giving a chance to each validator to raise an exception
             value = validator(descriptor=self, value=value, **kwds)
+
         # and return the new value
         return value
 
