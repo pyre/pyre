@@ -256,8 +256,8 @@ class Executive:
         if not uri.address: return
 
         # load the component recognizers
+        from ..components.Role import Role as role
         from ..components.Actor import Actor as actor
-        from ..components.Component import Component as component
         from ..components.Foundry import Foundry as foundry
         # make a locator
         locator = tracking.simple(f"while resolving '{uri.uri}'")
@@ -268,6 +268,10 @@ class Executive:
         # the easy things didn't work out; look for matching descriptors
         for candidate in self.retrieveComponentDescriptor(
                 uri=uri, protocol=protocol, locator=locator, **kwds):
+            # if the candidate is a protocol
+            if isinstance(candidate, role):
+                # get its default value
+                candidate = candidate.pyre_default()
             # if the candidate is a foundry
             if isinstance(candidate, foundry):
                 # invoke it
