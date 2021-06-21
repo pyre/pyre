@@ -45,4 +45,12 @@ class Director(pyre.actor):
         return
 
 
+    def __call__(self, globalAliases=True, **kwds):
+        """
+        Build an application instance
+        """
+        # just chain up; my job is to reset the default value of {globalAliases}
+        return super().__call__(globalAliases=globalAliases, **kwds)
+
+
 # end of file
