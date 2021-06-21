@@ -427,7 +427,7 @@ class Configurable(Dashboard):
         # build the set of names
         aliases = { alias for trait in traits for alias in trait.aliases }
         # merge global settings
-        nameserver.pullGlobalIntoScope(scope=scope, symbols=aliases)
+        nameserver.pullGlobalSettingsIntoScope(scope=scope, symbols=aliases)
         # and done
         return
 

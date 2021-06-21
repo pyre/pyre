@@ -359,7 +359,7 @@ class NameServer(Hierarchical):
 
 
     # aliasing
-    def pullGlobalIntoScope(self, scope, symbols):
+    def pullGlobalSettingsIntoScope(self, scope, symbols):
         """
         Merge settings for {symbols} between global scope and the given {scope}
         """
