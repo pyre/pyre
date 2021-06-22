@@ -5,10 +5,34 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "pyre: debug pyre application",
+            "type": "python",
+            "request": "launch",
+            "python": "${command:python.interpreterPath}",
+            "cwd": "${fileDirname}",
+            "program": "${file}",
+            "console": "integratedTerminal"
+        },
+        {
             "name": "pyre: [gdb/linux]: debug C++ extension",
             "type": "cppdbg",
             "request": "attach",
             "program": "/usr/bin/python3",
+            "processId": "${command:pickProcess}",
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ]
+        },
+        {
+            "name": "pyre: [gdb/macos]: debug C++ extension",
+            "type": "cppdbg",
+            "request": "attach",
+            "program": "/opt/local/bin/python3",
             "processId": "${command:pickProcess}",
             "MIMode": "gdb",
             "setupCommands": [
