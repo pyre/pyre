@@ -63,6 +63,11 @@ class Parser:
 
     # implementation details
     def process(self, doc, uri, locator):
+        # when the {yaml} file is empty, so is the document
+        if not doc:
+            # in which case, return an empty configuration
+            return []
+
         # unpack my separators
         typeSeparator = self.typeSeparator
         scopeSeparator = self.scopeSeparator
