@@ -347,17 +347,21 @@ class Configurator:
         # make an empty index
         index = {}
 
-        # add the {pfg} codec
-        from .pfg import pfg
-        index[pfg.encoding] = pfg
+        # add the {pml} codec
+        from .pml import pml
+        index[pml.encoding] = pml
 
         # add the {cfg} codec
         from .cfg import cfg
         index[cfg.encoding] = cfg
 
-        # add the {pml} codec
-        from .pml import pml
-        index[pml.encoding] = pml
+        # add the {pfg} codec
+        from .pfg import pfg
+        index[pfg.encoding] = pfg
+
+        # add the {yaml} codec
+        from .yaml import yaml
+        index[yaml.encoding] = yaml
 
         # all done
         return index
