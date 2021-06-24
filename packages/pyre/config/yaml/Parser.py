@@ -63,68 +63,74 @@ class Parser:
 
     # implementation details
     def process(self, doc, uri, locator):
-        # when the {yaml} file is empty, so is the document
-        if not doc:
-            # in which case, return an empty configuration
-            return []
-
-        # unpack my separators
-        typeSeparator = self.typeSeparator
-        scopeSeparator = self.scopeSeparator
-
-        # initialize the sequence of events
-        configuration = []
-        # reset the list of encountered errors
+        """
+        Convert the contents of {doc} into a sequence of configuration events
+        """
+        # initialize the error pile
         self.errors = []
+        # assemble the events
+        configuration = tuple(self.harvest(node=doc, locator=locator))
+        # and return them
+        return configuration
 
-        # initialize the to-do list
-        todo = [[doc, [], []]]
-        # go through it
-        for node, scope, conditions in todo:
-            # {scope} is the current prefix that has to be distributed to all names
-            # {conditions} is a list constraints that must be true before the assignment is applied
-            # {node} is a dictionary of (key, value) pairs
-            for token, value in node.items():
-                # take apart the token by splitting it on the type separator
-                spec = (tag.strip() for tag in token.split(typeSeparator))
-                # and extract the scope levels from each one
-                spec = tuple(tag.split(scopeSeparator) for tag in spec)
-                # if there is only one entry
-                if len(spec) == 1:
-                    # it's my name
-                    name  = scope + spec[0]
-                    # and i have no family
-                    family = []
-                # otherwise
-                else:
-                    # unpack a pair; anything else is an error
-                    family, name = spec
-                    # and adjust the name by prefixing it with the current scope
-                    name = scope + name
 
-                # if {value} is a nested scope
-                if type(value) is type(node):
-                    # push it on the to-do list
-                    todo.append([value, name, conditions])
-                    # and move on
-                    continue
+    def harvest(self, node, scope=None, constraints=None,
+                locator=None, typesep=typeSeparator, scopesep=scopeSeparator):
+        # if the current node is trivial
+        if not node:
+            # nothing to do
+            return
 
-                # otherwise, we have an assignment; figure out which kind: if it's conditional
-                if conditions:
-                    # make a conditional assignment
-                    assignment = self.ConditionalAssignment()
-                    # add it to the pile
-                    configuration.append(assignment)
-                    # and move on
-                    continue
+        # if necessary
+        if scope is None:
+            # initialize the scope
+            scope = []
+        # and
+        if constraints is None:
+            # initialize the constraints
+            constraints = []
 
-                # finally, this is an unconditional assignment
-                assignment = self.Assignment(key=name, value=value, locator=locator)
-                # add it to the pile
-                configuration.append(assignment)
+        # otherwise, go through its contents
+        for key, value in node.items():
+            # take apart the token by splitting it on the type separator
+            spec = (tag.strip() for tag in key.split(typesep))
+            # and extract the scope levels from each one
+            spec = tuple(tag.split(scopesep) for tag in spec)
+            # if there is only one entry
+            if len(spec) == 1:
+                # it's my name
+                name = scope + spec[0]
+                # and i have no family
+                family = []
+            # otherwise
+            else:
+                # unpack a pair; anything else is an error
+                family, name = spec
+                # and adjust the name by prefixing it with the current scope
+                name = scope + name
+
+            # MGA: assemble the constraints
+
+            # if {value} is a nested scope
+            if type(value) is type(node):
+                # process it
+                yield from self.harvest(node=value, scope=name, constraints=constraints,
+                                        locator=locator)
+                # and move on
+                continue
+
+            # otherwise, we have an assignment; figure out which kind: if it's conditional
+            if constraints:
+                # make a conditional assignment
+                yield self.ConditionalAssignment()
+                # and move on
+                continue
+
+            # otherwise, it's a raw assignment
+            yield self.Assignment(key=name, value=value, locator=locator)
 
         # all done
-        return configuration
+        return
 
 
 # end of file
