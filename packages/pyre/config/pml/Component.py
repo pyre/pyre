@@ -49,7 +49,7 @@ class Component(Node):
             namespace = self.name + event.key[:-1]
             # build a conditional assignment
             event = self.ConditionalAssignment(
-                component=namespace, condition=(self.name, self.family),
+                component=namespace, conditions=[(self.name, self.family)],
                 key=key, value=event.value,
                 locator=event.locator)
             # add it to my conditionals

@@ -108,13 +108,13 @@ class ConditionalAssignment(Assignment):
         return inspector.defer(assignment=self, **kwds)
 
     # meta methods
-    def __init__(self, component, condition, **kwds):
+    def __init__(self, component, conditions, **kwds):
         # chain up
         super().__init__(**kwds)
         # record the component
         self.component = component
         # and the conditions under which this assignment is to be applied
-        self.conditions = [condition]
+        self.conditions = list(conditions)
         # all done
         return
 

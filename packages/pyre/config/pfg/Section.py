@@ -43,7 +43,7 @@ class Section(EventContainer):
                 key = key,
                 value = event.value,
                 component = namespace,
-                condition = (name, family),
+                conditions = [(name, family)],
                 locator = event.locator
                 )
             # add it to my conditionals
