@@ -7,4 +7,5 @@ sample.user:
   email: michael.aivazis@orthologue.com # the email address of the user
   affiliation: orthologue # the affiliation of the user
   "pyre.vegetables.potato # side": fries
+
 # end of file
