@@ -445,6 +445,15 @@ pyre_test_python_testcase(pyre.pkg/codecs/pfg_componentName.py)
 pyre_test_python_testcase(pyre.pkg/codecs/pfg_componentConditional.py)
 pyre_test_python_testcase(pyre.pkg/codecs/pfg_componentConditionalNested.py)
 pyre_test_python_testcase(pyre.pkg/codecs/pfg_sample.py)
+pyre_test_python_testcase(pyre.pkg/codecs/yaml.py)
+pyre_test_python_testcase(pyre.pkg/codecs/yaml_empty.py)
+pyre_test_python_testcase(pyre.pkg/codecs/yaml_package.py)
+pyre_test_python_testcase(pyre.pkg/codecs/yaml_packageNested.py)
+pyre_test_python_testcase(pyre.pkg/codecs/yaml_componentFamily.py)
+pyre_test_python_testcase(pyre.pkg/codecs/yaml_componentName.py)
+pyre_test_python_testcase(pyre.pkg/codecs/yaml_componentConditional.py)
+pyre_test_python_testcase(pyre.pkg/codecs/yaml_componentConditionalNested.py)
+pyre_test_python_testcase(pyre.pkg/codecs/yaml_sample.py)
 
 
 #
