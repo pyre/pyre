@@ -47,6 +47,15 @@ class Parser:
             # process the contents
             return self.process(doc=doc, uri=uri, locator=locator)
 
+        # if we get this far, we couldn't find {yaml} support
+        import journal
+        # make a channel
+        channel = journal.warning("pyre.config.yaml")
+        # and complain
+        channel.line(f"could not locate support for 'yaml'")
+        channel.line(f"while attempting to parse '{uri}'")
+        channel.log()
+
         # all done
         return []
 
