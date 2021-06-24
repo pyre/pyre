@@ -99,35 +99,41 @@ class Parser:
             # if there is only one entry
             if len(spec) == 1:
                 # it's my name
-                name = scope + spec[0]
+                name = spec[0]
                 # and i have no family
                 family = []
             # otherwise
             else:
                 # unpack a pair; anything else is an error
                 family, name = spec
-                # and adjust the name by prefixing it with the current scope
-                name = scope + name
 
-            # MGA: assemble the constraints
+            # assemble the constraints
+            if family:
+                # add a constraint
+                constraints.append((scope+name, family))
 
             # if {value} is a nested scope
             if type(value) is type(node):
                 # process it
-                yield from self.harvest(node=value, scope=name, constraints=constraints,
+                yield from self.harvest(node=value, scope=scope+name, constraints=constraints,
                                         locator=locator)
                 # and move on
                 continue
 
             # otherwise, we have an assignment; figure out which kind: if it's conditional
             if constraints:
+                # the component that owns the assignment is encoded in the last constraint
+                component, _ = constraints[-1]
                 # make a conditional assignment
-                yield self.ConditionalAssignment()
+                yield self.ConditionalAssignment(key = name, value = value,
+                                                 component = component,
+                                                 conditions = reversed(constraints),
+                                                 locator = locator)
                 # and move on
                 continue
 
             # otherwise, it's a raw assignment
-            yield self.Assignment(key=name, value=value, locator=locator)
+            yield self.Assignment(key=scope+name, value=value, locator=locator)
 
         # all done
         return
