@@ -18,6 +18,7 @@ addons:
       - python3.8-dev
       - libgsl-dev
       - python3-pybind11
+      - python3-yaml
 
 install:
   - mkdir build && cd build
