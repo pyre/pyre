@@ -14,7 +14,9 @@ pyre.extensions := pyre.ext host.ext
 pyre.docker-images := \
     pyre.eoan-gcc pyre.eoan-clang \
     pyre.focal-gcc pyre.focal-clang \
-    pyre.groovy-cuda
+    pyre.groovy-cuda \
+    pyre.hirsute-gcc pyre.hirsute-clang
+
 # and test suites
 pyre.tests := pyre.python.tests pyre.pkg.tests pyre.lib.tests pyre.ext.tests sqlite.pkg.tests
 
@@ -87,13 +89,15 @@ pyre.focal-clang.name := focal-clang
 # groovy
 pyre.groovy-cuda.name := groovy-cuda
 pyre.groovy-cuda.launch.mounts := mm pyre
-
+# hirsute
+pyre.hirsute-gcc.name := hirsute-gcc
+pyre.hirsute-clang.name := hirsute-clang
 
 # the templates
 pyre.templates.root := templates/
 
 
-# get the testsuites
+# get the test suites
 include $(pyre.tests)
 
 
