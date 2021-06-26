@@ -17,8 +17,8 @@ jobs:
       - name: install packages
         run: >
             apt-fast install -y
-              libopenmpi-dev libgsl-dev
-              python3-dev python3-pybind11 python3-numpy python3-yaml
+            libopenmpi-dev libgsl-dev
+            python3-dev python3-pybind11 python3-numpy python3-yaml
 
 
 # end of file
