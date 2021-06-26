@@ -9,8 +9,9 @@ import merlin
 
 
 # implementations of the high level artifact containers
-@merlin.foundry()
-def library(implements=merlin.protocols.library, tip="a container of binary artifacts"):
+@merlin.foundry(implements=merlin.protocols.library,
+                tip="a container of binary artifacts")
+def library():
     """
     A container of binary artifacts
     """
@@ -20,9 +21,9 @@ def library(implements=merlin.protocols.library, tip="a container of binary arti
     return Library
 
 
-@merlin.foundry()
-def project(implements=merlin.protocols.project,
-            tip="the top level container of project artifacts"):
+@merlin.foundry(implements=merlin.protocols.project,
+                tip="the top level container of project artifacts")
+def project():
     """
     The top level container of project artifacts
     """
