@@ -31,7 +31,7 @@ jobs:
         run: >
             apt-fast install -y
             libopenmpi-dev libgsl-dev
-            {{ matrix.python }} {{ matrix.python }}-dev
+            ${{ matrix.python }} ${{ matrix.python }}-dev
             python3-pybind11 python3-numpy python3-yaml
       - name: g++ version
         run: ${{ matrix.gcc }} --version
