@@ -22,6 +22,7 @@ jobs:
       matrix:
         os: [ ubuntu-18.04, ubuntu-20.04 ]
         python: [ 3.8, 3.9 ]
+        gcc: [ 9, 10 ]
         exclude:
           - os: ubuntu-18.04
             python: 3.9
@@ -32,10 +33,8 @@ jobs:
             libopenmpi-dev libgsl-dev
             python${{ matrix.python }} python${{ matrix.python }}-dev
             python3-pybind11 python3-numpy python3-yaml
-      - name: g++ 9 version
-        run: g++-9 --version
-      - name: g++ 10 version
-        run: g++-10 --version
+      - name: g++ version
+        run: g++-${{ matrix.gcc }} --version
       - name: clang++ version
         run: clang++ --version
       - name: python version
