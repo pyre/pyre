@@ -1,0 +1,19 @@
+# -*- yaml -*-
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2021 all rights reserved
+
+
+name: hello
+on: [push]
+jobs:
+  signon:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ ubuntu-18.04, ubuntu-20.04 ]
+    steps:
+      - name: issue
+        run: cat /etc/issue
+
+
+# end of file
