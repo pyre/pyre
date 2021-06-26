@@ -6,6 +6,8 @@
 
 # support
 import merlin
+# schema
+from .Language import Language as language
 
 
 # class declaration
@@ -13,6 +15,11 @@ class Library(merlin.protocol, family="merlin.projects.libraries"):
     """
     A high level container of binary artifacts
     """
+
+
+    # user configurable state
+    languages = merlin.properties.tuple(schema=language())
+    languages.doc = "the languages of the library source assets"
 
 
     # framework hooks
