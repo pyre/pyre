@@ -6,6 +6,7 @@
 name: hello
 on: [push]
 jobs:
+
   signon:
     runs-on: ${{ matrix.os }}
     strategy:
@@ -14,11 +15,20 @@ jobs:
     steps:
       - name: issue
         run: cat /etc/issue
+
+  install:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ ubuntu-18.04, ubuntu-20.04 ]
+        python: [ 3.8, 3.9 ]
+    steps:
       - name: install packages
         run: >
             apt-fast install -y
             libopenmpi-dev libgsl-dev
-            python3-dev python3-pybind11 python3-numpy python3-yaml
+            python${{ matrix.python }} python${{ matrix.python }}-dev
+            python3-pybind11 python3-numpy python3-yaml
       - name: g++ version
         run: g++ --version
       - name: clang++ version
