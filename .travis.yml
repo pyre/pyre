@@ -17,10 +17,9 @@ addons:
     packages:
       - python3.8-dev
       - libgsl-dev
-      - python3-pybind11
-      - python3-yaml
 
 install:
+  - pip install numpy PyYAML pybind11
   - mkdir build && cd build
   - cmake .. -DCMAKE_INSTALL_PREFIX=../install -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_CXX_FLAGS="-fsized-deallocation"
   - make install
