@@ -32,12 +32,14 @@ jobs:
             libopenmpi-dev libgsl-dev
             python${{ matrix.python }} python${{ matrix.python }}-dev
             python3-pybind11 python3-numpy python3-yaml
-      - name: g++ version
-        run: g++ --version
+      - name: g++ 9 version
+        run: g++-9 --version
+      - name: g++ 10 version
+        run: g++-10--version
       - name: clang++ version
         run: clang++ --version
       - name: python version
-        run: python3 --version
+        run: python${{ matrix.python }}--version
 
 
 # end of file
