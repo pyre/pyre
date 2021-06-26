@@ -38,7 +38,7 @@ RUN DEBIAN_FRONTEND=noninteractive \
         openssh-server \
         g++ gfortran make \
         ${python} ${python}-dev \
-        python3-pybind11 \
+        python3-pybind11 python3-yaml python3-numpy \
         libopenmpi-dev \
         libgsl-dev
 
