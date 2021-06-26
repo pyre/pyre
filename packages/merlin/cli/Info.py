@@ -39,6 +39,34 @@ class Info(merlin.shells.command, family='merlin.cli.info'):
         return
 
 
+    @merlin.export(tip="display information about the known source languages")
+    def languages(self, plexus, **kwds):
+        """
+        Display information about the known source languages
+        """
+        # get the language protocol
+        language = merlin.protocols.language
+        # assemble its implementors
+        languages = tuple(
+            name for _, name, _ in language.pyre_locateAllImplementers(namespace="merlin")
+        )
+
+        # marker
+        indent = " " * 2
+
+        # make a channel
+        channel = journal.info("merlin.info.host")
+        # report
+        channel.line(f"{indent*0}languages:")
+        for name in languages:
+            channel.line(f"{indent*1}{name}")
+        # flush
+        channel.log()
+
+        # all done
+        return
+
+
     @merlin.export(tip="display information about the platform")
     def platform(self, plexus, **kwds):
         """
@@ -105,6 +133,7 @@ class Info(merlin.shells.command, family='merlin.cli.info'):
             ws = "not found"
             cfg = "not found"
 
+        # marker
         indent = " " * 2
 
         # make a channel
