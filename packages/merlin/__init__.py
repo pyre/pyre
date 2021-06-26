@@ -32,6 +32,7 @@ from . import meta
 from . import exceptions
 # asset protocols and their implementations
 from . import protocols
+from . import languages
 from . import projects
 # user interfaces
 from . import shells         # the supported application shells
