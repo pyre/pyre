@@ -11,11 +11,13 @@ group: travis_latest
 language: python
 python:
   - 3.8
+  - 3.9
 
 addons:
   apt:
     packages:
       - python3.8-dev
+      - python3.9-dev
       - libgsl-dev
       - python3-pybind11
 
