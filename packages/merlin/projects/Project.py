@@ -12,7 +12,7 @@ import merlin
 class Project(merlin.component,
               family="merlin.projects.project", implements=merlin.protocols.project):
     """
-    A high level container of assets
+    A high level container of artifacts
     """
 
 

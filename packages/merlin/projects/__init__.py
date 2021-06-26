@@ -8,11 +8,11 @@
 import merlin
 
 
-# implementations of the high level asset containers
+# implementations of the high level artifact containers
 @merlin.foundry()
-def library(implements=merlin.protocols.library, tip="a container of binary assets"):
+def library(implements=merlin.protocols.library, tip="a container of binary artifacts"):
     """
-    A container of binary assets
+    A container of binary artifacts
     """
     # get the project
     from .Library import Library
@@ -21,9 +21,10 @@ def library(implements=merlin.protocols.library, tip="a container of binary asse
 
 
 @merlin.foundry()
-def project(implements=merlin.protocols.project, tip="the top level container of project assets"):
+def project(implements=merlin.protocols.project,
+            tip="the top level container of project artifacts"):
     """
-    The top level container of project assets
+    The top level container of project artifacts
     """
     # get the project
     from .Project import Project
