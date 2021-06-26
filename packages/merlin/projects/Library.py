@@ -16,4 +16,9 @@ class Library(merlin.component,
     """
 
 
+    # user configurable state
+    languages = merlin.properties.tuple(schema=merlin.protocols.language())
+    languages.doc = "the languages of the library source assets"
+
+
 # end of file
