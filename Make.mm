@@ -19,7 +19,6 @@ RECURSE_DIRS = \
     schema \
     tests \
     examples \
-    bot \
     people
 
 # the standard targets
