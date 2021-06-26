@@ -35,7 +35,7 @@ jobs:
       - name: g++ 9 version
         run: g++-9 --version
       - name: g++ 10 version
-        run: g++-10--version
+        run: g++-10 --version
       - name: clang++ version
         run: clang++ --version
       - name: python version
