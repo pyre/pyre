@@ -11,7 +11,7 @@ import merlin
 # class declaration
 class Library(merlin.protocol, family="merlin.projects.libraries"):
     """
-    A high level container of binary assets
+    A high level container of binary artifacts
     """
 
 
