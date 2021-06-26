@@ -35,7 +35,7 @@ RUN apt dist-upgrade -y
 
 # install the base software stack
 RUN DEBIAN_FRONTEND=noninteractive \
-    apt install -y \
+        apt install -y \
         git vim unzip zip \
         g++ gfortran make \
         npm \
@@ -45,8 +45,7 @@ RUN DEBIAN_FRONTEND=noninteractive \
         libopenmpi-dev \
         nvidia-cuda-toolkit \
         ${python} ${python}-dev \
-        python3-numpy \
-        python3-pybind11
+        python3-pybind11 python3-yaml python3-numpy
 
 
 # setup the interactive environment
