@@ -39,7 +39,7 @@ jobs:
       - name: clang++ version
         run: clang++ --version
       - name: python version
-        run: python${{ matrix.python }}--version
+        run: python${{ matrix.python }} --version
 
 
 # end of file
