@@ -105,7 +105,7 @@ class Info(merlin.shells.command, family='merlin.cli.info'):
             ws = "not found"
             cfg = "not found"
 
-        indent = " " * 4
+        indent = " " * 2
 
         # make a channel
         channel = journal.info("merlin.info.workspace")
@@ -124,11 +124,19 @@ class Info(merlin.shells.command, family='merlin.cli.info'):
                 # show the name
                 channel.line(f"{indent*1}{project.pyre_name}")
                 # get its libraries
-                libraries = ", ".join(library.pyre_name for library in project.libraries)
+                libraries = project.libraries
                 # if there are any
                 if libraries:
                     # display
-                    channel.line(f"{indent*2}libraries: {libraries}")
+                    channel.line(f"{indent*2}libraries:")
+                    # go through them
+                    for library in libraries:
+                        # display the name
+                        channel.line(f"{indent*3}{library.pyre_name}")
+                        # get the source languages
+                        languages = ", ".join(language.name for language in library.languages)
+                        # display their names
+                        channel.line(f"{indent*4}languages: {languages}")
         # flush
         channel.log()
 
