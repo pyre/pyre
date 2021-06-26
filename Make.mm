@@ -18,8 +18,7 @@ RECURSE_DIRS = \
     templates \
     schema \
     tests \
-    examples \
-    people
+    examples
 
 # the standard targets
 all:
