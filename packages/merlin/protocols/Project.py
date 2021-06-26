@@ -13,7 +13,7 @@ from .Library import Library as library
 # class declaration
 class Project(merlin.protocol, family="merlin.projects.projects"):
     """
-    A high level container of assets
+    A high level container of artifacts
     """
 
 
