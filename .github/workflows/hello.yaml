@@ -19,6 +19,10 @@ jobs:
             apt-fast install -y
             libopenmpi-dev libgsl-dev
             python3-dev python3-pybind11 python3-numpy python3-yaml
+      - name: g++ version
+        run: g++ --version
+      - name: clang++ version
+        run: clang++ --version
       - name: python version
         run: python3 --version
 
