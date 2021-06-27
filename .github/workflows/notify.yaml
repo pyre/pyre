@@ -38,7 +38,7 @@ jobs:
       - name: cwd
         run: find .
       - name: clone mm
-        run: git clone mm
+        run: git clone https://github.com/aivazis/mm
       - name: cwd after mm cloning
         run: find .
 
