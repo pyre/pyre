@@ -46,7 +46,7 @@ jobs:
       - name: cwd after mm cloning
         run: find .
       - name: host info
-        run: python3 mm/mm.py host.info
+        run: python3 mm/mm.py host.info --make=make
 
 
 # end of file
