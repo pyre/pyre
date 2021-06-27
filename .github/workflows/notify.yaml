@@ -23,7 +23,9 @@ jobs:
         run: "echo ${RUNNER_OS}"
       - name: runner cache location
         run: "echo ${RUNNER_TOOL_CACHE}"
-      - name: runner cache contents
+      - name: node cache contents
+        run: "ls -l ${RUNNER_TOOL_CACHE}/node"
+      - name: python cache contents
         run: "ls -l ${RUNNER_TOOL_CACHE}/Python"
       - name: wget
         run: wget --version
