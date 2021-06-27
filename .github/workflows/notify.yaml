@@ -37,6 +37,8 @@ jobs:
         run: curl --version
       - name: cwd
         run: find .
+      - name: home
+        run: "echo ~; find ~"
       - name: clone mm
         run: git clone https://github.com/aivazis/mm
       - name: cwd after mm cloning
