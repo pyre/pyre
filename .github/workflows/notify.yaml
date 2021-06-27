@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: context
-        run: "echo sha: '${GITHUB_SHA}', ref: '${GITHUB_REF}'"
+        run: "echo sha: ${GITHUB_SHA}, ref: ${GITHUB_REF}"
       - name: wget
         run: wget --version
       - name: curl
