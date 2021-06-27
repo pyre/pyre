@@ -11,8 +11,20 @@ jobs:
   notify:
     runs-on: ubuntu-latest
     steps:
-      - name: context
+      - name: repo info
+        run: "echo repository: ${GITHUB_REPOSITORY}"
+      - name: graphql API
+        run: "echo event: ${GITHUB_GRAPHQL_URL}"
+      - name: event info
+        run: "echo event: ${GITHUB_EVENT_NAME}"
+      - name: commit info
         run: "echo sha: ${GITHUB_SHA}, ref: ${GITHUB_REF}"
+      - name: runner info
+        run: "echo ${RUNNER_OS}"
+      - name: runner cache location
+        run: "echo ${RUNNER_TOOL_CACHE}"
+      - name: runner cache contents
+        run: "ls -l ${RUNNER_TOOL_CACHE}"
       - name: wget
         run: wget --version
       - name: curl
