@@ -27,6 +27,8 @@ jobs:
         run: "ls -l ${RUNNER_TOOL_CACHE}/node"
       - name: python cache contents
         run: "ls -l ${RUNNER_TOOL_CACHE}/Python"
+      - name: python 3.9.5 cache contents
+        run: "find ${RUNNER_TOOL_CACHE}/Python/3.9.5"
       - name: wget
         run: wget --version
       - name: curl
