@@ -39,8 +39,8 @@ jobs:
         run: pwd; find .
       - name: home
         run: "echo ${HOME}; echo ~; find ~"
-      - name: mkdir .pyre
-        run: "mkdir ~/.pyre"
+      - name: make configuration directories
+        run: "mkdir ~/.pyre ~/.mm"
       - name: clone mm
         run: git clone https://github.com/aivazis/mm
       - name: cwd after mm cloning
