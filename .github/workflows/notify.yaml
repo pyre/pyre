@@ -21,6 +21,8 @@ jobs:
         run: "echo sha: ${GITHUB_SHA}, ref: ${GITHUB_REF}"
       - name: runner info
         run: "echo ${RUNNER_OS}"
+      - name: runner packages
+        run: "dpkg -l"
       - name: runner cache location
         run: "echo ${RUNNER_TOOL_CACHE}"
       - name: node cache contents
