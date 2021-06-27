@@ -24,7 +24,7 @@ jobs:
       - name: runner cache location
         run: "echo ${RUNNER_TOOL_CACHE}"
       - name: runner cache contents
-        run: "ls -l ${RUNNER_TOOL_CACHE}"
+        run: "ls -l ${RUNNER_TOOL_CACHE}/Python"
       - name: wget
         run: wget --version
       - name: curl
