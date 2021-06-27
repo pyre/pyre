@@ -35,6 +35,12 @@ jobs:
         run: wget --version
       - name: curl
         run: curl --version
+      - name: cwd
+        run: find .
+      - name: clone mm
+        run: git clone mm
+      - name: cwd after mm cloning
+        run: find .
 
 
 # end of file
