@@ -36,9 +36,11 @@ jobs:
       - name: curl
         run: curl --version
       - name: cwd
-        run: find .
+        run: pwd; find .
       - name: home
-        run: "echo ~; find ~"
+        run: "echo ${HOME}; echo ~; find ~"
+      - name: mkdir .pyre
+        run: "mkdir ~/.pyre"
       - name: clone mm
         run: git clone https://github.com/aivazis/mm
       - name: cwd after mm cloning
