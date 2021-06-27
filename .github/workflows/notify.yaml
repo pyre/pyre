@@ -1,0 +1,22 @@
+# -*- yaml -*-
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2021 all rights reserved
+
+
+name: notify
+on: [push]
+jobs:
+
+  # notify my CI server
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: context
+        run: "echo sha: '${GITHUB_SHA}', ref: '${GITHUB_REF}'"
+      - name: wget
+        run: wget --version
+      - name: curl
+        run: curl --version
+
+
+# end of file
