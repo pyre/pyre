@@ -45,6 +45,8 @@ jobs:
         run: git clone https://github.com/aivazis/mm
       - name: cwd after mm cloning
         run: find .
+      - name: host info
+        run: python3 mm/mm.py host.info
 
 
 # end of file
