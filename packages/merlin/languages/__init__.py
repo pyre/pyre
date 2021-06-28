@@ -9,8 +9,7 @@ import merlin
 
 
 # source encodings
-@merlin.foundry(implements=merlin.protocols.language,
-                tip="the C language")
+@merlin.foundry(implements=merlin.protocols.language, tip="the C language")
 def c():
     """
     The category of source artifacts encoded in the C programming language
@@ -19,6 +18,17 @@ def c():
     from .C import C
     # and publish it
     return C
+
+
+@merlin.foundry(implements=merlin.protocols.language, tip="the C++ language")
+def cxx():
+    """
+    The category of source artifacts encoded in the C++ programming language
+    """
+    # get the language
+    from .CXX import CXX
+    # and publish it
+    return CXX
 
 
 # end of file
