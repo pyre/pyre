@@ -53,4 +53,15 @@ def cxx():
     return CXX
 
 
+@merlin.foundry(implements=merlin.protocols.language, tip="the FORTRAN language")
+def fortran():
+    """
+    The category of source artifacts encoded in the FORTRAN programming language
+    """
+    # get the language
+    from .FORTRAN import FORTRAN
+    # and publish it
+    return FORTRAN
+
+
 # end of file
