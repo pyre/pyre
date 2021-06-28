@@ -11,7 +11,7 @@ from .Language import Language
 
 
 # class declaration
-class CXX(Language, family="merlin.projects.languages.cxx"):
+class CXX(Language, family="merlin.languages.cxx"):
     """
     A category of source artifacts encoded in the C++ programming language
     """

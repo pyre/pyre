@@ -11,7 +11,7 @@ from .Language import Language
 
 
 # class declaration
-class CUDA(Language, family="merlin.projects.languages.cuda"):
+class CUDA(Language, family="merlin.languages.cuda"):
     """
     A category of source artifacts encoded in the C programming language
     """
