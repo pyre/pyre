@@ -22,8 +22,7 @@ class FORTRAN(Language, family="merlin.languages.fortran"):
 
     # user configurable state
     sources = merlin.properties.strings()
-    sources.default = [".f", ".f77", ".f90", ".f95", ".f03",
-                       ".F", ".F77", ".F90", ".F95", ".F03",]
+    sources.default = [".f", ".f77", ".f90", ".f95", ".f03", ".F", ".F77", ".F90", ".F95", ".F03"]
     sources.doc = "the set of suffixes that identify an artifact as a source"
 
     headers = merlin.properties.strings()
