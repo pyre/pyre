@@ -20,6 +20,17 @@ def c():
     return C
 
 
+@merlin.foundry(implements=merlin.protocols.language, tip="the CUDA language")
+def cuda():
+    """
+    The category of source artifacts encoded in the CUDA programming language
+    """
+    # get the language
+    from .CUDA import CUDA
+    # and publish it
+    return CUDA
+
+
 @merlin.foundry(implements=merlin.protocols.language, tip="the C++ language")
 def cxx():
     """
