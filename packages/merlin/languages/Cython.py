@@ -11,7 +11,7 @@ from .Language import Language
 
 
 # class declaration
-class Cython(Language, family="merlin.projects.languages.cython"):
+class Cython(Language, family="merlin.languages.cython"):
     """
     A category of source artifacts encoded in the cython programming language
     """
