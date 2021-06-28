@@ -64,4 +64,15 @@ def fortran():
     return FORTRAN
 
 
+@merlin.foundry(implements=merlin.protocols.language, tip="the Python language")
+def python():
+    """
+    The category of source artifacts encoded in the Python programming language
+    """
+    # get the language
+    from .Python import Python
+    # and publish it
+    return Python
+
+
 # end of file
