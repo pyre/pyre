@@ -17,4 +17,14 @@ class C(Language, family="merlin.projects.languages.c"):
     """
 
 
+    # user configurable state
+    sources = merlin.properties.strings()
+    sources.default = ".c"
+    sources.doc = "the set of suffixes that identify an artifact as a source"
+
+    headers = merlin.properties.strings()
+    headers.default = ".h"
+    headers.doc = "the set of suffixes that identify an artifact as a header"
+
+
 # end of file
