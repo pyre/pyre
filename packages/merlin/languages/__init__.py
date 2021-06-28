@@ -31,6 +31,17 @@ def cuda():
     return CUDA
 
 
+@merlin.foundry(implements=merlin.protocols.language, tip="the cython language")
+def cython():
+    """
+    The category of source artifacts encoded in the cython programming language
+    """
+    # get the language
+    from .Cython import Cython
+    # and publish it
+    return Cython
+
+
 @merlin.foundry(implements=merlin.protocols.language, tip="the C++ language")
 def cxx():
     """
