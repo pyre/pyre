@@ -16,15 +16,22 @@ class C(Language, family="merlin.projects.languages.c"):
     A category of source artifacts encoded in the C programming language
     """
 
+    # constants
+    name= "C"
+
 
     # user configurable state
     sources = merlin.properties.strings()
-    sources.default = ".c"
+    sources.default = [".c"]
     sources.doc = "the set of suffixes that identify an artifact as a source"
 
     headers = merlin.properties.strings()
-    headers.default = ".h"
+    headers.default = [".h"]
     headers.doc = "the set of suffixes that identify an artifact as a header"
+
+    dialects = merlin.properties.strings()
+    dialects.default = ["ansi", "c90", "c99", "c11", "c17", "c18"]
+    dialects.doc = "the list of markers that specify supported language dialects"
 
 
 # end of file
