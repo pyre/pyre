@@ -119,7 +119,7 @@ class Property(Slotted):
 
 
     def __str__(self):
-        return "{0.name!r}: a property of type {0.typename!r}".format(self)
+        return f"{self.name}: a property of type '{self.typename}'"
 
 
 # end of file
