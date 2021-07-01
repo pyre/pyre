@@ -42,6 +42,14 @@ class Schema:
 
 
     # interface
+    def process(self, value, **kwds):
+        """
+        Walk {value} through all steps necessary to become acceptable
+        """
+        # by default, punt to {coerce}
+        return self.coerce(value=value, **kwds)
+
+
     def coerce(self, value, **kwds):
         """
         Convert the given value into a python native object
