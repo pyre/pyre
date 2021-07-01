@@ -4,7 +4,10 @@
 # (c) 1998-2021 all rights reserved
 
 
-# publish
+# MGA: {shelf} level aliases?
+pyre_aliases = {
+    "g++": "gxx"
+}
 
 
 # end of file
