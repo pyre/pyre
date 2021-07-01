@@ -10,8 +10,6 @@
 import os
 # superclass
 from .List import List
-# my schema
-from .Path import Path
 
 
 # declaration
@@ -43,8 +41,8 @@ class EnvPath(List):
             # split it using the path separator
             default = list(filter(None, default.split(self.pathsep)))
 
-        # chain up
-        super().__init__(schema=Path(), default=default, **kwds)
+        # chain up with {path} as my schema
+        super().__init__(schema=self.path(), default=default, **kwds)
 
         # save the variable name
         self.envvar = variable
