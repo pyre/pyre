@@ -52,15 +52,17 @@ class Importer(Loader):
         # build a simple locator
         locator = tracking.simple(source=uri.uri)
         # show me
-        # print("    importing: {!r}".format(source))
+        # print(f"    importing: '{source}'")
         # attempt to
         try:
             # import the module
             module = __import__(source)
+            # show me
+            # print(f"      uri: {uri} -> module: {module}")
         # the address portion of {uri} is not importable
         except (ImportError, TypeError) as error:
             # show me
-            # print("      error: {}".format(str(error)))
+            # print(f"      error: {error}")
             # complain
             raise cls.LoadingError(
                 codec=cls, uri=uri, locator=locator, description=str(error)) from error
