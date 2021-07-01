@@ -20,6 +20,9 @@ class Merlin(merlin.plexus, family='merlin.shells.plexus'):
     from .Action import Action as pyre_action
 
     # configurable state
+    compilers = merlin.properties.tuple(schema=merlin.protocols.compiler())
+    compilers.doc = "the list of compilers to use while building projects"
+
     projects = merlin.properties.tuple(schema=merlin.protocols.project())
     projects.doc = "the list of projects in the current workspace"
 
