@@ -16,6 +16,34 @@ class Info(merlin.shells.command, family='merlin.cli.info'):
     """
 
 
+    @merlin.export(tip="display information about the chosen compilers")
+    def compilers(self, plexus, **kwds):
+        """
+        Display information about the chosen compilers
+        """
+        # make a channel
+        channel = journal.info("merlin.info.host")
+        # indentation
+        indent = " " * 2
+        # get the list of compilers
+        compilers = plexus.compilers
+
+        # if there are any
+        if compilers:
+            # sign on
+            channel.line(f"{indent*0}compilers:")
+
+        # go through them
+        for compiler in compilers:
+            # report
+            channel.line(f"{indent*1}{compiler.pyre_family()}")
+        # flush
+        channel.log()
+
+        # all done
+        return
+
+
     @merlin.export(tip="display information about the host")
     def host(self, plexus, **kwds):
         """
