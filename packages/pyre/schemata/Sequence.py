@@ -71,7 +71,7 @@ class Sequence(Container):
                 # case coercing my values requires the instantiation of components; i don't
                 # want facilities to use the name of my node as the name of any instantiated
                 # components
-                yield self.schema.coerce(value=entry, incognito=incognito, **kwds)
+                yield self.schema.process(value=entry, incognito=incognito, **kwds)
             # all done
             return
         # otherwise, flag it as bad input
