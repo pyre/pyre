@@ -14,6 +14,20 @@
             "console": "integratedTerminal"
         },
         {
+            "name": "merlin: debug merlin",
+            "type": "python",
+            "request": "launch",
+            "python": "${command:python.interpreterPath}",
+            "cwd": "${fileDirname}",
+            "program": "${workspaceFolder}/bin/merlin",
+            "args": [
+                "info",
+                "compilers",
+                "--compilers=gnu"
+            ],
+            "console": "integratedTerminal"
+        },
+        {
             "name": "pyre: [gdb/linux]: debug C++ extension",
             "type": "cppdbg",
             "request": "attach",
