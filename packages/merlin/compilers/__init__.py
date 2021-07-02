@@ -4,9 +4,13 @@
 # (c) 1998-2021 all rights reserved
 
 
-# MGA: {shelf} level aliases?
-pyre_aliases = {
-    "g++": "gxx"
+# translate user friendly names to their canonical equivalents
+aliases = {
+    # compilers from the GNU suite
+    "gcc": "gnu.gcc",
+    "g++": "gnu.gxx",
+    "gnu.g++": "gnu.gxx",
+    "gfortran": "gnu.gfortran",
 }
 
 
