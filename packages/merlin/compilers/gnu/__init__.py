@@ -10,10 +10,10 @@ import merlin
 
 # publish
 # the GNU compiler suite
-@merlin.foundry(implements=merlin.protocols.compiler, tip="the GCC compiler suite")
+@merlin.foundry(implements=merlin.protocols.compiler, tip="the GNU compiler suite")
 def gnu():
     """
-    The GCC compiler suite
+    The GNU compiler suite
     """
     # get the suite
     from .Suite import Suite
@@ -26,7 +26,7 @@ def gnu():
                 tip="the C compiler from the GNU compiler suite")
 def gcc():
     """
-    The the C compiler from the GCC compiler suite
+    The C compiler from the GNU compiler suite
     """
     # get the suite
     from .GCC import GCC
@@ -39,7 +39,7 @@ def gcc():
                 tip="the C++ compiler from the GNU compiler suite")
 def gxx():
     """
-    The the C++ compiler from the GCC compiler suite
+    The C++ compiler from the GNU compiler suite
     """
     # get the suite
     from .GXX import GXX
@@ -47,5 +47,17 @@ def gxx():
     return GXX
 
 
-# aliases that are not valid python identifiers
+# the C compiler from the GNU compiler suite
+@merlin.foundry(implements=merlin.protocols.compiler,
+                tip="the FORTRAN compiler from the GNU compiler suite")
+def gfortran():
+    """
+    The FORTRAN compiler from the GNU compiler suite
+    """
+    # get the suite
+    from .GFortran import GFortran
+    # and publish it
+    return GFortran
+
+
 # end of file
