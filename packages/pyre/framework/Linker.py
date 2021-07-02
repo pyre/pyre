@@ -56,7 +56,7 @@ class Linker:
         # and if the look up fails
         except KeyError:
             # it's because we don't recognize the scheme
-            reason = "unknown scheme {!r}".format(scheme)
+            reason = f"unknown scheme '{scheme}'"
             # so complain
             raise self.BadResourceLocatorError(uri=uri, reason=reason)
 
@@ -79,7 +79,7 @@ class Linker:
                                            scheme=scheme, context=context, symbol=symbol,
                                            **kwds):
                 # got one; show me
-                # print('    shelf contents: {}'.format(shelf))
+                # print(f"    shelf contents: {shelf}")
                 # check whether it contains our symbol by attempting to
                 try:
                     # extract it
@@ -87,11 +87,14 @@ class Linker:
                     # if it's not there
                 except shelf.SymbolNotFoundError as error:
                     # show me
-                    # print(' ## error: {}'.format(str(error)))
+                    # print(f" ## error: {error}")
                     # not there; try the next match
                     continue
                 # otherwise, we have a candidate; show me
-                # print(' ## got: {}'.format(descriptor))
+                # print(f"pyre.framework.Linker.resolve:")
+                # print(f"  uri: {uri}")
+                # print(f"  protocol: {protocol}")
+                # print(f"  candidate: {descriptor}")
                 # let the client evaluate it further
                 yield descriptor
 
@@ -103,8 +106,14 @@ class Linker:
         # we have exhausted all supported cases of looking at external sources; there is one
         # more thing to try: in the process of interpreting the user request, we formed guesses
         # regarding the name the user is looking for. perhaps there is an implementer of our
-        # protocol whose package name is the symbol we are looking for
-
+        # protocol whose package name is the symbol we are looking for; this enables things like
+        #
+        #     app.py --shell=mpi
+        #
+        # which will pull the first implementer of our protocol that was registered by the
+        # {mpi} package
+        # print(f"pyre.framework.Linker.resolve:")
+        # print(f"    asking {protocol} for help with {uri}")
         # look through the protocol implementers
         for implementer in executive.registrar.implementers[protocol]:
             # get their package names
