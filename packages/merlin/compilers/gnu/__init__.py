@@ -4,7 +4,6 @@
 # (c) 1998-2021 all rights reserved
 
 
-print("merlin.compilers.gnu")
 # framework
 import merlin
 
