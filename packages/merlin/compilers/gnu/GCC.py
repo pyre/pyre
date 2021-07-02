@@ -8,11 +8,11 @@
 import merlin
 
 
-# the C compiler from the GCC compiler suite
+# the C compiler from the GNU compiler suite
 class GCC(merlin.component,
           family="merlin.compilers.gnu.gcc", implements=merlin.protocols.compiler):
     """
-    The C compiler from the GCC compiler suite
+    The C compiler from the GNU compiler suite
     """
 
 
