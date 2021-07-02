@@ -12,7 +12,7 @@ import merlin
 class GXX(merlin.component,
           family="merlin.compilers.gnu.g++", implements=merlin.protocols.compiler):
     """
-    The C++ compiler from the GCC compiler suite
+    The C++ compiler from the GNU compiler suite
     """
 
 
