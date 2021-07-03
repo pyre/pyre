@@ -55,12 +55,26 @@ def powerset(iterable):
     return itertools.chain.from_iterable(itertools.combinations(s, r) for r in range(len(s)+1))
 
 
+def sequify(items):
+    """
+    Normalize {items} into a tuple
+    """
+    # take care of {None} and anything false or empty
+    if not items: return ()
+    # if {items} is any iterable
+    if isinstance(items, collections.abc.Iterable):
+        # turn it into a tuple
+        return tuple(items)
+    # otherwise, place the lone item into a tuple
+    return (items,)
+
+
 # autovivified maps
 def vivify(levels=1, atom=dict):
     """
     Builds a nested {defaultdict} with a fixed depth and a specified type at the deepest level.
 
-    Adopted from (http://en.wikipedia.org/wiki/Autovivification)
+    Adapted from (http://en.wikipedia.org/wiki/Autovivification)
     """
     # the embryonic case is a {defaultdict} of type {atom}
     if levels < 2: return collections.defaultdict(atom)
