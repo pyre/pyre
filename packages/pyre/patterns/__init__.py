@@ -16,6 +16,7 @@ import itertools, collections
 
 
 # publish local support
+from .Decorator import Decorator as decorator
 from .Named import Named as named
 from .Observable import Observable as observable
 from .Singleton import Singleton as singleton
