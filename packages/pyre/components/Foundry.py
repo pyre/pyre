@@ -29,7 +29,7 @@ class Foundry(pyre.patterns.decorator):
         # save the tip
         self.pyre_tip = tip
         # and the sequence of implemented protocols
-        self.pyre_implements = self.sequify(implements)
+        self.pyre_implements = pyre.patterns.sequify(implements)
         # all done
         return
 
@@ -41,22 +41,6 @@ class Foundry(pyre.patterns.decorator):
         component.pyre_tip = self.pyre_tip
         # and return it
         return component
-
-
-    # implementation details
-    @classmethod
-    def sequify(self, items):
-        """
-        Normalize {items} into a tuple
-        """
-        # take care of {None} and anything false or empty
-        if not items: return ()
-        # if {items} is any iterable
-        if isinstance(items, collections.abc.Iterable):
-            # turn it into a tuple
-            return tuple(items)
-        # otherwise, place the lone item into a tuple
-        return (items,)
 
 
 # end of file
