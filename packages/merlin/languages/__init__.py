@@ -9,7 +9,7 @@ import merlin
 
 
 # source encodings
-@merlin.foundry(implements=merlin.protocols.language, tip="the C language")
+@merlin.components.language(language="c", tip="the C language")
 def c():
     """
     The category of source artifacts encoded in the C programming language
@@ -20,7 +20,7 @@ def c():
     return C
 
 
-@merlin.foundry(implements=merlin.protocols.language, tip="the CUDA language")
+@merlin.components.language(language="cuda", tip="the CUDA language")
 def cuda():
     """
     The category of source artifacts encoded in the CUDA programming language
@@ -31,7 +31,7 @@ def cuda():
     return CUDA
 
 
-@merlin.foundry(implements=merlin.protocols.language, tip="the cython language")
+@merlin.components.language(language="cython", tip="the cython language")
 def cython():
     """
     The category of source artifacts encoded in the cython programming language
@@ -42,7 +42,7 @@ def cython():
     return Cython
 
 
-@merlin.foundry(implements=merlin.protocols.language, tip="the C++ language")
+@merlin.components.language(language="c++", tip="the C++ language")
 def cxx():
     """
     The category of source artifacts encoded in the C++ programming language
@@ -53,7 +53,7 @@ def cxx():
     return CXX
 
 
-@merlin.foundry(implements=merlin.protocols.language, tip="the FORTRAN language")
+@merlin.components.language(language="fortran", tip="the FORTRAN language")
 def fortran():
     """
     The category of source artifacts encoded in the FORTRAN programming language
@@ -64,7 +64,7 @@ def fortran():
     return FORTRAN
 
 
-@merlin.foundry(implements=merlin.protocols.language, tip="the Python language")
+@merlin.components.language(language="python", tip="the Python language")
 def python():
     """
     The category of source artifacts encoded in the Python programming language
