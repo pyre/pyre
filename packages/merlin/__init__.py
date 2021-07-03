@@ -30,8 +30,10 @@ home, prefix, defaults = package.layout()
 # publish the local modules
 from . import meta
 from . import exceptions
-# asset protocols and their implementations
+# local extensions of the framework plumbing
 from . import protocols
+from . import components
+# builder abstractions
 from . import languages
 from . import compilers
 from . import projects
