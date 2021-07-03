@@ -17,7 +17,7 @@ class Cython(Language, family="merlin.languages.cython"):
     """
 
     # constants
-    name= "cython"
+    name = "cython"
 
 
     # user configurable state
