@@ -17,7 +17,7 @@ class FORTRAN(Language, family="merlin.languages.fortran"):
     """
 
     # constants
-    name= "FORTRAN"
+    name = "FORTRAN"
 
 
     # user configurable state

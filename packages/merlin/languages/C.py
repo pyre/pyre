@@ -17,7 +17,7 @@ class C(Language, family="merlin.languages.c"):
     """
 
     # constants
-    name= "C"
+    name = "C"
 
 
     # user configurable state
