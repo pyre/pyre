@@ -1,0 +1,14 @@
+# -*- yaml -*-
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2021 all rights reserved
+
+
+# this workspace contains the following projects
+# N.B.: the {.prj} suffix is necessary only because {pyre} and {journal} are already known
+# to the {nameserver} as packages
+projects:
+  - "#journal.prj"
+  - "#pyre.prj"
+
+
+# end of file

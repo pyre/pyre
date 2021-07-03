@@ -1,0 +1,16 @@
+# -*- yaml -*-
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2021 all rights reserved
+
+
+# the {journal} project contains
+journal.prj:
+    libraries: "#journal.lib"
+
+
+journal.lib:
+    name: journal
+    root: lib/{journal.lib.name}
+
+
+# end of file
