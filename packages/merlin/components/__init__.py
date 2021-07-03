@@ -6,8 +6,8 @@
 #
 
 
-# the executive
-from .Merlin import Merlin as merlin
+# the foundries
+from .Language import Language as language
 
 
 # end of file
