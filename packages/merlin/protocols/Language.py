@@ -20,4 +20,10 @@ class Language(merlin.protocol, family="merlin.languages"):
     sources.doc = "the set of suffixes that identify an artifact as a source"
 
 
+    # implementation details
+    # a map from the common name of a language to its supporting foundry; this index is
+    # maintained automatically by the {merlin.components.language} foundry
+    supported = {}
+
+
 # end of file
