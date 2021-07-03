@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2021 all rights reserved
-#
 
 
 # externals
@@ -24,17 +22,17 @@ class Foundry:
 
 
     # meta-methods
-    def __new__(cls, factory=None, implements=None, tip='', **kwds):
+    def __new__(cls, factory=None, **kwds):
         """
         Trap the invocation with meta-data and delay the decoration of the callable
         """
-        # if the method is known
+        # if the {factory} is known, it is because the constructor we build below was invoked
         if factory is not None:
             # check that the user gave us something we can decorate
             assert callable(factory), 'please invoke with keyword arguments'
-            # and chain up to do the normal thing; swallow the extra arguments, but don't
+            # and chain up to do the normal thing; swallow any extra arguments, but don't
             # worry, we'll see them again in {__init__}
-            return super().__new__(cls, **kwds)
+            return super().__new__(cls)
 
         # if we don't know the factory, we were invoked with keyword arguments; the strategy
         # here is to return a {Foundry} constructor as the value of this invocation, which
@@ -47,7 +45,7 @@ class Foundry:
             Convert a component factory into a foundry
             """
             # just build one of my instances
-            return cls(factory=factory, implements=implements, tip=tip, **kwds)
+            return cls(factory=factory, **kwds)
 
         # to hand over
         return build
