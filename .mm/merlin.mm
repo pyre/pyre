@@ -11,7 +11,7 @@ merlin.libraries :=
 # no python extension
 merlin.extensions :=
 # test suite
-merlin.tests := merlin.pkg.tests
+merlin.tests := #merlin.pkg.tests
 
 
 # the merlin package meta-data

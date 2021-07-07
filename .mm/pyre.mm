@@ -54,7 +54,7 @@ pyre.ext.stem := pyre
 pyre.ext.pkg := pyre.pkg
 pyre.ext.wraps := pyre.lib
 pyre.ext.capsule :=
-pyre.ext.extern := pyre.lib journal.lib pybind11 python
+pyre.ext.extern := journal.lib pybind11 python
 pyre.ext.lib.c++.flags += $($(compiler.c++).std.c++17)
 pyre.ext.lib.prerequisites += journal.lib # pyre.lib is added automatically
 # host info
@@ -63,7 +63,7 @@ host.ext.stem := host
 host.ext.pkg := pyre.pkg
 host.ext.wraps := pyre.lib
 host.ext.capsule :=
-host.ext.extern := pyre.lib journal.lib python
+host.ext.extern := journal.lib python
 host.ext.lib.c++.flags += $($(compiler.c++).std.c++17)
 host.ext.lib.prerequisites += journal.lib # pyre.lib is added automatically
 
@@ -74,7 +74,7 @@ postgres.ext.stem := postgres
 postgres.ext.pkg := pyre.pkg
 postgres.ext.wraps := pyre.lib
 postgres.ext.capsule :=
-postgres.ext.extern := pyre.lib journal.lib libpq python
+postgres.ext.extern := journal.lib libpq python
 postgres.ext.lib.c++.flags += $($(compiler.c++).std.c++17)
 postgres.ext.lib.prerequisites += journal.lib # pyre.lib is added automatically
 
