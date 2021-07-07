@@ -40,7 +40,7 @@ journal.ext.stem := journal
 journal.ext.root := extensions/journal/
 journal.ext.capsule :=
 journal.ext.wraps := journal.lib
-journal.ext.extern := journal.lib pybind11 python
+journal.ext.extern := pybind11 python
 # compiler control
 journal.ext.lib.c++.defines += PYRE_CORE
 journal.ext.lib.c++.flags += $($(compiler.c++).std.c++17)
