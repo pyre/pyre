@@ -13,6 +13,9 @@ namespace pyre::memory {
     // utility that normalizes type access
     template <typename T, bool isConst> class Cell;
 
+    // block on the stack
+    template <int D, typename T, bool isConst> class Stack;
+
     // block on the heap
     template <typename T, bool isConst> class Heap;
 

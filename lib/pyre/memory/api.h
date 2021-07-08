@@ -14,6 +14,13 @@ namespace pyre::memory {
     template <typename T, bool isConst>
     using cell_t = Cell<T, isConst>;
 
+    // block on the stack
+    template <int D, typename T>
+    using stack_t = Stack<D, T, false>;
+    // read-only version
+    template <int D, typename T>
+    using conststack_t = Stack<D, T, true>;
+
     // block on the heap
     template <typename T>
     using heap_t = Heap<T, false>;
