@@ -10,6 +10,7 @@
 
 // standard library
 #include <stdexcept>
+#include <array>
 #include <fstream>
 #include <utility>
 
