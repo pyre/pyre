@@ -344,6 +344,10 @@ class Configurator:
         # make an empty index
         index = collections.OrderedDict()
 
+        # add the {yaml} codec
+        from .yaml import yaml
+        index[yaml.encoding] = yaml
+
         # add the {pfg} codec
         from .pfg import pfg
         index[pfg.encoding] = pfg
