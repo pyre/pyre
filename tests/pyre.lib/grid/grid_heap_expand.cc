@@ -15,7 +15,9 @@ using matrix_t = pyre::grid::grid_t<pyre::grid::canonical_t<2>, pyre::memory::he
 
 
 // example from the spectral expansion step of {ampcor}
-int main(int argc, char * argv[]) {
+int
+main(int argc, char * argv[])
+{
     // initialize the journal
     pyre::journal::init(argc, argv);
     pyre::journal::application("grid_heap_expand");
@@ -25,34 +27,34 @@ int main(int argc, char * argv[]) {
     // pick a dimension for the base array
     const auto dim = 4;
     // our base array is {dim x dim}
-    matrix_t::shape_type shape { dim,dim };
+    matrix_t::shape_type shape { dim, dim };
     // it is packed in column major order with origin at {0,0}
     matrix_t::packing_type layout { shape };
     // make the base matrix
     matrix_t base { layout, layout.cells() };
 
-    // we want to fill each quadrant with different values, so let's start be defining "quadrant"
-    auto quad = shape / 2;  // <- this is {dim/2, dim/2}
+    // we want to fill each quadrant with different values, so let's start by defining "quadrant"
+    auto quad = shape / 2;    // <- this is {dim/2, dim/2}
 
     // go through the four quadrants
-    for (auto t=0; t<2; ++t) {
-        for (auto b=0; b<2; ++b) {
+    for (auto t = 0; t < 2; ++t) {
+        for (auto b = 0; b < 2; ++b) {
             // describe the restricted index range
-            auto box = layout.box( {t*dim/2, b*dim/2}, quad );
+            auto box = layout.box({ t * dim / 2, b * dim / 2 }, quad);
             // loop over it
             for (auto idx : box) {
                 // and set the value
                 // base[idx] = 2*t + b + 1;
-                base[idx] = layout[idx] + 1; // add some spice
+                base[idx] = layout[idx] + 1;    // add some spice
             }
         }
     }
 
     // show me {base}
     channel << "base:" << pyre::journal::newline;
-    for (int i=0; i<shape[0]; ++i) {
-        for (int j=0; j<shape[1]; ++j) {
-            channel << "  " << std::setw(2) << base[{i,j}];
+    for (int i = 0; i < shape[0]; ++i) {
+        for (int j = 0; j < shape[1]; ++j) {
+            channel << "  " << std::setw(2) << base[{ i, j }];
         }
         channel << pyre::journal::newline;
     }
@@ -72,12 +74,12 @@ int main(int argc, char * argv[]) {
     }
 
     // go through the four quadrants
-    for (auto t=0; t<2; ++t) {
-        for (auto b=0; b<2; ++b) {
+    for (auto t = 0; t < 2; ++t) {
+        for (auto b = 0; b < 2; ++b) {
             // the source
-            matrix_t::index_type src { t*dim/2, b*dim/2 };
+            matrix_t::index_type src { t * dim / 2, b * dim / 2 };
             // the shift to the destination
-            matrix_t::index_type shift { t*dim*(ovs-1), b*dim*(ovs-1) };
+            matrix_t::index_type shift { t * dim * (ovs - 1), b * dim * (ovs - 1) };
             // copy
             for (auto idx : layout.box(src, quad)) {
                 expanded[idx + shift] = base[idx];
@@ -87,9 +89,9 @@ int main(int argc, char * argv[]) {
 
     // show me {expanded}
     channel << "expanded:" << pyre::journal::newline;
-    for (int i=0; i<expandedShape[0]; ++i) {
-        for (int j=0; j<expandedShape[1]; ++j) {
-            channel << "  " << std::setw(2) << expanded[{i,j}];
+    for (int i = 0; i < expandedShape[0]; ++i) {
+        for (int j = 0; j < expandedShape[1]; ++j) {
+            channel << "  " << std::setw(2) << expanded[{ i, j }];
         }
         channel << pyre::journal::newline;
     }
