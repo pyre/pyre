@@ -61,6 +61,7 @@ Cpp11BracedListStyle: false
 DeriveLineEnding: false
 DerivePointerAlignment: false
 DisableFormat: false
+FixNamespaceComments: true
 ForEachMacros: [ foreach, Q_FOREACH, BOOST_FOREACH ]
 IncludeBlocks: Preserve
 IndentCaseBlocks: false
