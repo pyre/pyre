@@ -48,7 +48,7 @@ namespace pyre::journal {
     using cmd_t = std::map<cmdname_t, cmdvalue_t>;
 
     // a channel's verbosity level
-    using verbosity_t = size_t;
+    using verbosity_t = int;
 
     // the type of line
     using line_t = string_t;
@@ -69,7 +69,7 @@ namespace pyre::journal {
     // a palette is a map from a metadata key to a color name; it is used by the renderers to
     // colorize the message notes
     using palette_t = std::map<key_t, colorrep_t>;
-}
+}    // namespace pyre::journal
 
 
 #endif
