@@ -9,12 +9,11 @@
 
 
 // information about the location of the channel invocation
-class pyre::journal::Verbosity
-{
+class pyre::journal::Verbosity {
     // types
 public:
     // the verbosity level
-    using verbosity_type = size_t;
+    using verbosity_type = verbosity_t;
 
     // metamethods
 public:
