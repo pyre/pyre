@@ -128,10 +128,10 @@ newline(const Null & null) -> const Null &
 
 
 // the injection operators
-// verbosity level
+// detail level
 constexpr auto
 pyre::journal::
-operator<< (const Null & null, const Verbosity &) -> const Null &
+operator<< (const Null & null, const Detail &) -> const Null &
 {
     // do nothing
     return null;

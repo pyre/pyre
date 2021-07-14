@@ -11,28 +11,25 @@
 
 // accessors
 auto
-pyre::journal::Chronicler::
-verbosity() -> verbosity_type
+pyre::journal::Chronicler::detail() -> detail_type
 {
     // easy enough
-    return _verbosity;
+    return _detail;
 }
 
 
 auto
-pyre::journal::Chronicler::
-verbosity(verbosity_type verbosity) -> verbosity_type
+pyre::journal::Chronicler::detail(detail_type detail) -> detail_type
 {
     // swap
-    std::swap(verbosity, _verbosity);
+    std::swap(detail, _detail);
     // and return the old value
-    return verbosity;
+    return detail;
 }
 
 
 auto
-pyre::journal::Chronicler::
-notes() -> notes_type &
+pyre::journal::Chronicler::notes() -> notes_type &
 {
     // grant access to my global metadata
     return _notes;
@@ -40,8 +37,7 @@ notes() -> notes_type &
 
 
 auto
-pyre::journal::Chronicler::
-device() -> device_type
+pyre::journal::Chronicler::device() -> device_type
 {
     // share my device
     return _device;
@@ -50,8 +46,7 @@ device() -> device_type
 
 // mutators
 void
-pyre::journal::Chronicler::
-device(device_type dev)
+pyre::journal::Chronicler::device(device_type dev)
 {
     // install the user's smart pointer
     _device = dev;
@@ -62,8 +57,7 @@ device(device_type dev)
 
 template <class deviceT, class... Args>
 void
-pyre::journal::Chronicler::
-device(Args&&... args)
+pyre::journal::Chronicler::device(Args &&... args)
 {
     // build a smart pointer to a device and install it
     _device = std::make_shared<deviceT>(std::forward<Args>(args)...);
@@ -74,8 +68,7 @@ device(Args&&... args)
 
 // string -> nameset converter
 auto
-pyre::journal::Chronicler::
-nameset(string_t text) -> nameset_type
+pyre::journal::Chronicler::nameset(string_t text) -> nameset_type
 {
     // make a set
     nameset_type channels;
@@ -98,7 +91,7 @@ nameset(string_t text) -> nameset_type
             break;
         }
         // if found, extract the substring
-        auto channel = text.substr(start, pos-start);
+        auto channel = text.substr(start, pos - start);
         // if it's not empty
         if (!channel.empty()) {
             // add it to the set

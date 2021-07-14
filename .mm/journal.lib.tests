@@ -35,21 +35,21 @@ ansi_emulates.yes.harness := TERM=xterm
 ansi_emulates.yes.argv := 1
 
 
-# the {chronicler_verbosity} has special cases
-tests.journal.lib.chronicler_verbosity.cases := chronicler_verbosity.3 chronicler_verbosity.5
-# set the verbosity to 3
-chronicler_verbosity.3.argv := 3
-chronicler_verbosity.3.harness := JOURNAL_VERBOSITY=3
-# set the verbosity to 5
-chronicler_verbosity.5.argv := 5
-chronicler_verbosity.5.harness := JOURNAL_VERBOSITY=5
+# the {chronicler_detail} has special cases
+tests.journal.lib.chronicler_detail.cases := chronicler_detail.3 chronicler_detail.5
+# set the detail to 3
+chronicler_detail.3.argv := 3
+chronicler_detail.3.harness := JOURNAL_DETAIL=3
+# set the detail to 5
+chronicler_detail.5.argv := 5
+chronicler_detail.5.harness := JOURNAL_DETAIL=5
 
 # the {chronicler_init} test case needs command line arguments
 tests.journal.lib.chronicler_init.cases := chronicler_init.cmdline chronicler_init.envvar
-# set verbosity and channels through the command line
-chronicler_init.cmdline.argv := --journal.verbosity=5 --journal.debug=test.init.one,test.init.two
-# set verbosity and channels through the environment
-chronicler_init.envvar.harness := JOURNAL_VERBOSITY=5 JOURNAL_DEBUG=test.init.one,test.init.two
+# set detail and channels through the command line
+chronicler_init.cmdline.argv := --journal.detail=5 --journal.debug=test.init.one,test.init.two
+# set detail and channels through the environment
+chronicler_init.envvar.harness := JOURNAL_DETAIL=5 JOURNAL_DEBUG=test.init.one,test.init.two
 
 # the {file_sanity} test case must clean up the file it creates
 tests.journal.lib.file_sanity.clean += file_sanity.out

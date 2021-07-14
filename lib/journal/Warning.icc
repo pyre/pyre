@@ -12,8 +12,8 @@
 // metamethods
 template <template <typename> typename proxyT>
 pyre::journal::Warning<proxyT>::
-Warning(const name_type & name, verbosity_type verbosity) :
-    channel_type(name, verbosity)
+Warning(const name_type & name, detail_type detail) :
+    channel_type(name, detail)
 {
     // get my entry
     entry_type & e = this->entry();

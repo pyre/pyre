@@ -15,9 +15,9 @@ void
 pyre::journal::py::firewall(py::module & m)
 {
     // type aliases for the member functions (mfp: method pointer)
-    // verbosity
-    using getVerbosity_mfp = firewall_t::verbosity_type (firewall_t::*)() const;
-    using setVerbosity_mfp = firewall_t & (firewall_t::*) (firewall_t::verbosity_type);
+    // detail
+    using getDetail_mfp = firewall_t::detail_type (firewall_t::*)() const;
+    using setDetail_mfp = firewall_t & (firewall_t::*) (firewall_t::detail_type);
     // active
     using getActive_mfp = firewall_t::active_type (firewall_t::*)() const;
     using setActive_mfp = firewall_t & (firewall_t::*) (firewall_t::active_type);
@@ -38,15 +38,15 @@ pyre::journal::py::firewall(py::module & m)
         // the name; read-only property
         .def_property_readonly("name", &firewall_t::name, "my name")
 
-        // the verbosity level
+        // the detail level
         .def_property(
-            "verbosity",
+            "detail",
             // the getter
-            (getVerbosity_mfp) &firewall_t::verbosity,
+            (getDetail_mfp) &firewall_t::detail,
             // the setter
-            (setVerbosity_mfp) &firewall_t::verbosity,
+            (setDetail_mfp) &firewall_t::detail,
             // the docstring
-            "the verbosity level")
+            "the detail level")
 
         // the channel activation state; mutable property
         .def_property(

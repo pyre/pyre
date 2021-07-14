@@ -27,12 +27,12 @@ int main() {
     // inject something; avoid flushing by using {endl}
     channel
         << pyre::journal::at(__HERE__)
-        << pyre::journal::verbosity(4)
+        << pyre::journal::detail(4)
         << pyre::journal::note("time", "now")
         << "hello world!" << pyre::journal::newline;
 
-    // verify the verbosity level
-    assert (channel.verbosity() == 4);
+    // verify the detail level
+    assert (channel.detail() == 4);
 
     // get the metadata
     auto meta = channel.entry().notes();

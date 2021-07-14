@@ -15,9 +15,9 @@ void
 pyre::journal::py::warning(py::module & m)
 {
     // type aliases for the member functions (mfp: method pointer)
-    // verbosity
-    using getVerbosity_mfp = warning_t::verbosity_type (warning_t::*)() const;
-    using setVerbosity_mfp = warning_t & (warning_t::*) (warning_t::verbosity_type);
+    // detail
+    using getDetail_mfp = warning_t::detail_type (warning_t::*)() const;
+    using setDetail_mfp = warning_t & (warning_t::*) (warning_t::detail_type);
     // active
     using getActive_mfp = warning_t::active_type (warning_t::*)() const;
     using setActive_mfp = warning_t & (warning_t::*) (warning_t::active_type);
@@ -38,15 +38,15 @@ pyre::journal::py::warning(py::module & m)
         // the name; read-only property
         .def_property_readonly("name", &warning_t::name, "my name")
 
-        // the verbosity level
+        // the detail level
         .def_property(
-            "verbosity",
+            "detail",
             // the getter
-            (getVerbosity_mfp) &warning_t::verbosity,
+            (getDetail_mfp) &warning_t::detail,
             // the setter
-            (setVerbosity_mfp) &warning_t::verbosity,
+            (setDetail_mfp) &warning_t::detail,
             // the docstring
-            "the verbosity level")
+            "the detail level")
 
         // the channel activation state; mutable property
         .def_property(

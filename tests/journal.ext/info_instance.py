@@ -16,8 +16,8 @@ def test():
     channel = info(name="tests.journal.info")
     # verify the channel name
     assert channel.name == "tests.journal.info"
-    # the verbosity should be at the default level
-    assert channel.verbosity == 1
+    # the detail should be at the default level
+    assert channel.detail == 1
     # the page should be empty
     assert list(channel.page) == []
     # verify the metadata

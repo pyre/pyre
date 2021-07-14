@@ -18,7 +18,7 @@ public:
     using channel_type = Channel<Informational<proxyT>, proxyT>;
     // my parts
     using name_type = typename channel_type::name_type;
-    using verbosity_type = typename channel_type::verbosity_type;
+    using detail_type = typename channel_type::detail_type;
     using index_type = typename channel_type::index_type;
     using entry_type = typename channel_type::entry_type;
     // my exception
@@ -26,7 +26,7 @@ public:
 
     // metamethods
 public:
-    inline explicit Informational(const name_type & name, verbosity_type = 1);
+    inline explicit Informational(const name_type & name, detail_type = 1);
 
     // implementation details
 public:

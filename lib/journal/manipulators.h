@@ -12,8 +12,7 @@
 // end of transaction
 template <typename severityT, template <class> typename proxyT>
 auto
-pyre::journal::
-endl(Channel<severityT, proxyT> & channel) -> Channel<severityT, proxyT> &
+pyre::journal::endl(Channel<severityT, proxyT> & channel) -> Channel<severityT, proxyT> &
 {
     // ask the channel to record the accumulated message
     return channel.log();
@@ -22,8 +21,7 @@ endl(Channel<severityT, proxyT> & channel) -> Channel<severityT, proxyT> &
 
 template <typename severityT, template <class> typename proxyT>
 auto
-pyre::journal::
-newline(Channel<severityT, proxyT> & channel) -> Channel<severityT, proxyT> &
+pyre::journal::newline(Channel<severityT, proxyT> & channel) -> Channel<severityT, proxyT> &
 {
     // ask the channel entry to mark the end of a line of output
     return channel.line();
@@ -31,15 +29,14 @@ newline(Channel<severityT, proxyT> & channel) -> Channel<severityT, proxyT> &
 
 
 // the injection operators
-// verbosity level
+// detail level
 template <typename severityT, template <class> typename proxyT>
 auto
-pyre::journal::
-operator<< (Channel<severityT, proxyT> & channel, const Verbosity & verbosity)
+pyre::journal::operator<<(Channel<severityT, proxyT> & channel, const Detail & detail)
     -> Channel<severityT, proxyT> &
 {
-    // adjust the verbosity of the channel
-    channel.verbosity(verbosity.verbosity());
+    // adjust the detail of the channel
+    channel.detail(detail.detail());
     // all done
     return channel;
 }
@@ -48,8 +45,7 @@ operator<< (Channel<severityT, proxyT> & channel, const Verbosity & verbosity)
 // location info
 template <typename severityT, template <class> typename proxyT>
 auto
-pyre::journal::
-operator<< (Channel<severityT, proxyT> & channel, const Locator & locator)
+pyre::journal::operator<<(Channel<severityT, proxyT> & channel, const Locator & locator)
     -> Channel<severityT, proxyT> &
 {
     // use the locator information to set channel entry metadata
@@ -65,8 +61,7 @@ operator<< (Channel<severityT, proxyT> & channel, const Locator & locator)
 // metadata
 template <typename severityT, template <class> typename proxyT>
 auto
-pyre::journal::
-operator<< (Channel<severityT, proxyT> & channel, const Note & note)
+pyre::journal::operator<<(Channel<severityT, proxyT> & channel, const Note & note)
     -> Channel<severityT, proxyT> &
 {
     // transfer the note to the current entry
@@ -80,9 +75,9 @@ operator<< (Channel<severityT, proxyT> & channel, const Note & note)
 // this template takes care of {endl}, {newline}, and the stateless manipulators from <iomanip>
 template <typename severityT, template <class> typename proxyT>
 inline auto
-pyre::journal::
-operator<< (Channel<severityT, proxyT> & channel,
-            Channel<severityT, proxyT> & (*manipulator)(Channel<severityT, proxyT> &))
+pyre::journal::operator<<(
+    Channel<severityT, proxyT> & channel,
+    Channel<severityT, proxyT> & (*manipulator)(Channel<severityT, proxyT> &) )
     -> Channel<severityT, proxyT> &
 {
     // invoke the manipulator function with the {channel} as an argument
@@ -93,9 +88,8 @@ operator<< (Channel<severityT, proxyT> & channel,
 // injection of everything else
 template <typename itemT, typename severityT, template <class> typename proxyT>
 auto
-pyre::journal::
-operator<< (Channel<severityT, proxyT> & channel, const itemT & item)
-    -> Channel<severityT,proxyT> &
+pyre::journal::operator<<(Channel<severityT, proxyT> & channel, const itemT & item)
+    -> Channel<severityT, proxyT> &
 {
     // inject the item in the channel and return the channel
     channel.entry().inject(item);
@@ -107,8 +101,7 @@ operator<< (Channel<severityT, proxyT> & channel, const itemT & item)
 // flush with a decorator
 template <typename severityT, template <class> typename proxyT, typename decoratorT>
 auto
-pyre::journal::
-operator<< (Channel<severityT, proxyT> & channel, const Flush<decoratorT> & flush)
+pyre::journal::operator<<(Channel<severityT, proxyT> & channel, const Flush<decoratorT> & flush)
     -> Channel<severityT, proxyT> &
 {
     // inject the decorator
@@ -121,8 +114,7 @@ operator<< (Channel<severityT, proxyT> & channel, const Flush<decoratorT> & flus
 // make a decorator flushable
 template <typename decoratorT>
 auto
-pyre::journal::
-endl(decoratorT decorator) -> Flush<decoratorT>
+pyre::journal::endl(decoratorT decorator) -> Flush<decoratorT>
 {
     // easy enough
     return Flush(decorator);
@@ -130,8 +122,7 @@ endl(decoratorT decorator) -> Flush<decoratorT>
 
 
 // recognize the locator special signature and convert it into a flushable
-auto
-pyre::journal::endl(__HERE_DECL__) -> Flush<Locator>
+auto pyre::journal::endl(__HERE_DECL__) -> Flush<Locator>
 {
     return Flush(Locator(__HERE_ARGS__));
 }

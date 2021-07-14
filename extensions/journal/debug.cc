@@ -15,9 +15,9 @@ void
 pyre::journal::py::debug(py::module & m)
 {
     // type aliases for the member functions (mfp: method pointer)
-    // verbosity
-    using getVerbosity_mfp = debug_t::verbosity_type (debug_t::*)() const;
-    using setVerbosity_mfp = debug_t & (debug_t::*) (debug_t::verbosity_type);
+    // detail
+    using getDetail_mfp = debug_t::detail_type (debug_t::*)() const;
+    using setDetail_mfp = debug_t & (debug_t::*) (debug_t::detail_type);
     // active
     using getActive_mfp = debug_t::active_type (debug_t::*)() const;
     using setActive_mfp = debug_t & (debug_t::*) (debug_t::active_type);
@@ -38,15 +38,15 @@ pyre::journal::py::debug(py::module & m)
         // the name; read-only property
         .def_property_readonly("name", &debug_t::name, "my name")
 
-        // the verbosity level
+        // the detail level
         .def_property(
-            "verbosity",
+            "detail",
             // the getter
-            (getVerbosity_mfp) &debug_t::verbosity,
+            (getDetail_mfp) &debug_t::detail,
             // the setter
-            (setVerbosity_mfp) &debug_t::verbosity,
+            (setDetail_mfp) &debug_t::detail,
             // the docstring
-            "the verbosity level")
+            "the detail level")
 
         // the channel activation state; mutable property
         .def_property(

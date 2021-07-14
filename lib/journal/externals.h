@@ -47,8 +47,8 @@ namespace pyre::journal {
     using cmdvalue_t = string_t;
     using cmd_t = std::map<cmdname_t, cmdvalue_t>;
 
-    // a channel's verbosity level
-    using verbosity_t = int;
+    // a channel's level of detail
+    using detail_t = int;
 
     // the type of line
     using line_t = string_t;

@@ -14,17 +14,17 @@
 using chronicler_t = pyre::journal::chronicler_t;
 
 
-// verify that the verbosity level set in the environment matches what the test harness gave me
+// verify that the detail level set in the environment matches what the test harness gave me
 // on the command line
 int main(int argc, char *argv[]) {
     // make sure we get one command line argument
     assert (argc == 2);
-    // get the verbosity
-    auto verbosity = chronicler_t::verbosity();
+    // get the detail
+    auto detail = chronicler_t::detail();
     // interpret the command line argument as the intended level
-    pyre::journal::verbosity_t expected = std::atoi(argv[1]);
+    pyre::journal::detail_t expected = std::atoi(argv[1]);
     // verify they match
-    assert (verbosity == expected);
+    assert (detail == expected);
 
     // all done
     return 0;

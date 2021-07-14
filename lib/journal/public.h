@@ -25,7 +25,7 @@
 // message entry
 #include "Entry.h"
 // message metadata
-#include "Verbosity.h"
+#include "Detail.h"
 #include "Locator.h"
 #include "Note.h"
 #include "Flush.h"
@@ -76,8 +76,7 @@
 
 // the convenience initializer
 void
-pyre::journal::
-init(int argc, char* argv[])
+pyre::journal::init(int argc, char * argv[])
 {
     // ask {chronicler} to do this
     pyre::journal::chronicler_t::init(argc, argv);
@@ -88,8 +87,7 @@ init(int argc, char* argv[])
 
 // register the application name with the chronicler
 void
-pyre::journal::
-application(const value_t & name)
+pyre::journal::application(const value_t & name)
 {
     // get the global metadata
     auto & notes = chronicler_t::notes();
@@ -103,8 +101,7 @@ application(const value_t & name)
 
 // install the trash can as the global device
 void
-pyre::journal::
-quiet()
+pyre::journal::quiet()
 {
     // forward to the {chronicler_t}
     chronicler_t::quiet();
@@ -115,8 +112,7 @@ quiet()
 
 // send all channel output to a log file
 void
-pyre::journal::
-logfile(const path_t & name)
+pyre::journal::logfile(const path_t & name)
 {
     // create the device and register it with the chronicler
     chronicler_t::device<file_t>(name);

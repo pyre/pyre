@@ -16,8 +16,8 @@ def test():
     channel = journal.info(name="tests.journal.info")
     # verify the channel name
     assert channel.name == "tests.journal.info"
-    # the verbosity should be at the default level
-    assert channel.verbosity == 1
+    # the detail should be at the default level
+    assert channel.detail == 1
     # the channel should be active
     assert channel.active == True
     # and non fatal

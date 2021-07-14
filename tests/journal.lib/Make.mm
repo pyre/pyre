@@ -124,7 +124,7 @@ TESTS = \
 SPECIAL_TESTS = \
     ansi_emulates \
     chronicler_init \
-    chronicler_verbosity \
+    chronicler_detail \
 
 PROJ_LCC_LIBPATH = $(PROJ_LIBDIR)
 PROJ_LCXX_LIBPATH = $(PROJ_LIBDIR)
@@ -141,11 +141,11 @@ test: $(TESTS) $(SPECIAL_TESTS)
 	@echo "    ansi_emulates foo"; TERM=foo ./ansi_emulates 0
 	@echo "    ansi_emulates xterm"; TERM=xterm ./ansi_emulates 1
 	@echo "    chronicler_init"; \
-            JOURNAL_VERBOSITY=5 JOURNAL_DEBUG=test.init.one,test.init.two \
+            JOURNAL_DETAIL=5 JOURNAL_DEBUG=test.init.one,test.init.two \
             ./chronicler_init \
-            --journal.verbosity=5 --journal.debug=test.init.one,test.init.two
-	@echo "    chronicler_verbosity 3"; JOURNAL_VERBOSITY=3 ./chronicler_verbosity 3
-	@echo "    chronicler_verbosity 5"; JOURNAL_VERBOSITY=5 ./chronicler_verbosity 5
+            --journal.detail=5 --journal.debug=test.init.one,test.init.two
+	@echo "    chronicler_detail 3"; JOURNAL_DETAIL=3 ./chronicler_detail 3
+	@echo "    chronicler_detail 5"; JOURNAL_DETAIL=5 ./chronicler_detail 5
 
 # build
 %: %.c

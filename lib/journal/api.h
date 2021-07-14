@@ -11,7 +11,7 @@
 // end user facing api
 namespace pyre::journal {
     // the initializer of the global settings
-    inline void init(int argc, char* argv[]);
+    inline void init(int argc, char * argv[]);
     // registration of the application name; {value_t} is normally an {std::string}
     inline void application(const value_t & name);
     // turn all channel output off
@@ -39,8 +39,8 @@ namespace pyre::journal {
     // manipulators
     using at = Locator;
     using note = Note;
-    using verbosity = Verbosity;
-}
+    using detail = Detail;
+}    // namespace pyre::journal
 
 
 // the developer facing api
@@ -69,10 +69,10 @@ namespace pyre::journal {
     // otherwise, this is a production build
 #else
     // disable the developer channels
-    using debug_t =  null_t;
+    using debug_t = null_t;
     using firewall_t = null_t;
 #endif
-}
+}    // namespace pyre::journal
 
 
 // low level api; chances are good you shouldn't access these directly
@@ -109,7 +109,7 @@ namespace pyre::journal {
     using ascii_t = ASCII;
     using csi_t = CSI;
     using ansi_t = ANSI;
-}
+}    // namespace pyre::journal
 
 
 #endif

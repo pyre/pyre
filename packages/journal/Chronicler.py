@@ -18,16 +18,16 @@ class Chronicler(metaclass=pyre.patterns.singleton):
     # public data
     notes = None
     device = None
-    verbosity = 1
+    detail = 1
 
 
     # metamethods
-    def __init__(self, verbosity=verbosity, device=device, notes=notes, **kwds):
+    def __init__(self, detail=detail, device=device, notes=notes, **kwds):
         # chain up
         super().__init__(**kwds)
 
-        # the default verbosity
-        self.verbosity = verbosity
+        # the default detail
+        self.detail = detail
 
         # the global metadata; can't be empty
         self.notes = notes if notes is not None else {

@@ -12,10 +12,10 @@
 // metamethods
 template <typename severityT, template <typename> typename proxyT>
 pyre::journal::Channel<severityT, proxyT>::
-Channel(const name_type & name, verbosity_type verbosity) :
+Channel(const name_type & name, detail_type detail) :
     proxy_type(_index.lookup(name)),
     _name{ name },
-    _verbosity{ verbosity },
+    _detail{ detail },
     _entry{}
 {
     // get my entry
@@ -39,10 +39,10 @@ name() const -> const name_type &
 template <typename severityT, template <typename> typename proxyT>
 auto
 pyre::journal::Channel<severityT, proxyT>::
-verbosity() const -> verbosity_type
+detail() const -> detail_type
 {
     // easy enough
-    return _verbosity;
+    return _detail;
 }
 
 
@@ -60,10 +60,10 @@ entry() const -> entry_const_reference
 template <typename severityT, template <typename> typename proxyT>
 auto
 pyre::journal::Channel<severityT, proxyT>::
-verbosity(verbosity_type verbosity) -> severity_reference
+detail(detail_type detail) -> severity_reference
 {
-    // adjust my verbosity
-    _verbosity = verbosity;
+    // adjust my detail
+    _detail = detail;
     // enable chaining
     return static_cast<severity_reference>(*this);
 }
@@ -139,8 +139,8 @@ commit() -> severity_reference
         return self;
     }
 
-    // if my verbosity exceeds the maximum
-    if (_verbosity > chronicler_t::verbosity()) {
+    // if my detail exceeds the maximum
+    if (_detail > chronicler_t::detail()) {
         // nothing to do
         return self;
     }
