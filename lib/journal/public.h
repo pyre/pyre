@@ -61,6 +61,7 @@
 #include "Informational.h"
 #include "Warning.h"
 #include "Error.h"
+#include "Help.h"
 // developer facing
 #include "Debug.h"
 #include "Firewall.h"

@@ -94,6 +94,10 @@ namespace pyre::journal {
     template <template <typename> typename proxyT>
     class Error;
 
+    // the help channel
+    template <template <typename> typename proxyT>
+    class Help;
+
     // developer facing
     // debug
     template <template <typename> typename proxyT>
