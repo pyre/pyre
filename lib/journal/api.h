@@ -40,6 +40,8 @@ namespace pyre::journal {
     using at = Locator;
     using note = Note;
     using detail = Detail;
+    // the backwards compatible api; deprecated, and will be removed in 2.0
+    using verbosity = Detail;
 }    // namespace pyre::journal
 
 
