@@ -23,6 +23,7 @@ namespace pyre::journal {
     using info_t = Informational<InventoryProxy>;
     using warning_t = Warning<InventoryProxy>;
     using error_t = Error<InventoryProxy>;
+    using help_t = Help<InventoryProxy>;
 
     // the keeper of the global settings
     using chronicler_t = Chronicler;
