@@ -12,8 +12,8 @@
 
 // add bindings to the inventory
 void
-pyre::journal::py::
-devices(py::module & m) {
+pyre::journal::py::devices(py::module & m)
+{
     // the base device
     py::class_<device_t, device_t::pointer_type>(m, "Device")
         // accessor

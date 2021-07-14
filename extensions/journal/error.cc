@@ -15,9 +15,9 @@ void
 pyre::journal::py::error(py::module & m)
 {
     // type aliases for the member functions (mfp: method pointer)
-    // verbosity
-    using getVerbosity_mfp = error_t::verbosity_type (error_t::*)() const;
-    using setVerbosity_mfp = error_t & (error_t::*) (error_t::verbosity_type);
+    // detail
+    using getDetail_mfp = error_t::detail_type (error_t::*)() const;
+    using setDetail_mfp = error_t & (error_t::*) (error_t::detail_type);
     // active
     using getActive_mfp = error_t::active_type (error_t::*)() const;
     using setActive_mfp = error_t & (error_t::*) (error_t::active_type);
@@ -38,15 +38,15 @@ pyre::journal::py::error(py::module & m)
         // the name; read-only property
         .def_property_readonly("name", &error_t::name, "my name")
 
-        // the verbosity level
+        // the detail level
         .def_property(
-            "verbosity",
+            "detail",
             // the getter
-            (getVerbosity_mfp) &error_t::verbosity,
+            (getDetail_mfp) &error_t::detail,
             // the setter
-            (setVerbosity_mfp) &error_t::verbosity,
+            (setDetail_mfp) &error_t::detail,
             // the docstring
-            "the verbosity level")
+            "the detail level")
 
         // the channel activation state; mutable property
         .def_property(

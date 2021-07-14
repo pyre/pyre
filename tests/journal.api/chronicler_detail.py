@@ -7,7 +7,7 @@
 
 def test():
     """
-    Verify that we can control the global verbosity threshold
+    Verify that we can control the global detail threshold
     """
     # access
     import journal
@@ -15,12 +15,12 @@ def test():
     # get the global state
     chronicler = journal.chronicler
 
-    # verify that the verbosity level is at its default value
-    assert chronicler.verbosity == 1
+    # verify that the detail level is at its default value
+    assert chronicler.detail == 1
     # set it to some other value
-    chronicler.verbosity = 5
+    chronicler.detail = 5
     # verify the assignment sticks
-    assert chronicler.verbosity == 5
+    assert chronicler.detail == 5
 
     # all done
     return

@@ -33,7 +33,7 @@ class Channel(pyre.patterns.named):
 
 
     # public data
-    verbosity = 1           # default verbosity
+    detail = 1           # default detail
 
 
     # access to settings from my shared inventory
@@ -250,12 +250,12 @@ class Channel(pyre.patterns.named):
 
 
     # metamethods
-    def __init__(self, name, verbosity=verbosity, **kwds):
+    def __init__(self, name, detail=detail, **kwds):
         # chain up
         super().__init__(name=name, **kwds)
 
-        # set my verbosity
-        self.verbosity = verbosity
+        # set my detail
+        self.detail = detail
         # look up my inventory
         self.inventory = self.index.lookup(name)
         # start out with an empty entry
@@ -315,8 +315,8 @@ class Channel(pyre.patterns.named):
             # nothing to do
             return self
 
-        # if my verbosity exceeds the maximum
-        if self.verbosity > self.chronicler.verbosity:
+        # if my detail exceeds the maximum
+        if self.detail > self.chronicler.detail:
             # nothing to do
             return self
 

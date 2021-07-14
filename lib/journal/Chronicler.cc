@@ -46,20 +46,23 @@ using chronicler_t = pyre::journal::chronicler_t;
 
 
 // helpers
-static chronicler_t::notes_type initializeGlobals();
-static chronicler_t::verbosity_type initializeVerbosity();
+static chronicler_t::notes_type
+initializeGlobals();
+static chronicler_t::detail_type
+initializeDetail();
 
 
 // the initializer
 void
-chronicler_t::init(int argc, char* argv[]) {
+chronicler_t::init(int argc, char * argv[])
+{
     // our marker
     string_type marker("--journal.");
     // the table of parsed arguments
     cmd_type commands;
 
     // go trough the arguments
-    for (int i=0; i<argc; ++i) {
+    for (int i = 0; i < argc; ++i) {
         // convert into a string
         string_type arg(argv[i]);
         // filter the ones that are for me
@@ -71,20 +74,25 @@ chronicler_t::init(int argc, char* argv[]) {
             // extract the name part
             auto name = cmd.substr(0, sep);
             // and the value part
-            auto value = (sep != string_t::npos) ? cmd.substr(sep+1, string_t::npos) : "";
+            auto value = (sep != string_t::npos) ? cmd.substr(sep + 1, string_t::npos) : "";
             // put them in the table
             commands[name] = value;
         }
     }
 
-    // check for verbosity
-    auto & verb = commands["verbosity"];
+    // check for detail
+    const auto & level = commands["detail"];
     // if there
-    if (!verb.empty()) {
-        // extract
-        int v = std::strtol(verb.c_str(), nullptr, 10);
-        // set it
-        verbosity(v);
+    if (!level.empty()) {
+        // attempt to
+        try {
+            // extract and set it
+            detail(std::stoi(level));
+        }
+        // if anything goes wrong
+        catch (...) {
+            // ignore it
+        }
     }
 
     // check for debug channels
@@ -114,13 +122,14 @@ chronicler_t::quiet()
 
 
 // data
-chronicler_t::verbosity_type chronicler_t::_verbosity { initializeVerbosity() };
+chronicler_t::detail_type chronicler_t::_detail { initializeDetail() };
 chronicler_t::notes_type chronicler_t::_notes { initializeGlobals() };
 chronicler_t::device_type chronicler_t::_device { std::make_shared<console_t>() };
 
 
 // implementation details
-chronicler_t::notes_type initializeGlobals()
+chronicler_t::notes_type
+initializeGlobals()
 {
     // make a table
     chronicler_t::notes_type table;
@@ -134,29 +143,28 @@ chronicler_t::notes_type initializeGlobals()
 }
 
 
-chronicler_t::verbosity_type initializeVerbosity()
+chronicler_t::detail_type
+initializeDetail()
 {
     // establish the default severity level
-    pyre::journal::verbosity_t level = 1;
+    pyre::journal::detail_t level = 1;
 
-    // read the {JOURNAL_VERB} environment variable
-    auto setting = std::getenv("JOURNAL_VERBOSITY");
-    // if it doesn't exist
-    if (setting == nullptr) {
-        // go with our default
-        return level;
-    }
-    // otherwise, attempt to convert to a {verbosity_t}
-    auto status = std::strtol(setting, nullptr, 10);
-    // if the conversion failed
-    if (status == 0) {
-        // go with our default
-        return level;
+    // try to read the {JOURNAL_DETAIL} environment variable
+    const char * setting = std::getenv("JOURNAL_DETAIL");
+    // if there
+    if (setting != nullptr) {
+        // attempt to convert to a {detail_t}
+        auto status = std::strtol(setting, nullptr, 10);
+        // if the conversion succeeded
+        if (status != 0) {
+            // save it
+            level = status;
+        }
     }
 
-    // otherwise, use the converted value as the new level; note that this implementation makes
-    // it impossible to set the verbosity level to zero from the environment
-    return status;
+    // return the detail level; note that this implementation makes it impossible to set
+    // its value to zero from the environment
+    return level;
 }
 
 

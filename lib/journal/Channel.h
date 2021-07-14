@@ -18,8 +18,8 @@ public:
     using severity_type = severityT;
     using severity_reference = severity_type &;
 
-    // my verbosity
-    using verbosity_type = verbosity_t;
+    // my detail
+    using detail_type = detail_t;
 
     // access to my shared state
     using proxy_type = proxyT<severityT>;
@@ -46,18 +46,18 @@ public:
 
     // metamethods
 public:
-    inline Channel(const name_type &, verbosity_type = 1);
+    inline Channel(const name_type &, detail_type = 1);
 
     // accessors
 public:
     inline auto name() const -> const name_type &;
-    inline auto verbosity() const -> verbosity_type;
+    inline auto detail() const -> detail_type;
     inline auto entry() const -> entry_const_reference;
 
     // mutators
 public:
-    // verbosity
-    inline auto verbosity(verbosity_type) -> severity_reference;
+    // detail
+    inline auto detail(detail_type) -> severity_reference;
     // read/write access to my current journal entry
     inline auto entry() -> entry_reference;
 
@@ -91,7 +91,7 @@ private:
     // implementation details: data
 private:
     name_type _name;
-    verbosity_type _verbosity;
+    detail_type _detail;
     entry_type _entry;
 
     // implementation details: static data
