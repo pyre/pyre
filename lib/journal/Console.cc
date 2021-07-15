@@ -41,13 +41,10 @@ using ansi_t = pyre::journal::ansi_t;
 
 // metamethods
 // constructor
-pyre::journal::Console::
-Console() :
-    Stream("cout", std::cout),
-    _tty(isatty(1) == 1)
+pyre::journal::Console::Console() : Stream("cout", std::cout), _tty(isatty(1) == 1)
 {
     // if i am connected to a compatible terminal
-    if (_tty && ansi_t::compatible())  {
+    if (_tty && ansi_t::compatible()) {
         // populate my palette with some colors
         // put things back to normal
         _palette["reset"] = ansi_t::x11("normal");
@@ -57,6 +54,7 @@ Console() :
         _palette["info"] = ansi_t::x11("forest green");
         _palette["warning"] = ansi_t::x11("orange");
         _palette["error"] = ansi_t::x11("red");
+        _palette["help"] = ansi_t::x11("cyan");
         _palette["debug"] = ansi_t::x11("cornflower blue");
         _palette["firewall"] = ansi_t::x11("fuchsia");
         // the page body
@@ -66,9 +64,7 @@ Console() :
 
 
 // destructor
-pyre::journal::Console::
-~Console()
-{}
+pyre::journal::Console::~Console() {}
 
 
 // end of file
