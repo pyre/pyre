@@ -31,6 +31,7 @@ tests.journal.pkg.firewall_file.clean := firewall_file.log
 tests.journal.pkg.error_file.clean := error_file.log
 tests.journal.pkg.info_file.clean := info_file.log
 tests.journal.pkg.warning_file.clean := warning_file.log
+tests.journal.pkg.help_file.clean := help_file.log
 
 
 # end of file

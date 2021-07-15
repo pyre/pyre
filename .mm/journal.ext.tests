@@ -23,5 +23,6 @@ tests.journal.ext.firewall_file.clean += "firewall_file.log"
 tests.journal.ext.error_file.clean += "error_file.log"
 tests.journal.ext.info_file.clean += "info_file.log"
 tests.journal.ext.warning_file.clean += "warning_file.log"
+tests.journal.ext.help_file.clean += "help_file.log"
 
 # end of file

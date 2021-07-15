@@ -57,12 +57,13 @@ tests.journal.lib.file_sanity.clean += file_sanity.out
 # the {file_example} test case must clean up the file it creates
 tests.journal.lib.file_example.clean += file_example.out
 
-# the tests that send channel out put to a log file must clean up
+# the tests that send channel output to a log file must clean up
 tests.journal.lib.api_file.clean += api_file.log
 tests.journal.lib.debug_file.clean += debug_file.log
 tests.journal.lib.firewall_file.clean += firewall_file.log
 tests.journal.lib.error_file.clean += error_file.log
 tests.journal.lib.info_file.clean += info_file.log
 tests.journal.lib.warning_file.clean += warning_file.log
+tests.journal.lib.help_file.clean += help_file.log
 
 # end of file
