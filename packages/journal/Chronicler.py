@@ -18,14 +18,17 @@ class Chronicler(metaclass=pyre.patterns.singleton):
     # public data
     notes = None
     device = None
+    decor = 1
     detail = 1
 
 
     # metamethods
-    def __init__(self, detail=detail, device=device, notes=notes, **kwds):
+    def __init__(self, decor=decor, detail=detail, device=device, notes=notes, **kwds):
         # chain up
         super().__init__(**kwds)
 
+        # the default decor
+        self.decor = decor
         # the default detail
         self.detail = detail
 
