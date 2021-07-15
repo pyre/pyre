@@ -20,18 +20,20 @@ public:
 protected:
     virtual void header(palette_type &, linebuf_type &, const entry_type &) const override;
     virtual void body(palette_type &, linebuf_type &, const entry_type &) const override;
+    virtual void footer(palette_type &, linebuf_type &, const entry_type &) const override;
 
     // configuration
-    // MGA: currently hardwired until we have a good solution
 private:
-    const char * _marker = "";
+    const line_type _headerMarker { " >> " };
+    const line_type _bodyMarker { " -- " };
+    const line_type _footerMarker { " .. " };
 
     // disallow
 private:
     Alert(const Alert &) = delete;
     Alert(const Alert &&) = delete;
-    const Alert & operator= (const Alert &) = delete;
-    const Alert & operator= (const Alert &&) = delete;
+    const Alert & operator=(const Alert &) = delete;
+    const Alert & operator=(const Alert &&) = delete;
 };
 
 
