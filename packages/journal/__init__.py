@@ -52,6 +52,7 @@ if without_libjournal:
     from .Informational import Informational as info
     from .Warning import Warning as warning
     from .Error import Error as error
+    from .Help import Help as help
 
 
     # convenience function to set the application name
@@ -112,6 +113,7 @@ else:
     info = libjournal.Informational
     warning = libjournal.Warning
     error = libjournal.Error
+    help = libjournal.Help
 
 
 # administrative

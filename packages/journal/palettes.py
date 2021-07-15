@@ -16,6 +16,7 @@ null = {
     "info": "",
     "warning": "",
     "error": "",
+    "help": "",
     "body": "",
     }
 
@@ -29,6 +30,7 @@ light = {
     "info": ANSI.x11(name="forest green"),
     "warning": ANSI.x11(name="orange"),
     "error": ANSI.x11(name="red"),
+    "help": ANSI.x11(name="cyan"),
     "body": ANSI.x11(name="normal"),
     }
 
@@ -42,6 +44,7 @@ dark = {
     "info": ANSI.x11(name="forest green"),
     "warning": ANSI.x11(name="orange"),
     "error": ANSI.x11(name="red"),
+    "help": ANSI.x11(name="cyan"),
     "body": ANSI.x11(name="normal"),
 }
 
