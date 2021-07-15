@@ -11,12 +11,11 @@
 
 // metamethods
 template <typename severityT, template <typename> typename proxyT>
-pyre::journal::Channel<severityT, proxyT>::
-Channel(const name_type & name, detail_type detail) :
+pyre::journal::Channel<severityT, proxyT>::Channel(const name_type & name, detail_type detail) :
     proxy_type(_index.lookup(name)),
-    _name{ name },
-    _detail{ detail },
-    _entry{}
+    _name { name },
+    _detail { detail },
+    _entry {}
 {
     // get my entry
     entry_type & e = entry();
@@ -28,8 +27,7 @@ Channel(const name_type & name, detail_type detail) :
 // accessors
 template <typename severityT, template <typename> typename proxyT>
 auto
-pyre::journal::Channel<severityT, proxyT>::
-name() const -> const name_type &
+pyre::journal::Channel<severityT, proxyT>::name() const -> const name_type &
 {
     // easy enough
     return _name;
@@ -38,8 +36,7 @@ name() const -> const name_type &
 
 template <typename severityT, template <typename> typename proxyT>
 auto
-pyre::journal::Channel<severityT, proxyT>::
-detail() const -> detail_type
+pyre::journal::Channel<severityT, proxyT>::detail() const -> detail_type
 {
     // easy enough
     return _detail;
@@ -48,8 +45,7 @@ detail() const -> detail_type
 
 template <typename severityT, template <typename> typename proxyT>
 auto
-pyre::journal::Channel<severityT, proxyT>::
-entry() const -> entry_const_reference
+pyre::journal::Channel<severityT, proxyT>::entry() const -> entry_const_reference
 {
     // easy enough
     return _entry;
@@ -59,8 +55,7 @@ entry() const -> entry_const_reference
 // mutators
 template <typename severityT, template <typename> typename proxyT>
 auto
-pyre::journal::Channel<severityT, proxyT>::
-detail(detail_type detail) -> severity_reference
+pyre::journal::Channel<severityT, proxyT>::detail(detail_type detail) -> severity_reference
 {
     // adjust my detail
     _detail = detail;
@@ -71,8 +66,7 @@ detail(detail_type detail) -> severity_reference
 
 template <typename severityT, template <typename> typename proxyT>
 auto
-pyre::journal::Channel<severityT, proxyT>::
-entry() -> entry_reference
+pyre::journal::Channel<severityT, proxyT>::entry() -> entry_reference
 {
     // easy enough
     return _entry;
@@ -82,8 +76,7 @@ entry() -> entry_reference
 // injection support
 template <typename severityT, template <typename> typename proxyT>
 auto
-pyre::journal::Channel<severityT, proxyT>::
-line() -> severity_reference
+pyre::journal::Channel<severityT, proxyT>::line() -> severity_reference
 {
     // ask my entry to move the contents of its accumulator to the page
     _entry.push();
@@ -94,27 +87,26 @@ line() -> severity_reference
 
 template <typename severityT, template <typename> typename proxyT>
 auto
-pyre::journal::Channel<severityT, proxyT>::
-log() -> severity_reference
+pyre::journal::Channel<severityT, proxyT>::log() -> severity_reference
 {
-     // if there's anything in the entry buffer
-     if (!_entry.buffer().str().empty()) {
-         // move it to the page
-         _entry.push();
-     }
+    // if there's anything in the entry buffer
+    if (!_entry.buffer().str().empty()) {
+        // move it to the page
+        _entry.push();
+    }
 
-     // very carefully
-     try {
-          // write the journal entry to the device
-          commit();
-     }
-     // fatal channels raise exceptions
-     catch (...) {
-         // clean up the page
-         _entry.flush();
-         // and raise the exception again
-         throw;
-     }
+    // very carefully
+    try {
+        // write the journal entry to the device
+        commit();
+    }
+    // fatal channels raise exceptions
+    catch (...) {
+        // clean up the page
+        _entry.flush();
+        // and raise the exception again
+        throw;
+    }
 
     // clean up the page, but not the metadata; metadata accumulate for the lifetime of a
     // channel instance, so they can be set whenever the information becomes available
@@ -127,8 +119,7 @@ log() -> severity_reference
 
 template <typename severityT, template <typename> typename proxyT>
 auto
-pyre::journal::Channel<severityT, proxyT>::
-commit() -> severity_reference
+pyre::journal::Channel<severityT, proxyT>::commit() -> severity_reference
 {
     // me as a {severity_reference}; this works trivially because of crtp
     severity_reference self = static_cast<severity_reference>(*this);
@@ -162,8 +153,7 @@ commit() -> severity_reference
 // static interface
 template <typename severityT, template <typename> typename proxyT>
 auto
-pyre::journal::Channel<severityT, proxyT>::
-index() -> index_reference
+pyre::journal::Channel<severityT, proxyT>::index() -> index_reference
 {
     // grant access to the default inventory
     return _index;
@@ -172,8 +162,7 @@ index() -> index_reference
 
 template <typename severityT, template <typename> typename proxyT>
 auto
-pyre::journal::Channel<severityT, proxyT>::
-initializeIndex() -> index_type
+pyre::journal::Channel<severityT, proxyT>::initializeIndex() -> index_type
 {
     // make a default index
     return index_type(true, false);
@@ -183,8 +172,7 @@ initializeIndex() -> index_type
 // bulk channel activation
 template <typename severityT, template <typename> typename proxyT>
 void
-pyre::journal::Channel<severityT, proxyT>::
-activateChannels(const nameset_type & names)
+pyre::journal::Channel<severityT, proxyT>::activateChannels(const nameset_type & names)
 {
     // go through the names in the set
     for (auto & name : names) {
@@ -201,8 +189,7 @@ activateChannels(const nameset_type & names)
 // send all output to the trash
 template <typename severityT, template <typename> typename proxyT>
 void
-pyre::journal::Channel<severityT, proxyT>::
-quiet()
+pyre::journal::Channel<severityT, proxyT>::quiet()
 {
     // make a trash can
     auto trashcan = std::make_shared<trash_t>();
@@ -216,8 +203,7 @@ quiet()
 // send all output to a file with the given name
 template <typename severityT, template <typename> typename proxyT>
 void
-pyre::journal::Channel<severityT, proxyT>::
-logfile(const path_t & name)
+pyre::journal::Channel<severityT, proxyT>::logfile(const path_t & name)
 {
     // make a file
     auto logfile = std::make_shared<file_t>(name);
@@ -230,8 +216,7 @@ logfile(const path_t & name)
 
 template <typename severityT, template <typename> typename proxyT>
 auto
-pyre::journal::Channel<severityT, proxyT>::
-_initializeIndex() -> index_type
+pyre::journal::Channel<severityT, proxyT>::_initializeIndex() -> index_type
 {
     // ask my {severity} to do it
     return severity_type::initializeIndex();

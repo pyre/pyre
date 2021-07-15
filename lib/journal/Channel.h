@@ -10,8 +10,7 @@
 
 // the base journal channel
 template <typename severityT, template <class> typename proxyT>
-class pyre::journal::Channel : public proxyT<severityT>
-{
+class pyre::journal::Channel : public proxyT<severityT> {
     // types
 public:
     // my severity
