@@ -83,14 +83,29 @@ chronicler_t::init(int argc, char * argv[])
         }
     }
 
-    // check for detail
-    const auto & level = commands["detail"];
+    // check for decor
+    const auto & decoLevel = commands["decor"];
     // if there
-    if (!level.empty()) {
+    if (!decoLevel.empty()) {
         // attempt to
         try {
             // extract and set it
-            detail(std::stoi(level));
+            decor(std::stoi(decoLevel));
+        }
+        // if anything goes wrong
+        catch (...) {
+            // ignore it
+        }
+    }
+
+    // check for detail
+    const auto & detailLevel = commands["detail"];
+    // if there
+    if (!detailLevel.empty()) {
+        // attempt to
+        try {
+            // extract and set it
+            detail(std::stoi(detailLevel));
         }
         // if anything goes wrong
         catch (...) {
