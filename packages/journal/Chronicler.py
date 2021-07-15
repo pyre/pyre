@@ -37,7 +37,7 @@ class Chronicler(metaclass=pyre.patterns.singleton):
             "application": "journal",  # this key is required; applications should override
             }
 
-        # if whoever initialized the journal did not expressed an opinion regarding the device
+        # if whoever initialized the journal did not express an opinion regarding the device
         if device is None:
             # grab the console
             from .Console import Console as cout
