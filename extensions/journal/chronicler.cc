@@ -17,6 +17,16 @@ pyre::journal::py::chronicler(py::module & m)
     // the chronicler interface
     py::class_<chronicler_t>(m, "Chronicler")
         // accessors
+        // decor
+        .def_property_static(
+            "decor",
+            // the getter
+            [](py::object) { return chronicler_t::decor(); },
+            // the setter
+            [](py::object, chronicler_t::detail_type decor) { chronicler_t::decor(decor); },
+            // the docstring
+            "access the message decoration level")
+
         // detail
         .def_property_static(
             "detail",
