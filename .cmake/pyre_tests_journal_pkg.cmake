@@ -71,6 +71,17 @@ pyre_test_python_testcase(journal.pkg/firewall_sanity.py)
 pyre_test_python_testcase(journal.pkg/index_cascade.py)
 pyre_test_python_testcase(journal.pkg/index_lookup.py)
 pyre_test_python_testcase(journal.pkg/index_sanity.py)
+pyre_test_python_testcase(journal.pkg/help_cascade.py)
+pyre_test_python_testcase(journal.pkg/help_empty.py)
+pyre_test_python_testcase(journal.pkg/help_example.py)
+pyre_test_python_testcase(journal.pkg/help_example_fatal.py)
+pyre_test_python_testcase(journal.pkg/help_file.py)
+pyre_test_python_testcase(journal.pkg/help_flush.py)
+pyre_test_python_testcase(journal.pkg/help_inject.py)
+pyre_test_python_testcase(journal.pkg/help_instance.py)
+pyre_test_python_testcase(journal.pkg/help_loop.py)
+pyre_test_python_testcase(journal.pkg/help_quiet.py)
+pyre_test_python_testcase(journal.pkg/help_sanity.py)
 pyre_test_python_testcase(journal.pkg/info_cascade.py)
 pyre_test_python_testcase(journal.pkg/info_empty.py)
 pyre_test_python_testcase(journal.pkg/info_example.py)
@@ -131,6 +142,14 @@ add_test(NAME journal.pkg.firewall_file.cleanup
   )
 set_property(TEST journal.pkg.firewall_file.cleanup PROPERTY
   DEPENDS journal.pkg.firewall_file.py
+  )
+
+add_test(NAME journal.pkg.help_file.cleanup
+  COMMAND ${BASH_PROGRAM} -c "rm help_file.log"
+  WORKING_DIRECTORY ${PYRE_TESTSUITE_DIR}/journal.pkg
+  )
+set_property(TEST journal.pkg.help_file.cleanup PROPERTY
+  DEPENDS journal.pkg.help_file.py
   )
 
 add_test(NAME journal.pkg.info_file.cleanup

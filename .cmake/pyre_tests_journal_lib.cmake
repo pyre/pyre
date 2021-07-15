@@ -91,6 +91,15 @@ pyre_test_driver(journal.lib/index_contains.cc)
 pyre_test_driver(journal.lib/index_iter.cc)
 pyre_test_driver(journal.lib/index_lookup.cc)
 pyre_test_driver(journal.lib/index_sanity.cc)
+pyre_test_driver(journal.lib/help_cascade.cc)
+pyre_test_driver(journal.lib/help_empty.cc)
+pyre_test_driver(journal.lib/help_example.cc)
+pyre_test_driver(journal.lib/help_example_fatal.cc)
+pyre_test_driver(journal.lib/help_file.cc)
+pyre_test_driver(journal.lib/help_loop.cc)
+pyre_test_driver(journal.lib/help_nolocator.cc)
+pyre_test_driver(journal.lib/help_quiet.cc)
+pyre_test_driver(journal.lib/help_shared.cc)
 pyre_test_driver(journal.lib/info_cascade.cc)
 pyre_test_driver(journal.lib/info_empty.cc)
 pyre_test_driver(journal.lib/info_example.cc)
@@ -149,6 +158,13 @@ add_test(NAME journal.lib.firewall_file.cleanup
   )
 set_property(TEST journal.lib.firewall_file.cleanup PROPERTY
   DEPENDS journal.lib.firewall_file.cc
+  )
+
+add_test(NAME journal.lib.help_file.cleanup
+  COMMAND ${BASH_PROGRAM} -c "rm help_file.log"
+  )
+set_property(TEST journal.lib.help_file.cleanup PROPERTY
+  DEPENDS journal.lib.help_file.cc
   )
 
 add_test(NAME journal.lib.info_file.cleanup
