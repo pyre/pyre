@@ -8,7 +8,7 @@
 #define pyre_journal_public_h
 
 
-// external packagesvap
+// external packages
 #include "externals.h"
 // get the forward declarations
 #include "forward.h"
