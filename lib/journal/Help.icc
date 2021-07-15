@@ -17,7 +17,7 @@ pyre::journal::Help<proxyT>::Help(const name_type & name, detail_type detail) :
     // get my entry
     entry_type & e = this->entry();
     // decorate with my severity
-    e.note("severity", "info");
+    e.note("severity", "help");
 }
 
 
@@ -41,7 +41,7 @@ void
 pyre::journal::Help<proxyT>::die()
 {
     // prepare a message
-    auto msg = this->name() + exception_type::headline_type(": info");
+    auto msg = this->name() + exception_type::headline_type(": help");
     // throw an application error
     throw exception_type(msg, this->entry().page(), this->entry().notes());
 }
@@ -52,7 +52,7 @@ template <template <typename> typename proxyT>
 auto
 pyre::journal::Help<proxyT>::initializeIndex() -> index_type
 {
-    // make an empty index; for {info}, channels are (active,non-fatal) by default
+    // make an empty index; for {help}, channels are (active,non-fatal) by default
     index_type index(true, false);
     // and return it
     return index;
