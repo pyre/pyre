@@ -35,6 +35,15 @@ ansi_emulates.yes.harness := TERM=xterm
 ansi_emulates.yes.argv := 1
 
 
+# the {chronicler_decor} has special cases
+tests.journal.lib.chronicler_decor.cases := chronicler_decor.3 chronicler_decor.5
+# set the decor to 3
+chronicler_decor.3.argv := 3
+chronicler_decor.3.harness := JOURNAL_DECOR=3
+# set the decor to 5
+chronicler_decor.5.argv := 5
+chronicler_decor.5.harness := JOURNAL_DECOR=5
+
 # the {chronicler_detail} has special cases
 tests.journal.lib.chronicler_detail.cases := chronicler_detail.3 chronicler_detail.5
 # set the detail to 3
