@@ -90,6 +90,28 @@ if without_libjournal:
         return
 
 
+    # convenience function to set the message decoration level
+    def decor(level):
+        """
+        Set the message decoration level
+        """
+        # set {level} as the default
+        chronicler.decor = level
+        # all done
+        return
+
+
+    # convenience function to set the maximum message detail level
+    def detail(level):
+        """
+        Set the maximum message detail level
+        """
+        # set {level} as the default
+        chronicler.detail = level
+        # all done
+        return
+
+
 # if we have access to the bindings
 else:
     # let the c++ library take over
@@ -97,6 +119,8 @@ else:
     quiet = libjournal.quiet
     logfile = libjournal.logfile
     application = libjournal.application
+    decor = libjournal.decor
+    detail = libjournal.detail
 
     # publish the keeper of the global state
     chronicler = libjournal.Chronicler
