@@ -13,7 +13,8 @@
 
 
 // the module entry point
-PYBIND11_MODULE(journal, m) {
+PYBIND11_MODULE(journal, m)
+{
     // the doc string
     m.doc() = "the journal extension module";
 
@@ -33,6 +34,7 @@ PYBIND11_MODULE(journal, m) {
     pyre::journal::py::info(m);
     pyre::journal::py::warning(m);
     pyre::journal::py::error(m);
+    pyre::journal::py::help(m);
 
     // convenience functions at module level
     pyre::journal::py::api(m);
