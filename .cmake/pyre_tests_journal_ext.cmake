@@ -64,6 +64,21 @@ pyre_test_python_testcase(journal.ext/firewall_properties.py)
 pyre_test_python_testcase(journal.ext/firewall_quiet.py)
 pyre_test_python_testcase(journal.ext/firewall_sanity.py)
 pyre_test_python_testcase(journal.ext/firewall_shared.py)
+pyre_test_python_testcase(journal.ext/help_cascade.py)
+pyre_test_python_testcase(journal.ext/help_defaults.py)
+pyre_test_python_testcase(journal.ext/help_empty.py)
+pyre_test_python_testcase(journal.ext/help_example.py)
+pyre_test_python_testcase(journal.ext/help_example_fatal.py)
+pyre_test_python_testcase(journal.ext/help_file.py)
+pyre_test_python_testcase(journal.ext/help_flush.py)
+pyre_test_python_testcase(journal.ext/help_inject.py)
+pyre_test_python_testcase(journal.ext/help_instance.py)
+pyre_test_python_testcase(journal.ext/help_loop.py)
+pyre_test_python_testcase(journal.ext/help_notes.py)
+pyre_test_python_testcase(journal.ext/help_properties.py)
+pyre_test_python_testcase(journal.ext/help_quiet.py)
+pyre_test_python_testcase(journal.ext/help_sanity.py)
+pyre_test_python_testcase(journal.ext/help_shared.py)
 pyre_test_python_testcase(journal.ext/info_cascade.py)
 pyre_test_python_testcase(journal.ext/info_defaults.py)
 pyre_test_python_testcase(journal.ext/info_empty.py)
@@ -128,6 +143,14 @@ add_test(NAME journal.ext.firewall_file.cleanup
   )
 set_property(TEST journal.ext.firewall_file.cleanup PROPERTY
   DEPENDS journal.ext.firewall_file.py
+  )
+
+add_test(NAME journal.ext.help_file.cleanup
+  COMMAND ${BASH_PROGRAM} -c "rm help_file.log"
+  WORKING_DIRECTORY ${PYRE_TESTSUITE_DIR}/journal.ext
+  )
+set_property(TEST journal.ext.help_file.cleanup PROPERTY
+  DEPENDS journal.ext.help_file.py
   )
 
 add_test(NAME journal.ext.info_file.cleanup
