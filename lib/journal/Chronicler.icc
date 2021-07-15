@@ -11,6 +11,24 @@
 
 // accessors
 auto
+pyre::journal::Chronicler::decor() -> detail_type
+{
+    // easy enough
+    return _decor;
+}
+
+
+auto
+pyre::journal::Chronicler::decor(detail_type decor) -> detail_type
+{
+    // swap
+    std::swap(decor, _decor);
+    // and return the old value
+    return decor;
+}
+
+
+auto
 pyre::journal::Chronicler::detail() -> detail_type
 {
     // easy enough

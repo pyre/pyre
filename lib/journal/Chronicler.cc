@@ -46,11 +46,14 @@ using chronicler_t = pyre::journal::chronicler_t;
 
 
 // helpers
-static chronicler_t::notes_type
-initializeGlobals();
-static chronicler_t::detail_type
-initializeDetail();
+static auto
+initializeGlobals() -> chronicler_t::notes_type;
 
+static auto
+initializeDecor() -> chronicler_t::detail_type;
+
+static auto
+initializeDetail() -> chronicler_t::detail_type;
 
 // the initializer
 void
@@ -122,14 +125,15 @@ chronicler_t::quiet()
 
 
 // data
+chronicler_t::detail_type chronicler_t::_decor { initializeDecor() };
 chronicler_t::detail_type chronicler_t::_detail { initializeDetail() };
 chronicler_t::notes_type chronicler_t::_notes { initializeGlobals() };
 chronicler_t::device_type chronicler_t::_device { std::make_shared<console_t>() };
 
 
 // implementation details
-chronicler_t::notes_type
-initializeGlobals()
+auto
+initializeGlobals() -> chronicler_t::notes_type
 {
     // make a table
     chronicler_t::notes_type table;
@@ -143,11 +147,36 @@ initializeGlobals()
 }
 
 
-chronicler_t::detail_type
-initializeDetail()
+auto
+initializeDecor() -> chronicler_t::detail_type
+{
+    // establish the default decor level
+    chronicler_t::detail_type level = 1;
+
+    // try to read the {JOURNAL_DECOR} environment variable
+    const char * setting = std::getenv("JOURNAL_DECOR");
+    // if there
+    if (setting != nullptr) {
+        // attempt to convert to a {detail_t}
+        auto status = std::strtol(setting, nullptr, 10);
+        // if the conversion succeeded
+        if (status != 0) {
+            // save it
+            level = status;
+        }
+    }
+
+    // return the detail level; note that this implementation makes it impossible to set
+    // its value to zero from the environment
+    return level;
+}
+
+
+auto
+initializeDetail() -> chronicler_t::detail_type
 {
     // establish the default severity level
-    pyre::journal::detail_t level = 1;
+    chronicler_t::detail_type level = 1;
 
     // try to read the {JOURNAL_DETAIL} environment variable
     const char * setting = std::getenv("JOURNAL_DETAIL");
