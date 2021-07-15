@@ -9,8 +9,8 @@ journal.ext.tests.stem := journal.ext
 journal.ext.tests.prerequisites := journal.ext
 
 
-# global testsuite settings; these apply to all test cases
-# the harness is the portion of the command line before the test driver itselrf
+# global test suite settings; these apply to all test cases
+# the harness is the portion of the command line before the test driver itself
 journal.ext.tests.harness :=
 # arguments to pass to each test case
 journal.ext.tests.argv :=
@@ -24,5 +24,6 @@ tests.journal.ext.error_file.clean += "error_file.log"
 tests.journal.ext.info_file.clean += "info_file.log"
 tests.journal.ext.warning_file.clean += "warning_file.log"
 tests.journal.ext.help_file.clean += "help_file.log"
+
 
 # end of file
