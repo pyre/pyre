@@ -33,7 +33,8 @@ namespace pyre::journal::py {
     void info(py::module &);
     void warning(py::module &);
     void error(py::module &);
-}
+    void help(py::module &);
+}    // namespace pyre::journal::py
 
 
 #endif
