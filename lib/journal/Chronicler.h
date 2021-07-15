@@ -41,7 +41,10 @@ public:
     // suppress all output
     static void quiet();
 
-    // detail
+    // decoration level filter
+    static inline auto decor() -> detail_type;
+    static inline auto decor(detail_type) -> detail_type;
+    // detail level filter
     static inline auto detail() -> detail_type;
     static inline auto detail(detail_type) -> detail_type;
     // metadata
@@ -61,6 +64,7 @@ public:
 private:
     static device_type _device;
     static notes_type _notes;
+    static detail_type _decor;
     static detail_type _detail;
 
     // disallow
