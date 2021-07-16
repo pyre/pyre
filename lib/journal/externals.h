@@ -47,8 +47,10 @@ namespace pyre::journal {
     using cmdvalue_t = string_t;
     using cmd_t = std::map<cmdname_t, cmdvalue_t>;
 
-    // a channel's level of detail
+    // the channel level of detail
     using detail_t = int;
+    // the channel dent level
+    using dent_t = int;
 
     // the type of line
     using line_t = string_t;
