@@ -10,21 +10,19 @@
 
 
 // metamethods
-pyre::journal::Entry::
-Entry() :
+pyre::journal::Entry::Entry() :
     // fresh buffer
-    _buffer{},
+    _buffer {},
     // blank page
-    _page{},
+    _page {},
     // initialize the message notes with the global settings
-    _notes{ chronicler_t::notes() }
+    _notes { chronicler_t::notes() }
 {}
 
 
 // accessors
 auto
-pyre::journal::Entry::
-page() const -> page_const_reference
+pyre::journal::Entry::page() const -> page_const_reference
 {
     // easy enough
     return _page;
@@ -32,8 +30,7 @@ page() const -> page_const_reference
 
 
 auto
-pyre::journal::Entry::
-notes() const -> notes_const_reference
+pyre::journal::Entry::notes() const -> notes_const_reference
 {
     // easy enough
     return _notes;
@@ -42,8 +39,7 @@ notes() const -> notes_const_reference
 
 // mutators
 auto
-pyre::journal::Entry::
-buffer() -> linebuf_reference
+pyre::journal::Entry::buffer() -> linebuf_reference
 {
     // easy enough
     return _buffer;
@@ -51,8 +47,7 @@ buffer() -> linebuf_reference
 
 
 auto
-pyre::journal::Entry::
-page() -> page_reference
+pyre::journal::Entry::page() -> page_reference
 {
     // easy enough
     return _page;
@@ -60,8 +55,7 @@ page() -> page_reference
 
 
 auto
-pyre::journal::Entry::
-notes() -> notes_reference
+pyre::journal::Entry::notes() -> notes_reference
 {
     // easy enough
     return _notes;
@@ -70,8 +64,7 @@ notes() -> notes_reference
 
 // transaction support
 auto
-pyre::journal::Entry::
-note(const key_type & key, const value_type & value) -> entry_reference
+pyre::journal::Entry::note(const key_type & key, const value_type & value) -> entry_reference
 {
     // place the pair in the metadata table
     _notes.emplace(key, value);
@@ -81,11 +74,19 @@ note(const key_type & key, const value_type & value) -> entry_reference
 
 
 auto
-pyre::journal::Entry::
-push() -> entry_reference
+pyre::journal::Entry::push(dent_type level) -> entry_reference
 {
+    // setup a line
+    line_type line;
+    // inject the {chronicler} margin
+    for (auto count = 0; count < level; ++count) {
+        // as many times as necessary
+        line += chronicler_t::margin();
+    }
+    // add to it whatever is in the buffer
+    line += _buffer.str();
     // add to the page whatever is in the buffer
-    _page.push_back(_buffer.str());
+    _page.push_back(line);
     // and reset it
     _buffer.str(line_type());
     // discard any error flags
@@ -96,8 +97,7 @@ push() -> entry_reference
 
 
 auto
-pyre::journal::Entry::
-flush() -> entry_reference
+pyre::journal::Entry::flush() -> entry_reference
 {
     // clear the page
     _page.clear();
@@ -108,8 +108,8 @@ flush() -> entry_reference
 
 template <typename itemT>
 void
-pyre::journal::Entry::
-inject(const itemT & item) {
+pyre::journal::Entry::inject(const itemT & item)
+{
     // inject
     _buffer << item;
     // all done
@@ -117,6 +117,6 @@ inject(const itemT & item) {
 }
 
 
-# endif
+#endif
 
 // end of file
