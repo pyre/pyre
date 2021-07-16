@@ -19,6 +19,8 @@ public:
 
     // my detail
     using detail_type = detail_t;
+    // my dent
+    using dent_type = dent_t;
 
     // access to my shared state
     using proxy_type = proxyT<severityT>;
@@ -45,16 +47,20 @@ public:
 
     // metamethods
 public:
-    inline Channel(const name_type &, detail_type = 1);
+    inline Channel(const name_type &, detail_type = 1, dent_type = 0);
 
     // accessors
 public:
     inline auto name() const -> const name_type &;
+    inline auto dent() const -> dent_type;
     inline auto detail() const -> detail_type;
     inline auto entry() const -> entry_const_reference;
 
     // mutators
 public:
+    // dent control
+    inline auto indent(dent_type = 1) -> severity_reference;
+    inline auto outdent(dent_type = 1) -> severity_reference;
     // detail
     inline auto detail(detail_type) -> severity_reference;
     // read/write access to my current journal entry
@@ -90,6 +96,7 @@ private:
     // implementation details: data
 private:
     name_type _name;
+    dent_type _dent;
     detail_type _detail;
     entry_type _entry;
 

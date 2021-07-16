@@ -11,9 +11,11 @@
 
 // metamethods
 template <typename severityT, template <typename> typename proxyT>
-pyre::journal::Channel<severityT, proxyT>::Channel(const name_type & name, detail_type detail) :
+pyre::journal::Channel<severityT, proxyT>::Channel(
+    const name_type & name, detail_type detail, dent_type dent) :
     proxy_type(_index.lookup(name)),
     _name { name },
+    _dent { dent },
     _detail { detail },
     _entry {}
 {
@@ -31,6 +33,14 @@ pyre::journal::Channel<severityT, proxyT>::name() const -> const name_type &
 {
     // easy enough
     return _name;
+}
+
+template <typename severityT, template <typename> typename proxyT>
+auto
+pyre::journal::Channel<severityT, proxyT>::dent() const -> dent_type
+{
+    // easy enough
+    return _dent;
 }
 
 
@@ -53,6 +63,28 @@ pyre::journal::Channel<severityT, proxyT>::entry() const -> entry_const_referenc
 
 
 // mutators
+template <typename severityT, template <typename> typename proxyT>
+auto
+pyre::journal::Channel<severityT, proxyT>::indent(dent_type level) -> severity_reference
+{
+    // adjust my dent
+    _dent += level;
+    // enable chaining
+    return static_cast<severity_reference>(*this);
+}
+
+
+template <typename severityT, template <typename> typename proxyT>
+auto
+pyre::journal::Channel<severityT, proxyT>::outdent(dent_type level) -> severity_reference
+{
+    // adjust my dent; clip at zero
+    _dent = std::max(0, _dent - level);
+    // enable chaining
+    return static_cast<severity_reference>(*this);
+}
+
+
 template <typename severityT, template <typename> typename proxyT>
 auto
 pyre::journal::Channel<severityT, proxyT>::detail(detail_type detail) -> severity_reference
@@ -79,7 +111,7 @@ auto
 pyre::journal::Channel<severityT, proxyT>::line() -> severity_reference
 {
     // ask my entry to move the contents of its accumulator to the page
-    _entry.push();
+    _entry.push(_dent);
     // enable chaining
     return static_cast<severity_reference>(*this);
 }
@@ -92,7 +124,7 @@ pyre::journal::Channel<severityT, proxyT>::log() -> severity_reference
     // if there's anything in the entry buffer
     if (!_entry.buffer().str().empty()) {
         // move it to the page
-        _entry.push();
+        _entry.push(_dent);
     }
 
     // very carefully
