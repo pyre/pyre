@@ -67,8 +67,9 @@ template <typename severityT, template <typename> typename proxyT>
 auto
 pyre::journal::Channel<severityT, proxyT>::indent(dent_type level) -> severity_reference
 {
-    // adjust my dent
-    _dent += level;
+    // adjust my dent; clip at zero
+    // N.B.: it is used by the manipulators that can't guarantee {level} is positive
+    _dent = std::max(0, _dent + level);
     // enable chaining
     return static_cast<severity_reference>(*this);
 }
