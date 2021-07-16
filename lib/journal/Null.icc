@@ -10,15 +10,12 @@
 
 
 // metamethods
-pyre::journal::Null::
-Null(const name_type &)
-{}
+pyre::journal::Null::Null(const name_type &) {}
 
 
 // accessors
 constexpr auto
-pyre::journal::Null::
-active() const
+pyre::journal::Null::active() const
 {
     // easy enough
     return false;
@@ -26,8 +23,7 @@ active() const
 
 
 constexpr auto
-pyre::journal::Null::
-fatal() const
+pyre::journal::Null::fatal() const
 {
     // easy enough
     return false;
@@ -35,8 +31,7 @@ fatal() const
 
 
 constexpr auto
-pyre::journal::Null::
-device() const -> device_type
+pyre::journal::Null::device() const -> device_type
 {
     // easy enough
     return nullptr;
@@ -44,36 +39,28 @@ device() const -> device_type
 
 
 // accessors
-constexpr auto
-pyre::journal::Null::
-active(active_type) -> Null &
+constexpr auto pyre::journal::Null::active(active_type) -> Null &
 {
     // all done
     return *this;
 }
 
 
-constexpr auto
-pyre::journal::Null::
-fatal(fatal_type) -> Null &
+constexpr auto pyre::journal::Null::fatal(fatal_type) -> Null &
 {
     // all done
     return *this;
 }
 
 
-constexpr auto
-pyre::journal::Null::
-device(device_type) -> Null &
+constexpr auto pyre::journal::Null::device(device_type) -> Null &
 {
     // all done
     return *this;
 }
 
 
-constexpr
-pyre::journal::Null::
-operator active_type() const
+constexpr pyre::journal::Null::operator active_type() const
 {
     // always off
     return false;
@@ -82,8 +69,7 @@ operator active_type() const
 
 // interface
 constexpr void
-pyre::journal::Null::
-activate() const
+pyre::journal::Null::activate() const
 {
     // nothing to do
     return;
@@ -91,8 +77,7 @@ activate() const
 
 
 constexpr void
-pyre::journal::Null::
-deactivate() const
+pyre::journal::Null::deactivate() const
 {
     // nothing to do
     return;
@@ -100,8 +85,7 @@ deactivate() const
 
 
 constexpr void
-pyre::journal::Null::
-activateChannels(const nameset_type &)
+pyre::journal::Null::activateChannels(const nameset_type &)
 {
     // nothing to do
     return;
@@ -110,8 +94,7 @@ activateChannels(const nameset_type &)
 
 // manipulators
 constexpr auto
-pyre::journal::
-endl(const Null & null) -> const Null &
+pyre::journal::endl(const Null & null) -> const Null &
 {
     // leave the channel alone
     return null;
@@ -119,8 +102,7 @@ endl(const Null & null) -> const Null &
 
 
 constexpr auto
-pyre::journal::
-newline(const Null & null) -> const Null &
+pyre::journal::newline(const Null & null) -> const Null &
 {
     // leave the channel alone
     return null;
@@ -130,8 +112,16 @@ newline(const Null & null) -> const Null &
 // the injection operators
 // detail level
 constexpr auto
-pyre::journal::
-operator<< (const Null & null, const Detail &) -> const Null &
+pyre::journal::operator<<(const Null & null, const Dent &) -> const Null &
+{
+    // do nothing
+    return null;
+}
+
+
+// detail level
+constexpr auto
+pyre::journal::operator<<(const Null & null, const Detail &) -> const Null &
 {
     // do nothing
     return null;
@@ -140,8 +130,7 @@ operator<< (const Null & null, const Detail &) -> const Null &
 
 // location info
 constexpr auto
-pyre::journal::
-operator<< (const Null & null, const Locator &) -> const Null &
+pyre::journal::operator<<(const Null & null, const Locator &) -> const Null &
 {
     // do nothing
     return null;
@@ -150,8 +139,7 @@ operator<< (const Null & null, const Locator &) -> const Null &
 
 // metadata
 constexpr auto
-pyre::journal::
-operator<< (const Null & null, const Note &) -> const Null &
+pyre::journal::operator<<(const Null & null, const Note &) -> const Null &
 {
     // do nothing
     return null;
@@ -160,8 +148,7 @@ operator<< (const Null & null, const Note &) -> const Null &
 
 // injection of manipulator functions
 constexpr auto
-pyre::journal::
-operator<< (const Null & null, const Null & (*)(const Null &)) -> const Null &
+pyre::journal::operator<<(const Null & null, const Null & (*) (const Null &) ) -> const Null &
 {
     // do nothing
     return null;
@@ -171,8 +158,7 @@ operator<< (const Null & null, const Null & (*)(const Null &)) -> const Null &
 // injection of everything else
 template <typename itemT>
 constexpr auto
-pyre::journal::
-operator<< (const Null & null, const itemT &) -> const Null &
+pyre::journal::operator<<(const Null & null, const itemT &) -> const Null &
 {
     // leave the channel alone
     return null;

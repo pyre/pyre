@@ -36,6 +36,13 @@ pyre::journal::indent(Channel<severityT, proxyT> & channel) -> Channel<severityT
     return channel.indent();
 }
 
+auto
+pyre::journal::indent(dent_t level) -> Dent
+{
+    // easy enough
+    return Dent(level);
+}
+
 
 template <typename severityT, template <class> typename proxyT>
 auto
@@ -45,8 +52,28 @@ pyre::journal::outdent(Channel<severityT, proxyT> & channel) -> Channel<severity
     return channel.outdent();
 }
 
+auto
+pyre::journal::outdent(dent_t level) -> Dent
+{
+    // easy enough
+    return Dent(-level);
+}
+
 
 // the injection operators
+// indentation level
+template <typename severityT, template <class> typename proxyT>
+auto
+pyre::journal::operator<<(Channel<severityT, proxyT> & channel, const Dent & dent)
+    -> Channel<severityT, proxyT> &
+{
+    // adjust the detail of the channel
+    channel.indent(dent.dent());
+    // all done
+    return channel;
+}
+
+
 // detail level
 template <typename severityT, template <class> typename proxyT>
 auto
