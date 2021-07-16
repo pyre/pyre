@@ -28,6 +28,24 @@ pyre::journal::newline(Channel<severityT, proxyT> & channel) -> Channel<severity
 }
 
 
+template <typename severityT, template <class> typename proxyT>
+auto
+pyre::journal::indent(Channel<severityT, proxyT> & channel) -> Channel<severityT, proxyT> &
+{
+    // ask the channel entry to mark the end of a line of output
+    return channel.indent();
+}
+
+
+template <typename severityT, template <class> typename proxyT>
+auto
+pyre::journal::outdent(Channel<severityT, proxyT> & channel) -> Channel<severityT, proxyT> &
+{
+    // ask the channel entry to mark the end of a line of output
+    return channel.outdent();
+}
+
+
 // the injection operators
 // detail level
 template <typename severityT, template <class> typename proxyT>

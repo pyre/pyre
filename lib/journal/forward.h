@@ -121,6 +121,13 @@ namespace pyre::journal {
     template <typename severityT, template <class> typename proxyT>
     inline auto newline(Channel<severityT, proxyT> &) -> Channel<severityT, proxyT> &;
 
+    // indent
+    template <typename severityT, template <class> typename proxyT>
+    inline auto indent(Channel<severityT, proxyT> &) -> Channel<severityT, proxyT> &;
+    // outdent
+    template <typename severityT, template <class> typename proxyT>
+    inline auto outdent(Channel<severityT, proxyT> &) -> Channel<severityT, proxyT> &;
+
     // injection operators
     // detail level
     template <typename severityT, template <class> typename proxyT>
