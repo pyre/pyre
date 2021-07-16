@@ -47,6 +47,24 @@ pyre::journal::Chronicler::detail(detail_type detail) -> detail_type
 
 
 auto
+pyre::journal::Chronicler::margin() -> margin_type
+{
+    // easy enough
+    return _margin;
+}
+
+
+auto
+pyre::journal::Chronicler::margin(margin_type margin) -> margin_type
+{
+    // swap
+    std::swap(margin, _margin);
+    // and return the old value
+    return margin;
+}
+
+
+auto
 pyre::journal::Chronicler::notes() -> notes_type &
 {
     // grant access to my global metadata

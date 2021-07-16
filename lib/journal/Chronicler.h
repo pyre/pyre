@@ -16,6 +16,8 @@ public:
     using string_type = string_t;
     // detail level
     using detail_type = detail_t;
+    // the margin type
+    using margin_type = string_type;
     // global metadata
     using key_type = key_t;
     using value_type = value_t;
@@ -47,11 +49,15 @@ public:
     // detail level filter
     static inline auto detail() -> detail_type;
     static inline auto detail(detail_type) -> detail_type;
+
+    // print margin control
+    static inline auto margin() -> margin_type;
+    static inline auto margin(margin_type) -> margin_type;
+
     // metadata
     static inline auto notes() -> notes_type &;
     // device support
     static inline auto device() -> device_type;
-
     static inline void device(device_type);
 
     template <class deviceT, class... Args>
@@ -66,6 +72,7 @@ private:
     static notes_type _notes;
     static detail_type _decor;
     static detail_type _detail;
+    static string_type _margin;
 
     // disallow
 private:
