@@ -26,6 +26,7 @@
 #include "Entry.h"
 // message metadata
 #include "Detail.h"
+#include "Dent.h"
 #include "Locator.h"
 #include "Note.h"
 #include "Flush.h"

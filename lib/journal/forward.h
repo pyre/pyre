@@ -28,6 +28,8 @@ namespace pyre::journal {
     // and return a channel
     // level of detail
     class Detail;
+    // indentation
+    class Dent;
     // location information
     class Locator;
     // metadata manipulation
@@ -56,6 +58,8 @@ namespace pyre::journal {
     // mark the end of a line of output
     inline constexpr auto newline(const Null &) -> const Null &;
     // injection operators
+    // indentatino level
+    inline constexpr auto operator<<(const Null &, const Dent &) -> const Null &;
     // level of detail
     inline constexpr auto operator<<(const Null &, const Detail &) -> const Null &;
     // location info
@@ -124,11 +128,21 @@ namespace pyre::journal {
     // indent
     template <typename severityT, template <class> typename proxyT>
     inline auto indent(Channel<severityT, proxyT> &) -> Channel<severityT, proxyT> &;
+
+    inline auto indent(dent_t level) -> Dent;
+
     // outdent
     template <typename severityT, template <class> typename proxyT>
     inline auto outdent(Channel<severityT, proxyT> &) -> Channel<severityT, proxyT> &;
 
+    inline auto outdent(dent_t level) -> Dent;
+
     // injection operators
+    // indentation level
+    template <typename severityT, template <class> typename proxyT>
+    inline auto operator<<(Channel<severityT, proxyT> &, const Dent &)
+        -> Channel<severityT, proxyT> &;
+
     // detail level
     template <typename severityT, template <class> typename proxyT>
     inline auto operator<<(Channel<severityT, proxyT> &, const Detail &)
