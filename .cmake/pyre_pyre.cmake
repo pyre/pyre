@@ -62,6 +62,10 @@ endfunction(pyre_pyrePackage)
 function(pyre_pyreLib)
   # buld the libpyre version file
   configure_file(
+    pyre/version.h.in pyre/version.h
+    @ONLY
+    )
+  configure_file(
     pyre/version.cc.in pyre/version.cc
     @ONLY
     )
