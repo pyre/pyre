@@ -28,6 +28,68 @@ pyre::journal::newline(Channel<severityT, proxyT> & channel) -> Channel<severity
 }
 
 
+// color
+auto
+pyre::journal::ansi(colorname_t name) -> Color
+{
+    // look up the name in the ANSI table
+    auto color = ansi_t::ansi(name);
+    // make a color manipulator and return it
+    return Color(color);
+}
+
+
+auto
+pyre::journal::x11(colorname_t name) -> Color
+{
+    // look up the name in the X11 color table
+    auto color = ansi_t::x11(name);
+    // make a color manipulator and return it
+    return Color(color);
+}
+
+
+auto
+pyre::journal::csi3(int code, bool bright) -> Color
+{
+    // build the sequence
+    auto color = csi_t::csi3(code, bright);
+    // make a color manipulator and return it
+    return Color(color);
+}
+
+
+auto
+pyre::journal::csi8(int red, int green, int blue, bool foreground) -> Color
+{
+    // build the sequence
+    auto color = csi_t::csi8(red, green, blue, foreground);
+    // make a color manipulator and return it
+    return Color(color);
+}
+
+
+auto
+pyre::journal::csi8_gray(int gray, bool foreground) -> Color
+{
+    // build the sequence
+    auto color = csi_t::csi8_gray(gray);
+    // make a color manipulator and return it
+    return Color(color);
+}
+
+
+auto
+pyre::journal::csi24(int red, int green, int blue, bool foreground) -> Color
+{
+    // build the sequence
+    auto color = csi_t::csi24(red, green, blue, foreground);
+    // make a color manipulator and return it
+    return Color(color);
+}
+
+
+// indentation level
 template <typename severityT, template <class> typename proxyT>
 auto
 pyre::journal::indent(Channel<severityT, proxyT> & channel) -> Channel<severityT, proxyT> &
@@ -61,13 +123,26 @@ pyre::journal::outdent(dent_t level) -> Dent
 
 
 // the injection operators
+// color
+template <typename severityT, template <class> typename proxyT>
+auto
+pyre::journal::operator<<(Channel<severityT, proxyT> & channel, const Color & color)
+    -> Channel<severityT, proxyT> &
+{
+    // inject the color representation
+    channel.entry().inject(color.color());
+    // all done
+    return channel;
+}
+
+
 // indentation level
 template <typename severityT, template <class> typename proxyT>
 auto
 pyre::journal::operator<<(Channel<severityT, proxyT> & channel, const Dent & dent)
     -> Channel<severityT, proxyT> &
 {
-    // adjust the detail of the channel
+    // adjust the indentation level of the channel
     channel.indent(dent.dent());
     // all done
     return channel;
@@ -136,7 +211,7 @@ auto
 pyre::journal::operator<<(Channel<severityT, proxyT> & channel, const itemT & item)
     -> Channel<severityT, proxyT> &
 {
-    // inject the item in the channel and return the channel
+    // inject the item in the channel
     channel.entry().inject(item);
     // enable chaining
     return channel;
