@@ -19,12 +19,18 @@
 // exceptions
 #include "exceptions.h"
 
+// terminal support
+#include "ASCII.h"
+#include "CSI.h"
+#include "ANSI.h"
+
 // global settings
 #include "Chronicler.h"
 
 // message entry
 #include "Entry.h"
 // message metadata
+#include "Color.h"
 #include "Detail.h"
 #include "Dent.h"
 #include "Locator.h"
@@ -69,11 +75,6 @@
 
 // manipulators
 #include "manipulators.h"
-
-// terminal support
-#include "ASCII.h"
-#include "CSI.h"
-#include "ANSI.h"
 
 
 // the convenience initializer

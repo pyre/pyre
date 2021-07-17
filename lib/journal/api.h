@@ -105,6 +105,7 @@ namespace pyre::journal {
     using device_ptr = std::shared_ptr<Device>;
 
     // aliases for the manipulators
+    using color_t = Color;
     using indenter_t = Dent;
     using locator_t = Locator;
     using note_t = Note;
