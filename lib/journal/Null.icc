@@ -110,6 +110,15 @@ pyre::journal::newline(const Null & null) -> const Null &
 
 
 // the injection operators
+// color
+constexpr auto
+pyre::journal::operator<<(const Null & null, const Color &) -> const Null &
+{
+    // do nothing
+    return null;
+}
+
+
 // detail level
 constexpr auto
 pyre::journal::operator<<(const Null & null, const Dent &) -> const Null &

@@ -26,6 +26,8 @@ namespace pyre::journal {
 
     // the channel stream manipulators; some are actual classes, others are functions that take
     // and return a channel
+    // color
+    class Color;
     // level of detail
     class Detail;
     // indentation
@@ -58,7 +60,9 @@ namespace pyre::journal {
     // mark the end of a line of output
     inline constexpr auto newline(const Null &) -> const Null &;
     // injection operators
-    // indentatino level
+    // color
+    inline constexpr auto operator<<(const Null &, const Color &) -> const Null &;
+    // indentation level
     inline constexpr auto operator<<(const Null &, const Dent &) -> const Null &;
     // level of detail
     inline constexpr auto operator<<(const Null &, const Detail &) -> const Null &;
@@ -125,19 +129,38 @@ namespace pyre::journal {
     template <typename severityT, template <class> typename proxyT>
     inline auto newline(Channel<severityT, proxyT> &) -> Channel<severityT, proxyT> &;
 
+    // color
+    // the various color rep factories
+    // known color tables
+    inline auto ansi(colorname_t) -> Color;
+    inline auto x11(colorname_t) -> Color;
+    // ansi control sequences
+    inline auto csi3(int, bool = false) -> Color;
+    inline auto csi8(int, int, int, bool = true) -> Color;
+    inline auto csi8_gray(int, bool = true) -> Color;
+    inline auto csi24(int, int, int, bool = true) -> Color;
+
     // indent
+    // the stateful manipulator
+    inline auto indent(dent_t level) -> Dent;
+    // the stateless manipulator
     template <typename severityT, template <class> typename proxyT>
     inline auto indent(Channel<severityT, proxyT> &) -> Channel<severityT, proxyT> &;
 
-    inline auto indent(dent_t level) -> Dent;
-
     // outdent
+    // the stateful manipulator
+    inline auto outdent(dent_t level) -> Dent;
+    // the stateless manipulator
     template <typename severityT, template <class> typename proxyT>
     inline auto outdent(Channel<severityT, proxyT> &) -> Channel<severityT, proxyT> &;
 
-    inline auto outdent(dent_t level) -> Dent;
 
     // injection operators
+    // color
+    template <typename severityT, template <class> typename proxyT>
+    inline auto operator<<(Channel<severityT, proxyT> &, const Color &)
+        -> Channel<severityT, proxyT> &;
+
     // indentation level
     template <typename severityT, template <class> typename proxyT>
     inline auto operator<<(Channel<severityT, proxyT> &, const Dent &)
