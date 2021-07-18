@@ -10,11 +10,13 @@ pyre.pkg.tests.prerequisites := journal.pkg pyre.pkg
 
 
 # clean up
+tests.pyre.pkg.components.clean := __pycache__
 tests.pyre.pkg.descriptors.ostreams.clean := output.cfg
 tests.pyre.pkg.filesystem.local_make.clean := local-make
 tests.pyre.pkg.filesystem.zip.clean := sample.zip
 tests.pyre.pkg.schemata.ostreams.clean := output.cfg
 tests.pyre.pkg.primitives.path_resolution.clean := scratch
+tests.pyre.pkg.pyre.clean := __pycache__
 
 
 # the {filesystem.local-make} test modifies the current directory, which creates race
