@@ -21,9 +21,15 @@ pyre::journal::py::chronicler(py::module & m)
         .def_property_static(
             "decor",
             // the getter
-            [](py::object) { return chronicler_t::decor(); },
+            [](py::object) -> chronicler_t::detail_type {
+                // ask {chronicler_t}
+                return chronicler_t::decor();
+            },
             // the setter
-            [](py::object, chronicler_t::detail_type decor) { chronicler_t::decor(decor); },
+            [](py::object, chronicler_t::detail_type decor) -> chronicler_t::detail_type {
+                // set the new value and return the old
+                return chronicler_t::decor(decor);
+            },
             // the docstring
             "access the message decoration level")
 
@@ -31,9 +37,15 @@ pyre::journal::py::chronicler(py::module & m)
         .def_property_static(
             "detail",
             // the getter
-            [](py::object) { return chronicler_t::detail(); },
+            [](py::object) -> chronicler_t::detail_type {
+                // ask {chronicler_t}
+                return chronicler_t::detail();
+            },
             // the setter
-            [](py::object, chronicler_t::detail_type detail) { chronicler_t::detail(detail); },
+            [](py::object, chronicler_t::detail_type detail) -> chronicler_t::detail_type {
+                // set the new value and return the old
+                return chronicler_t::detail(detail);
+            },
             // the docstring
             "access the maximum detail level")
 
@@ -41,9 +53,17 @@ pyre::journal::py::chronicler(py::module & m)
         .def_property_static(
             "device",
             // the getter
-            [](py::object) { return chronicler_t::device(); },
+            [](py::object) -> chronicler_t::device_type {
+                // ask {chronicler_t}
+                return chronicler_t::device();
+            },
             // the setter
-            [](py::object, chronicler_t::device_type device) { chronicler_t::device(device); },
+            [](py::object, chronicler_t::device_type device) -> void {
+                // set the new device
+                chronicler_t::device(device);
+                // all done
+                return;
+            },
             // the docstring
             "access the default device")
 
@@ -51,7 +71,10 @@ pyre::journal::py::chronicler(py::module & m)
         .def_property_readonly_static(
             "notes",
             // the getter
-            [](py::object) -> chronicler_t::notes_type & { return chronicler_t::notes(); },
+            [](py::object) -> chronicler_t::notes_type & {
+                // ask {chronicler_t}
+                return chronicler_t::notes();
+            },
             // the docstring
             "access the global metadata")
 
