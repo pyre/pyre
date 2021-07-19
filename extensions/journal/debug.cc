@@ -82,7 +82,7 @@ pyre::journal::py::debug(py::module & m)
             // the docstring
             "the output device")
 
-        // the content of the current entry
+        // the contents of the current entry
         .def_property_readonly(
             "page",
             // the getter
@@ -117,7 +117,7 @@ pyre::journal::py::debug(py::module & m)
                 return m.attr("DebugError");
             },
             // the docstring
-            "the keeper of the global state")
+            "the type of exception raised when this channel type is fatal")
 
         // the channel severity: static read-only property
         .def_property_readonly_static(
@@ -211,6 +211,25 @@ pyre::journal::py::debug(py::module & m)
             // the docstring
             "add another line to the message page")
 
+        // add multiple lines at once
+        .def(
+            "report",
+            // the handler
+            [](debug_t & channel, py::iterable report) -> debug_t & {
+                // extract individual lines from the iterable
+                for (auto line : report) {
+                    // and inject each one
+                    channel << py::str(line) << pyre::journal::newline;
+                }
+                // all done
+                return channel;
+            },
+            // the signature
+            "report"_a,
+            // the docstring
+            "add multiple lines to the message page")
+
+        // add a message to the channel and flush
         .def(
             "log",
             // the handler
