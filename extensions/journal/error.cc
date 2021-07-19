@@ -94,7 +94,7 @@ pyre::journal::py::error(py::module & m)
             // N.B. the explicit declaration of the λ return value is
             // critical in making the page read/write in python
             [](error_t & channel) -> pyre::journal::page_t & {
-                // ask {chronicler_t}
+                // get my current page
                 return channel.entry().page();
             },
             // the docstring
@@ -107,7 +107,7 @@ pyre::journal::py::error(py::module & m)
             // N.B. the explicit declaration of the λ return value is
             // critical in making the notes read/write in python
             [](error_t & channel) -> pyre::journal::notes_t & {
-                // ask {chronicler_t}
+                // get the notes on the current page
                 return channel.entry().notes();
             },
             // the docstring
@@ -122,7 +122,7 @@ pyre::journal::py::error(py::module & m)
                 return m.attr("ApplicationError");
             },
             // the docstring
-            "the keeper of the global state")
+            "the type of exception raised when this channel type is fatal")
 
         // the channel severity
         .def_property_readonly_static(
