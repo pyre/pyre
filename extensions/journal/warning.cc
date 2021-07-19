@@ -32,11 +32,20 @@ pyre::journal::py::warning(py::module & m)
     // the warning channel interface
     py::class_<warning_t>(m, "Warning")
         // the constructor
-        .def(py::init<const string_t &>(), "name"_a)
+        .def(
+            // the implementation
+            py::init<const string_t &>(),
+            // the signature
+            "name"_a)
 
         // accessors
-        // the name; read-only property
-        .def_property_readonly("name", &warning_t::name, "my name")
+        // the name
+        .def_property_readonly(
+            "name",
+            // only getter
+            &warning_t::name,
+            // the docstring
+            "my name")
 
         // the detail level
         .def_property(
@@ -78,13 +87,16 @@ pyre::journal::py::warning(py::module & m)
             // the docstring
             "the output device")
 
-        // the content of the current entry
+        // the contents of the current entry
         .def_property_readonly(
             "page",
             // the getter
             // N.B. the explicit declaration of the λ return value is
             // critical in making the page read/write in python
-            [](warning_t & channel) -> pyre::journal::page_t & { return channel.entry().page(); },
+            [](warning_t & channel) -> pyre::journal::page_t & {
+                // get the entry contents
+                return channel.entry().page();
+            },
             // the docstring
             "the contents of the current entry")
 
@@ -94,7 +106,10 @@ pyre::journal::py::warning(py::module & m)
             // the getter
             // N.B. the explicit declaration of the λ return value is
             // critical in making the notes read/write in python
-            [](warning_t & channel) -> pyre::journal::notes_t & { return channel.entry().notes(); },
+            [](warning_t & channel) -> pyre::journal::notes_t & {
+                // get the entry notes
+                return channel.entry().notes();
+            },
             // the docstring
             "the notes associated with the current entry")
 
@@ -102,15 +117,21 @@ pyre::journal::py::warning(py::module & m)
         .def_property_readonly_static(
             "ApplicationError",
             // the getter
-            [m](py::object) -> py::object { return m.attr("ApplicationError"); },
+            [m](py::object) -> py::object {
+                // this is a module lvel attribute
+                return m.attr("ApplicationError");
+            },
             // the docstring
-            "the keeper of the global state")
+            "the exception raised when this channel is fatal")
 
-        // the channel severity: static read-only property
+        // the channel severity
         .def_property_readonly_static(
             "severity",
             // the getter
-            [](py::object) -> warning_t::string_type { return "warning"; },
+            [](py::object) -> warning_t::string_type {
+                // hardwired, as it is unlikely to change
+                return "warning";
+            },
             // the docstring
             "get the channel severity name")
 
@@ -118,23 +139,32 @@ pyre::journal::py::warning(py::module & m)
         .def_property_readonly_static(
             "chronicler",
             // the getter
-            [m](py::object) -> py::object { return m.attr("Chronicler"); },
+            [m](py::object) -> py::object {
+                // access the class record registered with the module
+                return m.attr("Chronicler");
+            },
             // the docstring
             "the keeper of the global state")
 
-        // the default activation state: static read-only property
+        // the default activation state
         .def_property_readonly_static(
             "defaultActive",
             // the getter
-            [](py::object) -> warning_t::active_type { return warning_t::index().active(); },
+            [](py::object) -> warning_t::active_type {
+                // ask my index
+                return warning_t::index().active();
+            },
             // the docstring
             "the default state of warning channels")
 
-        // the default fatal state: static read-only property
+        // the default fatal state
         .def_property_readonly_static(
             "defaultFatal",
             // the getter
-            [](py::object) -> warning_t::fatal_type { return warning_t::index().fatal(); },
+            [](py::object) -> warning_t::fatal_type {
+                // ask my index
+                return warning_t::index().fatal();
+            },
             // the docstring
             "the default fatality of warning channels")
 
@@ -142,9 +172,17 @@ pyre::journal::py::warning(py::module & m)
         .def_property_static(
             "defaultDevice",
             // the getter
-            [](py::object) -> warning_t::device_type { return warning_t::index().device(); },
+            [](py::object) -> warning_t::device_type {
+                // my index knows
+                return warning_t::index().device();
+            },
             // the setter
-            [](py::object, warning_t::device_type device) { warning_t::index().device(device); },
+            [](py::object, warning_t::device_type device) -> void {
+                // ask my index to set the new device
+                warning_t::index().device(device);
+                // all done
+                return;
+            },
             // the docstring
             "the default device for all warning channels")
 
@@ -169,37 +207,40 @@ pyre::journal::py::warning(py::module & m)
         .def(
             "line",
             // the handler
-            [](warning_t & channel, py::object msg) {
-                // cast to string
-                warning_t::string_type message = py::str(msg);
+            [](warning_t & channel, warning_t::string_type message) -> warning_t & {
                 // inject
                 channel << message << pyre::journal::newline;
+                // enable chaining
+                return channel;
             },
+            // the signature
+            "message"_a = "",
             // the docstring
-            "add another line to the message page",
-            // the arguments
-            "message"_a = "")
+            "add another line to the message page")
 
         // add a message to the channel and flush
         .def(
             "log",
             // the handler
-            [](warning_t & channel, py::object msg) {
-                // cast to string
-                warning_t::string_type message = py::str(msg);
+            [](warning_t & channel, warning_t::string_type message) -> warning_t & {
                 // inject and flush
                 channel << locator() << message << pyre::journal::endl;
+                // enable chaining
+                return channel;
             },
+            // the signature
+            "message"_a = "",
             // the docstring
-            "add the optional {message} to the channel contents and then record the entry",
-            // the arguments
-            "message"_a = "")
+            "add the optional {message} to the channel contents and then record the entry")
 
         // operator bool
         .def(
             "__bool__",
             // the implementation
-            [](const warning_t & channel) { return channel.active(); },
+            [](const warning_t & channel) -> bool {
+                // interpret as a request for the activation state
+                return channel.active();
+            },
             // the docstring
             "syntactic sugar for checking the state of a channel")
 
@@ -215,11 +256,14 @@ pyre::journal::py::warning(py::module & m)
         .def_static(
             "logfile",
             // the implementation
-            [](const warning_t::string_type & path) { warning_t::logfile(path); },
+            [](const warning_t::string_type & path) -> void {
+                // set up the device
+                warning_t::logfile(path);
+            },
+            // the signature
+            "name"_a,
             // the docstring
-            "send all output to a file",
-            // the arguments
-            "name"_a)
+            "send all output to a file")
 
         // done
         ;
