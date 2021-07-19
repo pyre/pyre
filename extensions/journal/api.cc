@@ -21,7 +21,9 @@ pyre::journal::py::api(py::module & m)
     m.def(
         "application",
         // the implementation
-        &pyre::journal::application, "name"_a,
+        &pyre::journal::application,
+        // the signature
+        "name"_a,
         // the docstring
         "register the application {name}");
 
@@ -37,31 +39,41 @@ pyre::journal::py::api(py::module & m)
     m.def(
         "logfile",
         // the implementation
-        [](const debug_t::string_type & path) { pyre::journal::logfile(path); },
+        [](const debug_t::string_type & path) -> void {
+            // set up the output device
+            pyre::journal::logfile(path);
+            // all done
+            return;
+        },
+        // the signature
+        "name"_a,
         // the docstring
-        "send all output to a file",
-        // the arguments
-        "name"_a);
+        "send all output to a file");
 
     // set the maximum message decoration level
     m.def(
         "decor",
         // the implementation
-        [](chronicler_t::detail_type level) { chronicler_t::decor(level); },
+        [](chronicler_t::detail_type level) -> void {
+            // set the maximum detail level
+            chronicler_t::decor(level);
+            // all done
+            return;
+        },
+        // the signature
+        "level"_a,
         // the docstring
-        "set the maximum message decoration level",
-        // the arguments
-        "level"_a);
+        "set the maximum message decoration level");
 
     // set the maximum message detail level
     m.def(
         "detail",
         // the implementation
-        [](chronicler_t::detail_type level) { chronicler_t::detail(level); },
+        [](chronicler_t::detail_type level) -> void { chronicler_t::detail(level); },
+        // the sigmature
+        "level"_a,
         // the docstring
-        "set the maximum message detail level",
-        // the arguments
-        "level"_a);
+        "set the maximum message detail level");
 
     // all done
     return;
