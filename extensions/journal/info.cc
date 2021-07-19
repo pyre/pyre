@@ -117,7 +117,7 @@ pyre::journal::py::info(py::module & m)
                 return m.attr("ApplicationError");
             },
             // the docstring
-            "the keeper of the global state")
+            "the exception raised when this channel is fatal")
 
         // the channel severity: static read-only property
         .def_property_readonly_static(
