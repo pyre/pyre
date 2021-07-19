@@ -211,6 +211,24 @@ pyre::journal::py::info(py::module & m)
             // the docstring
             "add another line to the message page")
 
+        // add multiple lines at once
+        .def(
+            "report",
+            // the handler
+            [](info_t & channel, py::iterable report) -> info_t & {
+                // extract individual lines from the iterable
+                for (auto line : report) {
+                    // and inject each one
+                    channel << py::str(line) << pyre::journal::newline;
+                }
+                // all done
+                return channel;
+            },
+            // the signature
+            "report"_a,
+            // the docstring
+            "add multiple lines to the message page")
+
         // add a message to the channel and flush
         .def(
             "log",

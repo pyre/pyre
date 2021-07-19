@@ -94,7 +94,7 @@ pyre::journal::py::error(py::module & m)
             // N.B. the explicit declaration of the λ return value is
             // critical in making the page read/write in python
             [](error_t & channel) -> pyre::journal::page_t & {
-                // get my current page
+                // ask {chronicler_t}
                 return channel.entry().page();
             },
             // the docstring
@@ -107,7 +107,7 @@ pyre::journal::py::error(py::module & m)
             // N.B. the explicit declaration of the λ return value is
             // critical in making the notes read/write in python
             [](error_t & channel) -> pyre::journal::notes_t & {
-                // get the notes on the current page
+                // ask {chronicler_t}
                 return channel.entry().notes();
             },
             // the docstring
@@ -122,7 +122,7 @@ pyre::journal::py::error(py::module & m)
                 return m.attr("ApplicationError");
             },
             // the docstring
-            "the type of exception raised when this channel type is fatal")
+            "the keeper of the global state")
 
         // the channel severity
         .def_property_readonly_static(
@@ -217,6 +217,24 @@ pyre::journal::py::error(py::module & m)
             "message"_a = "",
             // the docstring
             "add another line to the message page")
+
+        // add multiple lines at once
+        .def(
+            "report",
+            // the handler
+            [](error_t & channel, py::iterable report) -> error_t & {
+                // extract individual lines from the iterable
+                for (auto line : report) {
+                    // and inject each one
+                    channel << py::str(line) << pyre::journal::newline;
+                }
+                // all done
+                return channel;
+            },
+            // the signature
+            "report"_a,
+            // the docstring
+            "add multiple lines to the message page")
 
         // add a message to the channel and flush
         .def(
