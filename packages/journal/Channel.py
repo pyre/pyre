@@ -200,6 +200,16 @@ class Channel(pyre.patterns.named):
         return self
 
 
+    def report(self, report):
+        """
+        Add lines from the {report} to the current page
+        """
+        # use {report} to extend my {pgae}
+        self.page.extend(report)
+        # all done
+        return self
+
+
     def log(self, message=None):
         """
         Add {message} to the current page and then record the entry
