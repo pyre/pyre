@@ -15,7 +15,7 @@ using trash_t = pyre::journal::trash_t;
 using myerror_t = pyre::journal::error_t;
 
 
-// basic error example
+// exercise the manipulators that control indentation level
 int
 main()
 {

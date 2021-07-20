@@ -10,7 +10,7 @@
 #include <cassert>
 
 
-// exercise the common use case
+// exercise the manipulators that control indentation level
 int
 main()
 {
