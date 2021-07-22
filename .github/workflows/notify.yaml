@@ -2,11 +2,9 @@
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2021 all rights reserved
 
-
 name: notify
-on: workflow_dispatch
+on: push
 jobs:
-
   # notify my CI server
   notify:
     runs-on: ubuntu-latest
@@ -47,6 +45,5 @@ jobs:
         run: find .
       - name: host info
         run: python3 ${PWD}/mm/mm.py host.info --make=make
-
-
+#
 # end of file
