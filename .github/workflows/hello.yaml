@@ -14,6 +14,8 @@ jobs:
     steps:
       - name: issue
         run: cat /etc/issue
+      - name: packages
+        run: dpkg -l
 
   install:
     runs-on: ${{ matrix.os }}
