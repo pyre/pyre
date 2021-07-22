@@ -3,7 +3,7 @@
 # (c) 1998-2021 all rights reserved
 
 name: notify
-on: workflow_dispatch
+on: push
 jobs:
   # notify my CI server
   notify:
