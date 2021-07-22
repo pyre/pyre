@@ -15,8 +15,6 @@ jobs:
         python: [3.8, 3.9]
 
     steps:
-      - uses: actions/checkout@v2
-
       - name: set up python ${{matrix.python}}
         uses: actions/setup-python@v2
         with:
@@ -30,7 +28,9 @@ jobs:
       - name: show me where things are
         run: |
           pip show numpy
+          find $(python3-config --prefix)/lib/python${{matrix.python}}/site-packages/numpy/include
           pip show pybind11
+          find $(python3-config --prefix)/lib/python${{matrix.python}}/site-packages/pybind11/include
           pip show PyYAML
 
 # end of file
