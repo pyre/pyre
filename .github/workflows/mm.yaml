@@ -28,7 +28,7 @@ jobs:
       - name: show me where things are
         run: |
           pip show numpy
-          find $(python3-config --prefix)/lib/python${{matrix.python}}/site-packages/numpy/include
+          find $(python3-config --prefix)/lib/python${{matrix.python}}/site-packages/numpy/core/include
           pip show pybind11
           find $(python3-config --prefix)/lib/python${{matrix.python}}/site-packages/pybind11/include
           pip show PyYAML
