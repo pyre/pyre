@@ -23,6 +23,8 @@ jobs:
         run: "dpkg -l"
       - name: runner cache location
         run: "echo ${RUNNER_TOOL_CACHE}"
+      - name: cache contents
+        run: "ls -l ${RUNNER_TOOL_CACHE}"
       - name: node cache contents
         run: "ls -l ${RUNNER_TOOL_CACHE}/node"
       - name: python cache contents
