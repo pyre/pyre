@@ -1,0 +1,36 @@
+# -*- yaml -*-
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2021 all rights reserved
+
+name: mm
+on: push
+jobs:
+  # build and test the HEAD of the repository
+  build:
+    runs-on: ${{matrix.os}}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-18.04, ubuntu-20.04]
+        python-version: [3.8, 3.9]
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: set up python ${{python-version}}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{matrix.python-version}}
+
+      - name: install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install numpy pybind11 PyYAML
+
+      - name: show me where things are
+        run: |
+          pip show numpy
+          pip show pybind11
+          pip show PyYAML
+
+# end of file
