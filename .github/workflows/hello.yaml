@@ -3,7 +3,7 @@
 # (c) 1998-2021 all rights reserved
 
 name: hello
-on: workflow_dispatch
+on: push
 jobs:
   signon:
     runs-on: ${{ matrix.os }}
@@ -40,7 +40,12 @@ jobs:
           ${{ matrix.python }} ${{ matrix.python }}-dev
           python3-pybind11 python3-numpy python3-yaml
       - name: c++ version
-        run: ${{ matrix.cxx }} --version
+        run: |
+          which ${{ matrix.cxx }}
+          ${{ matrix.cxx }} --version
       - name: python version
-        run: ${{ matrix.python }} --version
+        run: |
+          which ${{ matrix.python }}
+          ${{ matrix.python }} --version
+
 # end of file
