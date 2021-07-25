@@ -18,6 +18,8 @@ jobs:
       - name: system packages
         run: |
           sudo apt update
+          sudo apt list --upgradable
+          sudo apt dist-upgrade
           sudo apt install -y make openssh-server libgsl-dev
 
       - name: set up python ${{matrix.python}}
