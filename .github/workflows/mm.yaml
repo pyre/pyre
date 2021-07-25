@@ -18,9 +18,7 @@ jobs:
       - name: system packages
         run: |
           sudo apt update
-          sudo apt install -y
-            make openssh-server
-            libgsl-dev
+          sudo apt install -y make openssh-server libgsl-dev
 
       - name: set up python ${{matrix.python}}
         uses: actions/setup-python@v2
