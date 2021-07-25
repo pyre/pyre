@@ -17,7 +17,6 @@ jobs:
     steps:
       - name: system packages
         run: |
-          apt update
           apt install -y make openssh-server
 
       - name: set up python ${{matrix.python}}
