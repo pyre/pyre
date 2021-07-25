@@ -15,6 +15,11 @@ jobs:
         python: [3.8, 3.9]
 
     steps:
+      - name: system packages
+        run: |
+          apt update
+          apt install -y make openssh-server
+
       - name: set up python ${{matrix.python}}
         uses: actions/setup-python@v2
         with:
@@ -24,6 +29,9 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           python -m pip install numpy pybind11 PyYAML
+
+      - name: packages
+        run: dpkg -l
 
       - name: versions
         run: |
