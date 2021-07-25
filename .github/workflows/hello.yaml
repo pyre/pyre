@@ -3,7 +3,7 @@
 # (c) 1998-2021 all rights reserved
 
 name: hello
-on: push
+on: workflow_dispatch
 jobs:
   signon:
     runs-on: ${{ matrix.os }}
