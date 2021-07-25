@@ -25,6 +25,10 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install numpy pybind11 PyYAML
 
+      - name: versions
+        run: |
+          make --version
+
       - name: show me where things are
         run: |
           pip show numpy
