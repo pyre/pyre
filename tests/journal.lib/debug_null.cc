@@ -5,7 +5,7 @@
 
 
 // disable the debug channels
-#define NDEBUG
+#define NDEBUG 1
 #undef PYRE_CORE
 // get the journal
 #include <pyre/journal.h>
@@ -19,7 +19,7 @@
 // verify that when NDEBUG is on, {debug_t} becomes {null_t}
 int main() {
     // verify that {debug_t} is a {null_t}
-    assert ((std::is_same<pyre::journal::debug_t, pyre::journal::null_t>::value));
+    static_assert ((std::is_same<pyre::journal::debug_t, pyre::journal::null_t>::value));
 
     // make a channel
     pyre::journal::debug_t channel("tests.journal.debug");
