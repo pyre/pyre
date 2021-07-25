@@ -16,14 +16,14 @@ jobs:
         python: [3.8, 3.9]
 
     steps:
-      - name: system packages
+      - name: ${{matrix.os}} refresh
         run: |
           sudo apt update
           sudo apt list --upgradable
           sudo apt dist-upgrade
           sudo apt install -y make openssh-server libgsl-dev
 
-      - name: set up python ${{matrix.python}}
+      - name: python ${{matrix.python}} setup
         uses: actions/setup-python@v2
         with:
           python-version: ${{matrix.python}}
@@ -33,14 +33,15 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install numpy pybind11 PyYAML
 
-      - name: packages
-        run: dpkg -l
+      - name: list system packages
+        run: |
+          dpkg -l
 
       - name: versions
         run: |
           make --version
 
-      - name: show me where things are
+      - name: locations
         run: |
           pip show numpy
           find $(python3-config --prefix)/lib/python${{matrix.python}}/site-packages/numpy/core/include
