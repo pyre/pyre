@@ -32,7 +32,7 @@ python.dir := $(sys.prefix)
 # install locations
 # this is necessary in order to override {mm} appending the build type to the install prefix
 builder.dest.prefix := $(project.prefix)/
-# install the pyton packages straight where they need to go
+# install the python packages straight where they need to go
 builder.dest.pyc := $(sys.prefix)/lib/python3/dist-packages/
 
 # control over the build process
