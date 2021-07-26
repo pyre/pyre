@@ -47,9 +47,9 @@ jobs:
           pip3 show pybind11
           pip3 show PyYAML
           echo "-----------"
-          find $(pythonLocation)/lib/python$(pythonVersion)/site-packages/numpy/core/include
+          find ${pythonLocation}/lib/python${pythonVersion}/site-packages/numpy/core/include
           echo "-----------"
-          find $(pythonLocation)/lib/$(pythonVersion)/site-packages/pybind11/include
+          find ${pythonLocation}/lib/${pythonVersion}/site-packages/pybind11/include
         env:
           pythonVersion: ${{matrix.python}}
 
