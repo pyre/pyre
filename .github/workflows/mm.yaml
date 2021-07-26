@@ -48,5 +48,7 @@ jobs:
           pip3 show pybind11
           find $(python3-config --prefix)/lib/python${{matrix.python}}/site-packages/pybind11/include
           pip3 show PyYAML
+        env:
+          pythonVersion: ${{matrix.python}}
 
 # end of file
