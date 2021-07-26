@@ -40,15 +40,16 @@ jobs:
       - name: versions
         run: |
           make --version
+          python3 --version
 
       - name: locations
         run: |
           pip3 show numpy
           pip3 show pybind11
           pip3 show PyYAML
-          echo "-----------"
+          echo " -- the numpy headers"
           find ${pythonLocation}/lib/python${pythonVersion}/site-packages/numpy/core/include
-          echo "-----------"
+          echo " -- the pybind11 headers"
           find ${pythonLocation}/lib/python${pythonVersion}/site-packages/pybind11/include
         env:
           pythonVersion: ${{matrix.python}}
