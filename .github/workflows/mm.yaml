@@ -44,10 +44,12 @@ jobs:
       - name: locations
         run: |
           pip3 show numpy
-          find $(python3-config --prefix)/lib/python${{matrix.python}}/site-packages/numpy/core/include
           pip3 show pybind11
-          find $(python3-config --prefix)/lib/python${{matrix.python}}/site-packages/pybind11/include
           pip3 show PyYAML
+          echo "-----------"
+          find $(pythonLocation)/lib/python$(pythonVersion)/site-packages/numpy/core/include
+          echo "-----------"
+          find $(pythonLocation)/lib/$(pythonVersion)/site-packages/pybind11/include
         env:
           pythonVersion: ${{matrix.python}}
 
