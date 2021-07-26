@@ -49,7 +49,7 @@ jobs:
           echo "-----------"
           find ${pythonLocation}/lib/python${pythonVersion}/site-packages/numpy/core/include
           echo "-----------"
-          find ${pythonLocation}/lib/${pythonVersion}/site-packages/pybind11/include
+          find ${pythonLocation}/lib/python${pythonVersion}/site-packages/pybind11/include
         env:
           pythonVersion: ${{matrix.python}}
 
