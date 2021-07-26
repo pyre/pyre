@@ -18,10 +18,14 @@ jobs:
     steps:
       - name: ${{matrix.os}} refresh
         run: |
+          echo " -- update the package cache"
           sudo apt update
+          echo " -- upgradables"
           sudo apt list --upgradable
+          echo " -- upgrade"
           sudo apt dist-upgrade
-          sudo apt install -y make openssh-server libgsl-dev
+          echo " -- install our dependencies"
+          sudo apt install -y make openssh-server libgsl-dev libopenmpi-dev
 
       - name: python ${{matrix.python}} setup
         uses: actions/setup-python@v2
@@ -39,18 +43,23 @@ jobs:
 
       - name: versions
         run: |
+          echo " -- make"
           make --version
+          echo " -- python"
           python3 --version
 
       - name: locations
         run: |
+          echo " -- numpy"
           pip3 show numpy
-          pip3 show pybind11
-          pip3 show PyYAML
-          echo " -- the numpy headers"
+          echo " -- its headers"
           find ${pythonLocation}/lib/python${pythonVersion}/site-packages/numpy/core/include
-          echo " -- the pybind11 headers"
+          echo " -- pybind11"
+          pip3 show pybind11
+          echo " -- its headers"
           find ${pythonLocation}/lib/python${pythonVersion}/site-packages/pybind11/include
+          echo " -- yaml"
+          pip3 show PyYAML
         env:
           pythonVersion: ${{matrix.python}}
 
