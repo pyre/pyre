@@ -3,6 +3,7 @@
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2021 all rights reserved
 
+${info config.mm}
 
 # external dependencies
 # system tools
@@ -32,5 +33,6 @@ pybind11.dir := $(python.dir))/lib/python$(python.version)/site-packages/pybind1
 # set the python compiler so we don't depend on the symbolic link, which may not even be there
 compiler.python := python$(python.version)
 
+${info done with config.mm}
 
 # end of file
