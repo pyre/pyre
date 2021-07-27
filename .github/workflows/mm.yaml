@@ -84,7 +84,6 @@ jobs:
           git checkout ${GITHUB_SHA}
           echo " -- checking whether mm can run from here"
           echo now at: ${PWD}
-          find .github
           ${MM} host.info
           ${MM} builder.info
           ${MM} make.info
@@ -92,7 +91,7 @@ jobs:
           ${MM} extern.gsl.info
           ${MM} extern.mpi.info
           ${MM} extern.numpy.info
-          ${MM} extern.pytbind11.info
+          ${MM} extern.pybind11.info
           echo " -- building pyre"
           ${MM}
           echo " -- testing pyre"
