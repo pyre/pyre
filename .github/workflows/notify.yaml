@@ -3,7 +3,7 @@
 # (c) 1998-2021 all rights reserved
 
 name: notify
-on: workflow_dispatch
+on: push
 jobs:
   # notify my CI server
   notify:
@@ -12,7 +12,7 @@ jobs:
       - name: repo info
         run: "echo repository: ${GITHUB_REPOSITORY}"
       - name: graphql API
-        run: "echo event: ${GITHUB_GRAPHQL_URL}"
+        run: "echo graphql endpoint: ${GITHUB_GRAPHQL_URL}"
       - name: event info
         run: "echo event: ${GITHUB_EVENT_NAME}"
       - name: commit info
