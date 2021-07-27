@@ -33,6 +33,9 @@ pybind11.dir := $(python.dir))/lib/python$(python.version)/site-packages/pybind1
 # set the python compiler so we don't depend on the symbolic link, which may not even be there
 compiler.python := python$(python.version)
 
+${info python: $(python.dir)}
+${info numpy: $(numpy.dir)}
+${info pybind1q: $(numpy.dir)}
 ${info done with config.mm}
 
 # end of file
