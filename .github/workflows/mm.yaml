@@ -84,6 +84,8 @@ jobs:
           ${MM} builder.info
           echo " -- building pyre"
           ${MM}
+          echo " -- testing pyre"
+          ${MM} tests
         env:
           pythonVersion: ${{matrix.python}}
 
