@@ -26,7 +26,7 @@ numpy.version := 1.21.1
 numpy.dir := $(python.dir))/lib/python$(python.version)/site-packages/numpy/core
 # pybind11
 pybind11.version := 2.7.0
-pybind11.dir := $(python.dir))/lib/python$(python.version)/site-packages/pybind11/include
+pybind11.dir := $(python.dir))/lib/python$(python.version)/site-packages/pybind11
 
 # control over the build process
 # set the python compiler so we don't depend on the symbolic link, which may not even be there
