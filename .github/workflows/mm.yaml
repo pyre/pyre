@@ -82,6 +82,11 @@ jobs:
           echo " -- checking whether mm can run from here"
           ${MM} host.info
           ${MM} builder.info
+          echo " -- verifying external packages"
+          ${MM} extern.gsl.info
+          ${MM} extern.mpi.info
+          ${MM} extern.numpy.info
+          ${MM} extern.pytbind11.info
           echo " -- building pyre"
           ${MM}
           echo " -- testing pyre"
