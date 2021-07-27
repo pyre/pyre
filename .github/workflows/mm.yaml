@@ -35,7 +35,7 @@ jobs:
       - name: install dependencies
         run: |
           python3 -m pip install --upgrade pip
-          pip3 install numpy pybind11 PyYAML
+          pip3 install graphene numpy pybind11 PyYAML
 
       - name: list system packages
         run: |
@@ -50,6 +50,8 @@ jobs:
 
       - name: locations
         run: |
+          echo " -- graphene"
+          pip3 show graphene
           echo " -- numpy"
           pip3 show numpy
           echo " -- its headers"
