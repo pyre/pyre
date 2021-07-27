@@ -10,7 +10,9 @@ mm:
     compilers = gcc, python/python3
 
     ; other settings
-    ; the make utility
+    ; the location of the configuration file
+    runcfg = .github/matrix
+    ; the name of the make utility
     make = make
 
 ; end of file
