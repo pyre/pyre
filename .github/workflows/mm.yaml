@@ -72,4 +72,15 @@ jobs:
          echo " -- cloning pyre"
          git clone https://github.com/pyre/pyre
 
+      - name: build pyre
+        run: |
+          echo " -- aliasing mm"
+          alias mm="python3 $(PWD)/mm/mm.py"
+          echo " -- switching to the pyre home directory"
+          cd pyre
+          echo " -- checking whether mm can run from here"
+          python3 ../mm/mm.py host.info --make=make
+          mm builder.info --make=make
+          echo " -- building pyre"
+
 # end of file
