@@ -80,6 +80,7 @@ jobs:
           echo " -- switching to the pyre home directory"
           cd pyre
           echo " -- checking whether mm can run from here"
+          echo now at: ${PWD}
           ${MM} host.info
           ${MM} builder.info
           echo " -- verifying external packages"
