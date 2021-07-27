@@ -75,12 +75,14 @@ jobs:
       - name: build pyre
         run: |
           echo " -- aliasing mm"
-          alias mm="python3 $(PWD)/mm/mm.py"
+          export MM="python3 $(PWD)/mm/mm.py --make=make"
           echo " -- switching to the pyre home directory"
           cd pyre
           echo " -- checking whether mm can run from here"
           python3 ../mm/mm.py host.info --make=make
-          mm builder.info --make=make
+          ${MM} builder.info --make=make
           echo " -- building pyre"
+        env:
+          pythonVersion: ${{matrix.python}}
 
 # end of file
