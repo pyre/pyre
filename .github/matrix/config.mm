@@ -24,10 +24,10 @@ python.version := $(pythonVersion)
 python.dir := $(pythonLocation)
 # numpy
 numpy.version := 1.21.1
-numpy.dir := $(python.dir))/lib/python$(python.version)/site-packages/numpy/core
+numpy.dir := $(python.dir)/lib/python$(python.version)/site-packages/numpy/core
 # pybind11
 pybind11.version := 2.7.0
-pybind11.dir := $(python.dir))/lib/python$(python.version)/site-packages/pybind11
+pybind11.dir := $(python.dir)/lib/python$(python.version)/site-packages/pybind11
 
 # control over the build process
 # set the python compiler so we don't depend on the symbolic link, which may not even be there
@@ -35,7 +35,7 @@ compiler.python := python$(python.version)
 
 ${info python: $(python.dir)}
 ${info numpy: $(numpy.dir)}
-${info pybind1q: $(numpy.dir)}
+${info pybind11: $(pybind11.dir)}
 ${info done with config.mm}
 
 # end of file
