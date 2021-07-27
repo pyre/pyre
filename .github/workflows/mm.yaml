@@ -77,6 +77,7 @@ jobs:
           echo " -- aliasing mm"
           export MM="python3 ${PWD}/mm/mm.py --make=make --runcfg=.github/matrix"
           echo mm: ${MM}
+          ${MM} --help
           echo " -- switching to the pyre home directory"
           cd pyre
           echo " -- checking whether mm can run from here"
