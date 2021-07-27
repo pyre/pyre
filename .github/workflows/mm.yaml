@@ -71,8 +71,6 @@ jobs:
          git clone https://github.com/aivazis/mm
          echo " -- cloning pyre"
          git clone https://github.com/pyre/pyre
-         echo " -- checking out the correct ref"
-         git checkout ${GITHUB_SHA}
 
       - name: build pyre
         run: |
@@ -82,6 +80,8 @@ jobs:
           ${MM} --help
           echo " -- switching to the pyre home directory"
           cd pyre
+          echo " -- checking out the correct ref"
+          git checkout ${GITHUB_SHA}
           echo " -- checking whether mm can run from here"
           echo now at: ${PWD}
           find .github
