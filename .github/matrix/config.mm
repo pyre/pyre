@@ -3,8 +3,6 @@
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2021 all rights reserved
 
-${info config.mm}
-
 # external dependencies
 # system tools
 sys.prefix := /usr
@@ -18,6 +16,7 @@ gsl.dir := $(sys.prefix)
 mpi.version := 4.0.3
 mpi.flavor := openmpi
 mpi.dir := ${sys.libx86}/openmpi
+mpi.executive := mpiexec
 
 # python
 python.version := $(pythonVersion)
@@ -32,10 +31,5 @@ pybind11.dir := $(python.dir)/lib/python$(python.version)/site-packages/pybind11
 # control over the build process
 # set the python compiler so we don't depend on the symbolic link, which may not even be there
 compiler.python := python$(python.version)
-
-${info python: $(python.dir)}
-${info numpy: $(numpy.dir)}
-${info pybind11: $(pybind11.dir)}
-${info done with config.mm}
 
 # end of file
