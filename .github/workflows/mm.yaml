@@ -71,6 +71,8 @@ jobs:
          git clone https://github.com/aivazis/mm
          echo " -- cloning pyre"
          git clone https://github.com/pyre/pyre
+         echo " -- checking out the correct ref"
+         git checkout ${GITHUB_SHA}
 
       - name: build pyre
         run: |
@@ -82,8 +84,10 @@ jobs:
           cd pyre
           echo " -- checking whether mm can run from here"
           echo now at: ${PWD}
+          find .github
           ${MM} host.info
           ${MM} builder.info
+          ${MM} make.info
           echo " -- verifying external packages"
           ${MM} extern.gsl.info
           ${MM} extern.mpi.info
