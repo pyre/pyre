@@ -65,4 +65,11 @@ jobs:
         env:
           pythonVersion: ${{matrix.python}}
 
+      - name: clone
+        run: |
+         echo " -- cloning mm"
+         git clone git@github.com:aivazis/mm
+         echo " -- cloning pyre"
+         git clone git@github.com:pyre/pyre
+
 # end of file
