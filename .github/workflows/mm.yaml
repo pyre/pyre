@@ -7,7 +7,7 @@ on: push
 jobs:
   # build and test the HEAD of the repository
   build:
-    name: ${{matrix.os}} + python-${{matrix.python}} + ${{matrix.suite}}-${{matrix.suiteVersion}}
+    name: ${{matrix.target}} python-${{matrix.python}},${{matrix.suite}}-${{matrix.suiteVersion}} on ${{matrix.os}}
     runs-on: ${{matrix.os}}
     strategy:
       fail-fast: false
@@ -15,12 +15,17 @@ jobs:
         os: [ubuntu-20.04]
         # target: [debug, opt]
         # python: [3.8, 3.9]
+        target: [debug]
         python: [3.9]
         suite: [clang, gcc]
         suiteVersion: [ 9, 10, 11, 12]
         exclude:
           - suite: gcc
             suiteVersion: 12
+          - suite: gcc
+            suiteVersion: 11
+          - suite: clang
+            suiteVersion: 9
 
     steps:
       - name: ${{matrix.os}} refresh
