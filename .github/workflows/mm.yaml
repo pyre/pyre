@@ -89,7 +89,7 @@ jobs:
       - name: build pyre
         run: |
           echo " -- aliasing mm"
-          export MM="python3 ${PWD}/mm/mm.py --config=.github/matrix/mm.pfg"
+          export MM="python3 ${PWD}/mm/mm.py --verbose --config=.github/matrix/mm.pfg"
           echo mm: ${MM}
           ${MM} --help
           echo " -- switching to the pyre home directory"
