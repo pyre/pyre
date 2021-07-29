@@ -13,12 +13,10 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-20.04]
-        # target: [debug, opt]
-        # python: [3.8, 3.9]
-        target: [debug]
-        python: [3.9]
+        target: [debug, opt]
+        python: [3.8, 3.9]
         suite: [clang, gcc]
-        suiteVersion: [ 9, 10, 11, 12]
+        suiteVersion: [9, 10, 11, 12]
         exclude:
           - suite: gcc
             suiteVersion: 12
@@ -106,6 +104,7 @@ jobs:
           ${mm} extern.pybind11.info
         env:
           mm: python3 ${{github.workspace}}/mm/mm.py --config=.github/matrix/mm.pfg
+          target: ${{matrix.target}}
           suite: ${{matrix.suite}}
           suiteVersion: ${{matrix.suiteVersion}}
           pythonVersion: ${{matrix.python}}
@@ -118,6 +117,7 @@ jobs:
           ${mm}
         env:
           mm: python3 ${{github.workspace}}/mm/mm.py --config=.github/matrix/mm.pfg
+          target: ${{matrix.target}}
           suite: ${{matrix.suite}}
           suiteVersion: ${{matrix.suiteVersion}}
           pythonVersion: ${{matrix.python}}
@@ -130,6 +130,7 @@ jobs:
           ${mm} tests
         env:
           mm: python3 ${{github.workspace}}/mm/mm.py --config=.github/matrix/mm.pfg
+          target: ${{matrix.target}}
           suite: ${{matrix.suite}}
           suiteVersion: ${{matrix.suiteVersion}}
           pythonVersion: ${{matrix.python}}
