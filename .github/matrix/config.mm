@@ -29,6 +29,13 @@ pybind11.version := 2.7.0
 pybind11.dir := $(python.dir)/lib/python$(python.version)/site-packages/pybind11
 
 # control over the build process
+# communicate the clang version choices
+clang.driver := clang-$(suiteVesion)
+clang++.driver := clang++-$(suiteVesion)
+# communicate the gcc version choices
+gcc.driver := gcc-$(suiteVesion)
+g++.driver := g++-$(suiteVesion)
+
 # set the python compiler so we don't depend on the symbolic link, which may not even be there
 compiler.python := python$(python.version)
 
