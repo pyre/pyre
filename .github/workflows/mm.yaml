@@ -79,38 +79,56 @@ jobs:
         env:
           pythonVersion: ${{matrix.python}}
 
-      - name: clone
+      - name: clone mm + pyre
         run: |
          echo " -- cloning mm"
          git clone https://github.com/aivazis/mm
          echo " -- cloning pyre"
          git clone https://github.com/pyre/pyre
 
-      - name: build pyre
+      - name: checkout pyre
         run: |
-          echo " -- aliasing mm"
-          export MM="python3 ${PWD}/mm/mm.py --verbose --config=.github/matrix/mm.pfg"
-          echo mm: ${MM}
-          ${MM} --help
           echo " -- switching to the pyre home directory"
           cd pyre
           echo " -- checking out the correct ref"
           git checkout ${GITHUB_SHA}
+
+      - name: verify mm
+        run: |
           echo " -- checking whether mm can run from here"
           echo now at: ${PWD}
-          ${MM} host.info
-          ${MM} builder.info
-          ${MM} make.info
+          echo mm: ${mm}
+          ${mm} --help
+          ${mm} host.info
+          ${mm} builder.info
+          ${mm} make.info
           echo " -- verifying external packages"
-          ${MM} extern.gsl.info
-          ${MM} extern.mpi.info
-          ${MM} extern.numpy.info
-          ${MM} extern.pybind11.info
+          ${mm} extern.gsl.info
+          ${mm} extern.mpi.info
+          ${mm} extern.numpy.info
+          ${mm} extern.pybind11.info
+        env:
+          mm: python3 ${{github.workspace}}/mm/mm.py --config=.github/matrix/mm.pfg
+          suite: ${{matrix.suite}}
+          suiteVersion: ${{matrix.suiteVersion}}
+          pythonVersion: ${{matrix.python}}
+
+      - name: build pyre
+        run: |
           echo " -- building pyre"
           ${MM}
+        env:
+          mm: python3 ${{github.workspace}}/mm/mm.py --config=.github/matrix/mm.pfg
+          suite: ${{matrix.suite}}
+          suiteVersion: ${{matrix.suiteVersion}}
+          pythonVersion: ${{matrix.python}}
+
+      - name: test pyre
+        run: |
           echo " -- testing pyre"
           ${MM} tests
         env:
+          mm: python3 ${{github.workspace}}/mm/mm.py --config=.github/matrix/mm.pfg
           suite: ${{matrix.suite}}
           suiteVersion: ${{matrix.suiteVersion}}
           pythonVersion: ${{matrix.python}}
