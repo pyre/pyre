@@ -7,7 +7,7 @@ mm:
     target = debug,shared
 
     ; compilers
-    compilers = gcc, python/python3
+    compilers = ${pyre.environ.suite}, python/python3
 
     ; other settings
     ; the location of the configuration file
