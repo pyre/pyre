@@ -92,9 +92,6 @@ jobs:
           cd pyre
           echo " -- checking out the correct ref"
           git checkout ${GITHUB_SHA}
-
-      - name: verify mm
-        run: |
           echo " -- checking whether mm can run from here"
           echo now at: ${PWD}
           echo mm: ${mm}
@@ -115,6 +112,8 @@ jobs:
 
       - name: build pyre
         run: |
+          echo " -- switching to the pyre home directory"
+          cd pyre
           echo " -- building pyre"
           ${MM}
         env:
@@ -125,6 +124,8 @@ jobs:
 
       - name: test pyre
         run: |
+          echo " -- switching to the pyre home directory"
+          cd pyre
           echo " -- testing pyre"
           ${MM} tests
         env:
