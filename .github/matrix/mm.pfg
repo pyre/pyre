@@ -4,7 +4,7 @@
 
 mm:
     ; targets
-    target = debug,shared
+    target = {pyre.environ.target},shared
 
     ; compilers
     compilers = {pyre.environ.suite}, python/python3
