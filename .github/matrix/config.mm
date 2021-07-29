@@ -31,10 +31,10 @@ pybind11.dir := $(python.dir)/lib/python$(python.version)/site-packages/pybind11
 # control over the build process
 # the clang drivers
 clang.driver := clang-$(suiteVesion)
-clang++.driver := clang++-$(suiteVesion)
+clang++.driver := clang++-$(suiteVersion)
 # the gcc drivers
-gcc.driver := gcc-$(suiteVesion)
-g++.driver := g++-$(suiteVesion)
+gcc.driver := gcc-$(suiteVersion)
+g++.driver := g++-$(suiteVersion)
 # the python driver
 python3.driver := python$(python.version)
 
