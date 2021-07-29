@@ -89,7 +89,7 @@ jobs:
       - name: build pyre
         run: |
           echo " -- aliasing mm"
-          export MM="python3 ${PWD}/mm/mm.py --make=make --runcfg=.github/matrix"
+          export MM="python3 ${PWD}/mm/mm.py --config=.github/matrix/mm.pfg"
           echo mm: ${MM}
           ${MM} --help
           echo " -- switching to the pyre home directory"
@@ -111,6 +111,8 @@ jobs:
           echo " -- testing pyre"
           ${MM} tests
         env:
+          suite: ${{matrix.suite}}
+          suiteVersion: ${{matrix.suiteVersion}}
           pythonVersion: ${{matrix.python}}
 
 # end of file
