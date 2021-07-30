@@ -15,7 +15,7 @@ jobs:
         os: [ubuntu-20.04]
         target: [Debug]
         python: [3.9]
-        suite: [clang]
+        suite: [clang, gcc]
         suiteVersion: [12]
         # os: [ubuntu-20.04]
         # target: [Debug, Release, RelWithDebInfo]
@@ -30,6 +30,9 @@ jobs:
           - suite: clang
             suiteVersion: 9
         include:
+          - suite: clang
+            cc: clang
+            cxx: clang++
           - suite: gcc
             cc: gcc
             cxx: g++
