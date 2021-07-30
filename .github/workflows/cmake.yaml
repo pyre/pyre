@@ -1,0 +1,138 @@
+# -*- yaml -*-
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2021 all rights reserved
+
+name: cmake
+on: push
+jobs:
+  # build and test the ref that launched this action
+  build:
+    name: ${{matrix.target}} python-${{matrix.python}}+${{matrix.suite}}-${{matrix.suiteVersion}} on ${{matrix.os}}
+    runs-on: ${{matrix.os}}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-20.04]
+        target: [Debug]
+        python: [3.9]
+        suite: [clang]
+        suiteVersion: [12]
+        # os: [ubuntu-20.04]
+        # target: [Debug, Release, RelWithDebInfo]
+        # python: [3.8, 3.9]
+        # suite: [clang, gcc]
+        # suiteVersion: [9, 10, 11, 12]
+        exclude:
+          - suite: gcc
+            suiteVersion: 12
+          - suite: gcc
+            suiteVersion: 11
+          - suite: clang
+            suiteVersion: 9
+
+    steps:
+      - name: ${{matrix.os}} refresh
+        run: |
+          echo " -- update the package cache"
+          sudo apt update
+          echo " -- upgradables"
+          sudo apt list --upgradable
+          echo " -- upgrade"
+          sudo apt dist-upgrade
+          echo " -- install our dependencies"
+          sudo apt install -y make cmake openssh-server libgsl-dev libopenmpi-dev
+
+      - name: python ${{matrix.python}} setup
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{matrix.python}}
+
+      - name: install dependencies
+        run: |
+          python3 -m pip install --upgrade pip
+          pip3 install distro graphene numpy pybind11 PyYAML
+
+      - name: list system packages
+        run: |
+          dpkg -l
+
+      - name: versions
+        run: |
+          echo " -- platform tag from python"
+          python${pythonVersion} -c "import sys; print(sys.platform)"
+          echo " -- distribution tag from python"
+          python${pythonVersion} -c "import distro; print(distro.linux_distribution(full_distribution_name=False))"
+          echo " -- make"
+          make --version
+          echo " -- cmake"
+          cmake --version
+          echo " -- python"
+          python3 --version
+          echo " -- ${{matrix.suite}}"
+          ${{matrix.suite}}-${{matrix.suiteVersion}} --version
+        env:
+          pythonVersion: ${{matrix.python}}
+
+      - name: locations
+        run: |
+          echo " -- distro"
+          pip3 show distro
+          echo " -- graphene"
+          pip3 show graphene
+          echo " -- numpy"
+          pip3 show numpy
+          echo " -- its headers"
+          find ${pythonLocation}/lib/python${pythonVersion}/site-packages/numpy/core/include
+          echo " -- pybind11"
+          pip3 show pybind11
+          echo " -- its headers"
+          find ${pythonLocation}/lib/python${pythonVersion}/site-packages/pybind11/include
+          echo " -- yaml"
+          pip3 show PyYAML
+        env:
+          pythonVersion: ${{matrix.python}}
+
+      - name: clone pyre
+        run: |
+          echo " -- cloning pyre"
+          git clone https://github.com/pyre/pyre
+
+      - name: checkout pyre
+        run: |
+          echo " -- switching to the pyre home directory"
+          cd pyre
+          echo " -- checking out the correct ref"
+          git checkout ${GITHUB_SHA}
+        env:
+          target: ${{matrix.target}}
+          suite: ${{matrix.suite}}
+          suiteVersion: ${{matrix.suiteVersion}}
+          pythonVersion: ${{matrix.python}}
+
+      - name: build pyre
+        run: |
+          echo " -- switching to the build directory"
+          cd blah
+          echo " -- configuring the build"
+          cmake blah blah
+          echo " -- building pyre"
+          make -j 2
+        env:
+          target: ${{matrix.target}}
+          suite: ${{matrix.suite}}
+          suiteVersion: ${{matrix.suiteVersion}}
+          pythonVersion: ${{matrix.python}}
+
+      - name: test pyre
+        run: |
+          echo " -- switching to the build directory"
+          cd blah
+          echo " -- testing pyre"
+          ctest -j 2
+        env:
+          target: ${{matrix.target}}
+          suite: ${{matrix.suite}}
+          suiteVersion: ${{matrix.suiteVersion}}
+          pythonVersion: ${{matrix.python}}
+#
+# end of file
