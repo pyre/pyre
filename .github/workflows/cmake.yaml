@@ -31,11 +31,11 @@ jobs:
             suiteVersion: 9
         include:
           - suite: gcc
-            cc: gcc-${{matrix.suiteVersion}}
-            cxx: g++-${{matrix.suiteVersion}}
+            cc: gcc
+            cxx: g++
           - suite: clang
-            cc: clang-${{matrix.suiteVersion}}
-            cxx: clang++-${{matrix.suiteVersion}}
+            cc: clang
+            cxx: clang++
 
     steps:
       - name: ${{matrix.os}} refresh
@@ -118,7 +118,7 @@ jobs:
           mkdir build
           cd build
           echo " -- configuring the build"
-          cmake -DCMAKE_INSTALL_PREFIX=${{runner.temp}}/install -DCMAKE_BUILD_TYPE=${{matrix.target}} -DCMAKE_CC_COMPILER=${{matrix.cc}} -DCMAKE_CXX_COMPILER=${{matrix.cxx}} -DPython_ROOT_DIR=${pythonLocation} ${{github.workspace}}/pyre
+          cmake -DCMAKE_INSTALL_PREFIX=${{runner.temp}}/install -DCMAKE_BUILD_TYPE=${{matrix.target}} -DCMAKE_CC_COMPILER=${{matrix.cc}}-${{matrix.suiteVersion}} -DCMAKE_CXX_COMPILER=${{matrix.cxx}}-${{matrix.suiteVersion}} -DPython_ROOT_DIR=${pythonLocation} ${{github.workspace}}/pyre
           echo " -- building pyre"
           make -j 2
         env:
