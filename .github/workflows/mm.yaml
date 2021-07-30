@@ -7,7 +7,7 @@ on: push
 jobs:
   # build and test the HEAD of the repository
   build:
-    name: ${{matrix.target}} python-${{matrix.python}},${{matrix.suite}}-${{matrix.suiteVersion}} on ${{matrix.os}}
+    name: ${{matrix.target}} python-${{matrix.python}}+${{matrix.suite}}-${{matrix.suiteVersion}} on ${{matrix.os}}
     runs-on: ${{matrix.os}}
     strategy:
       fail-fast: false
@@ -127,8 +127,8 @@ jobs:
           echo " -- switching to the pyre home directory"
           cd pyre
           echo " -- testing pyre"
-          ${mm} tests tests.pyre.pkg.externals
-          ${mm} tests tests.mpi.pkg
+          ${mm} tests.pyre.pkg.externals
+          ${mm} tests.mpi.pkg
         env:
           mm: python3 ${{github.workspace}}/mm/mm.py --config=.github/matrix/mm.pfg
           target: ${{matrix.target}}
