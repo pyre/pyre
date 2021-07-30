@@ -16,12 +16,10 @@ jobs:
         target: [Debug]
         python: [3.9]
         suite: [clang, gcc]
-        suiteVersion: [10]
+        suiteVersion: [9, 10, 11, 12]
         # os: [ubuntu-20.04]
         # target: [Debug, Release, RelWithDebInfo]
         # python: [3.8, 3.9]
-        # suite: [clang, gcc]
-        # suiteVersion: [9, 10, 11, 12]
         include:
           - suite: clang
             cc: clang
@@ -29,6 +27,13 @@ jobs:
           - suite: gcc
             cc: gcc
             cxx: g++
+        exclude:
+          - suite: gcc
+            suiteVersion: 12
+          - suite: gcc
+            suiteVersion: 11
+          - suite: clang
+            suiteVersion: 9
 
     steps:
       - name: ${{matrix.os}} refresh
