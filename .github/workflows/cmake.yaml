@@ -115,7 +115,7 @@ jobs:
           mkdir build
           cd build
           echo " -- configuring the build"
-          cmake -DCMAKE_INSTALL_PREFIX=${{runner.temp}}/install -DCMAKE_BUILD_TYPE=${{matrix.target}} -DCMAKE_C_COMPILER=${{matrix.cc}}-${{matrix.suiteVersion}} -DCMAKE_CXX_COMPILER=${{matrix.cxx}}-${{matrix.suiteVersion}} -DPython_ROOT_DIR=${pythonLocation} ${{github.workspace}}/pyre
+          cmake -DCMAKE_INSTALL_PREFIX=${{runner.temp}}/install -DCMAKE_BUILD_TYPE=${{matrix.target}} -DCMAKE_C_COMPILER=${{matrix.cc}}-${{matrix.suiteVersion}} -DCMAKE_CXX_COMPILER=${{matrix.cxx}}-${{matrix.suiteVersion}} -DPython_ROOT_DIR=${pythonLocation} -Dpybind11_DIR=${pythonLocation}/lib/python${pythonVersion}/site-packages/pybind11/share/cmake/pybind11 ${{github.workspace}}/pyre
           echo " -- building pyre"
           make -j 2
         env:
