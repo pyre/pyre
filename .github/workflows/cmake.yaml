@@ -15,11 +15,10 @@ jobs:
         os: [ubuntu-20.04]
         target: [Debug]
         python: [3.9]
-        suite: [clang, gcc]
-        suiteVersion: [9, 10, 11, 12]
-        # os: [ubuntu-20.04]
         # target: [Debug, Release, RelWithDebInfo]
         # python: [3.8, 3.9]
+        suite: [clang, gcc]
+        suiteVersion: [9, 10, 11, 12]
         include:
           - suite: clang
             cc: clang
@@ -91,7 +90,7 @@ jobs:
           echo " -- pybind11"
           pip3 show pybind11
           echo " -- its headers"
-          find ${pythonLocation}/lib/python${pythonVersion}/site-packages/pybind11/include
+          find ${pythonLocation}/lib/python${pythonVersion}/site-packages/pybind11
           echo " -- yaml"
           pip3 show PyYAML
         env:
