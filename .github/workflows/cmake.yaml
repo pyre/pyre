@@ -29,6 +29,13 @@ jobs:
             suiteVersion: 11
           - suite: clang
             suiteVersion: 9
+        include:
+          - suite: gcc
+            cc: gcc-${{matrix.suiteVersion}}
+            cxx: g++-${{matrix.suiteVersion}}
+          - suite: clang
+            cc: clang-${{matrix.suiteVersion}}
+            cxx: clang++-${{matrix.suiteVersion}}
 
     steps:
       - name: ${{matrix.os}} refresh
@@ -103,36 +110,27 @@ jobs:
           cd pyre
           echo " -- checking out the correct ref"
           git checkout ${GITHUB_SHA}
-        env:
-          target: ${{matrix.target}}
-          suite: ${{matrix.suite}}
-          suiteVersion: ${{matrix.suiteVersion}}
-          pythonVersion: ${{matrix.python}}
 
       - name: build pyre
         run: |
           echo " -- switching to the build directory"
-          cd blah
+          cd ${{runner.temp}}
+          mkdir build
+          cd build
           echo " -- configuring the build"
-          cmake blah blah
+          cmake -DCMAKE_INSTALL_PREFIX=${{runner.temp}}/install -DCMAKE_BUILD_TYPE=${{matrix.target}} -DCMAKE_CC_COMPILER=${{matrix.cc}} -DCMAKE_CXX_COMPILER=${{matrix.cxx}} -DPython_ROOT_DIR=${pythonLocation} ${{github.workspace}}/pyre
           echo " -- building pyre"
           make -j 2
         env:
-          target: ${{matrix.target}}
-          suite: ${{matrix.suite}}
-          suiteVersion: ${{matrix.suiteVersion}}
           pythonVersion: ${{matrix.python}}
 
       - name: test pyre
         run: |
           echo " -- switching to the build directory"
-          cd blah
+          cd ${{runner.temp}}
+          mkdir build
+          cd build
           echo " -- testing pyre"
           ctest -j 2
-        env:
-          target: ${{matrix.target}}
-          suite: ${{matrix.suite}}
-          suiteVersion: ${{matrix.suiteVersion}}
-          pythonVersion: ${{matrix.python}}
-#
+
 # end of file
