@@ -7,7 +7,7 @@ on: push
 jobs:
   # build and test the ref that launched this action
   build:
-    name: ${{matrix.target}} python-${{matrix.python}}+${{matrix.suite}}-${{matrix.suiteVersion}} on ${{matrix.os}}
+    name: ${{matrix.target}} python-${{matrix.python}}, ${{matrix.suite}}-${{matrix.suiteVersion}} on ${{matrix.os}}
     runs-on: ${{matrix.os}}
     strategy:
       fail-fast: false
