@@ -5,7 +5,7 @@
 name: mm
 on: push
 jobs:
-  # build and test the HEAD of the repository
+  # build and test the ref that launched this action
   build:
     name: ${{matrix.target}} python-${{matrix.python}}+${{matrix.suite}}-${{matrix.suiteVersion}} on ${{matrix.os}}
     runs-on: ${{matrix.os}}
@@ -13,14 +13,10 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-20.04]
-        target: [debug]
-        python: [3.9]
-        suite: [clang]
-        suiteVersion: [12]
-        # target: [debug, opt]
-        # python: [3.8, 3.9]
-        # suite: [clang, gcc]
-        # suiteVersion: [9, 10, 11, 12]
+        target: [debug, opt]
+        python: [3.8, 3.9]
+        suite: [clang, gcc]
+        suiteVersion: [9, 10, 11, 12]
         exclude:
           - suite: gcc
             suiteVersion: 12
@@ -145,4 +141,5 @@ jobs:
           suite: ${{matrix.suite}}
           suiteVersion: ${{matrix.suiteVersion}}
           pythonVersion: ${{matrix.python}}
+#
 # end of file
