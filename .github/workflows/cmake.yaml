@@ -29,13 +29,6 @@ jobs:
             suiteVersion: 11
           - suite: clang
             suiteVersion: 9
-        include:
-          - suite: gcc
-            cc: gcc
-            cxx: g++
-          - suite: clang
-            cc: clang
-            cxx: clang++
 
     steps:
       - name: ${{matrix.os}} refresh
