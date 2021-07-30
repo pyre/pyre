@@ -7,7 +7,7 @@ on: push
 jobs:
   # build and test the ref that launched this action
   build:
-    name: ${{matrix.target}} python-${{matrix.python}},${{matrix.suite}}-${{matrix.suiteVersion}} on ${{matrix.os}}
+    name: ${{matrix.target}} python-${{matrix.python}}+${{matrix.suite}}-${{matrix.suiteVersion}} on ${{matrix.os}}
     runs-on: ${{matrix.os}}
     strategy:
       fail-fast: false
@@ -129,6 +129,6 @@ jobs:
           echo " -- switching to the build directory"
           cd ${{runner.temp}}/build
           echo " -- testing pyre"
-          ctest -j 2
+          ctest -j 2 -E postgres.ext
 
 # end of file
