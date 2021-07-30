@@ -117,7 +117,7 @@ jobs:
           echo " -- configuring the build"
           cmake -DCMAKE_INSTALL_PREFIX=${prefix} -DCMAKE_BUILD_TYPE=${target} -DCMAKE_C_COMPILER=${cc} -DCMAKE_CXX_COMPILER=${cxx} -DPython_ROOT_DIR=${pythonLocation} -Dpybind11_DIR=${pythonLocation}/lib/python${pythonVersion}/site-packages/pybind11/share/cmake/pybind11 ${{github.workspace}}/pyre
           echo " -- building pyre"
-          make -j 2
+          make -j 2 install
         env:
           prefix: ${{runner.temp}}/install
           target: ${{matrix.target}}
@@ -127,8 +127,7 @@ jobs:
       - name: test pyre
         run: |
           echo " -- switching to the build directory"
-          cd ${{runner.temp}}
-          cd build
+          cd ${{runner.temp}}/build
           echo " -- testing pyre"
           ctest -j 2
 
