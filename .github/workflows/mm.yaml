@@ -13,10 +13,14 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-20.04]
-        target: [debug, opt]
-        python: [3.8, 3.9]
-        suite: [clang, gcc]
-        suiteVersion: [9, 10, 11, 12]
+        target: [debug]
+        python: [3.9]
+        suite: [clang]
+        suiteVersion: [12]
+        # target: [debug, opt]
+        # python: [3.8, 3.9]
+        # suite: [clang, gcc]
+        # suiteVersion: [9, 10, 11, 12]
         exclude:
           - suite: gcc
             suiteVersion: 12
@@ -53,12 +57,18 @@ jobs:
 
       - name: versions
         run: |
+          echo " -- platform tag from python"
+          python${pythonVersion} -c "import sys; print(sys.platform)"
+          echo " -- distribution tag from python"
+          python${pythonVersion} -c "import distro; print(distro.linux_distribution(full_distribution_name=False))"
           echo " -- make"
           make --version
           echo " -- python"
           python3 --version
           echo " -- ${{matrix.suite}}"
           ${{matrix.suite}}-${{matrix.suiteVersion}} --version
+        env:
+          pythonVersion: ${{matrix.python}}
 
       - name: locations
         run: |
@@ -79,10 +89,10 @@ jobs:
 
       - name: clone mm + pyre
         run: |
-         echo " -- cloning mm"
-         git clone https://github.com/aivazis/mm
-         echo " -- cloning pyre"
-         git clone https://github.com/pyre/pyre
+          echo " -- cloning mm"
+          git clone https://github.com/aivazis/mm
+          echo " -- cloning pyre"
+          git clone https://github.com/pyre/pyre
 
       - name: checkout pyre
         run: |
@@ -135,5 +145,4 @@ jobs:
           suite: ${{matrix.suite}}
           suiteVersion: ${{matrix.suiteVersion}}
           pythonVersion: ${{matrix.python}}
-
 # end of file
