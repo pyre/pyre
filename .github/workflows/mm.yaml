@@ -3,7 +3,7 @@
 # (c) 1998-2021 all rights reserved
 
 name: mm
-on: push
+on: workflow_dispatch
 jobs:
   # build and test the ref that launched this action
   build:
