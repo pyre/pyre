@@ -34,7 +34,7 @@ jobs:
             # cxx: g++
         # # exclude:
           # - suite: gcc
-            suiteVersion: 12
+            # suiteVersion: 12
           # - suite: gcc
             # suiteVersion: 11
           # - suite: clang
