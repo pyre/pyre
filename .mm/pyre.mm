@@ -80,9 +80,6 @@ postgres.ext.lib.prerequisites += journal.lib # pyre.lib is added automatically
 
 
 # the docker images
-# eoan
-pyre.eoan-gcc.name := eoan-gcc
-pyre.eoan-clang.name := eoan-clang
 # focal
 pyre.focal-gcc.name := focal-gcc
 pyre.focal-clang.name := focal-clang
