@@ -60,6 +60,8 @@ class Linux(POSIX, family='pyre.platforms.linux'):
                 # attribute here; the subclasses set the distribution name to the pyre
                 # canonical nickname
                 distribution, cls.release, cls.codename = platform.linux_distribution()
+                # just in case
+                distribution = distribution.lower()
             # if this also fails
             except AttributeError:
                 # there isn't much else to do; act like a generic linux system
@@ -69,29 +71,30 @@ class Linux(POSIX, family='pyre.platforms.linux'):
             # identify the platform characteristics; again, careful not to set the
             # {distribution} attribute here; the subclasses set the distribution name to the
             # pyre canonical nickname
-            distribution, cls.release, cls.codename = distro.linux_distribution(
-                full_distribution_name=False)
+            distribution = distro.id()
+            cls.release = distro.version()
+            cls.codename = distro.codename()
 
         # check for ubuntu
-        if distribution.lower().startswith('ubuntu'):
+        if distribution.startswith('ubuntu'):
             # load the platform file
             from .Ubuntu import Ubuntu
             # and return it
             return Ubuntu
         # check for debian
-        if distribution.lower().startswith('debian'):
+        if distribution.startswith('debian'):
             # load the platform file
             from .Debian import Debian
             # and return it
             return Debian
         # check for red hat
-        if distribution.lower().startswith('red hat'):
+        if distribution.startswith('red hat') or distribution.startswith('rhel'):
             # load the platform file
             from .RedHat import RedHat
             # and return it
             return RedHat
         # check for centos
-        if distribution.lower().startswith('centos'):
+        if distribution.startswith('centos'):
             # load the platform file
             from .CentOS import CentOS
             # and return it
