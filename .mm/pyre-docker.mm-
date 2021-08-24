@@ -8,7 +8,7 @@
 pyre.docker-images := \
     pyre.focal-gcc.dev pyre.focal-clang.dev \
     pyre.groovy-gcc.dev pyre.groovy-clang.dev pyre.groovy-cuda.dev \
-    pyre.hirsute-gcc.dev pyre.hirsute-clang.dev pyre.hirsute-gcc-cmake.dev
+    pyre.hirsute-gcc.dev pyre.hirsute-clang.dev pyre.hirsute-gcc-cmake.dev \
     pyre.focal-gcc.test pyre.focal-clang.test \
     pyre.groovy-gcc.test pyre.groovy-clang.test pyre.groovy-cuda.test \
     pyre.hirsute-gcc.test pyre.hirsute-clang.test pyre.hirsute-gcc-cmake.test
