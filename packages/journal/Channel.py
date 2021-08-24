@@ -204,7 +204,7 @@ class Channel(pyre.patterns.named):
         """
         Add lines from the {report} to the current page
         """
-        # use {report} to extend my {pgae}
+        # use {report} to extend my {page}
         self.page.extend(report)
         # all done
         return self
