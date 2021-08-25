@@ -25,7 +25,7 @@ class Help(Channel, active=True, fatal=False):
         Make an entry in the journal
         """
         # hunt down my device and record the entry
-        self.device.alert(entry=self.entry)
+        self.device.help(entry=self.entry)
         # all done
         return self
 
