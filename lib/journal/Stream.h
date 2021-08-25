@@ -36,10 +36,12 @@ public:
 
     // interface
 public:
-    // developer messages
-    virtual auto memo(const entry_type &) -> Stream & override;
     // user facing messages
     virtual auto alert(const entry_type &) -> Stream & override;
+    // help messages
+    virtual auto help(const entry_type &) -> Stream & override;
+    // developer messages
+    virtual auto memo(const entry_type &) -> Stream & override;
 
     // configuration data
 protected:
@@ -50,17 +52,20 @@ protected:
 private:
     // the stream to write to
     stream_type & _stream;
-    // the renderer for memos
-    renderer_pointer _memo;
+
     // the renderer for alerts
     renderer_pointer _alert;
+    // help messages
+    renderer_pointer _help;
+    // and memos
+    renderer_pointer _memo;
 
     // disallow
 private:
     Stream(const Stream &) = delete;
     Stream(const Stream &&) = delete;
-    const Stream & operator= (const Stream &) = delete;
-    const Stream & operator= (const Stream &&) = delete;
+    const Stream & operator=(const Stream &) = delete;
+    const Stream & operator=(const Stream &&) = delete;
 };
 
 
