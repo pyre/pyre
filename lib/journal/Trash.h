@@ -28,24 +28,28 @@ public:
 
     // interface
 public:
-    // developer messages
-    virtual auto memo(const entry_type &) -> Trash & override;
     // user facing messages
     virtual auto alert(const entry_type &) -> Trash & override;
+    // help messages
+    virtual auto help(const entry_type &) -> Trash & override;
+    // developer messages
+    virtual auto memo(const entry_type &) -> Trash & override;
 
     // data
 private:
-    // the renderer for memos
-    renderer_pointer _memo;
     // the renderer for alerts
     renderer_pointer _alert;
+    // help messages
+    renderer_pointer _help;
+    // and memos
+    renderer_pointer _memo;
 
     // disallow
 private:
     Trash(const Trash &) = delete;
     Trash(const Trash &&) = delete;
-    const Trash & operator= (const Trash &) = delete;
-    const Trash & operator= (const Trash &&) = delete;
+    const Trash & operator=(const Trash &) = delete;
+    const Trash & operator=(const Trash &&) = delete;
 };
 
 
