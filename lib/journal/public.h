@@ -43,6 +43,7 @@
 
 // renderers
 #include "Alert.h"
+#include "Bland.h"
 #include "Memo.h"
 
 // devices
