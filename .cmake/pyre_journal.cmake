@@ -64,6 +64,7 @@ function(pyre_journalLib)
     journal/ANSI.cc
     journal/ANSI_x11.cc
     journal/Alert.cc
+    journal/Bland.cc
     journal/Chronicler.cc
     journal/Console.cc
     journal/Device.cc
