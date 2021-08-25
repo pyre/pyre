@@ -23,10 +23,12 @@ banner = f"""
     {copyright}
 """
 
-header = banner + """
+authors = """
 authors:
     Michael Aïvázis     <michael.aivazis@para-sim.com>
 """
+
+header = banner + authors
 
 usage = header + """
     Basic commands:
