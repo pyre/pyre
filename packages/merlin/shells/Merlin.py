@@ -4,6 +4,8 @@
 # (c) 1998-2021 all rights reserved
 
 
+# external
+import textwrap
 # support
 import merlin
 
@@ -11,7 +13,8 @@ import merlin
 # declaration
 class Merlin(merlin.plexus, family='merlin.shells.plexus'):
     """
-    The main action dispatcher
+    merlin is an opinionated build system that leans on convention to simplify the
+    configuration management of complex projects
     """
 
     # constants
@@ -143,8 +146,14 @@ class Merlin(merlin.plexus, family='merlin.shells.plexus'):
         """
         Generate the help banner
         """
-        # show the license header
-        return merlin.meta.header
+        # the project header
+        yield from textwrap.dedent(merlin.meta.banner).splitlines()
+        # the doc string
+        yield from self.pyre_showSummary(indent='')
+        # the authors
+        yield from textwrap.dedent(merlin.meta.authors).splitlines()
+        # all done
+        return
 
 
     # interactive session management
