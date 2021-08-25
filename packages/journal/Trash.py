@@ -27,6 +27,14 @@ class Trash(Device):
         return self
 
 
+    def help(self, entry):
+        """
+        Generate a help screen
+        """
+        # do nothing
+        return self
+
+
     def memo(self, entry):
         """
         Generate a memo

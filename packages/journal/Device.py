@@ -26,6 +26,14 @@ class Device(pyre.patterns.named):
         raise NotImplementedError(f"class '{type(self).__name__}' must implement 'alert'")
 
 
+    def help(self, entry):
+        """
+        Generate a help screen
+        """
+        # this device doesn't know how to do that
+        raise NotImplementedError(f"class '{type(self).__name__}' must implement 'help'")
+
+
     def memo(self, entry):
         """
         Issue a memo
