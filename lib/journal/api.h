@@ -97,8 +97,9 @@ namespace pyre::journal {
     // renderers
     using renderer_t = Renderer;
     using renderer_ptr = std::shared_ptr<renderer_t>;
-    using memo_t = Memo;
     using alert_t = Alert;
+    using bland_t = Bland;
+    using memo_t = Memo;
 
     // devices
     using device_t = Device;

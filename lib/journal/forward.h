@@ -41,8 +41,9 @@ namespace pyre::journal {
     class Flush;
 
     // renderers
-    class Memo;
     class Alert;
+    class Bland;
+    class Memo;
 
     // devices
     class Splitter;
