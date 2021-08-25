@@ -18,8 +18,9 @@
 
 // renderer support
 #include "Renderer.h"
-#include "Memo.h"
 #include "Alert.h"
+#include "Bland.h"
+#include "Memo.h"
 
 // my superclass
 #include "Device.h"
@@ -29,28 +30,12 @@
 
 // metamethods
 // destructor
-pyre::journal::Stream::
-~Stream()
-{}
+pyre::journal::Stream::~Stream() {}
 
 
 // interface
 auto
-pyre::journal::Stream::
-memo(const entry_type & entry) -> Stream &
-{
-    // get the memo renderer to format the message
-    auto content = _memo->render(_palette, entry);
-    // inject it into my stream
-    _stream << content;
-    // all done
-    return *this;
-}
-
-
-auto
-pyre::journal::Stream::
-alert(const entry_type & entry) -> Stream &
+pyre::journal::Stream::alert(const entry_type & entry) -> Stream &
 {
     // get the page and the notes
     auto & page = entry.page();
@@ -67,6 +52,30 @@ alert(const entry_type & entry) -> Stream &
     // inject it into my stream
     _stream << content;
 
+    // all done
+    return *this;
+}
+
+
+auto
+pyre::journal::Stream::help(const entry_type & entry) -> Stream &
+{
+    // get the memo renderer to format the message
+    auto content = _help->render(_palette, entry);
+    // inject it into my stream
+    _stream << content;
+    // all done
+    return *this;
+}
+
+
+auto
+pyre::journal::Stream::memo(const entry_type & entry) -> Stream &
+{
+    // get the memo renderer to format the message
+    auto content = _memo->render(_palette, entry);
+    // inject it into my stream
+    _stream << content;
     // all done
     return *this;
 }
