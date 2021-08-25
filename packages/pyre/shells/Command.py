@@ -8,6 +8,7 @@
 
 # access to the framework
 import pyre
+import journal
 # my protocol
 from .Action import Action
 
@@ -41,19 +42,13 @@ class Command(pyre.component, implements=Action):
         """
         Show a help screen
         """
-        # indentation level
-        indent = '    '
-        # my specification
-        spec = '{.pyre_namespace} {.pyre_spec}'.format(plexus, self)
-        # tell the user what they typed
-        plexus.info.line(spec)
-        # generate a simple help screen
-        for line in self.pyre_help(spec=spec, indent=indent):
-            # and push it to my info channel
-            plexus.info.line(line)
-        # flush
-        plexus.info.log()
-        # and indicate success
+        # make a channel
+        channel = journal.help("pyre.help.command")
+        # build my help screen
+        channel.report(report=self.pyre_help(plexus=plexus))
+        # and flush
+        channel.log()
+        # all done
         return 0
 
 
@@ -76,10 +71,15 @@ class Command(pyre.component, implements=Action):
         return self.main(plexus=plexus, argv=argv)
 
 
-    def pyre_help(self, spec, indent=' '*4, **kwds):
+    def pyre_help(self, plexus, indent=' '*2, **kwds):
         """
         Hook for the application help system
         """
+        # build my specification
+        spec = f"{plexus.pyre_namespace} {self.pyre_spec}"
+        # and render it
+        yield spec
+
         # my summary
         yield from self.pyre_showSummary(indent=indent, **kwds)
         # my behaviors
