@@ -196,10 +196,14 @@ class Configurable(Dashboard):
         """
         Generate a short description of what I do
         """
-        # if i have a docstring (and i really really should...)
-        if self.__doc__:
-            # format and return
-            yield textwrap.indent(textwrap.dedent(self.__doc__), indent)
+        # get my docstring
+        doc = self.__doc__
+        # if i have one (and i really really should...)
+        if doc:
+            # remove leading indentation from the source code formatting and split
+            for line in textwrap.dedent(doc).splitlines():
+                # format and return
+                yield f"{indent}{line}"
         # all done
         return
 
@@ -226,15 +230,17 @@ class Configurable(Dashboard):
         # if we were able to find any trait info
         if public:
             # the {options} section
-            yield 'options:'
+            yield "options:"
             # figure out how much space we need
             width = max(len(name) for name,_,_ in public) + 2 # for the dashes
-            # for each behavior
+            # for each public trait
             for name, schema, tip in public:
-                # show the details
-                yield "{}{:>{}}: {} [{}]".format(indent, '--'+name, width, tip, schema)
+                # make a tag out of the name
+                tag = f"--{name}"
+                # show its details
+                yield f"{indent}{tag:>{width}}: {tip} [{schema}]"
             # leave some space
-            yield ''
+            yield ""
         # all done
         return
 
@@ -258,12 +264,14 @@ class Configurable(Dashboard):
 
         # if we were able to find any usage information
         if behaviors:
+            # make some space
+            yield ""
             # the {usage} section
-            yield 'usage:'
+            yield "usage:"
             # a banner with all the commands
-            yield '{}{} [command]'.format(indent, spec)
+            yield f"{indent}{spec} [command]"
             # leave some space
-            yield ''
+            yield ""
             # the beginning of the section with more details
             yield 'where [command] is one of'
             # figure out how much space we need
@@ -271,9 +279,9 @@ class Configurable(Dashboard):
             # for each behavior
             for behavior, tip in behaviors:
                 # show the details
-                yield '{}{:>{}}: {}'.format(indent, behavior, width, tip)
+                yield f"{indent}{behavior:>{width}}: {tip}"
             # leave some space
-            yield ''
+            yield ""
             # all done
             return
 
