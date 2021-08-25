@@ -142,10 +142,12 @@ class Application(pyre.component, metaclass=Director):
         """
         Hook for the application help system
         """
-        # build the simple description of what i do
-        content = '\n'.join(self.pyre_help())
-        # render it
-        self.info.log(content)
+        # make a channel
+        channel = journal.help("pyre.help.application")
+        # build the simple description of what i do and render it
+        channel.report(report=self.pyre_help())
+        # flush
+        channel.log()
         # and indicate success
         return 0
 
@@ -555,19 +557,18 @@ class Application(pyre.component, metaclass=Director):
 
 
     # basic support for the help system
-    def pyre_help(self, indent=' '*4, **kwds):
+    def pyre_help(self, indent=' '*2, **kwds):
         """
         Hook for the application help system
         """
         # make a mark
-        yield self.pyre_banner()
+        yield from self.pyre_banner()
         # my summary
-
         yield from self.pyre_showSummary(indent=indent, **kwds)
         # usage
-        yield "usage:"
         yield ""
-        yield f"    {self.pyre_name} [options]"
+        yield "usage:"
+        yield f"{indent}{self.pyre_name} [options]"
         yield ""
 
         # my public state
@@ -581,7 +582,7 @@ class Application(pyre.component, metaclass=Director):
         Print an identifying message for the help system
         """
         # easy
-        return ''
+        return []
 
 
     def pyre_respond(self, server, request):
