@@ -32,8 +32,9 @@ public:
     inline auto name() const -> const name_type &;
 
     // abstract
-    virtual auto memo(const entry_type &) -> Device & = 0;
     virtual auto alert(const entry_type &) -> Device & = 0;
+    virtual auto help(const entry_type &) -> Device & = 0;
+    virtual auto memo(const entry_type &) -> Device & = 0;
 
     // data
 private:
@@ -43,8 +44,8 @@ private:
 private:
     Device(const Device &) = delete;
     Device(const Device &&) = delete;
-    const Device & operator= (const Device &) = delete;
-    const Device & operator= (const Device &&) = delete;
+    const Device & operator=(const Device &) = delete;
+    const Device & operator=(const Device &&) = delete;
 };
 
 
