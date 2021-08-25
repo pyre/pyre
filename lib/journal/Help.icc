@@ -30,7 +30,7 @@ pyre::journal::Help<proxyT>::record()
     // hunt down the device to use
     auto dev = this->device();
     // record the entry
-    dev->alert(this->entry());
+    dev->help(this->entry());
     // all done
     return;
 }
