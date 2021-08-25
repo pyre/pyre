@@ -22,8 +22,9 @@
 #include "ANSI.h"
 // renderer support
 #include "Renderer.h"
-#include "Memo.h"
 #include "Alert.h"
+#include "Bland.h"
+#include "Memo.h"
 // the device declarations
 #include "Device.h"
 #include "Stream.h"

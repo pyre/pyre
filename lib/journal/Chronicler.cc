@@ -21,8 +21,9 @@
 // access to the console and the trash can
 // renderer support
 #include "Renderer.h"
-#include "Memo.h"
 #include "Alert.h"
+#include "Bland.h"
+#include "Memo.h"
 // device support
 #include "Device.h"
 #include "File.h"
