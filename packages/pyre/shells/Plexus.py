@@ -82,23 +82,15 @@ class Plexus(Application):
             return command.help(plexus=self)
 
         # if we get this far, the user has asked for help without specifying a particular
-        # command; we display the general help screen
-
-        # show the application banner
-        self.info.line(self.pyre_banner())
-        # show help on available actions
-        self.pyre_documentActions()
-        # flush
-        self.info.log()
-        # and indicate success
-        return 0
+        # command; display the general help screen
+        return super().help(**kwds)
 
 
     # meta-methods
     def __init__(self, **kwds):
         # chain up
         super().__init__(**kwds)
-        # build my repertoir
+        # build my repertoire
         self.pyre_repertoir = self.pyre_newRepertoir()
         # all done
         return
@@ -128,14 +120,28 @@ class Plexus(Application):
 
 
     # support for the help system
-    def pyre_documentActions(self, indent=' '*4):
+    def pyre_help(self, indent=' '*2, **kwds):
+        """
+        Hook for the plexus help system
+        """
+        # the application banner
+        yield from self.pyre_banner()
+        # the available actions
+        yield from self.pyre_documentActions(indent=indent)
+        # the configurable state
+        yield from self.pyre_showConfigurables(indent=indent)
+        # all done
+        return
+
+
+    def pyre_documentActions(self, indent=' '*2):
         """
         Place information about the available actions in my {info} channel
         """
-        # reset the pile of actions
+        # initialize the pile of known actions
         actions = []
         # get the documented commands
-        for uri, name, action, tip in self.pyre_action.pyre_documentedActions(plexus=self):
+        for _, name, _, tip in self.pyre_action.pyre_documentedActions(plexus=self):
             # and put them on the pile
             actions.append((name, tip))
         # if there were any
@@ -143,13 +149,14 @@ class Plexus(Application):
             # figure out how much space we need
             width = max(len(name) for name, _ in actions)
             # introduce this section
-            self.info.line('commands:')
+            yield ""
+            yield "commands:"
             # for each documented action
             for name, tip in actions:
                 # show the details
-                self.info.line('{}{:>{}}: {}'.format(indent, name, width, tip))
-            # some space
-            self.info.line()
+                yield f"{indent}{name:>{width}}: {tip}"
+            # add some space
+            yield ""
 
         # all done
         return
