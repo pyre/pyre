@@ -16,7 +16,7 @@ class Info(merlin.shells.command, family='merlin.cli.info'):
     """
 
 
-    @merlin.export(tip="display information about the chosen compilers")
+    @merlin.export(tip="display the chosen compilers")
     def compilers(self, plexus, **kwds):
         """
         Display information about the chosen compilers
@@ -36,7 +36,7 @@ class Info(merlin.shells.command, family='merlin.cli.info'):
         # go through them
         for compiler in compilers:
             # report
-            channel.line(f"{indent*1}{compiler.pyre_family()}")
+            channel.line(f"{indent*1}{compiler}")
         # flush
         channel.log()
 
@@ -44,7 +44,7 @@ class Info(merlin.shells.command, family='merlin.cli.info'):
         return
 
 
-    @merlin.export(tip="display information about the host")
+    @merlin.export(tip="display host information")
     def host(self, plexus, **kwds):
         """
         Display information about the host
@@ -67,7 +67,7 @@ class Info(merlin.shells.command, family='merlin.cli.info'):
         return
 
 
-    @merlin.export(tip="display information about the known source languages")
+    @merlin.export(tip="display the known source languages")
     def languages(self, plexus, **kwds):
         """
         Display information about the known source languages
@@ -95,7 +95,7 @@ class Info(merlin.shells.command, family='merlin.cli.info'):
         return
 
 
-    @merlin.export(tip="display information about the platform")
+    @merlin.export(tip="display platform information")
     def platform(self, plexus, **kwds):
         """
         Display information about the platform
@@ -123,7 +123,7 @@ class Info(merlin.shells.command, family='merlin.cli.info'):
         return
 
 
-    @merlin.export(tip="display information about the user")
+    @merlin.export(tip="display user information")
     def user(self, plexus, **kwds):
         """
         Display information about the host
