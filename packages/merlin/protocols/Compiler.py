@@ -24,10 +24,18 @@ class Compiler(merlin.protocol, family="merlin.compilers"):
         """
         # pull the known aliases from {compilers}
         from merlin.compilers import aliases
-        # attempt to convert
-        value = aliases.get(value, value)
+
+        # turn the value into a {uri}
+        uri = cls.uri().coerce(value)
+        # extract the address bit
+        family = uri.address
+        # run it through the compiler aliases
+        family = aliases.get(family, family)
+        # and reattach it
+        uri.address = family
+
         # chain up
-        return super().pyre_convert(value=value, **kwds)
+        return super().pyre_convert(value=str(uri), **kwds)
 
 
 # end of file
