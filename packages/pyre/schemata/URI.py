@@ -41,6 +41,9 @@ class URI(Schema):
         # {value} is broken, in which case it is almost certain we have a bug...
         value = str(value)
 
+        # collapse all internal spaces; they are not valid values anyway
+        value = ''.join(value.split())
+
         # attempt to coerce
         try:
             # by assuming it is a string
