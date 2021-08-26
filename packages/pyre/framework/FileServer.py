@@ -42,7 +42,9 @@ class FileServer(Filesystem):
 
 
     # constants
+    # the path of the user configuration directory on the physical filesystem
     DOT_PYRE = primitives.path('~/.pyre')
+    # the logical names for the configuration directories
     USER_DIR = primitives.path('/__pyre/user')
     STARTUP_DIR = primitives.path('/__pyre/startup')
     PACKAGES_DIR = primitives.path('/__pyre/packages')
@@ -122,7 +124,7 @@ class FileServer(Filesystem):
             return node.open(**kwds)
 
         # if i didn't recognize the {scheme}, complain
-        raise self.URISpecificationError(uri=uri, reason="unsupported scheme {!r}".format(scheme))
+        raise self.URISpecificationError(uri=uri, reason=f"unsupported scheme '{scheme}'")
 
 
     # convenience: access to the filesystem factories
@@ -159,16 +161,15 @@ class FileServer(Filesystem):
 
         # get the current working directory; it is guaranteed to be an absolute path so there
         # is no reason to resolve it
-
         startup = primitives.path.cwd()
         # however, it is possible that it doesn't exist, or it has the wrong permissions; try to
         # mount it, or mount an empty folder if anything goes wrong
         self[self.STARTUP_DIR] = self.retrieveFilesystem(root=startup)
 
         # the user's private folder, typically at {~/.pyre}
-        userdir = self.DOT_PYRE.expanduser().resolve()
+        priv = self.DOT_PYRE.expanduser().resolve()
         # same deal: mount it or an empty folder
-        self[self.USER_DIR] = self.retrieveFilesystem(root=userdir)
+        self[self.USER_DIR] = self.retrieveFilesystem(root=priv)
 
         # build the virtual directory where packages park their configuration
         self[self.PACKAGES_DIR] = self.folder()
@@ -192,11 +193,11 @@ class FileServer(Filesystem):
         # get the package name
         name = package.name
         # show me
-        # print("  package name: {}".format(name))
+        # print(f"  package name: {name}")
 
         # attempt to
         try:
-            # print("  looking for {}".format(self.USER_DIR / name))
+            # print(f"  looking for {self.USER_DIR / name}")
             # hunt down the package directory in the user area
             userdir = self[self.USER_DIR / name]
         # if not there
@@ -213,7 +214,7 @@ class FileServer(Filesystem):
 
         # grab the package prefix
         prefix = package.prefix
-        # print("  package prefix: {}".format(prefix))
+        # print(f"  package prefix: {prefix}")
         # not much to do if there isn't one
         if not prefix: return package
 
@@ -221,7 +222,7 @@ class FileServer(Filesystem):
         fs = self.retrieveFilesystem(root=prefix)
         # attempt to
         try:
-            # print("  looking for {}".format(package.DEFAULTS))
+            # print(f"  looking for {package.DEFAULTS}")
             # look for the configuration folder
             defaults = fs[package.DEFAULTS]
         # if not there
@@ -240,7 +241,7 @@ class FileServer(Filesystem):
         # look for configuration files
         for encoding in self.executive.configurator.encodings():
             # build the configuration file name
-            filename = "{}.{}".format(name, encoding)
+            filename = f"{name}.{encoding}"
             # look for
             try:
                 # the node that corresponds to the configuration file
@@ -250,13 +251,13 @@ class FileServer(Filesystem):
                 # bail
                 continue
             # if it is there, mount it within the package directory
-            # print("  mounting {}".format(self.PACKAGES_DIR / filename))
+            # print(f"  mounting {self.PACKAGES_DIR / filename}")
             self[self.PACKAGES_DIR / filename] = cfgfile
 
         # look for the configuration folder
         try:
             # get the associated node
-            # print("  looking for {}/{}".format(package.DEFAULTS, name))
+            # print(f"  looking for {package.DEFAULTS}/{name}")
             cfgdir = defaults[name]
         # if it's not there
         except fs.NotFoundError:
