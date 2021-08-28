@@ -190,6 +190,10 @@ class Info(merlin.shells.command, family='merlin.cli.info'):
                     for library in libraries:
                         # display the name
                         channel.line(f"{indent*3}{library.pyre_name}")
+                        # the stem
+                        channel.line(f"{indent*4}name: {library.name}")
+                        # the path relative to the repository root
+                        channel.line(f"{indent*4}root: {library.root}")
                         # get the source languages
                         languages = ", ".join(language.name for language in library.languages)
                         # display their names
