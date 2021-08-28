@@ -200,9 +200,9 @@ pyre::journal::py::debug(py::module & m)
         .def(
             "line",
             // the handler
-            [](debug_t & channel, debug_t::string_type message) -> debug_t & {
+            [](debug_t & channel, py::object message) -> debug_t & {
                 // inject
-                channel << message << pyre::journal::newline;
+                channel << py::str(message) << pyre::journal::newline;
                 // enable chaining
                 return channel;
             },
@@ -233,9 +233,9 @@ pyre::journal::py::debug(py::module & m)
         .def(
             "log",
             // the handler
-            [](debug_t & channel, const debug_t::string_type message) -> debug_t & {
+            [](debug_t & channel, py::object message) -> debug_t & {
                 // inject and flush
-                channel << locator() << message << pyre::journal::endl;
+                channel << locator() << py::str(message) << pyre::journal::endl;
                 // enable chaining
                 return channel;
             },

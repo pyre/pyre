@@ -207,9 +207,9 @@ pyre::journal::py::warning(py::module & m)
         .def(
             "line",
             // the handler
-            [](warning_t & channel, warning_t::string_type message) -> warning_t & {
+            [](warning_t & channel, py::object message) -> warning_t & {
                 // inject
-                channel << message << pyre::journal::newline;
+                channel << py::str(message) << pyre::journal::newline;
                 // enable chaining
                 return channel;
             },
@@ -240,9 +240,9 @@ pyre::journal::py::warning(py::module & m)
         .def(
             "log",
             // the handler
-            [](warning_t & channel, warning_t::string_type message) -> warning_t & {
+            [](warning_t & channel, py::object message) -> warning_t & {
                 // inject and flush
-                channel << locator() << message << pyre::journal::endl;
+                channel << locator() << py::str(message) << pyre::journal::endl;
                 // enable chaining
                 return channel;
             },
