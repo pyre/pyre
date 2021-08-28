@@ -5,13 +5,13 @@
 
 # the {pyre} project contains
 pyre.prj:
-    libraries: "#pyre.lib"
+    libraries: "#libpyre"
 
 
 # {libpyre}
-pyre.lib:
+libpyre:
     name: pyre
-    root: lib/{pyre.lib.name}
+    root: lib/{libpyre.name}
 
 
 # end of file

@@ -5,12 +5,12 @@
 
 # the {journal} project contains
 journal.prj:
-    libraries: "#journal.lib"
+    libraries: "#libjournal"
 
 
-journal.lib:
+libjournal:
     name: journal
-    root: lib/{journal.lib.name}
+    root: lib/{libjournal.name}
 
 
 # end of file
