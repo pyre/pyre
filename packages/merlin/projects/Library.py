@@ -17,6 +17,12 @@ class Library(merlin.component,
 
 
     # user configurable state
+    name = merlin.properties.str()
+    name.doc = "the name of the library; used as a seed to name its various assets"
+
+    root = merlin.properties.path()
+    root.doc = "the path to the library source relative to the root of the repository"
+
     languages = merlin.properties.tuple(schema=merlin.protocols.language())
     languages.doc = "the languages of the library source assets"
 
