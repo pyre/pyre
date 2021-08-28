@@ -195,7 +195,7 @@ class Channel(pyre.patterns.named):
         Add {message} to the current page
         """
         # add message to my page
-        self.page.append(message)
+        self.page.append(str(message))
         # all done
         return self
 
@@ -205,7 +205,7 @@ class Channel(pyre.patterns.named):
         Add lines from the {report} to the current page
         """
         # use {report} to extend my {page}
-        self.page.extend(report)
+        self.page.extend(str(entry) for entry in report)
         # all done
         return self
 
@@ -217,7 +217,7 @@ class Channel(pyre.patterns.named):
         # if there is a final {message} to process
         if message is not None:
             # add it to the page
-            self.page.append(message)
+            self.page.append(str(message))
 
         # get a stack trace
         trace = traceback.extract_stack(limit=2)
