@@ -207,9 +207,9 @@ pyre::journal::py::error(py::module & m)
         .def(
             "line",
             // the handler
-            [](error_t & channel, error_t::string_type message) -> error_t & {
+            [](error_t & channel, py::object message) -> error_t & {
                 // inject
-                channel << message << pyre::journal::newline;
+                channel << py::str(message) << pyre::journal::newline;
                 // all done
                 return channel;
             },
@@ -240,9 +240,9 @@ pyre::journal::py::error(py::module & m)
         .def(
             "log",
             // the handler
-            [](error_t & channel, error_t::string_type message) -> error_t & {
+            [](error_t & channel, py::object message) -> error_t & {
                 // inject and flush
-                channel << locator() << message << pyre::journal::endl;
+                channel << locator() << py::str(message) << pyre::journal::endl;
                 // all done
                 return channel;
             },
