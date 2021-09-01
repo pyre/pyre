@@ -12,6 +12,27 @@ from ..shells import command
 from .. import foundry
 
 
+# the command line interface
+@foundry(implements=action, tip="information about project entities")
+def info():
+    # get the action
+    from .Info import Info
+    # borrow its docstring
+    __doc__ = Info.__doc__
+    # and publish it
+    return Info
+
+
+@foundry(implements=action, tip="libraries in the current workspace")
+def lib():
+    # get the action
+    from .Libraries import Libraries
+    # borrow its docstring
+    __doc__ = Libraries.__doc__
+    # and publish it
+    return Libraries
+
+
 # help
 @foundry(implements=action, tip="information about this application")
 def about():
@@ -41,16 +62,6 @@ def help():
     __doc__ = Help.__doc__
     # and publish it
     return Help
-
-
-@foundry(implements=action, tip="information about project entities")
-def info():
-    # get the action
-    from .Info import Info
-    # borrow its docstring
-    __doc__ = Info.__doc__
-    # and publish it
-    return Info
 
 
 # debugging support
