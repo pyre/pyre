@@ -16,6 +16,9 @@ class Language(merlin.protocol, family="merlin.languages"):
 
 
     # required state
+    headers = merlin.properties.strings()
+    headers.doc = "the set of suffixes that identify an artifact as a header"
+
     sources = merlin.properties.strings()
     sources.doc = "the set of suffixes that identify an artifact as a source"
 
