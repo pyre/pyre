@@ -21,8 +21,37 @@ class Language(merlin.component, implements=merlin.protocols.language):
 
 
     # required state
+    headers = merlin.properties.strings()
+    headers.doc = "the set of suffixes that identify an artifact as a header"
+
     sources = merlin.properties.strings()
     sources.doc = "the set of suffixes that identify an artifact as a source"
+
+
+    # interface
+    @classmethod
+    def recognize(cls, name, node):
+        """
+        Attempt to recognize the asset represented by {node}
+        """
+        # extract the suffix of the filename
+        suffix = node.uri.suffix
+        # if it is one of mine
+        if suffix in cls.sources:
+            # make a source asset
+            asset = merlin.projects.source(name=name, node=node, language=cls)
+            # and return it
+            return asset
+
+        # if not, check against my headers
+        if node.uri.suffix in cls.headers:
+            # make a header
+            asset = merlin.projects.header(name=name, node=node)
+            # and return it
+            return asset
+
+        # out of ideas
+        return None
 
 
 # end of file
