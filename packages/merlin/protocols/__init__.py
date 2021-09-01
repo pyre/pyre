@@ -9,6 +9,7 @@ from .Compiler import Compiler as compiler
 from .Language import Language as language
 from .Library import Library as library
 from .Project import Project as project
+from .Source import Source as source
 
 
 # end of file
