@@ -15,4 +15,22 @@ class MerlinError(pyre.PyreError):
     """
 
 
+class UnrecognizableSourceLanguageError(MerlinError):
+    """
+    Exception raised when the source language of an asset could not be recognized
+    """
+
+    # public data
+    description = "{0.node.uri}: could not determine the source language"
+
+    # meta methods
+    def __init__(self, node, **kwds):
+        # chain up
+        super().__init__(**kwds):
+        # save the node
+        self.node = node
+        # all done
+        return
+
+
 # end of file
