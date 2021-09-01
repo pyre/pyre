@@ -18,6 +18,7 @@ class CXX(Language, family="merlin.languages.cxx"):
 
     # constants
     name = "C++"
+    linkable = True
 
 
     # user configurable state
