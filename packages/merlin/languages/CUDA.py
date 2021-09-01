@@ -18,6 +18,7 @@ class CUDA(Language, family="merlin.languages.cuda"):
 
     # constants
     name = "CUDA"
+    linkable = True
 
 
     # user configurable state

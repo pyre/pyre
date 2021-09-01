@@ -18,6 +18,7 @@ class C(Language, family="merlin.languages.c"):
 
     # constants
     name = "C"
+    linkable = True
 
 
     # user configurable state

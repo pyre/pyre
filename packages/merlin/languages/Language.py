@@ -15,6 +15,11 @@ class Language(merlin.component, implements=merlin.protocols.language):
     """
 
 
+    # constants
+    name = None
+    linkable = False
+
+
     # required state
     sources = merlin.properties.strings()
     sources.doc = "the set of suffixes that identify an artifact as a source"

@@ -18,6 +18,7 @@ class FORTRAN(Language, family="merlin.languages.fortran"):
 
     # constants
     name = "FORTRAN"
+    linkable = True
 
 
     # user configurable state
