@@ -6,20 +6,17 @@
 
 # support
 import merlin
+# superclass
+from .Asset import Asset
 # schema
 from .Language import Language as language
 
 
 # class declaration
-class Source(merlin.protocol, family="merlin.projects.sources"):
+class Source(Asset, family="merlin.projects.sources"):
     """
     Encapsulation of a file with source code
     """
-
-
-    # user configurable state
-    language = merlin.properties.tuple(schema=language())
-    language.doc = "the language of the source code"
 
 
     # framework hooks
