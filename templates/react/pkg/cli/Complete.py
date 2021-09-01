@@ -66,7 +66,7 @@ class Complete({project.name}.shells.command, family="{project.name}.cli.complet
                 # bail
                 return 1
             # otherwise, instantiate it
-            command = plexus.pyre_repertoir.resolve(plexus=plexus, spec=action)
+            command = plexus.pyre_repertoire.resolve(plexus=plexus, spec=action)
             # go through its traits
             for trait in command.pyre_behaviors():
                 # get the name
@@ -91,7 +91,7 @@ class Complete({project.name}.shells.command, family="{project.name}.cli.complet
                 # bail
                 return 1
             # otherwise, instantiate it
-            command = plexus.pyre_repertoir.resolve(plexus=plexus, spec=action)
+            command = plexus.pyre_repertoire.resolve(plexus=plexus, spec=action)
             # go through its traits
             for trait in command.pyre_behaviors():
                 # get the name
