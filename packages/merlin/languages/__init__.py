@@ -31,17 +31,6 @@ def cuda():
     return CUDA
 
 
-@merlin.components.language(language="cython", tip="the cython language")
-def cython():
-    """
-    The category of source artifacts encoded in the cython programming language
-    """
-    # get the language
-    from .Cython import Cython
-    # and publish it
-    return Cython
-
-
 @merlin.components.language(language="c++", tip="the C++ language")
 def cxx():
     """
@@ -51,6 +40,17 @@ def cxx():
     from .CXX import CXX
     # and publish it
     return CXX
+
+
+@merlin.components.language(language="cython", tip="the cython language")
+def cython():
+    """
+    The category of source artifacts encoded in the cython programming language
+    """
+    # get the language
+    from .Cython import Cython
+    # and publish it
+    return Cython
 
 
 @merlin.components.language(language="fortran", tip="the FORTRAN language")
