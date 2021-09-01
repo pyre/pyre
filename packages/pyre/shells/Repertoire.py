@@ -11,7 +11,7 @@ import pyre
 
 
 # class declaration
-class Repertoir:
+class Repertoire:
     """
     The manager of the collection of installed actions
     """

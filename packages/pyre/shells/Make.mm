@@ -27,7 +27,7 @@ EXPORT_PYTHON_MODULES = \
     Panel.py \
     Plain.py \
     Plexus.py \
-    Repertoir.py \
+    Repertoire.py \
     Script.py \
     Shell.py \
     Terminal.py \
