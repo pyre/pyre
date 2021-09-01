@@ -26,7 +26,7 @@ class UnrecognizableSourceLanguageError(MerlinError):
     # meta methods
     def __init__(self, node, **kwds):
         # chain up
-        super().__init__(**kwds):
+        super().__init__(**kwds)
         # save the node
         self.node = node
         # all done
