@@ -4,33 +4,13 @@
 # (c) 1998-2021 all rights reserved
 
 
-# support
-import merlin
-
-
-# implementations of the high level artifact containers
-@merlin.foundry(implements=merlin.protocols.library,
-                tip="a container of binary artifacts")
-def library():
-    """
-    A container of binary artifacts
-    """
-    # get the project
-    from .Library import Library
-    # and publish it
-    return Library
-
-
-@merlin.foundry(implements=merlin.protocols.project,
-                tip="the top level container of project artifacts")
-def project():
-    """
-    The top level container of project artifacts
-    """
-    # get the project
-    from .Project import Project
-    # and publish it
-    return Project
+# export the publicly visible assets
+from .Auxiliary import Auxiliary as auxiliary
+from .Directory import Directory as directory
+from .Header import Header as header
+from .Project import Project as project
+from .Library import Library as library
+from .Source import Source as source
 
 
 # end of file
