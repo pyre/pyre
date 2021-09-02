@@ -12,7 +12,7 @@ from .Asset import Asset
 
 
 # class declaration
-class Library(Asset,
+class Library(merlin.component,
               family="merlin.projects.libraries.library", implements=merlin.protocols.library):
     """
     A container of binary artifacts
