@@ -67,28 +67,34 @@ class Library(merlin.component,
         root.discover()
 
         # starting with my root
-        todo = [root]
+        todo = [(root, False)]
         # dive into the tree
-        for folder in todo:
+        for folder,ignore in todo:
             # form the name of the folder
             name = str(folder.uri.relativeTo(ws.uri))
             # make a directory
-            asset = merlin.projects.directory(name=name, node=folder)
-            # otherwise, make it available
-            yield asset
+            dir = merlin.projects.directory(name=name, node=folder)
+            # if its parent left a marker behind
+            if ignore:
+                # mark it as well
+                dir.ignore = ignore
+            # and make it available
+            yield dir
             # grab its contents
             for node in folder.contents.values():
                 # form the name of this asset
                 name = str(node.uri.relativeTo(ws.uri))
-                # if the current item is a folder
+                # folders
                 if node.isFolder:
-                    # add it to the pile of places to visit
-                    todo.append(node)
-                    # and move on with the next entry
+                    # get added to the pile of places to visit
+                    todo.append((node, dir.ignore))
+                    # moving on
                     continue
-                # otherwise, recognize it
+                # regular files become assets
                 asset = self.recognize(name=name, node=node, languages=languages)
-                # otherwise, make it available
+                # that are attached to their container
+                dir.add(asset=asset)
+                # and are made available
                 yield asset
 
         # all done
