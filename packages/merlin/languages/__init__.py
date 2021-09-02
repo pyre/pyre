@@ -9,6 +9,17 @@ import merlin
 
 
 # source encodings
+@merlin.components.language(language="autogen", tip="templates for generating source code")
+def autogen():
+    """
+    The category of source artifacts that are expanded into other sources
+    """
+    # get the language
+    from .Autogen import Autogen
+    # and publish it
+    return Autogen
+
+
 @merlin.components.language(language="c", tip="the C language")
 def c():
     """
