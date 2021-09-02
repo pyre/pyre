@@ -16,9 +16,13 @@ class Language(merlin.component, implements=merlin.protocols.language):
 
 
     # constants
+    # the language tag
     name = None
-    linkable = False
-
+    # properties of the canonical toolchains associated with this language
+    linkable = False   # whether the products are recognized by the system linker
+    # asset factories
+    sourceFactory = merlin.projects.source
+    headerFactory = merlin.projects.header
 
     # required state
     headers = merlin.properties.strings()
@@ -39,14 +43,14 @@ class Language(merlin.component, implements=merlin.protocols.language):
         # if it is one of mine
         if suffix in cls.sources:
             # make a source asset
-            asset = merlin.projects.source(name=name, node=node, language=cls)
+            asset = cls.sourceFactory(name=name, node=node, language=cls)
             # and return it
             return asset
 
         # if not, check against my headers
         if node.uri.suffix in cls.headers:
             # make a header
-            asset = merlin.projects.header(name=name, node=node)
+            asset = cls.headerFactory(name=name, node=node)
             # and return it
             return asset
 
