@@ -31,7 +31,7 @@ class Library(merlin.component,
 
 
     # interface
-    def sources(self):
+    def assets(self):
         """
         Generate the sequence of my source files
         """
@@ -74,10 +74,6 @@ class Library(merlin.component,
             name = str(folder.uri.relativeTo(ws.uri))
             # make a directory
             asset = merlin.projects.directory(name=name, node=folder)
-            # if it's marked as ignorable
-            if asset.ignore:
-                # move on
-                continue
             # otherwise, make it available
             yield asset
             # grab its contents
@@ -92,10 +88,6 @@ class Library(merlin.component,
                     continue
                 # otherwise, recognize it
                 asset = self.recognize(name=name, node=node, languages=languages)
-                # if it is marked as ignorable
-                if asset.ignore:
-                    # move on
-                    continue
                 # otherwise, make it available
                 yield asset
 
