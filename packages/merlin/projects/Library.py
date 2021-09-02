@@ -77,7 +77,6 @@ class Library(merlin.component,
             # if it's marked as ignorable
             if asset.ignore:
                 # move on
-                print(f"IGNORING {asset}")
                 continue
             # otherwise, make it available
             yield asset
@@ -95,11 +94,10 @@ class Library(merlin.component,
                 asset = self.recognize(name=name, node=node, languages=languages)
                 # if it is marked as ignorable
                 if asset.ignore:
-                    # show me
-                    print(f"IGNORING {asset}")
-                # make it available
+                    # move on
+                    continue
+                # otherwise, make it available
                 yield asset
-
 
         # all done
         return
