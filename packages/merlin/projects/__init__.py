@@ -11,6 +11,7 @@ from .Header import Header as header
 from .Project import Project as project
 from .Library import Library as library
 from .Source import Source as source
+from .Template import Template as template
 
 
 # end of file
