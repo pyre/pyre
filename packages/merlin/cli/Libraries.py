@@ -54,8 +54,6 @@ class Libraries(merlin.shells.command, family='merlin.cli.lib'):
         # make a channel
         channel = journal.info("merlin.libs.names")
 
-        lib = plexus.vfs["/workspace/lib"]
-
         # go through the set of libraries
         for lib in self.filter(projects=plexus.projects):
             # show me the asset name and its stem
@@ -64,8 +62,19 @@ class Libraries(merlin.shells.command, family='merlin.cli.lib'):
             channel.line(f"{indent*1}root: {lib.root}")
             channel.line(f"{indent*1} uri: {plexus.vfs['workspace'].uri / lib.root}")
             # go through the sources
-            for src in lib.sources():
-                print(f"asset: {src}")
+            for asset in lib.assets():
+                # set up a pile of markers
+                markers = []
+                # if the asset is marked {ignore}
+                if asset.ignore:
+                    # leave a marker
+                    markers.append("IGNORED")
+                # put them all together
+                marker= ", ".join(markers)
+                # assemble the line decoration
+                decoration = "" if not marker else f"  ({marker})"
+                # render the asset and its markers
+                channel.line(f"{indent*2}{asset.pyre_name}{decoration}")
 
         # flush
         channel.log()
