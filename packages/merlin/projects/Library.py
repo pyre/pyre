@@ -128,11 +128,14 @@ class Library(merlin.component,
         if pop == 0:
             # get the path to my root
             root = self.pyre_fileserver['/workspace'][self.root].uri
+            # build the list of languages we tried
+            claimants = ", ".join(language.name for language in languages)
             # make a channel
             channel = journal.error("merlin.library.assets")
             # complain
             channel.line(f"could not determine the source language")
             channel.line(f"of '{name}'")
+            channel.line(f"as any one of {claimants}")
             channel.line(f"while looking through the assets of the library '{self.name}'")
             channel.line(f"in '{root}'")
             # flush
