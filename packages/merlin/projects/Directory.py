@@ -15,8 +15,33 @@ class Directory(Asset,
                 family="merlin.projects.directories.directory",
                 implements=merlin.protocols.directory):
     """
-    Encapsulation of an auxiliary file
+    Encapsulation of an asset container
     """
+
+
+    # interface
+    def add(self, asset):
+        """
+        Add {asset} to my contents
+        """
+        # add {asset} to my pile
+        self.assets.add(asset)
+        # if i'm marked as ignorable
+        if self.ignore:
+            # mark the asset as well
+            asset.ignore = True
+        # all done
+        return
+
+
+    # meta methods
+    def __init__(self, **kwds):
+        # chain up
+        super().__init__(**kwds)
+        # initialize my assets
+        self.assets = set()
+        # all done
+        return
 
 
 # end of file
