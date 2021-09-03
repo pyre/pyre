@@ -12,6 +12,7 @@ from .Project import Project as project
 from .Library import Library as library
 from .Source import Source as source
 from .Template import Template as template
+from .Unrecognizable import Unrecognizable as unrecognizable
 
 
 # end of file
