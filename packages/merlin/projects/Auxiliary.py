@@ -17,4 +17,8 @@ class Auxiliary(merlin.component,
     """
 
 
+    # constants
+    category = "auxiliary"
+
+
 # end of file

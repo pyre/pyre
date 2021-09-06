@@ -15,4 +15,8 @@ class Header(Auxiliary, family="merlin.projects.categories.header"):
     """
 
 
+    # constants
+    category = "header"
+
+
 # end of file

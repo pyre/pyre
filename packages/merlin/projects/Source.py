@@ -17,4 +17,8 @@ class Source(merlin.component,
     """
 
 
+    # constants
+    category = "source"
+
+
 # end of file
