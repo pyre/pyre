@@ -6,16 +6,14 @@
 
 # support
 import merlin
-# superclass
-from .Asset import Asset
 
 
 # class declaration
-class Auxiliary(Asset,
-                family="merlin.projects.auxiliaries.auxiliary",
-                implements=merlin.protocols.auxiliary):
+class Auxiliary(merlin.component,
+                family="merlin.projects.categories.auxiliary",
+                implements=merlin.protocols.assetCategory):
     """
-    Encapsulation of an auxiliary file
+    The category of auxiliary assets
     """
 
 

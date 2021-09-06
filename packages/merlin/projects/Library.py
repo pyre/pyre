@@ -71,7 +71,7 @@ class Library(merlin.component,
             # form the name of the folder
             name = str(folder.uri.relativeTo(ws.uri))
             # make a directory
-            dir = merlin.projects.directory(name=name, node=folder)
+            dir = self.directory(name=name, node=folder)
             # if its parent left a marker behind
             if ignore:
                 # mark it as well
@@ -89,10 +89,12 @@ class Library(merlin.component,
                     # moving on
                     continue
                 # regular files become assets
-                asset = self.recognize(name=name, node=node, languages=languages)
+                asset = self.asset(name=name, node=node)
                 # that are attached to their container
                 dir.add(asset=asset)
-                # and are made available
+                # identified
+                self.recognize(asset=asset, languages=languages)
+                # and made available
                 yield asset
 
         # all done
@@ -100,7 +102,23 @@ class Library(merlin.component,
 
 
     # implementation details
-    def recognize(self, languages, name, node):
+    def directory(self, name, node):
+        """
+        Make a new asset container
+        """
+        # by default, use the raw asset container
+        return merlin.projects.directory(name=name, node=node)
+
+
+    def asset(self, name, node):
+        """
+        Make a new asset
+        """
+        # by default, use the raw asset
+        return merlin.projects.asset(name=name, node=node)
+
+
+    def recognize(self, asset, languages):
         """
         Recognize an asset given its filesystem {node} rep
         """
@@ -109,7 +127,7 @@ class Library(merlin.component,
         # go through the relevant languages
         for language in languages:
             # and ask each one to guess what this is
-            guess = language.recognize(name=name, node=node)
+            guess = language.recognize(asset=asset)
             # if something non-trivial came back
             if guess:
                 # add it to the pile

@@ -6,16 +6,14 @@
 
 # support
 import merlin
-# superclass
-from .Asset import Asset
 
 
 # class declaration
-class Unrecognizable(Asset,
-                     family="merlin.projects.foreign.unrecognizable",
-                     implements=merlin.protocols.foreign):
+class Unrecognizable(merlin.component,
+                     family="merlin.projects.categories.unrecognizable",
+                     implements=merlin.protocols.assetCategory):
     """
-    Encapsulation of an auxiliary file
+    Encapsulation of a file whose purpose is not known
     """
 
 
