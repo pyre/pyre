@@ -6,14 +6,13 @@
 
 # export
 from .Asset import Asset as asset
-from .Auxiliary import Auxiliary as auxiliary
+from .AssetCategory import AssetCategory as assetCategory
 from .Compiler import Compiler as compiler
 from .Directory import Directory as directory
-from .Foreign import Foreign as foreign
+from .File import File as file
 from .Language import Language as language
 from .Library import Library as library
 from .Project import Project as project
-from .Source import Source as source
 
 
 # end of file
