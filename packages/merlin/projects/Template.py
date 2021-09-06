@@ -17,4 +17,8 @@ class Template(merlin.component,
     """
 
 
+    # constants
+    category = "template"
+
+
 # end of file

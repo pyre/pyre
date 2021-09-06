@@ -17,4 +17,8 @@ class Unrecognizable(merlin.component,
     """
 
 
+    # constants
+    category = "unrecognizable"
+
+
 # end of file

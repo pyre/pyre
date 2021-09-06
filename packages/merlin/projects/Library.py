@@ -138,19 +138,21 @@ class Library(merlin.component,
         # if there is only one
         if pop == 1:
             # well, that's what it is
-            return candidates[0]
+            asset.category = candidates[0]
+            # and done
+            return
 
         # if there are no viable candidates
         if pop == 0:
             # mark this as an unrecognizable asset
-            asset = merlin.projects.unrecognizable(name=name, node=node)
-            # and send it off
-            return asset
+            asset.category = merlin.projects.unrecognizable
+            # and done
+            return
 
         # if there are more than one
         for candidate in candidates:
             # we require that they are all supporting files
-            if not isinstance(candidate, merlin.projects.auxiliary):
+            if not issubclass(candidate, merlin.projects.auxiliary):
                 # if any of them fail this constraint assemble the languages that are claiming
                 # this asset as their own
                 claimants = ", ".join(candidate.language.name for candidate in candidates)
@@ -165,9 +167,10 @@ class Library(merlin.component,
                 channel.log()
                 # just in case this error isn't fatal
                 return None
-
-        # otherwise, just return the first one
-        return candidates[0]
+        # otherwise, mark it as the first one
+        asset.category = candidates[0]
+        # and done
+        return
 
 
 # end of file
