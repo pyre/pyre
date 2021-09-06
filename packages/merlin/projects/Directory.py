@@ -19,6 +19,11 @@ class Directory(Asset,
     """
 
 
+    # required configurable state
+    category = merlin.properties.str(default="directory")
+    category.doc = "a clue about the type of this asset"
+
+
     # interface
     def add(self, asset):
         """
