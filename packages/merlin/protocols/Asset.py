@@ -9,15 +9,21 @@ import merlin
 
 
 # class declaration
-class Asset(merlin.protocol, family="merlin.projects.sources"):
+class Asset(merlin.protocol, family="merlin.projects.assets"):
     """
     Base protocol for all project assets
     """
 
 
     # required configurable state
+    category = merlin.properties.str()
+    category.doc = "a clue about the type of this asset"
+
     ignore = merlin.properties.bool(default=False)
     ignore.doc = "controls whether to ignore this asset"
+
+    private = merlin.properties.bool(default=False)
+    private.doc = "mark this asset as private"
 
 
 # end of file
