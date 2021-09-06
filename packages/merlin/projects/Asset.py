@@ -9,18 +9,22 @@ import merlin
 
 
 # class declaration
-class Asset(merlin.component):
+class Asset(merlin.component,
+            family="merlin.projects.assets.asset", implements=merlin.protocols.asset):
     """
-    Encapsulation of an undifferentiated project asset
-
-    This class is not meant to be instantiated directly; rather, it is the base of
-    other, more useful classes
+    Encapsulation of a project asset
     """
 
 
     # required configurable state
+    category = merlin.properties.str()
+    category.doc = "a clue about the type of this asset"
+
     ignore = merlin.properties.bool(default=False)
     ignore.doc = "controls whether to ignore this asset"
+
+    private = merlin.properties.bool(default=False)
+    private.doc = "mark this asset as private"
 
 
     # meta methods
