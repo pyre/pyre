@@ -6,12 +6,12 @@
 
 # support
 import merlin
-# superclass
-from .Source import Source
 
 
 # class declaration
-class Template(Source, family="merlin.projects.sources.template"):
+class Template(merlin.component,
+               family="merlin.projects.categories.template",
+               implements=merlin.protocols.assetCategory):
     """
     Encapsulation of a template file that generates other sources
     """
