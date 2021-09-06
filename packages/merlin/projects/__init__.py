@@ -5,11 +5,14 @@
 
 
 # export the publicly visible assets
-from .Auxiliary import Auxiliary as auxiliary
+from .Asset import Asset as asset
 from .Directory import Directory as directory
-from .Header import Header as header
 from .Project import Project as project
 from .Library import Library as library
+
+# and the asset categories
+from .Auxiliary import Auxiliary as auxiliary
+from .Header import Header as header
 from .Source import Source as source
 from .Template import Template as template
 from .Unrecognizable import Unrecognizable as unrecognizable
