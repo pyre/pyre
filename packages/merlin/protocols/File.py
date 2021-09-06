@@ -13,7 +13,7 @@ from .Asset import Asset
 # class declaration
 class File(Asset, family="merlin.projects.files"):
     """
-    Base protocol for all project assets
+    Base protocol for all file based project assets
     """
 
 
