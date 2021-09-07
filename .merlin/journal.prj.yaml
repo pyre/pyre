@@ -8,9 +8,16 @@ journal.prj:
     libraries: "#libjournal"
 
 
+# libjournal
 libjournal:
     name: journal
-    root: lib/{libjournal.name}
+    root: lib/journal
+    languages: c++, autogen
+
+
+# overrides for specific files
+lib/journal/debuginfo.h:
+    language: c
 
 
 # end of file

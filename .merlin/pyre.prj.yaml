@@ -12,6 +12,7 @@ pyre.prj:
 libpyre:
     name: pyre
     root: lib/{libpyre.name}
+    languages: c++, autogen
 
 
 # end of file
