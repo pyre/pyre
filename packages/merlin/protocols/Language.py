@@ -38,14 +38,14 @@ class Language(merlin.protocol, family="merlin.languages"):
         """
         # turn the value into a {uri}
         uri = cls.uri().coerce(value)
-        # extract the address bit
-        family = uri.address
+        # extract the address bit, convert it to lower case
+        family = uri.address.lower()
         # run it through the compiler aliases
         family = cls.aliases.get(family, family)
         # and reattach it
         uri.address = family
 
-        # chain up
+        # recast to a string and chain up
         return super().pyre_convert(value=str(uri), **kwds)
 
 
