@@ -33,17 +33,8 @@ class Library(merlin.component,
         """
         Generate the sequence of my source files
         """
-        # grab the set of required languages, as indicated by the user
-        languages = self.languages
-        # if none were specified
-        if not languages:
-            # fall back to all linkable
-            sieve = lambda x: x.linkable
-            # supported
-            supported = (lang() for lang in merlin.protocols.language.supported.values())
-            # languages
-            languages = tuple(filter(sieve, supported))
-
+        # get the supported languages
+        languages = tuple(self.supportedLanguages())
         # get the workspace folder
         ws = self.pyre_fileserver['/workspace']
         # starting with it
@@ -114,8 +105,8 @@ class Library(merlin.component,
         """
         Make a new asset
         """
-        # by default, use the raw asset
-        return merlin.projects.asset(name=name, node=node)
+        # by default, use s raw file asset
+        return merlin.projects.file(name=name, node=node)
 
 
     def recognize(self, asset, languages):
@@ -137,39 +128,70 @@ class Library(merlin.component,
         pop = len(candidates)
         # if there is only one
         if pop == 1:
-            # well, that's what it is
-            asset.category = candidates[0]
+            # unpack the language and category
+            language, category = candidates[0]
+            # and mark the asset
+            asset.language = language.name
+            asset.category = category.category
             # and done
             return
 
         # if there are no viable candidates
         if pop == 0:
             # mark this as an unrecognizable asset
-            asset.category = merlin.projects.unrecognizable
+            asset.category = merlin.projects.unrecognizable.category
             # and done
             return
 
         # if there are more than one
-        for candidate in candidates:
+        for language, candidate in candidates:
             # we require that they are all supporting files
             if not issubclass(candidate, merlin.projects.auxiliary):
                 # if any of them fail this constraint assemble the languages that are claiming
                 # this asset as their own
-                claimants = ", ".join(candidate.language.name for candidate in candidates)
+                claimants = ", ".join(language.name for language, _ in candidates)
                 # make a channel
-                channel = journal.error("merlin.library.assets")
+                channel = journal.warning("merlin.library.assets")
                 # complain
-                channel.line(f"the file '{name}'")
+                channel.line(f"the file '{asset.pyre_name}'")
                 channel.line(f"was claimed by multiple languages: {claimants}")
                 channel.line(f"while looking through the assets of '{self.name}'")
-                channel.line(f"")
                 # flush
                 channel.log()
                 # just in case this error isn't fatal
                 return None
-        # otherwise, mark it as the first one
-        asset.category = candidates[0]
+        # otherwise, unpack the first one
+        _, category = candidates[0]
+        # and mark the asset
+        asset.category = category.category
         # and done
+        return
+
+
+    def supportedLanguages(self):
+        """
+        Generate a sequence of the allowed languages
+        """
+        # grab the set of required languages, as indicated by the user
+        languages = self.languages
+        # if the user bothered to specify
+        if languages:
+            # respect the choices
+            yield from languages
+            # and nothing further
+            return
+
+        # if none were specified, fall back to all linkable
+        sieve = lambda x: x.linkable
+        # supported
+        supported = set(
+            language for _, _, language in
+            merlin.protocols.language.pyre_locateAllImplementers(namespace="merlin")
+            )
+        # languages
+        yield from filter(sieve, supported)
+
+        # all done
         return
 
 
