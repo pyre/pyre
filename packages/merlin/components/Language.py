@@ -34,7 +34,7 @@ class Language(merlin.foundry):
         # check that the language common name was supplied at the foundry call site
         assert language, "please specify the common name for the language"
         # register the foundry with the {language} protocol
-        self.language.supported[language] = factory
+        self.language.aliases[language] = factory.__name__
         # all done
         return
 
