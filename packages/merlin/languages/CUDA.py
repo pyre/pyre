@@ -17,7 +17,7 @@ class CUDA(Language, family="merlin.languages.cuda"):
     """
 
     # constants
-    name = "CUDA"
+    name = "cuda"
     linkable = True
 
 

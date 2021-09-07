@@ -17,7 +17,7 @@ class CXX(Language, family="merlin.languages.cxx"):
     """
 
     # constants
-    name = "C++"
+    name = "c++"
     linkable = True
 
 
