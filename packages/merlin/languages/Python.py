@@ -17,7 +17,7 @@ class Python(Language, family="merlin.languages.python"):
     """
 
     # constants
-    name = "Python"
+    name = "python"
 
 
     # user configurable state
