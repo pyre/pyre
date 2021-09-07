@@ -21,7 +21,7 @@ class Autogen(Language, family="merlin.languages.autogen"):
     # toolchain attributes
     linkable = True # not true, strictly speaking, but some are...
     # source factories
-    sourceFactory = merlin.projects.template
+    source = merlin.projects.template
 
     # user configurable state
     sources = merlin.properties.strings()
