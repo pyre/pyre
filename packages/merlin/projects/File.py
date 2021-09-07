@@ -20,7 +20,7 @@ class File(Asset,
 
 
     # required configurable state
-    language = merlin.properties.str()
+    language = merlin.protocols.language()
     language.doc = "a clue about the toolchain that processes this asset"
 
 
