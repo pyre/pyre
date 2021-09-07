@@ -7,6 +7,7 @@
 # export the publicly visible assets
 from .Asset import Asset as asset
 from .Directory import Directory as directory
+from .File import File as file
 from .Project import Project as project
 from .Library import Library as library
 
