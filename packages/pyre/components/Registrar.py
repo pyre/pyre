@@ -30,13 +30,13 @@ class Registrar:
     # public data
     protocols = None # the set of known protocols
     components = None # the map of component classes to their instances
-    implementers = None # a map of protocols to component classes that implements them
+    implementers = None # a map of protocols to component classes that implement them
 
 
     # interface
     def registerNamingServer(self, server):
         """
-        Register {server} as a naming serice
+        Register {server} as a naming service
         """
         # add it to my pile
         self.nameGenerators.add(server)
