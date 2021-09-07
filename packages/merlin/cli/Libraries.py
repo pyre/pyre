@@ -56,11 +56,15 @@ class Libraries(merlin.shells.command, family='merlin.cli.lib'):
 
         # go through the set of libraries
         for lib in self.filter(projects=plexus.projects):
+            # collect the supported languages
+            languages = ', '.join(l.name for l in lib.supportedLanguages())
             # show me the asset name and its stem
             channel.line(f"{lib.pyre_name}:")
             channel.line(f"{indent*1}name: {lib.name}")
             channel.line(f"{indent*1}root: {lib.root}")
-            channel.line(f"{indent*1} uri: {plexus.vfs['workspace'].uri / lib.root}")
+            channel.line(f"{indent*1}uri: {plexus.vfs['workspace'].uri / lib.root}")
+            channel.line(f"{indent*1}languages: {languages}")
+            channel.line(f"{indent*1}sources:")
             # go through the sources
             for asset in lib.assets():
                 # set up a pile of markers
@@ -69,6 +73,12 @@ class Libraries(merlin.shells.command, family='merlin.cli.lib'):
                 if asset.ignore:
                     # leave a marker
                     markers.append("IGNORED")
+                # for file based assets that belong to a specific toolchain
+                if hasattr(asset, "language") and asset.language:
+                    # add the language to the markers
+                    markers.append(asset.language.name)
+                # add the category to the markers
+                markers.append(asset.category)
                 # put them all together
                 marker= ", ".join(markers)
                 # assemble the line decoration
