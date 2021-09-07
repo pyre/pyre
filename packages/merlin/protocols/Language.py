@@ -36,7 +36,12 @@ class Language(merlin.protocol, family="merlin.languages"):
         Translate the component specification in {value} into canonical form; invoked during value
         processing
         """
-        # turn the value into a {uri}
+        # if {value} is not a string
+        if not isinstance(value, str):
+            # leave it alone
+            return value
+
+        # otherwise, turn the value into a {uri}
         uri = cls.uri().coerce(value)
         # extract the address bit, convert it to lower case
         family = uri.address.lower()
