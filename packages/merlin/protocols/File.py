@@ -8,6 +8,8 @@
 import merlin
 # superclass
 from .Asset import Asset
+# schema
+from .Language import Language
 
 
 # class declaration
@@ -18,7 +20,7 @@ class File(Asset, family="merlin.projects.files"):
 
 
     # required configurable state
-    language = merlin.properties.str()
+    language = Language()
     language.doc = "a clue about the toolchain that processes this asset"
 
 
