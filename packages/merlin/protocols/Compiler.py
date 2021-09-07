@@ -22,7 +22,12 @@ class Compiler(merlin.protocol, family="merlin.compilers"):
         Translate the component specification in {value} into canonical form; invoked during value
         processing
         """
-        # pull the known aliases from {compilers}
+        # if {value} is not a string
+        if not isinstance(value, str):
+            # leave it alone
+            return value
+
+        # otherwise, pull the known aliases from {compilers}
         from merlin.compilers import aliases
 
         # turn the value into a {uri}
@@ -34,7 +39,7 @@ class Compiler(merlin.protocol, family="merlin.compilers"):
         # and reattach it
         uri.address = family
 
-        # chain up
+        # recast into a string and chain up
         return super().pyre_convert(value=str(uri), **kwds)
 
 
