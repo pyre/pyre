@@ -20,9 +20,8 @@ class Language(merlin.component, implements=merlin.protocols.language):
     name = None
     # properties of the canonical toolchains associated with this language
     linkable = False   # whether the products are recognized by the system linker
-    # asset factories
-    sourceFactory = merlin.projects.source
-    headerFactory = merlin.projects.header
+    source = merlin.projects.source
+    header = merlin.projects.header
 
     # required state
     headers = merlin.properties.strings()
@@ -34,25 +33,21 @@ class Language(merlin.component, implements=merlin.protocols.language):
 
     # interface
     @classmethod
-    def recognize(cls, name, node):
+    def recognize(cls, asset):
         """
         Attempt to recognize the asset represented by {node}
         """
         # extract the suffix of the filename
-        suffix = node.uri.suffix
+        suffix = asset.node.uri.suffix
         # if it is one of mine
         if suffix in cls.sources:
-            # make a source asset
-            asset = cls.sourceFactory(name=name, node=node, language=cls)
-            # and return it
-            return asset
+            # mark it as a source asset
+            return (cls, cls.source)
 
         # if not, check against my headers
-        if node.uri.suffix in cls.headers:
-            # make a header
-            asset = cls.headerFactory(name=name, node=node)
-            # and return it
-            return asset
+        if suffix in cls.headers:
+            # mark it as a header
+            return (cls, cls.header)
 
         # out of ideas
         return None
