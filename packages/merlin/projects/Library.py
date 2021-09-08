@@ -55,37 +55,33 @@ class Library(merlin.component,
         # so let's explore this subtree
         root.discover()
 
+        # convert it into an asset
+        top = self.directory(name=str(self.root), node=root)
         # starting with my root
-        todo = [(root, False)]
+        todo = [top]
         # dive into the tree
-        for folder,ignore in todo:
-            # form the name of the folder
-            name = str(folder.uri.relativeTo(ws.uri))
-            # make a directory
-            dir = self.directory(name=name, node=folder)
-            # if its parent left a marker behind
-            if ignore:
-                # mark it as well
-                dir.ignore = ignore
-            # and make it available
-            yield dir
+        for folder in todo:
+            # make it available
+            yield folder
             # grab its contents
-            for node in folder.contents.values():
+            for node in folder.node.contents.values():
                 # form the name of this asset
                 name = str(node.uri.relativeTo(ws.uri))
                 # folders
                 if node.isFolder:
-                    # get added to the pile of places to visit
-                    todo.append((node, dir.ignore))
-                    # moving on
-                    continue
-                # regular files become assets
-                asset = self.asset(name=name, node=node)
-                # that are attached to their container
-                dir.add(asset=asset)
-                # identified
-                self.recognize(asset=asset, languages=languages)
-                # and made available
+                    # become directories
+                    asset = self.directory(name=name, node=node)
+                    # and get added to the pile of places to visit
+                    todo.append(asset)
+                # regular files
+                else:
+                    # become file based assets
+                    asset = self.asset(name=name, node=node)
+                    # and get identified
+                    self.recognize(asset=asset, languages=languages)
+                # either way, assets are attached to their container
+                folder.add(asset=asset)
+                # and are made available
                 yield asset
 
         # all done
