@@ -113,7 +113,17 @@ class Library(merlin.component,
         """
         Recognize an asset given its filesystem {node} rep
         """
-        # make a pile for the asset candidates
+        # if the asset category is already known
+        if asset.category:
+            # leave it alone
+            return
+
+        # if the asset language is known
+        if asset.language:
+            # override the default suggestions
+            languages = [ asset.language ]
+
+        # make a pile of guesses for the asset category
         candidates = []
         # go through the relevant languages
         for language in languages:
