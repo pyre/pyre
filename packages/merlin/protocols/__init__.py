@@ -7,6 +7,7 @@
 # export
 from .Asset import Asset as asset
 from .AssetCategory import AssetCategory as assetCategory
+from .Builder import Builder as builder
 from .Compiler import Compiler as compiler
 from .Directory import Directory as directory
 from .File import File as file
