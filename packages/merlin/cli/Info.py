@@ -16,6 +16,27 @@ class Info(merlin.shells.command, family='merlin.cli.info'):
     """
 
 
+    @merlin.export(tip="display the builder configuration")
+    def builder(self, plexus, **kwds):
+        """
+        Display the builder configuration
+        """
+        # get the builder
+        builder = plexus.builder
+
+        # make a channel
+        channel = journal.info("merlin.builder")
+        # show me
+        channel.line(f"builder:")
+        channel.line(f"  prefix: {builder.prefix}")
+        channel.line(f"  stage: {builder.stage}")
+        # flush
+        channel.log()
+
+        # all done
+        return
+
+
     @merlin.export(tip="display known compilers")
     def compilers(self, plexus, **kwds):
         """
