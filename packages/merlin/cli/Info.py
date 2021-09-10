@@ -16,7 +16,7 @@ class Info(merlin.shells.command, family='merlin.cli.info'):
     """
 
 
-    @merlin.export(tip="display the chosen compilers")
+    @merlin.export(tip="display known compilers")
     def compilers(self, plexus, **kwds):
         """
         Display information about the chosen compilers
@@ -57,7 +57,7 @@ class Info(merlin.shells.command, family='merlin.cli.info'):
         # report
         channel.line(f"          name: {host.hostname}")
         channel.line(f"      nickname: {host.nickname}")
-        channel.line(f"            os: {host.platform} {host.release} ({host.codename})")
+        channel.line(f"            os: {host.distribution} {host.release} ({host.codename})")
         channel.line(f"          arch: {host.cpus.architecture}")
         channel.line(f"         cores: {host.cpus.cores}")
         # flush
