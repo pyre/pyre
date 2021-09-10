@@ -7,7 +7,12 @@
 
 
 # externals
-import collections, functools, io, os, pwd, stat
+import collections
+import functools
+import io
+import os
+import pwd
+import stat
 
 
 # helpers
@@ -36,6 +41,7 @@ class Path(tuple):
     # string constants
     _CWD = '.'
     _SEP = '/'
+    _HOME = '~'
 
     # path constants
     root = None
@@ -338,12 +344,10 @@ class Path(tuple):
         """
         Build a path that points to the {user}'s home directory
         """
-        # grab the {pwd} support
-        import pwd
         # if we don't have a user
         if not user:
             # assume the current user
-            dir = os.path.expanduser("~")
+            dir = os.path.expanduser(cls._HOME)
         # otherwise
         else:
             # attempt to
@@ -376,14 +380,14 @@ class Path(tuple):
         return self._resolve(resolved={})
 
 
-    def expanduser(self):
+    def expanduser(self, marker=_HOME):
         """
         Build a path with '~' and '~user' patterns expanded
         """
         # grab the user spec, which must be the last path component
         spec = self[:-1]
         # if it doesn't start with the magic character
-        if spec[0] != '~':
+        if spec[0] != marker:
             # we are done
             return self
         # otherwise, use it to look up the user's home directory; the user name is what follows
@@ -626,7 +630,7 @@ class Path(tuple):
 
     # implementation details
     @classmethod
-    def _parse(cls, args, sep=_SEP, fragments=None):
+    def _parse(cls, args, sep=_SEP, home=_HOME, fragments=None):
         """
         Recognize each entry in {args} and distill its contribution to the path under construction
         """
@@ -649,10 +653,14 @@ class Path(tuple):
             elif isinstance(arg, str):
                 # check whether it starts with my separator
                 if arg and arg[0] == sep:
-                    # in which case, clear out the current pile
-                    fragments.clear()
+                    # in which case, clear out the current pile and start a new absolute path
+                    fragments = [ sep ]
+                # check whether it starts with the home marker
+                if arg and arg[0] == home:
+                    # expand it
+                    arg = os.path.expanduser(arg)
                     # and start a new absolute path
-                    fragments.append(sep)
+                    fragments = [ sep ]
                 # split on separator and remove blanks caused by multiple consecutive separators
                 fragments.extend(filter(None, arg.split(sep)))
             # more general iterables
