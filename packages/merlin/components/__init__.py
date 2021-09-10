@@ -6,6 +6,8 @@
 #
 
 
+# the components
+from .Builder import Builder as builder
 # the foundries
 from .Language import Language as language
 
