@@ -29,7 +29,7 @@ class Builder(merlin.protocol, family="merlin.builders"):
         """
         Specify the default implementation
         """
-        # choose thedefault implementer
+        # choose the default implementer
         return merlin.components.builder
 
 
