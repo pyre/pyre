@@ -13,6 +13,7 @@ from .Directory import Directory as directory
 from .File import File as file
 from .Language import Language as language
 from .Library import Library as library
+from .PrefixLayout import PrefixLayout as prefix
 from .Project import Project as project
 
 
