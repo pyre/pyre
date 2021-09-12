@@ -244,6 +244,8 @@ class Local(Filesystem):
                     node = folder[name]
                 # if this fails
                 except self.NotFoundError:
+                    # build a new node
+                    node = folder.folder() if meta.isFolder else folder.node()
                     # make a new node; if we are building a folder
                     if meta.isFolder:
                         # make it
@@ -258,6 +260,11 @@ class Local(Filesystem):
                     folder[name] = node
                 # new or old, its meta-data must be updated
                 self.vnodes[node] = meta
+                # and if the current node is a folder
+                if meta.isFolder:
+                    # add it to our {todo} pile
+                    todo.append( (node, level+1) )
+
             # we are done with this folder; check whether there are any dead nodes
             for entry in dead:
                 # remove the associated node from the vnode table
