@@ -25,5 +25,8 @@ class Builder(merlin.component,
     stage.default = "./builds"
     stage.doc = "the location of the intermediate, disposable build products"
 
+    prefixLayout = merlin.protocols.prefix()
+    prefixLayout.doc = "the layout of the installation area"
+
 
 # end of file
