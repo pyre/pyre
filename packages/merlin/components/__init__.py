@@ -6,6 +6,8 @@
 #
 
 
+# helpers
+from .FHS import FHS as fhs
 # the components
 from .Builder import Builder as builder
 # the foundries
