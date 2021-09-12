@@ -5,6 +5,8 @@
 
 
 # externals
+import journal
+# framework
 import merlin
 
 
@@ -19,6 +21,10 @@ class Debug(merlin.shells.command, family='merlin.cli.debug'):
     prefix = merlin.properties.str()
     prefix.default = None
     prefix.tip = "specify the portion of the namespace to display"
+
+    full = merlin.properties.bool()
+    full.default = False
+    full.tip = "control whether to do a full dive"
 
 
     @merlin.export(tip="list the encountered configuration files")
@@ -85,17 +91,45 @@ class Debug(merlin.shells.command, family='merlin.cli.debug'):
         """
         Dump the application virtual filesystem
         """
-        # make a channel
-        channel = plexus.info
-        # get the prefix
-        prefix = '/merlin' if self.prefix is None else self.prefix
-        # build the report
-        report = '\n'.join(plexus.vfs[prefix].dump(indent=1))
+        # get the prefix as a path
+        prefix = merlin.primitives.path('/merlin' if self.prefix is None else self.prefix)
 
+        # starting at the root of the {vfs}
+        folder = plexus.vfs
+        # go through the {prefix} intermediate folder carefully
+        for part in prefix.parts:
+            # try to
+            try:
+                # look up the folder
+                folder = folder[part]
+            # if anything goes wrong
+            except folder.NotFoundError:
+                # make a channel
+                channel = journal.error("merlin.debug.vfs")
+                # complain
+                channel.line(f"could not find '{part}' in '{folder.uri}'")
+                channel.line(f"while scanning for '{prefix}' in the virtual file system")
+                # flush
+                channel.log()
+                # and bail if errors aren't fatal
+                return 1
+            # if the folder exists, get its contents
+            folder.discover(levels=1)
+
+        # if the user wants to see everything
+        if self.full:
+            # dive
+            folder.discover()
+
+        # build the report
+        report = folder.dump(indent=1)
+
+        # make a channel
+        channel = journal.info("merlin.debug.vfs")
         # sign in
         channel.line(f"vfs: prefix='{prefix}'")
         # dump
-        channel.line(report)
+        channel.report(report=report)
         # flush
         channel.log()
 
