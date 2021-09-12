@@ -23,13 +23,25 @@ class Info(merlin.shells.command, family='merlin.cli.info'):
         """
         # get the builder
         builder = plexus.builder
+        # and the layout of the install area
+        prefix = builder.prefixLayout
 
+        # set up a marker
+        indent = " " * 2
         # make a channel
         channel = journal.info("merlin.builder")
         # show me
         channel.line(f"builder:")
-        channel.line(f"  prefix: {builder.prefix}")
-        channel.line(f"  stage: {builder.stage}")
+        channel.line(f"{indent*1}stage: {builder.stage}")
+        channel.line(f"{indent*1}prefix: {builder.prefix}")
+        channel.line(f"{indent*2}bin: {prefix.bin}")
+        channel.line(f"{indent*2}lib: {prefix.lib}")
+        channel.line(f"{indent*2}include: {prefix.include}")
+        channel.line(f"{indent*2}doc: {prefix.doc}")
+        channel.line(f"{indent*2}share: {prefix.share}")
+        channel.line(f"{indent*2}etc: {prefix.etc}")
+        channel.line(f"{indent*2}defaults: {prefix.defaults}")
+        channel.line(f"{indent*2}var: {prefix.var}")
         # flush
         channel.log()
 
