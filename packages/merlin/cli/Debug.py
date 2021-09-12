@@ -18,9 +18,9 @@ class Debug(merlin.shells.command, family='merlin.cli.debug'):
 
 
     # user configurable state
-    prefix = merlin.properties.str()
-    prefix.default = None
-    prefix.tip = "specify the portion of the namespace to display"
+    root = merlin.properties.str()
+    root.default = None
+    root.tip = "specify the portion of the namespace to display"
 
     full = merlin.properties.bool()
     full.default = False
@@ -62,7 +62,7 @@ class Debug(merlin.shells.command, family='merlin.cli.debug'):
         indent = " " * 2
 
         # get the prefix
-        prefix = "merlin" if self.prefix is None else self.prefix
+        prefix = "merlin" if self.root is None else self.root
         # and the name server
         nameserver = self.pyre_nameserver
 
@@ -92,7 +92,7 @@ class Debug(merlin.shells.command, family='merlin.cli.debug'):
         Dump the application virtual filesystem
         """
         # get the prefix as a path
-        prefix = merlin.primitives.path('/merlin' if self.prefix is None else self.prefix)
+        prefix = merlin.primitives.path('/merlin' if self.root is None else self.root)
 
         # starting at the root of the {vfs}
         folder = plexus.vfs
