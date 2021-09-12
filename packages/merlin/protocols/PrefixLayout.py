@@ -51,7 +51,7 @@ class PrefixLayout(merlin.protocol, family="merlin.layouts.prefix"):
         Specify the default implementation
         """
         # choose the default implementer
-        return merlin.components.prefix
+        return merlin.components.fhs
 
 
 # end of file
