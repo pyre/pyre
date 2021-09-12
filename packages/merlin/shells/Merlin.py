@@ -5,6 +5,7 @@
 
 
 # external
+import journal
 import textwrap
 # support
 import merlin
@@ -34,6 +35,28 @@ class Merlin(merlin.plexus, family='merlin.shells.plexus'):
 
 
     # framework hooks
+    # post instantiation hook
+    def pyre_initialized(self):
+        """
+        Go through my traits and force them to matrialize
+        """
+        # make a marker
+        indent = " " * 2
+        # and a channel
+        channel = journal.debug("merlin.plexus.init")
+        # go through my entire configurable state
+        for trait in self.pyre_configurables():
+            # ask for the value
+            value = getattr(self, trait.name)
+            # show me
+            channel.line(f"{indent*1}{trait.name}: {value}")
+        # flush
+        channel.log()
+
+        # indicate that nothing is amiss
+        return []
+
+
     # virtual filesystem configuration
     def pyre_mountApplicationFolders(self, pfs, prefix, **kwds):
         """
