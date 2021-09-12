@@ -19,6 +19,8 @@ from pyre import (
     executive,
     # shells
     application, plexus,
+    # miscellaneous
+    primitives,
 )
 
 # register the package
