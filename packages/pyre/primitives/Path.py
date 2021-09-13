@@ -634,6 +634,10 @@ class Path(tuple):
         """
         Recognize each entry in {args} and distill its contribution to the path under construction
         """
+        # N.B.: this implementation depends critically on retaining the value of {fragments} across
+        # recursive invocations; therefore, {fragments} MUST NOT be reassigned to a new value, and
+        # all modifications to its value must happen in place
+
         # initialize the pile
         if fragments is None:
             # empty it out
@@ -651,16 +655,24 @@ class Path(tuple):
                 fragments.extend(arg)
             # if {arg} is a string
             elif isinstance(arg, str):
+                # empty strings
+                if not arg:
+                    # are ignored
+                    continue
                 # check whether it starts with my separator
-                if arg and arg[0] == sep:
-                    # in which case, clear out the current pile and start a new absolute path
-                    fragments = [ sep ]
+                if arg[0] == sep:
+                    # in which case, clear out the current pile
+                    fragments.clear()
+                    # and start a new absolute path
+                    fragments.append(sep)
                 # check whether it starts with the home marker
-                if arg and arg[0] == home:
+                elif arg[0] == home:
                     # expand it
                     arg = os.path.expanduser(arg)
+                    # clear out the current pile
+                    fragments.clear()
                     # and start a new absolute path
-                    fragments = [ sep ]
+                    fragments.append(sep)
                 # split on separator and remove blanks caused by multiple consecutive separators
                 fragments.extend(filter(None, arg.split(sep)))
             # more general iterables
