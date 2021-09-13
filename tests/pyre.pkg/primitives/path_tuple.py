@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2021 all rights reserved
-#
 
 """
 Exercise the important special case of building a path with a tuple as a single
@@ -28,8 +26,7 @@ def test():
     # show me
     # print(r)
     # check that they are identical; this checks whether all the representational decisions are
-    #respected. in particular, the tricky one is the fact that currently paths are tuples with
-    #the path elements stored in the reverse order from what {os.path.split} would give
+    # respected.
     assert c == r
 
     # all done
