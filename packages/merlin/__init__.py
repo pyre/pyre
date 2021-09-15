@@ -11,6 +11,8 @@ merlin is a configuration management tool
 
 # import and publish pyre symbols
 from pyre import (
+    # basic stuff
+    primitives, tracking,
     # protocols, components, traits, and their infrastructure
     schemata, constraints, properties, protocol, component, foundry,
     # decorators
@@ -19,8 +21,8 @@ from pyre import (
     executive,
     # shells
     application, plexus,
-    # miscellaneous
-    primitives,
+    # flow
+    flow,
 )
 
 # register the package
@@ -39,7 +41,10 @@ from . import components
 from . import languages
 from . import compilers
 from . import projects
-# user interfaces
+# flow nodes
+from . import factories
+from . import products
+# support for the user interfaces
 from . import shells         # the supported application shells
 from . import cli            # the command line interface
 
