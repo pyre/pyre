@@ -6,10 +6,12 @@
 
 # support
 import merlin
+# superclass
+from .Product import Product
 
 
 # class declaration
-class Asset(merlin.component,
+class Asset(Product,
             family="merlin.projects.assets.asset", implements=merlin.protocols.asset):
     """
     Encapsulation of a project asset
