@@ -6,10 +6,12 @@
 
 # support
 import merlin
+# superclass
+from .Specification import Specification
 
 
 # class declaration
-class Asset(merlin.protocol, family="merlin.projects.assets"):
+class Asset(Specification, family="merlin.projects.assets"):
     """
     Base protocol for all project assets
     """
