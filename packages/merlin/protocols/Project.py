@@ -6,12 +6,14 @@
 
 # support
 import merlin
-# pull the protocols that define my state requirements
+# superclass
+from .Asset import Asset
+# schema
 from .Library import Library as library
 
 
 # class declaration
-class Project(merlin.protocol, family="merlin.projects.projects"):
+class Project(Asset, family="merlin.projects.projects"):
     """
     A high level container of artifacts
     """
