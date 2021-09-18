@@ -11,7 +11,7 @@ from .Asset import Asset
 
 
 # class declaration
-class Directory(Asset, family="merlin.projects.directories"):
+class Directory(Asset, family="merlin.assets.directories"):
     """
     Encapsulation of a container of assets
     """
@@ -24,7 +24,7 @@ class Directory(Asset, family="merlin.projects.directories"):
         Specify the default implementation
         """
         # publish the default implementation
-        return merlin.projects.directory
+        return merlin.assets.directory
 
 
 # end of file

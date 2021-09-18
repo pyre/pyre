@@ -9,7 +9,7 @@ import merlin
 
 
 # class declaration
-class AssetCategory(merlin.protocol, family="merlin.projects.categories"):
+class AssetCategory(merlin.protocol, family="merlin.assets.categories"):
     """
     Protocol for all project asset categories
     """
