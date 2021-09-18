@@ -37,13 +37,12 @@ from . import exceptions
 # local extensions of the framework plumbing
 from . import protocols
 from . import components
+# flow nodes
+from . import assets
+from . import factories
 # builder abstractions
 from . import languages
 from . import compilers
-from . import projects
-# flow nodes
-from . import factories
-from . import products
 # support for the user interfaces
 from . import shells         # the supported application shells
 from . import cli            # the command line interface
