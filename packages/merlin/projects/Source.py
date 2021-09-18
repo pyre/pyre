@@ -10,7 +10,7 @@ import merlin
 
 # class declaration
 class Source(merlin.component,
-             family="merlin.projects.categories.source",
+             family="merlin.assets.categories.source",
              implements=merlin.protocols.assetCategory):
     """
     Encapsulation of a source file

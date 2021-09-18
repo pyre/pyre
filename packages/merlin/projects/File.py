@@ -12,7 +12,7 @@ from .RealAsset import RealAsset
 
 # class declaration
 class File(RealAsset,
-           family="merlin.projects.files.file",
+           family="merlin.assets.files.file",
            implements=merlin.protocols.file):
     """
     Encapsulation of a file based project asset

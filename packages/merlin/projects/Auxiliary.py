@@ -10,7 +10,7 @@ import merlin
 
 # class declaration
 class Auxiliary(merlin.component,
-                family="merlin.projects.categories.auxiliary",
+                family="merlin.assets.categories.auxiliary",
                 implements=merlin.protocols.assetCategory):
     """
     The category of auxiliary assets

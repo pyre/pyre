@@ -9,7 +9,7 @@ from .Auxiliary import Auxiliary
 
 
 # class declaration
-class Header(Auxiliary, family="merlin.projects.categories.header"):
+class Header(Auxiliary, family="merlin.assets.categories.header"):
     """
     Encapsulation of a header file
     """

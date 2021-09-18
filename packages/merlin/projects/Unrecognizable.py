@@ -10,7 +10,7 @@ import merlin
 
 # class declaration
 class Unrecognizable(merlin.component,
-                     family="merlin.projects.categories.unrecognizable",
+                     family="merlin.assets.categories.unrecognizable",
                      implements=merlin.protocols.assetCategory):
     """
     Encapsulation of a file whose purpose is not known

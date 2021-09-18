@@ -13,7 +13,7 @@ from .Asset import Asset
 
 # class declaration
 class Library(Asset,
-              family="merlin.projects.libraries.library", implements=merlin.protocols.library):
+              family="merlin.assets.libraries.library", implements=merlin.protocols.library):
     """
     A container of binary artifacts
     """
@@ -96,7 +96,7 @@ class Library(Asset,
         Make a new asset container
         """
         # by default, use the raw asset container
-        return merlin.projects.directory(name=name, node=node)
+        return merlin.assets.directory(name=name, node=node)
 
 
     def asset(self, name, node):
@@ -104,7 +104,7 @@ class Library(Asset,
         Make a new asset
         """
         # by default, use s raw file asset
-        return merlin.projects.file(name=name, node=node)
+        return merlin.assets.file(name=name, node=node)
 
 
     def recognize(self, asset, languages):
@@ -147,14 +147,14 @@ class Library(Asset,
         # if there are no viable candidates
         if pop == 0:
             # mark this as an unrecognizable asset
-            asset.category = merlin.projects.unrecognizable.category
+            asset.category = merlin.assets.unrecognizable.category
             # and done
             return
 
         # if there are more than one
         for language, candidate in candidates:
             # we require that they are all supporting files
-            if not issubclass(candidate, merlin.projects.auxiliary):
+            if not issubclass(candidate, merlin.assets.auxiliary):
                 # if any of them fail this constraint assemble the languages that are claiming
                 # this asset as their own
                 claimants = ", ".join(language.name for language, _ in candidates)

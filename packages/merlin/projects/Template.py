@@ -10,7 +10,7 @@ import merlin
 
 # class declaration
 class Template(merlin.component,
-               family="merlin.projects.categories.template",
+               family="merlin.assets.categories.template",
                implements=merlin.protocols.assetCategory):
     """
     Encapsulation of a template file that generates other sources
