@@ -20,6 +20,9 @@ class File(Asset, family="merlin.projects.files"):
 
 
     # required configurable state
+    category = merlin.properties.str()
+    category.doc = "a clue about the type of this asset"
+
     language = Language()
     language.doc = "a clue about the toolchain that processes this asset"
 
