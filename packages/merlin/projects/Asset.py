@@ -11,8 +11,7 @@ from .Product import Product
 
 
 # class declaration
-class Asset(Product,
-            family="merlin.projects.assets.asset", implements=merlin.protocols.asset):
+class Asset(Product):
     """
     Encapsulation of a project asset
     """
@@ -27,16 +26,6 @@ class Asset(Product,
 
     private = merlin.properties.bool(default=False)
     private.doc = "mark this asset as private"
-
-
-    # meta methods
-    def __init__(self, node, **kwds):
-        # chain up
-        super().__init__(**kwds)
-        # store my node
-        self.node = node
-        # all done
-        return
 
 
 # end of file
