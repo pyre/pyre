@@ -13,7 +13,7 @@ from .Language import Language
 
 
 # class declaration
-class File(Asset, family="merlin.projects.files"):
+class File(Asset, family="merlin.assets.files"):
     """
     Base protocol for all file based project assets
     """
@@ -25,6 +25,16 @@ class File(Asset, family="merlin.projects.files"):
 
     language = Language()
     language.doc = "a clue about the toolchain that processes this asset"
+
+
+    # framework hooks
+    @classmethod
+    def pyre_default(cls, **kwds):
+        """
+        Specify the default implementation
+        """
+        # publish the default implementation
+        return merlin.assets.file
 
 
 # end of file

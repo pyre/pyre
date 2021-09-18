@@ -13,7 +13,7 @@ from .Language import Language as language
 
 
 # class declaration
-class Library(Asset, family="merlin.projects.libraries"):
+class Library(Asset, family="merlin.assets.libraries"):
     """
     A high level container of binary artifacts
     """
@@ -37,7 +37,7 @@ class Library(Asset, family="merlin.projects.libraries"):
         Specify the default implementation
         """
         # grab the library foundry and return it
-        return merlin.projects.library
+        return merlin.assets.library
 
 
 # end of file

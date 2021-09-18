@@ -11,7 +11,7 @@ from .Specification import Specification
 
 
 # class declaration
-class Asset(Specification, family="merlin.projects.assets"):
+class Asset(Specification, family="merlin.assets"):
     """
     Base protocol for all project assets
     """

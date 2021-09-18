@@ -13,7 +13,7 @@ from .Library import Library as library
 
 
 # class declaration
-class Project(Asset, family="merlin.projects.projects"):
+class Project(Asset, family="merlin.assets.projects"):
     """
     A high level container of artifacts
     """
@@ -31,7 +31,7 @@ class Project(Asset, family="merlin.projects.projects"):
         Specify the default implementation
         """
         # grab the basic project foundry and return it
-        return merlin.projects.project
+        return merlin.assets.project
 
 
     @classmethod
