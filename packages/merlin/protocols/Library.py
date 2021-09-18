@@ -6,12 +6,14 @@
 
 # support
 import merlin
+# superclass
+from .Asset import Asset
 # schema
 from .Language import Language as language
 
 
 # class declaration
-class Library(merlin.protocol, family="merlin.projects.libraries"):
+class Library(Asset, family="merlin.projects.libraries"):
     """
     A high level container of binary artifacts
     """
