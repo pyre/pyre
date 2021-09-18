@@ -6,13 +6,15 @@
 
 # support
 import merlin
+# superclass
+from .Asset import Asset
 
 
 # class declaration
-class Project(merlin.component,
+class Project(Asset,
               family="merlin.projects.project", implements=merlin.protocols.project):
     """
-    A high level container of artifacts
+    A high level container of assets
     """
 
 
