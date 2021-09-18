@@ -7,11 +7,11 @@
 # support
 import merlin
 # superclass
-from .Asset import Asset
+from .RealAsset import RealAsset
 
 
 # class declaration
-class Directory(Asset,
+class Directory(RealAsset,
                 family="merlin.projects.directories.directory",
                 implements=merlin.protocols.directory):
     """

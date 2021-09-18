@@ -7,11 +7,11 @@
 # support
 import merlin
 # superclass
-from .Asset import Asset
+from .RealAsset import RealAsset
 
 
 # class declaration
-class File(Asset,
+class File(RealAsset,
            family="merlin.projects.files.file",
            implements=merlin.protocols.file):
     """
