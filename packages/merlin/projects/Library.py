@@ -7,10 +7,12 @@
 # support
 import journal
 import merlin
+# superclass
+from .Asset import Asset
 
 
 # class declaration
-class Library(merlin.component,
+class Library(Asset,
               family="merlin.projects.libraries.library", implements=merlin.protocols.library):
     """
     A container of binary artifacts
