@@ -1,41 +1,28 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <nichael.aivazis@para-sim.com>
 # (c) 1998-2021 all rights reserved
-#
+
+
+# support
+import merlin
+# superclass
+from .Product import Product
 
 
 # class declaration
-class Asset:
+class Asset(Product):
     """
-    Base class for all objects tracked by merlin
+    Encapsulation of a project asset
     """
 
 
-    # constants
-    category = "asset"
+    # required configurable state
+    ignore = merlin.properties.bool(default=False)
+    ignore.doc = "controls whether to ignore this asset"
 
-
-    # meta methods
-    def __init__(self, name, uri, **kwds):
-        # chain up
-        super().__init__(**kwds)
-        # save my properties
-        self.name = name # my name
-        self.uri = uri # my path relative to the top level container
-        # all done
-        return
-
-
-    # implementation details
-    __slots__ = 'name', 'uri'
-
-
-    # debugging support
-    def dump(self, indent=''):
-        print('{0}{1.name} ({1.category})'.format(indent, self))
-        return
+    private = merlin.properties.bool(default=False)
+    private.doc = "mark this asset as private"
 
 
 # end of file
