@@ -12,7 +12,7 @@ from .Asset import Asset
 
 # class declaration
 class Project(Asset,
-              family="merlin.projects.project", implements=merlin.protocols.project):
+              family="merlin.assets.project", implements=merlin.protocols.project):
     """
     A high level container of assets
     """

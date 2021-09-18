@@ -12,7 +12,7 @@ from .RealAsset import RealAsset
 
 # class declaration
 class Directory(RealAsset,
-                family="merlin.projects.directories.directory",
+                family="merlin.assets.directories.directory",
                 implements=merlin.protocols.directory):
     """
     Encapsulation of an asset container
