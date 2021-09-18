@@ -18,9 +18,6 @@ class Asset(Product):
 
 
     # required configurable state
-    category = merlin.properties.str()
-    category.doc = "a clue about the type of this asset"
-
     ignore = merlin.properties.bool(default=False)
     ignore.doc = "controls whether to ignore this asset"
 
