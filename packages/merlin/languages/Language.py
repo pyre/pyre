@@ -20,8 +20,8 @@ class Language(merlin.component, implements=merlin.protocols.language):
     name = None
     # properties of the canonical toolchains associated with this language
     linkable = False   # whether the products are recognized by the system linker
-    source = merlin.projects.source
-    header = merlin.projects.header
+    source = merlin.assets.source
+    header = merlin.assets.header
 
     # required state
     headers = merlin.properties.strings()
