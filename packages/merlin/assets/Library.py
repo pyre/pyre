@@ -203,4 +203,21 @@ class Library(Asset,
         return
 
 
+    # hooks
+    def identify(self, authority, **kwds):
+        """
+        Ask {authority} to process a file based asset
+        """
+        # attempt to
+        try:
+            # ask authority for a handler for my type
+            handler = authority.library
+        # if it doesn't exist
+        except AttributeError:
+            # chain up
+            return super().identify(authority=authority)
+        # if it does, invoke it
+        return handler(library=self, **kwds)
+
+
 # end of file
