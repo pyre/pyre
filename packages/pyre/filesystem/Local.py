@@ -7,7 +7,10 @@
 
 
 # externals
-import hashlib, mmap, time
+import journal
+import hashlib
+import mmap
+import time
 # superclass
 from .Filesystem import Filesystem
 
@@ -183,11 +186,6 @@ class Local(Filesystem):
                 root=root,
                 walker=walker, recognizer=recognizer, levels=levels, **kwds)
 
-        # print(" ** pyre.filesystem.Local")
-        # print("  input:")
-        # print("    root: {!r}".format(root))
-        # print("    levels: {!r}".format(levels))
-        # print("  visiting:")
         # create a timestamp so we know the last time the filesystem contents were refreshed
         timestamp = time.gmtime()
         # use the supplied traversal support, if available; otherwise, use mine
@@ -196,11 +194,19 @@ class Local(Filesystem):
 
         # establish the starting point
         root = self if root is None else root
-        # print("    root uri: {!r}".format(root.uri))
         # and make sure it is is a folder
         if not root.isFolder:
             # otherwise complain
             raise self.DirectoryListingError(uri=root.uri, error='not a directory')
+
+        # show me where we are
+        # print(f" ** pyre.filesystem.Local")
+        # print(f"  input:")
+        # print(f"    root: '{root}'")
+        # print(f"    root uri: '{root.uri}'")
+        # print(f"    levels: {levels}")
+        # and mark the beginning of discovery
+        # print(f"  visiting:")
 
         # initialize the traversal: pairs made of the node we are working on, and the depth of
         # the traversal at the level of this node
@@ -214,23 +220,29 @@ class Local(Filesystem):
             # compute the actual location of this folder
             location = self.vnodes[folder].uri
             # show me
-            # print("    uri: {}".format(location))
+            # print(f"    uri: {location}")
             # put the current contents of the folder on a pile; once we recognize the actual
             # contents of the folder, we will remove them from this pile; what's left are
             # entries that disappeared since the last time we walked the folder and must be
             # removed
             dead = set(folder.contents)
             # show me
-            # print("    contents: {}".format(dead))
+            # print(f"    contents: {dead}")
             # walk through the contents
             for entry in walker.walk(location):
                 # show me
-                # print("      {}".format(entry))
-                # try to figure out what kind of entry this is by asking the recognizer
+                # print(f"      {entry}")
+                # ask the recognizer for the entry type
                 meta = recognizer.recognize(entry)
                 # if the recognizer failed
                 if not meta:
-                    # ignore this entry
+                    # make a channel
+                    channel = journal.debug("pyre.filesystem.discover")
+                    # leave a note
+                    channel.line(f"unable to determine the type of '{entry}'")
+                    channel.line(f"while exploring '{location}'")
+                    channel.log()
+                    # and ignore this entry
                     continue
                 # stamp the entry meta-data
                 meta.syncTime = timestamp
@@ -242,38 +254,42 @@ class Local(Filesystem):
                 try:
                     # get the node associated with {name} in this {folder}
                     node = folder[name]
-                # if this fails
+                # if the node doesn't exist, either we are exploring this tree for the first time
+                # or the {entry} was created since the last time we visited; in any case
                 except self.NotFoundError:
-                    # build a new node
+                    # build a new one
                     node = folder.folder() if meta.isFolder else folder.node()
-                    # make a new node; if we are building a folder
+                    # if we are building a folder
                     if meta.isFolder:
                         # make it
                         node = folder.folder()
-                        # and add its location to our {todo} pile
+                        # and add its location to our {todo} pile so we can visit it as well
                         todo.append( (node, level+1) )
                     # otherwise
                     else:
                         # make a regular node
                         node = folder.node()
-                    # either way, this is new contents for our folder
+                    # attach the new node to its folder
                     folder[name] = node
-                # new or old, its meta-data must be updated
+                # new or old, update the metadata of the node; we do this for old nodes as well
+                # because we keep track of the last time the folder was explored
                 self.vnodes[node] = meta
                 # and if the current node is a folder
                 if meta.isFolder:
                     # add it to our {todo} pile
                     todo.append( (node, level+1) )
 
-            # we are done with this folder; check whether there are any dead nodes
+            # we are done with this folder; show me the dead nodes
+            # print(f"    dead: {dead}")
+            # go through them
             for entry in dead:
-                # remove the associated node from the vnode table
+                # remove them from the table of {vnodes}
                 del self.vnodes[folder[entry]]
-                # and remove them from the folder contents
+                # and from the folder contents
                 del folder.contents[entry]
 
         # show me
-        # print("    after uri: {!r}".format(self.vnodes[root].uri))
+        # print(f"    after uri: '{self.vnodes[root].uri}'")
         # all done
         return root
 
