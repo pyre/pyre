@@ -38,6 +38,25 @@ class Builder(merlin.component,
     prefixLayout.doc = "the layout of the installation area"
 
 
+    # interface
+    def add(self, asset):
+        """
+        Add the given {asset} to the build pile
+        """
+        # ask the asset to identify itself
+        flow = asset.identify(authority=self)
+        # all done
+        return
+
+
+    def build(self):
+        """
+        Build the products
+        """
+        # all done
+        return
+
+
     # metamethods
     def __init__(self, **kwds):
         # chain up
@@ -84,6 +103,41 @@ class Builder(merlin.component,
         # and mount it
         vfs["stage"] = stage
 
+        # all done
+        return
+
+
+    # implementation details
+    def directory(self, directory):
+        """
+        Build a {directory}
+        """
+        # show me
+        print(f"building '{directory.pyre_name}', a directory")
+        # all done
+        return
+
+
+    def file(self, file):
+        """
+        Build a {file} base asset
+        """
+        # show me
+        print(f"building '{file.pyre_name}', a {file.category} file")
+        # all done
+        return
+
+
+    def library(self, library):
+        """
+        Build a {library}
+        """
+        # show me
+        print(f"building '{library.name}', a library")
+        # go through the assets of the library
+        for asset in library.assets():
+            # and add each one to the build pile
+            asset.identify(authority=self)
         # all done
         return
 
