@@ -33,6 +33,7 @@ class Info(merlin.shells.command, family='merlin.cli.info'):
         # show me
         channel.line(f"builder:")
         channel.line(f"{indent*1}type: {', '.join(builder.type)}")
+        channel.line(f"{indent*1}tag: {builder.tag}")
         channel.line(f"{indent*1}stage: {builder.stage}")
         channel.line(f"{indent*1}prefix: {builder.prefix}")
         channel.line(f"{indent*2}bin: {prefix.bin}")
