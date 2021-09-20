@@ -5,6 +5,7 @@
 
 
 # support
+import journal
 import merlin
 
 
@@ -17,6 +18,10 @@ class Builder(merlin.component,
 
 
     # required state
+    type = merlin.properties.strings()
+    type.default = "debug", "shared"
+    type.doc = "the build type"
+
     prefix = merlin.properties.path()
     prefix.default = "/tmp/{pyre.user.username}/products"
     prefix.doc = "the installation location of the final build products"
