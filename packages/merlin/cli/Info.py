@@ -32,6 +32,7 @@ class Info(merlin.shells.command, family='merlin.cli.info'):
         channel = journal.info("merlin.builder")
         # show me
         channel.line(f"builder:")
+        channel.line(f"{indent*1}type: {', '.join(builder.type)}")
         channel.line(f"{indent*1}stage: {builder.stage}")
         channel.line(f"{indent*1}prefix: {builder.prefix}")
         channel.line(f"{indent*2}bin: {prefix.bin}")
