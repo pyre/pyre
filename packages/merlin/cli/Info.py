@@ -23,6 +23,8 @@ class Info(merlin.shells.command, family='merlin.cli.info'):
         """
         # get the builder
         builder = plexus.builder
+        # the fileserver
+        vfs = plexus.vfs
         # and the layout of the install area
         prefix = builder.prefixLayout
 
@@ -34,8 +36,14 @@ class Info(merlin.shells.command, family='merlin.cli.info'):
         channel.line(f"builder:")
         channel.line(f"{indent*1}type: {', '.join(builder.type)}")
         channel.line(f"{indent*1}tag: {builder.tag}")
-        channel.line(f"{indent*1}stage: {builder.stage}")
-        channel.line(f"{indent*1}prefix: {builder.prefix}")
+        channel.line(f"{indent*1}stage:")
+        channel.line(f"{indent*2}seed: {builder.stage}")
+        channel.line(f"{indent*2}mounted: {vfs['/stage'].uri}")
+        channel.line(f"{indent*1}prefix:")
+        channel.line(f"{indent*2}seed: {builder.prefix}")
+        channel.line(f"{indent*2}abi tagged: {builder.prefixABI}")
+        channel.line(f"{indent*2}mounted: {vfs['/prefix'].uri}")
+        channel.line(f"{indent*1}prefix layout:")
         channel.line(f"{indent*2}bin: {prefix.bin}")
         channel.line(f"{indent*2}lib: {prefix.lib}")
         channel.line(f"{indent*2}include: {prefix.include}")
