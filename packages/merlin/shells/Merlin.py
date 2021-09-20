@@ -38,7 +38,7 @@ class Merlin(merlin.plexus, family='merlin.shells.plexus'):
     # post instantiation hook
     def pyre_initialized(self):
         """
-        Go through my traits and force them to matrialize
+        Go through my traits and force them to materialize
         """
         # make a marker
         indent = " " * 2
@@ -52,6 +52,9 @@ class Merlin(merlin.plexus, family='merlin.shells.plexus'):
             channel.line(f"{indent*1}{trait.name}: {value}")
         # flush
         channel.log()
+
+        # give my children their context
+        self.builder.merlin_initialized(plexus=self)
 
         # indicate that nothing is amiss
         return []
