@@ -18,6 +18,10 @@ class Builder(merlin.component,
 
 
     # configurable state
+    tag = merlin.properties.str()
+    tag.default = None
+    tag.doc = "the name of this build"
+
     type = merlin.properties.strings()
     type.default = "debug", "shared"
     type.doc = "the build type"
@@ -38,6 +42,18 @@ class Builder(merlin.component,
     def __init__(self, **kwds):
         # chain up
         super().__init__(**kwds)
+
+        # if the user didn't specify a tag
+        if self.tag is None:
+            # make a pile
+            tag = []
+            # grab the build type and add its parts to the tag
+            tag.extend(sorted(self.type))
+            # get the host and add its contribution
+            tag.append(self.pyre_host.tag)
+            # assemble the tag and store it
+            self.tag = "-".join(tag)
+
         # all done
         return
 
