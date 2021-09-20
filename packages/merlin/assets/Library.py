@@ -59,12 +59,13 @@ class Library(Asset,
 
         # convert it into an asset
         top = self.directory(name=str(self.root), node=root)
-        # starting with my root
+        # and make it available
+        yield top
+
+        # now, starting with my root
         todo = [top]
         # dive into the tree
         for folder in todo:
-            # make it available
-            yield folder
             # grab its contents
             for node in folder.node.contents.values():
                 # form the name of this asset
