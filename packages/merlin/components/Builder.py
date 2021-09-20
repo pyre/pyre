@@ -17,7 +17,7 @@ class Builder(merlin.component,
     """
 
 
-    # required state
+    # configurable state
     type = merlin.properties.strings()
     type.default = "debug", "shared"
     type.doc = "the build type"
@@ -38,11 +38,19 @@ class Builder(merlin.component,
     def __init__(self, **kwds):
         # chain up
         super().__init__(**kwds)
+        # all done
+        return
 
+
+    # framework hooks
+    def merlin_initialized(self, plexus, **kwds):
+        """
+        Hook invoked after the {plexus} is fully initialized
+        """
         # grab the root of the virtual filesystem
         vfs = self.pyre_fileserver
 
-        # get my prefix
+        # assemble the path to my prefix
         prefix = self.prefix
         # create it, if it doesn't already exist
         prefix.mkdir(parents=True, exist_ok=True)
@@ -51,7 +59,7 @@ class Builder(merlin.component,
         # and mount it
         vfs["prefix"] = prefix
 
-        # repeat for my staging area
+        # assemble the path to my staging area
         stage = self.stage
         # create it, if it doesn't already exist
         stage.mkdir(parents=True, exist_ok=True)
