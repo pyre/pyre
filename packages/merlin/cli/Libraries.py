@@ -22,6 +22,25 @@ class Libraries(merlin.shells.command, family='merlin.cli.lib'):
 
 
     # commands
+    @merlin.export(tip="build the selected libraries")
+    def build(self, plexus, **kwds):
+        """
+        Build the selected libraries
+        """
+        # grab the builder
+        builder = plexus.builder
+
+        # go through the set of selected libraries
+        for lib in self.filter(projects=plexus.projects):
+            # ask the builder to add it to its pile
+            builder.add(asset=lib)
+        # and build everything
+        builder.build()
+
+        # all done
+        return
+
+
     @merlin.export(tip="display the names of the selected libraries")
     def info(self, plexus, **kwds):
         """
@@ -30,7 +49,7 @@ class Libraries(merlin.shells.command, family='merlin.cli.lib'):
         # marker
         indent = " " * 2
         # make a channel
-        channel = journal.info("merlin.libs.names")
+        channel = journal.info("merlin.lib.info")
         # go through the set of libraries
         for lib in self.filter(projects=plexus.projects):
             # show me the asset name and its stem
@@ -52,7 +71,7 @@ class Libraries(merlin.shells.command, family='merlin.cli.lib'):
         # marker
         indent = " " * 2
         # make a channel
-        channel = journal.info("merlin.libs.names")
+        channel = journal.info("merlin.lib.sources")
 
         # go through the set of libraries
         for lib in self.filter(projects=plexus.projects):
