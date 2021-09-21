@@ -80,6 +80,8 @@ class Info(merlin.shells.command, family='merlin.cli.info'):
         for compiler in compilers:
             # report
             channel.line(f"{indent*1}{compiler}")
+            channel.line(f"{indent*2}driver: {compiler.driver}")
+            channel.line(f"{indent*2}version: {'.'.join(compiler.version())}")
         # flush
         channel.log()
 
