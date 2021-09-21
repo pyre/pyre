@@ -22,6 +22,10 @@ class Builder(merlin.component,
     tag.default = None
     tag.doc = "the name of this build"
 
+    tagged = merlin.properties.bool()
+    tagged.default = True
+    tagged.doc = "control whether to fold the compiler ABI into the installation prefix"
+
     type = merlin.properties.strings()
     type.default = "debug", "shared"
     type.doc = "the build type"
@@ -33,10 +37,6 @@ class Builder(merlin.component,
     stage = merlin.properties.path()
     stage.default = "/tmp/{pyre.user.username}/builds"
     stage.doc = "the location of the intermediate, disposable build products"
-
-    prefixABI = merlin.properties.bool()
-    prefixABI.default = True
-    prefixABI.doc = "control whether to fold the compiler ABI into the installation prefix"
 
     prefixLayout = merlin.protocols.prefix()
     prefixLayout.doc = "the layout of the installation area"
@@ -121,7 +121,7 @@ class Builder(merlin.component,
         vfs = self.pyre_fileserver
 
         # if the user want the ABI folded into the prefix
-        if self.prefixABI:
+        if self.tagged:
             # assemble the path to my prefix
             prefix = self.prefix / abi / self.tag
         # otherwise
