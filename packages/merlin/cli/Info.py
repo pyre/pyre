@@ -41,7 +41,7 @@ class Info(merlin.shells.command, family='merlin.cli.info'):
         channel.line(f"{indent*2}mounted: {vfs['/stage'].uri}")
         channel.line(f"{indent*1}prefix:")
         channel.line(f"{indent*2}seed: {builder.prefix}")
-        channel.line(f"{indent*2}abi tagged: {builder.prefixABI}")
+        channel.line(f"{indent*2}abi tagged: {builder.tagged}")
         channel.line(f"{indent*2}mounted: {vfs['/prefix'].uri}")
         channel.line(f"{indent*1}prefix layout:")
         channel.line(f"{indent*2}bin: {prefix.bin}")
