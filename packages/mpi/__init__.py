@@ -19,20 +19,20 @@ if sys.platform.startswith('linux'):
     # adjust the {dlopen} flags
     sys.setdlopenflags(sys.getdlopenflags() | ctypes.RTLD_GLOBAL)
 
-# we start out with {world} being a trivial commuincator
+# we start out with {world} being a trivial communicator
 from .TrivialCommunicator import TrivialCommunicator as world
 
 # attempt to load the mpi extension
 try:
     # try to load the extension
-    from . import mpi
+    from . import mpi as libmpi
 # if it fails for any reason
 except Exception as error:
     # indicate that there is no runtime support
-    mpi = None
+    libmpi = None
 # otherwise, we have bindings and hence MPI support
 else:
-    # grab the shell protocol form pyre
+    # grab the shell protocol from pyre
     from pyre import foundry, shells
 
     # the foundries for the shells in this package
@@ -69,7 +69,7 @@ def init():
     here we are...
     """
     # if we don't have runtime support
-    if not mpi:
+    if not libmpi:
         # bail
         return None
 
@@ -78,10 +78,10 @@ def init():
     atexit.register(finalize)
 
     # initialize mpi
-    mpi.init()
+    libmpi.init()
     # provide access to the extension through the base mpi object
     from .Object import Object
-    Object.mpi = mpi
+    Object.mpi = libmpi
 
     # the factory placeholders
     global communicator
@@ -95,17 +95,17 @@ def init():
     # fix the world communicator
     global world
     # by building a real one
-    world = communicator(capsule=mpi.world)
+    world = communicator(capsule=libmpi.world)
 
     # all done
-    return mpi
+    return libmpi
 
 def finalize():
     """
     Shutdown mpi
     """
     # if we don't have runtime support
-    if not mpi:
+    if not libmpi:
         # bail
         return
 
@@ -129,7 +129,7 @@ def finalize():
     Object.mpi = None
 
     # finalize
-    mpi.finalize()
+    libmpi.finalize()
 
     # all done
     return
