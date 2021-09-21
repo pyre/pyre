@@ -4,9 +4,6 @@
 # (c) 1998-2021 all rights reserved
 
 
-# support
-import re
-import subprocess
 # framework
 import merlin
 # superclass
