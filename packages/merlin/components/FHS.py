@@ -20,9 +20,9 @@ class FHS(merlin.component, family="merlin.layouts.fhs", implements=merlin.proto
     bin.default = "bin"
     bin.doc = "the location of executables"
 
-    defaults = merlin.properties.path()
-    defaults.default = "etc/defaults"
-    defaults.doc = "global package configuration files"
+    config = merlin.properties.path()
+    config.default = "etc/config"
+    config.doc = "global package configuration files"
 
     doc = merlin.properties.path()
     doc.default = "doc"
