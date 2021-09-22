@@ -41,6 +41,9 @@ class Builder(merlin.component,
     prefixLayout = merlin.protocols.prefix()
     prefixLayout.doc = "the layout of the installation area"
 
+    libflow = merlin.protocols.libflow()
+    libflow.doc = "the library workflow generator"
+
 
     # interface
     def add(self, asset):
@@ -149,38 +152,12 @@ class Builder(merlin.component,
 
 
     # implementation details
-    def directory(self, directory):
-        """
-        Build a {directory}
-        """
-        # show me
-        print(f"building '{directory.pyre_name}', a directory")
-        # all done
-        return
-
-
-    def file(self, file):
-        """
-        Build a {file} base asset
-        """
-        # show me
-        print(f"building '{file.pyre_name}', a {file.category} file")
-        # all done
-        return
-
-
     def library(self, library):
         """
         Build a {library}
         """
-        # show me
-        print(f"building '{library.name}', a library")
-        # go through the assets of the library
-        for asset in library.assets():
-            # and add each one to the build pile
-            asset.identify(authority=self)
-        # all done
-        return
+        # delegate to the {libflow} generator
+        return self.libflow.library(builder=self, library=library)
 
 
 # end of file
