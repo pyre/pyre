@@ -18,7 +18,7 @@ class RealAsset(Asset):
 
 
     # meta methods
-    def __init__(self, node, **kwds):
+    def __init__(self, node=None, **kwds):
         # chain up
         super().__init__(**kwds)
         # store my node
