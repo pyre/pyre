@@ -19,8 +19,8 @@ class PrefixLayout(merlin.protocol, family="merlin.layouts.prefix"):
     bin = merlin.properties.path()
     bin.doc = "the location of executables"
 
-    defaults = merlin.properties.path()
-    defaults.doc = "global package configuration files"
+    config = merlin.properties.path()
+    config.doc = "global package configuration files"
 
     doc = merlin.properties.path()
     doc.doc = "package documentation"
