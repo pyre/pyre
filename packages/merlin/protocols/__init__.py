@@ -5,18 +5,26 @@
 
 
 # export
+# flow parts
+from .Producer import Producer as producer
+from .Specification import Specification as specification
+
+# assets and their categories
 from .Asset import Asset as asset
 from .AssetCategory import AssetCategory as assetCategory
-from .Builder import Builder as builder
-from .Compiler import Compiler as compiler
 from .Directory import Directory as directory
 from .File import File as file
-from .Language import Language as language
 from .Library import Library as library
-from .PrefixLayout import PrefixLayout as prefix
-from .Producer import Producer as producer
 from .Project import Project as project
-from .Specification import Specification as specification
+
+# builders
+from .Builder import Builder as builder
+from .PrefixLayout import PrefixLayout as prefix
+from .LibFlow import LibFlow as libflow
+
+#  miscellaneous parts
+from .Compiler import Compiler as compiler
+from .Language import Language as language
 
 
 # end of file
