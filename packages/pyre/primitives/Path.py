@@ -44,7 +44,9 @@ class Path(tuple):
     _HOME = '~'
 
     # path constants
-    root = None
+    # N.B.: this used to be {None}, for unknown reasons; no test fails, and no there is
+    # no known case that depends on the old value
+    root = (_SEP,)
 
 
     # interface
