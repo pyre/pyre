@@ -141,14 +141,17 @@ class Path(tuple):
         """
         Return the final path component
         """
+        # N.B. this now returns a reasonable answer for both the root of the filesystem
+        # and the {cwd}; both cases used to return empty strings, for unknown reasons;
+        # there is no test that fails after this behavior change, and i haven't been able
+        # to track down a case that depended on the old behavior, so here we go...
+
         # when i am empty
         if len(self) == 0:
             # the last component is the empty string
-            return ''
+            return '.'
         # otherwise, get the last part of the path
-        name = self[-1]
-        # return it, unless it's the separator, in which case return the empty string
-        return name if name != self._SEP else ''
+        return self[-1]
 
 
     @property
