@@ -66,4 +66,15 @@ class Directory(RealAsset,
         return handler(directory=self, **kwds)
 
 
+    # flow hooks
+    def pyre_done(self, **kwds):
+        """
+        Hook invoked right after my factories finished refreshing me
+        """
+        # the trivial implementation here is just a place for a breakpoint while debugging
+        # it will be removed at some point...
+        # chain up
+        return super().pyre_done(**kwds)
+
+
 # end of file
