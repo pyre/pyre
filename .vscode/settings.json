@@ -1,15 +1,16 @@
 {
+    "cmake.configureOnOpen": false,
     "spellright.language": [
         "en"
     ],
     "spellright.documentTypes": [
         "cpp",
+        "html",
         "javascriptreact",
+        "latex",
         "makefile",
         "markdown",
-        "latex",
         "plaintext",
-        "python",
-        "html"
+        "python"
     ]
 }
