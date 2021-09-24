@@ -91,6 +91,7 @@ class Darwin(POSIX, family='pyre.platforms.darwin'):
     codenames = {
         '12.0': 'monterey',
         # big sur is has multiple personality disorder...
+        '11.6': 'big sur',
         '11.5': 'big sur',
         '11.4': 'big sur',
         '11.3': 'big sur',
