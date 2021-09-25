@@ -181,7 +181,7 @@ class Builder(merlin.component,
         # and my index
         index = self.index
         # build the directory asset
-        prefixDir = merlin.assets.directory(name=str(prefixPath), node=prefixFS)
+        prefixDir = merlin.assets.directory(name=str(prefixPath), node=prefixFS, path=prefixPath)
         # add it to the flow
         flow.products.add(prefixDir)
         # and index it
@@ -236,8 +236,12 @@ class Builder(merlin.component,
             # already exists, and a {pile} of intermediate directories for which we must
             # build nodes and attach them to the workflow; go through the pile
             for dir in reversed(pile):
+                # build the path to this child
+                childPath = parentDir.path / dir
+                # which becomes the asset name
+                childName = str(childPath)
                 # create the flow node for this child
-                childDir = merlin.assets.directory(name=f"{parentDir.pyre_name}/{dir}", node=None)
+                childDir = merlin.assets.directory(name=childName, node=None, path=childPath)
                 # add it to my flow products
                 flow.products.add(childDir)
                 # and index it so it is a retrievable asset
@@ -279,7 +283,7 @@ class Builder(merlin.component,
         # at its canonical location in the virtual filesystem
         # start by assembling the path to the staging area
         stage = self.stage / abi / self.tag
-        # force the creation of the diretory
+        # force the creation of the directory
         stage.mkdir(parents=True, exist_ok=True)
         # use it to anchor a local filesystem
         stageFS = vfs.retrieveFilesystem(root=stage)
@@ -293,7 +297,7 @@ class Builder(merlin.component,
         # and my product index
         index = self.index
         # make a directory flow node that refers to this location
-        stageDir = merlin.assets.directory(name=str(stagePath), node=stageFS)
+        stageDir = merlin.assets.directory(name=str(stagePath), node=stageFS, path=stagePath)
         # add it to the flow
         flow.products.add(stageDir)
         # and index it
