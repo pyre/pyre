@@ -57,8 +57,24 @@ class Library(Asset,
         # so let's explore this subtree
         root.discover()
 
-        # convert it into an asset
-        top = self.directory(name=str(self.root), node=root)
+        # for each asset, there are two interesting projections of its uri:
+        # the first one is relative to the project root; we use this to form the asset name
+        # because it is guaranteed to be globally unique within a given project; in addition,
+        # it is an easily predictable name to use in configuration files
+        # the second projection is relative to the root of the library, which gets folded
+        # with {/prefix/include} and the library name to locate the installation location of
+        # headers, and joined with some special character to form the unique name of the object
+        # modules that form an archive
+
+        # for the library {root}, these are trivial: the projection relative to the workspace
+        # is its own {root}, by definition
+        relWS = self.root
+        # and the projection relative to the root is empty
+        relLib = merlin.primitives.path()
+        # use these to convert the library {root} into an asset and decorate it
+        # the name must be a string, so coerce the root projection; these operations are trivial
+        # for the library root, but they set the pattern for building all of its assets
+        top = self.directory(name=str(relWS / relLib), node=root, path=relLib)
         # and make it available
         yield top
 
@@ -67,19 +83,22 @@ class Library(Asset,
         # dive into the tree
         for folder in todo:
             # grab its contents
-            for node in folder.node.contents.values():
-                # form the name of this asset
-                name = str(node.uri.relativeTo(ws.uri))
+            for entry, node in folder.node.contents.items():
+                # the projection of the asset relative to the library root is given by folding
+                # its name onto the projection of its folder
+                path = folder.path / entry
+                # and the name of this asset is obtained by folding this onto the library root
+                name = str(relWS / path)
                 # folders
                 if node.isFolder:
                     # become directories
-                    asset = self.directory(name=name, node=node)
+                    asset = self.directory(name=name, node=node, path=path)
                     # and get added to the pile of places to visit
                     todo.append(asset)
                 # regular files
                 else:
                     # become file based assets
-                    asset = self.asset(name=name, node=node)
+                    asset = self.asset(name=name, node=node, path=path)
                     # and get identified
                     self.recognize(asset=asset, languages=languages)
                 # either way, assets are attached to their container
@@ -92,20 +111,20 @@ class Library(Asset,
 
 
     # implementation details
-    def directory(self, name, node):
+    def directory(self, name, node, path):
         """
         Make a new asset container
         """
         # by default, use the raw asset container
-        return merlin.assets.directory(name=name, node=node)
+        return merlin.assets.directory(name=name, node=node, path=path)
 
 
-    def asset(self, name, node):
+    def asset(self, name, node, path):
         """
         Make a new asset
         """
         # by default, use s raw file asset
-        return merlin.assets.file(name=name, node=node)
+        return merlin.assets.file(name=name, node=node, path=path)
 
 
     def recognize(self, asset, languages):
