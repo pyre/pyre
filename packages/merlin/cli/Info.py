@@ -36,21 +36,21 @@ class Info(merlin.shells.command, family='merlin.cli.info'):
         channel.line(f"builder:")
         channel.line(f"{indent*1}type: {', '.join(builder.type)}")
         channel.line(f"{indent*1}tag: {builder.tag}")
-        channel.line(f"{indent*1}stage:")
+        channel.line(f"{indent*1}/stage:")
         channel.line(f"{indent*2}seed: {builder.stage}")
         channel.line(f"{indent*2}mounted: {vfs['/stage'].uri}")
-        channel.line(f"{indent*1}prefix:")
+        channel.line(f"{indent*1}/prefix:")
         channel.line(f"{indent*2}seed: {builder.prefix}")
         channel.line(f"{indent*2}abi tagged: {builder.tagged}")
         channel.line(f"{indent*2}mounted: {vfs['/prefix'].uri}")
-        channel.line(f"{indent*1}prefix layout:")
+        channel.line(f"{indent*1}/prefix layout:")
         channel.line(f"{indent*2}bin: {prefix.bin}")
         channel.line(f"{indent*2}lib: {prefix.lib}")
         channel.line(f"{indent*2}include: {prefix.include}")
         channel.line(f"{indent*2}doc: {prefix.doc}")
         channel.line(f"{indent*2}share: {prefix.share}")
         channel.line(f"{indent*2}etc: {prefix.etc}")
-        channel.line(f"{indent*2}defaults: {prefix.defaults}")
+        channel.line(f"{indent*2}config: {prefix.config}")
         channel.line(f"{indent*2}var: {prefix.var}")
         # flush
         channel.log()
@@ -94,17 +94,19 @@ class Info(merlin.shells.command, family='merlin.cli.info'):
         """
         Display information about the host
         """
+        # indentation
+        indent = " " * 2
         # get the host
         host = self.pyre_host
 
         # make a channel
         channel = journal.info("merlin.info.host")
         # report
-        channel.line(f"          name: {host.hostname}")
-        channel.line(f"      nickname: {host.nickname}")
-        channel.line(f"            os: {host.distribution} {host.release} ({host.codename})")
-        channel.line(f"          arch: {host.cpus.architecture}")
-        channel.line(f"         cores: {host.cpus.cores}")
+        channel.line(f"{indent*0}name: {host.hostname}")
+        channel.line(f"{indent*0}nickname: {host.nickname}")
+        channel.line(f"{indent*0}os: {host.distribution} {host.release} ({host.codename})")
+        channel.line(f"{indent*0}arch: {host.cpus.architecture}")
+        channel.line(f"{indent*0}cores: {host.cpus.cores}")
         # flush
         channel.log()
 
@@ -145,6 +147,8 @@ class Info(merlin.shells.command, family='merlin.cli.info'):
         """
         Display information about the platform
         """
+        # indentation
+        indent = " " * 2
         # get the host
         host = self.pyre_host
 
@@ -158,9 +162,9 @@ class Info(merlin.shells.command, family='merlin.cli.info'):
         # make a channel
         channel = journal.info("merlin.info.platform")
         # report
-        channel.line(f"            os: {platform} {release} ({codename})")
-        channel.line(f"          arch: {arch}")
-        channel.line(f"           tag: {tag}")
+        channel.line(f"{indent*0}os: {platform} {release} ({codename})")
+        channel.line(f"{indent*0}arch: {arch}")
+        channel.line(f"{indent*0}tag: {tag}")
         # flush
         channel.log()
 
