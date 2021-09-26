@@ -60,8 +60,83 @@ class Builder(merlin.component,
         """
         Build the products
         """
+        # look something up
+        asset = self.index["/prefix/config"]
+        # and build it
+        asset.pyre_make()
         # all done
         return
+
+
+    def mkdir(self, path):
+        """
+        Build a workflow that creates a directory at {path}
+        """
+        # N.B.: this algorithm assumes that {path} has an ancestor for which a fully formed asset
+        # already exists and is indexed correctly. the builder currently guarantees that
+        # {/prefix} and {/stage} exist, as they are the most common roots for generated assets
+
+        # grab my index
+        index = self.index
+        # make a pile for the intermediate directories that must be created
+        pile = []
+        # traverse the {path} upwards towards its root, looking for an anchor
+        for crumb in path.crumbs:
+            # form the name of the directory asset
+            name = str(crumb)
+            # look in the {index}
+            anchor = index.get(name)
+            # if it's there
+            if anchor:
+                # got it; no need to look further
+                break
+            # if not, we will have to build this directory, so add its name to the {pile}
+            pile.append(crumb.name)
+        # if we have reached the root of the filesystem without bumping into an {anchor}
+        else:
+            # there is something wrong, most likely a bug
+            channel = journal.firewall("merlin.builder.mkdir")
+            # complain
+            channel.line(f"could not anchor '{path}'")
+            channel.line(f"crumbs: {', '.join(reversed(pile))}")
+            channel.line(f"note: this workflow is compromised; please file an issue on github")
+            # and flush
+            channel.log()
+            # just in case firewalls aren't fatal, bail
+            return
+
+        # at this point, we have an {anchor} and a {pile} of intermediate directories that must
+        # be constructed; we will index them and store them in my list of flow {products}
+        products = self.flow.products
+        # go through them in reverse order
+        for child in reversed(pile):
+            # build the path to this child
+            childPath = anchor.path / child
+            # use it to form the asset name
+            childName = str(childPath)
+            # and use these two to form the directory; note that we don't have a filesystem node
+            # for this asset, an indication that it doesn't exist yet
+            childDir = merlin.assets.directory(name=childName, path=childPath)
+            # index it
+            index[childName] = childDir
+            # and add it to my flow
+            products.add(childDir)
+            # this directory gets realized using a diretory factory
+            mkdir = merlin.factories.mkdir()
+            # that builds this child
+            mkdir.name = child
+            # with its parent
+            mkdir.parent = anchor
+            # to form the subdirectory
+            mkdir.child = childDir
+            # adjust the cursor for the next level
+            anchor = childDir
+            # and move on; if this is the last iteration, we get out of here with {anchor}
+            # holding the terminal node that corresponds to this subdirectory
+
+        # whether there was a {pile} of intermediate directories or not, {anchor} has the answer
+        # and we are all done
+        return anchor
 
 
     # metamethods
@@ -199,65 +274,22 @@ class Builder(merlin.component,
             relpath, locator = layout.pyre_getTrait(alias=name)
             # project it to its canonical location
             path = prefixPath / relpath
-            # make a pile of the intermediate directories that don't exist and must be created
-            pile = []
-            # find the closest ancestor that is a known flow product by going through
-            # the path breadcrumbs
-            for parent in path.crumbs:
-                # form the asset name
-                parentName = str(parent)
-                # attempt to look it up in the asset index
-                parentDir = index.get(parentName)
-                # if its there
-                if parentDir:
-                    # got it; look no further
-                    break
-                # if not, add the directory name to the pile of intermediate directories
-                # we have to build
-                pile.append(parent.name)
-            # if we reached the root for the virtual filesystem without bumping into an
-            # existing directory
-            else:
-                # there is something wrong, since we should have run into {/prefix}, which
-                # we just built in the previous step; most likely this is a bug, so make a channel
-                channel = journal.firewall("merlin.builder")
-                # and complain
+            # create it and all intermediate directories up to {/prefix}, which we created
+            # and indexed above
+            dir = self.mkdir(path=path)
+            # when {mkdir} fails, it raises a firewall; but when the firewall is disabled
+            # it returns with a trivial node; in order to assist in debugging
+            if not dir:
+                # make a channel
+                channel = journal.error("merlin.builder.mkdir")
+                # complain
                 channel.line(f"could not anchor '{path}'")
                 channel.line(f"while building a workflow for '{name}' in the prefix layout")
                 channel.line(f"with value '{relpath}' from {locator}")
                 channel.line(f"when a directory asset for '/prefix' should have been found")
-                channel.line(f"crumbs: {', '.join(reversed(pile))}")
                 channel.line(f"note: this workflow is compromised; please file an issue on github")
-                # flush
+                # and flush
                 channel.log()
-                # bail, just in case this firewall is not fatal
-                return
-            # if we get this far, we have {parentDir} with a flow directory product that
-            # already exists, and a {pile} of intermediate directories for which we must
-            # build nodes and attach them to the workflow; go through the pile
-            for dir in reversed(pile):
-                # build the path to this child
-                childPath = parentDir.path / dir
-                # which becomes the asset name
-                childName = str(childPath)
-                # create the flow node for this child
-                childDir = merlin.assets.directory(name=childName, node=None, path=childPath)
-                # add it to my flow products
-                flow.products.add(childDir)
-                # and index it so it is a retrievable asset
-                index[childDir.pyre_name] = childDir
-                # this node gets realized by a factory
-                mkdir = merlin.factories.mkdir()
-                # that builds the intermediate directory
-                mkdir.name = dir
-                # as a child of the parent product
-                mkdir.parent = parentDir
-                # to form the child product
-                mkdir.child = childDir
-                # adjust the cursor for the next go around
-                parentDir = childDir
-                # move on; if this is the last iteration, we get out of here with
-                # {childDir} holding the terminal node that corresponds to this subdirectory
 
             # by now, we have a complete workflow for priming the directory structure under
             # {/prefix}; what is missing is making sure that the target directory nodes are
@@ -269,7 +301,7 @@ class Builder(merlin.component,
             # but if it's not there
             if not target:
                 # index the {childDir} node from above under its canonical name
-                index[canonicalPath] = childDir
+                index[canonicalPath] = dir
 
         # all done
         return
