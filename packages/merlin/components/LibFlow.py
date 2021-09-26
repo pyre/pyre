@@ -38,8 +38,10 @@ class LibFlow(merlin.component,
         """
         Handle a source {directory}
         """
-        # show me
-        print(f"building '{directory.pyre_name}', a directory")
+        # there may be headers to move, so build the corresponding directory in the prefix
+        incpath = merlin.primitives.path("/prefix/include", library.name, directory.path)
+        # ask the builder to assemble a workflow that creates this directory
+        builder.mkdir(path=incpath)
         # all done
         return
 
@@ -50,7 +52,7 @@ class LibFlow(merlin.component,
         Handle a {file} asset
         """
         # show me
-        print(f"building '{file.pyre_name}', a {file.category} file")
+        # print(f"building '{file.pyre_name}', a {file.category} file")
         # all done
         return
 
