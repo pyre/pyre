@@ -109,11 +109,26 @@ private:
     // data
     data_t _data;
 };
+
+// typedef for real values
+using real = double;
+
+// typedef for scalars
+using scalar_t = real;
+
+// typedef for vectors
+template <int D, typename T = real>
+using vector_t = pyre::algebra::Tensor<T, D>;
+
+// typedef for tensors
+template <int D1, int D2 = D1, typename T = real>
+using tensor_t = pyre::algebra::Tensor<T, D1, D2>;
+
 }
 }
+
 // include the inlines
 #include "Tensor.icc"
 #endif
-
 
 // end of file
