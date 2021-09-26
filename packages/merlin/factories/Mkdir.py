@@ -49,6 +49,9 @@ class Mkdir(Factory, family="merlin.factories.mkdir"):
         """
         Make the subdirectory
         """
+        # sign on
+        print(f" [mkdir] {self.child.path}")
+
         # unpack
         name = self.name
         child = self.child
