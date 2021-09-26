@@ -1,0 +1,127 @@
+template <typename T, int... I>
+pyre::algebra::Tensor<T, I...>::Tensor() : 
+    _data(pack_t { { I... } })
+{
+    // initialize memory
+    reset();
+
+    // all done
+    return;
+}
+
+template <typename T, int... I>
+pyre::algebra::Tensor<T, I...>::Tensor(const data_t & data) : _data(data)
+{}
+
+template <typename T, int... I>
+pyre::algebra::Tensor<T, I...>::Tensor(const data_t && data) : _data(std::forward(data))
+{}
+
+template <typename T, int... I>
+template <class... T2>
+pyre::algebra::Tensor<T, I...>::Tensor(T2... args) requires(sizeof...(T2) == S) : Tensor()
+{
+    // initialize with input arguments
+    _initialize(std::make_index_sequence<S> {}, args...);
+
+    // all done
+    return;
+}
+
+template <typename T, int... I>
+pyre::algebra::Tensor<T, I...>::~Tensor()
+{
+    std::cout << "~Tensor()" << std::endl;
+    return;
+}
+
+template <typename T, int... I>
+const T &
+pyre::algebra::Tensor<T, I...>::operator[](index_t i) const
+{
+    return _data[i];
+}
+
+template <typename T, int... I>
+T &
+pyre::algebra::Tensor<T, I...>::operator[](index_t i)
+{
+    return _data[i];
+}
+
+template <typename T, int... I>
+const T &
+pyre::algebra::Tensor<T, I...>::operator[](int i) const
+{
+    return _data[i];
+}
+
+template <typename T, int... I>
+T &
+pyre::algebra::Tensor<T, I...>::operator[](int i)
+{
+    return _data[i];
+}
+
+template <typename T, int... I>
+void
+pyre::algebra::Tensor<T, I...>::operator+=(const Tensor<T, I...> & rhs)
+{
+    // component-wise operator+=
+    return _operatorPlusEqual(std::make_index_sequence<S> {}, rhs);
+}
+
+template <typename T, int... I>
+pyre::algebra::Tensor<T, I...>::operator T() const requires(S == 1)
+{
+    return _data[0];
+}
+
+template <typename T, int... I>
+pyre::algebra::Tensor<T, I...>::operator data_t() const
+{
+    return _data;
+}
+
+template <typename T, int... I>
+void
+pyre::algebra::Tensor<T, I...>::reset()
+{
+    // reset to zero all entries
+    return _reset(std::make_index_sequence<S> {});
+}
+
+template <typename T, int... I>
+template <size_t... J, class... T2>
+void
+pyre::algebra::Tensor<T, I...>::_initialize(std::index_sequence<J...>, T2... args)
+{
+    ((_data[J] = args), ...);
+
+    // all done
+    return;
+}
+
+template <typename T, int... I>
+template <size_t... J>
+void pyre::algebra::Tensor<T, I...>::_reset(std::index_sequence<J...>)
+{
+    ((_data[J] = T()), ...);
+
+    // all done
+    return;
+}
+
+template <typename T, int... I>
+template <size_t... J>
+void
+pyre::algebra::Tensor<T, I...>::_operatorPlusEqual(
+    std::index_sequence<J...>, const Tensor<T, I...> & rhs)
+{
+    ((_data[J] += rhs[J]), ...);
+
+    // all done
+    return;
+}
+
+// end of file
