@@ -26,7 +26,16 @@ class Asset(Product):
     private.doc = "mark this asset as private"
 
 
-    # hooks
+    # builder requirements
+    def build(self, **kwds):
+        """
+        Refresh this asset
+        """
+        # delegate to my flow interface
+        return self.pyre_make(**kwds)
+
+
+    # merlin hooks
     def identify(self, authority, **kwds):
         """
         Ask {authority} to process a generic asset
