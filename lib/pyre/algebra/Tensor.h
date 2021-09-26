@@ -7,6 +7,8 @@
 #if !defined(pyre_algebra_Tensor_h)
 #define pyre_algebra_Tensor_h
 
+#define DEVELOP_MODE
+
 // TOFIX
 #include "../grid.h"
 
@@ -108,7 +110,20 @@ private:
 private:
     // data
     data_t _data;
+
+#ifdef DEVELOP_MODE
+public:
+    static int _constructor_calls;
+    static int _destructor_calls;
+#endif    // DEVELOP_MODE
 };
+
+#ifdef DEVELOP_MODE
+template <typename T, int... I> 
+int pyre::algebra::Tensor<T, I...>::_constructor_calls = 0;
+template <typename T, int... I>
+int pyre::algebra::Tensor<T, I...>::_destructor_calls = 0;
+#endif    // DEVELOP_MODE
 
 // typedef for real values
 using real = double;

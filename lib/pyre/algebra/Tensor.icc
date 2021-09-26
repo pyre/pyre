@@ -5,17 +5,37 @@ pyre::algebra::Tensor<T, I...>::Tensor() :
     // initialize memory
     reset();
 
+#ifdef DEVELOP_MODE
+    ++_constructor_calls;
+#endif    // DEVELOP_MODE
+
     // all done
     return;
 }
 
 template <typename T, int... I>
 pyre::algebra::Tensor<T, I...>::Tensor(const data_t & data) : _data(data)
-{}
+{
+
+#ifdef DEVELOP_MODE
+    ++_constructor_calls;
+#endif    // DEVELOP_MODE
+
+    // all done
+    return;
+}
 
 template <typename T, int... I>
 pyre::algebra::Tensor<T, I...>::Tensor(const data_t && data) : _data(std::forward(data))
-{}
+{
+
+#ifdef DEVELOP_MODE
+    ++_constructor_calls;
+#endif    // DEVELOP_MODE
+
+    // all done
+    return;
+}
 
 template <typename T, int... I>
 template <class... T2>
@@ -31,7 +51,11 @@ pyre::algebra::Tensor<T, I...>::Tensor(T2... args) requires(sizeof...(T2) == S) 
 template <typename T, int... I>
 pyre::algebra::Tensor<T, I...>::~Tensor()
 {
-    std::cout << "~Tensor()" << std::endl;
+
+#ifdef DEVELOP_MODE
+    ++_destructor_calls;
+#endif    // DEVELOP_MODE
+
     return;
 }
 
