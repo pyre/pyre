@@ -46,24 +46,26 @@ class Builder(merlin.component,
 
 
     # interface
-    def add(self, asset):
+    def add(self, assets):
         """
         Add the given {asset} to the build pile
         """
-        # ask the asset to identify itself
-        asset.identify(authority=self)
+        # go through the assets
+        for asset in assets:
+            # ask each one to  identify itself
+            asset.identify(authority=self)
         # all done
         return
 
 
-    def build(self):
+    def build(self, assets):
         """
         Build the products
         """
-        # look something up
-        asset = self.index["/prefix/config"]
-        # and build it
-        asset.pyre_make()
+        # go through the assets
+        for asset in assets:
+            # ask each one to  identify itself
+            asset.build(builder=self)
         # all done
         return
 
