@@ -29,8 +29,26 @@ class Library(Asset,
     languages = merlin.properties.tuple(schema=merlin.protocols.language())
     languages.doc = "the languages of the library source assets"
 
+    headers = merlin.properties.set(schema=merlin.protocols.file())
+    headers.doc = "the library headers as a set of products in /prefix"
+
 
     # interface
+    def build(self, builder, **kwds):
+        """
+        Refresh the library
+        """
+        # sign on
+        print(f"  [lib] {self.pyre_name}")
+        # go through my headers
+        for header in self.headers:
+            # ask each one to build itself
+            header.build(builder=builder, **kwds)
+
+        # all done
+        return super().build(builder=builder, **kwds)
+
+
     def assets(self):
         """
         Generate the sequence of my source files
@@ -98,7 +116,7 @@ class Library(Asset,
                 # regular files
                 else:
                     # become file based assets
-                    asset = self.asset(name=name, node=node, path=path)
+                    asset = self.file(name=name, node=node, path=path)
                     # and get identified
                     self.recognize(asset=asset, languages=languages)
                 # either way, assets are attached to their container
@@ -119,7 +137,7 @@ class Library(Asset,
         return merlin.assets.directory(name=name, node=node, path=path)
 
 
-    def asset(self, name, node, path):
+    def file(self, name, node, path):
         """
         Make a new asset
         """
