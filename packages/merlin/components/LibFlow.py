@@ -24,7 +24,6 @@ class LibFlow(merlin.component,
         Generate the workflow that builds a {library}
         """
         # show me
-        print(f"building '{library.name}', a library")
         # go through the assets of the library
         for asset in library.assets():
             # and add each one to the build pile
@@ -51,8 +50,37 @@ class LibFlow(merlin.component,
         """
         Handle a {file} asset
         """
-        # show me
-        # print(f"building '{file.pyre_name}', a {file.category} file")
+        # get the file category
+        category = file.category
+        # ask it to identify itself
+        category.identify(authority=self, builder=builder, library=library, file=file)
+        # all done
+        return
+
+
+    @merlin.export
+    def header(self, builder, library, file):
+        """
+        Handle a {file} asset
+        """
+        # all done
+        return
+
+
+    @merlin.export
+    def source(self, builder, library, file):
+        """
+        Handle a {file} asset
+        """
+        # all done
+        return
+
+
+    @merlin.export
+    def template(self, builder, library, file):
+        """
+        Handle a {template} asset
+        """
         # all done
         return
 
