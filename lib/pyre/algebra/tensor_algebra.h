@@ -257,18 +257,18 @@ namespace pyre {
 
         // factorial
         template <int D>
-        int Factorial()
+        int factorial()
         {
-            return D * Factorial<int(D - 1)>();
+            return D * factorial<int(D - 1)>();
         }
         template <>
-        int Factorial<1>()
+        int factorial<1>()
         {
             return 1;
         }
 
         template <typename T>
-        T ComputeDeterminant(const tensor_t<4, 4, T> & A)
+        T det(const tensor_t<4, 4, T> & A)
         {
             return A[1] * A[11] * A[14] * A[4] - A[1] * A[10] * A[15] * A[4]
                  - A[11] * A[13] * A[2] * A[4] + A[10] * A[13] * A[3] * A[4]
@@ -285,22 +285,22 @@ namespace pyre {
         }
 
         template <typename T>
-        T ComputeDeterminant(const tensor_t<3, 3, T> & A)
+        T det(const tensor_t<3, 3, T> & A)
         {
             return A[0] * (A[4] * A[8] - A[5] * A[7]) - A[1] * (A[3] * A[8] - A[5] * A[6])
                  + A[2] * (A[3] * A[7] - A[4] * A[6]);
         }
 
         template <typename T>
-        T ComputeDeterminant(const tensor_t<2, 2, T> & A)
+        T det(const tensor_t<2, 2, T> & A)
         {
             return A[0] * A[3] - A[1] * A[2];
         }
 
         template <typename T>
-        T ComputeInverse(const tensor_t<3, 3, T> & A, tensor_t<3, 3, T> & invA)
+        T inv(const tensor_t<3, 3, T> & A, tensor_t<3, 3, T> & invA)
         {
-            real det = ComputeDeterminant(A);
+            real det = det(A);
             assert(det != 0.0);
 
             T detinv = 1.0 / det;
@@ -318,9 +318,9 @@ namespace pyre {
         }
 
         template <typename T>
-        T ComputeInverse(const tensor_t<2, 2, T> & A, tensor_t<2, 2, T> & invA)
+        T inv(const tensor_t<2, 2, T> & A, tensor_t<2, 2, T> & invA)
         {
-            T det = ComputeDeterminant(A);
+            T det = det(A);
             assert(det != 0.0);
 
             T detinv = 1.0 / det;
