@@ -9,9 +9,10 @@
 from .Producer import Producer as producer
 from .Specification import Specification as specification
 
-# assets and their categories
-from .Asset import Asset as asset
+# asset categories
 from .AssetCategory import AssetCategory as assetCategory
+# and assets
+from .Asset import Asset as asset
 from .Directory import Directory as directory
 from .File import File as file
 from .Library import Library as library
