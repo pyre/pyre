@@ -49,14 +49,14 @@ public:
     inline Tensor();
 
     // constructor with underlying data type
-    inline Tensor(const data_t & data);
+    inline Tensor(const data_t &);
 
     // constructor with underlying data type (need this for return value optimization)
-    inline Tensor(const data_t && data);
+    inline Tensor(const data_t &&);
 
     // constructor from brace-enclosed initializer list
     template <class... T2>
-    Tensor(T2... args) requires(sizeof...(T2) == S);
+    Tensor(T2...) requires(sizeof...(T2) == S);
 
     // copy constructor
     Tensor(const Tensor &) = default;
@@ -68,22 +68,22 @@ public:
     Tensor & operator=(const Tensor &) = default;
 
     // move assignment operator
-    Tensor & operator=(Tensor && rhs) = default;
+    Tensor & operator=(Tensor &&) = default;
 
     // destructor
     inline ~Tensor();
 
 public:
     // components accessors with index
-    inline const T & operator[](index_t i) const;
-    inline T & operator[](index_t i);
+    inline const T & operator[](index_t) const;
+    inline T & operator[](index_t);
 
     // components accessors with integers
-    inline const T & operator[](int i) const;
-    inline T & operator[](int i);
+    inline const T & operator[](int) const;
+    inline T & operator[](int);
 
     // operator plus equal
-    inline void operator+=(const Tensor<T, I...> & rhs);
+    inline void operator+=(const Tensor<T, I...> &);
 
     // cast to underlying type T (enable if S = 1, i.e. scalar)
     operator T() const requires(S == 1);
@@ -97,7 +97,7 @@ public:
 private:
     // helper function for index sequence
     template <size_t... J, class... T2>
-    void _initialize(std::index_sequence<J...>, T2... args);
+    void _initialize(std::index_sequence<J...>, T2...);
 
     // helper function for index sequence
     template <size_t... J>
@@ -105,7 +105,7 @@ private:
 
     // helper function for index sequence
     template <size_t... J>
-    void _operatorPlusEqual(std::index_sequence<J...>, const Tensor<T, I...> & rhs);
+    void _operatorPlusEqual(std::index_sequence<J...>, const Tensor<T, I...> &);
 
 private:
     // data
