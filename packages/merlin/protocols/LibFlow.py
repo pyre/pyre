@@ -37,6 +37,27 @@ class LibFlow(merlin.protocol, family="merlin.builders.libflow"):
         """
 
 
+    @merlin.provides
+    def header(self, builder, library, file):
+        """
+        Handle a {header} file
+        """
+
+
+    @merlin.provides
+    def source(self, builder, library, file):
+        """
+        Handle a {source} file
+        """
+
+
+    @merlin.provides
+    def template(self, builder, library, file):
+        """
+        Handle a {template} file
+        """
+
+
     # framework hooks
     @classmethod
     def pyre_default(cls, **kwds):
