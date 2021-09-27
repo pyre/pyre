@@ -49,8 +49,10 @@ class Mkdir(Factory, family="merlin.factories.mkdir"):
         """
         Make the subdirectory
         """
+        # marker
+        indent = " " * 2
         # sign on
-        print(f" [mkdir] {self.child.path}")
+        print(f"{indent*1}[mkdir] {self.child.path}")
 
         # unpack
         name = self.name
