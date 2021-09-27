@@ -9,6 +9,7 @@ import merlin
 # superclass
 from .Asset import Asset
 # schema
+from .AssetCategory import AssetCategory
 from .Language import Language
 
 
@@ -20,7 +21,7 @@ class File(Asset, family="merlin.assets.files"):
 
 
     # required configurable state
-    category = merlin.properties.str()
+    category = AssetCategory()
     category.doc = "a clue about the type of this asset"
 
     language = Language()
