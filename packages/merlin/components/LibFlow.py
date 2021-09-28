@@ -63,6 +63,35 @@ class LibFlow(merlin.component,
         """
         Handle a {file} asset
         """
+        # get the path to the header in the source directory
+        origin = file.path
+        # form the corresponding path in the prefix
+        destination = merlin.primitives.path("/prefix/include") / library.name / origin
+
+        # build the corresponding file based asset
+        pub = merlin.assets.file(name=str(destination), path=destination)
+        #  decorate it
+        pub.category = file.category
+        pub.language = file.language
+        # index it
+        builder.index[pub.pyre_name] = pub
+        # and add it to the set of {headers} of the {library}
+        library.headers.add(pub)
+
+        # the parent directory of the destination
+        parent = destination.parent
+        # has a workflow that is guaranteed to exist
+        dir = builder.index[str(parent)]
+
+        # handling this header involves copying its contents
+        cp = merlin.factories.cp()
+        # from the source
+        cp.source = file
+        # to the destination
+        cp.destination = pub
+        # subject to the existence of the parent directory
+        cp.within = dir
+
         # all done
         return
 
