@@ -30,9 +30,11 @@ class CXX(Language, family="merlin.languages.cxx"):
     headers.default = [".h", ".hpp", ".hxx", ".h++", ".icc"]
     headers.doc = "the set of suffixes that identify an artifact as a header"
 
-    dialects = merlin.properties.strings()
-    dialects.default = ["c++98", "c++11", "c++14", "c++17", "c++20", "c++23"]
-    dialects.doc = "the list of markers that specify supported language dialects"
+    dialect = merlin.properties.str()
+    dialect.default = "c++20"
+    dialect.validators = merlin.constraints.isMember(
+        "c++98", "c++11", "c++14", "c++17", "c++20", "c++23")
+    dialect.doc = "the list of markers that specify supported language dialects"
 
 
 # end of file
