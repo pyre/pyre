@@ -8,6 +8,7 @@
 from .Factory import Factory as factory
 
 # factories
+from .Copy import Copy as cp
 from .Mkdir import Mkdir as mkdir
 
 
