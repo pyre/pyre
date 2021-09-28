@@ -337,6 +337,17 @@ namespace pyre {
 
             return det;
         }
+
+        template <int D, typename T>
+        T tr(const tensor_t<D, D, T> & A)
+        {
+            auto _tr = [&A]<size_t... J>(std::index_sequence<J...>) ->T
+            {
+                return (A[J * D + J]+ ... );
+            };
+
+            return _tr(std::make_index_sequence<D> {});
+        } 
     }
 }
 

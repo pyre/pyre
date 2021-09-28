@@ -48,6 +48,9 @@ int main(int argc, char* argv[]) {
     pyre::algebra::vector_t<3> y = a * A * x;
     assert((y == a * pyre::algebra::vector_t<3> { 3, 12, 21 }));
 
+    pyre::algebra::real trace = pyre::algebra::tr(A);
+    std::cout << trace << std::endl;
+
     // all done
     return 0;
 }
