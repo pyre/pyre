@@ -1,3 +1,9 @@
+// -*- coding: utf-8 -*-
+//
+// bianca giovanardi
+// (c) 2021 all rights reserved
+//
+
 #include "Tensor.h"
 #include <cassert>
 

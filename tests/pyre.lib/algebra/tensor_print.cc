@@ -1,7 +1,7 @@
 // -*- coding: utf-8 -*-
 //
 // bianca giovanardi
-// (c) 1998-2021 all rights reserved
+// (c) 2021 all rights reserved
 //
 
 // system includes
