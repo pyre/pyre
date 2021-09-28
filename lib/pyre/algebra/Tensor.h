@@ -231,8 +231,11 @@ std::ostream & operator<<(std::ostream & os, const pyre::algebra::tensor_t<D1, D
 }
 }
 
-// include the inlines
+// get the inline definitions
+#define pyre_algebra_Tensor_icc
 #include "Tensor.icc"
+#undef pyre_algebra_Tensor_icc
+
 #endif
 
 // end of file

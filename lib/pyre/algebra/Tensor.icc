@@ -4,6 +4,11 @@
 // (c) 2021 all rights reserved
 //
 
+// code guard
+#if !defined(pyre_algebra_Tensor_icc)
+#error this file contains implementation details for pyre::algebra::Tensor
+#else
+
 template <typename T, int... I>
 pyre::algebra::Tensor<T, I...>::Tensor() : 
     _data(pack_t { { I... } })
@@ -171,5 +176,7 @@ constexpr pyre::algebra::Tensor<T, I...> pyre::algebra::Tensor<T, I...>::_make_o
     constexpr auto wrap = []<size_t>() consteval->T { return 1; };
     return pyre::algebra::Tensor<T, I...>(wrap.template operator()<J>()...);
 }
+
+#endif
 
 // end of file
