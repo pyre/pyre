@@ -38,8 +38,10 @@ class Library(Asset,
         """
         Refresh the library
         """
+        # marker
+        indent = " " * 2
         # sign on
-        print(f"  [lib] {self.pyre_name}")
+        print(f"{indent*1}[lib] {self.pyre_name}")
         # go through my headers
         for header in self.headers:
             # ask each one to build itself
