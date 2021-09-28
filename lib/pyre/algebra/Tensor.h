@@ -24,17 +24,15 @@ private:
     static constexpr int S = (I * ...);
 
 private:
-    // QUESTION: should Tensor be templated wrt pack_t and storage_t?  
+    // TODO: template Tensor wrt pack_t and storage_t, just like class Grid
     // conventionally packed grid
     using pack_t = pyre::grid::canonical_t<N>;
     // of T on the heap
     using storage_t = pyre::memory::stack_t<S, T>;
-    // putting it all together
-    using grid_t = pyre::grid::grid_t<pack_t, storage_t>;
     // index
     using index_t = pack_t::index_type;
-    // data_type
-    using data_t = grid_t;
+    // data type
+    using data_t = storage_t;
 
 public:
     // export the underlying type
