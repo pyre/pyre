@@ -148,4 +148,22 @@ pyre::algebra::Tensor<T, I...>::_operatorPlusEqual(
     return;
 }
 
+template <typename T, int... I>
+template <size_t... J>
+constexpr pyre::algebra::Tensor<T, I...> pyre::algebra::Tensor<T, I...>::_make_zeros(
+    std::index_sequence<J...>)
+{
+    constexpr auto wrap = []<size_t>() consteval->T { return 0; };
+    return pyre::algebra::Tensor<T, I...>(wrap.template operator()<J>()...);
+}
+
+template <typename T, int... I>
+template <size_t... J>
+constexpr pyre::algebra::Tensor<T, I...> pyre::algebra::Tensor<T, I...>::_make_ones(
+    std::index_sequence<J...>)
+{
+    constexpr auto wrap = []<size_t>() consteval->T { return 1; };
+    return pyre::algebra::Tensor<T, I...>(wrap.template operator()<J>()...);
+}
+
 // end of file

@@ -107,8 +107,20 @@ private:
     template <size_t... J>
     void _operatorPlusEqual(std::index_sequence<J...>, const Tensor<T, I...> &);
 
+    // helper function to build the zero tensor
+    template <size_t... J>
+    static constexpr pyre::algebra::Tensor<T, I...> _make_zeros(std::index_sequence<J...>);
+
+    // helper function to build a tensor of ones
+    template <size_t... J>
+    static constexpr pyre::algebra::Tensor<T, I...> _make_ones(std::index_sequence<J...>);
+
 public:
+    // the zero element
     static const Tensor<T, I...> zero;
+
+    // a tensor of ones
+    static const Tensor<T, I...> one;
 
 private:
     // data
@@ -128,9 +140,16 @@ template <typename T, int... I>
 int pyre::algebra::Tensor<T, I...>::_destructor_calls = 0;
 #endif    // DEVELOP_MODE
 
-// TODO: This works only for 2D vectors. How can we generalize it to {0, ..., 0} S times?
 template <typename T, int... I>
-const pyre::algebra::Tensor<T, I...> pyre::algebra::Tensor<T, I...>::zero = { 0, 0 };
+const pyre::algebra::Tensor<T, I...> pyre::algebra::Tensor<T, I...>::zero =
+    pyre::algebra::Tensor<T, I...>::_make_zeros(
+        std::make_index_sequence<pyre::algebra::Tensor<T, I...>::size> {});
+
+template <typename T, int... I>
+const pyre::algebra::Tensor<T, I...> pyre::algebra::Tensor<T, I...>::one =
+    pyre::algebra::Tensor<T, I...>::_make_ones(
+        std::make_index_sequence<pyre::algebra::Tensor<T, I...>::size> {});
+
 // typedef for real values
 using real = double;
 
