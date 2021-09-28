@@ -107,6 +107,9 @@ private:
     template <size_t... J>
     void _operatorPlusEqual(std::index_sequence<J...>, const Tensor<T, I...> &);
 
+public:
+    static const Tensor<T, I...> zero;
+
 private:
     // data
     data_t _data;
@@ -125,6 +128,9 @@ template <typename T, int... I>
 int pyre::algebra::Tensor<T, I...>::_destructor_calls = 0;
 #endif    // DEVELOP_MODE
 
+// TODO: This works only for 2D vectors. How can we generalize it to {0, ..., 0} S times?
+template <typename T, int... I>
+const pyre::algebra::Tensor<T, I...> pyre::algebra::Tensor<T, I...>::zero = { 0, 0 };
 // typedef for real values
 using real = double;
 

@@ -22,7 +22,7 @@ int main(int argc, char* argv[]) {
     vector1 += vector2;
     assert(vector1 + vector2 == 2.0 * vector2);
     assert(vector2 - vector1 == 2.0 * (vector2 - vector1));
-    assert((vector2 - vector2 == pyre::algebra::vector_t<2> { 0, 0 }));
+    assert(vector2 - vector2 == pyre::algebra::vector_t<2>::zero);
 
     pyre::algebra::scalar_t a = 1.0;
     assert(vector2 * a == vector2);
