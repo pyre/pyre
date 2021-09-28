@@ -30,9 +30,10 @@ class C(Language, family="merlin.languages.c"):
     headers.default = [".h"]
     headers.doc = "the set of suffixes that identify an artifact as a header"
 
-    dialects = merlin.properties.strings()
-    dialects.default = ["ansi", "c90", "c99", "c11", "c17", "c18"]
-    dialects.doc = "the list of markers that specify supported language dialects"
+    dialect = merlin.properties.str()
+    dialect.default = "c99"
+    dialect.validators = merlin.constraints.isMember("ansi", "c90", "c99", "c11", "c17", "c18")
+    dialect.doc = "the C dialect to enforce"
 
 
 # end of file

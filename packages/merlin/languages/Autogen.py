@@ -28,5 +28,10 @@ class Autogen(Language, family="merlin.languages.autogen"):
     sources.default = [".in"]
     sources.doc = "the set of suffixes that identify an artifact as a source"
 
+    dialect = merlin.properties.str()
+    dialect.default = "cmake"
+    dialect.validators = merlin.constraints.isMember("cmake")
+    dialect.doc = "specify the expansion pattern syntax to apply"
+
 
 # end of file

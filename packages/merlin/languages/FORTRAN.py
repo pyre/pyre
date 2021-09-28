@@ -30,9 +30,10 @@ class FORTRAN(Language, family="merlin.languages.fortran"):
     headers.default = [".h", ".inc"]
     headers.doc = "the set of suffixes that identify an artifact as a header"
 
-    dialects = merlin.properties.strings()
-    dialects.default = ["f77", "f95", "f2003", "f2008", "f2018"]
-    dialects.doc = "the list of markers that specify supported language dialects"
+    dialect = merlin.properties.str()
+    dialect.default = "f95"
+    dialect.validators = merlin.constraints.isMember("f77", "f95", "f2003", "f2008", "f2018")
+    dialect.doc = "the list of markers that specify supported language dialects"
 
 
 # end of file
