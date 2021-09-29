@@ -12,7 +12,7 @@ merlin is a configuration management tool
 # import and publish pyre symbols
 from pyre import (
     # basic stuff
-    primitives, tracking,
+    patterns, primitives, tracking,
     # protocols, components, traits, and their infrastructure
     schemata, constraints, properties, protocol, component, foundry,
     # decorators
