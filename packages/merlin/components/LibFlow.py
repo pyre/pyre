@@ -69,14 +69,14 @@ class LibFlow(merlin.component,
         destination = merlin.primitives.path("/prefix/include") / library.name / origin
 
         # build the corresponding file based asset
-        pub = merlin.assets.file(name=str(destination), path=destination)
-        #  decorate it
-        pub.category = file.category
-        pub.language = file.language
+        dst = merlin.assets.file(name=str(destination), path=destination)
+        #  decorate it using information from the source {file}
+        dst.category = file.category
+        dst.language = file.language
         # index it
-        builder.index[pub.pyre_name] = pub
+        builder.index[dst.pyre_name] = dst
         # and add it to the set of {headers} of the {library}
-        library.headers.add(pub)
+        library.headers.add(dst)
 
         # the parent directory of the destination
         parent = destination.parent
@@ -88,7 +88,7 @@ class LibFlow(merlin.component,
         # from the source
         cp.source = file
         # to the destination
-        cp.destination = pub
+        cp.destination = dst
         # subject to the existence of the parent directory
         cp.within = dir
 
@@ -109,6 +109,15 @@ class LibFlow(merlin.component,
     def template(self, builder, library, file):
         """
         Handle a {template} asset
+        """
+        # all done
+        return
+
+
+    @merlin.export
+    def unrecognizable(self, builder, library, file):
+        """
+        Handle an {unrecognizable} asset
         """
         # all done
         return
