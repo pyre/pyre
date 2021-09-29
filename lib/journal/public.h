@@ -30,6 +30,7 @@
 // message entry
 #include "Entry.h"
 // message metadata
+#include "Code.h"
 #include "Color.h"
 #include "Detail.h"
 #include "Dent.h"

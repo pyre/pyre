@@ -26,6 +26,8 @@ namespace pyre::journal {
 
     // the channel stream manipulators; some are actual classes, others are functions that take
     // and return a channel
+    // codes
+    class Code;
     // color
     class Color;
     // level of detail
@@ -128,6 +130,11 @@ namespace pyre::journal {
     template <typename severityT, template <class> typename proxyT>
     inline auto newline(Channel<severityT, proxyT> &) -> Channel<severityT, proxyT> &;
 
+    // codes, error and otherwise
+    inline auto code(string_t) -> Code;
+    template <typename codeT>
+    inline auto code(codeT) -> Code;
+
     // color
     // the various color rep factories
     // known color tables
@@ -155,6 +162,11 @@ namespace pyre::journal {
 
 
     // injection operators
+    // code
+    template <typename severityT, template <class> typename proxyT>
+    inline auto operator<<(Channel<severityT, proxyT> &, const Code &)
+        -> Channel<severityT, proxyT> &;
+
     // color
     template <typename severityT, template <class> typename proxyT>
     inline auto operator<<(Channel<severityT, proxyT> &, const Color &)

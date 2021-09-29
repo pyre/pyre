@@ -28,6 +28,24 @@ pyre::journal::newline(Channel<severityT, proxyT> & channel) -> Channel<severity
 }
 
 
+// codes
+template <typename codeT>
+auto
+pyre::journal::code(codeT code) -> Code
+{
+    // make a code manipulator and return it
+    return Code(std::to_string(code));
+}
+
+
+auto
+pyre::journal::code(string_t code) -> Code
+{
+    // make a code manipulator and return it
+    return Code(code);
+}
+
+
 // color
 auto
 pyre::journal::ansi(colorname_t name) -> Color
@@ -123,6 +141,19 @@ pyre::journal::outdent(dent_t level) -> Dent
 
 
 // the injection operators
+// code
+template <typename severityT, template <class> typename proxyT>
+auto
+pyre::journal::operator<<(Channel<severityT, proxyT> & channel, const Code & code)
+    -> Channel<severityT, proxyT> &
+{
+    // inject the code
+    channel.entry().note("code", code.code());
+    // all done
+    return channel;
+}
+
+
 // color
 template <typename severityT, template <class> typename proxyT>
 auto
