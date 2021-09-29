@@ -55,8 +55,6 @@ class Library(Asset,
         """
         Generate the sequence of my source files
         """
-        # get the supported languages
-        languages = tuple(self.supportedLanguages())
         # get the workspace folder
         ws = self.pyre_fileserver['/workspace']
         # starting with it
@@ -98,6 +96,9 @@ class Library(Asset,
         # and make it available
         yield top
 
+        # build the asset recognizer
+        classifier = self.newAssetClassifier()
+
         # now, starting with my root
         todo = [top]
         # dive into the tree
@@ -115,12 +116,10 @@ class Library(Asset,
                     asset = self.directory(name=name, node=node, path=path)
                     # and get added to the pile of places to visit
                     todo.append(asset)
-                # regular files
+                # everything else is assumed to be a regular file
                 else:
-                    # become file based assets
-                    asset = self.file(name=name, node=node, path=path)
-                    # and get identified
-                    self.recognize(asset=asset, languages=languages)
+                    # so they become file based assets
+                    asset = self.file(name=name, node=node, path=path, classifier=classifier)
                 # either way, assets are attached to their container
                 folder.add(asset=asset)
                 # and are made available
@@ -139,81 +138,97 @@ class Library(Asset,
         return merlin.assets.directory(name=name, node=node, path=path)
 
 
-    def file(self, name, node, path):
+    def file(self, name, node, path, classifier):
         """
         Make a new asset
         """
-        # by default, use s raw file asset
-        return merlin.assets.file(name=name, node=node, path=path)
+        # by default, use the raw file asset
+        asset = merlin.assets.file(name=name, node=node, path=path)
+        # if the asset is marked as ignored
+        if asset.ignore:
+            # just leave it alone
+            return asset
+
+        # get its configuration
+        language = asset.language
+        category = asset.category
+
+        # if it already knows its language
+        if language:
+            # and its category
+            if category is not None:
+                # nothing further to do
+                return asset
+            # otherwise, ask the language for help
+            asset.category = language.recognize(name=name)
+            # and done
+            return asset
+
+        # ask the classifier for ideas
+        candidate, language = classifier.get(path.suffix, (category, None))
+        # if it comes back with a non-trivial answer that contradicts the asset configuration
+        if category and candidate is not category:
+            # favor what the user supplied, even if it's wrong...
+            candidate = category
+
+        # mark
+        asset.language = language
+        asset.category = candidate
+
+        # all done
+        return asset
 
 
-    def recognize(self, asset, languages):
+    def newAssetClassifier(self):
         """
-        Recognize an asset given its filesystem {node} rep
+        Build a table that map file suffixes to asset category and language
         """
-        # if the asset category is already known
-        if asset.category:
-            # leave it alone
-            return
-
-        # if the asset language is known
-        if asset.language:
-            # override the default suggestions
-            languages = [ asset.language ]
-
-        # make a pile of guesses for the asset category
-        candidates = []
+        # make a table of suffixes to category and language
+        table = merlin.patterns.vivify(levels=2, atom=set)
         # go through the relevant languages
-        for language in languages:
-            # and ask each one to guess what this is
-            guess = language.recognize(asset=asset)
-            # if something non-trivial came back
-            if guess:
-                # add it to the pile
-                candidates.append(guess)
+        for language in self.supportedLanguages():
+            # go through its suffix categories
+            for suffix, category in language.assetClassifier.items():
+                # add this to the table
+                table[suffix][category].add(language)
 
-        # get the number of candidates
-        pop = len(candidates)
-        # if there is only one
-        if pop == 1:
-            # unpack the language and category
-            language, category = candidates[0]
-            # and mark the asset
-            asset.language = language.name
-            asset.category = category.category
-            # and done
-            return
-
-        # if there are no viable candidates
-        if pop == 0:
-            # mark this as an unrecognizable asset
-            asset.category = merlin.assets.unrecognizable.category
-            # and done
-            return
-
-        # if there are more than one
-        for language, candidate in candidates:
-            # we require that they are all supporting files
-            if not issubclass(candidate, merlin.assets.auxiliary):
-                # if any of them fail this constraint assemble the languages that are claiming
-                # this asset as their own
-                claimants = ", ".join(language.name for language, _ in candidates)
-                # make a channel
-                channel = journal.warning("merlin.library.assets")
-                # complain
-                channel.line(f"the file '{asset.pyre_name}'")
-                channel.line(f"was claimed by multiple languages: {claimants}")
-                channel.line(f"while looking through the assets of '{self.name}'")
-                # flush
+        # the cleaned up version of {table} becomes my {assetClassifier}
+        assetClassifier = {}
+        # go through the table and for each suffix
+        for suffix in table:
+            # grab the table of candidate categories
+            categories = table[suffix]
+            # unpack
+            category, *conflicts = categories.keys()
+            # if there is a conflict
+            if conflicts:
+                # there is something wrong with the configuration of the supported languages
+                channel = journal.firewall("merlin.assets.library")
+                # so complain
+                channel.line(f"found multiple asset categories for suffix '{suffix}'")
+                channel.line(f"candidates:")
+                # go through the candidates
+                for cat, langs in categories.items():
+                    # and show me which languages claim which category
+                    channel.line(f"  {cat.category}: from  {', '.join(l.name for l in langs)}")
+                # and flush
                 channel.log()
-                # just in case this error isn't fatal
-                return None
-        # otherwise, unpack the first one
-        _, category = candidates[0]
-        # and mark the asset
-        asset.category = category.category
-        # and done
-        return
+                # just in case this firewall is not fatal,
+                # set up this suffix as unrecognizable category with no associated language
+                assetClassifier[suffix] = "unrecognized", None
+                # and move on
+                continue
+            # now, get the associated languages
+            language, *conflicts = categories[category]
+            # again, if more than one language compete for this suffix
+            if conflicts:
+                # the suffix is of unknown language
+                language = None
+            # mark it
+            assetClassifier[suffix] = category, language
+
+        # all done
+        return assetClassifier
 
 
     def supportedLanguages(self):
@@ -229,7 +244,7 @@ class Library(Asset,
             # and nothing further
             return
 
-        # if none were specified, fall back to all linkable
+        # if none were specified, fall back to all languages marked {linkable}
         sieve = lambda x: x.linkable
         # supported
         supported = set(
