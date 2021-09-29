@@ -183,6 +183,7 @@ class Builder(merlin.component,
         # all done
         return
 
+
     # implementation details
     def library(self, library):
         """
