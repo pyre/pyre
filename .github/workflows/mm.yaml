@@ -3,9 +3,10 @@
 # (c) 1998-2021 all rights reserved
 
 name: mm
-on: push
-  branches:
-    - main
+on:
+  push:
+    branches:
+      - main
 jobs:
   # build and test the ref that launched this action
   build:
