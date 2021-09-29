@@ -24,7 +24,7 @@ class Unrecognizable(Category, family="merlin.assets.categories.unrecognizable")
     # interface
     def identify(self, authority, **kwds):
         """
-        Ask {authority} to process a header file
+        Ask {authority} to process a file whose category could not be recognized
         """
         # attempt to
         try:
