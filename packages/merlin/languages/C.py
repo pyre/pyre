@@ -22,13 +22,14 @@ class C(Language, family="merlin.languages.c"):
 
 
     # user configurable state
-    sources = merlin.properties.strings()
-    sources.default = [".c"]
-    sources.doc = "the set of suffixes that identify an artifact as a source"
-
-    headers = merlin.properties.strings()
-    headers.default = [".h"]
-    headers.doc = "the set of suffixes that identify an artifact as a header"
+    categories = merlin.properties.catalog(schema=merlin.properties.str())
+    categories.default = {
+        # header suffixes
+        "header": [".h"],
+        # source suffixes
+        "source": [".c"],
+    }
+    categories.doc = "a map from file categories to a list of suffixes"
 
     dialect = merlin.properties.str()
     dialect.default = "c99"

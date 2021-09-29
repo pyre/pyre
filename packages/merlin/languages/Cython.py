@@ -21,13 +21,14 @@ class Cython(Language, family="merlin.languages.cython"):
 
 
     # user configurable state
-    sources = merlin.properties.strings()
-    sources.default = [".pyx"]
-    sources.doc = "the set of suffixes that identify an artifact as a source"
-
-    headers = merlin.properties.strings()
-    headers.default = [".pxi", ".pxd"]
-    headers.doc = "the set of suffixes that identify an artifact as a header"
+    categories = merlin.properties.catalog(schema=merlin.properties.str())
+    categories.default = {
+        # header suffixes
+        "header": [".pxi", ".pxd"],
+        # source suffixes
+        "source": [".pyx"],
+    }
+    categories.doc = "a map from file categories to a list of suffixes"
 
 
 # end of file

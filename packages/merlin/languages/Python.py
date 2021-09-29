@@ -21,13 +21,12 @@ class Python(Language, family="merlin.languages.python"):
 
 
     # user configurable state
-    sources = merlin.properties.strings()
-    sources.default = [".py"]
-    sources.doc = "the set of suffixes that identify an artifact as a module"
-
-    compiled = merlin.properties.strings()
-    compiled.default = [".pyc", ".pyd", ".pyo"]
-    compiled.doc = "the set of suffixes that identify an artifact as a byte compiled module"
+    categories = merlin.properties.catalog(schema=merlin.properties.str())
+    categories.default = {
+        # source suffixes
+        "source": [".py"],
+    }
+    categories.doc = "a map from file categories to a list of suffixes"
 
 
 # end of file
