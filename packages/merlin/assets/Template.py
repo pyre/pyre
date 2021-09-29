@@ -24,7 +24,7 @@ class Template(Category, family="merlin.assets.categories.template"):
     # interface
     def identify(self, authority, **kwds):
         """
-        Ask {authority} to process a header file
+        Ask {authority} to process a template file
         """
         # attempt to
         try:
