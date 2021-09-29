@@ -4,6 +4,8 @@
 
 name: cmake
 on: push
+  branches:
+    - main
 jobs:
   # build and test the ref that launched this action
   build:
