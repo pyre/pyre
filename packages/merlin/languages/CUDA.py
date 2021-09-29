@@ -22,13 +22,14 @@ class CUDA(Language, family="merlin.languages.cuda"):
 
 
     # user configurable state
-    sources = merlin.properties.strings()
-    sources.default = [".cu"]
-    sources.doc = "the set of suffixes that identify an artifact as a source"
-
-    headers = merlin.properties.strings()
-    headers.default = [".h"]
-    headers.doc = "the set of suffixes that identify an artifact as a header"
+    categories = merlin.properties.catalog(schema=merlin.properties.str())
+    categories.default = {
+        # header suffixes
+        "header": [".h"],
+        # source suffixes
+        "source": [".cu"],
+    }
+    categories.doc = "a map from file categories to a list of suffixes"
 
 
 # end of file

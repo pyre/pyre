@@ -24,9 +24,12 @@ class Autogen(Language, family="merlin.languages.autogen"):
     source = merlin.assets.template
 
     # user configurable state
-    sources = merlin.properties.strings()
-    sources.default = [".in"]
-    sources.doc = "the set of suffixes that identify an artifact as a source"
+    categories = merlin.properties.catalog(schema=merlin.properties.str())
+    categories.default = {
+        # source suffixes
+        "source": [".in"],
+    }
+    categories.doc = "a map from file categories to a list of suffixes"
 
     dialect = merlin.properties.str()
     dialect.default = "cmake"
