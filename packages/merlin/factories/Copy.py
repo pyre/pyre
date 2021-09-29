@@ -21,13 +21,16 @@ class Copy(Factory, family="merlin.factories.cp"):
 
     # inputs
     source = merlin.protocols.file.input()
+    source.default = None
     source.doc = "the source file"
 
     within = merlin.protocols.directory.input()
+    within.default = None
     within.doc = "the containing directory at the destination"
 
     # output
     destination = merlin.protocols.file.output()
+    destination.default = None
     destination.doc = "the destination file"
 
 

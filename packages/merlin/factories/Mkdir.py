@@ -25,10 +25,12 @@ class Mkdir(Factory, family="merlin.factories.mkdir"):
 
     # input
     parent = merlin.protocols.directory.input()
+    parent.default = None
     parent.doc = "the parent directory"
 
     # output
     child = merlin.protocols.directory.output()
+    child.default = None
     child.doc = "the child directory i create"
 
 
