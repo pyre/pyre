@@ -38,18 +38,18 @@ class FORTRAN(Language, family="merlin.languages.fortran"):
 
 
     # merlin hooks
-    def identify(self, authority, **kwds):
+    def identify(self, visitor, **kwds):
         """
-        Ask {authority} to process one of my source files
+        Ask {visitor} to process one of my source files
         """
         # attempt to
         try:
-            # ask authority for a handler for source files of my type
-            handler = authority.fortran
+            # ask the {visitor} for a handler for source files of my type
+            handler = visitor.fortran
         # if it doesn't exist
         except AttributeError:
             # chain up
-            return super().identify(authority=authority, **kwds)
+            return super().identify(visitor=visitor, **kwds)
         # if it does, invoke it
         return handler(language=self, **kwds)
 
