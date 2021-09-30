@@ -52,7 +52,7 @@ class Directory(RealAsset,
     # hooks
     def identify(self, authority, **kwds):
         """
-        Ask {authority} to process a file based asset
+        Ask {authority} to process a directory
         """
         # attempt to
         try:
@@ -61,7 +61,7 @@ class Directory(RealAsset,
         # if it doesn't exist
         except AttributeError:
             # chain up
-            return super().identify(authority=authority)
+            return super().identify(authority=authority, **kwds)
         # if it does, invoke it
         return handler(directory=self, **kwds)
 

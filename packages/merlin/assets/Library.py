@@ -268,7 +268,7 @@ class Library(Asset,
     # hooks
     def identify(self, authority, **kwds):
         """
-        Ask {authority} to process a file based asset
+        Ask {authority} to process a library
         """
         # attempt to
         try:
@@ -277,7 +277,7 @@ class Library(Asset,
         # if it doesn't exist
         except AttributeError:
             # chain up
-            return super().identify(authority=authority)
+            return super().identify(authority=authority, **kwds)
         # if it does, invoke it
         return handler(library=self, **kwds)
 
