@@ -44,6 +44,30 @@ class Language(merlin.component, implements=merlin.protocols.language, internal=
         return cls.assetClassifier.get(suffix)
 
 
+    # merlin hooks
+    def identify(self, authority, **kwds):
+        """
+        Ask {authority} to process an unknown language type
+        """
+        # attempt to
+        try:
+            # ask authority for a handler for a source file of any language
+            handler = authority.language
+        # if it doesn't exist
+        except AttributeError:
+            # this is almost certainly a bug; make a channel
+            channel = journal.firewall("merlin.languages.identify")
+            # complain
+            channel.line(f"unable to find a handler for {self.name} sources")
+            channel.line(f"while looking through the interface of '{authority.pyre_name}'")
+            # flush
+            channel.log()
+            # and fail, just in case firewalls aren't fatal
+            return None
+        # if it does, invoke it
+        return handler(language=self, **kwds)
+
+
     # framework hooks
     @classmethod
     def pyre_classRegistered(cls):

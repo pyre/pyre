@@ -38,4 +38,21 @@ class CXX(Language, family="merlin.languages.cxx"):
     dialect.doc = "the C++ standard to conform to"
 
 
+    # merlin hooks
+    def identify(self, authority, **kwds):
+        """
+        Ask {authority} to process one of my source files
+        """
+        # attempt to
+        try:
+            # ask authority for a handler for source files of my type
+            handler = authority.cxx
+        # if it doesn't exist
+        except AttributeError:
+            # chain up
+            return super().identify(authority=authority, **kwds)
+        # if it does, invoke it
+        return handler(language=self, **kwds)
+
+
 # end of file
