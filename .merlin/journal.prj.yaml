@@ -10,12 +10,20 @@ journal.prj:
 
 # libjournal
 libjournal:
+    # the name of the library
     name: journal
+    # the location of the source relative to the root ofthe project
     root: lib/journal
+    # deposit the headers in the {pyre} namespace
+    scope: pyre
+    # this is the header that provides access to the library
+    gateway: journal.h
+    # the default set of source languages
     languages: c++, autogen
 
 
 # overrides for specific files
+# the header with the C bindings
 lib/journal/debuginfo.h:
     language: c
 
