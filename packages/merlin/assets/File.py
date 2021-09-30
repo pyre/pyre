@@ -37,7 +37,7 @@ class File(RealAsset, family="merlin.assets.files.file", implements=merlin.proto
         # if it doesn't exist
         except AttributeError:
             # chain up
-            return super().identify(authority=authority)
+            return super().identify(authority=authority, **kwds)
         # if it does, invoke it
         return handler(file=self, **kwds)
 
