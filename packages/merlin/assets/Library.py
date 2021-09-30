@@ -26,9 +26,16 @@ class Library(Asset,
     root = merlin.properties.path()
     root.doc = "the path to the library source relative to the root of the repository"
 
+    scope = merlin.properties.path()
+    scope.doc = "place my headers within the scope of a larger project"
+
+    gateway = merlin.properties.path()
+    gateway.doc = "the name of the top level header that provides access to the other headers"
+
     languages = merlin.properties.tuple(schema=merlin.protocols.language())
     languages.doc = "the languages of the library source assets"
 
+    # flows
     headers = merlin.properties.set(schema=merlin.protocols.file())
     headers.doc = "the library headers as a set of products in /prefix"
 
@@ -97,7 +104,7 @@ class Library(Asset,
         yield top
 
         # build the asset recognizer
-        classifier = self.newAssetClassifier()
+        classifier = self.assetClassifier()
 
         # now, starting with my root
         todo = [top]
@@ -179,7 +186,7 @@ class Library(Asset,
         return asset
 
 
-    def newAssetClassifier(self):
+    def assetClassifier(self):
         """
         Build a table that map file suffixes to asset category and language
         """
