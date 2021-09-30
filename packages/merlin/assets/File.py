@@ -26,18 +26,18 @@ class File(RealAsset, family="merlin.assets.files.file", implements=merlin.proto
 
 
     # hooks
-    def identify(self, authority, **kwds):
+    def identify(self, visitor, **kwds):
         """
-        Ask {authority} to process a file based asset
+        Ask {visitor} to process a file based asset
         """
         # attempt to
         try:
-            # ask authority for a handler for my type
-            handler = authority.file
+            # ask the {visitor} for a handler for my type
+            handler = visitor.file
         # if it doesn't exist
         except AttributeError:
             # chain up
-            return super().identify(authority=authority, **kwds)
+            return super().identify(visitor=visitor, **kwds)
         # if it does, invoke it
         return handler(file=self, **kwds)
 
