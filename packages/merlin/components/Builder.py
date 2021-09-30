@@ -52,8 +52,8 @@ class Builder(merlin.component,
         """
         # go through the assets
         for asset in assets:
-            # ask each one to  identify itself
-            asset.identify(authority=self)
+            # ask each one to identify itself
+            asset.identify(visitor=self)
         # all done
         return
 
