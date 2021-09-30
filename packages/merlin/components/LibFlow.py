@@ -28,7 +28,7 @@ class LibFlow(merlin.component,
         # go through the assets of the library
         for asset in library.assets():
             # and add each one to the build pile
-            asset.identify(authority=self, builder=builder, library=library)
+            asset.identify(visitor=self, builder=builder, library=library)
         # all done
         return
 
@@ -66,7 +66,7 @@ class LibFlow(merlin.component,
         # get the file category
         category = file.category
         # ask it to identify itself
-        category.identify(authority=self, builder=builder, library=library, file=file)
+        category.identify(visitor=self, builder=builder, library=library, file=file)
         # all done
         return
 
@@ -140,7 +140,7 @@ class LibFlow(merlin.component,
         # get the language
         language = file.language
         # and ask it to identify itself
-        language.identify(authority=self, builder=builder, library=library, file=file)
+        language.identify(visitor=self, builder=builder, library=library, file=file)
         # all done
         return
 
