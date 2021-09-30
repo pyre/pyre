@@ -33,7 +33,7 @@ class Auxiliary(Category, family="merlin.assets.categories.auxiliary"):
         # if it doesn't exist
         except AttributeError:
             # chain up
-            return super().identify(authority=authority)
+            return super().identify(authority=authority, **kwds)
         # if it does, invoke it
         return handler(**kwds)
 
