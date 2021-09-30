@@ -18,6 +18,7 @@ class LibFlow(merlin.component,
 
 
     # interface
+    # asset handlers
     @merlin.export
     def library(self, builder, library):
         """
@@ -70,6 +71,7 @@ class LibFlow(merlin.component,
         return
 
 
+    # asset category handlers
     @merlin.export
     def header(self, builder, library, file):
         """
@@ -135,6 +137,10 @@ class LibFlow(merlin.component,
         """
         Handle a {file} asset
         """
+        # get the language
+        language = file.language
+        # and ask it to identify itself
+        language.identify(authority=self, builder=builder, library=library, file=file)
         # all done
         return
 
@@ -153,6 +159,17 @@ class LibFlow(merlin.component,
         """
         Handle an {unrecognizable} asset
         """
+        # all done
+        return
+
+
+    # source language handlers
+    @merlin.export
+    def language(self, builder, library, file, language):
+        """
+        Handle a source file from an unsupported language
+        """
+        print(f"  [{language.name}] {file.path}")
         # all done
         return
 
