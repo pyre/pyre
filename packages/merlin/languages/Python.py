@@ -29,4 +29,21 @@ class Python(Language, family="merlin.languages.python"):
     categories.doc = "a map from file categories to a list of suffixes"
 
 
+    # merlin hooks
+    def identify(self, authority, **kwds):
+        """
+        Ask {authority} to process one of my source files
+        """
+        # attempt to
+        try:
+            # ask authority for a handler for source files of my type
+            handler = authority.python
+        # if it doesn't exist
+        except AttributeError:
+            # chain up
+            return super().identify(authority=authority, **kwds)
+        # if it does, invoke it
+        return handler(language=self, **kwds)
+
+
 # end of file

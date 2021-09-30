@@ -31,4 +31,21 @@ class Cython(Language, family="merlin.languages.cython"):
     categories.doc = "a map from file categories to a list of suffixes"
 
 
+    # merlin hooks
+    def identify(self, authority, **kwds):
+        """
+        Ask {authority} to process one of my source files
+        """
+        # attempt to
+        try:
+            # ask authority for a handler for source files of my type
+            handler = authority.cython
+        # if it doesn't exist
+        except AttributeError:
+            # chain up
+            return super().identify(authority=authority, **kwds)
+        # if it does, invoke it
+        return handler(language=self, **kwds)
+
+
 # end of file

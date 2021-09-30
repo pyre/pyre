@@ -37,4 +37,21 @@ class C(Language, family="merlin.languages.c"):
     dialect.doc = "the C dialect to enforce"
 
 
+    # merlin hooks
+    def identify(self, authority, **kwds):
+        """
+        Ask {authority} to process one of my source files
+        """
+        # attempt to
+        try:
+            # ask authority for a handler for source files of my type
+            handler = authority.c
+        # if it doesn't exist
+        except AttributeError:
+            # chain up
+            return super().identify(authority=authority, **kwds)
+        # if it does, invoke it
+        return handler(language=self, **kwds)
+
+
 # end of file
