@@ -37,8 +37,20 @@ class LibFlow(merlin.component,
         """
         Handle a source {directory}
         """
+        # all headers go to the {include} directory in {prefix}
+        include = merlin.primitives.path("/prefix/include")
+        # get the special scope
+        scope = library.scope
+        # if one exists
+        if scope:
+            # place the headers in a subdirectory that includes this extra scope
+            anchor = scope / library.name
+        # otherwise
+        else:
+            # just the library name
+            anchor = library.name
         # there may be headers to move, so build the corresponding directory in the prefix
-        incpath = merlin.primitives.path("/prefix/include", library.name, directory.path)
+        incpath = include / anchor / directory.path
         # ask the builder to assemble a workflow that creates this directory
         builder.mkdir(path=incpath)
         # all done
@@ -63,10 +75,32 @@ class LibFlow(merlin.component,
         """
         Handle a {file} asset
         """
+        # all headers are anchored at
+        include = merlin.primitives.path("/prefix/include")
+        # get my name
+        name = library.name
+        # the special scope, if any
+        scope = library.scope
+        # and the name of the gateway header
+        gateway = library.gateway
+
         # get the path to the header in the source directory
         origin = file.path
-        # form the corresponding path in the prefix
-        destination = merlin.primitives.path("/prefix/include") / library.name / origin
+
+        # if i've been asked to place my headers in a special scope
+        if scope:
+            # and this file is the gateway header
+            if origin == gateway:
+                # the destination is
+                destination = include / scope / origin
+            # everything else
+            else:
+                # is placed in a path that includes my name
+                destination = include / scope / name / origin
+        # if there is no special scope
+        else:
+            # form the corresponding path in the prefix
+            destination = include / name / origin
 
         # build the corresponding file based asset
         dst = merlin.assets.file(name=str(destination), path=destination)
