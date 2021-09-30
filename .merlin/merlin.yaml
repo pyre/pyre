@@ -9,6 +9,7 @@
 projects:
   - "#journal.prj"
   - "#pyre.prj"
+  - "#mpi.prj"
 
 
 # end of file
