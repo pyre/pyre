@@ -10,9 +10,13 @@ pyre.prj:
 
 # {libpyre}
 libpyre:
+    # the name of the library
     name: pyre
-    root: lib/{libpyre.name}
+    # the default set of source languages
     languages: c++, autogen
+
+    # the location of the source relative to the root of the project
+    root: lib/pyre
 
 
 # end of file

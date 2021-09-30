@@ -12,14 +12,16 @@ mpi.prj:
 libmpi:
     # the name of the library
     name: mpi
-    # the location of the source relative to the root of the project
-    root: lib/mpi
-    # deposit the headers in the {pyre} namespace
-    scope: pyre
-    # this is the header that provides access to the library
-    gateway: mpi.h
     # all c++
     languages: c++
+    # the location of the source relative to the root of the project
+    root: lib/mpi
+
+    # users #include <pyre/mpi.h>
+    # so deposit all headers in the {pyre} namespace
+    scope: pyre
+    # except this one that acts as the gateway to the library
+    gateway: mpi.h
 
 
 # end of file
