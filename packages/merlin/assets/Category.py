@@ -24,14 +24,14 @@ class Category(merlin.component,
 
 
     # interface
-    def identify(self, authority, **kwds):
+    def identify(self, visitor, **kwds):
         """
-        Ask {authority} to process a header file
+        Ask {visitor} to process a header file
         """
         # attempt to
         try:
-            # ask authority for a handler for my type
-            handler = authority.category
+            # ask the {visitor} for a handler for my type
+            handler = visitor.category
         # if it doesn't exist
         except AttributeError:
             # this is almost certainly a bug; make a channel
@@ -39,7 +39,7 @@ class Category(merlin.component,
             # complain
             channel.line(f"unable to find a handler for '{self.pyre_name}'")
             channel.line(f"for the asset category '{self.__class__.__name__}'")
-            channel.line(f"while looking through the interface of '{authority.pyre_name}'")
+            channel.line(f"while looking through the interface of '{visitor.pyre_name}'")
             # flush
             channel.log()
             # and fail, just in case firewalls aren't fatal

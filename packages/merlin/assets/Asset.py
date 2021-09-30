@@ -36,14 +36,14 @@ class Asset(Product):
 
 
     # merlin hooks
-    def identify(self, authority, **kwds):
+    def identify(self, visitor, **kwds):
         """
-        Ask {authority} to process a generic asset
+        Ask {visitor} to process a generic asset
         """
         # attempt to
         try:
-            # ask authority for a handler for my type
-            handler = authority.asset
+            # ask the {visitor} for a handler for my type
+            handler = visitor.asset
         # if it doesn't exist
         except AttributeError:
             # this is almost certainly a bug; make a channel
@@ -51,7 +51,7 @@ class Asset(Product):
             # complain
             channel.line(f"unable to find a handler for '{self.pyre_name}'")
             channel.line(f"an asset of type '{self.__class__.__name__}'")
-            channel.line(f"while looking through the interface of '{authority.pyre_name}'")
+            channel.line(f"while looking through the interface of '{visitor.pyre_name}'")
             # flush
             channel.log()
             # and fail, just in case firewalls aren't fatal

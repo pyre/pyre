@@ -22,18 +22,18 @@ class Source(Category, family="merlin.assets.categories.source"):
 
 
     # interface
-    def identify(self, authority, **kwds):
+    def identify(self, visitor, **kwds):
         """
-        Ask {authority} to process a header file
+        Ask {visitor} to process a header file
         """
         # attempt to
         try:
-            # ask authority for a handler for my type
-            handler = authority.source
+            # ask the {visitor} for a handler for my type
+            handler = visitor.source
         # if it doesn't exist
         except AttributeError:
             # chain up
-            return super().identify(authority=authority, **kwds)
+            return super().identify(visitor=visitor, **kwds)
         # if it does, invoke it
         return handler(**kwds)
 
