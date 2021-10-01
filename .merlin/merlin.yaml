@@ -4,8 +4,11 @@
 
 
 # this workspace contains the following projects
-# N.B.: the {.prj} suffix is necessary only because {pyre} and {journal} are already known
-# to the {nameserver} as packages
+# N.B.:
+# - the {.prj} suffix is necessary only because {pyre} and {journal} are already known
+#   to the {nameserver} as packages
+# - the '#' in the name is required to denote that the list items are named instances
+#   not types that must beinstantiated; awkward but necessary, for now; hnece the quotes...
 projects:
   - "#journal.prj"
   - "#pyre.prj"
