@@ -6,6 +6,8 @@
 
 # support
 import merlin
+# schema
+from .PrefixLayout import PrefixLayout
 
 
 # the manager of intermediate and final build products
@@ -16,11 +18,23 @@ class Builder(merlin.protocol, family="merlin.builders"):
 
 
     # required state
-    prefix = merlin.properties.path()
-    prefix.doc = "the installation location of the final build products"
+    tag = merlin.properties.str()
+    tag.doc = "the name of this build"
+
+    tagged = merlin.properties.bool()
+    tagged.doc = "control whether to fold the compiler ABI into the installation prefix"
+
+    type = merlin.properties.strings()
+    type.doc = "the build type"
 
     stage = merlin.properties.path()
     stage.doc = "the location of the intermediate, disposable build products"
+
+    prefix = merlin.properties.path()
+    prefix.doc = "the installation location of the final build products"
+
+    layout = PrefixLayout()
+    layout.doc = "the layout of the installation area"
 
 
     # framework hooks
