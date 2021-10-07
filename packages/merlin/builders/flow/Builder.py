@@ -7,6 +7,8 @@
 # support
 import journal
 import merlin
+# my parts
+from .LibFlow import LibFlow
 
 
 # the manager of intermediate and final build products
@@ -42,6 +44,7 @@ class Builder(merlin.component,
     prefixLayout.doc = "the layout of the installation area"
 
     libflow = merlin.protocols.libflow()
+    libflow.default = LibFlow
     libflow.doc = "the library workflow generator"
 
 
