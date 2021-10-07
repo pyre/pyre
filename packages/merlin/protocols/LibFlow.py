@@ -65,7 +65,7 @@ class LibFlow(merlin.protocol, family="merlin.builders.libflow"):
         Specify the default implementation
         """
         # choose the default implementer
-        return merlin.components.libflow
+        return merlin.builders.flow.libflow
 
 
 # end of file
