@@ -86,6 +86,15 @@ class Builder(merlin.component, implements=merlin.protocols.builder):
 
 
     # implementation details
+    # framework hooks
+    def merlin_initialized(self, plexus, **kwds):
+        """
+        Hook invoked after the {plexus} is fully initialized
+        """
+        # nothing to do, by default
+        return
+
+
     # helpers
     def abi(self, plexus):
         """
