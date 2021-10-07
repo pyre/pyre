@@ -118,6 +118,9 @@ class Builder(BaseBuilder, family="merlin.builders.flow"):
         """
         Hook invoked after the {plexus} is fully initialized
         """
+        # chain up
+        super().merlin_initialized(plexus=plexus, **kwds)
+
         # grab my abi
         abi = self.abi(plexus=plexus)
         # and the root of the virtual filesystem
@@ -127,6 +130,7 @@ class Builder(BaseBuilder, family="merlin.builders.flow"):
         self.setupStage(vfs=vfs, abi=abi)
         # and the prefix
         self.setupPrefix(vfs=vfs, abi=abi)
+
         # all done
         return
 
