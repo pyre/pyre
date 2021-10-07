@@ -11,7 +11,7 @@ import merlin
 
 # the manager of intermediate and final build products
 class LibFlow(merlin.component,
-              family="merlin.builders.libflow", implements=merlin.protocols.libflow):
+              family="merlin.builders.flow.lib", implements=merlin.protocols.libflow):
     """
     Workflow generator for building libraries
     """

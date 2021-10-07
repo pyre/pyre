@@ -13,7 +13,7 @@ from .LibFlow import LibFlow
 
 # the manager of intermediate and final build products
 class Builder(merlin.component,
-              family="merlin.builders.builder", implements=merlin.protocols.builder):
+              family="merlin.builders.flow", implements=merlin.protocols.builder):
     """
     The manager of the all build products, both final and intermediate disposables
     """
