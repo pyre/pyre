@@ -9,7 +9,7 @@ import journal
 import merlin
 
 
-# the manager of intermediate and final build products
+# a builder of libraries
 class LibFlow(merlin.component,
               family="merlin.builders.flow.lib", implements=merlin.protocols.libflow):
     """
