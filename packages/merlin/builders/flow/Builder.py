@@ -7,72 +7,27 @@
 # support
 import journal
 import merlin
+
+# my superclass
+from ..Builder import Builder as BaseBuilder
 # my parts
 from .LibFlow import LibFlow
 
 
 # the manager of intermediate and final build products
-class Builder(merlin.component,
-              family="merlin.builders.flow", implements=merlin.protocols.builder):
+class Builder(BaseBuilder, family="merlin.builders.flow"):
     """
     The manager of the all build products, both final and intermediate disposables
     """
 
 
     # configurable state
-    tag = merlin.properties.str()
-    tag.default = None
-    tag.doc = "the name of this build"
-
-    tagged = merlin.properties.bool()
-    tagged.default = True
-    tagged.doc = "control whether to fold the compiler ABI into the installation prefix"
-
-    type = merlin.properties.strings()
-    type.default = "debug", "shared"
-    type.doc = "the build type"
-
-    prefix = merlin.properties.path()
-    prefix.default = "/tmp/{pyre.user.username}/products"
-    prefix.doc = "the installation location of the final build products"
-
-    stage = merlin.properties.path()
-    stage.default = "/tmp/{pyre.user.username}/builds"
-    stage.doc = "the location of the intermediate, disposable build products"
-
-    prefixLayout = merlin.protocols.prefix()
-    prefixLayout.doc = "the layout of the installation area"
-
     libflow = merlin.protocols.libflow()
     libflow.default = LibFlow
     libflow.doc = "the library workflow generator"
 
 
     # interface
-    def add(self, assets):
-        """
-        Add the given {asset} to the build pile
-        """
-        # go through the assets
-        for asset in assets:
-            # ask each one to identify itself
-            asset.identify(visitor=self)
-        # all done
-        return
-
-
-    def build(self, assets):
-        """
-        Build the products
-        """
-        # go through the assets
-        for asset in assets:
-            # ask each one to  identify itself
-            asset.build(builder=self)
-        # all done
-        return
-
-
     def mkdir(self, path):
         """
         Build a workflow that creates a directory at {path}
@@ -154,17 +109,6 @@ class Builder(merlin.component,
         # and an index for my named assets
         self.index = {}
 
-        # if the user didn't specify a tag
-        if self.tag is None:
-            # make a pile
-            tag = []
-            # grab the build type and add its parts to the tag
-            tag.extend(sorted(self.type))
-            # get the host and add its contribution
-            tag.append(self.pyre_host.tag)
-            # assemble the tag and store it
-            self.tag = "-".join(tag)
-
         # all done
         return
 
@@ -197,42 +141,6 @@ class Builder(merlin.component,
 
 
     # helpers
-    def abi(self, plexus):
-        """
-        Make a tag that reflects the platform and compiler choice
-        """
-        # we are looking to tag the build using information about the compilers in use
-        # this is really a poorly stated problem with many possible variables that could
-        # affect the binary compatibility of the build products; we punt and use the c++ or c
-        # compiler as the dominant factor
-        # so
-        determinant = None
-        # get the set of compilers and go through them
-        for compiler in plexus.compilers:
-            # if this is the c++ compiler
-            if compiler.language == "c++":
-                # mark it as the determining compiler
-                determinant = compiler
-                # we are done
-                break
-            # the c compiler
-            if compiler.language == "c":
-                # is a fallback
-                determinant = compiler
-        # if we didn't manage to find anything useful
-        if determinant is None:
-            # we won't add abi information to the products
-            return ""
-        # otherwise, get the compiler family
-        suite = compiler.suite
-        # and its version
-        major, _, _ = compiler.version()
-        # and fold them into the ABI
-        abi = f"{suite}{major}"
-        # all done
-        return abi
-
-
     def setupPrefix(self, vfs, abi):
         """
         Build a workflow that assembles my prefix layout
@@ -270,7 +178,7 @@ class Builder(merlin.component,
 
         # finally, build a flow that assembles the directory layout on demand
         # grab the layout
-        layout = self.prefixLayout
+        layout = self.layout
         # its entire configurable state is supposed to be subdirectories of prefix
         # so go through it
         for trait in layout.pyre_configurables():
