@@ -8,7 +8,7 @@
 import merlin
 
 
-# the manager of intermediate and final build products
+# a builder of libraries
 class LibFlow(merlin.protocol, family="merlin.builders.libflow"):
     """
     Workflow generator for libraries
