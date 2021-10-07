@@ -43,6 +43,8 @@ from . import factories
 # builder abstractions
 from . import languages
 from . import compilers
+# builders
+from . import builders
 # support for the user interfaces
 from . import shells         # the supported application shells
 from . import cli            # the command line interface
