@@ -49,9 +49,8 @@ class Asset(Product):
             # this is almost certainly a bug; make a channel
             channel = journal.firewall("merlin.assets.identify")
             # complain
-            channel.line(f"unable to find a handler for '{self.pyre_name}'")
-            channel.line(f"an asset of type '{self.__class__.__name__}'")
-            channel.line(f"while looking through the interface of '{visitor.pyre_name}'")
+            channel.line(f"unable to find a handler for {self}")
+            channel.line(f"in {visitor}")
             # flush
             channel.log()
             # and fail, just in case firewalls aren't fatal
