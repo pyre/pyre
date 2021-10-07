@@ -81,7 +81,7 @@ class Builder(BaseBuilder, family="merlin.builders.flow"):
             index[childName] = childDir
             # and add it to my flow
             products.add(childDir)
-            # this directory gets realized using a diretory factory
+            # this directory gets realized using a directory factory
             mkdir = merlin.factories.mkdir()
             # that builds this child
             mkdir.name = child
