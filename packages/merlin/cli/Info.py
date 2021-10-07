@@ -26,7 +26,7 @@ class Info(merlin.shells.command, family='merlin.cli.info'):
         # the fileserver
         vfs = plexus.vfs
         # and the layout of the install area
-        prefix = builder.prefixLayout
+        prefix = builder.layout
 
         # set up a marker
         indent = " " * 2
@@ -34,15 +34,16 @@ class Info(merlin.shells.command, family='merlin.cli.info'):
         channel = journal.info("merlin.builder")
         # show me
         channel.line(f"builder:")
+        channel.line(f"{indent*1}abi: {builder.abi(plexus=plexus)}")
         channel.line(f"{indent*1}type: {', '.join(builder.type)}")
         channel.line(f"{indent*1}tag: {builder.tag}")
         channel.line(f"{indent*1}/stage:")
         channel.line(f"{indent*2}seed: {builder.stage}")
-        channel.line(f"{indent*2}mounted: {vfs['/stage'].uri}")
+        channel.line(f"{indent*2}mounted at: {vfs['/stage'].uri}")
         channel.line(f"{indent*1}/prefix:")
         channel.line(f"{indent*2}seed: {builder.prefix}")
         channel.line(f"{indent*2}abi tagged: {builder.tagged}")
-        channel.line(f"{indent*2}mounted: {vfs['/prefix'].uri}")
+        channel.line(f"{indent*2}mounted at: {vfs['/prefix'].uri}")
         channel.line(f"{indent*1}/prefix layout:")
         channel.line(f"{indent*2}bin: {prefix.bin}")
         channel.line(f"{indent*2}lib: {prefix.lib}")
