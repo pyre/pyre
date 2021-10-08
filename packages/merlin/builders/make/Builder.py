@@ -18,6 +18,28 @@ class Builder(BaseBuilder, family="merlin.builders.make"):
     """
 
 
+    # interface
+    def add(self, plexus, **kwds):
+        """
+        Add the given {assets} to the build pile
+        """
+        # generate the makefile content
+        content = self.generate(plexus=plexus, **kwds)
+
+        # grab the stage uri
+        stage = plexus.vfs["/stage"].uri
+        # form the path to the makefile
+        makefile = stage / "Makefile"
+        # open the stream
+
+        stream = open(makefile, "w")
+        # and write
+        print('\n'.join(content), file=stream)
+
+        # all done
+        return
+
+
     # framework hooks
     def merlin_initialized(self, plexus, **kwds):
         """
@@ -37,15 +59,6 @@ class Builder(BaseBuilder, family="merlin.builders.make"):
         self.setupPrefix(vfs=vfs, abi=abi)
 
         # all done
-        return
-
-
-    # asset visitors
-    def library(self, library):
-        """
-        Build a {library}
-        """
-        # do nothing, for now
         return
 
 
@@ -101,6 +114,49 @@ class Builder(BaseBuilder, family="merlin.builders.make"):
         vfs[prefixPath] = prefixFS
 
         # all done
+        return
+
+
+    # makefile generation
+    def generate(self, **kwds):
+        """
+        Generate the makefile
+        """
+        # preamble
+        yield from self.preamble(**kwds)
+        # postamble
+        yield from self.postamble(**kwds)
+        # all done
+        return
+
+
+    def preamble(self, **kwds):
+        """
+        Generate the makefile preamble with all the boilerplate code
+        """
+        # sign on
+        yield "# -*- Makefile -*-"
+        # all done
+        return
+
+
+    def postamble(self, **kwds):
+        """
+        Generate the makefile preamble with all the boilerplate code
+        """
+        # close out the content
+        yield ""
+        yield "# end of file"
+        # all done
+        return
+
+
+    # asset visitors
+    def library(self, library):
+        """
+        Build a {library}
+        """
+        # do nothing, for now
         return
 
 
