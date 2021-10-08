@@ -41,26 +41,26 @@ class Builder(merlin.component, implements=merlin.protocols.builder):
 
 
     # interface
-    def add(self, assets):
+    def add(self, assets, **kwds):
         """
         Add the given {asset} to the build pile
         """
         # go through the assets
         for asset in assets:
             # ask each one to identify itself
-            asset.identify(visitor=self)
+            asset.identify(visitor=self, **kwds)
         # all done
         return
 
 
-    def build(self, assets):
+    def build(self, assets, **kwds):
         """
         Build the products
         """
         # go through the assets
         for asset in assets:
             # ask each one to  identify itself
-            asset.build(builder=self)
+            asset.build(builder=self, **kwds)
         # all done
         return
 
