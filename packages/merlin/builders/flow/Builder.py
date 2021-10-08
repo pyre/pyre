@@ -136,12 +136,12 @@ class Builder(BaseBuilder, family="merlin.builders.flow"):
 
 
     # implementation details
-    def library(self, library):
+    def library(self, library, **kwds):
         """
         Build a {library}
         """
         # delegate to the {libflow} generator
-        return self.libflow.library(builder=self, library=library)
+        return self.libflow.library(builder=self, library=library, **kwds)
 
 
     # helpers
