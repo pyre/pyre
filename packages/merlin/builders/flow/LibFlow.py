@@ -20,7 +20,7 @@ class LibFlow(merlin.component,
     # interface
     # asset handlers
     @merlin.export
-    def library(self, builder, library):
+    def library(self, library, **kwds):
         """
         Generate the workflow that builds a {library}
         """
@@ -28,13 +28,13 @@ class LibFlow(merlin.component,
         # go through the assets of the library
         for asset in library.assets():
             # and add each one to the build pile
-            asset.identify(visitor=self, builder=builder, library=library)
+            asset.identify(visitor=self, library=library, **kwds)
         # all done
         return
 
 
     @merlin.export
-    def directory(self, builder, library, directory):
+    def directory(self, builder, library, directory, **kwds):
         """
         Handle a source {directory}
         """
@@ -59,21 +59,21 @@ class LibFlow(merlin.component,
 
 
     @merlin.export
-    def file(self, builder, library, file):
+    def file(self, file, **kwds):
         """
         Handle a {file} asset
         """
         # get the file category
         category = file.category
         # ask it to identify itself
-        category.identify(visitor=self, builder=builder, library=library, file=file)
+        category.identify(visitor=self, file=file, **kwds)
         # all done
         return
 
 
     # asset category handlers
     @merlin.export
-    def header(self, builder, library, file):
+    def header(self, builder, library, file, **kwds):
         """
         Handle a {file} asset
         """
@@ -133,20 +133,20 @@ class LibFlow(merlin.component,
 
 
     @merlin.export
-    def source(self, builder, library, file):
+    def source(self, file, **kwds):
         """
         Handle a {file} asset
         """
         # get the language
         language = file.language
         # and ask it to identify itself
-        language.identify(visitor=self, builder=builder, library=library, file=file)
+        language.identify(visitor=self, file=file, **kwds)
         # all done
         return
 
 
     @merlin.export
-    def template(self, builder, library, file):
+    def template(self, **kwds):
         """
         Handle a {template} asset
         """
@@ -155,7 +155,7 @@ class LibFlow(merlin.component,
 
 
     @merlin.export
-    def unrecognizable(self, builder, library, file):
+    def unrecognizable(self, **kwds):
         """
         Handle an {unrecognizable} asset
         """
@@ -165,7 +165,7 @@ class LibFlow(merlin.component,
 
     # source language handlers
     @merlin.export
-    def language(self, builder, library, file, language):
+    def language(self, file, language, **kwds):
         """
         Handle a source file from an unsupported language
         """
