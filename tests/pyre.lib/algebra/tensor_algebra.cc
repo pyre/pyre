@@ -29,6 +29,7 @@ int main(int argc, char* argv[]) {
     pyre::algebra::scalar_t a = 1.0;
     assert(vector2 * a == vector2);
     assert(vector2 * (-a) == -vector2);
+    assert((-a) * vector2 == -vector2);
     assert(vector2 / a == vector2);
     assert(vector2 / (-a) == -vector2);
 
@@ -38,7 +39,6 @@ int main(int argc, char* argv[]) {
 
     pyre::algebra::scalar_t b(1.0);
     assert(2 * b == b + 1);
-    assert(2 * b - true == b);
 
     // TODO: Add tests for all algebraic operators
 
@@ -48,11 +48,20 @@ int main(int argc, char* argv[]) {
     pyre::algebra::vector_t<3> y = a * A * x;
     assert((y == a * pyre::algebra::vector_t<3> { 3, 12, 21 }));
 
-    pyre::algebra::real trace = pyre::algebra::tr(A);
-    std::cout << trace << std::endl;
+    // transpose tensor
+    pyre::algebra::tensor_t<3, 3> B = transpose(A);
+    // transpose of transpose is the identity operator
+    assert(transpose(B) == A);
 
-    pyre::algebra::tensor_t<3, 3> AT = pyre::algebra::transpose(A);
-    assert(transpose(AT) == A);
+    // transpose preserves trace
+    pyre::algebra::scalar_t traceA = tr(A);
+    pyre::algebra::scalar_t traceB = tr(B);
+    assert(traceA == traceB);
+
+    // transpose preserves determinant
+    pyre::algebra::scalar_t detA = det(A);
+    pyre::algebra::scalar_t detB = det(B);
+    assert(det(B) == det(A));
 
     // all done
     return 0;
