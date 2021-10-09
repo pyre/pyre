@@ -51,6 +51,9 @@ int main(int argc, char* argv[]) {
     pyre::algebra::real trace = pyre::algebra::tr(A);
     std::cout << trace << std::endl;
 
+    pyre::algebra::tensor_t<3, 3> AT = pyre::algebra::transpose(A);
+    assert(transpose(AT) == A);
+
     // all done
     return 0;
 }

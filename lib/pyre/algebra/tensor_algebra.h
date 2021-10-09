@@ -347,7 +347,28 @@ namespace pyre {
             };
 
             return _tr(std::make_index_sequence<D> {});
-        } 
+        }
+
+        template <int D, typename T>
+        tensor_t<D, D, T> transpose(const tensor_t<D, D, T> & A)
+        {
+            // A transposed
+            tensor_t<D, D, T> AT;
+
+            auto _transpose = [&A, &AT]<size_t... J>(std::index_sequence<J...>){
+                auto _transposeJ = [&A, &AT]<size_t... I>(std::index_sequence<I...>, size_t j)
+                {
+                    ((AT[j * D + I] = A [I * D + j]), ... );
+                    return;
+                };
+
+                (_transposeJ(std::make_index_sequence<D> {}, J), ...);
+            };
+
+            _transpose(std::make_index_sequence<D> {});
+
+            return AT;
+        }
     }
 }
 
