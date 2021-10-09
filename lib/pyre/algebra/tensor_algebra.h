@@ -369,6 +369,25 @@ namespace pyre {
 
             return AT;
         }
+
+        template <typename T>
+        vector_t<2, T> eigenvalues(const tensor_t<2, 2, T> & A)
+        {
+            T a = A[0] * A[0] + 4.0 * A[1] * A[2] - 2.0 * A[0] * A[3] + A[3] * A[3];
+            return vector_t<2, T>{0.5 * (A[0] + A[3] - sqrt(a)), 0.5 * (A[0] + A[3] + sqrt(a))};
+        }
+
+        // QUESTION: should these be returned in a matrix? 
+        template <typename T>
+        tensor_t<2, 2, T> eigenvectors(const tensor_t<2, 2, T> & A)
+        {
+            T a = sqrt(A[0] * A[0] + 4.0 * A[1] * A[2] - 2.0 * A[0] * A[3] + A[3] * A[3]);
+            return tensor_t<2, 2, T>{
+                (A[0] - A[3] - a) / (2.0 * A[2]), 
+                (A[0] - A[3] + a) / (2.0 * A[2]),
+                1.0, 
+                1.0};
+        }
     }
 }
 

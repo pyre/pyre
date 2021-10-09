@@ -63,6 +63,11 @@ int main(int argc, char* argv[]) {
     pyre::algebra::scalar_t detB = det(B);
     assert(det(B) == det(A));
 
+    // product of eigenvalues is equal to determinant
+    pyre::algebra::tensor_t<2, 2> C = { 0, 1, 2, 3 };
+    auto lambda = eigenvalues(C); 
+    assert(lambda[0] * lambda[1] == det(C));
+
     // all done
     return 0;
 }
