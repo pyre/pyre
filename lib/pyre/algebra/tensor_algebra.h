@@ -73,39 +73,6 @@ namespace pyre {
             return a * y;
         }
 
-        // vector_t inner product
-        template <typename T, int... I, std::size_t... J>
-        inline T _vector_inner_product(
-            const Tensor<T, I...> & y1, const Tensor<T, I...> & y2, std::index_sequence<J...>)
-        {
-            return ((y1[J] * y2[J]) + ...);
-        }
-        template <typename T, int... I>
-        inline T operator*(const Tensor<T, I...> & y1, const Tensor<T, I...> & y2)
-        {
-            constexpr int D = Tensor<T, I...>::size;
-            return _vector_inner_product(y1, y2, std::make_index_sequence<D> {});
-        }
-        template <typename T, int... I>
-        inline T operator*(Tensor<T, I...> && y1, const Tensor<T, I...> & y2)
-        {
-            constexpr int D = Tensor<T, I...>::size;
-            return _vector_inner_product(std::move(y1), y2, std::make_index_sequence<D> {});
-        }
-        template <typename T, int... I>
-        inline T operator*(const Tensor<T, I...> & y1, Tensor<T, I...> && y2)
-        {
-            constexpr int D = Tensor<T, I...>::size;
-            return _vector_inner_product(y1, std::move(y2), std::make_index_sequence<D> {});
-        }
-        template <typename T, int... I>
-        inline T operator*(Tensor<T, I...> && y1, Tensor<T, I...> && y2)
-        {
-            constexpr int D = Tensor<T, I...>::size;
-            return _vector_inner_product(
-                std::move(y1), std::move(y2), std::make_index_sequence<D> {});
-        }
-
         // sum of vector_t
         template <typename T, int... I, std::size_t... J>
         inline void _vector_sum(
@@ -238,28 +205,32 @@ namespace pyre {
             return (1.0 / a) * std::move(y);
         }
 
+        // TODO: FORWARD!!!!!
         // matrix-vector multiplication
         // row-column product
-        template <int D1, int D2, typename T, size_t... J>
+        template <int I /* row */, int J /* col */, int D1, int D2, int D3, typename T, size_t... K>
         inline T _row_times_column(
-            const tensor_t<D1, D2, T> & A, const vector_t<D2, T> & x, size_t row,
-            std::index_sequence<J...>)
+            const tensor_t<D1, D2, T> A1, tensor_t<D2, D3, T> A2, std::index_sequence<K...>)
         {
-            return ((A[{ row, J }] * x[J]) + ...);
+            return ((A1[{ I, K }] * A2[{ K, J }]) + ...);
         }
-        // matrix-vector product
-        template <int D1, int D2, typename T, size_t... J>
-        inline vector_t<D1, T> _matrix_times_column(
-            const tensor_t<D1, D2, T> & A, const vector_t<D2, T> & x, std::index_sequence<J...>)
+        template <int I /* row */, int D1, int D2, int D3, typename T, size_t... J>
+        inline tensor_t<D1, D3, T> _matrix_times_column(
+            const tensor_t<D1, D2, T> A1, tensor_t<D2, D3, T> A2, std::index_sequence<J...>)
         {
-            vector_t<D1, T> result;
-            ((result[J] = _row_times_column(A, x, J, std::make_index_sequence<D2> {})), ...);
+            tensor_t<D1, D3, T> result;
+            ((result[{I, J}] = _row_times_column<I, J>(A1, A2, std::make_index_sequence<D2> {})), ...);
             return result;
         }
-        template <int D1, int D2, typename T>
-        inline vector_t<D1, T> operator*(const tensor_t<D1, D2, T> & A, const vector_t<D2, T> & x)
+        template <int D1, int D2, int D3, typename T, size_t... I>
+        inline tensor_t<D1, D3, T> _matrix_times_matrix(const tensor_t<D1, D2, T> A1, const tensor_t<D2, D3, T> A2, std::index_sequence<I...>)
         {
-            return _matrix_times_column(A, x, std::make_index_sequence<D1> {});
+            return (_matrix_times_column<I>(A1, A2, std::make_index_sequence<D3> {}) + ... );
+        }
+        template <int D1, int D2, int D3, typename T>
+        inline tensor_t<D1, D3, T> operator*(const tensor_t<D1, D2, T> A1, const tensor_t<D2, D3, T> A2)
+        {
+            return _matrix_times_matrix(A1, A2, std::make_index_sequence<D1> {});
         }
 
         // factorial

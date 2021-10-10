@@ -35,7 +35,7 @@ int main(int argc, char* argv[]) {
 
     pyre::algebra::vector_t<3> vector3 = { 1, 0, 0 };
     pyre::algebra::vector_t<3> vector4 = { 0, 1, 0 };
-    assert(vector3 * vector4 == 0.0);
+    assert(transpose(vector3) * vector4 == 0.0);
 
     pyre::algebra::scalar_t b(1.0);
     assert(2 * b == b + 1);
