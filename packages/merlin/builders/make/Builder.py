@@ -4,6 +4,8 @@
 # (c) 1998-2021 all rights reserved
 
 
+# externals
+import datetime
 # support
 import merlin
 
@@ -18,23 +20,32 @@ class Builder(BaseBuilder, family="merlin.builders.make"):
     """
 
 
+    # configurable state
+    renderer = merlin.weaver.language()
+    renderer.default = "make"
+    renderer.doc = "the makefile mill"
+
+
     # interface
     def add(self, plexus, **kwds):
         """
-        Add the given {assets} to the build pile
+        Add the given assets to the build pile
         """
-        # generate the makefile content
-        content = self.generate(plexus=plexus, **kwds)
-
         # grab the stage uri
         stage = plexus.vfs["/stage"].uri
         # form the path to the makefile
         makefile = stage / "Makefile"
-        # open the stream
 
-        stream = open(makefile, "w")
-        # and write
-        print('\n'.join(content), file=stream)
+        # open the stream
+        with open(makefile, mode="w") as stream:
+            # grab my renderer
+            renderer = self.renderer
+            # prime the makefile content
+            document = self.generate(plexus=plexus, renderer=renderer, **kwds)
+            # ask the renderer to do its thing
+            content = renderer.render(document=document)
+            # and write
+            print('\n'.join(content), file=stream)
 
         # all done
         return
@@ -124,29 +135,173 @@ class Builder(BaseBuilder, family="merlin.builders.make"):
         """
         # preamble
         yield from self.preamble(**kwds)
+        # build rules
+        yield from self.rules(**kwds)
+        # boiler plate support
+        yield from self.boilerplate(**kwds)
         # postamble
         yield from self.postamble(**kwds)
         # all done
         return
 
 
-    def preamble(self, **kwds):
+    def preamble(self, renderer, **kwds):
         """
         Generate the makefile preamble with all the boilerplate code
         """
-        # sign on
-        yield "# -*- Makefile -*-"
+        # make a time stamp
+        stamp = f"generated on {datetime.datetime.now().isoformat()}"
+        # mark
+        yield renderer.commentLine(stamp)
+        yield ""
+
         # all done
         return
 
 
-    def postamble(self, **kwds):
+    def rules(self, renderer, assets, **kwds):
         """
         Generate the makefile preamble with all the boilerplate code
         """
-        # close out the content
+        # sign on
         yield ""
-        yield "# end of file"
+        yield renderer.commentLine("rules")
+
+        # collect the names of the assets
+        names = ' '.join(asset.pyre_name for asset in assets)
+        # make a rule that builds them all
+        yield f"all: {names}"
+        # all done
+        return
+
+
+    def boilerplate(self, renderer, **kwds):
+        """
+        Generate the makefile preamble with all the boilerplate code
+        """
+        # sign on
+        yield ""
+        # setup color support
+        yield from self.color(renderer, **kwds)
+        # all done
+        return
+
+
+    def postamble(self, renderer, **kwds):
+        """
+        Generate the makefile preamble with all the boilerplate code
+        """
+        # sign on
+        yield ""
+        # all done
+        return
+
+
+    def color(self, renderer, **kwds):
+        """
+        Set up support for colorized output
+        """
+        # sign on
+        yield renderer.commentLine("color support")
+
+        # sniff the terminal type
+        yield renderer.commentLine("initialize the TERM environment variable")
+        yield from renderer.setu(name="TERM", value="dumb")
+
+        # build a conditional assignment block so we can turn color off on terminals that
+        # don't understand ANSI control sequences
+        yield from renderer.ifeq(
+            op1 = renderer.value(var="TERM"),
+            op2 = renderer.builtin(func="findstring",
+                                   args=[renderer.value(var="TERM"), self.ansiTerminals]),
+            onTrue = self.ansiCSI(renderer, **kwds),
+            onFalse = self.dumbCSI(renderer, **kwds),
+        )
+
+        # render the color database
+        # basic colors
+        yield ""
+        yield renderer.commentLine("basic colors")
+        yield from renderer.set(name="palette.normal",
+                                value=renderer.call(func="csi3", args=["0"]))
+        yield from renderer.set(name="palette.black",
+                                value=renderer.call(func="csi3", args=["0;30"]))
+        yield from renderer.set(name="palette.red",
+                                value=renderer.call(func="csi3", args=["0;31"]))
+        yield from renderer.set(name="palette.green",
+                                value=renderer.call(func="csi3", args=["0;32"]))
+        yield from renderer.set(name="palette.brown",
+                                value=renderer.call(func="csi3", args=["0;33"]))
+        yield from renderer.set(name="palette.blue",
+                                value=renderer.call(func="csi3", args=["0;34"]))
+        yield from renderer.set(name="palette.purple",
+                                value=renderer.call(func="csi3", args=["0;35"]))
+        yield from renderer.set(name="palette.cyan",
+                                value=renderer.call(func="csi3", args=["0;36"]))
+        yield from renderer.set(name="palette.light-gray",
+                                value=renderer.call(func="csi3", args=["0;37"]))
+
+        # bright colors
+        yield ""
+        yield renderer.commentLine("bright colors")
+        yield from renderer.set(name="palette.dark-gray",
+                                value=renderer.call(func="csi3", args=["1;30"]))
+        yield from renderer.set(name="palette.light-red",
+                                value=renderer.call(func="csi3", args=["1;31"]))
+        yield from renderer.set(name="palette.light-green",
+                                value=renderer.call(func="csi3", args=["1;32"]))
+        yield from renderer.set(name="palette.yellow",
+                                value=renderer.call(func="csi3", args=["1;33"]))
+        yield from renderer.set(name="palette.light-blue",
+                                value=renderer.call(func="csi3", args=["1;34"]))
+        yield from renderer.set(name="palette.light-purple",
+                                value=renderer.call(func="csi3", args=["1;35"]))
+        yield from renderer.set(name="palette.light-cyan",
+                                value=renderer.call(func="csi3", args=["1;36"]))
+        yield from renderer.set(name="palette.white",
+                                value=renderer.call(func="csi3", args=["1;37"]))
+
+        # pretty colors
+        yield ""
+        yield renderer.commentLine("pretty colors")
+        yield from renderer.set(name="palette.amber",
+                                value=renderer.call(func="csi24", args=["38", "255", "191", "0"]))
+        yield from renderer.set(name="palette.lavender",
+                                value=renderer.call(func="csi24", args=["38", "192", "176", "224"]))
+        yield from renderer.set(name="palette.sage",
+                                value=renderer.call(func="csi24", args=["38", "176", "208", "176"]))
+        yield from renderer.set(name="palette.steel-blue",
+                                value=renderer.call(func="csi24", args=["38", "70", "130", "180"]))
+        # all done
+        return
+
+
+    # helpers
+    def ansiCSI(self, renderer, **kwds):
+        """
+        Build function that construct the ANSI control sequences
+        """
+        # the marker
+        esc = "\x1b"
+
+        # build the 3 bit color generator
+        yield from renderer.setq(name="csi3", value=f"\"{esc}[$(1)m\"")
+        yield from renderer.setq(name="csi8", value=f"\"{esc}[$(1);5;$(2)m\"")
+        yield from renderer.setq(name="csi24", value=f"\"{esc}[$(1);2;$(2);$(3);$(4)m\"")
+
+        # all done
+        return
+
+
+    def dumbCSI(self, renderer, **kwds):
+        """
+        Build function that construct stubs for the ANSI control sequences
+        """
+        # build the 3 bit color generator
+        yield from renderer.set(name="csi3", value="")
+        yield from renderer.set(name="csi8", value="")
+        yield from renderer.set(name="csi24", value="")
+
         # all done
         return
 
@@ -158,6 +313,10 @@ class Builder(BaseBuilder, family="merlin.builders.make"):
         """
         # do nothing, for now
         return
+
+
+    # constants
+    ansiTerminals = " ".join([ "ansi", "vt100", "vt102", "xterm", "xterm-color", "xterm-256color" ])
 
 
 # end of file
