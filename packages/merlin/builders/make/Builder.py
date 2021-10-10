@@ -275,6 +275,31 @@ class Builder(BaseBuilder, family="merlin.builders.make"):
                                 value=renderer.call(func="csi24", args=["38", "176", "208", "176"]))
         yield from renderer.set(name="palette.steel-blue",
                                 value=renderer.call(func="csi24", args=["38", "70", "130", "180"]))
+
+        # diagnostics
+        yield ""
+        yield renderer.commentLine("diagnostics")
+        yield from renderer.set(name="palette.info",
+                                value=renderer.call(func="csi8", args=["38", "28"]))
+        yield from renderer.set(name="palette.warning",
+                                value=renderer.call(func="csi8", args=["38", "214"]))
+        yield from renderer.set(name="palette.error",
+                                value=renderer.call(func="csi8", args=["38", "196"]))
+        yield from renderer.set(name="palette.debug",
+                                value=renderer.call(func="csi8", args=["38", "75"]))
+        yield from renderer.set(name="palette.firewall",
+                                value=renderer.value(var="palette.light-red"))
+
+        # the default theme
+        yield ""
+        yield renderer.commentLine("the default theme")
+        yield from renderer.set(name="palette.asset",
+                                value=renderer.value(var="palette.steel-blue"))
+        yield from renderer.set(name="palette.action",
+                                value=renderer.value(var="palette.lavender"))
+        yield from renderer.set(name="palette.attention",
+                                value=renderer.value(var="palette.purple"))
+
         # all done
         return
 
