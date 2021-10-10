@@ -68,6 +68,13 @@ int main(int argc, char* argv[]) {
     auto lambda = eigenvalues(C); 
     assert(lambda[0] * lambda[1] == det(C));
 
+    // definition of eigenvalues/vectors
+    auto eigenvectorMatrix = eigenvectors(C);
+    auto eigenvector0 = col<0>(eigenvectorMatrix);
+    auto eigenvector1 = col<1>(eigenvectorMatrix);
+    assert(C * eigenvector0 == lambda[0] * eigenvector0);
+    assert(C * eigenvector1 == lambda[1] * eigenvector1);
+
     // all done
     return 0;
 }
