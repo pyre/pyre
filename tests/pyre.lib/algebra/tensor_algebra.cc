@@ -81,6 +81,11 @@ int main(int argc, char* argv[]) {
     // Jacobi's theorem (all odd dimension skew symmetric matrices are singular)
     assert(det(skew(A)) == 0.0);
 
+    // Cayley-Hamilton's theorem (a matrix is a solution of its characteristic polynomial) (2D)
+    pyre::algebra::tensor_t<2, 2> M = { 0, 1, 2, 3 };
+    pyre::algebra::tensor_t<2, 2> I = { 1, 0, 0, 1 };
+    assert(M * M - tr(M) * M + det(M) * I == pyre::algebra::tensor_t<2>::zero);
+
     // all done
     return 0;
 }
