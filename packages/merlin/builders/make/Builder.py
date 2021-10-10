@@ -181,6 +181,8 @@ class Builder(BaseBuilder, family="merlin.builders.make"):
         """
         # sign on
         yield ""
+        # basic tokens to eliminate ambiguities and errors
+        yield from self.tokens(renderer, **kwds)
         # setup color support
         yield from self.color(renderer, **kwds)
         # all done
@@ -202,6 +204,7 @@ class Builder(BaseBuilder, family="merlin.builders.make"):
         Set up support for colorized output
         """
         # sign on
+        yield ""
         yield renderer.commentLine("color support")
 
         # sniff the terminal type
@@ -276,18 +279,34 @@ class Builder(BaseBuilder, family="merlin.builders.make"):
         return
 
 
+    def tokens(self, renderer, **kwds):
+        """
+        Simple variables that eliminate ambiguities and errors
+        """
+        # sign on
+        yield ""
+        yield renderer.commentLine("tokens")
+        # simple tokens
+        yield from renderer.set(name="empty")
+        yield from renderer.set(name="comma", value=",")
+        yield from renderer.set(name="space", value="$(empty) $(empty)")
+
+        # characters that don't render easily and make the makefile less readable
+        yield from renderer.set(name="esc", value="\"\x1b\"")
+
+        # all done
+        return
+
+
     # helpers
     def ansiCSI(self, renderer, **kwds):
         """
         Build function that construct the ANSI control sequences
         """
-        # the marker
-        esc = "\x1b"
-
         # build the 3 bit color generator
-        yield from renderer.setq(name="csi3", value=f"\"{esc}[$(1)m\"")
-        yield from renderer.setq(name="csi8", value=f"\"{esc}[$(1);5;$(2)m\"")
-        yield from renderer.setq(name="csi24", value=f"\"{esc}[$(1);2;$(2);$(3);$(4)m\"")
+        yield from renderer.setq(name="csi3", value=f"\"$(esc)[$(1)m\"")
+        yield from renderer.setq(name="csi8", value=f"\"$(esc)[$(1);5;$(2)m\"")
+        yield from renderer.setq(name="csi24", value=f"\"$(esc)[$(1);2;$(2);$(3);$(4)m\"")
 
         # all done
         return
