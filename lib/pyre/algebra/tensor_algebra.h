@@ -6,6 +6,7 @@
 
 #include "Tensor.h"
 #include <cassert>
+#include <cmath>
 
 namespace pyre {
     namespace algebra {
