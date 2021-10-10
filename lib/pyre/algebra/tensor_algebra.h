@@ -239,9 +239,9 @@ namespace pyre {
         }
 
         // matrix-vector multiplication
-        // row-vector product
+        // row-column product
         template <int D1, int D2, typename T, size_t... J>
-        inline T _row_times_vector(
+        inline T _row_times_column(
             const tensor_t<D1, D2, T> & A, const vector_t<D2, T> & x, size_t row,
             std::index_sequence<J...>)
         {
@@ -249,17 +249,17 @@ namespace pyre {
         }
         // matrix-vector product
         template <int D1, int D2, typename T, size_t... J>
-        inline vector_t<D1, T> _matrix_times_vector(
+        inline vector_t<D1, T> _matrix_times_column(
             const tensor_t<D1, D2, T> & A, const vector_t<D2, T> & x, std::index_sequence<J...>)
         {
             vector_t<D1, T> result;
-            ((result[J] = _row_times_vector(A, x, J, std::make_index_sequence<D2> {})), ...);
+            ((result[J] = _row_times_column(A, x, J, std::make_index_sequence<D2> {})), ...);
             return result;
         }
         template <int D1, int D2, typename T>
         inline vector_t<D1, T> operator*(const tensor_t<D1, D2, T> & A, const vector_t<D2, T> & x)
         {
-            return _matrix_times_vector(A, x, std::make_index_sequence<D1> {});
+            return _matrix_times_column(A, x, std::make_index_sequence<D1> {});
         }
 
         // factorial
