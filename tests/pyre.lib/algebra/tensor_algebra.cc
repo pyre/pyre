@@ -75,6 +75,12 @@ int main(int argc, char* argv[]) {
     assert(C * eigenvector0 == lambda[0] * eigenvector0);
     assert(C * eigenvector1 == lambda[1] * eigenvector1);
 
+    // symmetric tensors have zero skew part
+    assert(skew(sym(C)) == pyre::algebra::tensor_t<2>::zero);
+
+    // Jacobi's theorem (all odd dimension skew symmetric matrices are singular)
+    assert(det(skew(A)) == 0.0);
+
     // all done
     return 0;
 }

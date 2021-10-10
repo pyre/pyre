@@ -370,6 +370,18 @@ namespace pyre {
             return AT;
         }
 
+        template <int D, typename T>
+        tensor_t<D, D, T> sym(const tensor_t<D, D, T> & A)
+        {
+            return 0.5 * (A + transpose(A));
+        }
+
+        template <int D, typename T>
+        tensor_t<D, D, T> skew(const tensor_t<D, D, T> & A)
+        {
+            return 0.5 * (A - transpose(A));
+        }
+
         template <typename T>
         vector_t<2, T> eigenvalues(const tensor_t<2, 2, T> & A)
         {
