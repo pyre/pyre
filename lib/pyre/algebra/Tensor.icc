@@ -10,7 +10,7 @@
 #else
 
 template <typename T, int... I>
-pyre::algebra::Tensor<T, I...>::Tensor() : _data()
+pyre::algebra::Tensor<T, I...>::Tensor() : _data(), _layout{{ I... }}
 {
     // initialize memory
     reset();
@@ -24,7 +24,7 @@ pyre::algebra::Tensor<T, I...>::Tensor() : _data()
 }
 
 template <typename T, int... I>
-pyre::algebra::Tensor<T, I...>::Tensor(const data_t & data) : _data(data)
+pyre::algebra::Tensor<T, I...>::Tensor(const data_t & data) : _data(data), _layout{{ I... }}
 {
 
 #ifdef DEVELOP_MODE
@@ -36,7 +36,9 @@ pyre::algebra::Tensor<T, I...>::Tensor(const data_t & data) : _data(data)
 }
 
 template <typename T, int... I>
-pyre::algebra::Tensor<T, I...>::Tensor(const data_t && data) : _data(std::forward(data))
+pyre::algebra::Tensor<T, I...>::Tensor(const data_t && data) :
+    _data(std::forward(data)),
+    _layout{{ I... }}
 {
 
 #ifdef DEVELOP_MODE
@@ -73,14 +75,20 @@ template <typename T, int... I>
 const T &
 pyre::algebra::Tensor<T, I...>::operator[](index_t i) const
 {
-    return _data[i];
+    // get the offset that corresponds to this {index}
+    auto offset = _layout[i];
+    // get and return the value
+    return _data[offset];
 }
 
 template <typename T, int... I>
 T &
 pyre::algebra::Tensor<T, I...>::operator[](index_t i)
 {
-    return _data[i];
+    // get the offset that corresponds to this {index}
+    auto offset = _layout[i];
+    // get and return the value
+    return _data[offset];
 }
 
 template <typename T, int... I>

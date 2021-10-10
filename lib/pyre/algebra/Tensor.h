@@ -121,6 +121,9 @@ public:
     static const Tensor<T, I...> one;
 
 private:
+    // layout
+    const pack_t _layout;
+
     // data
     data_t _data;
 
@@ -188,7 +191,7 @@ std::ostream & _print_row(
 {
     os << "[ ";
     if (sizeof...(J) > 0)
-        _print(os, tensor[row * D2 + J]...);
+        _print(os, tensor[{ row, J }]...);
     os << " ]";
     return os;
 }
