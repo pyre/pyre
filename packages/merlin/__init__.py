@@ -21,6 +21,8 @@ from pyre import (
     executive,
     # shells
     application, plexus,
+    # content mills
+    weaver,
     # flow
     flow,
 )
