@@ -388,6 +388,29 @@ namespace pyre {
                 1.0, 
                 1.0};
         }
+        template <int I, int D1, int D2, typename T>
+        vector_t<D2, T> row(const tensor_t<D1, D2, T> & A)
+        {
+            auto _row = [&A]<size_t... J>(std::index_sequence<J...>) -> vector_t<D2, T>
+            {
+                auto wrap = [&A]<size_t K>()->T { return A[I * D2 + K]; };
+                return vector_t<D2, T>(wrap.template operator()<J>()...);
+            };
+
+            return _row(std::make_index_sequence<D1> {});
+        }
+
+        template <int I, int D1, int D2, typename T>
+        vector_t<D1, T> col(const tensor_t<D1, D2, T> & A)
+        {
+            auto _col = [&A]<size_t... J>(std::index_sequence<J...>) -> vector_t<D1, T>
+            {
+                auto wrap = [&A]<size_t K>()->T { return A[K * D2 + I]; };
+                return vector_t<D1, T>(wrap.template operator()<J>()...);
+            };
+
+            return _col(std::make_index_sequence<D2> {});
+        }
     }
 }
 
