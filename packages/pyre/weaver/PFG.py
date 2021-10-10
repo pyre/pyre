@@ -54,7 +54,7 @@ class PFG(LineMill):
 
     def value(self, value):
         """
-        Renderer a value for a multi-line trait
+        Render a value for a multiline trait
         """
         # easy
         return self.place(value)

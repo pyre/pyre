@@ -79,6 +79,8 @@ class Mill(pyre.component, Indenter, implements=Language):
         # way is to have a subclass do something smart, but some users may want to dump into
         # the file text they have already prepared
         yield from document
+        # all done
+        return
 
 
     @pyre.export
