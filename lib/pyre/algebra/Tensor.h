@@ -154,13 +154,13 @@ using real = double;
 // typedef for scalars
 using scalar_t = real;
 
-// typedef for vectors
-template <int D, typename T = real>
-using vector_t = pyre::algebra::Tensor<T, D>;
-
 // typedef for tensors
 template <int D1, int D2 = D1, typename T = real>
 using tensor_t = pyre::algebra::Tensor<T, D1, D2>;
+
+// typedef for (column) vectors
+template <int D, typename T = real>
+using vector_t = tensor_t<D, 1, T>;
 
 // helper functions for print
 template <typename Arg, typename... Args>
