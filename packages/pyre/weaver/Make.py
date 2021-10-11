@@ -90,6 +90,16 @@ class Make(LineMill):
         return
 
 
+    def literal(self, value):
+        """
+        Render {value} as a literal
+        """
+        # just the value
+        yield value
+        # and done
+        return
+
+
     def set(self, name, value="", multi=[]):
         """
         Set {name} to {value} immediately
