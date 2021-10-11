@@ -149,7 +149,7 @@ class Make(LineMill):
             return
 
         # pull the continuation mark
-        mark = self.continutionMark
+        mark = self.continuationMark
         # prime the multiline assignment
         yield f"{name} {op} {mark}"
         # append the multiline content
@@ -157,7 +157,7 @@ class Make(LineMill):
             # assemble the line
             rvalue = "".join(line)
             # and render it
-            yield f"    {rline} {mark}"
+            yield f"    {rvalue} {mark}"
 
         # all done
         return
