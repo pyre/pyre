@@ -11,6 +11,8 @@ import merlin
 
 # my superclass
 from ..Builder import Builder as BaseBuilder
+# my parts
+from .LibFlow import LibFlow
 
 
 # the manager of intermediate and final build products
@@ -24,6 +26,10 @@ class Builder(BaseBuilder, family="merlin.builders.make"):
     renderer = merlin.weaver.language()
     renderer.default = "make"
     renderer.doc = "the makefile mill"
+
+    libflow = merlin.protocols.libflow()
+    libflow.default = LibFlow
+    libflow.doc = "the library workflow generator"
 
 
     # interface
@@ -167,10 +173,19 @@ class Builder(BaseBuilder, family="merlin.builders.make"):
         yield ""
         yield renderer.commentLine("rules")
 
+        # concretize the asset sequence because we traverse it multiple times
+        assets = tuple(assets)
+
         # collect the names of the assets
         names = ' '.join(asset.pyre_name for asset in assets)
         # make a rule that builds them all
         yield f"all: {names}"
+
+        # now go through them
+        for asset in assets:
+            # and process each one
+            yield from asset.identify(visitor=self, renderer=renderer, **kwds)
+
         # all done
         return
 
@@ -350,17 +365,27 @@ class Builder(BaseBuilder, family="merlin.builders.make"):
         return
 
 
+    def makeColor(self, renderer, name, space, color):
+        """
+        Build the expression that creates a color
+        """
+        # assemble the arguments
+        args = (renderer.literal(value) for value in color)
+        # build and return the expression
+        return renderer.set(name=name, value=renderer.call(func=space, args=args))
+
+
     # asset visitors
-    def library(self, library):
+    def library(self, **kwds):
         """
         Build a {library}
         """
-        # do nothing, for now
-        return
+        # delegate to the {libflow} generator
+        return self.libflow.library(builder=self, **kwds)
 
 
     # constants
-    ansiTerminals = " ".join([ "ansi", "vt100", "vt102", "xterm", "xterm-color", "xterm-256color" ])
+    ansiTerminals = "ansi vt100 vt102 xterm xterm-color xterm-256color"
 
 
 # end of file
