@@ -45,8 +45,8 @@ class LibFlow(merlin.component,
         # the directory rules
         yield from self.directoryRules(renderer=renderer,
                                        library=library, directories=self._directories)
-        # the header rules
-        yield from self.headerRules(renderer=renderer, library=library, headers=self._headers)
+        # the asset rules
+        yield from self.assetRules(renderer=renderer, library=library, **kwds)
 
         # all done
         return
@@ -144,7 +144,7 @@ class LibFlow(merlin.component,
     # helpers
     def directoryRules(self, renderer, library, directories):
         """
-        Create a variable that holds all the exported headers
+        Build the rules that construct the prefix directory layout
         """
         # get the name of the library
         name = library.pyre_name
@@ -178,26 +178,45 @@ class LibFlow(merlin.component,
         # and the rules that build the individual directories
         # build the rules
         for dir in directories:
-            # tag the file
-            tag = root / dir.path
             # compute its destination
             dst = destination / dir.path
+            # tag the directory
+            tag = f"/prefix/include/{dst.relativeTo(include)}"
             # sign on
             yield ""
             yield renderer.commentLine(f"make {tag}")
             # the dependency line
-            yield f"{dst}: {dst.parent}"
+            yield f"{dst}: | {dst.parent}"
             # log
             yield f"\t@echo [mkdir] {tag}"
             # the rule
             yield f"\t@mkdir -p $@"
 
+        # all done
+        return
+
+
+    def assetRules(self, renderer, library, **kwds):
+        """
+        Build the rules that build {library} assets
+        """
+        # get the name of the library
+        name = library.pyre_name
+
+        # sign on
+        yield ""
+        yield renderer.commentLine(f"rules for the {name} assets")
+        yield f"{name}.assets: {name}.headers"
+
+        # build the header rules
+        yield from self.headerRules(renderer=renderer, library=library, headers=self._headers)
+        # build the object rules
+        yield from self.objectRules(renderer=renderer, library=library, sources=self._sources)
 
         # all done
         return
 
 
-        # all exported headers are anchored at
     def headerRules(self, renderer, library, headers):
         """
         Create a variable that holds all the exported headers
@@ -260,7 +279,7 @@ class LibFlow(merlin.component,
             yield ""
             yield renderer.commentLine(f"publish {tag}")
             # the dependency line
-            yield f"{gatewayDst}: {gatewaySrc} {gatewayDir}"
+            yield f"{gatewayDst}: {gatewaySrc} | {gatewayDir}"
             # log
             yield f"\t@echo [cp] {tag}"
             # the rule
@@ -279,7 +298,7 @@ class LibFlow(merlin.component,
         yield from renderer.set(name=f"{name}.exported",
                                 multi=(str(destination / header.path) for header in regular))
 
-        # make rules to export the regular haders
+        # make rules to export the regular headers
         yield ""
         yield renderer.commentLine(f"export the {name} headers")
         yield f"{name}.headers: {name}.directories ${{{name}.gateway}} ${{{name}.exported}}"
@@ -297,6 +316,23 @@ class LibFlow(merlin.component,
             yield f"\t@echo [cp] {tag}"
             # the rule
             yield f"\t@cp $< $@"
+
+        # all done
+        return
+
+
+    def objectRules(self, renderer, library, sources):
+        """
+        Build the set of rules that compile the {library} {sources}
+        """
+        # get the name of the library
+        name = library.pyre_name
+        # its root
+        root = library.root
+
+        # sign on
+        yield ""
+        yield renderer.commentLine(f"compile the {name} sources")
 
         # all done
         return
