@@ -24,32 +24,41 @@ class LibFlow(merlin.component,
         """
         Generate the workflow that builds a {library}
         """
-        # get the name of the library
-        name = library.pyre_name
+        # initialize my asset piles
+        self._directories = []
+        self._headers = []
+        self._sources = []
 
+        # go through the assets of the library
+        for asset in library.assets():
+            # and add each one to the correct pile
+            asset.identify(visitor=self, renderer=renderer, library=library, **kwds)
+
+        # now, get the name of the library
+        name = library.pyre_name
         # sign on
         yield ""
         yield renderer.commentLine(f"building {name}")
 
         # make the anchor rule
-        yield f"{name}: {name}.headers {name}.archive"
+        yield f"{name}: {name}.directories {name}.assets"
+        # the directory rules
+        yield from self.directoryRules(renderer=renderer,
+                                       library=library, directories=self._directories)
+        # the header rules
+        yield from self.headerRules(renderer=renderer, library=library, headers=self._headers)
 
-        # all done
-        return
-        # show me
-        # go through the assets of the library
-        for asset in library.assets():
-            # and add each one to the build pile
-            asset.identify(visitor=self, library=library, **kwds)
         # all done
         return
 
 
     @merlin.export
-    def directory(self, builder, library, directory, **kwds):
+    def directory(self, directory, **kwds):
         """
         Handle a source {directory}
         """
+        # add the asset to my directories
+        self._directories.append(directory)
         # all done
         return
 
@@ -69,10 +78,12 @@ class LibFlow(merlin.component,
 
     # asset category handlers
     @merlin.export
-    def header(self, builder, library, file, **kwds):
+    def header(self, file, **kwds):
         """
         Handle a {file} asset
         """
+        # add the asset to my headers
+        self._headers.append(file)
         # all done
         return
 
@@ -82,10 +93,8 @@ class LibFlow(merlin.component,
         """
         Handle a {file} asset
         """
-        # get the language
-        language = file.language
-        # and ask it to identify itself
-        language.identify(visitor=self, file=file, **kwds)
+        # add the asset to my sources
+        self._sources.append(file)
         # all done
         return
 
@@ -114,6 +123,181 @@ class LibFlow(merlin.component,
         """
         Handle a source file from an unsupported language
         """
+        # all done
+        return
+
+
+    # metamethods
+    def __init__(self, **kwds):
+        # chain up
+        super().__init__(**kwds)
+
+        # initialize my containers
+        self._directories = []
+        self._headers = []
+        self._sources = []
+
+        # all done
+        return
+
+
+    # helpers
+    def directoryRules(self, renderer, library, directories):
+        """
+        Create a variable that holds all the exported headers
+        """
+        # get the name of the library
+        name = library.pyre_name
+        # its root
+        root = library.root
+        # the special scope, if any
+        scope = library.scope
+
+        # all exported headers are anchored at
+        include = self.pyre_fileserver["/prefix/include"].uri
+
+        # if the headers are being placed in a special scope
+        if scope:
+            # the destination includes the scope
+            destination = include / scope / library.name
+        # otherwise
+        else:
+            # no scope, just the library name
+            destination = include / library.name
+
+        yield ""
+        yield renderer.commentLine(f"the directory layout of the {name} headers")
+        yield from renderer.set(name=f"{name}.directories",
+                                multi=(str(destination / dir.path) for dir in directories))
+
+        # build the aggregator rule
+        yield ""
+        yield renderer.commentLine(f"build the directory layout of the {name} headers")
+        yield f"{name}.directories: ${{{name}.directories}}"
+
+        # and the rules that build the individual directories
+        # build the rules
+        for dir in directories:
+            # tag the file
+            tag = root / dir.path
+            # compute its destination
+            dst = destination / dir.path
+            # sign on
+            yield ""
+            yield renderer.commentLine(f"make {tag}")
+            # the dependency line
+            yield f"{dst}: {dst.parent}"
+            # log
+            yield f"\t@echo [mkdir] {tag}"
+            # the rule
+            yield f"\t@mkdir -p $@"
+
+
+        # all done
+        return
+
+
+        # all exported headers are anchored at
+    def headerRules(self, renderer, library, headers):
+        """
+        Create a variable that holds all the exported headers
+        """
+        # get the name of the library
+        name = library.pyre_name
+        # its root
+        root = library.root
+        # the special scope, if any
+        scope = library.scope
+        # and the name of the gateway header
+        gateway = library.gateway
+
+        # all exported headers are anchored at
+        include = self.pyre_fileserver["/prefix/include"].uri
+
+        # if the headers are being placed in a special scope
+        if scope:
+            # the destination includes the scope
+            destination = include / scope / library.name
+        # otherwise
+        else:
+            # no scope, just the library name
+            destination = include / library.name
+
+        # in order to exclude the gateway
+        if gateway:
+            # build a sieve
+            sieve = lambda x: x.path != gateway
+        # and if there isn't one
+        else:
+            # make it trivial
+            sieve = None
+        # build the sequence of regular headers
+        regular = tuple(filter(sieve, headers))
+
+        # build the variable that holds the regular headers
+        # yield ""
+        # yield renderer.commentLine(f"the set of {name} headers in the source directories")
+        # park the full set of headers in a variable
+        # yield from renderer.set(name=f"{name}.headers",
+                           # multi=(str(header.node.uri) for header in headers))
+
+        # if there is a gateway header
+        if gateway:
+            # make a tag for it
+            tag = root / gateway
+            # form its location in the source
+            gatewaySrc = self.pyre_fileserver["/workspace"].uri / root / gateway
+            # its containing folder
+            gatewayDir = include / scope
+            # and its location in the prefix
+            gatewayDst = gatewayDir / gateway
+
+            # build the associated variable
+            yield ""
+            yield renderer.commentLine(f"the {name} gateway header")
+            yield from renderer.set(name=f"{name}.gateway", value=str(gatewayDst))
+            # and the rule that copies it
+            yield ""
+            yield renderer.commentLine(f"publish {tag}")
+            # the dependency line
+            yield f"{gatewayDst}: {gatewaySrc} {gatewayDir}"
+            # log
+            yield f"\t@echo [cp] {tag}"
+            # the rule
+            yield f"\t@cp $< $@"
+        # otherwise
+        else:
+            # null the variable so it's not uninitialized
+            yield ""
+            yield renderer.commentLine(f"{name} doesn't have a gateway header")
+            yield from renderer.set(name=f"{name}.gateway", value="")
+
+        # build the variable that holds the exported headers
+        yield ""
+        yield renderer.commentLine(f"the set of {name} exported headers")
+        # make the pile
+        yield from renderer.set(name=f"{name}.exported",
+                                multi=(str(destination / header.path) for header in regular))
+
+        # make rules to export the regular haders
+        yield ""
+        yield renderer.commentLine(f"export the {name} headers")
+        yield f"{name}.headers: {name}.directories ${{{name}.gateway}} ${{{name}.exported}}"
+
+        # build the rules that publish individual headers
+        for header in regular:
+            # tag the file
+            tag = root / header.path
+            # sign on
+            yield ""
+            yield renderer.commentLine(f"publish {tag}")
+            # the dependency line
+            yield f"{destination / header.path}: {header.node.uri} {destination}"
+            # log
+            yield f"\t@echo [cp] {tag}"
+            # the rule
+            yield f"\t@cp $< $@"
+
         # all done
         return
 
