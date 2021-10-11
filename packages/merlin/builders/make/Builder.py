@@ -181,13 +181,13 @@ class Builder(BaseBuilder, family="merlin.builders.make"):
         # make a rule that builds them all
         yield f"all: {names}"
 
-        # set up the {/prefix} directory layout
-        yield from self.prefixRules(renderer=renderer, assets=assets, **kwds)
-
         # now go through them
         for asset in assets:
             # and process each one
             yield from asset.identify(visitor=self, renderer=renderer, **kwds)
+
+        # set up the {/prefix} directory layout
+        yield from self.prefixRules(renderer=renderer, assets=assets, **kwds)
 
         # all done
         return
