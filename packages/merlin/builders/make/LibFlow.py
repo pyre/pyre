@@ -154,7 +154,7 @@ class LibFlow(merlin.component,
         scope = library.scope
 
         # all exported headers are anchored at
-        include = self.pyre_fileserver["/prefix/include"].uri
+        include = self.pyre_fileserver["/prefix"].uri / "include"
 
         # if the headers are being placed in a special scope
         if scope:
@@ -231,7 +231,7 @@ class LibFlow(merlin.component,
         gateway = library.gateway
 
         # all exported headers are anchored at
-        include = self.pyre_fileserver["/prefix/include"].uri
+        include = self.pyre_fileserver["/prefix"].uri / "include"
 
         # if the headers are being placed in a special scope
         if scope:
