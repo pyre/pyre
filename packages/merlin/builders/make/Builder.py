@@ -181,10 +181,53 @@ class Builder(BaseBuilder, family="merlin.builders.make"):
         # make a rule that builds them all
         yield f"all: {names}"
 
+        # set up the {/prefix} directory layout
+        yield from self.prefixRules(renderer=renderer, assets=assets, **kwds)
+
         # now go through them
         for asset in assets:
             # and process each one
             yield from asset.identify(visitor=self, renderer=renderer, **kwds)
+
+        # all done
+        return
+
+
+    def prefixRules(self, renderer, **kwds):
+        """
+        Build rules that generate the {/prefix} directory structure
+        """
+        # build the canonical location for the prefix
+        prefixPath = merlin.primitives.path("/prefix")
+        # and get the actual node
+        prefix = self.pyre_fileserver[prefixPath]
+
+        # sign on
+        yield ""
+        yield renderer.commentLine(f"/prefix directory layout")
+
+        # grab my layout
+        layout = self.layout
+        # its entire configurable state is supposed to be subdirectories of {/prefix}, so
+        # go through it
+        for trait in layout.pyre_configurables():
+            # the trait name specifies the mount point in the virtual filesystem
+            name = trait.name
+            # and its value is the path under {/prefix} in the physical filesystem
+            relpath, _ = layout.pyre_getTrait(alias=name)
+            # build its physical path
+            path = prefix.uri / relpath
+            # and project it to its canonical location to make a tag
+            tag = prefixPath / relpath
+            # sign on
+            yield ""
+            yield renderer.commentLine(f"make {tag}")
+            # the dependency line
+            yield f"{path}:"
+            # log
+            yield f"\t@echo [mkdir] {tag}"
+            # the rule
+            yield f"\t@mkdir -p $@"
 
         # all done
         return
