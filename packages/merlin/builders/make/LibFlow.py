@@ -165,7 +165,7 @@ class LibFlow(merlin.component,
 
         # set up the generator of the target directories
         def targets():
-            # now, go through the directories
+            # go through the directories
             for dir in directories:
                 # build the path
                 target = destination / dir.path
@@ -215,12 +215,12 @@ class LibFlow(merlin.component,
         # sign on
         yield ""
         yield renderer.commentLine(f"rules for the {name} assets")
-        yield f"{name}.assets: {name}.headers"
+        yield f"{name}.assets: {name}.headers {name}.archive"
 
         # build the header rules
         yield from self.headerRules(renderer=renderer, library=library, headers=self._headers)
         # build the object rules
-        yield from self.objectRules(renderer=renderer, library=library, sources=self._sources)
+        yield from self.archiveRules(renderer=renderer, library=library, sources=self._sources)
 
         # all done
         return
@@ -330,7 +330,7 @@ class LibFlow(merlin.component,
         return
 
 
-    def objectRules(self, renderer, library, sources):
+    def archiveRules(self, renderer, library, sources):
         """
         Build the set of rules that compile the {library} {sources}
         """
@@ -339,12 +339,45 @@ class LibFlow(merlin.component,
         # its root
         root = library.root
 
+        # the home of the object modules
+        stage = merlin.primitives.path("${stage}") / {name}
+
+        # sign on
+        yield ""
+        yield renderer.commentLine(f"make the {name} archive")
+        # make the rule
+        yield f"{name}.archive: {name}.objects"
+
+        # build a variable to hold the archive objects
+        yield ""
+        yield renderer.commentLine("the set of {name} objects")
+        # build the assignment
+        yield from renderer.set(name=f"{name}.objects",
+                                multi=(self.objectPath(stage=stage, source=source)
+                                       for source in sources))
+
         # sign on
         yield ""
         yield renderer.commentLine(f"compile the {name} sources")
+        # make the rule
+        yield f"{name}.objects: ${{{name}.objects}}"
 
         # all done
         return
+
+
+    def objectPath(self, stage, source):
+        """
+        Build the symbolic path to an object module
+        """
+        # replace the suffix from the source filename with the object suffix
+        stem = source.path.withSuffix(suffix=".o")
+        # hash it
+        hash = "~".join(stem)
+        # make it an absolute path
+        objpath = stage / hash
+        # and make it available
+        return f"{objpath}"
 
 
 # end of file
