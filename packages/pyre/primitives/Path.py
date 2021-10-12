@@ -318,8 +318,6 @@ class Path(tuple):
         if suffix and (not suffix.startswith('.') or self._SEP in suffix):
             # complain
             raise ValueError(f"invalid suffix '{suffix}'")
-        # get my name
-        name = self.name
         # get my suffix
         mine = self.suffix
         # and my stem
