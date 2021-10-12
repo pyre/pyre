@@ -169,14 +169,24 @@ class Builder(BaseBuilder, family="merlin.builders.make"):
         # mark
         yield renderer.commentLine(stamp)
 
-        # specify the directory layout of the workspace
+        # record the directory layout of the {/workspace}
         # get the node
         ws = self.pyre_fileserver["/workspace"]
+        # sign on
         yield ""
         yield renderer.commentLine("workspace layout")
+        # save the value
         yield from renderer.set(name="ws", value=f"{ws.uri}")
 
-        # specify the directory layout of the prefix
+        # record the location of the {/stage}
+        # get the node
+        stage = self.pyre_fileserver["/stage"]
+        yield ""
+        yield renderer.commentLine("stage layout")
+        # save the value
+        yield from renderer.set(name="stage", value=f"{stage.uri}")
+
+        # specify the directory layout of the {/prefix}
         yield ""
         yield renderer.commentLine("prefix layout")
         # get my layout
