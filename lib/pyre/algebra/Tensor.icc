@@ -181,6 +181,20 @@ constexpr pyre::algebra::Tensor<T, I...> pyre::algebra::Tensor<T, I...>::_make_o
     return pyre::algebra::Tensor<T, I...>(wrap.template operator()<J>()...);
 }
 
+template <typename T, int... I>
+template <pyre::algebra::Tensor<T, I...>::index_t K, size_t... J>
+constexpr pyre::algebra::Tensor<T, I...> pyre::algebra::Tensor<T, I...>::_make_basis_element(
+    std::index_sequence<J...>)
+{
+    using index_t = pyre::algebra::Tensor<T, I...>::index_t;
+    constexpr auto delta = []<size_t JJ>(size_t offset) consteval->T 
+    { 
+        if (JJ == offset) return 1; 
+        return 0; 
+    };
+    return pyre::algebra::Tensor<T, I...>(delta.template operator()<J>(_layout[K])...);
+}
+
 #endif
 
 // end of file

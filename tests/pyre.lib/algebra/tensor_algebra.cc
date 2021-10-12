@@ -89,6 +89,23 @@ int main(int argc, char* argv[]) {
     static_assert(pyre::algebra::tensor_t<2>::zero == pyre::algebra::tensor_t<2>::zero);
     static_assert(M == M);
 
+    constexpr pyre::algebra::tensor_t<2> unit00 = pyre::algebra::tensor_t<2>::unit<{0, 0}>;
+    constexpr pyre::algebra::tensor_t<2> unit01 = pyre::algebra::tensor_t<2>::unit<{0, 1}>;
+    constexpr pyre::algebra::tensor_t<2> unit10 = pyre::algebra::tensor_t<2>::unit<{1, 0}>;
+    constexpr pyre::algebra::tensor_t<2> unit11 = pyre::algebra::tensor_t<2>::unit<{1, 1}>;
+    static_assert(unit00 == pyre::algebra::tensor_t<2>{1, 0, 0, 0});
+    static_assert(unit01 == pyre::algebra::tensor_t<2>{0, 1, 0, 0});
+    static_assert(unit10 == pyre::algebra::tensor_t<2>{0, 0, 1, 0});
+    static_assert(unit11 == pyre::algebra::tensor_t<2>{0, 0, 0, 1});
+    static_assert(unit00 + unit01 + unit10 + unit11 == pyre::algebra::tensor_t<2>::one);
+
+    constexpr pyre::algebra::vector_t<3> unit0 = pyre::algebra::vector_t<3>::unit<{0, 0}>;
+    constexpr pyre::algebra::vector_t<3> unit1 = pyre::algebra::vector_t<3>::unit<{1, 0}>;
+    constexpr pyre::algebra::vector_t<3> unit2 = pyre::algebra::vector_t<3>::unit<{2, 0}>;
+    static_assert(unit0 == pyre::algebra::vector_t<3>{1, 0, 0});
+    static_assert(unit1 == pyre::algebra::vector_t<3>{0, 1, 0});
+    static_assert(unit2 == pyre::algebra::vector_t<3>{0, 0, 1});
+
     // all done
     return 0;
 }

@@ -113,6 +113,10 @@ private:
     template <size_t... J>
     static constexpr pyre::algebra::Tensor<T, I...> _make_ones(std::index_sequence<J...>);
 
+    // helper function to build a tensor of zeros with a 1 at index K
+    template <index_t K, size_t... J>
+    static constexpr pyre::algebra::Tensor<T, I...> _make_basis_element(std::index_sequence<J...>);
+
 public:
     // the zero element
     static constexpr Tensor<T, I...> zero = pyre::algebra::Tensor<T, I...>::_make_zeros(
@@ -120,6 +124,10 @@ public:
 
     // a tensor of ones
     static constexpr Tensor<T, I...> one = pyre::algebra::Tensor<T, I...>::_make_ones(
+        std::make_index_sequence<pyre::algebra::Tensor<T, I...>::size> {});
+
+    template<index_t K>
+    static constexpr Tensor<T, I...> unit = pyre::algebra::Tensor<T, I...>::_make_basis_element<K>(
         std::make_index_sequence<pyre::algebra::Tensor<T, I...>::size> {});
 
 private:
