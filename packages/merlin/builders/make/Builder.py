@@ -79,6 +79,15 @@ class Builder(BaseBuilder, family="merlin.builders.make"):
         return
 
 
+    # asset visitors
+    def library(self, **kwds):
+        """
+        Build a {library}
+        """
+        # delegate to the {libflow} generator
+        return self.libflow.library(builder=self, **kwds)
+
+
     # implementation details
     def setupStage(self, vfs, abi):
         """
@@ -159,7 +168,30 @@ class Builder(BaseBuilder, family="merlin.builders.make"):
         stamp = f"generated on {datetime.datetime.now().isoformat()}"
         # mark
         yield renderer.commentLine(stamp)
+
+        # specify the directory layout of the workspace
+        # get the node
+        ws = self.pyre_fileserver["/workspace"]
         yield ""
+        yield renderer.commentLine("workspace layout")
+        yield from renderer.set(name="ws", value=f"{ws.uri}")
+
+        # specify the directory layout of the prefix
+        yield ""
+        yield renderer.commentLine("prefix layout")
+        # get my layout
+        layout = self.layout
+        # get the root of the prefix tree
+        prefix = self.pyre_fileserver["/prefix"]
+        yield from renderer.set(name="prefix", value=f"{prefix.uri}")
+        # go through my layout
+        for trait in layout.pyre_configurables():
+            # the trait name specifies the mount point in the virtual filesystem
+            name = trait.name
+            # and its value is the path under {/prefix} in the physical filesystem
+            relpath, _ = layout.pyre_getTrait(alias=name)
+            # generate the assignment
+            yield from renderer.set(name=f"prefix.{name}", value=f"${{prefix}}/{relpath}")
 
         # all done
         return
@@ -416,15 +448,6 @@ class Builder(BaseBuilder, family="merlin.builders.make"):
         args = (renderer.literal(value) for value in color)
         # build and return the expression
         return renderer.set(name=name, value=renderer.call(func=space, args=args))
-
-
-    # asset visitors
-    def library(self, **kwds):
-        """
-        Build a {library}
-        """
-        # delegate to the {libflow} generator
-        return self.libflow.library(builder=self, **kwds)
 
 
     # constants
