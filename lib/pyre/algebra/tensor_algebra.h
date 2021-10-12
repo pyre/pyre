@@ -13,7 +13,7 @@ namespace pyre {
 
         // helper function
         template <typename T, int... I, size_t... J>
-        bool operatorEqualEqual(
+        constexpr bool operatorEqualEqual(
             std::index_sequence<J...>, const Tensor<T, I...> & lhs,
             const Tensor<T, I...> & rhs)
         {
@@ -23,7 +23,7 @@ namespace pyre {
         }
 
         template <typename T, int... I>
-        inline bool operator==(const Tensor<T, I...> & lhs, const Tensor<T, I...> & rhs)
+        constexpr inline bool operator==(const Tensor<T, I...> & lhs, const Tensor<T, I...> & rhs)
         {
             constexpr int D = Tensor<T, I...>::size;
             // all done

@@ -7,7 +7,7 @@
 #if !defined(pyre_algebra_Tensor_h)
 #define pyre_algebra_Tensor_h
 
-#define DEVELOP_MODE
+//#define DEVELOP_MODE
 
 // TOFIX
 #include "../grid.h"
@@ -18,7 +18,7 @@ namespace algebra {
 template <typename T, int... I>
 class Tensor {
 private:
-    // number of indices of the tensor (N = 0 for empty parameter pack, i.e. scalar)
+    // number of indices of the tensor, i.e. rank (N = 0 for empty parameter pack, i.e. scalar)
     static constexpr int N = sizeof...(I);
     // number of total entries of the tensor (S = 1 for empty parameter pack, i.e. scalar)
     static constexpr int S = (I * ...);
@@ -44,66 +44,66 @@ public:
 
 public:
     // default constructor
-    inline Tensor();
+    constexpr inline Tensor();
 
     // constructor with underlying data type
-    inline Tensor(const data_t &);
+    constexpr inline Tensor(const data_t &);
 
     // constructor with underlying data type (need this for return value optimization)
-    inline Tensor(const data_t &&);
+    constexpr inline Tensor(const data_t &&);
 
     // constructor from brace-enclosed initializer list
     template <class... T2>
-    Tensor(T2...) requires(sizeof...(T2) == S);
+    constexpr Tensor(T2...) requires(sizeof...(T2) == S);
 
     // copy constructor
-    Tensor(const Tensor &) = default;
+    constexpr Tensor(const Tensor &) = default;
 
     // move constructor
-    Tensor(Tensor &&) = default;
+    constexpr Tensor(Tensor &&) = default;
 
     // copy assignment operator
-    Tensor & operator=(const Tensor &) = default;
+    constexpr Tensor & operator=(const Tensor &) = default;
 
     // move assignment operator
-    Tensor & operator=(Tensor &&) = default;
+    constexpr Tensor & operator=(Tensor &&) = default;
 
     // destructor
-    inline ~Tensor();
+    constexpr inline ~Tensor();
 
 public:
     // components accessors with index
-    inline const T & operator[](index_t) const;
-    inline T & operator[](index_t);
+    constexpr inline const T & operator[](index_t) const;
+    constexpr inline T & operator[](index_t);
 
     // components accessors with integers
-    inline const T & operator[](int) const;
-    inline T & operator[](int);
+    constexpr inline const T & operator[](int) const;
+    constexpr inline T & operator[](int);
 
     // operator plus equal
-    inline void operator+=(const Tensor<T, I...> &);
+    constexpr inline void operator+=(const Tensor<T, I...> &);
 
     // cast to underlying type T (enable if S = 1, i.e. scalar)
-    operator T() const requires(S == 1);
+    constexpr operator T() const requires(S == 1);
 
     // cast to underlying data structure
-    operator data_t() const;
+    constexpr operator data_t() const;
 
     // reset all entries to zero
-    inline void reset();
+    constexpr inline void reset();
 
 private:
     // helper function for index sequence
     template <size_t... J, class... T2>
-    void _initialize(std::index_sequence<J...>, T2...);
+    constexpr void _initialize(std::index_sequence<J...>, T2...);
 
     // helper function for index sequence
     template <size_t... J>
-    void _reset(std::index_sequence<J...>);
+    constexpr void _reset(std::index_sequence<J...>);
 
     // helper function for index sequence
     template <size_t... J>
-    void _operatorPlusEqual(std::index_sequence<J...>, const Tensor<T, I...> &);
+    constexpr void _operatorPlusEqual(std::index_sequence<J...>, const Tensor<T, I...> &);
 
     // helper function to build the zero tensor
     template <size_t... J>
@@ -115,10 +115,12 @@ private:
 
 public:
     // the zero element
-    static const Tensor<T, I...> zero;
+    static constexpr Tensor<T, I...> zero = pyre::algebra::Tensor<T, I...>::_make_zeros(
+        std::make_index_sequence<pyre::algebra::Tensor<T, I...>::size> {});
 
     // a tensor of ones
-    static const Tensor<T, I...> one;
+    static constexpr Tensor<T, I...> one = pyre::algebra::Tensor<T, I...>::_make_ones(
+        std::make_index_sequence<pyre::algebra::Tensor<T, I...>::size> {});
 
 private:
     // layout
@@ -140,16 +142,6 @@ int pyre::algebra::Tensor<T, I...>::_constructor_calls = 0;
 template <typename T, int... I>
 int pyre::algebra::Tensor<T, I...>::_destructor_calls = 0;
 #endif    // DEVELOP_MODE
-
-template <typename T, int... I>
-const pyre::algebra::Tensor<T, I...> pyre::algebra::Tensor<T, I...>::zero =
-    pyre::algebra::Tensor<T, I...>::_make_zeros(
-        std::make_index_sequence<pyre::algebra::Tensor<T, I...>::size> {});
-
-template <typename T, int... I>
-const pyre::algebra::Tensor<T, I...> pyre::algebra::Tensor<T, I...>::one =
-    pyre::algebra::Tensor<T, I...>::_make_ones(
-        std::make_index_sequence<pyre::algebra::Tensor<T, I...>::size> {});
 
 // typedef for real values
 using real = double;

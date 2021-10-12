@@ -18,7 +18,7 @@ int main(int argc, char* argv[]) {
     pyre::algebra::vector_t<2> vector1 = { 0.0, 0.0 };
     assert(vector1 == vector1);
 
-    pyre::algebra::vector_t<2> vector2 = { 1.0, 2.0 };
+    constexpr pyre::algebra::vector_t<2> vector2 = { 1.0, 2.0 };
     vector1 += vector2;
     assert(vector1 + vector2 == 2.0 * vector2);
     assert(vector2 - vector1 == 2.0 * (vector2 - vector1));
@@ -26,25 +26,25 @@ int main(int argc, char* argv[]) {
     assert(pyre::algebra::vector_t<2>::zero
         == pyre::algebra::vector_t<2>::one - pyre::algebra::vector_t<2>::one);
 
-    pyre::algebra::scalar_t a = 1.0;
+    constexpr pyre::algebra::scalar_t a = 1.0;
     assert(vector2 * a == vector2);
     assert(vector2 * (-a) == -vector2);
     assert((-a) * vector2 == -vector2);
     assert(vector2 / a == vector2);
     assert(vector2 / (-a) == -vector2);
 
-    pyre::algebra::vector_t<3> vector3 = { 1, 0, 0 };
-    pyre::algebra::vector_t<3> vector4 = { 0, 1, 0 };
+    constexpr pyre::algebra::vector_t<3> vector3 = { 1, 0, 0 };
+    constexpr pyre::algebra::vector_t<3> vector4 = { 0, 1, 0 };
     assert(transpose(vector3) * vector4 == 0.0);
 
-    pyre::algebra::scalar_t b(1.0);
+    constexpr pyre::algebra::scalar_t b(1.0);
     assert(2 * b == b + 1);
 
     // TODO: Add tests for all algebraic operators
 
-    // Matrix-vector product
-    pyre::algebra::tensor_t<3, 3> A = { 0, 1, 2, 3, 4, 5, 6, 7, 8 };
-    pyre::algebra::vector_t<3> x = { 1, 1, 1 };
+    // Matrix-vector product // TODO: { {0, 1, 2}, {3, 4, 5}, {6, 7, 8} }
+    constexpr pyre::algebra::tensor_t<3, 3> A = { 0, 1, 2, 3, 4, 5, 6, 7, 8 };
+    constexpr pyre::algebra::vector_t<3> x = { 1, 1, 1 };
     pyre::algebra::vector_t<3> y = a * A * x;
     assert((y == a * pyre::algebra::vector_t<3> { 3, 12, 21 }));
 
@@ -82,9 +82,12 @@ int main(int argc, char* argv[]) {
     assert(det(skew(A)) == 0.0);
 
     // Cayley-Hamilton's theorem (a matrix is a solution of its characteristic polynomial) (2D)
-    pyre::algebra::tensor_t<2, 2> M = { 0, 1, 2, 3 };
-    pyre::algebra::tensor_t<2, 2> I = { 1, 0, 0, 1 };
+    constexpr pyre::algebra::tensor_t<2, 2> M = {0, 1, 2, 3};
+    constexpr pyre::algebra::tensor_t<2, 2> I = { 1, 0, 0, 1 };
     assert(M * M - tr(M) * M + det(M) * I == pyre::algebra::tensor_t<2>::zero);
+
+    static_assert(pyre::algebra::tensor_t<2>::zero == pyre::algebra::tensor_t<2>::zero);
+    static_assert(M == M);
 
     // all done
     return 0;
