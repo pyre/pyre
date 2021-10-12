@@ -153,8 +153,8 @@ class LibFlow(merlin.component,
         # the special scope, if any
         scope = library.scope
 
-        # all exported headers are anchored at
-        include = self.pyre_fileserver["/prefix"].uri / "include"
+        # the common prefix for include diretories is stored in a variable
+        include = merlin.primitives.path("${prefix.include}")
 
         # if the headers are being placed in a special scope
         if scope:
@@ -165,10 +165,21 @@ class LibFlow(merlin.component,
             # no scope, just the library name
             destination = include / library.name
 
+        # set up the generator of the target directories
+        def targets():
+            # now, go through the directories
+            for dir in directories:
+                # build the path
+                target = destination / dir.path
+                # and make it available
+                yield str(target)
+            # all done
+            return
+
+        # and render
         yield ""
         yield renderer.commentLine(f"the directory layout of the {name} headers")
-        yield from renderer.set(name=f"{name}.directories",
-                                multi=(str(destination / dir.path) for dir in directories))
+        yield from renderer.set(name=f"{name}.directories", multi=targets())
 
         # build the aggregator rule
         yield ""
