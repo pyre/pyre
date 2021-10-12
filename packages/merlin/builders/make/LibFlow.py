@@ -148,8 +148,6 @@ class LibFlow(merlin.component,
         """
         # get the name of the library
         name = library.pyre_name
-        # its root
-        root = library.root
         # the special scope, if any
         scope = library.scope
 
@@ -242,7 +240,7 @@ class LibFlow(merlin.component,
         gateway = library.gateway
 
         # all exported headers are anchored at
-        include = self.pyre_fileserver["/prefix"].uri / "include"
+        include = merlin.primitives.path("${prefix.include}")
 
         # if the headers are being placed in a special scope
         if scope:
@@ -276,7 +274,7 @@ class LibFlow(merlin.component,
             # make a tag for it
             tag = root / gateway
             # form its location in the source
-            gatewaySrc = self.pyre_fileserver["/workspace"].uri / root / gateway
+            gatewaySrc = "${ws}" / root / gateway
             # its containing folder
             gatewayDir = include / scope
             # and its location in the prefix
@@ -316,15 +314,15 @@ class LibFlow(merlin.component,
 
         # build the rules that publish individual headers
         for header in regular:
-            # tag the file
-            tag = root / header.path
+            # the path to the file relative to the workspace root
+            hpath = root / header.path
             # sign on
             yield ""
-            yield renderer.commentLine(f"publish {tag}")
+            yield renderer.commentLine(f"publish {hpath}")
             # the dependency line
-            yield f"{destination / header.path}: {header.node.uri} {destination}"
+            yield f"{destination / header.path}: ${{ws}}/{hpath} | {destination}"
             # log
-            yield f"\t@echo [cp] {tag}"
+            yield f"\t@echo [cp] {hpath}"
             # the rule
             yield f"\t@cp $< $@"
 
