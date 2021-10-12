@@ -11,23 +11,21 @@
 namespace pyre {
     namespace algebra {
 
-        // helper function
-        template <typename T, int... I, size_t... J>
-        constexpr bool operatorEqualEqual(
-            std::index_sequence<J...>, const Tensor<T, I...> & lhs,
-            const Tensor<T, I...> & rhs)
-        {
-            if (((lhs[J] == rhs[J]) && ...))
-                return true;
-            return false;
-        }
-
         template <typename T, int... I>
         constexpr inline bool operator==(const Tensor<T, I...> & lhs, const Tensor<T, I...> & rhs)
         {
             constexpr int D = Tensor<T, I...>::size;
+
+            // helper function
+            constexpr auto _operatorEqualEqual = []<size_t... J>(std::index_sequence<J...>, 
+                const Tensor<T, I...> & lhs, const Tensor<T, I...> & rhs) {
+                if (((lhs[J] == rhs[J]) && ...))
+                    return true;
+                return false;
+            };
+
             // all done
-            return operatorEqualEqual(std::make_index_sequence<D> {}, lhs, rhs);
+            return _operatorEqualEqual(std::make_index_sequence<D> {}, lhs, rhs);
         }
 
 
