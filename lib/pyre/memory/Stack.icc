@@ -13,7 +13,7 @@
 // metamethods
 // constructor
 template <int D, class T, bool isConst>
-pyre::memory::Stack<D, T, isConst>::
+constexpr pyre::memory::Stack<D, T, isConst>::
 Stack() :
     _data()
 {}
@@ -115,7 +115,7 @@ at(size_type pos) const -> const_reference
 
 
 template <int D, class T, bool isConst>
-auto
+constexpr auto
 pyre::memory::Stack<D, T, isConst>::
 operator [] (size_type pos) -> reference
 {
@@ -125,7 +125,7 @@ operator [] (size_type pos) -> reference
 
 
 template <int D, class T, bool isConst>
-auto
+constexpr auto
 pyre::memory::Stack<D, T, isConst>::
 operator [] (size_type pos) const -> const_reference
 {

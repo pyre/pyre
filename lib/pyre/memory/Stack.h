@@ -37,7 +37,7 @@ public:
     // metamethods
 public:
     // constructor
-    inline Stack();
+    constexpr inline Stack();
 
     // accessors
 public:
@@ -61,8 +61,8 @@ public:
     inline auto at(size_type) -> reference;
     inline auto at(size_type) const -> const_reference;
     // without bounds checking
-    inline auto operator[](size_type) -> reference;
-    inline auto operator[](size_type) const -> const_reference;
+    constexpr inline auto operator[](size_type) -> reference;
+    constexpr inline auto operator[](size_type) const -> const_reference;
 
     // implementation details: data
 private:
@@ -71,7 +71,7 @@ private:
     // default metamethods
 public:
     // destructor
-    ~Stack() = default;
+    constexpr ~Stack() = default;
     // constructors
     Stack(const Stack &) = default;
     Stack(Stack &&) = default;
