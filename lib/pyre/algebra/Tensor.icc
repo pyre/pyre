@@ -10,7 +10,7 @@
 #else
 
 template <typename T, int... I>
-constexpr pyre::algebra::Tensor<T, I...>::Tensor() : _data(), _layout { { I... } }
+constexpr pyre::algebra::Tensor<T, I...>::Tensor() : _data()
 {
     // initialize memory
     reset();
@@ -25,8 +25,7 @@ constexpr pyre::algebra::Tensor<T, I...>::Tensor() : _data(), _layout { { I... }
 
 template <typename T, int... I>
 constexpr pyre::algebra::Tensor<T, I...>::Tensor(const data_t & data) : 
-    _data(data), 
-    _layout{{ I... }}
+    _data(data)
 {
 
 #ifdef DEVELOP_MODE
@@ -39,8 +38,7 @@ constexpr pyre::algebra::Tensor<T, I...>::Tensor(const data_t & data) :
 
 template <typename T, int... I>
 constexpr pyre::algebra::Tensor<T, I...>::Tensor(const data_t && data) :
-    _data(std::forward(data)),
-    _layout { { I... } }
+    _data(std::forward(data))
 {
 
 #ifdef DEVELOP_MODE

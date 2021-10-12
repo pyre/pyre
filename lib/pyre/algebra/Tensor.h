@@ -124,7 +124,7 @@ public:
 
 private:
     // layout
-    const pack_t _layout;
+    static constexpr pack_t _layout {{I ...}};
 
     // data
     data_t _data;
