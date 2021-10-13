@@ -151,7 +151,7 @@ class LibFlow(merlin.component,
         # the special scope, if any
         scope = library.scope
 
-        # the common prefix for include diretories is stored in a variable
+        # the common prefix for include directories is stored in a variable
         include = merlin.primitives.path("${prefix.include}")
 
         # if the headers are being placed in a special scope
@@ -336,11 +336,6 @@ class LibFlow(merlin.component,
         """
         # get the name of the library
         name = library.pyre_name
-        # its root
-        root = library.root
-
-        # the home of the object modules
-        stage = merlin.primitives.path("${stage}") / {name}
 
         # sign on
         yield ""
@@ -353,8 +348,7 @@ class LibFlow(merlin.component,
         yield renderer.commentLine("the set of {name} objects")
         # build the assignment
         yield from renderer.set(name=f"{name}.objects",
-                                multi=(self.objectPath(stage=stage, source=source)
-                                       for source in sources))
+                                multi=self.formObjectPaths(library, sources))
 
         # sign on
         yield ""
@@ -366,18 +360,28 @@ class LibFlow(merlin.component,
         return
 
 
-    def objectPath(self, stage, source):
+    def formObjectPaths(self, library, sources):
         """
         Build the symbolic path to an object module
         """
-        # replace the suffix from the source filename with the object suffix
-        stem = source.path.withSuffix(suffix=".o")
-        # hash it
-        hash = "~".join(stem)
-        # make it an absolute path
-        objpath = stage / hash
-        # and make it available
-        return f"{objpath}"
+        # get the name of the library
+        name = library.pyre_name
+        # the home of the object modules
+        stage = merlin.primitives.path("${stage}") / {name}
+
+        # go through the sources
+        for source in sources:
+            # replace the suffix from the source filename with the object suffix
+            stem = source.path.withSuffix(suffix=".o")
+            # hash it
+            hash = "~".join(stem)
+            # make it an absolute path
+            objpath = stage / hash
+            # and make it available
+            yield f"{objpath}"
+
+        # all done
+        return
 
 
 # end of file
