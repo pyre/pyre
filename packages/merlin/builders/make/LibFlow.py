@@ -329,25 +329,41 @@ class LibFlow(merlin.component,
         """
         # get the name of the library
         name = library.pyre_name
+        # and its root
+        root = library.root
 
         # sign on
         yield ""
         yield renderer.commentLine(f"make the {name} archive")
         # make the rule
         yield f"{name}.archive: {name}.objects"
+        yield f"\t@echo [ar] ${{prefix.lib}}/lib{library.name}.a"
+
+        # make a pile of the names of the object files
+        objects = tuple(self.formObjectPaths(library, sources))
 
         # build a variable to hold the archive objects
         yield ""
         yield renderer.commentLine("the set of {name} objects")
         # build the assignment
-        yield from renderer.set(name=f"{name}.objects",
-                                multi=self.formObjectPaths(library, sources))
+        yield from renderer.set(name=f"{name}.objects", multi=objects)
 
-        # sign on
+        # make the aggregator rule for triggering the compilation
         yield ""
-        yield renderer.commentLine(f"compile the {name} sources")
+        yield renderer.commentLine(f"rule that triggers the compilation of the {name} sources")
         # make the rule
-        yield f"{name}.objects: #${{{name}.objects}}"
+        yield f"{name}.objects: ${{{name}.objects}}"
+
+        # make the set of rules that compile individual sources
+        for src, obj in zip(sources, objects):
+            # form the path to the source
+            srcp = "${ws}" / root / src.path
+            # sign on
+            yield ""
+            yield renderer.commentLine(f"compile {obj} from {srcp}")
+            # make the rule
+            yield f"{obj}: {srcp}"
+            yield f"\t@echo [{src.language.name}] {root / src.path}"
 
         # all done
         return
