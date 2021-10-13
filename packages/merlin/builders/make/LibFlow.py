@@ -191,24 +191,35 @@ class LibFlow(merlin.component,
         """
         Build the rules that build {library} assets
         """
+        # unpack
+        headers = self._headers
+        sources = self._sources
         # get the name of the library
         name = library.pyre_name
 
         # sign on
         yield ""
-        yield renderer.commentLine(f"rules for the {name} assets")
-        yield f"{name}.assets: {name}.headers {name}.archive"
+        yield renderer.commentLine(f"export the {name} headers")
+        yield f"{name}.assets:: {name}.headers"
 
         # build the header rules
-        yield from self.headerRules(renderer=renderer, library=library, headers=self._headers)
-        # build the object rules
-        yield from self.archiveRules(renderer=renderer, library=library, sources=self._sources)
+        yield from self.headerRules(renderer=renderer, library=library, headers=headers, **kwds)
+
+        # if there are sources
+        if sources:
+            # add the archive to the library assets
+            yield ""
+            yield renderer.commentLine(f"make the {name} archive")
+            yield f"{name}.assets:: {name}.archive"
+            # make the rules that build the objects
+            yield from self.archiveRules(renderer=renderer,
+                                         library=library, sources=sources, **kwds)
 
         # all done
         return
 
 
-    def headerRules(self, renderer, library, headers):
+    def headerRules(self, renderer, library, headers, **kwds):
         """
         Create a variable that holds all the exported headers
         """
@@ -312,7 +323,7 @@ class LibFlow(merlin.component,
         return
 
 
-    def archiveRules(self, renderer, library, sources):
+    def archiveRules(self, renderer, library, sources, **kwds):
         """
         Build the set of rules that compile the {library} {sources}
         """
