@@ -41,7 +41,7 @@ class LibFlow(merlin.component,
         yield renderer.commentLine(f"building {name}")
 
         # make the anchor rule
-        yield f"{name}: {name}.directories {name}.assets"
+        yield f"{name}: {name}.assets"
         # the directory rules
         yield from self.directoryRules(renderer=renderer,
                                        library=library, directories=self._directories)
@@ -163,28 +163,10 @@ class LibFlow(merlin.component,
             # no scope, just the library name
             destination = include / library.name
 
-        # set up the generator of the target directories
-        def targets():
-            # go through the directories
-            for dir in directories:
-                # build the path
-                target = destination / dir.path
-                # and make it available
-                yield str(target)
-            # all done
-            return
 
-        # and render
+        # build the rules that build the individual directories
         yield ""
         yield renderer.commentLine(f"the directory layout of the {name} headers")
-        yield from renderer.set(name=f"{name}.directories", multi=targets())
-
-        # build the aggregator rule
-        yield ""
-        yield renderer.commentLine(f"build the directory layout of the {name} headers")
-        yield f"{name}.directories: ${{{name}.directories}}"
-
-        # and the rules that build the individual directories
         # build the rules
         for dir in directories:
             # compute its destination
@@ -307,12 +289,12 @@ class LibFlow(merlin.component,
         yield from renderer.set(name=f"{name}.exported",
                                 multi=(str(destination / header.path) for header in regular))
 
-        # make rules to export the regular headers
+        # make the aggregator rule that exports headers
         yield ""
         yield renderer.commentLine(f"export the {name} headers")
-        yield f"{name}.headers: {name}.directories ${{{name}.gateway}} ${{{name}.exported}}"
+        yield f"{name}.headers: ${{{name}.gateway}} ${{{name}.exported}}"
 
-        # build the rules that publish individual headers
+        # make the rules that publish individual headers
         for header in regular:
             # the path to the file relative to the workspace root
             hpath = root / header.path
@@ -320,7 +302,7 @@ class LibFlow(merlin.component,
             yield ""
             yield renderer.commentLine(f"publish {hpath}")
             # the dependency line
-            yield f"{destination / header.path}: ${{ws}}/{hpath} | {destination}"
+            yield f"{destination/header.path}: ${{ws}}/{hpath} | {destination/header.path.parent}"
             # log
             yield f"\t@echo [cp] {hpath}"
             # the rule
@@ -354,7 +336,7 @@ class LibFlow(merlin.component,
         yield ""
         yield renderer.commentLine(f"compile the {name} sources")
         # make the rule
-        yield f"{name}.objects: ${{{name}.objects}}"
+        yield f"{name}.objects: #${{{name}.objects}}"
 
         # all done
         return
