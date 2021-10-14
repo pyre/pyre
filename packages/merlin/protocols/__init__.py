@@ -27,5 +27,8 @@ from .LibFlow import LibFlow as libflow
 from .Compiler import Compiler as compiler
 from .Language import Language as language
 
+# tools
+from .SCS import SCS as scs
+
 
 # end of file
