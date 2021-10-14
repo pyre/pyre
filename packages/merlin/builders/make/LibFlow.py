@@ -344,7 +344,7 @@ class LibFlow(merlin.component,
 
         # build a variable to hold the archive objects
         yield ""
-        yield renderer.commentLine("the set of {name} objects")
+        yield renderer.commentLine(f"the set of {name} objects")
         # build the assignment
         yield from renderer.set(name=f"{name}.objects", multi=objects)
 
