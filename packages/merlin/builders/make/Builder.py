@@ -93,25 +93,8 @@ class Builder(BaseBuilder, family="merlin.builders.make"):
         """
         # get the root of the virtual filesystem
         vfs = plexus.vfs
-        # get the user's home directory
-        home = self.pyre_user.home
-        # and the workspace path
-        ws = vfs["/workspace"].uri
-        # attempt to
-        try:
-            # project the workspace onto the user's home
-            hash = "~".join(ws.relativeTo(home))
-        # if this fails
-        except ValueError:
-            # just use the trailing part of the workspace
-            hash = ws.name
-
-        # get the active branch name
-        branch = plexus.scs.branch()
-
-        # we will hash the workspace
-        wstag = f"{hash}@{branch}"
-
+        # hash the workspace into a build tag
+        wstag = self.workspaceHash(plexus=plexus)
         # build the stage path
         stage = self.stage / wstag / abi / self.tag
         # force the creation of the directory
