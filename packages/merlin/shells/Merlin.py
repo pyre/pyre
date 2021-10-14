@@ -40,23 +40,10 @@ class Merlin(merlin.plexus, family='merlin.shells.plexus'):
         """
         Go through my traits and force them to materialize
         """
-        # make a marker
-        indent = " " * 2
-        # and a channel
-        channel = journal.debug("merlin.plexus.init")
-        # go through my entire configurable state
-        for trait in self.pyre_configurables():
-            # ask for the value
-            value = getattr(self, trait.name)
-            # show me
-            channel.line(f"{indent*1}{trait.name}: {value}")
-        # flush
-        channel.log()
-
         # give my children their context
         self.builder.merlin_initialized(plexus=self)
 
-        # indicate that nothing is amiss
+        # and indicate that nothing is amiss
         return []
 
 
