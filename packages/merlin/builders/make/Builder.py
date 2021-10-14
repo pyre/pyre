@@ -67,13 +67,11 @@ class Builder(BaseBuilder, family="merlin.builders.make"):
 
         # grab my abi
         abi = self.abi(plexus=plexus)
-        # and the root of the virtual filesystem
-        vfs = plexus.vfs
 
         # prep the stage area
-        self.setupStage(vfs=vfs, abi=abi)
+        self.setupStage(plexus=plexus, abi=abi, **kwds)
         # and the prefix
-        self.setupPrefix(vfs=vfs, abi=abi)
+        self.setupPrefix(plexus=plexus, abi=abi, **kwds)
 
         # all done
         return
@@ -89,10 +87,12 @@ class Builder(BaseBuilder, family="merlin.builders.make"):
 
 
     # implementation details
-    def setupStage(self, vfs, abi):
+    def setupStage(self, plexus, abi, **kwds):
         """
         Set up the staging area for build temporaries
         """
+        # get the root of the virtual filesystem
+        vfs = plexus.vfs
         # get the user's home directory
         home = self.pyre_user.home
         # and the workspace path
@@ -100,17 +100,20 @@ class Builder(BaseBuilder, family="merlin.builders.make"):
         # attempt to
         try:
             # project the workspace onto the user's home
-            rel = ws.relativeTo(home)
+            hash = "~".join(ws.relativeTo(home))
         # if this fails
         except ValueError:
             # just use the trailing part of the workspace
-            rel = [ws.name]
+            hash = ws.name
+
+        # get the active branch name
+        branch = plexus.scs.branch()
 
         # we will hash the workspace
-        wshash = "~".join(rel)
+        wstag = f"{hash}@{branch}"
 
         # build the stage path
-        stage = self.stage / wshash / abi / self.tag
+        stage = self.stage / wstag / abi / self.tag
         # force the creation of the directory
         stage.mkdir(parents=True, exist_ok=True)
         # use it to anchor a local filesystem
@@ -124,11 +127,13 @@ class Builder(BaseBuilder, family="merlin.builders.make"):
         return
 
 
-    def setupPrefix(self, vfs, abi):
+    def setupPrefix(self, plexus, abi, **kwds):
         """
         Set up the installation area
         """
-        # check whether the users wants the ABI folded into the prefix
+        # get the root of the virtual filesystem
+        vfs = plexus.vfs
+        # check whether the user wants the ABI folded into the prefix
         prefix = self.prefix / abi / self.tag if self.tagged else self.prefix
         # force the creation of the actual directory
         prefix.mkdir(parents=True, exist_ok=True)
@@ -138,7 +143,6 @@ class Builder(BaseBuilder, family="merlin.builders.make"):
         prefixPath = merlin.primitives.path("/prefix")
         # and mount the filesystem there
         vfs[prefixPath] = prefixFS
-
         # all done
         return
 
