@@ -33,6 +33,9 @@ class Merlin(merlin.plexus, family='merlin.shells.plexus'):
     projects = merlin.properties.tuple(schema=merlin.protocols.project())
     projects.doc = "the list of projects in the current workspace"
 
+    scs = merlin.protocols.scs()
+    scs.doc = "the source control system"
+
 
     # framework hooks
     # post instantiation hook
@@ -65,8 +68,12 @@ class Merlin(merlin.plexus, family='merlin.shells.plexus'):
         if workspacePath:
             # anchor a filesystem on this path
             ws = vfs.retrieveFilesystem(root=workspacePath)
-            # and grab the metadata directory
+            # grab the metadata directory
             wsmeta = ws[self.METAFOLDER].discover()
+            # and, if necessary
+            if not self.scs:
+                # deduce the source control system
+                self.scs = self.deduceSCS(workspace=ws)
         # otherwise
         else:
             # make an empty folder for both the workspace
@@ -183,6 +190,20 @@ class Merlin(merlin.plexus, family='merlin.shells.plexus'):
         context['merlin'] = merlin  # my package
         # and chain up
         return super().pyre_interactiveSessionContext(context=context)
+
+
+    # helpers
+    def deduceSCS(self, workspace):
+        """
+        Deduce the source control system
+        """
+        # start with the common case by looking for a {.git} directory
+        if ".git" in workspace:
+            # it's git
+            return "git"
+
+        # out of ideas
+        return None
 
 
     # private data
