@@ -132,4 +132,30 @@ class Builder(merlin.component, implements=merlin.protocols.builder):
         return abi
 
 
+    def workspaceHash(self, plexus):
+        """
+        Hash the workspace location and the currently active branch into a build tag
+        """
+        # get the root of the virtual filesystem
+        vfs = plexus.vfs
+        # get the user's home directory
+        home = self.pyre_user.home
+        # and the workspace path
+        ws = vfs["/workspace"].uri
+        # attempt to
+        try:
+            # project the workspace onto the user's home and hash it
+            hash = "~".join(ws.relativeTo(home))
+        # if this fails
+        except ValueError:
+            # just use the trailing part of the workspace
+            hash = ws.name
+        # get the active branch name
+        branch = plexus.scs.branch()
+        # fold it into the branch
+        tag = f"{hash}@{branch}"
+        # and return it
+        return tag
+
+
 # end of file
