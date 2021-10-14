@@ -123,13 +123,11 @@ class Builder(BaseBuilder, family="merlin.builders.flow"):
 
         # grab my abi
         abi = self.abi(plexus=plexus)
-        # and the root of the virtual filesystem
-        vfs = self.pyre_fileserver
 
         # prep the stage area
-        self.setupStage(vfs=vfs, abi=abi)
+        self.setupStage(plexus=plexus, abi=abi)
         # and the prefix
-        self.setupPrefix(vfs=vfs, abi=abi)
+        self.setupPrefix(plexus=plexus, abi=abi)
 
         # all done
         return
@@ -145,7 +143,7 @@ class Builder(BaseBuilder, family="merlin.builders.flow"):
 
 
     # helpers
-    def setupPrefix(self, vfs, abi):
+    def setupPrefix(self, plexus, abi, **kwds):
         """
         Build a workflow that assembles my prefix layout
         """
@@ -155,6 +153,9 @@ class Builder(BaseBuilder, family="merlin.builders.flow"):
         #   structure under prefix
         # - traverse the prefix layout and build/index flows that create the subdirectories
         #   when needed
+
+        # get the root of the virtual filesystem
+        vfs = plexus.vfs
 
         # first, modify the physical filesystem and mount it at its canonical location
         # check whether the users wants the ABI folded into the prefix
@@ -225,14 +226,19 @@ class Builder(BaseBuilder, family="merlin.builders.flow"):
         return
 
 
-    def setupStage(self, vfs, abi):
+    def setupStage(self, plexus, abi, **kwds):
         """
         Build a workflow that creates the staging are for the intermediate build products
         """
+        # get the root of the virtual filesystem
+        vfs = plexus.vfs
+        # hash the workspace into a build tag
+        wstag = self.workspaceHash(plexus=plexus)
+
         # first, we have to create the stage area in the physical filesystem and mount it
         # at its canonical location in the virtual filesystem
         # start by assembling the path to the staging area
-        stage = self.stage / abi / self.tag
+        stage = self.stage / wstag / abi / self.tag
         # force the creation of the directory
         stage.mkdir(parents=True, exist_ok=True)
         # use it to anchor a local filesystem
