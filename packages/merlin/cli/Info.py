@@ -154,7 +154,7 @@ class Info(merlin.shells.command, family='merlin.cli.info'):
         host = self.pyre_host
 
         # unpack
-        platform = host.platform
+        distribution = host.distribution
         release = host.release
         codename = host.codename
         arch = host.cpus.architecture
@@ -163,7 +163,7 @@ class Info(merlin.shells.command, family='merlin.cli.info'):
         # make a channel
         channel = journal.info("merlin.info.platform")
         # report
-        channel.line(f"{indent*0}os: {platform} {release} ({codename})")
+        channel.line(f"{indent*0}os: {distribution} {release} ({codename})")
         channel.line(f"{indent*0}arch: {arch}")
         channel.line(f"{indent*0}tag: {tag}")
         # flush
