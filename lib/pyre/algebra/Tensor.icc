@@ -15,39 +15,16 @@ constexpr pyre::algebra::Tensor<T, I...>::Tensor() : _data()
     // initialize memory
     reset();
 
-#ifdef DEVELOP_MODE
-    ++_constructor_calls;
-#endif    // DEVELOP_MODE
-
     // all done
     return;
 }
 
 template <typename T, int... I>
-constexpr pyre::algebra::Tensor<T, I...>::Tensor(const data_t & data) : 
-    _data(data)
-{
-
-#ifdef DEVELOP_MODE
-    ++_constructor_calls;
-#endif    // DEVELOP_MODE
-
-    // all done
-    return;
-}
+constexpr pyre::algebra::Tensor<T, I...>::Tensor(const data_t & data) : _data(data) {}
 
 template <typename T, int... I>
-constexpr pyre::algebra::Tensor<T, I...>::Tensor(const data_t && data) :
-    _data(std::forward(data))
-{
-
-#ifdef DEVELOP_MODE
-    ++_constructor_calls;
-#endif    // DEVELOP_MODE
-
-    // all done
-    return;
-}
+constexpr pyre::algebra::Tensor<T, I...>::Tensor(const data_t && data) : 
+    _data(std::forward(data)) {}
 
 template <typename T, int... I>
 template <class... T2>
@@ -61,12 +38,7 @@ constexpr pyre::algebra::Tensor<T, I...>::Tensor(T2... args) requires(sizeof...(
 }
 
 template <typename T, int... I>
-constexpr pyre::algebra::Tensor<T, I...>::~Tensor()
-{
-#ifdef DEVELOP_MODE
-    ++_destructor_calls;
-#endif    // DEVELOP_MODE
-}
+constexpr pyre::algebra::Tensor<T, I...>::~Tensor() {}
 
 template <typename T, int... I>
 constexpr const T &
