@@ -207,31 +207,31 @@ namespace pyre {
         // row-column product
         template <int I /* row */, int J /* col */, int D1, int D2, int D3, typename T, size_t... K>
         constexpr inline T _row_times_column(
-            const tensor_t<D1, D2, T> & A1, const tensor_t<D2, D3, T> & A2, 
+            const matrix_t<D1, D2, T> & A1, const matrix_t<D2, D3, T> & A2, 
             std::index_sequence<K...>)
         {
             return ((A1[{ I, K }] * A2[{ K, J }]) + ...);
         }
         template <int I /* row */, int D1, int D2, int D3, typename T, size_t... J>
-        constexpr inline tensor_t<D1, D3, T> _matrix_times_column(
-            const tensor_t<D1, D2, T> & A1, const tensor_t<D2, D3, T> & A2, 
+        constexpr inline matrix_t<D1, D3, T> _matrix_times_column(
+            const matrix_t<D1, D2, T> & A1, const matrix_t<D2, D3, T> & A2, 
             std::index_sequence<J...>)
         {
-            tensor_t<D1, D3, T> result;
+            matrix_t<D1, D3, T> result;
             ((result[{I, J}] = 
                 _row_times_column<I, J>(A1, A2, std::make_index_sequence<D2> {})), ...);
             return result;
         }
         template <int D1, int D2, int D3, typename T, size_t... I>
-        constexpr inline tensor_t<D1, D3, T> _matrix_times_matrix(
-            const tensor_t<D1, D2, T> & A1, const tensor_t<D2, D3, T> & A2, 
+        constexpr inline matrix_t<D1, D3, T> _matrix_times_matrix(
+            const matrix_t<D1, D2, T> & A1, const matrix_t<D2, D3, T> & A2, 
             std::index_sequence<I...>)
         {
             return (_matrix_times_column<I>(A1, A2, std::make_index_sequence<D3> {}) + ... );
         }
         template <int D1, int D2, int D3, typename T>
-        constexpr inline tensor_t<D1, D3, T> operator*(
-            const tensor_t<D1, D2, T> & A1, const tensor_t<D2, D3, T> & A2)
+        constexpr inline matrix_t<D1, D3, T> operator*(
+            const matrix_t<D1, D2, T> & A1, const matrix_t<D2, D3, T> & A2)
         {
             return _matrix_times_matrix(A1, A2, std::make_index_sequence<D1> {});
         }
@@ -249,7 +249,7 @@ namespace pyre {
         }
 
         template <typename T>
-        constexpr T det(const tensor_t<4, 4, T> & A)
+        constexpr T det(const matrix_t<4, 4, T> & A)
         {
             return A[{0, 1}] * A[{2, 3}] * A[{3, 2}] * A[{1, 0}] - A[{0, 1}] * A[{2, 2}] * A[{3, 3}]
                      * A[{1, 0}]
@@ -278,22 +278,22 @@ namespace pyre {
         }
 
         template <typename T>
-        constexpr T det(const tensor_t<3, 3, T> & A)
+        constexpr T det(const matrix_t<3, 3, T> & A)
         {
             return A[{0, 0}] * (A[{1, 1}] * A[{2, 2}] - A[{1, 2}] * A[{2, 1}]) - A[{0, 1}] * (A[{1, 0}] * A[{2, 2}] - A[{1, 2}] * A[{2, 0}])
                  + A[{0, 2}] * (A[{1, 0}] * A[{2, 1}] - A[{1, 1}] * A[{2, 0}]);
         }
 
         template <typename T>
-        constexpr T det(const tensor_t<2, 2, T> & A)
+        constexpr T det(const matrix_t<2, 2, T> & A)
         {
             return A[{0, 0}] * A[{1, 1}] - A[{0, 1}] * A[{1, 0}];
         }
 
         template <typename T>
-        constexpr tensor_t<3, 3, T> inv(const tensor_t<3, 3, T> & A)
+        constexpr matrix_t<3, 3, T> inv(const matrix_t<3, 3, T> & A)
         {
-            tensor_t<3, 3, T> invA;
+            matrix_t<3, 3, T> invA;
 
             T determinant = det(A);
             assert(determinant != 0.0);
@@ -313,9 +313,9 @@ namespace pyre {
         }
 
         template <typename T>
-        constexpr tensor_t<2, 2, T> inv(const tensor_t<2, 2, T> & A)
+        constexpr matrix_t<2, 2, T> inv(const matrix_t<2, 2, T> & A)
         {
-            tensor_t<2, 2, T> invA;
+            matrix_t<2, 2, T> invA;
 
             T determinant = det(A);
             assert(determinant != 0.0);
@@ -330,7 +330,7 @@ namespace pyre {
         }
 
         template <int D, typename T>
-        constexpr T tr(const tensor_t<D, D, T> & A)
+        constexpr T tr(const matrix_t<D, D, T> & A)
         {
             auto _tr = [&A]<size_t... J>(std::index_sequence<J...>) ->T
             {
@@ -341,10 +341,10 @@ namespace pyre {
         }
 
         template <int D1, int D2, typename T>
-        constexpr tensor_t<D2, D1, T> transpose(const tensor_t<D1, D2, T> & A)
+        constexpr matrix_t<D2, D1, T> transpose(const matrix_t<D1, D2, T> & A)
         {
             // A transposed
-            tensor_t<D2, D1, T> AT;
+            matrix_t<D2, D1, T> AT;
 
             auto _transposeJ = [&A, &AT]<size_t... J>(std::index_sequence<J...>){
                 auto _transposeI = [&A, &AT]<size_t K, size_t... I>(std::index_sequence<I...>)
@@ -362,19 +362,19 @@ namespace pyre {
         }
 
         template <int D, typename T>
-        constexpr tensor_t<D, D, T> sym(const tensor_t<D, D, T> & A)
+        constexpr matrix_t<D, D, T> sym(const matrix_t<D, D, T> & A)
         {
             return 0.5 * (A + transpose(A));
         }
 
         template <int D, typename T>
-        constexpr tensor_t<D, D, T> skew(const tensor_t<D, D, T> & A)
+        constexpr matrix_t<D, D, T> skew(const matrix_t<D, D, T> & A)
         {
             return 0.5 * (A - transpose(A));
         }
 
         template <typename T>
-        constexpr vector_t<2, T> eigenvalues(const tensor_t<2, 2, T> & A)
+        constexpr vector_t<2, T> eigenvalues(const matrix_t<2, 2, T> & A)
         {
             T a = A[{0, 0}] * A[{0, 0}] + 4.0 * A[{0, 1}] * A[{1, 0}] - 2.0 * A[{0, 0}] * A[{1, 1}] + A[{1, 1}] * A[{1, 1}];
             return vector_t<2, T>{0.5 * (A[{0, 0}] + A[{1, 1}] - sqrt(a)), 0.5 * (A[{0, 0}] + A[{1, 1}] + sqrt(a))};
@@ -382,17 +382,17 @@ namespace pyre {
 
         // QUESTION: should these be returned in a matrix? 
         template <typename T>
-        constexpr tensor_t<2, 2, T> eigenvectors(const tensor_t<2, 2, T> & A)
+        constexpr matrix_t<2, 2, T> eigenvectors(const matrix_t<2, 2, T> & A)
         {
             T a = sqrt(A[{0, 0}] * A[{0, 0}] + 4.0 * A[{0, 1}] * A[{1, 0}] - 2.0 * A[{0, 0}] * A[{1, 1}] + A[{1, 1}] * A[{1, 1}]);
-            return tensor_t<2, 2, T>{
+            return matrix_t<2, 2, T>{
                 (A[{0, 0}] - A[{1, 1}] - a) / (2.0 * A[{1, 0}]), 
                 (A[{0, 0}] - A[{1, 1}] + a) / (2.0 * A[{1, 0}]),
                 1.0, 
                 1.0};
         }
         template <int I, int D1, int D2, typename T>
-        constexpr vector_t<D2, T> row(const tensor_t<D1, D2, T> & A)
+        constexpr vector_t<D2, T> row(const matrix_t<D1, D2, T> & A)
         {
             auto _row = [&A]<size_t... J>(std::index_sequence<J...>) -> vector_t<D2, T>
             {
@@ -404,7 +404,7 @@ namespace pyre {
         }
 
         template <int I, int D1, int D2, typename T>
-        constexpr vector_t<D1, T> col(const tensor_t<D1, D2, T> & A)
+        constexpr vector_t<D1, T> col(const matrix_t<D1, D2, T> & A)
         {
             auto _col = [&A]<size_t... J>(std::index_sequence<J...>) -> vector_t<D1, T>
             {

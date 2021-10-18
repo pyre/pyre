@@ -43,13 +43,13 @@ int main(int argc, char* argv[]) {
     // TODO: Add tests for all algebraic operators
 
     // Matrix-vector product // TODO: { {0, 1, 2}, {3, 4, 5}, {6, 7, 8} }
-    constexpr pyre::algebra::tensor_t<3, 3> A = { 1, -2, 0, 0, 1, 2, 0, 1, 1 };
+    constexpr pyre::algebra::matrix_t<3, 3> A = { 1, -2, 0, 0, 1, 2, 0, 1, 1 };
     constexpr pyre::algebra::vector_t<3> x = { 1, 1, 1 };
     constexpr pyre::algebra::vector_t<3> y = a * A * x;
     static_assert(inv(A)*y == a * x);
 
     // transpose tensor
-    constexpr pyre::algebra::tensor_t<3, 3> B = transpose(A);
+    constexpr pyre::algebra::matrix_t<3, 3> B = transpose(A);
     // transpose of transpose is the identity operator
     static_assert(transpose(B) == A);
 
@@ -64,7 +64,7 @@ int main(int argc, char* argv[]) {
     static_assert(det(B) == det(A));
 
     // product of eigenvalues is equal to determinant
-    constexpr pyre::algebra::tensor_t<2, 2> C = { 0, 1, 2, 3 };
+    constexpr pyre::algebra::matrix_t<2, 2> C = { 0, 1, 2, 3 };
     constexpr auto lambda = eigenvalues(C); 
     static_assert(lambda[0] * lambda[1] == det(C));
 
@@ -76,28 +76,28 @@ int main(int argc, char* argv[]) {
     static_assert(C * eigenvector1 == lambda[1] * eigenvector1);
 
     // symmetric tensors have zero skew part
-    static_assert(skew(sym(C)) == pyre::algebra::tensor_t<2>::zero);
+    static_assert(skew(sym(C)) == pyre::algebra::matrix_t<2>::zero);
 
     // Jacobi's theorem (all odd dimension skew symmetric matrices are singular)
     static_assert(det(skew(A)) == 0.0);
 
     // Cayley-Hamilton's theorem (a matrix is a solution of its characteristic polynomial) (2D)
-    constexpr pyre::algebra::tensor_t<2, 2> M = {0, 1, 2, 3};
-    constexpr pyre::algebra::tensor_t<2, 2> I = { 1, 0, 0, 1 };
-    static_assert(M * M - tr(M) * M + det(M) * I == pyre::algebra::tensor_t<2>::zero);
+    constexpr pyre::algebra::matrix_t<2, 2> M = {0, 1, 2, 3};
+    constexpr pyre::algebra::matrix_t<2, 2> I = { 1, 0, 0, 1 };
+    static_assert(M * M - tr(M) * M + det(M) * I == pyre::algebra::matrix_t<2>::zero);
 
-    static_assert(pyre::algebra::tensor_t<2>::zero == pyre::algebra::tensor_t<2>::zero);
+    static_assert(pyre::algebra::matrix_t<2>::zero == pyre::algebra::matrix_t<2>::zero);
     static_assert(M == M);
 
-    constexpr pyre::algebra::tensor_t<2> unit00 = pyre::algebra::tensor_t<2>::unit<{0, 0}>;
-    constexpr pyre::algebra::tensor_t<2> unit01 = pyre::algebra::tensor_t<2>::unit<{0, 1}>;
-    constexpr pyre::algebra::tensor_t<2> unit10 = pyre::algebra::tensor_t<2>::unit<{1, 0}>;
-    constexpr pyre::algebra::tensor_t<2> unit11 = pyre::algebra::tensor_t<2>::unit<{1, 1}>;
-    static_assert(unit00 == pyre::algebra::tensor_t<2>{1, 0, 0, 0});
-    static_assert(unit01 == pyre::algebra::tensor_t<2>{0, 1, 0, 0});
-    static_assert(unit10 == pyre::algebra::tensor_t<2>{0, 0, 1, 0});
-    static_assert(unit11 == pyre::algebra::tensor_t<2>{0, 0, 0, 1});
-    static_assert(unit00 + unit01 + unit10 + unit11 == pyre::algebra::tensor_t<2>::one);
+    constexpr pyre::algebra::matrix_t<2> unit00 = pyre::algebra::matrix_t<2>::unit<{0, 0}>;
+    constexpr pyre::algebra::matrix_t<2> unit01 = pyre::algebra::matrix_t<2>::unit<{0, 1}>;
+    constexpr pyre::algebra::matrix_t<2> unit10 = pyre::algebra::matrix_t<2>::unit<{1, 0}>;
+    constexpr pyre::algebra::matrix_t<2> unit11 = pyre::algebra::matrix_t<2>::unit<{1, 1}>;
+    static_assert(unit00 == pyre::algebra::matrix_t<2>{1, 0, 0, 0});
+    static_assert(unit01 == pyre::algebra::matrix_t<2>{0, 1, 0, 0});
+    static_assert(unit10 == pyre::algebra::matrix_t<2>{0, 0, 1, 0});
+    static_assert(unit11 == pyre::algebra::matrix_t<2>{0, 0, 0, 1});
+    static_assert(unit00 + unit01 + unit10 + unit11 == pyre::algebra::matrix_t<2>::one);
 
     constexpr pyre::algebra::vector_t<3> unit0 = pyre::algebra::vector_t<3>::unit<{0, 0}>;
     constexpr pyre::algebra::vector_t<3> unit1 = pyre::algebra::vector_t<3>::unit<{1, 0}>;

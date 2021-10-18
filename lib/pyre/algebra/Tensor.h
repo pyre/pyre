@@ -142,13 +142,13 @@ using real = double;
 // typedef for scalars
 using scalar_t = real;
 
-// typedef for tensors
+// typedef for matrices
 template <int D1, int D2 = D1, typename T = real>
-using tensor_t = pyre::algebra::Tensor<T, D1, D2>;
+using matrix_t = pyre::algebra::Tensor<T, D1, D2>;
 
 // typedef for (column) vectors
 template <int D, typename T = real>
-using vector_t = tensor_t<D, 1, T>;
+using vector_t = matrix_t<D, 1, T>;
 
 // helper functions for print
 template <typename Arg, typename... Args>
@@ -172,7 +172,7 @@ inline std::ostream & _print_vector(
 
 template <int D1, int D2, typename T, size_t... J>
 std::ostream & _print_row(
-    std::ostream & os, const tensor_t<D1, D2, T> & tensor, size_t row, std::index_sequence<J...>)
+    std::ostream & os, const matrix_t<D1, D2, T> & tensor, size_t row, std::index_sequence<J...>)
 {
     os << "[ ";
     if (sizeof...(J) > 0)
@@ -183,7 +183,7 @@ std::ostream & _print_row(
 
 template <int D1, int D2, typename T, size_t... J>
 std::ostream & _print_comma_row(
-    std::ostream & os, const tensor_t<D1, D2, T> & tensor, size_t row, std::index_sequence<J...>)
+    std::ostream & os, const matrix_t<D1, D2, T> & tensor, size_t row, std::index_sequence<J...>)
 {
     os << ",";
     return _print_row(os, tensor, row, std::make_index_sequence<D2> {});
@@ -191,7 +191,7 @@ std::ostream & _print_comma_row(
 
 template <int D1, int D2, typename T, size_t... J>
 std::ostream & _print_matrix(
-    std::ostream & os, const tensor_t<D1, D2, T> & tensor, std::index_sequence<J...>)
+    std::ostream & os, const matrix_t<D1, D2, T> & tensor, std::index_sequence<J...>)
 {
     os << "[ ";
     _print_row(os, tensor, 0, std::make_index_sequence<D2> {});
@@ -209,7 +209,7 @@ std::ostream & operator<<(std::ostream & os, const pyre::algebra::vector_t<D, T>
 
 // overload operator<< for second order tensors
 template <int D1, int D2, typename T>
-std::ostream & operator<<(std::ostream & os, const pyre::algebra::tensor_t<D1, D2, T> & tensor)
+std::ostream & operator<<(std::ostream & os, const pyre::algebra::matrix_t<D1, D2, T> & tensor)
 {
     return _print_matrix(os, tensor, std::make_index_sequence<D1-1> {});
 }
