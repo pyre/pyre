@@ -40,6 +40,8 @@ class React(ProjectTemplate, family='pyre.smith.projects.react'):
     blacklist = re.compile("|".join([
         '.+\.png',
         '.+\.ttf',
+        'ambiance\.css',
+        'graphiql\.css',
         ]))
 
 
