@@ -224,41 +224,4 @@ def xml():
     return xml
 
 
-# the templater
-def smith(**kwds):
-    """
-    The templater facility
-    """
-    # grab the protocol
-    from .Smith import Smith as smith
-    # build a facility and return it
-    return smith(**kwds)
-
-# the protocol that captures the project metadata
-from .Project import Project as project
-
-
-# bare bones command line interface
-@foundry(implements=project)
-def plexus():
-    """
-    The plexus project type
-    """
-    # grab the component class
-    from .Plexus import Plexus as plexus
-    # and publish
-    return plexus
-
-# {react} based ux
-@foundry(implements=project)
-def react():
-    """
-    The react project type
-    """
-    # grab the component class
-    from .React import React as react
-    # and publish
-    return react
-
-
 # end of file
