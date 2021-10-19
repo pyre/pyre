@@ -4,6 +4,8 @@
 # (c) {project.span} all rights reserved
 
 
+# externals
+import textwrap
 # access the pyre framework
 import pyre
 # and my package
@@ -26,8 +28,14 @@ class Plexus(pyre.plexus, family='{project.name}.shells.plexus'):
         """
         Generate the help banner
         """
-        # show the license header
-        return {project.name}.meta.license
+        # the project header
+        yield from textwrap.dedent({project.name}.meta.banner).splitlines()
+        # the doc string
+        yield from self.pyre_showSummary(indent='')
+        # the authors
+        yield from textwrap.dedent({project.name}.meta.authors).splitlines()
+        # all done
+        return
 
 
     # interactive session management
