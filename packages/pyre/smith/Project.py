@@ -13,7 +13,7 @@ from .Installation import Installation
 
 
 # declaration
-class Project(pyre.protocol, family='pyre.weaver.projects'):
+class Project(pyre.protocol, family='pyre.smith.projects'):
     """
     Encapsulation of the project information
     """

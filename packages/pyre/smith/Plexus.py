@@ -15,14 +15,14 @@ from .ProjectTemplate import ProjectTemplate
 
 
 # declaration
-class React(ProjectTemplate, family='pyre.weaver.projects.react'):
+class Plexus(ProjectTemplate, family='pyre.smith.projects.plexus'):
     """
     Encapsulation of the project information
     """
 
 
     # additional user configurable state
-    template = pyre.properties.str(default='react')
+    template = pyre.properties.str(default='plexus')
     template.doc = "the project template"
 
 
@@ -38,8 +38,8 @@ class React(ProjectTemplate, family='pyre.weaver.projects.react'):
 
     # constants
     blacklist = re.compile("|".join([
+        'jquery.js',
         '.+\.png',
-        '.+\.ttf',
         ]))
 
 
