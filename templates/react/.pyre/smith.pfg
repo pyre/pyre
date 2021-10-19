@@ -1,5 +1,5 @@
 ; -*- pyre -*-
-; 
+;
 ; michael a.g. aïvázis <michael.aivazis@para-sim.com>
 ; (c) 1998-2021 all rights reserved
 ;
@@ -12,7 +12,7 @@ smith:
 project:
     name = {project.name}
     capname = {project.capname}
-    giturl = {project.giturl}
+    github = git@github.com:{project.github}
     authors = {project.authors}
     span = {project.span}
 
@@ -22,5 +22,6 @@ project:
         root = ~/live
         web = ~/live/web
         admin = root
+
 
 ; end of file
