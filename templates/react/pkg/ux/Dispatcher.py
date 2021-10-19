@@ -96,6 +96,16 @@ class Dispatcher:
         return server.documents.File(uri=uri, server=server, application=plexus)
 
 
+    def jscript(self, plexus, server, request, **kwds):
+        """
+        The client requested a document from the {{plexus}} pfs
+        """
+        # form the uri
+        uri = "/ux" + request.url
+        # open the document and serve it
+        return server.documents.Javascript(uri=uri, server=server, application=plexus)
+
+
     def favicon(self, plexus, server, request, **kwds):
         """
         The client requested the app icon
@@ -118,7 +128,8 @@ class Dispatcher:
     regex = re.compile("|".join([
         r"/(?P<graphql>graphql)",
         r"/(?P<stop>stop)",
-        r"/(?P<document>(graphics/.+)|(styles/.+)|(fonts/.+)|(.+\.js))",
+        r"/(?P<jscript>.+\.js)",
+        r"/(?P<document>(graphics/.+)|(styles/.+)|(fonts/.+))",
         r"/(?P<favicon>favicon.ico)",
         r"/(?P<root>.*)",
         ]))
