@@ -11,6 +11,9 @@ export Status from './status'
 // the main page
 export Main from './main'
 
+// sandboxes
+export {{ GiQL }} from './graphiql'
+
 // not yet implemented
 export NYI from './nyi'
 // while {{suspense}} is waiting
