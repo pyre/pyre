@@ -4,7 +4,6 @@
 // (c) {project.span} all rights reserved
 
 
-import 'regenerator-runtime'
 // the component framework
 import React, {{ Suspense }} from 'react'
 import ReactDOM from 'react-dom'
@@ -23,6 +22,8 @@ import styles from './styles'
 import {{ environment }} from '~/context'
 // views
 import {{
+    // graphiql
+    GiQL,
     // the main page
     Main,
     // boilerplate
@@ -41,36 +42,43 @@ const {project.capname}App = () => {{
 
     // render
     return (
-        <div style={{styles.page}}>
-            <Switch >
-                {{/* the closing page */}}
-                <Route path="/stop" component={{Stop}} />
-                {{/* the page to render while waiting for data to arrive */}}
-                <Route path="/loading" component={{Loading}} />
+        <Switch >
+            {{/* the graphiql sandbox */ }}
+            <Route path="/graphiql" component={{GiQL}} />
+            {{/* app navigation */}}
+            <Route>
+                <div style={{styles.page}}>
+                    <Switch >
+                        {{/* the closing page */ }}
+                        <Route path="/stop" component={{ Stop }} />
+                        {{/* the page to render while waiting for data to arrive */ }}
+                        <Route path="/loading" component={{ Loading }} />
 
-                {{/* show the app */}}
-                <Route path="/" component={{Main}} />
-            </Switch>
-            <Status />
-        </div>
+                        {{/* show the app */ }}
+                        <Route path="/" component={{ Main }} />
+                    </Switch>
+                    <Status />
+                </div>
+            </Route>
+        </Switch>
     )
 }}
 
 
 // the outer component that sets up access to the {{relay}}, {{suspense}}, and {{router}} environments
 const Root = () => (
-    <RelayEnvironmentProvider environment={{environment}}>
-        <Suspense fallback={{<Loading />}}>
-            <Router>
-                <{project.capname}App />
-            </Router>
-        </Suspense>
-    </RelayEnvironmentProvider>
+    <RelayEnvironmentProvider environment={{ environment }}>
+        <Suspense fallback={{< Loading />}}>
+        <Router>
+            <{project.capname}App />
+        </Router>
+    </Suspense>
+    </RelayEnvironmentProvider >
 )
 
 
 // render
-ReactDOM.unstable_createRoot(document.getElementById('{project.name}')).render(<Root />)
+ReactDOM.render(<Root />, document.getElementById('{project.name}'))
 
 
 // end of file
