@@ -18,15 +18,12 @@ EXPORT_PYTHON_MODULES = \
     CSh.py \
     Cfg.py \
     Cxx.py \
-    Django.py \
     Expression.py \
     F77.py \
     F90.py \
     HTML.py \
     HTTP.py \
-    Host.py \
     Indenter.py \
-    Installation.py \
     Language.py \
     LineComments.py \
     LineMill.py \
@@ -35,13 +32,9 @@ EXPORT_PYTHON_MODULES = \
     MixedComments.py \
     PFG.py \
     Perl.py \
-    Plexus.py \
-    Project.py \
-    ProjectTemplate.py \
     Python.py \
     SQL.py \
     SVG.py \
-    Smith.py \
     Sh.py \
     Stationery.py \
     TeX.py \
