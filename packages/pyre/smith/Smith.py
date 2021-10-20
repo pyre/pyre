@@ -9,6 +9,7 @@
 
 
 # externals
+import journal
 import os
 # access the framework
 import pyre
@@ -17,7 +18,7 @@ from .Project import Project
 
 
 # the application class
-class Smith(pyre.application, family='pyre.applications.smith'):
+class Smith(pyre.application, family="pyre.applications.smith", namespace="smith"):
     """
     A generator of projects in pyre standard form
     """
@@ -26,6 +27,9 @@ class Smith(pyre.application, family='pyre.applications.smith'):
     # user configurable state
     project = Project()
     project.doc = "the project information"
+
+    force = pyre.properties.bool(default=False)
+    force.doc = "overwrite the target directory if it exists"
 
 
     # public data
@@ -41,36 +45,42 @@ class Smith(pyre.application, family='pyre.applications.smith'):
     # application obligations
     @pyre.export
     def main(self, *args, **kwds):
+        # make a channel for reporting progress
+        info = journal.info("smith")
+
         # get the name of the project
         project = self.project.name
-        # instantiate my host configuration so that its settings materialize
-        host = self.project.live
         # get the nameserver
         nameserver = self.pyre_nameserver
-        # make local filesystem rooted at the model template directory
+        # make a local filesystem rooted at the model template directory
         template = self.vfs.local(root=self.vault).discover()
 
         # make a local filesystem rooted at the current directory
-        cwd = self.vfs.local(root='.').discover()
+        # and explore it carefully
+        cwd = self.vfs.local(root='.').discover(levels=1)
         # if the target path exists already
         if project in cwd:
+            # this is user error
+            channel = journal.error("smith")
             # complain
-            self.error.log(f"the folder '{project}' exists already")
-            # report failure
+            channel.line(f"the folder '{project}' exists already")
+            # flush
+            channel.log()
+            # and report failure
             return 1
 
         # show me
-        self.info.log("building the git repository")
-        # have {bazaar} create the directory
+        info.log("building the git repository")
+        # have {git} create the directory
         os.system(f"git init -q -b main {project}")
 
-        self.info.log('generating the source tree')
+        info.log('generating the source tree')
         # initialize the workload
         todo = [(cwd, project, template)]
         # as long as there are folders to visit
         for destination, name, source in todo:
             # show me
-            # self.info.log(f"creating the folder '{name}'")
+            # info.log(f"creating the folder '{name}'")
             # create the new folder
             folder = cwd.mkdir(parent=destination, name=name, exist_ok=True)
             # go through the folder contents
@@ -82,11 +92,16 @@ class Smith(pyre.application, family='pyre.applications.smith'):
                 # if anything goes wrong
                 except self.FrameworkError as error:
                     # generate an error message
-                    self.error.log(f"could not process '{entry}': {error}")
+                    channel = journal.error("smith")
+                    # complain
+                    channel.line(f"{error}")
+                    channel.line(f"while processing '{entry}'")
+                    # flush
+                    channel.log()
                     # and move on
                     continue
                 # show me
-                # self.info.log(f"generating '{entry}'")
+                # info.log(f"generating '{entry}'")
                 # if the {child} is a folder
                 if child.isFolder:
                     # add it to the workload
@@ -111,7 +126,12 @@ class Smith(pyre.application, family='pyre.applications.smith'):
                     # if anything goes wrong
                     except self.FrameworkError as error:
                         # generate an error message
-                        self.error.log(f"while processing '{entry}': {error}")
+                        channel = journal.error("smith")
+                        # complain
+                        channel.line(f"{error}")
+                        channel.line(f"while processing '{entry}'")
+                        # flush
+                        channel.log()
                         # and move on
                         continue
                     # create the file
@@ -124,7 +144,7 @@ class Smith(pyre.application, family='pyre.applications.smith'):
                 metanew.chmod(metaold.permissions)
 
         # tell me
-        self.info.log('committing the initial revision')
+        info.log('committing the initial revision')
         # build the commit command
         command = [
             "unset CDPATH", # just in case the user has strange tastes
