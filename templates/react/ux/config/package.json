@@ -3,7 +3,7 @@
     "version": "0.0.1",
     "description": "{project.name} embedded ux",
     "license": "BSD-2-Clause",
-    "repository": "{project.github}",
+    "repository": "https://github.com/{project.github}",
     "author": "Michael Aivazis <michael.aivazis@para-sim.com>",
     "scripts": {{
         "build": "webpack --mode development",
