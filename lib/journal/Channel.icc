@@ -247,6 +247,7 @@ pyre::journal::Channel<severityT, proxyT>::logfile(const path_t & name)
 }
 
 
+// index management
 template <typename severityT, template <typename> typename proxyT>
 auto
 pyre::journal::Channel<severityT, proxyT>::_initializeIndex() -> index_type
@@ -255,6 +256,12 @@ pyre::journal::Channel<severityT, proxyT>::_initializeIndex() -> index_type
     return severity_type::initializeIndex();
 }
 
+
+// this definition is offline to accommodate a family of NVCC bugs
+template <typename severityT, template <typename> typename proxyT>
+typename pyre::journal::Channel<severityT, proxyT>::index_type
+    pyre::journal::Channel<severityT, proxyT>::_index =
+        pyre::journal::Channel<severityT, proxyT>::_initializeIndex();
 
 #endif
 

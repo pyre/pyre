@@ -101,8 +101,10 @@ private:
     entry_type _entry;
 
     // implementation details: static data
+    // the definition is offline to accommodate a family of NVCC bugs that prohibit the 
+    // initialization of static data in the body of the class
 private:
-    static inline index_type _index = _initializeIndex();
+    static index_type _index;
 };
 
 
