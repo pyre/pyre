@@ -10,34 +10,31 @@
 
 // metamethods
 // destructor
-pyre::viz::BMP::
-~BMP()
+pyre::viz::BMP::~BMP()
 {
     // clean up
-    delete [] _data;
+    delete[] _data;
 }
 
 
 // constructor
-pyre::viz::BMP::
-BMP(int height, int width):
+pyre::viz::BMP::BMP(int height, int width) :
     _width { width },
     _height { height },
     // lines are padded out to the nearest multiple of four bytes; so, the number of pad bytes
     // at the end of every line is
-    _padBytesPerLine { (4 - (width*_pixelSz)%4) % 4 },
+    _padBytesPerLine { (4 - (width * _pixelSz) % 4) % 4 },
     // compute the size of the payload
     _payloadSz { _width * _height * _pixelSz + _height * _padBytesPerLine },
     // and the total bitmap size is
     _bitmapSz { _fileHeaderSz + _infoHeaderSz + _payloadSz },
     // use it to allocate my buffer
-    _data { new color_type[ _bitmapSz ] }
+    _data { new color_type[_bitmapSz] }
 {}
 
 
 // move constructor
-pyre::viz::BMP::
-BMP(BMP&& other) :
+pyre::viz::BMP::BMP(BMP && other) :
     _width { other._width },
     _height { other._height },
     _padBytesPerLine { other._padBytesPerLine },
@@ -52,17 +49,16 @@ BMP(BMP&& other) :
 
 // move assignment operator
 pyre::viz::BMP &
-pyre::viz::BMP::
-operator=(BMP&& other)
+pyre::viz::BMP::operator=(BMP && other)
 {
-    // if i'm reading from my self
+    // if i'm reading from myself
     if (this == &other) {
         // bail
         return *this;
     }
 
     // release my buffer
-    delete [] _data;
+    delete[] _data;
 
     // steal everything
     _width = other._width;
@@ -83,8 +79,7 @@ operator=(BMP&& other)
 // interface
 // get the total size of the bitmap, in bytes
 auto
-pyre::viz::BMP::
-bytes() const -> int
+pyre::viz::BMP::bytes() const -> int
 {
     return _bitmapSz;
 }
@@ -92,8 +87,7 @@ bytes() const -> int
 
 // access the data buffer
 auto
-pyre::viz::BMP::
-data() const -> buffer_type
+pyre::viz::BMP::data() const -> buffer_type
 {
     return _data;
 }
@@ -101,8 +95,7 @@ data() const -> buffer_type
 
 template <class iteratorT>
 auto
-pyre::viz::BMP::
-encode(iteratorT & source, bool topdown) const -> buffer_type
+pyre::viz::BMP::encode(iteratorT & source, bool topdown) const -> buffer_type
 {
     // if i don't own any memory
     if (_data == nullptr) {
@@ -188,14 +181,14 @@ encode(iteratorT & source, bool topdown) const -> buffer_type
     _data[cur++] = 0;
 
     // check that we are done with the header
-    assert(( cur == _payloadOffset ));
+    assert((cur == _payloadOffset));
 
-    // get the data
+    // encode the data at each pixel location; the payload is packed line by line
     for (auto row = 0; row < _height; ++row) {
         for (auto col = 0; col < _width; ++col) {
             // get the color triplet
             auto [red, green, blue] = *source;
-            // write it in the file
+            // write it in the file; note that the encoding order is {brg}, not {rgb}
             _data[cur++] = blue;
             _data[cur++] = green;
             _data[cur++] = red;
@@ -209,12 +202,11 @@ encode(iteratorT & source, bool topdown) const -> buffer_type
     }
 
     // check that we made it to the end
-    assert(( cur == _bitmapSz ));
+    assert((cur == _bitmapSz));
 
     // all done
     return _data;
 }
-
 
 
 #endif
