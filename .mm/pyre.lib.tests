@@ -17,6 +17,7 @@ pyre.lib.tests.c++.flags += -Wall $($(compiler.c++).std.c++17)
 # cleanup
 tests.pyre.lib.grid.clean += grid_mmap.data
 tests.pyre.lib.memory.clean += filemap.dat map.dat
+tests.pyre.lib.viz.clean += chip.bmp
 
 # test case configuration
 # the {pyre::memory} tests must be executed in a specific order
