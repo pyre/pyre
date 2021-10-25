@@ -11,6 +11,17 @@
 // set up the namespace
 namespace pyre::viz {
 
+    // just to make sure we are all on the same page
+    using byte_t = char;
+    // individual color values are one byte wide
+    using color_t = byte_t;
+    // {r,g,b} triplets
+    using rgb_t = std::tuple<color_t, color_t, color_t>;
+
+    // codecs
+    // micorosoft bitmap
+    class BMP;
+
 } // namespace pyre::viz
 
 

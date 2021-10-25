@@ -17,6 +17,9 @@
 // this is the file you are looking for
 #include "api.h"
 
+// local support
+#include "codecs/BMP.h"
+
 
 #endif
 
