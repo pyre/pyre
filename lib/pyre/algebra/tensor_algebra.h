@@ -361,6 +361,7 @@ namespace pyre {
             return AT;
         }
 
+        // TOFIX: This should return a symmetric matrix
         template <int D, typename T>
         constexpr matrix_t<D, D, T> sym(const matrix_t<D, D, T> & A)
         {
@@ -374,20 +375,24 @@ namespace pyre {
         }
 
         template <typename T>
-        constexpr vector_t<2, T> eigenvalues(const matrix_t<2, 2, T> & A)
+        constexpr vector_t<2, T> eigenvalues(const symmetric_matrix_t<2, T> & A)
         {
-            T a = A[{0, 0}] * A[{0, 0}] + 4.0 * A[{0, 1}] * A[{1, 0}] - 2.0 * A[{0, 0}] * A[{1, 1}] + A[{1, 1}] * A[{1, 1}];
-            return vector_t<2, T>{0.5 * (A[{0, 0}] + A[{1, 1}] - sqrt(a)), 0.5 * (A[{0, 0}] + A[{1, 1}] + sqrt(a))};
+            T delta = sqrt(4.0 * A[{0, 1}] * A[{0, 1}] 
+                + (A[{0, 0}] - A[{1, 1}]) * (A[{0, 0}] - A[{1, 1}]));
+            return vector_t<2, T>{
+                0.5 * (A[{0, 0}] + A[{1, 1}] + delta), 
+                0.5 * (A[{0, 0}] + A[{1, 1}] - delta)};
         }
 
-        // QUESTION: should these be returned in a matrix? 
         template <typename T>
-        constexpr matrix_t<2, 2, T> eigenvectors(const matrix_t<2, 2, T> & A)
+        constexpr matrix_t<2, 2, T> eigenvectors(const symmetric_matrix_t<2, T> & A)
         {
-            T a = sqrt(A[{0, 0}] * A[{0, 0}] + 4.0 * A[{0, 1}] * A[{1, 0}] - 2.0 * A[{0, 0}] * A[{1, 1}] + A[{1, 1}] * A[{1, 1}]);
+            T delta = sqrt(4.0 * A[{0, 1}] * A[{0, 1}] 
+                + (A[{0, 0}] - A[{1, 1}]) * (A[{0, 0}] - A[{1, 1}]));
+
             return matrix_t<2, 2, T>{
-                (A[{0, 0}] - A[{1, 1}] - a) / (2.0 * A[{1, 0}]), 
-                (A[{0, 0}] - A[{1, 1}] + a) / (2.0 * A[{1, 0}]),
+                (A[{0, 0}] - A[{1, 1}] + delta) / (2.0 * A[{1, 0}]), 
+                (A[{0, 0}] - A[{1, 1}] - delta) / (2.0 * A[{1, 0}]),
                 1.0, 
                 1.0};
         }

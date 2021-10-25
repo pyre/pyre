@@ -64,7 +64,7 @@ int main(int argc, char* argv[]) {
     static_assert(det(B) == det(A));
 
     // product of eigenvalues is equal to determinant
-    constexpr pyre::algebra::matrix_t<2, 2> C = { 0, 1, 2, 3 };
+    constexpr pyre::algebra::symmetric_matrix_t<2> C = { 1, 2, 2, 2 };
     constexpr auto lambda = eigenvalues(C); 
     static_assert(lambda[0] * lambda[1] == det(C));
 
@@ -75,14 +75,13 @@ int main(int argc, char* argv[]) {
     static_assert(C * eigenvector0 == lambda[0] * eigenvector0);
     static_assert(C * eigenvector1 == lambda[1] * eigenvector1);
 
-    // symmetric tensors have zero skew part
-    static_assert(skew(sym(C)) == pyre::algebra::matrix_t<2>::zero);
-
     // Jacobi's theorem (all odd dimension skew symmetric matrices are singular)
     static_assert(det(skew(A)) == 0.0);
 
-    // Cayley-Hamilton's theorem (a matrix is a solution of its characteristic polynomial) (2D)
     constexpr pyre::algebra::matrix_t<2, 2> M = {0, 1, 2, 3};
+    // symmetric tensors have zero skew part
+    static_assert(skew(sym(M)) == pyre::algebra::matrix_t<2>::zero);
+    // Cayley-Hamilton's theorem (a matrix is a solution of its characteristic polynomial) (2D)
     constexpr pyre::algebra::matrix_t<2, 2> I = { 1, 0, 0, 1 };
     static_assert(M * M - tr(M) * M + det(M) * I == pyre::algebra::matrix_t<2>::zero);
 

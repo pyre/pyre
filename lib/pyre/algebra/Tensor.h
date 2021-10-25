@@ -146,6 +146,14 @@ using scalar_t = real;
 template <int D1, int D2 = D1, typename T = real>
 using matrix_t = pyre::algebra::Tensor<T, D1, D2>;
 
+// (dummy) typedef for symmetric matrices
+template <int D, typename T = real>
+using symmetric_matrix_t = matrix_t<D, D, T>;
+
+// (dummy) typedef for symmetric matrices
+template <int D, typename T = real>
+using diagonal_matrix_t = matrix_t<D, D, T>;
+
 // typedef for (column) vectors
 template <int D, typename T = real>
 using vector_t = matrix_t<D, 1, T>;
