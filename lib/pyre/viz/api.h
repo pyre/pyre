@@ -11,6 +11,10 @@
 // publicly visible types
 namespace pyre::viz {
 
+    // codecs
+    // microsoft bmp
+    using bmp_t = BMP;
+
 } // namespace pyre::viz
 
 #endif
