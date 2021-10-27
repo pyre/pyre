@@ -12,10 +12,11 @@ class pyre::viz::BMP {
     // type aliases
 public:
     // aliases from package level
+    using byte_type = byte_t;
     using color_type = color_t;
     using rgb_type = rgb_t;
     // my data buffer
-    using buffer_type = color_type *;
+    using buffer_type = byte_type *;
 
     // metamethods
 public:
@@ -56,7 +57,7 @@ private:
     static constexpr int _infoHeaderSz = 40;
     static constexpr int _bitPlanes = 24;
     static constexpr int _payloadOffset = _fileHeaderSz + _infoHeaderSz;
-    static constexpr int _pixelSz = sizeof(rgb_type);
+    static constexpr int _pixelSz = 3 * sizeof(byte_type);
 
     // disabled metamethods
 public:

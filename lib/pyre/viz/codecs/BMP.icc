@@ -29,7 +29,7 @@ pyre::viz::BMP::BMP(int height, int width) :
     // and the total bitmap size is
     _bitmapSz { _fileHeaderSz + _infoHeaderSz + _payloadSz },
     // use it to allocate my buffer
-    _data { new color_type[_bitmapSz] }
+    _data { new byte_type[_bitmapSz] }
 {}
 
 
@@ -189,9 +189,10 @@ pyre::viz::BMP::encode(iteratorT & source, bool topdown) const -> buffer_type
             // get the color triplet
             auto [red, green, blue] = *source;
             // write it in the file; note that the encoding order is {brg}, not {rgb}
-            _data[cur++] = blue;
-            _data[cur++] = green;
-            _data[cur++] = red;
+            // and we scale the values to the range [0,255]
+            _data[cur++] = 255 * blue;
+            _data[cur++] = 255 * green;
+            _data[cur++] = 255 * red;
             // point to the next one
             ++source;
         }
