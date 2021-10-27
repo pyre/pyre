@@ -14,7 +14,7 @@ namespace pyre::viz {
     // just to make sure we are all on the same page
     using byte_t = char;
 
-    // individual color values are one byte wide
+    // individual color values are floats in [0,1]
     using color_t = float;
     // {r,g,b} triplets
     using rgb_t = std::tuple<color_t, color_t, color_t>;
