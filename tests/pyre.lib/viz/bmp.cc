@@ -14,6 +14,7 @@
 
 // type aliases
 using bmp_t = pyre::viz::bmp_t;
+using color_t = pyre::viz::color_t;
 
 // driver
 int
@@ -30,8 +31,10 @@ main(int argc, char * argv[])
     data.reserve(width * height);
     // go through it
     for (auto idx = 0; idx < width * height; ++idx) {
+        // form the colors
+        color_t c = (idx % 256) / 255.;
         // and place color values
-        data.emplace(data.end(), idx % 256, idx % 128, idx % 64);
+        data.emplace(data.end(), c / 2, 3 * c / 4, c);
     }
 
     // make a bitmap
