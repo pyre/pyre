@@ -6,7 +6,6 @@
 
 // STL
 #include <vector>
-#include <tuple>
 #include <fstream>
 // support
 #include <pyre/viz.h>
