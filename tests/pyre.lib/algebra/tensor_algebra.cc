@@ -91,24 +91,45 @@ int main(int argc, char* argv[]) {
     static_assert(matrix_t<2>::zero == matrix_t<2>::zero);
     static_assert(M == M);
 
-    constexpr matrix_t<2> unit00 = matrix_t<2>::unit<{0, 0}>;
-    constexpr matrix_t<2> unit01 = matrix_t<2>::unit<{0, 1}>;
-    constexpr matrix_t<2> unit10 = matrix_t<2>::unit<{1, 0}>;
-    constexpr matrix_t<2> unit11 = matrix_t<2>::unit<{1, 1}>;
+    static_assert(unit<2>(0) == vector_t<2>{1, 0}); 
+    static_assert(unit<2>(1) == vector_t<2>{0, 1}); 
+
+    static_assert(unit<3>(0) == vector_t<3>{1, 0, 0}); 
+    static_assert(unit<3>(1) == vector_t<3>{0, 1, 0}); 
+    static_assert(unit<3>(2) == vector_t<3>{0, 0, 1}); 
+
+    static_assert(unit<2>(0, 0) == matrix_t<2>{1, 0, 0, 0}); 
+    static_assert(unit<2>(0, 1) == matrix_t<2>{0, 1, 0, 0}); 
+    static_assert(unit<2>(1, 0) == matrix_t<2>{0, 0, 1, 0}); 
+    static_assert(unit<2>(1, 1) == matrix_t<2>{0, 0, 0, 1}); 
+
+    static_assert(unit<3>(0, 0) == matrix_t<3>{1, 0, 0, 0, 0, 0, 0, 0, 0}); 
+    static_assert(unit<3>(0, 1) == matrix_t<3>{0, 1, 0, 0, 0, 0, 0, 0, 0}); 
+    static_assert(unit<3>(0, 2) == matrix_t<3>{0, 0, 1, 0, 0, 0, 0, 0, 0}); 
+    static_assert(unit<3>(1, 0) == matrix_t<3>{0, 0, 0, 1, 0, 0, 0, 0, 0}); 
+    static_assert(unit<3>(1, 1) == matrix_t<3>{0, 0, 0, 0, 1, 0, 0, 0, 0}); 
+    static_assert(unit<3>(1, 2) == matrix_t<3>{0, 0, 0, 0, 0, 1, 0, 0, 0}); 
+    static_assert(unit<3>(2, 0) == matrix_t<3>{0, 0, 0, 0, 0, 0, 1, 0, 0}); 
+    static_assert(unit<3>(2, 1) == matrix_t<3>{0, 0, 0, 0, 0, 0, 0, 1, 0}); 
+    static_assert(unit<3>(2, 2) == matrix_t<3>{0, 0, 0, 0, 0, 0, 0, 0, 1}); 
+
+    constexpr matrix_t<2> unit00 = matrix_t<2>::unit(0, 0);
+    constexpr matrix_t<2> unit01 = matrix_t<2>::unit(0, 1);
+    constexpr matrix_t<2> unit10 = matrix_t<2>::unit(1, 0);
+    constexpr matrix_t<2> unit11 = matrix_t<2>::unit(1, 1);
     static_assert(unit00 == matrix_t<2>{1, 0, 0, 0});
     static_assert(unit01 == matrix_t<2>{0, 1, 0, 0});
     static_assert(unit10 == matrix_t<2>{0, 0, 1, 0});
     static_assert(unit11 == matrix_t<2>{0, 0, 0, 1});
     static_assert(unit00 + unit01 + unit10 + unit11 == matrix_t<2>::one);
 
-    // QUESTION: the following line triggers an explicit constructor compiler error
-    // constexpr vector_t<3> unit0 = vector_t<3>::unit<{0}>;
-    constexpr vector_t<3> unit0 = vector_t<3>::unit<0>;
-    constexpr vector_t<3> unit1 = vector_t<3>::unit<1>;
-    constexpr vector_t<3> unit2 = vector_t<3>::unit<2>;
+    constexpr vector_t<3> unit0 = vector_t<3>::unit(0);
+    constexpr vector_t<3> unit1 = vector_t<3>::unit(1);
+    constexpr vector_t<3> unit2 = vector_t<3>::unit(2);
     static_assert(unit0 == vector_t<3>{1, 0, 0});
     static_assert(unit1 == vector_t<3>{0, 1, 0});
     static_assert(unit2 == vector_t<3>{0, 0, 1});
+    static_assert(unit0 + unit1 + unit2 == vector_t<3>::one);
 
     // all done
     return 0;

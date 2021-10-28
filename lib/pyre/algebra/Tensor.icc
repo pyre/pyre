@@ -154,17 +154,30 @@ constexpr pyre::algebra::Tensor<T, I...> pyre::algebra::Tensor<T, I...>::_make_o
 }
 
 template <typename T, int... I>
-template <pyre::algebra::Tensor<T, I...>::index_t K, size_t... J>
+template <size_t... J>
 constexpr pyre::algebra::Tensor<T, I...> pyre::algebra::Tensor<T, I...>::_make_basis_element(
-    std::index_sequence<J...>)
+    pyre::algebra::Tensor<T, I...>::index_t K, std::index_sequence<J...>)
 {
-    constexpr auto delta = []<size_t II, size_t JJ>() consteval->T 
+    constexpr auto delta = [](size_t II, size_t JJ) ->T 
     { 
         if (II == JJ) return 1; 
         return 0;
     };
     // fill tensor with delta_ij
-    return pyre::algebra::Tensor<T, I...>(delta.template operator()<_layout[K] /* I */, J>()...);
+    return pyre::algebra::Tensor<T, I...>(delta(_layout[K] /* I */, J)...);
+}
+
+template <typename T, int... I>
+template<typename... Args>
+constexpr pyre::algebra::Tensor<T, I...> pyre::algebra::Tensor<T, I...>::unit(
+    //pyre::algebra::Tensor<T, I...>::index_t K) 
+    Args... args) requires (sizeof...(Args) == N)
+{
+    pyre::algebra::Tensor<T, I...>::index_t K(args...);
+
+    // return K-th basis element tensor
+    return pyre::algebra::Tensor<T, I...>::_make_basis_element(K, 
+        std::make_index_sequence<pyre::algebra::Tensor<T, I...>::size> {});
 }
 
 #endif

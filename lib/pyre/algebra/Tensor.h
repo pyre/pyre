@@ -112,8 +112,9 @@ private:
     static constexpr pyre::algebra::Tensor<T, I...> _make_ones(std::index_sequence<J...>);
 
     // helper function to build a tensor of zeros with a 1 at index K
-    template <index_t K, size_t... J>
-    static constexpr pyre::algebra::Tensor<T, I...> _make_basis_element(std::index_sequence<J...>);
+    template <size_t... J>
+    static constexpr pyre::algebra::Tensor<T, I...> _make_basis_element(index_t K, 
+        std::index_sequence<J...>);
 
 public:
     // the zero element
@@ -124,9 +125,9 @@ public:
     static constexpr Tensor<T, I...> one = pyre::algebra::Tensor<T, I...>::_make_ones(
         std::make_index_sequence<pyre::algebra::Tensor<T, I...>::size> {});
 
-    template<index_t K>
-    static constexpr Tensor<T, I...> unit = pyre::algebra::Tensor<T, I...>::_make_basis_element<K>(
-        std::make_index_sequence<pyre::algebra::Tensor<T, I...>::size> {});
+    // the K-th unit tensor
+    template<typename... Args>
+    static constexpr Tensor<T, I...> unit(Args...) requires (sizeof...(Args) == N);
 
 private:
     // layout
@@ -157,6 +158,23 @@ using symmetric_matrix_t = matrix_t<D, D, T>;
 // (dummy) typedef for symmetric matrices
 template <int D, typename T = real>
 using diagonal_matrix_t = matrix_t<D, D, T>;
+
+// factory for unit tensors
+template <int D, typename T = real, typename... Args>
+static constexpr auto unit(Args... args) {
+    
+    // number of indices of the tensor, i.e. rank
+    constexpr int N = sizeof...(args);
+    
+    auto _pack = []<size_t... J>(Args... args, std::index_sequence<J...>) -> auto
+    {
+        auto wrap = []<size_t>()->int { return D; };
+        // expands to Tensor<T, D, ..., D> where D appears N times
+        return Tensor<T, wrap.template operator()<J>()...>::unit(args...);
+    };
+
+    return _pack(args..., std::make_index_sequence<N> {});
+}
 
 // helper functions for print
 template <typename Arg, typename... Args>
