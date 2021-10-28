@@ -158,12 +158,13 @@ template <pyre::algebra::Tensor<T, I...>::index_t K, size_t... J>
 constexpr pyre::algebra::Tensor<T, I...> pyre::algebra::Tensor<T, I...>::_make_basis_element(
     std::index_sequence<J...>)
 {
-    constexpr auto delta = []<size_t JJ>(size_t offset) consteval->T 
+    constexpr auto delta = []<size_t II, size_t JJ>() consteval->T 
     { 
-        if (JJ == offset) return 1; 
-        return 0; 
+        if (II == JJ) return 1; 
+        return 0;
     };
-    return pyre::algebra::Tensor<T, I...>(delta.template operator()<J>(_layout[K])...);
+    // fill tensor with delta_ij
+    return pyre::algebra::Tensor<T, I...>(delta.template operator()<_layout[K] /* I */, J>()...);
 }
 
 #endif
