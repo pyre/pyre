@@ -28,10 +28,7 @@ namespace pyre {
             return _operatorEqualEqual(std::make_index_sequence<D> {}, lhs, rhs);
         }
 
-
         // Algebraic operations on vectors, tensors, ...
-        // TOFIX: generalize with respect to scalar type (in this case real)
-
         // vector_t times scalar
         template <typename T, int... I, size_t... J>
         constexpr inline void _vector_times_scalar(
