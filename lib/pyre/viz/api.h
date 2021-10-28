@@ -17,6 +17,14 @@ namespace pyre::viz {
 
 } // namespace pyre::viz
 
+
+// conversions from other color spaces to {rgb}
+namespace pyre::viz::colorspaces {
+    auto hsb(double h, double s, double b) -> rgb_t;
+    auto hsl(double h, double s, double l) -> rgb_t;
+} // namespace pyre::viz::colorspaces
+
+
 #endif
 
 // end of file

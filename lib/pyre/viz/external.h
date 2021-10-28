@@ -12,6 +12,7 @@
 #include <cassert>
 #include <cmath>
 #include <tuple>
+#include <algorithm>
 
 // support
 #include <pyre/journal.h>
