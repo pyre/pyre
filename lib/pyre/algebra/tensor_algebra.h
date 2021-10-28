@@ -247,37 +247,60 @@ namespace pyre {
             // fill diagonal of a zero matrix with vector v
             return _fill_matrix_diagonal(matrix_t<D, D, T>::zero, v, std::make_index_sequence<D> {});
         }
+
+        // row-column vector product
+        template <int D, typename T>
+        constexpr inline T operator*(
+            const vector_t<D, T> & v1, const vector_t<D, T> & v2) 
+        {
+            // helper function (scalar product)
+            constexpr auto _vector_times_vector = []<size_t... K>(
+                const vector_t<D, T> & v1, const vector_t<D, T> & v2, 
+                std::index_sequence<K...>) ->T 
+            { 
+                return ((v1[{ K }] * v2[{ K }]) + ...);
+            };
+
+            return _vector_times_vector(v1, v2, std::make_index_sequence<D> {});
+        }
         // matrix-vector multiplication
-        // row-column product
-        template <int I /* row */, int J /* col */, int D1, int D2, int D3, typename T, size_t... K>
-        constexpr inline T _row_times_column(
-            const matrix_t<D1, D2, T> & A1, const matrix_t<D2, D3, T> & A2, 
-            std::index_sequence<K...>)
+        template <int D1, int D2, typename T>
+        constexpr inline vector_t<D1, T> operator*(
+            const matrix_t<D1, D2, T> & A, const vector_t<D2, T> & v) 
         {
-            return ((A1[{ I, K }] * A2[{ K, J }]) + ...);
+            // helper function
+            constexpr auto _matrix_times_vector = []<size_t... K>(
+                const matrix_t<D1, D2, T> & A, const vector_t<D2, T> & v, 
+                std::index_sequence<K...>) -> vector_t<D1, T> 
+            { 
+                return vector_t<D1, T>((row<K>(A) * v)...);
+            };
+            return _matrix_times_vector(A, v, std::make_index_sequence<D2> {});
         }
-        template <int I /* row */, int D1, int D2, int D3, typename T, size_t... J>
-        constexpr inline matrix_t<D1, D3, T> _matrix_times_column(
-            const matrix_t<D1, D2, T> & A1, const matrix_t<D2, D3, T> & A2, 
-            std::index_sequence<J...>)
+        // vector-matrix multiplication
+        template <int D1, int D2, typename T>
+        constexpr inline vector_t<D1, T> operator*(const vector_t<D2, T> & v, 
+            const matrix_t<D1, D2, T> & A) 
         {
-            matrix_t<D1, D3, T> result;
-            ((result[{I, J}] = 
-                _row_times_column<I, J>(A1, A2, std::make_index_sequence<D2> {})), ...);
-            return result;
+            return transpose(A) * v;
         }
-        template <int D1, int D2, int D3, typename T, size_t... I>
-        constexpr inline matrix_t<D1, D3, T> _matrix_times_matrix(
-            const matrix_t<D1, D2, T> & A1, const matrix_t<D2, D3, T> & A2, 
-            std::index_sequence<I...>)
-        {
-            return (_matrix_times_column<I>(A1, A2, std::make_index_sequence<D3> {}) + ... );
-        }
+        // matrix-matrix multiplication
         template <int D1, int D2, int D3, typename T>
         constexpr inline matrix_t<D1, D3, T> operator*(
-            const matrix_t<D1, D2, T> & A1, const matrix_t<D2, D3, T> & A2)
+            const matrix_t<D1, D2, T> & A1, const matrix_t<D2, D3, T> & A2) 
+            requires(D1 != 1 && D2 != 1 && D3 != 1)
         {
-            return _matrix_times_matrix(A1, A2, std::make_index_sequence<D1> {});
+            // helper function
+            constexpr auto _matrix_times_matrix = []<size_t... K>(
+                const matrix_t<D1, D2, T> & A1, const matrix_t<D2, D3, T> & A2, 
+                std::index_sequence<K...>) -> matrix_t<D1, D3, T> 
+            {
+                // for each K build the matrix whose column K is equal to A1 * col<K>(A2)
+                // then add them all up
+                return (matrix_column<K>(A1 * col<K>(A2)) + ...);
+            };
+
+            return _matrix_times_matrix(A1, A2, std::make_index_sequence<D3> {});
         }
 
         // factorial

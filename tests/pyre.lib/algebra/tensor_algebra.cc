@@ -35,7 +35,7 @@ int main(int argc, char* argv[]) {
 
     constexpr pyre::algebra::vector_t<3> vector3 = { 1, 0, 0 };
     constexpr pyre::algebra::vector_t<3> vector4 = { 0, 1, 0 };
-    static_assert(transpose(vector3) * vector4 == 0.0);
+    static_assert(vector3 * vector4 == 0.0);
 
     constexpr pyre::algebra::scalar_t b(1.0);
     static_assert(2 * b == b + 1);
@@ -100,9 +100,11 @@ int main(int argc, char* argv[]) {
     static_assert(unit11 == pyre::algebra::matrix_t<2>{0, 0, 0, 1});
     static_assert(unit00 + unit01 + unit10 + unit11 == pyre::algebra::matrix_t<2>::one);
 
-    constexpr pyre::algebra::vector_t<3> unit0 = pyre::algebra::vector_t<3>::unit<{0, 0}>;
-    constexpr pyre::algebra::vector_t<3> unit1 = pyre::algebra::vector_t<3>::unit<{1, 0}>;
-    constexpr pyre::algebra::vector_t<3> unit2 = pyre::algebra::vector_t<3>::unit<{2, 0}>;
+    // QUESTION: the following line triggers an explicit constructor compiler error
+    // constexpr pyre::algebra::vector_t<3> unit0 = pyre::algebra::vector_t<3>::unit<{0}>;
+    constexpr pyre::algebra::vector_t<3> unit0 = pyre::algebra::vector_t<3>::unit<0>;
+    constexpr pyre::algebra::vector_t<3> unit1 = pyre::algebra::vector_t<3>::unit<1>;
+    constexpr pyre::algebra::vector_t<3> unit2 = pyre::algebra::vector_t<3>::unit<2>;
     static_assert(unit0 == pyre::algebra::vector_t<3>{1, 0, 0});
     static_assert(unit1 == pyre::algebra::vector_t<3>{0, 1, 0});
     static_assert(unit2 == pyre::algebra::vector_t<3>{0, 0, 1});
