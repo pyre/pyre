@@ -11,6 +11,7 @@
 // externals
 #include <cassert>
 #include <cmath>
+#include <complex>
 #include <tuple>
 #include <algorithm>
 

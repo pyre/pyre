@@ -24,6 +24,12 @@ namespace pyre::viz::colorspaces {
     auto hsl(double h, double s, double l) -> rgb_t;
 } // namespace pyre::viz::colorspaces
 
+// color maps
+namespace pyre::viz::colormaps {
+    template <class sourceT>
+    using complex_t = Complex<sourceT>;
+}
+
 
 #endif
 
