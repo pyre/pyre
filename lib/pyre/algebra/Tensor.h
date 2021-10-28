@@ -176,6 +176,32 @@ static constexpr auto unit(Args... args) {
     return _pack(args..., std::make_index_sequence<N> {});
 }
 
+// factory for identity matrices
+template <int D, typename T = real>
+static constexpr auto _make_identity_matrix() {
+
+    diagonal_matrix_t<D, T> identity;
+
+    auto _loop = [&identity]<size_t... I>(std::index_sequence<I...>)
+    {
+        ((identity[{I, I}] = 1), ... );
+        return;
+    };
+
+    _loop(std::make_index_sequence<D> {});
+
+    return identity;
+}
+
+template <int D, typename T = real>
+static constexpr diagonal_matrix_t<D, T> identity_matrix = _make_identity_matrix<D, T>();
+
+template <int D, typename T = real>
+static constexpr matrix_t<D, D, T> zero_matrix = matrix_t<D, D, T>::zero;
+
+template <int D, typename T = real>
+static constexpr matrix_t<D, D, T> one_matrix = matrix_t<D, D, T>::one;
+
 // helper functions for print
 template <typename Arg, typename... Args>
 inline std::ostream & _print(std::ostream & os, Arg && arg, Args &&... args)

@@ -85,10 +85,9 @@ int main(int argc, char* argv[]) {
     // symmetric tensors have zero skew part
     static_assert(skew(symmetric(M)) == matrix_t<2>::zero);
     // Cayley-Hamilton's theorem (a matrix is a solution of its characteristic polynomial) (2D)
-    constexpr matrix_t<2, 2> I = { 1, 0, 0, 1 };
-    static_assert(M * M - tr(M) * M + det(M) * I == matrix_t<2>::zero);
+    static_assert(M * M - tr(M) * M + det(M) * identity_matrix<2> == zero_matrix<2>);
 
-    static_assert(matrix_t<2>::zero == matrix_t<2>::zero);
+    static_assert(zero_matrix<2> == matrix_t<2>::zero);
     static_assert(M == M);
 
     static_assert(unit<2>(0) == vector_t<2>{1, 0}); 
