@@ -18,6 +18,10 @@
 #include "api.h"
 
 // local support
+// colorspaces
+#include "colorspaces/hsb.h"
+#include "colorspaces/hsl.h"
+// encodings
 #include "codecs/BMP.h"
 
 
