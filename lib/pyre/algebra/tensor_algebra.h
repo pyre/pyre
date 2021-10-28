@@ -428,11 +428,24 @@ namespace pyre {
             return AT;
         }
 
-        // TOFIX: This should return a symmetric matrix
+        // TOFIX: This still does a complete loop while it should do a upper-diagonal loop
         template <int D, typename T>
-        constexpr matrix_t<D, D, T> symmetric(const matrix_t<D, D, T> & A)
+        constexpr symmetric_matrix_t<D, T> symmetric(const matrix_t<D, D, T> & A)
         {
-            return 0.5 * (A + transpose(A));
+            symmetric_matrix_t<D, T> sym;
+
+            auto _loopJ = [&A, &sym]<size_t... K>(std::index_sequence<K...>){
+                auto _loopI = [&A, &sym]<size_t J, size_t... I>(std::index_sequence<I...>)
+                {
+                    ((sym[{I, J}] = 0.5 * (A[{I, J}] + A[{J, I}])), ... );
+                    return;
+                };
+
+                (_loopI.template operator()<K>(std::make_index_sequence<D> {}), ...);
+            };
+
+            _loopJ(std::make_index_sequence<D> {});
+            return sym;
         }
 
         template <int D, typename T>
