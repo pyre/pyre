@@ -430,7 +430,7 @@ namespace pyre {
 
         // TOFIX: This should return a symmetric matrix
         template <int D, typename T>
-        constexpr matrix_t<D, D, T> sym(const matrix_t<D, D, T> & A)
+        constexpr matrix_t<D, D, T> symmetric(const matrix_t<D, D, T> & A)
         {
             return 0.5 * (A + transpose(A));
         }

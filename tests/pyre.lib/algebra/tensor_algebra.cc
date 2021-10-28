@@ -82,7 +82,7 @@ int main(int argc, char* argv[]) {
 
     constexpr pyre::algebra::matrix_t<2, 2> M = {0, 1, 2, 3};
     // symmetric tensors have zero skew part
-    static_assert(skew(sym(M)) == pyre::algebra::matrix_t<2>::zero);
+    static_assert(skew(symmetric(M)) == pyre::algebra::matrix_t<2>::zero);
     // Cayley-Hamilton's theorem (a matrix is a solution of its characteristic polynomial) (2D)
     constexpr pyre::algebra::matrix_t<2, 2> I = { 1, 0, 0, 1 };
     static_assert(M * M - tr(M) * M + det(M) * I == pyre::algebra::matrix_t<2>::zero);
