@@ -18,9 +18,11 @@
 #include "api.h"
 
 // local support
-// colorspaces
+// color spaces
 #include "colorspaces/hsb.h"
 #include "colorspaces/hsl.h"
+// color maps
+#include "colormaps/Complex.h"
 // encodings
 #include "codecs/BMP.h"
 

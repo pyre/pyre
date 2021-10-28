@@ -23,6 +23,12 @@ namespace pyre::viz {
     // micorosoft bitmap
     class BMP;
 
+    // color maps
+    namespace colormaps {
+        template <class sourceT>
+        class Complex;
+    }
+
 } // namespace pyre::viz
 
 
