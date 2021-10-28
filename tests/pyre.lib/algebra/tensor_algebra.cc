@@ -74,6 +74,8 @@ int main(int argc, char* argv[]) {
     constexpr auto eigenvector1 = col<1>(eigenvectorMatrix);
     static_assert(C * eigenvector0 == lambda[0] * eigenvector0);
     static_assert(C * eigenvector1 == lambda[1] * eigenvector1);
+    constexpr auto lambda_diag = matrix_diagonal(lambda);
+    static_assert(C * eigenvectorMatrix ==  eigenvectorMatrix * lambda_diag);
 
     // Jacobi's theorem (all odd dimension skew symmetric matrices are singular)
     static_assert(det(skew(A)) == 0.0);

@@ -203,6 +203,53 @@ namespace pyre {
             return (1.0 / a) * std::move(y);
         }
 
+        // builds a square matrix with all zeros except the K-th row is equal to v
+        template <int K, int D, typename T>
+        constexpr inline matrix_t<D, D, T> matrix_row(const vector_t<D, T> & v)
+        {
+            constexpr auto _fill_matrix_row = []<size_t... I>(
+                matrix_t<D, D, T> A, const vector_t<D, T> & v, std::index_sequence<I...>) 
+                -> matrix_t<D, D, T>
+            {
+                ((A[{K, I}] = v[{ I }]), ...);
+                return A;
+            };
+
+            // fill row K of a zero matrix with vector v
+            return _fill_matrix_row(matrix_t<D, D, T>::zero, v, std::make_index_sequence<D> {});
+        }
+
+        // builds a square matrix with all zeros except the K-th column is equal to v
+        template <int K, int D, typename T>
+        constexpr inline matrix_t<D, D, T> matrix_column(const vector_t<D, T> & v)
+        {
+            constexpr auto _fill_matrix_column = []<size_t... I>(
+                matrix_t<D, D, T> A, const vector_t<D, T> & v, std::index_sequence<I...>) 
+                -> matrix_t<D, D, T>
+            {
+                ((A[{I, K}] = v[{ I }]), ...);
+                return A;
+            };
+
+            // fill column K of a zero matrix with vector v
+            return _fill_matrix_column(matrix_t<D, D, T>::zero, v, std::make_index_sequence<D> {});
+        }
+
+        // builds a square matrix with all zeros except the diagonal is equal to v
+        template <int D, typename T>
+        constexpr inline matrix_t<D, D, T> matrix_diagonal(const vector_t<D, T> & v)
+        {
+            constexpr auto _fill_matrix_diagonal = []<size_t... I>(
+                matrix_t<D, D, T> A, const vector_t<D, T> & v, std::index_sequence<I...>) 
+                -> matrix_t<D, D, T>
+            {
+                ((A[{I, I}] = v[{ I }]), ...);
+                return A;
+            };
+
+            // fill diagonal of a zero matrix with vector v
+            return _fill_matrix_diagonal(matrix_t<D, D, T>::zero, v, std::make_index_sequence<D> {});
+        }
         // matrix-vector multiplication
         // row-column product
         template <int I /* row */, int J /* col */, int D1, int D2, int D3, typename T, size_t... K>
