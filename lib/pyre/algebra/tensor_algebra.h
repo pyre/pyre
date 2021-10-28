@@ -42,16 +42,16 @@ namespace pyre {
             return;
         }
         template <typename T, int... I>
-        constexpr inline Tensor<T, I...> && operator*(const T & a, Tensor<T, I...> && y) requires(
-            Tensor<T, I...>::size != 1)
+        constexpr inline Tensor<T, I...> && operator*(const T & a, Tensor<T, I...> && y) 
+            requires(Tensor<T, I...>::size != 1)
         {
             constexpr int D = Tensor<T, I...>::size;
             _vector_times_scalar(a, y, y, std::make_index_sequence<D> {});
             return std::move(y);
         }
         template <typename T, int... I>
-        constexpr inline Tensor<T, I...> operator*(const T & a, const Tensor<T, I...> & y) requires(
-            Tensor<T, I...>::size != 1)
+        constexpr inline Tensor<T, I...> operator*(const T & a, const Tensor<T, I...> & y) 
+            requires(Tensor<T, I...>::size != 1)
         {
             Tensor<T, I...> result;
             constexpr int D = Tensor<T, I...>::size;
@@ -59,14 +59,14 @@ namespace pyre {
             return result;
         }
         template <typename T, int... I>
-        constexpr inline Tensor<T, I...> && operator*(Tensor<T, I...> && y, const T & a) requires(
-            Tensor<T, I...>::size != 1)
+        constexpr inline Tensor<T, I...> && operator*(Tensor<T, I...> && y, const T & a) 
+            requires(Tensor<T, I...>::size != 1)
         {
             return a * std::move(y);
         }
         template <typename T, int... I>
-        constexpr inline Tensor<T, I...> operator*(const Tensor<T, I...> & y, const T & a) requires(
-            Tensor<T, I...>::size != 1)
+        constexpr inline Tensor<T, I...> operator*(const Tensor<T, I...> & y, const T & a) 
+            requires(Tensor<T, I...>::size != 1)
         {
             return a * y;
         }
