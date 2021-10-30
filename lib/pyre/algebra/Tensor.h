@@ -9,6 +9,7 @@
 
 // TOFIX
 #include "../grid.h"
+#include "machine_epsilon.h"
 
 namespace pyre { 
 namespace algebra {
@@ -264,6 +265,52 @@ template <int D1, int D2, typename T>
 std::ostream & operator<<(std::ostream & os, const pyre::algebra::matrix_t<D1, D2, T> & tensor)
 {
     return _print_matrix(os, tensor, std::make_index_sequence<D1-1> {});
+}
+
+template <typename T, int... I>
+constexpr bool is_equal(const Tensor<T, I...> & lhs, const Tensor<T, I...> & rhs)
+{
+    // helper function (component-wise)
+    constexpr auto _is_equal = []<size_t... J>(const Tensor<T, I...> & lhs, 
+        const Tensor<T, I...> & rhs, std::index_sequence<J...>) {
+
+        // if all components are equal
+        if ((((lhs[J] <= rhs[J] + epsilon(rhs[J])) 
+            && (lhs[J] >= rhs[J] - epsilon(rhs[J]))) 
+            && ...)) {
+            // then the tensors are equal
+            return true;
+        }
+        // then the tensors differ
+        return false;
+    };
+
+    // the size of the tensor
+    constexpr int D = Tensor<T, I...>::size;
+    // all done
+    return _is_equal(lhs, rhs, std::make_index_sequence<D> {});
+}
+
+template <typename T, int... I>
+constexpr bool is_zero(const Tensor<T, I...> & A, T tolerance)
+{
+    // helper function (component-wise)
+    constexpr auto _is_zero = []<size_t... J>(const Tensor<T, I...> & A, 
+        T tolerance, std::index_sequence<J...>) {
+
+        // if all components are zero
+        if (((A[J] <= tolerance) && ...)) {
+            // then the tensor is zero
+            return true;
+        }
+        // then the tensors is not zero
+        return false;
+    };
+
+    // the size of the tensor
+    constexpr int D = Tensor<T, I...>::size;
+    // all done
+    return _is_zero(A, tolerance, std::make_index_sequence<D> {});
 }
 
 }
