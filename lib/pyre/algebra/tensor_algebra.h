@@ -245,7 +245,8 @@ namespace pyre {
             };
 
             // fill diagonal of a zero matrix with vector v
-            return _fill_matrix_diagonal(matrix_t<D, D, T>::zero, v, std::make_index_sequence<D> {});
+            return _fill_matrix_diagonal(matrix_t<D, D, T>::zero, v, 
+                std::make_index_sequence<D> {});
         }
 
         // row-column vector product
@@ -347,7 +348,8 @@ namespace pyre {
         template <typename T>
         constexpr T det(const matrix_t<3, 3, T> & A)
         {
-            return A[{0, 0}] * (A[{1, 1}] * A[{2, 2}] - A[{1, 2}] * A[{2, 1}]) - A[{0, 1}] * (A[{1, 0}] * A[{2, 2}] - A[{1, 2}] * A[{2, 0}])
+            return A[{0, 0}] * (A[{1, 1}] * A[{2, 2}] - A[{1, 2}] * A[{2, 1}]) 
+                 - A[{0, 1}] * (A[{1, 0}] * A[{2, 2}] - A[{1, 2}] * A[{2, 0}])
                  + A[{0, 2}] * (A[{1, 0}] * A[{2, 1}] - A[{1, 1}] * A[{2, 0}]);
         }
 
