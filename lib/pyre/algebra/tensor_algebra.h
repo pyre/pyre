@@ -14,16 +14,20 @@ namespace pyre {
         template <typename T, int... I>
         constexpr inline bool operator==(const Tensor<T, I...> & lhs, const Tensor<T, I...> & rhs)
         {
-            constexpr int D = Tensor<T, I...>::size;
-
-            // helper function
+            // helper function (operator== component-wise)
             constexpr auto _operatorEqualEqual = []<size_t... J>(std::index_sequence<J...>, 
                 const Tensor<T, I...> & lhs, const Tensor<T, I...> & rhs) {
-                if (((lhs[J] == rhs[J]) && ...))
+                // if all components are equal
+                if (((lhs[J] == rhs[J]) && ...)) {
+                    // then the tensors are equal
                     return true;
+                }
+                // then the tensors differ
                 return false;
             };
 
+            // the size of the tensor
+            constexpr int D = Tensor<T, I...>::size;
             // all done
             return _operatorEqualEqual(std::make_index_sequence<D> {}, lhs, rhs);
         }
