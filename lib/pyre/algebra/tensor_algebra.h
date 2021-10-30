@@ -476,6 +476,72 @@ namespace pyre {
                 1.0, 
                 1.0};
         }
+
+        template <typename T>
+        constexpr vector_t<3, T> eigenvalues(const matrix_t<3, 3, T> & A)
+        {
+            // https://hal.archives-ouvertes.fr/hal-01501221
+            T x1 = A[{0, 0}] * A[{0, 0}] + A[{1, 1}] * A[{1, 1}] + A[{2, 2}] * A[{2, 2}] 
+                - A[{0, 0}] * A[{1, 1}] - A[{0, 0}] * A[{2, 2}] - A[{1, 1}] * A[{2, 2}]
+                + 3.0 * (A[{0, 1}] * A[{0, 1}] + A[{0, 2}] * A[{0, 2}] + A[{1, 2}] * A[{1, 2}]);
+
+            T a = 2.0 * A[{0, 0}] - A[{1, 1}] - A[{2, 2}];
+            T b = 2.0 * A[{1, 1}] - A[{0, 0}] - A[{2, 2}];
+            T c = 2.0 * A[{2, 2}] - A[{0, 0}] - A[{1, 1}];
+
+            T x2 =  - a * b * c
+                    + 9.0 * (c * A[{0, 1}] * A[{0, 1}] + b * A[{0, 2}] * A[{0, 2}] 
+                        + a * A[{1, 2}] * A[{1, 2}])
+                    - 54.0 * A[{0, 1}] * A[{0, 2}] * A[{1, 2}];
+
+            T d = (A[{0, 0}] + A[{1, 1}] + A[{2, 2}]) / 3.0;
+            T e = 2.0 * sqrt(x1) / 3.0;
+
+            double PI = 4.0 * atan(1.0);
+            double tol = 1.e-16; //TOFIX
+            T phi = 0.0;
+            if (fabs(x2) < tol) {
+                phi = 0.5 * PI;
+            } 
+            else{
+                T two_sqrt_x1 = 2.0 * sqrt(x1);
+                phi = atan(sqrt((two_sqrt_x1 * x1 - x2) * (two_sqrt_x1 * x1 + x2)) / x2);
+                if (x2 < 0) phi += PI;
+            }
+
+            return vector_t<3, T>{ 
+                d - e * cos(phi / 3.0), 
+                d + e * cos((phi - PI) / 3.0), 
+                d + e * cos((phi + PI) / 3.0)
+            };
+        }
+
+        template <typename T>
+        constexpr matrix_t<3, 3, T> eigenvectors(const symmetric_matrix_t<3, T> & A)
+        {
+            // TODO: Manage special cases f = 0, denominators = 0
+            auto lambda = eigenvalues(A);
+            T m0 = (A[{0, 1}] * (A[{2, 2}] - lambda[0]) - A[{1, 2}] * A[{0, 2}]) / 
+                (A[{0, 2}] * (A[{1, 1}] - lambda[0]) - A[{0, 1}] * A[{1, 2}]);
+
+            T m1 = (A[{0, 1}] * (A[{2, 2}] - lambda[1]) - A[{1, 2}] * A[{0, 2}]) / 
+                (A[{0, 2}] * (A[{1, 1}] - lambda[1]) - A[{0, 1}] * A[{1, 2}]);
+
+            T m2 = (A[{0, 1}] * (A[{2, 2}] - lambda[2]) - A[{1, 2}] * A[{0, 2}]) / 
+                (A[{0, 2}] * (A[{1, 1}] - lambda[2]) - A[{0, 1}] * A[{1, 2}]);
+
+            return matrix_t<3, 3, T>{
+                (lambda[0] - A[{2, 2}] - A[{1, 2}] * m0) / A[{0, 2}], 
+                (lambda[1] - A[{2, 2}] - A[{1, 2}] * m1) / A[{0, 2}],
+                (lambda[2] - A[{2, 2}] - A[{1, 2}] * m2) / A[{0, 2}],
+                m0,
+                m1,
+                m2,
+                1.0, 
+                1.0,
+                1.0};
+        }
+
         template <int I, int D1, int D2, typename T>
         constexpr vector_t<D2, T> row(const matrix_t<D1, D2, T> & A)
         {
