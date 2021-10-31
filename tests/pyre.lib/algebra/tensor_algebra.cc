@@ -17,15 +17,11 @@ using namespace pyre::algebra;
 // main program
 int main(int argc, char* argv[]) {
 
-    constexpr vector_t<3> vector3 = { 1, 0, 0 };
-    constexpr vector_t<3> vector4 = { 0, 1, 0 };
-    static_assert(vector3 * vector4 == 0.0);
-
     // Matrix-vector product // TODO: { {0, 1, 2}, {3, 4, 5}, {6, 7, 8} }
     constexpr matrix_t<3, 3> A = { 1, -2, 0, 0, 1, 2, 0, 1, 1 };
     constexpr vector_t<3> x = { 1, 1, 1 };
-    constexpr vector_t<3> y = a * A * x;
-    static_assert(inv(A)*y == a * x);
+    constexpr vector_t<3> y = A * x;
+    static_assert(inv(A)*y == x);
 
     // transpose tensor
     constexpr matrix_t<3, 3> B = transpose(A);
@@ -68,44 +64,15 @@ int main(int argc, char* argv[]) {
     static_assert(zero_matrix<2> == matrix_t<2>::zero);
     static_assert(M == M);
 
-    static_assert(unit<2>(0) == vector_t<2>{1, 0}); 
-    static_assert(unit<2>(1) == vector_t<2>{0, 1}); 
-
-    static_assert(unit<3>(0) == vector_t<3>{1, 0, 0}); 
-    static_assert(unit<3>(1) == vector_t<3>{0, 1, 0}); 
-    static_assert(unit<3>(2) == vector_t<3>{0, 0, 1}); 
-
-    static_assert(unit<2>(0, 0) == matrix_t<2>{1, 0, 0, 0}); 
-    static_assert(unit<2>(0, 1) == matrix_t<2>{0, 1, 0, 0}); 
-    static_assert(unit<2>(1, 0) == matrix_t<2>{0, 0, 1, 0}); 
-    static_assert(unit<2>(1, 1) == matrix_t<2>{0, 0, 0, 1}); 
-
-    static_assert(unit<3>(0, 0) == matrix_t<3>{1, 0, 0, 0, 0, 0, 0, 0, 0}); 
-    static_assert(unit<3>(0, 1) == matrix_t<3>{0, 1, 0, 0, 0, 0, 0, 0, 0}); 
-    static_assert(unit<3>(0, 2) == matrix_t<3>{0, 0, 1, 0, 0, 0, 0, 0, 0}); 
-    static_assert(unit<3>(1, 0) == matrix_t<3>{0, 0, 0, 1, 0, 0, 0, 0, 0}); 
-    static_assert(unit<3>(1, 1) == matrix_t<3>{0, 0, 0, 0, 1, 0, 0, 0, 0}); 
-    static_assert(unit<3>(1, 2) == matrix_t<3>{0, 0, 0, 0, 0, 1, 0, 0, 0}); 
-    static_assert(unit<3>(2, 0) == matrix_t<3>{0, 0, 0, 0, 0, 0, 1, 0, 0}); 
-    static_assert(unit<3>(2, 1) == matrix_t<3>{0, 0, 0, 0, 0, 0, 0, 1, 0}); 
-    static_assert(unit<3>(2, 2) == matrix_t<3>{0, 0, 0, 0, 0, 0, 0, 0, 1}); 
 
     constexpr matrix_t<2> unit00 = matrix_t<2>::unit(0, 0);
     constexpr matrix_t<2> unit01 = matrix_t<2>::unit(0, 1);
     constexpr matrix_t<2> unit10 = matrix_t<2>::unit(1, 0);
     constexpr matrix_t<2> unit11 = matrix_t<2>::unit(1, 1);
-    static_assert(unit00 == matrix_t<2>{1, 0, 0, 0});
-    static_assert(unit01 == matrix_t<2>{0, 1, 0, 0});
-    static_assert(unit10 == matrix_t<2>{0, 0, 1, 0});
-    static_assert(unit11 == matrix_t<2>{0, 0, 0, 1});
-    static_assert(unit00 + unit01 + unit10 + unit11 == matrix_t<2>::one);
 
     constexpr vector_t<3> unit0 = vector_t<3>::unit(0);
     constexpr vector_t<3> unit1 = vector_t<3>::unit(1);
     constexpr vector_t<3> unit2 = vector_t<3>::unit(2);
-    static_assert(unit0 == vector_t<3>{1, 0, 0});
-    static_assert(unit1 == vector_t<3>{0, 1, 0});
-    static_assert(unit2 == vector_t<3>{0, 0, 1});
     static_assert(unit0 + unit1 + unit2 == vector_t<3>::one);
     // QUESTION: How can this be constexpr if exp is not constexpr?
     constexpr auto my_exp = [](double x) { return exp(x); };
