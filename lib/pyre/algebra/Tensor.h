@@ -267,6 +267,17 @@ std::ostream & operator<<(std::ostream & os, const pyre::algebra::matrix_t<D1, D
     return _print_matrix(os, tensor, std::make_index_sequence<D1-1> {});
 }
 
+template <typename T>
+constexpr bool is_equal(T lhs, T rhs)
+{
+    if ((lhs <= rhs + epsilon(rhs)) && (lhs >= rhs - epsilon(rhs)))
+    {
+        return true;
+    }
+
+    return false;
+}
+
 template <typename T, int... I>
 constexpr bool is_equal(const Tensor<T, I...> & lhs, const Tensor<T, I...> & rhs)
 {
@@ -275,9 +286,7 @@ constexpr bool is_equal(const Tensor<T, I...> & lhs, const Tensor<T, I...> & rhs
         const Tensor<T, I...> & rhs, std::index_sequence<J...>) {
 
         // if all components are equal
-        if ((((lhs[J] <= rhs[J] + epsilon(rhs[J])) 
-            && (lhs[J] >= rhs[J] - epsilon(rhs[J]))) 
-            && ...)) {
+        if ((is_equal(lhs[J], rhs[J]) && ...)) {
             // then the tensors are equal
             return true;
         }
