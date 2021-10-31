@@ -564,6 +564,20 @@ namespace pyre {
                 1.0};
         }
 
+        template <int D, typename T>
+        constexpr auto eigenvalues(const diagonal_matrix_t<D, T> & A)
+        {
+            // the diagonal entries are the eigenvalues
+            return matrix_diagonal(A);
+        }
+
+        template <int D, typename T>
+        constexpr auto eigenvectors(const diagonal_matrix_t<D, T> & A)
+        {
+            // the canonical basis is the set of eigenvectors
+            return identity_matrix<D>;
+        }
+
         template <int I, int D1, int D2, typename T>
         constexpr vector_t<D2, T> row(const matrix_t<D1, D2, T> & A)
         {
