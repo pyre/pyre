@@ -612,8 +612,8 @@ namespace pyre {
             auto P = eigenvectors(A);
 
             // helper function (component-wise)
-            auto _apply_f_to_diagonal = [&f]<size_t... I>(matrix_t<D, D, T> & lambda, 
-                std::index_sequence<I...>)
+            constexpr auto _apply_f_to_diagonal = []<size_t... I>(matrix_t<D, D, T> & lambda, 
+                auto f, std::index_sequence<I...>)
             {
                 // apply f to diagonal
                 ((lambda[{I, I}] = f(lambda[{I, I}])), ...);
@@ -623,7 +623,7 @@ namespace pyre {
             };
 
             // change eigenvalues into f(eigenvalues)
-            _apply_f_to_diagonal(lambda, std::make_index_sequence<D> {});
+            _apply_f_to_diagonal(lambda, f, std::make_index_sequence<D> {});
 
             // rebuild matrix
             return P * lambda * inv(P);

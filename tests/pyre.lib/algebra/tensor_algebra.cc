@@ -129,6 +129,11 @@ int main(int argc, char* argv[]) {
     static_assert(unit1 == vector_t<3>{0, 1, 0});
     static_assert(unit2 == vector_t<3>{0, 0, 1});
     static_assert(unit0 + unit1 + unit2 == vector_t<3>::one);
+    // QUESTION: How can this be constexpr if exp is not constexpr?
+    constexpr auto my_exp = [](double x) { return exp(x); };
+    constexpr auto C_exp = function(C, my_exp);
+    static_assert(C_exp[{0, 1}] == C_exp[{1, 0}]);
+    // static_assert(is_equal(function(function(C, my_exp), my_log), C));
 
     static_assert(matrix_diagonal(identity_matrix<3>) == vector_t<3>::one);
     static_assert(matrix_diagonal(matrix_diagonal(identity_matrix<3>)) == identity_matrix<3>);
