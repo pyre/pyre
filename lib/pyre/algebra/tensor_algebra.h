@@ -7,6 +7,7 @@
 #include "Tensor.h"
 #include <cassert>
 #include <cmath>
+#include <functional>
 
 namespace pyre {
     namespace algebra {
@@ -571,6 +572,34 @@ namespace pyre {
 
             return _col(std::make_index_sequence<D2> {});
         }
+
+        template <int D, typename T>
+        constexpr symmetric_matrix_t<D, T> function(const symmetric_matrix_t<D, T> & A, auto f)
+        {
+            // compute eigenvalues
+            auto lambda = matrix_diagonal(eigenvalues(A));
+
+            // compute eigenvectors
+            auto P = eigenvectors(A);
+
+            // helper function (component-wise)
+            auto _apply_f_to_diagonal = [&f]<size_t... I>(matrix_t<D, D, T> & lambda, 
+                std::index_sequence<I...>)
+            {
+                // apply f to diagonal
+                ((lambda[{I, I}] = f(lambda[{I, I}])), ...);
+
+                // all done
+                return;
+            };
+
+            // change eigenvalues into f(eigenvalues)
+            _apply_f_to_diagonal(lambda, std::make_index_sequence<D> {});
+
+            // rebuild matrix
+            return P * lambda * inv(P);
+        }
+
     }
 }
 
