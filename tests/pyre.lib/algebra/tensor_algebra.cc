@@ -80,9 +80,6 @@ int main(int argc, char* argv[]) {
     static_assert(C_exp[{0, 1}] == C_exp[{1, 0}]);
     // static_assert(is_equal(function(function(C, my_exp), my_log), C));
 
-    static_assert(matrix_diagonal(identity_matrix<3>) == vector_t<3>::one);
-    static_assert(matrix_diagonal(matrix_diagonal(identity_matrix<3>)) == identity_matrix<3>);
-
     // all done
     return 0;
 }
