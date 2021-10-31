@@ -23,21 +23,6 @@ int main(int argc, char* argv[]) {
     constexpr vector_t<3> y = A * x;
     static_assert(inv(A)*y == x);
 
-    // transpose tensor
-    constexpr matrix_t<3, 3> B = transpose(A);
-    // transpose of transpose is the identity operator
-    static_assert(transpose(B) == A);
-
-    // transpose preserves trace
-    constexpr scalar_t traceA = tr(A);
-    constexpr scalar_t traceB = tr(B);
-    static_assert(traceA == traceB);
-
-    // transpose preserves determinant
-    constexpr scalar_t detA = det(A);
-    constexpr scalar_t detB = det(B);
-    static_assert(det(B) == det(A));
-
     // product of eigenvalues is equal to determinant
     constexpr symmetric_matrix_t<2> C = { 1, 2, 2, 2 };
     constexpr auto lambda = eigenvalues(C); 
