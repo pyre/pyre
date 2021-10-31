@@ -254,6 +254,21 @@ namespace pyre {
                 std::make_index_sequence<D> {});
         }
 
+        // builds the vector with the diagonal entries of a matrix
+        template <int D, typename T>
+        constexpr inline vector_t<D, T> matrix_diagonal(const matrix_t<D, D, T> & A)
+        {
+
+            auto _fill_vector_with_matrix_diagonal = [&A]<size_t... J>(std::index_sequence<J...>) -> vector_t<D, T>
+            {
+                auto wrap = [&A]<size_t K>()->T { return  A[{K, K}]; };
+                return vector_t<D, T>(wrap.template operator()<J>()...);
+            };
+
+            // fill a vector with the diagonal of A and return it
+            return _fill_vector_with_matrix_diagonal(std::make_index_sequence<D> {});
+        }
+
         // row-column vector product
         template <int D, typename T>
         constexpr inline T operator*(

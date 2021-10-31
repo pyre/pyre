@@ -130,6 +130,9 @@ int main(int argc, char* argv[]) {
     static_assert(unit2 == vector_t<3>{0, 0, 1});
     static_assert(unit0 + unit1 + unit2 == vector_t<3>::one);
 
+    static_assert(matrix_diagonal(identity_matrix<3>) == vector_t<3>::one);
+    static_assert(matrix_diagonal(matrix_diagonal(identity_matrix<3>)) == identity_matrix<3>);
+
     // all done
     return 0;
 }
