@@ -200,7 +200,7 @@ template <int D, typename T = real>
 static constexpr diagonal_matrix_t<D, T> identity_matrix = _make_identity_matrix<D, T>();
 
 template <int D, typename T = real>
-static constexpr matrix_t<D, D, T> zero_matrix = matrix_t<D, D, T>::zero;
+static constexpr diagonal_matrix_t<D, T> zero_matrix = diagonal_matrix_t<D, T>::zero;
 
 template <int D, typename T = real>
 static constexpr matrix_t<D, D, T> one_matrix = matrix_t<D, D, T>::one;
