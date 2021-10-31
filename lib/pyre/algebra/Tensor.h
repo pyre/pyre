@@ -16,11 +16,21 @@ namespace algebra {
 
 template <typename T, int... I>
 class Tensor {
+
+private:
+    // helper function to compute the product of an arguments list
+    template <typename... Args>
+    static constexpr auto multiply(Args &&... args)
+    {
+        if constexpr (sizeof...(args))
+            return  (args * ...);
+        return 1;
+    }
 private:
     // number of indices of the tensor, i.e. rank (N = 0 for empty parameter pack, i.e. scalar)
     static constexpr int N = sizeof...(I);
     // number of total entries of the tensor (S = 1 for empty parameter pack, i.e. scalar)
-    static constexpr int S = (I * ...);
+    static constexpr int S = multiply(I...);
 
 private:
     // TODO: template Tensor wrt pack_t and storage_t, just like class Grid
