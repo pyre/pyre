@@ -153,10 +153,12 @@ template <int D1, int D2 = D1, typename T = real>
 using matrix_t = pyre::algebra::Tensor<T, D1, D2>;
 
 // (dummy) typedef for symmetric matrices
+// TODO: this should be a specialization of matrix_t with a symmetric pack_t
 template <int D, typename T = real>
 using symmetric_matrix_t = matrix_t<D, D, T>;
 
 // (dummy) typedef for symmetric matrices
+// TODO: this should be a specialization of matrix_t with a diagonal pack_t
 template <int D, typename T = real>
 using diagonal_matrix_t = matrix_t<D, D, T>;
 
