@@ -17,31 +17,9 @@ using namespace pyre::algebra;
 // main program
 int main(int argc, char* argv[]) {
 
-    vector_t<2> vector1 = { 0.0, 0.0 };
-    assert(vector1 == vector1);
-
-    constexpr vector_t<2> vector2 = { 1.0, 2.0 };
-    vector1 += vector2;
-    assert(vector1 + vector2 == 2.0 * vector2);
-    static_assert(vector2 + vector2 == 2.0 * vector2);
-    static_assert(vector2 - vector2 == vector_t<2>::zero);
-    static_assert(vector_t<2>::zero == vector_t<2>::one - vector_t<2>::one);
-
-    constexpr scalar_t a = 1.0;
-    static_assert(vector2 * a == vector2);
-    static_assert(vector2 * (-a) == -vector2);
-    static_assert((-a) * vector2 == -vector2);
-    static_assert(vector2 / a == vector2);
-    static_assert(vector2 / (-a) == -vector2);
-
     constexpr vector_t<3> vector3 = { 1, 0, 0 };
     constexpr vector_t<3> vector4 = { 0, 1, 0 };
     static_assert(vector3 * vector4 == 0.0);
-
-    constexpr scalar_t b(1.0);
-    static_assert(2 * b == b + 1);
-
-    // TODO: Add tests for all algebraic operators
 
     // Matrix-vector product // TODO: { {0, 1, 2}, {3, 4, 5}, {6, 7, 8} }
     constexpr matrix_t<3, 3> A = { 1, -2, 0, 0, 1, 2, 0, 1, 1 };
