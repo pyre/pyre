@@ -456,17 +456,17 @@ namespace pyre {
         {
             symmetric_matrix_t<D, T> sym;
 
-            auto _loopJ = [&A, &sym]<size_t... K>(std::index_sequence<K...>){
-                auto _loopI = [&A, &sym]<size_t J, size_t... I>(std::index_sequence<I...>)
+            auto _fill_column = [&A, &sym]<size_t... K>(std::index_sequence<K...>){
+                auto _fill_row = [&A, &sym]<size_t J, size_t... I>(std::index_sequence<I...>)
                 {
                     ((sym[{I, J}] = 0.5 * (A[{I, J}] + A[{J, I}])), ... );
                     return;
                 };
 
-                (_loopI.template operator()<K>(std::make_index_sequence<D> {}), ...);
+                (_fill_row.template operator()<K>(std::make_index_sequence<D> {}), ...);
             };
 
-            _loopJ(std::make_index_sequence<D> {});
+            _fill_column(std::make_index_sequence<D> {});
             return sym;
         }
 
