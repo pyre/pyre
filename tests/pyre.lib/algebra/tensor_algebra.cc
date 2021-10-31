@@ -37,14 +37,6 @@ int main(int argc, char* argv[]) {
     constexpr auto lambda_diag = matrix_diagonal(lambda);
     static_assert(C * eigenvectorMatrix ==  eigenvectorMatrix * lambda_diag);
 
-    // Jacobi's theorem (all odd dimension skew symmetric matrices are singular)
-    static_assert(det(skew(A)) == 0.0);
-
-    constexpr matrix_t<2, 2> M = {0, 1, 2, 3};
-    // symmetric tensors have zero skew part
-    static_assert(skew(symmetric(M)) == matrix_t<2>::zero);
-
-
 
     constexpr matrix_t<2> unit00 = matrix_t<2>::unit(0, 0);
     constexpr matrix_t<2> unit01 = matrix_t<2>::unit(0, 1);
