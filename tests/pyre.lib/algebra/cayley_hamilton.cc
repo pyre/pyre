@@ -1,0 +1,34 @@
+// -*- coding: utf-8 -*-
+//
+// bianca giovanardi
+// (c) 2021 all rights reserved
+//
+
+// support
+#include <cassert>
+
+// get the tensor algebra
+#include <pyre/algebra/tensor_algebra.h>
+
+// use namespace for readability
+using namespace pyre::algebra;
+
+// main program
+int main(int argc, char* argv[]) {
+
+    // 2D matrix: Cayley-Hamilton's theorem 
+    // (a matrix is a solution of its characteristic polynomial)
+    constexpr matrix_t<2, 2> M = {0, 1, 2, 3};
+    static_assert(M * M - tr(M) * M + det(M) * identity_matrix<2> == zero_matrix<2>);
+
+    // 3D matrix: Cayley-Hamilton's theorem
+    // (a matrix is a solution of its characteristic polynomial)
+    constexpr matrix_t<3, 3> P = { 1, -1, -2, 1, 1, 1, -2, 1, 2 };
+    static_assert(P * P * P - tr(P) * P * P + 0.5 * (tr(P) * tr(P) - tr(P * P)) * P 
+        - det(P) * identity_matrix<3> == zero_matrix<3>);
+
+    // all done
+    return 0;
+}
+
+// end of file
