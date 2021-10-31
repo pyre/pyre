@@ -26,10 +26,10 @@ int main(int argc, char* argv[]) {
     static_assert(transpose(At) == A);
 
     // transpose preserves trace
-    static_assert(tr(At) == tr(A));
+    static_assert(trace(At) == trace(A));
 
     // transpose preserves determinant
-    static_assert(det(At) == det(A));
+    static_assert(determinant(At) == determinant(A));
 
     // all done
     return 0;

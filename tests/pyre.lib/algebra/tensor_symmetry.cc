@@ -21,7 +21,7 @@ int main(int argc, char* argv[]) {
 
     // Jacobi's theorem 
     // (odd dimension skew symmetric matrices are singular)
-    static_assert(det(skew(A)) == 0.0);
+    static_assert(determinant(skew(A)) == 0.0);
 
     // symmetric matrices have zero skew part
     static_assert(skew(symmetric(A)) == matrix_t<3, 3>::zero);

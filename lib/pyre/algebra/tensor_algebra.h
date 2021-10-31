@@ -337,7 +337,7 @@ namespace pyre {
         }
 
         template <typename T>
-        constexpr T det(const matrix_t<4, 4, T> & A)
+        constexpr T determinant(const matrix_t<4, 4, T> & A)
         {
             return A[{0, 1}] * A[{2, 3}] * A[{3, 2}] * A[{1, 0}] - A[{0, 1}] * A[{2, 2}] * A[{3, 3}]
                      * A[{1, 0}]
@@ -366,7 +366,7 @@ namespace pyre {
         }
 
         template <typename T>
-        constexpr T det(const matrix_t<3, 3, T> & A)
+        constexpr T determinant(const matrix_t<3, 3, T> & A)
         {
             return A[{0, 0}] * (A[{1, 1}] * A[{2, 2}] - A[{1, 2}] * A[{2, 1}]) 
                  - A[{0, 1}] * (A[{1, 0}] * A[{2, 2}] - A[{1, 2}] * A[{2, 0}])
@@ -374,20 +374,20 @@ namespace pyre {
         }
 
         template <typename T>
-        constexpr T det(const matrix_t<2, 2, T> & A)
+        constexpr T determinant(const matrix_t<2, 2, T> & A)
         {
             return A[{0, 0}] * A[{1, 1}] - A[{0, 1}] * A[{1, 0}];
         }
 
         template <typename T>
-        constexpr matrix_t<3, 3, T> inv(const matrix_t<3, 3, T> & A)
+        constexpr matrix_t<3, 3, T> inverse(const matrix_t<3, 3, T> & A)
         {
             matrix_t<3, 3, T> invA;
 
-            T determinant = det(A);
-            assert(determinant != 0.0);
+            T det = determinant(A);
+            assert(det != 0.0);
 
-            T detinv = 1.0 / determinant;
+            T detinv = 1.0 / det;
             invA[{0, 0}] = detinv * (A[{1, 1}] * A[{2, 2}] - A[{1, 2}] * A[{2, 1}]);
             invA[{0, 1}] = detinv * (-A[{0, 1}] * A[{2, 2}] + A[{0, 2}] * A[{2, 1}]);
             invA[{0, 2}] = detinv * (A[{0, 1}] * A[{1, 2}] - A[{0, 2}] * A[{1, 1}]);
@@ -402,14 +402,14 @@ namespace pyre {
         }
 
         template <typename T>
-        constexpr matrix_t<2, 2, T> inv(const matrix_t<2, 2, T> & A)
+        constexpr matrix_t<2, 2, T> inverse(const matrix_t<2, 2, T> & A)
         {
             matrix_t<2, 2, T> invA;
 
-            T determinant = det(A);
-            assert(determinant != 0.0);
+            T det = determinant(A);
+            assert(det != 0.0);
 
-            T detinv = 1.0 / determinant;
+            T detinv = 1.0 / det;
             invA[{0, 0}] = detinv * (A[{1, 1}]);
             invA[{0, 1}] = detinv * (-A[{0, 1}]);
             invA[{1, 0}] = detinv * (-A[{1, 0}]);
@@ -419,14 +419,14 @@ namespace pyre {
         }
 
         template <int D, typename T>
-        constexpr T tr(const matrix_t<D, D, T> & A)
+        constexpr T trace(const matrix_t<D, D, T> & A)
         {
-            auto _tr = [&A]<size_t... J>(std::index_sequence<J...>) ->T
+            auto _trace = [&A]<size_t... J>(std::index_sequence<J...>) ->T
             {
                 return (A[{J, J}]+ ... );
             };
 
-            return _tr(std::make_index_sequence<D> {});
+            return _trace(std::make_index_sequence<D> {});
         }
 
         template <int D1, int D2, typename T>
@@ -626,7 +626,7 @@ namespace pyre {
             _apply_f_to_diagonal(lambda, f, std::make_index_sequence<D> {});
 
             // rebuild matrix
-            return P * lambda * inv(P);
+            return P * lambda * inverse(P);
         }
 
     }

@@ -21,7 +21,7 @@ int main(int argc, char* argv[]) {
     constexpr vector_t<3> x = { 1, 1, 1 };
     constexpr scalar_t a = -2.0;
     constexpr vector_t<3> y = a * A * x;
-    static_assert(inv(A) * y / a == x);
+    static_assert(inverse(A) * y / a == x);
 
     // all done
     return 0;
