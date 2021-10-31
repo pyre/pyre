@@ -282,6 +282,7 @@ std::ostream & operator<<(std::ostream & os, const pyre::algebra::matrix_t<D1, D
 template <typename T>
 constexpr bool is_equal(T lhs, T rhs)
 {
+    // QUESTION: < (>) or <= (>=)?
     if ((lhs <= rhs + epsilon(rhs)) && (lhs >= rhs - epsilon(rhs)))
     {
         return true;
