@@ -1,0 +1,75 @@
+// -*- coding: utf-8 -*-
+//
+// bianca giovanardi
+// (c) 2021 all rights reserved
+//
+
+// support
+#include <cassert>
+
+// get the tensor algebra
+#include <pyre/algebra/tensor_algebra.h>
+
+// use namespace for readability
+using namespace pyre::algebra;
+
+// main program
+int main(int argc, char* argv[]) {
+
+    // 2D symmetric matrix
+    constexpr symmetric_matrix_t<2> A = { 1, 2, 2, 2 };
+
+    // the matrix eigenvalues 
+    constexpr auto lambda_A = eigenvalues(A); 
+    constexpr auto eigenvalues_A = matrix_diagonal(lambda_A);
+
+    // the matrix eigenvectors
+    constexpr auto eigenvectors_A = eigenvectors(A);
+
+    // 2D symmetric matrix: product of eigenvalues is equal to determinant
+    static_assert(lambda_A[0] * lambda_A[1] == det(A));
+
+    // 2D symmetric matrix: sum of eigenvalues is equal to trace
+    static_assert(lambda_A[0] + lambda_A[1] == tr(A));
+
+    // 2D symmetric matrix: definition of eigenvalues/vectors
+    static_assert(A * col<0>(eigenvectors_A) == lambda_A[0] * col<0>(eigenvectors_A));
+    static_assert(A * col<1>(eigenvectors_A) == lambda_A[1] * col<1>(eigenvectors_A));
+    static_assert(A * eigenvectors_A == eigenvectors_A * eigenvalues_A);
+    // TOFIX
+    // static_assert(eigenvectorsMatrix * eigenvaluesMatrix * inv(eigenvectorsMatrix) == C);
+    static_assert(is_equal(eigenvectors_A * eigenvalues_A * inv(eigenvectors_A), A));
+
+    // 3D symmetric matrix
+    constexpr symmetric_matrix_t<3> B = { 1, -1, -2, 
+                                         -1,  1,  1, 
+                                         -2,  1,  2 };
+
+    // the matrix eigenvalues 
+    constexpr auto lambda_B = eigenvalues(B); 
+    constexpr auto eigenvalues_B = matrix_diagonal(lambda_B);
+
+    // the matrix eigenvectors
+    constexpr auto eigenvectors_B = eigenvectors(B);
+
+    // TOFIX
+    // 3D symmetric matrix: product of eigenvalues is equal to determinant
+    // static_assert(lambda_B[0] * lambda_B[1] * lambda_B[2] == det(B));
+
+    // 3D symmetric matrix: sum of eigenvalues is equal to trace
+    static_assert(lambda_B[0] + lambda_B[1] + lambda_B[2] == tr(B));
+
+    // TOFIX
+    // 3D symmetric matrix: definition of eigenvalues/vectors
+    // static_assert(B * col<0>(eigenvectors_B) == lambda_B[0] * col<0>(eigenvectors_B));
+    // static_assert(B * col<1>(eigenvectors_B) == lambda_B[1] * col<1>(eigenvectors_B));
+    // static_assert(B * col<2>(eigenvectors_B) == lambda_B[2] * col<2>(eigenvectors_B));
+    // static_assert(B * eigenvectors_B ==  eigenvectors_B * eigenvalues_B);
+    // static_assert(is_equal(eigenvectors_B * eigenvalues_B * inv(eigenvectors_B), B));
+
+
+    // all done
+    return 0;
+}
+
+// end of file
