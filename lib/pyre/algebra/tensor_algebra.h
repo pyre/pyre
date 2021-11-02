@@ -324,6 +324,35 @@ namespace pyre {
             return _matrix_times_matrix(A1, A2, std::make_index_sequence<D3> {});
         }
 
+        // the skew symmetric matrix representing vector a  
+        template <typename T>
+        constexpr inline matrix_t<3, 3, T> skew(const vector_t<3, T> & a)
+        {
+            matrix_t<3, 3, T> A = zero_matrix<3>;
+            A[{0, 1}] = -a[2];
+            A[{0, 2}] = a[1];
+            A[{1, 0}] = a[2];
+            A[{1, 2}] = -a[0];
+            A[{2, 0}] = -a[1];
+            A[{2, 1}] = a[0];
+
+            return A;
+        }
+
+        template <typename T>
+        constexpr inline auto cross(const vector_t<3, T> & a, const vector_t<3, T> & b)
+        {
+            return skew(a) * b;
+        }
+
+        template <typename T>
+        constexpr inline T cross(const vector_t<2, T> & a, const vector_t<2, T> & b)
+        {
+            vector_t<3, T> a3 {a[0], a[1], 0.0};
+            vector_t<3, T> b3 {b[0], b[1], 0.0};
+            return cross(a3, b3)[2];
+        }
+
         // factorial
         template <int D>
         constexpr int factorial()
