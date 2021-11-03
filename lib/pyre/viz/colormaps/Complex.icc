@@ -8,7 +8,6 @@
 #error this file contains implementation details for pyre::viz::colormaps::Complex
 #else
 
-
 // metamethods
 template <class sourceT>
 pyre::viz::colormaps::Complex<sourceT>::Complex(
@@ -21,7 +20,7 @@ pyre::viz::colormaps::Complex<sourceT>::Complex(
     rgb_type underflow, rgb_type overflow) :
     _bins { bins },
     _saturation { saturation },
-    _scaleHue { 360. / _bins },
+    _scaleHue { 2 * M_PI / _bins },
     _minBrightness { minBrightness },
     _maxBrightness { maxBrightness },
     _scaleBrightness { (_maxBrightness - _minBrightness) / _bins },
@@ -53,8 +52,8 @@ pyre::viz::colormaps::Complex<sourceT>::operator*() const -> rgb_type
         // mark
         return _overflow;
     }
-    // get the phase from the data source and map it to [0, 360)
-    auto phase = std::arg(value) * _deg;
+    // get the phase from the data source
+    auto phase = std::arg(value);
 
     // bin the phase
     int hueBin = phase / _scaleHue;

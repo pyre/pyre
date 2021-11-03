@@ -67,9 +67,6 @@ private:
     // was discarded because it makes branching workflows impossible
     source_type _source;
 
-    // radians to degrees
-    const double _deg = 180 / (4. * std::atan(1.));
-
     // default metamethods
 public:
     // destructor
