@@ -18,6 +18,9 @@
 #include "api.h"
 
 // local support
+// filters
+#include "filters/Amplitude.h"
+#include "filters/Phase.h"
 // color spaces
 #include "colorspaces/hsb.h"
 #include "colorspaces/hsl.h"
