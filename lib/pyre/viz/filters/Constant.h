@@ -36,9 +36,13 @@ public:
 
     // constructors
     Constant(const Constant &) = default;
-    Constant & operator=(const Constant &) = default;
     Constant(Constant &&) = default;
-    Constant & operator=(Constant &&) = default;
+
+    // deleted metamethods
+public:
+    // because {_value} is {const}
+    Constant & operator=(const Constant &) = delete;
+    Constant & operator=(Constant &&) = delete;
 };
 
 
