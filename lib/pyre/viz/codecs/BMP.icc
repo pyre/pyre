@@ -103,6 +103,8 @@ pyre::viz::BMP::encode(iteratorT & source, bool topdown) const -> buffer_type
         return nullptr;
     }
 
+    // the bitmap orientation is encoded using signed values for the encoded bitmap height
+    // so convert the flag to a sign
     auto flip = topdown ? -1 : 1;
 
     // start at the beginning
@@ -181,7 +183,20 @@ pyre::viz::BMP::encode(iteratorT & source, bool topdown) const -> buffer_type
     _data[cur++] = 0;
 
     // check that we are done with the header
-    assert((cur == _payloadOffset));
+    if (cur != _payloadOffset) {
+        // and if not, we have a bug
+        pyre::journal::firewall_t channel("pyre.viz.bmp");
+        // complain
+        channel
+            // what
+            << "the insertion cursor is at " << cur << "instead of " << _payloadOffset
+            << pyre::journal::newline
+            // when
+            << "after injecting the header of a " << _height << "x" << _width
+            << " BMP"
+            // flush
+            << pyre::journal::endl(__HERE__);
+    }
 
     // encode the data at each pixel location; the payload is packed line by line
     for (auto row = 0; row < _height; ++row) {
@@ -203,7 +218,20 @@ pyre::viz::BMP::encode(iteratorT & source, bool topdown) const -> buffer_type
     }
 
     // check that we made it to the end
-    assert((cur == _bitmapSz));
+    if (cur != _bitmapSz) {
+        // and if not, we have a bug
+        pyre::journal::firewall_t channel("pyre.viz.bmp");
+        // complain
+        channel
+            // what
+            << "the insertion cursor is at " << cur << "instead of " << _bitmapSz
+            << pyre::journal::newline
+            // when
+            << "after injecting the payload of a " << _height << "x" << _width
+            << " BMP"
+            // flush
+            << pyre::journal::endl(__HERE__);
+    }
 
     // all done
     return _data;
