@@ -10,9 +10,15 @@
 
 // the HSL to RGB conversion kernel
 // see the wikipedia article at {https://en.wikipedia.org/wiki/HSL_and_HSV#HSL_to_RGB}
+// N.B.:
+//   h in [-pi, pi] radians
+//   s in [0, 1]
+//   l in [0, 1]
 auto
 pyre::viz::colorspaces::hsl(double h, double s, double l) -> rgb_t
 {
+    // convert the hue from radians to degrees
+    h *= 180 / M_PI;
     // rescale the saturation
     auto a = s * std::min(l, 1 - l);
     // build the kernel
