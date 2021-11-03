@@ -19,7 +19,7 @@ pyre::viz::filters::Phase<sourceT>::Phase(source_const_reference source) : _sour
 // interface
 template <class sourceT>
 auto
-pyre::viz::filters::Phase<sourceT>::operator*() -> value_type
+pyre::viz::filters::Phase<sourceT>::operator*() const -> value_type
 {
     // easy enough
     return std::arg(*_source);

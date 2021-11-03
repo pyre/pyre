@@ -19,9 +19,9 @@ pyre::viz::filters::Amplitude<sourceT>::Amplitude(source_const_reference source)
 // interface
 template <class sourceT>
 auto
-pyre::viz::filters::Amplitude<sourceT>::operator*() -> value_type
+pyre::viz::filters::Amplitude<sourceT>::operator*() const -> value_type
 {
-    //  easy enough: compute the magnitude of whatever my source is pointing to
+    // easy enough: compute the magnitude of whatever my source is pointing to
     return std::abs(*_source);
 }
 
