@@ -24,6 +24,8 @@ namespace pyre::viz {
         template <class sourceT>
         class Amplitude;
 
+        class Constant;
+
         template <class sourceT>
         class Phase;
     } // namespace filters

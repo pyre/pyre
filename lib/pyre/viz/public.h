@@ -20,6 +20,7 @@
 // local support
 // filters
 #include "filters/Amplitude.h"
+#include "filters/Constant.h"
 #include "filters/Phase.h"
 // color spaces
 #include "colorspaces/hsb.h"
