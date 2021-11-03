@@ -1,0 +1,36 @@
+// -*- c++ -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2021 all rights reserved
+
+// code guard
+#if !defined(pyre_viz_filters_Constant_icc)
+#error this file contains implementation details for pyre::viz::filters::Constant
+#else
+
+
+// metamethods
+// constructor
+pyre::viz::filters::Constant::Constant(value_type value) : _value(value) {}
+
+
+// interface
+auto
+pyre::viz::filters::Constant::operator*() const -> value_type
+{
+    // always return my {_value}
+    return _value;
+}
+
+
+auto
+pyre::viz::filters::Constant::operator++() const -> void
+{
+    // nothing to do, since i don't have any upstream dependencies
+    return;
+}
+
+
+#endif
+
+// end of file

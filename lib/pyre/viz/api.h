@@ -23,6 +23,8 @@ namespace pyre::viz::filters {
     template <class sourceT>
     using amplitude_t = Amplitude<sourceT>;
 
+    using constant_t = Constant;
+
     template <class sourceT>
     using phase_t = Phase<sourceT>;
 } // namespace pyre::viz::filters
