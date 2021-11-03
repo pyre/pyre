@@ -6,8 +6,6 @@
 
 // support
 #include <cassert>
-// STL
-#include <tuple>
 // support
 #include <pyre/viz.h>
 
@@ -31,21 +29,21 @@ main(int argc, char * argv[])
 
     // check the primaries
     assert((pyre::viz::colorspaces::hsb(0, 1, 1) == red));
-    assert((pyre::viz::colorspaces::hsb(120, 1, 1) == green));
-    assert((pyre::viz::colorspaces::hsb(240, 1, 1) == blue));
+    assert((pyre::viz::colorspaces::hsb(2 * M_PI / 3, 1, 1) == green));
+    assert((pyre::viz::colorspaces::hsb(4 * M_PI / 3, 1, 1) == blue));
 
     // anything at zero brightness should be black
     assert((pyre::viz::colorspaces::hsb(0, 0, 0) == black));
-    assert((pyre::viz::colorspaces::hsb(120, 0, 0) == black));
-    assert((pyre::viz::colorspaces::hsb(240, 0, 0) == black));
+    assert((pyre::viz::colorspaces::hsb(2 * M_PI / 3, 0, 0) == black));
+    assert((pyre::viz::colorspaces::hsb(4 * M_PI / 3, 0, 0) == black));
     assert((pyre::viz::colorspaces::hsb(0, 1, 0) == black));
-    assert((pyre::viz::colorspaces::hsb(120, 1, 0) == black));
-    assert((pyre::viz::colorspaces::hsb(240, 1, 0) == black));
+    assert((pyre::viz::colorspaces::hsb(2 * M_PI / 3, 1, 0) == black));
+    assert((pyre::viz::colorspaces::hsb(4 * M_PI / 3, 1, 0) == black));
 
     // anything at zero saturation and full brightness should be white
     assert((pyre::viz::colorspaces::hsb(0, 0, 1) == white));
-    assert((pyre::viz::colorspaces::hsb(120, 0, 1) == white));
-    assert((pyre::viz::colorspaces::hsb(240, 0, 1) == white));
+    assert((pyre::viz::colorspaces::hsb(2 * M_PI / 3, 0, 1) == white));
+    assert((pyre::viz::colorspaces::hsb(4 * M_PI / 3, 0, 1) == white));
 
     // all done
     return 0;
