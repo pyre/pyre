@@ -28,7 +28,7 @@ public:
 
     // interface
 public:
-    inline auto operator*() -> value_type;
+    inline auto operator*() const -> value_type;
     inline auto operator++() -> void;
 
     // implementation details: data
