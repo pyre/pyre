@@ -39,7 +39,10 @@ namespace pyre::viz::colorspaces {
 namespace pyre::viz::colormaps {
     template <class sourceT>
     using complex_t = Complex<sourceT>;
-}
+
+    template <class sourceT>
+    using gray_t = Gray<sourceT>;
+} // namespace pyre::viz::colormaps
 
 
 #endif
