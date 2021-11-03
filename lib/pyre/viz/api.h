@@ -18,6 +18,15 @@ namespace pyre::viz {
 } // namespace pyre::viz
 
 
+// filters
+namespace pyre::viz::filters {
+    template <class sourceT>
+    using amplitude_t = Amplitude<sourceT>;
+
+    template <class sourceT>
+    using phase_t = Phase<sourceT>;
+} // namespace pyre::viz::filters
+
 // conversions from other color spaces to {rgb}
 namespace pyre::viz::colorspaces {
     auto hsb(double h, double s, double b) -> rgb_t;

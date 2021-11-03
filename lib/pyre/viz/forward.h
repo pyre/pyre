@@ -19,15 +19,25 @@ namespace pyre::viz {
     // {r,g,b} triplets
     using rgb_t = std::tuple<color_t, color_t, color_t>;
 
-    // codecs
-    // micorosoft bitmap
-    class BMP;
+    // filters
+    namespace filters {
+        template <class sourceT>
+        class Amplitude;
+
+        template <class sourceT>
+        class Phase;
+    } // namespace filters
 
     // color maps
     namespace colormaps {
         template <class sourceT>
         class Complex;
     }
+
+
+    // codecs
+    // micorosoft bitmap
+    class BMP;
 
 } // namespace pyre::viz
 
