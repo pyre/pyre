@@ -34,7 +34,10 @@ namespace pyre::viz {
     namespace colormaps {
         template <class sourceT>
         class Complex;
-    }
+
+        template <class sourceT>
+        class Gray;
+    } // namespace colormaps
 
 
     // codecs
