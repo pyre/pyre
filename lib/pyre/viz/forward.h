@@ -43,6 +43,9 @@ namespace pyre::viz {
 
         template <class hueSourceT, class saturationSourceT, class luminositySourceT>
         class HSL;
+
+        template <class redSourceT, class greenSourceT, class blueSourceT>
+        class RGB;
     } // namespace colormaps
 
 

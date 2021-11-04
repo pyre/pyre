@@ -30,6 +30,7 @@
 #include "colormaps/Gray.h"
 #include "colormaps/HSB.h"
 #include "colormaps/HSL.h"
+#include "colormaps/RGB.h"
 // encodings
 #include "codecs/BMP.h"
 
