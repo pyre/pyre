@@ -22,8 +22,6 @@ public:
     using saturation_source_const_reference = const saturation_source_type &;
     using luminosity_source_const_reference = const luminosity_source_type &;
 
-    // individual color values are one byte wide
-    using color_type = color_t;
     // i generate {r,g,b} triplets
     using rgb_type = rgb_t;
 
