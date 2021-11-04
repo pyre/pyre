@@ -8,7 +8,7 @@
 #define pyre_viz_colormaps_HSL_h
 
 
-// map complex values to (hue, brightness)
+// interpret three input sources as {hue, saturation, luminosity} and generate {rgb_t} color
 template <class hueSourceT, class saturationSourceT, class luminositySourceT>
 class pyre::viz::colormaps::HSL {
     // types
