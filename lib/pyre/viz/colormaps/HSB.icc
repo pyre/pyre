@@ -9,40 +9,40 @@
 #else
 
 // metamethods
-template <class hueSourceT, class saturationSourceT, class valueSourceT>
-pyre::viz::colormaps::HSB<hueSourceT, saturationSourceT, valueSourceT>::HSB(
+template <class hueSourceT, class saturationSourceT, class brightnessSourceT>
+pyre::viz::colormaps::HSB<hueSourceT, saturationSourceT, brightnessSourceT>::HSB(
     hue_source_const_reference hue, saturation_source_const_reference saturation,
-    value_source_const_reference value) :
+    brightness_source_const_reference brightness) :
     _hue { hue },
     _saturation { saturation },
-    _value { value }
+    _brightness { brightness }
 {}
 
 
 // interface
-template <class hueSourceT, class saturationSourceT, class valueSourceT>
+template <class hueSourceT, class saturationSourceT, class brightnessSourceT>
 auto
-pyre::viz::colormaps::HSB<hueSourceT, saturationSourceT, valueSourceT>::operator*() const
+pyre::viz::colormaps::HSB<hueSourceT, saturationSourceT, brightnessSourceT>::operator*() const
     -> rgb_type
 {
-    // get the value from the data sources
+    // get values from my data sources
     auto hue = *_hue;
     auto saturation = *_saturation;
-    auto value = *_value;
+    auto brightness = *_brightness;
 
     // covert to {rgb} and return
-    return colorspaces::hsb(hue, saturation, value);
+    return colorspaces::hsb(hue, saturation, brightness);
 }
 
 
-template <class hueSourceT, class saturationSourceT, class valueSourceT>
+template <class hueSourceT, class saturationSourceT, class brightnessSourceT>
 auto
-pyre::viz::colormaps::HSB<hueSourceT, saturationSourceT, valueSourceT>::operator++() -> void
+pyre::viz::colormaps::HSB<hueSourceT, saturationSourceT, brightnessSourceT>::operator++() -> void
 {
     // make my sources point to the next value
     ++_hue;
     ++_saturation;
-    ++_value;
+    ++_brightness;
     // all done
     return;
 }

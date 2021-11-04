@@ -38,7 +38,7 @@ namespace pyre::viz {
         template <class sourceT>
         class Gray;
 
-        template <class hueSourceT, class saturationSourceT, class valueSourceT>
+        template <class hueSourceT, class saturationSourceT, class brightnessSourceT>
         class HSB;
 
         template <class hueSourceT, class saturationSourceT, class luminositySourceT>
