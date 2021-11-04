@@ -8,7 +8,7 @@
 #define pyre_viz_colormaps_Gray_h
 
 
-// map complex values to (hue, brightness)
+// map a single value to a shade of gray
 template <class sourceT>
 class pyre::viz::colormaps::Gray {
     // types
@@ -18,8 +18,6 @@ public:
     // and its reference type
     using source_const_reference = const source_type &;
 
-    // individual color values are one byte wide
-    using color_type = color_t;
     // i generate {r,g,b} triplets
     using rgb_type = rgb_t;
 
