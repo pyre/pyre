@@ -25,7 +25,7 @@ public:
     // individual color values are one byte wide
     using color_type = color_t;
     // i generate {r,g,b} triplets
-    using rgb_type = rgb_t;
+    using rgb_type = viz::rgb_t;
 
     // metamethods
 public:

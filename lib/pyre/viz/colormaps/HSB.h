@@ -23,7 +23,7 @@ public:
     using brightness_source_const_reference = const brightness_source_type &;
 
     // i generate {r,g,b} triplets
-    using rgb_type = rgb_t;
+    using rgb_type = viz::rgb_t;
 
     // metamethods
 public:
