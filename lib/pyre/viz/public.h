@@ -28,6 +28,7 @@
 // color maps
 #include "colormaps/Complex.h"
 #include "colormaps/Gray.h"
+#include "colormaps/HSB.h"
 // encodings
 #include "codecs/BMP.h"
 

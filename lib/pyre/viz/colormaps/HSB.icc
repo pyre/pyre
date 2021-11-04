@@ -1,0 +1,53 @@
+// -*- c++ -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2021 all rights reserved
+
+// code guard
+#if !defined(pyre_viz_colormaps_HSB_icc)
+#error this file contains implementation details for pyre::viz::colormaps::HSB
+#else
+
+// metamethods
+template <class hueSourceT, class saturationSourceT, class valueSourceT>
+pyre::viz::colormaps::HSB<hueSourceT, saturationSourceT, valueSourceT>::HSB(
+    hue_source_const_reference hue, saturation_source_const_reference saturation,
+    value_source_const_reference value) :
+    _hue { hue },
+    _saturation { saturation },
+    _value { value }
+{}
+
+
+// interface
+template <class hueSourceT, class saturationSourceT, class valueSourceT>
+auto
+pyre::viz::colormaps::HSB<hueSourceT, saturationSourceT, valueSourceT>::operator*() const
+    -> rgb_type
+{
+    // get the value from the data sources
+    auto hue = *_hue;
+    auto saturation = *_saturation;
+    auto value = *_value;
+
+    // covert to {rgb} and return
+    return colorspaces::hsb(hue, saturation, value);
+}
+
+
+template <class hueSourceT, class saturationSourceT, class valueSourceT>
+auto
+pyre::viz::colormaps::HSB<hueSourceT, saturationSourceT, valueSourceT>::operator++() -> void
+{
+    // make my sources point to the next value
+    ++_hue;
+    ++_saturation;
+    ++_value;
+    // all done
+    return;
+}
+
+
+#endif
+
+// end of file
