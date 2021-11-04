@@ -8,22 +8,20 @@
 #define pyre_viz_colormaps_HSB_h
 
 
-// map complex values to (hue, brightness)
-template <class hueSourceT, class saturationSourceT, class valueSourceT>
+// interpret three input sources as {hue, saturation, brightness} and generate {rgb_t} color
+template <class hueSourceT, class saturationSourceT, class brightnessSourceT>
 class pyre::viz::colormaps::HSB {
     // types
 public:
     // my template parameters
     using hue_source_type = hueSourceT;
     using saturation_source_type = saturationSourceT;
-    using value_source_type = valueSourceT;
+    using brightness_source_type = brightnessSourceT;
     // and their reference types
     using hue_source_const_reference = const hue_source_type &;
     using saturation_source_const_reference = const saturation_source_type &;
-    using value_source_const_reference = const value_source_type &;
+    using brightness_source_const_reference = const brightness_source_type &;
 
-    // individual color values are one byte wide
-    using color_type = color_t;
     // i generate {r,g,b} triplets
     using rgb_type = rgb_t;
 
@@ -31,7 +29,7 @@ public:
 public:
     inline HSB(
         hue_source_const_reference hue, saturation_source_const_reference saturation,
-        value_source_const_reference value);
+        brightness_source_const_reference brightness);
 
     // interface: pretend to be an iterator
 public:
@@ -45,7 +43,7 @@ private:
     // the data source
     hue_source_type _hue;
     saturation_source_type _saturation;
-    value_source_type _value;
+    brightness_source_type _brightness;
 
     // default metamethods
 public:
