@@ -25,7 +25,7 @@ auto
 pyre::viz::colormaps::HSL<hueSourceT, saturationSourceT, luminositySourceT>::operator*() const
     -> rgb_type
 {
-    // get the value from the data sources
+    // get values from my data sources
     auto hue = *_hue;
     auto saturation = *_saturation;
     auto luminosity = *_luminosity;
