@@ -46,6 +46,9 @@ namespace pyre::viz::colormaps {
     template <class hueSourceT, class saturationSourceT, class valueSourceT>
     using hsb_t = HSB<hueSourceT, saturationSourceT, valueSourceT>;
 
+    template <class hueSourceT, class saturationSourceT, class luminositySourceT>
+    using hsl_t = HSB<hueSourceT, saturationSourceT, luminositySourceT>;
+
 } // namespace pyre::viz::colormaps
 
 
