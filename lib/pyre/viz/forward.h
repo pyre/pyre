@@ -37,6 +37,9 @@ namespace pyre::viz {
 
         template <class sourceT>
         class Gray;
+
+        template <class hueSourceT, class saturationSourceT, class valueSourceT>
+        class HSB;
     } // namespace colormaps
 
 
