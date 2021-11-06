@@ -26,6 +26,7 @@
 #include "filters/Multiply.h"
 #include "filters/Parametric.h"
 #include "filters/Phase.h"
+#include "filters/PolarSaw.h"
 // color spaces
 #include "colorspaces/hsb.h"
 #include "colorspaces/hsl.h"

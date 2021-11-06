@@ -43,6 +43,9 @@ namespace pyre::viz {
         // extract the phase of a complex source
         template <class sourceT>
         class Phase;
+        // a saw tooth function based on the phase of its input value
+        template <class sourceT>
+        class PolarSaw;
     } // namespace filters
 
     // color maps
