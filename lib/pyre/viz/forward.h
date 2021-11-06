@@ -11,21 +11,26 @@
 // set up the namespace
 namespace pyre::viz {
 
-    // just to make sure we are all on the same page
-    using byte_t = char;
-
+    // an interval is a pair of
+    using interval_t = std::tuple<double, double>;
     // individual color values are floats in [0,1]
     using color_t = float;
     // {r,g,b} triplets
     using rgb_t = std::tuple<color_t, color_t, color_t>;
+    // just to make sure we are all on the same page, wherever it matters
+    using byte_t = char;
 
     // filters
     namespace filters {
+        // extract the amplitude of a complex source
         template <class sourceT>
         class Amplitude;
-
+        // supply a constant value
         class Constant;
-
+        // scale values relative to an interval
+        template <class sourceT>
+        class Parametric;
+        // extract the phase of a complex source
         template <class sourceT>
         class Phase;
     } // namespace filters
