@@ -28,6 +28,9 @@ namespace pyre::viz {
         // supply a constant value
         template <typename valueT>
         class Constant;
+        // a saw tooth function based on the log of its input value
+        template <class sourceT>
+        class LogSaw;
         // scale values relative to an interval
         template <class sourceT>
         class Parametric;

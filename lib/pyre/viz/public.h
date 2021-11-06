@@ -21,6 +21,7 @@
 // filters
 #include "filters/Amplitude.h"
 #include "filters/Constant.h"
+#include "filters/LogSaw.h"
 #include "filters/Parametric.h"
 #include "filters/Phase.h"
 // color spaces

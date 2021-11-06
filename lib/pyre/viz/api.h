@@ -26,6 +26,9 @@ namespace pyre::viz::filters {
     // supply a constant value
     template <typename valueT = double>
     using constant_t = Constant<valueT>;
+    // a saw tooth function on the log of its input value
+    template <class sourceT>
+    using logsaw_t = LogSaw<sourceT>;
     // scale values relative to a given interval
     template <class sourceT>
     using parametric_t = Parametric<sourceT>;
