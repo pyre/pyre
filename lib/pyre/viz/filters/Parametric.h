@@ -8,7 +8,7 @@
 #define pyre_viz_filters_Parametric_h
 
 
-// a filter that always presents a constant value
+// a filter that shifts and scales its input values based on a given interval
 template <class sourceT>
 class pyre::viz::filters::Parametric {
     // types

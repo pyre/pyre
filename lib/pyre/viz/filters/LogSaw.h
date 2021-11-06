@@ -8,7 +8,7 @@
 #define pyre_viz_filters_LogSaw_h
 
 
-// a filter that extracts the amplitude of its complex data source
+// a filter computes the fractional part of the logarithm of its source
 template <class sourceT>
 class pyre::viz::filters::LogSaw {
     // types
