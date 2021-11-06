@@ -34,6 +34,9 @@ namespace pyre::viz {
         // a saw tooth function based on the log of its input value
         template <class sourceT>
         class LogSaw;
+        // a filter that multiples two others
+        template <class op1T, class op2T>
+        class Multiply;
         // scale values relative to an interval
         template <class sourceT>
         class Parametric;
