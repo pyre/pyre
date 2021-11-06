@@ -19,6 +19,7 @@
 
 // local support
 // filters
+#include "filters/Add.h"
 #include "filters/Amplitude.h"
 #include "filters/Constant.h"
 #include "filters/LogSaw.h"

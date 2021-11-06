@@ -20,6 +20,9 @@ namespace pyre::viz {
 
 // filters
 namespace pyre::viz::filters {
+    // a filter that adds two others
+    template <class op1T, class op2T>
+    using add_t = Add<op1T, op2T>;
     // extract the amplitude of a complex dataset
     template <class sourceT>
     using amplitude_t = Amplitude<sourceT>;
