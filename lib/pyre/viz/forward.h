@@ -26,6 +26,7 @@ namespace pyre::viz {
         template <class sourceT>
         class Amplitude;
         // supply a constant value
+        template <typename valueT>
         class Constant;
         // scale values relative to an interval
         template <class sourceT>

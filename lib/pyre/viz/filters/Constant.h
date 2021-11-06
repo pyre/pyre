@@ -9,11 +9,12 @@
 
 
 // a filter that always presents a constant value
+template <typename valueT>
 class pyre::viz::filters::Constant {
     // types
 public:
     // my value type
-    using value_type = double;
+    using value_type = valueT;
 
     // metamethods
 public:
