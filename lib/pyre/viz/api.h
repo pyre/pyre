@@ -20,11 +20,15 @@ namespace pyre::viz {
 
 // filters
 namespace pyre::viz::filters {
+    // extract the amplitude of a complex dataset
     template <class sourceT>
     using amplitude_t = Amplitude<sourceT>;
-
+    // supply a constant value
     using constant_t = Constant;
-
+    // scale values relative to a given interval
+    template <class sourceT>
+    using parametric_t = Parametric<sourceT>;
+    // extract the phase of a complex dataset
     template <class sourceT>
     using phase_t = Phase<sourceT>;
 } // namespace pyre::viz::filters
