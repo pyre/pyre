@@ -41,6 +41,9 @@ namespace pyre::viz::filters {
     // extract the phase of a complex dataset
     template <class sourceT>
     using phase_t = Phase<sourceT>;
+    // a saw tooth function on the phase of its input value
+    template <class sourceT>
+    using polarsaw_t = PolarSaw<sourceT>;
 } // namespace pyre::viz::filters
 
 // conversions from other color spaces to {rgb}
