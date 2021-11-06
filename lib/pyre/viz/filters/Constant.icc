@@ -11,20 +11,24 @@
 
 // metamethods
 // constructor
-pyre::viz::filters::Constant::Constant(value_type value) : _value(value) {}
+template <typename valueT>
+pyre::viz::filters::Constant<valueT>::Constant(value_type value) : _value(value)
+{}
 
 
 // interface
+template <typename valueT>
 auto
-pyre::viz::filters::Constant::operator*() const -> value_type
+pyre::viz::filters::Constant<valueT>::operator*() const -> value_type
 {
     // always return my {_value}
     return _value;
 }
 
 
+template <typename valueT>
 auto
-pyre::viz::filters::Constant::operator++() const -> void
+pyre::viz::filters::Constant<valueT>::operator++() const -> void
 {
     // nothing to do, since i don't have any upstream dependencies
     return;

@@ -21,7 +21,7 @@ using cursor_t = dataset_t::const_iterator;
 
 // my filters
 using phase_t = pyre::viz::filters::phase_t<cursor_t>;
-using constant_t = pyre::viz::filters::constant_t;
+using constant_t = pyre::viz::filters::constant_t<double>;
 // my color map
 using hsb_t = pyre::viz::colormaps::hsb_t<phase_t, constant_t, constant_t>;
 

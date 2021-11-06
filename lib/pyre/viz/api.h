@@ -24,7 +24,8 @@ namespace pyre::viz::filters {
     template <class sourceT>
     using amplitude_t = Amplitude<sourceT>;
     // supply a constant value
-    using constant_t = Constant;
+    template <typename valueT = double>
+    using constant_t = Constant<valueT>;
     // scale values relative to a given interval
     template <class sourceT>
     using parametric_t = Parametric<sourceT>;
