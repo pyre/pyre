@@ -36,7 +36,7 @@ main(int argc, char * argv[])
     // for a given number of bins
     const int bins = 1001;
     // the spacing is
-    const double delta = 1.0 / (bins - 1);
+    const double delta = 4.0 / (bins - 1);
 
     // make a dataset
     dataset_t data;
@@ -46,9 +46,11 @@ main(int argc, char * argv[])
     for (int i = 0; i < bins; ++i) {
         for (int j = 0; j < bins; ++j) {
             // convert the indices into a complex number in our space
-            data_t z { -0.5 + j * delta, 0.5 - i * delta };
+            data_t z { -2.0 + j * delta, 2.0 - i * delta };
+            // compute f(z)
+            auto f = (z - 1.0) / (z * z + z + 1.0);
             // place into the data set
-            data.emplace(data.end(), z);
+            data.emplace(data.end(), f);
         }
     }
 
