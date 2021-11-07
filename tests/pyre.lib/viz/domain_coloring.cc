@@ -22,9 +22,11 @@ using cursor_t = dataset_t::const_iterator;
 // my filters
 using phase_t = pyre::viz::filters::phase_t<cursor_t>;
 using mag_t = pyre::viz::filters::logsaw_t<cursor_t>;
+using pol_t = pyre::viz::filters::polarsaw_t<phase_t>;
+using mul_t = pyre::viz::filters::mul_t<mag_t, pol_t>;
 using constant_t = pyre::viz::filters::constant_t<double>;
 // my color map
-using hsb_t = pyre::viz::colormaps::hsb_t<phase_t, constant_t, mag_t>;
+using hsb_t = pyre::viz::colormaps::hsb_t<phase_t, constant_t, mul_t>;
 
 // and the workflow terminal
 using bmp_t = pyre::viz::bmp_t;
@@ -62,7 +64,7 @@ main(int argc, char * argv[])
     // make a phase filter for the hue
     auto hue = phase_t(start);
     // log sawtooth for the brightness
-    auto bright = mag_t(start);
+    auto bright = mul_t(mag_t(start), pol_t(hue));
     // and a constant filter for the saturation
     auto saturation = constant_t(0.9);
     // make a color map
