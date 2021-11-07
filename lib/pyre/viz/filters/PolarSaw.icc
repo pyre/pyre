@@ -24,7 +24,7 @@ pyre::viz::filters::PolarSaw<sourceT>::operator*() const -> value_type
     // get the value
     auto z = *_source;
     // compute the phase
-    auto saw = z * 12 / M_PI;
+    auto saw = z * 6 / M_PI;
     // project it onto [0,1]
     auto value = std::abs(saw - std::trunc(saw));
     // and return it
