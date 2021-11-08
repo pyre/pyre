@@ -44,6 +44,9 @@ namespace pyre::viz::filters {
     // a saw tooth function on the phase of its input value
     template <class sourceT>
     using polarsaw_t = PolarSaw<sourceT>;
+    // a filter that maps values in [0,1] to the index of of a call in a uniformly spaced grid
+    template <class sourceT>
+    using uniform_t = Uniform<sourceT>;
 } // namespace pyre::viz::filters
 
 // conversions from other color spaces to {rgb}

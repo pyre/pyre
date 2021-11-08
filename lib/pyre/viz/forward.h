@@ -46,6 +46,9 @@ namespace pyre::viz {
         // a saw tooth function based on the phase of its input value
         template <class sourceT>
         class PolarSaw;
+        // a filter that maps values in [0,1] to the index of of a call in a uniformly spaced grid
+        template <class sourceT>
+        class Uniform;
     } // namespace filters
 
     // color maps
