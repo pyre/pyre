@@ -27,6 +27,7 @@
 #include "filters/Parametric.h"
 #include "filters/Phase.h"
 #include "filters/PolarSaw.h"
+#include "filters/Uniform.h"
 // color spaces
 #include "colorspaces/hsb.h"
 #include "colorspaces/hsl.h"
