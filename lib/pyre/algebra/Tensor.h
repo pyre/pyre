@@ -168,23 +168,6 @@ using symmetric_matrix_t = matrix_t<D, D, T>;
 template <int D, typename T = real>
 using diagonal_matrix_t = matrix_t<D, D, T>;
 
-// factory for unit tensors
-template <int D, typename T = real, typename... Args>
-static constexpr auto unit(Args... args) {
-    
-    // number of indices of the tensor, i.e. rank
-    constexpr int N = sizeof...(args);
-    
-    auto _pack = []<size_t... J>(Args... args, std::index_sequence<J...>) -> auto
-    {
-        auto wrap = []<size_t>()->int { return D; };
-        // expands to Tensor<T, D, ..., D> where D appears N times
-        return Tensor<T, wrap.template operator()<J>()...>::unit(args...);
-    };
-
-    return _pack(args..., std::make_index_sequence<N> {});
-}
-
 // factory for identity matrices
 template <int D, typename T = real>
 static constexpr auto _make_identity_matrix() -> diagonal_matrix_t<D, T> 

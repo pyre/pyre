@@ -17,22 +17,22 @@ using namespace pyre::algebra;
 int main(int argc, char* argv[]) {
 
     // 2D matrix: the columns of the identity are the canonical basis 
-    static_assert(col<0>(identity_matrix<2>) == unit<2>(0));
-    static_assert(col<1>(identity_matrix<2>) == unit<2>(1));
+    static_assert(col<0>(identity_matrix<2>) == vector_t<2>::unit(0));
+    static_assert(col<1>(identity_matrix<2>) == vector_t<2>::unit(1));
 
     // 2D matrix: the rows of the identity are the canonical basis 
-    static_assert(row<0>(identity_matrix<2>) == unit<2>(0));
-    static_assert(row<1>(identity_matrix<2>) == unit<2>(1));
+    static_assert(row<0>(identity_matrix<2>) == vector_t<2>::unit(0));
+    static_assert(row<1>(identity_matrix<2>) == vector_t<2>::unit(1));
 
     // 3D matrix: the columns of the identity are the canonical basis 
-    static_assert(col<0>(identity_matrix<3>) == unit<3>(0));
-    static_assert(col<1>(identity_matrix<3>) == unit<3>(1));
-    static_assert(col<2>(identity_matrix<3>) == unit<3>(2));
+    static_assert(col<0>(identity_matrix<3>) == vector_t<3>::unit(0));
+    static_assert(col<1>(identity_matrix<3>) == vector_t<3>::unit(1));
+    static_assert(col<2>(identity_matrix<3>) == vector_t<3>::unit(2));
 
     // 3D matrix: the rows of the identity are the canonical basis 
-    static_assert(row<0>(identity_matrix<3>) == unit<3>(0));
-    static_assert(row<1>(identity_matrix<3>) == unit<3>(1));
-    static_assert(row<2>(identity_matrix<3>) == unit<3>(2));
+    static_assert(row<0>(identity_matrix<3>) == vector_t<3>::unit(0));
+    static_assert(row<1>(identity_matrix<3>) == vector_t<3>::unit(1));
+    static_assert(row<2>(identity_matrix<3>) == vector_t<3>::unit(2));
 
     // 2D matrix: the diagonal of the identity is the ones vector 
     static_assert(matrix_diagonal(identity_matrix<2>) == vector_t<2>::one);
