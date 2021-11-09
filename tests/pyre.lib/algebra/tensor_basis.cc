@@ -29,25 +29,12 @@ int main(int argc, char* argv[]) {
         == vector_t<3>::one);
 
     // 2D matrix: canonical basis
-    static_assert(matrix_t<2>::unit(0, 0) == matrix_t<2>{1, 0, 0, 0});
-    static_assert(matrix_t<2>::unit(0, 1) == matrix_t<2>{0, 1, 0, 0});
-    static_assert(matrix_t<2>::unit(1, 0) == matrix_t<2>{0, 0, 1, 0});
-    static_assert(matrix_t<2>::unit(1, 1) == matrix_t<2>{0, 0, 0, 1});
     static_assert(
           matrix_t<2>::unit(0, 0) + matrix_t<2>::unit(0, 1)
         + matrix_t<2>::unit(1, 0) + matrix_t<2>::unit(1, 1)
         == matrix_t<2, 2>::one);
 
     // 3D matrix: canonical basis
-    static_assert(matrix_t<3>::unit(0, 0) == matrix_t<3>{1, 0, 0, 0, 0, 0, 0, 0, 0});
-    static_assert(matrix_t<3>::unit(0, 1) == matrix_t<3>{0, 1, 0, 0, 0, 0, 0, 0, 0});
-    static_assert(matrix_t<3>::unit(0, 2) == matrix_t<3>{0, 0, 1, 0, 0, 0, 0, 0, 0});
-    static_assert(matrix_t<3>::unit(1, 0) == matrix_t<3>{0, 0, 0, 1, 0, 0, 0, 0, 0});
-    static_assert(matrix_t<3>::unit(1, 1) == matrix_t<3>{0, 0, 0, 0, 1, 0, 0, 0, 0});
-    static_assert(matrix_t<3>::unit(1, 2) == matrix_t<3>{0, 0, 0, 0, 0, 1, 0, 0, 0});
-    static_assert(matrix_t<3>::unit(2, 0) == matrix_t<3>{0, 0, 0, 0, 0, 0, 1, 0, 0});
-    static_assert(matrix_t<3>::unit(2, 1) == matrix_t<3>{0, 0, 0, 0, 0, 0, 0, 1, 0});
-    static_assert(matrix_t<3>::unit(2, 2) == matrix_t<3>{0, 0, 0, 0, 0, 0, 0, 0, 1});
     static_assert(
           matrix_t<3>::unit(0, 0) + matrix_t<3>::unit(0, 1) + matrix_t<3>::unit(0, 2)
         + matrix_t<3>::unit(1, 0) + matrix_t<3>::unit(1, 1) + matrix_t<3>::unit(1, 2) 
