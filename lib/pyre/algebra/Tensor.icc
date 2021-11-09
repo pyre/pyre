@@ -10,7 +10,7 @@
 #else
 
 template <typename T, int... I>
-constexpr pyre::algebra::Tensor<T, I...>::Tensor() : _data()
+constexpr inline pyre::algebra::Tensor<T, I...>::Tensor() : _data()
 {
     // initialize memory
     reset();
@@ -20,15 +20,16 @@ constexpr pyre::algebra::Tensor<T, I...>::Tensor() : _data()
 }
 
 template <typename T, int... I>
-constexpr pyre::algebra::Tensor<T, I...>::Tensor(const data_t & data) : _data(data) {}
+constexpr inline pyre::algebra::Tensor<T, I...>::Tensor(const data_t & data) : _data(data) {}
 
 template <typename T, int... I>
-constexpr pyre::algebra::Tensor<T, I...>::Tensor(const data_t && data) : 
+constexpr inline pyre::algebra::Tensor<T, I...>::Tensor(const data_t && data) : 
     _data(std::forward(data)) {}
 
 template <typename T, int... I>
 template <class... T2>
-constexpr pyre::algebra::Tensor<T, I...>::Tensor(T2... args) requires(sizeof...(T2) == S) : Tensor()
+constexpr inline pyre::algebra::Tensor<T, I...>::Tensor(T2... args) requires(sizeof...(T2) == S) 
+    : Tensor()
 {
     // initialize with input arguments
     _initialize(std::make_index_sequence<S> {}, args...);
@@ -38,10 +39,10 @@ constexpr pyre::algebra::Tensor<T, I...>::Tensor(T2... args) requires(sizeof...(
 }
 
 template <typename T, int... I>
-constexpr pyre::algebra::Tensor<T, I...>::~Tensor() {}
+constexpr inline pyre::algebra::Tensor<T, I...>::~Tensor() {}
 
 template <typename T, int... I>
-constexpr const T &
+constexpr inline const T &
 pyre::algebra::Tensor<T, I...>::operator[](index_t i) const
 {
     // get the offset that corresponds to this {index}
@@ -51,7 +52,7 @@ pyre::algebra::Tensor<T, I...>::operator[](index_t i) const
 }
 
 template <typename T, int... I>
-constexpr T &
+constexpr inline T &
 pyre::algebra::Tensor<T, I...>::operator[](index_t i)
 {
     // get the offset that corresponds to this {index}
@@ -61,21 +62,21 @@ pyre::algebra::Tensor<T, I...>::operator[](index_t i)
 }
 
 template <typename T, int... I>
-constexpr const T &
+constexpr inline const T &
 pyre::algebra::Tensor<T, I...>::operator[](int i) const
 {
     return _data[i];
 }
 
 template <typename T, int... I>
-constexpr T &
+constexpr inline T &
 pyre::algebra::Tensor<T, I...>::operator[](int i)
 {
     return _data[i];
 }
 
 template <typename T, int... I>
-constexpr void
+constexpr inline void
 pyre::algebra::Tensor<T, I...>::operator+=(const Tensor<T, I...> & rhs)
 {
     // component-wise operator+=
@@ -83,20 +84,19 @@ pyre::algebra::Tensor<T, I...>::operator+=(const Tensor<T, I...> & rhs)
 }
 
 template <typename T, int... I>
-constexpr pyre::algebra::Tensor<T, I...>::operator T() const requires(S == 1)
+constexpr inline pyre::algebra::Tensor<T, I...>::operator T() const requires(S == 1)
 {
     return _data[0];
 }
 
 template <typename T, int... I>
-constexpr pyre::algebra::Tensor<T, I...>::operator data_t() const
+constexpr inline pyre::algebra::Tensor<T, I...>::operator data_t() const
 {
     return _data;
 }
 
 template <typename T, int... I>
-constexpr void
-pyre::algebra::Tensor<T, I...>::reset()
+constexpr inline void pyre::algebra::Tensor<T, I...>::reset()
 {
     // reset to zero all entries
     return _reset(std::make_index_sequence<S> {});
@@ -104,7 +104,7 @@ pyre::algebra::Tensor<T, I...>::reset()
 
 template <typename T, int... I>
 template <size_t... J, class... T2>
-constexpr void
+constexpr inline void
 pyre::algebra::Tensor<T, I...>::_initialize(std::index_sequence<J...>, T2... args)
 {
     ((_data[J] = args), ...);
@@ -115,7 +115,7 @@ pyre::algebra::Tensor<T, I...>::_initialize(std::index_sequence<J...>, T2... arg
 
 template <typename T, int... I>
 template <size_t... J>
-constexpr void pyre::algebra::Tensor<T, I...>::_reset(std::index_sequence<J...>)
+constexpr inline void pyre::algebra::Tensor<T, I...>::_reset(std::index_sequence<J...>)
 {
     ((_data[J] = T()), ...);
 
@@ -125,7 +125,7 @@ constexpr void pyre::algebra::Tensor<T, I...>::_reset(std::index_sequence<J...>)
 
 template <typename T, int... I>
 template <size_t... J>
-constexpr void
+constexpr inline void
 pyre::algebra::Tensor<T, I...>::_operatorPlusEqual(
     std::index_sequence<J...>, const Tensor<T, I...> & rhs)
 {
@@ -137,7 +137,7 @@ pyre::algebra::Tensor<T, I...>::_operatorPlusEqual(
 
 template <typename T, int... I>
 template <size_t... J>
-constexpr pyre::algebra::Tensor<T, I...> pyre::algebra::Tensor<T, I...>::_make_zeros(
+constexpr inline pyre::algebra::Tensor<T, I...> pyre::algebra::Tensor<T, I...>::_make_zeros(
     std::index_sequence<J...>)
 {
     constexpr auto wrap = []<size_t>() consteval->T { return 0; };
@@ -146,7 +146,7 @@ constexpr pyre::algebra::Tensor<T, I...> pyre::algebra::Tensor<T, I...>::_make_z
 
 template <typename T, int... I>
 template <size_t... J>
-constexpr pyre::algebra::Tensor<T, I...> pyre::algebra::Tensor<T, I...>::_make_ones(
+constexpr inline pyre::algebra::Tensor<T, I...> pyre::algebra::Tensor<T, I...>::_make_ones(
     std::index_sequence<J...>)
 {
     constexpr auto wrap = []<size_t>() consteval->T { return 1; };
@@ -155,7 +155,7 @@ constexpr pyre::algebra::Tensor<T, I...> pyre::algebra::Tensor<T, I...>::_make_o
 
 template <typename T, int... I>
 template <size_t... J>
-constexpr pyre::algebra::Tensor<T, I...> pyre::algebra::Tensor<T, I...>::_make_basis_element(
+constexpr inline pyre::algebra::Tensor<T, I...> pyre::algebra::Tensor<T, I...>::_make_basis_element(
     pyre::algebra::Tensor<T, I...>::index_t K, std::index_sequence<J...>)
 {
     constexpr auto delta = [](size_t II, size_t JJ) ->T 
@@ -169,8 +169,7 @@ constexpr pyre::algebra::Tensor<T, I...> pyre::algebra::Tensor<T, I...>::_make_b
 
 template <typename T, int... I>
 template<typename... Args>
-constexpr pyre::algebra::Tensor<T, I...> pyre::algebra::Tensor<T, I...>::unit(
-    //pyre::algebra::Tensor<T, I...>::index_t K) 
+constexpr inline pyre::algebra::Tensor<T, I...> pyre::algebra::Tensor<T, I...>::unit(
     Args... args) requires (sizeof...(Args) == N)
 {
     pyre::algebra::Tensor<T, I...>::index_t K(args...);

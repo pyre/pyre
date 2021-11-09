@@ -355,18 +355,18 @@ namespace pyre {
 
         // factorial
         template <int D>
-        constexpr int factorial()
+        constexpr inline int factorial()
         {
             return D * factorial<int(D - 1)>();
         }
         template <>
-        constexpr int factorial<1>()
+        constexpr inline int factorial<1>()
         {
             return 1;
         }
 
         template <typename T>
-        constexpr T determinant(const matrix_t<4, 4, T> & A)
+        constexpr inline T determinant(const matrix_t<4, 4, T> & A)
         {
             return A[{0, 1}] * A[{2, 3}] * A[{3, 2}] * A[{1, 0}] - A[{0, 1}] * A[{2, 2}] * A[{3, 3}]
                      * A[{1, 0}]
@@ -395,7 +395,7 @@ namespace pyre {
         }
 
         template <typename T>
-        constexpr T determinant(const matrix_t<3, 3, T> & A)
+        constexpr inline T determinant(const matrix_t<3, 3, T> & A)
         {
             return A[{0, 0}] * (A[{1, 1}] * A[{2, 2}] - A[{1, 2}] * A[{2, 1}]) 
                  - A[{0, 1}] * (A[{1, 0}] * A[{2, 2}] - A[{1, 2}] * A[{2, 0}])
@@ -403,13 +403,13 @@ namespace pyre {
         }
 
         template <typename T>
-        constexpr T determinant(const matrix_t<2, 2, T> & A)
+        constexpr inline T determinant(const matrix_t<2, 2, T> & A)
         {
             return A[{0, 0}] * A[{1, 1}] - A[{0, 1}] * A[{1, 0}];
         }
 
         template <typename T>
-        constexpr matrix_t<3, 3, T> inverse(const matrix_t<3, 3, T> & A)
+        constexpr inline matrix_t<3, 3, T> inverse(const matrix_t<3, 3, T> & A)
         {
             matrix_t<3, 3, T> invA;
 
@@ -431,7 +431,7 @@ namespace pyre {
         }
 
         template <typename T>
-        constexpr matrix_t<2, 2, T> inverse(const matrix_t<2, 2, T> & A)
+        constexpr inline matrix_t<2, 2, T> inverse(const matrix_t<2, 2, T> & A)
         {
             matrix_t<2, 2, T> invA;
 
@@ -448,7 +448,7 @@ namespace pyre {
         }
 
         template <int D, typename T>
-        constexpr T trace(const matrix_t<D, D, T> & A)
+        constexpr inline T trace(const matrix_t<D, D, T> & A)
         {
             auto _trace = [&A]<size_t... J>(std::index_sequence<J...>) ->T
             {
@@ -459,7 +459,7 @@ namespace pyre {
         }
 
         template <int D1, int D2, typename T>
-        constexpr matrix_t<D2, D1, T> transpose(const matrix_t<D1, D2, T> & A)
+        constexpr inline matrix_t<D2, D1, T> transpose(const matrix_t<D1, D2, T> & A)
         {
             // A transposed
             matrix_t<D2, D1, T> AT;
@@ -481,7 +481,7 @@ namespace pyre {
 
         // TOFIX: This still does a complete loop while it should do a upper-diagonal loop
         template <int D, typename T>
-        constexpr symmetric_matrix_t<D, T> symmetric(const matrix_t<D, D, T> & A)
+        constexpr inline symmetric_matrix_t<D, T> symmetric(const matrix_t<D, D, T> & A)
         {
             symmetric_matrix_t<D, T> sym;
 
@@ -500,13 +500,13 @@ namespace pyre {
         }
 
         template <int D, typename T>
-        constexpr matrix_t<D, D, T> skew(const matrix_t<D, D, T> & A)
+        constexpr inline matrix_t<D, D, T> skew(const matrix_t<D, D, T> & A)
         {
             return 0.5 * (A - transpose(A));
         }
 
         template <typename T>
-        constexpr vector_t<2, T> eigenvalues(const symmetric_matrix_t<2, T> & A)
+        constexpr inline vector_t<2, T> eigenvalues(const symmetric_matrix_t<2, T> & A)
         {
             T delta = sqrt(4.0 * A[{0, 1}] * A[{0, 1}] 
                 + (A[{0, 0}] - A[{1, 1}]) * (A[{0, 0}] - A[{1, 1}]));
@@ -516,7 +516,7 @@ namespace pyre {
         }
 
         template <typename T>
-        constexpr matrix_t<2, 2, T> eigenvectors(const symmetric_matrix_t<2, T> & A)
+        constexpr inline matrix_t<2, 2, T> eigenvectors(const symmetric_matrix_t<2, T> & A)
         {
             T delta = sqrt(4.0 * A[{0, 1}] * A[{0, 1}] 
                 + (A[{0, 0}] - A[{1, 1}]) * (A[{0, 0}] - A[{1, 1}]));
@@ -529,7 +529,7 @@ namespace pyre {
         }
 
         template <typename T>
-        constexpr vector_t<3, T> eigenvalues(const matrix_t<3, 3, T> & A)
+        constexpr inline vector_t<3, T> eigenvalues(const matrix_t<3, 3, T> & A)
         {
             // https://hal.archives-ouvertes.fr/hal-01501221
             T x1 = A[{0, 0}] * A[{0, 0}] + A[{1, 1}] * A[{1, 1}] + A[{2, 2}] * A[{2, 2}] 
@@ -568,7 +568,7 @@ namespace pyre {
         }
 
         template <typename T>
-        constexpr matrix_t<3, 3, T> eigenvectors(const symmetric_matrix_t<3, T> & A)
+        constexpr inline matrix_t<3, 3, T> eigenvectors(const symmetric_matrix_t<3, T> & A)
         {
             // TODO: Manage special cases f = 0, denominators = 0
             auto lambda = eigenvalues(A);
@@ -594,21 +594,21 @@ namespace pyre {
         }
 
         template <int D, typename T>
-        constexpr auto eigenvalues(const diagonal_matrix_t<D, T> & A)
+        constexpr inline auto eigenvalues(const diagonal_matrix_t<D, T> & A)
         {
             // the diagonal entries are the eigenvalues
             return matrix_diagonal(A);
         }
 
         template <int D, typename T>
-        constexpr auto eigenvectors(const diagonal_matrix_t<D, T> & A)
+        constexpr inline auto eigenvectors(const diagonal_matrix_t<D, T> & A)
         {
             // the canonical basis is the set of eigenvectors
             return identity_matrix<D>;
         }
 
         template <int I, int D1, int D2, typename T>
-        constexpr vector_t<D2, T> row(const matrix_t<D1, D2, T> & A)
+        constexpr inline vector_t<D2, T> row(const matrix_t<D1, D2, T> & A)
         {
             auto _row = [&A]<size_t... J>(std::index_sequence<J...>) -> vector_t<D2, T>
             {
@@ -620,7 +620,7 @@ namespace pyre {
         }
 
         template <int I, int D1, int D2, typename T>
-        constexpr vector_t<D1, T> col(const matrix_t<D1, D2, T> & A)
+        constexpr inline vector_t<D1, T> col(const matrix_t<D1, D2, T> & A)
         {
             auto _col = [&A]<size_t... J>(std::index_sequence<J...>) -> vector_t<D1, T>
             {
@@ -632,7 +632,7 @@ namespace pyre {
         }
 
         template <int D, typename T>
-        constexpr symmetric_matrix_t<D, T> function(const symmetric_matrix_t<D, T> & A, auto f)
+        constexpr inline symmetric_matrix_t<D, T> function(const symmetric_matrix_t<D, T> & A, auto f)
         {
             // compute eigenvalues
             auto lambda = matrix_diagonal(eigenvalues(A));
