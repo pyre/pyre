@@ -141,7 +141,7 @@ public:
 
 private:
     // layout
-    static constexpr pack_t _layout {{I ...}};
+    static constexpr pack_t _layout {{I ...}, index_t::zero(), pack_t::order_type::rowMajor()};
 
     // data
     data_t _data;
