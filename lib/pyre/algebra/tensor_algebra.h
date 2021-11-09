@@ -525,11 +525,13 @@ namespace pyre {
             T delta = sqrt(4.0 * A[{0, 1}] * A[{0, 1}] 
                 + (A[{0, 0}] - A[{1, 1}]) * (A[{0, 0}] - A[{1, 1}]));
 
-            return matrix_t<2, 2, T>{
-                (A[{0, 0}] - A[{1, 1}] + delta) / (2.0 * A[{1, 0}]), 
-                (A[{0, 0}] - A[{1, 1}] - delta) / (2.0 * A[{1, 0}]),
-                1.0, 
-                1.0};
+            matrix_t<2, 2, T> eigenvector_matrix;
+            eigenvector_matrix[{0, 0}] = (A[{0, 0}] - A[{1, 1}] + delta) / (2.0 * A[{1, 0}]);
+            eigenvector_matrix[{0, 1}] = (A[{0, 0}] - A[{1, 1}] - delta) / (2.0 * A[{1, 0}]);
+            eigenvector_matrix[{1, 0}] = 1.0;
+            eigenvector_matrix[{1, 1}] = 1.0;
+
+            return eigenvector_matrix;
         }
 
         template <typename T>
@@ -585,16 +587,18 @@ namespace pyre {
             T m2 = (A[{0, 1}] * (A[{2, 2}] - lambda[2]) - A[{1, 2}] * A[{0, 2}]) / 
                 (A[{0, 2}] * (A[{1, 1}] - lambda[2]) - A[{0, 1}] * A[{1, 2}]);
 
-            return matrix_t<3, 3, T>{
-                (lambda[0] - A[{2, 2}] - A[{1, 2}] * m0) / A[{0, 2}], 
-                (lambda[1] - A[{2, 2}] - A[{1, 2}] * m1) / A[{0, 2}],
-                (lambda[2] - A[{2, 2}] - A[{1, 2}] * m2) / A[{0, 2}],
-                m0,
-                m1,
-                m2,
-                1.0, 
-                1.0,
-                1.0};
+            matrix_t<3, 3, T> eigenvector_matrix;
+            eigenvector_matrix[{0, 0}] = (lambda[0] - A[{2, 2}] - A[{1, 2}] * m0) / A[{0, 2}];
+            eigenvector_matrix[{0, 1}] = (lambda[1] - A[{2, 2}] - A[{1, 2}] * m1) / A[{0, 2}];
+            eigenvector_matrix[{0, 2}] = (lambda[2] - A[{2, 2}] - A[{1, 2}] * m2) / A[{0, 2}];
+            eigenvector_matrix[{1, 0}] = m0;
+            eigenvector_matrix[{1, 1}] = m1;
+            eigenvector_matrix[{1, 2}] = m2;
+            eigenvector_matrix[{2, 0}] = 1.0;
+            eigenvector_matrix[{2, 1}] = 1.0;
+            eigenvector_matrix[{2, 2}] = 1.0;
+
+            return eigenvector_matrix;
         }
 
         template <int D, typename T>
