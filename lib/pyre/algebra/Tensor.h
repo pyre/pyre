@@ -14,7 +14,7 @@
 namespace pyre { 
 namespace algebra {
 
-template <typename T, int... I>
+template <typename T, class packingT, int... I>
 class Tensor {
 
 private:
@@ -33,13 +33,12 @@ private:
     static constexpr int S = multiply(I...);
 
 private:
-    // TODO: template Tensor wrt pack_t and storage_t, just like class Grid
-    // conventionally packed grid
-    using pack_t = pyre::grid::canonical_t<N>;
-    // of T on the heap
-    using storage_t = pyre::memory::stack_t<S, T>;
+    // the packing strategy
+    using pack_t = packingT;
     // index
     using index_t = pack_t::index_type;
+    // of T on the heap
+    using storage_t = pyre::memory::stack_t<S, T>;
     // data type
     using data_t = storage_t;
 
@@ -90,7 +89,7 @@ public:
     constexpr inline T & operator[](int);
 
     // operator plus equal
-    constexpr inline void operator+=(const Tensor<T, I...> &);
+    constexpr inline void operator+=(const Tensor<T, packingT, I...> &);
 
     // cast to underlying type T (enable if S = 1, i.e. scalar)
     constexpr inline operator T() const requires(S == 1);
@@ -112,29 +111,33 @@ private:
 
     // helper function to build the zero tensor
     template <size_t... J>
-    static constexpr inline pyre::algebra::Tensor<T, I...> _make_zeros(std::index_sequence<J...>);
+    static constexpr inline pyre::algebra::Tensor<T, packingT, I...> 
+        _make_zeros(std::index_sequence<J...>);
 
     // helper function to build a tensor of ones
     template <size_t... J>
-    static constexpr inline pyre::algebra::Tensor<T, I...> _make_ones(std::index_sequence<J...>);
+    static constexpr inline pyre::algebra::Tensor<T, packingT, I...> 
+        _make_ones(std::index_sequence<J...>);
 
     // helper function to build a tensor of zeros with a 1 at index K
     template <size_t... J>
-    static constexpr inline pyre::algebra::Tensor<T, I...> _make_basis_element(index_t, 
-        std::index_sequence<J...>);
+    static constexpr inline pyre::algebra::Tensor<T, packingT, I...> 
+        _make_basis_element(index_t, std::index_sequence<J...>);
 
 public:
     // the zero element
-    static constexpr Tensor<T, I...> zero = pyre::algebra::Tensor<T, I...>::_make_zeros(
-        std::make_index_sequence<pyre::algebra::Tensor<T, I...>::size> {});
+    static constexpr Tensor<T, packingT, I...> zero = 
+        pyre::algebra::Tensor<T, packingT, I...>::_make_zeros(
+        std::make_index_sequence<pyre::algebra::Tensor<T, packingT, I...>::size> {});
 
     // a tensor of ones
-    static constexpr Tensor<T, I...> one = pyre::algebra::Tensor<T, I...>::_make_ones(
-        std::make_index_sequence<pyre::algebra::Tensor<T, I...>::size> {});
+    static constexpr Tensor<T, packingT, I...> one = 
+        pyre::algebra::Tensor<T, packingT, I...>::_make_ones(
+        std::make_index_sequence<pyre::algebra::Tensor<T, packingT, I...>::size> {});
 
     // the K-th unit tensor
     template<typename... Args>
-    static constexpr Tensor<T, I...> unit(Args...) requires (sizeof...(Args) == N);
+    static constexpr Tensor<T, packingT, I...> unit(Args...) requires (sizeof...(Args) == N);
 
 private:
     // layout
@@ -151,12 +154,12 @@ using real = double;
 using scalar_t = real;
 
 // typedef for vectors
-template <int D, typename T = real>
-using vector_t = pyre::algebra::Tensor<T, D>;
+template <int D, typename T = real, class packingT = pyre::grid::canonical_t<1>>
+using vector_t = pyre::algebra::Tensor<T, packingT, D>;
 
 // typedef for matrices
-template <int D1, int D2 = D1, typename T = real>
-using matrix_t = pyre::algebra::Tensor<T, D1, D2>;
+template <int D1, int D2 = D1, typename T = real, class packingT = pyre::grid::canonical_t<2>>
+using matrix_t = pyre::algebra::Tensor<T, packingT, D1, D2>;
 
 // (dummy) typedef for symmetric matrices
 // TODO: this should be a specialization of matrix_t with a symmetric pack_t
@@ -269,12 +272,13 @@ constexpr inline bool is_equal(T lhs, T rhs)
     return false;
 }
 
-template <typename T, int... I>
-constexpr inline bool is_equal(const Tensor<T, I...> & lhs, const Tensor<T, I...> & rhs)
+template <typename T, class packingT, int... I>
+constexpr inline bool is_equal(const Tensor<T, packingT, I...> & lhs, 
+    const Tensor<T, packingT, I...> & rhs)
 {
     // helper function (component-wise)
-    constexpr auto _is_equal = []<size_t... J>(const Tensor<T, I...> & lhs, 
-        const Tensor<T, I...> & rhs, std::index_sequence<J...>) {
+    constexpr auto _is_equal = []<size_t... J>(const Tensor<T, packingT, I...> & lhs, 
+        const Tensor<T, packingT, I...> & rhs, std::index_sequence<J...>) {
 
         // if all components are equal
         if ((is_equal(lhs[J], rhs[J]) && ...)) {
@@ -286,16 +290,16 @@ constexpr inline bool is_equal(const Tensor<T, I...> & lhs, const Tensor<T, I...
     };
 
     // the size of the tensor
-    constexpr int D = Tensor<T, I...>::size;
+    constexpr int D = Tensor<T, packingT, I...>::size;
     // all done
     return _is_equal(lhs, rhs, std::make_index_sequence<D> {});
 }
 
-template <typename T, int... I>
-constexpr inline bool is_zero(const Tensor<T, I...> & A, T tolerance)
+template <typename T, class packingT, int... I>
+constexpr inline bool is_zero(const Tensor<T, packingT, I...> & A, T tolerance)
 {
     // helper function (component-wise)
-    constexpr auto _is_zero = []<size_t... J>(const Tensor<T, I...> & A, 
+    constexpr auto _is_zero = []<size_t... J>(const Tensor<T, packingT, I...> & A, 
         T tolerance, std::index_sequence<J...>) {
 
         // if all components are zero
@@ -308,7 +312,7 @@ constexpr inline bool is_zero(const Tensor<T, I...> & A, T tolerance)
     };
 
     // the size of the tensor
-    constexpr int D = Tensor<T, I...>::size;
+    constexpr int D = Tensor<T, packingT, I...>::size;
     // all done
     return _is_zero(A, tolerance, std::make_index_sequence<D> {});
 }

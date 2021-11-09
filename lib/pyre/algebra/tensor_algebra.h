@@ -12,12 +12,13 @@
 namespace pyre {
     namespace algebra {
 
-        template <typename T, int... I>
-        constexpr inline bool operator==(const Tensor<T, I...> & lhs, const Tensor<T, I...> & rhs)
+        template <typename T, class packingT, int... I>
+        constexpr inline bool operator==(const Tensor<T, packingT, I...> & lhs, 
+            const Tensor<T, packingT, I...> & rhs)
         {
             // helper function (operator== component-wise)
             constexpr auto _operatorEqualEqual = []<size_t... J>(std::index_sequence<J...>, 
-                const Tensor<T, I...> & lhs, const Tensor<T, I...> & rhs) {
+                const Tensor<T, packingT, I...> & lhs, const Tensor<T, packingT, I...> & rhs) {
                 // if all components are equal
                 if (((lhs[J] == rhs[J]) && ...)) {
                     // then the tensors are equal
@@ -28,179 +29,182 @@ namespace pyre {
             };
 
             // the size of the tensor
-            constexpr int D = Tensor<T, I...>::size;
+            constexpr int D = Tensor<T, packingT, I...>::size;
             // all done
             return _operatorEqualEqual(std::make_index_sequence<D> {}, lhs, rhs);
         }
 
         // Algebraic operations on vectors, tensors, ...
         // vector_t times scalar
-        template <typename T, int... I, size_t... J>
+        template <typename T, class packingT, int... I, size_t... J>
         constexpr inline void _vector_times_scalar(
-            const T & a, const Tensor<T, I...> & y, Tensor<T, I...> & result,
+            const T & a, const Tensor<T, packingT, I...> & y, Tensor<T, packingT, I...> & result,
             std::index_sequence<J...>)
         {
             ((result[J] = y[J] * a), ...);
             return;
         }
-        template <typename T, int... I>
-        constexpr inline Tensor<T, I...> && operator*(const T & a, Tensor<T, I...> && y) 
-            requires(Tensor<T, I...>::size != 1)
+        template <typename T, class packingT, int... I>
+        constexpr inline Tensor<T, packingT, I...> && operator*(const T & a, 
+            Tensor<T, packingT, I...> && y) 
+            requires(Tensor<T, packingT, I...>::size != 1)
         {
-            constexpr int D = Tensor<T, I...>::size;
+            constexpr int D = Tensor<T, packingT, I...>::size;
             _vector_times_scalar(a, y, y, std::make_index_sequence<D> {});
             return std::move(y);
         }
-        template <typename T, int... I>
-        constexpr inline Tensor<T, I...> operator*(const T & a, const Tensor<T, I...> & y) 
-            requires(Tensor<T, I...>::size != 1)
+        template <typename T, class packingT, int... I>
+        constexpr inline Tensor<T, packingT, I...> operator*(const T & a, 
+            const Tensor<T, packingT, I...> & y) 
+            requires(Tensor<T, packingT, I...>::size != 1)
         {
-            Tensor<T, I...> result;
-            constexpr int D = Tensor<T, I...>::size;
+            Tensor<T, packingT, I...> result;
+            constexpr int D = Tensor<T, packingT, I...>::size;
             _vector_times_scalar(a, y, result, std::make_index_sequence<D> {});
             return result;
         }
-        template <typename T, int... I>
-        constexpr inline Tensor<T, I...> && operator*(Tensor<T, I...> && y, const T & a) 
-            requires(Tensor<T, I...>::size != 1)
+        template <typename T, class packingT, int... I>
+        constexpr inline Tensor<T, packingT, I...> && operator*(Tensor<T, packingT, I...> && y, const T & a) 
+            requires(Tensor<T, packingT, I...>::size != 1)
         {
             return a * std::move(y);
         }
-        template <typename T, int... I>
-        constexpr inline Tensor<T, I...> operator*(const Tensor<T, I...> & y, const T & a) 
-            requires(Tensor<T, I...>::size != 1)
+        template <typename T, class packingT, int... I>
+        constexpr inline Tensor<T, packingT, I...> operator*(const Tensor<T, packingT, I...> & y, const T & a) 
+            requires(Tensor<T, packingT, I...>::size != 1)
         {
             return a * y;
         }
 
         // sum of vector_t
-        template <typename T, int... I, std::size_t... J>
+        template <typename T, class packingT, int... I, std::size_t... J>
         constexpr inline void _vector_sum(
-            const Tensor<T, I...> & y1, const Tensor<T, I...> & y2,
-            Tensor<T, I...> & result, std::index_sequence<J...>)
+            const Tensor<T, packingT, I...> & y1, const Tensor<T, packingT, I...> & y2,
+            Tensor<T, packingT, I...> & result, std::index_sequence<J...>)
         {
             ((result[J] = y1[J] + y2[J]), ...);
             return;
         }
-        template <typename T, int... I>
-        constexpr inline Tensor<T, I...> operator+(
-            const Tensor<T, I...> & y1, const Tensor<T, I...> & y2)
+        template <typename T, class packingT, int... I>
+        constexpr inline Tensor<T, packingT, I...> operator+(
+            const Tensor<T, packingT, I...> & y1, const Tensor<T, packingT, I...> & y2)
         {
             // std::cout << "operator+ new temp" << std::endl;
-            Tensor<T, I...> result;
-            constexpr int D = Tensor<T, I...>::size;
+            Tensor<T, packingT, I...> result;
+            constexpr int D = Tensor<T, packingT, I...>::size;
             _vector_sum(y1, y2, result, std::make_index_sequence<D> {});
             return result;
         }
-        template <typename T, int... I>
-        constexpr inline Tensor<T, I...> && operator+(
-            Tensor<T, I...> && y1, const Tensor<T, I...> & y2)
+        template <typename T, class packingT, int... I>
+        constexpr inline Tensor<T, packingT, I...> && operator+(
+            Tensor<T, packingT, I...> && y1, const Tensor<T, packingT, I...> & y2)
         {
             // std::cout << "operator+ no temp && &" << std::endl;
-            constexpr int D = Tensor<T, I...>::size;
+            constexpr int D = Tensor<T, packingT, I...>::size;
             _vector_sum(y1, y2, y1, std::make_index_sequence<D> {});
             return std::move(y1);
         }
-        template <typename T, int... I>
-        constexpr inline Tensor<T, I...> && operator+(
-            const Tensor<T, I...> & y1, Tensor<T, I...> && y2)
+        template <typename T, class packingT, int... I>
+        constexpr inline Tensor<T, packingT, I...> && operator+(
+            const Tensor<T, packingT, I...> & y1, Tensor<T, packingT, I...> && y2)
         {
             // std::cout << "operator+ no temp & &&" << std::endl;
             return std::move(y2) + y1;
         }
-        template <typename T, int... I>
-        constexpr inline Tensor<T, I...> && operator+(Tensor<T, I...> && y1, Tensor<T, I...> && y2)
+        template <typename T, class packingT, int... I>
+        constexpr inline Tensor<T, packingT, I...> && operator+(Tensor<T, packingT, I...> && y1, Tensor<T, packingT, I...> && y2)
         {
             // std::cout << "operator+ no temp && &&" << std::endl;
-            constexpr int D = Tensor<T, I...>::size;
+            constexpr int D = Tensor<T, packingT, I...>::size;
             _vector_sum(y1, y2, y1, std::make_index_sequence<D> {});
             return std::move(y1);
         }
 
         // vector_t operator-
-        template <typename T, int... I, std::size_t... J>
+        template <typename T, class packingT, int... I, std::size_t... J>
         constexpr inline void _vector_minus(
-            const Tensor<T, I...> & y, Tensor<T, I...> & result, std::index_sequence<J...>)
+            const Tensor<T, packingT, I...> & y, 
+            Tensor<T, packingT, I...> & result, std::index_sequence<J...>)
         {
             ((result[J] = -y[J]), ...);
             return;
         }
-        template <typename T, int... I>
-        constexpr inline Tensor<T, I...> operator-(const Tensor<T, I...> & y)
+        template <typename T, class packingT, int... I>
+        constexpr inline Tensor<T, packingT, I...> operator-(const Tensor<T, packingT, I...> & y)
         {
             // std::cout << "unary operator- new temp" << std::endl;
-            Tensor<T, I...> result;
-            constexpr int D = Tensor<T, I...>::size;
+            Tensor<T, packingT, I...> result;
+            constexpr int D = Tensor<T, packingT, I...>::size;
             _vector_minus(y, result, std::make_index_sequence<D> {});
             return result;
         }
-        template <typename T, int... I>
-        constexpr inline Tensor<T, I...> && operator-(Tensor<T, I...> && y)
+        template <typename T, class packingT, int... I>
+        constexpr inline Tensor<T, packingT, I...> && operator-(Tensor<T, packingT, I...> && y)
         {
             // std::cout << "unary operator- no temp &&" << std::endl;
-            constexpr int D = Tensor<T, I...>::size;
+            constexpr int D = Tensor<T, packingT, I...>::size;
             _vector_minus(y, y, std::make_index_sequence<D> {});
             return std::move(y);
         }
-        template <typename T, int... I, std::size_t... J>
+        template <typename T, class packingT, int... I, std::size_t... J>
         constexpr inline void _vector_minus(
-            const Tensor<T, I...> & y1, const Tensor<T, I...> & y2,
-            Tensor<T, I...> & result, std::index_sequence<J...>)
+            const Tensor<T, packingT, I...> & y1, const Tensor<T, packingT, I...> & y2,
+            Tensor<T, packingT, I...> & result, std::index_sequence<J...>)
         {
             ((result[J] = y1[J] - y2[J]), ...);
             return;
         }
-        template <typename T, int... I>
-        constexpr inline Tensor<T, I...> operator-(
-            const Tensor<T, I...> & y1, const Tensor<T, I...> & y2)
+        template <typename T, class packingT, int... I>
+        constexpr inline Tensor<T, packingT, I...> operator-(
+            const Tensor<T, packingT, I...> & y1, const Tensor<T, packingT, I...> & y2)
         {
             // std::cout << "binary operator- new temp" << std::endl;
-            Tensor<T, I...> result;
-            constexpr int D = Tensor<T, I...>::size;
+            Tensor<T, packingT, I...> result;
+            constexpr int D = Tensor<T, packingT, I...>::size;
             _vector_minus(y1, y2, result, std::make_index_sequence<D> {});
             return result;
             // return y1 + (-y2);
         }
-        template <typename T, int... I>
-        constexpr inline Tensor<T, I...> && operator-(
-            Tensor<T, I...> && y1, const Tensor<T, I...> & y2)
+        template <typename T, class packingT, int... I>
+        constexpr inline Tensor<T, packingT, I...> && operator-(
+            Tensor<T, packingT, I...> && y1, const Tensor<T, packingT, I...> & y2)
         {
             // std::cout << "binary operator- no temp && &" << std::endl;
-            constexpr int D = Tensor<T, I...>::size;
+            constexpr int D = Tensor<T, packingT, I...>::size;
             _vector_minus(y1, y2, y1, std::make_index_sequence<D> {});
             return std::move(y1);
             // return std::move(y1) + (-y2);
         }
-        template <typename T, int... I>
-        constexpr inline Tensor<T, I...> && operator-(
-            const Tensor<T, I...> & y1, Tensor<T, I...> && y2)
+        template <typename T, class packingT, int... I>
+        constexpr inline Tensor<T, packingT, I...> && operator-(
+            const Tensor<T, packingT, I...> & y1, Tensor<T, packingT, I...> && y2)
         {
             // std::cout << "binary operator- no temp & &&" << std::endl;
-            constexpr int D = Tensor<T, I...>::size;
+            constexpr int D = Tensor<T, packingT, I...>::size;
             _vector_minus(y1, y2, y2, std::make_index_sequence<D> {});
             return std::move(y2);
             // return y1 + (-std::move(y2));
         }
-        template <typename T, int... I>
-        constexpr inline Tensor<T, I...> && operator-(Tensor<T, I...> && y1, Tensor<T, I...> && y2)
+        template <typename T, class packingT, int... I>
+        constexpr inline Tensor<T, packingT, I...> && operator-(Tensor<T, packingT, I...> && y1, Tensor<T, packingT, I...> && y2)
         {
             // std::cout << "binary operator- no temp && &&" << std::endl;
-            constexpr int D = Tensor<T, I...>::size;
+            constexpr int D = Tensor<T, packingT, I...>::size;
             _vector_minus(y1, y2, y1, std::make_index_sequence<D> {});
             return std::move(y1);
             // return std::move(y1) + (-std::move(y2));
         }
 
-        template <typename T, int... I>
-        constexpr inline Tensor<T, I...> operator/(const Tensor<T, I...> & y, const T & a) requires(
-            Tensor<T, I...>::size != 1)
+        template <typename T, class packingT, int... I>
+        constexpr inline Tensor<T, packingT, I...> operator/(const Tensor<T, packingT, I...> & y, const T & a) requires(
+            Tensor<T, packingT, I...>::size != 1)
         {
             return (1.0 / a) * y;
         }
 
-        template <typename T, int... I>
-        constexpr inline Tensor<T, I...> && operator/(Tensor<T, I...> && y, const T & a) requires(
-            Tensor<T, I...>::size != 1)
+        template <typename T, class packingT, int... I>
+        constexpr inline Tensor<T, packingT, I...> && operator/(Tensor<T, packingT, I...> && y, const T & a) requires(
+            Tensor<T, packingT, I...>::size != 1)
         {
             return (1.0 / a) * std::move(y);
         }
