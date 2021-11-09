@@ -79,8 +79,19 @@ template <typename T, int... I>
 constexpr inline void
 pyre::algebra::Tensor<T, I...>::operator+=(const Tensor<T, I...> & rhs)
 {
+    // helper function (component-wise)
+    constexpr auto _operator_plus_equal = []<size_t... J>(Tensor<T, I...> & data,
+        const Tensor<T, I...> & rhs, std::index_sequence<J...>)
+    {
+        // component-wise operator+=
+        ((data[J] += rhs[J]), ...);
+
+        // all done
+        return;
+    };
+
     // component-wise operator+=
-    return _operatorPlusEqual(std::make_index_sequence<S> {}, rhs);
+    return _operator_plus_equal(_data, rhs, std::make_index_sequence<S> {});
 }
 
 template <typename T, int... I>
@@ -118,18 +129,6 @@ template <size_t... J>
 constexpr inline void pyre::algebra::Tensor<T, I...>::_reset(std::index_sequence<J...>)
 {
     ((_data[J] = T()), ...);
-
-    // all done
-    return;
-}
-
-template <typename T, int... I>
-template <size_t... J>
-constexpr inline void
-pyre::algebra::Tensor<T, I...>::_operatorPlusEqual(
-    std::index_sequence<J...>, const Tensor<T, I...> & rhs)
-{
-    ((_data[J] += rhs[J]), ...);
 
     // all done
     return;

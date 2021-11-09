@@ -20,7 +20,7 @@ class Tensor {
 private:
     // helper function to compute the product of an arguments list
     template <typename... Args>
-    static constexpr auto multiply(Args &&... args)
+    static constexpr auto multiply(Args &&... args) -> int
     {
         if constexpr (sizeof...(args))
             return  (args * ...);
@@ -110,10 +110,6 @@ private:
     template <size_t... J>
     constexpr inline void _reset(std::index_sequence<J...>);
 
-    // helper function for index sequence
-    template <size_t... J>
-    constexpr inline void _operatorPlusEqual(std::index_sequence<J...>, const Tensor<T, I...> &);
-
     // helper function to build the zero tensor
     template <size_t... J>
     static constexpr inline pyre::algebra::Tensor<T, I...> _make_zeros(std::index_sequence<J...>);
@@ -124,7 +120,7 @@ private:
 
     // helper function to build a tensor of zeros with a 1 at index K
     template <size_t... J>
-    static constexpr inline pyre::algebra::Tensor<T, I...> _make_basis_element(index_t K, 
+    static constexpr inline pyre::algebra::Tensor<T, I...> _make_basis_element(index_t, 
         std::index_sequence<J...>);
 
 public:
@@ -191,7 +187,7 @@ static constexpr auto unit(Args... args) {
 
 // factory for identity matrices
 template <int D, typename T = real>
-static constexpr auto _make_identity_matrix()
+static constexpr auto _make_identity_matrix() -> diagonal_matrix_t<D, T> 
 {
     diagonal_matrix_t<D, T> identity;
 
