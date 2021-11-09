@@ -74,6 +74,7 @@ pyre_test_driver(pyre.lib/grid/shape_cartesian.cc)
 pyre_test_driver(pyre.lib/grid/shape_sanity.cc)
 pyre_test_driver(pyre.lib/grid/shape_scaling.cc)
 pyre_test_driver(pyre.lib/grid/shape_structured_binding.cc)
+pyre_test_driver(pyre.lib/grid/symmetric_visit.cc)
 
 # the {grid_get} tests need cleanup
 add_test(NAME pyre.lib.grid.grid_mmap.cleanup

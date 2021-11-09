@@ -1,0 +1,201 @@
+// -*- c++ -*-
+//
+// bianca giovanardi
+// (c) 2021 all rights reserved
+
+// code guard
+#if !defined(pyre_grid_Symmetric_icc)
+#error this file contains implementation details for pyre::grid::Symmetric
+#else
+
+// metamethods
+
+// constructor that assumes that the physical layout corresponds to the parameters given and
+// infers the nudge
+template <int N, template <typename, std::size_t> class containerT>
+constexpr
+pyre::grid::Symmetric<N, containerT>::
+Symmetric(shape_const_reference shape, index_const_reference origin, order_const_reference order) :
+    _shape { shape },
+    _order { order },
+    _origin { origin },
+    _D { _shape[0] /* TOFIX */ },
+    // compute the nudge, defined as the negative offset of the origin
+    _nudge { - _initShift(_origin) }
+{}
+
+
+// interface
+// accessors for the user supplied information
+template <int N, template <typename, std::size_t> class containerT>
+constexpr auto
+pyre::grid::Symmetric<N, containerT>::
+shape() const -> shape_type
+{
+    // easy enough
+    return _shape;
+}
+
+
+template <int N, template <typename, std::size_t> class containerT>
+constexpr auto
+pyre::grid::Symmetric<N, containerT>::
+order() const -> order_type
+{
+    // easy enough
+    return _order;
+}
+
+
+template <int N, template <typename, std::size_t> class containerT>
+constexpr auto
+pyre::grid::Symmetric<N, containerT>::
+origin() const -> index_type
+{
+    // easy enough
+    return _origin;
+}
+
+
+template <int N, template <typename, std::size_t> class containerT>
+constexpr auto
+pyre::grid::Symmetric<N, containerT>::
+nudge() const -> difference_type
+{
+    // easy enough
+    return _nudge;
+}
+
+
+template <int N, template <typename, std::size_t> class containerT>
+constexpr auto
+pyre::grid::Symmetric<N, containerT>::
+cells() const -> std::size_t
+{
+    // the number of cells in the upper- (or lower-) diagonal part
+    return _D * (_D + 1) / 2;
+}
+
+
+// from {difference_type} to {index_type}
+template <int N, template <typename, std::size_t> class containerT>
+constexpr auto
+pyre::grid::Symmetric<N, containerT>::
+index(difference_type offset) const -> index_type
+{
+
+    // count the number of matrix entries before row K
+    auto _entries_before_row = [](int K, int D) -> int {
+        return D * K - K * (K - 1) / 2;
+    };
+
+    // start from the top
+    int K = _D - 1;
+    while (offset < _entries_before_row(K, _D)) {
+        K--;
+    }
+
+    int I = K;
+    int J = offset - _entries_before_row(I, _D) + I;
+
+    // shift it by {_origin} and return it
+    // TOFIX: not sure if the _origin is used in this way for a symmetric packing
+    return index_type{I, J} + _origin;
+}
+
+
+// from {index_type} to {difference_type}
+template <int N, template <typename, std::size_t> class containerT>
+constexpr auto
+pyre::grid::Symmetric<N, containerT>::
+offset(index_const_reference index) const -> difference_type
+{
+    // the initial value; here so we can be explicit about the return type
+    difference_type zero = 0;
+    auto i = std::min(index[0], index[1]);
+    auto j = std::max(index[0], index[1]);
+    // compute the offset shift the result by the fixed offset of the {origin} and return it
+    // TOFIX: not sure if the nudge is used in this way for a symmetric packing
+    return _nudge + _D * i - i * ( i - 1 ) / 2 + (j - i);
+}
+
+
+// syntactic sugar for the packing isomorphism
+template <int N, template <typename, std::size_t> class containerT>
+constexpr auto
+pyre::grid::Symmetric<N, containerT>::
+operator[](difference_type offset) const -> index_type
+{
+    // easy enough
+    return index(offset);
+}
+
+
+template <int N, template <typename, std::size_t> class containerT>
+constexpr auto
+pyre::grid::Symmetric<N, containerT>::
+operator[](index_const_reference index) const -> difference_type
+{
+    // easy enough
+    return offset(index);
+}
+
+
+// iteration support
+template <int N, template <typename, std::size_t> class containerT>
+constexpr auto
+pyre::grid::Symmetric<N, containerT>::
+begin() const -> index_iterator
+{
+    // make an iterator that generates index in my packing {order}, starting at my {origin}
+    return index_iterator(shape(), order(), origin());
+}
+
+
+template <int N, template <typename, std::size_t> class containerT>
+constexpr auto
+pyre::grid::Symmetric<N, containerT>::
+begin(index_const_reference step) const -> index_iterator
+{
+    // make an iterator that generates index in my packing {order}, starting at my {origin}
+    return index_iterator(shape(), order(), origin(), step);
+}
+
+
+template <int N, template <typename, std::size_t> class containerT>
+constexpr auto
+pyre::grid::Symmetric<N, containerT>::
+end() const -> index_iterator
+{
+    // form the end of the container
+    auto end = _origin + _shape;
+    // build an iterator that points to it
+    return index_iterator(_shape, _order, end);
+}
+
+
+// static interface
+template <int N, template <typename, std::size_t> class containerT>
+constexpr auto
+pyre::grid::Symmetric<N, containerT>::
+rank() -> int
+{
+    // easy enough
+    return N;
+}
+
+
+// compute the shift necessary so that {origin}, i.e. the smallest index, maps to offset zero
+template <int N, template <typename, std::size_t> class containerT>
+constexpr auto
+pyre::grid::Symmetric<N, containerT>::
+_initShift(index_const_reference origin) -> difference_type
+{
+    // return the offset of {_origin}
+    return 0; //TOFIX offset(origin);
+}
+
+
+#endif
+
+// end of file

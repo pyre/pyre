@@ -55,7 +55,8 @@ LAYOUT_TESTS = \
     shape_cartesian.cc \
     shape_sanity.cc \
     shape_scaling.cc \
-    shape_structured_binding.cc
+    shape_structured_binding.cc \
+	symmetric_visit.cc
 
 GRID_TESTS = \
     grid_heap_box.cc \
