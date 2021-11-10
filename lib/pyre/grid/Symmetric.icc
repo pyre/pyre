@@ -110,12 +110,20 @@ constexpr auto
 pyre::grid::Symmetric<N, containerT>::
 offset(index_const_reference index) const -> difference_type
 {
+    // sort the indices 
+    index_type sorted_index = index;
+    std::sort(sorted_index.begin(), sorted_index.end());
+
     // extract i and j
-    auto i = std::min(index[0], index[1]);
-    auto j = std::max(index[0], index[1]);
+    auto i = sorted_index[0];
+    auto j = sorted_index[1];
+
+    int D1 = 1;
+    int D2 = _D * i - ( i - 1 ) * i / 2;
+
     // compute the offset shift the result by the fixed offset of the {origin} and return it
     // TOFIX: not sure if the nudge is used in this way for a symmetric packing
-    return _nudge + _D * i - i * ( i - 1 ) / 2 + (j - i);
+    return _nudge + D2 + (j - i);
 }
 
 
