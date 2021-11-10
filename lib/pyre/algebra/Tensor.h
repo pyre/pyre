@@ -30,7 +30,7 @@ private:
     // number of indices of the tensor, i.e. rank (N = 0 for empty parameter pack, i.e. scalar)
     static constexpr int N = sizeof...(I);
     // number of total entries of the tensor (S = 1 for empty parameter pack, i.e. scalar)
-    static constexpr int S = multiply(I...);
+    static constexpr int S = multiply(I...); // TOFIX: should this come from the packing?
 
 private:
     // the packing strategy
@@ -141,7 +141,8 @@ public:
 
 private:
     // layout
-    static constexpr pack_t _layout {{I ...}, index_t::zero(), pack_t::order_type::rowMajor()};
+    // static constexpr pack_t _layout {{I ...}, index_t::zero(), pack_t::order_type::rowMajor()};
+    static constexpr pack_t _layout { {I ...} };
 
     // data
     data_t _data;
@@ -161,10 +162,9 @@ using vector_t = pyre::algebra::Tensor<T, packingT, D>;
 template <int D1, int D2 = D1, typename T = real, class packingT = pyre::grid::canonical_t<2>>
 using matrix_t = pyre::algebra::Tensor<T, packingT, D1, D2>;
 
-// (dummy) typedef for symmetric matrices
-// TODO: this should be a specialization of matrix_t with a symmetric pack_t
+// typedef for symmetric matrices
 template <int D, typename T = real>
-using symmetric_matrix_t = matrix_t<D, D, T>;
+using symmetric_matrix_t = matrix_t<D, D, T, pyre::grid::symmetric_t<2>>;
 
 // (dummy) typedef for symmetric matrices
 // TODO: this should be a specialization of matrix_t with a diagonal pack_t
@@ -217,9 +217,9 @@ inline std::ostream & _print_vector(
     return os;
 }
 
-template <int D1, int D2, typename T, size_t... J>
+template <int D1, int D2, typename T, class packingT, size_t... J>
 std::ostream & _print_row(
-    std::ostream & os, const matrix_t<D1, D2, T> & tensor, size_t row, std::index_sequence<J...>)
+    std::ostream & os, const matrix_t<D1, D2, T, packingT> & tensor, size_t row, std::index_sequence<J...>)
 {
     os << "[ ";
     if (sizeof...(J) > 0)
@@ -228,17 +228,18 @@ std::ostream & _print_row(
     return os;
 }
 
-template <int D1, int D2, typename T, size_t... J>
+template <int D1, int D2, typename T, class packingT, size_t... J>
 std::ostream & _print_comma_row(
-    std::ostream & os, const matrix_t<D1, D2, T> & tensor, size_t row, std::index_sequence<J...>)
+    std::ostream & os, const matrix_t<D1, D2, T, packingT> & tensor, size_t row, 
+    std::index_sequence<J...>)
 {
     os << ",";
     return _print_row(os, tensor, row, std::make_index_sequence<D2> {});
 }
 
-template <int D1, int D2, typename T, size_t... J>
+template <int D1, int D2, typename T, class packingT, size_t... J>
 std::ostream & _print_matrix(
-    std::ostream & os, const matrix_t<D1, D2, T> & tensor, std::index_sequence<J...>)
+    std::ostream & os, const matrix_t<D1, D2, T, packingT> & tensor, std::index_sequence<J...>)
 {
     os << "[ ";
     _print_row(os, tensor, 0, std::make_index_sequence<D2> {});
@@ -255,8 +256,8 @@ std::ostream & operator<<(std::ostream & os, const pyre::algebra::vector_t<D, T>
 }
 
 // overload operator<< for second order tensors
-template <int D1, int D2, typename T>
-std::ostream & operator<<(std::ostream & os, const pyre::algebra::matrix_t<D1, D2, T> & tensor)
+template <int D1, int D2, typename T, class packingT>
+std::ostream & operator<<(std::ostream & os, const pyre::algebra::matrix_t<D1, D2, T, packingT> & tensor)
 {
     return _print_matrix(os, tensor, std::make_index_sequence<D1-1> {});
 }

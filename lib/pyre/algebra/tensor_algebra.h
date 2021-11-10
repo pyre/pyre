@@ -12,13 +12,26 @@
 namespace pyre {
     namespace algebra {
 
-        template <typename T, class packingT, int... I>
-        constexpr inline bool operator==(const Tensor<T, packingT, I...> & lhs, 
-            const Tensor<T, packingT, I...> & rhs)
+        // repacking type for sum of tensors:
+        // symmetric + symmetric = symmetric
+        // canonical + canonical = canonical
+        // canonical + symmetric = canonical
+        // symmetric + canonical = canonical
+        template <class packingT1, class packingT2>
+        requires (packingT1::rank() == packingT2::rank())
+        using repacking = std::conditional<
+            (std::is_same_v<packingT1, packingT2>), 
+                packingT1, 
+                pyre::grid::canonical_t<packingT1::rank()>
+                >::type;
+
+        template <typename T, class packingT1, class packingT2, int... I>
+        constexpr inline bool operator==(const Tensor<T, packingT1, I...> & lhs, 
+            const Tensor<T, packingT2, I...> & rhs)
         {
             // helper function (operator== component-wise)
             constexpr auto _operatorEqualEqual = []<size_t... J>(std::index_sequence<J...>, 
-                const Tensor<T, packingT, I...> & lhs, const Tensor<T, packingT, I...> & rhs) {
+                const Tensor<T, packingT1, I...> & lhs, const Tensor<T, packingT2, I...> & rhs) {
                 // if all components are equal
                 if (((lhs[J] == rhs[J]) && ...)) {
                     // then the tensors are equal
@@ -29,7 +42,7 @@ namespace pyre {
             };
 
             // the size of the tensor
-            constexpr int D = Tensor<T, packingT, I...>::size;
+            constexpr int D = Tensor<T, repacking<packingT1, packingT2>, I...>::size;
             // all done
             return _operatorEqualEqual(std::make_index_sequence<D> {}, lhs, rhs);
         }
@@ -77,47 +90,48 @@ namespace pyre {
         }
 
         // sum of vector_t
-        template <typename T, class packingT, int... I, std::size_t... J>
+        template <typename T, class packingT1, class packingT2, int... I, std::size_t... J>
         constexpr inline void _vector_sum(
-            const Tensor<T, packingT, I...> & y1, const Tensor<T, packingT, I...> & y2,
-            Tensor<T, packingT, I...> & result, std::index_sequence<J...>)
+            const Tensor<T, packingT1, I...> & y1, const Tensor<T, packingT2, I...> & y2,
+            Tensor<T, repacking<packingT1, packingT2>, I...> & result, std::index_sequence<J...>)
         {
             ((result[J] = y1[J] + y2[J]), ...);
             return;
         }
-        template <typename T, class packingT, int... I>
-        constexpr inline Tensor<T, packingT, I...> operator+(
-            const Tensor<T, packingT, I...> & y1, const Tensor<T, packingT, I...> & y2)
+        template <typename T, class packingT1, class packingT2, int... I>
+        constexpr inline Tensor<T, repacking<packingT1, packingT2>, I...> operator+(
+            const Tensor<T, packingT1, I...> & y1, const Tensor<T, packingT2, I...> & y2)
         {
             // std::cout << "operator+ new temp" << std::endl;
-            Tensor<T, packingT, I...> result;
-            constexpr int D = Tensor<T, packingT, I...>::size;
+            Tensor<T, repacking<packingT1, packingT2>, I...> result;
+            constexpr int D = Tensor<T, repacking<packingT1, packingT2>, I...>::size;
             _vector_sum(y1, y2, result, std::make_index_sequence<D> {});
             return result;
         }
-        template <typename T, class packingT, int... I>
-        constexpr inline Tensor<T, packingT, I...> && operator+(
-            Tensor<T, packingT, I...> && y1, const Tensor<T, packingT, I...> & y2)
+        template <typename T, class packingT1, class packingT2, int... I>
+        constexpr inline Tensor<T, repacking<packingT1, packingT2>, I...> && operator+(
+            Tensor<T, packingT1, I...> && y1, const Tensor<T, packingT2, I...> & y2)
         {
             // std::cout << "operator+ no temp && &" << std::endl;
-            constexpr int D = Tensor<T, packingT, I...>::size;
+            constexpr int D = Tensor<T, repacking<packingT1, packingT2>, I...>::size;
             _vector_sum(y1, y2, y1, std::make_index_sequence<D> {});
-            return std::move(y1);
+            return std::move(y1); // TOFIX: Move should be carefully thought about
         }
-        template <typename T, class packingT, int... I>
-        constexpr inline Tensor<T, packingT, I...> && operator+(
-            const Tensor<T, packingT, I...> & y1, Tensor<T, packingT, I...> && y2)
+        template <typename T, class packingT1, class packingT2, int... I>
+        constexpr inline Tensor<T, repacking<packingT1, packingT2>, I...> && operator+(
+            const Tensor<T, packingT1, I...> & y1, Tensor<T, packingT2, I...> && y2)
         {
             // std::cout << "operator+ no temp & &&" << std::endl;
-            return std::move(y2) + y1;
+            return std::move(y2) + y1; // TOFIX: Move should be carefully thought about
         }
-        template <typename T, class packingT, int... I>
-        constexpr inline Tensor<T, packingT, I...> && operator+(Tensor<T, packingT, I...> && y1, Tensor<T, packingT, I...> && y2)
+        template <typename T, class packingT1, class packingT2, int... I>
+        constexpr inline Tensor<T, repacking<packingT1, packingT2>, I...> && 
+            operator+(Tensor<T, packingT1, I...> && y1, Tensor<T, packingT2, I...> && y2)
         {
             // std::cout << "operator+ no temp && &&" << std::endl;
-            constexpr int D = Tensor<T, packingT, I...>::size;
+            constexpr int D = Tensor<T, repacking<packingT1, packingT2>, I...>::size;
             _vector_sum(y1, y2, y1, std::make_index_sequence<D> {});
-            return std::move(y1);
+            return std::move(y1); // TOFIX: Move should be carefully thought about
         }
 
         // vector_t operator-
@@ -146,52 +160,53 @@ namespace pyre {
             _vector_minus(y, y, std::make_index_sequence<D> {});
             return std::move(y);
         }
-        template <typename T, class packingT, int... I, std::size_t... J>
+        template <typename T, class packingT1, class packingT2, int... I, std::size_t... J>
         constexpr inline void _vector_minus(
-            const Tensor<T, packingT, I...> & y1, const Tensor<T, packingT, I...> & y2,
-            Tensor<T, packingT, I...> & result, std::index_sequence<J...>)
+            const Tensor<T, packingT1, I...> & y1, const Tensor<T, packingT2, I...> & y2,
+            Tensor<T, repacking<packingT1, packingT2>, I...> & result, std::index_sequence<J...>)
         {
             ((result[J] = y1[J] - y2[J]), ...);
             return;
         }
-        template <typename T, class packingT, int... I>
-        constexpr inline Tensor<T, packingT, I...> operator-(
-            const Tensor<T, packingT, I...> & y1, const Tensor<T, packingT, I...> & y2)
+        template <typename T, class packingT1, class packingT2, int... I>
+        constexpr inline Tensor<T, repacking<packingT1, packingT2>, I...> operator-(
+            const Tensor<T, packingT1, I...> & y1, const Tensor<T, packingT2, I...> & y2)
         {
             // std::cout << "binary operator- new temp" << std::endl;
-            Tensor<T, packingT, I...> result;
-            constexpr int D = Tensor<T, packingT, I...>::size;
+            Tensor<T, repacking<packingT1, packingT2>, I...> result;
+            constexpr int D = Tensor<T, repacking<packingT1, packingT2>, I...>::size;
             _vector_minus(y1, y2, result, std::make_index_sequence<D> {});
             return result;
             // return y1 + (-y2);
         }
-        template <typename T, class packingT, int... I>
-        constexpr inline Tensor<T, packingT, I...> && operator-(
-            Tensor<T, packingT, I...> && y1, const Tensor<T, packingT, I...> & y2)
+        template <typename T, class packingT1, class packingT2, int... I>
+        constexpr inline Tensor<T, repacking<packingT1, packingT2>, I...> && operator-(
+            Tensor<T, packingT1, I...> && y1, const Tensor<T, packingT2, I...> & y2)
         {
             // std::cout << "binary operator- no temp && &" << std::endl;
-            constexpr int D = Tensor<T, packingT, I...>::size;
+            constexpr int D = Tensor<T, repacking<packingT1, packingT2>, I...>::size;
             _vector_minus(y1, y2, y1, std::make_index_sequence<D> {});
-            return std::move(y1);
+            return std::move(y1); // TOFIX
             // return std::move(y1) + (-y2);
         }
-        template <typename T, class packingT, int... I>
-        constexpr inline Tensor<T, packingT, I...> && operator-(
-            const Tensor<T, packingT, I...> & y1, Tensor<T, packingT, I...> && y2)
+        template <typename T, class packingT1, class packingT2, int... I>
+        constexpr inline Tensor<T, repacking<packingT1, packingT2>, I...> && operator-(
+            const Tensor<T, packingT1, I...> & y1, Tensor<T, packingT2, I...> && y2)
         {
             // std::cout << "binary operator- no temp & &&" << std::endl;
-            constexpr int D = Tensor<T, packingT, I...>::size;
+            constexpr int D = Tensor<T, repacking<packingT1, packingT2>, I...>::size;
             _vector_minus(y1, y2, y2, std::make_index_sequence<D> {});
-            return std::move(y2);
+            return std::move(y2); // TOFIX
             // return y1 + (-std::move(y2));
         }
-        template <typename T, class packingT, int... I>
-        constexpr inline Tensor<T, packingT, I...> && operator-(Tensor<T, packingT, I...> && y1, Tensor<T, packingT, I...> && y2)
+        template <typename T, class packingT1, class packingT2, int... I>
+        constexpr inline Tensor<T, repacking<packingT1, packingT2>, I...> && operator-(
+            Tensor<T, packingT1, I...> && y1, Tensor<T, packingT2, I...> && y2)
         {
             // std::cout << "binary operator- no temp && &&" << std::endl;
-            constexpr int D = Tensor<T, packingT, I...>::size;
+            constexpr int D = Tensor<T, repacking<packingT1, packingT2>, I...>::size;
             _vector_minus(y1, y2, y1, std::make_index_sequence<D> {});
-            return std::move(y1);
+            return std::move(y1); // TOFIX
             // return std::move(y1) + (-std::move(y2));
         }
 
@@ -210,19 +225,20 @@ namespace pyre {
         }
 
         // builds a square matrix with all zeros except the K-th row is equal to v
-        template <int K, int D, typename T>
-        constexpr inline matrix_t<D, D, T> matrix_row(const vector_t<D, T> & v)
+        template <int K, int D, typename T, class packingT>
+        constexpr inline matrix_t<D, D, T, packingT> matrix_row(const vector_t<D, T> & v)
         {
             constexpr auto _fill_matrix_row = []<size_t... I>(
-                matrix_t<D, D, T> A, const vector_t<D, T> & v, std::index_sequence<I...>) 
-                -> matrix_t<D, D, T>
+                matrix_t<D, D, T, packingT> A, const vector_t<D, T> & v, std::index_sequence<I...>) 
+                -> matrix_t<D, D, T, packingT>
             {
                 ((A[{K, I}] = v[{ I }]), ...);
                 return A;
             };
 
             // fill row K of a zero matrix with vector v
-            return _fill_matrix_row(matrix_t<D, D, T>::zero, v, std::make_index_sequence<D> {});
+            return _fill_matrix_row(matrix_t<D, D, T, packingT>::zero, v, 
+                std::make_index_sequence<D> {});
         }
 
         // builds a square matrix with all zeros except the K-th column is equal to v
@@ -243,27 +259,30 @@ namespace pyre {
 
         // builds a square matrix with all zeros except the diagonal is equal to v
         template <int D, typename T>
-        constexpr inline matrix_t<D, D, T> matrix_diagonal(const vector_t<D, T> & v)
+        constexpr inline diagonal_matrix_t<D, T> matrix_diagonal(const vector_t<D, T> & v)
         {
             constexpr auto _fill_matrix_diagonal = []<size_t... I>(
-                matrix_t<D, D, T> A, const vector_t<D, T> & v, std::index_sequence<I...>) 
-                -> matrix_t<D, D, T>
+                diagonal_matrix_t<D, T> A, const vector_t<D, T> & v, std::index_sequence<I...>) 
+                -> diagonal_matrix_t<D, T>
             {
                 ((A[{I, I}] = v[{ I }]), ...);
                 return A;
             };
 
+            // instantiate a diagonal matrix
+            diagonal_matrix_t<D, T> A;
+
             // fill diagonal of a zero matrix with vector v
-            return _fill_matrix_diagonal(matrix_t<D, D, T>::zero, v, 
-                std::make_index_sequence<D> {});
+            return _fill_matrix_diagonal(A, v, std::make_index_sequence<D> {});
         }
 
         // builds the vector with the diagonal entries of a matrix
-        template <int D, typename T>
-        constexpr inline vector_t<D, T> matrix_diagonal(const matrix_t<D, D, T> & A)
+        template <int D, typename T, class packingT>
+        constexpr inline vector_t<D, T> matrix_diagonal(const matrix_t<D, D, T, packingT> & A)
         {
 
-            auto _fill_vector_with_matrix_diagonal = [&A]<size_t... J>(std::index_sequence<J...>) -> vector_t<D, T>
+            auto _fill_vector_with_matrix_diagonal = [&A]<size_t... J>(std::index_sequence<J...>) 
+                -> vector_t<D, T>
             {
                 auto wrap = [&A]<size_t K>()->T { return  A[{K, K}]; };
                 return vector_t<D, T>(wrap.template operator()<J>()...);
@@ -289,13 +308,13 @@ namespace pyre {
             return _vector_times_vector(v1, v2, std::make_index_sequence<D> {});
         }
         // matrix-vector multiplication
-        template <int D1, int D2, typename T>
+        template <int D1, int D2, typename T, class packingT>
         constexpr inline vector_t<D1, T> operator*(
-            const matrix_t<D1, D2, T> & A, const vector_t<D2, T> & v) 
+            const matrix_t<D1, D2, T, packingT> & A, const vector_t<D2, T> & v) 
         {
             // helper function
             constexpr auto _matrix_times_vector = []<size_t... K>(
-                const matrix_t<D1, D2, T> & A, const vector_t<D2, T> & v, 
+                const matrix_t<D1, D2, T, packingT> & A, const vector_t<D2, T> & v, 
                 std::index_sequence<K...>) -> vector_t<D1, T> 
             { 
                 return vector_t<D1, T>((row<K>(A) * v)...);
@@ -303,21 +322,22 @@ namespace pyre {
             return _matrix_times_vector(A, v, std::make_index_sequence<D2> {});
         }
         // vector-matrix multiplication
-        template <int D1, int D2, typename T>
+        template <int D1, int D2, typename T, class packingT>
         constexpr inline vector_t<D1, T> operator*(const vector_t<D2, T> & v, 
-            const matrix_t<D1, D2, T> & A) 
+            const matrix_t<D1, D2, T, packingT> & A) 
         {
             return transpose(A) * v;
         }
         // matrix-matrix multiplication
-        template <int D1, int D2, int D3, typename T>
+        template <int D1, int D2, int D3, typename T, class packingT1, class packingT2>
         constexpr inline matrix_t<D1, D3, T> operator*(
-            const matrix_t<D1, D2, T> & A1, const matrix_t<D2, D3, T> & A2) 
+            const matrix_t<D1, D2, T, packingT1> & A1, const matrix_t<D2, D3, T, packingT2> & A2) 
             requires(D1 != 1 && D2 != 1 && D3 != 1)
         {
             // helper function
             constexpr auto _matrix_times_matrix = []<size_t... K>(
-                const matrix_t<D1, D2, T> & A1, const matrix_t<D2, D3, T> & A2, 
+                const matrix_t<D1, D2, T, packingT1> & A1, 
+                const matrix_t<D2, D3, T, packingT2> & A2, 
                 std::index_sequence<K...>) -> matrix_t<D1, D3, T> 
             {
                 // for each K build the matrix whose column K is equal to A1 * col<K>(A2)
@@ -369,8 +389,8 @@ namespace pyre {
             return 1;
         }
 
-        template <typename T>
-        constexpr inline T determinant(const matrix_t<4, 4, T> & A)
+        template <typename T, class packingT>
+        constexpr inline T determinant(const matrix_t<4, 4, T, packingT> & A)
         {
             return A[{0, 1}] * A[{2, 3}] * A[{3, 2}] * A[{1, 0}] - A[{0, 1}] * A[{2, 2}] * A[{3, 3}]
                      * A[{1, 0}]
@@ -398,24 +418,24 @@ namespace pyre {
                      * A[{2, 1}];
         }
 
-        template <typename T>
-        constexpr inline T determinant(const matrix_t<3, 3, T> & A)
+        template <typename T, class packingT>
+        constexpr inline T determinant(const matrix_t<3, 3, T, packingT> & A)
         {
             return A[{0, 0}] * (A[{1, 1}] * A[{2, 2}] - A[{1, 2}] * A[{2, 1}]) 
                  - A[{0, 1}] * (A[{1, 0}] * A[{2, 2}] - A[{1, 2}] * A[{2, 0}])
                  + A[{0, 2}] * (A[{1, 0}] * A[{2, 1}] - A[{1, 1}] * A[{2, 0}]);
         }
 
-        template <typename T>
-        constexpr inline T determinant(const matrix_t<2, 2, T> & A)
+        template <typename T, class packingT>
+        constexpr inline T determinant(const matrix_t<2, 2, T, packingT> & A)
         {
             return A[{0, 0}] * A[{1, 1}] - A[{0, 1}] * A[{1, 0}];
         }
 
-        template <typename T>
-        constexpr inline matrix_t<3, 3, T> inverse(const matrix_t<3, 3, T> & A)
+        template <typename T, class packingT>
+        constexpr inline matrix_t<3, 3, T, packingT> inverse(const matrix_t<3, 3, T, packingT> & A)
         {
-            matrix_t<3, 3, T> invA;
+            matrix_t<3, 3, T, packingT> invA;
 
             T det = determinant(A);
             assert(det != 0.0);
@@ -434,10 +454,10 @@ namespace pyre {
             return invA;
         }
 
-        template <typename T>
-        constexpr inline matrix_t<2, 2, T> inverse(const matrix_t<2, 2, T> & A)
+        template <typename T, class packingT>
+        constexpr inline matrix_t<2, 2, T, packingT> inverse(const matrix_t<2, 2, T, packingT> & A)
         {
-            matrix_t<2, 2, T> invA;
+            matrix_t<2, 2, T, packingT> invA;
 
             T det = determinant(A);
             assert(det != 0.0);
@@ -451,8 +471,8 @@ namespace pyre {
             return invA;
         }
 
-        template <int D, typename T>
-        constexpr inline T trace(const matrix_t<D, D, T> & A)
+        template <int D, typename T, class packingT>
+        constexpr inline T trace(const matrix_t<D, D, T, packingT> & A)
         {
             auto _trace = [&A]<size_t... J>(std::index_sequence<J...>) ->T
             {
@@ -462,11 +482,11 @@ namespace pyre {
             return _trace(std::make_index_sequence<D> {});
         }
 
-        template <int D1, int D2, typename T>
-        constexpr inline matrix_t<D2, D1, T> transpose(const matrix_t<D1, D2, T> & A)
+        template <int D1, int D2, typename T, class packingT>
+        constexpr inline auto transpose(const matrix_t<D1, D2, T, packingT> & A)
         {
             // A transposed
-            matrix_t<D2, D1, T> AT;
+            matrix_t<D2, D1, T, packingT> AT;
 
             auto _transposeJ = [&A, &AT]<size_t... J>(std::index_sequence<J...>){
                 auto _transposeI = [&A, &AT]<size_t K, size_t... I>(std::index_sequence<I...>)
@@ -483,9 +503,8 @@ namespace pyre {
             return AT;
         }
 
-        // TOFIX: This still does a complete loop while it should do a upper-diagonal loop
-        template <int D, typename T>
-        constexpr inline symmetric_matrix_t<D, T> symmetric(const matrix_t<D, D, T> & A)
+        template <int D, typename T, class packingT>
+        constexpr inline symmetric_matrix_t<D, T> symmetric(const matrix_t<D, D, T, packingT> & A)
         {
             symmetric_matrix_t<D, T> sym;
 
@@ -503,8 +522,8 @@ namespace pyre {
             return sym;
         }
 
-        template <int D, typename T>
-        constexpr inline matrix_t<D, D, T> skew(const matrix_t<D, D, T> & A)
+        template <int D, typename T, class packingT>
+        constexpr inline matrix_t<D, D, T, packingT> skew(const matrix_t<D, D, T, packingT> & A)
         {
             return 0.5 * (A - transpose(A));
         }
@@ -535,7 +554,7 @@ namespace pyre {
         }
 
         template <typename T>
-        constexpr inline vector_t<3, T> eigenvalues(const matrix_t<3, 3, T> & A)
+        constexpr inline vector_t<3, T> eigenvalues(const symmetric_matrix_t<3, T> & A)
         {
             // https://hal.archives-ouvertes.fr/hal-01501221
             T x1 = A[{0, 0}] * A[{0, 0}] + A[{1, 1}] * A[{1, 1}] + A[{2, 2}] * A[{2, 2}] 
@@ -615,8 +634,8 @@ namespace pyre {
             return identity_matrix<D>;
         }
 
-        template <int I, int D1, int D2, typename T>
-        constexpr inline vector_t<D2, T> row(const matrix_t<D1, D2, T> & A)
+        template <int I, int D1, int D2, typename T, class packingT>
+        constexpr inline vector_t<D2, T> row(const matrix_t<D1, D2, T, packingT> & A)
         {
             auto _row = [&A]<size_t... J>(std::index_sequence<J...>) -> vector_t<D2, T>
             {
@@ -627,8 +646,8 @@ namespace pyre {
             return _row(std::make_index_sequence<D1> {});
         }
 
-        template <int I, int D1, int D2, typename T>
-        constexpr inline vector_t<D1, T> col(const matrix_t<D1, D2, T> & A)
+        template <int I, int D1, int D2, typename T, class packingT>
+        constexpr inline vector_t<D1, T> col(const matrix_t<D1, D2, T, packingT> & A)
         {
             auto _col = [&A]<size_t... J>(std::index_sequence<J...>) -> vector_t<D1, T>
             {
@@ -640,7 +659,8 @@ namespace pyre {
         }
 
         template <int D, typename T>
-        constexpr inline symmetric_matrix_t<D, T> function(const symmetric_matrix_t<D, T> & A, auto f)
+        constexpr inline symmetric_matrix_t<D, T> function(const symmetric_matrix_t<D, T> & A, 
+            auto f)
         {
             // compute eigenvalues
             auto lambda = matrix_diagonal(eigenvalues(A));
@@ -649,8 +669,8 @@ namespace pyre {
             auto P = eigenvectors(A);
 
             // helper function (component-wise)
-            constexpr auto _apply_f_to_diagonal = []<size_t... I>(matrix_t<D, D, T> & lambda, 
-                auto f, std::index_sequence<I...>)
+            constexpr auto _apply_f_to_diagonal = []<size_t... I>(auto & lambda, auto f, 
+                std::index_sequence<I...>)
             {
                 // apply f to diagonal
                 ((lambda[{I, I}] = f(lambda[{I, I}])), ...);
@@ -663,7 +683,7 @@ namespace pyre {
             _apply_f_to_diagonal(lambda, f, std::make_index_sequence<D> {});
 
             // rebuild matrix
-            return P * lambda * inverse(P);
+            return symmetric(P * lambda * inverse(P));
         }
 
     }
