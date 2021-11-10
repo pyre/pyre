@@ -110,8 +110,7 @@ constexpr auto
 pyre::grid::Symmetric<N, containerT>::
 offset(index_const_reference index) const -> difference_type
 {
-    // the initial value; here so we can be explicit about the return type
-    difference_type zero = 0;
+    // extract i and j
     auto i = std::min(index[0], index[1]);
     auto j = std::max(index[0], index[1]);
     // compute the offset shift the result by the fixed offset of the {origin} and return it
