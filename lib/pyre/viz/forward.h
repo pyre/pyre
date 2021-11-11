@@ -31,6 +31,10 @@ namespace pyre::viz {
         // supply a constant value
         template <typename valueT>
         class Constant;
+        // a filter that maps values in [0,1] to the index of of a call in a geometrically spaced
+        // grid
+        template <class sourceT>
+        class Geometric;
         // a saw tooth function based on the log of its input value
         template <class sourceT>
         class LogSaw;
