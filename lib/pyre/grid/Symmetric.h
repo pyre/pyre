@@ -17,8 +17,6 @@ template <int N, template <typename, std::size_t> class containerT>
 class pyre::grid::Symmetric {
     // types
 public:
-    // the rank of the packing is 2 
-    static_assert(N == 2);
     // alias for me
     using symmetric_type = Symmetric<N, containerT>;
     using symmetric_const_reference = const symmetric_type &;

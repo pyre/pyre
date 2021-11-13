@@ -66,6 +66,50 @@ nudge() const -> difference_type
     return _nudge;
 }
 
+// TOFIX: The following functions can be free functions. Where do they belong?
+namespace{
+
+    template<int N>
+    constexpr int _entries(int D) requires (N == 1)
+    {
+        return D;
+    }
+
+    template<int N>
+    constexpr int _entries(int D) requires (N > 1)
+    {
+        int sum_entries = 0;
+        for (int i = 0; i < D; ++i)
+        {
+            sum_entries += _entries<N - 1>(D - i);
+        }
+
+        return sum_entries;
+    }
+
+    template<int N>
+    constexpr int _entriesBeforeRow(int i, int D)
+    {
+        int result = 0;
+        for (int a = 0; a < i; ++a)
+        {
+            result += _entries<N - 1>(D - a);
+        }
+        return result;
+    }
+
+    template<int N> 
+    constexpr int _offset(int D, int i) requires (N == 1)
+    {
+        return i;
+    }
+
+    template<int N, class... T> 
+    constexpr int _offset(int D, int i, T... j) requires (sizeof...(T) == N - 1 && N > 1)
+    {
+        return _entriesBeforeRow<N>(i, D) + _offset<N - 1>(D - i, j...);
+    }
+}
 
 template <int N, template <typename, std::size_t> class containerT>
 constexpr auto
@@ -73,7 +117,7 @@ pyre::grid::Symmetric<N, containerT>::
 cells() const -> std::size_t
 {
     // the number of cells in the upper- (or lower-) diagonal part
-    return _D * (_D + 1) / 2;
+    return _entries<N>(_D);
 }
 
 
@@ -83,20 +127,16 @@ constexpr auto
 pyre::grid::Symmetric<N, containerT>::
 index(difference_type offset) const -> index_type
 {
-
-    // count the number of matrix entries before row K
-    auto _entries_before_row = [](int K, int D) -> int {
-        return D * K - K * (K - 1) / 2;
-    };
-
     // start from the top
     int K = _D - 1;
-    while (offset < _entries_before_row(K, _D)) {
+
+    // count the number of matrix entries before row K
+    while (offset < _entriesBeforeRow<N>(K, _D)) {
         K--;
     }
 
     int I = K;
-    int J = offset - _entries_before_row(I, _D) + I;
+    int J = offset - _entriesBeforeRow<N>(I, _D) + I;
 
     // shift it by {_origin} and return it
     // TOFIX: not sure if the _origin is used in this way for a symmetric packing
@@ -114,16 +154,27 @@ offset(index_const_reference index) const -> difference_type
     index_type sorted_index = index;
     std::sort(sorted_index.begin(), sorted_index.end());
 
-    // extract i and j
-    auto i = sorted_index[0];
-    auto j = sorted_index[1];
+    // helper function to shift the indices (i, j, k, ...) into (i, j - i, k - j, ...)
+    auto _shiftIndices = []<size_t... I>(index_t<N> & idx, std::index_sequence<I...>)
+    {
+        // iterate in reverse order to avoid overwriting entries before using them
+        ((idx[(N - 2 - I) + 1] -= idx[N - 2 - I]), ... );
+        // all done
+        return;
+    };
 
-    int D1 = 1;
-    int D2 = _D * i - ( i - 1 ) * i / 2;
+    // shift the indices (i, j, k, ...) into (i, j - i, k - j, ...)
+    _shiftIndices(sorted_index, std::make_index_sequence<N-1> {});
 
-    // compute the offset shift the result by the fixed offset of the {origin} and return it
+    // helper function needed to expand the array in a parameter pack
+    auto _getOffset = []<size_t... I>(index_t<N> idx, int D, std::index_sequence<I...>)
+    {
+        return _offset<N>(D, idx[I]...);
+    };
+
+    // get the offset
     // TOFIX: not sure if the nudge is used in this way for a symmetric packing
-    return _nudge + D2 + (j - i);
+    return _nudge + _getOffset(sorted_index, _D, std::make_index_sequence<N> {});
 }
 
 
