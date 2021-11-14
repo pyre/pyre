@@ -18,19 +18,13 @@ template <typename T, class packingT, int... I>
 class Tensor {
 
 private:
-    // helper function to compute the product of an arguments list
-    template <typename... Args>
-    static constexpr auto multiply(Args &&... args) -> int
-    {
-        if constexpr (sizeof...(args))
-            return  (args * ...);
-        return 1;
-    }
-private:
-    // number of indices of the tensor, i.e. rank (N = 0 for empty parameter pack, i.e. scalar)
+    // layout
+    // static constexpr pack_t _layout {{I ...}, index_t::zero(), pack_t::order_type::rowMajor()};
+    static constexpr packingT _layout { {I ...} };
+    // rank of the tensor (N = 0 for empty parameter pack, i.e. scalar)
     static constexpr int N = sizeof...(I);
     // number of total entries of the tensor (S = 1 for empty parameter pack, i.e. scalar)
-    static constexpr int S = multiply(I...); // TOFIX: should this come from the packing?
+    static constexpr auto S = _layout.cells();
 
 private:
     // the packing strategy
@@ -45,7 +39,7 @@ private:
 public:
     // export the underlying type
     using type = T;
-    // export the number of indices
+    // export the rank
     static constexpr int dofs = N;
     // export the container size
     static constexpr int size = S;
@@ -140,9 +134,6 @@ public:
     static constexpr Tensor<T, packingT, I...> unit(Args...) requires (sizeof...(Args) == N);
 
 private:
-    // layout
-    // static constexpr pack_t _layout {{I ...}, index_t::zero(), pack_t::order_type::rowMajor()};
-    static constexpr pack_t _layout { {I ...} };
 
     // data
     data_t _data;
