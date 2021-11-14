@@ -29,6 +29,7 @@
 #include "IndexIterator.h"
 #include "Canonical.h"
 #include "Symmetric.h"
+#include "Diagonal.h"
 // the grid
 #include "Grid.h"
 #include "GridIterator.h"

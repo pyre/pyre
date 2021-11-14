@@ -22,6 +22,7 @@ LAYOUT_TESTS = \
     canonical_slice.cc \
     canonical_visit.cc \
     canonical_visit_order.cc \
+	diagonal_visit.cc \
     index_access.cc \
     index_arithmetic.cc \
     index_cartesian.cc \
