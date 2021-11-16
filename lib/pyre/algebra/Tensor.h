@@ -17,14 +17,16 @@ namespace algebra {
 template <typename T, class packingT, int... I>
 class Tensor {
 
-private:
+public: // TOFIX private:
     // layout
     // static constexpr pack_t _layout {{I ...}, index_t::zero(), pack_t::order_type::rowMajor()};
     static constexpr packingT _layout { {I ...} };
     // rank of the tensor (N = 0 for empty parameter pack, i.e. scalar)
     static constexpr int N = sizeof...(I);
+    // TOFIX: ugly fix (artificially remove the trailing zero for diagonal matrices
     // number of total entries of the tensor (S = 1 for empty parameter pack, i.e. scalar)
-    static constexpr auto S = _layout.cells();
+    static constexpr auto S = !std::is_same_v<packingT, pyre::grid::diagonal_t<N>> ? 
+        _layout.cells() : _layout.cells() - 1; 
 
 private:
     // the packing strategy
@@ -32,7 +34,7 @@ private:
     // index
     using index_t = pack_t::index_type;
     // of T on the heap
-    using storage_t = pyre::memory::stack_t<S, T>;
+    using storage_t = pyre::memory::stack_t< _layout.cells() , T>;
     // data type
     using data_t = storage_t;
 
@@ -157,10 +159,9 @@ using matrix_t = pyre::algebra::Tensor<T, packingT, D1, D2>;
 template <int D, typename T = real>
 using symmetric_matrix_t = matrix_t<D, D, T, pyre::grid::symmetric_t<2>>;
 
-// (dummy) typedef for symmetric matrices
-// TODO: this should be a specialization of matrix_t with a diagonal pack_t
+// typedef for diagonal matrices
 template <int D, typename T = real>
-using diagonal_matrix_t = matrix_t<D, D, T>;
+using diagonal_matrix_t = matrix_t<D, D, T, pyre::grid::diagonal_t<2>>;
 
 // factory for identity matrices
 template <int D, typename T = real>

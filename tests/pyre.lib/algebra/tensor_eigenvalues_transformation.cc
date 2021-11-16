@@ -17,7 +17,7 @@ using namespace pyre::algebra;
 int main(int argc, char* argv[]) {
 
     // 2D symmetric matrix
-    constexpr symmetric_matrix_t<2> C = { 1, 2, 2, 2 };
+    constexpr symmetric_matrix_t<2> C = { 1, 2, /*2,*/ 2 };
 
     // QUESTION: How can these be constexpr if exp and log are not?
     constexpr auto constexpr_exp = [](double x) { return exp(x); };
