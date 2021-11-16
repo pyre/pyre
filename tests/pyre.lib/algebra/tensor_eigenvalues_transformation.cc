@@ -6,6 +6,7 @@
 
 // support
 #include <cassert>
+#include <iostream>
 
 // get the tensor algebra
 #include <pyre/algebra/tensor_algebra.h>
@@ -16,32 +17,21 @@ using namespace pyre::algebra;
 // main program
 int main(int argc, char* argv[]) {
 
-    // 2D symmetric matrix
-    constexpr symmetric_matrix_t<2> C = { 1, 2, /*2,*/ 2 };
-
-    // QUESTION: How can these be constexpr if exp and log are not?
+    // define constexpr versions of exp and log
     constexpr auto constexpr_exp = [](double x) { return exp(x); };
     constexpr auto constexpr_log = [](double x) { return log(x); };
-    constexpr auto C_exp = function(C, constexpr_exp);
-    
-    // TOFIX: remove, this just proves the point that C_exp is constexpr
-    static_assert(C_exp[{0, 1}] == C_exp[{1, 0}]);
 
-    // TOFIX:
-    // static_assert(function(function(C, constexpr_exp), constexpr_log) == C);
-    // static_assert(is_equal(function(function(C, my_exp), my_log), C));
-
-    // TOFIX: this does not build
-    // function(C, epsilon)
-    // but this does 
-    // function(C, epsilon<real>)
-
-    // QUESTION: This can't be constexpr'ed
-    auto C_exp2 = function(C, exp);
-
-    // TOFIX: this does not build because of 0 / 0 in eigenvector calculation
     // exp(zero) = one
-    // static_assert(function(zero_matrix<3>, constexpr_exp) == identity_matrix<3>);
+    static_assert(function(zero_matrix<2>, constexpr_exp) == identity_matrix<2>);
+
+    // log(one) = zero
+    static_assert(function(identity_matrix<2>, constexpr_log) == zero_matrix<2>);
+
+    // exp(zero) = one
+    static_assert(function(zero_matrix<3>, constexpr_exp) == identity_matrix<3>);
+
+    // log(one) = zero
+    static_assert(function(identity_matrix<3>, constexpr_log) == zero_matrix<3>);
 
     // all done
     return 0;
