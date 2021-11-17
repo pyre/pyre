@@ -18,12 +18,12 @@ int main(int argc, char* argv[]) {
 
     // 2D matrix: Cayley-Hamilton's theorem 
     // (a matrix is a solution of its characteristic polynomial)
-    constexpr matrix_t<2, 2> M = {0, 1, 2, 3};
+    constexpr matrix_t<2, 2> M {0, 1, 2, 3};
     static_assert(M * M - trace(M) * M + determinant(M) * identity_matrix<2> == zero_matrix<2>);
 
     // 3D matrix: Cayley-Hamilton's theorem
     // (a matrix is a solution of its characteristic polynomial)
-    constexpr matrix_t<3, 3> P = { 1, -1, -2, 1, 1, 1, -2, 1, 2 };
+    constexpr matrix_t<3, 3> P { 1, -1, -2, 1, 1, 1, -2, 1, 2 };
     static_assert(P * P * P - trace(P) * P * P + 0.5 * (trace(P) * trace(P) - trace(P * P)) * P 
         - determinant(P) * identity_matrix<3> == zero_matrix<3>);
 

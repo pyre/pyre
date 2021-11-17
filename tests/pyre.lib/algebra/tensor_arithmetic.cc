@@ -48,7 +48,7 @@ int main(int argc, char* argv[]) {
     static_assert(matrix_t<3, 3>::one * minus_one == -matrix_t<3, 3>::one);
 
     // a 2D vector
-    constexpr vector_t<2> vector2D = { -2.0, 2.0 };
+    constexpr vector_t<2> vector2D { -2.0, 2.0 };
 
     // v + v == 2*v 
     static_assert(vector2D + vector2D == 2.0 * vector2D);
@@ -60,7 +60,7 @@ int main(int argc, char* argv[]) {
     static_assert((vector2D + vector2D) / -2.0 == -vector2D);
 
     // a 3D vector
-    constexpr vector_t<3> vector3D = { -2.0, 2.0, 10.0 };
+    constexpr vector_t<3> vector3D { -2.0, 2.0, 10.0 };
 
     // v + v + v == 3 * v 
     static_assert(vector3D + vector3D + vector3D == 3.0 * vector3D);

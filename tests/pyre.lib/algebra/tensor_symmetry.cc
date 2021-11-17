@@ -17,7 +17,7 @@ using namespace pyre::algebra;
 int main(int argc, char* argv[]) {
 
     // a 3D matrix
-    constexpr matrix_t<3, 3> A = { 1, -2, 0, 0, 1, 2, 0, 1, 1 };
+    constexpr matrix_t<3, 3> A { 1, -2, 0, 0, 1, 2, 0, 1, 1 };
 
     // Jacobi's theorem 
     // (odd dimension skew symmetric matrices are singular)

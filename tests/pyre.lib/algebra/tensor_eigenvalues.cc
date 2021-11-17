@@ -17,7 +17,7 @@ using namespace pyre::algebra;
 int main(int argc, char* argv[]) {
 
     // 2D symmetric matrix
-    constexpr symmetric_matrix_t<2> A = { 1, 2, /*2,*/ 2 };
+    constexpr symmetric_matrix_t<2> A { 1, 2, /*2,*/ 2 };
 
     // the matrix eigenvalues 
     constexpr auto lambda_A = eigenvalues(A); 
@@ -38,7 +38,7 @@ int main(int argc, char* argv[]) {
     static_assert(A * eigenvectors_A == eigenvectors_A * eigenvalues_A);
 
     // 3D symmetric matrix
-    constexpr symmetric_matrix_t<3> B = { 1, -1, -2, 
+    constexpr symmetric_matrix_t<3> B { 1, -1, -2, 
                                          /*-1,*/  1,  1, 
                                          /*-2,*/ /*1,*/ 2 };
 

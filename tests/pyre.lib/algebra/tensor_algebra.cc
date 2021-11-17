@@ -17,8 +17,8 @@ using namespace pyre::algebra;
 int main(int argc, char* argv[]) {
 
     // matrix-vector product
-    constexpr matrix_t<3, 3> A = { 1, -2, 0, 0, 1, 2, 0, 1, 1 };
-    constexpr vector_t<3> x = { 1, 1, 1 };
+    constexpr matrix_t<3, 3> A { 1, -2, 0, 0, 1, 2, 0, 1, 1 };
+    constexpr vector_t<3> x { 1, 1, 1 };
     constexpr scalar_t a = -2.0;
     constexpr vector_t<3> y = a * A * x;
     static_assert(inverse(A) * y / a == x);

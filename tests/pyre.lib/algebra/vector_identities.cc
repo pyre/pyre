@@ -17,16 +17,16 @@ using namespace pyre::algebra;
 int main(int argc, char* argv[]) {
 
     // vector a
-    constexpr vector_t<3> a = { -2.0, 2.0, 0.0 };
+    constexpr vector_t<3> a { -2.0, 2.0, 0.0 };
 
     // vector b
-    constexpr vector_t<3> b = { -1.0, 0.0, 2.0 };
+    constexpr vector_t<3> b { -1.0, 0.0, 2.0 };
 
     // vector c
-    constexpr vector_t<3> c = { -1.0, 1.0, 2.0 };
+    constexpr vector_t<3> c { -1.0, 1.0, 2.0 };
 
     // vector d
-    constexpr vector_t<3> d = { 0.0, 1.5, -1.5 };
+    constexpr vector_t<3> d { 0.0, 1.5, -1.5 };
 
     // scalar alpha
     constexpr scalar_t alpha = 5.0;
