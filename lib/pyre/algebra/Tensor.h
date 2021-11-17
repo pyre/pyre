@@ -17,7 +17,7 @@ namespace algebra {
 template <typename T, class packingT, int... I>
 class Tensor {
 
-public: // TOFIX private:
+private:
     // layout
     // static constexpr pack_t _layout {{I ...}, index_t::zero(), pack_t::order_type::rowMajor()};
     static constexpr packingT _layout { {I ...} };
@@ -134,6 +134,10 @@ public:
     // the K-th unit tensor
     template<typename... Args>
     static constexpr Tensor<T, packingT, I...> unit(Args...) requires (sizeof...(Args) == N);
+
+// accessors
+public:
+    static constexpr const packingT & layout() {return _layout;}
 
 private:
 

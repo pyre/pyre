@@ -17,9 +17,12 @@ namespace pyre {
         constexpr inline bool operator==(const Tensor<T, packingT1, I...> & lhs, 
             const Tensor<T, packingT2, I...> & rhs)
         {
+            // typedef for the repacked tensor based on {packingT1} and {packingT2}
+            using repacked_tensor_t = Tensor<T, 
+                typename repacking<packingT1, packingT2>::packing_type, I...>;
+
             // iterate on the packing
-            for (auto idx : Tensor<T, 
-                typename repacking<packingT1, packingT2>::packing_type, I...>::_layout) {
+            for (auto idx : repacked_tensor_t::layout()) {
                 if(lhs[idx] != rhs[idx]){
                     return false;
                 }
@@ -75,8 +78,12 @@ namespace pyre {
             const Tensor<T, packingT1, I...> & y1, const Tensor<T, packingT2, I...> & y2,
             Tensor<T, typename repacking<packingT1, packingT2>::packing_type, I...> & result)
         {
-            // visit every spot
-            for (auto idx : Tensor<T, typename repacking<packingT1, packingT2>::packing_type, I...>::_layout) {
+            // typedef for the repacked tensor based on {packingT1} and {packingT2}
+            using repacked_tensor_t = Tensor<T, 
+                typename repacking<packingT1, packingT2>::packing_type, I...>;
+
+            // iterate on the packing
+            for (auto idx : repacked_tensor_t::layout()) {
                 result[idx] = y1[idx] + y2[idx];
             }
 
@@ -147,8 +154,12 @@ namespace pyre {
             const Tensor<T, packingT1, I...> & y1, const Tensor<T, packingT2, I...> & y2,
             Tensor<T, typename repacking<packingT1, packingT2>::packing_type, I...> & result)
         {
-            // visit every spot
-            for (auto idx : Tensor<T, typename repacking<packingT1, packingT2>::packing_type, I...>::_layout) {
+            // typedef for the repacked tensor based on {packingT1} and {packingT2}
+            using repacked_tensor_t = Tensor<T, 
+                typename repacking<packingT1, packingT2>::packing_type, I...>;
+
+            // iterate on the packing
+            for (auto idx : repacked_tensor_t::layout()) {
                 result[idx] = y1[idx] - y2[idx];
             }
 
