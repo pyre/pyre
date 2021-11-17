@@ -23,10 +23,14 @@ private:
     static constexpr packingT _layout { {I ...} };
     // rank of the tensor (N = 0 for empty parameter pack, i.e. scalar)
     static constexpr int N = sizeof...(I);
-    // TOFIX: ugly fix (artificially remove the trailing zero for diagonal matrices
     // number of total entries of the tensor (S = 1 for empty parameter pack, i.e. scalar)
-    static constexpr auto S = !std::is_same_v<packingT, pyre::grid::diagonal_t<N>> ? 
-        _layout.cells() : _layout.cells() - 1; 
+    static constexpr auto S = 
+        // if it is not a diagonal packing
+        !std::is_same_v<packingT, pyre::grid::diagonal_t<N>> ? 
+        // get the answer from the layout
+        _layout.cells() 
+        // otherwise, get the answer from the layout but do not count the trailing zero
+        : _layout.cells() - 1; 
 
 private:
     // the packing strategy
