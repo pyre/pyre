@@ -52,76 +52,76 @@ public:
 
 public:
     // default constructor
-    constexpr inline Tensor();
+    constexpr Tensor();
 
     // constructor with underlying data type
-    constexpr inline Tensor(const data_t &);
+    constexpr Tensor(const data_t &);
 
     // constructor with underlying data type (need this for return value optimization)
-    constexpr inline Tensor(const data_t &&);
+    constexpr Tensor(const data_t &&);
 
     // constructor from brace-enclosed initializer list
     template <class... T2>
-    constexpr inline Tensor(T2...) requires(sizeof...(T2) == S);
+    constexpr Tensor(T2...) requires(sizeof...(T2) == S);
 
     // copy constructor
-    constexpr inline Tensor(const Tensor &) = default;
+    constexpr Tensor(const Tensor &) = default;
 
     // move constructor
-    constexpr inline Tensor(Tensor &&) = default;
+    constexpr Tensor(Tensor &&) = default;
 
     // copy assignment operator
-    constexpr inline Tensor & operator=(const Tensor &) = default;
+    constexpr Tensor & operator=(const Tensor &) = default;
 
     // move assignment operator
-    constexpr inline Tensor & operator=(Tensor &&) = default;
+    constexpr Tensor & operator=(Tensor &&) = default;
 
     // destructor
-    constexpr inline ~Tensor();
+    constexpr ~Tensor();
 
 public:
     // components accessors with index
-    constexpr inline const T & operator[](index_t) const;
-    constexpr inline T & operator[](index_t);
+    constexpr const T & operator[](index_t) const;
+    constexpr T & operator[](index_t);
 
     // components accessors with integers
-    constexpr inline const T & operator[](int) const;
-    constexpr inline T & operator[](int);
+    constexpr const T & operator[](int) const;
+    constexpr T & operator[](int);
 
     // operator plus equal
-    constexpr inline void operator+=(const Tensor<T, packingT, I...> &);
+    constexpr void operator+=(const Tensor<T, packingT, I...> &);
 
     // cast to underlying type T (enable if S = 1, i.e. scalar)
-    constexpr inline operator T() const requires(S == 1);
+    constexpr operator T() const requires(S == 1);
 
     // cast to underlying data structure
-    constexpr inline operator data_t() const;
+    constexpr operator data_t() const;
 
     // reset all entries to zero
-    constexpr inline void reset();
+    constexpr void reset();
 
 private:
     // helper function for index sequence
     template <size_t... J, class... T2>
-    constexpr inline void _initialize(std::index_sequence<J...>, T2...);
+    constexpr void _initialize(std::index_sequence<J...>, T2...);
 
     // helper function for index sequence
     template <size_t... J>
-    constexpr inline void _reset(std::index_sequence<J...>);
+    constexpr void _reset(std::index_sequence<J...>);
 
     // helper function to build the zero tensor
     template <size_t... J>
-    static constexpr inline pyre::algebra::Tensor<T, packingT, I...> 
+    static constexpr pyre::algebra::Tensor<T, packingT, I...> 
         _make_zeros(std::index_sequence<J...>);
 
     // helper function to build a tensor of ones
     template <size_t... J>
-    static constexpr inline pyre::algebra::Tensor<T, packingT, I...> 
+    static constexpr pyre::algebra::Tensor<T, packingT, I...> 
         _make_ones(std::index_sequence<J...>);
 
     // helper function to build a tensor of zeros with a 1 at index K
     template <size_t... J>
-    static constexpr inline pyre::algebra::Tensor<T, packingT, I...> 
+    static constexpr pyre::algebra::Tensor<T, packingT, I...> 
         _make_basis_element(index_t, std::index_sequence<J...>);
 
 public:
@@ -263,7 +263,7 @@ std::ostream & operator<<(std::ostream & os, const pyre::algebra::matrix_t<D1, D
 }
 
 template <typename T>
-constexpr inline bool is_equal(T lhs, T rhs)
+constexpr bool is_equal(T lhs, T rhs)
 {
     if ((lhs < rhs + epsilon_right(rhs)) && (lhs > rhs - epsilon_left(rhs)))
     {
@@ -274,7 +274,7 @@ constexpr inline bool is_equal(T lhs, T rhs)
 }
 
 template <typename T, class packingT, int... I>
-constexpr inline bool is_equal(const Tensor<T, packingT, I...> & lhs, 
+constexpr bool is_equal(const Tensor<T, packingT, I...> & lhs, 
     const Tensor<T, packingT, I...> & rhs)
 {
     // helper function (component-wise)
@@ -297,7 +297,7 @@ constexpr inline bool is_equal(const Tensor<T, packingT, I...> & lhs,
 }
 
 template <typename T, class packingT, int... I>
-constexpr inline bool is_zero(const Tensor<T, packingT, I...> & A, T tolerance)
+constexpr bool is_zero(const Tensor<T, packingT, I...> & A, T tolerance)
 {
     // helper function (component-wise)
     constexpr auto _is_zero = []<size_t... J>(const Tensor<T, packingT, I...> & A, 
