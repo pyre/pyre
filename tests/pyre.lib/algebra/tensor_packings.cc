@@ -18,16 +18,17 @@ using namespace pyre::algebra;
 int main(int argc, char* argv[]) {
 
     // TOFIX: can we make these independent of the packing? 
-    static constexpr auto e00 = matrix_t<2, 2>::unit(0, 0);
+    static constexpr auto e00 = diagonal_matrix_t<2>::unit(0, 0);
     static constexpr auto e01 = matrix_t<2, 2>::unit(0, 1);
     static constexpr auto e10 = matrix_t<2, 2>::unit(1, 0);
-    static constexpr auto e11 = matrix_t<2, 2>::unit(1, 1);
+    static constexpr auto e11 = diagonal_matrix_t<2>::unit(1, 1);
+    static constexpr auto e01s = symmetric_matrix_t<2>::unit(0, 1);
 
-    // TOFIX: 4 * e11 won't compile
     static constexpr matrix_t<2, 2> A = 1.0 * e00 + 2.0 * e01 + 3.0 * e10 + 4.0 * e11;
-    static constexpr symmetric_matrix_t<2> B = {1.0, 2e0, /*2e0,*/ 4};
-    // TOFIX: how can we use the same basis tensors for a diagonal matrix? 
-    static constexpr diagonal_matrix_t<2> C = {1, 2};
+
+    static constexpr symmetric_matrix_t<2> B = 1.0 * e00 + 2.0 * e01s + 4.0 * e11;
+
+    static constexpr diagonal_matrix_t<2> C = 1.0 * e00 + 2.0 * e11;
 
     static_assert(A + B + C == matrix_t<2, 2> {3, 4, 5, 10});
     // static_assert(B + C + A == matrix_t<2, 2> {3, 4, 5, 10}); // TOFIX
