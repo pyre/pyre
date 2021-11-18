@@ -118,20 +118,20 @@ constexpr void pyre::algebra::Tensor<T, packingT, I...>::reset()
 }
 
 template <typename T, class packingT, int... I>
-constexpr auto pyre::algebra::Tensor<T, packingT, I...>::shape()
+constexpr auto pyre::algebra::Tensor<T, packingT, I...>::shape() const
 {
     return vector_t<N, int>{I...};
 }
 
 template <typename T, class packingT, int... I>
-constexpr bool pyre::algebra::Tensor<T, packingT, I...>::is_symmetric()
+constexpr bool pyre::algebra::Tensor<T, packingT, I...>::is_symmetric() const
 {
     return std::is_same_v<packingT, pyre::grid::symmetric_t<N>> 
         || std::is_same_v<packingT, pyre::grid::diagonal_t<N>>;
 }
 
 template <typename T, class packingT, int... I>
-constexpr bool pyre::algebra::Tensor<T, packingT, I...>::is_diagonal()
+constexpr bool pyre::algebra::Tensor<T, packingT, I...>::is_diagonal() const
 {
     return std::is_same_v<packingT, pyre::grid::diagonal_t<N>>;
 }

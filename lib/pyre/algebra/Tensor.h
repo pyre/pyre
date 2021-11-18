@@ -96,13 +96,13 @@ namespace pyre::algebra {
         constexpr void reset();
 
         // get shape of tensor
-        constexpr auto shape();
+        constexpr auto shape() const;
 
         // checks if the tensor is symmetric
-        constexpr bool is_symmetric();
+        constexpr bool is_symmetric() const;
 
         // checks if the tensor is diagonal
-        constexpr bool is_diagonal();
+        constexpr bool is_diagonal() const;
 
       private:
         // helper function for index sequence
