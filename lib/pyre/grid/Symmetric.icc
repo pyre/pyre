@@ -68,50 +68,77 @@ nudge() const -> difference_type
     return _nudge;
 }
 
-// TOFIX: The following functions can be free functions. Where do they belong?
-namespace{
 
-    template<int N>
-    constexpr int _entries(int D) requires (N == 1)
-    {
-        return D;
-    }
-
-    template<int N>
-    constexpr int _entries(int D) requires (N > 1)
-    {
-        int sum_entries = 0;
-        for (int i = 0; i < D; ++i)
-        {
-            sum_entries += _entries<N - 1>(D - i);
-        }
-
-        return sum_entries;
-    }
-
-    template<int N>
-    constexpr int _entriesBeforeRow(int i, int D)
-    {
-        int result = 0;
-        for (int a = 0; a < i; ++a)
-        {
-            result += _entries<N - 1>(D - a);
-        }
-        return result;
-    }
-
-    template<int N> 
-    constexpr int _offset(int D, int i) requires (N == 1)
-    {
-        return i;
-    }
-
-    template<int N, class... T> 
-    constexpr int _offset(int D, int i, T... j) requires (sizeof...(T) == N - 1 && N > 1)
-    {
-        return _entriesBeforeRow<N>(i, D) + _offset<N - 1>(D - i, j...);
-    }
+template <int N, template <typename, std::size_t> class containerT>
+template<int M>
+constexpr int 
+pyre::grid::Symmetric<N, containerT>::
+_entries(int D) requires (M == 1)
+{
+    // easy enough
+    return D;
 }
+
+
+template <int N, template <typename, std::size_t> class containerT>
+template<int M>
+constexpr int 
+pyre::grid::Symmetric<N, containerT>::
+_entries(int D) requires (M > 1)
+{
+    // add up the total number of entries for all 'rows'
+    int sum_entries = 0;
+    for (int i = 0; i < D; ++i)
+    {
+        sum_entries += _entries<M - 1>(D - i);
+    }
+    // all done
+    return sum_entries;
+}
+
+
+template <int N, template <typename, std::size_t> class containerT>
+template<int M>
+constexpr int 
+pyre::grid::Symmetric<N, containerT>::
+_entriesBeforeRow(int i, int D)
+{
+    // add up the total number of entries for each 'row' less than {i} 
+    int result = 0;
+    for (int a = 0; a < i; ++a)
+    {
+        result += _entries<M - 1>(D - a);
+    }
+    // all done
+    return result;
+}
+
+
+template <int N, template <typename, std::size_t> class containerT>
+template<int M>
+constexpr int 
+pyre::grid::Symmetric<N, containerT>::
+ _offset(int D, int i) requires (M == 1)
+{
+    // easy enough
+    return i;
+}
+
+
+template <int N, template <typename, std::size_t> class containerT>
+template<int M, class... T> 
+constexpr int 
+pyre::grid::Symmetric<N, containerT>::
+_offset(int D, int i, T... j) requires (sizeof...(T) == M - 1 && M > 1)
+{
+    // calculate the offset associated with the rank M index {i, j...} 
+    return
+        // as the sum the total number of entries in all rows lower than {i}
+        _entriesBeforeRow<N>(i, D)
+        // and the offset of a rank {M-1} packing of dimension {D-i} and index {j...}
+        + _offset<M - 1>(D - i, j...);
+}
+
 
 template <int N, template <typename, std::size_t> class containerT>
 constexpr auto

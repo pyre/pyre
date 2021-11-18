@@ -86,6 +86,26 @@ class pyre::grid::Symmetric {
     // zero offset
     static constexpr auto _initShift(index_const_reference) -> difference_type;
 
+    // helper functions for recursive index calculation
+  private:
+    // the total number of entries in a symmetric packing of rank {M} and dimension {D} 
+    template<int M>
+    static constexpr int _entries(int D) requires (M == 1);
+    template<int M>
+    static constexpr int _entries(int D) requires (M > 1);
+
+    // the total number of entries in all 'rows' lower than {i} in a symmetric packing of rank {M} 
+    // and dimension {D} 
+    template<int M>
+    static constexpr int _entriesBeforeRow(int i, int D);
+
+    // the offset associated with the M-rank index {i, j...} in a symmetric packing of rank {M} and
+    // dimension {D} 
+    template<int M, class... T> 
+    static constexpr int _offset(int D, int i, T... j) requires (sizeof...(T) == M - 1 && M > 1);
+    template<int M>
+    static constexpr int _offset(int D, int i) requires (M == 1);
+
     // implementation details: data
   private:
     // supplied by the caller
