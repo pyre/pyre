@@ -22,7 +22,7 @@ LAYOUT_TESTS = \
     canonical_slice.cc \
     canonical_visit.cc \
     canonical_visit_order.cc \
-	diagonal_visit.cc \
+    diagonal_visit.cc \
     index_access.cc \
     index_arithmetic.cc \
     index_cartesian.cc \
@@ -57,8 +57,8 @@ LAYOUT_TESTS = \
     shape_sanity.cc \
     shape_scaling.cc \
     shape_structured_binding.cc \
-	symmetric_visit.cc \
-	symmetric_sanity.cc
+    symmetric_visit.cc \
+    symmetric_sanity.cc
 
 GRID_TESTS = \
     grid_heap_box.cc \

@@ -11,6 +11,18 @@
 
 # algebra
 pyre_test_driver(pyre.lib/algebra/bcd.cc)
+pyre_test_driver(pyre.lib/algebra/cayley_hamilton.cc)
+pyre_test_driver(pyre.lib/algebra/tensor_algebra.cc)
+pyre_test_driver(pyre.lib/algebra/tensor_arithmetic.cc)
+pyre_test_driver(pyre.lib/algebra/tensor_basis.cc)
+pyre_test_driver(pyre.lib/algebra/tensor_eigenvalues.cc)
+pyre_test_driver(pyre.lib/algebra/tensor_eigenvalues_transformation.cc)
+pyre_test_driver(pyre.lib/algebra/tensor_invariants.cc)
+pyre_test_driver(pyre.lib/algebra/tensor_packings.cc)
+pyre_test_driver(pyre.lib/algebra/tensor_print.cc)
+pyre_test_driver(pyre.lib/algebra/tensor_symmetry.cc)
+pyre_test_driver(pyre.lib/algebra/tensor_utilities.cc)
+pyre_test_driver(pyre.lib/algebra/vector_identities.cc)
 
 # geometry
 pyre_test_driver(pyre.lib/geometry/point.cc)
