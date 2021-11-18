@@ -95,6 +95,9 @@ namespace pyre::algebra {
         // reset all entries to zero
         constexpr void reset();
 
+        // get shape of tensor
+        constexpr auto shape();
+
       private:
         // helper function for index sequence
         template <size_t... J, class... T2>
