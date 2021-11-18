@@ -35,8 +35,7 @@ int main(int argc, char* argv[]) {
 
     // check the math
     static_assert(A + B + C == matrix_t<2, 2> {3, 4, 5, 10});
-    // static_assert(B + C + A == matrix_t<2, 2> {3, 4, 5, 10}); // TOFIX
-    // std::cout << B + C + A << std::endl;
+    static_assert(B + C + A == matrix_t<2, 2> {3, 4, 5, 10});
     static_assert(C + A + B == matrix_t<2, 2> {3, 4, 5, 10});
 
     // all done
