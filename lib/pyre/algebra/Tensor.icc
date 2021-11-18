@@ -52,7 +52,7 @@ pyre::algebra::Tensor<T, packingT, I...>::operator[](index_t i) const
     // get the offset that corresponds to this {index}
     auto offset = _layout[i];
     // get and return the value
-    return _data[offset];
+    return _data.at(offset);
 }
 
 template <typename T, class packingT, int... I>
@@ -62,21 +62,21 @@ pyre::algebra::Tensor<T, packingT, I...>::operator[](index_t i)
     // get the offset that corresponds to this {index}
     auto offset = _layout[i];
     // get and return the value
-    return _data[offset];
+    return _data.at(offset);
 }
 
 template <typename T, class packingT, int... I>
 constexpr const T &
 pyre::algebra::Tensor<T, packingT, I...>::operator[](int i) const
 {
-    return _data[i];
+    return _data.at(i);
 }
 
 template <typename T, class packingT, int... I>
 constexpr T &
 pyre::algebra::Tensor<T, packingT, I...>::operator[](int i)
 {
-    return _data[i];
+    return _data.at(i);
 }
 
 template <typename T, class packingT, int... I>
