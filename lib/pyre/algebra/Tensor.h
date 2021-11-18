@@ -98,6 +98,12 @@ namespace pyre::algebra {
         // get shape of tensor
         constexpr auto shape();
 
+        // checks if the tensor is symmetric
+        constexpr bool is_symmetric();
+
+        // checks if the tensor is diagonal
+        constexpr bool is_diagonal();
+
       private:
         // helper function for index sequence
         template <size_t... J, class... T2>
