@@ -3,10 +3,12 @@
 // bianca giovanardi
 // (c) 2021 all rights reserved
 
+
 // code guard
 #if !defined(pyre_grid_Diagonal_icc)
 #error this file contains implementation details for pyre::grid::Diagonal
 #else
+
 
 // metamethods
 

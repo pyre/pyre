@@ -3,6 +3,7 @@
 // bianca giovanardi
 // (c) 2021 all rights reserved
 
+
 // code guard
 #if !defined(pyre_algebra_externals_h)
 #define pyre_algebra_externals_h

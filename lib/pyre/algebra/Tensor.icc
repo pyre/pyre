@@ -4,10 +4,12 @@
 // (c) 2021 all rights reserved
 //
 
+
 // code guard
 #if !defined(pyre_algebra_Tensor_icc)
 #error this file contains implementation details for pyre::algebra::Tensor
 #else
+
 
 template <typename T, class packingT, int... I>
 constexpr pyre::algebra::Tensor<T, packingT, I...>::Tensor() : _data()
@@ -180,6 +182,7 @@ pyre::algebra::Tensor<T, packingT, I...>::unit(Args... args) requires (sizeof...
     return pyre::algebra::Tensor<T, packingT, I...>::_make_basis_element(K, 
         std::make_index_sequence<pyre::algebra::Tensor<T, packingT, I...>::size> {});
 }
+
 
 #endif
 

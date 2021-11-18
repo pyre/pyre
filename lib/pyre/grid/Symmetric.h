@@ -3,6 +3,7 @@
 // bianca giovanardi
 // (c) 2021 all rights reserved
 
+
 // code guard
 #if !defined(pyre_grid_Symmetric_h)
 #define pyre_grid_Symmetric_h
@@ -16,7 +17,7 @@
 template <int N, template <typename, std::size_t> class containerT>
 class pyre::grid::Symmetric {
     // types
-public:
+  public:
     // alias for me
     using symmetric_type = Symmetric<N, containerT>;
     using symmetric_const_reference = const symmetric_type &;
@@ -36,7 +37,7 @@ public:
     using index_iterator = IndexIterator<symmetric_type>;
 
     // metamethods
-public:
+  public:
     // constructor that deduces {_nudge}
     constexpr explicit
     Symmetric(shape_const_reference shape,
@@ -44,7 +45,7 @@ public:
               order_const_reference order = order_type::c());
 
     // interface
-public:
+  public:
     // accessors
     // user supplied
     constexpr auto shape() const -> shape_type;
@@ -57,7 +58,7 @@ public:
     constexpr auto cells() const -> std::size_t;
 
     // the packing isomorphism
-public:
+  public:
     // from a given offset to the matching index
     constexpr auto index(difference_type) const -> index_type;
     // from an index to its offset from the beginning of the array
@@ -68,25 +69,25 @@ public:
     constexpr auto operator[](index_const_reference) const -> difference_type;
 
     // iteration support: iterators generate sequences of indices
-public:
+  public:
     // whole layout iterators
     constexpr auto begin() const -> index_iterator;
     constexpr auto begin(index_const_reference step) const -> index_iterator;
     constexpr auto end() const -> index_iterator;
 
     // static interface
-public:
+  public:
     // the number of axes
     static constexpr auto rank() -> int;
 
     // implementation details: static helpers
-protected:
+  protected:
     // given the packing {strides}, compute the shift that maps the lowest possible index to
     // zero offset
     static constexpr auto _initShift(index_const_reference) -> difference_type;
 
     // implementation details: data
-private:
+  private:
     // supplied by the caller
     const shape_type _shape;         // my shape
     const order_type _order;         // the packing order of the axes
@@ -96,7 +97,7 @@ private:
     const difference_type _nudge;    // offset correction when {_origin} is not {zero}
 
     // metamethods with default implementations
-public:
+  public:
     // destructor
     ~Symmetric() = default;
     // constructors
