@@ -99,29 +99,30 @@ namespace pyre {
             _vector_sum(y1, y2, result);
             return result;
         }
-        template <typename T, class packingT1, class packingT2, int... I>
-        constexpr Tensor<T, typename repacking<packingT1, packingT2>::packing_type, I...> && operator+(
-            Tensor<T, packingT1, I...> && y1, const Tensor<T, packingT2, I...> & y2)
-        {
-            // std::cout << "operator+ no temp && &" << std::endl;
-            _vector_sum(y1, y2, y1);
-            return std::move(y1); // TOFIX: Move should be carefully thought about
-        }
-        template <typename T, class packingT1, class packingT2, int... I>
-        constexpr Tensor<T, typename repacking<packingT1, packingT2>::packing_type, I...> && operator+(
-            const Tensor<T, packingT1, I...> & y1, Tensor<T, packingT2, I...> && y2)
-        {
-            // std::cout << "operator+ no temp & &&" << std::endl;
-            return std::move(y2) + y1; // TOFIX: Move should be carefully thought about
-        }
-        template <typename T, class packingT1, class packingT2, int... I>
-        constexpr Tensor<T, typename repacking<packingT1, packingT2>::packing_type, I...> && 
-            operator+(Tensor<T, packingT1, I...> && y1, Tensor<T, packingT2, I...> && y2)
-        {
-            // std::cout << "operator+ no temp && &&" << std::endl;
-            _vector_sum(y1, y2, y1);
-            return std::move(y1); // TOFIX: Move should be carefully thought about
-        }
+        // TOFIX: temporarily removed && functions that break the compilation
+        // template <typename T, class packingT1, class packingT2, int... I>
+        // constexpr Tensor<T, typename repacking<packingT1, packingT2>::packing_type, I...> && operator+(
+        //     Tensor<T, packingT1, I...> && y1, const Tensor<T, packingT2, I...> & y2)
+        // {
+        //     // std::cout << "operator+ no temp && &" << std::endl;
+        //     _vector_sum(y1, y2, y1);
+        //     return std::move(y1); // TOFIX: Move should be carefully thought about
+        // }
+        // template <typename T, class packingT1, class packingT2, int... I>
+        // constexpr Tensor<T, typename repacking<packingT1, packingT2>::packing_type, I...> && operator+(
+        //     const Tensor<T, packingT1, I...> & y1, Tensor<T, packingT2, I...> && y2)
+        // {
+        //     // std::cout << "operator+ no temp & &&" << std::endl;
+        //     return std::move(y2) + y1; // TOFIX: Move should be carefully thought about
+        // }
+        // template <typename T, class packingT1, class packingT2, int... I>
+        // constexpr Tensor<T, typename repacking<packingT1, packingT2>::packing_type, I...> && 
+        //     operator+(Tensor<T, packingT1, I...> && y1, Tensor<T, packingT2, I...> && y2)
+        // {
+        //     // std::cout << "operator+ no temp && &&" << std::endl;
+        //     _vector_sum(y1, y2, y1);
+        //     return std::move(y1); // TOFIX: Move should be carefully thought about
+        // }
 
         // vector_t operator-
         template <typename T, class packingT, int... I, std::size_t... J>
