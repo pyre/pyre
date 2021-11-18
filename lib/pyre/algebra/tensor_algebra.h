@@ -10,6 +10,17 @@
 
 
 namespace pyre::algebra {
+    template <typename T, class packingT, int... I>
+    constexpr T norm(const Tensor<T, packingT, I...> & tensor)
+    {
+        T result(0);
+        // iterate on the packing
+        for (auto idx : Tensor<T, packingT, I...>::layout()) {
+            result += tensor[idx] * tensor[idx];
+        }
+        return std::sqrt(result);
+    }
+
     template <typename T, class packingT1, class packingT2, int... I>
     constexpr bool operator==(const Tensor<T, packingT1, I...> & lhs, 
         const Tensor<T, packingT2, I...> & rhs)
