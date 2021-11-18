@@ -10,6 +10,8 @@
 
 // get the tensor algebra
 #include <pyre/algebra/tensor_algebra.h>
+#include <pyre/algebra/VectorBasis.h>
+#include <pyre/algebra/MatrixBasis.h>
 
 // use namespace for readability
 using namespace pyre::algebra;
@@ -17,19 +19,23 @@ using namespace pyre::algebra;
 // main program
 int main(int argc, char* argv[]) {
 
-    // TOFIX: can we make these independent of the packing? 
-    static constexpr auto e00 = diagonal_matrix_t<2>::unit(0, 0);
-    static constexpr auto e01 = matrix_t<2, 2>::unit(0, 1);
-    static constexpr auto e10 = matrix_t<2, 2>::unit(1, 0);
-    static constexpr auto e11 = diagonal_matrix_t<2>::unit(1, 1);
-    static constexpr auto e01s = symmetric_matrix_t<2>::unit(0, 1);
+    // Packing-independent base for 2D matrix 
+    static constexpr auto e_00 = MatrixBasis<2>::unit<0, 0>;
+    static constexpr auto e_01 = MatrixBasis<2>::unit<0, 1>;
+    static constexpr auto e_10 = MatrixBasis<2>::unit<1, 0>;
+    static constexpr auto e_11 = MatrixBasis<2>::unit<1, 1>;
+    static constexpr auto e_01s = symmetric(MatrixBasis<2>::unit<0, 1> + MatrixBasis<2>::unit<1, 0>);
 
-    static constexpr matrix_t<2, 2> A = 1.0 * e00 + 2.0 * e01 + 3.0 * e10 + 4.0 * e11;
+    // a 2D matrix
+    static constexpr matrix_t<2, 2> A = 1.0 * e_00 + 2.0 * e_01 + 3.0 * e_10 + 4.0 * e_11;
 
-    static constexpr symmetric_matrix_t<2> B = 1.0 * e00 + 2.0 * e01s + 4.0 * e11;
+    // a 2D symmetric matrix
+    static constexpr symmetric_matrix_t<2> B = 1.0 * e_00 + 2.0 * e_01s + 4.0 * e_11;
 
-    static constexpr diagonal_matrix_t<2> C = 1.0 * e00 + 2.0 * e11;
+    // a 2D diagonal matrix
+    static constexpr diagonal_matrix_t<2> C = 1.0 * e_00 + 2.0 * e_11;
 
+    // check the math
     static_assert(A + B + C == matrix_t<2, 2> {3, 4, 5, 10});
     // static_assert(B + C + A == matrix_t<2, 2> {3, 4, 5, 10}); // TOFIX
     // std::cout << B + C + A << std::endl;
