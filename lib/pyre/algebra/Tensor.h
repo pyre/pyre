@@ -92,6 +92,9 @@ namespace pyre::algebra {
         // cast to underlying data structure
         constexpr operator data_t() const;
 
+        // cast to canonical packing
+        constexpr operator Tensor<T, pyre::grid::canonical_t<N>, I...>() const; 
+
         // support for ranged for loops
         constexpr auto begin() const;
         constexpr auto end() const;
