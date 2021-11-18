@@ -4,14 +4,16 @@
 // (c) 2021 all rights reserved
 //
 
+
 // support
 #include <cassert>
-
 // get the tensor algebra
 #include <pyre/algebra.h>
 
+
 // use namespace for readability
 using namespace pyre::algebra;
+
 
 // main program
 int main(int argc, char* argv[]) {
@@ -30,5 +32,6 @@ int main(int argc, char* argv[]) {
     // all done
     return 0;
 }
+
 
 // end of file
