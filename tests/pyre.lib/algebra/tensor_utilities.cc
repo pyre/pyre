@@ -8,9 +8,7 @@
 #include <cassert>
 
 // get the tensor algebra
-#include <pyre/algebra/tensor_algebra.h>
-#include <pyre/algebra/VectorBasis.h>
-#include <pyre/algebra/MatrixBasis.h>
+#include <pyre/algebra.h>
 
 // use namespace for readability
 using namespace pyre::algebra;

@@ -4,9 +4,6 @@
 // (c) 2021 all rights reserved
 //
 
-// TOFIX
-#include "Tensor.h"
-
 #if !defined(pyre_algebra_MatrixBasis_h)
 #define pyre_algebra_MatrixBasis_h
 

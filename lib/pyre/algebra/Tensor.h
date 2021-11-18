@@ -7,10 +7,6 @@
 #if !defined(pyre_algebra_Tensor_h)
 #define pyre_algebra_Tensor_h
 
-// TOFIX
-#include "../grid.h"
-#include "machine_epsilon.h"
-
 namespace pyre { 
 namespace algebra {
 

@@ -4,12 +4,6 @@
 // (c) 2021 all rights reserved
 //
 
-#include "Tensor.h"
-#include "repacking.h"
-#include <cassert>
-#include <cmath>
-#include <functional>
-
 namespace pyre {
     namespace algebra {
 

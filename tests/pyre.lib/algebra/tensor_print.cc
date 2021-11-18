@@ -9,8 +9,7 @@
 #include <cassert>
 
 // dependencies
-#include <pyre/algebra/Tensor.h>
-#include <pyre/algebra/tensor_algebra.h>
+#include <pyre/algebra.h>
 
 using namespace pyre::algebra;
 
