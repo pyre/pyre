@@ -92,6 +92,10 @@ namespace pyre::algebra {
         // cast to underlying data structure
         constexpr operator data_t() const;
 
+        // support for ranged for loops
+        constexpr auto begin() const;
+        constexpr auto end() const;
+
         // reset all entries to zero
         constexpr void reset();
 

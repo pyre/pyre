@@ -111,6 +111,18 @@ constexpr pyre::algebra::Tensor<T, packingT, I...>::operator data_t() const
 }
 
 template <typename T, class packingT, int... I>
+constexpr auto pyre::algebra::Tensor<T, packingT, I...>::begin() const
+{
+    return _layout.begin();
+}
+
+template <typename T, class packingT, int... I>
+constexpr auto pyre::algebra::Tensor<T, packingT, I...>::end() const
+{
+    return _layout.end();
+}
+
+template <typename T, class packingT, int... I>
 constexpr void pyre::algebra::Tensor<T, packingT, I...>::reset()
 {
     // reset to zero all entries
