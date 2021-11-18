@@ -95,7 +95,7 @@ cend() const -> const_iterator
 
 // data access
 template <int D, class T, bool isConst>
-auto
+constexpr auto
 pyre::memory::Stack<D, T, isConst>::
 at(size_type pos) -> reference
 {
@@ -105,7 +105,7 @@ at(size_type pos) -> reference
 
 
 template <int D, class T, bool isConst>
-auto
+constexpr auto
 pyre::memory::Stack<D, T, isConst>::
 at(size_type pos) const -> const_reference
 {
