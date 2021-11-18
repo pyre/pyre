@@ -20,7 +20,7 @@ class ExtentManaged(type):
 
 
     def __new__(cls, name, bases, attributes):
-        # buld the record
+        # build the record
         record = super().__new__(cls, name, bases, attributes)
 
         # add the weakset attribute
