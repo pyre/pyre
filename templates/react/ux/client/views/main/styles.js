@@ -12,6 +12,12 @@ import base from '~/views/styles'
 
 // publish
 export default {{
+    // the overall page
+    page: {{
+        // inherit
+        ...base.page,
+    }},
+
     // the container
     panel: {{
         // inherit
