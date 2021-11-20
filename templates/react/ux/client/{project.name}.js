@@ -10,7 +10,7 @@ import ReactDOM from 'react-dom'
 // relay
 import {{ RelayEnvironmentProvider }} from 'react-relay/hooks'
 // routing
-import {{ BrowserRouter as Router, Switch, Route }} from 'react-router-dom'
+import {{ BrowserRouter as Router, Routes, Route }} from 'react-router-dom'
 // generator support
 import 'regenerator-runtime'
 
@@ -28,8 +28,6 @@ import {{
     Main,
     // boilerplate
     Loading, Stop,
-    // layout
-    Status,
 }} from '~/views'
 
 
@@ -42,36 +40,32 @@ const {project.capname}App = () => {{
 
     // render
     return (
-        <Switch >
-            {{/* the graphiql sandbox */ }}
-            <Route path="/graphiql" component={{GiQL}} />
-            {{/* app navigation */}}
-            <Route>
-                <div style={{styles.page}}>
-                    <Switch >
-                        {{/* the closing page */ }}
-                        <Route path="/stop" component={{ Stop }} />
-                        {{/* the page to render while waiting for data to arrive */ }}
-                        <Route path="/loading" component={{ Loading }} />
+        <Routes >
+            {{/* the app */ }}
+            <Route path="/" element={{<Main />}} />
 
-                        {{/* show the app */ }}
-                        <Route path="/" component={{ Main }} />
-                    </Switch>
-                    <Status />
-                </div>
-            </Route>
-        </Switch>
+            {{/* meta navigation */ }}
+            {{/* the closing page */ }}
+            <Route path="/stop" element={{<Stop />}} />
+            {{/* the page to render while waiting for data to arrive */ }}
+            <Route path="/loading" element={{<Loading />}} />
+
+
+            {{/* the graphiql sandbox */ }}
+            <Route path="/graphiql" element={{<GiQL />}} />
+        </Routes>
     )
 }}
 
 
-// the outer component that sets up access to the {{relay}}, {{suspense}}, and {{router}} environments
+// the outer component that sets up access to the {{relay}}, {{suspense}},
+// and {{router}} environments
 const Root = () => (
     <RelayEnvironmentProvider environment={{ environment }}>
         <Suspense fallback={{< Loading />}}>
-        <Router>
-            <{project.capname}App />
-        </Router>
+            <Router>
+                <{project.capname}App />
+            </Router>
     </Suspense>
     </RelayEnvironmentProvider >
 )
