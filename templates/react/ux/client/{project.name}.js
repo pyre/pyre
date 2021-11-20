@@ -42,7 +42,7 @@ const {project.capname}App = () => {{
     return (
         <Routes >
             {{/* the app */ }}
-            <Route path="/" element={{<Main />}} />
+            <Route path="/*" element={{<Main />}} />
 
             {{/* meta navigation */ }}
             {{/* the closing page */ }}
