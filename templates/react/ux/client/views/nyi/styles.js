@@ -22,7 +22,7 @@ export default {{
         position: "relative",
         top: "50%",
         left: "50%",
-        width: "400px",
+        width: "100%",
         height: "400px",
         textAlign: "center",
         transform: "translate(-50%, -50%)",
