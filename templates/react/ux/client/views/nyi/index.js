@@ -6,7 +6,7 @@
 
 // externals
 import React from 'react'
-import { useLocation } from 'react-router-dom'
+import {{ useLocation }} from 'react-router-dom'
 // locals
 // shapes
 import {{ Hammer }} from '~/shapes'
@@ -15,7 +15,7 @@ import styles from './styles'
 
 
 // the area
-const loading = () => (
+const loading = () => {{
     // grab the location
     const location = useLocation()
 
@@ -29,12 +29,12 @@ const loading = () => (
                     </g>
                 </svg>
                 <p style={{styles.message}}>
-                    the page at "{location.pathname}" is not implemented yet
+                    the page at "{{location.pathname}}" is not implemented yet
                 </p>
             </div>
         </section>
     )
-}
+}}
 
 
 // publish

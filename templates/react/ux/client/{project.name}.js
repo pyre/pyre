@@ -44,12 +44,12 @@ const {project.capname}App = () => {{
             {{/* the app */ }}
             <Route path="/" element={{<Main />}} >
                 {{/* specific activities */ }}
-                <Route path="experiment" element={<NYI />} />
-                <Route path="help" element={<NYI />} />
-                <Route path="about" element={<NYI />} />
+                <Route path="experiment" element={{<NYI />}} />
+                <Route path="help" element={{<NYI />}} />
+                <Route path="about" element={{<NYI />}} />
 
                 {{/* the default page */ }}
-                <Route index element={<NYI />} />
+                <Route index element={{<NYI />}} />
             </Route>
 
             {{/* meta navigation */ }}
