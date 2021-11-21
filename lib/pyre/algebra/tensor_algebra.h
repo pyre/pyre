@@ -556,16 +556,22 @@ namespace pyre::algebra {
         T d = (A[{0, 0}] + A[{1, 1}] + A[{2, 2}]) / 3.0;
         T e = 2.0 * sqrt(x1) / 3.0;
         double PI = 4.0 * atan(1.0);
-        double tol = 1.e-16; //TOFIX
         T phi = 0.0;
-        if (fabs(x2) < tol) {
-            phi = 0.5 * PI;
-        } 
-        else{
-            T two_sqrt_x1 = 2.0 * sqrt(x1);
-            phi = atan(sqrt((two_sqrt_x1 * x1 - x2) * (two_sqrt_x1 * x1 + x2)) / x2);
-            if (x2 < 0) phi += PI;
+        T two_sqrt_x1 = 2.0 * sqrt(x1);
+        T num = sqrt((two_sqrt_x1 * x1 - x2) * (two_sqrt_x1 * x1 + x2));
+        T den = x2;
+        // avoid dividing by zero (use the identity atan(a / b) + atan(b / a) = PI / 2
+        if (fabs(den) < num) {
+            // phi = 0.5 * PI - atan(den / num);
+            phi = atan(num / den);
         }
+        else {
+            phi = atan(num / den);
+        }
+        if (x2 < 0) {
+            phi += PI;
+        }
+
         return vector_t<3, T>{ 
             d - e * cos(phi / 3.0), 
             d + e * cos((phi - PI) / 3.0), 
