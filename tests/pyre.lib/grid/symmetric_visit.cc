@@ -12,7 +12,7 @@
 
 
 // type alias
-using symmetric_t = pyre::grid::symmetric_t<2>;
+using symmetric_t = pyre::grid::symmetric_t<5>;
 
 
 // simple check that the map from index space to offsets is correct
@@ -24,7 +24,7 @@ int main(int argc, char * argv[]) {
     pyre::journal::debug_t channel("pyre.grid.symmetric");
 
     // pick a shape
-    symmetric_t::shape_type shape { 3, 3};
+    symmetric_t::shape_type shape { 4, 4, 4, 4, 4};
     // make a canonical packing strategy
     symmetric_t packing { shape };
     // show me
