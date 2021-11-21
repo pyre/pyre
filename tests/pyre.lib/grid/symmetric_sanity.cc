@@ -39,6 +39,14 @@ int main(int argc, char * argv[]) {
         channel << "rank 1: " << offset << pyre::journal::newline;
         // assert the offset of the largest index is the last element
         static_assert( offset == packing.cells() - 1 );
+        // assert {packing[index]} is the inverse function of {packing[offset]} 
+        static_assert( offset == packing[packing[offset]] );
+        // visit every spot
+        for (auto idx : packing) {
+            std::sort(idx.begin(), idx.end());
+            // assert {packing[index]} is the inverse function of {packing[offset]} 
+            assert(idx == packing[packing[idx]]);
+        }
     }
 
     {
@@ -54,6 +62,14 @@ int main(int argc, char * argv[]) {
         channel << "rank 2: " << offset << pyre::journal::newline;
         // assert the offset of the largest index is the last element
         static_assert( offset == packing.cells() - 1 );
+        // assert {packing[index]} is the inverse function of {packing[offset]} 
+        static_assert( offset == packing[packing[offset]] );
+        // visit every spot
+        for (auto idx : packing) {
+            std::sort(idx.begin(), idx.end());
+            // assert {packing[index]} is the inverse function of {packing[offset]} 
+            assert(idx == packing[packing[idx]]);
+        }
     }
 
     {
@@ -69,6 +85,14 @@ int main(int argc, char * argv[]) {
         channel << "rank 3: " << offset << pyre::journal::newline;
         // assert the offset of the largest index is the last element
         static_assert( offset == packing.cells() - 1 );
+        // assert {packing[index]} is the inverse function of {packing[offset]} 
+        static_assert( offset == packing[packing[offset]] );
+        // visit every spot
+        for (auto idx : packing) {
+            std::sort(idx.begin(), idx.end());
+            // assert {packing[index]} is the inverse function of {packing[offset]} 
+            assert(idx == packing[packing[idx]]);
+        }
     }
 
     {
@@ -85,6 +109,14 @@ int main(int argc, char * argv[]) {
         channel << "rank 4: " << offset << pyre::journal::newline;
         // assert the offset of the largest index is the last element
         static_assert( offset == packing.cells() - 1 );
+        // assert {packing[index]} is the inverse function of {packing[offset]} 
+        static_assert( offset == packing[packing[offset]] );
+        // visit every spot
+        for (auto idx : packing) {
+            std::sort(idx.begin(), idx.end());
+            // assert {packing[index]} is the inverse function of {packing[offset]} 
+            assert(idx == packing[packing[idx]]);
+        }
     }
 
     {
@@ -101,6 +133,14 @@ int main(int argc, char * argv[]) {
         channel << "rank 5: " << offset << pyre::journal::newline;
         // assert the offset of the largest index is the last element
         static_assert( offset == packing.cells() - 1 );
+        // assert {packing[index]} is the inverse function of {packing[offset]} 
+        static_assert( offset == packing[packing[offset]] );
+        // visit every spot
+        for (auto idx : packing) {
+            std::sort(idx.begin(), idx.end());
+            // assert {packing[index]} is the inverse function of {packing[offset]} 
+            assert(idx == packing[packing[idx]]);
+        }
     }
 
     // flush
