@@ -21,7 +21,7 @@ Symmetric(shape_const_reference shape, index_const_reference origin, order_const
     _shape { shape },
     _order { order },
     _origin { origin },
-    _D { _shape[0] /* TOFIX */ },
+    _D { _shape[0] },
     // compute the nudge, defined as the negative offset of the origin
     _nudge { - _initShift(_origin) }
 {}
