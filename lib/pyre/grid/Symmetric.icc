@@ -134,7 +134,7 @@ _offset(int D, int i, T... j) requires (sizeof...(T) == M - 1 && M > 1)
     // calculate the offset associated with the rank M index {i, j...} 
     return
         // as the sum the total number of entries in all rows lower than {i}
-        _entriesBeforeRow<N>(i, D)
+        _entriesBeforeRow<M>(i, D)
         // and the offset of a rank {M-1} packing of dimension {D-i} and index {j...}
         + _offset<M - 1>(D - i, j...);
 }
