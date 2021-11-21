@@ -139,6 +139,33 @@ _offset(int D, int i, T... j) requires (sizeof...(T) == M - 1 && M > 1)
         + _offset<M - 1>(D - i, j...);
 }
 
+template <int N, template <typename, std::size_t> class containerT>
+template<int M> 
+constexpr int 
+pyre::grid::Symmetric<N, containerT>::
+_getFirstIndex(int D, int & offset) requires (M == 1)
+{
+    // easy enough
+    return offset;
+}
+
+template <int N, template <typename, std::size_t> class containerT>
+template<int M> 
+constexpr int 
+pyre::grid::Symmetric<N, containerT>::
+_getFirstIndex(int D, int & offset) requires (M > 1)
+{
+    // start from the top
+    int K = D - 1;
+
+    // count the number of matrix entries before row K
+    while (offset < _entriesBeforeRow<M>(K, D)) {
+        K--;
+    }
+
+    offset -= _entriesBeforeRow<M>(K, D);
+    return K;
+}
 
 template <int N, template <typename, std::size_t> class containerT>
 constexpr auto
@@ -156,20 +183,33 @@ constexpr auto
 pyre::grid::Symmetric<N, containerT>::
 index(difference_type offset) const -> index_type
 {
-    // start from the top
-    int K = _D - 1;
+    // the index to fill in
+    index_type index;
 
-    // count the number of matrix entries before row K
-    while (offset < _entriesBeforeRow<N>(K, _D)) {
-        K--;
-    }
+    // make a copy of the offset (need to modify it)
+    int offset_ = offset;
 
-    int I = K;
-    int J = offset - _entriesBeforeRow<N>(I, _D) + I;
+    // get the first index (and decrement the offset) 
+    index[0] = _getFirstIndex<N>(_D, offset_);
+
+    // helper function to get the next indices (i = 1, ..., N - 1)
+    auto _getIndices = [&offset_]<size_t... I>(index_t<N> & idx, int D, std::index_sequence<I...>)
+    {
+        // get the next index (I + 1) as:
+        ((idx[I + 1] = 
+            // the first index (corresponding to this offset) in a rank (N - (I + 1)) packing of 
+            // dimension (D - idx[I])
+            _getFirstIndex<N - (I + 1)>(D - idx[I], offset_) 
+            // plus the current index
+            + idx[I]), ... );
+        // all done
+        return;
+    };
+    _getIndices(index, _D, std::make_index_sequence<N - 1> {});
 
     // shift it by {_origin} and return it
     // TOFIX: not sure if the _origin is used in this way for a symmetric packing
-    return index_type{I, J} + _origin;
+    return index + _origin;
 }
 
 

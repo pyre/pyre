@@ -106,6 +106,11 @@ class pyre::grid::Symmetric {
     template<int M>
     static constexpr int _offset(int D, int i) requires (M == 1);
 
+    template<int M> 
+    static constexpr int _getFirstIndex(int D, int & offset) requires (M > 1);
+    template<int M> 
+    static constexpr int _getFirstIndex(int D, int & offset) requires (M == 1);
+
     // implementation details: data
   private:
     // supplied by the caller
