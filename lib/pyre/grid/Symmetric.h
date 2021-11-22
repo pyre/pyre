@@ -94,10 +94,10 @@ class pyre::grid::Symmetric {
     template<int M>
     static constexpr int _entries(int D) requires (M > 1);
 
-    // the total number of entries in all 'rows' lower than {i} in a symmetric packing of rank {M} 
+    // the total number of entries in all ranks lower than {i} in a symmetric packing of rank {M} 
     // and dimension {D} 
     template<int M>
-    static constexpr int _entriesBeforeRow(int i, int D);
+    static constexpr int _entriesBeforeRank(int i, int D);
 
     // the offset associated with the M-rank index {i, j...} in a symmetric packing of rank {M} and
     // dimension {D} 
@@ -106,10 +106,12 @@ class pyre::grid::Symmetric {
     template<int M>
     static constexpr int _offset(int D, int i) requires (M == 1);
 
+    // the index of the first rank corresponding to {offset} in a symmetric packing of rank {M} and
+    // dimension {D} 
     template<int M> 
-    static constexpr int _getFirstIndex(int D, int & offset) requires (M > 1);
+    static constexpr int _getFirstRankIndex(int D, int & offset) requires (M > 1);
     template<int M> 
-    static constexpr int _getFirstIndex(int D, int & offset) requires (M == 1);
+    static constexpr int _getFirstRankIndex(int D, int & offset) requires (M == 1);
 
     // implementation details: data
   private:
