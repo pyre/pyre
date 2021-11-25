@@ -21,9 +21,7 @@ Symmetric(shape_const_reference shape, index_const_reference origin, order_const
     _shape { shape },
     _order { order },
     _origin { origin },
-    _D { _shape[0] },
-    // compute the nudge, defined as the negative offset of the origin
-    _nudge { - _initShift(_origin) }
+    _D { _shape[0] }
 {}
 
 
@@ -58,15 +56,6 @@ origin() const -> index_type
     return _origin;
 }
 
-
-template <int N, template <typename, std::size_t> class containerT>
-constexpr auto
-pyre::grid::Symmetric<N, containerT>::
-nudge() const -> difference_type
-{
-    // easy enough
-    return _nudge;
-}
 
 
 template <int N, template <typename, std::size_t> class containerT>
@@ -218,7 +207,6 @@ index(difference_type offset) const -> index_type
     _getIndices(index, _D, std::make_index_sequence<N - 1> {});
 
     // shift it by {_origin} and return it
-    // TOFIX: not sure if the _origin is used in this way for a symmetric packing
     return index + _origin;
 }
 
@@ -229,8 +217,8 @@ constexpr auto
 pyre::grid::Symmetric<N, containerT>::
 offset(index_const_reference index) const -> difference_type
 {
-    // sort the indices 
-    index_type sorted_index = index;
+    // shift by the origin and sort the indices 
+    index_type sorted_index = index - _origin;
     std::sort(sorted_index.begin(), sorted_index.end());
 
     // helper function to shift the indices (i, j, k, ...) into (i, j - i, k - j, ...)
@@ -252,8 +240,7 @@ offset(index_const_reference index) const -> difference_type
     };
 
     // get the offset
-    // TOFIX: not sure if the nudge is used in this way for a symmetric packing
-    return _nudge + _getOffset(sorted_index, _D, std::make_index_sequence<N> {});
+    return _getOffset(sorted_index, _D, std::make_index_sequence<N> {});
 }
 
 
@@ -319,17 +306,6 @@ rank() -> int
 {
     // easy enough
     return N;
-}
-
-
-// compute the shift necessary so that {origin}, i.e. the smallest index, maps to offset zero
-template <int N, template <typename, std::size_t> class containerT>
-constexpr auto
-pyre::grid::Symmetric<N, containerT>::
-_initShift(index_const_reference origin) -> difference_type
-{
-    // return the offset of {_origin}
-    return 0; //TOFIX offset(origin);
 }
 
 

@@ -38,7 +38,7 @@ class pyre::grid::Symmetric {
 
     // metamethods
   public:
-    // constructor that deduces {_nudge}
+    // constructor (shape and origin must be diagonal indices)
     constexpr explicit
     Symmetric(shape_const_reference shape,
               index_const_reference origin = index_type::zero(),
@@ -51,8 +51,6 @@ class pyre::grid::Symmetric {
     constexpr auto shape() const -> shape_type;
     constexpr auto order() const -> order_type;
     constexpr auto origin() const -> index_type;
-    // deduced
-    constexpr auto nudge() const -> difference_type;
 
     // the total number of addressable cells
     constexpr auto cells() const -> std::size_t;
@@ -80,13 +78,7 @@ class pyre::grid::Symmetric {
     // the number of axes
     static constexpr auto rank() -> int;
 
-    // implementation details: static helpers
-  protected:
-    // given the packing {strides}, compute the shift that maps the lowest possible index to
-    // zero offset
-    static constexpr auto _initShift(index_const_reference) -> difference_type;
-
-    // helper functions for recursive index calculation
+    // implementation details: static helpers for recursive index calculation
   private:
     // the total number of entries in a symmetric packing of rank {M} and dimension {D} 
     template<int M>
@@ -121,7 +113,6 @@ class pyre::grid::Symmetric {
     const index_type _origin;        // the smallest allowable index value
     // deduced
     const int _D;                    // the shape dimension 
-    const difference_type _nudge;    // offset correction when {_origin} is not {zero}
 
     // metamethods with default implementations
   public:

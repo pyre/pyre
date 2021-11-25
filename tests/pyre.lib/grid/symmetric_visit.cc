@@ -32,8 +32,7 @@ int main(int argc, char * argv[]) {
         << "packing:" << pyre::journal::newline
         << "  shape: " << packing.shape() << pyre::journal::newline
         << "  order: " << packing.order() << pyre::journal::newline
-        << "  origin: " << packing.origin() << pyre::journal::newline
-        << "  nudge: " << packing.nudge() << pyre::journal::endl(__HERE__);
+        << "  origin: " << packing.origin() << pyre::journal::endl(__HERE__);
 
     // sign on
     channel << "visiting in packing order:" << pyre::journal::newline;
