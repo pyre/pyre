@@ -95,6 +95,10 @@ namespace pyre::algebra {
         // cast to canonical packing
         constexpr operator Tensor<T, pyre::grid::canonical_t<N>, I...>() const; 
 
+        // cast to symmetric packing (enable only for diagonal packing)
+        constexpr operator Tensor<T, pyre::grid::symmetric_t<N>, I...>() const requires 
+            (std::is_same_v<packingT, pyre::grid::diagonal_t<N>>); 
+
         // support for ranged for loops
         constexpr auto begin() const;
         constexpr auto end() const;
