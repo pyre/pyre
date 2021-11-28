@@ -83,12 +83,14 @@ namespace pyre::algebra {
         return a * y;
     }
 
-    // sum of vector_t
+    // operator+ for tensors
     template <typename T, class packingT1, class packingT2, int... I>
-    constexpr void _vector_sum(
-        const Tensor<T, packingT1, I...> & y1, const Tensor<T, packingT2, I...> & y2,
-        Tensor<T, typename repacking<packingT1, packingT2>::packing_type, I...> & result)
+    constexpr Tensor<T, typename repacking<packingT1, packingT2>::packing_type, I...> operator+(
+        const Tensor<T, packingT1, I...> & y1, const Tensor<T, packingT2, I...> & y2)
     {
+        // std::cout << "operator+ & &" << std::endl;
+        // instantiate the result
+        Tensor<T, typename repacking<packingT1, packingT2>::packing_type, I...> result;
         // typedef for the repacked tensor based on {packingT1} and {packingT2}
         using repacked_tensor_t = Tensor<T, 
             typename repacking<packingT1, packingT2>::packing_type, I...>;
@@ -97,42 +99,45 @@ namespace pyre::algebra {
             result[idx] = y1[idx] + y2[idx];
         }
         // all done
-        return;
-    }
-
-    template <typename T, class packingT1, class packingT2, int... I>
-    constexpr Tensor<T, typename repacking<packingT1, packingT2>::packing_type, I...> operator+(
-        const Tensor<T, packingT1, I...> & y1, const Tensor<T, packingT2, I...> & y2)
-    {
-        // std::cout << "operator+ new temp" << std::endl;
-        Tensor<T, typename repacking<packingT1, packingT2>::packing_type, I...> result;
-        _vector_sum(y1, y2, result);
         return result;
     }
-    // TOFIX: temporarily removed && functions that break the compilation
-    // template <typename T, class packingT1, class packingT2, int... I>
-    // constexpr Tensor<T, typename repacking<packingT1, packingT2>::packing_type, I...> && operator+(
-    //     Tensor<T, packingT1, I...> && y1, const Tensor<T, packingT2, I...> & y2)
-    // {
-    //     // std::cout << "operator+ no temp && &" << std::endl;
-    //     _vector_sum(y1, y2, y1);
-    //     return std::move(y1); // TOFIX: Move should be carefully thought about
-    // }
-    // template <typename T, class packingT1, class packingT2, int... I>
-    // constexpr Tensor<T, typename repacking<packingT1, packingT2>::packing_type, I...> && operator+(
-    //     const Tensor<T, packingT1, I...> & y1, Tensor<T, packingT2, I...> && y2)
-    // {
-    //     // std::cout << "operator+ no temp & &&" << std::endl;
-    //     return std::move(y2) + y1; // TOFIX: Move should be carefully thought about
-    // }
-    // template <typename T, class packingT1, class packingT2, int... I>
-    // constexpr Tensor<T, typename repacking<packingT1, packingT2>::packing_type, I...> && 
-    //     operator+(Tensor<T, packingT1, I...> && y1, Tensor<T, packingT2, I...> && y2)
-    // {
-    //     // std::cout << "operator+ no temp && &&" << std::endl;
-    //     _vector_sum(y1, y2, y1);
-    //     return std::move(y1); // TOFIX: Move should be carefully thought about
-    // }
+    template <typename T, class packingT1, class packingT2, int... I>
+    constexpr Tensor<T, typename repacking<packingT1, packingT2>::packing_type, I...> operator+(
+        const Tensor<T, packingT1, I...> & y1, Tensor<T, packingT2, I...> && y2)
+        requires (std::is_same_v<typename repacking<packingT1, packingT2>::packing_type, packingT2>)
+    {
+        // std::cout << "operator+ & &&" << std::endl;
+        // write the result on y1
+        y2 = y1 + std::as_const(y2);
+        // all done
+        return y2;
+    }
+    template <typename T, class packingT1, class packingT2, int... I>
+    constexpr Tensor<T, typename repacking<packingT1, packingT2>::packing_type, I...> operator+(
+        Tensor<T, packingT1, I...> && y1, const Tensor<T, packingT2, I...> & y2)
+        requires (std::is_same_v<typename repacking<packingT1, packingT2>::packing_type, packingT1>)
+    {
+        // std::cout << "operator+ && &" << std::endl;
+        // easy enough
+        return y2 + std::move(y1);
+    }
+    template <typename T, class packingT1, class packingT2, int... I>
+    constexpr Tensor<T, typename repacking<packingT1, packingT2>::packing_type, I...> 
+        operator+(Tensor<T, packingT1, I...> && y1, Tensor<T, packingT2, I...> && y2)
+    {
+        // std::cout << "operator+ && &&" << std::endl;
+        // typedef for the repacked tensor based on {packingT1} and {packingT2}
+        using repacking_t = typename repacking<packingT1, packingT2>::packing_type;
+        // if the repacking type is the packing type of y1
+        if constexpr(std::is_same_v<repacking_t, packingT1>) {
+            // pass down y1 as temporary and y2 as const reference 
+            return std::move(y1) + std::as_const(y2);
+        }
+        else {
+            // pass down y2 as temporary and y1 as const reference 
+            return std::move(y2) + std::as_const(y1);
+        }        
+    }
 
     // vector_t operator-
     template <typename T, class packingT, int... I, std::size_t... J>
