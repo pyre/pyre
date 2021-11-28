@@ -49,31 +49,18 @@ namespace pyre::algebra {
     }
 
     template <typename T, class packingT, int... I>
-    constexpr Tensor<T, packingT, I...> && operator*(T a, 
-        Tensor<T, packingT, I...> && y) 
-        requires(Tensor<T, packingT, I...>::size != 1)
-    {
-        constexpr int D = Tensor<T, packingT, I...>::size;
-        _vector_times_scalar(a, y, y, std::make_index_sequence<D> {});
-        return std::move(y);
-    }
-
-    template <typename T, class packingT, int... I>
     constexpr Tensor<T, packingT, I...> operator*(T a, 
         const Tensor<T, packingT, I...> & y) 
         requires(Tensor<T, packingT, I...>::size != 1)
     {
+        // instantiate the result
         Tensor<T, packingT, I...> result;
-        constexpr int D = Tensor<T, packingT, I...>::size;
-        _vector_times_scalar(a, y, result, std::make_index_sequence<D> {});
+        // iterate on the packing
+        for (auto idx : Tensor<T, packingT, I...>::layout()) {
+            result[idx] = a * y[idx];
+        }
+        // all done
         return result;
-    }
-
-    template <typename T, class packingT, int... I>
-    constexpr Tensor<T, packingT, I...> && operator*(Tensor<T, packingT, I...> && y, T a) 
-        requires(Tensor<T, packingT, I...>::size != 1)
-    {
-        return a * std::move(y);
     }
 
     template <typename T, class packingT, int... I>
@@ -81,6 +68,22 @@ namespace pyre::algebra {
         requires(Tensor<T, packingT, I...>::size != 1)
     {
         return a * y;
+    }
+
+    template <typename T, class packingT, int... I>
+    constexpr Tensor<T, packingT, I...> operator*(T a, 
+        Tensor<T, packingT, I...> && y) 
+        requires(Tensor<T, packingT, I...>::size != 1)
+    {
+        y = a * std::as_const(y);
+        return y;
+    }
+
+    template <typename T, class packingT, int... I>
+    constexpr Tensor<T, packingT, I...> operator*(Tensor<T, packingT, I...> && y, T a) 
+        requires(Tensor<T, packingT, I...>::size != 1)
+    {
+        return a * std::move(y);
     }
 
     // Tensor operator+
