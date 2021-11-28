@@ -139,90 +139,62 @@ namespace pyre::algebra {
         }        
     }
 
-    // vector_t operator-
-    template <typename T, class packingT, int... I, std::size_t... J>
-    constexpr void _vector_minus(
-        const Tensor<T, packingT, I...> & y, 
-        Tensor<T, packingT, I...> & result, std::index_sequence<J...>)
-    {
-        ((result[J] = -y[J]), ...);
-        return;
-    }
-
     template <typename T, class packingT, int... I>
     constexpr Tensor<T, packingT, I...> operator-(const Tensor<T, packingT, I...> & y)
     {
-        // std::cout << "unary operator- new temp" << std::endl;
+        // std::cout << "unary operator- &" << std::endl;
+        // instantiate the result
         Tensor<T, packingT, I...> result;
-        constexpr int D = Tensor<T, packingT, I...>::size;
-        _vector_minus(y, result, std::make_index_sequence<D> {});
+        // iterate on the packing
+        for (auto idx : Tensor<T, packingT, I...>::layout()) {
+            result[idx] = -y[idx];
+        }
+        // all done
         return result;
     }
 
+    // Tensor unary operator-
     template <typename T, class packingT, int... I>
-    constexpr Tensor<T, packingT, I...> && operator-(Tensor<T, packingT, I...> && y)
+    constexpr Tensor<T, packingT, I...> operator-(Tensor<T, packingT, I...> && y)
     {
-        // std::cout << "unary operator- no temp &&" << std::endl;
-        constexpr int D = Tensor<T, packingT, I...>::size;
-        _vector_minus(y, y, std::make_index_sequence<D> {});
-        return std::move(y);
-    }
-
-    template <typename T, class packingT1, class packingT2, int... I>
-    constexpr void _vector_minus(
-        const Tensor<T, packingT1, I...> & y1, const Tensor<T, packingT2, I...> & y2,
-        Tensor<T, typename repacking<packingT1, packingT2>::packing_type, I...> & result)
-    {
-        // typedef for the repacked tensor based on {packingT1} and {packingT2}
-        using repacked_tensor_t = Tensor<T, 
-            typename repacking<packingT1, packingT2>::packing_type, I...>;
-        // iterate on the packing
-        for (auto idx : repacked_tensor_t::layout()) {
-            result[idx] = y1[idx] - y2[idx];
-        }
+        // std::cout << "unary operator- &&" << std::endl;
+        // write the result on y1
+        y = -std::as_const(y);
         // all done
-        return;
-    }
+        return y;
+    }  
 
+    // TOFIX: Redefine these with universal references
     template <typename T, class packingT1, class packingT2, int... I>
     constexpr Tensor<T, typename repacking<packingT1, packingT2>::packing_type, I...> operator-(
         const Tensor<T, packingT1, I...> & y1, const Tensor<T, packingT2, I...> & y2)
     {
-        // std::cout << "binary operator- new temp" << std::endl;
-        Tensor<T, typename repacking<packingT1, packingT2>::packing_type, I...> result;
-        _vector_minus(y1, y2, result);
-        return result;
-        // return y1 + (-y2);
+        // std::cout << "operator- & &" << std::endl;
+        return y1 + (-y2);
     }
 
     template <typename T, class packingT1, class packingT2, int... I>
-    constexpr Tensor<T, typename repacking<packingT1, packingT2>::packing_type, I...> && operator-(
+    constexpr Tensor<T, typename repacking<packingT1, packingT2>::packing_type, I...> operator-(
         Tensor<T, packingT1, I...> && y1, const Tensor<T, packingT2, I...> & y2)
     {
-        // std::cout << "binary operator- no temp && &" << std::endl;
-        _vector_minus(y1, y2, y1);
-        return std::move(y1); // TOFIX
-        // return std::move(y1) + (-y2);
+        // std::cout << "operator- && &" << std::endl;
+        return std::move(y1) + (-y2);
     }
 
     template <typename T, class packingT1, class packingT2, int... I>
-    constexpr Tensor<T, typename repacking<packingT1, packingT2>::packing_type, I...> && operator-(
+    constexpr Tensor<T, typename repacking<packingT1, packingT2>::packing_type, I...> operator-(
         const Tensor<T, packingT1, I...> & y1, Tensor<T, packingT2, I...> && y2)
     {
-        // std::cout << "binary operator- no temp & &&" << std::endl;
-        _vector_minus(y1, y2, y2);
-        return std::move(y2); // TOFIX
-        // return y1 + (-std::move(y2));
+        // std::cout << "operator- & &&" << std::endl;
+        return y1 + (-std::move(y2));
     }
 
     template <typename T, class packingT1, class packingT2, int... I>
-    constexpr Tensor<T, typename repacking<packingT1, packingT2>::packing_type, I...> && operator-(
+    constexpr Tensor<T, typename repacking<packingT1, packingT2>::packing_type, I...> operator-(
         Tensor<T, packingT1, I...> && y1, Tensor<T, packingT2, I...> && y2)
     {
-        // std::cout << "binary operator- no temp && &&" << std::endl;
-        _vector_minus(y1, y2, y1);
-        return std::move(y1); // TOFIX
-        // return std::move(y1) + (-std::move(y2));
+        // std::cout << "operator- && &&" << std::endl;
+        return std::move(y1) + (-std::move(y2));
     }
 
     template <typename T, class packingT, int... I>
