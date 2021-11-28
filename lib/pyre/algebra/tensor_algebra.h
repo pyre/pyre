@@ -205,7 +205,7 @@ namespace pyre::algebra {
     }
 
     template <typename T, class packingT, int... I>
-    constexpr Tensor<T, packingT, I...> && operator/(Tensor<T, packingT, I...> && y, T a) requires(
+    constexpr Tensor<T, packingT, I...> operator/(Tensor<T, packingT, I...> && y, T a) requires(
         Tensor<T, packingT, I...>::size != 1)
     {
         return (1.0 / a) * std::move(y);
