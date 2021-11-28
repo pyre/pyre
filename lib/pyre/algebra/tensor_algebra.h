@@ -83,17 +83,17 @@ namespace pyre::algebra {
         return a * y;
     }
 
-    // operator+ for tensors
+    // Tensor operator+
     template <typename T, class packingT1, class packingT2, int... I>
     constexpr Tensor<T, typename repacking<packingT1, packingT2>::packing_type, I...> operator+(
         const Tensor<T, packingT1, I...> & y1, const Tensor<T, packingT2, I...> & y2)
     {
         // std::cout << "operator+ & &" << std::endl;
-        // instantiate the result
-        Tensor<T, typename repacking<packingT1, packingT2>::packing_type, I...> result;
         // typedef for the repacked tensor based on {packingT1} and {packingT2}
         using repacked_tensor_t = Tensor<T, 
             typename repacking<packingT1, packingT2>::packing_type, I...>;
+        // instantiate the result
+        repacked_tensor_t result;
         // iterate on the packing
         for (auto idx : repacked_tensor_t::layout()) {
             result[idx] = y1[idx] + y2[idx];
