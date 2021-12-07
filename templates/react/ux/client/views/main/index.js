@@ -34,7 +34,7 @@ const Panel = () => {{
                 <Flex.Box direction="row" style={{styles.flex}} >
 
                     {{/* the activity specific workarea */}}
-                    <Flex.Panel min={{400}} style={{styles.flex}} >
+                    <Flex.Panel min={{400}} auto={{true}} style={{styles.flex}} >
                         {{/* render whatever the router hands me */}}
                         <Outlet />
                     </Flex.Panel>
