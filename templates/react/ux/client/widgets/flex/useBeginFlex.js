@@ -61,9 +61,12 @@ export default ({{ panel }}) => {{
                 const extent = Math.round(node.getBoundingClientRect()[mainExtent])
                 // transfer its current extent to the its style
                 node.style[mainExtent] = `${{extent}}px`
+
+                // check whether the user has marked this panel as able to absorb viewport changes
+                const {{ auto }} = panels.get(panelRef)
                 // deduce the correct flex: every panel is now frozen to its styled extent,
-                // except the last one that becomes responsible for absorbing viewport size changes
-                const flx = (idx == refs.length - 1) ? "1 1 0" : "0 0 auto"
+                // except the ones marked auto
+                const flx = auto ? "1 1 0" : "0 0 auto"
                 // and apply it
                 node.style.flex = flx
                 // all done

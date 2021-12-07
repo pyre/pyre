@@ -102,7 +102,7 @@ export default () => {{
         // compute its extents
         const extent = node.getBoundingClientRect()[mainExtent]
         // unpack the size hints that were registered for this panel
-        const [min, max] = panels.get(panel)
+        const {{ min, max }} = panels.get(panel)
         // in order to do the clipping
         const allowed = Math.trunc(
             // first figure out which way we plan to push the limits

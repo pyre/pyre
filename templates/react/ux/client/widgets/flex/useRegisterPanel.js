@@ -12,7 +12,7 @@ import {{ Context }} from './context'
 
 
 // register a panel
-export default ({{ ref = null, min = 0, max = Infinity }}) => {{
+export default ({{ ref = null, min = 0, max = Infinity, auto = false }}) => {{
     // grab the state mutator
     const {{ addPanel }} = React.useContext(Context)
 
@@ -22,7 +22,7 @@ export default ({{ ref = null, min = 0, max = Infinity }}) => {{
     // after the initial mount
     React.useEffect(() => {{
         // register the panel
-        addPanel({{ ref: panel, min, max }})
+        addPanel({{ ref: panel, min, max, auto }})
     }}, [])
 
     // build and return the context relevant to this panel
