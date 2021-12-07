@@ -21,9 +21,9 @@ import styles from './styles'
 
 
 // a container for client children
-const panel = ({{ min = 0, max = Infinity, style, children, debug }}) => {{
+const panel = ({{ min = 0, max = Infinity, auto = false, style, children, debug }}) => {{
     // register this panel and make a {{ref}} for it
-    const ref = useRegisterPanel({{ min, max }})
+    const ref = useRegisterPanel({{ min, max, auto }})
     // get support for initiating flexing
     const flexProps = useBeginFlex({{ panel: ref }})
     // get the direction dependent extent names

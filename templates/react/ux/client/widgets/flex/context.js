@@ -70,9 +70,9 @@ export const Provider = ({{
 
     // higher level functions
     // registering a new panel
-    const addPanel = ({{ ref, min, max }}) => {{
+    const addPanel = ({{ ref, min, max, auto }}) => {{
         // update the panel pile
-        setPanels(old => new Map([...old, [ref, [min, max]]]))
+        setPanels(old => new Map([...old, [ref, {{min, max, auto}}]]))
         // all done
         return
     }}
