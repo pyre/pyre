@@ -7,9 +7,9 @@
 // externals
 import React from 'react'
 
-// locals
-// hooks
+// project hooks
 import {{ useEvent }} from '~/hooks'
+// locals
 // context
 import {{ Provider }} from './context'
 // hooks
@@ -29,7 +29,7 @@ const Box = ({{ style, children }}) => {{
 
     // make a ref for my container
     const ref = React.useRef(null)
-    // install our event listeners
+    // install our my listeners
     useEvent({{ name: "mouseup", listener: endFlex, client: ref }})
     useEvent({{ name: "mouseleave", listener: endFlex, client: ref }})
     useEvent({{
@@ -42,9 +42,9 @@ const Box = ({{ style, children }}) => {{
 
     // paint me
     return (
-        <div ref={{ref}} style={{boxStyle}}>
+        <div ref={{ref}} style={{boxStyle}} >
             {{children}}
-        </div>
+        </div >
     )
 }}
 
