@@ -29,7 +29,8 @@ const loading = () => {{
                     </g>
                 </svg>
                 <p style={{styles.message}}>
-                    the page at "{{location.pathname}}" is not implemented yet
+                    <span style={{styles.location}}>{{location.pathname}}</span>
+                    &nbsp;is not implemented yet
                 </p>
             </div>
         </section>
