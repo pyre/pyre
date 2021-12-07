@@ -52,7 +52,7 @@ const panel = ({{ min = 0, max = Infinity, style, children, debug }}) => {{
         // get my extent
         const {{ extent }} = useResizeObserver({{ ref }})
         // and render it as my content
-        content = <span>{{extent.width}}x{{extent.height}}</span>
+        content = <span styles={{styles.extent}}>debug: {{extent.width}}x{{extent.height}}</span>
     }}
 
     // paint me
