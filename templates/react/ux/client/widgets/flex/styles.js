@@ -17,6 +17,8 @@ export default {{
         position: "relative",
         overflow: "clip",
         display: "flex",
+        width: "100%",
+        height: "100%",
     }},
 
     // the individual panels
