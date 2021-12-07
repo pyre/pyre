@@ -28,6 +28,10 @@ export default {{
         transform: "translate(-50%, -50%)",
     }},
 
+    location: {{
+        color: theme.banner.name,
+    }},
+
     icon: {{
         // placement
         margin: "1.0em auto",
