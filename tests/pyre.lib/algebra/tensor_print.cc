@@ -20,7 +20,7 @@ int main(int argc, char* argv[]) {
     pyre::journal::application("tensor_print");
 
     // make a channel
-    pyre::journal::info_t channel("pyre.grid.tensor");
+    pyre::journal::info_t channel("pyre.algebra.tensor_print");
 
     matrix_t<1, 1> A { 1 };
     channel << A << pyre::journal::endl;
