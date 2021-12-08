@@ -53,25 +53,31 @@ export default ({{ panel }}) => {{
 
         // if this is the first time we are flexing
         if (!isManaged) {{
+            // collect the current sizes
+            const extents = refs.map(
+                panelRef => Math.round(panelRef.current.getBoundingClientRect()[mainExtent])
+            )
+
             // go through all the panels
             refs.forEach((panelRef, idx) => {{
-                // get the associated container
-                const node = panelRef.current
-                // measure it
-                const extent = Math.round(node.getBoundingClientRect()[mainExtent])
-                // transfer its current extent to the its style
-                node.style[mainExtent] = `${{extent}}px`
-
+                // grab the extent of the current panel
+                const extent = extents[idx]
                 // check whether the user has marked this panel as able to absorb viewport changes
                 const {{ auto }} = panels.get(panelRef)
                 // deduce the correct flex: every panel is now frozen to its styled extent,
                 // except the ones marked auto
-                const flx = auto ? "1 1 0" : "0 0 auto"
-                // and apply it
-                node.style.flex = flx
+                const flx = auto ? "1 1 auto" : "0 0 auto"
+
+                // get the style of the associated node
+                const style = panelRef.current.style
+                // apply the flex
+                style.flex = flx
+                // transfer its current extent to the its style
+                style[mainExtent] = `${{extent}}px`
                 // all done
                 return
             }})
+
             // mark
             setIsManaged(true)
         }}
