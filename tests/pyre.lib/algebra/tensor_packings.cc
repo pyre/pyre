@@ -34,9 +34,9 @@ int main(int argc, char* argv[]) {
     static constexpr diagonal_matrix_t<2> C = 1.0 * e_00 + 2.0 * e_11;
 
     // check the math
-    static_assert(A + B + C == matrix_t<2, 2> {3, 4, 5, 10});
-    static_assert(B + C + A == matrix_t<2, 2> {3, 4, 5, 10});
-    static_assert(C + A + B == matrix_t<2, 2> {3, 4, 5, 10});
+    static_assert(A + B + C == 3.0 * e_00 + 4.0 * e_01 + 5.0 * e_10 + 10.0 * e_11);
+    static_assert(B + C + A == A + B + C);
+    static_assert(C + A + B == A + B + C);
 
     // all done
     return 0;
