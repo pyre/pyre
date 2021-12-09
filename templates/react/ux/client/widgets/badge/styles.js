@@ -29,7 +29,7 @@ export default {{
         }},
     }},
 
-    // when exploring whether this acivity is available
+    // when exploring whether this activity is available
     // e.g. when the cursor hovers over its badge
     available: {{
         // for the badge
