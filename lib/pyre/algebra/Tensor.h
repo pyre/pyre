@@ -100,8 +100,8 @@ namespace pyre::algebra {
             (std::is_same_v<packingT, pyre::grid::diagonal_t<N>>); 
 
         // support for ranged for loops
-        constexpr auto begin() const;
-        constexpr auto end() const;
+        constexpr const auto begin() const;
+        constexpr const auto end() const;
 
         // reset all entries to zero
         constexpr void reset();

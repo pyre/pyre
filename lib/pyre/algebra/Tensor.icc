@@ -140,15 +140,15 @@ requires (std::is_same_v<packingT, pyre::grid::diagonal_t<N>>)
 }
 
 template <typename T, class packingT, int... I>
-constexpr auto pyre::algebra::Tensor<T, packingT, I...>::begin() const
+constexpr const auto pyre::algebra::Tensor<T, packingT, I...>::begin() const
 {
-    return _layout.begin();
+    return _data.cbegin();
 }
 
 template <typename T, class packingT, int... I>
-constexpr auto pyre::algebra::Tensor<T, packingT, I...>::end() const
+constexpr const auto pyre::algebra::Tensor<T, packingT, I...>::end() const
 {
-    return _layout.end();
+    return _data.cend();
 }
 
 template <typename T, class packingT, int... I>
