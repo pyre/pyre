@@ -21,6 +21,12 @@ namespace pyre::algebra {
         return std::sqrt(result);
     }
 
+    template <typename T, class packingT, int... I>
+    constexpr Tensor<T, packingT, I...> normalize(const Tensor<T, packingT, I...> & tensor)
+    {
+        return tensor / norm(tensor);
+    }
+
     template <typename T, class packingT1, class packingT2, int... I>
     constexpr bool operator==(const Tensor<T, packingT1, I...> & lhs, 
         const Tensor<T, packingT2, I...> & rhs)
