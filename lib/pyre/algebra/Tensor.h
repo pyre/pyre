@@ -31,9 +31,9 @@ namespace pyre::algebra {
         // the packing strategy
         using pack_t = packingT;
         // index
-        using index_t = pack_t::index_type;
+        using index_t = typename pack_t::index_type;
         // of T on the heap
-        using storage_t = pyre::memory::stack_t< _layout.cells() , T>;
+        using storage_t = typename pyre::memory::stack_t< _layout.cells() , T>;
         // data type
         using data_t = storage_t;
 
