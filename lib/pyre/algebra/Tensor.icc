@@ -148,7 +148,9 @@ constexpr const auto pyre::algebra::Tensor<T, packingT, I...>::begin() const
 template <typename T, class packingT, int... I>
 constexpr const auto pyre::algebra::Tensor<T, packingT, I...>::end() const
 {
-    return _data.cend();
+    return _data.cend()
+        // skip the last element in a diagonal packing (the artificial out-of-diagonal entry)
+        - 1 * std::is_same_v<packingT, pyre::grid::diagonal_t<N>>;
 }
 
 template <typename T, class packingT, int... I>
