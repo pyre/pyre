@@ -51,6 +51,9 @@ int main(int argc, char* argv[]) {
     // the matrix eigenvectors
     constexpr auto eigenvectors_B = eigenvectors(B);
 
+    // 3D symmetric matrix: product of eigenvalues is equal to determinant
+    static_assert(lambda_B[0] * lambda_B[1] * lambda_B[2] == determinant(B));
+
     // 3D symmetric matrix: sum of eigenvalues is equal to trace
     static_assert(lambda_B[0] + lambda_B[1] + lambda_B[2] == trace(B));
 
