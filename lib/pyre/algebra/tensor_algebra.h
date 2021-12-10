@@ -528,65 +528,125 @@ namespace pyre::algebra {
     template <typename T>
     constexpr vector_t<3, T> eigenvalues(const symmetric_matrix_t<3, T> & A)
     {
-        // https://hal.archives-ouvertes.fr/hal-01501221
-        T x1 = A[{0, 0}] * A[{0, 0}] + A[{1, 1}] * A[{1, 1}] + A[{2, 2}] * A[{2, 2}] 
-            - A[{0, 0}] * A[{1, 1}] - A[{0, 0}] * A[{2, 2}] - A[{1, 1}] * A[{2, 2}]
-            + 3.0 * (A[{0, 1}] * A[{0, 1}] + A[{0, 2}] * A[{0, 2}] + A[{1, 2}] * A[{1, 2}]);
-        T a = 2.0 * A[{0, 0}] - A[{1, 1}] - A[{2, 2}];
-        T b = 2.0 * A[{1, 1}] - A[{0, 0}] - A[{2, 2}];
-        T c = 2.0 * A[{2, 2}] - A[{0, 0}] - A[{1, 1}];
-        T x2 =  - a * b * c
-                + 9.0 * (c * A[{0, 1}] * A[{0, 1}] + b * A[{0, 2}] * A[{0, 2}] 
-                    + a * A[{1, 2}] * A[{1, 2}])
-                - 54.0 * A[{0, 1}] * A[{0, 2}] * A[{1, 2}];
-        T d = (A[{0, 0}] + A[{1, 1}] + A[{2, 2}]) / 3.0;
-        T e = 2.0 * sqrt(x1) / 3.0;
-        double PI = 4.0 * atan(1.0);
-        T phi = 0.0;
-        T two_sqrt_x1 = 2.0 * sqrt(x1);
-        T num = sqrt((two_sqrt_x1 * x1 - x2) * (two_sqrt_x1 * x1 + x2));
-        T den = x2;
-        // avoid dividing by zero (use the identity atan(a / b) + atan(b / a) = PI / 2
-        if (fabs(den) < num) {
-            // phi = 0.5 * PI - atan(den / num);
-            phi = atan(num / den);
-        }
-        else {
-            phi = atan(num / den);
-        }
-        if (x2 < 0) {
-            phi += PI;
-        }
+        T a11 = A[{0, 0}];
+        T a22 = A[{1, 1}];
+        T a33 = A[{2, 2}];
+        T a12 = A[{0, 1}];
+        T a13 = A[{0, 2}];
+        T a23 = A[{1, 2}];
+
+        // Formula from Kopp 2008, "Efficient numerical diagonalization of hermitian 3 × 3 matrices"
+        T c0 = a11 * a23 * a23 
+            + a22 * a13 * a13 
+            + a33 * a12 * a12 
+            - a11 * a22 * a33 
+            - 2.0 * a13 * a12 * a23;
+        T c1 = a11 * a22 
+            + a11 * a33 
+            + a22 * a33 
+            - a12 * a12 
+            - a13 * a13 
+            - a23 * a23;
+        T c2 = - a11 - a22 - a33;
+
+        T p = c2 * c2 - 3.0 * c1;
+        T q = - 13.5 * c0 - c2 * c2 * c2 + 4.5 * c1 * c2;
+        T num = sqrt(27.0 * (0.25 * c1 * c1 * (p - c1) + c0 * (q + 6.75 * c0)));
+        T den = q;
+        T phi = 1.0 / 3.0 * atan2(num, den);
+
+        T x1 = 2.0 * cos(phi);
+        T x2 = - cos(phi) - sqrt(3.0) * sin(phi);
+        T x3 = - cos(phi) + sqrt(3.0) * sin(phi);
+
+        T p_sqrt_3 = sqrt(p) / 3.0;
 
         return vector_t<3, T>{ 
-            d - e * cos(phi / 3.0), 
-            d + e * cos((phi - PI) / 3.0), 
-            d + e * cos((phi + PI) / 3.0)
+            p_sqrt_3 * x1 - c2 / 3.0, 
+            p_sqrt_3 * x2 - c2 / 3.0, 
+            p_sqrt_3 * x3 - c2 / 3.0
         };
     }
 
     template <typename T>
     constexpr matrix_t<3, 3, T> eigenvectors(const symmetric_matrix_t<3, T> & A)
     {
-        // TODO: Manage special cases f = 0, denominators = 0
+        // get the eigenvalues
         auto lambda = eigenvalues(A);
-        T m0 = (A[{0, 1}] * (A[{2, 2}] - lambda[0]) - A[{1, 2}] * A[{0, 2}]) / 
-            (A[{0, 2}] * (A[{1, 1}] - lambda[0]) - A[{0, 1}] * A[{1, 2}]);
-        T m1 = (A[{0, 1}] * (A[{2, 2}] - lambda[1]) - A[{1, 2}] * A[{0, 2}]) / 
-            (A[{0, 2}] * (A[{1, 1}] - lambda[1]) - A[{0, 1}] * A[{1, 2}]);
-        T m2 = (A[{0, 1}] * (A[{2, 2}] - lambda[2]) - A[{1, 2}] * A[{0, 2}]) / 
-            (A[{0, 2}] * (A[{1, 1}] - lambda[2]) - A[{0, 1}] * A[{1, 2}]);
-        matrix_t<3, 3, T> eigenvector_matrix;
-        eigenvector_matrix[{0, 0}] = (lambda[0] - A[{2, 2}] - A[{1, 2}] * m0) / A[{0, 2}];
-        eigenvector_matrix[{0, 1}] = (lambda[1] - A[{2, 2}] - A[{1, 2}] * m1) / A[{0, 2}];
-        eigenvector_matrix[{0, 2}] = (lambda[2] - A[{2, 2}] - A[{1, 2}] * m2) / A[{0, 2}];
-        eigenvector_matrix[{1, 0}] = m0;
-        eigenvector_matrix[{1, 1}] = m1;
-        eigenvector_matrix[{1, 2}] = m2;
-        eigenvector_matrix[{2, 0}] = 1.0;
-        eigenvector_matrix[{2, 1}] = 1.0;
-        eigenvector_matrix[{2, 2}] = 1.0;
-        return eigenvector_matrix;
+        auto eps = epsilon(norm(A));
+
+        // first eigenvector
+        vector_t<3, T> v0;
+        auto a = col<0>(A) - lambda[0] * vector_t<3, T>{1, 0, 0};
+        auto b = col<1>(A) - lambda[0] * vector_t<3, T>{0, 1, 0};
+        if (norm(a) <= eps) {
+            v0 = vector_t<3, T>{1, 0, 0};
+        }
+        else if (norm(b) <= eps) {
+            v0 = vector_t<3, T>{0, 1, 0};
+        }
+        else {
+            v0 = cross(a, b);
+            if (norm(v0) <= eps) {
+                auto mu = norm(a) / norm(b);
+                v0 = vector_t<3, T>{1, -mu, 0};
+            }
+        }
+
+        // second eigenvector
+        vector_t<3, T> v1;
+        // second eigenvalue is repeated
+        if(lambda[1] == lambda[0]) {
+            v1 = cross(v0, col<1>(A) - lambda[0] * vector_t<3, T>{0, 1, 0});
+        }
+        else { // lambda[1] != lambda[0]
+            auto a = col<0>(A) - lambda[1] * vector_t<3, T>{1, 0, 0};
+            auto b = col<1>(A) - lambda[1] * vector_t<3, T>{0, 1, 0};
+            if (norm(a) <= eps) {
+                v1 = vector_t<3, T>{1, 0, 0};
+            }
+            else if (norm(b) <= eps) {
+                v1 = vector_t<3, T>{0, 1, 0};
+            }
+            else {
+                v1 = cross(a, b);
+                if (norm(v1) <= eps) {
+                    auto mu = norm(a) / norm(b);
+                    v1 = vector_t<3, T>{1, -mu, 0};
+                }
+            }
+        }
+
+        // third eigenvector
+        vector_t<3, T> v2;
+        // third eigenvalue is repeated (first)
+        if (lambda[2] == lambda[0]) {
+            v2 = cross(v0, col<1>(A) - lambda[0] * vector_t<3, T>{0, 1, 0});
+        }
+        // third eigenvalue is repeated (second)
+        else if (lambda[2] == lambda[1]) {
+            v2 = cross(v1, col<1>(A) - lambda[1] * vector_t<3, T>{0, 1, 0});
+        }
+        else { // lambda[2] != lambda[0] && lambda[2] != lambda[1]
+            auto a = col<0>(A) - lambda[2] * vector_t<3, T>{1, 0, 0};
+            auto b = col<1>(A) - lambda[2] * vector_t<3, T>{0, 1, 0};
+            if (norm(a) <= eps_0) {
+                v2 = vector_t<3, T>{1, 0, 0};
+            }
+            else if (norm(b) <= eps_1) {
+                v2 = vector_t<3, T>{0, 1, 0};
+            }
+            else {
+                v2 = cross(a, b);
+                if (norm(v2) <= std::max(eps_0, eps_1)) {
+                    auto mu = norm(a) / norm(b);
+                    v2 = vector_t<3, T>{1, -mu, 0};
+                }
+            }
+        }
+
+        // build and return the matrix of eigenvectors
+        return matrix_column<0>(v0) + matrix_column<1>(v1) + matrix_column<2>(v2);
     }
 
     template <int D, typename T>
