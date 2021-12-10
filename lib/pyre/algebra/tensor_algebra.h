@@ -597,7 +597,19 @@ namespace pyre::algebra {
         vector_t<3, T> v1;
         // second eigenvalue is repeated
         if(lambda[1] == lambda[0]) {
-            v1 = cross(v0, col<1>(A) - lambda[0] * vector_t<3, T>{0, 1, 0});
+            auto a = col<0>(A) - lambda[0] * vector_t<3, T>{1, 0, 0};
+            if (norm(a) <= eps) {
+                auto b = col<1>(A) - lambda[0] * vector_t<3, T>{0, 1, 0};
+                if (norm(b) <= eps) {
+                    v1 = vector_t<3, T>{0, 1, 0};
+                }
+                else {
+                    v1 = cross(v0, b);
+                }
+            }
+            else {
+                v1 = cross(v0, a);      
+            }
         }
         else { // lambda[1] != lambda[0]
             auto a = col<0>(A) - lambda[1] * vector_t<3, T>{1, 0, 0};
@@ -618,32 +630,7 @@ namespace pyre::algebra {
         }
 
         // third eigenvector
-        vector_t<3, T> v2;
-        // third eigenvalue is repeated (first)
-        if (lambda[2] == lambda[0]) {
-            v2 = cross(v0, col<1>(A) - lambda[0] * vector_t<3, T>{0, 1, 0});
-        }
-        // third eigenvalue is repeated (second)
-        else if (lambda[2] == lambda[1]) {
-            v2 = cross(v1, col<1>(A) - lambda[1] * vector_t<3, T>{0, 1, 0});
-        }
-        else { // lambda[2] != lambda[0] && lambda[2] != lambda[1]
-            auto a = col<0>(A) - lambda[2] * vector_t<3, T>{1, 0, 0};
-            auto b = col<1>(A) - lambda[2] * vector_t<3, T>{0, 1, 0};
-            if (norm(a) <= eps_0) {
-                v2 = vector_t<3, T>{1, 0, 0};
-            }
-            else if (norm(b) <= eps_1) {
-                v2 = vector_t<3, T>{0, 1, 0};
-            }
-            else {
-                v2 = cross(a, b);
-                if (norm(v2) <= std::max(eps_0, eps_1)) {
-                    auto mu = norm(a) / norm(b);
-                    v2 = vector_t<3, T>{1, -mu, 0};
-                }
-            }
-        }
+        vector_t<3, T> v2 = cross(v0, v1);
 
         // build and return the matrix of eigenvectors
         return matrix_column<0>(v0) + matrix_column<1>(v1) + matrix_column<2>(v2);
