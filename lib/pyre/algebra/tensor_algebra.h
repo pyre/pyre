@@ -518,10 +518,10 @@ namespace pyre::algebra {
         T delta = sqrt(4.0 * A[{0, 1}] * A[{0, 1}] 
             + (A[{0, 0}] - A[{1, 1}]) * (A[{0, 0}] - A[{1, 1}]));
         matrix_t<2, 2, T> eigenvector_matrix;
-        eigenvector_matrix[{0, 0}] = (A[{0, 0}] - A[{1, 1}] + delta) / (2.0 * A[{1, 0}]);
-        eigenvector_matrix[{0, 1}] = (A[{0, 0}] - A[{1, 1}] - delta) / (2.0 * A[{1, 0}]);
-        eigenvector_matrix[{1, 0}] = 1.0;
-        eigenvector_matrix[{1, 1}] = 1.0;
+        eigenvector_matrix[{0, 0}] = A[{0, 0}] - A[{1, 1}] + delta;
+        eigenvector_matrix[{0, 1}] = A[{0, 0}] - A[{1, 1}] - delta;
+        eigenvector_matrix[{1, 0}] = 2.0 * A[{1, 0}];
+        eigenvector_matrix[{1, 1}] = 2.0 * A[{1, 0}];
         return eigenvector_matrix;
     }
 
