@@ -46,6 +46,29 @@ int main(int argc, char* argv[]) {
     vector_t<3> c { 1, 1, 1 };
     channel << c << pyre::journal::endl;
 
+    symmetric_matrix_t<2> S { 0, 1, 2 };
+    channel << "Tensor S: " << pyre::journal::newline;
+    channel << "\t" << S << pyre::journal::newline;
+    channel << "\t" << "is symmetric = " << S.is_symmetric() << pyre::journal::newline;
+    channel << "\t" << "shape = " << S.shape() << pyre::journal::newline; 
+    channel << "\t" << "data = " << pyre::journal::newline;
+    for (const auto s : S) {
+        channel << "\t\t" << s << pyre::journal::newline;
+    }
+    channel << pyre::journal::endl;
+
+    diagonal_matrix_t<2> R { 0, 1 };
+    channel << "Tensor R: " << pyre::journal::newline;
+    channel << "\t" << R << pyre::journal::newline;
+    channel << "\t" << "is diagonal = " << R.is_diagonal() << pyre::journal::newline;
+    channel << "\t" << "is symmetric = " << R.is_symmetric() << pyre::journal::newline;
+    channel << "\t" << "shape = " << R.shape() << pyre::journal::newline; 
+    channel << "\t" << "data = " << pyre::journal::newline;
+    for (const auto r : R) {
+        channel << "\t\t" << r << pyre::journal::newline;
+    }
+    channel << pyre::journal::endl;
+
     // all done
     return 0;
 }
