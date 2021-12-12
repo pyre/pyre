@@ -15,13 +15,13 @@ import styles from './styles'
 
 
 // the area
-const loading = () => {{
+export const NYI = () => {{
     // grab the location
     const location = useLocation()
 
     // render
     return (
-        <section style={{styles.loading}}>
+        <section style={{styles.nyi}}>
             <div style={{styles.placeholder}}>
                 <svg style={{styles.icon}} version="1.1" xmlns="http://www.w3.org/2000/svg">
                     <g transform="scale(0.3)" fill="#f37f19" stroke="none">
@@ -36,10 +36,6 @@ const loading = () => {{
         </section>
     )
 }}
-
-
-// publish
-export default loading
 
 
 // end of file

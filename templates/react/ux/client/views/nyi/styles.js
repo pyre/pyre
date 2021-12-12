@@ -13,7 +13,7 @@ import base from '~/views/styles'
 // publish
 export default {{
     // the container
-    loading: {{
+    nyi: {{
         // inherit
         ...base.panel,
     }},
