@@ -16,7 +16,7 @@ export default ({{ panel }}) => {{
     // grab the state mutator
     const {{
         mainExtent,
-        panels, addPanel,
+        panels,
         isManaged, setIsManaged,
         setSeparatorLocation,
         setFlexingPanel,
