@@ -20,8 +20,8 @@ export default () => {{
         // the registered panels
         panels,
         // flexing support
-        flexingPanel, setFlexingPanel,
-        downstreamPanels, setDownstreamPanels,
+        flexingPanel,
+        downstreamPanels,
         separatorLocation, setSeparatorLocation,
     }} = React.useContext(Context)
 
@@ -73,7 +73,7 @@ export default () => {{
             const absorbed = clip(panel, remaining)
             // if it can participate
             if (absorbed != 0) {{
-                // add it to the resining transaction
+                // add it to the resizing transaction
                 updates.push([panel, absorbed])
             }}
             // update the remaining size change and move on to the next downstream panel
