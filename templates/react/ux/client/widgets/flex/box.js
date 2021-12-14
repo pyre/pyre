@@ -20,7 +20,7 @@ import useDirection from './useDirection'
 import styles from './styles'
 
 
-const Box = ({{ style, children }}) => {{
+const Container = ({{ style, children }}) => {{
     // get the flexbox direction
     const {{ direction }} = useDirection()
     // get the flex support
@@ -50,11 +50,11 @@ const Box = ({{ style, children }}) => {{
 
 
 // turn flex into a context provider and publish
-export default ({{ direction, ...rest }}) => {{
+export const Box = ({{ direction, ...rest }}) => {{
     // set up the context provider
     return (
         <Provider direction={{direction}} >
-            <Box {{...rest}} />
+            <Container {{...rest}} />
         </Provider >
     )
 }}
