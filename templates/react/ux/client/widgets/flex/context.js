@@ -69,13 +69,36 @@ export const Provider = ({{
     const [downstreamPanels, setDownstreamPanels] = React.useState([])
 
     // higher level functions
-    // registering a new panel
-    const addPanel = ({{ ref, min, max, auto }}) => {{
+    // register a new panel
+    const addPanel = ({{ panel, min, max, auto }}) => {{
         // update the panel pile
-        setPanels(old => new Map([...old, [ref, {{min, max, auto}}]]))
+        setPanels(old => {{
+            // make a copy of the old state
+            const clone = new Map(old)
+            // add the new panel info
+            clone.set(panel, {{min, max, auto}})
+            // and return the updated map
+            return clone
+        }})
         // all done
         return
     }}
+
+    // remove a panel
+    const removePanel = ({{ panel }}) => {{
+        // update the panel pile
+        setPanels(old => {{
+            // make a copy of the old state
+            const clone = new Map(old)
+            // remove the panel
+            clone.delete(panel)
+            // and return the updated map
+            return clone
+        }})
+        // all done
+        return
+    }}
+
 
     // build the current value of the context
     const context = {{
@@ -88,7 +111,7 @@ export const Provider = ({{
         // the transform that centers the separator handle within the rule
         transform,
         // panel management
-        panels, addPanel,
+        panels, addPanel, removePanel,
         // managed panels have extents under our control after the first resize
         isManaged, setIsManaged,
         // support for flexing
