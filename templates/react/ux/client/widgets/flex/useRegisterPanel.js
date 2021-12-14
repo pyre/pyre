@@ -14,7 +14,7 @@ import {{ Context }} from './context'
 // register a panel
 export default ({{ ref = null, min = 0, max = Infinity, auto = false }}) => {{
     // grab the state mutator
-    const {{ addPanel }} = React.useContext(Context)
+    const {{ addPanel, removePanel }} = React.useContext(Context)
 
     // if the caller didn't provide a ref, make one
     const panel = ref === null ? React.useRef(null) : ref
@@ -22,7 +22,9 @@ export default ({{ ref = null, min = 0, max = Infinity, auto = false }}) => {{
     // after the initial mount
     React.useEffect(() => {{
         // register the panel
-        addPanel({{ ref: panel, min, max, auto }})
+        addPanel({{ panel, min, max, auto }})
+        // and return a clean up function
+        return () => removePanel({{ panel }})
     }}, [])
 
     // build and return the context relevant to this panel
