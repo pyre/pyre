@@ -6,7 +6,7 @@
 
 // pull
 export {{ default as Box }} from './box'
-export {{ default as Panel }} from './panel'
+export {{ Panel }} from './panel'
 
 
 // end of file
