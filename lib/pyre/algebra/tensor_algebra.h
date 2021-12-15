@@ -116,7 +116,7 @@ namespace pyre::algebra {
         requires (std::is_same_v<typename repacking<packingT1, packingT2>::packing_type, packingT2>)
     {
         // std::cout << "operator+ & &&" << std::endl;
-        // write the result on y1
+        // write the result on y2
         y2 = y1 + std::as_const(y2);
         // all done
         return y2;

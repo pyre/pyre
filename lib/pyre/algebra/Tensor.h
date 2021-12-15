@@ -14,7 +14,7 @@ namespace pyre::algebra {
     class Tensor {
       private:
         // layout
-        // static constexpr pack_t _layout {{I ...}, index_t::zero(), pack_t::order_type::rowMajor()};
+        // static constexpr packingT _layout {{I ...}, index_t::zero(), pack_t::order_type::rowMajor()};
         static constexpr packingT _layout { {I ...} };
         // rank of the tensor (N = 0 for empty parameter pack, i.e. scalar)
         static constexpr int N = sizeof...(I);
@@ -106,10 +106,10 @@ namespace pyre::algebra {
         // get shape of tensor
         constexpr auto shape() const;
 
-        // checks if the tensor is symmetric
+        // checks if the packing is symmetric
         constexpr bool is_symmetric() const;
 
-        // checks if the tensor is diagonal
+        // checks if the packing is diagonal
         constexpr bool is_diagonal() const;
 
       private:
