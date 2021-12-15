@@ -17,7 +17,7 @@
 // support
 #include <pyre/journal.h>
 #include <pyre/grid.h>
-#include "machine_epsilon.h" // TOFIX
+#include "machine_epsilon.h"
 
 // aliases that define implementation choices
 namespace pyre::algebra {

@@ -173,7 +173,6 @@ namespace pyre::algebra {
         return y;
     }  
 
-    // TOFIX: Redefine these with universal references
     template <typename T, class packingT1, class packingT2, int... I>
     constexpr Tensor<T, typename repacking<packingT1, packingT2>::packing_type, I...> operator-(
         const Tensor<T, packingT1, I...> & y1, const Tensor<T, packingT2, I...> & y2)
