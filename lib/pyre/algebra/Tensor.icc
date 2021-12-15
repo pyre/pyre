@@ -217,11 +217,8 @@ template<typename... Args>
 constexpr pyre::algebra::Tensor<T, packingT, I...> 
 pyre::algebra::Tensor<T, packingT, I...>::unit(Args... args) requires (sizeof...(Args) == N)
 {
-    pyre::algebra::Tensor<T, packingT, I...>::index_t K(args...);
-
     // return K-th basis element tensor
-    return pyre::algebra::Tensor<T, packingT, I...>::_make_basis_element(K, 
-        std::make_index_sequence<pyre::algebra::Tensor<T, packingT, I...>::size> {});
+    return _make_basis_element(index_t(args...), std::make_index_sequence<S> {});
 }
 
 
