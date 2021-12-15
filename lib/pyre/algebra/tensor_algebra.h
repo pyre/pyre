@@ -206,6 +206,24 @@ namespace pyre::algebra {
         return std::move(y1) + (-std::move(y2));
     }
 
+    // Tensor operator+=
+    template <typename T, class packingT1, int... I, class TENSOR>
+    constexpr Tensor<T, packingT1, I...> & operator+=
+        (Tensor<T, packingT1, I...> & lhs, TENSOR && rhs)
+    {
+        lhs = std::move(lhs) + std::forward<TENSOR>(rhs);
+        return lhs;
+    }
+
+    // Tensor operator-=
+    template <typename T, class packingT1, int... I, class TENSOR>
+    constexpr Tensor<T, packingT1, I...> & operator-=
+        (Tensor<T, packingT1, I...> & lhs, TENSOR && rhs)
+    {
+        lhs = std::move(lhs) - std::forward<TENSOR>(rhs);
+        return lhs;
+    }
+
     template <typename T, class packingT, int... I>
     constexpr Tensor<T, packingT, I...> operator/(const Tensor<T, packingT, I...> & y, T a) requires(
         Tensor<T, packingT, I...>::size != 1)
@@ -330,6 +348,25 @@ namespace pyre::algebra {
         };
         return _matrix_times_matrix(A1, A2, std::make_index_sequence<D3> {});
     }
+
+    // Tensor operator*=
+    template <typename T, class packingT1, int... I, class TENSOR>
+    constexpr Tensor<T, packingT1, I...> & operator*=
+        (Tensor<T, packingT1, I...> & lhs, TENSOR && rhs)
+    {
+        lhs = std::move(lhs) * std::forward<TENSOR>(rhs);
+        return lhs;
+    }
+
+    // Tensor operator/=
+    template <typename T, class packingT1, int... I, class SCALAR>
+    constexpr Tensor<T, packingT1, I...> & operator/=
+        (Tensor<T, packingT1, I...> & lhs, SCALAR && rhs)
+    {
+        lhs = std::move(lhs) / std::forward<SCALAR>(rhs);
+        return lhs;
+    }
+
     // the skew symmetric matrix representing vector a  
     template <typename T>
     constexpr matrix_t<3, 3, T> skew(const vector_t<3, T> & a)

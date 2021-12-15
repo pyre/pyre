@@ -83,9 +83,6 @@ namespace pyre::algebra {
         constexpr const T & operator[](int) const;
         constexpr T & operator[](int);
 
-        // operator plus equal
-        constexpr void operator+=(const Tensor<T, packingT, I...> &);
-
         // cast to underlying type T (enable if S = 1, i.e. scalar)
         constexpr operator T() const requires(S == 1);
 

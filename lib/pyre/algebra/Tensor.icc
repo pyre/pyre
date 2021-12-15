@@ -80,25 +80,6 @@ pyre::algebra::Tensor<T, packingT, I...>::operator[](int i)
 }
 
 template <typename T, class packingT, int... I>
-constexpr void
-pyre::algebra::Tensor<T, packingT, I...>::operator+=(const Tensor<T, packingT, I...> & rhs)
-{
-    // helper function (component-wise)
-    constexpr auto _operator_plus_equal = []<size_t... J>(Tensor<T, packingT, I...> & data,
-        const Tensor<T, packingT, I...> & rhs, std::index_sequence<J...>)
-    {
-        // component-wise operator+=
-        ((data[J] += rhs[J]), ...);
-
-        // all done
-        return;
-    };
-
-    // component-wise operator+=
-    return _operator_plus_equal(_data, rhs, std::make_index_sequence<S> {});
-}
-
-template <typename T, class packingT, int... I>
 constexpr pyre::algebra::Tensor<T, packingT, I...>::operator T() const requires(S == 1)
 {
     return _data[0];
