@@ -54,6 +54,7 @@ from .Dict import Dict as dict
 # the decorators
 from ..descriptors import converter, normalizer, validator
 
+
 # common meta-descriptors
 def strings(**kwds):
     """
@@ -77,6 +78,14 @@ def uris(**kwds):
     """
     # build a descriptor that describes a list of uris and return it
     return list(schema=uri(), **kwds)
+
+
+def kv(default={}, **kwds):
+    """
+    A (key, value) table of strings
+    """
+    # build a dictionary that maps strings to lists
+    return dict(schema=str(), default=default, **kwds)
 
 
 def catalog(default={}, **kwds):
