@@ -4,7 +4,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2021 all rights reserved
+# (c) 1998-2022 all rights reserved
 #
 
 
