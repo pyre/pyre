@@ -7,9 +7,11 @@
 // externals
 import React from 'react'
 
-// locals
+// project
 // hooks
 import {{ useResizeObserver }} from '~/hooks'
+
+// locals
 // hooks
 import useBeginFlex from './useBeginFlex'
 import useRegisterPanel from './useRegisterPanel'
@@ -52,7 +54,7 @@ export const Panel = ({{ min = 0, max = Infinity, auto = false, style, children,
         // get my extent
         const {{ extent }} = useResizeObserver({{ ref: panel }})
         // and render it as my content
-        content = <span styles={{styles.extent}}>debug: {{extent.width}}x{{extent.height}}</span>
+        content = <span style={{styles.extent}}>debug: {{extent.width}}x{{extent.height}}</span>
     }}
 
     // paint me

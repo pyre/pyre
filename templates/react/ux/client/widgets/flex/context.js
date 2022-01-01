@@ -27,9 +27,6 @@ export const Context = React.createContext(
         cursor: "col-resize",
         // the transform that centers the separator handle in its parent space
         transform: "translate(-50%, 0%)",
-        // indicator that the box has flexed
-        hasFlexed: false,
-        setHasFlexed: () => {{ throw new Error('no context provider') }},
         // panel management
         panels: null,
         addPanel: () => {{ throw new Error('no context provider') }},
@@ -40,6 +37,9 @@ export const Context = React.createContext(
         // the set of panels downstream from the flexing one
         downstreamPanels: null,
         setDownstreamPanels: () => {{ throw new Error('no context provider') }},
+        // the location of the moving panel separator
+        separatorLocation: null,
+        setSeparatorLocation: () => {{ throw new Error('no context provider') }},
     }}
 )
 
@@ -56,11 +56,11 @@ export const Provider = ({{
     // and the order, which affects the correlation between mouse movement and extent update
     const parity = direction.endsWith("-reverse") ? -1 : 1
 
-    // direction dependent attributes so we can access without checking
+    // flex direction dependent attributes so we can access without checking every time
     const [mainPos, crossPos] = isRow ? ["left", "top"] : ["top", "left"]
     const [mainExtent, crossExtent] = isRow ? ["width", "height"] : ["height", "width"]
     const [minExtent, maxExtent] = isRow ? ["minWidth", "maxWidth"] : ["minHeight", "maxHeight"]
-    // the cursor we show is also direction dependent
+    // the cursor we show is also flex direction dependent
     const cursor = isRow ? "col-resize" : "row-resize"
     // and so is the transformation that places the draggable handle over the separator
     const transform = isRow ? "translate(-50%, 0)" : "translate(0, -50%)"
@@ -68,9 +68,7 @@ export const Provider = ({{
     // the set of known panels
     const [panels, setPanels] = React.useState(new Map())
 
-    // indicator of whether we have taken control of the panel extents
-    const [hasFlexed, setHasFlexed] = React.useState(false)
-    // the location of the mouse as a separator is being dragged
+    // the location of the mouse while a separator is being dragged
     const [separatorLocation, setSeparatorLocation] = React.useState(null)
     // the panel being flexed when a separator is activated
     const [flexingPanel, setFlexingPanel] = React.useState(null)
@@ -78,30 +76,30 @@ export const Provider = ({{
     const [downstreamPanels, setDownstreamPanels] = React.useState([])
 
     // higher level functions
-    // register a new panel
+    // registering a new panel
     const addPanel = ({{ panel, min, max, auto }}) => {{
         // update the panel pile
         setPanels(old => {{
-            // make a copy of the old state
+            // clone the current pile
             const clone = new Map(old)
             // add the new panel info
-            clone.set(panel, {{min, max, auto}})
-            // and return the updated map
+            clone.set(panel, {{ min, max, auto }})
+            // and return the new map
             return clone
         }})
         // all done
         return
     }}
 
-    // remove a panel
+    // removing a panel
     const removePanel = ({{ panel }}) => {{
         // update the panel pile
         setPanels(old => {{
-            // make a copy of the old state
+            // clone the current pile
             const clone = new Map(old)
-            // remove the panel
+            // remove the panel that's going away
             clone.delete(panel)
-            // and return the updated map
+            // and return the new pile
             return clone
         }})
         // all done
@@ -117,12 +115,10 @@ export const Provider = ({{
         mainPos, crossPos, mainExtent, crossExtent, minExtent, maxExtent,
         // cursors
         cursor,
-        // the transform that centers the draggable handle within the separator
+        // the transform that centers the separator handle within the rule
         transform,
         // panel management
         panels, addPanel, removePanel,
-        // managed panels have extents under our control after the first resize
-        hasFlexed, setHasFlexed,
         // support for flexing
         flexingPanel, setFlexingPanel,
         separatorLocation, setSeparatorLocation,

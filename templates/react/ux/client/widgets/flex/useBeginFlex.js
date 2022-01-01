@@ -17,10 +17,7 @@ export default ({{ panel }}) => {{
     const {{
         panels,
         mainExtent, mainPos,
-        hasFlexed, setHasFlexed,
-        setSeparatorLocation,
-        setFlexingPanel,
-        setDownstreamPanels,
+        setSeparatorLocation, setFlexingPanel, setDownstreamPanels,
     }} = React.useContext(Context)
 
     // when a panel starts flexing
@@ -35,28 +32,19 @@ export default ({{ panel }}) => {{
         // collect placement and sizing information for all panels
         const extents = new Map(refs.map(ref => [ref, ref.current.getBoundingClientRect()]))
 
-        // if this is the first time we are flexing
-        if (!hasFlexed) {{
-            // go through all the panels
-            extents.forEach((extent, panelRef) => {{
-                // check whether the user has marked this panel as able to absorb viewport changes
-                const {{ auto }} = panels.get(panelRef)
-                // deduce the correct flex: every panel is now frozen to its styled extent,
-                // except the ones marked auto
-                const flx = auto ? "1 1 auto" : "0 0 auto"
+        // disable flexbox for all panels while we resize them
+        // go through all the panels
+        extents.forEach((extent, panelRef) => {{
+            // get the style of the associated element
+            const style = panelRef.current.style
+            // turn flex off
+            style.flex = "0 0 auto"
+            // and make sure the panel style reflects the current actual extent
+            style[mainExtent] = `${{extent[mainExtent]}}px`
+            // all done
+            return
+        }})
 
-                // get the style of the associated node
-                const style = panelRef.current.style
-                // apply the flex
-                style.flex = flx
-                // transfer its current extent to the its style
-                style[mainExtent] = `${{extent[mainExtent]}}px`
-                // all done
-                return
-            }})
-            // mark
-            setHasFlexed(true)
-        }}
 
         //  find the position of the flexing panel
         const pos = extents.get(panel)[mainPos]
@@ -69,12 +57,6 @@ export default ({{ panel }}) => {{
             // sorted in increasing order by their position
             (op1, op2) => extents.get(op1)[mainPos] - extents.get(op2)[mainPos]
         )
-
-        // currently, disallow activity on the last separator
-        if (downstream.length === 0) {{
-            // so skip the state update if there are no downstream panels
-            return
-        }}
 
         // record the panel that is flexing
         setFlexingPanel(panel)
