@@ -5,7 +5,7 @@
 
 
 // pull
-export {{  Box }} from './box'
+export {{ Box }} from './box'
 export {{ Panel }} from './panel'
 
 

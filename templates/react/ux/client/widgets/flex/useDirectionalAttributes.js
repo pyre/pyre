@@ -15,10 +15,16 @@ import {{ Context }} from './context'
 export default () => {{
     // pull the values from the context
     const {{
-        mainExtent, crossExtent, minExtent, maxExtent, cursor, transform
+        mainPos, crossPos, mainExtent, crossExtent, minExtent, maxExtent,
+        transform,
+        cursor,
     }} = React.useContext(Context)
     // and make them available
-    return {{ mainExtent, crossExtent, minExtent, maxExtent, cursor, transform }}
+    return {{
+        mainPos, crossPos, mainExtent, crossExtent, minExtent, maxExtent,
+        transform,
+        cursor,
+    }}
 }}
 
 

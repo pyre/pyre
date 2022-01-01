@@ -7,7 +7,8 @@
 // externals
 import React from 'react'
 
-// project hooks
+// project
+// hooks
 import {{ useEvent }} from '~/hooks'
 // locals
 // context
@@ -20,7 +21,8 @@ import useDirection from './useDirection'
 import styles from './styles'
 
 
-const Container = ({{ style, children }}) => {{
+// the top level flexing container
+const Flexbox = ({{ style, children }}) => {{
     // get the flexbox direction
     const {{ direction }} = useDirection()
     // get the flex support
@@ -29,9 +31,20 @@ const Container = ({{ style, children }}) => {{
 
     // make a ref for my container
     const ref = React.useRef(null)
-    // install our my listeners
-    useEvent({{ name: "mouseup", listener: endFlex, client: ref }})
-    useEvent({{ name: "mouseleave", listener: endFlex, client: ref }})
+
+    // install my event listeners
+    // end the flex when the user lets go of the mouse
+    useEvent({{
+        name: "mouseup", listener: endFlex, client: ref,
+        triggers: [flexingPanel]
+    }})
+    // end the flex when the  mouse leaves my client area
+    useEvent({{
+        name: "mouseleave", listener: endFlex, client: ref,
+        triggers: [flexingPanel]
+    }})
+    // flex when the mouse moves; the handler does something non-trivial only when there is
+    // a flexing panel
     useEvent({{
         name: "mousemove", listener: doFlex, client: ref,
         triggers: [flexingPanel, separatorLocation]
@@ -54,7 +67,7 @@ export const Box = ({{ direction, ...rest }}) => {{
     // set up the context provider
     return (
         <Provider direction={{direction}} >
-            <Container {{...rest}} />
+            <Flexbox {{...rest}} />
         </Provider >
     )
 }}
