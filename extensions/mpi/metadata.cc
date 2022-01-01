@@ -2,7 +2,7 @@
 //
 // michael a.g. aïvázis
 // orthologue
-// (c) 1998-2021 all rights reserved
+// (c) 1998-2022 all rights reserved
 //
 
 #include <portinfo>
@@ -16,7 +16,7 @@ const char * const mpi::copyright__name__ = "copyright";
 const char * const mpi::copyright__doc__ = "the module copyright string";
 PyObject * mpi::copyright(PyObject *, PyObject *)
 {
-    const char * const copyright_note = "mpi: (c) 1998-2021 Michael A.G. Aïvázis";
+    const char * const copyright_note = "mpi: (c) 1998-2022 Michael A.G. Aïvázis";
     return Py_BuildValue("s", copyright_note);
 }
 
