@@ -12,11 +12,8 @@ import {{ theme }} from '~/palette'
 export default {{
     // the overall box
     box: {{
-        position: "relative",
-        overflow: "clip",
         display: "flex",
-        width: "100%",
-        height: "100%",
+        overflow: "clip",
     }},
 
     // the individual panels
