@@ -107,7 +107,7 @@ export default () => {{
         const allowed = Math.trunc(
             // first figure out which way we plan to push the limits
             (delta > 0)
-                // on stretch : no more than {{maxSize}} permits
+                // on stretch: no more than {{maxSize}} permits
                 ? Math.min(delta, max - extent)
                 // on shrink: no less that {{minSize}} permits
                 : Math.max(delta, min - extent))
