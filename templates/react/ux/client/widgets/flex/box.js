@@ -22,7 +22,7 @@ import styles from './styles'
 
 
 // the top level flexing container
-const Flexbox = ({{ style, children }}) => {{
+const Flexbox = ({{ style, children, ...rest }}) => {{
     // get the flexbox direction
     const {{ direction }} = useDirection()
     // get the flex support
@@ -55,7 +55,7 @@ const Flexbox = ({{ style, children }}) => {{
 
     // paint me
     return (
-        <div ref={{ref}} style={{boxStyle}} >
+        <div ref={{ref}} style={{boxStyle}} {{..rest}} >
             {{children}}
         </div >
     )

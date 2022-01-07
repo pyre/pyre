@@ -23,7 +23,10 @@ import styles from './styles'
 
 
 // a container for client children
-export const Panel = ({{ min = 0, max = Infinity, auto = false, style, children, debug }}) => {{
+export const Panel = ({{
+    min = 0, max = Infinity, auto = false, debug = false,
+    style, children, ...rest
+}}) => {{
     // register this panel and make a {{ref}} for it
     const panel = useRegisterPanel({{ min, max, auto }})
     // get support for initiating flexing
@@ -60,7 +63,7 @@ export const Panel = ({{ min = 0, max = Infinity, auto = false, style, children,
     // paint me
     return (
         <>
-            <div ref={{panel}} style={{panelStyle}} >
+            <div ref={{panel}} style={{panelStyle}} {{...rest}} >
                 {{content}}
             </div>
             <Separator {{...flexProps}} style={{style.separator}} />
