@@ -31,43 +31,7 @@ class OK(Response):
         return b''
 
 
-# special document that gets served when a client has asked the server to exit
-class Exit(OK):
-    """
-    The client has asked the server to terminate; respond with an {OK} and shutdown
-    """
-
-    # public data
-    abort = True
-
-
-# simple documents
-class Literal(OK):
-    """
-    A response built out of a literal string
-    """
-
-    # public data
-    encoding = 'utf-8' # the encoding to use when converting to bytes
-
-    # interface
-    def render(self, server, **kwds):
-        """
-        Pack my value into a byte stream and send it along
-        """
-        # return my value as a byte stream
-        return self.value.encode(self.encoding)
-
-    # meta-methods
-    def __init__(self, value, **kwds):
-        # chain up
-        super().__init__(**kwds)
-        # save the value
-        self.value = value
-        # all done
-        return
-
-
+# windows bitmap
 class BMP(OK):
     """
     A stream formatted as a BMP
@@ -93,6 +57,17 @@ class BMP(OK):
         return
 
 
+# special document that gets served when a client has asked the server to exit
+class Exit(OK):
+    """
+    The client has asked the server to terminate; respond with an {OK} and shutdown
+    """
+
+    # public data
+    abort = True
+
+
+# json encoded content
 class JSON(OK):
     """
     A response built out of the JSON encoding of a python object
@@ -121,7 +96,34 @@ class JSON(OK):
         return
 
 
-# document responses
+# a string literal
+class Literal(OK):
+    """
+    A response built out of a literal string
+    """
+
+    # public data
+    encoding = 'utf-8' # the encoding to use when converting to bytes
+
+    # interface
+    def render(self, server, **kwds):
+        """
+        Pack my value into a byte stream and send it along
+        """
+        # return my value as a byte stream
+        return self.value.encode(self.encoding)
+
+    # meta-methods
+    def __init__(self, value, **kwds):
+        # chain up
+        super().__init__(**kwds)
+        # save the value
+        self.value = value
+        # all done
+        return
+
+
+# document types
 class Document(OK):
     """
     A response built out of an application generated document
@@ -171,6 +173,24 @@ class File(Document):
         super().__init__(**kwds)
         # save the uri
         self.uri = uri
+        # all done
+        return
+
+
+class CSS(File):
+    """
+    A stylesheet
+    """
+
+    # public data
+    encoding = 'utf-8' # the encoding to use when converting to bytes
+
+    # metamethods
+    def __init__(self, **kwds):
+        # chain up
+        super().__init__(**kwds)
+        # mark as javascript
+        self.headers['Content-Type'] = f'text/css; charset={self.encoding}'
         # all done
         return
 
