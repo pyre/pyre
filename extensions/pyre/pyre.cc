@@ -11,16 +11,16 @@
 
 
 // the module entry point
-PYBIND11_MODULE(pyre, m) {
-    // the doc string
-    m.doc() = "the journal extension module";
+PYBIND11_MODULE(pyre, m)
+{
+    // the docstring
+    m.doc() = "the pyre extension module";
 
     // register the module api
     pyre::py::api(m);
 
     // get the timer bindings
-    pyre::py::wall_timers(m);
-    pyre::py::process_timers(m);
+    pyre::py::timers(m);
 }
 
 
