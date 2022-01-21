@@ -62,8 +62,8 @@ if libpyre_without_timers:
 # otherwise
 else:
     # publish the C++ implementation
-    wallTimer = pyre.libpyre.WallTimer
-    processTimer = pyre.libpyre.ProcessTimer
+    wallTimer = pyre.libpyre.timers.WallTimer
+    processTimer = pyre.libpyre.timers.ProcessTimer
 
 
 # end of file
