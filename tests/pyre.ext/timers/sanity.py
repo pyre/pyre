@@ -10,8 +10,8 @@ def test():
     Sanity test: make sure the timer bindings are accessible
     """
     # access the timer bindings
-    from pyre.extensions.pyre import WallTimer
-    from pyre.extensions.pyre import ProcessTimer
+    from pyre.extensions.pyre.timers import WallTimer
+    from pyre.extensions.pyre.timers import ProcessTimer
     # all done
     return
 
