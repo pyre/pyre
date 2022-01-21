@@ -10,7 +10,7 @@ def test():
     Verify that we can instantiate a cpu timer
     """
     # access the timer bindings
-    from pyre.extensions.pyre import ProcessTimer
+    from pyre.extensions.pyre.timers import ProcessTimer
 
     # make a timer
     t = ProcessTimer(name="tests.timer")
