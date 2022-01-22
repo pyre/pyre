@@ -10,6 +10,7 @@
 
 // externals
 #include <array>
+#include <algorithm>
 #include <iterator>
 #include <numeric>
 #include <ostream>
@@ -33,10 +34,14 @@ namespace pyre::grid {
     template <typename T, int N>
     using array_t = std::array<T, N>;
 
+    // for the result of scaling reps by doubles
+    template <int N>
+    using vec_t = std::array<double, N>;
+
     // output streams
     using ostream_t = std::ostream;
     using ostream_reference = std::ostream &;
-}
+} // namespace pyre::grid
 
 
 #endif
