@@ -38,6 +38,10 @@ namespace pyre::grid {
     template <int N>
     using vec_t = std::array<double, N>;
 
+    // for the result of scaling reps by floats
+    template <int N>
+    using vecf_t = std::array<float, N>;
+
     // output streams
     using ostream_t = std::ostream;
     using ostream_reference = std::ostream &;

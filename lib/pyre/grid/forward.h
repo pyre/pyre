@@ -119,6 +119,16 @@ namespace pyre::grid {
 
     template <class containerT>
     constexpr auto operator/(const Rep<containerT> &, double) -> vec_t<Rep<containerT>::rank()>;
+
+    // scaling by floats
+    template <class containerT>
+    constexpr auto operator*(float, const Rep<containerT> &) -> vecf_t<Rep<containerT>::rank()>;
+
+    template <class containerT>
+    constexpr auto operator*(const Rep<containerT> &, float) -> vecf_t<Rep<containerT>::rank()>;
+
+    template <class containerT>
+    constexpr auto operator/(const Rep<containerT> &, float) -> vecf_t<Rep<containerT>::rank()>;
 } // namespace pyre::grid
 
 
