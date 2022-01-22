@@ -13,10 +13,25 @@ namespace pyre::py {
     // the module api
     void api(py::module &);
 
+    // memory
+    namespace memory {
+        // the subpackage initializer
+        void memory(py::module &);
+        // file backed memory
+        void map_c4(py::module &);
+        void constmap_c4(py::module &);
+        void map_c8(py::module &);
+        void constmap_c8(py::module &);
+    } // namespace memory
+
     // timers
-    void timers(py::module &);
-    void wall_timers(py::module &);
-    void process_timers(py::module &);
+    namespace timers {
+        // the subpackage initializer
+        void timers(py::module &);
+        // timer types
+        void wall_timers(py::module &);
+        void process_timers(py::module &);
+    } // namespace timers
 
 } // namespace pyre::py
 
