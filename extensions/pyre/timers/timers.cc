@@ -12,17 +12,18 @@
 
 // build the submodule
 void
-pyre::py::timers(py::module & m)
+pyre::py::timers::timers(py::module & m)
 {
+    // create a submodule
     auto timers = m.def_submodule(
         // the name
         "timers",
         // its docstring
         "support for timers");
 
-    // get the timer bindings
-    pyre::py::wall_timers(timers);
-    pyre::py::process_timers(timers);
+    // install the timer bindings
+    wall_timers(timers);
+    process_timers(timers);
 }
 
 
