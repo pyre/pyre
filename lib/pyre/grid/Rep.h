@@ -39,6 +39,12 @@ public:
     template <typename... argT>
     constexpr explicit Rep(argT...);
 
+    // interface
+public:
+    // maximum and minimum
+    constexpr auto max() -> value_type;
+    constexpr auto min() -> value_type;
+
     // static interface
 public:
     // my rank is the number of indices i can store
