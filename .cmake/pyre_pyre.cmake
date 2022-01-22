@@ -130,8 +130,9 @@ function(pyre_pyreModule)
   target_sources(pyremodule PRIVATE
     pyre/pyre.cc
     pyre/api.cc
-    pyre/process_timers.cc
-    pyre/wall_timers.cc
+    pyre/timers/timers.cc
+    pyre/timers/process_timers.cc
+    pyre/timers/wall_timers.cc
     )
 
   # host
