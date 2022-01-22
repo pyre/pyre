@@ -16,7 +16,7 @@ using process_timer_t = pyre::timers::process_timer_t;
 
 // add bindings timers
 void
-pyre::py::process_timers(py::module & m)
+pyre::py::timers::process_timers(py::module & m)
 {
     // the timer interface
     py::class_<process_timer_t>(m, "ProcessTimer")

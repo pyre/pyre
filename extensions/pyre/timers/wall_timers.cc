@@ -16,7 +16,7 @@ using wall_timer_t = pyre::timers::wall_timer_t;
 
 // add bindings timers
 void
-pyre::py::wall_timers(py::module & m)
+pyre::py::timers::wall_timers(py::module & m)
 {
     // the timer interface
     py::class_<wall_timer_t>(m, "WallTimer")
