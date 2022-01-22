@@ -19,8 +19,10 @@ PYBIND11_MODULE(pyre, m)
     // register the module api
     pyre::py::api(m);
 
-    // get the timer bindings
-    pyre::py::timers(m);
+    // memory
+    pyre::py::memory::memory(m);
+    // timers
+    pyre::py::timers::timers(m);
 }
 
 
