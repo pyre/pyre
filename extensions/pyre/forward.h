@@ -23,9 +23,6 @@ namespace pyre::py {
     namespace timers {
         // the subpackage initializer
         void timers(py::module &);
-        // timer types
-        void wall_timers(py::module &);
-        void process_timers(py::module &);
     } // namespace timers
 
 } // namespace pyre::py

@@ -5,9 +5,9 @@
 
 
 // external dependencies
-#include "../external.h"
+#include "external.h"
 // namespace setup
-#include "../forward.h"
+#include "forward.h"
 
 
 // build the submodule
