@@ -1,0 +1,30 @@
+// -*- c++ -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2022 all rights reserved
+
+// code guard
+#if !defined(pyre_py_memory_bindings_h)
+#define pyre_py_memory_bindings_h
+
+
+// the {pyre} extension namespace
+namespace pyre::py::memory {
+    // decorate a storage class with bindings that do not require write access to {memT}
+    template <class memT>
+    void bindConstStorage(py::class_<memT> &);
+    // decorate a storage class with bindings that require write access to {memT}
+    template <class memT>
+    void bindStorage(py::class_<memT> &);
+
+} // namespace pyre::py::memory
+
+
+// get the implementation
+#define pyre_py_memory_bindings_icc
+#include "bindings.icc"
+#undef pyre_py_memory_bindings_icc
+
+#endif
+
+// end of file

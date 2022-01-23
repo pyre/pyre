@@ -12,11 +12,10 @@
 namespace pyre::py::memory {
     // the initializer
     void memory(py::module &);
-    // file backed memory
-    void map_c4(py::module &);
-    void constmap_c4(py::module &);
-    void map_c8(py::module &);
-    void constmap_c8(py::module &);
+
+    // bindings for file backed storage
+    void maps(py::module &);
+
 } // namespace pyre::py::memory
 
 

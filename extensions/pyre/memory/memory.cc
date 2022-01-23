@@ -22,13 +22,8 @@ pyre::py::memory::memory(py::module & m)
         // its docstring
         "wrappers over {pyre::memory::map_t} template expansions");
 
-    // install the wrappers
-    // complex of float
-    map_c4(memory);
-    constmap_c4(memory);
-    // complex of double
-    map_c8(memory);
-    constmap_c8(memory);
+    // add the various maps
+    maps(memory);
 
     // all done
     return;

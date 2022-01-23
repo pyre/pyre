@@ -20,13 +20,11 @@
 
 // type aliases
 namespace pyre::py::memory {
-    // memory types
-    // complex of float
-    using map_c4_t = pyre::memory::map_t<std::complex<float>>;
-    using constmap_c4_t = pyre::memory::constmap_t<std::complex<float>>;
-    // complex of double
-    using map_c8_t = pyre::memory::map_t<std::complex<double>>;
-    using constmap_c8_t = pyre::memory::constmap_t<std::complex<double>>;
+    // STL
+    // class names
+    using classname_t = const char *;
+    // docstrings
+    using docstring_t = const char *;
 } // namespace pyre::py::memory
 
 
