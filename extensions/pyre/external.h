@@ -8,6 +8,8 @@
 #define pyre_py_external_h
 
 
+// STL
+#include <cstdint>
 // support
 #include <pyre/journal.h>
 // pybind11
