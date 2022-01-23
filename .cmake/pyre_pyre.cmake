@@ -131,10 +131,7 @@ function(pyre_pyreModule)
     pyre/pyre.cc
     pyre/api.cc
     pyre/memory/memory.cc
-    pyre/memory/constmap_c4.cc
-    pyre/memory/constmap_c8.cc
-    pyre/memory/map_c4.cc
-    pyre/memory/map_c8.cc
+    pyre/memory/maps.cc
     pyre/timers/timers.cc
     pyre/timers/process_timers.cc
     pyre/timers/wall_timers.cc
