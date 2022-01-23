@@ -5,9 +5,9 @@
 
 
 // externals
-#include "../external.h"
+#include "external.h"
 // namespace setup
-#include "../forward.h"
+#include "forward.h"
 
 
 // type alias
