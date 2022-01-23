@@ -5,9 +5,9 @@
 
 
 // externals
-#include "../external.h"
+#include "external.h"
 // namespace setup
-#include "../forward.h"
+#include "forward.h"
 
 
 // wrappers over {pyre::memory::map} template expansions
@@ -16,18 +16,18 @@ void
 pyre::py::memory::map_c4(py::module & m)
 {
     // alias
-    using map_t = pyre::py::map_c4_t;
+    using map_t = map_c4_t;
 
     // build the class record
     auto map = py::class_<map_t>(
         // the module scope
         m,
         // the name of the class
-        "ComplexFloat",
+        "ComplexFloatMap",
         // its docstring
         "wrapper over a {pyre::memory::map_t<std::complex<float>>} buffer");
 
-    // constructor
+    // constructors
     map.def(
         // the constructor
         py::init<map_t::uri_type, bool>(),
@@ -36,7 +36,6 @@ pyre::py::memory::map_c4(py::module & m)
         // the signature
         "uri"_a, "writable"_a = false);
 
-    // constructor
     map.def(
         // the constructor
         py::init<map_t::uri_type, map_t::size_type>(),

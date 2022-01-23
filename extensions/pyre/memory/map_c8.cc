@@ -5,9 +5,9 @@
 
 
 // externals
-#include "../external.h"
+#include "external.h"
 // namespace setup
-#include "../forward.h"
+#include "forward.h"
 
 
 // wrappers over {pyre::memory::map} template expansions
@@ -16,18 +16,18 @@ void
 pyre::py::memory::map_c8(py::module & m)
 {
     // alias
-    using map_t = pyre::py::map_c8_t;
+    using map_t = map_c8_t;
 
     // build the class record
     auto map = py::class_<map_t>(
         // the module scope
         m,
         // the name of the class
-        "ComplexDouble",
+        "ComplexDoubleMap",
         // its docstring
         "wrapper over a {pyre::memory::map_t<std::complex<double>>} buffer");
 
-    // constructor
+    // constructors
     map.def(
         // the constructor
         py::init<map_t::uri_type, bool>(),

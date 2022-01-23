@@ -13,15 +13,10 @@ namespace pyre::py {
     // the module api
     void api(py::module &);
 
-    // memory
+    // the memory subpackage
     namespace memory {
-        // the subpackage initializer
+        // the initializer
         void memory(py::module &);
-        // file backed memory
-        void map_c4(py::module &);
-        void constmap_c4(py::module &);
-        void map_c8(py::module &);
-        void constmap_c8(py::module &);
     } // namespace memory
 
     // timers
