@@ -137,7 +137,7 @@ include(CMakePackageConfigHelpers)
 write_basic_package_version_file(
     pyre-config-version.cmake
     VERSION ${PROJECT_VERSION}
-    COMPATIBILITY ExactVersion
+    COMPATIBILITY SameMinorVersion
     )
 
 # install config file for find_package
