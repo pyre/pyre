@@ -13,7 +13,13 @@ namespace pyre::py {
     // the module api
     void api(py::module &);
 
-    // the memory subpackage
+    // grid
+    namespace grid {
+        // the initializer
+        void grid(py::module &);
+    } // namespace grid
+
+    // memory
     namespace memory {
         // the initializer
         void memory(py::module &);

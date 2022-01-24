@@ -19,6 +19,8 @@ PYBIND11_MODULE(pyre, m)
     // register the module api
     pyre::py::api(m);
 
+    // grid
+    pyre::py::grid::grid(m);
     // memory
     pyre::py::memory::memory(m);
     // timers
