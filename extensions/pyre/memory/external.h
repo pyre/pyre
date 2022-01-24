@@ -18,16 +18,6 @@
 #include <pyre/memory.h>
 
 
-// type aliases
-namespace pyre::py::memory {
-    // STL
-    // class names
-    using classname_t = const char *;
-    // docstrings
-    using docstring_t = const char *;
-} // namespace pyre::py::memory
-
-
 #endif
 
 // end of file

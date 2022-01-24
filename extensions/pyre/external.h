@@ -24,6 +24,12 @@ namespace pyre::py {
     namespace py = pybind11;
     // get the special {pybind11} literals
     using namespace py::literals;
+
+    // for decorating pybind11 classes
+    // class names
+    using classname_t = const char *;
+    // docstrings
+    using docstring_t = const char *;
 } // namespace pyre::py
 
 
