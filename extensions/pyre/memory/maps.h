@@ -16,8 +16,6 @@ namespace pyre::py::memory {
 
     template <class cellT>
     void constmap(py::module &, classname_t, docstring_t);
-
-
 } // namespace pyre::py::memory
 
 
