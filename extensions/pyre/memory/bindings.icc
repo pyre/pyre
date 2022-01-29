@@ -36,7 +36,7 @@ pyre::py::memory::bindConstStorage(py::class_<memT> & cls)
     cls.def(
         // the name
         "__len__",
-        // the implementtaion
+        // the implementation
         &memT::cells,
         // the docstring
         "the number of data cells");
