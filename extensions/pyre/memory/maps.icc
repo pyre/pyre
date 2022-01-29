@@ -25,7 +25,7 @@ pyre::py::memory::constmap(py::module & m, classname_t name, docstring_t docstri
         // the constructor
         py::init<typename map_t::uri_type>(),
         // the docstring
-        "create a read-only memory map over an existing file",
+        "create a read-only memory map backed by an existing file",
         // the signature
         "uri"_a);
 
@@ -53,7 +53,7 @@ pyre::py::memory::map(py::module & m, classname_t name, docstring_t docstring)
         // the constructor
         py::init<typename map_t::uri_type, bool>(),
         // the docstring
-        "create a memory map over an existing file",
+        "create a memory map backed by an existing file",
         // the signature
         "uri"_a, "writable"_a = true);
 
