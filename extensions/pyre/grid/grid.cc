@@ -24,6 +24,8 @@ pyre::py::grid::grid(py::module & m)
 
     // indices
     indices(grid);
+    // layouts
+    layouts(grid);
     // orders
     orders(grid);
     // shapes
