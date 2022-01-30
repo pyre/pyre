@@ -44,15 +44,6 @@ pyre::py::grid::canonical2d(py::module & m)
         // docstring
         "a 2d canonical layout specification");
 
-    // add the constructor
-    cls.def(
-        // the constructor
-        py::init<layout_t::shape_type>(),
-        // the docstring
-        "create a layout",
-        // the signature: a pair of integers
-        "shape"_a);
-
     // add the layout interface
     layoutInterface(cls);
 
@@ -66,6 +57,34 @@ template <class layoutT>
 void
 pyre::py::grid::layoutInterface(py::class_<layoutT> & cls)
 {
+    // constructors
+    cls.def(
+        // the constructor
+        py::init<typename layoutT::shape_const_reference>(),
+        // the signature
+        "shape"_a,
+        // the docstring
+        "create a layout from the given {shape}");
+
+    cls.def(
+        // the constructor
+        py::init<
+            typename layoutT::shape_const_reference, typename layoutT::index_const_reference>(),
+        // the signature
+        "shape"_a, "origin"_a,
+        // the docstring
+        "create a layout from the given {shape} starting at {origin}");
+
+    cls.def(
+        // the constructor
+        py::init<
+            typename layoutT::shape_const_reference, typename layoutT::index_const_reference,
+            typename layoutT::order_const_reference>(),
+        // the signature
+        "shape"_a, "origin"_a, "order"_a,
+        // the docstring
+        "create a layout from the given {shape} and packing {order} starting at {origin}");
+
     // accessors
     cls.def_property_readonly_static(
         // the name of the property
