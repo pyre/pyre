@@ -127,11 +127,13 @@ template <class containerT>
 constexpr auto
 pyre::grid::operator-(const Rep<containerT> & i) -> Rep<containerT>
 {
-    // make a default index
+    // get the rank of the rep
+    constexpr auto rank = Rep<containerT>::rank();
+    // make room for the result
     Rep<containerT> result;
 
     // go through each axis
-    for (int axis = 0; axis < i.rank(); ++axis) {
+    for (int axis = 0; axis < rank; ++axis) {
         // do the math
         result[axis] = -i[axis];
     }
@@ -146,11 +148,13 @@ template <class containerT>
 constexpr auto
 pyre::grid::operator+(const Rep<containerT> & i1, const Rep<containerT> & i2) -> Rep<containerT>
 {
+    // get the rank of the rep
+    constexpr auto rank = Rep<containerT>::rank();
     // make a default index
     Rep<containerT> sum;
 
     // go through each axis
-    for (int axis = 0; axis < sum.rank(); ++axis) {
+    for (int axis = 0; axis < rank; ++axis) {
         // do the math
         sum[axis] = i1[axis] + i2[axis];
     }
@@ -164,11 +168,13 @@ template <class containerT>
 constexpr auto
 pyre::grid::operator-(const Rep<containerT> & i1, const Rep<containerT> & i2) -> Rep<containerT>
 {
+    // get the rank of the rep
+    constexpr auto rank = Rep<containerT>::rank();
     // make a default index
     Rep<containerT> diff;
 
     // go through each axis
-    for (int axis = 0; axis < diff.rank(); ++axis) {
+    for (int axis = 0; axis < rank; ++axis) {
         // do the math
         diff[axis] = i1[axis] - i2[axis];
     }
@@ -184,16 +190,22 @@ constexpr auto
 pyre::grid::operator*(const Rep<containerT1> & rep1, const Rep<containerT2> & rep2)
     -> Rep<containerY<int, std::tuple_size_v<containerT1> + std::tuple_size_v<containerT2>>>
 {
+    // get the ranks of the inputs
+    constexpr auto rank1 = Rep<containerT1>::rank();
+    constexpr auto rank2 = Rep<containerT2>::rank();
     // compute the dimension of the result
-    constexpr auto dim = std::tuple_size_v<containerT1> + std::tuple_size_v<containerT2>;
+    constexpr auto dim = rank1 + rank2;
+
     // build the result
     Rep<containerY<int, dim>> result;
+
     // grab the beginning of the storage
     auto begin = result.begin();
     // copy {rep1} into the result
     std::copy(rep1.begin(), rep1.end(), begin);
     // copy {rep2}
-    std::copy(rep2.begin(), rep2.end(), begin + rep1.rank());
+    std::copy(rep2.begin(), rep2.end(), begin + rank1);
+
     // all done
     return result;
 }
@@ -204,11 +216,13 @@ template <class containerT>
 constexpr auto
 pyre::grid::operator*(const Rep<containerT> & i, int s) -> Rep<containerT>
 {
+    // get the rank of the rep
+    constexpr auto rank = Rep<containerT>::rank();
     // make a default index
     Rep<containerT> scaled;
 
     // go through each axis
-    for (int axis = 0; axis < scaled.rank(); ++axis) {
+    for (int axis = 0; axis < rank; ++axis) {
         // do the math
         scaled[axis] = s * i[axis];
     }
@@ -231,11 +245,13 @@ template <class containerT>
 constexpr auto
 pyre::grid::operator/(const Rep<containerT> & i, int s) -> Rep<containerT>
 {
+    // get the rank of the rep
+    constexpr auto rank = Rep<containerT>::rank();
     // make a default index
     Rep<containerT> scaled;
 
     // go through each axis
-    for (int axis = 0; axis < scaled.rank(); ++axis) {
+    for (int axis = 0; axis < rank; ++axis) {
         // do the math
         scaled[axis] = i[axis] / s;
     }
@@ -250,11 +266,13 @@ template <class containerT>
 constexpr auto
 pyre::grid::operator*(const Rep<containerT> & i, double s) -> vec_t<Rep<containerT>::rank()>
 {
+    // get the rank of the rep
+    constexpr auto rank = Rep<containerT>::rank();
     // make an empty array
-    vec_t<i.rank()> scaled;
+    vec_t<rank> scaled;
 
     // go through each axis
-    for (int axis = 0; axis < i.rank(); ++axis) {
+    for (int axis = 0; axis < rank; ++axis) {
         // do the math
         scaled[axis] = s * i[axis];
     }
@@ -278,7 +296,7 @@ constexpr auto
 pyre::grid::operator/(const Rep<containerT> & i, double s) -> vec_t<Rep<containerT>::rank()>
 {
     // make an empty array
-    vec_t<i.rank()> scaled;
+    vec_t<Rep<containerT>::rank()> scaled;
 
     // go through each axis
     for (int axis = 0; axis < i.rank(); ++axis) {
@@ -297,7 +315,7 @@ constexpr auto
 pyre::grid::operator*(const Rep<containerT> & i, float s) -> vecf_t<Rep<containerT>::rank()>
 {
     // make an empty array
-    vecf_t<i.rank()> scaled;
+    vec_t<Rep<containerT>::rank()> scaled;
 
     // go through each axis
     for (int axis = 0; axis < i.rank(); ++axis) {
@@ -324,7 +342,7 @@ constexpr auto
 pyre::grid::operator/(const Rep<containerT> & i, float s) -> vecf_t<Rep<containerT>::rank()>
 {
     // make an empty array
-    vecf_t<i.rank()> scaled;
+    vec_t<Rep<containerT>::rank()> scaled;
 
     // go through each axis
     for (int axis = 0; axis < i.rank(); ++axis) {
