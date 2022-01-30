@@ -20,8 +20,8 @@ pyre::py::grid::layouts(py::module & m)
 {
     // instantiate layouts of a few dimensions
     canonical2d(m);
-    // canonical3d(m);
-    // canonical4d(m);
+    canonical3d(m);
+    canonical4d(m);
 
     // all done
     return;
@@ -42,7 +42,53 @@ pyre::py::grid::canonical2d(py::module & m)
         // class name
         "Canonical2D",
         // docstring
-        "a 2d canonical layout specification");
+        "a 2d canonical layout");
+
+    // add the layout interface
+    layoutInterface(cls);
+
+    // all done
+    return;
+}
+
+
+void
+pyre::py::grid::canonical3d(py::module & m)
+{
+    // type alias
+    using layout_t = pyre::grid::canonical_t<3>;
+
+    // build the class record
+    auto cls = py::class_<layout_t>(
+        // in scope
+        m,
+        // class name
+        "Canonical3D",
+        // docstring
+        "a 3d canonical layout");
+
+    // add the layout interface
+    layoutInterface(cls);
+
+    // all done
+    return;
+}
+
+
+void
+pyre::py::grid::canonical4d(py::module & m)
+{
+    // type alias
+    using layout_t = pyre::grid::canonical_t<4>;
+
+    // build the class record
+    auto cls = py::class_<layout_t>(
+        // in scope
+        m,
+        // class name
+        "Canonical4D",
+        // docstring
+        "a 4d canonical layout");
 
     // add the layout interface
     layoutInterface(cls);
