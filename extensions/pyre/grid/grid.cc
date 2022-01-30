@@ -22,10 +22,12 @@ pyre::py::grid::grid(py::module & m)
         // its docstring
         "wrappers over the various entities in {pyre::grid}");
 
-    // the shapes
-    shapes(grid);
-    // the indices
+    // indices
     indices(grid);
+    // orders
+    orders(grid);
+    // shapes
+    shapes(grid);
 
     // all done
     return;
