@@ -10,8 +10,15 @@
 
 // the {pyre} extension namespace
 namespace pyre::py::grid {
-    // add the shapes
+    // the shape instantiations
     void shape2d(py::module &);
+    void shape3d(py::module &);
+    void shape4d(py::module &);
+
+    // the interface decorator
+    template <class shapeT>
+    void shapeInterface(py::class_<shapeT> &);
+
 } // namespace pyre::py::grid
 
 
