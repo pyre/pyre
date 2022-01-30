@@ -15,6 +15,8 @@ namespace pyre::py::grid {
 
     // indices
     void indices(py::module &);
+    // orders
+    void orders(py::module &);
     // shapes
     void shapes(py::module &);
 
