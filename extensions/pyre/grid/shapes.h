@@ -4,18 +4,14 @@
 // (c) 1998-2022 all rights reserved
 
 // code guard
-#if !defined(pyre_py_grid_forward_h)
-#define pyre_py_grid_forward_h
+#if !defined(pyre_py_grid_shapes_h)
+#define pyre_py_grid_shapes_h
 
 
 // the {pyre} extension namespace
 namespace pyre::py::grid {
-    // the initializer
-    void grid(py::module &);
-
-    // bindings for shapes
-    void shapes(py::module &);
-
+    // add the shapes
+    void shape2d(py::module &);
 } // namespace pyre::py::grid
 
 
