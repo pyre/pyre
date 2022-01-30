@@ -10,6 +10,7 @@
 
 // STL
 #include <cstdint>
+#include <complex>
 // support
 #include <pyre/journal.h>
 // pybind11

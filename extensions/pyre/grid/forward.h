@@ -15,13 +15,14 @@ namespace pyre::py::grid {
 
     // indices
     void indices(py::module &);
-    // layouts
-    void layouts(py::module &);
     // orders
     void orders(py::module &);
     // shapes
     void shapes(py::module &);
-
+    // layouts
+    void layouts(py::module &);
+    // grids
+    void grids(py::module &);
 } // namespace pyre::py::grid
 
 
