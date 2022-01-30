@@ -13,7 +13,9 @@ namespace pyre::py::grid {
     // the initializer
     void grid(py::module &);
 
-    // bindings for shapes
+    // indices
+    void indices(py::module &);
+    // shapes
     void shapes(py::module &);
 
 } // namespace pyre::py::grid
