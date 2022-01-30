@@ -105,6 +105,22 @@ pyre::py::grid::reps(py::class_<repT> & cls)
         // docstring
         "make an iterator");
 
+    // string representation
+    cls.def(
+        // the name of the method
+        "__str__",
+        // the implementation
+        [](const repT & rep) {
+            // make a buffer
+            std::stringstream buffer;
+            // inject my value
+            buffer << rep;
+            // and return the value
+            return buffer.str();
+        },
+        // the docstring
+        "generate a string representation");
+
     // all done
     return;
 };
