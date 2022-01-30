@@ -35,10 +35,6 @@ public:
     template <typename... argT>
     constexpr Index(argT...);
 
-    // static interface: factories
-public:
-    static constexpr auto zero() -> index_type;
-
     // default metamethods
 public:
     // destructor
