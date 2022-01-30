@@ -9,32 +9,31 @@
 
 
 // low level entities; you should probably stay away from them
-namespace pyre::grid
-{
+namespace pyre::grid {
     // this wrapper over a {std::array}-like container
     // thin adaptor over a compile time container
     template <typename T, int N, template <typename, std::size_t> class containerT = std::array>
-    using rep_t = Rep<containerT<T,N>>;
+    using rep_t = Rep<containerT<T, N>>;
 
     // support for the multidimensional objects in this package
-    template <int N, typename T = int,
-              template <typename, std::size_t> class containerT = std::array>
-    using product_t = Product<containerT<T,N>>;
+    template <
+        int N, typename T = int, template <typename, std::size_t> class containerT = std::array>
+    using product_t = Product<containerT<T, N>>;
 
     // the number of possible values of each axis
-    template <int N, typename T = int,
-              template <typename, std::size_t> class containerT = std::array>
-    using shape_t = Shape<containerT<T,N>>;
+    template <
+        int N, typename T = int, template <typename, std::size_t> class containerT = std::array>
+    using shape_t = Shape<containerT<T, N>>;
 
     // indices
-    template <int N, typename T = int,
-              template <typename, std::size_t> class containerT = std::array>
-    using index_t = Index<containerT<T,N>>;
+    template <
+        int N, typename T = int, template <typename, std::size_t> class containerT = std::array>
+    using index_t = Index<containerT<T, N>>;
 
     // the order in which indices are packed in memory
-    template <int N, typename T = unsigned int,
-              template <typename, std::size_t> class containerT = std::array>
-    using order_t = Order<containerT<T,N>>;
+    template <
+        int N, typename T = int, template <typename, std::size_t> class containerT = std::array>
+    using order_t = Order<containerT<T, N>>;
 
     // in order product rank traversal
     template <class productT, class orderIteratorT, bool isConst = true>
@@ -53,7 +52,7 @@ namespace pyre::grid
     // and its iterator
     template <class gridT, class indexIteratorT, bool isConst>
     using grid_iterator_t = GridIterator<gridT, indexIteratorT, isConst>;
-}
+} // namespace pyre::grid
 
 
 #endif
