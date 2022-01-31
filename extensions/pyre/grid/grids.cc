@@ -31,9 +31,9 @@ pyre::py::grid::complexFloatConstMapGrid2D(py::module & m)
 {
     // type aliases
     using cell_t = std::complex<float>;
-    using layout_t = pyre::grid::canonical_t<2>;
+    using packing_t = pyre::grid::canonical_t<2>;
     using storage_t = pyre::memory::constmap_t<cell_t>;
-    using grid_t = pyre::grid::grid_t<layout_t, storage_t>;
+    using grid_t = pyre::grid::grid_t<packing_t, storage_t>;
 
     // build the class record
     auto cls = py::class_<grid_t>(
@@ -44,21 +44,127 @@ pyre::py::grid::complexFloatConstMapGrid2D(py::module & m)
         // docstring
         "a 2d grid backed by a read-only map of complex floats");
 
-    // install the interface
-    gridInterface(cls);
+    // the map specific interface
+    constmapInterface(cls);
+    // the grid interface
+    constgridInterface(cls);
 
     // all done
     return;
 }
 
 
-// the interface decorator
+// the map specific constructors
+template <class gridT>
+void
+pyre::py::grid::constmapInterface(py::class_<gridT> & cls)
+{
+    // constructors
+    cls.def(
+        // the implementation
+        py::init<typename gridT::packing_const_reference, typename gridT::storage_pointer>(),
+        //
+        "packing"_a, "storage"_a,
+        // the docstring
+        "make a new grid over the {storage} with the given {packing} strategy");
+
+    // all done
+    return;
+}
+
+
+// the const grid interface decorator
+template <class gridT>
+void
+pyre::py::grid::constgridInterface(py::class_<gridT> & cls)
+{
+    // accessors
+    // layout
+    cls.def(
+        // the name of the method
+        "layout",
+        // the implementation
+        &gridT::layout,
+        // the docstring
+        "access my layout");
+
+
+    // data access
+    // by index
+    cls.def(
+        // the name of the method
+        "__getitem__",
+        // the implementation
+        [](const gridT & self, typename gridT::index_const_reference index) {
+            // get the value at the given {index}
+            return self.at(index);
+        },
+        // the signature
+        "index"_a,
+        // the docstring
+        "get the value at the specified {index}");
+
+    // by offset
+    cls.def(
+        // the name of the method
+        "__getitem__",
+        // the implementation
+        [](const gridT & self, typename gridT::difference_type offset) {
+            // get the value at the given {offset}
+            return self.at(offset);
+        },
+        // the signature
+        "offset"_a,
+        // the docstring
+        "get the value at the specified {offset}");
+
+    // all done
+    return;
+}
+
+
+// the grid interface decorator
 template <class gridT>
 void
 pyre::py::grid::gridInterface(py::class_<gridT> & cls)
 {
+    // data access
+    // by index
+    cls.def(
+        // the name of the method
+        "__setitem__",
+        // the implementation
+        [](const gridT & self, typename gridT::index_const_reference index,
+           typename gridT::value_type value) -> void {
+            // set the value at the given {index}
+            self.at(index) = value;
+            // all done
+        },
+        // the signature
+        "index"_a,
+        // the docstring
+        "get the value at the specified {index}");
+
+    // by offset
+    cls.def(
+        // the name of the method
+        "__setitem__",
+        // the implementation
+        [](const gridT & self, typename gridT::difference_type offset,
+           typename gridT::value_type value) -> void {
+            // set the value at the given {offset}
+            self.at(offset) = value;
+            // all done
+            return;
+        },
+        // the signature
+        "offset"_a,
+        // the docstring
+        "get the value at the specified {offset}");
+
     // all done
     return;
 }
+
 
 // end of file
