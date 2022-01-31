@@ -12,10 +12,11 @@
 namespace pyre::py::memory {
     // decorate a storage class with bindings that do not require write access to {memT}
     template <class memT>
-    void bindConstStorage(py::class_<memT> &);
+    void bindConstStorage(holder_t<memT> &);
+
     // decorate a storage class with bindings that require write access to {memT}
     template <class memT>
-    void bindStorage(py::class_<memT> &);
+    void bindStorage(holder_t<memT> &);
 
 } // namespace pyre::py::memory
 
