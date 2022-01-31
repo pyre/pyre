@@ -10,15 +10,15 @@
 #include "forward.h"
 
 // my implementations
-#include "layouts.h"
+#include "packings.h"
 
 
 // wrappers over {pyre::grid::canonical_t} template expansions
 // build the submodule
 void
-pyre::py::grid::layouts(py::module & m)
+pyre::py::grid::packings(py::module & m)
 {
-    // instantiate layouts of a few dimensions
+    // instantiate packings of a few dimensions
     canonical2d(m);
     canonical3d(m);
     canonical4d(m);
@@ -28,24 +28,24 @@ pyre::py::grid::layouts(py::module & m)
 }
 
 
-// layout instantiations
+// packing instantiations
 void
 pyre::py::grid::canonical2d(py::module & m)
 {
     // type alias
-    using layout_t = pyre::grid::canonical_t<2>;
+    using packing_t = pyre::grid::canonical_t<2>;
 
     // build the class record
-    auto cls = py::class_<layout_t>(
+    auto cls = py::class_<packing_t>(
         // in scope
         m,
         // class name
         "Canonical2D",
         // docstring
-        "a 2d canonical layout");
+        "a 2d canonical packing");
 
-    // add the layout interface
-    layoutInterface(cls);
+    // add the packing interface
+    packingInterface(cls);
 
     // all done
     return;
@@ -56,19 +56,19 @@ void
 pyre::py::grid::canonical3d(py::module & m)
 {
     // type alias
-    using layout_t = pyre::grid::canonical_t<3>;
+    using packing_t = pyre::grid::canonical_t<3>;
 
     // build the class record
-    auto cls = py::class_<layout_t>(
+    auto cls = py::class_<packing_t>(
         // in scope
         m,
         // class name
         "Canonical3D",
         // docstring
-        "a 3d canonical layout");
+        "a 3d canonical packing");
 
-    // add the layout interface
-    layoutInterface(cls);
+    // add the packing interface
+    packingInterface(cls);
 
     // all done
     return;
@@ -79,19 +79,19 @@ void
 pyre::py::grid::canonical4d(py::module & m)
 {
     // type alias
-    using layout_t = pyre::grid::canonical_t<4>;
+    using packing_t = pyre::grid::canonical_t<4>;
 
     // build the class record
-    auto cls = py::class_<layout_t>(
+    auto cls = py::class_<packing_t>(
         // in scope
         m,
         // class name
         "Canonical4D",
         // docstring
-        "a 4d canonical layout");
+        "a 4d canonical packing");
 
-    // add the layout interface
-    layoutInterface(cls);
+    // add the packing interface
+    packingInterface(cls);
 
     // all done
     return;
@@ -99,37 +99,37 @@ pyre::py::grid::canonical4d(py::module & m)
 
 
 // the interface decorator
-template <class layoutT>
+template <class packingT>
 void
-pyre::py::grid::layoutInterface(py::class_<layoutT> & cls)
+pyre::py::grid::packingInterface(py::class_<packingT> & cls)
 {
     // constructors
     cls.def(
         // the constructor
-        py::init<typename layoutT::shape_const_reference>(),
+        py::init<typename packingT::shape_const_reference>(),
         // the signature
         "shape"_a,
         // the docstring
-        "create a layout from the given {shape}");
+        "create a packing from the given {shape}");
 
     cls.def(
         // the constructor
         py::init<
-            typename layoutT::shape_const_reference, typename layoutT::index_const_reference>(),
+            typename packingT::shape_const_reference, typename packingT::index_const_reference>(),
         // the signature
         "shape"_a, "origin"_a,
         // the docstring
-        "create a layout from the given {shape} starting at {origin}");
+        "create a packing from the given {shape} starting at {origin}");
 
     cls.def(
         // the constructor
         py::init<
-            typename layoutT::shape_const_reference, typename layoutT::index_const_reference,
-            typename layoutT::order_const_reference>(),
+            typename packingT::shape_const_reference, typename packingT::index_const_reference,
+            typename packingT::order_const_reference>(),
         // the signature
         "shape"_a, "origin"_a, "order"_a,
         // the docstring
-        "create a layout from the given {shape} and packing {order} starting at {origin}");
+        "create a packing from the given {shape} and packing {order} starting at {origin}");
 
     // accessors
     cls.def_property_readonly_static(
@@ -138,7 +138,7 @@ pyre::py::grid::layoutInterface(py::class_<layoutT> & cls)
         // the implementation
         [](py::object) {
             // get my rank and return it
-            return layoutT::rank();
+            return packingT::rank();
         },
         // the docstring
         "my rank");
@@ -147,7 +147,7 @@ pyre::py::grid::layoutInterface(py::class_<layoutT> & cls)
         // the name of the property
         "shape",
         // the accessor
-        &layoutT::shape,
+        &packingT::shape,
         // the docstring
         "get my shape");
 
@@ -155,7 +155,7 @@ pyre::py::grid::layoutInterface(py::class_<layoutT> & cls)
         // the name of the property
         "origin",
         // the accessor
-        &layoutT::origin,
+        &packingT::origin,
         // the docstring
         "get my origin");
 
@@ -163,7 +163,7 @@ pyre::py::grid::layoutInterface(py::class_<layoutT> & cls)
         // the name of the property
         "order",
         // the accessor
-        [](const layoutT & self) -> typename layoutT::order_type { return self.order(); },
+        [](const packingT & self) -> typename packingT::order_type { return self.order(); },
         // the docstring
         "get my order");
 
@@ -171,7 +171,7 @@ pyre::py::grid::layoutInterface(py::class_<layoutT> & cls)
         // the name of the property
         "strides",
         // the accessor
-        &layoutT::strides,
+        &packingT::strides,
         // the docstring
         "get my strides");
 
@@ -179,7 +179,7 @@ pyre::py::grid::layoutInterface(py::class_<layoutT> & cls)
         // the name of the property
         "nudge",
         // the accessor
-        &layoutT::nudge,
+        &packingT::nudge,
         // the docstring
         "get my nudge");
 
@@ -188,7 +188,7 @@ pyre::py::grid::layoutInterface(py::class_<layoutT> & cls)
         // the name of the method
         "index",
         // the implementation
-        &layoutT::index,
+        &packingT::index,
         // the signature
         "offset"_a,
         // the docstring
@@ -198,7 +198,7 @@ pyre::py::grid::layoutInterface(py::class_<layoutT> & cls)
         // the name of the method
         "offset",
         // the implementation
-        &layoutT::offset,
+        &packingT::offset,
         // the signature
         "index"_a,
         // the docstring
@@ -209,11 +209,11 @@ pyre::py::grid::layoutInterface(py::class_<layoutT> & cls)
         // the name of the method
         "box",
         // the implementation
-        &layoutT::box,
+        &packingT::box,
         // the signature
         "origin"_a, "shape"_a,
         // the doctring
-        "make a layout that is restricted to the given {shape} starting at the given {origin}");
+        "make a packing that is restricted to the given {shape} starting at the given {origin}");
 
     // metamethods
     // iterators
@@ -221,9 +221,9 @@ pyre::py::grid::layoutInterface(py::class_<layoutT> & cls)
         // the name of the method
         "__iter__",
         // the implementation
-        [](const layoutT & layout) {
+        [](const packingT & packing) {
             // make an iterator and return it
-            return py::make_iterator(layout.begin(), layout.end());
+            return py::make_iterator(packing.begin(), packing.end());
         },
         // make sure it lives long enough
         py::keep_alive<0, 1>(),

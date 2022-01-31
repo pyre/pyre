@@ -28,8 +28,8 @@ pyre::py::grid::grid(py::module & m)
     orders(grid);
     // shapes
     shapes(grid);
-    // layouts
-    layouts(grid);
+    // packings
+    packings(grid);
     // grids
     grids(grid);
 
