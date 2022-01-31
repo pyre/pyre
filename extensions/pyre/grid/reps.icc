@@ -102,6 +102,8 @@ pyre::py::grid::reps(py::class_<repT> & cls)
             // make an iterator and return it
             return py::make_iterator(rep.cbegin(), rep.cend());
         },
+        // make sure it lives long enough
+        py::keep_alive<0, 1>(),
         // docstring
         "make an iterator");
 

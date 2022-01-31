@@ -216,7 +216,7 @@ pyre::py::grid::layoutInterface(py::class_<layoutT> & cls)
         "make a layout that is restricted to the given {shape} starting at the given {origin}");
 
     // metamethods
-    // iterator
+    // iterators
     cls.def(
         // the name of the method
         "__iter__",
@@ -225,6 +225,8 @@ pyre::py::grid::layoutInterface(py::class_<layoutT> & cls)
             // make an iterator and return it
             return py::make_iterator(layout.begin(), layout.end());
         },
+        // make sure it lives long enough
+        py::keep_alive<0, 1>(),
         // docstring
         "make an iterator");
 
