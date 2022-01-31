@@ -19,8 +19,8 @@ namespace pyre::py::grid {
     void orders(py::module &);
     // shapes
     void shapes(py::module &);
-    // layouts
-    void layouts(py::module &);
+    // packings
+    void packings(py::module &);
     // grids
     void grids(py::module &);
 } // namespace pyre::py::grid
