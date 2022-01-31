@@ -13,7 +13,16 @@ namespace pyre::py::grid {
     // the grid instantiation
     void complexFloatConstMapGrid2D(py::module &);
 
-    // the interface decorator
+    // the interface decorators
+    template <class gridT>
+    void constmapInterface(py::class_<gridT> &);
+
+    template <class gridT>
+    void mapInterface(py::class_<gridT> &);
+
+    template <class gridT>
+    void constgridInterface(py::class_<gridT> &);
+
     template <class gridT>
     void gridInterface(py::class_<gridT> &);
 
