@@ -213,6 +213,8 @@ pyre::py::grid::orderInterface(py::class_<orderT> & cls)
             // make an iterator and return it
             return py::make_iterator(order.cbegin(), order.cend());
         },
+        // make sure it lives long enough
+        py::keep_alive<0, 1>(),
         // docstring
         "make an iterator");
 
