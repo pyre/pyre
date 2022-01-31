@@ -18,7 +18,7 @@ pyre::py::memory::constmap(py::module & m, classname_t name, docstring_t docstri
     using map_t = pyre::memory::constmap_t<cellT>;
 
     // build the class record
-    auto cls = holder_t<map_t>(m, name, docstring);
+    auto cls = shared_holder_t<map_t>(m, name, docstring);
 
     // constructor
     cls.def(
@@ -53,7 +53,7 @@ pyre::py::memory::map(py::module & m, classname_t name, docstring_t docstring)
     using map_t = pyre::memory::map_t<cellT>;
 
     // build the class record
-    auto cls = holder_t<map_t>(m, name, docstring);
+    auto cls = shared_holder_t<map_t>(m, name, docstring);
 
     // constructors
     cls.def(
