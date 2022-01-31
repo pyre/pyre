@@ -12,8 +12,6 @@
 #include "../external.h"
 // STL
 #include <complex>
-// pybind support
-#include <pybind11/complex.h>
 // get the pyre parts
 #include <pyre/memory.h>
 
