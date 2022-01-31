@@ -18,12 +18,19 @@ pyre::py::memory::constmap(py::module & m, classname_t name, docstring_t docstri
     using map_t = pyre::memory::constmap_t<cellT>;
 
     // build the class record
-    auto cls = py::class_<map_t>(m, name, docstring);
+    auto cls = holder_t<map_t>(m, name, docstring);
 
     // constructor
     cls.def(
         // the constructor
-        py::init<typename map_t::uri_type>(),
+        py::init([](typename map_t::uri_type uri) {
+            // get {os.fspath}
+            auto fspath = py::module::import("os").attr("fspath");
+            // call it to convert {uri}into a string
+            auto filename = py::str(fspath(uri));
+            // make a map and return it
+            return new map_t(filename);
+        }),
         // the docstring
         "create a read-only memory map backed by an existing file",
         // the signature
@@ -46,7 +53,7 @@ pyre::py::memory::map(py::module & m, classname_t name, docstring_t docstring)
     using map_t = pyre::memory::map_t<cellT>;
 
     // build the class record
-    auto cls = py::class_<map_t>(m, name, docstring);
+    auto cls = holder_t<map_t>(m, name, docstring);
 
     // constructors
     cls.def(
