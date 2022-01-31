@@ -12,24 +12,27 @@
 namespace pyre::grid {
     // polymorphic base class for building iterators
     template <class containerT, bool isConst>
-    using iterator_base = std::iterator<
-        std::forward_iterator_tag,
-        typename containerT::value_type,      // points to index ranks
-        typename containerT::difference_type, // distance among entries
-        std::conditional_t<
-            isConst, typename containerT::const_pointer, typename containerT::pointer>,
-        std::conditional_t<
-            isConst, typename containerT::const_reference, typename containerT::reference>>;
+    class iterator_base {
+    public:
+        using iterator_category = std::forward_iterator_tag;
+        using value_type = typename containerT::value_type;
+        using difference_type = typename containerT::difference_type;
+        using pointer = std::conditional_t<
+            isConst, typename containerT::const_pointer, typename containerT::pointer>;
+        using reference = std::conditional_t<
+            isConst, typename containerT::const_reference, typename containerT::reference>;
+    };
 
     // the base class for {IndexIterator}
     template <class packingT>
-    using base_index_iterator = std::iterator<
-        std::forward_iterator_tag,             // category
-        typename packingT::index_type,         // points to index instances
-        void,                                  // distance
-        const typename packingT::index_type *, // pointer
-        const typename packingT::index_type &  // reference
-        >;
+    class base_index_iterator {
+    public:
+        using iterator_category = std::forward_iterator_tag;
+        using value_type = typename packingT::index_type;
+        using difference_type = void;
+        using pointer = const typename packingT::index_type *;
+        using reference = const typename packingT::index_type &;
+    };
 } // namespace pyre::grid
 
 // set up the namespace
