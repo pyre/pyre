@@ -29,6 +29,9 @@ namespace pyre::viz::filters {
     // supply a constant value
     template <typename valueT = double>
     using constant_t = Constant<valueT>;
+    // a simple compressor that just drops pixels
+    template <class sourceT>
+    using decimate_t = Decimate<sourceT>;
     // a filter that maps values in [0,1] to the index of of a call in a geometrically spaced grid
     template <class sourceT>
     using geometric_t = Geometric<sourceT>;

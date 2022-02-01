@@ -31,6 +31,9 @@ namespace pyre::viz {
         // supply a constant value
         template <typename valueT>
         class Constant;
+        // a simple compressor that just drops pixels
+        template <class sourceT>
+        class Decimate;
         // a filter that maps values in [0,1] to the index of of a call in a geometrically spaced
         // grid
         template <class sourceT>

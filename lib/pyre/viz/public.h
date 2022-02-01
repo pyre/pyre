@@ -22,6 +22,7 @@
 #include "filters/Add.h"
 #include "filters/Amplitude.h"
 #include "filters/Constant.h"
+#include "filters/Decimate.h"
 #include "filters/Geometric.h"
 #include "filters/LogSaw.h"
 #include "filters/Multiply.h"
