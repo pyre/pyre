@@ -25,6 +25,8 @@ PYBIND11_MODULE(pyre, m)
     pyre::py::memory::memory(m);
     // timers
     pyre::py::timers::timers(m);
+    // viz
+    pyre::py::viz::viz(m);
 }
 
 

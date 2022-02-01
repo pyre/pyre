@@ -31,6 +31,12 @@ namespace pyre::py {
         void timers(py::module &);
     } // namespace timers
 
+    // viz
+    namespace viz {
+        // the subpackage initializer
+        void viz(py::module &);
+    } // namespace viz
+
 } // namespace pyre::py
 
 
