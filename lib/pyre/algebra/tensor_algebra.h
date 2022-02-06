@@ -45,19 +45,19 @@ namespace pyre::algebra {
 
     // Algebraic operations on vectors, tensors, ...
     // vector_t times scalar
-    template <typename T, class packingT, int... I, size_t... J>
+    template <typename T2, typename T, class packingT, int... I, size_t... J>
     constexpr void _vector_times_scalar(
-        T a, const Tensor<T, packingT, I...> & y, Tensor<T, packingT, I...> & result,
-        std::index_sequence<J...>)
+        T2 a, const Tensor<T, packingT, I...> & y, Tensor<T, packingT, I...> & result,
+        std::index_sequence<J...>) requires (std::convertible_to<T2, T>)
     {
         ((result[J] = y[J] * a), ...);
         return;
     }
 
-    template <typename T, class packingT, int... I>
-    constexpr Tensor<T, packingT, I...> operator*(T a, 
+    template <typename T2, typename T, class packingT, int... I>
+    constexpr Tensor<T, packingT, I...> operator*(T2 a, 
         const Tensor<T, packingT, I...> & y) 
-        requires(Tensor<T, packingT, I...>::size != 1)
+        requires(Tensor<T, packingT, I...>::size != 1 && std::convertible_to<T2, T>)
     {
         // instantiate the result
         Tensor<T, packingT, I...> result;
@@ -69,25 +69,25 @@ namespace pyre::algebra {
         return result;
     }
 
-    template <typename T, class packingT, int... I>
-    constexpr Tensor<T, packingT, I...> operator*(const Tensor<T, packingT, I...> & y, T a) 
-        requires(Tensor<T, packingT, I...>::size != 1)
+    template <typename T2, typename T, class packingT, int... I>
+    constexpr Tensor<T, packingT, I...> operator*(const Tensor<T, packingT, I...> & y, T2 a) 
+        requires(Tensor<T, packingT, I...>::size != 1 && std::convertible_to<T2, T>)
     {
         return a * y;
     }
 
-    template <typename T, class packingT, int... I>
-    constexpr Tensor<T, packingT, I...> operator*(T a, 
+    template <typename T2, typename T, class packingT, int... I>
+    constexpr Tensor<T, packingT, I...> operator*(T2 a, 
         Tensor<T, packingT, I...> && y) 
-        requires(Tensor<T, packingT, I...>::size != 1)
+        requires(Tensor<T, packingT, I...>::size != 1 && std::convertible_to<T2, T>)
     {
         y = a * std::as_const(y);
         return y;
     }
 
-    template <typename T, class packingT, int... I>
-    constexpr Tensor<T, packingT, I...> operator*(Tensor<T, packingT, I...> && y, T a) 
-        requires(Tensor<T, packingT, I...>::size != 1)
+    template <typename T2, typename T, class packingT, int... I>
+    constexpr Tensor<T, packingT, I...> operator*(Tensor<T, packingT, I...> && y, T2 a) 
+        requires(Tensor<T, packingT, I...>::size != 1 && std::convertible_to<T2, T>)
     {
         return a * std::move(y);
     }
@@ -223,16 +223,16 @@ namespace pyre::algebra {
         return lhs;
     }
 
-    template <typename T, class packingT, int... I>
-    constexpr Tensor<T, packingT, I...> operator/(const Tensor<T, packingT, I...> & y, T a) requires(
-        Tensor<T, packingT, I...>::size != 1)
+    template <typename T2, typename T, class packingT, int... I>
+    constexpr Tensor<T, packingT, I...> operator/(const Tensor<T, packingT, I...> & y, T2 a) 
+        requires(Tensor<T, packingT, I...>::size != 1 && std::convertible_to<T2, T>)
     {
         return (1.0 / a) * y;
     }
 
-    template <typename T, class packingT, int... I>
-    constexpr Tensor<T, packingT, I...> operator/(Tensor<T, packingT, I...> && y, T a) requires(
-        Tensor<T, packingT, I...>::size != 1)
+    template <typename T2, typename T, class packingT, int... I>
+    constexpr Tensor<T, packingT, I...> operator/(Tensor<T, packingT, I...> && y, T2 a) requires(
+        Tensor<T, packingT, I...>::size != 1 && std::convertible_to<T2, T>)
     {
         return (1.0 / a) * std::move(y);
     }

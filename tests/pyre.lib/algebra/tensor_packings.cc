@@ -26,7 +26,7 @@ int main(int argc, char* argv[]) {
                                             + MatrixBasis<2>::unit<1, 0>);
 
     // a 2D matrix
-    static constexpr auto A = 1.0 * e_00 + 2.0 * e_01 + 3.0 * e_10 + 4.0 * e_11;
+    static constexpr auto A = true * e_00 + 2.0 * e_01 + 3.0 * e_10 + 4 * e_11;
 
     // a 2D symmetric matrix
     static constexpr auto B = 1.0 * e_00 + 2.0 * e_01s + 4.0 * e_11;
