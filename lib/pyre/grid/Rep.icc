@@ -264,12 +264,12 @@ pyre::grid::operator/(const Rep<containerT> & i, int s) -> Rep<containerT>
 // scaling by doubles
 template <class containerT>
 constexpr auto
-pyre::grid::operator*(const Rep<containerT> & i, double s) -> vec_t<Rep<containerT>::rank()>
+pyre::grid::operator*(const Rep<containerT> & i, double s) -> doubles_t<Rep<containerT>::rank()>
 {
     // get the rank of the rep
     constexpr auto rank = Rep<containerT>::rank();
     // make an empty array
-    vec_t<rank> scaled;
+    doubles_t<rank> scaled;
 
     // go through each axis
     for (int axis = 0; axis < rank; ++axis) {
@@ -284,7 +284,7 @@ pyre::grid::operator*(const Rep<containerT> & i, double s) -> vec_t<Rep<containe
 
 template <class containerT>
 constexpr auto
-pyre::grid::operator*(double s, const Rep<containerT> & i) -> vec_t<Rep<containerT>::rank()>
+pyre::grid::operator*(double s, const Rep<containerT> & i) -> doubles_t<Rep<containerT>::rank()>
 {
     // easy
     return i * s;
@@ -293,10 +293,10 @@ pyre::grid::operator*(double s, const Rep<containerT> & i) -> vec_t<Rep<containe
 
 template <class containerT>
 constexpr auto
-pyre::grid::operator/(const Rep<containerT> & i, double s) -> vec_t<Rep<containerT>::rank()>
+pyre::grid::operator/(const Rep<containerT> & i, double s) -> doubles_t<Rep<containerT>::rank()>
 {
     // make an empty array
-    vec_t<Rep<containerT>::rank()> scaled;
+    doubles_t<Rep<containerT>::rank()> scaled;
 
     // go through each axis
     for (int axis = 0; axis < i.rank(); ++axis) {
@@ -312,10 +312,10 @@ pyre::grid::operator/(const Rep<containerT> & i, double s) -> vec_t<Rep<containe
 // scaling by floats
 template <class containerT>
 constexpr auto
-pyre::grid::operator*(const Rep<containerT> & i, float s) -> vecf_t<Rep<containerT>::rank()>
+pyre::grid::operator*(const Rep<containerT> & i, float s) -> floats_t<Rep<containerT>::rank()>
 {
     // make an empty array
-    vec_t<Rep<containerT>::rank()> scaled;
+    floats_t<Rep<containerT>::rank()> scaled;
 
     // go through each axis
     for (int axis = 0; axis < i.rank(); ++axis) {
@@ -330,7 +330,7 @@ pyre::grid::operator*(const Rep<containerT> & i, float s) -> vecf_t<Rep<containe
 
 template <class containerT>
 constexpr auto
-pyre::grid::operator*(float s, const Rep<containerT> & i) -> vecf_t<Rep<containerT>::rank()>
+pyre::grid::operator*(float s, const Rep<containerT> & i) -> floats_t<Rep<containerT>::rank()>
 {
     // easy
     return i * s;
@@ -339,10 +339,10 @@ pyre::grid::operator*(float s, const Rep<containerT> & i) -> vecf_t<Rep<containe
 
 template <class containerT>
 constexpr auto
-pyre::grid::operator/(const Rep<containerT> & i, float s) -> vecf_t<Rep<containerT>::rank()>
+pyre::grid::operator/(const Rep<containerT> & i, float s) -> floats_t<Rep<containerT>::rank()>
 {
     // make an empty array
-    vec_t<Rep<containerT>::rank()> scaled;
+    floats_t<Rep<containerT>::rank()> scaled;
 
     // go through each axis
     for (int axis = 0; axis < i.rank(); ++axis) {

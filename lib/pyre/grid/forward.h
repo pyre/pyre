@@ -115,23 +115,23 @@ namespace pyre::grid {
 
     // scaling by doubles
     template <class containerT>
-    constexpr auto operator*(double, const Rep<containerT> &) -> vec_t<Rep<containerT>::rank()>;
+    constexpr auto operator*(double, const Rep<containerT> &) -> doubles_t<Rep<containerT>::rank()>;
 
     template <class containerT>
-    constexpr auto operator*(const Rep<containerT> &, double) -> vec_t<Rep<containerT>::rank()>;
+    constexpr auto operator*(const Rep<containerT> &, double) -> doubles_t<Rep<containerT>::rank()>;
 
     template <class containerT>
-    constexpr auto operator/(const Rep<containerT> &, double) -> vec_t<Rep<containerT>::rank()>;
+    constexpr auto operator/(const Rep<containerT> &, double) -> doubles_t<Rep<containerT>::rank()>;
 
     // scaling by floats
     template <class containerT>
-    constexpr auto operator*(float, const Rep<containerT> &) -> vecf_t<Rep<containerT>::rank()>;
+    constexpr auto operator*(float, const Rep<containerT> &) -> floats_t<Rep<containerT>::rank()>;
 
     template <class containerT>
-    constexpr auto operator*(const Rep<containerT> &, float) -> vecf_t<Rep<containerT>::rank()>;
+    constexpr auto operator*(const Rep<containerT> &, float) -> floats_t<Rep<containerT>::rank()>;
 
     template <class containerT>
-    constexpr auto operator/(const Rep<containerT> &, float) -> vecf_t<Rep<containerT>::rank()>;
+    constexpr auto operator/(const Rep<containerT> &, float) -> floats_t<Rep<containerT>::rank()>;
 } // namespace pyre::grid
 
 
