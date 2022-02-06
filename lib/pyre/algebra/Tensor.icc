@@ -133,6 +133,18 @@ constexpr const auto pyre::algebra::Tensor<T, packingT, I...>::end() const
 }
 
 template <typename T, class packingT, int... I>
+constexpr auto pyre::algebra::Tensor<T, packingT, I...>::begin()
+{
+    return _data.begin();
+}
+
+template <typename T, class packingT, int... I>
+constexpr auto pyre::algebra::Tensor<T, packingT, I...>::end()
+{
+    return _data.begin() + S /* number of cells */;
+}
+
+template <typename T, class packingT, int... I>
 constexpr void pyre::algebra::Tensor<T, packingT, I...>::reset()
 {
     // reset to zero all entries

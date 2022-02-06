@@ -99,6 +99,8 @@ namespace pyre::algebra {
         // support for ranged for loops
         constexpr const auto begin() const;
         constexpr const auto end() const;
+        constexpr auto begin();
+        constexpr auto end();
 
         // reset all entries to zero
         constexpr void reset();
