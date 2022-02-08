@@ -15,7 +15,8 @@ pyre.docker-images := \
     pyre.eoan-gcc pyre.eoan-clang \
     pyre.focal-gcc pyre.focal-clang \
     pyre.groovy-gcc pyre.groovy-clang pyre.groovy-cuda \
-    pyre.hirsute-gcc pyre.hirsute-clang pyre.hirsute-gcc-cmake
+    pyre.hirsute-gcc pyre.hirsute-clang pyre.hirsute-gcc-cmake \
+    pyre.impish-gcc pyre.impish-clang
 
 # and test suites
 pyre.tests := pyre.python.tests pyre.pkg.tests pyre.lib.tests pyre.ext.tests sqlite.pkg.tests
@@ -92,6 +93,9 @@ pyre.groovy-cuda.launch.mounts := mm pyre
 pyre.hirsute-gcc.name := hirsute-gcc
 pyre.hirsute-clang.name := hirsute-clang
 pyre.hirsute-gcc-cmake.name := hirsute-gcc-cmake
+# impish
+pyre.impish-gcc.name := impish-gcc
+pyre.impish-clang.name := impish-clang
 
 # the templates
 pyre.templates.root := templates/
