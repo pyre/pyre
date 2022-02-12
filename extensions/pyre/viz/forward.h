@@ -13,6 +13,9 @@ namespace pyre::py::viz {
     // the initializer
     void viz(py::module &);
 
+    // bitmaps
+    void bmp(py::module &);
+
 } // namespace pyre::py::viz
 
 

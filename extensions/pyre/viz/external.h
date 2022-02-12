@@ -14,6 +14,14 @@
 #include <pyre/viz.h>
 
 
+// aliases
+namespace pyre::py::viz {
+    // bitmaps
+    using bmp_t = pyre::viz::bmp_t;
+
+} // namespace pyre::py::viz
+
+
 #endif
 
 // end of file
