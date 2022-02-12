@@ -38,6 +38,9 @@ namespace pyre::viz {
         // grid
         template <class sourceT>
         class Geometric;
+        // imaginary part of a complex source
+        template <class sourceT>
+        class Imaginary;
         // a saw tooth function based on the log of its input value
         template <class sourceT>
         class LogSaw;
@@ -53,6 +56,9 @@ namespace pyre::viz {
         // a saw tooth function based on the phase of its input value
         template <class sourceT>
         class PolarSaw;
+        // real part of a complex source
+        template <class sourceT>
+        class Real;
         // a filter that maps values in [0,1] to the index of of a call in a uniformly spaced grid
         template <class sourceT>
         class Uniform;

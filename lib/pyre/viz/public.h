@@ -24,11 +24,13 @@
 #include "filters/Constant.h"
 #include "filters/Decimate.h"
 #include "filters/Geometric.h"
+#include "filters/Imaginary.h"
 #include "filters/LogSaw.h"
 #include "filters/Multiply.h"
 #include "filters/Parametric.h"
 #include "filters/Phase.h"
 #include "filters/PolarSaw.h"
+#include "filters/Real.h"
 #include "filters/Uniform.h"
 // color spaces
 #include "colorspaces/hsb.h"
