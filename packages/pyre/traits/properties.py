@@ -84,7 +84,7 @@ def kv(default={}, **kwds):
     """
     A (key, value) table of strings
     """
-    # build a dictionary that maps strings to lists
+    # build a dictionary that maps strings to strings
     return dict(schema=str(), default=default, **kwds)
 
 
