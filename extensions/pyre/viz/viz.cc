@@ -10,7 +10,7 @@
 #include "forward.h"
 
 
-// wrappers over {pyre::viz::map} template expansions
+// wrappers over {pyre::viz} entities
 // build the submodule
 void
 pyre::py::viz::viz(py::module & m)
@@ -21,6 +21,9 @@ pyre::py::viz::viz(py::module & m)
         "viz",
         // its docstring
         "wrappers over {pyre::viz} entities");
+
+    // add the bitmap bindings
+    bmp(viz);
 
     // all done
     return;
