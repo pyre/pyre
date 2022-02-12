@@ -12,7 +12,7 @@
 // metamethods
 // destructor
 template <class sourceT>
-pyre::viz::filters::Geometric<sourceT>::~Geometric<sourceT>()
+pyre::viz::filters::Geometric<sourceT>::~Geometric()
 {
     // release the {_ticks};
     delete[] _ticks;
