@@ -35,6 +35,9 @@ namespace pyre::viz::filters {
     // a filter that maps values in [0,1] to the index of of a call in a geometrically spaced grid
     template <class sourceT>
     using geometric_t = Geometric<sourceT>;
+    // extract the imaginary part of a complex dataset
+    template <class sourceT>
+    using imaginary_t = Imaginary<sourceT>;
     // a saw tooth function on the log of its input value
     template <class sourceT>
     using logsaw_t = LogSaw<sourceT>;
@@ -50,6 +53,10 @@ namespace pyre::viz::filters {
     // a saw tooth function on the phase of its input value
     template <class sourceT>
     using polarsaw_t = PolarSaw<sourceT>;
+    // extract the real part of a complex dataset
+    template <class sourceT>
+    using real_t = Real<sourceT>;
+    // a saw tooth function on the phase of its input value
     // a filter that maps values in [0,1] to the index of of a call in a uniformly spaced grid
     template <class sourceT>
     using uniform_t = Uniform<sourceT>;
