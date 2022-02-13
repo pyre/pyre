@@ -20,6 +20,7 @@ pyre::py::grid::grids(py::module & m)
 {
     // 2d const maps
     complexFloatConstMapGrid2D(m);
+    complexDoubleConstMapGrid2D(m);
     // all done
     return;
 }
@@ -43,6 +44,34 @@ pyre::py::grid::complexFloatConstMapGrid2D(py::module & m)
         "ComplexFloatConstMapGrid2D",
         // docstring
         "a 2d grid backed by a read-only map of complex floats");
+
+    // the map specific interface
+    constmapInterface(cls);
+    // the grid interface
+    constgridInterface(cls);
+
+    // all done
+    return;
+}
+
+
+void
+pyre::py::grid::complexDoubleConstMapGrid2D(py::module & m)
+{
+    // type aliases
+    using cell_t = std::complex<double>;
+    using packing_t = pyre::grid::canonical_t<2>;
+    using storage_t = pyre::memory::constmap_t<cell_t>;
+    using grid_t = pyre::grid::grid_t<packing_t, storage_t>;
+
+    // build the class record
+    auto cls = py::class_<grid_t>(
+        // in scope
+        m,
+        // class name
+        "ComplexDoubleConstMapGrid2D",
+        // docstring
+        "a 2d grid backed by a read-only map of complex doubles");
 
     // the map specific interface
     constmapInterface(cls);
