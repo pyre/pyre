@@ -10,8 +10,9 @@
 
 // the {pyre} extension namespace
 namespace pyre::py::grid {
-    // the grid instantiation
+    // the grid instantiations
     void complexFloatConstMapGrid2D(py::module &);
+    void complexDoubleConstMapGrid2D(py::module &);
 
     // the interface decorators
     template <class gridT>
