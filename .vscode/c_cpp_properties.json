@@ -5,7 +5,7 @@
             "includePath": [
                 "${workspaceFolder}/**",
                 "${env:USER_TOOLS_DIR}/mm/${env:mm_abi}/include/**",
-                "/usr/include/python3.8/**"
+                "/usr/include/python3.9/**"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/${env:mm_compiler}",
