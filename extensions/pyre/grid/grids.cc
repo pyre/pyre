@@ -19,6 +19,12 @@ void
 pyre::py::grid::grids(py::module & m)
 {
     // 2d const maps
+    byteConstMapGrid2D(m);
+    int16ConstMapGrid2D(m);
+    int32ConstMapGrid2D(m);
+    int64ConstMapGrid2D(m);
+    floatConstMapGrid2D(m);
+    doubleConstMapGrid2D(m);
     complexFloatConstMapGrid2D(m);
     complexDoubleConstMapGrid2D(m);
     // all done
@@ -27,6 +33,174 @@ pyre::py::grid::grids(py::module & m)
 
 
 // grid instantiations
+void
+pyre::py::grid::byteConstMapGrid2D(py::module & m)
+{
+    // type aliases
+    using cell_t = char;
+    using packing_t = pyre::grid::canonical_t<2>;
+    using storage_t = pyre::memory::constmap_t<cell_t>;
+    using grid_t = pyre::grid::grid_t<packing_t, storage_t>;
+
+    // build the class record
+    auto cls = py::class_<grid_t>(
+        // in scope
+        m,
+        // class name
+        "ByteConstMapGrid2D",
+        // docstring
+        "a 2d grid backed by a read-only map of bytes");
+
+    // the map specific interface
+    constmapInterface(cls);
+    // the grid interface
+    constgridInterface(cls);
+
+    // all done
+    return;
+}
+
+
+void
+pyre::py::grid::int16ConstMapGrid2D(py::module & m)
+{
+    // type aliases
+    using cell_t = int16_t;
+    using packing_t = pyre::grid::canonical_t<2>;
+    using storage_t = pyre::memory::constmap_t<cell_t>;
+    using grid_t = pyre::grid::grid_t<packing_t, storage_t>;
+
+    // build the class record
+    auto cls = py::class_<grid_t>(
+        // in scope
+        m,
+        // class name
+        "Int16ConstMapGrid2D",
+        // docstring
+        "a 2d grid backed by a read-only map of {int16_t}");
+
+    // the map specific interface
+    constmapInterface(cls);
+    // the grid interface
+    constgridInterface(cls);
+
+    // all done
+    return;
+}
+
+
+void
+pyre::py::grid::int32ConstMapGrid2D(py::module & m)
+{
+    // type aliases
+    using cell_t = int32_t;
+    using packing_t = pyre::grid::canonical_t<2>;
+    using storage_t = pyre::memory::constmap_t<cell_t>;
+    using grid_t = pyre::grid::grid_t<packing_t, storage_t>;
+
+    // build the class record
+    auto cls = py::class_<grid_t>(
+        // in scope
+        m,
+        // class name
+        "Int32ConstMapGrid2D",
+        // docstring
+        "a 2d grid backed by a read-only map of {int32_t}");
+
+    // the map specific interface
+    constmapInterface(cls);
+    // the grid interface
+    constgridInterface(cls);
+
+    // all done
+    return;
+}
+
+
+void
+pyre::py::grid::int64ConstMapGrid2D(py::module & m)
+{
+    // type aliases
+    using cell_t = int64_t;
+    using packing_t = pyre::grid::canonical_t<2>;
+    using storage_t = pyre::memory::constmap_t<cell_t>;
+    using grid_t = pyre::grid::grid_t<packing_t, storage_t>;
+
+    // build the class record
+    auto cls = py::class_<grid_t>(
+        // in scope
+        m,
+        // class name
+        "Int64ConstMapGrid2D",
+        // docstring
+        "a 2d grid backed by a read-only map of {int64_t}");
+
+    // the map specific interface
+    constmapInterface(cls);
+    // the grid interface
+    constgridInterface(cls);
+
+    // all done
+    return;
+}
+
+
+void
+pyre::py::grid::floatConstMapGrid2D(py::module & m)
+{
+    // type aliases
+    using cell_t = float;
+    using packing_t = pyre::grid::canonical_t<2>;
+    using storage_t = pyre::memory::constmap_t<cell_t>;
+    using grid_t = pyre::grid::grid_t<packing_t, storage_t>;
+
+    // build the class record
+    auto cls = py::class_<grid_t>(
+        // in scope
+        m,
+        // class name
+        "FloatConstMapGrid2D",
+        // docstring
+        "a 2d grid backed by a read-only map of floats");
+
+    // the map specific interface
+    constmapInterface(cls);
+    // the grid interface
+    constgridInterface(cls);
+
+    // all done
+    return;
+}
+
+
+void
+pyre::py::grid::doubleConstMapGrid2D(py::module & m)
+{
+    // type aliases
+    using cell_t = double;
+    using packing_t = pyre::grid::canonical_t<2>;
+    using storage_t = pyre::memory::constmap_t<cell_t>;
+    using grid_t = pyre::grid::grid_t<packing_t, storage_t>;
+
+    // build the class record
+    auto cls = py::class_<grid_t>(
+        // in scope
+        m,
+        // class name
+        "DoubleConstMapGrid2D",
+        // docstring
+        "a 2d grid backed by a read-only map of doubles");
+
+    // the map specific interface
+    constmapInterface(cls);
+    // the grid interface
+    constgridInterface(cls);
+
+    // all done
+    return;
+}
+
+
 void
 pyre::py::grid::complexFloatConstMapGrid2D(py::module & m)
 {

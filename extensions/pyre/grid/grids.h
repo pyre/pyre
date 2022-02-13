@@ -11,6 +11,12 @@
 // the {pyre} extension namespace
 namespace pyre::py::grid {
     // the grid instantiations
+    void byteConstMapGrid2D(py::module &);
+    void int16ConstMapGrid2D(py::module &);
+    void int32ConstMapGrid2D(py::module &);
+    void int64ConstMapGrid2D(py::module &);
+    void floatConstMapGrid2D(py::module &);
+    void doubleConstMapGrid2D(py::module &);
     void complexFloatConstMapGrid2D(py::module &);
     void complexDoubleConstMapGrid2D(py::module &);
 
