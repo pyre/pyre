@@ -18,6 +18,8 @@ PYBIND11_MODULE(h5, m)
 
     // register the module api
     h5::py::api(m);
+    // bindings for files
+    h5::py::file(m);
 }
 
 

@@ -13,6 +13,9 @@ namespace h5::py {
     // the module api
     void api(py::module &);
 
+    // files
+    void file(py::module &);
+
 } // namespace h5::py
 
 
