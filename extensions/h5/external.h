@@ -42,6 +42,9 @@ namespace h5::py {
     // aliases for common STL classes
     using string_t = std::string;
 
+    // aliases of hdf5 entities
+    using File = H5::H5File;
+
 } // namespace h5::py
 
 
