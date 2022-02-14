@@ -15,7 +15,7 @@ void
 h5::py::file(py::module & m)
 {
     // add bindings for hdf5 file objects
-    auto cls = py::class_<H5::H5File>(
+    auto cls = py::class_<File>(
         // in scope
         m,
         // class name
@@ -28,7 +28,7 @@ h5::py::file(py::module & m)
         // the implementation
         py::init([](std::string name) {
             // make a read-only entity and return it
-            return new H5::H5File(name, H5F_ACC_RDONLY);
+            return new File(name, H5F_ACC_RDONLY);
         }),
         // the signature
         "path"_a,
@@ -40,7 +40,7 @@ h5::py::file(py::module & m)
         // the name
         "close",
         // the implementation
-        &H5::H5File::close,
+        &File::close,
         // the docstring
         "close the file");
 
