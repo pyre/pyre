@@ -25,6 +25,12 @@ pyre.tests := pyre.python.tests pyre.pkg.tests pyre.lib.tests pyre.ext.tests sql
 pyre.verbatim := pyre.templates
 
 
+# if we have {hdf5}, build the {h5} extension
+${if ${findstring hdf5,$(extern.available)},\
+    ${eval pyre.extensions += h5.ext} \
+}
+
+
 # if we have {libpq}, build the {postgres} extension and test it
 ${if ${findstring libpq,$(extern.available)},\
     ${eval pyre.extensions += postgres.ext} \
@@ -67,6 +73,17 @@ host.ext.capsule :=
 host.ext.extern := journal.lib python
 host.ext.lib.c++.flags += $($(compiler.c++).std.c++17)
 host.ext.lib.prerequisites += journal.lib # pyre.lib is added automatically
+
+
+# hdf5
+h5.ext.root := extensions/h5/
+h5.ext.stem := h5
+h5.ext.pkg := pyre.pkg
+h5.ext.wraps := pyre.lib
+h5.ext.capsule :=
+h5.ext.extern := journal.lib hdf5 python
+h5.ext.lib.c++.flags += $($(compiler.c++).std.c++17)
+h5.ext.lib.prerequisites += journal.lib # pyre.lib is added automatically
 
 
 # postgres
