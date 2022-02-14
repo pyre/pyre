@@ -36,7 +36,7 @@ template <class sourceT>
 auto
 pyre::viz::filters::LogSaw<sourceT>::operator++() -> void
 {
-    //  increment my source
+    // increment my source
     ++_source;
     // all done
     return;

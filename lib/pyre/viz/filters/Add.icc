@@ -32,7 +32,7 @@ template <class op1T, class op2T>
 auto
 pyre::viz::filters::Add<op1T, op2T>::operator++() -> void
 {
-    //  increment my sources
+    // increment my sources
     ++_op1;
     ++_op2;
     // all done
