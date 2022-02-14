@@ -48,7 +48,7 @@ template <class sourceT>
 auto
 pyre::viz::filters::Decimate<sourceT>::operator++() -> void
 {
-    //  increment my source
+    // increment my source
     ++_cursor;
     // all done
     return;
