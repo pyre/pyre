@@ -18,6 +18,9 @@
 #include <pybind11/stl.h>
 #include <pybind11/stl_bind.h>
 
+// hdf5
+#include <H5Cpp.h>
+
 
 // type aliases
 namespace h5::py {
@@ -35,6 +38,9 @@ namespace h5::py {
     // wraper to install a {std::shared_ptr} as the custom holder for the bindings
     template <class classT>
     using shared_holder_t = py::class_<classT, std::shared_ptr<classT>>;
+
+    // aliases for common STL classes
+    using string_t = std::string;
 
 } // namespace h5::py
 
