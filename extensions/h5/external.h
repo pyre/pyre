@@ -41,8 +41,12 @@ namespace h5::py {
 
     // aliases for common STL classes
     using string_t = std::string;
+    using dims_t = std::vector<hsize_t>;
+    using strings_t = std::vector<string_t>;
 
     // aliases of hdf5 entities
+    using Dataset = H5::DataSet;
+    using Dataspace = H5::DataSpace;
     using File = H5::H5File;
 
 } // namespace h5::py
