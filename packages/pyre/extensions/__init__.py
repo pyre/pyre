@@ -21,4 +21,14 @@ except ImportError:
     libpyre = None
 
 
+# attempt to
+try:
+    # load the {hdf5} bindings
+    from . import h5 as libh5
+# and if anything goes wrong
+except ImportError:
+    # just mark it as unavailable
+    libh5 = None
+
+
 # end of file
