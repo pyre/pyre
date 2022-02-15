@@ -80,12 +80,26 @@ find_program(BASH_PROGRAM bash)
 # packages
 # gsl
 find_package(GSL)
+
 # mpi
-find_package(MPI)
+find_package(MPI COMPONENTS CXX)
+
+# hdf5
+# if mpi is installed
+if(${MPI_FOUND})
+    # prefer the parallel version of hdf5
+    set(HDF5_PREFER_PARALLEL ON)
+endif()
+message("parallel hdf5: ${HDF5_PREFER_PARALLEL}")
+# hunt it down
+find_package(HDF5 COMPONENTS CXX HL)
+
 # postgres
 find_package(PostgreSQL)
+
 # python
 find_package(Python 3.6 COMPONENTS Interpreter Development NumPy)
+
 # for building bindings
 # require c++17
 set(CMAKE_CXX_STANDARD 17)
