@@ -160,12 +160,142 @@ h5::py::dataset(py::module & m)
         "extract my contents as a string");
 
 
-    // attempt get the dataset contents as a list of strings
+    // attempt to get the dataset contents as a list of ints
+    cls.def(
+        // the name
+        "ints",
+        // the implementation
+        [](const Dataset & self) -> ints_t {
+            // get my type
+            auto type = self.getTypeClass();
+            // check whether i contain integers
+            if (type != H5T_INTEGER) {
+                // if not, make a channel
+                auto channel = pyre::journal::error_t("pyre.hdf5");
+                // complain
+                channel
+                    // what
+                    << "not a dataset with integers"
+                    // where
+                    << pyre::journal::endl(__HERE__);
+                // build an empty list of integers
+                ints_t ints;
+                // and bail
+                return ints;
+            }
+
+            // we have ints; let's find out how many
+            // get my data space
+            auto space = self.getSpace();
+            // ask it for its rank
+            auto rank = space.getSimpleExtentNdims();
+            // make a correctly sized vector to hold the result
+            dims_t shape(rank);
+            // populate it
+            space.getSimpleExtentDims(&shape[0], nullptr);
+
+            // make sure i'm just a list
+            if (rank != 1) {
+                // if not, make a channel
+                auto channel = pyre::journal::error_t("pyre.hdf5");
+                // complain
+                channel
+                    // what
+                    << "not a list "
+                    // where
+                    << pyre::journal::endl(__HERE__);
+                // build an empty list of ints
+                ints_t ints;
+                // and bail
+                return ints;
+            }
+
+            // shape now knows how many integers there are
+            auto len = shape[0];
+            // use it to make a correctly sized vector
+            auto ints = ints_t(len);
+
+            // unconditional/unrestricted read
+            self.read(&ints[0], self.getIntType());
+
+            // all done
+            return ints;
+        },
+        // the docstring
+        "get my contents as a list of ints");
+
+
+    // attempt to get the dataset contents as a list of doubles
+    cls.def(
+        // the name
+        "doubles",
+        // the implementation
+        [](const Dataset & self) -> doubles_t {
+            // get my type
+            auto type = self.getTypeClass();
+            // check whether i contain doubles
+            if (type != H5T_FLOAT) {
+                // if not, make a channel
+                auto channel = pyre::journal::error_t("pyre.hdf5");
+                // complain
+                channel
+                    // what
+                    << "not a dataset with doubles"
+                    // where
+                    << pyre::journal::endl(__HERE__);
+                // build an empty list of doubles
+                doubles_t doubles;
+                // and bail
+                return doubles;
+            }
+
+            // we have doubles; let's find out how many
+            // get my data space
+            auto space = self.getSpace();
+            // ask it for its rank
+            auto rank = space.getSimpleExtentNdims();
+            // make a correctly sized vector to hold the result
+            dims_t shape(rank);
+            // populate it
+            space.getSimpleExtentDims(&shape[0], nullptr);
+
+            // make sure i'm just a list
+            if (rank != 1) {
+                // if not, make a channel
+                auto channel = pyre::journal::error_t("pyre.hdf5");
+                // complain
+                channel
+                    // what
+                    << "not a list "
+                    // where
+                    << pyre::journal::endl(__HERE__);
+                // build an empty list of doubles
+                doubles_t doubles;
+                // and bail
+                return doubles;
+            }
+
+            // shape now knows how many doubles there are
+            auto len = shape[0];
+            // use it to make a correctly sized vector
+            auto doubles = doubles_t(len);
+
+            // unconditional/unrestricted read
+            self.read(&doubles[0], self.getFloatType());
+
+            // all done
+            return doubles;
+        },
+        // the docstring
+        "get my contents as a list of ints");
+
+
+    // attempt to get the dataset contents as a list of strings
     cls.def(
         // the name
         "strings",
         // the implementation
-        [](const Dataset & self) {
+        [](const Dataset & self) -> strings_t {
             // get my type
             auto type = self.getTypeClass();
             // check whether i can be converted to a list of strings
