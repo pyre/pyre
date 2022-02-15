@@ -26,16 +26,16 @@ h5::py::file(py::module & m)
     // constructor
     cls.def(
         // the implementation
-        py::init([](std::string name) {
+        py::init([](std::string path) {
             // make a read-only entity and return it
-            return new File(name, H5F_ACC_RDONLY);
+            return new File(path, H5F_ACC_RDONLY);
         }),
         // the signature
         "path"_a,
         // the docstring
         "open an HDF5 file given its {path}");
 
-    // close a file
+    // close the file
     cls.def(
         // the name
         "close",
@@ -43,6 +43,17 @@ h5::py::file(py::module & m)
         &File::close,
         // the docstring
         "close the file");
+
+    // open a dataset
+    cls.def(
+        // the name
+        "dataset",
+        // the implementation
+        [](const File & self, string_t path) { return self.openDataSet(path); },
+        // the signature
+        "path"_a,
+        // the docstring
+        "open a dataset given its path");
 
     // all done
     return;
