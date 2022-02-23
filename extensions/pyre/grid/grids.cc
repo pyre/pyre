@@ -283,7 +283,7 @@ pyre::py::grid::constgridInterface(py::class_<gridT> & cls)
 {
     // accessors
     // layout
-    cls.def(
+    cls.def_property_readonly(
         // the name of the method
         "layout",
         // the implementation
