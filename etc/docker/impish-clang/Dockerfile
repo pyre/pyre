@@ -88,9 +88,9 @@ COPY . pyre
 # go to the {pyre} top level directory
 WORKDIR ${srcdir}/pyre
 # build
-# RUN ${mm}
+RUN ${mm}
 # show me the build context
-# RUN ${mm} --serial host.info builder.info compilers.info
+RUN ${mm} --serial host.info builder.info compilers.info
 
 # start the ssh daemon and test
 CMD service ssh start && ${MM} tests
