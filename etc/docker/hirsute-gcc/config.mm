@@ -7,16 +7,21 @@
 # external dependencies
 # system tools
 sys.prefix := /usr
-sys.lib := ${sys.prefix}/lib
-sys.libx86 := ${sys.lib}/x86_64-linux-gnu
+sys.lib := ${sys.prefix}/lib/x86_64-linux-gnu
 
 # gsl
 gsl.version := 2.6
 gsl.dir := $(sys.prefix)
+# hdf5
+hdf5.version := 1.10.6
+hdf5.dir := ${sys.prefix}
+hdf5.parallel := openmpi
+hdf5.incpath := $(hdf5.dir)/include/hdf5/$(hdf5.parallel)
+hdf5.libpath := $(sys.lib)/hdf5/${hdf5.parallel}
 # mpi
 mpi.version := 4.1.0
 mpi.flavor := openmpi
-mpi.dir := ${sys.libx86}/openmpi
+mpi.dir := ${sys.lib}/openmpi
 mpi.executive := mpiexec --allow-run-as-root
 # numpy
 numpy.version := 1.19.5
