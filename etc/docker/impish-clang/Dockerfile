@@ -37,13 +37,12 @@ RUN apt dist-upgrade -y
 #  - {openssh}, {zip}, {unzip} are needed for some of the tests
 RUN DEBIAN_FRONTEND=noninteractive \
         apt install -y \
-        git vim zip unzip\
+        git vim zip unzip \
         openssh-server \
         clang gfortran make \
         ${python} ${python}-dev \
         python3-pybind11 python3-yaml python3-numpy \
-        libopenmpi-dev \
-        libgsl-dev
+        libopenmpi-dev libhdf5-openmpi-dev libgsl-dev
 
 
 # setup the interactive environment
@@ -62,7 +61,7 @@ RUN sed \
 WORKDIR /root/.pyre
 # the mpi configuration
 COPY etc/docker/impish-gcc/mpi.pfg mpi.pfg
-# the {mm} coniguration file
+# the {mm} configuration file
 COPY etc/docker/impish-clang/mm.pfg mm.pfg.in
 # expand
 RUN sed \
@@ -89,9 +88,9 @@ COPY . pyre
 # go to the {pyre} top level directory
 WORKDIR ${srcdir}/pyre
 # build
-RUN ${mm}
+# RUN ${mm}
 # show me the build context
-RUN ${mm} --serial host.info builder.info compilers.info
+# RUN ${mm} --serial host.info builder.info compilers.info
 
 # start the ssh daemon and test
 CMD service ssh start && ${MM} tests
