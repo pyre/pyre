@@ -81,7 +81,16 @@ jobs:
         env:
           pythonVersion: ${{matrix.python}}
 
-      - name: locations
+      - name: external dependencies
+        run: |
+          echo " -- gsl"
+          sudo dpkg-query -L libgsl-dev
+          echo " -- openmpi"
+          sudo dpkg-query -L libopenmpi-dev
+          echo " -- hdf5"
+          sudo dpkg-query -L libhdf5-openmpi-dev
+
+      - name: locations of python packages
         run: |
           echo " -- distro"
           pip3 show distro
