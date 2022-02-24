@@ -48,7 +48,7 @@ jobs:
           echo " -- upgrade"
           sudo apt dist-upgrade
           echo " -- install our dependencies"
-          sudo apt install -y make cmake openssh-server libgsl-dev libopenmpi-dev libhdf5-openmpi-dev
+          sudo apt install -y make cmake openssh-server libgsl-dev libopenmpi-dev libhdf5-dev
 
       - name: python ${{matrix.python}} setup
         uses: actions/setup-python@v2

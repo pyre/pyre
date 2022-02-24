@@ -15,7 +15,7 @@ gsl.dir := $(sys.prefix)
 # hdf5
 hdf5.version := 1.10.6
 hdf5.dir := ${sys.prefix}
-hdf5.parallel := openmpi
+hdf5.parallel := serial
 hdf5.incpath := $(hdf5.dir)/include/hdf5/$(hdf5.parallel)
 hdf5.libpath := $(sys.lib)/hdf5/${hdf5.parallel}
 
