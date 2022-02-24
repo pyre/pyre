@@ -41,7 +41,7 @@ jobs:
           echo " -- upgrade"
           sudo apt dist-upgrade
           echo " -- install our dependencies"
-          sudo apt install -y make openssh-server libgsl-dev libopenmpi-dev
+          sudo apt install -y make openssh-server libgsl-dev libopenmpi-dev libhdf5-openmpi-dev
 
       - name: python ${{matrix.python}} setup
         uses: actions/setup-python@v2
