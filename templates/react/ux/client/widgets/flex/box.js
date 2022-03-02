@@ -55,7 +55,7 @@ const Flexbox = ({{ style, children, ...rest }}) => {{
 
     // paint me
     return (
-        <div ref={{ref}} style={{boxStyle}} {{..rest}} >
+        <div ref={{ref}} style={{boxStyle}} {{...rest}} >
             {{children}}
         </div >
     )
