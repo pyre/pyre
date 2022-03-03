@@ -14,7 +14,20 @@
 void
 h5::py::api(py::module & m)
 {
-    // module attributes
+    // initialize the library
+    m.def(
+        // the name
+        "init",
+        // the handler
+        []() -> void {
+            // turn off the native diagnostics; we commit to catching all exceptions and
+            // generating our own messages
+            H5::Exception::dontPrint();
+            // all done
+            return;
+        },
+        // the docstring
+        "initialize the hdf5 runtime");
 
     // all done
     return;
