@@ -25,10 +25,14 @@ except ImportError:
 try:
     # load the {hdf5} bindings
     from . import h5 as libh5
-# and if anything goes wrong
+# if anything goes wrong
 except ImportError:
     # just mark it as unavailable
     libh5 = None
+# otherwise
+else:
+    # initialize the {hdf5} runtime
+    libh5.init()
 
 
 # end of file
