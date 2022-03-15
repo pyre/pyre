@@ -67,35 +67,6 @@ class Exit(OK):
     abort = True
 
 
-# json encoded content
-class JSON(OK):
-    """
-    A response built out of the JSON encoding of a python object
-    """
-
-    # public data
-    encoding = 'utf-8' # the encoding to use when converting to bytes
-
-    # interface
-    def render(self, **kwds):
-        """
-        Encode the object in JSON format
-        """
-        # return my value as a byte stream
-        return json.dumps(self.value).encode(self.encoding)
-
-    # meta-methods
-    def __init__(self, value, **kwds):
-        # chain up
-        super().__init__(**kwds)
-        # add the content type to the headers
-        self.headers['Content-Type'] = f'application/json; charset={self.encoding}'
-        # save the value
-        self.value = value
-        # all done
-        return
-
-
 # a string literal
 class Literal(OK):
     """
@@ -106,7 +77,7 @@ class Literal(OK):
     encoding = 'utf-8' # the encoding to use when converting to bytes
 
     # interface
-    def render(self, server, **kwds):
+    def render(self, **kwds):
         """
         Pack my value into a byte stream and send it along
         """
@@ -119,6 +90,38 @@ class Literal(OK):
         super().__init__(**kwds)
         # save the value
         self.value = value
+        # all done
+        return
+
+
+# a csv file
+class CSV(Literal):
+    """
+    A byte stream formatted as CSV
+    """
+
+    # meta-methods
+    def __init__(self, **kwds):
+        # chain up
+        super().__init__(**kwds)
+        # add my content type to the headers
+        self.headers['Content-Type'] = 'text/csv'
+        # all done
+        return
+
+
+# json encoded content
+class JSON(Literal):
+    """
+    A response built out of the JSON encoding of a python object
+    """
+
+    # meta-methods
+    def __init__(self, value, **kwds):
+        # chain up after {json} encoding {value}
+        super().__init__(value=json.dumps(value), **kwds)
+        # add my content type to the headers
+        self.headers['Content-Type'] = f'application/json; charset={self.encoding}'
         # all done
         return
 
