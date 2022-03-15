@@ -291,7 +291,6 @@ pyre::py::grid::constgridInterface(py::class_<gridT> & cls)
         // the docstring
         "access my layout");
 
-
     // data access
     // by index
     cls.def(
