@@ -7,7 +7,8 @@
 #if !defined(pyre_h5_datatypes_h)
 #define pyre_h5_datatypes_h
 
-// and its specializations
+
+// the {datatype} specializations
 template <>
 auto
 pyre::h5::datatype(const char *) -> const H5::DataType &
@@ -57,17 +58,21 @@ pyre::h5::datatype(const double *) -> const H5::DataType &
 }
 
 
-#if 0
 template <>
 auto
 pyre::h5::datatype(const std::complex<float> *) -> const H5::DataType &
-{}
+{
+    // return the {std::complex<float>} singleton
+    return NATIVE_COMPLEX_FLOAT;
+}
 
 template <>
 auto
 pyre::h5::datatype(const std::complex<double> *) -> const H5::DataType &
-{}
-#endif
+{
+    // return the {std::complex<double>} singleton
+    return NATIVE_COMPLEX_DOUBLE;
+}
 
 
 #endif
