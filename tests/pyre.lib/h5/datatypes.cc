@@ -8,17 +8,21 @@
 #include <pyre/h5.h>
 
 
-// heck we can build the native datatypes
+// check we can build the native datatypes
 int
 main()
 {
-    // instantiate the native types
+    // instantiate the native types that are supported by {hdf5} out of the box
     [[maybe_unused]] auto charTp = pyre::h5::datatype<char>();
     [[maybe_unused]] auto shortTp = pyre::h5::datatype<short>();
     [[maybe_unused]] auto intTp = pyre::h5::datatype<int>();
     [[maybe_unused]] auto longTp = pyre::h5::datatype<long>();
     [[maybe_unused]] auto floatTp = pyre::h5::datatype<float>();
     [[maybe_unused]] auto doubleTp = pyre::h5::datatype<double>();
+
+    // instantiate our extensions to include the common {std::complex} instantiations
+    [[maybe_unused]] auto complexFloatTp = pyre::h5::datatype<std::complex<float>>();
+    [[maybe_unused]] auto complexDoubleTp = pyre::h5::datatype<std::complex<double>>();
 
     // all done
     return 0;
