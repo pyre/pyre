@@ -15,8 +15,8 @@ make_complex() -> H5::CompType;
 
 
 // my singletons
-auto pyre::h5::NATIVE_COMPLEX_FLOAT = make_complex<float>();
-auto pyre::h5::NATIVE_COMPLEX_DOUBLE = make_complex<double>();
+H5::CompType pyre::h5::NATIVE_COMPLEX_FLOAT = make_complex<float>();
+H5::CompType pyre::h5::NATIVE_COMPLEX_DOUBLE = make_complex<double>();
 
 
 // implementation of the type compositor
