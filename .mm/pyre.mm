@@ -49,9 +49,15 @@ pyre.pkg.ext := extensions/
 # the pyre library meta-data
 pyre.lib.root := lib/pyre/
 pyre.lib.stem := pyre
-pyre.lib.extern := journal.lib
 pyre.lib.prerequisites += journal.lib
 pyre.lib.c++.flags += $($(compiler.c++).std.c++17)
+# external dependencies
+pyre.lib.extern := \
+    journal.lib \
+    ${if ${findstring hdf5,$(extern.available)}, \
+        hdf5 \
+        ${if ${findstring mpi,$(hdf5.parallel)},mpi} \
+    } \
 
 
 # the pyre extensions
@@ -81,7 +87,7 @@ h5.ext.stem := h5
 h5.ext.pkg := pyre.pkg
 h5.ext.wraps := pyre.lib
 h5.ext.capsule :=
-h5.ext.extern = journal.lib hdf5 ${if ${findstring mpi,${hdf5.parallel}},mpi} pybind11 python
+h5.ext.extern = journal.lib hdf5 ${if ${findstring mpi,$(hdf5.parallel)},mpi} pybind11 python
 h5.ext.lib.c++.flags += $($(compiler.c++).std.c++17)
 h5.ext.lib.prerequisites += journal.lib # pyre.lib is added automatically
 
