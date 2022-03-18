@@ -7,7 +7,7 @@
 # the pyre library testsuite
 pyre.lib.tests.stem := pyre.lib
 pyre.lib.tests.prerequisites := pyre.lib journal.lib
-pyre.lib.tests.extern := pyre.lib journal.lib
+pyre.lib.tests.extern := $(pyre.lib.extern)
 
 # c++ compiler arguments
 pyre.lib.tests.c++.defines := PYRE_CORE
