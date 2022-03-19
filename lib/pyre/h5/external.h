@@ -9,6 +9,7 @@
 
 
 // externals
+#include <algorithm>
 #include <array>
 #include <complex>
 // support
