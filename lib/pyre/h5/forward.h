@@ -12,25 +12,25 @@
 namespace pyre::h5 {
     // the generic case
     template <typename cellT>
-    auto datatype(const cellT * = nullptr) -> const H5::DataType &;
+    inline auto datatype(const cellT * = nullptr) -> const datatype_t &;
 
     // and its specializations
     template <>
-    auto datatype(const char *) -> const H5::DataType &;
+    inline auto datatype(const char *) -> const datatype_t &;
     template <>
-    auto datatype(const short *) -> const H5::DataType &;
+    inline auto datatype(const short *) -> const datatype_t &;
     template <>
-    auto datatype(const int *) -> const H5::DataType &;
+    inline auto datatype(const int *) -> const datatype_t &;
     template <>
-    auto datatype(const long *) -> const H5::DataType &;
+    inline auto datatype(const long *) -> const datatype_t &;
     template <>
-    auto datatype(const float *) -> const H5::DataType &;
+    inline auto datatype(const float *) -> const datatype_t &;
     template <>
-    auto datatype(const double *) -> const H5::DataType &;
+    inline auto datatype(const double *) -> const datatype_t &;
     template <>
-    auto datatype(const std::complex<float> *) -> const H5::DataType &;
+    inline auto datatype(const std::complex<float> *) -> const datatype_t &;
     template <>
-    auto datatype(const std::complex<double> *) -> const H5::DataType &;
+    inline auto datatype(const std::complex<double> *) -> const datatype_t &;
 
     // support for the two common {std::complex} instantiations
     extern H5::CompType NATIVE_COMPLEX_FLOAT;

@@ -11,7 +11,7 @@
 // the {datatype} specializations
 template <>
 auto
-pyre::h5::datatype(const char *) -> const H5::DataType &
+pyre::h5::datatype(const char *) -> const datatype_t &
 {
     // build a NATIVE char
     return H5::PredType::NATIVE_CHAR;
@@ -19,7 +19,7 @@ pyre::h5::datatype(const char *) -> const H5::DataType &
 
 template <>
 auto
-pyre::h5::datatype(const short *) -> const H5::DataType &
+pyre::h5::datatype(const short *) -> const datatype_t &
 {
     // build a NATIVE short
     return H5::PredType::NATIVE_SHORT;
@@ -27,7 +27,7 @@ pyre::h5::datatype(const short *) -> const H5::DataType &
 
 template <>
 auto
-pyre::h5::datatype(const int *) -> const H5::DataType &
+pyre::h5::datatype(const int *) -> const datatype_t &
 {
     // build a NATIVE int
     return H5::PredType::NATIVE_INT;
@@ -35,7 +35,7 @@ pyre::h5::datatype(const int *) -> const H5::DataType &
 
 template <>
 auto
-pyre::h5::datatype(const long *) -> const H5::DataType &
+pyre::h5::datatype(const long *) -> const datatype_t &
 {
     // build a NATIVE long
     return H5::PredType::NATIVE_LONG;
@@ -43,7 +43,7 @@ pyre::h5::datatype(const long *) -> const H5::DataType &
 
 template <>
 auto
-pyre::h5::datatype(const float *) -> const H5::DataType &
+pyre::h5::datatype(const float *) -> const datatype_t &
 {
     // build a NATIVE float
     return H5::PredType::NATIVE_FLOAT;
@@ -51,27 +51,10 @@ pyre::h5::datatype(const float *) -> const H5::DataType &
 
 template <>
 auto
-pyre::h5::datatype(const double *) -> const H5::DataType &
+pyre::h5::datatype(const double *) -> const datatype_t &
 {
     // build a NATIVE double
     return H5::PredType::NATIVE_DOUBLE;
-}
-
-
-template <>
-auto
-pyre::h5::datatype(const std::complex<float> *) -> const H5::DataType &
-{
-    // return the {std::complex<float>} singleton
-    return NATIVE_COMPLEX_FLOAT;
-}
-
-template <>
-auto
-pyre::h5::datatype(const std::complex<double> *) -> const H5::DataType &
-{
-    // return the {std::complex<double>} singleton
-    return NATIVE_COMPLEX_DOUBLE;
 }
 
 
