@@ -32,9 +32,6 @@ namespace pyre::h5 {
     template <>
     inline auto datatype(const std::complex<double> *) -> const datatype_t &;
 
-    // support for the two common {std::complex} instantiations
-    extern H5::CompType NATIVE_COMPLEX_FLOAT;
-    extern H5::CompType NATIVE_COMPLEX_DOUBLE;
 } // namespace pyre::h5
 
 
