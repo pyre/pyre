@@ -10,11 +10,11 @@
 #include "forward.h"
 
 
-// file objects
+// datasets
 void
 h5::py::dataset(py::module & m)
 {
-    // add bindings for hdf5 file objects
+    // add bindings for hdf5 datasets
     auto cls = py::class_<Dataset>(
         // in scope
         m,
