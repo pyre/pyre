@@ -24,6 +24,8 @@ namespace pyre::h5 {
     using dataset_t = H5::DataSet;
     using dataspace_t = H5::DataSpace;
     using datatype_t = H5::DataType;
+    using comptype_t = H5::CompType;
+    using predtype_t = H5::PredType;
 } // namespace pyre::h5
 
 
