@@ -12,40 +12,16 @@
 
 // file objects
 void
-h5::py::datatype(py::module & m)
+h5::py::datatypes::native(py::module & m)
 {
-    // add bindings for hdf5 datatypes
-    auto datatype = py::class_<DataType>(
-        // in scope
-        m,
-        // class name
-        "DataType",
-        // docstring
-        "an HDF5 datatype");
-
-    auto pred = py::class_<PredType, DataType>(
-        // in scope
-        m,
-        // class name
-        "PredType",
-        // docstring
-        "an HDF5 predefined datatype");
-
-    // make a new namespace to hold builtin datatype descriptions
-    auto datatypes = m.def_submodule(
-        // the name of the module
-        "datatypes",
-        // its docstring
-        "a collection of predefined types");
-
     // make a new namespace to hold native datatype descriptions
-    auto native = datatypes.def_submodule(
+    auto native = m.def_submodule(
         // the name of the module
         "native",
         // its docstring
         "a collection of native types");
 
-    // add the datatypes
+    // add a selection of datatypes
     native.attr("char") = H5::PredType::NATIVE_CHAR;
     native.attr("unsigned_char") = H5::PredType::NATIVE_UCHAR;
     native.attr("short") = H5::PredType::NATIVE_SHORT;
