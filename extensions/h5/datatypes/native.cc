@@ -23,13 +23,13 @@ h5::py::datatypes::native(py::module & m)
 
     // add a selection of datatypes
     native.attr("char") = H5::PredType::NATIVE_CHAR;
-    native.attr("unsigned_char") = H5::PredType::NATIVE_UCHAR;
+    native.attr("unsignedChar") = H5::PredType::NATIVE_UCHAR;
     native.attr("short") = H5::PredType::NATIVE_SHORT;
-    native.attr("unsigned_short") = H5::PredType::NATIVE_USHORT;
+    native.attr("unsignedShort") = H5::PredType::NATIVE_USHORT;
     native.attr("int") = H5::PredType::NATIVE_INT;
-    native.attr("unsigned_int") = H5::PredType::NATIVE_UINT;
+    native.attr("unsignedInt") = H5::PredType::NATIVE_UINT;
     native.attr("long") = H5::PredType::NATIVE_LONG;
-    native.attr("unsigned_long") = H5::PredType::NATIVE_ULONG;
+    native.attr("unsignedLong") = H5::PredType::NATIVE_ULONG;
     native.attr("float") = H5::PredType::NATIVE_FLOAT;
     native.attr("double") = H5::PredType::NATIVE_DOUBLE;
 
