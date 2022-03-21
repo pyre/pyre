@@ -8,7 +8,7 @@
 #define pyre_h5_api_h
 
 
-// publicly visible types
+// interface
 namespace pyre::h5 {
 
     // datasets: basic IO
