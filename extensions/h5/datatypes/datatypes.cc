@@ -24,6 +24,8 @@ h5::py::datatypes::datatypes(py::module & m)
     // add the class definitions
     // the base data types
     datatype(datatypes);
+    // compound datatypes
+    compound(datatypes);
     // predefined datatypes
     predefined(datatypes);
     // add the constants that correspond to the native types

@@ -50,6 +50,7 @@ namespace h5::py {
     using DataSet = H5::DataSet;
     using DataSpace = H5::DataSpace;
     using DataType = H5::DataType;
+    using CompType = H5::CompType;
     using File = H5::H5File;
     using PredType = H5::PredType;
 
