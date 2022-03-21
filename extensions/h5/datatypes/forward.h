@@ -15,6 +15,7 @@ namespace h5::py::datatypes {
 
     // datatype classes
     void datatype(py::module &);
+    void compound(py::module &);
     void predefined(py::module &);
 
     // constants
