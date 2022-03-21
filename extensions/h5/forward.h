@@ -13,14 +13,19 @@ namespace h5::py {
     // the module api
     void api(py::module &);
 
-    // datatypes
-    void datatype(py::module &);
     // datasets
     void dataset(py::module &);
     // files
     void file(py::module &);
 
 } // namespace h5::py
+
+
+// datatypes are in their own naespace
+namespace h5::py::datatypes {
+    // datatypes
+    void datatypes(py::module &);
+} // namespace h5::py::datatypes
 
 
 #endif

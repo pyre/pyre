@@ -21,7 +21,7 @@ PYBIND11_MODULE(h5, m)
 
     // bindings
     h5::py::dataset(m);
-    h5::py::datatype(m);
+    h5::py::datatypes::datatypes(m);
     h5::py::file(m);
 
     // all done
