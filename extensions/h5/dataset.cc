@@ -15,11 +15,11 @@ void
 h5::py::dataset(py::module & m)
 {
     // add bindings for hdf5 datasets
-    auto cls = py::class_<Dataset>(
+    auto cls = py::class_<DataSet>(
         // in scope
         m,
         // class name
-        "Dataset",
+        "DataSet",
         // docstring
         "an HDF5 dataset");
 
@@ -29,7 +29,7 @@ h5::py::dataset(py::module & m)
         // the name
         "cell",
         // the implementation
-        [](const Dataset & self) {
+        [](const DataSet & self) {
             // get my type class
             return self.getTypeClass();
         },
@@ -42,7 +42,7 @@ h5::py::dataset(py::module & m)
         // the name
         "shape",
         // the implementation
-        [](const Dataset & self) -> dims_t {
+        [](const DataSet & self) -> dims_t {
             // get my dataspace
             auto space = self.getSpace();
             // ask it for its rank
@@ -63,7 +63,7 @@ h5::py::dataset(py::module & m)
         // the name
         "int",
         // the implementation
-        [](const Dataset & self) -> long {
+        [](const DataSet & self) -> long {
             // get my type
             auto type = self.getTypeClass();
             // check whether i can be converted to an integer
@@ -97,7 +97,7 @@ h5::py::dataset(py::module & m)
         // the name
         "double",
         // the implementation
-        [](const Dataset & self) -> double {
+        [](const DataSet & self) -> double {
             // get my type
             auto type = self.getTypeClass();
             // check whether i can be converted to a floating point number
@@ -131,7 +131,7 @@ h5::py::dataset(py::module & m)
         // the name
         "str",
         // the implementation
-        [](const Dataset & self) -> string_t {
+        [](const DataSet & self) -> string_t {
             // get my type
             auto type = self.getTypeClass();
             // check whether i can be converted to a string
@@ -165,7 +165,7 @@ h5::py::dataset(py::module & m)
         // the name
         "ints",
         // the implementation
-        [](const Dataset & self) -> ints_t {
+        [](const DataSet & self) -> ints_t {
             // get my type
             auto type = self.getTypeClass();
             // check whether i contain integers
@@ -230,7 +230,7 @@ h5::py::dataset(py::module & m)
         // the name
         "doubles",
         // the implementation
-        [](const Dataset & self) -> doubles_t {
+        [](const DataSet & self) -> doubles_t {
             // get my type
             auto type = self.getTypeClass();
             // check whether i contain doubles
@@ -295,7 +295,7 @@ h5::py::dataset(py::module & m)
         // the name
         "strings",
         // the implementation
-        [](const Dataset & self) -> strings_t {
+        [](const DataSet & self) -> strings_t {
             // get my type
             auto type = self.getTypeClass();
             // check whether i can be converted to a list of strings
@@ -348,7 +348,7 @@ h5::py::dataset(py::module & m)
             // make a slot
             const hsize_t one = 1;
             // we always write one string at offset zero
-            auto write = Dataspace(1, &one);
+            auto write = DataSpace(1, &one);
             // and read from the dataset space
             auto read = self.getSpace();
 

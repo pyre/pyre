@@ -47,9 +47,11 @@ namespace h5::py {
     using strings_t = std::vector<string_t>;
 
     // aliases of hdf5 entities
-    using Dataset = H5::DataSet;
-    using Dataspace = H5::DataSpace;
+    using DataSet = H5::DataSet;
+    using DataSpace = H5::DataSpace;
+    using DataType = H5::DataType;
     using File = H5::H5File;
+    using PredType = H5::PredType;
 
 } // namespace h5::py
 
