@@ -306,6 +306,24 @@ pyre::py::grid::constgridInterface(py::class_<gridT> & cls)
         // the docstring
         "get the value at the specified {index}");
 
+    // by tuple
+    cls.def(
+        // the name of the method
+        "__getitem__",
+        // the implementation
+        [](const gridT & self, const std::vector<typename gridT::index_type::rank_type> & index) {
+            // make an index
+            auto idx = typename gridT::index_type();
+            // fill it
+            std::copy(index.begin(), index.end(), idx.begin());
+            // get the value at the given {index} and return it
+            return self.at(idx);
+        },
+        // the signature
+        "index"_a,
+        // the docstring
+        "get the value at the specified {index}");
+
     // by offset
     cls.def(
         // the name of the method
