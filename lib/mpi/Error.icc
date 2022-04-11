@@ -25,6 +25,15 @@ pyre::mpi::Error::Error(int code):
 {}
 
 
+// interface
+auto
+pyre::mpi::Error::code() const -> int
+{
+    // easy enough
+    return _code;
+}
+
+
 #endif
 
 // end of file

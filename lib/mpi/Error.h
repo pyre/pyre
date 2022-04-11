@@ -13,21 +13,22 @@
 
 
 // forward declarations
-namespace pyre {
-    namespace mpi {
-        class Error;
-    }
-}
+namespace pyre { namespace mpi {
+    class Error;
+}} // namespace pyre::mpi
 
 // a wrapper around MPI_Error
 class pyre::mpi::Error : public std::exception {
+    // interface
+public:
+    inline auto code() const -> int;
 
-// meta-methods
+    // meta-methods
 public:
     inline Error(int code);
     inline ~Error();
 
-// data
+    // data
 private:
     int _code; // the raw MPI error code
 };
