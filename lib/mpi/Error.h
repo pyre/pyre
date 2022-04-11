@@ -5,17 +5,15 @@
 // (c) 1998-2022 all rights reserved
 //
 
-#if !defined(pyre_mpi_Error_h__)
-#define pyre_mpi_Error_h__
-
-
-// access to the base class
+#if !defined(pyre_mpi_Error_h)
+#define pyre_mpi_Error_h
 
 
 // forward declarations
-namespace pyre { namespace mpi {
+namespace pyre::mpi {
     class Error;
-}} // namespace pyre::mpi
+} // namespace pyre::mpi
+
 
 // a wrapper around MPI_Error
 class pyre::mpi::Error : public std::exception {
