@@ -7,7 +7,6 @@
 
 
 # externals
-import collections
 from .. import tracking # for locators
 from ..traits.Property import Property as properties # to get the default trait type
 # superclass
