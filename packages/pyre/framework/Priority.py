@@ -123,6 +123,18 @@ class Package(Priority):
     __slots__ = ()
 
 
+class Construction(Priority):
+    """
+    Category for the priorities of values retrieved from explicit arguments to the component
+    constructor
+    """
+    # public data
+    name = 'construction'
+    category = next(categories)
+    # narrow the footprint
+    __slots__ = ()
+
+
 class Persistent(Priority):
     """
     Category for the priorities of values retrieved from an application supplied persistent
@@ -186,6 +198,8 @@ Priority.defaults = Defaults
 Priority.boot = Boot
 Priority.package = Package
 Priority.command = Command
+Priority.construction = Construction
+Priority.persistent = Persistent
 Priority.user = User
 Priority.explicit = Explicit
 Priority.framework = Framework
