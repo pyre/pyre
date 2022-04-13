@@ -255,7 +255,7 @@ class Application(pyre.component, metaclass=Director):
 
         # check how the runtime was invoked
         argv0 = sys.argv[0] # this is guaranteed to exist, but may be empty
-        # if it's not empty
+        # if it's not empty, i was instantiated from within a script; hopefully, one of mine
         if argv0:
             # turn into an absolute path
             argv0 = pyre.primitives.path(argv0).resolve()
@@ -263,40 +263,34 @@ class Application(pyre.component, metaclass=Director):
             if argv0.exists():
                 # split the folder name and save it; that's where i am from...
                 home = argv0.parent
+                # and my prefix is its parent folder
+                prefix =  home.parent
 
-        # get my namespace
-        namespace = self.pyre_namespace
-        # if i have my own home and my own namespace
-        if home and namespace:
-            # my configuration directory should be at {home}/../defaults/{namespace}
-            cfg = home.parent / self.DEFAULTS / namespace
-            # if this exists
-            if cfg.isDirectory():
-                # form my prefix
-                prefix = home.parent
-                # and normalize my configuration directory
-                defaults = cfg
-                # all done
-                return home, prefix, defaults
-
-        # let's try to work with my package and my namespace
+        # at this point, i either have both {home} and {prefix}, or neither; there isn't much more
+        # to be done about {home}, but i still have a shot to find the system {defaults} by
+        # examining my {package}
         package = self.pyre_package()
-        # if they both exist
-        if package and namespace:
-            # get the package prefix
+        # if i don't know my {prefix} and my package has one
+        if prefix is None and package.prefix:
+            # use it; it's almost certainly a better choice that leaving it empty
             prefix = package.prefix
-            # if it exists
-            if prefix:
-                # my configuration directory should be at {prefix}/defaults/{namespace}
-                cfg = prefix / package.DEFAULTS / namespace
-                # if this exists
-                if cfg.isDirectory():
-                    # and normalize my configuration directory
-                    defaults = cfg
-                    # all done
-                    return home, prefix, defaults
 
-        # all done
+        # finding my {defaults} directory requires me to have a namespace
+        namespace = self.pyre_namespace
+
+        # if i don't have both
+        if not prefix or not namespace:
+            # not much more to do
+            return home, prefix, defaults
+
+        # look for my configuration directory
+        cfg = prefix / self.DEFAULTS / namespace
+        # if it exists
+        if cfg.isDirectory():
+            # all done
+            return home, prefix, cfg
+
+        # otherwise, not much else to do
         return home, prefix, defaults
 
 
