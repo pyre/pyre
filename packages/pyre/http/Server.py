@@ -54,15 +54,19 @@ class Server(pyre.nexus.server, family='pyre.nexus.servers.http'):
         """
         Initiate or continue a conversation with a peer over {channel}
         """
-        # we are here because the {channel} has data for me; one of the following is true
+        # we are here because {channel} has data for me; one of the following is true
         #
         # - this is the notification that the connection has been closed by the peer; in this
         #   case the channel contains exactly zero bytes for us; we check for this one early
-        # - this the first time this peer connects
+        #
+        # - this is the first time this peer connects
+        #
         # - more data for an existing request have arrived
+        #
         # - this is a known peer whose previous request was handled but has kept the connection
         #   alive; this case may not survive as it can be handled by starting a new request
         #   every time without closing the connection
+        #
         # - the client has pipelined its requests; currently, this case is not handled
         #   correctly because it involves saving the local buffers
 
@@ -134,7 +138,7 @@ class Server(pyre.nexus.server, family='pyre.nexus.servers.http'):
         """
         Fulfill the given fully formed client {request}
         """
-        # delegate to the app to build a response a message and return it
+        # delegate to the app to build a response and return it
         return self.application.pyre_respond(server=self, request=request)
 
 
