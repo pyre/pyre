@@ -27,9 +27,11 @@ pyre::viz::filters::Parametric<sourceT>::operator*() const -> value_type
     // get the value from my {_source}
     auto value = *_source;
     // unpack my interval
-    auto [low, hi] = _interval;
+    auto [low, high] = _interval;
+    // clip {value} to my {_interval}
+    value = std::max(low, std::min(high, value));
     // scale it
-    auto p = (value - low) / (hi - low);
+    auto p = (value - low) / (high - low);
     // and return it
     return p;
 }
