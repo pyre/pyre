@@ -23,6 +23,9 @@ namespace pyre::viz::filters {
     // a filter that adds two others
     template <class op1T, class op2T>
     using add_t = Add<op1T, op2T>;
+    // map a [0,1] interval into a portion of an interval
+    template <class sourceT>
+    using affine_t = Affine<sourceT>;
     // extract the amplitude of a complex dataset
     template <class sourceT>
     using amplitude_t = Amplitude<sourceT>;
