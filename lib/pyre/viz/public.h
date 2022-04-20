@@ -23,6 +23,7 @@
 #include "filters/Affine.h"
 #include "filters/Amplitude.h"
 #include "filters/Constant.h"
+#include "filters/Cycle.h"
 #include "filters/Decimate.h"
 #include "filters/Geometric.h"
 #include "filters/Imaginary.h"

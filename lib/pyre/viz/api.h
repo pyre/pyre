@@ -32,6 +32,9 @@ namespace pyre::viz::filters {
     // supply a constant value
     template <typename valueT = double>
     using constant_t = Constant<valueT>;
+    // compute phase as a cycle in [0,1]
+    template <typename valueT = double>
+    using cycle_t = Cycle<valueT>;
     // a simple compressor that just drops pixels
     template <class sourceT>
     using decimate_t = Decimate<sourceT>;
