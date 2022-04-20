@@ -17,14 +17,15 @@ public:
     using source_type = sourceT;
     // and its reference type
     using source_const_reference = const source_type &;
-
     // my value type
     using value_type = double;
+    // my interval
+    using interval_type = interval_t;
 
     // metamethods
 public:
     // constructor
-    inline Cycle(source_const_reference source);
+    inline Cycle(source_const_reference source, interval_type interval);
 
     // interface
 public:
@@ -34,6 +35,7 @@ public:
     // implementation details: data
 private:
     source_type _source;
+    interval_type _interval;
 
     // default metamethods
 public:

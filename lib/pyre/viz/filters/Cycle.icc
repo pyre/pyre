@@ -12,7 +12,9 @@
 // metamethods
 // constructor
 template <class sourceT>
-pyre::viz::filters::Cycle<sourceT>::Cycle(source_const_reference source) : _source(source)
+pyre::viz::filters::Cycle<sourceT>::Cycle(source_const_reference source, interval_type interval) :
+    _source(source),
+    _interval(interval)
 {}
 
 
@@ -28,8 +30,10 @@ pyre::viz::filters::Cycle<sourceT>::operator*() const -> value_type
         // by shifting it over
         cycle += 1;
     }
-    // and done
-    return cycle;
+    // unpack my interval
+    auto [low, high] = _interval;
+    // scale it and return it
+    return low + cycle * (high - low);
 }
 
 
