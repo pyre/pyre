@@ -34,6 +34,9 @@ namespace pyre::viz {
         // supply a constant value
         template <typename valueT>
         class Constant;
+        // compute phase as a cycle in [0,1]
+        template <typename valueT>
+        class Cycle;
         // a simple compressor that just drops pixels
         template <class sourceT>
         class Decimate;
