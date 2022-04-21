@@ -71,6 +71,8 @@ class Server(pyre.nexus.server, family='pyre.nexus.servers.http'):
         # - the client has pipelined its requests; currently, this case is not handled
         #   correctly because it involves saving the local buffers
 
+        # make a channel for reporting request and response information
+        headerReport = journal.debug("pyre.http.headers")
         # get the application context
         application = self.application
         # show me
@@ -121,7 +123,22 @@ class Server(pyre.nexus.server, family='pyre.nexus.servers.http'):
             # and reschedule this channel
             return True
 
-        # figuring out what the client is asking for is now complete; try to
+        # figuring out what the client is asking for is now complete; if the user wants
+        # to see the headers
+        if headerReport.active:
+            # show me the request info
+            headerReport.line(f"got a {request.command} request")
+            headerReport.line(f"for '{request.url}'")
+            # and the headers
+            headerReport.line(f"with headers")
+            # go through the headers
+            for key, value in request.headers.items():
+                # and show me each one
+                headerReport.line(f"  {key}: {value}")
+            # and report
+            headerReport.log()
+
+        # try to
         try:
             # fulfill the request
             response = self.fulfill(request)
@@ -129,6 +146,17 @@ class Server(pyre.nexus.server, family='pyre.nexus.servers.http'):
         except self.exceptions.ProtocolError as error:
             # send an error report to the client
             return self.respond(channel=channel, request=request, response=error)
+
+        # if the user wants to see the headers
+        if headerReport.active:
+            # sign on
+            headerReport.line(f"sending a response with headers")
+            # go through the headers
+            for key, value in response.headers.items():
+                # and show me eac hone
+                headerReport.line(f"  {key}: {value}")
+            # and report
+            headerReport.log()
 
         # if all goes well, respond
         return self.respond(channel=channel, request=request, response=response)
@@ -170,7 +198,7 @@ class Server(pyre.nexus.server, family='pyre.nexus.servers.http'):
                 channel.line(f"with headers")
                 # go through the headers
                 for key, value in request.headers.items():
-                    # and show me eachone
+                    # and show me each one
                     channel.line(f"  {key}: {value}")
                 # and complain
                 channel.log()
