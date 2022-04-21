@@ -7,6 +7,7 @@
 
 
 # externals
+import journal
 import pyre
 
 
@@ -110,7 +111,7 @@ class Server(pyre.nexus.server, family='pyre.nexus.servers.http'):
         # if something wrong happened
         except self.exceptions.ProtocolError as error:
             # send an error report to the client
-            return self.respond(channel=channel, response=error)
+            return self.respond(channel=channel, request=request, response=error)
 
         # if request assembly is not finished yet
         if not complete:
@@ -127,10 +128,10 @@ class Server(pyre.nexus.server, family='pyre.nexus.servers.http'):
         # if something bad happened
         except self.exceptions.ProtocolError as error:
             # send an error report to the client
-            return self.respond(channel=channel, response=error)
+            return self.respond(channel=channel, request=request, response=error)
 
         # if all goes well, respond
-        return self.respond(channel=channel, response=response)
+        return self.respond(channel=channel, request=request, response=response)
 
 
     # interface
@@ -142,7 +143,7 @@ class Server(pyre.nexus.server, family='pyre.nexus.servers.http'):
         return self.application.pyre_respond(server=self, request=request)
 
 
-    def respond(self, channel, response):
+    def respond(self, channel, request, response):
         # attempt to
         try:
             # ask the renderer to put together the byte stream
@@ -152,8 +153,27 @@ class Server(pyre.nexus.server, family='pyre.nexus.servers.http'):
             # render the error
             stream = b'\r\n'.join(self.renderer.render(server=self, document=error))
 
-        # either way, send the bytes to the client
-        channel.write(stream)
+        # either way, attempt to
+        try:
+            # send the bytes to the client
+            channel.write(stream)
+        # if anything goes wrong
+        except OSError as error:
+            # make a channel
+            channel = journal.debug("pyre.http.server")
+            # if it is active
+            if channel.active:
+                # build a message
+                channel.line(f"encountered {error}")
+                channel.line(f"while responding to a {request.command} request")
+                channel.line(f"for '{request.url}'")
+                channel.line(f"with headers")
+                # go through the headers
+                for key, value in request.headers.items():
+                    # and show me eachone
+                    channel.line(f"  {key}: {value}")
+                # and complain
+                channel.log()
 
         # if the application wants to terminate
         if response.abort:
@@ -168,7 +188,7 @@ class Server(pyre.nexus.server, family='pyre.nexus.servers.http'):
     def __init__(self, **kwds):
         # chain up
         super().__init__(**kwds)
-        # initialize my connectionn index
+        # initialize my connection index
         self.requests = {}
         # all done
         return
