@@ -64,16 +64,9 @@ class SocketTCP(Socket):
         """
         Write the bytes in {bstr} to my output channel
         """
-        # attempt  to
-        try:
-            # make sure the entire byte string is delivered
-            self.sendall(bstr)
-        # if anything goes wrong
-        except BrokenPipeError:
-            # ignore, but report that nothing was sent
-            return 0
-
-        # otherwise, return the number of bytes sent
+        # make sure the entire byte string is delivered
+        self.sendall(bstr)
+        # and return the number of bytes sent
         return len(bstr)
 
 
