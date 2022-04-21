@@ -20,8 +20,10 @@ namespace pyre::h5 {
         const dataset_t &,
         // the location to start reading from
         const typename gridT::index_type & origin,
-        // and the shape of the block
-        const typename gridT::shape_type & shape) -> gridT;
+        // the shape of the block
+        const typename gridT::shape_type & shape,
+        // and the strides
+        const typename gridT::shape_type & strides) -> gridT;
 
     // support for reading datasets into a {pyre::grid} when the caller supplies
     // the correct HDF5 data type
@@ -33,8 +35,10 @@ namespace pyre::h5 {
         const datatype_t &,
         // the location to start reading from
         const typename gridT::index_type & origin,
-        // and the shape of the block
-        const typename gridT::shape_type & shape) -> gridT;
+        // the shape of the block
+        const typename gridT::shape_type & shape,
+        // and the strides
+        const typename gridT::shape_type & strides) -> gridT;
 
 
 } // namespace pyre::h5
