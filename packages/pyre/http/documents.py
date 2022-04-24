@@ -19,7 +19,7 @@ class OK(Response):
     """
     # state
     code = 200
-    status = __doc__
+    status = " ".join(filter(None, (line.strip() for line in __doc__.splitlines())))
     description = "Request fulfilled, document follows"
 
     # interface
