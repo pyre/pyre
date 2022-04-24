@@ -38,20 +38,19 @@ class HTTP(pyre.component, implements=Language):
         """
         Render the document
         """
-        # the string used to assemble the output
-        splicer = '\r\n'
         # unpack
         code = document.code
-        status = document.status
         headers = document.headers
         version = document.version
+        # the standard does not permit {\r} or {\n} in the response opening
+        status = " ".join(line.strip() for line in document.status.splitlines())
 
         # decide which protocol to use
         protocol = self.version if self.version < version else version
         # turn it into a string
         protocol = "{}.{}".format(*protocol)
         # start the response
-        opening = f"HTTP/{protocol} {code}".encode(self.encoding, 'strict')
+        opening = f"HTTP/{protocol} {code} {status}".encode(self.encoding, 'strict')
         # and send it off
         yield opening
 
