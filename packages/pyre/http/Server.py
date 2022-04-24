@@ -150,7 +150,7 @@ class Server(pyre.nexus.server, family='pyre.nexus.servers.http'):
         # if the user wants to see the headers
         if headerReport.active:
             # sign on
-            headerReport.line(f"sending a response with headers")
+            headerReport.line(f"sending a {response.code} response with headers")
             # go through the headers
             for key, value in response.headers.items():
                 # and show me eac hone
