@@ -18,7 +18,7 @@ namespace pyre::viz {
     // {r,g,b} triplets
     using rgb_t = std::tuple<color_t, color_t, color_t>;
     // just to make sure we are all on the same page, wherever it matters
-    using byte_t = char;
+    using byte_t = unsigned char;
 
     // filters
     namespace filters {
