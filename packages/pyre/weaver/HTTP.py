@@ -29,7 +29,7 @@ class HTTP(pyre.component, implements=Language):
 
 
     # public data
-    version = 1,1 # my preferred protocol version
+    version = 1,0 # my preferred protocol version
 
 
     # mill obligations
