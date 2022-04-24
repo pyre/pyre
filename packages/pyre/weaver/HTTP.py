@@ -29,7 +29,7 @@ class HTTP(pyre.component, implements=Language):
 
 
     # public data
-    version = 1,0 # my preferred protocol version
+    version = 1,1 # my preferred protocol version
 
 
     # mill obligations
@@ -48,10 +48,12 @@ class HTTP(pyre.component, implements=Language):
 
         # decide which protocol to use
         protocol = self.version if self.version < version else version
-        # the protocol version
+        # turn it into a string
         protocol = "{}.{}".format(*protocol)
         # start the response
-        yield "HTTP/{} {} {}".format(protocol, code, status).encode(self.encoding, 'strict')
+        opening = f"HTTP/{protocol} {code}".encode(self.encoding, 'strict')
+        # and send it off
+        yield opening
 
         # assemble the payload
         page = self.body(document=document, **kwds)
@@ -59,7 +61,7 @@ class HTTP(pyre.component, implements=Language):
         headers['Content-Length'] = len(page)
 
         # assemble the headers and send them off
-        yield splicer.join(self.header(document=document)).encode(self.encoding, 'strict')
+        yield from self.header(document=document)
         # mark the end of the headers
         yield b''
         # send the page
@@ -73,8 +75,13 @@ class HTTP(pyre.component, implements=Language):
         """
         Render the header of the document
         """
-        # render the headers
-        yield from ("{}: {}".format(key, value) for key,value in document.headers.items())
+        # get my encoding
+        encoding = self.encoding
+        # go through the headers
+        for key, value in document.headers.items():
+            # encode and ship
+            yield f"{key}: {value}".encode(encoding, 'strict')
+
         # all done
         return
 
