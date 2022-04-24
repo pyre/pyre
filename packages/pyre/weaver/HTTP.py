@@ -41,9 +41,8 @@ class HTTP(pyre.component, implements=Language):
         # unpack
         code = document.code
         headers = document.headers
+        status = document.status
         version = document.version
-        # the standard does not permit {\r} or {\n} in the response opening
-        status = " ".join(line.strip() for line in document.status.splitlines())
 
         # decide which protocol to use
         protocol = self.version if self.version < version else version
