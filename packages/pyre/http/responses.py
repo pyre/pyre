@@ -17,7 +17,7 @@ class Continue(ProtocolError):
     """
     # state
     code = 100
-    status = __doc__
+    status = " ".join(filter(None, (line.strip() for line in __doc__.splitlines())))
     description = "Request received, please continue"
 
 
@@ -27,7 +27,7 @@ class SwitchingProtocols(ProtocolError):
     """
     # state
     code = 101
-    status = __doc__
+    status = " ".join(filter(None, (line.strip() for line in __doc__.splitlines())))
     description = "Switching to new protocol; obey Upgrade header"
 
 
@@ -37,7 +37,7 @@ class Created(ProtocolError):
     """
     # state
     code = 201
-    status = __doc__
+    status = " ".join(filter(None, (line.strip() for line in __doc__.splitlines())))
     description = "Document created, URL follows"
 
 
@@ -47,7 +47,7 @@ class Accepted(ProtocolError):
     """
     # state
     code = 202
-    status = __doc__
+    status = " ".join(filter(None, (line.strip() for line in __doc__.splitlines())))
     description = "Request accepted, processing continues off-line"
 
 
@@ -57,7 +57,7 @@ class NonAuthoritativeInformation(ProtocolError):
     """
     # state
     code = 203
-    status = __doc__
+    status = " ".join(filter(None, (line.strip() for line in __doc__.splitlines())))
     description = "Request fulfilled from cache"
 
 
@@ -67,7 +67,7 @@ class NoContent(ProtocolError):
     """
     # state
     code = 204
-    status = __doc__
+    status = " ".join(filter(None, (line.strip() for line in __doc__.splitlines())))
     description = "Request fulfilled, nothing follows"
 
 
@@ -77,8 +77,8 @@ class ResetContent(ProtocolError):
     """
     # state
     code = 205
-    status = __doc__
-    description = "Clear input form for further input."
+    status = " ".join(filter(None, (line.strip() for line in __doc__.splitlines())))
+    description = "Clear input form for further input"
 
 
 
@@ -88,8 +88,8 @@ class PartialContent(ProtocolError):
     """
     # state
     code = 206
-    status = __doc__
-    description = "Partial content follows."
+    status = " ".join(filter(None, (line.strip() for line in __doc__.splitlines())))
+    description = "Partial content follows"
 
 
 class MultipleChoices(ProtocolError):
@@ -98,7 +98,7 @@ class MultipleChoices(ProtocolError):
     """
     # state
     code = 300
-    status = __doc__
+    status = " ".join(filter(None, (line.strip() for line in __doc__.splitlines())))
     description = "Object has several resources -- see URI list"
 
 
@@ -108,7 +108,7 @@ class MovedPermanently(ProtocolError):
     """
     # state
     code = 301
-    status = __doc__
+    status = " ".join(filter(None, (line.strip() for line in __doc__.splitlines())))
     description = "Object moved permanently -- see URI list"
 
 
@@ -118,7 +118,7 @@ class Found(ProtocolError):
     """
     # state
     code = 302
-    status = __doc__
+    status = " ".join(filter(None, (line.strip() for line in __doc__.splitlines())))
     description = "Object moved temporarily -- see URI list"
 
 
@@ -128,7 +128,7 @@ class SeeOther(ProtocolError):
     """
     # state
     code = 303
-    status = __doc__
+    status = " ".join(filter(None, (line.strip() for line in __doc__.splitlines())))
     description = "Object moved -- see Method and URL list"
 
 
@@ -138,7 +138,7 @@ class NotModified(ProtocolError):
     """
     # state
     code = 304
-    status = __doc__
+    status = " ".join(filter(None, (line.strip() for line in __doc__.splitlines())))
     description = "Document has not changed since given time"
 
 
@@ -148,8 +148,8 @@ class UseProxy(ProtocolError):
     """
     # state
     code = 305
-    status = __doc__
-    description = "You must use proxy specified in Location to access this resource."
+    status = " ".join(filter(None, (line.strip() for line in __doc__.splitlines())))
+    description = "You must use proxy specified in Location to access this resource"
 
 
 class TemporaryRedirect(ProtocolError):
@@ -158,7 +158,7 @@ class TemporaryRedirect(ProtocolError):
     """
     # state
     code = 307
-    status = __doc__
+    status = " ".join(filter(None, (line.strip() for line in __doc__.splitlines())))
     description = "Object moved temporarily -- see URI list"
 
 
@@ -168,7 +168,7 @@ class BadRequestSyntax(ProtocolError):
     """
     # state
     code = 400
-    status = __doc__
+    status = " ".join(filter(None, (line.strip() for line in __doc__.splitlines())))
     description = "Bad request syntax or unsupported method"
 
 
@@ -178,7 +178,7 @@ class Unauthorized(ProtocolError):
     """
     # state
     code = 401
-    status = __doc__
+    status = " ".join(filter(None, (line.strip() for line in __doc__.splitlines())))
     description = "No permission -- see authorization schemes"
 
 
@@ -188,7 +188,7 @@ class PaymentRequired(ProtocolError):
     """
     # state
     code = 402
-    status = __doc__
+    status = " ".join(filter(None, (line.strip() for line in __doc__.splitlines())))
     description = "No payment -- see charging schemes"
 
 
@@ -198,7 +198,7 @@ class Forbidden(ProtocolError):
     """
     # state
     code = 403
-    status = __doc__
+    status = " ".join(filter(None, (line.strip() for line in __doc__.splitlines())))
     description = "Request forbidden -- authorization will not help"
 
 
@@ -208,7 +208,7 @@ class NotFound(ProtocolError):
     """
     # state
     code = 404
-    status = __doc__
+    status = " ".join(filter(None, (line.strip() for line in __doc__.splitlines())))
     description = "Nothing matches the given URI"
 
 
@@ -218,8 +218,8 @@ class MethodNotAllowed(ProtocolError):
     """
     # state
     code = 405
-    status = __doc__
-    description = "Specified method is invalid for this resource."
+    status = " ".join(filter(None, (line.strip() for line in __doc__.splitlines())))
+    description = "Specified method is invalid for this resource"
 
 
 class NotAcceptable(ProtocolError):
@@ -228,8 +228,8 @@ class NotAcceptable(ProtocolError):
     """
     # state
     code = 406
-    status = __doc__
-    description = "URI not available in preferred format."
+    status = " ".join(filter(None, (line.strip() for line in __doc__.splitlines())))
+    description = "URI not available in preferred format"
 
 
 class ProxyAuthenticationRequired(ProtocolError):
@@ -238,8 +238,8 @@ class ProxyAuthenticationRequired(ProtocolError):
     """
     # state
     code = 407
-    status = __doc__
-    description = "You must authenticate with this proxy before proceeding."
+    status = " ".join(filter(None, (line.strip() for line in __doc__.splitlines())))
+    description = "You must authenticate with this proxy before proceeding"
 
 
 class RequestTimeout(ProtocolError):
@@ -248,8 +248,8 @@ class RequestTimeout(ProtocolError):
     """
     # state
     code = 408
-    status = __doc__
-    description = "Request timed out; try again later."
+    status = " ".join(filter(None, (line.strip() for line in __doc__.splitlines())))
+    description = "Request timed out; try again later"
 
 
 class Conflict(ProtocolError):
@@ -258,8 +258,8 @@ class Conflict(ProtocolError):
     """
     # state
     code = 409
-    status = __doc__
-    description = "Request conflict."
+    status = " ".join(filter(None, (line.strip() for line in __doc__.splitlines())))
+    description = "Request conflict"
 
 
 class Gone(ProtocolError):
@@ -268,8 +268,8 @@ class Gone(ProtocolError):
     """
     # state
     code = 410
-    status = __doc__
-    description = "URI no longer exists and has been permanently removed."
+    status = " ".join(filter(None, (line.strip() for line in __doc__.splitlines())))
+    description = "URI no longer exists and has been permanently removed"
 
 
 class LengthRequired(ProtocolError):
@@ -278,8 +278,8 @@ class LengthRequired(ProtocolError):
     """
     # state
     code = 411
-    status = __doc__
-    description = "Client must specify Content-Length."
+    status = " ".join(filter(None, (line.strip() for line in __doc__.splitlines())))
+    description = "Client must specify Content-Length"
 
 
 class PreconditionFailed(ProtocolError):
@@ -288,8 +288,8 @@ class PreconditionFailed(ProtocolError):
     """
     # state
     code = 412
-    status = __doc__
-    description = "Precondition in headers is false."
+    status = " ".join(filter(None, (line.strip() for line in __doc__.splitlines())))
+    description = "Precondition in headers is false"
 
 
 class RequestEntityTooLarge(ProtocolError):
@@ -298,8 +298,8 @@ class RequestEntityTooLarge(ProtocolError):
     """
     # state
     code = 413
-    status = __doc__
-    description = "Entity is too large."
+    status = " ".join(filter(None, (line.strip() for line in __doc__.splitlines())))
+    description = "Entity is too large"
 
 
 class RequestURITooLong(ProtocolError):
@@ -308,8 +308,8 @@ class RequestURITooLong(ProtocolError):
     """
     # state
     code = 414
-    status = __doc__
-    description = "URI is too long."
+    status = " ".join(filter(None, (line.strip() for line in __doc__.splitlines())))
+    description = "URI is too long"
 
 
 class UnsupportedMediaType(ProtocolError):
@@ -318,8 +318,8 @@ class UnsupportedMediaType(ProtocolError):
     """
     # state
     code = 415
-    status = __doc__
-    description = "Entity body in unsupported format."
+    status = " ".join(filter(None, (line.strip() for line in __doc__.splitlines())))
+    description = "Entity body in unsupported format"
 
 
 class RequestedRangeNotSatisfiable(ProtocolError):
@@ -328,8 +328,8 @@ class RequestedRangeNotSatisfiable(ProtocolError):
     """
     # state
     code = 416
-    status = __doc__
-    description = "Cannot satisfy request range."
+    status = " ".join(filter(None, (line.strip() for line in __doc__.splitlines())))
+    description = "Cannot satisfy request range"
 
 
 class ExpectationFailed(ProtocolError):
@@ -338,8 +338,8 @@ class ExpectationFailed(ProtocolError):
     """
     # state
     code = 417
-    status = __doc__
-    description = "Expect condition could not be satisfied."
+    status = " ".join(filter(None, (line.strip() for line in __doc__.splitlines())))
+    description = "Expect condition could not be satisfied"
 
 
 class PreconditionRequired(ProtocolError):
@@ -348,8 +348,8 @@ class PreconditionRequired(ProtocolError):
     """
     # state
     code = 428
-    status = __doc__
-    description = "The origin server requires the request to be conditional."
+    status = " ".join(filter(None, (line.strip() for line in __doc__.splitlines())))
+    description = "The origin server requires the request to be conditional"
 
 
 class TooManyRequests(ProtocolError):
@@ -358,8 +358,8 @@ class TooManyRequests(ProtocolError):
     """
     # state
     code = 429
-    status = __doc__
-    description = "The user has sent too many requests in a given amount of time (rate limiting)."
+    status = " ".join(filter(None, (line.strip() for line in __doc__.splitlines())))
+    description = "The user has sent too many requests in a given amount of time (rate limiting)"
 
 
 class RequestHeaderFieldsTooLarge(ProtocolError):
@@ -368,9 +368,9 @@ class RequestHeaderFieldsTooLarge(ProtocolError):
     """
     # state
     code = 431
-    status = __doc__
+    status = " ".join(filter(None, (line.strip() for line in __doc__.splitlines())))
     description = ("The server is unwilling to process the request because its header fields "
-                  "are too large.")
+                  "are too large")
 
 
 class InternalServerError(ProtocolError):
@@ -379,7 +379,7 @@ class InternalServerError(ProtocolError):
     """
     # state
     code = 500
-    status = __doc__
+    status = " ".join(filter(None, (line.strip() for line in __doc__.splitlines())))
     description = "Server got itself in trouble"
 
 
@@ -389,7 +389,7 @@ class NotImplemented(ProtocolError):
     """
     # state
     code = 501
-    status = __doc__
+    status = " ".join(filter(None, (line.strip() for line in __doc__.splitlines())))
     description = "Server does not support this operation"
 
 
@@ -399,8 +399,8 @@ class BadGateway(ProtocolError):
     """
     # state
     code = 502
-    status = __doc__
-    description = "Invalid responses from another server/proxy."
+    status = " ".join(filter(None, (line.strip() for line in __doc__.splitlines())))
+    description = "Invalid responses from another server/proxy"
 
 
 class ServiceUnavailable(ProtocolError):
@@ -409,7 +409,7 @@ class ServiceUnavailable(ProtocolError):
     """
     # state
     code = 503
-    status = __doc__
+    status = " ".join(filter(None, (line.strip() for line in __doc__.splitlines())))
     description = "The server cannot process the request due to a high load"
 
 
@@ -419,7 +419,7 @@ class GatewayTimeout(ProtocolError):
     """
     # state
     code = 504
-    status = __doc__
+    status = " ".join(filter(None, (line.strip() for line in __doc__.splitlines())))
     description = "The gateway server did not receive a timely response"
 
 
@@ -429,8 +429,8 @@ class HTTPVersionNotSupported(ProtocolError):
     """
     # state
     code = 505
-    status = __doc__
-    description = "Cannot fulfill request."
+    status = " ".join(filter(None, (line.strip() for line in __doc__.splitlines())))
+    description = "Cannot fulfill request"
 
 
 class NetworkAuthenticationRequired(ProtocolError):
@@ -439,8 +439,8 @@ class NetworkAuthenticationRequired(ProtocolError):
     """
     # state
     code = 511
-    status = __doc__
-    description = "The client needs to authenticate to gain network access."
+    status = " ".join(filter(None, (line.strip() for line in __doc__.splitlines())))
+    description = "The client needs to authenticate to gain network access"
 
 
 # end of file
