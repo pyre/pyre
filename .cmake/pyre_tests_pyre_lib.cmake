@@ -80,7 +80,7 @@ add_test(NAME pyre.lib.grid.grid_mmap.cleanup
   COMMAND ${BASH_PROGRAM} -c "rm grid_mmap.data"
   )
 
-# and they need to happen in a spcific order
+# and they need to happen in a specific order
 set_property(TEST pyre.lib.grid.grid_mmap_set.cc PROPERTY
   DEPENDS pyre.lib.grid.grid_mmap_sanity.cc
   )
@@ -181,6 +181,85 @@ pyre_test_driver(pyre.lib/timers/wall_timer_sanity.cc)
 pyre_test_driver(pyre.lib/timers/wall_timer_shared.cc)
 pyre_test_driver(pyre.lib/timers/wall_timer_start.cc)
 pyre_test_driver(pyre.lib/timers/wall_timer_stop.cc)
+
+
+# viz
+pyre_test_driver(pyre.lib/viz/amplitude.cc)
+pyre_test_driver(pyre.lib/viz/bmp.cc)
+pyre_test_driver(pyre.lib/viz/complex.cc)
+pyre_test_driver(pyre.lib/viz/decimate.cc)
+pyre_test_driver(pyre.lib/viz/domain_coloring.cc)
+pyre_test_driver(pyre.lib/viz/hsb.cc)
+pyre_test_driver(pyre.lib/viz/hsl.cc)
+pyre_test_driver(pyre.lib/viz/logsaw.cc)
+pyre_test_driver(pyre.lib/viz/phase.cc)
+pyre_test_driver(pyre.lib/viz/polarsaw.cc)
+
+# some tests require cleanup
+add_test(NAME pyre.lib.viz.amplitude.cleanup
+  COMMAND ${BASH_PROGRAM} -c "rm amplitude.bmp"
+  )
+
+add_test(NAME pyre.lib.viz.bmp.cleanup
+  COMMAND ${BASH_PROGRAM} -c "rm chip.bmp"
+  )
+
+add_test(NAME pyre.lib.viz.complex.cleanup
+  COMMAND ${BASH_PROGRAM} -c "rm complex.bmp"
+  )
+
+add_test(NAME pyre.lib.viz.decimate.cleanup
+  COMMAND ${BASH_PROGRAM} -c "rm decimate.bmp"
+  )
+
+add_test(NAME pyre.lib.viz.domain_coloring.cleanup
+  COMMAND ${BASH_PROGRAM} -c "rm domain_coloring.bmp"
+  )
+
+add_test(NAME pyre.lib.viz.logsaw.cleanup
+  COMMAND ${BASH_PROGRAM} -c "rm logsaw.bmp"
+  )
+
+add_test(NAME pyre.lib.viz.phase.cleanup
+  COMMAND ${BASH_PROGRAM} -c "rm phase.bmp"
+  )
+
+add_test(NAME pyre.lib.viz.polarsaw.cleanup
+  COMMAND ${BASH_PROGRAM} -c "rm polarsaw.bmp"
+  )
+
+# some tests must happen in a specific order
+set_property(TEST pyre.lib.viz.amplitude.cleanup PROPERTY
+  DEPENDS pyre.lib.viz.amplitude.cc
+  )
+
+set_property(TEST pyre.lib.viz.bmp.cleanup PROPERTY
+  DEPENDS pyre.lib.viz.bmp.cc
+  )
+
+set_property(TEST pyre.lib.viz.complex.cleanup PROPERTY
+  DEPENDS pyre.lib.viz.complex.cc
+  )
+
+set_property(TEST pyre.lib.viz.decimate.cleanup PROPERTY
+  DEPENDS pyre.lib.viz.decimate.cc
+  )
+
+set_property(TEST pyre.lib.viz.domain_coloring.cleanup PROPERTY
+  DEPENDS pyre.lib.viz.domain_coloring.cc
+  )
+
+set_property(TEST pyre.lib.viz.logsaw.cleanup PROPERTY
+  DEPENDS pyre.lib.viz.logsaw.cc
+  )
+
+set_property(TEST pyre.lib.viz.phase.cleanup PROPERTY
+  DEPENDS pyre.lib.viz.phase.cc
+  )
+
+set_property(TEST pyre.lib.viz.polarsaw.cleanup PROPERTY
+  DEPENDS pyre.lib.viz.polarsaw.cc
+  )
 
 
 # end of file
