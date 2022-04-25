@@ -113,6 +113,17 @@ pyre::journal::quiet()
 }
 
 
+// set the detail threshold
+void
+pyre::journal::setDetail(int detail)
+{
+    // delegate to the {chronicler_t}
+    chronicler_t::detail(detail);
+    // all done
+    return;
+}
+
+
 // send all channel output to a log file
 void
 pyre::journal::logfile(const path_t & name)
