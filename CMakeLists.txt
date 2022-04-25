@@ -98,7 +98,7 @@ find_package(HDF5 COMPONENTS CXX HL)
 find_package(PostgreSQL)
 
 # python
-find_package(Python 3.6 COMPONENTS Interpreter Development NumPy)
+find_package(Python 3.7 COMPONENTS Interpreter Development NumPy)
 
 # for building bindings
 # require c++17
