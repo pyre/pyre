@@ -14,6 +14,7 @@
 // type aliases
 using bmp_t = pyre::viz::bmp_t;
 using color_t = pyre::viz::color_t;
+using ofstream_t = pyre::viz::ofstream_t;
 
 // driver
 int
@@ -45,7 +46,7 @@ main(int argc, char * argv[])
     auto img = bmp.encode(start);
 
     // open a file
-    std::ofstream str("chip.bmp", std::ios::out | std::ios::binary);
+    ofstream_t str("chip.bmp", std::ios::out | std::ios::binary);
     // if we succeeded
     if (str.is_open()) {
         // ask for the stream size
