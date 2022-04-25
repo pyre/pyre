@@ -25,8 +25,10 @@ using polar_t = pyre::viz::filters::polarsaw_t<phase_t>;
 // my color map
 using graymap_t = pyre::viz::colormaps::gray_t<polar_t>;
 
-// and the workflow terminal
+// the workflow terminal
 using bmp_t = pyre::viz::bmp_t;
+// and a stream to write it into
+using ofstream_t = pyre::viz::ofstream_t;
 
 
 // driver
@@ -69,7 +71,7 @@ main(int argc, char * argv[])
     auto img = bmp.encode(colormap);
 
     // open a file
-    std::ofstream str("polarsaw.bmp", std::ios::out | std::ios::binary);
+    ofstream_t str("polarsaw.bmp", std::ios::out | std::ios::binary);
     // if we succeeded
     if (str.is_open()) {
         // ask for the stream size

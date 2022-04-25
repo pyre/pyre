@@ -33,8 +33,10 @@ using constant_t = pyre::viz::filters::constant_t<double>;
 // my color map
 using hsb_t = pyre::viz::colormaps::hsb_t<phase_t, constant_t, mul_t>;
 
-// and the workflow terminal
+// the workflow terminal
 using bmp_t = pyre::viz::bmp_t;
+// and a stream to write it into
+using ofstream_t = pyre::viz::ofstream_t;
 
 
 // driver
@@ -84,7 +86,7 @@ main(int argc, char * argv[])
     auto img = bmp.encode(colormap);
 
     // open a file
-    std::ofstream str("decimate.bmp", std::ios::out | std::ios::binary);
+    ofstream_t str("decimate.bmp", std::ios::out | std::ios::binary);
     // if we succeeded
     if (str.is_open()) {
         // ask for the stream size
