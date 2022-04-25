@@ -22,13 +22,15 @@ using proctimer_t = pyre::timers::process_timer_t;
 
 
 // verify that we can manipulate the timer state
-int main() {
+int
+main()
+{
     // take a timestamp
     auto zero = proctimer_t::clock_type::now();
 
     // do something
-    double sum=0;
-    for (int i=0; i < 1000*1000; ++i) {
+    [[maybe_unused]] double sum = 0;
+    for (int i = 0; i < 1000 * 1000; ++i) {
         sum += i;
     }
 
@@ -38,9 +40,9 @@ int main() {
     auto mark = timer.start();
 
     // verify it is now active
-    assert (timer.active() == true);
+    assert(timer.active() == true);
     // and that its timestamp is later than our mark
-    assert (mark > zero);
+    assert(mark > zero);
 
     // all done
     return 0;
