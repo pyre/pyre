@@ -25,7 +25,7 @@ auto
 pyre::viz::filters::Parametric<sourceT>::operator*() const -> value_type
 {
     // get the value from my {_source}
-    auto value = *_source;
+    value_type value = *_source;
     // unpack my interval
     auto [low, high] = _interval;
     // clip {value} to my {_interval}
