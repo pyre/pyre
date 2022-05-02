@@ -43,7 +43,7 @@ main(int argc, char * argv[])
     // point to the beginning of the data
     auto start = data.begin();
     // encode
-    auto img = bmp.encode(start);
+    const char * img = reinterpret_cast<char *>(bmp.encode(start));
 
     // open a file
     ofstream_t str("chip.bmp", std::ios::out | std::ios::binary);

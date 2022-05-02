@@ -83,7 +83,7 @@ main(int argc, char * argv[])
     // make a bitmap
     bmp_t bmp(shape[0] / scale, shape[1] / scale);
     // connect it to the color map
-    auto img = bmp.encode(colormap);
+    const char * img = reinterpret_cast<char *>(bmp.encode(colormap));
 
     // open a file
     ofstream_t str("decimate.bmp", std::ios::out | std::ios::binary);

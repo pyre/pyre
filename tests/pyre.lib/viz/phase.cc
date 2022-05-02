@@ -70,7 +70,7 @@ main(int argc, char * argv[])
     // make a bitmap
     bmp_t bmp(bins, bins);
     // connect it to the color map
-    auto img = bmp.encode(colormap);
+    const char * img = reinterpret_cast<char *>(bmp.encode(colormap));
 
     // open a file
     ofstream_t str("phase.bmp", std::ios::out | std::ios::binary);
