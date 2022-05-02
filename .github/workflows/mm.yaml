@@ -20,16 +20,16 @@ jobs:
       matrix:
         os: [ubuntu-20.04]
         target: [debug, opt]
-        python: [3.8, 3.9, 3.10]
+        python: ["3.8", "3.9", "3.10"]
         suite: [clang, gcc]
-        suiteVersion: [9, 10, 11, 12]
+        suiteVersion: ["9", "10", "11", "12"]
         exclude:
           - suite: gcc
-            suiteVersion: 12
+            suiteVersion: "12"
           - suite: gcc
-            suiteVersion: 11
+            suiteVersion: "11"
           - suite: clang
-            suiteVersion: 9
+            suiteVersion: "9"
 
     steps:
       - name: ${{matrix.os}} refresh
