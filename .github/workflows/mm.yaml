@@ -20,7 +20,7 @@ jobs:
       matrix:
         os: [ubuntu-20.04]
         target: [debug, opt]
-        python: [3.8, 3.9]
+        python: [3.8, 3.9, 3.10]
         suite: [clang, gcc]
         suiteVersion: [9, 10, 11, 12]
         exclude:
