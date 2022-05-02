@@ -75,6 +75,7 @@ namespace pyre::viz::filters {
 
 // conversions from other color spaces to {rgb}
 namespace pyre::viz::colorspaces {
+    inline auto hl(double h, double l, double dominant = 1.0, double threshold = 0.4) -> viz::rgb_t;
     inline auto hsb(double h, double s, double b) -> viz::rgb_t;
     inline auto hsl(double h, double s, double l) -> viz::rgb_t;
 } // namespace pyre::viz::colorspaces
@@ -89,6 +90,9 @@ namespace pyre::viz::colormaps {
 
     template <class hueSourceT, class saturationSourceT, class brightnessSourceT>
     using hsb_t = HSB<hueSourceT, saturationSourceT, brightnessSourceT>;
+
+    template <class hueSourceT, class luminositySourceT>
+    using hl_t = HL<hueSourceT, luminositySourceT>;
 
     template <class hueSourceT, class saturationSourceT, class luminositySourceT>
     using hsl_t = HSB<hueSourceT, saturationSourceT, luminositySourceT>;

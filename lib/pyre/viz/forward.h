@@ -78,6 +78,9 @@ namespace pyre::viz {
         template <class sourceT>
         class Gray;
 
+        template <class hueSourceT, class luminositySourceT>
+        class HL;
+
         template <class hueSourceT, class saturationSourceT, class brightnessSourceT>
         class HSB;
 
@@ -90,7 +93,7 @@ namespace pyre::viz {
 
 
     // codecs
-    // micorosoft bitmap
+    // microsoft bitmap
     class BMP;
 
 } // namespace pyre::viz

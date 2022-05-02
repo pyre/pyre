@@ -35,11 +35,13 @@
 #include "filters/Real.h"
 #include "filters/Uniform.h"
 // color spaces
+#include "colorspaces/hl.h"
 #include "colorspaces/hsb.h"
 #include "colorspaces/hsl.h"
 // color maps
 #include "colormaps/Complex.h"
 #include "colormaps/Gray.h"
+#include "colormaps/HL.h"
 #include "colormaps/HSB.h"
 #include "colormaps/HSL.h"
 #include "colormaps/RGB.h"
