@@ -15,10 +15,18 @@ namespace pyre::viz {
     // microsoft bmp
     using bmp_t = BMP;
 
-    // and correctly typed file streams for reading and writing
-    using fstream_t = std::basic_fstream<byte_t>;
-    using ifstream_t = std::basic_ifstream<byte_t>;
-    using ofstream_t = std::basic_ofstream<byte_t>;
+    // and correctly typed file streams for reading and writing to avaoid having to cast
+    // {byte_t *} to {char *}
+    // using fstream_t = std::basic_fstream<byte_t>;
+    // using ifstream_t = std::basic_ifstream<byte_t>;
+    // using ofstream_t = std::basic_ofstream<byte_t>;
+    // N.B. these used to be aliases to {std::?stream<byte_t>} but the llvm libc++ seems to have
+    //      trouble building streams over {unsigned char}
+    // LAST CHECKED: 20220502 with llvm-13:
+    //      implicit instantiation of undefined template std::codecvt<unsigned char, ...>
+    using fstream_t = std::fstream;
+    using ifstream_t = std::ifstream;
+    using ofstream_t = std::ofstream;
 
 } // namespace pyre::viz
 
