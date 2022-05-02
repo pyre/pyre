@@ -14,10 +14,9 @@ pyre::viz::colormaps::HL<hueSourceT, luminositySourceT>::HL(
     // the sources
     hue_source_const_reference hue, luminosity_source_const_reference luminosity,
     // the free parameters
-    double dominant, double threshold) :
+    double threshold) :
     _hue { hue },
     _luminosity { luminosity },
-    _dominant { dominant },
     _threshold { threshold }
 {}
 
@@ -32,7 +31,7 @@ pyre::viz::colormaps::HL<hueSourceT, luminositySourceT>::operator*() const -> rg
     auto luminosity = *_luminosity;
 
     // covert to {rgb} and return
-    return colorspaces::hl(hue, luminosity, _dominant, _threshold);
+    return colorspaces::hl(hue, luminosity, _threshold);
 }
 
 

@@ -12,7 +12,7 @@
 // the kernel maps two values, hue and luminosity to RGB using a colorpmap that is
 // designed for displaying complex values [zebker@stanford.edu, private communication]
 auto
-pyre::viz::colorspaces::hl(double h, double l, double dominant, double threshold) -> viz::rgb_t
+pyre::viz::colorspaces::hl(double h, double l, double threshold) -> viz::rgb_t
 {
     // 2 * π / 3
     const auto angle = 2 * M_PI / 3;
@@ -30,7 +30,7 @@ pyre::viz::colorspaces::hl(double h, double l, double dominant, double threshold
 
     // we mix three values
     // the color dual to the dominant region is at whatever value the user supplied
-    auto dual = l * dominant;
+    auto dual = l;
     // the color at the low end of the region
     auto low = l * (threshold + (1 - threshold) * mix);
     // and the color at the high end of the region
