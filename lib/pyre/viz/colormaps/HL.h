@@ -29,7 +29,7 @@ public:
         // the sources
         hue_source_const_reference hue, luminosity_source_const_reference luminosity,
         // the free parameters
-        double dominant = 1.0, double threshold = 0.4);
+        double threshold = 0.4);
 
     // interface: pretend to be an iterator
 public:
@@ -43,7 +43,6 @@ private:
     // the data source
     hue_source_type _hue;
     luminosity_source_type _luminosity;
-    double _dominant;
     double _threshold;
 
     // default metamethods
