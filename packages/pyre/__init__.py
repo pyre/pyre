@@ -265,7 +265,9 @@ if executive:
     from .shells import application, action, plexus, command, panel
     # support for filesystems
     from . import filesystem
-    # support for workflows
+    # hdf5
+    from . import h5
+    # workflows
     from . import flow
     # document rendering
     from . import weaver
