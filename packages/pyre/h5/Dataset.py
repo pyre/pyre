@@ -6,8 +6,11 @@
 #
 
 
-# publish
-from .Group import Group as group
+# the dataset descriptor base class
+class Dataset:
+    """
+    The base class of all dataset descriptors
+    """
 
 
 # end of file
