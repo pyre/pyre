@@ -62,6 +62,9 @@ namespace pyre::viz {
         // a saw tooth function based on the phase of its input value
         template <class sourceT>
         class PolarSaw;
+        // a power law filter for amplitudes
+        template <class sourceT>
+        class Power;
         // real part of a complex source
         template <class sourceT>
         class Real;
