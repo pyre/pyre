@@ -7,6 +7,10 @@
 
 
 # publish
+# access to a store
+from .H5 import H5 as h5
+
+# datasets
 from .Group import Group as group
 
 
