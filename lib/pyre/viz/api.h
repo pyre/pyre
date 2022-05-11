@@ -72,6 +72,9 @@ namespace pyre::viz::filters {
     // a saw tooth function on the phase of its input value
     template <class sourceT>
     using polarsaw_t = PolarSaw<sourceT>;
+    // a power law filter for signal amplitudes
+    template <class sourceT>
+    using power_t = Power<sourceT>;
     // extract the real part of a complex dataset
     template <class sourceT>
     using real_t = Real<sourceT>;
