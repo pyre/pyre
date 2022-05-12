@@ -21,6 +21,10 @@ using storage_t = pyre::memory::heap_t<data_t>;
 using packing_t = pyre::grid::canonical_t<2>;
 // the container to put them in
 using dataset_t = pyre::grid::grid_t<packing_t, storage_t>;
+// indices
+using index_t = dataset_t::index_type;
+// shapes
+using shape_t = dataset_t::shape_type;
 
 
 // my filters
@@ -29,9 +33,8 @@ using phase_t = pyre::viz::filters::phase_t<decimate_t>;
 using mag_t = pyre::viz::filters::logsaw_t<decimate_t>;
 using pol_t = pyre::viz::filters::polarsaw_t<phase_t>;
 using mul_t = pyre::viz::filters::mul_t<mag_t, pol_t>;
-using constant_t = pyre::viz::filters::constant_t<double>;
 // my color map
-using hsb_t = pyre::viz::colormaps::hsb_t<phase_t, constant_t, mul_t>;
+using hl_t = pyre::viz::colormaps::hl_t<phase_t, mul_t>;
 
 // the workflow terminal
 using bmp_t = pyre::viz::bmp_t;
@@ -46,9 +49,9 @@ main(int argc, char * argv[])
     // a scale
     auto k = 1 << 10;
     // the dataset shape
-    dataset_t::shape_type shape { 4 * k, 4 * k };
+    shape_t shape { 4 * k, 4 * k };
     // use canonical packing
-    dataset_t::packing_type layout { shape };
+    packing_t layout { shape };
     // the spacing
     auto deltaX = 4.0 / (shape[0] - 1);
     auto deltaY = 4.0 / (shape[1] - 1);
@@ -67,19 +70,19 @@ main(int argc, char * argv[])
         data[idx] = f;
     }
 
-    // make a scale
+    // set up a scale
     int scale = 4;
+    // turn it into a shift
+    index_t stride { scale };
     // make the decimator
-    decimate_t decimator { data, layout.origin(), shape / scale, scale };
+    decimate_t decimator { data, layout.origin(), shape, stride };
 
     // make a phase filter for the hue
     auto hue = phase_t(decimator);
     // log sawtooth for the brightness
     auto bright = mul_t(mag_t(decimator), pol_t(hue));
-    // and a constant filter for the saturation
-    auto saturation = constant_t(0.9);
     // make a color map
-    hsb_t colormap(hue, saturation, bright);
+    hl_t colormap(hue, bright);
     // make a bitmap
     bmp_t bmp(shape[0] / scale, shape[1] / scale);
     // connect it to the color map
