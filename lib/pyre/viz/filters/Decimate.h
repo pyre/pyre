@@ -18,6 +18,13 @@ public:
     // and its reference type
     using source_const_reference = const source_type &;
 
+    // packing types
+    using packing_type = typename source_type::packing_type;
+    // indices
+    using index_type = typename source_type::index_type;
+    // shapes
+    using shape_type = typename source_type::shape_type;
+
     // my value type
     using value_type = typename source_type::value_type;
 
@@ -27,10 +34,10 @@ public:
     inline Decimate(
         // the source; expected to be grid-like
         source_const_reference source,
-        // the tile spec, in zoomed coordinates
-        typename source_type::index_type origin, typename source_type::shape_type shape,
-        // the decimation factor
-        int scale);
+        // the tile spec
+        index_type origin, shape_type shape,
+        // decimation control, expressed as an index shift
+        index_type stride);
 
     // interface
 public:
@@ -41,12 +48,6 @@ public:
 private:
     // my source
     source_const_reference _source;
-    // the scaling factor, derived from the input zoom level
-    int _scale;
-    // the origin
-    typename source_type::index_type _origin;
-    // the tile shape encoded in a layout
-    typename source_type::packing_type _layout;
     // my cursor
     typename source_type::index_iterator _cursor;
 
