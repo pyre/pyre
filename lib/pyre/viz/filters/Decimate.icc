@@ -16,21 +16,15 @@ pyre::viz::filters::Decimate<sourceT>::Decimate(
     // the source
     source_const_reference source,
     // the tile origin, in zoomed coordinates
-    typename source_type::index_type origin,
+    index_type origin,
     // the tile shape, in zoomed coordinates
-    typename source_type::shape_type shape,
-    // the zoom level
-    int scale) :
+    shape_type shape,
+    // the decimation factor
+    index_type stride) :
     // record the source
     _source { source },
-    // compute my scale
-    _scale { scale },
-    // the origin
-    _origin { origin },
-    // encode the shape into a layout
-    _layout { shape },
     // initialize my cursor
-    _cursor { _layout.begin() }
+    _cursor { packing_type(shape, origin).begin(stride) }
 {}
 
 
@@ -40,7 +34,7 @@ auto
 pyre::viz::filters::Decimate<sourceT>::operator*() const -> value_type
 {
     // easy enough
-    return _source[_scale * (_origin + *_cursor)];
+    return _source[*_cursor];
 }
 
 
