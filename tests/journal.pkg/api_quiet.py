@@ -12,7 +12,7 @@ def test():
     # get the journal
     import journal
 
-    # suppress all outpuut
+    # suppress all output
     journal.quiet()
 
     # make a channel
