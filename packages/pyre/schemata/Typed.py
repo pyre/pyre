@@ -100,7 +100,7 @@ class Typed:
             # no worries
             pass
 
-        # handle the numeric types
+        # handle numeric types
         if schema in cls.numeric:
             # check whether the client has a 'numeric' mixin
             try:
@@ -111,7 +111,7 @@ class Typed:
                 # no worries
                 pass
 
-        # handle the sequences
+        # handle sequences
         if schema in cls.sequences:
             # check whether the client has a 'sequence' mixin
             try:
@@ -122,7 +122,7 @@ class Typed:
                 # no worries
                 pass
 
-        # handle the sequences
+        # handle mappings
         if schema in cls.mappings:
             # check whether the client has a 'sequence' mixin
             try:
