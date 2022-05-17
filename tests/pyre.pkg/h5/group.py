@@ -6,14 +6,13 @@
 
 
 """
-Check that we can harvest datasets from groups
+Check that we can declare groups
 """
 
 
 # the driver
 def test():
     # support
-    import journal
     import pyre
 
     # make a group
@@ -21,25 +20,6 @@ def test():
         """
         A group of datasets in some HDF5 file
         """
-
-        id = pyre.h5.int(default=0)
-
-
-    # configure the journal
-    journal.application("pyre.h5.group")
-    # make a channel
-    channel = journal.debug("pyre.h5.group")
-
-    # show me
-    channel.line(f"{Group.__name__}")
-
-    # go through the contents of the identifier map
-    channel.line(f"  identifiers:")
-    for name, identifier in Group.pyre_idmap.items():
-        channel.line(f"    {name}: {identifier}")
-
-    # flush
-    channel.log()
 
     # all done
     return
