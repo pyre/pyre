@@ -7,9 +7,7 @@
 
 
 # externals
-import operator
 import itertools
-from .. import tracking
 # superclass
 from .Inventory import Inventory
 

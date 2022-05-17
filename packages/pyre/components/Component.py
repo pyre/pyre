@@ -7,7 +7,6 @@
 
 
 # externals
-import itertools
 import uuid
 from .. import tracking
 # superclass
