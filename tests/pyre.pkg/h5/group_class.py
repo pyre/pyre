@@ -12,6 +12,7 @@ Check that we can harvest datasets from groups
 
 # the driver
 def test():
+
     # support
     import journal
     import pyre
@@ -25,10 +26,10 @@ def test():
         id = pyre.h5.int(default=0)
 
 
-    # configure the journal
+    # configure thejournal
     journal.application("pyre.h5.group")
     # make a channel
-    channel = journal.debug("pyre.h5.group")
+    channel = journal.info("pyre.h5.group")
 
     # show me
     channel.line(f"{Group.__name__}")
