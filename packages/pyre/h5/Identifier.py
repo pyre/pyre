@@ -41,10 +41,8 @@ class Identifier:
             # return the descriptor
             return self
 
-        # otherwise, look up my value in the {inventory} of the {instance}
-        value = instance.pyre_inventory[self]
-        # and return it
-        return value
+        # otherwise, get my value from the {inventory} of the {instance}
+        return self.pyre_get(instance=instance)
 
 
     def __set__(self, instance, value):
@@ -82,6 +80,16 @@ class Identifier:
         self.pyre_name = name
         # all done
         return
+
+
+    def pyre_get(self, instance):
+        """
+        Read my value
+        """
+        # look up my value in the {inventory} of the {instance}
+        value = instance.pyre_inventory[self]
+        # and return it
+        return value
 
 
 # end of file
