@@ -52,6 +52,16 @@ class Identifier:
         print(f"{self.pyre_name}.__set__: {instance=}, {value=}")
 
 
+    def __del__(self, instance):
+        """
+        Delete my value
+        """
+        # remove form the {instance} inventory
+        del instance.pyre_inventory[self]
+        # and done
+        return
+
+
     # rep
     def __str__(self):
         """
