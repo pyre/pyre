@@ -26,8 +26,8 @@ class Identifier:
         """
         Attach my name
         """
-        # attach my name
-        self.pyre_name = name
+        # bind my to my name
+        self.pyre_bind(name=name)
         # all done
         return
 
@@ -42,7 +42,9 @@ class Identifier:
             return self
 
         # otherwise, look up my value in the {inventory} of the {instance}
-        return instance.pyre_inventory[self]
+        value = instance.pyre_inventory[self]
+        # and return it
+        return value
 
 
     def __set__(self, instance, value):
@@ -69,6 +71,17 @@ class Identifier:
         """
         # easy enough
         return "an identifier"
+
+
+    # framework hooks
+    def pyre_bind(self, name):
+        """
+        Bind me to my {name}
+        """
+        # save my name
+        self.pyre_name = name
+        # all done
+        return
 
 
 # end of file
