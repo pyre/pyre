@@ -31,12 +31,13 @@ class Location(Identifier, metaclass=Schema):
         return
 
 
-    def __set_name__(self, cls, name):
+    # framework hooks
+    def pyre_bind(self, name):
         """
         Attach my name
         """
         # chain up
-        super().__set_name__(cls, name)
+        super().pyre_bind(name=name)
         # if i don't have a location
         if self.pyre_location is None:
             # use my name as my location
