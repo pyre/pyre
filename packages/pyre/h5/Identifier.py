@@ -52,7 +52,7 @@ class Identifier:
         print(f"{self.pyre_name}.__set__: {instance=}, {value=}")
 
 
-    def __del__(self, instance):
+    def __delete__(self, instance):
         """
         Delete my value
         """
