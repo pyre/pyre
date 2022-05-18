@@ -4,12 +4,21 @@
 # (c) 1998-2022 all rights reserved
 
 
-# publish
-# access to a store
-from .H5 import H5 as h5
+# basic objects
+from .Group import Group as group
+from .File import File as file
+
 
 # datasets
-from .Group import Group as group
+from .Dataset import Dataset as dataset
+# scalars
+bool = dataset.bool
+float = dataset.float
+int = dataset.int
+str = dataset.str
+# containers
+tuple = dataset.tuple
+list = dataset.list
 
 
 # end of file
