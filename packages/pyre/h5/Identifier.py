@@ -36,7 +36,13 @@ class Identifier:
         """
         Read access to my value
         """
-        print(f"{self.pyre_name}.__get__: {cls=}, {instance=}")
+        # when accessing through a class record
+        if instance is None:
+            # return the descriptor
+            return self
+
+        # otherwise, look up my value in the {inventory} of the {instance}
+        return instance.pyre_inventory[self]
 
 
     def __set__(self, instance, value):
