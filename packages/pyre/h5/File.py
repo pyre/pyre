@@ -9,18 +9,10 @@ from .Group import Group
 
 
 # a dataset container
-class H5(Group):
+class File(Group):
     """
     An h5 file
     """
-
-
-    # metamethods
-    def __init__(self, **kwds):
-        # chain up
-        super().__init__(**kwds)
-        # all done
-        return
 
 
 # end of file
