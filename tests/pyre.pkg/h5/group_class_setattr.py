@@ -13,7 +13,6 @@ Exercise assignments to class attributes
 # the driver
 def test():
     # support
-    import journal
     import pyre
 
     # make a group
@@ -40,7 +39,7 @@ def test():
     # update the identifier
     Group.pols = pols
     # verify, but access carefully
-    Group.pyre_identifiers["pols"].default = pols
+    assert Group.pyre_identifiers["pols"].default == pols
 
     # assignment that adds a new identifier to the class
     # the identifier name
