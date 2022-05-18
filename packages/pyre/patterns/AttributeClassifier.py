@@ -35,16 +35,6 @@ class AttributeClassifier(Type):
     pyre_reserved = set()
 
 
-    # meta methods
-    @classmethod
-    def __prepare__(cls, name, bases, **kwds):
-        """
-        Build an attribute table that maintains a category index for attribute descriptors
-        """
-        # use an ordered dictionary
-        return collections.OrderedDict()
-
-
     # interface
     @classmethod
     def pyre_harvest(cls, attributes, descriptor):
