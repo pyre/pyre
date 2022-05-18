@@ -41,7 +41,7 @@ def test():
     # identifier section
     channel.line(f"  identifiers:")
     # go through the contents of the identifier map
-    for name, identifier in Group.pyre_idmap.items():
+    for name, identifier in Group.pyre_identifiers.items():
         # represent
         channel.line(f"    {name}: {identifier}")
         # the doc string
