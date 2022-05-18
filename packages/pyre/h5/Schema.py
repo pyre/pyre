@@ -80,6 +80,8 @@ class Schema(AttributeClassifier):
         if isinstance(value, Identifier):
             # add it to {pyre_identifiers}
             self.pyre_identifiers[name] = value
+            # and bind it
+            value.__set_name__(cls=self, name=name)
 
         # chain up to handle normal assignment
         return super().__setattr__(name, value)
