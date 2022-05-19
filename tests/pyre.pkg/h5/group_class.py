@@ -30,6 +30,14 @@ def test():
         pols.doc = "a dataset that's a container"
 
 
+    # verify that my table of identifiers is accessible
+    identifiers = Group.pyre_identifiers
+    # and of the correct size
+    assert len(identifiers) == 2
+    # check the contents
+    assert identifiers["id"].typename == "int"
+    assert identifiers["pols"].typename == "list"
+
     # configure the journal
     journal.application("pyre.h5.group")
     # make a channel
