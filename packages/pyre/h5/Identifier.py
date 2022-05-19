@@ -49,14 +49,17 @@ class Identifier:
         """
         Write access to my value
         """
-        print(f"{self.pyre_name}.__set__: {instance=}, {value=}")
+        # set my value in {instance}
+        self.pyre_set(instance, value)
+        # all done
+        return
 
 
     def __delete__(self, instance):
         """
         Delete my value
         """
-        # remove form the {instance} inventory
+        # remove from the {instance} inventory
         del instance.pyre_inventory[self]
         # and done
         return
@@ -90,6 +93,16 @@ class Identifier:
         value = instance.pyre_inventory[self]
         # and return it
         return value
+
+
+    def pyre_set(self, instance, value):
+        """
+        Write my value
+        """
+        # update the {inventory} of {instance}
+        instance.pyre_inventory[self] = value
+        # all done
+        return
 
 
 # end of file
