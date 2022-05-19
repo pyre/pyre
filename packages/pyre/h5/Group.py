@@ -14,5 +14,12 @@ class Group(Object):
     A container of datasets
     """
 
+    # metamethods
+    def __str__(self):
+        """
+        Human readable description
+        """
+        return "a group"
+
 
 # end of file
