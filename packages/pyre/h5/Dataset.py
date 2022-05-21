@@ -27,4 +27,13 @@ class Dataset(Object):
         return f"a dataset of type '{self.typename}'"
 
 
+    # framework hooks
+    def pyre_process(self, value, **kwds):
+        """
+        Walk {value} through
+        """
+        # let my {type} do the work
+        return self.process(value=value, **kwds)
+
+
 # end of file
