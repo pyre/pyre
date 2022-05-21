@@ -41,16 +41,22 @@ class Identifier:
             # return the descriptor
             return self
 
-        # otherwise, get my value from the {inventory} of the {instance}
-        return self.pyre_get(instance=instance)
+        # otherwise, get my value from {instance}
+        value = self.pyre_get(instance)
+        # process it
+        value = self.pyre_process(instance=instance, value=value)
+        # and make it available
+        return value
 
 
     def __set__(self, instance, value):
         """
         Write access to my value
         """
-        # set my value in {instance}
-        self.pyre_set(instance, value)
+        # process {value}
+        value = self.pyre_process(instance=instance, value=value)
+        # and attach it to {instance}
+        self.pyre_set(instance=instance, value=value)
         # all done
         return
 
@@ -89,8 +95,15 @@ class Identifier:
         """
         Read my value
         """
-        # look up my value in the {inventory} of the {instance}
-        value = instance.pyre_inventory[self]
+        # attempt to
+        try:
+            # get my value from the {inventory} of the {instance}
+            value = instance.pyre_inventory[self]
+        # if {instance} doesn't have an explicit value for me yet
+        except KeyError:
+            # use my default
+            value = self.default
+
         # and return it
         return value
 
@@ -103,6 +116,14 @@ class Identifier:
         instance.pyre_inventory[self] = value
         # all done
         return
+
+
+    def pyre_process(self, value, **kwds):
+        """
+        Walk {value} through
+        """
+        # i know nothing, so...
+        return value
 
 
 # end of file
