@@ -28,13 +28,28 @@ def test():
         answer.default = 42
         answer.doc = "the answer to the ultimate question"
 
+        # a compatible container
+        pols = pyre.h5.list(schema=pyre.h5.str())
+        pols.default = "HH", "HV", "VH", "VV"
+        pols.doc = "the list of polarizations"
+
     # instantiate
     group = Group()
 
     # verify we can read regular class attributes
     assert group.flag is True
+
     # check the answer
     assert group.answer == 42
+
+    # check the polarizations
+    pols = group.pols
+    # verify the tuple has been converted into a list
+    assert type(pols) is list
+    # verify the contents are all strings
+    assert tuple(map(type, pols)) == (str, str, str, str)
+    # check the actual values
+    assert pols == ["HH", "HV", "VH", "VV"]
 
     # all done
     return
