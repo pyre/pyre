@@ -16,6 +16,7 @@ bool = dataset.bool
 float = dataset.float
 int = dataset.int
 str = dataset.str
+timestamp = dataset.timestamp
 # containers
 tuple = dataset.tuple
 list = dataset.list
