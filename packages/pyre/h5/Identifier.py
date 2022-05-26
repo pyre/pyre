@@ -101,8 +101,8 @@ class Identifier:
             value = instance.pyre_inventory[self]
         # if {instance} doesn't have an explicit value for me yet
         except KeyError:
-            # use my default
-            value = self.default
+            # ask for a refresh
+            value = self.pyre_sync()
 
         # and return it
         return value
@@ -118,9 +118,17 @@ class Identifier:
         return
 
 
+    def pyre_sync(self):
+        """
+        Hook invoked when the {inventory} lookup fails and a value must be generated
+        """
+        # i have no opinions
+        return None
+
+
     def pyre_process(self, value, **kwds):
         """
-        Walk {value} through
+        Walk {value} through my transformations
         """
         # i know nothing, so...
         return value
