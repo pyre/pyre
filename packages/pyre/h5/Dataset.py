@@ -28,9 +28,23 @@ class Dataset(Object):
 
 
     # framework hooks
+    def pyre_sync(self):
+        """
+        Hook invoked when the {inventory} lookup fails and a value must be generated
+        """
+        # chain up to give my ancestors a chance to chip in
+        value = super().pyre_sync()
+        # if they have no opinion
+        if value is None:
+            # use my default
+            value = self.default
+        # and that's all i can do
+        return value
+
+
     def pyre_process(self, value, **kwds):
         """
-        Walk {value} through
+        Walk {value} through my transformations
         """
         # let my {type} do the work
         return self.process(value=value, **kwds)
