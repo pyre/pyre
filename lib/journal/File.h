@@ -24,7 +24,7 @@ public:
     // metamethods
 public:
     // constructor
-    inline File(const path_type &);
+    inline File(const path_type &, filemode_t = std::ios_base::out);
     // destructor
     virtual ~File();
 

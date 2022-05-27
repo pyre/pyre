@@ -87,7 +87,7 @@ public:
     // send all output to the trash
     static inline void quiet();
     // and all output to a file with the given filename
-    static inline void logfile(const path_t &);
+    static inline void logfile(const path_t &, filemode_t = std::ios_base::out);
 
     // NVCC workaround for initializing the index
 private:
@@ -101,7 +101,7 @@ private:
     entry_type _entry;
 
     // implementation details: static data
-    // the definition is offline to accommodate a family of NVCC bugs that prohibit the 
+    // the definition is offline to accommodate a family of NVCC bugs that prohibit the
     // initialization of static data in the body of the class
 private:
     static index_type _index;
