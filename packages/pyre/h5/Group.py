@@ -23,12 +23,16 @@ class Group(Object):
 
 
     # framework hooks
-    def pyre_sync(self):
+    def pyre_sync(self, instance, **kwds):
         """
         Hook invoked when the {inventory} lookup fails and a value must be generated
         """
-        # this is the value you are looking for...
-        return self
+        # build a clone of mine to hold my client's values for my structure
+        group = type(self)(name=self.pyre_name, at=self.pyre_location)
+        # attach it
+        self.pyre_set(instance=instance, value=group)
+        # and return it
+        return group
 
 
 # end of file
