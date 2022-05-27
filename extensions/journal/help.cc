@@ -274,14 +274,21 @@ pyre::journal::py::help(py::module & m)
         .def_static(
             "logfile",
             // the implementation
-            [](const help_t::string_type & path) -> void {
+            [](const help_t::string_type & path, const help_t::string_type & mode) -> void {
+                // initialize the mode
+                auto flag = std::ios_base::out;
+                // if {mode} is {append}
+                if (mode == "a") {
+                    // set the corresponding bit
+                    flag |= std::ios_base::app;
+                }
                 // set up the device
-                help_t::logfile(path);
+                help_t::logfile(path, flag);
                 // all done
                 return;
             },
             // the signature
-            "name"_a,
+            "name"_a, "mode"_a = "w",
             // the docstring
             "send all output to a file")
 

@@ -267,14 +267,21 @@ pyre::journal::py::debug(py::module & m)
         .def_static(
             "logfile",
             // the implementation
-            [](const debug_t::string_type & path) -> void {
+            [](const debug_t::string_type & path, const debug_t::string_type & mode) -> void {
+                // initialize the mode
+                auto flag = std::ios_base::out;
+                // if {mode} is {append}
+                if (mode == "a") {
+                    // set the corresponding bit
+                    flag |= std::ios_base::app;
+                }
                 // set up the device
-                debug_t::logfile(path);
+                debug_t::logfile(path, flag);
             },
-            // the docstring
-            "send all output to a file",
             // the arguments
-            "name"_a)
+            "name"_a, "mode"_a = "w",
+            // the docstring
+            "send all output to a file")
 
         // done
         ;
