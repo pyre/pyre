@@ -39,14 +39,21 @@ pyre::journal::py::api(py::module & m)
     m.def(
         "logfile",
         // the implementation
-        [](const debug_t::string_type & path) -> void {
+        [](const string_t & path, const string_t & mode) -> void {
+            // initialize the mode
+            auto flag = std::ios_base::out;
+            // if {mode} is {append}
+            if (mode == "a") {
+                // set the corresponding bit
+                flag |= std::ios_base::app;
+            }
             // set up the output device
-            pyre::journal::logfile(path);
+            pyre::journal::logfile(path, flag);
             // all done
             return;
         },
         // the signature
-        "name"_a,
+        "name"_a, "mode"_a = "w",
         // the docstring
         "send all output to a file");
 

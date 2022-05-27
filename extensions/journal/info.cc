@@ -267,12 +267,19 @@ pyre::journal::py::info(py::module & m)
         .def_static(
             "logfile",
             // the implementation
-            [](const info_t::string_type & path) -> void {
+            [](const info_t::string_type & path, const info_t::string_type & mode) -> void {
+                // initialize the mode
+                auto flag = std::ios_base::out;
+                // if {mode} is {append}
+                if (mode == "a") {
+                    // set the corresponding bit
+                    flag |= std::ios_base::app;
+                }
                 // set up the device
-                info_t::logfile(path);
+                info_t::logfile(path, flag);
             },
             // the signature
-            "name"_a,
+            "name"_a, "mode"_a = "w",
             // the docstring
             "send all output to a file")
 
