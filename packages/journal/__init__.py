@@ -78,12 +78,12 @@ if without_libjournal:
         return
 
     # convenience function to send all output to a log file
-    def logfile(path):
+    def logfile(path, mode="w"):
         """
         Send all output to a log file
         """
         # make a file
-        logfile = file(path=path)
+        logfile = file(path=path, mode=mode)
         # set it as the default device
         chronicler.device = logfile
         # all done
