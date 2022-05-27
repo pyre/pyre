@@ -138,14 +138,14 @@ class Channel(pyre.patterns.named):
 
 
     @classmethod
-    def logfile(cls, path):
+    def logfile(cls, path, mode="w"):
         """
         Send output from all channels of this severity to a log file
         """
         # get the file device
         from .File import File
         # make one
-        log = File(path)
+        log = File(path, mode)
         # and install it as the default
         return cls.setDefaultDevice(log)
 
