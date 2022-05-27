@@ -28,7 +28,7 @@ class Dataset(Object):
 
 
     # framework hooks
-    def pyre_sync(self):
+    def pyre_sync(self, **kwds):
         """
         Hook invoked when the {inventory} lookup fails and a value must be generated
         """
