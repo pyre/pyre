@@ -10,11 +10,11 @@
 
 
 // metamethods
-pyre::journal::File::File(const path_type & path) :
+pyre::journal::File::File(const path_type & path, filemode_t mode) :
     device_t("file"),
     _palette(),
     _path(path),
-    _file(path),
+    _file(path, mode),
     _alert { std::make_shared<Alert>() },
     _help { std::make_shared<Bland>() },
     _memo { std::make_shared<Memo>() }

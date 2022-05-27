@@ -126,10 +126,10 @@ pyre::journal::setDetail(int detail)
 
 // send all channel output to a log file
 void
-pyre::journal::logfile(const path_t & name)
+pyre::journal::logfile(const path_t & name, filemode_t mode)
 {
     // create the device and register it with the chronicler
-    chronicler_t::device<file_t>(name);
+    chronicler_t::device<file_t>(name, mode);
     // all done
     return;
 }
