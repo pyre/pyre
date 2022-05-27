@@ -130,12 +130,20 @@ function(pyre_pyreModule)
   target_sources(pyremodule PRIVATE
     pyre/pyre.cc
     pyre/api.cc
+    pyre/grid/grid.cc
+    pyre/grid/indices.cc
+    pyre/grid/grids.cc
+    pyre/grid/orders.cc
+    pyre/grid/packings.cc
+    pyre/grid/shapes.cc
     pyre/memory/memory.cc
     pyre/memory/maps.cc
     pyre/timers/timers.cc
     pyre/timers/process_timers.cc
     pyre/timers/wall_timers.cc
-    )
+    pyre/viz/viz.cc
+    pyre/viz/bmp.cc
+)
 
   # host
   Python_add_library(hostmodule MODULE)
