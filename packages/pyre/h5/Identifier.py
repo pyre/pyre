@@ -102,7 +102,7 @@ class Identifier:
         # if {instance} doesn't have an explicit value for me yet
         except KeyError:
             # ask for a refresh
-            value = self.pyre_sync()
+            value = self.pyre_sync(instance=instance)
 
         # and return it
         return value
@@ -118,7 +118,7 @@ class Identifier:
         return
 
 
-    def pyre_sync(self):
+    def pyre_sync(self, **kwds):
         """
         Hook invoked when the {inventory} lookup fails and a value must be generated
         """
