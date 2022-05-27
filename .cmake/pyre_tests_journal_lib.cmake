@@ -18,6 +18,7 @@ pyre_test_driver(journal.lib/ansi_null.cc)
 pyre_test_driver(journal.lib/ansi_x11.cc)
 pyre_test_driver(journal.lib/api_application.cc)
 pyre_test_driver(journal.lib/api_file.cc)
+pyre_test_driver(journal.lib/api_file_mode.cc)
 pyre_test_driver(journal.lib/api_quiet.cc)
 pyre_test_driver(journal.lib/bland_sanity.cc)
 pyre_test_driver(journal.lib/cerr_sanity.cc)
@@ -53,6 +54,7 @@ pyre_test_driver(journal.lib/debug_endl.cc)
 pyre_test_driver(journal.lib/debug_example.cc)
 pyre_test_driver(journal.lib/debug_example_fatal.cc)
 pyre_test_driver(journal.lib/debug_file.cc)
+pyre_test_driver(journal.lib/debug_file_mode.cc)
 pyre_test_driver(journal.lib/debug_flush.cc)
 pyre_test_driver(journal.lib/debug_indent.cc)
 pyre_test_driver(journal.lib/debug_indent_multi.cc)
@@ -72,6 +74,7 @@ pyre_test_driver(journal.lib/error_empty.cc)
 pyre_test_driver(journal.lib/error_example.cc)
 pyre_test_driver(journal.lib/error_example_nonfatal.cc)
 pyre_test_driver(journal.lib/error_file.cc)
+pyre_test_driver(journal.lib/error_file_mode.cc)
 pyre_test_driver(journal.lib/error_indent.cc)
 pyre_test_driver(journal.lib/error_indent_multi.cc)
 pyre_test_driver(journal.lib/error_inventory.cc)
@@ -89,6 +92,7 @@ pyre_test_driver(journal.lib/firewall_error.cc)
 pyre_test_driver(journal.lib/firewall_example.cc)
 pyre_test_driver(journal.lib/firewall_example_nonfatal.cc)
 pyre_test_driver(journal.lib/firewall_file.cc)
+pyre_test_driver(journal.lib/firewall_file_mode.cc)
 pyre_test_driver(journal.lib/firewall_indent.cc)
 pyre_test_driver(journal.lib/firewall_indent_multi.cc)
 pyre_test_driver(journal.lib/firewall_inventory.cc)
@@ -108,6 +112,7 @@ pyre_test_driver(journal.lib/help_empty.cc)
 pyre_test_driver(journal.lib/help_example.cc)
 pyre_test_driver(journal.lib/help_example_fatal.cc)
 pyre_test_driver(journal.lib/help_file.cc)
+pyre_test_driver(journal.lib/help_file_mode.cc)
 pyre_test_driver(journal.lib/help_indent.cc)
 pyre_test_driver(journal.lib/help_indent_multi.cc)
 pyre_test_driver(journal.lib/help_loop.cc)
@@ -120,6 +125,7 @@ pyre_test_driver(journal.lib/info_empty.cc)
 pyre_test_driver(journal.lib/info_example.cc)
 pyre_test_driver(journal.lib/info_example_fatal.cc)
 pyre_test_driver(journal.lib/info_file.cc)
+pyre_test_driver(journal.lib/info_file_mode.cc)
 pyre_test_driver(journal.lib/info_indent.cc)
 pyre_test_driver(journal.lib/info_indent_multi.cc)
 pyre_test_driver(journal.lib/info_loop.cc)
@@ -141,6 +147,7 @@ pyre_test_driver(journal.lib/warning_empty.cc)
 pyre_test_driver(journal.lib/warning_example.cc)
 pyre_test_driver(journal.lib/warning_example_fatal.cc)
 pyre_test_driver(journal.lib/warning_file.cc)
+pyre_test_driver(journal.lib/warning_file_mode.cc)
 pyre_test_driver(journal.lib/warning_indent.cc)
 pyre_test_driver(journal.lib/warning_indent_multi.cc)
 pyre_test_driver(journal.lib/warning_loop.cc)
@@ -196,6 +203,55 @@ add_test(NAME journal.lib.warning_file.cleanup
   )
 set_property(TEST journal.lib.warning_file.cleanup PROPERTY
   DEPENDS journal.lib.warning_file.cc
+  )
+
+add_test(NAME journal.lib.api_file_mode.cleanup
+  COMMAND ${BASH_PROGRAM} -c "rm api_file_mode.log"
+  )
+set_property(TEST journal.lib.api_file_mode.cleanup PROPERTY
+  DEPENDS journal.lib.api_file_mode.cc
+  )
+
+add_test(NAME journal.lib.debug_file_mode.cleanup
+  COMMAND ${BASH_PROGRAM} -c "rm debug_file_mode.log"
+  )
+set_property(TEST journal.lib.debug_file_mode.cleanup PROPERTY
+  DEPENDS journal.lib.debug_file_mode.cc
+  )
+
+add_test(NAME journal.lib.error_file_mode.cleanup
+  COMMAND ${BASH_PROGRAM} -c "rm error_file_mode.log"
+  )
+set_property(TEST journal.lib.error_file_mode.cleanup PROPERTY
+  DEPENDS journal.lib.error_file_mode.cc
+  )
+
+add_test(NAME journal.lib.firewall_file_mode.cleanup
+  COMMAND ${BASH_PROGRAM} -c "rm firewall_file_mode.log"
+  )
+set_property(TEST journal.lib.firewall_file_mode.cleanup PROPERTY
+  DEPENDS journal.lib.firewall_file_mode.cc
+  )
+
+add_test(NAME journal.lib.help_file_mode.cleanup
+  COMMAND ${BASH_PROGRAM} -c "rm help_file_mode.log"
+  )
+set_property(TEST journal.lib.help_file_mode.cleanup PROPERTY
+  DEPENDS journal.lib.help_file_mode.cc
+  )
+
+add_test(NAME journal.lib.info_file_mode.cleanup
+  COMMAND ${BASH_PROGRAM} -c "rm info_file_mode.log"
+  )
+set_property(TEST journal.lib.info_file_mode.cleanup PROPERTY
+  DEPENDS journal.lib.info_file_mode.cc
+  )
+
+add_test(NAME journal.lib.warning_file_mode.cleanup
+  COMMAND ${BASH_PROGRAM} -c "rm warning_file_mode.log"
+  )
+set_property(TEST journal.lib.warning_file_mode.cleanup PROPERTY
+  DEPENDS journal.lib.warning_file_mode.cc
   )
 
 # end of file
