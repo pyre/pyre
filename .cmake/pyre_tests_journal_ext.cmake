@@ -10,6 +10,7 @@
 #
 pyre_test_python_testcase(journal.ext/api_application.py)
 pyre_test_python_testcase(journal.ext/api_file.py)
+pyre_test_python_testcase(journal.ext/api_file_mode.py)
 pyre_test_python_testcase(journal.ext/api_quiet.py)
 pyre_test_python_testcase(journal.ext/cerr.py)
 pyre_test_python_testcase(journal.ext/chronicler.py)
@@ -24,6 +25,7 @@ pyre_test_python_testcase(journal.ext/debug_empty.py)
 pyre_test_python_testcase(journal.ext/debug_example.py)
 pyre_test_python_testcase(journal.ext/debug_example_fatal.py)
 pyre_test_python_testcase(journal.ext/debug_file.py)
+pyre_test_python_testcase(journal.ext/debug_file_mode.py)
 pyre_test_python_testcase(journal.ext/debug_flush.py)
 pyre_test_python_testcase(journal.ext/debug_inject.py)
 pyre_test_python_testcase(journal.ext/debug_instance.py)
@@ -41,6 +43,7 @@ pyre_test_python_testcase(journal.ext/error_empty.py)
 pyre_test_python_testcase(journal.ext/error_example.py)
 pyre_test_python_testcase(journal.ext/error_example_nonfatal.py)
 pyre_test_python_testcase(journal.ext/error_file.py)
+pyre_test_python_testcase(journal.ext/error_file_mode.py)
 pyre_test_python_testcase(journal.ext/error_flush.py)
 pyre_test_python_testcase(journal.ext/error_inject.py)
 pyre_test_python_testcase(journal.ext/error_instance.py)
@@ -57,6 +60,7 @@ pyre_test_python_testcase(journal.ext/firewall_empty.py)
 pyre_test_python_testcase(journal.ext/firewall_example.py)
 pyre_test_python_testcase(journal.ext/firewall_example_nonfatal.py)
 pyre_test_python_testcase(journal.ext/firewall_file.py)
+pyre_test_python_testcase(journal.ext/firewall_file_mode.py)
 pyre_test_python_testcase(journal.ext/firewall_flush.py)
 pyre_test_python_testcase(journal.ext/firewall_inject.py)
 pyre_test_python_testcase(journal.ext/firewall_instance.py)
@@ -73,6 +77,7 @@ pyre_test_python_testcase(journal.ext/help_empty.py)
 pyre_test_python_testcase(journal.ext/help_example.py)
 pyre_test_python_testcase(journal.ext/help_example_fatal.py)
 pyre_test_python_testcase(journal.ext/help_file.py)
+pyre_test_python_testcase(journal.ext/help_file_mode.py)
 pyre_test_python_testcase(journal.ext/help_flush.py)
 pyre_test_python_testcase(journal.ext/help_inject.py)
 pyre_test_python_testcase(journal.ext/help_instance.py)
@@ -89,6 +94,7 @@ pyre_test_python_testcase(journal.ext/info_empty.py)
 pyre_test_python_testcase(journal.ext/info_example.py)
 pyre_test_python_testcase(journal.ext/info_example_fatal.py)
 pyre_test_python_testcase(journal.ext/info_file.py)
+pyre_test_python_testcase(journal.ext/info_file_mode.py)
 pyre_test_python_testcase(journal.ext/info_flush.py)
 pyre_test_python_testcase(journal.ext/info_inject.py)
 pyre_test_python_testcase(journal.ext/info_instance.py)
@@ -107,6 +113,7 @@ pyre_test_python_testcase(journal.ext/warning_empty.py)
 pyre_test_python_testcase(journal.ext/warning_example.py)
 pyre_test_python_testcase(journal.ext/warning_example_fatal.py)
 pyre_test_python_testcase(journal.ext/warning_file.py)
+pyre_test_python_testcase(journal.ext/warning_file_mode.py)
 pyre_test_python_testcase(journal.ext/warning_flush.py)
 pyre_test_python_testcase(journal.ext/warning_inject.py)
 pyre_test_python_testcase(journal.ext/warning_instance.py)
@@ -173,6 +180,62 @@ add_test(NAME journal.ext.warning_file.cleanup
   )
 set_property(TEST journal.ext.warning_file.cleanup PROPERTY
   DEPENDS journal.ext.warning_file.py
+  )
+
+add_test(NAME journal.ext.api_file_mode.cleanup
+  COMMAND ${BASH_PROGRAM} -c "echo $(pwd); rm api_file_mode.log"
+  WORKING_DIRECTORY ${PYRE_TESTSUITE_DIR}/journal.ext
+  )
+set_property(TEST journal.ext.api_file_mode.cleanup PROPERTY
+  DEPENDS journal.ext.api_file_mode.py
+  )
+
+add_test(NAME journal.ext.debug_file_mode.cleanup
+  COMMAND ${BASH_PROGRAM} -c "rm debug_file_mode.log"
+  WORKING_DIRECTORY ${PYRE_TESTSUITE_DIR}/journal.ext
+  )
+set_property(TEST journal.ext.debug_file_mode.cleanup PROPERTY
+  DEPENDS journal.ext.debug_file_mode.py
+  )
+
+add_test(NAME journal.ext.error_file_mode.cleanup
+  COMMAND ${BASH_PROGRAM} -c "rm error_file_mode.log"
+  WORKING_DIRECTORY ${PYRE_TESTSUITE_DIR}/journal.ext
+  )
+set_property(TEST journal.ext.error_file_mode.cleanup PROPERTY
+  DEPENDS journal.ext.error_file_mode.py
+  )
+
+add_test(NAME journal.ext.firewall_file_mode.cleanup
+  COMMAND ${BASH_PROGRAM} -c "rm firewall_file_mode.log"
+  WORKING_DIRECTORY ${PYRE_TESTSUITE_DIR}/journal.ext
+  )
+set_property(TEST journal.ext.firewall_file_mode.cleanup PROPERTY
+  DEPENDS journal.ext.firewall_file_mode.py
+  )
+
+add_test(NAME journal.ext.help_file_mode.cleanup
+  COMMAND ${BASH_PROGRAM} -c "rm help_file_mode.log"
+  WORKING_DIRECTORY ${PYRE_TESTSUITE_DIR}/journal.ext
+  )
+set_property(TEST journal.ext.help_file_mode.cleanup PROPERTY
+  DEPENDS journal.ext.help_file_mode.py
+  )
+
+add_test(NAME journal.ext.info_file_mode.cleanup
+  COMMAND ${BASH_PROGRAM} -c "rm info_file_mode.log"
+  WORKING_DIRECTORY ${PYRE_TESTSUITE_DIR}/journal.ext
+  )
+set_property(TEST journal.ext.info_file_mode.cleanup PROPERTY
+  DEPENDS journal.ext.info_file_mode.py
+  )
+
+add_test(NAME journal.ext.warning_file_mode.cleanup
+  COMMAND ${BASH_PROGRAM} -c "rm warning_file_mode.log"
+  WORKING_DIRECTORY ${PYRE_TESTSUITE_DIR}/journal.ext
+  )
+set_property(TEST journal.ext.warning_file_mode.cleanup PROPERTY
+  DEPENDS journal.ext.warning_file_mode.py
   )
 
 # end of file
