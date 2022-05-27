@@ -75,4 +75,12 @@ tests.journal.lib.info_file.clean += info_file.log
 tests.journal.lib.warning_file.clean += warning_file.log
 tests.journal.lib.help_file.clean += help_file.log
 
+tests.journal.lib.api_file_mode.clean += api_file_mode.log
+tests.journal.lib.debug_file_mode.clean += debug_file_mode.log
+tests.journal.lib.firewall_file_mode.clean += firewall_file_mode.log
+tests.journal.lib.error_file_mode.clean += error_file_mode.log
+tests.journal.lib.info_file_mode.clean += info_file_mode.log
+tests.journal.lib.warning_file_mode.clean += warning_file_mode.log
+tests.journal.lib.help_file_mode.clean += help_file_mode.log
+
 # end of file
