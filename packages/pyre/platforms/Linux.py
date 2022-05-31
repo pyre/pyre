@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2022 all rights reserved
-#
 
 
 # externals
@@ -12,8 +10,9 @@ import operator
 import subprocess
 # superclass
 from .POSIX import POSIX
-# the cpu info object
+# the info objects
 from .CPUInfo import CPUInfo
+from .MemoryInfo import MemoryInfo
 
 
 # declaration
@@ -123,6 +122,33 @@ class Linux(POSIX, family='pyre.platforms.linux'):
         return cls.procCPUInfo()
 
 
+    @classmethod
+    def memorySurvey(cls):
+        """
+        Interrogate {/proc} for the amount of available memory
+        """
+        # grab the translation table
+        xlat = cls.memXLAT
+        # create an info object
+        info = MemoryInfo()
+        # prime the tokenizer
+        tokens = cls.tokenizeInfo(info=open(cls.meminfo))
+
+        # parse
+        for key, value in tokens:
+            # translate the key
+            key = xlat.get(key)
+            # if it is of interest
+            if key:
+                # extract the value
+                value = int(value.split()[0]) * 1024
+                # set the corresponding attribute in {info}
+                setattr(info, key, value)
+
+        # all done
+        return info
+
+
     # implementation details: workhorses
     @classmethod
     def lscpu(cls):
@@ -150,7 +176,7 @@ class Linux(POSIX, family='pyre.platforms.linux'):
         # make a pipe
         with subprocess.Popen(**settings) as pipe:
             # get the text source and tokenize it
-            tokens = cls.tokenizeCPUInfo(cpuinfo=pipe.stdout)
+            tokens = cls.tokenizeInfo(info=pipe.stdout)
             # parse
             for key, value in tokens:
                 # number of sockets
@@ -192,7 +218,7 @@ class Linux(POSIX, family='pyre.platforms.linux'):
         # the markers
         physicalid = None
         # prime the tokenizer
-        tokens = cls.tokenizeCPUInfo(cpuinfo=open(cls.cpuinfo))
+        tokens = cls.tokenizeInfo(info=open(cls.cpuinfo))
         # the keys we care about
         targets = {'siblings', 'cpu cores'}
         # parse
@@ -246,12 +272,12 @@ class Linux(POSIX, family='pyre.platforms.linux'):
 
 
     @classmethod
-    def tokenizeCPUInfo(cls, cpuinfo):
+    def tokenizeInfo(cls, info):
         """
         Split the CPU info file into (key, value) pairs
         """
         # in order to tokenize each line
-        for line in cpuinfo:
+        for line in info:
             # strip whitespace
             line = line.strip()
             # if this leaves us with nothing, we ran into a separator blank line
@@ -271,6 +297,14 @@ class Linux(POSIX, family='pyre.platforms.linux'):
     # implementation constants
     issue = '/etc/issue'
     cpuinfo = '/proc/cpuinfo'
+    meminfo = '/proc/meminfo'
+
+    # the proc field to attribute translation table
+    memXLAT = {
+        "MemTotal": "total",
+        "MemFree": "free",
+        "MemAvailable": "available"
+    }
 
 
 # end of file
