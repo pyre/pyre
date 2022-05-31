@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2022 all rights reserved
-#
 
 
 # externals
@@ -13,8 +11,9 @@ import socket
 import pyre
 # my protocol
 from .Platform import Platform
-# cpu info
+# info
 from .CPUInfo import CPUInfo
+from .MemoryInfo import MemoryInfo
 
 
 # declaration
@@ -46,6 +45,14 @@ class Host(pyre.component, family='pyre.platforms.generic', implements=Platform)
             self._cpus = self.cpuSurvey()
         # all done
         return self._cpus
+
+    @property
+    def memory(self):
+        """
+        Information about the memory on the host
+        """
+        # do not cache anything, to make sure the information we return is always up to date
+        return self.memorySurvey()
 
     @property
     def tag(self):
@@ -82,6 +89,16 @@ class Host(pyre.component, family='pyre.platforms.generic', implements=Platform)
         # by default, we know nothing; so assume one single core cpu with no hyper-threading
         # subclasses should override with their platform dependent survey code
         return CPUInfo()
+
+
+    @classmethod
+    def memorySurvey(cls):
+        """
+        Collect information about the memory on this host
+        """
+        # by default, we know nothing
+        # subclasses should override with their platform dependent survey code
+        return MemoryInfo()
 
 
     # feature support
