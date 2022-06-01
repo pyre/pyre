@@ -13,10 +13,7 @@
 // constructor that accepts an initializer list
 template <class containerT>
 template <typename... argT>
-constexpr
-pyre::grid::Shape<containerT>::
-Shape(argT... idx) :
-    rep_type(idx...)
+constexpr pyre::grid::Shape<containerT>::Shape(argT... idx) : rep_type(idx...)
 {}
 
 
@@ -24,26 +21,23 @@ Shape(argT... idx) :
 // the total number of addressable values
 template <class containerT>
 constexpr auto
-pyre::grid::Shape<containerT>::
-cells() const -> std::size_t
+pyre::grid::Shape<containerT>::cells() const -> std::size_t
 {
     // the initial value
-    int one = 1;
+    std::size_t one = 1;
     // my capacity is equal to the product of the number of possible values along each axis
-    return std::accumulate(this->begin(), this->end(), one, std::multiplies<int>());
+    return std::accumulate(this->begin(), this->end(), one, std::multiplies<std::size_t>());
 }
 
 
 // support for structured bindings
-template<class containerT>
+template <class containerT>
 class std::tuple_size<pyre::grid::Shape<containerT>> :
-    public std::integral_constant<int, pyre::grid::Shape<containerT>::rank()>
-{};
+    public std::integral_constant<int, pyre::grid::Shape<containerT>::rank()> {};
 
 
-template<std::size_t I, class containerT>
-struct std::tuple_element<I, pyre::grid::Shape<containerT>>
-{
+template <std::size_t I, class containerT>
+struct std::tuple_element<I, pyre::grid::Shape<containerT>> {
     static_assert(I < pyre::grid::Shape<containerT>::rank(), "index is out of bounds");
     using type = typename containerT::value_type;
 };
