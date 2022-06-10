@@ -4,6 +4,8 @@
 # (c) 1998-2022 all rights reserved
 
 
+# external
+import itertools
 # superclass
 from .Object import Object
 
@@ -50,8 +52,8 @@ class Group(Object):
         # N.B.:
         # currently, there are two possible sources of identifiers in my contents
         # - the static layout of my {mro}, with each superclass contributing the identifiers it
-        #    declares
-        # - the pile of identifiers added programmatically
+        #    declares; stored by {schema} in {pyre_identifiers}
+        # - the pile of identifiers added programmatically; stored in {pyre_dynamicIdentifiers}
         #
         # collating identifiers from these sources requires taking shadowing into account
         # shadowing is determined by the {pyre_location} of an identifier, not its {pyre_name}
@@ -59,38 +61,45 @@ class Group(Object):
 
         # make a pile of identifier names that have been encountered
         known = set()
-
-        # go through my pedigree
-        for base in type(self).mro():
-            # attempt to
-            try:
-                # look up the static identifiers i inherit from this ancestor
-                identifiers = base.pyre_identifiers.values()
-            # if it doesn't have any
-            except AttributeError:
-                # no problem; move on
+        # get the full sequence of identifiers
+        identifiers = itertools.chain(
+            # the identifiers added at runtime
+            self.pyre_dynamicIdentifiers.values(),
+            # the identifiers from my static structure
+            *(base.pyre_identifiers.values()
+                for base in type(self).mro() if hasattr(base, "pyre_identifiers"))
+            )
+        # go through them
+        for identifier in identifiers:
+            # get their location
+            location = identifier.pyre_location
+            # if this location is being shadowed
+            if location in known:
+                # move on
                 continue
-            # go through them
-            for identifier in identifiers:
-                # get their location
-                location = identifier.pyre_location
-                # if this location is being shadowed
-                if location in known:
-                    # move on
-                    continue
-                # otherwise, add it to the pile of {known} locations
-                known.add(location)
-                # and send off the {identifier}
-                yield identifier
+            # otherwise, add it to the pile of {known} locations
+            known.add(location)
+            # and send off the {identifier}
+            yield identifier
         # all done
         return
 
 
     # metamethods
+    def __init__(self, **kwds):
+        # chain up
+        super().__init__(**kwds)
+        # initialize my pile of dynamic contents
+        self.pyre_dynamicIdentifiers = {}
+        # all done
+        return
+
+
     def __str__(self):
         """
         Human readable description
         """
+        # say something simple, for now
         return "a group"
 
 
