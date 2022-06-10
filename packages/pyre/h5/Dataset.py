@@ -18,6 +18,16 @@ class Dataset(Object):
     """
 
 
+    # public data
+    @property
+    def pyre_marker(self):
+        """
+        Generate an identifying mark
+        """
+        # use my type name
+        return self.typename
+
+
     # metamethods
     def __str__(self):
         """
