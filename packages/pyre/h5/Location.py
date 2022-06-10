@@ -19,6 +19,31 @@ class Location(Identifier, metaclass=Schema):
     """
 
 
+    # interface
+    def pyre_datasets(self):
+        """
+        Generate a sequence of my datasets
+        """
+        # i don't have any
+        return []
+
+
+    def pyre_groups(self):
+        """
+        Generate a sequence of my subgroups
+        """
+        # i don't have any
+        return []
+
+
+    def pyre_locations(self):
+        """
+        Generate a sequence of locations among my contents
+        """
+        # i don't have any
+        return []
+
+
     # metamethods
     def __init__(self, name=None, at=None, **kwds):
         # chain up
@@ -44,6 +69,8 @@ class Location(Identifier, metaclass=Schema):
             self.pyre_location = name
         # all done
         return
+
+
 
 
 # end of file
