@@ -18,8 +18,13 @@ int = dataset.int
 str = dataset.str
 timestamp = dataset.timestamp
 # containers
-tuple = dataset.tuple
+array = dataset.array
 list = dataset.list
+tuple = dataset.tuple
+
+
+# the explorer
+from .Tree import Tree as tree
 
 
 # end of file
