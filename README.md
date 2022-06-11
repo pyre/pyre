@@ -1,5 +1,7 @@
 # pyre
 
+[![release](https://img.shields.io/github/v/release/pyre/pyre)](https://img.shields.io/github/v/release/pyre/pyre)
+[![conda version](https://img.shields.io/conda/vn/conda-forge/pyre)](https://img.shields.io/conda/vn/conda-forge/pyre)
 [![mm](https://github.com/pyre/pyre/actions/workflows/mm.yaml/badge.svg)](https://github.com/pyre/pyre/actions/workflows/mm.yaml)
 [![cmake](https://github.com/pyre/pyre/actions/workflows/cmake.yaml/badge.svg)](https://github.com/pyre/pyre/actions/workflows/cmake.yaml)
 [![PyPI version](https://badge.fury.io/py/pyre.svg)](https://badge.fury.io/py/pyre)
