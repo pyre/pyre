@@ -89,8 +89,14 @@ class Darwin(POSIX, family='pyre.platforms.darwin'):
     # private data
     # the known code names
     codenames = {
+        # monterey releases
+        '12.5': 'monterey',
+        '12.4': 'monterey',
+        '12.3': 'monterey',
+        '12.2': 'monterey',
+        '12.1': 'monterey',
         '12.0': 'monterey',
-        # big sur is has multiple personality disorder...
+        # big sur seems to have brought about a change in the naming convention
         '11.6': 'big sur',
         '11.5': 'big sur',
         '11.4': 'big sur',
