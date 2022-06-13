@@ -140,10 +140,10 @@ def where(configurable, attribute=None):
     if attribute is None: return configurable.pyre_locator
     # retrieve the trait descriptor
     trait = configurable.pyre_trait(alias=attribute)
-    # find the slot where the attribute is stored
-    slot = configurable.pyre_inventory[trait]
-    # and return its locator
-    return slot.locator
+    # grab the locator of the slot where the attribute value is stored
+    locator = configurable.pyre_inventory.getTraitLocator(trait)
+    # and return it
+    return locator
 
 
 # put the following start-up steps inside functions so we can have better control over their
