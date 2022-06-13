@@ -45,12 +45,14 @@ class Director(pyre.actor):
         return
 
 
-    def __call__(self, globalAliases=True, **kwds):
+    def __call__(self, globalAliases=True, locator=None, **kwds):
         """
         Build an application instance
         """
-        # just chain up; my job is to reset the default value of {globalAliases}
-        return super().__call__(globalAliases=globalAliases, **kwds)
+        # record the caller's location
+        locator = pyre.tracking.here(1) if locator is None else locator
+        # and chain up
+        return super().__call__(globalAliases=globalAliases, locator=locator, **kwds)
 
 
 # end of file
