@@ -1,0 +1,15 @@
+# -*- makefile -*-
+#
+# {project.authors}
+# (c) {project.span} all rights reserved
+
+
+# the testsuite for the {project.name} bindings
+{project.name}.lib.tests.stem := {project.name}.lib
+# depends on
+{project.name}.lib.tests.prerequisites := {project.name}.lib
+# external dependencies
+{project.name}.lib.tests.extern := {project.name}.lib $({project.name}.lib.extern)
+
+
+# end of file
