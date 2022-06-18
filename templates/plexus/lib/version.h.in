@@ -22,8 +22,13 @@ namespace {project.name}::version {{
     // type aliases
     using string_t = std::string;
 
-    // my version is a tuple of three integers and the {{git}} hash
-    using version_t = std::tuple<int, int, int, string_t>;
+    // my version is a struct with three integers and the {{git}} hash
+    struct version_t {{
+        int major;
+        int minor;
+        int micro;
+        string_t revision;
+    }};
 
     // the version of the {{project.name}} library
     auto version() -> version_t;
