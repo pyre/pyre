@@ -124,7 +124,7 @@ class Smith(pyre.application, family="pyre.applications.smith", namespace="smith
                         # expand any macros
                         body = nameserver.interpolate(expression=body)
                     # if anything goes wrong
-                    except self.FrameworkError as error:
+                    except (self.FrameworkError, TypeError) as error:
                         # generate an error message
                         channel = journal.error("smith")
                         # complain
