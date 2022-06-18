@@ -2,9 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # {project.authors}
-# {project.affiliations}
 # (c) {project.span} all rights reserved
-#
 
 
 """
@@ -25,4 +23,4 @@ if __name__ == "__main__":
     test()
 
 
-# end of file 
+# end of file
