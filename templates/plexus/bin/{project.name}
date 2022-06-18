@@ -10,7 +10,7 @@
 import {project.name}
 
 # build an instance of the app
-app = {project.name}.plexus(name='{project.name}.app')
+app = {project.name}.shells.{project.name}(name='{project.name}.app')
 # invoke it
 status = app.run()
 # and pass its exit status on to the shell
