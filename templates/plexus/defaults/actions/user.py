@@ -10,7 +10,7 @@
 import {project.name}
 
 # declaration
-class debug({project.name}.command, family='{project.name}.actions.debug'):
+class user({project.name}.command, family='{project.name}.actions.user'):
     """
     An example command
     """
@@ -21,10 +21,10 @@ class debug({project.name}.command, family='{project.name}.actions.debug'):
 
 
     # behaviors
-    @{project.name}.export(tip='convenience action for debugging the plexus')
+    @{project.name}.export(tip='convenience action for testing extensibility')
     def test(self, plexus, **kwds):
         """
-        Convenient resting point for debugging code during development
+        Convenient action for testing extensibility or parking debugging code during development
         """
         # show me
         plexus.info.log(self.pyre_name)
