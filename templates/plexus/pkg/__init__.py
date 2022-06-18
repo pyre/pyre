@@ -9,27 +9,35 @@
 
 # import and publish pyre symbols
 from pyre import (
-    # protocols, components and traits
+    # protocols, components, traits, and their infrastructure
     schemata, constraints, properties, protocol, component, foundry,
     # decorators
     export, provides,
     # the manager of the pyre runtime
     executive,
+    # support for concurrency
+    nexus,
+    # support for workflows, products, and factories
+    flow,
+    # shells
+    application, plexus,
     # miscellaneous
-    tracking, units
+    primitives, tracking, units, weaver,
     )
 
 
-# bootstrap
+# register the package with the framework
 package = executive.registerPackage(name='{project.name}', file=__file__)
 # save the geography
 home, prefix, defaults = package.layout()
 
-# publish local modules
-from . import (
-    meta, # meta-data
-    extensions, # my extension module
-    )
+
+# publish the local modules
+# the bindings
+from .ext import lib{project.name}
+# basic functionality
+from . import meta
+
 
 # administrivia
 def copyright():
@@ -69,10 +77,6 @@ def version():
     """
     # pull and return the meta-data
     return meta.version
-
-
-# plexus support
-from .components import plexus, action, command
 
 
 # end of file
