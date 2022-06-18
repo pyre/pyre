@@ -25,10 +25,13 @@ banner = f"""
     {{copyright}}
 """
 
-header = banner + """
+authors = """
 authors:
     {project.authors}
 """
+
+header = banner + authors
+
 
 license = header + """
 license:

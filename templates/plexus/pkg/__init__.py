@@ -38,6 +38,10 @@ from .ext import lib{project.name}
 # basic functionality
 from . import meta
 
+# user interfaces
+from . import shells
+from . import cli
+
 
 # administrivia
 def copyright():
