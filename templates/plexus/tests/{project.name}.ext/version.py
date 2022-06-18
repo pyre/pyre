@@ -8,13 +8,15 @@
 
 
 """
-Sanity check: verify that the extension from the {{{project.name}}} package is accessible
+Version check
 """
 
 
 def test():
     # access the {{{project.name}}} extension
     from {project.name} import lib{project.name}
+    # verify that the static and dynamic versions match
+    assert lib{project.name}.version.static() == lib{project.name}.version.dynamic()
     # all done
     return
 
