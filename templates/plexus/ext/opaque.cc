@@ -1,7 +1,7 @@
 // -*- c++ -*-
 //
-// michael a.g. aïvázis <michael.aivazis@para-sim.com>
-// (c) 1998-2022 all rights reserved
+// {project.authors}
+// (c) {project.span} all rights reserved
 
 
 // externals
@@ -10,10 +10,10 @@
 #include "forward.h"
 
 
-// add the local exceptions
+// opaque classes do not get auto-converted to and from python
 void
 {project.name}::py::
-exceptions(py::module & m) {{
+opaque(py::module & m) {{
     // all done
     return;
 }}
