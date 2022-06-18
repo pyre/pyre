@@ -5,6 +5,7 @@
 
 
 # externals
+import journal
 import {project.name}
 
 
@@ -59,7 +60,7 @@ class About({project.name}.shells.command, family='{project.name}.cli.about'):
         # get the package version
         major, minor, micro, revision = {project.name}.version()
         # show it
-        channel.line(f"package: {major}.{minor}.{micro} rev {revision}")
+        channel.line(f"tablet: {{major}}.{{minor}}.{{micro}} rev {{revision}}")
 
         # get the bindings
         lib{project.name} = {project.name}.lib{project.name}
@@ -70,11 +71,11 @@ class About({project.name}.shells.command, family='{project.name}.cli.about'):
             # get the library version
             major, minor, micro, revision = lib{project.name}.version.dynamic()
             # show it
-            channel.line(f"  library: {major}.{minor}.{micro} rev {revision}")
+            channel.line(f"   library: {{major}}.{{minor}}.{{micro}} rev {{revision}}")
             # get the version of the bindings
             major, minor, micro, revision = lib{project.name}.version.static()
             # show it
-            channel.line(f"  bindings: {major}.{minor}.{micro} rev {revision}")
+            channel.line(f"  bindings: {{major}}.{{minor}}.{{micro}} rev {{revision}}")
 
         # flush
         channel.log()
