@@ -1,9 +1,9 @@
-;
-; {project.authors}
-; (c) {project.span} all rights reserved
+#
+# {project.authors}
+# (c) {project.span} all rights reserved
 
 
-; project defaults
+# project info
 project:
   name: {project.name}
   capname: {project.capname}
@@ -12,4 +12,4 @@ project:
   github: {project.github}
 
 
-; end of file
+# end of file
