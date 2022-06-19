@@ -31,7 +31,7 @@ class Application(pyre.component, metaclass=Director):
     # constants
     USER = 'user' # the name of the folder with user settings
     SYSTEM = 'system' # the name of the folder with the global settings
-    DEFAULTS = 'defaults' # the name of the folder with my configuration files
+    CONFIG = 'share' # the name of the folder with my configuration files
 
     # the default name for pyre applications; subclasses are expected to provide a more
     # reasonable value, which gets used to load per-instance configuration right before the
@@ -49,7 +49,7 @@ class Application(pyre.component, metaclass=Director):
     # geography
     pyre_home = None # the directory where my invocation script lives
     pyre_prefix = None # my installation directory
-    pyre_defaults = None # the directory with my configuration folders
+    pyre_config = None # the directory with my configuration folders
     pfs = None # the root of my private filesystem
     layout = None # my configuration options
 
@@ -192,7 +192,7 @@ class Application(pyre.component, metaclass=Director):
                 self.debug.active = True
 
         # sniff around for my environment
-        self.pyre_home, self.pyre_prefix, self.pyre_defaults = self.pyre_explore()
+        self.pyre_home, self.pyre_prefix, self.pyre_config = self.pyre_explore()
         # instantiate my layout
         self.layout = self.pyre_loadLayout()
         # mount my folders
@@ -251,7 +251,7 @@ class Application(pyre.component, metaclass=Director):
         Look around my runtime environment and the filesystem for my special folders
         """
         # by default, i have nothing
-        home = prefix = defaults = None
+        home = prefix = config = None
 
         # check how the runtime was invoked
         argv0 = sys.argv[0] # this is guaranteed to exist, but may be empty
@@ -267,7 +267,7 @@ class Application(pyre.component, metaclass=Director):
                 prefix =  home.parent
 
         # at this point, i either have both {home} and {prefix}, or neither; there isn't much more
-        # to be done about {home}, but i still have a shot to find the system {defaults} by
+        # to be done about {home}, but i still have a shot to find the system {config} by
         # examining my {package}
         package = self.pyre_package()
         # if i don't know my {prefix} and my package has one
@@ -275,23 +275,23 @@ class Application(pyre.component, metaclass=Director):
             # use it; it's almost certainly a better choice that leaving it empty
             prefix = package.prefix
 
-        # finding my {defaults} directory requires me to have a namespace
+        # finding my {config} directory requires me to have a namespace
         namespace = self.pyre_namespace
 
         # if i don't have both
         if not prefix or not namespace:
             # not much more to do
-            return home, prefix, defaults
+            return home, prefix, config
 
         # look for my configuration directory
-        cfg = prefix / self.DEFAULTS / namespace
+        cfg = prefix / self.CONFIG / namespace
         # if it exists
         if cfg.isDirectory():
             # all done
             return home, prefix, cfg
 
         # otherwise, not much else to do
-        return home, prefix, defaults
+        return home, prefix, config
 
 
     def pyre_mountPrivateFilespace(self):
@@ -393,7 +393,7 @@ class Application(pyre.component, metaclass=Director):
         # look for
         try:
             # the folder with my configurations
-            cfgdir = prefix[f"defaults/{namespace}"]
+            cfgdir = prefix[f"{self.CONFIG}/{namespace}"]
         # if it is not there
         except pfs.NotFoundError:
             # make an empty folder; must use {pfs} to do this to guarantee filesystem consistency
