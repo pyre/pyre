@@ -199,7 +199,7 @@ function(pyre_pyreDefaults)
   # install the configuration files
   install(
     FILES pyre.pfg merlin.pfg
-    DESTINATION defaults
+    DESTINATION share
   )
   # all done
 endfunction(pyre_pyreDefaults)
