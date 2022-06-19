@@ -222,9 +222,9 @@ class FileServer(Filesystem):
         fs = self.retrieveFilesystem(root=prefix)
         # attempt to
         try:
-            # print(f"  looking for {package.DEFAULTS}")
+            # print(f"  looking for {package.CONFIG}")
             # look for the configuration folder
-            defaults = fs[package.DEFAULTS]
+            config = fs[package.CONFIG]
         # if not there
         except fs.NotFoundError:
             # print("    not there")
@@ -233,10 +233,10 @@ class FileServer(Filesystem):
         # print("    found it")
 
         # if the configuration folder is empty
-        if not defaults.contents:
+        if not config.contents:
             # it might be because we haven't explored it yet
             # print("    expanding it")
-            defaults.discover(levels=1)
+            config.discover(levels=1)
 
         # look for configuration files
         for encoding in self.executive.configurator.encodings():
@@ -245,7 +245,7 @@ class FileServer(Filesystem):
             # look for
             try:
                 # the node that corresponds to the configuration file
-                cfgfile = defaults[filename]
+                cfgfile = config[filename]
             # if it's not there
             except fs.NotFoundError:
                 # bail
@@ -257,8 +257,8 @@ class FileServer(Filesystem):
         # look for the configuration folder
         try:
             # get the associated node
-            # print(f"  looking for {package.DEFAULTS}/{name}")
-            cfgdir = defaults[name]
+            # print(f"  looking for {package.CONFIG}/{name}")
+            cfgdir = config[name]
         # if it's not there
         except fs.NotFoundError:
             # print("    not there")
