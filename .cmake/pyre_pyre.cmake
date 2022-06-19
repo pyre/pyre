@@ -198,7 +198,7 @@ endfunction(pyre_pyreBin)
 function(pyre_pyreDefaults)
   # install the configuration files
   install(
-    FILES pyre.pfg merlin.pfg
+    DIRECTORY pyre merlin
     DESTINATION share
   )
   # all done
