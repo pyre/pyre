@@ -2,17 +2,17 @@
 # -*- coding: utf-8 -*-
 #
 # {project.authors}
-# {project.affiliations}
 # (c) {project.span} all rights reserved
-#
+
 
 # get the package
 import {project.name}
 
+
 # declaration
-class user({project.name}.command, family='{project.name}.actions.user'):
+class user({project.name}.shells.command, family='{project.name}.cli.user'):
     """
-    An example command
+    An example of a user provided command to exercise extensibility
     """
 
 
