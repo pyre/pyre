@@ -8,8 +8,12 @@
 # its name matches the name of the project, so it will get set correctly by default
 # its path relative to the project
 {project.name}.pkg.root := pkg/
-# its plexus wrapper in the {{bin}} directory
+
+# its plexus wrapper is in {{bin}}
 {project.name}.pkg.drivers := {project.name}
+
+# its configuration files are in {{share}}
+{project.name}.pkg.defaults := share/
 
 
 # end of file
