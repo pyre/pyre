@@ -141,7 +141,7 @@ class Executive:
         Locate and load all accessible configuration files for the given {stem}
         """
         # show me
-        # print("Executive.configure:")
+        # print("Executive.configureStem:")
         # print(f"    stem={stem}")
         # print(f"    cfgpath={cfgpath}")
         # print(f"    locator={locator}")
@@ -167,6 +167,7 @@ class Executive:
             # print(f" ++ looking for '{uri}'")
             # load the settings from the associated file
             self.loadConfiguration(uri=uri, priority=priority, locator=locator)
+
         # all done
         return
 
