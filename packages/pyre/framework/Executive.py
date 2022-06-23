@@ -114,23 +114,29 @@ class Executive:
         # look for platform specific settings
         stem = f"{namespace}/platforms/{host.distribution}"
         # mark
-        here = tracking.simple('while discovering the host characteristics')
+        action = tracking.simple('while discovering the host characteristics')
+        # chain to the existing locator
+        chain = tracking.chain(action, locator)
         # attempt to load any matching configuration files
-        self.configureStem(stem=stem, priority=self.priority.user, locator=here)
+        self.configureStem(stem=stem, priority=self.priority.user, locator=chain)
 
         # look for host specific settings
         stem = f"{namespace}/hosts/{host.nickname}"
         # mark
-        here = tracking.simple('while discovering the host characteristics')
+        action = tracking.simple('while discovering the host characteristics')
+        # chain to the existing locator
+        chain = tracking.chain(action, locator)
         # attempt to load any matching configuration files
-        self.configureStem(stem=stem, priority=self.priority.user, locator=here)
+        self.configureStem(stem=stem, priority=self.priority.user, locator=chain)
 
         # finally, look for a {user@host} configuration files
         stem = f"{namespace}/users/{self.user.username}@{host.nickname}"
         # mark
-        here = tracking.simple('while loading the user specific configuration')
+        action = tracking.simple('while loading the user specific configuration')
+        # chain to the existing locator
+        chain = tracking.chain(action, locator)
         # attempt to load any matching configuration files
-        self.configureStem(stem=stem, priority=self.priority.user, locator=here)
+        self.configureStem(stem=stem, priority=self.priority.user, locator=chain)
 
         # all done
         return
