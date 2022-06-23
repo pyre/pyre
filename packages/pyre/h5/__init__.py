@@ -26,6 +26,9 @@ tuple = dataset.tuple
 # readers and writers
 from .Reader import Reader as reader
 from .Writer import Writer as writer
+
+# the walker of the hierarchy
+from .Walker import Walker as walker
 # the explorer
 from .Tree import Tree as tree
 
