@@ -25,4 +25,21 @@ class Object(Location):
         return
 
 
+    # framework hooks
+    def pyre_identify(self, authority, **kwds):
+        """
+        Let {authority} know i am an object
+        """
+        # attempt to
+        try:
+            # ask {authority} for my handler
+            handler = authority.onObject
+        # if it doesn't understand
+        except AttributeError:
+            # chain up
+            return super().identify(authority=authority, **kwds)
+        # otherwise, invoke the handler
+        return handler(object=self, **kwds)
+
+
 # end of file
