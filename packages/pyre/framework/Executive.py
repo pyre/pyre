@@ -98,8 +98,11 @@ class Executive:
         """
         Locate and load all accessible configuration files for the given {namespace}
         """
-        # first up, package level configuration based on the raw {namespace}
-        stem = namespace
+        # first up, package level configuration based on the raw {namespace}; first in the
+        # raw directory
+        self.configureStem(stem=namespace, locator=locator, priority=self.priority.package)
+        # and then in the private subdirectory
+        stem = f"{namespace}/{namespace}"
         # locate and load
         self.configureStem(stem=stem, locator=locator, priority=self.priority.package)
 
@@ -111,30 +114,43 @@ class Executive:
             # none of what follows can be done, so bail
             return
 
-        # look for platform specific settings
-        stem = f"{namespace}/platforms/{host.distribution}"
-        # mark
+        # we care about the os distribution
+        distro = host.distribution
+        # and the host nickname
+        nickname = host.nickname
+        # form the user tag
+        user = f"{self.user.username}@{nickname}"
+
+        # look for platform specific settings in a private subdirectory
         action = tracking.simple('while discovering the host characteristics')
         # chain to the existing locator
         chain = tracking.chain(action, locator)
+        # first in the raw directory
+        self.configureStem(stem=distro, priority=self.priority.user, locator=chain)
+        # but also in the private subdirectory
+        stem = f"{namespace}/platforms/{distro}"
         # attempt to load any matching configuration files
         self.configureStem(stem=stem, priority=self.priority.user, locator=chain)
 
         # look for host specific settings
-        stem = f"{namespace}/hosts/{host.nickname}"
-        # mark
         action = tracking.simple('while discovering the host characteristics')
         # chain to the existing locator
         chain = tracking.chain(action, locator)
+        # first in the raw directory
+        self.configureStem(stem=nickname, priority=self.priority.user, locator=chain)
+        # but also in the private directory
+        stem = f"{namespace}/hosts/{nickname}"
         # attempt to load any matching configuration files
         self.configureStem(stem=stem, priority=self.priority.user, locator=chain)
 
         # finally, look for a {user@host} configuration files
-        stem = f"{namespace}/users/{self.user.username}@{host.nickname}"
-        # mark
         action = tracking.simple('while loading the user specific configuration')
         # chain to the existing locator
         chain = tracking.chain(action, locator)
+        # first in the raw directory
+        self.configureStem(stem=user, priority=self.priority.user, locator=chain)
+        # but also in the private directory
+        stem = f"{namespace}/users/{user}"
         # attempt to load any matching configuration files
         self.configureStem(stem=stem, priority=self.priority.user, locator=chain)
 
