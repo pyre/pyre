@@ -71,6 +71,20 @@ class Location(Identifier, metaclass=Schema):
         return
 
 
+    def pyre_identify(self, authority, **kwds):
+        """
+        Let {authority} know i am a location
+        """
+        # attempt to
+        try:
+            # ask {authority} for my handler
+            handler = authority.onLocation
+        # if it doesn't understand
+        except AttributeError:
+            # chain up
+            return super().identify(authority=authority, **kwds)
+        # otherwise, invoke the handler
+        return handler(location=self, **kwds)
 
 
 # end of file

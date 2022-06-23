@@ -134,4 +134,12 @@ class Identifier:
         return value
 
 
+    def pyre_identify(self, authority, **kwds):
+        """
+        Let {authority} know i am an identifier
+        """
+        # invoke the hook
+        return authority.onIdentifier(identifier=self, **kwds)
+
+
 # end of file

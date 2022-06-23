@@ -60,4 +60,20 @@ class Dataset(Object):
         return self.process(value=value, **kwds)
 
 
+    def pyre_identify(self, authority, **kwds):
+        """
+        Let {authority} know i am a dataset
+        """
+        # attempt to
+        try:
+            # ask {authority} for my handler
+            handler = authority.onDataset
+        # if it doesn't exist
+        except AttributeError:
+            # chain up
+            return super().identify(authority=authority, **kwds)
+        # otherwise, invoke the handler
+        return handler(dataset=self, **kwds)
+
+
 # end of file
