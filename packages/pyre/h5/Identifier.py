@@ -40,7 +40,6 @@ class Identifier:
         if instance is None:
             # return the descriptor
             return self
-
         # otherwise, get my value from {instance}
         value = self.pyre_get(instance)
         # process it
@@ -65,8 +64,8 @@ class Identifier:
         """
         Delete my value
         """
-        # remove from the {instance} inventory
-        del instance.pyre_inventory[self]
+        # remove my value
+        self.pyre_delete(instance=instance)
         # and done
         return
 
@@ -95,35 +94,24 @@ class Identifier:
         """
         Read my value
         """
-        # attempt to
-        try:
-            # get my value from the {inventory} of the {instance}
-            value = instance.pyre_inventory[self]
-        # if {instance} doesn't have an explicit value for me yet
-        except KeyError:
-            # ask for a refresh
-            value = self.pyre_sync(instance=instance)
-
-        # and return it
-        return value
+        # i don't know how to do that
+        raise NotImplementedError(f"class '{type(self).__name__}' must implement 'pyre_get'")
 
 
     def pyre_set(self, instance, value):
         """
         Write my value
         """
-        # update the {inventory} of {instance}
-        instance.pyre_inventory[self] = value
-        # all done
-        return
+        # i don't know how to do that
+        raise NotImplementedError(f"class '{type(self).__name__}' must implement 'pyre_set'")
 
 
-    def pyre_sync(self, **kwds):
+    def pyre_delete(self, instance):
         """
-        Hook invoked when the {inventory} lookup fails and a value must be generated
+        Delete my value
         """
-        # i have no opinions
-        return None
+        # i don't know how to do that
+        raise NotImplementedError(f"class '{type(self).__name__}' must implement 'pyre_delete'")
 
 
     def pyre_process(self, value, **kwds):
