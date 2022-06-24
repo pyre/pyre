@@ -114,6 +114,14 @@ class Identifier:
         raise NotImplementedError(f"class '{type(self).__name__}' must implement 'pyre_delete'")
 
 
+    def pyre_sync(self, **kwds):
+        """
+        Hook invoked when the {inventory} lookup fails and a value must be generated
+        """
+        # i know nothing, so...
+        return None
+
+
     def pyre_process(self, value, **kwds):
         """
         Walk {value} through my transformations
