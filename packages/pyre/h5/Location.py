@@ -8,8 +8,6 @@
 from .Identifier import Identifier
 # metaclass
 from .Schema import Schema
-# my parts
-from .Inventory import Inventory
 
 
 # base class of all h5 objects that have an address
@@ -50,8 +48,6 @@ class Location(Identifier, metaclass=Schema):
         super().__init__(name=name, **kwds)
         # record the location
         self.pyre_location = at if at is not None else name
-        # initialize my inventory
-        self.pyre_inventory = Inventory()
         # all done
         return
 
