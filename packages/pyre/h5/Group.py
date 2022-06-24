@@ -8,6 +8,8 @@
 import itertools
 # superclass
 from .Object import Object
+# my parts
+from .Inventory import Inventory
 
 
 # a dataset container
@@ -89,7 +91,9 @@ class Group(Object):
     def __init__(self, **kwds):
         # chain up
         super().__init__(**kwds)
-        # initialize my pile of dynamic contents
+        # initialize my inventory
+        self.pyre_inventory = Inventory()
+        # and my pile of dynamic contents
         self.pyre_dynamicIdentifiers = {}
         # all done
         return
@@ -104,14 +108,48 @@ class Group(Object):
 
 
     # framework hooks
-    def pyre_sync(self, instance, **kwds):
+    def pyre_get(self, descriptor):
+        """
+        Read my value
+        """
+        # attempt to
+        try:
+            # get the {descriptor} value from my {inventory}
+            value = self.pyre_inventory[descriptor]
+        # if i don't have an explicit value for {descriptor} yet
+        except KeyError:
+            # ask for a refresh
+            value = descriptor.pyre_sync(instance=self)
+        # and return it
+        return value
+
+
+    def pyre_set(self, descriptor, value):
+        """
+        Write my value
+        """
+        # update the value of {descriptor} in my {inventory}
+        self.pyre_inventory[descriptor] = value
+        # all done
+        return
+
+
+    def pyre_delete(self, descriptor):
+        """
+        Delete my value
+        """
+        # remove {descriptor} from my inventory
+        del self.pyre_inventory[descriptor]
+        # and done
+        return
+
+
+    def pyre_sync(self, **kwds):
         """
         Hook invoked when the {inventory} lookup fails and a value must be generated
         """
         # build a clone of mine to hold my client's values for my structure
         group = type(self)(name=self.pyre_name, at=self.pyre_location)
-        # attach it
-        self.pyre_set(instance=instance, value=group)
         # and return it
         return group
 
