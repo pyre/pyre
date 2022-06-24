@@ -41,7 +41,7 @@ class Identifier:
             # return the descriptor
             return self
         # otherwise, get my value from {instance}
-        value = self.pyre_get(instance)
+        value = instance.pyre_get(descriptor=self)
         # process it
         value = self.pyre_process(instance=instance, value=value)
         # and make it available
@@ -55,7 +55,7 @@ class Identifier:
         # process {value}
         value = self.pyre_process(instance=instance, value=value)
         # and attach it to {instance}
-        self.pyre_set(instance=instance, value=value)
+        instance.pyre_set(descriptor=self, value=value)
         # all done
         return
 
@@ -64,8 +64,8 @@ class Identifier:
         """
         Delete my value
         """
-        # remove my value
-        self.pyre_delete(instance=instance)
+        # remove my value from {instance}
+        instance.pyre_delete(descriptor=self)
         # and done
         return
 
@@ -90,7 +90,7 @@ class Identifier:
         return
 
 
-    def pyre_get(self, instance):
+    def pyre_get(self, descriptor):
         """
         Read my value
         """
@@ -98,7 +98,7 @@ class Identifier:
         raise NotImplementedError(f"class '{type(self).__name__}' must implement 'pyre_get'")
 
 
-    def pyre_set(self, instance, value):
+    def pyre_set(self, descriptor, value):
         """
         Write my value
         """
@@ -106,7 +106,7 @@ class Identifier:
         raise NotImplementedError(f"class '{type(self).__name__}' must implement 'pyre_set'")
 
 
-    def pyre_delete(self, instance):
+    def pyre_delete(self, descriptor):
         """
         Delete my value
         """
