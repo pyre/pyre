@@ -33,11 +33,11 @@ class Object(Location):
         # attempt to
         try:
             # ask {authority} for my handler
-            handler = authority.onObject
+            handler = authority.pyre_onObject
         # if it doesn't understand
         except AttributeError:
             # chain up
-            return super().identify(authority=authority, **kwds)
+            return super().pyre_identify(authority=authority, **kwds)
         # otherwise, invoke the handler
         return handler(object=self, **kwds)
 

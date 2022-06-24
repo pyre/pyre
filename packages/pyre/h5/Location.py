@@ -74,11 +74,11 @@ class Location(Identifier, metaclass=Schema):
         # attempt to
         try:
             # ask {authority} for my handler
-            handler = authority.onLocation
+            handler = authority.pyre_onLocation
         # if it doesn't understand
         except AttributeError:
             # chain up
-            return super().identify(authority=authority, **kwds)
+            return super().pyre_identify(authority=authority, **kwds)
         # otherwise, invoke the handler
         return handler(location=self, **kwds)
 

@@ -67,11 +67,11 @@ class Dataset(Object):
         # attempt to
         try:
             # ask {authority} for my handler
-            handler = authority.onDataset
+            handler = authority.pyre_onDataset
         # if it doesn't exist
         except AttributeError:
             # chain up
-            return super().identify(authority=authority, **kwds)
+            return super().pyre_identify(authority=authority, **kwds)
         # otherwise, invoke the handler
         return handler(dataset=self, **kwds)
 

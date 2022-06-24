@@ -135,7 +135,7 @@ class Identifier:
         Let {authority} know i am an identifier
         """
         # invoke the hook
-        return authority.onIdentifier(identifier=self, **kwds)
+        return authority.pyre_onIdentifier(identifier=self, **kwds)
 
 
 # end of file

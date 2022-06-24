@@ -165,11 +165,11 @@ class Group(Object):
         # attempt to
         try:
             # ask {authority} for my handler
-            handler = authority.onGroup
+            handler = authority.pyre_onGroup
         # if it doesn't understand
         except AttributeError:
             # chain up
-            return super().identify(authority=authority, **kwds)
+            return super().pyre_identify(authority=authority, **kwds)
         # otherwise, invoke the handler
         return handler(group=self, **kwds)
 
