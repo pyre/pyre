@@ -144,12 +144,16 @@ class Group(Object):
         return
 
 
-    def pyre_sync(self, **kwds):
+    def pyre_sync(self, instance, **kwds):
         """
         Hook invoked when the {inventory} lookup fails and a value must be generated
         """
         # build a clone of mine to hold my client's values for my structure
         group = type(self)(name=self.pyre_name, at=self.pyre_location)
+        # make sure {instance} remembers my clone; this step is important for groups so that
+        # {instance} local storage is created to support further content access
+        # there is a test case that checks for this...
+        instance.pyre_set(descriptor=self, value=group)
         # and return it
         return group
 
