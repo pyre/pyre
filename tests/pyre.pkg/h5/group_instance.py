@@ -31,11 +31,11 @@ def test():
     # instantiate
     group = Group()
 
-    # verify that my table of identifiers is accessible
-    identifiers = group.pyre_identifiers
-    # and of the correct size
+    # build the full set of my identifiers
+    identifiers = {**Group.pyre_identifiers, **group.pyre_identifiers}
+    # make sure it's the correct size
     assert len(identifiers) == 2
-    # check the contents
+    # and check the contents
     assert identifiers["id"].typename == "int"
     assert identifiers["pols"].typename == "list"
 
