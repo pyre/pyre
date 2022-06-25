@@ -10,6 +10,11 @@ import itertools
 from .Object import Object
 # my parts
 from .Inventory import Inventory
+# typing
+import typing
+from .Dataset import Dataset
+from .Identifier import Identifier
+from .Location import Location
 
 
 # a dataset container
@@ -20,7 +25,7 @@ class Group(Object):
 
     # public data
     @property
-    def pyre_marker(self):
+    def pyre_marker(self) -> str:
         """
         Generate an identifying mark
         """
@@ -29,17 +34,29 @@ class Group(Object):
 
 
     # interface
-    def pyre_datasets(self):
+    # add a new identifier
+    def pyre_extend(self, identifier: Identifier) -> 'Group':
+        """
+        Add a new {identifier} to this group
+
+        The {identifier} must have a {pyre_name}
+        """
+        # add it to my pile
+        self.pyre_identifiers[identifier.pyre_name] = identifier
+        # all done
+        return self
+
+
+    # access to contents by category
+    def pyre_datasets(self) -> typing.Sequence[Dataset]:
         """
         Generate a sequence of my datasets
         """
-        # get the {dataset} base class
-        from .Dataset import Dataset
         # filter and return
         return filter(lambda loc: issubclass(loc, Dataset), self.pyre_locations())
 
 
-    def pyre_groups(self):
+    def pyre_groups(self) -> typing.Sequence['Group']:
         """
         Generate a sequence of my subgroups
         """
@@ -47,7 +64,7 @@ class Group(Object):
         return filter(lambda loc: issubclass(loc, Group), self.pyre_locations())
 
 
-    def pyre_locations(self):
+    def pyre_locations(self) -> typing.Sequence[Location]:
         """
         Generate a sequence of contents
         """
@@ -55,7 +72,7 @@ class Group(Object):
         # currently, there are two possible sources of identifiers in my contents
         # - the static layout of my {mro}, with each superclass contributing the identifiers it
         #    declares; stored by {schema} in {pyre_identifiers}
-        # - the pile of identifiers added programmatically; stored in {pyre_dynamicIdentifiers}
+        # - the pile of identifiers added programmatically; stored in {pyre_identifiers}
         #
         # collating identifiers from these sources requires taking shadowing into account
         # shadowing is determined by the {pyre_location} of an identifier, not its {pyre_name}
@@ -66,7 +83,7 @@ class Group(Object):
         # get the full sequence of identifiers
         identifiers = itertools.chain(
             # the identifiers added at runtime
-            self.pyre_dynamicIdentifiers.values(),
+            self.pyre_identifiers.values(),
             # the identifiers from my static structure
             *(base.pyre_identifiers.values()
                 for base in type(self).mro() if hasattr(base, "pyre_identifiers"))
@@ -92,30 +109,64 @@ class Group(Object):
         # chain up
         super().__init__(**kwds)
         # initialize my inventory
-        self.pyre_inventory = Inventory()
+        self.pyre_inventory: Inventory = Inventory()
         # and my pile of dynamic contents
-        self.pyre_dynamicIdentifiers = {}
+        self.pyre_identifiers: typing.Dict[str, Identifier] = {}
         # all done
         return
 
 
-    def __str__(self):
+    def __getattr__(self, name: str) -> typing.Any:
+        """
+        Trap attribute look up to support dynamic identifiers
+        """
+        # looking up {name} has failed; check whether
+        try:
+            # {name} points to one of my dynamic identifiers
+            identifier = self.pyre_identifiers[name]
+        # if not
+        except KeyError:
+            # i'm out of ideas
+            raise AttributeError(f"group '{self.pyre_name}' has no identifier named '{name}'")
+
+        # otherwise, ask it to do its thing
+        return identifier.__get__(instance=self, cls=type(self))
+
+
+    def __setattr__(self, name: str, value: typing.Any) -> None:
+        """
+        Trap attribute assignment to support dynamic identifiers
+        """
+        # check whether
+        try:
+            # {name} points to one of my dynamic identifiers
+            identifier = self.pyre_identifiers[name]
+        # if not
+        except KeyError:
+            # delegate
+            return super().__setattr__(name, value)
+
+        # if it is, ask it to do its thing
+        return identifier.__set__(instance=self, value=value)
+
+
+    def __str__(self) -> str:
         """
         Human readable description
         """
         # say something simple, for now
-        return "a group"
+        return f"group '{self.pyre_name}' at '{self.pyre_location}'"
 
 
     # framework hooks
-    def pyre_get(self, descriptor):
+    def pyre_get(self, descriptor: Identifier) -> typing.Any:
         """
         Read my value
         """
         # attempt to
         try:
             # get the {descriptor} value from my {inventory}
-            value = self.pyre_inventory[descriptor]
+            value = self.pyre_inventory[descriptor.pyre_name]
         # if i don't have an explicit value for {descriptor} yet
         except KeyError:
             # ask for a refresh
@@ -124,27 +175,27 @@ class Group(Object):
         return value
 
 
-    def pyre_set(self, descriptor, value):
+    def pyre_set(self, descriptor: Identifier, value: typing.Any) -> None:
         """
         Write my value
         """
         # update the value of {descriptor} in my {inventory}
-        self.pyre_inventory[descriptor] = value
+        self.pyre_inventory[descriptor.pyre_name] = value
         # all done
         return
 
 
-    def pyre_delete(self, descriptor):
+    def pyre_delete(self, descriptor: Identifier) -> None:
         """
         Delete my value
         """
         # remove {descriptor} from my inventory
-        del self.pyre_inventory[descriptor]
+        del self.pyre_inventory[descriptor.pyre_name]
         # and done
         return
 
 
-    def pyre_sync(self, instance, **kwds):
+    def pyre_sync(self, instance: 'Group', **kwds) -> 'Group':
         """
         Hook invoked when the {inventory} lookup fails and a value must be generated
         """
@@ -158,7 +209,7 @@ class Group(Object):
         return group
 
 
-    def pyre_identify(self, authority, **kwds):
+    def pyre_identify(self, authority: typing.Any, **kwds) -> typing.Any:
         """
         Let {authority} know i am a group
         """
