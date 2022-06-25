@@ -83,4 +83,12 @@ class Location(Identifier, metaclass=Schema):
         return handler(location=self, **kwds)
 
 
+    def pyre_clone(self):
+        """
+        Make as faithful a clone of mine as possible
+        """
+        # invoke my constructor
+        return type(self)(name=self.pyre_name, at=self.pyre_location)
+
+
 # end of file
