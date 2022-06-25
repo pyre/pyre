@@ -20,28 +20,28 @@ class Walker:
         """
         Perform a breadth-first traversal of {location}
         """
-        # prime the workload
-        todo = [(location, prefix)]
+        # prime the work pile
+        todo = [(prefix, None, location)]
 
         # now go through it
-        for entry, path in todo:
+        for prefix, parent, location in todo:
             # return the current entry
-            yield entry, path
+            yield prefix, parent, location
             # compute the new path
-            newPath = path / entry.pyre_location
-            # and add its children to the pile
-            todo.extend((child, newPath) for child in entry.pyre_locations())
+            prefix = prefix / location.pyre_location
+            # and add its children to the work pile
+            todo.extend((prefix, location, child) for child in location.pyre_locations())
 
         # all done
         return
 
 
-    def depth(self, location, prefix=pyre.primitives.path.root):
+    def depth(self, location, parent=None, prefix=pyre.primitives.path.root):
         """
         Perform a depth-first traversal of {location}
         """
         # first up, the {location} itself
-        yield location, prefix
+        yield prefix, parent, location
 
         # compute the new path
         prefix = prefix / location.pyre_location
@@ -49,7 +49,7 @@ class Walker:
         # grab the {location} contents
         for child in location.pyre_locations():
             # and explore each one
-            yield from self.depth(location=child, prefix=prefix)
+            yield from self.depth(location=child, parent=location, prefix=prefix)
 
         # all done
         return
