@@ -138,12 +138,16 @@ class Identifier:
         return authority.pyre_onIdentifier(identifier=self, **kwds)
 
 
-    def pyre_clone(self):
+    def pyre_clone(self, name=None, **kwds):
         """
         Make as faithful a clone of mine as possible
         """
+        # if the caller did not express any opinions
+        if name is None:
+            # use my name as the default
+            name = self.pyre_name
         # invoke my constructor
-        return type(self)(name=self.pyre_name)
+        return type(self)(name=name, **kwds)
 
 
 # end of file
