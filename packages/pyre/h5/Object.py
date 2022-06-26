@@ -42,12 +42,16 @@ class Object(Location):
         return handler(object=self, **kwds)
 
 
-    def pyre_clone(self):
+    def pyre_clone(self, id=None, **kwds):
         """
         Make as faithful a clone of mine as possible
         """
+        # if the user didn't specify an {id}
+        if id is None:
+            # use mine
+            id = self.pyre_id
         # invoke my constructor
-        return type(self)(name=self.pyre_name, at=self.pyre_location, id=self.pyre_id)
+        return super().pyre_clone(id=id, **kwds)
 
 
 # end of file
