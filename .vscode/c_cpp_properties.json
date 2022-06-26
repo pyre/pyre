@@ -20,7 +20,8 @@
             "includePath": [
                 "${workspaceFolder}/**",
                 "${env:USER_TOOLS_DIR}/mm/${env:mm_abi}/**",
-                "/opt/local/Library/Frameworks/Python.framework/Versions/3.9/include/**",
+                "/opt/local/Library/Frameworks/Python.framework/Versions/3.10/include/**",
+                "/opt/local/Library/Frameworks/Python.framework/Versions/3.10/lib/python3.10/site-packages/pybind11/include",
                 "/opt/local/include/**"
             ],
             "defines": [],
