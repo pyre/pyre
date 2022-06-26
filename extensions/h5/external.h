@@ -17,7 +17,6 @@
 #include <pybind11/complex.h>
 #include <pybind11/stl.h>
 #include <pybind11/stl_bind.h>
-
 // hdf5
 #include <H5Cpp.h>
 
@@ -35,7 +34,7 @@ namespace pyre::h5::py {
     // docstrings
     using docstring_t = const char *;
 
-    // wraper to install a {std::shared_ptr} as the custom holder for the bindings
+    // wrapper to install a {std::shared_ptr} as the custom holder for the bindings
     template <class classT>
     using shared_holder_t = py::class_<classT, std::shared_ptr<classT>>;
 
@@ -47,11 +46,16 @@ namespace pyre::h5::py {
     using strings_t = std::vector<string_t>;
 
     // aliases of hdf5 entities
+    // to avoid having to constantly look up which ones are prefixed by H5 and which not
     using DataSet = H5::DataSet;
     using DataSpace = H5::DataSpace;
     using DataType = H5::DataType;
     using CompType = H5::CompType;
     using File = H5::H5File;
+    using Group = H5::Group;
+    using Identifier = H5::IdComponent;
+    using Location = H5::H5Location;
+    using Object = H5::H5Object;
     using PredType = H5::PredType;
 
 } // namespace pyre::h5::py
