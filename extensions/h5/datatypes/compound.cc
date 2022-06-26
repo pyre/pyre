@@ -12,7 +12,7 @@
 
 // file objects
 void
-h5::py::datatypes::compound(py::module & m)
+pyre::h5::py::datatypes::compound(py::module & m)
 {
     // add the class
     auto compType = py::class_<CompType, DataType>(

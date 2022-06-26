@@ -12,7 +12,7 @@
 
 // file objects
 void
-h5::py::datatypes::datatypes(py::module & m)
+pyre::h5::py::datatypes::datatypes(py::module & m)
 {
     // make a new namespace to hold datatype descriptions
     auto datatypes = m.def_submodule(

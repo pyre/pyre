@@ -17,12 +17,12 @@ PYBIND11_MODULE(h5, m)
     m.doc() = "the hdf5 extension module";
 
     // register the module api
-    h5::py::api(m);
+    pyre::h5::py::api(m);
 
     // bindings
-    h5::py::dataset(m);
-    h5::py::datatypes::datatypes(m);
-    h5::py::file(m);
+    pyre::h5::py::dataset(m);
+    pyre::h5::py::datatypes::datatypes(m);
+    pyre::h5::py::file(m);
 
     // all done
     return;
