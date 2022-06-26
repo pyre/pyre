@@ -22,6 +22,7 @@ PYBIND11_MODULE(h5, m)
     // bindings
     pyre::h5::py::dataset(m);
     pyre::h5::py::datatypes::datatypes(m);
+    pyre::h5::py::group(m);
     pyre::h5::py::file(m);
 
     // all done

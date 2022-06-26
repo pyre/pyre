@@ -13,15 +13,15 @@ namespace pyre::h5::py {
     // the module api
     void api(py::module &);
 
-    // datasets
+    // wrappers for C++ api
     void dataset(py::module &);
-    // files
     void file(py::module &);
+    void group(py::module &);
 
 } // namespace pyre::h5::py
 
 
-// datatypes are in their own naespace
+// datatypes are in their own namespace
 namespace pyre::h5::py::datatypes {
     // datatypes
     void datatypes(py::module &);
