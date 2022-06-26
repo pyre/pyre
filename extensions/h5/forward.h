@@ -9,7 +9,7 @@
 
 
 // the {h5} extension namespace
-namespace h5::py {
+namespace pyre::h5::py {
     // the module api
     void api(py::module &);
 
@@ -18,14 +18,14 @@ namespace h5::py {
     // files
     void file(py::module &);
 
-} // namespace h5::py
+} // namespace pyre::h5::py
 
 
 // datatypes are in their own naespace
-namespace h5::py::datatypes {
+namespace pyre::h5::py::datatypes {
     // datatypes
     void datatypes(py::module &);
-} // namespace h5::py::datatypes
+} // namespace pyre::h5::py::datatypes
 
 
 #endif

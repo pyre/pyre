@@ -12,7 +12,7 @@
 
 // file objects
 void
-h5::py::datatypes::predefined(py::module & m)
+pyre::h5::py::datatypes::predefined(py::module & m)
 {
     // add the class
     auto predType = py::class_<PredType, DataType>(

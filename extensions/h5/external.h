@@ -23,7 +23,7 @@
 
 
 // type aliases
-namespace h5::py {
+namespace pyre::h5::py {
     // import {pybind11}
     namespace py = pybind11;
     // get the special {pybind11} literals
@@ -54,7 +54,7 @@ namespace h5::py {
     using File = H5::H5File;
     using PredType = H5::PredType;
 
-} // namespace h5::py
+} // namespace pyre::h5::py
 
 
 #endif

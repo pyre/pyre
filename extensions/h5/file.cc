@@ -12,7 +12,7 @@
 
 // file objects
 void
-h5::py::file(py::module & m)
+pyre::h5::py::file(py::module & m)
 {
     // add bindings for hdf5 file objects
     auto cls = py::class_<File>(

@@ -12,7 +12,7 @@
 
 // add global bindings to the module
 void
-h5::py::api(py::module & m)
+pyre::h5::py::api(py::module & m)
 {
     // initialize the library
     m.def(

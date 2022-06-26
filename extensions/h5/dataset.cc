@@ -12,7 +12,7 @@
 
 // datasets
 void
-h5::py::dataset(py::module & m)
+pyre::h5::py::dataset(py::module & m)
 {
     // add bindings for hdf5 datasets
     auto cls = py::class_<DataSet>(

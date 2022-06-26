@@ -9,7 +9,7 @@
 
 
 // the local binders
-namespace h5::py::datatypes {
+namespace pyre::h5::py::datatypes {
     // the module intializer
     void datatypes(py::module &);
 
@@ -21,7 +21,7 @@ namespace h5::py::datatypes {
     // constants
     void native(py::module &);
 
-} // namespace h5::py::datatypes
+} // namespace pyre::h5::py::datatypes
 
 
 #endif
