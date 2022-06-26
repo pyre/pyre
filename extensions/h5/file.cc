@@ -15,7 +15,7 @@ void
 pyre::h5::py::file(py::module & m)
 {
     // add bindings for hdf5 file objects
-    auto cls = py::class_<File>(
+    auto cls = py::class_<File, Group>(
         // in scope
         m,
         // class name
@@ -51,17 +51,6 @@ pyre::h5::py::file(py::module & m)
         &File::close,
         // the docstring
         "close the file");
-
-    // open a dataset
-    cls.def(
-        // the name
-        "dataset",
-        // the implementation
-        [](const File & self, string_t path) { return self.openDataSet(path); },
-        // the signature
-        "path"_a,
-        // the docstring
-        "open a dataset given its path");
 
     // all done
     return;
