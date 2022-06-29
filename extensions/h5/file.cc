@@ -32,7 +32,7 @@ pyre::h5::py::file(py::module & m)
             //   r+: read/write, file must exist
             //    w: create file, truncate if it exists
             //   w-: create file, fail if it exists
-            //    x: alias for avove
+            //    x: alias for above
             //    a: create if it doesn't exist, read/write regardless
 
             // for now, make a read-only entity and return it
