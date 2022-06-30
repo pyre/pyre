@@ -37,11 +37,28 @@ pyre::h5::py::group(py::module & m)
         // the name
         "dataset",
         // the implementation
-        [](const Group & self, string_t path) { return self.openDataSet(path); },
+        [](const Group & self, string_t path) -> DataSet {
+            // open the dataset and return it
+            return self.openDataSet(path);
+        },
         // the signature
         "path"_a,
         // the docstring
         "open a dataset given its path");
+
+    // open a group
+    cls.def(
+        // the name
+        "group",
+        // the implementation
+        [](const Group & self, string_t path) -> Group {
+            // open the group and return it
+            return self.openGroup(path);
+        },
+        // the signature
+        "path"_a,
+        // the docstring
+        "open a group given its path");
 
     // all done
     return;
