@@ -4,14 +4,14 @@
 # (c) 1998-2022 all rights reserved
 
 
+# support
+import pyre
 # superclass
 from .Object import Object
-# type information
-from .. import schemata
 
 
 # the dataset descriptor base class
-@schemata.typed
+@pyre.schemata.typed
 class Dataset(Object):
     """
     The base class of all dataset descriptors
@@ -19,6 +19,34 @@ class Dataset(Object):
 
 
     # public data
+    @property
+    def value(self):
+        """
+        Retrieve my value
+        """
+        # get the value from my cache
+        value = self._value
+        # if it is trivial
+        if value is None:
+            # it could be that this is the first time i'm asked for it; process my default
+            value = self.process(value=self.default)
+            # and save it
+            self._value = value
+        # in any case
+        return value
+
+
+    @value.setter
+    def value(self, value):
+        """
+        Set my value
+        """
+        # process and cache the result
+        self._value = self.process(value=value)
+        # and done
+        return
+
+
     @property
     def pyre_marker(self):
         """
@@ -29,37 +57,26 @@ class Dataset(Object):
 
 
     # metamethods
+    def __init__(self, doc=None, **kwds):
+        # chain up
+        super().__init__(**kwds)
+        # set up my {value}
+        self._value = None
+        # record my documentation
+        self._doc = None
+        # all done
+        return
+
+
     def __str__(self):
         """
         Human readable representation
         """
         # easy enough
-        return f"a dataset of type '{self.typename}'"
+        return f"{self.pyre_location}: a dataset of type '{self.typename}'"
 
 
     # framework hooks
-    def pyre_sync(self, **kwds):
-        """
-        Hook invoked when the {inventory} lookup fails and a value must be generated
-        """
-        # chain up to give my ancestors a chance to chip in
-        value = super().pyre_sync()
-        # if they have no opinion
-        if value is None:
-            # use my default
-            value = self.default
-        # and that's all i can do
-        return value
-
-
-    def pyre_process(self, value, **kwds):
-        """
-        Walk {value} through my transformations
-        """
-        # let my {type} do the work
-        return self.process(value=value, **kwds)
-
-
     def pyre_identify(self, authority, **kwds):
         """
         Let {authority} know i am a dataset
@@ -74,6 +91,14 @@ class Dataset(Object):
             return super().pyre_identify(authority=authority, **kwds)
         # otherwise, invoke the handler
         return handler(dataset=self, **kwds)
+
+
+    def pyre_clone(self, **kwds):
+        """
+        Make as faithful a clone of mine as possible
+        """
+        # invoke my constructor
+        return super().pyre_clone(default=self.default, doc=self.doc, **kwds)
 
 
 # end of file
