@@ -4,6 +4,11 @@
 # (c) 1998-2022 all rights reserved
 
 
+# typing
+import pyre
+import typing
+
+
 # base class of all h5 objects
 class Identifier:
     """
@@ -12,7 +17,7 @@ class Identifier:
 
 
     # metamethods
-    def __init__(self, name=None, **kwds):
+    def __init__(self, name: str = None, **kwds):
         # chain up
         super().__init__(**kwds)
         # my name
@@ -22,7 +27,7 @@ class Identifier:
 
 
     # descriptor support
-    def __set_name__(self, cls, name):
+    def __set_name__(self, cls: type, name: str):
         """
         Attach my name
         """
@@ -32,7 +37,7 @@ class Identifier:
         return
 
 
-    def __get__(self, instance, cls):
+    def __get__(self, instance: 'pyre.h5.Group', cls: type):
         """
         Read access to my value
         """
@@ -40,27 +45,23 @@ class Identifier:
         if instance is None:
             # return the descriptor
             return self
-        # otherwise, get my value from {instance}
-        value = instance.pyre_get(descriptor=self)
-        # process it
-        value = self.pyre_process(instance=instance, value=value)
+        # otherwise, aks {instance} for my value manager
+        identifier = instance.pyre_get(descriptor=self)
         # and make it available
-        return value
+        return identifier
 
 
-    def __set__(self, instance, value):
+    def __set__(self, instance: 'pyre.h5.Group', identifier: 'Identifier'):
         """
         Write access to my value
         """
-        # process {value}
-        value = self.pyre_process(instance=instance, value=value)
         # and attach it to {instance}
-        instance.pyre_set(descriptor=self, value=value)
+        instance.pyre_set(descriptor=self, identifier=identifier)
         # all done
         return
 
 
-    def __delete__(self, instance):
+    def __delete__(self, instance: 'pyre.h5.Group'):
         """
         Delete my value
         """
@@ -80,7 +81,7 @@ class Identifier:
 
 
     # framework hooks
-    def pyre_bind(self, name):
+    def pyre_bind(self, name: str):
         """
         Bind me to my {name}
         """
@@ -88,46 +89,6 @@ class Identifier:
         self.pyre_name = name
         # all done
         return
-
-
-    def pyre_get(self, descriptor):
-        """
-        Read my value
-        """
-        # i don't know how to do that
-        raise NotImplementedError(f"class '{type(self).__name__}' must implement 'pyre_get'")
-
-
-    def pyre_set(self, descriptor, value):
-        """
-        Write my value
-        """
-        # i don't know how to do that
-        raise NotImplementedError(f"class '{type(self).__name__}' must implement 'pyre_set'")
-
-
-    def pyre_delete(self, descriptor):
-        """
-        Delete my value
-        """
-        # i don't know how to do that
-        raise NotImplementedError(f"class '{type(self).__name__}' must implement 'pyre_delete'")
-
-
-    def pyre_sync(self, **kwds):
-        """
-        Hook invoked when the {inventory} lookup fails and a value must be generated
-        """
-        # i know nothing, so...
-        return None
-
-
-    def pyre_process(self, value, **kwds):
-        """
-        Walk {value} through my transformations
-        """
-        # i know nothing, so...
-        return value
 
 
     def pyre_identify(self, authority, **kwds):
@@ -138,7 +99,7 @@ class Identifier:
         return authority.pyre_onIdentifier(identifier=self, **kwds)
 
 
-    def pyre_clone(self, name=None, **kwds):
+    def pyre_clone(self, name: typing.Optional[str] = None, **kwds):
         """
         Make as faithful a clone of mine as possible
         """
