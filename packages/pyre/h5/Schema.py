@@ -1,11 +1,15 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2022 all rights reserved
 
 
+# external
+import itertools
+
 # superclass
 from pyre.patterns.AttributeClassifier import AttributeClassifier
+
 # the base class for my descriptors
 from .Identifier import Identifier
 
@@ -15,7 +19,6 @@ class Schema(AttributeClassifier):
     """
     Harvest dataset descriptors from h5 groups
     """
-
 
     # metamethods
     def __new__(cls, name, bases, attributes, **kwds):
@@ -29,14 +32,24 @@ class Schema(AttributeClassifier):
         #  attach the {pyre_identifiers}
 
         # make a table with the known identifiers and add it to the pile of attributes
-        attributes["pyre_identifiers"] = {
+        attributes["pyre_localIdentifiers"] = {
             name: identifier
             for name, identifier in cls.pyre_harvestIdentifiers(attributes=attributes)
         }
+        # make room for the identifier resolution table; we will fill it after the class record
+        # is built
+        pyre_identifiers = {}
+        # and add it to the pile
+        attributes["pyre_identifiers"] = pyre_identifiers
 
-        # build the record and return it
-        return super().__new__(cls, name, bases, attributes, **kwds)
+        # build the class record
+        record = super().__new__(cls, name, bases, attributes, **kwds)
 
+        # resolve the visible identifiers
+        pyre_identifiers.update(record.pyre_resolveIdentifiers())
+
+        # all done
+        return record
 
     def __call__(self, **kwds):
         """
@@ -46,16 +59,6 @@ class Schema(AttributeClassifier):
         location = super().__call__(**kwds)
         # and return the new instance
         return location
-
-
-    def __getattr__(self, name):
-        """
-        Look up the value of {name} in one of my instances
-        """
-        # we are here only when normal attribute look up fails in one of my instances
-        # currently, there is nothing useful for me to do here, so complain
-        raise AttributeError # as of 3.10: AttributeError(name=name, obj=self)
-
 
     def __setattr__(self, name, value):
         """
@@ -86,7 +89,6 @@ class Schema(AttributeClassifier):
         # chain up to handle normal assignment
         return super().__setattr__(name, value)
 
-
     # implementation details
     @classmethod
     def pyre_harvestIdentifiers(cls, attributes):
@@ -95,6 +97,39 @@ class Schema(AttributeClassifier):
         """
         # examine the attributes and select the identifiers
         yield from cls.pyre_harvest(attributes=attributes, descriptor=Identifier)
+        # all done
+        return
+
+    def pyre_resolveIdentifiers(self):
+        """
+        Scan the {mro} of the class record in {self} and build a table of visible
+        identifiers
+        """
+        # make a pile of identifier locations that have been previously encountered
+        # this helps us make sure that declarations for a given location in subclasses correctly
+        # shadow declarations in ancestors
+        seen = set()
+        # get the full sequence of identifier providers visible to me
+        identifiers = itertools.chain(
+            # by getting the identifiers from my static structure
+            *(
+                base.pyre_localIdentifiers.values()
+                for base in self.mro()
+                if hasattr(base, "pyre_localIdentifiers")
+            )
+        )
+        # go through them
+        for identifier in identifiers:
+            # get their location
+            location = identifier.pyre_location
+            # if this location is being shadowed
+            if location in seen:
+                # move on
+                continue
+            # otherwise, add it to the pile of {known} locations
+            seen.add(location)
+            # and send off the {identifier} with its name as the key
+            yield identifier.pyre_name, identifier
         # all done
         return
 
