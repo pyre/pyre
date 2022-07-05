@@ -21,14 +21,14 @@ def test():
         """
         A group of datasets in some HDF5 file
         """
+
         # something simple
         id = pyre.h5.int()
-        id.doc = "a simple dataset"
+        id.pyre_doc = "a simple dataset"
 
         # something a bit more complicated
         pols = pyre.h5.list()
-        pols.doc = "a dataset that's a container"
-
+        pols.pyre_doc = "a dataset that's a container"
 
     # verify that my table of identifiers is accessible
     identifiers = Group.pyre_identifiers
@@ -53,7 +53,7 @@ def test():
         # represent
         channel.line(f"    {name}: {identifier}")
         # the doc string
-        channel.line(f"      doc: {identifier.doc}")
+        channel.line(f"      doc: {identifier.pyre_doc}")
         # show me the default value
         channel.line(f"      default: {identifier.default}")
 

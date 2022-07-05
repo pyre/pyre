@@ -20,13 +20,14 @@ def test():
         """
         A group of datasets in some HDF5 file
         """
+
         # something simple
         id = pyre.h5.int()
-        id.doc = "a simple dataset"
+        id.pyre_doc = "a simple dataset"
 
         # something a bit more complicated
         pols = pyre.h5.list()
-        pols.doc = "a dataset that's a container"
+        pols.pyre_doc = "a dataset that's a container"
 
     # instantiate
     group = Group()
