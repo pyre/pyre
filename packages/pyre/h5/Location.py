@@ -1,4 +1,4 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2022 all rights reserved
@@ -6,8 +6,10 @@
 
 # external
 import pyre
+
 # superclass
 from .Identifier import Identifier
+
 # typing
 import typing
 
@@ -18,12 +20,13 @@ class Location(Identifier):
     The base class for all h5 objects that have an address
     """
 
-
     # metamethods
-    def __init__(self,
-                 name: typing.Optional[str] = None,
-                 at: typing.Optional[str | pyre.primitives.pathlike] = None,
-                 **kwds):
+    def __init__(
+        self,
+        name: typing.Optional[str] = None,
+        at: typing.Optional[str | pyre.primitives.pathlike] = None,
+        **kwds
+    ):
         # chain up
         super().__init__(name=name, **kwds)
         # prefer {at} as the location, and fall back to {name} if it's trivial
@@ -32,7 +35,6 @@ class Location(Identifier):
         self.pyre_location = pyre.primitives.path(location) if location else None
         # all done
         return
-
 
     # framework hooks
     def pyre_bind(self, name: str):
@@ -48,7 +50,6 @@ class Location(Identifier):
         # all done
         return
 
-
     def pyre_identify(self, authority, **kwds):
         """
         Let {authority} know i am a location
@@ -63,7 +64,6 @@ class Location(Identifier):
             return super().pyre_identify(authority=authority, **kwds)
         # otherwise, invoke the handler
         return handler(location=self, **kwds)
-
 
     def pyre_clone(self, at=None, **kwds):
         """
