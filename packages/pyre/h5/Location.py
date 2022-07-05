@@ -46,7 +46,7 @@ class Location(Identifier):
     def __init__(
         self,
         name: typing.Optional[str] = None,
-        at: typing.Optional[str | pyre.primitives.pathlike] = None,
+        at: typing.Optional[pyre.primitives.pathlike] = None,
         **kwds
     ):
         # chain up
@@ -87,7 +87,7 @@ class Location(Identifier):
         # otherwise, invoke the handler
         return handler(location=self, **kwds)
 
-    def pyre_clone(self, at=None, **kwds):
+    def pyre_clone(self, at: typing.Optional[pyre.primitives.pathlike] = None, **kwds):
         """
         Make as faithful a clone of mine as possible
         """
