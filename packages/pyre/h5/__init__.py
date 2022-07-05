@@ -1,4 +1,4 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2022 all rights reserved
@@ -11,6 +11,7 @@ from .File import File as file
 
 # datasets
 from .Dataset import Dataset as dataset
+
 # scalars
 bool = dataset.bool
 float = dataset.float
@@ -27,10 +28,9 @@ tuple = dataset.tuple
 from .Reader import Reader as reader
 from .Writer import Writer as writer
 
-# the walker of the hierarchy
-from .Walker import Walker as walker
-# the explorer
+# visitors
 from .Tree import Tree as tree
+from .Walker import Walker as walker
 
 
 # end of file
