@@ -1,4 +1,4 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2022 all rights reserved
@@ -6,6 +6,7 @@
 
 # support
 import pyre
+
 # superclass
 from .Object import Object
 
@@ -17,7 +18,6 @@ class Dataset(Object):
     The base class of all dataset descriptors
     """
 
-
     # public data
     @property
     def value(self):
@@ -26,15 +26,8 @@ class Dataset(Object):
         """
         # get the value from my cache
         value = self._value
-        # if it is trivial
-        if value is None:
-            # it could be that this is the first time i'm asked for it; process my default
-            value = self.process(value=self.default)
-            # and save it
-            self._value = value
-        # in any case
+        # and return it
         return value
-
 
     @value.setter
     def value(self, value):
@@ -46,7 +39,6 @@ class Dataset(Object):
         # and done
         return
 
-
     @property
     def pyre_marker(self):
         """
@@ -55,18 +47,14 @@ class Dataset(Object):
         # use my type name
         return self.typename
 
-
     # metamethods
-    def __init__(self, doc=None, **kwds):
+    def __init__(self, **kwds):
         # chain up
         super().__init__(**kwds)
         # set up my {value}
-        self._value = None
-        # record my documentation
-        self._doc = None
+        self._value = self.process(value=self.default)
         # all done
         return
-
 
     def __str__(self):
         """
@@ -74,7 +62,6 @@ class Dataset(Object):
         """
         # easy enough
         return f"{self.pyre_location}: a dataset of type '{self.typename}'"
-
 
     # framework hooks
     def pyre_identify(self, authority, **kwds):
@@ -92,13 +79,12 @@ class Dataset(Object):
         # otherwise, invoke the handler
         return handler(dataset=self, **kwds)
 
-
     def pyre_clone(self, **kwds):
         """
         Make as faithful a clone of mine as possible
         """
         # invoke my constructor
-        return super().pyre_clone(default=self.default, doc=self.doc, **kwds)
+        return super().pyre_clone(default=self.default, **kwds)
 
 
 # end of file
