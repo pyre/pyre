@@ -12,7 +12,6 @@ pyre.libraries := pyre.lib
 pyre.extensions := pyre.ext host.ext
 # docker image
 pyre.docker-images := \
-    pyre.eoan-gcc pyre.eoan-clang \
     pyre.focal-gcc pyre.focal-clang \
     pyre.groovy-gcc pyre.groovy-clang pyre.groovy-cuda \
     pyre.hirsute-gcc pyre.hirsute-clang pyre.hirsute-gcc-cmake \
