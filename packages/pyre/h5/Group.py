@@ -1,4 +1,4 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2022 all rights reserved
@@ -6,10 +6,16 @@
 
 # external
 import itertools
+
+# metaclass
+from .Schema import Schema
+
 # superclass
 from .Object import Object
+
 # my parts
 from .Inventory import Inventory
+
 # typing
 import typing
 from .Dataset import Dataset
@@ -18,7 +24,7 @@ from .Location import Location
 
 
 # a dataset container
-class Group(Object):
+class Group(Object, metaclass=Schema):
     """
     A container of datasets
     """
@@ -32,10 +38,9 @@ class Group(Object):
         # use my type name
         return "g"
 
-
     # interface
     # add a new identifier
-    def pyre_extend(self, identifier: Identifier) -> 'Group':
+    def pyre_extend(self, identifier: Identifier) -> "Group":
         """
         Add a new {identifier} to this group
 
@@ -46,7 +51,6 @@ class Group(Object):
         # all done
         return self
 
-
     # access to contents by category
     def pyre_datasets(self) -> typing.Sequence[Dataset]:
         """
@@ -55,14 +59,12 @@ class Group(Object):
         # filter and return
         return filter(lambda loc: issubclass(loc, Dataset), self.pyre_locations())
 
-
-    def pyre_groups(self) -> typing.Sequence['Group']:
+    def pyre_groups(self) -> typing.Sequence["Group"]:
         """
         Generate a sequence of my subgroups
         """
         # filter and return
         return filter(lambda loc: issubclass(loc, Group), self.pyre_locations())
-
 
     def pyre_locations(self) -> typing.Sequence[Location]:
         """
@@ -70,12 +72,11 @@ class Group(Object):
         """
         # N.B.:
         # currently, there are two possible sources of identifiers in my contents
-        # - the static layout of my {mro}, with each superclass contributing the identifiers it
-        #    declares; stored by {schema} in {pyre_identifiers}
-        # - the pile of identifiers added programmatically; stored in {pyre_identifiers}
+        # - the static layout of my class; stored in the {pyre_identifiers} class attribute
+        # - the pile of identifiers added programmatically; stored in my {pyre_identifiers}
         #
         # collating identifiers from these sources requires taking shadowing into account
-        # shadowing is determined by the {pyre_location} of an identifier, not its {pyre_name}
+        # shadowing is determined by the {pyre_location} of an identifier, not its {pyre_name};
         # inconsistencies caused by decorrelations between names and locations are considered bugs
 
         # make a pile of identifier names that have been encountered
@@ -85,9 +86,8 @@ class Group(Object):
             # the identifiers added at runtime
             self.pyre_identifiers.values(),
             # the identifiers from my static structure
-            *(base.pyre_identifiers.values()
-                for base in type(self).mro() if hasattr(base, "pyre_identifiers"))
-            )
+            type(self).pyre_identifiers.values(),
+        )
         # go through them
         for identifier in identifiers:
             # get their location
@@ -103,18 +103,16 @@ class Group(Object):
         # all done
         return
 
-
     # metamethods
     def __init__(self, **kwds):
         # chain up
         super().__init__(**kwds)
         # initialize my inventory
-        self.pyre_inventory: Inventory = Inventory()
+        self.pyre_inventory: Inventory = self.pyre_newInventory()
         # and my pile of dynamic contents
         self.pyre_identifiers: typing.Dict[str, Identifier] = {}
         # all done
         return
-
 
     def __getattr__(self, name: str) -> typing.Any:
         """
@@ -127,28 +125,33 @@ class Group(Object):
         # if not
         except KeyError:
             # i'm out of ideas
-            raise AttributeError(f"group '{self.pyre_name}' has no identifier named '{name}'")
+            raise AttributeError(
+                f"group '{self.pyre_name}' has no identifier named '{name}'"
+            )
 
-        # otherwise, ask it to do its thing
-        return identifier.__get__(instance=self, cls=type(self))
-
+        # otherwise, hand it off
+        return identifier
 
     def __setattr__(self, name: str, value: typing.Any) -> None:
         """
-        Trap attribute assignment to support dynamic identifiers
+        Trap attribute assignment unconditionally
         """
-        # check whether
-        try:
-            # {name} points to one of my dynamic identifiers
-            identifier = self.pyre_identifiers[name]
-        # if not
-        except KeyError:
-            # delegate
+        # during instantiation
+        if name.startswith("pyre_"):
+            # stay out of the way
             return super().__setattr__(name, value)
-
-        # if it is, ask it to do its thing
-        return identifier.__set__(instance=self, value=value)
-
+        # if {value} is not an {identifier}
+        if not isinstance(value, Identifier):
+            # delegate to process a normal assignment
+            return super().__setattr__(name, value)
+        # if this is an introduction of a new member
+        if name not in self.pyre_identifiers:
+            # register the newcomer
+            self.pyre_identifiers[name] = value
+        # add it to my inventory
+        self.pyre_inventory[name] = value
+        # all done
+        return
 
     def __str__(self) -> str:
         """
@@ -157,33 +160,24 @@ class Group(Object):
         # say something simple, for now
         return f"group '{self.pyre_name}' at '{self.pyre_location}'"
 
-
     # framework hooks
-    def pyre_get(self, descriptor: Identifier) -> typing.Any:
+    def pyre_get(self, descriptor: Identifier) -> Identifier:
         """
-        Read my value
+        Look up the identifier associated the {descriptor} name in my {pyre_inventory}
         """
-        # attempt to
-        try:
-            # get the {descriptor} value from my {inventory}
-            value = self.pyre_inventory[descriptor.pyre_name]
-        # if i don't have an explicit value for {descriptor} yet
-        except KeyError:
-            # ask for a refresh
-            value = descriptor.pyre_sync(instance=self)
+        # look up the {identifier} that corresponds to this descriptor
+        identifier = self.pyre_inventory[descriptor.pyre_name]
         # and return it
-        return value
+        return identifier
 
-
-    def pyre_set(self, descriptor: Identifier, value: typing.Any) -> None:
+    def pyre_set(self, descriptor: Identifier, identifier: Identifier) -> None:
         """
-        Write my value
+        Associate the {descriptor} name with {identifier} in my {pyre_inventory}
         """
         # update the value of {descriptor} in my {inventory}
-        self.pyre_inventory[descriptor.pyre_name] = value
+        self.pyre_inventory[descriptor.pyre_name] = identifier
         # all done
         return
-
 
     def pyre_delete(self, descriptor: Identifier) -> None:
         """
@@ -193,21 +187,6 @@ class Group(Object):
         del self.pyre_inventory[descriptor.pyre_name]
         # and done
         return
-
-
-    def pyre_sync(self, instance: 'Group', **kwds) -> 'Group':
-        """
-        Hook invoked when the {inventory} lookup fails and a value must be generated
-        """
-        # build a clone of mine to hold my client's values for my structure
-        group = type(self)(name=self.pyre_name, at=self.pyre_location)
-        # make sure {instance} remembers my clone; this step is important for groups so that
-        # {instance} local storage is created to support further content access
-        # there is a test case that checks for this...
-        instance.pyre_set(descriptor=self, value=group)
-        # and return it
-        return group
-
 
     def pyre_identify(self, authority: typing.Any, **kwds) -> typing.Any:
         """
@@ -223,6 +202,23 @@ class Group(Object):
             return super().pyre_identify(authority=authority, **kwds)
         # otherwise, invoke the handler
         return handler(group=self, **kwds)
+
+    # implementation details
+    @classmethod
+    def pyre_newInventory(cls) -> Inventory:
+        """
+        Build the inventory of a new instance
+        """
+        # start fresh
+        inventory = Inventory()
+        # go through all known identifiers
+        for name, descriptor in cls.pyre_identifiers.items():
+            # clone the descriptor
+            clone = descriptor.pyre_clone()
+            # register the clone and move to the next one
+            inventory[name] = clone
+        # all done
+        return inventory
 
 
 # end of file
