@@ -20,6 +20,28 @@ class Location(Identifier):
     The base class for all h5 objects that have an address
     """
 
+    # access to contents by category; all trivial by default
+    def pyre_datasets(self) -> typing.Sequence["Dataset"]:
+        """
+        Generate a sequence of my datasets
+        """
+        # nothing from me
+        return []
+
+    def pyre_groups(self) -> typing.Sequence["Group"]:
+        """
+        Generate a sequence of my subgroups
+        """
+        # nothing from me
+        return []
+
+    def pyre_locations(self) -> typing.Sequence["Location"]:
+        """
+        Generate a sequence of contents
+        """
+        # nothing from me
+        return []
+
     # metamethods
     def __init__(
         self,
