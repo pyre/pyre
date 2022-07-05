@@ -1,4 +1,4 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2022 all rights reserved
@@ -15,16 +15,21 @@ class Identifier:
     A placeholder for h5 identifiers, a very very low level concept
     """
 
-
     # metamethods
-    def __init__(self, name: str = None, **kwds):
+    def __init__(
+        self,
+        name: typing.Optional[str] = None,
+        doc: typing.Optional[str] = None,
+        **kwds
+    ):
         # chain up
         super().__init__(**kwds)
         # my name
         self.pyre_name = name
+        # my docstring
+        self.pyre_doc = doc
         # all done
         return
-
 
     # descriptor support
     def __set_name__(self, cls: type, name: str):
@@ -36,8 +41,7 @@ class Identifier:
         # all done
         return
 
-
-    def __get__(self, instance: 'pyre.h5.Group', cls: type):
+    def __get__(self, instance: "pyre.h5.Group", cls: type):
         """
         Read access to my value
         """
@@ -50,8 +54,7 @@ class Identifier:
         # and make it available
         return identifier
 
-
-    def __set__(self, instance: 'pyre.h5.Group', identifier: 'Identifier'):
+    def __set__(self, instance: "pyre.h5.Group", identifier: "Identifier"):
         """
         Write access to my value
         """
@@ -60,8 +63,7 @@ class Identifier:
         # all done
         return
 
-
-    def __delete__(self, instance: 'pyre.h5.Group'):
+    def __delete__(self, instance: "pyre.h5.Group"):
         """
         Delete my value
         """
@@ -70,7 +72,6 @@ class Identifier:
         # and done
         return
 
-
     # rep
     def __str__(self):
         """
@@ -78,7 +79,6 @@ class Identifier:
         """
         # easy enough
         return "an identifier"
-
 
     # framework hooks
     def pyre_bind(self, name: str):
@@ -90,14 +90,12 @@ class Identifier:
         # all done
         return
 
-
     def pyre_identify(self, authority, **kwds):
         """
         Let {authority} know i am an identifier
         """
         # invoke the hook
         return authority.pyre_onIdentifier(identifier=self, **kwds)
-
 
     def pyre_clone(self, name: typing.Optional[str] = None, **kwds):
         """
@@ -108,7 +106,7 @@ class Identifier:
             # use my name as the default
             name = self.pyre_name
         # invoke my constructor
-        return type(self)(name=name, **kwds)
+        return type(self)(name=name, doc=self.pyre_doc, **kwds)
 
 
 # end of file
