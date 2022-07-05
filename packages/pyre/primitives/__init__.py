@@ -10,7 +10,9 @@ from .URI import URI as uri
 
 # typing
 import os
-# my shorthand
-pathlike = os.PathLike | str
+import typing
+
+# my shorthand; use {Union} since PEP604 is not available before python 3.10
+pathlike = typing.Union[os.PathLike, str]
 
 # end of file
