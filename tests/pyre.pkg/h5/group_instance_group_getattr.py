@@ -20,20 +20,21 @@ def test():
         """
         A group of datasets in some HDF5 file
         """
+
         # something boring
         flag = pyre.h5.bool()
         flag.default = True
-        flag.doc = "a boolean"
+        flag.pyre_doc = "a boolean"
 
         # something simple
         answer = pyre.h5.int()
         answer.default = 42
-        answer.doc = "the answer to the ultimate question"
+        answer.pyre_doc = "the answer to the ultimate question"
 
         # a compatible container
         pols = pyre.h5.list(schema=pyre.h5.str())
         pols.default = "HH", "HV", "VH", "VV"
-        pols.doc = "the list of polarizations"
+        pols.pyre_doc = "the list of polarizations"
 
     # embed it in another group
     class Group(pyre.h5.group):
@@ -43,7 +44,6 @@ def test():
 
         # the subgroup
         meta = Meta()
-
 
     # instantiate
     group = Group()
@@ -55,11 +55,11 @@ def test():
 
     # verify we can read through the subgroup
     # the flag
-    assert meta.flag is True
+    assert meta.flag.value is True
     #  the int
-    assert meta.answer == 42
+    assert meta.answer.value == 42
     # check the polarizations
-    pols = meta.pols
+    pols = meta.pols.value
     # verify the tuple has been converted into a list
     assert type(pols) is list
     # verify the contents are all strings

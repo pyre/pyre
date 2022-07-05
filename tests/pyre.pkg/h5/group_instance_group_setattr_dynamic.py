@@ -20,19 +20,20 @@ def test():
         """
         A group of datasets in some HDF5 file
         """
+
         # something boring
         flag = pyre.h5.bool()
         flag.default = True
-        flag.doc = "a boolean"
+        flag.pyre_doc = "a boolean"
 
     # embed it in another group
     class Group(pyre.h5.group):
         """
         A group that contains a subgroup
         """
+
         # the subgroup
         meta = Meta()
-
 
     # build a descriptor for a dynamic group
     data = pyre.h5.group(name="data")
@@ -50,16 +51,16 @@ def test():
     # and the dataset to the new group
     g.data.pyre_extend(identifier=HH)
     # check that we pick up the default value
-    assert g.data.HH == True
+    assert g.data.HH.value == True
     # that we can change it
-    g.data.HH = False
+    g.data.HH.value = False
     # and it sticks
-    assert g.data.HH == False
+    assert g.data.HH.value == False
 
     # to check that the identifier is involved in the assignment
     try:
         # try something that should fail to convert to bool
-        g.data.HH = 5
+        g.data.HH.value = 5
         # we shouldn't be able to reach here
         assert False
     # if the correct exception is raised

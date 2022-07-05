@@ -20,13 +20,14 @@ def test():
         """
         A group of datasets in some HDF5 file
         """
+
         # something simple
         id = pyre.h5.int()
-        id.doc = "a simple dataset"
+        id.pyre_doc = "a simple dataset"
 
         # something a bit more complicated
         pols = pyre.h5.list()
-        pols.doc = "a dataset that's a container"
+        pols.pyre_doc = "a dataset that's a container"
 
     # boring class attribute assignment
     Group.boring = True
@@ -52,7 +53,7 @@ def test():
     freqId = Group.pyre_identifiers["freq"]
     # it picked up the name and location
     assert freqId.pyre_name == name
-    assert freqId.pyre_location == name
+    assert freqId.pyre_location == pyre.primitives.path(name)
     # its type is correct
     assert freqId.typename == "list"
     # and its default value is what we expect
