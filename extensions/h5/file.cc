@@ -27,16 +27,47 @@ pyre::h5::py::file(py::module & m)
     cls.def(
         // the implementation
         py::init([](std::string path, std::string mode) {
-            // valid modes, per {h5py}
-            //    r: read-only, file must exist
-            //   r+: read/write, file must exist
-            //    w: create file, truncate if it exists
-            //   w-: create file, fail if it exists
-            //    x: alias for above
-            //    a: create if it doesn't exist, read/write regardless
+            // decode mode
+            if (mode == "r") {
+                // read-only, file must exist
+                return new File(path, H5F_ACC_RDONLY);
+            }
+            if (mode == "r+") {
+                // read/write, file must exist
+                return new File(path, H5F_ACC_RDWR);
+            }
+            if (mode == "w") {
+                // create file, truncate if it exists
+                return new File(path, H5F_ACC_TRUNC);
+            }
+            if (mode == "w-" || mode == "x") {
+                // create file, fail if it exists
+                return new File(path, H5F_ACC_EXCL);
+            }
 
-            // for now, make a read-only entity and return it
-            return new File(path, H5F_ACC_RDONLY);
+            // h5py has one more valid {mode}
+            // a: create if it doesn't exist, read/write regardless
+            // supporting this requires attempting to open the file in RDWR mode
+            // and trying again in EXCL if it fails
+            // i need to learn a bit more about error trapping before attempting this
+
+            // if we get this far, we have a problem
+            auto channel = pyre::journal::error_t("pyre.h5.file");
+            // so complain
+            channel
+                // say why
+                << "invalid mode '" << mode << "'"
+                << pyre::journal::newline
+                // show me the filename
+                << "while opening '" << path << "'"
+                << pyre::journal::newline
+                // show me what's supported
+                << "currently supported modes: r, r+, w, w-"
+                // and flush
+                << pyre::journal::endl(__HERE__);
+
+            // just in case this error is not fatal, make a stub
+            return new File();
         }),
         // the signature
         "path"_a, "mode"_a = "r",
