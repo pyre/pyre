@@ -1,13 +1,11 @@
 # -*- coding: utf-8 -*-
 
 
-# support
-import pyre
-
 # parts
 from .File import File
 
 # typing
+import pyre
 from .Dataset import Dataset
 from .Group import Group
 from .Location import Location
