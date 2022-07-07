@@ -2,36 +2,30 @@
 
 
 # support
-import journal
+import pyre
 
-# superclass
+# parts
 from .File import File
 
 # typing
-import os
 from .Dataset import Dataset
 from .Group import Group
 from .Location import Location
 
 
 # the base reader
-class Reader(File):
+class Reader:
     """
     The base reader for h5 products
     """
 
     # interface
-    def open(self, path: os.PathLike) -> File:
-        """
-        Access the h5 file at {path}
-        """
-        # set the mode and delegate
-        return super().open(path=path, mode="r")
-
-    def read(self, query: Location = None) -> Location:
+    def read(self, path: pyre.primitives.pathlike, query: Location = None) -> Location:
         """
         Open the h5 file at {path} and read the information in {query}
         """
+        # create the top level container
+        file = File().open(path=path, mode="r")
         # if the user doesn't have any opinions
         if query is None:
             # grab my schema and use it for guidance as to what to read from the file
@@ -39,9 +33,19 @@ class Reader(File):
         # visit the {query} structure and return the result; the initial {parent} is the {file}
         # object, therefore {query} must be anchored by an element whose {pyre_location} is a
         # valid absolute path
-        return query.pyre_identify(authority=self, parent=self)
+        return query.pyre_identify(authority=self, parent=file)
 
     # implementation details
+    def schema(self):
+        """
+        Retrieve the schema of the data product
+        """
+        # i don't have one; force subclasses to define
+        raise NotImplementedError(
+            f"class '{type(self).__name__}' must implement 'schema'"
+        )
+
+    # structure traversal
     def pyre_onDataset(self, dataset: Dataset, parent: Group) -> Dataset:
         """
         Process a {group} at {prefix}
@@ -50,10 +54,11 @@ class Reader(File):
         hid = parent.pyre_id.dataset(path=str(dataset.pyre_location))
         # clone the {dataset}
         clone = dataset.pyre_clone(id=hid)
-        # attach the clone to its parent
-        parent.pyre_set(descriptor=clone, identifier=clone)
+        # attach the clone to its parent; use the {dataset} from the query as the descriptor
+        # in order to minimize the number of objects with {libh5} footprint
+        parent.pyre_set(descriptor=dataset, identifier=clone)
         # all done
-        return clone
+        return parent
 
     def pyre_onGroup(self, group: Group, parent: Group) -> Group:
         """
@@ -63,14 +68,15 @@ class Reader(File):
         hid = parent.pyre_id.group(path=str(group.pyre_location))
         # clone it
         clone = group.pyre_clone(id=hid)
-        # attach it to its parent
-        parent.pyre_set(descriptor=clone, identifier=clone)
+        # attach the clone to its parent; use the {group} from the query as the descriptor
+        # in order to minimize the number of objects with {libh5} footprint
+        parent.pyre_set(descriptor=group, identifier=clone)
         # now, go through its children
         for child in group.pyre_locations():
             # and visit each one
             child.pyre_identify(authority=self, parent=clone)
         # all done
-        return clone
+        return parent
 
 
 # end of file
