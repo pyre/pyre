@@ -128,7 +128,6 @@ class Group(Object, metaclass=Schema):
             raise AttributeError(
                 f"group '{self.pyre_name}' has no identifier named '{name}'"
             )
-
         # otherwise, hand it off
         return identifier
 
@@ -144,12 +143,8 @@ class Group(Object, metaclass=Schema):
         if not isinstance(value, Identifier):
             # delegate to process a normal assignment
             return super().__setattr__(name, value)
-        # if this is an introduction of a new member
-        if name not in self.pyre_identifiers:
-            # register the newcomer
-            self.pyre_identifiers[name] = value
-        # add it to my inventory
-        self.pyre_inventory[name] = value
+        # otherwise, make the assignment
+        self.pyre_set(descriptor=value, identifier=value)
         # all done
         return
 
@@ -174,8 +169,14 @@ class Group(Object, metaclass=Schema):
         """
         Associate the {descriptor} name with {identifier} in my {pyre_inventory}
         """
-        # update the value of {descriptor} in my {inventory}
-        self.pyre_inventory[descriptor.pyre_name] = identifier
+        # get the descriptor name
+        name = descriptor.pyre_name
+        # if this is an introduction of a new member
+        if name not in self.pyre_identifiers:
+            # register the newcomer
+            self.pyre_identifiers[name] = identifier
+        # add it to my inventory
+        self.pyre_inventory[name] = identifier
         # all done
         return
 
