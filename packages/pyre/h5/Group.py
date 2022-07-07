@@ -70,36 +70,8 @@ class Group(Object, metaclass=Schema):
         """
         Generate a sequence of contents
         """
-        # N.B.:
-        # currently, there are two possible sources of identifiers in my contents
-        # - the static layout of my class; stored in the {pyre_identifiers} class attribute
-        # - the pile of identifiers added programmatically; stored in my {pyre_identifiers}
-        #
-        # collating identifiers from these sources requires taking shadowing into account
-        # shadowing is determined by the {pyre_location} of an identifier, not its {pyre_name};
-        # inconsistencies caused by decorrelations between names and locations are considered bugs
-
-        # make a pile of identifier names that have been encountered
-        known = set()
-        # get the full sequence of identifiers
-        identifiers = itertools.chain(
-            # the identifiers added at runtime
-            self.pyre_identifiers.values(),
-            # the identifiers from my static structure
-            type(self).pyre_identifiers.values(),
-        )
-        # go through them
-        for identifier in identifiers:
-            # get their location
-            location = identifier.pyre_location
-            # if this location is being shadowed
-            if location in known:
-                # move on
-                continue
-            # otherwise, add it to the pile of {known} locations
-            known.add(location)
-            # and send off the {identifier}
-            yield identifier
+        # all known identifiers are now registered with my {pyre_inventory}
+        yield from self.pyre_inventory.values()
         # all done
         return
 
