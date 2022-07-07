@@ -1,4 +1,4 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2022 all rights reserved
@@ -6,8 +6,12 @@
 
 # support
 import pyre
+
 # superclass
 from .Group import Group
+
+# typing
+import typing
 
 
 # a dataset container
@@ -15,7 +19,6 @@ class File(Group):
     """
     An h5 file
     """
-
 
     # interface
     def open(self, path, mode):
@@ -27,14 +30,28 @@ class File(Group):
         # all done
         return self
 
+    # metamethods
+    def __init__(self, at="/", **kwds):
+        # chain up with root as my location, unless the client has something else to suggest
+        super().__init__(at=at, **kwds)
+        # all done
+        return
 
-    # implementation details
-    def schema(self):
+    # framework hooks
+    def pyre_identify(self, authority: typing.Any, **kwds) -> typing.Any:
         """
-        Retrieve the schema of the data product
+        Let {authority} know i am a group
         """
-        # i don't have one; force subclasses to define
-        raise NotImplementedError(f"class '{type(self).__name__}' must implement 'schema'")
+        # attempt to
+        try:
+            # ask {authority} for my handler
+            handler = authority.pyre_onFile
+        # if it doesn't understand
+        except AttributeError:
+            # chain up
+            return super().pyre_identify(authority=authority, **kwds)
+        # otherwise, invoke the handler
+        return handler(group=self, **kwds)
 
 
 # end of file
