@@ -4,10 +4,14 @@
 # (c) 1998-2022 all rights reserved
 
 
-# basic objects
+# internals that mirror the h5 C++ api
+from .Identifier import Identifier as identifier
+from .Location import Location as location
+from .Object import Object as object
+
+# structural objects
 from .Group import Group as group
 from .File import File as file
-
 
 # datasets
 from .Dataset import Dataset as dataset
