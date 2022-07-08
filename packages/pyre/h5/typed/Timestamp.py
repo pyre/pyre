@@ -19,8 +19,6 @@ class Timestamp:
         value = self.pyre_id.str()
         # store it; drop nanosecond precision since {strptime} can't handle it
         self.value = value[:26]
-
-        print(f"timestamp: converted '{value}' to '{self.value}'")
         # and return the raw contents
         return value
 
