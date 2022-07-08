@@ -52,6 +52,8 @@ class Reader:
         hid = parent.pyre_id.dataset(path=str(dataset.pyre_location))
         # clone the {dataset}
         clone = dataset.pyre_clone(id=hid)
+        # pull the value
+        clone.pyre_read()
         # attach the clone to its parent; use the {dataset} from the query as the descriptor
         # in order to minimize the number of objects with {libh5} footprint
         parent.pyre_set(descriptor=dataset, identifier=clone)
