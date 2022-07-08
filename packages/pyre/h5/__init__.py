@@ -33,6 +33,7 @@ from .Reader import Reader as reader
 from .Writer import Writer as writer
 
 # visitors
+from .Explorer import Explorer as explorer
 from .Tree import Tree as tree
 from .Walker import Walker as walker
 
