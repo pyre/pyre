@@ -20,6 +20,7 @@ PYBIND11_MODULE(h5, m)
     pyre::h5::py::api(m);
 
     // bindings
+    pyre::h5::py::dataspace(m);
     pyre::h5::py::dataset(m);
     pyre::h5::py::datatypes::datatypes(m);
     pyre::h5::py::group(m);
