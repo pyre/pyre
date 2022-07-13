@@ -14,6 +14,7 @@ namespace pyre::h5::py {
     void api(py::module &);
 
     // wrappers for C++ api
+    void dataspace(py::module &);
     void dataset(py::module &);
     void file(py::module &);
     void group(py::module &);
