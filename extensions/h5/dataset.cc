@@ -34,7 +34,7 @@ pyre::h5::py::dataset(py::module & m)
             return self.getTypeClass();
         },
         // the docstring
-        "get the dataset cell type");
+        "get my cell type");
 
 
     // the dataset shape
@@ -56,6 +56,16 @@ pyre::h5::py::dataset(py::module & m)
         },
         // the docstring
         "get the shape of the dataset");
+
+
+    // the dataset space
+    cls.def_property_readonly(
+        // the name
+        "space",
+        // the implementation
+        &DataSet::getSpace,
+        // the docstring
+        "get my dataspace");
 
 
     // attempt to get the dataset contents as an int
