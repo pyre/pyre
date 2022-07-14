@@ -24,6 +24,40 @@ pyre::h5::py::dataspace(py::module & m)
         "an HDF5 dataspace");
 
 
+    // flag that indicates whether this dataspace is simple
+    cls.def_property_readonly(
+        // the name
+        "simple",
+        // the reader
+        &DataSpace::isSimple,
+        // the docstring
+        "check whether i'm simple");
+
+
+    // the dataspace shape
+    cls.def_property(
+        // the name
+        "shape",
+        // the reader
+        [](const DataSpace & self) -> dims_t {
+            // get my rank
+            auto rank = self.getSimpleExtentNdims();
+            // make a correctly sized vector to hold the result
+            dims_t shape(rank);
+            // populate it
+            self.getSimpleExtentDims(&shape[0], nullptr);
+            // and return it
+            return shape;
+        },
+        // the writer
+        [](DataSpace & self, const dims_t & shape) -> void {
+            // all done
+            return;
+        },
+        // the docstring
+        "get the shape of the dataset");
+
+
     // all done
     return;
 }
