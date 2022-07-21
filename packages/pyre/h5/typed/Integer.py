@@ -4,10 +4,6 @@
 # (c) 1998-2022 all rights reserved
 
 
-# externals
-import journal
-
-
 # the {int} mixin
 class Integer:
     """
