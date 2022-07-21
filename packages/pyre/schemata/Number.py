@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2022 all rights reserved
-#
 
+
+# externals
+import math
 
 # superclass
 from .Schema import Schema
@@ -17,30 +18,24 @@ def evaluationContext():
     """
     # initialize an empty one
     context = {}
-
-    # load the math module
-    import math
-    # push it in my context
+    # push {math} in my context
     context.update(math.__dict__)
-
     # enable the greek letters for the corresponding constants
-    context['π'] = math.pi
-
+    context["π"] = math.pi
     # τ is a {3.6} feature
     try:
         # if it's there, pull it
-        context['τ'] = math.tau
+        context["τ"] = math.tau
     # otherwise
     except AttributeError:
         # compute it
-        context['τ'] = 2*math.pi
-
+        context["τ"] = 2 * math.pi
     # all done
     return context
 
 
 # declaration
-class Numeric(Schema):
+class Number(Schema):
     """
     Intermediate class to mark the schemata that are numeric
     """

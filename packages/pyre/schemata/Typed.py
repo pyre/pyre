@@ -1,21 +1,17 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2022 all rights reserved
-#
 
 
-# declaration
+# the decorator
 class Typed:
     """
     A class decorator that embeds type decorated subclasses whose names match their {typename}
     """
 
-
     # the list of types that i will use to decorate my client
-    from . import schemata, numeric, sequences, mappings
-
+    from . import schemata, numbers, sequences, mappings
 
     # meta-methods
     def __new__(cls, record=None, schemata=schemata, **kwds):
@@ -30,7 +26,6 @@ class Typed:
         # otherwise, do the normal thing
         return super().__new__(cls, **kwds)
 
-
     def __init__(self, schemata=schemata, **kwds):
         """
         Build an instance of this decorator.
@@ -42,14 +37,12 @@ class Typed:
         # all done
         return
 
-
     def __call__(self, client):
         """
         Build a class record
         """
         # delegate to my implementation
         return self.build(client=client, schemata=self.schemata)
-
 
     # implementation details
     @classmethod
@@ -82,7 +75,6 @@ class Typed:
         # return the new class record
         return client
 
-
     @classmethod
     def pedigree(cls, client, schema):
         """
@@ -101,11 +93,11 @@ class Typed:
             pass
 
         # handle numeric types
-        if schema in cls.numeric:
-            # check whether the client has a 'numeric' mixin
+        if schema in cls.numbers:
+            # check whether the client has a 'numbers' mixin
             try:
                 # and use it
-                yield client.numeric
+                yield client.numbers
             # if not
             except AttributeError:
                 # no worries

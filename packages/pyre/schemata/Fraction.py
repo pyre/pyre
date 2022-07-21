@@ -9,10 +9,10 @@
 # access the package with support for rational number
 import fractions
 # and my superclass
-from .Numeric import Numeric
+from .Number import Number
 
 
-class Fraction(Numeric):
+class Fraction(Number):
     """
     A type declarator for fixed point numbers
     """

@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2022 all rights reserved
-#
 
 
 # the trivial type
 from .Schema import Schema as identity
+
 # simple types
 from .Boolean import Boolean as bool
 from .Complex import Complex as complex
@@ -53,9 +52,9 @@ meta = (istream, ostream, envvar, envpath)
 schemata = basic + composite + containers + meta
 
 # type categories
-sequences = { list, set, tuple }
-mappings = { catalog }
-numeric = { bool, complex, decimal, dimensional, float, int }
+sequences = {list, set, tuple}
+mappings = {catalog}
+numbers = {bool, complex, decimal, dimensional, float, int}
 
 
 # grant access to the type decorator
