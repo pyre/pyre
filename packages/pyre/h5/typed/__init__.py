@@ -6,6 +6,7 @@
 
 # the type specific dataset mixins
 from .Bool import Bool as bool
+from .Float import Float as float
 from .Integer import Integer as int
 from .String import String as str
 from .Timestamp import Timestamp as timestamp
