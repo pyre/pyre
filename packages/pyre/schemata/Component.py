@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2022 all rights reserved
-#
 
 
 # superclass
@@ -16,25 +14,22 @@ class Component(Schema):
     A type declarator for components
     """
 
-
     # types
     from . import uri
 
     # constants
     default = object()
-    complaint = 'could not coerce {0.value!r} into a component'
+    complaint = "could not coerce {0.value!r} into a component"
 
     # public data
     protocol = None
-
 
     @property
     def typename(self):
         """
         Identify my schema through my protocol
         """
-        return self.protocol.pyre_family() or 'component'
-
+        return self.protocol.pyre_family() or "component"
 
     # interface
     def coerce(self, value, **kwds):
@@ -106,16 +101,16 @@ class Component(Schema):
         # send it off
         return value
 
-
     def string(self, value):
         """
         Render value as a string that can be persisted for later coercion
         """
         # respect {None}
-        if value is None: return None
+        if value is None:
+            # by leaving it alone
+            return None
         # my value knows
         return value.pyre_name
-
 
     def json(self, value):
         """
@@ -123,7 +118,6 @@ class Component(Schema):
         """
         # represent as a string
         return self.string(value)
-
 
     # meta-methods
     def __init__(self, protocol, default=default, **kwds):

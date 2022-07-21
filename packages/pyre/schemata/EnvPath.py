@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2022 all rights reserved
-#
 
 
 # externals
 import os
+
 # superclass
 from .List import List
 
@@ -18,11 +17,9 @@ class EnvPath(List):
     A list of paths whose default value is tied to the value of an environment variable
     """
 
-
     # constants
-    typename = 'envpath' # the name of my type
-    pathsep = os.pathsep # the character to use as separator
-
+    typename = "envpath"  # the name of my type
+    pathsep = os.pathsep  # the character to use as separator
 
     # meta-methods
     def __init__(self, variable, pathsep=pathsep, **kwds):
@@ -48,7 +45,6 @@ class EnvPath(List):
         self.envvar = variable
         # all done
         return
-
 
     # implementation details
     def _coerce(self, value, **kwds):

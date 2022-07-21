@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2022 all rights reserved
-#
 
 
 # externals
 import sys
+
 # superclasses
 from .Schema import Schema
 from ..framework.Dashboard import Dashboard
@@ -19,14 +18,12 @@ class InputStream(Schema, Dashboard):
     A representation of input streams
     """
 
-
     # constants
-    mode = 'r'
-    typename = 'istream'
+    mode = "r"
+    typename = "istream"
 
     # types
     from . import uri
-
 
     # interface
     def coerce(self, value, **kwds):
@@ -34,7 +31,7 @@ class InputStream(Schema, Dashboard):
         Attempt to convert {value} into an open input stream
         """
         # the value is the special string "stdin"
-        if value == 'stdin' or value == '<stdin>':
+        if value == "stdin" or value == "<stdin>":
             # return the process stdin
             return sys.stdin
         # for strings
@@ -48,16 +45,16 @@ class InputStream(Schema, Dashboard):
         # otherwise, leave it alone
         return value
 
-
     def string(self, value):
         """
         Render value as a string that can be persisted for later coercion
         """
         # respect {None}
-        if value is None: return None
+        if value is None:
+            # by leaving it alone
+            return None
         # my value knows
         return value.name
-
 
     def json(self, value):
         """
@@ -66,9 +63,8 @@ class InputStream(Schema, Dashboard):
         # represent as a string
         return self.string(value)
 
-
     # meta-methods
-    def __init__(self, default='stdin', mode=mode, **kwds):
+    def __init__(self, default="stdin", mode=mode, **kwds):
         # chain up, potentially with local default
         super().__init__(default=default, **kwds)
         # save my mode

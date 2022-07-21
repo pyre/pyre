@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2022 all rights reserved
-#
 
 
 # access the package with support for rational number
 import fractions
+
 # and my superclass
 from .Number import Number
 
@@ -17,11 +16,9 @@ class Fraction(Number):
     A type declarator for fixed point numbers
     """
 
-
     # constants
-    typename = 'fraction' # the name of my type
-    ncomplaint = 'could not coerce {0.value!r) into a fraction'
-
+    typename = "fraction"  # the name of my type
+    complaint = "could not coerce {0.value!r) into a fraction"
 
     # interface
     def coerce(self, value, **kwds):
@@ -37,14 +34,12 @@ class Fraction(Number):
             # complain
             raise self.CastingError(value=value, description=self.complaint)
 
-
     def json(self, value):
         """
         Generate a JSON representation of {value}
         """
         # represent as a string
         return self.string(value)
-
 
     # meta-methods
     def __init__(self, default=fractions.Fraction(), **kwds):
