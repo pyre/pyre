@@ -1,14 +1,13 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2022 all rights reserved
-#
 
 
 # externals
-import collections.abc # for sequence checking
-from .. import schemata # type information
+import collections.abc  # for sequence checking
+from .. import schemata  # type information
+
 # superclass
 from .Slotted import Slotted
 
@@ -20,12 +19,10 @@ class Property(Slotted):
     The base class for traits that correspond to simple types
     """
 
-
     # framework data
-    category = 'property'
+    category = "property"
     # predicate that indicates whether this trait is a property
     isProperty = True
-
 
     # mixins to be included to my type offering
     class schema:
@@ -47,8 +44,7 @@ class Property(Slotted):
             """
             return self.pyre_nameserver.variable
 
-
-    class numeric:
+    class numbers:
         """Mixin for handling numeric types"""
 
         # override the default expression handler
@@ -59,7 +55,6 @@ class Property(Slotted):
             """
             # build expressions
             return self.pyre_nameserver.expression
-
 
     class sequences:
         """Mixin for handling typed containers"""
@@ -91,8 +86,7 @@ class Property(Slotted):
                 return super().native(value=value, **kwds)
 
             # shouldn't get here
-            assert False, 'unreachable'
-
+            assert False, "unreachable"
 
     # meta-methods
     def __init__(self, classSlot=None, instanceSlot=None, **kwds):
@@ -116,7 +110,6 @@ class Property(Slotted):
 
         # all done
         return
-
 
     def __str__(self):
         return f"{self.name}: a property of type '{self.typename}'"
