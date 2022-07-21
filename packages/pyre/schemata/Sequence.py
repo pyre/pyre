@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2022 all rights reserved
-#
 
 
 # externals
-import collections.abc # for container identification
+import collections.abc  # for container identification
+
 # superclass
 from .Container import Container
 
@@ -18,15 +17,13 @@ class Sequence(Container):
     The base class for type declarators that are sequences of other types
     """
 
-
     # constants
-    open = '[({'
-    close = '])}'
-    delimiter = ','
-    typename = 'sequence' # the name of my type
-    container = tuple # the default container i represent
-    complaint = 'could not coerce {0.value!r} as a sequence'
-
+    open = "[({"
+    close = "])}"
+    delimiter = ","
+    typename = "sequence"  # the name of my type
+    container = tuple  # the default container i represent
+    complaint = "could not coerce {0.value!r} as a sequence"
 
     # interface
     def str(self, value):
@@ -34,20 +31,21 @@ class Sequence(Container):
         Render value as a string that can be persisted for later coercion
         """
         # respect {None}
-        if value is None: return None
+        if value is None:
+            return None
         # my value knows
         return str(self.container(str(item) for item in value))
-
 
     def json(self, value):
         """
         Generate a JSON representation of {value}
         """
         # respect {None}
-        if value is None: return None
+        if value is None:
+            # by leaving it alone
+            return None
         # easy enough
         return self.container(str(item) for item in value)
-
 
     # implementation details
     def _coerce(self, value, incognito=True, **kwds):
@@ -57,12 +55,18 @@ class Sequence(Container):
         # string processing
         if isinstance(value, str):
             # strip opening and closing delimiters
-            if value and value[0] in self.open: value = value[1:]
-            if value and value[-1] in self.close: value = value[:-1]
-            # if there is nothing left, we are done
-            if not value: return
+            if value and value[0] in self.open:
+                value = value[1:]
+            if value and value[-1] in self.close:
+                value = value[:-1]
+            # if there is nothing left
+            if not value:
+                # we are done
+                return
             # otherwise, split it using comma as the separator
-            value = filter(None, (entry.strip() for entry in value.split(self.delimiter)))
+            value = filter(
+                None, (entry.strip() for entry in value.split(self.delimiter))
+            )
         # if we have an iterable
         if isinstance(value, collections.abc.Iterable):
             # go through each entry

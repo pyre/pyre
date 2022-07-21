@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2022 all rights reserved
-#
 
 
 # externals
-import collections.abc # for container identification
+import collections.abc  # for container identification
+
 # superclass
 from .Container import Container
 
@@ -18,12 +17,10 @@ class Mapping(Container):
     The base class for type declarators that map strings to other types
     """
 
-
     # constants
-    typename = 'mapping' # the name of my type
-    container = dict # the default container i represent
-    complaint = 'could not coerce {0.value!r} to a mapping'
-
+    typename = "mapping"  # the name of my type
+    container = dict  # the default container i represent
+    complaint = "could not coerce {0.value!r} to a mapping"
 
     # implementation details
     def _coerce(self, value, **kwds):
@@ -34,7 +31,8 @@ class Mapping(Container):
         if isinstance(value, str):
             # otherwise, not supported
             raise NotImplementedError(
-                "class {.__name__} cannot coerce strings".format(type(self)))
+                "class {.__name__} cannot coerce strings".format(type(self))
+            )
 
         # if we have a mapping
         if isinstance(value, collections.abc.Mapping):

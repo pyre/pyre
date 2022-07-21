@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2022 all rights reserved
-#
 
 
 # support
 from .. import primitives
+
 # superclass
 from .Schema import Schema
 
@@ -18,16 +17,14 @@ class Path(Schema):
     A type declarator for paths
     """
 
-
     # constants
-    typename = 'path' # the name of my type
+    typename = "path"  # the name of my type
     complaint = "cannot cast {0.value!r} into a path"
 
     # magic values
     cwd = primitives.path.cwd
     root = primitives.path.root
     home = primitives.path.home()
-
 
     # interface
     def coerce(self, value, **kwds):
@@ -46,7 +43,6 @@ class Path(Schema):
 
         # cast {value} into a path
         return primitives.path(value)
-
 
     def json(self, value):
         """

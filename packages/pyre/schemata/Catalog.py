@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2022 all rights reserved
-#
 
 
 # superclass
@@ -16,9 +14,8 @@ class Catalog(Mapping):
     The catalog type declarator
     """
 
-
     # constants
-    typename = 'catalog' # the name of my type
+    typename = "catalog"  # the name of my type
 
 
 # end of file

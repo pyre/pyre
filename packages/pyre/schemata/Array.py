@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2022 all rights reserved
-#
 
 
 # externals
 import collections.abc
+
 # superclass
 from .Schema import Schema
 
@@ -18,11 +17,9 @@ class Array(Schema):
     The array type declarator
     """
 
-
     # constants
-    typename = 'array' # the name of my type
-    complaint = 'could not coerce {0.value!r} to an array'
-
+    typename = "array"  # the name of my type
+    complaint = "could not coerce {0.value!r} to an array"
 
     # interface
     def coerce(self, value, **kwds):
@@ -33,15 +30,18 @@ class Array(Schema):
         if isinstance(value, str):
             # strip it
             value = value.strip()
-            # if there is nothing left, return an empty tuple
-            if not value: return ()
+            # if there is nothing left
+            if not value:
+                # return an empty tuple
+                return ()
             # otherwise, ask python to process
             value = eval(value)
-        # if {value} is an iterable, convert it to a tuple and return it
-        if isinstance(value, collections.abc.Iterable): return tuple(value)
+        # if {value} is an iterable
+        if isinstance(value, collections.abc.Iterable):
+            # convert it to a tuple and return it
+            return tuple(value)
         # otherwise flag it as bad input
         raise self.CastingError(value=value, description=self.complaint)
-
 
     # meta-methods
     def __init__(self, default=(), **kwds):

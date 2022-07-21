@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2022 all rights reserved
-#
 
 
 # externals
 import os
+
 # superclass
 from .String import String
 
@@ -19,8 +18,7 @@ class EnvVar(String):
     """
 
     # constants
-    typename = 'envvar' # the name of my type
-
+    typename = "envvar"  # the name of my type
 
     # meta-methods
     def __init__(self, variable, **kwds):

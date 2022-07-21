@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2022 all rights reserved
-#
 
 
 # superclass
@@ -16,11 +14,9 @@ class Container(Schema):
     The base class for type declarators that are sequences of other types
     """
 
-
     # constants
-    typename = 'container' # the name of my type
+    typename = "container"  # the name of my type
     isContainer = True
-
 
     @property
     def container(self):
@@ -29,8 +25,8 @@ class Container(Schema):
         """
         # complain that the subclass is not constructed properly
         raise NotImplementedError(
-            "class {.__name__} must define a {container} type".format(type(self)))
-
+            "class {.__name__} must define a {container} type".format(type(self))
+        )
 
     # interface
     def coerce(self, value, **kwds):
@@ -40,7 +36,6 @@ class Container(Schema):
         # get the worker to build an iterable, cast it into my container type and return it
         return self.container(self._coerce(value=value, **kwds))
 
-
     def render(self, renderer, value, workload):
         """
         Render {value} using {renderer}
@@ -48,17 +43,19 @@ class Container(Schema):
         # get my schema
         schema = self.schema
         # render just my name
-        yield renderer.trait(name=self.name, value='')
+        yield renderer.trait(name=self.name, value="")
         # go through the items
         for item in value:
             # ask my schema to render each one
-            entry = ','.join(schema.render(renderer=renderer, value=item,
-                                           workload=workload, incognito=True))
+            entry = ",".join(
+                schema.render(
+                    renderer=renderer, value=item, workload=workload, incognito=True
+                )
+            )
             # and put it on a separate line
             yield renderer.value(value=f"{entry},")
         # all done
         return
-
 
     # meta-methods
     def __init__(self, default=object, schema=Schema(), **kwds):
