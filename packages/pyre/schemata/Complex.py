@@ -1,30 +1,25 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2022 all rights reserved
-#
 
 
 # externals
 import collections.abc
 
-
 # superclass
-from .Numeric import Numeric
+from .Number import Number
 
 
 # declaration
-class Complex(Numeric):
+class Complex(Number):
     """
     A type declarator for complex numbers
     """
 
-
     # constants
-    typename = 'complex' # the name of my type
-    complaint = 'could not coerce {0.value!r} into a complex number'
-
+    typename = "complex"  # the name of my type
+    complaint = "could not coerce {0.value!r} into a complex number"
 
     # interface
     def coerce(self, value, **kwds):
@@ -47,7 +42,6 @@ class Complex(Numeric):
         except Exception as error:
             # complain
             raise self.CastingError(value=value, description=self.complaint)
-
 
     # meta-methods
     def __init__(self, default=complex(), **kwds):

@@ -1,26 +1,22 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2022 all rights reserved
-#
 
 
 # superclass
-from .Numeric import Numeric
+from .Number import Number
 
 
 # declaration
-class Float(Numeric):
+class Float(Number):
     """
     A type declarator for floats
     """
 
-
     # constants
-    typename = 'float' # the name of my type
-    complaint = 'could not coerce {0.value!r} into a float'
-
+    typename = "float"  # the name of my type
+    complaint = "could not coerce {0.value!r} into a float"
 
     # interface
     def coerce(self, value, **kwds):
@@ -39,7 +35,6 @@ class Float(Numeric):
         except Exception as error:
             # complain
             raise self.CastingError(value=value, description=self.complaint)
-
 
     # meta-methods
     def __init__(self, default=float(), **kwds):
