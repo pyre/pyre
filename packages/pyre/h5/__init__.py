@@ -13,6 +13,7 @@ from .Object import Object as object
 from .Group import Group as group
 from .File import File as file
 
+
 # datasets
 from .Dataset import Dataset as dataset
 
@@ -26,6 +27,9 @@ timestamp = dataset.timestamp
 array = dataset.array
 list = dataset.list
 tuple = dataset.tuple
+
+# containers
+from .typed.Strings import Strings as strings
 
 
 # readers and writers
