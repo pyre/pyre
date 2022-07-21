@@ -20,7 +20,7 @@ class Dataset(Object):
     """
 
     # my mixins
-    from .typed import bool, int, str, timestamp
+    from .typed import bool, int, float, str, timestamp
 
     # public data
     @property
