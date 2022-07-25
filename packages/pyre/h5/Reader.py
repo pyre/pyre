@@ -62,6 +62,8 @@ class Reader:
         """
         # get the dataset key
         location = str(dataset.pyre_location)
+        # use it to update the current path
+        path /= location
         # attempt to
         try:
             # realize the h5 object that gives me access to my contents
@@ -69,20 +71,34 @@ class Reader:
         # if anything goes wrong
         except Exception as error:
             # make a channel
-            channel = journal.warning("pyre.h5.reader")
+            channel = journal.error("pyre.h5.reader")
             # let the user know
             channel.line(f"error: {error}")
-            channel.line(f"while looking up {path}")
-            channel.line(f"in {uri}")
+            channel.line(f"while looking up '{path}'")
+            channel.line(f"in '{uri}'")
+            # flush
+            channel.log()
+            # and bail
+            raise
+        # otherwise, clone the {dataset}
+        clone = dataset.pyre_clone(id=hid)
+        # and attempt to
+        try:
+            # pull the value
+            clone.pyre_read()
+        # if anything goes wrong
+        except Exception as error:
+            # make a channel
+            channel = journal.error("pyre.h5.reader")
+            # let the user know
+            channel.line(f"error: {error}")
+            channel.line(f"while reading '{path}'")
+            channel.line(f"in '{uri}'")
             # flush
             channel.log()
             # and bail
             raise
 
-        # clone the {dataset}
-        clone = dataset.pyre_clone(id=hid)
-        # pull the value
-        clone.pyre_read()
         # attach the clone to its parent; use the {dataset} from the query as the descriptor
         # in order to minimize the number of objects with {libh5} footprint
         parent.pyre_set(descriptor=dataset, identifier=clone)
@@ -102,16 +118,30 @@ class Reader:
         """
         # get the group location
         location = group.pyre_location
-        # realize the h5 object that gives me access to the group contents
-        hid = parent.pyre_id.group(path=str(location))
-        # clone it
+        # update the current path
+        path /= location
+        # attempt to
+        try:
+            # realize the h5 object that gives me access to the group contents
+            hid = parent.pyre_id.group(path=str(location))
+        # if anything goes wrong
+        except Exception as error:
+            # make a channel
+            channel = journal.error("pyre.h5.reader")
+            # let the user know
+            channel.line(f"error: {error}")
+            channel.line(f"while looking up '{path}'")
+            channel.line(f"in '{uri}'")
+            # flush
+            channel.log()
+            # and bail
+            raise
+        # otherwise, clone it
         clone = group.pyre_clone(id=hid)
         # attach the clone to its parent; use the {group} from the query as the descriptor
         # in order to minimize the number of objects with {libh5} footprint
         parent.pyre_set(descriptor=group, identifier=clone)
 
-        # update the current path
-        path /= location
         # now, go through its children
         for child in group.pyre_locations():
             # and visit each one
