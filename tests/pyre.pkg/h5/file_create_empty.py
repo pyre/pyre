@@ -16,14 +16,14 @@ def test():
     import pyre
 
     # fix the location of the test file
-    path = pyre.primitives.path("file_create_empty.h5")
+    uri = pyre.primitives.path("file_create_empty.h5")
     # create it
-    f = pyre.h5.file().open(path=path, mode="w")
+    f = pyre.h5.file().open(uri=uri, mode="w")
 
     # verify it's there
-    assert path.exists()
+    assert uri.exists()
     # and delete it
-    path.unlink()
+    uri.unlink()
 
     # all done
     return
