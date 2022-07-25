@@ -21,12 +21,12 @@ class File(Group):
     """
 
     # interface
-    def open(self, path, mode):
+    def open(self, uri: pyre.primitives.pathlike, mode: str):
         """
-        Access the h5 file at {path}
+        Access the h5 file at {uri}
         """
         # open the file and attach my handle
-        self.pyre_id = pyre.libh5.File(path=str(path), mode=mode)
+        self.pyre_id = pyre.libh5.File(path=str(uri), mode=mode)
         # all done
         return self
 
