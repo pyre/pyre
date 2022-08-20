@@ -1,9 +1,7 @@
 # -*- cmake -*-
 #
-# michael a.g. aïvázis
-# orthologue
-# (c) 1998-2021 all rights reserved
-#
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2022 all rights reserved
 
 
 # build the postgres module
