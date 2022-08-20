@@ -13,6 +13,8 @@ pyre_pyreModule()
 pyre_mpiModule()
 # gsl
 pyre_gslModule()
+# h5
+pyre_h5Module()
 # postgres
 pyre_postgresModule()
 

@@ -72,17 +72,18 @@ include(pyre_merlin)
 include(pyre_cuda)
 include(pyre_mpi)
 include(pyre_gsl)
+include(pyre_h5)
 include(pyre_postgres)
 
 # programs
 find_program(BASH_PROGRAM bash)
 
 # packages
+# mpi; esrly so packages that depend on it know
+find_package(MPI COMPONENTS CXX)
+
 # gsl
 find_package(GSL)
-
-# mpi
-find_package(MPI COMPONENTS CXX)
 
 # hdf5
 # if mpi is installed
