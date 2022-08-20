@@ -58,9 +58,9 @@ function(pyre_pyrePackage)
 endfunction(pyre_pyrePackage)
 
 
-# buld the pyre libraries
+# build the pyre libraries
 function(pyre_pyreLib)
-  # buld the libpyre version file
+  # build the libpyre version file
   configure_file(
     pyre/version.h.in pyre/version.h
     @ONLY
