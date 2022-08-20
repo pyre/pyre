@@ -36,7 +36,7 @@ function(pyre_test_target target testfile)
   # replace path separators with dors
   string(REPLACE "/" "." stem ${path})
 
-  # buld the target and return it
+  # build the target and return it
   set(${target} "tests.${stem}.${base}" PARENT_SCOPE)
 
   # all done

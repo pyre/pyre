@@ -6,7 +6,7 @@
 #
 
 
-# buld the journal pcckage
+# build the journal pcckage
 function(pyre_journalPackage)
   # install the sources straight from the source directory
   install(
