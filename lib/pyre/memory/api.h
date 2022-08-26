@@ -42,7 +42,7 @@ namespace pyre::memory {
     // const view to someone else's data
     template <typename T>
     using constview_t = View<T, true>;
-}
+} // namespace pyre::memory
 
 
 // low level entities; you should probably stay away from them
@@ -50,7 +50,7 @@ namespace pyre::memory {
     // support for managing file-backed memory undifferentiated blocks; this is the base class
     // for {map_t} and {constmap_t} above
     using filemap_t = FileMap;
-}
+} // namespace pyre::memory
 
 
 #endif
