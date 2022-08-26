@@ -50,6 +50,8 @@ public:
     inline auto bytes() const -> size_type;
     // access to the raw data pointer
     inline auto data() const -> pointer;
+    // access to the name of the supporing file
+    inline auto uri() const -> uri_type;
 
     // iterator support
 public:
@@ -74,8 +76,8 @@ public:
     // constructors
     Map(const Map &) = default;
     Map(Map &&) = default;
-    Map & operator= (const Map &) = default;
-    Map & operator= (Map &&) = default;
+    Map & operator=(const Map &) = default;
+    Map & operator=(Map &&) = default;
 };
 
 
@@ -85,6 +87,6 @@ public:
 #undef pyre_memory_Map_icc
 
 
-# endif
+#endif
 
 // end of file
