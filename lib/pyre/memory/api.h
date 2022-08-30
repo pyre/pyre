@@ -47,8 +47,8 @@ namespace pyre::memory {
 
 // low level entities; you should probably stay away from them
 namespace pyre::memory {
-    // support for managing file-backed memory undifferentiated blocks; this is the base class
-    // for {map_t} and {constmap_t} above
+    // support for managing file-backed memory undifferentiated blocks
+    // used by {map_t} and {constmap_t} above
     using filemap_t = FileMap;
 } // namespace pyre::memory
 
