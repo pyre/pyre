@@ -50,7 +50,7 @@ public:
     inline auto bytes() const -> size_type;
     // access to the raw data pointer
     inline auto data() const -> pointer;
-    // access to the name of the supporing file
+    // access to the name of the supporting file
     inline auto uri() const -> uri_type;
 
     // iterator support
