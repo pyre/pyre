@@ -206,7 +206,7 @@ class Matrix:
         # otherwise, look at the file extension
         suffix = filename.suffix
         # if it's {bin}
-        if suffix == "bin":
+        if suffix == ".bin":
             # go binary
             return self.read(filename)
 
