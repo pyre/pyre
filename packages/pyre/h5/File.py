@@ -40,7 +40,7 @@ class File(Group):
     # framework hooks
     def pyre_identify(self, authority: typing.Any, **kwds) -> typing.Any:
         """
-        Let {authority} know i am a group
+        Let {authority} know i am a file
         """
         # attempt to
         try:
