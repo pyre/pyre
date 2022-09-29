@@ -377,6 +377,15 @@ pyre::h5::py::dataset(py::module & m)
         "get my contents as a list of strings");
 
 
+    // close the dataset
+    cls.def(
+        // the name
+        "close",
+        // the implementation
+        &DataSet::close,
+        // the docstring
+        "close the dataset");
+
     // all done
     return;
 }
