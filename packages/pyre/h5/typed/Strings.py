@@ -16,7 +16,7 @@ class Strings(Dataset.list):
     # metamethods
     def __init__(self, **kwds):
         # set the schema and chain up
-        super().__init__(schema=Dataset.str(), **kwds)
+        super().__init__(schema=Dataset.str(name="sentinel"), **kwds)
         # all done
         return
 
