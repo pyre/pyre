@@ -25,9 +25,9 @@ class Identifier:
         # chain up
         super().__init__(**kwds)
         # my name
-        self.pyre_name = name
+        self.pyre_name: str = name
         # my docstring
-        self.pyre_doc = doc
+        self.pyre_doc: str = doc
         # all done
         return
 
