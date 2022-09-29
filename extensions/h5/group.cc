@@ -46,7 +46,7 @@ pyre::h5::py::group(py::module & m)
         // the docstring
         "open a dataset given its path");
 
-    // open a group
+    // open one of my subgroups
     cls.def(
         // the name
         "group",
@@ -58,7 +58,7 @@ pyre::h5::py::group(py::module & m)
         // the signature
         "path"_a,
         // the docstring
-        "open a group given its path");
+        "open one of my subgroups given its path");
 
     // all done
     return;
