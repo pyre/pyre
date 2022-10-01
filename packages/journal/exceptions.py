@@ -30,7 +30,7 @@ class FirewallError(JournalError):
     def __init__(self, channel, **kwds):
         # chain up
         super().__init__(locator=channel.locator, **kwds)
-        # save the firewall
+        # save the channel
         self.firewall = channel
         # all done
         return
@@ -49,7 +49,7 @@ class DebugError(JournalError):
     def __init__(self, channel, **kwds):
         # chain up
         super().__init__(locator=channel.locator, **kwds)
-        # save the firewall
+        # save the channel
         self.debug = channel
         # all done
         return
@@ -68,7 +68,7 @@ class ApplicationError(JournalError):
     def __init__(self, channel, **kwds):
         # chain up
         super().__init__(locator=channel.locator, **kwds)
-        # save the firewall
+        # save the channel
         self.error = channel
         # all done
         return
