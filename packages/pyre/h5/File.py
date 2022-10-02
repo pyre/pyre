@@ -63,7 +63,7 @@ class File(Group):
         # save it
         self.pyre_fapl = fapl
         # assemble the file uri
-        uri = f"https://{bucket}.s3.amazonaws.com/{key}"
+        uri = f"https://{bucket}.s3.amazonaws.com{key}"
         # open the file and attach my handle
         self.pyre_id = libh5.File(uri=uri, fapl=fapl, mode="r")
 
