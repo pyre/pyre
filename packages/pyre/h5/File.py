@@ -42,7 +42,7 @@ class File(Group):
         self, bucket: str, key: str, profile: typing.Optional[str] = None
     ) -> "File":
         """
-        Access the remote dataset {key} in the given S3 {bucket}
+        Access the remote dataset {key} in the given S3 {bucket} using the {ROS3} driver
         """
         # get the hdf5 bindings
         libh5 = pyre.libh5
@@ -59,7 +59,8 @@ class File(Group):
             return self
         # make a {ros3} access parameter list
         fapl = libh5.fapls.ros3(profile)
-        # attach it
+        # attach it; this ensures it lives at least as long as the file object,
+        # and it is properly closed when the file object is garbage collected
         self.pyre_fapl = fapl
         # open the file and attach my handle
         self.pyre_id = libh5.File(bucket, key, fapl)
