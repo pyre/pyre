@@ -52,11 +52,13 @@ namespace pyre::h5::py {
     using DataType = H5::DataType;
     using CompType = H5::CompType;
     using File = H5::H5File;
+    using FileAccessPropertyList = H5::FileAccPropList;
     using Group = H5::Group;
     using Identifier = H5::IdComponent;
     using Location = H5::H5Location;
     using Object = H5::H5Object;
     using PredType = H5::PredType;
+    using PropList = H5::PropList;
 
 } // namespace pyre::h5::py
 
