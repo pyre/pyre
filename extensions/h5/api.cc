@@ -29,6 +29,21 @@ pyre::h5::py::api(py::module & m)
         // the docstring
         "initialize the hdf5 runtime");
 
+    // check whether there is ROS3 support
+    m.def(
+        // the name
+        "ros3",
+        // the handler
+        []() -> bool {
+#if defined(H5_HAVE_ROS3_VFD)
+            return true;
+#else
+            return false;
+#endif
+        },
+        // the docstring
+        "check whether there is ROS3 support");
+
     // all done
     return;
 }
