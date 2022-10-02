@@ -23,26 +23,26 @@ pyre::h5::py::file(py::module & m)
         // docstring
         "an HDF5 file");
 
-    // constructor
+    // constructor for accessing a local file
     cls.def(
         // the implementation
         py::init([](std::string path, std::string mode) {
             // decode mode
             if (mode == "r") {
                 // read-only, file must exist
-                return new File(path, H5F_ACC_RDONLY);
+                return File(path, H5F_ACC_RDONLY);
             }
             if (mode == "r+") {
                 // read/write, file must exist
-                return new File(path, H5F_ACC_RDWR);
+                return File(path, H5F_ACC_RDWR);
             }
             if (mode == "w") {
                 // create file, truncate if it exists
-                return new File(path, H5F_ACC_TRUNC);
+                return File(path, H5F_ACC_TRUNC);
             }
             if (mode == "w-" || mode == "x") {
                 // create file, fail if it exists
-                return new File(path, H5F_ACC_EXCL);
+                return File(path, H5F_ACC_EXCL);
             }
 
             // h5py has one more valid {mode}
@@ -67,7 +67,7 @@ pyre::h5::py::file(py::module & m)
                 << pyre::journal::endl(__HERE__);
 
             // just in case this error is not fatal, make a stub
-            return new File();
+            return File();
         }),
         // the signature
         "path"_a, "mode"_a = "r",
