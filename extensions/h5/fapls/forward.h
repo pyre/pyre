@@ -12,6 +12,9 @@
 namespace pyre::h5::py::fapls {
     // the module initializer
     void fapls(py::module &);
+
+    // fapl classes
+    void ros3(py::module &);
 } // namespace pyre::h5::py::fapls
 
 

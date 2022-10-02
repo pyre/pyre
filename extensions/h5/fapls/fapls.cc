@@ -21,6 +21,9 @@ pyre::h5::py::fapls::fapls(py::module & m)
         // its docstring
         "HDF5 file access parameter list types");
 
+    // add the supported fapl types
+    ros3(fapls);
+
     // all done
     return;
 }
