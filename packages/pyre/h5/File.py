@@ -57,13 +57,16 @@ class File(Group):
             channel.log()
             # and bail
             return self
-        # make a {ros3} access parameter list
-        fapl = libh5.fapls.ros3(profile)
-        # attach it; this ensures it lives at least as long as the file object,
-        # and it is properly closed when the file object is garbage collected
+
+        # make an access parameter list and fill it with {ros3} information
+        fapl = libh5.FAPL().ros3()
+        # save it
         self.pyre_fapl = fapl
+        # assemble the file uri
+        uri = f"https://{bucket}.s3.amazonaws.com/{key}"
         # open the file and attach my handle
-        self.pyre_id = libh5.File(bucket, key, fapl)
+        self.pyre_id = libh5.File(uri, fapl)
+
         # all done
         return self
 
@@ -73,6 +76,18 @@ class File(Group):
         super().__init__(at=at, **kwds)
         # record my access property list
         self.pyre_fapl = fapl
+        # all done
+        return
+
+    def __del__(self):
+        # get my access parameter list
+        fapl = self.pyre_fapl
+        # if it's non-trivial
+        if fapl is not None:
+            # close it
+            fapl.close()
+        # chain up
+        super().__del__()
         # all done
         return
 
