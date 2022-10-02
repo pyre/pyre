@@ -19,7 +19,10 @@ PYBIND11_MODULE(h5, m)
     // register the module api
     pyre::h5::py::api(m);
 
-    // bindings
+    // property lists
+    pyre::h5::py::fapl(m);
+
+    // object bindings
     pyre::h5::py::dataspace(m);
     pyre::h5::py::dataset(m);
     pyre::h5::py::datatypes::datatypes(m);
