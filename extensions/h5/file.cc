@@ -26,23 +26,23 @@ pyre::h5::py::file(py::module & m)
     // constructor for accessing a local file
     cls.def(
         // the implementation
-        py::init([](std::string path, std::string mode) {
+        py::init([](std::string uri, std::string mode) {
             // decode mode
             if (mode == "r") {
                 // read-only, file must exist
-                return File(path, H5F_ACC_RDONLY);
+                return File(uri, H5F_ACC_RDONLY);
             }
             if (mode == "r+") {
                 // read/write, file must exist
-                return File(path, H5F_ACC_RDWR);
+                return File(uri, H5F_ACC_RDWR);
             }
             if (mode == "w") {
                 // create file, truncate if it exists
-                return File(path, H5F_ACC_TRUNC);
+                return File(uri, H5F_ACC_TRUNC);
             }
             if (mode == "w-" || mode == "x") {
                 // create file, fail if it exists
-                return File(path, H5F_ACC_EXCL);
+                return File(uri, H5F_ACC_EXCL);
             }
 
             // h5py has one more valid {mode}
@@ -59,7 +59,7 @@ pyre::h5::py::file(py::module & m)
                 << "invalid mode '" << mode << "'"
                 << pyre::journal::newline
                 // show me the filename
-                << "while opening '" << path << "'"
+                << "while opening '" << uri << "'"
                 << pyre::journal::newline
                 // show me what's supported
                 << "currently supported modes: r, r+, w, w-"
@@ -70,9 +70,60 @@ pyre::h5::py::file(py::module & m)
             return File();
         }),
         // the signature
-        "path"_a, "mode"_a = "r",
+        "uri"_a, "mode"_a = "r",
         // the docstring
-        "open an HDF5 file given its {path}");
+        "open an HDF5 file given its {uri}");
+
+    // constructor for accessing a file with a custom access property list
+    cls.def(
+        // the implementation
+        py::init([](std::string uri, const FileAccessPropertyList & p, std::string mode) {
+            // decode mode
+            if (mode == "r") {
+                // read-only, file must exist
+                return File(uri, H5F_ACC_RDONLY, p);
+            }
+            if (mode == "r+") {
+                // read/write, file must exist
+                return File(uri, H5F_ACC_RDWR, p);
+            }
+            if (mode == "w") {
+                // create file, truncate if it exists
+                return File(uri, H5F_ACC_TRUNC, p);
+            }
+            if (mode == "w-" || mode == "x") {
+                // create file, fail if it exists
+                return File(uri, H5F_ACC_EXCL, p);
+            }
+
+            // h5py has one more valid {mode}
+            // a: create if it doesn't exist, read/write regardless
+            // supporting this requires attempting to open the file in RDWR mode
+            // and trying again in EXCL if it fails
+            // i need to learn a bit more about error trapping before attempting this
+
+            // if we get this far, we have a problem
+            auto channel = pyre::journal::error_t("pyre.h5.file");
+            // so complain
+            channel
+                // say why
+                << "invalid mode '" << mode << "'"
+                << pyre::journal::newline
+                // show me the filename
+                << "while opening '" << uri << "'"
+                << pyre::journal::newline
+                // show me what's supported
+                << "currently supported modes: r, r+, w, w-"
+                // and flush
+                << pyre::journal::endl(__HERE__);
+
+            // just in case this error is not fatal, make a stub
+            return File();
+        }),
+        // the signature
+        "uri"_a, "fapl"_a, "mode"_a = "r",
+        // the docstring
+        "open an HDF5 file given its {uri} and a custom access property list");
 
     // close the file
     cls.def(
