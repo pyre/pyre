@@ -81,19 +81,19 @@ pyre::h5::py::file(py::module & m)
             // decode mode
             if (mode == "r") {
                 // read-only, file must exist
-                return File(uri, H5F_ACC_RDONLY, p);
+                return File(uri, H5F_ACC_RDONLY, FileCreatePropertyList::DEFAULT, p);
             }
             if (mode == "r+") {
                 // read/write, file must exist
-                return File(uri, H5F_ACC_RDWR, p);
+                return File(uri, H5F_ACC_RDWR, FileCreatePropertyList::DEFAULT, p);
             }
             if (mode == "w") {
                 // create file, truncate if it exists
-                return File(uri, H5F_ACC_TRUNC, p);
+                return File(uri, H5F_ACC_TRUNC, FileCreatePropertyList::DEFAULT, p);
             }
             if (mode == "w-" || mode == "x") {
                 // create file, fail if it exists
-                return File(uri, H5F_ACC_EXCL, p);
+                return File(uri, H5F_ACC_EXCL, FileCreatePropertyList::DEFAULT, p);
             }
 
             // h5py has one more valid {mode}
