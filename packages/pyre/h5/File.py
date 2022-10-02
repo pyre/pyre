@@ -34,7 +34,7 @@ class File(Group):
             x: alias for w-
         """
         # open the file and attach my handle
-        self.pyre_id = pyre.libh5.File(path=str(uri), mode=mode)
+        self.pyre_id = pyre.libh5.File(uri=str(uri), mode=mode)
         # all done
         return self
 
@@ -65,7 +65,7 @@ class File(Group):
         # assemble the file uri
         uri = f"https://{bucket}.s3.amazonaws.com/{key}"
         # open the file and attach my handle
-        self.pyre_id = libh5.File(uri, fapl)
+        self.pyre_id = libh5.File(uri=uri, fapl=fapl, mode="r")
 
         # all done
         return self
