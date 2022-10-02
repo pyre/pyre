@@ -45,11 +45,35 @@ pyre::h5::py::fapl(py::module & m)
         // the name
         "ros3",
         // the implementation
-        [](FileAccessPropertyList & plist) -> FileAccessPropertyList & {
+        [](FileAccessPropertyList & plist, std::string region, std::string id,
+           std::string key) -> FileAccessPropertyList & {
+            // make room for the driver parameters
+            H5FD_ros3_fapl_t p;
+            // populate
+            p.version = H5FD_CURR_ROS3_FAPL_T_VERSION;
+            p.authenticate = 0;
+            std::strcpy(p.aws_region, region.data());
+            std::strcpy(p.secret_id, id.data());
+            std::strcpy(p.secret_key, key.data());
+            // and transfer
+            auto status = H5Pset_fapl_ros3(plist.getId(), &p);
+            // if the transfer failed
+            if (status < 0) {
+                // make a channel
+                auto channel = pyre::journal::error_t("pyre.h5.fapl");
+                // complain
+                channel
+                    // complain
+                    << "failed to populate a file access property list with ros3 parameters"
+                    << pyre::journal::newline
+                    // and flush
+                    << pyre::journal::endl(__HERE__);
+            }
             // all done
             return plist;
         },
         // the signature
+        "region"_a = "us-east-1", "id"_a = "", "key"_a = "",
         // the docstring
         "populate the property list with ros3 parameters");
 #endif
