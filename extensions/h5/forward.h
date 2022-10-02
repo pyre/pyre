@@ -29,12 +29,6 @@ namespace pyre::h5::py::datatypes {
 } // namespace pyre::h5::py::datatypes
 
 
-// file access parameter lists are in their own namespace
-namespace pyre::h5::py::fapls {
-    // fapls
-    void fapls(py::module &);
-} // namespace pyre::h5::py::fapls
-
 #endif
 
 // end of file
