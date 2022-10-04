@@ -7,6 +7,9 @@
 # externals
 import collections.abc  # for container identification
 
+# to get the base exception
+import pyre
+
 # superclass
 from .Container import Container
 
@@ -71,11 +74,18 @@ class Sequence(Container):
         if isinstance(value, collections.abc.Iterable):
             # go through each entry
             for entry in value:
-                # convert it and hand it to the caller. perform the conversion incognito, in
-                # case coercing my values requires the instantiation of components; i don't
-                # want facilities to use the name of my node as the name of any instantiated
-                # components
-                yield self.schema.process(value=entry, incognito=incognito, **kwds)
+                # attempt to
+                try:
+                    # convert it and hand it to the caller. perform the conversion incognito, in
+                    # case coercing my values requires the instantiation of components; i don't
+                    # want facilities to use the name of my node as the name of any instantiated
+                    # components
+                    yield self.schema.process(value=entry, incognito=incognito, **kwds)
+                # if anything goes wrong that it is managed by the framework, assume it has
+                # been communicated to the user
+                except pyre.PyreError:
+                    # and skip this entry
+                    continue
             # all done
             return
         # otherwise, flag it as bad input
