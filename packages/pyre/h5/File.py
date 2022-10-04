@@ -5,6 +5,7 @@
 
 
 # support
+import journal
 import pyre
 
 # superclass
