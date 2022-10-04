@@ -7,5 +7,6 @@
         "*.js": "javascriptreact",
         "*.mm": "makefile",
         "type_traits": "cpp"
-    }
+    },
+    "python.analysis.typeCheckingMode": "basic"
 }
