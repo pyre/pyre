@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2022 all rights reserved
-#
 
 
 """
@@ -17,8 +15,11 @@ The sequence
     .
     .
     .
-    t.stop()
-    elapsed = t.read()
+    delta = t.stop()   # returns the interval since the last {start}
+    elapsed = t.read() # for the raw total elapsed time
+    elapsed = t.sec()  # for float seconds
+    elapsed = t.ms()   # for float milliseconds
+    elapsed = t.us()   # for float microseconds
 
 produces a timer, and registers it under the name {test}. Timers must be started before any
 readings can take place. Stopping a timer prevents it from accumulating time, while {t.read}
@@ -28,10 +29,9 @@ reused as many times as you like.
 Another interesting feature is that registered timers are available from anywhere in an
 application. You can register a timer in one place, access it and start it in another, and stop
 it and take a reading in a third, all without needing to pass around the variable. The timer
-registry grants access to the same timer when it is asked for a timer of known name.
+registry grants access to the same timer when it is asked for a timer of a known name.
 
-If the {libpyre} bindings are available, you are sharing these timers with low level code as
-well.
+If the {libpyre} bindings are available, the same timers are accessible from low level code
 """
 
 
@@ -40,6 +40,7 @@ libpyre_without_timers = False
 
 # get the {__main__} module
 import __main__
+
 # so we can check
 try:
     # whether the user asked for the pure python implementation
@@ -48,6 +49,7 @@ try:
 except AttributeError:
     # it's because the user hasn't expressed an opinion; check with pyre
     import pyre
+
     # whether the C++ bindings are available
     if pyre.libpyre is None:
         # if not, fall back to the pure python implementations
@@ -57,13 +59,13 @@ except AttributeError:
 # so...
 if libpyre_without_timers:
     # publish the pure python implementation
-    from .WallTimer import WallTimer as wallTimer
-    from .ProcessTimer import ProcessTimer as processTimer
+    from .WallTimer import WallTimer as wall
+    from .ProcessTimer import ProcessTimer as cpu
 # otherwise
 else:
     # publish the C++ implementation
-    wallTimer = pyre.libpyre.timers.WallTimer
-    processTimer = pyre.libpyre.timers.ProcessTimer
+    wall = pyre.libpyre.timers.WallTimer
+    cpu = pyre.libpyre.timers.ProcessTimer
 
 
 # end of file
