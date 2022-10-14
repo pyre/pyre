@@ -29,6 +29,13 @@ pyre::py::memory::maps(py::module & m)
         "ByteConstMap",
         // docstring
         "a read-only file backed memory buffer of {char}");
+    constmap<unsigned char>(
+        // in scope
+        m,
+        // class name
+        "UInt8ConstMap",
+        // docstring
+        "a read-only file backed memory buffer of {uint8_t}");
     // i2
     constmap<int16_t>(
         // in scope
@@ -95,6 +102,13 @@ pyre::py::memory::maps(py::module & m)
         "ByteMap",
         // docstring
         "a read/write file backed memory buffer of {char}");
+    map<unsigned char>(
+        // in scope
+        m,
+        // class name
+        "UInt8Map",
+        // docstring
+        "a read/write file backed memory buffer of {uint8_t}");
     // i2
     map<int16_t>(
         // in scope
