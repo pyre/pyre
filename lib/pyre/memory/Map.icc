@@ -26,27 +26,6 @@ pyre::memory::Map<T, isConst>::Map(uri_type uri, size_type cells) :
 
 
 // interface
-// compute the number of cells in the memory block
-template <typename T, bool isConst>
-auto
-pyre::memory::Map<T, isConst>::cells() const -> cell_count_type
-{
-    // convert using my size in bytes
-    return bytes() / sizeof(value_type);
-}
-
-
-// interface
-// compute the number of cells in the memory block
-template <typename T, bool isConst>
-auto
-pyre::memory::Map<T, isConst>::bytes() const -> size_type
-{
-    // convert using my size in bytes
-    return _map->bytes();
-}
-
-
 // get the name of the supporting file
 template <typename T, bool isConst>
 auto
@@ -57,6 +36,26 @@ pyre::memory::Map<T, isConst>::uri() const -> uri_type
 }
 
 
+// compute the number of cells in the memory block
+template <typename T, bool isConst>
+auto
+pyre::memory::Map<T, isConst>::cells() const -> cell_count_type
+{
+    // convert using my size in bytes
+    return bytes() / sizeof(value_type);
+}
+
+
+// compute the number of cells in the memory block
+template <typename T, bool isConst>
+auto
+pyre::memory::Map<T, isConst>::bytes() const -> size_type
+{
+    // convert using my size in bytes
+    return _map->bytes();
+}
+
+
 // access to the raw data pointer
 template <typename T, bool isConst>
 auto
@@ -64,6 +63,17 @@ pyre::memory::Map<T, isConst>::data() const -> pointer
 {
     // cast my data pointer to a {pointer}
     return static_cast<pointer>(_map->data());
+}
+
+
+// access to the raw data pointer in a form suitable for including in diagnostics
+// by bypassing any interpretation of my {pointer} type by the stream injection logic
+template <typename T, bool isConst>
+auto
+pyre::memory::Map<T, isConst>::where() const -> const void *
+{
+    // cast my data pointer to a {pointer}
+    return static_cast<const void *>(_map->data());
 }
 
 

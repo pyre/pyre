@@ -44,14 +44,16 @@ public:
 
     // interface
 public:
+    // access to the name of the supporting file
+    inline auto uri() const -> uri_type;
     // the number of cells; the inherited {bytes} tells you the memory footprint of the block
     inline auto cells() const -> cell_count_type;
     // the memory footprint of the block
     inline auto bytes() const -> size_type;
     // access to the raw data pointer
     inline auto data() const -> pointer;
-    // access to the name of the supporting file
-    inline auto uri() const -> uri_type;
+    // access to the raw data pointer in a form suitable for including in diagnostics
+    inline auto where() const -> const void *;
 
     // iterator support
 public:
