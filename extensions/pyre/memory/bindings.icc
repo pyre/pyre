@@ -23,6 +23,15 @@ pyre::py::memory::bindConstStorage(shared_holder_t<memT> & cls)
         // the docstring
         "the path to the backing store");
 
+    // where
+    cls.def_property_readonly(
+        // the name of the property
+        "where",
+        // the implementation
+        [](const memT & self) { return reinterpret_cast<intptr_t>(self.where()); },
+        // the docstring
+        "the location of the map in memory");
+
     // cells
     cls.def_property_readonly(
         // the name of the property
