@@ -29,7 +29,6 @@ PROJ_SRCS = \
     exceptions.cc \
     firewall.cc \
     info.cc \
-    opaque.cc \
     warning.cc
 
 # end of file
