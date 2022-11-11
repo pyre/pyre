@@ -77,7 +77,7 @@ pyre::journal::py::api(py::module & m)
         "detail",
         // the implementation
         [](chronicler_t::detail_type level) -> void { chronicler_t::detail(level); },
-        // the sigmature
+        // the signature
         "level"_a,
         // the docstring
         "set the maximum message detail level");
