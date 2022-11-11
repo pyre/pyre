@@ -17,24 +17,21 @@ using firewall_t = pyre::journal::firewall_t;
 
 
 // hit
-extern "C"
-void firewall_hit(const char * channel, __HERE_DECL__, const char * fmt, ...)
+extern "C" void
+firewall_hit(const char * channel, __HERE_DECL__, const char * fmt, ...)
 {
     // pull the varargs
     std::va_list args;
     char buffer[4096];
     va_start(args, fmt);
-    std::vsprintf(buffer, fmt, args);
+    std::vsnprintf(buffer, sizeof(buffer), fmt, args);
     va_end(args);
 
     // create a firewall channel
     firewall_t firewall(channel);
 
     // log the message
-    firewall
-        << pyre::journal::Locator(__HERE_ARGS__)
-        << buffer
-        << pyre::journal::endl;
+    firewall << pyre::journal::Locator(__HERE_ARGS__) << buffer << pyre::journal::endl;
 
     // all done
     return;
@@ -42,8 +39,8 @@ void firewall_hit(const char * channel, __HERE_DECL__, const char * fmt, ...)
 
 
 // check
-extern "C"
-void firewall_check(const char * channel, int condition, __HERE_DECL__, const char * fmt, ...)
+extern "C" void
+firewall_check(const char * channel, int condition, __HERE_DECL__, const char * fmt, ...)
 {
     // if {condition} is false
     if (!condition) {
@@ -51,17 +48,14 @@ void firewall_check(const char * channel, int condition, __HERE_DECL__, const ch
         std::va_list args;
         char buffer[4096];
         va_start(args, fmt);
-        std::vsprintf(buffer, fmt, args);
+        std::vsnprintf(buffer, sizeof(buffer), fmt, args);
         va_end(args);
 
         // create a firewall channel
         firewall_t firewall(channel);
 
         // log the message
-        firewall
-            << pyre::journal::Locator(__HERE_ARGS__)
-            << buffer
-            << pyre::journal::endl;
+        firewall << pyre::journal::Locator(__HERE_ARGS__) << buffer << pyre::journal::endl;
     }
 
     // all done
