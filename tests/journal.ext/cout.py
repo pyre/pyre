@@ -12,7 +12,7 @@ def test():
     # access
     from journal import libjournal
 
-    # make a trash can
+    # make a console that's tied to {cout}
     console = libjournal.Console()
     # verify its name is what we expect
     assert console.name == "cout"
