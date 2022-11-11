@@ -106,12 +106,12 @@ function(pyre_journalModule)
     journal/chronicler.cc
     journal/debug.cc
     journal/devices.cc
+    journal/entry.cc
     journal/error.cc
     journal/exceptions.cc
     journal/firewall.cc
     journal/help.cc
     journal/info.cc
-    journal/opaque.cc
     journal/warning.cc
     )
   # install
