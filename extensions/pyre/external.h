@@ -34,7 +34,7 @@ namespace pyre::py {
     // docstrings
     using docstring_t = const char *;
 
-    // wraper to install a {std::shared_ptr} as the custom holder for the bindings
+    // wrapper to install a {std::shared_ptr} as the custom holder for the bindings
     template <class clsT>
     using shared_holder_t = py::class_<clsT, std::shared_ptr<clsT>>;
 
