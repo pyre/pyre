@@ -207,9 +207,9 @@ pyre::journal::py::error(py::module & m)
         .def(
             "line",
             // the handler
-            [](error_t & channel, py::object message) -> error_t & {
+            [](error_t & channel, const error_t::string_type & message) -> error_t & {
                 // inject
-                channel << py::str(message) << pyre::journal::newline;
+                channel << message << pyre::journal::newline;
                 // all done
                 return channel;
             },
@@ -226,7 +226,7 @@ pyre::journal::py::error(py::module & m)
                 // extract individual lines from the iterable
                 for (auto line : report) {
                     // and inject each one
-                    channel << py::str(line) << pyre::journal::newline;
+                    channel << line << pyre::journal::newline;
                 }
                 // all done
                 return channel;
@@ -240,9 +240,9 @@ pyre::journal::py::error(py::module & m)
         .def(
             "log",
             // the handler
-            [](error_t & channel, py::object message) -> error_t & {
+            [](error_t & channel, const error_t::string_type & message) -> error_t & {
                 // inject and flush
-                channel << locator() << py::str(message) << pyre::journal::endl;
+                channel << locator() << message << pyre::journal::endl;
                 // all done
                 return channel;
             },

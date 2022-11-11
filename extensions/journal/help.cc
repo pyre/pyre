@@ -207,9 +207,9 @@ pyre::journal::py::help(py::module & m)
         .def(
             "line",
             // the handler
-            [](help_t & channel, py::object message) -> help_t & {
+            [](help_t & channel, const help_t::string_type & message) -> help_t & {
                 // inject
-                channel << py::str(message) << pyre::journal::newline;
+                channel << message << pyre::journal::newline;
                 // enable chaining
                 return channel;
             },
@@ -240,9 +240,9 @@ pyre::journal::py::help(py::module & m)
         .def(
             "log",
             // the handler
-            [](help_t & channel, py::object message) -> help_t & {
+            [](help_t & channel, const help_t::string_type & message) -> help_t & {
                 // inject and flush
-                channel << locator() << py::str(message) << pyre::journal::endl;
+                channel << locator() << message << pyre::journal::endl;
                 // enable chaining
                 return channel;
             },

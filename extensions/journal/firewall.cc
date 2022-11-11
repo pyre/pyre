@@ -207,9 +207,9 @@ pyre::journal::py::firewall(py::module & m)
         .def(
             "line",
             // the handler
-            [](firewall_t & channel, py::object message) -> firewall_t & {
+            [](firewall_t & channel, const firewall_t::string_type & message) -> firewall_t & {
                 // inject
-                channel << py::str(message) << pyre::journal::newline;
+                channel << message << pyre::journal::newline;
                 // enable chaining
                 return channel;
             },
@@ -240,9 +240,9 @@ pyre::journal::py::firewall(py::module & m)
         .def(
             "log",
             // the handler
-            [](firewall_t & channel, py::object message) -> firewall_t & {
+            [](firewall_t & channel, const firewall_t::string_type & message) -> firewall_t & {
                 // inject and flush
-                channel << locator() << py::str(message) << pyre::journal::endl;
+                channel << locator() << message << pyre::journal::endl;
                 // enable chaining
                 return channel;
             },
