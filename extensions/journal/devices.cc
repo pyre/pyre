@@ -25,19 +25,19 @@ public:
     auto alert(const entry_t & entry) -> device_t & override
     {
         // the magic
-        PYBIND11_OVERRIDE_PURE(device_t &, device_t, alert, entry);
+        PYBIND11_OVERRIDE_PURE(device_t &, device_t, alert, std::ref(entry));
     };
 
     auto help(const entry_t & entry) -> device_t & override
     {
         // the magic
-        PYBIND11_OVERRIDE_PURE(device_t &, device_t, help, entry);
+        PYBIND11_OVERRIDE_PURE(device_t &, device_t, help, std::ref(entry));
     };
 
     auto memo(const entry_t & entry) -> device_t & override
     {
         // the magic
-        PYBIND11_OVERRIDE_PURE(device_t &, device_t, memo, entry);
+        PYBIND11_OVERRIDE_PURE(device_t &, device_t, memo, std::ref(entry));
     };
 };
 
