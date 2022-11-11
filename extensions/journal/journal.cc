@@ -18,10 +18,11 @@ PYBIND11_MODULE(journal, m)
     // the doc string
     m.doc() = "the journal extension module";
 
-    // bind the opaque types
-    pyre::journal::py::opaque(m);
     // register the exception types
     pyre::journal::py::exceptions(m);
+
+    // journal entry parts
+    pyre::journal::py::entry(m);
 
     // global state
     pyre::journal::py::chronicler(m);
