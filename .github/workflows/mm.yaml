@@ -33,13 +33,16 @@ jobs:
           - os: "ubuntu-20.04"
             suite: clang
             suiteVersion: "9"
-          - os: "ubuntu-22.10"
+          - os: "ubuntu-22.04"
             suite: gcc
             suiteVersion: "12"
-          - os: "ubuntu-22.10"
+          - os: "ubuntu-22.04"
+            suite: clang
+            suiteVersion: "11"
+          - os: "ubuntu-22.04"
             suite: clang
             suiteVersion: "10"
-          - os: "ubuntu-22.10"
+          - os: "ubuntu-22.04"
             suite: clang
             suiteVersion: "9"
 
