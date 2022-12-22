@@ -18,17 +18,29 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-20.04]
+        os: [ubuntu-20.04, ubuntu-22.04]
         target: [debug, opt]
         python: ["3.8", "3.9", "3.10"]
         suite: [clang, gcc]
         suiteVersion: ["9", "10", "11", "12"]
         exclude:
-          - suite: gcc
+          - os: "ubuntu-20.04"
+            suite: gcc
             suiteVersion: "12"
-          - suite: gcc
+          - os: "ubuntu-20.04"
+            suite: gcc
             suiteVersion: "11"
-          - suite: clang
+          - os: "ubuntu-20.04"
+            suite: clang
+            suiteVersion: "9"
+          - os: "ubuntu-22.10"
+            suite: gcc
+            suiteVersion: "12"
+          - os: "ubuntu-22.10"
+            suite: clang
+            suiteVersion: "10"
+          - os: "ubuntu-22.10"
+            suite: clang
             suiteVersion: "9"
 
     steps:
