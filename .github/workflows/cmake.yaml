@@ -31,18 +31,42 @@ jobs:
             cc: gcc
             cxx: g++
         exclude:
+          # ubuntu 20.04
+          # gcc: missing 14, 13, 12, 11
+          - os: "ubuntu-20.04"
+            suite: gcc
+            suiteVersion: "14"
+          - os: "ubuntu-20.04"
+            suite: gcc
+            suiteVersion: "13"
           - os: "ubuntu-20.04"
             suite: gcc
             suiteVersion: "12"
           - os: "ubuntu-20.04"
             suite: gcc
             suiteVersion: "11"
+          # clang: missing 14, 13, 12
           - os: "ubuntu-20.04"
             suite: clang
-            suiteVersion: "9"
+            suiteVersion: "14"
+          - os: "ubuntu-20.04"
+            suite: clang
+            suiteVersion: "13"
+          - os: "ubuntu-20.04"
+            suite: clang
+            suiteVersion: "12"
+          # ubuntu 22.04
+          # gcc: missing 14, 13, 9
           - os: "ubuntu-22.04"
             suite: gcc
-            suiteVersion: "12"
+            suiteVersion: "14"
+          - os: "ubuntu-22.04"
+            suite: gcc
+            suiteVersion: "13"
+          - os: "ubuntu-22.04"
+            suite: gcc
+            suiteVersion: "9"
+          # clang: missing 11, 10, 9
           - os: "ubuntu-22.04"
             suite: clang
             suiteVersion: "11"
