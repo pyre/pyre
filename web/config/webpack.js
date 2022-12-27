@@ -1,7 +1,7 @@
 // -*- javascript -*-
 // michael a.g. aïvázis
 // orthologue
-// (c) 1998-2022 all rights reserved
+// (c) 1998-2023 all rights reserved
 //
 
 // get webpack
