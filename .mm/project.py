@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# california institute of technology
-# (c) 1998-2021 all rights reserved
-#
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2023 all rights reserved
 
 
 def requirements(package):
@@ -13,15 +11,15 @@ def requirements(package):
 
     # build the package instances
     packages = [
-        package(name='cuda', optional=True),
-        package(name='gsl', optional=True),
-        package(name='libpq', optional=True),
-        package(name='mpi', optional=True),
-        package(name='python', optional=False),
-        ]
+        package(name="cuda", optional=True),
+        package(name="gsl", optional=True),
+        package(name="libpq", optional=True),
+        package(name="mpi", optional=True),
+        package(name="python", optional=False),
+    ]
 
     # build a dictionary and return it
-    return { package.name: package for package in packages }
+    return {package.name: package for package in packages}
 
 
 # end of file

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@orthologue.com>
-# (c) 1998-2022 all rights reserved
+# (c) 1998-2023 all rights reserved
 #
 
 # expansion placeholders
@@ -18,7 +18,7 @@ version = (major, minor, micro, revision)
 
 
 # decorations for the help system
-copyright = "copyright (c) 1998-2022 all rights reserved"
+copyright = "copyright (c) 1998-2023 all rights reserved"
 
 banner = f"""
     pyre mpi {major}.{minor}.{micro} revision {revision}
