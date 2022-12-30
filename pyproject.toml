@@ -19,7 +19,8 @@ build-backend = "setuptools.build_meta"
 # install time
 [project]
 name = "pyre"
-description = "A frameowrk for building scientific applications"
+version = "1.11.2"
+description = "A framework for building scientific applications"
 readme = "README.md"
 authors = [
     { name = "Michael A.G. Aïvázis", email = "michael.aivazis@para-sim.com" },
@@ -31,7 +32,7 @@ requires-python = ">3.7.2"
 keywords = ["science", "framework"]
 classifiers = [
     "Development Status :: 6 - Mature",
-    "License :: OSI Approved :: BSD 3-Clause License",
+    "License :: OSI Approved :: BSD License",
     "Programming Language :: Python :: 3 :: Only",
     "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
@@ -40,7 +41,6 @@ classifiers = [
     "Programming Language :: Python :: 3.11",
 ]
 dependencies = ["PyYAML"]
-dynamic = ["version"]
 
 # package discovery
 [tool.setuptools.packages.find]
@@ -48,9 +48,5 @@ where = ["packages"]
 include = ["journal*"]
 # include = ["cuda", "gsl", "journal", "merlin", "mpi", "pyre"]
 namespaces = false
-
-# version
-[tool.setuptools_scm]
-local_scheme = "node-and-date"
 
 # end of file
