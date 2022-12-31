@@ -6,7 +6,8 @@
 #
 
 # cmake setup
-cmake_minimum_required(VERSION 3.12...3.18)
+# v3.18 is needed to pass Development.Module to FIndPython
+cmake_minimum_required(VERSION 3.19...3.25)
 
 # options
 option(WITH_CUDA "enable support for CUDA" OFF)
@@ -99,7 +100,7 @@ find_package(HDF5 COMPONENTS CXX HL)
 find_package(PostgreSQL)
 
 # python
-find_package(Python 3.7 COMPONENTS Interpreter Development NumPy)
+find_package(Python 3.7 COMPONENTS Interpreter Development.Module NumPy)
 
 # for building bindings
 # require c++17
