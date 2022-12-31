@@ -168,26 +168,28 @@ endfunction(pyre_pyreModule)
 
 # the scripts
 function(pyre_pyreBin)
-  # the pyre enhanced interpreter
-  add_executable(python.pyre)
-  # its sources
-  target_sources(python.pyre PRIVATE
-    python.cc
-    )
-  # and libraries
-  target_link_libraries(python.pyre Python::Python)
+  if (Python_Development.Embed_FOUND)
+    # the pyre enhanced interpreter
+    add_executable(python.pyre)
+    # its sources
+    target_sources(python.pyre PRIVATE
+      python.cc
+      )
+    # and libraries
+    target_link_libraries(python.pyre Python::Python)
 
-  # install the custom python
-  install(
-    TARGETS python.pyre
-    RUNTIME
-    DESTINATION ${CMAKE_INSTALL_BINDIR}
-    )
-  # install the scripts
-  install(
-    PROGRAMS pyre pyre-config merlin smith.pyre
-    DESTINATION ${CMAKE_INSTALL_BINDIR}
-    )
+    # install the custom python
+    install(
+      TARGETS python.pyre
+      RUNTIME
+      DESTINATION ${CMAKE_INSTALL_BINDIR}
+      )
+    # install the scripts
+    install(
+      PROGRAMS pyre pyre-config merlin smith.pyre
+      DESTINATION ${CMAKE_INSTALL_BINDIR}
+      )
+  endif(Python_Development.Embed_FOUND)
   # all done
 endfunction(pyre_pyreBin)
 
