@@ -1,4 +1,4 @@
-name: Build and upload to PyPI
+name: pypi
 
 # publish when a (published) GitHub Release is created, use the following:
 on:
@@ -27,7 +27,7 @@ jobs:
           path: ./wheelhouse/*.whl
 
   build_sdist:
-    name: Build source distribution
+    name: build source distribution
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
