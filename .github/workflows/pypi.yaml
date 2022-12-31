@@ -19,17 +19,6 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: install dependencies
-        run: |
-          echo " -- update the package cache"
-          sudo apt update
-          echo " -- upgradables"
-          sudo apt list --upgradable
-          echo " -- upgrade"
-          sudo apt dist-upgrade
-          echo " -- install our dependencies"
-          sudo apt install -y libgsl-dev libhdf5-dev
-
       - name: build wheels
         uses: pypa/cibuildwheel@v2.11.4
 
