@@ -92,7 +92,7 @@ if(${MPI_FOUND})
     # prefer the parallel version of hdf5
     set(HDF5_PREFER_PARALLEL ON)
 endif()
-message("parallel hdf5: ${HDF5_PREFER_PARALLEL}")
+message(STATUS "Parallel HDF5: ${HDF5_PREFER_PARALLEL}")
 # hunt it down
 find_package(HDF5 COMPONENTS CXX HL)
 
