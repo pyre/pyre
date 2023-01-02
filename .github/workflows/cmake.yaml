@@ -94,6 +94,8 @@ jobs:
         run: |
           python${pythonVersion} -m pip install --upgrade pip
           pip-${pythonVersion} install distro graphene numpy pybind11 PyYAML
+        env:
+          pythonVersion: ${{matrix.python}}
 
       - name: list system packages
         run: |
