@@ -12,66 +12,84 @@ jobs:
   build:
     name: >-
       ${{matrix.target}}
-      python-${{matrix.python}}+${{matrix.suite}}-${{matrix.suiteVersion}}
+      python-${{matrix.python}}+${{matrix.compiler}}
       on ${{matrix.os}}
     runs-on: ${{matrix.os}}
     strategy:
       fail-fast: false
       matrix:
         os: [ubuntu-20.04, ubuntu-22.04]
-        target: [debug, opt]
-        python: ["3.8", "3.9", "3.10"]
-        suite: [clang, gcc]
-        suiteVersion: ["9", "10", "11", "12", "13", "14"]
+        target: [Debug, Release, RelWithDebInfo]
+        python: ["3.7", "3.8", "3.9", "3.10", "3.11"]
+        compiler: [
+          "gcc-9", "gcc-10", "gcc-11", "gcc-12",
+          "clang-10", "clang-11", "clang-12", "clang-13", "clang-14"
+        ]
+        # define the names of the compilers
+        include:
+          - compiler: gcc-9
+            suite: gcc
+            suiteVersion: 9
+            cc: gcc-9
+            cxx: g++-9
+          - compiler: gcc-10
+            suite: gcc
+            suiteVersion: 10
+            cc: gcc-10
+            cxx: g++-10
+          - compiler: gcc-11
+            suite: gcc
+            suiteVersion: 11
+            cc: gcc-11
+            cxx: g++-11
+          - compiler: gcc-12
+            suite: gcc
+            suiteVersion: 12
+            cc: gcc-12
+            cxx: g++-12
+          - compiler: clang-10
+            suite: clang
+            suiteVersion: 10
+            cc: clang-10
+            cxx: clang++-10
+          - compiler: clang-11
+            suite: clang
+            suiteVersion: 11
+            cc: clang-11
+            cxx: clang++-11
+          - compiler: clang-12
+            suite: clang
+            suiteVersion: 12
+            cc: clang-12
+            cxx: clang++-12
+          - compiler: clang-13
+            suite: clang
+            suiteVersion: 13
+            cc: clang-13
+            cxx: clang++-13
+          - compiler: clang-14
+            suite: clang
+            suiteVersion: 14
+            cc: clang-14
+            cxx: clang++-14
+        # disable the unsupported combinations
         exclude:
-          # ubuntu 20.04
-          # gcc: missing 14, 13, 12, 11
-          - os: "ubuntu-20.04"
-            suite: gcc
-            suiteVersion: "14"
-          - os: "ubuntu-20.04"
-            suite: gcc
-            suiteVersion: "13"
-          - os: "ubuntu-20.04"
-            suite: gcc
-            suiteVersion: "12"
-          - os: "ubuntu-20.04"
-            suite: gcc
-            suiteVersion: "11"
-          # clang: missing 14, 13, 12, 9
-          - os: "ubuntu-20.04"
-            suite: clang
-            suiteVersion: "14"
-          - os: "ubuntu-20.04"
-            suite: clang
-            suiteVersion: "13"
-          - os: "ubuntu-20.04"
-            suite: clang
-            suiteVersion: "12"
-          - os: "ubuntu-20.04"
-            suite: clang
-            suiteVersion: "9"
-          # ubuntu 22.04
-          # gcc: missing 14, 13, 9
-          - os: "ubuntu-22.04"
-            suite: gcc
-            suiteVersion: "14"
-          - os: "ubuntu-22.04"
-            suite: gcc
-            suiteVersion: "13"
-          - os: "ubuntu-22.04"
-            suite: gcc
-            suiteVersion: "9"
-          # clang: missing 11, 10, 9
-          - os: "ubuntu-22.04"
-            suite: clang
-            suiteVersion: "11"
-          - os: "ubuntu-22.04"
-            suite: clang
-            suiteVersion: "10"
-          - os: "ubuntu-22.04"
-            suite: clang
-            suiteVersion: "9"
+          # unsupported compilers on ubuntu-20.04
+          - os: ubuntu-20.04
+            compiler: gcc-11
+          - os: ubuntu-20.04
+            compiler: gcc-12
+          - os: ubuntu-20.04
+            compiler: clang-13
+          - os: ubuntu-20.04
+            compiler: clang-14
+          # unsupported compilers on ubuntu-22.04
+          - os: ubuntu-22.04
+            compiler: gcc-9
+          - os: ubuntu-22.04
+            compiler: clang-10
+          - os: ubuntu-22.04
+            compiler: clang-11
 
     steps:
       - name: ${{matrix.os}} refresh
@@ -92,8 +110,10 @@ jobs:
 
       - name: install dependencies
         run: |
-          python3 -m pip install --upgrade pip
-          pip3 install distro graphene numpy pybind11 PyYAML
+          python${pythonVersion} -m pip install --upgrade pip
+          pip-${pythonVersion} install distro graphene numpy pybind11 PyYAML
+        env:
+          pythonVersion: ${{matrix.python}}
 
       - name: list system packages
         run: |
@@ -108,9 +128,9 @@ jobs:
           echo " -- make"
           make --version
           echo " -- python"
-          python3 --version
-          echo " -- ${{matrix.suite}}"
-          ${{matrix.suite}}-${{matrix.suiteVersion}} --version
+          python${pythonVersion} --version
+          echo " -- ${{matrix.compiler}}"
+          ${{matrix.compiler}} --version
         env:
           pythonVersion: ${{matrix.python}}
 
@@ -125,18 +145,20 @@ jobs:
 
       - name: locations of python packages
         run: |
+          echo " -- distro"
+          pip-${pythonVersion} show distro
           echo " -- graphene"
-          pip3 show graphene
+          pip-${pythonVersion} show graphene
           echo " -- numpy"
-          pip3 show numpy
+          pip-${pythonVersion} show numpy
           echo " -- its headers"
           find ${pythonLocation}/lib/python${pythonVersion}/site-packages/numpy/core/include
           echo " -- pybind11"
-          pip3 show pybind11
+          pip-${pythonVersion} show pybind11
           echo " -- its headers"
-          find ${pythonLocation}/lib/python${pythonVersion}/site-packages/pybind11/include
+          find ${pythonLocation}/lib/python${pythonVersion}/site-packages/pybind11
           echo " -- yaml"
-          pip3 show PyYAML
+          pip-${pythonVersion} show PyYAML
         env:
           pythonVersion: ${{matrix.python}}
 
