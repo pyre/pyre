@@ -129,8 +129,10 @@ jobs:
           make --version
           echo " -- python"
           python${pythonVersion} --version
-          echo " -- ${{matrix.compiler}}"
-          ${{matrix.compiler}} --version
+          echo " -- ${{matrix.cc}}"
+          ${{matrix.cc}} --version
+          echo " -- ${{matrix.cxx}}"
+          ${{matrix.cxx}} --version
         env:
           pythonVersion: ${{matrix.python}}
 
