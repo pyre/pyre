@@ -111,7 +111,7 @@ jobs:
       - name: install dependencies
         run: |
           python${pythonVersion} -m pip install --upgrade pip
-          pip-${pythonVersion} install distro graphene numpy pybind11 PyYAML
+          pip3 install distro graphene numpy pybind11 PyYAML
         env:
           pythonVersion: ${{matrix.python}}
 
@@ -148,19 +148,19 @@ jobs:
       - name: locations of python packages
         run: |
           echo " -- distro"
-          pip-${pythonVersion} show distro
+          pip3 show distro
           echo " -- graphene"
-          pip-${pythonVersion} show graphene
+          pip3 show graphene
           echo " -- numpy"
-          pip-${pythonVersion} show numpy
+          pip3 show numpy
           echo " -- its headers"
           find ${pythonLocation}/lib/python${pythonVersion}/site-packages/numpy/core/include
           echo " -- pybind11"
-          pip-${pythonVersion} show pybind11
+          pip3 show pybind11
           echo " -- its headers"
           find ${pythonLocation}/lib/python${pythonVersion}/site-packages/pybind11
           echo " -- yaml"
-          pip-${pythonVersion} show PyYAML
+          pip3 show PyYAML
         env:
           pythonVersion: ${{matrix.python}}
 
