@@ -8,7 +8,12 @@
     "scripts": {{
         "build": "webpack --mode development",
         "dev": "webpack --mode development",
-        "relay": "relay-compiler --src ./client --schema ./schema/{project.name}.gql"
+        "relay": "relay-compiler"
+    }},
+    "relay": {{
+        "src": "./client",
+        "schema": "./schema/{project.name}.gql",
+        "language": "javascript"
     }},
     "devDependencies": {{
         "@babel/core": "latest",
@@ -26,16 +31,16 @@
         "webpack-cli": "latest"
     }},
     "dependencies": {{
-        "graphql": "latest",
-        "graphiql": "latest",
+        "graphql": "16.6.0",
+        "graphiql": "2.2.0",
         "lazysizes": "latest",
         "lodash": "latest",
         "path-browserify": "latest",
-        "react": "latest",
-        "react-dom": "latest",
-        "react-relay": "latest",
-        "react-router": "latest",
-        "react-router-dom": "latest",
+        "react": "18.2.0",
+        "react-dom": "18.2.0",
+        "react-relay": "14.0.0",
+        "react-router": "6.6.2",
+        "react-router-dom": "6.6.2",
         "regenerator-runtime": "latest"
     }}
 }}
