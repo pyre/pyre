@@ -16,12 +16,5 @@ project:
     authors = {project.authors}
     span = {project.span}
 
-    live:
-        name = localhost
-        home = ~
-        root = ~/live
-        web = ~/live/web
-        admin = root
-
 
 ; end of file
