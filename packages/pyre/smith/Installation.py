@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2023 all rights reserved
-#
 
 
 # the framework
@@ -11,11 +9,10 @@ import pyre
 
 
 # declaration
-class Installation(pyre.protocol, family='pyre.smith.installations'):
+class Installation(pyre.protocol, family="pyre.smith.installations"):
     """
     Encapsulation of the configuration and layout of the machine hosting the installation
     """
-
 
     # user configurable state
     name = pyre.properties.str()
@@ -36,7 +33,6 @@ class Installation(pyre.protocol, family='pyre.smith.installations'):
     admin = pyre.properties.str()
     admin.doc = "the username of the remote administrator"
 
-
     # framework obligations
     @classmethod
     def pyre_default(cls, **kwds):
@@ -45,6 +41,7 @@ class Installation(pyre.protocol, family='pyre.smith.installations'):
         """
         # the default installation is a posix host
         from .Host import Host
+
         return Host
 
 

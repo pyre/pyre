@@ -1,30 +1,28 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2023 all rights reserved
-#
 
 
 # externals
 import re
+
 # the framework
 import pyre
+
 # my superclass
 from .ProjectTemplate import ProjectTemplate
 
 
 # declaration
-class React(ProjectTemplate, family='pyre.smith.projects.react'):
+class React(ProjectTemplate, family="pyre.smith.projects.react"):
     """
     Encapsulation of the project information
     """
 
-
     # additional user configurable state
-    template = pyre.properties.str(default='react')
+    template = pyre.properties.str(default="react")
     template.doc = "the project template"
-
 
     # interface
     @pyre.export
@@ -35,14 +33,17 @@ class React(ProjectTemplate, family='pyre.smith.projects.react'):
         # check with my pile
         return self.blacklist.match(filename)
 
-
     # constants
-    blacklist = re.compile("|".join([
-        '.+\.png',
-        '.+\.ttf',
-        'ambiance\.css',
-        'graphiql\.css',
-        ]))
+    blacklist = re.compile(
+        "|".join(
+            [
+                ".+\.png",
+                ".+\.ttf",
+                "ambiance\.css",
+                "graphiql\.css",
+            ]
+        )
+    )
 
 
 # end of file

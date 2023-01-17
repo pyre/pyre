@@ -1,18 +1,17 @@
 #!/usr/bin/env python3
-# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2023 all rights reserved
-#
 
 
 # externals
 import journal
 import os
+
 # access the framework
 import pyre
+
 # my protocols
 from .Project import Project
 
@@ -23,14 +22,12 @@ class Smith(pyre.application, family="pyre.applications.smith", namespace="smith
     A generator of projects in pyre standard form
     """
 
-
     # user configurable state
     project = Project()
     project.doc = "the project information"
 
     force = pyre.properties.bool(default=False)
     force.doc = "overwrite the target directory if it exists"
-
 
     # public data
     @property
@@ -39,8 +36,7 @@ class Smith(pyre.application, family="pyre.applications.smith", namespace="smith
         Return the location of the project template directory
         """
         # build and  return the absolute path to the model template
-        return pyre.prefix / 'templates' / self.project.template
-
+        return pyre.prefix / "templates" / self.project.template
 
     # application obligations
     @pyre.export
@@ -57,7 +53,7 @@ class Smith(pyre.application, family="pyre.applications.smith", namespace="smith
 
         # make a local filesystem rooted at the current directory
         # and explore it carefully
-        cwd = self.vfs.local(root='.').discover(levels=1)
+        cwd = self.vfs.local(root=".").discover(levels=1)
         # if the target path exists already
         if project in cwd:
             # this is user error
@@ -74,7 +70,7 @@ class Smith(pyre.application, family="pyre.applications.smith", namespace="smith
         # have {git} create the directory
         os.system(f"git init -q -b main {project}")
 
-        info.log('generating the source tree')
+        info.log("generating the source tree")
         # initialize the workload
         todo = [(cwd, project, template)]
         # as long as there are folders to visit
@@ -112,9 +108,11 @@ class Smith(pyre.application, family="pyre.applications.smith", namespace="smith
                 # if the name is blacklisted
                 if self.project.blacklisted(filename=entry):
                     # open the file in binary mode and read its contents
-                    body = child.open(mode='rb').read()
+                    body = child.open(mode="rb").read()
                     # and copy it
-                    destination = cwd.write(parent=folder, name=entry, contents=body, mode='wb')
+                    destination = cwd.write(
+                        parent=folder, name=entry, contents=body, mode="wb"
+                    )
                 # otherwise
                 else:
                     # the {child} is a regular file; open it and read its contents
@@ -144,16 +142,16 @@ class Smith(pyre.application, family="pyre.applications.smith", namespace="smith
                 metanew.chmod(metaold.permissions)
 
         # tell me
-        info.log('committing the initial revision')
+        info.log("committing the initial revision")
         # build the commit command
         command = [
-            "unset CDPATH", # just in case the user has strange tastes
+            "unset CDPATH",  # just in case the user has strange tastes
             f"cd {project}",
             "git add .",
             "git commit -q -m 'automatically generated source'",
-            "git tag v0.0.1", # tag it
+            "git tag v0.0.1",  # tag it
             "cd ..",
-            ]
+        ]
         # execute
         os.system("; ".join(command))
 

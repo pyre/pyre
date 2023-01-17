@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2023 all rights reserved
-#
 
 
 """
@@ -28,6 +26,7 @@ def smith(**kwds):
     """
     # grab the protocol
     from .Smith import Smith
+
     # build a facility and return it
     return Smith(**kwds)
 
@@ -40,8 +39,10 @@ def plexus():
     """
     # grab the component class
     from .Plexus import Plexus as plexus
+
     # and publish
     return plexus
+
 
 # {react} based ux
 @foundry(implements=project)
@@ -51,6 +52,7 @@ def react():
     """
     # grab the component class
     from .React import React as react
+
     # and publish
     return react
 
