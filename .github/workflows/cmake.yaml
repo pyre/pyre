@@ -113,6 +113,12 @@ jobs:
           cmake --version
           echo " -- python"
           python${pythonVersion} --version
+          echo "    -- prefix"
+          python${pythonVersion}-config --prefix
+          echo "    -- includes"
+          python${pythonVersion}-config --includes
+          echo "    -- libs"
+          python${pythonVersion}-config --libs
           echo " -- ${{matrix.cc}}"
           ${{matrix.cc}} --version
           echo " -- ${{matrix.cxx}}"
