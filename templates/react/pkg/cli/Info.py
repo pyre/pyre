@@ -11,7 +11,7 @@ import {project.name}
 
 
 # declaration
-class Info({project.name}.shells.command, family='{project.name}.cli.info'):
+class Info({project.name}.shells.command, family="{project.name}.cli.info"):
     """
     Display helpful information about various aspects of the application
     """

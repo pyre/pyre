@@ -5,7 +5,7 @@
 
 
 ; overall application configuration
-{project.name}.plexus:
+{project.name}.app:
     ; run as a web app
     shell = web
 

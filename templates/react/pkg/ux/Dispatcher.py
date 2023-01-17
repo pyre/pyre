@@ -51,10 +51,10 @@ class Dispatcher:
         # save the location of my document root so i can serve static assets
         self.docroot = docroot.discover()
         # attach it to the app's private filesystem
-        pfs['ux'] = docroot
+        pfs["ux"] = docroot
 
         # make a spec for the app engine
-        spec = 'ux'
+        spec = "ux"
         # use the spec to build a name for my panel
         name = f"{{plexus.pyre_name}}.{{spec}}"
         # make an instance of the application engine
