@@ -22,7 +22,7 @@ from pyre import (
 
 
 # register the package with the framework
-package = executive.registerPackage(name='{project.name}', file=__file__)
+package = executive.registerPackage(name="{project.name}", file=__file__)
 # save the geography
 home, prefix, defaults = package.layout()
 

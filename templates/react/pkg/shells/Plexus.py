@@ -13,13 +13,21 @@ import {project.name}
 
 
 # declaration
-class Plexus(pyre.plexus, family='{project.name}.shells.plexus'):
+class Plexus(pyre.plexus, family="{project.name}.shells.plexus"):
     """
     The main action dispatcher
     """
 
     # types
     from .Action import Action as pyre_action
+
+
+    # metamethods
+    def __init__(self, name="{project.name}.app", **kwds):
+        # chain up
+        super().__init__(name=name, **kwds)
+        # all done
+        return
 
 
     # pyre framework hooks
@@ -31,7 +39,7 @@ class Plexus(pyre.plexus, family='{project.name}.shells.plexus'):
         # the project header
         yield from textwrap.dedent({project.name}.meta.banner).splitlines()
         # the doc string
-        yield from self.pyre_showSummary(indent='')
+        yield from self.pyre_showSummary(indent="")
         # the authors
         yield from textwrap.dedent({project.name}.meta.authors).splitlines()
         # all done
@@ -46,7 +54,7 @@ class Plexus(pyre.plexus, family='{project.name}.shells.plexus'):
         # prime the execution context
         context = context or {{}}
         # grant access to my package
-        context['{project.name}'] = {project.name}  # my package
+        context["{project.name}"] = {project.name}  # my package
         # and chain up
         return super().pyre_interactiveSessionContext(context=context)
 
