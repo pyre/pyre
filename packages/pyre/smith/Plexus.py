@@ -1,30 +1,28 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2023 all rights reserved
-#
 
 
 # externals
 import re
+
 # the framework
 import pyre
+
 # my superclass
 from .ProjectTemplate import ProjectTemplate
 
 
 # declaration
-class Plexus(ProjectTemplate, family='pyre.smith.projects.plexus'):
+class Plexus(ProjectTemplate, family="pyre.smith.projects.plexus"):
     """
     Encapsulation of the project information
     """
 
-
     # additional user configurable state
-    template = pyre.properties.str(default='plexus')
+    template = pyre.properties.str(default="plexus")
     template.doc = "the project template"
-
 
     # interface
     @pyre.export
@@ -35,12 +33,14 @@ class Plexus(ProjectTemplate, family='pyre.smith.projects.plexus'):
         # check with my pile
         return self.blacklist.match(filename)
 
-
     # constants
-    blacklist = re.compile("|".join([
-        'jquery.js',
-        '.+\.png',
-        ]))
+    blacklist = re.compile(
+        "|".join(
+            [
+                ".+\.png",
+            ]
+        )
+    )
 
 
 # end of file
