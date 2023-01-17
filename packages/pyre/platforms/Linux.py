@@ -181,7 +181,7 @@ class Linux(POSIX, family="pyre.platforms.linux"):
             # parse
             for key, value in tokens:
                 # number of sockets
-                if key == "Socket(s)":
+                if key == "Socket(s)" or key == "Cluster(s)":
                     # attempt to
                     try:
                         # convert the value to an integer; the value is not guaranteed to be
@@ -192,7 +192,7 @@ class Linux(POSIX, family="pyre.platforms.linux"):
                         # move on
                         pass
                 # number of cores per socket
-                elif key == "Core(s) per socket":
+                elif key.startswith("Core(s) per "):
                     # save
                     coresPerSocket = int(value)
                 # number of threads per core
