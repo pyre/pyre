@@ -168,7 +168,8 @@ endfunction(pyre_pyreModule)
 
 # the scripts
 function(pyre_pyreBin)
-  if (Python_Development.Embed_FOUND)
+  # if (Python_Development.Embed_FOUND)
+  if (FALSE)
     # the pyre enhanced interpreter
     add_executable(python.pyre)
     # its sources
@@ -184,12 +185,12 @@ function(pyre_pyreBin)
       RUNTIME
       DESTINATION ${CMAKE_INSTALL_BINDIR}
       )
-    # install the scripts
-    install(
-      PROGRAMS pyre pyre-config merlin smith.pyre
-      DESTINATION ${CMAKE_INSTALL_BINDIR}
-      )
   endif(Python_Development.Embed_FOUND)
+  # install the scripts
+  install(
+    PROGRAMS pyre pyre-config merlin smith.pyre
+    DESTINATION ${CMAKE_INSTALL_BINDIR}
+    )
   # all done
 endfunction(pyre_pyreBin)
 
