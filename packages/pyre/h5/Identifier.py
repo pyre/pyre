@@ -20,7 +20,7 @@ class Identifier:
         self,
         name: typing.Optional[str] = None,
         doc: typing.Optional[str] = None,
-        **kwds
+        **kwds,
     ):
         # chain up
         super().__init__(**kwds)
@@ -49,7 +49,7 @@ class Identifier:
         if instance is None:
             # return the descriptor
             return self
-        # otherwise, aks {instance} for my value manager
+        # otherwise, ask {instance} for my value manager
         identifier = instance.pyre_get(descriptor=self)
         # and make it available
         return identifier
@@ -90,13 +90,6 @@ class Identifier:
         # all done
         return
 
-    def pyre_identify(self, authority, **kwds):
-        """
-        Let {authority} know i am an identifier
-        """
-        # invoke the hook
-        return authority.pyre_onIdentifier(identifier=self, **kwds)
-
     def pyre_clone(self, name: typing.Optional[str] = None, **kwds):
         """
         Make as faithful a clone of mine as possible
@@ -107,6 +100,23 @@ class Identifier:
             name = self.pyre_name
         # invoke my constructor
         return type(self)(name=name, doc=self.pyre_doc, **kwds)
+
+    def pyre_identify(self, authority, **kwds):
+        """
+        Let {authority} know i am an identifier
+        """
+        # attempt to
+        try:
+            # ask authority for the base handler
+            handler = authority.pyre_onIdentifier
+        # if it doesn't understand
+        except AttributeError:
+            # it's not a visitor
+            raise NotImplementedError(
+                f"class '{type(authority).__name__}' is not a '{type(self).__name__}' visitor"
+            )
+        # otherwise, invoke the hook
+        return handler(identifier=self, **kwds)
 
 
 # end of file
