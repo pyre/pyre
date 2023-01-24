@@ -8,11 +8,14 @@
 import collections.abc
 
 # superclass
-from .Schema import Schema
+from .Sequence import Sequence
+
+# default schema
+from .Float import Float
 
 
 # declaration
-class Array(Schema):
+class Array(Sequence):
     """
     The array type declarator
     """
@@ -21,10 +24,19 @@ class Array(Schema):
     typename = "array"  # the name of my type
     complaint = "could not coerce {0.value!r} to an array"
 
-    # interface
-    def coerce(self, value, **kwds):
+    # meta-methods
+    def __init__(self, shape=None, schema=Float(), **kwds):
+        # chain up, potentially with my local default value
+        super().__init__(schema=schema, **kwds)
+        # save my shape
+        self.shape = shape
+        # all done
+        return
+
+    # implementation details
+    def _coerce(self, value, incognito=True, **kwds):
         """
-        Convert {value} into a tuple
+        Convert {value} into an iterable
         """
         # evaluate the string
         if isinstance(value, str):
@@ -33,20 +45,11 @@ class Array(Schema):
             # if there is nothing left
             if not value:
                 # return an empty tuple
-                return ()
+                return
             # otherwise, ask python to process
             value = eval(value)
-        # if {value} is an iterable
-        if isinstance(value, collections.abc.Iterable):
-            # convert it to a tuple and return it
-            return tuple(value)
-        # otherwise flag it as bad input
-        raise self.CastingError(value=value, description=self.complaint)
-
-    # meta-methods
-    def __init__(self, default=(), **kwds):
-        # chain up, potentially with my local default value
-        super().__init__(default=default, **kwds)
+        # delegate to my superclass to build my container
+        yield from super()._coerce(value=value, incognito=incognito, **kwds)
         # all done
         return
 
