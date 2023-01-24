@@ -26,7 +26,7 @@ from .Location import Location
 # a dataset container
 class Group(Object, metaclass=Schema):
     """
-    A container of datasets
+    A container of h5 objects
     """
 
     # public data

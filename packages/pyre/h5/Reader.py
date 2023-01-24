@@ -56,9 +56,9 @@ class Reader:
         uri: pyre.primitives.pathlike,
         path: pyre.primitives.pathlike,
         **kwds,
-    ) -> Dataset:
+    ) -> Group:
         """
-        Process a {group} at {prefix}
+        Process a {dataset} at {prefix}
         """
         # get the dataset key
         location = str(dataset.pyre_location)
@@ -66,7 +66,7 @@ class Reader:
         path /= location
         # attempt to
         try:
-            # realize the h5 object that gives me access to my contents
+            # realize the h5 object that gives me access to the dataset contents
             hid = parent.pyre_id.dataset(path=location)
         # if anything goes wrong
         except Exception as error:
