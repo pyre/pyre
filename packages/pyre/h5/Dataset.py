@@ -22,7 +22,7 @@ class Dataset(Object):
     # datasets are scalars, by default
     shape = "scalar"
     # my mixins
-    from .typed import array, bool, int, float, str, timestamp
+    from .typed import array, bool, complex, float, int, str, timestamp
 
     # public data
     @property
