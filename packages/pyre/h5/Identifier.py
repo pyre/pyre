@@ -15,19 +15,44 @@ class Identifier:
     A placeholder for h5 identifiers, a very very low level concept
     """
 
+    # interface
+    def pyre_close(self) -> "Identifier":
+        """
+        Detach me from my HDF5 object
+        """
+        # get my id
+        hid = self.pyre_id
+        # if it's valid
+        if hid is not None:
+            # close it
+            hid.close()
+            # reset my id
+            self.pyre_id = None
+        # all done
+        return self
+
     # metamethods
     def __init__(
         self,
+        id: typing.Any = None,
         name: typing.Optional[str] = None,
         doc: typing.Optional[str] = None,
         **kwds,
     ):
         # chain up
         super().__init__(**kwds)
+        # the handle to my HDF% object
+        self.pyre_id = id
         # my name
         self.pyre_name: str = name
         # my docstring
         self.pyre_doc: str = doc
+        # all done
+        return
+
+    def __del__(self):
+        # detach me from my h5 object
+        self.pyre_close()
         # all done
         return
 
@@ -90,16 +115,25 @@ class Identifier:
         # all done
         return
 
-    def pyre_clone(self, name: typing.Optional[str] = None, **kwds):
+    def pyre_clone(
+        self,
+        id: typing.Optional[typing.Any] = None,
+        name: typing.Optional[str] = None,
+        **kwds,
+    ):
         """
         Make as faithful a clone of mine as possible
         """
-        # if the caller did not express any opinions
+        # if the caller did not specify an id
+        if id is None:
+            # use mine
+            id = self.pyre_id
+        # if the caller did not express any opinions on the name
         if name is None:
-            # use my name as the default
+            # use mine
             name = self.pyre_name
         # invoke my constructor
-        return type(self)(name=name, doc=self.pyre_doc, **kwds)
+        return type(self)(id=id, name=name, doc=self.pyre_doc, **kwds)
 
     def pyre_identify(self, authority, **kwds):
         """
