@@ -38,15 +38,6 @@ class DirectoryListingError(GenericError):
     # public data
     description = "error while accessing '{0.uri}': {0.error}"
 
-    # meta-methods
-    def __init__(self, error, **kwds):
-        # chain up
-        super().__init__(**kwds)
-        # save the error info
-        self.error = error
-        # all done
-        return
-
 
 class MountPointError(GenericError):
     """
@@ -55,15 +46,6 @@ class MountPointError(GenericError):
 
     # public data
     description = "error while mounting '{0.uri}': {0.error}"
-
-    # meta-methods
-    def __init__(self, error, **kwds):
-        # chain up
-        super().__init__(**kwds)
-        # save the error info
-        self.error = error
-        # all done
-        return
 
 
 class FilesystemError(GenericError):

@@ -24,12 +24,11 @@ class EvaluationError(NodeError):
     description = "evaluation error: {0.error}"
 
     # meta-methods
-    def __init__(self, error, node=None, **kwds):
+    def __init__(self, node=None, **kwds):
         # chain up
         super().__init__(**kwds)
         # save the error info
         self.node = node
-        self.error = error
         # all done
         return
 
@@ -69,12 +68,11 @@ class ExpressionSyntaxError(ExpressionError):
     description = "while evaluating {0.expression!r}: {0.error}"
 
     # meta-methods
-    def __init__(self, formula, error, **kwds):
+    def __init__(self, formula, **kwds):
         # chain up
         super().__init__(**kwds)
         # save the error info
         self.expression = formula
-        self.error = error
         # all done
         return
 
@@ -107,7 +105,9 @@ class AliasingError(NodeError):
     description = "both {0.target!r} and {0.alias!r} have existing nodes"
 
     # meta-methods
-    def __init__(self, key, target, alias, targetNode, targetInfo, aliasNode, aliasInfo, **kwds):
+    def __init__(
+        self, key, target, alias, targetNode, targetInfo, aliasNode, aliasInfo, **kwds
+    ):
         # chain up
         super().__init__(**kwds)
         # save the error info
