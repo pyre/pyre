@@ -41,13 +41,10 @@ class Schema(AttributeClassifier):
         pyre_identifiers = {}
         # and add it to the pile
         attributes["pyre_identifiers"] = pyre_identifiers
-
         # build the class record
         record = super().__new__(cls, name, bases, attributes, **kwds)
-
         # resolve the visible identifiers
         pyre_identifiers.update(record.pyre_resolveIdentifiers())
-
         # all done
         return record
 
@@ -78,7 +75,6 @@ class Schema(AttributeClassifier):
             identifier.default = value
             # and done
             return
-
         # if {value} is an {Object} instance
         if isinstance(value, Object):
             # add it to {pyre_identifiers}

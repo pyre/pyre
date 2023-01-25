@@ -49,7 +49,6 @@ class Object(Location):
         # all done
         return
 
-    # framework hooks
     def __delete__(self, group: "pyre.h5.Group"):
         """
         Delete my value
@@ -59,6 +58,7 @@ class Object(Location):
         # and done
         return
 
+    # framework hooks
     def pyre_identify(self, authority, **kwds):
         """
         Let {authority} know i am an object
