@@ -53,16 +53,18 @@ def open(uri: pyre.primitives.uri, mode: str = "r"):
     """
     # parse the {uri}
     uri = pyre.primitives.uri.parse(value=uri, scheme="file")
+    # extract the scheme
+    scheme = uri.scheme
 
     # if the scheme is {file}
-    if uri.scheme == "file":
+    if scheme == "file":
         # make a local file object whose path is the address in the {uri}
         f = file().open(uri=uri.address, mode=mode)
         # and return it
         return f
 
     # if the scheme is {s3}
-    if uri.scheme == "s3":
+    if scheme == "s3":
         # if the library doesn't have support for {ros3}
         if not pyre.libh5.ros3():
             # make a channel
@@ -102,7 +104,7 @@ def open(uri: pyre.primitives.uri, mode: str = "r"):
     # if we get this far, the {uri} was malformed; make a channel
     channel = journal.error("pyre.h5")
     # and complain
-    channel.log(f"unknown scheme in dataset '{uri}'")
+    channel.log(f"unknown scheme '{scheme}' in dataset '{uri}'")
 
     # all done
     return
