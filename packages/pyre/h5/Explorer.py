@@ -31,17 +31,16 @@ class Explorer:
         """
         Process a {dataset}
         """
-        # get the id
-        id = dataset.pyre_id
-        # the location
+        # get the value
+        value = dataset.value
+        # the shape
+        shape = dataset.shape
+        # and the location
         loc = dataset.pyre_location
-        # a representation for the value
-        val = dataset.string(value=dataset.value)
-        # and the shape
-        shape = id.shape if id else "unknown"
-
-        # build the label
-        yield f"{graphic}{loc} = {val}, shape: {shape if shape else 'scalar'}"
+        # build a representation for the value
+        rep = dataset.string(value=value)
+        # assemble the label
+        yield f"{graphic}{loc} = {rep}, shape: {shape}"
         # all done
         return
 
