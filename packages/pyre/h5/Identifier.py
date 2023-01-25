@@ -104,7 +104,7 @@ class Identifier:
             handler = authority.pyre_onIdentifier
         # if it doesn't understand
         except AttributeError:
-            # it's not a visitor
+            # it's not a visitor, since we only get here when all alternatives are exhausted
             raise NotImplementedError(
                 f"class '{type(authority).__name__}' is not a '{type(self).__name__}' visitor"
             )
