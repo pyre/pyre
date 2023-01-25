@@ -11,7 +11,7 @@ import itertools
 from pyre.patterns.AttributeClassifier import AttributeClassifier
 
 # the base class for my descriptors
-from .Identifier import Identifier
+from .Object import Object
 
 
 # dataset harvester
@@ -79,8 +79,8 @@ class Schema(AttributeClassifier):
             # and done
             return
 
-        # if {value} is an {Identifier} instance
-        if isinstance(value, Identifier):
+        # if {value} is an {Object} instance
+        if isinstance(value, Object):
             # add it to {pyre_identifiers}
             self.pyre_identifiers[name] = value
             # and bind it
@@ -96,7 +96,7 @@ class Schema(AttributeClassifier):
         Scan {attributes} for identifiers
         """
         # examine the attributes and select the identifiers
-        yield from cls.pyre_harvest(attributes=attributes, descriptor=Identifier)
+        yield from cls.pyre_harvest(attributes=attributes, descriptor=Object)
         # all done
         return
 
