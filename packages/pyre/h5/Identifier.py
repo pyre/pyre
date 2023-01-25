@@ -56,47 +56,6 @@ class Identifier:
         # all done
         return
 
-    # descriptor support
-    def __set_name__(self, cls: type, name: str):
-        """
-        Attach my name
-        """
-        # bind my to my name
-        self.pyre_bind(name=name)
-        # all done
-        return
-
-    def __get__(self, instance: "pyre.h5.Group", cls: type):
-        """
-        Read access to my value
-        """
-        # when accessing through a class record
-        if instance is None:
-            # return the descriptor
-            return self
-        # otherwise, ask {instance} for my value manager
-        identifier = instance.pyre_get(descriptor=self)
-        # and make it available
-        return identifier
-
-    def __set__(self, instance: "pyre.h5.Group", identifier: "Identifier"):
-        """
-        Write access to my value
-        """
-        # and attach it to {instance}
-        instance.pyre_set(descriptor=self, identifier=identifier)
-        # all done
-        return
-
-    def __delete__(self, instance: "pyre.h5.Group"):
-        """
-        Delete my value
-        """
-        # remove my value from {instance}
-        instance.pyre_delete(descriptor=self)
-        # and done
-        return
-
     # rep
     def __str__(self):
         """
