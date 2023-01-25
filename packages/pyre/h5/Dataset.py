@@ -19,6 +19,8 @@ class Dataset(Object):
     The base class of all dataset descriptors
     """
 
+    # datasets are scalars, by default
+    shape = "scalar"
     # my mixins
     from .typed import array, bool, int, float, str, timestamp
 

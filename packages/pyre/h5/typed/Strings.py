@@ -29,6 +29,8 @@ class Strings(Dataset.list):
         value = self.pyre_id.strings()
         # store it
         self.value = value
+        # update my shape
+        self.shape = self.pyre_id.shape
         # and return the raw contents
         return value
 

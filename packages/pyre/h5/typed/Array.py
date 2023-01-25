@@ -15,6 +15,10 @@ class Array:
         """
         Read my value from disk and update my cache
         """
+        # get my id
+        id = self.pyre_id
+        # update my shape
+        self.shape = id.shape
         # trivial, for now
         return self
 
