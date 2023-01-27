@@ -31,31 +31,24 @@ class Schema(AttributeClassifier):
         #  here, for example, we modify {attributes} before chaining up in order to build and
         #  attach the {pyre_identifiers}
 
-        # make a table with the known identifiers and add it to the pile of attributes
+        # make room for the identifier resolution table; it will contain all the identifiers that
+        # are visible to this class, i.e. not shadowed by superclasses; we will fill it
+        # after the class record is built by traversing the {mro} and handling shadowing correctly
+        # this table plays the role similar to the {__dict__} in a normal class
+        identifiers = {}
+        # and add it to the class attributes
+        attributes["pyre_identifiers"] = identifiers
+        # make a table with the identifiers declated in this class and add it to the attributes
         attributes["pyre_localIdentifiers"] = {
             name: identifier
             for name, identifier in cls.pyre_harvestIdentifiers(attributes=attributes)
         }
-        # make room for the identifier resolution table; we will fill it after the class record
-        # is built
-        pyre_identifiers = {}
-        # and add it to the pile
-        attributes["pyre_identifiers"] = pyre_identifiers
-        # build the class record
+        # build the class record and bind all static identifiers
         record = super().__new__(cls, name, bases, attributes, **kwds)
         # resolve the visible identifiers
-        pyre_identifiers.update(record.pyre_resolveIdentifiers())
+        identifiers.update(record.pyre_resolveIdentifiers())
         # all done
         return record
-
-    def __call__(self, **kwds):
-        """
-        Build an instance of one of my classes
-        """
-        # build the instance
-        location = super().__call__(**kwds)
-        # and return the new instance
-        return location
 
     def __setattr__(self, name, value):
         """
@@ -116,14 +109,14 @@ class Schema(AttributeClassifier):
         )
         # go through them
         for identifier in identifiers:
-            # get their location
-            location = identifier.pyre_location
+            # get their name
+            name = identifier.pyre_name
             # if this location is being shadowed
-            if location in seen:
+            if name in seen:
                 # move on
                 continue
             # otherwise, add it to the pile of {known} locations
-            seen.add(location)
+            seen.add(name)
             # and send off the {identifier} with its name as the key
             yield identifier.pyre_name, identifier
         # all done
