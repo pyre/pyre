@@ -36,7 +36,7 @@ class Reader:
         # visit the {query} structure and return the result; the initial {parent} is the {file}
         # object, therefore {query} must be anchored by an element whose {pyre_location} is a
         # valid absolute path
-        return query.pyre_identify(authority=self, parent=file, uri=uri, path=root)
+        return query.pyre_identify(authority=self, parent=file, uri=uri)
 
     # implementation details
     def schema(self):
@@ -54,16 +54,15 @@ class Reader:
         dataset: Dataset,
         parent: Group,
         uri: pyre.primitives.pathlike,
-        path: pyre.primitives.pathlike,
         **kwds,
     ) -> Group:
         """
         Process a {dataset} at {prefix}
         """
-        # get the dataset key
+        # get the dataset location
         location = str(dataset.pyre_location)
-        # use it to update the current path
-        path /= location
+        # form the path to it
+        path = parent.pyre_location / location
         # attempt to
         try:
             # realize the h5 object that gives me access to the dataset contents
@@ -71,17 +70,17 @@ class Reader:
         # if anything goes wrong
         except Exception as error:
             # make a channel
-            channel = journal.error("pyre.h5.reader")
+            channel = journal.warning("pyre.h5.reader")
             # let the user know
-            channel.line(f"error: {error}")
+            channel.line(f"warning: {error}")
             channel.line(f"while looking up '{path}'")
             channel.line(f"in '{uri}'")
             # flush
             channel.log()
-            # and bail
-            raise
+            # and move on
+            return parent
         # otherwise, clone the {dataset}
-        clone = dataset.pyre_clone(id=hid)
+        clone = dataset.pyre_clone(id=hid, at=path)
         # and attempt to
         try:
             # pull the value
@@ -89,16 +88,15 @@ class Reader:
         # if anything goes wrong
         except Exception as error:
             # make a channel
-            channel = journal.error("pyre.h5.reader")
+            channel = journal.warning("pyre.h5.reader")
             # let the user know
-            channel.line(f"error: {error}")
-            channel.line(f"while reading '{path}'")
+            channel.line(f"{error}")
+            channel.line(f"while attempting to read '{path}'")
             channel.line(f"in '{uri}'")
             # flush
             channel.log()
             # and bail
-            raise
-
+            return parent
         # attach the clone to its parent; use the {dataset} from the query as the descriptor
         # in order to minimize the number of objects with {libh5} footprint
         parent.pyre_set(descriptor=dataset, identifier=clone)
@@ -110,7 +108,6 @@ class Reader:
         group: Group,
         parent: Group,
         uri: pyre.primitives.pathlike,
-        path: pyre.primitives.pathlike,
         **kwds,
     ) -> Group:
         """
@@ -118,8 +115,8 @@ class Reader:
         """
         # get the group location
         location = group.pyre_location
-        # update the current path
-        path /= location
+        # form the path to it
+        path = parent.pyre_location / location
         # attempt to
         try:
             # realize the h5 object that gives me access to the group contents
@@ -137,7 +134,7 @@ class Reader:
             # and bail
             raise
         # otherwise, clone it
-        clone = group.pyre_clone(id=hid)
+        clone = group.pyre_clone(id=hid, at=path)
         # attach the clone to its parent; use the {group} from the query as the descriptor
         # in order to minimize the number of objects with {libh5} footprint
         parent.pyre_set(descriptor=group, identifier=clone)
@@ -145,9 +142,7 @@ class Reader:
         # now, go through its children
         for child in group.pyre_locations():
             # and visit each one
-            child.pyre_identify(
-                authority=self, parent=clone, uri=uri, path=path, **kwds
-            )
+            child.pyre_identify(authority=self, parent=clone, uri=uri, **kwds)
         # all done
         return parent
 
