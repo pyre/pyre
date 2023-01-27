@@ -47,7 +47,7 @@ class Location(Identifier):
         self,
         name: typing.Optional[str] = None,
         at: typing.Optional[pyre.primitives.pathlike] = None,
-        **kwds
+        **kwds,
     ):
         # chain up
         super().__init__(name=name, **kwds)

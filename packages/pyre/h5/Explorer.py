@@ -36,7 +36,7 @@ class Explorer:
         # the shape
         shape = dataset.shape
         # and the location
-        loc = dataset.pyre_location
+        loc = dataset.pyre_name
         # build a representation for the value
         rep = dataset.string(value=value)
         # assemble the label
@@ -49,7 +49,7 @@ class Explorer:
         Process a group
         """
         # use the {group} location as the label
-        yield f"{graphic}{group.pyre_location}:"
+        yield f"{graphic}{group.pyre_name}:"
         # indent
         graphic += "  "
         # go through the {group} children
