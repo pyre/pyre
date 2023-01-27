@@ -39,18 +39,6 @@ class Group(Object, metaclass=Schema):
         return "g"
 
     # interface
-    # add a new identifier
-    def pyre_extend(self, identifier: Identifier) -> "Group":
-        """
-        Add a new {identifier} to this group
-
-        The {identifier} must have a {pyre_name}
-        """
-        # add it to my pile
-        self.pyre_identifiers[identifier.pyre_name] = identifier
-        # all done
-        return self
-
     # access to contents by category
     def pyre_datasets(self) -> typing.Sequence[Dataset]:
         """
@@ -90,7 +78,9 @@ class Group(Object, metaclass=Schema):
         """
         Trap attribute look up to support dynamic identifiers
         """
-        # looking up {name} has failed; check whether
+        # N.B.: this get called after regular attribute lookup has failed, so we only get here
+        # when {name} is not known to the static structure of a group
+        # check whether
         try:
             # {name} points to one of my dynamic identifiers
             identifier = self.pyre_identifiers[name]
@@ -107,13 +97,15 @@ class Group(Object, metaclass=Schema):
         """
         Trap attribute assignment unconditionally
         """
-        # during instantiation
+        # N.B.: unconditionally means unconditionally: this gets called during construction,
+        # while the objet layout is being initialized;
+        # so, during instantiation when my attributes are being initialized
         if name.startswith("pyre_"):
             # stay out of the way
             return super().__setattr__(name, value)
         # if {value} is not an {identifier}
         if not isinstance(value, Identifier):
-            # delegate to process a normal assignment
+            # chain up to process a normal assignment
             return super().__setattr__(name, value)
         # otherwise, make the assignment
         self.pyre_set(descriptor=value, identifier=value)

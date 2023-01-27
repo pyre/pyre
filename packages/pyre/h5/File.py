@@ -34,6 +34,8 @@ class File(Group):
            w-: create file, fail if it exists
             x: alias for w-
         """
+        # save the file URI
+        self.pyre_uri = uri
         # open the file and attach my handle
         self.pyre_id = pyre.libh5.File(uri=str(uri), mode=mode)
         # all done
@@ -65,6 +67,8 @@ class File(Group):
         self.pyre_fapl = fapl
         # assemble the file uri
         uri = f"https://{bucket}.s3.amazonaws.com{key}"
+        # save it
+        self.pyre_uri = uri
         # open the file and attach my handle
         self.pyre_id = libh5.File(uri=uri, fapl=fapl, mode="r")
 
@@ -72,11 +76,13 @@ class File(Group):
         return self
 
     # metamethods
-    def __init__(self, at="/", fapl=None, **kwds):
+    def __init__(self, name="root", at="/", fapl=None, **kwds):
         # chain up with root as my location, unless the client has something else to suggest
-        super().__init__(at=at, **kwds)
+        super().__init__(name=name, at=at, **kwds)
         # record my access property list
         self.pyre_fapl = fapl
+        # initially, i'm not attached to an actual HDF5 file
+        self.pyre_uri = None
         # all done
         return
 
