@@ -55,8 +55,8 @@ def test():
     assert g1.meta.answer.value == 42
     assert g1.meta.pols.value == ["HH", "HV", "VH", "VV"]
     # and that the inventories are in the expected state
-    assert len(g1.pyre_inventory) == 1
-    assert len(g1.meta.pyre_inventory) == 3
+    assert len(g1.pyre_identifiers) == 1
+    assert len(g1.meta.pyre_identifiers) == 3
 
     # get the {meta} instance from {g1}
     m1 = g1.meta
@@ -68,7 +68,7 @@ def test():
     assert g1.meta.flag.value == False
     assert g1.meta.answer.value == 0
     assert g1.meta.pols.value == ["HH"]
-    assert len(g1.meta.pyre_inventory) == 3
+    assert len(g1.meta.pyre_identifiers) == 3
 
     # make a second group
     g2 = Group()
@@ -77,8 +77,8 @@ def test():
     assert g2.meta.answer.value == 42
     assert g2.meta.pols.value == ["HH", "HV", "VH", "VV"]
     # and that the inventories are in the expected state
-    assert len(g2.pyre_inventory) == 1
-    assert len(g2.meta.pyre_inventory) == 3
+    assert len(g2.pyre_identifiers) == 1
+    assert len(g2.meta.pyre_identifiers) == 3
 
     # get the {meta} instance from {g2}
     m2 = g2.meta
@@ -90,7 +90,7 @@ def test():
     assert g2.meta.flag.value == False
     assert g2.meta.answer.value == 1
     assert g2.meta.pols.value == ["VV"]
-    assert len(g2.meta.pyre_inventory) == 3
+    assert len(g2.meta.pyre_identifiers) == 3
 
     # verify there is no crosstalk with {g1}
     assert g1.meta.flag.value == False
