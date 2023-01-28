@@ -19,6 +19,14 @@ class Container(Schema):
     isContainer = True
 
     @property
+    def type(self):
+        """
+        Build a human readable type name
+        """
+        # combine my typename with my schema
+        return f"{self.typename}[{self.schema.type}]"
+
+    @property
     def container(self):
         """
         The default container represented by this schema

@@ -36,6 +36,14 @@ class Schema:
         # all done
         return
 
+    @property
+    def type(self):
+        """
+        Build a human readable type name
+        """
+        # by default, return my marker
+        return self.typename
+
     # interface
     def process(self, value, **kwds):
         """
