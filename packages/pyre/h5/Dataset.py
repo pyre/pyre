@@ -55,9 +55,29 @@ class Dataset(Object):
         Generate an identifying mark
         """
         # use my type name
-        return self.typename
+        return self.type
 
-    # interface
+    # metamethods
+    def __init__(self, value=None, **kwds):
+        # chain up
+        super().__init__(**kwds)
+        # set up my {value}
+        self._value = value
+        # all done
+        return
+
+    def __str__(self):
+        """
+        Human readable representation
+        """
+        # easy enough
+        return (
+            f"dataset '{self.pyre_name}' at '{self.pyre_location}', "
+            f"type '{self.type}', shape {self.shape}"
+        )
+
+    # framework hooks
+    # value syncing with the file
     def pyre_read(self):
         """
         Read my on-disk value into my cache
@@ -94,26 +114,7 @@ class Dataset(Object):
         # if all is well, delegate
         return self.pyre_push()
 
-    # metamethods
-    def __init__(self, value=None, **kwds):
-        # chain up
-        super().__init__(**kwds)
-        # set up my {value}
-        self._value = value
-        # all done
-        return
-
-    def __str__(self):
-        """
-        Human readable representation
-        """
-        # easy enough
-        return (
-            f"dataset '{self.pyre_name}' at '{self.pyre_location}', "
-            f"type '{self.type}', shape {self.shape}"
-        )
-
-    # framework hooks
+    # visiting
     def pyre_identify(self, authority, **kwds):
         """
         Let {authority} know i am a dataset
@@ -129,6 +130,7 @@ class Dataset(Object):
         # otherwise, invoke the handler
         return handler(dataset=self, **kwds)
 
+    # cloning
     def pyre_clone(self, **kwds) -> "Dataset":
         """
         Make as faithful a clone of mine as possible
