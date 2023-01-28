@@ -13,6 +13,9 @@ from pyre.patterns.AttributeClassifier import AttributeClassifier
 # the base class for my descriptors
 from .Object import Object
 
+# support
+from .Inventory import Inventory
+
 
 # dataset harvester
 class Schema(AttributeClassifier):
@@ -35,7 +38,7 @@ class Schema(AttributeClassifier):
         # are visible to this class, i.e. not shadowed by superclasses; we will fill it
         # after the class record is built by traversing the {mro} and handling shadowing correctly
         # this table plays the role similar to the {__dict__} in a normal class
-        identifiers = {}
+        identifiers = Inventory()
         # and add it to the class attributes
         attributes["pyre_identifiers"] = identifiers
         # make a table with the identifiers declated in this class and add it to the attributes

@@ -58,8 +58,8 @@ class Group(Object, metaclass=Schema):
         """
         Generate a sequence of contents
         """
-        # all known identifiers are now registered with my {pyre_inventory}
-        yield from self.pyre_inventory.values()
+        # nd off all known identifiers
+        yield from self.pyre_identifiers.values()
         # all done
         return
 
@@ -68,9 +68,7 @@ class Group(Object, metaclass=Schema):
         # chain up
         super().__init__(**kwds)
         # initialize my inventory
-        self.pyre_inventory: Inventory = self.pyre_newInventory()
-        # and my pile of dynamic contents
-        self.pyre_identifiers: typing.Dict[str, Identifier] = {}
+        self.pyre_identifiers: Inventory = self.pyre_newInventory()
         # all done
         return
 
@@ -122,25 +120,19 @@ class Group(Object, metaclass=Schema):
     # framework hooks
     def pyre_get(self, descriptor: Identifier) -> Identifier:
         """
-        Look up the identifier associated the {descriptor} name in my {pyre_inventory}
+        Look up the identifier associated this {descriptor}
         """
         # look up the {identifier} that corresponds to this descriptor
-        identifier = self.pyre_inventory[descriptor.pyre_name]
+        identifier = self.pyre_identifiers[descriptor.pyre_name]
         # and return it
         return identifier
 
     def pyre_set(self, descriptor: Identifier, identifier: Identifier) -> None:
         """
-        Associate the {descriptor} name with {identifier} in my {pyre_inventory}
+        Associate my {descriptor} with {identifier}
         """
-        # get the descriptor name
-        name = descriptor.pyre_name
-        # if this is an introduction of a new member
-        if name not in self.pyre_identifiers:
-            # register the newcomer
-            self.pyre_identifiers[name] = identifier
-        # add it to my inventory
-        self.pyre_inventory[name] = identifier
+        # make the association
+        self.pyre_identifiers[descriptor.pyre_name] = identifier
         # all done
         return
 
@@ -149,7 +141,7 @@ class Group(Object, metaclass=Schema):
         Delete my value
         """
         # remove {descriptor} from my inventory
-        del self.pyre_inventory[descriptor.pyre_name]
+        del self.pyre_identifiers[descriptor.pyre_name]
         # and done
         return
 
@@ -178,7 +170,8 @@ class Group(Object, metaclass=Schema):
         inventory = Inventory()
         # go through all known identifiers
         for name, descriptor in cls.pyre_identifiers.items():
-            # clone the descriptor
+            # clone the descriptor; the cloning is necessary to support adding content to
+            # subgroups without modifying the static structure
             clone = descriptor.pyre_clone()
             # register the clone and move to the next one
             inventory[name] = clone
