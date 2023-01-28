@@ -54,7 +54,7 @@ class Object(Location):
         Delete my value
         """
         # remove my value from {instance}
-        group.pyre_delete(descriptor=self)
+        group.pyre_delete(name=self.pyre_name)
         # and done
         return
 
