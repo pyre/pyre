@@ -44,31 +44,37 @@ class Group(Object, metaclass=Schema):
         """
         Generate a sequence of my datasets
         """
-        # filter and return
-        return filter(lambda loc: issubclass(loc, Dataset), self.pyre_locations())
+        # select datasets
+        yield from filter(lambda loc: issubclass(loc, Dataset), self.pyre_locations())
+        # all done
+        return
 
     def pyre_groups(self) -> typing.Sequence["Group"]:
         """
         Generate a sequence of my subgroups
         """
-        # filter and return
-        return filter(lambda loc: issubclass(loc, Group), self.pyre_locations())
+        # select groups
+        yield from filter(lambda loc: issubclass(loc, Group), self.pyre_locations())
+        # all done
+        return
 
     def pyre_locations(self) -> typing.Sequence[Location]:
         """
         Generate a sequence of contents
         """
-        # nd off all known identifiers
+        # hand off all known identifiers
         yield from self.pyre_identifiers.values()
         # all done
         return
 
     # metamethods
-    def __init__(self, **kwds):
+    def __init__(self, identifiers=None, **kwds):
         # chain up
         super().__init__(**kwds)
         # initialize my inventory
-        self.pyre_identifiers: Inventory = self.pyre_newInventory()
+        self.pyre_identifiers: Inventory = self.pyre_newInventory(
+            identifiers=identifiers
+        )
         # all done
         return
 
@@ -81,7 +87,7 @@ class Group(Object, metaclass=Schema):
         # check whether
         try:
             # {name} points to one of my dynamic identifiers
-            identifier = self.pyre_identifiers[name]
+            value = self.pyre_get(name=name)
         # if not
         except KeyError:
             # i'm out of ideas
@@ -89,7 +95,7 @@ class Group(Object, metaclass=Schema):
                 f"group '{self.pyre_name}' has no identifier named '{name}'"
             )
         # otherwise, hand it off
-        return identifier
+        return value
 
     def __setattr__(self, name: str, value: typing.Any) -> None:
         """
@@ -101,14 +107,26 @@ class Group(Object, metaclass=Schema):
         if name.startswith("pyre_"):
             # stay out of the way
             return super().__setattr__(name, value)
-        # if {value} is not an {identifier}
-        if not isinstance(value, Identifier):
-            # chain up to process a normal assignment
-            return super().__setattr__(name, value)
-        # otherwise, make the assignment
-        self.pyre_set(name=name, identifier=value)
-        # all done
-        return
+        # check whether
+        try:
+            # {name} is a known identifier
+            identifier = self.pyre_identifiers[name]
+        # if it's not
+        except KeyError:
+            # we'll try something else
+            pass
+        # if it is
+        else:
+            # ask it to do its thing
+            return identifier.__set__(instance=self, value=value)
+        # if {value} is a new {identifier}
+        if isinstance(value, Identifier):
+            # clone it with the new name
+            identifier = value.pyre_clone(name=name)
+            # and add it to my pile as dynamic content
+            return self.pyre_set(name=name, value=identifier)
+        # otherwise chain up to process a normal assignment
+        return super().__setattr__(name, value)
 
     def __str__(self) -> str:
         """
@@ -118,7 +136,8 @@ class Group(Object, metaclass=Schema):
         return f"group '{self.pyre_name}' at '{self.pyre_location}'"
 
     # framework hooks
-    def pyre_get(self, name: str) -> Identifier:
+    # content access
+    def pyre_get(self, name: str) -> typing.Any:
         """
         Look up the identifier associated this {descriptor}
         """
@@ -127,12 +146,12 @@ class Group(Object, metaclass=Schema):
         # and return it
         return identifier
 
-    def pyre_set(self, name: str, identifier: Identifier) -> None:
+    def pyre_set(self, name: str, value: typing.Any) -> None:
         """
         Associate my {descriptor} with {identifier}
         """
         # make the association
-        self.pyre_identifiers[name] = identifier
+        self.pyre_identifiers[name] = value
         # all done
         return
 
@@ -145,6 +164,15 @@ class Group(Object, metaclass=Schema):
         # and done
         return
 
+    # cloning
+    def pyre_clone(self, **kwds):
+        """
+        # Make as faithful a copy of me as possible
+        """
+        # chain up with my contents
+        return super().pyre_clone(identifiers=self.pyre_identifiers, **kwds)
+
+    # visiting
     def pyre_identify(self, authority: typing.Any, **kwds) -> typing.Any:
         """
         Let {authority} know i am a group
@@ -162,19 +190,29 @@ class Group(Object, metaclass=Schema):
 
     # implementation details
     @classmethod
-    def pyre_newInventory(cls) -> Inventory:
+    def pyre_newInventory(cls, identifiers=None) -> Inventory:
         """
         Build the inventory of a new instance
         """
         # start fresh
         inventory = Inventory()
-        # go through all known identifiers
-        for name, descriptor in cls.pyre_identifiers.items():
-            # clone the descriptor; the cloning is necessary to support adding content to
-            # subgroups without modifying the static structure
-            clone = descriptor.pyre_clone()
-            # register the clone and move to the next one
-            inventory[name] = clone
+        # if there's no dynamic content
+        if identifiers is None:
+            # use my static content
+            content = cls.pyre_identifiers.items()
+        # otherwise
+        else:
+            # chain my dynamic and static contents
+            content = itertools.chain(identifiers.items(), cls.pyre_identifiers.items())
+        # go through it
+        for name, descriptor in content:
+            # if the name is already present
+            if name in inventory:
+                # skip it; it is being shadowed
+                continue
+            # otherwise, clone the descriptor and register it; the cloning is necessary
+            # to support adding content to subgroups without modifying any existing structure
+            inventory[name] = descriptor.pyre_clone()
         # all done
         return inventory
 

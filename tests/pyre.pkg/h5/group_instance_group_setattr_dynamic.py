@@ -43,13 +43,13 @@ def test():
     # instantiate
     g = Group()
     # attach the new group
-    g.pyre_set(name=data.pyre_name, identifier=data)
+    g.pyre_set(name=data.pyre_name, value=data)
 
     # verify that we get the exact same object every time we ask for the new identifier
     assert g.data is g.data
 
     # and the dataset to the new group
-    g.data.pyre_set(name=HH.pyre_name, identifier=HH)
+    g.data.pyre_set(name=HH.pyre_name, value=HH)
     # check that we pick up the default value
     assert g.data.HH.value == True
     # that we can change it

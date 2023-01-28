@@ -7,6 +7,9 @@
 # superclass
 from .Location import Location
 
+# typing
+import typing
+
 
 # a basic h5 object
 class Object(Location):
@@ -18,43 +21,41 @@ class Object(Location):
     """
 
     # descriptor support
-    def __set_name__(self, cls: type, name: str):
+    def __set_name__(self, cls: type, name: str) -> None:
         """
         Attach my name
         """
-        # bind my to my name
+        # bind me to my name
         self.pyre_bind(name=name)
         # all done
         return
 
-    def __get__(self, group: "pyre.h5.Group", cls: type):
+    def __get__(self, instance: "Object", cls: type) -> typing.Any:
         """
         Read access to my value
         """
         # when accessing through a class record
-        if group is None:
+        if instance is None:
             # return the descriptor
             return self
-        # otherwise, ask the {group} for my value manager
-        identifier = group.pyre_get(name=self.pyre_name)
-        # and make it available
-        return identifier
+        # otherwise, ask the {instance}
+        return instance.pyre_get(name=self.pyre_name)
 
-    def __set__(self, group: "pyre.h5.Group", identifier: "Identifier"):
+    def __set__(self, instance: "Object", value: typing.Any) -> None:
         """
         Write access to my value
         """
         # and attach it to {instance}
-        group.pyre_set(name=self.pyre_name, identifier=identifier)
+        instance.pyre_set(name=self.pyre_name, value=value)
         # all done
         return
 
-    def __delete__(self, group: "pyre.h5.Group"):
+    def __delete__(self, instance: "Object") -> None:
         """
         Delete my value
         """
         # remove my value from {instance}
-        group.pyre_delete(name=self.pyre_name)
+        instance.pyre_delete(name=self.pyre_name)
         # and done
         return
 
@@ -73,6 +74,25 @@ class Object(Location):
             return super().pyre_identify(authority=authority, **kwds)
         # otherwise, invoke the handler
         return handler(object=self, **kwds)
+
+    # the default implementations of the content accessors
+    def pyre_get(self, **kwds):
+        # not implemented
+        raise NotImplementedError(
+            f"class '{type(self).__name__}' must implement 'pyre_get'"
+        )
+
+    def pyre_set(self, **kwds):
+        # not implemented
+        raise NotImplementedError(
+            f"class '{type(self).__name__}' must implement 'pyre_set'"
+        )
+
+    def pyre_delete(self, **kwds):
+        # not implemented
+        raise NotImplementedError(
+            f"class '{type(self).__name__}' must implement 'pyre_delete'"
+        )
 
 
 # end of file
