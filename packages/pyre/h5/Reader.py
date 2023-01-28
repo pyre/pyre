@@ -99,7 +99,7 @@ class Reader:
             return parent
         # attach the clone to its parent; use the {dataset} from the query as the descriptor
         # in order to minimize the number of objects with {libh5} footprint
-        parent.pyre_set(name=dataset.pyre_name, value=clone)
+        parent.pyre_new(name=dataset.pyre_name, identifier=clone)
         # all done
         return parent
 
@@ -137,7 +137,7 @@ class Reader:
         clone = group.pyre_clone(id=hid, at=path)
         # attach the clone to its parent; use the {group} from the query as the descriptor
         # in order to minimize the number of objects with {libh5} footprint
-        parent.pyre_set(name=group.pyre_name, value=clone)
+        parent.pyre_new(name=group.pyre_name, identifier=clone)
 
         # now, go through its children
         for child in group.pyre_locations():
