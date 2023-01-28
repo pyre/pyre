@@ -101,32 +101,14 @@ class Group(Object, metaclass=Schema):
         """
         Trap attribute assignment unconditionally
         """
-        # N.B.: unconditionally means unconditionally: this gets called during construction,
-        # while the objet layout is being initialized;
+        # N.B.: unconditionally means _unconditionally_:
+        # this gets called during construction, while the objet layout is being initialized
         # so, during instantiation when my attributes are being initialized
         if name.startswith("pyre_"):
             # stay out of the way
             return super().__setattr__(name, value)
-        # check whether
-        try:
-            # {name} is a known identifier
-            identifier = self.pyre_identifiers[name]
-        # if it's not
-        except KeyError:
-            # we'll try something else
-            pass
-        # if it is
-        else:
-            # ask it to do its thing
-            return identifier.__set__(instance=self, value=value)
-        # if {value} is a new {identifier}
-        if isinstance(value, Identifier):
-            # clone it with the new name
-            identifier = value.pyre_clone(name=name)
-            # and add it to my pile as dynamic content
-            return self.pyre_set(name=name, value=identifier)
-        # otherwise chain up to process a normal assignment
-        return super().__setattr__(name, value)
+        # otherwise, make an assignment
+        return self.pyre_set(name=name, value=value)
 
     def __str__(self) -> str:
         """
@@ -136,22 +118,53 @@ class Group(Object, metaclass=Schema):
         return f"group '{self.pyre_name}' at '{self.pyre_location}'"
 
     # framework hooks
-    # content access
+    # content access dispatchers
+    def pyre_new(self, name: str, identifier: Identifier):
+        """
+        Add {identifier} to my content under {name}
+        """
+        # easy enough
+        self.pyre_identifiers[name] = identifier
+        # and done
+        return
+
     def pyre_get(self, name: str) -> typing.Any:
         """
         Look up the identifier associated this {descriptor}
         """
         # look up the {identifier} that corresponds to this descriptor
         identifier = self.pyre_identifiers[name]
-        # and return it
+        # if it is a dataset
+        if isinstance(identifier, Dataset):
+            # return whatever it provides
+            return identifier.value
+        # otherwise, grant access to the identifier
         return identifier
 
     def pyre_set(self, name: str, value: typing.Any) -> None:
         """
         Associate my {descriptor} with {identifier}
         """
-        # make the association
-        self.pyre_identifiers[name] = value
+        # get my identifiers
+        identifiers = self.pyre_identifiers
+        # attempt to
+        try:
+            # look up the {identifier} that corresponds to this descriptor
+            identifier = identifiers[name]
+        # if it's not there
+        except KeyError:
+            # make a new assignment
+            identifiers[name] = value
+            # and move on
+            return
+        # if it is a dataset
+        if isinstance(identifier, Dataset):
+            # set its value
+            identifier.value = value
+            # and done
+            return
+        # otherwise, override my content with the new identifier
+        identifiers[name] = value
         # all done
         return
 
