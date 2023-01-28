@@ -52,7 +52,7 @@ meta = (istream, ostream, envvar, envpath)
 schemata = basic + composite + containers + meta
 
 # type categories
-sequences = {list, set, tuple}
+sequences = {list, set, tuple, array}
 mappings = {catalog}
 numbers = {bool, complex, decimal, dimensional, float, int}
 
