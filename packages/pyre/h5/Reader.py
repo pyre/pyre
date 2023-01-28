@@ -72,7 +72,7 @@ class Reader:
             # make a channel
             channel = journal.warning("pyre.h5.reader")
             # let the user know
-            channel.line(f"warning: {error}")
+            channel.line(f"{error}")
             channel.line(f"while looking up '{path}'")
             channel.line(f"in '{uri}'")
             # flush
@@ -99,7 +99,7 @@ class Reader:
             return parent
         # attach the clone to its parent; use the {dataset} from the query as the descriptor
         # in order to minimize the number of objects with {libh5} footprint
-        parent.pyre_set(name=dataset.pyre_name, identifier=clone)
+        parent.pyre_set(name=dataset.pyre_name, value=clone)
         # all done
         return parent
 
@@ -126,7 +126,7 @@ class Reader:
             # make a channel
             channel = journal.error("pyre.h5.reader")
             # let the user know
-            channel.line(f"error: {error}")
+            channel.line(f"{error}")
             channel.line(f"while looking up '{path}'")
             channel.line(f"in '{uri}'")
             # flush
@@ -137,7 +137,7 @@ class Reader:
         clone = group.pyre_clone(id=hid, at=path)
         # attach the clone to its parent; use the {group} from the query as the descriptor
         # in order to minimize the number of objects with {libh5} footprint
-        parent.pyre_set(name=group.pyre_name, identifier=clone)
+        parent.pyre_set(name=group.pyre_name, value=clone)
 
         # now, go through its children
         for child in group.pyre_locations():
