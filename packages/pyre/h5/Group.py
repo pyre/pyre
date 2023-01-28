@@ -106,7 +106,7 @@ class Group(Object, metaclass=Schema):
             # chain up to process a normal assignment
             return super().__setattr__(name, value)
         # otherwise, make the assignment
-        self.pyre_set(descriptor=value, identifier=value)
+        self.pyre_set(name=name, identifier=value)
         # all done
         return
 
@@ -118,21 +118,21 @@ class Group(Object, metaclass=Schema):
         return f"group '{self.pyre_name}' at '{self.pyre_location}'"
 
     # framework hooks
-    def pyre_get(self, descriptor: Identifier) -> Identifier:
+    def pyre_get(self, name: str) -> Identifier:
         """
         Look up the identifier associated this {descriptor}
         """
         # look up the {identifier} that corresponds to this descriptor
-        identifier = self.pyre_identifiers[descriptor.pyre_name]
+        identifier = self.pyre_identifiers[name]
         # and return it
         return identifier
 
-    def pyre_set(self, descriptor: Identifier, identifier: Identifier) -> None:
+    def pyre_set(self, name: str, identifier: Identifier) -> None:
         """
         Associate my {descriptor} with {identifier}
         """
         # make the association
-        self.pyre_identifiers[descriptor.pyre_name] = identifier
+        self.pyre_identifiers[name] = identifier
         # all done
         return
 
