@@ -40,19 +40,19 @@ def test():
     group = Group()
 
     # verify the default state of the object
-    assert group.flag.value is True
-    assert group.id.value == 42
-    assert group.pols.value == ["HH"]
+    assert group.flag is True
+    assert group.id == 42
+    assert group.pols == ["HH"]
 
     # make some assignments that will require conversions
-    group.flag.value = "off"
-    group.id.value = "1"
-    group.pols.value = "HH", "HV", "VH", "VV"
+    group.flag = "off"
+    group.id = "1"
+    group.pols = "HH", "HV", "VH", "VV"
 
     # verify the new state of the object
-    assert group.flag.value is False
-    assert group.id.value == 1
-    assert group.pols.value == ["HH", "HV", "VH", "VV"]
+    assert group.flag is False
+    assert group.id == 1
+    assert group.pols == ["HH", "HV", "VH", "VV"]
 
     # all done
     return

@@ -41,10 +41,10 @@ def test():
     assert group.flag is True
 
     # check the answer
-    assert group.answer.value == 42
+    assert group.answer == 42
 
     # check the polarizations
-    pols = group.pols.value
+    pols = group.pols
     # verify the tuple has been converted into a list
     assert type(pols) is list
     # verify the contents are all strings
