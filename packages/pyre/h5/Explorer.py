@@ -33,6 +33,8 @@ class Explorer:
         """
         # get the value
         value = dataset.value
+        # the type
+        typename = dataset.type
         # the shape
         shape = dataset.shape
         # and the location
@@ -40,7 +42,7 @@ class Explorer:
         # build a representation for the value
         rep = dataset.string(value=value)
         # assemble the label
-        yield f"{graphic}{loc} = {rep}, shape: {shape}"
+        yield f"{graphic}{loc} = {rep}, type: {typename}, shape: {shape}"
         # all done
         return
 
