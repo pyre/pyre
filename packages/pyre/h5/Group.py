@@ -136,12 +136,12 @@ class Group(Object, metaclass=Schema):
         # all done
         return
 
-    def pyre_delete(self, descriptor: Identifier) -> None:
+    def pyre_delete(self, name: str) -> None:
         """
         Delete my value
         """
         # remove {descriptor} from my inventory
-        del self.pyre_identifiers[descriptor.pyre_name]
+        del self.pyre_identifiers[name]
         # and done
         return
 
