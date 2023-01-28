@@ -55,11 +55,11 @@ def test():
 
     # verify we can read through the subgroup
     # the flag
-    assert meta.flag.value is True
+    assert meta.flag is True
     #  the int
-    assert meta.answer.value == 42
+    assert meta.answer == 42
     # check the polarizations
-    pols = meta.pols.value
+    pols = meta.pols
     # verify the tuple has been converted into a list
     assert type(pols) is list
     # verify the contents are all strings

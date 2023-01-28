@@ -51,16 +51,16 @@ def test():
     # and the dataset to the new group
     g.data.pyre_set(name=HH.pyre_name, value=HH)
     # check that we pick up the default value
-    assert g.data.HH.value == True
+    assert g.data.HH == True
     # that we can change it
-    g.data.HH.value = False
+    g.data.HH = False
     # and it sticks
-    assert g.data.HH.value == False
+    assert g.data.HH == False
 
     # to check that the identifier is involved in the assignment
     try:
         # try something that should fail to convert to bool
-        g.data.HH.value = 5
+        g.data.HH = 5
         # we shouldn't be able to reach here
         assert False
     # if the correct exception is raised
