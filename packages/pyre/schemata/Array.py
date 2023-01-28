@@ -4,9 +4,6 @@
 # (c) 1998-2023 all rights reserved
 
 
-# externals
-import collections.abc
-
 # superclass
 from .Sequence import Sequence
 
