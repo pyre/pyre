@@ -36,7 +36,7 @@ class Object(Location):
             # return the descriptor
             return self
         # otherwise, ask the {group} for my value manager
-        identifier = group.pyre_get(descriptor=self)
+        identifier = group.pyre_get(name=self.pyre_name)
         # and make it available
         return identifier
 
@@ -45,7 +45,7 @@ class Object(Location):
         Write access to my value
         """
         # and attach it to {instance}
-        group.pyre_set(descriptor=self, identifier=identifier)
+        group.pyre_set(name=self.pyre_name, identifier=identifier)
         # all done
         return
 
