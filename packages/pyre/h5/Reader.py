@@ -9,9 +9,10 @@ from .File import File
 
 # typing
 import pyre
+import typing
+from .Object import Object
 from .Dataset import Dataset
 from .Group import Group
-from .Location import Location
 
 
 # the base reader
@@ -21,7 +22,9 @@ class Reader:
     """
 
     # interface
-    def read(self, uri: pyre.primitives.pathlike, query: Location = None) -> Location:
+    def read(
+        self, uri: pyre.primitives.pathlike, query: typing.Optional[Object] = None
+    ) -> typing.Optional[Object]:
         """
         Open the h5 file at {path} and read the information in {query}
         """
@@ -31,15 +34,15 @@ class Reader:
         if query is None:
             # grab my schema and use it for guidance as to what to read from the file
             query = self.schema()
-        # starting at
-        root = pyre.primitives.path.root
-        # visit the {query} structure and return the result; the initial {parent} is the {file}
-        # object, therefore {query} must be anchored by an element whose {pyre_location} is a
-        # valid absolute path
-        return query.pyre_identify(authority=self, parent=file, uri=uri)
+        # visit the {query} and populate the {file} structure
+        query.pyre_identify(authority=self, parent=file, uri=uri)
+        # find where {query} fits with {file}
+        result = file.pyre_locate(location=query.pyre_location)
+        # and send it off
+        return result
 
     # implementation details
-    def schema(self):
+    def schema(self) -> Object:
         """
         Retrieve the schema of the data product
         """
