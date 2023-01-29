@@ -6,6 +6,8 @@
 
 # external
 import itertools
+import journal
+import pyre
 
 # metaclass
 from .Schema import Schema
@@ -39,6 +41,38 @@ class Group(Object, metaclass=Schema):
         return "g"
 
     # interface
+    def pyre_locate(
+        self, location: pyre.primitives.pathlike
+    ) -> typing.Optional[Object]:
+        """
+        Locate the object at the given {location}
+        """
+        # coerce the location into a path
+        location = pyre.primitives.path(location)
+        # starting with me
+        cursor = self
+        # go through the location parts
+        for name in location.parts:
+            # attempt to
+            try:
+                # locate the group member
+                cursor = cursor.pyre_identifiers[name]
+            # if this fails
+            except KeyError:
+                # make a channel
+                channel = journal.error("pyre.h5.group")
+                # build the report
+                channel.line(f"could not find '{location}'")
+                channel.line(f"within the group at '{self.pyre_location}'")
+                channel.line(f"'{cursor.pyre_location}' has no member '{name}")
+                # and complain
+                channel.log()
+                # and bail, just in case errors aren't fatal
+                return None
+
+        # if all went well, we have found the location
+        return cursor
+
     # access to contents by category
     def pyre_datasets(self) -> typing.Sequence[Dataset]:
         """
