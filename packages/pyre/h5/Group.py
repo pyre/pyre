@@ -102,13 +102,19 @@ class Group(Object, metaclass=Schema):
         Trap attribute assignment unconditionally
         """
         # N.B.: unconditionally means _unconditionally_:
-        # this gets called during construction, while the objet layout is being initialized
+        # this gets called during construction, while the objet layout is being initialized;
         # so, during instantiation when my attributes are being initialized
         if name.startswith("pyre_"):
             # stay out of the way
             return super().__setattr__(name, value)
-        # otherwise, make an assignment
-        return self.pyre_set(name=name, value=value)
+        # get my identifiers
+        identifiers = self.pyre_identifiers
+        # if {name} is a known identifier or {value} is one of ours
+        if name in identifiers or isinstance(value, Object):
+            # make structural assignment
+            return self.pyre_set(name=name, value=value)
+        # everything else is a normal assignment
+        return super().__setattr__(name, value)
 
     def __str__(self) -> str:
         """
