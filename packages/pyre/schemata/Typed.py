@@ -66,7 +66,7 @@ class Typed:
         # once again, to build the classes
         for schema, ancestors in zip(schemata, pedigree):
             # make a docstring
-            doc = f"A subclass of '{client.__name__}' of type '{schema.typename}'"
+            doc = f"A '{client.__name__}' of type '{schema.typename}'"
             # build the class: name it after the schema, add the docstring
             typedClient = type(schema.typename, ancestors, {"__doc__": doc})
             # and attach it to the client
@@ -105,7 +105,7 @@ class Typed:
 
         # handle sequences
         if schema in cls.sequences:
-            # check whether the client has a 'sequence' mixin
+            # check whether the client has a 'sequences' mixin
             try:
                 # and use it
                 yield client.sequences
@@ -113,13 +113,29 @@ class Typed:
             except AttributeError:
                 # no worries
                 pass
+            # check whether the client has a 'containers' mixin
+            try:
+                # and use it
+                yield client.containers
+            # if not
+            except AttributeError:
+                # no worries
+                pass
 
         # handle mappings
         if schema in cls.mappings:
-            # check whether the client has a 'sequence' mixin
+            # check whether the client has a 'mappings' mixin
             try:
                 # and use it
                 yield client.mappings
+            # if not
+            except AttributeError:
+                # no worries
+                pass
+            # check whether the client has a 'containers' mixin
+            try:
+                # and use it
+                yield client.containers
             # if not
             except AttributeError:
                 # no worries
