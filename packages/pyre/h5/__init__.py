@@ -8,6 +8,9 @@
 import pyre
 import journal
 
+# the new implementation
+from . import schema
+
 # internals that mirror the h5 C++ api
 from .Identifier import Identifier as identifier
 from .Location import Location as location
