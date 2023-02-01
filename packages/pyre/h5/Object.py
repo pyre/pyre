@@ -45,7 +45,7 @@ class Object(Location):
         """
         Write access to my value
         """
-        # and attach it to {instance}
+        # attach it to {instance}
         instance.pyre_set(name=self.pyre_name, value=value)
         # all done
         return
