@@ -30,7 +30,7 @@ def test():
         answer.doc = "the answer to the ultimate question"
 
         # a compatible container
-        pols = pyre.h5.schema.list(schema=pyre.h5.str())
+        pols = pyre.h5.schema.strings()
         pols.default = ["HH", "HV", "VH", "VV"]
         pols.doc = "the list of polarizations"
 
