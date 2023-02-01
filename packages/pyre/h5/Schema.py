@@ -59,7 +59,7 @@ class Schema(AttributeClassifier):
         """
         # check whether
         try:
-            # {name} is one the identifiers in my {pyre_identifiers}
+            # {name} is one of the identifiers in my {pyre_identifiers}
             identifier = self.pyre_identifiers[name]
         # if not
         except KeyError:
