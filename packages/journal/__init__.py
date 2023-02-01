@@ -6,6 +6,7 @@
 
 # publish the package metadata
 from . import meta
+
 # load the exception hierarchy
 from . import exceptions
 
@@ -13,6 +14,7 @@ from . import exceptions
 without_libjournal = False
 # get the {__main__} module
 import __main__
+
 # check whether
 try:
     # the user has expressed an opinion
@@ -26,6 +28,7 @@ except AttributeError:
 if not without_libjournal:
     # load the bindings
     from .ext import libjournal
+
     # if something went wrong
     if libjournal is None:
         # indicate that we don't have access to the bindings
@@ -35,8 +38,15 @@ if not without_libjournal:
 if without_libjournal:
     # publish the keeper of the global settings
     from .Chronicler import Chronicler
+
     # instantiate the singleton and publish the instance
     chronicler = Chronicler()
+
+    # exceptions
+    JournalError = exceptions.JournalError
+    FirewallError = exceptions.FirewallError
+    DebugError = exceptions.DebugError
+    ApplicationError = exceptions.ApplicationError
 
     # devices
     from .Trash import Trash as trash
@@ -48,12 +58,12 @@ if without_libjournal:
     # developer facing
     from .Debug import Debug as debug
     from .Firewall import Firewall as firewall
+
     # user facing
     from .Informational import Informational as info
     from .Warning import Warning as warning
     from .Error import Error as error
     from .Help import Help as help
-
 
     # convenience function to set the application name
     def application(name):
@@ -89,7 +99,6 @@ if without_libjournal:
         # all done
         return
 
-
     # convenience function to set the message decoration level
     def decor(level):
         """
@@ -99,7 +108,6 @@ if without_libjournal:
         chronicler.decor = level
         # all done
         return
-
 
     # convenience function to set the maximum message detail level
     def detail(level):
@@ -138,6 +146,12 @@ else:
     warning = libjournal.Warning
     error = libjournal.Error
     help = libjournal.Help
+
+    # exceptions
+    JournalError = exceptions.JournalError
+    FirewallError = libjournal.FirewallError
+    DebugError = libjournal.DebugError
+    ApplicationError = libjournal.ApplicationError
 
 
 # administrative
