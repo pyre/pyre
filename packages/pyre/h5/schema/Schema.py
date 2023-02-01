@@ -48,6 +48,10 @@ class Schema(AttributeClassifier):
         """
         Assign {name} to {value} in the class record of one of my instances
         """
+        # if the name is in the protected namespace
+        if name.startswith("_"):
+            # handle a normal assignment
+            return super().__setattr__(name, value)
         # get my descriptors
         descriptors = self._pyre_descriptors
         # check whether
@@ -56,16 +60,14 @@ class Schema(AttributeClassifier):
             descriptor = descriptors[name]
         # if not
         except KeyError:
-            # if {value} is not a descriptor
-            if not isinstance(value, Descriptor):
-                # chain up to handle a normal assignment
-                return super().__setattr__(name, value)
-            # otherwise, add it to my pile
-            descriptors[name] = value
-            # bind it
-            value.__set_name__(cls=self, name=name)
-            # and done
-            return
+            # if {value} is a descriptor
+            if isinstance(value, Descriptor):
+                # add it to my pile
+                descriptors[name] = value
+                # and bind it
+                value.__set_name__(cls=self, name=name)
+            # in any case, chain up to handle a normal assignment
+            return super().__setattr__(name, value)
         # the following cases are possible:
         # if {descriptor} is a {dataset} and {value} is not a descriptor
         if isinstance(descriptor, Dataset) and not isinstance(value, Descriptor):
@@ -79,6 +81,7 @@ class Schema(AttributeClassifier):
             channel = journal.firewall("pyre.h5.schema")
             # build a report
             channel.line(f"unsupported assignment '{self.__name__}.{name}' <- {value}")
+            channel.line(f"in {self}")
             # flush
             channel.log()
             # and bail, just in case firewalls aren't fatal
@@ -87,8 +90,8 @@ class Schema(AttributeClassifier):
         descriptors[name] = value
         # bind it
         value.__set_name__(cls=self, name=name)
-        # all done
-        return
+        # and chain up to handle a normal assignment
+        return super().__setattr__(name, value)
 
     # implementation details
     @classmethod
