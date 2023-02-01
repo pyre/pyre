@@ -55,27 +55,29 @@ class Group(Descriptor, metaclass=Schema):
         # all done
         return
 
-    def _disable__getattr__(self, name: str) -> typing.Any:
+    def __getattr__(self, name: str) -> typing.Any:
         """
         Trap failures in attribute lookup to support dynamic content
         """
-        print(f"pyre.h5.schema.Group.__getattr__: {name=}")
-        # check whether
-        try:
-            # {name} points to one of my dynamic identifiers, in which case grab the value
-            value = self._pyre_get(name=name)
-        # if not
-        except KeyError:
-            # i'm out of ideas; must have been a typo
-            raise AttributeError(f"group '{self._pyre_name}' has no member '{name}'")
-        # if it's there
-        return value
+        # this should not be reachable since we make sure {__dict__} is always updated
+        channel = journal.firewall("pyre.h5.schema")
+        # so make a report
+        channel.line(f"trapped a request for {name}")
+        channel.line(f"in {self}")
+        # complain
+        channel.log()
+        # and bail, just in case firewalls aren't fatal
+        return None
 
     def __setattr__(self, name: str, value: typing.Any) -> None:
         """
         Trap assignments unconditionally
         """
-        # get my descriptors
+        # if the name is in the protected namespace
+        if name.startswith("_"):
+            # handle a normal assignment
+            return super().__setattr__(name, value)
+        # otherwise, frab my descriptors
         descriptors = self._pyre_descriptors
         # check whether
         try:
@@ -83,18 +85,14 @@ class Group(Descriptor, metaclass=Schema):
             descriptor = descriptors[name]
         # if not
         except KeyError:
-            # if {value} is not a descriptor
-            if not isinstance(value, Descriptor):
-                # chain up to handle a normal assignment
-                return super().__setattr__(name, value)
-            # otherwise, register it as a known descriptor
-            descriptors[name] = value
-            # record it
-            self.__dict__[name] = value
-            # bind it
-            value._pyre_bind(name=name)
-            # and done
-            return
+            # if {value} is a descriptor
+            if isinstance(value, Descriptor):
+                # register it
+                descriptors[name] = value
+                # and bind it
+                value._pyre_bind(name=name)
+            # in any case, chain up to handle the assignment
+            return super().__setattr__(name, value)
         # for known descriptors, the following cases are possible:
         # if {descriptor} is a {dataset} and {value} is not a descriptor
         if isinstance(descriptor, Dataset) and not isinstance(value, Descriptor):
@@ -110,7 +108,7 @@ class Group(Descriptor, metaclass=Schema):
             channel.line(
                 f"unsupported assignment '{self._pyre_name}.{name}' <- {value}"
             )
-            channel.line(f"to {self}")
+            channel.line(f"in {self}")
             # flush
             channel.log()
             # and bail, just in case firewalls aren't fatal
@@ -119,8 +117,8 @@ class Group(Descriptor, metaclass=Schema):
         descriptors[name] = value
         # bind it
         value._pyre_bind(name=name)
-        # all done
-        return
+        # and chain up to update the attribute
+        return super().__setattr__(name, value)
 
     # representation
     def __str__(self) -> str:
