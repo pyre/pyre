@@ -81,6 +81,7 @@ class Descriptor:
         return
 
     # framework hooks
+    # name binding
     def _pyre_bind(self, name):
         """
         Set my name
@@ -92,12 +93,36 @@ class Descriptor:
         # all done
         return
 
+    # cloning
     def _pyre_clone(self, **kwds):
         """
         Make a copy
         """
         # call my constructor and return the new instance
         return type(self)(name=self._pyre_name, **kwds)
+
+    # visiting
+    def _pyre_identify(self, authority, **kwds):
+        """
+        Let {authority} know i am a descriptor
+        """
+        # attempt to
+        try:
+            # ask {authority} for my handler
+            handler = authority._pyre_onDescriptor
+        # if it doesn't understand
+        except AttributeError:
+            # get my class
+            cls = type(self)
+            # and my poorly formed visitor
+            visitor = type(authority)
+            # it's not a visitor, since we only get here when all alternatives are exhausted
+            raise NotImplementedError(
+                f"class '{visitor.__module__}.{visitor.__name__}' "
+                f"is not a '{cls.__module__}.{cls.__name__}' visitor"
+            )
+        # otherwise, invoke the handler
+        return handler(object=self, **kwds)
 
     # implementation details
     _pyre_name = None
