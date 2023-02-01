@@ -36,6 +36,7 @@ class Dataset(Descriptor):
         return f"dataset '{self._pyre_name}' of type '{self.type}'"
 
     # framework hooks
+    # cloning
     def _pyre_clone(self, default=object, **kwds):
         """
         Make a copy
@@ -46,6 +47,22 @@ class Dataset(Descriptor):
             default = self.default
         # add my state and chain up
         return super()._pyre_clone(default=default, doc=self.__doc__)
+
+    # visiting
+    def _pyre_identify(self, authority, **kwds):
+        """
+        Let {authority} know i am a dataset
+        """
+        # attempt to
+        try:
+            # ask {authority} for my handler
+            handler = authority._pyre_onDataset
+        # if it doesn't understand
+        except AttributeError:
+            # chain up
+            return super()._pyre_identify(authority=authority, **kwds)
+        # otherwise, invoke the handler
+        return handler(dataset=self, **kwds)
 
     # mixin for all sequences
     class containers:
