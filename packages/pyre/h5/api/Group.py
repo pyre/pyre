@@ -201,31 +201,30 @@ class Group(Object):
         """
         Generate a sequence of my datasets
         """
-        # hand off
-        yield from (
-            # descriptor names
-            name
-            # from the pile of known descriptors
-            for name, descriptor in self._pyre_descriptors.items()
-            # if they are datasets
-            if isinstance(descriptor, schema.dataset)
-        )
-        # all sone
+        # go through the known descriptors
+        for name, descriptor in self._pyre_descriptors.items():
+            # identify the ones that are groups
+            if isinstance(descriptor, schema.dataset):
+                # look up the corresponding dataset; carefully so we don't cause the
+                # evaluation we force by default
+                dataset = super().__getattribute__(name)
+                # and hand off the pair
+                yield (name, dataset)
+        # all done
         return
 
     def _pyre_groups(self) -> collections.abc.Generator:
         """
         Generate a sequence of my subgroups
         """
-        # hand off
-        yield from (
-            # descriptor names
-            name
-            # from the pile of known descriptors
-            for name, descriptor in self._pyre_descriptors.items()
-            # if they are groups
-            if isinstance(descriptor, schema.group)
-        )
+        # go through the known descriptors
+        for name, descriptor in self._pyre_descriptors.items():
+            # identify the ones that are groups
+            if isinstance(descriptor, schema.group):
+                # look up the corresponding group
+                group = super().__getattribute__(name)
+                # and hand off the pair
+                yield (name, group)
         # all done
         return
 
@@ -233,8 +232,12 @@ class Group(Object):
         """
         Generate a sequence of contents
         """
-        # every descriptor i know of counts as a location
-        yield from self._pyre_descriptors
+        # go through the known descriptors
+        for name in self._pyre_descriptors:
+            # look up the corresponding location
+            location = super().__getattribute__(name)
+            # and hand off the pair
+            yield (name, location)
         # all done
         return
 
