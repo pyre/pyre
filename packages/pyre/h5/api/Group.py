@@ -136,8 +136,18 @@ class Group(Object):
             return super().__setattr__(name, value)
         # the only remaining legal assignment is to the value of a dataset
         if isinstance(descriptor, schema.dataset):
-            # get the dataset
-            dataset = super().__getattribute__(name)
+            # attempt to
+            try:
+                # get the dataset
+                dataset = super().__getattribute__(name)
+            # if there isn't one yet
+            except AttributeError:
+                # compute the location of the new member
+                location = self._pyre_location / descriptor._pyre_name
+                # make it
+                dataset = Dataset(at=location, layout=descriptor)
+                # and store it
+                super().__setattr__(name, dataset)
             # set its value
             dataset.value = value
             # and done
