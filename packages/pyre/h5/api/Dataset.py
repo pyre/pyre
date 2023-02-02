@@ -14,6 +14,9 @@ class Dataset(Object):
     Access to the data stored in an h5 file
     """
 
+    # datasets are scalars, by default
+    shape = "scalar"
+
     # value access
     @property
     def value(self):
@@ -34,15 +37,22 @@ class Dataset(Object):
         return
 
     # metamethods
-    def __init__(self, **kwds):
+    def __init__(self, layout=None, **kwds):
         # chain up
-        super().__init__(**kwds)
-        # get my schema
-        layout = self._pyre_layout
+        super().__init__(layout=layout, **kwds)
         # initialize my value
         self._value = layout.process(layout.default)
         # all done
         return
+
+    def __str__(self):
+        """
+        Human readable representation
+        """
+        # easy enough
+        return (
+            f"dataset at '{self.pyre_location}', a {self.shape} of type '{self.type}'"
+        )
 
     # framework hooks
     def _pyre_identify(self, authority, **kwds):
