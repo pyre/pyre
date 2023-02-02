@@ -124,6 +124,14 @@ class Descriptor:
         # otherwise, invoke the handler
         return handler(object=self, **kwds)
 
+    # decoration
+    def _pyre_marker(self):
+        """
+        Generate an identifying mark for structural renderings
+        """
+        # easy
+        return "d"
+
     # implementation details
     _pyre_name = None
     _pyre_descriptors = {}

@@ -4,10 +4,13 @@
 # (c) 1998-2023 all rights reserved
 
 
-# publish
+# the structural elements
 from .Descriptor import Descriptor as descriptor
 from .Group import Group as group
 from .Dataset import Dataset as dataset
+
+# a visitor that displays the structure of a schema
+from .Explorer import Explorer as explorer
 
 # the typed descriptors
 # scalars
