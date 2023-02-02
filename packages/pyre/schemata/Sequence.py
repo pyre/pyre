@@ -26,7 +26,7 @@ class Sequence(Container):
     delimiter = ","
     typename = "sequence"  # the name of my type
     container = tuple  # the default container i represent
-    complaint = "could not coerce {0.value!r} as a sequence"
+    complaint = "could not coerce {0.value!r} to type "
 
     # interface
     def str(self, value):
@@ -88,8 +88,10 @@ class Sequence(Container):
                     continue
             # all done
             return
-        # otherwise, flag it as bad input
-        raise self.CastingError(value=value, description=self.complaint)
+        # otherwise, flag it as bad input; build description
+        description = self.complaint + self.type
+        # and complain
+        raise self.CastingError(value=value, description=description)
 
 
 # end of file
