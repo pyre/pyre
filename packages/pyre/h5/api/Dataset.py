@@ -58,7 +58,7 @@ class Dataset(Object):
             # chain up
             return super()._pyre_identify(authority=authority, **kwds)
         # otherwise, invoke the handler
-        return handler(object=self, **kwds)
+        return handler(dataset=self, **kwds)
 
 
 # end of file
