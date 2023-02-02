@@ -41,12 +41,10 @@ def test():
     # now, make a group with this layout
     g = pyre.h5.api.group(at="/", layout=Group())
 
-    # it has one subgroup
-    assert list(g._pyre_groups()) == ["meta"]
-    # and no datasets
-    assert list(g._pyre_datasets()) == []
-    # for a total of one location
-    assert list(g._pyre_locations()) == ["meta"]
+    # access the members and verify we get the default values but coerced
+    # to the dataset type
+    assert g.meta.id == 0
+    assert g.meta.pols == ["HH", "VV"]
 
     # all done
     return g
