@@ -27,8 +27,14 @@ class Group(Object):
     def __init__(self, layout: typing.Optional[schema.group] = None, **kwds):
         # chain  up
         super().__init__(layout=layout, **kwds)
-        # attach my content layout
-        self._pyre_descriptors = layout._pyre_descriptors if layout is not None else {}
+        # figure out my layout
+        descriptors = layout._pyre_descriptors if layout is not None else {}
+        # attach them
+        self._pyre_descriptors = descriptors
+        # go through them
+        for name, descriptor in descriptors.items():
+            # and populate my state
+            setattr(self, name, descriptor)
         # all done
         return
 
@@ -108,18 +114,35 @@ class Group(Object):
         descriptors = self._pyre_descriptors
         # if {value} is a layout
         if isinstance(value, schema.descriptor):
-            # save it
+            # record it in my layout
             descriptors[name] = value
-            # and attempt to
-            try:
-                # clear any previous value
-                super().__delattr__(name)
-            # if this fails
-            except AttributeError:
-                # no worries; it just didn't have a previously recorded value
-                pass
-            # we are done; the rest will happen when the attribute get read
-            return
+            # compute the location of the new member
+            location = self._pyre_location / value._pyre_name
+            # if it's group
+            if isinstance(value, schema.group):
+                # we'll make a group
+                factory = Group
+            # if it's a dataset
+            elif isinstance(value, schema.dataset):
+                # we'll make a dataset
+                factory = Dataset
+            # anything else
+            else:
+                # we have a bug, probably caused by the introduction of a new descriptor type
+                # that is not handled here
+                channel = journal.firewall("pyre.h5.api")
+                # so build a report
+                channel.line(f"unknown descriptor type")
+                channel.line(f"{descriptor}")
+                channel.line(f"while looking up '{name}' in {self}")
+                # complain
+                channel.log()
+                # and bail, just in case firewalls aren't fatal
+                return
+            # make the value
+            attr = factory(at=location, layout=value)
+            # and set it
+            return super().__setattr__(name, attr)
         # if {value} is an h5 element
         if isinstance(value, Object):
             # save its layout
