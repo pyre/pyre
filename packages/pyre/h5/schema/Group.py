@@ -57,12 +57,12 @@ class Group(Descriptor, metaclass=Schema):
 
     def __getattr__(self, name: str) -> typing.Any:
         """
-        Trap failures in attribute lookup to support dynamic content
+        Trap failures in attribute lookup
         """
         # this should not be reachable since we make sure {__dict__} is always updated
         channel = journal.firewall("pyre.h5.schema")
         # so make a report
-        channel.line(f"trapped a request for {name}")
+        channel.line(f"trapped a request for '{name}'")
         channel.line(f"in {self}")
         # complain
         channel.log()
