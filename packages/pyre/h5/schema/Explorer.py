@@ -72,7 +72,7 @@ class Explorer:
     def render(self, descriptor, graphic=""):
         # unpack my state
         indent = self.indent
-        # and the {location} information
+        # and the {descriptor} information
         label = descriptor._pyre_name
         marker = descriptor._pyre_marker()
         # build a string and return it
