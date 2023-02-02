@@ -252,7 +252,7 @@ class Group(Object):
             # chain up
             return super()._pyre_identify(authority=authority, **kwds)
         # otherwise, invoke the handler
-        return handler(object=self, **kwds)
+        return handler(group=self, **kwds)
 
 
 # end of file
