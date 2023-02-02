@@ -161,5 +161,13 @@ class Group(Descriptor, metaclass=Schema):
         # otherwise, invoke the handler
         return handler(group=self, **kwds)
 
+    # decoration
+    def _pyre_marker(self):
+        """
+        Generate an identifying mark for structural renderings
+        """
+        # easy
+        return "g"
+
 
 # end of file

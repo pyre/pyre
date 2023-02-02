@@ -77,5 +77,13 @@ class Dataset(Descriptor):
                 schema=self.schema, default=self.container(self._default), **kwds
             )
 
+    # decoration
+    def _pyre_marker(self):
+        """
+        Generate an identifying mark for structural renderings
+        """
+        # easy
+        return self.type
+
 
 # end of file
