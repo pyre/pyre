@@ -24,6 +24,9 @@ def test():
         id = pyre.h5.schema.int()
         id.doc = "a simple dataset"
 
+        flag = pyre.h5.schema.bool(default=False)
+        flag.doc = "a boolean"
+
         # something a bit more complicated
         pols = pyre.h5.schema.strings()
         pols.default = "HH", "VV"
@@ -41,12 +44,15 @@ def test():
     # now, make a group with this layout
     g = pyre.h5.api.group(at="/", layout=Group())
 
-    # it has one subgroup
-    assert list(g._pyre_groups()) == ["meta"]
-    # and no datasets
-    assert list(g._pyre_datasets()) == []
-    # for a total of one location
-    assert list(g._pyre_locations()) == ["meta"]
+    # make adjustments that involve type coercion
+    g.meta.id = "1"
+    g.meta.flag = "on"
+    g.meta.pols = ("HV", "VH")
+
+    # and verify everything worked as expected
+    assert g.meta.id == 1
+    assert g.meta.flag is True
+    assert g.meta.pols == ["HV", "VH"]
 
     # all done
     return g
