@@ -10,6 +10,7 @@ import journal
 
 # the new implementation
 from . import schema
+from . import api
 
 # internals that mirror the h5 C++ api
 from .Identifier import Identifier as identifier
@@ -19,25 +20,7 @@ from .Object import Object as object
 # structural objects
 from .Group import Group as group
 from .File import File as file
-
-
-# datasets
 from .Dataset import Dataset as dataset
-
-# scalars
-bool = dataset.bool
-float = dataset.float
-int = dataset.int
-str = dataset.str
-timestamp = dataset.timestamp
-# containers
-array = dataset.array
-list = dataset.list
-tuple = dataset.tuple
-
-# containers
-from .typed.Strings import Strings as strings
-
 
 # readers and writers
 from .Reader import Reader as reader
