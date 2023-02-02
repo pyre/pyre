@@ -153,6 +153,12 @@ else:
     DebugError = libjournal.DebugError
     ApplicationError = libjournal.ApplicationError
 
+# publish the color generator
+from .ANSI import ANSI as ansi
+
+# and the ascii symbolic names
+from .ASCII import ASCII as ascii
+
 
 # administrative
 def copyright():
