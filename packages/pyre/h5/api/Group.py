@@ -13,7 +13,6 @@ from .Object import Object
 # typing
 import collections.abc
 import typing
-from .. import schema
 from .Dataset import Dataset
 
 
@@ -24,7 +23,9 @@ class Group(Object):
     """
 
     # metamethods
-    def __init__(self, layout: typing.Optional[schema.group] = None, **kwds):
+    def __init__(
+        self, layout: typing.Optional[Object._pyre_schema.group] = None, **kwds
+    ):
         # chain  up
         super().__init__(layout=layout, **kwds)
         # figure out my layout
@@ -77,7 +78,7 @@ class Group(Object):
         # doesn't have an actual value yet; compute the location of the member
         location = self._pyre_location / descriptor._pyre_name
         # if the descriptor is a dataset
-        if isinstance(descriptor, schema.dataset):
+        if isinstance(descriptor, self._pyre_schema.dataset):
             # make a dataset
             dataset = Dataset(at=location, layout=descriptor)
             # record it
@@ -85,7 +86,7 @@ class Group(Object):
             # and return its value
             return dataset.value
         # if the descriptor is a group
-        if isinstance(descriptor, schema.group):
+        if isinstance(descriptor, self._pyre_schema.group):
             # make a group
             group = Group(at=location, layout=descriptor)
             # record it
@@ -113,17 +114,17 @@ class Group(Object):
         # get my descriptors
         descriptors = self._pyre_descriptors
         # if {value} is a layout
-        if isinstance(value, schema.descriptor):
+        if isinstance(value, self._pyre_schema.descriptor):
             # record it in my layout
             descriptors[name] = value
             # compute the location of the new member
             location = self._pyre_location / value._pyre_name
             # if it's group
-            if isinstance(value, schema.group):
+            if isinstance(value, self._pyre_schema.group):
                 # we'll make a group
                 factory = Group
             # if it's a dataset
-            elif isinstance(value, schema.dataset):
+            elif isinstance(value, self._pyre_schema.dataset):
                 # we'll make a dataset
                 factory = Dataset
             # anything else
@@ -158,7 +159,7 @@ class Group(Object):
             # nothing is special; process a regular assignment
             return super().__setattr__(name, value)
         # the only remaining legal assignment is to the value of a dataset
-        if isinstance(descriptor, schema.dataset):
+        if isinstance(descriptor, self._pyre_schema.dataset):
             # attempt to
             try:
                 # get the dataset
@@ -213,7 +214,7 @@ class Group(Object):
         # go through the known descriptors
         for name, descriptor in self._pyre_descriptors.items():
             # identify the ones that are groups
-            if isinstance(descriptor, schema.dataset):
+            if isinstance(descriptor, self._pyre_schema.dataset):
                 # look up the corresponding dataset; carefully so we don't cause the
                 # evaluation we force by default
                 dataset = super().__getattribute__(name)
@@ -229,7 +230,7 @@ class Group(Object):
         # go through the known descriptors
         for name, descriptor in self._pyre_descriptors.items():
             # identify the ones that are groups
-            if isinstance(descriptor, schema.group):
+            if isinstance(descriptor, self._pyre_schema.group):
                 # look up the corresponding group
                 group = super().__getattribute__(name)
                 # and hand off the pair
