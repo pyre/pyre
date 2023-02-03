@@ -22,42 +22,42 @@ class Explorer:
         Draw the tree at {location}
         """
         # easy enough
-        yield from location.pyre_identify(authority=self)
+        yield from location._pyre_identify(authority=self)
         # all done
         return
 
     # implementation details
-    def pyre_onDataset(self, dataset: Dataset, graphic: str = ""):
+    def _pyre_onDataset(self, dataset: Dataset, graphic: str = ""):
         """
         Process a {dataset}
         """
         # get the value
         value = dataset.value
+        # the schema
+        layout = dataset._pyre_layout
         # the type
-        typename = dataset.type
-        # the shape
-        shape = dataset.shape
+        typename = layout.type
         # and the location
-        loc = dataset.pyre_name
+        loc = dataset._pyre_location.name
         # build a representation for the value
-        rep = dataset.string(value=value)
+        rep = layout.string(value=value)
         # assemble the label
-        yield f"{graphic}{loc} = {rep}, type: {typename}, shape: {shape}"
+        yield f"{graphic}{loc} = {rep} ({typename})"
         # all done
         return
 
-    def pyre_onGroup(self, group: Group, graphic: str = ""):
+    def _pyre_onGroup(self, group: Group, graphic: str = ""):
         """
         Process a group
         """
         # use the {group} location as the label
-        yield f"{graphic}{group.pyre_name}:"
+        yield f"{graphic}{group._pyre_location.name}:"
         # indent
         graphic += "  "
         # go through the {group} children
-        for child in group.pyre_locations():
+        for _, location in group._pyre_locations():
             # and visit each one
-            yield from child.pyre_identify(authority=self, graphic=graphic)
+            yield from location._pyre_identify(authority=self, graphic=graphic)
         # all done
         return
 
