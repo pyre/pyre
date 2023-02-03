@@ -30,9 +30,9 @@ class Group(Descriptor, metaclass=Schema):
     def __init__(self, descriptors=None, **kwds):
         # chain up
         super().__init__(**kwds)
-        # normalize the explicit contents
+        # normalize the explicit content
         if descriptors is None:
-            # by making sure its a mappint
+            # by making sure its a mapping
             descriptors = {}
         # deduce my schema: grab the class descriptors and add the explicit content
         descriptors = Inventory(**type(self)._pyre_descriptors, **descriptors)
