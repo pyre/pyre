@@ -24,6 +24,23 @@ pyre::h5::py::enums(py::module & m)
         .value("map", H5O_TYPE_MAP)
         .value("types", H5O_TYPE_NTYPES);
 
+    // dataset types
+    py::enum_<H5T_class_t>(m, "DatasetTypes", "the types of h5 datasets")
+        // add the values
+        .value("none", H5T_NO_CLASS)
+        .value("int", H5T_INTEGER)
+        .value("float", H5T_FLOAT)
+        .value("timestamp", H5T_TIME)
+        .value("str", H5T_STRING)
+        .value("bits", H5T_BITFIELD)
+        .value("opaque", H5T_OPAQUE)
+        .value("compound", H5T_COMPOUND)
+        .value("ref", H5T_REFERENCE)
+        .value("enum", H5T_ENUM)
+        .value("vlen", H5T_VLEN)
+        .value("array", H5T_ARRAY)
+        .value("classes", H5T_NCLASSES);
+
     // all done
     return;
 }
