@@ -5,6 +5,7 @@
 
 
 # support
+import journal
 import pyre
 
 # superclass
@@ -84,6 +85,49 @@ class Dataset(Descriptor):
         """
         # easy
         return self.type
+
+    # type resolution base on cell type and shape
+    @classmethod
+    def _pyre_deduce(cls, name, cell, shape):
+        """
+        Build a descriptor base on the given {type} and {shape}
+        """
+        # attempt to
+        try:
+            # figure out the cell type
+            atom = getattr(cls, cell)
+        # if this fails
+        except AttributeError:
+            # let me know, for now
+            channel = journal.warning("pyre.h5.schema")
+            # make a report
+            channel.line(f"could not deduce a schema for a '{cell}' of shape '{shape}'")
+            channel.line(f"while attempting to resolve '{name}'")
+            # complain
+            channel.log()
+            # and build an undifferentiated type
+            return cls.identity(name=name)
+        # if the shape is empty
+        if len(shape) == 0:
+            # instantiate the atom and return it
+            return atom(name=name)
+        # if the shape is rank one
+        if len(shape) == 1 and cell == "str":
+            # make a list of strings
+            return cls.list(name=name, schema=atom(name="sentinel"))
+        # if the cell is a numeric type
+        if cell in ["complex", "float", "int"]:
+            # make an array
+            return cls.array(name=name, schema=atom(name="sentinel"))
+        # for anything else, # let me know, for now
+        channel = journal.warning("pyre.h5.schema")
+        # make a report
+        channel.line(f"could not deduce the schema for a '{cell}' of shape '{shape}'")
+        channel.line(f"while attempting to resolve '{name}'")
+        # complain
+        channel.log()
+        # and build an undifferentiated type
+        return cls.identity(name=name)
 
 
 # end of file
