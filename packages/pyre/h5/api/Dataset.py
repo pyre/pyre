@@ -50,9 +50,7 @@ class Dataset(Object):
         Human readable representation
         """
         # easy enough
-        return (
-            f"dataset at '{self.pyre_location}', a {self.shape} of type '{self.type}'"
-        )
+        return f"dataset at '{self._pyre_location}' of type '{self._pyre_layout.type}'"
 
     # framework hooks
     def _pyre_identify(self, authority, **kwds):
