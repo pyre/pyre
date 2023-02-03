@@ -27,6 +27,7 @@ class Object(Location):
         return
 
     # framework hooks
+    # visitor
     def _pyre_identify(self, authority, **kwds):
         """
         Let {authority} know i am an object
@@ -41,6 +42,32 @@ class Object(Location):
             return super()._pyre_identify(authority=authority, **kwds)
         # otherwise, invoke the handler
         return handler(object=self, **kwds)
+
+    # rendering
+    def _pyre_render(self, channel=None, flush=True):
+        """
+        Generate a representation of my structure
+        """
+        # get the explorer factory
+        from .Explorer import Explorer as explorer
+
+        # if we don't have a channel
+        if channel is None:
+            # get the journal
+            import journal
+
+            # and make one
+            channel = journal.info("pyre.h5.object")
+
+        # build the report
+        channel.report(report=explorer().visit(self))
+        # if we were asked to flush the channel
+        if flush:
+            # do it
+            channel.log()
+
+        # all done
+        return
 
 
 # end of file
