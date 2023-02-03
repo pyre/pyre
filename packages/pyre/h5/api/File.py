@@ -93,6 +93,20 @@ class File(Group):
         # and chain up
         return super()._pyre_close()
 
+    # structural
+    def _pyre_root(self) -> Group._pyre_schema.group:
+        """
+        Get the root of my layout
+        """
+        # get my layout
+        layout = self._pyre_layout
+        # if it is trivial
+        if layout is None:
+            # build an empty group at the root
+            layout = self._pyre_schema.group(name="root")
+        # either way
+        return layout
+
     # visiting
     def _pyre_identify(self, authority, **kwds):
         """
