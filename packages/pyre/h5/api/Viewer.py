@@ -11,13 +11,13 @@ from .Location import Location
 
 
 # the visitor
-class Explorer:
+class Viewer:
     """
     A visitor that draws the contents of an h5 location
     """
 
     # interface
-    def explore(self, location: Location):
+    def visit(self, location: Location):
         """
         Draw the tree at {location}
         """
