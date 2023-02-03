@@ -44,12 +44,12 @@ class Object(Location):
         return handler(object=self, **kwds)
 
     # rendering
-    def _pyre_render(self, channel=None, flush=True):
+    def _pyre_view(self, channel=None, flush=True):
         """
-        Generate a representation of my structure
+        Generate a textual representation of my structure in a journal {channel}
         """
         # get the explorer factory
-        from .Explorer import Explorer as explorer
+        from .Viewer import Viewer as viewer
 
         # if we don't have a channel
         if channel is None:
@@ -60,7 +60,7 @@ class Object(Location):
             channel = journal.info("pyre.h5.object")
 
         # build the report
-        channel.report(report=explorer().explore(self))
+        channel.report(report=viewer().visit(self))
         # if we were asked to flush the channel
         if flush:
             # do it
