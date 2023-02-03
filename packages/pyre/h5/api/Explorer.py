@@ -17,7 +17,7 @@ class Explorer:
     """
 
     # interface
-    def visit(self, location: Location):
+    def explore(self, location: Location):
         """
         Draw the tree at {location}
         """

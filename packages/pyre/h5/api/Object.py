@@ -60,7 +60,7 @@ class Object(Location):
             channel = journal.info("pyre.h5.object")
 
         # build the report
-        channel.report(report=explorer().visit(self))
+        channel.report(report=explorer().explore(self))
         # if we were asked to flush the channel
         if flush:
             # do it
