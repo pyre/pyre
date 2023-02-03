@@ -196,6 +196,15 @@ class Group(Object):
         return f"group '{self._pyre_location}'"
 
     # framework hooks
+    # member retrieval
+    def _pyre_lookup(self, name: str) -> Object:
+        """
+        Look up the h5 {object} associated with {name}
+        """
+        # since we want to bypass the forced evaluation that happens to datasets by default
+        # use the correct attribute getter
+        return super().__getattribute__(name)
+
     # classifications
     def _pyre_datasets(self) -> collections.abc.Generator:
         """
