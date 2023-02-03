@@ -8,9 +8,11 @@
 from .Identifier import Identifier as identifier
 from .Location import Location as location
 from .Object import Object as object
+
 # publicly visible factories
 from .Group import Group as group
 from .Dataset import Dataset as dataset
+from .File import File as file
 
 
 # end of file
