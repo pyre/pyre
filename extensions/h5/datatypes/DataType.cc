@@ -6,22 +6,26 @@
 
 // externals
 #include "external.h"
+// the package globla declarations
+#include "../__init__.h"
+// the local declarations
+#include "__init__.h"
 // namespace setup
 #include "forward.h"
 
 
 // file objects
 void
-pyre::h5::py::datatypes::compound(py::module & m)
+pyre::h5::py::datatypes::datatype(py::module & m)
 {
-    // add the class
-    auto compType = py::class_<CompType, DataType>(
+    // add bindings for the base hdf5 datatype
+    auto dataType = py::class_<DataType>(
         // in scope
         m,
         // class name
-        "CompType",
+        "DataType",
         // docstring
-        "an HDF5 compound datatype");
+        "the base HDF5 datatype");
 
     // all done
     return;

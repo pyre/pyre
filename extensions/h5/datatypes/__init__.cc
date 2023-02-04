@@ -6,6 +6,10 @@
 
 // externals
 #include "external.h"
+// the package globla declarations
+#include "../__init__.h"
+// the local declarations
+#include "__init__.h"
 // namespace setup
 #include "forward.h"
 

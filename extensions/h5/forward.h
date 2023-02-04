@@ -23,13 +23,6 @@ namespace pyre::h5::py {
 } // namespace pyre::h5::py
 
 
-// datatypes are in their own namespace
-namespace pyre::h5::py::datatypes {
-    // datatypes
-    void datatypes(py::module &);
-} // namespace pyre::h5::py::datatypes
-
-
 #endif
 
 // end of file
