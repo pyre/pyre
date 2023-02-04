@@ -16,19 +16,19 @@
 
 // file objects
 void
-pyre::h5::py::datatypes::compound(py::module & m)
+pyre::h5::py::datatypes::enum_(py::module & m)
 {
     // add the class
-    auto compType = py::class_<CompType, DataType>(
+    auto enumType = py::class_<EnumType, DataType>(
         // in scope
         m,
         // class name
-        "CompType",
+        "EnumType",
         // docstring
-        "an HDF5 compound datatype");
+        "an HDF5 array datatype");
 
     // constructor
-    compType.def(py::init<>());
+    enumType.def(py::init<>());
 
     // all done
     return;

@@ -16,19 +16,19 @@
 
 // file objects
 void
-pyre::h5::py::datatypes::compound(py::module & m)
+pyre::h5::py::datatypes::float_(py::module & m)
 {
     // add the class
-    auto compType = py::class_<CompType, DataType>(
+    auto floatType = py::class_<FloatType, AtomType>(
         // in scope
         m,
         // class name
-        "CompType",
+        "FloatType",
         // docstring
-        "an HDF5 compound datatype");
+        "an HDF5 float datatype");
 
     // constructor
-    compType.def(py::init<>());
+    floatType.def(py::init<>());
 
     // all done
     return;

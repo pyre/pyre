@@ -47,19 +47,35 @@ namespace pyre::h5::py {
 
     // aliases of hdf5 entities
     // to avoid having to constantly look up which ones are prefixed by H5 and which not
-    using DataSet = H5::DataSet;
-    using DataSpace = H5::DataSpace;
-    using DataType = H5::DataType;
-    using CompType = H5::CompType;
-    using File = H5::H5File;
+    // property lists
+    // structural entities
+    using Identifier = H5::IdComponent; // pure virtual
+    // property lists derive from {Identifier}
+    using PropList = H5::PropList;
     using FileAccessPropertyList = H5::FileAccPropList;
     using FileCreatePropertyList = H5::FileCreatPropList;
+    // dataspaces derive from {Identifier}
+    using DataSpace = H5::DataSpace;
+    // locations derive from {Identifier}
+    using Location = H5::H5Location; // pure virtual
+    // objects derive from {Location}
+    using Object = H5::H5Object; // pure virtual
+    // groups derive from {Object}
     using Group = H5::Group;
-    using Identifier = H5::IdComponent;
-    using Location = H5::H5Location;
-    using Object = H5::H5Object;
-    using PredType = H5::PredType;
-    using PropList = H5::PropList;
+    using File = H5::H5File;
+    // datasets derive from object
+    using DataSet = H5::DataSet;
+    // datatypes derive from {Object}
+    using DataType = H5::DataType;
+    using ArrayType = H5::ArrayType;   // derives DataType
+    using AtomType = H5::AtomType;     // derives from DataType
+    using FloatType = H5::FloatType;   // derives from AtomType
+    using IntType = H5::IntType;       // derives from AtomType
+    using PredType = H5::PredType;     // derives from AtomType
+    using StrType = H5::StrType;       // derives from AtomType
+    using CompType = H5::CompType;     // derives from DataType
+    using EnumType = H5::EnumType;     // derives from DataType
+    using VarLenType = H5::VarLenType; // derives from DataType
 
 } // namespace pyre::h5::py
 
