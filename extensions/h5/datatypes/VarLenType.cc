@@ -16,19 +16,19 @@
 
 // file objects
 void
-pyre::h5::py::datatypes::compound(py::module & m)
+pyre::h5::py::datatypes::varlen(py::module & m)
 {
     // add the class
-    auto compType = py::class_<CompType, DataType>(
+    auto varlenType = py::class_<VarLenType, DataType>(
         // in scope
         m,
         // class name
-        "CompType",
+        "VarLenType",
         // docstring
-        "an HDF5 compound datatype");
+        "an HDF5 variable length datatype");
 
     // constructor
-    compType.def(py::init<>());
+    varlenType.def(py::init<>());
 
     // all done
     return;

@@ -19,7 +19,7 @@ void
 pyre::h5::py::datatypes::predefined(py::module & m)
 {
     // add the class
-    auto predType = py::class_<PredType, DataType>(
+    auto predType = py::class_<PredType, AtomType>(
         // in scope
         m,
         // class name
