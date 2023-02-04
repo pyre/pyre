@@ -17,7 +17,7 @@ from .File import File
 # the explorer
 class Explorer:
     """
-    A visitor that extracts the layout of a file
+    A visitor that inspects an h5 file and extracts its layout
     """
 
     # interface
@@ -31,10 +31,9 @@ class Explorer:
         handle = file._pyre_id
         # and ask it about the group at the {root}
         origin = handle.group(path="/")
-
+        # look for structure
         self._explore(layout=root, group=origin)
-
-        # all done
+        # and return it
         return root
 
     # implementation details
@@ -45,7 +44,7 @@ class Explorer:
         # get the descriptors
         schema = File._pyre_schema
         # get the object types
-        typeinfo = pyre.libh5.ObjectTypes
+        typeinfo = pyre.libh5.ObjectType
         # go through the members
         for name, type in group.members():
             # on groups
@@ -66,7 +65,7 @@ class Explorer:
                 hid = group.dataset(path=name)
                 # make a dataset
                 descriptor = schema.dataset._pyre_deduce(
-                    name=name, cell=hid.cell.name, shape=hid.shape
+                    name=name, cell=hid.cell, info=hid.type, shape=hid.shape
                 )
                 # adjust my layout
                 setattr(layout, name, descriptor)
