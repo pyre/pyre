@@ -33,7 +33,7 @@ pyre::h5::py::datatypes::datatype(py::module & m)
     // the name of the type
     cls.def_property_readonly(
         // the name
-        "name",
+        "className",
         // the implementation
         &DataType::fromClass,
         // the docstring
