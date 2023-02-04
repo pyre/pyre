@@ -15,7 +15,7 @@ void
 pyre::h5::py::enums(py::module & m)
 {
     // object types
-    py::enum_<H5O_type_t>(m, "ObjectTypes", "the types of h5 objects")
+    py::enum_<H5O_type_t>(m, "ObjectType", "the types of h5 objects")
         // add the values
         .value("unknown", H5O_TYPE_UNKNOWN)
         .value("group", H5O_TYPE_GROUP)
@@ -25,7 +25,7 @@ pyre::h5::py::enums(py::module & m)
         .value("types", H5O_TYPE_NTYPES);
 
     // dataset types
-    py::enum_<H5T_class_t>(m, "DatasetTypes", "the types of h5 datasets")
+    py::enum_<H5T_class_t>(m, "DatasetType", "the types of h5 datasets")
         // add the values
         .value("none", H5T_NO_CLASS)
         .value("int", H5T_INTEGER)
@@ -40,6 +40,17 @@ pyre::h5::py::enums(py::module & m)
         .value("vlen", H5T_VLEN)
         .value("array", H5T_ARRAY)
         .value("classes", H5T_NCLASSES);
+
+    // byte packing order
+    py::enum_<H5T_order_t>(m, "ByteOrder", "the byte packing strategies")
+        // add the values
+        .value("error", H5T_ORDER_ERROR)
+        .value("little", H5T_ORDER_LE)
+        .value("big", H5T_ORDER_BE)
+        .value("vax", H5T_ORDER_VAX)
+        .value("mixed", H5T_ORDER_MIXED)
+        .value("none", H5T_ORDER_NONE);
+
 
     // all done
     return;
