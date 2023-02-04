@@ -27,6 +27,18 @@ pyre::h5::py::datatypes::datatype(py::module & m)
         // docstring
         "the base HDF5 datatype");
 
+    // constructor
+    dataType.def(py::init<>());
+
+    // the name of the type
+    dataType.def_property_readonly(
+        // the name
+        "name",
+        // the implementation
+        &DataType::fromClass,
+        // the docstring
+        "the name of this datatype");
+
     // all done
     return;
 }

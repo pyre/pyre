@@ -16,19 +16,16 @@
 
 // file objects
 void
-pyre::h5::py::datatypes::compound(py::module & m)
+pyre::h5::py::datatypes::atom(py::module & m)
 {
     // add the class
-    auto compType = py::class_<CompType, DataType>(
+    auto atomType = py::class_<AtomType, DataType>(
         // in scope
         m,
         // class name
-        "CompType",
+        "AtomType",
         // docstring
-        "an HDF5 compound datatype");
-
-    // constructor
-    compType.def(py::init<>());
+        "an HDF5 atom datatype");
 
     // all done
     return;

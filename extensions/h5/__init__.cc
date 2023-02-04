@@ -22,7 +22,6 @@ PYBIND11_MODULE(h5, m)
 
     // register the module api
     pyre::h5::py::api(m);
-
     // enums
     pyre::h5::py::enums(m);
     // property lists

@@ -28,12 +28,22 @@ pyre::h5::py::datatypes::datatypes(py::module & m)
     // add the class definitions
     // the base data types
     datatype(datatypes);
+    // array datatypes
+    array(datatypes);
+    // atom datatype
+    atom(datatypes);
+    float_(datatypes);
+    int_(datatypes);
+    predefined(datatypes);
+    str(datatypes);
     // compound datatypes
     compound(datatypes);
-    // predefined datatypes
-    predefined(datatypes);
     // add the constants that correspond to the native types
     native(datatypes);
+    // enum types
+    enum_(datatypes);
+    // variable length types
+    varlen(datatypes);
 
     // all done
     return;
