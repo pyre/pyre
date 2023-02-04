@@ -88,46 +88,67 @@ class Dataset(Descriptor):
 
     # type resolution base on cell type and shape
     @classmethod
-    def _pyre_deduce(cls, name, cell, shape):
+    def _pyre_deduce(cls, name, cell, info, shape):
         """
         Build a descriptor base on the given {type} and {shape}
         """
+        # unpack
+        cellname = cell.name
         # attempt to
         try:
             # figure out the cell type
-            atom = getattr(cls, cell)
+            atom = getattr(cls, cellname)
         # if this fails
         except AttributeError:
-            # let me know, for now
-            channel = journal.warning("pyre.h5.schema")
-            # make a report
-            channel.line(f"could not deduce a schema for a '{cell}' of shape '{shape}'")
-            channel.line(f"while attempting to resolve '{name}'")
-            # complain
-            channel.log()
-            # and build an undifferentiated type
-            return cls.identity(name=name)
+            # we understand certain compound types, so give it a shot
+            atom = cls._pyre_deduce_compound(
+                name=name, cell=cell, info=info, shape=shape
+            )
         # if the shape is empty
         if len(shape) == 0:
             # instantiate the atom and return it
             return atom(name=name)
         # if the shape is rank one
-        if len(shape) == 1 and cell == "str":
+        if len(shape) == 1 and cellname == "str":
             # make a list of strings
             return cls.list(name=name, schema=atom(name="sentinel"))
         # if the cell is a numeric type
-        if cell in ["complex", "float", "int"]:
+        if atom.typename in ["complex", "float", "int", "identity"]:
             # make an array
             return cls.array(name=name, schema=atom(name="sentinel"))
-        # for anything else, # let me know, for now
+        # anything else is generic
+        return cls._pyre_deduce_generic(name=name, cell=cell, info=info, shape=shape)
+
+    @classmethod
+    def _pyre_deduce_compound(cls, name, cell, info, **kwds):
+        """
+        Check whether this is a compound type we understand
+        """
+        # if the datatype is a compound with two members
+        if cell == type(cell).compound and info.count == 2:
+            # and both are floats
+            if info.type(1).className == info.type(1).className == "FloatType":
+                # call it complex and move on
+                return cls.complex
+        # anything else is generic
+        return cls._pyre_deduce_generic(name=name, cell=cell, info=info, **kwds)
+
+    @classmethod
+    def _pyre_deduce_generic(cls, name, cell, shape, **kwds):
+        """
+        Build an undifferentiated dataset type when type deduction fails
+        """
+        # let me know, for now
         channel = journal.warning("pyre.h5.schema")
         # make a report
-        channel.line(f"could not deduce the schema for a '{cell}' of shape '{shape}'")
+        channel.line(
+            f"could not deduce the schema for a '{cell.name}' of shape '{shape}'"
+        )
         channel.line(f"while attempting to resolve '{name}'")
         # complain
         channel.log()
         # and build an undifferentiated type
-        return cls.identity(name=name)
+        return cls.identity
 
 
 # end of file
