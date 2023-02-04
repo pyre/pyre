@@ -14,7 +14,7 @@
 #include "forward.h"
 
 
-// file objects
+// encapsulations of the native datatypes
 void
 pyre::h5::py::datatypes::native(py::module & m)
 {
