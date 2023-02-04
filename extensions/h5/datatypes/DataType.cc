@@ -48,6 +48,15 @@ pyre::h5::py::datatypes::datatype(py::module & m)
         // the docstring
         "get my class type");
 
+    // get the size of the data type
+    cls.def_property_readonly(
+        // the name
+        "bytes",
+        // the implementation
+        &DataType::getSize,
+        // the docstring
+        "retrieve the size of this data type");
+
     // interface
     cls.def(
         // the name
