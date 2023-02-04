@@ -14,5 +14,12 @@ from .Group import Group as group
 from .Dataset import Dataset as dataset
 from .File import File as file
 
+# file access
+from .Reader import Reader as reader
+
+# visitors
+from .Explorer import Explorer as explorer
+from .Viewer import Viewer as viewer
+
 
 # end of file
