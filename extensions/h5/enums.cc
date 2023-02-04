@@ -25,7 +25,7 @@ pyre::h5::py::enums(py::module & m)
         .value("types", H5O_TYPE_NTYPES);
 
     // dataset types
-    py::enum_<H5T_class_t>(m, "DatasetType", "the types of h5 datasets")
+    py::enum_<H5T_class_t>(m, "DataSetType", "the types of h5 datasets")
         // add the values
         .value("none", H5T_NO_CLASS)
         .value("int", H5T_INTEGER)
