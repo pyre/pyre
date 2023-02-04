@@ -63,13 +63,24 @@ pyre::h5::py::datatypes::datatype(py::module & m)
         "close",
         // the implementation
         [](DataType & self) -> void {
-            // invoked the virtual function
+            // invoke the virtual function
             self.close();
             // all done
             return;
         },
         // the docstring
         "close the associated h5 handle");
+
+    cls.def(
+        // the name
+        "decode",
+        // the implementation
+        [](const DataType & self) -> DataType * {
+            // invoke the virtual function
+            return self.decode();
+        },
+        // the docstring
+        "decode the type by examining the binary representation of this datatype");
 
     // all done
     return;
