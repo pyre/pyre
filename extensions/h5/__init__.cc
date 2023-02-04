@@ -9,6 +9,10 @@
 // namespace setup
 #include "forward.h"
 
+// my package declarations
+#include "__init__.h"
+// my subpackages
+#include "datatypes/__init__.h"
 
 // the module entry point
 PYBIND11_MODULE(h5, m)
@@ -24,10 +28,12 @@ PYBIND11_MODULE(h5, m)
     // property lists
     pyre::h5::py::fapl(m);
 
+    // subpackages
+    pyre::h5::py::datatypes::datatypes(m);
+
     // object bindings
     pyre::h5::py::dataspace(m);
     pyre::h5::py::dataset(m);
-    pyre::h5::py::datatypes::datatypes(m);
     pyre::h5::py::group(m);
     pyre::h5::py::file(m);
 
