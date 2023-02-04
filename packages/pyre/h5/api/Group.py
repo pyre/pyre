@@ -4,7 +4,7 @@
 # (c) 1998-2023 all rights reserved
 
 
-# external
+# support
 import journal
 
 # superclass
@@ -13,6 +13,7 @@ from .Object import Object
 # typing
 import collections.abc
 import typing
+import pyre
 from .Dataset import Dataset
 
 
@@ -197,13 +198,27 @@ class Group(Object):
         return f"group '{self._pyre_location}'"
 
     # framework hooks
+    # directed traversal
+    def _pyre_lookup(self, path: pyre.primitives.pathlike) -> Object:
+        """
+        Look up the h5 {object} associated with {path}
+        """
+        # starting with me
+        cursor = self
+        # go through the {path} levels
+        for name in pyre.primitives.path(path).names:
+            # lookup the new spot
+            cursor = cursor._pyre_get(name)
+        # all done
+        return cursor
+
     # member retrieval
-    def _pyre_lookup(self, name: str) -> Object:
+    def _pyre_get(self, name: str) -> Object:
         """
         Look up the h5 {object} associated with {name}
         """
-        # since we want to bypass the forced evaluation that happens to datasets by default
-        # use the correct attribute getter
+        # since we want to bypass the forced evaluation that happens to datasets by default,
+        # we have to use the correct attribute getter
         return super().__getattribute__(name)
 
     # classifications
