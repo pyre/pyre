@@ -10,9 +10,6 @@
 
 // the local binders
 namespace pyre::h5::py::datatypes {
-    // the module initializer
-    void datatypes(py::module &);
-
     // datatype classes
     void datatype(py::module &);
     void compound(py::module &);
