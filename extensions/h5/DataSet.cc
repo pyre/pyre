@@ -23,19 +23,93 @@ pyre::h5::py::dataset(py::module & m)
         // docstring
         "an HDF5 dataset");
 
-
     // the dataset type
     cls.def_property_readonly(
         // the name
         "cell",
         // the implementation
-        [](const DataSet & self) {
+        [](const DataSet & self) -> H5T_class_t {
             // get my type class
             return self.getTypeClass();
         },
         // the docstring
         "get my cell type");
 
+    cls.def_property_readonly(
+        // the name
+        "type",
+        // the implementation
+        [](const DataSet & self) -> DataType * {
+            // get my type class
+            auto cls = self.getTypeClass();
+            // deduce
+            switch (cls) {
+                // integers
+                case H5T_INTEGER:
+                    // return the integer data type descriptor
+                    return new H5::IntType(self.getIntType());
+                // floats
+                case H5T_FLOAT:
+                    // return the float data type descriptor
+                    return new H5::FloatType(self.getFloatType());
+                // strings
+                case H5T_STRING:
+                    // return the string data type descriptor
+                    return new H5::StrType(self.getStrType());
+                // compound types
+                case H5T_COMPOUND:
+                    // return the compound data type descriptor
+                    return new H5::CompType(self.getCompType());
+                // enum types
+                case H5T_ENUM:
+                    // return the enum data type descriptor
+                    return new H5::EnumType(self.getEnumType());
+                // variable length types
+                case H5T_VLEN:
+                    // return the variable length data type descriptor
+                    return new H5::VarLenType(self.getVarLenType());
+                // array types
+                case H5T_ARRAY:
+                    // return the array data type descriptor
+                    return new H5::ArrayType(self.getArrayType());
+                // by default
+                default:
+                    // grab whatever generic information is available
+                    return new H5::DataType(self.getDataType());
+            }
+
+            // this should be unreachable, but just in case new paths open up
+            return new H5::DataType(self.getDataType());
+        },
+        // the docstring
+        "get detailed information about my type");
+
+    // the on-disk size
+    cls.def_property_readonly(
+        // the name
+        "disksize",
+        // the implementation
+        &DataSet::getStorageSize,
+        // the docstring
+        "get the on-disk size of the dataset");
+
+    // the on-disk offset
+    cls.def_property_readonly(
+        // the name
+        "offset",
+        // the implementation
+        &DataSet::getOffset,
+        // the docstring
+        "get the on-disk offset of the dataset");
+
+    // the in-memory size
+    cls.def_property_readonly(
+        // the name
+        "memsize",
+        // the implementation
+        &DataSet::getInMemDataSize,
+        // the docstring
+        "get the in-memory size of the dataset");
 
     // the dataset shape
     cls.def_property_readonly(
@@ -56,7 +130,6 @@ pyre::h5::py::dataset(py::module & m)
         },
         // the docstring
         "get the shape of the dataset");
-
 
     // the dataset space
     cls.def_property_readonly(
