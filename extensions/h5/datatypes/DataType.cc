@@ -19,7 +19,7 @@ void
 pyre::h5::py::datatypes::datatype(py::module & m)
 {
     // add bindings for the base hdf5 datatype
-    auto dataType = py::class_<DataType>(
+    auto cls = py::class_<DataType>(
         // in scope
         m,
         // class name
@@ -28,16 +28,39 @@ pyre::h5::py::datatypes::datatype(py::module & m)
         "the base HDF5 datatype");
 
     // constructor
-    dataType.def(py::init<>());
+    cls.def(py::init<>());
 
     // the name of the type
-    dataType.def_property_readonly(
+    cls.def_property_readonly(
         // the name
         "name",
         // the implementation
         &DataType::fromClass,
         // the docstring
         "the name of this datatype");
+
+    // the class type, an {H5T_class_t}
+    cls.def_property_readonly(
+        // the name
+        "cell",
+        // the implementation
+        &DataType::getClass,
+        // the docstring
+        "get my class type");
+
+    // interface
+    cls.def(
+        // the name
+        "close",
+        // the implementation
+        [](DataType & self) -> void {
+            // invoked the virtual function
+            self.close();
+            // all done
+            return;
+        },
+        // the docstring
+        "close the associated h5 handle");
 
     // all done
     return;
