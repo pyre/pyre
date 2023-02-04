@@ -77,7 +77,6 @@ pyre::h5::py::dataset(py::module & m)
                     // grab whatever generic information is available
                     return new H5::DataType(self.getDataType());
             }
-
             // this should be unreachable, but just in case new paths open up
             return new H5::DataType(self.getDataType());
         },
