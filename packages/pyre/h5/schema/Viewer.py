@@ -8,13 +8,13 @@
 import journal
 
 # a visitor of schemata
-class Explorer:
+class Viewer:
     """
     A visitor that draws the structure of a schema
     """
 
     # interface
-    def explore(self, descriptor, margin="", graphic=""):
+    def visit(self, descriptor, margin="", graphic=""):
         # start things off
         yield self.render(descriptor=descriptor, graphic=graphic)
 
@@ -30,8 +30,8 @@ class Explorer:
         bodyGraphic = margin + "+- "
         # go through all but the last child
         for child in children[:-1]:
-            # and explore each one
-            yield from self.explore(
+            # and visit each one
+            yield from self.visit(
                 descriptor=child, margin=bodyMargin, graphic=bodyGraphic
             )
 
@@ -39,7 +39,7 @@ class Explorer:
         lastMargin = margin + "   "
         lastGraphic = margin + "`- "
         # repeat for the last child
-        yield from self.explore(
+        yield from self.visit(
             descriptor=children[-1], margin=lastMargin, graphic=lastGraphic
         )
 
@@ -53,7 +53,7 @@ class Explorer:
         # make a channel
         channel = journal.info("pyre.h5.schema")
         # generate the report
-        channel.report(self.explore(descriptor=descriptor))
+        channel.report(self.visit(descriptor=descriptor))
         # flush
         channel.log()
         # and done

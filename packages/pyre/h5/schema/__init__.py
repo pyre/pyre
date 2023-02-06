@@ -10,7 +10,7 @@ from .Group import Group as group
 from .Dataset import Dataset as dataset
 
 # a visitor that displays the structure of a schema
-from .Explorer import Explorer as explorer
+from .Viewer import Viewer as viewer
 
 # the typed descriptors
 # scalars
