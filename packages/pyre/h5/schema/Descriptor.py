@@ -137,8 +137,8 @@ class Descriptor:
         """
         Generate a representation of my structure
         """
-        # get the explorer factory
-        from .Explorer import Explorer as explorer
+        # get the viewer factory
+        from .Viewer import Viewer as viewer
 
         # if we don't have a channel
         if channel is None:
@@ -149,7 +149,7 @@ class Descriptor:
             channel = journal.info("pyre.h5.object")
 
         # build the report
-        channel.report(report=explorer().explore(self))
+        channel.report(report=viewer().visit(self))
         # if we were asked to flush the channel
         if flush:
             # do it
