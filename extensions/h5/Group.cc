@@ -14,6 +14,35 @@
 void
 pyre::h5::py::group(py::module & m)
 {
+    // helpers
+    auto getByName = [](const Group & self, const string_t & name) {
+        // figure out the type of the named member
+        auto type = self.childObjType(name);
+        // if it's a group
+        if (type == H5O_TYPE_GROUP) {
+            // get the group id
+            auto hid = self.getObjId(name);
+            // and return a copy along with the type information
+            return py::make_tuple(type, new Group(hid));
+        }
+        // if it's a dataset
+        if (type == H5O_TYPE_DATASET) {
+            // get the dataset id
+            auto hid = self.getObjId(name);
+            // and return a copy along with the type information
+            return py::make_tuple(type, new DataSet(hid));
+        }
+        // for anything else, just return the type info
+        return py::make_tuple(type, nullptr);
+    };
+
+    auto getByIndex = [&getByName](const Group & self, int index) {
+        // figure out the index of the named member
+        auto name = self.getObjnameByIdx(index);
+        // and look it up
+        return getByName(self, name);
+    };
+
     // add bindings for hdf5 groups
     auto cls = py::class_<Group>(
         // in scope
@@ -87,6 +116,26 @@ pyre::h5::py::group(py::module & m)
         // the docstring
         "open one of my subgroups given its path");
 
+    cls.def(
+        // the name
+        "get",
+        // the implementation
+        getByName,
+        // the signature
+        "path"_a,
+        // the docstring
+        "get the member at the given location");
+
+    cls.def(
+        // the name
+        "get",
+        // the implementation
+        getByIndex,
+        // the signature
+        "index"_a,
+        // the docstring
+        "get the name of the member at the given location");
+
     // metamethods
     cls.def(
         // the name
@@ -103,12 +152,7 @@ pyre::h5::py::group(py::module & m)
         // the name
         "__getitem__",
         // the implementation
-        [](const Group & self, const string_t & name) {
-            // figure out its type
-            auto type = self.childObjType(name);
-            // and return it
-            return type;
-        },
+        getByName,
         // the signature
         "path"_a,
         // the docstring
@@ -118,14 +162,7 @@ pyre::h5::py::group(py::module & m)
         // the name
         "__getitem__",
         // the implementation
-        [](const Group & self, int index) {
-            // get the name of the member at {index}y3j
-            auto name = self.getObjnameByIdx(index);
-            // figure out its type
-            auto type = self.childObjType(name);
-            // and return the pair
-            return py::make_tuple(name, type);
-        },
+        getByIndex,
         // the signature
         "index"_a,
         // the docstring
