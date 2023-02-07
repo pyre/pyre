@@ -23,17 +23,17 @@ pyre::h5::py::group(py::module & m)
             // get the group id
             auto hid = self.getObjId(name);
             // and return a copy along with the type information
-            return py::make_tuple(type, new Group(hid));
+            return py::make_tuple(new Group(hid), type);
         }
         // if it's a dataset
         if (type == H5O_TYPE_DATASET) {
             // get the dataset id
             auto hid = self.getObjId(name);
             // and return a copy along with the type information
-            return py::make_tuple(type, new DataSet(hid));
+            return py::make_tuple(new DataSet(hid), type);
         }
         // for anything else, just return the type info
-        return py::make_tuple(type, nullptr);
+        return py::make_tuple(nullptr, type);
     };
 
     auto getByIndex = [&getByName](const Group & self, int index) {
