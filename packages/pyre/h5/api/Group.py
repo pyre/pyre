@@ -6,6 +6,7 @@
 
 # support
 import journal
+import pyre
 
 # superclass
 from .Object import Object
@@ -13,7 +14,6 @@ from .Object import Object
 # typing
 import collections.abc
 import typing
-import pyre
 from .Dataset import Dataset
 
 
@@ -199,27 +199,44 @@ class Group(Object):
 
     # framework hooks
     # directed traversal
-    def _pyre_lookup(self, path: pyre.primitives.pathlike) -> Object:
+    def _pyre_get(self, path: pyre.primitives.pathlike) -> typing.Optional[Object]:
         """
         Look up the h5 {object} associated with {path}
         """
-        # starting with me
-        cursor = self
-        # go through the {path} levels
-        for name in pyre.primitives.path(path).names:
-            # lookup the new spot
-            cursor = cursor._pyre_get(name)
-        # all done
-        return cursor
-
-    # member retrieval
-    def _pyre_get(self, name: str) -> Object:
-        """
-        Look up the h5 {object} associated with {name}
-        """
-        # since we want to bypass the forced evaluation that happens to datasets by default,
-        # we have to use the correct attribute getter
-        return super().__getattribute__(name)
+        # grab the low level object
+        hid, info = self._pyre_id.get(str(path))
+        # compute the location of the member
+        location = self._pyre_location / path
+        # extract the name of the node
+        name = location.name
+        # on groups
+        if info == pyre.libh5.ObjectType.group:
+            # build the layout
+            layout = self._pyre_schema.group(name=name)
+            # build the node
+            group = Group(id=hid, at=location, layout=layout)
+            # and return it
+            return group
+        # on datasets
+        if info == pyre.libh5.ObjectType.dataset:
+            # build the layout
+            layout = self._pyre_schema.dataset._pyre_deduce(
+                name=name, cell=hid.cell, info=hid.type, shape=hid.shape
+            )
+            # build the node
+            dataset = Dataset(id=hid, at=location, layout=layout)
+            # and return it
+            return dataset
+        # anything else implies an objet type that we do not support currently
+        channel = journal.firewall("pyre.h5.group")
+        # make a report
+        channel.line(f"unsupported member type {info.name}")
+        channel.line(f"while looking up {path}")
+        channel.line(f"in {self}")
+        # complain
+        channel.log()
+        # and bail, just in case firewalls aren't fatal
+        return
 
     # classifications
     def _pyre_datasets(self) -> collections.abc.Generator:
