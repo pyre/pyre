@@ -21,7 +21,7 @@ class Explorer:
     """
 
     # interface
-    def explore(self, file: File) -> typing.Optional[File._pyre_schema.group]:
+    def visit(self, file: File) -> typing.Optional[File._pyre_schema.group]:
         """
         Visit the given {file} and extract its layout
         """
@@ -31,7 +31,7 @@ class Explorer:
         handle = file._pyre_id
         # and ask it about the group at the {root}
         origin = handle.group(path="/")
-        # look for structure
+        # look for its structure
         self._explore(layout=root, group=origin)
         # and return it
         return root
