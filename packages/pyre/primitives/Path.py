@@ -25,6 +25,7 @@ def _unaryDispatch(f):
     def dispatch(self, *args, **kwds):
         # build my rep and forward to the wrapped function
         return f(self, *args, **kwds)
+
     # return the function to leave behind
     return dispatch
 
@@ -39,15 +40,14 @@ class Path(tuple):
     from .exceptions import PathError, SymbolicLinkLoopError
 
     # string constants
-    _CWD = '.'
-    _SEP = '/'
-    _HOME = '~'
+    _CWD = "."
+    _SEP = "/"
+    _HOME = "~"
 
     # path constants
-    # N.B.: this used to be {None}, for unknown reasons; no test fails, and there is
-    # no known case that depends on the old value
-    root = (_SEP,)
-
+    # this gets patched with an actual instance of this class later in this file,
+    # after the declaration
+    root = None
 
     # interface
     # methods about me and my parts implemented as properties
@@ -58,7 +58,6 @@ class Path(tuple):
         """
         # easy enough
         return iter(self)
-
 
     @property
     def names(self):
@@ -74,7 +73,6 @@ class Path(tuple):
         # and return the iterator
         return parts
 
-
     @property
     def anchor(self):
         """
@@ -83,7 +81,7 @@ class Path(tuple):
         # if i am empty
         if len(self) == 0:
             # i can't be absolute
-            return ''
+            return ""
         # get my first part
         first = self[0]
         # if it is my separator
@@ -91,8 +89,7 @@ class Path(tuple):
             # i have a root
             return first
         # otherwise, I don't
-        return ''
-
+        return ""
 
     @property
     def parents(self):
@@ -102,12 +99,11 @@ class Path(tuple):
         # get my type
         cls = type(self)
         # generate a sequence of lengths so i can build subsequences
-        for pos in range(1,len(self)):
+        for pos in range(1, len(self)):
             # build a path out of a subsequence that doesn't include the last level
             yield super().__new__(cls, self[:-pos])
         # all done
         return
-
 
     @property
     def crumbs(self):
@@ -120,7 +116,6 @@ class Path(tuple):
         yield from self.parents
         # all done
         return
-
 
     @property
     def parent(self):
@@ -137,7 +132,6 @@ class Path(tuple):
         # for the rest, generate a sequence of length one shorter than me
         return super().__new__(type(self), self[:-1])
 
-
     @property
     def name(self):
         """
@@ -151,10 +145,9 @@ class Path(tuple):
         # when i am empty
         if len(self) == 0:
             # the last component is the empty string
-            return '.'
+            return "."
         # otherwise, get the last part of the path
         return self[-1]
-
 
     @property
     def path(self):
@@ -164,7 +157,6 @@ class Path(tuple):
         # easy enough
         return str(self)
 
-
     @property
     def suffix(self):
         """
@@ -173,14 +165,13 @@ class Path(tuple):
         # grab my name
         name = self.name
         # look for the last '.'
-        pos = name.rfind('.')
+        pos = name.rfind(".")
         # if not there
         if pos == -1:
             # we have nothing
-            return ''
+            return ""
         # otherwise
         return name[pos:]
-
 
     @property
     def suffixes(self):
@@ -188,10 +179,9 @@ class Path(tuple):
         Return an iterable over the extensions in name
         """
         # get my name and skip any leading dots
-        name = self.name.lstrip('.')
+        name = self.name.lstrip(".")
         # split on the '.', skip the first bit and return the rest with a leading '.'
-        return ('.' + suffix for suffix in name.split('.')[1:])
-
+        return ("." + suffix for suffix in name.split(".")[1:])
 
     @property
     def stem(self):
@@ -201,14 +191,13 @@ class Path(tuple):
         # grab my name
         name = self.name
         # look for the last '.'
-        pos = name.rfind('.')
+        pos = name.rfind(".")
         # if not there
         if pos == -1:
             # my stem is my name
             return name
         # otherwise, drop the suffix
         return name[:pos]
-
 
     @property
     def contents(self):
@@ -222,7 +211,6 @@ class Path(tuple):
         # all done
         return
 
-
     # introspection methods
     def as_posix(self):
         """
@@ -230,7 +218,6 @@ class Path(tuple):
         """
         # i know how to do this
         return str(self)
-
 
     def as_uri(self):
         """
@@ -245,7 +232,6 @@ class Path(tuple):
         # and complain
         raise ValueError(msg)
 
-
     def isAbsolute(self):
         """
         Check whether the path is absolute or not
@@ -253,14 +239,12 @@ class Path(tuple):
         # get my last part
         return True if self.anchor else False
 
-
     def isReserved(self):
         """
         Check whether the path is reserved or not
         """
         # always false
         return False
-
 
     # methods about me and others
     def join(self, *others):
@@ -271,7 +255,6 @@ class Path(tuple):
         cls = type(self)
         # that's just what my constructor does
         return cls.__new__(cls, self, *others)
-
 
     def relativeTo(self, other):
         """
@@ -295,8 +278,7 @@ class Path(tuple):
                 raise ValueError(f"{error}: {location}")
 
         # what's left is the answer
-        return super().__new__(type(self), self[len(other):])
-
+        return super().__new__(type(self), self[len(other) :])
 
     def withName(self, name):
         """
@@ -309,13 +291,12 @@ class Path(tuple):
         # replace my name and build a new path
         return super().__new__(type(self), self[:-1] + (name,))
 
-
     def withSuffix(self, suffix=None):
         """
         Build a new path with my suffix replaced by {suffix}
         """
         # check that the suffix is valid
-        if suffix and (not suffix.startswith('.') or self._SEP in suffix):
+        if suffix and (not suffix.startswith(".") or self._SEP in suffix):
             # complain
             raise ValueError(f"invalid suffix '{suffix}'")
         # get my suffix
@@ -329,8 +310,7 @@ class Path(tuple):
             return self.withName(stem) if mine else self
 
         # if a suffix were supplied, append it to my stem and build a path
-        return self.withName(name=stem+suffix)
-
+        return self.withName(name=stem + suffix)
 
     # real path interface
     @classmethod
@@ -341,9 +321,8 @@ class Path(tuple):
         # get the directory and turn it into a path
         return cls(os.getcwd())
 
-
     @classmethod
-    def home(cls, user=''):
+    def home(cls, user=""):
         """
         Build a path that points to the {user}'s home directory
         """
@@ -366,7 +345,6 @@ class Path(tuple):
         # if we get this far, we have the name of the path; build a path and return it
         return cls(dir)
 
-
     def resolve(self):
         """
         Build an equivalent absolute normalized path that is free of symbolic links
@@ -381,7 +359,6 @@ class Path(tuple):
             return self
         # otherwise, get the guy to do his thing
         return self._resolve(resolved={})
-
 
     def expanduser(self, marker=_HOME):
         """
@@ -399,7 +376,6 @@ class Path(tuple):
         home = self.home(user=spec[1:])
         # build the new path and return it
         return super().__new__(type(self), home + self[1:])
-
 
     # real path introspection
     def exists(self):
@@ -423,14 +399,12 @@ class Path(tuple):
         # if i got this far, i exist
         return True
 
-
     def isBlockDevice(self):
         """
         Check whether I am a block device
         """
         # check with {stat}
         return self.mask(stat.S_IFBLK)
-
 
     def isCharacterDevice(self):
         """
@@ -439,14 +413,12 @@ class Path(tuple):
         # check with {stat}
         return self.mask(stat.S_IFCHR)
 
-
     def isDirectory(self):
         """
         Check whether I am a directory
         """
         # check with {stat}
         return self.mask(stat.S_IFDIR)
-
 
     def isFile(self):
         """
@@ -455,7 +427,6 @@ class Path(tuple):
         # check with {stat}
         return self.mask(stat.S_IFREG)
 
-
     def isNamedPipe(self):
         """
         Check whether I am a socket
@@ -463,14 +434,12 @@ class Path(tuple):
         # check with {stat}
         return self.mask(stat.S_IFIFO)
 
-
     def isSocket(self):
         """
         Check whether I am a socket
         """
         # check with {stat}
         return self.mask(stat.S_IFSOCK)
-
 
     def isSymlink(self):
         """
@@ -487,7 +456,6 @@ class Path(tuple):
         # otherwise, check with my stat record
         return stat.S_ISLNK(mode)
 
-
     def mask(self, mask):
         """
         Get my stat record and filter me through {mask}
@@ -503,7 +471,6 @@ class Path(tuple):
         # otherwise, check with {mask}
         return stat.S_IFMT(mode) == mask
 
-
     # physical path interface
     # forwarding to standard library functions
     chdir = _unaryDispatch(os.chdir)
@@ -513,7 +480,6 @@ class Path(tuple):
     open = _unaryDispatch(io.open)
     rmdir = _unaryDispatch(os.rmdir)
     unlink = _unaryDispatch(os.unlink)
-
 
     # local implementations of the physical path interface
     def mkdir(self, parents=False, exist_ok=False, **kwds):
@@ -538,14 +504,12 @@ class Path(tuple):
         # if we are supposed to build the intermediate levels, delegate to the system routine
         return os.makedirs(self, exist_ok=exist_ok, **kwds)
 
-
-    def touch(self,  mode=0x666, exist_ok=True):
+    def touch(self, mode=0x666, exist_ok=True):
         """
         Create a file at his path
         """
         # all done
-        raise NotImplementedError('NYI!')
-
+        raise NotImplementedError("NYI!")
 
     # constructors
     @classmethod
@@ -555,7 +519,6 @@ class Path(tuple):
         """
         # my normal constructor does this
         return cls(*args)
-
 
     # meta-methods
     def __new__(cls, *args):
@@ -568,7 +531,6 @@ class Path(tuple):
             return args[0]
         # otherwise, parse the arguments and chain up to build my instance
         return super().__new__(cls, cls._parse(args))
-
 
     def __str__(self):
         """
@@ -591,16 +553,14 @@ class Path(tuple):
         # otherwise
         else:
             # leave no marker in the beginning
-            marker = ''
+            marker = ""
         # build the body out of the remaining parts
         body = sep.join(i)
         # ok, let's put this all together
-        return f'{marker}{body}'
-
+        return f"{marker}{body}"
 
     # implement the {os.PathLike} protocol
     __fspath__ = __str__
-
 
     def __bool__(self):
         """
@@ -608,7 +568,6 @@ class Path(tuple):
         """
         # there are no conditions under which I am false since empty tuple means '.'
         return True
-
 
     # arithmetic; pure sugar but slower than other methods of assembling paths
     def __truediv__(self, other):
@@ -620,7 +579,6 @@ class Path(tuple):
         # too easy
         return cls.__new__(cls, self, other)
 
-
     def __rtruediv__(self, other):
         """
         Syntactic sugar for assembling paths
@@ -629,7 +587,6 @@ class Path(tuple):
         cls = type(self)
         # too easy
         return cls.__new__(cls, other, self)
-
 
     # implementation details
     @classmethod
@@ -692,7 +649,6 @@ class Path(tuple):
         # all done
         return fragments
 
-
     def _resolve(self, base=None, resolved=None):
         """
         Workhorse for path resolution
@@ -715,11 +671,11 @@ class Path(tuple):
         # go through my parts
         for part in workload:
             # empty or parts that are '.'
-            if not part or part=='.':
+            if not part or part == ".":
                 # are skipped
                 continue
             # parent directory markers
-            if part == '..':
+            if part == "..":
                 # back me up by one level
                 base = base.parent
                 # and carry on
