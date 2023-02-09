@@ -23,6 +23,16 @@ pyre::h5::py::dataset(py::module & m)
         // docstring
         "an HDF5 dataset");
 
+    // properties
+    // my h5 handle
+    cls.def_property_readonly(
+        // the name
+        "hid",
+        // the implementation
+        &DataSet::getId,
+        // the docstring
+        "get my h5 handle id");
+
     // the dataset type
     cls.def_property_readonly(
         // the name
