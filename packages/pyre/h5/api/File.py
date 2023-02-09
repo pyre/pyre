@@ -12,6 +12,7 @@ from .Group import Group
 # typing
 import pyre
 import typing
+from .Object import Object
 
 
 # file is a group at '/'
@@ -32,7 +33,7 @@ class File(Group):
         return
 
     # framework hooks
-    # attach to h5 sources
+    # attach to local files
     def _pyre_local(
         self, uri: pyre.primitives.pathlike, mode: str = "r", **kwds
     ) -> "File":
@@ -50,6 +51,7 @@ class File(Group):
         # delegate to the opener
         return self._pyre_open(uri=uri, mode=mode, **kwds)
 
+    # attach to S3 buckets
     def _pyre_ros3(
         self, bucket: str, key: str, profile: typing.Optional[str] = None
     ) -> "File":
@@ -106,6 +108,20 @@ class File(Group):
             layout = self._pyre_schema.group(name="root")
         # either way
         return layout
+
+    # member access
+    def _pyre_find(self, path: pyre.primitives.pathlike) -> typing.Optional[Object]:
+        """
+        Look up the h5 {object} associated with {path}
+        """
+        # normalize the input {path}
+        path = pyre.primitives.path(path)
+        # if the request is for the root object
+        if path == pyre.primitives.path.root:
+            # return me
+            return self
+        # otherwise, delegate to the {group} that i am to look up my members
+        return super()._pyre_find(path=path)
 
     # visiting
     def _pyre_identify(self, authority, **kwds):
