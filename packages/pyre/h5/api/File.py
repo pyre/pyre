@@ -32,6 +32,14 @@ class File(Group):
         # all done
         return
 
+    # representation
+    def __str__(self):
+        """
+        Build a human readable representation
+        """
+        # easy enough
+        return f"file '{self._pyre_uri}'"
+
     # framework hooks
     # attach to local files
     def _pyre_local(
