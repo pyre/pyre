@@ -20,17 +20,26 @@ function(pyre_h5Module)
     endif(HDF5_IS_PARALLEL)
     # add the sources
     target_sources(h5module PRIVATE
-      h5/h5.cc
+      h5/__init__.cc
       h5/api.cc
-      h5/dataset.cc
-      h5/dataspace.cc
-      h5/datatypes/compound.cc
-      h5/datatypes/datatype.cc
-      h5/datatypes/datatypes.cc
+      h5/DataSet.cc
+      h5/DataSpace.cc
+      h5/enums.cc
+      h5/File.cc
+      h5/FileAccessPropertyList.cc
+      h5/Group.cc
+      h5/datatypes/__init__.cc
+      h5/datatypes/ArrayType.cc
+      h5/datatypes/AtomType.cc
+      h5/datatypes/CompType.cc
+      h5/datatypes/DataType.cc
+      h5/datatypes/EnumType.cc
+      h5/datatypes/FloatType.cc
+      h5/datatypes/IntType.cc
       h5/datatypes/native.cc
-      h5/datatypes/predefined.cc
-      h5/file.cc
-      h5/group.cc
+      h5/datatypes/PredType.cc
+      h5/datatypes/StrType.cc
+      h5/datatypes/VarLenType.cc
       )
     # install
     install(
