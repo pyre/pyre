@@ -38,12 +38,16 @@ class Reader:
         query: typing.Optional[schema.descriptor] = None,
         errors: typing.Optional[typing.Sequence[Object]] = None,
         **kwds,
-    ) -> Object:
+    ) -> typing.Optional[Object]:
         """
         Read {file} and extract an h5 {object} with the structure of {query}
         """
         # analyze the {uri} and build the h5 {file}, passing any extra arguments to it
         file = self.open(uri=uri, mode=mode, **kwds)
+        # if anything went wrong
+        if file is None:
+            # assume that the error has already been reported and bail
+            return None
         # normalize the desired layout
         if query is None:
             # get my schema
@@ -56,7 +60,9 @@ class Reader:
         )
 
     # implementation details
-    def open(self, uri: pyre.primitives.uri, mode, **kwds) -> typing.Optional[File]:
+    def open(
+        self, uri: typing.Union[pyre.primitives.uri, str], mode: str, **kwds
+    ) -> typing.Optional[File]:
         """
         Open an h5 file object
         """
