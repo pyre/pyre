@@ -8,7 +8,8 @@
 from . import schema
 from . import api
 
-# convenient access to key factories
+# shortcuts
+reader = api.reader
 
 
 # end of file
