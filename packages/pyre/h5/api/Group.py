@@ -243,7 +243,7 @@ class Group(Object):
             dataset = Dataset(id=hid, at=location, layout=layout)
             # and return it
             return dataset
-        # anything else implies an objet type that we do not support currently
+        # anything else implies an object type that we do not support currently
         channel = journal.firewall("pyre.h5.group")
         # make a report
         channel.line(f"unsupported member type {info.name}")
