@@ -6,11 +6,10 @@
 
 # external
 import journal
+import pyre
 
 # typing
-import pyre
 import typing
-from .Object import Object
 from .File import File
 
 
