@@ -23,6 +23,9 @@ class Group(Object):
     A container of h5 objects
     """
 
+    # types
+    _pyre_objectTypes = pyre.libh5.ObjectType
+
     # metamethods
     def __init__(
         self, layout: typing.Optional[Object._pyre_schema.group] = None, **kwds
@@ -189,6 +192,14 @@ class Group(Object):
         # and bail, just in case firewalls aren't fatal
         return
 
+    # member access
+    def __getitem__(self, path):
+        """
+        Lookup {path} within my subtree
+        """
+        # delegate
+        return self._pyre_find(path=path)
+
     # representation
     def __str__(self):
         """
@@ -199,10 +210,15 @@ class Group(Object):
 
     # framework hooks
     # directed traversal
-    def _pyre_get(self, path: pyre.primitives.pathlike) -> typing.Optional[Object]:
+    def _pyre_find(self, path: pyre.primitives.pathlike) -> typing.Optional[Object]:
         """
-        Look up the h5 {object} associated with {path}
+        Look up the h5 {object} associated with {path} within the subtree managed by this
+        group, assuming it is already bound to a live h5 object
         """
+        # pull the object type enums
+        objectTypes = self._pyre_objectTypes
+        # and the schema
+        schema = self._pyre_schema
         # grab the low level object
         hid, info = self._pyre_id.get(str(path))
         # compute the location of the member
@@ -210,17 +226,17 @@ class Group(Object):
         # extract the name of the node
         name = location.name
         # on groups
-        if info == pyre.libh5.ObjectType.group:
+        if info == objectTypes.group:
             # build the layout
-            layout = self._pyre_schema.group(name=name)
+            layout = schema.group(name=name)
             # build the node
             group = Group(id=hid, at=location, layout=layout)
             # and return it
             return group
         # on datasets
-        if info == pyre.libh5.ObjectType.dataset:
+        if info == objectTypes.dataset:
             # build the layout
-            layout = self._pyre_schema.dataset._pyre_deduce(
+            layout = schema.dataset._pyre_deduce(
                 name=name, cell=hid.cell, info=hid.type, shape=hid.shape
             )
             # build the node
