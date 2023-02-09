@@ -77,7 +77,7 @@ class Group(Descriptor, metaclass=Schema):
         if name.startswith("_"):
             # handle a normal assignment
             return super().__setattr__(name, value)
-        # otherwise, frab my descriptors
+        # otherwise, grab my descriptors
         descriptors = self._pyre_descriptors
         # check whether
         try:
