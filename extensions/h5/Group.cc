@@ -52,6 +52,15 @@ pyre::h5::py::group(py::module & m)
         // docstring
         "an HDF5 group");
 
+    // properties
+    cls.def_property_readonly(
+        // the name
+        "hid",
+        // the implementation
+        &Group::getId,
+        // the docstring
+        "get my h5 handle id");
+
     // close the group
     cls.def(
         // the name
