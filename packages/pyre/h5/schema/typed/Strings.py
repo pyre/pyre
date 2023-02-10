@@ -30,7 +30,7 @@ class Strings(Dataset.list):
         # store it
         self.value = value
         # update my shape
-        self.shape = self._pyre_id.shape
+        self.shape = dataset._pyre_id.shape
         # and return the raw contents
         return value
 
