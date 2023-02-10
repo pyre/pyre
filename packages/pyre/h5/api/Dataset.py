@@ -4,6 +4,9 @@
 # (c) 1998-2023 all rights reserved
 
 
+# support
+import journal
+
 # superclass
 from .Object import Object
 
@@ -53,6 +56,61 @@ class Dataset(Object):
         return f"dataset at '{self._pyre_location}' of type '{self._pyre_layout.type}'"
 
     # framework hooks
+    # value syncing
+    def _pyre_read(self, file):
+        """
+        Read my on-disk value into my cache
+        """
+        # if i'm not bound to an h5 source
+        if self._pyre_id is None:
+            # make a channel
+            channel = journal.warning("pyre.h5.sync")
+            # complain
+            channel.line(f"{self}")
+            channel.line(f"is not bound to an h5 file")
+            channel.line(f"while reading '{file._pyre_uri}'")
+            # flush
+            channel.log()
+            # and return something harmless
+            return None
+        # if all is well, attempt to
+        try:
+            # read the value and update the cache
+            self.value = self._pyre_layout._pyre_pull(dataset=self)
+        # if this fails
+        except NotImplementedError as error:
+            # make a channel
+            channel = journal.warning("pyre.h5.sync")
+            # complain
+            channel.line(f"{self}")
+            channel.line(f"{error}")
+            channel.line(f"can't pull values from disk")
+            channel.line(f"while reading '{file._pyre_uri}'")
+            # flush
+            channel.log()
+        # and return something harmless, in case errors aren't fatal
+        return None
+
+    def pyre_write(self, file):
+        """
+        Write my cache value to disk
+        """
+        # if i'm not mapped to an h5 file
+        if self._pyre_id is None:
+            # make a channel
+            channel = journal.warning("pyre.h5.sync")
+            # complain
+            channel.line(f"{self}")
+            channel.line(f"is not bound to an h5 file")
+            channel.line(f"while writing '{file._pyre_uri}'")
+            # flush
+            channel.log()
+            # and bail
+            return
+        # if all is well, delegate
+        return self._pyre_layout._pyre_push(datset=self)
+
+    # visiting
     def _pyre_identify(self, authority, **kwds):
         """
         Let {authority} know i am a dataset
