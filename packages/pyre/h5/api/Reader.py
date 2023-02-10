@@ -143,10 +143,10 @@ class Reader:
         # the {_pyre_descriptors} and values of the {object} attributes must be
         # populated
         #
-        # get the layout of the {object}
+        # get the {object} layout
         layout = object._pyre_layout
         # if the {object} has deduced its layout already and it is not a group
-        if layout is not None and not isinstance(layout, schema.group):
+        if layout is not None and not isinstance(layout, type(group)):
             # there is a mismatch between the schema and the contents of the file
             # make a channel
             channel = journal.error("pyre.h5.reader")
@@ -197,6 +197,28 @@ class Reader:
         """
         Process a dataset
         """
+        # get the {object} layout
+        layout = object._pyre_layout
+        # if it's non-trivial make sure it's compatible with its schema
+        if layout is not None and not isinstance(layout, type(dataset)):
+            # there is a mismatch between the schema and the contents of the file
+            # make a channel
+            channel = journal.error("pyre.h5.reader")
+            # make a report
+            channel.line(f"type mismatch in {object._pyre_location}")
+            channel.line(f"expected a {dataset}")
+            channel.line(f"but got a {layout}")
+            channel.line(f"while reading '{file._pyre_uri}'")
+            # flush it
+            channel.log()
+            # in case errors aren't fatal, add the {group} to the error pile
+            if errors is not None:
+                # if the caller cares
+                errors.append(dataset)
+            # and bail
+            return object
+        # read the dataset value
+        object._pyre_read(file=file)
         # all done
         return object
 
