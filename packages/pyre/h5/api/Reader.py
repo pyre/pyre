@@ -146,12 +146,12 @@ class Reader:
         # get the {object} layout
         layout = object._pyre_layout
         # if the {object} has deduced its layout already and it is not a group
-        if layout is not None and not isinstance(layout, type(group)):
+        if layout is not None and not isinstance(layout, schema.group):
             # there is a mismatch between the schema and the contents of the file
             # make a channel
             channel = journal.error("pyre.h5.reader")
             # make a report
-            channel.line(f"type mismatch in {object._pyre_location}")
+            channel.line(f"type mismatch in '{object._pyre_location}'")
             channel.line(f"expected a group, got {layout}")
             channel.line(f"while reading '{file._pyre_uri}'")
             # flush it
