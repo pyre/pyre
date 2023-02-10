@@ -24,7 +24,7 @@ array = dataset.array
 list = dataset.list
 tuple = dataset.tuple
 # derived
-from .Strings import Strings as strings
+from .typed.Strings import Strings as strings
 
 
 # end of file
