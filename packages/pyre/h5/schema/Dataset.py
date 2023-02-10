@@ -136,8 +136,11 @@ class Dataset(Descriptor):
             return atom(name=name)
         # if the shape is rank one
         if len(shape) == 1 and cellname == "str":
+            # we have a special type for that
+            from . import strings
+
             # make a list of strings
-            return cls.list(name=name, schema=atom(name="sentinel"))
+            return strings(name=name)
         # if the cell is a numeric type
         if atom.typename in ["complex", "float", "int", "identity"]:
             # make an array
