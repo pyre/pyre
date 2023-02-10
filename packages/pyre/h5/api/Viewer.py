@@ -37,12 +37,14 @@ class Viewer:
         layout = dataset._pyre_layout
         # the type
         typename = layout.type
+        # the shape
+        shape = layout.shape
         # and the location
         loc = dataset._pyre_location.name
         # build a representation for the value
         rep = layout.string(value=value)
         # assemble the label
-        yield f"{graphic}{loc} = {rep} ({typename})"
+        yield f"{graphic}{loc} = {rep} ({typename}: {shape})"
         # all done
         return
 
