@@ -11,14 +11,12 @@ class Array:
     """
 
     # value synchronization
-    def pyre_pull(self):
+    def _pyre_pull(self, dataset):
         """
         Read my value from disk and update my cache
         """
-        # get my id
-        id = self.pyre_id
         # update my shape
-        self.shape = id.shape
+        self.shape = dataset._pyre_id.shape
         # trivial, for now
         return self
 

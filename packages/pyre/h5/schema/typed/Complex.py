@@ -4,19 +4,19 @@
 # (c) 1998-2023 all rights reserved
 
 
-# the {float} mixin
-class Float:
+# the {complex} mixin
+class Complex:
     """
     Implementation details of the {float} dataset mixin
     """
 
     # value synchronization
-    def pyre_pull(self):
+    def _pyre_pull(self, dataset):
         """
         Read my value from disk and update my cache
         """
         # read the value
-        value = self.pyre_id.double()
+        value = dataset._pyre_id.complex()
         # store it
         self.value = value
         # and return the raw contents
