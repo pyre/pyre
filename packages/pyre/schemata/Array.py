@@ -19,7 +19,6 @@ class Array(Sequence):
 
     # constants
     typename = "array"  # the name of my type
-    complaint = "could not coerce {0.value!r} to an array"
 
     # meta-methods
     def __init__(self, shape=None, schema=Float(), **kwds):
