@@ -4,30 +4,23 @@
 # (c) 1998-2023 all rights reserved
 
 
-# the {str} mixin
-class String:
+# the {float} mixin
+class Float:
     """
-    Implementation details of the {str} dataset mixin
+    Implementation details of the {float} dataset mixin
     """
 
     # value synchronization
-    def pyre_pull(self):
+    def _pyre_pull(self, dataset):
         """
         Read my value from disk and update my cache
         """
         # read the value
-        value = self.pyre_id.str()
+        value = dataset._pyre_id.double()
         # store it
         self.value = value
         # and return the raw contents
         return value
-
-    # representations
-    def string(self, value):
-        """
-        Quote my value
-        """
-        return f"'{value}'"
 
 
 # end of file

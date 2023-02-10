@@ -19,6 +19,9 @@ class Dataset(Descriptor):
     The base class of all typed datasets
     """
 
+    # my mixins
+    from .typed import array, bool, complex, float, int, str, timestamp
+
     # metamethods
     def __init__(self, doc="", **kwds):
         # chain up
@@ -48,6 +51,29 @@ class Dataset(Descriptor):
             default = self.default
         # add my state and chain up
         return super()._pyre_clone(default=default, doc=self.__doc__)
+
+    # value syncing hooks by dataset subclasses
+    def _pyre_pull(self, dataset):
+        """
+        Pull my on-disk value into my cache
+        """
+        # get my type
+        cls = type(self)
+        # my children must know how to do this
+        raise NotImplementedError(
+            f"class '{cls.__module__}.{cls.__name__}' must implement '_pyre_pull'"
+        )
+
+    def _pyre_push(self, dataset):
+        """
+        Push my cache value to disk
+        """
+        # get my type
+        cls = type(self)
+        # my children must know how to do this
+        raise NotImplementedError(
+            f"class '{cls.__module__}.{cls.__name__}' must implement '_pyre_push'"
+        )
 
     # visiting
     def _pyre_identify(self, authority, **kwds):

@@ -21,16 +21,16 @@ class Strings(Dataset.list):
         return
 
     # value synchronization
-    def pyre_pull(self):
+    def _pyre_pull(self, dataset):
         """
         Read my value from disk and update my cache
         """
         # read the value
-        value = self.pyre_id.strings()
+        value = dataset._pyre_id.strings()
         # store it
         self.value = value
         # update my shape
-        self.shape = self.pyre_id.shape
+        self.shape = self._pyre_id.shape
         # and return the raw contents
         return value
 
