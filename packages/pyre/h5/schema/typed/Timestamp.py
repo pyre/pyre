@@ -11,24 +11,16 @@ class Timestamp:
     """
 
     # value synchronization
-    def pyre_pull(self):
+    def _pyre_pull(self, dataset):
         """
         Read my value from disk and update my cache
         """
         # read the value; timestamps are stored as strings
-        value = self.pyre_id.str()
+        value = dataset._pyre_id.str()
         # store it; drop nanosecond precision since {strptime} can't handle it
         self.value = value[:26]
         # and return the raw contents
         return value
-
-    # framework hooks
-    def pyre_clone(self, format=None, **kwds):
-        """
-        Make a copy of my
-        """
-        # chain up
-        return super().pyre_clone(format=self.format, **kwds)
 
 
 # end of file

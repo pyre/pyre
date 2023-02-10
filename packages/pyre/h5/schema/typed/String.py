@@ -4,23 +4,30 @@
 # (c) 1998-2023 all rights reserved
 
 
-# the {bool} mixin
-class Bool:
+# the {str} mixin
+class String:
     """
-    Implementation details of the {bool} dataset mixin
+    Implementation details of the {str} dataset mixin
     """
 
     # value synchronization
-    def pyre_pull(self):
+    def _pyre_pull(self, dataset):
         """
         Read my value from disk and update my cache
         """
-        # read the value; values are stored as strings, for now
-        value = self.pyre_id.str()
+        # read the value
+        value = dataset._pyre_id.str()
         # store it
         self.value = value
         # and return the raw contents
         return value
+
+    # representations
+    def string(self, value):
+        """
+        Quote my value
+        """
+        return f"'{value}'"
 
 
 # end of file
