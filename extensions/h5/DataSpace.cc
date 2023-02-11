@@ -23,16 +23,85 @@ pyre::h5::py::dataspace(py::module & m)
         // docstring
         "an HDF5 dataspace");
 
+    // constructors
+    cls.def(
+        // the implementation
+        py::init<H5S_class_t>(),
+        // the signature
+        "type"_a = H5S_SCALAR,
+        // the something
+        "make a dataspace of the given type");
+
+    cls.def(
+        // the implementation
+        py::init([](const py::sequence & shape) -> std::unique_ptr<DataSpace> {
+            // get the rank
+            auto rank = shape.size();
+            // make a correctly sized vector to hold the dimensions
+            dims_t dims(rank);
+            // go trough the dimensions
+            for (auto axis = 0; axis < rank; ++axis) {
+                // and transfer each one
+                dims[axis] = py::cast<dims_t::value_type>(shape[axis]);
+            }
+            // instantiate and return
+            return std::unique_ptr<DataSpace>(new DataSpace(rank, &dims[0], nullptr));
+        }),
+        // the signature
+        "shape"_a,
+        // the something
+        "make a dataspace of the given shape");
+
+    // static properties
+    cls.def_property_readonly_static(
+        // the name
+        "all",
+        // the implementation
+        [](const py::object &) {
+            // easy enough
+            return DataSpace::ALL;
+        },
+        // docstring
+        "the default dataspace object");
+
+    cls.def_property_readonly_static(
+        // the name
+        "ops",
+        // the implementation
+        [m](const py::object &) -> py::object {
+            // easy enough
+            // return m.attr("SelectionOperator");
+            return m.attr("SelectionOperator");
+        },
+        // docstring
+        "convenient access to the dataspace selection operator enums");
+
+    // my h5 handle
+    cls.def_property_readonly(
+        // the name
+        "hid",
+        // the implementation
+        &DataSpace::getId,
+        // the docstring
+        "get my h5 handle id");
 
     // flag that indicates whether this dataspace is simple
     cls.def_property_readonly(
         // the name
         "simple",
-        // the reader
+        // the implementation
         &DataSpace::isSimple,
         // the docstring
         "check whether i'm simple");
 
+    // the dataspace rank
+    cls.def_property_readonly(
+        // the name
+        "rank",
+        // the implementation
+        &DataSpace::getSimpleExtentNdims,
+        // the docstring
+        "get my rank");
 
     // the dataspace shape
     cls.def_property(
@@ -51,12 +120,330 @@ pyre::h5::py::dataspace(py::module & m)
         },
         // the writer
         [](DataSpace & self, const dims_t & shape) -> void {
+            // resize me
+            self.setExtentSimple(shape.size(), &shape[0], nullptr);
             // all done
             return;
         },
         // the docstring
-        "get the shape of the dataset");
+        "get and set my shape");
 
+    // the number of cells in this dataspace
+    cls.def_property_readonly(
+        // the name
+        "cells",
+        // the implementation
+        &DataSpace::getSimpleExtentNpoints,
+        // the docstring
+        "the number of cells of the dataspace");
+
+    // the dataspace type
+    cls.def_property_readonly(
+        // the name
+        "type",
+        // the implementation
+        &DataSpace::getSimpleExtentType,
+        // the docstring
+        "the type of the dataspace");
+
+    // check the current selection
+    cls.def_property_readonly(
+        // the name
+        "validSelection",
+        // the implementation
+        &DataSpace::selectValid,
+        // the docstring
+        "verify the current selection");
+
+    // the bounding box of the current selection
+    cls.def_property_readonly(
+        // the name
+        "selectionBounds",
+        // the implementation
+        [](const DataSpace & self) {
+            // find my rank
+            auto rank = self.getSimpleExtentNdims();
+            // the beginning
+            dims_t begin(rank);
+            // and the end
+            dims_t end(rank);
+            // hand them both to the bbox calculator
+            self.getSelectBounds(&begin[0], &end[0]);
+            // and return them to the caller
+            return py::make_tuple(begin, end);
+        },
+        // the docstring
+        "get the bounding box of the current selection");
+
+    // the number of cells in the current selection
+    cls.def_property_readonly(
+        // the name
+        "selectedCells",
+        // the implementation
+        &DataSpace::getSelectNpoints,
+        // the docstring
+        "get the number of cells in the current selection");
+
+    // the number of elements in the current selection
+    cls.def_property_readonly(
+        // the name
+        "selectedElements",
+        // the implementation
+        &DataSpace::getSelectElemNpoints,
+        // the docstring
+        "get the number of elements in the current selection");
+
+    // the number of hyperslabs in the current selection
+    cls.def_property_readonly(
+        // the name
+        "selectedSlabs",
+        // the implementation
+        &DataSpace::getSelectHyperNblocks,
+        // the docstring
+        "get the number of hyperslabs in the current selection");
+
+    // interface
+    // clear the dataspace
+    cls.def(
+        // the name
+        "clear",
+        // the implementation
+        &DataSpace::setExtentNone,
+        // the docstring
+        "clear the dataspace, i.e. empty its extent");
+
+    // clone the dataspace
+    cls.def(
+        // the name
+        "clone",
+        // the implementation
+        [](const DataSpace & self) {
+            // make a new dataspace of the same type
+            auto clone = new DataSpace(self.getSimpleExtentType());
+            // use me as a template
+            clone->copy(self);
+            // wrap in a handler and return it
+            return std::unique_ptr<DataSpace>(clone);
+        },
+        // the docstring
+        "clear the dataspace, i.e. empty its extent");
+
+    // close the dataspace
+    cls.def(
+        // the name
+        "close",
+        // the implementation
+        &DataSpace::close,
+        // the docstring
+        "close the dataspace");
+
+    // resize the dataspace
+    cls.def(
+        // the name
+        "reshape",
+        // the implementation
+        [](DataSpace & self, const dims_t & shape) -> void {
+            // resize me
+            self.setExtentSimple(shape.size(), &shape[0], nullptr);
+            // all done
+            return;
+        },
+        // the signature
+        "shape"_a,
+        // the docstring
+        "resize this dataspace to the new {shape}");
+
+    // selections
+    cls.def(
+        // the name
+        "selectAll",
+        // the implementation
+        &DataSpace::selectAll,
+        // the docstring
+        "select the entire dataspace");
+
+    cls.def(
+        // the name
+        "selectNone",
+        // the implementation
+        &DataSpace::selectNone,
+        // the docstring
+        "clear the dataspace selection");
+
+    // offset the current selection
+    cls.def(
+        // the name
+        "offset",
+        // the implementation
+        [](const DataSpace & self, const offsets_t & delta) -> void {
+            // apply the offset
+            self.offsetSimple(&delta[0]);
+            // all done
+            return;
+        },
+        // the signature
+        "delta"_a,
+        // the docstring
+        "offset the current selection by the given {delta}");
+
+    // element selection
+    cls.def(
+        // the name
+        "selectElements",
+        // the implementation
+        [](DataSpace & self, H5S_seloper_t op, points_t elements) {
+            // make a pile
+            auto pile = new hsize_t[elements.size() * elements[0].size()];
+            // starting at 0
+            auto cursor = 0;
+            // go through the points
+            for (const auto & element : elements) {
+                // and their coordinates
+                for (const auto & index : element) {
+                    // transfer the {index} to the {pile}
+                    pile[cursor++] = index;
+                }
+            }
+            // combine the {elements} with the current selection
+            self.selectElements(op, elements.size(), pile);
+            // clean up
+            delete[] pile;
+            // all done
+            return;
+        },
+        // the signature
+        "op"_a, "elements"_a,
+        // the docstring
+        "combine the given {elements} with the current selection");
+
+    // grab (a portion of) the list of elements in the current selection
+    cls.def(
+        // the name
+        "getSelectedElements",
+        // the implementation
+        [](const DataSpace & self, int start) {
+            // get my rank
+            auto rank = self.getSimpleExtentNdims();
+            // get the number of selected elements
+            auto len = self.getSelectElemNpoints();
+            // make a pile
+            auto pile = new hsize_t[len * rank];
+            // populate it
+            self.getSelectElemPointlist(0, len, pile);
+            // build the coordinate table
+            points_t points;
+            // go through the points
+            for (auto p = start; p < len; ++p) {
+                // build a vector to hold the coordinates and add it to the pile
+                auto & point = points.emplace_back(rank);
+                // populate the coordinates
+                for (auto index = 0; index < rank; ++index) {
+                    // by copying each index to the right spot
+                    point[index] = pile[p * rank + index];
+                }
+            }
+            // clean up
+            delete[] pile;
+            // and return the points
+            return points;
+        },
+        // the signature
+        "start"_a = 0,
+        // the docstring
+        "get the list of elements in the current selection");
+
+    // slab selection
+    cls.def(
+        // the name
+        "selectSlab",
+        // the implementation
+        [](const DataSpace & self, H5S_seloper_t op, const dims_t & count, const dims_t & start) {
+            // select the slab with default strides and block count
+            self.selectHyperslab(op, &count[0], &start[0]);
+            // all done
+            return;
+        },
+        // the signature
+        "op"_a, "count"_a, "start"_a,
+        // the docstring
+        "combine a slab with the current selection");
+
+    cls.def(
+        // the name
+        "selectSlab",
+        // the implementation
+        [](const DataSpace & self, H5S_seloper_t op, const dims_t & count, const dims_t & start,
+           const dims_t & stride) {
+            // select the slab with default block count
+            self.selectHyperslab(op, &count[0], &start[0], &stride[0]);
+            // all done
+            return;
+        },
+        // the signature
+        "op"_a, "count"_a, "start"_a, "stride"_a,
+        // the docstring
+        "combine a slab with the current selection");
+
+    cls.def(
+        // the name
+        "selectSlab",
+        // the implementation
+        [](const DataSpace & self, H5S_seloper_t op, const dims_t & count, const dims_t & start,
+           const dims_t & stride, const dims_t & block) {
+            // select the slab
+            self.selectHyperslab(op, &count[0], &start[0], &stride[0], &block[0]);
+            // all done
+            return;
+        },
+        // the signature
+        "op"_a, "count"_a, "start"_a, "stride"_a, "block"_a,
+        // the docstring
+        "combine a slab with the current selection");
+
+    // grab (a portion of) the list of selected slabs
+    cls.def(
+        // the name
+        "getSelectedSlabs",
+        // the implementation
+        [](const DataSpace & self, int start) {
+            // get my rank
+            auto rank = self.getSimpleExtentNdims();
+            // get the selection size
+            auto len = self.getSelectHyperNblocks();
+            // compute the number of blocks we will extract
+            auto blocks = len - start;
+            // make a pile for the slabs, formatted as a (begin,end) pair for each slab
+            auto pile = new hsize_t[2 * rank * blocks];
+            // populate it
+            self.getSelectHyperBlocklist(start, blocks, pile);
+            // build the result
+            std::vector<std::pair<dims_t, dims_t>> slabs;
+            // go through them
+            for (auto block = 0; block < blocks; ++block) {
+                // compute the location of this block
+                auto cursor = pile + 2 * rank * (block + start);
+                // set up the beginning of the block
+                dims_t begin(rank);
+                // populate it
+                std::copy(cursor, cursor + rank, begin.begin());
+                // set up the end of the block
+                dims_t end(rank);
+                // skip to the beginning of the end block
+                cursor += rank;
+                // and populate it
+                std::copy(cursor, cursor + rank, end.begin());
+                // add the pair to the pile
+                slabs.emplace_back(begin, end);
+            }
+            // clean up
+            delete[] pile;
+            // return the harvested slabs
+            return slabs;
+        },
+        // the signature
+        "start"_a = 0,
+        // the docstring
+        "get the list of selected hyperslabs");
 
     // all done
     return;

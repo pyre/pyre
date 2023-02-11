@@ -9,6 +9,8 @@
 
 
 // STL
+#include <algorithm>
+#include <memory>
 #include <string>
 // support
 #include <pyre/journal.h>
@@ -40,14 +42,18 @@ namespace pyre::h5::py {
 
     // aliases for common STL classes
     using string_t = std::string;
-    using dims_t = std::vector<hsize_t>;
     using ints_t = std::vector<long>;
     using doubles_t = std::vector<double>;
     using strings_t = std::vector<string_t>;
 
+    // for specifying dataspace coordinates and shapes
+    using dims_t = std::vector<hsize_t>;
+    using offsets_t = std::vector<hssize_t>;
+    // a collection of dataspace coordinates
+    using points_t = std::vector<dims_t>;
+
     // aliases of hdf5 entities
     // to avoid having to constantly look up which ones are prefixed by H5 and which not
-    // property lists
     // structural entities
     using Identifier = H5::IdComponent; // pure virtual
     // property lists derive from {Identifier}
