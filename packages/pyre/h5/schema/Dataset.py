@@ -22,6 +22,9 @@ class Dataset(Descriptor):
     # my mixins
     from .typed import array, bool, complex, float, int, str, timestamp
 
+    # by default, everything is a scalar
+    shape = "scalar"
+
     # metamethods
     def __init__(self, doc="", **kwds):
         # chain up
