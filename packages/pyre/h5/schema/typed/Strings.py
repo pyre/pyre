@@ -17,6 +17,8 @@ class Strings(Dataset.list):
     def __init__(self, **kwds):
         # set the schema and chain up
         super().__init__(schema=Dataset.str(name="sentinel"), **kwds)
+        # initialize my shape
+        self.shape = []
         # all done
         return
 
