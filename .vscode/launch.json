@@ -19,7 +19,7 @@
             "request": "launch",
             "python": "${command:python.interpreterPath}",
             "cwd": "${fileDirname}",
-            "program": "${workspaceFolder}/bin/merlin",
+            "program": "${env:mm_prefix}/bin/merlin",
             "args": [
                 "info",
                 "compilers",
