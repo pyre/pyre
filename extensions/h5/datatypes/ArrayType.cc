@@ -28,7 +28,15 @@ pyre::h5::py::datatypes::array(py::module & m)
         "an HDF5 array datatype");
 
     // constructor
-    arrayType.def(py::init<>());
+    arrayType.def(
+        // the implementation
+        py::init([](const DataType & type, const dims_t & shape) {
+            return new ArrayType(type, shape.size(), &shape[0]);
+        }),
+        // the signature
+        "type"_a, "shape"_a,
+        // the docstring
+        "build an array of the given {type} and {shape}");
 
     // all done
     return;
