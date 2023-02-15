@@ -4,6 +4,9 @@
 # (c) 1998-2023 all rights reserved
 
 
+# external
+import journal
+
 # superclass
 from .Location import Location
 
@@ -53,19 +56,14 @@ class Object(Location):
 
         # if we don't have a channel
         if channel is None:
-            # get the journal
-            import journal
-
-            # and make one
+            # make one
             channel = journal.info("pyre.h5.object")
-
         # build the report
         channel.report(report=viewer().visit(self))
         # if we were asked to flush the channel
         if flush:
             # do it
             channel.log()
-
         # all done
         return
 
