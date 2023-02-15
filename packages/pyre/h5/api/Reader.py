@@ -40,7 +40,7 @@ class Reader:
         **kwds,
     ) -> typing.Optional[Object]:
         """
-        Read {file} and extract an h5 {object} with the structure of {query}
+        Open {uri} and extract an h5 {object} with the structure of {query} anchored at {path}
         """
         # analyze the {uri} and build the h5 {file}, passing any extra arguments to it
         file = self.open(uri=uri, mode=mode, **kwds)
@@ -58,6 +58,108 @@ class Reader:
         return query._pyre_identify(
             authority=self, file=file, object=anchor, errors=errors
         )
+
+    # framework hooks
+    def _pyre_onGroup(
+        self, file: File, object: Group, group: schema.group, errors
+    ) -> Group:
+        """
+        Process a {group}
+        """
+        # getting here implies that the lookup of the {object} that corresponds
+        # to the {group} layout was successful; the lookup endows {object} with
+        # its {_pyre_id} and {_pyre_location}; it also builds a {_pyre_layout},
+        # but it's not as articulated as {group} is, so we replace it; finally,
+        # the {_pyre_descriptors} and values of the {object} attributes must be
+        # populated
+        #
+        # get the {object} layout
+        layout = object._pyre_layout
+        # if the {object} has deduced its layout already and it is not a group
+        if layout is not None and not isinstance(layout, schema.group):
+            # there is a mismatch between the schema and the contents of the file
+            # make a channel
+            channel = journal.error("pyre.h5.reader")
+            # make a report
+            channel.line(f"type mismatch in '{object._pyre_location}'")
+            channel.line(f"expected a group, got {layout}")
+            channel.line(f"while reading '{file._pyre_uri}'")
+            # flush it
+            channel.log()
+            # in case errors aren't fatal, add the {group} to the error pile
+            if errors is not None:
+                # if the caller cares
+                errors.append(group)
+            # and bail
+            return object
+        # replace the layout with the {group}
+        object._pyre_layout = group
+        # go through the group contents
+        for name, descriptor in group._pyre_descriptors.items():
+            # attempt to
+            try:
+                # look up the name
+                entry = object._pyre_find(path=descriptor._pyre_name)
+            # if anything goes wrong
+            except RuntimeError:
+                # make a channel
+                channel = journal.error("pyre.h5.reader")
+                # make a report
+                channel.line(f"could not find '{name}'")
+                channel.line(f"at {object._pyre_location}")
+                channel.line(f"while reading '{file._pyre_uri}'")
+                # flush it
+                channel.log()
+                # and ignore this descriptor
+                continue
+            # figure out what it is
+            descriptor._pyre_identify(
+                authority=self, file=file, object=entry, errors=errors
+            )
+            # attach the {entry} to {object} under {name}
+            setattr(object, name, entry)
+        # all done
+        return object
+
+    def _pyre_onDataset(
+        self, file: File, object: Dataset, dataset: schema.dataset, errors
+    ) -> Dataset:
+        """
+        Process a dataset
+        """
+        # get the {object} layout
+        layout = object._pyre_layout
+        # if it's non-trivial make sure it's compatible with its schema
+        if layout is not None and not isinstance(layout, type(dataset)):
+            # there is a mismatch between the schema and the contents of the file
+            # make a channel
+            channel = journal.error("pyre.h5.reader")
+            # make a report
+            channel.line(f"type mismatch in {object._pyre_location}")
+            channel.line(f"expected a {dataset}")
+            channel.line(f"but got a {layout}")
+            channel.line(f"while reading '{file._pyre_uri}'")
+            # flush it
+            channel.log()
+            # in case errors aren't fatal, add the {group} to the error pile
+            if errors is not None:
+                # if the caller cares
+                errors.append(dataset)
+            # and bail
+            return object
+        # read the dataset value
+        object._pyre_read(file=file)
+        # all done
+        return object
+
+    def _pyre_schema(self, file, **kwds) -> schema.group:
+        """
+        Retrieve the schema of the data product
+        """
+        # the default is dynamic discovery, implemented by getting an explorer
+        explorer = Explorer()
+        # to discover the structure of the file
+        return explorer.visit(file=file)
 
     # implementation details
     def open(
@@ -114,113 +216,11 @@ class Reader:
         # complain
         channel.line(f"could not open an h5 file")
         channel.line(f"with the given uri '{uri}':")
-        channel.line(f"unknown scheme '{scheme}'")
+        channel.line(f"the scheme '{scheme}' is not supported")
         # flush
         channel.log()
         # and bail, in case errors aren't fatal
         return
-
-    # framework hooks
-    def _pyre_schema(self, file, **kwds) -> schema.group:
-        """
-        Retrieve the schema of the data product
-        """
-        # the default is dynamic discovery, implemented by getting an explorer
-        explorer = Explorer()
-        # to discover the structure of the file
-        return explorer.visit(file=file)
-
-    def _pyre_onGroup(
-        self, file: File, object: Group, group: schema.group, errors
-    ) -> Group:
-        """
-        Process a {group}
-        """
-        # getting here implies that the lookup of the {object} that corresponds
-        # to the {group} layout was successful; the lookup endows {object} with
-        # its {_pyre_id} and {_pyre_location}; it also builds a {_pyre_layout},
-        # but it's not as articulated as {group} is, so we replace it; finally,
-        # the {_pyre_descriptors} and values of the {object} attributes must be
-        # populated
-        #
-        # get the {object} layout
-        layout = object._pyre_layout
-        # if the {object} has deduced its layout already and it is not a group
-        if layout is not None and not isinstance(layout, schema.group):
-            # there is a mismatch between the schema and the contents of the file
-            # make a channel
-            channel = journal.error("pyre.h5.reader")
-            # make a report
-            channel.line(f"type mismatch in '{object._pyre_location}'")
-            channel.line(f"expected a group, got {layout}")
-            channel.line(f"while reading '{file._pyre_uri}'")
-            # flush it
-            channel.log()
-            # in case errors aren't fatal, add the {group} to the error pile
-            if errors is not None:
-                # if the caller cares
-                errors.append(group)
-            # and bail
-            return object
-        # replace the layout with the {group}
-        object._pyre_layout = group
-        # go through the group contents
-        for name, descriptor in group._pyre_descriptors.items():
-            # attempt to
-            try:
-                # look up the name
-                entry = object._pyre_find(path=descriptor._pyre_name)
-            # if anything goes wrong
-            except:
-                # make a channel
-                channel = journal.error("pyre.h5.reader")
-                # make a report
-                channel.line(f"could not find '{name}'")
-                channel.line(f"at {object._pyre_location}")
-                channel.line(f"while reading '{file._pyre_uri}'")
-                # flush it
-                channel.log()
-                # and ignore this descriptor
-                continue
-            # figure out what it is
-            descriptor._pyre_identify(
-                authority=self, file=file, object=entry, errors=errors
-            )
-            # attach the {entry} to {object} under {name}
-            setattr(object, name, entry)
-        # all done
-        return object
-
-    def _pyre_onDataset(
-        self, file: File, object: Dataset, dataset: schema.dataset, errors
-    ) -> Dataset:
-        """
-        Process a dataset
-        """
-        # get the {object} layout
-        layout = object._pyre_layout
-        # if it's non-trivial make sure it's compatible with its schema
-        if layout is not None and not isinstance(layout, type(dataset)):
-            # there is a mismatch between the schema and the contents of the file
-            # make a channel
-            channel = journal.error("pyre.h5.reader")
-            # make a report
-            channel.line(f"type mismatch in {object._pyre_location}")
-            channel.line(f"expected a {dataset}")
-            channel.line(f"but got a {layout}")
-            channel.line(f"while reading '{file._pyre_uri}'")
-            # flush it
-            channel.log()
-            # in case errors aren't fatal, add the {group} to the error pile
-            if errors is not None:
-                # if the caller cares
-                errors.append(dataset)
-            # and bail
-            return object
-        # read the dataset value
-        object._pyre_read(file=file)
-        # all done
-        return object
 
 
 # end of file
