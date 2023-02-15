@@ -22,9 +22,6 @@ class Dataset(Descriptor):
     # my mixins
     from .typed import array, bool, complex, float, int, str, timestamp, containers
 
-    # by default, everything is a scalar
-    shape = "scalar"
-
     # metamethods
     def __init__(self, doc="", **kwds):
         # chain up
@@ -117,9 +114,7 @@ class Dataset(Descriptor):
         # if this fails
         except AttributeError:
             # we understand certain compound types, so give it a shot
-            atom = cls._pyre_deduce_compound(
-                name=name, cell=cell, info=info, shape=shape
-            )
+            atom = cls._pyre_deduce_compound(name=name, cell=cell, info=info)
         # if the shape is empty
         if len(shape) == 0:
             # instantiate the atom and return it
@@ -139,7 +134,7 @@ class Dataset(Descriptor):
         return cls._pyre_deduce_generic(name=name, cell=cell, info=info, shape=shape)
 
     @classmethod
-    def _pyre_deduce_compound(cls, name, cell, info, **kwds):
+    def _pyre_deduce_compound(cls, name, cell, info):
         """
         Check whether this is a compound type we understand
         """
