@@ -39,7 +39,7 @@ class Group(Descriptor, metaclass=Schema):
         # grab my attributes
         attributes = self.__dict__
         # prep my content
-        content = {}
+        content = Inventory()
         # go through the schema
         for name, descriptor in descriptors.items():
             # clone the source {descriptor} to decouple my state
