@@ -143,7 +143,35 @@ pyre::h5::py::group(py::module & m)
         // the signature
         "index"_a,
         // the docstring
-        "get the name of the member at the given location");
+        "get the name of the member at the given index");
+
+    // member creation
+    cls.def(
+        // the name
+        "create",
+        // the implementation
+        [](const Group & self, const string_t & path) -> Group {
+            // make the group and return it
+            return self.createGroup(path);
+        },
+        // the signature
+        "path"_a,
+        // the docstring
+        "create a new group of the given {name}");
+
+    cls.def(
+        // the name
+        "create",
+        // the implementation
+        [](const Group & self, const string_t & path, const DataType & type,
+           const DataSpace & space) -> DataSet {
+            // make the dataset and return it
+            return self.createDataSet(path, type, space);
+        },
+        // the signature
+        "path"_a, "type"_a, "space"_a,
+        // the docstring
+        "create a new group of the given {name}");
 
     // metamethods
     cls.def(
