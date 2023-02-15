@@ -20,7 +20,7 @@ class Dataset(Descriptor):
     """
 
     # my mixins
-    from .typed import array, bool, complex, float, int, str, timestamp
+    from .typed import array, bool, complex, float, int, str, timestamp, containers
 
     # by default, everything is a scalar
     shape = "scalar"
@@ -93,19 +93,6 @@ class Dataset(Descriptor):
             return super()._pyre_identify(authority=authority, **kwds)
         # otherwise, invoke the handler
         return handler(dataset=self, **kwds)
-
-    # mixin for all sequences
-    class containers:
-
-        # hooks
-        def _pyre_clone(self, **kwds):
-            """
-            Make a copy
-            """
-            # add my schema to the pile and chain up
-            return super()._pyre_clone(
-                schema=self.schema, default=self.container(self._default), **kwds
-            )
 
     # decoration
     def _pyre_marker(self):

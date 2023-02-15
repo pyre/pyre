@@ -13,5 +13,8 @@ from .Integer import Integer as int
 from .String import String as str
 from .Timestamp import Timestamp as timestamp
 
+# container mixins
+from .Container import Container as containers
+
 
 # end of file
