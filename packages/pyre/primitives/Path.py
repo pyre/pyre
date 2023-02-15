@@ -382,7 +382,8 @@ class Path(tuple):
         """
         Check whether I exist
         """
-        # MGA - 20160121
+        # MGA: 20160121
+        #
         # N.B. do not be tempted to return {self} on success and {None} on failure: our
         # representation of the {cwd} is an empty tuple, and that would always fail the
         # existence test. at least until we short circuit {__bool__} to always return
