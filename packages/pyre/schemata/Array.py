@@ -21,11 +21,9 @@ class Array(Sequence):
     typename = "array"  # the name of my type
 
     # meta-methods
-    def __init__(self, shape=None, schema=Float(), **kwds):
+    def __init__(self, schema=Float(), **kwds):
         # chain up, potentially with my local default value
         super().__init__(schema=schema, **kwds)
-        # save my shape
-        self.shape = shape
         # all done
         return
 
