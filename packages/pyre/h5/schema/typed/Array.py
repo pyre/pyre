@@ -29,8 +29,6 @@ class Array:
         """
         Read my value from disk and update my cache
         """
-        # update my shape
-        self.shape = dataset._pyre_id.shape
         # build my value
         value = Raster(dataset=dataset, schema=self.schema)
         # cache it
