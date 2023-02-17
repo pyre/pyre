@@ -27,12 +27,12 @@ def test():
         # something simple
         answer = pyre.h5.schema.int()
         answer.default = 42
-        answer.doc = "the answer to the ultimate question"
+        answer.__doc__ = "the answer to the ultimate question"
 
         # a compatible container
         pols = pyre.h5.schema.strings()
         pols.default = ["HH", "HV", "VH", "VV"]
-        pols.doc = "the list of polarizations"
+        pols.__doc__ = "the list of polarizations"
 
     # instantiate
     group = Group(name="root")
