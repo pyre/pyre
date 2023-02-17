@@ -24,17 +24,17 @@ def test():
         # something boring
         flag = pyre.h5.schema.bool()
         flag.default = True
-        flag.doc = "a boolean"
+        flag.__doc__ = "a boolean"
 
         # something simple
         answer = pyre.h5.schema.int()
         answer.default = 42
-        answer.doc = "the answer to the ultimate question"
+        answer.__doc__ = "the answer to the ultimate question"
 
         # a compatible container
         pols = pyre.h5.schema.list(schema=pyre.h5.schema.str())
         pols.default = ["HH", "HV", "VH", "VV"]
-        pols.doc = "the list of polarizations"
+        pols.__doc__ = "the list of polarizations"
 
     # embed it in another group
     class Group(pyre.h5.schema.group):

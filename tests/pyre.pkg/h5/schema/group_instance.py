@@ -23,11 +23,11 @@ def test():
 
         # something simple
         id = pyre.h5.schema.int()
-        id.doc = "a simple dataset"
+        id.__doc__ = "a simple dataset"
 
         # something a bit more complicated
         pols = pyre.h5.schema.list()
-        pols.doc = "a dataset that's a container"
+        pols.__doc__ = "a dataset that's a container"
 
     # instantiate
     group = Group(name="root")

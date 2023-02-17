@@ -27,7 +27,7 @@ def test():
         # something simple
         answer = pyre.h5.schema.int()
         answer.default = 42
-        answer.doc = "the answer to the ultimate question"
+        answer.__doc__ = "the answer to the ultimate question"
 
     # verify we can read regular class attributes
     assert Group.flag is True
@@ -38,7 +38,7 @@ def test():
     assert isinstance(answer, pyre.h5.schema.int)
     # and that we have access to its metadata
     assert answer.default == 42
-    assert answer.doc == "the answer to the ultimate question"
+    assert answer.__doc__ == "the answer to the ultimate question"
 
     # all done
     return
