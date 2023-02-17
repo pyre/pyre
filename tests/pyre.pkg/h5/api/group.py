@@ -22,12 +22,12 @@ def test():
 
         # something simple
         id = pyre.h5.schema.int()
-        id.doc = "a simple dataset"
+        id.__doc__ = "a simple dataset"
 
         # something a bit more complicated
         pols = pyre.h5.schema.strings()
         pols.default = "HH", "VV"
-        pols.doc = "a dataset that's a container"
+        pols.__doc__ = "a dataset that's a container"
 
     # now, make a group with this layout
     g = pyre.h5.api.group(at="/", layout=Group())
@@ -35,9 +35,9 @@ def test():
     # it has no subgroups
     assert tuple(g._pyre_groups()) == ()
     # and it has two datasets
-    assert tuple(g._pyre_datasets()) == ("id", "pols")
+    assert tuple(name for name, _ in g._pyre_datasets()) == ("id", "pols")
     # for a total of two locations
-    assert tuple(g._pyre_locations()) == ("id", "pols")
+    assert tuple(name for name, _ in g._pyre_locations()) == ("id", "pols")
 
     # access the members
     assert g.id == 0
