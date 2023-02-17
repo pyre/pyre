@@ -25,7 +25,7 @@ def test():
         # something boring
         flag = pyre.h5.schema.bool()
         flag.default = True
-        flag.doc = "a boolean"
+        flag.__doc__ = "a boolean"
 
     # embed it in another group
     class Group(pyre.h5.schema.group):
