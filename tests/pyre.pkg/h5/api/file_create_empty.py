@@ -18,7 +18,7 @@ def test():
     # fix the location of the test file
     uri = pyre.primitives.path("file_create_empty.h5")
     # create it
-    f = pyre.h5.file().open(uri=uri, mode="w")
+    f = pyre.h5.api.file()._pyre_local(uri=uri, mode="w")
 
     # verify it's there
     assert uri.exists()
