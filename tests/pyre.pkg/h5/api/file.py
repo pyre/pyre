@@ -16,16 +16,16 @@ def test():
     import pyre
 
     # get the class
-    f = pyre.h5.file
+    f = pyre.h5.api.file
     # sort its inheritance
     pedigree = f.mro()
     # check it
     assert pedigree == [
-        pyre.h5.file,
-        pyre.h5.group,
-        pyre.h5.object,
-        pyre.h5.location,
-        pyre.h5.identifier,
+        pyre.h5.api.file,
+        pyre.h5.api.group,
+        pyre.h5.api.object,
+        pyre.h5.api.location,
+        pyre.h5.api.identifier,
         object,
     ]
 
