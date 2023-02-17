@@ -22,15 +22,15 @@ def test():
 
         # something simple
         id = pyre.h5.schema.int()
-        id.doc = "a simple dataset"
+        id.__doc__ = "a simple dataset"
 
         flag = pyre.h5.schema.bool(default=False)
-        flag.doc = "a boolean"
+        flag.__doc__ = "a boolean"
 
         # something a bit more complicated
         pols = pyre.h5.schema.strings()
         pols.default = "HH", "VV"
-        pols.doc = "a dataset that's a container"
+        pols.__doc__ = "a dataset that's a container"
 
     # and the main group layout
     class Group(pyre.h5.schema.group):
