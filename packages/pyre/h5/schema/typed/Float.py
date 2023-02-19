@@ -17,8 +17,6 @@ class Float:
         """
         # read the value
         value = dataset._pyre_id.double()
-        # store it
-        self.value = value
         # and return the raw contents
         return value
 

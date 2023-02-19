@@ -27,8 +27,6 @@ class Strings(Dataset.list):
         """
         # read the value
         value = dataset._pyre_id.strings()
-        # store it
-        self.value = value
         # and return the raw contents
         return value
 
