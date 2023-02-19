@@ -13,24 +13,6 @@ class Descriptor:
     The base structural element
     """
 
-    # public data
-    @property
-    def doc(self):
-        """
-        Provide access to my docstring
-        """
-        return self.__doc__
-
-    @doc.setter
-    def doc(self, explanation: str):
-        """
-        Set my docstring
-        """
-        # attach
-        self.__doc__ = explanation
-        # and done
-        return
-
     # metamethods
     def __init__(self, name=None, **kwds):
         # chain up
