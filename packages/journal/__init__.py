@@ -65,6 +65,12 @@ if without_libjournal:
     from .Error import Error as error
     from .Help import Help as help
 
+    # lower level entities that users may want to subclass
+    from .Device import Device as device
+    from .Renderer import Renderer as renderer
+    from .Alert import Alert as alert
+    from .Memo import Memo as memo
+
     # convenience function to set the application name
     def application(name):
         """
@@ -123,18 +129,18 @@ if without_libjournal:
 # if we have access to the bindings
 else:
     # let the c++ library take over
-    # pull the convenience methods; their interface is the same as the pure python implementation
-    quiet = libjournal.quiet
-    logfile = libjournal.logfile
-    application = libjournal.application
-    decor = libjournal.decor
-    detail = libjournal.detail
-
     # publish the keeper of the global state
     chronicler = libjournal.Chronicler
 
+    # exceptions
+    JournalError = exceptions.JournalError
+    FirewallError = libjournal.FirewallError
+    DebugError = libjournal.DebugError
+    ApplicationError = libjournal.ApplicationError
+
     # devices
     trash = libjournal.Trash
+    file = libjournal.File
     cout = libjournal.Console
     cerr = libjournal.ErrorConsole
 
@@ -147,11 +153,19 @@ else:
     error = libjournal.Error
     help = libjournal.Help
 
-    # exceptions
-    JournalError = exceptions.JournalError
-    FirewallError = libjournal.FirewallError
-    DebugError = libjournal.DebugError
-    ApplicationError = libjournal.ApplicationError
+    # lower level entities that users may want to subclass
+    device = libjournal.Device
+    # renderer = libjournal.Renderer
+    # alert = libjournal.Alert
+    # memo = libjournal.Memo
+
+    # pull the convenience methods; their interface is the same as the pure python implementation
+    application = libjournal.application
+    quiet = libjournal.quiet
+    logfile = libjournal.logfile
+    decor = libjournal.decor
+    detail = libjournal.detail
+
 
 # publish the color generator
 from .ANSI import ANSI as ansi
