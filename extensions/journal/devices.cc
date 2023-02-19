@@ -12,10 +12,10 @@
 // augment the namespace
 namespace pyre::journal::py::trampoline {
     // with the device trampoline
-    class Bounce;
+    class Device;
 } // namespace pyre::journal::py::trampoline
 
-class pyre::journal::py::trampoline::Bounce : public device_t {
+class pyre::journal::py::trampoline::Device : public device_t {
     // pull the constructors
 public:
     using device_t::Device;
@@ -47,7 +47,7 @@ void
 pyre::journal::py::devices(py::module & m)
 {
     // the base device
-    py::class_<device_t, device_t::pointer_type, trampoline::Bounce>(m, "Device")
+    py::class_<device_t, device_t::pointer_type, trampoline::Device>(m, "Device")
         // constructor
         .def(py::init<string_t>(), "name"_a)
         // accessor
