@@ -17,8 +17,6 @@ class Integer:
         """
         # read the value
         value = dataset._pyre_id.int()
-        # store it
-        self.value = value
         # and return the raw contents
         return value
 

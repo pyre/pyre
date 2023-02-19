@@ -17,8 +17,6 @@ class Complex:
         """
         # read the value
         value = dataset._pyre_id.complex()
-        # store it
-        self.value = value
         # and return the raw contents
         return value
 
