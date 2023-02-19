@@ -31,8 +31,6 @@ class Array:
         """
         # build my value
         value = Raster(dataset=dataset, schema=self.schema)
-        # cache it
-        self.value = value
         # and return it
         return value
 

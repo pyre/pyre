@@ -17,10 +17,8 @@ class Timestamp:
         """
         # read the value; timestamps are stored as strings
         value = dataset._pyre_id.str()
-        # store it; drop nanosecond precision since {strptime} can't handle it
-        self.value = value[:26]
         # and return the raw contents
-        return value
+        return value[:26]
 
 
 # end of file
