@@ -5,7 +5,7 @@
 
 
 # superclass
-from ..Dataset import Dataset
+from ..schema.Dataset import Dataset
 
 
 # a list of strings
