@@ -9,6 +9,13 @@
 // namespace setup
 #include "forward.h"
 
+// modules
+#include "__init__.h"
+// subpackages
+#include "memory/__init__.h"
+#include "grid/__init__.h"
+#include "timers/__init__.h"
+#include "viz/__init__.h"
 
 // the module entry point
 PYBIND11_MODULE(pyre, m)
@@ -19,14 +26,14 @@ PYBIND11_MODULE(pyre, m)
     // register the module api
     pyre::py::api(m);
 
-    // grid
-    pyre::py::grid::grid(m);
     // memory
-    pyre::py::memory::memory(m);
+    pyre::py::memory::__init__(m);
+    // grid
+    pyre::py::grid::__init__(m);
     // timers
-    pyre::py::timers::timers(m);
+    pyre::py::timers::__init__(m);
     // viz
-    pyre::py::viz::viz(m);
+    pyre::py::viz::__init__(m);
 }
 
 

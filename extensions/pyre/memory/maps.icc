@@ -36,6 +36,15 @@ pyre::py::memory::constmap(py::module & m, classname_t name, docstring_t docstri
         // the signature
         "uri"_a);
 
+    // uri
+    cls.def_property_readonly(
+        // the name of the property
+        "uri",
+        // the getter
+        &map_t::uri,
+        // the docstring
+        "the path to the backing store");
+
     // read-only access
     bindConstStorage<map_t>(cls);
 
@@ -71,6 +80,15 @@ pyre::py::memory::map(py::module & m, classname_t name, docstring_t docstring)
         "create a new memory map with the given number of {cells}",
         // the signature
         "uri"_a, "cells"_a);
+
+    // uri
+    cls.def_property_readonly(
+        // the name of the property
+        "uri",
+        // the getter
+        &map_t::uri,
+        // the docstring
+        "the path to the backing store");
 
     // read-only access
     bindConstStorage<map_t>(cls);

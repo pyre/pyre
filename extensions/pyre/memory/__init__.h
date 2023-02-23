@@ -4,14 +4,14 @@
 // (c) 1998-2023 all rights reserved
 
 // code guard
-#if !defined(pyre_py_memory_forward_h)
-#define pyre_py_memory_forward_h
+#if !defined(pyre_py_memory___init___h)
+#define pyre_py_memory___init___h
 
 
-// the {pyre} extension namespace
+// the {memory} subpackage
 namespace pyre::py::memory {
-    // bindings for file backed storage
-    void maps(py::module &);
+    // the package initializer
+    void __init__(py::module &);
 } // namespace pyre::py::memory
 
 

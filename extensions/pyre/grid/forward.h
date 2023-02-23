@@ -10,9 +10,6 @@
 
 // the {pyre} extension namespace
 namespace pyre::py::grid {
-    // the initializer
-    void grid(py::module &);
-
     // indices
     void indices(py::module &);
     // orders

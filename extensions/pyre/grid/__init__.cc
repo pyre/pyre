@@ -8,12 +8,14 @@
 #include "external.h"
 // namespace setup
 #include "forward.h"
+// package declaration
+#include "__init__.h"
 
 
 // wrappers over {pyre::grid::map} template expansions
 // build the submodule
 void
-pyre::py::grid::grid(py::module & m)
+pyre::py::grid::__init__(py::module & m)
 {
     // create a {grid} submodule
     auto grid = m.def_submodule(
