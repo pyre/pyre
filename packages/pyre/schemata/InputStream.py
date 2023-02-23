@@ -65,7 +65,7 @@ class InputStream(Schema, Dashboard):
 
     # meta-methods
     def __init__(self, default="stdin", mode=mode, **kwds):
-        # chain up, potentially with local default
+        # chain up
         super().__init__(default=default, **kwds)
         # save my mode
         self.mode = mode
