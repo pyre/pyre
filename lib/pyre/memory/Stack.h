@@ -47,6 +47,8 @@ public:
     constexpr auto bytes() const -> size_type;
     // access to the raw data pointer
     constexpr auto data() const -> pointer;
+    // access to the raw data pointer in a form suitable for diagnostics
+    constexpr auto where() const -> const void *;
 
     // iterator support
 public:
@@ -75,8 +77,8 @@ public:
     // constructors
     Stack(const Stack &) = default;
     Stack(Stack &&) = default;
-    Stack & operator= (const Stack &) = default;
-    Stack & operator= (Stack &&) = default;
+    Stack & operator=(const Stack &) = default;
+    Stack & operator=(Stack &&) = default;
 };
 
 
@@ -86,6 +88,6 @@ public:
 #undef pyre_memory_Stack_icc
 
 
-# endif
+#endif
 
 // end of file
