@@ -23,7 +23,9 @@ pyre::py::memory::__init__(py::module & m)
         // its docstring
         "wrappers over {pyre::memory} template expansions");
 
-    // add the various maps
+    // buffers on the heap
+    heaps(memory);
+    // file backed memory
     maps(memory);
 
     // all done
