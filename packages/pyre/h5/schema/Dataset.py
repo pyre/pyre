@@ -24,7 +24,7 @@ class Dataset(Descriptor):
     memtype = None
 
     # my mixins
-    from .typed import array, bool, complex, float, int, str, timestamp, containers
+    from ..typed import array, bool, complex, float, int, str, timestamp, containers
 
     # metamethods
     def __init__(self, doc="", **kwds):
