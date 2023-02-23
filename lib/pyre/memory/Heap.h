@@ -28,7 +28,7 @@ public:
     using size_type = typename cell_type::size_type;
     using cell_count_type = typename cell_type::cell_count_type;
     // my handle
-    using handle_type = std::shared_ptr<value_type []>;
+    using handle_type = std::shared_ptr<value_type[]>;
 
     // metamethods
 public:
@@ -45,6 +45,8 @@ public:
     inline auto bytes() const -> size_type;
     // access to the raw data pointer
     inline auto data() const -> pointer;
+    // access to the raw data pointer in a form suitable for including in diagnostics
+    inline auto where() const -> const void *;
     // the shared pointer
     inline auto handle() const -> handle_type;
 
@@ -72,8 +74,8 @@ public:
     // constructors
     Heap(const Heap &) = default;
     Heap(Heap &&) = default;
-    Heap & operator= (const Heap &) = default;
-    Heap & operator= (Heap &&) = default;
+    Heap & operator=(const Heap &) = default;
+    Heap & operator=(Heap &&) = default;
 };
 
 
@@ -83,6 +85,6 @@ public:
 #undef pyre_memory_Heap_icc
 
 
-# endif
+#endif
 
 // end of file
