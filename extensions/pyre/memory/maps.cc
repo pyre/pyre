@@ -29,7 +29,15 @@ pyre::py::memory::maps(py::module & m)
         "ByteConstMap",
         // docstring
         "a read-only file backed memory buffer of {char}");
-    constmap<unsigned char>(
+    // i1
+    constmap<int8_t>(
+        // in scope
+        m,
+        // class name
+        "Int8ConstMap",
+        // docstring
+        "a read-only file backed memory buffer of {int8_t}");
+    constmap<uint8_t>(
         // in scope
         m,
         // class name
@@ -44,6 +52,13 @@ pyre::py::memory::maps(py::module & m)
         "Int16ConstMap",
         // docstring
         "a read-only file backed memory buffer of {int16_t}");
+    constmap<uint16_t>(
+        // in scope
+        m,
+        // class name
+        "UInt16ConstMap",
+        // docstring
+        "a read-only file backed memory buffer of {uint16_t}");
     // i4
     constmap<int32_t>(
         // in scope
@@ -52,6 +67,13 @@ pyre::py::memory::maps(py::module & m)
         "Int32ConstMap",
         // docstring
         "a read-only file backed memory buffer of {int32_t}");
+    constmap<uint32_t>(
+        // in scope
+        m,
+        // class name
+        "UInt32ConstMap",
+        // docstring
+        "a read-only file backed memory buffer of {uint32_t}");
     // i8
     constmap<int64_t>(
         // in scope
@@ -60,6 +82,13 @@ pyre::py::memory::maps(py::module & m)
         "Int64ConstMap",
         // docstring
         "a read-only file backed memory buffer of {int64_t}");
+    constmap<uint64_t>(
+        // in scope
+        m,
+        // class name
+        "UInt64ConstMap",
+        // docstring
+        "a read-only file backed memory buffer of {uint64_t}");
     // d4
     constmap<float>(
         // in scope
@@ -102,7 +131,15 @@ pyre::py::memory::maps(py::module & m)
         "ByteMap",
         // docstring
         "a read/write file backed memory buffer of {char}");
-    map<unsigned char>(
+    // i1
+    map<int8_t>(
+        // in scope
+        m,
+        // class name
+        "Int8Map",
+        // docstring
+        "a read/write file backed memory buffer of {int8_t}");
+    map<uint8_t>(
         // in scope
         m,
         // class name
@@ -117,6 +154,13 @@ pyre::py::memory::maps(py::module & m)
         "Int16Map",
         // docstring
         "a read/write file backed memory buffer of {int16_t}");
+    map<uint16_t>(
+        // in scope
+        m,
+        // class name
+        "UInt16Map",
+        // docstring
+        "a read/write file backed memory buffer of {uint16_t}");
     // i4
     map<int32_t>(
         // in scope
@@ -133,6 +177,13 @@ pyre::py::memory::maps(py::module & m)
         "Int64Map",
         // docstring
         "a read/write file backed memory buffer of {int64_t}");
+    map<uint64_t>(
+        // in scope
+        m,
+        // class name
+        "UInt64Map",
+        // docstring
+        "a read/write file backed memory buffer of {uint64_t}");
     // d4
     map<float>(
         // in scope
