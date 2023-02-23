@@ -6,7 +6,7 @@
 
 // externals
 #include "external.h"
-// the package globla declarations
+// the package global declarations
 #include "../__init__.h"
 // the local declarations
 #include "__init__.h"
@@ -16,7 +16,7 @@
 
 // file objects
 void
-pyre::h5::py::datatypes::datatypes(py::module & m)
+pyre::h5::py::datatypes::__init__(py::module & m)
 {
     // make a new namespace to hold datatype descriptions
     auto datatypes = m.def_submodule(

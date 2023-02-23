@@ -14,7 +14,7 @@
 
 namespace pyre::h5::py::datatypes {
     // the module initializer
-    void datatypes(py::module &);
+    void __init__(py::module &);
 } // namespace pyre::h5::py::datatypes
 
 #endif
