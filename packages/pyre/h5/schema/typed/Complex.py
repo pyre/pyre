@@ -13,7 +13,7 @@ class Complex:
     # value synchronization
     def _pyre_pull(self, dataset):
         """
-        Read my value from disk and update my cache
+        Read my value from disk
         """
         # read the value
         value = dataset._pyre_id.complex()
