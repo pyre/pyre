@@ -76,7 +76,7 @@ class Dataset(Object):
         # if all is well, attempt to
         try:
             # read the value and update the cache
-            self.value = self._pyre_layout._pyre_pull(dataset=self)
+            self.value = self._pyre_pull()
         # if this fails
         except NotImplementedError as error:
             # make a channel
@@ -91,7 +91,18 @@ class Dataset(Object):
         # and return something harmless, in case errors aren't fatal
         return None
 
-    def pyre_write(self, file):
+    def _pyre_pull(self):
+        """
+        Extract my value from disk and populate my cache
+        """
+        # get my layout
+        layout = self._pyre_layout
+        # ask it to extract the value from the h5 store and process it
+        value = layout._pyre_pull(dataset=self)
+        # hand it off
+        return value
+
+    def _pyre_write(self, file):
         """
         Write my cache value to disk
         """
