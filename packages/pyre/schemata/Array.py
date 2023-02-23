@@ -21,9 +21,11 @@ class Array(Sequence):
     typename = "array"  # the name of my type
 
     # meta-methods
-    def __init__(self, schema=Float(), **kwds):
-        # chain up, potentially with my local default value
+    def __init__(self, schema=Float(), rank=None, **kwds):
+        # chain up
         super().__init__(schema=schema, **kwds)
+        # save my rank
+        self.rank = rank
         # all done
         return
 
