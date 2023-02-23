@@ -8,11 +8,12 @@
 #include "external.h"
 // namespace setup
 #include "forward.h"
-
+// package declarations
+#include "__init__.h"
 
 // build the submodule
 void
-pyre::py::timers::timers(py::module & m)
+pyre::py::timers::__init__(py::module & m)
 {
     // create a submodule
     auto timers = m.def_submodule(

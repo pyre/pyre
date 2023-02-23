@@ -8,12 +8,14 @@
 #include "external.h"
 // namespace setup
 #include "forward.h"
+// package declarations
+#include "__init__.h"
 
 
 // wrappers over {pyre::viz} entities
 // build the submodule
 void
-pyre::py::viz::viz(py::module & m)
+pyre::py::viz::__init__(py::module & m)
 {
     // create a {viz} submodule
     auto viz = m.def_submodule(
