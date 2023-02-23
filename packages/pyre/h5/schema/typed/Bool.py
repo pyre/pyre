@@ -24,8 +24,8 @@ class Bool:
         """
         # read the value; values are stored as strings, for now
         value = dataset._pyre_id.str()
-        # and return the raw contents
-        return value
+        # process it and return it
+        return self.process(value)
 
 
 # end of file
