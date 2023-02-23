@@ -19,6 +19,10 @@ class Dataset(Descriptor):
     The base class of all typed datasets
     """
 
+    # types
+    disktype = None
+    memtype = None
+
     # my mixins
     from .typed import array, bool, complex, float, int, str, timestamp, containers
 
