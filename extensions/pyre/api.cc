@@ -8,14 +8,13 @@
 #include "external.h"
 // namespace setup
 #include "forward.h"
-
+// the package declarations
+#include "__init__.h"
 
 // add global bindings to the module
 void
-pyre::py::
-api(py::module & m) {
-    // module attributes
-
+pyre::py::api(py::module & m)
+{
     // all done
     return;
 }

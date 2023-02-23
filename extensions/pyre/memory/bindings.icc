@@ -14,15 +14,6 @@ template <class memT>
 void
 pyre::py::memory::bindConstStorage(shared_holder_t<memT> & cls)
 {
-    // uri
-    cls.def_property_readonly(
-        // the name of the property
-        "uri",
-        // the getter
-        &memT::uri,
-        // the docstring
-        "the path to the backing store");
-
     // where
     cls.def_property_readonly(
         // the name of the property

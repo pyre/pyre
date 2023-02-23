@@ -4,15 +4,14 @@
 // (c) 1998-2023 all rights reserved
 
 // code guard
-#if !defined(pyre_py_timers_forward_h)
-#define pyre_py_timers_forward_h
+#if !defined(pyre_py_timers___init___h)
+#define pyre_py_timers___init___h
 
 
-// the {pyre} extension namespace
+// the {timers} subpackage
 namespace pyre::py::timers {
-    // timer types
-    void wall_timers(py::module &);
-    void process_timers(py::module &);
+    // the package initializer
+    void __init__(py::module &);
 } // namespace pyre::py::timers
 
 

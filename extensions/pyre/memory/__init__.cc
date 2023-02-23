@@ -8,19 +8,20 @@
 #include "external.h"
 // namespace setup
 #include "forward.h"
+// my package declarations
+#include "__init__.h"
 
-
-// wrappers over {pyre::memory::map} template expansions
+// wrappers over {pyre::memory} template expansions
 // build the submodule
 void
-pyre::py::memory::memory(py::module & m)
+pyre::py::memory::__init__(py::module & m)
 {
     // create a {memory} submodule
     auto memory = m.def_submodule(
         // the name of the module
         "memory",
         // its docstring
-        "wrappers over {pyre::memory::map_t} template expansions");
+        "wrappers over {pyre::memory} template expansions");
 
     // add the various maps
     maps(memory);
