@@ -12,10 +12,9 @@
 
 // metamethods
 template <class T, bool isConst>
-pyre::memory::View<T, isConst>::
-View(pointer data, cell_count_type cells) :
-    _data{ data },
-    _cells{ cells }
+pyre::memory::View<T, isConst>::View(pointer data, cell_count_type cells) :
+    _data { data },
+    _cells { cells }
 {}
 
 
@@ -23,8 +22,7 @@ View(pointer data, cell_count_type cells) :
 // get the number of cells in the block
 template <class T, bool isConst>
 auto
-pyre::memory::View<T, isConst>::
-cells() const -> cell_count_type
+pyre::memory::View<T, isConst>::cells() const -> cell_count_type
 {
     // easy
     return _cells;
@@ -34,8 +32,7 @@ cells() const -> cell_count_type
 // get the memory footprint of the block
 template <class T, bool isConst>
 auto
-pyre::memory::View<T, isConst>::
-bytes() const -> size_type
+pyre::memory::View<T, isConst>::bytes() const -> size_type
 {
     // scale the number of cells by the cell size
     return cells() * sizeof(value_type);
@@ -45,8 +42,17 @@ bytes() const -> size_type
 // access to the data pointer
 template <class T, bool isConst>
 auto
-pyre::memory::View<T, isConst>::
-data() const -> pointer
+pyre::memory::View<T, isConst>::data() const -> pointer
+{
+    // return the raw data pointer
+    return _data;
+}
+
+
+// access to the data pointer
+template <class T, bool isConst>
+auto
+pyre::memory::View<T, isConst>::where() const -> const void *
 {
     // return the raw data pointer
     return _data;
@@ -56,8 +62,7 @@ data() const -> pointer
 // iterator support
 template <class T, bool isConst>
 auto
-pyre::memory::View<T, isConst>::
-begin() const -> pointer
+pyre::memory::View<T, isConst>::begin() const -> pointer
 {
     // the beginning of the block
     return data();
@@ -66,8 +71,7 @@ begin() const -> pointer
 
 template <class T, bool isConst>
 auto
-pyre::memory::View<T, isConst>::
-end() const -> pointer
+pyre::memory::View<T, isConst>::end() const -> pointer
 {
     // one past the last cell in the block
     return data() + cells();
@@ -77,20 +81,17 @@ end() const -> pointer
 // data access
 template <class T, bool isConst>
 auto
-pyre::memory::View<T, isConst>::
-at(size_type pos) const -> reference
+pyre::memory::View<T, isConst>::at(size_type pos) const -> reference
 {
     // if the request is out of bounds
     if (pos >= cells()) {
         // make a channel
         pyre::journal::firewall_t channel("pyre.memory.bounds");
         // and complain
-        channel
-            << "out of bounds access:" << pyre::journal::newline
-            << "  index " << pos << " must be less than " << cells() << pyre::journal::newline
-            << "  in pyre::memory::View::operator[]" << pyre::journal::newline
-            << "  with a view at " << data()
-            << pyre::journal::endl(__HERE__);
+        channel << "out of bounds access:" << pyre::journal::newline << "  index " << pos
+                << " must be less than " << cells() << pyre::journal::newline
+                << "  in pyre::memory::View::operator[]" << pyre::journal::newline
+                << "  with a view at " << data() << pyre::journal::endl(__HERE__);
         // unreachable, unless the user has marked this error as non-fatal
         // clamp {pos} to the last element in the block
         pos = cells() - 1;
@@ -103,8 +104,7 @@ at(size_type pos) const -> reference
 
 template <class T, bool isConst>
 auto
-pyre::memory::View<T, isConst>::
-operator [] (size_type pos) const -> reference
+pyre::memory::View<T, isConst>::operator[](size_type pos) const -> reference
 {
     // return a reference to the cell at {pos}
     return _data[pos];
