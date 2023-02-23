@@ -10,6 +10,8 @@
 
 // the {pyre} extension namespace
 namespace pyre::py::memory {
+    // bindings for buffers on the heap
+    void heaps(py::module &);
     // bindings for file backed storage
     void maps(py::module &);
 } // namespace pyre::py::memory
