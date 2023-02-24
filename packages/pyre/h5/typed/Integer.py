@@ -14,9 +14,16 @@ class Integer:
     Implementation details of the {int} dataset mixin
     """
 
-    # type info
-    disktype = pyre.libh5.datatypes.IntType
-    memtype = None
+    # metamethods
+    def __init__(self, memtype=None, disktype=None, **kwds):
+        # chain up
+        super().__init__(**kwds)
+        # save my in-memory type
+        self.memtype = memtype if memtype is not None else pyre.h5.memtypes.int64()
+        # save my on-disk type
+        self.disktype = disktype if disktype is not None else pyre.h5.disktypes.int()
+        # all done
+        return
 
     # value synchronization
     def _pyre_pull(self, dataset):
