@@ -128,6 +128,47 @@ pyre::h5::py::enums(py::module & m)
         .value("set", H5T_NORM_MSBSET)
         .value("none", H5T_NORM_NONE);
 
+    // string character sets
+    py::enum_<H5T_cset_t>(m, "CharacterSet", "the string character sets")
+        .value("error", H5T_CSET_ERROR)
+        .value("ascii", H5T_CSET_ASCII)
+        .value("utf8", H5T_CSET_UTF8)
+        .value("reserved_2", H5T_CSET_RESERVED_2)
+        .value("reserved_3", H5T_CSET_RESERVED_3)
+        .value("reserved_4", H5T_CSET_RESERVED_4)
+        .value("reserved_5", H5T_CSET_RESERVED_5)
+        .value("reserved_6", H5T_CSET_RESERVED_6)
+        .value("reserved_7", H5T_CSET_RESERVED_7)
+        .value("reserved_8", H5T_CSET_RESERVED_8)
+        .value("reserved_9", H5T_CSET_RESERVED_9)
+        .value("reserved_10", H5T_CSET_RESERVED_10)
+        .value("reserved_11", H5T_CSET_RESERVED_11)
+        .value("reserved_12", H5T_CSET_RESERVED_12)
+        .value("reserved_13", H5T_CSET_RESERVED_13)
+        .value("reserved_14", H5T_CSET_RESERVED_14)
+        .value("reserved_15", H5T_CSET_RESERVED_15);
+
+    // string padding shemes
+    py::enum_<H5T_str_t>(m, "StringPadding", "the string padding schemes")
+        .value("error", H5T_STR_ERROR)
+        .value("null_terminated", H5T_STR_NULLTERM)
+        .value("null_padded", H5T_STR_NULLPAD)
+        .value("space_padded", H5T_STR_SPACEPAD)
+        .value("reserved_3", H5T_STR_RESERVED_3)
+        .value("reserved_4", H5T_STR_RESERVED_4)
+        .value("reserved_5", H5T_STR_RESERVED_5)
+        .value("reserved_6", H5T_STR_RESERVED_6)
+        .value("reserved_7", H5T_STR_RESERVED_7)
+        .value("reserved_8", H5T_STR_RESERVED_8)
+        .value("reserved_9", H5T_STR_RESERVED_9)
+        .value("reserved_10", H5T_STR_RESERVED_10)
+        .value("reserved_11", H5T_STR_RESERVED_11)
+        .value("reserved_12", H5T_STR_RESERVED_12)
+        .value("reserved_13", H5T_STR_RESERVED_13)
+        .value("reserved_14", H5T_STR_RESERVED_14)
+        .value("reserved_15", H5T_STR_RESERVED_15);
+
+
     // all done
     return;
 }
