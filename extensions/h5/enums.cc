@@ -106,12 +106,20 @@ pyre::h5::py::enums(py::module & m)
         .value("none", H5T_ORDER_NONE);
 
     // datatype bit padding types
-    py::enum_<H5T_pad_t>(m, "PadType", "the bit padding strategies")
+    py::enum_<H5T_pad_t>(m, "PaddingType", "the bit padding strategies")
         // add the values
         .value("error", H5T_PAD_ERROR)
         .value("zero", H5T_PAD_ZERO)
         .value("one", H5T_PAD_ONE)
         .value("background", H5T_PAD_BACKGROUND);
+
+    // floating point mantissa normalization strategies
+    py::enum_<H5T_norm_t>(m, "NormalizationType", "the mantissa normalization strategies")
+        // add the values
+        .value("error", H5T_NORM_ERROR)
+        .value("implied", H5T_NORM_IMPLIED)
+        .value("set", H5T_NORM_MSBSET)
+        .value("none", H5T_NORM_NONE);
 
     // all done
     return;
