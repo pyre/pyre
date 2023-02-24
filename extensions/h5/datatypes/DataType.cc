@@ -39,6 +39,14 @@ pyre::h5::py::datatypes::datatype(py::module & m)
         // the docstring
         "the name of this datatype");
 
+    cls.def_property_readonly(
+        // the name
+        "id",
+        // the implementation
+        &DataType::getId,
+        // the docstring
+        "the h5 handle of this datatype");
+
     // the class type, an {H5T_class_t}
     cls.def_property_readonly(
         // the name
