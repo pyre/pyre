@@ -22,8 +22,10 @@ namespace pyre::h5::py::datatypes {
     void enum_(py::module &);
     void varlen(py::module &);
 
-    // constants
-    void native(py::module &);
+    // subpackages
+    void big(py::module &);    // big endian
+    void little(py::module &); // little endian
+    void native(py::module &); // native
 
 } // namespace pyre::h5::py::datatypes
 
