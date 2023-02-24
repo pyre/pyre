@@ -27,8 +27,10 @@ pyre::h5::py::datatypes::compound(py::module & m)
         // docstring
         "an HDF5 compound datatype");
 
-    // constructor
+    // constructors
     cls.def(py::init<>());
+
+    cls.def(py::init<std::size_t>());
 
     // my length is the number of members
     cls.def_property_readonly(
@@ -38,6 +40,16 @@ pyre::h5::py::datatypes::compound(py::module & m)
         &CompType::getNmembers,
         // the docstring
         "the number of members in this compound type");
+
+    cls.def_property(
+        // the name
+        "bytes",
+        // the getter
+        &CompType::getSize,
+        // the setter
+        &CompType::setSize,
+        // the docstring
+        "get/set the overall size");
 
     // member layout
     cls.def(
@@ -124,6 +136,16 @@ pyre::h5::py::datatypes::compound(py::module & m)
         "deduce the type of the member at the given {index}");
 
     // interface
+    cls.def(
+        // the name
+        "insert",
+        // the implementation
+        &CompType::insertMember,
+        // the signature
+        "name"_a, "offset"_a, "type"_a,
+        // the docstring
+        "insert {name} of {type} at the given {offset}");
+
     cls.def(
         // the name
         "pack",
