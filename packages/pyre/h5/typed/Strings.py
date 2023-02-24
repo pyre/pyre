@@ -15,9 +15,13 @@ class Strings(Dataset.list):
     """
 
     # metamethods
-    def __init__(self, **kwds):
+    def __init__(self, schema=None, **kwds):
+        # if the user didn't pick
+        if schema is None:
+            # make a reasonable choice
+            schema = Dataset.str(name="sentinel")
         # set the schema and chain up
-        super().__init__(schema=Dataset.str(name="sentinel"), **kwds)
+        super().__init__(schema=schema, **kwds)
         # all done
         return
 
