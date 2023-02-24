@@ -108,9 +108,9 @@ pyre::h5::py::enums(py::module & m)
     // integer sign schemes
     py::enum_<H5T_sign_t>(m, "Sign", "the sign schemes")
         .value("error", H5T_SGN_ERROR)
-        .value("none", H5T_SGN_NONE)    // unsigned types
-        .value("complement", H5T_SGN_2) // two's complement
-        .value("none", H5T_NSGN);
+        .value("unsigned", H5T_SGN_NONE) // unsigned types
+        .value("complement", H5T_SGN_2)  // two's complement
+        .value("null", H5T_NSGN);
 
     // datatype bit padding types
     py::enum_<H5T_pad_t>(m, "PaddingType", "the bit padding strategies")
