@@ -105,6 +105,13 @@ pyre::h5::py::enums(py::module & m)
         .value("mixed", H5T_ORDER_MIXED)
         .value("none", H5T_ORDER_NONE);
 
+    // datatype bit padding types
+    py::enum_<H5T_pad_t>(m, "PadType", "the bit padding strategies")
+        // add the values
+        .value("error", H5T_PAD_ERROR)
+        .value("zero", H5T_PAD_ZERO)
+        .value("one", H5T_PAD_ONE)
+        .value("background", H5T_PAD_BACKGROUND);
 
     // all done
     return;
