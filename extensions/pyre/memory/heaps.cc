@@ -26,7 +26,7 @@ pyre::py::memory::heaps(py::module & m)
         // in scope
         m,
         // class name
-        "ByteHeap",
+        "CharHeap",
         // docstring
         "a read/write memory buffer of {char}");
     // i1

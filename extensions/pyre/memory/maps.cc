@@ -26,7 +26,7 @@ pyre::py::memory::maps(py::module & m)
         // in scope
         m,
         // class name
-        "ByteConstMap",
+        "CharConstMap",
         // docstring
         "a read-only file backed memory buffer of {char}");
     // i1
@@ -128,7 +128,7 @@ pyre::py::memory::maps(py::module & m)
         // in scope
         m,
         // class name
-        "ByteMap",
+        "CharMap",
         // docstring
         "a read/write file backed memory buffer of {char}");
     // i1
