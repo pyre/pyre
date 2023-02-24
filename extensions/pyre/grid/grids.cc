@@ -69,7 +69,7 @@ pyre::py::grid::byteConstMapGrid2D(py::module & m)
         // in scope
         m,
         // class name
-        "ByteConstMapGrid2D",
+        "CharConstMapGrid2D",
         // docstring
         "a 2d grid backed by a read-only map of bytes");
 
@@ -294,7 +294,7 @@ pyre::py::grid::byteConstMapGrid3D(py::module & m)
         // in scope
         m,
         // class name
-        "ByteConstMapGrid3D",
+        "CharConstMapGrid3D",
         // docstring
         "a 3d grid backed by a read-only map of bytes");
 
@@ -519,7 +519,7 @@ pyre::py::grid::byteConstMapGrid4D(py::module & m)
         // in scope
         m,
         // class name
-        "ByteConstMapGrid4D",
+        "CharConstMapGrid4D",
         // docstring
         "a 4d grid backed by a read-only map of bytes");
 
