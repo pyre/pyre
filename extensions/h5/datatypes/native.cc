@@ -50,31 +50,31 @@ pyre::h5::py::datatypes::native(py::module & m)
     native.attr("bool") = H5::PredType::NATIVE_HBOOL;
 
     native.attr("int8") = H5::PredType::NATIVE_INT8;
-    native.attr("unsignedInt8") = H5::PredType::NATIVE_UINT8;
+    native.attr("uint8") = H5::PredType::NATIVE_UINT8;
     native.attr("int16") = H5::PredType::NATIVE_INT16;
-    native.attr("unsignedInt16") = H5::PredType::NATIVE_UINT16;
+    native.attr("uint16") = H5::PredType::NATIVE_UINT16;
     native.attr("int32") = H5::PredType::NATIVE_INT32;
-    native.attr("unsignedInt32") = H5::PredType::NATIVE_UINT32;
+    native.attr("uint32") = H5::PredType::NATIVE_UINT32;
     native.attr("int64") = H5::PredType::NATIVE_INT64;
-    native.attr("unsignedInt64") = H5::PredType::NATIVE_UINT64;
+    native.attr("uint64") = H5::PredType::NATIVE_UINT64;
 
     native.attr("intLeast8") = H5::PredType::NATIVE_INT_LEAST8;
-    native.attr("unsignedIntLeast8") = H5::PredType::NATIVE_UINT_LEAST8;
+    native.attr("uintLeast8") = H5::PredType::NATIVE_UINT_LEAST8;
     native.attr("intLeast16") = H5::PredType::NATIVE_INT_LEAST16;
-    native.attr("unsignedIntLeast16") = H5::PredType::NATIVE_UINT_LEAST16;
+    native.attr("uintLeast16") = H5::PredType::NATIVE_UINT_LEAST16;
     native.attr("intLeast32") = H5::PredType::NATIVE_INT_LEAST32;
-    native.attr("unsignedIntLeast32") = H5::PredType::NATIVE_UINT_LEAST32;
+    native.attr("uintLeast32") = H5::PredType::NATIVE_UINT_LEAST32;
     native.attr("intLeast64") = H5::PredType::NATIVE_INT_LEAST64;
-    native.attr("unsignedIntLeast64") = H5::PredType::NATIVE_UINT_LEAST64;
+    native.attr("uintLeast64") = H5::PredType::NATIVE_UINT_LEAST64;
 
     native.attr("intFast8") = H5::PredType::NATIVE_INT_FAST8;
-    native.attr("unsignedIntFast8") = H5::PredType::NATIVE_UINT_FAST8;
+    native.attr("uintFast8") = H5::PredType::NATIVE_UINT_FAST8;
     native.attr("intFast16") = H5::PredType::NATIVE_INT_FAST16;
-    native.attr("unsignedIntFast16") = H5::PredType::NATIVE_UINT_FAST16;
+    native.attr("uintFast16") = H5::PredType::NATIVE_UINT_FAST16;
     native.attr("intFast32") = H5::PredType::NATIVE_INT_FAST32;
-    native.attr("unsignedIntFast32") = H5::PredType::NATIVE_UINT_FAST32;
+    native.attr("uintFast32") = H5::PredType::NATIVE_UINT_FAST32;
     native.attr("intFast64") = H5::PredType::NATIVE_INT_FAST64;
-    native.attr("unsignedIntFast64") = H5::PredType::NATIVE_UINT_FAST64;
+    native.attr("uintFast64") = H5::PredType::NATIVE_UINT_FAST64;
 
     // all done
     return;
