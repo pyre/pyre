@@ -73,6 +73,14 @@ pyre::h5::py::datatypes::datatype(py::module & m)
 
     cls.def(
         // the name
+        "encode",
+        // the implementation
+        &DataType::encode,
+        // the docstring
+        "create a binary object description");
+
+    cls.def(
+        // the name
         "decode",
         // the implementation
         [](const DataType & self) -> DataType * {
@@ -80,7 +88,7 @@ pyre::h5::py::datatypes::datatype(py::module & m)
             return self.decode();
         },
         // the docstring
-        "decode the type by examining the binary representation of this datatype");
+        "decode the binary object description");
 
     // all done
     return;
