@@ -19,7 +19,7 @@ void
 pyre::h5::py::datatypes::int_(py::module & m)
 {
     // add the class
-    auto intType = py::class_<IntType, AtomType>(
+    auto cls = py::class_<IntType, AtomType>(
         // in scope
         m,
         // class name
@@ -27,8 +27,22 @@ pyre::h5::py::datatypes::int_(py::module & m)
         // docstring
         "an HDF5 int datatype");
 
-    // constructor
-    intType.def(py::init<>());
+    // constructors
+    // default
+    cls.def(py::init<>());
+    // from a predefined integral type
+    cls.def(py::init<const PredType &>());
+
+    // properties
+    cls.def_property(
+        // the name
+        "sign",
+        // the getter
+        &IntType::getSign,
+        // the setter
+        &IntType::setSign,
+        // the docstring
+        "get/set the sign type");
 
     // all done
     return;
