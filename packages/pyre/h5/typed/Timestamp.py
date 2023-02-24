@@ -14,10 +14,6 @@ class Timestamp:
     Implementation details of the {timestamp} dataset mixin
     """
 
-    # type info
-    disktype = pyre.libh5.datatypes.StrType
-    memtype = None
-
     # value synchronization
     def _pyre_pull(self, dataset):
         """
