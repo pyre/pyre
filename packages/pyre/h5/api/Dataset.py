@@ -17,9 +17,6 @@ class Dataset(Object):
     Access to the data stored in an h5 file
     """
 
-    # datasets are scalars, by default
-    shape = "scalar"
-
     # value access
     @property
     def value(self):
@@ -119,7 +116,18 @@ class Dataset(Object):
             # and bail
             return
         # if all is well, delegate
-        return self._pyre_layout._pyre_push(datset=self)
+        return self._pyre_push(dataset=self)
+
+    def _pyre_push(self):
+        """
+        Flush my value  to disk
+        """
+        # get my layout
+        layout = self._pyre_layout
+        # ask it to flush me to disk
+        layout._pyre_push(dataset=self)
+        # all done
+        return
 
     # visiting
     def _pyre_identify(self, authority, **kwds):
