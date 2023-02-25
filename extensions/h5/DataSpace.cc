@@ -24,6 +24,7 @@ pyre::h5::py::dataspace(py::module & m)
         "an HDF5 dataspace");
 
     // constructors
+    // of a given class, "scalar" by default
     cls.def(
         // the implementation
         py::init<H5S_class_t>(),
@@ -32,20 +33,12 @@ pyre::h5::py::dataspace(py::module & m)
         // the something
         "make a dataspace of the given type");
 
+    // simple, with the given shape
     cls.def(
         // the implementation
-        py::init([](const py::sequence & shape) -> std::unique_ptr<DataSpace> {
-            // get the rank
-            auto rank = shape.size();
-            // make a correctly sized vector to hold the dimensions
-            dims_t dims(rank);
-            // go trough the dimensions
-            for (auto axis = 0; axis < rank; ++axis) {
-                // and transfer each one
-                dims[axis] = py::cast<dims_t::value_type>(shape[axis]);
-            }
+        py::init([](const dims_t & dims) {
             // instantiate and return
-            return std::unique_ptr<DataSpace>(new DataSpace(rank, &dims[0], nullptr));
+            return new DataSpace(dims.size(), &dims[0], nullptr);
         }),
         // the signature
         "shape"_a,
@@ -59,7 +52,7 @@ pyre::h5::py::dataspace(py::module & m)
         // the implementation
         [](const py::object &) {
             // easy enough
-            return DataSpace::ALL;
+            return &DataSpace::ALL;
         },
         // docstring
         "the default dataspace object");
@@ -70,7 +63,6 @@ pyre::h5::py::dataspace(py::module & m)
         // the implementation
         [m](const py::object &) -> py::object {
             // easy enough
-            // return m.attr("SelectionOperator");
             return m.attr("SelectionOperator");
         },
         // docstring
