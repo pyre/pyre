@@ -13,8 +13,17 @@
 // compute the footprint of the given number of cells
 template <typename T, bool isConst>
 constexpr auto
-pyre::memory::Cell<T, isConst>::
-bytes(cell_count_type n) -> size_type
+pyre::memory::Cell<T, isConst>::writable() -> bool
+{
+    // easy
+    return !isConst;
+}
+
+
+// compute the footprint of the given number of cells
+template <typename T, bool isConst>
+constexpr auto
+pyre::memory::Cell<T, isConst>::bytes(cell_count_type n) -> size_type
 {
     // easy
     return n * sizeof(T);
