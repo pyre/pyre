@@ -12,851 +12,268 @@
 // my instantiations
 #include "grids.h"
 
-
-// wrappers over {pyre::grid::grid_t} template expansions
-// build the submodule
 void
 pyre::py::grid::grids(py::module & m)
 {
-    // 2d const maps
-    byteConstMapGrid2D(m);
-    int16ConstMapGrid2D(m);
-    int32ConstMapGrid2D(m);
-    int64ConstMapGrid2D(m);
-    floatConstMapGrid2D(m);
-    doubleConstMapGrid2D(m);
-    complexFloatConstMapGrid2D(m);
-    complexDoubleConstMapGrid2D(m);
+    // populate the typename table
+    // heap
+    typenames[std::type_index(typeid(heap_char_t))] = "CharHeap";
+    // signed integral types
+    typenames[std::type_index(typeid(heap_int8_t))] = "Int8Heap";
+    typenames[std::type_index(typeid(heap_int16_t))] = "Int16Heap";
+    typenames[std::type_index(typeid(heap_int32_t))] = "Int32Heap";
+    typenames[std::type_index(typeid(heap_int64_t))] = "Int64Heap";
+    // unsigned integral types
+    typenames[std::type_index(typeid(heap_uint8_t))] = "UInt8Heap";
+    typenames[std::type_index(typeid(heap_uint16_t))] = "UInt16Heap";
+    typenames[std::type_index(typeid(heap_uint32_t))] = "UInt32Heap";
+    typenames[std::type_index(typeid(heap_uint64_t))] = "UInt64Heap";
+    // floating point types
+    typenames[std::type_index(typeid(heap_float_t))] = "FloatHeap";
+    typenames[std::type_index(typeid(heap_double_t))] = "DoubleHeap";
+    // complex types
+    typenames[std::type_index(typeid(heap_complexfloat_t))] = "ComplexFloatHeap";
+    typenames[std::type_index(typeid(heap_complexdouble_t))] = "ComplexDoubleHeap";
 
-    // 3d const maps
-    byteConstMapGrid3D(m);
-    int16ConstMapGrid3D(m);
-    int32ConstMapGrid3D(m);
-    int64ConstMapGrid3D(m);
-    floatConstMapGrid3D(m);
-    doubleConstMapGrid3D(m);
-    complexFloatConstMapGrid3D(m);
-    complexDoubleConstMapGrid3D(m);
+    // constheap
+    typenames[std::type_index(typeid(constheap_char_t))] = "CharConstHeap";
+    // signed integral types
+    typenames[std::type_index(typeid(constheap_int8_t))] = "Int8ConstHeap";
+    typenames[std::type_index(typeid(constheap_int16_t))] = "Int16ConstHeap";
+    typenames[std::type_index(typeid(constheap_int32_t))] = "Int32ConstHeap";
+    typenames[std::type_index(typeid(constheap_int64_t))] = "Int64ConstHeap";
+    // unsigned integral types
+    typenames[std::type_index(typeid(constheap_uint8_t))] = "UInt8ConstHeap";
+    typenames[std::type_index(typeid(constheap_uint16_t))] = "UInt16ConstHeap";
+    typenames[std::type_index(typeid(constheap_uint32_t))] = "UInt32ConstHeap";
+    typenames[std::type_index(typeid(constheap_uint64_t))] = "UInt64ConstHeap";
+    // floating point types
+    typenames[std::type_index(typeid(constheap_float_t))] = "FloatConstHeap";
+    typenames[std::type_index(typeid(constheap_double_t))] = "DoubleConstHeap";
+    // complex types
+    typenames[std::type_index(typeid(constheap_complexfloat_t))] = "ComplexFloatConstHeap";
+    typenames[std::type_index(typeid(constheap_complexdouble_t))] = "ComplexDoubleConstHeap";
 
-    // 4d const maps
-    byteConstMapGrid4D(m);
-    int16ConstMapGrid4D(m);
-    int32ConstMapGrid4D(m);
-    int64ConstMapGrid4D(m);
-    floatConstMapGrid4D(m);
-    doubleConstMapGrid4D(m);
-    complexFloatConstMapGrid4D(m);
-    complexDoubleConstMapGrid4D(m);
+    // map
+    typenames[std::type_index(typeid(map_char_t))] = "CharMap";
+    // signed integral types
+    typenames[std::type_index(typeid(map_int8_t))] = "Int8Map";
+    typenames[std::type_index(typeid(map_int16_t))] = "Int16Map";
+    typenames[std::type_index(typeid(map_int32_t))] = "Int32Map";
+    typenames[std::type_index(typeid(map_int64_t))] = "Int64Map";
+    // unsigned integral types
+    typenames[std::type_index(typeid(map_uint8_t))] = "UInt8Map";
+    typenames[std::type_index(typeid(map_uint16_t))] = "UInt16Map";
+    typenames[std::type_index(typeid(map_uint32_t))] = "UInt32Map";
+    typenames[std::type_index(typeid(map_uint64_t))] = "UInt64Map";
+    // floating point types
+    typenames[std::type_index(typeid(map_float_t))] = "FloatMap";
+    typenames[std::type_index(typeid(map_double_t))] = "DoubleMap";
+    // complex types
+    typenames[std::type_index(typeid(map_complexfloat_t))] = "ComplexFloatMap";
+    typenames[std::type_index(typeid(map_complexdouble_t))] = "ComplexDoubleMap";
 
-    // all done
-    return;
-}
+    // constmap
+    typenames[std::type_index(typeid(constmap_char_t))] = "CharConstMap";
+    // signed integral types
+    typenames[std::type_index(typeid(constmap_int8_t))] = "Int8ConstMap";
+    typenames[std::type_index(typeid(constmap_int16_t))] = "Int16ConstMap";
+    typenames[std::type_index(typeid(constmap_int32_t))] = "Int32ConstMap";
+    typenames[std::type_index(typeid(constmap_int64_t))] = "Int64ConstMap";
+    // unsigned integral types
+    typenames[std::type_index(typeid(constmap_uint8_t))] = "UInt8ConstMap";
+    typenames[std::type_index(typeid(constmap_uint16_t))] = "UInt16ConstMap";
+    typenames[std::type_index(typeid(constmap_uint32_t))] = "UInt32ConstMap";
+    typenames[std::type_index(typeid(constmap_uint64_t))] = "UInt64ConstMap";
+    // floating point types
+    typenames[std::type_index(typeid(constmap_float_t))] = "FloatConstMap";
+    typenames[std::type_index(typeid(constmap_double_t))] = "DoubleConstMap";
+    // complex types
+    typenames[std::type_index(typeid(constmap_complexfloat_t))] = "ComplexFloatConstMap";
+    typenames[std::type_index(typeid(constmap_complexdouble_t))] = "ComplexDoubleConstMap";
 
+    // build the class records
+    // 2d grids
+    // heap
+    bind<heap_char_t, 2>(m);
+    bind<heap_int8_t, 2>(m);
+    bind<heap_int16_t, 2>(m);
+    bind<heap_int32_t, 2>(m);
+    bind<heap_int64_t, 2>(m);
+    bind<heap_uint8_t, 2>(m);
+    bind<heap_uint16_t, 2>(m);
+    bind<heap_uint32_t, 2>(m);
+    bind<heap_uint64_t, 2>(m);
+    bind<heap_float_t, 2>(m);
+    bind<heap_double_t, 2>(m);
+    bind<heap_complexfloat_t, 2>(m);
+    bind<heap_complexdouble_t, 2>(m);
+    // constheap
+    bindconst<constheap_char_t, 2>(m);
+    bindconst<constheap_int8_t, 2>(m);
+    bindconst<constheap_int16_t, 2>(m);
+    bindconst<constheap_int32_t, 2>(m);
+    bindconst<constheap_int64_t, 2>(m);
+    bindconst<constheap_uint8_t, 2>(m);
+    bindconst<constheap_uint16_t, 2>(m);
+    bindconst<constheap_uint32_t, 2>(m);
+    bindconst<constheap_uint64_t, 2>(m);
+    bindconst<constheap_float_t, 2>(m);
+    bindconst<constheap_double_t, 2>(m);
+    bindconst<constheap_complexfloat_t, 2>(m);
+    bindconst<constheap_complexdouble_t, 2>(m);
+    // map
+    bind<map_char_t, 2>(m);
+    bind<map_int8_t, 2>(m);
+    bind<map_int16_t, 2>(m);
+    bind<map_int32_t, 2>(m);
+    bind<map_int64_t, 2>(m);
+    bind<map_uint8_t, 2>(m);
+    bind<map_uint16_t, 2>(m);
+    bind<map_uint32_t, 2>(m);
+    bind<map_uint64_t, 2>(m);
+    bind<map_float_t, 2>(m);
+    bind<map_double_t, 2>(m);
+    bind<map_complexfloat_t, 2>(m);
+    bind<map_complexdouble_t, 2>(m);
+    // constmap
+    bindconst<constmap_char_t, 2>(m);
+    bindconst<constmap_int8_t, 2>(m);
+    bindconst<constmap_int16_t, 2>(m);
+    bindconst<constmap_int32_t, 2>(m);
+    bindconst<constmap_int64_t, 2>(m);
+    bindconst<constmap_uint8_t, 2>(m);
+    bindconst<constmap_uint16_t, 2>(m);
+    bindconst<constmap_uint32_t, 2>(m);
+    bindconst<constmap_uint64_t, 2>(m);
+    bindconst<constmap_float_t, 2>(m);
+    bindconst<constmap_double_t, 2>(m);
+    bindconst<constmap_complexfloat_t, 2>(m);
+    bindconst<constmap_complexdouble_t, 2>(m);
 
-// grid instantiations
-// 2d
-void
-pyre::py::grid::byteConstMapGrid2D(py::module & m)
-{
-    // type aliases
-    using cell_t = char;
-    using packing_t = pyre::grid::canonical_t<2>;
-    using storage_t = pyre::memory::constmap_t<cell_t>;
-    using grid_t = pyre::grid::grid_t<packing_t, storage_t>;
+    // 3d grids
+    // heap
+    bind<heap_char_t, 3>(m);
+    bind<heap_int8_t, 3>(m);
+    bind<heap_int16_t, 3>(m);
+    bind<heap_int32_t, 3>(m);
+    bind<heap_int64_t, 3>(m);
+    bind<heap_uint8_t, 3>(m);
+    bind<heap_uint16_t, 3>(m);
+    bind<heap_uint32_t, 3>(m);
+    bind<heap_uint64_t, 3>(m);
+    bind<heap_float_t, 3>(m);
+    bind<heap_double_t, 3>(m);
+    bind<heap_complexfloat_t, 3>(m);
+    bind<heap_complexdouble_t, 3>(m);
+    // constheap
+    bindconst<constheap_char_t, 3>(m);
+    bindconst<constheap_int8_t, 3>(m);
+    bindconst<constheap_int16_t, 3>(m);
+    bindconst<constheap_int32_t, 3>(m);
+    bindconst<constheap_int64_t, 3>(m);
+    bindconst<constheap_uint8_t, 3>(m);
+    bindconst<constheap_uint16_t, 3>(m);
+    bindconst<constheap_uint32_t, 3>(m);
+    bindconst<constheap_uint64_t, 3>(m);
+    bindconst<constheap_float_t, 3>(m);
+    bindconst<constheap_double_t, 3>(m);
+    bindconst<constheap_complexfloat_t, 3>(m);
+    bindconst<constheap_complexdouble_t, 3>(m);
+    // map
+    bind<map_char_t, 3>(m);
+    bind<map_int8_t, 3>(m);
+    bind<map_int16_t, 3>(m);
+    bind<map_int32_t, 3>(m);
+    bind<map_int64_t, 3>(m);
+    bind<map_uint8_t, 3>(m);
+    bind<map_uint16_t, 3>(m);
+    bind<map_uint32_t, 3>(m);
+    bind<map_uint64_t, 3>(m);
+    bind<map_float_t, 3>(m);
+    bind<map_double_t, 3>(m);
+    bind<map_complexfloat_t, 3>(m);
+    bind<map_complexdouble_t, 3>(m);
+    // constmap
+    bindconst<constmap_char_t, 3>(m);
+    bindconst<constmap_int8_t, 3>(m);
+    bindconst<constmap_int16_t, 3>(m);
+    bindconst<constmap_int32_t, 3>(m);
+    bindconst<constmap_int64_t, 3>(m);
+    bindconst<constmap_uint8_t, 3>(m);
+    bindconst<constmap_uint16_t, 3>(m);
+    bindconst<constmap_uint32_t, 3>(m);
+    bindconst<constmap_uint64_t, 3>(m);
+    bindconst<constmap_float_t, 3>(m);
+    bindconst<constmap_double_t, 3>(m);
+    bindconst<constmap_complexfloat_t, 3>(m);
+    bindconst<constmap_complexdouble_t, 3>(m);
 
-    // build the class record
-    auto cls = py::class_<grid_t>(
-        // in scope
-        m,
-        // class name
-        "CharConstMapGrid2D",
-        // docstring
-        "a 2d grid backed by a read-only map of bytes");
-
-    // the map specific interface
-    constmapInterface(cls);
-    // the grid interface
-    constgridInterface(cls);
-
-    // all done
-    return;
-}
-
-
-void
-pyre::py::grid::int16ConstMapGrid2D(py::module & m)
-{
-    // type aliases
-    using cell_t = int16_t;
-    using packing_t = pyre::grid::canonical_t<2>;
-    using storage_t = pyre::memory::constmap_t<cell_t>;
-    using grid_t = pyre::grid::grid_t<packing_t, storage_t>;
-
-    // build the class record
-    auto cls = py::class_<grid_t>(
-        // in scope
-        m,
-        // class name
-        "Int16ConstMapGrid2D",
-        // docstring
-        "a 2d grid backed by a read-only map of {int16_t}");
-
-    // the map specific interface
-    constmapInterface(cls);
-    // the grid interface
-    constgridInterface(cls);
-
-    // all done
-    return;
-}
-
-
-void
-pyre::py::grid::int32ConstMapGrid2D(py::module & m)
-{
-    // type aliases
-    using cell_t = int32_t;
-    using packing_t = pyre::grid::canonical_t<2>;
-    using storage_t = pyre::memory::constmap_t<cell_t>;
-    using grid_t = pyre::grid::grid_t<packing_t, storage_t>;
-
-    // build the class record
-    auto cls = py::class_<grid_t>(
-        // in scope
-        m,
-        // class name
-        "Int32ConstMapGrid2D",
-        // docstring
-        "a 2d grid backed by a read-only map of {int32_t}");
-
-    // the map specific interface
-    constmapInterface(cls);
-    // the grid interface
-    constgridInterface(cls);
-
-    // all done
-    return;
-}
-
-
-void
-pyre::py::grid::int64ConstMapGrid2D(py::module & m)
-{
-    // type aliases
-    using cell_t = int64_t;
-    using packing_t = pyre::grid::canonical_t<2>;
-    using storage_t = pyre::memory::constmap_t<cell_t>;
-    using grid_t = pyre::grid::grid_t<packing_t, storage_t>;
-
-    // build the class record
-    auto cls = py::class_<grid_t>(
-        // in scope
-        m,
-        // class name
-        "Int64ConstMapGrid2D",
-        // docstring
-        "a 2d grid backed by a read-only map of {int64_t}");
-
-    // the map specific interface
-    constmapInterface(cls);
-    // the grid interface
-    constgridInterface(cls);
-
-    // all done
-    return;
-}
-
-
-void
-pyre::py::grid::floatConstMapGrid2D(py::module & m)
-{
-    // type aliases
-    using cell_t = float;
-    using packing_t = pyre::grid::canonical_t<2>;
-    using storage_t = pyre::memory::constmap_t<cell_t>;
-    using grid_t = pyre::grid::grid_t<packing_t, storage_t>;
-
-    // build the class record
-    auto cls = py::class_<grid_t>(
-        // in scope
-        m,
-        // class name
-        "FloatConstMapGrid2D",
-        // docstring
-        "a 2d grid backed by a read-only map of floats");
-
-    // the map specific interface
-    constmapInterface(cls);
-    // the grid interface
-    constgridInterface(cls);
-
-    // all done
-    return;
-}
-
-
-void
-pyre::py::grid::doubleConstMapGrid2D(py::module & m)
-{
-    // type aliases
-    using cell_t = double;
-    using packing_t = pyre::grid::canonical_t<2>;
-    using storage_t = pyre::memory::constmap_t<cell_t>;
-    using grid_t = pyre::grid::grid_t<packing_t, storage_t>;
-
-    // build the class record
-    auto cls = py::class_<grid_t>(
-        // in scope
-        m,
-        // class name
-        "DoubleConstMapGrid2D",
-        // docstring
-        "a 2d grid backed by a read-only map of doubles");
-
-    // the map specific interface
-    constmapInterface(cls);
-    // the grid interface
-    constgridInterface(cls);
-
-    // all done
-    return;
-}
-
-
-void
-pyre::py::grid::complexFloatConstMapGrid2D(py::module & m)
-{
-    // type aliases
-    using cell_t = std::complex<float>;
-    using packing_t = pyre::grid::canonical_t<2>;
-    using storage_t = pyre::memory::constmap_t<cell_t>;
-    using grid_t = pyre::grid::grid_t<packing_t, storage_t>;
-
-    // build the class record
-    auto cls = py::class_<grid_t>(
-        // in scope
-        m,
-        // class name
-        "ComplexFloatConstMapGrid2D",
-        // docstring
-        "a 2d grid backed by a read-only map of complex floats");
-
-    // the map specific interface
-    constmapInterface(cls);
-    // the grid interface
-    constgridInterface(cls);
-
-    // all done
-    return;
-}
-
-
-void
-pyre::py::grid::complexDoubleConstMapGrid2D(py::module & m)
-{
-    // type aliases
-    using cell_t = std::complex<double>;
-    using packing_t = pyre::grid::canonical_t<2>;
-    using storage_t = pyre::memory::constmap_t<cell_t>;
-    using grid_t = pyre::grid::grid_t<packing_t, storage_t>;
-
-    // build the class record
-    auto cls = py::class_<grid_t>(
-        // in scope
-        m,
-        // class name
-        "ComplexDoubleConstMapGrid2D",
-        // docstring
-        "a 2d grid backed by a read-only map of complex doubles");
-
-    // the map specific interface
-    constmapInterface(cls);
-    // the grid interface
-    constgridInterface(cls);
+    // 4d grids
+    // heap
+    bind<heap_char_t, 4>(m);
+    bind<heap_int8_t, 4>(m);
+    bind<heap_int16_t, 4>(m);
+    bind<heap_int32_t, 4>(m);
+    bind<heap_int64_t, 4>(m);
+    bind<heap_uint8_t, 4>(m);
+    bind<heap_uint16_t, 4>(m);
+    bind<heap_uint32_t, 4>(m);
+    bind<heap_uint64_t, 4>(m);
+    bind<heap_float_t, 4>(m);
+    bind<heap_double_t, 4>(m);
+    bind<heap_complexfloat_t, 4>(m);
+    bind<heap_complexdouble_t, 4>(m);
+    // constheap
+    bindconst<constheap_char_t, 4>(m);
+    bindconst<constheap_int8_t, 4>(m);
+    bindconst<constheap_int16_t, 4>(m);
+    bindconst<constheap_int32_t, 4>(m);
+    bindconst<constheap_int64_t, 4>(m);
+    bindconst<constheap_uint8_t, 4>(m);
+    bindconst<constheap_uint16_t, 4>(m);
+    bindconst<constheap_uint32_t, 4>(m);
+    bindconst<constheap_uint64_t, 4>(m);
+    bindconst<constheap_float_t, 4>(m);
+    bindconst<constheap_double_t, 4>(m);
+    bindconst<constheap_complexfloat_t, 4>(m);
+    bindconst<constheap_complexdouble_t, 4>(m);
+    // map
+    bind<map_char_t, 4>(m);
+    bind<map_int8_t, 4>(m);
+    bind<map_int16_t, 4>(m);
+    bind<map_int32_t, 4>(m);
+    bind<map_int64_t, 4>(m);
+    bind<map_uint8_t, 4>(m);
+    bind<map_uint16_t, 4>(m);
+    bind<map_uint32_t, 4>(m);
+    bind<map_uint64_t, 4>(m);
+    bind<map_float_t, 4>(m);
+    bind<map_double_t, 4>(m);
+    bind<map_complexfloat_t, 4>(m);
+    bind<map_complexdouble_t, 4>(m);
+    // constmap
+    bindconst<constmap_char_t, 4>(m);
+    bindconst<constmap_int8_t, 4>(m);
+    bindconst<constmap_int16_t, 4>(m);
+    bindconst<constmap_int32_t, 4>(m);
+    bindconst<constmap_int64_t, 4>(m);
+    bindconst<constmap_uint8_t, 4>(m);
+    bindconst<constmap_uint16_t, 4>(m);
+    bindconst<constmap_uint32_t, 4>(m);
+    bindconst<constmap_uint64_t, 4>(m);
+    bindconst<constmap_float_t, 4>(m);
+    bindconst<constmap_double_t, 4>(m);
+    bindconst<constmap_complexfloat_t, 4>(m);
+    bindconst<constmap_complexdouble_t, 4>(m);
 
     // all done
     return;
 }
 
 
-// 3d
-void
-pyre::py::grid::byteConstMapGrid3D(py::module & m)
-{
-    // type aliases
-    using cell_t = char;
-    using packing_t = pyre::grid::canonical_t<3>;
-    using storage_t = pyre::memory::constmap_t<cell_t>;
-    using grid_t = pyre::grid::grid_t<packing_t, storage_t>;
+#if 0
 
-    // build the class record
-    auto cls = py::class_<grid_t>(
-        // in scope
-        m,
-        // class name
-        "CharConstMapGrid3D",
-        // docstring
-        "a 3d grid backed by a read-only map of bytes");
-
-    // the map specific interface
-    constmapInterface(cls);
-    // the grid interface
-    constgridInterface(cls);
-
-    // all done
-    return;
-}
-
-
-void
-pyre::py::grid::int16ConstMapGrid3D(py::module & m)
-{
-    // type aliases
-    using cell_t = int16_t;
-    using packing_t = pyre::grid::canonical_t<3>;
-    using storage_t = pyre::memory::constmap_t<cell_t>;
-    using grid_t = pyre::grid::grid_t<packing_t, storage_t>;
-
-    // build the class record
-    auto cls = py::class_<grid_t>(
-        // in scope
-        m,
-        // class name
-        "Int16ConstMapGrid3D",
-        // docstring
-        "a 3d grid backed by a read-only map of {int16_t}");
-
-    // the map specific interface
-    constmapInterface(cls);
-    // the grid interface
-    constgridInterface(cls);
-
-    // all done
-    return;
-}
-
-
-void
-pyre::py::grid::int32ConstMapGrid3D(py::module & m)
-{
-    // type aliases
-    using cell_t = int32_t;
-    using packing_t = pyre::grid::canonical_t<3>;
-    using storage_t = pyre::memory::constmap_t<cell_t>;
-    using grid_t = pyre::grid::grid_t<packing_t, storage_t>;
-
-    // build the class record
-    auto cls = py::class_<grid_t>(
-        // in scope
-        m,
-        // class name
-        "Int32ConstMapGrid3D",
-        // docstring
-        "a 3d grid backed by a read-only map of {int32_t}");
-
-    // the map specific interface
-    constmapInterface(cls);
-    // the grid interface
-    constgridInterface(cls);
-
-    // all done
-    return;
-}
-
-
-void
-pyre::py::grid::int64ConstMapGrid3D(py::module & m)
-{
-    // type aliases
-    using cell_t = int64_t;
-    using packing_t = pyre::grid::canonical_t<3>;
-    using storage_t = pyre::memory::constmap_t<cell_t>;
-    using grid_t = pyre::grid::grid_t<packing_t, storage_t>;
-
-    // build the class record
-    auto cls = py::class_<grid_t>(
-        // in scope
-        m,
-        // class name
-        "Int64ConstMapGrid3D",
-        // docstring
-        "a 3d grid backed by a read-only map of {int64_t}");
-
-    // the map specific interface
-    constmapInterface(cls);
-    // the grid interface
-    constgridInterface(cls);
-
-    // all done
-    return;
-}
-
-
-void
-pyre::py::grid::floatConstMapGrid3D(py::module & m)
-{
-    // type aliases
-    using cell_t = float;
-    using packing_t = pyre::grid::canonical_t<3>;
-    using storage_t = pyre::memory::constmap_t<cell_t>;
-    using grid_t = pyre::grid::grid_t<packing_t, storage_t>;
-
-    // build the class record
-    auto cls = py::class_<grid_t>(
-        // in scope
-        m,
-        // class name
-        "FloatConstMapGrid3D",
-        // docstring
-        "a 3d grid backed by a read-only map of floats");
-
-    // the map specific interface
-    constmapInterface(cls);
-    // the grid interface
-    constgridInterface(cls);
-
-    // all done
-    return;
-}
-
-
-void
-pyre::py::grid::doubleConstMapGrid3D(py::module & m)
-{
-    // type aliases
-    using cell_t = double;
-    using packing_t = pyre::grid::canonical_t<3>;
-    using storage_t = pyre::memory::constmap_t<cell_t>;
-    using grid_t = pyre::grid::grid_t<packing_t, storage_t>;
-
-    // build the class record
-    auto cls = py::class_<grid_t>(
-        // in scope
-        m,
-        // class name
-        "DoubleConstMapGrid3D",
-        // docstring
-        "a 3d grid backed by a read-only map of doubles");
-
-    // the map specific interface
-    constmapInterface(cls);
-    // the grid interface
-    constgridInterface(cls);
-
-    // all done
-    return;
-}
-
-
-void
-pyre::py::grid::complexFloatConstMapGrid3D(py::module & m)
-{
-    // type aliases
-    using cell_t = std::complex<float>;
-    using packing_t = pyre::grid::canonical_t<3>;
-    using storage_t = pyre::memory::constmap_t<cell_t>;
-    using grid_t = pyre::grid::grid_t<packing_t, storage_t>;
-
-    // build the class record
-    auto cls = py::class_<grid_t>(
-        // in scope
-        m,
-        // class name
-        "ComplexFloatConstMapGrid3D",
-        // docstring
-        "a 3d grid backed by a read-only map of complex floats");
-
-    // the map specific interface
-    constmapInterface(cls);
-    // the grid interface
-    constgridInterface(cls);
-
-    // all done
-    return;
-}
-
-
-void
-pyre::py::grid::complexDoubleConstMapGrid3D(py::module & m)
-{
-    // type aliases
-    using cell_t = std::complex<double>;
-    using packing_t = pyre::grid::canonical_t<3>;
-    using storage_t = pyre::memory::constmap_t<cell_t>;
-    using grid_t = pyre::grid::grid_t<packing_t, storage_t>;
-
-    // build the class record
-    auto cls = py::class_<grid_t>(
-        // in scope
-        m,
-        // class name
-        "ComplexDoubleConstMapGrid3D",
-        // docstring
-        "a 3d grid backed by a read-only map of complex doubles");
-
-    // the map specific interface
-    constmapInterface(cls);
-    // the grid interface
-    constgridInterface(cls);
-
-    // all done
-    return;
-}
-
-
-// 4d
-void
-pyre::py::grid::byteConstMapGrid4D(py::module & m)
-{
-    // type aliases
-    using cell_t = char;
-    using packing_t = pyre::grid::canonical_t<4>;
-    using storage_t = pyre::memory::constmap_t<cell_t>;
-    using grid_t = pyre::grid::grid_t<packing_t, storage_t>;
-
-    // build the class record
-    auto cls = py::class_<grid_t>(
-        // in scope
-        m,
-        // class name
-        "CharConstMapGrid4D",
-        // docstring
-        "a 4d grid backed by a read-only map of bytes");
-
-    // the map specific interface
-    constmapInterface(cls);
-    // the grid interface
-    constgridInterface(cls);
-
-    // all done
-    return;
-}
-
-
-void
-pyre::py::grid::int16ConstMapGrid4D(py::module & m)
-{
-    // type aliases
-    using cell_t = int16_t;
-    using packing_t = pyre::grid::canonical_t<4>;
-    using storage_t = pyre::memory::constmap_t<cell_t>;
-    using grid_t = pyre::grid::grid_t<packing_t, storage_t>;
-
-    // build the class record
-    auto cls = py::class_<grid_t>(
-        // in scope
-        m,
-        // class name
-        "Int16ConstMapGrid4D",
-        // docstring
-        "a 4d grid backed by a read-only map of {int16_t}");
-
-    // the map specific interface
-    constmapInterface(cls);
-    // the grid interface
-    constgridInterface(cls);
-
-    // all done
-    return;
-}
-
-
-void
-pyre::py::grid::int32ConstMapGrid4D(py::module & m)
-{
-    // type aliases
-    using cell_t = int32_t;
-    using packing_t = pyre::grid::canonical_t<4>;
-    using storage_t = pyre::memory::constmap_t<cell_t>;
-    using grid_t = pyre::grid::grid_t<packing_t, storage_t>;
-
-    // build the class record
-    auto cls = py::class_<grid_t>(
-        // in scope
-        m,
-        // class name
-        "Int32ConstMapGrid4D",
-        // docstring
-        "a 4d grid backed by a read-only map of {int32_t}");
-
-    // the map specific interface
-    constmapInterface(cls);
-    // the grid interface
-    constgridInterface(cls);
-
-    // all done
-    return;
-}
-
-
-void
-pyre::py::grid::int64ConstMapGrid4D(py::module & m)
-{
-    // type aliases
-    using cell_t = int64_t;
-    using packing_t = pyre::grid::canonical_t<4>;
-    using storage_t = pyre::memory::constmap_t<cell_t>;
-    using grid_t = pyre::grid::grid_t<packing_t, storage_t>;
-
-    // build the class record
-    auto cls = py::class_<grid_t>(
-        // in scope
-        m,
-        // class name
-        "Int64ConstMapGrid4D",
-        // docstring
-        "a 4d grid backed by a read-only map of {int64_t}");
-
-    // the map specific interface
-    constmapInterface(cls);
-    // the grid interface
-    constgridInterface(cls);
-
-    // all done
-    return;
-}
-
-
-void
-pyre::py::grid::floatConstMapGrid4D(py::module & m)
-{
-    // type aliases
-    using cell_t = float;
-    using packing_t = pyre::grid::canonical_t<4>;
-    using storage_t = pyre::memory::constmap_t<cell_t>;
-    using grid_t = pyre::grid::grid_t<packing_t, storage_t>;
-
-    // build the class record
-    auto cls = py::class_<grid_t>(
-        // in scope
-        m,
-        // class name
-        "FloatConstMapGrid4D",
-        // docstring
-        "a 4d grid backed by a read-only map of floats");
-
-    // the map specific interface
-    constmapInterface(cls);
-    // the grid interface
-    constgridInterface(cls);
-
-    // all done
-    return;
-}
-
-
-void
-pyre::py::grid::doubleConstMapGrid4D(py::module & m)
-{
-    // type aliases
-    using cell_t = double;
-    using packing_t = pyre::grid::canonical_t<4>;
-    using storage_t = pyre::memory::constmap_t<cell_t>;
-    using grid_t = pyre::grid::grid_t<packing_t, storage_t>;
-
-    // build the class record
-    auto cls = py::class_<grid_t>(
-        // in scope
-        m,
-        // class name
-        "DoubleConstMapGrid4D",
-        // docstring
-        "a 4d grid backed by a read-only map of doubles");
-
-    // the map specific interface
-    constmapInterface(cls);
-    // the grid interface
-    constgridInterface(cls);
-
-    // all done
-    return;
-}
-
-
-void
-pyre::py::grid::complexFloatConstMapGrid4D(py::module & m)
-{
-    // type aliases
-    using cell_t = std::complex<float>;
-    using packing_t = pyre::grid::canonical_t<4>;
-    using storage_t = pyre::memory::constmap_t<cell_t>;
-    using grid_t = pyre::grid::grid_t<packing_t, storage_t>;
-
-    // build the class record
-    auto cls = py::class_<grid_t>(
-        // in scope
-        m,
-        // class name
-        "ComplexFloatConstMapGrid4D",
-        // docstring
-        "a 4d grid backed by a read-only map of complex floats");
-
-    // the map specific interface
-    constmapInterface(cls);
-    // the grid interface
-    constgridInterface(cls);
-
-    // all done
-    return;
-}
-
-
-void
-pyre::py::grid::complexDoubleConstMapGrid4D(py::module & m)
-{
-    // type aliases
-    using cell_t = std::complex<double>;
-    using packing_t = pyre::grid::canonical_t<4>;
-    using storage_t = pyre::memory::constmap_t<cell_t>;
-    using grid_t = pyre::grid::grid_t<packing_t, storage_t>;
-
-    // build the class record
-    auto cls = py::class_<grid_t>(
-        // in scope
-        m,
-        // class name
-        "ComplexDoubleConstMapGrid4D",
-        // docstring
-        "a 4d grid backed by a read-only map of complex doubles");
-
-    // the map specific interface
-    constmapInterface(cls);
-    // the grid interface
-    constgridInterface(cls);
-
-    // all done
-    return;
-}
-
-
-// the map specific constructors
-template <class gridT>
-void
-pyre::py::grid::constmapInterface(py::class_<gridT> & cls)
-{
-    // constructors
-    cls.def(
-        // the implementation
-        py::init<typename gridT::packing_const_reference, typename gridT::storage_pointer>(),
-        //
-        "packing"_a, "storage"_a,
-        // the docstring
-        "make a new grid over the {storage} with the given {packing} strategy");
-
-    // all done
-    return;
-}
-
-
-// the const grid interface decorator
-template <class gridT>
-void
-pyre::py::grid::constgridInterface(py::class_<gridT> & cls)
-{
-    // accessors
-    // layout
-    cls.def_property_readonly(
-        // the name of the method
-        "layout",
-        // the implementation
-        &gridT::layout,
-        // the docstring
-        "access my layout");
-
-    // data access
-    // by index
-    cls.def(
-        // the name of the method
-        "__getitem__",
-        // the implementation
-        [](const gridT & self, typename gridT::index_const_reference index) {
-            // get the value at the given {index}
-            return self.at(index);
-        },
-        // the signature
-        "index"_a,
-        // the docstring
-        "get the value at the specified {index}");
-
-    // by tuple
-    cls.def(
-        // the name of the method
-        "__getitem__",
-        // the implementation
-        [](const gridT & self, const std::vector<typename gridT::index_type::rank_type> & index) {
-            // make an index
-            auto idx = typename gridT::index_type();
-            // fill it
-            std::copy(index.begin(), index.end(), idx.begin());
-            // get the value at the given {index} and return it
-            return self.at(idx);
-        },
-        // the signature
-        "index"_a,
-        // the docstring
-        "get the value at the specified {index}");
-
-    // by offset
-    cls.def(
-        // the name of the method
-        "__getitem__",
-        // the implementation
-        [](const gridT & self, typename gridT::difference_type offset) {
-            // get the value at the given {offset}
-            return self.at(offset);
-        },
-        // the signature
-        "offset"_a,
-        // the docstring
-        "get the value at the specified {offset}");
-
-    // all done
-    return;
-}
-
-
-// the grid interface decorator
-template <class gridT>
-void
-pyre::py::grid::gridInterface(py::class_<gridT> & cls)
-{
-    // data access
-    // by index
-    cls.def(
-        // the name of the method
-        "__setitem__",
-        // the implementation
-        [](const gridT & self, typename gridT::index_const_reference index,
-           typename gridT::value_type value) -> void {
-            // set the value at the given {index}
-            self.at(index) = value;
-            // all done
-        },
-        // the signature
-        "index"_a,
-        // the docstring
-        "get the value at the specified {index}");
-
-    // by offset
-    cls.def(
-        // the name of the method
-        "__setitem__",
-        // the implementation
-        [](const gridT & self, typename gridT::difference_type offset,
-           typename gridT::value_type value) -> void {
-            // set the value at the given {offset}
-            self.at(offset) = value;
-            // all done
-            return;
-        },
-        // the signature
-        "offset"_a,
-        // the docstring
-        "get the value at the specified {offset}");
-
-    // all done
-    return;
-}
-
+#endif
 
 // end of file

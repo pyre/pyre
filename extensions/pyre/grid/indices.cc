@@ -150,7 +150,6 @@ template <class indexT>
 void
 pyre::py::grid::indexInterface(py::class_<indexT> & cls)
 {
-
     // add the filling constructor
     cls.def(
         // the constructor
