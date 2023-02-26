@@ -9,6 +9,9 @@ class MemoryType:
     A memory type specification
     """
 
+    # constants
+    ctype = "void"
+
     # data
     @property
     def tag(self):
@@ -19,6 +22,11 @@ class MemoryType:
         # bindings, so it can be interpolated into class names when requesting specific
         # template instantiations
         return type(self).__name__
+
+    # metamethods
+    def __str__(self):
+        # use my {ctype} as my marker
+        return self.ctype
 
 
 # end of file
