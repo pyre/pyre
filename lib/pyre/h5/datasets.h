@@ -111,6 +111,57 @@ pyre::h5::read(
     return grid;
 }
 
+// generics
+template <class memT>
+auto
+pyre::h5::read(
+    const dataset_t & self, memT & data, const datatype_t & memtype, const shape_t & origin,
+    const shape_t shape) -> void
+{
+    // get the size of the buffer
+    hsize_t memsize = data.cells();
+    // the in-memory layout is one-dimensional
+    auto memspace = dataspace_t(1, &memsize);
+    // make a block count
+    shape_t count;
+    // resize it to the same rank as the requested {shape} and fill it with ones
+    // since we read only one block of data
+    count.assign(shape.size(), 1);
+    // extract the on-disk layout
+    auto filespace = self.getSpace();
+    // specify the region of interest by selecting the appropriate hyperslab
+    filespace.selectHyperslab(H5S_SELECT_SET, &count[0], &origin[0], nullptr, &shape[0]);
+    // populate the buffer
+    self.read(data.data(), memtype, memspace, filespace);
+    // all done
+    return;
+};
+
+template <class memT>
+auto
+pyre::h5::write(
+    const dataset_t & self, memT & data, const datatype_t & memtype, const shape_t & origin,
+    const shape_t shape) -> void
+{
+    // get the size of the buffer
+    hsize_t memsize = data.cells();
+    // the in-memory layout is one-dimensional
+    auto memspace = dataspace_t(1, &memsize);
+    // make a block count
+    shape_t count;
+    // resize it to the same rank as the requested {shape} and fill it with ones
+    // since we read only one block of data
+    count.assign(shape.size(), 1);
+    // extract the on-disk layout
+    auto filespace = self.getSpace();
+    // specify the region of interest by selecting the appropriate hyperslab
+    filespace.selectHyperslab(H5S_SELECT_SET, &count[0], &origin[0], nullptr, &shape[0]);
+    // populate the buffer
+    self.write(data.data(), memtype, memspace, filespace);
+    // all done
+    return;
+};
+
 
 #endif
 
