@@ -4,6 +4,9 @@
 # (c) 1998-2023 all rights reserved
 
 
+# support
+import pyre
+
 # superclass
 from .MemoryType import MemoryType
 
@@ -16,6 +19,7 @@ class ComplexDouble(MemoryType):
 
     # constants
     ctype = "std::complex<double>"
+    htype = pyre.libh5.datatypes.native.complexDouble
 
 
 # end of file

@@ -4,9 +4,13 @@
 # (c) 1998-2023 all rights reserved
 
 
+# c types
 # char
 from .Char import Char as char
+from .ComplexFloat import ComplexFloat as complexFloat
+from .ComplexDouble import ComplexDouble as complexDouble
 
+# specification with a guaranteed size
 # signed
 from .Int8 import Int8 as int8
 from .Int16 import Int16 as int16

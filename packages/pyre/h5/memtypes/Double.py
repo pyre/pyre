@@ -4,6 +4,9 @@
 # (c) 1998-2023 all rights reserved
 
 
+# support
+import pyre
+
 # superclass
 from .MemoryType import MemoryType
 
@@ -16,6 +19,7 @@ class Double(MemoryType):
 
     # constants
     ctype = "double"
+    htype = pyre.libh5.datatypes.native.double
 
 
 # end of file
