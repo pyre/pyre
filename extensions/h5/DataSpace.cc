@@ -267,7 +267,7 @@ pyre::h5::py::dataspace(py::module & m)
         // the name
         "offset",
         // the implementation
-        [](const DataSpace & self, const index_t & delta) -> void {
+        [](const DataSpace & self, const offsets_t & delta) -> void {
             // apply the offset
             self.offsetSimple(&delta[0]);
             // all done
@@ -347,50 +347,58 @@ pyre::h5::py::dataspace(py::module & m)
     // slab selection
     cls.def(
         // the name
-        "selectSlab",
+        "slab",
         // the implementation
-        [](const DataSpace & self, H5S_seloper_t op, const shape_t & count, const shape_t & start) {
-            // select the slab with default strides and block count
-            self.selectHyperslab(op, &count[0], &start[0]);
+        [](const DataSpace & self, const index_t & origin, const shape_t & shape) {
+            // the block count
+            shape_t count;
+            // we only want one block
+            count.assign(shape.size(), 1);
+            // set the selection to the given slab
+            self.selectHyperslab(H5S_SELECT_SET, &count[0], &origin[0], nullptr, &shape[0]);
             // all done
             return;
         },
         // the signature
-        "op"_a, "count"_a, "start"_a,
+        "origin"_a, "shape"_a,
         // the docstring
-        "combine a slab with the current selection");
+        "select a slab of the given {shape} at the given {origin}");
 
     cls.def(
         // the name
-        "selectSlab",
+        "slab",
         // the implementation
-        [](const DataSpace & self, H5S_seloper_t op, const shape_t & count, const shape_t & start,
-           const shape_t & stride) {
-            // select the slab with default block count
-            self.selectHyperslab(op, &count[0], &start[0], &stride[0]);
+        [](const DataSpace & self, H5S_seloper_t op, const index_t & origin,
+           const shape_t & shape) {
+            // the block count
+            shape_t count;
+            // we only want one block
+            count.assign(shape.size(), 1);
+            // set the selection to the given slab
+            self.selectHyperslab(op, &count[0], &origin[0], nullptr, &shape[0]);
             // all done
             return;
         },
         // the signature
-        "op"_a, "count"_a, "start"_a, "stride"_a,
+        "op"_a, "origin"_a, "shape"_a,
         // the docstring
-        "combine a slab with the current selection");
+        "use {op} to combine the specified slab with the current selection");
 
     cls.def(
         // the name
-        "selectSlab",
+        "slab",
         // the implementation
-        [](const DataSpace & self, H5S_seloper_t op, const shape_t & count, const shape_t & start,
-           const shape_t & stride, const shape_t & block) {
+        [](const DataSpace & self, H5S_seloper_t op, const shape_t & origin, const shape_t & shape,
+           const shape_t & stride, const shape_t & count) {
             // select the slab
-            self.selectHyperslab(op, &count[0], &start[0], &stride[0], &block[0]);
+            self.selectHyperslab(op, &count[0], &origin[0], &stride[0], &shape[0]);
             // all done
             return;
         },
         // the signature
-        "op"_a, "count"_a, "start"_a, "stride"_a, "block"_a,
+        "op"_a, "origin"_a, "shape"_a, "stride"_a, "count"_a,
         // the docstring
-        "combine a slab with the current selection");
+        "combine a fully specified hyperslab with the current selection");
 
     // grab (a portion of) the list of selected slabs
     cls.def(
