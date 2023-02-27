@@ -9,7 +9,6 @@
 // namespace setup
 #include "forward.h"
 
-
 // datasets
 void
 pyre::h5::py::dataset(py::module & m)
@@ -467,6 +466,108 @@ pyre::h5::py::dataset(py::module & m)
         &DataSet::close,
         // the docstring
         "close the dataset");
+
+    // read a block of data from the dataset
+    cls.def(
+        // the name
+        "read",
+        // the implementation
+        &read<heap_int_t>,
+        // the signature
+        "data"_a, "memtype"_a, "origin"_a, "shape"_a,
+        // the docstring
+        "fill {data} with the tile @{origin}+{shape}");
+
+    cls.def(
+        // the name
+        "read",
+        // the implementation
+        &read<heap_float_t>,
+        // the signature
+        "data"_a, "memtype"_a, "origin"_a, "shape"_a,
+        // the docstring
+        "fill {data} with the tile @{origin}+{shape}");
+
+    cls.def(
+        // the name
+        "read",
+        // the implementation
+        &read<heap_double_t>,
+        // the signature
+        "data"_a, "memtype"_a, "origin"_a, "shape"_a,
+        // the docstring
+        "fill {data} with the tile @{origin}+{shape}");
+
+    cls.def(
+        // the name
+        "read",
+        // the implementation
+        &read<heap_complexfloat_t>,
+        // the signature
+        "data"_a, "memtype"_a, "origin"_a, "shape"_a,
+        // the docstring
+        "fill {data} with the tile @{origin}+{shape}");
+
+    cls.def(
+        // the name
+        "read",
+        // the implementation
+        &read<heap_complexdouble_t>,
+        // the signature
+        "data"_a, "memtype"_a, "origin"_a, "shape"_a,
+        // the docstring
+        "fill {data} with the tile @{origin}+{shape}");
+
+    // write a block of data to the dataset
+    cls.def(
+        // the name
+        "write",
+        // the implementation
+        &write<heap_int_t>,
+        // the signature
+        "data"_a, "memtype"_a, "origin"_a, "shape"_a,
+        // the docstring
+        "fill {data} with the tile @{origin}+{shape}");
+
+    cls.def(
+        // the name
+        "write",
+        // the implementation
+        &write<heap_float_t>,
+        // the signature
+        "data"_a, "memtype"_a, "origin"_a, "shape"_a,
+        // the docstring
+        "fill {data} with the tile @{origin}+{shape}");
+
+    cls.def(
+        // the name
+        "write",
+        // the implementation
+        &write<heap_double_t>,
+        // the signature
+        "data"_a, "memtype"_a, "origin"_a, "shape"_a,
+        // the docstring
+        "fill {data} with the tile @{origin}+{shape}");
+
+    cls.def(
+        // the name
+        "write",
+        // the implementation
+        &write<heap_complexfloat_t>,
+        // the signature
+        "data"_a, "memtype"_a, "origin"_a, "shape"_a,
+        // the docstring
+        "fill {data} with the tile @{origin}+{shape}");
+
+    cls.def(
+        // the name
+        "write",
+        // the implementation
+        &write<heap_complexdouble_t>,
+        // the signature
+        "data"_a, "memtype"_a, "origin"_a, "shape"_a,
+        // the docstring
+        "fill {data} with the tile @{origin}+{shape}");
 
     // all done
     return;
