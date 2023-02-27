@@ -76,6 +76,28 @@ pyre::h5::py::datatypes::native(py::module & m)
     native.attr("intFast64") = H5::PredType::NATIVE_INT_FAST64;
     native.attr("uintFast64") = H5::PredType::NATIVE_UINT_FAST64;
 
+    // build a compound type to represent {std::complex<float>}
+    // grab the native float
+    auto nf = H5::PredType::NATIVE_FLOAT;
+    // allocate the type
+    auto cf = new H5::CompType(2 * nf.getSize());
+    // insert the real and imaginary parts
+    cf->insertMember("r", 0, nf);
+    cf->insertMember("i", nf.getSize(), nf);
+    // and attach it to the module
+    native.attr("complexFloat") = cf;
+
+    // build a compound type to represent {std::complex<double>}
+    // grab the native double
+    auto nd = H5::PredType::NATIVE_DOUBLE;
+    // allocate the type
+    auto cd = new H5::CompType(2 * nd.getSize());
+    // insert the real and imaginary parts
+    cd->insertMember("r", 0, nd);
+    cd->insertMember("i", nd.getSize(), nd);
+    // and attach it
+    native.attr("complexDouble") = cd;
+
     // all done
     return;
 }
