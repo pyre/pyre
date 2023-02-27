@@ -15,7 +15,7 @@ namespace pyre::viz {
     // microsoft bmp
     using bmp_t = BMP;
 
-    // and correctly typed file streams for reading and writing to avaoid having to cast
+    // and correctly typed file streams for reading and writing to avoid having to cast
     // {byte_t *} to {char *}
     // using fstream_t = std::basic_fstream<byte_t>;
     // using ifstream_t = std::basic_ifstream<byte_t>;
