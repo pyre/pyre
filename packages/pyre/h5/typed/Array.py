@@ -31,6 +31,15 @@ class Array:
         # easy enough
         return self.schema.memtype
 
+    # metamethods
+    def __init__(self, shape=None, **kwds):
+        # chain up
+        super().__init__(**kwds)
+        # save the shape
+        self.shape = shape
+        # all done
+        return
+
     # interface
     def coerce(self, value, **kwds):
         """
@@ -48,7 +57,7 @@ class Array:
         Build a proxy to help with the file interactions
         """
         # build my value
-        value = Raster(dataset=dataset, schema=self.schema)
+        value = Raster(dataset=dataset)
         # and return it
         return value
 
