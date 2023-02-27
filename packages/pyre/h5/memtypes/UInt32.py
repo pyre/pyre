@@ -4,6 +4,9 @@
 # (c) 1998-2023 all rights reserved
 
 
+# support
+import pyre
+
 # superclass
 from .MemoryType import MemoryType
 
@@ -16,6 +19,7 @@ class UInt32(MemoryType):
 
     # constants
     ctype = "uint32_t"
+    htype = pyre.libh5.datatypes.native.uint32
 
 
 # end of file
