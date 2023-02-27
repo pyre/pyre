@@ -26,6 +26,10 @@ namespace pyre::h5 {
     using datatype_t = H5::DataType;
     using comptype_t = H5::CompType;
     using predtype_t = H5::PredType;
+    // for specifying dataspace coordinates and shapes
+    using shape_t = std::vector<hsize_t>;
+    using index_t = shape_t;
+    using offsets_t = std::vector<hssize_t>;
 } // namespace pyre::h5
 
 

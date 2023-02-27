@@ -40,6 +40,17 @@ namespace pyre::h5 {
         // and the strides
         const typename gridT::shape_type & strides) -> gridT;
 
+    // support for reading into existing {pyre::memory} buffers
+    template <class memT>
+    auto read(
+        const dataset_t & self, memT & data, const datatype_t & memtype, const shape_t & origin,
+        const shape_t shape) -> void;
+
+    // support for writing from existing {pyre::memory} buffers
+    template <class memT>
+    auto write(
+        const dataset_t & self, memT & data, const datatype_t & memtype, const shape_t & origin,
+        const shape_t shape) -> void;
 
 } // namespace pyre::h5
 
