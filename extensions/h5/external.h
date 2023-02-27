@@ -14,6 +14,7 @@
 #include <string>
 // support
 #include <pyre/journal.h>
+#include <pyre/memory.h>
 // pybind11
 #include <pybind11/pybind11.h>
 #include <pybind11/complex.h>
@@ -47,10 +48,10 @@ namespace pyre::h5::py {
     using strings_t = std::vector<string_t>;
 
     // for specifying dataspace coordinates and shapes
-    using dims_t = std::vector<hsize_t>;
-    using offsets_t = std::vector<hssize_t>;
+    using shape_t = std::vector<hsize_t>;
+    using index_t = std::vector<hssize_t>;
     // a collection of dataspace coordinates
-    using points_t = std::vector<dims_t>;
+    using points_t = std::vector<shape_t>;
 
     // aliases of hdf5 entities
     // to avoid having to constantly look up which ones are prefixed by H5 and which not
