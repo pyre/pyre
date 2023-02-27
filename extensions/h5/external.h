@@ -10,9 +10,11 @@
 
 // STL
 #include <algorithm>
+#include <complex>
 #include <memory>
 #include <string>
 // support
+#include <pyre/h5.h>
 #include <pyre/journal.h>
 #include <pyre/memory.h>
 // pybind11
@@ -49,7 +51,8 @@ namespace pyre::h5::py {
 
     // for specifying dataspace coordinates and shapes
     using shape_t = std::vector<hsize_t>;
-    using index_t = std::vector<hssize_t>;
+    using index_t = shape_t;
+    using offsets_t = std::vector<hssize_t>;
     // a collection of dataspace coordinates
     using points_t = std::vector<shape_t>;
 
@@ -83,6 +86,14 @@ namespace pyre::h5::py {
     using CompType = H5::CompType;     // derives from DataType
     using EnumType = H5::EnumType;     // derives from DataType
     using VarLenType = H5::VarLenType; // derives from DataType
+
+    // aliases for select memory template expansions
+    using heap_int_t = pyre::memory::heap_t<int>;
+    using heap_long_t = pyre::memory::heap_t<long>;
+    using heap_float_t = pyre::memory::heap_t<float>;
+    using heap_double_t = pyre::memory::heap_t<double>;
+    using heap_complexfloat_t = pyre::memory::heap_t<std::complex<float>>;
+    using heap_complexdouble_t = pyre::memory::heap_t<std::complex<double>>;
 
 } // namespace pyre::h5::py
 
