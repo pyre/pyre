@@ -36,9 +36,9 @@ pyre::h5::py::dataspace(py::module & m)
     // simple, with the given shape
     cls.def(
         // the implementation
-        py::init([](const dims_t & dims) {
+        py::init([](const shape_t & shape) {
             // instantiate and return
-            return new DataSpace(dims.size(), &dims[0], nullptr);
+            return new DataSpace(shape.size(), &shape[0], nullptr);
         }),
         // the signature
         "shape"_a,
@@ -100,18 +100,18 @@ pyre::h5::py::dataspace(py::module & m)
         // the name
         "shape",
         // the reader
-        [](const DataSpace & self) -> dims_t {
+        [](const DataSpace & self) -> shape_t {
             // get my rank
             auto rank = self.getSimpleExtentNdims();
             // make a correctly sized vector to hold the result
-            dims_t shape(rank);
+            shape_t shape(rank);
             // populate it
             self.getSimpleExtentDims(&shape[0], nullptr);
             // and return it
             return shape;
         },
         // the writer
-        [](DataSpace & self, const dims_t & shape) -> void {
+        [](DataSpace & self, const shape_t & shape) -> void {
             // resize me
             self.setExtentSimple(shape.size(), &shape[0], nullptr);
             // all done
@@ -156,9 +156,9 @@ pyre::h5::py::dataspace(py::module & m)
             // find my rank
             auto rank = self.getSimpleExtentNdims();
             // the beginning
-            dims_t begin(rank);
+            shape_t begin(rank);
             // and the end
-            dims_t end(rank);
+            shape_t end(rank);
             // hand them both to the bbox calculator
             self.getSelectBounds(&begin[0], &end[0]);
             // and return them to the caller
@@ -234,7 +234,7 @@ pyre::h5::py::dataspace(py::module & m)
         // the name
         "reshape",
         // the implementation
-        [](DataSpace & self, const dims_t & shape) -> void {
+        [](DataSpace & self, const shape_t & shape) -> void {
             // resize me
             self.setExtentSimple(shape.size(), &shape[0], nullptr);
             // all done
@@ -267,7 +267,7 @@ pyre::h5::py::dataspace(py::module & m)
         // the name
         "offset",
         // the implementation
-        [](const DataSpace & self, const offsets_t & delta) -> void {
+        [](const DataSpace & self, const index_t & delta) -> void {
             // apply the offset
             self.offsetSimple(&delta[0]);
             // all done
@@ -349,7 +349,7 @@ pyre::h5::py::dataspace(py::module & m)
         // the name
         "selectSlab",
         // the implementation
-        [](const DataSpace & self, H5S_seloper_t op, const dims_t & count, const dims_t & start) {
+        [](const DataSpace & self, H5S_seloper_t op, const shape_t & count, const shape_t & start) {
             // select the slab with default strides and block count
             self.selectHyperslab(op, &count[0], &start[0]);
             // all done
@@ -364,8 +364,8 @@ pyre::h5::py::dataspace(py::module & m)
         // the name
         "selectSlab",
         // the implementation
-        [](const DataSpace & self, H5S_seloper_t op, const dims_t & count, const dims_t & start,
-           const dims_t & stride) {
+        [](const DataSpace & self, H5S_seloper_t op, const shape_t & count, const shape_t & start,
+           const shape_t & stride) {
             // select the slab with default block count
             self.selectHyperslab(op, &count[0], &start[0], &stride[0]);
             // all done
@@ -380,8 +380,8 @@ pyre::h5::py::dataspace(py::module & m)
         // the name
         "selectSlab",
         // the implementation
-        [](const DataSpace & self, H5S_seloper_t op, const dims_t & count, const dims_t & start,
-           const dims_t & stride, const dims_t & block) {
+        [](const DataSpace & self, H5S_seloper_t op, const shape_t & count, const shape_t & start,
+           const shape_t & stride, const shape_t & block) {
             // select the slab
             self.selectHyperslab(op, &count[0], &start[0], &stride[0], &block[0]);
             // all done
@@ -409,17 +409,17 @@ pyre::h5::py::dataspace(py::module & m)
             // populate it
             self.getSelectHyperBlocklist(start, blocks, pile);
             // build the result
-            std::vector<std::pair<dims_t, dims_t>> slabs;
+            std::vector<std::pair<shape_t, shape_t>> slabs;
             // go through them
             for (auto block = 0; block < blocks; ++block) {
                 // compute the location of this block
                 auto cursor = pile + 2 * rank * (block + start);
                 // set up the beginning of the block
-                dims_t begin(rank);
+                shape_t begin(rank);
                 // populate it
                 std::copy(cursor, cursor + rank, begin.begin());
                 // set up the end of the block
-                dims_t end(rank);
+                shape_t end(rank);
                 // skip to the beginning of the end block
                 cursor += rank;
                 // and populate it

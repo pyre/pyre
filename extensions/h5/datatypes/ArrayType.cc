@@ -30,7 +30,7 @@ pyre::h5::py::datatypes::array(py::module & m)
     // constructor
     arrayType.def(
         // the implementation
-        py::init([](const DataType & type, const dims_t & shape) {
+        py::init([](const DataType & type, const shape_t & shape) {
             return new ArrayType(type, shape.size(), &shape[0]);
         }),
         // the signature
