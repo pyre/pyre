@@ -7,6 +7,17 @@
 # c types
 # char
 from .Char import Char as char
+from .SignedChar import SignedChar as signedChar
+from .UnsignedChar import UnsignedChar as unsignedChar
+from .Short import Short as short
+from .UnsignedShort import UnsignedShort as unsignedShort
+from .Int import Int as int
+from .UnsignedInt import UnsignedInt as unsignedInt
+from .Long import Long as long
+from .UnsignedLong import UnsignedLong as unsignedLong
+
+from .Float import Float as float
+from .Double import Double as double
 from .ComplexFloat import ComplexFloat as complexFloat
 from .ComplexDouble import ComplexDouble as complexDouble
 
