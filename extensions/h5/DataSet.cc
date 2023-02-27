@@ -125,13 +125,13 @@ pyre::h5::py::dataset(py::module & m)
         // the name
         "shape",
         // the implementation
-        [](const DataSet & self) -> dims_t {
+        [](const DataSet & self) -> shape_t {
             // get my dataspace
             auto space = self.getSpace();
             // ask it for its rank
             auto rank = space.getSimpleExtentNdims();
             // make a correctly sized vector to hold the result
-            dims_t shape(rank);
+            shape_t shape(rank);
             // populate it
             space.getSimpleExtentDims(&shape[0], nullptr);
             // and return it
@@ -282,7 +282,7 @@ pyre::h5::py::dataset(py::module & m)
             // ask it for its rank
             auto rank = space.getSimpleExtentNdims();
             // make a correctly sized vector to hold the result
-            dims_t shape(rank);
+            shape_t shape(rank);
             // populate it
             space.getSimpleExtentDims(&shape[0], nullptr);
 
@@ -347,7 +347,7 @@ pyre::h5::py::dataset(py::module & m)
             // ask it for its rank
             auto rank = space.getSimpleExtentNdims();
             // make a correctly sized vector to hold the result
-            dims_t shape(rank);
+            shape_t shape(rank);
             // populate it
             space.getSimpleExtentDims(&shape[0], nullptr);
 
@@ -412,7 +412,7 @@ pyre::h5::py::dataset(py::module & m)
             // ask it for its rank
             auto rank = space.getSimpleExtentNdims();
             // make a correctly sized vector to hold the result
-            dims_t shape(rank);
+            shape_t shape(rank);
             // populate it
             space.getSimpleExtentDims(&shape[0], nullptr);
 
@@ -439,7 +439,7 @@ pyre::h5::py::dataset(py::module & m)
 
             // make a slot
             const hsize_t one = 1;
-            // we always write one string at offset zero
+            // we always write one snnnntring at offset zero
             auto write = DataSpace(1, &one);
             // and read from the dataset space
             auto read = self.getSpace();
