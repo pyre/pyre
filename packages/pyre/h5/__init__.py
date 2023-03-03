@@ -28,4 +28,13 @@ except AttributeError as error:
     channel.log()
 
 
+# convenience
+def open(**kwds):
+    """
+    Make a generic reader to read a data product
+    """
+    # easy enough
+    return reader().read(**kwds)
+
+
 # end of file
