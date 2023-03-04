@@ -52,12 +52,18 @@ class Viewer:
 
     # visitor implementation
     def _pyre_onDataset(self, dataset: Dataset, graphic: str, **kwds):
+        """
+        Process a {dataset}
+        """
         # draw
         yield self._render(descriptor=dataset, graphic=graphic)
         # all done
         return
 
     def _pyre_onGroup(self, group: Group, margin: str, graphic: str):
+        """
+        Process a {group}
+        """
         # draw
         yield self._render(descriptor=group, graphic=graphic)
         # collect the children
