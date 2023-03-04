@@ -15,6 +15,7 @@ from .Viewer import Viewer as viewer
 # the typed descriptors
 # scalars
 bool = dataset.bool
+complex = dataset.complex
 float = dataset.float
 int = dataset.int
 str = dataset.str
