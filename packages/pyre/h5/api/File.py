@@ -22,9 +22,18 @@ class File(Group):
     """
 
     # metamethods
-    def __init__(self, at: pyre.primitives.pathlike = "/", **kwds):
+    def __init__(
+        self,
+        at: pyre.primitives.pathlike = "/",
+        layout: typing.Optional[Object._pyre_schema.group] = None,
+        **kwds,
+    ):
+        # normalize the layout
+        if layout is None:
+            # by making sure it is a group
+            layout = self._pyre_schema.group(name="root")
         # chain up
-        super().__init__(at=at)
+        super().__init__(at=at, layout=layout, **kwds)
         # initialize my access property list
         self._pyre_fapl = None
         # initially, i'm not attached to a particular file
@@ -122,14 +131,8 @@ class File(Group):
         """
         Get the root of my layout
         """
-        # get my layout
-        layout = self._pyre_layout
-        # if it is trivial
-        if layout is None:
-            # build an empty group at the root
-            layout = self._pyre_schema.group(name="root")
-        # either way
-        return layout
+        # get my layout; it's guaranteed to be a group with the correct name
+        return self._pyre_layout
 
     # member access
     def _pyre_find(self, path: pyre.primitives.pathlike) -> typing.Optional[Object]:
