@@ -99,8 +99,8 @@ pyre::h5::py::enums(py::module & m)
     py::enum_<H5T_order_t>(m, "ByteOrder", "the byte packing strategies")
         // add the values
         .value("error", H5T_ORDER_ERROR)
-        .value("little", H5T_ORDER_LE)
-        .value("big", H5T_ORDER_BE)
+        .value("littleEndian", H5T_ORDER_LE)
+        .value("bigEndian", H5T_ORDER_BE)
         .value("vax", H5T_ORDER_VAX)
         .value("mixed", H5T_ORDER_MIXED)
         .value("none", H5T_ORDER_NONE);
