@@ -27,14 +27,6 @@ class Dataset(Descriptor):
     from ..typed import array, bool, complex, float, int, str, timestamp, containers
 
     # metamethods
-    def __init__(self, doc="", **kwds):
-        # chain up
-        super().__init__(**kwds)
-        # record the documentation
-        self.__doc__ = doc
-        # all done
-        return
-
     # representation
     def __str__(self):
         """
@@ -45,17 +37,6 @@ class Dataset(Descriptor):
 
     # framework hooks
     # cloning
-    def _pyre_clone(self, default=object, **kwds):
-        """
-        Make a copy
-        """
-        # if i didn't get an explicit default value
-        if default is object:
-            # use mine
-            default = self.default
-        # add my state and chain up
-        return super()._pyre_clone(default=default, doc=self.__doc__)
-
     # value syncing hooks by dataset subclasses
     def _pyre_pull(self, dataset):
         """

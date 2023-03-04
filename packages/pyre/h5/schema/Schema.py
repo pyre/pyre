@@ -6,7 +6,6 @@
 
 # externals
 import itertools
-import journal
 
 # superclass
 from pyre.patterns.AttributeClassifier import AttributeClassifier
@@ -18,6 +17,7 @@ from .Inventory import Inventory
 
 # typing
 import typing
+
 
 # the generator of group structure
 class Schema(AttributeClassifier):
@@ -31,7 +31,9 @@ class Schema(AttributeClassifier):
         Build the class record of a new h5 group
         """
         # make a table for the locally declared descriptors
-        localDescriptors = dict(cls._pyre_identifyDescriptors(attributes=attributes))
+        localDescriptors = Inventory(
+            cls._pyre_identifyDescriptors(attributes=attributes)
+        )
         # and an empty one for all visible descriptors that we will fill out later on
         descriptors = Inventory()
         # add them to the pile of {attributes} of {cls}
@@ -43,55 +45,6 @@ class Schema(AttributeClassifier):
         descriptors.update(record._pyre_resolve())
         # all dons
         return record
-
-    def __setattr__(self, name: str, value: typing.Any):
-        """
-        Assign {name} to {value} in the class record of one of my instances
-        """
-        # if the name is in the protected namespace
-        if name.startswith("_"):
-            # handle a normal assignment
-            return super().__setattr__(name, value)
-        # get my descriptors
-        descriptors = self._pyre_descriptors
-        # check whether
-        try:
-            # {name} is a known {descriptor}
-            descriptor = descriptors[name]
-        # if not
-        except KeyError:
-            # if {value} is a descriptor
-            if isinstance(value, Descriptor):
-                # add it to my pile
-                descriptors[name] = value
-                # and bind it
-                value.__set_name__(cls=self, name=name)
-            # in any case, chain up to handle a normal assignment
-            return super().__setattr__(name, value)
-        # the following cases are possible:
-        # if {descriptor} is a {dataset} and {value} is not a descriptor
-        if isinstance(descriptor, Dataset) and not isinstance(value, Descriptor):
-            # interpret as setting a new default value
-            descriptor.default = value
-            # all done
-            return
-        # {value} is not a descriptor
-        if not isinstance(value, Descriptor):
-            # this is almost certainly a bug; make a channel
-            channel = journal.firewall("pyre.h5.schema")
-            # build a report
-            channel.line(f"unsupported assignment '{self.__name__}.{name}' <- {value}")
-            channel.line(f"in {self}")
-            # flush
-            channel.log()
-            # and bail, just in case firewalls aren't fatal
-            return
-        # otherwise, replace my {descriptor} with {value}
-        descriptors[name] = value
-        # bind it
-        value.__set_name__(cls=self, name=name)
-        # and chain up to handle a normal assignment
-        return super().__setattr__(name, value)
 
     # implementation details
     @classmethod

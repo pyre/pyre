@@ -7,6 +7,7 @@
 # external
 import typing
 
+
 # the base node
 class Descriptor:
     """
@@ -14,7 +15,7 @@ class Descriptor:
     """
 
     # metamethods
-    def __init__(self, name=None, **kwds):
+    def __init__(self, name: str = None, **kwds):
         # chain up
         super().__init__(**kwds)
         # set my name
@@ -32,39 +33,9 @@ class Descriptor:
         # all done
         return
 
-    # descriptor implementation
-    def __get__(self, instance, cls: type) -> typing.Any:
-        """
-        Read my value
-        """
-        # when accessing through a class record
-        if instance is None:
-            # grant access to the descriptor
-            return self
-        # otherwise, ask {instance} for my value
-        return instance._pyre_get(name=self._pyre_name)
-
-    def __set__(self, instance, value) -> None:
-        """
-        Write my value
-        """
-        # ask {instance} to process and record the new {value}
-        instance._pyre_set(name=self._pyre_name, value=value)
-        # all done
-        return
-
-    def __delete__(self, instance) -> None:
-        """
-        Delete my value
-        """
-        # ask {instance} to forget my value
-        instance._pyre_delete(name=self._pyre_name)
-        # all done
-        return
-
     # framework hooks
     # name binding
-    def _pyre_bind(self, name):
+    def _pyre_bind(self, name: str):
         """
         Set my name
         """
@@ -74,14 +45,6 @@ class Descriptor:
             self._pyre_name = name
         # all done
         return
-
-    # cloning
-    def _pyre_clone(self, **kwds):
-        """
-        Make a copy
-        """
-        # call my constructor and return the new instance
-        return type(self)(name=self._pyre_name, **kwds)
 
     # visiting
     def _pyre_identify(self, authority, **kwds):
