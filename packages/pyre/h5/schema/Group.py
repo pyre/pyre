@@ -5,6 +5,7 @@
 
 
 # support
+import itertools
 import journal
 
 # metaclass
@@ -24,6 +25,14 @@ class Group(Descriptor, metaclass=Schema):
     """
 
     # metamethods
+    def __init__(self, **kwds):
+        # chain up
+        super().__init__(**kwds)
+        # initialize the storage for my dynamic content
+        self._pyre_instanceDescriptors = Inventory()
+        # all done
+        return
+
     # representation
     def __str__(self) -> str:
         """
@@ -39,6 +48,26 @@ class Group(Descriptor, metaclass=Schema):
         return f"group '{name}', an instance of '{module}.{typename}'"
 
     # framework hooks
+    # introspection
+    def _pyre_descriptors(self):
+        """
+        Generate a sequence of my descriptors
+        """
+        # throw all descriptor name into a pile
+        names = set(
+            itertools.chain(self._pyre_instanceDescriptors, self._pyre_classDescriptors)
+        )
+        # go through them
+        for name in names:
+            # retrieve the associated value
+            attr = getattr(self, name)
+            # if it is a descriptor
+            if isinstance(attr, Descriptor):
+                # we got one; send it off
+                yield attr
+        # all done
+        return
+
     # visiting
     def _pyre_identify(self, authority, **kwds):
         """
