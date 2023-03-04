@@ -23,8 +23,22 @@ class Dataset(Object):
         """
         Retrieve my value
         """
-        # easy enough
-        return self._value
+        # read my cache
+        value = self._value
+        # if it's non trivial
+        if value is not None:
+            # hand it off
+            return value
+        # otherwise, get my descriptor
+        spec = self._pyre_layout
+        # if it is non-trivial
+        if spec is not None:
+            # ask it for its default
+            value = spec.process(spec.default)
+        # record it
+        self._value = value
+        # and return it
+        return value
 
     @value.setter
     def value(self, value):
@@ -40,8 +54,8 @@ class Dataset(Object):
     def __init__(self, layout=None, **kwds):
         # chain up
         super().__init__(layout=layout, **kwds)
-        # initialize my value
-        self._value = layout.process(layout.default)
+        # initialize my value cache
+        self._value = None
         # all done
         return
 
