@@ -14,22 +14,6 @@ class Identifier:
     A placeholder for h5 identifiers, a very very low level concept
     """
 
-    # interface
-    def _pyre_close(self) -> "Identifier":
-        """
-        Detach me from my HDF5 object
-        """
-        # get my id
-        hid = self._pyre_id
-        # if it's valid
-        if hid is not None:
-            # close it
-            hid.close()
-            # reset my id
-            self._pyre_id = None
-        # all done
-        return self
-
     # metamethods
     def __init__(
         self,
@@ -38,7 +22,7 @@ class Identifier:
     ):
         # chain up
         super().__init__(**kwds)
-        # the handle to my HDF% object
+        # the handle to my HDF5 object
         self._pyre_id = id
         # all done
         return
@@ -58,6 +42,22 @@ class Identifier:
         return f"an identifier"
 
     # framework hooks
+    # clean up
+    def _pyre_close(self) -> "Identifier":
+        """
+        Detach me from my HDF5 object
+        """
+        # get my id
+        hid = self._pyre_id
+        # if it's valid
+        if hid is not None:
+            # close it
+            hid.close()
+            # reset my id
+            self._pyre_id = None
+        # all done
+        return self
+
     # visiting
     def _pyre_identify(self, authority, **kwds):
         """
