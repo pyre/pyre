@@ -5,7 +5,7 @@
 
 
 # a table of descriptors that belong to a group
-class Inventory(dict):
+class Inventory(set):
     """
     A table of descriptors that are accessible by a group
     """

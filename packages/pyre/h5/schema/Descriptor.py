@@ -4,10 +4,6 @@
 # (c) 1998-2023 all rights reserved
 
 
-# external
-import typing
-
-
 # the base node
 class Descriptor:
     """
@@ -105,8 +101,6 @@ class Descriptor:
 
     # implementation details
     _pyre_name = None
-    _pyre_descriptors = {}
-    _pyre_localDescriptors = {}
 
 
 # end of file

@@ -32,17 +32,18 @@ class Schema(AttributeClassifier):
         """
         # make a table for the locally declared descriptors
         localDescriptors = Inventory(
-            cls._pyre_identifyDescriptors(attributes=attributes)
+            name
+            for name, descriptor in cls._pyre_identifyDescriptors(attributes=attributes)
         )
-        # and an empty one for all visible descriptors that we will fill out later on
-        descriptors = Inventory()
+        # and an empty one for all visible class descriptors that we will fill out later on
+        classDescriptors = Inventory()
         # add them to the pile of {attributes} of {cls}
-        attributes["_pyre_descriptors"] = descriptors
         attributes["_pyre_localDescriptors"] = localDescriptors
+        attributes["_pyre_classDescriptors"] = classDescriptors
         # build the record
         record = super().__new__(cls, name, bases, attributes, **kwds)
         # resolve the visible descriptors
-        descriptors.update(record._pyre_resolve())
+        classDescriptors.update(record._pyre_resolve())
         # all dons
         return record
 
@@ -61,33 +62,27 @@ class Schema(AttributeClassifier):
         """
         Scan the {mro} of the class record in {self} and return all visible descriptors
         """
-        # make a pile of descriptors
+        # make a pile of descriptor names
         descriptors = itertools.chain(
             # by chaining together
             *(
                 # all locally declared descriptors
-                base._pyre_localDescriptors.values()
+                base._pyre_localDescriptors
                 # from every base of {self}
                 for base in self.mro()
-                # that is a descriptor
-                if issubclass(base, Descriptor)
+                # that is a group
+                if isinstance(base, Schema)
             )
         )
-        # make a pile of descriptors that have been encountered previously so i can ensure
-        # that descriptors in ancestors are shadowed correctly
-        seen = set()
-        # go through the descriptors
-        for descriptor in descriptors:
-            # get the name
-            name = descriptor._pyre_name
-            # if we've bumped into this {name} before
-            if name in seen:
-                # skip it
-                continue
-            # otherwise, add it to known pile
-            seen.add(name)
-            # and send off the descriptor
-            yield descriptor._pyre_name, descriptor
+        # go through them
+        yield from (
+            # and filter those names
+            name
+            # from the pile
+            for name in descriptors
+            # that correspond to descriptors
+            if isinstance(getattr(self, name), Descriptor)
+        )
         # all done
         return
 
