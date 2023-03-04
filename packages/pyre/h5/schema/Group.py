@@ -6,7 +6,7 @@
 
 # support
 import itertools
-import journal
+import typing
 
 # metaclass
 from .Schema import Schema
@@ -32,6 +32,15 @@ class Group(Descriptor, metaclass=Schema):
         self._pyre_instanceDescriptors = Inventory()
         # all done
         return
+
+    # attribute setting
+    def __setattr__(self, name: str, value: typing.Any) -> None:
+        # if value is a named descriptor
+        if isinstance(value, Descriptor) and value._pyre_name is not None:
+            # add it to my pile
+            self._pyre_instanceDescriptors.add(name)
+        # chain up to carry out the actual assignment
+        return super().__setattr__(name, value)
 
     # representation
     def __str__(self) -> str:
