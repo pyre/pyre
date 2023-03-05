@@ -47,7 +47,7 @@ class Location(Identifier):
         # chain up
         super().__init__(**kwds)
         # record the location
-        self._pyre_location = pyre.primitives.path(at) if at else None
+        self._pyre_location = pyre.primitives.path(at) if at is not None else None
         # all done
         return
 
