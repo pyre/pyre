@@ -55,7 +55,7 @@ class Viewer:
         # indent
         graphic += "  "
         # go through the {group} children
-        for _, location in group._pyre_locations():
+        for location in group._pyre_locations():
             # and visit each one
             yield from location._pyre_identify(authority=self, graphic=graphic)
         # all done
