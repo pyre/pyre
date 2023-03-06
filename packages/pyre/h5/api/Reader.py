@@ -79,14 +79,14 @@ class Reader:
         if layout is not None and not isinstance(layout, schema.group):
             # there is a mismatch between the schema and the contents of the file
             # make a channel
-            channel = journal.error("pyre.h5.reader")
+            channel = journal.warning("pyre.h5.reader")
             # make a report
             channel.line(f"type mismatch in '{object._pyre_location}'")
             channel.line(f"expected a group, got {layout}")
             channel.line(f"while reading '{file._pyre_uri}'")
             # flush it
             channel.log()
-            # in case errors aren't fatal, add the {group} to the error pile
+            # add the {group} to the error pile
             if errors is not None:
                 # if the caller cares
                 errors.append(group)
@@ -95,15 +95,17 @@ class Reader:
         # replace the layout with the {group}
         object._pyre_layout = group
         # go through the group contents
-        for name, descriptor in group._pyre_descriptors.items():
+        for descriptor in group._pyre_descriptors():
+            # get its name
+            name = descriptor._pyre_name
             # attempt to
             try:
                 # look up the name
-                entry = object._pyre_find(path=descriptor._pyre_name)
+                entry = object._pyre_find(path=name)
             # if anything goes wrong
             except RuntimeError:
                 # make a channel
-                channel = journal.error("pyre.h5.reader")
+                channel = journal.warning("pyre.h5.reader")
                 # make a report
                 channel.line(f"could not find '{name}'")
                 channel.line(f"at {object._pyre_location}")
@@ -133,7 +135,7 @@ class Reader:
         if layout is not None and not isinstance(layout, type(dataset)):
             # there is a mismatch between the schema and the contents of the file
             # make a channel
-            channel = journal.error("pyre.h5.reader")
+            channel = journal.warning("pyre.h5.reader")
             # make a report
             channel.line(f"type mismatch in {object._pyre_location}")
             channel.line(f"expected a {dataset}")
@@ -141,7 +143,7 @@ class Reader:
             channel.line(f"while reading '{file._pyre_uri}'")
             # flush it
             channel.log()
-            # in case errors aren't fatal, add the {group} to the error pile
+            # add the {dataset} to the error pile
             if errors is not None:
                 # if the caller cares
                 errors.append(dataset)
@@ -159,7 +161,7 @@ class Reader:
         # the default is dynamic discovery, implemented by getting an explorer
         explorer = Explorer()
         # to discover the structure of the file
-        return explorer.visit(file=file)
+        return explorer.visit(object=file)
 
     # implementation details
     def open(
