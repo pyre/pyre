@@ -27,5 +27,16 @@ class Bool:
         # process it and return it
         return self.process(value)
 
+    def _pyre_push(self, src, dest):
+        """
+        Push my cache value to disk
+        """
+        # grab the value and convert to a string
+        value = str(src.value)
+        # and write it out
+        dest._pyre_id.str(value)
+        # all done
+        return
+
 
 # end of file
