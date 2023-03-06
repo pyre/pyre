@@ -60,8 +60,12 @@ class File(Group):
         """
         Build a human readable representation
         """
+        # get my type info
+        cls = type(self)
+        name = cls.__name__
+        module = cls.__module__
         # easy enough
-        return f"file '{self._pyre_uri}'"
+        return f"file '{self._pyre_uri}', an instance of '{module}.{name}' "
 
     # framework hooks
     # attach to local files
