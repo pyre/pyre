@@ -157,7 +157,7 @@ pyre::h5::py::dataset(py::module & m)
         [](const DataSet & self) -> long {
             // get my type
             auto type = self.getTypeClass();
-            // check whether i can be converted to an integer
+            // check whether i am compatible with an integer
             if (type != H5T_INTEGER) {
                 // if not, make a channel
                 auto channel = pyre::journal::error_t("pyre.hdf5");
@@ -170,17 +170,44 @@ pyre::h5::py::dataset(py::module & m)
                 // and bail
                 return 0;
             }
-
             // make some room
             long result;
             // read the data
-            self.read(&result, self.getIntType());
-
+            self.read(&result, PredType::NATIVE_LONG);
             // all done
             return result;
         },
         // the docstring
         "extract my contents as an integer");
+
+    // attempt to save the dataset contents as an int
+    cls.def(
+        // the name
+        "int",
+        // the implementation
+        [](const DataSet & self, long value) -> void {
+            // get my type
+            auto type = self.getTypeClass();
+            // check whether i am compatible with an integer
+            if (type != H5T_INTEGER) {
+                // if not, make a channel
+                auto channel = pyre::journal::error_t("pyre.hdf5");
+                // complain
+                channel
+                    // what
+                    << "the dataset does not contain an integer"
+                    // where
+                    << pyre::journal::endl(__HERE__);
+                // and bail
+                return;
+            }
+            // write the data
+            self.write(&value, PredType::NATIVE_LONG);
+            // all done
+            return;
+        },
+        // the docstring
+        "save my contents as an integer");
 
 
     // attempt to get the dataset contents as a double
@@ -191,7 +218,7 @@ pyre::h5::py::dataset(py::module & m)
         [](const DataSet & self) -> double {
             // get my type
             auto type = self.getTypeClass();
-            // check whether i can be converted to a floating point number
+            // check whether i am compatible with a floating point number
             if (type != H5T_FLOAT) {
                 // if not, make a channel
                 auto channel = pyre::journal::error_t("pyre.hdf5");
@@ -204,18 +231,44 @@ pyre::h5::py::dataset(py::module & m)
                 // and bail
                 return 0;
             }
-
             // make some room
             double result;
             // read the data
-            self.read(&result, self.getFloatType());
-
+            self.read(&result, PredType::NATIVE_DOUBLE);
             // all done
             return result;
         },
         // the docstring
         "extract my contents as a double");
 
+    // attempt to save the dataset contents as a double
+    cls.def(
+        // the name
+        "double",
+        // the implementation
+        [](const DataSet & self, double value) -> void {
+            // get my type
+            auto type = self.getTypeClass();
+            // check whether i am compatible with a floating point number
+            if (type != H5T_FLOAT) {
+                // if not, make a channel
+                auto channel = pyre::journal::error_t("pyre.hdf5");
+                // complain
+                channel
+                    // what
+                    << "the dataset does not contain a floating point number"
+                    // where
+                    << pyre::journal::endl(__HERE__);
+                // and bail
+                return;
+            }
+            // write the data
+            self.write(&value, PredType::NATIVE_DOUBLE);
+            // all done
+            return;
+        },
+        // the docstring
+        "save my contents as a double");
 
     // attempt to get the dataset contents as a string
     cls.def(
@@ -238,14 +291,41 @@ pyre::h5::py::dataset(py::module & m)
                 // and bail
                 return "";
             }
-
             // make some room
             string_t result;
             // read the data
             self.read(result, self.getStrType());
-
             // all done
             return result;
+        },
+        // the docstring
+        "extract my contents as a string");
+
+    // attempt to save the dataset contents as a string
+    cls.def(
+        // the name
+        "str",
+        // the implementation
+        [](const DataSet & self, const string_t & value) -> void {
+            // get my type
+            auto type = self.getTypeClass();
+            // check whether i can be converted to a string
+            if (type != H5T_STRING) {
+                // if not, make a channel
+                auto channel = pyre::journal::error_t("pyre.hdf5");
+                // complain
+                channel
+                    // what
+                    << "the dataset does not contain a string"
+                    // where
+                    << pyre::journal::endl(__HERE__);
+                // and bail
+                return;
+            }
+            // read the data
+            self.write(value, self.getStrType());
+            // all done
+            return;
         },
         // the docstring
         "extract my contents as a string");
@@ -308,7 +388,7 @@ pyre::h5::py::dataset(py::module & m)
 
             // make a slot
             const hsize_t one = 1;
-            // we always write one snnnntring at offset zero
+            // we always write one string at offset zero
             auto write = DataSpace(1, &one);
             // and read from the dataset space
             auto read = self.getSpace();
@@ -326,6 +406,74 @@ pyre::h5::py::dataset(py::module & m)
         },
         // the docstring
         "get my contents as a list of strings");
+
+    // attempt to save the dataset contents as a list of strings
+    cls.def(
+        // the name
+        "strings",
+        // the implementation
+        [](const DataSet & self, const strings_t & value) -> void {
+            // get my type
+            auto type = self.getTypeClass();
+            // check whether i can be converted to a list of strings
+            if (type != H5T_STRING) {
+                // if not, make a channel
+                auto channel = pyre::journal::error_t("pyre.hdf5");
+                // complain
+                channel
+                    // what
+                    << "not a dataset with null terminated strings"
+                    // where
+                    << pyre::journal::endl(__HERE__);
+                // and bail
+                return;
+            }
+            // we have strings; let's find out how many
+            // get my data space
+            auto space = self.getSpace();
+            // ask it for its rank
+            auto rank = space.getSimpleExtentNdims();
+            // make a correctly sized vector to hold the result
+            shape_t shape(rank);
+            // populate it
+            space.getSimpleExtentDims(&shape[0], nullptr);
+
+            // make sure i'm just a list
+            if (rank != 1) {
+                // if not, make a channel
+                auto channel = pyre::journal::error_t("pyre.hdf5");
+                // complain
+                channel
+                    // what
+                    << "not a list "
+                    // where
+                    << pyre::journal::endl(__HERE__);
+                // and bail
+                return;
+            }
+
+            // shape now knows how many strings there are
+            auto len = shape[0];
+            // make a slot
+            const hsize_t one = 1;
+            // we always read one string at offset zero
+            auto read = DataSpace(1, &one);
+            // and write to the dataset space
+            auto write = self.getSpace();
+
+            // write as many times as there are strings to pull
+            for (hsize_t idx = 0; idx < len; ++idx) {
+                // restrict the read dataspace to one string at offset {idx}
+                read.selectHyperslab(H5S_SELECT_SET, &one, &idx);
+                // unconditional/unrestricted write
+                self.write(value[idx], self.getStrType(), read, write);
+            }
+
+            // all done
+            return;
+        },
+        // the docstring
+        "save my contents as a list of strings");
 
 
     // close the dataset
