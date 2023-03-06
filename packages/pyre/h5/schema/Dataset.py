@@ -49,7 +49,7 @@ class Dataset(Descriptor):
             f"class '{cls.__module__}.{cls.__name__}' must implement '_pyre_pull'"
         )
 
-    def _pyre_push(self, dataset):
+    def _pyre_push(self, src, dest):
         """
         Push my cache value to disk
         """
