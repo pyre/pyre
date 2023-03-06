@@ -12,8 +12,8 @@ import pyre
 from .Object import Object
 
 # typing
-import collections.abc
 import typing
+import collections.abc
 from .Dataset import Dataset
 
 
