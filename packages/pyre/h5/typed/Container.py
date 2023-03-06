@@ -10,15 +10,5 @@ class Container:
     The base class for all container types
     """
 
-    # framework hooks
-    def _pyre_clone(self, **kwds):
-        """
-        Make a copy
-        """
-        # add my schema to the pile and chain up
-        return super()._pyre_clone(
-            schema=self.schema, default=self.container(self._default), **kwds
-        )
-
 
 # end of file
