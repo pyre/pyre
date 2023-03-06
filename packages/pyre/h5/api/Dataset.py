@@ -83,11 +83,23 @@ class Dataset(Object):
             # flush
             channel.log()
             # and return something harmless
-            return None
+            return
+        # if i don't have a type descriptor
+        if self._pyre_layout is None:
+            # make a channel
+            channel = journal.warning("pyre.h5.sync")
+            # complain
+            channel.line(f"{self}")
+            channel.line(f"does not have a type")
+            channel.line(f"while reading '{file._pyre_uri}'")
+            # flush
+            channel.log()
+            # and return something harmless
+            return
         # if all is well, attempt to
         try:
-            # read the value and update the cache
-            self.value = self._pyre_pull()
+            # read the value and update my cache
+            self._value = self._pyre_pull()
         # if this fails
         except NotImplementedError as error:
             # make a channel
@@ -99,19 +111,8 @@ class Dataset(Object):
             channel.line(f"while reading '{file._pyre_uri}'")
             # flush
             channel.log()
-        # and return something harmless, in case errors aren't fatal
-        return None
-
-    def _pyre_pull(self):
-        """
-        Extract my value from disk and populate my cache
-        """
-        # get my layout
-        layout = self._pyre_layout
-        # ask it to extract the value from the h5 store and process it
-        value = layout._pyre_pull(dataset=self)
-        # hand it off
-        return value
+        # all done
+        return
 
     def _pyre_write(self, file):
         """
@@ -130,7 +131,21 @@ class Dataset(Object):
             # and bail
             return
         # if all is well, delegate
-        return self._pyre_push(dataset=self)
+        self._pyre_push(dataset=self)
+        # all done
+        return
+
+    # lower level value syncing with no error checking
+    def _pyre_pull(self):
+        """
+        Extract my value from disk
+        """
+        # get my layout
+        layout = self._pyre_layout
+        # ask it to extract the value from the h5 store and process it
+        value = layout._pyre_pull(dataset=self)
+        # hand it off
+        return value
 
     def _pyre_push(self):
         """
