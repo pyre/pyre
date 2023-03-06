@@ -96,47 +96,27 @@ class Writer:
             entry = parent._pyre_find(path=name)
         # if it's not there
         except RuntimeError:
-            # make it
-            entry = Dataset(
-                id=parent._pyre_id.create(
-                    path=name, type=data._pyre_id.type, space=data._pyre_id.space
-                ),
-                at=data._pyre_location,
-                layout=dataset,
-            )
+            # compute its location relative to its parent
+            location = parent._pyre_location / name
+            # its space should be identical to its source
+            space = data._pyre_id.space
+            # for the type, prefer the potentially more accurate type from the spec, if it's there
+            # and fall back to whatever is known about the source type
+            # type = (
+            # dataset.disktype if dataset.disktype is not None else data._pyre_id.type
+            # )
+            type = data._pyre_id.type
+            # build the low level object
+            hid = parent._pyre_id.create(path=name, type=type, space=space)
+            # realize it
+            entry = Dataset(id=hid, at=location, layout=dataset)
         # if it is already there
         else:
             # compare the types/shapes and check for whatever consistency guarantees are
             # necessary for the data copy to follow
-            #
-            # go back to schema.dataset and introduce the concept of a disk-type for all schema
-            # this will let the user choose the on-disk representation on a case by case basis
-            # pick a reasonable {PredType} for the atoms, and {ArrayType[PredType]} for arrays
-            # need a map from schema to native types
             pass
-
-        # we have structure; make content:
-        # if there is incoming {data}, get its value, otherwise copy the default values
-        # from {dataset} schema
-        value = data.value if data else dataset.default
-        # make a channel
-        channel = journal.debug("pyre.h5.writer.dataset")
-        channel.line(f"pyre.h5.api.Writer._pyre_onDataset:")
-        channel.line(f"  name: {name}")
-        channel.line(f"  parent: {parent}")
-        channel.line(f"  schema: {dataset}")
-        channel.line(f"    disktype: {dataset.disktype}")
-        channel.line(f"  data: {data}")
-        channel.line(f"    disktype: {data._pyre_id.type}")
-        channel.line(f"  entry: {entry}")
-        channel.line(f"  value: {value}")
-        # flush
-        channel.log()
-
-        # write
-        # entry.write(value)
-        # what happens to arrays? do they get filled with some default?
-
+        # we have structure; make content
+        entry._pyre_write(file=file, src=data)
         # all done
         return parent
 
