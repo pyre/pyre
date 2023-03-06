@@ -24,6 +24,13 @@ class String:
         # all done
         return
 
+    # representations
+    def string(self, value):
+        """
+        Quote my value
+        """
+        return f"'{value}'"
+
     # value synchronization
     def _pyre_pull(self, dataset):
         """
@@ -34,12 +41,16 @@ class String:
         # and return the raw contents
         return value
 
-    # representations
-    def string(self, value):
+    def _pyre_push(self, src, dest):
         """
-        Quote my value
+        Push my cache value to disk
         """
-        return f"'{value}'"
+        # grab the value
+        value = src.value
+        # and write it out
+        dest._pyre_id.str(value)
+        # all done
+        return
 
 
 # end of file
