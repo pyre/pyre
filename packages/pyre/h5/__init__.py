@@ -16,6 +16,7 @@ try:
 
     # shortcuts
     reader = api.reader
+    writer = api.writer
 
 # if anything goes wrong
 except AttributeError as error:
