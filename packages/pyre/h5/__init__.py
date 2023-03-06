@@ -29,9 +29,9 @@ except AttributeError as error:
 
 
 # convenience
-def open(**kwds):
+def read(**kwds):
     """
-    Make a generic reader to read a data product
+    Ask a generic reader to read a data product
     """
     # easy enough
     return reader().read(**kwds)
