@@ -114,7 +114,7 @@ class Dataset(Object):
         # all done
         return
 
-    def _pyre_write(self, file):
+    def _pyre_write(self, file: "File", src: "Dataset"):
         """
         Write my cache value to disk
         """
@@ -131,7 +131,7 @@ class Dataset(Object):
             # and bail
             return
         # if all is well, delegate
-        self._pyre_push(dataset=self)
+        self._pyre_push(src=src)
         # all done
         return
 
@@ -147,14 +147,14 @@ class Dataset(Object):
         # hand it off
         return value
 
-    def _pyre_push(self):
+    def _pyre_push(self, src):
         """
         Flush my value  to disk
         """
         # get my layout
         layout = self._pyre_layout
         # ask it to flush me to disk
-        layout._pyre_push(dataset=self)
+        layout._pyre_push(src=src, dest=self)
         # all done
         return
 
