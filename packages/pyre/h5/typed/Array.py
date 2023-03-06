@@ -61,5 +61,10 @@ class Array:
         # and return it
         return value
 
+    def _pyre_push(self, src, dest):
+        """
+        Push my cache value to disk
+        """
+
 
 # end of file
