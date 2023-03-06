@@ -28,169 +28,39 @@ class Group(Object):
 
     # metamethods
     def __init__(
-        self, layout: typing.Optional[Object._pyre_schema.group] = None, **kwds
+        self,
+        layout: typing.Optional[Object._pyre_schema.group] = None,
+        at: typing.Optional[pyre.primitives.pathlike] = "/",
+        **kwds,
     ):
         # chain  up
-        super().__init__(layout=layout, **kwds)
-        # figure out my layout
-        descriptors = layout._pyre_descriptors if layout is not None else {}
-        # attach them
-        self._pyre_descriptors = descriptors
-        # go through them
-        for name, descriptor in descriptors.items():
-            # and populate my state
-            setattr(self, name, descriptor)
+        super().__init__(layout=layout, at=at, **kwds)
+        # initialize my members
+        self._pyre_members = set()
         # all done
         return
 
     # attribute access
     def __getattribute__(self, name: str) -> typing.Any:
         """
-        Trap attribute read access unconditionally
+        Look up {name}
         """
-        # if the {name} is in the protected namespace
-        if name.startswith("_"):
-            # do a normal lookup
-            return super().__getattribute__(name)
-        # otherwise, grab my layout
-        descriptors = super().__getattribute__("_pyre_descriptors")
-        # attempt to
-        try:
-            # search for a descriptor associated with this name
-            descriptor = descriptors[name]
-        # if this fails
-        except KeyError:
-            # chain up to do a normal attribute lookup
-            return super().__getattribute__(name)
-        # if it succeeds, {name} is one of ours; attempt to
-        try:
-            # grab its value
-            proxy = super().__getattribute__(name)
-        # if this fails
-        except AttributeError:
-            # we have some work to do
-            pass
-        # otherwise
-        else:
-            # if it's a dataset
-            if isinstance(proxy, Dataset):
-                # grab its value and return it
-                return proxy.value
-            # otherwise, return it unchanged
-            return proxy
-        # if we get this far, we know that {name} corresponds to a {descriptor} that
-        # doesn't have an actual value yet; compute the location of the member
-        location = self._pyre_location / descriptor._pyre_name
-        # if the descriptor is a dataset
-        if isinstance(descriptor, self._pyre_schema.dataset):
-            # make a dataset
-            dataset = Dataset(at=location, layout=descriptor)
-            # record it
-            super().__setattr__(name, dataset)
-            # and return its value
-            return dataset.value
-        # if the descriptor is a group
-        if isinstance(descriptor, self._pyre_schema.group):
-            # make a group
-            group = Group(at=location, layout=descriptor)
-            # record it
-            super().__setattr__(name, group)
-            # and return it
-            return group
-        # otherwise, we are out of ideas; almost certainly this is a bug caused
-        # by the introduction of a new descriptor type that is not handled
-        # correctly
-        channel = journal.firewall("pyre.h5.api")
-        # so build a report
-        channel.line(f"unknown descriptor type")
-        channel.line(f"{descriptor}")
-        channel.line(f"while looking up '{name}' in {self}")
-        # complain
-        channel.log()
-        # and bail, just in case firewalls aren't fatal
-        return
+        # get the value
+        member = super().__getattribute__(name)
+        # if it is a dataset
+        if isinstance(member, Dataset):
+            # grab its value and return it
+            return member.value
+        # otherwise, just return the member itself
+        return member
 
     def __setattr__(self, name: str, value: typing.Any) -> None:
-        # if the name is in the protected namespace
-        if name.startswith("_"):
-            # chain up to handle a normal assignment
-            return super().__setattr__(name, value)
-        # get my descriptors
-        descriptors = self._pyre_descriptors
-        # if {value} is a layout
-        if isinstance(value, self._pyre_schema.descriptor):
-            # record it in my layout
-            descriptors[name] = value
-            # compute the location of the new member
-            location = self._pyre_location / value._pyre_name
-            # if it's group
-            if isinstance(value, self._pyre_schema.group):
-                # we'll make a group
-                factory = Group
-            # if it's a dataset
-            elif isinstance(value, self._pyre_schema.dataset):
-                # we'll make a dataset
-                factory = Dataset
-            # anything else
-            else:
-                # we have a bug, probably caused by the introduction of a new descriptor type
-                # that is not handled here
-                channel = journal.firewall("pyre.h5.api")
-                # so build a report
-                channel.line(f"unknown descriptor type")
-                channel.line(f"{descriptor}")
-                channel.line(f"while looking up '{name}' in {self}")
-                # complain
-                channel.log()
-                # and bail, just in case firewalls aren't fatal
-                return
-            # make the value
-            attr = factory(at=location, layout=value)
-            # and set it
-            return super().__setattr__(name, attr)
-        # if {value} is an h5 element
+        # if {value} is an hdf5 object
         if isinstance(value, Object):
-            # save its layout
-            descriptors[name] = value._pyre_layout
-            # and record it
-            return super().__setattr__(name, value)
-        # if we get this far, {value} is not special; is {name} special? attempt to
-        try:
-            # lookup a descriptor by this {name}
-            descriptor = descriptors[name]
-        # if this fails
-        except KeyError:
-            # nothing is special; process a regular assignment
-            return super().__setattr__(name, value)
-        # the only remaining legal assignment is to the value of a dataset
-        if isinstance(descriptor, self._pyre_schema.dataset):
-            # attempt to
-            try:
-                # get the dataset
-                dataset = super().__getattribute__(name)
-            # if there isn't one yet
-            except AttributeError:
-                # compute the location of the new member
-                location = self._pyre_location / descriptor._pyre_name
-                # make it
-                dataset = Dataset(at=location, layout=descriptor)
-                # and store it
-                super().__setattr__(name, dataset)
-            # set its value
-            dataset.value = value
-            # and done
-            return
-        # anything else is a bug
-        channel = journal.firewall("pyre.h5.api")
-        # so build a report
-        channel.line(f"cannot assign '{value}'")
-        channel.line(f"to '{name}'")
-        channel.line(f"associated with {descriptor}")
-        channel.line(f"in {self}")
-        # complain
-        channel.log()
-        # and bail, just in case firewalls aren't fatal
-        return
+            # record it
+            self._pyre_members.add(name)
+        # and make a normal assignment
+        return super().__setattr__(name, value)
 
     # member access
     def __getitem__(self, path):
@@ -241,6 +111,8 @@ class Group(Object):
             )
             # build the node
             dataset = Dataset(id=hid, at=location, layout=layout)
+            # load its value
+            dataset.value = layout._pyre_pull(dataset=dataset)
             # and return it
             return dataset
         # anything else implies an object type that we do not support currently
@@ -259,15 +131,23 @@ class Group(Object):
         """
         Generate a sequence of my datasets
         """
-        # go through the known descriptors
-        for name, descriptor in self._pyre_descriptors.items():
+        # get my spec
+        spec = self._pyre_layout
+        # if it's trivial
+        if spec is None:
+            # nothing further
+            return
+        # go through my descriptors
+        for descriptor in spec._pyre_descriptors():
             # identify the ones that are groups
             if isinstance(descriptor, self._pyre_schema.dataset):
+                # get the name
+                name = descriptor._pyre_name
                 # look up the corresponding dataset; carefully so we don't cause the
                 # evaluation we force by default
                 dataset = super().__getattribute__(name)
-                # and hand off the pair
-                yield (name, dataset)
+                # and hand it off
+                yield dataset
         # all done
         return
 
@@ -275,14 +155,22 @@ class Group(Object):
         """
         Generate a sequence of my subgroups
         """
+        # get my spec
+        spec = self._pyre_layout
+        # if it's trivial
+        if spec is None:
+            # nothing further
+            return
         # go through the known descriptors
-        for name, descriptor in self._pyre_descriptors.items():
+        for descriptor in spec._pyre_descriptors():
             # identify the ones that are groups
             if isinstance(descriptor, self._pyre_schema.group):
+                # get the name
+                name = descriptor._pyre_name
                 # look up the corresponding group
                 group = super().__getattribute__(name)
-                # and hand off the pair
-                yield (name, group)
+                # and hand it off
+                yield group
         # all done
         return
 
@@ -290,12 +178,20 @@ class Group(Object):
         """
         Generate a sequence of contents
         """
+        # get my spec
+        spec = self._pyre_layout
+        # if it's trivial
+        if spec is None:
+            # nothing further
+            return
         # go through the known descriptors
-        for name in self._pyre_descriptors:
+        for descriptor in spec._pyre_descriptors():
+            # get the name
+            name = descriptor._pyre_name
             # look up the corresponding location
             location = super().__getattribute__(name)
-            # and hand off the pair
-            yield (name, location)
+            # and hand it off
+            yield location
         # all done
         return
 
