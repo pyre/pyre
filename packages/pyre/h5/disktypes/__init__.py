@@ -5,6 +5,7 @@
 
 
 # publish
+# abstract types
 from .Array import Array as array
 from .Compound import Compound as compound
 from .Enum import Enum as enum
@@ -12,5 +13,7 @@ from .Float import Float as float
 from .Integer import Integer as int
 from .String import String as str
 
+# concrete types
+complex = compound
 
 # end of file
