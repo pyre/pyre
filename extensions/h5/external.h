@@ -88,8 +88,10 @@ namespace pyre::h5::py {
     using VarLenType = H5::VarLenType; // derives from DataType
 
     // aliases for select memory template expansions
-    using heap_int_t = pyre::memory::heap_t<int>;
-    using heap_long_t = pyre::memory::heap_t<long>;
+    using heap_int8_t = pyre::memory::heap_t<std::int8_t>;
+    using heap_int16_t = pyre::memory::heap_t<std::int16_t>;
+    using heap_int32_t = pyre::memory::heap_t<std::int32_t>;
+    using heap_int64_t = pyre::memory::heap_t<std::int64_t>;
     using heap_float_t = pyre::memory::heap_t<float>;
     using heap_double_t = pyre::memory::heap_t<double>;
     using heap_complexfloat_t = pyre::memory::heap_t<std::complex<float>>;
