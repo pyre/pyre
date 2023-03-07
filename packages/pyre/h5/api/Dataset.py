@@ -50,6 +50,63 @@ class Dataset(Object):
         # all done
         return
 
+    # metadata
+    @property
+    def cell(self):
+        """
+        The dataset cell type, a DataSetType enum
+        """
+        # easy enough
+        return self._pyre_id.cell
+
+    @property
+    def disksize(self):
+        """
+        The on-disk size of the dataset
+        """
+        # easy enough
+        return self._pyre_id.disksize
+
+    @property
+    def memsize(self):
+        """
+        The in-memory size of the dataset
+        """
+        # easy enough
+        return self._pyre_id.memsize
+
+    @property
+    def offset(self):
+        """
+        The offset of this dataset on disk
+        """
+        # easy enough
+        return self._pyre_id.offset
+
+    @property
+    def shape(self):
+        """
+        The dataset shape
+        """
+        # easy enough
+        return self._pyre_id.shape
+
+    @property
+    def space(self):
+        """
+        The dataset space
+        """
+        # easy enough
+        return self._pyre_id.space
+
+    @property
+    def type(self):
+        """
+        The dataset type
+        """
+        # easy enough
+        return self._pyre_id.type
+
     # metamethods
     def __init__(self, layout=None, **kwds):
         # chain up
