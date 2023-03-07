@@ -38,12 +38,23 @@ pyre::h5::py::datatypes::__init__(py::module & m)
     str(datatypes);
     // compound datatypes
     compound(datatypes);
-    // add the constants that correspond to the native types
-    native(datatypes);
     // enum types
     enum_(datatypes);
     // variable length types
     varlen(datatypes);
+
+    // predefined datatypes
+    native(datatypes);
+
+    std(datatypes);
+    big(datatypes);
+    little(datatypes);
+
+    alpha(datatypes);
+    ieee(datatypes);
+    intel(datatypes);
+    mips(datatypes);
+    unix(datatypes);
 
     // all done
     return;
