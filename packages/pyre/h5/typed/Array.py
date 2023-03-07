@@ -65,6 +65,24 @@ class Array:
         """
         Push my cache value to disk
         """
+        # get the src raster
+        raster = src.value
+        # build the work pile
+        tiles = [raster.read()] + raster._staged
+        # go through the assembled tiles
+        for tile in tiles:
+            # get the data
+            data = tile.data
+            # its in-memory data type
+            type = tile.type.htype
+            # its origin
+            origin = tile.origin
+            # and shape
+            shape = tile.shape
+            # and write it out
+            dest._pyre_id.write(data=data, memtype=type, origin=origin, shape=shape)
+        # all done
+        return
 
 
 # end of file
