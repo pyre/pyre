@@ -25,7 +25,7 @@ pyre::h5::py::datatypes::native(py::module & m)
         // its docstring
         "a collection of native types");
 
-    // add a selection of datatypes
+    // integral
     native.attr("char") = H5::PredType::NATIVE_CHAR;
     native.attr("signedChar") = H5::PredType::NATIVE_SCHAR;
     native.attr("unsignedChar") = H5::PredType::NATIVE_UCHAR;
@@ -37,9 +37,6 @@ pyre::h5::py::datatypes::native(py::module & m)
     native.attr("unsignedLong") = H5::PredType::NATIVE_ULONG;
     native.attr("longlong") = H5::PredType::NATIVE_LLONG;
     native.attr("unsignedLongLong") = H5::PredType::NATIVE_ULLONG;
-    native.attr("float") = H5::PredType::NATIVE_FLOAT;
-    native.attr("double") = H5::PredType::NATIVE_DOUBLE;
-    native.attr("longDouble") = H5::PredType::NATIVE_LDOUBLE;
     native.attr("bit8") = H5::PredType::NATIVE_B8;
     native.attr("bit16") = H5::PredType::NATIVE_B16;
     native.attr("bit32") = H5::PredType::NATIVE_B32;
@@ -75,6 +72,11 @@ pyre::h5::py::datatypes::native(py::module & m)
     native.attr("uintFast32") = H5::PredType::NATIVE_UINT_FAST32;
     native.attr("intFast64") = H5::PredType::NATIVE_INT_FAST64;
     native.attr("uintFast64") = H5::PredType::NATIVE_UINT_FAST64;
+
+    // floating point
+    native.attr("float") = H5::PredType::NATIVE_FLOAT;
+    native.attr("double") = H5::PredType::NATIVE_DOUBLE;
+    native.attr("longDouble") = H5::PredType::NATIVE_LDOUBLE;
 
     // build a compound type to represent {std::complex<float>}
     // grab the native float
