@@ -30,8 +30,32 @@ pyre::h5::py::datatypes::str(py::module & m)
     // constructors
     // default
     cls.def(py::init<>());
-    // from a predefined float type
-    cls.def(py::init<const PredType &>());
+    // from a specific predefined type
+    cls.def(
+        // the implementation
+        py::init<const PredType &>(),
+        // the signature
+        "type"_a,
+        // the docstrings
+        "make a string type with a specific {type} as its cell");
+
+    // from a specific predefined type and a size
+    cls.def(
+        // the implementation
+        py::init<const PredType &, const size_t &>(),
+        // the signature
+        "type"_a, "cells"_a,
+        // the docstring
+        "make a string type of the given {type} and set the size to {cells}");
+
+    // native string of a given size
+    cls.def(
+        // the implementation
+        py::init([](size_t cells) { return StrType(0, cells); }),
+        // the signature
+        "cells"_a,
+        // the docstring
+        "make a native c-style string of the given number of {cells}");
 
     // properties
     cls.def_property(
