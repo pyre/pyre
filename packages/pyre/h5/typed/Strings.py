@@ -4,6 +4,9 @@
 # (c) 1998-2023 all rights reserved
 
 
+# support
+import journal
+
 # superclass
 from ..schema.Dataset import Dataset
 
@@ -30,8 +33,23 @@ class Strings(Dataset.list):
         """
         Read my value from disk
         """
-        # read the value
-        value = dataset._pyre_id.strings()
+        # attempt to
+        try:
+            # read the value
+            value = dataset._pyre_id.strings()
+        # if something goes wrong
+        except RuntimeError as error:
+            # make a channel
+            channel = journal.error("pyre.h5.typed.strings")
+            # report
+            channel.line(f"hdf5 runtime error: {error}")
+            channel.line(f"while reading a list of strings")
+            channel.line(f"from {dataset}")
+            # flush
+            channel.log()
+            # and, just in case errors aren't fatal, return an empty list
+            return []
+
         # and return the raw contents
         return value
 
@@ -41,8 +59,20 @@ class Strings(Dataset.list):
         """
         # grab the value
         value = src.value
-        # and write it out
-        dest._pyre_id.strings(value)
+        # and attempt
+        try:
+            # to write it out
+            dest._pyre_id.strings(value)
+        # if something goes wrong
+        except RuntimeError as error:
+            # make a channel
+            channel = journal.error("pyre.h5.typed.strings")
+            # report
+            channel.line(f"hdf5 runtime error: {error}")
+            channel.line(f"while writing {value}")
+            channel.line(f"to {dest}")
+            # and flush
+            channel.log()
         # all done
         return
 
