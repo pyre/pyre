@@ -490,7 +490,37 @@ pyre::h5::py::dataset(py::module & m)
         // the name
         "read",
         // the implementation
-        &read<heap_int_t>,
+        &read<heap_int8_t>,
+        // the signature
+        "data"_a, "memtype"_a, "origin"_a, "shape"_a,
+        // the docstring
+        "fill {data} with the tile @{origin}+{shape}");
+
+    cls.def(
+        // the name
+        "read",
+        // the implementation
+        &read<heap_int16_t>,
+        // the signature
+        "data"_a, "memtype"_a, "origin"_a, "shape"_a,
+        // the docstring
+        "fill {data} with the tile @{origin}+{shape}");
+
+    cls.def(
+        // the name
+        "read",
+        // the implementation
+        &read<heap_int32_t>,
+        // the signature
+        "data"_a, "memtype"_a, "origin"_a, "shape"_a,
+        // the docstring
+        "fill {data} with the tile @{origin}+{shape}");
+
+    cls.def(
+        // the name
+        "read",
+        // the implementation
+        &read<heap_int64_t>,
         // the signature
         "data"_a, "memtype"_a, "origin"_a, "shape"_a,
         // the docstring
@@ -541,7 +571,37 @@ pyre::h5::py::dataset(py::module & m)
         // the name
         "write",
         // the implementation
-        &write<heap_int_t>,
+        &write<heap_int8_t>,
+        // the signature
+        "data"_a, "memtype"_a, "origin"_a, "shape"_a,
+        // the docstring
+        "fill {data} with the tile @{origin}+{shape}");
+
+    cls.def(
+        // the name
+        "write",
+        // the implementation
+        &write<heap_int16_t>,
+        // the signature
+        "data"_a, "memtype"_a, "origin"_a, "shape"_a,
+        // the docstring
+        "fill {data} with the tile @{origin}+{shape}");
+
+    cls.def(
+        // the name
+        "write",
+        // the implementation
+        &write<heap_int32_t>,
+        // the signature
+        "data"_a, "memtype"_a, "origin"_a, "shape"_a,
+        // the docstring
+        "fill {data} with the tile @{origin}+{shape}");
+
+    cls.def(
+        // the name
+        "write",
+        // the implementation
+        &write<heap_int64_t>,
         // the signature
         "data"_a, "memtype"_a, "origin"_a, "shape"_a,
         // the docstring
