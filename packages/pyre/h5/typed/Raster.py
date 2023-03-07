@@ -66,26 +66,30 @@ class Raster:
         return self._dataset._pyre_id.type
 
     # interface
-    def read(self, shape, origin=None):
+    def read(self, shape=None, origin=None):
         """
         Allocate a buffer of the given {shape} on the heap, optionally initializing it with
         my contents from {origin}
         """
-        # get my dataset
-        dataset = self._dataset
-        # and schema
-        layout = dataset._pyre_layout
-        # look up the memtype
-        memtype = layout.memtype
-        # ask it for the memory
+        # normalize the shape
+        if shape is None:
+            # by setting it to cover my entire contents
+            shape = self.shape
+        # normalize the origin
+        if origin is None:
+            # by setting to the beginning, if the user didn't specify otherwise
+            origin = [0] * len(shape)
+        # look up my in-memory type
+        memtype = self.memtype
+        # ask it for enough memory to hold the requested data
         data = memtype.heap(cells=math.prod(shape))
-        # get the dataset handle
+        # get my dataset handle
         hid = self._dataset._pyre_id
-        # if it's connected to a source
+        # if i'm connected to a source
         if hid is not None:
-            # fill it
+            # populate my buffer
             hid.read(data=data, memtype=memtype.htype, shape=shape, origin=origin)
-        # make a tile and return it
+        # wrap all this up in a tile and return it
         return self.tile(data=data, type=memtype, origin=origin, shape=shape)
 
     # metamethods
