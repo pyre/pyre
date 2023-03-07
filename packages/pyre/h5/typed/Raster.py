@@ -5,7 +5,7 @@
 
 # support
 import math
-import pyre
+import weakref
 
 
 # rasters are tied to non-scalar datasets
@@ -97,7 +97,7 @@ class Raster:
         # chain up
         super().__init__(**kwds)
         # save my data source
-        self._dataset = dataset
+        self._dataset = weakref.proxy(dataset)
         # make a pile for the cached modifications
         self._staged = []
         # all done
