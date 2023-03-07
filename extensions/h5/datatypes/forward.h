@@ -23,9 +23,17 @@ namespace pyre::h5::py::datatypes {
     void varlen(py::module &);
 
     // subpackages
+    void native(py::module &); // native
+
+    void std(py::module &);    // native
     void big(py::module &);    // big endian
     void little(py::module &); // little endian
-    void native(py::module &); // native
+
+    void alpha(py::module &); // native
+    void ieee(py::module &);  // IEEE floating point
+    void intel(py::module &); // intel specific types
+    void mips(py::module &);  // intel specific types
+    void unix(py::module &);  // unix
 
 } // namespace pyre::h5::py::datatypes
 
