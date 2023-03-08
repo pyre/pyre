@@ -131,23 +131,12 @@ class Group(Object):
         """
         Generate a sequence of my datasets
         """
-        # get my spec
-        spec = self._pyre_layout
-        # if it's trivial
-        if spec is None:
-            # nothing further
-            return
-        # go through my descriptors
-        for descriptor in spec._pyre_descriptors():
-            # identify the ones that are groups
-            if isinstance(descriptor, self._pyre_schema.dataset):
-                # get the name
-                name = descriptor._pyre_name
-                # look up the corresponding dataset; carefully so we don't cause the
-                # evaluation we force by default
-                dataset = super().__getattribute__(name)
-                # and hand it off
-                yield dataset
+        # go through my locations
+        for location in self._pyre_locations():
+            # identify the ones that are datasets
+            if isinstance(location, Dataset):
+                # hand it off
+                yield location
         # all done
         return
 
@@ -155,22 +144,12 @@ class Group(Object):
         """
         Generate a sequence of my subgroups
         """
-        # get my spec
-        spec = self._pyre_layout
-        # if it's trivial
-        if spec is None:
-            # nothing further
-            return
-        # go through the known descriptors
-        for descriptor in spec._pyre_descriptors():
+        # go through my locations
+        for location in self._pyre_locations():
             # identify the ones that are groups
-            if isinstance(descriptor, self._pyre_schema.group):
-                # get the name
-                name = descriptor._pyre_name
-                # look up the corresponding group
-                group = super().__getattribute__(name)
-                # and hand it off
-                yield group
+            if isinstance(location, Group):
+                # hand it off
+                yield location
         # all done
         return
 
@@ -178,18 +157,10 @@ class Group(Object):
         """
         Generate a sequence of contents
         """
-        # get my spec
-        spec = self._pyre_layout
-        # if it's trivial
-        if spec is None:
-            # nothing further
-            return
         # go through the known descriptors
-        for descriptor in spec._pyre_descriptors():
-            # get the name
-            name = descriptor._pyre_name
+        for member in self._pyre_members:
             # look up the corresponding location
-            location = super().__getattribute__(name)
+            location = super().__getattribute__(member)
             # and hand it off
             yield location
         # all done
