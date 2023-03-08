@@ -7,6 +7,10 @@
 # support
 import pyre
 
+# types
+from .. import disktypes
+from .. import memtypes
+
 
 # the {float} mixin
 class Float:
@@ -15,13 +19,13 @@ class Float:
     """
 
     # metamethods
-    def __init__(self, memtype=None, disktype=None, **kwds):
+    def __init__(self, memtype=memtypes.double, disktype=disktypes.double, **kwds):
         # chain up
         super().__init__(**kwds)
         # save my in-memory type
-        self.memtype = memtype if memtype is not None else pyre.h5.memtypes.real64()
+        self.memtype = memtype
         # save my on-disk type
-        self.disktype = disktype if disktype is not None else pyre.h5.disktypes.float()
+        self.disktype = disktype
         # all done
         return
 
