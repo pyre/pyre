@@ -124,7 +124,7 @@ class Dataset(Descriptor):
         Check whether this is a compound type we understand
         """
         # if the datatype is a compound with two members
-        if cell == type(cell).compound and info.count == 2:
+        if cell == type(cell).compound and info.members == 2:
             # and both are floats
             if info.type(1).className == info.type(1).className == "FloatType":
                 # call it complex and move on
