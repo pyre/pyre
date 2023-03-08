@@ -35,10 +35,15 @@ from .UInt32 import UInt32 as uint32
 from .UInt64 import UInt64 as uint64
 
 # floats
-from .Float import Float as real32
-from .Double import Double as real64
-from .ComplexFloat import ComplexFloat as complex64
-from .ComplexDouble import ComplexDouble as complex128
+from .Float import Float as float
+from .Double import Double as double
+from .ComplexFloat import ComplexFloat as complexFloat
+from .ComplexDouble import ComplexDouble as complexDouble
 
+# aliases
+r32 = float
+r64 = double
+c64 = complexFloat
+c128 = complexDouble
 
 # end of file
