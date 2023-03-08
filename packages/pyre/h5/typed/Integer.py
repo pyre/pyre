@@ -19,7 +19,7 @@ class Integer:
     """
 
     # metamethods
-    def __init__(self, memtype=memtypes.int, disktype=disktypes.int, **kwds):
+    def __init__(self, memtype=memtypes.int64, disktype=disktypes.int64, **kwds):
         # chain up
         super().__init__(**kwds)
         # save my in-memory type
