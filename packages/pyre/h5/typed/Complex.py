@@ -7,6 +7,10 @@
 # support
 import pyre
 
+# types
+from .. import disktypes
+from .. import memtypes
+
 
 # the {complex} mixin
 class Complex:
@@ -15,25 +19,11 @@ class Complex:
     """
 
     # metamethods
-    def __init__(self, memtype=None, disktype=None, **kwds):
+    def __init__(self, memtype=memtypes.c128, disktype=disktypes.c128, **kwds):
         # chain up
         super().__init__(**kwds)
-        # if the caller didn't specify a memtype
-        if memtype is None:
-            # set it to {std::complex<double>}
-            memtype = pyre.h5.memtypes.complex128()
         # save my in-memory type
         self.memtype = memtype
-        # similarly, if there is no disktype specification
-        if disktype is None:
-            # use a double as the basis
-            double = pyre.h5.disktypes.float(pyre.libh5.datatypes.native.double)
-            # to build a compound type
-            disktype = pyre.h5.disktypes.compound(2 * double.bytes)
-            # with a real part
-            disktype.insert(name="r", offset=0, type=double)
-            # and an imaginary part
-            disktype.insert(name="i", offset=double.bytes, type=double)
         # save my on-disk type
         self.disktype = disktype
         # all done
