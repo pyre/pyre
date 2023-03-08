@@ -22,4 +22,8 @@ class Short(MemoryType):
     htype = pyre.libh5.datatypes.native.short
 
 
+# the singleton
+short = Short()
+
+
 # end of file

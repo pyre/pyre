@@ -22,4 +22,8 @@ class Long(MemoryType):
     htype = pyre.libh5.datatypes.native.long
 
 
+# the singleton
+long = Long()
+
+
 # end of file

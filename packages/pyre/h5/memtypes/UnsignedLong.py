@@ -22,4 +22,8 @@ class UnsignedLong(MemoryType):
     htype = pyre.libh5.datatypes.native.unsignedLong
 
 
+# the singleton
+unsignedLong = UnsignedLong()
+
+
 # end of file

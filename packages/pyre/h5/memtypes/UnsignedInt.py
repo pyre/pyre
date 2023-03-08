@@ -22,4 +22,8 @@ class UnsignedInt(MemoryType):
     htype = pyre.libh5.datatypes.native.unsignedInt
 
 
+# the singleton
+unsignedInt = UnsignedInt()
+
+
 # end of file

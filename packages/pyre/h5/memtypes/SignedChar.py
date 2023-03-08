@@ -22,4 +22,8 @@ class SignedChar(MemoryType):
     htype = pyre.libh5.datatypes.native.signedChar
 
 
+# the singleton
+signedChar = SignedChar()
+
+
 # end of file

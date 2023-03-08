@@ -22,4 +22,8 @@ class UInt16(MemoryType):
     htype = pyre.libh5.datatypes.native.uint16
 
 
+# the singleton
+uint16 = UInt16()
+
+
 # end of file
