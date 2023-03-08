@@ -28,8 +28,6 @@ pyre::h5::py::datatypes::str(py::module & m)
         "an HDF5 string datatype");
 
     // constructors
-    // default
-    cls.def(py::init<>());
     // from a specific predefined type
     cls.def(
         // the implementation
