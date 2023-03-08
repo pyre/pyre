@@ -22,4 +22,8 @@ class UnsignedShort(MemoryType):
     htype = pyre.libh5.datatypes.native.unsignedShort
 
 
+# the singleton
+unsignedShort = UnsignedShort()
+
+
 # end of file

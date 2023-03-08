@@ -22,4 +22,8 @@ class Int(MemoryType):
     htype = pyre.libh5.datatypes.native.int
 
 
+# the singleton
+int = Int()
+
+
 # end of file

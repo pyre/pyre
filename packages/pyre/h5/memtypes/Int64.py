@@ -22,4 +22,8 @@ class Int64(MemoryType):
     htype = pyre.libh5.datatypes.native.int64
 
 
+# the singleton
+int64 = Int64()
+
+
 # end of file

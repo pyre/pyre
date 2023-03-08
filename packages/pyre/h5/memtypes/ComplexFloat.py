@@ -22,4 +22,8 @@ class ComplexFloat(MemoryType):
     htype = pyre.libh5.datatypes.native.complexFloat
 
 
+# the singleton
+complexFloat = ComplexFloat()
+
+
 # end of file
