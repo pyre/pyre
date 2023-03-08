@@ -6,6 +6,10 @@
 # support
 import pyre
 
+# types
+from .. import disktypes
+from .. import memtypes
+
 
 # the {str} mixin
 class String:
@@ -14,13 +18,13 @@ class String:
     """
 
     # metamethods
-    def __init__(self, memtype=None, disktype=None, **kwds):
+    def __init__(self, memtype=memtypes.char, disktype=disktypes.char, **kwds):
         # chain up
         super().__init__(**kwds)
         # save my in-memory type
-        self.memtype = memtype if memtype is not None else pyre.h5.memtypes.char()
+        self.memtype = memtype
         # save my on-disk type
-        self.disktype = disktype if disktype is not None else pyre.h5.disktypes.str()
+        self.disktype = disktype
         # all done
         return
 
