@@ -28,14 +28,18 @@ pyre::h5::py::datatypes::compound(py::module & m)
         "an HDF5 compound datatype");
 
     // constructors
-    cls.def(py::init<>());
-
-    cls.def(py::init<std::size_t>());
+    cls.def(
+        // the implementation
+        py::init<std::size_t>(),
+        // the signature
+        "size"_a,
+        // the docstring
+        "make a compound type of the give {size} in bytes");
 
     // my length is the number of members
     cls.def_property_readonly(
         // the name
-        "count",
+        "members",
         // the implementation
         &CompType::getNmembers,
         // the docstring

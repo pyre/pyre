@@ -28,7 +28,14 @@ pyre::h5::py::datatypes::datatype(py::module & m)
         "the base HDF5 datatype");
 
     // constructor
-    cls.def(py::init<>());
+    // from a predefined float type
+    cls.def(
+        // the implementation
+        py::init<const PredType &>(),
+        // the signature
+        "type"_a,
+        // the docstring
+        "make a copy of the predefined {type}");
 
     // the name of the type
     cls.def_property_readonly(
