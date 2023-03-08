@@ -22,4 +22,8 @@ class Char(MemoryType):
     htype = pyre.libh5.datatypes.native.char
 
 
+# the singleton
+char = Char()
+
+
 # end of file

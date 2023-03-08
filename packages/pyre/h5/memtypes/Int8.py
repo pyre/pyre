@@ -22,4 +22,8 @@ class Int8(MemoryType):
     htype = pyre.libh5.datatypes.native.int8
 
 
+# the singleton
+int8 = Int8()
+
+
 # end of file

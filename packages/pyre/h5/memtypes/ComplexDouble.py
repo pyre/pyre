@@ -22,4 +22,8 @@ class ComplexDouble(MemoryType):
     htype = pyre.libh5.datatypes.native.complexDouble
 
 
+# the singleton
+complexDouble = ComplexDouble()
+
+
 # end of file

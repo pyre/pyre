@@ -22,4 +22,8 @@ class Double(MemoryType):
     htype = pyre.libh5.datatypes.native.double
 
 
+# the singleton
+double = Double()
+
+
 # end of file

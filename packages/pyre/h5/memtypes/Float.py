@@ -22,4 +22,8 @@ class Float(MemoryType):
     htype = pyre.libh5.datatypes.native.float
 
 
+# the singleton
+float = Float()
+
+
 # end of file
