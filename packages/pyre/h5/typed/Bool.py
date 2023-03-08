@@ -6,6 +6,9 @@
 # support
 import pyre
 
+# types
+from .. import disktypes
+
 
 # the {bool} mixin
 class Bool:
@@ -14,7 +17,7 @@ class Bool:
     """
 
     # type info
-    disktype = pyre.libh5.datatypes.StrType
+    disktype = disktypes.strType
     memtype = None
 
     # value synchronization
