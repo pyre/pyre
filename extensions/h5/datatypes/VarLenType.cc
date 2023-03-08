@@ -27,9 +27,6 @@ pyre::h5::py::datatypes::varlen(py::module & m)
         // docstring
         "an HDF5 variable length datatype");
 
-    // constructor
-    varlenType.def(py::init<>());
-
     // all done
     return;
 }
