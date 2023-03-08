@@ -78,25 +78,41 @@ pyre::h5::py::datatypes::native(py::module & m)
     native.attr("double") = H5::PredType::NATIVE_DOUBLE;
     native.attr("longDouble") = H5::PredType::NATIVE_LDOUBLE;
 
+    // build a compound type to represent {std::complex<halffloat>}
+    // make a new floating point type based on float
+    auto nh = H5::FloatType(H5::PredType::NATIVE_FLOAT);
+    // narrow it
+    nh.setFields(15, 10, 5, 0, 10);
+    nh.setSize(2);
+    // save it
+    native.attr("half") = nh;
+    // allocate the complex type
+    auto ch = H5::CompType(2 + nh.getSize());
+    // insert the real and imaginary parts
+    ch.insertMember("r", 0, nh);
+    ch.insertMember("i", nh.getSize(), nh);
+    // and attach it to the module
+    native.attr("complexHalf") = ch;
+
     // build a compound type to represent {std::complex<float>}
     // grab the native float
     auto nf = H5::PredType::NATIVE_FLOAT;
-    // allocate the type
-    auto cf = new H5::CompType(2 * nf.getSize());
+    // allocate the complex type
+    auto cf = H5::CompType(2 * nf.getSize());
     // insert the real and imaginary parts
-    cf->insertMember("r", 0, nf);
-    cf->insertMember("i", nf.getSize(), nf);
+    cf.insertMember("r", 0, nf);
+    cf.insertMember("i", nf.getSize(), nf);
     // and attach it to the module
     native.attr("complexFloat") = cf;
 
     // build a compound type to represent {std::complex<double>}
     // grab the native double
     auto nd = H5::PredType::NATIVE_DOUBLE;
-    // allocate the type
-    auto cd = new H5::CompType(2 * nd.getSize());
+    // allocate the complex type
+    auto cd = H5::CompType(2 * nd.getSize());
     // insert the real and imaginary parts
-    cd->insertMember("r", 0, nd);
-    cd->insertMember("i", nd.getSize(), nd);
+    cd.insertMember("r", 0, nd);
+    cd.insertMember("i", nd.getSize(), nd);
     // and attach it
     native.attr("complexDouble") = cd;
 
