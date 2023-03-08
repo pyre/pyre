@@ -47,6 +47,8 @@ class Panel(Command):
             # if we have one, invoke it
             return default(plexus=plexus, argv=argv)
 
+        # initialize the status
+        status = self.SUCCESS
         # otherwise, go through my secondary arguments
         for command in argv:
             # attempt to
@@ -88,7 +90,7 @@ class Panel(Command):
                 channel = plexus.error
                 # generate an error message for the user
                 channel.line(f"{category}: {error}")
-                channel.line(f"while executing '{self.pyre_spec} {command}':")
+                channel.line(f"while executing '{self.pyre_spec} {command}'")
                 # flush
                 channel.log()
                 # and bail
