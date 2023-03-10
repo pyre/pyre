@@ -31,12 +31,12 @@ def test():
         pols.__doc__ = "a dataset that's a container"
 
     # verify that my table of descriptors is accessible
-    descriptors = Group._pyre_descriptors
+    descriptors = Group._pyre_classDescriptors
     # and of the correct size
     assert len(descriptors) == 2
     # check the contents
-    assert descriptors["id"].typename == "int"
-    assert descriptors["pols"].typename == "list"
+    assert getattr(Group, "id").typename == "int"
+    assert getattr(Group, "pols").typename == "list"
 
     # configure the journal
     journal.application("pyre.h5.group")
@@ -49,7 +49,9 @@ def test():
     # descriptor section
     channel.line(f"  descriptors:")
     # go through the contents of the descriptor map
-    for name, descriptor in Group._pyre_descriptors.items():
+    for name in Group._pyre_classDescriptors:
+        # get the descriptor
+        descriptor = getattr(Group, name)
         # represent
         channel.line(f"    {name}: {descriptor.type}")
         # the doc string
