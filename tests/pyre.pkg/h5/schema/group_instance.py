@@ -33,12 +33,12 @@ def test():
     group = Group(name="root")
 
     # build the full set of my identifiers
-    identifiers = {**Group._pyre_descriptors, **group._pyre_descriptors}
+    names = set(group._pyre_descriptors())
     # make sure it's the correct size
-    assert len(identifiers) == 2
+    assert len(names) == 2
     # and check the contents
-    assert identifiers["id"].typename == "int"
-    assert identifiers["pols"].typename == "list"
+    assert getattr(group, "id").typename == "int"
+    assert getattr(group, "pols").typename == "list"
 
     # all done
     return
