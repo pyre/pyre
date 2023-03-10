@@ -41,12 +41,14 @@ def test():
     # now, make a group with this layout
     g = pyre.h5.api.group(at="/", layout=Group())
 
-    # it has one subgroup
-    assert list(name for name, _ in g._pyre_groups()) == ["meta"]
-    # and no datasets
-    assert list(g._pyre_datasets()) == []
-    # for a total of one location
-    assert list(name for name, _ in g._pyre_locations()) == ["meta"]
+    # it has no members
+    assert tuple(g._pyre_members) == ()
+    # no subgroups
+    assert tuple(g._pyre_groups()) == ()
+    # no datasets
+    assert tuple(g._pyre_datasets()) == ()
+    # and no locations
+    assert tuple(g._pyre_locations()) == ()
 
     # all done
     return g

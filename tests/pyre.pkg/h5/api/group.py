@@ -33,15 +33,13 @@ def test():
     g = pyre.h5.api.group(at="/", layout=Group())
 
     # it has no subgroups
+    assert tuple(g._pyre_members) == ()
+    # it has no subgroups
     assert tuple(g._pyre_groups()) == ()
-    # and it has two datasets
-    assert tuple(name for name, _ in g._pyre_datasets()) == ("id", "pols")
-    # for a total of two locations
-    assert tuple(name for name, _ in g._pyre_locations()) == ("id", "pols")
-
-    # access the members
-    assert g.id == 0
-    assert g.pols == ["HH", "VV"]
+    # no datasets
+    assert tuple(g._pyre_datasets()) == ()
+    # and no locations
+    assert tuple(g._pyre_locations()) == ()
 
     # all done
     return
