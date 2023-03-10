@@ -126,20 +126,20 @@ function(pyre_pyreModule)
   target_link_libraries(pyremodule PRIVATE pyre journal pybind11::module)
   # add the sources
   target_sources(pyremodule PRIVATE
-    pyre/pyre.cc
+    pyre/__init__.cc
     pyre/api.cc
-    pyre/grid/grid.cc
+    pyre/grid/__init__.cc
     pyre/grid/indices.cc
     pyre/grid/grids.cc
     pyre/grid/orders.cc
     pyre/grid/packings.cc
     pyre/grid/shapes.cc
-    pyre/memory/memory.cc
+    pyre/memory/__init__.cc
     pyre/memory/maps.cc
-    pyre/timers/timers.cc
+    pyre/timers/__init__.cc
     pyre/timers/process_timers.cc
     pyre/timers/wall_timers.cc
-    pyre/viz/viz.cc
+    pyre/viz/__init__.cc
     pyre/viz/bmp.cc
 )
 
