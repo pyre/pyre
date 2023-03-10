@@ -36,10 +36,18 @@ function(pyre_h5Module)
       h5/datatypes/EnumType.cc
       h5/datatypes/FloatType.cc
       h5/datatypes/IntType.cc
-      h5/datatypes/native.cc
       h5/datatypes/PredType.cc
       h5/datatypes/StrType.cc
       h5/datatypes/VarLenType.cc
+      h5/datatypes/alpha.cc
+      h5/datatypes/big.cc
+      h5/datatypes/ieee.cc
+      h5/datatypes/intel.cc
+      h5/datatypes/little.cc
+      h5/datatypes/mips.cc
+      h5/datatypes/native.cc
+      h5/datatypes/std.cc
+      h5/datatypes/unix.cc
       )
     # install
     install(
