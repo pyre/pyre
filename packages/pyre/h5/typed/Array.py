@@ -15,22 +15,6 @@ class Array:
     """
 
     # type info
-    @property
-    def disktype(self):
-        """
-        Extract the on-disk type of my schema
-        """
-        # easy enough
-        return self.schema.disktype
-
-    @property
-    def memtype(self):
-        """
-        Extract the in-memory type of my schema
-        """
-        # easy enough
-        return self.schema.memtype
-
     # metamethods
     def __init__(self, shape=None, **kwds):
         # chain up
