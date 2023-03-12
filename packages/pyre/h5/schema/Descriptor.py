@@ -3,6 +3,10 @@
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2023 all rights reserved
 
+# support
+import journal
+import typing
+
 
 # the base node
 class Descriptor:
@@ -11,7 +15,7 @@ class Descriptor:
     """
 
     # metamethods
-    def __init__(self, name: str = None, **kwds):
+    def __init__(self, name: typing.Optional[str] = None, **kwds):
         # chain up
         super().__init__(**kwds)
         # set my name
@@ -83,10 +87,7 @@ class Descriptor:
 
         # if we don't have a channel
         if channel is None:
-            # get the journal
-            import journal
-
-            # and make one
+            # make one
             channel = journal.info("pyre.h5.object")
 
         # build the report
@@ -100,7 +101,7 @@ class Descriptor:
         return
 
     # implementation details
-    _pyre_name = None
+    _pyre_name: typing.Optional[str] = None
 
 
 # end of file
