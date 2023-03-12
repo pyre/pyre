@@ -5,7 +5,7 @@
 
 
 # support
-import pyre
+from .. import disktypes
 
 # superclass
 from .MemoryType import MemoryType
@@ -19,7 +19,7 @@ class Short(MemoryType):
 
     # constants
     ctype = "short int"
-    htype = pyre.libh5.datatypes.native.short
+    htype = disktypes.short
 
 
 # the singleton

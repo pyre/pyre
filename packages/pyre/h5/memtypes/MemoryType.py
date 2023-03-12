@@ -7,6 +7,9 @@
 # support
 import pyre
 
+# base types
+from .. import disktypes
+
 
 # the memtype base class
 class MemoryType:
@@ -15,7 +18,8 @@ class MemoryType:
     """
 
     # constants
-    ctype = "void"
+    ctype: str = "void"
+    htype: disktypes.type = None
 
     # data
     @property

@@ -5,7 +5,7 @@
 
 
 # support
-import pyre
+from .. import disktypes
 
 # superclass
 from .MemoryType import MemoryType
@@ -19,7 +19,7 @@ class ComplexDouble(MemoryType):
 
     # constants
     ctype = "std::complex<double>"
-    htype = pyre.libh5.datatypes.native.complexDouble
+    htype = disktypes.complexDouble
 
 
 # the singleton

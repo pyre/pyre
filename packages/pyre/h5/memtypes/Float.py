@@ -5,7 +5,7 @@
 
 
 # support
-import pyre
+from .. import disktypes
 
 # superclass
 from .MemoryType import MemoryType
@@ -19,7 +19,7 @@ class Float(MemoryType):
 
     # constants
     ctype = "float"
-    htype = pyre.libh5.datatypes.native.float
+    htype = disktypes.float
 
 
 # the singleton

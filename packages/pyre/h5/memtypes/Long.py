@@ -5,7 +5,7 @@
 
 
 # support
-import pyre
+from .. import disktypes
 
 # superclass
 from .MemoryType import MemoryType
@@ -19,7 +19,7 @@ class Long(MemoryType):
 
     # constants
     ctype = "long int"
-    htype = pyre.libh5.datatypes.native.long
+    htype = disktypes.long
 
 
 # the singleton
