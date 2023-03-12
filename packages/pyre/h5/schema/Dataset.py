@@ -8,6 +8,10 @@
 import journal
 import pyre
 
+# types
+from .. import disktypes
+from .. import memtypes
+
 # superclass
 from .Descriptor import Descriptor
 
@@ -19,14 +23,20 @@ class Dataset(Descriptor):
     The base class of all typed datasets
     """
 
-    # types
-    disktype = None
-    memtype = None
-
     # my mixins
     from ..typed import array, bool, complex, float, int, str, timestamp, containers
 
     # metamethods
+    # construction
+    def __init__(self, memtype: memtypes.type, disktype: disktypes.type, **kwds):
+        # chain up
+        super().__init__(**kwds)
+        # record my types
+        self.memtype = memtype
+        self.disktype = disktype
+        # all done
+        return
+
     # representation
     def __str__(self):
         """
