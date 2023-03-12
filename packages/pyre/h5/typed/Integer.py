@@ -4,9 +4,6 @@
 # (c) 1998-2023 all rights reserved
 
 
-# support
-import pyre
-
 # types
 from .. import disktypes
 from .. import memtypes
@@ -21,11 +18,7 @@ class Integer:
     # metamethods
     def __init__(self, memtype=memtypes.int64, disktype=disktypes.int64, **kwds):
         # chain up
-        super().__init__(**kwds)
-        # save my in-memory type
-        self.memtype = memtype
-        # save my on-disk type
-        self.disktype = disktype
+        super().__init__(memtype=memtype, disktype=disktype, **kwds)
         # all done
         return
 
