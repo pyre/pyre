@@ -3,11 +3,9 @@
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2023 all rights reserved
 
-# support
-import pyre
-
 # types
 from .. import disktypes
+from .. import memtypes
 
 
 # the {bool} mixin
@@ -16,9 +14,12 @@ class Bool:
     Implementation details of the {bool} dataset mixin
     """
 
-    # type info
-    disktype = disktypes.strType
-    memtype = None
+    # metamethods
+    def __init__(self, **kwds):
+        # chain up
+        super().__init__(disktype=disktypes.char, memtype=memtypes.int8, **kwds)
+        # all done
+        return
 
     # value synchronization
     def _pyre_pull(self, dataset):

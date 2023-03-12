@@ -4,8 +4,9 @@
 # (c) 1998-2023 all rights reserved
 
 
-# support
-import pyre
+# types
+from .. import disktypes
+from .. import memtypes
 
 
 # the {timestamp} mixin
@@ -13,6 +14,13 @@ class Timestamp:
     """
     Implementation details of the {timestamp} dataset mixin
     """
+
+    # metamethods
+    def __init__(self, memtype=memtypes.char, disktype=disktypes.char, **kwds):
+        # chain up
+        super().__init__(memtype=memtype, disktype=disktype, **kwds)
+        # all done
+        return
 
     # value synchronization
     def _pyre_pull(self, dataset):

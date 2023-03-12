@@ -3,9 +3,6 @@
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2023 all rights reserved
 
-# support
-import pyre
-
 # types
 from .. import disktypes
 from .. import memtypes
@@ -20,11 +17,7 @@ class String:
     # metamethods
     def __init__(self, memtype=memtypes.char, disktype=disktypes.char, **kwds):
         # chain up
-        super().__init__(**kwds)
-        # save my in-memory type
-        self.memtype = memtype
-        # save my on-disk type
-        self.disktype = disktype
+        super().__init__(memtype=memtype, disktype=disktype, **kwds)
         # all done
         return
 
