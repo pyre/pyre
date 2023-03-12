@@ -7,7 +7,10 @@
 # support
 import pyre
 
-# abstract types; useful as building blocks defining new types
+# the base type
+type = pyre.libh5.datatypes.DataType
+
+# abstract types; useful as building blocks while defining new types
 from .Array import Array as arrayType
 from .Compound import Compound as compoundType
 from .Enum import Enum as enumType
@@ -62,6 +65,14 @@ r64 = double
 c32 = complexHalf
 c64 = complexFloat
 c128 = complexDouble
+
+# numpy names
+float16 = half
+float32 = float
+float64 = double
+complex32 = complexHalf
+complex64 = complexFloat
+complex128 = complexDouble
 
 # standard types - strings
 c_s1 = std.c_s1
