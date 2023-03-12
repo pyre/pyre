@@ -354,19 +354,13 @@ pyre::h5::py::dataset(py::module & m)
                 // and bail
                 return strings;
             }
-
             // we have strings; let's find out how many
             // get my data space
             auto space = self.getSpace();
             // ask it for its rank
             auto rank = space.getSimpleExtentNdims();
-            // make a correctly sized vector to hold the result
-            shape_t shape(rank);
-            // populate it
-            space.getSimpleExtentDims(&shape[0], nullptr);
-
-            // make sure i'm just a list
-            if (rank != 1) {
+            // make sure i'm just a list;
+            if (rank > 1) {
                 // if not, make a channel
                 auto channel = pyre::journal::error_t("pyre.hdf5");
                 // complain
@@ -380,19 +374,30 @@ pyre::h5::py::dataset(py::module & m)
                 // and bail
                 return strings;
             }
-
+            // if the {rank} is zero, we have a single string; deal with it
+            if (rank == 0) {
+                // build a list of one string
+                auto strings = strings_t(1);
+                // read the data
+                self.read(strings[0], self.getStrType());
+                // and return
+                return strings;
+            }
+            // if we get this far, we have a list of strings
+            // make a correctly sized vector to hold the result
+            shape_t shape(rank);
+            // populate it
+            space.getSimpleExtentDims(&shape[0], nullptr);
             // shape now knows how many strings there are
             auto len = shape[0];
             // use it to make a correctly sized vector
             auto strings = strings_t(len);
-
             // make a slot
             const hsize_t one = 1;
             // we always write one string at offset zero
             auto write = DataSpace(1, &one);
             // and read from the dataset space
             auto read = self.getSpace();
-
             // read as many times as there are strings to pull
             for (hsize_t idx = 0; idx < len; ++idx) {
                 // restrict the read dataspace to one string at offset {idx}
@@ -400,7 +405,6 @@ pyre::h5::py::dataset(py::module & m)
                 // unconditional/unrestricted read
                 self.read(strings[idx], self.getStrType(), write, read);
             }
-
             // all done
             return strings;
         },
