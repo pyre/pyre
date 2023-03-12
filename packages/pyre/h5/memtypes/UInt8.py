@@ -5,7 +5,7 @@
 
 
 # support
-import pyre
+from .. import disktypes
 
 # superclass
 from .MemoryType import MemoryType
@@ -19,7 +19,7 @@ class UInt8(MemoryType):
 
     # constants
     ctype = "uint8_t"
-    htype = pyre.libh5.datatypes.native.uint8
+    htype = disktypes.uint8
 
 
 # the singleton

@@ -5,7 +5,7 @@
 
 
 # support
-import pyre
+from .. import disktypes
 
 # superclass
 from .MemoryType import MemoryType
@@ -19,7 +19,7 @@ class Int(MemoryType):
 
     # constants
     ctype = "int"
-    htype = pyre.libh5.datatypes.native.int
+    htype = disktypes.int
 
 
 # the singleton

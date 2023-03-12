@@ -3,6 +3,8 @@
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2023 all rights reserved
 
+# the base class
+from .MemoryType import MemoryType as type
 
 # c types
 from .Char import char

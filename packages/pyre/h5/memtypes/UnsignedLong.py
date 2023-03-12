@@ -5,7 +5,7 @@
 
 
 # support
-import pyre
+from .. import disktypes
 
 # superclass
 from .MemoryType import MemoryType
@@ -19,7 +19,7 @@ class UnsignedLong(MemoryType):
 
     # constants
     ctype = "unsigned long int"
-    htype = pyre.libh5.datatypes.native.unsignedLong
+    htype = disktypes.unsignedLong
 
 
 # the singleton

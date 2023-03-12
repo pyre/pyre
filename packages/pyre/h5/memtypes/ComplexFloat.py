@@ -5,7 +5,7 @@
 
 
 # support
-import pyre
+from .. import disktypes
 
 # superclass
 from .MemoryType import MemoryType
@@ -19,7 +19,7 @@ class ComplexFloat(MemoryType):
 
     # constants
     ctype = "std::complex<float>"
-    htype = pyre.libh5.datatypes.native.complexFloat
+    htype = disktypes.complexFloat
 
 
 # the singleton

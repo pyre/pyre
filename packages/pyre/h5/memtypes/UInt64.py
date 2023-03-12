@@ -5,7 +5,7 @@
 
 
 # support
-import pyre
+from .. import disktypes
 
 # superclass
 from .MemoryType import MemoryType
@@ -19,7 +19,7 @@ class UInt64(MemoryType):
 
     # constants
     ctype = "uint64_t"
-    htype = pyre.libh5.datatypes.native.uint64
+    htype = disktypes.uint64
 
 
 # the singleton
