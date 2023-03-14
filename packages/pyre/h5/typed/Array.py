@@ -28,11 +28,10 @@ class Array:
     def coerce(self, value, **kwds):
         """
         Convert {value} into an array
-
-        This is sufficiently high up in the conversion process to suffice; the only thing higher
-        is {process}, and its implementation in {schema} just delegates to {coerce} immediately
         """
-        # leave alone, for now
+        # this is sufficiently high up in the conversion process to suffice; the only thing higher
+        # is {process}, and its implementation in {schema} just delegates to {coerce} immediately;
+        # so, leave alone, for now
         return value
 
     # framework hooks value synchronization
