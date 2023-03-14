@@ -149,8 +149,8 @@ class Reader:
                 errors.append(dataset)
             # and bail
             return object
-        # read the dataset value
-        object._pyre_read(file=file)
+        # replace the {object} spec with the {dataset}
+        object._pyre_layout = dataset
         # all done
         return object
 
