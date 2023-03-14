@@ -29,16 +29,8 @@ class Dataset(Object):
         if value is not None:
             # hand it off
             return value
-        # otherwise, get my descriptor
-        spec = self._pyre_layout
-        # if it is non-trivial
-        if spec is not None:
-            # ask it for its default
-            value = spec.process(spec.default)
-        # record it
-        self._value = value
-        # and return it
-        return value
+        # otherwise, read from disk
+        return self._pyre_pull()
 
     @value.setter
     def value(self, value):
@@ -156,7 +148,7 @@ class Dataset(Object):
         # if all is well, attempt to
         try:
             # read the value and update my cache
-            self._value = self._pyre_pull()
+            return self._pyre_pull()
         # if this fails
         except NotImplementedError as error:
             # make a channel
@@ -197,11 +189,24 @@ class Dataset(Object):
         """
         Extract my value from disk
         """
-        # get my layout
-        layout = self._pyre_layout
-        # ask it to extract the value from the h5 store and process it
-        value = layout._pyre_pull(dataset=self)
-        # hand it off
+        # get my spec
+        spec = self._pyre_layout
+        # if i don't have one
+        if spec is None:
+            # there isn't much more i can do
+            return None
+        # get my h5 handle
+        hid = self._pyre_id
+        # if i don't have a connection to a file
+        if hid is None:
+            # process and return my default value; don't cache it so we can try again next
+            # time the value is requested
+            return spec.process(spec.default)
+        # if all is good, ask my spec to extract my value from the h5 store and process it
+        value = spec._pyre_pull(dataset=self)
+        # update the cache
+        self._value = value
+        # and hand it off
         return value
 
     def _pyre_push(self, src):
