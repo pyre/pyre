@@ -18,7 +18,8 @@ class Descriptor:
     def __init__(self, name: typing.Optional[str] = None, **kwds):
         # chain up
         super().__init__(**kwds)
-        # set my name
+        # set my name; this does not have to be the name by which I am known to my container,
+        # since valid h5 group member names may not be valid python identifiers
         self._pyre_name = name
         # all done
         return
