@@ -30,6 +30,8 @@ class Group(Descriptor, metaclass=Schema):
         super().__init__(**kwds)
         # initialize the storage for my dynamic content
         self._pyre_instanceDescriptors = Inventory()
+        # initialize my table with the h5 names of my members
+        self._pyre_aliases = dict(self._pyre_staticAliases)
         # all done
         return
 
@@ -37,8 +39,10 @@ class Group(Descriptor, metaclass=Schema):
     def __setattr__(self, name: str, value: typing.Any) -> None:
         # if value is a named descriptor
         if isinstance(value, Descriptor) and value._pyre_name is not None:
-            # add it to my pile
+            # add the attribute name to my pile of known descriptors
             self._pyre_instanceDescriptors.add(name)
+            # and the name of the descriptor to my aliases
+            self._pyre_aliases[value._pyre_name] = name
         # chain up to carry out the actual assignment
         return super().__setattr__(name, value)
 
@@ -70,12 +74,28 @@ class Group(Descriptor, metaclass=Schema):
         for name in names:
             # retrieve the associated value
             attr = getattr(self, name)
-            # if it is a descriptor
+            # the user may have reassigned an non-descriptor to this {name}, so let's
+            # verify that what we retrieved is a descriptor
             if isinstance(attr, Descriptor):
                 # we got one; send it off
                 yield attr
         # all done
         return
+
+    def _pyre_find(self, alias):
+        """
+        Find the descriptor with the given {name}
+        """
+        # lookup the name in my aliases
+        name = self._pyre_aliases[alias]
+        # retrieve my attribute
+        attr = getattr(self, name)
+        # if it's not a descriptor
+        if not isinstance(attr, Descriptor):
+            # bail
+            raise KeyError(f"'{alias}' is not a descriptor in {self}")
+        # otherwise, return it
+        return attr
 
     # visiting
     def _pyre_identify(self, authority, **kwds):
