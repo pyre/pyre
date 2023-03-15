@@ -32,6 +32,18 @@ pyre::h5::py::dataset(py::module & m)
         // the docstring
         "get my h5 handle id");
 
+    // the object category
+    cls.def_property_readonly_static(
+        // the name
+        "category",
+        // the implementation
+        [](const py::object &) -> H5I_type_t {
+            // i am a group
+            return H5I_DATASET;
+        },
+        // the docstring
+        "get my h5 object category");
+
     // the dataset type
     cls.def_property_readonly(
         // the name
