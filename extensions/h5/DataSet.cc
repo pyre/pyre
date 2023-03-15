@@ -113,15 +113,6 @@ pyre::h5::py::dataset(py::module & m)
         // the docstring
         "get the on-disk size of the dataset");
 
-    // the on-disk offset
-    cls.def_property_readonly(
-        // the name
-        "offset",
-        // the implementation
-        &DataSet::getOffset,
-        // the docstring
-        "get the on-disk offset of the dataset");
-
     // the in-memory size
     cls.def_property_readonly(
         // the name
@@ -130,6 +121,15 @@ pyre::h5::py::dataset(py::module & m)
         &DataSet::getInMemDataSize,
         // the docstring
         "get the in-memory size of the dataset");
+
+    // the on-disk offset
+    cls.def_property_readonly(
+        // the name
+        "offset",
+        // the implementation
+        &DataSet::getOffset,
+        // the docstring
+        "get the on-disk offset of the dataset");
 
     // the dataset shape
     cls.def_property_readonly(
