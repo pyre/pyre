@@ -39,6 +39,19 @@ class PyreError(Exception):
         # otherwise
         return reason
 
+    def _pyre_report(self):
+        """
+        Generate a more verbose report regarding this error
+        """
+        # first, generate the textual representation of the error
+        yield str(self)
+        # if there is a locator
+        if self.locator:
+            # add its contents to the report
+            yield str(self.locator)
+        # all done
+        return
+
 
 class FrameworkError(PyreError):
     """
