@@ -30,20 +30,10 @@ class Schema(AttributeClassifier):
         """
         Build the class record of a new h5 group
         """
-        # make a table for the locally declared descriptors
-        localDescriptors = Inventory(
-            name
-            for name, descriptor in cls._pyre_identifyDescriptors(attributes=attributes)
-        )
-        # and an empty one for all visible class descriptors that we will fill out later on
-        classDescriptors = Inventory()
-        # add them to the pile of {attributes} of {cls}
-        attributes["_pyre_localDescriptors"] = localDescriptors
-        attributes["_pyre_classDescriptors"] = classDescriptors
         # build the record
         record = super().__new__(cls, name, bases, attributes, **kwds)
-        # resolve the visible descriptors
-        classDescriptors.update(record._pyre_resolve())
+        # resolve the group static structure
+        record._pyre_resolve(attributes=attributes)
         # all dons
         return record
 
@@ -58,31 +48,54 @@ class Schema(AttributeClassifier):
         # all done
         return
 
-    def _pyre_resolve(self):
+    def _pyre_resolve(self, attributes: dict):
         """
-        Scan the {mro} of the class record in {self} and return all visible descriptors
+        Scan the {mro} of the class record in {self} and build the group static structure
         """
-        # make a pile of descriptor names
-        descriptors = itertools.chain(
-            # by chaining together
-            *(
-                # all locally declared descriptors
-                base._pyre_localDescriptors
-                # from every base of {self}
-                for base in self.mro()
-                # that is a group
-                if isinstance(base, Schema)
-            )
-        )
-        # go through them
-        yield from (
-            # and filter those names
-            name
-            # from the pile
-            for name in descriptors
-            # that correspond to descriptors
-            if isinstance(getattr(self, name), Descriptor)
-        )
+        # the set of descriptor names from the declaration of this group
+        localDescriptors = Inventory()
+        # the set of descriptor names from the entire class hierarchy
+        classDescriptors = Inventory()
+        # the map from h5 member names to attribute names
+        aliases = {}
+        # go through the local declarations
+        for name, descriptor in self._pyre_identifyDescriptors(attributes=attributes):
+            # add the name to the local pile
+            localDescriptors.add(name)
+            # and update the aliases
+            aliases[descriptor._pyre_name] = name
+        # update the static layout
+        classDescriptors.update(localDescriptors)
+
+        # now, go through my ancestors
+        for base in self.mro()[1:]:
+            # if this {base} class is not a group
+            if not isinstance(base, Schema):
+                # skip it
+                continue
+            # go through its locally declared descriptors
+            for name in base._pyre_localDescriptors:
+                # look up my understanding of this name
+                descriptor = getattr(self, name)
+                # if some mixin did something different with this name
+                if not isinstance(descriptor, Descriptor):
+                    # move on
+                    continue
+                # otherwise, add it to the static layout
+                classDescriptors.add(name)
+                # get the descriptor name
+                alias = descriptor._pyre_name
+                # if it's not already among my aliases
+                if alias not in aliases:
+                    # add it
+                    aliases[alias] = name
+
+        # attach the local name
+        self._pyre_localDescriptors = localDescriptors
+        # attach the class descriptors
+        self._pyre_classDescriptors = classDescriptors
+        # and the translation map
+        self._pyre_staticAliases = aliases
         # all done
         return
 
