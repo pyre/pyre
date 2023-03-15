@@ -48,11 +48,23 @@ pyre::h5::py::datatypes::datatype(py::module & m)
 
     cls.def_property_readonly(
         // the name
-        "id",
+        "hid",
         // the implementation
         &DataType::getId,
         // the docstring
         "the h5 handle of this datatype");
+
+    // the object category
+    cls.def_property_readonly_static(
+        // the name
+        "category",
+        // the implementation
+        [](const py::object &) -> H5I_type_t {
+            // i am a group
+            return H5I_DATATYPE;
+        },
+        // the docstring
+        "get my h5 object category");
 
     // the class type, an {H5T_class_t}
     cls.def_property_readonly(

@@ -77,6 +77,18 @@ pyre::h5::py::dataspace(py::module & m)
         // the docstring
         "get my h5 handle id");
 
+    // the object category
+    cls.def_property_readonly_static(
+        // the name
+        "category",
+        // the implementation
+        [](const py::object &) -> H5I_type_t {
+            // i am a dataspace
+            return H5I_DATASPACE;
+        },
+        // the docstring
+        "get my h5 object category");
+
     // flag that indicates whether this dataspace is simple
     cls.def_property_readonly(
         // the name

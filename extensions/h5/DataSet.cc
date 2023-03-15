@@ -38,7 +38,7 @@ pyre::h5::py::dataset(py::module & m)
         "category",
         // the implementation
         [](const py::object &) -> H5I_type_t {
-            // i am a group
+            // i am a dataset
             return H5I_DATASET;
         },
         // the docstring
