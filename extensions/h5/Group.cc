@@ -121,7 +121,7 @@ pyre::h5::py::group(py::module & m)
         // the signature
         "path"_a,
         // the docstring
-        "open a dataset given its path");
+        "open a dataset given its {path}");
 
     // open one of my subgroups
     cls.def(
@@ -135,7 +135,7 @@ pyre::h5::py::group(py::module & m)
         // the signature
         "path"_a,
         // the docstring
-        "open one of my subgroups given its path");
+        "open one of my subgroups given its {path}");
 
     cls.def(
         // the name
@@ -145,7 +145,7 @@ pyre::h5::py::group(py::module & m)
         // the signature
         "path"_a,
         // the docstring
-        "get the member at the given location");
+        "get the member at the given {path}");
 
     cls.def(
         // the name
@@ -155,7 +155,7 @@ pyre::h5::py::group(py::module & m)
         // the signature
         "index"_a,
         // the docstring
-        "get the name of the member at the given index");
+        "get the name of the member at the given {index}");
 
     // member creation
     cls.def(
@@ -169,7 +169,7 @@ pyre::h5::py::group(py::module & m)
         // the signature
         "path"_a,
         // the docstring
-        "create a new group of the given {name}");
+        "create a new group at the given {path}");
 
     cls.def(
         // the name
@@ -183,7 +183,7 @@ pyre::h5::py::group(py::module & m)
         // the signature
         "path"_a, "type"_a, "space"_a,
         // the docstring
-        "create a new group of the given {name}");
+        "create a new dataset at the given {name} given its {type} and data {space}");
 
     // metamethods
     cls.def(
@@ -205,7 +205,7 @@ pyre::h5::py::group(py::module & m)
         // the signature
         "path"_a,
         // the docstring
-        "get the member at the given location");
+        "get the member at the given {path}");
 
     cls.def(
         // the name
@@ -215,7 +215,7 @@ pyre::h5::py::group(py::module & m)
         // the signature
         "index"_a,
         // the docstring
-        "get the name of the member at the given location");
+        "get the name of the member at the given {index}");
 
     cls.def(
         // the name
