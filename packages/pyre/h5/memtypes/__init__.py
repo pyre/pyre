@@ -43,4 +43,9 @@ r64 = double
 c64 = complexFloat
 c128 = complexDouble
 
+float32 = float
+float64 = double
+complex64 = complexFloat
+complex128 = complexDouble
+
 # end of file
