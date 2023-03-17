@@ -12,7 +12,7 @@
 
 // type aliases
 using file_t = pyre::journal::file_t;
-using error_t = pyre::journal::error_t;
+using myerror_t = pyre::journal::error_t;
 
 
 // send all output to a log file
@@ -20,7 +20,7 @@ int
 main()
 {
     // make a channel
-    error_t channel("tests.journal.error");
+    myerror_t channel("tests.journal.error");
     // make sure it's not fatal
     channel.fatal(false);
     // and attach a logfile as its device, opened in append mode
