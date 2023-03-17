@@ -125,10 +125,10 @@ pyre::h5::py::file(py::module & m)
         // the docstring
         "open an HDF5 file given its {uri} and a custom access property list");
 
-    // the object category
+    // the identifier category
     cls.def_property_readonly_static(
         // the name
-        "category",
+        "identifierType",
         // the implementation
         [](const py::object &) -> H5I_type_t {
             // i am a file
