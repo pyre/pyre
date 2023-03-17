@@ -30,6 +30,15 @@ class Object(Location):
         return
 
     # framework hooks
+    # properties
+    @property
+    def _pyre_objectType(self):
+        """
+        Look up my h5 identifier type
+        """
+        # my handle knows
+        return self._pyre_id.objectType
+
     # visitor
     def _pyre_identify(self, authority, **kwds):
         """
