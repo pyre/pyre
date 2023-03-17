@@ -5,79 +5,71 @@
 
 
 # external
-import journal
 import pyre
+
+# superclass
+from .Inspector import Inspector
 
 # typing
 import typing
+from .. import schema
 from .Object import Object
-from .Group import Group
 from .Dataset import Dataset
+from .Group import Group
 from .File import File
+
+# type aliases
+H5Group = pyre.libh5.Group
+H5DataSet = pyre.libh5.DataSet
+H5Object = typing.Union[H5Group, H5DataSet]
+H5ObjectType = pyre.libh5.ObjectType
 
 
 # the explorer
-class Explorer:
+class Explorer(Inspector):
     """
-    A visitor that inspects an h5 object and extracts its layout
+    A visitor that builds the layout of an h5 object by examining its on-disk content
     """
 
     # interface
-    def visit(self, object: Object) -> typing.Optional[Object._pyre_schema.group]:
+    def visit(self, object: Object) -> schema.descriptor:
         """
         Visit the given {file} and extract its layout
         """
         # ask {object} to identify itself and delegate to my handlers
         return object._pyre_identify(authority=self)
 
-        return root
-
     # visitor implementation
-    def _pyre_onFile(self, file: File, **kwds):
+    def _pyre_onFile(self, file: File) -> schema.group:
         """
-        Process a {file}
+        Build a descriptor for the given {group}
         """
-        # get the underlying h5 object and ask it about the group at the root
-        origin = file._pyre_id.group(path="/")
-        # form the starting point of the layout
-        root = file._pyre_root()
-        # and explore it
-        return root._pyre_identify(authority=self, hid=origin)
+        # get the {file} handle
+        h5id = file._pyre_id
+        # build a group descriptor and return it
+        return self._pyre_inferGroupDescriptor(name="root", h5id=h5id)
 
-    def _pyre_onGroup(self, group: Group, hid: pyre.libh5.Group, **kwds):
+    def _pyre_onGroup(self, group: Group) -> schema.group:
         """
-        Process a {group}
+        Build a descriptor for the given {group}
         """
-        # get the descriptor factoriess
-        schema = File._pyre_schema
-        # and the low level object types enums
-        typeinfo = pyre.libh5.ObjectType
-        # go through the group members
-        for name, type in hid.members():
-            # on groups
-            if type == typeinfo.group:
-                # make a group with the given {name}
-                spec = schema.group(name=name)
-                # attach it
-                setattr(group, name, spec)
-                # explore it
-                spec._pyre_identify(authority=self, hid=hid.group(path=name))
-                # and move on
-                continue
-            # on datasets
-            if type == typeinfo.dataset:
-                # get the underlying dataset object
-                dataset = hid.dataset(path=name)
-                # inspect it to make a dataset spec
-                spec = schema.dataset._pyre_deduce(
-                    name=name, cell=dataset.cell, info=dataset.type, shape=dataset.shape
-                )
-                # attach it to the group being explored
-                setattr(group, name, spec)
-                # and move on
-                continue
-        # all done
-        return group
+        # get the {group} handle
+        h5id = group._pyre_id
+        # and its name
+        name = group._pyre_location.name
+        # build a group descriptor and return it
+        return self._pyre_inferGroupDescriptor(name=name, h5id=h5id)
+
+    def _pyre_onDataset(self, dataset: Dataset) -> schema.dataset:
+        """
+        Build a type descriptor for the given {dataset}
+        """
+        # get the dataset handle
+        h5id = dataset._pyre_id
+        # and its entry name in its group
+        name = dataset._pyre_location.name
+        # build a type descriptor and return it
+        return self._pyre_inferDatasetDescriptor(name=name, h5id=h5id)
 
 
 # end of file
