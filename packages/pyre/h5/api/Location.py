@@ -20,6 +20,16 @@ class Location(Identifier):
     The base class for all h5 objects that have an address
     """
 
+    # metamethods
+    def __init__(self, at: typing.Optional[pyre.primitives.pathlike] = None, **kwds):
+        # chain up
+        super().__init__(**kwds)
+        # record the location
+        self._pyre_location = pyre.primitives.path(at) if at is not None else None
+        # all done
+        return
+
+    # framework hooks
     # access to contents by category; all trivial by default
     def _pyre_datasets(self) -> typing.Sequence[str]:
         """
@@ -42,16 +52,6 @@ class Location(Identifier):
         # nothing from me
         return []
 
-    # metamethods
-    def __init__(self, at: typing.Optional[pyre.primitives.pathlike] = None, **kwds):
-        # chain up
-        super().__init__(**kwds)
-        # record the location
-        self._pyre_location = pyre.primitives.path(at) if at is not None else None
-        # all done
-        return
-
-    # framework hooks
     # visiting
     def _pyre_identify(self, authority, **kwds):
         """
