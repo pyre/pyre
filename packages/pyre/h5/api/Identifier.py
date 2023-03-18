@@ -86,7 +86,7 @@ class Identifier:
             raise NotImplementedError(
                 f"class '{visitor.__module__}.{visitor.__name__}' "
                 f"is not a '{cls.__module__}.{cls.__name__}' visitor"
-            )
+            ) from None
         # otherwise, invoke the hook
         return handler(identifier=self, **kwds)
 
