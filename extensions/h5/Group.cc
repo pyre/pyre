@@ -15,7 +15,7 @@ void
 pyre::h5::py::group(py::module & m)
 {
     // helpers
-    auto getByName = [](const Group & self, const string_t & name) {
+    auto getByName = [](const Group & self, const string_t & name) -> py::object {
         // figure out the type of the named member
         auto type = self.childObjType(name);
         // if it's a group
@@ -23,20 +23,20 @@ pyre::h5::py::group(py::module & m)
             // get the group id
             auto hid = self.getObjId(name);
             // and return a copy along with the type information
-            return py::make_tuple(new Group(hid), type);
+            return py::cast(new Group(hid));
         }
         // if it's a dataset
         if (type == H5O_TYPE_DATASET) {
             // get the dataset id
             auto hid = self.getObjId(name);
             // and return a copy along with the type information
-            return py::make_tuple(new DataSet(hid), type);
+            return py::cast(new DataSet(hid));
         }
-        // for anything else, just return the type info
-        return py::make_tuple(nullptr, type);
+        // bail on the other object types, for now
+        return py::none();
     };
 
-    auto getByIndex = [&getByName](const Group & self, int index) {
+    auto getByIndex = [&getByName](const Group & self, int index) -> py::object {
         // figure out the index of the named member
         auto name = self.getObjnameByIdx(index);
         // and look it up
@@ -100,7 +100,7 @@ pyre::h5::py::group(py::module & m)
         // the implementation
         [](const Group & self) {
             // we build (name, type) pairs
-            using info_t = std::tuple<string_t, H5O_type_t>;
+            using info_t = string_t;
             // in a container
             using members_t = std::vector<info_t>;
             // make one
@@ -112,7 +112,7 @@ pyre::h5::py::group(py::module & m)
                 // figure out its type
                 auto type = self.childObjType(name);
                 // and add the pair to the pile
-                members.emplace_back(name, type);
+                members.emplace_back(name);
             }
             // all done
             return members;
