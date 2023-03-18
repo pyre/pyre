@@ -156,6 +156,46 @@ namespace pyre::algebra {
         // all done
         return _is_zero(A, tolerance, std::make_index_sequence<D> {});
     }
+
+    // helper function (compare J-th component)
+    template <size_t J, typename T, class packingT, int... I>
+    constexpr auto is_less(const Tensor<T, packingT, I...>& lhs, 
+    const Tensor<T, packingT, I...>& rhs) -> bool 
+        requires(J < Tensor<T, packingT, I...>::size)
+    {
+        // if the J-th component of {lhs} is less than J-th component of {rhs}
+        if ((lhs[J] < rhs[J])) {
+            // then {lhs} is less than {rhs}
+            return true;
+        }
+        // if the J-th component of {lhs} is greater than J-th component of {rhs}
+        if (lhs[J] != rhs[J]) {
+            // then {lhs} is not less than {rhs}
+            return false;
+        } 
+        // if the J-th component of {lhs} is equal to J-th component of {rhs},
+        // then compare the next component
+        return is_less<J+1>(lhs, rhs);
+    }
+
+    // helper function (compare J-th component)
+    template <size_t J, typename T, class packingT, int... I>
+    constexpr auto is_less(const Tensor<T, packingT, I...>& lhs, 
+    const Tensor<T, packingT, I...>& rhs) -> bool 
+        requires(J == Tensor<T, packingT, I...>::size)
+    {
+        // base case for recursion: all components are equal
+        return false;
+    }
+
+    template <typename T, class packingT, int... I>
+    inline bool operator< (const Tensor<T, packingT, I...>& lhs, 
+        const Tensor<T, packingT, I...>& rhs) 
+    {
+        // recursively compare all components starting from component 0
+        return is_less<0>(lhs, rhs); 
+    }
+
 }
 
 
