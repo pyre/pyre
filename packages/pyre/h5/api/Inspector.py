@@ -14,9 +14,6 @@ import typing
 from .. import disktypes
 from .. import memtypes
 from .. import schema
-from .Group import Group
-from .Dataset import Dataset
-
 
 # type aliases
 H5Group = pyre.libh5.Group
@@ -37,6 +34,7 @@ class Inspector:
         self,
         name: str,
         h5id: typing.Union[H5Group, H5DataSet],
+        depth: typing.Optional[int] = None,
     ) -> schema.descriptor:
         """
         Build a specification for {h5id} given its {h5type}
@@ -48,29 +46,41 @@ class Inspector:
         # look up the recognizer
         recognizer = getattr(self, f"_pyre_infer{tag}Descriptor")
         # invoke it and return the generated descriptor
-        return recognizer(name=name, h5id=h5id)
+        return recognizer(name=name, h5id=h5id, depth=depth)
 
     # group structure
-    def _pyre_inferGroupDescriptor(self, name: str, h5id: H5Group) -> schema.group:
+    def _pyre_inferGroupDescriptor(
+        self, name: str, h5id: H5Group, depth: typing.Optional[int] = None
+    ) -> schema.group:
         """
         Build a group
         """
         # make a descriptor
         descriptor = schema.group(name=name)
-        # go through my contents
-        for memberName, memberType in h5id.members():
-            # look it up
-            memberId, _ = h5id.get(path=memberName)
+        # check the depth limit
+        if depth is not None:
+            # if we have reached the bottom
+            if depth <= 0:
+                # go no further
+                return descriptor
+            # otherwise, adjust it
+            depth -= 1
+        # go through the group contents
+        for memberName, *_ in h5id.members():
+            # look up
+            memberId, *_ = h5id.get(path=memberName)
             # identify it
-            member = self._pyre_inferDescriptor(name=memberName, h5id=memberId)
-            # and add it to my contents
+            member = self._pyre_inferDescriptor(
+                name=memberName, h5id=memberId, depth=depth
+            )
+            # and add it to the descriptor
             setattr(descriptor, memberName, member)
         # return the group descriptor
         return descriptor
 
     # dataset structure
     def _pyre_inferDatasetDescriptor(
-        self, name: str, h5id: H5DataSet
+        self, name: str, h5id: H5DataSet, **kwds
     ) -> schema.dataset:
         """
         Build a typed dataset descriptor by inspecting {h5id}
@@ -93,7 +103,6 @@ class Inspector:
             channel.log()
             # and raise the exception, in case firewalls aren't fatal
             raise problem
-
         # deduce the schema
         descriptor = recognizer(name=name, h5type=h5id.type)
         # get the dataset space
