@@ -9,9 +9,13 @@ import journal
 # superclass
 from .Group import Group
 
+# parts
+from .Inspector import Inspector
+
 # typing
 import pyre
 import typing
+from .. import schema
 from .Object import Object
 
 
@@ -25,19 +29,26 @@ class File(Group):
     def __init__(
         self,
         at: pyre.primitives.pathlike = "/",
-        layout: typing.Optional[Object._pyre_schema.group] = None,
+        layout: typing.Optional[schema.group] = None,
+        inspector=None,
         **kwds,
     ):
         # normalize the layout
         if layout is None:
             # by making sure it is a group
-            layout = self._pyre_schema.group(name="root")
+            layout = schema.group(name="root")
         # chain up
         super().__init__(at=at, layout=layout, **kwds)
         # initialize my access property list
         self._pyre_fapl = None
         # initially, i'm not attached to a particular file
         self._pyre_uri = None
+        # if i wasn't given an explicit inspector
+        if inspector is None:
+            # make a default one
+            inspector = Inspector()
+        # attach it
+        self._pyre_inspector = inspector
         # all done
         return
 
@@ -131,7 +142,7 @@ class File(Group):
         return super()._pyre_close()
 
     # structural
-    def _pyre_root(self) -> Group._pyre_schema.group:
+    def _pyre_root(self) -> schema.group:
         """
         Get the root of my layout
         """
@@ -139,7 +150,7 @@ class File(Group):
         return self._pyre_layout
 
     # member access
-    def _pyre_find(self, path: pyre.primitives.pathlike) -> typing.Optional[Object]:
+    def __pyre_find(self, path: pyre.primitives.pathlike) -> typing.Optional[Object]:
         """
         Look up the h5 {object} associated with {path}
         """
