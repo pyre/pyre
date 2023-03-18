@@ -79,7 +79,7 @@ class Descriptor:
         return "d"
 
     # rendering
-    def _pyre_render(self, channel=None, flush=True):
+    def _pyre_view(self, channel=None, flush=True):
         """
         Generate a representation of my structure
         """
@@ -90,14 +90,12 @@ class Descriptor:
         if channel is None:
             # make one
             channel = journal.info("pyre.h5.object")
-
         # build the report
         channel.report(report=viewer().visit(self))
         # if we were asked to flush the channel
         if flush:
             # do it
             channel.log()
-
         # all done
         return
 
