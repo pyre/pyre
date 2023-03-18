@@ -10,6 +10,10 @@ import journal
 # superclass
 from .Location import Location
 
+# typing
+import typing
+from .. import schema
+
 
 # a basic h5 object
 class Object(Location):
@@ -18,7 +22,7 @@ class Object(Location):
     """
 
     # metamethods
-    def __init__(self, layout=None, **kwds):
+    def __init__(self, layout: typing.Optional[schema.descriptor] = None, **kwds):
         # chain up
         super().__init__(**kwds)
         # record my type
