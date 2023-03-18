@@ -100,9 +100,9 @@ class Dataset(Object):
         return self._pyre_id.type
 
     # metamethods
-    def __init__(self, layout=None, **kwds):
+    def __init__(self, **kwds):
         # chain up
-        super().__init__(layout=layout, **kwds)
+        super().__init__(**kwds)
         # initialize my value cache
         self._value = None
         # all done
@@ -117,7 +117,7 @@ class Dataset(Object):
 
     # framework hooks
     # value syncing
-    def _pyre_read(self, file):
+    def _pyre_read(self, file: "File"):
         """
         Read my on-disk value into my cache
         """
