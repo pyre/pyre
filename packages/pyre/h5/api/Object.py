@@ -17,9 +17,6 @@ class Object(Location):
     The base class for all publicly visible h5 objects
     """
 
-    # type factories
-    from .. import schema as _pyre_schema
-
     # metamethods
     def __init__(self, layout=None, **kwds):
         # chain up
