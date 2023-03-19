@@ -120,8 +120,6 @@ class Inspector:
         Compare the {expected} and {actual} specifications of a dataset and build a specification
         that is guaranteed to work
         """
-        # don't modify {expected}; it is almost certainly a product schema full of shared state
-        # instead, we transfer as much as possible from {expected} to {actual}
         # check the disk types for compatibility
         if expected.disktype.cell != actual.disktype.cell:
             # f they don't match, we have a problem
