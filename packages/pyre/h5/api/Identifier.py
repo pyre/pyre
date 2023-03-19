@@ -27,12 +27,6 @@ class Identifier:
         # all done
         return
 
-    def __del__(self):
-        # detach me from my h5 object
-        self._pyre_close()
-        # all done
-        return
-
     # rep
     def __str__(self):
         """
