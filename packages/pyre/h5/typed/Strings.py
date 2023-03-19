@@ -17,6 +17,9 @@ class Strings(Dataset.list):
     Implementation details of the dataset mixin that supports a {list} of {str}
     """
 
+    # constants
+    typename = "strings"  # the name of my type
+
     # metamethods
     def __init__(self, schema=None, **kwds):
         # if the user didn't pick
