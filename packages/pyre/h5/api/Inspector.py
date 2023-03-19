@@ -8,12 +8,17 @@
 import journal
 from . import exceptions
 
+# h5 object factories
+from .Group import Group
+from .Dataset import Dataset
+
 # typing
 import pyre
 import typing
 from .. import disktypes
 from .. import memtypes
 from .. import schema
+from .Object import Object
 
 # type aliases
 H5Group = pyre.libh5.Group
@@ -28,7 +33,76 @@ class Inspector:
     A mixin that provides higher level access to {libh5} entities
     """
 
-    # group accessors
+    # object factories
+    def _pyre_inferObject(
+        self,
+        h5id: typing.Union[H5DataSet, H5Group],
+        path: pyre.primitives.path,
+        depth: typing.Optional[int] = None,
+    ) -> Object:
+        """
+        Look up {path} within {group} and build its representation
+        """
+        # get its type
+        h5type = h5id.objectType
+        # build the tag
+        tag = h5type.name.capitalize()
+        # lookup the object factory
+        factory = getattr(self, f"_pyre_infer{tag}")
+        # invoke it
+        h5object = factory(h5id=h5id, path=path, depth=depth)
+        # and return whatever object it built
+        return h5object
+
+    def _pyre_inferGroup(
+        self,
+        h5id: H5Group,
+        path: pyre.primitives.path,
+        depth: typing.Optional[int] = None,
+    ) -> Group:
+        """
+        Build a group at {path}
+        """
+        # check the depth limit
+        if depth is not None:
+            # if we have reached the bottom
+            if depth <= 0:
+                # make an empty group and go no further
+                return Group(id=h5id, at=path)
+            # otherwise, adjust it
+            depth -= 1
+        # build an empty spec
+        spec = schema.group(name=path.name)
+        # and attach it to an empty group
+        group = Group(id=h5id, at=path, layout=spec)
+        # infer my structure
+        for memberName in h5id.members():
+            # look up the member
+            memberId = h5id.get(path=memberName)
+            # build it
+            member = self._pyre_inferObject(
+                h5id=memberId, path=path / memberName, depth=depth
+            )
+            # add it to the group contents
+            setattr(group, memberName, member)
+            # and its layout to the group spec
+            setattr(spec, memberName, member._pyre_layout)
+        # all done
+        return group
+
+    def _pyre_inferDataset(
+        self, h5id: H5DataSet, path: pyre.primitives.path, **kwds
+    ) -> Dataset:
+        """
+        Build a dataset at {path}
+        """
+        # figure out my structure
+        spec = self._pyre_inferDatasetDescriptor(name=path.name, h5id=h5id)
+        # make an empty dataset
+        dataset = Dataset(id=h5id, at=path, layout=spec)
+        # and return it
+        return dataset
+
     # descriptor factories
     def _pyre_inferDescriptor(
         self,
@@ -66,9 +140,9 @@ class Inspector:
             # otherwise, adjust it
             depth -= 1
         # go through the group contents
-        for memberName, *_ in h5id.members():
+        for memberName in h5id.members():
             # look up
-            memberId, *_ = h5id.get(path=memberName)
+            memberId = h5id.get(path=memberName)
             # identify it
             member = self._pyre_inferDescriptor(
                 name=memberName, h5id=memberId, depth=depth
