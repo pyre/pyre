@@ -83,6 +83,31 @@ class UnsupportedCompoundTypeError(APIError):
         return
 
 
+# type mismatch
+class TypeMismatchError(APIError):
+    """
+    Exception raised whet the on-disk type of a dataset is not compatible with its specification
+    """
+
+    # the message template
+    description = (
+        "at '{0.path}': type mismatch: "
+        "expected '{0.expected.disktype.cell.name}', "
+        "got '{0.actual.disktype.cell.name}'"
+    )
+
+    # metamethods
+    def __init__(self, path, expected, actual, **kwds):
+        # chain up
+        super().__init__(**kwds)
+        # save the error information
+        self.path = path
+        self.expected = expected
+        self.actual = actual
+        # all done
+        return
+
+
 # validator errors
 class ValidationError(APIError):
     """
