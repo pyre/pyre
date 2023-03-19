@@ -52,20 +52,6 @@ class File(Group):
         # all done
         return
 
-    def __del__(self):
-        # get my access parameter list
-        fapl = self._pyre_fapl
-        # if it is non-trivial
-        if fapl is not None:
-            # close it
-            fapl.close()
-            # and discard it
-            self._pyre_fapl = None
-        # chain up
-        super().__del__()
-        # all done
-        return
-
     # representation
     def __str__(self):
         """
