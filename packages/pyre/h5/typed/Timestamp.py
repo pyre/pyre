@@ -16,7 +16,7 @@ class Timestamp:
     """
 
     # metamethods
-    def __init__(self, memtype=memtypes.char, disktype=disktypes.char, **kwds):
+    def __init__(self, memtype=memtypes.char, disktype=disktypes.c_s1, **kwds):
         # chain up
         super().__init__(memtype=memtype, disktype=disktype, **kwds)
         # all done

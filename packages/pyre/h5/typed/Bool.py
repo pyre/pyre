@@ -17,7 +17,7 @@ class Bool:
     # metamethods
     def __init__(self, **kwds):
         # chain up
-        super().__init__(disktype=disktypes.char, memtype=memtypes.int8, **kwds)
+        super().__init__(disktype=disktypes.c_s1, memtype=memtypes.int8, **kwds)
         # all done
         return
 
