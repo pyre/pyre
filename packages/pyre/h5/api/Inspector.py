@@ -103,10 +103,42 @@ class Inspector:
         """
         # {query} has the structure we expect to find here; load the actual one from disk
         actual = self._pyre_inferDatasetDescriptor(name=path.name, h5id=h5id)
+        # consolidate the two pictures into a layout for the bew dataset
+        spec = self._pyre_consolidateSchema(path=path, expected=query, actual=actual)
         # make a dataset
-        dataset = Dataset(id=h5id, at=path, layout=query)
+        dataset = Dataset(id=h5id, at=path, layout=spec)
         # and return it
         return dataset
+
+    def _pyre_consolidateSchema(
+        self,
+        path: pyre.primitives.path,
+        expected: schema.dataset,
+        actual: schema.dataset,
+    ):
+        """
+        Compare the {expected} and {actual} specifications of a dataset and build a specification
+        that is guaranteed to work
+        """
+        # don't modify {expected}; it is almost certainly a product schema full of shared state
+        # instead, we transfer as much as possible from {expected} to {actual}
+        # check the disk types for compatibility
+        if expected.disktype.cell != actual.disktype.cell:
+            # f they don't match, we have a problem
+            problem = exceptions.TypeMismatchError(
+                path=path, expected=expected, actual=actual
+            )
+            # make a channel
+            channel = journal.warning("pyre.h5.api.inspector")
+            # report
+            channel.report(report=problem._pyre_report())
+            # and flush
+            channel.log()
+            # prefer the actual, so pulling information from the file can succeed;
+            # it will cause failures elsewhere, most likely, so this may better be an error
+            return actual
+        # in every other case, prefer the {expected} descriptor
+        return expected
 
     # support for inferring hierarchies using nothing but on-disk information
     # object factories
@@ -277,55 +309,6 @@ class Inspector:
         # and return it
         return array
 
-    def _pyre_inferStrDescriptor(self, name: str, h5type: H5DataType) -> schema.dataset:
-        """
-        Build a {str} descriptor
-        """
-        # MGA: NYI: how does {h5type} affect the inference?
-        # get the on-disk type
-        disktype = disktypes.char
-        # get the in-memory type
-        memtype = memtypes.char
-        # build the descriptor
-        str = schema.str(name=name, memtype=memtype, disktype=disktype)
-        # and return it
-        return str
-
-    def _pyre_inferIntDescriptor(self, name: str, h5type: H5DataType) -> schema.dataset:
-        """
-        Build an {int} descriptor
-        """
-        # build the tags
-        sign = "u" if h5type.sign == pyre.libh5.Sign.unsigned else ""
-        bits = h5type.precision
-        # assemble the factory name
-        factory = f"{sign}int{bits}"
-        # get the on-disk type
-        disktype = getattr(disktypes, factory)
-        # get the in-memory type
-        memtype = getattr(memtypes, factory)
-        # build the descriptor
-        int = schema.int(name=name, memtype=memtype, disktype=disktype)
-        # and return it
-        return int
-
-    def _pyre_inferFloatDescriptor(
-        self, name: str, h5type: H5DataType
-    ) -> schema.dataset:
-        """
-        Build a {float} descriptor
-        """
-        # build the tag
-        bits = h5type.precision
-        # get the on-disk type
-        disktype = getattr(disktypes, f"float{bits}")
-        # get the in-memory type; don't let it drop below 32 bits
-        memtype = getattr(memtypes, f"float{max(bits, 32)}")
-        # build the descriptor
-        float = schema.float(name=name, memtype=memtype, disktype=disktype)
-        # and return it
-        return float
-
     def _pyre_inferCompoundDescriptor(
         self, name: str, h5type: H5DataType
     ) -> schema.dataset:
@@ -340,12 +323,10 @@ class Inspector:
         ):
             # get the total bits
             bits = sum(h5type.type(n).precision for n in range(2))
-            # get the on-disk type
-            disktype = getattr(disktypes, f"complex{bits}")
             # get the in-memory type; don't let it drop below 64
             memtype = getattr(memtypes, f"complex{max(bits, 64)}")
             # build the descriptor
-            complex = schema.complex(name=name, memtype=memtype, disktype=disktype)
+            complex = schema.complex(name=name, memtype=memtype, disktype=h5type)
             # and return it
             return complex
         # nothing else is supported, for now; build a problem description
@@ -358,6 +339,49 @@ class Inspector:
         channel.log()
         # and raise the exception, just in case firewalls aren't fatal
         raise problem
+
+    def _pyre_inferFloatDescriptor(
+        self, name: str, h5type: H5DataType
+    ) -> schema.dataset:
+        """
+        Build a {float} descriptor
+        """
+        # build the tag
+        bits = h5type.precision
+        # get the in-memory type; don't let it drop below 32 bits
+        memtype = getattr(memtypes, f"float{max(bits, 32)}")
+        # build the descriptor
+        float = schema.float(name=name, memtype=memtype, disktype=h5type)
+        # and return it
+        return float
+
+    def _pyre_inferIntDescriptor(self, name: str, h5type: H5DataType) -> schema.dataset:
+        """
+        Build an {int} descriptor
+        """
+        # build the tags
+        sign = "u" if h5type.sign == pyre.libh5.Sign.unsigned else ""
+        bits = h5type.precision
+        # assemble the factory name
+        factory = f"{sign}int{bits}"
+        # get the in-memory type
+        memtype = getattr(memtypes, factory)
+        # build the descriptor
+        int = schema.int(name=name, memtype=memtype, disktype=h5type)
+        # and return it
+        return int
+
+    def _pyre_inferStrDescriptor(self, name: str, h5type: H5DataType) -> schema.dataset:
+        """
+        Build a {str} descriptor
+        """
+        # MGA: NYI: how does {h5type} affect the inference?
+        # get the in-memory type
+        memtype = memtypes.char
+        # build the descriptor
+        str = schema.str(name=name, memtype=memtype, disktype=h5type)
+        # and return it
+        return str
 
 
 # end of file
