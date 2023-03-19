@@ -37,15 +37,6 @@ pyre::h5::py::datatypes::str(py::module & m)
         // the docstrings
         "make a string type with a specific {type} as its cell");
 
-    // from a specific predefined type and a size
-    cls.def(
-        // the implementation
-        py::init<const PredType &, const size_t &>(),
-        // the signature
-        "type"_a, "cells"_a,
-        // the docstring
-        "make a string type of the given {type} and set the size to {cells}");
-
     // native string of a given size
     cls.def(
         // the implementation
