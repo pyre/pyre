@@ -31,8 +31,84 @@ H5ObjectType = pyre.libh5.ObjectType
 class Inspector:
     """
     A mixin that provides higher level access to {libh5} entities
+
+    It can build h5 object hierarchies by inferring structure and type information
+    using only on-disk information, or it can walk the hierarchy with a specification
+    and extract a subset of the information
     """
 
+    # support for querying the hierarchy by following a spec
+    # object factories
+    def _pyre_queryObject(
+        self,
+        h5id: typing.Union[H5DataSet, H5Group],
+        path: pyre.primitives.path,
+        query: schema.descriptor,
+    ):
+        """
+        Build the hierarchy root at {path} that is contained within the given {h5id},
+        using {query} as a constraint on the traversal
+        """
+        # get the type of the object at {h5id}
+        h5type = h5id.objectType
+        # build the tag
+        tag = h5type.name.capitalize()
+        # look up the object factory
+        factory = getattr(self, f"_pyre_query{tag}")
+        # invoke it
+        h5object = factory(h5id=h5id, path=path, query=query)
+        # and return what was built
+        return h5object
+
+    def _pyre_queryGroup(
+        self, h5id: H5Group, path: pyre.primitives.path, query: schema.group
+    ):
+        """
+        Build a group at {path}
+        """
+        # build an empty spec
+        spec = schema.group(name=path.name)
+        # and attach it to an empty group
+        group = Group(id=h5id, at=path, layout=spec)
+        # go through the members in {query}
+        for memberName, attributeName in query._pyre_aliases.items():
+            # carefully
+            try:
+                # look up the member
+                memberId = h5id.get(memberName)
+            # if it's not there
+            except RuntimeError:
+                # ignore and move on
+                continue
+            # if it's there, build its location
+            memberPath = path / memberName
+            # extract its descriptor
+            memberSpec = getattr(query, attributeName)
+            # build it
+            member = self._pyre_queryObject(
+                h5id=memberId, path=memberPath, query=memberSpec
+            )
+            # add it to the group contents
+            setattr(group, attributeName, member)
+            # and its layout to the group spec
+            setattr(spec, attributeName, member._pyre_layout)
+        # all done
+        return group
+
+    def _pyre_queryDataset(
+        self, h5id: H5DataSet, path: pyre.primitives.path, query: schema.dataset
+    ):
+        """
+        Build the dataset at {path}
+        """
+        # {query} has the structure we expect to find here; load the actual one from disk
+        actual = self._pyre_inferDatasetDescriptor(name=path.name, h5id=h5id)
+        # make a dataset
+        dataset = Dataset(id=h5id, at=path, layout=query)
+        # and return it
+        return dataset
+
+    # support for inferring hierarchies using nothing but on-disk information
     # object factories
     def _pyre_inferObject(
         self,
@@ -41,9 +117,12 @@ class Inspector:
         depth: typing.Optional[int] = None,
     ) -> Object:
         """
-        Look up {path} within {group} and build its representation
+        Build the hierarchy rooted at {path} that is contained within the given {h5id}
+
+        The parameter {depth} places an upper bound on the search; if it is {None}, the
+        full hierarchy is retrieved
         """
-        # get its type
+        # get the type of the object at {h5id}
         h5type = h5id.objectType
         # build the tag
         tag = h5type.name.capitalize()
@@ -51,7 +130,7 @@ class Inspector:
         factory = getattr(self, f"_pyre_infer{tag}")
         # invoke it
         h5object = factory(h5id=h5id, path=path, depth=depth)
-        # and return whatever object it built
+        # and return what was built
         return h5object
 
     def _pyre_inferGroup(
