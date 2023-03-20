@@ -14,7 +14,11 @@ from .Object import Object
 # typing
 import typing
 import collections.abc
+from .. import schema
 from .Dataset import Dataset
+
+# type aliases
+H5ObjectType = pyre.libh5.ObjectType
 
 
 # a basic h5 object
@@ -23,20 +27,16 @@ class Group(Object):
     A container of h5 objects
     """
 
-    # types
-    _pyre_objectTypes = pyre.libh5.ObjectType
-
     # metamethods
     def __init__(
         self,
-        layout: typing.Optional[Object._pyre_schema.group] = None,
         at: typing.Optional[pyre.primitives.pathlike] = "/",
         **kwds,
     ):
         # chain  up
-        super().__init__(layout=layout, at=at, **kwds)
+        super().__init__(at=at, **kwds)
         # initialize my members
-        self._pyre_members = set()
+        self._pyre_contents = set()
         # all done
         return
 
@@ -58,7 +58,7 @@ class Group(Object):
         # if {value} is an hdf5 object
         if isinstance(value, Object):
             # record it
-            self._pyre_members.add(name)
+            self._pyre_contents.add(name)
         # and make a normal assignment
         return super().__setattr__(name, value)
 
@@ -80,51 +80,42 @@ class Group(Object):
 
     # framework hooks
     # directed traversal
-    def _pyre_find(self, path: pyre.primitives.pathlike) -> typing.Optional[Object]:
+    def _pyre_descriptor(self, path: pyre.primitives.pathlike) -> Object:
+        """
+        Look up the h5 object associated with {path} within the subtree managed by this
+        group, assuming it is already bound to a live h5 object
+        """
+        # normalize path
+        path = pyre.primitives.path(path)
+        # start the search with me
+        cursor = self
+        # go through the path parts
+        for fragment in path.names:
+            # translate the path {fragment} into an attribute name
+            name = cursor._pyre_layout._pyre_aliases[fragment]
+            # find the child, carefully bypassing the forced dataset evaluation
+            # so we can hunt down the object and not its value
+            cursor = super(Group, cursor).__getattribute__(name)
+        # all done
+        return cursor
+
+    def _pyre_find(self, path: pyre.primitives.pathlike) -> typing.Any:
         """
         Look up the h5 {object} associated with {path} within the subtree managed by this
         group, assuming it is already bound to a live h5 object
         """
-        # pull the object type enums
-        objectTypes = self._pyre_objectTypes
-        # and the schema
-        schema = self._pyre_schema
-        # grab the low level object
-        hid, info = self._pyre_id.get(str(path))
-        # compute the location of the member
-        location = self._pyre_location / path
-        # extract the name of the node
-        name = location.name
-        # on groups
-        if info == objectTypes.group:
-            # build the layout
-            layout = schema.group(name=name)
-            # build the node
-            group = Group(id=hid, at=location, layout=layout)
-            # and return it
-            return group
-        # on datasets
-        if info == objectTypes.dataset:
-            # build the layout
-            layout = schema.dataset._pyre_deduce(
-                name=name, cell=hid.cell, info=hid.type, shape=hid.shape
-            )
-            # build the node
-            dataset = Dataset(id=hid, at=location, layout=layout)
-            # load its value
-            dataset.value = layout._pyre_pull(dataset=dataset)
-            # and return it
-            return dataset
-        # anything else implies an object type that we do not support currently
-        channel = journal.firewall("pyre.h5.group")
-        # make a report
-        channel.line(f"unsupported member type {info.name}")
-        channel.line(f"while looking up {path}")
-        channel.line(f"in {self}")
-        # complain
-        channel.log()
-        # and bail, just in case firewalls aren't fatal
-        return
+        # normalize path
+        path = pyre.primitives.path(path)
+        # start the search with me
+        cursor = self
+        # go through the path parts
+        for fragment in path.names:
+            # translate the path {fragment} into an attribute name
+            name = cursor._pyre_layout._pyre_aliases[fragment]
+            # point to the new child and move on
+            cursor = getattr(cursor, name)
+        # all done
+        return cursor
 
     # classifications
     def _pyre_datasets(self) -> collections.abc.Generator:
@@ -158,7 +149,7 @@ class Group(Object):
         Generate a sequence of contents
         """
         # go through the known descriptors
-        for member in self._pyre_members:
+        for member in self._pyre_contents:
             # look up the corresponding location
             location = super().__getattribute__(member)
             # and hand it off
