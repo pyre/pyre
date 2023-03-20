@@ -42,7 +42,7 @@ def test():
     g = pyre.h5.api.group(at="/", layout=Group())
 
     # it has no members
-    assert tuple(g._pyre_members) == ()
+    assert tuple(g._pyre_contents) == ()
     # no subgroups
     assert tuple(g._pyre_groups()) == ()
     # no datasets
