@@ -13,7 +13,7 @@ Definitions for all the exceptions raised by this package
 from ..exceptions import H5Error
 
 
-# the local base
+# the local base of api errors
 class APIError(H5Error):
     """
     The base class of all exceptions raised by the {h5.api} package
