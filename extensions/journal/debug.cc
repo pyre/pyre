@@ -15,16 +15,7 @@ void
 pyre::journal::py::debug(py::module & m)
 {
     // type aliases for the member functions (mfp: method pointer)
-    // detail
-    using getDetail_mfp = debug_t::detail_type (debug_t::*)() const;
-    using setDetail_mfp = debug_t & (debug_t::*) (debug_t::detail_type);
-    // active
-    using getActive_mfp = debug_t::active_type (debug_t::*)() const;
-    using setActive_mfp = debug_t & (debug_t::*) (debug_t::active_type);
-    // fatal
-    using getFatal_mfp = debug_t::fatal_type (debug_t::*)() const;
-    using setFatal_mfp = debug_t & (debug_t::*) (debug_t::fatal_type);
-    // device
+    // {device} is the only one that confuses {py::overload_cast}
     using getDevice_mfp = debug_t::device_type (debug_t::*)() const;
     using setDevice_mfp = debug_t & (debug_t::*) (debug_t::device_type);
 
@@ -46,9 +37,9 @@ pyre::journal::py::debug(py::module & m)
         .def_property(
             "detail",
             // the getter
-            (getDetail_mfp) &debug_t::detail,
+            py::overload_cast<>(&debug_t::detail, py::const_),
             // the setter
-            (setDetail_mfp) &debug_t::detail,
+            py::overload_cast<debug_t::detail_type>(&debug_t::detail),
             // the docstring
             "the detail level")
 
@@ -56,9 +47,9 @@ pyre::journal::py::debug(py::module & m)
         .def_property(
             "active",
             // the getter
-            (getActive_mfp) &debug_t::active,
+            py::overload_cast<>(&debug_t::active, py::const_),
             // the setter
-            (setActive_mfp) &debug_t::active,
+            py::overload_cast<debug_t::active_type>(&debug_t::active),
             // the docstring
             "the channel activation state")
 
@@ -66,9 +57,9 @@ pyre::journal::py::debug(py::module & m)
         .def_property(
             "fatal",
             // the getter
-            (getFatal_mfp) &debug_t::fatal,
+            py::overload_cast<>(&debug_t::fatal, py::const_),
             // the setter
-            (setFatal_mfp) &debug_t::fatal,
+            py::overload_cast<debug_t::fatal_type>(&debug_t::fatal),
             // the docstring
             "the channel activation state")
 
