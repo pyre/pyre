@@ -14,33 +14,46 @@ class Chronicler(metaclass=pyre.patterns.singleton):
     The manager of the journal global state
     """
 
-
     # public data
     notes = None
     device = None
     decor = 1
     detail = 1
-
+    margin = " " * 4
 
     # metamethods
-    def __init__(self, decor=decor, detail=detail, device=device, notes=notes, **kwds):
+    def __init__(
+        self,
+        decor=decor,
+        detail=detail,
+        device=device,
+        margin=margin,
+        notes=notes,
+        **kwds,
+    ):
         # chain up
         super().__init__(**kwds)
-
         # the default decor
         self.decor = decor
         # the default detail
         self.detail = detail
+        # the default margin
+        self.margin = margin
 
         # the global metadata; can't be empty
-        self.notes = notes if notes is not None else {
-            "application": "journal",  # this key is required; applications should override
+        self.notes = (
+            notes
+            if notes is not None
+            else {
+                "application": "journal",  # this key is required; applications should override
             }
+        )
 
         # if whoever initialized the journal did not express an opinion regarding the device
         if device is None:
             # grab the console
             from .Console import Console as cout
+
             # and instantiate it
             device = cout()
         # attach it
