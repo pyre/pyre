@@ -161,6 +161,48 @@ pyre_test_driver(journal.lib/warning_quiet.cc)
 pyre_test_driver(journal.lib/warning_shared.cc)
 
 # clean up
+add_test(NAME journal.lib.debug_device.cleanup
+  COMMAND ${BASH_PROGRAM} -c "rm debug_device.log"
+  )
+set_property(TEST journal.lib.debug_device.cleanup PROPERTY
+  DEPENDS journal.lib.debug_device.cc
+  )
+
+add_test(NAME journal.lib.error_device.cleanup
+  COMMAND ${BASH_PROGRAM} -c "rm error_device.log"
+  )
+set_property(TEST journal.lib.error_device.cleanup PROPERTY
+  DEPENDS journal.lib.error_device.cc
+  )
+
+add_test(NAME journal.lib.firewall_device.cleanup
+  COMMAND ${BASH_PROGRAM} -c "rm firewall_device.log"
+  )
+set_property(TEST journal.lib.firewall_device.cleanup PROPERTY
+  DEPENDS journal.lib.firewall_device.cc
+  )
+
+add_test(NAME journal.lib.help_device.cleanup
+  COMMAND ${BASH_PROGRAM} -c "rm help_device.log"
+  )
+set_property(TEST journal.lib.help_device.cleanup PROPERTY
+  DEPENDS journal.lib.help_device.cc
+  )
+
+add_test(NAME journal.lib.info_device.cleanup
+  COMMAND ${BASH_PROGRAM} -c "rm info_device.log"
+  )
+set_property(TEST journal.lib.info_device.cleanup PROPERTY
+  DEPENDS journal.lib.info_device.cc
+  )
+
+add_test(NAME journal.lib.warning_device.cleanup
+  COMMAND ${BASH_PROGRAM} -c "rm warning_device.log"
+  )
+set_property(TEST journal.lib.warning_device.cleanup PROPERTY
+  DEPENDS journal.lib.warning_device.cc
+  )
+
 add_test(NAME journal.lib.api_file.cleanup
   COMMAND ${BASH_PROGRAM} -c "rm api_file.log"
   )
