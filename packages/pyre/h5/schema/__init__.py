@@ -4,6 +4,9 @@
 # (c) 1998-2023 all rights reserved
 
 
+# the local exceptions
+from . import exceptions
+
 # the structural elements
 from .Descriptor import Descriptor as descriptor
 from .Group import Group as group
