@@ -5,14 +5,17 @@
 
 
 # externals
-import traceback       # location information
+import traceback  # location information
+
 # framework
-import pyre            # for my superclass and {tracking}
+import pyre  # for my superclass and {tracking}
 
 # the index
 from .Index import Index
+
 # the base inventory
 from .Inventory import Inventory
+
 # the keeper of the global settings
 from .Chronicler import Chronicler
 
@@ -27,14 +30,12 @@ class Channel(pyre.patterns.named):
     channel can control whether it's active, or what device it writes to.
     """
 
-
     # types
     from .exceptions import JournalError
 
-
     # public data
-    detail = 1           # default detail
-
+    dent = 0  # default indentation level
+    detail = 1  # default detail
 
     # access to settings from my shared inventory
     @property
@@ -55,7 +56,6 @@ class Channel(pyre.patterns.named):
         # all done
         return
 
-
     @property
     def fatal(self):
         """
@@ -73,7 +73,6 @@ class Channel(pyre.patterns.named):
         self.inventory.fatal = fatal
         # all done
         return
-
 
     @property
     def device(self):
@@ -99,7 +98,6 @@ class Channel(pyre.patterns.named):
         # all done
         return
 
-
     # control over the severity wide device
     @classmethod
     def getDefaultDevice(cls):
@@ -108,7 +106,6 @@ class Channel(pyre.patterns.named):
         """
         # my inventory type has it
         return cls.inventory_type.device
-
 
     @classmethod
     def setDefaultDevice(cls, device):
@@ -122,7 +119,6 @@ class Channel(pyre.patterns.named):
         # all done
         return old
 
-
     # convenient configuration
     @classmethod
     def quiet(cls):
@@ -131,11 +127,11 @@ class Channel(pyre.patterns.named):
         """
         # get the trash can
         from .Trash import Trash
+
         # make one
         trash = Trash()
         # and install it as the default device
         return cls.setDefaultDevice(trash)
-
 
     @classmethod
     def logfile(cls, path, mode="w"):
@@ -144,11 +140,11 @@ class Channel(pyre.patterns.named):
         """
         # get the file device
         from .File import File
+
         # make one
         log = File(path, mode)
         # and install it as the default
         return cls.setDefaultDevice(log)
-
 
     # access to information from my current entry
     @property
@@ -159,7 +155,6 @@ class Channel(pyre.patterns.named):
         # ask and pass on
         return self.entry.page
 
-
     @property
     def notes(self):
         """
@@ -167,7 +162,6 @@ class Channel(pyre.patterns.named):
         """
         # ask and pass on
         return self.entry.notes
-
 
     # interface
     def activate(self):
@@ -179,7 +173,6 @@ class Channel(pyre.patterns.named):
         # all done
         return self
 
-
     def deactivate(self):
         """
         Disable the recording of messages
@@ -189,16 +182,14 @@ class Channel(pyre.patterns.named):
         # all done
         return self
 
-
     def line(self, message=""):
         """
         Add {message} to the current page
         """
         # add message to my page
-        self.page.append(str(message))
+        self.page.append(self.chronicler.margin * self.dent + str(message))
         # all done
         return self
-
 
     def report(self, report):
         """
@@ -209,7 +200,6 @@ class Channel(pyre.patterns.named):
         # all done
         return self
 
-
     def log(self, message=None):
         """
         Add {message} to the current page and then record the entry
@@ -217,7 +207,7 @@ class Channel(pyre.patterns.named):
         # if there is a final {message} to process
         if message is not None:
             # add it to the page
-            self.page.append(str(message))
+            self.line(message)
 
         # get a stack trace
         trace = traceback.extract_stack(limit=2)
@@ -258,14 +248,15 @@ class Channel(pyre.patterns.named):
         # all done
         return status
 
-
     # metamethods
-    def __init__(self, name, detail=detail, **kwds):
+    def __init__(self, name, detail=detail, dent=dent, **kwds):
         # chain up
         super().__init__(name=name, **kwds)
 
         # set my detail
         self.detail = detail
+        # and my indentation level
+        self.dent = dent
         # look up my inventory
         self.inventory = self.index.lookup(name)
         # start out with an empty entry
@@ -276,7 +267,6 @@ class Channel(pyre.patterns.named):
         # all done
         return
 
-
     @classmethod
     def __init_subclass__(cls, active=True, fatal=False, **kwds):
         # chain up
@@ -285,13 +275,9 @@ class Channel(pyre.patterns.named):
         # we will derive a customized class with a synthesized name
         name = cls.__name__ + Inventory.__name__
         # that is a subclass of {Inventory}
-        bases = [ Inventory ]
+        bases = [Inventory]
         # with default values for the channel state
-        attributes = {
-            "active": active,
-            "fatal": fatal,
-            "device": None
-            }
+        attributes = {"active": active, "fatal": fatal, "device": None}
         # build the class
         inventory = type(name, tuple(bases), attributes)
         # fix the module so it gets the correct attribution in stack traces
@@ -307,13 +293,11 @@ class Channel(pyre.patterns.named):
         # all done
         return
 
-
     def __bool__(self):
         """
         Simplify activation state testing
         """
         return self.inventory.active
-
 
     # implementation details
     def commit(self):
@@ -341,7 +325,6 @@ class Channel(pyre.patterns.named):
         # all done
         return status
 
-
     def complaint(self):
         """
         Prepare the exception i raise when i'm fatal
@@ -353,20 +336,22 @@ class Channel(pyre.patterns.named):
         line = notes["line"]
         function = notes["function"]
         # build a locator
-        self.locator = pyre.tracking.script(source=filename, line=line, function=function)
+        self.locator = pyre.tracking.script(
+            source=filename, line=line, function=function
+        )
         # instantiate the exception
         complaint = self.fatalError(channel=self)
         # and return it
         return complaint
-
 
     def record(self):
         """
         Write the accumulated message to the device
         """
         # subclasses must override
-        raise NotImplementedError(f"class '{type(self).__name__}' must implement 'record'")
-
+        raise NotImplementedError(
+            f"class '{type(self).__name__}' must implement 'record'"
+        )
 
     def newEntry(self):
         """
@@ -376,31 +361,31 @@ class Channel(pyre.patterns.named):
         notes = {
             "channel": self.name,
             "severity": self.severity,
-            }
+        }
 
         # inject whatever metadata it has
         notes.update(self.chronicler.notes)
 
         # get the entry factory
         from .Entry import Entry
+
         # make one
         entry = Entry(notes=notes)
 
         # and return it
         return entry
 
-
     # class data
-    severity = "generic"           # the severity name
-    chronicler = Chronicler()      # the keeper of the global settings
-    fatalError = JournalError      # the exception i raise when i'm fatal
-    inventory_type = Inventory     # the default inventory type; subclasses get their own
+    severity = "generic"  # the severity name
+    chronicler = Chronicler()  # the keeper of the global settings
+    fatalError = JournalError  # the exception i raise when i'm fatal
+    inventory_type = Inventory  # the default inventory type; subclasses get their own
     index = Index(inventory_type)  # the severity wide channel index
 
     # instance data
-    entry = None                   # the accumulator of message content and metadata
-    locator = None                 # location information
-    inventory = None               # the state shared by all instances of the same name/severity
+    entry = None  # the accumulator of message content and metadata
+    locator = None  # location information
+    inventory = None  # the state shared by all instances of the same name/severity
 
 
 # end of file
