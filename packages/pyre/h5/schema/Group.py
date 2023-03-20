@@ -6,7 +6,9 @@
 
 # support
 import itertools
+import pyre
 import typing
+from . import exceptions
 
 # metaclass
 from .Schema import Schema
@@ -30,7 +32,7 @@ class Group(Descriptor, metaclass=Schema):
         super().__init__(**kwds)
         # initialize the storage for my dynamic content
         self._pyre_instanceDescriptors = Inventory()
-        # initialize my table with the h5 names of my members
+        # a map from h5 member names on disk to attribute names in the spec
         self._pyre_aliases = dict(self._pyre_staticAliases)
         # all done
         return
@@ -82,7 +84,30 @@ class Group(Descriptor, metaclass=Schema):
         # all done
         return
 
-    def _pyre_find(self, alias):
+    def _pyre_find(self, path: pyre.primitives.pathlike) -> Descriptor:
+        """
+        Descend into my structure looking for the member at {path}
+        """
+        # normalize the path
+        path = pyre.primitives.path(path)
+        # initialize the search
+        cursor = self
+        # take {path} apart and visit its crumbs
+        for name in path.names:
+            # attempt to
+            try:
+                # point to the next name
+                cursor = cursor._pyre_get(alias=name)
+            # if something goes wrong
+            except (KeyError, AttributeError):
+                # complain
+                raise exceptions.PathNotFoundError(
+                    group=self, path=path, child=cursor, fragment=name
+                )
+        # otherwise, return the specification
+        return cursor
+
+    def _pyre_get(self, alias: str) -> Descriptor:
         """
         Find the descriptor with the given {name}
         """
