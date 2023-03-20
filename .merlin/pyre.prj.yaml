@@ -15,7 +15,7 @@ libpyre:
     # the default set of source languages
     languages: c++, autogen
 
-    # the location of the source relative to the root of the project
+    # the location of its sources relative to the root of the project
     root: lib/pyre
 
 
