@@ -15,16 +15,7 @@ void
 pyre::journal::py::info(py::module & m)
 {
     // type aliases for the member functions (mfp: method pointer)
-    // detail
-    using getDetail_mfp = info_t::detail_type (info_t::*)() const;
-    using setDetail_mfp = info_t & (info_t::*) (info_t::detail_type);
-    // active
-    using getActive_mfp = info_t::active_type (info_t::*)() const;
-    using setActive_mfp = info_t & (info_t::*) (info_t::active_type);
-    // fatal
-    using getFatal_mfp = info_t::fatal_type (info_t::*)() const;
-    using setFatal_mfp = info_t & (info_t::*) (info_t::fatal_type);
-    // device
+    // {device} is the only one that confuses {py::overload_cast}
     using getDevice_mfp = info_t::device_type (info_t::*)() const;
     using setDevice_mfp = info_t & (info_t::*) (info_t::device_type);
 
@@ -46,9 +37,9 @@ pyre::journal::py::info(py::module & m)
         .def_property(
             "detail",
             // the getter
-            (getDetail_mfp) &info_t::detail,
+            py::overload_cast<>(&info_t::detail, py::const_),
             // the setter
-            (setDetail_mfp) &info_t::detail,
+            py::overload_cast<info_t::detail_type>(&info_t::detail),
             // the docstring
             "the detail level")
 
@@ -56,9 +47,9 @@ pyre::journal::py::info(py::module & m)
         .def_property(
             "active",
             // the getter
-            (getActive_mfp) &info_t::active,
+            py::overload_cast<>(&info_t::active, py::const_),
             // the setter
-            (setActive_mfp) &info_t::active,
+            py::overload_cast<info_t::active_type>(&info_t::active),
             // the docstring
             "the channel activation state")
 
@@ -66,9 +57,9 @@ pyre::journal::py::info(py::module & m)
         .def_property(
             "fatal",
             // the getter
-            (getFatal_mfp) &info_t::fatal,
+            py::overload_cast<>(&info_t::fatal, py::const_),
             // the setter
-            (setFatal_mfp) &info_t::fatal,
+            py::overload_cast<info_t::fatal_type>(&info_t::fatal),
             // the docstring
             "the channel activation state")
 

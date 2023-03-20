@@ -15,16 +15,7 @@ void
 pyre::journal::py::warning(py::module & m)
 {
     // type aliases for the member functions (mfp: method pointer)
-    // detail
-    using getDetail_mfp = warning_t::detail_type (warning_t::*)() const;
-    using setDetail_mfp = warning_t & (warning_t::*) (warning_t::detail_type);
-    // active
-    using getActive_mfp = warning_t::active_type (warning_t::*)() const;
-    using setActive_mfp = warning_t & (warning_t::*) (warning_t::active_type);
-    // fatal
-    using getFatal_mfp = warning_t::fatal_type (warning_t::*)() const;
-    using setFatal_mfp = warning_t & (warning_t::*) (warning_t::fatal_type);
-    // device
+    // {device} is the only one that confuses {py::overload_cast}
     using getDevice_mfp = warning_t::device_type (warning_t::*)() const;
     using setDevice_mfp = warning_t & (warning_t::*) (warning_t::device_type);
 
@@ -51,9 +42,9 @@ pyre::journal::py::warning(py::module & m)
         .def_property(
             "detail",
             // the getter
-            (getDetail_mfp) &warning_t::detail,
+            py::overload_cast<>(&warning_t::detail, py::const_),
             // the setter
-            (setDetail_mfp) &warning_t::detail,
+            py::overload_cast<warning_t::detail_type>(&warning_t::detail),
             // the docstring
             "the detail level")
 
@@ -61,9 +52,9 @@ pyre::journal::py::warning(py::module & m)
         .def_property(
             "active",
             // the getter
-            (getActive_mfp) &warning_t::active,
+            py::overload_cast<>(&warning_t::active, py::const_),
             // the setter
-            (setActive_mfp) &warning_t::active,
+            py::overload_cast<warning_t::active_type>(&warning_t::active),
             // the docstring
             "the channel activation state")
 
@@ -71,9 +62,9 @@ pyre::journal::py::warning(py::module & m)
         .def_property(
             "fatal",
             // the getter
-            (getFatal_mfp) &warning_t::fatal,
+            py::overload_cast<>(&warning_t::fatal, py::const_),
             // the setter
-            (setFatal_mfp) &warning_t::fatal,
+            py::overload_cast<warning_t::fatal_type>(&warning_t::fatal),
             // the docstring
             "the channel activation state")
 

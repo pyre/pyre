@@ -15,16 +15,7 @@ void
 pyre::journal::py::firewall(py::module & m)
 {
     // type aliases for the member functions (mfp: method pointer)
-    // detail
-    using getDetail_mfp = firewall_t::detail_type (firewall_t::*)() const;
-    using setDetail_mfp = firewall_t & (firewall_t::*) (firewall_t::detail_type);
-    // active
-    using getActive_mfp = firewall_t::active_type (firewall_t::*)() const;
-    using setActive_mfp = firewall_t & (firewall_t::*) (firewall_t::active_type);
-    // fatal
-    using getFatal_mfp = firewall_t::fatal_type (firewall_t::*)() const;
-    using setFatal_mfp = firewall_t & (firewall_t::*) (firewall_t::fatal_type);
-    // device
+    // {device} is the only one that confuses {py::overload_cast}
     using getDevice_mfp = firewall_t::device_type (firewall_t::*)() const;
     using setDevice_mfp = firewall_t & (firewall_t::*) (firewall_t::device_type);
 
@@ -51,9 +42,9 @@ pyre::journal::py::firewall(py::module & m)
         .def_property(
             "detail",
             // the getter
-            (getDetail_mfp) &firewall_t::detail,
+            py::overload_cast<>(&firewall_t::detail, py::const_),
             // the setter
-            (setDetail_mfp) &firewall_t::detail,
+            py::overload_cast<firewall_t::detail_type>(&firewall_t::detail),
             // the docstring
             "the detail level")
 
@@ -61,9 +52,9 @@ pyre::journal::py::firewall(py::module & m)
         .def_property(
             "active",
             // the getter
-            (getActive_mfp) &firewall_t::active,
+            py::overload_cast<>(&firewall_t::active, py::const_),
             // the setter
-            (setActive_mfp) &firewall_t::active,
+            py::overload_cast<firewall_t::active_type>(&firewall_t::active),
             // the docstring
             "the channel activation state")
 
@@ -71,9 +62,9 @@ pyre::journal::py::firewall(py::module & m)
         .def_property(
             "fatal",
             // the getter
-            (getFatal_mfp) &firewall_t::fatal,
+            py::overload_cast<>(&firewall_t::fatal, py::const_),
             // the setter
-            (setFatal_mfp) &firewall_t::fatal,
+            py::overload_cast<firewall_t::fatal_type>(&firewall_t::fatal),
             // the docstring
             "the channel activation state")
 
