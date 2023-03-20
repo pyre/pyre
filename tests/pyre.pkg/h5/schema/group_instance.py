@@ -26,7 +26,7 @@ def test():
         id.__doc__ = "a simple dataset"
 
         # something a bit more complicated
-        pols = pyre.h5.schema.list()
+        pols = pyre.h5.schema.list(schema=pyre.h5.schema.int())
         pols.__doc__ = "a dataset that's a container"
 
     # instantiate
