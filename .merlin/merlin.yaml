@@ -3,7 +3,8 @@
 # (c) 1998-2023 all rights reserved
 
 
-# this workspace contains the following projects
+# the list of projects in this workspace
+# each one has its own configuration in this directory
 # N.B.:
 # - the {.prj} suffix is necessary only because {pyre} and {journal} are already known
 #   to the {nameserver} as packages

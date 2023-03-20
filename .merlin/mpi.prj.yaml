@@ -14,7 +14,7 @@ libmpi:
     name: mpi
     # all c++
     languages: c++
-    # the location of the source relative to the root of the project
+    # the location of its sources relative to the root of the project
     root: lib/mpi
 
     # users #include <pyre/mpi.h>
