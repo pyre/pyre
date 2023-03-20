@@ -187,6 +187,25 @@ pyre::journal::py::debug(py::module & m)
             // the docstring
             "disable output generation")
 
+        // dent control
+        .def(
+            "indent",
+            // the method;
+            &debug_t::indent,
+            // the signature
+            "levels"_a = 1,
+            // the docstring
+            "indent output by the indicated number of {levels}")
+
+        .def(
+            "outdent",
+            // the method;
+            &debug_t::outdent,
+            // the signature
+            "levels"_a = 1,
+            // the docstring
+            "outdent output by the indicated number of {levels}")
+
         // add a line to the contents
         .def(
             "line",
