@@ -10,6 +10,7 @@ import merlin
 
 # my superclass
 from ..Builder import Builder as BaseBuilder
+
 # my parts
 from .LibFlow import LibFlow
 
@@ -20,12 +21,10 @@ class Builder(BaseBuilder, family="merlin.builders.flow"):
     The manager of the all build products, both final and intermediate disposables
     """
 
-
     # configurable state
     libflow = merlin.protocols.libflow()
     libflow.default = LibFlow
     libflow.doc = "the library workflow generator"
-
 
     # interface
     def mkdir(self, path):
@@ -59,7 +58,9 @@ class Builder(BaseBuilder, family="merlin.builders.flow"):
             # complain
             channel.line(f"could not anchor '{path}'")
             channel.line(f"crumbs: {', '.join(reversed(pile))}")
-            channel.line(f"note: this workflow is compromised; please file an issue on github")
+            channel.line(
+                f"note: this workflow is compromised; please file an issue on github"
+            )
             # and flush
             channel.log()
             # just in case firewalls aren't fatal, bail
@@ -98,7 +99,6 @@ class Builder(BaseBuilder, family="merlin.builders.flow"):
         # and we are all done
         return anchor
 
-
     # metamethods
     def __init__(self, **kwds):
         # chain up
@@ -111,7 +111,6 @@ class Builder(BaseBuilder, family="merlin.builders.flow"):
 
         # all done
         return
-
 
     # framework hooks
     def merlin_initialized(self, plexus, **kwds):
@@ -132,7 +131,6 @@ class Builder(BaseBuilder, family="merlin.builders.flow"):
         # all done
         return
 
-
     # implementation details
     def library(self, **kwds):
         """
@@ -140,7 +138,6 @@ class Builder(BaseBuilder, family="merlin.builders.flow"):
         """
         # delegate to the {libflow} generator
         return self.libflow.library(builder=self, **kwds)
-
 
     # helpers
     def setupPrefix(self, plexus, abi, **kwds):
@@ -175,7 +172,9 @@ class Builder(BaseBuilder, family="merlin.builders.flow"):
         # and my index
         index = self.index
         # build the directory asset
-        prefixDir = merlin.assets.directory(name=str(prefixPath), node=prefixFS, path=prefixPath)
+        prefixDir = merlin.assets.directory(
+            name=str(prefixPath), node=prefixFS, path=prefixPath
+        )
         # add it to the flow
         flow.products.add(prefixDir)
         # and index it
@@ -203,10 +202,16 @@ class Builder(BaseBuilder, family="merlin.builders.flow"):
                 channel = journal.error("merlin.builder.mkdir")
                 # complain
                 channel.line(f"could not anchor '{path}'")
-                channel.line(f"while building a workflow for '{name}' in the prefix layout")
+                channel.line(
+                    f"while building a workflow for '{name}' in the prefix layout"
+                )
                 channel.line(f"with value '{relpath}' from {locator}")
-                channel.line(f"when a directory asset for '/prefix' should have been found")
-                channel.line(f"note: this workflow is compromised; please file an issue on github")
+                channel.line(
+                    f"when a directory asset for '/prefix' should have been found"
+                )
+                channel.line(
+                    f"note: this workflow is compromised; please file an issue on github"
+                )
                 # and flush
                 channel.log()
 
@@ -224,7 +229,6 @@ class Builder(BaseBuilder, family="merlin.builders.flow"):
 
         # all done
         return
-
 
     def setupStage(self, plexus, abi, **kwds):
         """
@@ -253,7 +257,9 @@ class Builder(BaseBuilder, family="merlin.builders.flow"):
         # and my product index
         index = self.index
         # make a directory flow node that refers to this location
-        stageDir = merlin.assets.directory(name=str(stagePath), node=stageFS, path=stagePath)
+        stageDir = merlin.assets.directory(
+            name=str(stagePath), node=stageFS, path=stagePath
+        )
         # add it to the flow
         flow.products.add(stageDir)
         # and index it
