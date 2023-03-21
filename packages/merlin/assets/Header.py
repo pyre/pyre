@@ -14,10 +14,8 @@ class Header(Auxiliary, family="merlin.assets.categories.header"):
     Encapsulation of a header file
     """
 
-
     # constants
     category = "header"
-
 
     # interface
     def identify(self, visitor, **kwds):

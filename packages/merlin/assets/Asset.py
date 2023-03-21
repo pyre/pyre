@@ -7,6 +7,7 @@
 # support
 import journal
 import merlin
+
 # superclass
 from .Product import Product
 
@@ -17,14 +18,12 @@ class Asset(Product):
     Encapsulation of a project asset
     """
 
-
     # required configurable state
     ignore = merlin.properties.bool(default=False)
     ignore.doc = "controls whether to ignore this asset"
 
     private = merlin.properties.bool(default=False)
     private.doc = "mark this asset as private"
-
 
     # builder requirements
     def build(self, **kwds):
@@ -33,7 +32,6 @@ class Asset(Product):
         """
         # delegate to my flow interface
         return self.pyre_make(**kwds)
-
 
     # merlin hooks
     def identify(self, visitor, **kwds):

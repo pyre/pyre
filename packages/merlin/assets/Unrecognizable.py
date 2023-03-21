@@ -4,8 +4,6 @@
 # (c) 1998-2023 all rights reserved
 
 
-# support
-import merlin
 # superclass
 from .Category import Category
 
@@ -16,10 +14,8 @@ class Unrecognizable(Category, family="merlin.assets.categories.unrecognizable")
     Encapsulation of a file whose purpose is not known
     """
 
-
     # constants
     category = "unrecognizable"
-
 
     # interface
     def identify(self, visitor, **kwds):

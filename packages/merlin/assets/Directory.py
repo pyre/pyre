@@ -6,23 +6,24 @@
 
 # support
 import merlin
+
 # superclass
 from .RealAsset import RealAsset
 
 
 # class declaration
-class Directory(RealAsset,
-                family="merlin.assets.directories.directory",
-                implements=merlin.protocols.directory):
+class Directory(
+    RealAsset,
+    family="merlin.assets.directories.directory",
+    implements=merlin.protocols.directory,
+):
     """
     Encapsulation of an asset container
     """
 
-
     # required configurable state
     category = merlin.properties.str(default="directory")
     category.doc = "a clue about the type of this asset"
-
 
     # interface
     def add(self, asset):
@@ -38,7 +39,6 @@ class Directory(RealAsset,
         # all done
         return
 
-
     # meta methods
     def __init__(self, **kwds):
         # chain up
@@ -47,7 +47,6 @@ class Directory(RealAsset,
         self.assets = set()
         # all done
         return
-
 
     # hooks
     def identify(self, visitor, **kwds):
@@ -64,7 +63,6 @@ class Directory(RealAsset,
             return super().identify(visitor=visitor, **kwds)
         # if it does, invoke it
         return handler(directory=self, **kwds)
-
 
     # flow hooks
     def pyre_done(self, **kwds):

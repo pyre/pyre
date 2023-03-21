@@ -4,8 +4,6 @@
 # (c) 1998-2023 all rights reserved
 
 
-# support
-import merlin
 # superclass
 from .Category import Category
 
@@ -16,10 +14,8 @@ class Auxiliary(Category, family="merlin.assets.categories.auxiliary"):
     The category of auxiliary assets
     """
 
-
     # constants
     category = "auxiliary"
-
 
     # interface
     def identify(self, visitor, **kwds):

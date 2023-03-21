@@ -7,17 +7,18 @@
 # support
 import journal
 import merlin
+
 # superclass
 from .Asset import Asset
 
 
 # class declaration
-class Library(Asset,
-              family="merlin.assets.libraries.library", implements=merlin.protocols.library):
+class Library(
+    Asset, family="merlin.assets.libraries.library", implements=merlin.protocols.library
+):
     """
     A container of binary artifacts
     """
-
 
     # user configurable state
     name = merlin.properties.str()
@@ -30,7 +31,9 @@ class Library(Asset,
     scope.doc = "place my headers within the scope of a larger project"
 
     gateway = merlin.properties.path()
-    gateway.doc = "the name of the top level header that provides access to the other headers"
+    gateway.doc = (
+        "the name of the top level header that provides access to the other headers"
+    )
 
     languages = merlin.properties.tuple(schema=merlin.protocols.language())
     languages.doc = "the languages of the library source assets"
@@ -38,7 +41,6 @@ class Library(Asset,
     # flows
     headers = merlin.properties.set(schema=merlin.protocols.file())
     headers.doc = "the library headers as a set of products in /prefix"
-
 
     # interface
     def build(self, builder, **kwds):
@@ -57,13 +59,12 @@ class Library(Asset,
         # all done
         return super().build(builder=builder, **kwds)
 
-
     def assets(self):
         """
         Generate the sequence of my source files
         """
         # get the workspace folder
-        ws = self.pyre_fileserver['/workspace']
+        ws = self.pyre_fileserver["/workspace"]
         # starting with it
         root = ws
         # navigate down to my {root} carefully one step at a time because the filesystem
@@ -126,7 +127,9 @@ class Library(Asset,
                 # everything else is assumed to be a regular file
                 else:
                     # so they become file based assets
-                    asset = self.file(name=name, node=node, path=path, classifier=classifier)
+                    asset = self.file(
+                        name=name, node=node, path=path, classifier=classifier
+                    )
                 # either way, assets are attached to their container
                 folder.add(asset=asset)
                 # and are made available
@@ -135,7 +138,6 @@ class Library(Asset,
         # all done
         return
 
-
     # implementation details
     def directory(self, name, node, path):
         """
@@ -143,7 +145,6 @@ class Library(Asset,
         """
         # by default, use the raw asset container
         return merlin.assets.directory(name=name, node=node, path=path)
-
 
     def file(self, name, node, path, classifier):
         """
@@ -159,7 +160,6 @@ class Library(Asset,
         # get its configuration
         language = asset.language
         category = asset.category
-
         # if it already knows its language
         if language:
             # and its category
@@ -171,20 +171,17 @@ class Library(Asset,
             # and done
             return asset
 
-        # ask the classifier for ideas
+        # otherwise, ask the classifier for ideas
         candidate, language = classifier.get(path.suffix, (category, None))
         # if it comes back with a non-trivial answer that contradicts the asset configuration
         if category and candidate is not category:
             # favor what the user supplied, even if it's wrong...
             candidate = category
-
         # mark
         asset.language = language
         asset.category = candidate
-
         # all done
         return asset
-
 
     def assetClassifier(self):
         """
@@ -217,7 +214,9 @@ class Library(Asset,
                 # go through the candidates
                 for cat, langs in categories.items():
                     # and show me which languages claim which category
-                    channel.line(f"  {cat.category}: from  {', '.join(l.name for l in langs)}")
+                    channel.line(
+                        f"  {cat.category}: from  {', '.join(l.name for l in langs)}"
+                    )
                 # and flush
                 channel.log()
                 # just in case this firewall is not fatal,
@@ -237,7 +236,6 @@ class Library(Asset,
         # all done
         return assetClassifier
 
-
     def supportedLanguages(self):
         """
         Generate a sequence of the allowed languages
@@ -255,15 +253,16 @@ class Library(Asset,
         sieve = lambda x: x.linkable
         # supported
         supported = set(
-            language for _, _, language in
-            merlin.protocols.language.pyre_locateAllImplementers(namespace="merlin")
+            language
+            for _, _, language in merlin.protocols.language.pyre_locateAllImplementers(
+                namespace="merlin"
             )
+        )
         # languages
         yield from filter(sieve, supported)
 
         # all done
         return
-
 
     # hooks
     def identify(self, visitor, **kwds):
