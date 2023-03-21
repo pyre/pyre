@@ -10,12 +10,14 @@ import merlin
 
 
 # a builder of libraries
-class LibFlow(merlin.component,
-              family="merlin.builders.flow.lib", implements=merlin.protocols.libflow):
+class LibFlow(
+    merlin.component,
+    family="merlin.builders.flow.lib",
+    implements=merlin.protocols.libflow,
+):
     """
     Workflow generator for building libraries
     """
-
 
     # interface
     # asset handlers
@@ -31,7 +33,6 @@ class LibFlow(merlin.component,
             asset.identify(visitor=self, library=library, **kwds)
         # all done
         return
-
 
     @merlin.export
     def directory(self, builder, library, directory, **kwds):
@@ -57,7 +58,6 @@ class LibFlow(merlin.component,
         # all done
         return
 
-
     @merlin.export
     def file(self, file, **kwds):
         """
@@ -69,7 +69,6 @@ class LibFlow(merlin.component,
         category.identify(visitor=self, file=file, **kwds)
         # all done
         return
-
 
     # asset category handlers
     @merlin.export
@@ -131,7 +130,6 @@ class LibFlow(merlin.component,
         # all done
         return
 
-
     @merlin.export
     def source(self, file, **kwds):
         """
@@ -144,7 +142,6 @@ class LibFlow(merlin.component,
         # all done
         return
 
-
     @merlin.export
     def template(self, **kwds):
         """
@@ -153,7 +150,6 @@ class LibFlow(merlin.component,
         # all done
         return
 
-
     @merlin.export
     def unrecognizable(self, **kwds):
         """
@@ -161,7 +157,6 @@ class LibFlow(merlin.component,
         """
         # all done
         return
-
 
     # source language handlers
     @merlin.export

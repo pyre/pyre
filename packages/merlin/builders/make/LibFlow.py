@@ -10,12 +10,14 @@ import merlin
 
 
 # a builder of libraries
-class LibFlow(merlin.component,
-              family="merlin.builders.flow.lib", implements=merlin.protocols.libflow):
+class LibFlow(
+    merlin.component,
+    family="merlin.builders.flow.lib",
+    implements=merlin.protocols.libflow,
+):
     """
     Workflow generator for building libraries
     """
-
 
     # interface
     # asset handlers
@@ -43,14 +45,14 @@ class LibFlow(merlin.component,
         # make the anchor rule
         yield f"{name}: {name}.assets"
         # the directory rules
-        yield from self.directoryRules(renderer=renderer,
-                                       library=library, directories=self._directories)
+        yield from self.directoryRules(
+            renderer=renderer, library=library, directories=self._directories
+        )
         # the asset rules
         yield from self.assetRules(renderer=renderer, library=library, **kwds)
 
         # all done
         return
-
 
     @merlin.export
     def directory(self, directory, **kwds):
@@ -61,7 +63,6 @@ class LibFlow(merlin.component,
         self._directories.append(directory)
         # all done
         return
-
 
     @merlin.export
     def file(self, file, **kwds):
@@ -75,7 +76,6 @@ class LibFlow(merlin.component,
         # all done
         return
 
-
     # asset category handlers
     @merlin.export
     def header(self, file, **kwds):
@@ -87,7 +87,6 @@ class LibFlow(merlin.component,
         # all done
         return
 
-
     @merlin.export
     def source(self, file, **kwds):
         """
@@ -98,7 +97,6 @@ class LibFlow(merlin.component,
         # all done
         return
 
-
     @merlin.export
     def template(self, **kwds):
         """
@@ -106,7 +104,6 @@ class LibFlow(merlin.component,
         """
         # all done
         return
-
 
     @merlin.export
     def unrecognizable(self, **kwds):
@@ -116,7 +113,6 @@ class LibFlow(merlin.component,
         # all done
         return
 
-
     # source language handlers
     @merlin.export
     def language(self, **kwds):
@@ -125,7 +121,6 @@ class LibFlow(merlin.component,
         """
         # all done
         return
-
 
     # metamethods
     def __init__(self, **kwds):
@@ -139,7 +134,6 @@ class LibFlow(merlin.component,
 
         # all done
         return
-
 
     # helpers
     def directoryRules(self, renderer, library, directories):
@@ -163,7 +157,6 @@ class LibFlow(merlin.component,
             # no scope, just the library name
             destination = include / library.name
 
-
         # build the rules that build the individual directories
         yield ""
         yield renderer.commentLine(f"the directory layout of the {name} headers")
@@ -186,7 +179,6 @@ class LibFlow(merlin.component,
         # all done
         return
 
-
     def assetRules(self, renderer, library, **kwds):
         """
         Build the rules that build {library} assets
@@ -203,7 +195,9 @@ class LibFlow(merlin.component,
         yield f"{name}.assets:: {name}.headers"
 
         # build the header rules
-        yield from self.headerRules(renderer=renderer, library=library, headers=headers, **kwds)
+        yield from self.headerRules(
+            renderer=renderer, library=library, headers=headers, **kwds
+        )
 
         # if there are sources
         if sources:
@@ -212,12 +206,12 @@ class LibFlow(merlin.component,
             yield renderer.commentLine(f"make the {name} archive")
             yield f"{name}.assets:: {name}.archive"
             # make the rules that build the objects
-            yield from self.archiveRules(renderer=renderer,
-                                         library=library, sources=sources, **kwds)
+            yield from self.archiveRules(
+                renderer=renderer, library=library, sources=sources, **kwds
+            )
 
         # all done
         return
-
 
     def headerRules(self, renderer, library, headers, **kwds):
         """
@@ -260,7 +254,7 @@ class LibFlow(merlin.component,
         # yield renderer.commentLine(f"the set of {name} headers in the source directories")
         # park the full set of headers in a variable
         # yield from renderer.set(name=f"{name}.headers",
-                           # multi=(str(header.node.uri) for header in headers))
+        # multi=(str(header.node.uri) for header in headers))
 
         # if there is a gateway header
         if gateway:
@@ -297,8 +291,10 @@ class LibFlow(merlin.component,
         yield ""
         yield renderer.commentLine(f"the set of {name} exported headers")
         # make the pile
-        yield from renderer.set(name=f"{name}.exported",
-                                multi=(str(destination / header.path) for header in regular))
+        yield from renderer.set(
+            name=f"{name}.exported",
+            multi=(str(destination / header.path) for header in regular),
+        )
 
         # make the aggregator rule that exports headers
         yield ""
@@ -321,7 +317,6 @@ class LibFlow(merlin.component,
 
         # all done
         return
-
 
     def archiveRules(self, renderer, library, sources, **kwds):
         """
@@ -350,7 +345,9 @@ class LibFlow(merlin.component,
 
         # make the aggregator rule for triggering the compilation
         yield ""
-        yield renderer.commentLine(f"rule that triggers the compilation of the {name} sources")
+        yield renderer.commentLine(
+            f"rule that triggers the compilation of the {name} sources"
+        )
         # make the rule
         yield f"{name}.objects: ${{{name}.objects}}"
 
@@ -367,7 +364,6 @@ class LibFlow(merlin.component,
 
         # all done
         return
-
 
     def formObjectPaths(self, library, sources):
         """

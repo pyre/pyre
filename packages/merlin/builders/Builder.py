@@ -14,7 +14,6 @@ class Builder(merlin.component, implements=merlin.protocols.builder):
     The manager of the all build products, both final and intermediate disposables
     """
 
-
     # configurable state
     tag = merlin.properties.str()
     tag.default = None
@@ -39,7 +38,6 @@ class Builder(merlin.component, implements=merlin.protocols.builder):
     layout = merlin.protocols.prefix()
     layout.doc = "the layout of the installation area"
 
-
     # interface
     def add(self, assets, **kwds):
         """
@@ -52,7 +50,6 @@ class Builder(merlin.component, implements=merlin.protocols.builder):
         # all done
         return
 
-
     def build(self, assets, **kwds):
         """
         Build the products
@@ -63,7 +60,6 @@ class Builder(merlin.component, implements=merlin.protocols.builder):
             asset.build(builder=self, **kwds)
         # all done
         return
-
 
     # metamethods
     def __init__(self, **kwds):
@@ -84,7 +80,6 @@ class Builder(merlin.component, implements=merlin.protocols.builder):
         # all done
         return
 
-
     # implementation details
     # framework hooks
     def merlin_initialized(self, plexus, **kwds):
@@ -93,7 +88,6 @@ class Builder(merlin.component, implements=merlin.protocols.builder):
         """
         # nothing to do, by default
         return
-
 
     # helpers
     def abi(self, plexus):
@@ -130,7 +124,6 @@ class Builder(merlin.component, implements=merlin.protocols.builder):
         abi = f"{suite}{major}"
         # all done
         return abi
-
 
     def workspaceHash(self, plexus):
         """
