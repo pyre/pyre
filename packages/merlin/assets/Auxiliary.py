@@ -20,7 +20,7 @@ class Auxiliary(Category, family="merlin.assets.categories.auxiliary"):
     # interface
     def identify(self, visitor, **kwds):
         """
-        Ask {visitor} to process a header file
+        Ask {visitor} to process an auxiliary file
         """
         # attempt to
         try:

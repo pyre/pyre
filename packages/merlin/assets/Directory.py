@@ -15,7 +15,7 @@ class Directory(Category, family="merlin.assets.categories.directory"):
     """
 
     # constants
-    category = "source"
+    category = "directory"
 
     # interface
     def identify(self, visitor, **kwds):
