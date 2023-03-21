@@ -4,8 +4,6 @@
 # (c) 1998-2023 all rights reserved
 
 
-# support
-import merlin
 # superclass
 from .Category import Category
 
@@ -16,10 +14,8 @@ class Source(Category, family="merlin.assets.categories.source"):
     Encapsulation of a source file
     """
 
-
     # constants
     category = "source"
-
 
     # interface
     def identify(self, visitor, **kwds):

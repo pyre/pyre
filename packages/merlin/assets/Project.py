@@ -6,17 +6,18 @@
 
 # support
 import merlin
+
 # superclass
 from .Asset import Asset
 
 
 # class declaration
-class Project(Asset,
-              family="merlin.assets.project", implements=merlin.protocols.project):
+class Project(
+    Asset, family="merlin.assets.project", implements=merlin.protocols.project
+):
     """
     A high level container of assets
     """
-
 
     # required state
     libraries = merlin.properties.tuple(schema=merlin.protocols.library())

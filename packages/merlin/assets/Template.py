@@ -4,8 +4,6 @@
 # (c) 1998-2023 all rights reserved
 
 
-# support
-import merlin
 # superclass
 from .Category import Category
 
@@ -16,10 +14,8 @@ class Template(Category, family="merlin.assets.categories.template"):
     Encapsulation of a template file that generates other sources
     """
 
-
     # constants
     category = "template"
-
 
     # interface
     def identify(self, visitor, **kwds):
