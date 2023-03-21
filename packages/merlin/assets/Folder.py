@@ -10,6 +10,9 @@ import merlin
 # superclass
 from .RealAsset import RealAsset
 
+# my asset category
+from .Directory import Directory
+
 
 # class declaration
 class Folder(
@@ -22,7 +25,8 @@ class Folder(
     """
 
     # required configurable state
-    category = merlin.properties.str(default="folder")
+    category = merlin.protocols.assetCategory()
+    category.default = Directory
     category.doc = "a clue about the type of this asset"
 
     # interface
