@@ -27,7 +27,7 @@ class Category(
     # interface
     def identify(self, visitor, **kwds):
         """
-        Ask {visitor} to process a header file
+        Ask {visitor} to process a generic asset category
         """
         # attempt to
         try:

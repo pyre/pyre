@@ -20,7 +20,7 @@ class Source(Category, family="merlin.assets.categories.source"):
     # interface
     def identify(self, visitor, **kwds):
         """
-        Ask {visitor} to process a header file
+        Ask {visitor} to process a source file
         """
         # attempt to
         try:
