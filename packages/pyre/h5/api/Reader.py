@@ -21,7 +21,7 @@ from .File import File
 from .Inspector import Inspector
 
 # type aliases
-ErrorReport = list[Exception]
+ErrorReport = typing.List[Exception]
 
 
 # the reader
