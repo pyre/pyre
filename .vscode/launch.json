@@ -14,7 +14,7 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "merlin: debug merlin",
+            "name": "merlin: debug merlin compilers",
             "type": "python",
             "request": "launch",
             "python": "${command:python.interpreterPath}",
@@ -24,6 +24,20 @@
                 "info",
                 "compilers",
                 "--compilers=gnu"
+            ],
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "merlin: debug merlin libraries",
+            "type": "python",
+            "request": "launch",
+            "python": "${command:python.interpreterPath}",
+            "cwd": "${fileDirname}",
+            "program": "${env:mm_prefix}/bin/merlin",
+            "args": [
+                "lib",
+                "sources",
+                "--only=journal"
             ],
             "console": "integratedTerminal"
         },
