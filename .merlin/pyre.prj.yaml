@@ -5,6 +5,7 @@
 
 # the {pyre} project contains
 pyre.prj:
+    # a library
     libraries: "#libpyre"
 
 

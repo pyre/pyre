@@ -5,6 +5,7 @@
 
 # the {journal} project contains
 mpi.prj:
+    # a library
     libraries: "#libmpi"
 
 
