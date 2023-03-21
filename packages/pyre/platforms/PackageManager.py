@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2023 all rights reserved
-#
 
 
 # the framework
@@ -11,11 +9,10 @@ import pyre
 
 
 # declaration
-class PackageManager(pyre.protocol, family='pyre.platforms.packagers'):
+class PackageManager(pyre.protocol, family="pyre.platforms.packagers"):
     """
     Encapsulation of host specific information
     """
-
 
     # requirements
     @pyre.provides
@@ -66,7 +63,6 @@ class PackageManager(pyre.protocol, family='pyre.platforms.packagers'):
         particular implementation of this protocol
         """
 
-
     # framework obligations
     @classmethod
     def pyre_default(cls, **kwds):
@@ -76,6 +72,7 @@ class PackageManager(pyre.protocol, family='pyre.platforms.packagers'):
         # the host should specify a sensible default; if there is nothing there, this is an
         # unmanaged system that relies on environment variables and standard locations
         from .Bare import Bare
+
         # return the support for unmanaged systems
         return Bare
 
