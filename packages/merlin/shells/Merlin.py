@@ -7,12 +7,13 @@
 # external
 import journal
 import textwrap
+
 # support
 import merlin
 
 
 # declaration
-class Merlin(merlin.plexus, family='merlin.shells.plexus'):
+class Merlin(merlin.plexus, family="merlin.shells.plexus"):
     """
     merlin is an opinionated build system that leans on convention to simplify the
     configuration management of complex projects
@@ -36,7 +37,6 @@ class Merlin(merlin.plexus, family='merlin.shells.plexus'):
     scs = merlin.protocols.scs()
     scs.doc = "the source control system"
 
-
     # framework hooks
     # post instantiation hook
     def pyre_initialized(self):
@@ -48,7 +48,6 @@ class Merlin(merlin.plexus, family='merlin.shells.plexus'):
 
         # and indicate that nothing is amiss
         return []
-
 
     # virtual filesystem configuration
     def pyre_mountApplicationFolders(self, pfs, prefix, **kwds):
@@ -125,7 +124,6 @@ class Merlin(merlin.plexus, family='merlin.shells.plexus'):
         # all done
         return pfs
 
-
     # instance configuration
     def pyre_loadConfiguration(self, locator):
         """
@@ -147,7 +145,6 @@ class Merlin(merlin.plexus, family='merlin.shells.plexus'):
         # all done
         return
 
-
     # main entry point for the web shell
     def pyre_respond(self, server, request):
         """
@@ -163,7 +160,6 @@ class Merlin(merlin.plexus, family='merlin.shells.plexus'):
         # otherwise, ask the dispatcher to do its thing
         return ux.dispatch(plexus=self, server=server, request=request)
 
-
     # support for the help system
     def pyre_banner(self):
         """
@@ -172,12 +168,11 @@ class Merlin(merlin.plexus, family='merlin.shells.plexus'):
         # the project header
         yield from textwrap.dedent(merlin.meta.banner).splitlines()
         # the doc string
-        yield from self.pyre_showSummary(indent='')
+        yield from self.pyre_showSummary(indent="")
         # the authors
         yield from textwrap.dedent(merlin.meta.authors).splitlines()
         # all done
         return
-
 
     # interactive session management
     def pyre_interactiveSessionContext(self, context=None):
@@ -187,10 +182,9 @@ class Merlin(merlin.plexus, family='merlin.shells.plexus'):
         # prime the execution context
         context = context or {}
         # grant access to my package
-        context['merlin'] = merlin  # my package
+        context["merlin"] = merlin  # my package
         # and chain up
         return super().pyre_interactiveSessionContext(context=context)
-
 
     # helpers
     def deduceSCS(self, workspace):
@@ -205,9 +199,8 @@ class Merlin(merlin.plexus, family='merlin.shells.plexus'):
         # out of ideas
         return None
 
-
     # private data
-    _ux = None # the UX manager
+    _ux = None  # the UX manager
 
 
 # end of file

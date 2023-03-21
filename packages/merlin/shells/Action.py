@@ -9,7 +9,7 @@ import pyre
 
 
 # protocol declaration
-class Action(pyre.action, family='merlin.cli'):
+class Action(pyre.action, family="merlin.cli"):
     """
     Protocol declaration for merlin commands
     """
