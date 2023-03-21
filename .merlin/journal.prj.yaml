@@ -5,6 +5,7 @@
 
 # the {journal} project contains
 journal.prj:
+    # a library
     libraries: "#libjournal"
 
 
@@ -28,8 +29,9 @@ libjournal:
 # overrides for specific files
 # the header with the C bindings
 lib/journal/debuginfo.h:
-    # this is not necessary for the build, strictly speaking
-    # but record it; we may care some day
+    # this is not necessary for the build, strictly speaking, but record it;
+    # it is an example of a user overriding the automatic asset classifier,
+    # and we may care some day
     language: c
 
 
