@@ -11,9 +11,10 @@ from .Specification import Specification as specification
 
 # asset categories
 from .AssetCategory import AssetCategory as assetCategory
+
 # and assets
 from .Asset import Asset as asset
-from .Directory import Directory as directory
+from .Folder import Folder as folder
 from .File import File as file
 from .Library import Library as library
 from .Project import Project as project

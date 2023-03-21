@@ -6,16 +6,16 @@
 
 # support
 import merlin
+
 # super class
 from .Asset import Asset
 
 
 # class declaration
-class Directory(Asset, family="merlin.assets.directories"):
+class Folder(Asset, family="merlin.assets.folders"):
     """
     Encapsulation of a container of assets
     """
-
 
     # framework hooks
     @classmethod
@@ -24,7 +24,7 @@ class Directory(Asset, family="merlin.assets.directories"):
         Specify the default implementation
         """
         # publish the default implementation
-        return merlin.assets.directory
+        return merlin.assets.folder
 
 
 # end of file

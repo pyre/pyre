@@ -12,17 +12,17 @@ from .RealAsset import RealAsset
 
 
 # class declaration
-class Directory(
+class Folder(
     RealAsset,
-    family="merlin.assets.directories.directory",
-    implements=merlin.protocols.directory,
+    family="merlin.assets.folders.folder",
+    implements=merlin.protocols.folder,
 ):
     """
     Encapsulation of an asset container
     """
 
     # required configurable state
-    category = merlin.properties.str(default="directory")
+    category = merlin.properties.str(default="folder")
     category.doc = "a clue about the type of this asset"
 
     # interface
@@ -51,18 +51,18 @@ class Directory(
     # hooks
     def identify(self, visitor, **kwds):
         """
-        Ask {visitor} to process a directory
+        Ask {visitor} to process a folder
         """
         # attempt to
         try:
             # ask the {visitor} for a handler for my type
-            handler = visitor.directory
+            handler = visitor.folder
         # if it doesn't exist
         except AttributeError:
             # chain up
             return super().identify(visitor=visitor, **kwds)
         # if it does, invoke it
-        return handler(directory=self, **kwds)
+        return handler(folder=self, **kwds)
 
     # flow hooks
     def pyre_done(self, **kwds):
