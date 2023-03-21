@@ -12,7 +12,7 @@ import merlin
 # a builder of libraries
 class LibFlow(
     merlin.component,
-    family="merlin.builders.flow.lib",
+    family="merlin.builders.make.lib",
     implements=merlin.protocols.libflow,
 ):
     """
