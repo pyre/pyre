@@ -19,7 +19,7 @@ class Chronicler(metaclass=pyre.patterns.singleton):
     device = None
     decor = 1
     detail = 1
-    margin = " " * 4
+    margin = " " * 2
 
     # metamethods
     def __init__(
