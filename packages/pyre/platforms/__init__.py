@@ -1,18 +1,16 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2023 all rights reserved
-#
 
 
 # the marker of component factories
 from .. import foundry
 
-
 # the protocols
 from .Platform import Platform as platform
 from .PackageManager import PackageManager as packager
+
 
 # the various implementations
 # package managers
@@ -23,6 +21,7 @@ def dpkg():
     """
     # get the class record
     from .DPkg import DPkg
+
     # and return it
     return DPkg
 
@@ -34,6 +33,7 @@ def macports():
     """
     # get the class record
     from .MacPorts import MacPorts
+
     # and return it
     return MacPorts
 
@@ -42,10 +42,11 @@ def macports():
 @foundry(implements=platform)
 def darwin():
     """
-    Support for OSX
+    Support for macOS
     """
     # get the class record
     from .Darwin import Darwin
+
     # and return it
     return Darwin
 
@@ -57,6 +58,7 @@ def linux():
     """
     # get the class record
     from .Linux import Linux
+
     # and return it
     return Linux
 
@@ -68,6 +70,7 @@ def centos():
     """
     # get the class record
     from .CentOS import CentOS
+
     # and return it
     return CentOS
 
@@ -79,6 +82,7 @@ def redhat():
     """
     # get the class record
     from .RedHat import RedHat
+
     # and return it
     return RedHat
 
@@ -90,12 +94,14 @@ def ubuntu():
     """
     # get the class record
     from .Ubuntu import Ubuntu
+
     # and return it
     return Ubuntu
 
 
 # host aliases
 osx = darwin
+macos = darwin
 
 
 # end of file

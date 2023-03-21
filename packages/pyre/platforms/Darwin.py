@@ -27,6 +27,8 @@ class Darwin(POSIX, family="pyre.platforms.darwin"):
     platform = "darwin"
     distribution = "macos"
 
+    extension_object = ".o"
+
     prefix_library = "lib"
     extension_staticLibrary = ".a"
     extension_dynamicLibrary = ".dylib"

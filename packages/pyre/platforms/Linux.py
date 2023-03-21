@@ -27,6 +27,8 @@ class Linux(POSIX, family="pyre.platforms.linux"):
     platform = "linux"
     distribution = "generic"
 
+    extension_object = ".o"
+
     prefix_library = "lib"
     extension_staticLibrary = ".a"
     extension_dynamicLibrary = ".so"

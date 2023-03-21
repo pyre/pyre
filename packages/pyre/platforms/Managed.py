@@ -1,15 +1,16 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2023 all rights reserved
-#
 
 
 # externals
 import re
+import shutil
+
 # the framework
 import pyre
+
 # my protocol
 from .PackageManager import PackageManager
 
@@ -20,7 +21,6 @@ class Managed(pyre.component, implements=PackageManager):
     Support for un*x systems that don't have package management facilities
     """
 
-
     # public data
     @property
     def name(self):
@@ -29,8 +29,9 @@ class Managed(pyre.component, implements=PackageManager):
         """
         # the base class doesn't have one; subclasses must provide a unique name that enables
         # package categories to identify with which package manager they are collaborating
-        raise NotImplementedError("class {.__name__} must supply a 'name'".format(type(self)))
-
+        raise NotImplementedError(
+            "class {.__name__} must supply a 'name'".format(type(self))
+        )
 
     @property
     def client(self):
@@ -43,10 +44,10 @@ class Managed(pyre.component, implements=PackageManager):
         # the error message template
         msg = (
             "class {.__name__} must supply 'client', "
-            "the name or path to the package manager front end")
+            "the name or path to the package manager front end"
+        )
         # instantiate and complain
         raise NotImplementedError(msg.format(type(self)))
-
 
     # protocol obligations
     @pyre.export
@@ -60,9 +61,7 @@ class Managed(pyre.component, implements=PackageManager):
         if prefix is not None:
             # in which case I'm done
             return prefix
-        # otherwise, grab the shell utilities
-        import shutil
-        # locate the full path to the package manager client
+        # otherwise, locate the full path to the package manager client
         client = shutil.which(self.client)
         # if we found it
         if client:
@@ -75,7 +74,7 @@ class Managed(pyre.component, implements=PackageManager):
             # if it's not there
             if not client.exists():
                 # build the message
-                msg = 'could not locate {.manager!r}'.format(self)
+                msg = "could not locate {.manager!r}".format(self)
                 # complain
                 raise self.ConfigurationError(configurable=self, errors=[msg])
 
@@ -90,7 +89,6 @@ class Managed(pyre.component, implements=PackageManager):
         # and return it
         return prefix
 
-
     @pyre.export
     def installed(self):
         """
@@ -99,7 +97,6 @@ class Managed(pyre.component, implements=PackageManager):
         # ask the index...
         return self.getInstalledPackages()
 
-
     @pyre.export
     def info(self, package):
         """
@@ -107,7 +104,6 @@ class Managed(pyre.component, implements=PackageManager):
         """
         # send what the index has
         return self.getInstalledPackages()[package]
-
 
     @pyre.provides
     def packages(self, category):
@@ -118,7 +114,7 @@ class Managed(pyre.component, implements=PackageManager):
         # check whether this package category can interact with me
         try:
             # by looking for my handler
-            choices = getattr(category, '{}Packages'.format(self.name))
+            choices = getattr(category, "{}Packages".format(self.name))
         # if it can't
         except AttributeError:
             # the error message template
@@ -134,7 +130,6 @@ class Managed(pyre.component, implements=PackageManager):
         # all done
         return
 
-
     @pyre.export
     def contents(self, package):
         """
@@ -144,7 +139,6 @@ class Managed(pyre.component, implements=PackageManager):
         yield from self.retrievePackageContents(package=package)
         # all done
         return
-
 
     @pyre.provides
     def configure(self, installation):
@@ -167,7 +161,6 @@ class Managed(pyre.component, implements=PackageManager):
 
         # otherwise, ask the installation to configure itself with my help
         return configure(packager=self)
-
 
     # implementation details
     def find(self, target, pile):
@@ -193,20 +186,18 @@ class Managed(pyre.component, implements=PackageManager):
         # all done
         return
 
-
     def findfirst(self, target, contents):
         """
         Locate the path to {target} in the {contents} of some package
         """
         # form the regex
-        regex = '(?P<path>.*)/{}$'.format(target)
+        regex = "(?P<path>.*)/{}$".format(target)
         # search for it in contents
         for match in self.find(target=regex, pile=contents):
             # extract the folder
-            return pyre.primitives.path(match.group('path'))
+            return pyre.primitives.path(match.group("path"))
         # otherwise, leave it blank
         return
-
 
     def locate(self, targets, paths):
         """
@@ -226,7 +217,6 @@ class Managed(pyre.component, implements=PackageManager):
                     break
         # all done
         return
-
 
     # private data
     # the installation location of the package manager
