@@ -6,8 +6,10 @@
 
 # support
 import journal
+
 # framework
 import merlin
+
 # superclass
 from .Factory import Factory
 
@@ -18,13 +20,12 @@ class Copy(Factory, family="merlin.factories.cp"):
     Copy a file from one location to another
     """
 
-
     # inputs
     source = merlin.protocols.file.input()
     source.default = None
     source.doc = "the source file"
 
-    within = merlin.protocols.directory.input()
+    within = merlin.protocols.folder.input()
     within.default = None
     within.doc = "the containing directory at the destination"
 
@@ -32,7 +33,6 @@ class Copy(Factory, family="merlin.factories.cp"):
     destination = merlin.protocols.file.output()
     destination.default = None
     destination.doc = "the destination file"
-
 
     # protocol obligations
     @merlin.export
@@ -44,7 +44,6 @@ class Copy(Factory, family="merlin.factories.cp"):
         # it will be removed at some point...
         # chain up
         return super().pyre_make(**kwds)
-
 
     # framework hooks
     def pyre_run(self, **kwds):

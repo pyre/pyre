@@ -6,8 +6,10 @@
 
 # support
 import journal
+
 # framework
 import merlin
+
 # superclass
 from .Factory import Factory
 
@@ -18,21 +20,19 @@ class Mkdir(Factory, family="merlin.factories.mkdir"):
     Create a subdirectory
     """
 
-
     # configurable state
     name = merlin.properties.str()
     name.doc = "the name of the subdirectory to create"
 
     # input
-    parent = merlin.protocols.directory.input()
+    parent = merlin.protocols.folder.input()
     parent.default = None
     parent.doc = "the parent directory"
 
     # output
-    child = merlin.protocols.directory.output()
+    child = merlin.protocols.folder.output()
     child.default = None
     child.doc = "the child directory i create"
-
 
     # protocol obligations
     @merlin.export
@@ -44,7 +44,6 @@ class Mkdir(Factory, family="merlin.factories.mkdir"):
         # it will be removed at some point...
         # chain up
         return super().pyre_make(**kwds)
-
 
     # framework hooks
     def pyre_run(self, **kwds):
@@ -92,7 +91,9 @@ class Mkdir(Factory, family="merlin.factories.mkdir"):
         channel = journal.error("merlin.factories.mkdir")
         # complain
         channel.line(f"a file named '{name}' already exists")
-        channel.line(f"while attempting to create a subdirectory in '{parent.pyre_name}'")
+        channel.line(
+            f"while attempting to create a subdirectory in '{parent.pyre_name}'"
+        )
         # flush
         channel.log()
 

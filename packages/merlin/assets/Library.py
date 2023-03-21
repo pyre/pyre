@@ -100,7 +100,7 @@ class Library(
         # use these to convert the library {root} into an asset and decorate it
         # the name must be a string, so coerce the root projection; these operations are trivial
         # for the library root, but they set the pattern for building all of its assets
-        top = self.directory(name=str(relWS / relLib), node=root, path=relLib)
+        top = self.folder(name=str(relWS / relLib), node=root, path=relLib)
         # and make it available
         yield top
 
@@ -121,7 +121,7 @@ class Library(
                 # folders
                 if node.isFolder:
                     # become directories
-                    asset = self.directory(name=name, node=node, path=path)
+                    asset = self.folder(name=name, node=node, path=path)
                     # and get added to the pile of places to visit
                     todo.append(asset)
                 # everything else is assumed to be a regular file
@@ -139,12 +139,12 @@ class Library(
         return
 
     # implementation details
-    def directory(self, name, node, path):
+    def folder(self, name, node, path):
         """
         Make a new asset container
         """
         # by default, use the raw asset container
-        return merlin.assets.directory(name=name, node=node, path=path)
+        return merlin.assets.folder(name=name, node=node, path=path)
 
     def file(self, name, node, path, classifier):
         """

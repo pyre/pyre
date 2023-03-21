@@ -77,7 +77,7 @@ class Builder(BaseBuilder, family="merlin.builders.flow"):
             childName = str(childPath)
             # and use these two to form the directory; note that we don't have a filesystem node
             # for this asset, an indication that it doesn't exist yet
-            childDir = merlin.assets.directory(name=childName, path=childPath)
+            childDir = merlin.assets.folder(name=childName, path=childPath)
             # index it
             index[childName] = childDir
             # and add it to my flow
@@ -172,7 +172,7 @@ class Builder(BaseBuilder, family="merlin.builders.flow"):
         # and my index
         index = self.index
         # build the directory asset
-        prefixDir = merlin.assets.directory(
+        prefixDir = merlin.assets.folder(
             name=str(prefixPath), node=prefixFS, path=prefixPath
         )
         # add it to the flow
@@ -257,7 +257,7 @@ class Builder(BaseBuilder, family="merlin.builders.flow"):
         # and my product index
         index = self.index
         # make a directory flow node that refers to this location
-        stageDir = merlin.assets.directory(
+        stageDir = merlin.assets.folder(
             name=str(stagePath), node=stageFS, path=stagePath
         )
         # add it to the flow

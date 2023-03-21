@@ -8,7 +8,7 @@
 from .Product import Product as product
 
 # export the publicly visible assets
-from .Directory import Directory as directory
+from .Folder import Folder as folder
 from .File import File as file
 from .Project import Project as project
 from .Library import Library as library

@@ -35,9 +35,9 @@ class LibFlow(
         return
 
     @merlin.export
-    def directory(self, builder, library, directory, **kwds):
+    def folder(self, builder, library, folder, **kwds):
         """
-        Handle a source {directory}
+        Handle a source {folder}
         """
         # all headers go to the {include} directory in {prefix}
         include = merlin.primitives.path("/prefix/include")
@@ -52,7 +52,7 @@ class LibFlow(
             # just the library name
             anchor = library.name
         # there may be headers to move, so build the corresponding directory in the prefix
-        incpath = include / anchor / directory.path
+        incpath = include / anchor / folder.path
         # ask the builder to assemble a workflow that creates this directory
         builder.mkdir(path=incpath)
         # all done

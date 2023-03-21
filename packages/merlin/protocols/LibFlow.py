@@ -14,7 +14,6 @@ class LibFlow(merlin.protocol, family="merlin.builders.libflow"):
     Workflow generator for libraries
     """
 
-
     # required interface
     @merlin.provides
     def library(self, builder, library):
@@ -22,13 +21,11 @@ class LibFlow(merlin.protocol, family="merlin.builders.libflow"):
         Generate the workflow that builds a {library}
         """
 
-
     @merlin.provides
-    def directory(self, builder, library, directory):
+    def folder(self, builder, library, folder):
         """
-        Handle a source {directory}
+        Handle a source {folder}
         """
-
 
     @merlin.provides
     def file(self, builder, library, file):
@@ -36,13 +33,11 @@ class LibFlow(merlin.protocol, family="merlin.builders.libflow"):
         Handle a {file} asset
         """
 
-
     @merlin.provides
     def header(self, builder, library, file):
         """
         Handle a {header} file
         """
-
 
     @merlin.provides
     def source(self, builder, library, file):
@@ -50,13 +45,11 @@ class LibFlow(merlin.protocol, family="merlin.builders.libflow"):
         Handle a {source} file
         """
 
-
     @merlin.provides
     def template(self, builder, library, file):
         """
         Handle a {template} file
         """
-
 
     # framework hooks
     @classmethod

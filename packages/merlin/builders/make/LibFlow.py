@@ -27,7 +27,7 @@ class LibFlow(
         Generate the workflow that builds a {library}
         """
         # initialize my asset piles
-        self._directories = []
+        self._folders = []
         self._headers = []
         self._sources = []
 
@@ -45,8 +45,8 @@ class LibFlow(
         # make the anchor rule
         yield f"{name}: {name}.assets"
         # the directory rules
-        yield from self.directoryRules(
-            renderer=renderer, library=library, directories=self._directories
+        yield from self.folderRules(
+            renderer=renderer, library=library, folders=self._folders
         )
         # the asset rules
         yield from self.assetRules(renderer=renderer, library=library, **kwds)
@@ -55,12 +55,12 @@ class LibFlow(
         return
 
     @merlin.export
-    def directory(self, directory, **kwds):
+    def folder(self, folder, **kwds):
         """
-        Handle a source {directory}
+        Handle a source {folder}
         """
-        # add the asset to my directories
-        self._directories.append(directory)
+        # add the asset to my folders
+        self._folders.append(folder)
         # all done
         return
 
@@ -128,7 +128,7 @@ class LibFlow(
         super().__init__(**kwds)
 
         # initialize my containers
-        self._directories = []
+        self._folders = []
         self._headers = []
         self._sources = []
 
@@ -136,7 +136,7 @@ class LibFlow(
         return
 
     # helpers
-    def directoryRules(self, renderer, library, directories):
+    def folderRules(self, renderer, library, folders):
         """
         Build the rules that construct the prefix directory layout
         """
@@ -161,7 +161,7 @@ class LibFlow(
         yield ""
         yield renderer.commentLine(f"the directory layout of the {name} headers")
         # build the rules
-        for dir in directories:
+        for dir in folders:
             # compute its destination
             dst = destination / dir.path
             # tag the directory
