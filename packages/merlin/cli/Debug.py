@@ -6,16 +6,16 @@
 
 # externals
 import journal
+
 # framework
 import merlin
 
 
 # declaration
-class Debug(merlin.shells.command, family='merlin.cli.debug'):
+class Debug(merlin.shells.command, family="merlin.cli.debug"):
     """
     Display debugging information about this application
     """
-
 
     # user configurable state
     root = merlin.properties.str()
@@ -26,7 +26,6 @@ class Debug(merlin.shells.command, family='merlin.cli.debug'):
     full.default = False
     full.tip = "control whether to do a full dive"
 
-
     @merlin.export(tip="list the encountered configuration files")
     def config(self, plexus, **kwds):
         """
@@ -34,22 +33,24 @@ class Debug(merlin.shells.command, family='merlin.cli.debug'):
         """
         # make a channel
         channel = plexus.info
-        # set up the indentation level
-        indent = " " * 2
+        # set up the margin
+        channel.chronicler.margin = " " * 2
 
         # get the configurator
         cfg = self.pyre_configurator
+        # indent
+        channel.indent()
         # go through its list of sources
         for uri, priority in cfg.sources:
             # tell me
-            channel.line(f"{indent}{uri}, priority '{priority.name}'")
-
+            channel.line(f"{uri}, priority '{priority.name}'")
+        # back out
+        channel.outdent()
         # flush
         channel.log()
 
         # all done
         return 0
-
 
     @merlin.export(tip="dump the application configuration namespace")
     def nfs(self, plexus, **kwds):
@@ -58,14 +59,16 @@ class Debug(merlin.shells.command, family='merlin.cli.debug'):
         """
         # make a channel
         channel = plexus.info
-        # set up the indentation level
-        indent = " " * 2
+        # set up the margin
+        channel.chronicler.margin = " " * 2
 
         # get the prefix
         prefix = "merlin" if self.root is None else self.root
         # and the name server
         nameserver = self.pyre_nameserver
 
+        # indent
+        channel.indent()
         # get all nodes that match my {prefix}
         for info, node in nameserver.find(pattern=prefix):
             # attempt to
@@ -77,14 +80,14 @@ class Debug(merlin.shells.command, family='merlin.cli.debug'):
                 # use the error message as the value
                 value = f" ** ERROR: {error}"
             # inject
-            channel.line(f"{indent}{info.name}: {value}")
-
+            channel.line(f"{info.name}: {value}")
+        # back out
+        channel.outdent()
         # flush
         channel.log()
 
         # all done
         return 0
-
 
     @merlin.export(tip="dump the application virtual filesystem")
     def vfs(self, plexus, **kwds):
@@ -92,7 +95,7 @@ class Debug(merlin.shells.command, family='merlin.cli.debug'):
         Dump the application virtual filesystem
         """
         # get the prefix as a path
-        prefix = merlin.primitives.path('/merlin' if self.root is None else self.root)
+        prefix = merlin.primitives.path("/merlin" if self.root is None else self.root)
 
         # starting at the root of the {vfs}
         folder = plexus.vfs
@@ -108,7 +111,9 @@ class Debug(merlin.shells.command, family='merlin.cli.debug'):
                 channel = journal.error("merlin.debug.vfs")
                 # complain
                 channel.line(f"could not find '{part}' in '{folder.uri}'")
-                channel.line(f"while scanning for '{prefix}' in the virtual file system")
+                channel.line(
+                    f"while scanning for '{prefix}' in the virtual file system"
+                )
                 # flush
                 channel.log()
                 # and bail if errors aren't fatal
