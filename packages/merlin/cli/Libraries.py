@@ -10,16 +10,14 @@ import merlin
 
 
 # declaration
-class Libraries(merlin.shells.command, family='merlin.cli.lib'):
+class Libraries(merlin.shells.command, family="merlin.cli.lib"):
     """
     Access to the libraries of the current workspace
     """
 
-
     # user configurable state
     only = merlin.properties.strings()
     only.doc = "narrow the libraries to those whose name is in this set"
-
 
     # commands
     @merlin.export(tip="build the selected libraries")
@@ -40,51 +38,52 @@ class Libraries(merlin.shells.command, family='merlin.cli.lib'):
         # all done
         return
 
-
     @merlin.export(tip="display the names of the selected libraries")
     def info(self, plexus, **kwds):
         """
         Display the names of the selected libraries
         """
-        # marker
-        indent = " " * 2
         # make a channel
         channel = journal.info("merlin.lib.info")
+        # margin
+        channel.chronicler.margin = " " * 2
         # go through the set of libraries
         for lib in self.filter(projects=plexus.projects):
             # show me the asset name and its stem
             channel.line(f"{lib.pyre_name}:")
-            channel.line(f"{indent*1}name: {lib.name}")
-            channel.line(f"{indent*1}root: {lib.root}")
+            channel.indent()
+            channel.line(f"name: {lib.name}")
+            channel.line(f"root: {lib.root}")
+            channel.outdent()
         # flush
         channel.log()
         # all done
         return
-
 
     @merlin.export(tip="display the sources of the selected libraries")
     def sources(self, plexus, **kwds):
         """
         Display the sources of the selected libraries
         """
-        # ask the plexus to
-        # marker
-        indent = " " * 2
         # make a channel
         channel = journal.info("merlin.lib.sources")
+        # margin
+        channel.chronicler.margin = " " * 2
 
         # go through the set of libraries
         for lib in self.filter(projects=plexus.projects):
             # collect the supported languages
-            languages = ', '.join(l.name for l in lib.supportedLanguages())
+            languages = ", ".join(l.name for l in lib.supportedLanguages())
             # show me the asset name and its stem
             channel.line(f"{lib.pyre_name}:")
-            channel.line(f"{indent*1}name: {lib.name}")
-            channel.line(f"{indent*1}root: {lib.root}")
-            channel.line(f"{indent*1}uri: {plexus.vfs['workspace'].uri / lib.root}")
-            channel.line(f"{indent*1}languages: {languages}")
-            channel.line(f"{indent*1}sources:")
+            channel.indent()
+            channel.line(f"name: {lib.name}")
+            channel.line(f"root: {lib.root}")
+            channel.line(f"uri: {plexus.vfs['workspace'].uri / lib.root}")
+            channel.line(f"languages: {languages}")
+            channel.line(f"sources:")
             # go through the sources
+            channel.indent()
             for asset in lib.assets():
                 # set up a pile of markers
                 markers = []
@@ -97,19 +96,20 @@ class Libraries(merlin.shells.command, family='merlin.cli.lib'):
                     # add the language to the markers
                     markers.append(asset.language.name)
                 # add the category to the markers
-                markers.append(asset.category)
+                markers.append(asset.category.category)
                 # put them all together
-                marker= ", ".join(markers)
+                marker = ", ".join(markers)
                 # assemble the line decoration
                 decoration = "" if not marker else f"  ({marker})"
                 # render the asset and its markers
-                channel.line(f"{indent*2}{asset.pyre_name}{decoration}")
+                channel.line(f"{asset.pyre_name}{decoration}")
+            # back out
+            channel.outdent(levels=2)
 
         # flush
         channel.log()
         # all done
         return
-
 
     # implementation details
     def filter(self, projects):
