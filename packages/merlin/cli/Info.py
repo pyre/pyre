@@ -29,8 +29,6 @@ class Info(merlin.shells.command, family="merlin.cli.info"):
 
         # make a channel
         channel = journal.info("merlin.builder")
-        # change the margin
-        channel.chronicler.margin = " " * 2
         # show me
         channel.line(f"builder:")
         channel.indent()
@@ -70,8 +68,6 @@ class Info(merlin.shells.command, family="merlin.cli.info"):
         """
         # make a channel
         channel = journal.info("merlin.info.host")
-        # change the margin
-        channel.chronicler.margin = " " * 2
         # get the list of compilers
         compilers = plexus.compilers
 
@@ -107,8 +103,6 @@ class Info(merlin.shells.command, family="merlin.cli.info"):
         host = self.pyre_host
         # make a channel
         channel = journal.info("merlin.info.host")
-        # change the margin
-        channel.chronicler.margin = " " * 2
         # report
         channel.line(f"name: {host.hostname}")
         channel.line(f"nickname: {host.nickname}")
@@ -135,8 +129,6 @@ class Info(merlin.shells.command, family="merlin.cli.info"):
         )
         # make a channel
         channel = journal.info("merlin.info.host")
-        # change the margin
-        channel.chronicler.margin = " " * 2
         # report
         channel.line(f"languages:")
         channel.indent()
@@ -164,8 +156,6 @@ class Info(merlin.shells.command, family="merlin.cli.info"):
         tag = f"{host.tag}"
         # make a channel
         channel = journal.info("merlin.info.platform")
-        # change the margin
-        channel.chronicler.margin = " " * 2
         # report
         channel.line(f"os: {distribution} {release} ({codename})")
         channel.line(f"arch: {arch}")
@@ -186,8 +176,6 @@ class Info(merlin.shells.command, family="merlin.cli.info"):
 
         # make a channel
         channel = journal.info("merlin.info.user")
-        # change the margin
-        channel.chronicler.margin = " " * 2
         # report
         channel.line(f"user: {user.username} ({user.uid})")
         channel.line(f"home: {user.home}")
@@ -215,8 +203,6 @@ class Info(merlin.shells.command, family="merlin.cli.info"):
             cfg = "not found"
         # make a channel
         channel = journal.info("merlin.info.workspace")
-        # change the margin
-        channel.chronicler.margin = " " * 2
         # report
         channel.line(f"workspace: {ws}")
         channel.line(f"config: {cfg}")

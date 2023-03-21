@@ -45,8 +45,6 @@ class Libraries(merlin.shells.command, family="merlin.cli.lib"):
         """
         # make a channel
         channel = journal.info("merlin.lib.info")
-        # margin
-        channel.chronicler.margin = " " * 2
         # go through the set of libraries
         for lib in self.filter(projects=plexus.projects):
             # show me the asset name and its stem
@@ -67,8 +65,6 @@ class Libraries(merlin.shells.command, family="merlin.cli.lib"):
         """
         # make a channel
         channel = journal.info("merlin.lib.sources")
-        # margin
-        channel.chronicler.margin = " " * 2
 
         # go through the set of libraries
         for lib in self.filter(projects=plexus.projects):

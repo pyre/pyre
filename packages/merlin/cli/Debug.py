@@ -33,8 +33,6 @@ class Debug(merlin.shells.command, family="merlin.cli.debug"):
         """
         # make a channel
         channel = plexus.info
-        # set up the margin
-        channel.chronicler.margin = " " * 2
 
         # get the configurator
         cfg = self.pyre_configurator
@@ -59,8 +57,6 @@ class Debug(merlin.shells.command, family="merlin.cli.debug"):
         """
         # make a channel
         channel = plexus.info
-        # set up the margin
-        channel.chronicler.margin = " " * 2
 
         # get the prefix
         prefix = "merlin" if self.root is None else self.root
