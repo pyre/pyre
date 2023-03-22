@@ -32,6 +32,14 @@ class Builder(BaseBuilder, family="merlin.builders.make"):
     libflow.default = LibFlow
     libflow.doc = "the library workflow generator"
 
+    makefile = merlin.properties.str()
+    makefile.default = "makefile"
+    makefile.doc = "the name of the generated makefile"
+
+    auxfile = merlin.properties.str()
+    auxfile.default = ".merlin.make"
+    auxfile.doc = "the name of the generated makefile"
+
     # interface
     def add(self, plexus, **kwds):
         """
@@ -43,22 +51,22 @@ class Builder(BaseBuilder, family="merlin.builders.make"):
         stage = plexus.vfs["/stage"].uri
 
         # form the path to the main makefile
-        makefile = stage / "makefile"
+        makefile = stage / self.makefile
         # open it
         with open(makefile, mode="w") as stream:
             # prime the makefile content
-            document = self.makefile(plexus=plexus, renderer=renderer, **kwds)
+            document = self.generateMakefile(plexus=plexus, renderer=renderer, **kwds)
             # ask the renderer to do its thing
             content = renderer.render(document=document)
             # and write
             print("\n".join(content), file=stream)
 
         # form the path to the auxiliary makefile
-        aux = stage / "merlin.make"
+        aux = stage / self.auxfile
         # open it
         with open(aux, mode="w") as stream:
             # prime the makefile content
-            document = self.aux(plexus=plexus, renderer=renderer, **kwds)
+            document = self.generateAuxfile(plexus=plexus, renderer=renderer, **kwds)
             # ask the renderer to do its thing
             content = renderer.render(document=document)
             # and write
@@ -74,15 +82,12 @@ class Builder(BaseBuilder, family="merlin.builders.make"):
         """
         # chain up
         super().merlin_initialized(plexus=plexus, **kwds)
-
         # grab my abi
         abi = self.abi(plexus=plexus)
-
         # prep the stage area
         self.setupStage(plexus=plexus, abi=abi, **kwds)
         # and the prefix
         self.setupPrefix(plexus=plexus, abi=abi, **kwds)
-
         # all done
         return
 
@@ -137,7 +142,7 @@ class Builder(BaseBuilder, family="merlin.builders.make"):
         return
 
     # makefile generation
-    def makefile(self, **kwds):
+    def generateMakefile(self, **kwds):
         """
         Generate the main makefile
         """
@@ -150,7 +155,7 @@ class Builder(BaseBuilder, family="merlin.builders.make"):
         # all done
         return
 
-    def aux(self, **kwds):
+    def generateAuxfile(self, **kwds):
         """
         Generate the auxiliary makefile
         """
@@ -170,8 +175,8 @@ class Builder(BaseBuilder, family="merlin.builders.make"):
 
         # include the aux file
         yield ""
-        yield renderer.commentLine("include the aux file")
-        yield "include merlin.make"
+        yield renderer.commentLine("include the auxiliary file")
+        yield f"include {self.auxfile}"
 
         # record the directory layout of the {/workspace}
         # get the node
@@ -205,9 +210,7 @@ class Builder(BaseBuilder, family="merlin.builders.make"):
             # and its value is the path under {/prefix} in the physical filesystem
             relpath, _ = layout.pyre_getTrait(alias=name)
             # generate the assignment
-            yield from renderer.set(
-                name=f"prefix.{name}", value=f"${{prefix}}/{relpath}"
-            )
+            yield from renderer.set(name=f"prefix.{name}", value=f"$(prefix)/{relpath}")
 
         # all done
         return
@@ -271,7 +274,7 @@ class Builder(BaseBuilder, family="merlin.builders.make"):
             # the dependency line
             yield f"{path}:"
             # log
-            yield f"\t@${{call log.action,mkdir,{tag}}}"
+            yield f"\t@$(call log.action,mkdir,{tag})"
             # the rule
             yield f"\t@$(mkdirp) $@"
 
