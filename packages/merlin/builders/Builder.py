@@ -117,9 +117,9 @@ class Builder(merlin.component, implements=merlin.protocols.builder):
             # we won't add abi information to the products
             return ""
         # otherwise, get the compiler family
-        suite = compiler.suite
+        suite = determinant.suite
         # and its version
-        major, _, _ = compiler.version()
+        major, _, _ = determinant.version()
         # and fold them into the ABI
         abi = f"{suite}{major}"
         # all done
