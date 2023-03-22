@@ -37,17 +37,28 @@ class Builder(BaseBuilder, family="merlin.builders.make"):
         """
         Add the given assets to the build pile
         """
-        # grab the stage uri
+        # grab my renderer
+        renderer = self.renderer
+        # get the stage uri
         stage = plexus.vfs["/stage"].uri
-        # form the path to the makefile
-        makefile = stage / "Makefile"
 
-        # open the stream
+        # form the path to the main makefile
+        makefile = stage / "Makefile"
+        # open it
         with open(makefile, mode="w") as stream:
-            # grab my renderer
-            renderer = self.renderer
             # prime the makefile content
-            document = self.generate(plexus=plexus, renderer=renderer, **kwds)
+            document = self.makefile(plexus=plexus, renderer=renderer, **kwds)
+            # ask the renderer to do its thing
+            content = renderer.render(document=document)
+            # and write
+            print("\n".join(content), file=stream)
+
+        # form the path to the auxiliary makefile
+        aux = stage / "merlin.make"
+        # open it
+        with open(aux, mode="w") as stream:
+            # prime the makefile content
+            document = self.aux(plexus=plexus, renderer=renderer, **kwds)
             # ask the renderer to do its thing
             content = renderer.render(document=document)
             # and write
@@ -126,29 +137,41 @@ class Builder(BaseBuilder, family="merlin.builders.make"):
         return
 
     # makefile generation
-    def generate(self, **kwds):
+    def makefile(self, **kwds):
         """
-        Generate the makefile
+        Generate the main makefile
         """
         # preamble
         yield from self.preamble(**kwds)
         # build rules
         yield from self.rules(**kwds)
-        # boiler plate support
-        yield from self.boilerplate(**kwds)
         # postamble
         yield from self.postamble(**kwds)
         # all done
         return
 
+    def aux(self, **kwds):
+        """
+        Generate the auxiliary makefile
+        """
+        # boilerplate support
+        yield from self.boilerplate(**kwds)
+        # all done
+        return
+
     def preamble(self, renderer, **kwds):
         """
-        Generate the makefile preamble with all the boilerplate code
+        Generate the makefile preamble the bulder layout
         """
         # make a time stamp
         stamp = f"generated on {datetime.datetime.now().isoformat()}"
         # mark
         yield renderer.commentLine(stamp)
+
+        # include the aux file
+        yield ""
+        yield renderer.commentLine("include the aux file")
+        yield "include merlin.make"
 
         # record the directory layout of the {/workspace}
         # get the node
@@ -191,7 +214,7 @@ class Builder(BaseBuilder, family="merlin.builders.make"):
 
     def rules(self, renderer, assets, **kwds):
         """
-        Generate the makefile preamble with all the boilerplate code
+        Generate the makefile fragment with the build rules
         """
         # sign on
         yield ""
@@ -248,7 +271,7 @@ class Builder(BaseBuilder, family="merlin.builders.make"):
             # the dependency line
             yield f"{path}:"
             # log
-            yield f"\t@echo [mkdir] {tag}"
+            yield f"\t@${{call log.action,mkdir,{tag}}}"
             # the rule
             yield f"\t@mkdir -p $@"
 
@@ -259,18 +282,25 @@ class Builder(BaseBuilder, family="merlin.builders.make"):
         """
         Generate the makefile preamble with all the boilerplate code
         """
-        # sign on
-        yield ""
+        # make a time stamp
+        stamp = f"generated on {datetime.datetime.now().isoformat()}"
+        # mark
+        yield renderer.commentLine(stamp)
+
         # basic tokens to eliminate ambiguities and errors
         yield from self.tokens(renderer, **kwds)
         # setup color support
         yield from self.color(renderer, **kwds)
+        # screen logs
+        yield from self.screen(renderer, **kwds)
+        # commonly used tools
+        yield from self.tools(renderer, **kwds)
         # all done
         return
 
     def postamble(self, renderer, **kwds):
         """
-        Generate the makefile preamble with all the boilerplate code
+        Generate the makefile postamble
         """
         # sign on
         yield ""
@@ -415,6 +445,62 @@ class Builder(BaseBuilder, family="merlin.builders.make"):
         # all done
         return
 
+    def screen(self, renderer, **kwds):
+        """
+        Support for colorized screen output
+        """
+        yield ""
+        yield "# screen functions"
+        yield "log ?= echo"
+        yield "# indentation"
+        yield 'log.halfdent = "  "'
+        yield 'log.indent = "    "'
+
+        yield ""
+        yield "log.info = \\"
+        yield "    $(log) \\"
+        yield '    $(palette.info)"  [info]"$(palette.normal) \\'
+        yield "    $(palette.info)$(1)$(palette.normal)"
+        yield ""
+        yield "log.warning = \\"
+        yield "    $(log) \\"
+        yield '    $(palette.warning)"  [warning]"$(palette.normal) \\'
+        yield "    $(palette.warning)$(1)$(palette.normal)"
+        yield ""
+        yield "log.error = \\"
+        yield "    $(log) \\"
+        yield '    $(palette.error)"  [error]"$(palette.normal) \\'
+        yield "    $(palette.error)$(1)$(palette.normal)"
+        yield ""
+        yield "log.debug = \\"
+        yield "    $(log) \\"
+        yield '    $(palette.debug)"  [debug]"$(palette.normal) \\'
+        yield "    $(palette.debug)$(1)$(palette.normal)"
+        yield ""
+        yield "log.firewall = \\"
+        yield "    $(log) \\"
+        yield '    $(palette.firewall)"  [firewall]"$(palette.normal) \\'
+        yield "    $(palette.firewall)$(1)$(palette.normal)"
+        yield ""
+        yield "# render a build action"
+        yield "log.asset = \\"
+        yield "    $(log) \\"
+        yield '    $(palette.asset)"  [$(1)]"$(palette.normal) \\'
+        yield "    $(2)"
+        yield ""
+        yield "log.action = \\"
+        yield "    $(log) \\"
+        yield '    $(palette.action)"  [$(1)]"$(palette.normal) \\'
+        yield "    $(2)"
+        yield ""
+        yield "log.attention = \\"
+        yield "    $(log) \\"
+        yield '    $(palette.attention)"  [$(1)]"$(palette.normal) \\'
+        yield "    $(2)"
+        yield ""
+        # all done
+        return
+
     def tokens(self, renderer, **kwds):
         """
         Simple variables that eliminate ambiguities and errors
@@ -429,6 +515,139 @@ class Builder(BaseBuilder, family="merlin.builders.make"):
 
         # characters that don't render easily and make the makefile less readable
         yield from renderer.set(name="esc", value='"\x1b"')
+
+        # all done
+        return
+
+    def tools(self, renderer, **kwds):
+        """
+        Set up macros for accessing the toolchain
+        """
+        # sign on
+        yield ""
+        yield renderer.commentLine("tools")
+        yield ""
+        yield "# librarian"
+        yield "ar = ar"
+        yield "ar.create = $(ar) $(ar.flags.create)"
+        yield "ar.extract = $(ar) $(ar.flags.extract)"
+        yield "ar.remove = $(ar) $(ar.flags.remove)"
+        yield "ar.update = $(ar) $(ar.flags.update)"
+        yield "ar.flags.create = rc"
+        yield "ar.flags.extract = x"
+        yield "ar.flags.remove = d"
+        yield "ar.flags.update = ru"
+        yield ""
+        yield "# cwd"
+        yield "cd = cd"
+        yield ""
+        yield "# file attributes"
+        yield "chgrp = chgrp"
+        yield "chgrp.recurse = $(chgrp) $(chgrp.flags.recurse)"
+        yield "chgrp.flags.recurse = -R"
+        yield ""
+        yield "chmod = chmod"
+        yield "chmod.recurse = $(chmod) $(chmod.flags.recurse)"
+        yield "chmod.write = $(chmod) $(chmod.flags.write)"
+        yield "chmod.write-recurse = $(chmod.recurse) $(chmod.flags.write)"
+        yield "chmod.flags.recurse = -R"
+        yield "chmod.flags.write = +w"
+        yield ""
+        yield "chown = chown"
+        yield "chown.recurse = $(chown) $(chown.flags.recurse)"
+        yield "chown.flags.recurse = -R"
+        yield ""
+        yield "# copy"
+        yield "cp = cp"
+        yield "cp.f = $(cp) $(cp.flags.force)"
+        yield "cp.r = $(cp) $(cp.flags.recurse)"
+        yield "cp.fr = $(cp) $(cp.flags.force-recurse)"
+        yield "cp.flags.force = -f"
+        yield "cp.flags.recurse = -r"
+        yield "cp.flags.force-recurse = -fr"
+        yield ""
+        yield "# date"
+        yield "date = date"
+        yield "date.year = $(date) '+%Y'"
+        yield "date.stamp = $(date) -u"
+        yield ""
+        yield "# git"
+        yield "git = git"
+        yield 'git.hash = $(git) log --format=format:"%h" -n 1'
+        yield "git.tag = $(git) describe --tags --long --always"
+        yield ""
+        yield "# loader"
+        yield "ld = ld"
+        yield "ld.out = $(ld) $(ld.flags.out)"
+        yield "ld.shared = $(ld) $(ld.flags.shared)"
+        yield "ld.flags.out =  -o"
+        yield "ld.flags.shared =  -shared"
+        yield ""
+        yield "# links"
+        yield "ln = ln"
+        yield "ln.soft = $(ln) -s"
+        yield ""
+        yield "# directories"
+        yield "mkdir = mkdir"
+        yield "mkdir.flags.make-parents = -p"
+        yield "mkdirp = $(mkdir) $(mkdir.flags.make-parents)"
+        yield ""
+        yield "# move"
+        yield "mv = mv"
+        yield "mv.f = $(mv) $(mv.flags.force)"
+        yield "mv.flags.force = -f"
+        yield ""
+        yield "# ranlib"
+        yield "ranlib = ranlib"
+        yield "ranlib.flags ="
+        yield ""
+        yield "# remove"
+        yield "rm = rm"
+        yield "rm.force = $(rm) $(rm.flags.force)"
+        yield "rm.recurse = $(rm) $(rm.flags.recurse)"
+        yield "rm.force-recurse = $(rm) $(rm.flags.force-recurse)"
+        yield "rm.flags.force = -f"
+        yield "rm.flags.recurse = -r"
+        yield "rm.flags.force-recurse = -rf"
+        yield ""
+        yield "rmdir = rmdir"
+        yield ""
+        yield "# rsync"
+        yield "rsync = rsync"
+        yield "rsync.recurse = $(rsync) $(rsync.flags.recurse)"
+        yield "rsync.flags.recurse = -ruavz --progress --stats"
+        yield ""
+        yield "# sed"
+        yield "sed = sed"
+        yield ""
+        yield "# ssh"
+        yield "ssh = ssh"
+        yield "scp = scp"
+        yield "scp.recurse = $(scp) $(scp.flags.recurse)"
+        yield "scp.flags.recurse = -r"
+        yield ""
+        yield "# tags"
+        yield "tags = true"
+        yield "tags.flags ="
+        yield "tags.home ="
+        yield "tags.file = $(tags.home)/TAGS"
+        yield ""
+        yield "# tar"
+        yield "tar = tar"
+        yield "tar.flags.create = -cvj -f"
+        yield ""
+        yield "# TeX and associated tools"
+        yield "tex.tex = tex"
+        yield "tex.latex = latex"
+        yield "tex.pdflatex = pdflatex"
+        yield "tex.bibtex = bibtex"
+        yield "tex.dvips = dvips"
+        yield "tex.dvipdf = dvipdf"
+        yield ""
+        yield "# yacc"
+        yield "yacc = yacc"
+        yield "yacc.c = y.tab.c"
+        yield "yacc.h = y.tab.h"
 
         # all done
         return
