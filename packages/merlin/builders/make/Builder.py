@@ -43,7 +43,7 @@ class Builder(BaseBuilder, family="merlin.builders.make"):
         stage = plexus.vfs["/stage"].uri
 
         # form the path to the main makefile
-        makefile = stage / "Makefile"
+        makefile = stage / "makefile"
         # open it
         with open(makefile, mode="w") as stream:
             # prime the makefile content
