@@ -56,7 +56,7 @@ class Builder(merlin.component, implements=merlin.protocols.builder):
         """
         # go through the assets
         for asset in assets:
-            # ask each one to  identify itself
+            # ask each one to identify itself
             asset.build(builder=self, **kwds)
         # all done
         return
