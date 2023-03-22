@@ -9,7 +9,7 @@
             "type": "python",
             "request": "launch",
             "python": "${command:python.interpreterPath}",
-            "cwd": "${fileDirname}",
+            "cwd": "${workspaceFolder}",
             "program": "${file}",
             "console": "integratedTerminal"
         },
@@ -18,7 +18,7 @@
             "type": "python",
             "request": "launch",
             "python": "${command:python.interpreterPath}",
-            "cwd": "${fileDirname}",
+            "cwd": "${workspaceFolder}",
             "program": "${env:mm_prefix}/bin/merlin",
             "args": [
                 "info",
@@ -28,16 +28,16 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "merlin: debug merlin libraries",
+            "name": "merlin: debug merlin make builder",
             "type": "python",
             "request": "launch",
             "python": "${command:python.interpreterPath}",
-            "cwd": "${fileDirname}",
+            "cwd": "${workspaceFolder}",
             "program": "${env:mm_prefix}/bin/merlin",
             "args": [
                 "lib",
-                "sources",
-                "--only=journal"
+                "build",
+                "--builder=make"
             ],
             "console": "integratedTerminal"
         },
