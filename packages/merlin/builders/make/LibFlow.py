@@ -189,21 +189,23 @@ class LibFlow(
         # get the name of the library
         name = library.pyre_name
 
-        # sign on
-        yield ""
-        yield renderer.commentLine(f"export the {name} headers")
-        yield f"{name}.assets:: {name}.headers"
+        # if there are headers
+        if headers:
+            # sign on
+            yield ""
+            yield renderer.commentLine(f"add the headers to the {name} assets")
+            yield f"{name}.assets:: {name}.headers"
 
-        # build the header rules
-        yield from self.headerRules(
-            renderer=renderer, library=library, headers=headers, **kwds
-        )
+            # build the header rules
+            yield from self.headerRules(
+                renderer=renderer, library=library, headers=headers, **kwds
+            )
 
         # if there are sources
         if sources:
             # add the archive to the library assets
             yield ""
-            yield renderer.commentLine(f"make the {name} archive")
+            yield renderer.commentLine(f"add the archive to the {name} assets")
             yield f"{name}.assets:: {name}.archive"
             # make the rules that build the objects
             yield from self.archiveRules(
@@ -326,40 +328,60 @@ class LibFlow(
         name = library.pyre_name
         # and its root
         root = library.root
-
-        # sign on
-        yield ""
-        yield renderer.commentLine(f"make the {name} archive")
-        # make the rule
-        yield f"{name}.archive: {name}.objects"
-        yield f"\t@echo [ar] ${{prefix.lib}}/lib{library.name}.a"
-
         # make a pile of the names of the object files
         objects = tuple(self.formObjectPaths(library, sources))
 
-        # build a variable to hold the archive objects
+        # define the macro with the destination archive
         yield ""
-        yield renderer.commentLine(f"the set of {name} objects")
+        yield renderer.commentLine(f"define the full path to the {name} archive")
+        yield from renderer.set(
+            name=f"{name}.archive", value=f"${{prefix.lib}}/{name}.a"
+        )
+        # define the macro with the library staging location
+        yield ""
+        yield renderer.commentLine(f"define the {name} staging location")
+        yield from renderer.set(name=f"{name}.stage", value=f"${{stage}}/{name}")
+        # define a macro with the archive objects
+        yield ""
+        yield renderer.commentLine(f"define the set of {name} objects")
         # build the assignment
         yield from renderer.set(name=f"{name}.objects", multi=objects)
 
-        # make the aggregator rule for triggering the compilation
+        # the archive trigger rule
         yield ""
-        yield renderer.commentLine(
-            f"rule that triggers the compilation of the {name} sources"
-        )
+        yield renderer.commentLine(f"trigger the {name} archive")
+        yield f"{name}.archive: ${{{name}.archive}}"
+        # the archive build rule
+        yield ""
+        yield renderer.commentLine(f"make the {name} archive")
+        yield f"${{{name}.archive}}: ${{{name}.objects}} | ${{prefix.lib}}"
+        yield f"\t@echo [ar] {name}.a"
+
+        # the stage trigger rule
+        yield ""
+        yield renderer.commentLine(f"trigger the {name} stage")
+        yield f"{name}.stage: ${{{name}.stage}}"
+        # the stage build rule
+        yield ""
+        yield renderer.commentLine(f"make the {name} staging location")
+        yield f"${{{name}.stage}}:"
+        yield f"\t@echo [mkdir] {name}"
+        yield f"\t@mkdir -p $@"
+
+        # the object trigger rule
+        yield ""
+        yield renderer.commentLine(f"trigger the compilation of the {name} sources")
         # make the rule
         yield f"{name}.objects: ${{{name}.objects}}"
-
         # make the set of rules that compile individual sources
         for src, obj in zip(sources, objects):
             # form the path to the source
             srcp = "${ws}" / root / src.path
             # sign on
             yield ""
-            yield renderer.commentLine(f"compile {obj} from {srcp}")
+            yield renderer.commentLine(f"compile {srcp} to {obj}")
             # make the rule
-            yield f"{obj}: {srcp}"
+            yield f"{obj}: {srcp} | ${{{name}.stage}}"
             yield f"\t@echo [{src.language.name}] {root / src.path}"
 
         # all done
@@ -376,10 +398,8 @@ class LibFlow(
 
         # go through the sources
         for source in sources:
-            # replace the suffix from the source filename with the object suffix
-            stem = source.path.withSuffix(suffix=".o")
-            # hash it
-            hash = "~".join(stem)
+            # hash the filename and add the object extension
+            hash = "~".join(source.path) + self.pyre_host.extension_object
             # make it an absolute path
             objpath = stage / hash
             # and make it available
