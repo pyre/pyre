@@ -5,15 +5,19 @@
 
 # the {pyre} project contains
 pyre.prj:
-    # a library
+    # a library; note the '#' in the name
     libraries: "#libpyre"
 
 
 # {libpyre}
 libpyre:
-    # the name of the library
+    # the name of the library; it is used to build the archive and shared object names
+    # e.g., on u*ix, the archive will be called libpyre.a and the shared object libpyre.so,
+    # whereas on macOS we'll get libpyre.a and libpyre.dylib
     name: pyre
-    # the default set of source languages
+    # the default set of source languages; used to pick a language for assets where the target
+    # language is not uniquely deducible from its suffix; e.g., C and C++ headers typically
+    # have a '.h' suffix
     languages: c++, autogen
 
     # the location of its sources relative to the root of the project
