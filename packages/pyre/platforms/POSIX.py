@@ -10,6 +10,9 @@ import shutil
 # superclass
 from .Host import Host
 
+# parts
+from .Tools import Tools
+
 
 # declaration
 class POSIX(Host, family="pyre.platforms.posix"):
@@ -20,6 +23,10 @@ class POSIX(Host, family="pyre.platforms.posix"):
     # public data
     platform = "posix"
     distribution = "unknown"
+
+    # user configurable state
+    # the commonly available tools
+    tools = Tools()
 
     # interface
     @classmethod
