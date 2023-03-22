@@ -6,6 +6,7 @@
 
 # support
 import merlin
+
 # superclass
 from .Language import Language
 
@@ -19,7 +20,7 @@ class Autogen(Language, family="merlin.languages.autogen"):
     # constants
     name = "autogen"
     # toolchain attributes
-    linkable = True # not true, strictly speaking, but some are...
+    linkable = True  # not true, strictly speaking, but some are...
     # source factories
     source = merlin.assets.template
 
@@ -35,7 +36,6 @@ class Autogen(Language, family="merlin.languages.autogen"):
     dialect.default = "cmake"
     dialect.validators = merlin.constraints.isMember("cmake")
     dialect.doc = "specify the expansion pattern syntax to apply"
-
 
     # merlin hooks
     def identify(self, visitor, **kwds):

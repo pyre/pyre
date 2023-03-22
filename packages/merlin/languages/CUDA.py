@@ -6,6 +6,7 @@
 
 # support
 import merlin
+
 # superclass
 from .Language import Language
 
@@ -20,7 +21,6 @@ class CUDA(Language, family="merlin.languages.cuda"):
     name = "cuda"
     linkable = True
 
-
     # user configurable state
     categories = merlin.properties.catalog(schema=merlin.properties.str())
     categories.default = {
@@ -30,7 +30,6 @@ class CUDA(Language, family="merlin.languages.cuda"):
         "source": [".cu"],
     }
     categories.doc = "a map from file categories to a list of suffixes"
-
 
     # merlin hooks
     def identify(self, visitor, **kwds):

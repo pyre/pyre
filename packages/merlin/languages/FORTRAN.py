@@ -6,6 +6,7 @@
 
 # support
 import merlin
+
 # superclass
 from .Language import Language
 
@@ -20,22 +21,33 @@ class FORTRAN(Language, family="merlin.languages.fortran"):
     name = "fortran"
     linkable = True
 
-
     # user configurable state
     categories = merlin.properties.catalog(schema=merlin.properties.str())
     categories.default = {
         # header suffixes
         "header": [".h", ".inc"],
         # source suffixes
-        "source": [".f", ".f77", ".f90", ".f95", ".f03", ".F", ".F77", ".F90", ".F95", ".F03"],
+        "source": [
+            ".f",
+            ".f77",
+            ".f90",
+            ".f95",
+            ".f03",
+            ".F",
+            ".F77",
+            ".F90",
+            ".F95",
+            ".F03",
+        ],
     }
     categories.doc = "a map from file categories to a list of suffixes"
 
     dialect = merlin.properties.str()
     dialect.default = "f95"
-    dialect.validators = merlin.constraints.isMember("f77", "f95", "f2003", "f2008", "f2018")
+    dialect.validators = merlin.constraints.isMember(
+        "f77", "f95", "f2003", "f2008", "f2018"
+    )
     dialect.doc = "the list of markers that specify supported language dialects"
-
 
     # merlin hooks
     def identify(self, visitor, **kwds):
