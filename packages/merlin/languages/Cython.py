@@ -6,6 +6,7 @@
 
 # support
 import merlin
+
 # superclass
 from .Language import Language
 
@@ -19,7 +20,6 @@ class Cython(Language, family="merlin.languages.cython"):
     # constants
     name = "cython"
 
-
     # user configurable state
     categories = merlin.properties.catalog(schema=merlin.properties.str())
     categories.default = {
@@ -29,7 +29,6 @@ class Cython(Language, family="merlin.languages.cython"):
         "source": [".pyx"],
     }
     categories.doc = "a map from file categories to a list of suffixes"
-
 
     # merlin hooks
     def identify(self, visitor, **kwds):

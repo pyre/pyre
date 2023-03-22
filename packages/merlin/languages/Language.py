@@ -6,6 +6,7 @@
 
 # support
 import journal
+
 # framework
 import merlin
 
@@ -16,12 +17,11 @@ class Language(merlin.component, implements=merlin.protocols.language, internal=
     A category of source artifacts, usually associated with a family of processing workflows
     """
 
-
     # constants
     # the language tag
     name = None
     # properties of the canonical toolchains associated with this language
-    linkable = False        # whether the products are recognized by the system linker
+    linkable = False  # whether the products are recognized by the system linker
     assetClassifier = None  # a {suffix} -> {assetCategory} map
     # default asset category factories
     source = merlin.assets.source
@@ -30,7 +30,6 @@ class Language(merlin.component, implements=merlin.protocols.language, internal=
     # required state
     categories = merlin.properties.catalog()
     categories.doc = "a map from file categories to a list of suffixes"
-
 
     # interface
     @classmethod
@@ -42,7 +41,6 @@ class Language(merlin.component, implements=merlin.protocols.language, internal=
         suffix = merlin.primitives.path(name).suffix
         # and ask my {assetClassifier}
         return cls.assetClassifier.get(suffix)
-
 
     # merlin hooks
     def identify(self, visitor, **kwds):
@@ -59,14 +57,15 @@ class Language(merlin.component, implements=merlin.protocols.language, internal=
             channel = journal.firewall("merlin.languages.identify")
             # complain
             channel.line(f"unable to find a handler for {self.name} sources")
-            channel.line(f"while looking through the interface of '{visitor.pyre_name}'")
+            channel.line(
+                f"while looking through the interface of '{visitor.pyre_name}'"
+            )
             # flush
             channel.log()
             # and fail, just in case firewalls aren't fatal
             return None
         # if it does, invoke it
         return handler(language=self, **kwds)
-
 
     # framework hooks
     @classmethod

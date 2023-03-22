@@ -6,6 +6,7 @@
 
 # support
 import merlin
+
 # superclass
 from .Language import Language
 
@@ -20,7 +21,6 @@ class CXX(Language, family="merlin.languages.cxx"):
     name = "c++"
     linkable = True
 
-
     # user configurable state
     categories = merlin.properties.catalog(schema=merlin.properties.str())
     categories.default = {
@@ -34,9 +34,9 @@ class CXX(Language, family="merlin.languages.cxx"):
     dialect = merlin.properties.str()
     dialect.default = "c++20"
     dialect.validators = merlin.constraints.isMember(
-        "c++98", "c++11", "c++14", "c++17", "c++20", "c++23")
-    dialect.doc = "the C++ standard to conform to"
-
+        "c++98", "c++11", "c++14", "c++17", "c++20", "c++23"
+    )
+    dialect.doc = "the C++ standard"
 
     # merlin hooks
     def identify(self, visitor, **kwds):

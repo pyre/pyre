@@ -6,6 +6,7 @@
 
 # support
 import merlin
+
 # superclass
 from .Language import Language
 
@@ -20,7 +21,6 @@ class C(Language, family="merlin.languages.c"):
     name = "c"
     linkable = True
 
-
     # user configurable state
     categories = merlin.properties.catalog(schema=merlin.properties.str())
     categories.default = {
@@ -33,9 +33,10 @@ class C(Language, family="merlin.languages.c"):
 
     dialect = merlin.properties.str()
     dialect.default = "c99"
-    dialect.validators = merlin.constraints.isMember("ansi", "c90", "c99", "c11", "c17", "c18")
+    dialect.validators = merlin.constraints.isMember(
+        "ansi", "c90", "c99", "c11", "c17", "c18"
+    )
     dialect.doc = "the C dialect to enforce"
-
 
     # merlin hooks
     def identify(self, visitor, **kwds):
