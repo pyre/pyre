@@ -43,7 +43,7 @@ class LibFlow(
         yield renderer.commentLine(f"building {name}")
         # make the anchor rule
         yield f"{name}: {name}.assets"
-        yield f"\t@${{call log.asset,lib,{name}}}"
+        yield f"\t@$(call log.asset,lib,{name})"
 
         # the directory rules
         yield from self.folderRules(
@@ -147,7 +147,7 @@ class LibFlow(
         scope = library.scope
 
         # the common prefix for include directories is stored in a variable
-        include = merlin.primitives.path("${prefix.include}")
+        include = merlin.primitives.path("$(prefix.include)")
 
         # if the headers are being placed in a special scope
         if scope:
@@ -173,9 +173,9 @@ class LibFlow(
             # the dependency line
             yield f"{dst}: | {dst.parent}"
             # log
-            yield f"\t@${{call log.action,mkdir,{tag}}}"
+            yield f"\t@$(call log.action,mkdir,{tag})"
             # the rule
-            yield f"\t@mkdir -p $@"
+            yield f"\t@$(mkdirp) $@"
 
         # all done
         return
@@ -230,7 +230,7 @@ class LibFlow(
         gateway = library.gateway
 
         # all exported headers are anchored at
-        include = merlin.primitives.path("${prefix.include}")
+        include = merlin.primitives.path("$(prefix.include)")
 
         # if the headers are being placed in a special scope
         if scope:
@@ -280,9 +280,9 @@ class LibFlow(
             # the dependency line
             yield f"{gatewayDst}: {gatewaySrc} | {gatewayDir}"
             # log
-            yield f"\t@${{call log.action,cp,{tag}}}"
+            yield f"\t@$(call log.action,cp,{tag})"
             # the rule
-            yield f"\t@cp $< $@"
+            yield f"\t@$(cp) $< $@"
         # otherwise
         else:
             # null the variable so it's not uninitialized
@@ -302,7 +302,7 @@ class LibFlow(
         # make the aggregator rule that exports headers
         yield ""
         yield renderer.commentLine(f"export the {name} headers")
-        yield f"{name}.headers: ${{{name}.gateway}} ${{{name}.exported}}"
+        yield f"{name}.headers: $({name}.gateway) $({name}.exported)"
 
         # make the rules that publish individual headers
         for header in regular:
@@ -312,11 +312,11 @@ class LibFlow(
             yield ""
             yield renderer.commentLine(f"publish {hpath}")
             # the dependency line
-            yield f"{destination/header.path}: ${{ws}}/{hpath} | {destination/header.path.parent}"
+            yield f"{destination/header.path}: $(ws)/{hpath} | {destination/header.path.parent}"
             # log
-            yield f"\t@${{call log.action,cp,{hpath}}}"
+            yield f"\t@$(call log.action,cp,{hpath})"
             # the rule
-            yield f"\t@cp $< $@"
+            yield f"\t@$(cp) $< $@"
 
         # all done
         return
@@ -335,13 +335,11 @@ class LibFlow(
         # define the macro with the destination archive
         yield ""
         yield renderer.commentLine(f"define the full path to the {name} archive")
-        yield from renderer.set(
-            name=f"{name}.archive", value=f"${{prefix.lib}}/{name}.a"
-        )
+        yield from renderer.set(name=f"{name}.archive", value=f"$(prefix.lib)/{name}.a")
         # define the macro with the library staging location
         yield ""
         yield renderer.commentLine(f"define the {name} staging location")
-        yield from renderer.set(name=f"{name}.stage", value=f"${{stage}}/{name}")
+        yield from renderer.set(name=f"{name}.stage", value=f"$(stage)/{name}")
         # define a macro with the archive objects
         yield ""
         yield renderer.commentLine(f"define the set of {name} objects")
@@ -351,29 +349,29 @@ class LibFlow(
         # the archive trigger rule
         yield ""
         yield renderer.commentLine(f"trigger the {name} archive")
-        yield f"{name}.archive: ${{{name}.archive}}"
+        yield f"{name}.archive: $({name}.archive)"
         # the archive build rule
         yield ""
         yield renderer.commentLine(f"make the {name} archive")
-        yield f"${{{name}.archive}}: ${{{name}.objects}} | ${{prefix.lib}}"
-        yield f"\t@${{call log.action,ar,{name}.a}}"
+        yield f"$({name}.archive): $({name}.objects) | $(prefix.lib)"
+        yield f"\t@$(call log.action,ar,{name}.a)"
 
         # the stage trigger rule
         yield ""
         yield renderer.commentLine(f"trigger the {name} stage")
-        yield f"{name}.stage: ${{{name}.stage}}"
+        yield f"{name}.stage: $({name}.stage)"
         # the stage build rule
         yield ""
         yield renderer.commentLine(f"make the {name} staging location")
-        yield f"${{{name}.stage}}:"
-        yield f"\t@${{call log.action,mkdir,{name}}}"
-        yield f"\t@mkdir -p $@"
+        yield f"$({name}.stage):"
+        yield f"\t@$(call log.action,mkdir,{name})"
+        yield f"\t@$(mkdirp) $@"
 
         # the object trigger rule
         yield ""
         yield renderer.commentLine(f"trigger the compilation of the {name} sources")
         # make the rule
-        yield f"{name}.objects: ${{{name}.objects}}"
+        yield f"{name}.objects: $({name}.objects)"
         # make the set of rules that compile individual sources
         for src, obj in zip(sources, objects):
             # form the path to the source
@@ -382,8 +380,8 @@ class LibFlow(
             yield ""
             yield renderer.commentLine(f"compile {srcp} to {obj}")
             # make the rule
-            yield f"{obj}: {srcp} | ${{{name}.stage}}"
-            yield f"\t@${{call log.action,{src.language.name},{root / src.path}}}"
+            yield f"{obj}: {srcp} | $({name}.stage)"
+            yield f"\t@$(call log.action,{src.language.name},{root / src.path})"
 
         # all done
         return

@@ -273,7 +273,7 @@ class Builder(BaseBuilder, family="merlin.builders.make"):
             # log
             yield f"\t@${{call log.action,mkdir,{tag}}}"
             # the rule
-            yield f"\t@mkdir -p $@"
+            yield f"\t@$(mkdirp) $@"
 
         # all done
         return
