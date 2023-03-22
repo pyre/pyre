@@ -53,7 +53,7 @@ class PackageManager(pyre.protocol, family="pyre.platforms.packagers"):
         The type of information returned is determined by the package manager. Typically, it
         contains the list of files that are installed by this package, but it may contain other
         filesystem entities as well. This method should return a non-empty sequence if and only
-        if {pakage} is actually fully installed
+        if {package} is actually fully installed
         """
 
     @pyre.provides
