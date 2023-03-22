@@ -10,6 +10,7 @@ from .. import foundry
 # the protocols
 from .Platform import Platform as platform
 from .PackageManager import PackageManager as packager
+from .Tools import Tools as tools
 
 
 # the various implementations
