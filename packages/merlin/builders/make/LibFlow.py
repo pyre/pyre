@@ -41,9 +41,10 @@ class LibFlow(
         # sign on
         yield ""
         yield renderer.commentLine(f"building {name}")
-
         # make the anchor rule
         yield f"{name}: {name}.assets"
+        yield f"\t@${{call log.asset,lib,{name}}}"
+
         # the directory rules
         yield from self.folderRules(
             renderer=renderer, library=library, folders=self._folders
@@ -172,7 +173,7 @@ class LibFlow(
             # the dependency line
             yield f"{dst}: | {dst.parent}"
             # log
-            yield f"\t@echo [mkdir] {tag}"
+            yield f"\t@${{call log.action,mkdir,{tag}}}"
             # the rule
             yield f"\t@mkdir -p $@"
 
@@ -279,7 +280,7 @@ class LibFlow(
             # the dependency line
             yield f"{gatewayDst}: {gatewaySrc} | {gatewayDir}"
             # log
-            yield f"\t@echo [cp] {tag}"
+            yield f"\t@${{call log.action,cp,{tag}}}"
             # the rule
             yield f"\t@cp $< $@"
         # otherwise
@@ -313,7 +314,7 @@ class LibFlow(
             # the dependency line
             yield f"{destination/header.path}: ${{ws}}/{hpath} | {destination/header.path.parent}"
             # log
-            yield f"\t@echo [cp] {hpath}"
+            yield f"\t@${{call log.action,cp,{hpath}}}"
             # the rule
             yield f"\t@cp $< $@"
 
@@ -355,7 +356,7 @@ class LibFlow(
         yield ""
         yield renderer.commentLine(f"make the {name} archive")
         yield f"${{{name}.archive}}: ${{{name}.objects}} | ${{prefix.lib}}"
-        yield f"\t@echo [ar] {name}.a"
+        yield f"\t@${{call log.action,ar,{name}.a}}"
 
         # the stage trigger rule
         yield ""
@@ -365,7 +366,7 @@ class LibFlow(
         yield ""
         yield renderer.commentLine(f"make the {name} staging location")
         yield f"${{{name}.stage}}:"
-        yield f"\t@echo [mkdir] {name}"
+        yield f"\t@${{call log.action,mkdir,{name}}}"
         yield f"\t@mkdir -p $@"
 
         # the object trigger rule
@@ -382,7 +383,7 @@ class LibFlow(
             yield renderer.commentLine(f"compile {srcp} to {obj}")
             # make the rule
             yield f"{obj}: {srcp} | ${{{name}.stage}}"
-            yield f"\t@echo [{src.language.name}] {root / src.path}"
+            yield f"\t@${{call log.action,{src.language.name},{root / src.path}}}"
 
         # all done
         return
