@@ -29,12 +29,10 @@ class Libraries(merlin.shells.command, family="merlin.cli.lib"):
         builder = plexus.builder
         # and the selected libraries
         libs = tuple(self.filter(projects=plexus.projects))
-
         # ask the builder to add each one to its pile
         builder.add(plexus=plexus, assets=libs)
         # and then build everything
         builder.build(plexus=plexus, assets=libs)
-
         # all done
         return
 
