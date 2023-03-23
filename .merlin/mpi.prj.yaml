@@ -17,6 +17,8 @@ libmpi:
     languages: c++
     # the location of its sources relative to the root of the project
     root: lib/mpi
+    # external dependencies
+    requires: mpi
 
     # users #include <pyre/mpi.h>
     # so deposit all headers in the {pyre} namespace
