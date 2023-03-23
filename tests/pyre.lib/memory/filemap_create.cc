@@ -15,19 +15,23 @@ using filemap_t = pyre::memory::filemap_t;
 
 
 // create a new filemap
-int main(int argc, char * argv[]) {
+int
+main(int argc, char * argv[])
+{
     // initialize the journal
     pyre::journal::init(argc, argv);
     pyre::journal::application("filemap_create");
 
+    // pick a size
+    size_t cells = 4 * 1024;
     // create a new file-backed memory block
     // N.B.: the {ul} suffix is necessary to disambiguate the constructor
-    filemap_t product("filemap.dat", 4*1024ul);
+    filemap_t product("filemap.dat", cells);
 
     // get the actual size
     auto bytes = product.bytes();
     // we expect a 4k block
-    assert(( bytes == 4*1024ul ));
+    assert((bytes == cells));
 
     // make a byte
     char value = 0xff;
