@@ -25,6 +25,12 @@ class Asset(Product):
     private = merlin.properties.bool(default=False)
     private.doc = "mark this asset as private"
 
+    request = merlin.properties.strings()
+    request.doc = "the list of optional external dependencies"
+
+    require = merlin.properties.strings()
+    require.doc = "the list of required external dependencies"
+
     # builder requirements
     def build(self, **kwds):
         """
