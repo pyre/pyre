@@ -30,7 +30,7 @@ class Info(merlin.shells.command, family="merlin.cli.info"):
         # make a channel
         channel = journal.info("merlin.builder")
         # show me
-        channel.line(f"builder:")
+        channel.line(f"builder: {builder}")
         channel.indent()
         channel.line(f"abi: {builder.abi(plexus=plexus)}")
         channel.line(f"/stage:")
@@ -43,8 +43,7 @@ class Info(merlin.shells.command, family="merlin.cli.info"):
         channel.line(f"seed: {builder.prefix}")
         channel.line(f"abi tagged: {builder.tagged}")
         channel.line(f"mounted at: {vfs['/prefix'].uri}")
-        channel.outdent()
-        channel.line(f"/prefix layout:")
+        channel.line(f"layout:")
         channel.indent()
         channel.line(f"bin: {prefix.bin}")
         channel.line(f"lib: {prefix.lib}")
@@ -54,7 +53,7 @@ class Info(merlin.shells.command, family="merlin.cli.info"):
         channel.line(f"etc: {prefix.etc}")
         channel.line(f"config: {prefix.config}")
         channel.line(f"var: {prefix.var}")
-        channel.outdent(levels=2)
+        channel.outdent(levels=3)
         # flush
         channel.log()
 
