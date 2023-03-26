@@ -9,7 +9,7 @@
 import merlin
 
 # build an instance of the plexus
-app = merlin.shells.merlin(name='merlin.plexus')
+app = merlin.shells.merlin(name="merlin.app")
 # and run it
 status = app.run()
 # pass the status on to the shell
