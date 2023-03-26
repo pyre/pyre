@@ -28,7 +28,7 @@ class LibFlow(
         """
         # show me
         # go through the assets of the library
-        for asset in library.assets():
+        for asset in library.assets:
             # and add each one to the build pile
             asset.identify(visitor=self, library=library, **kwds)
         # all done

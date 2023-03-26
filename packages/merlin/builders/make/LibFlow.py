@@ -32,7 +32,7 @@ class LibFlow(
         self._sources = []
 
         # go through the assets of the library
-        for asset in library.assets():
+        for asset in library.assets:
             # and add each one to the correct pile
             asset.identify(visitor=self, renderer=renderer, library=library, **kwds)
 
@@ -56,24 +56,55 @@ class LibFlow(
         return
 
     @merlin.export
-    def folder(self, folder, **kwds):
+    def folder(self, folder, library, parent=None, **kwds):
         """
         Handle a source {folder}
         """
-        # add the asset to my folders
+        # if the user wants to skip this folder
+        if folder.ignore:
+            # figure out where the folder got marker
+            where = folder.pyre_where(attribute="ignore")
+            # make a channel
+            channel = journal.warning("merlin.builder.make")
+            # let the user know
+            channel.line(f"excluding folder '{folder.path}'")
+            channel.line(f"from the contents of {library}")
+            channel.line(f"as explicitly requested")
+            channel.line(f"{where}")
+            # flush
+            channel.log()
+            # move on to other things
+            return
+        # if it has explicit dependency requirements
+        if folder.require and not library.supports(requirements=folder.require):
+            # skip it
+            return
+        # otherwise, add it to my pile of folders
         self._folders.append(folder)
+        #  go through its contents
+        for asset in folder.assets:
+            # and ask each one to identify itself
+            asset.identify(visitor=self, library=library, parent=folder, **kwds)
         # all done
         return
 
     @merlin.export
-    def file(self, file, **kwds):
+    def file(self, file: merlin.assets.file, library: merlin.assets.library, **kwds):
         """
         Handle a {file} asset
         """
+        # if the user wants to skip this file
+        if file.ignore:
+            # move on
+            return
+        # if it has explicit dependency requirements
+        if file.require and not library.supports(requirements=file.require):
+            # skip it
+            return
         # get the file category
         category = file.category
         # ask it to identify itself
-        category.identify(visitor=self, file=file, **kwds)
+        category.identify(visitor=self, library=library, file=file, **kwds)
         # all done
         return
 
