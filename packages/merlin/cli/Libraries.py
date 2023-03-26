@@ -78,7 +78,7 @@ class Libraries(merlin.shells.command, family="merlin.cli.lib"):
             channel.line(f"sources:")
             # go through the sources
             channel.indent()
-            for asset in lib.assets():
+            for asset in lib.assets:
                 # set up a pile of markers
                 markers = []
                 # if the asset is marked {ignore}
