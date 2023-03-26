@@ -11,6 +11,10 @@ import merlin
 # superclass
 from .Asset import Asset
 
+# type annotations
+import typing
+import collections.abc
+
 
 # class declaration
 class Library(
@@ -55,11 +59,10 @@ class Library(
         for header in self.headers:
             # ask each one to build itself
             header.build(builder=builder, **kwds)
-
         # all done
         return super().build(builder=builder, **kwds)
 
-    def assets(self):
+    def assets(self) -> collections.abc.Iterable:
         """
         Generate the sequence of my source files
         """
@@ -101,12 +104,8 @@ class Library(
         # the name must be a string, so coerce the root projection; these operations are trivial
         # for the library root, but they set the pattern for building all of its assets
         top = self.folder(name=str(relWS / relLib), node=root, path=relLib)
-        # and make it available
-        yield top
-
         # build the asset recognizer
         classifier = self.assetClassifier()
-
         # now, starting with my root
         todo = [top]
         # dive into the tree
@@ -132,13 +131,28 @@ class Library(
                     )
                 # either way, assets are attached to their container
                 folder.add(asset=asset)
-                # and are made available
-                yield asset
-
+        # publish the top level folder
+        yield top
         # all done
         return
 
+    def supports(self, requirements: typing.List[str]) -> bool:
+        """
+        Check whether the external dependency {requirements} can be satisfied
+        """
+        # MGA: NYI
+        return True
+
+    # metamethods
+    def __str__(self):
+        """
+        Generate a description of this library
+        """
+        # use my name and type
+        return f"the '{self.pyre_name}' library"
+
     # implementation details
+    # asset visitor
     def folder(self, name, node, path):
         """
         Make a new asset container
@@ -161,7 +175,7 @@ class Library(
         language = asset.language
         category = asset.category
         # if it already knows its language
-        if language:
+        if language is not None:
             # and its category
             if category is not None:
                 # nothing further to do
@@ -183,7 +197,8 @@ class Library(
         # all done
         return asset
 
-    def assetClassifier(self):
+    # suffix -> (assetCategory, language)
+    def assetClassifier(self) -> dict:
         """
         Build a table that map file suffixes to asset category and language
         """
@@ -236,7 +251,7 @@ class Library(
         # all done
         return assetClassifier
 
-    def supportedLanguages(self):
+    def supportedLanguages(self) -> collections.abc.Iterable:
         """
         Generate a sequence of the allowed languages
         """
@@ -248,7 +263,6 @@ class Library(
             yield from languages
             # and nothing further
             return
-
         # if none were specified, fall back to all languages marked {linkable}
         sieve = lambda x: x.linkable
         # supported
@@ -260,7 +274,6 @@ class Library(
         )
         # languages
         yield from filter(sieve, supported)
-
         # all done
         return
 
