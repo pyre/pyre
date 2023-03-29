@@ -21,6 +21,7 @@ class Panel(Command):
     """
 
     # constants
+    EMPTY_ARGV = object()
     SUCCESS = 0
     ERROR_GENERIC = 1
     ERROR_EXECUTION = 2
@@ -32,23 +33,8 @@ class Panel(Command):
         """
         Dispatch to my methods based on the names in {argv}
         """
-        # realize the argument sequence
-        argv = tuple(argv)
-        # if there was no command
-        if not argv:
-            # attempt to
-            try:
-                # look for a default action
-                default = getattr(self, "default")
-            # if not there
-            except AttributeError:
-                # show the user my help screen
-                return self.help(plexus=plexus)
-            # if we have one, invoke it
-            return default(plexus=plexus, argv=argv)
-
         # initialize the status
-        status = self.SUCCESS
+        status = self.EMPTY_ARGV
         # otherwise, go through my secondary arguments
         for command in argv:
             # attempt to
@@ -96,8 +82,20 @@ class Panel(Command):
                 # and bail
                 return self.ERROR_EXECUTION
 
-        # all done
-        return status
+        # if we have processed at least one command
+        if status != self.EMPTY_ARGV:
+            # all done
+            return status
+        # otherwise, attempt to
+        try:
+            # look for a default action
+            default = getattr(self, "default")
+        # if not there
+        except AttributeError:
+            # show the user my help screen
+            return self.help(plexus=plexus)
+        # if we have one, invoke it and return its status
+        return default(plexus=plexus, argv=argv)
 
     # failure modes
     def pyre_unrecognizedCommand(self, plexus, command, **kwds):
