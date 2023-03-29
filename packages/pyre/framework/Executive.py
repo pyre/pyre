@@ -119,7 +119,7 @@ class Executive:
         user = f"{self.user.username}@{nickname}"
 
         # look for platform specific settings in a private subdirectory
-        action = tracking.simple("while discovering the host characteristics")
+        action = tracking.simple("while discovering the platform characteristics")
         # chain to the existing locator
         chain = tracking.chain(action, locator)
         # first in the raw directory
