@@ -71,7 +71,11 @@ private:
     // default metamethods
 public:
     // destructor
+#ifdef WITH_CXX20
     constexpr ~Stack() = default;
+#else
+    ~Stack() = default;
+#endif
     // constructors
     Stack(const Stack &) = default;
     Stack(Stack &&) = default;

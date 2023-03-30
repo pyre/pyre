@@ -28,8 +28,10 @@
 #include "Index.h"
 #include "IndexIterator.h"
 #include "Canonical.h"
+#ifdef WITH_CXX20
 #include "Symmetric.h"
 #include "Diagonal.h"
+#endif
 // the grid
 #include "Grid.h"
 #include "GridIterator.h"

@@ -87,8 +87,8 @@ find_package(PostgreSQL)
 # python
 find_package(Python 3.6 COMPONENTS Interpreter Development NumPy)
 # for building bindings
-# require c++20
-set(CMAKE_CXX_STANDARD 20)
+# require c++17
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(PYBIND11_CPP_STANDARD -std=c++17)
