@@ -7,6 +7,8 @@
 function(pyre_cudaPackage)
   # if the user requested CUDA support
   if(WITH_CUDA)
+    find_package(CUDA 9.0 REQUIRED)
+
     # install the sources straight from the source directory
     install(
       DIRECTORY cuda
