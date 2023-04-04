@@ -96,6 +96,15 @@ message(STATUS "Parallel HDF5: ${HDF5_PREFER_PARALLEL}")
 # hunt it down
 find_package(HDF5 COMPONENTS CXX HL)
 
+# find cuda if it is required
+if(${WITH_CUDA})
+    # add the cuda package
+    find_package(CUDA REQUIRED)
+  if(${CUDA_FOUND})
+    enable_language(CUDA)
+  endif()
+endif()
+
 # postgres
 find_package(PostgreSQL)
 
