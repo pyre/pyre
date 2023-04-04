@@ -290,4 +290,24 @@ function(pyre_test_driver_mpi testfile slots)
 endfunction()
 
 
+# register a cuda parallel test case based on a compiled driver
+function(pyre_test_driver_cuda testfile)
+  # create the name of the testcase
+  pyre_test_testcase(testname ${testfile} ${ARGN})
+  # create the name of the target
+  pyre_test_target(target ${testfile})
+
+  # schedule it to be compiled
+  add_executable(${target} ${testfile})
+  # with some macros
+  target_compile_definitions(${target} PRIVATE PYRE_CORE WITH_CUDA)
+  # link against my libraries
+  target_link_libraries(${target} PUBLIC pyre journal ${CUDA_LIBRARIES})
+
+  # make it a test case
+  add_test(NAME ${testname} COMMAND ${target} ${ARGN})
+
+  # all done
+endfunction()
+
 # end of file
