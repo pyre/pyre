@@ -53,10 +53,6 @@ main(int argc, char * argv[])
     arena.at(1000) = 0.0;
     assert(arena.at(1000) == 0.0);
 
-    // destruct the memory
-    arena.~Managed();
-
-
     // all done
     return 0;
 }
