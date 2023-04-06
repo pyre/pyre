@@ -33,18 +33,12 @@ public:
 
     // accessors
 public:
-    // access to the raw data pointer
-    inline auto data() const -> pointer;
-    // the shared pointer
-    inline auto handle() const -> handle_type;
-
-    // iterator support
-public:
-    inline auto begin() const -> pointer;
+    // access to the raw device data pointer
+    inline auto device_data() const -> pointer;
 
     // implementation details: data
 private:
-    handle_type _data;
+    pointer _device_data;
 
     // default metamethods
 public:

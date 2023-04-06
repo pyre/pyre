@@ -9,14 +9,11 @@
 // constructor
 template <class T, bool isConst>
 pyre::cuda::memory::DeviceMapped<T, isConst>::DeviceMapped(
-    pointer HostSpot) : // the cuda {malloc} api is not RAII friendly, so we initialize with a
-                        // {nullptr} and replace it with the actual allocation
-    _data { nullptr }
+    pointer HostSpot) // for mapped memory only a pointer to the spot on host memory is needed,
+                      // therefore no initialization with a nullptr
 {
-    // grab a spot
-    pointer DeviceSpot = nullptr;
     // set the device pointer to the start of the host memory spot
-    auto status = cudaHostGetDevicePointer(&DeviceSpot, HostSpot, 0);
+    auto status = cudaHostGetDevicePointer(&_device_data, HostSpot, 0);
     // if something went wrong
     if (status != cudaSuccess) {
         // make a channel
@@ -31,39 +28,18 @@ pyre::cuda::memory::DeviceMapped<T, isConst>::DeviceMapped(
     // all went well
     pyre::journal::debug_t channel("pyre.cuda.mapped_t");
     // so let me know
-    channel << "set device pointer to  " << HostSpot << " at " << (void *) DeviceSpot
+    channel << "set device pointer to  " << HostSpot << " at " << (void *) _device_data
             << pyre::journal::endl(__HERE__);
-
-    // replace the {nullptr} with the new block no destructor is needed for mapped memory
-    _data.reset(DeviceSpot);
 }
 
 // interface
-// access to the data pointer
+// access to the device data pointer
 template <class T, bool isConst>
 auto
-pyre::cuda::memory::DeviceMapped<T, isConst>::data() const -> pointer
+pyre::cuda::memory::DeviceMapped<T, isConst>::device_data() const -> pointer
 {
     // return the raw data pointer
-    return _data.get();
-}
-
-// get the shared pointer
-template <class T, bool isConst>
-auto
-pyre::cuda::memory::DeviceMapped<T, isConst>::handle() const -> handle_type
-{
-    // easy
-    return _data;
-}
-
-// iterator support
-template <class T, bool isConst>
-auto
-pyre::cuda::memory::DeviceMapped<T, isConst>::begin() const -> pointer
-{
-    // the beginning of the block
-    return data();
+    return _device_data;
 }
 
 #endif
