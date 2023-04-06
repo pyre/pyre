@@ -1,0 +1,71 @@
+// -*- c++ -*-
+
+// code guard
+#if !defined(pyre_cuda_memory_DeviceMapped_icc)
+#error this file contains implementation details for pyre::cuda::memory::DeviceMapped
+#else
+
+// metamethods
+// constructor
+template <class T, bool isConst>
+pyre::cuda::memory::DeviceMapped<T, isConst>::DeviceMapped(
+    pointer HostSpot) : // the cuda {malloc} api is not RAII friendly, so we initialize with a
+                        // {nullptr} and replace it with the actual allocation
+    _data { nullptr }
+{
+    // grab a spot
+    pointer DeviceSpot = nullptr;
+    // set the device pointer to the start of the host memory spot
+    auto status = cudaHostGetDevicePointer(&DeviceSpot, HostSpot, 0);
+    // if something went wrong
+    if (status != cudaSuccess) {
+        // make a channel
+        pyre::journal::error_t error("pyre.cuda");
+        // complain
+        error << "while setting device pointer to " << HostSpot << " : " << pyre::journal::newline
+              << cudaGetErrorName(status) << " (" << status << ")" << pyre::journal::endl(__HERE__);
+        // and bail
+        throw std::bad_alloc();
+    }
+
+    // all went well
+    pyre::journal::debug_t channel("pyre.cuda.mapped_t");
+    // so let me know
+    channel << "set device pointer to  " << HostSpot << " at " << (void *) DeviceSpot
+            << pyre::journal::endl(__HERE__);
+
+    // replace the {nullptr} with the new block no destructor is needed for mapped memory
+    _data.reset(DeviceSpot);
+}
+
+// interface
+// access to the data pointer
+template <class T, bool isConst>
+auto
+pyre::cuda::memory::DeviceMapped<T, isConst>::data() const -> pointer
+{
+    // return the raw data pointer
+    return _data.get();
+}
+
+// get the shared pointer
+template <class T, bool isConst>
+auto
+pyre::cuda::memory::DeviceMapped<T, isConst>::handle() const -> handle_type
+{
+    // easy
+    return _data;
+}
+
+// iterator support
+template <class T, bool isConst>
+auto
+pyre::cuda::memory::DeviceMapped<T, isConst>::begin() const -> pointer
+{
+    // the beginning of the block
+    return data();
+}
+
+#endif
+
+// end of file
