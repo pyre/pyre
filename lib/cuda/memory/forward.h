@@ -19,6 +19,12 @@ namespace pyre::cuda::memory {
     // pinned memory block on the device with device-only access
     template <typename T, bool isConst>
     class DevicePinned;
+    // mapped memory block on the host with host-only access
+    template <typename T, bool isConst>
+    class HostMapped;
+    // mapped memory block on the device with device-only access
+    template <typename T, bool isConst>
+    class DeviceMapped;
 }; // namespace pyre::cuda::memory
 
 

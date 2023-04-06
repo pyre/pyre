@@ -36,6 +36,24 @@ namespace pyre::cuda::memory {
     // read-only access
     template <typename T>
     using constdevice_pinned_t = DevicePinned<T, true>;
+
+    // export host mapped memory blocks
+    // read/write access
+    template <typename T>
+    using host_mapped_t = HostMapped<T, false>;
+
+    // read-only access
+    template <typename T>
+    using consthost_mapped_t = HostMapped<T, true>;
+
+    // export device mapped memory blocks
+    // read/write access
+    template <typename T>
+    using device_mapped_t = DeviceMapped<T, false>;
+
+    // read-only access
+    template <typename T>
+    using constdevice_mapped_t = DeviceMapped<T, true>;
 } // namespace pyre::cuda::memory
 
 
