@@ -18,8 +18,16 @@ namespace pyre::cuda::memory {
     // read-only access
     template <typename T>
     using constmanaged_t = Managed<T, true>;
-}
 
+    // export managed memory blocks
+    // read/write access
+    template <typename T>
+    using host_pinned_t = HostPinned<T, false>;
+
+    // read-only access
+    template <typename T>
+    using consthost_pinned_t = HostPinned<T, true>;
+} // namespace pyre::cuda::memory
 
 
 #endif

@@ -18,7 +18,7 @@
 
 // implementation
 #include "Managed.h"
-
+#include "HostPinned.h"
 
 #endif
 
