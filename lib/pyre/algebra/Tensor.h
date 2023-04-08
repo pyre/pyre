@@ -28,6 +28,14 @@ namespace pyre::algebra {
             : _layout.cells() - 1; 
 
       public:
+        // export my type
+        using tensor_t = Tensor<T, packingT, I...>;
+        // export a canonical tensor with my same underlying type {T} and shape {I...} 
+        using canonical_tensor_t = Tensor<T, pyre::grid::canonical_t<N>, I...>;
+        // export a symmetric tensor with my same underlying type {T} and shape {I...} 
+        using symmetric_tensor_t = Tensor<T, pyre::grid::symmetric_t<N>, I...>;
+        // export a diagonal tensor with my same underlying type {T} and shape {I...} 
+        using diagonal_tensor_t = Tensor<T, pyre::grid::diagonal_t<N>, I...>;
         // export the packing strategy
         using pack_t = packingT;
         // export the index type
@@ -42,7 +50,6 @@ namespace pyre::algebra {
         static constexpr int order = N;
         // export the container size
         static constexpr int size = S;
-        // TOFIX: export my type here Tensor<...>
 
       public:
         // default constructor
@@ -89,10 +96,10 @@ namespace pyre::algebra {
         constexpr operator data_t() const;
 
         // cast to canonical packing
-        constexpr operator Tensor<T, pyre::grid::canonical_t<N>, I...>() const; 
+        constexpr operator canonical_tensor_t() const; 
 
         // cast to symmetric packing (enable only for diagonal packing)
-        constexpr operator Tensor<T, pyre::grid::symmetric_t<N>, I...>() const requires 
+        constexpr operator symmetric_tensor_t() const requires 
             (std::is_same_v<packingT, pyre::grid::diagonal_t<N>>); 
 
         // support for ranged for loops
@@ -128,16 +135,14 @@ namespace pyre::algebra {
 
       public:
         // the zero tensor // TOFIX: this should be a diagonal tensor
-        static constexpr Tensor<T, packingT, I...> zero = 
-            make_zeros<size, T, packingT, I...>();
+        static constexpr tensor_t zero = make_zeros<size, T, packingT, I...>();
 
         // a tensor of ones // TOFIX: call this {ones}
-        static constexpr Tensor<T, packingT, I...> one = 
-            make_ones<size, T, packingT, I...>();
+        static constexpr tensor_t one = make_ones<size, T, packingT, I...>();
 
         // the unit tensor with a one in the entry whose indices are specified in {Args...} 
         template<typename... Args>
-        static constexpr Tensor<T, packingT, I...> unit(Args...) requires (sizeof...(Args) == N);
+        static constexpr tensor_t unit(Args...) requires (sizeof...(Args) == N);
 
       // accessors
       public:
