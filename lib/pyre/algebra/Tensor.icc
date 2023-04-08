@@ -192,45 +192,12 @@ constexpr void pyre::algebra::Tensor<T, packingT, I...>::_reset(std::index_seque
 }
 
 template <typename T, class packingT, int... I>
-template <size_t... J>
-constexpr pyre::algebra::Tensor<T, packingT, I...> 
-pyre::algebra::Tensor<T, packingT, I...>::_make_zeros(std::index_sequence<J...>)
-{
-    constexpr auto wrap = []<size_t>() consteval->T { return 0; };
-    return pyre::algebra::Tensor<T, packingT, I...>(wrap.template operator()<J>()...);
-}
-
-template <typename T, class packingT, int... I>
-template <size_t... J>
-constexpr pyre::algebra::Tensor<T, packingT, I...> 
-pyre::algebra::Tensor<T, packingT, I...>::_make_ones(std::index_sequence<J...>)
-{
-    constexpr auto wrap = []<size_t>() consteval->T { return 1; };
-    return pyre::algebra::Tensor<T, packingT, I...>(wrap.template operator()<J>()...);
-}
-
-template <typename T, class packingT, int... I>
-template <size_t... J>
-constexpr pyre::algebra::Tensor<T, packingT, I...> 
-pyre::algebra::Tensor<T, packingT, I...>::_make_basis_element(
-    pyre::algebra::Tensor<T, packingT, I...>::index_t K, std::index_sequence<J...>)
-{
-    constexpr auto delta = [](size_t II, size_t JJ) ->T 
-    { 
-        if (II == JJ) return 1; 
-        return 0;
-    };
-    // fill tensor with delta_ij
-    return pyre::algebra::Tensor<T, packingT, I...>(delta(_layout[K] /* I */, J)...);
-}
-
-template <typename T, class packingT, int... I>
 template<typename... Args>
 constexpr pyre::algebra::Tensor<T, packingT, I...> 
 pyre::algebra::Tensor<T, packingT, I...>::unit(Args... args) requires (sizeof...(Args) == N)
 {
     // return K-th basis element tensor
-    return _make_basis_element(index_t(args...), std::make_index_sequence<S> {});
+    return make_basis_element<size, T, packingT, I...>(index_t(args...));
 }
 
 

@@ -18,6 +18,8 @@
 #include "api.h"
 
 // implementation
+// functions to create tensors
+#include "factories.h"
 // the tensor
 #include "Tensor.h"
 // the basis elements

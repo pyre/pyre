@@ -27,23 +27,22 @@ namespace pyre::algebra {
             // otherwise, get the answer from the layout but do not count the trailing zero
             : _layout.cells() - 1; 
 
-      private:
-        // the packing strategy
-        using pack_t = packingT;
-        // index
-        using index_t = typename pack_t::index_type;
-        // of T on the heap
-        using storage_t = typename pyre::memory::stack_t< _layout.cells() , T>;
-        // data type
-        using data_t = storage_t;
-
       public:
+        // export the packing strategy
+        using pack_t = packingT;
+        // export the index type
+        using index_t = typename pack_t::index_type;
+        // export the storage type (T on the stack)
+        using storage_t = typename pyre::memory::stack_t< _layout.cells() , T>;
+        // export data type
+        using data_t = storage_t;
         // export the underlying type
         using type = T;
-        // export the rank
+        // export the rank // TOFIX: this should really be called {order}
         static constexpr int dofs = N;
         // export the container size
         static constexpr int size = S;
+        // TOFIX: export my type here Tensor<...>
 
       public:
         // default constructor
@@ -123,33 +122,21 @@ namespace pyre::algebra {
         template <size_t... J>
         constexpr void _reset(std::index_sequence<J...>);
 
-        // helper function to build the zero tensor
-        template <size_t... J>
-        static constexpr pyre::algebra::Tensor<T, packingT, I...> 
-            _make_zeros(std::index_sequence<J...>);
+        // TOFIX: from index sequence to integer sequence
 
-        // helper function to build a tensor of ones
-        template <size_t... J>
-        static constexpr pyre::algebra::Tensor<T, packingT, I...> 
-            _make_ones(std::index_sequence<J...>);
-
-        // helper function to build a tensor of zeros with a 1 at index K
-        template <size_t... J>
-        static constexpr pyre::algebra::Tensor<T, packingT, I...> 
-            _make_basis_element(index_t, std::index_sequence<J...>);
+        // TOFIX convert all these to the -> syntax
 
       public:
-        // the zero element
+        // the zero tensor // TOFIX: this should be a diagonal tensor
         static constexpr Tensor<T, packingT, I...> zero = 
-            pyre::algebra::Tensor<T, packingT, I...>::_make_zeros(
-            std::make_index_sequence<pyre::algebra::Tensor<T, packingT, I...>::size> {});
+            make_zeros<size, T, packingT, I...>();
 
-        // a tensor of ones
+        // a tensor of ones // TOFIX: call this {ones}
         static constexpr Tensor<T, packingT, I...> one = 
-            pyre::algebra::Tensor<T, packingT, I...>::_make_ones(
-            std::make_index_sequence<pyre::algebra::Tensor<T, packingT, I...>::size> {});
+            make_ones<size, T, packingT, I...>();
 
-        // the K-th unit tensor
+        // TOFIX: this should really take in input an index_T
+        // the unit tensor with a one in the entry whose indices are specified in {Args...} 
         template<typename... Args>
         static constexpr Tensor<T, packingT, I...> unit(Args...) requires (sizeof...(Args) == N);
 
