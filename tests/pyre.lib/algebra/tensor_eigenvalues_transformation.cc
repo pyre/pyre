@@ -23,16 +23,16 @@ int main(int argc, char* argv[]) {
     constexpr auto constexpr_log = [](double x) { return log(x); };
 
     // exp(zero) = one
-    static_assert(function(zero_matrix<2>, constexpr_exp) == identity_matrix<2>);
+    static_assert(function(matrix_t<2>::zero, constexpr_exp) == matrix_t<2>::identity);
 
     // log(one) = zero
-    static_assert(function(identity_matrix<2>, constexpr_log) == zero_matrix<2>);
+    static_assert(function(matrix_t<2>::identity, constexpr_log) == matrix_t<2>::zero);
 
     // exp(zero) = one
-    static_assert(function(zero_matrix<3>, constexpr_exp) == identity_matrix<3>);
+    static_assert(function(matrix_t<3>::zero, constexpr_exp) == matrix_t<3>::identity);
 
     // log(one) = zero
-    static_assert(function(identity_matrix<3>, constexpr_log) == zero_matrix<3>);
+    static_assert(function(matrix_t<3>::identity, constexpr_log) == matrix_t<3>::zero);
 
     // all done
     return 0;

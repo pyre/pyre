@@ -535,7 +535,7 @@ namespace pyre::algebra {
     template <int D, typename T>
     constexpr auto skew(const symmetric_matrix_t<D, T> & A) 
     {
-        return zero_matrix<D, T>;
+        return symmetric_matrix_t<D, T>::zero;
     }
 
     template <typename T>
@@ -683,7 +683,7 @@ namespace pyre::algebra {
     constexpr auto eigenvectors(const diagonal_matrix_t<D, T> & A)
     {
         // the canonical basis is the set of eigenvectors
-        return identity_matrix<D>;
+        return diagonal_matrix_t<D, T>::identity;
     }
 
     template <int I, int D1, int D2, typename T, class packingT>

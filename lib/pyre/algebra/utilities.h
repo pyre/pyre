@@ -11,15 +11,6 @@
 
 namespace pyre::algebra {
 
-    template <int D, typename T = real>
-    static constexpr diagonal_matrix_t<D, T> identity_matrix = matrix_t<D, D, T>::identity;
-
-    template <int D, typename T = real>
-    static constexpr diagonal_matrix_t<D, T> zero_matrix = diagonal_matrix_t<D, T>::zero;
-
-    template <int D, typename T = real>
-    static constexpr matrix_t<D, D, T> one_matrix = matrix_t<D, D, T>::ones;
-
     // helper functions for print
     template <typename Arg, typename... Args>
     inline std::ostream & _print(std::ostream & os, Arg && arg, Args &&... args)

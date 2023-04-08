@@ -19,28 +19,28 @@ using namespace pyre::algebra;
 int main(int argc, char* argv[]) {
 
     // 2D matrix: the columns of the identity are the canonical basis 
-    static_assert(col<0>(identity_matrix<2>) == VectorBasis<2>::unit<0>);
-    static_assert(col<1>(identity_matrix<2>) == VectorBasis<2>::unit<1>);
+    static_assert(col<0>(matrix_t<2>::identity) == VectorBasis<2>::unit<0>);
+    static_assert(col<1>(matrix_t<2>::identity) == VectorBasis<2>::unit<1>);
 
     // 2D matrix: the rows of the identity are the canonical basis 
-    static_assert(row<0>(identity_matrix<2>) == VectorBasis<2>::unit<0>);
-    static_assert(row<1>(identity_matrix<2>) == VectorBasis<2>::unit<1>);
+    static_assert(row<0>(matrix_t<2>::identity) == VectorBasis<2>::unit<0>);
+    static_assert(row<1>(matrix_t<2>::identity) == VectorBasis<2>::unit<1>);
 
     // 3D matrix: the columns of the identity are the canonical basis 
-    static_assert(col<0>(identity_matrix<3>) == VectorBasis<3>::unit<0>);
-    static_assert(col<1>(identity_matrix<3>) == VectorBasis<3>::unit<1>);
-    static_assert(col<2>(identity_matrix<3>) == VectorBasis<3>::unit<2>);
+    static_assert(col<0>(matrix_t<3>::identity) == VectorBasis<3>::unit<0>);
+    static_assert(col<1>(matrix_t<3>::identity) == VectorBasis<3>::unit<1>);
+    static_assert(col<2>(matrix_t<3>::identity) == VectorBasis<3>::unit<2>);
 
     // 3D matrix: the rows of the identity are the canonical basis 
-    static_assert(row<0>(identity_matrix<3>) == VectorBasis<3>::unit<0>);
-    static_assert(row<1>(identity_matrix<3>) == VectorBasis<3>::unit<1>);
-    static_assert(row<2>(identity_matrix<3>) == VectorBasis<3>::unit<2>);
+    static_assert(row<0>(matrix_t<3>::identity) == VectorBasis<3>::unit<0>);
+    static_assert(row<1>(matrix_t<3>::identity) == VectorBasis<3>::unit<1>);
+    static_assert(row<2>(matrix_t<3>::identity) == VectorBasis<3>::unit<2>);
 
     // 2D matrix: the diagonal of the identity is the ones vector 
-    static_assert(matrix_diagonal(identity_matrix<2>) == vector_t<2>::ones);
+    static_assert(matrix_diagonal(matrix_t<2>::identity) == vector_t<2>::ones);
 
     // 3D matrix: the diagonal of the identity is the ones vector 
-    static_assert(matrix_diagonal(identity_matrix<3>) == vector_t<3>::ones);
+    static_assert(matrix_diagonal(matrix_t<3>::identity) == vector_t<3>::ones);
 
     // 2D matrix: build a matrix with a given diagonal
     constexpr diagonal_matrix_t<2> matrix2D = matrix_diagonal(vector_t<2>{-1.0, 1.0});
