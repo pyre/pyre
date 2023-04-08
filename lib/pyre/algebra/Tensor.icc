@@ -197,7 +197,7 @@ constexpr pyre::algebra::Tensor<T, packingT, I...>
 pyre::algebra::Tensor<T, packingT, I...>::unit(Args... args) requires (sizeof...(Args) == N)
 {
     // return K-th basis element tensor
-    return make_basis_element<size, T, packingT, I...>(index_t(args...));
+    return make_basis_element<tensor_t>(index_t(args...));
 }
 
 

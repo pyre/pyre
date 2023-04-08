@@ -5,68 +5,59 @@
 
 namespace pyre::algebra {
     
-    template <int S /*size of tensor*/, typename T, class packingT, int... I>
-    constexpr auto make_zeros() 
-        -> pyre::algebra::Tensor<T, packingT, I...>
+    template <class tensorT>
+    constexpr auto make_zeros() -> tensorT
     {
-        using tensor_t = pyre::algebra::Tensor<T, packingT, I...>;
-
-        constexpr auto _make_zeros = []<size_t... J>(std::index_sequence<J...>) 
-            -> tensor_t
+        constexpr auto _make_zeros = []<size_t... J>(std::index_sequence<J...>) -> tensorT
         {
-            constexpr auto fill_zeros = []<size_t>() consteval-> T { return 0; };
-            // return a tensor filled with ones
-            return tensor_t(fill_zeros.template operator()<J>()...);
+            constexpr auto fill_zeros = []<size_t>() consteval-> tensorT::type { return 0; };
+            // return a tensor filled with zeros
+            return tensorT(fill_zeros.template operator()<J>()...);
         };
 
         // fill tensor with zeros
-        return _make_zeros(std::make_index_sequence<S>{});
+        return _make_zeros(std::make_index_sequence<tensorT::size>{});
     }
 
-    template <int S /*size of tensor*/, typename T, class packingT, int... I>
-    constexpr auto make_ones() 
-        -> pyre::algebra::Tensor<T, packingT, I...> 
+    template <class tensorT>
+    constexpr auto make_ones() -> tensorT 
     {
-        using tensor_t = pyre::algebra::Tensor<T, packingT, I...>;
-
-        constexpr auto _make_ones = []<size_t... J>(std::index_sequence<J...>) 
-            -> tensor_t
+        constexpr auto _make_ones = []<size_t... J>(std::index_sequence<J...>) -> tensorT
         {
-            constexpr auto fill_ones = []<size_t>() consteval-> T { return 1; };
+            constexpr auto fill_ones = []<size_t>() consteval-> tensorT::type { return 1; };
             // return a tensor filled with ones
-            return tensor_t(fill_ones.template operator()<J>()...);
+            return tensorT(fill_ones.template operator()<J>()...);
         };
 
         // fill tensor with ones
-        return _make_ones(std::make_index_sequence<S>{});
+        return _make_ones(std::make_index_sequence<tensorT::size>{});
     }
 
     // make the element of the tensor basis that has a one at the index given by {args...}
-    template <int S, typename T, class packingT, int... I>
+    template <class tensorT>
     constexpr auto make_basis_element(auto index
         // if should be /*pyre::algebra::Tensor<T, packingT, I...>::index_t index*/ but for some 
         //  reason it gives a compiler error
         )
-        -> pyre::algebra::Tensor<T, packingT, I...>
+        -> tensorT
     {
-        // typedef for tensor type and index type
-        using tensor_t = pyre::algebra::Tensor<T, packingT, I...>;
-        using index_t = tensor_t::index_t;
+        // typedef for index type
+        using index_t = tensorT::index_t;
 
         constexpr auto _make_basis_element = []<size_t... J>(index_t K, std::index_sequence<J...>) 
-            -> tensor_t
+            -> tensorT
         {
-            constexpr auto delta = [](size_t II, size_t JJ) ->T 
+            constexpr auto delta = [](size_t II, size_t JJ) -> tensorT::type 
             { 
                 if (II == JJ) return 1; 
                 return 0;
             };
 
             // fill tensor with delta_ij
-            return tensor_t(delta(pyre::algebra::Tensor<T, packingT, I...>::layout()[K] /* I */, J)...);
+            return tensorT(delta(tensorT::layout()[K] /* I */, J)...);
         };
 
-        return _make_basis_element(index, std::make_index_sequence<S>{});
+        return _make_basis_element(index, std::make_index_sequence<tensorT::size>{});
     }
 }
 
