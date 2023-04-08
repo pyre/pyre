@@ -140,6 +140,9 @@ namespace pyre::algebra {
         // a tensor of ones
         static constexpr tensor_t ones = make_ones<tensor_t>();
 
+        // the identity tensor
+        static constexpr diagonal_tensor_t identity = make_identity<tensor_t>();
+
         // the unit tensor with a one in the entry whose indices are specified in {Args...} 
         template<typename... Args>
         static constexpr tensor_t unit(Args...) requires (sizeof...(Args) == N);

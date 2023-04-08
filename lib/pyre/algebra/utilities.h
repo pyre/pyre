@@ -10,25 +10,9 @@
 
 
 namespace pyre::algebra {
-    // factory for identity matrices
-    template <int D, typename T>
-    static constexpr auto _make_identity_matrix() -> diagonal_matrix_t<D, T> 
-    {
-        diagonal_matrix_t<D, T> identity;
-
-        auto _loop = [&identity]<size_t... I>(std::index_sequence<I...>)
-        {
-            ((identity[{I, I}] = 1), ... );
-            return;
-        };
-
-        _loop(std::make_index_sequence<D> {});
-
-        return identity;
-    }
 
     template <int D, typename T = real>
-    static constexpr diagonal_matrix_t<D, T> identity_matrix = _make_identity_matrix<D, T>();
+    static constexpr diagonal_matrix_t<D, T> identity_matrix = matrix_t<D, D, T>::identity;
 
     template <int D, typename T = real>
     static constexpr diagonal_matrix_t<D, T> zero_matrix = diagonal_matrix_t<D, T>::zero;

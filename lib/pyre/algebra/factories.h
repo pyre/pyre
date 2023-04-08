@@ -56,6 +56,24 @@ namespace pyre::algebra {
 
         return _make_basis_element(index, std::make_index_sequence<tensorT::size>{});
     }
+
+    // factory for identity tensor (for now only for second order tensors)
+    template <class tensorT>
+    static constexpr auto make_identity() -> tensorT::diagonal_tensor_t 
+    requires (tensorT::order == 2)
+    {
+        typename tensorT::diagonal_tensor_t identity;
+
+        auto _loop = [&identity]<size_t... I>(std::index_sequence<I...>)
+        {
+            ((identity[{I, I}] = 1), ... );
+            return;
+        };
+
+        _loop(std::make_index_sequence<tensorT::diagonal_tensor_t::size> {});
+
+        return identity;
+    }
 }
 
 
