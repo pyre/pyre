@@ -135,7 +135,6 @@ namespace pyre::algebra {
         static constexpr Tensor<T, packingT, I...> one = 
             make_ones<size, T, packingT, I...>();
 
-        // TOFIX: this should really take in input an index_T
         // the unit tensor with a one in the entry whose indices are specified in {Args...} 
         template<typename... Args>
         static constexpr Tensor<T, packingT, I...> unit(Args...) requires (sizeof...(Args) == N);
