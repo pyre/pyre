@@ -134,8 +134,8 @@ namespace pyre::algebra {
         // TOFIX convert all these to the -> syntax
 
       public:
-        // the zero tensor // TOFIX: this should be a diagonal tensor
-        static constexpr tensor_t zero = make_zeros<tensor_t>();
+        // the zero tensor
+        static constexpr diagonal_tensor_t zero = make_zeros<tensor_t>();
 
         // a tensor of ones
         static constexpr tensor_t ones = make_ones<tensor_t>();

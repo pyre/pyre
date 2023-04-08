@@ -4,19 +4,20 @@
 
 
 namespace pyre::algebra {
-    
+
     template <class tensorT>
-    constexpr auto make_zeros() -> tensorT
+    constexpr auto make_zeros() -> tensorT::diagonal_tensor_t
     {
-        constexpr auto _make_zeros = []<size_t... J>(std::index_sequence<J...>) -> tensorT
+        constexpr auto _make_zeros = []<size_t... J>(std::index_sequence<J...>) -> 
+            tensorT::diagonal_tensor_t
         {
             constexpr auto fill_zeros = []<size_t>() consteval-> tensorT::type { return 0; };
             // return a tensor filled with zeros
-            return tensorT(fill_zeros.template operator()<J>()...);
+            return typename tensorT::diagonal_tensor_t(fill_zeros.template operator()<J>()...);
         };
 
         // fill tensor with zeros
-        return _make_zeros(std::make_index_sequence<tensorT::size>{});
+        return _make_zeros(std::make_index_sequence<tensorT::diagonal_tensor_t::size>{});
     }
 
     template <class tensorT>
