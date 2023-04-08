@@ -37,10 +37,10 @@ int main(int argc, char* argv[]) {
     static_assert(row<2>(identity_matrix<3>) == VectorBasis<3>::unit<2>);
 
     // 2D matrix: the diagonal of the identity is the ones vector 
-    static_assert(matrix_diagonal(identity_matrix<2>) == vector_t<2>::one);
+    static_assert(matrix_diagonal(identity_matrix<2>) == vector_t<2>::ones);
 
     // 3D matrix: the diagonal of the identity is the ones vector 
-    static_assert(matrix_diagonal(identity_matrix<3>) == vector_t<3>::one);
+    static_assert(matrix_diagonal(identity_matrix<3>) == vector_t<3>::ones);
 
     // 2D matrix: build a matrix with a given diagonal
     constexpr diagonal_matrix_t<2> matrix2D = matrix_diagonal(vector_t<2>{-1.0, 1.0});

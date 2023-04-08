@@ -34,7 +34,7 @@ namespace pyre::algebra {
     static constexpr diagonal_matrix_t<D, T> zero_matrix = diagonal_matrix_t<D, T>::zero;
 
     template <int D, typename T = real>
-    static constexpr matrix_t<D, D, T> one_matrix = matrix_t<D, D, T>::one;
+    static constexpr matrix_t<D, D, T> one_matrix = matrix_t<D, D, T>::ones;
 
     // helper functions for print
     template <typename Arg, typename... Args>

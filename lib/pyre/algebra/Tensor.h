@@ -137,8 +137,8 @@ namespace pyre::algebra {
         // the zero tensor // TOFIX: this should be a diagonal tensor
         static constexpr tensor_t zero = make_zeros<size, T, packingT, I...>();
 
-        // a tensor of ones // TOFIX: call this {ones}
-        static constexpr tensor_t one = make_ones<size, T, packingT, I...>();
+        // a tensor of ones
+        static constexpr tensor_t ones = make_ones<size, T, packingT, I...>();
 
         // the unit tensor with a one in the entry whose indices are specified in {Args...} 
         template<typename... Args>
