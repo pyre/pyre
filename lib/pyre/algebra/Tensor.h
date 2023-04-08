@@ -38,8 +38,8 @@ namespace pyre::algebra {
         using data_t = storage_t;
         // export the underlying type
         using type = T;
-        // export the rank // TOFIX: this should really be called {order}
-        static constexpr int dofs = N;
+        // export the order
+        static constexpr int order = N;
         // export the container size
         static constexpr int size = S;
         // TOFIX: export my type here Tensor<...>
