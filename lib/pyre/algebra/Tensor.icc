@@ -171,6 +171,13 @@ constexpr bool pyre::algebra::Tensor<T, packingT, I...>::is_diagonal() const
 }
 
 template <typename T, class packingT, int... I>
+constexpr bool pyre::algebra::Tensor<T, packingT, I...>::is_square()
+{
+    // if all the entries {I1, ..., IN} in the parameter pack are equal then the tensor is square  
+    return entries_all_equal<I...>();
+}
+
+template <typename T, class packingT, int... I>
 template <size_t... J, class... T2>
 constexpr void
 pyre::algebra::Tensor<T, packingT, I...>::_initialize(std::index_sequence<J...>, T2... args)

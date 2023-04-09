@@ -120,6 +120,9 @@ namespace pyre::algebra {
         // checks if the packing is diagonal
         constexpr bool is_diagonal() const;
 
+        // checks if the layout is square
+        static constexpr bool is_square();
+
       private:
         // helper function for index sequence
         template <size_t... J, class... T2>
