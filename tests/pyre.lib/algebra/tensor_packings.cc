@@ -18,12 +18,12 @@ using namespace pyre::algebra;
 int main(int argc, char* argv[]) {
 
     // Packing-independent base for 2D matrix 
-    static constexpr auto e_00 = MatrixBasis<2>::unit<0, 0>;
-    static constexpr auto e_01 = MatrixBasis<2>::unit<0, 1>;
-    static constexpr auto e_10 = MatrixBasis<2>::unit<1, 0>;
-    static constexpr auto e_11 = MatrixBasis<2>::unit<1, 1>;
-    static constexpr auto e_01s = symmetric(MatrixBasis<2>::unit<0, 1> 
-                                            + MatrixBasis<2>::unit<1, 0>);
+    static constexpr auto e_00 = matrix_t<2>::unit<0, 0>;
+    static constexpr auto e_01 = matrix_t<2>::unit<0, 1>;
+    static constexpr auto e_10 = matrix_t<2>::unit<1, 0>;
+    static constexpr auto e_11 = matrix_t<2>::unit<1, 1>;
+    static constexpr auto e_01s = symmetric(matrix_t<2>::unit<0, 1> 
+                                            + matrix_t<2>::unit<1, 0>);
 
     // a 2D matrix
     static constexpr auto A = true * e_00 + 2.0 * e_01 + 3.0 * e_10 + 4 * e_11;
