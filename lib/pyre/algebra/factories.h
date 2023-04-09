@@ -55,30 +55,66 @@ namespace pyre::algebra {
         return _make_ones(std::make_index_sequence<tensorT::size>{});
     }
 
+    namespace {
+        template <class tensorT, int... I>
+        constexpr auto make_basis_element_implementation()
+        -> tensorT
+        {
+            // typedef for index type
+            using index_t = tensorT::index_t;
+            // wrap the parameter pack into an index
+            index_t index(I...);
+
+            // make an element of the basis by the Kronecker delta
+            constexpr auto _make_basis_element = []<size_t... J>(index_t K, std::index_sequence<J...>) 
+                -> tensorT
+            {
+                constexpr auto delta = [](size_t II, size_t JJ) -> tensorT::type 
+                { 
+                    if (II == JJ) return 1; 
+                    return 0;
+                };
+
+                // fill tensor with delta_ij
+                return tensorT(delta(tensorT::layout()[K] /* I */, J)...);
+            };
+
+            return _make_basis_element(index, std::make_index_sequence<tensorT::size>{});
+        }
+    }
+
     // make the element of the tensor basis that has a one at the index given by {I...}
     template <class tensorT, int... I>
     constexpr auto make_basis_element()
         -> tensorT
-        requires (sizeof...(I) == tensorT::order)
+        requires (sizeof...(I) == tensorT::order
+            && 
+            // not a
+            !(
+                // diagonal entry
+                entries_all_equal<I...>() &&
+                // of a square tensor 
+                tensorT::is_square()
+            ))
     {
-        // typedef for index type
-        using index_t = tensorT::index_t;
-        index_t index(I...);
+        // return the requested element of the basis (non-diagonal version, returns a full tensor)
+        return make_basis_element_implementation<tensorT, I...>();
+    }
 
-        constexpr auto _make_basis_element = []<size_t... J>(index_t K, std::index_sequence<J...>) 
-            -> tensorT
-        {
-            constexpr auto delta = [](size_t II, size_t JJ) -> tensorT::type 
-            { 
-                if (II == JJ) return 1; 
-                return 0;
-            };
-
-            // fill tensor with delta_ij
-            return tensorT(delta(tensorT::layout()[K] /* I */, J)...);
-        };
-
-        return _make_basis_element(index, std::make_index_sequence<tensorT::size>{});
+    // make the element of the tensor basis that has a one at the index given by {I...}
+    //  (diagonal version: index is on diagonal and tensor is square)
+    template <class tensorT, int... I>
+    constexpr auto make_basis_element()
+        -> tensorT::diagonal_tensor_t
+        requires (sizeof...(I) == tensorT::order
+            && 
+            // diagonal entry
+            entries_all_equal<I...>() &&
+            // of a square tensor 
+            tensorT::is_square())
+    {
+        // return the requested element of the basis (diagonal version, returns a diagonal tensor)
+        return make_basis_element_implementation<typename tensorT::diagonal_tensor_t, I...>();
     }
 
     // factory for identity tensor (for now only for second order tensors)
