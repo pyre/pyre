@@ -55,7 +55,7 @@ namespace pyre::algebra {
         return _make_ones(std::make_index_sequence<tensorT::size>{});
     }
 
-    // make the element of the tensor basis that has a one at the index given by {args...}
+    // make the element of the tensor basis that has a one at the index given by {I...}
     template <class tensorT, int... I>
     constexpr auto make_basis_element()
         -> tensorT
