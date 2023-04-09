@@ -609,7 +609,7 @@ namespace pyre::tensor {
     {
         // get the eigenvalues
         auto lambda = eigenvalues(A);
-        auto eps = epsilon(norm(A));
+        auto eps = pyre::algebra::epsilon(norm(A));
 
         // first eigenvector
         vector_t<3, T> v0;
