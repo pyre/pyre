@@ -5,6 +5,27 @@
 
 namespace pyre::algebra {
 
+    // returns whether the entries in a parameter pack {I...} are all equal
+    template <int... I>
+    constexpr auto entries_all_equal() -> bool
+    {
+        // store the template parameter pack in an array for convenience
+        constexpr std::array<int, sizeof...(I)> index {I...};
+
+        // helper function to check whether all entries in {index} are equal
+        constexpr auto _entries_all_equal = [index]<size_t... J>(std::index_sequence<J...>) {
+            // if all entries in the index are equal
+            if constexpr (((index[J] == index[J + 1]) && ...)) {
+                // then the index is diagonal
+                return true;
+            }
+            // then the index is not diagonal
+            return false;
+        };
+
+        return _entries_all_equal(std::make_index_sequence<sizeof...(I) - 1> {});
+    }
+
     template <class tensorT>
     constexpr auto make_zeros() -> tensorT::diagonal_tensor_t
     {
