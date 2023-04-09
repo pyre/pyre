@@ -17,7 +17,7 @@
 // support
 #include <pyre/journal.h>
 #include <pyre/grid.h>
-#include <pyre/algebra/machine_epsilon.h>
+#include <pyre/algebra/epsilon.h>
 
 
 // aliases that define implementation choices
