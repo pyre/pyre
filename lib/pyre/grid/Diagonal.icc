@@ -86,11 +86,12 @@ pyre::grid::Diagonal<N, containerT>::
 index(difference_type offset) const -> index_type
 {
     // helper function to build an {index_type} repeating {offset} N times
-    constexpr auto _getIndex = []<size_t... I>(difference_type offset, std::index_sequence<I...>) 
+    constexpr auto _getIndex = []<int... I>(difference_type offset, 
+        integer_sequence<I...>) 
         -> index_type
     {
         // helper template function returning {offset}
-        constexpr auto _wrap = []<size_t>(difference_type offset)->difference_type 
+        constexpr auto _wrap = []<int>(difference_type offset)->difference_type 
         { 
             return  offset; 
         };
@@ -100,7 +101,7 @@ index(difference_type offset) const -> index_type
     };
 
     // shift it by {_origin} and return it
-    return _getIndex(offset, std::make_index_sequence<N> {}) + _origin;
+    return _getIndex(offset, make_integer_sequence<N> {}) + _origin;
 }
 
 template <int N, template <typename, std::size_t> class containerT>
@@ -109,8 +110,8 @@ pyre::grid::Diagonal<N, containerT>::
 _isDiagonalIndex (index_const_reference index) -> bool
 {
     // helper function needed to check if it is a diagonal index
-    auto _checkDiagonalIndex = []<size_t... I>(index_const_reference index, 
-        std::index_sequence<I...>) -> bool
+    auto _checkDiagonalIndex = []<int... I>(index_const_reference index, 
+        integer_sequence<I...>) -> bool
     {
         // if all indices are equal
         if (((index[I] == index[I + 1]) && ...)) {
@@ -122,7 +123,7 @@ _isDiagonalIndex (index_const_reference index) -> bool
     };
 
     // check if index is on the diagonal
-    return _checkDiagonalIndex(index, std::make_index_sequence<N - 1> {});
+    return _checkDiagonalIndex(index, make_integer_sequence<N - 1> {});
 };
 
 // from {index_type} to {difference_type}

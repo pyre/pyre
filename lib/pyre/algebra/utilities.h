@@ -20,9 +20,9 @@ namespace pyre::algebra {
         return os;
     }
 
-    template <int D, typename T, std::size_t... J>
+    template <int D, typename T, int... J>
     inline std::ostream & _print_vector(
-        std::ostream & os, const pyre::algebra::vector_t<D, T> & vector, std::index_sequence<J...>)
+        std::ostream & os, const pyre::algebra::vector_t<D, T> & vector, integer_sequence<J...>)
     {
         os << "[ ";
         if (sizeof...(J) > 0)
@@ -31,9 +31,9 @@ namespace pyre::algebra {
         return os;
     }
 
-    template <int D1, int D2, typename T, class packingT, size_t... J>
+    template <int D1, int D2, typename T, class packingT, int... J>
     std::ostream & _print_row(
-        std::ostream & os, const matrix_t<D1, D2, T, packingT> & tensor, size_t row, std::index_sequence<J...>)
+        std::ostream & os, const matrix_t<D1, D2, T, packingT> & tensor, int row, integer_sequence<J...>)
     {
         os << "[ ";
         if (sizeof...(J) > 0)
@@ -42,22 +42,22 @@ namespace pyre::algebra {
         return os;
     }
 
-    template <int D1, int D2, typename T, class packingT, size_t... J>
+    template <int D1, int D2, typename T, class packingT, int... J>
     std::ostream & _print_comma_row(
-        std::ostream & os, const matrix_t<D1, D2, T, packingT> & tensor, size_t row, 
-        std::index_sequence<J...>)
+        std::ostream & os, const matrix_t<D1, D2, T, packingT> & tensor, int row, 
+        integer_sequence<J...>)
     {
         os << ",";
-        return _print_row(os, tensor, row, std::make_index_sequence<D2> {});
+        return _print_row(os, tensor, row, make_integer_sequence<D2> {});
     }
 
-    template <int D1, int D2, typename T, class packingT, size_t... J>
+    template <int D1, int D2, typename T, class packingT, int... J>
     std::ostream & _print_matrix(
-        std::ostream & os, const matrix_t<D1, D2, T, packingT> & tensor, std::index_sequence<J...>)
+        std::ostream & os, const matrix_t<D1, D2, T, packingT> & tensor, integer_sequence<J...>)
     {
         os << "[ ";
-        _print_row(os, tensor, 0, std::make_index_sequence<D2> {});
-        ((_print_comma_row(os, tensor, J + 1, std::make_index_sequence<D2> {})), ...);
+        _print_row(os, tensor, 0, make_integer_sequence<D2> {});
+        ((_print_comma_row(os, tensor, J + 1, make_integer_sequence<D2> {})), ...);
         os << " ]";
         return os;
     }
@@ -66,14 +66,14 @@ namespace pyre::algebra {
     template <int D, typename T>
     std::ostream & operator<<(std::ostream & os, const pyre::algebra::vector_t<D, T> & vector)
     {
-        return _print_vector(os, vector, std::make_index_sequence<D> {});
+        return _print_vector(os, vector, make_integer_sequence<D> {});
     }
 
     // overload operator<< for second order tensors
     template <int D1, int D2, typename T, class packingT>
     std::ostream & operator<<(std::ostream & os, const pyre::algebra::matrix_t<D1, D2, T, packingT> & tensor)
     {
-        return _print_matrix(os, tensor, std::make_index_sequence<D1-1> {});
+        return _print_matrix(os, tensor, make_integer_sequence<D1-1> {});
     }
 
     template <typename T>
@@ -92,8 +92,8 @@ namespace pyre::algebra {
         const Tensor<T, packingT, I...> & rhs)
     {
         // helper function (component-wise)
-        constexpr auto _is_equal = []<size_t... J>(const Tensor<T, packingT, I...> & lhs, 
-            const Tensor<T, packingT, I...> & rhs, std::index_sequence<J...>) {
+        constexpr auto _is_equal = []<int... J>(const Tensor<T, packingT, I...> & lhs, 
+            const Tensor<T, packingT, I...> & rhs, integer_sequence<J...>) {
 
             // if all components are equal
             if ((is_equal(lhs[J], rhs[J]) && ...)) {
@@ -107,15 +107,15 @@ namespace pyre::algebra {
         // the size of the tensor
         constexpr int D = Tensor<T, packingT, I...>::size;
         // all done
-        return _is_equal(lhs, rhs, std::make_index_sequence<D> {});
+        return _is_equal(lhs, rhs, make_integer_sequence<D> {});
     }
 
     template <typename T, class packingT, int... I>
     constexpr bool is_zero(const Tensor<T, packingT, I...> & A, T tolerance)
     {
         // helper function (component-wise)
-        constexpr auto _is_zero = []<size_t... J>(const Tensor<T, packingT, I...> & A, 
-            T tolerance, std::index_sequence<J...>) {
+        constexpr auto _is_zero = []<int... J>(const Tensor<T, packingT, I...> & A, 
+            T tolerance, integer_sequence<J...>) {
 
             // if all components are zero
             if (((A[J] <= tolerance) && ...)) {
@@ -129,11 +129,11 @@ namespace pyre::algebra {
         // the size of the tensor
         constexpr int D = Tensor<T, packingT, I...>::size;
         // all done
-        return _is_zero(A, tolerance, std::make_index_sequence<D> {});
+        return _is_zero(A, tolerance, make_integer_sequence<D> {});
     }
 
     // helper function (compare J-th component)
-    template <size_t J, typename T, class packingT, int... I>
+    template <int J, typename T, class packingT, int... I>
     constexpr auto is_less(const Tensor<T, packingT, I...>& lhs, 
     const Tensor<T, packingT, I...>& rhs) -> bool 
         requires(J < Tensor<T, packingT, I...>::size)
@@ -154,7 +154,7 @@ namespace pyre::algebra {
     }
 
     // helper function (compare J-th component)
-    template <size_t J, typename T, class packingT, int... I>
+    template <int J, typename T, class packingT, int... I>
     constexpr auto is_less(const Tensor<T, packingT, I...>& lhs, 
     const Tensor<T, packingT, I...>& rhs) -> bool 
         requires(J == Tensor<T, packingT, I...>::size)

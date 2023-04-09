@@ -36,7 +36,7 @@ constexpr pyre::algebra::Tensor<T, packingT, I...>::Tensor(T2... args)
     : Tensor()
 {
     // initialize with input arguments
-    _initialize(std::make_index_sequence<S> {}, args...);
+    _initialize(make_integer_sequence<S> {}, args...);
 
     // all done
     return;
@@ -148,7 +148,7 @@ template <typename T, class packingT, int... I>
 constexpr void pyre::algebra::Tensor<T, packingT, I...>::reset()
 {
     // reset to zero all entries
-    return _reset(std::make_index_sequence<S> {});
+    return _reset(make_integer_sequence<S> {});
 }
 
 template <typename T, class packingT, int... I>
@@ -178,9 +178,9 @@ constexpr bool pyre::algebra::Tensor<T, packingT, I...>::is_square()
 }
 
 template <typename T, class packingT, int... I>
-template <size_t... J, class... T2>
+template <int... J, class... T2>
 constexpr void
-pyre::algebra::Tensor<T, packingT, I...>::_initialize(std::index_sequence<J...>, T2... args)
+pyre::algebra::Tensor<T, packingT, I...>::_initialize(integer_sequence<J...>, T2... args)
 {
     ((_data[J] = args), ...);
 
@@ -189,8 +189,8 @@ pyre::algebra::Tensor<T, packingT, I...>::_initialize(std::index_sequence<J...>,
 }
 
 template <typename T, class packingT, int... I>
-template <size_t... J>
-constexpr void pyre::algebra::Tensor<T, packingT, I...>::_reset(std::index_sequence<J...>)
+template <int... J>
+constexpr void pyre::algebra::Tensor<T, packingT, I...>::_reset(integer_sequence<J...>)
 {
     ((_data[J] = T()), ...);
 

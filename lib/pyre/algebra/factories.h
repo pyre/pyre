@@ -13,7 +13,7 @@ namespace pyre::algebra {
         constexpr std::array<int, sizeof...(I)> index {I...};
 
         // helper function to check whether all entries in {index} are equal
-        constexpr auto _entries_all_equal = [index]<size_t... J>(std::index_sequence<J...>) {
+        constexpr auto _entries_all_equal = [index]<int... J>(integer_sequence<J...>) {
             // if all entries in the index are equal
             if constexpr (((index[J] == index[J + 1]) && ...)) {
                 // then the index is diagonal
@@ -23,36 +23,36 @@ namespace pyre::algebra {
             return false;
         };
 
-        return _entries_all_equal(std::make_index_sequence<sizeof...(I) - 1> {});
+        return _entries_all_equal(make_integer_sequence<sizeof...(I) - 1> {});
     }
 
     template <class tensorT>
     constexpr auto make_zeros() -> tensorT::diagonal_tensor_t
     {
-        constexpr auto _make_zeros = []<size_t... J>(std::index_sequence<J...>) -> 
+        constexpr auto _make_zeros = []<int... J>(integer_sequence<J...>) -> 
             tensorT::diagonal_tensor_t
         {
-            constexpr auto fill_zeros = []<size_t>() consteval-> tensorT::type { return 0; };
+            constexpr auto fill_zeros = []<int>() consteval-> tensorT::type { return 0; };
             // return a tensor filled with zeros
             return typename tensorT::diagonal_tensor_t(fill_zeros.template operator()<J>()...);
         };
 
         // fill tensor with zeros
-        return _make_zeros(std::make_index_sequence<tensorT::diagonal_tensor_t::size>{});
+        return _make_zeros(make_integer_sequence<tensorT::diagonal_tensor_t::size>{});
     }
 
     template <class tensorT>
     constexpr auto make_ones() -> tensorT 
     {
-        constexpr auto _make_ones = []<size_t... J>(std::index_sequence<J...>) -> tensorT
+        constexpr auto _make_ones = []<int... J>(integer_sequence<J...>) -> tensorT
         {
-            constexpr auto fill_ones = []<size_t>() consteval-> tensorT::type { return 1; };
+            constexpr auto fill_ones = []<int>() consteval-> tensorT::type { return 1; };
             // return a tensor filled with ones
             return tensorT(fill_ones.template operator()<J>()...);
         };
 
         // fill tensor with ones
-        return _make_ones(std::make_index_sequence<tensorT::size>{});
+        return _make_ones(make_integer_sequence<tensorT::size>{});
     }
 
     namespace {
@@ -66,10 +66,10 @@ namespace pyre::algebra {
             index_t index(I...);
 
             // make an element of the basis by the Kronecker delta
-            constexpr auto _make_basis_element = []<size_t... J>(index_t K, std::index_sequence<J...>) 
+            constexpr auto _make_basis_element = []<int... J>(index_t K, integer_sequence<J...>) 
                 -> tensorT
             {
-                constexpr auto delta = [](size_t II, size_t JJ) -> tensorT::type 
+                constexpr auto delta = [](int II, int JJ) -> tensorT::type 
                 { 
                     if (II == JJ) return 1; 
                     return 0;
@@ -79,7 +79,7 @@ namespace pyre::algebra {
                 return tensorT(delta(tensorT::layout()[K] /* I */, J)...);
             };
 
-            return _make_basis_element(index, std::make_index_sequence<tensorT::size>{});
+            return _make_basis_element(index, make_integer_sequence<tensorT::size>{});
         }
     }
 
@@ -122,16 +122,16 @@ namespace pyre::algebra {
     static constexpr auto make_identity() -> tensorT::diagonal_tensor_t 
     requires (tensorT::order == 2)
     {
-        constexpr auto _make_ones = []<size_t... J>(std::index_sequence<J...>) -> 
+        constexpr auto _make_ones = []<int... J>(integer_sequence<J...>) -> 
             tensorT::diagonal_tensor_t
         {
-            constexpr auto fill_ones = []<size_t>() consteval-> tensorT::type { return 1; };
+            constexpr auto fill_ones = []<int>() consteval-> tensorT::type { return 1; };
             // return a tensor filled with zeros
             return typename tensorT::diagonal_tensor_t(fill_ones.template operator()<J>()...);
         };
 
         // fill tensor with zeros
-        return _make_ones(std::make_index_sequence<tensorT::diagonal_tensor_t::size>{});
+        return _make_ones(make_integer_sequence<tensorT::diagonal_tensor_t::size>{});
     }
 }
 

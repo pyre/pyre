@@ -22,6 +22,12 @@
 // aliases that define implementation choices
 namespace pyre::algebra {
 
+    // sequences of integers
+    template <int N>
+    using make_integer_sequence = std::make_integer_sequence<int, N>;
+    template <int... I>
+    using integer_sequence = std::integer_sequence<int, I...>;
+
 }
 
 

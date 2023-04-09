@@ -125,15 +125,12 @@ namespace pyre::algebra {
 
       private:
         // helper function for index sequence
-        template <size_t... J, class... T2>
-        constexpr void _initialize(std::index_sequence<J...>, T2...);
+        template <int... J, class... T2>
+        constexpr void _initialize(integer_sequence<J...>, T2...);
 
         // helper function for index sequence
-        template <size_t... J>
-        constexpr void _reset(std::index_sequence<J...>);
-
-        // TOFIX: from index sequence to integer sequence
-
+        template <int... J>
+        constexpr void _reset(integer_sequence<J...>);
 
       public:
         // the zero tensor

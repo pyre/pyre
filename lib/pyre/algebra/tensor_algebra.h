@@ -45,10 +45,10 @@ namespace pyre::algebra {
 
     // Algebraic operations on vectors, tensors, ...
     // vector_t times scalar
-    template <typename T2, typename T, class packingT, int... I, size_t... J>
+    template <typename T2, typename T, class packingT, int... I, int... J>
     constexpr void _vector_times_scalar(
         T2 a, const Tensor<T, packingT, I...> & y, Tensor<T, packingT, I...> & result,
-        std::index_sequence<J...>) requires (std::convertible_to<T2, T>)
+        integer_sequence<J...>) requires (std::convertible_to<T2, T>)
     {
         ((result[J] = y[J] * a), ...);
         return;
@@ -240,8 +240,8 @@ namespace pyre::algebra {
     template <int K, int D, typename T, class packingT>
     constexpr matrix_t<D, D, T, packingT> matrix_row(const vector_t<D, T> & v)
     {
-        constexpr auto _fill_matrix_row = []<size_t... I>(
-            matrix_t<D, D, T, packingT> A, const vector_t<D, T> & v, std::index_sequence<I...>) 
+        constexpr auto _fill_matrix_row = []<int... I>(
+            matrix_t<D, D, T, packingT> A, const vector_t<D, T> & v, integer_sequence<I...>) 
             -> matrix_t<D, D, T, packingT>
         {
             ((A[{K, I}] = v[{ I }]), ...);
@@ -249,28 +249,28 @@ namespace pyre::algebra {
         };
         // fill row K of a zero matrix with vector v
         return _fill_matrix_row(matrix_t<D, D, T, packingT>::zero, v, 
-            std::make_index_sequence<D> {});
+            make_integer_sequence<D> {});
     }
     // builds a square matrix with all zeros except the K-th column is equal to v
     template <int K, int D, typename T>
     constexpr matrix_t<D, D, T> matrix_column(const vector_t<D, T> & v)
     {
-        constexpr auto _fill_matrix_column = []<size_t... I>(
-            matrix_t<D, D, T> A, const vector_t<D, T> & v, std::index_sequence<I...>) 
+        constexpr auto _fill_matrix_column = []<int... I>(
+            matrix_t<D, D, T> A, const vector_t<D, T> & v, integer_sequence<I...>) 
             -> matrix_t<D, D, T>
         {
             ((A[{I, K}] = v[{ I }]), ...);
             return A;
         };
         // fill column K of a zero matrix with vector v
-        return _fill_matrix_column(matrix_t<D, D, T>::zero, v, std::make_index_sequence<D> {});
+        return _fill_matrix_column(matrix_t<D, D, T>::zero, v, make_integer_sequence<D> {});
     }
     // builds a square matrix with all zeros except the diagonal is equal to v
     template <int D, typename T>
     constexpr diagonal_matrix_t<D, T> matrix_diagonal(const vector_t<D, T> & v)
     {
-        constexpr auto _fill_matrix_diagonal = []<size_t... I>(
-            diagonal_matrix_t<D, T> A, const vector_t<D, T> & v, std::index_sequence<I...>) 
+        constexpr auto _fill_matrix_diagonal = []<int... I>(
+            diagonal_matrix_t<D, T> A, const vector_t<D, T> & v, integer_sequence<I...>) 
             -> diagonal_matrix_t<D, T>
         {
             ((A[{I, I}] = v[{ I }]), ...);
@@ -279,20 +279,20 @@ namespace pyre::algebra {
         // instantiate a diagonal matrix
         diagonal_matrix_t<D, T> A;
         // fill diagonal of a zero matrix with vector v
-        return _fill_matrix_diagonal(A, v, std::make_index_sequence<D> {});
+        return _fill_matrix_diagonal(A, v, make_integer_sequence<D> {});
     }
     // builds the vector with the diagonal entries of a matrix
     template <int D, typename T, class packingT>
     constexpr vector_t<D, T> matrix_diagonal(const matrix_t<D, D, T, packingT> & A)
     {
-        auto _fill_vector_with_matrix_diagonal = [&A]<size_t... J>(std::index_sequence<J...>) 
+        auto _fill_vector_with_matrix_diagonal = [&A]<int... J>(integer_sequence<J...>) 
             -> vector_t<D, T>
         {
-            auto wrap = [&A]<size_t K>()->T { return  A[{K, K}]; };
+            auto wrap = [&A]<int K>()->T { return  A[{K, K}]; };
             return vector_t<D, T>(wrap.template operator()<J>()...);
         };
         // fill a vector with the diagonal of A and return it
-        return _fill_vector_with_matrix_diagonal(std::make_index_sequence<D> {});
+        return _fill_vector_with_matrix_diagonal(make_integer_sequence<D> {});
     }
     // row-column vector product
     template <int D, typename T>
@@ -300,13 +300,13 @@ namespace pyre::algebra {
         const vector_t<D, T> & v1, const vector_t<D, T> & v2) 
     {
         // helper function (scalar product)
-        constexpr auto _vector_times_vector = []<size_t... K>(
+        constexpr auto _vector_times_vector = []<int... K>(
             const vector_t<D, T> & v1, const vector_t<D, T> & v2, 
-            std::index_sequence<K...>) ->T 
+            integer_sequence<K...>) ->T 
         { 
             return ((v1[{ K }] * v2[{ K }]) + ...);
         };
-        return _vector_times_vector(v1, v2, std::make_index_sequence<D> {});
+        return _vector_times_vector(v1, v2, make_integer_sequence<D> {});
     }
     // matrix-vector multiplication
     template <int D1, int D2, typename T, class packingT>
@@ -314,13 +314,13 @@ namespace pyre::algebra {
         const matrix_t<D1, D2, T, packingT> & A, const vector_t<D2, T> & v) 
     {
         // helper function
-        constexpr auto _matrix_times_vector = []<size_t... K>(
+        constexpr auto _matrix_times_vector = []<int... K>(
             const matrix_t<D1, D2, T, packingT> & A, const vector_t<D2, T> & v, 
-            std::index_sequence<K...>) -> vector_t<D1, T> 
+            integer_sequence<K...>) -> vector_t<D1, T> 
         { 
             return vector_t<D1, T>((row<K>(A) * v)...);
         };
-        return _matrix_times_vector(A, v, std::make_index_sequence<D2> {});
+        return _matrix_times_vector(A, v, make_integer_sequence<D2> {});
     }
     // vector-matrix multiplication
     template <int D1, int D2, typename T, class packingT>
@@ -336,16 +336,16 @@ namespace pyre::algebra {
         requires(D1 != 1 && D2 != 1 && D3 != 1)
     {
         // helper function
-        constexpr auto _matrix_times_matrix = []<size_t... K>(
+        constexpr auto _matrix_times_matrix = []<int... K>(
             const matrix_t<D1, D2, T, packingT1> & A1, 
             const matrix_t<D2, D3, T, packingT2> & A2, 
-            std::index_sequence<K...>) -> matrix_t<D1, D3, T> 
+            integer_sequence<K...>) -> matrix_t<D1, D3, T> 
         {
             // for each K build the matrix whose column K is equal to A1 * col<K>(A2)
             // then add them all up
             return (matrix_column<K>(A1 * col<K>(A2)) + ...);
         };
-        return _matrix_times_matrix(A1, A2, std::make_index_sequence<D3> {});
+        return _matrix_times_matrix(A1, A2, make_integer_sequence<D3> {});
     }
 
     // Tensor operator*=
@@ -485,11 +485,11 @@ namespace pyre::algebra {
     template <int D, typename T, class packingT>
     constexpr T trace(const matrix_t<D, D, T, packingT> & A)
     {
-        auto _trace = [&A]<size_t... J>(std::index_sequence<J...>) ->T
+        auto _trace = [&A]<int... J>(integer_sequence<J...>) ->T
         {
             return (A[{J, J}]+ ... );
         };
-        return _trace(std::make_index_sequence<D> {});
+        return _trace(make_integer_sequence<D> {});
     }
 
     template <int D1, int D2, typename T, class packingT>
@@ -497,15 +497,15 @@ namespace pyre::algebra {
     {
         // A transposed
         matrix_t<D2, D1, T, packingT> AT;
-        auto _transposeJ = [&A, &AT]<size_t... J>(std::index_sequence<J...>){
-            auto _transposeI = [&A, &AT]<size_t K, size_t... I>(std::index_sequence<I...>)
+        auto _transposeJ = [&A, &AT]<int... J>(integer_sequence<J...>){
+            auto _transposeI = [&A, &AT]<int K, int... I>(integer_sequence<I...>)
             {
                 ((AT[{K, I}] = A [{I, K}]), ... );
                 return;
             };
-            (_transposeI.template operator()<J>(std::make_index_sequence<D1> {}), ...);
+            (_transposeI.template operator()<J>(make_integer_sequence<D1> {}), ...);
         };
-        _transposeJ(std::make_index_sequence<D2> {});
+        _transposeJ(make_integer_sequence<D2> {});
         return AT;
     }
 
@@ -513,15 +513,15 @@ namespace pyre::algebra {
     constexpr symmetric_matrix_t<D, T> symmetric(const matrix_t<D, D, T, packingT> & A)
     {
         symmetric_matrix_t<D, T> sym;
-        auto _fill_column = [&A, &sym]<size_t... K>(std::index_sequence<K...>){
-            auto _fill_row = [&A, &sym]<size_t J, size_t... I>(std::index_sequence<I...>)
+        auto _fill_column = [&A, &sym]<int... K>(integer_sequence<K...>){
+            auto _fill_row = [&A, &sym]<int J, int... I>(integer_sequence<I...>)
             {
                 ((sym[{I, J}] = 0.5 * (A[{I, J}] + A[{J, I}])), ... );
                 return;
             };
-            (_fill_row.template operator()<K>(std::make_index_sequence<D> {}), ...);
+            (_fill_row.template operator()<K>(make_integer_sequence<D> {}), ...);
         };
-        _fill_column(std::make_index_sequence<D> {});
+        _fill_column(make_integer_sequence<D> {});
         return sym;
     }
 
@@ -689,23 +689,23 @@ namespace pyre::algebra {
     template <int I, int D1, int D2, typename T, class packingT>
     constexpr vector_t<D2, T> row(const matrix_t<D1, D2, T, packingT> & A)
     {
-        auto _row = [&A]<size_t... J>(std::index_sequence<J...>) -> vector_t<D2, T>
+        auto _row = [&A]<int... J>(integer_sequence<J...>) -> vector_t<D2, T>
         {
-            auto wrap = [&A]<size_t K>()->T { return  A[{I, K}]; };
+            auto wrap = [&A]<int K>()->T { return  A[{I, K}]; };
             return vector_t<D2, T>(wrap.template operator()<J>()...);
         };
-        return _row(std::make_index_sequence<D1> {});
+        return _row(make_integer_sequence<D1> {});
     }
 
     template <int I, int D1, int D2, typename T, class packingT>
     constexpr vector_t<D1, T> col(const matrix_t<D1, D2, T, packingT> & A)
     {
-        auto _col = [&A]<size_t... J>(std::index_sequence<J...>) -> vector_t<D1, T>
+        auto _col = [&A]<int... J>(integer_sequence<J...>) -> vector_t<D1, T>
         {
-            auto wrap = [&A]<size_t K>()->T { return A[{K, I}]; };
+            auto wrap = [&A]<int K>()->T { return A[{K, I}]; };
             return vector_t<D1, T>(wrap.template operator()<J>()...);
         };
-        return _col(std::make_index_sequence<D2> {});
+        return _col(make_integer_sequence<D2> {});
     }
 
     template <int D, typename T, class packingT>
@@ -716,8 +716,8 @@ namespace pyre::algebra {
         // compute eigenvectors
         auto P = eigenvectors(A);
         // helper function (component-wise)
-        constexpr auto _apply_f_to_diagonal = []<size_t... I>(auto & lambda, auto f, 
-            std::index_sequence<I...>)
+        constexpr auto _apply_f_to_diagonal = []<int... I>(auto & lambda, auto f, 
+            integer_sequence<I...>)
         {
             // apply f to diagonal
             ((lambda[{I, I}] = f(lambda[{I, I}])), ...);
@@ -725,7 +725,7 @@ namespace pyre::algebra {
             return;
         };
         // change eigenvalues into f(eigenvalues)
-        _apply_f_to_diagonal(lambda, f, std::make_index_sequence<D> {});
+        _apply_f_to_diagonal(lambda, f, make_integer_sequence<D> {});
         // rebuild matrix
         return symmetric(P * lambda * inverse(P));
     }

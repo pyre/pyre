@@ -192,7 +192,8 @@ index(difference_type offset) const -> index_type
     index[0] = _getFirstRankIndex<N>(_D, offset_);
 
     // helper function to get the next indices (i = 1, ..., N - 1)
-    auto _getIndices = [&offset_]<size_t... I>(index_t<N> & idx, int D, std::index_sequence<I...>)
+    auto _getIndices = [&offset_]<int... I>(index_t<N> & idx, int D, 
+        integer_sequence<I...>)
     {
         // get the next index (I + 1) as:
         ((idx[I + 1] = 
@@ -204,7 +205,7 @@ index(difference_type offset) const -> index_type
         // all done
         return;
     };
-    _getIndices(index, _D, std::make_index_sequence<N - 1> {});
+    _getIndices(index, _D, make_integer_sequence<N - 1> {});
 
     // shift it by {_origin} and return it
     return index + _origin;
@@ -222,7 +223,7 @@ offset(index_const_reference index) const -> difference_type
     std::sort(sorted_index.begin(), sorted_index.end());
 
     // helper function to shift the indices (i, j, k, ...) into (i, j - i, k - j, ...)
-    auto _shiftIndices = []<size_t... I>(index_t<N> & idx, std::index_sequence<I...>)
+    auto _shiftIndices = []<int... I>(index_t<N> & idx, integer_sequence<I...>)
     {
         // iterate in reverse order to avoid overwriting entries before using them
         ((idx[(N - 2 - I) + 1] -= idx[N - 2 - I]), ... );
@@ -231,16 +232,16 @@ offset(index_const_reference index) const -> difference_type
     };
 
     // shift the indices (i, j, k, ...) into (i, j - i, k - j, ...)
-    _shiftIndices(sorted_index, std::make_index_sequence<N-1> {});
+    _shiftIndices(sorted_index, make_integer_sequence<N-1> {});
 
     // helper function needed to expand the array in a parameter pack
-    auto _getOffset = []<size_t... I>(index_t<N> idx, int D, std::index_sequence<I...>)
+    auto _getOffset = []<int... I>(index_t<N> idx, int D, integer_sequence<I...>)
     {
         return _offset<N>(D, idx[I]...);
     };
 
     // get the offset
-    return _getOffset(sorted_index, _D, std::make_index_sequence<N> {});
+    return _getOffset(sorted_index, _D, make_integer_sequence<N> {});
 }
 
 
