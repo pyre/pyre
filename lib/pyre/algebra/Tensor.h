@@ -131,7 +131,6 @@ namespace pyre::algebra {
 
         // TOFIX: from index sequence to integer sequence
 
-        // TOFIX convert all these to the -> syntax
 
       public:
         // the zero tensor
