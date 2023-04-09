@@ -22,9 +22,6 @@
 #include "factories.h"
 // the tensor
 #include "Tensor.h"
-// the basis elements
-#include "VectorBasis.h"
-#include "MatrixBasis.h"
 // useful functions for {Tensor}
 #include "utilities.h"
 // the repacking strategies
