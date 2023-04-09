@@ -28,7 +28,7 @@
 #include "Index.h"
 #include "IndexIterator.h"
 #include "Canonical.h"
-#ifdef WITH_CXX20
+#ifdef WITH_COMPACT_PACKINGS
 #include "Symmetric.h"
 #include "Diagonal.h"
 #endif

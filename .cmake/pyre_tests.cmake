@@ -226,6 +226,7 @@ function(pyre_test_driver_cxx20 testfile)
   add_executable(${target} ${testfile})
   # with some macros
   target_compile_definitions(${target} PRIVATE PYRE_CORE)
+  target_compile_definitions(${target} PRIVATE WITH_COMPACT_PACKINGS)
   target_compile_definitions(${target} PRIVATE WITH_CXX20)
   # link against my libraries
   target_link_libraries(${target} PUBLIC pyre journal)
