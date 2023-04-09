@@ -63,17 +63,16 @@ namespace pyre::algebra {
     static constexpr auto make_identity() -> tensorT::diagonal_tensor_t 
     requires (tensorT::order == 2)
     {
-        typename tensorT::diagonal_tensor_t identity;
-
-        auto _loop = [&identity]<size_t... I>(std::index_sequence<I...>)
+        constexpr auto _make_ones = []<size_t... J>(std::index_sequence<J...>) -> 
+            tensorT::diagonal_tensor_t
         {
-            ((identity[{I, I}] = 1), ... );
-            return;
+            constexpr auto fill_ones = []<size_t>() consteval-> tensorT::type { return 1; };
+            // return a tensor filled with zeros
+            return typename tensorT::diagonal_tensor_t(fill_ones.template operator()<J>()...);
         };
 
-        _loop(std::make_index_sequence<tensorT::diagonal_tensor_t::size> {});
-
-        return identity;
+        // fill tensor with zeros
+        return _make_ones(std::make_index_sequence<tensorT::diagonal_tensor_t::size>{});
     }
 }
 
