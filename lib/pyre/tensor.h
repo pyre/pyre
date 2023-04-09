@@ -4,15 +4,15 @@
 // (c) 2021 all rights reserved
 
 // code guard
-#if !defined(pyre_algebra_h)
-#define pyre_algebra_h
+#if !defined(pyre_tensor_h)
+#define pyre_tensor_h
 
 // DESIGN NOTES
 
 
 // publish the interface
-// the api is in "algebra/api.h"
-#include "algebra/public.h"
+// the api is in "tensor/api.h"
+#include "tensor/public.h"
 
 
 #endif

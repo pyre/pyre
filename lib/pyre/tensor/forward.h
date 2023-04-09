@@ -5,12 +5,12 @@
 
 
 // code guard
-#if !defined(pyre_algebra_forward_h)
-#define pyre_algebra_forward_h
+#if !defined(pyre_tensor_forward_h)
+#define pyre_tensor_forward_h
 
 
 // set up the namespace
-namespace pyre::algebra {
+namespace pyre::tensor {
 
     // the tensor class
     template <typename T, class packingT, int... I> class Tensor;

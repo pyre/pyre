@@ -8,11 +8,11 @@
 // support
 #include <cassert>
 // get the tensor algebra
-#include <pyre/algebra.h>
+#include <pyre/tensor.h>
 
 
 // use namespace for readability
-using namespace pyre::algebra;
+using namespace pyre::tensor;
 
 
 // main program

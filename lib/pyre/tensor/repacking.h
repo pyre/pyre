@@ -5,7 +5,7 @@
 //
 
 
-namespace pyre::algebra {
+namespace pyre::tensor {
     template <class T, class S>
     struct repacking;
 

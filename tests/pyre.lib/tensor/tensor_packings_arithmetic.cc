@@ -9,11 +9,11 @@
 #include <iostream>
 
 // get the tensor algebra
-#include <pyre/algebra.h>
+#include <pyre/tensor.h>
 
 
 // use namespace for readability
-using namespace pyre::algebra;
+using namespace pyre::tensor;
 
 
 // main program
@@ -24,7 +24,7 @@ int main(int argc, char* argv[]) {
     pyre::journal::application("tensor_packings_arithmetic");
 
     // make a channel
-    pyre::journal::debug_t channel("pyre.algebra.tensor");
+    pyre::journal::debug_t channel("pyre.tensor");
 
     {
         // report

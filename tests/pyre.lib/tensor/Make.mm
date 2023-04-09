@@ -22,7 +22,19 @@ all: test clean
 
 
 test: $(TESTS)
-	./bcd \
+	./cayley_hamilton \
+	./tensor_algebra \
+	./tensor_arithmetic \
+	./tensor_basis \
+	./tensor_eigenvalues \
+	./tensor_eigenvalues_transformation \
+	./tensor_invariants \
+	./tensor_packings \
+	./tensor_print \
+	./tensor_symmetry \
+	./tensor_utilities \
+	./vector_identities \
+
 
 # build
 %: %.cc

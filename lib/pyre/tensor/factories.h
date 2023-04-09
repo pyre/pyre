@@ -1,9 +1,9 @@
 // code guard
-#if !defined(pyre_algebra_factories_h)
-#define pyre_algebra_factories_h
+#if !defined(pyre_tensor_factories_h)
+#define pyre_tensor_factories_h
 
 
-namespace pyre::algebra {
+namespace pyre::tensor {
 
     // returns whether the entries in a parameter pack {I...} are all equal
     template <int... I>

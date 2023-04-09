@@ -11,20 +11,7 @@
 
 # algebra
 pyre_test_driver(pyre.lib/algebra/bcd.cc)
-if (WITH_TENSOR)
-pyre_test_driver_cxx20(pyre.lib/algebra/cayley_hamilton.cc)
-pyre_test_driver_cxx20(pyre.lib/algebra/tensor_algebra.cc)
-pyre_test_driver_cxx20(pyre.lib/algebra/tensor_arithmetic.cc)
-pyre_test_driver_cxx20(pyre.lib/algebra/tensor_basis.cc)
-pyre_test_driver_cxx20(pyre.lib/algebra/tensor_eigenvalues.cc)
-pyre_test_driver_cxx20(pyre.lib/algebra/tensor_eigenvalues_transformation.cc)
-pyre_test_driver_cxx20(pyre.lib/algebra/tensor_invariants.cc)
-pyre_test_driver_cxx20(pyre.lib/algebra/tensor_packings.cc)
-pyre_test_driver_cxx20(pyre.lib/algebra/tensor_print.cc)
-pyre_test_driver_cxx20(pyre.lib/algebra/tensor_symmetry.cc)
-pyre_test_driver_cxx20(pyre.lib/algebra/tensor_utilities.cc)
-pyre_test_driver_cxx20(pyre.lib/algebra/vector_identities.cc)
-endif()
+
 
 # geometry
 pyre_test_driver(pyre.lib/geometry/point.cc)
@@ -202,6 +189,23 @@ pyre_test_driver(pyre.lib/timers/wall_timer_sanity.cc)
 pyre_test_driver(pyre.lib/timers/wall_timer_shared.cc)
 pyre_test_driver(pyre.lib/timers/wall_timer_start.cc)
 pyre_test_driver(pyre.lib/timers/wall_timer_stop.cc)
+
+
+# tensor
+if (WITH_TENSOR)
+pyre_test_driver_cxx20(pyre.lib/tensor/cayley_hamilton.cc)
+pyre_test_driver_cxx20(pyre.lib/tensor/tensor_algebra.cc)
+pyre_test_driver_cxx20(pyre.lib/tensor/tensor_arithmetic.cc)
+pyre_test_driver_cxx20(pyre.lib/tensor/tensor_basis.cc)
+pyre_test_driver_cxx20(pyre.lib/tensor/tensor_eigenvalues.cc)
+pyre_test_driver_cxx20(pyre.lib/tensor/tensor_eigenvalues_transformation.cc)
+pyre_test_driver_cxx20(pyre.lib/tensor/tensor_invariants.cc)
+pyre_test_driver_cxx20(pyre.lib/tensor/tensor_packings.cc)
+pyre_test_driver_cxx20(pyre.lib/tensor/tensor_print.cc)
+pyre_test_driver_cxx20(pyre.lib/tensor/tensor_symmetry.cc)
+pyre_test_driver_cxx20(pyre.lib/tensor/tensor_utilities.cc)
+pyre_test_driver_cxx20(pyre.lib/tensor/vector_identities.cc)
+endif()
 
 
 # end of file

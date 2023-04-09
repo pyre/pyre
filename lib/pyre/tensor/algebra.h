@@ -5,11 +5,11 @@
 //
 
 
-#if !defined(pyre_algebra_tensor_algebra_h)
-#define pyre_algebra_tensor_algebra_h
+#if !defined(pyre_tensor_tensor_algebra_h)
+#define pyre_tensor_tensor_algebra_h
 
 
-namespace pyre::algebra {
+namespace pyre::tensor {
     template <typename T, class packingT, int... I>
     constexpr T norm(const Tensor<T, packingT, I...> & tensor)
     {

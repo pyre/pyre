@@ -7,11 +7,11 @@
 // support
 #include <cassert>
 // get the tensor algebra
-#include <pyre/algebra.h>
+#include <pyre/tensor.h>
 
 
 // use namespace for readability
-using namespace pyre::algebra;
+using namespace pyre::tensor;
 
 
 // main program
@@ -22,7 +22,7 @@ int main(int argc, char* argv[]) {
     pyre::journal::application("tensor_print");
 
     // make a channel
-    pyre::journal::debug_t channel("pyre.algebra.tensor_iterators");
+    pyre::journal::debug_t channel("pyre.tensor.tensor_iterators");
 
     // a 2D matrix
     matrix_t<2, 2> A {1.0, 2.0, 3.0, 4.0};

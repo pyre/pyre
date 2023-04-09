@@ -5,8 +5,8 @@
 
 
 // code guard
-#if !defined(pyre_algebra_public_h)
-#define pyre_algebra_public_h
+#if !defined(pyre_tensor_public_h)
+#define pyre_tensor_public_h
 
 
 // external packages
@@ -27,7 +27,7 @@
 // the repacking strategies
 #include "repacking.h"
 // the algebra on tensors
-#include "tensor_algebra.h"
+#include "algebra.h"
 
 
 #endif

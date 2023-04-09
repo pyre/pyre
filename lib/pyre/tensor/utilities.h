@@ -5,11 +5,11 @@
 
 
 // code guard
-#if !defined(pyre_algebra_utilities_h)
-#define pyre_algebra_utilities_h
+#if !defined(pyre_tensor_utilities_h)
+#define pyre_tensor_utilities_h
 
 
-namespace pyre::algebra {
+namespace pyre::tensor {
 
     // helper functions for print
     template <typename Arg, typename... Args>
@@ -22,7 +22,7 @@ namespace pyre::algebra {
 
     template <int D, typename T, int... J>
     inline std::ostream & _print_vector(
-        std::ostream & os, const pyre::algebra::vector_t<D, T> & vector, integer_sequence<J...>)
+        std::ostream & os, const pyre::tensor::vector_t<D, T> & vector, integer_sequence<J...>)
     {
         os << "[ ";
         if (sizeof...(J) > 0)
@@ -64,14 +64,14 @@ namespace pyre::algebra {
 
     // overload operator<< for vectors
     template <int D, typename T>
-    std::ostream & operator<<(std::ostream & os, const pyre::algebra::vector_t<D, T> & vector)
+    std::ostream & operator<<(std::ostream & os, const pyre::tensor::vector_t<D, T> & vector)
     {
         return _print_vector(os, vector, make_integer_sequence<D> {});
     }
 
     // overload operator<< for second order tensors
     template <int D1, int D2, typename T, class packingT>
-    std::ostream & operator<<(std::ostream & os, const pyre::algebra::matrix_t<D1, D2, T, packingT> & tensor)
+    std::ostream & operator<<(std::ostream & os, const pyre::tensor::matrix_t<D1, D2, T, packingT> & tensor)
     {
         return _print_matrix(os, tensor, make_integer_sequence<D1-1> {});
     }

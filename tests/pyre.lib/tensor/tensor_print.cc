@@ -8,9 +8,9 @@
 // system includes
 #include <iostream>
 // dependencies
-#include <pyre/algebra.h>
+#include <pyre/tensor.h>
 
-using namespace pyre::algebra;
+using namespace pyre::tensor;
 
 // main program
 int main(int argc, char* argv[]) {
@@ -20,7 +20,7 @@ int main(int argc, char* argv[]) {
     pyre::journal::application("tensor_print");
 
     // make a channel
-    pyre::journal::info_t channel("pyre.algebra.tensor_print");
+    pyre::journal::info_t channel("pyre.tensor.tensor_print");
 
     matrix_t<1, 1> A { 1 };
     channel << A << pyre::journal::endl;

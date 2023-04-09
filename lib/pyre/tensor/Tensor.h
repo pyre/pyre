@@ -5,11 +5,11 @@
 //
 
 
-#if !defined(pyre_algebra_Tensor_h)
-#define pyre_algebra_Tensor_h
+#if !defined(pyre_tensor_Tensor_h)
+#define pyre_tensor_Tensor_h
 
 
-namespace pyre::algebra {
+namespace pyre::tensor {
     template <typename T, class packingT, int... I>
     class Tensor {
       private:
@@ -158,9 +158,9 @@ namespace pyre::algebra {
 
 
 // get the inline definitions
-#define pyre_algebra_Tensor_icc
+#define pyre_tensor_Tensor_icc
 #include "Tensor.icc"
-#undef pyre_algebra_Tensor_icc
+#undef pyre_tensor_Tensor_icc
 
 
 #endif

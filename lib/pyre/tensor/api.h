@@ -5,12 +5,12 @@
 
 
 // code guard
-#if !defined(pyre_algebra_api_h)
-#define pyre_algebra_api_h
+#if !defined(pyre_tensor_api_h)
+#define pyre_tensor_api_h
 
 
 // low level entities; you should probably stay away from them
-namespace pyre::algebra
+namespace pyre::tensor
 {
     // typedef for real values
     using real = double;
@@ -20,11 +20,11 @@ namespace pyre::algebra
 
     // typedef for vectors
     template <int D, typename T = real, class packingT = pyre::grid::diagonal_t<1>>
-    using vector_t = pyre::algebra::Tensor<T, packingT, D>;
+    using vector_t = pyre::tensor::Tensor<T, packingT, D>;
 
     // typedef for matrices
     template <int D1, int D2 = D1, typename T = real, class packingT = pyre::grid::canonical_t<2>>
-    using matrix_t = pyre::algebra::Tensor<T, packingT, D1, D2>;
+    using matrix_t = pyre::tensor::Tensor<T, packingT, D1, D2>;
 
     // typedef for symmetric matrices
     template <int D, typename T = real>

@@ -12,7 +12,7 @@
 // get support
 #include <pyre/timers.h>
 #include <pyre/journal.h>
-#include <pyre/algebra.h>
+#include <pyre/tensor.h>
 
 
 // type aliases
@@ -33,7 +33,7 @@ void scalar_vector_benchmark()
 
     // ARRAY
     // a scalar
-    pyre::algebra::real scalar = sqrt(2);
+    pyre::tensor::real scalar = sqrt(2);
 
     // array vector
     std::array<double, 3> vector_c {1.0, -1.0, 2.0};
@@ -65,8 +65,8 @@ void scalar_vector_benchmark()
 
     // PYRE TENSOR
     // tensor vector
-    pyre::algebra::vector_t<3> vector {1.0, -1.0, 2.0};
-    pyre::algebra::vector_t<3> result_tensor {0.0, 0.0, 0.0};
+    pyre::tensor::vector_t<3> vector {1.0, -1.0, 2.0};
+    pyre::tensor::vector_t<3> result_tensor {0.0, 0.0, 0.0};
 
     // start timer
     t.start();
@@ -157,9 +157,9 @@ void scalar_product_vectors_benchmark()
 
     // PYRE TENSOR
     // tensor vector
-    pyre::algebra::vector_t<3> vector_1 {1.0, -1.0, 2.0};
-    pyre::algebra::vector_t<3> vector_2 {1.0, 1.0, 2.0};
-    pyre::algebra::scalar_t result_tensor = 0.0;
+    pyre::tensor::vector_t<3> vector_1 {1.0, -1.0, 2.0};
+    pyre::tensor::vector_t<3> vector_2 {1.0, 1.0, 2.0};
+    pyre::tensor::scalar_t result_tensor = 0.0;
 
     // start timer
     t.start();
@@ -198,7 +198,7 @@ void scalar_tensor_benchmark()
 
     // ARRAY
     // a scalar
-    pyre::algebra::real scalar = sqrt(2);
+    pyre::tensor::real scalar = sqrt(2);
 
     // array tensor
     std::array<double, 9> tensor_c {1.0, -1.0, 2.0, 1.0, 0.0, 1.0, 2.0, -1.0, 0.0};
@@ -230,8 +230,8 @@ void scalar_tensor_benchmark()
 
     // PYRE TENSOR
     // tensor vector
-    pyre::algebra::matrix_t<3> tensor {1.0, -1.0, 2.0, 1.0, 0.0, 1.0, 2.0, -1.0, 0.0};
-    pyre::algebra::matrix_t<3> result_tensor {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+    pyre::tensor::matrix_t<3> tensor {1.0, -1.0, 2.0, 1.0, 0.0, 1.0, 2.0, -1.0, 0.0};
+    pyre::tensor::matrix_t<3> result_tensor {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
 
     // start timer
     t.start();

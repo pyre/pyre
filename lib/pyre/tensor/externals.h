@@ -5,8 +5,8 @@
 
 
 // code guard
-#if !defined(pyre_algebra_externals_h)
-#define pyre_algebra_externals_h
+#if !defined(pyre_tensor_externals_h)
+#define pyre_tensor_externals_h
 
 
 // externals
@@ -17,10 +17,11 @@
 // support
 #include <pyre/journal.h>
 #include <pyre/grid.h>
-#include "machine_epsilon.h"
+#include <pyre/algebra/machine_epsilon.h>
+
 
 // aliases that define implementation choices
-namespace pyre::algebra {
+namespace pyre::tensor {
 
     // sequences of integers
     template <int N>
