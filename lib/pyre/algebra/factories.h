@@ -35,12 +35,14 @@ namespace pyre::algebra {
     }
 
     // make the element of the tensor basis that has a one at the index given by {args...}
-    template <class tensorT>
-    constexpr auto make_basis_element(typename tensorT::index_t index)
+    template <class tensorT, int... I>
+    constexpr auto make_basis_element()
         -> tensorT
+        requires (sizeof...(I) == tensorT::order)
     {
         // typedef for index type
         using index_t = tensorT::index_t;
+        index_t index(I...);
 
         constexpr auto _make_basis_element = []<size_t... J>(index_t K, std::index_sequence<J...>) 
             -> tensorT

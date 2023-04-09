@@ -191,15 +191,6 @@ constexpr void pyre::algebra::Tensor<T, packingT, I...>::_reset(std::index_seque
     return;
 }
 
-template <typename T, class packingT, int... I>
-template<typename... Args>
-constexpr pyre::algebra::Tensor<T, packingT, I...> 
-pyre::algebra::Tensor<T, packingT, I...>::unit(Args... args) requires (sizeof...(Args) == N)
-{
-    // return K-th basis element tensor
-    return make_basis_element<tensor_t>(index_t(args...));
-}
-
 
 #endif
 
