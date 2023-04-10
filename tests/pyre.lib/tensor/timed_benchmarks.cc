@@ -21,7 +21,7 @@ using timer_t = pyre::timers::process_timer_t;
 void scalar_vector_benchmark() 
 {
     // make a channel
-    pyre::journal::info_t channel("tests.timer");
+    pyre::journal::info_t channel("tests.timer.scalar_vector_multiplication");
 
     // make a timer
     timer_t t("tests.timer");
@@ -93,7 +93,7 @@ void scalar_vector_benchmark()
 void scalar_product_vectors_benchmark() 
 {
     // make a channel
-    pyre::journal::info_t channel("tests.timer");
+    pyre::journal::info_t channel("tests.timer.vector_scalar_product");
 
     // make a timer
     timer_t t("tests.timer");
@@ -188,7 +188,7 @@ void scalar_product_vectors_benchmark()
 void scalar_matrix_benchmark() 
 {
     // make a channel
-    pyre::journal::info_t channel("tests.timer");
+    pyre::journal::info_t channel("tests.timer.scalar_matrix_multiplication");
 
     // make a timer
     timer_t t("tests.timer");
