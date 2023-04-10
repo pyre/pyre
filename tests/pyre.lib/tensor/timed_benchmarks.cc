@@ -31,6 +31,7 @@ void scalar_vector_benchmark()
 
     channel << "Computing " << N << " scalar-vector multiplications" << pyre::journal::endl;
 
+
     // ARRAY
     // a scalar
     pyre::tensor::real scalar = sqrt(2);
@@ -39,6 +40,8 @@ void scalar_vector_benchmark()
     std::array<double, 3> vector_c {1.0, -1.0, 2.0};
     std::array<double, 3> result_c {0.0, 0.0, 0.0};
 
+    // reset timer
+    t.reset();
     // start timer
     t.start();
 
@@ -59,15 +62,14 @@ void scalar_vector_benchmark()
             << pyre::journal::newline
         << "\t\t process time = " << t.ms() << " ms " << pyre::journal::endl;
 
-    // reset timer
-    t.reset();
-
 
     // PYRE TENSOR
     // tensor vector
     pyre::tensor::vector_t<3> vector {1.0, -1.0, 2.0};
     pyre::tensor::vector_t<3> result_tensor {0.0, 0.0, 0.0};
 
+    // reset timer
+    t.reset();
     // start timer
     t.start();
 
@@ -108,6 +110,8 @@ void scalar_product_vectors_benchmark()
     std::array<double, 3> vector_array_2 {1.0, 1.0, 2.0};
     double result_array_for = 0.0;
 
+    // reset timer
+    t.reset();
     // start timer
     t.start();
 
@@ -127,13 +131,12 @@ void scalar_product_vectors_benchmark()
         << "\t\t result = " << result_array_for << pyre::journal::newline
         << "\t\t process time = " << t.ms() << " ms " << pyre::journal::endl;
 
-    // reset timer
-    t.reset();
-
 
     // ARRAY EXPANDED BY HAND
     double result_array = 0.0;
 
+    // reset timer
+    t.reset();
     // start timer
     t.start();
 
@@ -151,9 +154,6 @@ void scalar_product_vectors_benchmark()
         << "\t\t result = " << result_array << pyre::journal::newline
         << "\t\t process time = " << t.ms() << " ms " << pyre::journal::endl;
 
-    // reset timer
-    t.reset();
-
 
     // PYRE TENSOR
     // tensor vector
@@ -161,6 +161,8 @@ void scalar_product_vectors_benchmark()
     pyre::tensor::vector_t<3> vector_2 {1.0, 1.0, 2.0};
     pyre::tensor::scalar_t result_tensor = 0.0;
 
+    // reset timer
+    t.reset();
     // start timer
     t.start();
 
@@ -196,6 +198,7 @@ void scalar_tensor_benchmark()
 
     channel << "Computing " << N << " scalar-tensor multiplications" << pyre::journal::endl;
 
+
     // ARRAY
     // a scalar
     pyre::tensor::real scalar = sqrt(2);
@@ -204,6 +207,8 @@ void scalar_tensor_benchmark()
     std::array<double, 9> tensor_c {1.0, -1.0, 2.0, 1.0, 0.0, 1.0, 2.0, -1.0, 0.0};
     std::array<double, 9> result_c {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
 
+    // reset timer
+    t.reset();
     // start timer
     t.start();
 
@@ -227,15 +232,14 @@ void scalar_tensor_benchmark()
             << pyre::journal::newline
         << "\t\t process time = " << t.ms() << " ms " << pyre::journal::endl;
 
-    // reset timer
-    t.reset();
-
 
     // PYRE TENSOR
     // tensor vector
     pyre::tensor::matrix_t<3> tensor {1.0, -1.0, 2.0, 1.0, 0.0, 1.0, 2.0, -1.0, 0.0};
     pyre::tensor::matrix_t<3> result_tensor {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
 
+    // reset timer
+    t.reset();
     // start timer
     t.start();
 
