@@ -233,7 +233,7 @@ void scalar_matrix_benchmark()
         << "\t\t process time = " << t.ms() << " ms " << pyre::journal::endl;
 
 
-    // PYRE TENSOR
+    // PYRE TENSOR (operator*)
     // tensor vector
     pyre::tensor::matrix_t<3> tensor {1.0, -1.0, 2.0, 1.0, 0.0, 1.0, 2.0, -1.0, 0.0};
     pyre::tensor::matrix_t<3> result_tensor {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
@@ -252,7 +252,68 @@ void scalar_matrix_benchmark()
     t.stop();
 
     // report
-    channel << "\t pyre tensor " << pyre::journal::newline
+    channel << "\t pyre tensor (result_tensor += scalar * tensor)" 
+        << pyre::journal::newline
+        << "\t\t result = " << result_tensor << pyre::journal::newline
+        << "\t\t process time = " << t.ms() << " ms " << pyre::journal::endl;
+
+
+    // PYRE TENSOR (index)
+    result_tensor.reset();
+    // reset timer
+    t.reset();
+    // start timer
+    t.start();
+
+    for (int n = 0; n < N; ++n) { 
+        // scalar * vector (tensor)
+        result_tensor[{0, 0}] += scalar * tensor[{0, 0}];
+        result_tensor[{0, 1}] += scalar * tensor[{0, 1}];
+        result_tensor[{0, 2}] += scalar * tensor[{0, 2}];
+        result_tensor[{1, 0}] += scalar * tensor[{1, 0}];
+        result_tensor[{1, 1}] += scalar * tensor[{1, 1}];
+        result_tensor[{1, 2}] += scalar * tensor[{1, 2}];
+        result_tensor[{2, 0}] += scalar * tensor[{2, 0}];
+        result_tensor[{2, 1}] += scalar * tensor[{2, 1}];
+        result_tensor[{2, 2}] += scalar * tensor[{2, 2}];
+    }
+
+    // stop the timer
+    t.stop();
+
+    // report
+    channel << "\t pyre tensor (result_tensor[{i, j}] += scalar * tensor[{i, j}])" 
+        << pyre::journal::newline
+        << "\t\t result = " << result_tensor << pyre::journal::newline
+        << "\t\t process time = " << t.ms() << " ms " << pyre::journal::endl;
+
+
+    // PYRE TENSOR (unpacked)
+    result_tensor.reset();
+    // reset timer
+    t.reset();
+    // start timer
+    t.start();
+
+    for (int n = 0; n < N; ++n) { 
+        // scalar * vector (tensor)
+        result_tensor[0 * 3 + 0] += scalar * tensor[0 * 3 + 0];
+        result_tensor[0 * 3 + 1] += scalar * tensor[0 * 3 + 1];
+        result_tensor[0 * 3 + 2] += scalar * tensor[0 * 3 + 2];
+        result_tensor[1 * 3 + 0] += scalar * tensor[1 * 3 + 0];
+        result_tensor[1 * 3 + 1] += scalar * tensor[1 * 3 + 1];
+        result_tensor[1 * 3 + 2] += scalar * tensor[1 * 3 + 2];
+        result_tensor[2 * 3 + 0] += scalar * tensor[2 * 3 + 0];
+        result_tensor[2 * 3 + 1] += scalar * tensor[2 * 3 + 1];
+        result_tensor[2 * 3 + 2] += scalar * tensor[2 * 3 + 2];
+    }
+
+    // stop the timer
+    t.stop();
+
+    // report
+    channel << "\t pyre tensor (result_tensor[i * 3 + j] += scalar * tensor[i * 3 + j])" 
+        << pyre::journal::newline
         << "\t\t result = " << result_tensor << pyre::journal::newline
         << "\t\t process time = " << t.ms() << " ms " << pyre::journal::endl;
 
