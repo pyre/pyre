@@ -185,7 +185,7 @@ void scalar_product_vectors_benchmark()
 }
 
 
-void scalar_tensor_benchmark() 
+void scalar_matrix_benchmark() 
 {
     // make a channel
     pyre::journal::info_t channel("tests.timer");
@@ -196,7 +196,7 @@ void scalar_tensor_benchmark()
     // number of times to do operation
     int N = 1<<25;
 
-    channel << "Computing " << N << " scalar-tensor multiplications" << pyre::journal::endl;
+    channel << "Computing " << N << " scalar-matrix multiplications" << pyre::journal::endl;
 
 
     // ARRAY
@@ -265,7 +265,8 @@ int main() {
 
     scalar_vector_benchmark();
     scalar_product_vectors_benchmark();
-    scalar_tensor_benchmark();
+    scalar_matrix_benchmark();
+
 
     return 0;
 }
