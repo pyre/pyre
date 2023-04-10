@@ -263,11 +263,20 @@ void scalar_matrix_benchmark()
 
 int main() {
 
+    // scalar * vector
     scalar_vector_benchmark();
+    // vector * vector
     scalar_product_vectors_benchmark();
+    // scalar * matrix
     scalar_matrix_benchmark();
 
+    // TODO:
+    // vector + vector
+    // matrix + matrix
+    // matrix * vector
+    // matrix * matrix     
 
+    // all done
     return 0;
 }
 
