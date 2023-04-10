@@ -27,10 +27,11 @@ public:
 
     // metamethods
 public:
-    // constructor
-    inline explicit Timer(const name_type &);
     // let the compiler write the destructor
     ~Timer() = default;
+    // constructors
+    // timer state is shared among all timers with the same name
+    inline explicit Timer(const name_type &);
 
     // accessors
 public:
