@@ -11,8 +11,7 @@
 
 // interface
 auto
-pyre::timers::WallClock::
-now() -> time_point_type
+pyre::timers::WallClock::now() -> time_point_type
 {
     return clock_type::now();
 }

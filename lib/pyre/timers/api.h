@@ -14,7 +14,7 @@ namespace pyre::timers {
     using wall_timer_t = Timer<WallClock, Proxy>;
     // process CPU time
     using process_timer_t = Timer<ProcessClock, Proxy>;
-}
+} // namespace pyre::timers
 
 
 #endif
