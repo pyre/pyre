@@ -194,7 +194,7 @@ void scalar_tensor_benchmark()
     // number of times to do operation
     int N = 1<<25;
 
-    channel << "Computing " << N << " scalar-vector multiplications" << pyre::journal::endl;
+    channel << "Computing " << N << " scalar-tensor multiplications" << pyre::journal::endl;
 
     // ARRAY
     // a scalar
@@ -220,7 +220,10 @@ void scalar_tensor_benchmark()
 
     // report
     channel << "\t array (for loop) " << pyre::journal::newline
-        << "\t\t result = " << result_c[0] << "\t" << result_c[1] << "\t" << result_c[2] 
+        << "\t\t result = " 
+            << result_c[0] << "\t" << result_c[1] << "\t" << result_c[2] << "\t"
+            << result_c[3] << "\t" << result_c[4] << "\t" << result_c[5] << "\t"
+            << result_c[6] << "\t" << result_c[7] << "\t" << result_c[8] 
             << pyre::journal::newline
         << "\t\t process time = " << t.ms() << " ms " << pyre::journal::endl;
 
