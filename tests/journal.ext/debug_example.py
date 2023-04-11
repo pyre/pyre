@@ -11,6 +11,7 @@ def test():
     """
     # get the channel
     from journal.ext.journal import Debug as debug
+
     # and the trash can
     from journal.ext.journal import Trash as trash
 
@@ -26,7 +27,8 @@ def test():
 
     # inject
     channel.line("debug channel:")
-    channel.log("    hello world!")
+    # and flush with some additional metadata
+    channel.log("    hello world!", code=7)
 
     # all done
     return
