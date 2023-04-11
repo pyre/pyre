@@ -11,6 +11,7 @@ def test():
     """
     # get the trash can
     from journal.Trash import Trash as trash
+
     # and the channel
     from journal.Firewall import Firewall as firewall
 
@@ -26,16 +27,17 @@ def test():
     try:
         # inject
         channel.line("firewall:")
-        channel.log("    a nasty bug was detected")
+        # and flush with some additional metadata
+        channel.log("    a nasty bug was detected", code=7)
         # shouldn't get here
         assert False, "unreachable"
     # if the correct exception was raised
     except channel.FirewallError as error:
         # verify that the description is correct
         assert str(error) == (
-            f"file='{__file__}', line='29', function='test': "
+            f"file='{__file__}', line='31', function='test': "
             "firewall breached; aborting..."
-            )
+        )
 
     # all done
     return
