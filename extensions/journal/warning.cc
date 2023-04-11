@@ -250,7 +250,14 @@ pyre::journal::py::warning(py::module & m)
         .def(
             "log",
             // the handler
-            [](warning_t & channel, const warning_t::string_type & message) -> warning_t & {
+            [](warning_t & channel, const warning_t::string_type & message,
+               // additional arguments are interpreted as entry notes
+               py::kwargs kwds) -> warning_t & {
+                // unpack {kwds}
+                for (auto entry : kwds) {
+                    // and treat each one as a note
+                    channel << pyre::journal::note(py::str(entry.first), py::str(entry.second));
+                }
                 // inject and flush
                 channel << locator() << message << pyre::journal::endl;
                 // enable chaining

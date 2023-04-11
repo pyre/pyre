@@ -250,7 +250,14 @@ pyre::journal::py::firewall(py::module & m)
         .def(
             "log",
             // the handler
-            [](firewall_t & channel, const firewall_t::string_type & message) -> firewall_t & {
+            [](firewall_t & channel, const firewall_t::string_type & message,
+               // additional arguments are interpreted as entry notes
+               py::kwargs kwds) -> firewall_t & {
+                // unpack {kwds}
+                for (auto entry : kwds) {
+                    // and treat each one as a note
+                    channel << pyre::journal::note(py::str(entry.first), py::str(entry.second));
+                }
                 // inject and flush
                 channel << locator() << message << pyre::journal::endl;
                 // enable chaining
