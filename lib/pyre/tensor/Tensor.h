@@ -144,7 +144,7 @@ namespace pyre::tensor {
 
         // the unit tensor with a one in the entry whose indices are specified in {J...} 
         template<int... J>
-        static constexpr tensor_t unit = make_basis_element<tensor_t, J...>();
+        static constexpr auto unit = make_basis_element<tensor_t, J...>();
 
       // accessors
       public:
