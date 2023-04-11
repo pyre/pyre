@@ -24,7 +24,8 @@ def test():
 
     # inject
     channel.line("debug channel:")
-    channel.log("    hello world!")
+    # and flush with some additional metadata
+    channel.log("    hello world!", code=7)
 
     # all done
     return
