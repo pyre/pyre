@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis <nichael.aivazis@para-sim.com>
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2023 all rights reserved
 
 
@@ -11,6 +11,10 @@ aliases = {
     "g++": "gnu.gxx",
     "gnu.g++": "gnu.gxx",
     "gfortran": "gnu.gfortran",
+    # compilers from the llvm suite
+    "clang": "llvm.clang",
+    "clang++": "llvm.clangxx",
+    "llvm.clang++": "llvm.clangxx",
 }
 
 
