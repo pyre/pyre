@@ -219,25 +219,21 @@ class Builder(BaseBuilder, family="merlin.builders.make"):
         """
         Generate the makefile fragment with the build rules
         """
-        # sign on
-        yield ""
-        yield renderer.commentLine("rules")
-
-        # concretize the asset sequence because we traverse it multiple times
-        assets = tuple(assets)
-
-        # collect the names of the assets
-        names = " ".join(asset.pyre_name for asset in assets)
-        # make a rule that builds them all
-        yield f"all: {names}"
-
-        # now go through them
+        # go through the assets
         for asset in assets:
-            # and process each one
+            # get the asset name
+            name = asset.pyre_name
+            # leave a mark
+            yield ""
+            yield renderer.commentLine(f"{name} rules")
+            # add the asset to the default target
+            yield renderer.commentLine(f"add {name} to the default target")
+            yield f"all:: {name}"
+            # and process its contents
             yield from asset.identify(visitor=self, renderer=renderer, **kwds)
 
         # set up the {/prefix} directory layout
-        yield from self.prefixRules(renderer=renderer, assets=assets, **kwds)
+        yield from self.prefixRules(renderer=renderer, **kwds)
 
         # all done
         return
