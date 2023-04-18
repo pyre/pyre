@@ -5,8 +5,49 @@
 # (c) 1998-2023 all rights reserved
 
 
-# get the package
-import merlin
+# attempt to
+try:
+    # get the package
+    import merlin
+# the most likely cause of failure is the lack of a functioning {pyre} installation
+# download and install a minimal version; the tricky part is figuring out where to
+# place the downloaded file
+except ImportError:
+    # get some help
+    import os
+    import sys
+    import urllib.request
+
+    # use an XDG compliant layout
+    xdgHome = os.getenv("XDG_CONFIG_HOME", "~/.config")
+    # point to the {pyre} specific subdirectory
+    xdg = os.path.join(xdgHome, "pyre")
+    # expand variables and references to the user's home directory
+    xdg = os.path.expanduser(os.path.expandvars(xdg))
+    # force the existence of the directory
+    os.makedirs(name=xdg, exist_ok=True)
+    # the target release of pyre
+    release = "v1.12.0"
+    # the pyre installation is in a zip file
+    pyre = f"pyre-{release}.zip"
+    # which we place in the pyre specific configuration directory
+    bootstrap = os.path.join(xdg, pyre)
+    # if the file doesn't exist already
+    if not os.path.exists(path=bootstrap):
+        # form the url to the github release asset
+        url = f"http://github.com/pyre/pyre/releases/download/{release}/pyre-boot.zip"
+        # show me
+        print(f"downloading '{url}'")
+        # get the zip file from github
+        with urllib.request.urlopen(url=url) as ins:
+            # by opening the local file in binary mode
+            with open(bootstrap, "wb") as outs:
+                # and copying the remote file in it
+                outs.write(ins.read())
+    # add the zip file to the python path
+    sys.path.insert(1, bootstrap)
+    # and try again
+    import merlin
 
 # build an instance of the plexus
 app = merlin.shells.merlin(name="merlin.app")
