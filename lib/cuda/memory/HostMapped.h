@@ -43,6 +43,8 @@ public:
     inline auto data() const -> pointer;
     // the shared pointer
     inline auto handle() const -> handle_type;
+    // set the device pointer to the host pointer
+    inline auto device() const -> pointer;
 
     // iterator support
 public:
@@ -59,6 +61,7 @@ public:
     // implementation details: data
 private:
     handle_type _data;
+    pointer _device_data;
     const cell_count_type _cells;
 
     // default metamethods

@@ -12,6 +12,7 @@ pyre::cuda::memory::HostMapped<T, isConst>::HostMapped(
     cell_count_type cells) : // the cuda {malloc} api is not RAII friendly, so we initialize with a
                              // {nullptr} and replace it with the actual allocation
     _data { nullptr },
+    _device_data { nullptr },
     _cells { cells }
 {
     // grab a spot
@@ -53,6 +54,23 @@ pyre::cuda::memory::HostMapped<T, isConst>::HostMapped(
         // and bail
         throw std::runtime_error(description);
     }
+
+    // set the device pointer to the start of the host memory spot
+    status = cudaHostGetDevicePointer(&_device_data, spot, 0);
+    // if something went wrong
+    if (status != cudaSuccess) {
+        // make a channel
+        pyre::journal::error_t error("pyre.cuda");
+        // complain
+        error << "while setting device pointer to " << spot << " : " << pyre::journal::newline
+              << cudaGetErrorName(status) << " (" << status << ")" << pyre::journal::endl(__HERE__);
+        // and bail
+        throw std::bad_alloc();
+    }
+
+    // all went well, so let me know
+    channel << "set device pointer to  " << spot << " at " << (void *) _device_data
+            << pyre::journal::endl(__HERE__);
 
     // if all went well, make a deleter for CUDA allocated memory
     auto destructor = [footprint](auto ptr) {
@@ -122,6 +140,15 @@ pyre::cuda::memory::HostMapped<T, isConst>::handle() const -> handle_type
 {
     // easy
     return _data;
+}
+
+// get the device pointer
+template <class T, bool isConst>
+auto
+pyre::cuda::memory::HostMapped<T, isConst>::device() const -> pointer
+{
+    // easy
+    return _device_data;
 }
 
 // iterator support

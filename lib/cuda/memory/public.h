@@ -22,11 +22,12 @@
 
 // pinned memory
 #include "HostPinned.h"
-#include "DevicePinned.h"
 
 // mapped memory
 #include "HostMapped.h"
-#include "DeviceMapped.h"
+
+// benchmark kernel
+#include "benchmark_kernel.h"
 
 #endif
 
