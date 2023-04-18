@@ -54,7 +54,6 @@ class LLVM(merlin.component, implements=merlin.protocols.compiler):
             line = next(stream).strip()
             # extract the fields
             match = regex.match(line)
-            print(match)
             # if it didn't match
             if not match:
                 # oh well...
