@@ -166,7 +166,7 @@ class Builder(BaseBuilder, family="merlin.builders.make"):
 
     def preamble(self, renderer, **kwds):
         """
-        Generate the makefile preamble the bulder layout
+        Generate the makefile preamble the builder layout
         """
         # make a time stamp
         stamp = f"generated on {datetime.datetime.now().isoformat()}"
@@ -221,15 +221,7 @@ class Builder(BaseBuilder, family="merlin.builders.make"):
         """
         # go through the assets
         for asset in assets:
-            # get the asset name
-            name = asset.pyre_name
-            # leave a mark
-            yield ""
-            yield renderer.commentLine(f"{name} rules")
-            # add the asset to the default target
-            yield renderer.commentLine(f"add {name} to the default target")
-            yield f"all:: {name}"
-            # and process its contents
+            # and process their contents
             yield from asset.identify(visitor=self, renderer=renderer, **kwds)
 
         # set up the {/prefix} directory layout
