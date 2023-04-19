@@ -27,18 +27,33 @@ class LibFlow(
         Generate the workflow that builds a {library}
         """
         # initialize my asset piles
-        self._folders = []
-        self._headers = []
-        self._sources = []
+        folders = []
+        headers = []
+        sources = []
 
         # go through the assets of the library
         for asset in library.assets:
             # and add each one to the correct pile
-            asset.identify(visitor=self, renderer=renderer, library=library, **kwds)
+            asset.identify(
+                visitor=self,
+                renderer=renderer,
+                library=library,
+                folders=folders,
+                headers=headers,
+                sources=sources,
+                **kwds,
+            )
 
         # now, get the name of the library
         name = library.pyre_name
         # sign on
+        yield ""
+        yield renderer.commentLine(f"{name} rules")
+        # add the asset to the default target
+        yield renderer.commentLine(f"add {name} to the default target")
+        yield f"all:: {name}"
+
+        # make a target that builds just this library
         yield ""
         yield renderer.commentLine(f"building {name}")
         # make the anchor rule
@@ -46,17 +61,17 @@ class LibFlow(
         yield f"\t@$(call log.asset,lib,{name})"
 
         # the directory rules
-        yield from self.folderRules(
-            renderer=renderer, library=library, folders=self._folders
-        )
+        yield from self.folderRules(renderer=renderer, library=library, folders=folders)
         # the asset rules
-        yield from self.assetRules(renderer=renderer, library=library, **kwds)
+        yield from self.assetRules(
+            renderer=renderer, library=library, headers=headers, sources=sources, **kwds
+        )
 
         # all done
         return
 
     @merlin.export
-    def folder(self, folder, library, parent=None, **kwds):
+    def folder(self, folder, library, folders, parent=None, **kwds):
         """
         Handle a source {folder}
         """
@@ -80,11 +95,13 @@ class LibFlow(
             # skip it
             return
         # otherwise, add it to my pile of folders
-        self._folders.append(folder)
+        folders.append(folder)
         #  go through its contents
         for asset in folder.assets:
             # and ask each one to identify itself
-            asset.identify(visitor=self, library=library, parent=folder, **kwds)
+            asset.identify(
+                visitor=self, library=library, parent=folder, folders=folders, **kwds
+            )
         # all done
         return
 
@@ -110,22 +127,22 @@ class LibFlow(
 
     # asset category handlers
     @merlin.export
-    def header(self, file, **kwds):
+    def header(self, file, headers, **kwds):
         """
-        Handle a {file} asset
+        Handle a {header}
         """
         # add the asset to my headers
-        self._headers.append(file)
+        headers.append(file)
         # all done
         return
 
     @merlin.export
-    def source(self, file, **kwds):
+    def source(self, file, sources, **kwds):
         """
-        Handle a {file} asset
+        Handle a {source} file
         """
         # add the asset to my sources
-        self._sources.append(file)
+        sources.append(file)
         # all done
         return
 
@@ -151,19 +168,6 @@ class LibFlow(
         """
         Handle a source file from an unsupported language
         """
-        # all done
-        return
-
-    # metamethods
-    def __init__(self, **kwds):
-        # chain up
-        super().__init__(**kwds)
-
-        # initialize my containers
-        self._folders = []
-        self._headers = []
-        self._sources = []
-
         # all done
         return
 
@@ -211,28 +215,22 @@ class LibFlow(
         # all done
         return
 
-    def assetRules(self, renderer, library, **kwds):
+    def assetRules(self, renderer, library, headers, sources, **kwds):
         """
         Build the rules that build {library} assets
         """
-        # unpack
-        headers = self._headers
-        sources = self._sources
         # get the name of the library
         name = library.pyre_name
-
         # if there are headers
         if headers:
             # sign on
             yield ""
             yield renderer.commentLine(f"add the headers to the {name} assets")
             yield f"{name}.assets:: {name}.headers"
-
-            # build the header rules
+            # make rules that export the public headers
             yield from self.headerRules(
                 renderer=renderer, library=library, headers=headers, **kwds
             )
-
         # if there are sources
         if sources:
             # add the archive to the library assets
@@ -243,7 +241,6 @@ class LibFlow(
             yield from self.archiveRules(
                 renderer=renderer, library=library, sources=sources, **kwds
             )
-
         # all done
         return
 
