@@ -21,12 +21,12 @@ except ImportError:
     # use an XDG compliant layout
     xdgHome = os.getenv("XDG_CONFIG_HOME", "~/.config")
     # point to the {pyre} specific subdirectory
-    xdg = os.path.join(xdgHome, "pyre")
+    xdg = os.path.join(xdgHome, "pyre", "bootstrap")
     # expand variables and references to the user's home directory
     xdg = os.path.expanduser(os.path.expandvars(xdg))
     # force the existence of the directory
     os.makedirs(name=xdg, exist_ok=True)
-    # the target release of pyre
+    # pick the target release of pyre
     release = "v1.12.0"
     # the pyre installation is in a zip file
     pyre = f"pyre-{release}.zip"
@@ -36,15 +36,14 @@ except ImportError:
     if not os.path.exists(path=bootstrap):
         # form the url to the github release asset
         url = f"http://github.com/pyre/pyre/releases/download/{release}/pyre-boot.zip"
-        # show me
-        print(f"downloading '{url}'")
         # get the zip file from github
         with urllib.request.urlopen(url=url) as ins:
             # by opening the local file in binary mode
             with open(bootstrap, "wb") as outs:
-                # and copying the remote file in it
+                # and copying the contents of the remote file
                 outs.write(ins.read())
     # add the zip file to the python path
+    # the head of the list is always the {cwd}, so use the next slot
     sys.path.insert(1, bootstrap)
     # and try again
     import merlin
