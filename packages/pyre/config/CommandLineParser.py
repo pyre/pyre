@@ -46,23 +46,20 @@ class CommandLineParser:
     engines
     """
 
-
     # public data
-    prefix = '-'
-    assignment = '='
-    fieldSeparator = '.'
-    groupStart = '('
-    groupSeparator = ','
-    groupEnd = ')'
+    prefix = "-"
+    assignment = "="
+    fieldSeparator = "."
+    groupStart = "("
+    groupSeparator = ","
+    groupEnd = ")"
 
-    handlers = None # the special handlers of command line arguments
+    handlers = None  # the special handlers of command line arguments
     assignmentScanner = None
     locator = staticmethod(tracking.command)
 
-
     # types
     from .events import Command, Assignment
-
 
     # interface
     def parse(self, argv):
@@ -76,19 +73,20 @@ class CommandLineParser:
         # build a configuration object to store the processed command line
         configuration = []
         # run through the command line
-        for index,arg in enumerate(argv):
+        for index, arg in enumerate(argv):
             # look for an assignment
             match = self.assignmentScanner.match(arg)
             # if we have one
             if match:
                 # get the tokens from the scanner
                 key = match.group("key")
-                value = match.group("value") or ''
+                value = match.group("value") or ""
                 # if there is a key
                 if key:
                     # process this
                     self._processAssignments(
-                        configuration, key,value, self.locator(arg=match.string))
+                        configuration, key, value, self.locator(arg=match.string)
+                    )
                 # if not, something special happened
                 else:
                     # we ran in to a '-' or '--' that signals the end of configuration options
@@ -104,7 +102,6 @@ class CommandLineParser:
         # all done; return the configuration
         return configuration
 
-
     def buildScanners(self):
         """
         Build the command line recognizers that are used to detect the supported command line
@@ -112,24 +109,26 @@ class CommandLineParser:
         """
         # the assignment recognizer regular expression
         regex = []
-        # if i have a special character that indicates the beginning of a cofiguration
+        # if i have a special character that indicates the beginning of a configuration
         if self.prefix:
             # incorporate it into the regex
-            regex.append(r'(?P<prefix>' + self.prefix + r'{1,2})')
+            regex.append(r"(?P<prefix>" + self.prefix + r"{1,2})")
         # add the 'key=value' form
         regex += [
             # the key
-            r'(?P<key>[^', self.assignment, r']*)',
+            r"(?P<key>[^",
+            self.assignment,
+            r"]*)",
             # the optional assignment symbol
-            self.assignment, r'?',
+            self.assignment,
+            r"?",
             # and the optional value
-            r'(?P<value>.+)?'
-            ]
+            r"(?P<value>.+)?",
+        ]
         # compile this pattern
         self.assignmentScanner = re.compile("".join(regex))
         # all done
         return
-
 
     # meta methods
     def __init__(self, handlers=None, **kwds):
@@ -141,7 +140,6 @@ class CommandLineParser:
         self.handlers = {} if handlers is None else handlers
         # all done
         return
-
 
     # implementation details
     def _processAssignments(self, configuration, key, value, locator):
@@ -183,7 +181,6 @@ class CommandLineParser:
 
         # all done
         return
-
 
     def _processArguments(self, configuration, index, *args):
         """
