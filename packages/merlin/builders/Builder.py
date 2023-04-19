@@ -41,7 +41,7 @@ class Builder(merlin.component, implements=merlin.protocols.builder):
     # interface
     def add(self, assets, **kwds):
         """
-        Add the given {asset} to the build pile
+        Add the given {assets} to the build pile
         """
         # go through the assets
         for asset in assets:
