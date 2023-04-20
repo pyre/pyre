@@ -14,10 +14,8 @@ class Language(merlin.foundry):
     Decorate a language foundry
     """
 
-
     # my protocols
-    language = merlin.protocols.language
-
+    language = merlin.protocols.assets.language
 
     # metamethods
     def __new__(cls, implements=language, **kwds):
@@ -26,7 +24,6 @@ class Language(merlin.foundry):
         """
         # chain up with my new default protocol
         return super().__new__(cls, implements=implements, **kwds)
-
 
     def __init__(self, factory, language=None, **kwds):
         # chain up
