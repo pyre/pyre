@@ -10,7 +10,9 @@ import merlin
 
 # publish
 # the LLVM compiler suite
-@merlin.foundry(implements=merlin.protocols.compiler, tip="the LLVM compiler suite")
+@merlin.foundry(
+    implements=merlin.protocols.external.compiler, tip="the LLVM compiler suite"
+)
 def llvm():
     """
     The LLVM compiler suite
@@ -24,7 +26,7 @@ def llvm():
 
 # the C compiler from the LLVM compiler suite
 @merlin.foundry(
-    implements=merlin.protocols.compiler,
+    implements=merlin.protocols.external.compiler,
     tip="the C compiler from the LLVM compiler suite",
 )
 def clang():
@@ -40,7 +42,7 @@ def clang():
 
 # the C compiler from the LLVM compiler suite
 @merlin.foundry(
-    implements=merlin.protocols.compiler,
+    implements=merlin.protocols.external.compiler,
     tip="the C++ compiler from the LLVM compiler suite",
 )
 def clangxx():
