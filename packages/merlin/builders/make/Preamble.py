@@ -26,6 +26,16 @@ class Preamble(Fragment):
     marker.default = "the preamble with the boilerplate"
     marker.doc = "the comment marker that identifies this fragment"
 
+    # interface
+    def generate(self, stage, **kwds):
+        """
+        Generate my makefile
+        """
+        # build the makefile path
+        makefile = stage / self.makefile
+        # chain up
+        yield from super().generate(makefile=makefile, **kwds)
+
     # implementation details
     def _generate(self, **kwds):
         """

@@ -15,16 +15,16 @@ class Fragment(Generator):
     """
 
     # interface
-    def generate(self, **kwds):
+    def generate(self, makefile, **kwds):
         """
         Generate the makefile preamble
         """
         # chain up
-        super().generate(**kwds)
+        super().generate(makefile=makefile, **kwds)
         # leave behind a marker in the main makefile
         yield self.renderer.commentLine(self.marker)
         # and construct the file include
-        yield f"include {self.makefile.name}"
+        yield f"include {makefile.name}"
         # all done
         return
 

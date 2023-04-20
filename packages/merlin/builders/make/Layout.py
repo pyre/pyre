@@ -26,6 +26,16 @@ class Layout(Fragment):
     marker.default = "the directory layout"
     marker.doc = "the comment marker that identifies this fragment"
 
+    # interface
+    def generate(self, stage, **kwds):
+        """
+        Generate my makefile
+        """
+        # build the makefile path
+        makefile = stage / self.makefile
+        # chain up
+        yield from super().generate(makefile=makefile, **kwds)
+
     # implementation details
     def _generate(self, layout, **kwds):
         """
