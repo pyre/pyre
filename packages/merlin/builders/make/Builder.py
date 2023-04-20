@@ -16,7 +16,7 @@ from .Generator import Generator
 
 # my parts
 from .Layout import Layout
-from .LibFlow import LibFlow
+from .Librarian import Librarian
 from .Preamble import Preamble
 
 
@@ -35,9 +35,9 @@ class Builder(Builder, Generator, family="merlin.builders.make"):
     marker.default = "the main makefile"
     marker.doc = "the comment marker that identifies this fragment"
 
-    libflow = merlin.protocols.flow.libflow()
-    libflow.default = LibFlow
-    libflow.doc = "the library workflow generator"
+    librarian = merlin.protocols.flow.librarian()
+    librarian.default = Librarian
+    librarian.doc = "the library workflow generator"
 
     # interface
     def add(self, plexus, **kwds):
@@ -122,8 +122,8 @@ class Builder(Builder, Generator, family="merlin.builders.make"):
         """
         Build a {library}
         """
-        # delegate to the {libflow} generator
-        return self.libflow.generate(**kwds)
+        # delegate to the {librarian} generator
+        return self.librarian.generate(**kwds)
 
     # makefile generation
     def _generate(self, stage, assets, **kwds):
