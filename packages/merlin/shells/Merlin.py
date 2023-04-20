@@ -25,16 +25,16 @@ class Merlin(merlin.plexus, family="merlin.shells.plexus"):
     from .Action import Action as pyre_action
 
     # configurable state
-    builder = merlin.protocols.builder()
+    builder = merlin.protocols.flow.builder()
     builder.doc = "the component that manages the various build products"
 
-    compilers = merlin.properties.tuple(schema=merlin.protocols.compiler())
+    compilers = merlin.properties.tuple(schema=merlin.protocols.external.compiler())
     compilers.doc = "the list of compilers to use while building projects"
 
-    projects = merlin.properties.tuple(schema=merlin.protocols.project())
+    projects = merlin.properties.tuple(schema=merlin.protocols.assets.project())
     projects.doc = "the list of projects in the current workspace"
 
-    scs = merlin.protocols.scs()
+    scs = merlin.protocols.external.scs()
     scs.doc = "the source control system"
 
     # framework hooks
