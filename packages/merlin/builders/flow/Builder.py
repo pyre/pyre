@@ -113,25 +113,25 @@ class Builder(BaseBuilder, family="merlin.builders.flow"):
         return
 
     # framework hooks
-    def merlin_initialized(self, plexus, **kwds):
+    def _merlin_initialized(self, plexus, **kwds):
         """
         Hook invoked after the {plexus} is fully initialized
         """
         # chain up
-        super().merlin_initialized(plexus=plexus, **kwds)
+        super()._merlin_initialized(plexus=plexus, **kwds)
 
         # grab my abi
         abi = self.abi(plexus=plexus)
 
         # prep the stage area
-        self.setupStage(plexus=plexus, abi=abi)
+        self._setupStage(plexus=plexus, abi=abi)
         # and the prefix
-        self.setupPrefix(plexus=plexus, abi=abi)
+        self._setupPrefix(plexus=plexus, abi=abi)
 
         # all done
         return
 
-    # implementation details
+    # visitor support
     def library(self, **kwds):
         """
         Build a {library}
@@ -140,7 +140,7 @@ class Builder(BaseBuilder, family="merlin.builders.flow"):
         return self.libflow.library(builder=self, **kwds)
 
     # helpers
-    def setupPrefix(self, plexus, abi, **kwds):
+    def _setupPrefix(self, plexus, abi, **kwds):
         """
         Build a workflow that assembles my prefix layout
         """
@@ -230,14 +230,14 @@ class Builder(BaseBuilder, family="merlin.builders.flow"):
         # all done
         return
 
-    def setupStage(self, plexus, abi, **kwds):
+    def _setupStage(self, plexus, abi, **kwds):
         """
         Build a workflow that creates the staging are for the intermediate build products
         """
         # get the root of the virtual filesystem
         vfs = plexus.vfs
         # hash the workspace into a build tag
-        wstag = self.workspaceHash(plexus=plexus)
+        wstag = self._workspaceHash(plexus=plexus)
 
         # first, we have to create the stage area in the physical filesystem and mount it
         # at its canonical location in the virtual filesystem
