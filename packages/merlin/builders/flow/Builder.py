@@ -12,7 +12,7 @@ import merlin
 from ..Builder import Builder as BaseBuilder
 
 # my parts
-from .Librarian import Librarian
+from .Library import Library
 
 
 # the manager of intermediate and final build products
@@ -22,9 +22,9 @@ class Builder(BaseBuilder, family="merlin.builders.flow"):
     """
 
     # configurable state
-    librarian = merlin.protocols.flow.librarian()
-    librarian.default = Librarian
-    librarian.doc = "the library workflow generator"
+    libFlow = merlin.protocols.flow.library()
+    libFlow.default = Library
+    libFlow.doc = "the library workflow generator"
 
     # interface
     def mkdir(self, path):
@@ -136,8 +136,8 @@ class Builder(BaseBuilder, family="merlin.builders.flow"):
         """
         Build a {library}
         """
-        # delegate to the {librarian} generator
-        return self.librarian.library(builder=self, **kwds)
+        # delegate to the {libFlow} generator
+        return self.libFlow.library(builder=self, **kwds)
 
     # helpers
     def _setupPrefix(self, plexus, abi, **kwds):

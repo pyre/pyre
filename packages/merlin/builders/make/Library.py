@@ -13,10 +13,10 @@ from .Fragment import Fragment
 
 
 # a builder of libraries
-class Librarian(
+class Library(
     Fragment,
     family="merlin.builders.make.lib",
-    implements=merlin.protocols.flow.librarian,
+    implements=merlin.protocols.flow.library,
 ):
     """
     Workflow generator for building libraries

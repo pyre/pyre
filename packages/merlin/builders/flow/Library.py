@@ -5,15 +5,14 @@
 
 
 # support
-import journal
 import merlin
 
 
 # a builder of libraries
-class Librarian(
+class Library(
     merlin.component,
     family="merlin.builders.flow.lib",
-    implements=merlin.protocols.flow.librarian,
+    implements=merlin.protocols.flow.library,
 ):
     """
     Workflow generator for building libraries
