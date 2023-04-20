@@ -9,7 +9,7 @@ import merlin
 
 
 # the manager of intermediate and final build products
-class Builder(merlin.component, implements=merlin.protocols.builder):
+class Builder(merlin.component, implements=merlin.protocols.flow.builder):
     """
     The manager of the all build products, both final and intermediate disposables
     """
@@ -35,7 +35,7 @@ class Builder(merlin.component, implements=merlin.protocols.builder):
     prefix.default = "/tmp/{pyre.user.username}/products"
     prefix.doc = "the installation location of the final build products"
 
-    layout = merlin.protocols.prefix()
+    layout = merlin.protocols.flow.prefix()
     layout.doc = "the layout of the installation area"
 
     # interface

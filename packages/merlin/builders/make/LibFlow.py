@@ -16,7 +16,7 @@ from .Fragment import Fragment
 class LibFlow(
     Fragment,
     family="merlin.builders.make.lib",
-    implements=merlin.protocols.libflow,
+    implements=merlin.protocols.flow.libflow,
 ):
     """
     Workflow generator for building libraries

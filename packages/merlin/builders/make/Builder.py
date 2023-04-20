@@ -35,7 +35,7 @@ class Builder(Builder, Generator, family="merlin.builders.make"):
     marker.default = "the main makefile"
     marker.doc = "the comment marker that identifies this fragment"
 
-    libflow = merlin.protocols.libflow()
+    libflow = merlin.protocols.flow.libflow()
     libflow.default = LibFlow
     libflow.doc = "the library workflow generator"
 
