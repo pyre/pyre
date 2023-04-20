@@ -22,29 +22,25 @@ class Generator(merlin.component):
     renderer.default = "make"
     renderer.doc = "the makefile mill"
 
-    makefile = merlin.properties.path()
-    makefile.default = "merlin.generic"
-    makefile.doc = "the generated makefile"
-
     marker = merlin.properties.str()
     marker.default = "generic makefile fragment"
     marker.doc = "the comment marker that identifies this fragment"
 
     # interface
-    def generate(self, stage, **kwds):
+    def generate(self, makefile, **kwds):
         """
         Generate the makefile preamble
         """
         # get the renderer
         renderer = self.renderer
         # open the output
-        with open(stage / self.makefile, mode="w") as makefile:
+        with open(makefile, mode="w") as stream:
             # prime the content generation
-            contents = self._generate(stage=stage, **kwds)
+            contents = self._generate(**kwds)
             # ask my renderer to build the makefile
             document = renderer.render(document=contents)
             # and write it out
-            print("\n".join(document), file=makefile)
+            print("\n".join(document), file=stream)
         # all done
         return
 
