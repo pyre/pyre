@@ -10,10 +10,10 @@ import merlin
 
 
 # a builder of libraries
-class LibFlow(
+class Librarian(
     merlin.component,
     family="merlin.builders.flow.lib",
-    implements=merlin.protocols.flow.libflow,
+    implements=merlin.protocols.flow.librarian,
 ):
     """
     Workflow generator for building libraries
