@@ -8,10 +8,13 @@
 import journal
 import merlin
 
+# superclass
+from .Fragment import Fragment
+
 
 # a builder of libraries
 class LibFlow(
-    merlin.component,
+    Fragment,
     family="merlin.builders.make.lib",
     implements=merlin.protocols.libflow,
 ):
@@ -20,9 +23,27 @@ class LibFlow(
     """
 
     # interface
+    def generate(self, stage, library, **kwds):
+        """
+        Generate my makefile
+        """
+        # build the makefile path
+        makefile = stage / f"merlin.{library.pyre_name}"
+        # chain up
+        yield from super().generate(makefile=makefile, library=library, **kwds)
+
+    # implementation details
+    def _generate(self, library, **kwds):
+        # chain up
+        yield from super()._generate(**kwds)
+        # render the library makefile
+        yield from self.library(library=library)
+        # all done
+        return
+
     # asset handlers
     @merlin.export
-    def library(self, renderer, library, **kwds):
+    def library(self, library, **kwds):
         """
         Generate the workflow that builds a {library}
         """
@@ -36,7 +57,6 @@ class LibFlow(
             # and add each one to the correct pile
             asset.identify(
                 visitor=self,
-                renderer=renderer,
                 library=library,
                 folders=folders,
                 headers=headers,
@@ -46,6 +66,8 @@ class LibFlow(
 
         # now, get the name of the library
         name = library.pyre_name
+        # and the renderer
+        renderer = self.renderer
         # sign on
         yield ""
         yield renderer.commentLine(f"{name} rules")
@@ -61,10 +83,10 @@ class LibFlow(
         yield f"\t@$(call log.asset,lib,{name})"
 
         # the directory rules
-        yield from self.folderRules(renderer=renderer, library=library, folders=folders)
+        yield from self.folderRules(library=library, folders=folders)
         # the asset rules
         yield from self.assetRules(
-            renderer=renderer, library=library, headers=headers, sources=sources, **kwds
+            library=library, headers=headers, sources=sources, **kwds
         )
 
         # all done
@@ -172,7 +194,7 @@ class LibFlow(
         return
 
     # helpers
-    def folderRules(self, renderer, library, folders):
+    def folderRules(self, library, folders):
         """
         Build the rules that construct the prefix directory layout
         """
@@ -180,6 +202,8 @@ class LibFlow(
         name = library.pyre_name
         # the special scope, if any
         scope = library.scope
+        # and the renderer
+        renderer = self.renderer
 
         # the common prefix for include directories is stored in a variable
         include = merlin.primitives.path("$(prefix.include)")
@@ -215,12 +239,14 @@ class LibFlow(
         # all done
         return
 
-    def assetRules(self, renderer, library, headers, sources, **kwds):
+    def assetRules(self, library, headers, sources, **kwds):
         """
         Build the rules that build {library} assets
         """
         # get the name of the library
         name = library.pyre_name
+        # and the renderer
+        renderer = self.renderer
         # if there are headers
         if headers:
             # sign on
@@ -228,9 +254,7 @@ class LibFlow(
             yield renderer.commentLine(f"add the headers to the {name} assets")
             yield f"{name}.assets:: {name}.headers"
             # make rules that export the public headers
-            yield from self.headerRules(
-                renderer=renderer, library=library, headers=headers, **kwds
-            )
+            yield from self.headerRules(library=library, headers=headers, **kwds)
         # if there are sources
         if sources:
             # add the archive to the library assets
@@ -238,13 +262,11 @@ class LibFlow(
             yield renderer.commentLine(f"add the archive to the {name} assets")
             yield f"{name}.assets:: {name}.archive"
             # make the rules that build the objects
-            yield from self.archiveRules(
-                renderer=renderer, library=library, sources=sources, **kwds
-            )
+            yield from self.archiveRules(library=library, sources=sources, **kwds)
         # all done
         return
 
-    def headerRules(self, renderer, library, headers, **kwds):
+    def headerRules(self, library, headers, **kwds):
         """
         Create a variable that holds all the exported headers
         """
@@ -254,8 +276,10 @@ class LibFlow(
         root = library.root
         # the special scope, if any
         scope = library.scope
-        # and the name of the gateway header
+        # the name of the gateway header
         gateway = library.gateway
+        # and the renderer
+        renderer = self.renderer
 
         # all exported headers are anchored at
         include = merlin.primitives.path("$(prefix.include)")
@@ -349,14 +373,16 @@ class LibFlow(
         # all done
         return
 
-    def archiveRules(self, renderer, library, sources, **kwds):
+    def archiveRules(self, library, sources, **kwds):
         """
         Build the set of rules that compile the {library} {sources}
         """
         # get the name of the library
         name = library.pyre_name
-        # and its root
+        # its root
         root = library.root
+        # and the renderer
+        renderer = self.renderer
         # make a pile of the names of the object files
         objects = tuple(self.formObjectPaths(library, sources))
 
