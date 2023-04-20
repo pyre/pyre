@@ -6,8 +6,9 @@
 
 # support
 import merlin
+
 # superclass
-from .Specification import Specification
+from ..flow.Specification import Specification
 
 
 # class declaration
@@ -15,7 +16,6 @@ class Asset(Specification, family="merlin.assets"):
     """
     Base protocol for all project assets
     """
-
 
     # required configurable state
     ignore = merlin.properties.bool(default=False)

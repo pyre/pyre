@@ -6,10 +6,12 @@
 
 # support
 import merlin
+
 # superclass
 from .Asset import Asset
+
 # schema
-from .AssetCategory import AssetCategory
+from .Category import Category
 from .Language import Language
 
 
@@ -19,14 +21,12 @@ class File(Asset, family="merlin.assets.files"):
     Base protocol for all file based project assets
     """
 
-
     # required configurable state
-    category = AssetCategory()
+    category = Category()
     category.doc = "a clue about the type of this asset"
 
     language = Language()
     language.doc = "a clue about the toolchain that processes this asset"
-
 
     # framework hooks
     @classmethod
