@@ -15,7 +15,7 @@ import merlin
 class Category(
     merlin.component,
     family="merlin.assets.categories.category",
-    implements=merlin.protocols.assetCategory,
+    implements=merlin.protocols.assets.category,
 ):
     """
     The base category for all file based assets

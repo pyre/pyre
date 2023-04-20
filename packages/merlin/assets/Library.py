@@ -18,7 +18,9 @@ import collections.abc
 
 # class declaration
 class Library(
-    Asset, family="merlin.assets.libraries.library", implements=merlin.protocols.library
+    Asset,
+    family="merlin.assets.libraries.library",
+    implements=merlin.protocols.assets.library,
 ):
     """
     A container of binary artifacts
@@ -39,11 +41,11 @@ class Library(
         "the name of the top level header that provides access to the other headers"
     )
 
-    languages = merlin.properties.tuple(schema=merlin.protocols.language())
+    languages = merlin.properties.tuple(schema=merlin.protocols.assets.language())
     languages.doc = "the languages of the library source assets"
 
     # flows
-    headers = merlin.properties.set(schema=merlin.protocols.file())
+    headers = merlin.properties.set(schema=merlin.protocols.assets.file())
     headers.doc = "the library headers as a set of products in /prefix"
 
     # derived data
@@ -207,7 +209,7 @@ class Library(
         # supported
         supported = set(
             language
-            for _, _, language in merlin.protocols.language.pyre_locateAllImplementers(
+            for _, _, language in merlin.protocols.assets.language.pyre_locateAllImplementers(
                 namespace="merlin"
             )
         )

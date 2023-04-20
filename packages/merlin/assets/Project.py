@@ -13,14 +13,14 @@ from .Asset import Asset
 
 # class declaration
 class Project(
-    Asset, family="merlin.assets.project", implements=merlin.protocols.project
+    Asset, family="merlin.assets.project", implements=merlin.protocols.assets.project
 ):
     """
     A high level container of assets
     """
 
     # required state
-    libraries = merlin.properties.tuple(schema=merlin.protocols.library())
+    libraries = merlin.properties.tuple(schema=merlin.protocols.assets.library())
     libraries.doc = "the collection of project libraries"
 
     # hooks
