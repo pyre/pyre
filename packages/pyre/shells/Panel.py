@@ -89,7 +89,7 @@ class Panel(Command):
         # otherwise, attempt to
         try:
             # look for a default action
-            default = getattr(self, "default")
+            default = self.default
         # if not there
         except AttributeError:
             # show the user my help screen
