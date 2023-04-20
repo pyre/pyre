@@ -10,7 +10,8 @@ from .Specification import Specification as specification
 # builders
 from .Builder import Builder as builder
 from .PrefixLayout import PrefixLayout as prefix
-from .Librarian import Librarian as librarian
+from .Library import Library as library
+from .Project import Project as project
 
 
 # end of file

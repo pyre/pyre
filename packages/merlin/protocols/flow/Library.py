@@ -9,7 +9,7 @@ import merlin
 
 
 # a builder of libraries
-class Librarian(merlin.protocol, family="merlin.builders.librarian"):
+class Library(merlin.protocol, family="merlin.builders.librarian"):
     """
     Workflow generator for libraries
     """

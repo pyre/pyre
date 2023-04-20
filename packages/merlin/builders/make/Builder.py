@@ -4,9 +4,6 @@
 # (c) 1998-2023 all rights reserved
 
 
-# externals
-import datetime
-
 # support
 import merlin
 
@@ -16,8 +13,9 @@ from .Generator import Generator
 
 # my parts
 from .Layout import Layout
-from .Librarian import Librarian
+from .Library import Library
 from .Preamble import Preamble
+from .Project import Project
 
 
 # the manager of intermediate and final build products
@@ -35,9 +33,13 @@ class Builder(Builder, Generator, family="merlin.builders.make"):
     marker.default = "the main makefile"
     marker.doc = "the comment marker that identifies this fragment"
 
-    librarian = merlin.protocols.flow.librarian()
-    librarian.default = Librarian
-    librarian.doc = "the library workflow generator"
+    libFlow = merlin.protocols.flow.library()
+    libFlow.default = Library
+    libFlow.doc = "the library workflow generator"
+
+    projFlow = merlin.protocols.flow.project()
+    projFlow.default = Project
+    projFlow.doc = "the project workflow generator"
 
     # interface
     def add(self, plexus, **kwds):
@@ -116,14 +118,15 @@ class Builder(Builder, Generator, family="merlin.builders.make"):
         """
         Build a {project}
         """
-        return []
+        # delegate to the {projFlow} generator
+        return self.projFlow.generate(**kwds)
 
     def library(self, **kwds):
         """
         Build a {library}
         """
-        # delegate to the {librarian} generator
-        return self.librarian.generate(**kwds)
+        # delegate to the {libFlow} generator
+        return self.libFlow.generate(**kwds)
 
     # makefile generation
     def _generate(self, stage, assets, **kwds):
