@@ -72,8 +72,8 @@ class LibFlow(
         yield ""
         yield renderer.commentLine(f"{name} rules")
         # add the asset to the default target
-        yield renderer.commentLine(f"add {name} to the default target")
-        yield f"all:: {name}"
+        yield renderer.commentLine(f"add {name} to the pile of libraries")
+        yield f"libraries:: {name}"
 
         # make a target that builds just this library
         yield ""
