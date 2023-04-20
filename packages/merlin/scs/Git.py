@@ -8,16 +8,18 @@
 import journal
 import re
 import subprocess
+
 # support
 import merlin
 
 
 # the git source control system wrapper
-class Git(merlin.component, family="merlin.scs.git", implements=merlin.protocols.scs):
+class Git(
+    merlin.component, family="merlin.scs.git", implements=merlin.protocols.external.scs
+):
     """
     The git source control system
     """
-
 
     # interface
     @merlin.export
@@ -26,7 +28,7 @@ class Git(merlin.component, family="merlin.scs.git", implements=merlin.protocols
         Get the name of the currently active branch
         """
         # the git command line
-        cmd = [ "git", "branch", "--show-current" ]
+        cmd = ["git", "branch", "--show-current"]
         # settings
         options = {
             "executable": "git",
@@ -34,7 +36,8 @@ class Git(merlin.component, family="merlin.scs.git", implements=merlin.protocols
             "stdout": subprocess.PIPE,
             "stderr": subprocess.PIPE,
             "universal_newlines": True,
-            "shell": False }
+            "shell": False,
+        }
         # invoke
         with subprocess.Popen(**options) as git:
             # collect the output
@@ -60,7 +63,6 @@ class Git(merlin.component, family="merlin.scs.git", implements=merlin.protocols
         # if anything went wrong
         return "unknown"
 
-
     @merlin.export
     def version(self):
         """
@@ -69,7 +71,7 @@ class Git(merlin.component, family="merlin.scs.git", implements=merlin.protocols
         # the value to return on failure
         bail = (0, 0, 0, "")
         # the git command line
-        cmd = [ "git", "describe", "--tags", "--long", "--always" ]
+        cmd = ["git", "describe", "--tags", "--long", "--always"]
         # settings
         options = {
             "executable": "git",
@@ -77,7 +79,8 @@ class Git(merlin.component, family="merlin.scs.git", implements=merlin.protocols
             "stdout": subprocess.PIPE,
             "stderr": subprocess.PIPE,
             "universal_newlines": True,
-            "shell": False }
+            "shell": False,
+        }
         # invoke
         with subprocess.Popen(**options) as git:
             # collect the output
@@ -126,7 +129,7 @@ class Git(merlin.component, family="merlin.scs.git", implements=merlin.protocols
     # parser of the {git describe} result
     descriptionParser = re.compile(
         r"(v(?P<major>\d+)\.(?P<minor>\d+).(?P<micro>\d+)-\d+-g)?(?P<commit>.+)"
-        )
+    )
 
 
 # end of file
