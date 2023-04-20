@@ -184,7 +184,7 @@ class Info(merlin.shells.command, family="merlin.cli.info"):
         Display information about the known source languages
         """
         # get the language protocol
-        language = merlin.protocols.language
+        language = merlin.protocols.assets.language
         # assemble its implementors
         languages = tuple(
             name
