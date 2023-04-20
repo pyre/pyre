@@ -12,7 +12,7 @@ import merlin
 class Suite(
     merlin.component,
     family="merlin.compilers.llvm",
-    implements=merlin.protocols.compiler,
+    implements=merlin.protocols.external.compiler,
 ):
     """
     The LLVM compiler suite

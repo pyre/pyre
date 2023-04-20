@@ -13,7 +13,7 @@ import merlin
 
 
 # the base compiler for the GNU compiler suite
-class GNU(merlin.component, implements=merlin.protocols.compiler):
+class GNU(merlin.component, implements=merlin.protocols.external.compiler):
     """
     Common base for compilers from the GNU compiler suite
     """

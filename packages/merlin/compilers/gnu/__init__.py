@@ -10,7 +10,9 @@ import merlin
 
 # publish
 # the GNU compiler suite
-@merlin.foundry(implements=merlin.protocols.compiler, tip="the GNU compiler suite")
+@merlin.foundry(
+    implements=merlin.protocols.external.compiler, tip="the GNU compiler suite"
+)
 def gnu():
     """
     The GNU compiler suite
@@ -24,7 +26,7 @@ def gnu():
 
 # the C compiler from the GNU compiler suite
 @merlin.foundry(
-    implements=merlin.protocols.compiler,
+    implements=merlin.protocols.external.compiler,
     tip="the C compiler from the GNU compiler suite",
 )
 def gcc():
@@ -40,7 +42,7 @@ def gcc():
 
 # the C++ compiler from the GNU compiler suite
 @merlin.foundry(
-    implements=merlin.protocols.compiler,
+    implements=merlin.protocols.external.compiler,
     tip="the C++ compiler from the GNU compiler suite",
 )
 def gxx():
@@ -56,7 +58,7 @@ def gxx():
 
 # the FORTRAN compiler from the GNU compiler suite
 @merlin.foundry(
-    implements=merlin.protocols.compiler,
+    implements=merlin.protocols.external.compiler,
     tip="the FORTRAN compiler from the GNU compiler suite",
 )
 def gfortran():

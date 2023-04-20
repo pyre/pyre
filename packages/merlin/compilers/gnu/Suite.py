@@ -12,7 +12,7 @@ import merlin
 class Suite(
     merlin.component,
     family="merlin.compilers.gnu",
-    implements=merlin.protocols.compiler,
+    implements=merlin.protocols.external.compiler,
 ):
     """
     The GNU compiler suite

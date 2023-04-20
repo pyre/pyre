@@ -13,7 +13,7 @@ import merlin
 
 
 # the base compiler from the LLVM compiler suite
-class LLVM(merlin.component, implements=merlin.protocols.compiler):
+class LLVM(merlin.component, implements=merlin.protocols.external.compiler):
     """
     Common base for compilers from the LLVM compiler suite
     """
