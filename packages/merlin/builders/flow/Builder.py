@@ -22,7 +22,7 @@ class Builder(BaseBuilder, family="merlin.builders.flow"):
     """
 
     # configurable state
-    libflow = merlin.protocols.libflow()
+    libflow = merlin.protocols.flow.libflow()
     libflow.default = LibFlow
     libflow.doc = "the library workflow generator"
 
