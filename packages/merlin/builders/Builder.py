@@ -82,7 +82,7 @@ class Builder(merlin.component, implements=merlin.protocols.builder):
 
     # implementation details
     # framework hooks
-    def merlin_initialized(self, plexus, **kwds):
+    def _merlin_initialized(self, plexus, **kwds):
         """
         Hook invoked after the {plexus} is fully initialized
         """
@@ -125,7 +125,7 @@ class Builder(merlin.component, implements=merlin.protocols.builder):
         # all done
         return abi
 
-    def workspaceHash(self, plexus):
+    def _workspaceHash(self, plexus):
         """
         Hash the workspace location and the currently active branch into a build tag
         """

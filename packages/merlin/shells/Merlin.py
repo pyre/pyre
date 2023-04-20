@@ -44,7 +44,7 @@ class Merlin(merlin.plexus, family="merlin.shells.plexus"):
         Go through my traits and force them to materialize
         """
         # give my children their context
-        self.builder.merlin_initialized(plexus=self)
+        self.builder._merlin_initialized(plexus=self)
 
         # and indicate that nothing is amiss
         return []

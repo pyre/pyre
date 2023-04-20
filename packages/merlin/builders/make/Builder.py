@@ -54,30 +54,30 @@ class Builder(Builder, Generator, family="merlin.builders.make"):
         return
 
     # framework hooks
-    def merlin_initialized(self, plexus, **kwds):
+    def _merlin_initialized(self, plexus, **kwds):
         """
         Hook invoked after the {plexus} is fully initialized
         """
         # chain up
-        super().merlin_initialized(plexus=plexus, **kwds)
+        super()._merlin_initialized(plexus=plexus, **kwds)
         # grab my abi
         abi = self.abi(plexus=plexus)
         # prep the stage area
-        self.setupStage(plexus=plexus, abi=abi, **kwds)
+        self._setupStage(plexus=plexus, abi=abi, **kwds)
         # and the prefix
-        self.setupPrefix(plexus=plexus, abi=abi, **kwds)
+        self._setupPrefix(plexus=plexus, abi=abi, **kwds)
         # all done
         return
 
     # implementation details
-    def setupStage(self, plexus, abi, **kwds):
+    def _setupStage(self, plexus, abi, **kwds):
         """
         Set up the staging area for build temporaries
         """
         # get the root of the virtual filesystem
         vfs = plexus.vfs
         # hash the workspace into a build tag
-        wstag = self.workspaceHash(plexus=plexus)
+        wstag = self._workspaceHash(plexus=plexus)
         # build the stage path
         stage = self.stage / wstag / abi / self.tag
         # force the creation of the directory
@@ -92,7 +92,7 @@ class Builder(Builder, Generator, family="merlin.builders.make"):
         # all done
         return
 
-    def setupPrefix(self, plexus, abi, **kwds):
+    def _setupPrefix(self, plexus, abi, **kwds):
         """
         Set up the installation area
         """
@@ -111,10 +111,24 @@ class Builder(Builder, Generator, family="merlin.builders.make"):
         # all done
         return
 
+    # asset visitors
+    def project(self, **kwds):
+        """
+        Build a {project}
+        """
+        return []
+
+    def library(self, **kwds):
+        """
+        Build a {library}
+        """
+        # delegate to the {libflow} generator
+        return self.libflow.generate(**kwds)
+
     # makefile generation
     def _generate(self, stage, assets, **kwds):
         """
-        Generate the makefile preamble the builder layout
+        Generate the main makefile
         """
         # chain up
         yield from super()._generate()
@@ -138,14 +152,6 @@ class Builder(Builder, Generator, family="merlin.builders.make"):
 
         # all done
         return
-
-    # asset visitors
-    def library(self, **kwds):
-        """
-        Build a {library}
-        """
-        # delegate to the {libflow} generator
-        return self.libflow.generate(**kwds)
 
 
 # end of file
