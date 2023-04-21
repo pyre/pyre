@@ -29,8 +29,14 @@ class Library(
         """
         # build the makefile path
         makefile = stage / f"merlin.{library.pyre_name}"
+        # and a comment to be places above the include of my makefile
+        marker = f"the '{library.pyre_name}' rules"
         # chain up
-        yield from super().generate(makefile=makefile, library=library, **kwds)
+        yield from super().generate(
+            makefile=makefile, marker=marker, library=library, **kwds
+        )
+        # all done
+        return
 
     # implementation details
     def _generate(self, library, **kwds):
