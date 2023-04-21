@@ -22,10 +22,6 @@ class Generator(merlin.component):
     renderer.default = "make"
     renderer.doc = "the makefile mill"
 
-    marker = merlin.properties.str()
-    marker.default = "generic makefile fragment"
-    marker.doc = "the comment marker that identifies this fragment"
-
     # interface
     def generate(self, makefile, **kwds):
         """
