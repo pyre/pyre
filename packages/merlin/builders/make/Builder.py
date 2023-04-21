@@ -29,10 +29,6 @@ class Builder(Builder, Generator, family="merlin.builders.make"):
     makefile.default = "Makefile"
     makefile.doc = "the name of the generated makefile"
 
-    marker = merlin.properties.str()
-    marker.default = "the main makefile"
-    marker.doc = "the comment marker that identifies this fragment"
-
     libFlow = merlin.protocols.flow.library()
     libFlow.default = Library
     libFlow.doc = "the library workflow generator"
