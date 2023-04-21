@@ -35,12 +35,14 @@ class Preamble(Fragment):
         yield from super().generate(makefile=makefile, marker=marker, **kwds)
 
     # implementation details
-    def _generate(self, **kwds):
+    def _generate(self, target="projects", **kwds):
         """
         Build my contents
         """
         # chain up
         yield from super()._generate(**kwds)
+        # makefile prep
+        yield from self._prep(target=target)
         # basic tokens to eliminate ambiguities and errors
         yield from self._tokens()
         # setup color support
@@ -51,6 +53,18 @@ class Preamble(Fragment):
         yield from self._tools()
         # all done
         return
+
+    def _prep(self, target):
+        """
+        Miscellaneous makefile prep
+        """
+        # get my renderer
+        renderer = self.renderer
+        # sign on
+        yield ""
+        yield renderer.commentLine("prep")
+        # the default target
+        yield from renderer.set(name=".DEFAULT_GOAL", value=target)
 
     def _tokens(self):
         """
