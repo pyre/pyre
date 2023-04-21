@@ -1,7 +1,9 @@
 // -*- c++ -*-
 //
-#ifndef BENCHMARK_KERNEL_H
-#define BENCHMARK_KERNEL_H
+
+// code guard
+#if !defined(pyre_cuda_memory_benchmark_kernels_h)
+#define pyre_cuda_memory_benchmark_kernels_h
 
 #include <cuda_runtime.h>
 
@@ -31,3 +33,5 @@ __global__ void
 computeI3(double * A, double * I3, int size);
 
 #endif
+
+// end of file

@@ -16,7 +16,6 @@
 
 // type alias
 using host_mapped_t = pyre::cuda::memory::host_mapped_t<double>;
-using device_mapped_t = pyre::cuda::memory::device_mapped_t<double>;
 
 
 // main program
@@ -37,9 +36,6 @@ main(int argc, char * argv[])
     // show me the address
     channel << "allocated " << cells << " doubles at " << arena.data()
             << pyre::journal::endl(__HERE__);
-
-    // get the device pointer
-    device_mapped_t device_arena(arena.data());
 
     // verify we can iterate and initialize all cells
     for (auto & cell : arena) {
