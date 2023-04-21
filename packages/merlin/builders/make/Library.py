@@ -77,7 +77,7 @@ class Library(
         # sign on
         yield ""
         yield renderer.commentLine(f"{name} rules")
-        # add the asset to the default target
+        # add this library to the pile
         yield renderer.commentLine(f"add {name} to the pile of libraries")
         yield f"libraries:: {name}"
 
