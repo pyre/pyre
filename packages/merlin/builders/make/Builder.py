@@ -114,19 +114,25 @@ class Builder(Builder, Generator, family="merlin.builders.make"):
         return
 
     # asset visitors
-    def project(self, **kwds):
+    def project(self, project, **kwds):
         """
         Build a {project}
         """
         # delegate to the {projFlow} generator
-        return self.projFlow.generate(**kwds)
+        yield from self.projFlow.generate(builder=self, project=project, **kwds)
+        # go through my libraries
+        for library in project.libraries:
+            # and generate makefiles for each one
+            yield from library.identify(visitor=self, **kwds)
+        # all done
+        return
 
     def library(self, **kwds):
         """
         Build a {library}
         """
         # delegate to the {libFlow} generator
-        return self.libFlow.generate(**kwds)
+        return self.libFlow.generate(builder=self, **kwds)
 
     # makefile generation
     def _generate(self, stage, assets, **kwds):
@@ -141,7 +147,7 @@ class Builder(Builder, Generator, family="merlin.builders.make"):
         # make a preamble generator
         preamble = Preamble(name=f"{self.pyre_name}.preamble")
         # and build the preamble
-        yield from preamble.generate(stage=stage)
+        yield from preamble.generate(stage=stage, **kwds)
 
         # make a layout generator
         layout = Layout(name=f"{self.pyre_name}.dirs")
