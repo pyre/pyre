@@ -22,10 +22,6 @@ class Preamble(Fragment):
     makefile.default = "merlin.pre"
     makefile.doc = "the generated makefile"
 
-    marker = merlin.properties.str()
-    marker.default = "the preamble with the boilerplate"
-    marker.doc = "the comment marker that identifies this fragment"
-
     # interface
     def generate(self, stage, **kwds):
         """
@@ -33,8 +29,10 @@ class Preamble(Fragment):
         """
         # build the makefile path
         makefile = stage / self.makefile
+        # and a comment
+        marker = f"boilerplate"
         # chain up
-        yield from super().generate(makefile=makefile, **kwds)
+        yield from super().generate(makefile=makefile, marker=marker, **kwds)
 
     # implementation details
     def _generate(self, **kwds):
