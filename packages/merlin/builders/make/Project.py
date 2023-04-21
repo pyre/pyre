@@ -28,7 +28,7 @@ class Project(
         Generate my makefile
         """
         # build the makefile path
-        makefile = stage / f"merlin.{project.pyre_name}"
+        makefile = stage / "merlin" / project.pyre_name
         # and a comment to be places above the include of my makefile
         marker = f"the '{project.pyre_name}' rules"
         # make some space

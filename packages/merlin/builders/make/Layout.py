@@ -19,7 +19,7 @@ class Layout(Fragment):
 
     # configurable state
     makefile = merlin.properties.path()
-    makefile.default = "merlin.dirs"
+    makefile.default = "layout"
     makefile.doc = "the generated makefile"
 
     # interface
@@ -28,7 +28,7 @@ class Layout(Fragment):
         Generate my makefile
         """
         # build the makefile path
-        makefile = stage / self.makefile
+        makefile = stage / "merlin" / self.makefile
         # an identifying comment
         marker = "the directory layout"
         # chain up
