@@ -34,7 +34,7 @@ class Build(merlin.shells.command, family="merlin.cli.projects"):
         # filter
         projects = tuple(filter(sieve, plexus.projects))
         # ask the builder to add each one to its pile
-        builder.add(plexus=plexus, assets=projects)
+        builder.add(plexus=plexus, assets=projects, target="projects")
         # and then build everything
         builder.build(plexus=plexus, assets=projects)
         # all done
@@ -56,7 +56,7 @@ class Build(merlin.shells.command, family="merlin.cli.projects"):
         # filter
         libraries = tuple(filter(sieve, libs))
         # ask the builder to add each one to its pile
-        builder.add(plexus=plexus, assets=libraries)
+        builder.add(plexus=plexus, assets=libraries, target="libraries")
         # and then build everything
         builder.build(plexus=plexus, assets=libraries)
         # all done
