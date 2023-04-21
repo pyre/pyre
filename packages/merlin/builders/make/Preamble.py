@@ -19,7 +19,7 @@ class Preamble(Fragment):
 
     # configurable state
     makefile = merlin.properties.path()
-    makefile.default = "merlin.pre"
+    makefile.default = "preamble"
     makefile.doc = "the generated makefile"
 
     # interface
@@ -28,7 +28,7 @@ class Preamble(Fragment):
         Generate my makefile
         """
         # build the makefile path
-        makefile = stage / self.makefile
+        makefile = stage / "merlin" / self.makefile
         # and a comment
         marker = f"boilerplate"
         # chain up

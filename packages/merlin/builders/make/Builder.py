@@ -26,7 +26,7 @@ class Builder(Builder, Generator, family="merlin.builders.make"):
 
     # configurable state
     makefile = merlin.properties.path()
-    makefile.default = "makefile"
+    makefile.default = "Makefile"
     makefile.doc = "the name of the generated makefile"
 
     marker = merlin.properties.str()
@@ -48,6 +48,10 @@ class Builder(Builder, Generator, family="merlin.builders.make"):
         """
         # get the stage uri
         stage = plexus.vfs["/stage"].uri
+        # form the directory with the makefile fragments
+        fragments = stage / "merlin"
+        # make sure it exists
+        fragments.mkdir(parents=True, exist_ok=True)
         # build the makefile path
         makefile = stage / self.makefile
         # generate the makefiles

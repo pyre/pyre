@@ -24,7 +24,7 @@ class Fragment(Generator):
         # leave behind a marker in the main makefile
         yield self.renderer.commentLine(marker)
         # and construct the file include
-        yield f"include {makefile.name}"
+        yield f"include merlin/{makefile.name}"
         # all done
         return
 
