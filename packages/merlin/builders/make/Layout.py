@@ -22,10 +22,6 @@ class Layout(Fragment):
     makefile.default = "merlin.dirs"
     makefile.doc = "the generated makefile"
 
-    marker = merlin.properties.str()
-    marker.default = "the directory layout"
-    marker.doc = "the comment marker that identifies this fragment"
-
     # interface
     def generate(self, stage, **kwds):
         """
@@ -33,8 +29,10 @@ class Layout(Fragment):
         """
         # build the makefile path
         makefile = stage / self.makefile
+        # an identifying comment
+        marker = "the directory layout"
         # chain up
-        yield from super().generate(makefile=makefile, **kwds)
+        yield from super().generate(makefile=makefile, marker=marker, **kwds)
 
     # implementation details
     def _generate(self, layout, **kwds):
