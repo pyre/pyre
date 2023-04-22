@@ -41,8 +41,8 @@ class Library(
         "the name of the top level header that provides access to the other headers"
     )
 
-    languages = merlin.properties.tuple(schema=merlin.protocols.assets.language())
-    languages.doc = "the languages of the library source assets"
+    languages = merlin.protocols.languages.table()
+    languages.doc = "language specific configuration"
 
     # flows
     headers = merlin.properties.set(schema=merlin.protocols.assets.file())
@@ -196,25 +196,8 @@ class Library(
         """
         Generate a sequence of the allowed languages
         """
-        # grab the set of required languages, as indicated by the user
-        languages = self.languages
-        # if the user bothered to specify
-        if languages:
-            # respect the choices
-            yield from languages
-            # and nothing further
-            return
-        # if none were specified, fall back to all languages marked {linkable}
-        sieve = lambda x: x.linkable
-        # supported
-        supported = set(
-            language
-            for _, _, language in merlin.protocols.assets.language.pyre_locateAllImplementers(
-                namespace="merlin"
-            )
-        )
-        # languages
-        yield from filter(sieve, supported)
+        # generate the sequence of supported languages
+        yield from self.languages
         # all done
         return
 
