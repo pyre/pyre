@@ -50,6 +50,11 @@ class Libraries(merlin.shells.command, family="merlin.cli.lib"):
             channel.indent()
             channel.line(f"name: {lib.name}")
             channel.line(f"root: {lib.root}")
+            channel.line(f"languages:")
+            channel.indent()
+            for language in lib.languages:
+                channel.report(report=language.report())
+            channel.outdent()
             channel.outdent()
         # flush
         channel.log()
