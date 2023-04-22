@@ -25,7 +25,7 @@ class File(
     category = merlin.protocols.assets.category()
     category.doc = "a clue about the type of this asset"
 
-    language = merlin.protocols.assets.language()
+    language = merlin.protocols.languages.language()
     language.doc = "a clue about the toolchain that processes this asset"
 
     # hooks
