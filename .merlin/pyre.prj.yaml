@@ -15,13 +15,10 @@ libpyre:
     # e.g., on linux, the archive will be called libpyre.a and the shared object libpyre.so,
     # whereas on macOS we'll get libpyre.a and libpyre.dylib
     name: pyre
-    # the default set of source languages; helps assign a language to assets where the
-    # language is not uniquely deducible from its suffix; e.g., C and C++ headers typically
-    # have a '.h' suffix
-    # see {merlin info languages} for an up to date list of known languages
-    languages: c++, autogen
     # the location of the library sources relative to the root of the project
     root: lib/pyre
+    # language specific configuration
+    languages.cxx.dialect: c++17
 
     # optional external dependencies; a dependency can be marked optional if the source code
     # structure is flexible enough to accommodate its absence; see the special configuration
