@@ -14,17 +14,14 @@ class Language(merlin.protocol, family="merlin.languages"):
     A category of source artifacts, usually associated with a family of processing workflows
     """
 
-
     # required state
     categories = merlin.properties.catalog(schema=merlin.properties.str())
     categories.doc = "a map from file categories to a list of suffixes"
-
 
     # implementation details
     # a map from the common to the canonical name of a language; this index is
     # maintained automatically by the {merlin.components.language} foundry
     aliases = {}
-
 
     # framework hooks
     @classmethod
