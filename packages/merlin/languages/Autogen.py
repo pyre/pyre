@@ -12,7 +12,11 @@ from .Language import Language
 
 
 # class declaration
-class Autogen(Language, family="merlin.languages.autogen"):
+class Autogen(
+    Language,
+    family="merlin.languages.autogen",
+    implements=merlin.protocols.languages.autogen,
+):
     """
     A category of source artifacts that are templates that expand into other artifacts
     """
@@ -52,6 +56,17 @@ class Autogen(Language, family="merlin.languages.autogen"):
             return super().identify(visitor=visitor, **kwds)
         # if it does, invoke it
         return handler(language=self, **kwds)
+
+    def report(self):
+        """
+        Generate a report
+        """
+        # sign on
+        yield from super().report()
+        # add my dialect
+        yield f"  dialect: {self.dialect}"
+        # all done
+        return
 
 
 # end of file

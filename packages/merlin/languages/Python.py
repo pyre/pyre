@@ -12,7 +12,11 @@ from .Language import Language
 
 
 # class declaration
-class Python(Language, family="merlin.languages.python"):
+class Python(
+    Language,
+    family="merlin.languages.python",
+    implements=merlin.protocols.languages.python,
+):
     """
     A category of source artifacts encoded in the Python programming language
     """

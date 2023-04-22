@@ -95,4 +95,16 @@ def python():
     return Python
 
 
+@merlin.foundry(tip="language specific configuration table")
+def table():
+    """
+    A table of language specific configurations
+    """
+    # get the table
+    from .Table import Table
+
+    # and publish it
+    return Table
+
+
 # end of file
