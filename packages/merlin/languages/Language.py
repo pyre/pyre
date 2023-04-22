@@ -69,6 +69,15 @@ class Language(
         # if it does, invoke it
         return handler(language=self, **kwds)
 
+    def report(self):
+        """
+        Generate a report
+        """
+        # sign on
+        yield f"{self.name}:"
+        # all done
+        return
+
     # framework hooks
     @classmethod
     def pyre_classRegistered(cls):
