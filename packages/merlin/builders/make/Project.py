@@ -73,7 +73,14 @@ class Project(
         yield ""
         yield renderer.commentLine(f"building {name}")
         # add the libraries to the anchor rule
-        yield f"{name}:: {name}.libraries"
+        yield f"{name}: {name}.assets"
+        yield f"\t@$(call log.asset,project,{name})"
+
+        # make a target that builds just this project
+        yield ""
+        yield renderer.commentLine(f"building {name}")
+        # add the libraries to the anchor rule
+        yield f"{name}.assets:: {name}.libraries"
 
         # make some room
         yield ""
