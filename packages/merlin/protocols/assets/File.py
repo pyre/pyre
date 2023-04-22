@@ -12,7 +12,7 @@ from .Asset import Asset
 
 # schema
 from .Category import Category
-from .Language import Language
+from ..languages.Language import Language
 
 
 # class declaration

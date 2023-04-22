@@ -11,7 +11,6 @@ import merlin
 from .Asset import Asset
 
 # schema
-from .Language import Language as language
 from ..languages.Table import Table as table
 
 
