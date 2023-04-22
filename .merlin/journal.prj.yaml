@@ -13,17 +13,15 @@ journal.prj:
 libjournal:
     # the name of the library
     name: journal
-    # the default set of source languages
-    languages: c++, autogen
-
     # the location of its sources relative to the root of the project
     root: lib/journal
-
-    # users #include <pyre/journal.h>
+    # users access using "#include <pyre/journal.h>"
     # so deposit all headers in the {pyre} namespace
     scope: pyre
     # except this one that acts as the gateway to the library
     gateway: journal.h
+    # language specific configuration
+    languages.cxx.dialect: c++17
 
 
 # overrides for specific files
