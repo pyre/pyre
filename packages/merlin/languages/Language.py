@@ -13,7 +13,7 @@ import merlin
 
 # base class for all supported languages
 class Language(
-    merlin.component, implements=merlin.protocols.assets.language, internal=True
+    merlin.component, implements=merlin.protocols.languages.language, internal=True
 ):
     """
     A category of source artifacts, usually associated with a family of processing workflows
