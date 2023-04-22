@@ -15,7 +15,7 @@ class Language(merlin.foundry):
     """
 
     # my protocols
-    language = merlin.protocols.assets.language
+    language = merlin.protocols.languages.language
 
     # metamethods
     def __new__(cls, implements=language, **kwds):
