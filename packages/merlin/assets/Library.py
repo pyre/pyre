@@ -138,69 +138,6 @@ class Library(
         # all done
         return asset
 
-    # suffix -> (assetCategory, language)
-    def assetClassifier(self) -> dict:
-        """
-        Build a map of file suffixes to asset category and language
-        """
-        # make a table of suffixes to category and language
-        table = merlin.patterns.vivify(levels=2, atom=set)
-        # go through the relevant languages
-        for language in self.supportedLanguages():
-            # go through its suffix categories
-            for suffix, category in language.assetClassifier.items():
-                # add this to the table
-                table[suffix][category].add(language)
-
-        # the cleaned up version of {table} becomes my {assetClassifier}
-        assetClassifier = {}
-        # go through the table and for each suffix
-        for suffix in table:
-            # grab the table of candidate categories
-            categories = table[suffix]
-            # unpack
-            category, *conflicts = categories.keys()
-            # if there is a conflict
-            if conflicts:
-                # there is something wrong with the configuration of the supported languages
-                channel = journal.firewall("merlin.assets.library")
-                # so complain
-                channel.line(f"found multiple asset categories for suffix '{suffix}'")
-                channel.line(f"candidates:")
-                # go through the candidates
-                for cat, langs in categories.items():
-                    # and show me which languages claim which category
-                    channel.line(
-                        f"  {cat.category}: from  {', '.join(l.name for l in langs)}"
-                    )
-                # and flush
-                channel.log()
-                # just in case this firewall is not fatal,
-                # set up this suffix as unrecognizable category with no associated language
-                assetClassifier[suffix] = "unrecognized", None
-                # and move on
-                continue
-            # now, get the associated languages
-            language, *conflicts = categories[category]
-            # again, if more than one language competes for this suffix
-            if conflicts:
-                # the suffix is of unknown language
-                language = None
-            # mark it
-            assetClassifier[suffix] = category, language
-
-        # all done
-        return assetClassifier
-
-    def supportedLanguages(self) -> collections.abc.Iterable:
-        """
-        Generate a sequence of the allowed languages
-        """
-        # generate the sequence of supported languages
-        yield from self.languages
-        # all done
-        return
-
     # hooks
     def identify(self, visitor, **kwds):
         """
@@ -261,7 +198,7 @@ class Library(
         # for the library root, but they set the pattern for building all of its assets
         top = self.folder(name=str(relWS / relLib), node=root, path=relLib)
         # build the asset recognizer
-        classifier = self.assetClassifier()
+        classifier = self.languages.classifier
         # now, starting with my root
         todo = [top]
         # dive into the tree
