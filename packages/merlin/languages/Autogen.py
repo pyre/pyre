@@ -32,7 +32,7 @@ class Autogen(
     categories = merlin.properties.catalog(schema=merlin.properties.str())
     categories.default = {
         # source suffixes
-        "source": [".in"],
+        "template": [".in"],
     }
     categories.doc = "a map from file categories to a list of suffixes"
 
