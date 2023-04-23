@@ -7,17 +7,19 @@
 # framework
 import merlin
 
-# superclass
+# superclasses
+from ..base.C import C
 from .LLVM import LLVM
 
 
 # the C compiler from the GNU compiler suite
-class Clang(LLVM, family="merlin.compilers.llvm.clang"):
+class Clang(C, LLVM, family="merlin.compilers.llvm.clang"):
     """
     The C compiler from the LLVM compiler suite
     """
 
     # constants
+    tag = "clang"
     language = "c"
 
     # configurable state
