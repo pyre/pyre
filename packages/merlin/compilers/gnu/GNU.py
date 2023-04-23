@@ -11,9 +11,12 @@ import subprocess
 # framework
 import merlin
 
+# superclass
+from ..base.Unix import Unix
+
 
 # the base compiler for the GNU compiler suite
-class GNU(merlin.component, implements=merlin.protocols.external.compiler):
+class GNU(Unix):
     """
     Common base for compilers from the GNU compiler suite
     """
@@ -26,50 +29,10 @@ class GNU(merlin.component, implements=merlin.protocols.external.compiler):
     # configurable state
     driver = merlin.properties.path()
     driver.default = "gcc"
-
-    # interface
-    def version(self):
-        """
-        Retrieve the compiler version
-        """
-        # get the driver
-        driver = str(self.driver)
-        # and the recognizer
-        regex = self._regex
-
-        # set up the shell command
-        settings = {
-            "executable": driver,
-            "args": (driver, "--version"),
-            "stdout": subprocess.PIPE,
-            "stderr": subprocess.PIPE,
-            "universal_newlines": True,
-            "shell": False,
-        }
-        # make a pipe
-        with subprocess.Popen(**settings) as pipe:
-            # get the text source
-            stream = pipe.stdout
-            # the first line is the version
-            line = next(stream).strip()
-            # extract the fields
-            match = regex.match(line)
-            # if it didn't match
-            if not match:
-                # oh well...
-                return "unknown", "unknown", "unknown"
-            # otherwise, extract the version fields
-            major = match.group("major")
-            minor = match.group("minor")
-            micro = match.group("micro")
-            # and return it
-            return major, minor, micro
-
-        # all done
-        return "unknown", "unknown", "unknown"
+    driver.doc = "the path to the compiler executable"
 
     # implementation details
-    _regex = re.compile(
+    _version_regex = re.compile(
         "".join(
             [
                 r"(?P<tag>.+)",
