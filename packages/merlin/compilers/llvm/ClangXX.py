@@ -18,6 +18,7 @@ class ClangXX(LLVM, family="merlin.compilers.llvm.clang++"):
     """
 
     # constants
+    tag = "clang"
     language = "c++"
 
     # configurable state
