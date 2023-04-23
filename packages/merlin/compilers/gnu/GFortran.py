@@ -18,6 +18,7 @@ class GFortran(GNU, family="merlin.compilers.gnu.gfortran"):
     """
 
     # constants
+    tag = "GNU Fortran"
     language = "fortran"
 
     # configurable state

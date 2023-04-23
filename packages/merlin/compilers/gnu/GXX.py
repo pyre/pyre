@@ -18,6 +18,7 @@ class GXX(GNU, family="merlin.compilers.gnu.g++"):
     """
 
     # constants
+    tag = "g++"
     language = "c++"
 
     # configurable state
