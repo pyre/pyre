@@ -7,17 +7,19 @@
 # framework
 import merlin
 
-# superclass
+# superclasses
+from ..base.C import C
 from .GNU import GNU
 
 
 # the C compiler from the GNU compiler suite
-class GCC(GNU, family="merlin.compilers.gnu.gcc"):
+class GCC(C, GNU, family="merlin.compilers.gnu.gcc"):
     """
     The C compiler from the GNU compiler suite
     """
 
     # constants
+    tag = "gcc"
     language = "c"
 
     # configurable state
