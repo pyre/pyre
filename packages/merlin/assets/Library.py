@@ -141,7 +141,7 @@ class Library(
     # suffix -> (assetCategory, language)
     def assetClassifier(self) -> dict:
         """
-        Build a table that map file suffixes to asset category and language
+        Build a map of file suffixes to asset category and language
         """
         # make a table of suffixes to category and language
         table = merlin.patterns.vivify(levels=2, atom=set)
@@ -182,7 +182,7 @@ class Library(
                 continue
             # now, get the associated languages
             language, *conflicts = categories[category]
-            # again, if more than one language compete for this suffix
+            # again, if more than one language competes for this suffix
             if conflicts:
                 # the suffix is of unknown language
                 language = None
