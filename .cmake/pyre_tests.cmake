@@ -227,11 +227,11 @@ function(pyre_test_driver_cxx20 testfile)
   # with some macros
   target_compile_definitions(${target} PRIVATE PYRE_CORE)
   target_compile_definitions(${target} PRIVATE WITH_COMPACT_PACKINGS)
-  target_compile_definitions(${target} PRIVATE WITH_CXX20)
   # link against my libraries
   target_link_libraries(${target} PUBLIC pyre journal)
   # request c++20 to build the target
   target_compile_features(${target} PUBLIC cxx_std_20)
+  target_compile_definitions(${target} PRIVATE WITH_CXX20)
 
   # make it a test case
   add_test(NAME ${testname} COMMAND ${target} ${ARGN})
