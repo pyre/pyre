@@ -57,10 +57,13 @@ void scalar_vector_benchmark()
     t.stop();
 
     // report
-    channel << "\t array (for loop) " << pyre::journal::newline
-        << "\t\t result = " << result_c[0] << "\t" << result_c[1] << "\t" << result_c[2] 
-            << pyre::journal::newline
-        << "\t\t process time = " << t.ms() << " ms " << pyre::journal::endl;
+    channel 
+        << "array (for loop) " << pyre::journal::newline
+        << pyre::journal::indent(1) 
+        << "result = [ " << result_c[0] << ", " << result_c[1] << ", " << result_c[2] << " ]"
+        << pyre::journal::newline
+        << "process time = " << t.ms() << " ms " << pyre::journal::newline
+        << pyre::journal::outdent(1) << pyre::journal::endl;
 
 
     // PYRE TENSOR
@@ -82,9 +85,12 @@ void scalar_vector_benchmark()
     t.stop();
 
     // report
-    channel << "\t pyre tensor " << pyre::journal::newline
-        << "\t\t result = " << result_tensor << pyre::journal::newline
-        << "\t\t process time = " << t.ms() << " ms " << pyre::journal::endl;
+    channel
+        << "pyre tensor" << pyre::journal::newline
+        << pyre::journal::indent(1) 
+        << "result = " << result_tensor << pyre::journal::newline
+        << "process time = " << t.ms() << " ms " << pyre::journal::newline
+        << pyre::journal::outdent(1) << pyre::journal::endl;
 
     // all done
     return;
@@ -127,9 +133,12 @@ void scalar_product_vectors_benchmark()
     t.stop();
 
     // report
-    channel << "\t array (for loop) " << pyre::journal::newline
-        << "\t\t result = " << result_array_for << pyre::journal::newline
-        << "\t\t process time = " << t.ms() << " ms " << pyre::journal::endl;
+    channel 
+        << "array (for loop)" << pyre::journal::newline
+        << pyre::journal::indent(1) 
+        << "result = " << result_array_for << pyre::journal::newline
+        << "process time = " << t.ms() << " ms " << pyre::journal::newline
+        << pyre::journal::outdent(1) << pyre::journal::endl;
 
 
     // ARRAY EXPANDED BY HAND
@@ -150,9 +159,12 @@ void scalar_product_vectors_benchmark()
     t.stop();
 
     // report
-    channel << "\t array (expanded) " << pyre::journal::newline
-        << "\t\t result = " << result_array << pyre::journal::newline
-        << "\t\t process time = " << t.ms() << " ms " << pyre::journal::endl;
+    channel
+        << "array (expanded)" << pyre::journal::newline
+        << pyre::journal::indent(1) 
+        << "result = " << result_array << pyre::journal::newline
+        << "process time = " << t.ms() << " ms " << pyre::journal::newline
+        << pyre::journal::outdent(1) << pyre::journal::endl;
 
 
     // PYRE TENSOR
@@ -175,9 +187,12 @@ void scalar_product_vectors_benchmark()
     t.stop();
 
     // report
-    channel << "\t pyre tensor " << pyre::journal::newline
-        << "\t\t result = " << result_tensor << pyre::journal::newline
-        << "\t\t process time = " << t.ms() << " ms " << pyre::journal::endl;
+    channel 
+        << "pyre tensor" << pyre::journal::newline
+        << pyre::journal::indent(1) 
+        << "result = " << result_tensor << pyre::journal::newline
+        << "process time = " << t.ms() << " ms " << pyre::journal::newline
+        << pyre::journal::outdent(1) << pyre::journal::endl;
 
 
     // all done
@@ -224,13 +239,15 @@ void scalar_matrix_benchmark()
     t.stop();
 
     // report
-    channel << "\t array (for loop) " << pyre::journal::newline
-        << "\t\t result = " 
-            << result_c[0] << "\t" << result_c[1] << "\t" << result_c[2] << "\t"
-            << result_c[3] << "\t" << result_c[4] << "\t" << result_c[5] << "\t"
-            << result_c[6] << "\t" << result_c[7] << "\t" << result_c[8] 
-            << pyre::journal::newline
-        << "\t\t process time = " << t.ms() << " ms " << pyre::journal::endl;
+    channel
+        << "array (for loop)" << pyre::journal::newline
+        << pyre::journal::indent(1) 
+        << "result = "
+        << result_c[0] << ", " << result_c[1] << ", " << result_c[2] << ", "
+        << result_c[3] << ", " << result_c[4] << ", " << result_c[5] << ", "
+        << result_c[6] << ", " << result_c[7] << ", " << result_c[8] << pyre::journal::newline
+        << "process time = " << t.ms() << " ms " << pyre::journal::newline
+        << pyre::journal::outdent(1) << pyre::journal::endl;
 
 
     // PYRE TENSOR (operator*)
@@ -252,10 +269,12 @@ void scalar_matrix_benchmark()
     t.stop();
 
     // report
-    channel << "\t pyre tensor (result_tensor += scalar * tensor)" 
-        << pyre::journal::newline
-        << "\t\t result = " << result_tensor << pyre::journal::newline
-        << "\t\t process time = " << t.ms() << " ms " << pyre::journal::endl;
+    channel 
+        << "pyre tensor (result_tensor += scalar * tensor)" << pyre::journal::newline
+        << pyre::journal::indent(1) 
+        << "result = " << result_tensor << pyre::journal::newline
+        << "process time = " << t.ms() << " ms " << pyre::journal::newline
+        << pyre::journal::outdent(1) << pyre::journal::endl;
 
 
     // PYRE TENSOR (index)
@@ -282,10 +301,12 @@ void scalar_matrix_benchmark()
     t.stop();
 
     // report
-    channel << "\t pyre tensor (result_tensor[{i, j}] += scalar * tensor[{i, j}])" 
-        << pyre::journal::newline
-        << "\t\t result = " << result_tensor << pyre::journal::newline
-        << "\t\t process time = " << t.ms() << " ms " << pyre::journal::endl;
+    channel
+        << "pyre tensor (result_tensor[{i, j}] += scalar * tensor[{i, j}])" << pyre::journal::newline
+        << pyre::journal::indent(1) 
+        << "result = " << result_tensor << pyre::journal::newline
+        << "process time = " << t.ms() << " ms " << pyre::journal::newline
+        << pyre::journal::outdent(1) << pyre::journal::endl;
 
 
     // PYRE TENSOR (unpacked)
@@ -312,10 +333,12 @@ void scalar_matrix_benchmark()
     t.stop();
 
     // report
-    channel << "\t pyre tensor (result_tensor[i * 3 + j] += scalar * tensor[i * 3 + j])" 
-        << pyre::journal::newline
-        << "\t\t result = " << result_tensor << pyre::journal::newline
-        << "\t\t process time = " << t.ms() << " ms " << pyre::journal::endl;
+    channel
+        << "pyre tensor (result_tensor[i * 3 + j] += scalar * tensor[i * 3 + j]" << pyre::journal::newline
+        << pyre::journal::indent(1) 
+        << "result = " << result_tensor << pyre::journal::newline
+        << "process time = " << t.ms() << " ms " << pyre::journal::newline
+        << pyre::journal::outdent(1) << pyre::journal::endl;
 
     // all done
     return;
