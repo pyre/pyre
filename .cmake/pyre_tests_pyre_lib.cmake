@@ -31,9 +31,6 @@ pyre_test_driver(pyre.lib/grid/canonical_sanity.cc)
 pyre_test_driver(pyre.lib/grid/canonical_slice.cc)
 pyre_test_driver(pyre.lib/grid/canonical_visit.cc)
 pyre_test_driver(pyre.lib/grid/canonical_visit_order.cc)
-if (WITH_COMPACT_PACKINGS)
-pyre_test_driver_cxx20(pyre.lib/grid/diagonal_visit.cc)
-endif()
 pyre_test_driver(pyre.lib/grid/grid_heap_box.cc)
 pyre_test_driver(pyre.lib/grid/grid_heap_box_skip.cc)
 pyre_test_driver(pyre.lib/grid/grid_heap_expand.cc)
@@ -78,10 +75,6 @@ pyre_test_driver(pyre.lib/grid/shape_cartesian.cc)
 pyre_test_driver(pyre.lib/grid/shape_sanity.cc)
 pyre_test_driver(pyre.lib/grid/shape_scaling.cc)
 pyre_test_driver(pyre.lib/grid/shape_structured_binding.cc)
-if (WITH_COMPACT_PACKINGS)
-pyre_test_driver_cxx20(pyre.lib/grid/symmetric_visit.cc)
-pyre_test_driver_cxx20(pyre.lib/grid/symmetric_sanity.cc)
-endif()
 
 # the {grid_get} tests need cleanup
 add_test(NAME pyre.lib.grid.grid_mmap.cleanup
@@ -189,6 +182,14 @@ pyre_test_driver(pyre.lib/timers/wall_timer_sanity.cc)
 pyre_test_driver(pyre.lib/timers/wall_timer_shared.cc)
 pyre_test_driver(pyre.lib/timers/wall_timer_start.cc)
 pyre_test_driver(pyre.lib/timers/wall_timer_stop.cc)
+
+
+# compact packings
+if (WITH_COMPACT_PACKINGS)
+pyre_test_driver_cxx20(pyre.lib/grid/diagonal_visit.cc)
+pyre_test_driver_cxx20(pyre.lib/grid/symmetric_visit.cc)
+pyre_test_driver_cxx20(pyre.lib/grid/symmetric_sanity.cc)
+endif()
 
 
 # tensor
