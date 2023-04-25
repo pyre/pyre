@@ -185,7 +185,7 @@ function(pyre_pyreBin)
       RUNTIME
       DESTINATION ${CMAKE_INSTALL_BINDIR}
       )
-  endif(Python_Development.Embed_FOUND)
+  endif()
   # install the scripts
   install(
     PROGRAMS pyre pyre-config merlin smith.pyre
