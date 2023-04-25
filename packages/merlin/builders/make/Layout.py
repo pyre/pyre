@@ -103,6 +103,27 @@ class Layout(Fragment):
         """
         # get my renderer
         renderer = self.renderer
+
+        # the directory with the cloned sources
+        yield ""
+        yield renderer.commentLine(f"make /stage/src")
+        # the dependency line
+        yield f"$(src):"
+        # log
+        yield f"\t@$(call log.action,mkdir,/stage/src)"
+        # the rule
+        yield f"\t@$(mkdirp) $@"
+
+        # the directory with the build artifacts
+        yield ""
+        yield renderer.commentLine(f"make /stage/build")
+        # the dependency line
+        yield f"$(build):"
+        # log
+        yield f"\t@$(call log.action,mkdir,/stage/build)"
+        # the rule
+        yield f"\t@$(mkdirp) $@"
+
         # build the canonical location for the prefix
         prefix = merlin.primitives.path("/prefix")
         # its entire configurable state is supposed to be subdirectories of {/prefix}, so
