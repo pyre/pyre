@@ -333,6 +333,9 @@ class Preamble(Fragment):
         yield "date.year := $(date) '+%Y'"
         yield "date.stamp := $(date) -u"
         yield ""
+        yield "# echo"
+        yield "echo := echo"
+        yield ""
         yield "# git"
         yield "git := git"
         yield 'git.hash := $(git) log --format=format:"%h" -n 1'
