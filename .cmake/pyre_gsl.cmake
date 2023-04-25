@@ -27,6 +27,8 @@ function(pyre_gslModule)
     # adjust the name to match what python expects
     set_target_properties(gslmodule PROPERTIES LIBRARY_OUTPUT_NAME gsl)
     set_target_properties(gslmodule PROPERTIES SUFFIX ${PYTHON3_SUFFIX})
+    # specify the directory for the module compilation products
+    pyre_library_directory(gslmodule extensions)
     # set the include directories
     target_include_directories(gslmodule PRIVATE ${GSL_INCLUDE_DIRS} ${Python_NumPy_INCLUDE_DIRS})
     # set the libraries to link against
@@ -36,23 +38,23 @@ function(pyre_gslModule)
       )
     # add the sources
     target_sources(gslmodule PRIVATE
-      gsl/gsl.cc
-      gsl/blas.cc
-      gsl/exceptions.cc
-      gsl/histogram.cc
-      gsl/linalg.cc
-      gsl/matrix.cc
-      gsl/metadata.cc
-      gsl/pdf.cc
-      gsl/permutation.cc
-      gsl/rng.cc
-      gsl/stats.cc
-      gsl/vector.cc
+      extensions/gsl/gsl.cc
+      extensions/gsl/blas.cc
+      extensions/gsl/exceptions.cc
+      extensions/gsl/histogram.cc
+      extensions/gsl/linalg.cc
+      extensions/gsl/matrix.cc
+      extensions/gsl/metadata.cc
+      extensions/gsl/pdf.cc
+      extensions/gsl/permutation.cc
+      extensions/gsl/rng.cc
+      extensions/gsl/stats.cc
+      extensions/gsl/vector.cc
       )
 
     if (${MPI_FOUND})
       # add the MPI aware sources to the pile
-      target_sources(gslmodule PRIVATE gsl/partition.cc)
+      target_sources(gslmodule PRIVATE extensions/gsl/partition.cc)
       # the mpi include directories
       target_include_directories(gslmodule PRIVATE ${MPI_CXX_INCLUDE_PATH})
       # add the MPI presence indicator
@@ -63,13 +65,13 @@ function(pyre_gslModule)
 
     if (${Python_NumPy_FOUND})
       # add the numpy aware sources to the pile
-      target_sources(gslmodule PRIVATE gsl/numpy.cc)
+      target_sources(gslmodule PRIVATE extensions/gsl/numpy.cc)
       # add the MPI presence indicator
       target_compile_definitions(gslmodule PRIVATE WITH_NUMPY)
     endif()
 
     # copy the capsule definitions to the staging area
-    configure_file(gsl/capsules.h ../lib/pyre/gsl/ COPYONLY)
+    configure_file(extensions/gsl/capsules.h lib/pyre/gsl/ COPYONLY)
     # install the extension
     install(
       TARGETS gslmodule

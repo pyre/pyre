@@ -72,22 +72,24 @@ function(pyre_mpiModule)
     # adjust the name to match what python expects
     set_target_properties(mpimodule PROPERTIES LIBRARY_OUTPUT_NAME mpi)
     set_target_properties(mpimodule PROPERTIES SUFFIX ${PYTHON3_SUFFIX})
+    # specify the directory for the module compilation products
+    pyre_library_directory(mpimodule extensions)
     # set the libraries to link against
     target_link_libraries(
       mpimodule PRIVATE pyre::mpi journal
       )
     # add the sources
     target_sources(mpimodule PRIVATE
-      mpi/mpi.cc
-      mpi/communicators.cc
-      mpi/exceptions.cc
-      mpi/groups.cc
-      mpi/metadata.cc
-      mpi/ports.cc
-      mpi/startup.cc
+      extensions/mpi/mpi.cc
+      extensions/mpi/communicators.cc
+      extensions/mpi/exceptions.cc
+      extensions/mpi/groups.cc
+      extensions/mpi/metadata.cc
+      extensions/mpi/ports.cc
+      extensions/mpi/startup.cc
       )
     # copy the capsule definitions to the staging area
-    configure_file(mpi/capsules.h ../lib/pyre/mpi/ COPYONLY)
+    configure_file(extensions/mpi/capsules.h lib/pyre/mpi/ COPYONLY)
     # install the extension
     install(
       TARGETS mpimodule
