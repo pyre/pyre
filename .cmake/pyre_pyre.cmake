@@ -203,7 +203,7 @@ endfunction(pyre_pyreBin)
 function(pyre_pyreDefaults)
   # install the configuration files
   install(
-    DIRECTORY pyre merlin
+    DIRECTORY defaults/pyre defaults/merlin
     DESTINATION share
   )
   # all done
