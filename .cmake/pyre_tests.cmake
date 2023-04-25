@@ -192,9 +192,7 @@ function(pyre_test_driver testfile)
   # make it a test case
   add_test(NAME ${testname} COMMAND ${target} ${ARGN})
   # specify the directory for the target compilation products
-  set_target_properties(${target} PROPERTIES RUNTIME_OUTPUT_DIRECTORY 
-  ${CMAKE_CURRENT_BINARY_DIR}/tests
-  )
+  pyre_target_directory(${target} tests)
 
   # all done
 endfunction()
@@ -210,8 +208,7 @@ function(pyre_test_driver_case testfile)
   # make it a test case
   add_test(NAME ${testname} COMMAND ${target} ${ARGN})
   # specify the directory for the target compilation products
-  set_target_properties(${target} PROPERTIES RUNTIME_OUTPUT_DIRECTORY 
-  ${CMAKE_CURRENT_BINARY_DIR}/tests)
+  pyre_target_directory(${target} tests)
 
   # all done
 endfunction()
@@ -250,9 +247,7 @@ function(pyre_test_driver_env_case testfile env)
     ${env}
     )
   # specify the directory for the target compilation products
-  set_target_properties(${target} PROPERTIES RUNTIME_OUTPUT_DIRECTORY 
-    ${CMAKE_CURRENT_BINARY_DIR}/tests
-    )
+  pyre_target_directory(${target} tests)
     
   # all done
 endfunction()
@@ -281,9 +276,7 @@ function(pyre_test_driver_mpi testfile slots)
     ${ARGN}
     )
   # specify the directory for the target compilation products
-  set_target_properties(${target} PROPERTIES RUNTIME_OUTPUT_DIRECTORY 
-  ${CMAKE_CURRENT_BINARY_DIR}/tests
-  )
+  pyre_target_directory(${target} tests)
 
   # all done
 endfunction()
@@ -306,9 +299,7 @@ function(pyre_test_driver_cuda testfile)
   # make it a test case
   add_test(NAME ${testname} COMMAND ${target} ${ARGN})
   # specify the directory for the target compilation products
-  set_target_properties(${target} PROPERTIES RUNTIME_OUTPUT_DIRECTORY 
-  ${CMAKE_CURRENT_BINARY_DIR}/tests
-  )
+  pyre_target_directory(${target} tests)
 
   # all done
 endfunction()
