@@ -25,22 +25,6 @@ function(pyre_test_testcase testcase testfile)
 endfunction()
 
 
-# generate a unique test target name
-function(pyre_test_target target testfile)
-  # split
-  get_filename_component(path ${testfile} DIRECTORY)
-  get_filename_component(base ${testfile} NAME_WE)
-
-  # replace path separators with dors
-  string(REPLACE "/" "." stem ${path})
-
-  # build the target and return it
-  set(${target} "${stem}.${base}" PARENT_SCOPE)
-
-  # all done
-endfunction()
-
-
 # attach {setup} and {cleanup} fixtures to a test case
 # N.B.: the signature may look backwards, but the {testfile} command line arguments are in
 # ${ARGN} so it seemed simpler this way
