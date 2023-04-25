@@ -96,22 +96,24 @@ function(pyre_journalModule)
   # adjust the name to match what python expects
   set_target_properties(journalmodule PROPERTIES LIBRARY_OUTPUT_NAME journal)
   set_target_properties(journalmodule PROPERTIES SUFFIX ${PYTHON3_SUFFIX})
+  # specify the directory for the module compilation products
+  pyre_library_directory(journalmodule extensions)
   # set the libraries to link against
   target_link_libraries(journalmodule PRIVATE journal pybind11::module)
   # add the sources
   target_sources(journalmodule PRIVATE
-    journal/journal.cc
-    journal/api.cc
-    journal/chronicler.cc
-    journal/debug.cc
-    journal/devices.cc
-    journal/entry.cc
-    journal/error.cc
-    journal/exceptions.cc
-    journal/firewall.cc
-    journal/help.cc
-    journal/info.cc
-    journal/warning.cc
+    extensions/journal/journal.cc
+    extensions/journal/api.cc
+    extensions/journal/chronicler.cc
+    extensions/journal/debug.cc
+    extensions/journal/devices.cc
+    extensions/journal/entry.cc
+    extensions/journal/error.cc
+    extensions/journal/exceptions.cc
+    extensions/journal/firewall.cc
+    extensions/journal/help.cc
+    extensions/journal/info.cc
+    extensions/journal/warning.cc
     )
   # install
   install(
