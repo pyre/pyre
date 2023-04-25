@@ -62,14 +62,22 @@ class Layout(Fragment):
         yield renderer.commentLine("workspace layout")
         # save the value
         yield from renderer.set(name="ws", value=f"{ws.uri}")
-
-        # record the location of the {/stage}
-        # get the node
+        # get the stage
         stage = self.pyre_fileserver["/stage"]
-        yield ""
-        yield renderer.commentLine("stage layout")
+        # make a mark
+        yield renderer.commentLine("the staging directory")
         # save the value
         yield from renderer.set(name="stage", value=f"{stage.uri}")
+        # make a mark
+        yield renderer.commentLine("the cloned sources")
+        # save the value
+        yield from renderer.set(name="src", value=f"$(stage)/src")
+        # form the path to the build directory
+        build = stage.uri / "build"
+        # make a mark
+        yield renderer.commentLine("the build directory")
+        # save the value
+        yield from renderer.set(name="build", value=f"$(stage)/build")
 
         # specify the directory layout of the {/prefix}
         yield ""
