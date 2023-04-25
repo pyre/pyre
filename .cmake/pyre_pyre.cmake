@@ -232,4 +232,14 @@ function(pyre_target_directory target directory)
 endfunction()
 
 
+# add definitions to compilation of file
+function(pyre_add_definitions driverfile definitions)
+  # generate the name of the target
+  pyre_target(target ${driverfile})
+  # request the definitions for the target
+  target_compile_definitions(${target} PRIVATE ${definitions})
+# all done
+endfunction()
+
+
 # end of file
