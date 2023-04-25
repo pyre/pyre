@@ -72,7 +72,7 @@ class Libraries(merlin.shells.command, family="merlin.cli.lib"):
         # go through the set of libraries
         for lib in self.filter(projects=plexus.projects):
             # collect the supported languages
-            languages = ", ".join(l.name for l in lib.supportedLanguages())
+            languages = ", ".join(l.name for l in lib.languages)
             # show me the asset name and its stem
             channel.line(f"{lib.pyre_name}:")
             channel.indent()
@@ -81,8 +81,9 @@ class Libraries(merlin.shells.command, family="merlin.cli.lib"):
             channel.line(f"uri: {plexus.vfs['workspace'].uri / lib.root}")
             channel.line(f"languages: {languages}")
             channel.line(f"sources:")
-            # go through the sources
+            # push in
             channel.indent()
+            # go through the sources
             for asset in lib.assets:
                 # set up a pile of markers
                 markers = []
