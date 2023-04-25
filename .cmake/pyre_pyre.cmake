@@ -206,4 +206,20 @@ function(pyre_pyreDefaults)
 endfunction(pyre_pyreDefaults)
 
 
+# generate a unique test target name
+function(pyre_test_target target testfile)
+  # split
+  get_filename_component(path ${testfile} DIRECTORY)
+  get_filename_component(base ${testfile} NAME_WE)
+
+  # replace path separators with dors
+  string(REPLACE "/" "." stem ${path})
+
+  # build the target and return it
+  set(${target} "${stem}.${base}" PARENT_SCOPE)
+
+  # all done
+endfunction()
+
+
 # end of file
