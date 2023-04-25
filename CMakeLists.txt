@@ -144,7 +144,7 @@ add_subdirectory(packages)
 add_subdirectory(lib)
 include(pyre_extensions)
 include(pyre_defaults)
-add_subdirectory(bin)
+include(pyre_bin)
 
 # make exports available in binary dir during build
 export(EXPORT pyre-targets
