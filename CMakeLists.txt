@@ -143,7 +143,7 @@ pyre_destinationInit()
 add_subdirectory(packages)
 add_subdirectory(lib)
 include(pyre_extensions)
-add_subdirectory(defaults)
+include(pyre_defaults)
 add_subdirectory(bin)
 
 # make exports available in binary dir during build
