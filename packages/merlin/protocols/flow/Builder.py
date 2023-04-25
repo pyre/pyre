@@ -43,7 +43,7 @@ class Builder(merlin.protocol, family="merlin.builders"):
         Specify the default implementation
         """
         # choose the default implementer
-        return merlin.builders.flow
+        return merlin.builders.make
 
 
 # end of file
