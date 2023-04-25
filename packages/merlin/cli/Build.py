@@ -30,7 +30,7 @@ class Build(merlin.shells.command, family="merlin.cli.projects"):
         # and the user defined selection
         only = self.only
         # build the selector
-        sieve = (lambda x: x.name in only) if only else None
+        sieve = (lambda x: x.pyre_name in only) if only else None
         # filter
         projects = tuple(filter(sieve, plexus.projects))
         # ask the builder to add each one to its pile
