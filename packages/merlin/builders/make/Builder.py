@@ -131,6 +131,10 @@ class Builder(Builder, Generator, family="merlin.builders.make"):
         """
         Build a {library}
         """
+        # N.B.:
+        #  the {lib} command panel calls this entry point directly
+        #  so don't be tempted to eliminate it as superfluous
+        #  since libraries are handled as project assets
         # delegate to the {libFlow} generator
         return self.libFlow.generate(builder=self, **kwds)
 
