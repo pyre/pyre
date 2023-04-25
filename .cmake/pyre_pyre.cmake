@@ -122,39 +122,43 @@ function(pyre_pyreModule)
   # adjust the name to match what python expects
   set_target_properties(pyremodule PROPERTIES LIBRARY_OUTPUT_NAME pyre)
   set_target_properties(pyremodule PROPERTIES SUFFIX ${PYTHON3_SUFFIX})
+  # specify the directory for the module compilation products
+  pyre_library_directory(pyremodule extensions)
   # set the libraries to link against
   target_link_libraries(pyremodule PRIVATE pyre journal pybind11::module)
   # add the sources
   target_sources(pyremodule PRIVATE
-    pyre/__init__.cc
-    pyre/api.cc
-    pyre/grid/__init__.cc
-    pyre/grid/indices.cc
-    pyre/grid/grids.cc
-    pyre/grid/orders.cc
-    pyre/grid/packings.cc
-    pyre/grid/shapes.cc
-    pyre/memory/__init__.cc
-    pyre/memory/maps.cc
-    pyre/timers/__init__.cc
-    pyre/timers/process_timers.cc
-    pyre/timers/wall_timers.cc
-    pyre/viz/__init__.cc
-    pyre/viz/bmp.cc
-)
+    extensions/pyre/__init__.cc
+    extensions/pyre/api.cc
+    extensions/pyre/grid/__init__.cc
+    extensions/pyre/grid/indices.cc
+    extensions/pyre/grid/grids.cc
+    extensions/pyre/grid/orders.cc
+    extensions/pyre/grid/packings.cc
+    extensions/pyre/grid/shapes.cc
+    extensions/pyre/memory/__init__.cc
+    extensions/pyre/memory/maps.cc
+    extensions/pyre/timers/__init__.cc
+    extensions/pyre/timers/process_timers.cc
+    extensions/pyre/timers/wall_timers.cc
+    extensions/pyre/viz/__init__.cc
+    extensions/pyre/viz/bmp.cc
+  )
 
   # host
   Python_add_library(hostmodule MODULE)
   # adjust the name to match what python expects
   set_target_properties(hostmodule PROPERTIES LIBRARY_OUTPUT_NAME host)
   set_target_properties(hostmodule PROPERTIES SUFFIX ${PYTHON3_SUFFIX})
+  # specify the directory for the module compilation products
+  pyre_library_directory(hostmodule extensions)
   # set the libraries to link against
   target_link_libraries(hostmodule PRIVATE pyre journal)
   # add the sources
   target_sources(hostmodule PRIVATE
-    host/host.cc
-    host/cpu.cc
-    host/metadata.cc
+    extensions/host/host.cc
+    extensions/host/cpu.cc
+    extensions/host/metadata.cc
     )
 
   # install the pyre extensions
@@ -226,6 +230,16 @@ endfunction()
 function(pyre_target_directory target directory)
   # set output directory for this target to subdirectory {directory} of the build directory
   set_target_properties(${target} PROPERTIES RUNTIME_OUTPUT_DIRECTORY 
+    ${CMAKE_CURRENT_BINARY_DIR}/${directory}
+  )
+# all done
+endfunction()
+
+
+# specify the directory for the module
+function(pyre_library_directory library directory)
+  # set output directory for this library to subdirectory {directory} of the build directory
+  set_target_properties(${library} PROPERTIES LIBRARY_OUTPUT_DIRECTORY 
     ${CMAKE_CURRENT_BINARY_DIR}/${directory}
   )
 # all done
