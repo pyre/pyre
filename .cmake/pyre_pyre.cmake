@@ -222,4 +222,14 @@ function(pyre_target target testfile)
 endfunction()
 
 
+# specify the directory for the target compilation products
+function(pyre_target_directory target directory)
+  # set output directory for this target to subdirectory {directory} of the build directory
+  set_target_properties(${target} PROPERTIES RUNTIME_OUTPUT_DIRECTORY 
+    ${CMAKE_CURRENT_BINARY_DIR}/${directory}
+  )
+# all done
+endfunction()
+
+
 # end of file
