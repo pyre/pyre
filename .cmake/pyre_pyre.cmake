@@ -206,8 +206,8 @@ function(pyre_pyreDefaults)
 endfunction(pyre_pyreDefaults)
 
 
-# generate a unique test target name
-function(pyre_test_target target testfile)
+# generate a unique target name
+function(pyre_target target testfile)
   # split
   get_filename_component(path ${testfile} DIRECTORY)
   get_filename_component(base ${testfile} NAME_WE)
