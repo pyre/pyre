@@ -35,7 +35,7 @@ function(pyre_test_target target testfile)
   string(REPLACE "/" "." stem ${path})
 
   # build the target and return it
-  set(${target} "tests.${stem}.${base}" PARENT_SCOPE)
+  set(${target} "${stem}.${base}" PARENT_SCOPE)
 
   # all done
 endfunction()
@@ -207,6 +207,10 @@ function(pyre_test_driver testfile)
 
   # make it a test case
   add_test(NAME ${testname} COMMAND ${target} ${ARGN})
+  # specify the directory for the target compilation products
+  set_target_properties(${target} PROPERTIES RUNTIME_OUTPUT_DIRECTORY 
+  ${CMAKE_CURRENT_BINARY_DIR}/tests
+  )
 
   # all done
 endfunction()
@@ -221,6 +225,9 @@ function(pyre_test_driver_case testfile)
 
   # make it a test case
   add_test(NAME ${testname} COMMAND ${target} ${ARGN})
+  # specify the directory for the target compilation products
+  set_target_properties(${target} PROPERTIES RUNTIME_OUTPUT_DIRECTORY 
+  ${CMAKE_CURRENT_BINARY_DIR}/tests)
 
   # all done
 endfunction()
@@ -258,7 +265,11 @@ function(pyre_test_driver_env_case testfile env)
     APPEND PROPERTY ENVIRONMENT
     ${env}
     )
-
+  # specify the directory for the target compilation products
+  set_target_properties(${target} PROPERTIES RUNTIME_OUTPUT_DIRECTORY 
+    ${CMAKE_CURRENT_BINARY_DIR}/tests
+    )
+    
   # all done
 endfunction()
 
@@ -285,6 +296,10 @@ function(pyre_test_driver_mpi testfile slots)
     ${MPIEXEC_POSTFLAGS}
     ${ARGN}
     )
+  # specify the directory for the target compilation products
+  set_target_properties(${target} PROPERTIES RUNTIME_OUTPUT_DIRECTORY 
+  ${CMAKE_CURRENT_BINARY_DIR}/tests
+  )
 
   # all done
 endfunction()
@@ -306,6 +321,10 @@ function(pyre_test_driver_cuda testfile)
 
   # make it a test case
   add_test(NAME ${testname} COMMAND ${target} ${ARGN})
+  # specify the directory for the target compilation products
+  set_target_properties(${target} PROPERTIES RUNTIME_OUTPUT_DIRECTORY 
+  ${CMAKE_CURRENT_BINARY_DIR}/tests
+  )
 
   # all done
 endfunction()
