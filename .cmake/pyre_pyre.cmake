@@ -178,7 +178,7 @@ function(pyre_pyreBin)
     add_executable(python.pyre)
     # its sources
     target_sources(python.pyre PRIVATE
-      python.cc
+      bin/python.cc
       )
     # and libraries
     target_link_libraries(python.pyre Python::Python)
@@ -192,7 +192,7 @@ function(pyre_pyreBin)
   endif()
   # install the scripts
   install(
-    PROGRAMS pyre pyre-config merlin smith.pyre
+    PROGRAMS bin/pyre bin/pyre-config bin/merlin bin/smith.pyre
     DESTINATION ${CMAKE_INSTALL_BINDIR}
     )
   # all done
