@@ -12,15 +12,24 @@ merlin is a configuration management tool
 # import and publish pyre symbols
 from pyre import (
     # basic stuff
-    patterns, primitives, tracking,
+    patterns,
+    primitives,
+    tracking,
     # protocols, components, traits, and their infrastructure
-    schemata, constraints, properties, protocol, component, foundry,
+    schemata,
+    constraints,
+    properties,
+    protocol,
+    component,
+    foundry,
     # decorators
-    export, provides,
+    export,
+    provides,
     # the manager of the pyre runtime
     executive,
     # shells
-    application, plexus,
+    application,
+    plexus,
     # content mills
     weaver,
     # flow
@@ -28,7 +37,7 @@ from pyre import (
 )
 
 # register the package
-package = executive.registerPackage(name='merlin', file=__file__)
+package = executive.registerPackage(name="merlin", file=__file__)
 # attach the geography
 home, prefix, defaults = package.layout()
 
@@ -36,20 +45,25 @@ home, prefix, defaults = package.layout()
 # publish the local modules
 from . import meta
 from . import exceptions
+
 # local extensions of the framework plumbing
 from . import protocols
 from . import components
+
 # flow nodes
 from . import assets
 from . import factories
+
 # builder abstractions
 from . import languages
 from . import compilers
+
 # builders
 from . import builders
+
 # support for the user interfaces
-from . import shells         # the supported application shells
-from . import cli            # the command line interface
+from . import shells  # the supported application shells
+from . import cli  # the command line interface
 
 
 # administrative
@@ -92,5 +106,8 @@ def version():
     # return the version
     return meta.version
 
+
+# this is expected to be here
+__version__ = meta.version
 
 # end of file
