@@ -180,7 +180,7 @@ function(pyre_test_driver testfile)
   # generate the name of the testcase
   pyre_test_testcase(testname ${testfile} ${ARGN})
   # generate the name of the target
-  pyre_test_target(target ${testfile})
+  pyre_target(target ${testfile})
 
   # schedule it to be compiled
   add_executable(${target} ${testfile})
@@ -205,7 +205,7 @@ function(pyre_test_driver_case testfile)
   # generate the name of the testcase
   pyre_test_testcase(testname ${testfile} ${ARGN})
   # generate the name of the target
-  pyre_test_target(target ${testfile})
+  pyre_target(target ${testfile})
 
   # make it a test case
   add_test(NAME ${testname} COMMAND ${target} ${ARGN})
@@ -240,7 +240,7 @@ function(pyre_test_driver_env_case testfile env)
   # generate the name of the testcase
   pyre_test_testcase(testname ${testfile} ${env} ${ARGN})
   # generate the name of the target
-  pyre_test_target(target ${testfile})
+  pyre_target(target ${testfile})
 
   # make a test case
   add_test(NAME ${testname} COMMAND ${target} ${ARGN})
@@ -263,7 +263,7 @@ function(pyre_test_driver_mpi testfile slots)
   # create the name of the testcase
   pyre_test_testcase(testname ${testfile} ${ARGN})
   # create the name of the target
-  pyre_test_target(target ${testfile})
+  pyre_target(target ${testfile})
 
   # schedule it to be compiled
   add_executable(${target} ${testfile})
@@ -294,7 +294,7 @@ function(pyre_test_driver_cuda testfile)
   # create the name of the testcase
   pyre_test_testcase(testname ${testfile} ${ARGN})
   # create the name of the target
-  pyre_test_target(target ${testfile})
+  pyre_target(target ${testfile})
 
   # schedule it to be compiled
   add_executable(${target} ${testfile})
