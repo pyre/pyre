@@ -34,7 +34,7 @@ function(pyre_benchmark_driver_cxx20 benchmarkfile)
   target_compile_options(${target} PRIVATE $<$<CONFIG:Release>:-O3>)
   # with some macros
   target_compile_definitions(${target} PRIVATE PYRE_CORE)
-  target_compile_definitions(${target} PRIVATE WITH_COMPACT_PACKINGS)
+  target_compile_definitions(${target} PRIVATE HAVE_COMPACT_PACKINGS)
   # link against my libraries
   target_link_libraries(${target} PUBLIC pyre journal)
   # request c++20 to build the target
