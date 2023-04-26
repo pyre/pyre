@@ -14,7 +14,7 @@ function(pyre_journalPackage)
     )
   # build the package meta-data
   configure_file(
-    journal/meta.py.in journal/meta.py
+    packages/journal/meta.py.in packages/journal/meta.py
     @ONLY
     )
   # install the generated package meta-data file

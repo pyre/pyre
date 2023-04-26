@@ -9,7 +9,7 @@ function(pyre_cudaPackage)
   if(WITH_CUDA)
     # install the sources straight from the source directory
     install(
-      DIRECTORY cuda
+      DIRECTORY packages/cuda
       DESTINATION ${PYRE_DEST_PACKAGES}
       FILES_MATCHING PATTERN *.py
       )

@@ -7,13 +7,13 @@
 function(pyre_merlinPackage)
   # install the sources straight from the source directory
   install(
-    DIRECTORY merlin
+    DIRECTORY packages/merlin
     DESTINATION ${PYRE_DEST_PACKAGES}
     FILES_MATCHING PATTERN *.py
     )
   # build the package meta-data
   configure_file(
-    merlin/meta.py.in merlin/meta.py
+    packages/merlin/meta.py.in packages/merlin/meta.py
     @ONLY
     )
   # install the generated package meta-data file
