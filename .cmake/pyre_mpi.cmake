@@ -9,13 +9,13 @@ function(pyre_mpiPackage)
   if(${MPI_FOUND})
     # install the sources straight from the source directory
     install(
-      DIRECTORY mpi
+      DIRECTORY packages/mpi
       DESTINATION ${PYRE_DEST_PACKAGES}
       FILES_MATCHING PATTERN *.py
       )
     # build the package meta-data
     configure_file(
-      mpi/meta.py.in mpi/meta.py
+      packages/mpi/meta.py.in packages/mpi/meta.py
       @ONLY
       )
     # install the generated package meta-data file
