@@ -140,7 +140,7 @@ pyre_stagingInit()
 pyre_destinationInit()
 
 # visit subdirectories
-add_subdirectory(packages)
+include(pyre_packages)
 add_subdirectory(lib)
 include(pyre_extensions)
 include(pyre_defaults)

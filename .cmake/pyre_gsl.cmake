@@ -10,7 +10,7 @@ function(pyre_gslPackage)
   if(${GSL_FOUND})
     # install the sources straight from the source directory
     install(
-      DIRECTORY gsl
+      DIRECTORY packages/gsl
       DESTINATION ${PYRE_DEST_PACKAGES}
       FILES_MATCHING PATTERN *.py
       )

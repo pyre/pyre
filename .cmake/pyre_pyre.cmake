@@ -37,13 +37,13 @@ endfunction(pyre_portinfo)
 function(pyre_pyrePackage)
   # install the sources straight from the source directory
   install(
-    DIRECTORY pyre
+    DIRECTORY packages/pyre
     DESTINATION ${PYRE_DEST_PACKAGES}
     FILES_MATCHING PATTERN *.py
     )
   # build the package meta-data
   configure_file(
-    pyre/meta.py.in pyre/meta.py
+    packages/pyre/meta.py.in packages/pyre/meta.py
     @ONLY
     )
   # install the generated package meta-data file
