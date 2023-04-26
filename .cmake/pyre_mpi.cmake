@@ -20,7 +20,7 @@ function(pyre_mpiPackage)
       )
     # install the generated package meta-data file
     install(
-      DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/mpi
+      DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/packages/mpi
       DESTINATION ${PYRE_DEST_PACKAGES}
       FILES_MATCHING PATTERN *.py
       )
@@ -91,7 +91,7 @@ function(pyre_mpiModule)
       extensions/mpi/startup.cc
       )
     # copy the capsule definitions to the staging area
-    configure_file(extensions/mpi/capsules.h lib/pyre/mpi/ COPYONLY)
+    configure_file(extensions/mpi/capsules.h lib/pyre/mpi COPYONLY)
     # install the extension
     install(
       TARGETS mpimodule
@@ -100,7 +100,7 @@ function(pyre_mpiModule)
       )
     # and publish the capsules
     install(
-      FILES ${CMAKE_CURRENT_SOURCE_DIR}/mpi/capsules.h
+      FILES ${CMAKE_CURRENT_SOURCE_DIR}/extensions/mpi/capsules.h
       DESTINATION ${PYRE_DEST_INCLUDE}/pyre/mpi
       )
   endif()

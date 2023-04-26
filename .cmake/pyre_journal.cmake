@@ -8,7 +8,7 @@
 function(pyre_journalPackage)
   # install the sources straight from the source directory
   install(
-    DIRECTORY journal
+    DIRECTORY packages/journal
     DESTINATION ${PYRE_DEST_PACKAGES}
     FILES_MATCHING PATTERN *.py
     )
@@ -19,7 +19,7 @@ function(pyre_journalPackage)
     )
   # install the generated package meta-data file
   install(
-    DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/journal
+    DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/packages/journal
     DESTINATION ${PYRE_DEST_PACKAGES}
     FILES_MATCHING PATTERN *.py
     )

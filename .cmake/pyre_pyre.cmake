@@ -48,7 +48,7 @@ function(pyre_pyrePackage)
     )
   # install the generated package meta-data file
   install(
-    DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/pyre
+    DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/packages/pyre
     DESTINATION ${PYRE_DEST_PACKAGES}
     FILES_MATCHING PATTERN *.py
     )
