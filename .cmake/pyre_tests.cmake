@@ -25,6 +25,27 @@ function(pyre_test_testcase testcase testfile)
 endfunction()
 
 
+# build the cuda kernel associated with this {driverfile}
+function(pyre_kernel_target kernelobject driverfile)
+    # extract the driver directory
+    get_filename_component(driver_directory ${driverfile} DIRECTORY)
+    # extract the driver basename
+    get_filename_component(driver_basename ${driverfile} NAME_WE)
+    # assemble the cu filename associated with this {driverfile} 
+    set(cudafile "${driver_directory}/${driver_basename}.cu")
+    # generate the name of the target with the cuda kernel
+    pyre_test_target(kernelobject ${cudafile})
+    # rename the kernel target to distinguish it from the driver target
+    set(kernelobject "${kernelobject}_kernel")
+    # propagate definition of variable to parent scope
+    set(kernelobject "${kernelobject}" PARENT_SCOPE)
+    # sign up the kernel target for build based on the cuda source file
+    add_library("${kernelobject}" STATIC ${cudafile})
+
+  # all done
+endfunction()
+
+
 # attach {setup} and {cleanup} fixtures to a test case
 # N.B.: the signature may look backwards, but the {testfile} command line arguments are in
 # ${ARGN} so it seemed simpler this way
@@ -303,5 +324,22 @@ function(pyre_test_driver_cuda testfile)
 
   # all done
 endfunction()
+
+# register a cuda parallel test case based on a compiled driver
+function(pyre_benchmark_driver_cuda testfile)
+  # create the name of the target
+  pyre_target(target ${testfile})
+  # create the object file for the corresponding cuda kernel
+  pyre_kernel_target(kernelobject ${testfile})
+  
+  # schedule it to be compiled
+  add_executable(${target} ${testfile})
+  # with some macros
+  target_compile_definitions(${target} PRIVATE PYRE_CORE WITH_CUDA)
+  # link against my libraries
+  target_link_libraries(${target} PUBLIC pyre journal ${CUDA_LIBRARIES} ${kernelobject})
+
+  # all done
+endfunction() 
 
 # end of file
