@@ -9,7 +9,7 @@
 pyre_portinfo()
 # build libjournal
 pyre_journalLib()
-# buld libpyre
+# build libpyre
 pyre_pyreLib()
 # and the mpi layers
 pyre_mpiLib()
