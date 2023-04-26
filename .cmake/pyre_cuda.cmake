@@ -18,4 +18,22 @@ function(pyre_cudaPackage)
 endfunction(pyre_cudaPackage)
 
 
+# the pyre cuda headers
+function(pyre_cudaLib)
+  # if the user requested CUDA support
+  if(WITH_CUDA)
+    # copy the cuda headers
+    file(GLOB_RECURSE files
+         RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}/lib/cuda
+         CONFIGURE_DEPENDS
+         lib/cuda/*.h lib/cuda/*.icc
+         )
+    foreach(file ${files})
+      configure_file(lib/cuda/${file} lib/pyre/cuda/${file} COPYONLY)
+    endforeach()
+  endif()
+  # all done
+endfunction(pyre_cudaLib)
+
+
 # end of file

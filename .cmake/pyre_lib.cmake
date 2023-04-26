@@ -11,6 +11,8 @@ pyre_portinfo()
 pyre_journalLib()
 # build libpyre
 pyre_pyreLib()
+# and the cuda layers
+pyre_cudaLib()
 # and the mpi layers
 pyre_mpiLib()
 
