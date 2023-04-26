@@ -35,26 +35,28 @@ function(pyre_mpiLib)
   if(MPI_FOUND)
     # copy the mpi headers
     file(GLOB_RECURSE files
-         RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}/mpi
+         RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}/lib/mpi
          CONFIGURE_DEPENDS
-         *.h *.icc
+         lib/mpi/*.h lib/mpi/*.icc
          )
     foreach(file ${files})
       # skip the special header
       if("${file}" STREQUAL "mpi.h")
         continue()
       endif()
-      configure_file(mpi/${file} pyre/mpi/${file} COPYONLY)
+      configure_file(lib/mpi/${file} lib/pyre/mpi/${file} COPYONLY)
     endforeach()
 
     # and the mpi master header with the pyre directory
-    configure_file(mpi/mpi.h pyre/mpi.h COPYONLY)
+    configure_file(lib/mpi/mpi.h lib/pyre/mpi.h COPYONLY)
 
     # the mpi target (INTERFACE since it is header-only)
     add_library(mpi INTERFACE)
+    # specify the directory for the library compilation products
+    pyre_library_directory(mpi lib)
     target_link_libraries(mpi INTERFACE pyre MPI::MPI_CXX)
     target_include_directories(mpi INTERFACE
-      $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
+      $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/lib>
       $<INSTALL_INTERFACE:${PYRE_DEST_INCLUDE}>
       )
     add_library(pyre::mpi ALIAS mpi)
