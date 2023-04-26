@@ -31,49 +31,51 @@ endfunction(pyre_journalPackage)
 function(pyre_journalLib)
   # copy the journal headers over to the staging area
   file(GLOB_RECURSE files
-       RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}/journal
+       RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}/lib/journal
        CONFIGURE_DEPENDS
-       *.h *.icc
+       lib/journal/*.h lib/journal/*.icc
        )
   foreach(file ${files})
     # skip the special header
     if("${file}" STREQUAL "journal.h")
       continue()
     endif()
-    configure_file(journal/${file} pyre/journal/${file} COPYONLY)
+    configure_file(lib/journal/${file} lib/pyre/journal/${file} COPYONLY)
   endforeach()
 
   # and the journal master header within the pyre directory
-  configure_file(journal/journal.h pyre/journal.h COPYONLY)
+  configure_file(lib/journal/journal.h lib/pyre/journal.h COPYONLY)
 
   # the libjournal target
   add_library(journal SHARED)
+  # specify the directory for the library compilation products
+  pyre_library_directory(journal lib)
   # define the core macro
   set_target_properties(journal PROPERTIES COMPILE_DEFINITIONS PYRE_CORE)
   # set the include directories
   target_include_directories(
     journal PUBLIC
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/lib>
     $<INSTALL_INTERFACE:${PYRE_DEST_INCLUDE}>
     )
   # add the sources
   target_sources(journal
     PRIVATE
-    journal/ANSI.cc
-    journal/ANSI_x11.cc
-    journal/Alert.cc
-    journal/Bland.cc
-    journal/Chronicler.cc
-    journal/Console.cc
-    journal/Device.cc
-    journal/ErrorConsole.cc
-    journal/File.cc
-    journal/Memo.cc
-    journal/Renderer.cc
-    journal/Stream.cc
-    journal/Trash.cc
-    journal/debuginfo.cc
-    journal/firewalls.cc
+    lib/journal/ANSI.cc
+    lib/journal/ANSI_x11.cc
+    lib/journal/Alert.cc
+    lib/journal/Bland.cc
+    lib/journal/Chronicler.cc
+    lib/journal/Console.cc
+    lib/journal/Device.cc
+    lib/journal/ErrorConsole.cc
+    lib/journal/File.cc
+    lib/journal/Memo.cc
+    lib/journal/Renderer.cc
+    lib/journal/Stream.cc
+    lib/journal/Trash.cc
+    lib/journal/debuginfo.cc
+    lib/journal/firewalls.cc
     )
 
   # libpyre and libjournal

@@ -9,23 +9,23 @@ function(pyre_portinfo)
   # inject the platform information and move it to the staging area
   # this is the C++ version
   configure_file(
-    portinfo.in portinfo
+    lib/portinfo.in lib/portinfo
     @ONLY
     )
   # install the portinfo file
   install(
-    FILES ${CMAKE_CURRENT_BINARY_DIR}/portinfo
+    FILES ${CMAKE_CURRENT_BINARY_DIR}/lib/portinfo
     DESTINATION ${PYRE_DEST_INCLUDE}
     )
 
   # repeat with the C version
   configure_file(
-    portinfo.in portinfo.h
+    lib/portinfo.in lib/portinfo.h
     @ONLY
     )
   # install the portinfo file
   install(
-    FILES ${CMAKE_CURRENT_BINARY_DIR}/portinfo.h
+    FILES ${CMAKE_CURRENT_BINARY_DIR}/lib/portinfo.h
     DESTINATION ${PYRE_DEST_INCLUDE}
     )
 
@@ -60,36 +60,38 @@ endfunction(pyre_pyrePackage)
 function(pyre_pyreLib)
   # build the libpyre version file
   configure_file(
-    pyre/version.h.in pyre/version.h
+    lib/pyre/version.h.in lib/pyre/version.h
     @ONLY
     )
   configure_file(
-    pyre/version.cc.in pyre/version.cc
+    lib/pyre/version.cc.in lib/pyre/version.cc
     @ONLY
     )
   # copy the pyre headers over to the staging area
   file(GLOB_RECURSE files
-       RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}/pyre
+       RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}/lib/pyre
        CONFIGURE_DEPENDS
-       *.h *.icc
+       lib/pyre/*.h lib/pyre/*.icc
        )
   foreach(file ${files})
-    configure_file(pyre/${file} pyre/${file} COPYONLY)
+    configure_file(lib/pyre/${file} lib/pyre/${file} COPYONLY)
   endforeach()
 
   # the libpyre target
   add_library(pyre SHARED)
+  # specify the directory for the library compilation products
+  pyre_library_directory(pyre lib)
   # set the include directories
   target_include_directories(
     pyre PUBLIC
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/lib>
     $<INSTALL_INTERFACE:${PYRE_DEST_INCLUDE}>
     )
   # add the sources
   target_sources(pyre
     PRIVATE
-    pyre/memory/FileMap.cc
-    ${CMAKE_CURRENT_BINARY_DIR}/pyre/version.cc
+    lib/pyre/memory/FileMap.cc
+    ${CMAKE_CURRENT_BINARY_DIR}/lib/pyre/version.cc
     )
   # and the link dependencies
   target_link_libraries(
@@ -99,7 +101,7 @@ function(pyre_pyreLib)
 
   # install all the pyre headers
   install(
-    DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/pyre
+    DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/lib/pyre
     DESTINATION ${PYRE_DEST_INCLUDE}
     FILES_MATCHING PATTERN *.h PATTERN *.icc
     )
