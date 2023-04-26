@@ -43,6 +43,9 @@ endif()
 # default to build tests only when root project, but allow user to choose
 option(PYRE_BUILD_TESTING "Build pyre's test suite" ${PYRE_IS_ROOT_PROJECT})
 
+# default not to build the pyre benchmarks   
+option(PYRE_BUILD_BENCHMARKS "Build pyre's benchmark suite" OFF)
+
 # hmmmmm
 include(GNUInstallDirs)
 
@@ -235,7 +238,17 @@ if(PYRE_BUILD_TESTING)
   if(PostgreSQL_FOUND)
     include(pyre_tests_postgres_ext)
   endif()
+endif()
 
+
+# if we are building the benchmarks
+if(PYRE_BUILD_BENCHMARKS)
+
+  # get my functions
+  include(pyre_benchmarks)
+
+  # add the benchmarks to the pile
+  include(pyre_benchmarks_pyre_lib)
 endif()
 
 
