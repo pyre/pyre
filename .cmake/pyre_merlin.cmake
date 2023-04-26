@@ -18,7 +18,7 @@ function(pyre_merlinPackage)
     )
   # install the generated package meta-data file
   install(
-    DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/merlin
+    DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/packages/merlin
     DESTINATION ${PYRE_DEST_PACKAGES}
     FILES_MATCHING PATTERN *.py
     )
