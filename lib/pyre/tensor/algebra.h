@@ -61,11 +61,8 @@ namespace pyre::tensor {
     {
         // instantiate the result
         Tensor<T, packingT, I...> result;
-        // iterate on the packing
-        for (auto idx : Tensor<T, packingT, I...>::layout()) {
-            result[idx] = a * y[idx];
-        }
-        // all done
+        constexpr int D = Tensor<T, packingT, I...>::size;
+        _vector_times_scalar(a, y, result, make_integer_sequence<D> {});
         return result;
     }
 
