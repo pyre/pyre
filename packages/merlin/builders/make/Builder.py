@@ -71,48 +71,6 @@ class Builder(Builder, Generator, family="merlin.builders.make"):
         # all done
         return
 
-    # implementation details
-    def _setupStage(self, plexus, abi, **kwds):
-        """
-        Set up the staging area for build temporaries
-        """
-        # get the root of the virtual filesystem
-        vfs = plexus.vfs
-        # hash the workspace into a build tag
-        wstag = self._workspaceHash(plexus=plexus)
-        # build the stage path
-        stage = self.stage / wstag / abi / self.tag
-        # force the creation of the directory
-        stage.mkdir(parents=True, exist_ok=True)
-        # use it to anchor a local filesystem
-        stageFS = vfs.retrieveFilesystem(root=stage)
-        # build the canonical location for the stage in the virtual filesystem
-        stagePath = merlin.primitives.path("/stage")
-        # and mount it at its canonical location
-        vfs[stagePath] = stageFS
-
-        # all done
-        return
-
-    def _setupPrefix(self, plexus, abi, **kwds):
-        """
-        Set up the installation area
-        """
-        # get the root of the virtual filesystem
-        vfs = plexus.vfs
-        # check whether the user wants the ABI folded into the prefix
-        prefix = self.prefix / abi / self.tag if self.tagged else self.prefix
-        # force the creation of the actual directory
-        prefix.mkdir(parents=True, exist_ok=True)
-        # use it as an anchor for a local filesystem
-        prefixFS = vfs.retrieveFilesystem(root=prefix)
-        # build the canonical location for the prefix
-        prefixPath = merlin.primitives.path("/prefix")
-        # and mount the filesystem there
-        vfs[prefixPath] = prefixFS
-        # all done
-        return
-
     # asset visitors
     def project(self, project, **kwds):
         """
@@ -163,6 +121,48 @@ class Builder(Builder, Generator, family="merlin.builders.make"):
             # and generate makefiles for each one
             yield from asset.identify(visitor=self, stage=stage, **kwds)
 
+        # all done
+        return
+
+    # directory layout
+    def _setupStage(self, plexus, abi, **kwds):
+        """
+        Set up the staging area for build temporaries
+        """
+        # get the root of the virtual filesystem
+        vfs = plexus.vfs
+        # hash the workspace into a build tag
+        wstag = self._workspaceHash(plexus=plexus)
+        # build the stage path
+        stage = self.stage / wstag / abi / self.tag
+        # force the creation of the directory
+        stage.mkdir(parents=True, exist_ok=True)
+        # use it to anchor a local filesystem
+        stageFS = vfs.retrieveFilesystem(root=stage)
+        # build the canonical location for the stage in the virtual filesystem
+        stagePath = merlin.primitives.path("/stage")
+        # and mount it at its canonical location
+        vfs[stagePath] = stageFS
+
+        # all done
+        return
+
+    def _setupPrefix(self, plexus, abi, **kwds):
+        """
+        Set up the installation area
+        """
+        # get the root of the virtual filesystem
+        vfs = plexus.vfs
+        # check whether the user wants the ABI folded into the prefix
+        prefix = self.prefix / abi / self.tag if self.tagged else self.prefix
+        # force the creation of the actual directory
+        prefix.mkdir(parents=True, exist_ok=True)
+        # use it as an anchor for a local filesystem
+        prefixFS = vfs.retrieveFilesystem(root=prefix)
+        # build the canonical location for the prefix
+        prefixPath = merlin.primitives.path("/prefix")
+        # and mount the filesystem there
+        vfs[prefixPath] = prefixFS
         # all done
         return
 
