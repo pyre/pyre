@@ -50,15 +50,11 @@ class Builder(merlin.component, implements=merlin.protocols.flow.builder):
         # all done
         return
 
-    def build(self, assets, **kwds):
+    def build(self, **kwds):
         """
         Build the products
         """
-        # go through the assets
-        for asset in assets:
-            # ask each one to identify itself
-            asset.build(builder=self, **kwds)
-        # all done
+        # nothing to do, by default
         return
 
     # metamethods
