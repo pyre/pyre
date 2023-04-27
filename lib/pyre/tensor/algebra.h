@@ -44,7 +44,7 @@ namespace pyre::tensor {
     }
 
     // Algebraic operations on vectors, tensors, ...
-    // vector_t times scalar
+    // tensor times scalar (implementation)
     template <typename T2, typename T, class packingT, int... I, int... J>
     constexpr void _tensor_times_scalar(
         T2 a, const Tensor<T, packingT, I...> & y, Tensor<T, packingT, I...> & result,
@@ -54,6 +54,7 @@ namespace pyre::tensor {
         return;
     }
 
+    // scalar times tensor
     template <typename T2, typename T, class packingT, int... I>
     constexpr Tensor<T, packingT, I...> operator*(T2 a, 
         const Tensor<T, packingT, I...> & y) 
@@ -66,6 +67,7 @@ namespace pyre::tensor {
         return result;
     }
 
+    // tensor times scalar
     template <typename T2, typename T, class packingT, int... I>
     constexpr Tensor<T, packingT, I...> operator*(const Tensor<T, packingT, I...> & y, T2 a) 
         requires(Tensor<T, packingT, I...>::size != 1 && std::convertible_to<T2, T>)
@@ -73,6 +75,7 @@ namespace pyre::tensor {
         return a * y;
     }
 
+    // scalar times (temporary) tensor
     template <typename T2, typename T, class packingT, int... I>
     constexpr Tensor<T, packingT, I...> operator*(T2 a, 
         Tensor<T, packingT, I...> && y) 
@@ -83,6 +86,7 @@ namespace pyre::tensor {
         return y;
     }
 
+    // (temporary) tensor times scalar 
     template <typename T2, typename T, class packingT, int... I>
     constexpr Tensor<T, packingT, I...> operator*(Tensor<T, packingT, I...> && y, T2 a) 
         requires(Tensor<T, packingT, I...>::size != 1 && std::convertible_to<T2, T>)
