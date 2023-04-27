@@ -27,9 +27,29 @@ namespace pyre::tensor {
         return tensor / norm(tensor);
     }
 
+    // operator== (implementation)
+    template <typename T, class packingT, int... I, int... J>
+    constexpr auto _tensor_equal(const Tensor<T, packingT, I...> & lhs, 
+        const Tensor<T, packingT, I...> & rhs, integer_sequence<J...>) -> bool
+    {
+        if (((lhs[J] == rhs[J]) && ...)) return true;
+        return false;
+    }
+
+    // tensors operator== (same packing)
+    template <typename T, class packingT, int... I>
+    constexpr bool operator==(const Tensor<T, packingT, I...> & lhs, 
+        const Tensor<T, packingT, I...> & rhs)
+    {
+        constexpr int D = Tensor<T, packingT, I...>::size;
+        return _tensor_equal(lhs, rhs, make_integer_sequence<D> {});
+    }
+
+    // tensors operator== (different packing)
     template <typename T, class packingT1, class packingT2, int... I>
     constexpr bool operator==(const Tensor<T, packingT1, I...> & lhs, 
         const Tensor<T, packingT2, I...> & rhs)
+        requires(!std::is_same_v<packingT1, packingT2>)
     {
         // typedef for the repacked tensor based on {packingT1} and {packingT2}
         using repacked_tensor_t = Tensor<T, 
