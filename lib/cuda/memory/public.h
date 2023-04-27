@@ -26,9 +26,6 @@
 // mapped memory
 #include "HostMapped.h"
 
-// benchmark kernel
-#include "benchmark_kernel.h"
-
 #endif
 
 // end of file
