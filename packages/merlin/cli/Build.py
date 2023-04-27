@@ -32,11 +32,11 @@ class Build(merlin.shells.command, family="merlin.cli.projects"):
         # build the selector
         sieve = (lambda x: x.pyre_name in only) if only else None
         # filter
-        projects = tuple(filter(sieve, plexus.projects))
+        projects = filter(sieve, plexus.projects)
         # ask the builder to add each one to its pile
         builder.add(plexus=plexus, assets=projects, target="projects")
         # and then build everything
-        builder.build(plexus=plexus, assets=projects)
+        builder.build(plexus=plexus)
         # all done
         return
 
@@ -54,11 +54,11 @@ class Build(merlin.shells.command, family="merlin.cli.projects"):
         # assemble all accessible libraries
         libs = (lib for project in plexus.projects for lib in project.libraries)
         # filter
-        libraries = tuple(filter(sieve, libs))
+        libraries = filter(sieve, libs)
         # ask the builder to add each one to its pile
         builder.add(plexus=plexus, assets=libraries, target="libraries")
         # and then build everything
-        builder.build(plexus=plexus, assets=libraries)
+        builder.build(plexus=plexus)
         # all done
         return
 
