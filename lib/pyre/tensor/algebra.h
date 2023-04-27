@@ -46,7 +46,7 @@ namespace pyre::tensor {
     // Algebraic operations on vectors, tensors, ...
     // vector_t times scalar
     template <typename T2, typename T, class packingT, int... I, int... J>
-    constexpr void _vector_times_scalar(
+    constexpr void _tensor_times_scalar(
         T2 a, const Tensor<T, packingT, I...> & y, Tensor<T, packingT, I...> & result,
         integer_sequence<J...>) requires (std::convertible_to<T2, T>)
     {
@@ -62,7 +62,7 @@ namespace pyre::tensor {
         // instantiate the result
         Tensor<T, packingT, I...> result;
         constexpr int D = Tensor<T, packingT, I...>::size;
-        _vector_times_scalar(a, y, result, make_integer_sequence<D> {});
+        _tensor_times_scalar(a, y, result, make_integer_sequence<D> {});
         return result;
     }
 
@@ -79,7 +79,7 @@ namespace pyre::tensor {
         requires(Tensor<T, packingT, I...>::size != 1 && std::convertible_to<T2, T>)
     {
         constexpr int D = Tensor<T, packingT, I...>::size;
-        _vector_times_scalar(a, y, y, make_integer_sequence<D> {});
+        _tensor_times_scalar(a, y, y, make_integer_sequence<D> {});
         return y;
     }
 
