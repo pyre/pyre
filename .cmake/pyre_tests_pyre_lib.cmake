@@ -193,7 +193,7 @@ endif()
 
 
 # tensor
-if (WITH_TENSOR)
+if (HAVE_TENSOR)
 pyre_test_driver_cxx20(pyre.lib/tensor/cayley_hamilton.cc)
 pyre_test_driver_cxx20(pyre.lib/tensor/tensor_algebra.cc)
 pyre_test_driver_cxx20(pyre.lib/tensor/tensor_arithmetic.cc)

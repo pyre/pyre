@@ -11,7 +11,7 @@
 
 
 # tensor
-if (WITH_TENSOR)
+if (HAVE_TENSOR)
 pyre_benchmark_driver_cxx20(pyre.lib/tensor/tensor_algebra.cc)
 endif()
 
