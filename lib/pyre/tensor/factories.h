@@ -87,7 +87,7 @@ namespace pyre::tensor {
     template <class tensorT, int... I>
     constexpr auto make_basis_element()
         -> tensorT
-        requires (sizeof...(I) == tensorT::order
+        requires (sizeof...(I) == tensorT::rank
             && 
             // not a
             !(
@@ -106,7 +106,7 @@ namespace pyre::tensor {
     template <class tensorT, int... I>
     constexpr auto make_basis_element()
         -> tensorT::diagonal_tensor_t
-        requires (sizeof...(I) == tensorT::order
+        requires (sizeof...(I) == tensorT::rank
             && 
             // diagonal entry
             entries_all_equal<I...>() &&
@@ -120,7 +120,7 @@ namespace pyre::tensor {
     // factory for identity tensor (for now only for second order tensors)
     template <class tensorT>
     static constexpr auto make_identity() -> tensorT::diagonal_tensor_t 
-    requires (tensorT::order == 2)
+    requires (tensorT::rank == 2)
     {
         constexpr auto _make_ones = []<int... J>(integer_sequence<J...>) -> 
             tensorT::diagonal_tensor_t

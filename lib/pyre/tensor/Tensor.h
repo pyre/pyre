@@ -46,8 +46,8 @@ namespace pyre::tensor {
         using data_t = storage_t;
         // export the underlying type
         using type = T;
-        // export the order
-        static constexpr int order = N;
+        // export the rank
+        static constexpr int rank = N;
         // export the container size
         static constexpr int size = S;
 
