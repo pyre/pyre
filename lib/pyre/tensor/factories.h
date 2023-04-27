@@ -23,6 +23,10 @@ namespace pyre::tensor {
             return false;
         };
 
+        // trivial case: there is only one index  
+        if(index.size() == 1) return false;
+
+        // otherwise check if all the indices are equal
         return _entries_all_equal(make_integer_sequence<sizeof...(I) - 1> {});
     }
 

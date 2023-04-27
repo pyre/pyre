@@ -19,7 +19,7 @@ namespace pyre::tensor
     using scalar_t = real;
 
     // typedef for vectors
-    template <int D, typename T = real, class packingT = pyre::grid::diagonal_t<1>>
+    template <int D, typename T = real, class packingT = pyre::grid::canonical_t<1>>
     using vector_t = pyre::tensor::Tensor<T, packingT, D>;
 
     // typedef for matrices
