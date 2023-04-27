@@ -78,7 +78,8 @@ namespace pyre::tensor {
         Tensor<T, packingT, I...> && y) 
         requires(Tensor<T, packingT, I...>::size != 1 && std::convertible_to<T2, T>)
     {
-        y = a * std::as_const(y);
+        constexpr int D = Tensor<T, packingT, I...>::size;
+        _vector_times_scalar(a, y, y, make_integer_sequence<D> {});
         return y;
     }
 
