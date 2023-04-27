@@ -14,7 +14,6 @@ namespace pyre::tensor {
     class Tensor {
       private:
         // layout
-        // static constexpr packingT _layout {{I ...}, index_t::zero(), pack_t::order_type::rowMajor()};
         static constexpr packingT _layout { {I ...} };
         // rank of the tensor (N = 0 for empty parameter pack, i.e. scalar)
         static constexpr int N = sizeof...(I);
