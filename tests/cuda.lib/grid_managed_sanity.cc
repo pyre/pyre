@@ -10,7 +10,7 @@
 // get the grid
 #include <pyre/grid.h>
 // get the cuda memory support
-#include <cuda/memory.h>
+#include <pyre/cuda/memory.h>
 
 
 // verify the layout of a grid on the heap

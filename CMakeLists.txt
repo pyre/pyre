@@ -217,6 +217,7 @@ if(PYRE_BUILD_TESTING)
 
   # if we have CUDA and the user cares
   if(WITH_CUDA)
+    include(pyre_tests_cuda_lib)
     include(pyre_tests_cuda_pkg)
   endif()
 

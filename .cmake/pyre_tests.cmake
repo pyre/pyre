@@ -34,7 +34,7 @@ function(pyre_kernel_target kernelobject driverfile)
     # assemble the cu filename associated with this {driverfile} 
     set(cudafile "${driver_directory}/${driver_basename}.cu")
     # generate the name of the target with the cuda kernel
-    pyre_test_target(kernelobject ${cudafile})
+    pyre_target(kernelobject ${cudafile})
     # rename the kernel target to distinguish it from the driver target
     set(kernelobject "${kernelobject}_kernel")
     # propagate definition of variable to parent scope
