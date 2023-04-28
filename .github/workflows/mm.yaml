@@ -7,6 +7,11 @@ on:
   push:
     branches:
       - main
+  pull_request:
+  release:
+    types:
+      - published
+
 jobs:
   # build and test the ref that launched this action
   build:
