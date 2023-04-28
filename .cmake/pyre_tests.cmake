@@ -248,7 +248,7 @@ function(pyre_test_driver_env_case testfile env)
     )
   # specify the directory for the target compilation products
   pyre_target_directory(${target} tests)
-    
+
   # all done
 endfunction()
 

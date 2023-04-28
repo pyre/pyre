@@ -231,7 +231,7 @@ endfunction()
 # specify the directory for the target compilation products
 function(pyre_target_directory target directory)
   # set output directory for this target to subdirectory {directory} of the build directory
-  set_target_properties(${target} PROPERTIES RUNTIME_OUTPUT_DIRECTORY 
+  set_target_properties(${target} PROPERTIES RUNTIME_OUTPUT_DIRECTORY
     ${CMAKE_CURRENT_BINARY_DIR}/${directory}
   )
 # all done
@@ -241,7 +241,7 @@ endfunction()
 # specify the directory for the module
 function(pyre_library_directory library directory)
   # set output directory for this library to subdirectory {directory} of the build directory
-  set_target_properties(${library} PROPERTIES LIBRARY_OUTPUT_DIRECTORY 
+  set_target_properties(${library} PROPERTIES LIBRARY_OUTPUT_DIRECTORY
     ${CMAKE_CURRENT_BINARY_DIR}/${directory}
   )
 # all done

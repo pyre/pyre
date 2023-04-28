@@ -43,7 +43,7 @@ endif()
 # default to build tests only when root project, but allow user to choose
 option(PYRE_BUILD_TESTING "Build pyre's test suite" ${PYRE_IS_ROOT_PROJECT})
 
-# default not to build the pyre benchmarks   
+# default not to build the pyre benchmarks
 option(PYRE_BUILD_BENCHMARKS "Build pyre's benchmark suite" OFF)
 
 # hmmmmm
