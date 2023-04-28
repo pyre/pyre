@@ -41,7 +41,7 @@ function(pyre_test_testcase_shell_fixture setup cleanup testfile)
     )
   # specify the required working directory
   set_property(TEST ${testname}.setup PROPERTY
-    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/${dir}
+    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/${dir}
     )
   # register it as the setup of a fixture
   set_property(TEST ${testname}.setup PROPERTY
@@ -54,7 +54,7 @@ function(pyre_test_testcase_shell_fixture setup cleanup testfile)
     )
   # specify the required working directory
   set_property(TEST ${testname}.cleanup PROPERTY
-    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/${dir}
+    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/${dir}
     )
   # register it as the cleanup of a fixture
   set_property(TEST ${testname}.cleanup PROPERTY
@@ -70,7 +70,7 @@ function(pyre_test_testcase_shell_fixture setup cleanup testfile)
 endfunction()
 
 
-# register a python script as a test case; use a path relative to {CMAKE_SOURCE_DIR}
+# register a python script as a test case; use a path relative to {PROJECT_SOURCE_DIR}
 function(pyre_test_python_testcase testfile)
   # generate the name of the testcase
   pyre_test_testcase(testname ${testfile} ${ARGN})
@@ -89,7 +89,7 @@ function(pyre_test_python_testcase testfile)
     )
   # launch from the location of the testcase
   set_property(TEST ${testname} PROPERTY
-    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/${dir}
+    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/${dir}
     )
 
   # all done
@@ -121,7 +121,7 @@ function(pyre_test_python_testcase_mpi testfile slots)
     )
   # launch from the location of the testcase
   set_property(TEST ${testname} PROPERTY
-    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/${dir}
+    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/${dir}
     )
 
   # all done
@@ -129,7 +129,7 @@ endfunction()
 
 
 # register a python script as a test case that requires environment variables to be set up; use
-# a path relative to {CMAKE_SOURCE_DIR}
+# a path relative to {PROJECT_SOURCE_DIR}
 function(pyre_test_python_testcase_env testfile env)
   # generate the name of the testcase
   pyre_test_testcase(testname ${testfile} ${ARGN})
@@ -150,21 +150,21 @@ function(pyre_test_python_testcase_env testfile env)
     )
   # launch from the location of the testcase
   set_property(TEST ${testname} PROPERTY
-    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/${dir}
+    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/${dir}
     )
 
   # all done
 endfunction()
 
 
-# register a python script as a test case; use a path relative to {CMAKE_SOURCE_DIR}
+# register a python script as a test case; use a path relative to {PROJECT_SOURCE_DIR}
 function(pyre_test_pyre_driver driver case)
   # generate the name of the testcase
   set(testname "${driver}.${case}")
 
   # set up the harness
   add_test(NAME ${testname}
-    COMMAND ${Python_EXECUTABLE} ${CMAKE_SOURCE_DIR}/bin/${driver} ${ARGN}
+    COMMAND ${Python_EXECUTABLE} ${PROJECT_SOURCE_DIR}/bin/${driver} ${ARGN}
     )
   # register the runtime environment requirements
   set_property(TEST ${testname} PROPERTY ENVIRONMENT
