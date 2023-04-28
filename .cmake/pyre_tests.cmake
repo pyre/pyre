@@ -271,7 +271,7 @@ function(pyre_test_driver_mpi testfile slots)
   add_test(NAME ${testname} COMMAND
     ${MPIEXEC} ${MPIEXEC_NUMPROC_FLAG} ${slots} --hostfile localhost
     ${MPIEXEC_PREFLAGS}
-    ${target}
+    tests/${target}
     ${MPIEXEC_POSTFLAGS}
     ${ARGN}
     )
