@@ -1,7 +1,7 @@
 // -*- c++ -*-
 //
 // the pyre authors
-// (c) 1998-2020 all rights reserved
+// (c) 1998-2023 all rights reserved
 
 #if !defined(pyre_journal_Splitter_h)
 #define pyre_journal_Splitter_h

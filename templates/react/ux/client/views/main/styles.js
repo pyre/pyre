@@ -1,7 +1,7 @@
 // -*- web -*-
 //
 // {project.authors}
-// (c) 1998-2020 all rights reserved
+// (c) 1998-2023 all rights reserved
 
 
 // get colors
