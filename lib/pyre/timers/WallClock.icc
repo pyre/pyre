@@ -1,0 +1,22 @@
+// -*- c++ -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2023 all rights reserved
+
+// code guard
+#if !defined(pyre_timers_WallClock_icc)
+#error this file contains implementation details for pyre::timers::WallClock
+#else
+
+
+// interface
+auto
+pyre::timers::WallClock::now() -> time_point_type
+{
+    return clock_type::now();
+}
+
+
+#endif
+
+// end of file

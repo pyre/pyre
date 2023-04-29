@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2020 all rights reserved
+# (c) 1998-2023 all rights reserved
 #
 
 
@@ -43,6 +43,8 @@ class Configurable(Dashboard):
     pyre_isProtocol = False
     pyre_isComponent = False
 
+    pyre_doc = None
+    pyre_tip = None
 
     # basic support for the help system
     def pyre_help(self, indent=' '*4, **kwds):
@@ -194,10 +196,14 @@ class Configurable(Dashboard):
         """
         Generate a short description of what I do
         """
-        # if i have a docstring (and i really really should...)
-        if self.__doc__:
-            # format and return
-            yield textwrap.indent(textwrap.dedent(self.__doc__), indent)
+        # get my docstring
+        doc = self.__doc__
+        # if i have one (and i really really should...)
+        if doc:
+            # remove leading indentation from the source code formatting and split
+            for line in textwrap.dedent(doc).splitlines():
+                # format and return
+                yield f"{indent}{line}"
         # all done
         return
 
@@ -224,15 +230,17 @@ class Configurable(Dashboard):
         # if we were able to find any trait info
         if public:
             # the {options} section
-            yield 'options:'
+            yield "options:"
             # figure out how much space we need
             width = max(len(name) for name,_,_ in public) + 2 # for the dashes
-            # for each behavior
+            # for each public trait
             for name, schema, tip in public:
-                # show the details
-                yield "{}{:>{}}: {} [{}]".format(indent, '--'+name, width, tip, schema)
+                # make a tag out of the name
+                tag = f"--{name}"
+                # show its details
+                yield f"{indent}{tag:>{width}}: {tip} [{schema}]"
             # leave some space
-            yield ''
+            yield ""
         # all done
         return
 
@@ -256,12 +264,14 @@ class Configurable(Dashboard):
 
         # if we were able to find any usage information
         if behaviors:
+            # make some space
+            yield ""
             # the {usage} section
-            yield 'usage:'
+            yield "usage:"
             # a banner with all the commands
-            yield '{}{} [command]'.format(indent, spec)
+            yield f"{indent}{spec} [command]"
             # leave some space
-            yield ''
+            yield ""
             # the beginning of the section with more details
             yield 'where [command] is one of'
             # figure out how much space we need
@@ -269,9 +279,9 @@ class Configurable(Dashboard):
             # for each behavior
             for behavior, tip in behaviors:
                 # show the details
-                yield '{}{:>{}}: {}'.format(indent, behavior, width, tip)
+                yield f"{indent}{behavior:>{width}}: {tip}"
             # leave some space
-            yield ''
+            yield ""
             # all done
             return
 
@@ -412,6 +422,24 @@ class Configurable(Dashboard):
         return cls
 
 
+    # additional configuration support
+    @classmethod
+    def pyre_pullGlobalSettingsIntoScope(cls, scope):
+        """
+        Alias global settings whose names match my configurables into the given scope
+        """
+        # get the name server
+        nameserver = cls.pyre_nameserver
+        # my configurable traits
+        traits = cls.pyre_configurables()
+        # build the set of names
+        aliases = { alias for trait in traits for alias in trait.aliases }
+        # merge global settings
+        nameserver.pullGlobalSettingsIntoScope(scope=scope, symbols=aliases)
+        # and done
+        return
+
+
     # compatibility check
     @classmethod
     def pyre_isCompatible(cls, spec, fast=True):
@@ -428,6 +456,8 @@ class Configurable(Dashboard):
         is False, a thorough check of all traits will be performed resulting in a detailed
         compatibility report.
         """
+        # get the generic trait type that everybody is compatible with
+        from pyre.traits.properties import identity
         # get the report factory
         from .CompatibilityReport import CompatibilityReport
         # to build an empty one
@@ -450,17 +480,30 @@ class Configurable(Dashboard):
                 # move on to the next trait
                 continue
 
-            # are the two traits instances of compatible classes?
-            if not issubclass(type(mine), type(hers)):
-                # build an error description
-                error = cls.CategoryMismatchError(configurable=cls, target=spec, name=hers.name)
-                # add it to the report
-                report.incompatibilities[hers].append(error)
-                # if we are in fast mode, we have done enough
-                if fast: return report
-                # otherwise move on to the next trait. N.B. the superfluous {continue} is here
-                # in case more checking is added after this paragraph
+            # get the traits types
+            myType = type(mine)
+            herType = type(hers)
+
+            # if the two traits are instance of compatible classes
+            if issubclass(myType, herType):
+                # move on
                 continue
+
+            # if {hers} is a generic trait
+            if herType is identity:
+                # move on
+                continue
+
+            # if we get this far, we have an incompatibility; build an error description
+            error = cls.CategoryMismatchError(configurable=cls, target=spec, name=hers.name)
+            # add it to the report
+            report.incompatibilities[hers].append(error)
+            # if we are in fast mode
+            if fast:
+                # we have done enough
+                return report
+            # otherwise move on to the next trait
+            continue
 
         # all done
         return report

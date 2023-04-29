@@ -1,7 +1,7 @@
 // -*- c++ -*-
 //
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
-// (c) 1998-2020 all rights reserved
+// (c) 1998-2023 all rights reserved
 
 // code guard
 #if !defined(pyre_journal_exceptions_icc)
@@ -10,45 +10,84 @@
 
 
 // application_error
-// constructors
+// constructor
 pyre::journal::application_error::
-application_error(const char * what) :
-    std::runtime_error(what)
+application_error(const headline_type & what, const page_type & page, const notes_type & notes) :
+    std::runtime_error(what),
+    _page{ page },
+    _notes{ notes }
 {}
 
-
+// accessors
+auto
 pyre::journal::application_error::
-application_error(const string_type & what) :
-    std::runtime_error(what)
-{}
+page() const -> page_const_reference
+{
+    // easy enough
+    return _page;
+}
+
+auto
+pyre::journal::application_error::
+notes() const -> notes_const_reference
+{
+    // easy enough
+    return _notes;
+}
 
 
 // firewall_error
-// constructors
+// constructor
 pyre::journal::firewall_error::
-firewall_error(const char * what) :
-    std::logic_error(what)
+firewall_error(const headline_type & what, const page_type & page, const notes_type & notes) :
+    std::logic_error(what),
+    _page{ page },
+    _notes{ notes }
 {}
 
-
+// accessors
+auto
 pyre::journal::firewall_error::
-firewall_error(const string_type & what) :
-    std::logic_error(what)
-{}
+page() const -> page_const_reference
+{
+    // easy enough
+    return _page;
+}
+
+auto
+pyre::journal::firewall_error::
+notes() const -> notes_const_reference
+{
+    // easy enough
+    return _notes;
+}
 
 
 // debug
-// constructors
+// constructor
 pyre::journal::debug_error::
-debug_error(const char * what) :
-    std::logic_error(what)
+debug_error(const headline_type & what, const page_type & page, const notes_type & notes) :
+    std::logic_error(what),
+    _page{ page },
+    _notes{ notes }
 {}
 
-
+// accessors
+auto
 pyre::journal::debug_error::
-debug_error(const string_type & what) :
-    std::logic_error(what)
-{}
+page() const -> page_const_reference
+{
+    // easy enough
+    return _page;
+}
+
+auto
+pyre::journal::debug_error::
+notes() const -> notes_const_reference
+{
+    // easy enough
+    return _notes;
+}
 
 
 # endif

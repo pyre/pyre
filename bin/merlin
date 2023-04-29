@@ -1,27 +1,19 @@
-#!/usr/bin/env python3
+#! /usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
-# (c) 1998-2020 all rights reserved
-#
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2023 all rights reserved
 
-# version check
-# python version information is in {{sys.version}
-import sys
-# unwrap
-major, minor, _, _, _ = sys.version_info
-# check
-if major < 3 or (major == 3 and minor < 5):
-    # and complain
-    raise RuntimeError("merlin requires python 3.5 or newer")
 
-# shell for invoking merlin commands
-# package access
+# get the package
 import merlin
-# invoke its main entry point
-status = merlin.main()
-# and hand the status to the shell
+
+# build an instance of the plexus
+app = merlin.shells.merlin(name="merlin.app")
+# and run it
+status = app.run()
+# pass the status on to the shell
 raise SystemExit(status)
+
 
 # end of file

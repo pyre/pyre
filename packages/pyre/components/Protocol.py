@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2020 all rights reserved
+# (c) 1998-2023 all rights reserved
 #
 
 
@@ -45,6 +45,17 @@ class Protocol(Configurable, metaclass=Role, internal=True):
         """
         # actual protocols should override
         return None
+
+
+    # configuration hooks
+    @classmethod
+    def pyre_configure(cls, **kwds):
+        """
+        Load configuration files derivable from {name} for a component that is about to
+        be instantiated after a specification {uri} has been resolved
+        """
+        # do nothing; subclasses may override
+        return
 
 
     # value processing hooks
@@ -101,6 +112,23 @@ class Protocol(Configurable, metaclass=Role, internal=True):
 
         # otherwise, complain
         raise cls.ResolutionError(protocol=cls, value=value, report=report)
+
+
+    # the last step in the value processing flow is component instantiation
+    @classmethod
+    def pyre_instantiate(cls, spec, component, name, locator, **kwds):
+        """
+        Invoke the {component} constructor to build a new instance
+        """
+        # N.B.:
+        # {spec} is the original raw string that is being resolved
+        # protocols that understand complicated specifications may want to perform some last minute
+        # configuration steps before handing the new instance to the caller
+
+        # instantiate and return the new object
+        # mark as {implicit} to denote that this instance was created during
+        # facility processing, rather than explicitly
+        return component(name=name, locator=locator, implicit=True)
 
 
     # introspection
@@ -372,7 +400,11 @@ class Protocol(Configurable, metaclass=Role, internal=True):
         for name, entity in cls.pyre_executive.retrieveComponents(uri=uri):
             # if the entity is a component
             if isinstance(entity, cls.actor):
-                # and it is compatible with me
+                # check whether it is marked as an implementation detail
+                if entity.pyre_internal is True:
+                    # in which case just skip it
+                    continue
+                # if it is compatible with me
                 if entity.pyre_isCompatible(spec=cls, fast=True):
                     # pass it along
                     yield uri, name, entity
@@ -385,8 +417,12 @@ class Protocol(Configurable, metaclass=Role, internal=True):
                 for protocol in entity.pyre_implements:
                     # is compatible with me
                     if protocol.pyre_isCompatible(spec=cls, fast=True):
-                        # in which case, pass it along
-                        yield uri, name, entity
+                        # in which case, invoke the foundry
+                        component = entity()
+                        # if it's not marked as an implementation detail
+                        if component.pyre_internal is False:
+                            # pass it along
+                            yield uri, name, component
                         # stop checking other protocols
                         break
                 # grab the next one

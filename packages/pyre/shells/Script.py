@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2020 all rights reserved
+# (c) 1998-2023 all rights reserved
 #
 
 
@@ -60,7 +60,6 @@ class Script(Executive, family="pyre.shells.script"):
             status = 2
         # if the framework complained about something
         except self.PyreError as error:
-            print(type(error).mro())
             # if we are in debug mode
             if application.DEBUG:
                 # let the error through

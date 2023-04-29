@@ -1,0 +1,136 @@
+// -*- c++ -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2023 all rights reserved
+
+
+// code guard
+#if !defined(pyre_memory_Stack_icc)
+#error this file contains implementation details for pyre::memory::Stack
+#else
+
+
+// metamethods
+// constructor
+template <int D, class T, bool isConst>
+pyre::memory::Stack<D, T, isConst>::Stack() : _data()
+{}
+
+
+// interface
+// get the number of cells in the block
+template <int D, class T, bool isConst>
+constexpr auto
+pyre::memory::Stack<D, T, isConst>::cells() const -> cell_count_type
+{
+    // easy
+    return D;
+}
+
+
+// get the memory footprint of the block
+template <int D, class T, bool isConst>
+constexpr auto
+pyre::memory::Stack<D, T, isConst>::bytes() const -> size_type
+{
+    // scale the number of cells by the cell size
+    return cells() * sizeof(value_type);
+}
+
+
+// access to the data pointer
+template <int D, class T, bool isConst>
+constexpr auto
+pyre::memory::Stack<D, T, isConst>::data() const -> pointer
+{
+    // return the raw data pointer
+    return _data.data();
+}
+
+
+// access to the data pointer in form suitable for diagnostics
+template <int D, class T, bool isConst>
+constexpr auto
+pyre::memory::Stack<D, T, isConst>::where() const -> const void *
+{
+    // return the raw data pointer
+    return _data.data();
+}
+
+
+// iterator support
+template <int D, class T, bool isConst>
+constexpr auto
+pyre::memory::Stack<D, T, isConst>::begin() -> iterator
+{
+    // the beginning of the block
+    return _data.begin();
+}
+
+
+template <int D, class T, bool isConst>
+constexpr auto
+pyre::memory::Stack<D, T, isConst>::end() -> iterator
+{
+    // one past the last cell in the block
+    return _data.end();
+}
+
+template <int D, class T, bool isConst>
+constexpr auto
+pyre::memory::Stack<D, T, isConst>::cbegin() const -> const_iterator
+{
+    // the beginning of the block
+    return _data.begin();
+}
+
+
+template <int D, class T, bool isConst>
+constexpr auto
+pyre::memory::Stack<D, T, isConst>::cend() const -> const_iterator
+{
+    // one past the last cell in the block
+    return _data.end();
+}
+
+
+// data access
+template <int D, class T, bool isConst>
+auto
+pyre::memory::Stack<D, T, isConst>::at(size_type pos) -> reference
+{
+    // return a reference to the cell at {pos}
+    return _data.at(pos);
+}
+
+
+template <int D, class T, bool isConst>
+auto
+pyre::memory::Stack<D, T, isConst>::at(size_type pos) const -> const_reference
+{
+    // return a reference to the cell at {pos}
+    return _data.at(pos);
+}
+
+
+template <int D, class T, bool isConst>
+auto
+pyre::memory::Stack<D, T, isConst>::operator[](size_type pos) -> reference
+{
+    // return a reference to the cell at {pos}
+    return _data[pos];
+}
+
+
+template <int D, class T, bool isConst>
+auto
+pyre::memory::Stack<D, T, isConst>::operator[](size_type pos) const -> const_reference
+{
+    // return a reference to the cell at {pos}
+    return _data[pos];
+}
+
+
+#endif
+
+// end of file

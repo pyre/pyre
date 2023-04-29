@@ -2,7 +2,7 @@
 //
 // michael a.g. aïvázis
 // orthologue
-// (c) 1998-2020 all rights reserved
+// (c) 1998-2023 all rights reserved
 //
 
 #include <portinfo>
@@ -44,15 +44,15 @@ discover(PyObject *, PyObject *args)
     cudaError_t status = cudaGetDeviceCount(&count);
     // if anything went wrong
     if (status != cudaSuccess) {
-        // make an error channel
-        pyre::journal::error_t error("cuda");
-        // show me
-        error
+        // make a channel
+        pyre::journal::warning_t channel("cuda");
+        // complain
+        channel
             << pyre::journal::at(__HERE__)
             << "while getting device count: "
             << cudaGetErrorName(status) << " (" << status << ")"
             << pyre::journal::endl;
-        // pretend there are no CUDA capable devices
+        // and pretend there are no CUDA capable devices
         return PyTuple_New(0);
     }
     // show me
@@ -193,18 +193,22 @@ struct coreTableEntry {
 };
 
 // the known GPU generations
-static coreTableEntry coreTableMap[] = {
-    { 0x70,  64}, // Volta Generation (SM 7.0) GV100 class
-    { 0x62, 128}, // Pascal Generation (SM 6.2) GP10x class
-    { 0x61, 128}, // Pascal Generation (SM 6.1) GP10x class
-    { 0x60,  64}, // Pascal Generation (SM 6.0) GP100 class
-    { 0x53, 128}, // Maxwell Generation (SM 5.3) GM20x class
-    { 0x52, 128}, // Maxwell Generation (SM 5.2) GM20x class
-    { 0x50, 128}, // Maxwell Generation (SM 5.0) GM10x class
-    { 0x37, 192}, // Kepler Generation (SM 3.7) GK21x class
-    { 0x35, 192}, // Kepler Generation (SM 3.5) GK11x class
-    { 0x32, 192}, // Kepler Generation (SM 3.2) GK10x class
-    { 0x30, 192}, // Kepler Generation (SM 3.0) GK10x class
+static coreTableEntry coreTableMap [] = {
+    { 0x86, 64 },     // Ampere  (SM 8.6) GA100
+    { 0x80, 64 },     // Ampere  (SM 8.0) GA100
+    { 0x75, 64 },     // Turing  (SM 7.5) GV100
+    { 0x72, 64 },     // Volta   (SM 7.2) GV100
+    { 0x70, 64 },     // Volta   (SM 7.0) GV100
+    { 0x62, 128 },    // Pascal  (SM 6.2) GP10x
+    { 0x61, 128 },    // Pascal  (SM 6.1) GP10x
+    { 0x60, 64 },     // Pascal  (SM 6.0) GP100
+    { 0x53, 128 },    // Maxwell (SM 5.3) GM20x
+    { 0x52, 128 },    // Maxwell (SM 5.2) GM20x
+    { 0x50, 128 },    // Maxwell (SM 5.0) GM10x
+    { 0x37, 192 },    // Kepler  (SM 3.7) GK21x
+    { 0x35, 192 },    // Kepler  (SM 3.5) GK11x
+    { 0x32, 192 },    // Kepler  (SM 3.2) GK10x
+    { 0x30, 192 },    // Kepler  (SM 3.0) GK10x
 };
 
 // the number of known GPU generations

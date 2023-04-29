@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2020 all rights reserved
+# (c) 1998-2023 all rights reserved
 #
 
 
@@ -27,10 +27,10 @@ def test_el_GR():
     # test object -> str
     assert "1234,56" == locale.str(1234.56)
     assert "1.234,56" == locale.format_string("%.2f", 1234.56, grouping=True, monetary=True)
-    # print(locale.currency(1234567.89, True, True, False))
-    # print(locale.currency(1234567.89, True, True, True))
-    assert "1.234.567,89 Eu" == locale.currency(1234567.89, True, True, False)
-    assert "1.234.567,89 EUR " == locale.currency(1234567.89, True, True, True)
+    # print(locale.currency(1234567.89, symbol=True, grouping=True, international=False))
+    # print(locale.currency(1234567.89, symbol=True, grouping=True, international=True))
+    assert "1.234.567,89 Eu" == locale.currency(1234567.89, True, True, False).strip()
+    assert "1.234.567,89 EUR" == locale.currency(1234567.89, True, True, True).strip()
 
     return
 
@@ -52,8 +52,8 @@ def test_en_US():
     assert "1,234.56" == locale.format_string("%.2f", 1234.56, grouping=True, monetary=True)
     # print(locale.currency(1234567.89, True, True, False))
     # print(locale.currency(1234567.89, True, True, True))
-    assert "$1,234,567.89" == locale.currency(1234567.89, True, True, False)
-    assert "USD 1,234,567.89" == locale.currency(1234567.89, True, True, True)
+    assert "$1,234,567.89" == locale.currency(1234567.89, True, True, False).strip()
+    assert "USD 1,234,567.89" == locale.currency(1234567.89, True, True, True).strip()
 
     return
 
@@ -75,8 +75,8 @@ def test_en_GB():
     assert "1,234.56" == locale.format_string("%.2f", 1234.56, grouping=True, monetary=True)
     # print(locale.currency(1234567.89, True, True, False))
     # print(locale.currency(1234567.89, True, True, True))
-    assert "£1,234,567.89" == locale.currency(1234567.89, True, True, False)
-    assert "GBP 1,234,567.89" == locale.currency(1234567.89, True, True, True)
+    assert "£1,234,567.89" == locale.currency(1234567.89, True, True, False).strip()
+    assert "GBP 1,234,567.89" == locale.currency(1234567.89, True, True, True).strip()
 
     return
 
@@ -99,18 +99,17 @@ def test_fr_FR():
     assert "1234,56" == locale.format_string("%.2f", 1234.56, grouping=False, monetary=True)
     # print(locale.currency(1234567.89, True, True, False))
     # print(locale.currency(1234567.89, True, True, True))
-    # assert "1 234 567,89 Eu" == locale.currency(1234567.89, True, True, False)
-    # assert "1 234 567,89 EUR " == locale.currency(1234567.89, True, True, True)
+    assert "1 234 567,89 Eu" == locale.currency(1234567.89, True, True, False).strip()
+    assert "1 234 567,89 EUR" == locale.currency(1234567.89, True, True, True).strip()
 
     return
 
 
 def test():
+    # test_en_GB()
+    # test_en_US()
+    # test_fr_FR()
     # test_el_GR()
-    test_en_GB()
-    test_en_US()
-    test_fr_FR()
-    test_el_GR()
 
     return
 

@@ -2,11 +2,12 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2020 all rights reserved
+# (c) 1998-2023 all rights reserved
 #
 
 
 # externals
+import os
 import weakref
 # pyre types
 from .. import primitives, schemata
@@ -42,7 +43,11 @@ class FileServer(Filesystem):
 
 
     # constants
+    # the XDG compliant fallback for user configuration
+    XDG_CONFIG = primitives.path("~/.config/pyre")
+    # the legacy path of the user configuration directory on the physical filesystem
     DOT_PYRE = primitives.path('~/.pyre')
+    # the logical names for the configuration directories
     USER_DIR = primitives.path('/__pyre/user')
     STARTUP_DIR = primitives.path('/__pyre/startup')
     PACKAGES_DIR = primitives.path('/__pyre/packages')
@@ -93,6 +98,16 @@ class FileServer(Filesystem):
                 # complain
                 raise self.IsFolderError(filesystem=self, node=None, uri=uri)
 
+        # translate application private file space uris
+        if scheme == 'pfs':
+            # find the registered app
+            app = self.executive.dashboard.pyre_application
+            # adjust the scheme
+            scheme = 'vfs'
+            # and the uri
+            uri.scheme = 'vfs'
+            uri.address = f"{app.pfs.uri}/{uri.address}"
+
         # if the scheme is {vfs}
         if scheme == 'vfs':
             # assuming the uri is within my virtual filesystem
@@ -112,7 +127,7 @@ class FileServer(Filesystem):
             return node.open(**kwds)
 
         # if i didn't recognize the {scheme}, complain
-        raise self.URISpecificationError(uri=uri, reason="unsupported scheme {!r}".format(scheme))
+        raise self.URISpecificationError(uri=uri, reason=f"unsupported scheme '{scheme}'")
 
 
     # convenience: access to the filesystem factories
@@ -149,16 +164,13 @@ class FileServer(Filesystem):
 
         # get the current working directory; it is guaranteed to be an absolute path so there
         # is no reason to resolve it
-
         startup = primitives.path.cwd()
         # however, it is possible that it doesn't exist, or it has the wrong permissions; try to
         # mount it, or mount an empty folder if anything goes wrong
         self[self.STARTUP_DIR] = self.retrieveFilesystem(root=startup)
 
-        # the user's private folder, typically at {~/.pyre}
-        userdir = self.DOT_PYRE.expanduser().resolve()
-        # same deal: mount it or an empty folder
-        self[self.USER_DIR] = self.retrieveFilesystem(root=userdir)
+        # mount the user's private folder, if it's there
+        self[self.USER_DIR] = self.retrieveFilesystem(root=self.xdg)
 
         # build the virtual directory where packages park their configuration
         self[self.PACKAGES_DIR] = self.folder()
@@ -182,11 +194,11 @@ class FileServer(Filesystem):
         # get the package name
         name = package.name
         # show me
-        # print("  package name: {}".format(name))
+        # print(f"  package name: {name}")
 
         # attempt to
         try:
-            # print("  looking for {}".format(self.USER_DIR / name))
+            # print(f"  looking for {self.USER_DIR / name}")
             # hunt down the package directory in the user area
             userdir = self[self.USER_DIR / name]
         # if not there
@@ -203,7 +215,7 @@ class FileServer(Filesystem):
 
         # grab the package prefix
         prefix = package.prefix
-        # print("  package prefix: {}".format(prefix))
+        # print(f"  package prefix: {prefix}")
         # not much to do if there isn't one
         if not prefix: return package
 
@@ -211,9 +223,9 @@ class FileServer(Filesystem):
         fs = self.retrieveFilesystem(root=prefix)
         # attempt to
         try:
-            # print("  looking for {}".format(package.DEFAULTS))
+            # print(f"  looking for {package.CONFIG}")
             # look for the configuration folder
-            defaults = fs[package.DEFAULTS]
+            config = fs[package.CONFIG]
         # if not there
         except fs.NotFoundError:
             # print("    not there")
@@ -222,32 +234,32 @@ class FileServer(Filesystem):
         # print("    found it")
 
         # if the configuration folder is empty
-        if not defaults.contents:
+        if not config.contents:
             # it might be because we haven't explored it yet
             # print("    expanding it")
-            defaults.discover(levels=1)
+            config.discover(levels=1)
 
         # look for configuration files
         for encoding in self.executive.configurator.encodings():
             # build the configuration file name
-            filename = "{}.{}".format(name, encoding)
+            filename = f"{name}.{encoding}"
             # look for
             try:
                 # the node that corresponds to the configuration file
-                cfgfile = defaults[filename]
+                cfgfile = config[filename]
             # if it's not there
             except fs.NotFoundError:
                 # bail
                 continue
             # if it is there, mount it within the package directory
-            # print("  mounting {}".format(self.PACKAGES_DIR / filename))
+            # print(f"  mounting {self.PACKAGES_DIR / filename}")
             self[self.PACKAGES_DIR / filename] = cfgfile
 
         # look for the configuration folder
         try:
             # get the associated node
-            # print("  looking for {}/{}".format(package.DEFAULTS, name))
-            cfgdir = defaults[name]
+            # print(f"  looking for {package.CONFIG}/{name}")
+            cfgdir = config[name]
         # if it's not there
         except fs.NotFoundError:
             # print("    not there")
@@ -271,6 +283,17 @@ class FileServer(Filesystem):
         self.executive = None if executive is None else weakref.proxy(executive)
         # initialize the table of known mount points
         self.mounts = {}
+
+        # figure out where the configuration directory is; first, try looking for an XDG compliant
+        # layout; perhaps the system sets up the mandated environment variable
+        xdg = primitives.path(os.getenv("XDG_CONFIG_HOME", self.XDG_CONFIG)).expanduser().resolve()
+        # if it is not a real directory
+        if not xdg.exists():
+            # fall back to the legacy solution
+            xdg = self.DOT_PYRE.expanduser().resolve()
+        # record
+        self.xdg = xdg
+
         # all done
         return
 

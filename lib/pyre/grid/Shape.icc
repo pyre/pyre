@@ -1,0 +1,48 @@
+// -*- c++ -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2023 all rights reserved
+
+// code guard
+#if !defined(pyre_grid_Shape_icc)
+#error this file contains implementation details for pyre::grid::Shape
+#else
+
+
+// metamethods
+// constructor that accepts an initializer list
+template <class containerT>
+template <typename... argT>
+constexpr pyre::grid::Shape<containerT>::Shape(argT... idx) : rep_type(idx...)
+{}
+
+
+// interface
+// the total number of addressable values
+template <class containerT>
+constexpr auto
+pyre::grid::Shape<containerT>::cells() const -> std::size_t
+{
+    // the initial value
+    std::size_t one = 1;
+    // my capacity is equal to the product of the number of possible values along each axis
+    return std::accumulate(this->begin(), this->end(), one, std::multiplies<std::size_t>());
+}
+
+
+// support for structured bindings
+template <class containerT>
+class std::tuple_size<pyre::grid::Shape<containerT>> :
+    public std::integral_constant<int, pyre::grid::Shape<containerT>::rank()> {};
+
+
+template <std::size_t I, class containerT>
+struct std::tuple_element<I, pyre::grid::Shape<containerT>> {
+    static_assert(I < pyre::grid::Shape<containerT>::rank(), "index is out of bounds");
+    using type = typename containerT::value_type;
+};
+
+
+#endif
+
+// end of file

@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2020 all rights reserved
+# (c) 1998-2023 all rights reserved
 #
 
 
@@ -207,7 +207,7 @@ class Parser(pyre.parsing.parser):
             # build a conditional assignment
             event = self.ConditionalAssignment(
                 component = self.name + key[:-1],
-                condition = (self.name, self.family),
+                conditions = [(self.name, self.family)],
                 key = key[-1:], value = value,
                 locator = locator)
         # otherwise

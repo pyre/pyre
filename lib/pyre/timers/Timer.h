@@ -1,77 +1,69 @@
-// -*- C++ -*-
-// -*- coding: utf-8 -*-
+// -*- c++ -*-
 //
-// michael a.g. aïvázis
-// orthologue
-// (c) 1998-2020 all rights reserved
-//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2023 all rights reserved
 
-
+// code guard
 #if !defined(pyre_timers_Timer_h)
 #define pyre_timers_Timer_h
 
-namespace pyre {
-    namespace timers {
-        class Timer;
-    }
-}
 
-// imported types
-#include <string>
-
-// get platform specific clock type
-#if defined(mm_platforms_darwin) || defined(__config_platform_darwin)
-#include "mach/Clock.h"
-#elif defined(mm_platforms_linux) || defined(__config_platform_linux)
-#include <pyre/algebra/BCD.h>
-#include "posix/Clock.h"
-#else
-#include <pyre/algebra/BCD.h>
-#include "epoch/Clock.h"
-#endif
-
-// the timer
-class pyre::timers::Timer {
-    //typedefs
+// user facing encapsulation of a timer
+template <class clockT, template <class, class> class proxyT>
+class pyre::timers::Timer : public proxyT<Timer<clockT, proxyT>, clockT> {
+    // types
 public:
-    using clock_t = Clock;
-    using timer_t = Timer;
-    using name_t = std::string;
+    // my clock type
+    using clock_type = clockT;
+    // access to my shared state
+    using proxy_type = proxyT<Timer<clockT, proxyT>, clockT>;
+    // and its parts
+    using movement_type = typename proxy_type::movement_type;
+    // my registry
+    using registry_type = Registrar<movement_type>;
+    using registry_reference = registry_type &;
+    // my name
+    using name_type = typename registry_type::name_type;
 
-    // interface
+    // metamethods
 public:
-    inline auto name() const -> name_t;
+    // let the compiler write the destructor
+    ~Timer() = default;
+    // constructors
+    // timer state is shared among all timers with the same name
+    inline explicit Timer(const name_type &);
 
-    inline auto start() -> Timer &;
-    inline auto stop() -> Timer &;
-    inline auto reset() -> Timer &;
-
-    inline auto lap();  // read the elapsed time
-    inline auto read(); // return the accumulated time
-
-    // meta methods
+    // accessors
 public:
-    inline Timer(name_t name);
-    virtual ~Timer();
+    inline auto name() const;
 
-    // data members
+    // static interface
+public:
+    inline static auto registry() -> registry_reference;
+
+    // implementation details: data members
 private:
-    name_t _name;
-    clock_t::tick_t _start;
-    clock_t::tick_t _accumulated;
+    name_type _name;
 
-    static clock_t _theClock;
+    // implementation details: static data
+private:
+    // the timer registry
+    inline static registry_type _registry;
 
-    // disable these
+    // disable constructors and assignments
 private:
     Timer(const Timer &) = delete;
-    const timer_t & operator= (const timer_t &) = delete;
+    Timer(Timer &&) = delete;
+    Timer & operator=(const Timer &) = delete;
+    Timer & operator=(Timer &&) = delete;
 };
+
 
 // get the inline definitions
 #define pyre_timers_Timer_icc
 #include "Timer.icc"
 #undef pyre_timers_Timer_icc
+
 
 #endif
 

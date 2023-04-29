@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2020 all rights reserved
+# (c) 1998-2023 all rights reserved
 #
 
 
@@ -54,6 +54,7 @@ from .Dict import Dict as dict
 # the decorators
 from ..descriptors import converter, normalizer, validator
 
+
 # common meta-descriptors
 def strings(**kwds):
     """
@@ -67,7 +68,7 @@ def paths(**kwds):
     """
     A list of paths
     """
-    # build a descriptor that describes a list of uris and return it
+    # build a descriptor that describes a list of paths and return it
     return list(schema=path(), **kwds)
 
 
@@ -79,12 +80,24 @@ def uris(**kwds):
     return list(schema=uri(), **kwds)
 
 
-def catalog(default={}, **kwds):
+def kv(default={}, **kwds):
+    """
+    A (key, value) table of strings
+    """
+    # build a dictionary that maps strings to strings
+    return dict(schema=str(), default=default, **kwds)
+
+
+def catalog(default={}, schema=None, **kwds):
     """
     A {dict} of {list}s
     """
+    # if the user didn't specify a schema
+    if schema is None:
+        # default to string
+        schema = str()
     # build a dictionary that maps strings to lists
-    return dict(schema=list(**kwds), default=default)
+    return dict(schema=list(schema=schema, **kwds), default=default)
 
 
 # end of file

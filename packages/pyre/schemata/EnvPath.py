@@ -1,17 +1,14 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
-# (c) 1998-2020 all rights reserved
-#
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2023 all rights reserved
 
 
 # externals
 import os
+
 # superclass
 from .List import List
-# my schema
-from .Path import Path
 
 
 # declaration
@@ -20,11 +17,9 @@ class EnvPath(List):
     A list of paths whose default value is tied to the value of an environment variable
     """
 
-
     # constants
-    typename = 'envpath' # the name of my type
-    pathsep = os.pathsep # the character to use as separator
-
+    typename = "envpath"  # the name of my type
+    pathsep = os.pathsep  # the character to use as separator
 
     # meta-methods
     def __init__(self, variable, pathsep=pathsep, **kwds):
@@ -43,14 +38,13 @@ class EnvPath(List):
             # split it using the path separator
             default = list(filter(None, default.split(self.pathsep)))
 
-        # chain up
-        super().__init__(schema=Path(), default=default, **kwds)
+        # chain up with {path} as my schema
+        super().__init__(schema=self.path(), default=default, **kwds)
 
         # save the variable name
         self.envvar = variable
         # all done
         return
-
 
     # implementation details
     def _coerce(self, value, **kwds):

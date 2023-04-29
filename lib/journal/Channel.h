@@ -1,7 +1,7 @@
 // -*- c++ -*-
 //
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
-// (c) 1998-2020 all rights reserved
+// (c) 1998-2023 all rights reserved
 
 // code guard
 #if !defined(pyre_journal_Channel_h)
@@ -10,16 +10,17 @@
 
 // the base journal channel
 template <typename severityT, template <class> typename proxyT>
-class pyre::journal::Channel : public proxyT<severityT>
-{
+class pyre::journal::Channel : public proxyT<severityT> {
     // types
 public:
     // my severity
     using severity_type = severityT;
     using severity_reference = severity_type &;
 
-    // my verbosity
-    using verbosity_type = verbosity_t;
+    // my detail
+    using detail_type = detail_t;
+    // my dent
+    using dent_type = dent_t;
 
     // access to my shared state
     using proxy_type = proxyT<severityT>;
@@ -46,18 +47,22 @@ public:
 
     // metamethods
 public:
-    inline Channel(const name_type &, verbosity_type = 1);
+    inline Channel(const name_type &, detail_type = 1, dent_type = 0);
 
     // accessors
 public:
     inline auto name() const -> const name_type &;
-    inline auto verbosity() const -> verbosity_type;
+    inline auto dent() const -> dent_type;
+    inline auto detail() const -> detail_type;
     inline auto entry() const -> entry_const_reference;
 
     // mutators
 public:
-    // verbosity
-    inline auto verbosity(verbosity_type) -> severity_reference;
+    // dent control
+    inline auto indent(dent_type = 1) -> severity_reference;
+    inline auto outdent(dent_type = 1) -> severity_reference;
+    // detail
+    inline auto detail(detail_type) -> severity_reference;
     // read/write access to my current journal entry
     inline auto entry() -> entry_reference;
 
@@ -82,17 +87,24 @@ public:
     // send all output to the trash
     static inline void quiet();
     // and all output to a file with the given filename
-    static inline void logfile(const path_t &);
+    static inline void logfile(const path_t &, filemode_t = std::ios_base::out);
+
+    // NVCC workaround for initializing the index
+private:
+    static inline auto _initializeIndex() -> index_type;
 
     // implementation details: data
 private:
     name_type _name;
-    verbosity_type _verbosity;
+    dent_type _dent;
+    detail_type _detail;
     entry_type _entry;
 
     // implementation details: static data
+    // the definition is offline to accommodate a family of NVCC bugs that prohibit the
+    // initialization of static data in the body of the class
 private:
-    static inline index_type _index = severity_type::initializeIndex();
+    static index_type _index;
 };
 
 

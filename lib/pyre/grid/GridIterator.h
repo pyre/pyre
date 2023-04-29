@@ -1,60 +1,74 @@
-// -*- C++ -*-
-// -*- coding: utf-8 -*-
+// -*- c++ -*-
 //
-// michael a.g. aïvázis
-// orthologue
-// (c) 1998-2020 all rights reserved
-//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2023 all rights reserved
 
 // code guard
 #if !defined(pyre_grid_GridIterator_h)
 #define pyre_grid_GridIterator_h
 
 
-// declaration
-template <typename gridT>
-class pyre::grid::GridIterator {
+// in iterator that visit the cells of a grid in a specific order
+template <class gridT, class indexIteratorT, bool isConst>
+class pyre::grid::GridIterator : public iterator_base<gridT, isConst> {
     // types
 public:
-    // my parts
+    // my template parameters
     using grid_type = gridT;
-    using slice_type = typename grid_type::slice_type;
-    using iterator_type = typename slice_type::iterator_type;
-    using value_type = typename grid_type::cell_type;
+    using index_iterator = indexIteratorT;
+    // me
+    using iterator = GridIterator<grid_type, indexIteratorT, isConst>;
+    using iterator_reference = iterator &;
+    // my base class
+    using iterbase = iterator_base<grid_type, isConst>;
+    // my parts
+    using grid_reference = std::conditional_t<isConst, const grid_type &, grid_type &>;
+    using grid_const_reference = const grid_type &;
+    using index_const_iterator_reference = const index_iterator &;
+    // what i point to
+    using value_type = typename iterbase::value_type;
+    using pointer = typename iterbase::pointer;
+    using reference = typename iterbase::reference;
 
-    // meta-methods
+    // metamethods
 public:
-    inline GridIterator(grid_type & grid, const iterator_type & it);
+    // constructor
+    constexpr GridIterator(grid_reference, index_const_iterator_reference);
 
-    // interface
+    // iterator protocol
 public:
-    inline auto & operator++();
-    inline auto & operator*() const;
+    // dereference
+    constexpr auto operator*() const -> reference;
+    // arithmetic
+    constexpr auto operator++() -> iterator_reference;
+    constexpr auto operator++(int) -> iterator;
 
-    // access to the iterator
-    inline const auto & iterator() const;
+    // accessors: needed so {operator==} doesn't have to be a friend
+public:
+    constexpr auto grid() const -> grid_const_reference;
+    constexpr auto iter() const -> index_const_iterator_reference;
 
-    // implementation details
+    // implementation details: data
 private:
-    grid_type & _grid;
-    iterator_type _iterator;
+    grid_reference _grid;
+    index_iterator _idxptr;
+
+    // default metamethods
+public:
+    // destructor
+    ~GridIterator() = default;
+    // let the compiler write the rest
+    constexpr GridIterator(const GridIterator &) = default;
+    constexpr GridIterator(GridIterator &&) = default;
+    constexpr GridIterator & operator=(const GridIterator &) = default;
+    constexpr GridIterator & operator=(GridIterator &&) = default;
 };
 
 
-// GridIterator traits
-// 20180726: switch to {std::} to keep gcc-6.4 happy; we need it for cuda
-namespace std {
-    template <typename gridT>
-    class iterator_traits<pyre::grid::GridIterator<gridT>> {
-        // types
-    public:
-        using value_type = typename gridT::cell_type;
-        using difference_type = void;
-        using pointer = typename gridT::cell_type *;
-        using reference = typename gridT::cell_type &;
-        using iterator_category = std::forward_iterator_tag;
-    };
-}
+// get the inline definitions
+#define pyre_grid_GridIterator_icc
+#include "GridIterator.icc"
+#undef pyre_grid_GridIterator_icc
 
 
 #endif

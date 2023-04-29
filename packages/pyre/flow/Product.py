@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2020 all rights reserved
+# (c) 1998-2023 all rights reserved
 #
 
 
@@ -38,7 +38,7 @@ class Product(Node, implements=Specification, internal=True):
             # and ask each one to update me
             factory.pyre_make(**kwds)
         # if all went well, update my status
-        self.pyre_stale = False
+        self.pyre_done(**kwds)
         # all done
         return self
 
@@ -75,6 +75,17 @@ class Product(Node, implements=Specification, internal=True):
             yield from factory.pyre_targets(**kwds)
         # and add myself to the pile
         yield self
+        # all done
+        return
+
+
+    # interface
+    def pyre_done(self, **kwds):
+        """
+        Hook invoked right after my factories finished refreshing me
+        """
+        # by default, mark me as clean
+        self.pyre_stale = False
         # all done
         return
 

@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2020 all rights reserved
+# (c) 1998-2023 all rights reserved
 #
 
 
@@ -30,13 +30,13 @@ class Registrar:
     # public data
     protocols = None # the set of known protocols
     components = None # the map of component classes to their instances
-    implementers = None # a map of protocols to component classes that implements them
+    implementers = None # a map of protocols to component classes that implement them
 
 
     # interface
     def registerNamingServer(self, server):
         """
-        Register {server} as a naming serice
+        Register {server} as a naming service
         """
         # add it to my pile
         self.nameGenerators.add(server)
@@ -96,8 +96,12 @@ class Registrar:
         """
         # go through the registered name generators
         for namegen in self.nameGenerators:
-            # ask for a name
-            return namegen.nameInstance(componentClass=componentClass)
+            # ask each one for a name
+            name = namegen.nameInstance(componentClass=componentClass)
+            # the first one that returns something non-trivial
+            if name is not None:
+                # gets to decide the name of the component instance
+                return name
         # out of ideas
         return None
 

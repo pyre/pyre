@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
-# (c) 1998-2020 all rights reserved
+# (c) 1998-2023 all rights reserved
 
 
 # get the ANSI color spaces
@@ -16,6 +16,7 @@ null = {
     "info": "",
     "warning": "",
     "error": "",
+    "help": "",
     "body": "",
     }
 
@@ -29,7 +30,8 @@ light = {
     "info": ANSI.x11(name="forest green"),
     "warning": ANSI.x11(name="orange"),
     "error": ANSI.x11(name="red"),
-    "body": "",
+    "help": ANSI.x11(name="cyan"),
+    "body": ANSI.x11(name="normal"),
     }
 
 
@@ -42,7 +44,8 @@ dark = {
     "info": ANSI.x11(name="forest green"),
     "warning": ANSI.x11(name="orange"),
     "error": ANSI.x11(name="red"),
-    "body": "",
+    "help": ANSI.x11(name="cyan"),
+    "body": ANSI.x11(name="normal"),
 }
 
 

@@ -1,54 +1,33 @@
-// -*- C++ -*-
-// -*- coding: utf-8 -*-
+// -*- c++ -*-
 //
-// michael a.g. aïvázis
-// orthologue
-// (c) 1998-2020 all rights reserved
-//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2023 all rights reserved
 
 // code guard
 #if !defined(pyre_memory_public_h)
 #define pyre_memory_public_h
 
-// forward declaration
+
+// external packages
+#include "externals.h"
+// get the forward declarations
 #include "forward.h"
 
-// the object model
-#include "View.h"
-#include "ConstView.h"
+// published type aliases; this is the file you are looking for...
+#include "api.h"
+
+// implementation
+#include "Cell.h"
+// memory block on the stack
+#include "Stack.h"
+// memory block on the heap
 #include "Heap.h"
-#include "MemoryMap.h"
-#include "Direct.h"
-#include "ConstDirect.h"
+// file-backed memory blocks
+#include "FileMap.h"
+#include "Map.h"
+// foreign data
+#include "View.h"
 
-// the implementations
-// views over existing memory
-#define pyre_memory_View_icc
-#include "View.icc"
-#undef pyre_memory_View_icc
-
-// views over existing const memory
-#define pyre_memory_ConstView_icc
-#include "ConstView.icc"
-#undef pyre_memory_ConstView_icc
-
-// dynamically allocated memory
-#define pyre_memory_Heap_icc
-#include "Heap.icc"
-#undef pyre_memory_Heap_icc
-
-// support for memory backed by files
-#define pyre_memory_MemoryMap_icc
-#include "MemoryMap.icc"
-#undef pyre_memory_MemoryMap_icc
-
-#define pyre_memory_Direct_icc
-#include "Direct.icc"
-#undef pyre_memory_Direct_icc
-
-#define pyre_memory_ConstDirect_icc
-#include "ConstDirect.icc"
-#undef pyre_memory_ConstDirect_icc
 
 #endif
 

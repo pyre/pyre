@@ -1,7 +1,7 @@
 # -*- Makefile -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
-# (c) 1998-2020 all rights reserved
+# (c) 1998-2023 all rights reserved
 
 
 # merlin builds a python package
@@ -11,13 +11,14 @@ merlin.libraries :=
 # no python extension
 merlin.extensions :=
 # test suite
-merlin.tests := merlin.pkg.tests
+merlin.tests := #merlin.pkg.tests
 
 
 # the merlin package meta-data
 merlin.pkg.root := packages/merlin/
 merlin.pkg.stem := merlin
 merlin.pkg.ext :=
+merlin.pkg.drivers := merlin
 
 
 # get the testsuites

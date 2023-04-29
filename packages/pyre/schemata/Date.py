@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
-# (c) 1998-2020 all rights reserved
-#
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2023 all rights reserved
 
 
 # externals
 import datetime
+
 # superclass
 from .Schema import Schema
 
@@ -18,19 +17,19 @@ class Date(Schema):
     A type declarator for dates
     """
 
-
     # constants
-    format = "%Y-%m-%d" # the default date format
-    typename = 'date' # the name of my type
-
+    format = "%Y-%m-%d"  # the default date format
+    typename = "date"  # the name of my type
 
     # interface
     def coerce(self, value, **kwds):
         """
         Attempt to convert {value} into a date
         """
-        # treat false values as uninitialized
-        if not value: return None
+        # treat all false values
+        if not value:
+            # as uninitialized
+            return None
 
         # check whether {value} is already a {date} instance
         if isinstance(value, datetime.date):
@@ -63,16 +62,16 @@ class Date(Schema):
             # complain
             raise self.CastingError(value=value, description=str(error))
 
-
     def string(self, value):
         """
         Render value as a string that can be persisted for later coercion
         """
         # respect {None}
-        if value is None: return None
+        if value is None:
+            # by leaving it alone
+            return None
         # my value knows
         return value.strftime(self.format)
-
 
     def json(self, value):
         """
@@ -80,7 +79,6 @@ class Date(Schema):
         """
         # represent as a string
         return self.string(value)
-
 
     # meta-methods
     def __init__(self, default=datetime.date.today(), format=format, **kwds):

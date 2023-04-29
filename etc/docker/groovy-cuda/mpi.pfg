@@ -1,0 +1,11 @@
+;
+; michael a.g. aïvázis <michael.aivazis@para-sim.com>
+; (c) 1998-2023 all rights reserved
+
+
+mpi.shells.mpirun:
+    ; extra flags to the mpi launcher
+    extra = --allow-run-as-root
+
+
+; end of file

@@ -1,7 +1,7 @@
 // -*- c++ -*-
 //
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
-// (c) 1998-2020 all rights reserved
+// (c) 1998-2023 all rights reserved
 
 // code guard
 #if !defined(pyre_journal_api_h)
@@ -11,18 +11,21 @@
 // end user facing api
 namespace pyre::journal {
     // the initializer of the global settings
-    inline void init(int argc, char* argv[]);
+    inline void init(int argc, char * argv[]);
     // registration of the application name; {value_t} is normally an {std::string}
     inline void application(const value_t & name);
+    // manipulate the detail threshold
+    inline void setDetail(int);
     // turn all channel output off
     inline void quiet();
     // send all channel output to a log file
-    inline void logfile(const path_t &);
+    inline void logfile(const path_t &, filemode_t mode = std::ios_base::out);
 
     // channels
     using info_t = Informational<InventoryProxy>;
     using warning_t = Warning<InventoryProxy>;
     using error_t = Error<InventoryProxy>;
+    using help_t = Help<InventoryProxy>;
 
     // the keeper of the global settings
     using chronicler_t = Chronicler;
@@ -39,8 +42,10 @@ namespace pyre::journal {
     // manipulators
     using at = Locator;
     using note = Note;
-    using verbosity = Verbosity;
-}
+    using detail = Detail;
+    // the backwards compatible api; deprecated, and will be removed in 2.0
+    using verbosity = Detail;
+} // namespace pyre::journal
 
 
 // the developer facing api
@@ -69,10 +74,10 @@ namespace pyre::journal {
     // otherwise, this is a production build
 #else
     // disable the developer channels
-    using debug_t =  null_t;
+    using debug_t = null_t;
     using firewall_t = null_t;
 #endif
-}
+} // namespace pyre::journal
 
 
 // low level api; chances are good you shouldn't access these directly
@@ -94,14 +99,18 @@ namespace pyre::journal {
     // renderers
     using renderer_t = Renderer;
     using renderer_ptr = std::shared_ptr<renderer_t>;
-    using memo_t = Memo;
     using alert_t = Alert;
+    using bland_t = Bland;
+    using memo_t = Memo;
 
     // devices
     using device_t = Device;
     using device_ptr = std::shared_ptr<Device>;
 
     // aliases for the manipulators
+    using code_t = Code;
+    using color_t = Color;
+    using indenter_t = Dent;
     using locator_t = Locator;
     using note_t = Note;
 
@@ -109,7 +118,7 @@ namespace pyre::journal {
     using ascii_t = ASCII;
     using csi_t = CSI;
     using ansi_t = ANSI;
-}
+} // namespace pyre::journal
 
 
 #endif

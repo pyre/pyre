@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2020 all rights reserved
+# (c) 1998-2023 all rights reserved
 #
 
 
@@ -105,35 +105,64 @@ class Actor(Requirement):
         """
         Build an instance of one of my classes
         """
-        # ask the component class for any opinions on the name of this instance
-        name = self.pyre_normalizeInstanceName(name)
-        # get the registrar
+        # record the caller's location
+        locator = tracking.here(1) if locator is None else locator
+
+        # get the executive
+        executive = self.pyre_executive
+        # the nameserver
+        nameserver = self.pyre_nameserver
+        # and the component registrar
         registrar = self.pyre_registrar
 
-        # if I know the name
+        # if the caller didn't supply a name
+        if name is None:
+            # try asking the component registrar for ideas
+            name = registrar.nameInstance(componentClass=self)
+        # and ask the component class for any opinions on the name of this instance
+        name = self.pyre_normalizeInstanceName(name)
+
+        # if I know the name after all
         if name:
             # look for this name among my instances
             instance = registrar.retrieveComponentByName(componentClass=self, name=name)
-            # if found, return it
-            if instance: return instance
+            # if the registrar knows an instance by this name
+            if instance:
+                # no need to go any further
+                return instance
             # otherwise, we are making a new instance under this name; if i were asked to alias
             # its traits globally
             if globalAliases:
-                # get the nameserver
-                nameserver = self.pyre_nameserver
-                # my configurable traits
-                traits = self.pyre_configurables()
-                # build the set of names
-                aliases = { alias for trait in traits for alias in trait.aliases }
-                # merge global settings
-                nameserver.pullGlobalIntoScope(scope=name, symbols=aliases)
-        # if not
-        else:
-            # ask the component registrar for help
-            name = registrar.nameInstance(componentClass=self)
+                # do it
+                self.pyre_pullGlobalSettingsIntoScope(scope=name)
 
-        # in any case, record the caller's location
-        locator = tracking.here(1) if locator is None else locator
+            # if the constructor has any extra arguments
+            if kwds:
+                # make a discard pile
+                discard = set()
+                # build a table of my trait names
+                traits = {trait.name for trait in self.pyre_configurables()}
+
+                # go through the extra arguments and their values
+                for key, value in kwds.items():
+                    # if the argument does not correspond to one of my traits
+                    if key not in traits:
+                        # skip it
+                        continue
+                    # otherwise, form its full name
+                    full = nameserver.join(name, key)
+                    # assign a priority
+                    priority = executive.priority.construction()
+                    # make a configuration entry
+                    nameserver.insert(name=full, value=value, locator=locator, priority=priority)
+                    # and add it to the discard pile
+                    discard.add(key)
+
+                # to clean up, go through the discard pile
+                for key in discard:
+                    # and remove each key from the pile of constructor arguments
+                    del kwds[key]
+
         # invoke the pre-instantiation hooks
         self.pyre_staged(name=name, locator=locator, implicit=implicit)
         # build the instance

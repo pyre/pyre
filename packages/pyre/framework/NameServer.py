@@ -2,12 +2,11 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2020 all rights reserved
+# (c) 1998-2023 all rights reserved
 #
 
 
 # externals
-import collections
 from .. import tracking # for locators
 from ..traits.Property import Property as properties # to get the default trait type
 # superclass
@@ -46,12 +45,11 @@ class NameServer(Hierarchical):
         Add {configurable} to the model under {name}
         """
         # add the {configurable} to the store
-        # N.B: let {insert} choose the slot factory; this uses to specify a {literal} as the
+        # N.B: let {insert} choose the slot factory; this used to specify a {literal} as the
         # slot factory, but this appears to have been misguided: there are paths when replacing
         # an existing node that invoked the slot factory with more arguments than
         # {self.literal} could handle...
-        key, _, _ = self.insert(name=name, value=configurable,
-                                priority=priority, locator=locator)
+        key, _, _ = self.insert(name=name, value=configurable, priority=priority, locator=locator)
         # and return the key
         return key
 
@@ -139,11 +137,13 @@ class NameServer(Hierarchical):
         # attempt to
         try:
             # evaluate the expression
-            return self.node.interpolation.expand(model=self, expression=expression)
+            node = self.node.interpolation.expand(model=self, expression=expression)
         # with empty expressions
         except self.EmptyExpressionError as error:
             # return the expanded text, since it the input may have contained escaped braces
-            return error.expression
+            node = error.expression
+        # all done
+        return node
 
 
     # override superclass methods
@@ -151,6 +151,15 @@ class NameServer(Hierarchical):
         """
         Add {value} to the store
         """
+        # N.B.: presenting a {value} to be inserted into the model under {key} involves using
+        # the {factory} to create a slot. the {factory} used is either the one supplied by the
+        # caller, or whatever is registered as metadata for this {key}. the metadata, i.e. the
+        # locator and the assignment priority must be correctly associated with the key before
+        # the {factory} is invoked because the {tracker}, and other observers, may query the
+        # name server for it as part of the slot creation. if the call to the {factory} throws
+        # an exception, the metadata must be rolled back to what it was before the failed node
+        # insertion.
+
         # figure out the node info
         name, split, key = self.info.fillNodeId(model=self, key=key, split=split, name=name)
 
@@ -165,18 +174,17 @@ class NameServer(Hierarchical):
 
         # look for the node registered under this key
         old = self._nodes.get(key, None)
-        # and
-        try:
-            # its meta-data
-            meta = self._metadata[key]
+        # and its metadata
+        meta = self._metadata.get(key)
+
         # if this is the first time this name was encountered
-        except KeyError:
-            # if we have no meta-data, we shouldn't have an old node either
+        if meta is None:
+            # we shouldn't have an {old} node either
             if old is not None:
                 # if we do, it's a bug, so get the journal
                 import journal
                 # build a bug report
-                bug = f"{name}: found a node with no meta-data"
+                bug = f"{name}: found a node with no metadata"
                 # and complain
                 raise journal.firewall("pyre.nameserver").log(bug)
 
@@ -185,19 +193,30 @@ class NameServer(Hierarchical):
                 # use instance slots for a generic trait
                 factory = properties.identity(name=name).instanceSlot
 
+            # speculative: update the metadata
             # build the info node
             meta = self.info(name=name, split=split, key=key,
                              priority=priority, locator=locator, factory=factory)
-            # attach it to the meta-data store
+            # and attach it to the meta-data store
             self._metadata[key] = meta
-            # build the new node
-            new = factory(key=key, value=value)
-            # and attach it
+
+            # gingerly
+            try:
+                # build the new node
+                new = factory(key=key, value=value)
+            # if anything wrong happens
+            except Exception:
+                # clear out the metadata
+                del self._metadata[key]
+                # and raise the same exception
+                raise
+            # otherwise, we are all good; attach the node
             self._nodes[key] = new
-            # all done
+            # and return the insertion info
             return key, new, old
 
-        # if a factory were prescribed
+        # getting this far implies we've bumped into this key before; if the caller has supplied
+        # a specific factory
         if factory:
             # install it
             meta.factory = factory
@@ -223,22 +242,32 @@ class NameServer(Hierarchical):
             # and register it; no need to adjust the graph since the slot factory now takes
             # care of this
             self._nodes[key] = new
-
             # and we are done
             return key, new, old
 
         # if the new assignment is higher priority than the existing one
         if priority > meta.priority:
-            # record the assignment priority
+            # save the current metadata so we can roll it back if we have to
+            mark = self.info(name=name, split=split, key=key,
+                             priority=meta.priority, locator=meta.locator, factory=meta.factory)
+            # record the assignment metadata so whoever is watching for this assignment
+            # has access to the current information; save the priority
             meta.priority = priority
-            # and its locator
+            # and the assignment locator
             meta.locator = locator
-
-            # make a new node using the registered node factory
-            new = meta.factory(key=key, value=value, current=old)
-            # register it
+            # now, gingerly
+            try:
+                # make a new node using the registered node factory
+                new = meta.factory(key=key, value=value, current=old)
+            # if anything goes wrong
+            except Exception:
+                # roll back the metadata
+                meta.locator = mark.locator
+                meta.priority = mark.priority
+                # and raise the same exception
+                raise
+            # otherwise, we are all good; register the new node
             self._nodes[key] = new
-
             # and we are done
             return key, new, old
 
@@ -329,39 +358,18 @@ class NameServer(Hierarchical):
 
 
     # aliasing
-    def pullGlobalIntoScope(self, scope, symbols):
+    def pullGlobalSettingsIntoScope(self, scope, symbols):
         """
-        Merge settings for {traits} between global scope and the scope of {name}
+        Merge settings for {symbols} between global scope and the given {scope}
         """
-        # get the global scope
-        top = self._hash
-        # build the scope of the new instance
-        key = self.hash(scope)
-        # with each one
+        # go through the symbols
         for symbol in symbols:
-            # if the name has never been hashed
-            if symbol not in top:
-                # nothing to do; no assignments have been made to it or its possible children
-                continue
-            # if the scope and symbol are identical
+            # if the {scope} name and the {symbol} are identical
             if scope == symbol:
-                # merging will fail, so skip it before we damage the symbol table
+                # the aliasing will fail, so skip it before we damage the symbol table
                 continue
-            # build the destination key
-            destination = key[symbol]
-            # make an alias
-            source = top.alias(alias=symbol, target=destination)
-            # construct the global name for the symbol
-            canonical = self.join(scope, symbol)
-            # and try to
-            try:
-                # to merge the information
-                self.merge(source=source, canonical=canonical, destination=destination, name=symbol)
-            # if this fails
-            except Exception:
-                # there must be some residual naming conflict between this trait and a global
-                # object; issue a warning and ignore
-                continue
+            # otherwise, build the alias
+            self.alias(target=self.join(scope, symbol), alias=symbol)
 
         # all done
         return

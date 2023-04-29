@@ -1,7 +1,7 @@
 // -*- c++ -*-
 //
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
-// (c) 1998-2020 all rights reserved
+// (c) 1998-2023 all rights reserved
 
 // code guard
 #if !defined(pyre_journal_Locator_h)
@@ -20,7 +20,7 @@ public:
 public:
     // constructor
     // modern version; preferred when instantiating explicitly
-    inline Locator(const value_type &, int, const value_type &);
+    inline Locator(const value_type &, const value_type &, const value_type &);
     // legacy version; used by the {__HERE__} locator factories
     inline explicit Locator(const char * = "", int = 0, const char * = "");
 

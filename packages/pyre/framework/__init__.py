@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2020 all rights reserved
+# (c) 1998-2023 all rights reserved
 #
 
 
@@ -41,11 +41,11 @@ def debug():
     # enable boot-time diagnostics
     global _verbose
     _verbose = True
-    # attach {ExtentAware} as the metaclass of {Slot} so we can verify that all instances of
+    # attach {Extent} as the metaclass of {Slot} so we can verify that all instances of
     # this class are properly garbage collected
-    from ..patterns.ExtentAware import ExtentAware
+    from ..patterns.Extent import Extent
     global _metaclass_Slot
-    _metaclass_Slot = ExtentAware
+    _metaclass_Slot = Extent
 
     # configure the garbage collector
     import gc

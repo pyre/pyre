@@ -1,0 +1,168 @@
+// -*- c++ -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2023 all rights reserved
+
+// code guard
+#if !defined(pyre_timers_Movement_icc)
+#error this file contains implementation details for pyre::timers::Movement
+#else
+
+
+// metamethods
+template <class clockT>
+pyre::timers::Movement<clockT>::Movement() :
+    // all timers start out disabled
+    _active { false },
+    // with a default-initialized timestamp
+    _mark {},
+    // and a zero duration
+    _elapsed { duration_type::zero() }
+{}
+
+
+// accessors
+template <class clockT>
+auto
+pyre::timers::Movement<clockT>::active() const
+{
+    // easy enough
+    return _active;
+}
+
+
+template <class clockT>
+auto
+pyre::timers::Movement<clockT>::mark() const
+{
+    // easy enough
+    return _mark;
+}
+
+
+// interface
+// buttons
+template <class clockT>
+auto
+pyre::timers::Movement<clockT>::start()
+{
+    // starting a movement that is already active
+    if (_active) {
+        // is a no-op
+        return _mark;
+    }
+
+    // otherwise, activate
+    _active = true;
+    // get a timestamp
+    _mark = clock_type::now();
+
+    // and return the timestamp, in case the caller cares
+    return _mark;
+}
+
+
+template <class clockT>
+auto
+pyre::timers::Movement<clockT>::stop()
+{
+    // stopping an inactive movement
+    if (!_active) {
+        // is a no-op
+        return _elapsed;
+    }
+
+    // otherwise, compute the time elapsed since the last {start}
+    auto elapsed = clock_type::now() - _mark;
+    // mark the movement as stopped
+    _active = false;
+    // update the elapsed time
+    _elapsed += elapsed;
+    // and return the adjustment
+    return elapsed;
+}
+
+
+template <class clockT>
+auto
+pyre::timers::Movement<clockT>::reset() -> movement_reference
+{
+    // mark the movement as inactive
+    _active = false;
+    // zero out the duration
+    _elapsed = duration_type::zero();
+    //
+    return *this;
+}
+
+
+// readout
+template <class clockT>
+auto
+pyre::timers::Movement<clockT>::read() const
+{
+    // if the timer is not active
+    if (!_active) {
+        // return the accumulated time
+        return _elapsed;
+    }
+
+    // otherwise, non-destructively compute the accumulated time
+    auto elapsed = clock_type::now() - _mark;
+    // add the accumulated time and return it
+    return _elapsed + elapsed;
+}
+
+
+// displays
+template <class clockT>
+auto
+pyre::timers::Movement<clockT>::sec() const
+{
+    // read the timer
+    auto duration = read();
+    // convert the duration in seconds
+    auto sec = std::chrono::duration_cast<seconds_type>(duration);
+    // and return it
+    return sec.count();
+}
+
+
+template <class clockT>
+auto
+pyre::timers::Movement<clockT>::ms() const
+{
+    // read the timer
+    auto duration = read();
+    // convert the duration into milliseconds
+    auto ms = std::chrono::duration_cast<milliseconds_type>(duration);
+    // and return it
+    return ms.count();
+}
+
+
+template <class clockT>
+auto
+pyre::timers::Movement<clockT>::us() const
+{
+    // read the timer
+    auto duration = read();
+    // convert the duration into microseconds
+    auto us = std::chrono::duration_cast<microseconds_type>(duration);
+    // and return it
+    return us.count();
+}
+
+
+// syntactic sugar
+template <class clockT>
+pyre::timers::Movement<clockT>::operator active_type() const
+{
+    // return my activation state
+    return _active;
+}
+
+
+#endif
+
+// end of file

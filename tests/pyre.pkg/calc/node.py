@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2020 all rights reserved
+# (c) 1998-2023 all rights reserved
 #
 
 
@@ -32,8 +32,8 @@ if __name__ == "__main__":
     # get access to the Node class
     from pyre.calc.Node import Node
     # verify reference counts
-    # print(tuple(Node._pyre_extent))
-    assert tuple(Node._pyre_extent) == ()
+    # print(tuple(Node.pyre_extent))
+    assert tuple(Node.pyre_extent) == ()
 
 
 # end of file

@@ -1,9 +1,7 @@
-# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis <michael.aivazis@orthologue.com>
-# (c) 1998-2020 all rights reserved
-#
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2023 all rights reserved
 
 # expansion placeholders
 date = "@TODAY@"
@@ -18,17 +16,19 @@ version = (major, minor, micro, revision)
 
 
 # decorations for the help system
-copyright = "copyright (c) 1998-2020 all rights reserved"
+copyright = "copyright (c) 1998-2023 all rights reserved"
 
 banner = f"""
     merlin {major}.{minor}.{micro} revision {revision}
     {copyright}
 """
 
-header = banner + """
-author:
-    Michael Aïvázis     <michael.aivazis@orthologue.com>
+authors = """
+authors:
+    Michael Aïvázis     <michael.aivazis@para-sim.com>
 """
+
+header = banner + authors
 
 usage = header + """
     Basic commands:

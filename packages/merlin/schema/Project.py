@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2020 all rights reserved
+# (c) 1998-2023 all rights reserved
 #
 
 
@@ -15,10 +15,6 @@ class Project(Named):
     """
     Project metadata
     """
-
-
-    # public state
-    name = None # the name of the project; managed by the superclass
 
 
 # end of file

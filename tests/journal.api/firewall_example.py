@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
-# (c) 1998-2020 all rights reserved
+# (c) 1998-2023 all rights reserved
 
 
 def test():
@@ -23,7 +23,8 @@ def test():
     try:
         # inject
         channel.line("firewall:")
-        channel.log("    a nasty bug was detected")
+        # and flush with some additional metadata
+        channel.log("    a nasty bug was detected", code=7)
         # shouldn't get here
         assert False, "unreachable"
     # if the correct exception was raised

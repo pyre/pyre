@@ -1,7 +1,7 @@
 // -*- c++ -*-
 //
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
-// (c) 1998-2020 all rights reserved
+// (c) 1998-2023 all rights reserved
 
 // code guard
 #if !defined(pyre_journal_py_external_h)
@@ -26,9 +26,9 @@ namespace pyre::journal::py {
     namespace py = pybind11;
     // get the special {pybind11} literals
     using namespace py::literals;
-}
+}    // namespace pyre::journal::py
 
 
-# endif
+#endif
 
 // end of file

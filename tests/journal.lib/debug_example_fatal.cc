@@ -1,7 +1,7 @@
 // -*- c++ -*-
 //
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
-// (c) 1998-2020 all rights reserved
+// (c) 1998-2023 all rights reserved
 
 
 // get the journal
@@ -42,7 +42,7 @@ int main() {
     // if all goes well
     } catch (const debug_t::exception_type & error) {
         // make sure the reason was recorded correctly
-        assert (error.what() == channel.name() + debug_t::string_type(": debug error"));
+        assert (error.what() == channel.name() + debug_t::string_type(": debug"));
     }
 
     // all done

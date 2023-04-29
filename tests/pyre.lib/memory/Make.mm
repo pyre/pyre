@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2020 all rights reserved
+# (c) 1998-2023 all rights reserved
 #
 
 # project defaults
@@ -11,22 +11,26 @@ include pyre.def
 
 # the pile of tests
 TESTS = \
-    view-instantiate \
-    constview-instantiate \
-    heap-instantiate \
-    direct-create \
-    direct-map \
-    direct-instantiate \
-    direct-instantiate-partial \
-    constdirect-create \
-    constdirect-map \
-    constdirect-instantiate \
-    constdirect-instantiate-partial \
+    constmap_oob.cc \
+    constmap_read.cc \
+    constview_access.cc \
+    filemap_create.cc \
+    filemap_write.cc \
+    filemap_read.cc \
+    heap_access.cc \
+    heap_borrow.cc \
+    heap_copy.cc \
+    heap_oob.cc \
+    map_create.cc \
+    map_oob.cc \
+    map_read.cc \
+    map_write.cc \
+    memory_sanity.cc \
+    view_access.cc \
+    view_oob.cc \
 
 # tests that should fail because their access patterns are prohibited
 SHOULD_FAIL = \
-    direct-clone \
-    constdirect-clone \
 
 all: test clean
 

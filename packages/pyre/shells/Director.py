@@ -2,12 +2,10 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2020 all rights reserved
+# (c) 1998-2023 all rights reserved
 #
 
 
-# externals
-import weakref
 # framework access
 import pyre
 
@@ -20,7 +18,6 @@ class Director(pyre.actor):
     {Director} takes care of all the tasks necessary to register an application family with the
     framework
     """
-
 
     # meta methods
     def __init__(self, name, bases, attributes, namespace=None, **kwds):
@@ -44,39 +41,28 @@ class Director(pyre.actor):
         # all done
         return
 
-
     def __call__(self, name=None, globalAliases=True, locator=None, **kwds):
         """
-        Instantiate one of my classes
+        Build an application instance
         """
-        # if I have a name for the application instance, use it to hunt down configuration
-        # files for this particular instance
-        if name:
-            # get the executive
-            executive = self.pyre_executive
-            # set up the priority
-            priority = executive.priority.package
-            # build a locator
-            initloc = pyre.tracking.simple('while initializing application {!r}'.format(name))
-            # ask the executive to hunt down the application INSTANCE configuration file
-            executive.configure(stem=name, priority=priority, locator=initloc)
-
         # record the caller's location
-        locator = pyre.tracking.here(1) if locator is None else locator
-        # chain up to create the instance
-        app = super().__call__(name=name, globalAliases=globalAliases, locator=locator, **kwds)
+        # if i have a name
+        if name is not None:
+            # build a locator
+            loc = pyre.tracking.simple(f"while initializing application '{name}'")
+            # connect it to the locator of the caller
+            locator = loc if locator is None else pyre.tracking.chain(loc, locator)
+            # load the application configuration
+            self.pyre_executive.configure(namespace=name, locator=loc)
+        # otherwise
+        else:
+            # just adjust the locator
+            locator = pyre.tracking.here(1) if locator is None else locator
 
-        # get the dashboard
-        from ..framework.Dashboard import Dashboard as dashboard
-        # check whether there is already an app registered with the dashboard
-        if dashboard.pyre_application is not None:
-            # generate a warning
-            app.warning.log('the app {.pyre_application} is already registered'.format(self))
-        # in any case, attach this instance to the dashboard
-        dashboard.pyre_application = app
-
-        # and return it
-        return app
+        # and chain up
+        return super().__call__(
+            name=name, globalAliases=globalAliases, locator=locator, **kwds
+        )
 
 
 # end of file

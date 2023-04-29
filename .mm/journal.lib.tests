@@ -1,7 +1,7 @@
 # -*- Makefile -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
-# (c) 1998-2019 all rights reserved
+# (c) 1998-2023 all rights reserved
 
 
 # the libjournal test suite
@@ -35,21 +35,30 @@ ansi_emulates.yes.harness := TERM=xterm
 ansi_emulates.yes.argv := 1
 
 
-# the {chronicler_verbosity} has special cases
-tests.journal.lib.chronicler_verbosity.cases := chronicler_verbosity.3 chronicler_verbosity.5
-# set the verbosity to 3
-chronicler_verbosity.3.argv := 3
-chronicler_verbosity.3.harness := JOURNAL_VERBOSITY=3
-# set the verbosity to 5
-chronicler_verbosity.5.argv := 5
-chronicler_verbosity.5.harness := JOURNAL_VERBOSITY=5
+# the {chronicler_decor} has special cases
+tests.journal.lib.chronicler_decor.cases := chronicler_decor.3 chronicler_decor.5
+# set the decor to 3
+chronicler_decor.3.argv := 3
+chronicler_decor.3.harness := JOURNAL_DECOR=3
+# set the decor to 5
+chronicler_decor.5.argv := 5
+chronicler_decor.5.harness := JOURNAL_DECOR=5
+
+# the {chronicler_detail} has special cases
+tests.journal.lib.chronicler_detail.cases := chronicler_detail.3 chronicler_detail.5
+# set the detail to 3
+chronicler_detail.3.argv := 3
+chronicler_detail.3.harness := JOURNAL_DETAIL=3
+# set the detail to 5
+chronicler_detail.5.argv := 5
+chronicler_detail.5.harness := JOURNAL_DETAIL=5
 
 # the {chronicler_init} test case needs command line arguments
 tests.journal.lib.chronicler_init.cases := chronicler_init.cmdline chronicler_init.envvar
-# set verbosity and channels through the command line
-chronicler_init.cmdline.argv := --journal.verbosity=5 --journal.debug=test.init.one,test.init.two
-# set verbosity and channels through the environment
-chronicler_init.envvar.harness := JOURNAL_VERBOSITY=5 JOURNAL_DEBUG=test.init.one,test.init.two
+# set detail and channels through the command line
+chronicler_init.cmdline.argv := --journal.detail=5 --journal.debug=test.init.one,test.init.two
+# set detail and channels through the environment
+chronicler_init.envvar.harness := JOURNAL_DETAIL=5 JOURNAL_DEBUG=test.init.one,test.init.two
 
 # the {file_sanity} test case must clean up the file it creates
 tests.journal.lib.file_sanity.clean += file_sanity.out
@@ -57,12 +66,28 @@ tests.journal.lib.file_sanity.clean += file_sanity.out
 # the {file_example} test case must clean up the file it creates
 tests.journal.lib.file_example.clean += file_example.out
 
-# the tests that send channel out put to a log file must clean up
+# the tests that send channel output to a log file must clean up
+tests.journal.lib.debug_device.clean += debug_device.log
+tests.journal.lib.firewall_device.clean += firewall_device.log
+tests.journal.lib.error_device.clean += error_device.log
+tests.journal.lib.info_device.clean += info_device.log
+tests.journal.lib.warning_device.clean += warning_device.log
+tests.journal.lib.help_device.clean += help_device.log
+
 tests.journal.lib.api_file.clean += api_file.log
 tests.journal.lib.debug_file.clean += debug_file.log
 tests.journal.lib.firewall_file.clean += firewall_file.log
 tests.journal.lib.error_file.clean += error_file.log
 tests.journal.lib.info_file.clean += info_file.log
 tests.journal.lib.warning_file.clean += warning_file.log
+tests.journal.lib.help_file.clean += help_file.log
+
+tests.journal.lib.api_file_mode.clean += api_file_mode.log
+tests.journal.lib.debug_file_mode.clean += debug_file_mode.log
+tests.journal.lib.firewall_file_mode.clean += firewall_file_mode.log
+tests.journal.lib.error_file_mode.clean += error_file_mode.log
+tests.journal.lib.info_file_mode.clean += info_file_mode.log
+tests.journal.lib.warning_file_mode.clean += warning_file_mode.log
+tests.journal.lib.help_file_mode.clean += help_file_mode.log
 
 # end of file

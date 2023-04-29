@@ -2,13 +2,13 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2020 all rights reserved
+# (c) 1998-2023 all rights reserved
 #
 
 
 # externals
 import numbers
-from . import gsl # the extension
+from . import gsl  # the extension
 
 
 # the class declaration
@@ -17,12 +17,11 @@ class Vector:
     A wrapper over a gsl vector
     """
 
-
     # types
     from .Permutation import Permutation as permutation
+
     # constants
     defaultFormat = "+16.7"
-
 
     # class methods
     # mpi support
@@ -35,6 +34,7 @@ class Vector:
         if communicator is None:
             # get the mpi package
             import mpi
+
             # use the world by default
             communicator = mpi.world
         # get the vector capsule
@@ -46,7 +46,6 @@ class Vector:
         # and return it
         return result
 
-
     @classmethod
     def collect(cls, vector, communicator=None, destination=0):
         """
@@ -57,19 +56,20 @@ class Vector:
         if communicator is None:
             # get the mpi package
             import mpi
+
             # use the world by default
             communicator = mpi.world
         # gather the data
         result = gsl.gatherVector(communicator.capsule, destination, vector.data)
         # if i am not the destination task, nothing further to do
-        if communicator.rank != destination: return
+        if communicator.rank != destination:
+            return
         # otherwise, unpack the result
         data, shape = result
         # dress up the result as a vector
         result = cls(shape=shape, data=data)
         # and return it
         return result
-
 
     def excerpt(self, communicator=None, source=0, vector=None):
         """
@@ -81,6 +81,7 @@ class Vector:
         if communicator is None:
             # get the mpi package
             import mpi
+
             # use the world by default
             communicator = mpi.world
         # get the vector capsule
@@ -89,7 +90,6 @@ class Vector:
         gsl.scatterVector(communicator.capsule, source, self.data, data)
         # and return me
         return self
-
 
     # public data
     @property
@@ -102,7 +102,6 @@ class Vector:
         # all done
         return
 
-
     # initialization
     def zero(self):
         """
@@ -112,7 +111,6 @@ class Vector:
         gsl.vector_zero(self.data)
         # and return
         return self
-
 
     def fill(self, value):
         """
@@ -138,7 +136,6 @@ class Vector:
         # all done
         return self
 
-
     def basis(self, index):
         """
         Initialize me as a basis vector: all elements are set to zero except {index}, which is
@@ -149,14 +146,12 @@ class Vector:
         # and return
         return self
 
-
     def random(self, pdf):
         """
         Fill me with random numbers using the probability distribution {pdf}
         """
         # the {pdf} knows how to do this
         return pdf.vector(vector=self)
-
 
     def clone(self):
         """
@@ -169,7 +164,6 @@ class Vector:
         # and return it
         return clone
 
-
     def copy(self, other):
         """
         Fill me with values from {other}, which is assumed to be of compatible shape
@@ -178,7 +172,6 @@ class Vector:
         gsl.vector_copy(self.data, other.data)
         # and return me
         return self
-
 
     def tuple(self):
         """
@@ -189,16 +182,15 @@ class Vector:
         # and return it
         return rep
 
-
     def view(self, start, shape):
         """
         Build a view of my from {start} to {start+shape}
         """
         # access the view object
         from .VectorView import VectorView
+
         # build and return one
         return VectorView(vector=self, start=start, shape=shape)
-
 
     def load(self, filename, binary=None):
         """
@@ -220,13 +212,12 @@ class Vector:
         # otherwise, look at the file extension
         suffix = filename.suffix
         # if it's {bin}
-        if suffix == "bin":
+        if suffix == ".bin":
             # go binary
             return self.read(filename)
 
         # otherwise
         return self.scanf(filename)
-
 
     def save(self, filename, binary=None, format=defaultFormat):
         """
@@ -255,7 +246,6 @@ class Vector:
         # otherwise
         return self.printf(filename=filename, format=format)
 
-
     def read(self, filename):
         """
         Read my values from {filename}
@@ -264,7 +254,6 @@ class Vector:
         gsl.vector_read(self.data, filename.path)
         # and return
         return self
-
 
     def write(self, filename):
         """
@@ -275,7 +264,6 @@ class Vector:
         # and return
         return self
 
-
     def scanf(self, filename):
         """
         Read my values from {filename}
@@ -285,27 +273,23 @@ class Vector:
         # and return
         return self
 
-
     def printf(self, filename, format=defaultFormat):
         """
         Write my values to {filename}
         """
         # write
-        gsl.vector_printf(self.data, filename.path, '%'+format+'e')
+        gsl.vector_printf(self.data, filename.path, "%" + format + "e")
         # and return
         return self
 
-
-    def print(self, format='{:+13.4e}', indent='', interactive=True):
+    def print(self, format="{:+13.4e}", indent="", interactive=True):
         """
         Print my values using the given {format}
         """
         # build the line
-        line = ' '.join(
-            [ '{}['.format(indent) ] +
-            [ format.format(value) for value in self ] +
-            [']']
-            )
+        line = " ".join(
+            ["{}[".format(indent)] + [format.format(value) for value in self] + ["]"]
+        )
 
         # if we are in interactive mode
         if interactive:
@@ -315,7 +299,6 @@ class Vector:
         # all done
         return line
 
-
     # maxima and minima
     def max(self):
         """
@@ -324,7 +307,6 @@ class Vector:
         # easy enough
         return gsl.vector_max(self.data)
 
-
     def min(self):
         """
         Compute my maximum value
@@ -332,14 +314,12 @@ class Vector:
         # easy enough
         return gsl.vector_min(self.data)
 
-
     def minmax(self):
         """
         Compute my minimum and maximum values
         """
         # easy enough
         return gsl.vector_minmax(self.data)
-
 
     # statistics
     def sort(self):
@@ -351,7 +331,6 @@ class Vector:
         # and return myself
         return self
 
-
     def sortIndirect(self):
         """
         Construct the permutation that would sort me in ascending order
@@ -361,7 +340,6 @@ class Vector:
         # build a permutation object and return it
         return self.permutation(shape=self.shape, data=pdata)
 
-
     def mean(self, weights=None):
         """
         Compute the mean value of my elements, weighted by the optional {weights}
@@ -369,14 +347,12 @@ class Vector:
         # easy enough
         return gsl.vector_mean(self.data, weights.data if weights is not None else None)
 
-
     def median(self):
         """
         Compute the median value of my elements; only works on previously sorted vectors
         """
         # easy enough
         return gsl.vector_median(self.data)
-
 
     def variance(self, mean=None):
         """
@@ -386,7 +362,6 @@ class Vector:
         # easy enough
         return gsl.vector_variance(self.data, float(mean) if mean is not None else None)
 
-
     def sdev(self, mean=None):
         """
         Compute the mean value of my elements with respect to {mean}. If {mean} is {None}, it
@@ -394,7 +369,6 @@ class Vector:
         """
         # easy enough
         return gsl.vector_sdev(self.data, float(mean) if mean is not None else None)
-
 
     def ndarray(self, copy=False):
         """
@@ -406,7 +380,6 @@ class Vector:
         if copy:
             array = array.copy()
         return array
-
 
     # meta methods
     def __init__(self, shape, data=None, **kwds):
@@ -420,12 +393,10 @@ class Vector:
         # all done
         return
 
-
     # container support
     def __len__(self):
         # easy
         return self.shape
-
 
     def __iter__(self):
         # for each valid value of the index
@@ -435,11 +406,9 @@ class Vector:
         # no more
         return
 
-
     def __contains__(self, value):
         # faster than checking every element in python
         return gsl.vector_contains(self.data, value)
-
 
     def __getitem__(self, index):
         # assuming {index} is convertible into an integer, attempt to
@@ -452,10 +421,12 @@ class Vector:
             if type(index) is not slice:
                 # if not, we are out of ideas
                 raise TypeError(
-                    'vector indices must be integers, not {.__name__}'.format(type(index)))
+                    "vector indices must be integers, not {.__name__}".format(
+                        type(index)
+                    )
+                )
         # we have a slice, so return an appropriate value generator
         return self._slice(index)
-
 
     def __setitem__(self, index, value):
         # assuming {index} is convertible into an integer, attempt to
@@ -468,31 +439,32 @@ class Vector:
             if type(index) is not slice:
                 # if not, we are out of ideas
                 raise TypeError(
-                    'vector indices must be integers, not {.__name__}'.format(type(index)))
+                    "vector indices must be integers, not {.__name__}".format(
+                        type(index)
+                    )
+                )
         # we have a slice; assume {value} is a compatible iterable
         try:
             # iterate over the slice and the values
-            for i,v in zip(range(*index.indices(self.shape)), value):
+            for i, v in zip(range(*index.indices(self.shape)), value):
                 # and set the corresponding vector element
                 gsl.vector_set(self.data, i, v)
         except TypeError:
-            raise TypeError('can only assign an iterable')
+            raise TypeError("can only assign an iterable")
 
         # all done
         return
 
-
     # comparisons
     def __eq__(self, other):
         # type check
-        if type(self) is not type(other): return NotImplemented
+        if type(self) is not type(other):
+            return NotImplemented
         # hand the request off to the extension module
         return gsl.vector_equal(self.data, other.data)
 
-
     def __ne__(self, other):
         return not (self == other)
-
 
     # in-place arithmetic
     def __iadd__(self, other):
@@ -514,7 +486,6 @@ class Vector:
         # otherwise, let the interpreter know
         raise NotImplemented
 
-
     def __isub__(self, other):
         """
         In-place subtraction with the elements of {other}
@@ -533,7 +504,6 @@ class Vector:
             return self
         # otherwise, let the interpreter know
         raise NotImplemented
-
 
     def __imul__(self, other):
         """
@@ -554,7 +524,6 @@ class Vector:
         # otherwise, let the interpreter know
         raise NotImplemented
 
-
     def __itruediv__(self, other):
         """
         In-place addition with the elements of {other}
@@ -568,12 +537,11 @@ class Vector:
         # if other is a number
         if isinstance(other, numbers.Number):
             # do scaling by constant
-            gsl.vector_scale(self.data, 1/float(other))
+            gsl.vector_scale(self.data, 1 / float(other))
             # and return
             return self
         # otherwise, let the interpreter know
         raise NotImplemented
-
 
     # implementation details
     def _slice(self, index):
@@ -586,7 +554,6 @@ class Vector:
             yield gsl.vector_get(self.data, i)
         # all done
         return
-
 
     # private data
     data = None

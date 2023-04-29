@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2020 all rights reserved
+# (c) 1998-2023 all rights reserved
 #
 
 
@@ -17,11 +17,8 @@ RECURSE_DIRS = \
     bin \
     templates \
     schema \
-    etc \
     tests \
-    examples \
-    bot \
-    people
+    examples
 
 # the standard targets
 all:

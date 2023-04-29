@@ -1,0 +1,103 @@
+// -*- c++ -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2023 all rights reserved
+
+// code guard
+#if !defined(pyre_grid_Order_icc)
+#error this file contains implementation details for pyre::grid::Order
+#else
+
+
+// metamethods
+template <class containerT>
+template <typename... argT>
+constexpr
+pyre::grid::Order<containerT>::
+Order(argT... args) :
+    rep_type( args... )
+{}
+
+
+// static interface: factories
+// column major oder
+template <class containerT>
+constexpr auto
+pyre::grid::Order<containerT>::
+columnMajor() -> order_type
+{
+    // declare the helper argument: an empty object, used only for its type
+    auto arg = std::make_index_sequence<order_type::rank()> {};
+    // invoke the helper
+    return _columnMajor(arg);
+}
+
+
+// alias for the above
+template <class containerT>
+constexpr auto
+pyre::grid::Order<containerT>::
+fortran() -> order_type
+{
+    // delegate
+    return columnMajor();
+}
+
+
+// row major oder
+template <class containerT>
+constexpr auto
+pyre::grid::Order<containerT>::
+rowMajor() -> order_type
+{
+    // declare the helper argument: an empty object, used only for its type
+    auto arg = std::make_index_sequence<order_type::rank()> {};
+    // invoke the helper
+    return _rowMajor(arg);
+}
+
+
+// alias for the above
+template <class containerT>
+constexpr auto
+pyre::grid::Order<containerT>::
+c() -> order_type
+{
+    // delegate
+    return rowMajor();
+}
+
+
+// implementation details
+// column major helper
+template <class containerT>
+template<std::size_t... seq>
+constexpr auto
+pyre::grid::Order<containerT>::
+_columnMajor(std::index_sequence<seq...>) -> order_type
+{
+    // enforce our invariant
+    static_assert( order_type::rank() == sizeof...(seq) );
+    // aggregate initialize my return value with the sequence [0, ..., N-1]
+    // don't forget that the constructor is marked {explicit} so we need to say what we mean
+    return order_type { seq... };
+}
+
+
+template <class containerT>
+template<std::size_t... seq>
+constexpr auto
+pyre::grid::Order<containerT>::
+_rowMajor(std::index_sequence<seq...>) -> order_type
+{
+    // enforce our invariant
+    static_assert( order_type::rank() == sizeof...(seq) );
+    // aggregate initialize my return value with the sequence [N-1, ..., 0]
+    // don't forget that the constructor is marked {explicit} so we need to say what we mean
+    return order_type { sizeof...(seq) - 1 - seq... };
+}
+
+
+#endif
+
+// end of file

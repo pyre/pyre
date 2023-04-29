@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2020 all rights reserved
+# (c) 1998-2023 all rights reserved
 #
 
 
@@ -206,7 +206,7 @@ class Matrix:
         # otherwise, look at the file extension
         suffix = filename.suffix
         # if it's {bin}
-        if suffix == "bin":
+        if suffix == ".bin":
             # go binary
             return self.read(filename)
 

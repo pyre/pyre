@@ -1,10 +1,10 @@
 # -*- Makefile -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
-# (c) 1998-2020 all rights reserved
+# (c) 1998-2023 all rights reserved
 
 
-# the mpi library testsuite
+# the cuda package testsuite
 pyre-cuda.pkg.tests.stem := cuda.pkg
 pyre-cuda.pkg.tests.prerequisites := pyre-cuda.pkg pyre.pkg pyre-cuda.ext
 

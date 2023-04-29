@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2020 all rights reserved
+# (c) 1998-2023 all rights reserved
 #
 
 
@@ -41,8 +41,8 @@ if __name__ == "__main__":
 
     # check that the nodes were all destroyed
     from pyre.filesystem.Node import Node
-    # print("Node extent:", len(Node._pyre_extent))
-    assert len(Node._pyre_extent) == 0
+    # print("Node extent:", len(Node.pyre_extent))
+    assert len(Node.pyre_extent) == 0
 
 
 # end of file

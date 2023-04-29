@@ -1,7 +1,7 @@
 // -*- c++ -*-
 //
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
-// (c) 1998-2020 all rights reserved
+// (c) 1998-2023 all rights reserved
 
 // code guard
 #if !defined(pyre_journal_Inventory_icc)
@@ -10,18 +10,16 @@
 
 
 // metamethods
-pyre::journal::Inventory::
-Inventory(active_type active, fatal_type fatal) :
-    _active {active},
-    _fatal {fatal},
-    _device {nullptr}
+pyre::journal::Inventory::Inventory(active_type active, fatal_type fatal) :
+    _active { active },
+    _fatal { fatal },
+    _device { nullptr }
 {}
 
 
 // accessors
 auto
-pyre::journal::Inventory::
-active() const
+pyre::journal::Inventory::active() const -> active_type
 {
     // easy enough
     return _active;
@@ -29,8 +27,7 @@ active() const
 
 
 auto
-pyre::journal::Inventory::
-fatal() const
+pyre::journal::Inventory::fatal() const -> fatal_type
 {
     // easy enough
     return _fatal;
@@ -38,8 +35,7 @@ fatal() const
 
 
 auto
-pyre::journal::Inventory::
-device() const
+pyre::journal::Inventory::device() const -> device_type
 {
     // easy enough
     return _device;
@@ -48,8 +44,7 @@ device() const
 
 // mutators
 auto
-pyre::journal::Inventory::
-active(active_type active) -> inventory_reference
+pyre::journal::Inventory::active(active_type active) -> inventory_reference
 {
     // easy enough
     _active = active;
@@ -59,8 +54,7 @@ active(active_type active) -> inventory_reference
 
 
 auto
-pyre::journal::Inventory::
-fatal(fatal_type fatal) -> inventory_reference
+pyre::journal::Inventory::fatal(fatal_type fatal) -> inventory_reference
 {
     // easy enough
     _fatal = fatal;
@@ -70,8 +64,7 @@ fatal(fatal_type fatal) -> inventory_reference
 
 
 auto
-pyre::journal::Inventory::
-device(device_type device) -> inventory_reference
+pyre::journal::Inventory::device(device_type device) -> inventory_reference
 {
     // easy enough
     _device = device;
@@ -80,10 +73,9 @@ device(device_type device) -> inventory_reference
 }
 
 
-template <class deviceT, class...Args>
+template <class deviceT, class... Args>
 inline auto
-pyre::journal::Inventory::
-device(Args&&... args) -> inventory_reference
+pyre::journal::Inventory::device(Args &&... args) -> inventory_reference
 {
     // make a shared pointer and install it
     _device = std::make_shared<deviceT>(std::forward<Args>(args)...);
@@ -93,8 +85,7 @@ device(Args&&... args) -> inventory_reference
 
 
 // syntactic sugar
-pyre::journal::Inventory::
-operator active_type() const
+pyre::journal::Inventory::operator active_type() const
 {
     // return my activation state
     return active();

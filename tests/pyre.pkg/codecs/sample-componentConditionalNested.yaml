@@ -1,0 +1,10 @@
+#
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2023 all rights reserved
+
+"test.item # sample":
+    # a nested component with a conditional binding
+    "test.part # engine":
+        id: 3Q4XYZ
+
+# end of file

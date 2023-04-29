@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
-# (c) 1998-2020 all rights reserved
+# (c) 1998-2023 all rights reserved
 
 
 def test():
@@ -28,12 +28,12 @@ def test():
         # no problem
         pass
 
-    # verify its verbosity is at 1 by default
-    assert channel.verbosity == 1
+    # verify its detail is at 1 by default
+    assert channel.detail == 1
     # that it can be modified
-    channel.verbosity = 5
+    channel.detail = 5
     # and the assignment sticks
-    assert channel.verbosity == 5
+    assert channel.detail == 5
 
     # verify its activation state is off by default
     assert channel.active is True

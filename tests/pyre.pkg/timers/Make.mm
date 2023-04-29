@@ -2,30 +2,19 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2020 all rights reserved
+# (c) 1998-2023 all rights reserved
 #
 
 
 PROJECT = pyre
 
-#--------------------------------------------------------------------------
-#
-
 all: test
 
-test: sanity python native pyre
-
-sanity:
+test:
 	${PYTHON} ./sanity.py
-
-python:
-	${PYTHON} ./python_timer.py
-	${PYTHON} ./python_timer_errors.py
-
-native:
-	${PYTHON} ./native_timer.py
-
-pyre:
-	${PYTHON} ./pyre_timer.py
+	${PYTHON} ./process_timer_instance.py
+	${PYTHON} ./process_timer_example.py
+	${PYTHON} ./wall_timer_instance.py
+	${PYTHON} ./wall_timer_example.py
 
 # end of file

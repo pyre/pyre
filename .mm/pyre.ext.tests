@@ -1,0 +1,12 @@
+# -*- Makefile -*-
+#
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2023 all rights reserved
+
+
+# the pyre extension module test suite
+pyre.ext.tests.stem := pyre.ext
+pyre.ext.tests.prerequisites := pyre.ext
+
+
+# end of file

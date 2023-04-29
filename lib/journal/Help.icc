@@ -1,0 +1,64 @@
+// -*- c++ -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2023 all rights reserved
+
+// code guard
+#if !defined(pyre_journal_Help_icc)
+#error this file contains implementation details for pyre::journal::Help
+#else
+
+
+// metamethods
+template <template <typename> typename proxyT>
+pyre::journal::Help<proxyT>::Help(const name_type & name, detail_type detail) :
+    channel_type(name, detail)
+{
+    // get my entry
+    entry_type & e = this->entry();
+    // decorate with my severity
+    e.note("severity", "help");
+}
+
+
+// implementation details
+// record the message to the chosen device
+template <template <typename> typename proxyT>
+void
+pyre::journal::Help<proxyT>::record()
+{
+    // hunt down the device to use
+    auto dev = this->device();
+    // record the entry
+    dev->help(this->entry());
+    // all done
+    return;
+}
+
+
+template <template <typename> typename proxyT>
+void
+pyre::journal::Help<proxyT>::die()
+{
+    // prepare a message
+    auto msg = this->name() + exception_type::headline_type(": help");
+    // throw an application error
+    throw exception_type(msg, this->entry().page(), this->entry().notes());
+}
+
+
+// initialize the channel index
+template <template <typename> typename proxyT>
+auto
+pyre::journal::Help<proxyT>::initializeIndex() -> index_type
+{
+    // make an empty index; for {help}, channels are (active,non-fatal) by default
+    index_type index(true, false);
+    // and return it
+    return index;
+}
+
+
+#endif
+
+// end of file

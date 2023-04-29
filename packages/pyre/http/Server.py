@@ -2,11 +2,12 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2020 all rights reserved
+# (c) 1998-2023 all rights reserved
 #
 
 
 # externals
+import journal
 import pyre
 
 
@@ -54,18 +55,24 @@ class Server(pyre.nexus.server, family='pyre.nexus.servers.http'):
         """
         Initiate or continue a conversation with a peer over {channel}
         """
-        # we are here because the {channel} has data for me; one of the following is true
+        # we are here because {channel} has data for me; one of the following is true
         #
         # - this is the notification that the connection has been closed by the peer; in this
         #   case the channel contains exactly zero bytes for us; we check for this one early
-        # - this the first time this peer connects
-        # - more data that for an existing request have arrived
+        #
+        # - this is the first time this peer connects
+        #
+        # - more data for an existing request have arrived
+        #
         # - this is a known peer whose previous request was handled but has kept the connection
         #   alive; this case may not survive as it can be handled by starting a new request
         #   every time without closing the connection
+        #
         # - the client has pipelined its requests; currently, this case is not handled
         #   correctly because it involves saving the local buffers
 
+        # make a channel for reporting request and response information
+        headerReport = journal.debug("pyre.http.headers")
         # get the application context
         application = self.application
         # show me
@@ -106,7 +113,7 @@ class Server(pyre.nexus.server, family='pyre.nexus.servers.http'):
         # if something wrong happened
         except self.exceptions.ProtocolError as error:
             # send an error report to the client
-            return self.respond(channel=channel, response=error)
+            return self.respond(channel=channel, request=request, response=error)
 
         # if request assembly is not finished yet
         if not complete:
@@ -116,17 +123,43 @@ class Server(pyre.nexus.server, family='pyre.nexus.servers.http'):
             # and reschedule this channel
             return True
 
-        # figuring out what the client is asking for is now complete; try to
+        # figuring out what the client is asking for is now complete; if the user wants
+        # to see the headers
+        if headerReport.active:
+            # show me the request info
+            headerReport.line(f"got a {request.command} request")
+            headerReport.line(f"for '{request.url}'")
+            # and the headers
+            headerReport.line(f"with headers")
+            # go through the headers
+            for key, value in request.headers.items():
+                # and show me each one
+                headerReport.line(f"  {key}: {value}")
+            # and report
+            headerReport.log()
+
+        # try to
         try:
             # fulfill the request
             response = self.fulfill(request)
         # if something bad happened
         except self.exceptions.ProtocolError as error:
             # send an error report to the client
-            return self.respond(channel=channel, response=error)
+            return self.respond(channel=channel, request=request, response=error)
+
+        # if the user wants to see the headers
+        if headerReport.active:
+            # sign on
+            headerReport.line(f"sending a {response.code} response with headers")
+            # go through the headers
+            for key, value in response.headers.items():
+                # and show me eac hone
+                headerReport.line(f"  {key}: {value}")
+            # and report
+            headerReport.log()
 
         # if all goes well, respond
-        return self.respond(channel=channel, response=response)
+        return self.respond(channel=channel, request=request, response=response)
 
 
     # interface
@@ -134,11 +167,11 @@ class Server(pyre.nexus.server, family='pyre.nexus.servers.http'):
         """
         Fulfill the given fully formed client {request}
         """
-        # delegate to the app to build a response a message and return it
+        # delegate to the app to build a response and return it
         return self.application.pyre_respond(server=self, request=request)
 
 
-    def respond(self, channel, response):
+    def respond(self, channel, request, response):
         # attempt to
         try:
             # ask the renderer to put together the byte stream
@@ -148,17 +181,42 @@ class Server(pyre.nexus.server, family='pyre.nexus.servers.http'):
             # render the error
             stream = b'\r\n'.join(self.renderer.render(server=self, document=error))
 
-        # either way, send the bytes to the client
-        channel.write(stream)
-        # keep the channel alive
-        return True
+        # either way, attempt to
+        try:
+            # send the bytes to the client
+            channel.write(stream)
+        # if anything goes wrong
+        except OSError as error:
+            # make a channel
+            channel = journal.debug("pyre.http.server")
+            # if it is active
+            if channel.active:
+                # build a message
+                channel.line(f"encountered {error}")
+                channel.line(f"while responding to a {request.command} request")
+                channel.line(f"for '{request.url}'")
+                channel.line(f"with headers")
+                # go through the headers
+                for key, value in request.headers.items():
+                    # and show me each one
+                    channel.line(f"  {key}: {value}")
+                # and complain
+                channel.log()
+
+        # if the application wants to terminate
+        if response.abort:
+            # do it
+            raise SystemExit(0)
+
+        # otherwise, let the response document decide whether we should keep the channel alive
+        return response.alive
 
 
     # meta-methods
     def __init__(self, **kwds):
         # chain up
         super().__init__(**kwds)
-        # initialize my connectionn index
+        # initialize my connection index
         self.requests = {}
         # all done
         return

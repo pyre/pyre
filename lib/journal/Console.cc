@@ -1,7 +1,7 @@
 // -*- c++ -*-
 //
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
-// (c) 1998-2020 all rights reserved
+// (c) 1998-2023 all rights reserved
 
 
 // external support
@@ -22,8 +22,9 @@
 #include "ANSI.h"
 // renderer support
 #include "Renderer.h"
-#include "Memo.h"
 #include "Alert.h"
+#include "Bland.h"
+#include "Memo.h"
 // get the device declarations
 #include "Device.h"
 #include "Stream.h"
@@ -41,13 +42,10 @@ using ansi_t = pyre::journal::ansi_t;
 
 // metamethods
 // constructor
-pyre::journal::Console::
-Console() :
-    Stream("cout", std::cout),
-    _tty(isatty(1) == 1)
+pyre::journal::Console::Console() : Stream("cout", std::cout), _tty(isatty(1) == 1)
 {
     // if i am connected to a compatible terminal
-    if (_tty && ansi_t::compatible())  {
+    if (_tty && ansi_t::compatible()) {
         // populate my palette with some colors
         // put things back to normal
         _palette["reset"] = ansi_t::x11("normal");
@@ -57,18 +55,17 @@ Console() :
         _palette["info"] = ansi_t::x11("forest green");
         _palette["warning"] = ansi_t::x11("orange");
         _palette["error"] = ansi_t::x11("red");
+        _palette["help"] = ansi_t::x11("cyan");
         _palette["debug"] = ansi_t::x11("cornflower blue");
         _palette["firewall"] = ansi_t::x11("fuchsia");
         // the page body
-        _palette["body"] = "";
+        _palette["body"] = ansi_t::x11("normal");
     }
 }
 
 
 // destructor
-pyre::journal::Console::
-~Console()
-{}
+pyre::journal::Console::~Console() {}
 
 
 // end of file

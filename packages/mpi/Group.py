@@ -2,18 +2,18 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2020 all rights reserved
+# (c) 1998-2023 all rights reserved
 #
 
 
 # base class
 from .Object import Object
 # meta-class
-from pyre.patterns.ExtentAware import ExtentAware
+from pyre.patterns.Extent import Extent
 
 
 # declaration
-class Group(Object, metaclass=ExtentAware):
+class Group(Object, metaclass=Extent):
     """
     Encapsulation of MPI communicator groups
     """

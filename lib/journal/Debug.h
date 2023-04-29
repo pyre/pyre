@@ -1,7 +1,7 @@
 // -*- c++ -*-
 //
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
-// (c) 1998-2020 all rights reserved
+// (c) 1998-2023 all rights reserved
 
 // code guard
 #if !defined(pyre_journal_Debug_h)
@@ -18,7 +18,7 @@ public:
     using channel_type = Channel<Debug<proxyT>, proxyT>;
     // my parts
     using name_type = typename channel_type::name_type;
-    using verbosity_type = typename channel_type::verbosity_type;
+    using detail_type = typename channel_type::detail_type;
     using index_type = typename channel_type::index_type;
     using entry_type = typename channel_type::entry_type;
     // my exception
@@ -26,7 +26,7 @@ public:
 
     // metamethods
 public:
-    inline Debug(const name_type &, verbosity_type = 1);
+    inline Debug(const name_type &, detail_type = 1);
 
     // implementation details; don't access directly
 public:

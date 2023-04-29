@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2020 all rights reserved
+# (c) 1998-2023 all rights reserved
 #
 
 
@@ -41,14 +41,17 @@ class Factory(Node, metaclass=FactoryMaker, implements=Producer, internal=True):
             locator = pyre.tracking.here(level=1)
             # complain
             raise self.IncompleteFlowError(node=self, traits=unbound, locator=locator)
-        # go through the stale products
+        # go through my stale inputs
         for product in stale:
-            # refresh them
+            # and refresh them
             product.pyre_make(**kwds)
-        # if anything were stale
-        if stale:
-            # invoke me
-            self.pyre_run(stale=stale, **kwds)
+        # invoke me, unconditionally
+        # this used to check whether any of the inputs were stale and skip the invocation if
+        # none were. walk through the algorithm once more and write down under what conditions
+        # things are supposed to fire. do factories deserve their own status, or is product status
+        # sufficient to record the state of the workflow?
+        self.pyre_run(stale=stale, **kwds)
+
         # all done
         return
 

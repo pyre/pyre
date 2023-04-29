@@ -1,7 +1,7 @@
 // -*- c++ -*-
 //
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
-// (c) 1998-2020 all rights reserved
+// (c) 1998-2023 all rights reserved
 
 // code guard
 #if !defined(pyre_journal_Entry_h)
@@ -9,13 +9,14 @@
 
 
 // encapsulation of a journal message entry
-class pyre::journal::Entry
-{
+class pyre::journal::Entry {
     // types
 public:
     // aliases for myself
     using entry_type = Entry;
     using entry_reference = entry_type &;
+    // the dent type
+    using dent_type = dent_t;
     // message payload
     using page_type = page_t;
     using page_reference = page_type &;
@@ -53,7 +54,7 @@ public:
 public:
     inline auto note(const key_type &, const value_type &) -> entry_reference;
     // move the buffer to the page and reset
-    inline auto push() -> entry_reference;
+    inline auto push(dent_type) -> entry_reference;
     // clear the page
     inline auto flush() -> entry_reference;
 
@@ -71,8 +72,8 @@ private:
 private:
     Entry(const Entry &) = delete;
     Entry(Entry &&) = delete;
-    Entry & operator= (const Entry &) = delete;
-    Entry & operator= (Entry &&) = delete;
+    Entry & operator=(const Entry &) = delete;
+    Entry & operator=(Entry &&) = delete;
 };
 
 

@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2020 all rights reserved
+# (c) 1998-2023 all rights reserved
 #
 
 
@@ -18,19 +18,19 @@ def test():
     # declare a couple of protocols
     class base(pyre.protocol):
         """the base protocol"""
-        common = pyre.property()
+        common = pyre.properties.int()
 
     class derived(base):
         """a derived one, so automatically compatible"""
-        extra = pyre.property()
+        extra = pyre.properties.int()
 
     class ok(pyre.protocol):
         """one that doesn't derive but has the right public protocol"""
-        common = pyre.property()
+        common = pyre.properties.int()
 
     class notok(pyre.protocol):
         """one that doesn't provide the right public protocol"""
-        what = pyre.property()
+        what = pyre.properties.int()
 
     class badtype(pyre.protocol):
         """one that has the right trait but of the wrong type"""

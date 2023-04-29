@@ -3,14 +3,13 @@
 //
 // michael a.g. aïvázis
 // orthologue
-// (c) 1998-2020 all rights reserved
+// (c) 1998-2023 all rights reserved
 
 // code guard
 #if !defined(pyre_h)
 #define pyre_h
 
 // support
-#include "algebra.h"
 #include "timers.h"
 #include "memory.h"
 #include "grid.h"

@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis, leif strand
 # orthologue
-# (c) 1998-2020 all rights reserved
+# (c) 1998-2023 all rights reserved
 #
 
 
@@ -31,6 +31,7 @@ class Channel:
         """
         raise NotImplementedError(
             "class {.__name__!r} must implement 'close'".format(type(self)))
+
 
     # access to the individual channel end points
     @property

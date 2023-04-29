@@ -1,7 +1,7 @@
 // -*- c++ -*-
 //
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
-// (c) 1998-2020 all rights reserved
+// (c) 1998-2023 all rights reserved
 
 // code guard
 #if !defined(pyre_journal_File_h)
@@ -24,7 +24,7 @@ public:
     // metamethods
 public:
     // constructor
-    inline File(const path_type &);
+    inline File(const path_type &, filemode_t = std::ios_base::out);
     // destructor
     virtual ~File();
 
@@ -34,10 +34,12 @@ public:
 
     // interface
 public:
-    // developer messages
-    virtual auto memo(const entry_type &) -> File & override;
     // user facing messages
     virtual auto alert(const entry_type &) -> File & override;
+    // help screens
+    virtual auto help(const entry_type &) -> File & override;
+    // developer messages
+    virtual auto memo(const entry_type &) -> File & override;
 
     // configuration data
 protected:
@@ -50,17 +52,20 @@ private:
     path_type _path;
     // the file to write to
     file_type _file;
-    // the renderer for memos
-    renderer_pointer _memo;
+
     // the renderer for alerts
     renderer_pointer _alert;
+    // help screens
+    renderer_pointer _help;
+    // and memos
+    renderer_pointer _memo;
 
     // disallow
 private:
     File(const File &) = delete;
     File(const File &&) = delete;
-    const File & operator= (const File &) = delete;
-    const File & operator= (const File &&) = delete;
+    const File & operator=(const File &) = delete;
+    const File & operator=(const File &&) = delete;
 };
 
 

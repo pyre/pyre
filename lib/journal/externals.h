@@ -1,7 +1,7 @@
 // -*- c++ -*-
 //
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
-// (c) 1998-2020 all rights reserved
+// (c) 1998-2023 all rights reserved
 
 // code guard
 #if !defined(pyre_journal_externals_h)
@@ -21,7 +21,6 @@
 #include <fstream>
 #include <sstream>
 #include <iomanip>
-#include <filesystem>
 
 
 // aliases for fundamental types that define implementation choices
@@ -35,8 +34,10 @@ namespace pyre::journal {
     using outputstream_t = std::ostream;
     // file streams; careful here: we already have a {file_t} that's an alias to the file device
     using filestream_t = std::ofstream;
+    // and their mode bit masks
+    using filemode_t = std::ios_base::openmode;
     // paths
-    using path_t = std::filesystem::path;
+    using path_t = std::string;
 
     // generic names
     using name_t = string_t;
@@ -48,8 +49,10 @@ namespace pyre::journal {
     using cmdvalue_t = string_t;
     using cmd_t = std::map<cmdname_t, cmdvalue_t>;
 
-    // a channel's verbosity level
-    using verbosity_t = size_t;
+    // the channel level of detail
+    using detail_t = int;
+    // the channel dent level
+    using dent_t = int;
 
     // the type of line
     using line_t = string_t;
@@ -70,7 +73,7 @@ namespace pyre::journal {
     // a palette is a map from a metadata key to a color name; it is used by the renderers to
     // colorize the message notes
     using palette_t = std::map<key_t, colorrep_t>;
-}
+} // namespace pyre::journal
 
 
 #endif

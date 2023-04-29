@@ -1,0 +1,158 @@
+// -*- c++ -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2023 all rights reserved
+
+// code guard
+#if !defined(pyre_grid_Product_icc)
+#error this file contains implementation details for pyre::grid::Product
+#else
+
+// metamethods
+template <class containerT>
+template <typename... argT>
+constexpr
+pyre::grid::Product<containerT>::
+Product(argT... idx) :
+    rep_type(idx...)
+{}
+
+
+// iterator support
+template <class containerT>
+template <class orderT>
+constexpr auto
+pyre::grid::Product<containerT>::
+begin(const orderT & order) -> iterator<orderT>
+{
+    // make an iterator that points to the beginning and return it
+    return iterator<orderT> { *this, order.begin() };
+}
+
+
+template <class containerT>
+template <class orderT>
+constexpr auto
+pyre::grid::Product<containerT>::
+begin(const orderT & order) const -> const_iterator<orderT>
+{
+    // make an iterator that points to the beginning and return it
+    return const_iterator<orderT> { *this, order.begin() };
+}
+
+
+template <class containerT>
+template <class orderT>
+constexpr auto
+pyre::grid::Product<containerT>::
+end(const orderT & order) -> iterator<orderT>
+{
+    // make an iterator that points to the end and return it
+    return iterator<orderT> { *this, order.end() };
+}
+
+
+template <class containerT>
+template <class orderT>
+constexpr auto
+pyre::grid::Product<containerT>::
+end(const orderT & order) const -> const_iterator<orderT>
+{
+    // make an iterator that points to the end and return it
+    return const_iterator<orderT> { *this, order.end() };
+}
+
+
+// reverse iterator support
+template <class containerT>
+template <class orderT>
+constexpr auto
+pyre::grid::Product<containerT>::
+rbegin(const orderT & order) -> reverse_iterator<orderT>
+{
+    // make an iterator that points to the beginning and return it
+    return reverse_iterator<orderT> { *this, order.rbegin() };
+}
+
+
+template <class containerT>
+template <class orderT>
+constexpr auto
+pyre::grid::Product<containerT>::
+rbegin(const orderT & order) const -> const_reverse_iterator<orderT>
+{
+    // make an iterator that points to the beginning and return it
+    return const_reverse_iterator<orderT> { *this, order.rbegin() };
+}
+
+
+template <class containerT>
+template <class orderT>
+constexpr auto
+pyre::grid::Product<containerT>::
+rend(const orderT & order) -> reverse_iterator<orderT>
+{
+    // make an iterator that points to the end and return it
+    return reverse_iterator<orderT> { *this, order.rend() };
+}
+
+
+template <class containerT>
+template <class orderT>
+constexpr auto
+pyre::grid::Product<containerT>::
+rend(const orderT & order) const -> const_reverse_iterator<orderT>
+{
+    // make an iterator that points to the end and return it
+    return const_reverse_iterator<orderT> { *this, order.rend() };
+}
+
+
+// const iteration
+template <class containerT>
+template <class orderT>
+constexpr auto
+pyre::grid::Product<containerT>::
+cbegin(const orderT & order) const -> const_iterator<orderT>
+{
+    // make an iterator that points to the beginning and return it
+    return const_iterator<orderT> { *this, order.begin() };
+}
+
+
+template <class containerT>
+template <class orderT>
+constexpr auto
+pyre::grid::Product<containerT>::
+cend(const orderT & order) const -> const_iterator<orderT>
+{
+    // make an iterator that points to the end and return it
+    return const_iterator<orderT> { *this, order.end() };
+}
+
+
+template <class containerT>
+template <class orderT>
+constexpr auto
+pyre::grid::Product<containerT>::
+crbegin(const orderT & order) const -> const_reverse_iterator<orderT>
+{
+    // make an iterator that points to the beginning and return it
+    return const_reverse_iterator<orderT> { *this, order.rbegin() };
+}
+
+
+template <class containerT>
+template <class orderT>
+constexpr auto
+pyre::grid::Product<containerT>::
+crend(const orderT & order) const -> const_reverse_iterator<orderT>
+{
+    // make an iterator that points to the end and return it
+    return const_reverse_iterator<orderT> { *this, order.rend() };
+}
+
+
+#endif
+
+// end of file

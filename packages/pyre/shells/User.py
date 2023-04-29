@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2020 all rights reserved
+# (c) 1998-2023 all rights reserved
 #
 
 
@@ -23,6 +23,18 @@ class User(pyre.component):
     name = pyre.properties.str()
     name.doc = 'the full name of the user'
 
+    username = pyre.properties.str()
+    username.default = os.environ.get('LOGNAME')
+    username.doc =  "the username"
+
+    uid = pyre.properties.str()
+    uid.default = os.getuid()
+    uid.doc = "the user's system id"
+
+    home = pyre.properties.path()
+    home.default = os.environ.get('HOME')
+    home.doc = "the location of the user's home directory"
+
     email = pyre.properties.str()
     email.doc = 'the email address of the user'
 
@@ -32,11 +44,6 @@ class User(pyre.component):
     # choices and defaults
     externals = pyre.externals.dependencies()
     externals.doc = 'the database of preferred instances for each external package category'
-
-    # public data
-    uid = os.getuid() # the user's system id
-    home = pyre.primitives.path(os.environ.get('HOME')) # the location of the user's home directory
-    username = os.environ.get('LOGNAME') # the username
 
 
 # end of file

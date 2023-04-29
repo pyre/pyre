@@ -1,4 +1,9 @@
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2023 all rights reserved
+
 @PACKAGE_INIT@
 
 include(${CMAKE_CURRENT_LIST_DIR}/pyre-targets.cmake)
 check_required_components(pyre)
+
+# end of file

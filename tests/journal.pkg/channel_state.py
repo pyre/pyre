@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
-# (c) 1998-2020 all rights reserved
+# (c) 1998-2023 all rights reserved
 
 
 # channel state
@@ -17,17 +17,17 @@ def test():
     d1 = Channel(name="test.channel")
     # verify the name was recorder correctly
     assert d1.name == "test.channel"
-    # that its verbosity is set to the default value
-    assert d1.verbosity == Channel.verbosity
+    # that its detail is set to the default value
+    assert d1.detail == Channel.detail
     # and that it is accessing the correct global state manager
     assert d1.chronicler is Channel.chronicler
 
     # make another
-    d3 = Channel(name="test.channel", verbosity=3)
+    d3 = Channel(name="test.channel", detail=3)
     # verify the name was recorder correctly
     assert d3.name == "test.channel"
-    # that its verbosity is set to the default value
-    assert d3.verbosity == 3
+    # that its detail is set to the default value
+    assert d3.detail == 3
     # and that it is accessing the correct global state manager
     assert d3.chronicler is Channel.chronicler
 

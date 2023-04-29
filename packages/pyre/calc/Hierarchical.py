@@ -2,15 +2,15 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2020 all rights reserved
+# (c) 1998-2023 all rights reserved
 #
 
 
 # externals
 import re
 import operator
-import collections
-from .. import patterns
+import collections.abc
+from .. import primitives
 # my base class
 from .SymbolTable import SymbolTable
 
@@ -82,7 +82,7 @@ class Hierarchical(SymbolTable):
         if not self._nodes: return
         # build the name recognizer
         regex = re.compile(pattern)
-        # we need a key, since slots are not orderable
+        # we need a sort key, since slots do not have a natural ordering
         key = operator.attrgetter('name') if key is None else key
         # iterate over my nodes
         for info in sorted(self._metadata.values(), key=key):
@@ -118,6 +118,11 @@ class Hierarchical(SymbolTable):
         # have been registered originally
         aliasKey = baseKey.alias(target=targetKey, alias=alias)
 
+        # if {alias} was not previously known
+        if aliasKey is None:
+            # we are done
+            return
+
         # now that the two names are aliases of each other, we must resolve the potential node
         # conflict: only one of these is accessible by name any more
         return self.merge(source=aliasKey, canonical=target, destination=targetKey, name=alias)
@@ -127,7 +132,7 @@ class Hierarchical(SymbolTable):
         """
         Split a multilevel {name} into its parts and return its hash
         """
-        # if we were not given a hashin context, use my root
+        # if we were not given a hashing context, use my root
         context = self._hash if context is None else context
         # if {name} is already a hash key
         if isinstance(name, type(context)):
@@ -138,7 +143,7 @@ class Hierarchical(SymbolTable):
             # hash it
             return context.hash(items=self.split(name=name))
         # if it is an iterable
-        if isinstance(name, collections.Iterable):
+        if isinstance(name, collections.abc.Iterable):
             # skip the split, just hash
             return context.hash(items=name)
         # otherwise
@@ -254,7 +259,7 @@ class Hierarchical(SymbolTable):
         # record my separator
         self.separator = separator
         # initialize my name hash
-        self._hash = patterns.newPathHash()
+        self._hash = primitives.pathhash()
         # and the node metadata
         self._metadata = {}
         # all done
@@ -370,15 +375,17 @@ class Hierarchical(SymbolTable):
         """
         List my contents
         """
+        # set the indent marker
+        indent = " " * 4
         # sign on
         print("model '{}':".format(self))
         print("  nodes:")
         # for all node that match {pattern}
         for info, node in self.find(pattern):
             # print the node information
-            node.dump(indent=' '*4, name=info.name)
+            node.dump(indent=indent, name=info.name)
             # and the slot type
-            print("      slot: {}".format(type(node).__name__))
+            # print("      slot: {}".format(type(node).__name__))
         # all done
         return
 

@@ -2,12 +2,12 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2020 all rights reserved
+# (c) 1998-2023 all rights reserved
 #
 
 
 # externals
-import itertools
+import uuid
 from .. import tracking
 # superclass
 from .Configurable import Configurable
@@ -184,7 +184,19 @@ class Component(Configurable, metaclass=Actor, internal=True):
         """
         Pre-instantiation hook invoked right before the instance is created
         """
-        # by default, nothing to do
+        # grab my protocol
+        protocol = cls.pyre_implements
+        # if i don't have one
+        if protocol is None:
+            # bail
+            return cls
+
+        # if the instance that's about to be created is named and was requested explicitly
+        if name and not implicit:
+            # ask my protocol to load any {name} specific configuration files
+            protocol.pyre_configure(name=name, locator=locator)
+
+        # and nothing further
         return cls
 
 
@@ -331,8 +343,10 @@ class Component(Configurable, metaclass=Actor, internal=True):
 
 
     def __init__(self, name, locator, implicit, **kwds):
-        # only needed to swallow the extra arguments
+        # chain up, but first swallow the extra arguments that are used by my metaclass
         super().__init__(**kwds)
+        # make me an id
+        self.pyre_id = uuid.uuid1()
         # all done
         return
 

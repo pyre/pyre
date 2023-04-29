@@ -1,7 +1,7 @@
 # -*- Makefile -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
-# (c) 1998-2020 all rights reserved
+# (c) 1998-2023 all rights reserved
 
 
 # the mpi library testsuite
@@ -18,6 +18,22 @@ pyre-mpi.pkg.hostfile := --hostfile localhost
 # assemble the haness
 pyre-mpi.pkg.harness := $(mpi.executive) $(pyre-mpi.pkg.hostfile)
 
+
+# on some machines, running multiple mpi tests at the same time causes trouble
+# serialize the test suite
+tests.mpi.pkg.extension.pre := tests.mpi.pkg.sanity
+tests.mpi.pkg.world.pre := tests.mpi.pkg.extension
+tests.mpi.pkg.group.pre := tests.mpi.pkg.world
+tests.mpi.pkg.group_include.pre := tests.mpi.pkg.group
+tests.mpi.pkg.group_exclude.pre := tests.mpi.pkg.group_include
+tests.mpi.pkg.group_setops.pre := tests.mpi.pkg.group_exclude
+tests.mpi.pkg.restrict.pre := tests.mpi.pkg.group_setops
+tests.mpi.pkg.bcast.pre := tests.mpi.pkg.restrict
+tests.mpi.pkg.sum.pre := tests.mpi.pkg.bcast
+tests.mpi.pkg.product.pre := tests.mpi.pkg.sum
+tests.mpi.pkg.max.pre := tests.mpi.pkg.product
+tests.mpi.pkg.min.pre := tests.mpi.pkg.max
+tests.mpi.pkg.port.pre := tests.mpi.pkg.min
 
 # the sanity tests
 # {extension} has cases

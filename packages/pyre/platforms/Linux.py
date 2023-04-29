@@ -1,39 +1,40 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
-# (c) 1998-2020 all rights reserved
-#
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2023 all rights reserved
 
 
 # externals
 import collections
 import operator
 import subprocess
+
 # superclass
 from .POSIX import POSIX
-# the cpu info object
+
+# the info objects
 from .CPUInfo import CPUInfo
+from .MemoryInfo import MemoryInfo
 
 
 # declaration
-class Linux(POSIX, family='pyre.platforms.linux'):
+class Linux(POSIX, family="pyre.platforms.linux"):
     """
     Encapsulation of a generic linux host
     """
 
-
     # public data
-    platform = 'linux'
-    distribution = 'generic'
+    platform = "linux"
+    distribution = "generic"
 
-    prefix_library = 'lib'
-    extension_staticLibrary = '.a'
-    extension_dynamicLibrary = '.so'
+    extension_object = ".o"
+
+    prefix_library = "lib"
+    extension_staticLibrary = ".a"
+    extension_dynamicLibrary = ".so"
 
     template_staticLibrary = "{0.prefix_library}{1}{0.extension_staticLibrary}"
     template_dynamicLibrary = "{0.prefix_library}{1}{0.extension_dynamicLibrary}"
-
 
     # protocol obligations
     @classmethod
@@ -42,7 +43,7 @@ class Linux(POSIX, family='pyre.platforms.linux'):
         Return a suitable default encapsulation of the runtime host
         """
 
-        # in python 3.8, {platform} doesn't have {linux_distribution} any more; the
+        # after python 3.8, {platform} doesn't have {linux_distribution} any more; the
         # functionality has been delegated to the {distro} package
 
         # so let's try
@@ -51,15 +52,18 @@ class Linux(POSIX, family='pyre.platforms.linux'):
             import distro
         # if that fails
         except ImportError:
-            # fallback to the native  python package; this is silly in the long term, but it's a
-            # reasonable workaround for current 3.7 users that don't have {distro}
+            # fallback to the native python package; this is silly in the long term, but it's a
+            # reasonable workaround for current 3.7- users that don't have {distro}
             import platform
+
             # if it still has the deprecated function
             try:
                 # identify the platform characteristics; careful not to set the {distribution}
                 # attribute here; the subclasses set the distribution name to the pyre
                 # canonical nickname
                 distribution, cls.release, cls.codename = platform.linux_distribution()
+                # just in case
+                distribution = distribution.lower()
             # if this also fails
             except AttributeError:
                 # there isn't much else to do; act like a generic linux system
@@ -69,37 +73,41 @@ class Linux(POSIX, family='pyre.platforms.linux'):
             # identify the platform characteristics; again, careful not to set the
             # {distribution} attribute here; the subclasses set the distribution name to the
             # pyre canonical nickname
-            distribution, cls.release, cls.codename = distro.linux_distribution(
-                full_distribution_name=False)
+            distribution = distro.id()
+            cls.release = distro.version()
+            cls.codename = distro.codename()
 
         # check for ubuntu
-        if distribution.lower().startswith('ubuntu'):
+        if distribution.startswith("ubuntu"):
             # load the platform file
             from .Ubuntu import Ubuntu
+
             # and return it
             return Ubuntu
         # check for debian
-        if distribution.lower().startswith('debian'):
+        if distribution.startswith("debian"):
             # load the platform file
             from .Debian import Debian
+
             # and return it
             return Debian
         # check for red hat
-        if distribution.lower().startswith('red hat'):
+        if distribution.startswith("red hat") or distribution.startswith("rhel"):
             # load the platform file
             from .RedHat import RedHat
+
             # and return it
             return RedHat
         # check for centos
-        if distribution.lower().startswith('centos'):
+        if distribution.startswith("centos"):
             # load the platform file
             from .CentOS import CentOS
+
             # and return it
             return CentOS
 
         # otherwise, act like a generic linux system
         return cls
-
 
     # implementation details: explorers
     @classmethod
@@ -119,6 +127,31 @@ class Linux(POSIX, family='pyre.platforms.linux'):
         # last resort, because it's heavily polluted by x86_64 peculiarities
         return cls.procCPUInfo()
 
+    @classmethod
+    def memorySurvey(cls):
+        """
+        Interrogate {/proc} for the amount of available memory
+        """
+        # grab the translation table
+        xlat = cls.memXLAT
+        # create an info object
+        info = MemoryInfo()
+        # prime the tokenizer
+        tokens = cls.tokenizeInfo(info=open(cls.meminfo))
+
+        # parse
+        for key, value in tokens:
+            # translate the key
+            key = xlat.get(key)
+            # if it is of interest
+            if key:
+                # extract the value
+                value = int(value.split()[0]) * 1024
+                # set the corresponding attribute in {info}
+                setattr(info, key, value)
+
+        # all done
+        return info
 
     # implementation details: workhorses
     @classmethod
@@ -127,16 +160,15 @@ class Linux(POSIX, family='pyre.platforms.linux'):
         Invoke {lscpu} to gather CPU info
         """
         # the name of the program that collates the cpu information
-        client = 'lscpu'
+        client = "lscpu"
         # the command line arguments
         settings = {
-            'executable' : client,
-            'args': (
-                client,
-                ),
-            'stdout': subprocess.PIPE, 'stderr': subprocess.PIPE,
-            'universal_newlines': True,
-            'shell': False
+            "executable": client,
+            "args": (client,),
+            "stdout": subprocess.PIPE,
+            "stderr": subprocess.PIPE,
+            "universal_newlines": True,
+            "shell": False,
         }
 
         # initialize storage
@@ -147,15 +179,22 @@ class Linux(POSIX, family='pyre.platforms.linux'):
         # make a pipe
         with subprocess.Popen(**settings) as pipe:
             # get the text source and tokenize it
-            tokens = cls.tokenizeCPUInfo(cpuinfo=pipe.stdout)
+            tokens = cls.tokenizeInfo(info=pipe.stdout)
             # parse
             for key, value in tokens:
                 # number of sockets
-                if key == "Socket(s)":
-                    # save
-                    sockets = int(value)
+                if key == "Socket(s)" or key == "Cluster(s)":
+                    # attempt to
+                    try:
+                        # convert the value to an integer; the value is not guaranteed to be
+                        # parable as an integer; e.g. docker instances on aarch64 report a '-'
+                        sockets = int(value)
+                    # if anything goes wrong
+                    except ValueError:
+                        # move on
+                        pass
                 # number of cores per socket
-                elif key == "Core(s) per socket":
+                elif key.startswith("Core(s) per "):
                     # save
                     coresPerSocket = int(value)
                 # number of threads per core
@@ -171,7 +210,6 @@ class Linux(POSIX, family='pyre.platforms.linux'):
         info.cpus = info.cores * threadsPerCore
         # and retur it
         return info
-
 
     @classmethod
     def procCPUInfo(cls):
@@ -189,9 +227,9 @@ class Linux(POSIX, family='pyre.platforms.linux'):
         # the markers
         physicalid = None
         # prime the tokenizer
-        tokens = cls.tokenizeCPUInfo(cpuinfo=open(cls.cpuinfo))
+        tokens = cls.tokenizeInfo(info=open(cls.cpuinfo))
         # the keys we care about
-        targets = {'siblings', 'cpu cores'}
+        targets = {"siblings", "cpu cores"}
         # parse
         for key, value in tokens:
             # if the key is blank
@@ -201,13 +239,13 @@ class Linux(POSIX, family='pyre.platforms.linux'):
                 # and move on
                 continue
             # record the processor ids; that's all we have on single core machines
-            if key == 'processor':
+            if key == "processor":
                 # increment the count
                 ids += 1
                 # move on
                 continue
             # the socket to which this core belongs
-            if key == 'physical id':
+            if key == "physical id":
                 # harvest the cpu physical id
                 physicalid = value
                 # move on
@@ -226,9 +264,9 @@ class Linux(POSIX, family='pyre.platforms.linux'):
             # update the cpu count
             sockets += 1
             # update the number of physical cores
-            physical += int(sec['cpu cores'])
+            physical += int(sec["cpu cores"])
             # update the number of logical cores
-            logical += int(sec['siblings'])
+            logical += int(sec["siblings"])
 
         # create an info object
         info = CPUInfo()
@@ -241,33 +279,37 @@ class Linux(POSIX, family='pyre.platforms.linux'):
         # and return it
         return info
 
-
     @classmethod
-    def tokenizeCPUInfo(cls, cpuinfo):
+    def tokenizeInfo(cls, info):
         """
         Split the CPU info file into (key, value) pairs
         """
         # in order to tokenize each line
-        for line in cpuinfo:
+        for line in info:
             # strip whitespace
             line = line.strip()
             # if this leaves us with nothing, we ran into a separator blank line
             if not line:
                 # form a pair of blank tokens
-                key = value = ''
+                key = value = ""
             # otherwise
             else:
                 # split apart and strip leading and trailing whitespace
-                key, value = map(operator.methodcaller('strip'), line.split(':', maxsplit=1))
+                key, value = map(
+                    operator.methodcaller("strip"), line.split(":", maxsplit=1)
+                )
             # yield the tokens
             yield key, value
         # nothing more
         return
 
-
     # implementation constants
-    issue = '/etc/issue'
-    cpuinfo = '/proc/cpuinfo'
+    issue = "/etc/issue"
+    cpuinfo = "/proc/cpuinfo"
+    meminfo = "/proc/meminfo"
+
+    # the proc field to attribute translation table
+    memXLAT = {"MemTotal": "total", "MemFree": "free", "MemAvailable": "available"}
 
 
 # end of file

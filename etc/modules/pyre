@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2020 all rights reserved
+# (c) 1998-2023 all rights reserved
 #
 
 # Module file created by config on $(TODAY)
@@ -12,7 +12,7 @@ module-whatis "pyre is an open source application framework"
 
 # help
 proc ModulesHelp { } {
-    puts stderr "pyre is an open source application frameowrk"
+    puts stderr "pyre is an open source application framework"
 }
 
 # geometry

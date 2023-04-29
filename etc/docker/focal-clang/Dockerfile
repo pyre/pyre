@@ -1,4 +1,7 @@
 ## -*- docker-image-name: "pyre:focal-clang" -*-
+#
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2023 all rights reserved
 
 # based on ubuntu
 FROM ubuntu:focal
@@ -33,12 +36,12 @@ RUN apt dist-upgrade -y
 #  - {vim} is for interactive use
 #  - {openssh}, {zip}, {unzip} are needed for some of the tests
 RUN DEBIAN_FRONTEND=noninteractive \
-    apt install -y \
+        apt install -y \
         git vim zip unzip\
         openssh-server \
         clang gfortran make \
         ${python} ${python}-dev \
-        python3-pybind11 \
+        python3-pybind11 python3-yaml python3-numpy \
         libopenmpi-dev \
         libgsl-dev
 
@@ -47,9 +50,9 @@ RUN DEBIAN_FRONTEND=noninteractive \
 # go home
 WORKDIR /root
 # copy the files with support for interactive use
-COPY etc/docker/eoan-gcc/inputrc .inputrc
+COPY etc/docker/focal-gcc/inputrc .inputrc
 # the startup file
-COPY etc/docker/eoan-gcc/bashrc bashrc.in
+COPY etc/docker/focal-gcc/bashrc bashrc.in
 # expand
 RUN sed \
         -e "s:@SRCDIR@:${srcdir}:g" \
@@ -58,7 +61,7 @@ RUN sed \
 # make the pyre configuration directory
 WORKDIR /root/.pyre
 # the mpi configuration
-COPY etc/docker/eoan-gcc/mpi.pfg mpi.pfg
+COPY etc/docker/focal-gcc/mpi.pfg mpi.pfg
 # the {mm} coniguration file
 COPY etc/docker/focal-clang/mm.pfg mm.pfg.in
 # expand

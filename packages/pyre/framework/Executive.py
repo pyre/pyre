@@ -1,15 +1,19 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
-# (c) 1998-2020 all rights reserved
-#
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2023 all rights reserved
 
 
 # externals
-import re, weakref, operator, itertools
+import re
+import weakref
+import operator
+import itertools
+
 # primitives, locators
-from .. import primitives, tracking
+from .. import timers
+from .. import primitives
+from .. import tracking
 
 
 #  the class declaration
@@ -18,29 +22,26 @@ class Executive:
     The specification of the obligations of the various managers of framework services
     """
 
-
     # exceptions
     from .exceptions import PyreError, ComponentNotFoundError
 
     # types
     from ..schemata import uri
     from .Priority import Priority as priority
+
     # get the client base class
     from .Dashboard import Dashboard as dashboard
 
-
     # constants
-    hostmapkey = 'pyre.hostmap' # the key with the nicknames of known hosts
-
+    hostmapkey = "pyre.hostmap"  # the key with the nicknames of known hosts
 
     # public data
     # the managers; patched during boot
-    nameserver = None # entities accessible by name
-    fileserver = None # the URI resolver
-    registrar = None # protocol and component bookkeeping
-    configurator = None # configuration sources and events
-    linker = None # the pyre plug-in manager
-    timekeeper = None # the timer registry
+    nameserver = None  # entities accessible by name
+    fileserver = None  # the URI resolver
+    registrar = None  # protocol and component bookkeeping
+    configurator = None  # configuration sources and events
+    linker = None  # the pyre plug-in manager
 
     # the runtime environment; patched during discovery
     host = None
@@ -49,8 +50,7 @@ class Executive:
     environ = None
 
     # bookkeeping
-    errors = None # the pile of exceptions raised during booting and configuration
-
+    errors = None  # the pile of exceptions raised during booting and configuration
 
     # high level interface
     def loadConfiguration(self, uri, locator=None, priority=priority.user):
@@ -73,49 +73,121 @@ class Executive:
             return
         # ask the configurator to process the stream
         errors = self.configurator.loadConfiguration(
-            uri=uri, source=source, locator=locator, priority=priority)
+            uri=uri, source=source, locator=locator, priority=priority
+        )
         # add any errors to my pile
         self.errors.extend(errors)
         # all done
         return
 
-
     # other facilities
     def newTimer(self, **kwds):
         """
-        Build an return a timer
+        Build and return a timer
         """
         # let the timer registry do its thing
-        return self.timekeeper.timer(**kwds)
-
+        return timers.wall(**kwds)
 
     # support for internal requests
-    def configure(self, stem, locator, priority):
+    def configure(self, namespace, locator):
         """
-        Locate and load all accessible configuration files for the given {stem}
+        Locate and load all accessible configuration files for the given {namespace}
         """
-        # print("Executive.configure:")
-        # print(f"    stem={stem}")
-        # print(f"    locator={locator}")
-        # print(f"    priority={priority}")
-        # access the fileserver
-        fs = self.fileserver
-        # the nameserver
-        ns = self.nameserver
-        # and the configurator
-        cfg = self.configurator
-        # form all possible combinations of filename fragments for the configuration sources
-        scope = itertools.product(reversed(ns.configpath), [stem], cfg.encodings())
-        # look for each one
-        for root, filename, extension in scope:
-            # build the uri
-            uri = f"{root.uri}/{filename}.{extension}"
-            # print(f" ++ looking for '{uri}'")
-            # load the settings from the associated file
-            self.loadConfiguration(uri=uri, priority=priority, locator=locator)
+        # first up, package level configuration based on the raw {namespace}; first in the
+        # raw directory
+        self.configureStem(
+            stem=namespace, locator=locator, priority=self.priority.package
+        )
+        # and then in the private subdirectory
+        stem = f"{namespace}/{namespace}"
+        # locate and load
+        self.configureStem(stem=stem, locator=locator, priority=self.priority.package)
+
+        # next, we look for platform, machine, and user specific settings
+        # get the host
+        host = self.host
+        # if it hasn't been identified yet
+        if host is None:
+            # none of what follows can be done, so bail
+            return
+
+        # we care about the os distribution
+        distro = host.distribution
+        # and the host nickname
+        nickname = host.nickname
+        # form the user tag
+        user = f"{self.user.username}@{nickname}"
+
+        # look for platform specific settings in a private subdirectory
+        action = tracking.simple("while discovering the platform characteristics")
+        # chain to the existing locator
+        chain = tracking.chain(action, locator)
+        # first in the raw directory
+        self.configureStem(stem=distro, priority=self.priority.user, locator=chain)
+        # but also in the private subdirectory
+        stem = f"{namespace}/platforms/{distro}"
+        # attempt to load any matching configuration files
+        self.configureStem(stem=stem, priority=self.priority.user, locator=chain)
+
+        # look for host specific settings
+        action = tracking.simple("while discovering the host characteristics")
+        # chain to the existing locator
+        chain = tracking.chain(action, locator)
+        # first in the raw directory
+        self.configureStem(stem=nickname, priority=self.priority.user, locator=chain)
+        # but also in the private directory
+        stem = f"{namespace}/hosts/{nickname}"
+        # attempt to load any matching configuration files
+        self.configureStem(stem=stem, priority=self.priority.user, locator=chain)
+
+        # finally, look for a {user@host} configuration files
+        action = tracking.simple("while loading the user specific configuration")
+        # chain to the existing locator
+        chain = tracking.chain(action, locator)
+        # first in the raw directory
+        self.configureStem(stem=user, priority=self.priority.user, locator=chain)
+        # but also in the private directory
+        stem = f"{namespace}/users/{user}"
+        # attempt to load any matching configuration files
+        self.configureStem(stem=stem, priority=self.priority.user, locator=chain)
+
         # all done
         return
 
+    def configureStem(self, stem, locator, cfgpath=None, priority=priority.package):
+        """
+        Locate and load all accessible configuration files for the given {stem}
+        """
+        # show me
+        # print("Executive.configureStem:")
+        # print(f"    stem={stem}")
+        # print(f"    cfgpath={cfgpath}")
+        # print(f"    locator={locator}")
+        # print(f"    priority={priority}")
+
+        # get the name server
+        ns = self.nameserver
+        # and the configurator
+        cfg = self.configurator
+
+        # if the caller didn't supply a specific path of interest
+        if cfgpath is None:
+            # use the default
+            cfgpath = reversed(ns.configpath)
+
+        # form all possible combinations of filename fragments for the configuration sources
+        scope = itertools.product(cfgpath, [stem], cfg.encodings())
+        # look for each one
+        for root, filename, extension in scope:
+            # build the {uri}
+            uri = f"{root}/{filename}.{extension}"
+            # show me
+            # print(f" ++ looking for '{uri}'")
+            # load the settings from the associated file
+            self.loadConfiguration(uri=uri, priority=priority, locator=locator)
+
+        # all done
+        return
 
     def resolve(self, uri, protocol=None, **kwds):
         """
@@ -152,7 +224,7 @@ class Executive:
 
             vfs:/local/shapes.py/box
 
-        implies that the fileserver can resolve the address {local/shapes.py} into a valid file
+        implies that the file server can resolve the address {local/shapes.py} into a valid file
         within the virtual filesystem that forms the application namespace. The referenced
         {symbol} must be a callable that can produce component class records when called. For
         example, the file {shapes.py} might contain
@@ -175,13 +247,13 @@ class Executive:
         # print(f'    protocol: {protocol}')
         # force a uri
         uri = self.uri().coerce(uri)
-        # grab my nameserver
+        # grab my name server
         nameserver = self.nameserver
 
         # if the {uri} contains a fragment, treat it as the name of the component
         name = uri.fragment
         # is there anything registered under it? check carefully: do not to disturb the symbol
-        # table of the nameserver, in case the name is junk
+        # table of the name server, in case the name is junk
         if name and name in nameserver:
             # the name is known; attempt to
             try:
@@ -199,11 +271,14 @@ class Executive:
                 return
 
         # if the address part is empty, do not go any further
-        if not uri.address: return
+        if not uri.address:
+            return
 
         # load the component recognizers
+        from ..components.Role import Role as role
         from ..components.Actor import Actor as actor
-        from ..components.Component import Component as component
+        from ..components.Foundry import Foundry as foundry
+
         # make a locator
         locator = tracking.simple(f"while resolving '{uri.uri}'")
 
@@ -212,21 +287,17 @@ class Executive:
 
         # the easy things didn't work out; look for matching descriptors
         for candidate in self.retrieveComponentDescriptor(
-                uri=uri, protocol=protocol, locator=locator, **kwds):
-            # if the candidate is neither a component class nor a component instance
-            if not (isinstance(candidate, actor) or isinstance(candidate, component)):
-                # it must be a foundry
-                try:
-                    # so invoke it
-                    candidate = candidate()
-                # if this fails
-                except TypeError:
-                    # move on to the next candidate
-                    continue
-                # if it succeeded, verify it is a component
-                if not (isinstance(candidate, actor) or isinstance(candidate, component)):
-                    # and if not, move on
-                    continue
+            uri=uri, protocol=protocol, locator=locator, **kwds
+        ):
+            # if the candidate is a protocol
+            if isinstance(candidate, role):
+                # get its default value
+                candidate = candidate.pyre_default()
+            # if the candidate is a foundry
+            if isinstance(candidate, foundry):
+                # invoke it
+                candidate = candidate()
+
             # if it is a component class and we have been asked to instantiate it
             if name and isinstance(candidate, actor):
                 # build it
@@ -244,7 +315,6 @@ class Executive:
         # totally out of ideas
         return
 
-
     def retrieveComponents(self, uri):
         """
         Retrieve all component classes from the shelf at {uri}
@@ -254,12 +324,11 @@ class Executive:
         # and return its contents
         return shelf.items()
 
-
     def retrieveComponentDescriptor(self, uri, protocol, **kwds):
         """
         The component resolution workhorse
         """
-        # grab my nameserver
+        # grab my name server
         nameserver = self.nameserver
         # get the uri scheme
         scheme = uri.scheme
@@ -283,7 +352,7 @@ class Executive:
             if protocol:
                 # build the new address
                 extended = nameserver.join(protocol.pyre_family(), address)
-                # does the nameserver recognize it?
+                # does the name server recognize it?
                 if extended in nameserver:
                     # look it up
                     try:
@@ -295,11 +364,12 @@ class Executive:
                         pass
 
         # ask the linker to find descriptors
-        yield from self.linker.resolve(executive=self, protocol=protocol, uri=uri, **kwds)
+        yield from self.linker.resolve(
+            executive=self, protocol=protocol, uri=uri, **kwds
+        )
 
         # all done
         return
-
 
     # registration interface for framework objects
     def registerProtocolClass(self, protocol, family, priority=priority.package):
@@ -318,12 +388,12 @@ class Executive:
         # make a priority
         priority = priority()
         # insert the protocol into the model
-        key = self.nameserver.configurable(name=family, configurable=protocol,
-                                           priority=priority, locator=locator)
+        key = self.nameserver.configurable(
+            name=family, configurable=protocol, priority=priority, locator=locator
+        )
 
-        # and return the nameserver registration key
+        # and return the name server registration key
         return key
-
 
     def registerComponentClass(self, component, family, priority=priority.package):
         """
@@ -341,11 +411,11 @@ class Executive:
         # make a priority
         priority = priority()
         # insert the component into the model
-        key = self.nameserver.configurable(name=family, configurable=component,
-                                           priority=priority, locator=locator)
+        key = self.nameserver.configurable(
+            name=family, configurable=component, priority=priority, locator=locator
+        )
         # return the key
         return key
-
 
     def registerComponentInstance(self, instance, name, priority=priority.package):
         """
@@ -356,11 +426,11 @@ class Executive:
         # make a priority
         priority = priority()
         # insert the component instance into the model
-        key = self.nameserver.configurable(name=name, configurable=instance,
-                                           priority=priority, locator=locator)
+        key = self.nameserver.configurable(
+            name=name, configurable=instance, priority=priority, locator=locator
+        )
         # return the key
         return key
-
 
     def registerPackage(self, name, file):
         """
@@ -368,7 +438,7 @@ class Executive:
         """
         # build a locator
         locator = tracking.here(level=1)
-        # get the nameserver to build one
+        # get the name server to build one
         package = self.nameserver.createPackage(name=name, locator=locator)
         # register it
         package.register(executive=self, file=primitives.path(file).resolve())
@@ -378,7 +448,6 @@ class Executive:
         # all done
         return package
 
-
     # the default factories of all my parts
     def newNameServer(self, **kwds):
         """
@@ -386,9 +455,9 @@ class Executive:
         """
         # access the factory
         from .NameServer import NameServer
+
         # build one and return it
         return NameServer(**kwds)
-
 
     def newFileServer(self, **kwds):
         """
@@ -396,9 +465,9 @@ class Executive:
         """
         # access the factory
         from .FileServer import FileServer
+
         # build one and return it
         return FileServer(**kwds)
-
 
     def newComponentRegistrar(self, **kwds):
         """
@@ -406,9 +475,9 @@ class Executive:
         """
         # access the factory
         from ..components.Registrar import Registrar
+
         # build one and return it
         return Registrar(**kwds)
-
 
     def newConfigurator(self, **kwds):
         """
@@ -416,9 +485,9 @@ class Executive:
         """
         # access the factory
         from ..config.Configurator import Configurator
+
         # build one and return it
         return Configurator(**kwds)
-
 
     def newLinker(self, **kwds):
         """
@@ -426,11 +495,11 @@ class Executive:
         """
         # access the factory
         from .Linker import Linker
+
         # build one
         linker = Linker(executive=self, **kwds)
         # and return it
         return linker
-
 
     def newCommandLineParser(self, **kwds):
         """
@@ -438,13 +507,13 @@ class Executive:
         """
         # access the factory
         from ..config.CommandLineParser import CommandLineParser
+
         # build one
         parser = CommandLineParser(**kwds)
         # register the local handlers
-        parser.handlers['config'] = self._configurationLoader
+        parser.handlers["config"] = self._configurationLoader
         # and return the parser
         return parser
-
 
     def newSchema(self, **kwds):
         """
@@ -452,19 +521,9 @@ class Executive:
         """
         # access the factory
         from .Schema import Schema
+
         # build one and return it
         return Schema(**kwds)
-
-
-    def newTimerRegistry(self, **kwds):
-        """
-        Build a new time registrar
-        """
-        # access the factory
-        from ..timers.Registrar import Registrar
-        # build one and return it
-        return Registrar(**kwds)
-
 
     # meta-methods
     def __init__(self, **kwds):
@@ -474,7 +533,6 @@ class Executive:
         self.errors = []
         # all done
         return
-
 
     # implementation details
     def boot(self):
@@ -486,7 +544,6 @@ class Executive:
         # all done
         return self
 
-
     def activate(self):
         """
         Turn on the executive
@@ -494,32 +551,25 @@ class Executive:
         # nothing to do here, for now...
         return self
 
-
     def discover(self, **kwds):
         """
         Discover what is known about the runtime environment
         """
-        # grab my nameserver
+        # grab my name server
         nameserver = self.nameserver
-        # and my fileserver
+        # and my file server
         fileserver = self.fileserver
 
         # access the platform protocol
         from ..platforms import platform
+
         # get the host class record; the default value already contains all we could discover
         # about the type of machine we are running on
         host = platform().default()
-
-        # hunt down the distribution configuration file and load it
-        # make a locator
-        here = tracking.simple('while discovering the platform characteristics')
-        # set the stem
-        stem = f'pyre/platforms/{host.distribution}'
-        # attempt to load any matching configuration files
-        self.configure(stem=stem, priority=self.priority.user, locator=here)
-
         # set up an iterator over the map of known hosts, in priority order
-        knownHosts = nameserver.find(pattern=self.hostmapkey, key=operator.attrgetter('priority'))
+        knownHosts = nameserver.find(
+            pattern=self.hostmapkey, key=operator.attrgetter("priority")
+        )
         # go through them
         for info, slot in knownHosts:
             # get the regular expression from the slot value
@@ -532,6 +582,7 @@ class Executive:
             except re.error as error:
                 # get the journal
                 import journal
+
                 # make a channel
                 channel = journal.warning("pyre.config")
                 # complain
@@ -553,25 +604,19 @@ class Executive:
             # make the hostname be the nickname
             host.nickname = host.hostname
 
-        # hunt down the host specific configuration file and load it
-        # make a locator
-        here = tracking.simple('while discovering the host characteristics')
-        # set the stem
-        stem = f'pyre/hosts/{host.nickname}'
-        # attempt to load any matching configuration files
-        self.configure(stem=stem, priority=self.priority.user, locator=here)
-
         # get the host information
-        self.host = host(name='pyre.host')
+        self.host = host(name="pyre.host")
 
         # now the user and the terminal
         from ..shells import user, terminal
+
         # instantiate them and attach them
-        self.user = user(name='pyre.user')
-        self.terminal = terminal.pyre_default()(name='pyre.terminal')
+        self.user = user(name="pyre.user")
+        self.terminal = terminal.pyre_default()(name="pyre.terminal")
 
         # finally, the environment variables
         from .Environ import Environ
+
         # instantiate and attach
         self.environ = Environ(executive=self)
 
@@ -582,18 +627,16 @@ class Executive:
         # all done
         return self
 
-
     def initializeNamespaces(self):
         """
         Create and initialize the default namespace entries
         """
-        # initialize my fileserver
+        # initialize my file server
         self.fileserver.initializeNamespace()
         # initialize my configurator
         self.configurator.initializeNamespace()
         # all done
         return self
-
 
     def shutdown(self):
         """
@@ -603,7 +646,6 @@ class Executive:
         self.errors = []
         # all done
         return self
-
 
     # helpers and other details not normally useful to end users
     def _configurationLoader(self, key, value, locator):
@@ -616,12 +658,15 @@ class Executive:
             name = ".".join(key)
             # grab the journal
             import journal
+
             # issue a warning
-            journal.warning('pyre.framework').log(f"{name}: no uri")
+            journal.warning("pyre.framework").log(f"{name}: no uri")
             # and go no further
             return
         # load the configuration
-        self.loadConfiguration(uri=value, locator=locator, priority=self.priority.command)
+        self.loadConfiguration(
+            uri=value, locator=locator, priority=self.priority.command
+        )
         # and return
         return
 

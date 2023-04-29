@@ -2,17 +2,20 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2020 all rights reserved
+# (c) 1998-2023 all rights reserved
 #
 
 
 # externals
 import sys
+
 # access to the framework
 import pyre
 import journal
+
 # my metaclass
 from .Director import Director
+
 # protocols
 from .Shell import Shell
 
@@ -27,11 +30,10 @@ class Application(pyre.component, metaclass=Director):
     filesystem, configuring the help system, and supplying the main behavior.
     """
 
-
     # constants
-    USER = 'user' # the name of the folder with user settings
-    SYSTEM = 'system' # the name of the folder with the global settings
-    DEFAULTS = 'defaults' # the name of the folder with my configuration files
+    USER = "user"  # the name of the folder with user settings
+    SYSTEM = "system"  # the name of the folder with the global settings
+    CONFIG = "share"  # the name of the folder with my configuration files
 
     # the default name for pyre applications; subclasses are expected to provide a more
     # reasonable value, which gets used to load per-instance configuration right before the
@@ -40,18 +42,18 @@ class Application(pyre.component, metaclass=Director):
 
     # public state
     shell = Shell()
-    shell.doc = 'my hosting strategy'
+    shell.doc = "my hosting strategy"
 
     DEBUG = pyre.properties.bool(default=False)
-    DEBUG.doc = 'debugging mode'
+    DEBUG.doc = "debugging mode"
 
     # per-instance public data
     # geography
-    pyre_home = None # the directory where my invocation script lives
-    pyre_prefix = None # my installation directory
-    pyre_defaults = None # the directory with my configuration folders
-    pfs = None # the root of my private filesystem
-    layout = None # my configuration options
+    pyre_home = None  # the directory where my invocation script lives
+    pyre_prefix = None  # my installation directory
+    pyre_config = None  # the directory with my configuration folders
+    pfs = None  # the root of my private filesystem
+    layout = None  # my configuration options
 
     # journal channels
     info = None
@@ -83,7 +85,6 @@ class Application(pyre.component, metaclass=Director):
         """
         return self.pyre_nameserver
 
-
     @property
     def argv(self):
         """
@@ -95,7 +96,6 @@ class Application(pyre.component, metaclass=Director):
             yield command.command
         # all done
         return
-
 
     @property
     def searchpath(self):
@@ -117,7 +117,6 @@ class Application(pyre.component, metaclass=Director):
         # all done
         return
 
-
     # component interface
     @pyre.export
     def main(self, *args, **kwds):
@@ -127,7 +126,6 @@ class Application(pyre.component, metaclass=Director):
         # the default behavior is to show the help screen
         return self.help(**kwds)
 
-
     @pyre.export
     def launched(self, *args, **kwds):
         """
@@ -136,27 +134,44 @@ class Application(pyre.component, metaclass=Director):
         # nothing to do but indicate success
         return 0
 
-
     @pyre.export
     def help(self, **kwds):
         """
         Hook for the application help system
         """
-        # build the simple description of what i do
-        content = '\n'.join(self.pyre_help())
-        # render it
-        self.info.log(content)
+        # make a channel
+        channel = journal.help("pyre.help.application")
+        # build the simple description of what i do and render it
+        channel.report(report=self.pyre_help())
+        # flush
+        channel.log()
         # and indicate success
         return 0
-
 
     # meta methods
     def __init__(self, name=None, **kwds):
         # chain up
         super().__init__(name=name, **kwds)
 
+        # get the executive
+        executive = self.pyre_executive
         # set up my nickname
         nickname = self.pyre_namespace or name
+
+        # get the dashboard
+        dashboard = executive.dashboard
+        # check whether there is already an app registered with the dashboard
+        if dashboard.pyre_application is not None:
+            # make a channel
+            channel = journal.warning(f"{nickname}")
+            # complain
+            channel.line(f"while registering {self}:")
+            channel.line(
+                f"another app, {dashboard.pyre_application}, is already registered"
+            )
+            channel.log()
+        # in any case, attach me to the dashboard
+        dashboard.pyre_application = self
 
         # if i have one
         if nickname:
@@ -175,17 +190,17 @@ class Application(pyre.component, metaclass=Director):
                 self.debug.active = True
 
         # sniff around for my environment
-        self.pyre_home, self.pyre_prefix, self.pyre_defaults = self.pyre_explore()
+        self.pyre_home, self.pyre_prefix, self.pyre_config = self.pyre_explore()
         # instantiate my layout
         self.layout = self.pyre_loadLayout()
         # mount my folders
         self.pfs = self.pyre_mountPrivateFilespace()
+
         # go through my requirements and build my dependency map
         # self.dependencies = self.pyre_resolveDependencies()
 
         # all done
         return
-
 
     # implementation details
     def run(self, *args, **kwds):
@@ -195,7 +210,6 @@ class Application(pyre.component, metaclass=Director):
         # easy enough
         return self.shell.launch(self, *args, **kwds)
 
-
     # initialization hooks
     def pyre_loadLayout(self):
         """
@@ -203,20 +217,33 @@ class Application(pyre.component, metaclass=Director):
         """
         # access the factory
         from .Layout import Layout
-        # build one and return it
-        return Layout()
 
+        # build one and return it
+        return Layout(name=f"{self.pyre_name}.layout")
+
+    def pyre_loadConfiguration(self, locator):
+        """
+        Load my configuration files
+        """
+        # get my name
+        name = self.pyre_name
+        # and the executive
+        executive = self.pyre_executive
+        # ask it to hunt down configuration files derived from my name
+        executive.configure(namespace=name, locator=locator)
+        # all done
+        return
 
     def pyre_explore(self):
         """
         Look around my runtime environment and the filesystem for my special folders
         """
         # by default, i have nothing
-        home = prefix = defaults = None
+        home = prefix = config = None
 
         # check how the runtime was invoked
-        argv0 = sys.argv[0] # this is guaranteed to exist, but may be empty
-        # if it's not empty
+        argv0 = sys.argv[0]  # this is guaranteed to exist, but may be empty
+        # if it's not empty, i was instantiated from within a script; hopefully, one of mine
         if argv0:
             # turn into an absolute path
             argv0 = pyre.primitives.path(argv0).resolve()
@@ -224,49 +251,42 @@ class Application(pyre.component, metaclass=Director):
             if argv0.exists():
                 # split the folder name and save it; that's where i am from...
                 home = argv0.parent
-
-        # get my namespace
-        namespace = self.pyre_namespace
-        # if i have my own home and my own namespace
-        if home and namespace:
-            # my configuration directory should be at {home}/../defaults/{namespace}
-            cfg = home.parent / self.DEFAULTS / namespace
-            # if this exists
-            if cfg.isDirectory():
-                # form my prefix
+                # and my prefix is its parent folder
                 prefix = home.parent
-                # and normalize my configuration directory
-                defaults = cfg
-                # all done
-                return home, prefix, defaults
 
-        # let's try to work with my package and my namespace
+        # at this point, i either have both {home} and {prefix}, or neither; there isn't much more
+        # to be done about {home}, but i still have a shot to find the system {config} by
+        # examining my {package}
         package = self.pyre_package()
-        # if they both exist
-        if package and namespace:
-            # get the package prefix
+        # if i don't know my {prefix} and my package has one
+        if prefix is None and package.prefix:
+            # use it; it's almost certainly a better choice that leaving it empty
             prefix = package.prefix
-            # if it exists
-            if prefix:
-                # my configuration directory should be at {prefix}/defaults/{namespace}
-                cfg = prefix / package.DEFAULTS / namespace
-                # if this exists
-                if cfg.isDirectory():
-                    # and normalize my configuration directory
-                    defaults = cfg
-                    # all done
-                    return home, prefix, defaults
 
-        # all done
-        return home, prefix, defaults
+        # finding my {config} directory requires me to have a namespace
+        namespace = self.pyre_namespace
 
+        # if i don't have both
+        if not prefix or not namespace:
+            # not much more to do
+            return home, prefix, config
+
+        # look for my configuration directory
+        cfg = prefix / self.CONFIG / namespace
+        # if it exists
+        if cfg.isDirectory():
+            # all done
+            return home, prefix, cfg
+
+        # otherwise, not much else to do
+        return home, prefix, config
 
     def pyre_mountPrivateFilespace(self):
         """
         Build the private filesystem
         """
         # get the file server
-        vfs = self.pyre_fileserver
+        vfs = self.vfs
         # get the namespace
         namespace = self.pyre_namespace
         # if i don't have a namespace
@@ -323,7 +343,7 @@ class Application(pyre.component, metaclass=Director):
         # configuration folders in priority order
         for root in [self.SYSTEM, self.USER]:
             # build the work list: triplets of {name}, {source}, {destination}
-            todo = [ (root, pfs[root], pfs) ]
+            todo = [(root, pfs[root], pfs)]
             # now, for each triplet in the work list
             for path, source, destination in todo:
                 # go through all the children of {source}
@@ -341,7 +361,7 @@ class Application(pyre.component, metaclass=Director):
                             # and attach it
                             destination[name] = link
                         # add it to the work list
-                        todo.append( (name, node, link) )
+                        todo.append((name, node, link))
                     # otherwise
                     else:
                         # link the file into the destination folder
@@ -349,7 +369,6 @@ class Application(pyre.component, metaclass=Director):
 
         # all done
         return pfs
-
 
     def pyre_mountApplicationFolders(self, pfs, prefix):
         """
@@ -360,7 +379,7 @@ class Application(pyre.component, metaclass=Director):
         # look for
         try:
             # the folder with my configurations
-            cfgdir = prefix['defaults/{}'.format(namespace)]
+            cfgdir = prefix[f"{self.CONFIG}/{namespace}"]
         # if it is not there
         except pfs.NotFoundError:
             # make an empty folder; must use {pfs} to do this to guarantee filesystem consistency
@@ -369,7 +388,7 @@ class Application(pyre.component, metaclass=Director):
         pfs[self.SYSTEM] = cfgdir
 
         # now, my runtime folders
-        folders = [ 'etc', 'var' ]
+        folders = ["etc", "var"]
         # go through them
         for folder in folders:
             # and mount each one
@@ -377,7 +396,6 @@ class Application(pyre.component, metaclass=Director):
 
         # all done
         return pfs
-
 
     def pyre_mountPrivateFolder(self, pfs, prefix, folder):
         """
@@ -387,8 +405,8 @@ class Application(pyre.component, metaclass=Director):
         # get my namespace
         namespace = self.pyre_namespace
         # sign in
-        # print("Application.pyre_mountPrivateFolder:")
-        # print("  looking for: {.uri}/{}/{}".format(prefix, folder, namespace))
+        # print(f"Application.pyre_mountPrivateFolder:")
+        # print(f"  looking for: {prefix.uri}/{folder}/{namespace}")
         # give me the context
 
         # check whether the parent folder exists
@@ -397,9 +415,15 @@ class Application(pyre.component, metaclass=Director):
             parent = prefix[folder]
         # if not
         except prefix.NotFoundError:
-            # create it
-            parent = prefix.mkdir(name=folder)
-        # look for content
+            # attempt to
+            try:
+                # create it
+                parent = prefix.mkdir(name=folder)
+            # if something goes wrong
+            except OSError:
+                # bail
+                return
+        # the directory is there; look for content
         parent.discover(levels=1)
         # now, check whether there is a subdirectory named after me
         try:
@@ -407,14 +431,20 @@ class Application(pyre.component, metaclass=Director):
             mine = parent[namespace]
         # if not
         except prefix.NotFoundError as error:
-            # create it
-            mine = parent.mkdir(name=namespace)
+            # attempt to
+            try:
+                # create it
+                mine = parent.mkdir(name=namespace)
+            # if something goes wrong
+            except OSError:
+                # bail
+                return
             # and show me
-            # print("  created {.uri}".format(mine))
+            # print(f"  created {mine.uri}")
         # if all went well
         else:
             # show me
-            # print("  mounted {.uri}".format(mine))
+            # print(f"  mounted {mine.uri}")
             # look carefully; there may be large subdirectories beneath
             mine.discover(levels=1)
 
@@ -424,6 +454,23 @@ class Application(pyre.component, metaclass=Director):
         # all done
         return
 
+    def pyre_locateParentWith(self, marker, folder=None):
+        """
+        Locate the directory that contains {marker}, starting with {folder} of the {cwd} and
+        moving upwards
+        """
+        # if the caller has not expressed an opinion start with the current working directory
+        folder = pyre.primitives.path.cwd() if folder is None else folder
+        # go through folders on the way to the root of the filesystem
+        for candidate in folder.crumbs:
+            # form the filename
+            target = candidate / marker
+            # if it exists
+            if target.exists():
+                # we are done
+                return candidate
+        # if we get this far, the marker could not be fund
+        return None
 
     def pyre_resolveDependencies(self):
         """
@@ -446,7 +493,6 @@ class Application(pyre.component, metaclass=Director):
         # all done
         return dependencies
 
-
     # other behaviors
     def pyre_shutdown(self, **kwds):
         """
@@ -454,7 +500,6 @@ class Application(pyre.component, metaclass=Director):
         """
         # nothing to do...
         return
-
 
     def pyre_interrupted(self, **kwds):
         """
@@ -465,7 +510,6 @@ class Application(pyre.component, metaclass=Director):
         # indicate something went wrong
         return 1
 
-
     def pyre_interactiveSessionContext(self, context=None):
         """
         Prepare the interactive context by granting access to application parts
@@ -473,48 +517,43 @@ class Application(pyre.component, metaclass=Director):
         # prime the execution context
         context = context or {}
         # grant access to pyre
-        context['pyre'] = pyre
+        context["pyre"] = pyre
         # by default, nothing to do: the shell has already bound me in this context
         return context
-
 
     def pyre_interactiveBanner(self):
         """
         Print an identifying message for the interactive session
         """
         # just saying hi...
-        return 'entering interactive mode...\n'
-
+        return "entering interactive mode...\n"
 
     # basic support for the help system
-    def pyre_help(self, indent=' '*4, **kwds):
+    def pyre_help(self, indent=" " * 2, **kwds):
         """
         Hook for the application help system
         """
         # make a mark
-        yield self.pyre_banner()
+        yield from self.pyre_banner()
         # my summary
-
         yield from self.pyre_showSummary(indent=indent, **kwds)
         # usage
-        yield 'usage:'
-        yield ''
-        yield '    {} [options]'.format(self.pyre_name)
-        yield ''
+        yield ""
+        yield "usage:"
+        yield f"{indent}{self.pyre_name} [options]"
+        yield ""
 
         # my public state
         yield from self.pyre_showConfigurables(indent=indent, **kwds)
         # all done
         return
 
-
     def pyre_banner(self):
         """
         Print an identifying message for the help system
         """
         # easy
-        return ''
-
+        return []
 
     def pyre_respond(self, server, request):
         """
@@ -523,19 +562,20 @@ class Application(pyre.component, metaclass=Director):
         # grab my debug channel
         channel = self.debug
         # print the top line
-        channel.line("responding to HTTP request:")
-        channel.line("  app: {}".format(self))
-        channel.line("  nexus: {.nexus}".format(self))
-        channel.line("  server: {}".format(server))
+        channel.line(f"responding to HTTP request:")
+        channel.line(f"  app: {self}")
+        channel.line(f"  nexus: {self.nexus}")
+        channel.line(f"  server: {server}")
         # dump the request contents
-        request.dump(channel=channel, indent='  ')
+        request.dump(channel=channel, indent="  ")
         # flush
         channel.log()
 
         # build a default response
         response = server.responses.NotFound(
             server=server,
-            description="{.pyre_name} does not support web deployment".format(self))
+            description=f"{self.pyre_name} does not support web deployment",
+        )
         # and return it
         return response
 

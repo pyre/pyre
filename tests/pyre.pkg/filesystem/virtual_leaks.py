@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2020 all rights reserved
+# (c) 1998-2023 all rights reserved
 #
 
 
@@ -30,7 +30,7 @@ def test(interactive=False): # change to True to see the dump
     # now clear its contents explicitly
     fs.contents = {}
     # verify that all the nodes except the filesystem itself were destroyed
-    assert len(fs._pyre_extent) == 1
+    assert len(fs.pyre_extent) == 1
 
     # all done
     return fs
@@ -47,8 +47,8 @@ if __name__ == "__main__":
 
     # check that the nodes were all destroyed
     from pyre.filesystem.Node import Node
-    # print("Node extent:", len(Node._pyre_extent))
-    assert len(Node._pyre_extent) == 0
+    # print("Node extent:", len(Node.pyre_extent))
+    assert len(Node.pyre_extent) == 0
 
 
 # end of file

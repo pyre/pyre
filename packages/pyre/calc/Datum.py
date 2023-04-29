@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2020 all rights reserved
+# (c) 1998-2023 all rights reserved
 #
 
 
@@ -30,6 +30,7 @@ class Datum(AbstractNode):
 
     # exceptions; included here for client convenience
     from .exceptions import (
+        NodeError,
         EmptyExpressionError, ExpressionSyntaxError, EvaluationError,
         UnresolvedNodeError
         )
@@ -131,6 +132,27 @@ class Datum(AbstractNode):
         """
         # use the class factory to make one and return it
         return self.reference(operands=(self,), **kwds)
+
+
+    # debugging support
+    def dump(self, name, indent):
+        """
+        Print my name and value
+        """
+        # attempt to
+        try:
+            # get my value
+            value = self.value
+        # if something goes wrong
+        except self.NodeError as error:
+            # use the error message as a value so the caller can see what's wrong
+            value = f" ** ERROR: {error}"
+
+        # show me
+        print(f"{indent}{name}: {value}")
+
+        # all done
+        return self
 
 
 # end of file

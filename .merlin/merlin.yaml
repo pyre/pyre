@@ -1,0 +1,19 @@
+# -*- yaml -*-
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2023 all rights reserved
+
+
+# the list of projects in this workspace
+# each one has its own configuration in this directory
+# N.B.:
+# - the {.prj} suffix is necessary only because {pyre} and {journal} are already known
+#   to the {nameserver} as packages
+# - the '#' in the name is required to denote that the list items are named instances
+#   not types that must be instantiated; awkward but necessary, for now; hence the quotes...
+projects:
+  - "#journal.prj"
+  - "#pyre.prj"
+  - "#mpi.prj"
+
+
+# end of file

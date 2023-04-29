@@ -1,0 +1,73 @@
+<!doctype html>
+
+<!--
+{project.authors}
+(c) {project.span} all rights reserved
+-->
+
+<html lang="en">
+
+<head>
+  <!-- meta -->
+  <meta charset="utf-8" />
+  <title>{project.name}</title>
+
+  <!-- default style sheet -->
+  <link href="/styles/{project.name}.css" type="text/css" rel="stylesheet" media="all" />
+  <!-- graphiql styling -->
+  <link href="/styles/graphiql.css" type="text/css" rel="stylesheet" media="all" />
+  <link href="/styles/ambiance.css" type="text/css" rel="stylesheet" media="all" />
+
+  <!-- bookmark -->
+  <link href="/graphics/flame.png" type="image/png" rel="icon" />
+
+  <!-- apple specific icons -->
+  <link rel="apple-touch-icon" href="/graphics/flame-80x80.png">
+  <link rel="apple-touch-icon" sizes="57x57" href="/graphics/flame-57x57.png">
+  <link rel="apple-touch-icon" sizes="72x72" href="/graphics/flame-72x72.png">
+  <link rel="apple-touch-icon" sizes="114x114" href="/graphics/flame-114x114.png">
+  <link rel="apple-touch-icon" sizes="144x144" href="/graphics/flame-144x144.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="/graphics/flame-152x152.png">
+  <link rel="apple-touch-icon" sizes="167x167" href="/graphics/flame-167x167.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/graphics/flame-180x180.png">
+
+  <!-- apple web app customizations -->
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+
+</head>
+
+<!-- body -->
+
+<body>
+  <!-- anchor spot for the root react components -->
+  <div id="{project.name}">
+    <div id="placeholder">
+      <svg id="placeholder_logo" version="1.1" xmlns="http://www.w3.org/2000/svg">
+        <g fill="#f37f19" stroke="none">
+          <path d="M 100 0
+                     C 200 75 -125 160 60 300
+                     C 20 210 90 170 95 170
+                     C 80 260 130 225 135 285
+                     C 160 260 160 250 155 240
+                     C 180 260 175 270 170 300
+                     C 205 270 240 210 195 135
+                     C 195 165 190 180 160 200
+                     C 175 180 220 55 100 0
+                     Z" />
+        </g>
+      </svg>
+      <p id="placeholder_text">
+        loading; please wait...
+      </p>
+    </div>
+  </div>
+
+  <!-- webpack injects the app engine here -->
+</body>
+
+<!-- all done -->
+
+</html>
+
+<!-- end of file -->

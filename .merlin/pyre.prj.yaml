@@ -1,0 +1,36 @@
+# -*- yaml -*-
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2023 all rights reserved
+
+
+# the {pyre} project contains
+pyre.prj:
+    # a library; note the '#' in the name
+    libraries: "#libpyre"
+
+# the library
+libpyre:
+    # the name of the library; it is used to build the archive and shared object names
+    # e.g., on u*ix, the archive will be called libpyre.a and the shared object libpyre.so,
+    # whereas on macOS we'll get libpyre.a and libpyre.dylib
+    name: pyre
+    # the default set of source languages; helps pick a language for assets where the target
+    # language is not uniquely deducible from its suffix; e.g., C and C++ headers typically
+    # have a '.h' suffix
+    languages: c++, autogen
+    # the location of its sources relative to the root of the project
+    root: lib/pyre
+
+    # optional external dependencies
+    request:
+        - hdf5
+        - mpi
+        - postgres >= 8.2
+
+# special configuration for select assets
+# the h5 folder contains code that depends on {libh5}
+lib/pyre/h5:
+    # skip it unless its requirements are satisfied
+    require: hdf5
+
+# end of file

@@ -1,0 +1,91 @@
+// -*- c++ -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2023 all rights reserved
+
+// code guard
+#if !defined(pyre_py_memory_bindings_icc)
+#error this file contains implementation details for pyre::py::memory bindings
+#else
+
+
+// bindings that do not require write access to {memT}
+template <class memT>
+void
+pyre::py::memory::bindConstStorage(shared_holder_t<memT> & cls)
+{
+    // where
+    cls.def_property_readonly(
+        // the name of the property
+        "where",
+        // the implementation
+        [](const memT & self) { return reinterpret_cast<intptr_t>(self.where()); },
+        // the docstring
+        "the location of the map in memory");
+
+    // cells
+    cls.def_property_readonly(
+        // the name of the property
+        "cells",
+        // the getter
+        &memT::cells,
+        // the docstring
+        "the number of data cells");
+
+    // bytes
+    cls.def_property_readonly(
+        // the name of the property
+        "bytes",
+        // the getter
+        &memT::bytes,
+        // the docstring
+        "the memory footprint of the map, in bytes");
+
+    // metamethods
+    cls.def(
+        // the name
+        "__len__",
+        // the implementation
+        &memT::cells,
+        // the docstring
+        "the number of data cells");
+
+    cls.def(
+        // the name
+        "__getitem__",
+        // the implementtaion
+        &memT::at,
+        // the docstring
+        "get the value of the cell at a given index");
+
+    // all done
+    return;
+}
+
+
+// bindings that require write access to {memT}
+template <class memT>
+void
+pyre::py::memory::bindStorage(shared_holder_t<memT> & cls)
+{
+    cls.def(
+        // the name
+        "__setitem__",
+        // the implementation
+        [](memT & map, typename memT::size_type index, typename memT::value_type value) {
+            // set the {value} at {index}
+            map.at(index) = value;
+            // all done
+            return;
+        },
+        // the docstring
+        "set the value of the cell at a given index");
+
+    // all done
+    return;
+}
+
+
+#endif
+
+// end of file

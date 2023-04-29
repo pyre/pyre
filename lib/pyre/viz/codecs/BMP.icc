@@ -1,0 +1,243 @@
+// -*- c++ -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2023 all rights reserved
+
+// code guard
+#if !defined(pyre_viz_codecs_BMP_icc)
+#error this file contains implementation details for pyre::viz::BMP
+#else
+
+// metamethods
+// destructor
+pyre::viz::BMP::~BMP()
+{
+    // clean up
+    delete[] _data;
+}
+
+
+// constructor
+pyre::viz::BMP::BMP(int height, int width) :
+    _width { width },
+    _height { height },
+    // lines are padded out to the nearest multiple of four bytes; so, the number of pad bytes
+    // at the end of every line is
+    _padBytesPerLine { (4 - (width * _pixelSz) % 4) % 4 },
+    // compute the size of the payload
+    _payloadSz { _width * _height * _pixelSz + _height * _padBytesPerLine },
+    // and the total bitmap size is
+    _bitmapSz { _fileHeaderSz + _infoHeaderSz + _payloadSz },
+    // use it to allocate my buffer
+    _data { new byte_type[_bitmapSz] }
+{}
+
+
+// move constructor
+pyre::viz::BMP::BMP(BMP && other) :
+    _width { other._width },
+    _height { other._height },
+    _padBytesPerLine { other._padBytesPerLine },
+    _payloadSz { other._payloadSz },
+    _bitmapSz { other._bitmapSz },
+    _data { other._data }
+{
+    // invalidate {other}
+    other._data = nullptr;
+}
+
+
+// move assignment operator
+pyre::viz::BMP &
+pyre::viz::BMP::operator=(BMP && other)
+{
+    // if i'm reading from myself
+    if (this == &other) {
+        // bail
+        return *this;
+    }
+
+    // release my buffer
+    delete[] _data;
+
+    // steal everything
+    _width = other._width;
+    _height = other._height;
+    _padBytesPerLine = other._padBytesPerLine;
+    _payloadSz = other._payloadSz;
+    _bitmapSz = other._bitmapSz;
+    _data = other._data;
+
+    // invalidate {other}
+    other._data = nullptr;
+
+    // all done
+    return *this;
+}
+
+
+// interface
+// get the total size of the bitmap, in bytes
+auto
+pyre::viz::BMP::bytes() const -> int
+{
+    return _bitmapSz;
+}
+
+
+// access the data buffer
+auto
+pyre::viz::BMP::data() const -> buffer_type
+{
+    return _data;
+}
+
+
+template <class iteratorT>
+auto
+pyre::viz::BMP::encode(iteratorT & source, bool topdown) const -> buffer_type
+{
+    // if i don't own any memory
+    if (_data == nullptr) {
+        // i can't do anything
+        return nullptr;
+    }
+
+    // the bitmap orientation is encoded using signed values for the encoded bitmap height
+    // so convert the flag to a sign
+    auto flip = topdown ? -1 : 1;
+
+    // start at the beginning
+    int cur = 0;
+    // the file header
+    // encode the file type
+    _data[cur++] = 'B';
+    _data[cur++] = 'M';
+    // encode the total file size in little endian
+    _data[cur++] = _bitmapSz;
+    _data[cur++] = _bitmapSz >> 8;
+    _data[cur++] = _bitmapSz >> 16;
+    _data[cur++] = _bitmapSz >> 24;
+    // write the reserved bytes
+    _data[cur++] = 0;
+    _data[cur++] = 0;
+    _data[cur++] = 0;
+    _data[cur++] = 0;
+    // write the offset to the beginning of the payload
+    _data[cur++] = _payloadOffset;
+    _data[cur++] = _payloadOffset >> 8;
+    _data[cur++] = _payloadOffset >> 16;
+    _data[cur++] = _payloadOffset >> 24;
+
+    // the info header
+    // encode the info header size
+    _data[cur++] = _infoHeaderSz;
+    _data[cur++] = _infoHeaderSz >> 8;
+    _data[cur++] = _infoHeaderSz >> 16;
+    _data[cur++] = _infoHeaderSz >> 24;
+    // encode the width
+    _data[cur++] = _width;
+    _data[cur++] = _width >> 8;
+    _data[cur++] = _width >> 16;
+    _data[cur++] = _width >> 24;
+    // encode the height
+    _data[cur++] = flip * _height;
+    _data[cur++] = flip * _height >> 8;
+    _data[cur++] = flip * _height >> 16;
+    _data[cur++] = flip * _height >> 24;
+    // encode the number of bit planes
+    _data[cur++] = 1;
+    _data[cur++] = 1 >> 8;
+    // encode the number of bits per pixel
+    _data[cur++] = _bitPlanes;
+    _data[cur++] = _bitPlanes >> 8;
+    // mark this as an uncompressed {BI_RGB} stream
+    _data[cur++] = 0;
+    _data[cur++] = 0;
+    _data[cur++] = 0;
+    _data[cur++] = 0;
+    // encode the size of the payload; set to 0 for BI_RGB streams
+    _data[cur++] = 0;
+    _data[cur++] = 0;
+    _data[cur++] = 0;
+    _data[cur++] = 0;
+    // the number of X pixels per meter; set to zero
+    _data[cur++] = 0;
+    _data[cur++] = 0;
+    _data[cur++] = 0;
+    _data[cur++] = 0;
+    // the number of Y pixels per meter; set to zero
+    _data[cur++] = 0;
+    _data[cur++] = 0;
+    _data[cur++] = 0;
+    _data[cur++] = 0;
+    // the number of colors used; set to zero
+    _data[cur++] = 0;
+    _data[cur++] = 0;
+    _data[cur++] = 0;
+    _data[cur++] = 0;
+    // the number of important colors; set to zero
+    _data[cur++] = 0;
+    _data[cur++] = 0;
+    _data[cur++] = 0;
+    _data[cur++] = 0;
+
+    // check that we are done with the header
+    if (cur != _payloadOffset) {
+        // and if not, we have a bug
+        pyre::journal::firewall_t channel("pyre.viz.bmp");
+        // complain
+        channel
+            // what
+            << "the insertion cursor is at " << cur << "instead of " << _payloadOffset
+            << pyre::journal::newline
+            // when
+            << "after injecting the header of a " << _height << "x" << _width
+            << " BMP"
+            // flush
+            << pyre::journal::endl(__HERE__);
+    }
+
+    // encode the data at each pixel location; the payload is packed line by line
+    for (auto row = 0; row < _height; ++row) {
+        for (auto col = 0; col < _width; ++col) {
+            // get the color triplet
+            auto [red, green, blue] = *source;
+            // write it in the file; note that the encoding order is {brg}, not {rgb}
+            // and we scale the values to the range [0,255]
+            _data[cur++] = 255 * blue;
+            _data[cur++] = 255 * green;
+            _data[cur++] = 255 * red;
+            // point to the next one
+            ++source;
+        }
+        // done with this line; add the pad bytes
+        for (auto pad = 0; pad < _padBytesPerLine; ++pad) {
+            _data[cur++] = 0;
+        }
+    }
+
+    // check that we made it to the end
+    if (cur != _bitmapSz) {
+        // and if not, we have a bug
+        pyre::journal::firewall_t channel("pyre.viz.bmp");
+        // complain
+        channel
+            // what
+            << "the insertion cursor is at " << cur << "instead of " << _bitmapSz
+            << pyre::journal::newline
+            // when
+            << "after injecting the payload of a " << _height << "x" << _width
+            << " BMP"
+            // flush
+            << pyre::journal::endl(__HERE__);
+    }
+
+    // all done
+    return _data;
+}
+
+
+#endif
+
+// end of file

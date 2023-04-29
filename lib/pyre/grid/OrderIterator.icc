@@ -1,0 +1,109 @@
+// -*- c++ -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2023 all rights reserved
+
+// code guard
+#if !defined(pyre_grid_OrderIterator_icc)
+#error this file contains implementation details for pyre::grid::OrderIterator
+#else
+
+
+// metamethods
+template <class productT, class orderIteratorT, bool isConst>
+constexpr
+pyre::grid::OrderIterator<productT, orderIteratorT, isConst>::
+OrderIterator(product_reference product, order_const_iterator_reference order) :
+    iterator_base<productT, isConst>(),
+    _product { product },
+    _order { order }
+{}
+
+
+// the iterator protocol
+// dereference
+template <class productT, class orderIteratorT, bool isConst>
+constexpr auto
+pyre::grid::OrderIterator<productT, orderIteratorT, isConst>::
+operator*() const -> reference
+{
+    // ask {product} for the value of the rank pointed to by {oder}
+    return _product[*_order];
+}
+
+
+// arithmetic: prefix
+template <class productT, class orderIteratorT, bool isConst>
+constexpr auto
+pyre::grid::OrderIterator<productT, orderIteratorT, isConst>::
+operator++() -> iterator_reference
+{
+    // point to the next rank in order
+    ++_order;
+    // all done
+    return *this;
+}
+
+
+// arithmetic: postfix
+template <class productT, class orderIteratorT, bool isConst>
+constexpr auto
+pyre::grid::OrderIterator<productT, orderIteratorT, isConst>::
+operator++(int) -> iterator
+{
+    // clone me
+    auto clone = *this;
+    // increment me
+    ++(*this);
+    // and return the clone
+    return clone;
+}
+
+
+// accessors
+template <class productT, class orderIteratorT, bool isConst>
+constexpr auto
+pyre::grid::OrderIterator<productT, orderIteratorT, isConst>::
+product() const -> product_reference
+{
+    return _product;
+}
+
+template <class productT, class orderIteratorT, bool isConst>
+constexpr auto
+pyre::grid::OrderIterator<productT, orderIteratorT, isConst>::
+order() const -> order_const_iterator_reference
+{
+    return _order;
+}
+
+
+// the global operators
+// equality
+template <class productT, class orderIteratorT, bool isConst>
+constexpr auto
+pyre::grid::
+operator==(const OrderIterator<productT, orderIteratorT, isConst> & it1,
+           const OrderIterator<productT, orderIteratorT, isConst> & it2) -> bool
+{
+    // iterators are equal if they have the same order and product
+    return it1.order() == it2.order() && &it1.product() == &it2.product();
+}
+
+
+// and not
+template <class productT, class orderIteratorT, bool isConst>
+constexpr auto
+pyre::grid::
+operator!=(const OrderIterator<productT, orderIteratorT, isConst> & it1,
+           const OrderIterator<productT, orderIteratorT, isConst> & it2) -> bool
+{
+    // iterators are unequal iff they are not equal
+    return !(it1 == it2);
+}
+
+
+#endif
+
+
+// end of file

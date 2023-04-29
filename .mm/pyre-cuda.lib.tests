@@ -1,0 +1,17 @@
+# -*- Makefile -*-
+#
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2023 all rights reserved
+
+
+# the pyre_cuda library testsuite
+pyre-cuda.lib.tests.stem := cuda.lib
+pyre-cuda.lib.tests.prerequisites := pyre-cuda.lib
+pyre-cuda.lib.tests.extern := pyre-cuda.lib pyre.lib journal.lib cuda
+
+# c++ compiler arguments
+pyre-cuda.lib.tests.c++.defines := PYRE_CORE
+pyre-cuda.lib.tests.c++.flags += -Wall $($(compiler.c++).std.c++17)
+
+
+# end of file

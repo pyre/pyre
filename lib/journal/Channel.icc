@@ -1,7 +1,7 @@
 // -*- c++ -*-
 //
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
-// (c) 1998-2020 all rights reserved
+// (c) 1998-2023 all rights reserved
 
 // code guard
 #if !defined(pyre_journal_Channel_icc)
@@ -11,12 +11,13 @@
 
 // metamethods
 template <typename severityT, template <typename> typename proxyT>
-pyre::journal::Channel<severityT, proxyT>::
-Channel(const name_type & name, verbosity_type verbosity) :
+pyre::journal::Channel<severityT, proxyT>::Channel(
+    const name_type & name, detail_type detail, dent_type dent) :
     proxy_type(_index.lookup(name)),
-    _name{ name },
-    _verbosity{ verbosity },
-    _entry{}
+    _name { name },
+    _dent { dent },
+    _detail { detail },
+    _entry {}
 {
     // get my entry
     entry_type & e = entry();
@@ -28,28 +29,33 @@ Channel(const name_type & name, verbosity_type verbosity) :
 // accessors
 template <typename severityT, template <typename> typename proxyT>
 auto
-pyre::journal::Channel<severityT, proxyT>::
-name() const -> const name_type &
+pyre::journal::Channel<severityT, proxyT>::name() const -> const name_type &
 {
     // easy enough
     return _name;
 }
 
-
 template <typename severityT, template <typename> typename proxyT>
 auto
-pyre::journal::Channel<severityT, proxyT>::
-verbosity() const -> verbosity_type
+pyre::journal::Channel<severityT, proxyT>::dent() const -> dent_type
 {
     // easy enough
-    return _verbosity;
+    return _dent;
 }
 
 
 template <typename severityT, template <typename> typename proxyT>
 auto
-pyre::journal::Channel<severityT, proxyT>::
-entry() const -> entry_const_reference
+pyre::journal::Channel<severityT, proxyT>::detail() const -> detail_type
+{
+    // easy enough
+    return _detail;
+}
+
+
+template <typename severityT, template <typename> typename proxyT>
+auto
+pyre::journal::Channel<severityT, proxyT>::entry() const -> entry_const_reference
 {
     // easy enough
     return _entry;
@@ -59,11 +65,11 @@ entry() const -> entry_const_reference
 // mutators
 template <typename severityT, template <typename> typename proxyT>
 auto
-pyre::journal::Channel<severityT, proxyT>::
-verbosity(verbosity_type verbosity) -> severity_reference
+pyre::journal::Channel<severityT, proxyT>::indent(dent_type level) -> severity_reference
 {
-    // adjust my verbosity
-    _verbosity = verbosity;
+    // adjust my dent; clip at zero
+    // N.B.: it is used by the manipulators that can't guarantee {level} is positive
+    _dent = std::max(0, _dent + level);
     // enable chaining
     return static_cast<severity_reference>(*this);
 }
@@ -71,8 +77,29 @@ verbosity(verbosity_type verbosity) -> severity_reference
 
 template <typename severityT, template <typename> typename proxyT>
 auto
-pyre::journal::Channel<severityT, proxyT>::
-entry() -> entry_reference
+pyre::journal::Channel<severityT, proxyT>::outdent(dent_type level) -> severity_reference
+{
+    // adjust my dent; clip at zero
+    _dent = std::max(0, _dent - level);
+    // enable chaining
+    return static_cast<severity_reference>(*this);
+}
+
+
+template <typename severityT, template <typename> typename proxyT>
+auto
+pyre::journal::Channel<severityT, proxyT>::detail(detail_type detail) -> severity_reference
+{
+    // adjust my detail
+    _detail = detail;
+    // enable chaining
+    return static_cast<severity_reference>(*this);
+}
+
+
+template <typename severityT, template <typename> typename proxyT>
+auto
+pyre::journal::Channel<severityT, proxyT>::entry() -> entry_reference
 {
     // easy enough
     return _entry;
@@ -82,11 +109,10 @@ entry() -> entry_reference
 // injection support
 template <typename severityT, template <typename> typename proxyT>
 auto
-pyre::journal::Channel<severityT, proxyT>::
-line() -> severity_reference
+pyre::journal::Channel<severityT, proxyT>::line() -> severity_reference
 {
     // ask my entry to move the contents of its accumulator to the page
-    _entry.push();
+    _entry.push(_dent);
     // enable chaining
     return static_cast<severity_reference>(*this);
 }
@@ -94,27 +120,26 @@ line() -> severity_reference
 
 template <typename severityT, template <typename> typename proxyT>
 auto
-pyre::journal::Channel<severityT, proxyT>::
-log() -> severity_reference
+pyre::journal::Channel<severityT, proxyT>::log() -> severity_reference
 {
-     // if there's anything in the entry buffer
-     if (!_entry.buffer().str().empty()) {
-         // move it to the page
-         _entry.push();
-     }
+    // if there's anything in the entry buffer
+    if (!_entry.buffer().str().empty()) {
+        // move it to the page
+        _entry.push(_dent);
+    }
 
-     // very carefully
-     try {
-          // write the journal entry to the device
-          commit();
-     }
-     // fatal channels raise exceptions
-     catch (...) {
-         // clean up the page
-         _entry.flush();
-         // and raise the exception again
-         throw;
-     }
+    // very carefully
+    try {
+        // write the journal entry to the device
+        commit();
+    }
+    // fatal channels raise exceptions
+    catch (...) {
+        // clean up the page
+        _entry.flush();
+        // and raise the exception again
+        throw;
+    }
 
     // clean up the page, but not the metadata; metadata accumulate for the lifetime of a
     // channel instance, so they can be set whenever the information becomes available
@@ -127,8 +152,7 @@ log() -> severity_reference
 
 template <typename severityT, template <typename> typename proxyT>
 auto
-pyre::journal::Channel<severityT, proxyT>::
-commit() -> severity_reference
+pyre::journal::Channel<severityT, proxyT>::commit() -> severity_reference
 {
     // me as a {severity_reference}; this works trivially because of crtp
     severity_reference self = static_cast<severity_reference>(*this);
@@ -139,8 +163,8 @@ commit() -> severity_reference
         return self;
     }
 
-    // if my verbosity exceeds the maximum
-    if (_verbosity > chronicler_t::verbosity()) {
+    // if my detail exceeds the maximum
+    if (_detail > chronicler_t::detail()) {
         // nothing to do
         return self;
     }
@@ -162,8 +186,7 @@ commit() -> severity_reference
 // static interface
 template <typename severityT, template <typename> typename proxyT>
 auto
-pyre::journal::Channel<severityT, proxyT>::
-index() -> index_reference
+pyre::journal::Channel<severityT, proxyT>::index() -> index_reference
 {
     // grant access to the default inventory
     return _index;
@@ -172,8 +195,7 @@ index() -> index_reference
 
 template <typename severityT, template <typename> typename proxyT>
 auto
-pyre::journal::Channel<severityT, proxyT>::
-initializeIndex() -> index_type
+pyre::journal::Channel<severityT, proxyT>::initializeIndex() -> index_type
 {
     // make a default index
     return index_type(true, false);
@@ -183,8 +205,7 @@ initializeIndex() -> index_type
 // bulk channel activation
 template <typename severityT, template <typename> typename proxyT>
 void
-pyre::journal::Channel<severityT, proxyT>::
-activateChannels(const nameset_type & names)
+pyre::journal::Channel<severityT, proxyT>::activateChannels(const nameset_type & names)
 {
     // go through the names in the set
     for (auto & name : names) {
@@ -201,8 +222,7 @@ activateChannels(const nameset_type & names)
 // send all output to the trash
 template <typename severityT, template <typename> typename proxyT>
 void
-pyre::journal::Channel<severityT, proxyT>::
-quiet()
+pyre::journal::Channel<severityT, proxyT>::quiet()
 {
     // make a trash can
     auto trashcan = std::make_shared<trash_t>();
@@ -216,17 +236,32 @@ quiet()
 // send all output to a file with the given name
 template <typename severityT, template <typename> typename proxyT>
 void
-pyre::journal::Channel<severityT, proxyT>::
-logfile(const path_t & name)
+pyre::journal::Channel<severityT, proxyT>::logfile(const path_t & name, filemode_t mode)
 {
     // make a file
-    auto logfile = std::make_shared<file_t>(name);
+    auto logfile = std::make_shared<file_t>(name, mode);
     // register it as the default device
     index().device(logfile);
     // all done
     return;
 }
 
+
+// index management
+template <typename severityT, template <typename> typename proxyT>
+auto
+pyre::journal::Channel<severityT, proxyT>::_initializeIndex() -> index_type
+{
+    // ask my {severity} to do it
+    return severity_type::initializeIndex();
+}
+
+
+// this definition is offline to accommodate a family of NVCC bugs
+template <typename severityT, template <typename> typename proxyT>
+typename pyre::journal::Channel<severityT, proxyT>::index_type
+    pyre::journal::Channel<severityT, proxyT>::_index =
+        pyre::journal::Channel<severityT, proxyT>::_initializeIndex();
 
 #endif
 

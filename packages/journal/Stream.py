@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
-# (c) 1998-2020 all rights reserved
+# (c) 1998-2023 all rights reserved
 
 
 # superclass
@@ -18,8 +18,9 @@ class Stream(Device):
 
 
     # types
-    from .Memo import Memo
     from .Alert import Alert
+    from .Bland import Bland
+    from .Memo import Memo
 
 
     # interface
@@ -31,6 +32,18 @@ class Stream(Device):
         """
         # invoke the alert renderer to format the message
         content = self.alertRenderer.render(palette=self.palette, entry=entry)
+        # and record it
+        self.record(page=content)
+        # all done
+        return self
+
+
+    def help(self, entry):
+        """
+        Generate a help screen
+        """
+        # invoke the memo renderer to format the message
+        content = self.helpRenderer.render(palette=self.palette, entry=entry)
         # and record it
         self.record(page=content)
         # all done
@@ -63,7 +76,7 @@ class Stream(Device):
 
     # metamethods
     def __init__(self, stream, name="stream",
-                 palette=palettes.null, alerts=None, memos=None, **kwds):
+                 palette=palettes.null, alerts=None, help=None, memos=None, **kwds):
         # chain up
         super().__init__(name=name, **kwds)
         # save the stream
@@ -71,8 +84,9 @@ class Stream(Device):
         # save the palette
         self.palette = palette
         # save the renderers
-        self.memoRenderer = memos if memos is not None else self.Memo()
         self.alertRenderer = alerts if alerts is not None else self.Alert()
+        self.helpRenderer = help if help is not None else self.Bland()
+        self.memoRenderer = memos if memos is not None else self.Memo()
 
         # save the palette
         self.palette = palette

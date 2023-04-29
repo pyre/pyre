@@ -1,14 +1,14 @@
 // -*- c++ -*-
 //
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
-// (c) 1998-2020 all rights reserved
+// (c) 1998-2023 all rights reserved
 
 // code guard
 #if !defined(pyre_journal_public_h)
 #define pyre_journal_public_h
 
 
-// external packagesvap
+// external packages
 #include "externals.h"
 // get the forward declarations
 #include "forward.h"
@@ -19,13 +19,21 @@
 // exceptions
 #include "exceptions.h"
 
+// terminal support
+#include "ASCII.h"
+#include "CSI.h"
+#include "ANSI.h"
+
 // global settings
 #include "Chronicler.h"
 
 // message entry
 #include "Entry.h"
 // message metadata
-#include "Verbosity.h"
+#include "Code.h"
+#include "Color.h"
+#include "Detail.h"
+#include "Dent.h"
 #include "Locator.h"
 #include "Note.h"
 #include "Flush.h"
@@ -36,6 +44,7 @@
 
 // renderers
 #include "Alert.h"
+#include "Bland.h"
 #include "Memo.h"
 
 // devices
@@ -61,6 +70,7 @@
 #include "Informational.h"
 #include "Warning.h"
 #include "Error.h"
+#include "Help.h"
 // developer facing
 #include "Debug.h"
 #include "Firewall.h"
@@ -68,16 +78,10 @@
 // manipulators
 #include "manipulators.h"
 
-// terminal support
-#include "ASCII.h"
-#include "CSI.h"
-#include "ANSI.h"
-
 
 // the convenience initializer
 void
-pyre::journal::
-init(int argc, char* argv[])
+pyre::journal::init(int argc, char * argv[])
 {
     // ask {chronicler} to do this
     pyre::journal::chronicler_t::init(argc, argv);
@@ -88,8 +92,7 @@ init(int argc, char* argv[])
 
 // register the application name with the chronicler
 void
-pyre::journal::
-application(const value_t & name)
+pyre::journal::application(const value_t & name)
 {
     // get the global metadata
     auto & notes = chronicler_t::notes();
@@ -103,8 +106,7 @@ application(const value_t & name)
 
 // install the trash can as the global device
 void
-pyre::journal::
-quiet()
+pyre::journal::quiet()
 {
     // forward to the {chronicler_t}
     chronicler_t::quiet();
@@ -113,13 +115,23 @@ quiet()
 }
 
 
+// set the detail threshold
+void
+pyre::journal::setDetail(int detail)
+{
+    // delegate to the {chronicler_t}
+    chronicler_t::detail(detail);
+    // all done
+    return;
+}
+
+
 // send all channel output to a log file
 void
-pyre::journal::
-logfile(const path_t & name)
+pyre::journal::logfile(const path_t & name, filemode_t mode)
 {
     // create the device and register it with the chronicler
-    chronicler_t::device<file_t>(name);
+    chronicler_t::device<file_t>(name, mode);
     // all done
     return;
 }

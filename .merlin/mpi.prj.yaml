@@ -1,0 +1,30 @@
+# -*- yaml -*-
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2023 all rights reserved
+
+
+# the {journal} project contains
+mpi.prj:
+    # a library
+    libraries: "#libmpi"
+
+
+# libjournal
+libmpi:
+    # the name of the library
+    name: mpi
+    # all c++
+    languages: c++
+    # the location of its sources relative to the root of the project
+    root: lib/mpi
+    # external dependencies
+    requires: mpi
+
+    # users #include <pyre/mpi.h>
+    # so deposit all headers in the {pyre} namespace
+    scope: pyre
+    # except this one that acts as the gateway to the library
+    gateway: mpi.h
+
+
+# end of file

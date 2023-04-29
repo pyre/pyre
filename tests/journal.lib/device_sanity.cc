@@ -1,7 +1,7 @@
 // -*- c++ -*-
 //
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
-// (c) 1998-2020 all rights reserved
+// (c) 1998-2023 all rights reserved
 
 
 // get the journal
@@ -21,8 +21,9 @@ public:
 
     // interface
 public:
-    virtual auto memo(const entry_type &) -> Trivial &;
     virtual auto alert(const entry_type &) -> Trivial &;
+    virtual auto help(const entry_type &) -> Trivial &;
+    virtual auto memo(const entry_type &) -> Trivial &;
 };
 
 
@@ -30,27 +31,40 @@ public:
 Trivial::~Trivial() {}
 Trivial::Trivial() : device_t("trivial") {}
 
-// the {memo} method
-auto Trivial::memo(const entry_type &) -> Trivial &
+// the {alert} method
+auto
+Trivial::alert(const entry_type &) -> Trivial &
 {
     // return myself
     return *this;
 }
 
-// and the {alert} method
-auto Trivial::alert(const entry_type &) -> Trivial &
+
+// the {help} method
+auto
+Trivial::help(const entry_type &) -> Trivial &
 {
     // return myself
     return *this;
 }
 
+
+// and the {memo} method
+auto
+Trivial::memo(const entry_type &) -> Trivial &
+{
+    // return myself
+    return *this;
+}
 
 // alias the type
 using trivial_t = Trivial;
 
 
 // exercise the trivial device
-int main() {
+int
+main()
+{
     // instantiate
     trivial_t device;
 

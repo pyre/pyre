@@ -1,0 +1,28 @@
+# -*- graphql -*-
+#
+# {project.authors}
+# (c) {project.span} all rights reserved
+
+
+schema {{
+  query: Query
+}}
+
+
+# the top level query
+type Query {{
+  # server version information
+  version: Version
+}}
+
+
+# server version
+type Version {{
+  major: Int!
+  minor: Int!
+  micro: Int!
+  revid: String!
+}}
+
+
+# end of file

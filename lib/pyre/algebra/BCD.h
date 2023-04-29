@@ -3,7 +3,7 @@
 //
 // michael a.g. aïvázis
 // orthologue
-// (c) 1998-2020 all rights reserved
+// (c) 1998-2023 all rights reserved
 //
 
 #if !defined(pyre_algebra_BCD_h)

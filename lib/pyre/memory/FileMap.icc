@@ -1,0 +1,134 @@
+// -*- c++ -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2023 all rights reserved
+
+// code guard
+#if !defined(pyre_memory_FileMap_icc)
+#error this file contains implementation details for pyre::memory::FileMap
+#else
+
+
+// metamethods
+// destructor
+pyre::memory::FileMap::
+~FileMap()
+{
+    // remove the mapping
+    unmap();
+}
+
+
+// constructor that maps an existing data product
+pyre::memory::FileMap::
+FileMap(uri_type uri, writable_type writable) :
+    _uri { uri },
+    _writable { writable },
+    _data { nullptr },
+    _bytes {},
+    _info {}
+{
+    // check the file
+    stat();
+    // and map it
+    map();
+
+    // make a channel
+    pyre::journal::debug_t channel("pyre.memory.map");
+    // sign on
+    channel
+        << "mapped existing data product:" << pyre::journal::newline
+        << "  name: " << _uri << pyre::journal::newline
+        << "  size: " << _bytes << " bytes" << pyre::journal::newline
+        << "  addr: " << _data
+        << pyre::journal::endl(__HERE__);
+
+    // all done
+    return;
+}
+
+
+// constructor that creates a new one
+pyre::memory::FileMap::
+FileMap(uri_type uri, size_type bytes) :
+    _uri { uri },
+    _writable { true },
+    _data { nullptr },
+    _bytes { bytes },
+    _info {}
+{
+    // make the actual file; careful: existing products are deleted
+    create();
+    // check the file
+    stat();
+    // and map it
+    map();
+
+    // make a channel
+    journal::debug_t channel("pyre.memory.map");
+    // sign on
+    channel
+        << "created and mapped a new data product:" << pyre::journal::newline
+        << "  name: " << _uri << pyre::journal::newline
+        << "  size: " << _bytes << " bytes" << pyre::journal::newline
+        << "  addr: " << _data
+        << pyre::journal::endl(__HERE__);
+
+    // all done
+    return;
+}
+
+
+// interface
+// get the path to my data product
+auto
+pyre::memory::FileMap::
+uri() const -> uri_type
+{
+    // easy enough
+    return _uri;
+}
+
+
+// check whether the block is writable
+auto
+pyre::memory::FileMap::
+writable() const -> bool
+{
+    // easy enough
+    return _writable;
+}
+
+
+// get the number of bytes of the memory block
+auto
+pyre::memory::FileMap::
+bytes() const -> size_type
+{
+    // easy enough
+    return _bytes;
+}
+
+
+// get the address of the block
+auto
+pyre::memory::FileMap::
+data() const -> pointer
+{
+    // easy enough
+    return _data;
+}
+
+
+// syntactic sugar
+pyre::memory::FileMap::
+operator pointer() const
+{
+    // return the address of the memory block
+    return data();
+}
+
+
+# endif
+
+// end of file

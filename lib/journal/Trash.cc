@@ -1,7 +1,7 @@
 // -*- c++ -*-
 //
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
-// (c) 1998-2020 all rights reserved
+// (c) 1998-2023 all rights reserved
 
 
 // external support
@@ -18,8 +18,10 @@
 
 // renderer support
 #include "Renderer.h"
-#include "Memo.h"
 #include "Alert.h"
+#include "Bland.h"
+#include "Memo.h"
+
 // my superclass
 #include "Device.h"
 // get the stream declaration
@@ -28,33 +30,41 @@
 
 // metamethods
 // destructor
-pyre::journal::Trash::
-~Trash()
-{}
+pyre::journal::Trash::~Trash() {}
 
 
 // interface
 auto
-pyre::journal::Trash::
-memo(const entry_type & entry) -> Trash &
+pyre::journal::Trash::alert(const entry_type & entry) -> Trash &
 {
     // make an empty palette
     palette_type palette;
     // go through the motions, and then discard the content
-    _memo->render(palette, entry);
+    _alert->render(palette, entry);
     // all done
     return *this;
 }
 
 
 auto
-pyre::journal::Trash::
-alert(const entry_type & entry) -> Trash &
+pyre::journal::Trash::help(const entry_type & entry) -> Trash &
 {
     // make an empty palette
     palette_type palette;
     // go through the motions, and then discard the content
-    _alert->render(palette, entry);
+    _help->render(palette, entry);
+    // all done
+    return *this;
+}
+
+
+auto
+pyre::journal::Trash::memo(const entry_type & entry) -> Trash &
+{
+    // make an empty palette
+    palette_type palette;
+    // go through the motions, and then discard the content
+    _memo->render(palette, entry);
     // all done
     return *this;
 }

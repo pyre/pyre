@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2020 all rights reserved
+# (c) 1998-2023 all rights reserved
 #
 
 
@@ -13,7 +13,7 @@ PROJ_CLEAN += scratch
 # standard targets
 all: test clean
 
-test: sanity paths
+test: sanity paths pathhash
 
 sanity:
 	${PYTHON} ./sanity.py
@@ -24,6 +24,9 @@ paths: prep
 	${PYTHON} ./path_parts.py
 	${PYTHON} ./path_resolution.py
 	${PYTHON} ./path_tuple.py
+
+pathhash:
+	${PYTHON} ./pathhash.py
 
 prep:
 	@$(RM_RF) scratch

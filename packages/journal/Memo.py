@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
-# (c) 1998-2020 all rights reserved
+# (c) 1998-2023 all rights reserved
 
 
 # superclass
 from .Renderer import Renderer
 
 
-# the renderer or developer-facing essages
+# the renderer or developer-facing messages
 class Memo(Renderer):
     """
     The renderer of user-facing messages
@@ -29,11 +29,11 @@ class Memo(Renderer):
 
         # get the notes
         notes = entry.notes
+        # grab the severity
+        severity = notes["severity"]
 
         # setup the marker
-        marker = self.marker
-        # otherwise, grab the severity
-        severity = notes["severity"]
+        marker = self.headerMarker
 
         # get the name of the file
         filename = notes["filename"]
@@ -88,33 +88,16 @@ class Memo(Renderer):
 
             # assemble the line and make it available
             yield ''.join(buffer)
-
-        # render the channel name and severity
-        buffer = [
-            palette[severity], marker, palette["reset"],
-            palette[severity], notes["channel"], palette["reset"],
-            "(", palette[severity], severity, palette["reset"], ")"
-            ]
-        # assemble and push
-        yield ''.join(buffer)
-
-        # now, for the rest of the metadata; make a pile of the information we have displayed
-        # already
-        done = { "severity", "channel", "filename", "line", "function", "source" }
-        # go through the metadata
-        for key, value in notes.items():
-            # if this is something we've dealt with
-            if key in done:
-                # skip it
-                continue
-            # otherwise, render it
+        # if we don't have location information
+        else:
+            # just print the channel severity
             buffer = [
-                palette[severity], marker, palette["reset"],
-                palette[severity], key, palette["reset"],
-                ": ",
-                palette[severity], value, palette["reset"],
-                ]
-            # assemble and push
+                palette[severity],
+                severity,
+                palette["reset"],
+                ":",
+            ]
+            # assemble the line and make it available
             yield ''.join(buffer)
 
         # all done
@@ -136,7 +119,7 @@ class Memo(Renderer):
         notes = entry.notes
 
         # get the marker
-        marker = self.continuation
+        marker = self.bodyMarker
         # and the severity
         severity = notes["severity"]
 
@@ -154,10 +137,88 @@ class Memo(Renderer):
         return
 
 
+    def footer(self, palette, entry):
+        """
+        Generate the message body
+        """
+        # get the page
+        page = entry.page
+        # if there's nothing to do
+        if not page:
+            # move on
+            return
+
+        # get the notes
+        notes = entry.notes
+        # grab the severity
+        severity = notes["severity"]
+        # and the name of the channel
+        channel = notes["channel"]
+
+        # set up the marker
+        marker = self.footerMarker
+        # grab the chronicler
+        from . import chronicler
+
+        # if the {chronicler} decoration level is sufficiently high
+        if chronicler.decor > 2:
+            # look up the application name
+            app = notes.get("application")
+            # if we know it
+            if app:
+                # render it
+                buffer = [
+                    palette[severity], marker, palette["reset"],
+                    "from application ",
+                    palette[severity], app, palette["reset"],
+                ]
+                # assemble and push
+                yield ''.join(buffer)
+
+            # render the channel info
+            buffer = [
+                palette[severity], marker, palette["reset"],
+                "because the ",
+                palette[severity], severity, palette["reset"],
+                " channel '",
+                palette[severity], channel, palette["reset"],
+                "' is active"
+                ]
+            # assemble and push
+            yield ''.join(buffer)
+
+        # now, for the rest of the metadata
+        if chronicler.decor > 1:
+        # make a pile of the information we have displayed # already
+            done = {
+                "severity", "channel", "application",
+                "filename", "line", "function", "source",
+            }
+            # go through the metadata
+            for key, value in notes.items():
+                # if this is something we've dealt with
+                if key in done:
+                    # skip it
+                    continue
+                # otherwise, render it
+                buffer = [
+                    palette[severity], marker, palette["reset"],
+                    palette[severity], key, palette["reset"],
+                    ": ",
+                    palette[severity], value, palette["reset"],
+                    ]
+                # assemble and push
+                yield ''.join(buffer)
+
+        # all done
+        return
+
+
     # implementation details
     maxlen = 60
-    marker = " >> "
-    continuation = " -- "
+    headerMarker = " >> "
+    bodyMarker = " -- "
+    footerMarker = " .. "
 
 
 # end of file

@@ -1,7 +1,7 @@
 // -*- c++ -*-
 //
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
-// (c) 1998-2020 all rights reserved
+// (c) 1998-2023 all rights reserved
 
 // code guard
 #if !defined(pyre_journal_py_forward_h)
@@ -14,13 +14,14 @@
 // the {libjournal} namespace
 namespace pyre::journal::py {
 
-    // bindings of opaque types
-    void opaque(py::module &);
     // exceptions
     void exceptions(py::module &);
 
     // module level convenience methods
     void api(py::module &);
+
+    // journal entry parts
+    void entry(py::module &);
 
     // module methods
     void chronicler(py::module &);
@@ -33,7 +34,8 @@ namespace pyre::journal::py {
     void info(py::module &);
     void warning(py::module &);
     void error(py::module &);
-}
+    void help(py::module &);
+} // namespace pyre::journal::py
 
 
 #endif

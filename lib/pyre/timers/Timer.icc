@@ -1,64 +1,44 @@
-// -*- C++ -*-
-// -*- coding: utf-8 -*-
+// -*- c++ -*-
 //
-// michael a.g. aïvázis
-// orthologue
-// (c) 1998-2020 all rights reserved
-//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2023 all rights reserved
 
-
+// code guard
 #if !defined(pyre_timers_Timer_icc)
-#error This header file contains implementation details of the typename Timer
+#error this file contains implementation details for pyre::timers::Timer
 #else
 
-// interface
-auto pyre::timers::Timer::name() const -> name_t {
+
+// metamethods
+template <class clockT, template <class, class> class proxyT>
+pyre::timers::Timer<clockT, proxyT>::Timer(const name_type & name) :
+    // lookup my movement
+    proxy_type(_registry.lookup(name)),
+    // save my name
+    _name(name)
+{}
+
+
+// accessors
+template <class clockT, template <class, class> class proxyT>
+auto
+pyre::timers::Timer<clockT, proxyT>::name() const
+{
+    // easy enough
     return _name;
 }
 
-auto pyre::timers::Timer::start() -> Timer & {
-    // start a timer: record a timestamp so i can report elapsed time later
-    _start = _theClock.time();
-    // all done
-    return *this;
+
+// static interface
+template <class clockT, template <class, class> class proxyT>
+auto
+pyre::timers::Timer<clockT, proxyT>::registry() -> registry_reference
+{
+    // easy enough
+    return _registry;
 }
 
-auto pyre::timers::Timer::stop() -> Timer & {
-    // start a timer: record a timestamp so i can report elapsed time later
-    _accumulated += _theClock.time() - _start;
-    // all done
-    return *this;
-}
-
-auto pyre::timers::Timer::reset() -> Timer & {
-    // zero out the accumulated time
-    _accumulated = 0;
-    // all done
-    return *this;
-}
-
-auto pyre::timers::Timer::read() {
-    // get the elapsed time recorded
-    // running timers do not include the time interval since they were last stopped
-    // use lap to read accumulated time non-destructively from a running timer
-    return _theClock.elapsed(_accumulated);
-}
-
-auto pyre::timers::Timer::lap() {
-    // read the clock
-    clock_t::tick_t now = _theClock.time();
-    // return the accumulated time non-destructively
-    return _theClock.elapsed(_accumulated + now - _start);
-}
-
-// constructor
-pyre::timers::Timer::Timer(name_t name) :
-    _name(name),
-    _start(_theClock.time()),
-    _accumulated(0) {
-}
 
 #endif
-
 
 // end of file

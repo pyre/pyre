@@ -1,7 +1,7 @@
 // -*- c++ -*-
 //
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
-// (c) 1998-2020 all rights reserved
+// (c) 1998-2023 all rights reserved
 
 
 // external support
@@ -18,8 +18,9 @@
 
 // renderer support
 #include "Renderer.h"
-#include "Memo.h"
 #include "Alert.h"
+#include "Bland.h"
+#include "Memo.h"
 
 // my superclass
 #include "Device.h"
@@ -29,28 +30,12 @@
 
 // metamethods
 // destructor
-pyre::journal::File::
-~File()
-{}
+pyre::journal::File::~File() {}
 
 
 // interface
 auto
-pyre::journal::File::
-memo(const entry_type & entry) -> File &
-{
-    // get the memo renderer to format the message
-    auto content = _memo->render(_palette, entry);
-    // inject it into my file
-    _file << content;
-    // all done
-    return *this;
-}
-
-
-auto
-pyre::journal::File::
-alert(const entry_type & entry) -> File &
+pyre::journal::File::alert(const entry_type & entry) -> File &
 {
     // get the page and the notes
     auto & page = entry.page();
@@ -67,6 +52,30 @@ alert(const entry_type & entry) -> File &
     // inject it into my file
     _file << content;
 
+    // all done
+    return *this;
+}
+
+
+auto
+pyre::journal::File::help(const entry_type & entry) -> File &
+{
+    // get the memo renderer to format the message
+    auto content = _help->render(_palette, entry);
+    // inject it into my file
+    _file << content;
+    // all done
+    return *this;
+}
+
+
+auto
+pyre::journal::File::memo(const entry_type & entry) -> File &
+{
+    // get the memo renderer to format the message
+    auto content = _memo->render(_palette, entry);
+    // inject it into my file
+    _file << content;
     // all done
     return *this;
 }

@@ -2,10 +2,12 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2020 all rights reserved
+# (c) 1998-2023 all rights reserved
 #
 
 
+# externals
+import uuid
 # access to the algebraic package
 from .. import calc
 # access to the locators
@@ -83,6 +85,8 @@ class Slot(Dashboard, metaclass=calc.calculator):
         super().__init__(**kwds)
         # save my state
         self.key = key
+        # give me an id
+        self.pyre_id = uuid.uuid1()
         # all done
         return
 

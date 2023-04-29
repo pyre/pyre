@@ -2,14 +2,12 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2020 all rights reserved
+# (c) 1998-2023 all rights reserved
 #
 
 
 # externals
-import operator
 import itertools
-from .. import tracking
 # superclass
 from .Inventory import Inventory
 

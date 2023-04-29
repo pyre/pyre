@@ -1,7 +1,7 @@
 // -*- c++ -*-
 //
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
-// (c) 1998-2020 all rights reserved
+// (c) 1998-2023 all rights reserved
 
 
 // get the journal
@@ -16,8 +16,8 @@ using chronicler_t = pyre::journal::chronicler_t;
 
 // verify that the initial chronicler global state is as expected
 int main() {
-    // verify that the default verbosity is at level 1
-    assert (chronicler_t::verbosity() == 1);
+    // verify that the default detail is at level 1
+    assert (chronicler_t::detail() == 1);
 
     // get the global metadata map
     chronicler_t::notes_type & notes = chronicler_t::notes();

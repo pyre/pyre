@@ -1,0 +1,75 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "pyre: debug pyre application",
+            "type": "python",
+            "request": "launch",
+            "python": "${command:python.interpreterPath}",
+            "cwd": "${workspaceFolder}",
+            "program": "${file}",
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "merlin: debug merlin compilers",
+            "type": "python",
+            "request": "launch",
+            "python": "${command:python.interpreterPath}",
+            "cwd": "${workspaceFolder}",
+            "program": "${env:mm_prefix}/bin/merlin",
+            "args": [
+                "info",
+                "compilers",
+                "--compilers=gnu"
+            ],
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "merlin: debug merlin make builder",
+            "type": "python",
+            "request": "launch",
+            "python": "${command:python.interpreterPath}",
+            "cwd": "${workspaceFolder}",
+            "program": "${env:mm_prefix}/bin/merlin",
+            "args": [
+                "lib",
+                "build",
+                "--builder=make"
+            ],
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "pyre: [gdb/linux]: debug C++ extension",
+            "type": "cppdbg",
+            "request": "attach",
+            "program": "/usr/bin/python3",
+            "processId": "${command:pickProcess}",
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ]
+        },
+        {
+            "name": "pyre: [gdb/macos]: debug C++ extension",
+            "type": "cppdbg",
+            "request": "attach",
+            "program": "/opt/local/bin/python3",
+            "processId": "${command:pickProcess}",
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ]
+        }
+    ]
+}

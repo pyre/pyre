@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2020 all rights reserved
+# (c) 1998-2023 all rights reserved
 #
 
 
@@ -14,15 +14,21 @@ For more details, see http://pyre.orthologue.com.
 For terms of use, see pyre.license()
 """
 
-# version check
-# python version information is in {sys.version}
+# check the version of python
 import sys
-# unwrap
-major, minor, _, _, _ = sys.version_info
+major, minor, micro, _, _ = sys.version_info
+# pack it
+current = (major, minor,  micro)
+# minimum required
+required = (3, 7, 2)
 # check
-if major < 3 or (major == 3 and minor < 6):
-    # complain
-    raise RuntimeError("pyre needs python 3.6 or newer")
+if current < required:
+    # get the exception type
+    from .framework.exceptions import PyreError
+    # stringify the required version
+    required = '.'.join(map(str, required))
+    # and complain
+    raise RuntimeError(f"pyre requires python {required} or newer")
 
 
 # convenience
@@ -44,7 +50,7 @@ def resolve(uri):
 
 def loadConfiguration(uri):
     """
-    Open {uri} and attempt to load its contents into the configaration model
+    Open {uri} and attempt to load its contents into the configuration model
     """
     # build a locator for these settings
     here = tracking.here(level=1)
@@ -134,10 +140,10 @@ def where(configurable, attribute=None):
     if attribute is None: return configurable.pyre_locator
     # retrieve the trait descriptor
     trait = configurable.pyre_trait(alias=attribute)
-    # find the slot where the attribute is stored
-    slot = configurable.pyre_inventory[trait]
-    # and return its locator
-    return slot.locator
+    # grab the locator of the slot where the attribute value is stored
+    locator = configurable.pyre_inventory.getTraitLocator(trait)
+    # and return it
+    return locator
 
 
 # put the following start-up steps inside functions so we can have better control over their
@@ -146,13 +152,6 @@ def boot():
     """
     Perform all the initialization steps necessary to bootstrap the framework
     """
-    # check the version of python
-    import sys
-    major, minor, micro, _, _ = sys.version_info
-    if major < 3 or (major == 3 and minor < 2):
-        from .framework.exceptions import PyreError
-        raise PyreError(description="pyre needs python 3.2 or newer")
-
     # check whether the user has indicated we should skip booting
     try:
         import __main__
@@ -161,6 +160,26 @@ def boot():
     except:
         # just ignore it and carry on
         pass
+
+    # now, check whether
+    try:
+        # the user has prohibited loading the extension module
+        without_libpyre = __main__.pyre_without_libpyre
+    # if there is no such setting
+    except AttributeError:
+        # assume that this means we should try
+        without_libpyre = False
+
+    # access the module level variable
+    global libpyre
+    # if we are not supposed to load the bindings
+    if without_libpyre:
+        # mark it
+        libpyre = None
+    # otherwise
+    else:
+        # pull the bindings, if they exist
+        from .extensions import libpyre
 
     # grab the executive factory
     from . import framework
@@ -206,6 +225,7 @@ def debug():
 
 
 # kickstart
+libpyre = None
 # invoke the debug method in case the user asked for debugging support
 debug()
 
@@ -235,28 +255,34 @@ from .framework.exceptions import PyreError
 executive = boot()
 # if the framework booted properly
 if executive:
-    # turn on the executive
-    executive.activate()
-    # register this package
-    package = executive.registerPackage(name='pyre', file=__file__)
-    # record its geography
-    home, prefix, defaults = package.layout()
+    # low level stuff
+    from .extensions import libh5
     # package managers
     from . import externals
     # platform managers
     from . import platforms
-    # discover information about the runtime environment
-    executive.discover()
     # application shells
     from .shells import application, action, plexus, command, panel
     # support for filesystems
     from . import filesystem
-    # support for workflows
+    # hdf5
+    from . import h5
+    # workflows
     from . import flow
     # document rendering
     from . import weaver
     # the interprocess communication mechanisms
     from . import ipc, nexus, services
+
+    # discover information about the runtime environment
+    executive.discover()
+    # and turn on the executive
+    executive.activate()
+
+    # register this package
+    package = executive.registerPackage(name='pyre', file=__file__)
+    # and record its geography
+    home, prefix, defaults = package.layout()
 
 
 # clean up the executive instance when the interpreter shuts down

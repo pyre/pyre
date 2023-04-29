@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2020 all rights reserved
+# (c) 1998-2023 all rights reserved
 #
 
 
@@ -114,17 +114,6 @@ class AbstractNode:
 
     # implementation details
     _pyre_hasAlgebra = False
-
-
-    # debugging support
-    def dump(self, name, indent):
-        """
-        Print my name and value
-        """
-        # show me
-        print(f"{indent}{name}: {self.value}")
-        # all done
-        return self
 
 
 # end of file

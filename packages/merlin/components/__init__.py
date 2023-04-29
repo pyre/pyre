@@ -2,20 +2,14 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2020 all rights reserved
+# (c) 1998-2023 all rights reserved
 #
 
 
-# the spell protocol
-from .Action import Action as action
-# the spell component
-from .Spell import Spell as spell
-# the locally enhanced component base class
-from .Component import Component as component
-# the singletons
-from .Dashboard import Dashboard as dashboard
-# the executive
-from .Merlin import Merlin as merlin
+# helpers
+from .FHS import FHS as fhs
+# the foundries
+from .Language import Language as language
 
 
 # end of file

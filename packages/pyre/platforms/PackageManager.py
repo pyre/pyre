@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
-# (c) 1998-2020 all rights reserved
-#
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2023 all rights reserved
 
 
 # the framework
@@ -11,11 +9,10 @@ import pyre
 
 
 # declaration
-class PackageManager(pyre.protocol, family='pyre.platforms.packagers'):
+class PackageManager(pyre.protocol, family="pyre.platforms.packagers"):
     """
     Encapsulation of host specific information
     """
-
 
     # requirements
     @pyre.provides
@@ -56,7 +53,7 @@ class PackageManager(pyre.protocol, family='pyre.platforms.packagers'):
         The type of information returned is determined by the package manager. Typically, it
         contains the list of files that are installed by this package, but it may contain other
         filesystem entities as well. This method should return a non-empty sequence if and only
-        if {pakage} is actually fully installed
+        if {package} is actually fully installed
         """
 
     @pyre.provides
@@ -65,7 +62,6 @@ class PackageManager(pyre.protocol, family='pyre.platforms.packagers'):
         Dispatch to the {packageInstance} configuration procedure that is specific to the
         particular implementation of this protocol
         """
-
 
     # framework obligations
     @classmethod
@@ -76,6 +72,7 @@ class PackageManager(pyre.protocol, family='pyre.platforms.packagers'):
         # the host should specify a sensible default; if there is nothing there, this is an
         # unmanaged system that relies on environment variables and standard locations
         from .Bare import Bare
+
         # return the support for unmanaged systems
         return Bare
 

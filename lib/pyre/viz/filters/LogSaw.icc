@@ -1,0 +1,48 @@
+// -*- c++ -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2023 all rights reserved
+
+// code guard
+#if !defined(pyre_viz_filters_LogSaw_icc)
+#error this file contains implementation details for pyre::viz::LogSaw
+#else
+
+
+// metamethods
+// constructor
+template <class sourceT>
+pyre::viz::filters::LogSaw<sourceT>::LogSaw(source_const_reference source) : _source(source)
+{}
+
+
+// interface
+template <class sourceT>
+auto
+pyre::viz::filters::LogSaw<sourceT>::operator*() const -> value_type
+{
+    // get the magnitude of the value
+    auto mag = std::abs(*_source);
+    // compute its log
+    auto log = std::log2(mag);
+    // project it onto [0,1]
+    auto value = std::abs(log - std::trunc(log));
+    // and return it
+    return value;
+}
+
+
+template <class sourceT>
+auto
+pyre::viz::filters::LogSaw<sourceT>::operator++() -> void
+{
+    // increment my source
+    ++_source;
+    // all done
+    return;
+}
+
+
+#endif
+
+// end of file

@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2020 all rights reserved
+# (c) 1998-2023 all rights reserved
 #
 
 
@@ -115,7 +115,7 @@ class Merlin(pyre.plexus, family='merlin.components.plexus'):
         super().__init__(name=name, **kwds)
 
         # the spell manager is built during the construction of superclass; local alias
-        self.spellbook = self.pyre_repertoir
+        self.spellbook = self.pyre_repertoire
 
         # the curator
         from .Curator import Curator
@@ -171,7 +171,7 @@ class Merlin(pyre.plexus, family='merlin.components.plexus'):
 
 
     # support
-    def pyre_newRepertoir(self):
+    def pyre_newRepertoire(self):
         """
         Build my spell manager
         """

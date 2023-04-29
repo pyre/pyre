@@ -1,236 +1,71 @@
-// -*- C++ -*-
-// -*- coding: utf-8 -*-
+// -*- c++ -*-
 //
-// michael a.g. aïvázis
-// orthologue
-// (c) 1998-2020 all rights reserved
-//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2023 all rights reserved
 
 // code guard
 #if !defined(pyre_grid_Index_icc)
-#error This header file contains implementation details of class pyre::grid::Index
-#endif
+#error this file contains implementation details for pyre::grid::Index
+#else
 
 
-// meta-methods
-template <typename repT> template <typename... argT>
-pyre::grid::Index<repT>::
-Index(argT... value) :
-    _index{value...}
+// metamethods
+// constructor that fills an index with a specific value
+template <class containerT>
+constexpr pyre::grid::Index<containerT>::Index(rank_type value) : rep_type {}
+{
+    // fill my representation with {value}
+    // std::fill(this->begin(), this->end(), value);
+    // this would be the preferred way, but {std::fill} is not {constexpr} until {c++20}, so
+    for (auto & axis : *this) {
+        // set the value
+        axis = value;
+    }
+}
+
+
+// constructor that accepts an initializer list
+template <class containerT>
+template <typename... argT>
+constexpr pyre::grid::Index<containerT>::Index(argT... idx) : rep_type(idx...)
 {}
 
 
-// interface
-// initializer with a constant value
-template <typename repT>
+// add a shape to an index
+template <class indexContainerT, class shapeContainerT>
 constexpr auto
-pyre::grid::Index<repT>::
-fill(value_type value) {
-    // make an empty one
-    Index<rep_type> idx {};
-    // fill it with {value}
-    std::fill(idx.begin(), idx.end(), value);
-    // all done
-    return idx;
-}
+pyre::grid::operator+(const Index<indexContainerT> & i, const Shape<shapeContainerT> & s)
+    -> Index<indexContainerT>
+{
+    // get the index rank
+    constexpr auto rank = Index<indexContainerT>::rank();
+    // make a default index
+    Index<indexContainerT> sum;
 
-// dimensionality of the index
-template <typename repT>
-constexpr auto
-pyre::grid::Index<repT>::
-dim() {
-    // ask my rep
-    return std::tuple_size<rep_type>::value;
-}
-
-template <typename repT>
-constexpr auto
-pyre::grid::Index<repT>::
-size() const {
-    // easy enough
-    return _index.size();
-}
-
-// value access
-template <typename repT>
-auto &
-pyre::grid::Index<repT>::
-operator[] (size_type item) {
-    // bounds check
-#if defined(DEBUG_CHECK_BOUNDS)
-    if (item >= size()) {
-        // open a channel
-        pyre::journal::firewall_t firewall("pyre.grid.bounds");
-        // complain
-        firewall
-            << pyre::journal::at(__HERE__)
-            << "index error: out of range: " << item << " > " << size()-1
-            << pyre::journal::endl;
-
+    // go through each axis
+    for (auto axis = 0; axis < rank; ++axis) {
+        // do the math
+        sum[axis] = i[axis] + s[axis];
     }
-#endif
-    // return the address of the indicated item
-    return _index[item];
-}
 
-
-template <typename repT>
-auto
-pyre::grid::Index<repT>::
-operator[] (size_type item) const {
-    // bounds check
-#if defined(DEBUG_CHECK_BOUNDS)
-    if (item >= size()) {
-        // open a channel
-        pyre::journal::firewall_t firewall("pyre.grid.bounds");
-        // complain
-        firewall
-            << pyre::journal::at(__HERE__)
-            << "index error: out of range: " << item << " > " << size()-1
-            << pyre::journal::endl;
-
-    }
-#endif
-    // look up the item value and return it
-    return _index[item];
-}
-
-
-// loops
-template <typename repT>
-auto
-pyre::grid::Index<repT>::
-begin() const {
-    // the array itself is the beginning
-    return _index.cbegin();
-}
-
-
-template <typename repT>
-auto
-pyre::grid::Index<repT>::
-end() const {
-    // compute the element "one past the end"
-    return _index.cend();
-}
-
-
-template <typename repT>
-auto
-pyre::grid::Index<repT>::
-begin() {
-    // the array itself is the beginning
-    return _index.begin();
-}
-
-
-template <typename repT>
-auto
-pyre::grid::Index<repT>::
-end() {
-    // compute the element "one past the end"
-    return _index.end();
-}
-
-
-// operators on indices
-template <typename repT>
-auto
-pyre::grid::
-operator==(const Index<repT> & one, const Index<repT> & two) {
-    // delegate to the standard algorithm
-    return std::equal(one.begin(), one.end(), two.begin());
-}
-
-
-template <typename repT>
-auto
-pyre::grid::
-operator!=(const Index<repT> & one, const Index<repT> & two) {
-    // easy enough
-    return !(one == two);
-}
-
-
-template <typename repT>
-auto
-pyre::grid::
-operator+(const Index<repT> & one, const Index<repT> & two) {
-    // make a default one
-    Index<repT> sum {};
-    // go through its slots
-    for (typename Index<repT>::size_type slot=0; slot < one.size(); ++slot) {
-        // and set each one to the sum of the other two
-        sum[slot] = one[slot] + two[slot];
-    }
     // all done
     return sum;
 }
 
 
-template <typename repT>
-auto
-pyre::grid::
-operator-(const Index<repT> & one, const Index<repT> & two) {
-    // make a default one
-    Index<repT> sum {};
-    // go through its slots
-    for (typename Index<repT>::size_type slot=0; slot < one.size(); ++slot) {
-        // and set each one to the sum of the other two
-        sum[slot] = one[slot] - two[slot];
-    }
-    // all done
-    return sum;
-}
+// support for structured bindings
+template <class containerT>
+class std::tuple_size<pyre::grid::Index<containerT>> :
+    public std::integral_constant<int, pyre::grid::Index<containerT>::rank()> {};
 
 
-template <typename repT>
-auto
-pyre::grid::
-operator*(int scale, const Index<repT> & idx) {
-    // make a default one
-    Index<repT> res = idx;
-    // go through its slots
-    for (typename Index<repT>::size_type slot=0; slot < idx.size(); ++slot) {
-        // and set each one to the sum of the other two
-        res[slot] *= scale;
-    }
-    // all done
-    return res;
-}
+template <std::size_t I, class containerT>
+struct std::tuple_element<I, pyre::grid::Index<containerT>> {
+    static_assert(I < pyre::grid::Index<containerT>::rank(), "index is out of bounds");
+    using type = typename containerT::value_type;
+};
 
 
-template <typename repT>
-auto
-pyre::grid::
-operator*(const Index<repT> & idx, int scale) {
-    // make a default one
-    Index<repT> res = idx;
-    // go through its slots
-    for (typename Index<repT>::size_type slot=0; slot < idx.size(); ++slot) {
-        // and set each one to the sum of the other two
-        res[slot] *= scale;
-    }
-    // all done
-    return res;
-}
-
-
-template <typename repT>
-auto &
-pyre::grid::
-operator<<(std::ostream & stream, const pyre::grid::Index<repT> & index) {
-    // initialize; do it in this scope scope so we can use the iterator after the loop
-    auto v = index.begin();
-    // inject up to the last coordinate
-    for (; v != index.end()-1; ++v) {
-        stream << *v << ", ";
-    }
-    // and now the last one
-    stream << *v;
-    // all done
-    return stream;
-}
-
+#endif
 
 // end of file

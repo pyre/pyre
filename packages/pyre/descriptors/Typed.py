@@ -2,12 +2,12 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2020 all rights reserved
+# (c) 1998-2023 all rights reserved
 #
 
 
 # externals
-import collections
+import collections.abc
 # my base class is from {pyre.schemata}
 from ..schemata.Schema import Schema
 
@@ -43,16 +43,17 @@ class Typed(Schema):
         for converter in self.converters:
             # by asking each register converter to prep the value
             value = converter(descriptor=self, value=value, **kwds)
-        # cast
+        # invoke my schema to coerce the {value}
         value = self.coerce(value=value, **kwds)
         # normalize
         for normalizer in self.normalizers:
-            # by asking each normalizer to bring {value} in normal form
+            # by asking each normalizer to bring {value} to normal form
             value = normalizer(descriptor=self, value=value, **kwds)
         # validate
         for validator in self.validators:
             # by giving a chance to each validator to raise an exception
             value = validator(descriptor=self, value=value, **kwds)
+
         # and return the new value
         return value
 
@@ -95,7 +96,7 @@ class Typed(Schema):
         # handle anything empty
         if not processors: return []
         # if i have an iterable
-        if isinstance(processors, collections.Iterable):
+        if isinstance(processors, collections.abc.Iterable):
             # turn it into a list
             return list(processors)
         # otherwise, place the lone processor in a list

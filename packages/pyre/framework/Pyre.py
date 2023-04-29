@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2020 all rights reserved
+# (c) 1998-2023 all rights reserved
 #
 
 
@@ -106,8 +106,6 @@ class Pyre(Executive):
 
         # component linker
         self.linker = self.newLinker()
-        # the timer registry
-        self.timekeeper = self.newTimerRegistry()
 
         # all done
         return

@@ -1,0 +1,123 @@
+// -*- c++ -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2023 all rights reserved
+
+// code guard
+#if !defined(pyre_grid_IndexIterator_icc)
+#error this file contains implementation details for pyre::grid::IndexIterator
+#else
+
+
+// metamethods
+// shape, order, origin
+template <class packingT>
+constexpr
+pyre::grid::IndexIterator<packingT>::
+IndexIterator(shape_const_reference shape, order_const_reference order,
+              index_const_reference origin) :
+    _current { origin },
+    _shape { shape },
+    _order { order },
+    _origin { origin },
+    _step { 1 }
+{}
+
+
+// shape, order, origin, step
+template <class packingT>
+constexpr
+pyre::grid::IndexIterator<packingT>::
+IndexIterator(shape_const_reference shape, order_const_reference order,
+              index_const_reference origin, index_const_reference step) :
+    _current { origin },
+    _shape { shape },
+    _order { order },
+    _origin { origin },
+    _step { step }
+{}
+
+
+// the iterator protocol
+// dereference
+template <class packingT>
+constexpr auto
+pyre::grid::IndexIterator<packingT>::
+operator*() const -> index_const_reference
+{
+    // where i point
+    return _current;
+}
+
+
+// arithmetic: prefix
+template <class packingT>
+constexpr auto
+pyre::grid::IndexIterator<packingT>::
+operator++() -> iterator_reference
+{
+    // go through each rank in the given {order}
+    for (auto rank : _order) {
+        // get the limiting value for this rank
+        rank_type limit = _origin[rank] + _shape[rank];
+        // get my current value for this rank and increment it
+        auto value = _current[rank] + _step[rank];
+        // if the value didn't overflow
+        if (value < limit) {
+            // store it
+            _current[rank] = value;
+            // all done
+            return *this;
+        }
+        // if the value overflowed, set it to its starting value and grab the next one
+        _current[rank] = _origin[rank];
+    }
+    // if we get this far, every rank has overflowed; point to the end
+    _current = _origin + _shape;
+    // all done
+    return *this;
+}
+
+
+// arithmetic: postfix
+template <class packingT>
+constexpr auto
+pyre::grid::IndexIterator<packingT>::
+operator++(int) -> iterator
+{
+    // make a copy of me
+    auto clone = *this;
+    // increment me
+    ++(*this);
+    // and return the clone
+    return clone;
+}
+
+
+// the global operators
+// equality
+template <class packingT>
+constexpr auto
+pyre::grid::
+operator==(const IndexIterator<packingT> & it1, const IndexIterator<packingT> & it2) -> bool
+{
+    // iterators are equal if they point to the same index
+    return *it1 == *it2;
+}
+
+
+// and not
+template <class packingT>
+constexpr auto
+pyre::grid::
+operator!=(const IndexIterator<packingT> & it1, const IndexIterator<packingT> & it2) -> bool
+{
+    // iterators are unequal iff they are not equal
+    return !(it1 == it2);
+}
+
+
+#endif
+
+
+// end of file

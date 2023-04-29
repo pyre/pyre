@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
-# (c) 1998-2020 all rights reserved
-#
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2023 all rights reserved
 
 
 # superclass
@@ -16,11 +14,9 @@ class String(Schema):
     A type declarator for strings
     """
 
-
     # constants
-    typename = 'str' # the name of my type
-    complaint = 'could not coerce {0.value!r} into a string'
-
+    typename = "str"  # the name of my type
+    complaint = "could not coerce {0.value!r} into a string"
 
     # interface
     def coerce(self, value, **kwds):
@@ -35,7 +31,6 @@ class String(Schema):
         except Exception as error:
             # complain
             raise self.CastingError(value=value, description=self.complaint)
-
 
     # meta-methods
     def __init__(self, default=str(), **kwds):

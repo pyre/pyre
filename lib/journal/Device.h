@@ -1,7 +1,7 @@
 // -*- c++ -*-
 //
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
-// (c) 1998-2020 all rights reserved
+// (c) 1998-2023 all rights reserved
 
 // code guard
 #if !defined(pyre_journal_Device_h)
@@ -32,8 +32,9 @@ public:
     inline auto name() const -> const name_type &;
 
     // abstract
-    virtual auto memo(const entry_type &) -> Device & = 0;
     virtual auto alert(const entry_type &) -> Device & = 0;
+    virtual auto help(const entry_type &) -> Device & = 0;
+    virtual auto memo(const entry_type &) -> Device & = 0;
 
     // data
 private:
@@ -43,8 +44,8 @@ private:
 private:
     Device(const Device &) = delete;
     Device(const Device &&) = delete;
-    const Device & operator= (const Device &) = delete;
-    const Device & operator= (const Device &&) = delete;
+    const Device & operator=(const Device &) = delete;
+    const Device & operator=(const Device &&) = delete;
 };
 
 

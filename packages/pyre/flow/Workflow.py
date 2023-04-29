@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2020 all rights reserved
+# (c) 1998-2023 all rights reserved
 #
 
 
@@ -87,7 +87,7 @@ class Workflow(Factory, family='pyre.flow.workflow', implements=Flow):
                 yield product, meta
 
         # all done
-        return []
+        return
 
 
     def pyre_factories(self):

@@ -1,0 +1,21 @@
+;
+; michael a.g. aïvázis <michael.aivazis@para-sim.com>
+; (c) 1998-2023 all rights reserved
+
+mm:
+    ; targets
+    target = debug,shared
+
+    ; compilers
+    compilers = gcc, nvcc, python/python3
+
+    ; final products
+    prefix = @PREFIX@
+    ; intermediate build products
+    bldroot = /tmp/builds
+
+    ; other settings
+    ; the make utility
+    make = make
+
+; end of file

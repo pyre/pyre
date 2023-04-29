@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
-# (c) 1998-2020 all rights reserved
+# (c) 1998-2023 all rights reserved
 
 
 def test():
@@ -12,7 +12,7 @@ def test():
     # get the journal
     import journal
 
-    # suppress all outpuut
+    # suppress all output
     journal.quiet()
 
     # make a channel

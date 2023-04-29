@@ -1,0 +1,48 @@
+// -*- c++ -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2023 all rights reserved
+
+// code guard
+#if !defined(pyre_viz_filters_Uniform_icc)
+#error this file contains implementation details for pyre::viz::filters::Uniform
+#else
+
+
+// metamethods
+// constructor
+template <class sourceT>
+pyre::viz::filters::Uniform<sourceT>::Uniform(source_const_reference source, int bins) :
+    _source(source),
+    _scale(1.0 / bins)
+{}
+
+
+// interface
+template <class sourceT>
+auto
+pyre::viz::filters::Uniform<sourceT>::operator*() const -> value_type
+{
+    // get the value from my {_source}
+    auto value = *_source;
+    // compute the bin it falls in
+    value_type bin = std::trunc(value / _scale);
+    // and return it
+    return bin;
+}
+
+
+template <class sourceT>
+auto
+pyre::viz::filters::Uniform<sourceT>::operator++() -> void
+{
+    // increment my source
+    ++_source;
+    // all done
+    return;
+}
+
+
+#endif
+
+// end of file

@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2020 all rights reserved
+# (c) 1998-2023 all rights reserved
 #
 
 
@@ -19,7 +19,7 @@ class OK(Response):
     """
     # state
     code = 200
-    status = __doc__
+    status = " ".join(filter(None, (line.strip() for line in __doc__.splitlines())))
     description = "Request fulfilled, document follows"
 
     # interface
@@ -31,7 +31,43 @@ class OK(Response):
         return b''
 
 
-# simple documents
+# windows bitmap
+class BMP(OK):
+    """
+    A stream formatted as a BMP
+    """
+
+    # interface
+    def render(self, server, **kwds):
+        """
+        Send my value along
+        """
+        # my value is already a byte stream; send it off
+        return self.bmp
+
+    # meta-methods
+    def __init__(self, bmp, **kwds):
+        # chain up
+        super().__init__(**kwds)
+        # add the content type to the headers
+        self.headers['Content-Type'] = f'image/bmp'
+        # save the value
+        self.bmp = bmp
+        # all done
+        return
+
+
+# special document that gets served when a client has asked the server to exit
+class Exit(OK):
+    """
+    The client has asked the server to terminate; respond with an {OK} and shutdown
+    """
+
+    # public data
+    abort = True
+
+
+# a string literal
 class Literal(OK):
     """
     A response built out of a literal string
@@ -41,9 +77,9 @@ class Literal(OK):
     encoding = 'utf-8' # the encoding to use when converting to bytes
 
     # interface
-    def render(self, server, **kwds):
+    def render(self, **kwds):
         """
-        Pack the contents of the file into a binary buffer
+        Pack my value into a byte stream and send it along
         """
         # return my value as a byte stream
         return self.value.encode(self.encoding)
@@ -58,35 +94,39 @@ class Literal(OK):
         return
 
 
-class JSON(OK):
+# a csv file
+class CSV(Literal):
     """
-    A response built out of the JSON encoding of a python object
+    A byte stream formatted as CSV
     """
-
-    # public data
-    encoding = 'utf-8' # the encoding to use when converting to bytes
-
-    # interface
-    def render(self, **kwds):
-        """
-        Encode the object in JSON format
-        """
-        # return my value as a byte stream
-        return json.dumps(self.value).encode(self.encoding)
 
     # meta-methods
-    def __init__(self, value, **kwds):
+    def __init__(self, **kwds):
         # chain up
         super().__init__(**kwds)
-        # add the content type to the headers
-        self.headers['Content-Type'] = f'application/json; charset={self.encoding}'
-        # save the value
-        self.value = value
+        # add my content type to the headers
+        self.headers['Content-Type'] = 'text/csv'
         # all done
         return
 
 
-# document responses
+# json encoded content
+class JSON(Literal):
+    """
+    A response built out of the JSON encoding of a python object
+    """
+
+    # meta-methods
+    def __init__(self, value, **kwds):
+        # chain up after {json} encoding {value}
+        super().__init__(value=json.dumps(value), **kwds)
+        # add my content type to the headers
+        self.headers['Content-Type'] = f'application/json; charset={self.encoding}'
+        # all done
+        return
+
+
+# document types
 class Document(OK):
     """
     A response built out of an application generated document
@@ -136,6 +176,42 @@ class File(Document):
         super().__init__(**kwds)
         # save the uri
         self.uri = uri
+        # all done
+        return
+
+
+class CSS(File):
+    """
+    A stylesheet
+    """
+
+    # public data
+    encoding = 'utf-8' # the encoding to use when converting to bytes
+
+    # metamethods
+    def __init__(self, **kwds):
+        # chain up
+        super().__init__(**kwds)
+        # mark as javascript
+        self.headers['Content-Type'] = f'text/css; charset={self.encoding}'
+        # all done
+        return
+
+
+class Javascript(File):
+    """
+    A javascript file
+    """
+
+    # public data
+    encoding = 'utf-8' # the encoding to use when converting to bytes
+
+    # metamethods
+    def __init__(self, **kwds):
+        # chain up
+        super().__init__(**kwds)
+        # mark as javascript
+        self.headers['Content-Type'] = f'text/javascript; charset={self.encoding}'
         # all done
         return
 

@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2020 all rights reserved
+# (c) 1998-2023 all rights reserved
 #
 
 
@@ -89,14 +89,14 @@ class Peer(pyre.component, family='pyre.nexus.peers.peer', implements=Asynchrono
         # i may not have a name, but i need one in what follows
         name = name or self.pyre_family() or "pyre.nexus.peers"
 
-        # if i were handed a timer to use
-        if timer is not None:
-            # save it
-            self.timer = timer
-        # otherwise
-        else:
-            # make a new one and start it
-            self.timer = self.pyre_executive.newTimer(name=name).start()
+        # if i didn't get handed a timer to use
+        if timer is None:
+            # make a new one
+            timer = self.pyre_executive.newTimer(name=name)
+            # start it
+            timer.start()
+        # save it
+        self.timer = timer
 
         # journal channels
         import journal

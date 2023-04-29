@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2020 all rights reserved
+# (c) 1998-2023 all rights reserved
 #
 
 
@@ -16,9 +16,11 @@ import itertools, collections
 
 
 # publish local support
+from .Decorator import Decorator as decorator
 from .Named import Named as named
 from .Observable import Observable as observable
 from .Singleton import Singleton as singleton
+from .Unique import Unique as unique
 
 
 # utilities
@@ -53,28 +55,31 @@ def powerset(iterable):
     return itertools.chain.from_iterable(itertools.combinations(s, r) for r in range(len(s)+1))
 
 
+def sequify(items):
+    """
+    Normalize {items} into a tuple
+    """
+    # take care of {None} and anything false or empty
+    if not items: return ()
+    # if {items} is any iterable
+    if isinstance(items, collections.abc.Iterable):
+        # turn it into a tuple
+        return tuple(items)
+    # otherwise, place the lone item into a tuple
+    return (items,)
+
+
 # autovivified maps
 def vivify(levels=1, atom=dict):
     """
     Builds a nested {defaultdict} with a fixed depth and a specified type at the deepest level.
 
-    Adopted from (http://en.wikipedia.org/wiki/Autovivification)
+    Adapted from (http://en.wikipedia.org/wiki/Autovivification)
     """
     # the embryonic case is a {defaultdict} of type {atom}
     if levels < 2: return collections.defaultdict(atom)
     # otherwise, build a {defaultdict} that is shallower by one level
     return collections.defaultdict(lambda: vivify(levels=levels-1, atom=atom))
-
-
-# factories
-def newPathHash(**kwds):
-    """
-    Build a hashing functor for name hierarchies
-    """
-    # get the factory
-    from .PathHash import PathHash
-    # and invoke it
-    return PathHash(**kwds)
 
 
 # cofunctors

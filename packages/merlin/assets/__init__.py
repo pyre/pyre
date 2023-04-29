@@ -1,14 +1,24 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
-# (c) 1998-2020 all rights reserved
-#
+# michael a.g. aïvázis <nichael.aivazis@para-sim.com>
+# (c) 1998-2023 all rights reserved
 
 
-# convenient access
-from .PythonModule import PythonModule as pythonmodule
-from .PythonPackage import PythonPackage as pythonpackage
+# publish the base {product} so users can extend
+from .Product import Product as product
+
+# export the publicly visible assets
+from .Folder import Folder as folder
+from .File import File as file
+from .Project import Project as project
+from .Library import Library as library
+
+# and the asset categories
+from .Auxiliary import Auxiliary as auxiliary
+from .Header import Header as header
+from .Source import Source as source
+from .Template import Template as template
+from .Unrecognizable import Unrecognizable as unrecognizable
 
 
 # end of file

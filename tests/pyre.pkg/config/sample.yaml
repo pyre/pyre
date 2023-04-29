@@ -1,0 +1,11 @@
+# -*- yaml -*-
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2023 all rights reserved
+
+sample.user:
+  name: michael a.g. aïvázis # the name of the user
+  email: michael.aivazis@orthologue.com # the email address of the user
+  affiliation: orthologue # the affiliation of the user
+  "pyre.vegetables.potato # side": fries
+
+# end of file

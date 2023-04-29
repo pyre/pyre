@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2020 all rights reserved
+# (c) 1998-2023 all rights reserved
 #
 
 # project defaults
@@ -11,36 +11,63 @@ include pyre.def
 
 # the pile of tests
 LAYOUT_TESTS = \
-    index \
-    index-access \
-    index-bool \
-    index-arithmetic \
-    packing \
-    packing-c \
-    packing-fortran \
-    packing-access \
-    slice \
-    iterator \
-    iterator-access \
-    iterator-loop \
-    iterator-slice \
-    layout \
-    layout-order \
-    layout-order-default \
-    layout-slice \
+    canonical_box.cc \
+    canonical_box_skip.cc \
+    canonical_cslice.cc \
+    canonical_map.cc \
+    canonical_map_origin.cc \
+    canonical_map_positive.cc \
+    canonical_nudge.cc \
+    canonical_sanity.cc \
+    canonical_slice.cc \
+    canonical_visit.cc \
+    canonical_visit_order.cc \
+    index_access.cc \
+    index_arithmetic.cc \
+    index_cartesian.cc \
+    index_enum.cc \
+    index_fill.cc \
+    index_from_tuple.cc \
+    index_iterator.cc \
+    index_sanity.cc \
+    index_scaling.cc \
+    index_structured_binding.cc \
+    index_zero.cc \
+    order_access.cc \
+    order_c.cc \
+    order_fortran.cc \
+    order_sanity.cc \
+    product_access.cc \
+    product_iteration.cc \
+    product_ordered_iteration.cc \
+    product_sanity.cc \
+    rep_at.cc \
+    rep_eq.cc \
+    rep_fill.cc \
+    rep_iteration.cc \
+    rep_op.cc \
+    rep_reverse_iteration.cc \
+    rep_sanity.cc \
+    rep_zero.cc \
+    sanity.cc \
+    shape_access.cc \
+    shape_arithmetic.cc \
+    shape_cartesian.cc \
+    shape_sanity.cc \
+    shape_scaling.cc \
+    shape_structured_binding.cc
 
 GRID_TESTS = \
-    grid-view \
-    grid-heap \
-    grid-direct \
-    grid-direct-data \
-    grid-direct-set \
-    grid-direct-get \
-    grid-fill \
-    grid-mosaic \
-    grid-scan \
-    grid-transform \
-    grid-view-assignment \
+    grid_heap_box.cc \
+    grid_heap_box_skip.cc \
+    grid_heap_expand.cc \
+    grid_heap_iteration.cc \
+    grid_heap_sanity.cc \
+    grid_mmap_sanity.cc \
+    grid_mmap_set.cc \
+    grid_mmap_get.cc \
+    grid_sat.cc \
+    grid_sat_box.cc
 
 all: test clean
 

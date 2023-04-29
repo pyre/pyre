@@ -1,21 +1,17 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
-# (c) 1998-2020 all rights reserved
-#
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2023 all rights reserved
 
 
-# declaration
+# the decorator
 class Typed:
     """
     A class decorator that embeds type decorated subclasses whose names match their {typename}
     """
 
-
     # the list of types that i will use to decorate my client
-    from . import schemata, numeric, sequences, mappings
-
+    from . import schemata, numbers, sequences, mappings
 
     # meta-methods
     def __new__(cls, record=None, schemata=schemata, **kwds):
@@ -30,7 +26,6 @@ class Typed:
         # otherwise, do the normal thing
         return super().__new__(cls, **kwds)
 
-
     def __init__(self, schemata=schemata, **kwds):
         """
         Build an instance of this decorator.
@@ -42,14 +37,12 @@ class Typed:
         # all done
         return
 
-
     def __call__(self, client):
         """
         Build a class record
         """
         # delegate to my implementation
         return self.build(client=client, schemata=self.schemata)
-
 
     # implementation details
     @classmethod
@@ -73,7 +66,7 @@ class Typed:
         # once again, to build the classes
         for schema, ancestors in zip(schemata, pedigree):
             # make a docstring
-            doc = f"A subclass of '{client.__name__}' of type '{schema.typename}'"
+            doc = f"A '{client.__name__}' of type '{schema.typename}'"
             # build the class: name it after the schema, add the docstring
             typedClient = type(schema.typename, ancestors, {"__doc__": doc})
             # and attach it to the client
@@ -81,7 +74,6 @@ class Typed:
 
         # return the new class record
         return client
-
 
     @classmethod
     def pedigree(cls, client, schema):
@@ -100,20 +92,20 @@ class Typed:
             # no worries
             pass
 
-        # handle the numeric types
-        if schema in cls.numeric:
-            # check whether the client has a 'numeric' mixin
+        # handle numeric types
+        if schema in cls.numbers:
+            # check whether the client has a 'numbers' mixin
             try:
                 # and use it
-                yield client.numeric
+                yield client.numbers
             # if not
             except AttributeError:
                 # no worries
                 pass
 
-        # handle the sequences
+        # handle sequences
         if schema in cls.sequences:
-            # check whether the client has a 'sequence' mixin
+            # check whether the client has a 'sequences' mixin
             try:
                 # and use it
                 yield client.sequences
@@ -121,13 +113,29 @@ class Typed:
             except AttributeError:
                 # no worries
                 pass
+            # check whether the client has a 'containers' mixin
+            try:
+                # and use it
+                yield client.containers
+            # if not
+            except AttributeError:
+                # no worries
+                pass
 
-        # handle the sequences
+        # handle mappings
         if schema in cls.mappings:
-            # check whether the client has a 'sequence' mixin
+            # check whether the client has a 'mappings' mixin
             try:
                 # and use it
                 yield client.mappings
+            # if not
+            except AttributeError:
+                # no worries
+                pass
+            # check whether the client has a 'containers' mixin
+            try:
+                # and use it
+                yield client.containers
             # if not
             except AttributeError:
                 # no worries

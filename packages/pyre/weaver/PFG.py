@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2020 all rights reserved
+# (c) 1998-2023 all rights reserved
 #
 
 
@@ -54,7 +54,7 @@ class PFG(LineMill):
 
     def value(self, value):
         """
-        Renderer a value for a multi-line trait
+        Render a value for a multiline trait
         """
         # easy
         return self.place(value)

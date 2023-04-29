@@ -1,0 +1,119 @@
+// -*- c++ -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2023 all rights reserved
+
+// code guard
+#if !defined(pyre_timers_Proxy_icc)
+#error this file contains implementation details for pyre::timers::Proxy
+#else
+
+
+// metamethods
+template <class timerT, class clockT>
+pyre::timers::Proxy<timerT, clockT>::Proxy(movement_reference movement) :
+    // point to actual movement
+    _movement { movement }
+{}
+
+
+// accessors
+template <class timerT, class clockT>
+auto
+pyre::timers::Proxy<timerT, clockT>::active() const
+{
+    // easy enough
+    return _movement.active();
+}
+
+
+template <class timerT, class clockT>
+auto
+pyre::timers::Proxy<timerT, clockT>::mark() const
+{
+    // easy enough
+    return _movement.mark();
+}
+
+
+// interface
+// buttons
+template <class timerT, class clockT>
+auto
+pyre::timers::Proxy<timerT, clockT>::start()
+{
+    // delegate
+    return _movement.start();
+}
+
+
+template <class timerT, class clockT>
+auto
+pyre::timers::Proxy<timerT, clockT>::stop()
+{
+    // delegate
+    return _movement.stop();
+}
+
+
+template <class timerT, class clockT>
+auto
+pyre::timers::Proxy<timerT, clockT>::reset() -> timer_reference
+{
+    // delegate
+    _movement.reset();
+    // support chaining by casting me as my client (crtp)
+    return static_cast<timer_reference>(*this);
+}
+
+
+// readout
+template <class timerT, class clockT>
+auto
+pyre::timers::Proxy<timerT, clockT>::read() const
+{
+    // delegate
+    return _movement.read();
+}
+
+
+// displays
+template <class timerT, class clockT>
+auto
+pyre::timers::Proxy<timerT, clockT>::sec() const
+{
+    // delegate
+    return _movement.sec();
+}
+
+
+template <class timerT, class clockT>
+auto
+pyre::timers::Proxy<timerT, clockT>::ms() const
+{
+    // delegate
+    return _movement.ms();
+}
+
+
+template <class timerT, class clockT>
+auto
+pyre::timers::Proxy<timerT, clockT>::us() const
+{
+    // delegate
+    return _movement.us();
+}
+
+
+// syntactic sugar
+template <class timerT, class clockT>
+pyre::timers::Proxy<timerT, clockT>::operator active_type() const
+{
+    // delegate
+    return active_type(_movement);
+}
+
+
+#endif
+
+// end of file

@@ -1,0 +1,232 @@
+// -*- c++ -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2023 all rights reserved
+
+// code guard
+#if !defined(pyre_py_grid_grids_icc)
+#error this file contains implementation details for pyre::py::grid::grids
+#else
+
+#include <iostream>
+
+// the read/write class record factory
+template <typename storageT, int dim>
+auto
+pyre::py::grid::bind(py::module & m)
+{
+    // make the class record
+    auto cls = makecls<storageT, dim>(m);
+    // add the constructors
+    constructors(cls);
+    // and the interface
+    read(cls);
+    write(cls);
+    // all done
+    return;
+}
+
+
+// the read-only class record factory
+template <typename storageT, int dim>
+auto
+pyre::py::grid::bindconst(py::module & m)
+{
+    // make the class record
+    auto cls = makecls<storageT, dim>(m);
+    // add the constructors
+    constructors(cls);
+    // and the interface
+    read(cls);
+    // all done
+    return;
+}
+
+
+// the class record factory
+template <typename storageT, int dim>
+auto
+pyre::py::grid::makecls(py::module & m)
+{
+    // type aliases
+    using storage_t = storageT;
+    using cell_t = typename storage_t::cell_type;
+    using packing_t = pyre::grid::canonical_t<dim>;
+    using grid_t = pyre::grid::grid_t<packing_t, storage_t>;
+
+
+    // encode the dimension
+    auto d = std::to_string(dim) + "D";
+    // assemble the name
+    auto name = typenames[std::type_index(typeid(storage_t))] + "Grid" + d;
+    // and the docstring
+    auto doc = std::string("A ") + (cell_t::writable() ? "" : "const ") + "grid in " + d;
+
+    // build the class record
+    auto cls = py::class_<grid_t>(
+        // scope
+        m,
+        // name
+        name.data(),
+        // docstring
+        "a grid");
+
+    // and return it
+    return cls;
+}
+
+
+// the map specific constructors
+template <class gridT>
+void
+pyre::py::grid::constructors(py::class_<gridT> & cls)
+{
+    // constructors
+    cls.def(
+        // the implementation
+        py::init<typename gridT::packing_const_reference, typename gridT::storage_pointer>(),
+        //
+        "packing"_a, "storage"_a,
+        // the docstring
+        "make a new grid over the {storage} with the given {packing} strategy");
+
+    // all done
+    return;
+}
+
+
+// the const grid interface decorator
+template <class gridT>
+void
+pyre::py::grid::read(py::class_<gridT> & cls)
+{
+    // accessors
+    // layout
+    cls.def_property_readonly(
+        // the name of the method
+        "layout",
+        // the implementation
+        &gridT::layout,
+        // the docstring
+        "access my layout");
+
+    // data access
+    // by index
+    cls.def(
+        // the name of the method
+        "__getitem__",
+        // the implementation
+        [](const gridT & self, typename gridT::index_const_reference index) {
+            // get the value at the given {index}
+            return self.at(index);
+        },
+        // the signature
+        "index"_a,
+        // the docstring
+        "get the value at the specified {index}");
+
+    // by tuple
+    cls.def(
+        // the name of the method
+        "__getitem__",
+        // the implementation
+        [](const gridT & self, const std::vector<typename gridT::index_type::rank_type> & index) {
+            // make an index
+            auto idx = typename gridT::index_type();
+            // fill it
+            std::copy(index.begin(), index.end(), idx.begin());
+            // get the value at the given {index} and return it
+            return self.at(idx);
+        },
+        // the signature
+        "index"_a,
+        // the docstring
+        "get the value at the specified {index}");
+
+    // by offset
+    cls.def(
+        // the name of the method
+        "__getitem__",
+        // the implementation
+        [](const gridT & self, typename gridT::difference_type offset) {
+            // get the value at the given {offset}
+            return self.at(offset);
+        },
+        // the signature
+        "offset"_a,
+        // the docstring
+        "get the value at the specified {offset}");
+
+    // all done
+    return;
+}
+
+
+// the grid interface decorator
+template <class gridT>
+void
+pyre::py::grid::write(py::class_<gridT> & cls)
+{
+    // data access
+    // by index
+    cls.def(
+        // the name of the method
+        "__setitem__",
+        // the implementation
+        [](const gridT & self, typename gridT::index_const_reference index,
+           typename gridT::value_type value) -> void {
+            // set the value at the given {index}
+            self.at(index) = value;
+            // all done
+            return;
+        },
+        // the signature
+        "index"_a, "value"_a,
+        // the docstring
+        "set the value at the specified {index}");
+
+    // by tuple
+    cls.def(
+        // the name of the method
+        "__setitem__",
+        // the implementation
+        [](const gridT & self, const std::vector<typename gridT::index_type::rank_type> & index,
+           typename gridT::value_type value) -> void {
+            // make an index
+            auto idx = typename gridT::index_type();
+            // fill it
+            std::copy(index.begin(), index.end(), idx.begin());
+            // set the value at the given {index}
+            self.at(idx) = value;
+            // all done
+            return;
+        },
+        // the signature
+        "index"_a, "value"_a,
+        // the docstring
+        "get the value at the specified {index}");
+
+    // by offset
+    cls.def(
+        // the name of the method
+        "__setitem__",
+        // the implementation
+        [](const gridT & self, typename gridT::difference_type offset,
+           typename gridT::value_type value) -> void {
+            // set the value at the given {offset}
+            self.at(offset) = value;
+            // all done
+            return;
+        },
+        // the signature
+        "offset"_a, "value"_a,
+        // the docstring
+        "set the value at the specified {offset}");
+
+    // all done
+    return;
+}
+
+#endif
+
+// end of file

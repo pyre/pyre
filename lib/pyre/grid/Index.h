@@ -1,65 +1,56 @@
-// -*- C++ -*-
-// -*- coding: utf-8 -*-
+// -*- c++ -*-
 //
-// michael a.g. aïvázis
-// orthologue
-// (c) 1998-2020 all rights reserved
-//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2023 all rights reserved
 
 // code guard
 #if !defined(pyre_grid_Index_h)
 #define pyre_grid_Index_h
 
 
-// declaration
-template <typename repT>
-class pyre::grid::Index {
+// storage for a multidimensional index
+// resist the temptation to use unsigned types as the fundamental representation type; they
+// complicate index arithmetic unnecessarily
+
+// basic index type
+template <class containerT>
+class pyre::grid::Index : public Product<containerT> {
     // types
 public:
-    // the container of the index values
-    typedef repT rep_type;
-    // for sizing things
-    typedef typename rep_type::size_type size_type;
-    // just in case anybody cares about the type of my payload
-    typedef typename rep_type::value_type value_type;
+    // alias for me
+    using index_type = Index<containerT>;
+    // alias for my base
+    using rep_type = Product<containerT>;
+    // individual axis values
+    using rank_type = typename rep_type::value_type;
+    using rank_reference = rank_type &;
+    using rank_const_reference = const rank_type &;
 
-    // meta-methods
+    // metamethods
 public:
-    // the constructor is a variadic template to enable construction of the rep using
-    // initializer lists; an alternative is to relax the access control to {_index} to allow the
-    // compiler to do it
-    template <typename... argT> inline Index(argT... value);
+    // constructor that fills an index with a given {value}
+    constexpr explicit Index(rank_type);
 
-    // interface
+    // constructor; a variadic template to enable initializer lists
+    template <typename... argT>
+    constexpr Index(argT...);
+
+    // default metamethods
 public:
-    // factories
-    inline static constexpr auto fill(value_type value);
-
-    // dimensionality
-    inline static constexpr auto dim();
-    // same as {dim} but as a member function
-    inline constexpr auto size() const;
-
-    // indexed access
-    inline auto & operator[](size_type item);
-    inline auto operator[](size_type item) const;
-
-    // support for ranged for loops
-    inline auto begin() const;
-    inline auto end() const;
-
-    inline auto begin();
-    inline auto end();
-
-    // implementation details
-private:
-    // there are two ways to initialize _index
-    //  - relax access control to enable initialization through brace enclosed
-    //    initializer lists
-    //  - make the constructor a variadic template with a parameter pack
-    // we picked the latter
-    repT _index;
+    // destructor
+    ~Index() = default;
+    // constructors
+    Index(const Index &) = default;
+    Index(Index &&) = default;
+    Index & operator=(const Index &) = default;
+    Index & operator=(Index &&) = default;
 };
+
+
+// get the inline definitions
+#define pyre_grid_Index_icc
+#include "Index.icc"
+#undef pyre_grid_Index_icc
 
 
 #endif

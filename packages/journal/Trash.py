@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
-# (c) 1998-2020 all rights reserved
+# (c) 1998-2023 all rights reserved
 
 
 # superclass
@@ -22,6 +22,14 @@ class Trash(Device):
     def alert(self, entry):
         """
         Generate an alert
+        """
+        # do nothing
+        return self
+
+
+    def help(self, entry):
+        """
+        Generate a help screen
         """
         # do nothing
         return self

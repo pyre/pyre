@@ -1,0 +1,52 @@
+// -*- c++ -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2023 all rights reserved
+
+// code guard
+#if !defined(pyre_viz_colormaps_RGB_icc)
+#error this file contains implementation details for pyre::viz::colormaps::RGB
+#else
+
+// metamethods
+template <class redSourceT, class greenSourceT, class blueSourceT>
+pyre::viz::colormaps::RGB<redSourceT, greenSourceT, blueSourceT>::RGB(
+    red_source_const_reference red, green_source_const_reference green,
+    blue_source_const_reference blue) :
+    _red { red },
+    _green { green },
+    _blue { blue }
+{}
+
+
+// interface
+template <class redSourceT, class greenSourceT, class blueSourceT>
+auto
+pyre::viz::colormaps::RGB<redSourceT, greenSourceT, blueSourceT>::operator*() const -> rgb_type
+{
+    // get value from my data source
+    auto red = *_red;
+    auto green = *_green;
+    auto blue = *_blue;
+
+    // produce a gray value
+    return rgb_type { red, green, blue };
+}
+
+
+template <class redSourceT, class greenSourceT, class blueSourceT>
+auto
+pyre::viz::colormaps::RGB<redSourceT, greenSourceT, blueSourceT>::operator++() -> void
+{
+    // make my sources point to their next value
+    ++_red;
+    ++_green;
+    ++_blue;
+    // all done
+    return;
+}
+
+
+#endif
+
+// end of file

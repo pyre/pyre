@@ -1,0 +1,52 @@
+# -*- toml -*-
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2023 all rights reserved
+
+# build time
+[build-system]
+requires = [
+    "wheel",
+    "setuptools",
+    "setuptools_scm[toml]",
+    "cmake",
+    "scikit-build",
+    "pybind11",
+    "numpy",
+    "ninja; platform_system!='Windows'",
+]
+build-backend = "setuptools.build_meta"
+
+# install time
+[project]
+name = "pyre"
+version = "1.11.2"
+description = "A framework for building scientific applications"
+readme = "README.md"
+authors = [
+    { name = "Michael A.G. Aïvázis", email = "michael.aivazis@para-sim.com" },
+]
+maintainers = [
+    { name = "Michael A.G. Aïvázis", email = "michael.aivazis@para-sim.com" },
+]
+requires-python = ">3.7.2"
+keywords = ["science", "framework"]
+classifiers = [
+    "Development Status :: 6 - Mature",
+    "License :: OSI Approved :: BSD License",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+]
+dependencies = ["PyYAML"]
+
+# package discovery
+[tool.setuptools.packages.find]
+where = ["packages"]
+include = ["journal*"]
+# include = ["cuda", "gsl", "journal", "merlin", "mpi", "pyre"]
+namespaces = false
+
+# end of file

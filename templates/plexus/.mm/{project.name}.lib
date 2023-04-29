@@ -1,0 +1,27 @@
+# -*- makefile -*-
+#
+# {project.authors}
+# (c) {project.span} all rights reserved
+
+
+# configuration for lib{project.name}
+{project.name}.lib.stem := {project.name}
+# its location
+{project.name}.lib.root := lib/
+# dependencies on external packages
+{project.name}.lib.extern := pyre
+
+# use c++20
+{project.name}.lib.c++.flags += $($(compiler.c++).std.c++20)
+
+# the autogen files
+{project.name}.lib.headers.autogen := version.h.in
+# the expansion table
+{project.name}.lib.autogen = \
+    @MAJOR@|$({project.name}.major)\
+    @MINOR@|$({project.name}.minor) \
+    @MICRO@|$({project.name}.micro) \
+    @REVISION@|$({project.name}.revision) \
+
+
+# end of file

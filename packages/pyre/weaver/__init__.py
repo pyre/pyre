@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2020 all rights reserved
+# (c) 1998-2023 all rights reserved
 #
 
 
@@ -222,41 +222,6 @@ def xml():
     from .XML import XML as xml
     # and return it
     return xml
-
-
-# the templater
-def smith(**kwds):
-    """
-    The templater facility
-    """
-    # grab the protocol
-    from .Smith import Smith as smith
-    # build a facility and return it
-    return smith(**kwds)
-
-# the protocol that captures the project metadata
-from .Project import Project as project
-
-# the templated project implementations
-@foundry(implements=project)
-def django():
-    """
-    The django project type
-    """
-    # grab the component class
-    from .Django import Django as django
-    # and return it
-    return django
-
-@foundry(implements=project)
-def plexus():
-    """
-    The plexus project type
-    """
-    # grab the component class
-    from .Plexus import Plexus as plexus
-    # and return it
-    return plexus
 
 
 # end of file

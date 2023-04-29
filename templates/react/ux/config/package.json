@@ -1,0 +1,46 @@
+{{
+    "name": "{project.name}",
+    "version": "0.0.1",
+    "description": "{project.name} embedded ux",
+    "license": "BSD-2-Clause",
+    "repository": "https://github.com/{project.github}",
+    "author": "Michael Aivazis <michael.aivazis@para-sim.com>",
+    "scripts": {{
+        "build": "webpack --mode development",
+        "dev": "webpack --mode development",
+        "relay": "relay-compiler"
+    }},
+    "relay": {{
+        "src": "./client",
+        "schema": "./schema/{project.name}.gql",
+        "language": "javascript"
+    }},
+    "devDependencies": {{
+        "@babel/core": "latest",
+        "@babel/preset-env": "latest",
+        "@babel/preset-react": "latest",
+        "@babel/plugin-proposal-export-default-from": "latest",
+        "babel-loader": "latest",
+        "babel-plugin-relay": "latest",
+        "babel-plugin-styled-components": "latest",
+        "html-webpack-plugin": "latest",
+        "relay-compiler": "latest",
+        "ts-loader": "latest",
+        "typescript": "latest",
+        "webpack": "latest",
+        "webpack-cli": "latest"
+    }},
+    "dependencies": {{
+        "graphql": "16.6.0",
+        "graphiql": "2.2.0",
+        "lazysizes": "latest",
+        "lodash": "latest",
+        "path-browserify": "latest",
+        "react": "18.2.0",
+        "react-dom": "18.2.0",
+        "react-relay": "14.0.0",
+        "react-router": "6.6.2",
+        "react-router-dom": "6.6.2",
+        "regenerator-runtime": "latest"
+    }}
+}}

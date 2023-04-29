@@ -3,7 +3,7 @@
 //
 // michael a.g. aïvázis
 // orthologue
-// (c) 1998-2020 all rights reserved
+// (c) 1998-2023 all rights reserved
 //
 
 // code guard
@@ -42,38 +42,6 @@ namespace pyre {
         template <typename pointT = point_t<3, double>> using cloud_t = PointCloud<pointT>;
         // brick
         template <size_t dim = 3, typename nodeT = point_t<3> > using brick_t = Brick<dim, nodeT>;
-    }
-}
-
-// pull types from {pyre::grid}
-namespace pyre {
-    namespace geometry {
-        template <typename repT>
-        using index_t = pyre::grid::index_t<repT>;
-
-        template <typename repT>
-        using shape_t = pyre::grid::shape_t<repT>;
-
-        template <size_t dim>
-        using packing_t = pyre::grid::packing_t<dim>;
-
-        template <typename indexT, typename packingT = packing_t<indexT::dim()>>
-        using slice_t = pyre::grid::slice_t<indexT, packingT>;
-
-        template <typename sliceT>
-        using iterator_t = pyre::grid::iterator_t<sliceT>;
-
-        template <typename indexT, typename packingT = packing_t<indexT::dim()>>
-        using layout_t = pyre::grid::layout_t<indexT, packingT>;
-
-        // grid
-        template <typename cellT, typename layoutT, typename storageT>
-        using grid_t = pyre::grid::grid_t<cellT, layoutT, storageT>;
-        // direct grid
-        template <typename cellT,
-                  typename layoutT,
-                  typename directT = pyre::memory::direct_t<cellT>>
-        using directgrid_t = pyre::grid::directgrid_t<cellT, layoutT, directT>;
     }
 }
 

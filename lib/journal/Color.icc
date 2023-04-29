@@ -1,0 +1,29 @@
+// -*- c++ -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2023 all rights reserved
+
+// code guard
+#if !defined(pyre_journal_Color_icc)
+#error This header contains implementation details of pyre::journal::Color
+#else
+
+
+// metamethods
+// modern version
+pyre::journal::Color::Color(color_type color) : _color(color) {}
+
+
+// interface
+// accessors
+auto
+pyre::journal::Color::color() const -> color_type
+{
+    // easy enough
+    return _color;
+}
+
+
+#endif
+
+// end of file

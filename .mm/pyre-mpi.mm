@@ -1,7 +1,7 @@
 # -*- Makefile -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
-# (c) 1998-2020 all rights reserved
+# (c) 1998-2023 all rights reserved
 
 
 # check availability
@@ -30,7 +30,7 @@ pyre-mpi.pkg.ext :=
 pyre-mpi.lib.root := lib/mpi/
 pyre-mpi.lib.stem := mpi
 pyre-mpi.lib.incdir := $(builder.dest.inc)pyre/mpi/
-pyre-mpi.lib.master := mpi.h
+pyre-mpi.lib.gateway := mpi.h
 pyre-mpi.lib.prerequisites := journal.lib
 pyre-mpi.lib.extern := journal.lib mpi
 pyre-mpi.lib.c++.flags += $($(compiler.c++).std.c++17)

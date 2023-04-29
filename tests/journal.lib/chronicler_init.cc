@@ -1,7 +1,7 @@
 // -*- c++ -*-
 //
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
-// (c) 1998-2020 all rights reserved
+// (c) 1998-2023 all rights reserved
 
 #include <iostream>
 // get the journal
@@ -20,8 +20,8 @@ int main(int argc, char* argv[]) {
     // register the command line with the {chronicler}
     chronicler_t::init(argc, argv);
 
-    // we expect the verbosity level to be 5
-    assert (chronicler_t::verbosity() == 5);
+    // we expect the detail level to be 5
+    assert (chronicler_t::detail() == 5);
 
     // and the following channels to be active
     assert (debug_t("test.init.one"));

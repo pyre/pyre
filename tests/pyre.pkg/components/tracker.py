@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2020 all rights reserved
+# (c) 1998-2023 all rights reserved
 #
 
 
@@ -35,7 +35,7 @@ def test():
     # make a component instance
     c = component(name='raw')
 
-    # ask my tracker to wtach it
+    # ask my tracker to watch it
     t.track(component=c)
 
     # change the component's trait

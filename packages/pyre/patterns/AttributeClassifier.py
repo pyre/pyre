@@ -2,18 +2,18 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2020 all rights reserved
+# (c) 1998-2023 all rights reserved
 #
 
 
 # externals
 import collections
 # superclass
-from .AbstractMetaclass import AbstractMetaclass
+from .Type import Type
 
 
 # class declaration
-class AttributeClassifier(AbstractMetaclass):
+class AttributeClassifier(Type):
     """
     A base metaclass that enables attribute categorization.
 
@@ -33,16 +33,6 @@ class AttributeClassifier(AbstractMetaclass):
 
     # data
     pyre_reserved = set()
-
-
-    # meta methods
-    @classmethod
-    def __prepare__(cls, name, bases, **kwds):
-        """
-        Build an attribute table that maintains a category index for attribute descriptors
-        """
-        # use an ordered dictionary
-        return collections.OrderedDict()
 
 
     # interface

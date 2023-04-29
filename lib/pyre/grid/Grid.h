@@ -1,84 +1,116 @@
-// -*- C++ -*-
+// -*- c++ -*-
 //
-// michael a.g. aïvázis
-// orthologue
-// (c) 1998-2020 all rights reserved
-//
-
-// A grid
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2023 all rights reserved
 
 // code guard
 #if !defined(pyre_grid_Grid_h)
 #define pyre_grid_Grid_h
 
-// declaration
-template <typename cellT, typename layoutT, typename storageT>
+
+template <class packingT, class storageT>
 class pyre::grid::Grid {
     // types
 public:
     // aliases for my template parameters
-    using cell_type = cellT;
-    using layout_type = layoutT;
+    using packing_type = packingT;
     using storage_type = storageT;
-    // view over portions of my data
-    using view_type = View<Grid<cell_type, layout_type, storage_type>>;
-    using constview_type = ConstView<Grid<cell_type, layout_type, storage_type>>;
 
-    // dependent types
-    using slice_type = typename layout_type::slice_type;
-    using index_type = typename layout_type::index_type;
-    using shape_type = typename layout_type::shape_type;
-    using packing_type = typename layout_type::packing_type;
+    // me
+    using grid_type = Grid<packing_type, storage_type>;
 
-    // other help
-    using size_type = std::size_t;
+    // my value
+    using value_type = typename storage_type::value_type;
+    using pointer = typename storage_type::pointer;
+    using const_pointer = typename storage_type::const_pointer;
+    using reference = typename storage_type::reference;
+    using const_reference = typename storage_type::const_reference;
+    // distances
+    using difference_type = typename storage_type::difference_type;
 
-    // meta-methods
+    // my parts
+    using storage_pointer = std::shared_ptr<storage_type>;
+    using packing_const_reference = const packing_type &;
+    // my shape
+    using shape_type = typename packing_type::shape_type;
+    using shape_const_reference = const shape_type &;
+    // my index
+    using index_type = typename packing_type::index_type;
+    using index_const_reference = const index_type &;
+    // iterators
+    using index_iterator = typename packing_type::index_iterator;
+    using iterator = GridIterator<grid_type, index_iterator, false>;
+    using const_iterator = GridIterator<grid_type, index_iterator, true>;
+
+    // metamethods
 public:
-    // given a layout and a storage solution managed by someone else
-    inline Grid(layout_type layout, const storage_type & storage);
-    // given a layout and a storage solution managed by me
-    inline Grid(layout_type layout, storage_type && storage);
-    // given a layout and a storage solution that can be instantiated using my shape info
-    inline Grid(layout_type layout);
-    // given just the index extents
-    inline Grid(shape_type shape);
+    // constructor that makes a grid using the supplied packing and storage strategies
+    constexpr Grid(packing_const_reference, storage_pointer);
 
-    // interface
+    // constructor that forwards its extra arguments to the storage strategy
+    template <typename... Args>
+    constexpr Grid(packing_const_reference, Args &&...);
+
+    // accessors
 public:
-    // the dimensionality of my index
-    inline static constexpr auto dim();
+    constexpr auto data() const -> storage_pointer;
+    constexpr auto layout() const -> packing_const_reference;
 
-    // access to my shape
-    inline const auto & layout() const;
-    // access to my memory location
-    inline auto data() const;
-    // access to my storage strategy
-    inline const auto & storage() const;
+    // interface: data access
+public:
+    // with bounds check
+    constexpr auto at(difference_type) const -> reference;
+    constexpr auto at(index_const_reference) const -> reference;
+    // without bounds check
+    constexpr auto operator[](difference_type) const -> reference;
+    constexpr auto operator[](index_const_reference) const -> reference;
 
-    // iteration support
-    inline auto view();
-    inline auto view(const slice_type & slice);
+    // interface: iteration support
+public:
+    // whole grid iteration: visit every value in my native packing order
+    constexpr auto begin() -> iterator;
+    constexpr auto begin(index_type) -> iterator;
+    constexpr auto end() -> iterator;
+    // const
+    constexpr auto begin() const -> const_iterator;
+    constexpr auto begin(index_type) const -> const_iterator;
+    constexpr auto end() const -> const_iterator;
+    // and again, for non-const grids
+    constexpr auto cbegin() const -> const_iterator;
+    constexpr auto cbegin(index_type) const -> const_iterator;
+    constexpr auto cend() const -> const_iterator;
 
-    inline auto view() const;
-    inline auto view(const slice_type & slice) const;
+    // iterate over a portion of the grid
+    constexpr auto box(packing_const_reference) const -> grid_type;
+    constexpr auto box(index_const_reference, shape_const_reference) const -> grid_type;
 
-    inline auto constview() const;
-    inline auto constview(const slice_type & slice) const;
+    // slicing: create subgrids of a given shape anchored at the given index; rank reduction is
+    // achieved by zeroing out the ranks to be skipped in the shape specification
+public:
+    template <int sliceRank = packing_type::rank()>
+    constexpr auto slice(index_const_reference, shape_const_reference) const;
 
-    // read and write access using offsets
-    inline auto & operator[](size_type offset);
-    inline auto & operator[](size_type offset) const;
-
-    // read and write access using indices
-    inline auto & operator[](const index_type & index);
-    inline const auto & operator[](const index_type & index) const;
-
-    // implementation details - data
+    // implementation details: data
 private:
-    const layout_type _layout;
-    const storage_type _storage;
+    const packing_type _layout;
+    const storage_pointer _data;
+
+    // default metamethods
+public:
+    // destructor
+    ~Grid() = default;
+    // constructors
+    Grid(const Grid &) = default;
+    Grid(Grid &&) = default;
+    Grid & operator=(const Grid &) = default;
+    Grid & operator=(Grid &&) = default;
 };
+
+
+// get the inline definitions
+#define pyre_grid_Grid_icc
+#include "Grid.icc"
+#undef pyre_grid_Grid_icc
 
 
 #endif

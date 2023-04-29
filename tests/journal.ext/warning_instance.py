@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
-# (c) 1998-2020 all rights reserved
+# (c) 1998-2023 all rights reserved
 
 
 def test():
@@ -16,8 +16,8 @@ def test():
     channel = warning(name="tests.journal.warning")
     # verify the channel name
     assert channel.name == "tests.journal.warning"
-    # the verbosity should be at the default level
-    assert channel.verbosity == 1
+    # the detail should be at the default level
+    assert channel.detail == 1
     # it should be active
     assert channel.active is True
     # and non-fatal

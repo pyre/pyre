@@ -1,23 +1,21 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
-# (c) 1998-2020 all rights reserved
-#
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2023 all rights reserved
 
 
 # externals
 import sys
+
 # the framework
 import pyre
 
 
 # declaration
-class Platform(pyre.protocol, family='pyre.platforms'):
+class Platform(pyre.protocol, family="pyre.platforms"):
     """
     Encapsulation of host specific information
     """
-
 
     # framework obligations
     @classmethod
@@ -28,22 +26,26 @@ class Platform(pyre.protocol, family='pyre.platforms'):
         # get the platform id
         platform = sys.platform
 
-        # if we are on darwin
-        if platform.startswith('darwin'):
+        # if we are on {darwin}
+        if platform.startswith("darwin"):
             # get the {Darwin} host wrapper
             from .Darwin import Darwin
+
             # and ask it for a suitable default implementation
             return Darwin
 
-        # if we are on a linux derivative
-        if platform.startswith('linux'):
+        # if we are on a {linux} derivative
+        if platform.startswith("linux"):
             # get the {Linux} host wrapper
             from .Linux import Linux
+
             # and ask it for a suitable default implementation
             return Linux.flavor()
 
-        # otherwise, we know nothing; let the user know
+        # otherwise, we know nothing; grab the generic host
         from .Host import Host
+
+        # and return it
         return Host
 
 

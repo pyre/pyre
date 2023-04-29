@@ -1,0 +1,54 @@
+// -*- c++ -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2023 all rights reserved
+
+// code guard
+#if !defined(pyre_viz_filters_Decimate_icc)
+#error this file contains implementation details for pyre::viz::Decimate
+#else
+
+
+// metamethods
+// constructor
+template <class sourceT>
+pyre::viz::filters::Decimate<sourceT>::Decimate(
+    // the source
+    source_const_reference source,
+    // the tile origin, in zoomed coordinates
+    index_type origin,
+    // the tile shape, in zoomed coordinates
+    shape_type shape,
+    // the decimation factor
+    index_type stride) :
+    // record the source
+    _source { source },
+    // initialize my cursor
+    _cursor { packing_type(shape, origin).begin(stride) }
+{}
+
+
+// interface
+template <class sourceT>
+auto
+pyre::viz::filters::Decimate<sourceT>::operator*() const -> value_type
+{
+    // easy enough
+    return _source[*_cursor];
+}
+
+
+template <class sourceT>
+auto
+pyre::viz::filters::Decimate<sourceT>::operator++() -> void
+{
+    // increment my source
+    ++_cursor;
+    // all done
+    return;
+}
+
+
+#endif
+
+// end of file
