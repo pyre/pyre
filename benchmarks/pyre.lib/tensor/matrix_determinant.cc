@@ -54,7 +54,7 @@ void determinant_2D()
 
     // report
     channel 
-        << "array (for loop)" << pyre::journal::newline
+        << "array " << pyre::journal::newline
         << pyre::journal::indent(1) 
         << "result = " << result_c << pyre::journal::newline
         << "process time = " << t.ms() << " ms " << pyre::journal::newline
@@ -129,7 +129,7 @@ void determinant_3D()
 
     // report
     channel 
-        << "array (for loop)" << pyre::journal::newline
+        << "array " << pyre::journal::newline
         << pyre::journal::indent(1) 
         << "result = " << result_c << pyre::journal::newline
         << "process time = " << t.ms() << " ms " << pyre::journal::newline
