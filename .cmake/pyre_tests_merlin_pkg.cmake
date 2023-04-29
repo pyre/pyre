@@ -17,7 +17,7 @@ pyre_test_python_testcase(tests/merlin.pkg/components/merlin_packages.py)
 # cleanup
 add_test(NAME tests.merlin.components.clean
   COMMAND ${BASH_PROGRAM} -c "rm .merlin/project.pickle"
-  WORKING_DIRECTORY "${PYRE_TESTSUITE_DIR}/merlin.pkg/components"
+  WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}/tests/merlin.pkg/components"
   )
 
 # fixture
