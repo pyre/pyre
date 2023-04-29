@@ -36,7 +36,7 @@ namespace pyre::tensor {
         return tensor / norm(tensor);
     }
 
-    // operator== (implementation)
+    // operator== (implementation for tensors with same packing)
     template <typename T, class packingT, int... I, int... J>
     constexpr auto _tensor_equal(const Tensor<T, packingT, I...> & lhs, 
         const Tensor<T, packingT, I...> & rhs, integer_sequence<J...>) -> bool
@@ -45,7 +45,7 @@ namespace pyre::tensor {
         return false;
     }
 
-    // tensors operator== (same packing)
+    // tensors operator== (for tensors with same packing)
     template <typename T, class packingT, int... I>
     constexpr bool operator==(const Tensor<T, packingT, I...> & lhs, 
         const Tensor<T, packingT, I...> & rhs)
@@ -54,7 +54,8 @@ namespace pyre::tensor {
         return _tensor_equal(lhs, rhs, make_integer_sequence<D> {});
     }
 
-    // tensors operator== (different packing)
+    // TOFIX: version for different packings should not iterate on the packing 
+    // tensors operator== (for tensors with different packing)
     template <typename T, class packingT1, class packingT2, int... I>
     constexpr bool operator==(const Tensor<T, packingT1, I...> & lhs, 
         const Tensor<T, packingT2, I...> & rhs)
