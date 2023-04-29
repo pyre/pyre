@@ -123,12 +123,13 @@ namespace pyre::tensor {
         return a * std::move(y);
     }
 
-    // Tensor operator+
+    // TOFIX: version for different packings should not iterate on the packing 
+    // tensor operator+ & & (for tensors with different packing)
     template <typename T, class packingT1, class packingT2, int... I>
     constexpr Tensor<T, typename repacking<packingT1, packingT2>::packing_type, I...> operator+(
         const Tensor<T, packingT1, I...> & y1, const Tensor<T, packingT2, I...> & y2)
+        requires (!std::is_same_v<packingT1, packingT2>)
     {
-        // std::cout << "operator+ & &" << std::endl;
         // typedef for the repacked tensor based on {packingT1} and {packingT2}
         using repacked_tensor_t = Tensor<T, 
             typename repacking<packingT1, packingT2>::packing_type, I...>;
@@ -141,31 +142,69 @@ namespace pyre::tensor {
         // all done
         return result;
     }
+
+    // tensor operator+ & & (implementation for tensors with same packing)
+    template <typename T, class packingT, int... I, int... J>
+    constexpr inline void _vector_sum(
+        const Tensor<T, packingT, I...> & y1, const Tensor<T, packingT, I...> & y2,
+        Tensor<T, packingT, I...> & result, integer_sequence<J...>)
+    {
+        ((result[J] = y1[J] + y2[J]), ...);
+        return;
+    }
+
+    // tensor operator+ & & (for tensors with same packing)
+    template <typename T, class packingT, int... I>
+    constexpr Tensor<T, packingT, I...> operator+(
+        const Tensor<T, packingT, I...> & y1, const Tensor<T, packingT, I...> & y2)
+    {
+        // instantiate the result
+        Tensor<T, packingT, I...> result;
+        constexpr int D = Tensor<T, packingT, I...>::size;
+        _vector_sum(y1, y2, result, make_integer_sequence<D> {});
+        // all done
+        return result;
+    }
+
+    // tensor operator+ & && (for tensors with different packing)
     template <typename T, class packingT1, class packingT2, int... I>
     constexpr Tensor<T, typename repacking<packingT1, packingT2>::packing_type, I...> operator+(
         const Tensor<T, packingT1, I...> & y1, Tensor<T, packingT2, I...> && y2)
-        requires (std::is_same_v<typename repacking<packingT1, packingT2>::packing_type, packingT2>)
+        requires (!std::is_same_v<packingT1, packingT2>
+            && std::is_same_v<typename repacking<packingT1, packingT2>::packing_type, packingT2>)
     {
-        // std::cout << "operator+ & &&" << std::endl;
         // write the result on y2
         y2 = y1 + std::as_const(y2);
         // all done
         return y2;
     }
+
+    // tensor operator+ & && (for tensors with same packing)
+    template <typename T, class packingT, int... I>
+    constexpr Tensor<T, packingT, I...> operator+(
+        const Tensor<T, packingT, I...> & y1, Tensor<T, packingT, I...> && y2)
+    {
+        // write the result on y2
+        constexpr int D = Tensor<T, packingT, I...>::size;
+        _vector_sum(y1, y2, y2, make_integer_sequence<D> {});
+        // all done
+        return y2;
+    }
+
+    // tensor operator+ && & (for all tensors packing)
     template <typename T, class packingT1, class packingT2, int... I>
     constexpr Tensor<T, typename repacking<packingT1, packingT2>::packing_type, I...> operator+(
         Tensor<T, packingT1, I...> && y1, const Tensor<T, packingT2, I...> & y2)
-        requires (std::is_same_v<typename repacking<packingT1, packingT2>::packing_type, packingT1>)
     {
-        // std::cout << "operator+ && &" << std::endl;
         // easy enough
         return y2 + std::move(y1);
     }
+
+    // tensor operator+ && && (for all tensors packing)
     template <typename T, class packingT1, class packingT2, int... I>
     constexpr Tensor<T, typename repacking<packingT1, packingT2>::packing_type, I...> 
         operator+(Tensor<T, packingT1, I...> && y1, Tensor<T, packingT2, I...> && y2)
     {
-        // std::cout << "operator+ && &&" << std::endl;
         // typedef for the repacked tensor based on {packingT1} and {packingT2}
         using repacking_t = typename repacking<packingT1, packingT2>::packing_type;
         // if the repacking type is the packing type of y1
