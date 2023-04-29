@@ -43,472 +43,498 @@ class Library(
         # chain up
         yield from super()._generate(**kwds)
         # render the library makefile
-        yield from self.library(library=library)
+        yield from self.library(library=library, **kwds)
         # all done
         return
 
     # asset handlers
     @merlin.export
-    def library(self, library, **kwds):
+    def library(self, plexus, library, **kwds):
         """
         Generate the workflow that builds a {library}
         """
-        # initialize my asset piles
-        folders = []
-        headers = []
-        sources = []
-        templates = []
-
-        # go through the assets of the library
-        for asset in library.assets:
-            # and add each one to the correct pile
-            asset.identify(
-                visitor=self,
-                library=library,
-                folders=folders,
-                headers=headers,
-                sources=sources,
-                templates=templates,
-                **kwds,
-            )
-
-        # now, get the name of the library
+        # get the library name
         name = library.pyre_name
         # and the renderer
         renderer = self.renderer
-        # sign on
-        yield ""
-        yield renderer.commentLine(f"{name} rules")
-        # add this library to the pile
-        yield renderer.commentLine(f"add {name} to the pile of libraries")
-        yield f"libraries:: {name}"
 
-        # make a target that builds just this library
+        # add  this library to the pile
+        yield renderer.commentLine(f"add {library} to the pile of libraries")
+        yield f"libraries:: {name}"
         yield ""
-        yield renderer.commentLine(f"building {name}")
-        # make the anchor rule
+        # make a target that builds this library and logs a marker
+        yield renderer.commentLine(f"the target that builds {name}")
         yield f"{name}: {name}.assets"
         yield f"\t@$(call log.asset,lib,{name})"
+        yield ""
 
-        # the directory rules
-        yield from self.folderRules(library=library, folders=folders)
-        # the asset rules
-        yield from self.assetRules(
-            library=library, headers=headers, sources=sources, **kwds
-        )
+        # prime the asset counters
+        counter = {
+            "headers": 0,
+            "sources": 0,
+        }
+        # generate some variable definitions
+        yield from self._assignments(plexus=plexus, library=library)
+        # go through the library assets
+        for asset in library.assets:
+            # and ask each one to contribute
+            yield from asset.identify(
+                visitor=self, plexus=plexus, library=library, counter=counter, **kwds
+            )
+        # generate the build targets
+        yield from self._targets(library=library, counter=counter)
 
-        # all done
         return
 
     @merlin.export
-    def folder(self, folder, library, folders, parent=None, **kwds):
+    def folder(self, folder, library, **kwds):
         """
         Handle a source {folder}
         """
-        # if the user wants to skip this folder
+        # assemble the path of the folder relative to the workspace root
+        path = library.root / folder.path
+        # if the user has marked this folder as one to skip
         if folder.ignore:
-            # figure out where the folder got marker
+            # figure out where the folder got the marker
             where = folder.pyre_where(attribute="ignore")
             # make a channel
             channel = journal.warning("merlin.builder.make")
             # let the user know
-            channel.line(f"excluding folder '{folder.path}'")
+            channel.line(f"excluding the folder '{path}'")
             channel.line(f"from the contents of {library}")
             channel.line(f"as explicitly requested")
             channel.line(f"{where}")
             # flush
             channel.log()
-            # move on to other things
+            # and move on
             return
-        # if it has explicit dependency requirements
-        if folder.require and not library.supports(requirements=folder.require):
-            # skip it
+        # get the explicit requierements for this folder
+        require = folder.require
+        # if the folder has explicit dependency requirements that aren't met
+        if require and not library.supports(requirements=require):
+            # make a channel
+            channel = journal.warning("merlin.builder.make")
+            # let the user know
+            channel.line(f"excluding the folder '{path}'")
+            channel.line(f"from the contents of {library}")
+            channel.line(f"because its requirements")
+            channel.indent()
+            channel.report(report=require)
+            channel.outdent()
+            channel.line(f"could not be satisfied")
+            # flush
+            channel.log()
+            # and move
             return
-        # otherwise, add it to my pile of folders
-        folders.append(folder)
-        #  go through its contents
+
+        # otherwise, get the renderer
+        renderer = self.renderer
+        # the name of the library
+        name = library.pyre_name
+        # and its stem
+        stem = library.name
+        # sign on
+        yield renderer.commentLine(f"++ folder: folder")
+
+        # build the path to the clone of the source tree by expanding the corresponding variable
+        srcVar = merlin.primitives.path("$(src)") / name / folder.path
+        # its vfs equivalent
+        srcVFS = merlin.primitives.path("/stage/src") / name / folder.path
+        # mark
+        yield renderer.commentLine(f"make {srcVFS}")
+        # build the dependency line
+        yield f"{srcVar}: | {srcVar.parent}"
+        # log
+        yield f"\t@$(call log.action,mkdir,{srcVFS})"
+        # add the rule
+        yield f"\t@$(mkdirp) $@"
+        # make some room
+        yield ""
+
+        # build the directory where the exported headers get installed
+        prefixVar = merlin.primitives.path("$(prefix.include)")
+        # and the vfs equivalent
+        prefixVFS = merlin.primitives.path("/prefix/include")
+        # some libraries place their headers within a specific scope
+        scope = library.scope
+        # if this is the case here
+        if scope:
+            # make sure it is included in the destination path
+            dstVar = prefixVar / scope / stem / folder.path
+            # form its vfs equivalent
+            dstVFS = prefixVFS / scope / stem / folder.path
+        # otherwise
+        else:
+            # place the headers directly in the include directory
+            dstVar = prefixVar / stem / folder.path
+            # form its vfs equivalent
+            dstVFS = prefixVFS / stem / folder.path
+        # mark
+        yield renderer.commentLine(f"make {dstVFS}")
+        # build the dependency line
+        yield f"{dstVar}: | {dstVar.parent}"
+        # log
+        yield f"\t@$(call log.action,mkdir,{dstVFS})"
+        # add the rule
+        yield f"\t@$(mkdirp) $@"
+        # make some room
+        yield ""
+
+        # now, go through the folder contents
         for asset in folder.assets:
-            # and ask each one to identify itself
-            asset.identify(
-                visitor=self, library=library, parent=folder, folders=folders, **kwds
-            )
+            # and ask each one to contribute
+            yield from asset.identify(visitor=self, library=library, **kwds)
+
         # all done
         return
 
     @merlin.export
-    def file(self, file: merlin.assets.file, library: merlin.assets.library, **kwds):
+    def file(self, file, library, **kwds):
         """
         Handle a {file} asset
         """
-        # if the user wants to skip this file
+        # get the path to the file
+        path = library.root / file.path
+        # if the user has marked this file as one to skip
         if file.ignore:
-            # move on
+            # figure out where the file got the marker
+            where = file.pyre_where(attribute="ignore")
+            # make a channel
+            channel = journal.warning("merlin.builder.make")
+            # let the user know
+            channel.line(f"excluding the file '{path}'")
+            channel.line(f"from the contents of {library}")
+            channel.line(f"as explicitly requested")
+            channel.line(f"{where}")
+            # flush
+            channel.log()
+            # and move on
             return
-        # if it has explicit dependency requirements
-        if file.require and not library.supports(requirements=file.require):
-            # skip it
+        # get the explicit requirements for this file
+        require = file.require
+        # if the file has explicit dependency requirements that aren't met
+        if require and not library.supports(requirements=require):
+            # make a channel
+            channel = journal.warning("merlin.builder.make")
+            # let the user know
+            channel.line(f"excluding the file '{path}'")
+            channel.line(f"from the contents of {library}")
+            channel.line(f"because its requirements")
+            channel.indent()
+            channel.report(report=require)
+            channel.outdent()
+            channel.line(f"could not be satisfied")
+            # flush
+            channel.log()
+            # and move
             return
         # get the file category
         category = file.category
-        # ask it to identify itself
-        category.identify(visitor=self, library=library, file=file, **kwds)
+        # and ask it to identify itself
+        yield from category.identify(visitor=self, library=library, file=file, **kwds)
         # all done
         return
 
     # asset category handlers
     @merlin.export
-    def header(self, file, headers, **kwds):
+    def header(self, library, file, counter, **kwds):
         """
         Handle a {header}
         """
-        # add the asset to my headers
-        headers.append(file)
+        # update the header counter
+        counter["headers"] += 1
+        # get the renderer
+        renderer = self.renderer
+        # get the path to the header relative to the library root
+        hpath = file.path
+        # the library name
+        name = library.pyre_name
+        # its root
+        root = library.root
+        # the header scope
+        scope = library.scope
+        # figure out whether this the gateway header
+        gateway = hpath in library.gateway
+        # form the path to the source
+        src = merlin.primitives.path(f"$({name}.ws)") / hpath
+        # form the clone location
+        clone = merlin.primitives.path(f"$({name}.src)") / hpath
+        # if this the gateway header
+        if gateway:
+            # export it to the root of the scope
+            prefix = merlin.primitives.path(f"$(prefix.include)") / scope / hpath
+        # otherwise
+        else:
+            # export it within the normal header tree
+            prefix = merlin.primitives.path(f"$({name}.include)") / hpath
+
+        # make a tag
+        tag = root / hpath
+        # mark
+        yield renderer.commentLine(f"-- header: {tag}")
+        # if this is the gateway header
+        if gateway:
+            # leave a comment that explains why the rules look different
+            yield renderer.commentLine(f"   note: {tag} is a gateway header")
+        # mark
+        yield renderer.commentLine(f"add {tag} to the pile of exported headers")
+        # add it to the exported header pile
+        yield from renderer.seti(name=f"{name}.exported", value=f"{prefix}")
+        # make some room
+        yield ""
+
+        # clone
+        yield renderer.commentLine(f"clone {src} to {clone}")
+        # add the dependency line
+        yield f"{clone}: {src} | {clone.parent}"
+        # log
+        yield f"\t@$(call log.action,clone,{tag})"
+        # the rule
+        yield f"\t@$(cp) $< $@"
+        # make some room
+        yield ""
+
+        # export
+        yield renderer.commentLine(f"export {clone} to {prefix}")
+        # add the dependency line
+        yield f"{prefix}: {clone} | {prefix.parent}"
+        # log
+        yield f"\t@$(call log.action,export,{tag})"
+        # the rule
+        yield f"\t@$(cp) $< $@"
+        # make some room
+        yield ""
+
         # all done
         return
 
     @merlin.export
-    def source(self, file, sources, **kwds):
+    def source(self, plexus, library, file, counter, **kwds):
         """
         Handle a {source} file
         """
-        # add the asset to my sources
-        sources.append(file)
+        # update the source counter
+        counter["sources"] += 1
+        # get the renderer
+        renderer = self.renderer
+        # and the host
+        host = plexus.pyre_host
+        # get the path to the header relative to the library root
+        hpath = file.path
+        # the library name
+        name = library.pyre_name
+        # its root
+        root = library.root
+        # form the path to the source
+        src = merlin.primitives.path(f"$({name}.ws)") / hpath
+        # form the clone location
+        clone = merlin.primitives.path(f"$({name}.src)") / hpath
+        # build the object module path
+        obj = merlin.primitives.path(f"$({name}.build)") / host.object(
+            stem="~".join(hpath)
+        )
+        # make a tag
+        tag = root / hpath
+
+        # mark
+        yield renderer.commentLine(f"-- {file.language.name} source: {tag}")
+        # add the object module to the pile
+        yield renderer.commentLine(f"add {obj} to the pile of {name} object modules")
+        # adjust the variable
+        yield from renderer.seti(name=f"{name}.objects", value=f"{obj}")
+        # make some room
+        yield ""
+
+        # clone
+        yield renderer.commentLine(f"clone {src} to {clone}")
+        # add the dependency line
+        yield f"{clone}: {src} | {clone.parent}"
+        # log
+        yield f"\t@$(call log.action,clone,{tag})"
+        # the rule
+        yield f"\t@$(cp) $< $@"
+        # make some room
+        yield ""
+
+        # compile
+        yield renderer.commentLine(f"compile {clone} to {obj}")
+        # make the dependency line
+        yield f"{obj}: {clone} | $({name}.build)"
+        # log
+        yield f"\t@$(call log.action,{file.language.name},{tag})"
+        # generate the object module
+        yield f"\t@$(touch) $@"
+        # make some room
+        yield ""
+
         # all done
         return
 
     @merlin.export
-    def template(self, file, templates, **kwds):
+    def template(self, file, **kwds):
         """
         Handle a {template} asset
         """
-        # add the asset to the autogenerated pile
-        templates.append(file)
+        # get the renderer
+        renderer = self.renderer
+        # mark
+        yield renderer.commentLine(f"template {file.path}")
         # all done
         return
 
     @merlin.export
-    def unrecognizable(self, **kwds):
+    def unrecognizable(self, file, **kwds):
         """
         Handle an {unrecognizable} asset
         """
+        # get the renderer
+        renderer = self.renderer
+        # mark
+        yield renderer.commentLine(f" !! unrecognizable: {file.path}")
         # all done
         return
 
     # source language handlers
     @merlin.export
-    def language(self, **kwds):
+    def language(self, language, **kwds):
         """
         Handle a source file from an unsupported language
         """
+        # get the renderer
+        renderer = self.renderer
+        # mark
+        yield renderer.commentLine(f" !! unknown language {language}")
         # all done
         return
 
     # helpers
-    def folderRules(self, library, folders):
+    def _assignments(self, plexus, library):
         """
-        Build the rules that construct the prefix directory layout
+        Generate some library specific variable assignments
         """
-        # get the name of the library
+        # get the host
+        host = plexus.pyre_host
+        # get the library name
         name = library.pyre_name
-        # the special scope, if any
+        # its naming stem
+        stem = library.name
+        # its location within its workspace
+        root = library.root
+        # and its scope
         scope = library.scope
-        # and the renderer
+        # grab the renderer
         renderer = self.renderer
 
-        # build the rules that clone the {workspace} directory structure into {src}
-        yield ""
-        yield renderer.commentLine(f"the directory layout of the cloned {name} source")
-        # the common root of all these directories is stored in a variable
-        src = merlin.primitives.path("$(src)") / name
-        # and its logical location is
-        stg = merlin.primitives.path("/stage/src") / name
-        # generate the rules
-        for dir in folders:
-            # compute the target directory
-            tgt = src / dir.path
-            # tag the directory
-            tag = stg / dir.path
-            # sign on
-            yield renderer.commentLine(f"make {tag}")
-            # generate the dependency line
-            yield f"{tgt}: | {tgt.parent}"
-            # log
-            yield f"\t@$(call log.action,mkdir,{tag})"
-            # and the rule
-            yield f"\t@$(mkdirp) $@"
-            yield ""
+        # form the location of the sources within the workspace
+        ws = merlin.primitives.path("$(ws)") / root
+        # the location of the cloned source tree
+        src = merlin.primitives.path("$(src)") / {name}
+        # the location of the build artifacts
+        build = merlin.primitives.path("$(build)") / {name}
+        # the location of the exported headers
+        inc = merlin.primitives.path("$(prefix.include)") / {scope} / {stem}
+        # and the location of the archive
+        lib = merlin.primitives.path("$(prefix.lib)")
 
-        # the common prefix for include directories is stored in a variable
-        include = merlin.primitives.path("$(prefix.include)")
-        # if the headers are being placed in a special scope
-        if scope:
-            # the destination includes the scope
-            destination = include / scope / library.name
-        # otherwise
-        else:
-            # no scope, just the library name
-            destination = include / library.name
-        # form the rules that build the individual {prefix.include} directories
+        # the root of the library source tree
+        yield renderer.commentLine(f"the location of the {name} sources")
+        yield from renderer.set(name=f"{name}.ws", value=f"{ws}")
+        # the cloned source
+        yield renderer.commentLine(f"the location of the source tree clone")
+        yield from renderer.set(name=f"{name}.src", value=f"{src}")
+        # the destination of the exported headers
+        yield renderer.commentLine(f"the destination of the exported headers")
+        yield from renderer.set(name=f"{name}.include", value=f"{inc}")
+        # the staging location for the object modules
+        yield renderer.commentLine(f"the location of the object modules")
+        yield from renderer.set(name=f"{name}.build", value=f"{build}")
+
+        # form the name of the archive
+        archive = lib / host.staticLibrary(stem=stem)
+        # make a variable for it
+        yield renderer.commentLine(f"the {name} archive")
+        yield from renderer.set(name=f"{name}.archive", value=f"{archive}")
+
+        # form the name of the dynamic library
+        dll = lib / host.dynamicLibrary(stem=stem)
+        # make a variable for it
+        yield renderer.commentLine(f"the {name} dynamic library")
+        yield from renderer.set(name=f"{name}.dll", value=f"{dll}")
+
+        # prime the pile of headers
+        yield renderer.commentLine(f"prime the list of exported headers")
+        yield from renderer.set(name=f"{name}.exported", value="")
+        # and the list of object modules
+        yield renderer.commentLine(f"prime the list of object modules")
+        yield from renderer.set(name=f"{name}.objects", value="")
+        # make some room
         yield ""
-        yield renderer.commentLine(f"the directory layout of the {name} headers")
-        # generate the rules
-        for dir in folders:
-            # compute its destination
-            dst = destination / dir.path
-            # tag the directory
-            tag = f"/prefix/include/{dst.relativeTo(include)}"
-            # sign on
-            yield renderer.commentLine(f"make {tag}")
-            # the dependency line
-            yield f"{dst}: | {dst.parent}"
-            # log
-            yield f"\t@$(call log.action,mkdir,{tag})"
-            # the rule
-            yield f"\t@$(mkdirp) $@"
-            yield ""
 
         # all done
         return
 
-    def assetRules(self, library, headers, sources, **kwds):
+    def _targets(self, library, counter):
         """
-        Build the rules that build {library} assets
+        Build the targets that build the library assets
         """
-        # get the name of the library
-        name = library.pyre_name
-        # and the renderer
+        # grab the renderer
         renderer = self.renderer
-        # if there are headers
-        if headers:
-            # sign on
-            yield ""
-            yield renderer.commentLine(f"add the headers to the {name} assets")
+        # get the library name
+        name = library.pyre_name
+
+        # if the library has headers
+        if counter["headers"]:
+            # add the exported headers to the library assets
+            yield renderer.commentLine(f"add the exported headers to the {name} assets")
             yield f"{name}.assets:: {name}.headers"
-            # make rules that export the public headers
-            yield from self.headerRules(library=library, headers=headers, **kwds)
-        # if there are sources
-        if sources:
-            # add the archive to the library assets
             yield ""
-            yield renderer.commentLine(f"add the archive to the {name} assets")
+            # export the headers
+            yield renderer.commentLine(
+                f"publish the target that exports the public headers"
+            )
+            yield f"{name}.headers: $({name}.exported)"
+            yield ""
+
+        # if the library has sources
+        if counter["sources"]:
+            # realize the build area
+            yield renderer.commentLine(f"realize the {name} build area")
+            yield f"$(build)/{name}: | $(build)"
+            # log
+            yield f"\t@$(call log.action,mkdir,/stage/build/{name})"
+            # add the rule
+            yield f"\t@$(mkdirp) $@"
+            yield ""
+            # entry point for it
+            yield renderer.commentLine(
+                f"publish the target that creates the {name} build stage"
+            )
+            yield f"{name}.build: | $({name}.build)"
+            yield ""
+
+            # add the archive to the assets
+            yield renderer.commentLine(f"add the static archive to the {name} assets")
             yield f"{name}.assets:: {name}.archive"
-            # make the rules that build the objects
-            yield from self.archiveRules(library=library, sources=sources, **kwds)
-        # all done
-        return
-
-    def headerRules(self, library, headers, **kwds):
-        """
-        Create a variable that holds all the exported headers
-        """
-        # get the name of the library
-        name = library.pyre_name
-        # its root
-        root = library.root
-        # the special scope, if any
-        scope = library.scope
-        # the name of the gateway header
-        gateway = library.gateway
-        # and the renderer
-        renderer = self.renderer
-
-        # all exported headers are anchored at
-        include = merlin.primitives.path("$(prefix.include)")
-
-        # if the headers are being placed in a special scope
-        if scope:
-            # the destination includes the scope
-            destination = include / scope / library.name
-        # otherwise
-        else:
-            # no scope, just the library name
-            destination = include / library.name
-
-        # in order to exclude the gateway
-        if gateway:
-            # build a sieve
-            sieve = lambda x: x.path != gateway
-        # and if there isn't one
-        else:
-            # make it trivial
-            sieve = None
-        # build the sequence of regular headers
-        regular = tuple(filter(sieve, headers))
-
-        # build the variable that holds the regular headers
-        # yield ""
-        # yield renderer.commentLine(f"the set of {name} headers in the source directories")
-        # park the full set of headers in a variable
-        # yield from renderer.set(name=f"{name}.headers",
-        # multi=(str(header.node.uri) for header in headers))
-
-        # if there is a gateway header
-        if gateway:
-            # make a tag for it
-            tag = root / gateway
-            # form its location in the source
-            gatewaySrc = "${ws}" / root / gateway
-            # its containing folder
-            gatewayDir = include / scope
-            # and its location in the prefix
-            gatewayDst = gatewayDir / gateway
-
-            # build the associated variable
             yield ""
-            yield renderer.commentLine(f"the {name} gateway header")
-            yield from renderer.set(name=f"{name}.gateway", value=str(gatewayDst))
-            # and the rule that copies it
+            # entry point to build it
+            yield renderer.commentLine(
+                f"publish the target that builds the {name} archive"
+            )
+            yield f"{name}.archive: $({name}.archive)"
             yield ""
-            yield renderer.commentLine(f"publish {tag}")
-            # the dependency line
-            yield f"{gatewayDst}: {gatewaySrc} | {gatewayDir}"
-            # log
-            yield f"\t@$(call log.action,cp,{tag})"
-            # the rule
-            yield f"\t@$(cp) $< $@"
-        # otherwise
-        else:
-            # null the variable so it's not uninitialized
+            # entry point to build its objects
+            yield renderer.commentLine(
+                f"publish the target that builds the {name} object modules"
+            )
+            yield f"{name}.objects: $({name}.objects)"
             yield ""
-            yield renderer.commentLine(f"{name} doesn't have a gateway header")
-            yield from renderer.set(name=f"{name}.gateway", value="")
 
-        # build the variable that holds the exported headers
-        yield ""
-        yield renderer.commentLine(f"the set of {name} exported headers")
-        # make the pile
-        yield from renderer.set(
-            name=f"{name}.exported",
-            multi=(str(destination / header.path) for header in regular),
-        )
-
-        # make the aggregator rule that exports headers
-        yield ""
-        yield renderer.commentLine(f"export the {name} headers")
-        yield f"{name}.headers: $({name}.gateway) $({name}.exported)"
-
-        # make the rules that publish individual headers
-        for header in regular:
-            # the path to the file relative to the workspace root
-            hpath = root / header.path
-            # sign on
-            yield ""
-            yield renderer.commentLine(f"publish {hpath}")
-            # the dependency line
-            yield f"{destination/header.path}: $(ws)/{hpath} | {destination/header.path.parent}"
-            # log
-            yield f"\t@$(call log.action,cp,{hpath})"
-            # the rule
-            yield f"\t@$(cp) $< $@"
-
-        # all done
-        return
-
-    def archiveRules(self, library, sources, **kwds):
-        """
-        Build the set of rules that compile the {library} {sources}
-        """
-        # get the name of the library
-        name = library.pyre_name
-        # its root
-        root = library.root
-        # and the renderer
-        renderer = self.renderer
-        # make a pile of the names of the object files
-        objects = tuple(self.formObjectPaths(library, sources))
-
-        # define the macro with the destination archive
-        yield ""
-        yield renderer.commentLine(f"define the full path to the {name} archive")
-        yield from renderer.set(name=f"{name}.archive", value=f"$(prefix.lib)/{name}.a")
-        # define the macro with the library staging location
-        yield ""
-        # set the location of the library source
-        yield renderer.commentLine(f"define the location of the {name} source")
-        yield from renderer.set(name=f"{name}.ws", value=f"$(ws)/{root}")
-        # set the location of the cloned source
-        yield renderer.commentLine(f"define the location of the {name} cloned source")
-        yield from renderer.set(name=f"{name}.src", value=f"$(src)/{name}")
-        # set the library staging location
-        yield renderer.commentLine(f"define the {name} staging location")
-        yield from renderer.set(name=f"{name}.build", value=f"$(build)/{name}")
-        # define a macro with the archive objects
-        yield ""
-        yield renderer.commentLine(f"define the set of {name} objects")
-        # build the assignment
-        yield from renderer.set(name=f"{name}.objects", multi=objects)
-
-        # the archive trigger rule
-        yield ""
-        yield renderer.commentLine(f"trigger the {name} archive")
-        yield f"{name}.archive: $({name}.archive)"
-        # the archive build rule
-        yield ""
-        yield renderer.commentLine(f"make the {name} archive")
-        yield f"$({name}.archive): $({name}.objects) | $(prefix.lib)"
-        yield f"\t@$(call log.action,ar,{name}.a)"
-
-        # the macro with the build location
-        yield ""
-        yield renderer.commentLine(f"make the {name} build location")
-        yield f"$({name}.build):"
-        yield f"\t@$(call log.action,mkdir,/stage/build/{name})"
-        yield f"\t@$(mkdirp) $@"
-
-        # the build trigger rule
-        yield ""
-        yield renderer.commentLine(f"trigger the {name} build")
-        yield f"{name}.build: $({name}.build)"
-        # the build rule
-
-        # the object trigger rule
-        yield ""
-        yield renderer.commentLine(f"trigger the compilation of the {name} sources")
-        # make the rule
-        yield f"{name}.objects: $({name}.objects)"
-        # make the set of rules that compile individual sources
-        for src, obj in zip(sources, objects):
-            # make the tag
-            tag = root / src.path
-            # form the path to the source in the workspace directory
-            original = f"$({name}.ws)" / src.path
-            # and the path to its clone in the {src}
-            clone = f"$({name}.src)" / src.path
-            # mark
-            yield ""
-            yield renderer.commentLine(f"copy {original} to {clone}")
-            # make the rule
-            yield f"{clone}: {original} | {clone.parent}"
-            yield f"\t@$(call log.action,cp,{tag})"
-            yield f"\t@$(cp) $< $@"
-            # mark
-            yield ""
-            yield renderer.commentLine(f"compile {original} to {obj}")
-            # make the rule
-            yield f"{obj}: {clone} | $({name}.build)"
-            yield f"\t@$(call log.action,{src.language.name},{tag})"
+            # build the static library
+            yield renderer.commentLine(f"build the static library")
+            yield f"$({name}.archive): $({name}.objects) | $(prefix.lib)"
+            yield f"\t@$(call log.action,ar,{name}.a)"
             yield f"\t@$(touch) $@"
-
-        # all done
-        return
-
-    def formObjectPaths(self, library, sources):
-        """
-        Build the symbolic path to an object module
-        """
-        # get the name of the library
-        name = library.pyre_name
-        # the home of the object modules
-        build = merlin.primitives.path(f"$({name}.build)")
-
-        # go through the sources
-        for source in sources:
-            # form the object module path out of the filename hash
-            hash = self.pyre_host.object(stem="~".join(source.path))
-            # make it an absolute path
-            objpath = build / hash
-            # and make it available
-            yield f"{objpath}"
+            yield ""
 
         # all done
         return
