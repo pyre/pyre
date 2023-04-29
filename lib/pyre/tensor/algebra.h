@@ -47,8 +47,8 @@ namespace pyre::tensor {
 
     // tensors operator== (for tensors with same packing)
     template <typename T, class packingT, int... I>
-    constexpr bool operator==(const Tensor<T, packingT, I...> & lhs, 
-        const Tensor<T, packingT, I...> & rhs)
+    constexpr auto operator==(const Tensor<T, packingT, I...> & lhs, 
+        const Tensor<T, packingT, I...> & rhs) -> bool
     {
         constexpr int D = Tensor<T, packingT, I...>::size;
         return _tensor_equal(lhs, rhs, make_integer_sequence<D> {});
@@ -57,8 +57,8 @@ namespace pyre::tensor {
     // TOFIX: version for different packings should not iterate on the packing 
     // tensors operator== (for tensors with different packing)
     template <typename T, class packingT1, class packingT2, int... I>
-    constexpr bool operator==(const Tensor<T, packingT1, I...> & lhs, 
-        const Tensor<T, packingT2, I...> & rhs)
+    constexpr auto operator==(const Tensor<T, packingT1, I...> & lhs, 
+        const Tensor<T, packingT2, I...> & rhs) -> bool
         requires(!std::is_same_v<packingT1, packingT2>)
     {
         // typedef for the repacked tensor based on {packingT1} and {packingT2}
@@ -76,9 +76,9 @@ namespace pyre::tensor {
     // Algebraic operations on vectors, tensors, ...
     // tensor times scalar (implementation)
     template <typename T2, typename T, class packingT, int... I, int... J>
-    constexpr void _tensor_times_scalar(
-        T2 a, const Tensor<T, packingT, I...> & y, Tensor<T, packingT, I...> & result,
-        integer_sequence<J...>) requires (std::convertible_to<T2, T>)
+    constexpr void _tensor_times_scalar(T2 a, const Tensor<T, packingT, I...> & y, 
+        Tensor<T, packingT, I...> & result, integer_sequence<J...>) 
+        requires (std::convertible_to<T2, T>)
     {
         ((result[J] = y[J] * a), ...);
         return;
@@ -86,8 +86,8 @@ namespace pyre::tensor {
 
     // scalar times tensor
     template <typename T2, typename T, class packingT, int... I>
-    constexpr Tensor<T, packingT, I...> operator*(T2 a, 
-        const Tensor<T, packingT, I...> & y) 
+    constexpr auto operator*(T2 a, const Tensor<T, packingT, I...> & y)
+        -> Tensor<T, packingT, I...>
         requires(Tensor<T, packingT, I...>::size != 1 && std::convertible_to<T2, T>)
     {
         // instantiate the result
@@ -99,7 +99,8 @@ namespace pyre::tensor {
 
     // tensor times scalar
     template <typename T2, typename T, class packingT, int... I>
-    constexpr Tensor<T, packingT, I...> operator*(const Tensor<T, packingT, I...> & y, T2 a) 
+    constexpr auto operator*(const Tensor<T, packingT, I...> & y, T2 a)
+        -> Tensor<T, packingT, I...>
         requires(Tensor<T, packingT, I...>::size != 1 && std::convertible_to<T2, T>)
     {
         return a * y;
@@ -107,8 +108,8 @@ namespace pyre::tensor {
 
     // scalar times (temporary) tensor
     template <typename T2, typename T, class packingT, int... I>
-    constexpr Tensor<T, packingT, I...> operator*(T2 a, 
-        Tensor<T, packingT, I...> && y) 
+    constexpr auto operator*(T2 a, Tensor<T, packingT, I...> && y)
+        -> Tensor<T, packingT, I...>
         requires(Tensor<T, packingT, I...>::size != 1 && std::convertible_to<T2, T>)
     {
         constexpr int D = Tensor<T, packingT, I...>::size;
@@ -118,7 +119,8 @@ namespace pyre::tensor {
 
     // (temporary) tensor times scalar 
     template <typename T2, typename T, class packingT, int... I>
-    constexpr Tensor<T, packingT, I...> operator*(Tensor<T, packingT, I...> && y, T2 a) 
+    constexpr auto operator*(Tensor<T, packingT, I...> && y, T2 a)
+        -> Tensor<T, packingT, I...>
         requires(Tensor<T, packingT, I...>::size != 1 && std::convertible_to<T2, T>)
     {
         return a * std::move(y);
@@ -127,8 +129,9 @@ namespace pyre::tensor {
     // TOFIX: version for different packings should not iterate on the packing 
     // tensor operator+ & & (for tensors with different packing)
     template <typename T, class packingT1, class packingT2, int... I>
-    constexpr Tensor<T, typename repacking<packingT1, packingT2>::packing_type, I...> operator+(
-        const Tensor<T, packingT1, I...> & y1, const Tensor<T, packingT2, I...> & y2)
+    constexpr auto operator+(const Tensor<T, packingT1, I...> & y1, 
+        const Tensor<T, packingT2, I...> & y2) 
+        -> Tensor<T, typename repacking<packingT1, packingT2>::packing_type, I...>
         requires (!std::is_same_v<packingT1, packingT2>)
     {
         // typedef for the repacked tensor based on {packingT1} and {packingT2}
@@ -146,9 +149,9 @@ namespace pyre::tensor {
 
     // tensor operator+ & & (implementation for tensors with same packing)
     template <typename T, class packingT, int... I, int... J>
-    constexpr inline void _vector_sum(
-        const Tensor<T, packingT, I...> & y1, const Tensor<T, packingT, I...> & y2,
-        Tensor<T, packingT, I...> & result, integer_sequence<J...>)
+    constexpr void _vector_sum(const Tensor<T, packingT, I...> & y1, 
+        const Tensor<T, packingT, I...> & y2, Tensor<T, packingT, I...> & result, 
+        integer_sequence<J...>)
     {
         ((result[J] = y1[J] + y2[J]), ...);
         return;
@@ -156,8 +159,8 @@ namespace pyre::tensor {
 
     // tensor operator+ & & (for tensors with same packing)
     template <typename T, class packingT, int... I>
-    constexpr Tensor<T, packingT, I...> operator+(
-        const Tensor<T, packingT, I...> & y1, const Tensor<T, packingT, I...> & y2)
+    constexpr auto operator+(const Tensor<T, packingT, I...> & y1,
+        const Tensor<T, packingT, I...> & y2) -> Tensor<T, packingT, I...>
     {
         // instantiate the result
         Tensor<T, packingT, I...> result;
@@ -169,8 +172,9 @@ namespace pyre::tensor {
 
     // tensor operator+ & && (for tensors with different packing)
     template <typename T, class packingT1, class packingT2, int... I>
-    constexpr Tensor<T, typename repacking<packingT1, packingT2>::packing_type, I...> operator+(
-        const Tensor<T, packingT1, I...> & y1, Tensor<T, packingT2, I...> && y2)
+    constexpr auto operator+(const Tensor<T, packingT1, I...> & y1, 
+        Tensor<T, packingT2, I...> && y2)
+        -> Tensor<T, typename repacking<packingT1, packingT2>::packing_type, I...>
         requires (!std::is_same_v<packingT1, packingT2>
             && std::is_same_v<typename repacking<packingT1, packingT2>::packing_type, packingT2>)
     {
@@ -182,8 +186,8 @@ namespace pyre::tensor {
 
     // tensor operator+ & && (for tensors with same packing)
     template <typename T, class packingT, int... I>
-    constexpr Tensor<T, packingT, I...> operator+(
-        const Tensor<T, packingT, I...> & y1, Tensor<T, packingT, I...> && y2)
+    constexpr auto operator+(const Tensor<T, packingT, I...> & y1, Tensor<T, packingT, I...> && y2)
+        -> Tensor<T, packingT, I...>
     {
         // write the result on y2
         constexpr int D = Tensor<T, packingT, I...>::size;
@@ -194,8 +198,9 @@ namespace pyre::tensor {
 
     // tensor operator+ && & (for all tensors packing)
     template <typename T, class packingT1, class packingT2, int... I>
-    constexpr Tensor<T, typename repacking<packingT1, packingT2>::packing_type, I...> operator+(
-        Tensor<T, packingT1, I...> && y1, const Tensor<T, packingT2, I...> & y2)
+    constexpr auto operator+(Tensor<T, packingT1, I...> && y1, 
+        const Tensor<T, packingT2, I...> & y2)
+        -> Tensor<T, typename repacking<packingT1, packingT2>::packing_type, I...>
     {
         // easy enough
         return y2 + std::move(y1);
@@ -203,8 +208,8 @@ namespace pyre::tensor {
 
     // tensor operator+ && && (for all tensors packing)
     template <typename T, class packingT1, class packingT2, int... I>
-    constexpr Tensor<T, typename repacking<packingT1, packingT2>::packing_type, I...> 
-        operator+(Tensor<T, packingT1, I...> && y1, Tensor<T, packingT2, I...> && y2)
+    constexpr auto operator+(Tensor<T, packingT1, I...> && y1, Tensor<T, packingT2, I...> && y2)
+        -> Tensor<T, typename repacking<packingT1, packingT2>::packing_type, I...>
     {
         // typedef for the repacked tensor based on {packingT1} and {packingT2}
         using repacking_t = typename repacking<packingT1, packingT2>::packing_type;
