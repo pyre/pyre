@@ -161,6 +161,76 @@ void determinant_3D(int N)
 }
 
 
+void determinant_3D_diagonal(int N) 
+{
+    // make a channel
+    pyre::journal::info_t channel("tests.timer.determinant");
+
+    // make a timer
+    timer_t t("tests.timer");
+    
+    channel << "Computing " << N << " determinants (3x3, diagonal)" << pyre::journal::endl;
+
+
+    // ARRAY
+
+    // array tensor
+    std::array<double, 3> tensor_c {1.0, -1.0, 2.0};
+    double result_c = 0;
+
+    // reset timer
+    t.reset();
+    // start timer
+    t.start();
+
+    for (int n = 0; n < N; ++n) { 
+        // determinant (array)
+        result_c += tensor_c[0] * tensor_c[1] * tensor_c[2];
+    }
+
+    // stop the timer
+    t.stop();
+
+    // report
+    channel 
+        << "array " << pyre::journal::newline
+        << pyre::journal::indent(1) 
+        << "result = " << result_c << pyre::journal::newline
+        << "process time = " << t.ms() << " ms " << pyre::journal::newline
+        << pyre::journal::outdent(1) << pyre::journal::endl;
+
+
+    // PYRE TENSOR
+    // tensor vector
+    pyre::tensor::diagonal_matrix_t<3> tensor {1.0, -1.0, 2.0};
+    pyre::tensor::real result_tensor = 0.;
+
+    // reset timer
+    t.reset();
+    // start timer
+    t.start();
+
+    for (int n = 0; n < N; ++n) { 
+        // determinant (tensor)
+        result_tensor += pyre::tensor::determinant(tensor);
+    }
+
+    // stop the timer
+    t.stop();
+
+    // report
+    channel
+        << "pyre tensor" << pyre::journal::newline
+        << pyre::journal::indent(1) 
+        << "result = " << result_tensor << pyre::journal::newline
+        << "process time = " << t.ms() << " ms " << pyre::journal::newline
+        << pyre::journal::outdent(1) << pyre::journal::endl;
+
+    // all done
+    return;
+}
+
+
 int main() {
 
     // number of times to do operation
@@ -171,6 +241,9 @@ int main() {
 
     // run benchmark for 3D matrix
     determinant_3D(N);
+
+    // run benchmark for 3D diagonal matrix
+    determinant_3D_diagonal(N);
 
     // all done
     return 0;
