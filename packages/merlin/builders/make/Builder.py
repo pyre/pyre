@@ -51,7 +51,7 @@ class Builder(Builder, Generator, family="merlin.builders.make"):
         # build the makefile path
         makefile = stage / self.makefile
         # generate the makefiles
-        self.generate(stage=stage, makefile=makefile, **kwds)
+        self.generate(plexus=plexus, stage=stage, makefile=makefile, **kwds)
         # all done
         return
 
