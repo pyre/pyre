@@ -127,7 +127,7 @@ pyre_test_python_testcase(tests/journal.pkg/warning_sanity.py)
 # clean up
 add_test(NAME tests.journal.pkg.api_file.cleanup
   COMMAND ${BASH_PROGRAM} -c "echo $(pwd); rm api_file.log"
-  WORKING_DIRECTORY ${PYRE_TESTSUITE_DIR}/journal.pkg
+  WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/tests/journal.pkg
   )
 set_property(TEST tests.journal.pkg.api_file.cleanup PROPERTY
   DEPENDS tests.journal.pkg.api_file.py
@@ -135,7 +135,7 @@ set_property(TEST tests.journal.pkg.api_file.cleanup PROPERTY
 
 add_test(NAME tests.journal.pkg.debug_file.cleanup
   COMMAND ${BASH_PROGRAM} -c "rm debug_file.log"
-  WORKING_DIRECTORY ${PYRE_TESTSUITE_DIR}/journal.pkg
+  WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/tests/journal.pkg
   )
 set_property(TEST tests.journal.pkg.debug_file.cleanup PROPERTY
   DEPENDS tests.journal.pkg.debug_file.py
@@ -143,7 +143,7 @@ set_property(TEST tests.journal.pkg.debug_file.cleanup PROPERTY
 
 add_test(NAME tests.journal.pkg.error_file.cleanup
   COMMAND ${BASH_PROGRAM} -c "rm error_file.log"
-  WORKING_DIRECTORY ${PYRE_TESTSUITE_DIR}/journal.pkg
+  WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/tests/journal.pkg
   )
 set_property(TEST tests.journal.pkg.error_file.cleanup PROPERTY
   DEPENDS tests.journal.pkg.error_file.py
@@ -151,7 +151,7 @@ set_property(TEST tests.journal.pkg.error_file.cleanup PROPERTY
 
 add_test(NAME tests.journal.pkg.firewall_file.cleanup
   COMMAND ${BASH_PROGRAM} -c "rm firewall_file.log"
-  WORKING_DIRECTORY ${PYRE_TESTSUITE_DIR}/journal.pkg
+  WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/tests/journal.pkg
   )
 set_property(TEST tests.journal.pkg.firewall_file.cleanup PROPERTY
   DEPENDS tests.journal.pkg.firewall_file.py
@@ -159,7 +159,7 @@ set_property(TEST tests.journal.pkg.firewall_file.cleanup PROPERTY
 
 add_test(NAME tests.journal.pkg.help_file.cleanup
   COMMAND ${BASH_PROGRAM} -c "rm help_file.log"
-  WORKING_DIRECTORY ${PYRE_TESTSUITE_DIR}/journal.pkg
+  WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/tests/journal.pkg
   )
 set_property(TEST tests.journal.pkg.help_file.cleanup PROPERTY
   DEPENDS tests.journal.pkg.help_file.py
@@ -167,7 +167,7 @@ set_property(TEST tests.journal.pkg.help_file.cleanup PROPERTY
 
 add_test(NAME tests.journal.pkg.info_file.cleanup
   COMMAND ${BASH_PROGRAM} -c "rm info_file.log"
-  WORKING_DIRECTORY ${PYRE_TESTSUITE_DIR}/journal.pkg
+  WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/tests/journal.pkg
   )
 set_property(TEST tests.journal.pkg.info_file.cleanup PROPERTY
   DEPENDS tests.journal.pkg.info_file.py
@@ -175,7 +175,7 @@ set_property(TEST tests.journal.pkg.info_file.cleanup PROPERTY
 
 add_test(NAME tests.journal.pkg.warning_file.cleanup
   COMMAND ${BASH_PROGRAM} -c "rm warning_file.log"
-  WORKING_DIRECTORY ${PYRE_TESTSUITE_DIR}/journal.pkg
+  WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/tests/journal.pkg
   )
 set_property(TEST tests.journal.pkg.warning_file.cleanup PROPERTY
   DEPENDS tests.journal.pkg.warning_file.py
@@ -183,7 +183,7 @@ set_property(TEST tests.journal.pkg.warning_file.cleanup PROPERTY
 
 add_test(NAME tests.journal.pkg.file_sanity.cleanup
   COMMAND ${BASH_PROGRAM} -c "echo $(pwd); rm file_sanity.log"
-  WORKING_DIRECTORY ${PYRE_TESTSUITE_DIR}/journal.pkg
+  WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/tests/journal.pkg
   )
 set_property(TEST tests.journal.pkg.file_sanity.cleanup PROPERTY
   DEPENDS tests.journal.pkg.file_sanity.py
@@ -191,7 +191,7 @@ set_property(TEST tests.journal.pkg.file_sanity.cleanup PROPERTY
 
 add_test(NAME tests.journal.pkg.file_example.cleanup
   COMMAND ${BASH_PROGRAM} -c "echo $(pwd); rm file_example.log"
-  WORKING_DIRECTORY ${PYRE_TESTSUITE_DIR}/journal.pkg
+  WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/tests/journal.pkg
   )
 set_property(TEST tests.journal.pkg.file_example.cleanup PROPERTY
   DEPENDS tests.journal.pkg.file_example.py
@@ -200,7 +200,7 @@ set_property(TEST tests.journal.pkg.file_example.cleanup PROPERTY
 # clean up
 add_test(NAME tests.journal.pkg.api_file_mode.cleanup
   COMMAND ${BASH_PROGRAM} -c "echo $(pwd); rm api_file_mode.log"
-  WORKING_DIRECTORY ${PYRE_TESTSUITE_DIR}/journal.pkg
+  WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/tests/journal.pkg
   )
 set_property(TEST tests.journal.pkg.api_file_mode.cleanup PROPERTY
   DEPENDS tests.journal.pkg.api_file_mode.py
@@ -208,7 +208,7 @@ set_property(TEST tests.journal.pkg.api_file_mode.cleanup PROPERTY
 
 add_test(NAME tests.journal.pkg.debug_file_mode.cleanup
   COMMAND ${BASH_PROGRAM} -c "rm debug_file_mode.log"
-  WORKING_DIRECTORY ${PYRE_TESTSUITE_DIR}/journal.pkg
+  WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/tests/journal.pkg
   )
 set_property(TEST tests.journal.pkg.debug_file_mode.cleanup PROPERTY
   DEPENDS tests.journal.pkg.debug_file_mode.py
@@ -216,7 +216,7 @@ set_property(TEST tests.journal.pkg.debug_file_mode.cleanup PROPERTY
 
 add_test(NAME tests.journal.pkg.error_file_mode.cleanup
   COMMAND ${BASH_PROGRAM} -c "rm error_file_mode.log"
-  WORKING_DIRECTORY ${PYRE_TESTSUITE_DIR}/journal.pkg
+  WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/tests/journal.pkg
   )
 set_property(TEST tests.journal.pkg.error_file_mode.cleanup PROPERTY
   DEPENDS tests.journal.pkg.error_file_mode.py
@@ -224,7 +224,7 @@ set_property(TEST tests.journal.pkg.error_file_mode.cleanup PROPERTY
 
 add_test(NAME tests.journal.pkg.firewall_file_mode.cleanup
   COMMAND ${BASH_PROGRAM} -c "rm firewall_file_mode.log"
-  WORKING_DIRECTORY ${PYRE_TESTSUITE_DIR}/journal.pkg
+  WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/tests/journal.pkg
   )
 set_property(TEST tests.journal.pkg.firewall_file_mode.cleanup PROPERTY
   DEPENDS tests.journal.pkg.firewall_file_mode.py
@@ -232,7 +232,7 @@ set_property(TEST tests.journal.pkg.firewall_file_mode.cleanup PROPERTY
 
 add_test(NAME tests.journal.pkg.help_file_mode.cleanup
   COMMAND ${BASH_PROGRAM} -c "rm help_file_mode.log"
-  WORKING_DIRECTORY ${PYRE_TESTSUITE_DIR}/journal.pkg
+  WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/tests/journal.pkg
   )
 set_property(TEST tests.journal.pkg.help_file_mode.cleanup PROPERTY
   DEPENDS tests.journal.pkg.help_file_mode.py
@@ -240,7 +240,7 @@ set_property(TEST tests.journal.pkg.help_file_mode.cleanup PROPERTY
 
 add_test(NAME tests.journal.pkg.info_file_mode.cleanup
   COMMAND ${BASH_PROGRAM} -c "rm info_file_mode.log"
-  WORKING_DIRECTORY ${PYRE_TESTSUITE_DIR}/journal.pkg
+  WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/tests/journal.pkg
   )
 set_property(TEST tests.journal.pkg.info_file_mode.cleanup PROPERTY
   DEPENDS tests.journal.pkg.info_file_mode.py
@@ -248,7 +248,7 @@ set_property(TEST tests.journal.pkg.info_file_mode.cleanup PROPERTY
 
 add_test(NAME tests.journal.pkg.warning_file_mode.cleanup
   COMMAND ${BASH_PROGRAM} -c "rm warning_file_mode.log"
-  WORKING_DIRECTORY ${PYRE_TESTSUITE_DIR}/journal.pkg
+  WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/tests/journal.pkg
   )
 set_property(TEST tests.journal.pkg.warning_file_mode.cleanup PROPERTY
   DEPENDS tests.journal.pkg.warning_file_mode.py

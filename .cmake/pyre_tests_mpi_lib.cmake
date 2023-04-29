@@ -15,7 +15,7 @@ pyre_test_driver_mpi(tests/mpi.lib/communicator.cc 8)
 
 # startup
 add_test(NAME tests.mpi.lib.localhost.pre
-  COMMAND ${BASH_PROGRAM} -c "cp ${PYRE_TESTSUITE_DIR}/mpi.lib/localhost ."
+  COMMAND ${BASH_PROGRAM} -c "cp ${PROJECT_SOURCE_DIR}/tests/mpi.lib/localhost ."
   )
 # cleanup
 add_test(NAME tests.mpi.lib.localhost.post
