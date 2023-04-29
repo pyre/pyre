@@ -31,7 +31,7 @@ function(pyre_benchmark_driver_cxx20 benchmarkfile)
   # schedule it to be compiled
   add_executable(${target} ${benchmarkfile})
   # in release mode
-  target_compile_options(${target} PRIVATE $<$<CONFIG:Release>:-O3>)
+  target_compile_options(${target} PRIVATE "-O3")
   # with some macros
   target_compile_definitions(${target} PRIVATE PYRE_CORE)
   target_compile_definitions(${target} PRIVATE HAVE_COMPACT_PACKINGS)
