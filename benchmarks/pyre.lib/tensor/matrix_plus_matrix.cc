@@ -19,16 +19,13 @@
 using timer_t = pyre::timers::process_timer_t;
 
 
-void matrix_plus_matrix()
+void matrix_plus_matrix(int N)
 {
     // make a channel
     pyre::journal::info_t channel("tests.timer.matrix_plus_matrix");
 
     // make a timer
     timer_t t("tests.timer");
-    
-    // number of times to do operation
-    int N = 1<<25;
 
     channel << "Computing " << N << " matrix-matrix sums" << pyre::journal::endl;
 
@@ -102,8 +99,11 @@ void matrix_plus_matrix()
 
 int main() {
 
+    // number of times to do operation
+    int N = 1<<25;
+
     // matrix plus matrix
-    matrix_plus_matrix();
+    matrix_plus_matrix(N);
 
     // all done
     return 0;

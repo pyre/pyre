@@ -19,7 +19,7 @@
 using timer_t = pyre::timers::process_timer_t;
 
 
-void determinant_2D() 
+void determinant_2D(int N) 
 {
     // make a channel
     pyre::journal::info_t channel("tests.timer.determinant");
@@ -27,9 +27,6 @@ void determinant_2D()
     // make a timer
     timer_t t("tests.timer");
     
-    // number of times to do operation
-    int N = 1<<25;
-
     channel << "Computing " << N << " determinants (2x2)" << pyre::journal::endl;
 
 
@@ -92,7 +89,7 @@ void determinant_2D()
 }
 
 
-void determinant_3D() 
+void determinant_3D(int N) 
 {
     // make a channel
     pyre::journal::info_t channel("tests.timer.determinant");
@@ -100,9 +97,6 @@ void determinant_3D()
     // make a timer
     timer_t t("tests.timer");
     
-    // number of times to do operation
-    int N = 1<<25;
-
     channel << "Computing " << N << " determinants (3x3)" << pyre::journal::endl;
 
 
@@ -169,11 +163,14 @@ void determinant_3D()
 
 int main() {
 
+    // number of times to do operation
+    int N = 1<<25;
+
     // run benchmark for 2D matrix
-    determinant_2D();
+    determinant_2D(N);
 
     // run benchmark for 3D matrix
-    determinant_3D();
+    determinant_3D(N);
 
     // all done
     return 0;

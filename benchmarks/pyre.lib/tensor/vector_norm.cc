@@ -19,16 +19,13 @@
 using timer_t = pyre::timers::process_timer_t;
 
 
-void norm_vector()
+void norm_vector(int N)
 {
     // make a channel
     pyre::journal::info_t channel("tests.timer.norm_vector");
 
     // make a timer
     timer_t t("tests.timer");
-    
-    // number of times to do operation
-    int N = 1<<25;
 
     channel << "Computing " << N << " norms of vectors" << pyre::journal::endl;
 
@@ -101,8 +98,11 @@ void norm_vector()
 
 int main() {
 
+    // number of times to do operation
+    int N = 1<<25;
+
     // norm of a vector
-    norm_vector();
+    norm_vector(N);
 
     // all done
     return 0;

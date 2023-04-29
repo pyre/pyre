@@ -19,16 +19,13 @@
 using timer_t = pyre::timers::process_timer_t;
 
 
-void matrix_times_scalar() 
+void matrix_times_scalar(int N) 
 {
     // make a channel
     pyre::journal::info_t channel("tests.timer.matrix_times_scalar");
 
     // make a timer
     timer_t t("tests.timer");
-    
-    // number of times to do operation
-    int N = 1<<25;
 
     channel << "Computing " << N << " scalar-matrix multiplications" << pyre::journal::endl;
 
@@ -166,8 +163,11 @@ void matrix_times_scalar()
 
 int main() {
 
+    // number of times to do operation
+    int N = 1<<25;
+
     // scalar * matrix
-    matrix_times_scalar();
+    matrix_times_scalar(N);
 
     // all done
     return 0;

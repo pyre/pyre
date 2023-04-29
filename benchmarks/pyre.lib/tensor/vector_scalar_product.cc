@@ -19,16 +19,13 @@
 using timer_t = pyre::timers::process_timer_t;
 
 
-void vector_scalar_product() 
+void vector_scalar_product(int N) 
 {
     // make a channel
     pyre::journal::info_t channel("tests.timer.vector_scalar_product");
 
     // make a timer
     timer_t t("tests.timer");
-    
-    // number of times to do operation
-    int N = 1<<25;
 
     channel << "Computing " << N << " scalar products" << pyre::journal::endl;
 
@@ -125,8 +122,11 @@ void vector_scalar_product()
 
 int main() {
 
+    // number of times to do operation
+    int N = 1<<25;
+
     // vector * vector
-    vector_scalar_product();
+    vector_scalar_product(N);
 
     // all done
     return 0;

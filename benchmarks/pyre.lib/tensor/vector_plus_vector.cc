@@ -19,16 +19,13 @@
 using timer_t = pyre::timers::process_timer_t;
 
 
-void vector_plus_vector()
+void vector_plus_vector(int N)
 {
     // make a channel
     pyre::journal::info_t channel("tests.timer.vector_plus_vector");
 
     // make a timer
     timer_t t("tests.timer");
-    
-    // number of times to do operation
-    int N = 1<<25;
 
     channel << "Computing " << N << " vector-vector sums" << pyre::journal::endl;
 
@@ -100,8 +97,11 @@ void vector_plus_vector()
 
 int main() {
 
+    // number of times to do operation
+    int N = 1<<25;
+
     // vector plus vector
-    vector_plus_vector();
+    vector_plus_vector(N);
 
     // all done
     return 0;
