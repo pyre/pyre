@@ -27,47 +27,52 @@
 
 // create a nonce name to satisfy the device constructor
 // TODO permit anonymous devices?
-static auto nonce()
+// MGA 20230429:
+//   seems to me that anonymous devices would imply state that is not shareable
+//   this is a change that i have contemplated for timers, where sometimes sharing is overkill
+//   it would require some non-trivial restructuring of the implementation, since state sharing
+//   is baked in rather deeply. worth thinking through...
+static auto
+nonce()
 {
     static int id = 0;
     return "Splitter" + std::to_string(id++);
 }
 
-pyre::journal::Splitter::
-Splitter() :
-    Device{nonce()}
-{}
+pyre::journal::Splitter::Splitter() : Device { nonce() } {}
 
-pyre::journal::Splitter::
-Splitter(std::vector<output_t> o) :
-    Device{nonce()},
-    _outputs{o}
-{}
+pyre::journal::Splitter::Splitter(std::vector<output_t> o) : Device { nonce() }, _outputs { o } {}
 
 void
-pyre::journal::Splitter::
-attach(output_t output)
+pyre::journal::Splitter::attach(output_t output)
 {
     outputs().push_back(output);
 }
 
 // the interface simply forwards to the outputs' interfaces
 auto
-pyre::journal::Splitter::
-memo(const entry_type & entry) -> Splitter &
+pyre::journal::Splitter::alert(const entry_type & entry) -> Splitter &
 {
     for (auto & output : outputs()) {
-        output->memo(entry);
+        output->alert(entry);
     }
     return *this;
 }
 
 auto
-pyre::journal::Splitter::
-alert(const entry_type & entry) -> Splitter &
+pyre::journal::Splitter::help(const entry_type & entry) -> Splitter &
 {
     for (auto & output : outputs()) {
         output->alert(entry);
+    }
+    return *this;
+}
+
+auto
+pyre::journal::Splitter::memo(const entry_type & entry) -> Splitter &
+{
+    for (auto & output : outputs()) {
+        output->memo(entry);
     }
     return *this;
 }

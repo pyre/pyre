@@ -7,8 +7,7 @@
 #define pyre_journal_Splitter_h
 
 // a middleman plumbing device that splits one input to any number of outputs
-class pyre::journal::Splitter : public Device
-{
+class pyre::journal::Splitter : public Device {
 protected:
     using output_t = std::shared_ptr<Device>;
     using outputs_t = std::vector<output_t>;
@@ -28,8 +27,9 @@ public:
     auto & outputs() { return _outputs; }
     void attach(output_t output);
 
-    virtual auto memo(const entry_type & entry) -> Splitter & override;
     virtual auto alert(const entry_type & entry) -> Splitter & override;
+    virtual auto help(const entry_type & entry) -> Splitter & override;
+    virtual auto memo(const entry_type & entry) -> Splitter & override;
 };
 
 #endif
