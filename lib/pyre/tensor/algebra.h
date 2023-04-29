@@ -28,8 +28,10 @@ namespace pyre::tensor {
         return std::sqrt(_norm_square(tensor, make_integer_sequence<D> {}));
     }
 
+    // normalize a tensor with its 2-norm
     template <typename T, class packingT, int... I>
-    constexpr Tensor<T, packingT, I...> normalize(const Tensor<T, packingT, I...> & tensor)
+    constexpr auto normalize(const Tensor<T, packingT, I...> & tensor) 
+        -> Tensor<T, packingT, I...>
     {
         return tensor / norm(tensor);
     }
