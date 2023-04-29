@@ -226,26 +226,32 @@ namespace pyre::tensor {
         }        
     }
 
+    // tensor unary operator- &
     template <typename T, class packingT, int... I>
     constexpr Tensor<T, packingT, I...> operator-(const Tensor<T, packingT, I...> & y)
     {
-        // std::cout << "unary operator- &" << std::endl;
-        // instantiate the result
-        Tensor<T, packingT, I...> result;
-        // iterate on the packing
-        for (auto idx : Tensor<T, packingT, I...>::layout()) {
-            result[idx] = -y[idx];
-        }
-        // all done
-        return result;
+        // typedef the tensor
+        using tensor_t = Tensor<T, packingT, I...>;
+        // get the tensor size (number of components)
+        constexpr int D = tensor_t::size;
+
+        // helper function to do component-wise operation
+        constexpr auto _operator_minus = []<int... J>(const tensor_t & tensor, 
+            integer_sequence<J...>) -> tensor_t
+        {
+            // return sum of all square components
+            return tensor_t {-tensor[J] ...};
+        };
+
+        // return the result of the component-wise operation
+        return _operator_minus(y, make_integer_sequence<D> {});
     }
 
-    // Tensor unary operator-
+    // tensor unary operator- &&
     template <typename T, class packingT, int... I>
     constexpr Tensor<T, packingT, I...> operator-(Tensor<T, packingT, I...> && y)
     {
-        // std::cout << "unary operator- &&" << std::endl;
-        // write the result on y1
+        // write the result on the temporary
         y = -std::as_const(y);
         // all done
         return y;
