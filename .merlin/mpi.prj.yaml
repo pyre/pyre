@@ -3,13 +3,13 @@
 # (c) 1998-2023 all rights reserved
 
 
-# the {journal} project contains
+# the {mpi} project contains
 mpi.prj:
     # a library
     libraries: "#libmpi"
 
 
-# libjournal
+# libmpi
 libmpi:
     # the name of the library
     name: mpi
