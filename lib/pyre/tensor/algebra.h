@@ -281,12 +281,27 @@ namespace pyre::tensor {
         return std::move(y1) + (-std::move(y2));
     }
 
-    // Tensor operator+=
-    template <typename T, class packingT1, int... I, class TENSOR>
-    constexpr Tensor<T, packingT1, I...> & operator+=
-        (Tensor<T, packingT1, I...> & lhs, TENSOR && rhs)
+    // tensor operator+= (for tensors with same packing)
+    template <typename T, class packingT, int... I>
+    constexpr Tensor<T, packingT, I...> & operator+=
+        (Tensor<T, packingT, I...> & lhs, const Tensor<T, packingT, I...> & rhs)
     {
-        lhs = std::move(lhs) + std::forward<TENSOR>(rhs);
+        constexpr int D = Tensor<T, packingT, I...>::size;
+        _vector_sum(lhs, rhs, lhs, make_integer_sequence<D> {});
+        // all done
+        return lhs;
+    }
+
+    // tensor operator+= (for tensors with different packing)
+    template <typename T, class packingT1, class packingT2, int... I>
+    constexpr auto operator+=
+        (Tensor<T, packingT1, I...> & lhs, const Tensor<T, packingT2, I...> & rhs)
+        -> auto &
+        requires (!std::is_same_v<packingT1, packingT2>
+            && std::is_same_v<typename repacking<packingT1, packingT2>::packing_type, packingT1>)
+    {
+        lhs = std::move(lhs) + rhs;
+        // all done
         return lhs;
     }
 
