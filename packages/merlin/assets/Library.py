@@ -36,7 +36,7 @@ class Library(
     scope = merlin.properties.path()
     scope.doc = "place my headers within the scope of a larger project"
 
-    gateway = merlin.properties.path()
+    gateway = merlin.properties.paths()
     gateway.doc = (
         "the name of the top level header that provides access to the other headers"
     )
