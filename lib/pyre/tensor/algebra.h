@@ -13,12 +13,17 @@ namespace pyre::tensor {
     template <typename T, class packingT, int... I>
     constexpr T norm(const Tensor<T, packingT, I...> & tensor)
     {
-        T result(0);
-        // iterate on the packing
-        for (auto idx : Tensor<T, packingT, I...>::layout()) {
-            result += tensor[idx] * tensor[idx];
-        }
-        return std::sqrt(result);
+        // helper function
+        constexpr auto _norm_square = []<int... J>(const Tensor<T, packingT, I...> & tensor, 
+            integer_sequence<J...>) -> T
+        {
+            // return sum of all square components
+            return ((tensor[J] * tensor[J]) + ...);
+        };
+
+        // return 
+        constexpr int D = Tensor<T, packingT, I...>::size;
+        return std::sqrt(_norm_square(tensor, make_integer_sequence<D> {}));
     }
 
     template <typename T, class packingT, int... I>
