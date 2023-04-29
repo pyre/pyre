@@ -78,15 +78,6 @@ function(pyre_destinationInit)
 endfunction(pyre_destinationInit)
 
 
-# describe the root pf tyhe test suite
-function(pyre_testInit)
-  # create a variable to hold the root in the test directory
-  set(PYRE_TESTSUITE_DIR ${CMAKE_SOURCE_DIR}/tests PARENT_SCOPE)
-  set(PYRE_TESTSUITE_TMPDIR ${CMAKE_BINARY_DIR}/tmp PARENT_SCOPE)
-  # all done
-endfunction(pyre_testInit)
-
-
 # ask git for the most recent tag and use it to build the version
 function(pyre_getVersion)
   # git
