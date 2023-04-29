@@ -195,10 +195,6 @@ if(PYRE_BUILD_TESTING)
   # and my functions
   include(pyre_tests)
 
-  # initialize the variables that describe the test suite; needed so harnesses can set up the
-  # working directory correctly
-  pyre_testInit()
-
   # pure python
   include(pyre_tests_python)
 
