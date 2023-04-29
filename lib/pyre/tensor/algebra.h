@@ -10,8 +10,10 @@
 
 
 namespace pyre::tensor {
+
+    // compute 2-norm of tensor
     template <typename T, class packingT, int... I>
-    constexpr T norm(const Tensor<T, packingT, I...> & tensor)
+    constexpr auto norm(const Tensor<T, packingT, I...> & tensor) -> T
     {
         // helper function
         constexpr auto _norm_square = []<int... J>(const Tensor<T, packingT, I...> & tensor, 
