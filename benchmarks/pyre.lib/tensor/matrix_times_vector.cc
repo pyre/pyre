@@ -51,7 +51,7 @@ void matrix_times_vector()
         {
             for (size_t j = 0; j < vector_c.size(); ++j)
             {
-                result_c[i] += tensor_c[i + j] * vector_c[j];
+                result_c[i] += tensor_c[i * 3 + j] * vector_c[j];
             }
         }
     }
