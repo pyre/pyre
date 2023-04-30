@@ -36,4 +36,23 @@ function(pyre_cudaLib)
 endfunction(pyre_cudaLib)
 
 
+# build the cuda kernel associated with this {driverfile}
+function(pyre_kernel_target kernelobject driverfile)
+    # extract the driver directory
+    get_filename_component(driver_directory ${driverfile} DIRECTORY)
+    # extract the driver basename
+    get_filename_component(driver_basename ${driverfile} NAME_WE)
+    # assemble the cu filename associated with this {driverfile} 
+    set(cudafile "${driver_directory}/${driver_basename}.cu")
+    # generate the name of the target with the cuda kernel
+    pyre_target(kernelobject ${cudafile})
+    # rename the kernel target to distinguish it from the driver target
+    set(kernelobject "${kernelobject}_kernel")
+    # propagate definition of variable to parent scope
+    set(kernelobject "${kernelobject}" PARENT_SCOPE)
+    # sign up the kernel target for build based on the cuda source file
+    add_library("${kernelobject}" STATIC ${cudafile})
+  # all done
+endfunction()
+
 # end of file
