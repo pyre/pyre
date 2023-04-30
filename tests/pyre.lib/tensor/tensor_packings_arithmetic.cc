@@ -24,7 +24,7 @@ int main(int argc, char* argv[]) {
     pyre::journal::application("tensor_packings_arithmetic");
 
     // make a channel
-    pyre::journal::debug_t channel("pyre.tensor");
+    pyre::journal::info_t channel("pyre.tensor");
 
     {
         // report
