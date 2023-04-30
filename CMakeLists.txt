@@ -250,15 +250,4 @@ if(PYRE_BUILD_BENCHMARKS)
 endif()
 
 
-# if we are building the benchmarks
-if(PYRE_BUILD_BENCHMARKS)
-
-  # get my functions
-  include(pyre_benchmarks)
-
-  # add the testsuite to the pile
-  add_subdirectory(benchmarks)
-endif()
-
-
 # end of file
