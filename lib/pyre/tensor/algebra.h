@@ -202,7 +202,7 @@ namespace pyre::tensor {
     template <typename T, class packingT1, class packingT2, int... I>
     constexpr auto operator+(Tensor<T, packingT1, I...> && y1, 
         const Tensor<T, packingT2, I...> & y2)
-        -> Tensor<T, typename repacking<packingT1, packingT2>::packing_type, I...>
+        -> auto
     {
         // easy enough
         return y2 + std::move(y1);
@@ -211,7 +211,7 @@ namespace pyre::tensor {
     // tensor operator+ && && (for all tensors packing)
     template <typename T, class packingT1, class packingT2, int... I>
     constexpr auto operator+(Tensor<T, packingT1, I...> && y1, Tensor<T, packingT2, I...> && y2)
-        -> Tensor<T, typename repacking<packingT1, packingT2>::packing_type, I...>
+        -> auto
     {
         // typedef for the repacked tensor based on {packingT1} and {packingT2}
         using repacking_t = typename repacking<packingT1, packingT2>::packing_type;
@@ -228,7 +228,7 @@ namespace pyre::tensor {
 
     // tensor unary operator- &
     template <typename T, class packingT, int... I>
-    constexpr Tensor<T, packingT, I...> operator-(const Tensor<T, packingT, I...> & y)
+    constexpr auto operator-(const Tensor<T, packingT, I...> & y) -> Tensor<T, packingT, I...>
     {
         // typedef the tensor
         using tensor_t = Tensor<T, packingT, I...>;
@@ -249,7 +249,7 @@ namespace pyre::tensor {
 
     // tensor unary operator- &&
     template <typename T, class packingT, int... I>
-    constexpr Tensor<T, packingT, I...> operator-(Tensor<T, packingT, I...> && y)
+    constexpr auto operator-(Tensor<T, packingT, I...> && y) -> auto
     {
         // write the result on the temporary
         y = -std::as_const(y);
@@ -257,42 +257,46 @@ namespace pyre::tensor {
         return y;
     }  
 
+    // tensor operator- & &
     template <typename T, class packingT1, class packingT2, int... I>
-    constexpr Tensor<T, typename repacking<packingT1, packingT2>::packing_type, I...> operator-(
-        const Tensor<T, packingT1, I...> & y1, const Tensor<T, packingT2, I...> & y2)
+    constexpr auto operator-(const Tensor<T, packingT1, I...> & y1, 
+        const Tensor<T, packingT2, I...> & y2) -> auto
     {
         // std::cout << "operator- & &" << std::endl;
         return y1 + (-y2);
     }
 
+    // tensor operator- && &
     template <typename T, class packingT1, class packingT2, int... I>
-    constexpr Tensor<T, typename repacking<packingT1, packingT2>::packing_type, I...> operator-(
-        Tensor<T, packingT1, I...> && y1, const Tensor<T, packingT2, I...> & y2)
+    constexpr auto operator-(Tensor<T, packingT1, I...> && y1, 
+        const Tensor<T, packingT2, I...> & y2) -> auto
     {
         // std::cout << "operator- && &" << std::endl;
         return std::move(y1) + (-y2);
     }
 
+    // tensor operator- & &&
     template <typename T, class packingT1, class packingT2, int... I>
-    constexpr Tensor<T, typename repacking<packingT1, packingT2>::packing_type, I...> operator-(
-        const Tensor<T, packingT1, I...> & y1, Tensor<T, packingT2, I...> && y2)
+    constexpr auto operator-(const Tensor<T, packingT1, I...> & y1, 
+        Tensor<T, packingT2, I...> && y2) -> auto
     {
         // std::cout << "operator- & &&" << std::endl;
         return y1 + (-std::move(y2));
     }
 
+    // tensor operator- && &&
     template <typename T, class packingT1, class packingT2, int... I>
-    constexpr Tensor<T, typename repacking<packingT1, packingT2>::packing_type, I...> operator-(
-        Tensor<T, packingT1, I...> && y1, Tensor<T, packingT2, I...> && y2)
+    constexpr auto operator-(Tensor<T, packingT1, I...> && y1, Tensor<T, packingT2, I...> && y2)
+        -> auto
     {
         // std::cout << "operator- && &&" << std::endl;
-        return std::move(y1) + (-std::move(y2));
+        return std::move(y1) + std::move(-std::move(y2));
     }
 
     // tensor operator+= (for tensors with same packing)
     template <typename T, class packingT, int... I>
-    constexpr Tensor<T, packingT, I...> & operator+=
-        (Tensor<T, packingT, I...> & lhs, const Tensor<T, packingT, I...> & rhs)
+    constexpr auto operator+=(Tensor<T, packingT, I...> & lhs, 
+        const Tensor<T, packingT, I...> & rhs) -> Tensor<T, packingT, I...> &
     {
         constexpr int D = Tensor<T, packingT, I...>::size;
         _vector_sum(lhs, rhs, lhs, make_integer_sequence<D> {});
@@ -302,9 +306,8 @@ namespace pyre::tensor {
 
     // tensor operator+= (for tensors with different packing)
     template <typename T, class packingT1, class packingT2, int... I>
-    constexpr auto operator+=
-        (Tensor<T, packingT1, I...> & lhs, const Tensor<T, packingT2, I...> & rhs)
-        -> auto &
+    constexpr auto operator+=(Tensor<T, packingT1, I...> & lhs, 
+        const Tensor<T, packingT2, I...> & rhs) -> auto &
         requires (!std::is_same_v<packingT1, packingT2>
             && std::is_same_v<typename repacking<packingT1, packingT2>::packing_type, packingT1>)
     {
@@ -315,29 +318,30 @@ namespace pyre::tensor {
 
     // Tensor operator-=
     template <typename T, class packingT1, int... I, class TENSOR>
-    constexpr Tensor<T, packingT1, I...> & operator-=
-        (Tensor<T, packingT1, I...> & lhs, TENSOR && rhs)
+    constexpr auto operator-=(Tensor<T, packingT1, I...> & lhs, TENSOR && rhs)
+    -> Tensor<T, packingT1, I...> &
     {
         lhs = std::move(lhs) - std::forward<TENSOR>(rhs);
         return lhs;
     }
 
     template <typename T2, typename T, class packingT, int... I>
-    constexpr Tensor<T, packingT, I...> operator/(const Tensor<T, packingT, I...> & y, T2 a) 
-        requires(Tensor<T, packingT, I...>::size != 1 && std::convertible_to<T2, T>)
+    constexpr auto operator/(const Tensor<T, packingT, I...> & y, T2 a) -> Tensor<T, packingT, I...>
+    requires(Tensor<T, packingT, I...>::size != 1 && std::convertible_to<T2, T>)
     {
         return (1.0 / a) * y;
     }
 
     template <typename T2, typename T, class packingT, int... I>
-    constexpr Tensor<T, packingT, I...> operator/(Tensor<T, packingT, I...> && y, T2 a) requires(
-        Tensor<T, packingT, I...>::size != 1 && std::convertible_to<T2, T>)
+    constexpr operator/(Tensor<T, packingT, I...> && y, T2 a) -> Tensor<T, packingT, I...>
+    requires(Tensor<T, packingT, I...>::size != 1 && std::convertible_to<T2, T>)
     {
         return (1.0 / a) * std::move(y);
     }
+
     // builds a square matrix with all zeros except the K-th row is equal to v
     template <int K, int D, typename T, class packingT>
-    constexpr matrix_t<D, D, T, packingT> matrix_row(const vector_t<D, T> & v)
+    constexpr auto matrix_row(const vector_t<D, T> & v) -> matrix_t<D, D, T, packingT>
     {
         constexpr auto _fill_matrix_row = []<int... I>(
             matrix_t<D, D, T, packingT> A, const vector_t<D, T> & v, integer_sequence<I...>) 
@@ -350,9 +354,10 @@ namespace pyre::tensor {
         return _fill_matrix_row(matrix_t<D, D, T, packingT>::zero, v, 
             make_integer_sequence<D> {});
     }
+
     // builds a square matrix with all zeros except the K-th column is equal to v
     template <int K, int D, typename T>
-    constexpr matrix_t<D, D, T> matrix_column(const vector_t<D, T> & v)
+    constexpr auto matrix_column(const vector_t<D, T> & v) -> matrix_t<D, D, T>
     {
         constexpr auto _fill_matrix_column = []<int... I>(
             matrix_t<D, D, T> A, const vector_t<D, T> & v, integer_sequence<I...>) 
@@ -364,9 +369,10 @@ namespace pyre::tensor {
         // fill column K of a zero matrix with vector v
         return _fill_matrix_column(matrix_t<D, D, T>::zero, v, make_integer_sequence<D> {});
     }
+
     // builds a square matrix with all zeros except the diagonal is equal to v
     template <int D, typename T>
-    constexpr diagonal_matrix_t<D, T> matrix_diagonal(const vector_t<D, T> & v)
+    constexpr auto matrix_diagonal(const vector_t<D, T> & v) -> diagonal_matrix_t<D, T>
     {
         constexpr auto _fill_matrix_diagonal = []<int... I>(
             diagonal_matrix_t<D, T> A, const vector_t<D, T> & v, integer_sequence<I...>) 
@@ -380,9 +386,10 @@ namespace pyre::tensor {
         // fill diagonal of a zero matrix with vector v
         return _fill_matrix_diagonal(A, v, make_integer_sequence<D> {});
     }
+
     // builds the vector with the diagonal entries of a matrix
     template <int D, typename T, class packingT>
-    constexpr vector_t<D, T> matrix_diagonal(const matrix_t<D, D, T, packingT> & A)
+    constexpr auto matrix_diagonal(const matrix_t<D, D, T, packingT> & A) -> vector_t<D, T>
     {
         auto _fill_vector_with_matrix_diagonal = [&A]<int... J>(integer_sequence<J...>) 
             -> vector_t<D, T>
@@ -393,10 +400,10 @@ namespace pyre::tensor {
         // fill a vector with the diagonal of A and return it
         return _fill_vector_with_matrix_diagonal(make_integer_sequence<D> {});
     }
+
     // row-column vector product
     template <int D, typename T>
-    constexpr T operator*(
-        const vector_t<D, T> & v1, const vector_t<D, T> & v2) 
+    constexpr auto operator*(const vector_t<D, T> & v1, const vector_t<D, T> & v2) -> T
     {
         // helper function (scalar product)
         constexpr auto _vector_times_vector = []<int... K>(
@@ -407,10 +414,11 @@ namespace pyre::tensor {
         };
         return _vector_times_vector(v1, v2, make_integer_sequence<D> {});
     }
+
     // matrix-vector multiplication
     template <int D1, int D2, typename T, class packingT>
-    constexpr vector_t<D1, T> operator*(
-        const matrix_t<D1, D2, T, packingT> & A, const vector_t<D2, T> & v) 
+    constexpr auto operator*(const matrix_t<D1, D2, T, packingT> & A, const vector_t<D2, T> & v)
+    -> vector_t<D1, T>
     {
         // helper function
         constexpr auto _matrix_times_vector = []<int... K>(
@@ -421,18 +429,20 @@ namespace pyre::tensor {
         };
         return _matrix_times_vector(A, v, make_integer_sequence<D2> {});
     }
+
     // vector-matrix multiplication
     template <int D1, int D2, typename T, class packingT>
-    constexpr vector_t<D1, T> operator*(const vector_t<D2, T> & v, 
-        const matrix_t<D1, D2, T, packingT> & A) 
+    constexpr auto operator*(const vector_t<D2, T> & v, const matrix_t<D1, D2, T, packingT> & A)
+    -> vector_t<D1, T>
     {
         return transpose(A) * v;
     }
+
     // matrix-matrix multiplication
     template <int D1, int D2, int D3, typename T, class packingT1, class packingT2>
-    constexpr matrix_t<D1, D3, T> operator*(
-        const matrix_t<D1, D2, T, packingT1> & A1, const matrix_t<D2, D3, T, packingT2> & A2) 
-        requires(D1 != 1 && D2 != 1 && D3 != 1)
+    constexpr auto operator*(const matrix_t<D1, D2, T, packingT1> & A1, 
+        const matrix_t<D2, D3, T, packingT2> & A2) -> matrix_t<D1, D3, T>
+    requires(D1 != 1 && D2 != 1 && D3 != 1)
     {
         // helper function
         constexpr auto _matrix_times_matrix = []<int... K>(
@@ -449,8 +459,8 @@ namespace pyre::tensor {
 
     // Tensor operator*=
     template <typename T, class packingT1, int... I, class TENSOR>
-    constexpr Tensor<T, packingT1, I...> & operator*=
-        (Tensor<T, packingT1, I...> & lhs, TENSOR && rhs)
+    constexpr auto operator*=(Tensor<T, packingT1, I...> & lhs, TENSOR && rhs)
+    -> Tensor<T, packingT1, I...> &
     {
         lhs = std::move(lhs) * std::forward<TENSOR>(rhs);
         return lhs;
@@ -458,8 +468,8 @@ namespace pyre::tensor {
 
     // Tensor operator/=
     template <typename T, class packingT1, int... I, class SCALAR>
-    constexpr Tensor<T, packingT1, I...> & operator/=
-        (Tensor<T, packingT1, I...> & lhs, SCALAR && rhs)
+    constexpr auto operator/=(Tensor<T, packingT1, I...> & lhs, SCALAR && rhs)
+    -> Tensor<T, packingT1, I...> &
     {
         lhs = std::move(lhs) / std::forward<SCALAR>(rhs);
         return lhs;
@@ -467,7 +477,7 @@ namespace pyre::tensor {
 
     // the skew symmetric matrix representing vector a  
     template <typename T>
-    constexpr matrix_t<3, 3, T> skew(const vector_t<3, T> & a)
+    constexpr auto skew(const vector_t<3, T> & a) -> matrix_t<3, 3, T>
     {
         matrix_t<3, 3, T> A = matrix_t<3, 3, T>::zero;
         A[{0, 1}] = -a[2];
@@ -480,33 +490,34 @@ namespace pyre::tensor {
     }
 
     template <typename T>
-    constexpr auto cross(const vector_t<3, T> & a, const vector_t<3, T> & b)
+    constexpr auto cross(const vector_t<3, T> & a, const vector_t<3, T> & b) -> auto
     {
         return skew(a) * b;
     }
 
     template <typename T>
-    constexpr T cross(const vector_t<2, T> & a, const vector_t<2, T> & b)
+    constexpr auto cross(const vector_t<2, T> & a, const vector_t<2, T> & b) -> T
     {
         vector_t<3, T> a3 {a[0], a[1], 0.0};
         vector_t<3, T> b3 {b[0], b[1], 0.0};
         return cross(a3, b3)[2];
     }
+
     // factorial
     template <int D>
-    constexpr int factorial()
+    constexpr auto factorial() -> int
     {
         return D * factorial<int(D - 1)>();
     }
 
     template <>
-    constexpr int factorial<1>()
+    constexpr auto factorial<1>() -> int
     {
         return 1;
     }
 
     template <typename T, class packingT>
-    constexpr T determinant(const matrix_t<4, 4, T, packingT> & A)
+    constexpr auto determinant(const matrix_t<4, 4, T, packingT> & A) -> T
     {
         return A[{0, 1}] * A[{2, 3}] * A[{3, 2}] * A[{1, 0}] - A[{0, 1}] * A[{2, 2}] * A[{3, 3}]
                  * A[{1, 0}]
@@ -535,7 +546,7 @@ namespace pyre::tensor {
     }
 
     template <typename T, class packingT>
-    constexpr T determinant(const matrix_t<3, 3, T, packingT> & A)
+    constexpr auto determinant(const matrix_t<3, 3, T, packingT> & A) -> T
     {
         return A[{0, 0}] * (A[{1, 1}] * A[{2, 2}] - A[{1, 2}] * A[{2, 1}]) 
              - A[{0, 1}] * (A[{1, 0}] * A[{2, 2}] - A[{1, 2}] * A[{2, 0}])
@@ -543,13 +554,13 @@ namespace pyre::tensor {
     }
 
     template <typename T, class packingT>
-    constexpr T determinant(const matrix_t<2, 2, T, packingT> & A)
+    constexpr auto determinant(const matrix_t<2, 2, T, packingT> & A) -> T
     {
         return A[{0, 0}] * A[{1, 1}] - A[{0, 1}] * A[{1, 0}];
     }
 
     template <typename T, class packingT>
-    constexpr matrix_t<3, 3, T, packingT> inverse(const matrix_t<3, 3, T, packingT> & A)
+    constexpr auto inverse(const matrix_t<3, 3, T, packingT> & A) -> matrix_t<3, 3, T, packingT>
     {
         matrix_t<3, 3, T, packingT> invA;
         T det = determinant(A);
@@ -568,7 +579,7 @@ namespace pyre::tensor {
     }
 
     template <typename T, class packingT>
-    constexpr matrix_t<2, 2, T, packingT> inverse(const matrix_t<2, 2, T, packingT> & A)
+    constexpr auto inverse(const matrix_t<2, 2, T, packingT> & A) -> matrix_t<2, 2, T, packingT>
     {
         matrix_t<2, 2, T, packingT> invA;
         T det = determinant(A);
@@ -582,9 +593,9 @@ namespace pyre::tensor {
     }
 
     template <int D, typename T, class packingT>
-    constexpr T trace(const matrix_t<D, D, T, packingT> & A)
+    constexpr auto trace(const matrix_t<D, D, T, packingT> & A) -> T
     {
-        auto _trace = [&A]<int... J>(integer_sequence<J...>) ->T
+        auto _trace = [&A]<int... J>(integer_sequence<J...>) -> T
         {
             return (A[{J, J}]+ ... );
         };
@@ -609,7 +620,7 @@ namespace pyre::tensor {
     }
 
     template <int D, typename T, class packingT>
-    constexpr symmetric_matrix_t<D, T> symmetric(const matrix_t<D, D, T, packingT> & A)
+    constexpr auto symmetric(const matrix_t<D, D, T, packingT> & A) -> symmetric_matrix_t<D, T>
     {
         symmetric_matrix_t<D, T> sym;
         auto _fill_column = [&A, &sym]<int... K>(integer_sequence<K...>){
@@ -625,20 +636,20 @@ namespace pyre::tensor {
     }
 
     template <int D, typename T, class packingT>
-    constexpr auto skew(const matrix_t<D, D, T, packingT> & A) 
+    constexpr auto skew(const matrix_t<D, D, T, packingT> & A) -> auto
     requires (!std::is_same_v<packingT, pyre::grid::symmetric_t<2>>) 
     {
         return 0.5 * (A - transpose(A));
     }
 
     template <int D, typename T>
-    constexpr auto skew(const symmetric_matrix_t<D, T> & A) 
+    constexpr auto skew(const symmetric_matrix_t<D, T> & A) -> auto
     {
         return symmetric_matrix_t<D, T>::zero;
     }
 
     template <typename T>
-    constexpr vector_t<2, T> eigenvalues(const symmetric_matrix_t<2, T> & A)
+    constexpr auto eigenvalues(const symmetric_matrix_t<2, T> & A) -> vector_t<2, T>
     {
         T delta = sqrt(4.0 * A[{0, 1}] * A[{0, 1}] 
             + (A[{0, 0}] - A[{1, 1}]) * (A[{0, 0}] - A[{1, 1}]));
@@ -648,7 +659,7 @@ namespace pyre::tensor {
     }
 
     template <typename T>
-    constexpr matrix_t<2, 2, T> eigenvectors(const symmetric_matrix_t<2, T> & A)
+    constexpr auto eigenvectors(const symmetric_matrix_t<2, T> & A) -> matrix_t<2, 2, T>
     {
         T delta = sqrt(4.0 * A[{0, 1}] * A[{0, 1}] 
             + (A[{0, 0}] - A[{1, 1}]) * (A[{0, 0}] - A[{1, 1}]));
@@ -661,7 +672,7 @@ namespace pyre::tensor {
     }
 
     template <typename T>
-    constexpr vector_t<3, T> eigenvalues(const symmetric_matrix_t<3, T> & A)
+    constexpr auto eigenvalues(const symmetric_matrix_t<3, T> & A) -> vector_t<3, T>
     {
         T a11 = A[{0, 0}];
         T a22 = A[{1, 1}];
@@ -704,7 +715,7 @@ namespace pyre::tensor {
     }
 
     template <typename T>
-    constexpr matrix_t<3, 3, T> eigenvectors(const symmetric_matrix_t<3, T> & A)
+    constexpr auto eigenvectors(const symmetric_matrix_t<3, T> & A) -> matrix_t<3, 3, T>
     {
         // get the eigenvalues
         auto lambda = eigenvalues(A);
@@ -772,21 +783,21 @@ namespace pyre::tensor {
     }
 
     template <int D, typename T>
-    constexpr auto eigenvalues(const diagonal_matrix_t<D, T> & A)
+    constexpr auto eigenvalues(const diagonal_matrix_t<D, T> & A) -> auto
     {
         // the diagonal entries are the eigenvalues
         return matrix_diagonal(A);
     }
 
     template <int D, typename T>
-    constexpr auto eigenvectors(const diagonal_matrix_t<D, T> & A)
+    constexpr auto eigenvectors(const diagonal_matrix_t<D, T> & A) -> auto
     {
         // the canonical basis is the set of eigenvectors
         return diagonal_matrix_t<D, T>::identity;
     }
 
     template <int I, int D1, int D2, typename T, class packingT>
-    constexpr vector_t<D2, T> row(const matrix_t<D1, D2, T, packingT> & A)
+    constexpr auto row(const matrix_t<D1, D2, T, packingT> & A) -> vector_t<D2, T>
     {
         auto _row = [&A]<int... J>(integer_sequence<J...>) -> vector_t<D2, T>
         {
@@ -797,7 +808,7 @@ namespace pyre::tensor {
     }
 
     template <int I, int D1, int D2, typename T, class packingT>
-    constexpr vector_t<D1, T> col(const matrix_t<D1, D2, T, packingT> & A)
+    constexpr auto col(const matrix_t<D1, D2, T, packingT> & A) -> vector_t<D1, T>
     {
         auto _col = [&A]<int... J>(integer_sequence<J...>) -> vector_t<D1, T>
         {
@@ -808,7 +819,7 @@ namespace pyre::tensor {
     }
 
     template <int D, typename T, class packingT>
-    constexpr auto function(const matrix_t<D, D, T, packingT> & A, auto f)
+    constexpr auto function(const matrix_t<D, D, T, packingT> & A, auto f) -> auto
     {
         // compute eigenvalues
         auto lambda = matrix_diagonal(eigenvalues(A));
