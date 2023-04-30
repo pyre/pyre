@@ -32,9 +32,9 @@ int main(int argc, char* argv[]) {
         channel << pyre::journal::newline;   
 
         // pick a matrix
-        static constexpr matrix_t<2, 2> A {1.0, 2.0, 3.0, 4.0};
+        constexpr matrix_t<2, 2> A {1.0, 2.0, 3.0, 4.0};
         // pick a matrix
-        static constexpr matrix_t<2, 2> B {-1.0, 0.0, 0.0, -4.0};
+        constexpr matrix_t<2, 2> B {-1.0, 0.0, 0.0, -4.0};
 
         // show me
         channel << "A = " << A << pyre::journal::newline;   
@@ -63,9 +63,9 @@ int main(int argc, char* argv[]) {
         channel << pyre::journal::newline;   
 
         // pick a diagonal matrix
-        static constexpr diagonal_matrix_t<2> A {1.0, 4.0};
+        constexpr diagonal_matrix_t<2> A {1.0, 4.0};
         // pick a matrix
-        static constexpr matrix_t<2, 2> B {-1.0, 0.0, 0.0, -4.0};
+        constexpr matrix_t<2, 2> B {-1.0, 0.0, 0.0, -4.0};
 
         // show me
         channel << "A = " << A << pyre::journal::newline;   
@@ -94,9 +94,9 @@ int main(int argc, char* argv[]) {
         channel << pyre::journal::newline;   
 
         // pick a matrix
-        static constexpr matrix_t<2, 2> A {1.0, 0.0, 0.0, 4.0};
+        constexpr matrix_t<2, 2> A {1.0, 0.0, 0.0, 4.0};
         // pick a diagonal matrix
-        static constexpr diagonal_matrix_t<2> B {-1.0, -4.0};
+        constexpr diagonal_matrix_t<2> B {-1.0, -4.0};
 
         // show me
         channel << "A = " << A << pyre::journal::newline;   
@@ -125,9 +125,9 @@ int main(int argc, char* argv[]) {
         channel << pyre::journal::newline;   
 
         // pick a diagonal matrix
-        static constexpr diagonal_matrix_t<2> A {1.0, 4.0};
+        constexpr diagonal_matrix_t<2> A {1.0, 4.0};
         // pick a diagonal matrix
-        static constexpr diagonal_matrix_t<2> B {-1.0, -4.0};
+        constexpr diagonal_matrix_t<2> B {-1.0, -4.0};
 
         // show me
         channel << "A = " << A << pyre::journal::newline;   
