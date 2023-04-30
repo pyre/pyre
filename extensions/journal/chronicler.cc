@@ -1,7 +1,7 @@
 // -*- c++ -*-
 //
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
-// (c) 1998-2021 all rights reserved
+// (c) 1998-2023 all rights reserved
 
 
 // externals
@@ -66,6 +66,24 @@ pyre::journal::py::chronicler(py::module & m)
             },
             // the docstring
             "access the default device")
+
+        // device
+        .def_property_static(
+            "margin",
+            // the getter
+            [](py::object) -> chronicler_t::margin_type {
+                // ask {chronicler_t}
+                return chronicler_t::margin();
+            },
+            // the setter
+            [](py::object, chronicler_t::margin_type margin) -> void {
+                // set the new margin
+                chronicler_t::margin(margin);
+                // all done
+                return;
+            },
+            // the docstring
+            "access the default margin")
 
         // global metadata
         .def_property_readonly_static(

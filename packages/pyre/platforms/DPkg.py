@@ -1,31 +1,30 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
-# (c) 1998-2021 all rights reserved
-#
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2023 all rights reserved
 
 
 # externals
-import re, subprocess
+import re
+import subprocess
+
 # framework
 import pyre
+
 # superclass
 from .Managed import Managed
 
 
 # declaration
-class DPkg(Managed, family='pyre.platforms.packagers.dpkg'):
+class DPkg(Managed, family="pyre.platforms.packagers.dpkg"):
     """
     Support for the debian package manager
     """
 
-
     # constants
-    name = 'dpkg'
-    client = 'dpkg-query'
-    defaultLocation = pyre.primitives.path('/usr/bin')
-
+    name = "dpkg"
+    client = "dpkg-query"
+    defaultLocation = pyre.primitives.path("/usr/bin")
 
     # meta-methods
     def __init__(self, **kwds):
@@ -35,7 +34,6 @@ class DPkg(Managed, family='pyre.platforms.packagers.dpkg'):
         self._alternatives = {}
         # all done
         return
-
 
     # implementation details
     def alternatives(self, group):
@@ -58,12 +56,11 @@ class DPkg(Managed, family='pyre.platforms.packagers.dpkg'):
 
         # ask the package protocol to build one; this is done by the protocol since it knows
         # how to derive package names from version numbers correctly
-        index = { name: package for name, package in group.dpkgAlternatives(dpkg=self) }
+        index = {name: package for name, package in group.dpkgAlternatives(dpkg=self)}
         # attach it
         alternatives[category] = index
         # and return it
         return index
-
 
     def identify(self, installation):
         """
@@ -71,8 +68,6 @@ class DPkg(Managed, family='pyre.platforms.packagers.dpkg'):
         """
         # get the name of the installation instance
         name = installation.pyre_name
-        # grab the index of installed packages
-        installed = self.getInstalledPackages()
 
         # one possibility is that this instance belongs to a selection group; we build
         # these for some packages whenever we have to provide package choices to support the
@@ -83,8 +78,8 @@ class DPkg(Managed, family='pyre.platforms.packagers.dpkg'):
 
         # beyond this point, nothing works unless this package belongs to a selection group
         if not alternatives:
-            # it isn't
-            msg = 'could not locate support for {!r} among {}'.format(name, alternatives)
+            # if it doesn't
+            msg = f"could not locate support for '{name}' among {alternatives}"
             # complain
             raise installation.ConfigurationError(configurable=self, errors=[msg])
 
@@ -110,7 +105,7 @@ class DPkg(Managed, family='pyre.platforms.packagers.dpkg'):
             raise package.ConfigurationError(configurable=self, errors=[msg])
 
         # collect all alternatives whose names start with the flavor
-        candidates = [ tag for tag in alternatives if tag.startswith(flavor) ]
+        candidates = [tag for tag in alternatives if tag.startswith(flavor)]
 
         # if there is exactly one candidate
         if len(candidates) == 1:
@@ -122,15 +117,14 @@ class DPkg(Managed, family='pyre.platforms.packagers.dpkg'):
         # if there were no viable candidates
         if not candidates:
             # describe what went wrong
-            msg = "no viable candidates for {!r}".format(flavor)
+            msg = f"no viable candidates for '{flavor}'"
             # and report it
             raise installation.ConfigurationError(configurable=self, errors=[msg])
 
         # otherwise, there were more than one candidate; describe what went wrong
-        msg = 'multiple candidates for {!r}: {}; please select one'.format(flavor, candidates)
+        msg = "multiple candidates for '{flavor}': {candidates}; please select one"
         # and report it
         raise installation.ConfigurationError(configurable=self, errors=[msg])
-
 
     def setAlternatives(self, group, options):
         """
@@ -143,7 +137,6 @@ class DPkg(Managed, family='pyre.platforms.packagers.dpkg'):
         self._alternatives[group] = options
         # all done
         return options
-
 
     def getInstalledPackages(self):
         """
@@ -163,22 +156,22 @@ class DPkg(Managed, family='pyre.platforms.packagers.dpkg'):
         # ask it
         return installed
 
-
     def retrieveInstalledPackages(self):
         """
         Generate a sequence of all installed ports
         """
         # set up the shell command
         settings = {
-            'executable': str(self.client),
-            'args': (
+            "executable": str(self.client),
+            "args": (
                 str(self.client),
-                '--show',
-                '--showformat=${binary:Package}\t${Version}\t${db:Status-Abbrev}\n',
+                "--show",
+                "--showformat=${binary:Package}\t${Version}\t${db:Status-Abbrev}\n",
             ),
-            'stdout': subprocess.PIPE, 'stderr': subprocess.PIPE,
-            'universal_newlines': True,
-            'shell': False
+            "stdout": subprocess.PIPE,
+            "stderr": subprocess.PIPE,
+            "universal_newlines": True,
+            "shell": False,
         }
         # make a pipe
         with subprocess.Popen(**settings) as pipe:
@@ -193,10 +186,9 @@ class DPkg(Managed, family='pyre.platforms.packagers.dpkg'):
                 # if it matched
                 if match:
                     # extract the information we need and hand it to the caller
-                    yield match.group('package', 'version', 'revision')
+                    yield match.group("package", "version", "revision")
         # all done
         return
-
 
     def retrievePackageContents(self, package):
         """
@@ -204,11 +196,12 @@ class DPkg(Managed, family='pyre.platforms.packagers.dpkg'):
         """
         # set up the shell command
         settings = {
-            'executable': str(self.client),
-            'args': (str(self.client), '--listfiles', package),
-            'stdout': subprocess.PIPE, 'stderr': subprocess.PIPE,
-            'universal_newlines': True,
-            'shell': False
+            "executable": str(self.client),
+            "args": (str(self.client), "--listfiles", package),
+            "stdout": subprocess.PIPE,
+            "stderr": subprocess.PIPE,
+            "universal_newlines": True,
+            "shell": False,
         }
         # execute
         with subprocess.Popen(**settings) as pipe:
@@ -221,7 +214,6 @@ class DPkg(Managed, family='pyre.platforms.packagers.dpkg'):
         # all done
         return
 
-
     # private data
     _installed = None
     _alternatives = None
@@ -233,7 +225,7 @@ class DPkg(Managed, family='pyre.platforms.packagers.dpkg'):
         r"(?P<version>[\w.+]+)"
         r"((?P<revision>[\w.+~-]+))?"
         r"\tii"
-        )
+    )
 
 
 # end of file

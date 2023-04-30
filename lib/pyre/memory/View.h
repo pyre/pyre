@@ -1,7 +1,7 @@
 // -*- c++ -*-
 //
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
-// (c) 1998-2021 all rights reserved
+// (c) 1998-2023 all rights reserved
 
 // code guard
 #if !defined(pyre_memory_View_h)
@@ -9,7 +9,7 @@
 
 
 // a block of cells whose memory belongs to someone else
-template <class T,  bool isConst>
+template <class T, bool isConst>
 class pyre::memory::View {
     // types
 public:
@@ -41,6 +41,8 @@ public:
     inline auto bytes() const -> size_type;
     // access to the raw data pointer
     inline auto data() const -> pointer;
+    // access to the raw data pointer in a form suitable for diagnostics
+    inline auto where() const -> const void *;
 
     // iterator support
 public:
@@ -66,8 +68,8 @@ public:
     // constructors
     View(const View &) = default;
     View(View &&) = default;
-    View & operator= (const View &) = default;
-    View & operator= (View &&) = default;
+    View & operator=(const View &) = default;
+    View & operator=(View &&) = default;
 };
 
 
@@ -77,6 +79,6 @@ public:
 #undef pyre_memory_View_icc
 
 
-# endif
+#endif
 
 // end of file

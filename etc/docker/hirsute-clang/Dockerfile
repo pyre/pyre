@@ -1,4 +1,7 @@
 ## -*- docker-image-name: "pyre:hirsute-clang" -*-
+#
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2023 all rights reserved
 
 # based on ubuntu
 FROM ubuntu:hirsute
@@ -34,13 +37,12 @@ RUN apt dist-upgrade -y
 #  - {openssh}, {zip}, {unzip} are needed for some of the tests
 RUN DEBIAN_FRONTEND=noninteractive \
         apt install -y \
-        git vim zip unzip\
+        git vim zip unzip \
         openssh-server \
         clang gfortran make \
         ${python} ${python}-dev \
         python3-pybind11 python3-yaml python3-numpy \
-        libopenmpi-dev \
-        libgsl-dev
+        libopenmpi-dev libhdf5-openmpi-dev libgsl-dev
 
 
 # setup the interactive environment
@@ -59,7 +61,7 @@ RUN sed \
 WORKDIR /root/.pyre
 # the mpi configuration
 COPY etc/docker/hirsute-gcc/mpi.pfg mpi.pfg
-# the {mm} coniguration file
+# the {mm} configuration file
 COPY etc/docker/hirsute-clang/mm.pfg mm.pfg.in
 # expand
 RUN sed \

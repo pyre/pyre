@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
-# (c) 1998-2021 all rights reserved
+# (c) 1998-2023 all rights reserved
 
 
 def test():
@@ -10,7 +10,7 @@ def test():
     Make sure we can instantiate a wall clock timer
     """
     # access the timer bindings
-    from pyre.extensions.pyre import WallTimer
+    from pyre.extensions.pyre.timers import WallTimer
 
     # make a timer
     t = WallTimer(name="tests.timer")

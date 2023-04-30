@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
-# (c) 1998-2021 all rights reserved
-#
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2023 all rights reserved
 
 
 # externals
 import sys
+
 # superclasses
 from .Schema import Schema
 from ..framework.Dashboard import Dashboard
@@ -19,14 +18,12 @@ class OutputStream(Schema, Dashboard):
     A representation of input streams
     """
 
-
     # constants
-    mode = 'w'
-    typename = 'ostream'
+    mode = "w"
+    typename = "ostream"
 
     # types
     from . import uri
-
 
     # interface
     def coerce(self, value, **kwds):
@@ -34,11 +31,11 @@ class OutputStream(Schema, Dashboard):
         Attempt to convert {value} into an open input stream
         """
         # the value is the special string "stdout"
-        if value == 'stdout' or value == '<stdout>':
+        if value == "stdout" or value == "<stdout>":
             # return the process stdout
             return sys.stdout
         # the value is the special string "stderr"
-        if value == 'stderr' or value == '<stderr>':
+        if value == "stderr" or value == "<stderr>":
             # return the process stderr
             return sys.stderr
         # check for strings
@@ -52,16 +49,16 @@ class OutputStream(Schema, Dashboard):
         # otherwise, leave it alone
         return value
 
-
     def string(self, value):
         """
         Render value as a string that can be persisted for later coercion
         """
         # respect {None}
-        if value is None: return None
+        if value is None:
+            #  by leaving it alone
+            return None
         # my value knows
         return value.name
-
 
     def json(self, value):
         """
@@ -70,9 +67,8 @@ class OutputStream(Schema, Dashboard):
         # represent as a string
         return self.string(value)
 
-
     # meta-methods
-    def __init__(self, default='stdout', mode=mode, **kwds):
+    def __init__(self, default="stdout", mode=mode, **kwds):
         # chain up
         super().__init__(default=default, **kwds)
         # save my mode

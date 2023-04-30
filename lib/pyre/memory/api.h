@@ -1,7 +1,7 @@
 // -*- c++ -*-
 //
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
-// (c) 1998-2021 all rights reserved
+// (c) 1998-2023 all rights reserved
 
 // code guard
 #if !defined(pyre_memory_api_h)
@@ -42,15 +42,15 @@ namespace pyre::memory {
     // const view to someone else's data
     template <typename T>
     using constview_t = View<T, true>;
-}
+} // namespace pyre::memory
 
 
 // low level entities; you should probably stay away from them
 namespace pyre::memory {
-    // support for managing file-backed memory undifferentiated blocks; this is the base class
-    // for {map_t} and {constmap_t} above
+    // support for managing file-backed memory undifferentiated blocks
+    // used by {map_t} and {constmap_t} above
     using filemap_t = FileMap;
-}
+} // namespace pyre::memory
 
 
 #endif

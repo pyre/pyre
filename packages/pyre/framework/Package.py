@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2021 all rights reserved
+# (c) 1998-2023 all rights reserved
 #
 
 
@@ -23,7 +23,7 @@ class Package(Named):
     # geography
     home = None # the path to the package importable (as given by its {__file__})
     prefix = None # the home of the package installation
-    defaults = None # the location of the package configuration files
+    config = None # the location of the package configuration files
     # bookkeeping
     locator = None # my birthplace
     sources = None
@@ -51,28 +51,28 @@ class Package(Named):
         # hopefully, it also exists
         if prefix.isDirectory():
             # in which case, here is the location of the package configuration files
-            defaults = prefix / self.DEFAULTS / self.name
+            config = prefix / self.CONFIG / self.name
             # if this doesn't exist
-            if not defaults.isDirectory():
+            if not config.isDirectory():
                 # we have no configuration folder
-                defaults = None
+                config = None
         # if {prefix} does not exist
         else:
             # we have no prefix
             prefix = None
             # and no configuration folder
-            defaults = None
+            config = None
 
         # show me
         # print('pyre.framework.Package.register: name={.name!r}'.format(self))
         # print('  home={!r}'.format(str(home)))
         # print('  prefix={!r}'.format(str(prefix)))
-        # print('  defaults={!r}'.format(str(defaults)))
+        # print('  config={!r}'.format(str(config)))
 
         # attach
         self.home = home
         self.prefix = prefix
-        self.defaults = defaults
+        self.config = config
 
         # register with the fileserver
         executive.fileserver.registerPackage(package=self)
@@ -86,7 +86,7 @@ class Package(Named):
         Easy access to the package folders
         """
         # form a triplet and return it
-        return self.home, self.prefix, self.defaults
+        return self.home, self.prefix, self.config
 
 
     def configure(self, executive):
@@ -116,7 +116,7 @@ class Package(Named):
 
 
     # implementation details
-    DEFAULTS = 'defaults' # the path to the configuration folder relative to {prefix}
+    CONFIG = 'share' # the path to the configuration folder relative to {prefix}
 
 
 # end of file

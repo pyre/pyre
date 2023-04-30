@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
-# (c) 1998-2021 all rights reserved
-#
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2023 all rights reserved
 
 
 # superclass
@@ -16,16 +14,13 @@ class URI(Schema):
     Parser for resource identifiers
     """
 
-
     # types
     from .exceptions import CastingError
     from ..primitives import uri as locator
 
-
     # constants
-    typename = 'uri' # the name of my type
-    complaint = 'could not coerce {0.value!r} into a URI'
-
+    typename = "uri"  # the name of my type
+    complaint = "could not coerce {0.value!r} into a URI"
 
     # interface
     def coerce(self, value, **kwds):
@@ -42,18 +37,21 @@ class URI(Schema):
         value = str(value)
 
         # collapse all internal spaces; they are not valid values anyway
-        value = ''.join(value.split())
+        value = "".join(value.split())
 
         # attempt to coerce
         try:
             # by assuming it is a string
             return self.locator.parse(
-                value.strip(), scheme=self.scheme, authority=self.authority, address=self.address)
+                value.strip(),
+                scheme=self.scheme,
+                authority=self.authority,
+                address=self.address,
+            )
         # if anything goes wrong
         except Exception as error:
             # complain
             raise self.CastingError(value=value, description=self.complaint)
-
 
     def json(self, value):
         """
@@ -62,9 +60,10 @@ class URI(Schema):
         # represent as a string
         return self.string(value)
 
-
     # meta-methods
-    def __init__(self, default=locator(), scheme=None, authority=None, address=None, **kwds):
+    def __init__(
+        self, default=locator(), scheme=None, authority=None, address=None, **kwds
+    ):
         # chain up with my default
         super().__init__(default=default, **kwds)
         # save my defaults

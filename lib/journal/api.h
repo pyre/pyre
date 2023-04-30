@@ -1,7 +1,7 @@
 // -*- c++ -*-
 //
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
-// (c) 1998-2021 all rights reserved
+// (c) 1998-2023 all rights reserved
 
 // code guard
 #if !defined(pyre_journal_api_h)
@@ -14,10 +14,12 @@ namespace pyre::journal {
     inline void init(int argc, char * argv[]);
     // registration of the application name; {value_t} is normally an {std::string}
     inline void application(const value_t & name);
+    // manipulate the detail threshold
+    inline void setDetail(int);
     // turn all channel output off
     inline void quiet();
     // send all channel output to a log file
-    inline void logfile(const path_t &);
+    inline void logfile(const path_t &, filemode_t mode = std::ios_base::out);
 
     // channels
     using info_t = Informational<InventoryProxy>;
@@ -41,7 +43,7 @@ namespace pyre::journal {
     using detail = Detail;
     // the backwards compatible api; deprecated, and will be removed in 2.0
     using verbosity = Detail;
-}    // namespace pyre::journal
+} // namespace pyre::journal
 
 
 // the developer facing api
@@ -73,7 +75,7 @@ namespace pyre::journal {
     using debug_t = null_t;
     using firewall_t = null_t;
 #endif
-}    // namespace pyre::journal
+} // namespace pyre::journal
 
 
 // low level api; chances are good you shouldn't access these directly
@@ -104,6 +106,7 @@ namespace pyre::journal {
     using device_ptr = std::shared_ptr<Device>;
 
     // aliases for the manipulators
+    using code_t = Code;
     using color_t = Color;
     using indenter_t = Dent;
     using locator_t = Locator;
@@ -113,7 +116,7 @@ namespace pyre::journal {
     using ascii_t = ASCII;
     using csi_t = CSI;
     using ansi_t = ANSI;
-}    // namespace pyre::journal
+} // namespace pyre::journal
 
 
 #endif

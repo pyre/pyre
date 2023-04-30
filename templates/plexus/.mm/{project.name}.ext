@@ -1,0 +1,22 @@
+# -*- Makefile -*-
+#
+# {project.authors}
+# (c) {project.span} all rights reserved
+
+
+# naming seed
+{project.name}.ext.stem := {project.name}
+# its location
+{project.name}.ext.root := ext/
+
+# these are bindings for
+{project.name}.ext.wraps := {project.name}.lib
+# built with pybind11
+{project.name}.ext.capsule :=
+# dependencies on external packages
+{project.name}.ext.extern := {project.name}.lib pyre pybind11 python
+# compiler control
+{project.name}.ext.lib.c++.flags += $($(compiler.c++).std.c++20)
+
+
+# end of file

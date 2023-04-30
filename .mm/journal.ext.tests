@@ -1,7 +1,7 @@
 # -*- Makefile -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
-# (c) 1998-2021 all rights reserved
+# (c) 1998-2023 all rights reserved
 
 
 # the journal extension module test suite
@@ -21,9 +21,17 @@ tests.journal.ext.api_file.clean += "api_file.log"
 tests.journal.ext.debug_file.clean += "debug_file.log"
 tests.journal.ext.firewall_file.clean += "firewall_file.log"
 tests.journal.ext.error_file.clean += "error_file.log"
+tests.journal.ext.help_file.clean += "help_file.log"
 tests.journal.ext.info_file.clean += "info_file.log"
 tests.journal.ext.warning_file.clean += "warning_file.log"
-tests.journal.ext.help_file.clean += "help_file.log"
+
+tests.journal.ext.api_file_mode.clean += "api_file_mode.log"
+tests.journal.ext.debug_file_mode.clean += "debug_file_mode.log"
+tests.journal.ext.firewall_file_mode.clean += "firewall_file_mode.log"
+tests.journal.ext.error_file_mode.clean += "error_file_mode.log"
+tests.journal.ext.help_file_mode.clean += "help_file_mode.log"
+tests.journal.ext.info_file_mode.clean += "info_file_mode.log"
+tests.journal.ext.warning_file_mode.clean += "warning_file_mode.log"
 
 
 # end of file

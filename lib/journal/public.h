@@ -1,7 +1,7 @@
 // -*- c++ -*-
 //
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
-// (c) 1998-2021 all rights reserved
+// (c) 1998-2023 all rights reserved
 
 // code guard
 #if !defined(pyre_journal_public_h)
@@ -30,6 +30,7 @@
 // message entry
 #include "Entry.h"
 // message metadata
+#include "Code.h"
 #include "Color.h"
 #include "Detail.h"
 #include "Dent.h"
@@ -112,12 +113,23 @@ pyre::journal::quiet()
 }
 
 
+// set the detail threshold
+void
+pyre::journal::setDetail(int detail)
+{
+    // delegate to the {chronicler_t}
+    chronicler_t::detail(detail);
+    // all done
+    return;
+}
+
+
 // send all channel output to a log file
 void
-pyre::journal::logfile(const path_t & name)
+pyre::journal::logfile(const path_t & name, filemode_t mode)
 {
     // create the device and register it with the chronicler
-    chronicler_t::device<file_t>(name);
+    chronicler_t::device<file_t>(name, mode);
     // all done
     return;
 }

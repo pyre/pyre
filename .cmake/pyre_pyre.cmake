@@ -1,9 +1,7 @@
 # -*- cmake -*-
 #
-# michael a.g. aïvázis
-# orthologue
-# (c) 1998-2021 all rights reserved
-#
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2023 all rights reserved
 
 
 # generate the portinfo file
@@ -11,23 +9,23 @@ function(pyre_portinfo)
   # inject the platform information and move it to the staging area
   # this is the C++ version
   configure_file(
-    portinfo.in portinfo
+    lib/portinfo.in lib/portinfo
     @ONLY
     )
   # install the portinfo file
   install(
-    FILES ${CMAKE_CURRENT_BINARY_DIR}/portinfo
+    FILES ${CMAKE_CURRENT_BINARY_DIR}/lib/portinfo
     DESTINATION ${PYRE_DEST_INCLUDE}
     )
 
   # repeat with the C version
   configure_file(
-    portinfo.in portinfo.h
+    lib/portinfo.in lib/portinfo.h
     @ONLY
     )
   # install the portinfo file
   install(
-    FILES ${CMAKE_CURRENT_BINARY_DIR}/portinfo.h
+    FILES ${CMAKE_CURRENT_BINARY_DIR}/lib/portinfo.h
     DESTINATION ${PYRE_DEST_INCLUDE}
     )
 
@@ -39,18 +37,18 @@ endfunction(pyre_portinfo)
 function(pyre_pyrePackage)
   # install the sources straight from the source directory
   install(
-    DIRECTORY pyre
+    DIRECTORY packages/pyre
     DESTINATION ${PYRE_DEST_PACKAGES}
     FILES_MATCHING PATTERN *.py
     )
   # build the package meta-data
   configure_file(
-    pyre/meta.py.in pyre/meta.py
+    packages/pyre/meta.py.in packages/pyre/meta.py
     @ONLY
     )
   # install the generated package meta-data file
   install(
-    DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/pyre
+    DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/packages/pyre
     DESTINATION ${PYRE_DEST_PACKAGES}
     FILES_MATCHING PATTERN *.py
     )
@@ -62,36 +60,38 @@ endfunction(pyre_pyrePackage)
 function(pyre_pyreLib)
   # build the libpyre version file
   configure_file(
-    pyre/version.h.in pyre/version.h
+    lib/pyre/version.h.in lib/pyre/version.h
     @ONLY
     )
   configure_file(
-    pyre/version.cc.in pyre/version.cc
+    lib/pyre/version.cc.in lib/pyre/version.cc
     @ONLY
     )
   # copy the pyre headers over to the staging area
   file(GLOB_RECURSE files
-       RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}/pyre
+       RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}/lib/pyre
        CONFIGURE_DEPENDS
-       *.h *.icc
+       lib/pyre/*.h lib/pyre/*.icc
        )
   foreach(file ${files})
-    configure_file(pyre/${file} pyre/${file} COPYONLY)
+    configure_file(lib/pyre/${file} lib/pyre/${file} COPYONLY)
   endforeach()
 
   # the libpyre target
   add_library(pyre SHARED)
+  # specify the directory for the library compilation products
+  pyre_library_directory(pyre lib)
   # set the include directories
   target_include_directories(
     pyre PUBLIC
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/lib>
     $<INSTALL_INTERFACE:${PYRE_DEST_INCLUDE}>
     )
   # add the sources
   target_sources(pyre
     PRIVATE
-    pyre/memory/FileMap.cc
-    ${CMAKE_CURRENT_BINARY_DIR}/pyre/version.cc
+    lib/pyre/memory/FileMap.cc
+    ${CMAKE_CURRENT_BINARY_DIR}/lib/pyre/version.cc
     )
   # and the link dependencies
   target_link_libraries(
@@ -101,7 +101,7 @@ function(pyre_pyreLib)
 
   # install all the pyre headers
   install(
-    DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/pyre
+    DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/lib/pyre
     DESTINATION ${PYRE_DEST_INCLUDE}
     FILES_MATCHING PATTERN *.h PATTERN *.icc
     )
@@ -124,28 +124,43 @@ function(pyre_pyreModule)
   # adjust the name to match what python expects
   set_target_properties(pyremodule PROPERTIES LIBRARY_OUTPUT_NAME pyre)
   set_target_properties(pyremodule PROPERTIES SUFFIX ${PYTHON3_SUFFIX})
+  # specify the directory for the module compilation products
+  pyre_library_directory(pyremodule extensions)
   # set the libraries to link against
   target_link_libraries(pyremodule PRIVATE pyre journal pybind11::module)
   # add the sources
   target_sources(pyremodule PRIVATE
-    pyre/pyre.cc
-    pyre/api.cc
-    pyre/process_timers.cc
-    pyre/wall_timers.cc
-    )
+    extensions/pyre/__init__.cc
+    extensions/pyre/api.cc
+    extensions/pyre/grid/__init__.cc
+    extensions/pyre/grid/indices.cc
+    extensions/pyre/grid/grids.cc
+    extensions/pyre/grid/orders.cc
+    extensions/pyre/grid/packings.cc
+    extensions/pyre/grid/shapes.cc
+    extensions/pyre/memory/__init__.cc
+    extensions/pyre/memory/maps.cc
+    extensions/pyre/timers/__init__.cc
+    extensions/pyre/timers/process_timers.cc
+    extensions/pyre/timers/wall_timers.cc
+    extensions/pyre/viz/__init__.cc
+    extensions/pyre/viz/bmp.cc
+  )
 
   # host
   Python_add_library(hostmodule MODULE)
   # adjust the name to match what python expects
   set_target_properties(hostmodule PROPERTIES LIBRARY_OUTPUT_NAME host)
   set_target_properties(hostmodule PROPERTIES SUFFIX ${PYTHON3_SUFFIX})
+  # specify the directory for the module compilation products
+  pyre_library_directory(hostmodule extensions)
   # set the libraries to link against
   target_link_libraries(hostmodule PRIVATE pyre journal)
   # add the sources
   target_sources(hostmodule PRIVATE
-    host/host.cc
-    host/cpu.cc
-    host/metadata.cc
+    extensions/host/host.cc
+    extensions/host/cpu.cc
+    extensions/host/metadata.cc
     )
 
   # install the pyre extensions
@@ -159,24 +174,27 @@ endfunction(pyre_pyreModule)
 
 # the scripts
 function(pyre_pyreBin)
-  # the pyre enhanced interpreter
-  add_executable(python.pyre)
-  # its sources
-  target_sources(python.pyre PRIVATE
-    python.cc
-    )
-  # and libraries
-  target_link_libraries(python.pyre Python::Python)
+  # if (Python_Development.Embed_FOUND)
+  if (FALSE)
+    # the pyre enhanced interpreter
+    add_executable(python.pyre)
+    # its sources
+    target_sources(python.pyre PRIVATE
+      bin/python.cc
+      )
+    # and libraries
+    target_link_libraries(python.pyre Python::Python)
 
-  # install the custom python
-  install(
-    TARGETS python.pyre
-    RUNTIME
-    DESTINATION ${CMAKE_INSTALL_BINDIR}
-    )
+    # install the custom python
+    install(
+      TARGETS python.pyre
+      RUNTIME
+      DESTINATION ${CMAKE_INSTALL_BINDIR}
+      )
+  endif()
   # install the scripts
   install(
-    PROGRAMS pyre pyre-config merlin smith.pyre
+    PROGRAMS bin/pyre bin/pyre-config bin/merlin bin/smith.pyre
     DESTINATION ${CMAKE_INSTALL_BINDIR}
     )
   # all done
@@ -187,11 +205,57 @@ endfunction(pyre_pyreBin)
 function(pyre_pyreDefaults)
   # install the configuration files
   install(
-    FILES pyre.pfg merlin.pfg
-    DESTINATION defaults
+    DIRECTORY defaults/pyre defaults/merlin
+    DESTINATION share
   )
   # all done
 endfunction(pyre_pyreDefaults)
+
+
+# generate a unique target name
+function(pyre_target target testfile)
+  # split
+  get_filename_component(path ${testfile} DIRECTORY)
+  get_filename_component(base ${testfile} NAME_WE)
+
+  # replace path separators with dors
+  string(REPLACE "/" "." stem ${path})
+
+  # build the target and return it
+  set(${target} "${stem}.${base}" PARENT_SCOPE)
+
+  # all done
+endfunction()
+
+
+# specify the directory for the target compilation products
+function(pyre_target_directory target directory)
+  # set output directory for this target to subdirectory {directory} of the build directory
+  set_target_properties(${target} PROPERTIES RUNTIME_OUTPUT_DIRECTORY
+    ${CMAKE_CURRENT_BINARY_DIR}/${directory}
+  )
+# all done
+endfunction()
+
+
+# specify the directory for the module
+function(pyre_library_directory library directory)
+  # set output directory for this library to subdirectory {directory} of the build directory
+  set_target_properties(${library} PROPERTIES LIBRARY_OUTPUT_DIRECTORY
+    ${CMAKE_CURRENT_BINARY_DIR}/${directory}
+  )
+# all done
+endfunction()
+
+
+# add definitions to compilation of file
+function(pyre_add_definitions driverfile definitions)
+  # generate the name of the target
+  pyre_target(target ${driverfile})
+  # request the definitions for the target
+  target_compile_definitions(${target} PRIVATE ${definitions})
+# all done
+endfunction()
 
 
 # end of file

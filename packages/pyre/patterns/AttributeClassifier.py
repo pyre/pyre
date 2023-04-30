@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2021 all rights reserved
+# (c) 1998-2023 all rights reserved
 #
 
 
@@ -33,16 +33,6 @@ class AttributeClassifier(Type):
 
     # data
     pyre_reserved = set()
-
-
-    # meta methods
-    @classmethod
-    def __prepare__(cls, name, bases, **kwds):
-        """
-        Build an attribute table that maintains a category index for attribute descriptors
-        """
-        # use an ordered dictionary
-        return collections.OrderedDict()
 
 
     # interface

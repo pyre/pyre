@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
-# (c) 1998-2021 all rights reserved
+# (c) 1998-2023 all rights reserved
 
 
 def test():
@@ -11,6 +11,7 @@ def test():
     """
     # get the channel
     from journal.ext.journal import Error as error
+
     # and the trash can
     from journal.ext.journal import Trash as trash
 
@@ -25,7 +26,8 @@ def test():
     try:
         # inject
         channel.line("error:")
-        channel.log("    a nasty bug was detected")
+        # and flush with some additional metadata
+        channel.log("    a nasty bug was detected", code=7)
         # shouldn't get here
         assert False, "unreachable"
     # if the correct exception was raised

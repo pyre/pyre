@@ -1,0 +1,49 @@
+// -*- C++ -*-
+// -*- coding: utf-8 -*-
+//
+// {project.authors}
+// (c) {project.span} all rights reserved
+
+// code guard
+#if !defined({project.name}_version_h)
+#define {project.name}_version_h
+
+
+// support
+#include <tuple>
+#include <string>
+
+
+// put all version related symbols in their own namespace
+// N.B.: version information is made available two different ways in order to enable detecting
+// inconsistencies between the headers accessible at compile time and the library available
+// at run time
+namespace {project.name}::version {{
+    // type aliases
+    using string_t = std::string;
+
+    // my version is a struct with three integers and the {{git}} hash
+    struct version_t {{
+        int major;
+        int minor;
+        int micro;
+        string_t revision;
+    }};
+
+    // the version of the {{project.name}} library
+    auto version() -> version_t;
+
+    // the version visible through the headers
+    // clang-format off
+    const int major = @MAJOR@;
+    const int minor = @MINOR@;
+    const int micro = @MICRO@;
+    const string_t revision = "@REVISION@";
+    // clang-format on
+
+}}
+
+
+#endif
+
+// end of file

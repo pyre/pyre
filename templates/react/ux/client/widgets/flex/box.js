@@ -7,9 +7,10 @@
 // externals
 import React from 'react'
 
-// locals
+// project
 // hooks
 import {{ useEvent }} from '~/hooks'
+// locals
 // context
 import {{ Provider }} from './context'
 // hooks
@@ -20,7 +21,8 @@ import useDirection from './useDirection'
 import styles from './styles'
 
 
-const Box = ({{ style, children }}) => {{
+// the top level flexing container
+const Flexbox = ({{ style, children, ...rest }}) => {{
     // get the flexbox direction
     const {{ direction }} = useDirection()
     // get the flex support
@@ -29,9 +31,20 @@ const Box = ({{ style, children }}) => {{
 
     // make a ref for my container
     const ref = React.useRef(null)
-    // install our event listeners
-    useEvent({{ name: "mouseup", listener: endFlex, client: ref }})
-    useEvent({{ name: "mouseleave", listener: endFlex, client: ref }})
+
+    // install my event listeners
+    // end the flex when the user lets go of the mouse
+    useEvent({{
+        name: "mouseup", listener: endFlex, client: ref,
+        triggers: [flexingPanel]
+    }})
+    // end the flex when the  mouse leaves my client area
+    useEvent({{
+        name: "mouseleave", listener: endFlex, client: ref,
+        triggers: [flexingPanel]
+    }})
+    // flex when the mouse moves; the handler does something non-trivial only when there is
+    // a flexing panel
     useEvent({{
         name: "mousemove", listener: doFlex, client: ref,
         triggers: [flexingPanel, separatorLocation]
@@ -42,19 +55,19 @@ const Box = ({{ style, children }}) => {{
 
     // paint me
     return (
-        <div ref={{ref}} style={{boxStyle}}>
+        <div ref={{ref}} style={{boxStyle}} {{...rest}} >
             {{children}}
-        </div>
+        </div >
     )
 }}
 
 
 // turn flex into a context provider and publish
-export default ({{ direction, ...rest }}) => {{
+export const Box = ({{ direction, ...rest }}) => {{
     // set up the context provider
     return (
         <Provider direction={{direction}} >
-            <Box {{...rest}} />
+            <Flexbox {{...rest}} />
         </Provider >
     )
 }}

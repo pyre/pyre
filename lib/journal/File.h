@@ -1,7 +1,7 @@
 // -*- c++ -*-
 //
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
-// (c) 1998-2021 all rights reserved
+// (c) 1998-2023 all rights reserved
 
 // code guard
 #if !defined(pyre_journal_File_h)
@@ -24,7 +24,7 @@ public:
     // metamethods
 public:
     // constructor
-    inline File(const path_type &);
+    inline File(const path_type &, filemode_t = std::ios_base::out);
     // destructor
     virtual ~File();
 

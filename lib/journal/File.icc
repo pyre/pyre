@@ -1,7 +1,7 @@
 // -*- c++ -*-
 //
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
-// (c) 1998-2021 all rights reserved
+// (c) 1998-2023 all rights reserved
 
 // code guard
 #if !defined(pyre_journal_File_icc)
@@ -10,11 +10,11 @@
 
 
 // metamethods
-pyre::journal::File::File(const path_type & path) :
+pyre::journal::File::File(const path_type & path, filemode_t mode) :
     device_t("file"),
     _palette(),
     _path(path),
-    _file(path),
+    _file(path, mode | std::ios_base::out),
     _alert { std::make_shared<Alert>() },
     _help { std::make_shared<Bland>() },
     _memo { std::make_shared<Memo>() }

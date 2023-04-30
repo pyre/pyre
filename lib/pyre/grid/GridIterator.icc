@@ -1,7 +1,7 @@
 // -*- c++ -*-
 //
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
-// (c) 1998-2021 all rights reserved
+// (c) 1998-2023 all rights reserved
 
 // code guard
 #if !defined(pyre_grid_GridIterator_icc)
@@ -11,11 +11,10 @@
 
 // metamethods
 template <class gridT, class indexIteratorT, bool isConst>
-constexpr
-pyre::grid::GridIterator<gridT, indexIteratorT, isConst>::
-GridIterator(grid_reference grid, index_const_iterator_reference iterator) :
-    _grid{ grid },
-    _idxptr{ iterator }
+constexpr pyre::grid::GridIterator<gridT, indexIteratorT, isConst>::GridIterator(
+    grid_reference grid, index_const_iterator_reference iterator) :
+    _grid { grid },
+    _idxptr { iterator }
 {}
 
 
@@ -23,8 +22,7 @@ GridIterator(grid_reference grid, index_const_iterator_reference iterator) :
 // dereference
 template <class gridT, class indexIteratorT, bool isConst>
 constexpr auto
-pyre::grid::GridIterator<gridT, indexIteratorT, isConst>::
-operator*() const -> reference
+pyre::grid::GridIterator<gridT, indexIteratorT, isConst>::operator*() const -> reference
 {
     // retrieve the value and return it
     return _grid[*_idxptr];
@@ -34,8 +32,7 @@ operator*() const -> reference
 // arithmetic: prefix
 template <class gridT, class indexIteratorT, bool isConst>
 constexpr auto
-pyre::grid::GridIterator<gridT, indexIteratorT, isConst>::
-operator++() -> iterator_reference
+pyre::grid::GridIterator<gridT, indexIteratorT, isConst>::operator++() -> iterator_reference
 {
     // get the next index;
     ++_idxptr;
@@ -47,8 +44,7 @@ operator++() -> iterator_reference
 // arithmetic: postfix
 template <class gridT, class indexIteratorT, bool isConst>
 constexpr auto
-pyre::grid::GridIterator<gridT, indexIteratorT, isConst>::
-operator++(int) -> iterator
+pyre::grid::GridIterator<gridT, indexIteratorT, isConst>::operator++(int) -> iterator
 {
     // make a copy of me
     auto clone = *this;
@@ -62,8 +58,7 @@ operator++(int) -> iterator
 // accessors
 template <class gridT, class indexIteratorT, bool isConst>
 constexpr auto
-pyre::grid::GridIterator<gridT, indexIteratorT, isConst>::
-grid() const -> grid_const_reference
+pyre::grid::GridIterator<gridT, indexIteratorT, isConst>::grid() const -> grid_const_reference
 {
     // easy enough
     return _grid;
@@ -72,8 +67,8 @@ grid() const -> grid_const_reference
 
 template <class gridT, class indexIteratorT, bool isConst>
 constexpr auto
-pyre::grid::GridIterator<gridT, indexIteratorT, isConst>::
-iter() const -> index_const_iterator_reference
+pyre::grid::GridIterator<gridT, indexIteratorT, isConst>::iter() const
+    -> index_const_iterator_reference
 {
     // easy enough
     return _idxptr;
@@ -84,21 +79,21 @@ iter() const -> index_const_iterator_reference
 // equality
 template <class gridT, class indexIteratorT, bool isConst>
 constexpr auto
-pyre::grid::
-operator==(const GridIterator<gridT, indexIteratorT, isConst> & it1,
-           const GridIterator<gridT, indexIteratorT, isConst> & it2) -> bool
+pyre::grid::operator==(
+    const GridIterator<gridT, indexIteratorT, isConst> & it1,
+    const GridIterator<gridT, indexIteratorT, isConst> & it2) -> bool
 {
     // iterators are equal if they point to the same index of the same grid
-    return it1.iter() == it2.iter() && &it2.grid() == &it2.grid();
+    return it1.iter() == it2.iter() && &it1.grid() == &it2.grid();
 }
 
 
 // and not
 template <class gridT, class indexIteratorT, bool isConst>
 constexpr auto
-pyre::grid::
-operator!=(const GridIterator<gridT, indexIteratorT, isConst> & it1,
-           const GridIterator<gridT, indexIteratorT, isConst> & it2) -> bool
+pyre::grid::operator!=(
+    const GridIterator<gridT, indexIteratorT, isConst> & it1,
+    const GridIterator<gridT, indexIteratorT, isConst> & it2) -> bool
 {
     // iterators are unequal iff they are not equal
     return !(it1 == it2);

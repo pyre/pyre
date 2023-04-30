@@ -1,7 +1,7 @@
 // -*- c++ -*-
 //
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
-// (c) 1998-2021 all rights reserved
+// (c) 1998-2023 all rights reserved
 
 // code guard
 #if !defined(pyre_memory_Map_h)
@@ -44,12 +44,16 @@ public:
 
     // interface
 public:
+    // access to the name of the supporting file
+    inline auto uri() const -> uri_type;
     // the number of cells; the inherited {bytes} tells you the memory footprint of the block
     inline auto cells() const -> cell_count_type;
     // the memory footprint of the block
     inline auto bytes() const -> size_type;
     // access to the raw data pointer
     inline auto data() const -> pointer;
+    // access to the raw data pointer in a form suitable for including in diagnostics
+    inline auto where() const -> const void *;
 
     // iterator support
 public:
@@ -74,8 +78,8 @@ public:
     // constructors
     Map(const Map &) = default;
     Map(Map &&) = default;
-    Map & operator= (const Map &) = default;
-    Map & operator= (Map &&) = default;
+    Map & operator=(const Map &) = default;
+    Map & operator=(Map &&) = default;
 };
 
 
@@ -85,6 +89,6 @@ public:
 #undef pyre_memory_Map_icc
 
 
-# endif
+#endif
 
 // end of file

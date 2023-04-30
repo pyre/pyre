@@ -2,12 +2,11 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2021 all rights reserved
+# (c) 1998-2023 all rights reserved
 #
 
 
 # externals
-import collections
 from .. import tracking # for locators
 from ..traits.Property import Property as properties # to get the default trait type
 # superclass

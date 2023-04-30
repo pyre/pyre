@@ -12,7 +12,7 @@ from ..shells import command
 from .. import foundry
 
 
-# help
+# application introspection
 @foundry(implements=action, tip="information about this application")
 def about():
     # get the action
@@ -33,6 +33,17 @@ def config():
     return Config
 
 
+@foundry(implements=action, tip="helpful information")
+def info():
+    # get the action
+    from .Info import Info
+    # borrow its docstring
+    __doc__ = Info.__doc__
+    # and publish it
+    return Info
+
+
+# low level info useful while debugging
 @foundry(implements=action, tip="debugging information")
 def debug():
     # get the action
@@ -41,7 +52,6 @@ def debug():
     __doc__ = Debug.__doc__
     # and publish it
     return Debug
-
 
 # command completion; no tip so it doesn't show up on the help panel
 @foundry(implements=action)

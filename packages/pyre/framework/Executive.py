@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
-# (c) 1998-2021 all rights reserved
-#
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2023 all rights reserved
 
 
 # externals
@@ -11,6 +9,7 @@ import re
 import weakref
 import operator
 import itertools
+
 # primitives, locators
 from .. import timers
 from .. import primitives
@@ -23,28 +22,26 @@ class Executive:
     The specification of the obligations of the various managers of framework services
     """
 
-
     # exceptions
     from .exceptions import PyreError, ComponentNotFoundError
 
     # types
     from ..schemata import uri
     from .Priority import Priority as priority
+
     # get the client base class
     from .Dashboard import Dashboard as dashboard
 
-
     # constants
-    hostmapkey = 'pyre.hostmap' # the key with the nicknames of known hosts
-
+    hostmapkey = "pyre.hostmap"  # the key with the nicknames of known hosts
 
     # public data
     # the managers; patched during boot
-    nameserver = None # entities accessible by name
-    fileserver = None # the URI resolver
-    registrar = None # protocol and component bookkeeping
-    configurator = None # configuration sources and events
-    linker = None # the pyre plug-in manager
+    nameserver = None  # entities accessible by name
+    fileserver = None  # the URI resolver
+    registrar = None  # protocol and component bookkeeping
+    configurator = None  # configuration sources and events
+    linker = None  # the pyre plug-in manager
 
     # the runtime environment; patched during discovery
     host = None
@@ -53,8 +50,7 @@ class Executive:
     environ = None
 
     # bookkeeping
-    errors = None # the pile of exceptions raised during booting and configuration
-
+    errors = None  # the pile of exceptions raised during booting and configuration
 
     # high level interface
     def loadConfiguration(self, uri, locator=None, priority=priority.user):
@@ -77,12 +73,12 @@ class Executive:
             return
         # ask the configurator to process the stream
         errors = self.configurator.loadConfiguration(
-            uri=uri, source=source, locator=locator, priority=priority)
+            uri=uri, source=source, locator=locator, priority=priority
+        )
         # add any errors to my pile
         self.errors.extend(errors)
         # all done
         return
-
 
     # other facilities
     def newTimer(self, **kwds):
@@ -90,16 +86,20 @@ class Executive:
         Build and return a timer
         """
         # let the timer registry do its thing
-        return timers.wallTimer(**kwds)
-
+        return timers.wall(**kwds)
 
     # support for internal requests
     def configure(self, namespace, locator):
         """
         Locate and load all accessible configuration files for the given {namespace}
         """
-        # first up, package level configuration based on the raw {namespace}
-        stem = namespace
+        # first up, package level configuration based on the raw {namespace}; first in the
+        # raw directory
+        self.configureStem(
+            stem=namespace, locator=locator, priority=self.priority.package
+        )
+        # and then in the private subdirectory
+        stem = f"{namespace}/{namespace}"
         # locate and load
         self.configureStem(stem=stem, locator=locator, priority=self.priority.package)
 
@@ -111,37 +111,55 @@ class Executive:
             # none of what follows can be done, so bail
             return
 
-        # look for platform specific settings
-        stem = f"{namespace}/platforms/{host.distribution}"
-        # mark
-        here = tracking.simple('while discovering the host characteristics')
+        # we care about the os distribution
+        distro = host.distribution
+        # and the host nickname
+        nickname = host.nickname
+        # form the user tag
+        user = f"{self.user.username}@{nickname}"
+
+        # look for platform specific settings in a private subdirectory
+        action = tracking.simple("while discovering the platform characteristics")
+        # chain to the existing locator
+        chain = tracking.chain(action, locator)
+        # first in the raw directory
+        self.configureStem(stem=distro, priority=self.priority.user, locator=chain)
+        # but also in the private subdirectory
+        stem = f"{namespace}/platforms/{distro}"
         # attempt to load any matching configuration files
-        self.configureStem(stem=stem, priority=self.priority.user, locator=here)
+        self.configureStem(stem=stem, priority=self.priority.user, locator=chain)
 
         # look for host specific settings
-        stem = f"{namespace}/hosts/{host.nickname}"
-        # mark
-        here = tracking.simple('while discovering the host characteristics')
+        action = tracking.simple("while discovering the host characteristics")
+        # chain to the existing locator
+        chain = tracking.chain(action, locator)
+        # first in the raw directory
+        self.configureStem(stem=nickname, priority=self.priority.user, locator=chain)
+        # but also in the private directory
+        stem = f"{namespace}/hosts/{nickname}"
         # attempt to load any matching configuration files
-        self.configureStem(stem=stem, priority=self.priority.user, locator=here)
+        self.configureStem(stem=stem, priority=self.priority.user, locator=chain)
 
         # finally, look for a {user@host} configuration files
-        stem = f"{namespace}/users/{self.user.username}@{host.nickname}"
-        # mark
-        here = tracking.simple('while loading the user specific configuration')
+        action = tracking.simple("while loading the user specific configuration")
+        # chain to the existing locator
+        chain = tracking.chain(action, locator)
+        # first in the raw directory
+        self.configureStem(stem=user, priority=self.priority.user, locator=chain)
+        # but also in the private directory
+        stem = f"{namespace}/users/{user}"
         # attempt to load any matching configuration files
-        self.configureStem(stem=stem, priority=self.priority.user, locator=here)
+        self.configureStem(stem=stem, priority=self.priority.user, locator=chain)
 
         # all done
         return
-
 
     def configureStem(self, stem, locator, cfgpath=None, priority=priority.package):
         """
         Locate and load all accessible configuration files for the given {stem}
         """
         # show me
-        # print("Executive.configure:")
+        # print("Executive.configureStem:")
         # print(f"    stem={stem}")
         # print(f"    cfgpath={cfgpath}")
         # print(f"    locator={locator}")
@@ -167,9 +185,9 @@ class Executive:
             # print(f" ++ looking for '{uri}'")
             # load the settings from the associated file
             self.loadConfiguration(uri=uri, priority=priority, locator=locator)
+
         # all done
         return
-
 
     def resolve(self, uri, protocol=None, **kwds):
         """
@@ -253,12 +271,14 @@ class Executive:
                 return
 
         # if the address part is empty, do not go any further
-        if not uri.address: return
+        if not uri.address:
+            return
 
         # load the component recognizers
         from ..components.Role import Role as role
         from ..components.Actor import Actor as actor
         from ..components.Foundry import Foundry as foundry
+
         # make a locator
         locator = tracking.simple(f"while resolving '{uri.uri}'")
 
@@ -267,7 +287,8 @@ class Executive:
 
         # the easy things didn't work out; look for matching descriptors
         for candidate in self.retrieveComponentDescriptor(
-                uri=uri, protocol=protocol, locator=locator, **kwds):
+            uri=uri, protocol=protocol, locator=locator, **kwds
+        ):
             # if the candidate is a protocol
             if isinstance(candidate, role):
                 # get its default value
@@ -294,7 +315,6 @@ class Executive:
         # totally out of ideas
         return
 
-
     def retrieveComponents(self, uri):
         """
         Retrieve all component classes from the shelf at {uri}
@@ -303,7 +323,6 @@ class Executive:
         shelf = self.linker.loadShelf(executive=self, uri=uri)
         # and return its contents
         return shelf.items()
-
 
     def retrieveComponentDescriptor(self, uri, protocol, **kwds):
         """
@@ -345,11 +364,12 @@ class Executive:
                         pass
 
         # ask the linker to find descriptors
-        yield from self.linker.resolve(executive=self, protocol=protocol, uri=uri, **kwds)
+        yield from self.linker.resolve(
+            executive=self, protocol=protocol, uri=uri, **kwds
+        )
 
         # all done
         return
-
 
     # registration interface for framework objects
     def registerProtocolClass(self, protocol, family, priority=priority.package):
@@ -368,12 +388,12 @@ class Executive:
         # make a priority
         priority = priority()
         # insert the protocol into the model
-        key = self.nameserver.configurable(name=family, configurable=protocol,
-                                           priority=priority, locator=locator)
+        key = self.nameserver.configurable(
+            name=family, configurable=protocol, priority=priority, locator=locator
+        )
 
         # and return the name server registration key
         return key
-
 
     def registerComponentClass(self, component, family, priority=priority.package):
         """
@@ -391,11 +411,11 @@ class Executive:
         # make a priority
         priority = priority()
         # insert the component into the model
-        key = self.nameserver.configurable(name=family, configurable=component,
-                                           priority=priority, locator=locator)
+        key = self.nameserver.configurable(
+            name=family, configurable=component, priority=priority, locator=locator
+        )
         # return the key
         return key
-
 
     def registerComponentInstance(self, instance, name, priority=priority.package):
         """
@@ -406,11 +426,11 @@ class Executive:
         # make a priority
         priority = priority()
         # insert the component instance into the model
-        key = self.nameserver.configurable(name=name, configurable=instance,
-                                           priority=priority, locator=locator)
+        key = self.nameserver.configurable(
+            name=name, configurable=instance, priority=priority, locator=locator
+        )
         # return the key
         return key
-
 
     def registerPackage(self, name, file):
         """
@@ -428,7 +448,6 @@ class Executive:
         # all done
         return package
 
-
     # the default factories of all my parts
     def newNameServer(self, **kwds):
         """
@@ -436,9 +455,9 @@ class Executive:
         """
         # access the factory
         from .NameServer import NameServer
+
         # build one and return it
         return NameServer(**kwds)
-
 
     def newFileServer(self, **kwds):
         """
@@ -446,9 +465,9 @@ class Executive:
         """
         # access the factory
         from .FileServer import FileServer
+
         # build one and return it
         return FileServer(**kwds)
-
 
     def newComponentRegistrar(self, **kwds):
         """
@@ -456,9 +475,9 @@ class Executive:
         """
         # access the factory
         from ..components.Registrar import Registrar
+
         # build one and return it
         return Registrar(**kwds)
-
 
     def newConfigurator(self, **kwds):
         """
@@ -466,9 +485,9 @@ class Executive:
         """
         # access the factory
         from ..config.Configurator import Configurator
+
         # build one and return it
         return Configurator(**kwds)
-
 
     def newLinker(self, **kwds):
         """
@@ -476,11 +495,11 @@ class Executive:
         """
         # access the factory
         from .Linker import Linker
+
         # build one
         linker = Linker(executive=self, **kwds)
         # and return it
         return linker
-
 
     def newCommandLineParser(self, **kwds):
         """
@@ -488,13 +507,13 @@ class Executive:
         """
         # access the factory
         from ..config.CommandLineParser import CommandLineParser
+
         # build one
         parser = CommandLineParser(**kwds)
         # register the local handlers
-        parser.handlers['config'] = self._configurationLoader
+        parser.handlers["config"] = self._configurationLoader
         # and return the parser
         return parser
-
 
     def newSchema(self, **kwds):
         """
@@ -502,9 +521,9 @@ class Executive:
         """
         # access the factory
         from .Schema import Schema
+
         # build one and return it
         return Schema(**kwds)
-
 
     # meta-methods
     def __init__(self, **kwds):
@@ -514,7 +533,6 @@ class Executive:
         self.errors = []
         # all done
         return
-
 
     # implementation details
     def boot(self):
@@ -526,14 +544,12 @@ class Executive:
         # all done
         return self
 
-
     def activate(self):
         """
         Turn on the executive
         """
         # nothing to do here, for now...
         return self
-
 
     def discover(self, **kwds):
         """
@@ -546,11 +562,14 @@ class Executive:
 
         # access the platform protocol
         from ..platforms import platform
+
         # get the host class record; the default value already contains all we could discover
         # about the type of machine we are running on
         host = platform().default()
         # set up an iterator over the map of known hosts, in priority order
-        knownHosts = nameserver.find(pattern=self.hostmapkey, key=operator.attrgetter('priority'))
+        knownHosts = nameserver.find(
+            pattern=self.hostmapkey, key=operator.attrgetter("priority")
+        )
         # go through them
         for info, slot in knownHosts:
             # get the regular expression from the slot value
@@ -563,6 +582,7 @@ class Executive:
             except re.error as error:
                 # get the journal
                 import journal
+
                 # make a channel
                 channel = journal.warning("pyre.config")
                 # complain
@@ -585,16 +605,18 @@ class Executive:
             host.nickname = host.hostname
 
         # get the host information
-        self.host = host(name='pyre.host')
+        self.host = host(name="pyre.host")
 
         # now the user and the terminal
         from ..shells import user, terminal
+
         # instantiate them and attach them
-        self.user = user(name='pyre.user')
-        self.terminal = terminal.pyre_default()(name='pyre.terminal')
+        self.user = user(name="pyre.user")
+        self.terminal = terminal.pyre_default()(name="pyre.terminal")
 
         # finally, the environment variables
         from .Environ import Environ
+
         # instantiate and attach
         self.environ = Environ(executive=self)
 
@@ -604,7 +626,6 @@ class Executive:
 
         # all done
         return self
-
 
     def initializeNamespaces(self):
         """
@@ -617,7 +638,6 @@ class Executive:
         # all done
         return self
 
-
     def shutdown(self):
         """
         Clean up
@@ -626,7 +646,6 @@ class Executive:
         self.errors = []
         # all done
         return self
-
 
     # helpers and other details not normally useful to end users
     def _configurationLoader(self, key, value, locator):
@@ -639,12 +658,15 @@ class Executive:
             name = ".".join(key)
             # grab the journal
             import journal
+
             # issue a warning
-            journal.warning('pyre.framework').log(f"{name}: no uri")
+            journal.warning("pyre.framework").log(f"{name}: no uri")
             # and go no further
             return
         # load the configuration
-        self.loadConfiguration(uri=value, locator=locator, priority=self.priority.command)
+        self.loadConfiguration(
+            uri=value, locator=locator, priority=self.priority.command
+        )
         # and return
         return
 

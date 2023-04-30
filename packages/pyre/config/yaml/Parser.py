@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2021 all rights reserved
+# (c) 1998-2023 all rights reserved
 #
 
 
@@ -101,6 +101,8 @@ class Parser:
 
         # otherwise, go through its contents
         for key, value in node.items():
+            # the key is always a string; yaml interprets keys that are valid numbers
+            key = str(key)
             # take apart the token by splitting it on the type separator
             spec = (tag.strip() for tag in key.split(typesep))
             # and extract the scope levels from each one

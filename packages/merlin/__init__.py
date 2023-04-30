@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
-# (c) 1998-2021 all rights reserved
+# (c) 1998-2023 all rights reserved
 
 
 """
@@ -12,7 +12,7 @@ merlin is a configuration management tool
 # import and publish pyre symbols
 from pyre import (
     # basic stuff
-    primitives, tracking,
+    patterns, primitives, tracking,
     # protocols, components, traits, and their infrastructure
     schemata, constraints, properties, protocol, component, foundry,
     # decorators
@@ -21,6 +21,8 @@ from pyre import (
     executive,
     # shells
     application, plexus,
+    # content mills
+    weaver,
     # flow
     flow,
 )
@@ -43,6 +45,8 @@ from . import factories
 # builder abstractions
 from . import languages
 from . import compilers
+# builders
+from . import builders
 # support for the user interfaces
 from . import shells         # the supported application shells
 from . import cli            # the command line interface

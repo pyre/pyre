@@ -1,7 +1,7 @@
 // -*- c++ -*-
 //
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
-// (c) 1998-2021 all rights reserved
+// (c) 1998-2023 all rights reserved
 
 
 // external dependencies
@@ -18,10 +18,11 @@ PYBIND11_MODULE(journal, m)
     // the doc string
     m.doc() = "the journal extension module";
 
-    // bind the opaque types
-    pyre::journal::py::opaque(m);
     // register the exception types
     pyre::journal::py::exceptions(m);
+
+    // journal entry parts
+    pyre::journal::py::entry(m);
 
     // global state
     pyre::journal::py::chronicler(m);

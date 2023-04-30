@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
-# (c) 1998-2021 all rights reserved
+# (c) 1998-2023 all rights reserved
 
 
 # publish the package metadata
 from . import meta
+
 # load the exception hierarchy
 from . import exceptions
 
@@ -13,6 +14,7 @@ from . import exceptions
 without_libjournal = False
 # get the {__main__} module
 import __main__
+
 # check whether
 try:
     # the user has expressed an opinion
@@ -26,6 +28,7 @@ except AttributeError:
 if not without_libjournal:
     # load the bindings
     from .ext import libjournal
+
     # if something went wrong
     if libjournal is None:
         # indicate that we don't have access to the bindings
@@ -35,8 +38,15 @@ if not without_libjournal:
 if without_libjournal:
     # publish the keeper of the global settings
     from .Chronicler import Chronicler
+
     # instantiate the singleton and publish the instance
     chronicler = Chronicler()
+
+    # exceptions
+    JournalError = exceptions.JournalError
+    FirewallError = exceptions.FirewallError
+    DebugError = exceptions.DebugError
+    ApplicationError = exceptions.ApplicationError
 
     # devices
     from .Trash import Trash as trash
@@ -48,12 +58,18 @@ if without_libjournal:
     # developer facing
     from .Debug import Debug as debug
     from .Firewall import Firewall as firewall
+
     # user facing
     from .Informational import Informational as info
     from .Warning import Warning as warning
     from .Error import Error as error
     from .Help import Help as help
 
+    # lower level entities that users may want to subclass
+    from .Device import Device as device
+    from .Renderer import Renderer as renderer
+    from .Alert import Alert as alert
+    from .Memo import Memo as memo
 
     # convenience function to set the application name
     def application(name):
@@ -78,17 +94,16 @@ if without_libjournal:
         return
 
     # convenience function to send all output to a log file
-    def logfile(path):
+    def logfile(path, mode="w"):
         """
         Send all output to a log file
         """
         # make a file
-        logfile = file(path=path)
+        logfile = file(path=path, mode=mode)
         # set it as the default device
         chronicler.device = logfile
         # all done
         return
-
 
     # convenience function to set the message decoration level
     def decor(level):
@@ -99,7 +114,6 @@ if without_libjournal:
         chronicler.decor = level
         # all done
         return
-
 
     # convenience function to set the maximum message detail level
     def detail(level):
@@ -115,18 +129,18 @@ if without_libjournal:
 # if we have access to the bindings
 else:
     # let the c++ library take over
-    # pull the convenience methods; their interface is the same as the pure python implementation
-    quiet = libjournal.quiet
-    logfile = libjournal.logfile
-    application = libjournal.application
-    decor = libjournal.decor
-    detail = libjournal.detail
-
     # publish the keeper of the global state
     chronicler = libjournal.Chronicler
 
+    # exceptions
+    JournalError = exceptions.JournalError
+    FirewallError = libjournal.FirewallError
+    DebugError = libjournal.DebugError
+    ApplicationError = libjournal.ApplicationError
+
     # devices
     trash = libjournal.Trash
+    file = libjournal.File
     cout = libjournal.Console
     cerr = libjournal.ErrorConsole
 
@@ -138,6 +152,26 @@ else:
     warning = libjournal.Warning
     error = libjournal.Error
     help = libjournal.Help
+
+    # lower level entities that users may want to subclass
+    device = libjournal.Device
+    # renderer = libjournal.Renderer
+    # alert = libjournal.Alert
+    # memo = libjournal.Memo
+
+    # pull the convenience methods; their interface is the same as the pure python implementation
+    application = libjournal.application
+    quiet = libjournal.quiet
+    logfile = libjournal.logfile
+    decor = libjournal.decor
+    detail = libjournal.detail
+
+
+# publish the color generator
+from .ANSI import ANSI as ansi
+
+# and the ascii symbolic names
+from .ASCII import ASCII as ascii
 
 
 # administrative

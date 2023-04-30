@@ -9,7 +9,7 @@ import {project.name}
 
 
 # declaration
-class About({project.name}.shells.command, family='{project.name}.cli.about'):
+class About({project.name}.shells.command, family="{project.name}.cli.about"):
     """
     Display information about this application
     """

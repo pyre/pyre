@@ -1,7 +1,7 @@
 // -*- c++ -*-
 //
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
-// (c) 1998-2021 all rights reserved
+// (c) 1998-2023 all rights reserved
 
 // code guard
 #if !defined(pyre_journal_externals_h)
@@ -34,6 +34,8 @@ namespace pyre::journal {
     using outputstream_t = std::ostream;
     // file streams; careful here: we already have a {file_t} that's an alias to the file device
     using filestream_t = std::ofstream;
+    // and their mode bit masks
+    using filemode_t = std::ios_base::openmode;
     // paths
     using path_t = std::string;
 
@@ -71,7 +73,7 @@ namespace pyre::journal {
     // a palette is a map from a metadata key to a color name; it is used by the renderers to
     // colorize the message notes
     using palette_t = std::map<key_t, colorrep_t>;
-}    // namespace pyre::journal
+} // namespace pyre::journal
 
 
 #endif

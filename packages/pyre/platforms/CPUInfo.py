@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
-# (c) 1998-2021 all rights reserved
-#
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2023 all rights reserved
 
 
 # externals
@@ -17,11 +15,12 @@ class CPUInfo:
     """
 
     # keep it simple for now
-    architecture = platform.machine() # the cpu type; python seems to get this right reliably
+    # the cpu type; python seems to get this right reliably
+    architecture = platform.machine()
 
-    sockets = 1    # the number of physical chips; a socket has cores
-    cores = 1      # the number of cores per socket; a core has cpus
-    cpus = 1       # the number of cpus per core; see {hyper-threading}
+    sockets = 1  # the number of physical chips; a socket has cores
+    cores = 1  # the number of cores per socket; a core has cpus
+    cpus = 1  # the number of cpus per core; see {hyper-threading}
 
     # there are layers above this that could be captured:
     #     books, drawers, nodes

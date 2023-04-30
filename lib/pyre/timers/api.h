@@ -1,7 +1,7 @@
 // -*- c++ -*-
 //
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
-// (c) 1998-2021 all rights reserved
+// (c) 1998-2023 all rights reserved
 
 // code guard
 #if !defined(pyre_timers_api_h)
@@ -14,7 +14,7 @@ namespace pyre::timers {
     using wall_timer_t = Timer<WallClock, Proxy>;
     // process CPU time
     using process_timer_t = Timer<ProcessClock, Proxy>;
-}
+} // namespace pyre::timers
 
 
 #endif

@@ -1,7 +1,7 @@
 # -*- Makefile -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
-# (c) 1998-2021 all rights reserved
+# (c) 1998-2023 all rights reserved
 
 
 # the journal package test suite
@@ -32,6 +32,14 @@ tests.journal.pkg.error_file.clean := error_file.log
 tests.journal.pkg.info_file.clean := info_file.log
 tests.journal.pkg.warning_file.clean := warning_file.log
 tests.journal.pkg.help_file.clean := help_file.log
+
+tests.journal.pkg.api_file_mode.clean := api_file_mode.log
+tests.journal.pkg.debug_file_mode.clean := debug_file_mode.log
+tests.journal.pkg.firewall_file_mode.clean := firewall_file_mode.log
+tests.journal.pkg.error_file_mode.clean := error_file_mode.log
+tests.journal.pkg.info_file_mode.clean := info_file_mode.log
+tests.journal.pkg.warning_file_mode.clean := warning_file_mode.log
+tests.journal.pkg.help_file_mode.clean := help_file_mode.log
 
 
 # end of file

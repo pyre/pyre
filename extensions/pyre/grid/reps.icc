@@ -1,0 +1,132 @@
+// -*- c++ -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2023 all rights reserved
+
+// code guard
+#if !defined(pyre_py_grid_reps_icc)
+#error this file contains implementation details for pyre::py::grid reps
+#else
+
+// endow {repT} with an reps
+template <class repT>
+void
+pyre::py::grid::reps(py::class_<repT> & cls)
+{
+    // factories
+    cls.def_static(
+        // the name of the function
+        "zero",
+        // the implementation
+        []() -> repT {
+            // make one and return it
+            return repT::zero();
+        },
+        // the docstring
+        "create a zero filled instance");
+
+    cls.def_static(
+        // the name of the function
+        "one",
+        // the implementation
+        []() -> repT {
+            // make one and return it
+            return repT::one();
+        },
+        // the docstring
+        "create an instance filled with ones");
+
+    cls.def_static(
+        // the name of the function
+        "fill",
+        // the implementation
+        [](int value) -> repT {
+            // make one and return it
+            return repT::fill(value);
+        },
+        // signature
+        "value"_a,
+        // the docstring
+        "create an instance filled with the given value");
+
+    // rank
+    cls.def_property_readonly_static(
+        // the name of the property
+        "rank",
+        // the implementation
+        [](py::object) -> int {
+            // get my rank and return it
+            return repT::rank();
+        },
+        // the docstring
+        "my rank");
+
+    // get the maximum element
+    cls.def(
+        // the name of the method
+        "max",
+        // the implementation
+        &repT::max,
+        // docstring
+        "get the maximum value");
+
+    // get the minimum element
+    cls.def(
+        // the name of the method
+        "min",
+        // the implementation
+        &repT::min,
+        // docstring
+        "get the minimum value");
+
+    // access to individual ranks
+    cls.def(
+        // the name of the method
+        "__getitem__",
+        // the implementation
+        [](const repT & self, int index) -> int {
+            // access the requested rank and return its value
+            return self[index];
+        },
+        // the signature
+        "index"_a,
+        // docstring
+        "get the value at the specified {index}");
+
+    // iterator
+    cls.def(
+        // the name of the method
+        "__iter__",
+        // the implementation
+        [](const repT & rep) {
+            // make an iterator and return it
+            return py::make_iterator(rep.cbegin(), rep.cend());
+        },
+        // make sure it lives long enough
+        py::keep_alive<0, 1>(),
+        // docstring
+        "make an iterator");
+
+    // string representation
+    cls.def(
+        // the name of the method
+        "__str__",
+        // the implementation
+        [](const repT & rep) {
+            // make a buffer
+            std::stringstream buffer;
+            // inject my value
+            buffer << rep;
+            // and return the value
+            return buffer.str();
+        },
+        // the docstring
+        "generate a string representation");
+
+    // all done
+    return;
+};
+
+#endif
+
+// end of file

@@ -1,4 +1,7 @@
 ## -*- docker-image-name: "pyre:hirsute-gcc" -*-
+#
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2023 all rights reserved
 
 # based on ubuntu
 FROM ubuntu:hirsute
@@ -39,8 +42,7 @@ RUN DEBIAN_FRONTEND=noninteractive \
         g++ gfortran make \
         ${python} ${python}-dev \
         python3-pybind11 python3-yaml python3-numpy \
-        libopenmpi-dev \
-        libgsl-dev
+        libopenmpi-dev libhdf5-openmpi-dev libgsl-dev
 
 
 # setup the interactive environment
@@ -59,7 +61,7 @@ RUN sed \
 WORKDIR /root/.pyre
 # the mpi configuration
 COPY etc/docker/hirsute-gcc/mpi.pfg mpi.pfg
-# the {mm} coniguration file
+# the {mm} configuration file
 COPY etc/docker/hirsute-gcc/mm.pfg mm.pfg.in
 # expand
 RUN sed \

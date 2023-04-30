@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2021 all rights reserved
+# (c) 1998-2023 all rights reserved
 #
 
 
@@ -112,6 +112,23 @@ class Protocol(Configurable, metaclass=Role, internal=True):
 
         # otherwise, complain
         raise cls.ResolutionError(protocol=cls, value=value, report=report)
+
+
+    # the last step in the value processing flow is component instantiation
+    @classmethod
+    def pyre_instantiate(cls, spec, component, name, locator, **kwds):
+        """
+        Invoke the {component} constructor to build a new instance
+        """
+        # N.B.:
+        # {spec} is the original raw string that is being resolved
+        # protocols that understand complicated specifications may want to perform some last minute
+        # configuration steps before handing the new instance to the caller
+
+        # instantiate and return the new object
+        # mark as {implicit} to denote that this instance was created during
+        # facility processing, rather than explicitly
+        return component(name=name, locator=locator, implicit=True)
 
 
     # introspection

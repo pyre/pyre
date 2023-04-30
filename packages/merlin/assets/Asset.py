@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <nichael.aivazis@para-sim.com>
-# (c) 1998-2021 all rights reserved
+# (c) 1998-2023 all rights reserved
 
 
 # support
 import journal
 import merlin
+
 # superclass
 from .Product import Product
 
@@ -17,7 +18,6 @@ class Asset(Product):
     Encapsulation of a project asset
     """
 
-
     # required configurable state
     ignore = merlin.properties.bool(default=False)
     ignore.doc = "controls whether to ignore this asset"
@@ -25,24 +25,36 @@ class Asset(Product):
     private = merlin.properties.bool(default=False)
     private.doc = "mark this asset as private"
 
+    request = merlin.properties.strings()
+    request.doc = "the list of optional external dependencies"
 
-    # hooks
-    def identify(self, authority, **kwds):
+    require = merlin.properties.strings()
+    require.doc = "the list of required external dependencies"
+
+    # builder requirements
+    def build(self, **kwds):
         """
-        Ask {authority} to process a generic asset
+        Refresh this asset
+        """
+        # delegate to my flow interface
+        return self.pyre_make(**kwds)
+
+    # merlin hooks
+    def identify(self, visitor, **kwds):
+        """
+        Ask {visitor} to process a generic asset
         """
         # attempt to
         try:
-            # ask authority for a handler for my type
-            handler = authority.asset
+            # ask the {visitor} for a handler for my type
+            handler = visitor.asset
         # if it doesn't exist
         except AttributeError:
             # this is almost certainly a bug; make a channel
             channel = journal.firewall("merlin.assets.identify")
             # complain
-            channel.line(f"unable to find a handler for '{self.pyre_name}'")
-            channel.line(f"an asset of type '{self.__class__.__name__}'")
-            channel.line(f"while looking through the interface of '{authority.pyre_name}'")
+            channel.line(f"unable to find a handler for {self}")
+            channel.line(f"in {visitor}")
             # flush
             channel.log()
             # and fail, just in case firewalls aren't fatal

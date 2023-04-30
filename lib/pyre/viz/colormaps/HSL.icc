@@ -1,0 +1,53 @@
+// -*- c++ -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2023 all rights reserved
+
+// code guard
+#if !defined(pyre_viz_colormaps_HSL_icc)
+#error this file contains implementation details for pyre::viz::colormaps::HSL
+#else
+
+// metamethods
+template <class hueSourceT, class saturationSourceT, class luminositySourceT>
+pyre::viz::colormaps::HSL<hueSourceT, saturationSourceT, luminositySourceT>::HSL(
+    hue_source_const_reference hue, saturation_source_const_reference saturation,
+    luminosity_source_const_reference luminosity) :
+    _hue { hue },
+    _saturation { saturation },
+    _luminosity { luminosity }
+{}
+
+
+// interface
+template <class hueSourceT, class saturationSourceT, class luminositySourceT>
+auto
+pyre::viz::colormaps::HSL<hueSourceT, saturationSourceT, luminositySourceT>::operator*() const
+    -> rgb_type
+{
+    // get values from my data sources
+    auto hue = *_hue;
+    auto saturation = *_saturation;
+    auto luminosity = *_luminosity;
+
+    // covert to {rgb} and return
+    return colorspaces::hsl(hue, saturation, luminosity);
+}
+
+
+template <class hueSourceT, class saturationSourceT, class luminositySourceT>
+auto
+pyre::viz::colormaps::HSL<hueSourceT, saturationSourceT, luminositySourceT>::operator++() -> void
+{
+    // make my sources point to the next value
+    ++_hue;
+    ++_saturation;
+    ++_luminosity;
+    // all done
+    return;
+}
+
+
+#endif
+
+// end of file

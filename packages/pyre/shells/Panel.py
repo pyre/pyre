@@ -1,15 +1,15 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
-# (c) 1998-2021 all rights reserved
-#
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2023 all rights reserved
 
 
 # access to the framework
 import pyre
+
 # and the journal
 import journal
+
 # superclass
 from .Command import Command
 
@@ -21,11 +21,11 @@ class Panel(Command):
     """
 
     # constants
+    EMPTY_ARGV = object()
     SUCCESS = 0
     ERROR_GENERIC = 1
     ERROR_EXECUTION = 2
     ERROR_UNRECOGNIZED_COMMAND = 3
-
 
     # interface
     @pyre.export
@@ -33,21 +33,8 @@ class Panel(Command):
         """
         Dispatch to my methods based on the names in {argv}
         """
-        # realize the argument sequence
-        argv = tuple(argv)
-        # if there was no command
-        if not argv:
-            # attempt to
-            try:
-                # look for a default action
-                default = getattr(self, 'default')
-            # if not there
-            except AttributeError:
-                # show the user my help screen
-                return self.help(plexus=plexus)
-            # if we have one, invoke it
-            return default(plexus=plexus, argv=argv)
-
+        # initialize the status
+        status = self.EMPTY_ARGV
         # otherwise, go through my secondary arguments
         for command in argv:
             # attempt to
@@ -57,7 +44,9 @@ class Panel(Command):
             # if there was some kind of typo
             except AttributeError:
                 # handle the error
-                return self.pyre_unrecognizedCommand(plexus=plexus, command=command, argv=argv)
+                return self.pyre_unrecognizedCommand(
+                    plexus=plexus, command=command, argv=argv
+                )
 
             # otherwise, all is well; attempt to
             try:
@@ -83,15 +72,30 @@ class Panel(Command):
                     raise
                 # otherwise, grab the type of error
                 category = type(error).__name__
-                # and generate an error message for the user
-                plexus.error.line(f"while executing '{self.pyre_spec} {command}':")
-                plexus.error.log(f"    {category}: {error}")
+                # get a channel
+                channel = plexus.error
+                # generate an error message for the user
+                channel.line(f"{category}: {error}")
+                channel.line(f"while executing '{self.pyre_spec} {command}'")
+                # flush
+                channel.log()
                 # and bail
                 return self.ERROR_EXECUTION
 
-        # all done
-        return status
-
+        # if we have processed at least one command
+        if status != self.EMPTY_ARGV:
+            # all done
+            return status
+        # otherwise, attempt to
+        try:
+            # look for a default action
+            default = getattr(self, "default")
+        # if not there
+        except AttributeError:
+            # show the user my help screen
+            return self.help(plexus=plexus)
+        # if we have one, invoke it and return its status
+        return default(plexus=plexus, argv=argv)
 
     # failure modes
     def pyre_unrecognizedCommand(self, plexus, command, **kwds):

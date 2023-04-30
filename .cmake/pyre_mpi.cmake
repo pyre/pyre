@@ -1,9 +1,7 @@
 # -*- cmake -*-
 #
-# michael a.g. aïvázis
-# orthologue
-# (c) 1998-2021 all rights reserved
-#
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2023 all rights reserved
 
 
 function(pyre_mpiPackage)
@@ -11,18 +9,18 @@ function(pyre_mpiPackage)
   if(${MPI_FOUND})
     # install the sources straight from the source directory
     install(
-      DIRECTORY mpi
+      DIRECTORY packages/mpi
       DESTINATION ${PYRE_DEST_PACKAGES}
       FILES_MATCHING PATTERN *.py
       )
     # build the package meta-data
     configure_file(
-      mpi/meta.py.in mpi/meta.py
+      packages/mpi/meta.py.in packages/mpi/meta.py
       @ONLY
       )
     # install the generated package meta-data file
     install(
-      DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/mpi
+      DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/packages/mpi
       DESTINATION ${PYRE_DEST_PACKAGES}
       FILES_MATCHING PATTERN *.py
       )
@@ -36,30 +34,33 @@ function(pyre_mpiLib)
   # if we have mpi
   if(MPI_FOUND)
     # copy the mpi headers
-
-    # the mpi target (INTERFACE since it is header-only)
-    add_library(mpi INTERFACE)
-    target_link_libraries(mpi INTERFACE pyre MPI::MPI_CXX)
-    target_include_directories(mpi INTERFACE
-      $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
-      $<INSTALL_INTERFACE:${PYRE_DEST_INCLUDE}>
-      )
-    add_library(pyre::mpi ALIAS mpi)
-
-    file(GLOB_RECURSE
-         RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}/mpi
+    file(GLOB_RECURSE files
+         RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}/lib/mpi
          CONFIGURE_DEPENDS
-         *.h *.icc
+         lib/mpi/*.h lib/mpi/*.icc
          )
     foreach(file ${files})
       # skip the special header
       if("${file}" STREQUAL "mpi.h")
         continue()
       endif()
-      configure_file(mpi/${file} pyre/mpi/${file} COPYONLY)
+      configure_file(lib/mpi/${file} lib/pyre/mpi/${file} COPYONLY)
     endforeach()
+
     # and the mpi master header with the pyre directory
-    configure_file(mpi/mpi.h pyre/mpi.h COPYONLY)
+    configure_file(lib/mpi/mpi.h lib/pyre/mpi.h COPYONLY)
+
+    # the mpi target (INTERFACE since it is header-only)
+    add_library(mpi INTERFACE)
+    # specify the directory for the library compilation products
+    pyre_library_directory(mpi lib)
+    target_link_libraries(mpi INTERFACE pyre MPI::MPI_CXX)
+    target_include_directories(mpi INTERFACE
+      $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/lib>
+      $<INSTALL_INTERFACE:${PYRE_DEST_INCLUDE}>
+      )
+    add_library(pyre::mpi ALIAS mpi)
+
   endif(MPI_FOUND)
   # all done
 endfunction(pyre_mpiLib)
@@ -73,22 +74,24 @@ function(pyre_mpiModule)
     # adjust the name to match what python expects
     set_target_properties(mpimodule PROPERTIES LIBRARY_OUTPUT_NAME mpi)
     set_target_properties(mpimodule PROPERTIES SUFFIX ${PYTHON3_SUFFIX})
+    # specify the directory for the module compilation products
+    pyre_library_directory(mpimodule extensions)
     # set the libraries to link against
     target_link_libraries(
       mpimodule PRIVATE pyre::mpi journal
       )
     # add the sources
     target_sources(mpimodule PRIVATE
-      mpi/mpi.cc
-      mpi/communicators.cc
-      mpi/exceptions.cc
-      mpi/groups.cc
-      mpi/metadata.cc
-      mpi/ports.cc
-      mpi/startup.cc
+      extensions/mpi/mpi.cc
+      extensions/mpi/communicators.cc
+      extensions/mpi/exceptions.cc
+      extensions/mpi/groups.cc
+      extensions/mpi/metadata.cc
+      extensions/mpi/ports.cc
+      extensions/mpi/startup.cc
       )
     # copy the capsule definitions to the staging area
-    configure_file(mpi/capsules.h ../lib/pyre/mpi/ COPYONLY)
+    configure_file(extensions/mpi/capsules.h lib/pyre/mpi COPYONLY)
     # install the extension
     install(
       TARGETS mpimodule
@@ -97,7 +100,7 @@ function(pyre_mpiModule)
       )
     # and publish the capsules
     install(
-      FILES ${CMAKE_CURRENT_SOURCE_DIR}/mpi/capsules.h
+      FILES ${CMAKE_CURRENT_SOURCE_DIR}/extensions/mpi/capsules.h
       DESTINATION ${PYRE_DEST_INCLUDE}/pyre/mpi
       )
   endif()

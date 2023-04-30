@@ -1,52 +1,51 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
-# (c) 1998-2021 all rights reserved
-#
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2023 all rights reserved
 
 
-# externals
-import collections.abc
 # superclass
-from .Schema import Schema
+from .Sequence import Sequence
+
+# default schema
+from .Float import Float
 
 
 # declaration
-class Array(Schema):
+class Array(Sequence):
     """
     The array type declarator
     """
 
-
     # constants
-    typename = 'array' # the name of my type
-    complaint = 'could not coerce {0.value!r} to an array'
+    typename = "array"  # the name of my type
 
+    # meta-methods
+    def __init__(self, schema=Float(), rank=None, **kwds):
+        # chain up
+        super().__init__(schema=schema, **kwds)
+        # save my rank
+        self.rank = rank
+        # all done
+        return
 
-    # interface
-    def coerce(self, value, **kwds):
+    # implementation details
+    def _coerce(self, value, incognito=True, **kwds):
         """
-        Convert {value} into a tuple
+        Convert {value} into an iterable
         """
         # evaluate the string
         if isinstance(value, str):
             # strip it
             value = value.strip()
-            # if there is nothing left, return an empty tuple
-            if not value: return ()
+            # if there is nothing left
+            if not value:
+                # return an empty tuple
+                return
             # otherwise, ask python to process
             value = eval(value)
-        # if {value} is an iterable, convert it to a tuple and return it
-        if isinstance(value, collections.abc.Iterable): return tuple(value)
-        # otherwise flag it as bad input
-        raise self.CastingError(value=value, description=self.complaint)
-
-
-    # meta-methods
-    def __init__(self, default=(), **kwds):
-        # chain up, potentially with my local default value
-        super().__init__(default=default, **kwds)
+        # delegate to my superclass to build my container
+        yield from super()._coerce(value=value, incognito=incognito, **kwds)
         # all done
         return
 

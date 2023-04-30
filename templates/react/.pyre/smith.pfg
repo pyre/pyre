@@ -1,26 +1,19 @@
 ; -*- pyre -*-
-; 
-; michael a.g. aïvázis <michael.aivazis@para-sim.com>
-; (c) 1998-2021 all rights reserved
 ;
+; michael a.g. aïvázis <michael.aivazis@para-sim.com>
+; (c) 1998-2023 all rights reserved
+
 ; the configuration of the source code generator
 
+; pick a template
+smith.project = react
 
-smith:
-    project = react
-
+; project metadata
 project:
     name = {project.name}
     capname = {project.capname}
-    giturl = {project.giturl}
+    github = git@github.com:{project.github}
     authors = {project.authors}
     span = {project.span}
-
-    live:
-        name = localhost
-        home = ~
-        root = ~/live
-        web = ~/live/web
-        admin = root
 
 ; end of file

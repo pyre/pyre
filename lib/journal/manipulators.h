@@ -1,7 +1,7 @@
 // -*- c++ -*-
 //
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
-// (c) 1998-2021 all rights reserved
+// (c) 1998-2023 all rights reserved
 
 // code guard
 #if !defined(pyre_journal_manipulators_h)
@@ -25,6 +25,24 @@ pyre::journal::newline(Channel<severityT, proxyT> & channel) -> Channel<severity
 {
     // ask the channel entry to mark the end of a line of output
     return channel.line();
+}
+
+
+// codes
+template <typename codeT>
+auto
+pyre::journal::code(codeT code) -> Code
+{
+    // make a code manipulator and return it
+    return Code(std::to_string(code));
+}
+
+
+auto
+pyre::journal::code(string_t code) -> Code
+{
+    // make a code manipulator and return it
+    return Code(code);
 }
 
 
@@ -123,6 +141,19 @@ pyre::journal::outdent(dent_t level) -> Dent
 
 
 // the injection operators
+// code
+template <typename severityT, template <class> typename proxyT>
+auto
+pyre::journal::operator<<(Channel<severityT, proxyT> & channel, const Code & code)
+    -> Channel<severityT, proxyT> &
+{
+    // inject the code
+    channel.entry().note("code", code.code());
+    // all done
+    return channel;
+}
+
+
 // color
 template <typename severityT, template <class> typename proxyT>
 auto

@@ -1,0 +1,48 @@
+// -*- c++ -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2023 all rights reserved
+
+// code guard
+#if !defined(pyre_viz_filters_PolarSaw_icc)
+#error this file contains implementation details for pyre::viz::PolarSaw
+#else
+
+
+// metamethods
+// constructor
+template <class sourceT>
+pyre::viz::filters::PolarSaw<sourceT>::PolarSaw(source_const_reference source) : _source(source)
+{}
+
+
+// interface
+template <class sourceT>
+auto
+pyre::viz::filters::PolarSaw<sourceT>::operator*() const -> value_type
+{
+    // get the value
+    auto z = *_source;
+    // compute the phase
+    auto saw = z * 6 / M_PI;
+    // project it onto [0,1]
+    auto value = std::abs(saw - std::trunc(saw));
+    // and return it
+    return value;
+}
+
+
+template <class sourceT>
+auto
+pyre::viz::filters::PolarSaw<sourceT>::operator++() -> void
+{
+    // increment my source
+    ++_source;
+    // all done
+    return;
+}
+
+
+#endif
+
+// end of file

@@ -1,13 +1,11 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
-# (c) 1998-2021 all rights reserved
-#
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2023 all rights reserved
 
 
 # externals
-import re # for the parser
+import re  # for the parser
 import socket
 
 
@@ -25,7 +23,8 @@ class Address:
     @property
     def value(self):
         raise NotImplementedError(
-            "class {.__name__!r} must implement 'value'".format(type(self)))
+            f"class {type(self).__name__!r} must implement 'value'"
+        )
 
 
 class IPv4(Address):
@@ -46,7 +45,7 @@ class IPv4(Address):
         return (self.host, self.port)
 
     # meta methods
-    def __init__(self, host='', port=None, **kwds):
+    def __init__(self, host="", port=None, **kwds):
         # chain up
         super().__init__(**kwds)
         # store my state
@@ -100,36 +99,35 @@ class INet(Schema):
     A type declarator for internet addresses
     """
 
-
     # types
     from .exceptions import CastingError
+
     # the address base class
     address = Address
     # the more specialized types
     ip = ip4 = ipv4 = IPv4
     unix = local = Unix
 
-
     # constants
-    any = ip(host='', port=0) # the moral equivalent of zero...
-    typename = 'inet' # the name of my type
-    complaint = 'could not coerce {0.value!r} into an internet address'
-
+    any = ip(host="", port=0)  # the moral equivalent of zero...
+    typename = "inet"  # the name of my type
+    complaint = "could not coerce {0.value!r} into an internet address"
 
     # interface
     def coerce(self, value, **kwds):
         """
         Attempt to convert {value} into a internet address
         """
-        # {address} instances go right through
-        if isinstance(value, self.address): return value
+        # {address} instances
+        if isinstance(value, self.address):
+            # go right through
+            return value
         # strings
         if isinstance(value, str):
             # get processes by my parser
             return self.parse(value.strip())
         # anything else is an error
         raise self.CastingError(value=value, description=self.complaint)
-
 
     def recognize(self, family, address):
         """
@@ -144,12 +142,11 @@ class INet(Schema):
 
         # unix
         if family == socket.AF_UNIX:
-            # return a unix addres
+            # return a unix address
             return self.unix(path=address)
 
         # otherwise
         raise NotImplementedError("unsupported socket family: {}".format(family))
-
 
     def parse(self, value):
         """
@@ -167,23 +164,24 @@ class INet(Schema):
             raise self.CastingError(value=value, description=self.complaint)
 
         # check whether this an IP address
-        family = match.group('ip')
+        family = match.group("ip")
         # and if so
         if family:
             # invoke the correct constructor
-            return getattr(self, family)(host=match.group('host'), port=match.group('port'))
+            return getattr(self, family)(
+                host=match.group("host"), port=match.group("port")
+            )
 
         # check whether this is a UNIX address
-        family = match.group('unix')
+        family = match.group("unix")
         # and if so
         if family:
             # invoke the correct constructor
-            return getattr(self, family)(path=match.group('path'))
+            return getattr(self, family)(path=match.group("path"))
 
         # if we get this far, there was no explicit family name in the address, in which case
         # just build an ipv4 address
-        return self.ipv4(host=match.group('host'), port=match.group('port'))
-
+        return self.ipv4(host=match.group("host"), port=match.group("port"))
 
     def json(self, value):
         """
@@ -192,7 +190,6 @@ class INet(Schema):
         # represent as a string
         return self.string(value)
 
-
     # meta-methods
     def __init__(self, default=any, **kwds):
         # chain up with my default
@@ -200,13 +197,12 @@ class INet(Schema):
         # all done
         return
 
-
     # private data
     regex = re.compile(
         r"(?P<unix>unix|local):(?P<path>.+)"
         r"|"
         r"(?:(?P<ip>ip|ip4|ip6|ipv4|ipv6):)?(?P<host>[^:]+)(?::(?P<port>[0-9]+))?"
-        )
+    )
 
 
 # end of file

@@ -1,7 +1,7 @@
 // -*- c++ -*-
 //
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
-// (c) 1998-2021 all rights reserved
+// (c) 1998-2023 all rights reserved
 
 // code guard
 #if !defined(pyre_memory_Stack_h)
@@ -47,6 +47,8 @@ public:
     constexpr auto bytes() const -> size_type;
     // access to the raw data pointer
     constexpr auto data() const -> pointer;
+    // access to the raw data pointer in a form suitable for diagnostics
+    constexpr auto where() const -> const void *;
 
     // iterator support
 public:
@@ -79,8 +81,8 @@ public:
     // constructors
     Stack(const Stack &) = default;
     Stack(Stack &&) = default;
-    Stack & operator= (const Stack &) = default;
-    Stack & operator= (Stack &&) = default;
+    Stack & operator=(const Stack &) = default;
+    Stack & operator=(Stack &&) = default;
 };
 
 
@@ -90,6 +92,6 @@ public:
 #undef pyre_memory_Stack_icc
 
 
-# endif
+#endif
 
 // end of file

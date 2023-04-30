@@ -1,0 +1,86 @@
+// -*- c++ -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2023 all rights reserved
+
+// code guard
+#if !defined(pyre_viz_colormaps_Complex_icc)
+#error this file contains implementation details for pyre::viz::colormaps::Complex
+#else
+
+// metamethods
+template <class sourceT>
+pyre::viz::colormaps::Complex<sourceT>::Complex(
+    source_const_reference source, int bins, double saturation,
+    // brightness bin range
+    double minBrightness, double maxBrightness,
+    // amplitude bin range
+    double minAmplitude, double maxAmplitude,
+    // out of range data
+    rgb_type underflow, rgb_type overflow) :
+    _bins { bins },
+    _saturation { saturation },
+    _scaleHue { 2 * M_PI / _bins },
+    _minBrightness { minBrightness },
+    _maxBrightness { maxBrightness },
+    _scaleBrightness { (_maxBrightness - _minBrightness) / _bins },
+    _minAmplitude { minAmplitude },
+    _maxAmplitude { maxAmplitude },
+    _scaleAmplitude { (_maxAmplitude - _minAmplitude) / _bins },
+    _overflow { overflow },
+    _underflow { underflow },
+    _source { source }
+{}
+
+
+// interface
+template <class sourceT>
+auto
+pyre::viz::colormaps::Complex<sourceT>::operator*() const -> rgb_type
+{
+    // get the value from the data source
+    auto value = *_source;
+
+    // compute the amplitude
+    auto ampl = std::abs(value);
+    // on underflow
+    if (ampl < _minAmplitude) {
+        // mark
+        return _underflow;
+    }
+    if (ampl > _maxAmplitude) {
+        // mark
+        return _overflow;
+    }
+    // get the phase from the data source
+    auto phase = std::arg(value);
+
+    // bin the phase
+    int hueBin = phase / _scaleHue;
+    // compute the hue
+    auto hue = hueBin * _scaleHue;
+
+    // bin the amplitude
+    int brightnessBin = (ampl - _minAmplitude) / _scaleAmplitude;
+    // compute the brightness
+    auto brightness = _minBrightness + brightnessBin * _scaleBrightness;
+
+    // convert the {hsl} values to {rgb} and return the triplet
+    return colorspaces::hsb(hue, _saturation, brightness);
+}
+
+
+template <class sourceT>
+auto
+pyre::viz::colormaps::Complex<sourceT>::operator++() -> void
+{
+    // make {_source} point to the next value
+    ++_source;
+    // all done
+    return;
+}
+
+
+#endif
+
+// end of file

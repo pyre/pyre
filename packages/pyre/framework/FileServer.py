@@ -2,11 +2,12 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2021 all rights reserved
+# (c) 1998-2023 all rights reserved
 #
 
 
 # externals
+import os
 import weakref
 # pyre types
 from .. import primitives, schemata
@@ -42,7 +43,9 @@ class FileServer(Filesystem):
 
 
     # constants
-    # the path of the user configuration directory on the physical filesystem
+    # the XDG compliant fallback for user configuration
+    XDG_CONFIG = primitives.path("~/.config/pyre")
+    # the legacy path of the user configuration directory on the physical filesystem
     DOT_PYRE = primitives.path('~/.pyre')
     # the logical names for the configuration directories
     USER_DIR = primitives.path('/__pyre/user')
@@ -166,10 +169,8 @@ class FileServer(Filesystem):
         # mount it, or mount an empty folder if anything goes wrong
         self[self.STARTUP_DIR] = self.retrieveFilesystem(root=startup)
 
-        # the user's private folder, typically at {~/.pyre}
-        priv = self.DOT_PYRE.expanduser().resolve()
-        # same deal: mount it or an empty folder
-        self[self.USER_DIR] = self.retrieveFilesystem(root=priv)
+        # mount the user's private folder, if it's there
+        self[self.USER_DIR] = self.retrieveFilesystem(root=self.xdg)
 
         # build the virtual directory where packages park their configuration
         self[self.PACKAGES_DIR] = self.folder()
@@ -222,9 +223,9 @@ class FileServer(Filesystem):
         fs = self.retrieveFilesystem(root=prefix)
         # attempt to
         try:
-            # print(f"  looking for {package.DEFAULTS}")
+            # print(f"  looking for {package.CONFIG}")
             # look for the configuration folder
-            defaults = fs[package.DEFAULTS]
+            config = fs[package.CONFIG]
         # if not there
         except fs.NotFoundError:
             # print("    not there")
@@ -233,10 +234,10 @@ class FileServer(Filesystem):
         # print("    found it")
 
         # if the configuration folder is empty
-        if not defaults.contents:
+        if not config.contents:
             # it might be because we haven't explored it yet
             # print("    expanding it")
-            defaults.discover(levels=1)
+            config.discover(levels=1)
 
         # look for configuration files
         for encoding in self.executive.configurator.encodings():
@@ -245,7 +246,7 @@ class FileServer(Filesystem):
             # look for
             try:
                 # the node that corresponds to the configuration file
-                cfgfile = defaults[filename]
+                cfgfile = config[filename]
             # if it's not there
             except fs.NotFoundError:
                 # bail
@@ -257,8 +258,8 @@ class FileServer(Filesystem):
         # look for the configuration folder
         try:
             # get the associated node
-            # print(f"  looking for {package.DEFAULTS}/{name}")
-            cfgdir = defaults[name]
+            # print(f"  looking for {package.CONFIG}/{name}")
+            cfgdir = config[name]
         # if it's not there
         except fs.NotFoundError:
             # print("    not there")
@@ -282,6 +283,17 @@ class FileServer(Filesystem):
         self.executive = None if executive is None else weakref.proxy(executive)
         # initialize the table of known mount points
         self.mounts = {}
+
+        # figure out where the configuration directory is; first, try looking for an XDG compliant
+        # layout; perhaps the system sets up the mandated environment variable
+        xdg = primitives.path(os.getenv("XDG_CONFIG_HOME", self.XDG_CONFIG)).expanduser().resolve()
+        # if it is not a real directory
+        if not xdg.exists():
+            # fall back to the legacy solution
+            xdg = self.DOT_PYRE.expanduser().resolve()
+        # record
+        self.xdg = xdg
+
         # all done
         return
 

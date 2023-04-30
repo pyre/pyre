@@ -3,7 +3,7 @@
 //
 // michael a.g. aïvázis
 // orthologue
-// (c) 1998-2021 all rights reserved
+// (c) 1998-2023 all rights reserved
 //
 
 
@@ -23,6 +23,15 @@ pyre::mpi::Error::Error(int code):
     std::exception(),
     _code(code)
 {}
+
+
+// interface
+auto
+pyre::mpi::Error::code() const -> int
+{
+    // easy enough
+    return _code;
+}
 
 
 #endif

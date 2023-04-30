@@ -1,7 +1,7 @@
 // -*- c++ -*-
 //
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
-// (c) 1998-2021 all rights reserved
+// (c) 1998-2023 all rights reserved
 
 
 // externals
@@ -15,16 +15,7 @@ void
 pyre::journal::py::warning(py::module & m)
 {
     // type aliases for the member functions (mfp: method pointer)
-    // detail
-    using getDetail_mfp = warning_t::detail_type (warning_t::*)() const;
-    using setDetail_mfp = warning_t & (warning_t::*) (warning_t::detail_type);
-    // active
-    using getActive_mfp = warning_t::active_type (warning_t::*)() const;
-    using setActive_mfp = warning_t & (warning_t::*) (warning_t::active_type);
-    // fatal
-    using getFatal_mfp = warning_t::fatal_type (warning_t::*)() const;
-    using setFatal_mfp = warning_t & (warning_t::*) (warning_t::fatal_type);
-    // device
+    // {device} is the only one that confuses {py::overload_cast}
     using getDevice_mfp = warning_t::device_type (warning_t::*)() const;
     using setDevice_mfp = warning_t & (warning_t::*) (warning_t::device_type);
 
@@ -51,9 +42,9 @@ pyre::journal::py::warning(py::module & m)
         .def_property(
             "detail",
             // the getter
-            (getDetail_mfp) &warning_t::detail,
+            py::overload_cast<>(&warning_t::detail, py::const_),
             // the setter
-            (setDetail_mfp) &warning_t::detail,
+            py::overload_cast<warning_t::detail_type>(&warning_t::detail),
             // the docstring
             "the detail level")
 
@@ -61,9 +52,9 @@ pyre::journal::py::warning(py::module & m)
         .def_property(
             "active",
             // the getter
-            (getActive_mfp) &warning_t::active,
+            py::overload_cast<>(&warning_t::active, py::const_),
             // the setter
-            (setActive_mfp) &warning_t::active,
+            py::overload_cast<warning_t::active_type>(&warning_t::active),
             // the docstring
             "the channel activation state")
 
@@ -71,9 +62,9 @@ pyre::journal::py::warning(py::module & m)
         .def_property(
             "fatal",
             // the getter
-            (getFatal_mfp) &warning_t::fatal,
+            py::overload_cast<>(&warning_t::fatal, py::const_),
             // the setter
-            (setFatal_mfp) &warning_t::fatal,
+            py::overload_cast<warning_t::fatal_type>(&warning_t::fatal),
             // the docstring
             "the channel activation state")
 
@@ -203,13 +194,32 @@ pyre::journal::py::warning(py::module & m)
             // the docstring
             "disable output generation")
 
+        // dent control
+        .def(
+            "indent",
+            // the method;
+            &warning_t::indent,
+            // the signature
+            "levels"_a = 1,
+            // the docstring
+            "indent output by the indicated number of {levels}")
+
+        .def(
+            "outdent",
+            // the method;
+            &warning_t::outdent,
+            // the signature
+            "levels"_a = 1,
+            // the docstring
+            "outdent output by the indicated number of {levels}")
+
         // add a line to the contents
         .def(
             "line",
             // the handler
-            [](warning_t & channel, py::object message) -> warning_t & {
+            [](warning_t & channel, const warning_t::string_type & message) -> warning_t & {
                 // inject
-                channel << py::str(message) << pyre::journal::newline;
+                channel << message << pyre::journal::newline;
                 // enable chaining
                 return channel;
             },
@@ -240,9 +250,16 @@ pyre::journal::py::warning(py::module & m)
         .def(
             "log",
             // the handler
-            [](warning_t & channel, py::object message) -> warning_t & {
+            [](warning_t & channel, const warning_t::string_type & message,
+               // additional arguments are interpreted as entry notes
+               py::kwargs kwds) -> warning_t & {
+                // unpack {kwds}
+                for (auto entry : kwds) {
+                    // and treat each one as a note
+                    channel << pyre::journal::note(py::str(entry.first), py::str(entry.second));
+                }
                 // inject and flush
-                channel << locator() << py::str(message) << pyre::journal::endl;
+                channel << locator() << message << pyre::journal::endl;
                 // enable chaining
                 return channel;
             },
@@ -274,12 +291,19 @@ pyre::journal::py::warning(py::module & m)
         .def_static(
             "logfile",
             // the implementation
-            [](const warning_t::string_type & path) -> void {
+            [](const warning_t::string_type & path, const warning_t::string_type & mode) -> void {
+                // initialize the mode
+                auto flag = std::ios_base::out;
+                // if {mode} is {append}
+                if (mode == "a") {
+                    // set the corresponding bit
+                    flag |= std::ios_base::app;
+                }
                 // set up the device
-                warning_t::logfile(path);
+                warning_t::logfile(path, flag);
             },
             // the signature
-            "name"_a,
+            "name"_a, "mode"_a = "w",
             // the docstring
             "send all output to a file")
 

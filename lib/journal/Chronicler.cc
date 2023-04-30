@@ -1,7 +1,7 @@
 // -*- c++ -*-
 //
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
-// (c) 1998-2021 all rights reserved
+// (c) 1998-2023 all rights reserved
 
 
 // external support
@@ -141,7 +141,7 @@ chronicler_t::quiet()
 
 
 // data
-chronicler_t::margin_type chronicler_t::_margin = { "    " };
+chronicler_t::margin_type chronicler_t::_margin = { "  " };
 chronicler_t::detail_type chronicler_t::_decor { initializeDecor() };
 chronicler_t::detail_type chronicler_t::_detail { initializeDetail() };
 chronicler_t::notes_type chronicler_t::_notes { initializeGlobals() };

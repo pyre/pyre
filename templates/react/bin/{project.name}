@@ -9,7 +9,7 @@
 import {project.name}
 
 # build an instance of the plexus
-app = {project.name}.shells.{project.name}(name='{project.name}.plexus')
+app = {project.name}.shells.{project.name}(name="{project.name}.app")
 # and run it
 status = app.run()
 # pass the status on to the shell

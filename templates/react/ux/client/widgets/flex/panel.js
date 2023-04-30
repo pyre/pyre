@@ -7,9 +7,11 @@
 // externals
 import React from 'react'
 
-// locals
+// project
 // hooks
 import {{ useResizeObserver }} from '~/hooks'
+
+// locals
 // hooks
 import useBeginFlex from './useBeginFlex'
 import useRegisterPanel from './useRegisterPanel'
@@ -21,11 +23,14 @@ import styles from './styles'
 
 
 // a container for client children
-const panel = ({{ min = 0, max = Infinity, style, children, debug }}) => {{
+export const Panel = ({{
+    min = 0, max = Infinity, auto = false, debug = false,
+    style, children, ...rest
+}}) => {{
     // register this panel and make a {{ref}} for it
-    const ref = useRegisterPanel({{ min, max }})
+    const panel = useRegisterPanel({{ min, max, auto }})
     // get support for initiating flexing
-    const flexProps = useBeginFlex({{ panel: ref }})
+    const flexProps = useBeginFlex({{ panel }})
     // get the direction dependent extent names
     const {{ minExtent, maxExtent }} = useDirectionalAttributes()
 
@@ -50,25 +55,21 @@ const panel = ({{ min = 0, max = Infinity, style, children, debug }}) => {{
     // however, in debugging mode
     if (debug) {{
         // get my extent
-        const {{ extent }} = useResizeObserver({{ ref }})
+        const {{ extent }} = useResizeObserver({{ ref: panel }})
         // and render it as my content
-        content = <span>{{extent.width}}x{{extent.height}}</span>
+        content = <span style={{styles.extent}}>debug: {{extent.width}}x{{extent.height}}</span>
     }}
 
     // paint me
     return (
         <>
-            <div ref={{ref}} style={{panelStyle}} >
+            <div ref={{panel}} style={{panelStyle}} {{...rest}} >
                 {{content}}
             </div>
             <Separator {{...flexProps}} style={{style.separator}} />
         </>
     )
 }}
-
-
-// publish
-export default panel
 
 
 // end of file

@@ -1,40 +1,38 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
-# (c) 1998-2021 all rights reserved
-#
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2023 all rights reserved
 
 
 # externals
 from .. import units
+
 # my superclass
-from .Numeric import Numeric
+from .Number import Number
 
 
 # declaration
-class Dimensional(Numeric):
+class Dimensional(Number):
     """
     A type declarator for quantities with units
     """
 
-
     # constants
-    typename = 'dimensional' # the name of my type
-    complaint = 'could not coerce {0.value!r} into a dimensional quantity'
-
+    typename = "dimensional"  # the name of my type
+    complaint = "could not coerce {0.value!r} into a dimensional quantity"
 
     # public data
     parser = units.parser()
-
 
     # interface
     def coerce(self, value, **kwds):
         """
         Attempt to convert {value} into a dimensional
         """
-        # dimensionals go right through
-        if isinstance(value, units.dimensional): return value
+        # quantities with units
+        if isinstance(value, units.dimensional):
+            # go right through
+            return value
 
         # attempt to coerce strings
         try:
@@ -45,14 +43,12 @@ class Dimensional(Numeric):
             # complain
             raise self.CastingError(value=value, description=self.complaint)
 
-
     def json(self, value):
         """
         Generate a JSON representation of {value}
         """
         # represent as a string
         return self.string(value)
-
 
     # meta-methods
     def __init__(self, default=units.zero, **kwds):

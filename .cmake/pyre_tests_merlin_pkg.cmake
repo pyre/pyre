@@ -1,28 +1,27 @@
 # -*- cmake -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
-# (c) 1998-2021 all rights reserved
-#
+# (c) 1998-2023 all rights reserved
 
 
 #
 # merlin
 #
 # components
-pyre_test_python_testcase(merlin.pkg/components/sanity.py)
-pyre_test_python_testcase(merlin.pkg/components/merlin_shell.py)
-pyre_test_python_testcase(merlin.pkg/components/merlin_spell.py)
-pyre_test_python_testcase(merlin.pkg/components/merlin_curator.py)
-pyre_test_python_testcase(merlin.pkg/components/merlin_packages.py)
+pyre_test_python_testcase(tests/merlin.pkg/components/sanity.py)
+pyre_test_python_testcase(tests/merlin.pkg/components/merlin_shell.py)
+pyre_test_python_testcase(tests/merlin.pkg/components/merlin_spell.py)
+pyre_test_python_testcase(tests/merlin.pkg/components/merlin_curator.py)
+pyre_test_python_testcase(tests/merlin.pkg/components/merlin_packages.py)
 
 # cleanup
-add_test(NAME merlin.components.clean
+add_test(NAME tests.merlin.components.clean
   COMMAND ${BASH_PROGRAM} -c "rm .merlin/project.pickle"
-  WORKING_DIRECTORY "${PYRE_TESTSUITE_DIR}/merlin.pkg/components"
+  WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}/tests/merlin.pkg/components"
   )
 
 # fixture
-set_property(TEST merlin.components.clean PROPERTY
+set_property(TEST tests.merlin.components.clean PROPERTY
   FIXTURES_CLEANUP MERLIN_COMPONENTS
   )
 
@@ -37,12 +36,12 @@ pyre_test_pyre_driver(merlin multi init merlin.one merlin.two)
 pyre_test_pyre_driver(merlin deep init --create-prefix merlin.deep/this/is/very/deep/ly/buried)
 
 # clean up
-add_test(NAME merlin.spells.clean
+add_test(NAME tests.merlin.spells.clean
   COMMAND ${BASH_PROGRAM} -c "rm -rf merlin.*; "
   )
 
 # fixture
-set_property(TEST merlin.spells.clean PROPERTY
+set_property(TEST tests.merlin.spells.clean PROPERTY
   FIXTURES_CLEANUP MERLIN_SPELL
   )
 

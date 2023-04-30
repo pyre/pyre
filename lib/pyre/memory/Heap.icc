@@ -1,7 +1,7 @@
 // -*- c++ -*-
 //
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
-// (c) 1998-2021 all rights reserved
+// (c) 1998-2023 all rights reserved
 
 
 // code guard
@@ -13,26 +13,23 @@
 // metamethods
 // constructor
 template <class T, bool isConst>
-pyre::memory::Heap<T, isConst>::
-Heap(cell_count_type cells) :
-    _data{ new value_type[cells] },
-    _cells{ cells }
+pyre::memory::Heap<T, isConst>::Heap(cell_count_type cells) :
+    _data { new value_type[cells] },
+    _cells { cells }
 {}
 
 
 template <class T, bool isConst>
-pyre::memory::Heap<T, isConst>::
-Heap(handle_type handle, cell_count_type cells) :
-    _data{ handle },
-    _cells{ cells }
+pyre::memory::Heap<T, isConst>::Heap(handle_type handle, cell_count_type cells) :
+    _data { handle },
+    _cells { cells }
 {}
 
 // interface
 // get the number of cells in the block
 template <class T, bool isConst>
 auto
-pyre::memory::Heap<T, isConst>::
-cells() const -> cell_count_type
+pyre::memory::Heap<T, isConst>::cells() const -> cell_count_type
 {
     // easy
     return _cells;
@@ -42,8 +39,7 @@ cells() const -> cell_count_type
 // get the memory footprint of the block
 template <class T, bool isConst>
 auto
-pyre::memory::Heap<T, isConst>::
-bytes() const -> size_type
+pyre::memory::Heap<T, isConst>::bytes() const -> size_type
 {
     // scale the number of cells by the cell size
     return cells() * sizeof(value_type);
@@ -53,8 +49,17 @@ bytes() const -> size_type
 // access to the data pointer
 template <class T, bool isConst>
 auto
-pyre::memory::Heap<T, isConst>::
-data() const -> pointer
+pyre::memory::Heap<T, isConst>::data() const -> pointer
+{
+    // return the raw data pointer
+    return _data.get();
+}
+
+
+// access to the data pointer in a form suitable for including in diagnostics
+template <class T, bool isConst>
+auto
+pyre::memory::Heap<T, isConst>::where() const -> const void *
 {
     // return the raw data pointer
     return _data.get();
@@ -64,8 +69,7 @@ data() const -> pointer
 // get the shared pointer
 template <class T, bool isConst>
 auto
-pyre::memory::Heap<T, isConst>::
-handle() const -> handle_type
+pyre::memory::Heap<T, isConst>::handle() const -> handle_type
 {
     // easy
     return _data;
@@ -75,8 +79,7 @@ handle() const -> handle_type
 // iterator support
 template <class T, bool isConst>
 auto
-pyre::memory::Heap<T, isConst>::
-begin() const -> pointer
+pyre::memory::Heap<T, isConst>::begin() const -> pointer
 {
     // the beginning of the block
     return data();
@@ -85,8 +88,7 @@ begin() const -> pointer
 
 template <class T, bool isConst>
 auto
-pyre::memory::Heap<T, isConst>::
-end() const -> pointer
+pyre::memory::Heap<T, isConst>::end() const -> pointer
 {
     // one past the last cell in the block
     return data() + cells();
@@ -96,20 +98,17 @@ end() const -> pointer
 // data access
 template <class T, bool isConst>
 auto
-pyre::memory::Heap<T, isConst>::
-at(size_type pos) const -> reference
+pyre::memory::Heap<T, isConst>::at(size_type pos) const -> reference
 {
     // if the request is out of bounds
     if (pos >= cells()) {
         // make a channel
         pyre::journal::firewall_t channel("pyre.memory.bounds");
         // and complain
-        channel
-            << "out of bounds access:" << pyre::journal::newline
-            << "  index " << pos << " must be less than " << cells() << pyre::journal::newline
-            << "  in pyre::memory::heap_t::operator[]" << pyre::journal::newline
-            << "  with a block on the heap at " << data()
-            << pyre::journal::endl(__HERE__);
+        channel << "out of bounds access:" << pyre::journal::newline << "  index " << pos
+                << " must be less than " << cells() << pyre::journal::newline
+                << "  in pyre::memory::heap_t::operator[]" << pyre::journal::newline
+                << "  with a block on the heap at " << data() << pyre::journal::endl(__HERE__);
         // unreachable, unless the user has marked this error as non-fatal
         // clamp {pos} to the last element in the block
         pos = cells() - 1;
@@ -122,8 +121,7 @@ at(size_type pos) const -> reference
 
 template <class T, bool isConst>
 auto
-pyre::memory::Heap<T, isConst>::
-operator [] (size_type pos) const -> reference
+pyre::memory::Heap<T, isConst>::operator[](size_type pos) const -> reference
 {
     // return a reference to the cell at {pos}
     return _data[pos];

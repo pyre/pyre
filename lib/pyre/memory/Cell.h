@@ -1,7 +1,7 @@
 // -*- c++ -*-
 //
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
-// (c) 1998-2021 all rights reserved
+// (c) 1998-2023 all rights reserved
 
 // code guard
 #if !defined(pyre_memory_Cell_h)
@@ -31,6 +31,8 @@ public:
 
     // interface
 public:
+    // expose my constness
+    static constexpr auto writable() -> bool;
     // compute the footprint of {n} cells
     static constexpr auto bytes(cell_count_type = 1) -> size_type;
 };
@@ -42,6 +44,6 @@ public:
 #undef pyre_memory_Cell_icc
 
 
-# endif
+#endif
 
 // end of file

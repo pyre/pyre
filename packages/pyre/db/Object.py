@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orhologue
-# (c) 1998-2021 all rights reserved
+# (c) 1998-2023 all rights reserved
 #
 
 

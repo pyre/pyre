@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
-# (c) 1998-2021 all rights reserved
+# (c) 1998-2023 all rights reserved
 
 
 def test():
@@ -11,6 +11,7 @@ def test():
     """
     # get the trash can
     from journal.Trash import Trash as trash
+
     # and the channel
     from journal.Informational import Informational as info
 
@@ -23,7 +24,8 @@ def test():
     channel.notes["time"] = "now"
     # inject
     channel.line("info channel:")
-    channel.log("    hello world!")
+    # and flush with some additional metadata
+    channel.log("    hello world!", code=7)
 
     # all done
     return

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
-# (c) 1998-2021 all rights reserved
+# (c) 1998-2023 all rights reserved
 
 
 def test():
@@ -10,7 +10,7 @@ def test():
     Verify that we can instantiate a cpu timer
     """
     # access the timer bindings
-    from pyre.extensions.pyre import ProcessTimer
+    from pyre.extensions.pyre.timers import ProcessTimer
 
     # make a timer
     t = ProcessTimer(name="tests.timer")

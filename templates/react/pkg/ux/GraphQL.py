@@ -21,7 +21,7 @@ class GraphQL:
         Resolve the {{query}} and generate a response for the client
         """
         # parse the {{request}} payload
-        payload = json.loads(b'\n'.join(request.payload))
+        payload = json.loads(b"\n".join(request.payload))
         # get the query
         query = payload.get("query")
         # there are also other fields that we don't care about just yet

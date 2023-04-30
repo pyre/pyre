@@ -1,7 +1,7 @@
 // -*- c++ -*-
 //
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
-// (c) 1998-2021 all rights reserved
+// (c) 1998-2023 all rights reserved
 
 // code guard
 #if !defined(pyre_timers_Proxy_h)
@@ -50,7 +50,7 @@ public:
     // readouts
     // get the accumulated time; make sure to stop the timer first, otherwise the behavior is
     // undefined
-    inline auto read() const ;
+    inline auto read() const;
     // compute the accumulated time without disturbing the timer;
     inline auto lap() const;
 

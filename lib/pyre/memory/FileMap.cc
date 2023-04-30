@@ -1,7 +1,7 @@
 // -*- c++ -*-
 //
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
-// (c) 1998-2021 all rights reserved
+// (c) 1998-2023 all rights reserved
 
 
 // externals
@@ -19,8 +19,7 @@
 // implementation details
 // check and get info on the file backing an existing data product given its name
 void
-pyre::memory::FileMap::
-stat()
+pyre::memory::FileMap::stat()
 {
     // pull an old fashioned string out of the pathname
     auto filename = _uri.c_str();
@@ -31,10 +30,8 @@ stat()
         // make a channel
         pyre::journal::error_t channel("pyre.memory.map");
         // complain
-        channel
-            << "while looking for " << _uri << ":" << pyre::journal::newline
-            << "stat: error " << errno << ": " << std::strerror(errno)
-            << pyre::journal::endl(__HERE__);
+        channel << "while looking for '" << _uri << "':" << pyre::journal::newline << "stat: error "
+                << errno << ": " << std::strerror(errno) << pyre::journal::endl(__HERE__);
     }
 
     // get the file size
@@ -47,8 +44,7 @@ stat()
 
 // create the backing file for a new data product given its name and size
 void
-pyre::memory::FileMap::
-create()
+pyre::memory::FileMap::create()
 {
     // we take advantage of the POSIX requirement that writing past the end of a file
     // automatically fills all preceding locations with nulls
@@ -69,8 +65,7 @@ create()
 
 // create a file backed memory map, given the name and size of the file
 void
-pyre::memory::FileMap::
-map()
+pyre::memory::FileMap::map()
 {
     // deduce the access mode
     auto mode = _writable ? O_RDWR : O_RDONLY;
@@ -81,10 +76,8 @@ map()
         // make a channel
         pyre::journal::error_t channel("pyre.memory.map");
         // complain
-        channel
-            << "while mapping " << _uri << ":" << pyre::journal::newline
-            << "open: error " << errno << ": " << std::strerror(errno)
-            << pyre::journal::endl(__HERE__);
+        channel << "while mapping '" << _uri << "':" << pyre::journal::newline << "open: error "
+                << errno << ": " << std::strerror(errno) << pyre::journal::endl(__HERE__);
         // unreachable, unless the user has marked this error as non-fatal
         return;
     }
@@ -98,10 +91,8 @@ map()
         // make a channel
         pyre::journal::error_t channel("pyre.memory.map");
         // complain
-        channel
-            << "while mapping " << _uri << ":" << pyre::journal::newline
-            << "mmap: error " << errno << ": " << std::strerror(errno)
-            << pyre::journal::endl(__HERE__);
+        channel << "while mapping '" << _uri << "':" << pyre::journal::newline << "mmap: error "
+                << errno << ": " << std::strerror(errno) << pyre::journal::endl(__HERE__);
         // unreachable, unless the user has marked this error as non-fatal
         return;
     }
@@ -109,11 +100,9 @@ map()
     // make a channel
     pyre::journal::debug_t channel("pyre.memory.map");
     // and report success
-    channel
-        << "with " << _uri << ":" << pyre::journal::newline
-        << "mapped " << _bytes << " bytes of "
-        << (_writable ? "read/write" : "read only") << " memory at " << _data
-        << pyre::journal::endl(__HERE__);
+    channel << "with '" << _uri << "':" << pyre::journal::newline << "mapped " << _bytes
+            << " bytes of " << (_writable ? "read/write" : "read only") << " memory at " << _data
+            << pyre::journal::endl(__HERE__);
 
     // close the file descriptor; we don't need it any more
     ::close(fd);
@@ -125,8 +114,7 @@ map()
 
 // unmap file backed memory
 void
-pyre::memory::FileMap::
-unmap()
+pyre::memory::FileMap::unmap()
 {
     // if we don't have a valid map
     if (_data == MAP_FAILED || _bytes == 0) {
@@ -141,20 +129,16 @@ unmap()
         // make a channel
         pyre::journal::warning_t channel("pyre.memory.map");
         // complain
-        channel
-            << "while unmapping " << _uri << ":" << pyre::journal::newline
-            << "munmap: error " << errno << ": " << std::strerror(errno)
-            << pyre::journal::endl(__HERE__);
+        channel << "while unmapping '" << _uri << "':" << pyre::journal::newline << "munmap: error "
+                << errno << ": " << std::strerror(errno) << pyre::journal::endl(__HERE__);
     }
 
     // make a channel
     pyre::journal::debug_t channel("pyre.memory.map");
     // and report success
-    channel
-        << "with " << _uri << ":" << pyre::journal::newline
-        << "unmapped " << _bytes << " bytes of "
-        << (_writable ? "read/write" : "read only") << " memory at " << _data
-        << pyre::journal::endl(__HERE__);
+    channel << "with '" << _uri << "':" << pyre::journal::newline << "unmapped " << _bytes
+            << " bytes of " << (_writable ? "read/write" : "read only") << " memory at " << _data
+            << pyre::journal::endl(__HERE__);
 
     // invalidate the pointer
     _data = MAP_FAILED;

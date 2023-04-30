@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
-# (c) 1998-2021 all rights reserved
+# (c) 1998-2023 all rights reserved
 
 
 # support
@@ -16,11 +16,8 @@ class Language(merlin.protocol, family="merlin.languages"):
 
 
     # required state
-    headers = merlin.properties.strings()
-    headers.doc = "the set of suffixes that identify an artifact as a header"
-
-    sources = merlin.properties.strings()
-    sources.doc = "the set of suffixes that identify an artifact as a source"
+    categories = merlin.properties.catalog(schema=merlin.properties.str())
+    categories.doc = "a map from file categories to a list of suffixes"
 
 
     # implementation details

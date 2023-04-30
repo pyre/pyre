@@ -1,7 +1,7 @@
 // -*- c++ -*-
 //
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
-// (c) 1998-2021 all rights reserved
+// (c) 1998-2023 all rights reserved
 
 // code guard
 #if !defined(pyre_grid_Index_h)
@@ -34,10 +34,6 @@ public:
     // constructor; a variadic template to enable initializer lists
     template <typename... argT>
     constexpr Index(argT...);
-
-    // static interface: factories
-public:
-    static constexpr auto zero() -> index_type;
 
     // default metamethods
 public:

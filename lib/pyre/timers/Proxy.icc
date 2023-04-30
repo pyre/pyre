@@ -1,7 +1,7 @@
 // -*- c++ -*-
 //
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
-// (c) 1998-2021 all rights reserved
+// (c) 1998-2023 all rights reserved
 
 // code guard
 #if !defined(pyre_timers_Proxy_icc)
@@ -11,18 +11,16 @@
 
 // metamethods
 template <class timerT, class clockT>
-pyre::timers::Proxy<timerT, clockT>::
-Proxy(movement_reference movement) :
+pyre::timers::Proxy<timerT, clockT>::Proxy(movement_reference movement) :
     // point to actual movement
-    _movement {movement}
+    _movement { movement }
 {}
 
 
 // accessors
 template <class timerT, class clockT>
 auto
-pyre::timers::Proxy<timerT, clockT>::
-active() const
+pyre::timers::Proxy<timerT, clockT>::active() const
 {
     // easy enough
     return _movement.active();
@@ -31,8 +29,7 @@ active() const
 
 template <class timerT, class clockT>
 auto
-pyre::timers::Proxy<timerT, clockT>::
-mark() const
+pyre::timers::Proxy<timerT, clockT>::mark() const
 {
     // easy enough
     return _movement.mark();
@@ -43,8 +40,7 @@ mark() const
 // buttons
 template <class timerT, class clockT>
 auto
-pyre::timers::Proxy<timerT, clockT>::
-start()
+pyre::timers::Proxy<timerT, clockT>::start()
 {
     // delegate
     return _movement.start();
@@ -53,8 +49,7 @@ start()
 
 template <class timerT, class clockT>
 auto
-pyre::timers::Proxy<timerT, clockT>::
-stop()
+pyre::timers::Proxy<timerT, clockT>::stop()
 {
     // delegate
     return _movement.stop();
@@ -63,8 +58,7 @@ stop()
 
 template <class timerT, class clockT>
 auto
-pyre::timers::Proxy<timerT, clockT>::
-reset() -> timer_reference
+pyre::timers::Proxy<timerT, clockT>::reset() -> timer_reference
 {
     // delegate
     _movement.reset();
@@ -76,8 +70,7 @@ reset() -> timer_reference
 // readout
 template <class timerT, class clockT>
 auto
-pyre::timers::Proxy<timerT, clockT>::
-read() const
+pyre::timers::Proxy<timerT, clockT>::read() const
 {
     // delegate
     return _movement.read();
@@ -87,8 +80,7 @@ read() const
 // displays
 template <class timerT, class clockT>
 auto
-pyre::timers::Proxy<timerT, clockT>::
-sec() const
+pyre::timers::Proxy<timerT, clockT>::sec() const
 {
     // delegate
     return _movement.sec();
@@ -97,8 +89,7 @@ sec() const
 
 template <class timerT, class clockT>
 auto
-pyre::timers::Proxy<timerT, clockT>::
-ms() const
+pyre::timers::Proxy<timerT, clockT>::ms() const
 {
     // delegate
     return _movement.ms();
@@ -107,8 +98,7 @@ ms() const
 
 template <class timerT, class clockT>
 auto
-pyre::timers::Proxy<timerT, clockT>::
-us() const
+pyre::timers::Proxy<timerT, clockT>::us() const
 {
     // delegate
     return _movement.us();
@@ -117,8 +107,7 @@ us() const
 
 // syntactic sugar
 template <class timerT, class clockT>
-pyre::timers::Proxy<timerT, clockT>::
-operator active_type() const
+pyre::timers::Proxy<timerT, clockT>::operator active_type() const
 {
     // delegate
     return active_type(_movement);

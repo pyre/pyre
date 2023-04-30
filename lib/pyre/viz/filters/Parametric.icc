@@ -1,0 +1,53 @@
+// -*- c++ -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2023 all rights reserved
+
+// code guard
+#if !defined(pyre_viz_filters_Parametric_icc)
+#error this file contains implementation details for pyre::viz::filters::Parametric
+#else
+
+
+// metamethods
+// constructor
+template <class sourceT>
+pyre::viz::filters::Parametric<sourceT>::Parametric(
+    source_const_reference source, interval_type interval) :
+    _source(source),
+    _interval(interval)
+{}
+
+
+// interface
+template <class sourceT>
+auto
+pyre::viz::filters::Parametric<sourceT>::operator*() const -> value_type
+{
+    // get the value from my {_source}
+    value_type value = *_source;
+    // unpack my interval
+    auto [low, high] = _interval;
+    // clip {value} to my {_interval}
+    value = std::max(low, std::min(high, value));
+    // scale it
+    auto p = (value - low) / (high - low);
+    // and return it
+    return p;
+}
+
+
+template <class sourceT>
+auto
+pyre::viz::filters::Parametric<sourceT>::operator++() -> void
+{
+    // increment my source
+    ++_source;
+    // all done
+    return;
+}
+
+
+#endif
+
+// end of file

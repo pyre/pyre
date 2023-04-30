@@ -1,7 +1,7 @@
 // -*- c++ -*-
 //
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
-// (c) 1998-2021 all rights reserved
+// (c) 1998-2023 all rights reserved
 
 // code guard
 #if !defined(pyre_journal_Channel_h)
@@ -87,7 +87,7 @@ public:
     // send all output to the trash
     static inline void quiet();
     // and all output to a file with the given filename
-    static inline void logfile(const path_t &);
+    static inline void logfile(const path_t &, filemode_t = std::ios_base::out);
 
     // NVCC workaround for initializing the index
 private:
@@ -101,8 +101,10 @@ private:
     entry_type _entry;
 
     // implementation details: static data
+    // the definition is offline to accommodate a family of NVCC bugs that prohibit the
+    // initialization of static data in the body of the class
 private:
-    static inline index_type _index = _initializeIndex();
+    static index_type _index;
 };
 
 

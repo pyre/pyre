@@ -1,0 +1,124 @@
+// -*- c++ -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2023 all rights reserved
+
+// code guard
+#if !defined(pyre_viz_filters_Geometric_icc)
+#error this file contains implementation details for pyre::viz::filters::Geometric
+#else
+
+
+// metamethods
+// destructor
+template <class sourceT>
+pyre::viz::filters::Geometric<sourceT>::~Geometric()
+{
+    // release the {_ticks};
+    delete[] _ticks;
+    // all done
+    return;
+}
+
+
+// constructor
+template <class sourceT>
+pyre::viz::filters::Geometric<sourceT>::Geometric(
+    source_const_reference source, int bins, double factor) :
+    // save the source
+    _source(source),
+    // and the bins
+    _bins(bins),
+    // the {_scale} is the inverse of the sum of the geometric series
+    // 1 + {factor} + {factor}^2 + ... + {factor}^{bins-1}
+    _scale((factor - 1.0) / (std::pow(factor, bins) - 1.0)),
+    // the {_ticks} are the values in [0,1] that separate the bins
+    _ticks(new double[bins + 1])
+{
+    // the ticks start at zero
+    _ticks[0] = 0.0;
+    // the intermediate value are deduced from the powers of the {_scale}
+    for (auto i = 1; i < _bins; ++i) {
+        // each one builds on the one before
+        _ticks[i] = _ticks[i - 1] + std::pow(_scale, _bins - i);
+    }
+    // the last one is at one
+    _ticks[_bins] = 1.0;
+    // all done
+    return;
+}
+
+
+// copy constructor
+template <class sourceT>
+pyre::viz::filters::Geometric<sourceT>::Geometric(const Geometric & other) :
+    _source(other._source),
+    _bins(other._bins),
+    _scale(other._scale),
+    _ticks(new double[_bins + 1])
+{
+    // copy the {_ticks} values
+    for (auto i = 0; i < _bins + 1; ++i) {
+        _ticks[i] = other._ticks[i];
+    }
+    // all done
+    return;
+}
+
+
+// move constructor
+template <class sourceT>
+pyre::viz::filters::Geometric<sourceT>::Geometric(Geometric && other) :
+    // copy the configuration from {other}
+    _source(other._source),
+    _bins(other._bins),
+    _scale(other._scale),
+    // steal the {_ticks}
+    _ticks(other._ticks)
+{
+    // invalidate the {_ticks} of {other}
+    other._ticks = nullptr;
+    // all done
+    return;
+}
+
+
+// interface
+template <class sourceT>
+auto
+pyre::viz::filters::Geometric<sourceT>::operator*() const -> value_type
+{
+    // N.B.: on underflow, we return a -1; on overflow, we return {_bins}
+
+    // get the value from my {_source}
+    auto value = *_source;
+    // when {_bins} is small, linear search is not a bad way to go
+    for (value_type bin = 0; bin <= _bins; ++bin) {
+        // get the current tick value
+        auto tick = _ticks[bin];
+        // if the value is smaller than the current tick
+        if (value < tick) {
+            // it belongs to the previous bin
+            return bin - 1;
+        }
+    }
+
+    // if we make it this far, it's overflow
+    return _bins;
+}
+
+
+template <class sourceT>
+auto
+pyre::viz::filters::Geometric<sourceT>::operator++() -> void
+{
+    // increment my source
+    ++_source;
+    // all done
+    return;
+}
+
+
+#endif
+
+// end of file

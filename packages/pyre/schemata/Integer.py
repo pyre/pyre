@@ -1,26 +1,22 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
-# (c) 1998-2021 all rights reserved
-#
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2023 all rights reserved
 
 
 # superclass
-from .Numeric import Numeric
+from .Number import Number
 
 
 # declaration
-class Integer(Numeric):
+class Integer(Number):
     """
     A type declarator for integers
     """
 
-
     # constants
-    typename = 'int' # the name of my type
-    complaint = 'could not coerce {0.value!r} into an integer'
-
+    typename = "int"  # the name of my type
+    complaint = "could not coerce {0.value!r} into an integer"
 
     # interface
     def coerce(self, value, **kwds):
@@ -39,7 +35,6 @@ class Integer(Numeric):
         except Exception as error:
             # complain
             raise self.CastingError(value=value, description=self.complaint)
-
 
     # meta-methods
     def __init__(self, default=int(), **kwds):

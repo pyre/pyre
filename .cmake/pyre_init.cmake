@@ -1,9 +1,7 @@
 # -*- cmake -*-
 #
-# michael a.g. aïvázis
-# orthologue
-# (c) 1998-2021 all rights reserved
-#
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2023 all rights reserved
 
 
 # setup cmake
@@ -78,15 +76,6 @@ function(pyre_destinationInit)
   set(PYRE_DEST_FULL_PACKAGES ${PYRE_DEST_FULL_PACKAGES} PARENT_SCOPE)
   # all done
 endfunction(pyre_destinationInit)
-
-
-# describe the root pf tyhe test suite
-function(pyre_testInit)
-  # create a variable to hold the root in the test directory
-  set(PYRE_TESTSUITE_DIR ${CMAKE_SOURCE_DIR}/tests PARENT_SCOPE)
-  set(PYRE_TESTSUITE_TMPDIR ${CMAKE_BINARY_DIR}/tmp PARENT_SCOPE)
-  # all done
-endfunction(pyre_testInit)
 
 
 # ask git for the most recent tag and use it to build the version

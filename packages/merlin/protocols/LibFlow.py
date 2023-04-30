@@ -1,19 +1,18 @@
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
-# (c) 1998-2021 all rights reserved
+# (c) 1998-2023 all rights reserved
 
 
 # support
 import merlin
 
 
-# the manager of intermediate and final build products
+# a builder of libraries
 class LibFlow(merlin.protocol, family="merlin.builders.libflow"):
     """
     Workflow generator for libraries
     """
-
 
     # required interface
     @merlin.provides
@@ -22,13 +21,11 @@ class LibFlow(merlin.protocol, family="merlin.builders.libflow"):
         Generate the workflow that builds a {library}
         """
 
-
     @merlin.provides
-    def directory(self, builder, library, directory):
+    def folder(self, builder, library, folder):
         """
-        Handle a source {directory}
+        Handle a source {folder}
         """
-
 
     @merlin.provides
     def file(self, builder, library, file):
@@ -36,6 +33,23 @@ class LibFlow(merlin.protocol, family="merlin.builders.libflow"):
         Handle a {file} asset
         """
 
+    @merlin.provides
+    def header(self, builder, library, file):
+        """
+        Handle a {header} file
+        """
+
+    @merlin.provides
+    def source(self, builder, library, file):
+        """
+        Handle a {source} file
+        """
+
+    @merlin.provides
+    def template(self, builder, library, file):
+        """
+        Handle a {template} file
+        """
 
     # framework hooks
     @classmethod
@@ -44,7 +58,7 @@ class LibFlow(merlin.protocol, family="merlin.builders.libflow"):
         Specify the default implementation
         """
         # choose the default implementer
-        return merlin.components.libflow
+        return merlin.builders.flow.libflow
 
 
 # end of file

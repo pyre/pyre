@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
-# (c) 1998-2021 all rights reserved
-#
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2023 all rights reserved
 
 
 # externals
 import datetime
+
 # superclass
 from .Schema import Schema
 
@@ -18,12 +17,10 @@ class Time(Schema):
     A type declarator for timestamps
     """
 
-
     # constants
-    format = "%H:%M:%S" # the default format
-    typename = 'time' # the name of my type
-    complaint = 'could not coerce {0.value!r} into a time'
-
+    format = "%H:%M:%S"  # the default format
+    typename = "time"  # the name of my type
+    complaint = "could not coerce {0.value!r} into a time"
 
     # interface
     def coerce(self, value, **kwds):
@@ -61,16 +58,16 @@ class Time(Schema):
             # complain
             raise self.CastingError(value=value, description=self.complaint)
 
-
     def string(self, value):
         """
         Render value as a string that can be persisted for later coercion
         """
         # respect {None}
-        if value is None: return None
+        if value is None:
+            # by leaving it alone
+            return None
         # my value knows
         return value.strftime(self.format)
-
 
     def json(self, value):
         """
@@ -78,7 +75,6 @@ class Time(Schema):
         """
         # represent as a string
         return self.string(value)
-
 
     # meta-methods
     def __init__(self, default=datetime.datetime.today(), format=format, **kwds):

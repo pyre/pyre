@@ -13,7 +13,7 @@ import base from '~/views/styles'
 // publish
 export default {{
     // the container
-    loading: {{
+    nyi: {{
         // inherit
         ...base.panel,
     }},
@@ -22,10 +22,14 @@ export default {{
         position: "relative",
         top: "50%",
         left: "50%",
-        width: "400px",
+        width: "100%",
         height: "400px",
         textAlign: "center",
         transform: "translate(-50%, -50%)",
+    }},
+
+    location: {{
+        color: theme.banner.name,
     }},
 
     icon: {{

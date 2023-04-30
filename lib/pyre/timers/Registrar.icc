@@ -1,7 +1,7 @@
 // -*- c++ -*-
 //
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
-// (c) 1998-2021 all rights reserved
+// (c) 1998-2023 all rights reserved
 
 // code guard
 #if !defined(pyre_timers_Registrar_icc)
@@ -11,17 +11,14 @@
 
 // metamethods
 template <class movementT>
-pyre::timers::Registrar<movementT>::
-Registrar():
-    _registry {}
+pyre::timers::Registrar<movementT>::Registrar() : _registry {}
 {}
 
 
 // interface
 template <class movementT>
 auto
-pyre::timers::Registrar<movementT>::
-size() const
+pyre::timers::Registrar<movementT>::size() const
 {
     return _registry.size();
 }
@@ -29,8 +26,7 @@ size() const
 
 template <class movementT>
 auto
-pyre::timers::Registrar<movementT>::
-empty() const
+pyre::timers::Registrar<movementT>::empty() const
 {
     return _registry.empty();
 }
@@ -38,8 +34,7 @@ empty() const
 
 template <class movementT>
 auto
-pyre::timers::Registrar<movementT>::
-contains(const name_type & timer) const
+pyre::timers::Registrar<movementT>::contains(const name_type & timer) const
 {
     // attempt to locate the {timer}
     auto place = _registry.find(timer);
@@ -55,8 +50,7 @@ contains(const name_type & timer) const
 
 template <class movementT>
 auto
-pyre::timers::Registrar<movementT>::
-emplace(const name_type & name)
+pyre::timers::Registrar<movementT>::emplace(const name_type & name)
 {
     // easy enough
     return _registry.emplace(name, movement_type());
@@ -65,8 +59,7 @@ emplace(const name_type & name)
 
 template <class movementT>
 auto
-pyre::timers::Registrar<movementT>::
-begin() const
+pyre::timers::Registrar<movementT>::begin() const
 {
     return _registry.begin();
 }
@@ -74,8 +67,7 @@ begin() const
 
 template <class movementT>
 auto
-pyre::timers::Registrar<movementT>::
-end() const
+pyre::timers::Registrar<movementT>::end() const
 {
     return _registry.end();
 }
@@ -83,8 +75,7 @@ end() const
 
 template <class movementT>
 auto
-pyre::timers::Registrar<movementT>::
-lookup(const name_type & timer) -> movement_type &
+pyre::timers::Registrar<movementT>::lookup(const name_type & timer) -> movement_type &
 {
     // look it up and return it
     return _registry[timer];

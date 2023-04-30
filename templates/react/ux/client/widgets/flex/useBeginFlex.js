@@ -15,12 +15,9 @@ import {{ Context }} from './context'
 export default ({{ panel }}) => {{
     // grab the state mutator
     const {{
-        mainExtent,
-        panels, addPanel,
-        isManaged, setIsManaged,
-        setSeparatorLocation,
-        setFlexingPanel,
-        setDownstreamPanels,
+        panels,
+        mainExtent, mainPos,
+        setSeparatorLocation, setFlexingPanel, setDownstreamPanels,
     }} = React.useContext(Context)
 
     // when a panel starts flexing
@@ -30,48 +27,43 @@ export default ({{ panel }}) => {{
         // quash any side effects
         evt.preventDefault()
 
-        // unpack the cursor location
-        const location = {{ x: evt.clientX, y: evt.clientY }}
-
         // get the panel refs
         const refs = Array.from(panels.keys())
-        // find the index of the active panel
-        const idx = refs.indexOf(panel)
-        // use it to extract all the downstream panels
-        const downstream = refs.slice(idx + 1)
+        // collect placement and sizing information for all panels
+        const extents = new Map(refs.map(ref => [ref, ref.current.getBoundingClientRect()]))
 
-        // currently, disallow activity on the last separator; so skip the state update
-        // if there are no downstream panels
-        if (downstream !== []) {{
-            // record the panel that is flexing
-            setFlexingPanel(panel)
-            // and the downstream ones
-            setDownstreamPanels(downstream)
-            // save the current mouse coordinates
-            setSeparatorLocation(location)
-        }}
+        // disable flexbox for all panels while we resize them
+        // go through all the panels
+        extents.forEach((extent, panelRef) => {{
+            // get the style of the associated element
+            const style = panelRef.current.style
+            // turn flex off
+            style.flex = "0 0 auto"
+            // and make sure the panel style reflects the current actual extent
+            style[mainExtent] = `${{extent[mainExtent]}}px`
+            // all done
+            return
+        }})
 
-        // if this is the first time we are flexing
-        if (!isManaged) {{
-            // go through all the panels
-            refs.forEach((panelRef, idx) => {{
-                // get the associated container
-                const node = panelRef.current
-                // measure it
-                const extent = Math.round(node.getBoundingClientRect()[mainExtent])
-                // transfer its current extent to the its style
-                node.style[mainExtent] = `${{extent}}px`
-                // deduce the correct flex: every panel is now frozen to its styled extent,
-                // except the last one that becomes responsible for absorbing viewport size changes
-                const flx = (idx == refs.length - 1) ? "1 1 0" : "0 0 auto"
-                // and apply it
-                node.style.flex = flx
-                // all done
-                return
-            }})
-            // mark
-            setIsManaged(true)
-        }}
+
+        //  find the position of the flexing panel
+        const pos = extents.get(panel)[mainPos]
+
+        // the downstream panels are those panels
+        const downstream = refs.filter(
+            // whose position is greater than the flexing panel
+            ref => extents.get(ref)[mainPos] > pos
+        ).sort(
+            // sorted in increasing order by their position
+            (op1, op2) => extents.get(op1)[mainPos] - extents.get(op2)[mainPos]
+        )
+
+        // record the panel that is flexing
+        setFlexingPanel(panel)
+        // and the downstream ones
+        setDownstreamPanels(downstream)
+        // unpack the mouse coordinates and use them as the current separator location
+        setSeparatorLocation({{ x: evt.clientX, y: evt.clientY }})
 
         // all done
         return

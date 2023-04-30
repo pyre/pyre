@@ -1,31 +1,31 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
-# (c) 1998-2021 all rights reserved
-#
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2023 all rights reserved
 
 
 # externals
-import re, collections, subprocess
+import re
+import collections
+import subprocess
+
 # framework
 import pyre
+
 # superclass
 from .Managed import Managed
 
 
 # declaration
-class MacPorts(Managed, family='pyre.platforms.packagers.macports'):
+class MacPorts(Managed, family="pyre.platforms.packagers.macports"):
     """
     Support for the macport package manager
     """
 
-
     # constants
-    name = 'macports'
-    client = 'port'
-    defaultLocation = pyre.primitives.path('/opt/local/bin')
-
+    name = "macports"
+    client = "port"
+    defaultLocation = pyre.primitives.path("/opt/local/bin")
 
     # meta-methods
     def __init__(self, **kwds):
@@ -35,7 +35,6 @@ class MacPorts(Managed, family='pyre.platforms.packagers.macports'):
         self._normalizations = collections.defaultdict(dict)
         # all done
         return
-
 
     # implementation details
     def getInstalledPackages(self):
@@ -56,7 +55,6 @@ class MacPorts(Managed, family='pyre.platforms.packagers.macports'):
         # in any case, return it
         return installed
 
-
     def alternatives(self, group):
         """
         Generate a sequence of alternative installations for {group}, starting with the default
@@ -66,7 +64,6 @@ class MacPorts(Managed, family='pyre.platforms.packagers.macports'):
         alternatives = self.getAlternatives()
         # look up the given {group} and pass on the package alternatives
         return alternatives.get(group, ())
-
 
     def getAlternatives(self):
         """
@@ -86,18 +83,18 @@ class MacPorts(Managed, family='pyre.platforms.packagers.macports'):
         # ask it
         return alternatives
 
-
     def retrieveInstalledPackages(self):
         """
         Ask macports for installed package information
         """
         # set up the shell command
         settings = {
-            'executable': str(self.client),
-            'args': (str(self.client), '-q', 'installed', 'active'),
-            'stdout': subprocess.PIPE, 'stderr': subprocess.PIPE,
-            'universal_newlines': True,
-            'shell': False
+            "executable": str(self.client),
+            "args": (str(self.client), "-q", "installed", "active"),
+            "stdout": subprocess.PIPE,
+            "stderr": subprocess.PIPE,
+            "universal_newlines": True,
+            "shell": False,
         }
         # make a pipe
         with subprocess.Popen(**settings) as pipe:
@@ -114,24 +111,26 @@ class MacPorts(Managed, family='pyre.platforms.packagers.macports'):
                     # this shouldn't happen, since we only asked for active ports; skip it
                     continue
                 # unpack the info
-                vinfo, *variants = info.split('+')
+                vinfo, *variants = info.split("+")
                 # the version info starts with an @ sign
-                if vinfo[0] != '@':
+                if vinfo[0] != "@":
                     # something has changes in the macports versioning scheme
                     import journal
+
                     # describe the problem
-                    msg = 'unexpected character {!r} in macports version field'.format(vinfo[0])
+                    msg = "unexpected character {!r} in macports version field".format(
+                        vinfo[0]
+                    )
                     # and let me know
                     raise journal.firewall(self.pyre_family()).log(msg)
                 # and has two parts; apparently there are ports with '_' in their version
                 # numbers, e.g. libproj4; just call everything to the left of the last '_' the
                 # version, until there is official word on the format of the version info field
-                version, macrev = vinfo[1:].rsplit('_', maxsplit=1)
+                version, macrev = vinfo[1:].rsplit("_", maxsplit=1)
                 # hand it to the caller
                 yield package, version, set(variants)
         # all done
         return
-
 
     def retrievePackageContents(self, package):
         """
@@ -139,11 +138,12 @@ class MacPorts(Managed, family='pyre.platforms.packagers.macports'):
         """
         # set up the shell command
         settings = {
-            'executable': str(self.client),
-            'args': (str(self.client), 'contents', package),
-            'stdout': subprocess.PIPE, 'stderr': subprocess.PIPE,
-            'universal_newlines': True,
-            'shell': False
+            "executable": str(self.client),
+            "args": (str(self.client), "contents", package),
+            "stdout": subprocess.PIPE,
+            "stderr": subprocess.PIPE,
+            "universal_newlines": True,
+            "shell": False,
         }
         # make a pipe
         with subprocess.Popen(**settings) as pipe:
@@ -154,18 +154,18 @@ class MacPorts(Managed, family='pyre.platforms.packagers.macports'):
         # all done
         return
 
-
     def retrievePackageAlternatives(self):
         """
         Retrieve selection information for all known package groups
         """
         # template for the command line args
         settings = {
-            'executable': str(self.client),
-            'args': ( str(self.client), 'select', '--summary'),
-            'stdout': subprocess.PIPE, 'stderr': subprocess.PIPE,
-            'universal_newlines': True,
-            'shell': False
+            "executable": str(self.client),
+            "args": (str(self.client), "select", "--summary"),
+            "stdout": subprocess.PIPE,
+            "stderr": subprocess.PIPE,
+            "universal_newlines": True,
+            "shell": False,
         }
 
         # run the command
@@ -182,10 +182,10 @@ class MacPorts(Managed, family='pyre.platforms.packagers.macports'):
                 # make a set out of the alternatives
                 alternatives = list(alternatives.split())
                 # remove the dummy marker 'none'; it should always be there
-                alternatives.remove('none')
+                alternatives.remove("none")
 
                 # handle the selection: if it is 'none'
-                if selection == 'none':
+                if selection == "none":
                     # it contributes nothing to the net alternatives
                     selection = []
                 # if not
@@ -198,8 +198,11 @@ class MacPorts(Managed, family='pyre.platforms.packagers.macports'):
                     except ValueError:
                         # port selections are in an inconsistent state
                         import journal
+
                         # build a message
-                        msg = "the {!r} port selection is in inconsistent state".format(group)
+                        msg = "the {!r} port selection is in inconsistent state".format(
+                            group
+                        )
                         # and warn the user
                         journal.warning("pyre.platforms").log(msg)
                     # and put it at the top of the pile
@@ -212,18 +215,16 @@ class MacPorts(Managed, family='pyre.platforms.packagers.macports'):
         # all done
         return
 
-
     def getSelectionInfo(self, group, alternative):
         """
         Identify the package in the {group} that provides the selected {alternative}
         """
         # the selection file is known to belong to the package
-        selection = str(self.prefix() / 'etc' / 'select' / group / alternative)
+        selection = str(self.prefix() / "etc" / "select" / group / alternative)
         # find out where it came from
         package = self.getFileProvider(filename=selection)
         # return the package and the selection map
         return package
-
 
     def getNormalization(self, group, alternative):
         """
@@ -235,13 +236,15 @@ class MacPorts(Managed, family='pyre.platforms.packagers.macports'):
         # attempt to
         try:
             # get the canonical filenames from 'base'
-            base = table['base']
+            base = table["base"]
         # if its not there
         except KeyError:
             # pull in the sequence of files from 'base'
-            base = tuple(self.retrieveNormalizationTable(group=group, alternative='base'))
+            base = tuple(
+                self.retrieveNormalizationTable(group=group, alternative="base")
+            )
             # record it for next time
-            table['base'] = base
+            table["base"] = base
 
         # next, attempt to
         try:
@@ -250,20 +253,21 @@ class MacPorts(Managed, family='pyre.platforms.packagers.macports'):
         # if not there
         except KeyError:
             # pull in the list of files from {alternative}
-            target = tuple(self.retrieveNormalizationTable(group=group, alternative=alternative))
+            target = tuple(
+                self.retrieveNormalizationTable(group=group, alternative=alternative)
+            )
             # record it
             table[alternative] = target
 
         # return the pair
         return base, target
 
-
     def retrieveNormalizationTable(self, group, alternative):
         """
         Populate the {group} normalization table with the selections for {alternative}
         """
         # form the filename
-        name = self.prefix() / 'etc' / 'select' / group / alternative
+        name = self.prefix() / "etc" / "select" / group / alternative
         # open it
         with name.open() as stream:
             # pull the contents
@@ -271,10 +275,9 @@ class MacPorts(Managed, family='pyre.platforms.packagers.macports'):
                 # strip
                 line = line.strip()
                 # interpret it and pass it on
-                yield pyre.primitives.path(line) if line != '-' else None
+                yield pyre.primitives.path(line) if line != "-" else None
         # all done
         return
-
 
     def getFileProvider(self, filename):
         """
@@ -282,11 +285,12 @@ class MacPorts(Managed, family='pyre.platforms.packagers.macports'):
         """
         # set up the shell command
         settings = {
-            'executable': str(self.client),
-            'args': (str(self.client), 'provides', str(filename)),
-            'stdout': subprocess.PIPE, 'stderr': subprocess.PIPE,
-            'universal_newlines': True,
-            'shell': False
+            "executable": str(self.client),
+            "args": (str(self.client), "provides", str(filename)),
+            "stdout": subprocess.PIPE,
+            "stderr": subprocess.PIPE,
+            "universal_newlines": True,
+            "shell": False,
         }
         # make a pipe
         with subprocess.Popen(**settings) as pipe:
@@ -297,11 +301,10 @@ class MacPorts(Managed, family='pyre.platforms.packagers.macports'):
             # if it does
             if match:
                 # extract the package name and return it
-                return match.group('package')
+                return match.group("package")
 
         # if we got this far, the filename does not belong to a package
         return
-
 
     def identify(self, installation):
         """
@@ -347,12 +350,14 @@ class MacPorts(Managed, family='pyre.platforms.packagers.macports'):
         # beyond this point, nothing works unless this package belongs to a selection group
         if not alternatives:
             # it isn't
-            msg = 'could not locate a {.category!r} package for {!r}'.format(installation, name)
+            msg = "could not locate a {.category!r} package for {!r}".format(
+                installation, name
+            )
             # complain
             raise installation.ConfigurationError(configurable=self, errors=[msg])
 
         # collect all alternatives whose names start with the flavor
-        candidates = [ tag for tag in alternatives if tag.startswith(flavor) ]
+        candidates = [tag for tag in alternatives if tag.startswith(flavor)]
 
         # if there is exactly one candidate
         if len(candidates) == 1:
@@ -365,15 +370,17 @@ class MacPorts(Managed, family='pyre.platforms.packagers.macports'):
         if not candidates:
             # describe what went wrong
             msg = "no viable candidates for {.category!r}; please select one of {}".format(
-                installation, alternatives)
+                installation, alternatives
+            )
             # and report it
             raise installation.ConfigurationError(configurable=self, errors=[msg])
 
         # otherwise, there were more than one candidate; describe what went wrong
-        msg = 'multiple candidates for {!r}: {}; please select one'.format(flavor, candidates)
+        msg = "multiple candidates for {!r}: {}; please select one".format(
+            flavor, candidates
+        )
         # and report it
         raise installation.ConfigurationError(configurable=self, errors=[msg])
-
 
     # private data
     # the index of installed packages: (package name -> package info)

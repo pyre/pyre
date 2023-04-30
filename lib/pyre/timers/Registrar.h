@@ -1,7 +1,7 @@
 // -*- c++ -*-
 //
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
-// (c) 1998-2021 all rights reserved
+// (c) 1998-2023 all rights reserved
 
 // code guard
 #if !defined(pyre_timers_Registrar_h)
@@ -10,8 +10,7 @@
 
 // owner of the map (timer name -> shared movement)
 template <class movementT>
-class pyre::timers::Registrar
-{
+class pyre::timers::Registrar {
     // types
 public:
     // timer names
@@ -28,8 +27,8 @@ public:
     // let the compiler write the rest
     Registrar(const Registrar &) = default;
     Registrar(Registrar &&) = default;
-    Registrar & operator= (const Registrar &) = default;
-    Registrar & operator= (Registrar &&) = default;
+    Registrar & operator=(const Registrar &) = default;
+    Registrar & operator=(Registrar &&) = default;
 
     // interface
 public:

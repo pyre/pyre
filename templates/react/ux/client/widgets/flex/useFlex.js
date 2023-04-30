@@ -20,8 +20,8 @@ export default () => {{
         // the registered panels
         panels,
         // flexing support
-        flexingPanel, setFlexingPanel,
-        downstreamPanels, setDownstreamPanels,
+        flexingPanel,
+        downstreamPanels,
         separatorLocation, setSeparatorLocation,
     }} = React.useContext(Context)
 
@@ -73,7 +73,7 @@ export default () => {{
             const absorbed = clip(panel, remaining)
             // if it can participate
             if (absorbed != 0) {{
-                // add it to the resining transaction
+                // add it to the resizing transaction
                 updates.push([panel, absorbed])
             }}
             // update the remaining size change and move on to the next downstream panel
@@ -88,7 +88,7 @@ export default () => {{
         // otherwise, update the sizes of every panel that flexes
         resize(updates)
 
-        // record the new state
+        // record the new reference location
         setSeparatorLocation({{ x, y }})
 
         // all done
@@ -102,14 +102,14 @@ export default () => {{
         // compute its extents
         const extent = node.getBoundingClientRect()[mainExtent]
         // unpack the size hints that were registered for this panel
-        const [min, max] = panels.get(panel)
+        const {{ min, max }} = panels.get(panel)
         // in order to do the clipping
         const allowed = Math.trunc(
             // first figure out which way we plan to push the limits
             (delta > 0)
-                // on stretch : no more than {{maxSize}} permits
+                // on stretch: no more than {{maxSize}} permits
                 ? Math.min(delta, max - extent)
-                // on shrink: no less that {{minSize}} permit
+                // on shrink: no less that {{minSize}} permits
                 : Math.max(delta, min - extent))
         // all done
         return allowed

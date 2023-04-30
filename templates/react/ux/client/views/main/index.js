@@ -8,12 +8,12 @@
 // framework
 import React from 'react'
 // routing
-import {{ BrowserRouter as Router, Switch, Route }} from 'react-router-dom'
+import {{ Outlet }} from 'react-router-dom'
 
 // locals
 import styles from './styles'
 // view
-import {{ NYI }} from '~/views'
+import {{ Status }} from '~/views'
 // activities
 import {{ ActivityBar }} from '~/activities'
 // widgets
@@ -25,19 +25,23 @@ import {{ Flex }} from '~/widgets'
 const Panel = () => {{
     // lay out the main page
     return (
-        <section style={{styles.panel}} >
-            {{/* navigation bar */}}
-            <ActivityBar style={{styles.activitybar}} />
+        <section style={{styles.page}} >
+            <section style={{styles.panel}} >
+                {{/* navigation bar */}}
+                <ActivityBar style={{styles.activitybar}} />
 
-            {{/* a flex container with two panels */}}
-            <Flex.Box direction="row" style={{styles.flex}} >
+                {{/* a flex container with two panels */}}
+                <Flex.Box direction="row" style={{styles.flex}} >
 
-                {{/* the activity specific workarea */}}
-                <Flex.Panel min={{400}} style={{styles.flex}} >
-                    <NYI />
-                </Flex.Panel>
+                    {{/* the activity specific workarea */}}
+                    <Flex.Panel min={{400}} auto={{true}} style={{styles.flex}} >
+                        {{/* render whatever the router hands me */}}
+                        <Outlet />
+                    </Flex.Panel>
 
-            </Flex.Box>
+                </Flex.Box>
+            </section >
+            <Status />
         </section >
     )
 }}

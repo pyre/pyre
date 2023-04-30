@@ -1,0 +1,52 @@
+// -*- c++ -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2023 all rights reserved
+
+// code guard
+#if !defined(pyre_viz_filters_Affine_icc)
+#error this file contains implementation details for pyre::viz::filters::Affine
+#else
+
+
+// metamethods
+// constructor
+template <class sourceT>
+pyre::viz::filters::Affine<sourceT>::Affine(source_const_reference source, interval_type interval) :
+    _source(source),
+    _interval(interval)
+{}
+
+
+// interface
+template <class sourceT>
+auto
+pyre::viz::filters::Affine<sourceT>::operator*() const -> value_type
+{
+    // get the value from my {_source}
+    auto value = *_source;
+    // unpack my interval
+    auto [low, high] = _interval;
+    // clip {value} to the unit interval
+    value = std::max(0.0, std::min(1.0, value));
+    // affine it
+    auto p = low + value * (high - low);
+    // and return it
+    return p;
+}
+
+
+template <class sourceT>
+auto
+pyre::viz::filters::Affine<sourceT>::operator++() -> void
+{
+    // increment my source
+    ++_source;
+    // all done
+    return;
+}
+
+
+#endif
+
+// end of file

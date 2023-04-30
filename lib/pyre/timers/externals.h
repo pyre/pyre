@@ -1,7 +1,7 @@
 // -*- c++ -*-
 //
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
-// (c) 1998-2021 all rights reserved
+// (c) 1998-2023 all rights reserved
 
 // code guard
 #if !defined(pyre_timers_externals_h)
@@ -33,7 +33,7 @@ namespace pyre::timers {
     using seconds_t = std::chrono::duration<double>;
     using milliseconds_t = std::chrono::duration<double, std::milli>;
     using microseconds_t = std::chrono::duration<double, std::micro>;
-}
+} // namespace pyre::timers
 
 
 #endif

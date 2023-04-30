@@ -1,7 +1,7 @@
 // -*- c++ -*-
 //
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
-// (c) 1998-2021 all rights reserved
+// (c) 1998-2023 all rights reserved
 
 
 // externals
@@ -15,16 +15,7 @@ void
 pyre::journal::py::info(py::module & m)
 {
     // type aliases for the member functions (mfp: method pointer)
-    // detail
-    using getDetail_mfp = info_t::detail_type (info_t::*)() const;
-    using setDetail_mfp = info_t & (info_t::*) (info_t::detail_type);
-    // active
-    using getActive_mfp = info_t::active_type (info_t::*)() const;
-    using setActive_mfp = info_t & (info_t::*) (info_t::active_type);
-    // fatal
-    using getFatal_mfp = info_t::fatal_type (info_t::*)() const;
-    using setFatal_mfp = info_t & (info_t::*) (info_t::fatal_type);
-    // device
+    // {device} is the only one that confuses {py::overload_cast}
     using getDevice_mfp = info_t::device_type (info_t::*)() const;
     using setDevice_mfp = info_t & (info_t::*) (info_t::device_type);
 
@@ -46,9 +37,9 @@ pyre::journal::py::info(py::module & m)
         .def_property(
             "detail",
             // the getter
-            (getDetail_mfp) &info_t::detail,
+            py::overload_cast<>(&info_t::detail, py::const_),
             // the setter
-            (setDetail_mfp) &info_t::detail,
+            py::overload_cast<info_t::detail_type>(&info_t::detail),
             // the docstring
             "the detail level")
 
@@ -56,9 +47,9 @@ pyre::journal::py::info(py::module & m)
         .def_property(
             "active",
             // the getter
-            (getActive_mfp) &info_t::active,
+            py::overload_cast<>(&info_t::active, py::const_),
             // the setter
-            (setActive_mfp) &info_t::active,
+            py::overload_cast<info_t::active_type>(&info_t::active),
             // the docstring
             "the channel activation state")
 
@@ -66,9 +57,9 @@ pyre::journal::py::info(py::module & m)
         .def_property(
             "fatal",
             // the getter
-            (getFatal_mfp) &info_t::fatal,
+            py::overload_cast<>(&info_t::fatal, py::const_),
             // the setter
-            (setFatal_mfp) &info_t::fatal,
+            py::overload_cast<info_t::fatal_type>(&info_t::fatal),
             // the docstring
             "the channel activation state")
 
@@ -196,13 +187,32 @@ pyre::journal::py::info(py::module & m)
             // the docstring
             "disable output generation")
 
+        // dent control
+        .def(
+            "indent",
+            // the method;
+            &info_t::indent,
+            // the signature
+            "levels"_a = 1,
+            // the docstring
+            "indent output by the indicated number of {levels}")
+
+        .def(
+            "outdent",
+            // the method;
+            &info_t::outdent,
+            // the signature
+            "levels"_a = 1,
+            // the docstring
+            "outdent output by the indicated number of {levels}")
+
         // add a line to the contents
         .def(
             "line",
             // the handler
-            [](info_t & channel, py::object message) -> info_t & {
+            [](info_t & channel, const info_t::string_type & message) -> info_t & {
                 // inject
-                channel << py::str(message) << pyre::journal::newline;
+                channel << message << pyre::journal::newline;
                 // enable chaining
                 return channel;
             },
@@ -233,9 +243,16 @@ pyre::journal::py::info(py::module & m)
         .def(
             "log",
             // the handler
-            [](info_t & channel, py::object message) -> info_t & {
+            [](info_t & channel, const info_t::string_type & message,
+               // additional arguments are interpreted as entry notes
+               py::kwargs kwds) -> info_t & {
+                // unpack {kwds}
+                for (auto entry : kwds) {
+                    // and treat each one as a note
+                    channel << pyre::journal::note(py::str(entry.first), py::str(entry.second));
+                }
                 // inject and flush
-                channel << locator() << py::str(message) << pyre::journal::endl;
+                channel << locator() << message << pyre::journal::endl;
                 // enable chaining
                 return channel;
             },
@@ -267,12 +284,19 @@ pyre::journal::py::info(py::module & m)
         .def_static(
             "logfile",
             // the implementation
-            [](const info_t::string_type & path) -> void {
+            [](const info_t::string_type & path, const info_t::string_type & mode) -> void {
+                // initialize the mode
+                auto flag = std::ios_base::out;
+                // if {mode} is {append}
+                if (mode == "a") {
+                    // set the corresponding bit
+                    flag |= std::ios_base::app;
+                }
                 // set up the device
-                info_t::logfile(path);
+                info_t::logfile(path, flag);
             },
             // the signature
-            "name"_a,
+            "name"_a, "mode"_a = "w",
             // the docstring
             "send all output to a file")
 

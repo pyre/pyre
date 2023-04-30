@@ -2,12 +2,10 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2021 all rights reserved
+# (c) 1998-2023 all rights reserved
 #
 
 
-# externals
-import weakref
 # framework access
 import pyre
 
@@ -20,7 +18,6 @@ class Director(pyre.actor):
     {Director} takes care of all the tasks necessary to register an application family with the
     framework
     """
-
 
     # meta methods
     def __init__(self, name, bases, attributes, namespace=None, **kwds):
@@ -44,13 +41,28 @@ class Director(pyre.actor):
         # all done
         return
 
-
-    def __call__(self, globalAliases=True, **kwds):
+    def __call__(self, name=None, globalAliases=True, locator=None, **kwds):
         """
         Build an application instance
         """
-        # just chain up; my job is to reset the default value of {globalAliases}
-        return super().__call__(globalAliases=globalAliases, **kwds)
+        # record the caller's location
+        # if i have a name
+        if name is not None:
+            # build a locator
+            loc = pyre.tracking.simple(f"while initializing application '{name}'")
+            # connect it to the locator of the caller
+            locator = loc if locator is None else pyre.tracking.chain(loc, locator)
+            # load the application configuration
+            self.pyre_executive.configure(namespace=name, locator=loc)
+        # otherwise
+        else:
+            # just adjust the locator
+            locator = pyre.tracking.here(1) if locator is None else locator
+
+        # and chain up
+        return super().__call__(
+            name=name, globalAliases=globalAliases, locator=locator, **kwds
+        )
 
 
 # end of file

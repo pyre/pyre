@@ -3,19 +3,17 @@
 # -*- coding: utf-8 -*-
 #
 # {project.authors}
-# {project.affiliations}
 # (c) {project.span} all rights reserved
-#
 
 
 # get the package
 import {project.name}
 
-# build an instance of the plexus
-app = {project.name}.plexus(name='{project.name}.plexus')
-# and run it
+# build an instance of the app
+app = {project.name}.shells.{project.name}(name='{project.name}.app')
+# invoke it
 status = app.run()
-# pass the status on to the shell
+# and pass its exit status on to the shell
 raise SystemExit(status)
 
 

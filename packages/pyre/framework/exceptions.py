@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2021 all rights reserved
+# (c) 1998-2023 all rights reserved
 #
 
 
@@ -15,13 +15,17 @@ class PyreError(Exception):
     description = "generic pyre error"
 
     # meta-methods
-    def __init__(self, description=None, locator=None, **kwds):
+    def __init__(self, description=None, locator=None, error=None, **kwds):
         # chain up
         super().__init__(**kwds)
         # attach the locator
         self.locator = locator
-        # check whether we have to attach a special error description
-        if description is not None: self.description = description
+        # and the actual error
+        self.error = error
+        # if this particular invocation overrides the default description
+        if description is not None:
+            # record it
+            self.description = description
         # all done
         return
 
@@ -34,6 +38,19 @@ class PyreError(Exception):
             return "{.locator}: {}".format(self, reason)
         # otherwise
         return reason
+
+    def _pyre_report(self):
+        """
+        Generate a more verbose report regarding this error
+        """
+        # first, generate the textual representation of the error
+        yield str(self)
+        # if there is a locator
+        if self.locator:
+            # add its contents to the report
+            yield str(self.locator)
+        # all done
+        return
 
 
 class FrameworkError(PyreError):

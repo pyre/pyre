@@ -1,43 +1,44 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
-# (c) 1998-2021 all rights reserved
-#
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2023 all rights reserved
 
 
 # the framework
 import pyre
+
 # superclass
 from .POSIX import POSIX
+
 # the default package manager
 from .MacPorts import MacPorts
+
 # the CPU info object
 from .CPUInfo import CPUInfo
 
 
 # declaration
-class Darwin(POSIX, family='pyre.platforms.darwin'):
+class Darwin(POSIX, family="pyre.platforms.darwin"):
     """
     Encapsulation of a darwin host
     """
 
-
     # constants
-    platform = 'darwin'
-    distribution = 'macos'
+    platform = "darwin"
+    distribution = "macos"
 
-    prefix_library = 'lib'
-    extension_staticLibrary = '.a'
-    extension_dynamicLibrary = '.dylib'
+    extension_object = ".o"
+
+    prefix_library = "lib"
+    extension_staticLibrary = ".a"
+    extension_dynamicLibrary = ".dylib"
 
     template_staticLibrary = "{0.prefix_library}{1}{0.extension_staticLibrary}"
     template_dynamicLibrary = "{0.prefix_library}{1}{0.extension_dynamicLibrary}"
 
     # user configurable state
     packager = pyre.platforms.packager(default=MacPorts)
-    packager.doc = 'the manager of external packages installed on this host'
-
+    packager.doc = "the manager of external packages installed on this host"
 
     # implementation details: explorers
     @classmethod
@@ -61,20 +62,22 @@ class Darwin(POSIX, family='pyre.platforms.darwin'):
         # and return it
         return info
 
-
     @classmethod
     def getOSInfo(cls):
         # ask the platform package
         import platform
+
         # for the release number
         release, _, _ = platform.mac_ver()
         # extract the major release
-        major = '.'.join(release.split('.')[:2])
-        # use it to get the codename
-        codename = cls.codenames.get(major, 'unknown')
+        major, minor = map(int, release.split(".")[:2])
+        # after {big sur}, the codename is determined by {major}
+        # the older releases use {minor} as well
+        tag = f"{major}.x" if major >= 11 else f"{major}.{minor}"
+        # use the tag to get the codename
+        codename = cls.codenames.get(tag, "unknown")
         # and return
         return release, codename
-
 
     # meta-methods
     def __init__(self, **kwds):
@@ -85,38 +88,34 @@ class Darwin(POSIX, family='pyre.platforms.darwin'):
         # all done
         return
 
-
     # private data
     # the known code names
     codenames = {
-        '12.0': 'monterey',
-        # big sur is has multiple personality disorder...
-        '11.6': 'big sur',
-        '11.5': 'big sur',
-        '11.4': 'big sur',
-        '11.3': 'big sur',
-        '11.2': 'big sur',
-        '11.1': 'big sur',
-        '11.0': 'big sur',
-        '10.16': 'big sur',
+        # ventura
+        "13.x": "ventura",
+        # monterey
+        "12.x": "monterey",
+        # big sur seems to have brought about a change in the naming convention
+        "11.x": "big sur",
+        "10.16": "big sur",
         # older releases
-        '10.15': 'catalina',
-        '10.14': 'mojave',
-        '10.13': 'high sierra',
-        '10.12': 'sierra',
-        '10.11': 'el capitan',
-        '10.10': 'yosemite',
-        '10.9': 'mavericks',
-        '10.8': 'mountain lion',
-        '10.7': 'lion',
-        '10.6': 'snow leopard',
-        '10.5': 'leopard',
-        '10.4': 'tiger',
-        '10.3': 'panther',
-        '10.2': 'jaguar',
-        '10.1': 'puma',
-        '10.0': 'cheetah',
-        }
+        "10.15": "catalina",
+        "10.14": "mojave",
+        "10.13": "high sierra",
+        "10.12": "sierra",
+        "10.11": "el capitan",
+        "10.10": "yosemite",
+        "10.9": "mavericks",
+        "10.8": "mountain lion",
+        "10.7": "lion",
+        "10.6": "snow leopard",
+        "10.5": "leopard",
+        "10.4": "tiger",
+        "10.3": "panther",
+        "10.2": "jaguar",
+        "10.1": "puma",
+        "10.0": "cheetah",
+    }
 
 
 # end of file

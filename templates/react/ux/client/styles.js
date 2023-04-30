@@ -8,21 +8,8 @@
 import {{ theme }} from '~/palette'
 
 
-// styling for the page container
+// styling for the meta components
 export default {{
-    // the top level flex container
-    page : {{
-        // placement
-        width: "100%",
-        height: "100%",
-
-        // overall styling
-        backgroundColor: theme.page.background,
-
-        // for my children
-        display: "flex",
-        flexDirection: "column",
-    }},
 }}
 
 

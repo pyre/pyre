@@ -1,0 +1,29 @@
+// -*- c++ -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2023 all rights reserved
+
+// code guard
+#if !defined(pyre_journal_Code_icc)
+#error This header contains implementation details of pyre::journal::Code
+#else
+
+
+// metamethods
+// modern version
+pyre::journal::Code::Code(code_type code) : _code(code) {}
+
+
+// interface
+// accessors
+auto
+pyre::journal::Code::code() const -> code_type
+{
+    // easy enough
+    return _code;
+}
+
+
+#endif
+
+// end of file

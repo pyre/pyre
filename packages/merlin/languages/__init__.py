@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <nichael.aivazis@para-sim.com>
-# (c) 1998-2021 all rights reserved
+# (c) 1998-2023 all rights reserved
 
 
 # support
@@ -9,13 +9,16 @@ import merlin
 
 
 # source encodings
-@merlin.components.language(language="autogen", tip="templates for generating source code")
+@merlin.components.language(
+    language="autogen", tip="templates for generating source code"
+)
 def autogen():
     """
     The category of source artifacts that are expanded into other sources
     """
     # get the language
     from .Autogen import Autogen
+
     # and publish it
     return Autogen
 
@@ -27,6 +30,7 @@ def c():
     """
     # get the language
     from .C import C
+
     # and publish it
     return C
 
@@ -38,6 +42,7 @@ def cuda():
     """
     # get the language
     from .CUDA import CUDA
+
     # and publish it
     return CUDA
 
@@ -49,6 +54,7 @@ def cxx():
     """
     # get the language
     from .CXX import CXX
+
     # and publish it
     return CXX
 
@@ -60,6 +66,7 @@ def cython():
     """
     # get the language
     from .Cython import Cython
+
     # and publish it
     return Cython
 
@@ -71,6 +78,7 @@ def fortran():
     """
     # get the language
     from .FORTRAN import FORTRAN
+
     # and publish it
     return FORTRAN
 
@@ -82,6 +90,7 @@ def python():
     """
     # get the language
     from .Python import Python
+
     # and publish it
     return Python
 

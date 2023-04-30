@@ -1,18 +1,19 @@
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
-# (c) 1998-2021 all rights reserved
+# (c) 1998-2023 all rights reserved
 
 
 # external
 import journal
 import textwrap
+
 # support
 import merlin
 
 
 # declaration
-class Merlin(merlin.plexus, family='merlin.shells.plexus'):
+class Merlin(merlin.plexus, family="merlin.shells.plexus"):
     """
     merlin is an opinionated build system that leans on convention to simplify the
     configuration management of complex projects
@@ -33,6 +34,8 @@ class Merlin(merlin.plexus, family='merlin.shells.plexus'):
     projects = merlin.properties.tuple(schema=merlin.protocols.project())
     projects.doc = "the list of projects in the current workspace"
 
+    scs = merlin.protocols.scs()
+    scs.doc = "the source control system"
 
     # framework hooks
     # post instantiation hook
@@ -40,25 +43,11 @@ class Merlin(merlin.plexus, family='merlin.shells.plexus'):
         """
         Go through my traits and force them to materialize
         """
-        # make a marker
-        indent = " " * 2
-        # and a channel
-        channel = journal.debug("merlin.plexus.init")
-        # go through my entire configurable state
-        for trait in self.pyre_configurables():
-            # ask for the value
-            value = getattr(self, trait.name)
-            # show me
-            channel.line(f"{indent*1}{trait.name}: {value}")
-        # flush
-        channel.log()
-
         # give my children their context
         self.builder.merlin_initialized(plexus=self)
 
-        # indicate that nothing is amiss
+        # and indicate that nothing is amiss
         return []
-
 
     # virtual filesystem configuration
     def pyre_mountApplicationFolders(self, pfs, prefix, **kwds):
@@ -78,8 +67,12 @@ class Merlin(merlin.plexus, family='merlin.shells.plexus'):
         if workspacePath:
             # anchor a filesystem on this path
             ws = vfs.retrieveFilesystem(root=workspacePath)
-            # and grab the metadata directory
+            # grab the metadata directory
             wsmeta = ws[self.METAFOLDER].discover()
+            # and, if necessary
+            if not self.scs:
+                # deduce the source control system
+                self.scs = self.deduceSCS(workspace=ws)
         # otherwise
         else:
             # make an empty folder for both the workspace
@@ -131,7 +124,6 @@ class Merlin(merlin.plexus, family='merlin.shells.plexus'):
         # all done
         return pfs
 
-
     # instance configuration
     def pyre_loadConfiguration(self, locator):
         """
@@ -153,7 +145,6 @@ class Merlin(merlin.plexus, family='merlin.shells.plexus'):
         # all done
         return
 
-
     # main entry point for the web shell
     def pyre_respond(self, server, request):
         """
@@ -169,7 +160,6 @@ class Merlin(merlin.plexus, family='merlin.shells.plexus'):
         # otherwise, ask the dispatcher to do its thing
         return ux.dispatch(plexus=self, server=server, request=request)
 
-
     # support for the help system
     def pyre_banner(self):
         """
@@ -178,12 +168,11 @@ class Merlin(merlin.plexus, family='merlin.shells.plexus'):
         # the project header
         yield from textwrap.dedent(merlin.meta.banner).splitlines()
         # the doc string
-        yield from self.pyre_showSummary(indent='')
+        yield from self.pyre_showSummary(indent="")
         # the authors
         yield from textwrap.dedent(merlin.meta.authors).splitlines()
         # all done
         return
-
 
     # interactive session management
     def pyre_interactiveSessionContext(self, context=None):
@@ -193,13 +182,25 @@ class Merlin(merlin.plexus, family='merlin.shells.plexus'):
         # prime the execution context
         context = context or {}
         # grant access to my package
-        context['merlin'] = merlin  # my package
+        context["merlin"] = merlin  # my package
         # and chain up
         return super().pyre_interactiveSessionContext(context=context)
 
+    # helpers
+    def deduceSCS(self, workspace):
+        """
+        Deduce the source control system
+        """
+        # start with the common case by looking for a {.git} directory
+        if ".git" in workspace:
+            # it's git
+            return "git"
+
+        # out of ideas
+        return None
 
     # private data
-    _ux = None # the UX manager
+    _ux = None  # the UX manager
 
 
 # end of file

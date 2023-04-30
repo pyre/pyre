@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
-# (c) 1998-2021 all rights reserved
+# (c) 1998-2023 all rights reserved
 
 
 # support
@@ -9,6 +9,7 @@ import merlin
 # superclass
 from .Asset import Asset
 # schema
+from .AssetCategory import AssetCategory
 from .Language import Language
 
 
@@ -20,7 +21,7 @@ class File(Asset, family="merlin.assets.files"):
 
 
     # required configurable state
-    category = merlin.properties.str()
+    category = AssetCategory()
     category.doc = "a clue about the type of this asset"
 
     language = Language()

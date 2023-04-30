@@ -1,0 +1,158 @@
+// -*- c++ -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2023 all rights reserved
+
+// code guard
+#if !defined(pyre_py_grid_algebra_icc)
+#error this file contains implementation details for pyre::py::grid algebra
+#else
+
+// endow {repT} with an algebra
+template <class repT>
+void
+pyre::py::grid::algebra(py::class_<repT> & cls)
+{
+    // unary operators
+    cls.def(
+        // the name of the operation
+        "__pos__",
+        // the implementation
+        [](const repT & self) -> repT {
+            // return myself
+            return self;
+        },
+        // the docstring
+        "+{self}");
+
+    cls.def(
+        // the name of the operation
+        "__neg__",
+        // the implementation
+        [](const repT & self) -> repT {
+            // return negative myself
+            return -self;
+        },
+        // the docstring
+        "-{self}");
+
+    // addition
+    cls.def(
+        // the name of the operation
+        "__add__",
+        // the implementation
+        [](const repT & self, const repT & other) -> repT {
+            // perform the addition and return the result
+            return self + other;
+        },
+        // the signature
+        "other"_a,
+        // the docstring
+        "{self} + {other}");
+
+    // subtraction
+    cls.def(
+        // the name of the operation
+        "__sub__",
+        // the implementation
+        [](const repT & self, const repT & other) -> repT {
+            // perform the subtraction and return the result
+            return self - other;
+        },
+        // the signature
+        "other"_a,
+        // the docstring
+        "{self} - {other}");
+
+    // left multiplication by integers
+    cls.def(
+        // the name of the operation
+        "__mul__",
+        // the implementation
+        [](const repT & self, int scale) -> repT {
+            // perform the multiplication and return the result
+            return scale * self;
+        },
+        // the signature
+        "other"_a,
+        // the docstring
+        "{self} * {int}");
+
+    // right multiplication by integers
+    cls.def(
+        // the name of the operation
+        "__rmul__",
+        // the implementation
+        [](const repT & self, int scale) -> repT {
+            // perform the multiplication and return the result
+            return scale * self;
+        },
+        // the signature
+        "other"_a,
+        // the docstring
+        "{int} * {self}");
+
+    // left division by integers
+    cls.def(
+        // the name of the operation
+        "__truediv__",
+        // the implementation
+        [](const repT & self, int scale) -> repT {
+            // perform the division and return the result
+            return self / scale;
+        },
+        // the signature
+        "other"_a,
+        // the docstring
+        "{self} / {int}");
+
+    // left multiplication by doubles
+    cls.def(
+        // the name of the operation
+        "__mul__",
+        // the implementation
+        [](const repT & self, double scale) {
+            // perform the product and return the result
+            return scale * self;
+        },
+        // the signature
+        "other"_a,
+        // the docstring
+        "{self} * {double}");
+
+    // right multiplication by doubles
+    cls.def(
+        // the name of the operation
+        "__rmul__",
+        // the implementation
+        [](const repT & self, double scale) {
+            // perform the product and return the result
+            return scale * self;
+        },
+        // the signature
+        "other"_a,
+        // the docstring
+        "{double} * {self}");
+
+    // left division by doubles
+    cls.def(
+        // the name of the operation
+        "__truediv__",
+        // the implementation
+        [](const repT & self, double scale) {
+            // perform the division and return the result
+            return self / scale;
+        },
+        // the signature
+        "other"_a,
+        // the docstring
+        "{self} / {double}");
+
+
+    // all done
+    return;
+};
+
+#endif
+
+// end of file

@@ -1,13 +1,13 @@
 # -*- Makefile -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
-# (c) 1998-2021 all rights reserved
+# (c) 1998-2023 all rights reserved
 
 
 # the pyre library testsuite
 pyre.lib.tests.stem := pyre.lib
 pyre.lib.tests.prerequisites := pyre.lib journal.lib
-pyre.lib.tests.extern := pyre.lib journal.lib
+pyre.lib.tests.extern := pyre.lib $(pyre.lib.extern)
 
 # c++ compiler arguments
 pyre.lib.tests.c++.defines := PYRE_CORE
@@ -17,6 +17,9 @@ pyre.lib.tests.c++.flags += -Wall $($(compiler.c++).std.c++17)
 # cleanup
 tests.pyre.lib.grid.clean += grid_mmap.data
 tests.pyre.lib.memory.clean += filemap.dat map.dat
+tests.pyre.lib.viz.clean += \
+    amplitude.bmp chip.bmp complex.bmp decimate.bmp domain_coloring.bmp \
+    logsaw.bmp phase.bmp polarsaw.bmp
 
 # test case configuration
 # the {pyre::memory} tests must be executed in a specific order

@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2021 all rights reserved
+# (c) 1998-2023 all rights reserved
 #
 
 
@@ -77,12 +77,20 @@ class Facility(Slotted, schemata.component):
         """
         Coerce {value} into an instance of a component compatible with my protocol
         """
+        # save the incoming value specification
+        spec = value
+        # grab my protocol
+        protocol = self.protocol
         # run the value through my regular coercion
         value = self.process(value=value, node=node, **kwds)
-        # if {value} results in {None} after initial processing, leave it alone
-        if value is None: return None
-        # if what I got back is a component instance, we are all done
-        if isinstance(value, self.protocol.component): return value
+        # if {value} results in {None} after initial processing
+        if value is None:
+            # leave it alone
+            return None
+        # if what I got back is a component instance
+        if isinstance(value, protocol.component):
+            # we are all done
+            return value
 
         # get the key of the node
         key = node.key
@@ -101,9 +109,8 @@ class Facility(Slotted, schemata.component):
             # and no locator
             locator = None
 
-        # instantiate and return; mark as {implicit} to denote that this instance was created
-        # during facility processing, rather than explicitly
-        return value(name=name, locator=locator, implicit=True)
+        # instantiate and return
+        return protocol.pyre_instantiate(spec=spec, component=value, name=name, locator=locator)
 
 
     def render(self, value, renderer, workload, incognito=False):

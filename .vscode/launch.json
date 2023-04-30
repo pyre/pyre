@@ -9,21 +9,35 @@
             "type": "python",
             "request": "launch",
             "python": "${command:python.interpreterPath}",
-            "cwd": "${fileDirname}",
+            "cwd": "${workspaceFolder}",
             "program": "${file}",
             "console": "integratedTerminal"
         },
         {
-            "name": "merlin: debug merlin",
+            "name": "merlin: debug merlin compilers",
             "type": "python",
             "request": "launch",
             "python": "${command:python.interpreterPath}",
-            "cwd": "${fileDirname}",
-            "program": "${workspaceFolder}/bin/merlin",
+            "cwd": "${workspaceFolder}",
+            "program": "${env:mm_prefix}/bin/merlin",
             "args": [
                 "info",
                 "compilers",
                 "--compilers=gnu"
+            ],
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "merlin: debug merlin make builder",
+            "type": "python",
+            "request": "launch",
+            "python": "${command:python.interpreterPath}",
+            "cwd": "${workspaceFolder}",
+            "program": "${env:mm_prefix}/bin/merlin",
+            "args": [
+                "lib",
+                "build",
+                "--builder=make"
             ],
             "console": "integratedTerminal"
         },

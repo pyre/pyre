@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
-# (c) 1998-2021 all rights reserved
-#
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2023 all rights reserved
 
 
 # superclass
@@ -16,10 +14,9 @@ class Tuple(Sequence):
     The tuple type declarator
     """
 
-
     # constants
-    typename = 'tuple' # the name of my type
-    container = tuple # the container i represent
+    typename = "tuple"  # the name of my type
+    container = tuple  # the container i represent
 
 
 # end of file

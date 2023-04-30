@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <nichael.aivazis@para-sim.com>
-# (c) 1998-2021 all rights reserved
+# (c) 1998-2023 all rights reserved
 
 
 # publish the base {product} so users can extend
 from .Product import Product as product
 
 # export the publicly visible assets
-from .Directory import Directory as directory
+from .Folder import Folder as folder
 from .File import File as file
 from .Project import Project as project
 from .Library import Library as library

@@ -1,7 +1,7 @@
 // -*- c++ -*-
 //
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
-// (c) 1998-2021 all rights reserved
+// (c) 1998-2023 all rights reserved
 
 
 // externals
@@ -39,14 +39,21 @@ pyre::journal::py::api(py::module & m)
     m.def(
         "logfile",
         // the implementation
-        [](const debug_t::string_type & path) -> void {
+        [](const string_t & path, const string_t & mode) -> void {
+            // initialize the mode
+            auto flag = std::ios_base::out;
+            // if {mode} is {append}
+            if (mode == "a") {
+                // set the corresponding bit
+                flag |= std::ios_base::app;
+            }
             // set up the output device
-            pyre::journal::logfile(path);
+            pyre::journal::logfile(path, flag);
             // all done
             return;
         },
         // the signature
-        "name"_a,
+        "name"_a, "mode"_a = "w",
         // the docstring
         "send all output to a file");
 
@@ -70,7 +77,7 @@ pyre::journal::py::api(py::module & m)
         "detail",
         // the implementation
         [](chronicler_t::detail_type level) -> void { chronicler_t::detail(level); },
-        // the sigmature
+        // the signature
         "level"_a,
         // the docstring
         "set the maximum message detail level");

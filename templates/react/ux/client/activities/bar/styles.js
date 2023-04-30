@@ -19,7 +19,7 @@ export default {{
     // my opinions on badges
     badge: {{
         //  styling
-        padding: "0.75rem",
+        padding: "0.375rem 0.5rem",
         // make a transparent border of the correctwidth so the badges don't move around
         // when the corresponding activity is engaged
         borderLeft: `2px solid hsl(0deg, 0%, 0%, 0)`,
@@ -41,7 +41,7 @@ export default {{
         }},
     }},
 
-    // when exploring whether this acivity is available
+    // when exploring whether this activity is available
     // e.g. when the cursor hovers over its badge
     available: {{
         // for the badge
