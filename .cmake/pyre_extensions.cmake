@@ -6,7 +6,7 @@
 #
 
 # build the journal extension
-# pyre_journalModule()
+pyre_journalModule()
 # the host and timers extensions`
 pyre_pyreModule()
 # mpi
