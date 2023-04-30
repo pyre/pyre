@@ -247,6 +247,13 @@ if(PYRE_BUILD_BENCHMARKS)
 
   # add the benchmarks to the pile
   include(pyre_benchmarks_pyre_lib)
+
+  # if we have CUDA and the user cares
+  if(WITH_CUDA)
+    # add the cuda benchmarks to the pile
+    include(pyre_benchmarks_cuda_lib)
+  endif()
+
 endif()
 
 
