@@ -51,21 +51,23 @@ class Workspace(Fragment):
         # repository info
         yield renderer.commentLine(f"get the repository revision information")
         # record it
-        yield from renderer.set(
-            name="ws.describe", value=f"$(subst -, ,$(shell cd $(ws) && {cmd}))"
-        )
+        yield from renderer.set(name="ws.tag", value=f"$(shell cd $(ws) && {cmd})")
+        # convert into a space delimited list
+        yield renderer.commentLine(f"get the repository revision information")
+        # record it
+        yield from renderer.set(name="ws.words", value=f"$(subst -, ,$(ws.tag))")
         # extract the tag
         yield renderer.commentLine(f"extract the version tag")
         # record it
         yield from renderer.set(
             name="ws.version",
-            value=f"$(subst ., ,$(patsubst v%,%,$(word 1,$(ws.describe))))",
+            value=f"$(subst ., ,$(patsubst v%,%,$(word 1,$(ws.words))))",
         )
         # and the revision
         yield renderer.commentLine(f"extract the commit SHA")
         # record it
         yield from renderer.set(
-            name="ws.revision", value=f"$(patsubst g%,%,$(word 3,$(ws.describe)))"
+            name="ws.revision", value=f"$(patsubst g%,%,$(word 3,$(ws.words)))"
         )
         # get the major version
         yield renderer.commentLine(f"extract the major version")
@@ -89,7 +91,7 @@ class Workspace(Fragment):
         # and the path to the file with the archived workspace revision information
         yield renderer.commentLine("the archived workspace info")
         # save the value
-        yield from renderer.set(name="ws.rev.arc", value=f"$(build)/ws.rev.arc")
+        yield from renderer.set(name="ws.rev", value=f"$(build)/ws.rev")
         # make some room
         yield ""
 
@@ -101,23 +103,28 @@ class Workspace(Fragment):
         yield f"\t@$(call log.action,git,/stage/build/ws.now)"
         # the rule
         yield f"\t@$(echo) '# repository info' > $(ws.rev.now)"
+        yield f"\t@$(echo) ' ' >> $(ws.rev.now)"
+        yield f"\t@$(echo) ws.tag := $(ws.tag) >> $(ws.rev.now)"
         yield f"\t@$(echo) ws.major := $(ws.major) >> $(ws.rev.now)"
         yield f"\t@$(echo) ws.minor := $(ws.minor) >> $(ws.rev.now)"
         yield f"\t@$(echo) ws.micro := $(ws.micro) >> $(ws.rev.now)"
         yield f"\t@$(echo) ws.revision := $(ws.revision) >> $(ws.rev.now)"
+        yield f"\t@$(echo) ws.date := $(shell $(date.date)) >> $(ws.rev.now)"
+        yield f"\t@$(echo) ' ' >> $(ws.rev.now)"
+        yield f"\t@$(echo) '# end of file' >> $(ws.rev.now)"
         # make some room
         yield ""
 
         # target for the file with the archive workspace revision information
         yield renderer.commentLine(f"the file with the archived revision information")
         # build the target
-        yield f"$(ws.rev.arc): ws.rev.now"
+        yield f"$(ws.rev): ws.rev.now"
         # the rule
-        yield f"\t@if $(diff) $(ws.rev.now) $(ws.rev.arc) >& /dev/null; then \\"
+        yield f"\t@if $(diff) $(ws.rev.now) $(ws.rev) >& /dev/null; then \\"
         yield f"      $(call log.action,rev,ok) ; \\"
         yield f"    else \\"
         yield f"      $(call log.action,rev,/stage/build/ws.rev.now) ; \\"
-        yield f"      $(cp) $(ws.rev.now) $(ws.rev.arc) ; \\"
+        yield f"      $(cp) $(ws.rev.now) $(ws.rev) ; \\"
         yield f"    fi"
         # make some room
         yield ""
@@ -125,7 +132,7 @@ class Workspace(Fragment):
         # load the file with the repository information
         yield renderer.commentLine(f"load the repository information")
         # add the instruction
-        yield "projects:: $(ws.rev.arc)"
+        yield "projects:: $(ws.rev)"
         # make some room
         yield ""
 
