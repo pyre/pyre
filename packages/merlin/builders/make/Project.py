@@ -5,7 +5,6 @@
 
 
 # support
-import journal
 import merlin
 
 # superclass
