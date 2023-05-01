@@ -11,6 +11,9 @@ import textwrap
 # support
 import merlin
 
+# my parts
+from .Palette import Palette
+
 
 # declaration
 class Merlin(merlin.plexus, family="merlin.shells.plexus"):
@@ -36,6 +39,15 @@ class Merlin(merlin.plexus, family="merlin.shells.plexus"):
 
     scs = merlin.protocols.external.scs()
     scs.doc = "the source control system"
+
+    # metamethods
+    def __init__(self, **kwds):
+        # chain up
+        super().__init__(**kwds)
+        # set up my color palette
+        self.palette = Palette(terminal=self.executive.terminal)
+        # all done
+        return
 
     # framework hooks
     # post instantiation hook
