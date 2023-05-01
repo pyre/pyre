@@ -32,6 +32,7 @@ using grid_mapped_t = pyre::grid::grid_t<pack_t, mapped_storage_t>;
 
 // timer
 using proctimer_t = pyre::timers::process_timer_t;
+using walltimer_t = pyre::timers::wall_timer_t;
 
 // declaration of the kernel wrappers
 void
@@ -112,14 +113,20 @@ managedInvariants(pack_t tensorPack, pack_t invariantPack, int nThreadPerBlock, 
         throw std::bad_alloc();
     }
 
-    // make a timer
+    // make a general timer
     proctimer_t timer("tests.timer");
 
-    // and reset it
+    // make a wallclock timer
+    walltimer_t walltimer("tests.timer");
+
+    // reset the general timer
     timer.reset();
 
     // start the timer
     timer.start();
+
+    // start the wallclock timer
+    walltimer.start();
 
     // execute the kernel wrapper
     wrapperManaged(
@@ -138,8 +145,11 @@ managedInvariants(pack_t tensorPack, pack_t invariantPack, int nThreadPerBlock, 
         throw std::bad_alloc();
     }
 
-    // and stop the timer
+    // stop the general timer
     timer.stop();
+
+    // and stop the wallclock timer
+    walltimer.stop();
 
     // make a channel
     pyre::journal::debug_t timerChannel("tests.timer");
@@ -148,8 +158,9 @@ managedInvariants(pack_t tensorPack, pack_t invariantPack, int nThreadPerBlock, 
     // show me
     timerChannel
         // show me the elapsed time
-        << "Elapsed time for managed memory invariant computation: " << timer.ms()
-        << pyre::journal::endl(__HERE__);
+        << "Managed memory tensor invariant computation: "
+        << "\nGeneral timer time:  " << timer.ms() << " ms"
+        << "\nWallclock time: " << walltimer.ms() << " ms" << pyre::journal::endl(__HERE__);
 
     // all done
     return;
@@ -271,14 +282,21 @@ pinnedInvariants(pack_t tensorPack, pack_t invariantPack, int nThreadPerBlock, i
         // and bail
         throw std::bad_alloc();
     }
-    // make a timer
+
+    // make a general timer
     proctimer_t timer("tests.timer");
 
-    // and reset it
+    // make a wallclock timer
+    walltimer_t walltimer("tests.timer");
+
+    // reset the general timer
     timer.reset();
 
     // start the timer
     timer.start();
+
+    // start the wallclock timer
+    walltimer.start();
 
     wrapperPinned(
         nTensors, nThreadPerBlock, nBlocks, tensorArray.data()->data(), I1.data()->data(),
@@ -296,8 +314,11 @@ pinnedInvariants(pack_t tensorPack, pack_t invariantPack, int nThreadPerBlock, i
         throw std::bad_alloc();
     }
 
-    // and stop the timer
+    // stop the general timer
     timer.stop();
+
+    // and stop the wallclock timer
+    walltimer.stop();
 
     // make a channel
     pyre::journal::debug_t timerChannel("tests.timer");
@@ -306,8 +327,9 @@ pinnedInvariants(pack_t tensorPack, pack_t invariantPack, int nThreadPerBlock, i
     // show me
     timerChannel
         // show me the elapsed time
-        << "Elapsed time for pinned memory invariant computation: " << timer.ms()
-        << pyre::journal::endl(__HERE__);
+        << "Pinned memory tensor invariant computation: "
+        << "\nGeneral timer time:  " << timer.ms() << " ms"
+        << "\nWallclock time: " << walltimer.ms() << " ms" << pyre::journal::endl(__HERE__);
 
     // all done
     return;
@@ -376,14 +398,20 @@ mappedInvariants(pack_t tensorPack, pack_t invariantPack, int nThreadPerBlock, i
         throw std::bad_alloc();
     }
 
-    // make a timer
+    // make a general timer
     proctimer_t timer("tests.timer");
 
-    // and reset it
+    // make a wallclock timer
+    walltimer_t walltimer("tests.timer");
+
+    // reset the general timer
     timer.reset();
 
     // start the timer
     timer.start();
+
+    // start the wallclock timer
+    walltimer.start();
 
     wrapperMapped(
         nTensors, nThreadPerBlock, nBlocks, tensorArray.data()->device(), I1.data()->device(),
@@ -401,8 +429,11 @@ mappedInvariants(pack_t tensorPack, pack_t invariantPack, int nThreadPerBlock, i
         throw std::bad_alloc();
     }
 
-    // and stop the timer
+    // stop the general timer
     timer.stop();
+
+    // and stop the wallclock timer
+    walltimer.stop();
 
     // make a channel
     pyre::journal::debug_t timerChannel("tests.timer");
@@ -411,8 +442,9 @@ mappedInvariants(pack_t tensorPack, pack_t invariantPack, int nThreadPerBlock, i
     // show me
     timerChannel
         // show me the elapsed time
-        << "Elapsed time for mapped memory invariant computation: " << timer.ms()
-        << pyre::journal::endl(__HERE__);
+        << "Mapped memory tensor invariant computation: "
+        << "\nGeneral timer time:  " << timer.ms() << " ms"
+        << "\nWallclock time: " << walltimer.ms() << " ms" << pyre::journal::endl(__HERE__);
 
     // all done
     return;

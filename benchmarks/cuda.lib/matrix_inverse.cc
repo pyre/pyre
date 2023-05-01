@@ -32,6 +32,7 @@ using grid_mapped_t = pyre::grid::grid_t<pack_t, mapped_storage_t>;
 
 // timer
 using proctimer_t = pyre::timers::process_timer_t;
+using walltimer_t = pyre::timers::wall_timer_t;
 
 void
 wrapperManaged(
@@ -106,14 +107,20 @@ managedInverses(pack_t tensorPack, int nThreadPerBlock, int nTensors)
         throw std::bad_alloc();
     }
 
-    // make a timer
+    // make a general timer
     proctimer_t timer("tests.timer");
 
-    // and reset it
+    // make a wallclock timer
+    walltimer_t walltimer("tests.timer");
+
+    // reset the general timer
     timer.reset();
 
     // start the timer
     timer.start();
+
+    // start the wallclock timer
+    walltimer.start();
 
     // execute the kernel wrapper
     wrapperManaged(
@@ -132,8 +139,11 @@ managedInverses(pack_t tensorPack, int nThreadPerBlock, int nTensors)
         throw std::bad_alloc();
     }
 
-    // and stop the timer
+    // stop the general timer
     timer.stop();
+
+    // and stop the wallclock timer
+    walltimer.stop();
 
     // make a channel
     pyre::journal::debug_t timerChannel("tests.timer");
@@ -142,8 +152,9 @@ managedInverses(pack_t tensorPack, int nThreadPerBlock, int nTensors)
     // show me
     timerChannel
         // show me the elapsed time
-        << "Elapsed time for managed memory inverse computation: " << timer.ms() << " ms"
-        << pyre::journal::endl(__HERE__);
+        << "Managed memory tensor inverse computation: "
+        << "\nGeneral timer time:  " << timer.ms() << " ms"
+        << "\nWallclock time: " << walltimer.ms() << " ms" << pyre::journal::endl(__HERE__);
 
     // all done
     return;
@@ -237,14 +248,20 @@ pinnedInverses(pack_t tensorPack, int nThreadPerBlock, int nTensors)
         throw std::bad_alloc();
     }
 
-    // make a timer
+    // make a general timer
     proctimer_t timer("tests.timer");
 
-    // and reset it
+    // make a wallclock timer
+    walltimer_t walltimer("tests.timer");
+
+    // reset the general timer
     timer.reset();
 
     // start the timer
     timer.start();
+
+    // start the wallclock timer
+    walltimer.start();
 
     // execute the kernel wrapper
     wrapperPinned(
@@ -263,8 +280,11 @@ pinnedInverses(pack_t tensorPack, int nThreadPerBlock, int nTensors)
         throw std::bad_alloc();
     }
 
-    // and stop the timer
+    // stop the general timer
     timer.stop();
+
+    // and stop the wallclock timer
+    walltimer.stop();
 
     // make a channel
     pyre::journal::debug_t timerChannel("tests.timer");
@@ -273,8 +293,9 @@ pinnedInverses(pack_t tensorPack, int nThreadPerBlock, int nTensors)
     // show me
     timerChannel
         // show me the elapsed time
-        << "Elapsed time for pinned memory inverse computation: " << timer.ms() << " ms"
-        << pyre::journal::endl(__HERE__);
+        << "Pinned memory tensor inverse computation: "
+        << "\nGeneral timer time:  " << timer.ms() << " ms"
+        << "\nWallclock time: " << walltimer.ms() << " ms" << pyre::journal::endl(__HERE__);
 
     // all done
     return;
@@ -339,14 +360,20 @@ mappedInverses(pack_t tensorPack, int nThreadPerBlock, int nTensors)
         throw std::bad_alloc();
     }
 
-    // make a timer
+    // make a general timer
     proctimer_t timer("tests.timer");
 
-    // and reset it
+    // make a wallclock timer
+    walltimer_t walltimer("tests.timer");
+
+    // reset the general timer
     timer.reset();
 
     // start the timer
     timer.start();
+
+    // start the wallclock timer
+    walltimer.start();
 
     // execute the kernel wrapper
     wrapperMapped(
@@ -365,8 +392,11 @@ mappedInverses(pack_t tensorPack, int nThreadPerBlock, int nTensors)
         throw std::bad_alloc();
     }
 
-    // and stop the timer
+    // stop the general timer
     timer.stop();
+
+    // and stop the wallclock timer
+    walltimer.stop();
 
     // make a channel
     pyre::journal::debug_t timerChannel("tests.timer");
@@ -375,8 +405,9 @@ mappedInverses(pack_t tensorPack, int nThreadPerBlock, int nTensors)
     // show me
     timerChannel
         // show me the elapsed time
-        << "Elapsed time for mapped memory inverse computation: " << timer.ms() << " ms"
-        << pyre::journal::endl(__HERE__);
+        << "Mapped memory tensor inverse computation: "
+        << "\nGeneral timer time:  " << timer.ms() << " ms"
+        << "\nWallclock time: " << walltimer.ms() << " ms" << pyre::journal::endl(__HERE__);
 
     // all done
     return;
