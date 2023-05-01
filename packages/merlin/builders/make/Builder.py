@@ -52,8 +52,8 @@ class Builder(Builder, Generator, family="merlin.builders.make"):
         # make a channel
         channel = journal.info("merlin.builders.make")
         # sign on
-        channel.line(f"{self}")
-        channel.line(f"is generating makefiles for '{ws}'")
+        channel.line(f"{self}:")
+        channel.line(f"generating makefiles for '{ws}'")
         # flush
         channel.log()
 
@@ -103,12 +103,12 @@ class Builder(Builder, Generator, family="merlin.builders.make"):
         yield from self.projFlow.generate(
             plexus=plexus, builder=self, project=project, **kwds
         )
-        # mark
-        channel.log(f"{palette.project}[proj]{palette.normal} {project.pyre_name}")
         # go through my libraries
         for library in project.libraries:
             # and generate makefiles for each one
             yield from library.identify(plexus=plexus, visitor=self, **kwds)
+        # mark
+        channel.log(f"{palette.project}[proj]{palette.normal} {project.pyre_name}")
         # all done
         return
 
@@ -120,10 +120,6 @@ class Builder(Builder, Generator, family="merlin.builders.make"):
         channel = journal.help("merlin.builders.make")
         # grab the {plexus} color palette
         palette = plexus.palette
-        # mark
-        channel.indent()
-        channel.log(f"{palette.library}[lib]{palette.normal} {library.name}")
-        channel.outdent()
         # N.B.:
         #  the {lib} command panel calls this entry point directly
         #  so don't be tempted to eliminate it as superfluous
@@ -132,6 +128,8 @@ class Builder(Builder, Generator, family="merlin.builders.make"):
         yield from self.libFlow.generate(
             plexus=plexus, builder=self, library=library, **kwds
         )
+        # mark
+        channel.log(f"{palette.library}[lib]{palette.normal} {library.name}")
         # all done
         return
 
