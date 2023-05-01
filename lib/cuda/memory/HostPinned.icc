@@ -125,23 +125,6 @@ pyre::cuda::memory::HostPinned<T, isConst>::handle() const -> handle_type
     return _data;
 }
 
-// iterator support
-template <class T, bool isConst>
-auto
-pyre::cuda::memory::HostPinned<T, isConst>::begin() const -> pointer
-{
-    // the beginning of the block
-    return data();
-}
-
-template <class T, bool isConst>
-auto
-pyre::cuda::memory::HostPinned<T, isConst>::end() const -> pointer
-{
-    // one past the last cell in the block
-    return data() + cells();
-}
-
 // data access
 template <class T, bool isConst>
 auto

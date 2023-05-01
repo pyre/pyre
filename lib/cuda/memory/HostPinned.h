@@ -44,11 +44,6 @@ public:
     // the shared pointer
     inline auto handle() const -> handle_type;
 
-    // iterator support
-public:
-    inline auto begin() const -> pointer;
-    inline auto end() const -> pointer;
-
     // data access
 public:
     // with bounds checking
