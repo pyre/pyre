@@ -78,9 +78,10 @@ class Layout(Fragment):
         yield renderer.commentLine("the build directory")
         # save the value
         yield from renderer.set(name="build", value=f"$(stage)/build")
+        # make some room
+        yield ""
 
         # specify the directory layout of the {/prefix}
-        yield ""
         yield renderer.commentLine("prefix layout")
         # get the root of the prefix tree
         prefix = self.pyre_fileserver["/prefix"]
