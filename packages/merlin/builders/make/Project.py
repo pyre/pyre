@@ -63,7 +63,6 @@ class Project(
         # and the renderer
         renderer = self.renderer
         # sign on
-        yield ""
         yield renderer.commentLine(f"{name} rules")
         # add this project to the pile
         yield renderer.commentLine(f"add {name} to the pile of projects")

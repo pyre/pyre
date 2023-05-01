@@ -51,6 +51,8 @@ class Generator(merlin.component):
         )
         # mark
         yield self.renderer.commentLine(stamp)
+        # make some room
+        yield ""
         # all done
         return
 
