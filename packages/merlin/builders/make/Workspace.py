@@ -100,7 +100,7 @@ class Workspace(Fragment):
         # build the target
         yield f"ws.rev.now: | $(build)"
         # log
-        yield f"\t@$(call log.action,git,/stage/build/ws.now)"
+        yield f"\t@$(call log.action,git,$(ws))"
         # the rule
         yield f"\t@$(echo) '# repository info' > $(ws.rev.now)"
         yield f"\t@$(echo) ' ' >> $(ws.rev.now)"
