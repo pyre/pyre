@@ -120,9 +120,7 @@ class Workspace(Fragment):
         # build the target
         yield f"$(ws.rev): ws.rev.now"
         # the rule
-        yield f"\t@if $(diff) $(ws.rev.now) $(ws.rev) >& /dev/null; then \\"
-        yield f"      $(call log.action,rev,ok) ; \\"
-        yield f"    else \\"
+        yield f"\t@if ! $(diff) $(ws.rev.now) $(ws.rev) >& /dev/null; then \\"
         yield f"      $(call log.action,rev,/stage/build/ws.rev.now) ; \\"
         yield f"      $(cp) $(ws.rev.now) $(ws.rev) ; \\"
         yield f"    fi"
