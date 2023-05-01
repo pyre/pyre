@@ -14,7 +14,6 @@ class CSI:
     A generator of ANSI control strings
     """
 
-
     # reset
     @staticmethod
     def reset():
@@ -23,7 +22,6 @@ class CSI:
         """
         # build the sequence and return it
         return f"{ASCII.ESC}[0m"
-
 
     # the color commands
     @staticmethod
@@ -36,11 +34,10 @@ class CSI:
             f"{ASCII.ESC}[",
             "1" if bright else "0",
             f";{code}" if code is not None else "",
-            "m"
+            "m",
         ]
         # assemble it and return it
         return "".join(seq)
-
 
     @staticmethod
     def csi8(red=0, green=0, blue=0, foreground=True):
@@ -54,11 +51,10 @@ class CSI:
             "38" if foreground else "48",
             ";5;",
             str(16 + int(f"{red}{green}{blue}", 6)),
-            "m"
+            "m",
         ]
         # assemble it and return it
         return "".join(seq)
-
 
     @staticmethod
     def csi8_gray(gray=0, foreground=True):
@@ -72,11 +68,10 @@ class CSI:
             "38" if foreground else "48",
             ";5;",
             str(232 + gray),
-            "m"
+            "m",
         ]
         # assemble it and return it
         return "".join(seq)
-
 
     @staticmethod
     def csi24(red=0, green=0, blue=0, foreground=True):
@@ -89,11 +84,10 @@ class CSI:
             f"{ASCII.ESC}[",
             "38" if foreground else "48",
             f";2;{red};{green};{blue}",
-            "m"
+            "m",
         ]
         # assemble it and return it
         return "".join(seq)
-
 
     # graphics rendition commands
     @staticmethod
@@ -102,11 +96,7 @@ class CSI:
         Turn blink on or off
         """
         # build the sequence
-        seq = [
-            f"{ASCII.ESC}["
-            "5" if state else "25"
-            "m"
-        ]
+        seq = [f"{ASCII.ESC}[" "5" if state else "25" "m"]
         # assemble it and return it
         return "".join(seq)
 
