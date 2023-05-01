@@ -21,6 +21,11 @@ class Git(
     The git source control system
     """
 
+    # setup
+    name = "git"
+    branchArgs = [name, "branch", "--show-current"]
+    describeArgs = [name, "describe", "--tags", "--long", "--always"]
+
     # interface
     @merlin.export
     def branch(self):
@@ -28,7 +33,7 @@ class Git(
         Get the name of the currently active branch
         """
         # the git command line
-        cmd = ["git", "branch", "--show-current"]
+        cmd = self.branchArgs
         # settings
         options = {
             "executable": "git",
@@ -71,7 +76,7 @@ class Git(
         # the value to return on failure
         bail = (0, 0, 0, "")
         # the git command line
-        cmd = ["git", "describe", "--tags", "--long", "--always"]
+        cmd = self.describeArgs
         # settings
         options = {
             "executable": "git",
