@@ -16,6 +16,7 @@ from .Layout import Layout
 from .Library import Library
 from .Preamble import Preamble
 from .Project import Project
+from .Workspace import Workspace
 
 
 # the manager of intermediate and final build products
@@ -106,15 +107,23 @@ class Builder(Builder, Generator, family="merlin.builders.make"):
         # make some room
         yield ""
 
+        # get my name
+        name = self.pyre_name
+
         # make a preamble generator
-        preamble = Preamble(name=f"{self.pyre_name}.preamble")
+        preamble = Preamble(name=f"{name}.preamble")
         # and build the preamble
         yield from preamble.generate(stage=stage, **kwds)
 
         # make a layout generator
-        layout = Layout(name=f"{self.pyre_name}.dirs")
+        layout = Layout(name=f"{name}.dirs")
         # and record the layout
         yield from layout.generate(stage=stage, layout=self.layout)
+
+        # make a generator that extract the workspace info
+        ws = Workspace(name=f"{name}.ws")
+        # and build the makefile
+        yield from ws.generate(stage=stage, **kwds)
 
         # go through the assets
         for asset in assets:
