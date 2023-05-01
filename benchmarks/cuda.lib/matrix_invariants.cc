@@ -159,8 +159,11 @@ managedInvariants(pack_t tensorPack, pack_t invariantPack, int nThreadPerBlock, 
     timerChannel
         // show me the elapsed time
         << "Managed memory tensor invariant computation: "
-        << "\nGeneral timer time:  " << timer.ms() << " ms"
-        << "\nWallclock time: " << walltimer.ms() << " ms" << pyre::journal::endl(__HERE__);
+        << pyre::journal::indent(1)
+        << "General timer time:  " << timer.ms() << " ms"
+        << "Wallclock time: " << walltimer.ms() << " ms" 
+        << pyre::journal::outdent(1)
+        << pyre::journal::endl(__HERE__);
 
     // all done
     return;
@@ -328,8 +331,11 @@ pinnedInvariants(pack_t tensorPack, pack_t invariantPack, int nThreadPerBlock, i
     timerChannel
         // show me the elapsed time
         << "Pinned memory tensor invariant computation: "
-        << "\nGeneral timer time:  " << timer.ms() << " ms"
-        << "\nWallclock time: " << walltimer.ms() << " ms" << pyre::journal::endl(__HERE__);
+        << pyre::journal::indent(1)
+        << "General timer time:  " << timer.ms() << " ms"
+        << "Wallclock time: " << walltimer.ms() << " ms" 
+        << pyre::journal::outdent(1)
+        << pyre::journal::endl(__HERE__);
 
     // all done
     return;
@@ -443,8 +449,11 @@ mappedInvariants(pack_t tensorPack, pack_t invariantPack, int nThreadPerBlock, i
     timerChannel
         // show me the elapsed time
         << "Mapped memory tensor invariant computation: "
-        << "\nGeneral timer time:  " << timer.ms() << " ms"
-        << "\nWallclock time: " << walltimer.ms() << " ms" << pyre::journal::endl(__HERE__);
+        << pyre::journal::indent(1)
+        << "General timer time:  " << timer.ms() << " ms"
+        << "Wallclock time: " << walltimer.ms() << " ms" 
+        << pyre::journal::outdent(1)
+        << pyre::journal::endl(__HERE__);
 
     // all done
     return;

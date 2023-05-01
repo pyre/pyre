@@ -153,8 +153,11 @@ managedInverses(pack_t tensorPack, int nThreadPerBlock, int nTensors)
     timerChannel
         // show me the elapsed time
         << "Managed memory tensor inverse computation: "
-        << "\nGeneral timer time:  " << timer.ms() << " ms"
-        << "\nWallclock time: " << walltimer.ms() << " ms" << pyre::journal::endl(__HERE__);
+        << pyre::journal::indent(1)
+        << "General timer time:  " << timer.ms() << " ms"
+        << "Wallclock time: " << walltimer.ms() << " ms" 
+        << pyre::journal::outdent(1)
+        << pyre::journal::endl(__HERE__);
 
     // all done
     return;
@@ -294,8 +297,11 @@ pinnedInverses(pack_t tensorPack, int nThreadPerBlock, int nTensors)
     timerChannel
         // show me the elapsed time
         << "Pinned memory tensor inverse computation: "
-        << "\nGeneral timer time:  " << timer.ms() << " ms"
-        << "\nWallclock time: " << walltimer.ms() << " ms" << pyre::journal::endl(__HERE__);
+        << pyre::journal::indent(1)
+        << "General timer time:  " << timer.ms() << " ms"
+        << "Wallclock time: " << walltimer.ms() << " ms" 
+        << pyre::journal::outdent(1)
+        << pyre::journal::endl(__HERE__);
 
     // all done
     return;
@@ -406,8 +412,11 @@ mappedInverses(pack_t tensorPack, int nThreadPerBlock, int nTensors)
     timerChannel
         // show me the elapsed time
         << "Mapped memory tensor inverse computation: "
-        << "\nGeneral timer time:  " << timer.ms() << " ms"
-        << "\nWallclock time: " << walltimer.ms() << " ms" << pyre::journal::endl(__HERE__);
+        << pyre::journal::indent(1)
+        << "General timer time:  " << timer.ms() << " ms"
+        << "Wallclock time: " << walltimer.ms() << " ms"
+        << pyre::journal::outdent(1)
+        << pyre::journal::endl(__HERE__);
 
     // all done
     return;
