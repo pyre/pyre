@@ -5,6 +5,7 @@
 
 
 # support
+import journal
 import merlin
 
 # superclasses
@@ -43,8 +44,19 @@ class Builder(Builder, Generator, family="merlin.builders.make"):
         """
         Add the given assets to the build pile
         """
+        # get the workspace uri
+        ws = plexus.vfs["/workspace"].uri
         # get the stage uri
         stage = plexus.vfs["/stage"].uri
+
+        # make a channel
+        channel = journal.info("merlin.builders.make")
+        # sign on
+        channel.line(f"{self}")
+        channel.line(f"is generating makefiles for '{ws}'")
+        # flush
+        channel.log()
+
         # form the directory with the makefile fragments
         fragments = stage / "merlin"
         # make sure it exists
@@ -53,6 +65,12 @@ class Builder(Builder, Generator, family="merlin.builders.make"):
         makefile = stage / self.makefile
         # generate the makefiles
         self.generate(plexus=plexus, stage=stage, makefile=makefile, **kwds)
+
+        # and tell the users where the makefiles are
+        channel.line(f"makefiles in '{stage}'")
+        # flush
+        channel.log()
+
         # all done
         return
 
@@ -73,29 +91,49 @@ class Builder(Builder, Generator, family="merlin.builders.make"):
         return
 
     # asset visitors
-    def project(self, project, **kwds):
+    def project(self, plexus, project, **kwds):
         """
         Build a {project}
         """
+        # make a channel
+        channel = journal.help("merlin.builders.make")
+        # grab the {plexus} color palette
+        palette = plexus.palette
         # delegate to the {projFlow} generator
-        yield from self.projFlow.generate(builder=self, project=project, **kwds)
+        yield from self.projFlow.generate(
+            plexus=plexus, builder=self, project=project, **kwds
+        )
+        # mark
+        channel.log(f"{palette.project}[proj]{palette.normal} {project.pyre_name}")
         # go through my libraries
         for library in project.libraries:
             # and generate makefiles for each one
-            yield from library.identify(visitor=self, **kwds)
+            yield from library.identify(plexus=plexus, visitor=self, **kwds)
         # all done
         return
 
-    def library(self, **kwds):
+    def library(self, plexus, library, **kwds):
         """
         Build a {library}
         """
+        # make a channel
+        channel = journal.help("merlin.builders.make")
+        # grab the {plexus} color palette
+        palette = plexus.palette
+        # mark
+        channel.indent()
+        channel.log(f"{palette.library}[lib]{palette.normal} {library.name}")
+        channel.outdent()
         # N.B.:
         #  the {lib} command panel calls this entry point directly
         #  so don't be tempted to eliminate it as superfluous
         #  since libraries are handled as project assets
         # delegate to the {libFlow} generator
-        return self.libFlow.generate(builder=self, **kwds)
+        yield from self.libFlow.generate(
+            plexus=plexus, builder=self, library=library, **kwds
+        )
+        # all done
+        return
 
     # makefile generation
     def _generate(self, stage, assets, **kwds):
