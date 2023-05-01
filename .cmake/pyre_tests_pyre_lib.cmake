@@ -276,7 +276,7 @@ endif()
 
 # tensor
 if (HAVE_TENSOR)
-set(definitions "HAVE_TENSOR")
+set(definitions "HAVE_TENSOR" "HAVE_COMPACT_PACKINGS")
 pyre_test_driver_cxx20(tests/pyre.lib/tensor/cayley_hamilton.cc)
 pyre_add_definitions(tests/pyre.lib/tensor/cayley_hamilton.cc ${definitions})
 pyre_test_driver_cxx20(tests/pyre.lib/tensor/tensor_algebra.cc)
