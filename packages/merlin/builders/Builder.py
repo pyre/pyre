@@ -139,12 +139,18 @@ class Builder(merlin.component, implements=merlin.protocols.flow.builder):
         except ValueError:
             # just use the trailing part of the workspace
             hash = ws.name
-        # get the active branch name
-        branch = plexus.scs.branch()
-        # fold it into the branch
-        tag = f"{hash}@{branch}"
-        # and return it
-        return tag
+        # get the source control system
+        scs = plexus.scs
+        # if we are within a workspace and we support the source control system
+        if scs:
+            # get the active branch name
+            branch = plexus.scs.branch()
+            # fold it into the branch
+            tag = f"{hash}@{branch}"
+            # and return it
+            return tag
+        # otherwise, return the name hash
+        return hash
 
 
 # end of file
