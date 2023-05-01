@@ -200,7 +200,7 @@ class Channel(pyre.patterns.named):
         # all done
         return self
 
-    def log(self, message=None):
+    def log(self, message=None, **kwds):
         """
         Add {message} to the current page and then record the entry
         """
@@ -220,8 +220,12 @@ class Channel(pyre.patterns.named):
         notes["filename"] = filename
         notes["line"] = str(line)
         notes["function"] = function
+        # and any additional arguments
+        for key, value in kwds.items():
+            # as notes
+            notes[str(key)] = str(value)
 
-        # certain channels, e.g. errors and firewalls, raise exceptions as part of committing a
+        # fatal channels, e.g. errors and firewalls, raise exceptions as part of committing a
         # message to the journal. such exceptions may be caught and handled, and the channel
         # instance may continue to be used. this leads to text accumulating on my page, and the
         # next time i'm flushed, my {entry} still contains lines from the previous

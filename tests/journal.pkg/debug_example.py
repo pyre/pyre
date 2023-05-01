@@ -9,8 +9,10 @@ def test():
     """
     Exercise the debug channel with a realistic example
     """
-    # access the parts
+    # get the trash can
     from journal.Trash import Trash as trash
+
+    # and the channel
     from journal.Debug import Debug as debug
 
     # make a debug channel
@@ -24,7 +26,8 @@ def test():
     channel.notes["time"] = "now"
     # inject
     channel.line("debug channel:")
-    channel.log("    hello world!")
+    # and flush with some metadata
+    channel.log("    hello world!", code=7)
 
     # all done
     return

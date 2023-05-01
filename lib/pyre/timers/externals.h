@@ -33,7 +33,7 @@ namespace pyre::timers {
     using seconds_t = std::chrono::duration<double>;
     using milliseconds_t = std::chrono::duration<double, std::milli>;
     using microseconds_t = std::chrono::duration<double, std::micro>;
-}
+} // namespace pyre::timers
 
 
 #endif

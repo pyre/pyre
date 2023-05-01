@@ -25,22 +25,6 @@ function(pyre_test_testcase testcase testfile)
 endfunction()
 
 
-# generate a unique test target name
-function(pyre_test_target target testfile)
-  # split
-  get_filename_component(path ${testfile} DIRECTORY)
-  get_filename_component(base ${testfile} NAME_WE)
-
-  # replace path separators with dors
-  string(REPLACE "/" "." stem ${path})
-
-  # build the target and return it
-  set(${target} "tests.${stem}.${base}" PARENT_SCOPE)
-
-  # all done
-endfunction()
-
-
 # attach {setup} and {cleanup} fixtures to a test case
 # N.B.: the signature may look backwards, but the {testfile} command line arguments are in
 # ${ARGN} so it seemed simpler this way
@@ -57,7 +41,7 @@ function(pyre_test_testcase_shell_fixture setup cleanup testfile)
     )
   # specify the required working directory
   set_property(TEST ${testname}.setup PROPERTY
-    WORKING_DIRECTORY ${PYRE_TESTSUITE_DIR}/${dir}
+    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/${dir}
     )
   # register it as the setup of a fixture
   set_property(TEST ${testname}.setup PROPERTY
@@ -70,7 +54,7 @@ function(pyre_test_testcase_shell_fixture setup cleanup testfile)
     )
   # specify the required working directory
   set_property(TEST ${testname}.cleanup PROPERTY
-    WORKING_DIRECTORY ${PYRE_TESTSUITE_DIR}/${dir}
+    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/${dir}
     )
   # register it as the cleanup of a fixture
   set_property(TEST ${testname}.cleanup PROPERTY
@@ -86,7 +70,7 @@ function(pyre_test_testcase_shell_fixture setup cleanup testfile)
 endfunction()
 
 
-# register a python script as a test case; use a path relative to {PYRE_TESTSUITE_DIR}
+# register a python script as a test case; use a path relative to {PROJECT_SOURCE_DIR}
 function(pyre_test_python_testcase testfile)
   # generate the name of the testcase
   pyre_test_testcase(testname ${testfile} ${ARGN})
@@ -105,7 +89,7 @@ function(pyre_test_python_testcase testfile)
     )
   # launch from the location of the testcase
   set_property(TEST ${testname} PROPERTY
-    WORKING_DIRECTORY ${PYRE_TESTSUITE_DIR}/${dir}
+    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/${dir}
     )
 
   # all done
@@ -137,7 +121,7 @@ function(pyre_test_python_testcase_mpi testfile slots)
     )
   # launch from the location of the testcase
   set_property(TEST ${testname} PROPERTY
-    WORKING_DIRECTORY ${PYRE_TESTSUITE_DIR}/${dir}
+    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/${dir}
     )
 
   # all done
@@ -145,7 +129,7 @@ endfunction()
 
 
 # register a python script as a test case that requires environment variables to be set up; use
-# a path relative to {PYRE_TESTSUITE_DIR}
+# a path relative to {PROJECT_SOURCE_DIR}
 function(pyre_test_python_testcase_env testfile env)
   # generate the name of the testcase
   pyre_test_testcase(testname ${testfile} ${ARGN})
@@ -166,21 +150,21 @@ function(pyre_test_python_testcase_env testfile env)
     )
   # launch from the location of the testcase
   set_property(TEST ${testname} PROPERTY
-    WORKING_DIRECTORY ${PYRE_TESTSUITE_DIR}/${dir}
+    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/${dir}
     )
 
   # all done
 endfunction()
 
 
-# register a python script as a test case; use a path relative to {PYRE_TESTSUITE_DIR}
+# register a python script as a test case; use a path relative to {PROJECT_SOURCE_DIR}
 function(pyre_test_pyre_driver driver case)
   # generate the name of the testcase
   set(testname "${driver}.${case}")
 
   # set up the harness
   add_test(NAME ${testname}
-    COMMAND ${Python_EXECUTABLE} ${CMAKE_SOURCE_DIR}/bin/${driver} ${ARGN}
+    COMMAND ${Python_EXECUTABLE} ${PROJECT_SOURCE_DIR}/bin/${driver} ${ARGN}
     )
   # register the runtime environment requirements
   set_property(TEST ${testname} PROPERTY ENVIRONMENT
@@ -196,7 +180,7 @@ function(pyre_test_driver testfile)
   # generate the name of the testcase
   pyre_test_testcase(testname ${testfile} ${ARGN})
   # generate the name of the target
-  pyre_test_target(target ${testfile})
+  pyre_target(target ${testfile})
 
   # schedule it to be compiled
   add_executable(${target} ${testfile})
@@ -207,6 +191,8 @@ function(pyre_test_driver testfile)
 
   # make it a test case
   add_test(NAME ${testname} COMMAND ${target} ${ARGN})
+  # specify the directory for the target compilation products
+  pyre_target_directory(${target} tests)
 
   # all done
 endfunction()
@@ -217,10 +203,12 @@ function(pyre_test_driver_case testfile)
   # generate the name of the testcase
   pyre_test_testcase(testname ${testfile} ${ARGN})
   # generate the name of the target
-  pyre_test_target(target ${testfile})
+  pyre_target(target ${testfile})
 
   # make it a test case
   add_test(NAME ${testname} COMMAND ${target} ${ARGN})
+  # specify the directory for the target compilation products
+  pyre_target_directory(${target} tests)
 
   # all done
 endfunction()
@@ -249,7 +237,7 @@ function(pyre_test_driver_env_case testfile env)
   # generate the name of the testcase
   pyre_test_testcase(testname ${testfile} ${env} ${ARGN})
   # generate the name of the target
-  pyre_test_target(target ${testfile})
+  pyre_target(target ${testfile})
 
   # make a test case
   add_test(NAME ${testname} COMMAND ${target} ${ARGN})
@@ -258,6 +246,8 @@ function(pyre_test_driver_env_case testfile env)
     APPEND PROPERTY ENVIRONMENT
     ${env}
     )
+  # specify the directory for the target compilation products
+  pyre_target_directory(${target} tests)
 
   # all done
 endfunction()
@@ -268,7 +258,7 @@ function(pyre_test_driver_mpi testfile slots)
   # create the name of the testcase
   pyre_test_testcase(testname ${testfile} ${ARGN})
   # create the name of the target
-  pyre_test_target(target ${testfile})
+  pyre_target(target ${testfile})
 
   # schedule it to be compiled
   add_executable(${target} ${testfile})
@@ -281,10 +271,35 @@ function(pyre_test_driver_mpi testfile slots)
   add_test(NAME ${testname} COMMAND
     ${MPIEXEC} ${MPIEXEC_NUMPROC_FLAG} ${slots} --hostfile localhost
     ${MPIEXEC_PREFLAGS}
-    ${target}
+    tests/${target}
     ${MPIEXEC_POSTFLAGS}
     ${ARGN}
     )
+  # specify the directory for the target compilation products
+  pyre_target_directory(${target} tests)
+
+  # all done
+endfunction()
+
+
+# register a cuda parallel test case based on a compiled driver
+function(pyre_test_driver_cuda testfile)
+  # create the name of the testcase
+  pyre_test_testcase(testname ${testfile} ${ARGN})
+  # create the name of the target
+  pyre_target(target ${testfile})
+
+  # schedule it to be compiled
+  add_executable(${target} ${testfile})
+  # with some macros
+  target_compile_definitions(${target} PRIVATE PYRE_CORE WITH_CUDA)
+  # link against my libraries
+  target_link_libraries(${target} PUBLIC pyre journal ${CUDA_LIBRARIES})
+
+  # make it a test case
+  add_test(NAME ${testname} COMMAND ${target} ${ARGN})
+  # specify the directory for the target compilation products
+  pyre_target_directory(${target} tests)
 
   # all done
 endfunction()

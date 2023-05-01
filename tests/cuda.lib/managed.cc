@@ -19,7 +19,8 @@ using managed_t = pyre::cuda::memory::managed_t<double>;
 
 
 // main program
-int main(int argc, char * argv[])
+int
+main(int argc, char * argv[])
 {
     // initialize the journal
     pyre::journal::init(argc, argv);
@@ -33,9 +34,8 @@ int main(int argc, char * argv[])
     managed_t arena(cells);
 
     // show me the address
-    channel
-        << "allocated " << cells << " doubles at " << arena.data()
-        << pyre::journal::endl(__HERE__);
+    channel << "allocated " << cells << " doubles at " << arena.data()
+            << pyre::journal::endl(__HERE__);
 
     // verify we can iterate and initialize all cells
     for (auto & cell : arena) {
@@ -46,8 +46,12 @@ int main(int argc, char * argv[])
     // verify we can iterate and read
     for (auto cell : arena) {
         // verify the memory contents are what we expect
-        assert(( cell == 1.0 ));
+        assert((cell == 1.0));
     }
+
+    // find a random index and set it to zero
+    arena.at(1000) = 0.0;
+    assert(arena.at(1000) == 0.0);
 
     // all done
     return 0;

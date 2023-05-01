@@ -11,6 +11,7 @@ def test():
     """
     # get the trash can
     from journal.Trash import Trash as trash
+
     # and the channel
     from journal.Help import Help as help
 
@@ -23,7 +24,8 @@ def test():
 
     # inject
     channel.line("help channel:")
-    channel.log("    hello world!")
+    # and flush with some additional metadata
+    channel.log("    hello world!", code=7)
 
     # all done
     return

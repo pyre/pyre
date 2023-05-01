@@ -12,6 +12,8 @@ function(pyre_postgresModule)
     # adjust the name to match what python expects
     set_target_properties(postgresmodule PROPERTIES LIBRARY_OUTPUT_NAME postgres)
     set_target_properties(postgresmodule PROPERTIES SUFFIX ${PYTHON3_SUFFIX})
+    # specify the directory for the module compilation products
+    pyre_library_directory(postgresmodule extensions)
     # set the include directories
     target_include_directories(postgresmodule PRIVATE ${PostgreSQL_INCLUDE_DIRS})
     # set the link directories
@@ -23,12 +25,12 @@ function(pyre_postgresModule)
       )
     # add the sources
     target_sources(postgresmodule PRIVATE
-      postgres/postgres.cc
-      postgres/connection.cc
-      postgres/execute.cc
-      postgres/exceptions.cc
-      postgres/interlayer.cc
-      postgres/metadata.cc
+      extensions/postgres/postgres.cc
+      extensions/postgres/connection.cc
+      extensions/postgres/execute.cc
+      extensions/postgres/exceptions.cc
+      extensions/postgres/interlayer.cc
+      extensions/postgres/metadata.cc
       )
 
     # install the extension

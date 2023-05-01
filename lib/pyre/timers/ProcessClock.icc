@@ -11,15 +11,14 @@
 
 // interface
 auto
-pyre::timers::ProcessClock::
-now() -> time_point_type
+pyre::timers::ProcessClock::now() -> time_point_type
 {
     // make some room
     timespec t;
     // get the process CPU time
     clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &t);
     // convert to nanoseconds and compute the time elapsed since {t=0}
-    duration_type since_epoch(1000*1000*1000*t.tv_sec + t.tv_nsec);
+    duration_type since_epoch(1000 * 1000 * 1000 * t.tv_sec + t.tv_nsec);
     // turn that into a time stamp and return it
     return time_point_type(since_epoch);
 }

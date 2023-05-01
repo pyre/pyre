@@ -243,7 +243,14 @@ pyre::journal::py::debug(py::module & m)
         .def(
             "log",
             // the handler
-            [](debug_t & channel, const debug_t::string_type & message) -> debug_t & {
+            [](debug_t & channel, const debug_t::string_type & message,
+               // additional arguments are interpreted as entry notes
+               py::kwargs kwds) -> debug_t & {
+                // unpack {kwds}
+                for (auto entry : kwds) {
+                    // and treat each one as a note
+                    channel << pyre::journal::note(py::str(entry.first), py::str(entry.second));
+                }
                 // inject and flush
                 channel << locator() << message << pyre::journal::endl;
                 // enable chaining

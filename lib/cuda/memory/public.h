@@ -17,8 +17,14 @@
 #include "api.h"
 
 // implementation
+// managed memory
 #include "Managed.h"
 
+// pinned memory
+#include "HostPinned.h"
+
+// mapped memory
+#include "HostMapped.h"
 
 #endif
 

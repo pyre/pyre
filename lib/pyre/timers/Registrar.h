@@ -10,8 +10,7 @@
 
 // owner of the map (timer name -> shared movement)
 template <class movementT>
-class pyre::timers::Registrar
-{
+class pyre::timers::Registrar {
     // types
 public:
     // timer names
@@ -28,8 +27,8 @@ public:
     // let the compiler write the rest
     Registrar(const Registrar &) = default;
     Registrar(Registrar &&) = default;
-    Registrar & operator= (const Registrar &) = default;
-    Registrar & operator= (Registrar &&) = default;
+    Registrar & operator=(const Registrar &) = default;
+    Registrar & operator=(Registrar &&) = default;
 
     // interface
 public:

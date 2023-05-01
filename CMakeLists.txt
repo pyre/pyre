@@ -43,6 +43,9 @@ endif()
 # default to build tests only when root project, but allow user to choose
 option(PYRE_BUILD_TESTING "Build pyre's test suite" ${PYRE_IS_ROOT_PROJECT})
 
+# default not to build the pyre benchmarks
+option(PYRE_BUILD_BENCHMARKS "Build pyre's benchmark suite" OFF)
+
 # hmmmmm
 include(GNUInstallDirs)
 
@@ -96,6 +99,15 @@ message(STATUS "Parallel HDF5: ${HDF5_PREFER_PARALLEL}")
 # hunt it down
 find_package(HDF5 COMPONENTS CXX HL)
 
+# find cuda if it is required
+if(${WITH_CUDA})
+    # add the cuda package
+    find_package(CUDA REQUIRED)
+  if(${CUDA_FOUND})
+    enable_language(CUDA)
+  endif()
+endif()
+
 # postgres
 find_package(PostgreSQL)
 
@@ -107,6 +119,7 @@ find_package(Python 3.7
 # for building bindings
 # require c++17
 set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CUDA_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(PYBIND11_CPP_STANDARD -std=c++17)
@@ -131,11 +144,11 @@ pyre_stagingInit()
 pyre_destinationInit()
 
 # visit subdirectories
-add_subdirectory(packages)
-add_subdirectory(lib)
-add_subdirectory(extensions)
-add_subdirectory(defaults)
-add_subdirectory(bin)
+include(pyre_packages)
+include(pyre_lib)
+include(pyre_extensions)
+include(pyre_defaults)
+include(pyre_bin)
 
 # make exports available in binary dir during build
 export(EXPORT pyre-targets
@@ -183,11 +196,64 @@ if(PYRE_BUILD_TESTING)
   # and my functions
   include(pyre_tests)
 
-  # initialize the variables that describe the test suite; needed so harnesses can set up the
-  # working directory correctly
-  pyre_testInit()
-  # add the testsuite to the pile
-  add_subdirectory(tests)
+  # pure python
+  include(pyre_tests_python)
+
+  # pyre
+  include(pyre_tests_pyre_lib)
+  include(pyre_tests_pyre_pkg)
+
+  # journal
+  include(pyre_tests_journal_lib)
+  include(pyre_tests_journal_pkg)
+  include(pyre_tests_journal_ext)
+  include(pyre_tests_journal_api)
+
+  # merlin; disable for now so CI doesn't fail while restructuring the package
+  # include(pyre_tests_merlin_pkg)
+
+  # sqlite
+  include(pyre_tests_sqlite_pkg)
+
+  # if we have CUDA and the user cares
+  if(WITH_CUDA)
+    include(pyre_tests_cuda_lib)
+    include(pyre_tests_cuda_pkg)
+  endif()
+
+  # if we have MPI support
+  if(MPI_FOUND)
+    include(pyre_tests_mpi_pkg)
+    include(pyre_tests_mpi_lib)
+  endif()
+
+  # if we have GSL support
+  if(GSL_FOUND)
+    include(pyre_tests_gsl_pkg)
+  endif()
+
+  # if we have postgres support
+  if(PostgreSQL_FOUND)
+    include(pyre_tests_postgres_ext)
+  endif()
+endif()
+
+
+# if we are building the benchmarks
+if(PYRE_BUILD_BENCHMARKS)
+
+  # get my functions
+  include(pyre_benchmarks)
+
+  # add the benchmarks to the pile
+  include(pyre_benchmarks_pyre_lib)
+
+  # if we have CUDA and the user cares
+  if(WITH_CUDA)
+    # add the cuda benchmarks to the pile
+    include(pyre_benchmarks_cuda_lib)
+  endif()
+
 endif()
 
 

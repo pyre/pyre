@@ -51,7 +51,7 @@ public:
     // readouts
     // get the accumulated time; make sure to stop the timer first, otherwise the behavior is
     // undefined
-    inline auto read() const ;
+    inline auto read() const;
     // compute the accumulated time without disturbing the timer;
     inline auto lap() const;
 
@@ -79,9 +79,9 @@ public:
 
     // data members
 private:
-    active_type _active;         // active timers accumulate time
-    time_point_type _mark;       // timestamp from when the timer was last activated
-    duration_type _elapsed;      // the total time this timer has been active
+    active_type _active;    // active timers accumulate time
+    time_point_type _mark;  // timestamp from when the timer was last activated
+    duration_type _elapsed; // the total time this timer has been active
 };
 
 

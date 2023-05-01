@@ -24,7 +24,8 @@ def test():
     try:
         # inject
         channel.line("error:")
-        channel.log("    a nasty bug was detected")
+        # and flush with some additional metadata
+        channel.log("    a nasty bug was detected", code=7)
         # shouldn't get here
         assert False, "unreachable"
     # if the correct exception was raised

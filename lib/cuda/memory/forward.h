@@ -11,8 +11,15 @@
 // set up the namespace
 namespace pyre::cuda::memory {
     // managed memory block on the device with universal access
-    template <typename T, bool isConst> class Managed;
-};
+    template <typename T, bool isConst>
+    class Managed;
+    // pinned memory block on the host with host-only access
+    template <typename T, bool isConst>
+    class HostPinned;
+    // mapped memory block on the host with host-only access
+    template <typename T, bool isConst>
+    class HostMapped;
+}; // namespace pyre::cuda::memory
 
 
 #endif

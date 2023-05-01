@@ -15,16 +15,20 @@ namespace pyre::timers {
     class ProcessClock;
 
     // timer movements
-    template <class timerT> class Movement;
+    template <class timerT>
+    class Movement;
     // and their proxies
-    template <class timerT, class clockT> class Proxy;
+    template <class timerT, class clockT>
+    class Proxy;
 
     // the timer registry
-    template <class movementT> class Registrar;
+    template <class movementT>
+    class Registrar;
 
     // the timer
-    template <class clockT, template <class, class> class proxyT> class Timer;
-}
+    template <class clockT, template <class, class> class proxyT>
+    class Timer;
+} // namespace pyre::timers
 
 
 // when testing
@@ -48,10 +52,10 @@ namespace pyre::timers {
     // timer registry: a map from names to timer movements
     template <class movementT>
     using registrar_t = Registrar<movementT>;
-}
-# endif
+} // namespace pyre::timers
+#endif
 
 
-# endif
+#endif
 
 // end of file

@@ -68,7 +68,7 @@ def paths(**kwds):
     """
     A list of paths
     """
-    # build a descriptor that describes a list of uris and return it
+    # build a descriptor that describes a list of paths and return it
     return list(schema=path(), **kwds)
 
 
@@ -88,12 +88,16 @@ def kv(default={}, **kwds):
     return dict(schema=str(), default=default, **kwds)
 
 
-def catalog(default={}, **kwds):
+def catalog(default={}, schema=None, **kwds):
     """
     A {dict} of {list}s
     """
+    # if the user didn't specify a schema
+    if schema is None:
+        # default to string
+        schema = str()
     # build a dictionary that maps strings to lists
-    return dict(schema=list(**kwds), default=default)
+    return dict(schema=list(schema=schema, **kwds), default=default)
 
 
 # end of file
