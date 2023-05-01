@@ -333,7 +333,7 @@ namespace pyre::tensor {
     }
 
     template <typename T2, typename T, class packingT, int... I>
-    constexpr operator/(Tensor<T, packingT, I...> && y, T2 a) -> Tensor<T, packingT, I...>
+    constexpr auto operator/(Tensor<T, packingT, I...> && y, T2 a) -> Tensor<T, packingT, I...>
     requires(Tensor<T, packingT, I...>::size != 1 && std::convertible_to<T2, T>)
     {
         return (1.0 / a) * std::move(y);
