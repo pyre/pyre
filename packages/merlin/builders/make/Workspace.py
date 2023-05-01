@@ -102,7 +102,9 @@ class Workspace(Fragment):
         # log
         yield f"\t@$(call log.action,git,$(ws))"
         # the rule
-        yield f"\t@$(echo) '# repository info' > $(ws.rev.now)"
+        yield f"\t@$(echo) '# -*- Makefile -*-' > $(ws.rev.now)"
+        yield f"\t@$(echo) ' ' >> $(ws.rev.now)"
+        yield f"\t@$(echo) '# repository info' >> $(ws.rev.now)"
         yield f"\t@$(echo) ' ' >> $(ws.rev.now)"
         yield f"\t@$(echo) ws.tag := $(ws.tag) >> $(ws.rev.now)"
         yield f"\t@$(echo) ws.major := $(ws.major) >> $(ws.rev.now)"
