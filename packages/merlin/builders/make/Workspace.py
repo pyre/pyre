@@ -35,12 +35,12 @@ class Workspace(Fragment):
         yield from super().generate(makefile=makefile, marker=marker, **kwds)
 
     # implementation details
-    def _generate(self, plexus, target="projects", **kwds):
+    def _generate(self, plexus, builder, target="projects", **kwds):
         """
         Build my contents
         """
         # chain up
-        yield from super()._generate(**kwds)
+        yield from super()._generate(builder=builder, **kwds)
         # get the source control system
         scs = plexus.scs
         # get my renderer
@@ -48,7 +48,8 @@ class Workspace(Fragment):
 
         # ask the source control system to generate the fragment that extract the
         # repository revision information
-        yield from scs.make(renderer=renderer)
+        # yield from scs.make(renderer=renderer)
+        yield from builder.identify(visitor=scs, plexus=plexus, **kwds)
 
         # add the path to the file with the live workspace revision information
         yield renderer.commentLine("the live workspace info")
