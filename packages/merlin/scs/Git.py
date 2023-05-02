@@ -130,6 +130,54 @@ class Git(
         # if anything else went wrong
         return bail
 
+    # framework hooks
+    # builder specific behavior
+    def make(self, renderer):
+        """
+        Generate a makefile fragment that extracts repository revision information into
+        the canonical variable names
+        """
+        # get the describe command
+        cmd = " ".join(self.describeArgs)
+
+        # repository info
+        yield renderer.commentLine(f"get the repository revision information")
+        # record it
+        yield from renderer.set(name="ws.tag", value=f"$(shell cd $(ws) && {cmd})")
+        # convert into a space delimited list
+        yield renderer.commentLine(f"get the repository revision information")
+        # record it
+        yield from renderer.set(name="ws.words", value=f"$(subst -, ,$(ws.tag))")
+        # extract the tag
+        yield renderer.commentLine(f"extract the version tag")
+        # record it
+        yield from renderer.set(
+            name="ws.version",
+            value=f"$(subst ., ,$(patsubst v%,%,$(word 1,$(ws.words))))",
+        )
+        # and the revision
+        yield renderer.commentLine(f"extract the commit SHA")
+        # record it
+        yield from renderer.set(
+            name="ws.revision", value=f"$(patsubst g%,%,$(word 3,$(ws.words)))"
+        )
+        # get the major version
+        yield renderer.commentLine(f"extract the major version")
+        # record it
+        yield from renderer.set(name="ws.major", value=f"$(word 1,$(ws.version))")
+        # get the minor version
+        yield renderer.commentLine(f"extract the minor version")
+        # record it
+        yield from renderer.set(name="ws.minor", value=f"$(word 2,$(ws.version))")
+        # get the micro version
+        yield renderer.commentLine(f"extract the micro version")
+        # record it
+        yield from renderer.set(name="ws.micro", value=f"$(word 3,$(ws.version))")
+        # make some room
+        yield ""
+        # all done
+        return
+
     # private data
     # parser of the {git describe} result
     descriptionParser = re.compile(
