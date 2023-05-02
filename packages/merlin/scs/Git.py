@@ -132,13 +132,15 @@ class Git(
 
     # framework hooks
     # builder specific behavior
-    def make(self, renderer):
+    def make(self, builder, **kwds):
         """
         Generate a makefile fragment that extracts repository revision information into
         the canonical variable names
         """
         # get the describe command
         cmd = " ".join(self.describeArgs)
+        # get the renderer
+        renderer = builder.renderer
 
         # repository info
         yield renderer.commentLine(f"get the repository revision information")
