@@ -43,46 +43,12 @@ class Workspace(Fragment):
         yield from super()._generate(**kwds)
         # get the source control system
         scs = plexus.scs
-        # get its describe command
-        cmd = " ".join(scs.describeArgs)
         # get my renderer
         renderer = self.renderer
 
-        # repository info
-        yield renderer.commentLine(f"get the repository revision information")
-        # record it
-        yield from renderer.set(name="ws.tag", value=f"$(shell cd $(ws) && {cmd})")
-        # convert into a space delimited list
-        yield renderer.commentLine(f"get the repository revision information")
-        # record it
-        yield from renderer.set(name="ws.words", value=f"$(subst -, ,$(ws.tag))")
-        # extract the tag
-        yield renderer.commentLine(f"extract the version tag")
-        # record it
-        yield from renderer.set(
-            name="ws.version",
-            value=f"$(subst ., ,$(patsubst v%,%,$(word 1,$(ws.words))))",
-        )
-        # and the revision
-        yield renderer.commentLine(f"extract the commit SHA")
-        # record it
-        yield from renderer.set(
-            name="ws.revision", value=f"$(patsubst g%,%,$(word 3,$(ws.words)))"
-        )
-        # get the major version
-        yield renderer.commentLine(f"extract the major version")
-        # record it
-        yield from renderer.set(name="ws.major", value=f"$(word 1,$(ws.version))")
-        # get the minor version
-        yield renderer.commentLine(f"extract the minor version")
-        # record it
-        yield from renderer.set(name="ws.minor", value=f"$(word 2,$(ws.version))")
-        # get the micro version
-        yield renderer.commentLine(f"extract the micro version")
-        # record it
-        yield from renderer.set(name="ws.micro", value=f"$(word 3,$(ws.version))")
-        # make some room
-        yield ""
+        # ask the source control system to generate the fragment that extract the
+        # repository revision information
+        yield from scs.make(renderer=renderer)
 
         # add the path to the file with the live workspace revision information
         yield renderer.commentLine("the live workspace info")
