@@ -48,15 +48,6 @@ class Builder(Builder, Generator, family="merlin.builders.make"):
         ws = plexus.vfs["/workspace"].uri
         # get the stage uri
         stage = plexus.vfs["/stage"].uri
-
-        # make a channel
-        channel = journal.info("merlin.builders.make")
-        # sign on
-        channel.line(f"{self}:")
-        channel.line(f"generating makefiles for '{ws}'")
-        # flush
-        channel.log()
-
         # form the directory with the makefile fragments
         fragments = stage / "merlin"
         # make sure it exists
@@ -66,10 +57,14 @@ class Builder(Builder, Generator, family="merlin.builders.make"):
         # generate the makefiles
         self.generate(plexus=plexus, stage=stage, makefile=makefile, **kwds)
 
-        # and tell the users where the makefiles are
-        channel.line(f"makefiles in '{stage}'")
-        # flush
-        channel.log()
+        # make a channel
+        channel = journal.help("merlin.builders.make")
+        # grab the {plexus} color palette
+        palette = plexus.palette
+        # report the location of the makefiles
+        channel.log(f"{palette.project}[make]{palette.normal} {stage}")
+        # and the processed workspace
+        channel.log(f"{palette.project}[ws]{palette.normal} {ws}")
 
         # all done
         return
