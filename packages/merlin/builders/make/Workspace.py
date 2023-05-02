@@ -100,7 +100,7 @@ class Workspace(Fragment):
         # build the target
         yield f"ws.rev.now: | $(build)"
         # log
-        yield f"\t@$(call log.action,git,$(ws))"
+        yield f"\t@$(call log.action,{plexus.scs.name},$(ws.tag))"
         # the rule
         yield f"\t@$(echo) '# -*- Makefile -*-' > $(ws.rev.now)"
         yield f"\t@$(echo) ' ' >> $(ws.rev.now)"
@@ -123,7 +123,7 @@ class Workspace(Fragment):
         yield f"$(ws.rev): ws.rev.now"
         # the rule
         yield f"\t@if ! $(diff) $(ws.rev.now) $(ws.rev) >& /dev/null; then \\"
-        yield f"      $(call log.action,rev,/stage/build/ws.rev.now) ; \\"
+        yield f"      $(call log.action,rev,/stage/build/ws.rev) ; \\"
         yield f"      $(cp) $(ws.rev.now) $(ws.rev) ; \\"
         yield f"    fi"
         # make some room
