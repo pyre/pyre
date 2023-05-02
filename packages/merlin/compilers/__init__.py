@@ -4,6 +4,9 @@
 # (c) 1998-2023 all rights reserved
 
 
+# the table with compiler choices
+from .Compilers import Compilers as compilers
+
 # translate user friendly names to their canonical equivalents
 aliases = {
     # compilers from the GNU suite
