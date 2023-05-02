@@ -59,6 +59,7 @@ public:
     // mutators
 public:
     // dent control
+    inline auto dent(dent_type = 0) -> severity_reference;
     inline auto indent(dent_type = 1) -> severity_reference;
     inline auto outdent(dent_type = 1) -> severity_reference;
     // detail
