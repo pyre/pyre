@@ -68,7 +68,7 @@ auto
 pyre::journal::Channel<severityT, proxyT>::dent(dent_type level) -> severity_reference
 {
     // set the dent to the given {level}
-    _dent = level;
+    _dent = std::max(0, level);
     // enable chaining
     return static_cast<severity_reference>(*this);
 }
