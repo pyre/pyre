@@ -55,7 +55,9 @@ class Builder(Builder, Generator, family="merlin.builders.make"):
         # build the makefile path
         makefile = stage / self.makefile
         # generate the makefiles
-        self.generate(plexus=plexus, stage=stage, makefile=makefile, **kwds)
+        self.generate(
+            plexus=plexus, builder=self, stage=stage, makefile=makefile, **kwds
+        )
 
         # make a channel
         channel = journal.help("merlin.builders.make")
@@ -85,6 +87,21 @@ class Builder(Builder, Generator, family="merlin.builders.make"):
         # all done
         return
 
+    def identify(self, visitor, **kwds):
+        """
+        Ask {visitor} for builder specific support
+        """
+        # attempt to
+        try:
+            # ask the {visitor} for a {flow} handler
+            handler = visitor.make
+        # if it doesn't exist
+        except AttributeError:
+            # chain up
+            return super().identify(visitor=visitor, **kwds)
+        # if it does, invoke it
+        return handler(builder=self, **kwds)
+
     # asset visitors
     def project(self, plexus, project, **kwds):
         """
@@ -95,9 +112,7 @@ class Builder(Builder, Generator, family="merlin.builders.make"):
         # grab the {plexus} color palette
         palette = plexus.palette
         # delegate to the {projFlow} generator
-        yield from self.projFlow.generate(
-            plexus=plexus, builder=self, project=project, **kwds
-        )
+        yield from self.projFlow.generate(plexus=plexus, project=project, **kwds)
         # go through my libraries
         for library in project.libraries:
             # and generate makefiles for each one
@@ -120,9 +135,7 @@ class Builder(Builder, Generator, family="merlin.builders.make"):
         #  so don't be tempted to eliminate it as superfluous
         #  since libraries are handled as project assets
         # delegate to the {libFlow} generator
-        yield from self.libFlow.generate(
-            plexus=plexus, builder=self, library=library, **kwds
-        )
+        yield from self.libFlow.generate(plexus=plexus, library=library, **kwds)
         # mark
         channel.log(f"{palette.library}[lib]{palette.normal} {library.name}")
         # all done

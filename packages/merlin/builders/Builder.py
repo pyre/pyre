@@ -5,6 +5,7 @@
 
 
 # support
+import journal
 import merlin
 
 
@@ -77,6 +78,31 @@ class Builder(merlin.component, implements=merlin.protocols.flow.builder):
         return
 
     # implementation details
+    # merlin hooks
+    def identify(self, visitor, **kwds):
+        """
+        Ask {visitor} to process a generic builder
+        """
+        # attempt to
+        try:
+            # ask the {visitor} for a generic builder handler
+            handler = visitor.builder
+        # if it doesn't exist
+        except AttributeError:
+            # this is almost certainly a bug; make a channel
+            channel = journal.firewall("merlin.builders.identify")
+            # complain
+            channel.line(f"unable to find builder support")
+            channel.line(
+                f"while looking through the interface of '{visitor.pyre_name}'"
+            )
+            # flush
+            channel.log()
+            # and fail, just in case firewalls aren't fatal
+            return None
+        # if it does, invoke it
+        return handler(builder=self, **kwds)
+
     # framework hooks
     def _merlin_initialized(self, plexus, **kwds):
         """

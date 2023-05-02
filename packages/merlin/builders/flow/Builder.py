@@ -112,7 +112,7 @@ class Builder(BaseBuilder, family="merlin.builders.flow"):
         # all done
         return
 
-    # framework hooks
+    # merlin hooks
     def _merlin_initialized(self, plexus, **kwds):
         """
         Hook invoked after the {plexus} is fully initialized
@@ -131,7 +131,22 @@ class Builder(BaseBuilder, family="merlin.builders.flow"):
         # all done
         return
 
-    # visitor support
+    def identify(self, visitor, **kwds):
+        """
+        Ask {visitor} for builder specific support
+        """
+        # attempt to
+        try:
+            # ask the {visitor} for a {flow} handler
+            handler = visitor.flow
+        # if it doesn't exist
+        except AttributeError:
+            # chain up
+            return super().identify(visitor=visitor, **kwds)
+        # if it does, invoke it
+        return handler(builder=self, **kwds)
+
+    # asset visitor support
     def library(self, **kwds):
         """
         Build a {library}
