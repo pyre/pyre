@@ -65,11 +65,22 @@ pyre::journal::Channel<severityT, proxyT>::entry() const -> entry_const_referenc
 // mutators
 template <typename severityT, template <typename> typename proxyT>
 auto
+pyre::journal::Channel<severityT, proxyT>::dent(dent_type level) -> severity_reference
+{
+    // set the dent to the given {level}
+    _dent = level;
+    // enable chaining
+    return static_cast<severity_reference>(*this);
+}
+
+
+template <typename severityT, template <typename> typename proxyT>
+auto
 pyre::journal::Channel<severityT, proxyT>::indent(dent_type level) -> severity_reference
 {
     // adjust my dent; clip at zero
     // N.B.: it is used by the manipulators that can't guarantee {level} is positive
-    _dent = std::max(0, _dent + level);
+    dent(std::max(0, dent() + level));
     // enable chaining
     return static_cast<severity_reference>(*this);
 }
@@ -80,7 +91,8 @@ auto
 pyre::journal::Channel<severityT, proxyT>::outdent(dent_type level) -> severity_reference
 {
     // adjust my dent; clip at zero
-    _dent = std::max(0, _dent - level);
+    // N.B.: it is used by the manipulators that can't guarantee {level} is positive
+    dent(std::max(0, dent() - level));
     // enable chaining
     return static_cast<severity_reference>(*this);
 }
@@ -112,7 +124,7 @@ auto
 pyre::journal::Channel<severityT, proxyT>::line() -> severity_reference
 {
     // ask my entry to move the contents of its accumulator to the page
-    _entry.push(_dent);
+    entry().push(dent());
     // enable chaining
     return static_cast<severity_reference>(*this);
 }
@@ -123,9 +135,9 @@ auto
 pyre::journal::Channel<severityT, proxyT>::log() -> severity_reference
 {
     // if there's anything in the entry buffer
-    if (!_entry.buffer().str().empty()) {
+    if (!entry().buffer().str().empty()) {
         // move it to the page
-        _entry.push(_dent);
+        entry().push(dent());
     }
 
     // very carefully
@@ -136,14 +148,14 @@ pyre::journal::Channel<severityT, proxyT>::log() -> severity_reference
     // fatal channels raise exceptions
     catch (...) {
         // clean up the page
-        _entry.flush();
+        entry().flush();
         // and raise the exception again
         throw;
     }
 
     // clean up the page, but not the metadata; metadata accumulate for the lifetime of a
     // channel instance, so they can be set whenever the information becomes available
-    _entry.flush();
+    entry().flush();
 
     // enable chaining
     return static_cast<severity_reference>(*this);
@@ -164,7 +176,7 @@ pyre::journal::Channel<severityT, proxyT>::commit() -> severity_reference
     }
 
     // if my detail exceeds the maximum
-    if (_detail > chronicler_t::detail()) {
+    if (detail() > chronicler_t::detail()) {
         // nothing to do
         return self;
     }
