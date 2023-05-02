@@ -14,7 +14,6 @@ class Compiler(merlin.protocol, family="merlin.compilers"):
     An artifact factory that translates sources into a binary form
     """
 
-
     # framework hooks
     @classmethod
     def pyre_convert(cls, value, **kwds):
