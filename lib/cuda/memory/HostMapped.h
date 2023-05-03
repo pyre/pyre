@@ -43,7 +43,7 @@ public:
     inline auto data() const -> pointer;
     // the shared pointer
     inline auto handle() const -> handle_type;
-    // set the device pointer to the host pointer
+    // access to the device data pointer
     inline auto device() const -> pointer;
 
     // iterator support
