@@ -19,6 +19,23 @@ class Unix(merlin.component, implements=merlin.protocols.external.compiler):
     driver = merlin.properties.path()
     driver.doc = "the path to the compiler executable"
 
+    # attributes
+    @property
+    def version(self):
+        """
+        Retrieve my version
+        """
+        # get my cached value
+        version = self._version
+        # if i haven't done this before
+        if version is None:
+            # retrieve it
+            version = self._getVersion()
+            # and cache it
+            self._version = version
+        # all done
+        return version
+
     # flags
     flag_compile = "-c"
     flag_cov = "--coverage"
@@ -39,23 +56,89 @@ class Unix(merlin.component, implements=merlin.protocols.external.compiler):
     flag_write = "-o"
 
     # interface
-    def baseline(self):
+    # merlin hooks -- builders
+    def make(self, builder, **kwds):
+        """
+        Generate a makefile fragment for the {make} builder
+        """
+        # get my language
+        language = self.language
+        # assemble my version
+        version = ".".join(self.version)
+        # get the renderer
+        renderer = builder.renderer
+        # mark
+        yield renderer.commentLine(f"{language} compiler support")
+        # my driver
+        yield from renderer.set(name=f"{language}.driver", value=f"{self.driver}")
+        # its version
+        yield from renderer.set(name=f"{language}.version", value=f"{version}")
+        # leave some room
+        yield ""
+
+        # the compile command line
+        yield renderer.commentLine(f"usage: {language}.compile <source> <object>")
+        # generate
+        yield from renderer.setq(
+            name=f"{language}.compile",
+            multi=[
+                f"echo $({language}.driver)",
+            ]
+            # the output file
+            + [self._compile("$(1)")]
+            # the output file
+            + [self._write("$(2)")]
+            # the baseline options
+            + [self._baseline()]
+            # other
+        )
+        # leave some room
+        yield ""
+
+        # the link command line
+        yield renderer.commentLine(f"usage: {language}.link <source> <object>")
+        # generate
+        yield from renderer.setq(
+            name=f"{language}.link",
+            multi=[
+                f"$({language}.driver)",
+            ],
+        )
+        # leave some room
+        yield ""
+
+        # all done
+        return
+
+    # metamethods
+    def __init__(self, **kwds):
+        # chain up
+        super().__init__(**kwds)
+        # the version cache
+        self._version = None
+        # all done
+        return
+
+    # command line generators
+    def _baseline(self):
         """
         Add a collection of flags to the command line unconditionally
         """
         # nothing by default
         return []
 
-    def compile(self):
+    def _compile(self, source):
         """
         Restrict the processing to the compilation phase
         """
-        # add the correct flag to the command line
-        yield self.flag_compile
+        # get the flag
+        flag = self.flag_compile
+        # add to the command line
+        yield f"{flag} {source}"
         # all done
         return
 
-    def coverage(self):
+    def _coverage(self):
         """
         Generate coverage information
         """
@@ -64,7 +147,7 @@ class Unix(merlin.component, implements=merlin.protocols.external.compiler):
         # all done
         return
 
-    def debug(self):
+    def _debug(self):
         """
         Generate debugging symbols
         """
@@ -73,7 +156,7 @@ class Unix(merlin.component, implements=merlin.protocols.external.compiler):
         # all done
         return
 
-    def dialect(self, std):
+    def _dialect(self, std):
         """
         Specify the language dialect
         """
@@ -84,7 +167,7 @@ class Unix(merlin.component, implements=merlin.protocols.external.compiler):
         # all done
         return
 
-    def define(self, symbols):
+    def _define(self, symbols):
         """
         Build a command line fragment to define the given {symbols} for the preprocessor
         """
@@ -97,7 +180,7 @@ class Unix(merlin.component, implements=merlin.protocols.external.compiler):
         # all done
         return
 
-    def dll(self):
+    def _dll(self):
         """
         Build a shared object
         """
@@ -106,7 +189,7 @@ class Unix(merlin.component, implements=merlin.protocols.external.compiler):
         # all done
         return
 
-    def incpath(self, paths):
+    def _incpath(self, paths):
         """
         Build a command line fragment to add the given paths to the preprocessor search list
         """
@@ -119,7 +202,7 @@ class Unix(merlin.component, implements=merlin.protocols.external.compiler):
         # all done
         return
 
-    def libpath(self, paths):
+    def _libpath(self, paths):
         """
         Build a command line fragment to add the given paths to the linker search list
         """
@@ -132,7 +215,7 @@ class Unix(merlin.component, implements=merlin.protocols.external.compiler):
         # all done
         return
 
-    def libraries(self, paths):
+    def _libraries(self, paths):
         """
         Link against the libraries in {paths}
         """
@@ -145,7 +228,7 @@ class Unix(merlin.component, implements=merlin.protocols.external.compiler):
         # all done
         return
 
-    def makedep(self):
+    def _makedep(self):
         """
         Generate a dependency tree for the current translation unit
         """
@@ -154,7 +237,7 @@ class Unix(merlin.component, implements=merlin.protocols.external.compiler):
         # all done
         return
 
-    def opt(self, level=3):
+    def _opt(self, level=3):
         """
         Control the optimizationlevel
         """
@@ -165,7 +248,7 @@ class Unix(merlin.component, implements=merlin.protocols.external.compiler):
         # all done
         return
 
-    def pic(self, model="PIC"):
+    def _pic(self, model="PIC"):
         """
         Generate position independent code, suitable for inclusion in  a shared library
         """
@@ -176,7 +259,7 @@ class Unix(merlin.component, implements=merlin.protocols.external.compiler):
         # all done
         return
 
-    def preprocess(self):
+    def _preprocess(self):
         """
         Restrict the processing to the preprocessing phase
         """
@@ -185,7 +268,7 @@ class Unix(merlin.component, implements=merlin.protocols.external.compiler):
         # all done
         return
 
-    def prof(self):
+    def _prof(self):
         """
         Generate profiling information
         """
@@ -194,7 +277,7 @@ class Unix(merlin.component, implements=merlin.protocols.external.compiler):
         # all done
         return
 
-    def sources(self, paths):
+    def _sources(self, paths):
         """
         Add the {paths} to the list of sources to compile
         """
@@ -203,7 +286,38 @@ class Unix(merlin.component, implements=merlin.protocols.external.compiler):
         # all done
         return
 
-    def version(self):
+    def _warn(self, diagnostics=None):
+        """
+        Control the generation of warnings; the default is to complain about everything
+        """
+        # get the flag
+        flag = self.flag_warn
+        # if the user didn't restrict the list
+        if diagnostics is None:
+            # complain about everything
+            yield f"{flag}all"
+            # and done
+            return
+        # otherwise, go through them
+        for diagnostic in diagnostics:
+            # and add each one to the command line
+            yield f"{flag}{diagnostic}"
+        # all done
+        return
+
+    def _write(self, path):
+        """
+        Place the output in {path}
+        """
+        # get the flag
+        flag = self.flag_write
+        # add to the command line
+        yield f"{flag} {path}"
+        # all done
+        return
+
+    # helpers
+    def _getVersion(self):
         """
         Retrieve the compiler version
         """
@@ -238,36 +352,6 @@ class Unix(merlin.component, implements=merlin.protocols.external.compiler):
                 return major, minor, micro
         # otherwise, report failure with the correct structure
         return "unknown", "unknown", "unknown"
-
-    def warn(self, diagnostics=None):
-        """
-        Control the generation of warnings; the default is to complain about everything
-        """
-        # get the flag
-        flag = self.flag_warn
-        # if the user didn't restrict the list
-        if diagnostics is None:
-            # complain about everything
-            yield f"{flag}all"
-            # and done
-            return
-        # otherwise, go through them
-        for diagnostic in diagnostics:
-            # and add each one to the command line
-            yield f"{flag}{diagnostic}"
-        # all done
-        return
-
-    def write(self, path):
-        """
-        Place the output in {path}
-        """
-        # get the flag
-        flag = self.flag_write
-        # add the correct flag to the command line
-        yield f"{flag} {path}"
-        # all done
-        return
 
     # the version regex
     _version_regex = []
