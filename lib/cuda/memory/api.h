@@ -36,7 +36,7 @@ namespace pyre::cuda::memory {
     // read-only access
     template <typename T>
     using consthost_mapped_t = HostMapped<T, true>;
-} // namespace pyre::cuda::memory
+}
 
 
 #endif

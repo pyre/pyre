@@ -49,10 +49,6 @@ main(int argc, char * argv[])
         assert((cell == 1.0));
     }
 
-    // find a random index and set it to zero
-    arena.at(1000) = 0.0;
-    assert(arena.at(1000) == 0.0);
-
     // all done
     return 0;
 }

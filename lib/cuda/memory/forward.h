@@ -19,7 +19,7 @@ namespace pyre::cuda::memory {
     // mapped memory block on the host with host-only access
     template <typename T, bool isConst>
     class HostMapped;
-}; // namespace pyre::cuda::memory
+};
 
 
 #endif

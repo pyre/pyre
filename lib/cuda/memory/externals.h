@@ -22,7 +22,7 @@ namespace pyre::memory {
     using size_t = std::size_t;
     // distances
     using ptrdiff_t = std::ptrdiff_t;
-} // namespace pyre::memory
+}
 
 
 #endif
