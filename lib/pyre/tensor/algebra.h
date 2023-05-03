@@ -344,7 +344,7 @@ namespace pyre::tensor {
     constexpr auto matrix_row(const vector_t<D, T> & v) -> matrix_t<D, D, T, packingT>
     {
         constexpr auto _fill_matrix_row = []<int... I>(
-            matrix_t<D, D, T, packingT> A, const vector_t<D, T> & v, integer_sequence<I...>) 
+            matrix_t<D, D, T, packingT> & A, const vector_t<D, T> & v, integer_sequence<I...>) 
             -> matrix_t<D, D, T, packingT>
         {
             ((A[{K, I}] = v[{ I }]), ...);
