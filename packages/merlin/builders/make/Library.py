@@ -319,6 +319,8 @@ class Library(
         renderer = self.renderer
         # and the host
         host = plexus.pyre_host
+        # get the source language
+        language = file.language.name
         # get the path to the header relative to the library root
         hpath = file.path
         # the library name
@@ -361,9 +363,9 @@ class Library(
         # make the dependency line
         yield f"{obj}: {clone} | $({name}.build)"
         # log
-        yield f"\t@$(call log.action,{file.language.name},{tag})"
+        yield f"\t@$(call log.action,{language},{tag})"
         # generate the object module
-        yield f"\t@$(touch) $@"
+        yield f"\t@$(call {language}.compile,$<,$@)"
         # make some room
         yield ""
 
