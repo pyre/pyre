@@ -5,7 +5,7 @@
 
 // function to compute the invariants of a 3x3 tensor
 __global__ void
-computeInvariants(double * A, double * I1, double * I2, double * I3, int size)
+computeInvariants(const double * A, double * I1, double * I2, double * I3, int size)
 {
     // get the index of each thread
     int index = threadIdx.x + blockDim.x * blockIdx.x;
@@ -38,7 +38,7 @@ computeInvariants(double * A, double * I1, double * I2, double * I3, int size)
 
 void
 wrapperManaged(
-    int nTensors, int nThreadPerBlock, int nBlocks, double * tensorArray, double * I1, double * I2,
+    int nTensors, int nThreadPerBlock, int nBlocks, const double * tensorArray, double * I1, double * I2,
     double * I3)
 {
     // execute the kernel
@@ -50,8 +50,8 @@ wrapperManaged(
 
 void
 wrapperPinned(
-    int nTensors, int nThreadPerBlock, int nBlocks, double * tensorArray, double * I1, double * I2,
-    double * I3, double * gpuTensors, double * gpuI1, double * gpuI2, double * gpuI3)
+    int nTensors, int nThreadPerBlock, int nBlocks, const double * tensorArray, double * I1, 
+    double * I2, double * I3, double * gpuTensors, double * gpuI1, double * gpuI2, double * gpuI3)
 {
     // set cuda error
     cudaError_t status;
@@ -96,8 +96,8 @@ wrapperPinned(
 
 void
 wrapperMapped(
-    int nTensors, int nThreadPerBlock, int nBlocks, double * tensorArray, double * I1, double * I2,
-    double * I3)
+    int nTensors, int nThreadPerBlock, int nBlocks, const double * tensorArray, double * I1, 
+    double * I2, double * I3)
 {
     // execute the kernel
     computeInvariants<<<nBlocks, nThreadPerBlock>>>(tensorArray, I1, I2, I3, nTensors);

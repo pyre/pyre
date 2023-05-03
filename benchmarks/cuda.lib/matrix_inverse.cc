@@ -36,16 +36,16 @@ using walltimer_t = pyre::timers::wall_timer_t;
 
 void
 wrapperManaged(
-    int nTensors, int nThreadPerBlock, int nBlocks, double * tensorArray, double * inverseArray);
+    int nTensors, int nThreadPerBlock, int nBlocks, const double * tensorArray, double * inverseArray);
 
 void
 wrapperPinned(
-    int nTensors, int nThreadPerBlock, int nBlocks, double * tensorArray, double * inverseArray,
+    int nTensors, int nThreadPerBlock, int nBlocks, const double * tensorArray, double * inverseArray,
     double * gpuTensors, double * gpuInverses);
 
 void
 wrapperMapped(
-    int nTensors, int nThreadPerBlock, int nBlocks, double * tensorArray, double * inverseArray);
+    int nTensors, int nThreadPerBlock, int nBlocks, const double * tensorArray, double * inverseArray);
 
 void
 managedInverses(pack_t tensorPack, int nThreadPerBlock, int nTensors)

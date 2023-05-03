@@ -37,18 +37,18 @@ using walltimer_t = pyre::timers::wall_timer_t;
 // declaration of the kernel wrappers
 void
 wrapperManaged(
-    int nTensors, int nThreadPerBlock, int nBlocks, double * tensorArray, double * I1, double * I2,
-    double * I3);
+    int nTensors, int nThreadPerBlock, int nBlocks, const double * tensorArray, double * I1, 
+    double * I2, double * I3);
 
 void
 wrapperPinned(
-    int nTensors, int nThreadPerBlock, int nBlocks, double * tensorArray, double * I1, double * I2,
-    double * I3, double * gpuTensors, double * gpuI1, double * gpuI2, double * gpuI3);
+    int nTensors, int nThreadPerBlock, int nBlocks, const double * tensorArray, double * I1, 
+    double * I2, double * I3, double * gpuTensors, double * gpuI1, double * gpuI2, double * gpuI3);
 
 void
 wrapperMapped(
-    int nTensors, int nThreadPerBlock, int nBlocks, double * tensorArray, double * I1, double * I2,
-    double * I3);
+    int nTensors, int nThreadPerBlock, int nBlocks, const double * tensorArray, double * I1, 
+    double * I2, double * I3);
 
 void
 managedInvariants(pack_t tensorPack, pack_t invariantPack, int nThreadPerBlock, int nTensors)

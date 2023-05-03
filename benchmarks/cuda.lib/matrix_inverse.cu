@@ -5,7 +5,7 @@
 
 // function to compute the invariants of a 3x3 tensor
 __global__ void
-computeInverse(double * A, double * Ainv, int size)
+computeInverse(const double * A, double * Ainv, int size)
 {
     // get the index of each thread
     int index = threadIdx.x + blockDim.x * blockIdx.x;
@@ -46,7 +46,7 @@ computeInverse(double * A, double * Ainv, int size)
 
 void
 wrapperManaged(
-    int nTensors, int nThreadPerBlock, int nBlocks, double * tensorArray, double * inverseArray)
+    int nTensors, int nThreadPerBlock, int nBlocks, const double * tensorArray, double * inverseArray)
 {
     // execute the kernel
     computeInverse<<<nBlocks, nThreadPerBlock>>>(tensorArray, inverseArray, nTensors);
@@ -58,7 +58,7 @@ wrapperManaged(
 
 void
 wrapperPinned(
-    int nTensors, int nThreadPerBlock, int nBlocks, double * tensorArray, double * inverseArray,
+    int nTensors, int nThreadPerBlock, int nBlocks, const double * tensorArray, double * inverseArray,
     double * gpuTensors, double * gpuInverses)
 {
     // set cuda error
@@ -92,7 +92,7 @@ wrapperPinned(
 
 void
 wrapperMapped(
-    int nTensors, int nThreadPerBlock, int nBlocks, double * tensorArray, double * inverseArray)
+    int nTensors, int nThreadPerBlock, int nBlocks, const double * tensorArray, double * inverseArray)
 {
     // execute the kernel
     computeInverse<<<nBlocks, nThreadPerBlock>>>(tensorArray, inverseArray, nTensors);
