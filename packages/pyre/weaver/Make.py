@@ -154,8 +154,10 @@ class Make(LineMill):
         for line in multi:
             # assemble the line
             rvalue = "".join(line)
-            # and render it
-            yield f"    {rvalue} {mark}"
+            # check whether there is anything there
+            if rvalue:
+                # and render it
+                yield f"    {rvalue} {mark}"
 
         # all done
         return
