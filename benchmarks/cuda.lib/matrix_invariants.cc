@@ -36,18 +36,18 @@ using walltimer_t = pyre::timers::wall_timer_t;
 
 // declaration of the kernel wrappers
 void
-wrapperManaged(
-    int nTensors, int nThreadPerBlock, int nBlocks, const double * tensorArray, double * I1, 
+computeInvariantsManaged(
+    int nTensors, int nThreadPerBlock, int nBlocks, const double * tensorArray, double * I1,
     double * I2, double * I3);
 
 void
-wrapperPinned(
-    int nTensors, int nThreadPerBlock, int nBlocks, const double * tensorArray, double * I1, 
+computeInvariantsPinned(
+    int nTensors, int nThreadPerBlock, int nBlocks, const double * tensorArray, double * I1,
     double * I2, double * I3, double * gpuTensors, double * gpuI1, double * gpuI2, double * gpuI3);
 
 void
-wrapperMapped(
-    int nTensors, int nThreadPerBlock, int nBlocks, const double * tensorArray, double * I1, 
+computeInvariantsMapped(
+    int nTensors, int nThreadPerBlock, int nBlocks, const double * tensorArray, double * I1,
     double * I2, double * I3);
 
 void
@@ -129,7 +129,7 @@ managedInvariants(pack_t tensorPack, pack_t invariantPack, int nThreadPerBlock, 
     walltimer.start();
 
     // execute the kernel wrapper
-    wrapperManaged(
+    computeInvariantsManaged(
         nTensors, nThreadPerBlock, nBlocks, tensorArray.data()->data(), I1.data()->data(),
         I2.data()->data(), I3.data()->data());
 
@@ -158,11 +158,9 @@ managedInvariants(pack_t tensorPack, pack_t invariantPack, int nThreadPerBlock, 
     // show me
     timerChannel
         // show me the elapsed time
-        << "Managed memory tensor invariant computation: "
-        << pyre::journal::indent(1)
+        << "Managed memory tensor invariant computation: " << pyre::journal::indent(1)
         << "General timer time:  " << timer.ms() << " ms"
-        << "Wallclock time: " << walltimer.ms() << " ms" 
-        << pyre::journal::outdent(1)
+        << "Wallclock time: " << walltimer.ms() << " ms" << pyre::journal::outdent(1)
         << pyre::journal::endl(__HERE__);
 
     // all done
@@ -301,7 +299,7 @@ pinnedInvariants(pack_t tensorPack, pack_t invariantPack, int nThreadPerBlock, i
     // start the wallclock timer
     walltimer.start();
 
-    wrapperPinned(
+    computeInvariantsPinned(
         nTensors, nThreadPerBlock, nBlocks, tensorArray.data()->data(), I1.data()->data(),
         I2.data()->data(), I3.data()->data(), gpuTensors, gpuI1, gpuI2, gpuI3);
 
@@ -330,11 +328,9 @@ pinnedInvariants(pack_t tensorPack, pack_t invariantPack, int nThreadPerBlock, i
     // show me
     timerChannel
         // show me the elapsed time
-        << "Pinned memory tensor invariant computation: "
-        << pyre::journal::indent(1)
+        << "Pinned memory tensor invariant computation: " << pyre::journal::indent(1)
         << "General timer time:  " << timer.ms() << " ms"
-        << "Wallclock time: " << walltimer.ms() << " ms" 
-        << pyre::journal::outdent(1)
+        << "Wallclock time: " << walltimer.ms() << " ms" << pyre::journal::outdent(1)
         << pyre::journal::endl(__HERE__);
 
     // all done
@@ -419,7 +415,7 @@ mappedInvariants(pack_t tensorPack, pack_t invariantPack, int nThreadPerBlock, i
     // start the wallclock timer
     walltimer.start();
 
-    wrapperMapped(
+    computeInvariantsMapped(
         nTensors, nThreadPerBlock, nBlocks, tensorArray.data()->device(), I1.data()->device(),
         I2.data()->device(), I3.data()->device());
 
@@ -448,11 +444,9 @@ mappedInvariants(pack_t tensorPack, pack_t invariantPack, int nThreadPerBlock, i
     // show me
     timerChannel
         // show me the elapsed time
-        << "Mapped memory tensor invariant computation: "
-        << pyre::journal::indent(1)
+        << "Mapped memory tensor invariant computation: " << pyre::journal::indent(1)
         << "General timer time:  " << timer.ms() << " ms"
-        << "Wallclock time: " << walltimer.ms() << " ms" 
-        << pyre::journal::outdent(1)
+        << "Wallclock time: " << walltimer.ms() << " ms" << pyre::journal::outdent(1)
         << pyre::journal::endl(__HERE__);
 
     // all done

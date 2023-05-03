@@ -37,9 +37,9 @@ computeInvariants(const double * A, double * I1, double * I2, double * I3, int s
 }
 
 void
-wrapperManaged(
-    int nTensors, int nThreadPerBlock, int nBlocks, const double * tensorArray, double * I1, double * I2,
-    double * I3)
+computeInvariantsManaged(
+    int nTensors, int nThreadPerBlock, int nBlocks, const double * tensorArray, double * I1,
+    double * I2, double * I3)
 {
     // execute the kernel
     computeInvariants<<<nBlocks, nThreadPerBlock>>>(tensorArray, I1, I2, I3, nTensors);
@@ -49,8 +49,8 @@ wrapperManaged(
 }
 
 void
-wrapperPinned(
-    int nTensors, int nThreadPerBlock, int nBlocks, const double * tensorArray, double * I1, 
+computeInvariantsPinned(
+    int nTensors, int nThreadPerBlock, int nBlocks, const double * tensorArray, double * I1,
     double * I2, double * I3, double * gpuTensors, double * gpuI1, double * gpuI2, double * gpuI3)
 {
     // set cuda error
@@ -95,8 +95,8 @@ wrapperPinned(
 }
 
 void
-wrapperMapped(
-    int nTensors, int nThreadPerBlock, int nBlocks, const double * tensorArray, double * I1, 
+computeInvariantsMapped(
+    int nTensors, int nThreadPerBlock, int nBlocks, const double * tensorArray, double * I1,
     double * I2, double * I3)
 {
     // execute the kernel

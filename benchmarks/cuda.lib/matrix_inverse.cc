@@ -35,17 +35,19 @@ using proctimer_t = pyre::timers::process_timer_t;
 using walltimer_t = pyre::timers::wall_timer_t;
 
 void
-wrapperManaged(
-    int nTensors, int nThreadPerBlock, int nBlocks, const double * tensorArray, double * inverseArray);
+computeInvariantsManaged(
+    int nTensors, int nThreadPerBlock, int nBlocks, const double * tensorArray,
+    double * inverseArray);
 
 void
-wrapperPinned(
-    int nTensors, int nThreadPerBlock, int nBlocks, const double * tensorArray, double * inverseArray,
-    double * gpuTensors, double * gpuInverses);
+computeInvariantsPinned(
+    int nTensors, int nThreadPerBlock, int nBlocks, const double * tensorArray,
+    double * inverseArray, double * gpuTensors, double * gpuInverses);
 
 void
-wrapperMapped(
-    int nTensors, int nThreadPerBlock, int nBlocks, const double * tensorArray, double * inverseArray);
+computeInvariantsMapped(
+    int nTensors, int nThreadPerBlock, int nBlocks, const double * tensorArray,
+    double * inverseArray);
 
 void
 managedInverses(pack_t tensorPack, int nThreadPerBlock, int nTensors)
@@ -123,7 +125,7 @@ managedInverses(pack_t tensorPack, int nThreadPerBlock, int nTensors)
     walltimer.start();
 
     // execute the kernel wrapper
-    wrapperManaged(
+    computeInvariantsManaged(
         nTensors, nThreadPerBlock, nBlocks, tensorArray.data()->data(),
         inverseArray.data()->data());
 
@@ -152,11 +154,9 @@ managedInverses(pack_t tensorPack, int nThreadPerBlock, int nTensors)
     // show me
     timerChannel
         // show me the elapsed time
-        << "Managed memory tensor inverse computation: "
-        << pyre::journal::indent(1)
+        << "Managed memory tensor inverse computation: " << pyre::journal::indent(1)
         << "General timer time:  " << timer.ms() << " ms"
-        << "Wallclock time: " << walltimer.ms() << " ms" 
-        << pyre::journal::outdent(1)
+        << "Wallclock time: " << walltimer.ms() << " ms" << pyre::journal::outdent(1)
         << pyre::journal::endl(__HERE__);
 
     // all done
@@ -267,7 +267,7 @@ pinnedInverses(pack_t tensorPack, int nThreadPerBlock, int nTensors)
     walltimer.start();
 
     // execute the kernel wrapper
-    wrapperPinned(
+    computeInvariantsPinned(
         nTensors, nThreadPerBlock, nBlocks, tensorArray.data()->data(), inverseArray.data()->data(),
         gpuTensors, gpuInverses);
 
@@ -296,11 +296,9 @@ pinnedInverses(pack_t tensorPack, int nThreadPerBlock, int nTensors)
     // show me
     timerChannel
         // show me the elapsed time
-        << "Pinned memory tensor inverse computation: "
-        << pyre::journal::indent(1)
+        << "Pinned memory tensor inverse computation: " << pyre::journal::indent(1)
         << "General timer time:  " << timer.ms() << " ms"
-        << "Wallclock time: " << walltimer.ms() << " ms" 
-        << pyre::journal::outdent(1)
+        << "Wallclock time: " << walltimer.ms() << " ms" << pyre::journal::outdent(1)
         << pyre::journal::endl(__HERE__);
 
     // all done
@@ -382,7 +380,7 @@ mappedInverses(pack_t tensorPack, int nThreadPerBlock, int nTensors)
     walltimer.start();
 
     // execute the kernel wrapper
-    wrapperMapped(
+    computeInvariantsMapped(
         nTensors, nThreadPerBlock, nBlocks, tensorArray.data()->device(),
         inverseArray.data()->device());
 
@@ -411,11 +409,9 @@ mappedInverses(pack_t tensorPack, int nThreadPerBlock, int nTensors)
     // show me
     timerChannel
         // show me the elapsed time
-        << "Mapped memory tensor inverse computation: "
-        << pyre::journal::indent(1)
+        << "Mapped memory tensor inverse computation: " << pyre::journal::indent(1)
         << "General timer time:  " << timer.ms() << " ms"
-        << "Wallclock time: " << walltimer.ms() << " ms"
-        << pyre::journal::outdent(1)
+        << "Wallclock time: " << walltimer.ms() << " ms" << pyre::journal::outdent(1)
         << pyre::journal::endl(__HERE__);
 
     // all done

@@ -45,8 +45,9 @@ computeInverse(const double * A, double * Ainv, int size)
 }
 
 void
-wrapperManaged(
-    int nTensors, int nThreadPerBlock, int nBlocks, const double * tensorArray, double * inverseArray)
+computeInvariantsManaged(
+    int nTensors, int nThreadPerBlock, int nBlocks, const double * tensorArray,
+    double * inverseArray)
 {
     // execute the kernel
     computeInverse<<<nBlocks, nThreadPerBlock>>>(tensorArray, inverseArray, nTensors);
@@ -57,9 +58,9 @@ wrapperManaged(
 
 
 void
-wrapperPinned(
-    int nTensors, int nThreadPerBlock, int nBlocks, const double * tensorArray, double * inverseArray,
-    double * gpuTensors, double * gpuInverses)
+computeInvariantsPinned(
+    int nTensors, int nThreadPerBlock, int nBlocks, const double * tensorArray,
+    double * inverseArray, double * gpuTensors, double * gpuInverses)
 {
     // set cuda error
     cudaError_t status;
@@ -91,8 +92,9 @@ wrapperPinned(
 }
 
 void
-wrapperMapped(
-    int nTensors, int nThreadPerBlock, int nBlocks, const double * tensorArray, double * inverseArray)
+computeInvariantsMapped(
+    int nTensors, int nThreadPerBlock, int nBlocks, const double * tensorArray,
+    double * inverseArray)
 {
     // execute the kernel
     computeInverse<<<nBlocks, nThreadPerBlock>>>(tensorArray, inverseArray, nTensors);
