@@ -11,8 +11,7 @@
 
 // metamethods
 // destructor
-pyre::memory::FileMap::
-~FileMap()
+pyre::memory::FileMap::~FileMap()
 {
     // remove the mapping
     unmap();
@@ -20,8 +19,7 @@ pyre::memory::FileMap::
 
 
 // constructor that maps an existing data product
-pyre::memory::FileMap::
-FileMap(uri_type uri, writable_type writable) :
+pyre::memory::FileMap::FileMap(uri_type uri, writable_type writable) :
     _uri { uri },
     _writable { writable },
     _data { nullptr },
@@ -36,12 +34,9 @@ FileMap(uri_type uri, writable_type writable) :
     // make a channel
     pyre::journal::debug_t channel("pyre.memory.map");
     // sign on
-    channel
-        << "mapped existing data product:" << pyre::journal::newline
-        << "  name: " << _uri << pyre::journal::newline
-        << "  size: " << _bytes << " bytes" << pyre::journal::newline
-        << "  addr: " << _data
-        << pyre::journal::endl(__HERE__);
+    channel << "mapped existing data product:" << pyre::journal::newline << "  name: " << _uri
+            << pyre::journal::newline << "  size: " << _bytes << " bytes" << pyre::journal::newline
+            << "  addr: " << _data << pyre::journal::endl(__HERE__);
 
     // all done
     return;
@@ -49,8 +44,7 @@ FileMap(uri_type uri, writable_type writable) :
 
 
 // constructor that creates a new one
-pyre::memory::FileMap::
-FileMap(uri_type uri, size_type bytes) :
+pyre::memory::FileMap::FileMap(uri_type uri, size_type bytes) :
     _uri { uri },
     _writable { true },
     _data { nullptr },
@@ -67,12 +61,9 @@ FileMap(uri_type uri, size_type bytes) :
     // make a channel
     journal::debug_t channel("pyre.memory.map");
     // sign on
-    channel
-        << "created and mapped a new data product:" << pyre::journal::newline
-        << "  name: " << _uri << pyre::journal::newline
-        << "  size: " << _bytes << " bytes" << pyre::journal::newline
-        << "  addr: " << _data
-        << pyre::journal::endl(__HERE__);
+    channel << "created and mapped a new data product:" << pyre::journal::newline
+            << "  name: " << _uri << pyre::journal::newline << "  size: " << _bytes << " bytes"
+            << pyre::journal::newline << "  addr: " << _data << pyre::journal::endl(__HERE__);
 
     // all done
     return;
@@ -82,8 +73,7 @@ FileMap(uri_type uri, size_type bytes) :
 // interface
 // get the path to my data product
 auto
-pyre::memory::FileMap::
-uri() const -> uri_type
+pyre::memory::FileMap::uri() const -> uri_type
 {
     // easy enough
     return _uri;
@@ -92,8 +82,7 @@ uri() const -> uri_type
 
 // check whether the block is writable
 auto
-pyre::memory::FileMap::
-writable() const -> bool
+pyre::memory::FileMap::writable() const -> bool
 {
     // easy enough
     return _writable;
@@ -102,8 +91,7 @@ writable() const -> bool
 
 // get the number of bytes of the memory block
 auto
-pyre::memory::FileMap::
-bytes() const -> size_type
+pyre::memory::FileMap::bytes() const -> size_type
 {
     // easy enough
     return _bytes;
@@ -112,8 +100,7 @@ bytes() const -> size_type
 
 // get the address of the block
 auto
-pyre::memory::FileMap::
-data() const -> pointer
+pyre::memory::FileMap::data() const -> pointer
 {
     // easy enough
     return _data;
@@ -121,14 +108,13 @@ data() const -> pointer
 
 
 // syntactic sugar
-pyre::memory::FileMap::
-operator pointer() const
+pyre::memory::FileMap::operator pointer() const
 {
     // return the address of the memory block
     return data();
 }
 
 
-# endif
+#endif
 
 // end of file

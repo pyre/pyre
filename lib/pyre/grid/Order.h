@@ -54,13 +54,11 @@ public:
 private:
     // the {columnMajor} helper
     template <std::size_t... seq>
-    static constexpr auto
-    _columnMajor(std::index_sequence<seq...>) -> order_type;
+    static constexpr auto _columnMajor(std::index_sequence<seq...>) -> order_type;
 
     // the {rowMajor} helper
     template <std::size_t... seq>
-    static constexpr auto
-    _rowMajor(std::index_sequence<seq...>) -> order_type;
+    static constexpr auto _rowMajor(std::index_sequence<seq...>) -> order_type;
 };
 
 

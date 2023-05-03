@@ -1,12 +1,9 @@
 // -*- C++ -*-
 //
-// michael a.g. aïvázis
-// orthologue
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
 // (c) 1998-2023 all rights reserved
-//
 
-// Representation of a logical d-dimensional parallelopiped
-//
+// Representation of a logical d-dimensional parallelepiped
 // A brick is a container of 2^d nodes whose actual type is a template parameter
 
 // declaration of bricks
@@ -17,14 +14,15 @@ public:
     // export my template parameters
     typedef nodeT node_type;
     // my parts
-    typedef std::array<node_type, 1<<dim> rep_type; // 2^d nodes of a type of your choice
+    typedef std::array<node_type, 1 << dim> rep_type; // 2^d nodes of a type of your choice
     // convenience
     typedef size_t size_type;
     typedef std::pair<typename node_type::rep_type, typename node_type::rep_type> box_type;
 
     // meta-methods
 public:
-    template <typename... cornerT> inline Brick(cornerT... corner);
+    template <typename... cornerT>
+    inline Brick(cornerT... corner);
 
     // interface
 public:

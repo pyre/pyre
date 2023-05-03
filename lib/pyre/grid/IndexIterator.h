@@ -39,8 +39,8 @@ public:
     // shape, order, origin
     constexpr IndexIterator(shape_const_reference, order_const_reference, index_const_reference);
     // shape, order, origin, step
-    constexpr IndexIterator(shape_const_reference, order_const_reference,
-                            index_const_reference, index_const_reference);
+    constexpr IndexIterator(
+        shape_const_reference, order_const_reference, index_const_reference, index_const_reference);
 
     // iterator protocol
 public:
@@ -52,11 +52,11 @@ public:
 
     // implementation details: data
 private:
-    index_type _current;            // the current value of the index
-    const shape_type _shape;        // the shape of the packing
-    const order_type _order;        // the index ordering determines the iteration order
-    const index_type _origin;       // the lowest possible value
-    const index_type _step;         // the desired increment along each rank
+    index_type _current;      // the current value of the index
+    const shape_type _shape;  // the shape of the packing
+    const order_type _order;  // the index ordering determines the iteration order
+    const index_type _origin; // the lowest possible value
+    const index_type _step;   // the desired increment along each rank
 
     // default metamethods
 public:
