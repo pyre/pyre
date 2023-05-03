@@ -35,7 +35,7 @@ class Workspace(Fragment):
         yield from super().generate(makefile=makefile, marker=marker, **kwds)
 
     # implementation details
-    def _generate(self, plexus, builder, target="projects", **kwds):
+    def _generate(self, plexus, builder, **kwds):
         """
         Build my contents
         """
@@ -46,7 +46,7 @@ class Workspace(Fragment):
         # get my renderer
         renderer = self.renderer
 
-        # ask the source control system to generate the fragment that extract the
+        # ask the source control system to generate the fragment that extracts the
         # repository revision information
         # yield from scs.make(renderer=renderer)
         yield from builder.identify(visitor=scs, plexus=plexus, **kwds)
