@@ -141,7 +141,7 @@ class Builder(merlin.component, implements=merlin.protocols.flow.builder):
         # otherwise, get the compiler family
         suite = determinant.suite
         # and its version
-        major, _, _ = determinant.version()
+        major, _, _ = determinant.version
         # and fold them into the ABI
         abi = f"{suite}{major}"
         # all done
