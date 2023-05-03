@@ -212,6 +212,8 @@ function(pyre_test_driver_cxx20 testfile)
   target_compile_definitions(${target} PRIVATE PYRE_CORE)
   # link against my libraries
   target_link_libraries(${target} PUBLIC pyre journal)
+  # specify the directory for the target compilation products
+  pyre_target_directory(${target} tests)
   # request c++20 to build the target
   target_compile_features(${target} PUBLIC cxx_std_20)
   target_compile_definitions(${target} PRIVATE WITH_CXX20)
