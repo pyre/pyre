@@ -17,10 +17,14 @@
 extern "C" {
 #endif
 
-    int  debuginfo_active(const char * name);
-    void debuginfo_activate(const char * name);
-    void debuginfo_deactivate(const char * name);
-    void debuginfo_out(const char * name, __HERE_DECL__, const char * fmt, ...);
+int
+debuginfo_active(const char * name);
+void
+debuginfo_activate(const char * name);
+void
+debuginfo_deactivate(const char * name);
+void
+debuginfo_out(const char * name, __HERE_DECL__, const char * fmt, ...);
 
 #ifdef __cplusplus
 }

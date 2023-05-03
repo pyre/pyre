@@ -34,8 +34,8 @@ private:
 private:
     ErrorConsole(const ErrorConsole &) = delete;
     ErrorConsole(const ErrorConsole &&) = delete;
-    const ErrorConsole & operator= (const ErrorConsole &) = delete;
-    const ErrorConsole & operator= (const ErrorConsole &&) = delete;
+    const ErrorConsole & operator=(const ErrorConsole &) = delete;
+    const ErrorConsole & operator=(const ErrorConsole &&) = delete;
 };
 
 

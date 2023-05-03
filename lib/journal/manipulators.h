@@ -273,7 +273,8 @@ pyre::journal::endl(decoratorT decorator) -> Flush<decoratorT>
 
 
 // recognize the locator special signature and convert it into a flushable
-auto pyre::journal::endl(__HERE_DECL__) -> Flush<Locator>
+auto
+pyre::journal::endl(__HERE_DECL__) -> Flush<Locator>
 {
     return Flush(Locator(__HERE_ARGS__));
 }

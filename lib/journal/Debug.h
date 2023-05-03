@@ -10,8 +10,7 @@
 
 // developer facing channel; usually gets turned off in release mode
 template <template <typename> typename proxyT>
-class pyre::journal::Debug : public Channel<Debug<proxyT>, proxyT>
-{
+class pyre::journal::Debug : public Channel<Debug<proxyT>, proxyT> {
     // types
 public:
     // my base
@@ -44,8 +43,8 @@ public:
 private:
     Debug(const Debug &) = delete;
     Debug(const Debug &&) = delete;
-    const Debug & operator= (const Debug &) = delete;
-    const Debug & operator= (const Debug &&) = delete;
+    const Debug & operator=(const Debug &) = delete;
+    const Debug & operator=(const Debug &&) = delete;
 };
 
 

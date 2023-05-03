@@ -18,8 +18,7 @@
 
 // the color table factory
 auto
-pyre::journal::ANSI::
-make_x11() -> table_type
+pyre::journal::ANSI::make_x11() -> table_type
 {
     // make a table
     table_type table;

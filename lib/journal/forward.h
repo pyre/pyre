@@ -218,7 +218,7 @@ namespace pyre::journal {
     class ASCII;
     class CSI;
     class ANSI;
-}    // namespace pyre::journal
+} // namespace pyre::journal
 
 
 #endif

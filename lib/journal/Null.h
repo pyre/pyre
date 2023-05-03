@@ -9,8 +9,7 @@
 
 
 // the null channel conforms to the API but has no effect
-class pyre::journal::Null
-{
+class pyre::journal::Null {
     // types
 public:
     // channel names
@@ -55,8 +54,8 @@ public:
 private:
     Null(const Null &) = delete;
     Null(const Null &&) = delete;
-    const Null & operator= (const Null &) = delete;
-    const Null & operator= (const Null &&) = delete;
+    const Null & operator=(const Null &) = delete;
+    const Null & operator=(const Null &&) = delete;
 };
 
 

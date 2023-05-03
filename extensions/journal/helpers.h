@@ -12,7 +12,7 @@
 namespace pyre::journal::py {
     // build a locator that points to the nearest caller from python
     inline auto locator() -> locator_t;
-}
+} // namespace pyre::journal::py
 
 
 // get the inline definitions

@@ -17,9 +17,7 @@
 
 // metamethods
 // destructor
-pyre::journal::Device::
-~Device()
-{}
+pyre::journal::Device::~Device() {}
 
 
 // end of file

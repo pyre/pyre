@@ -20,17 +20,17 @@ public:
     inline static auto reset() -> rep_type;
 
     // the old 3 bit colors: {code} in [30,37] or [40,47]
-    inline static auto csi3(int code, bool bright=false) -> rep_type;
+    inline static auto csi3(int code, bool bright = false) -> rep_type;
 
     // 8 bit color: values in [0,7]
-    inline static auto csi8(int red, int green, int blue, bool foreground=true) -> rep_type;
-    inline static auto csi8_gray(int gray, bool foreground=true) -> rep_type;
+    inline static auto csi8(int red, int green, int blue, bool foreground = true) -> rep_type;
+    inline static auto csi8_gray(int gray, bool foreground = true) -> rep_type;
 
     // 24 bit color: values in [0,23]
-    inline static auto csi24(int red, int green, int blue, bool foreground=true) -> rep_type;
+    inline static auto csi24(int red, int green, int blue, bool foreground = true) -> rep_type;
 
     // turn blink on and off; there isn't wide support for this, so avoid it
-    inline static auto blink(bool state=true) -> rep_type;
+    inline static auto blink(bool state = true) -> rep_type;
 };
 
 

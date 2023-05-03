@@ -12,10 +12,10 @@
 // c++20 has <source_location>, so this will soon be obsolete
 
 // used by the locator to communicate the source of a message
-#define __HERE__ __FILE__,__LINE__,__func__
+#define __HERE__ __FILE__, __LINE__, __func__
 // used for the C/FORTRAN bindings
 #define __HERE_ARGS__ filename, lineno, funcname
-#define __HERE_DECL__ const char * filename, long lineno, const char * funcname
+#define __HERE_DECL__ const char *filename, long lineno, const char *funcname
 
 
 #endif

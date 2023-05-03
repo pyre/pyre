@@ -11,8 +11,7 @@
 // user facing channel; meant for error messages, i.e. conditions from which the application
 // cannot recover
 template <template <typename> typename proxyT>
-class pyre::journal::Error : public Channel<Error<proxyT>, proxyT>
-{
+class pyre::journal::Error : public Channel<Error<proxyT>, proxyT> {
     // types
 public:
     // my base
@@ -45,8 +44,8 @@ public:
 private:
     Error(const Error &) = delete;
     Error(const Error &&) = delete;
-    const Error & operator= (const Error &) = delete;
-    const Error & operator= (const Error &&) = delete;
+    const Error & operator=(const Error &) = delete;
+    const Error & operator=(const Error &&) = delete;
 };
 
 
