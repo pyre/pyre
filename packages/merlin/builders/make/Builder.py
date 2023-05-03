@@ -13,6 +13,7 @@ from ..Builder import Builder
 from .Generator import Generator
 
 # my parts
+from .Compilers import Compilers
 from .Layout import Layout
 from .Library import Library
 from .Preamble import Preamble
@@ -164,10 +165,15 @@ class Builder(Builder, Generator, family="merlin.builders.make"):
         # and record the layout
         yield from layout.generate(stage=stage, layout=self.layout)
 
-        # make a generator that extract the workspace info
+        # make a generator that extracts the workspace info
         ws = Workspace(name=f"{name}.ws")
         # and build the makefile
         yield from ws.generate(stage=stage, **kwds)
+
+        # make a generator for the selected compilers
+        compilers = Compilers(name=f"{name}.compilers")
+        # and build the fragment
+        yield from compilers.generate(stage=stage, **kwds)
 
         # go through the assets
         for asset in assets:
