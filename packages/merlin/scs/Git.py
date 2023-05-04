@@ -26,6 +26,7 @@ class Git(
     branchArgs = ["branch", "--show-current"]
     describeArgs = ["describe", "--tags", "--long", "--always"]
     hashArgs = ["log", "--format=format:%h", "-n", "1"]
+    versionArgs = ["--version"]
 
     # interface
     @merlin.export
@@ -142,7 +143,7 @@ class Git(
             # get the description
             description = stdout.strip()
             # parse it
-            match = self.descriptionParser.match(description)
+            match = self._descriptionParser.match(description)
             # if everything went ok
             if match:
                 # extract the version info
@@ -163,6 +164,43 @@ class Git(
         channel.log()
         # and, just in case firewalls aren't fatal, bail
         return bail
+
+    @merlin.export
+    def version(self, driver=None, **kwds):
+        """
+        Extract the version of git
+        """
+        # get the command line
+        cmd = self.versionCmd(driver=driver)
+        # set up the shell command
+        settings = {
+            "executable": driver,
+            "args": cmd,
+            "stdout": subprocess.PIPE,
+            "stderr": subprocess.PIPE,
+            "universal_newlines": True,
+            "shell": False,
+        }
+        # make a pipe
+        with subprocess.Popen(**settings) as pipe:
+            # get the text source
+            stream = pipe.stdout
+            # and the recognizer
+            regex = self._versionParser
+            # the first line is the version
+            line = next(stream).strip()
+            # extract the fields
+            match = regex.match(line)
+            # if we got a match
+            if match:
+                # extract the version fields
+                major = match.group("major")
+                minor = match.group("minor")
+                micro = match.group("micro")
+                # assemble the version tuple and return it
+                return major, minor, micro
+        # otherwise, report failure with the correct structure
+        return "unknown", "unknown", "unknown"
 
     # framework hooks
     # builder specific behavior
@@ -248,6 +286,17 @@ class Git(
         # all done
         return
 
+    def versionCmd(self, driver=None):
+        """
+        Build the command line that extracts repository revision information
+        """
+        # first the driver
+        yield self.driverCmd(driver=driver)
+        # and now the rest of the command line
+        yield from self.versionArgs
+        # all done
+        return
+
     def driverCmd(self, driver=None):
         """
         Generate the reference to my executable to use as the driver
@@ -259,8 +308,17 @@ class Git(
 
     # private data
     # parser of the {git describe} result
-    descriptionParser = re.compile(
+    _descriptionParser = re.compile(
         r"(v(?P<major>\d+)\.(?P<minor>\d+).(?P<micro>\d+)-\d+-g)?(?P<commit>.+)"
+    )
+    # parser of the tool version
+    _versionParser = re.compile(
+        "".join(
+            [
+                r"(?P<tag>.+)\s+version\s+",
+                r"(?P<major>\d+)\.(?P<minor>\d+)\.(?P<micro>\d+)",
+            ]
+        )
     )
 
 
