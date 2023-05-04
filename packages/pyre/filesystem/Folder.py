@@ -1,15 +1,15 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2023 all rights reserved
-#
 
 
 # externals
 import itertools
+
 # support
 from .. import primitives
+
 # base class
 from .Node import Node
 
@@ -23,18 +23,21 @@ class Folder(Node):
     representation of the hierarchical structure of filesystems.
     """
 
-
     # constants
     isFolder = True
-
 
     # types
     # my metadata
     from .InfoFolder import InfoFolder as metadata
+
     # exceptions
     from .exceptions import (
-        FolderInsertionError, NotRootError, FolderError, IsFolderError, NotFoundError)
-
+        FolderInsertionError,
+        NotRootError,
+        FolderError,
+        IsFolderError,
+        NotFoundError,
+    )
 
     # interface
     def open(self):
@@ -44,11 +47,11 @@ class Folder(Node):
         # return my contents
         return self.contents.items()
 
-
     def mkdir(self, name, parents=True, exist_ok=True):
         # delegate to my filesystem
-        return self.filesystem().mkdir(parent=self, name=name, parents=parents, exist_ok=exist_ok)
-
+        return self.filesystem().mkdir(
+            parent=self, name=name, parents=parents, exist_ok=exist_ok
+        )
 
     def remove(self, node, name=None, **kwds):
         """
@@ -57,7 +60,9 @@ class Folder(Node):
         # if the node is a folder
         if node.isFolder:
             # we don't support that yet
-            raise NotImplemntedError("NYI: removing directories is not implemented yet")
+            raise NotImplementedError(
+                "NYI: removing directories is not implemented yet"
+            )
 
         # if we were not told the name by which the node is known
         if name is None:
@@ -84,14 +89,14 @@ class Folder(Node):
         # all done
         return
 
-
-    def write(self, name, contents, mode='w'):
+    def write(self, name, contents, mode="w"):
         """
         Create a file with the given {name} and {contents}
         """
         # delegate to my filesystem
-        return self.filesystem().write(parent=self, name=name, contents=contents, mode=mode)
-
+        return self.filesystem().write(
+            parent=self, name=name, contents=contents, mode=mode
+        )
 
     # searching for specific contents
     def find(self, pattern):
@@ -104,11 +109,11 @@ class Folder(Node):
         """
         # access the finder factory
         from . import finder
+
         # to build one
         f = finder()
         # and start the search
         return f.explore(folder=self, pattern=pattern)
-
 
     # populating filesystems
     def discover(self, **kwds):
@@ -118,7 +123,6 @@ class Folder(Node):
         # punt to the implementation in my filesystem
         return self.filesystem().discover(root=self, **kwds)
 
-
     # making entire filesystems available through me
     def mount(self, uri, filesystem):
         """
@@ -126,7 +130,6 @@ class Folder(Node):
         """
         # easy enough: just insert {filesystem} at {uri}
         return self._insert(uri=primitives.path(uri), node=filesystem)
-
 
     # node factories
     def node(self):
@@ -136,14 +139,12 @@ class Folder(Node):
         # easy enough
         return Node(filesystem=self.filesystem())
 
-
     def folder(self):
         """
         Build a new folder within my filesystem
         """
         # also easy
         return Folder(filesystem=self.filesystem())
-
 
     # a factory for paths
     @staticmethod
@@ -153,7 +154,6 @@ class Folder(Node):
         """
         # easy enough
         return primitives.path(*args)
-
 
     # meta methods
     def __init__(self, **kwds):
@@ -167,14 +167,12 @@ class Folder(Node):
         # and return
         return
 
-
     def __iter__(self):
         """
         Return an iterator over my {contents}
         """
         # easy enough
         return iter(self.contents)
-
 
     def __getitem__(self, uri):
         """
@@ -183,14 +181,12 @@ class Folder(Node):
         # invoke the implementation and return the result
         return self._retrieve(uri=primitives.path(uri))
 
-
     def __setitem__(self, uri, node):
         """
         Attach {node} at {uri}
         """
         # invoke the implementation and return the result
         return self._insert(node=node, uri=primitives.path(uri))
-
 
     def __contains__(self, uri):
         """
@@ -203,14 +199,16 @@ class Folder(Node):
         # attempt to
         try:
             # iterate over the names
-            for name in uri.names: node = node.contents[name]
+            for name in uri.names:
+                node = node.contents[name]
         # if node is not a folder, report failure
-        except AttributeError: return False
+        except AttributeError:
+            return False
         # if {name} is not among the contents of node, report failure
-        except KeyError: return False
+        except KeyError:
+            return False
         # if we get this far, report success
         return True
-
 
     # implementation details
     def _retrieve(self, uri):
@@ -222,20 +220,22 @@ class Folder(Node):
         # attempt to
         try:
             # hunt down the target node
-            for name in uri.names: node = node.contents[name]
+            for name in uri.names:
+                node = node.contents[name]
         # if any of the folder lookups fail
         except KeyError:
             # notify the caller
             raise self.NotFoundError(
-                filesystem=self.filesystem(), node=self, uri=uri, fragment=name)
+                filesystem=self.filesystem(), node=self, uri=uri, fragment=name
+            )
         # if one of the intermediate nodes is not a folder
         except AttributeError:
             # notify the caller
             raise self.FolderError(
-                filesystem=self.filesystem(), node=self, uri=uri, fragment=node.uri)
+                filesystem=self.filesystem(), node=self, uri=uri, fragment=node.uri
+            )
         # otherwise, return the target node
         return node
-
 
     def _insert(self, node, uri, metadata=None):
         """
@@ -273,7 +273,11 @@ class Folder(Node):
             except AttributeError:
                 # complain
                 raise self.FolderError(
-                    filesystem=current.filesystem(), node=current, uri=uri, fragment=name)
+                    filesystem=current.filesystem(),
+                    node=current,
+                    uri=uri,
+                    fragment=name,
+                )
 
         # at this point, {current} points to the folder that should contain our {node}; get its
         # name by asking the input {uri}
@@ -286,9 +290,15 @@ class Folder(Node):
         except AttributeError:
             # complain
             raise self.FolderInsertionError(
-                filesystem=current.filesystem(), node=node, target=current.uri.name, uri=uri)
+                filesystem=current.filesystem(),
+                node=node,
+                target=current.uri.name,
+                uri=uri,
+            )
         # inform the filesystem
-        current.filesystem().attach(node=node, uri=(current.uri / name), metadata=metadata)
+        current.filesystem().attach(
+            node=node, uri=(current.uri / name), metadata=metadata
+        )
         # and return the {node}
         return node
 

@@ -66,7 +66,7 @@ class Stat(Recognizer):
         # if not there
         except KeyError:
             # build a message
-            msg = "'{}': unknown file type: mode={}".format(entry, mode)
+            msg = f"'{entry}': unknown file type: mode={mode}"
             # and complain
             return journal.firewall("pyre.filesystem").log(msg)
 
