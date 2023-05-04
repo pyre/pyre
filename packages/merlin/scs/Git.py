@@ -69,9 +69,9 @@ class Git(
         return "unknown"
 
     @merlin.export
-    def version(self):
+    def revision(self):
         """
-        Extract project version meta-data from a git repository
+        Extract workspace revision meta-data from a git repository
         """
         # the value to return on failure
         bail = (0, 0, 0, "")
