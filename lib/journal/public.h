@@ -48,11 +48,13 @@
 #include "Memo.h"
 
 // devices
+#include "Splitter.h"
 #include "Trash.h"
 #include "File.h"
 #include "Stream.h"
 #include "Console.h"
 #include "ErrorConsole.h"
+#include "Tee.h"
 
 // support for channel shared state
 #include "Inventory.h"
