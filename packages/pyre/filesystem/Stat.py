@@ -1,15 +1,13 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2023 all rights reserved
-#
 
 
 # externals
 import os
 import stat
-
+import journal
 
 # my base class
 from .Recognizer import Recognizer
@@ -21,7 +19,6 @@ class Stat(Recognizer):
     This class provides support for sorting out local filesystem entries based on the lowest
     level of metadata available: the actual representation on the hard disk.
     """
-
 
     # types
     from .BlockDevice import BlockDevice
@@ -41,12 +38,11 @@ class Stat(Recognizer):
         stat.S_IFLNK: Link,
         stat.S_IFIFO: NamedPipe,
         stat.S_IFSOCK: Socket,
-        }
-
+    }
 
     # interface
     @classmethod
-    def recognize(cls, entry, follow_symlinks=False):
+    def recognize(cls, entry, follow_symlinks=True):
         """
         The most basic file recognition: convert the name of a file into a {Node} descendant
         and decorate it with all the meta-data available on the disk.
@@ -69,8 +65,6 @@ class Stat(Recognizer):
             info = cls.filetypes[stat.S_IFMT(mode)]
         # if not there
         except KeyError:
-            # we have a bug
-            import journal
             # build a message
             msg = "'{}': unknown file type: mode={}".format(entry, mode)
             # and complain
