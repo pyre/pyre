@@ -27,6 +27,12 @@ class SCS(merlin.protocol, family="merlin.scs"):
         Extract the workspace revision from the source control metadata
         """
 
+    @merlin.provides
+    def version(self, **kwds):
+        """
+        Extract the version of the scs tool itself
+        """
+
     # framework hooks
     @classmethod
     def pyre_default(cls, **kwds):
