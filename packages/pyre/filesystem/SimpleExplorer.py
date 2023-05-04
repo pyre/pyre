@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2023 all rights reserved
-#
 
 
 # my superclass
@@ -17,7 +15,6 @@ class SimpleExplorer(Explorer):
     filesystem
     """
 
-
     # interface
     def explore(self, node, label):
         """
@@ -27,20 +24,21 @@ class SimpleExplorer(Explorer):
         yield self.render(name=label, node=node)
 
         # if {node} is not a directory, we are done
-        if not node.isFolder: return
+        if not node.isFolder:
+            return
 
         # otherwise, increase the indentation level
         self._indent += 1
         # iterate over the folder contents
         for name, child in sorted(node.contents.items()):
             # generate the content report
-            for description in self.explore(node=child, label=name): yield description
+            for description in self.explore(node=child, label=name):
+                yield description
         # decrease the indentation level back
         self._indent -= 1
 
         # all done
         return
-
 
     # meta methods
     def __init__(self, indent=0, **kwds):
@@ -51,15 +49,15 @@ class SimpleExplorer(Explorer):
         # all done
         return
 
-
     # implementation details
     def render(self, name, node):
-        # build a string an return it
-        return "{0}({1}) {2}".format(self.INDENT*self._indent, node.marker, name)
-
+        # compute the indent
+        indent = self.INDENT * self._indent
+        # build a string and return it
+        return f"{indent}({node.marker}) {name}"
 
     # constants
-    INDENT = ' '*2
+    INDENT = " " * 2
 
 
 # end of file

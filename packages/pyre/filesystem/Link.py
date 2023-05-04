@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2023 all rights reserved
-#
 
 
 # superclass
@@ -16,10 +14,8 @@ class Link(File):
     Representation of symbolic links for filesystems that support them
     """
 
-
     # constant
-    marker = 'l'
-
+    marker = "l"
 
     # interface
     def identify(self, explorer, **kwds):
@@ -28,13 +24,13 @@ class Link(File):
         """
         return explorer.onLink(info=self, **kwds)
 
-
     # meta-methods
     def __init__(self, uri, info=None, **kwds):
         # chain up
         super().__init__(uri=uri, info=info, **kwds)
         # support
         from .Stat import Stat
+
         # build my referent
         self.referent = Stat.recognize(entry=uri, follow_symlinks=True)
         # all done

@@ -1,15 +1,15 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2023 all rights reserved
-#
 
 
 # externals
 import zipfile
+
 # support
 from .. import primitives
+
 # base class
 from .Filesystem import Filesystem
 
@@ -20,11 +20,9 @@ class Zip(Filesystem):
     Representation of a filesystem mounted from a zip file on the local host machine
     """
 
-
     # node metadata
     from .InfoZipFile import InfoZipFile
     from .InfoZipFolder import InfoZipFolder
-
 
     # interface
     def open(self, node, **kwds):
@@ -36,7 +34,6 @@ class Zip(Filesystem):
         # and call the {zipfile} file factory, which accepts {ZipInfo} instances as well as
         # archive data members
         return self.zipfile.open(metadata.info, **kwds)
-
 
     def discover(self, root=None, **kwds):
         """
@@ -60,7 +57,7 @@ class Zip(Filesystem):
             # start by converting the name into a path
             path = primitives.path(name)
             # so if the name ends with a slash
-            if name[-1] == '/':
+            if name[-1] == "/":
                 # make folder
                 node = self.folder()
                 # build the metadata
@@ -75,7 +72,6 @@ class Zip(Filesystem):
             self._insert(node=node, uri=path, metadata=metadata)
         # all done
         return root
-
 
     # meta methods
     def __init__(self, metadata, **kwds):

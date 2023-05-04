@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2023 all rights reserved
-#
 
 
 # superclass
@@ -17,9 +15,8 @@ class InfoFile(Info):
     """
 
     # constants
-    marker = 'f'
+    marker = "f"
     isFolder = False
-
 
     # interface
     def identify(self, explorer, **kwds):
