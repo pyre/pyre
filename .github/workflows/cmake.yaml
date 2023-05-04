@@ -164,6 +164,7 @@ jobs:
         run: |
           echo " -- switching to the pyre home directory"
           cd pyre
+          git pull --all
           echo " -- checking out the correct ref"
           git checkout ${GITHUB_SHA}
 
