@@ -23,20 +23,21 @@ class Git(
 
     # setup
     name = "git"
-    branchArgs = [name, "branch", "--show-current"]
-    describeArgs = [name, "describe", "--tags", "--long", "--always"]
+    branchArgs = ["branch", "--show-current"]
+    describeArgs = ["describe", "--tags", "--long", "--always"]
+    hashArgs = ["log", '--format=format:"%h"', "-n", "1"]
 
     # interface
     @merlin.export
-    def branch(self):
+    def branch(self, driver=None):
         """
         Get the name of the currently active branch
         """
         # the git command line
-        cmd = self.branchArgs
+        cmd = self.branchCmd(driver=driver)
         # settings
         options = {
-            "executable": "git",
+            "executable": driver,
             "args": cmd,
             "stdout": subprocess.PIPE,
             "stderr": subprocess.PIPE,
@@ -69,17 +70,58 @@ class Git(
         return "unknown"
 
     @merlin.export
-    def revision(self):
+    def hash(self, driver=None):
+        """
+        Get the hash of the current HEAD
+        """
+        # the git command line
+        cmd = self.hashCmd(driver=driver)
+        # settings
+        options = {
+            "executable": driver,
+            "args": cmd,
+            "stdout": subprocess.PIPE,
+            "stderr": subprocess.PIPE,
+            "universal_newlines": True,
+            "shell": False,
+        }
+        # invoke
+        with subprocess.Popen(**options) as git:
+            # collect the output
+            stdout, _ = git.communicate()
+            # get the status
+            status = git.returncode
+            # if something went wring
+            if status != 0:
+                # issue a warning
+                channel = journal.warning("merlin.scs.git")
+                # that git failed
+                channel.line(f"git failed with code {status}")
+                channel.line(f"while attempting to retrieve the hash of HEAD")
+                # flush
+                channel.log()
+                # and bail
+                return "unknown"
+            # if successful, get the hash
+            hash = stdout.strip()
+            # and return it
+            return hash
+
+        # if anything went wrong
+        return "unknown"
+
+    @merlin.export
+    def revision(self, driver=None):
         """
         Extract workspace revision meta-data from a git repository
         """
+        # the git command line
+        cmd = self.describeCmd(driver=driver)
         # the value to return on failure
         bail = (0, 0, 0, "")
-        # the git command line
-        cmd = self.describeArgs
         # settings
         options = {
-            "executable": "git",
+            "executable": driver,
             "args": cmd,
             "stdout": subprocess.PIPE,
             "stderr": subprocess.PIPE,
@@ -132,13 +174,13 @@ class Git(
 
     # framework hooks
     # builder specific behavior
-    def make(self, builder, **kwds):
+    def make(self, builder, driver=None, **kwds):
         """
         Generate a makefile fragment that extracts repository revision information into
         the canonical variable names
         """
         # get the describe command
-        cmd = " ".join(self.describeArgs)
+        cmd = " ".join(self.describeCmd(driver=driver))
         # get the renderer
         renderer = builder.renderer
 
@@ -179,6 +221,49 @@ class Git(
         yield ""
         # all done
         return
+
+    # command line generation
+    def branchCmd(self, driver=None):
+        """
+        Build the command line that extracts repository revision information
+        """
+        # first the driver
+        yield self.driverCmd(driver=driver)
+        # and now the rest of the command line
+        yield from self.branchArgs
+        # all done
+        return
+
+    def describeCmd(self, driver=None):
+        """
+        Build the command line that extracts repository revision information
+        """
+        # first the driver
+        yield self.driverCmd(driver=driver)
+        # and now the rest of the command line
+        yield from self.describeArgs
+        # all done
+        return
+
+    def hashCmd(self, driver=None):
+        """
+        Build the command line that extracts repository revision information
+        """
+        # first the driver
+        yield self.driverCmd(driver=driver)
+        # and now the rest of the command line
+        yield from self.hashArgs
+        # all done
+        return
+
+    def driverCmd(self, driver=None):
+        """
+        Generate the reference to my executable to use as the driver
+        """
+        # sort out the driver
+        driver = driver if driver is not None else self.name
+        # and return it
+        return driver
 
     # private data
     # parser of the {git describe} result
