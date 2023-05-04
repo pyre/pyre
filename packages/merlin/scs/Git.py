@@ -25,7 +25,7 @@ class Git(
     name = "git"
     branchArgs = ["branch", "--show-current"]
     describeArgs = ["describe", "--tags", "--long", "--always"]
-    hashArgs = ["log", '--format=format:"%h"', "-n", "1"]
+    hashArgs = ["log", "--format=format:%h", "-n", "1"]
 
     # interface
     @merlin.export
@@ -50,23 +50,20 @@ class Git(
             stdout, _ = git.communicate()
             # get the status
             status = git.returncode
-            # if something went wring
-            if status != 0:
-                # issue a warning
-                channel = journal.warning("merlin.scs.git")
-                # that git failed
-                channel.line(f"git failed with code {status}")
-                channel.line(f"while attempting to retrieve the active branch name")
-                # flush
-                channel.log()
-                # and bail
-                return "unknown"
-            # if successful, get the branch name
-            branch = stdout.strip()
-            # and return it
-            return branch
-
-        # if anything went wrong
+            # if successful
+            if status == 0:
+                # get the branch name
+                branch = stdout.strip()
+                # and return it
+                return branch
+        # if anything went wrong, issue a warning
+        channel = journal.warning("merlin.scs.git")
+        # that git failed
+        channel.line(f"git failed with code {status}")
+        channel.line(f"while attempting to retrieve the active branch name")
+        # flush
+        channel.log()
+        # and bail
         return "unknown"
 
     @merlin.export
@@ -91,23 +88,20 @@ class Git(
             stdout, _ = git.communicate()
             # get the status
             status = git.returncode
-            # if something went wring
-            if status != 0:
-                # issue a warning
-                channel = journal.warning("merlin.scs.git")
-                # that git failed
-                channel.line(f"git failed with code {status}")
-                channel.line(f"while attempting to retrieve the hash of HEAD")
-                # flush
-                channel.log()
-                # and bail
-                return "unknown"
-            # if successful, get the hash
-            hash = stdout.strip()
-            # and return it
-            return hash
-
-        # if anything went wrong
+            # if successful
+            if status == 0:
+                # get the hash
+                hash = stdout.strip()
+                # and return it
+                return hash
+        # if something went wrong, issue a warning
+        channel = journal.warning("merlin.scs.git")
+        # that git failed
+        channel.line(f"git failed with code {status}")
+        channel.line(f"while attempting to retrieve the hash of HEAD")
+        # flush
+        channel.log()
+        # and bail
         return "unknown"
 
     @merlin.export
@@ -134,7 +128,7 @@ class Git(
             stdout, stderr = git.communicate()
             # get the status
             status = git.returncode
-            # if something went wring
+            # if something went wrong
             if status != 0:
                 # issue a warning
                 channel = journal.warning("merlin.scs.git")
@@ -149,27 +143,25 @@ class Git(
             description = stdout.strip()
             # parse it
             match = self.descriptionParser.match(description)
-            # if something went wrong
-            if not match:
-                # this is most likely a bug
-                channel = journal.firewall("merlin.scs.git")
-                # complain
-                channel.line(f"git returned '{description}'")
-                channel.line(f"which the parser couldn't understand")
-                channel.line(f"while looking for version tag")
-                # flush
-                channel.log()
-                # and, just in case firewalls aren't fatal, bail
-                return bail
-            # otherwise, extract the version info
-            major = match.group("major") or 1
-            minor = match.group("minor") or 0
-            micro = match.group("micro") or 0
-            commit = match.group("commit")
-            # and return it
-            return (int(major), int(minor), int(micro), commit)
+            # if everything went ok
+            if match:
+                # extract the version info
+                major = match.group("major") or bail[0]
+                minor = match.group("minor") or bail[1]
+                micro = match.group("micro") or bail[2]
+                commit = match.group("commit") or bail[3]
+                # and return it
+                return (int(major), int(minor), int(micro), commit)
 
-        # if anything else went wrong
+        # if something went wrong, it is most likely a bug
+        channel = journal.firewall("merlin.scs.git")
+        # complain
+        channel.line(f"git returned '{description}'")
+        channel.line(f"which the parser couldn't understand")
+        channel.line(f"while looking for the repository revision")
+        # flush
+        channel.log()
+        # and, just in case firewalls aren't fatal, bail
         return bail
 
     # framework hooks
