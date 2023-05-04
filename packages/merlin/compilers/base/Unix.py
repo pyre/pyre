@@ -56,57 +56,18 @@ class Unix(merlin.component, implements=merlin.protocols.external.compiler):
     flag_write = "-o"
 
     # interface
-    # merlin hooks -- builders
-    def make(self, builder, **kwds):
+    def compile(self, driver, source, object, **kwds):
         """
-        Generate a makefile fragment for the {make} builder
+        Generate the command to compile {source} to {object}
         """
-        # get my language
-        language = self.language
-        # assemble my version
-        version = ".".join(self.version)
-        # get the renderer
-        renderer = builder.renderer
-        # mark
-        yield renderer.commentLine(f"{language} compiler support")
-        # my driver
-        yield from renderer.set(name=f"{language}.driver", value=f"{self.driver}")
-        # its version
-        yield from renderer.set(name=f"{language}.version", value=f"{version}")
-        # leave some room
-        yield ""
-
-        # the compile command line
-        yield renderer.commentLine(f"usage: {language}.compile <source> <object>")
-        # generate
-        yield from renderer.setq(
-            name=f"{language}.compile",
-            multi=[
-                f"echo $({language}.driver)",
-            ]
-            # the output file
-            + [self._compile("$(1)")]
-            # the output file
-            + [self._write("$(2)")]
-            # the baseline options
-            + [self._baseline()]
-            # other
-        )
-        # leave some room
-        yield ""
-
-        # the link command line
-        yield renderer.commentLine(f"usage: {language}.link <source> <object>")
-        # generate
-        yield from renderer.setq(
-            name=f"{language}.link",
-            multi=[
-                f"$({language}.driver)",
-            ],
-        )
-        # leave some room
-        yield ""
-
+        # start with the driver
+        yield f"echo {driver}"
+        # the baseline command options
+        yield from self._baseline()
+        # output generation
+        yield from self._write(path=object)
+        # the source to compiler
+        yield from self._compile(source=source)
         # all done
         return
 
