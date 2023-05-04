@@ -342,26 +342,16 @@ class FileServer(Filesystem):
             folder = self.mounts[path]
             # go through each level in the relative path
             for level in diff.parts:
+                # explore the folder we are in; perhaps this is the first time we get here
+                folder.discover(levels=1)
                 # try to
                 try:
                     # get the associated folder
                     folder = folder[level]
                 # if this fails
                 except self.NotFoundError:
-                    # and the the folder has any contents
-                    if folder.contents:
-                        # {level} does not exist; not much else we can do but punt
-                        return self.folder()
-                    # otherwise, it must be that the folder hasn't been explored yet
-                    folder.discover(levels=1)
-                    # look again
-                    try:
-                        # for the subdirectory
-                        folder = folder[level]
-                    # if it fails again after discovery
-                    except self.NotFoundError:
-                        # {level} does not exist; not much else we can do but punt
-                        return self.folder()
+                    # {level} does not exist; not much else we can do but punt
+                    return self.folder()
             # if we get this far, we have what we are looking for
             return folder.discover(levels=levels)
 
