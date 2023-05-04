@@ -110,6 +110,7 @@ class Info(merlin.shells.command, family="merlin.cli.info"):
         channel = journal.info("merlin.info.workspace")
         # report
         channel.line(f"workspace: {ws}")
+        channel.line(f"revision: {plexus.scs.revision()}")
         channel.line(f"config: {cfg}")
         # get the list of projects
         projects = plexus.projects
