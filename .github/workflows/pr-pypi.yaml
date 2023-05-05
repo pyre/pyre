@@ -1,4 +1,4 @@
-name: pypi
+name: pr-pypi
 
 # publish when a (published) GitHub Release is created, use the following:
 on:
