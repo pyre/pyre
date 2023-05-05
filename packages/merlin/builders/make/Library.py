@@ -237,7 +237,7 @@ class Library(
 
     # asset category handlers
     @merlin.export
-    def header(self, library, file, counter, **kwds):
+    def header(self, library, file, counter, clone=None, **kwds):
         """
         Handle a {header}
         """
@@ -258,7 +258,11 @@ class Library(
         # form the path to the source
         src = merlin.primitives.path(f"$({name}.ws)") / hpath
         # form the clone location
-        clone = merlin.primitives.path(f"$({name}.src)") / hpath
+        clone = (
+            clone
+            if clone is not None
+            else merlin.primitives.path(f"$({name}.src)") / hpath
+        )
         # if this the gateway header
         if gateway:
             # export it to the root of the scope
@@ -284,32 +288,15 @@ class Library(
         yield ""
 
         # clone
-        yield renderer.commentLine(f"clone {src} to {clone}")
-        # add the dependency line
-        yield f"{clone}: {src} | {clone.parent}"
-        # log
-        yield f"\t@$(call log.action,clone,{tag})"
-        # the rule
-        yield f"\t@$(cp) $< $@"
-        # make some room
-        yield ""
-
-        # export
-        yield renderer.commentLine(f"export {clone} to {prefix}")
-        # add the dependency line
-        yield f"{prefix}: {clone} | {prefix.parent}"
-        # log
-        yield f"\t@$(call log.action,export,{tag})"
-        # the rule
-        yield f"\t@$(cp) $< $@"
-        # make some room
-        yield ""
+        yield from self._clone(src=src, clone=clone, tag=tag, **kwds)
+        # publish
+        yield from self._publish(clone=clone, prefix=prefix, tag=tag, **kwds)
 
         # all done
         return
 
     @merlin.export
-    def source(self, plexus, library, file, counter, **kwds):
+    def source(self, plexus, library, file, counter, clone=None, language=None, **kwds):
         """
         Handle a {source} file
         """
@@ -320,7 +307,7 @@ class Library(
         # and the host
         host = plexus.pyre_host
         # get the source language
-        language = file.language.name
+        language = language or file.language.name
         # get the path to the header relative to the library root
         hpath = file.path
         # the library name
@@ -330,7 +317,7 @@ class Library(
         # form the path to the source
         src = merlin.primitives.path(f"$({name}.ws)") / hpath
         # form the clone location
-        clone = merlin.primitives.path(f"$({name}.src)") / hpath
+        clone = clone or (merlin.primitives.path(f"$({name}.src)") / hpath)
         # build the object module path
         obj = merlin.primitives.path(f"$({name}.build)") / host.object(
             stem="~".join(hpath)
@@ -348,39 +335,40 @@ class Library(
         yield ""
 
         # clone
-        yield renderer.commentLine(f"clone {src} to {clone}")
-        # add the dependency line
-        yield f"{clone}: {src} | {clone.parent}"
-        # log
-        yield f"\t@$(call log.action,clone,{tag})"
-        # the rule
-        yield f"\t@$(cp) $< $@"
-        # make some room
-        yield ""
-
-        # compile
-        yield renderer.commentLine(f"compile {clone} to {obj}")
-        # make the dependency line
-        yield f"{obj}: {clone} | $({name}.build)"
-        # log
-        yield f"\t@$(call log.action,{language},{tag})"
-        # generate the object module
-        yield f"\t@$(call {language}.compile,$<,$@)"
-        # make some room
-        yield ""
+        yield from self._clone(src=src, clone=clone, tag=tag, **kwds)
+        # compiler
+        yield from self._compile(
+            lib=name, language=language, clone=clone, obj=obj, tag=tag, **kwds
+        )
 
         # all done
         return
 
     @merlin.export
-    def template(self, file, **kwds):
+    def template(self, library, file, **kwds):
         """
         Handle a {template} asset
         """
-        # get the renderer
-        renderer = self.renderer
-        # mark
-        yield renderer.commentLine(f"template {file.path}")
+        return
+        # the library name
+        name = library.pyre_name
+        # the source path
+        source = file.path
+        # the clone path
+        clone = merlin.primitives.path(f"$({name}.src)") / source.parent / source.stem
+        # the asset classifier, a dict (suffix -> (category, language))
+        classifier = library.languages.classifier
+        # classify the target
+        category, language = classifier.get(clone.suffix, (None, None))
+        # and ask it to identify itself
+        yield from category.identify(
+            visitor=self,
+            library=library,
+            file=source,
+            clone=clone,
+            language=language,
+            **kwds,
+        )
         # all done
         return
 
@@ -410,6 +398,65 @@ class Library(
         return
 
     # helpers
+    def _clone(self, src, clone, tag, action="clone", method="$(cp) $< $@", **kwds):
+        """
+        Stage a workspace file
+        """
+        # get the renderer
+        renderer = self.renderer
+        # clone
+        yield renderer.commentLine(f"clone {src} to {clone}")
+        # add the dependency line
+        yield f"{clone}: {src} | {clone.parent}"
+        # log
+        yield f"\t@$(call log.action,{action},{tag})"
+        # the rule
+        yield f"\t@{method}"
+        # make some room
+        yield ""
+        # all done
+        return
+
+    def _compile(self, lib, language, clone, obj, tag, **kwds):
+        """
+        Compile a source file
+        """
+        # get the renderer
+        renderer = self.renderer
+        # compile
+        yield renderer.commentLine(f"compile {clone} to {obj}")
+        # make the dependency line
+        yield f"{obj}: {clone} | $({lib}.build)"
+        # log
+        yield f"\t@$(call log.action,{language},{tag})"
+        # generate the object module
+        yield f"\t@$(call {language}.compile,$<,$@)"
+        # make some room
+        yield ""
+
+        # all done
+        return
+
+    def _publish(self, clone, prefix, tag, **kwds):
+        """
+        Publish a header file
+        """
+        # get the renderer
+        renderer = self.renderer
+        # export
+        yield renderer.commentLine(f"export {clone} to {prefix}")
+        # add the dependency line
+        yield f"{prefix}: {clone} | {prefix.parent}"
+        # log
+        yield f"\t@$(call log.action,export,{tag})"
+        # the rule
+        yield f"\t@$(cp) $< $@"
+        # make some room
+        yield ""
+
+        # all done
+        return
+
     def _assignments(self, plexus, library):
         """
         Generate some library specific variable assignments
