@@ -125,6 +125,8 @@ jobs:
 
       - name: mm diagnostics
         run: |
+          echo " -- switching to the pyre home directory"
+          cd pyre
           echo " -- checking whether mm can run from here"
           echo now at: ${PWD}
           echo mm: ${mm}
