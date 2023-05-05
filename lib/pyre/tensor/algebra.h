@@ -151,7 +151,7 @@ namespace pyre::tensor {
 
     // tensor operator+ & & (implementation for tensors with same packing)
     template <typename T, class packingT, int... I, int... J>
-    constexpr void _vector_sum(const Tensor<T, packingT, I...> & y1, 
+    constexpr void _tensor_sum(const Tensor<T, packingT, I...> & y1, 
         const Tensor<T, packingT, I...> & y2, Tensor<T, packingT, I...> & result, 
         integer_sequence<J...>)
     {
@@ -167,7 +167,7 @@ namespace pyre::tensor {
         // instantiate the result
         Tensor<T, packingT, I...> result;
         constexpr int D = Tensor<T, packingT, I...>::size;
-        _vector_sum(y1, y2, result, make_integer_sequence<D> {});
+        _tensor_sum(y1, y2, result, make_integer_sequence<D> {});
         // all done
         return result;
     }
@@ -193,7 +193,7 @@ namespace pyre::tensor {
     {
         // write the result on y2
         constexpr int D = Tensor<T, packingT, I...>::size;
-        _vector_sum(y1, y2, y2, make_integer_sequence<D> {});
+        _tensor_sum(y1, y2, y2, make_integer_sequence<D> {});
         // all done
         return y2;
     }
@@ -299,7 +299,7 @@ namespace pyre::tensor {
         const Tensor<T, packingT, I...> & rhs) -> Tensor<T, packingT, I...> &
     {
         constexpr int D = Tensor<T, packingT, I...>::size;
-        _vector_sum(lhs, rhs, lhs, make_integer_sequence<D> {});
+        _tensor_sum(lhs, rhs, lhs, make_integer_sequence<D> {});
         // all done
         return lhs;
     }
