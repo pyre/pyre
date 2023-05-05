@@ -29,7 +29,7 @@ namespace pyre::tensor {
     template <int... I>
     using integer_sequence = std::integer_sequence<int, I...>;
 
-}
+} // namespace pyre::tensor
 
 
 #endif

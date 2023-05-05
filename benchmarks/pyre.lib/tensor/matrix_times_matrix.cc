@@ -19,7 +19,8 @@
 using timer_t = pyre::timers::process_timer_t;
 
 
-void matrix_times_matrix(int N)
+void
+matrix_times_matrix(int N)
 {
     // make a channel
     pyre::journal::info_t channel("tests.timer.matrix_times_matrix");
@@ -33,9 +34,9 @@ void matrix_times_matrix(int N)
     // ARRAY
 
     // array matrix
-    std::array<double, 9> tensor1_c {1.0, -1.0, 2.0, 1.0, 0.0, 1.0, 2.0, -1.0, 0.0};
-    std::array<double, 9> tensor2_c {1.0, -1.0, 2.0, 1.0, 0.0, 1.0, 2.0, -1.0, 0.0};
-    std::array<double, 9> result_c {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+    std::array<double, 9> tensor1_c { 1.0, -1.0, 2.0, 1.0, 0.0, 1.0, 2.0, -1.0, 0.0 };
+    std::array<double, 9> tensor2_c { 1.0, -1.0, 2.0, 1.0, 0.0, 1.0, 2.0, -1.0, 0.0 };
+    std::array<double, 9> result_c { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
 
     const auto size_rows = tensor1_c.size() / 3;
     // reset timer
@@ -43,15 +44,13 @@ void matrix_times_matrix(int N)
     // start timer
     t.start();
 
-    for (int n = 0; n < N; ++n) { 
+    for (int n = 0; n < N; ++n) {
         // matrix * matrix (array)
-        for (size_t i = 0; i < size_rows; ++i)
-        {
-            for (size_t j = 0; j < size_rows; ++j)
-            {
-                for (size_t k = 0; k < size_rows; ++k)
-                {
-                    result_c[j + i * size_rows] += tensor2_c[k + i * size_rows] * tensor1_c[j + k * size_rows];
+        for (size_t i = 0; i < size_rows; ++i) {
+            for (size_t j = 0; j < size_rows; ++j) {
+                for (size_t k = 0; k < size_rows; ++k) {
+                    result_c[j + i * size_rows] +=
+                        tensor2_c[k + i * size_rows] * tensor1_c[j + k * size_rows];
                 }
             }
         }
@@ -61,22 +60,19 @@ void matrix_times_matrix(int N)
     t.stop();
 
     // report
-    channel
-        << "array (for loop)" << pyre::journal::newline
-        << pyre::journal::indent(1) 
-        << "result = "
-        << result_c[0] << ", " << result_c[1] << ", " << result_c[2] << ", "
-        << result_c[3] << ", " << result_c[4] << ", " << result_c[5] << ", "
-        << result_c[6] << ", " << result_c[7] << ", " << result_c[8] << pyre::journal::newline
-        << "process time = " << t.ms() << " ms " << pyre::journal::newline
-        << pyre::journal::outdent(1) << pyre::journal::endl;
+    channel << "array (for loop)" << pyre::journal::newline << pyre::journal::indent(1)
+            << "result = " << result_c[0] << ", " << result_c[1] << ", " << result_c[2] << ", "
+            << result_c[3] << ", " << result_c[4] << ", " << result_c[5] << ", " << result_c[6]
+            << ", " << result_c[7] << ", " << result_c[8] << pyre::journal::newline
+            << "process time = " << t.ms() << " ms " << pyre::journal::newline
+            << pyre::journal::outdent(1) << pyre::journal::endl;
 
 
     // PYRE TENSOR
     // tensor matrix
-    pyre::tensor::matrix_t<3> tensor1 {1.0, -1.0, 2.0, 1.0, 0.0, 1.0, 2.0, -1.0, 0.0};
-    pyre::tensor::matrix_t<3> tensor2 {1.0, -1.0, 2.0, 1.0, 0.0, 1.0, 2.0, -1.0, 0.0};
-    pyre::tensor::matrix_t<3> result_tensor {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+    pyre::tensor::matrix_t<3> tensor1 { 1.0, -1.0, 2.0, 1.0, 0.0, 1.0, 2.0, -1.0, 0.0 };
+    pyre::tensor::matrix_t<3> tensor2 { 1.0, -1.0, 2.0, 1.0, 0.0, 1.0, 2.0, -1.0, 0.0 };
+    pyre::tensor::matrix_t<3> result_tensor { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
 
     // reset timer
     t.reset();
@@ -92,22 +88,20 @@ void matrix_times_matrix(int N)
     t.stop();
 
     // report
-    channel
-        << "pyre tensor" << pyre::journal::newline
-        << pyre::journal::indent(1) 
-        << "result = " << result_tensor << pyre::journal::newline
-        << "process time = " << t.ms() << " ms " << pyre::journal::newline
-        << pyre::journal::outdent(1) << pyre::journal::endl;
+    channel << "pyre tensor" << pyre::journal::newline << pyre::journal::indent(1)
+            << "result = " << result_tensor << pyre::journal::newline << "process time = " << t.ms()
+            << " ms " << pyre::journal::newline << pyre::journal::outdent(1) << pyre::journal::endl;
 
     // all done
     return;
 }
 
 
-int main() {
-
+int
+main()
+{
     // number of times to do operation
-    int N = 1<<25;
+    int N = 1 << 25;
 
     // matrix times matrix
     matrix_times_matrix(N);

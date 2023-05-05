@@ -13,9 +13,10 @@
 namespace pyre::tensor {
 
     // the tensor class
-    template <typename T, class packingT, int... I> class Tensor;
+    template <typename T, class packingT, int... I>
+    class Tensor;
 
-}
+} // namespace pyre::tensor
 
 
 #endif

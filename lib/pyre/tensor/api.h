@@ -1,7 +1,7 @@
 // -*- c++ -*-
 //
 // bianca giovanardi
-// (c) 2021 all rights reserved
+// (c) 1998-2023 all rights reserved
 
 
 // code guard
@@ -10,8 +10,7 @@
 
 
 // low level entities; you should probably stay away from them
-namespace pyre::tensor
-{
+namespace pyre::tensor {
     // typedef for real values
     using real = double;
 
@@ -33,7 +32,7 @@ namespace pyre::tensor
     // typedef for diagonal matrices
     template <int D, typename T = real>
     using diagonal_matrix_t = matrix_t<D, D, T, pyre::grid::diagonal_t<2>>;
-}
+} // namespace pyre::tensor
 
 
 #endif

@@ -15,15 +15,14 @@
 // constructor that assumes that the physical layout corresponds to the parameters given and
 // infers the nudge
 template <int N, template <typename, std::size_t> class containerT>
-constexpr
-pyre::grid::Diagonal<N, containerT>::
-Diagonal(shape_const_reference shape, index_const_reference origin, order_const_reference order) :
+constexpr pyre::grid::Diagonal<N, containerT>::Diagonal(
+    shape_const_reference shape, index_const_reference origin, order_const_reference order) :
     _shape { shape },
     _order { order },
     _origin { origin },
     _D { _shape[0] },
     // compute the nudge, defined as the negative offset of the origin
-    _nudge { - _initShift(_origin) }
+    _nudge { -_initShift(_origin) }
 {}
 
 
@@ -31,8 +30,7 @@ Diagonal(shape_const_reference shape, index_const_reference origin, order_const_
 // accessors for the user supplied information
 template <int N, template <typename, std::size_t> class containerT>
 constexpr auto
-pyre::grid::Diagonal<N, containerT>::
-shape() const -> shape_type
+pyre::grid::Diagonal<N, containerT>::shape() const -> shape_type
 {
     // easy enough
     return _shape;
@@ -41,8 +39,7 @@ shape() const -> shape_type
 
 template <int N, template <typename, std::size_t> class containerT>
 constexpr auto
-pyre::grid::Diagonal<N, containerT>::
-order() const -> order_type
+pyre::grid::Diagonal<N, containerT>::order() const -> order_type
 {
     // easy enough
     return _order;
@@ -51,8 +48,7 @@ order() const -> order_type
 
 template <int N, template <typename, std::size_t> class containerT>
 constexpr auto
-pyre::grid::Diagonal<N, containerT>::
-origin() const -> index_type
+pyre::grid::Diagonal<N, containerT>::origin() const -> index_type
 {
     // easy enough
     return _origin;
@@ -61,8 +57,7 @@ origin() const -> index_type
 
 template <int N, template <typename, std::size_t> class containerT>
 constexpr auto
-pyre::grid::Diagonal<N, containerT>::
-nudge() const -> difference_type
+pyre::grid::Diagonal<N, containerT>::nudge() const -> difference_type
 {
     // easy enough
     return _nudge;
@@ -71,8 +66,7 @@ nudge() const -> difference_type
 
 template <int N, template <typename, std::size_t> class containerT>
 constexpr auto
-pyre::grid::Diagonal<N, containerT>::
-cells() const -> std::size_t
+pyre::grid::Diagonal<N, containerT>::cells() const -> std::size_t
 {
     // the number of cells in the diagonal plus a cell to store the off-diagonal zero
     return _D + 1;
@@ -82,18 +76,15 @@ cells() const -> std::size_t
 // from {difference_type} to {index_type}
 template <int N, template <typename, std::size_t> class containerT>
 constexpr auto
-pyre::grid::Diagonal<N, containerT>::
-index(difference_type offset) const -> index_type
+pyre::grid::Diagonal<N, containerT>::index(difference_type offset) const -> index_type
 {
     // helper function to build an {index_type} repeating {offset} N times
-    constexpr auto _getIndex = []<int... I>(difference_type offset, 
-        integer_sequence<I...>) 
-        -> index_type
+    constexpr auto _getIndex =
+        []<int... I>(difference_type offset, integer_sequence<I...>)->index_type
     {
         // helper template function returning {offset}
-        constexpr auto _wrap = []<int>(difference_type offset)->difference_type 
-        { 
-            return  offset; 
+        constexpr auto _wrap = []<int>(difference_type offset) -> difference_type {
+            return offset;
         };
 
         // build an index of N times {offset}
@@ -105,13 +96,12 @@ index(difference_type offset) const -> index_type
 }
 
 template <int N, template <typename, std::size_t> class containerT>
-constexpr auto 
-pyre::grid::Diagonal<N, containerT>::
-_isDiagonalIndex (index_const_reference index) -> bool
+constexpr auto
+pyre::grid::Diagonal<N, containerT>::_isDiagonalIndex(index_const_reference index) -> bool
 {
     // helper function needed to check if it is a diagonal index
-    auto _checkDiagonalIndex = []<int... I>(index_const_reference index, 
-        integer_sequence<I...>) -> bool
+    auto _checkDiagonalIndex =
+        []<int... I>(index_const_reference index, integer_sequence<I...>)->bool
     {
         // if all indices are equal
         if (((index[I] == index[I + 1]) && ...)) {
@@ -129,12 +119,10 @@ _isDiagonalIndex (index_const_reference index) -> bool
 // from {index_type} to {difference_type}
 template <int N, template <typename, std::size_t> class containerT>
 constexpr auto
-pyre::grid::Diagonal<N, containerT>::
-offset(index_const_reference index) const -> difference_type
+pyre::grid::Diagonal<N, containerT>::offset(index_const_reference index) const -> difference_type
 {
     // if {index} is on the diagonal
-    if(_isDiagonalIndex(index))
-    {
+    if (_isDiagonalIndex(index)) {
         // the offset is the diagonal index, shifted by the _nudge (i.e. the offset of the {origin})
         return index[0] + _nudge;
     }
@@ -147,8 +135,7 @@ offset(index_const_reference index) const -> difference_type
 // syntactic sugar for the packing isomorphism
 template <int N, template <typename, std::size_t> class containerT>
 constexpr auto
-pyre::grid::Diagonal<N, containerT>::
-operator[](difference_type offset) const -> index_type
+pyre::grid::Diagonal<N, containerT>::operator[](difference_type offset) const -> index_type
 {
     // easy enough
     return index(offset);
@@ -157,8 +144,8 @@ operator[](difference_type offset) const -> index_type
 
 template <int N, template <typename, std::size_t> class containerT>
 constexpr auto
-pyre::grid::Diagonal<N, containerT>::
-operator[](index_const_reference index) const -> difference_type
+pyre::grid::Diagonal<N, containerT>::operator[](index_const_reference index) const
+    -> difference_type
 {
     // easy enough
     return offset(index);
@@ -168,8 +155,7 @@ operator[](index_const_reference index) const -> difference_type
 // iteration support
 template <int N, template <typename, std::size_t> class containerT>
 constexpr auto
-pyre::grid::Diagonal<N, containerT>::
-begin() const -> index_iterator
+pyre::grid::Diagonal<N, containerT>::begin() const -> index_iterator
 {
     // make an iterator that generates index in my packing {order}, starting at my {origin}
     return index_iterator(shape(), order(), origin());
@@ -178,8 +164,7 @@ begin() const -> index_iterator
 
 template <int N, template <typename, std::size_t> class containerT>
 constexpr auto
-pyre::grid::Diagonal<N, containerT>::
-begin(index_const_reference step) const -> index_iterator
+pyre::grid::Diagonal<N, containerT>::begin(index_const_reference step) const -> index_iterator
 {
     // make an iterator that generates index in my packing {order}, starting at my {origin}
     return index_iterator(shape(), order(), origin(), step);
@@ -188,8 +173,7 @@ begin(index_const_reference step) const -> index_iterator
 
 template <int N, template <typename, std::size_t> class containerT>
 constexpr auto
-pyre::grid::Diagonal<N, containerT>::
-end() const -> index_iterator
+pyre::grid::Diagonal<N, containerT>::end() const -> index_iterator
 {
     // form the end of the container
     auto end = _origin + _shape;
@@ -201,8 +185,7 @@ end() const -> index_iterator
 // static interface
 template <int N, template <typename, std::size_t> class containerT>
 constexpr auto
-pyre::grid::Diagonal<N, containerT>::
-rank() -> int
+pyre::grid::Diagonal<N, containerT>::rank() -> int
 {
     // easy enough
     return N;
@@ -212,8 +195,7 @@ rank() -> int
 // compute the shift necessary so that {origin}, i.e. the smallest index, maps to offset zero
 template <int N, template <typename, std::size_t> class containerT>
 constexpr auto
-pyre::grid::Diagonal<N, containerT>::
-_initShift(index_const_reference origin) -> difference_type
+pyre::grid::Diagonal<N, containerT>::_initShift(index_const_reference origin) -> difference_type
 {
     // assert that the origin is on the diagonal
     assert(_isDiagonalIndex(origin));

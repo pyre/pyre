@@ -53,7 +53,7 @@ namespace pyre::tensor {
     struct repacking<pyre::grid::Symmetric<N, containerT>, pyre::grid::Diagonal<N, containerT>> {
         using packing_type = pyre::grid::Symmetric<N, containerT>;
     };
-}
+} // namespace pyre::tensor
 
 
 // end of file
