@@ -4,7 +4,6 @@
 
 name: cmake
 on:
-  pull_request:
   push:
     branches:
       - main
@@ -19,10 +18,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-22.04]
-        target: [RelWithDebInfo]
-        python: ["3.11"]
-        compiler: ["gcc-12"]
+        os: [ubuntu-20.04, ubuntu-22.04]
+        target: [Debug, Release, RelWithDebInfo]
+        python: ["3.7", "3.8", "3.9", "3.10", "3.11"]
+        compiler: [
+          "gcc-9", "gcc-10", "gcc-11", "gcc-12",
+          "clang-10", "clang-11", "clang-12", "clang-13", "clang-14"
+        ]
         # define the names of the compilers
         include:
           - compiler: gcc-9
@@ -161,7 +163,6 @@ jobs:
         run: |
           echo " -- switching to the pyre home directory"
           cd pyre
-          git fetch ${GITHUB_REF}
           echo " -- checking out the correct ref"
           git checkout ${GITHUB_SHA}
 
