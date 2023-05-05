@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // bianca giovanardi
-// (c) 2021 all rights reserved
+// (c) 1998-2023 all rights reserved
 //
 
 
