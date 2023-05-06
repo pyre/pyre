@@ -44,7 +44,7 @@ namespace pyre::tensor {
         const Tensor<T, packingT2, I...> & rhs) -> bool
     {
         // the repacking type
-        using repacking_t = typename repacking<packingT1, packingT2>::packing_type;
+        using repacking_t = typename repacking_sum<packingT1, packingT2>::packing_type;
         // the repacked tensor type
         using repacked_tensor_t = Tensor<T, repacking_t, I...>;
         // the number of components of the repacked tensor
@@ -141,11 +141,11 @@ namespace pyre::tensor {
         constexpr auto _tensor_sum(
             const Tensor<T, packingT1, I...> & y1, 
             const Tensor<T, packingT2, I...> & y2, 
-            Tensor<T, typename repacking<packingT1, packingT2>::packing_type, I...> & result)
-            -> Tensor<T, typename repacking<packingT1, packingT2>::packing_type, I...>
+            Tensor<T, typename repacking_sum<packingT1, packingT2>::packing_type, I...> & result)
+            -> Tensor<T, typename repacking_sum<packingT1, packingT2>::packing_type, I...>
         {
             // the repacking type
-            using repacking_t = typename repacking<packingT1, packingT2>::packing_type;
+            using repacking_t = typename repacking_sum<packingT1, packingT2>::packing_type;
             // the repacked tensor type
             using repacked_tensor_t = Tensor<T, repacking_t, I...>;
             // the number of components of the repacked tensor
@@ -196,10 +196,10 @@ namespace pyre::tensor {
     template <typename T, class packingT1, class packingT2, int... I>
     constexpr auto operator+(const Tensor<T, packingT1, I...> & y1, 
         const Tensor<T, packingT2, I...> & y2) 
-        -> Tensor<T, typename repacking<packingT1, packingT2>::packing_type, I...>
+        -> Tensor<T, typename repacking_sum<packingT1, packingT2>::packing_type, I...>
     {
         // the repacking type
-        using repacking_t = typename repacking<packingT1, packingT2>::packing_type;
+        using repacking_t = typename repacking_sum<packingT1, packingT2>::packing_type;
         // typedef for the repacked tensor based on {packingT1} and {packingT2}
         using repacked_tensor_t = Tensor<T, repacking_t, I...>;
         // instantiate the result
@@ -213,7 +213,8 @@ namespace pyre::tensor {
     template <typename T, class packingT1, class packingT2, int... I>
     constexpr auto operator+(const Tensor<T, packingT1, I...> & y1, 
         Tensor<T, packingT2, I...> && y2) -> Tensor<T, packingT2, I...>
-        requires (std::is_same_v<typename repacking<packingT1, packingT2>::packing_type, packingT2>)
+        requires (std::is_same_v<typename repacking_sum<packingT1, 
+            packingT2>::packing_type, packingT2>)
     {
         // compute component-wise summation and write the result on y2
         return _tensor_sum(y1, y2, y2);
@@ -235,7 +236,7 @@ namespace pyre::tensor {
         -> auto
     {
         // typedef for the repacked tensor based on {packingT1} and {packingT2}
-        using repacking_t = typename repacking<packingT1, packingT2>::packing_type;
+        using repacking_t = typename repacking_sum<packingT1, packingT2>::packing_type;
         // if the repacking type is the packing type of y1
         if constexpr(std::is_same_v<repacking_t, packingT1>) {
             // pass down y1 as temporary and y2 as const reference 
