@@ -38,43 +38,46 @@ namespace pyre::tensor {
         return tensor / norm(tensor);
     }
 
-    namespace {
-        // operator== (implementation for tensors with same packing)
-        template <typename T, class packingT, int... I, int... J>
-        constexpr auto _tensor_equal(const Tensor<T, packingT, I...> & lhs, 
-            const Tensor<T, packingT, I...> & rhs, integer_sequence<J...>) -> bool
-        {
-            if (((lhs[J] == rhs[J]) && ...)) return true;
-            return false;
-        }
-    }
-
-    // tensors operator== (for tensors with same packing)
-    template <typename T, class packingT, int... I>
-    constexpr auto operator==(const Tensor<T, packingT, I...> & lhs, 
-        const Tensor<T, packingT, I...> & rhs) -> bool
-    {
-        constexpr int D = Tensor<T, packingT, I...>::size;
-        return _tensor_equal(lhs, rhs, make_integer_sequence<D> {});
-    }
-
-    // TOFIX: version for different packings should not iterate on the packing 
-    // tensors operator== (for tensors with different packing)
+    // tensors operator==
     template <typename T, class packingT1, class packingT2, int... I>
     constexpr auto operator==(const Tensor<T, packingT1, I...> & lhs, 
         const Tensor<T, packingT2, I...> & rhs) -> bool
-        requires(!std::is_same_v<packingT1, packingT2>)
     {
-        // typedef for the repacked tensor based on {packingT1} and {packingT2}
-        using repacked_tensor_t = Tensor<T, 
-            typename repacking<packingT1, packingT2>::packing_type, I...>;
-        // iterate on the packing
-        for (auto idx : repacked_tensor_t::layout()) {
-            if(lhs[idx] != rhs[idx]){
-                return false;
-            }
-        }
-        return true;
+        // the repacking type
+        using repacking_t = typename repacking<packingT1, packingT2>::packing_type;
+        // the repacked tensor type
+        using repacked_tensor_t = Tensor<T, repacking_t, I...>;
+        // the number of components of the repacked tensor
+        constexpr int D = repacked_tensor_t::size;
+        // the type of tensor {lhs}
+        using tensor1_t = Tensor<T, packingT1, I...>;
+        // the type of tensor {rhs}
+        using tensor2_t = Tensor<T, packingT2, I...>;
+           
+        // helper function to perform component-by-component comparison
+        constexpr auto _component_wise_comparison = []<int... J>
+        (const auto & lhs, const auto & rhs, integer_sequence<J...>) -> bool
+        {
+            // helper function to sum of component K (enumeration relative to the repacking)
+            constexpr auto _component_equal = []<int K>(const auto & lhs, const auto & rhs)
+                -> bool
+            {
+                // get the index corresponding to the offset K in the repacking
+                constexpr auto index = repacked_tensor_t::layout().index(K);
+                // map the index into the offset for the packing of y1 
+                constexpr auto K1 = tensor1_t::layout().offset(index);
+                // map the index into the offset for the packing of y2 
+                constexpr auto K2 = tensor2_t::layout().offset(index);
+                // all done
+                return lhs[K1] == rhs[K2];
+            };
+
+            // return component-wise comparison
+            return (((_component_equal.template operator()<J>(lhs, rhs)) && ...));
+        };
+
+        // perform component-by-component comparison
+        return _component_wise_comparison(lhs, rhs, make_integer_sequence<D> {});
     }
 
     namespace {
