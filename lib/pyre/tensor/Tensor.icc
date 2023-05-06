@@ -48,6 +48,32 @@ constexpr pyre::tensor::Tensor<T, packingT, I...>::~Tensor()
 {}
 
 template <typename T, class packingT, int... I>
+template <int... J>
+constexpr const T &
+pyre::tensor::Tensor<T, packingT, I...>::at() const
+{
+    // pack the parameters into an index
+    constexpr index_t index { J... };
+    // get the offset that corresponds to this {index}
+    constexpr auto offset = _layout[index];
+    // get and return the value
+    return _data.at(offset);
+}
+
+template <typename T, class packingT, int... I>
+template <int... J>
+constexpr T &
+pyre::tensor::Tensor<T, packingT, I...>::at()
+{
+    // pack the parameters into an index
+    constexpr index_t index { J... };
+    // get the offset that corresponds to this {index}
+    constexpr auto offset = _layout[index];
+    // get and return the value
+    return _data.at(offset);
+}
+
+template <typename T, class packingT, int... I>
 constexpr const T &
 pyre::tensor::Tensor<T, packingT, I...>::operator[](index_t i) const
 {
