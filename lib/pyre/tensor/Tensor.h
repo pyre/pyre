@@ -90,12 +90,6 @@ namespace pyre::tensor {
         constexpr const T & operator[](int) const;
         constexpr T & operator[](int);
 
-        // components template accessors with parameter pack
-        template <int... J>
-        constexpr const T & at() const;
-        template <int... J>
-        constexpr T & at();
-
         // cast to underlying type T (enable if S = 1, i.e. scalar)
         constexpr operator T() const
             requires(S == 1);
