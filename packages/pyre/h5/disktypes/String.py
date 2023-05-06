@@ -5,11 +5,11 @@
 
 
 # my superclass is in libh5
-import pyre
+from .. import libh5
 
 
 # arrays
-class String(pyre.libh5.datatypes.StrType):
+class String(libh5.datatypes.StrType):
     """
     An h5 StrType
     """

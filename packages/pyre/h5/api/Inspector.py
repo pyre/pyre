@@ -15,16 +15,17 @@ from .Dataset import Dataset
 # typing
 import pyre
 import typing
+from .. import libh5
 from .. import disktypes
 from .. import memtypes
 from .. import schema
 from .Object import Object
 
 # type aliases
-H5Group = pyre.libh5.Group
-H5DataSet = pyre.libh5.DataSet
-H5DataType = pyre.libh5.datatypes.DataType
-H5ObjectType = pyre.libh5.ObjectType
+H5Group = libh5.Group
+H5DataSet = libh5.DataSet
+H5DataType = libh5.datatypes.DataType
+H5ObjectType = libh5.ObjectType
 
 
 # libh5 bridge mixin
@@ -317,7 +318,7 @@ class Inspector:
         """
         # check for a complex number
         if h5type.members == 2 and (
-            h5type.type(0).cell == h5type.type(1).cell == pyre.libh5.DataSetType.float
+            h5type.type(0).cell == h5type.type(1).cell == libh5.DataSetType.float
         ):
             # get the total bits
             bits = sum(h5type.type(n).precision for n in range(2))
@@ -358,7 +359,7 @@ class Inspector:
         Build an {int} descriptor
         """
         # build the tags
-        sign = "u" if h5type.sign == pyre.libh5.Sign.unsigned else ""
+        sign = "u" if h5type.sign == libh5.Sign.unsigned else ""
         bits = h5type.precision
         # assemble the factory name
         factory = f"{sign}int{bits}"

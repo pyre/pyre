@@ -5,11 +5,11 @@
 
 
 # my superclass is in libh5
-import pyre
+from .. import libh5
 
 
 # enums
-class Enum(pyre.libh5.datatypes.EnumType):
+class Enum(libh5.datatypes.EnumType):
     """
     An h5 EnumType
     """

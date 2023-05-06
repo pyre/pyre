@@ -5,11 +5,11 @@
 
 
 # my superclass is in libh5
-import pyre
+from .. import libh5
 
 
 # compound types
-class Compound(pyre.libh5.datatypes.CompType):
+class Compound(libh5.datatypes.CompType):
     """
     An h5 CompType
     """

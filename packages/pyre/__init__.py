@@ -272,9 +272,6 @@ from .framework.exceptions import PyreError
 executive = boot()
 # if the framework booted properly
 if executive:
-    # low level stuff
-    from .extensions import libh5
-
     # package managers
     from . import externals
 

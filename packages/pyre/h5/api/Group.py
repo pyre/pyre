@@ -14,11 +14,11 @@ from .Object import Object
 # typing
 import typing
 import collections.abc
-from .. import schema
+from .. import libh5
 from .Dataset import Dataset
 
 # type aliases
-H5ObjectType = pyre.libh5.ObjectType
+H5ObjectType = libh5.ObjectType
 
 
 # a basic h5 object
