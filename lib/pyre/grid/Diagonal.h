@@ -9,7 +9,7 @@
 #define pyre_grid_Diagonal_h
 
 
-// encapsulation of the symmetric packing strategy
+// encapsulation of the diagonal packing strategy
 // a packing strategy provides the isomorphism
 //
 //    Z_s1 x ... x Z_sn -> Z_(s1 * ... * sn)
@@ -19,8 +19,8 @@ class pyre::grid::Diagonal {
     // types
 public:
     // alias for me
-    using symmetric_type = Diagonal<N, containerT>;
-    using symmetric_const_reference = const symmetric_type &;
+    using diagonal_type = Diagonal<N, containerT>;
+    using diagonal_const_reference = const diagonal_type &;
     // my parts
     // rank order
     using order_type = Order<containerT<int, N>>;
@@ -34,7 +34,7 @@ public:
     // offsets
     using difference_type = typename index_type::difference_type;
     // iterators
-    using index_iterator = IndexIterator<symmetric_type>;
+    using index_iterator = IndexIterator<diagonal_type>;
 
     // metamethods
 public:
