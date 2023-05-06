@@ -81,7 +81,6 @@ namespace pyre::tensor {
     }
 
     namespace {
-        // Algebraic operations on vectors, tensors, ...
         // tensor times scalar (implementation)
         template <typename T2, typename T, class packingT, int... I, int... J>
         constexpr void _tensor_times_scalar(T2 a, const Tensor<T, packingT, I...> & y, 
@@ -137,7 +136,7 @@ namespace pyre::tensor {
 
     namespace
     {
-        // tensor operator+ & &
+        // tensor plus tensor (implementation)
         template <typename T, class packingT1, class packingT2, int... I>
         constexpr auto _tensor_sum(
             const Tensor<T, packingT1, I...> & y1, 
@@ -193,7 +192,7 @@ namespace pyre::tensor {
         }
     }
 
-    // tensor operator+ & &
+    // tensor plus tensor
     template <typename T, class packingT1, class packingT2, int... I>
     constexpr auto operator+(const Tensor<T, packingT1, I...> & y1, 
         const Tensor<T, packingT2, I...> & y2) 
@@ -210,7 +209,7 @@ namespace pyre::tensor {
         return _tensor_sum(y1, y2, result);
     }
 
-    // tensor operator+ & &&
+    // tensor plus (temporary) tensor
     template <typename T, class packingT1, class packingT2, int... I>
     constexpr auto operator+(const Tensor<T, packingT1, I...> & y1, 
         Tensor<T, packingT2, I...> && y2) -> Tensor<T, packingT2, I...>
@@ -220,7 +219,7 @@ namespace pyre::tensor {
         return _tensor_sum(y1, y2, y2);
     }
 
-    // tensor operator+ && &
+    // (temporary) tensor plus tensor
     template <typename T, class packingT1, class packingT2, int... I>
     constexpr auto operator+(Tensor<T, packingT1, I...> && y1, 
         const Tensor<T, packingT2, I...> & y2)
@@ -230,7 +229,7 @@ namespace pyre::tensor {
         return y2 + std::move(y1);
     }
 
-    // tensor operator+ && &&
+    // (temporary) tensor plus (temporary) tensor
     template <typename T, class packingT1, class packingT2, int... I>
     constexpr auto operator+(Tensor<T, packingT1, I...> && y1, Tensor<T, packingT2, I...> && y2)
         -> auto
@@ -248,7 +247,7 @@ namespace pyre::tensor {
         }        
     }
 
-    // tensor unary operator- &
+    // (unary) minus tensor
     template <typename T, class packingT, int... I>
     constexpr auto operator-(const Tensor<T, packingT, I...> & y) -> Tensor<T, packingT, I...>
     {
@@ -269,7 +268,7 @@ namespace pyre::tensor {
         return _operator_minus(y, make_integer_sequence<D> {});
     }
 
-    // tensor unary operator- &&
+    // (unary) minus (temporary) tensor
     template <typename T, class packingT, int... I>
     constexpr auto operator-(Tensor<T, packingT, I...> && y) -> auto
     {
@@ -279,7 +278,7 @@ namespace pyre::tensor {
         return y;
     }  
 
-    // tensor operator- & &
+    // tensor minus tensor
     template <typename T, class packingT1, class packingT2, int... I>
     constexpr auto operator-(const Tensor<T, packingT1, I...> & y1, 
         const Tensor<T, packingT2, I...> & y2) -> auto
@@ -288,7 +287,7 @@ namespace pyre::tensor {
         return y1 + (-y2);
     }
 
-    // tensor operator- && &
+    // (temporary) tensor minus tensor
     template <typename T, class packingT1, class packingT2, int... I>
     constexpr auto operator-(Tensor<T, packingT1, I...> && y1, 
         const Tensor<T, packingT2, I...> & y2) -> auto
@@ -297,7 +296,7 @@ namespace pyre::tensor {
         return std::move(y1) + (-y2);
     }
 
-    // tensor operator- & &&
+    // tensor minus (temporary) tensor
     template <typename T, class packingT1, class packingT2, int... I>
     constexpr auto operator-(const Tensor<T, packingT1, I...> & y1, 
         Tensor<T, packingT2, I...> && y2) -> auto
@@ -306,7 +305,7 @@ namespace pyre::tensor {
         return y1 + (-std::move(y2));
     }
 
-    // tensor operator- && &&
+    // (temporary) tensor minus (temporary) tensor
     template <typename T, class packingT1, class packingT2, int... I>
     constexpr auto operator-(Tensor<T, packingT1, I...> && y1, Tensor<T, packingT2, I...> && y2)
         -> auto
@@ -315,7 +314,7 @@ namespace pyre::tensor {
         return std::move(y1) + std::move(-std::move(y2));
     }
 
-    // tensor operator+=
+    // tensor plus equal tensor
     template <typename T, class packingT1, int... I, class TENSOR>
     constexpr auto operator+=(Tensor<T, packingT1, I...> & lhs, 
         TENSOR && rhs) -> Tensor<T, packingT1, I...> & 
@@ -324,7 +323,7 @@ namespace pyre::tensor {
         return lhs;
     }
 
-    // Tensor operator-=
+    // tensor minus equal tensor
     template <typename T, class packingT1, int... I, class TENSOR>
     constexpr auto operator-=(Tensor<T, packingT1, I...> & lhs, TENSOR && rhs)
     -> Tensor<T, packingT1, I...> &
@@ -333,6 +332,7 @@ namespace pyre::tensor {
         return lhs;
     }
 
+    // tensor divided scalar
     template <typename T2, typename T, class packingT, int... I>
     constexpr auto operator/(const Tensor<T, packingT, I...> & y, T2 a) -> Tensor<T, packingT, I...>
     requires(Tensor<T, packingT, I...>::size != 1 && std::convertible_to<T2, T>)
@@ -340,6 +340,7 @@ namespace pyre::tensor {
         return (1.0 / a) * y;
     }
 
+    // (temporary) tensor divided scalar
     template <typename T2, typename T, class packingT, int... I>
     constexpr auto operator/(Tensor<T, packingT, I...> && y, T2 a) -> Tensor<T, packingT, I...>
     requires(Tensor<T, packingT, I...>::size != 1 && std::convertible_to<T2, T>)
