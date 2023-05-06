@@ -38,13 +38,15 @@ namespace pyre::tensor {
         return tensor / norm(tensor);
     }
 
-    // operator== (implementation for tensors with same packing)
-    template <typename T, class packingT, int... I, int... J>
-    constexpr auto _tensor_equal(const Tensor<T, packingT, I...> & lhs, 
-        const Tensor<T, packingT, I...> & rhs, integer_sequence<J...>) -> bool
-    {
-        if (((lhs[J] == rhs[J]) && ...)) return true;
-        return false;
+    namespace {
+        // operator== (implementation for tensors with same packing)
+        template <typename T, class packingT, int... I, int... J>
+        constexpr auto _tensor_equal(const Tensor<T, packingT, I...> & lhs, 
+            const Tensor<T, packingT, I...> & rhs, integer_sequence<J...>) -> bool
+        {
+            if (((lhs[J] == rhs[J]) && ...)) return true;
+            return false;
+        }
     }
 
     // tensors operator== (for tensors with same packing)
@@ -75,15 +77,17 @@ namespace pyre::tensor {
         return true;
     }
 
-    // Algebraic operations on vectors, tensors, ...
-    // tensor times scalar (implementation)
-    template <typename T2, typename T, class packingT, int... I, int... J>
-    constexpr void _tensor_times_scalar(T2 a, const Tensor<T, packingT, I...> & y, 
-        Tensor<T, packingT, I...> & result, integer_sequence<J...>) 
-        requires (std::convertible_to<T2, T>)
-    {
-        ((result[J] = y[J] * a), ...);
-        return;
+    namespace {
+        // Algebraic operations on vectors, tensors, ...
+        // tensor times scalar (implementation)
+        template <typename T2, typename T, class packingT, int... I, int... J>
+        constexpr void _tensor_times_scalar(T2 a, const Tensor<T, packingT, I...> & y, 
+            Tensor<T, packingT, I...> & result, integer_sequence<J...>) 
+            requires (std::convertible_to<T2, T>)
+        {
+            ((result[J] = y[J] * a), ...);
+            return;
+        }
     }
 
     // scalar times tensor
@@ -128,59 +132,62 @@ namespace pyre::tensor {
         return a * std::move(y);
     }
 
-    // tensor operator+ & &
-    template <typename T, class packingT1, class packingT2, int... I>
-    constexpr auto _tensor_sum(
-        const Tensor<T, packingT1, I...> & y1, 
-        const Tensor<T, packingT2, I...> & y2, 
-        Tensor<T, typename repacking<packingT1, packingT2>::packing_type, I...> & result)
-        -> Tensor<T, typename repacking<packingT1, packingT2>::packing_type, I...>
+    namespace
     {
-        // the repacking type
-        using repacking_t = typename repacking<packingT1, packingT2>::packing_type;
-        // the repacked tensor type
-        using repacked_tensor_t = Tensor<T, repacking_t, I...>;
-        // the number of components of the repacked tensor
-        constexpr int D = repacked_tensor_t::size;
-        // the type of tensor y1
-        using tensor1_t = Tensor<T, packingT1, I...>;
-        // the type of tensor y2
-        using tensor2_t = Tensor<T, packingT2, I...>;
-
-        // helper function to perform component-by-component sum
-        constexpr auto _component_wise_sums = []<int... J>
-        (const auto & y1, const auto & y2, auto & result, integer_sequence<J...>)
+        // tensor operator+ & &
+        template <typename T, class packingT1, class packingT2, int... I>
+        constexpr auto _tensor_sum(
+            const Tensor<T, packingT1, I...> & y1, 
+            const Tensor<T, packingT2, I...> & y2, 
+            Tensor<T, typename repacking<packingT1, packingT2>::packing_type, I...> & result)
+            -> Tensor<T, typename repacking<packingT1, packingT2>::packing_type, I...>
         {
-            // helper function to sum of component K (enumeration relative to the repacking)
-            constexpr auto _component_sum = []<int K>(const auto & y1, const auto & y2, 
-                auto & result)
-            {
-                // get the index corresponding to the offset K in the repacking
-                constexpr auto index = repacked_tensor_t::layout().index(K);
-                // map the index into the offset for the packing of y1 
-                constexpr auto K1 = tensor1_t::layout().offset(index);
-                // map the index into the offset for the packing of y2 
-                constexpr auto K2 = tensor2_t::layout().offset(index);
+            // the repacking type
+            using repacking_t = typename repacking<packingT1, packingT2>::packing_type;
+            // the repacked tensor type
+            using repacked_tensor_t = Tensor<T, repacking_t, I...>;
+            // the number of components of the repacked tensor
+            constexpr int D = repacked_tensor_t::size;
+            // the type of tensor y1
+            using tensor1_t = Tensor<T, packingT1, I...>;
+            // the type of tensor y2
+            using tensor2_t = Tensor<T, packingT2, I...>;
 
-                // perform the sum of the corresponding entries
-                result[K] = y1[K1] + y2[K2];
+            // helper function to perform component-by-component sum
+            constexpr auto _component_wise_sums = []<int... J>
+            (const auto & y1, const auto & y2, auto & result, integer_sequence<J...>)
+            {
+                // helper function to sum of component K (enumeration relative to the repacking)
+                constexpr auto _component_sum = []<int K>(const auto & y1, const auto & y2, 
+                    auto & result)
+                {
+                    // get the index corresponding to the offset K in the repacking
+                    constexpr auto index = repacked_tensor_t::layout().index(K);
+                    // map the index into the offset for the packing of y1 
+                    constexpr auto K1 = tensor1_t::layout().offset(index);
+                    // map the index into the offset for the packing of y2 
+                    constexpr auto K2 = tensor2_t::layout().offset(index);
+
+                    // perform the sum of the corresponding entries
+                    result[K] = y1[K1] + y2[K2];
+
+                    // all done
+                    return;
+                };
+
+                // sum over each component J = 0, ..., size of repacking
+                ((_component_sum.template operator()<J>(y1, y2, result)), ...);
 
                 // all done
                 return;
             };
 
-            // sum over each component J = 0, ..., size of repacking
-            ((_component_sum.template operator()<J>(y1, y2, result)), ...);
+            // perform component-by-component sum
+            _component_wise_sums(y1, y2, result, make_integer_sequence<D> {});
 
             // all done
-            return;
-        };
-
-        // perform component-by-component sum
-        _component_wise_sums(y1, y2, result, make_integer_sequence<D> {});
-
-        // all done
-        return result;
+            return result;
+        }
     }
 
     // tensor operator+ & &
