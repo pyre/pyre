@@ -34,7 +34,7 @@ determinant_2D(int N)
     // ARRAY
 
     // array tensor
-    std::array<double, 9> tensor_c { 1.0, -1.0, 2.0, 1.0 };
+    std::array<double, 4> tensor_c { 1.0, -1.0, 2.0, 1.0 };
     double result_c = 0;
 
     // reset timer
@@ -57,7 +57,7 @@ determinant_2D(int N)
 
 
     // PYRE TENSOR
-    // tensor vector
+    // tensor matrix
     pyre::tensor::matrix_t<2> tensor { 1.0, -1.0, 2.0, 1.0 };
     pyre::tensor::real result_tensor = 0.;
 
@@ -124,7 +124,7 @@ determinant_3D(int N)
 
 
     // PYRE TENSOR
-    // tensor vector
+    // tensor matrix
     pyre::tensor::matrix_t<3> tensor { 1.0, -1.0, 2.0, 1.0, 0.0, 1.0, -1.0, 2.0, -2.0 };
     pyre::tensor::real result_tensor = 0.;
 
@@ -189,7 +189,7 @@ determinant_3D_diagonal(int N)
 
 
     // PYRE TENSOR
-    // tensor vector
+    // tensor matrix
     pyre::tensor::diagonal_matrix_t<3> tensor { 1.0, -1.0, 2.0 };
     pyre::tensor::real result_tensor = 0.;
 
