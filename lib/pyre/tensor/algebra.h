@@ -350,30 +350,33 @@ namespace pyre::tensor {
     }
 
     // builds a square matrix with all zeros except the K-th row is equal to v
-    template <int K, int D, typename T, class packingT>
-    constexpr auto matrix_row(const vector_t<D, T> & v) -> matrix_t<D, D, T, packingT>
+    template <int K, int D, typename T>
+    constexpr auto matrix_row(const vector_t<D, T> & v) -> matrix_t<D, D, T>
     {
-        constexpr auto _fill_matrix_row = []<int... I>(
-            matrix_t<D, D, T, packingT> & A, const vector_t<D, T> & v, integer_sequence<I...>) 
-            -> matrix_t<D, D, T, packingT>
+        // the type of the matrix to be returned 
+        using matrix_result_t = matrix_t<D, D, T>;
+
+        constexpr auto _fill_matrix_row = []<int... I>(matrix_result_t & A, 
+            const vector_t<D, T> & v, integer_sequence<I...>) -> matrix_result_t
         {
-            ((A[{K, I}] = v[{ I }]), ...);
+            ((A[matrix_result_t::template getOffset<K, I>()] = v[{ I }]), ...);
             return A;
         };
         // fill row K of a zero matrix with vector v
-        return _fill_matrix_row(matrix_t<D, D, T, packingT>::zero, v, 
-            make_integer_sequence<D> {});
+        return _fill_matrix_row(matrix_result_t::zero, v, make_integer_sequence<D> {});
     }
 
     // builds a square matrix with all zeros except the K-th column is equal to v
     template <int K, int D, typename T>
     constexpr auto matrix_column(const vector_t<D, T> & v) -> matrix_t<D, D, T>
     {
-        constexpr auto _fill_matrix_column = []<int... I>(
-            matrix_t<D, D, T> A, const vector_t<D, T> & v, integer_sequence<I...>) 
-            -> matrix_t<D, D, T>
+        // the type of the matrix to be returned 
+        using matrix_result_t = matrix_t<D, D, T>;
+
+        constexpr auto _fill_matrix_column = []<int... I>(matrix_result_t A, 
+            const vector_t<D, T> & v, integer_sequence<I...>) -> matrix_result_t
         {
-            ((A[{I, K}] = v[{ I }]), ...);
+            ((A[matrix_result_t::template getOffset<I, K>()] = v[{ I }]), ...);
             return A;
         };
         // fill column K of a zero matrix with vector v
@@ -404,8 +407,11 @@ namespace pyre::tensor {
         auto _fill_vector_with_matrix_diagonal = [&A]<int... J>(integer_sequence<J...>) 
             -> vector_t<D, T>
         {
-            auto wrap = [&A]<int K>()->T { return  A[{K, K}]; };
-            return vector_t<D, T>(wrap.template operator()<J>()...);
+            auto _diagonal_entry = [&A]<int K>()->T {
+                constexpr int offset = matrix_t<D, D, T, packingT>::template getOffset<K, K>();
+                return  A[offset]; 
+            };
+            return vector_t<D, T>(_diagonal_entry.template operator()<J>()...);
         };
         // fill a vector with the diagonal of A and return it
         return _fill_vector_with_matrix_diagonal(make_integer_sequence<D> {});
@@ -483,7 +489,7 @@ namespace pyre::tensor {
                         A2[matrix2_t::template getOffset<L, JJ>()]) + ...);
                 };
 
-                // compute the component {I, J} as the contraction of A1[{I, K}] and A2[{K, J}]
+                // compute the component {I, J} as the contraction of A1(I, K) and A2(K, J)
                 ((result[matrix_result_t::template getOffset<I, J>()] = 
                     _contract_L.template operator()<I, J>(A1, A2, make_integer_sequence<D2> {})), ... );
 
@@ -525,13 +531,20 @@ namespace pyre::tensor {
     template <typename T>
     constexpr auto skew(const vector_t<3, T> & a) -> matrix_t<3, 3, T>
     {
-        matrix_t<3, 3, T> A = matrix_t<3, 3, T>::zero;
-        A[{0, 1}] = -a[2];
-        A[{0, 2}] = a[1];
-        A[{1, 0}] = a[2];
-        A[{1, 2}] = -a[0];
-        A[{2, 0}] = -a[1];
-        A[{2, 1}] = a[0];
+        // the type of matrix {A}
+        using matrix_t = matrix_t<3, 3, T>;
+
+        // instantiate the result
+        matrix_t A = matrix_t::zero;
+
+        A[matrix_t::template getOffset<0, 1>()] = -a[2];
+        A[matrix_t::template getOffset<0, 2>()] = a[1];
+        A[matrix_t::template getOffset<1, 0>()] = a[2];
+        A[matrix_t::template getOffset<1, 2>()] = -a[0];
+        A[matrix_t::template getOffset<2, 0>()] = -a[1];
+        A[matrix_t::template getOffset<2, 1>()] = a[0];
+
+        // all done
         return A;
     }
 
@@ -565,85 +578,150 @@ namespace pyre::tensor {
     template <typename T, class packingT>
     constexpr auto determinant(const matrix_t<4, 4, T, packingT> & A) -> T
     {
-        return A[{0, 1}] * A[{2, 3}] * A[{3, 2}] * A[{1, 0}] - A[{0, 1}] * A[{2, 2}] * A[{3, 3}]
-                 * A[{1, 0}]
-             - A[{2, 3}] * A[{3, 1}] * A[{0, 2}] * A[{1, 0}] + A[{2, 2}] * A[{3, 1}] * A[{0, 3}]
-                 * A[{1, 0}]
-             - A[{0, 0}] * A[{2, 3}] * A[{3, 2}] * A[{1, 1}] + A[{0, 0}] * A[{2, 2}] * A[{3, 3}]
-                 * A[{1, 1}]
-             + A[{2, 3}] * A[{3, 0}] * A[{0, 2}] * A[{1, 1}] - A[{2, 2}] * A[{3, 0}] * A[{0, 3}]
-                 * A[{1, 1}]
-             - A[{0, 1}] * A[{2, 3}] * A[{3, 0}] * A[{1, 2}] + A[{0, 0}] * A[{2, 3}] * A[{3, 1}]
-                 * A[{1, 2}]
-             + A[{0, 1}] * A[{2, 2}] * A[{3, 0}] * A[{1, 3}] - A[{0, 0}] * A[{2, 2}] * A[{3, 1}]
-                 * A[{1, 3}]
-             - A[{3, 3}] * A[{0, 2}] * A[{1, 1}] * A[{2, 0}] + A[{3, 2}] * A[{0, 3}] * A[{1, 1}]
-                 * A[{2, 0}]
-             + A[{0, 1}] * A[{3, 3}] * A[{1, 2}] * A[{2, 0}] - A[{3, 1}] * A[{0, 3}] * A[{1, 2}]
-                 * A[{2, 0}]
-             - A[{0, 1}] * A[{3, 2}] * A[{1, 3}] * A[{2, 0}] + A[{3, 1}] * A[{0, 2}] * A[{1, 3}]
-                 * A[{2, 0}]
-             + A[{3, 3}] * A[{0, 2}] * A[{1, 0}] * A[{2, 1}] - A[{3, 2}] * A[{0, 3}] * A[{1, 0}]
-                 * A[{2, 1}]
-             - A[{0, 0}] * A[{3, 3}] * A[{1, 2}] * A[{2, 1}] + A[{3, 0}] * A[{0, 3}] * A[{1, 2}]
-                 * A[{2, 1}]
-             + A[{0, 0}] * A[{3, 2}] * A[{1, 3}] * A[{2, 1}] - A[{3, 0}] * A[{0, 2}] * A[{1, 3}]
-                 * A[{2, 1}];
+        // the type of matrix {A}
+        using matrix_t = matrix_t<4, 4, T, packingT>;
+
+        T a11 = A[matrix_t::template getOffset<0, 0>()];
+        T a12 = A[matrix_t::template getOffset<0, 1>()];
+        T a13 = A[matrix_t::template getOffset<0, 2>()];
+        T a14 = A[matrix_t::template getOffset<0, 3>()];
+        T a21 = A[matrix_t::template getOffset<1, 0>()];
+        T a22 = A[matrix_t::template getOffset<1, 1>()];
+        T a23 = A[matrix_t::template getOffset<1, 2>()];
+        T a24 = A[matrix_t::template getOffset<1, 3>()];
+        T a31 = A[matrix_t::template getOffset<2, 0>()];
+        T a32 = A[matrix_t::template getOffset<2, 1>()];
+        T a33 = A[matrix_t::template getOffset<2, 2>()];
+        T a34 = A[matrix_t::template getOffset<2, 3>()];
+        T a41 = A[matrix_t::template getOffset<3, 0>()];
+        T a42 = A[matrix_t::template getOffset<3, 1>()];
+        T a43 = A[matrix_t::template getOffset<3, 2>()];
+        T a44 = A[matrix_t::template getOffset<3, 3>()];
+
+        return a12 * a34 * a43 * a21 - a12 * a33 * a44
+                 * a21
+             - a34 * a42 * a13 * a21 + a33 * a42 * a14
+                 * a21
+             - a11 * a34 * a43 * a22 + a11 * a33 * a44
+                 * a22
+             + a34 * a41 * a13 * a22 - a33 * a41 * a14
+                 * a22
+             - a12 * a34 * a41 * a23 + a11 * a34 * a42
+                 * a23
+             + a12 * a33 * a41 * a24 - a11 * a33 * a42
+                 * a24
+             - a44 * a13 * a22 * a31 + a43 * a14 * a22
+                 * a31
+             + a12 * a44 * a23 * a31 - a42 * a14 * a23
+                 * a31
+             - a12 * a43 * a24 * a31 + a42 * a13 * a24
+                 * a31
+             + a44 * a13 * a21 * a32 - a43 * a14 * a21
+                 * a32
+             - a11 * a44 * a23 * a32 + a41 * a14 * a23
+                 * a32
+             + a11 * a43 * a24 * a32 - a41 * a13 * a24
+                 * a32;
     }
 
     template <typename T, class packingT>
     constexpr auto determinant(const matrix_t<3, 3, T, packingT> & A) -> T
     {
-        return A[{0, 0}] * (A[{1, 1}] * A[{2, 2}] - A[{1, 2}] * A[{2, 1}]) 
-             - A[{0, 1}] * (A[{1, 0}] * A[{2, 2}] - A[{1, 2}] * A[{2, 0}])
-             + A[{0, 2}] * (A[{1, 0}] * A[{2, 1}] - A[{1, 1}] * A[{2, 0}]);
+        // the type of matrix {A}
+        using matrix_t = matrix_t<3, 3, T, packingT>;
+
+        T a11 = A[matrix_t::template getOffset<0, 0>()];
+        T a12 = A[matrix_t::template getOffset<0, 1>()];
+        T a13 = A[matrix_t::template getOffset<0, 2>()];
+        T a21 = A[matrix_t::template getOffset<1, 0>()];
+        T a22 = A[matrix_t::template getOffset<1, 1>()];
+        T a23 = A[matrix_t::template getOffset<1, 2>()];
+        T a31 = A[matrix_t::template getOffset<2, 0>()];
+        T a32 = A[matrix_t::template getOffset<2, 1>()];
+        T a33 = A[matrix_t::template getOffset<2, 2>()];
+
+        return a11 * (a22 * a33 - a23 * a32) 
+             - a12 * (a21 * a33 - a23 * a31)
+             + a13 * (a21 * a32 - a22 * a31);
     }
 
     template <typename T, class packingT>
     constexpr auto determinant(const matrix_t<2, 2, T, packingT> & A) -> T
     {
-        return A[{0, 0}] * A[{1, 1}] - A[{0, 1}] * A[{1, 0}];
+        // the type of matrix {A}
+        using matrix_t = matrix_t<2, 2, T, packingT>;
+
+        T a11 = A[matrix_t::template getOffset<0, 0>()];
+        T a22 = A[matrix_t::template getOffset<1, 1>()];
+        T a12 = A[matrix_t::template getOffset<0, 1>()];
+        T a21 = A[matrix_t::template getOffset<1, 0>()];
+
+        return a11 * a22 - a12 * a21;
     }
 
     template <typename T, class packingT>
     constexpr auto inverse(const matrix_t<3, 3, T, packingT> & A) -> matrix_t<3, 3, T, packingT>
     {
-        matrix_t<3, 3, T, packingT> invA;
+        // the type of matrix {A}
+        using matrix_t = matrix_t<3, 3, T, packingT>;
+
+        T a11 = A[matrix_t::template getOffset<0, 0>()];
+        T a12 = A[matrix_t::template getOffset<0, 1>()];
+        T a13 = A[matrix_t::template getOffset<0, 2>()];
+        T a21 = A[matrix_t::template getOffset<1, 0>()];
+        T a22 = A[matrix_t::template getOffset<1, 1>()];
+        T a23 = A[matrix_t::template getOffset<1, 2>()];
+        T a31 = A[matrix_t::template getOffset<2, 0>()];
+        T a32 = A[matrix_t::template getOffset<2, 1>()];
+        T a33 = A[matrix_t::template getOffset<2, 2>()];
+
+        matrix_t invA;
         T det = determinant(A);
         assert(det != 0.0);
         T detinv = 1.0 / det;
-        invA[{0, 0}] = detinv * (A[{1, 1}] * A[{2, 2}] - A[{1, 2}] * A[{2, 1}]);
-        invA[{0, 1}] = detinv * (-A[{0, 1}] * A[{2, 2}] + A[{0, 2}] * A[{2, 1}]);
-        invA[{0, 2}] = detinv * (A[{0, 1}] * A[{1, 2}] - A[{0, 2}] * A[{1, 1}]);
-        invA[{1, 0}] = detinv * (-A[{1, 0}] * A[{2, 2}] + A[{1, 2}] * A[{2, 0}]);
-        invA[{1, 1}] = detinv * (A[{0, 0}] * A[{2, 2}] - A[{0, 2}] * A[{2, 0}]);
-        invA[{1, 2}] = detinv * (-A[{0, 0}] * A[{1, 2}] + A[{0, 2}] * A[{1, 0}]);
-        invA[{2, 0}] = detinv * (A[{1, 0}] * A[{2, 1}] - A[{1, 1}] * A[{2, 0}]);
-        invA[{2, 1}] = detinv * (-A[{0, 0}] * A[{2, 1}] + A[{0, 1}] * A[{2, 0}]);
-        invA[{2, 2}] = detinv * (A[{0, 0}] * A[{1, 1}] - A[{0, 1}] * A[{1, 0}]);
+        invA[matrix_t::template getOffset<0, 0>()] = detinv * (a22 * a33 - a23 * a32);
+        invA[matrix_t::template getOffset<0, 1>()] = detinv * (-a12 * a33 + a13 * a32);
+        invA[matrix_t::template getOffset<0, 2>()] = detinv * (a12 * a23 - a13 * a22);
+        invA[matrix_t::template getOffset<1, 0>()] = detinv * (-a21 * a33 + a23 * a31);
+        invA[matrix_t::template getOffset<1, 1>()] = detinv * (a11 * a33 - a13 * a31);
+        invA[matrix_t::template getOffset<1, 2>()] = detinv * (-a11 * a23 + a13 * a21);
+        invA[matrix_t::template getOffset<2, 0>()] = detinv * (a21 * a32 - a22 * a31);
+        invA[matrix_t::template getOffset<2, 1>()] = detinv * (-a11 * a32 + a12 * a31);
+        invA[matrix_t::template getOffset<2, 2>()] = detinv * (a11 * a22 - a12 * a21);
         return invA;
     }
 
     template <typename T, class packingT>
     constexpr auto inverse(const matrix_t<2, 2, T, packingT> & A) -> matrix_t<2, 2, T, packingT>
     {
-        matrix_t<2, 2, T, packingT> invA;
+        // the type of matrix {A}
+        using matrix_t = matrix_t<2, 2, T, packingT>;
+
+        T a11 = A[matrix_t::template getOffset<0, 0>()];
+        T a22 = A[matrix_t::template getOffset<1, 1>()];
+        T a12 = A[matrix_t::template getOffset<0, 1>()];
+        T a21 = A[matrix_t::template getOffset<1, 0>()];
+
+        matrix_t invA;
         T det = determinant(A);
         assert(det != 0.0);
         T detinv = 1.0 / det;
-        invA[{0, 0}] = detinv * (A[{1, 1}]);
-        invA[{0, 1}] = detinv * (-A[{0, 1}]);
-        invA[{1, 0}] = detinv * (-A[{1, 0}]);
-        invA[{1, 1}] = detinv * (A[{0, 0}]);
+        invA[matrix_t::template getOffset<0, 0>()] = detinv * a22;
+        invA[matrix_t::template getOffset<0, 1>()] = detinv * (-a12);
+        invA[matrix_t::template getOffset<1, 0>()] = detinv * (-a21);
+        invA[matrix_t::template getOffset<1, 1>()] = detinv * a11;
         return invA;
     }
 
     template <int D, typename T, class packingT>
     constexpr auto trace(const matrix_t<D, D, T, packingT> & A) -> T
     {
+        // the type of matrix {A}
+        using matrix_t = matrix_t<D, D, T, packingT>;
+
         auto _trace = [&A]<int... J>(integer_sequence<J...>) -> T
         {
-            return (A[{J, J}]+ ... );
+            return (A[matrix_t::template getOffset<J, J>()]+ ... );
         };
         return _trace(make_integer_sequence<D> {});
     }
@@ -651,12 +729,16 @@ namespace pyre::tensor {
     template <int D1, int D2, typename T, class packingT>
     constexpr auto transpose(const matrix_t<D1, D2, T, packingT> & A)
     {
+        // the type of matrix {A}
+        using matrix_t = matrix_t<D1, D2, T, packingT>;
+
         // A transposed
-        matrix_t<D2, D1, T, packingT> AT;
+        matrix_t AT;
         auto _transposeJ = [&A, &AT]<int... J>(integer_sequence<J...>){
             auto _transposeI = [&A, &AT]<int K, int... I>(integer_sequence<I...>)
             {
-                ((AT[{K, I}] = A [{I, K}]), ... );
+                ((AT[matrix_t::template getOffset<K, I>()] = 
+                    A[matrix_t::template getOffset<I, K>()]), ... );
                 return;
             };
             (_transposeI.template operator()<J>(make_integer_sequence<D1> {}), ...);
@@ -668,16 +750,36 @@ namespace pyre::tensor {
     template <int D, typename T, class packingT>
     constexpr auto symmetric(const matrix_t<D, D, T, packingT> & A) -> symmetric_matrix_t<D, T>
     {
-        symmetric_matrix_t<D, T> sym;
+        // the type of matrix {A}
+        using matrix_input_t = matrix_t<D, D, T, packingT>;
+
+        // the type of matrix for the result
+        using matrix_result_t = symmetric_matrix_t<D, T>;
+
+        // the result
+        matrix_result_t sym;
+
+        // helper function to fill all rows in colum K 
         auto _fill_column = [&A, &sym]<int... K>(integer_sequence<K...>){
+            // helper function to fill entry (I, J) 
             auto _fill_row = [&A, &sym]<int J, int... I>(integer_sequence<I...>)
             {
-                ((sym[{I, J}] = 0.5 * (A[{I, J}] + A[{J, I}])), ... );
+                // symm(I, J) = 1/2 (A(I, J) + A(J, I))
+                ((sym[matrix_result_t::template getOffset<I, J>()] = 
+                    0.5 * (A[matrix_input_t::template getOffset<I, J>()] 
+                    + A[matrix_input_t::template getOffset<J, I>()])), ... );
+
+                // all done
                 return;
             };
+            // fill all rows in column K
             (_fill_row.template operator()<K>(make_integer_sequence<D> {}), ...);
         };
+
+        // fill all columns
         _fill_column(make_integer_sequence<D> {});
+
+        // all done
         return sym;
     }
 
@@ -697,35 +799,55 @@ namespace pyre::tensor {
     template <typename T>
     constexpr auto eigenvalues(const symmetric_matrix_t<2, T> & A) -> vector_t<2, T>
     {
-        T delta = sqrt(4.0 * A[{0, 1}] * A[{0, 1}] 
-            + (A[{0, 0}] - A[{1, 1}]) * (A[{0, 0}] - A[{1, 1}]));
+        // the type of matrix {A}
+        using matrix_input_t = symmetric_matrix_t<2, T>;
+
+        T a11 = A[matrix_input_t::template getOffset<0, 0>()];
+        T a22 = A[matrix_input_t::template getOffset<1, 1>()];
+        T a12 = A[matrix_input_t::template getOffset<0, 1>()];
+
+        T delta = sqrt(4.0 * a12 * a12 + (a11 - a22) * (a11 - a22));
         return vector_t<2, T>{
-            0.5 * (A[{0, 0}] + A[{1, 1}] + delta), 
-            0.5 * (A[{0, 0}] + A[{1, 1}] - delta)};
+            0.5 * (a11 + a22 + delta), 
+            0.5 * (a11 + a22 - delta)};
     }
 
     template <typename T>
     constexpr auto eigenvectors(const symmetric_matrix_t<2, T> & A) -> matrix_t<2, 2, T>
     {
-        T delta = sqrt(4.0 * A[{0, 1}] * A[{0, 1}] 
-            + (A[{0, 0}] - A[{1, 1}]) * (A[{0, 0}] - A[{1, 1}]));
-        matrix_t<2, 2, T> eigenvector_matrix;
-        eigenvector_matrix[{0, 0}] = A[{0, 0}] - A[{1, 1}] + delta;
-        eigenvector_matrix[{0, 1}] = A[{0, 0}] - A[{1, 1}] - delta;
-        eigenvector_matrix[{1, 0}] = 2.0 * A[{1, 0}];
-        eigenvector_matrix[{1, 1}] = 2.0 * A[{1, 0}];
+        // the type of matrix {A}
+        using matrix_input_t = symmetric_matrix_t<2, T>;
+
+        T a11 = A[matrix_input_t::template getOffset<0, 0>()];
+        T a22 = A[matrix_input_t::template getOffset<1, 1>()];
+        T a12 = A[matrix_input_t::template getOffset<0, 1>()];
+
+        T delta = sqrt(4.0 * a12 * a12 + (a11 - a22) * (a11 - a22));
+
+        // the type of eigenvectors matrix
+        using matrix_eigenvector_t = matrix_t<2, 2, T>;
+
+        matrix_eigenvector_t eigenvector_matrix;
+        eigenvector_matrix[matrix_eigenvector_t::template getOffset<0, 0>()] = a11 - a22 + delta;
+        eigenvector_matrix[matrix_eigenvector_t::template getOffset<0, 1>()] = a11 - a22 - delta;
+        eigenvector_matrix[matrix_eigenvector_t::template getOffset<1, 0>()] = 2.0 * a12;
+        eigenvector_matrix[matrix_eigenvector_t::template getOffset<1, 1>()] = 2.0 * a12;
+
         return eigenvector_matrix;
     }
 
     template <typename T>
     constexpr auto eigenvalues(const symmetric_matrix_t<3, T> & A) -> vector_t<3, T>
     {
-        T a11 = A[{0, 0}];
-        T a22 = A[{1, 1}];
-        T a33 = A[{2, 2}];
-        T a12 = A[{0, 1}];
-        T a13 = A[{0, 2}];
-        T a23 = A[{1, 2}];
+        // the type of matrix {A}
+        using matrix_t = symmetric_matrix_t<3, T>;
+
+        T a11 = A[matrix_t::template getOffset<0, 0>()];
+        T a22 = A[matrix_t::template getOffset<1, 1>()];
+        T a33 = A[matrix_t::template getOffset<2, 2>()];
+        T a12 = A[matrix_t::template getOffset<0, 1>()];
+        T a13 = A[matrix_t::template getOffset<0, 2>()];
+        T a23 = A[matrix_t::template getOffset<1, 2>()];
 
         // Formula from Kopp 2008, "Efficient numerical diagonalization of hermitian 3 × 3 matrices"
         T c0 = a11 * a23 * a23 
@@ -842,24 +964,42 @@ namespace pyre::tensor {
         return diagonal_matrix_t<D, T>::identity;
     }
 
+    // extract row {I} of a matrix
     template <int I, int D1, int D2, typename T, class packingT>
     constexpr auto row(const matrix_t<D1, D2, T, packingT> & A) -> vector_t<D2, T>
     {
+        // the type of the matrix in input 
+        using matrix_input_t = matrix_t<D1, D2, T, packingT>;
+
         auto _row = [&A]<int... J>(integer_sequence<J...>) -> vector_t<D2, T>
         {
-            auto wrap = [&A]<int K>()->T { return  A[{I, K}]; };
-            return vector_t<D2, T>(wrap.template operator()<J>()...);
+            auto entry_IK = [&A]<int K>()->T { 
+                // get the offset corresponding to multi-index (I, K) for this matrix packing
+                constexpr int offset = matrix_input_t::template getOffset<I, K>();
+                return  A[offset]; 
+            };
+            // return a vector filled with entries (I, J) for all J...
+            return vector_t<D2, T>(entry_IK.template operator()<J>()...);
         };
         return _row(make_integer_sequence<D1> {});
     }
 
+    // extract column {I} of a matrix
     template <int I, int D1, int D2, typename T, class packingT>
     constexpr auto col(const matrix_t<D1, D2, T, packingT> & A) -> vector_t<D1, T>
     {
+        // the type of the matrix in input 
+        using matrix_input_t = matrix_t<D1, D2, T, packingT>;
+
         auto _col = [&A]<int... J>(integer_sequence<J...>) -> vector_t<D1, T>
         {
-            auto wrap = [&A]<int K>()->T { return A[{K, I}]; };
-            return vector_t<D1, T>(wrap.template operator()<J>()...);
+            auto entry_KI = [&A]<int K>()->T { 
+                // get the offset corresponding to multi-index (K, I) for this matrix packing
+                constexpr int offset = matrix_input_t::template getOffset<K, I>();
+                return A[offset]; 
+            };
+            // return a vector filled with entries (J, I) for all J...
+            return vector_t<D1, T>(entry_KI.template operator()<J>()...);
         };
         return _col(make_integer_sequence<D2> {});
     }
@@ -869,6 +1009,9 @@ namespace pyre::tensor {
     requires (std::is_same_v<packingT, pyre::grid::symmetric_t<2>> || 
         std::is_same_v<packingT, pyre::grid::diagonal_t<2>> )
     {
+        // the type of the matrix in input 
+        using matrix_input_t = matrix_t<D, D, T, packingT>;
+
         // compute eigenvalues
         auto lambda = matrix_diagonal(eigenvalues(A));
         // compute eigenvectors
@@ -878,7 +1021,8 @@ namespace pyre::tensor {
             integer_sequence<I...>)
         {
             // apply f to diagonal
-            ((lambda[{I, I}] = f(lambda[{I, I}])), ...);
+            ((lambda[matrix_input_t::template getOffset<I, I>()] = 
+                f(lambda[matrix_input_t::template getOffset<I, I>()])), ...);
             // all done
             return;
         };
