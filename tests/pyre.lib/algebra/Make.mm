@@ -22,7 +22,8 @@ all: test clean
 
 
 test: $(TESTS)
-	./bcd \
+	./bcd
+
 
 # build
 %: %.cc
