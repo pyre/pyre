@@ -42,8 +42,8 @@ protected:
 private:
     Renderer(const Renderer &) = delete;
     Renderer(const Renderer &&) = delete;
-    const Renderer & operator= (const Renderer &) = delete;
-    const Renderer & operator= (const Renderer &&) = delete;
+    const Renderer & operator=(const Renderer &) = delete;
+    const Renderer & operator=(const Renderer &&) = delete;
 };
 
 

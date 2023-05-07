@@ -10,8 +10,7 @@
 
 // user facing channel; meant for informational messages, such as progress reports
 template <template <typename> typename proxyT>
-class pyre::journal::Informational : public Channel<Informational<proxyT>, proxyT>
-{
+class pyre::journal::Informational : public Channel<Informational<proxyT>, proxyT> {
     // types
 public:
     // my base
@@ -44,8 +43,8 @@ public:
 private:
     Informational(const Informational &) = delete;
     Informational(const Informational &&) = delete;
-    const Informational & operator= (const Informational &) = delete;
-    const Informational & operator= (const Informational &&) = delete;
+    const Informational & operator=(const Informational &) = delete;
+    const Informational & operator=(const Informational &&) = delete;
 };
 
 

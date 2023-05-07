@@ -6,8 +6,10 @@
 
 # pull the action protocol
 from ..shells import action
+
 # and the base panel
 from ..shells import command
+
 # pull in the command decorator
 from .. import foundry
 
@@ -17,16 +19,29 @@ from .. import foundry
 def info():
     # get the action
     from .Info import Info
+
     # borrow its docstring
     __doc__ = Info.__doc__
     # and publish it
     return Info
 
 
+@foundry(implements=action, tip="build assets from the current workspace")
+def build():
+    # get the action
+    from .Build import Build
+
+    # borrow its docstring
+    __doc__ = Build.__doc__
+    # and publish it
+    return Build
+
+
 @foundry(implements=action, tip="libraries in the current workspace")
 def lib():
     # get the action
     from .Libraries import Libraries
+
     # borrow its docstring
     __doc__ = Libraries.__doc__
     # and publish it
@@ -38,6 +53,7 @@ def lib():
 def about():
     # get the action
     from .About import About
+
     # borrow its docstring
     __doc__ = About.__doc__
     # and publish it
@@ -48,6 +64,7 @@ def about():
 def config():
     # get the action
     from .Config import Config
+
     # borrow its docstring
     __doc__ = Config.__doc__
     # and publish it
@@ -58,6 +75,7 @@ def config():
 def help():
     # get the action
     from .Help import Help
+
     # borrow its docstring
     __doc__ = Help.__doc__
     # and publish it
@@ -69,6 +87,7 @@ def help():
 def debug():
     # get the action
     from .Debug import Debug
+
     # borrow its docstring
     __doc__ = Debug.__doc__
     # and publish it
@@ -80,6 +99,7 @@ def debug():
 def complete():
     # get the action
     from .Complete import Complete
+
     # and publish it
     return Complete
 

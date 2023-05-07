@@ -36,12 +36,12 @@ public:
     using const_iterator = OrderIterator<product_type, typename orderT::const_iterator, true>;
 
     template <class orderT>
-    using reverse_iterator = OrderIterator<product_type,
-                                           typename orderT::const_reverse_iterator, false>;
+    using reverse_iterator =
+        OrderIterator<product_type, typename orderT::const_reverse_iterator, false>;
 
     template <class orderT>
-    using const_reverse_iterator = OrderIterator<product_type,
-                                                 typename orderT::const_reverse_iterator, true>;
+    using const_reverse_iterator =
+        OrderIterator<product_type, typename orderT::const_reverse_iterator, true>;
 
     // metamethods
 public:

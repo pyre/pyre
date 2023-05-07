@@ -18,8 +18,7 @@
 
 // compatibility check
 auto
-pyre::journal::ANSI::
-compatible() -> bool
+pyre::journal::ANSI::compatible() -> bool
 {
     // get my instance
     const ANSI & instance = initialize();
@@ -30,8 +29,7 @@ compatible() -> bool
 
 // access to the color tables
 auto
-pyre::journal::ANSI::
-null(const name_type & color) -> csi_type
+pyre::journal::ANSI::null(const name_type & color) -> csi_type
 {
     // there's nothing ever in this table...
     return "";
@@ -39,8 +37,7 @@ null(const name_type & color) -> csi_type
 
 
 auto
-pyre::journal::ANSI::
-ansi(const name_type & color) -> csi_type
+pyre::journal::ANSI::ansi(const name_type & color) -> csi_type
 {
     // get me my instance
     const ANSI & instance = initialize();
@@ -54,8 +51,7 @@ ansi(const name_type & color) -> csi_type
 
 
 auto
-pyre::journal::ANSI::
-gray(const name_type & color) -> csi_type
+pyre::journal::ANSI::gray(const name_type & color) -> csi_type
 {
     // get me my instance
     const ANSI & instance = initialize();
@@ -69,8 +65,7 @@ gray(const name_type & color) -> csi_type
 
 
 auto
-pyre::journal::ANSI::
-x11(const name_type & color) -> csi_type
+pyre::journal::ANSI::x11(const name_type & color) -> csi_type
 {
     // get me my instance
     const ANSI & instance = initialize();
@@ -84,8 +79,7 @@ x11(const name_type & color) -> csi_type
 
 
 auto
-pyre::journal::ANSI::
-misc(const name_type & color) -> csi_type
+pyre::journal::ANSI::misc(const name_type & color) -> csi_type
 {
     // get me my instance
     const ANSI & instance = initialize();
@@ -100,8 +94,7 @@ misc(const name_type & color) -> csi_type
 
 // the singleton factory
 auto
-pyre::journal::ANSI::
-initialize() -> const ANSI &
+pyre::journal::ANSI::initialize() -> const ANSI &
 {
     // make one, once...
     static ANSI * ptr { new ANSI() };
@@ -111,8 +104,7 @@ initialize() -> const ANSI &
 
 
 // metamethods
-pyre::journal::ANSI::
-ANSI() :
+pyre::journal::ANSI::ANSI() :
     // copatibility flag
     _compatible { emulates() },
     // color tables
@@ -125,8 +117,7 @@ ANSI() :
 
 // implementations
 auto
-pyre::journal::ANSI::
-emulates() -> bool
+pyre::journal::ANSI::emulates() -> bool
 {
     // get the {TERM} environment variable
     auto term = std::getenv("TERM");
@@ -137,8 +128,7 @@ emulates() -> bool
     }
 
     // the set of compatible terminal types
-    nameset_t compatible { "ansi",
-                           "vt102", "vt220", "vt320", "vt420",
+    nameset_t compatible { "ansi",  "vt102",       "vt220",         "vt320",         "vt420",
                            "xterm", "xterm-color", "xterm-16color", "xterm-256color" };
 
     // if the value is not in the set of supported emulations
@@ -153,8 +143,7 @@ emulates() -> bool
 
 
 auto
-pyre::journal::ANSI::
-make_ansi() -> table_type
+pyre::journal::ANSI::make_ansi() -> table_type
 {
     // make a table
     ansi_t::table_type table;
@@ -188,8 +177,7 @@ make_ansi() -> table_type
 
 
 auto
-pyre::journal::ANSI::
-make_gray() -> table_type
+pyre::journal::ANSI::make_gray() -> table_type
 {
     // make a table
     ansi_t::table_type table;
@@ -211,8 +199,7 @@ make_gray() -> table_type
 
 
 auto
-pyre::journal::ANSI::
-make_misc() -> table_type
+pyre::journal::ANSI::make_misc() -> table_type
 {
     // make a table
     ansi_t::table_type table;

@@ -18,7 +18,7 @@ version = (major, minor, micro, revision)
 
 
 # decorations for the help system
-copyright = "copyright (c) 1998-2023 all rights reserved"
+copyright = "copyright (c) 1998-@YEAR@ all rights reserved"
 
 banner = f"""
     journal {major}.{minor}.{micro} revision {revision}

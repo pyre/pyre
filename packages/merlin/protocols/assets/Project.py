@@ -6,8 +6,10 @@
 
 # support
 import merlin
+
 # superclass
 from .Asset import Asset
+
 # schema
 from .Library import Library as library
 
@@ -18,11 +20,9 @@ class Project(Asset, family="merlin.assets.projects"):
     A high level container of artifacts
     """
 
-
     # required state
     libraries = merlin.properties.tuple(schema=library())
     libraries.doc = "the collection of project libraries"
-
 
     # framework hooks
     @classmethod
@@ -32,7 +32,6 @@ class Project(Asset, family="merlin.assets.projects"):
         """
         # grab the basic project foundry and return it
         return merlin.assets.project
-
 
     @classmethod
     def pyre_configure(cls, name, locator, **kwds):

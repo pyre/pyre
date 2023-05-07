@@ -10,8 +10,7 @@
 
 // flush a channel after injecting a decorator
 template <typename decoratorT>
-class pyre::journal::Flush
-{
+class pyre::journal::Flush {
 public:
     using decorator_type = decoratorT;
 

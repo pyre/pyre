@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2023 all rights reserved
-#
 
 
 # externals
@@ -132,9 +130,9 @@ class Local(Filesystem):
         # adjust the location of the new branch
         root = self if root is None else root
         # print(" ++ input:")
-        # print("      root: {}".format(root))
-        # print("      uri: {!r}".format(root.uri))
-        # print("      tree: {!r}".format(tree.uri))
+        # print(f"      root: {root}")
+        # print(f"      uri: '{root.uri}'")
+        # print(f"      tree: '{tree.uri}'")
 
         # initialize the worklist
         todo = [(root, name, tree)]

@@ -6,6 +6,7 @@
 
 # support
 import merlin
+
 # schema
 from .PrefixLayout import PrefixLayout
 
@@ -15,7 +16,6 @@ class Builder(merlin.protocol, family="merlin.builders"):
     """
     The manager of the all build products, both final and intermediate disposables
     """
-
 
     # required state
     tag = merlin.properties.str()
@@ -36,7 +36,6 @@ class Builder(merlin.protocol, family="merlin.builders"):
     layout = PrefixLayout()
     layout.doc = "the layout of the installation area"
 
-
     # framework hooks
     @classmethod
     def pyre_default(cls, **kwds):
@@ -44,7 +43,7 @@ class Builder(merlin.protocol, family="merlin.builders"):
         Specify the default implementation
         """
         # choose the default implementer
-        return merlin.builders.flow
+        return merlin.builders.make
 
 
 # end of file

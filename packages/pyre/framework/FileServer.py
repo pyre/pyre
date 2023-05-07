@@ -1,16 +1,17 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2023 all rights reserved
-#
 
 
 # externals
 import os
 import weakref
+
 # pyre types
-from .. import primitives, schemata
+from .. import primitives
+from .. import schemata
+
 # superclass
 from ..filesystem.Filesystem import Filesystem
 
@@ -28,12 +29,12 @@ class FileServer(Filesystem):
     their physical locations at runtime. For example, during the bootstrapping process the
     framework looks for user preferences for pyre applications. On Unix like machines, these
     are stored in '~/.pyre' and its subfolders. The entire hierarchy is mounted in the virtual
-    filesystem under '/-/user'. This has the following advantages:
+    filesystem under '/__pyre/user'. This has the following advantages:
 
-    * applications can navigate through the contents of '/-/user' as if it were an actual
+    * applications can navigate through the contents of '/__pyre/user' as if it were an actual
       filesystem
 
-    * configuration settings that require references to entries in '/_/user' can now be
+    * configuration settings that require references to entries in '/__pyre/user' can now be
       expressed portably, since there is no need to hardwire actual paths
 
     Applications are encouraged to lay out their own custom namespaces. The application
@@ -41,17 +42,15 @@ class FileServer(Filesystem):
     is free to provide the mapping that reflects their physical location at runtime.
     """
 
-
     # constants
     # the XDG compliant fallback for user configuration
-    XDG_CONFIG = primitives.path("~/.config/pyre")
+    XDG_CONFIG = primitives.path("~/.config")
     # the legacy path of the user configuration directory on the physical filesystem
-    DOT_PYRE = primitives.path('~/.pyre')
+    DOT_PYRE = primitives.path("~/.pyre")
     # the logical names for the configuration directories
-    USER_DIR = primitives.path('/__pyre/user')
-    STARTUP_DIR = primitives.path('/__pyre/startup')
-    PACKAGES_DIR = primitives.path('/__pyre/packages')
-
+    USER_DIR = primitives.path("/__pyre/user")
+    STARTUP_DIR = primitives.path("/__pyre/startup")
+    PACKAGES_DIR = primitives.path("/__pyre/packages")
 
     # public data
     @property
@@ -68,7 +67,6 @@ class FileServer(Filesystem):
         # all done
         return
 
-
     # interface
     def open(self, uri, **kwds):
         """
@@ -80,7 +78,7 @@ class FileServer(Filesystem):
         scheme = uri.scheme
 
         # if {scheme} is missing, assume it is a file from the local filesystem
-        if scheme is None or scheme == 'file':
+        if scheme is None or scheme == "file":
             # so attempt to
             try:
                 # open it and return the associated file object
@@ -88,28 +86,30 @@ class FileServer(Filesystem):
             # if {uri} is not in my logical namespace
             except self.NotFoundError as error:
                 # complain
-                raise self.SourceNotFoundError(filesystem=self, node=error.node, uri=uri)
+                raise self.SourceNotFoundError(
+                    filesystem=self, node=error.node, uri=uri
+                )
             # if {uri} maps to a non-existent file
             except IOError:
                 # complain
                 raise self.SourceNotFoundError(filesystem=self, node=None, uri=uri)
             # if {uri} maps to a folder
-            except OSError: # NYI: after python3.3: convert to IsADirectoryError
+            except OSError:  # NYI: after python3.3: convert to IsADirectoryError
                 # complain
                 raise self.IsFolderError(filesystem=self, node=None, uri=uri)
 
         # translate application private file space uris
-        if scheme == 'pfs':
+        if scheme == "pfs":
             # find the registered app
             app = self.executive.dashboard.pyre_application
             # adjust the scheme
-            scheme = 'vfs'
+            scheme = "vfs"
             # and the uri
-            uri.scheme = 'vfs'
+            uri.scheme = "vfs"
             uri.address = f"{app.pfs.uri}/{uri.address}"
 
         # if the scheme is {vfs}
-        if scheme == 'vfs':
+        if scheme == "vfs":
             # assuming the uri is within my virtual filesystem
             try:
                 # get the node
@@ -117,7 +117,9 @@ class FileServer(Filesystem):
             # if {uri} is not in my logical namespace
             except self.NotFoundError as error:
                 # complain
-                raise self.SourceNotFoundError(filesystem=self, node=error.node, uri=uri)
+                raise self.SourceNotFoundError(
+                    filesystem=self, node=error.node, uri=uri
+                )
 
             # if the node is a folder
             if node.isFolder:
@@ -127,8 +129,9 @@ class FileServer(Filesystem):
             return node.open(**kwds)
 
         # if i didn't recognize the {scheme}, complain
-        raise self.URISpecificationError(uri=uri, reason=f"unsupported scheme '{scheme}'")
-
+        raise self.URISpecificationError(
+            uri=uri, reason=f"unsupported scheme '{scheme}'"
+        )
 
     # convenience: access to the filesystem factories
     def local(self, root, **kwds):
@@ -137,9 +140,9 @@ class FileServer(Filesystem):
         """
         # access the factory
         from .. import filesystem
+
         # invoke it
         return filesystem.local(root=str(root), **kwds)
-
 
     def virtual(self, **kwds):
         """
@@ -147,9 +150,9 @@ class FileServer(Filesystem):
         """
         # access the factory
         from .. import filesystem
+
         # invoke it
         return filesystem.virtual(**kwds)
-
 
     # framework support
     def initializeNamespace(self):
@@ -177,7 +180,6 @@ class FileServer(Filesystem):
 
         # all done
         return
-
 
     def registerPackage(self, package):
         """
@@ -217,7 +219,8 @@ class FileServer(Filesystem):
         prefix = package.prefix
         # print(f"  package prefix: {prefix}")
         # not much to do if there isn't one
-        if not prefix: return package
+        if not prefix:
+            return package
 
         # otherwise, mount/get the associated filesystem
         fs = self.retrieveFilesystem(root=prefix)
@@ -274,7 +277,6 @@ class FileServer(Filesystem):
         # all done
         return package
 
-
     # meta-methods
     def __init__(self, executive=None, **kwds):
         # chain up
@@ -286,7 +288,13 @@ class FileServer(Filesystem):
 
         # figure out where the configuration directory is; first, try looking for an XDG compliant
         # layout; perhaps the system sets up the mandated environment variable
-        xdg = primitives.path(os.getenv("XDG_CONFIG_HOME", self.XDG_CONFIG)).expanduser().resolve()
+        xdgHome = (
+            primitives.path(os.getenv("XDG_CONFIG_HOME", self.XDG_CONFIG))
+            .expanduser()
+            .resolve()
+        )
+        # point to a {pyre} specific subdirectory
+        xdg = xdgHome / "pyre"
         # if it is not a real directory
         if not xdg.exists():
             # fall back to the legacy solution
@@ -296,7 +304,6 @@ class FileServer(Filesystem):
 
         # all done
         return
-
 
     # implementation details
     def retrieveFilesystem(self, root, levels=1):
@@ -335,26 +342,16 @@ class FileServer(Filesystem):
             folder = self.mounts[path]
             # go through each level in the relative path
             for level in diff.parts:
+                # explore the folder we are in; perhaps this is the first time we get here
+                folder.discover(levels=1)
                 # try to
                 try:
                     # get the associated folder
                     folder = folder[level]
                 # if this fails
                 except self.NotFoundError:
-                    # and the the folder has any contents
-                    if folder.contents:
-                        # {level} does not exist; not much else we can do but punt
-                        return self.folder()
-                    # otherwise, it must be that the folder hasn't been explored yet
-                    folder.discover(levels=1)
-                    # look again
-                    try:
-                        # for the subdirectory
-                        folder = folder[level]
-                    # if it fails again after discovery
-                    except self.NotFoundError:
-                        # {level} does not exist; not much else we can do but punt
-                        return self.folder()
+                    # {level} does not exist; not much else we can do but punt
+                    return self.folder()
             # if we get this far, we have what we are looking for
             return folder.discover(levels=levels)
 

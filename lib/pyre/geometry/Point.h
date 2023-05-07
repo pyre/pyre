@@ -1,9 +1,7 @@
 // -*- C++ -*-
 //
-// michael a.g. aïvázis
-// orthologue
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
 // (c) 1998-2023 all rights reserved
-//
 
 
 // declaration of points
@@ -17,7 +15,8 @@ public:
 
     // meta-methods
 public:
-    template <typename... coordT> inline Point(coordT... coordinate);
+    template <typename... coordT>
+    inline Point(coordT... coordinate);
 
     // interface
 public:

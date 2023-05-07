@@ -14,7 +14,6 @@ class SCS(merlin.protocol, family="merlin.scs"):
     The source control system
     """
 
-
     # obligations
     @merlin.provides
     def branch(self, **kwds):
@@ -22,13 +21,17 @@ class SCS(merlin.protocol, family="merlin.scs"):
         Deduce the name of the currently active branch
         """
 
+    @merlin.provides
+    def revision(self, **kwds):
+        """
+        Extract the workspace revision from the source control metadata
+        """
 
     @merlin.provides
     def version(self, **kwds):
         """
-        Extract the project version from the source control metadata
+        Extract the version of the scs tool itself
         """
-
 
     # framework hooks
     @classmethod

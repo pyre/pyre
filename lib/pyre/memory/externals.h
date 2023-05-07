@@ -15,11 +15,11 @@
 #include <utility>
 
 // low level stuff
-#include <cstring>     // for {strerror}
-#include <fcntl.h>     // for {open}
-#include <unistd.h>    // for {close}
-#include <sys/mman.h>  // for {mmap}
-#include <sys/stat.h>  // for the mode flags
+#include <cstring>    // for {strerror}
+#include <fcntl.h>    // for {open}
+#include <unistd.h>   // for {close}
+#include <sys/mman.h> // for {mmap}
+#include <sys/stat.h> // for the mode flags
 
 // support
 #include <pyre/journal.h>
@@ -40,7 +40,7 @@ namespace pyre::memory {
     using uri_t = std::string;
     // file information
     using info_t = struct stat;
-}
+} // namespace pyre::memory
 
 
 #endif

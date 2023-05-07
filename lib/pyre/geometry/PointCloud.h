@@ -1,9 +1,7 @@
 // -*- C++ -*-
 //
-// michael a.g. aïvázis
-// orthologue
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
 // (c) 1998-2023 all rights reserved
-//
 
 
 // declaration of points

@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2023 all rights reserved
-#
 
 
 # externals
 import weakref
+
 # my metaclass
 from . import _metaclass_Node
 
@@ -21,17 +20,15 @@ class Node(metaclass=_metaclass_Node):
     representation of the hierarchical structure of filesystems.
     """
 
-
     # constants
     isFolder = False
-
 
     # types
     # my metadata
     from .InfoFile import InfoFile as metadata
+
     # exceptions
     from .exceptions import GenericError
-
 
     # public data
     @property
@@ -42,7 +39,6 @@ class Node(metaclass=_metaclass_Node):
         # this much is guaranteed to exist for all well-formed filesystems
         return self.filesystem().info(node=self)
 
-
     @property
     def uri(self):
         """
@@ -50,7 +46,6 @@ class Node(metaclass=_metaclass_Node):
         """
         # this much is guaranteed to exist for all well-formed filesystems
         return self.filesystem().info(node=self).uri
-
 
     @property
     def marker(self):
@@ -60,7 +55,6 @@ class Node(metaclass=_metaclass_Node):
         # this much is guaranteed to exist for all well-formed filesystems
         return self.filesystem().info(node=self).marker
 
-
     # interface
     def checksum(self, **kwds):
         """
@@ -69,14 +63,12 @@ class Node(metaclass=_metaclass_Node):
         # delegate to the filesystem
         return self.filesystem().checksum(node=self, **kwds)
 
-
     def open(self, **kwds):
         """
         Access the contents of the physical resource with which I am associated
         """
         # delegate the action to the filesystem
         return self.filesystem().open(node=self, **kwds)
-
 
     # meta methods
     def __init__(self, filesystem, **kwds):
@@ -90,7 +82,6 @@ class Node(metaclass=_metaclass_Node):
         # and return
         return
 
-
     # debugging support
     def dump(self, indent=0):
         """
@@ -98,6 +89,7 @@ class Node(metaclass=_metaclass_Node):
         """
         # grab the tree explorer factory
         from . import treeExplorer
+
         # build one
         explorer = treeExplorer(indent=indent)
         # get the representation of my contents and dump it out
@@ -105,13 +97,12 @@ class Node(metaclass=_metaclass_Node):
         # all done
         return
 
-
     def print(self):
         """
         Display my contents
         """
         # easy...
-        return print('\n'.join(self.dump()))
+        return print("\n".join(self.dump()))
 
 
 # end of file

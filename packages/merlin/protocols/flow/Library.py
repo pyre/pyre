@@ -9,7 +9,7 @@ import merlin
 
 
 # a builder of libraries
-class LibFlow(merlin.protocol, family="merlin.builders.libflow"):
+class Library(merlin.protocol, family="merlin.builders.librarian"):
     """
     Workflow generator for libraries
     """
@@ -58,7 +58,7 @@ class LibFlow(merlin.protocol, family="merlin.builders.libflow"):
         Specify the default implementation
         """
         # choose the default implementer
-        return merlin.builders.flow.libflow
+        return merlin.builders.flow.librarian
 
 
 # end of file

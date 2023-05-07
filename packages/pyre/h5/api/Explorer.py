@@ -12,6 +12,7 @@ from .Inspector import Inspector
 
 # typing
 import typing
+from .. import libh5
 from .. import schema
 from .Object import Object
 from .Dataset import Dataset
@@ -19,10 +20,10 @@ from .Group import Group
 from .File import File
 
 # type aliases
-H5Group = pyre.libh5.Group
-H5DataSet = pyre.libh5.DataSet
+H5Group = libh5.Group
+H5DataSet = libh5.DataSet
 H5Object = typing.Union[H5Group, H5DataSet]
-H5ObjectType = pyre.libh5.ObjectType
+H5ObjectType = libh5.ObjectType
 
 
 # the explorer

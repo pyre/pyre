@@ -23,15 +23,12 @@
 
 
 // metamethods
-pyre::journal::Renderer::
-~Renderer()
-{}
+pyre::journal::Renderer::~Renderer() {}
 
 
 // interface
 auto
-pyre::journal::Renderer::
-render(palette_type & palette, const entry_type & entry) const -> line_type
+pyre::journal::Renderer::render(palette_type & palette, const entry_type & entry) const -> line_type
 {
     // make a buffer
     linebuf_type buffer;
@@ -48,8 +45,7 @@ render(palette_type & palette, const entry_type & entry) const -> line_type
 
 // implementation details
 void
-pyre::journal::Renderer::
-header(palette_type &, linebuf_type &, const entry_type &) const
+pyre::journal::Renderer::header(palette_type &, linebuf_type &, const entry_type &) const
 {
     // all done
     return;
@@ -57,8 +53,7 @@ header(palette_type &, linebuf_type &, const entry_type &) const
 
 
 void
-pyre::journal::Renderer::
-body(palette_type &, linebuf_type &, const entry_type &) const
+pyre::journal::Renderer::body(palette_type &, linebuf_type &, const entry_type &) const
 {
     // all done
     return;
@@ -66,8 +61,7 @@ body(palette_type &, linebuf_type &, const entry_type &) const
 
 
 void
-pyre::journal::Renderer::
-footer(palette_type &, linebuf_type &, const entry_type &) const
+pyre::journal::Renderer::footer(palette_type &, linebuf_type &, const entry_type &) const
 {
     // all done
     return;

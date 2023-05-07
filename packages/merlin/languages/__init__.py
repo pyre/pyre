@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis <nichael.aivazis@para-sim.com>
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2023 all rights reserved
 
 
@@ -93,6 +93,18 @@ def python():
 
     # and publish it
     return Python
+
+
+@merlin.foundry(tip="language specific configuration table")
+def table():
+    """
+    A table of language specific configurations
+    """
+    # get the table
+    from .Table import Table
+
+    # and publish it
+    return Table
 
 
 # end of file

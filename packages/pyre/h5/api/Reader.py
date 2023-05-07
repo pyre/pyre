@@ -9,6 +9,7 @@ import journal
 import pyre
 
 # support
+from .. import libh5
 from .Explorer import Explorer
 
 # typing
@@ -90,7 +91,7 @@ class Reader:
         # if the {scheme} points to an {s3} bucket
         if scheme == "s3":
             # check whether the installed {h5} library supports {ros3}
-            if not pyre.libh5.ros3():
+            if not libh5.ros3():
                 # make a channel
                 channel = journal.error("pyre.h5.reader")
                 # complain

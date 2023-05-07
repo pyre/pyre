@@ -6,10 +6,12 @@
 
 # support
 import merlin
+
 # superclass
 from .Asset import Asset
+
 # schema
-from .Language import Language as language
+from ..languages.Table import Table as table
 
 
 # class declaration
@@ -18,7 +20,6 @@ class Library(Asset, family="merlin.assets.libraries"):
     A high level container of binary artifacts
     """
 
-
     # user configurable state
     name = merlin.properties.str()
     name.doc = "the name of the library; used as a seed to name its various assets"
@@ -26,9 +27,8 @@ class Library(Asset, family="merlin.assets.libraries"):
     root = merlin.properties.path()
     root.doc = "the path to the library source relative to the root of the repository"
 
-    languages = merlin.properties.tuple(schema=language())
-    languages.doc = "the languages of the library source assets"
-
+    languages = table()
+    languages.doc = "language specific configuration"
 
     # framework hooks
     @classmethod
