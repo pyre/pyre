@@ -90,6 +90,14 @@ namespace pyre::tensor {
         constexpr const T & operator[](int) const;
         constexpr T & operator[](int);
 
+        // takes a parameter pack {J...} and evaluates (at compile time) the offset corresponding
+        // to the entry identified by the {J...} indices, based on the tensor packing
+        template <int... J>
+        static consteval auto getOffset() -> int
+        {
+            return _layout.offset({ J... });
+        }
+
         // cast to underlying type T (enable if S = 1, i.e. scalar)
         constexpr operator T() const
             requires(S == 1);
