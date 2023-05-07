@@ -451,39 +451,42 @@ namespace pyre::tensor {
     // matrix-matrix multiplication
     template <int D1, int D2, int D3, typename T, class packingT1, class packingT2>
     constexpr auto operator*(const matrix_t<D1, D2, T, packingT1> & A1, 
-        const matrix_t<D2, D3, T, packingT2> & A2) -> matrix_t<D1, D3, T>
+        const matrix_t<D2, D3, T, packingT2> & A2) 
+            -> matrix_t<D1, D3, T, typename repacking_prod<packingT1, packingT2>::packing_type>
     requires(D1 != 1 && D2 != 1 && D3 != 1)
     {
+        // repacking type
+        using repacking_t = typename repacking_prod<packingT1, packingT2>::packing_type;
         // instantiate result
-        matrix_t<D1, D3, T> result;
+        matrix_t<D1, D3, T, repacking_t> result;
 
         // helper function to fill the {I, ...} components
         constexpr auto _fill_I = []<int... K>(
-            const matrix_t<D1, D2, T> & A1,
-            const matrix_t<D2, D3, T> & A2,
-            matrix_t<D1, D3, T> & result,
+            const matrix_t<D1, D2, T, packingT1> & A1,
+            const matrix_t<D2, D3, T, packingT2> & A2,
+            matrix_t<D1, D3, T, repacking_t> & result,
             integer_sequence<K...>){
             
             // helper function to fill the {I, J} component
             constexpr auto _fill_J = []<int J, int... I>(
-                const matrix_t<D1, D2, T> & A1,
-                const matrix_t<D2, D3, T> & A2,
-                matrix_t<D1, D3, T> & result,
+                const matrix_t<D1, D2, T, packingT1> & A1,
+                const matrix_t<D2, D3, T, packingT2> & A2,
+                matrix_t<D1, D3, T, repacking_t> & result,
                 integer_sequence<I...>) {
 
                 // helper function to contract an index
                 constexpr auto _contract_L = []<int II, int JJ, int... L>(
-                    const matrix_t<D1, D2, T> & A1,
-                    const matrix_t<D2, D3, T> & A2,
+                    const matrix_t<D1, D2, T, packingT1> & A1,
+                    const matrix_t<D2, D3, T, packingT2> & A2,
                     integer_sequence<L...>) -> T {
                     // return index contraction
                     return ((
-                        A1[matrix_t<D1, D2, T>::layout().offset({II, L})] * 
-                        A2[matrix_t<D2, D3, T>::layout().offset({L, JJ})]) + ...);
+                        A1[matrix_t<D1, D2, T, packingT1>::layout().offset({II, L})] * 
+                        A2[matrix_t<D2, D3, T, packingT2>::layout().offset({L, JJ})]) + ...);
                 };
 
                 // compute the component {I, J} as the contraction of A1[{I, K}] and A2[{K, J}]
-                ((result[matrix_t<D1, D3, T>::layout().offset({I, J})] = 
+                ((result[matrix_t<D1, D3, T, repacking_t>::layout().offset({I, J})] = 
                     _contract_L.template operator()<I, J>(A1, A2, make_integer_sequence<D2> {})), ... );
 
                 // all done
