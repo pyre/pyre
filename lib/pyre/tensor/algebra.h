@@ -866,6 +866,8 @@ namespace pyre::tensor {
 
     template <int D, typename T, class packingT>
     constexpr auto function(const matrix_t<D, D, T, packingT> & A, auto f) -> auto
+    requires (std::is_same_v<packingT, pyre::grid::symmetric_t<2>> || 
+        std::is_same_v<packingT, pyre::grid::diagonal_t<2>> )
     {
         // compute eigenvalues
         auto lambda = matrix_diagonal(eigenvalues(A));
