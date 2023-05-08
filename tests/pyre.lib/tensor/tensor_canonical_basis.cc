@@ -65,8 +65,7 @@ main(int argc, char * argv[])
     static_assert(vector_t<3>::unit<0> * vector_t<3>::unit<2> == 0);
     static_assert(vector_t<3>::unit<1> * vector_t<3>::unit<2> == 0);
 
-    // compact packing-independent representation of matrices
-    // the basis elements for R^2 X R^2
+    // the packing-agnostic canonical basis of R^2x2
     constexpr auto e_00 = matrix_t<2>::unit<0, 0>;
     constexpr auto e_01 = matrix_t<2>::unit<0, 1>;
     constexpr auto e_10 = matrix_t<2>::unit<1, 0>;

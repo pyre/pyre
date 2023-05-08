@@ -19,7 +19,7 @@ using namespace pyre::tensor;
 int
 main(int argc, char * argv[])
 {
-    // the canonical basis of R^3x3
+    // the packing-agnostic canonical basis of R^3x3
     constexpr auto e00 = matrix_t<3>::unit<0, 0>;
     constexpr auto e01 = matrix_t<3>::unit<0, 1>;
     constexpr auto e02 = matrix_t<3>::unit<0, 2>;
@@ -30,7 +30,7 @@ main(int argc, char * argv[])
     constexpr auto e21 = matrix_t<3>::unit<2, 1>;
     constexpr auto e22 = matrix_t<3>::unit<2, 2>;
 
-    // the canonical basis of R^3
+    // the packing-agnostic canonical basis of R^3
     constexpr auto e0 = vector_t<3>::unit<0>;
     constexpr auto e1 = vector_t<3>::unit<1>;
     constexpr auto e2 = vector_t<3>::unit<2>;
