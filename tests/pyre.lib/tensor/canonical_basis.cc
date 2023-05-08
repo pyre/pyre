@@ -99,6 +99,11 @@ main(int argc, char * argv[])
     static_assert(!(e_00 + e_01_sym).is_diagonal() && (e_00 + e_01_sym).is_symmetric());
     static_assert(!(e_11 + e_01_sym).is_diagonal() && (e_11 + e_01_sym).is_symmetric());
 
+    // other types that cast to double
+    static_assert(
+        true * e_00 + 2.0 * e_01 + 3.0 * e_10 + 4 * e_11
+        == e_00 + 2.0 * e_01 + 3.0 * e_10 + 4.0 * e_11);
+
     // all done
     return 0;
 }
