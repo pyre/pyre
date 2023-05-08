@@ -39,7 +39,7 @@ tests.pyre.lib.grid.grid_mmap_get.pre := tests.pyre.lib.grid.grid_mmap_set
 # exclude the tensor tests (require c++20)
 pyre.lib.tests.drivers.exclude += \
     tensor/canonical_arithmetics.cc \
-    tensor/cayley_hamilton.cc \
+    tensor/cayley_hamilton_theorem.cc \
     tensor/compact_arithmetics.cc \
     tensor/tensor_basis.cc \
     tensor/tensor_eigenvalues.cc \
