@@ -277,34 +277,49 @@ endif()
 # tensor
 if (HAVE_TENSOR)
 set(definitions "HAVE_TENSOR" "HAVE_COMPACT_PACKINGS")
-pyre_test_driver_cxx20(tests/pyre.lib/tensor/canonical_arithmetics.cc)
-pyre_add_definitions(tests/pyre.lib/tensor/canonical_arithmetics.cc ${definitions})
-pyre_test_driver_cxx20(tests/pyre.lib/tensor/canonical_basis.cc)
-pyre_add_definitions(tests/pyre.lib/tensor/canonical_basis.cc ${definitions})
-pyre_test_driver_cxx20(tests/pyre.lib/tensor/cayley_hamilton_theorem.cc)
-pyre_add_definitions(tests/pyre.lib/tensor/cayley_hamilton_theorem.cc ${definitions})
-pyre_test_driver_cxx20(tests/pyre.lib/tensor/compact_arithmetics.cc)
-pyre_add_definitions(tests/pyre.lib/tensor/compact_arithmetics.cc ${definitions})
+
+pyre_test_driver_cxx20(tests/pyre.lib/tensor/tensor_canonical_arithmetics.cc)
+pyre_add_definitions(tests/pyre.lib/tensor/tensor_canonical_arithmetics.cc ${definitions})
+
+pyre_test_driver_cxx20(tests/pyre.lib/tensor/tensor_canonical_basis.cc)
+pyre_add_definitions(tests/pyre.lib/tensor/tensor_canonical_basis.cc ${definitions})
+
+pyre_test_driver_cxx20(tests/pyre.lib/tensor/tensor_cayley_hamilton_theorem.cc)
+pyre_add_definitions(tests/pyre.lib/tensor/tensor_cayley_hamilton_theorem.cc ${definitions})
+
+pyre_test_driver_cxx20(tests/pyre.lib/tensor/tensor_compact_arithmetics.cc)
+pyre_add_definitions(tests/pyre.lib/tensor/tensor_compact_arithmetics.cc ${definitions})
+
 pyre_test_driver_cxx20(tests/pyre.lib/tensor/tensor_eigenvalues.cc)
 pyre_add_definitions(tests/pyre.lib/tensor/tensor_eigenvalues.cc ${definitions})
+
 pyre_test_driver_cxx20(tests/pyre.lib/tensor/tensor_eigenvalues_transformation.cc)
 pyre_add_definitions(tests/pyre.lib/tensor/tensor_eigenvalues_transformation.cc ${definitions})
+
+pyre_test_driver_cxx20(tests/pyre.lib/tensor/tensor_identities.cc)
+pyre_add_definitions(tests/pyre.lib/tensor/tensor_identities.cc ${definitions})
+
 pyre_test_driver_cxx20(tests/pyre.lib/tensor/tensor_inverse.cc)
 pyre_add_definitions(tests/pyre.lib/tensor/tensor_inverse.cc ${definitions})
+
 pyre_test_driver_cxx20(tests/pyre.lib/tensor/tensor_iterators.cc)
 pyre_add_definitions(tests/pyre.lib/tensor/tensor_iterators.cc ${definitions})
+
 pyre_test_driver_cxx20(tests/pyre.lib/tensor/tensor_literals.cc)
 pyre_add_definitions(tests/pyre.lib/tensor/tensor_literals.cc ${definitions})
+
 pyre_test_driver_cxx20(tests/pyre.lib/tensor/tensor_print.cc)
 pyre_add_definitions(tests/pyre.lib/tensor/tensor_print.cc ${definitions})
+
 pyre_test_driver_cxx20(tests/pyre.lib/tensor/tensor_symmetry.cc)
 pyre_add_definitions(tests/pyre.lib/tensor/tensor_symmetry.cc ${definitions})
+
 pyre_test_driver_cxx20(tests/pyre.lib/tensor/tensor_transpose.cc)
 pyre_add_definitions(tests/pyre.lib/tensor/tensor_transpose.cc ${definitions})
+
 pyre_test_driver_cxx20(tests/pyre.lib/tensor/tensor_utilities.cc)
 pyre_add_definitions(tests/pyre.lib/tensor/tensor_utilities.cc ${definitions})
-pyre_test_driver_cxx20(tests/pyre.lib/tensor/vector_identities.cc)
-pyre_add_definitions(tests/pyre.lib/tensor/vector_identities.cc ${definitions})
+
 endif()
 
 

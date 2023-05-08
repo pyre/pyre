@@ -38,12 +38,13 @@ tests.pyre.lib.grid.grid_mmap_get.pre := tests.pyre.lib.grid.grid_mmap_set
 
 # exclude the tensor tests (require c++20)
 pyre.lib.tests.drivers.exclude += \
-    tensor/canonical_arithmetics.cc \
-    tensor/canonical_basis.cc \
-    tensor/cayley_hamilton_theorem.cc \
-    tensor/compact_arithmetics.cc \
+    tensor/tensor_canonical_arithmetics.cc \
+    tensor/tensor_canonical_basis.cc \
+    tensor/tensor_cayley_hamilton_theorem.cc \
+    tensor/tensor_compact_arithmetics.cc \
     tensor/tensor_eigenvalues.cc \
     tensor/tensor_eigenvalues_transformation.cc \
+    tensor/tensor_identities.cc \
     tensor/tensor_inverse.cc \
     tensor/tensor_iterators.cc \
     tensor/tensor_literals.cc \
@@ -51,7 +52,6 @@ pyre.lib.tests.drivers.exclude += \
     tensor/tensor_symmetry.cc \
     tensor/tensor_transpose.cc \
     tensor/tensor_utilities.cc \
-    tensor/vector_identities.cc \
 
 
 # exclude the compact packing tests (require c++20)
