@@ -796,17 +796,20 @@ pyre::tensor::trace(const pyre::tensor::matrix_t<D, D, T, packingT> & A) -> T
 template <int D1, int D2, typename T, class packingT>
 constexpr auto
 pyre::tensor::transpose(const pyre::tensor::matrix_t<D1, D2, T, packingT> & A)
+    -> pyre::tensor::matrix_t<D2, D1, T, packingT>
 {
     // the type of matrix {A}
-    using matrix_t = pyre::tensor::matrix_t<D1, D2, T, packingT>;
+    using matrix_input_t = pyre::tensor::matrix_t<D1, D2, T, packingT>;
+    using matrix_result_t = pyre::tensor::matrix_t<D2, D1, T, packingT>;
 
     // A transposed
-    matrix_t AT;
+    matrix_result_t AT;
     auto _transposeJ = [&A, &AT ]<int... J>(pyre::tensor::integer_sequence<J...>)
     {
         auto _transposeI = [&A, &AT ]<int K, int... I>(pyre::tensor::integer_sequence<I...>)
         {
-            ((AT[matrix_t::template getOffset<K, I>()] = A[matrix_t::template getOffset<I, K>()]),
+            ((AT[matrix_result_t::template getOffset<K, I>()] =
+                  A[matrix_input_t::template getOffset<I, K>()]),
              ...);
             return;
         };
