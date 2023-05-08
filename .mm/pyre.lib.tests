@@ -45,6 +45,7 @@ pyre.lib.tests.drivers.exclude += \
     tensor/tensor_eigenvalues_transformation.cc \
     tensor/tensor_invariants.cc \
     tensor/tensor_iterators.cc \
+    tensor/tensor_literals.cc \
     tensor/tensor_packings.cc \
     tensor/tensor_packings_arithmetic.cc \
     tensor/tensor_print.cc \
