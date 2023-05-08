@@ -40,7 +40,6 @@ tests.pyre.lib.grid.grid_mmap_get.pre := tests.pyre.lib.grid.grid_mmap_set
 pyre.lib.tests.drivers.exclude += \
     tensor/cayley_hamilton.cc \
     tensor/tensor_algebra.cc \
-    tensor/tensor_arithmetic.cc \
     tensor/tensor_basis.cc \
     tensor/tensor_eigenvalues.cc \
     tensor/tensor_eigenvalues_transformation.cc \
@@ -51,7 +50,6 @@ pyre.lib.tests.drivers.exclude += \
     tensor/tensor_print.cc \
     tensor/tensor_symmetry.cc \
     tensor/tensor_utilities.cc \
-    tensor/timed_benchmarks.cc \
     tensor/vector_identities.cc \
 
 
