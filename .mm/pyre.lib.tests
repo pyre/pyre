@@ -39,11 +39,12 @@ tests.pyre.lib.grid.grid_mmap_get.pre := tests.pyre.lib.grid.grid_mmap_set
 # exclude the tensor tests (require c++20)
 pyre.lib.tests.drivers.exclude += \
     tensor/cayley_hamilton.cc \
-    tensor/tensor_algebra.cc \
+    tensor/tensor_arithmetics.cc \
     tensor/tensor_basis.cc \
     tensor/tensor_eigenvalues.cc \
     tensor/tensor_eigenvalues_transformation.cc \
     tensor/tensor_invariants.cc \
+    tensor/tensor_inverse.cc \
     tensor/tensor_iterators.cc \
     tensor/tensor_literals.cc \
     tensor/tensor_packings.cc \
