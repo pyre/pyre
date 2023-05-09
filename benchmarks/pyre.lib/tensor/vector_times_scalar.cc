@@ -16,7 +16,7 @@
 
 
 // type aliases
-using timer_t = pyre::timers::process_timer_t;
+using process_timer_t = pyre::timers::process_timer_t;
 
 
 void
@@ -26,7 +26,7 @@ vector_times_scalar(int N)
     pyre::journal::info_t channel("tests.timer.vector_times_scalar");
 
     // make a timer
-    timer_t t("tests.timer");
+    process_timer_t t("tests.timer");
 
     channel << "Computing " << N << " scalar-vector multiplications" << pyre::journal::endl;
 

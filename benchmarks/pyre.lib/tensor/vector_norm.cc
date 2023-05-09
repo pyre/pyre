@@ -16,7 +16,7 @@
 
 
 // type aliases
-using timer_t = pyre::timers::process_timer_t;
+using process_timer_t = pyre::timers::process_timer_t;
 
 
 void
@@ -26,7 +26,7 @@ norm_vector(int N)
     pyre::journal::info_t channel("tests.timer.norm_vector");
 
     // make a timer
-    timer_t t("tests.timer");
+    process_timer_t t("tests.timer");
 
     channel << "Computing " << N << " norms of vectors" << pyre::journal::endl;
 

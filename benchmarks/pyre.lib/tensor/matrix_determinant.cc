@@ -16,7 +16,7 @@
 
 
 // type aliases
-using timer_t = pyre::timers::process_timer_t;
+using process_timer_t = pyre::timers::process_timer_t;
 
 
 void
@@ -26,7 +26,7 @@ determinant_2D(int N)
     pyre::journal::info_t channel("tests.timer.determinant");
 
     // make a timer
-    timer_t t("tests.timer");
+    process_timer_t t("tests.timer");
 
     channel << "Computing " << N << " determinants (2x2)" << pyre::journal::endl;
 
@@ -91,7 +91,7 @@ determinant_3D(int N)
     pyre::journal::info_t channel("tests.timer.determinant");
 
     // make a timer
-    timer_t t("tests.timer");
+    process_timer_t t("tests.timer");
 
     channel << "Computing " << N << " determinants (3x3)" << pyre::journal::endl;
 
@@ -158,7 +158,7 @@ determinant_3D_symmetric(int N)
     pyre::journal::info_t channel("tests.timer.determinant");
 
     // make a timer
-    timer_t t("tests.timer");
+    process_timer_t t("tests.timer");
 
     channel << "Computing " << N << " determinants (3x3, symmetric)" << pyre::journal::endl;
 
@@ -230,7 +230,7 @@ determinant_3D_diagonal(int N)
     pyre::journal::info_t channel("tests.timer.determinant");
 
     // make a timer
-    timer_t t("tests.timer");
+    process_timer_t t("tests.timer");
 
     channel << "Computing " << N << " determinants (3x3, diagonal)" << pyre::journal::endl;
 

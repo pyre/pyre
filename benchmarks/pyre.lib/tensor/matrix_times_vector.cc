@@ -16,7 +16,7 @@
 
 
 // type aliases
-using timer_t = pyre::timers::process_timer_t;
+using process_timer_t = pyre::timers::process_timer_t;
 
 
 void
@@ -26,7 +26,7 @@ matrix_times_vector(int N)
     pyre::journal::info_t channel("tests.timer.matrix_times_vector");
 
     // make a timer
-    timer_t t("tests.timer");
+    process_timer_t t("tests.timer");
 
     channel << "Computing " << N << " matrix-vector multiplications" << pyre::journal::endl;
 
@@ -98,7 +98,7 @@ symmetric_matrix_times_vector(int N)
     pyre::journal::info_t channel("tests.timer.matrix_times_vector");
 
     // make a timer
-    timer_t t("tests.timer");
+    process_timer_t t("tests.timer");
 
     channel << "Computing " << N << " matrix-vector multiplications (symmetric matrix)"
             << pyre::journal::endl;

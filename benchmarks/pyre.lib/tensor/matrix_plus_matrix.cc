@@ -16,7 +16,7 @@
 
 
 // type aliases
-using timer_t = pyre::timers::process_timer_t;
+using process_timer_t = pyre::timers::process_timer_t;
 
 
 void
@@ -26,7 +26,7 @@ matrix_plus_matrix(int N)
     pyre::journal::info_t channel("tests.timer.matrix_plus_matrix");
 
     // make a timer
-    timer_t t("tests.timer");
+    process_timer_t t("tests.timer");
 
     channel << "Computing " << N << " matrix-matrix sums" << pyre::journal::endl;
 
@@ -98,7 +98,7 @@ matrix_plus_symmetric_matrix(int N)
     pyre::journal::info_t channel("tests.timer.matrix_plus_symmetric_matrix");
 
     // make a timer
-    timer_t t("tests.timer");
+    process_timer_t t("tests.timer");
 
     channel << "Computing " << N << " matrix-matrix sums (matrix + symmetric matrix)"
             << pyre::journal::endl;
@@ -176,7 +176,7 @@ matrix_plus_diagonal_matrix(int N)
     pyre::journal::info_t channel("tests.timer.matrix_plus_diagonal_matrix");
 
     // make a timer
-    timer_t t("tests.timer");
+    process_timer_t t("tests.timer");
 
     channel << "Computing " << N << " matrix-matrix sums (matrix + diagonal matrix)"
             << pyre::journal::endl;
@@ -249,7 +249,7 @@ symmetric_matrix_plus_diagonal_matrix(int N)
     pyre::journal::info_t channel("tests.timer.symmetric_matrix_plus_diagonal_matrix");
 
     // make a timer
-    timer_t t("tests.timer");
+    process_timer_t t("tests.timer");
 
     channel << "Computing " << N << " matrix-matrix sums (symmetric matrix + diagonal matrix)"
             << pyre::journal::endl;
