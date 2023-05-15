@@ -15,7 +15,7 @@
 
 
 // type alias
-using host_mapped_t = pyre::cuda::memory::host_mapped_t<double>;
+using mapped_t = pyre::cuda::memory::mapped_t<double>;
 
 
 // main program
@@ -31,7 +31,7 @@ main(int argc, char * argv[])
     // pick a number
     const int cells = 1024 * 1024;
     // allocate some memory
-    host_mapped_t arena(cells);
+    mapped_t arena(cells);
 
     // show me the address
     channel << "allocated " << cells << " doubles at " << arena.data()

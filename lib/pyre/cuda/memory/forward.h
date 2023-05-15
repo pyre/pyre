@@ -15,11 +15,11 @@ namespace pyre::cuda::memory {
     class Managed;
     // pinned memory block on the host with host-only access
     template <typename T, bool isConst>
-    class HostPinned;
+    class Pinned;
     // mapped memory block on the host with host-only access
     template <typename T, bool isConst>
-    class HostMapped;
-};
+    class Mapped;
+}; // namespace pyre::cuda::memory
 
 
 #endif

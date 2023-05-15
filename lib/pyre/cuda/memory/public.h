@@ -21,10 +21,10 @@
 #include "Managed.h"
 
 // pinned memory
-#include "HostPinned.h"
+#include "Pinned.h"
 
 // mapped memory
-#include "HostMapped.h"
+#include "Mapped.h"
 
 #endif
 

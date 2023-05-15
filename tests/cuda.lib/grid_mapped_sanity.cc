@@ -26,7 +26,7 @@ main(int argc, char * argv[])
     // we'll work with a 3d conventionally packed grid
     using pack_t = pyre::grid::canonical_t<3>;
     // of doubles on the heap
-    using storage_t = pyre::cuda::memory::host_mapped_t<double>;
+    using storage_t = pyre::cuda::memory::mapped_t<double>;
     // putting it all together
     using grid_t = pyre::grid::grid_t<pack_t, storage_t>;
 
