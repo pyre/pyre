@@ -1,17 +1,17 @@
 // -*- c++ -*-
 
 // code guard
-#if !defined(pyre_cuda_memory_HostMapped_icc)
-#error this file contains implementation details for pyre::cuda::memory::HostMapped
+#if !defined(pyre_cuda_memory_Mapped_icc)
+#error this file contains implementation details for pyre::cuda::memory::Mapped
 #else
 
 // metamethods
 // constructor
 template <class T, bool isConst>
-pyre::cuda::memory::HostMapped<T, isConst>::HostMapped(
+pyre::cuda::memory::Mapped<T, isConst>::Mapped(
     cell_count_type cells) : // the cuda {malloc} api is not RAII friendly, so we initialize with a
                              // {nullptr} and replace it with the actual allocation
-    _data { nullptr },
+    _cpu_data { nullptr },
     _device_data { nullptr },
     _cells { cells }
 {
@@ -96,12 +96,12 @@ pyre::cuda::memory::HostMapped<T, isConst>::HostMapped(
     };
 
     // replace the {nullptr} with the new block and register the deallocator
-    _data.reset(spot, destructor);
+    _cpu_data.reset(spot, destructor);
 }
 
 template <class T, bool isConst>
-pyre::cuda::memory::HostMapped<T, isConst>::HostMapped(handle_type handle, cell_count_type cells) :
-    _data { handle },
+pyre::cuda::memory::Mapped<T, isConst>::Mapped(handle_type handle, cell_count_type cells) :
+    _cpu_data { handle },
     _cells { cells }
 {}
 
@@ -109,7 +109,7 @@ pyre::cuda::memory::HostMapped<T, isConst>::HostMapped(handle_type handle, cell_
 // get the number of cells in the block
 template <class T, bool isConst>
 auto
-pyre::cuda::memory::HostMapped<T, isConst>::cells() const -> cell_count_type
+pyre::cuda::memory::Mapped<T, isConst>::cells() const -> cell_count_type
 {
     // easy
     return _cells;
@@ -118,7 +118,7 @@ pyre::cuda::memory::HostMapped<T, isConst>::cells() const -> cell_count_type
 // get the memory footprint of the block
 template <class T, bool isConst>
 auto
-pyre::cuda::memory::HostMapped<T, isConst>::bytes() const -> size_type
+pyre::cuda::memory::Mapped<T, isConst>::bytes() const -> size_type
 {
     // scale the number of cells by the cell size
     return cells() * sizeof(value_type);
@@ -127,25 +127,25 @@ pyre::cuda::memory::HostMapped<T, isConst>::bytes() const -> size_type
 // access to the data pointer
 template <class T, bool isConst>
 auto
-pyre::cuda::memory::HostMapped<T, isConst>::data() const -> pointer
+pyre::cuda::memory::Mapped<T, isConst>::data() const -> pointer
 {
     // return the raw data pointer
-    return _data.get();
+    return _cpu_data.get();
 }
 
 // get the shared pointer
 template <class T, bool isConst>
 auto
-pyre::cuda::memory::HostMapped<T, isConst>::handle() const -> handle_type
+pyre::cuda::memory::Mapped<T, isConst>::handle() const -> handle_type
 {
     // easy
-    return _data;
+    return _cpu_data;
 }
 
 // get the device pointer
 template <class T, bool isConst>
 auto
-pyre::cuda::memory::HostMapped<T, isConst>::device() const -> pointer
+pyre::cuda::memory::Mapped<T, isConst>::device() const -> pointer
 {
     // easy
     return _device_data;
@@ -154,7 +154,7 @@ pyre::cuda::memory::HostMapped<T, isConst>::device() const -> pointer
 // iterator support
 template <class T, bool isConst>
 auto
-pyre::cuda::memory::HostMapped<T, isConst>::begin() const -> pointer
+pyre::cuda::memory::Mapped<T, isConst>::begin() const -> pointer
 {
     // the beginning of the block
     return data();
@@ -162,7 +162,7 @@ pyre::cuda::memory::HostMapped<T, isConst>::begin() const -> pointer
 
 template <class T, bool isConst>
 auto
-pyre::cuda::memory::HostMapped<T, isConst>::end() const -> pointer
+pyre::cuda::memory::Mapped<T, isConst>::end() const -> pointer
 {
     // one past the last cell in the block
     return data() + cells();
@@ -171,7 +171,7 @@ pyre::cuda::memory::HostMapped<T, isConst>::end() const -> pointer
 // data access
 template <class T, bool isConst>
 auto
-pyre::cuda::memory::HostMapped<T, isConst>::at(size_type pos) const -> reference
+pyre::cuda::memory::Mapped<T, isConst>::at(size_type pos) const -> reference
 {
     // if the request is out of bounds
     if (pos >= cells()) {
@@ -193,7 +193,7 @@ pyre::cuda::memory::HostMapped<T, isConst>::at(size_type pos) const -> reference
 
 template <class T, bool isConst>
 auto
-pyre::cuda::memory::HostMapped<T, isConst>::operator[](size_type pos) const -> reference
+pyre::cuda::memory::Mapped<T, isConst>::operator[](size_type pos) const -> reference
 {
     // return a reference to the cell at {pos}
     return data()[pos];

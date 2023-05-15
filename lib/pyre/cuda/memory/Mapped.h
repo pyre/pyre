@@ -1,12 +1,12 @@
 // -*- c++ -*-
 
 // code guard
-#if !defined(pyre_cuda_memory_HostMapped_h)
-#define pyre_cuda_memory_HostMapped_h
+#if !defined(pyre_cuda_memory_Mapped_h)
+#define pyre_cuda_memory_Mapped_h
 
 // a block of cells on mapped memory
 template <class T, bool isConst>
-class pyre::cuda::memory::HostMapped {
+class pyre::cuda::memory::Mapped {
     // types
 public:
     // my cell
@@ -29,9 +29,9 @@ public:
     // metamethods
 public:
     // allocate a new block of memory
-    inline HostMapped(cell_count_type);
+    inline Mapped(cell_count_type);
     // i can make one from a block and a count
-    inline HostMapped(handle_type, cell_count_type);
+    inline Mapped(handle_type, cell_count_type);
 
     // accessors
 public:
@@ -60,25 +60,25 @@ public:
 
     // implementation details: data
 private:
-    handle_type _data;
+    handle_type _cpu_data;
     pointer _device_data;
     const cell_count_type _cells;
 
     // default metamethods
 public:
     // destructor
-    ~HostMapped() = default;
+    ~Mapped() = default;
     // constructors
-    HostMapped(const HostMapped &) = default;
-    HostMapped(HostMapped &&) = default;
-    HostMapped & operator=(const HostMapped &) = default;
-    HostMapped & operator=(HostMapped &&) = default;
+    Mapped(const Mapped &) = default;
+    Mapped(Mapped &&) = default;
+    Mapped & operator=(const Mapped &) = default;
+    Mapped & operator=(Mapped &&) = default;
 };
 
 // get the inline definitions
-#define pyre_cuda_memory_HostMapped_icc
-#include "HostMapped.icc"
-#undef pyre_cuda_memory_HostMapped_icc
+#define pyre_cuda_memory_Mapped_icc
+#include "Mapped.icc"
+#undef pyre_cuda_memory_Mapped_icc
 
 #endif
 
