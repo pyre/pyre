@@ -1,12 +1,12 @@
 // -*- c++ -*-
 
 // code guard
-#if !defined(pyre_cuda_memory_HostPinned_h)
-#define pyre_cuda_memory_HostPinned_h
+#if !defined(pyre_cuda_memory_Pinned_h)
+#define pyre_cuda_memory_Pinned_h
 
 // a block of cells on pinned memory
 template <class T, bool isConst>
-class pyre::cuda::memory::HostPinned {
+class pyre::cuda::memory::Pinned {
     // types
 public:
     // my cell
@@ -29,9 +29,9 @@ public:
     // metamethods
 public:
     // allocate a new block of host memory
-    inline HostPinned(cell_count_type);
+    inline Pinned(cell_count_type);
     // i can make one from a block and a count
-    inline HostPinned(handle_type, cell_count_type);
+    inline Pinned(handle_type, cell_count_type);
 
     // accessors
 public:
@@ -43,6 +43,15 @@ public:
     inline auto data() const -> pointer;
     // the shared pointer
     inline auto handle() const -> handle_type;
+    // access to the device data pointer
+    inline auto device() const -> pointer;
+
+    // cpu gpu synchronization
+public:
+    // synchronize memory from cpu to gpu
+    inline auto synchronizeHostToDevice(pointer, pointer, cell_count_type);
+    // synchronize memory from gpu to cpu
+    inline auto synchronizeDeviceToHost(pointer, pointer, cell_count_type);
 
     // data access
 public:
@@ -51,26 +60,31 @@ public:
     // without bounds checking
     inline auto operator[](size_type) const -> reference;
 
+    // delete the gpu memory
+public:
+    inline auto deleteDevice();
+
     // implementation details: data
 private:
-    handle_type _data;
+    handle_type _cpu_data;
+    pointer _device_data;
     const cell_count_type _cells;
 
     // default metamethods
 public:
     // destructor
-    ~HostPinned() = default;
+    ~Pinned() = default;
     // constructors
-    HostPinned(const HostPinned &) = default;
-    HostPinned(HostPinned &&) = default;
-    HostPinned & operator=(const HostPinned &) = default;
-    HostPinned & operator=(HostPinned &&) = default;
+    Pinned(const Pinned &) = default;
+    Pinned(Pinned &&) = default;
+    Pinned & operator=(const Pinned &) = default;
+    Pinned & operator=(Pinned &&) = default;
 };
 
 // get the inline definitions
-#define pyre_cuda_memory_HostPinned_icc
-#include "HostPinned.icc"
-#undef pyre_cuda_memory_HostPinned_icc
+#define pyre_cuda_memory_Pinned_icc
+#include "Pinned.icc"
+#undef pyre_cuda_memory_Pinned_icc
 
 #endif
 
