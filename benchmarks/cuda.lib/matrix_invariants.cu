@@ -53,42 +53,8 @@ computeInvariantsPinned(
     int nTensors, int nThreadPerBlock, int nBlocks, const double * tensorArray, double * I1,
     double * I2, double * I3, double * gpuTensors, double * gpuI1, double * gpuI2, double * gpuI3)
 {
-    // set cuda error
-    cudaError_t status;
-
-    // copy the pinned memory
-    status =
-        cudaMemcpy(gpuTensors, tensorArray, nTensors * 9 * sizeof(double), cudaMemcpyHostToDevice);
-    if (status != cudaSuccess) {
-        // complain
-        std::cout << "while sending memory " << cudaGetErrorName(status) << " (" << status << ")"
-                  << std::endl;
-    }
-
     // execute the kernel
     computeInvariants<<<nBlocks, nThreadPerBlock>>>(gpuTensors, gpuI1, gpuI2, gpuI3, nTensors);
-
-    // send the memory back
-    status = cudaMemcpy(I1, gpuI1, nTensors * sizeof(double), cudaMemcpyDeviceToHost);
-    if (status != cudaSuccess) {
-        // complain
-        std::cout << "while receive memory " << cudaGetErrorName(status) << " (" << status << ")"
-                  << std::endl;
-    }
-
-    status = cudaMemcpy(I2, gpuI2, nTensors * sizeof(double), cudaMemcpyDeviceToHost);
-    if (status != cudaSuccess) {
-        // complain
-        std::cout << "while receive memory " << cudaGetErrorName(status) << " (" << status << ")"
-                  << std::endl;
-    }
-
-    status = cudaMemcpy(I3, gpuI3, nTensors * sizeof(double), cudaMemcpyDeviceToHost);
-    if (status != cudaSuccess) {
-        // complain
-        std::cout << "while receive memory " << cudaGetErrorName(status) << " (" << status << ")"
-                  << std::endl;
-    }
 
     // all done
     return;

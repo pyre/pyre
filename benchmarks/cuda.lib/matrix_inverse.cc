@@ -22,8 +22,8 @@ using pack_t = pyre::grid::canonical_t<2>;
 
 // memory storage
 using managed_storage_t = pyre::cuda::memory::managed_t<double>;
-using pinned_storage_t = pyre::cuda::memory::host_pinned_t<double>;
-using mapped_storage_t = pyre::cuda::memory::host_mapped_t<double>;
+using pinned_storage_t = pyre::cuda::memory::pinned_t<double>;
+using mapped_storage_t = pyre::cuda::memory::mapped_t<double>;
 
 // grids
 using grid_managed_t = pyre::grid::grid_t<pack_t, managed_storage_t>;
@@ -154,8 +154,9 @@ managedInverses(pack_t tensorPack, int nThreadPerBlock, int nTensors)
     // show me
     timerChannel
         // show me the elapsed time
-        << "Managed memory tensor inverse computation: " << pyre::journal::indent(1)
-        << "General timer time:  " << timer.ms() << " ms"
+        << "Managed memory tensor inverse computation: " << pyre::journal::newline
+        << pyre::journal::indent(1) << "General timer time:  " << timer.ms() << " ms"
+        << pyre::journal::newline << pyre::journal::indent(1)
         << "Wallclock time: " << walltimer.ms() << " ms" << pyre::journal::outdent(1)
         << pyre::journal::endl(__HERE__);
 
@@ -266,10 +267,31 @@ pinnedInverses(pack_t tensorPack, int nThreadPerBlock, int nTensors)
     // start the wallclock timer
     walltimer.start();
 
+    // synchronize the tensors between host and device
+    tensorArray.data()->synchronizeHostToDevice(
+        tensorArray.data()->data(), tensorArray.data()->device(), nTensors * 9);
+
+
     // execute the kernel wrapper
     computeInvariantsPinned(
         nTensors, nThreadPerBlock, nBlocks, tensorArray.data()->data(), inverseArray.data()->data(),
-        gpuTensors, gpuInverses);
+        tensorArray.data()->device(), inverseArray.data()->device());
+
+    // wait for GPU to finish before synchronizing the inverse
+    status = cudaDeviceSynchronize();
+    if (status != cudaSuccess) {
+        // make a channel
+        pyre::journal::error_t error("pyre.cuda");
+        // complain
+        error << "while synchronizing the GPU " << pyre::journal::newline
+              << cudaGetErrorName(status) << " (" << status << ")" << pyre::journal::endl(__HERE__);
+        // and bail
+        throw std::bad_alloc();
+    }
+
+    // and synchronize the inverse between device and host
+    inverseArray.data()->synchronizeDeviceToHost(
+        inverseArray.data()->data(), inverseArray.data()->device(), nTensors * 9);
 
     // wait for GPU to finish before stopping the timer
     status = cudaDeviceSynchronize();
@@ -289,6 +311,9 @@ pinnedInverses(pack_t tensorPack, int nThreadPerBlock, int nTensors)
     // and stop the wallclock timer
     walltimer.stop();
 
+    // delete gpu memory
+    inverseArray.data()->deleteDevice();
+
     // make a channel
     pyre::journal::debug_t timerChannel("tests.timer");
     // activate it
@@ -296,8 +321,9 @@ pinnedInverses(pack_t tensorPack, int nThreadPerBlock, int nTensors)
     // show me
     timerChannel
         // show me the elapsed time
-        << "Pinned memory tensor inverse computation: " << pyre::journal::indent(1)
-        << "General timer time:  " << timer.ms() << " ms"
+        << "Pinned memory tensor inverse computation: " << pyre::journal::newline
+        << pyre::journal::indent(1) << "General timer time:  " << timer.ms() << " ms"
+        << pyre::journal::newline << pyre::journal::indent(1)
         << "Wallclock time: " << walltimer.ms() << " ms" << pyre::journal::outdent(1)
         << pyre::journal::endl(__HERE__);
 
@@ -409,8 +435,9 @@ mappedInverses(pack_t tensorPack, int nThreadPerBlock, int nTensors)
     // show me
     timerChannel
         // show me the elapsed time
-        << "Mapped memory tensor inverse computation: " << pyre::journal::indent(1)
-        << "General timer time:  " << timer.ms() << " ms"
+        << "Mapped memory tensor inverse computation: " << pyre::journal::newline
+        << pyre::journal::indent(1) << "General timer time:  " << timer.ms() << " ms"
+        << pyre::journal::newline << pyre::journal::indent(1)
         << "Wallclock time: " << walltimer.ms() << " ms" << pyre::journal::outdent(1)
         << pyre::journal::endl(__HERE__);
 

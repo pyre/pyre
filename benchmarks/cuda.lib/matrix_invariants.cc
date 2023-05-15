@@ -22,8 +22,8 @@ using pack_t = pyre::grid::canonical_t<2>;
 
 // memory storage
 using managed_storage_t = pyre::cuda::memory::managed_t<double>;
-using pinned_storage_t = pyre::cuda::memory::host_pinned_t<double>;
-using mapped_storage_t = pyre::cuda::memory::host_mapped_t<double>;
+using pinned_storage_t = pyre::cuda::memory::pinned_t<double>;
+using mapped_storage_t = pyre::cuda::memory::mapped_t<double>;
 
 // grids
 using grid_managed_t = pyre::grid::grid_t<pack_t, managed_storage_t>;
@@ -158,8 +158,9 @@ managedInvariants(pack_t tensorPack, pack_t invariantPack, int nThreadPerBlock, 
     // show me
     timerChannel
         // show me the elapsed time
-        << "Managed memory tensor invariant computation: " << pyre::journal::indent(1)
-        << "General timer time:  " << timer.ms() << " ms"
+        << "Managed memory tensor invariant computation: " << pyre::journal::newline
+        << pyre::journal::indent(1) << "General timer time:  " << timer.ms() << " ms"
+        << pyre::journal::newline << pyre::journal::indent(1)
         << "Wallclock time: " << walltimer.ms() << " ms" << pyre::journal::outdent(1)
         << pyre::journal::endl(__HERE__);
 
@@ -196,60 +197,6 @@ pinnedInvariants(pack_t tensorPack, pack_t invariantPack, int nThreadPerBlock, i
     grid_pinned_t I2 { invariantPack, invariantPack.cells() };
     grid_pinned_t I3 { invariantPack, invariantPack.cells() };
 
-    // and the gpu memory
-    double *gpuTensors, *gpuI1, *gpuI2, *gpuI3;
-    auto status = cudaMalloc(&gpuTensors, nTensors * 9 * sizeof(double));
-    // if something went wrong
-    if (status != cudaSuccess) {
-        // make a channel
-        pyre::journal::error_t error("pyre.cuda");
-        // complain
-        error << "while allocating " << nTensors * 9
-              << " bytes of device memory: " << pyre::journal::newline << cudaGetErrorName(status)
-              << " (" << status << ")" << pyre::journal::endl(__HERE__);
-        // and bail
-        throw std::bad_alloc();
-    }
-
-    status = cudaMalloc(&gpuI1, nTensors * sizeof(double));
-    // if something went wrong
-    if (status != cudaSuccess) {
-        // make a channel
-        pyre::journal::error_t error("pyre.cuda");
-        // complain
-        error << "while allocating " << nTensors
-              << " bytes of device memory: " << pyre::journal::newline << cudaGetErrorName(status)
-              << " (" << status << ")" << pyre::journal::endl(__HERE__);
-        // and bail
-        throw std::bad_alloc();
-    }
-
-    status = cudaMalloc(&gpuI2, nTensors * sizeof(double));
-    // if something went wrong
-    if (status != cudaSuccess) {
-        // make a channel
-        pyre::journal::error_t error("pyre.cuda");
-        // complain
-        error << "while allocating " << nTensors
-              << " bytes of device memory: " << pyre::journal::newline << cudaGetErrorName(status)
-              << " (" << status << ")" << pyre::journal::endl(__HERE__);
-        // and bail
-        throw std::bad_alloc();
-    }
-
-    status = cudaMalloc(&gpuI3, nTensors * sizeof(double));
-    // if something went wrong
-    if (status != cudaSuccess) {
-        // make a channel
-        pyre::journal::error_t error("pyre.cuda");
-        // complain
-        error << "while allocating " << nTensors
-              << " bytes of device memory: " << pyre::journal::newline << cudaGetErrorName(status)
-              << " (" << status << ")" << pyre::journal::endl(__HERE__);
-        // and bail
-        throw std::bad_alloc();
-    }
-
     // setup the grid for the gpu computation
     int nBlocks;
 
@@ -273,7 +220,7 @@ pinnedInvariants(pack_t tensorPack, pack_t invariantPack, int nThreadPerBlock, i
     }
 
     // make sure the gpu is available before starting
-    status = cudaDeviceSynchronize();
+    cudaError_t status = cudaDeviceSynchronize();
     if (status != cudaSuccess) {
         // make a channel
         pyre::journal::error_t error("pyre.cuda");
@@ -299,9 +246,34 @@ pinnedInvariants(pack_t tensorPack, pack_t invariantPack, int nThreadPerBlock, i
     // start the wallclock timer
     walltimer.start();
 
+    // synchronize the tensors between host and device
+    tensorArray.data()->synchronizeHostToDevice(
+        tensorArray.data()->data(), tensorArray.data()->device(), nTensors * 9);
+
+    // execute the kernel
     computeInvariantsPinned(
         nTensors, nThreadPerBlock, nBlocks, tensorArray.data()->data(), I1.data()->data(),
-        I2.data()->data(), I3.data()->data(), gpuTensors, gpuI1, gpuI2, gpuI3);
+        I2.data()->data(), I3.data()->data(), tensorArray.data()->device(), I1.data()->device(),
+        I2.data()->device(), I3.data()->device());
+
+    // wait for GPU to finish before synchronizing the invariants
+    status = cudaDeviceSynchronize();
+    if (status != cudaSuccess) {
+        // make a channel
+        pyre::journal::error_t error("pyre.cuda");
+        // complain
+        error << "while synchronizing the GPU " << pyre::journal::newline
+              << cudaGetErrorName(status) << " (" << status << ")" << pyre::journal::endl(__HERE__);
+        // and bail
+        throw std::bad_alloc();
+    }
+
+    // and synchronize the invariants between device and host
+    I1.data()->synchronizeDeviceToHost(I1.data()->data(), I1.data()->device(), nTensors);
+
+    I2.data()->synchronizeDeviceToHost(I2.data()->data(), I2.data()->device(), nTensors);
+
+    I3.data()->synchronizeDeviceToHost(I3.data()->data(), I3.data()->device(), nTensors);
 
     // wait for GPU to finish before stopping the timer
     status = cudaDeviceSynchronize();
@@ -321,6 +293,12 @@ pinnedInvariants(pack_t tensorPack, pack_t invariantPack, int nThreadPerBlock, i
     // and stop the wallclock timer
     walltimer.stop();
 
+    // delethe the device memory
+    tensorArray.data()->deleteDevice();
+    I1.data()->deleteDevice();
+    I2.data()->deleteDevice();
+    I3.data()->deleteDevice();
+
     // make a channel
     pyre::journal::debug_t timerChannel("tests.timer");
     // activate it
@@ -328,8 +306,9 @@ pinnedInvariants(pack_t tensorPack, pack_t invariantPack, int nThreadPerBlock, i
     // show me
     timerChannel
         // show me the elapsed time
-        << "Pinned memory tensor invariant computation: " << pyre::journal::indent(1)
-        << "General timer time:  " << timer.ms() << " ms"
+        << "Pinned memory tensor invariant computation: " << pyre::journal::newline
+        << pyre::journal::indent(1) << "General timer time:  " << timer.ms() << " ms"
+        << pyre::journal::newline << pyre::journal::indent(1)
         << "Wallclock time: " << walltimer.ms() << " ms" << pyre::journal::outdent(1)
         << pyre::journal::endl(__HERE__);
 
@@ -444,8 +423,9 @@ mappedInvariants(pack_t tensorPack, pack_t invariantPack, int nThreadPerBlock, i
     // show me
     timerChannel
         // show me the elapsed time
-        << "Mapped memory tensor invariant computation: " << pyre::journal::indent(1)
-        << "General timer time:  " << timer.ms() << " ms"
+        << "Mapped memory tensor invariant computation: " << pyre::journal::newline
+        << pyre::journal::indent(1) << "General timer time:  " << timer.ms() << " ms"
+        << pyre::journal::newline << pyre::journal::indent(1)
         << "Wallclock time: " << walltimer.ms() << " ms" << pyre::journal::outdent(1)
         << pyre::journal::endl(__HERE__);
 

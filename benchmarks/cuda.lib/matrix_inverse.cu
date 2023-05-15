@@ -62,30 +62,8 @@ computeInvariantsPinned(
     int nTensors, int nThreadPerBlock, int nBlocks, const double * tensorArray,
     double * inverseArray, double * gpuTensors, double * gpuInverses)
 {
-    // set cuda error
-    cudaError_t status;
-
-
-    // copy the pinned memory
-    status =
-        cudaMemcpy(gpuTensors, tensorArray, nTensors * 9 * sizeof(double), cudaMemcpyHostToDevice);
-    if (status != cudaSuccess) {
-        // complain
-        std::cout << "while sending memory " << cudaGetErrorName(status) << " (" << status << ")"
-                  << std::endl;
-    }
-
     // execute the kernel
     computeInverse<<<nBlocks, nThreadPerBlock>>>(gpuTensors, gpuInverses, nTensors);
-
-    // send the memory back
-    status = cudaMemcpy(
-        inverseArray, gpuInverses, nTensors * 9 * sizeof(double), cudaMemcpyDeviceToHost);
-    if (status != cudaSuccess) {
-        // complain
-        std::cout << "while receive memory " << cudaGetErrorName(status) << " (" << status << ")"
-                  << std::endl;
-    }
 
     // all done
     return;
