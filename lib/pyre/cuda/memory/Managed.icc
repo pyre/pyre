@@ -9,16 +9,16 @@
 #error this file contains implementation details for pyre::cuda::memory::Managed
 #else
 
+#include <cuda_runtime.h>
 
 // metamethods
 // constructor
 template <class T, bool isConst>
-pyre::cuda::memory::Managed<T, isConst>::
-Managed(cell_count_type cells) :
+pyre::cuda::memory::Managed<T, isConst>::Managed(cell_count_type cells) :
     // the cuda {malloc} api is not RAII friendly, so we initialize with a {nullptr} and
     // replace it with the actual allocation
-    _data{ nullptr },
-    _cells{ cells }
+    _data { nullptr },
+    _cells { cells }
 {
     // grab a spot
     pointer spot = nullptr;
@@ -31,11 +31,9 @@ Managed(cell_count_type cells) :
         // make a channel
         pyre::journal::error_t error("pyre.cuda");
         // complain
-        error
-            << "while allocating " << footprint << " bytes of device memory: "
-            << pyre::journal::newline
-            << cudaGetErrorName(status) << " (" << status << ")"
-            << pyre::journal::endl(__HERE__);
+        error << "while allocating " << footprint
+              << " bytes of device memory: " << pyre::journal::newline << cudaGetErrorName(status)
+              << " (" << status << ")" << pyre::journal::endl(__HERE__);
         // and bail
         throw std::bad_alloc();
     }
@@ -43,9 +41,8 @@ Managed(cell_count_type cells) :
     // all went well
     pyre::journal::debug_t channel("pyre.cuda.managed_t");
     // so let me know
-    channel
-        << "allocated " << footprint << " bytes at " << (void *)spot
-        << pyre::journal::endl(__HERE__);
+    channel << "allocated " << footprint << " bytes at " << (void *) spot
+            << pyre::journal::endl(__HERE__);
 
     // zero out the memory
     status = cudaMemset(spot, 0, footprint);
@@ -56,11 +53,9 @@ Managed(cell_count_type cells) :
         // make a channel
         pyre::journal::error_t error("pyre.cuda");
         // complain
-        error
-            << "while initializing " << footprint
-            << " bytes of device memory for the offset field: "
-            << description << " (" << status << ")"
-            << pyre::journal::endl(__HERE__);
+        error << "while initializing " << footprint
+              << " bytes of device memory for the offset field: " << description << " (" << status
+              << ")" << pyre::journal::endl(__HERE__);
         // and bail
         throw std::runtime_error(description);
     }
@@ -74,19 +69,16 @@ Managed(cell_count_type cells) :
             // make a channel
             pyre::journal::error_t error("pyre.cuda");
             // complain
-            error
-                << "while deallocating " << footprint << " bytes of device memory: "
-                << pyre::journal::newline
-                << cudaGetErrorName(status) << " (" << status << ")"
-                << pyre::journal::endl(__HERE__);
+            error << "while deallocating " << footprint
+                  << " bytes of device memory: " << pyre::journal::newline
+                  << cudaGetErrorName(status) << " (" << status << ")"
+                  << pyre::journal::endl(__HERE__);
         }
         // all went well
         pyre::journal::debug_t channel("pyre.cuda.managed_t");
         // so let me know
-        channel
-            << "deallocated " << footprint << " bytes starting at "
-            << (void *) ptr << " on the device"
-            << pyre::journal::endl(__HERE__);
+        channel << "deallocated " << footprint << " bytes starting at " << (void *) ptr
+                << " on the device" << pyre::journal::endl(__HERE__);
         // all done
         return;
     };
@@ -97,18 +89,16 @@ Managed(cell_count_type cells) :
 
 
 template <class T, bool isConst>
-pyre::cuda::memory::Managed<T, isConst>::
-Managed(handle_type handle, cell_count_type cells) :
-    _data{ handle },
-    _cells{ cells }
+pyre::cuda::memory::Managed<T, isConst>::Managed(handle_type handle, cell_count_type cells) :
+    _data { handle },
+    _cells { cells }
 {}
 
 // interface
 // get the number of cells in the block
 template <class T, bool isConst>
 auto
-pyre::cuda::memory::Managed<T, isConst>::
-cells() const -> cell_count_type
+pyre::cuda::memory::Managed<T, isConst>::cells() const -> cell_count_type
 {
     // easy
     return _cells;
@@ -118,8 +108,7 @@ cells() const -> cell_count_type
 // get the memory footprint of the block
 template <class T, bool isConst>
 auto
-pyre::cuda::memory::Managed<T, isConst>::
-bytes() const -> size_type
+pyre::cuda::memory::Managed<T, isConst>::bytes() const -> size_type
 {
     // scale the number of cells by the cell size
     return cells() * sizeof(value_type);
@@ -129,8 +118,7 @@ bytes() const -> size_type
 // access to the data pointer
 template <class T, bool isConst>
 auto
-pyre::cuda::memory::Managed<T, isConst>::
-data() const -> pointer
+pyre::cuda::memory::Managed<T, isConst>::data() const -> pointer
 {
     // return the raw data pointer
     return _data.get();
@@ -140,8 +128,7 @@ data() const -> pointer
 // get the shared pointer
 template <class T, bool isConst>
 auto
-pyre::cuda::memory::Managed<T, isConst>::
-handle() const -> handle_type
+pyre::cuda::memory::Managed<T, isConst>::handle() const -> handle_type
 {
     // easy
     return _data;
@@ -151,8 +138,7 @@ handle() const -> handle_type
 // iterator support
 template <class T, bool isConst>
 auto
-pyre::cuda::memory::Managed<T, isConst>::
-begin() const -> pointer
+pyre::cuda::memory::Managed<T, isConst>::begin() const -> pointer
 {
     // the beginning of the block
     return data();
@@ -161,8 +147,7 @@ begin() const -> pointer
 
 template <class T, bool isConst>
 auto
-pyre::cuda::memory::Managed<T, isConst>::
-end() const -> pointer
+pyre::cuda::memory::Managed<T, isConst>::end() const -> pointer
 {
     // one past the last cell in the block
     return data() + cells();
@@ -172,20 +157,17 @@ end() const -> pointer
 // data access
 template <class T, bool isConst>
 auto
-pyre::cuda::memory::Managed<T, isConst>::
-at(size_type pos) const -> reference
+pyre::cuda::memory::Managed<T, isConst>::at(size_type pos) const -> reference
 {
     // if the request is out of bounds
     if (pos >= cells()) {
         // make a channel
         pyre::journal::firewall_t channel("pyre.memory.bounds");
         // and complain
-        channel
-            << "out of bounds access:" << pyre::journal::newline
-            << "  index " << pos << " must be less than " << cells() << pyre::journal::newline
-            << "  in pyre::cuda::memory::managed_t::operator[]" << pyre::journal::newline
-            << "  with a block on the heap at " << data()
-            << pyre::journal::endl(__HERE__);
+        channel << "out of bounds access:" << pyre::journal::newline << "  index " << pos
+                << " must be less than " << cells() << pyre::journal::newline
+                << "  in pyre::cuda::memory::managed_t::operator[]" << pyre::journal::newline
+                << "  with a block on the heap at " << data() << pyre::journal::endl(__HERE__);
         // unreachable, unless the user has marked this error as non-fatal
         // clamp {pos} to the last element in the block
         pos = cells() - 1;
@@ -198,8 +180,7 @@ at(size_type pos) const -> reference
 
 template <class T, bool isConst>
 auto
-pyre::cuda::memory::Managed<T, isConst>::
-operator [] (size_type pos) const -> reference
+pyre::cuda::memory::Managed<T, isConst>::operator[](size_type pos) const -> reference
 {
     // return a reference to the cell at {pos}
     return data()[pos];
