@@ -190,7 +190,6 @@ class Inspector:
         for memberName in h5id.members():
             # look up the member
             memberId = h5id.get(path=memberName)
-            print(f"at: {path}, member: {memberName}: {memberId}")
             # build it
             member = self._pyre_inferObject(
                 h5id=memberId, path=path / memberName, depth=depth
