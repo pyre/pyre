@@ -18,6 +18,14 @@ class Raster:
     from .Tile import Tile as tile
 
     @property
+    def dataset(self):
+        """
+        Get my dataset
+        """
+        # go straight to the source
+        return self._dataset._pyre_id
+
+    @property
     def rank(self):
         """
         Get my rank
