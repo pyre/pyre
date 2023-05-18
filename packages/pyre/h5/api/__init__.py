@@ -14,6 +14,7 @@ from .Object import Object as object
 # publicly visible factories
 from .Group import Group as group
 from .Dataset import Dataset as dataset
+from .Datatype import Datatype as datatype
 from .File import File as file
 
 # infrastructure

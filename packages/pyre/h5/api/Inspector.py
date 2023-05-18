@@ -11,6 +11,7 @@ from . import exceptions
 # h5 object factories
 from .Group import Group
 from .Dataset import Dataset
+from .Datatype import Datatype
 
 # typing
 import pyre
@@ -189,6 +190,7 @@ class Inspector:
         for memberName in h5id.members():
             # look up the member
             memberId = h5id.get(path=memberName)
+            print(f"at: {path}, member: {memberName}: {memberId}")
             # build it
             member = self._pyre_inferObject(
                 h5id=memberId, path=path / memberName, depth=depth
@@ -212,6 +214,17 @@ class Inspector:
         dataset = Dataset(id=h5id, at=path, layout=spec)
         # and return it
         return dataset
+
+    def _pyre_inferDatatype(
+        self, h5id: H5DataType, path: pyre.primitives.path, **kwds
+    ) -> Dataset:
+        """
+        Build a named data type at {path}
+        """
+        # make a named datatype
+        datatype = Datatype(id=h5id, at=path)
+        # and return it
+        return datatype
 
     # descriptor factories
     def _pyre_inferDescriptor(
