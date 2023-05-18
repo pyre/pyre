@@ -14,9 +14,10 @@ For more details, see http://pyre.orthologue.com.
 For terms of use, see pyre.license()
 """
 
-# check the version of python
+# version check
 import sys
 
+# get the version of python
 major, minor, micro, _, _ = sys.version_info
 # pack it
 current = (major, minor, micro)
@@ -24,9 +25,6 @@ current = (major, minor, micro)
 required = (3, 7, 2)
 # check
 if current < required:
-    # get the exception type
-    from .framework.exceptions import PyreError
-
     # stringify the required version
     required = ".".join(map(str, required))
     # and complain
