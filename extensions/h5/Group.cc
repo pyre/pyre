@@ -16,22 +16,29 @@ pyre::h5::py::group(py::module & m)
 {
     // helpers
     auto getByName = [](const Group & self, const string_t & name) -> py::object {
+        // get the member id
+        auto hid = self.getObjId(name);
         // figure out the type of the named member
         auto type = self.childObjType(name);
-        // if it's a group
-        if (type == H5O_TYPE_GROUP) {
-            // get the group id
-            auto hid = self.getObjId(name);
-            // and return a copy along with the type information
-            return py::cast(new Group(hid));
+        // decode the {type}
+        switch (type) {
+            // if it's a group
+            case H5O_TYPE_GROUP:
+                // dress it up and return it
+                return py::cast(new Group(hid));
+            // if it's a dataset
+            case H5O_TYPE_DATASET:
+                // dress it up and return it
+                return py::cast(new DataSet(hid));
+            // if it is a named type
+            case H5O_TYPE_NAMED_DATATYPE:
+                // dress it up and return it
+                return py::cast(new DataType(hid));
+            // otherwise
+            default:
+                break;
         }
-        // if it's a dataset
-        if (type == H5O_TYPE_DATASET) {
-            // get the dataset id
-            auto hid = self.getObjId(name);
-            // and return a copy along with the type information
-            return py::cast(new DataSet(hid));
-        }
+
         // bail on the other object types, for now
         return py::none();
     };
