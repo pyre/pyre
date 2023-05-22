@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2023 all rights reserved
-#
 
 
 """
@@ -19,7 +17,7 @@ def test():
     # the location of this test
     cwd = pyre.primitives.path.cwd()
     # the location with the crazy links that {mm} prepared
-    scratch = cwd / 'scratch'
+    scratch = cwd / "scratch"
 
     # a couple of easy ones
     # this is guaranteed by posix
@@ -28,17 +26,17 @@ def test():
     # assert scratch == scratch.resolve()
 
     # another good link
-    here = scratch / 'here'
+    here = scratch / "here"
     # check
     # assert scratch == here.resolve()
 
     # another good link
-    up = scratch / 'up'
+    up = scratch / "up"
     # check
     # assert cwd == up.resolve()
 
     # a cycle
-    cycle = scratch / 'cycle'
+    cycle = scratch / "cycle"
     # check that
     try:
         # this fails
@@ -48,12 +46,14 @@ def test():
     # further, check that
     except cycle.SymbolicLinkLoopError as error:
         # the message we expect
-        msg = "while resolving '{0.path}': symbolic link loop at '{0.loop}'".format(error)
+        msg = "while resolving '{0.path}': symbolic link loop at '{0.loop}'".format(
+            error
+        )
         # is what we get
         assert str(error) == msg
 
     # a loop
-    loop = scratch / 'loop'
+    loop = scratch / "loop"
     # check that
     try:
         # this fails
@@ -63,12 +63,14 @@ def test():
     # further, check that
     except loop.SymbolicLinkLoopError as error:
         # the message we expect
-        msg = "while resolving '{0.path}': symbolic link loop at '{0.loop}'".format(error)
+        msg = "while resolving '{0.path}': symbolic link loop at '{0.loop}'".format(
+            error
+        )
         # is what we get
         assert str(error) == msg
 
     # a ramp
-    ramp = scratch / 'ramp'
+    ramp = scratch / "ramp"
     # check that
     try:
         # this fails
@@ -78,12 +80,14 @@ def test():
     # further, check that
     except ramp.SymbolicLinkLoopError as error:
         # the message we expect
-        msg = "while resolving '{0.path}': symbolic link loop at '{0.loop}'".format(error)
+        msg = "while resolving '{0.path}': symbolic link loop at '{0.loop}'".format(
+            error
+        )
         # is what we get
         assert str(error) == msg
 
     # a two link cycle
-    tic = scratch / 'tic'
+    tic = scratch / "tic"
     # check that
     try:
         # this fails
@@ -93,7 +97,9 @@ def test():
     # further, check that
     except tic.SymbolicLinkLoopError as error:
         # the message we expect
-        msg = "while resolving '{0.path}': symbolic link loop at '{0.loop}'".format(error)
+        msg = "while resolving '{0.path}': symbolic link loop at '{0.loop}'".format(
+            error
+        )
         # is what we get
         assert str(error) == msg
 
