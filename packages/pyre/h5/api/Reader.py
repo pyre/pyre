@@ -48,30 +48,14 @@ class Reader:
         """
         # analyze the {uri} and build the h5 {file}, passing any extra arguments to it
         file = self.open(uri=uri, mode=mode, **kwds)
-        # if anything went wrong
-        if file is None:
-            # assume that the error has already been reported and bail
-            return None
         # ask the file for its inspector
         inspector = file._pyre_inspector
-        # normalize the starting path
+        # normalize the target path
         path = pyre.primitives.path(path)
-        # if it's the root group
-        if path == pyre.primitives.path.root:
-            # set the anchor at the file
-            anchor = file
-        # otherwise
-        else:
-            # get the anchor id
-            anchorId = file._pyre_id.get(str(path))
-            # ask the inspector to build an empty representation
-            anchor = inspector._pyre_inferObject(h5id=anchorId, path=path)
-        # if the traversal is unconstrained
-        if query is None:
-            # ask the inspector to infer the layout
-            return inspector._pyre_inferObject(h5id=anchor._pyre_id, path=path)
-        # otherwise, run the constrained traversal and return the resulting object
-        return inspector._pyre_queryObject(h5id=anchor._pyre_id, path=path, query=query)
+        # find the container group
+        anchor = file._pyre_id.get(path=str(path))
+        # and ask the inspector to infer the layout
+        return inspector._pyre_inspect(h5id=anchor, path=path, query=query)
 
     # implementation details
     def open(
