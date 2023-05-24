@@ -28,5 +28,8 @@ from .Viewer import Viewer as viewer
 from .Reader import Reader as reader
 from .Writer import Writer as writer
 
+# patch the inspector as a class attribute of groups
+group._pyre_inspector = inspector()
+
 
 # end of file

@@ -10,9 +10,6 @@ from .. import libh5
 # superclass
 from .Group import Group
 
-# parts
-from .Inspector import Inspector
-
 # typing
 import pyre
 import typing
@@ -31,7 +28,6 @@ class File(Group):
         self,
         at: pyre.primitives.pathlike = "/",
         layout: typing.Optional[schema.group] = None,
-        inspector=None,
         **kwds,
     ):
         # normalize the layout
@@ -44,12 +40,6 @@ class File(Group):
         self._pyre_fapl = None
         # initially, i'm not attached to a particular file
         self._pyre_uri = None
-        # if i wasn't given an explicit inspector
-        if inspector is None:
-            # make a default one
-            inspector = Inspector()
-        # attach it
-        self._pyre_inspector = inspector
         # all done
         return
 
@@ -133,20 +123,6 @@ class File(Group):
         """
         # get my layout; it's guaranteed to be a group with the correct name
         return self._pyre_layout
-
-    # member access
-    def __pyre_find(self, path: pyre.primitives.pathlike) -> typing.Optional[Object]:
-        """
-        Look up the h5 {object} associated with {path}
-        """
-        # normalize the input {path}
-        path = pyre.primitives.path(path)
-        # if the request is for the root object
-        if path == pyre.primitives.path.root:
-            # return me
-            return self
-        # otherwise, delegate to the {group} that i am to look up my members
-        return super()._pyre_find(path=path)
 
     # visiting
     def _pyre_identify(self, authority, **kwds):
