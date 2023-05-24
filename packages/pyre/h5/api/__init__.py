@@ -22,6 +22,7 @@ from .Inspector import Inspector as inspector
 
 # visitors
 from .Explorer import Explorer as explorer
+from .Assembler import Assembler as assembler
 from .Viewer import Viewer as viewer
 
 # file access
