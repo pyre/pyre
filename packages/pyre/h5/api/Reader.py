@@ -37,8 +37,6 @@ class Reader:
     # interface
     def read(
         self,
-        uri: pyre.primitives.uri,
-        mode: str = "r",
         path: pyre.primitives.pathlike = "/",
         query: typing.Optional[schema.descriptor] = None,
         **kwds,
@@ -46,8 +44,8 @@ class Reader:
         """
         Open {uri} and extract an h5 {object} with the structure of {query} anchored at {path}
         """
-        # analyze the {uri} and build the h5 {file}, passing any extra arguments to it
-        file = self.open(uri=uri, mode=mode, **kwds)
+        # get my file
+        file = self._file
         # ask the file for its inspector
         inspector = file._pyre_inspector
         # normalize the target path
@@ -56,6 +54,15 @@ class Reader:
         anchor = file._pyre_id.get(path=str(path))
         # and ask the inspector to infer the layout
         return inspector._pyre_inspect(h5id=anchor, path=path, query=query)
+
+    # metamethods
+    def __init__(self, uri: pyre.primitives.uri, mode: str = "r", **kwds):
+        # chain up
+        super().__init__(**kwds)
+        # build the file object
+        self._file = self.open(uri=uri, mode=mode)
+        # all done
+        return
 
     # implementation details
     def open(
