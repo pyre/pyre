@@ -99,7 +99,7 @@ class Group(Descriptor, metaclass=Schema):
                 # point to the next name
                 cursor = cursor._pyre_get(alias=name)
             # if something goes wrong
-            except (KeyError, AttributeError):
+            except AttributeError:
                 # complain
                 raise exceptions.PathNotFoundError(
                     group=self, path=path, child=cursor, fragment=name
@@ -109,7 +109,7 @@ class Group(Descriptor, metaclass=Schema):
 
     def _pyre_get(self, alias: str) -> Descriptor:
         """
-        Find the descriptor with the given {name}
+        Find the descriptor with the given {alias}
         """
         # lookup the name in my aliases
         name = self._pyre_aliases[alias]
@@ -118,7 +118,7 @@ class Group(Descriptor, metaclass=Schema):
         # if it's not a descriptor
         if not isinstance(attr, Descriptor):
             # bail
-            raise KeyError(f"'{alias}' is not a descriptor in {self}")
+            raise AttributeError(f"'{alias}' is not a descriptor in {self}")
         # otherwise, return it
         return attr
 
