@@ -211,7 +211,7 @@ class Dataset(Object):
 
     def _pyre_push(self, src):
         """
-        Flush my value  to disk
+        Flush my value to disk
         """
         # get my layout
         layout = self._pyre_layout
@@ -219,6 +219,14 @@ class Dataset(Object):
         layout._pyre_push(src=src, dest=self)
         # all done
         return
+
+    # creation metadata
+    def _pyre_dataspace(self):
+        """
+        Build a representation of my dataspace
+        """
+        # my layout knows how to do this
+        return self._pyre_layout._pyre_dataspace(value=self.value)
 
     # visiting
     def _pyre_identify(self, authority, **kwds):
