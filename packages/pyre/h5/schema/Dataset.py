@@ -9,6 +9,7 @@ import journal
 import pyre
 
 # types
+from .. import libh5
 from .. import disktypes
 from .. import memtypes
 
@@ -59,7 +60,7 @@ class Dataset(Descriptor):
             f"class '{cls.__module__}.{cls.__name__}' must implement '_pyre_pull'"
         )
 
-    def _pyre_push(self, src, dest):
+    def _pyre_push(self, src, dst):
         """
         Push my cache value to disk
         """
@@ -69,6 +70,14 @@ class Dataset(Descriptor):
         raise NotImplementedError(
             f"class '{cls.__module__}.{cls.__name__}' must implement '_pyre_push'"
         )
+
+    # a dataspace compatible with my type and my client's value
+    def _pyre_dataspace(self, **kwds):
+        """
+        Construct a handle for my dataspace
+        """
+        # all descriptors are assumed to be scalars; descendants may override
+        return libh5.DataSpace()
 
     # visiting
     def _pyre_identify(self, authority, **kwds):
