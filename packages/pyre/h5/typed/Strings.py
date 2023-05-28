@@ -6,6 +6,7 @@
 
 # support
 import journal
+from .. import libh5
 
 # superclass
 from ..schema.Dataset import Dataset
@@ -56,7 +57,7 @@ class Strings(Dataset.list):
         # and return the raw contents
         return value
 
-    def _pyre_push(self, src, dest):
+    def _pyre_push(self, src, dst: libh5.DataSet):
         """
         Push my cache value to disk
         """
@@ -65,7 +66,7 @@ class Strings(Dataset.list):
         # and attempt
         try:
             # to write it out
-            dest._pyre_id.strings(value)
+            dst.strings(value)
         # if something goes wrong
         except RuntimeError as error:
             # make a channel
@@ -73,11 +74,19 @@ class Strings(Dataset.list):
             # report
             channel.line(f"hdf5 runtime error: {error}")
             channel.line(f"while writing {value}")
-            channel.line(f"to {dest}")
+            channel.line(f"to {dst}")
             # and flush
             channel.log()
         # all done
         return
+
+    # framework hooks
+    def _pyre_dataspace(self, value, **kwds):
+        """
+        Create a diskspace instance that describes scalar types
+        """
+        # easy
+        return libh5.DataSpace(shape=[len(value)])
 
 
 # end of file

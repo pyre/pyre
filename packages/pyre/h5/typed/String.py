@@ -4,6 +4,7 @@
 # (c) 1998-2023 all rights reserved
 
 # types
+from .. import libh5
 from .. import disktypes
 from .. import memtypes
 
@@ -38,14 +39,14 @@ class String:
         # and return the raw contents
         return value
 
-    def _pyre_push(self, src, dest):
+    def _pyre_push(self, src, dst: libh5.DataSet):
         """
         Push my cache value to disk
         """
         # grab the value
-        value = src.value
+        value = self.string(src.value)
         # and write it out
-        dest._pyre_id.str(value)
+        dst.str(value)
         # all done
         return
 
