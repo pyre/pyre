@@ -252,7 +252,7 @@ class Inspector:
 
     def _pyre_inferDatatype(
         self, h5id: H5DataType, path: pyre.primitives.path, **kwds
-    ) -> Dataset:
+    ) -> Datatype:
         """
         Build a named data type at {path}
         """
