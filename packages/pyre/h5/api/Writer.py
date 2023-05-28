@@ -9,7 +9,7 @@ import journal
 import pyre
 
 # support
-from .Explorer import Explorer
+from .Assembler import Assembler
 
 # typing
 import typing
@@ -18,6 +18,9 @@ from .Object import Object
 from .Dataset import Dataset
 from .Group import Group
 from .File import File
+
+# alias the h5 bindings
+from .. import libh5
 
 
 # the writer
@@ -32,166 +35,93 @@ class Writer:
     # interface
     def write(
         self,
-        data: Object,
-        uri: pyre.primitives.uri,
-        mode: str = "w",
-        path: pyre.primitives.pathlike = "/",
+        data: typing.Optional[Object] = None,
         query: typing.Optional[schema.descriptor] = None,
-        errors: typing.Optional[typing.Sequence[Object]] = None,
         **kwds,
-    ) -> typing.Optional[File]:
+    ) -> None:
         """
-        Open {uri} and save an h5 {data} product with the structure of {query}
+        Open save an h5 {data} product with the structure of {query} in my file
         """
-        # analyze the {uri} and build the h5 {file}, passing any extra arguments to it
-        file = self.open(uri=uri, mode=mode, **kwds)
-        # if anything went wrong
-        if file is None:
-            # assume that the error has already been reported and bail, just in case errors
-            # aren't fatal
+        # make sure there is something to write
+        if data is None and query is None:
+            # if not, there is nothing to do
             return None
-        # normalize the desired layout
+        # if i don't gave {data}
+        if data is None:
+            # i must have structure, so build it
+            assembler = Assembler()
+            # by visiting the structure we are traversin
+            data = assembler.visit(descriptor=query)
+        # i need structure to traverse
         if query is None:
-            # get my schema
+            # so if the user didn't provide a map, borrow from the data object
             query = data._pyre_layout
-        # normalize the starting path
-        path = pyre.primitives.path(path)
-        # look up the h5 location that serves as the query anchor
-        parent = file._pyre_find(path=path)
+        # get the destination handle; assume i am attached to valid {file}
+        dst = self._file._pyre_id
         # traverse the structure and build the content
-        return query._pyre_identify(
-            authority=self,
-            name=path.name,
-            parent=parent,
-            data=data,
-            file=file,
-            errors=errors,
-        )
+        data._pyre_identify(authority=self, dst=dst, **kwds)
+        # all done
+        return
+
+    # metamethods
+    def __init__(self, uri: pyre.primitives.uri, mode: str = "w", **kwds):
+        # chain up
+        super().__init__(**kwds)
+        # build the file object
+        self._file = self._pyre_open(uri=uri, mode=mode)
+        # all done
+        return
 
     # framework hooks
-    def _pyre_onDataset(
-        self,
-        dataset: schema.dataset,
-        file: File,
-        name: str,
-        parent: Group,
-        data: typing.Optional[Dataset],
-        errors,
-        **kwds,
-    ) -> Group:
+    def _pyre_onDataset(self, dataset: Dataset, dst: libh5.Group, **kwds) -> None:
         """
         Process a dataset
         """
-        # there are three sources of truth regarding the dataset at hand:
-        #   {dataset}: with the static layout of the parent group
-        #   {data}:    the object we are saving in the new {file}, which may not exist
-        #   {parent}:  whatever may be stored in the file already
-        # there are two pieces of information that must be checked for consistency:
-        #   the dataset type
-        #   the dataset shape
-        #
+        # form the {dataset} name as known by its parent
+        name = dataset._pyre_location.name
         # attempt to
         try:
-            # look up {name} within {parent}
-            entry = parent._pyre_find(path=name)
-        # if it's not there
+            # look up the {dataset} in the output file
+            hid = dst.get(path=name)
+        # if it doesn't exist
         except RuntimeError:
-            # compute its location relative to its parent
-            location = parent._pyre_location / name
-            # its space should be identical to its source
-            space = data._pyre_id.space
-            # for the type, prefer the potentially more accurate type from the spec, if it's there
-            # and fall back to whatever is known about the source type
-            # type = (
-            # dataset.disktype if dataset.disktype is not None else data._pyre_id.type
-            # )
-            type = data._pyre_id.type
-            # build the low level object
-            hid = parent._pyre_id.create(path=name, type=type, space=space)
-            # realize it
-            entry = Dataset(id=hid, at=location, layout=dataset)
-        # if it is already there
-        else:
-            # compare the types/shapes and check for whatever consistency guarantees are
-            # necessary for the data copy to follow
-            pass
+            # get its structure
+            schema = dataset._pyre_layout
+            # we have to make it; we need the {datatype} of the {dataset}
+            datatype = schema.disktype
+            # and its {dataspace}
+            dataspace = dataset._pyre_dataspace()
+            # i we these two, we can create i
+            hid = dst.create(path=name, type=datatype, space=dataspace)
         # we have structure; make content
-        entry._pyre_write(file=file, src=data)
+        dataset._pyre_write(dst=hid)
         # all done
-        return parent
+        return
 
-    def _pyre_onGroup(
-        self,
-        group: schema.group,
-        file: File,
-        name: str,
-        parent: Group,
-        data: typing.Optional[Group],
-        errors,
-        **kwds,
-    ) -> Group:
+    def _pyre_onGroup(self, group: Group, dst: libh5.Group, **kwds) -> None:
         """
         Process a {group}
         """
+        # form the name of the target group in the output
+        name = group._pyre_location.name
         # attempt to
         try:
-            # look up this {name} within {parent}
-            entry = parent._pyre_find(path=name)
-        # if anything goes wrong
+            # look up a pre-existing group
+            hid = dst.get(path=name)
+        # if it doesn't exist
         except RuntimeError:
-            # no worries; build the group
-            entry = Group(
-                id=parent._pyre_id.create(path=name),
-                at=parent._pyre_location / name,
-                layout=group,
-            )
-        # if it's there
-        else:
-            # and we've stumbled into something that's not a group
-            if not isinstance(entry, Group):
-                # we have a problem; make a channel
-                channel = journal.error("pyre.h5.reader")
-                # make a report
-                channel.line(f"type mismatch in '{parent._pyre_location / name}'")
-                channel.line(f"expected a group, got {entry}")
-                channel.line(f"while writing '{file}'")
-                # flush
-                channel.log()
-                # and bail, just in case errors aren't fatal
-                return parent
+            # make it
+            hid = dst.create(path=name)
         # now, go through the group contents
-        for descriptor in group._pyre_descriptors():
-            # get the descriptor name
-            name = descriptor._pyre_name
-            # if we have {data}
-            if data:
-                # and it knows {name}
-                try:
-                    # get the associated object
-                    object = data._pyre_find(path=name)
-                # if it doesn't
-                except RuntimeError:
-                    # no worries, just build structure
-                    object = None
-            # if not
-            else:
-                # no worries, just build structure
-                object = None
-            # identify the descriptor
-            descriptor._pyre_identify(
-                authority=self,
-                name=name,
-                parent=entry,
-                file=file,
-                data=object,
-                errors=errors,
-            )
+        for member in group._pyre_locations():
+            # and ask each member to identify itself
+            member._pyre_identify(authority=self, dst=hid, **kwds)
         # all done
-        return parent
+        return
 
     # implementation details
-    def open(
-        self, uri: typing.Union[pyre.primitives.uri, str], mode: str, **kwds
+    def _pyre_open(
+        self, uri: pyre.primitives.urilike, mode: str, **kwds
     ) -> typing.Optional[File]:
         """
         Open an h5 file object
