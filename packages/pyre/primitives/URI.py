@@ -42,6 +42,10 @@ class URI:
         """
         # get my authority
         authority = self.authority
+        # if it's blank
+        if not authority:
+            # not much to do
+            return (None,) * 4
         # parse it
         match = self._authorityParser.match(authority)
         # if it fails
@@ -53,7 +57,7 @@ class URI:
         port = match.group("port")
         password = match.group("passwd")
         host = match.group("host")
-        # and return the triple
+        # and return the fields
         return host, port, user, password
 
     # interface
