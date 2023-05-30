@@ -11,6 +11,7 @@ import pyre
 from .. import schema
 
 # and the local concrete nodes
+from .Object import Object
 from .Group import Group
 from .Dataset import Dataset
 
@@ -25,7 +26,7 @@ class Assembler:
     """
 
     # interface
-    def visit(self, descriptor: schema.descriptor):
+    def visit(self, descriptor: schema.descriptor) -> Object:
         """
         Build the concrete h5 entity that corresponds to the given {descriptor}
         """
@@ -33,7 +34,9 @@ class Assembler:
         return descriptor._pyre_identify(authority=self)
 
     # framework hooks
-    def _pyre_onGroup(self, group: schema.group, parent: typing.Optional[Group] = None):
+    def _pyre_onGroup(
+        self, group: schema.group, parent: typing.Optional[Group] = None
+    ) -> Group:
         """
         Process a {group}
         """
@@ -58,7 +61,7 @@ class Assembler:
         # all done
         return node
 
-    def _pyre_onDataset(self, dataset: schema.dataset, parent: Group):
+    def _pyre_onDataset(self, dataset: schema.dataset, parent: Group) -> Dataset:
         """
         Process a {dataset}
         """
