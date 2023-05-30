@@ -190,8 +190,8 @@ class Dataset(Object):
         hid = self._pyre_id
         # if i don't have a connection to a file
         if hid is None:
-            # process and return my default value; don't cache it so we can try again next
-            # time the value is requested
+            # process and return my default value; don't cache it so we can try again
+            # next time the value is requested
             return spec.process(spec.default)
         # if all is good, ask my spec to extract my value from the h5 store and process it
         value = spec._pyre_pull(dataset=self)
