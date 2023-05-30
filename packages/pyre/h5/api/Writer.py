@@ -91,7 +91,7 @@ class Writer:
             datatype = schema.disktype
             # and its {dataspace}
             dataspace = dataset._pyre_dataspace()
-            # i we these two, we can create i
+            # with these two, we can create it
             hid = dst.create(path=name, type=datatype, space=dataspace)
         # we have structure; make content
         dataset._pyre_write(dst=hid)
