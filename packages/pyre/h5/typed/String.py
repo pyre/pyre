@@ -22,13 +22,6 @@ class String:
         # all done
         return
 
-    # representations
-    def string(self, value):
-        """
-        Quote my value
-        """
-        return f"'{value}'"
-
     # value synchronization
     def _pyre_pull(self, dataset):
         """
