@@ -18,7 +18,7 @@ pyre::py::memory::constmap(py::module & m, classname_t name, docstring_t docstri
     using map_t = pyre::memory::constmap_t<cellT>;
 
     // build the class record
-    auto cls = shared_holder_t<map_t>(m, name, docstring);
+    auto cls = shared_holder_t<map_t>(m, name, py::buffer_protocol(), docstring);
 
     // constructor
     cls.def(
@@ -47,6 +47,8 @@ pyre::py::memory::constmap(py::module & m, classname_t name, docstring_t docstri
 
     // read-only access
     bindConstStorage<map_t>(cls);
+    // read only buffer protocol
+    bindBufferProtocol<map_t>(cls);
 
     // all done
     return;
@@ -62,7 +64,7 @@ pyre::py::memory::map(py::module & m, classname_t name, docstring_t docstring)
     using map_t = pyre::memory::map_t<cellT>;
 
     // build the class record
-    auto cls = shared_holder_t<map_t>(m, name, docstring);
+    auto cls = shared_holder_t<map_t>(m, name, py::buffer_protocol(), docstring);
 
     // constructors
     cls.def(
@@ -94,6 +96,8 @@ pyre::py::memory::map(py::module & m, classname_t name, docstring_t docstring)
     bindConstStorage<map_t>(cls);
     // read/write access
     bindStorage<map_t>(cls);
+    // read+write buffer protocol
+    bindBufferProtocol<map_t>(cls);
 
     // all done
     return;
