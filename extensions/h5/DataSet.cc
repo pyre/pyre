@@ -351,7 +351,7 @@ pyre::h5::py::dataset(py::module & m)
             return;
         },
         // the docstring
-        "extract my contents as a string");
+        "save my contents as a string");
 
 
     // attempt to get the dataset contents as a list of strings
