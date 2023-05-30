@@ -105,6 +105,12 @@ namespace pyre::grid {
 
     // scaling by integers
     template <class containerT>
+    constexpr auto operator*(std::size_t, const Rep<containerT> &) -> Rep<containerT>;
+
+    template <class containerT>
+    constexpr auto operator*(const Rep<containerT> &, std::size_t) -> Rep<containerT>;
+
+    template <class containerT>
     constexpr auto operator*(int, const Rep<containerT> &) -> Rep<containerT>;
 
     template <class containerT>
