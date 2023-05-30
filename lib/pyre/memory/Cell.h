@@ -32,6 +32,7 @@ public:
     // interface
 public:
     // expose my constness
+    static constexpr auto readonly() -> bool;
     static constexpr auto writable() -> bool;
     // compute the footprint of {n} cells
     static constexpr auto bytes(cell_count_type = 1) -> size_type;
