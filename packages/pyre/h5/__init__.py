@@ -25,17 +25,27 @@ if libh5 is not None:
     # convenience
     def read(uri: primitives.uri, mode: str = "r", **kwds):
         """
-        Ask a generic reader to read a data product
+        Read the data product at {uri}
         """
         # easy enough
         return reader(uri=uri, mode=mode).read(**kwds)
 
     def write(uri: primitives.uri, mode: str = "w", **kwds):
         """
-        Ask a generic reader to read a data product
+        Write the data product to {uri}
         """
         # easy enough
         return writer(uri=uri, mode=mode).write(**kwds)
+
+    def product(spec: schema.descriptor) -> api.object:
+        """
+        Build the data product that corresponds to {spec} with all data set to
+        their default values
+        """
+        # make an assembler
+        assembler = api.assembler()
+        # and ask it to concretize the {spec}
+        return assembler.visit(descriptor=spec)
 
 
 # end of file
