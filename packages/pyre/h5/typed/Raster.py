@@ -31,15 +31,31 @@ class Raster:
         Get my rank
         """
         # go straight to the source
-        return self._dataset._pyre_id.space.rank
+        return len(self.shape)
 
     @property
     def shape(self):
         """
         Get my shape
         """
-        # go straight to the source
-        return self._dataset._pyre_id.space.shape
+        # get my explicit value
+        shape = self._shape
+        # if it's non-trivial
+        if shape is not None:
+            # that's the right answer
+            return shape
+        # otherwise, get my rep on disk
+        hid = self.dataset
+        # if it's trivial
+        if hid is None:
+            # send back whatever is recorded in my spec
+            return self._dataset.shape
+        # if not, look it up
+        shape = hid.space.shape
+        # cache it
+        self._shape = shape
+        # and return it
+        return shape
 
     @property
     def disktype(self):
@@ -47,7 +63,7 @@ class Raster:
         Get my expected on-disk type
         """
         # easy enough
-        return self._dataset._pyre_layout.disktype
+        return self._disktype
 
     @property
     def memtype(self):
@@ -55,7 +71,7 @@ class Raster:
         Get my in-memory type
         """
         # easy enough
-        return self._dataset._pyre_layout.memtype
+        return self._memtype
 
     @property
     def schema(self):
@@ -101,11 +117,16 @@ class Raster:
         return self.tile(data=data, type=memtype, origin=origin, shape=shape)
 
     # metamethods
-    def __init__(self, dataset, **kwds):
+    def __init__(self, dataset, memtype, disktype, shape=None, **kwds):
         # chain up
         super().__init__(**kwds)
         # save my data source
-        self._dataset = weakref.proxy(dataset)
+        self._dataset = None if dataset is None else weakref.proxy(dataset)
+        # my shape
+        self._shape = shape
+        # and my types
+        self._memtype = memtype
+        self._disktype = disktype
         # make a pile for the cached modifications
         self._staged = []
         # all done
