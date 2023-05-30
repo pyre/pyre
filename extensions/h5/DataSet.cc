@@ -229,6 +229,8 @@ pyre::h5::py::dataset(py::module & m)
             // all done
             return;
         },
+        // the signature
+        "value"_a,
         // the docstring
         "save my contents as an integer");
 
@@ -290,6 +292,8 @@ pyre::h5::py::dataset(py::module & m)
             // all done
             return;
         },
+        // the signature
+        "value"_a,
         // the docstring
         "save my contents as a double");
 
@@ -350,6 +354,8 @@ pyre::h5::py::dataset(py::module & m)
             // all done
             return;
         },
+        // the signature
+        "value"_a,
         // the docstring
         "save my contents as a string");
 
@@ -499,6 +505,8 @@ pyre::h5::py::dataset(py::module & m)
             // all done
             return;
         },
+        // the signature
+        "value"_a,
         // the docstring
         "save my contents as a list of strings");
 
