@@ -92,28 +92,19 @@ class Reader:
                 channel.log()
                 # and bail
                 return None
-            # interpret the {authority} field as the {bucket} name
-            authority = uri.authority
-            # as such, it must be there; if not
-            if authority is None:
-                # make a channel
-                channel = journal.error("pyre.h5.reader")
-                # complain
-                channel.line(f"couldn't figure out the S3 bucket name")
-                channel.line(f"while parsing '{uri}':")
-                channel.line(f"the 'authority' field is null")
-                # flush
-                channel.log()
-                # and bail, in case errors aren't fatal
-                return None
-            # if it is there, take it apart
-            fields = authority.split("@")
-            # extract the authentication profile and the bucket name
-            profile, bucket = fields if len(fields) == 2 else ("", authority)
-            # get the object key
-            key = uri.address
+            # the supported uris are of the form
+            #
+            #   s3://profile@region/bucket/key
+            #
+            # parse the authority field
+            region, _, profile, _ = uri.server
+            # parse the path to the file
+            _, bucket, key = pyre.primitives.path(uri.address)
             # open the remote file and return it
-            return File()._pyre_ros3(profile=profile, bucket=bucket, key=key)
+            return File()._pyre_ros3(
+                region=region, profile=profile, bucket=bucket, key=str(key)
+            )
+
         # if we get this far, the {uri} was malformed; make a channel
         channel = journal.error("pyre.h5.reader")
         # complain
