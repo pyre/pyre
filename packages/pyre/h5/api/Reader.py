@@ -99,7 +99,7 @@ class Reader:
             # parse the authority field
             region, _, profile, _ = uri.server
             # parse the path to the file
-            _, bucket, key = pyre.primitives.path(uri.address)
+            _, bucket, *key = pyre.primitives.path(uri.address)
             # open the remote file and return it
             return File()._pyre_ros3(
                 region=region, profile=profile, bucket=bucket, key=str(key)
