@@ -102,7 +102,7 @@ class Reader:
             _, bucket, *key = pyre.primitives.path(uri.address)
             # open the remote file and return it
             return File()._pyre_ros3(
-                region=region, profile=profile, bucket=bucket, key=str(key)
+                region=region, profile=profile, bucket=bucket, key="/".join(key)
             )
 
         # if we get this far, the {uri} was malformed; make a channel
