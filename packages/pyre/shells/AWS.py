@@ -20,6 +20,19 @@ class AWS(pyre.component):
     """
 
     # interface
+    def credentials(self, profile: str = "default"):
+        """
+        Get the pair of access keys from the named {profile}
+        """
+        # get my profiles
+        profiles = self._profiles
+        # get the id
+        id = profiles[profile].get("aws_access_key_id", "")
+        # and the secret
+        secret = profiles[profile].get("aws_secret_access_key", "")
+        # and pass them on
+        return id, secret
+
     def profile(self, name: str = "default"):
         """
         Access the contents of the named profile
