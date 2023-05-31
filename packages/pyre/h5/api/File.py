@@ -76,27 +76,51 @@ class File(Group):
 
     # attach to S3 buckets
     def _pyre_ros3(
-        self, bucket: str, key: str, profile: typing.Optional[str] = None
+        self,
+        region: typing.Optional[str],
+        profile: typing.Optional[str],
+        bucket: str,
+        key: str,
     ) -> "File":
         """
         Access the remote dataset {key} in the given S3 {bucket} using the {ROS3} driver
         """
-        # if the library doesn't have support for {ros3}
-        if not libh5.ros3():
-            # make a channel
-            channel = journal.error("pyre.h5.file.ros3")
-            # complain
-            channel.line("this installation of libhdf5 has no support for ros3")
-            channel.line(f"while looking for key '{key}' in bucket '{bucket}'")
-            # flush
-            channel.log()
-            # and bail, just in case errors aren't fatal
-            return self
+        # get the user proxy so we can ask for AWS credentials
+        aws = pyre.executive.user.aws
+        # if the region is non-trivial
+        if region:
+            # fold into the {s3} url
+            s3 = f"s3.{region}.amazonaws.com"
+        # otherwise
+        else:
+            # normalize it
+            region = ""
+            # and don't use it in the {s3} url
+            s3 = "s3.amazonaws.com"
 
-        # make an access parameter list and fill it with {ros3} information
-        fapl = libh5.FAPL().ros3()
+        region = "" if region is None else region
+        # if there was no {profile} specification
+        profile = "default" if profile is None else profile
+        # ask for the credentials
+        id, secret = aws.credentials(profile="default")
+        # if both are non-trivial
+        if id and secret:
+            # turn authentication on
+            authenticate = True
+        # otherwise
+        else:
+            # turn it off and let the ros3 driver figure it out
+            authenticate = False
+        # make a ros3 access parameter list and fill it with {ros3} information
+        fapl = libh5.FAPL().ros3(
+            region=region,
+            id=id,
+            key=secret,
+            authenticate=authenticate,
+        )
+        #
         # assemble the file uri
-        uri = f"https://{bucket}.s3.amazonaws.com{key}"
+        uri = f"https://{bucket}.{s3}/{key}"
         # and delegate to the opener
         return self._pyre_open(uri=uri, mode="r", fapl=fapl)
 
