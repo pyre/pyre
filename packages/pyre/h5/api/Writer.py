@@ -85,12 +85,8 @@ class Writer:
             hid = dst.get(path=name)
         # if it doesn't exist
         except RuntimeError:
-            # get its structure
-            schema = dataset._pyre_layout
-            # we have to make it; we need the {datatype} of the {dataset}
-            datatype = schema.disktype
-            # and its {dataspace}
-            dataspace = dataset._pyre_dataspace()
+            # we have to make it; ask the {dataset} for its type and shape
+            datatype, dataspace = dataset._pyre_describe()
             # with these two, we can create it
             hid = dst.create(path=name, type=datatype, space=dataspace)
         # we have structure; make content
