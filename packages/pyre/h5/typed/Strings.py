@@ -80,13 +80,23 @@ class Strings(Dataset.list):
         # all done
         return
 
-    # framework hooks
-    def _pyre_dataspace(self, value, **kwds):
+    # information about my on-disk layout
+    def _pyre_describe(self, dataset):
         """
-        Create a diskspace instance that describes scalar types
+        Construct representations for my on-disk datatype and dataspace
         """
-        # easy
-        return libh5.DataSpace(shape=[len(value)])
+        # get the dataset value; it should be a list of string
+        value = dataset.value
+        # the type width is the max of the lengths
+        width = max([1] + list(map(len, value)))
+        # the space is determined by the number of strings
+        shape = [len(value)]
+        # build the type
+        type = self.disktype(cells=width)
+        # and the space
+        space = libh5.DataSpace(shape=shape)
+        # hand the pair off
+        return type, space
 
 
 # end of file
