@@ -72,12 +72,16 @@ class Dataset(Descriptor):
         )
 
     # a dataspace compatible with my type and my client's value
-    def _pyre_dataspace(self, **kwds):
+    def _pyre_describe(self, **kwds):
         """
-        Construct a handle for my dataspace
+        Construct representations for my on-disk datatype and dataspace
         """
-        # all descriptors are assumed to be scalars; descendants may override
-        return libh5.DataSpace()
+        # all descriptors are assumed to be scalars, by default
+        scalar = libh5.DataSpace()
+        # as a result, their type does not depend on the value of the dataset
+        type = self.disktype
+        # hand off the pair
+        return type, scalar
 
     # visiting
     def _pyre_identify(self, authority, **kwds):
