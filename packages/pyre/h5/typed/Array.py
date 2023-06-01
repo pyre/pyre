@@ -97,5 +97,17 @@ class Array:
         # all done
         return
 
+    # information about my on-disk layout
+    def _pyre_describe(self, dataset):
+        """
+        Construct representations for my on-disk datatype and dataspace
+        """
+        # the type is in my schema
+        type = self.disktype
+        # get the shape from the {dataset} value
+        space = libh5.DataSpace(shape=dataset.value.shape)
+        # hand off the pair
+        return type, space
+
 
 # end of file
