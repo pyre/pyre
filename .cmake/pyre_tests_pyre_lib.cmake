@@ -11,7 +11,6 @@
 # algebra
 pyre_test_driver(tests/pyre.lib/algebra/bcd.cc)
 
-
 # geometry
 pyre_test_driver(tests/pyre.lib/geometry/point.cc)
 pyre_test_driver(tests/pyre.lib/geometry/pointcloud.cc)
@@ -260,70 +259,6 @@ set_property(TEST tests.pyre.lib.viz.phase.cleanup PROPERTY
 set_property(TEST tests.pyre.lib.viz.polarsaw.cleanup PROPERTY
   DEPENDS tests.pyre.lib.viz.polarsaw.cc
   )
-
-
-# compact packings
-if (HAVE_COMPACT_PACKINGS)
-set(definitions "HAVE_COMPACT_PACKINGS")
-pyre_test_driver_cxx20(tests/pyre.lib/grid/diagonal_visit.cc)
-pyre_add_definitions(tests/pyre.lib/grid/diagonal_visit.cc ${definitions})
-pyre_test_driver_cxx20(tests/pyre.lib/grid/symmetric_visit.cc)
-pyre_add_definitions(tests/pyre.lib/grid/symmetric_visit.cc ${definitions})
-pyre_test_driver_cxx20(tests/pyre.lib/grid/symmetric_sanity.cc)
-pyre_add_definitions(tests/pyre.lib/grid/symmetric_sanity.cc ${definitions})
-endif()
-
-
-# tensor
-if (HAVE_TENSOR)
-set(definitions "HAVE_COMPACT_PACKINGS")
-
-pyre_test_driver_cxx20(tests/pyre.lib/tensor/tensor_canonical_arithmetics.cc)
-pyre_add_definitions(tests/pyre.lib/tensor/tensor_canonical_arithmetics.cc ${definitions})
-
-pyre_test_driver_cxx20(tests/pyre.lib/tensor/tensor_canonical_basis.cc)
-pyre_add_definitions(tests/pyre.lib/tensor/tensor_canonical_basis.cc ${definitions})
-
-pyre_test_driver_cxx20(tests/pyre.lib/tensor/tensor_cayley_hamilton_theorem.cc)
-pyre_add_definitions(tests/pyre.lib/tensor/tensor_cayley_hamilton_theorem.cc ${definitions})
-
-pyre_test_driver_cxx20(tests/pyre.lib/tensor/tensor_compact_arithmetics.cc)
-pyre_add_definitions(tests/pyre.lib/tensor/tensor_compact_arithmetics.cc ${definitions})
-
-pyre_test_driver_cxx20(tests/pyre.lib/tensor/tensor_eigenvalues.cc)
-pyre_add_definitions(tests/pyre.lib/tensor/tensor_eigenvalues.cc ${definitions})
-
-pyre_test_driver_cxx20(tests/pyre.lib/tensor/tensor_eigenvalues_transformation.cc)
-pyre_add_definitions(tests/pyre.lib/tensor/tensor_eigenvalues_transformation.cc ${definitions})
-
-pyre_test_driver_cxx20(tests/pyre.lib/tensor/tensor_identities.cc)
-pyre_add_definitions(tests/pyre.lib/tensor/tensor_identities.cc ${definitions})
-
-pyre_test_driver_cxx20(tests/pyre.lib/tensor/tensor_inverse.cc)
-pyre_add_definitions(tests/pyre.lib/tensor/tensor_inverse.cc ${definitions})
-
-pyre_test_driver_cxx20(tests/pyre.lib/tensor/tensor_iterators.cc)
-pyre_add_definitions(tests/pyre.lib/tensor/tensor_iterators.cc ${definitions})
-
-pyre_test_driver_cxx20(tests/pyre.lib/tensor/tensor_literals.cc)
-pyre_add_definitions(tests/pyre.lib/tensor/tensor_literals.cc ${definitions})
-
-pyre_test_driver_cxx20(tests/pyre.lib/tensor/tensor_matrix_product.cc)
-pyre_add_definitions(tests/pyre.lib/tensor/tensor_matrix_product.cc ${definitions})
-
-pyre_test_driver_cxx20(tests/pyre.lib/tensor/tensor_print.cc)
-pyre_add_definitions(tests/pyre.lib/tensor/tensor_print.cc ${definitions})
-
-pyre_test_driver_cxx20(tests/pyre.lib/tensor/tensor_symmetry.cc)
-pyre_add_definitions(tests/pyre.lib/tensor/tensor_symmetry.cc ${definitions})
-
-pyre_test_driver_cxx20(tests/pyre.lib/tensor/tensor_transpose.cc)
-pyre_add_definitions(tests/pyre.lib/tensor/tensor_transpose.cc ${definitions})
-
-pyre_test_driver_cxx20(tests/pyre.lib/tensor/tensor_utilities.cc)
-pyre_add_definitions(tests/pyre.lib/tensor/tensor_utilities.cc ${definitions})
-
-endif()
 
 
 # end of file

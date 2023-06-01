@@ -40,7 +40,7 @@ RECURSE_DIRS = \
 
 
 # the support in {pyre.external} is still very experimental and the test cases are still in debugging mode
-# now that journal errors are fatal, these tests stop the build
+# now that journal errors are fatal, these tests stop the buld
 # skip until the support improves a bit
 SKIP = \
     externals \

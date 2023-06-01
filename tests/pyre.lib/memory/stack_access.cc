@@ -18,7 +18,7 @@ using array_t = pyre::memory::stack_t<9, double>;
 int main(int argc, char * argv[]) {
     // initialize the journal
     pyre::journal::init(argc, argv);
-    pyre::journal::application("stack_access");
+    pyre::journal::application("heap_access");
 
     // make a block on the stack
     array_t block;

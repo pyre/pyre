@@ -31,7 +31,7 @@ int main(int argc, char * argv[]) {
         << "packing:" << pyre::journal::newline
         << "  shape: " << packing.shape() << pyre::journal::newline
         << "  order: " << packing.order() << pyre::journal::newline
-        << "  origin: " << packing.origin() << pyre::journal::newline
+        << "  origin: " << packing.order() << pyre::journal::newline
         << "  nudge: " << packing.nudge() << pyre::journal::newline
         << "  strides: " << packing.strides() << pyre::journal::endl(__HERE__);
 
@@ -48,7 +48,7 @@ int main(int argc, char * argv[]) {
                 << pyre::journal::newline;
         // verify that we are visiting in packing order
         assert(( offset == i ));
-        // increment the counter and grab the next index
+        // increment the counter and grab thej next index
         ++i;
     }
     // flush
