@@ -212,12 +212,12 @@ class Dataset(Object):
         return
 
     # creation metadata
-    def _pyre_dataspace(self):
+    def _pyre_describe(self):
         """
         Build a representation of my dataspace
         """
         # my layout knows how to do this
-        return self._pyre_layout._pyre_dataspace(value=self.value)
+        return self._pyre_layout._pyre_describe(dataset=self)
 
     # visiting
     def _pyre_identify(self, authority, **kwds):
