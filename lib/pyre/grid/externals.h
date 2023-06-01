@@ -45,6 +45,13 @@ namespace pyre::grid {
     // output streams
     using ostream_t = std::ostream;
     using ostream_reference = std::ostream &;
+
+    // sequences of integers
+    template <int N>
+    using make_integer_sequence = std::make_integer_sequence<int, N>;
+    template <int... I>
+    using integer_sequence = std::integer_sequence<int, I...>;
+
 } // namespace pyre::grid
 
 

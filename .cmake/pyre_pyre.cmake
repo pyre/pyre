@@ -249,11 +249,20 @@ endfunction()
 
 
 # add definitions to compilation of file
-function(pyre_add_definitions driverfile definitions)
+function(pyre_add_definitions driverfile)
+  
+  # the argument list is the list of definitions
+  set(definitions ${ARGN})
+
   # generate the name of the target
   pyre_target(target ${driverfile})
-  # request the definitions for the target
-  target_compile_definitions(${target} PRIVATE ${definitions})
+
+  # for each definition requested
+  foreach(definition IN LISTS definitions)
+    # apply the definition to the target
+    target_compile_definitions(${target} PRIVATE ${definition})
+  endforeach()
+
 # all done
 endfunction()
 

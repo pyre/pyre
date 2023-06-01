@@ -48,7 +48,7 @@ public:
     inline constexpr void deactivate() const;
 
     // bulk activation
-    static constexpr inline void activateChannels(const nameset_type &);
+    static constexpr void activateChannels(const nameset_type &);
 
     // disallow
 private:
