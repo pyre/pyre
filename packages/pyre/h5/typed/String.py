@@ -16,7 +16,7 @@ class String:
     """
 
     # metamethods
-    def __init__(self, memtype=memtypes.char, disktype=disktypes.c_s1, **kwds):
+    def __init__(self, memtype=memtypes.char, disktype=disktypes.strType, **kwds):
         # chain up
         super().__init__(memtype=memtype, disktype=disktype, **kwds)
         # all done
@@ -42,6 +42,18 @@ class String:
         dst.str(value)
         # all done
         return
+
+    # information about my on-disk layout
+    def _pyre_describe(self, dataset):
+        """
+        Construct representations for my on-disk datatype and dataspace
+        """
+        # strings are scalars
+        shape = libh5.DataSpace()
+        # but the type knows the length of the value
+        type = self.disktype(cells=max(1, len(self.string(dataset.value))))
+        # hand off the pair
+        return type, shape
 
 
 # end of file
