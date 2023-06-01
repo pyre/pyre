@@ -26,13 +26,5 @@ class Container:
         # all done
         return
 
-    # framework hooks
-    def _pyre_dataspace(self, value):
-        """
-        Create a data space instance that describes non-scalar types
-        """
-        # easy
-        return libh5.DataSpace(shape=value.shape)
-
 
 # end of file
