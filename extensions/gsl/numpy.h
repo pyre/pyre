@@ -16,16 +16,16 @@ namespace gsl {
         extern const char * const ndarray__name__;
         extern const char * const ndarray__doc__;
         PyObject * ndarray(PyObject *, PyObject *);
-    } // of namespace vector
+    } // namespace vector
 
     namespace matrix {
         // matrix_ndarray
         extern const char * const ndarray__name__;
         extern const char * const ndarray__doc__;
         PyObject * ndarray(PyObject *, PyObject *);
-    } // of namespace matrix
-} // of namespace gsl
+    } // namespace matrix
+} // namespace gsl
 
-#endif //gsl_extension_numpy_h
+#endif // gsl_extension_numpy_h
 
 // end of file

@@ -20,13 +20,17 @@ const char * const gsl::histogram::alloc__name__ = "histogram_alloc";
 const char * const gsl::histogram::alloc__doc__ = "allocate a histogram";
 
 PyObject *
-gsl::histogram::alloc(PyObject *, PyObject * args) {
+gsl::histogram::alloc(PyObject *, PyObject * args)
+{
     // place holders for the python arguments
     size_t shape;
     // unpack the argument tuple
     int status = PyArg_ParseTuple(args, "k:histogram_alloc", &shape);
     // if something went wrong
-    if (!status) return 0;
+    if (!status) {
+        // bail
+        return 0;
+    }
 
     // allocate a histogram
     gsl_histogram * h = gsl_histogram_alloc(shape);
@@ -42,18 +46,19 @@ const char * const gsl::histogram::uniform__doc__ =
     "build bins with uniform coverage of a given range";
 
 PyObject *
-gsl::histogram::uniform(PyObject *, PyObject * args) {
+gsl::histogram::uniform(PyObject *, PyObject * args)
+{
     // the arguments
     PyObject * capsule;
     double lower, upper;
     // unpack the argument tuple
-    int status = PyArg_ParseTuple(
-                                  args, "O!dd:histogram_uniform",
-                                  &PyCapsule_Type, &capsule,
-                                  &lower, &upper
-                                  );
+    int status =
+        PyArg_ParseTuple(args, "O!dd:histogram_uniform", &PyCapsule_Type, &capsule, &lower, &upper);
     // if something went wrong
-    if (!status) return 0;
+    if (!status) {
+        // bail
+        return 0;
+    }
     // bail out if the capsule is not valid
     if (!PyCapsule_IsValid(capsule, capsule_t)) {
         PyErr_SetString(PyExc_TypeError, "invalid histogram capsule");
@@ -77,17 +82,19 @@ const char * const gsl::histogram::ranges__doc__ =
     "set the histogram bins using the specified values";
 
 PyObject *
-gsl::histogram::ranges(PyObject *, PyObject * args) {
+gsl::histogram::ranges(PyObject *, PyObject * args)
+{
     // the arguments
     PyObject * points;
     PyObject * capsule;
     // unpack the argument tuple
     int status = PyArg_ParseTuple(
-                                  args, "O!O!:histogram_ranges",
-                                  &PyCapsule_Type, &capsule,
-                                  &PyTuple_Type, &points);
+        args, "O!O!:histogram_ranges", &PyCapsule_Type, &capsule, &PyTuple_Type, &points);
     // if something went wrong
-    if (!status) return 0;
+    if (!status) {
+        // bail
+        return 0;
+    }
     // bail out if the capsule is not valid
     if (!PyCapsule_IsValid(capsule, capsule_t)) {
         PyErr_SetString(PyExc_TypeError, "invalid histogram capsule");
@@ -106,7 +113,7 @@ gsl::histogram::ranges(PyObject *, PyObject * args) {
     // if anything went wrong
     if (PyErr_Occurred()) {
         // deallocate the range array
-        delete [] ranges;
+        delete[] ranges;
         // and raise an exception
         return 0;
     }
@@ -114,7 +121,7 @@ gsl::histogram::ranges(PyObject *, PyObject * args) {
     gsl_histogram_set_ranges(h, ranges, size);
 
     // deallocate the range array
-    delete [] ranges;
+    delete[] ranges;
     // return None
     Py_INCREF(Py_None);
     return Py_None;
@@ -126,13 +133,17 @@ const char * const gsl::histogram::reset__name__ = "histogram_reset";
 const char * const gsl::histogram::reset__doc__ = "reset a histogram";
 
 PyObject *
-gsl::histogram::reset(PyObject *, PyObject * args) {
+gsl::histogram::reset(PyObject *, PyObject * args)
+{
     // the arguments
     PyObject * capsule;
     // unpack the argument tuple
     int status = PyArg_ParseTuple(args, "O!:histogram_reset", &PyCapsule_Type, &capsule);
     // if something went wrong
-    if (!status) return 0;
+    if (!status) {
+        // bail
+        return 0;
+    }
     // bail out if the capsule is not valid
     if (!PyCapsule_IsValid(capsule, capsule_t)) {
         PyErr_SetString(PyExc_TypeError, "invalid histogram capsule");
@@ -156,17 +167,18 @@ const char * const gsl::histogram::increment__doc__ =
     "increment by one the bin that contains the given value";
 
 PyObject *
-gsl::histogram::increment(PyObject *, PyObject * args) {
+gsl::histogram::increment(PyObject *, PyObject * args)
+{
     // the arguments
     double x;
     PyObject * capsule;
     // unpack the argument tuple
-    int status = PyArg_ParseTuple(
-                                  args, "O!d:histogram_increment",
-                                  &PyCapsule_Type, &capsule,
-                                  &x);
+    int status = PyArg_ParseTuple(args, "O!d:histogram_increment", &PyCapsule_Type, &capsule, &x);
     // if something went wrong
-    if (!status) return 0;
+    if (!status) {
+        // bail
+        return 0;
+    }
     // bail out if the capsule is not valid
     if (!PyCapsule_IsValid(capsule, capsule_t)) {
         PyErr_SetString(PyExc_TypeError, "invalid histogram capsule");
@@ -190,17 +202,19 @@ const char * const gsl::histogram::accumulate__doc__ =
     "add the given weight to the bin that contains the given value";
 
 PyObject *
-gsl::histogram::accumulate(PyObject *, PyObject * args) {
+gsl::histogram::accumulate(PyObject *, PyObject * args)
+{
     // the arguments
     double x, weight;
     PyObject * capsule;
     // unpack the argument tuple
-    int status = PyArg_ParseTuple(
-                                  args, "O!dd:histogram_accumulate",
-                                  &PyCapsule_Type, &capsule,
-                                  &x, &weight);
+    int status =
+        PyArg_ParseTuple(args, "O!dd:histogram_accumulate", &PyCapsule_Type, &capsule, &x, &weight);
     // if something went wrong
-    if (!status) return 0;
+    if (!status) {
+        // bail
+        return 0;
+    }
     // bail out if the capsule is not valid
     if (!PyCapsule_IsValid(capsule, capsule_t)) {
         PyErr_SetString(PyExc_TypeError, "invalid histogram capsule");
@@ -224,18 +238,19 @@ const char * const gsl::histogram::fill__doc__ =
     "increment my frequency counts using values for the given vector";
 
 PyObject *
-gsl::histogram::fill(PyObject *, PyObject * args) {
+gsl::histogram::fill(PyObject *, PyObject * args)
+{
     // the arguments
     PyObject * capsule;
     PyObject * vCapsule;
     // unpack the argument tuple
     int status = PyArg_ParseTuple(
-                                  args, "O!O!:histogram_fill",
-                                  &PyCapsule_Type, &capsule,
-                                  &PyCapsule_Type, &vCapsule
-                                  );
+        args, "O!O!:histogram_fill", &PyCapsule_Type, &capsule, &PyCapsule_Type, &vCapsule);
     // if something went wrong
-    if (!status) return 0;
+    if (!status) {
+        // bail
+        return 0;
+    }
     // bail out if the histogram capsule is not valid
     if (!PyCapsule_IsValid(capsule, capsule_t)) {
         PyErr_SetString(PyExc_TypeError, "invalid histogram capsule");
@@ -248,14 +263,13 @@ gsl::histogram::fill(PyObject *, PyObject * args) {
     }
 
     // get the histogram
-    gsl_histogram * h =
-        static_cast<gsl_histogram *>(PyCapsule_GetPointer(capsule, capsule_t));
+    gsl_histogram * h = static_cast<gsl_histogram *>(PyCapsule_GetPointer(capsule, capsule_t));
     // get the values
     gsl_vector * v =
         static_cast<gsl_vector *>(PyCapsule_GetPointer(vCapsule, gsl::vector::capsule_t));
 
     // fill it out
-    for (size_t i=0; i < v->size; i++) {
+    for (size_t i = 0; i < v->size; i++) {
         gsl_histogram_increment(h, gsl_vector_get(v, i));
     }
 
@@ -270,16 +284,17 @@ const char * const gsl::histogram::clone__name__ = "histogram_clone";
 const char * const gsl::histogram::clone__doc__ = "build a clone of a histogram";
 
 PyObject *
-gsl::histogram::clone(PyObject *, PyObject * args) {
+gsl::histogram::clone(PyObject *, PyObject * args)
+{
     // the arguments
     PyObject * sourceCapsule;
     // unpack the argument tuple
-    int status = PyArg_ParseTuple(
-                                  args, "O!O!:histogram_clone",
-                                  &PyCapsule_Type, &sourceCapsule
-                                  );
+    int status = PyArg_ParseTuple(args, "O!O!:histogram_clone", &PyCapsule_Type, &sourceCapsule);
     // if something went wrong
-    if (!status) return 0;
+    if (!status) {
+        // bail
+        return 0;
+    }
     // bail out if the source capsule is not valid
     if (!PyCapsule_IsValid(sourceCapsule, capsule_t)) {
         PyErr_SetString(PyExc_TypeError, "invalid histogram capsule for source");
@@ -303,18 +318,20 @@ const char * const gsl::histogram::copy__name__ = "histogram_copy";
 const char * const gsl::histogram::copy__doc__ = "build a copy of a histogram";
 
 PyObject *
-gsl::histogram::copy(PyObject *, PyObject * args) {
+gsl::histogram::copy(PyObject *, PyObject * args)
+{
     // the arguments
     PyObject * sourceCapsule;
     PyObject * destinationCapsule;
     // unpack the argument tuple
     int status = PyArg_ParseTuple(
-                                  args, "O!O!:histogram_copy",
-                                  &PyCapsule_Type, &destinationCapsule,
-                                  &PyCapsule_Type, &sourceCapsule
-                                  );
+        args, "O!O!:histogram_copy", &PyCapsule_Type, &destinationCapsule, &PyCapsule_Type,
+        &sourceCapsule);
     // if something went wrong
-    if (!status) return 0;
+    if (!status) {
+        // bail
+        return 0;
+    }
     // bail out if the source capsule is not valid
     if (!PyCapsule_IsValid(sourceCapsule, capsule_t)) {
         PyErr_SetString(PyExc_TypeError, "invalid histogram capsule for source");
@@ -346,13 +363,17 @@ const char * const gsl::histogram::vector__doc__ =
     "increment my frequency counts using values for the given vector";
 
 PyObject *
-gsl::histogram::vector(PyObject *, PyObject * args) {
+gsl::histogram::vector(PyObject *, PyObject * args)
+{
     // the arguments
     PyObject * capsule;
     // unpack the argument tuple
     int status = PyArg_ParseTuple(args, "O!:histogram_vector", &PyCapsule_Type, &capsule);
     // if something went wrong
-    if (!status) return 0;
+    if (!status) {
+        // bail
+        return 0;
+    }
     // bail out if the histogram capsule is not valid
     if (!PyCapsule_IsValid(capsule, capsule_t)) {
         PyErr_SetString(PyExc_TypeError, "invalid histogram capsule");
@@ -360,8 +381,7 @@ gsl::histogram::vector(PyObject *, PyObject * args) {
     }
 
     // get the histogram
-    gsl_histogram * h =
-        static_cast<gsl_histogram *>(PyCapsule_GetPointer(capsule, capsule_t));
+    gsl_histogram * h = static_cast<gsl_histogram *>(PyCapsule_GetPointer(capsule, capsule_t));
 
     // build the vector
     gsl_vector * v;
@@ -369,7 +389,7 @@ gsl::histogram::vector(PyObject *, PyObject * args) {
     // make the vector
     v = gsl_vector_alloc(h->n);
     // copy the data
-    for (size_t i=0; i < h->n; i++) {
+    for (size_t i = 0; i < h->n; i++) {
         gsl_vector_set(v, i, gsl_histogram_get(h, i));
     }
 
@@ -384,17 +404,18 @@ const char * const gsl::histogram::find__doc__ =
     "return the index of the bin the contains the given value";
 
 PyObject *
-gsl::histogram::find(PyObject *, PyObject * args) {
+gsl::histogram::find(PyObject *, PyObject * args)
+{
     // the arguments
     double value;
     PyObject * capsule;
     // unpack the argument tuple
-    int status = PyArg_ParseTuple(
-                                  args, "O!d:histogram_find",
-                                  &PyCapsule_Type, &capsule,
-                                  &value);
+    int status = PyArg_ParseTuple(args, "O!d:histogram_find", &PyCapsule_Type, &capsule, &value);
     // if something went wrong
-    if (!status) return 0;
+    if (!status) {
+        // bail
+        return 0;
+    }
     // bail out if the capsule is not valid
     if (!PyCapsule_IsValid(capsule, capsule_t)) {
         PyErr_SetString(PyExc_TypeError, "invalid histogram capsule");
@@ -419,13 +440,17 @@ const char * const gsl::histogram::max__name__ = "histogram_max";
 const char * const gsl::histogram::max__doc__ = "return the maximum upper range";
 
 PyObject *
-gsl::histogram::max(PyObject *, PyObject * args) {
+gsl::histogram::max(PyObject *, PyObject * args)
+{
     // the arguments
     PyObject * capsule;
     // unpack the argument tuple
     int status = PyArg_ParseTuple(args, "O!:histogram_max", &PyCapsule_Type, &capsule);
     // if something went wrong
-    if (!status) return 0;
+    if (!status) {
+        // bail
+        return 0;
+    }
     // bail out if the capsule is not valid
     if (!PyCapsule_IsValid(capsule, capsule_t)) {
         PyErr_SetString(PyExc_TypeError, "invalid histogram capsule");
@@ -449,13 +474,17 @@ const char * const gsl::histogram::min__name__ = "histogram_min";
 const char * const gsl::histogram::min__doc__ = "return the minimum lower range";
 
 PyObject *
-gsl::histogram::min(PyObject *, PyObject * args) {
+gsl::histogram::min(PyObject *, PyObject * args)
+{
     // the arguments
     PyObject * capsule;
     // unpack the argument tuple
     int status = PyArg_ParseTuple(args, "O!:histogram_min", &PyCapsule_Type, &capsule);
     // if something went wrong
-    if (!status) return 0;
+    if (!status) {
+        // bail
+        return 0;
+    }
     // bail out if the capsule is not valid
     if (!PyCapsule_IsValid(capsule, capsule_t)) {
         PyErr_SetString(PyExc_TypeError, "invalid histogram capsule");
@@ -480,17 +509,18 @@ const char * const gsl::histogram::range__doc__ =
     "return the range that corresponds to the given bin";
 
 PyObject *
-gsl::histogram::range(PyObject *, PyObject * args) {
+gsl::histogram::range(PyObject *, PyObject * args)
+{
     // the arguments
     size_t index;
     PyObject * capsule;
     // unpack the argument tuple
-    int status = PyArg_ParseTuple(
-                                  args, "O!k:histogram_range",
-                                  &PyCapsule_Type, &capsule,
-                                  &index);
+    int status = PyArg_ParseTuple(args, "O!k:histogram_range", &PyCapsule_Type, &capsule, &index);
     // if something went wrong
-    if (!status) return 0;
+    if (!status) {
+        // bail
+        return 0;
+    }
     // bail out if the capsule is not valid
     if (!PyCapsule_IsValid(capsule, capsule_t)) {
         PyErr_SetString(PyExc_TypeError, "invalid histogram capsule");
@@ -521,13 +551,17 @@ const char * const gsl::histogram::max_bin__doc__ =
     "return the index of the bin where the maximum value is contained";
 
 PyObject *
-gsl::histogram::max_bin(PyObject *, PyObject * args) {
+gsl::histogram::max_bin(PyObject *, PyObject * args)
+{
     // the arguments
     PyObject * capsule;
     // unpack the argument tuple
     int status = PyArg_ParseTuple(args, "O!:histogram_max_bin", &PyCapsule_Type, &capsule);
     // if something went wrong
-    if (!status) return 0;
+    if (!status) {
+        // bail
+        return 0;
+    }
     // bail out if the capsule is not valid
     if (!PyCapsule_IsValid(capsule, capsule_t)) {
         PyErr_SetString(PyExc_TypeError, "invalid histogram capsule");
@@ -552,13 +586,17 @@ const char * const gsl::histogram::min_bin__doc__ =
     "return the index of the bin where the minimum value is contained";
 
 PyObject *
-gsl::histogram::min_bin(PyObject *, PyObject * args) {
+gsl::histogram::min_bin(PyObject *, PyObject * args)
+{
     // the arguments
     PyObject * capsule;
     // unpack the argument tuple
     int status = PyArg_ParseTuple(args, "O!:histogram_min_bin", &PyCapsule_Type, &capsule);
     // if something went wrong
-    if (!status) return 0;
+    if (!status) {
+        // bail
+        return 0;
+    }
     // bail out if the capsule is not valid
     if (!PyCapsule_IsValid(capsule, capsule_t)) {
         PyErr_SetString(PyExc_TypeError, "invalid histogram capsule");
@@ -579,17 +617,20 @@ gsl::histogram::min_bin(PyObject *, PyObject * args) {
 
 // max_val
 const char * const gsl::histogram::max_val__name__ = "histogram_max_val";
-const char * const gsl::histogram::max_val__doc__ =
-    "find the maximum value in the histogram";
+const char * const gsl::histogram::max_val__doc__ = "find the maximum value in the histogram";
 
 PyObject *
-gsl::histogram::max_val(PyObject *, PyObject * args) {
+gsl::histogram::max_val(PyObject *, PyObject * args)
+{
     // the arguments
     PyObject * capsule;
     // unpack the argument tuple
     int status = PyArg_ParseTuple(args, "O!:histogram_max_val", &PyCapsule_Type, &capsule);
     // if something went wrong
-    if (!status) return 0;
+    if (!status) {
+        // bail
+        return 0;
+    }
     // bail out if the capsule is not valid
     if (!PyCapsule_IsValid(capsule, capsule_t)) {
         PyErr_SetString(PyExc_TypeError, "invalid histogram capsule");
@@ -610,17 +651,20 @@ gsl::histogram::max_val(PyObject *, PyObject * args) {
 
 // min_val
 const char * const gsl::histogram::min_val__name__ = "histogram_min_val";
-const char * const gsl::histogram::min_val__doc__ =
-    "find the minimum value in the histogram";
+const char * const gsl::histogram::min_val__doc__ = "find the minimum value in the histogram";
 
 PyObject *
-gsl::histogram::min_val(PyObject *, PyObject * args) {
+gsl::histogram::min_val(PyObject *, PyObject * args)
+{
     // the arguments
     PyObject * capsule;
     // unpack the argument tuple
     int status = PyArg_ParseTuple(args, "O!:histogram_min_val", &PyCapsule_Type, &capsule);
     // if something went wrong
-    if (!status) return 0;
+    if (!status) {
+        // bail
+        return 0;
+    }
     // bail out if the capsule is not valid
     if (!PyCapsule_IsValid(capsule, capsule_t)) {
         PyErr_SetString(PyExc_TypeError, "invalid histogram capsule");
@@ -645,13 +689,17 @@ const char * const gsl::histogram::mean__doc__ =
     "compute the mean value of the contents of a histogram";
 
 PyObject *
-gsl::histogram::mean(PyObject *, PyObject * args) {
+gsl::histogram::mean(PyObject *, PyObject * args)
+{
     // the arguments
     PyObject * capsule;
     // unpack the argument tuple
     int status = PyArg_ParseTuple(args, "O!:histogram_mean", &PyCapsule_Type, &capsule);
     // if something went wrong
-    if (!status) return 0;
+    if (!status) {
+        // bail
+        return 0;
+    }
     // bail out if the capsule is not valid
     if (!PyCapsule_IsValid(capsule, capsule_t)) {
         PyErr_SetString(PyExc_TypeError, "invalid histogram capsule");
@@ -676,13 +724,17 @@ const char * const gsl::histogram::sdev__doc__ =
     "compute the standard deviation of the contents of a histogram";
 
 PyObject *
-gsl::histogram::sdev(PyObject *, PyObject * args) {
+gsl::histogram::sdev(PyObject *, PyObject * args)
+{
     // the arguments
     PyObject * capsule;
     // unpack the argument tuple
     int status = PyArg_ParseTuple(args, "O!:histogram_sdev", &PyCapsule_Type, &capsule);
     // if something went wrong
-    if (!status) return 0;
+    if (!status) {
+        // bail
+        return 0;
+    }
     // bail out if the capsule is not valid
     if (!PyCapsule_IsValid(capsule, capsule_t)) {
         PyErr_SetString(PyExc_TypeError, "invalid histogram capsule");
@@ -703,17 +755,20 @@ gsl::histogram::sdev(PyObject *, PyObject * args) {
 
 // sum
 const char * const gsl::histogram::sum__name__ = "histogram_sum";
-const char * const gsl::histogram::sum__doc__ =
-    "compute the sum of the contents of a histogram";
+const char * const gsl::histogram::sum__doc__ = "compute the sum of the contents of a histogram";
 
 PyObject *
-gsl::histogram::sum(PyObject *, PyObject * args) {
+gsl::histogram::sum(PyObject *, PyObject * args)
+{
     // the arguments
     PyObject * capsule;
     // unpack the argument tuple
     int status = PyArg_ParseTuple(args, "O!:histogram_sum", &PyCapsule_Type, &capsule);
     // if something went wrong
-    if (!status) return 0;
+    if (!status) {
+        // bail
+        return 0;
+    }
     // bail out if the capsule is not valid
     if (!PyCapsule_IsValid(capsule, capsule_t)) {
         PyErr_SetString(PyExc_TypeError, "invalid histogram capsule");
@@ -737,14 +792,18 @@ const char * const gsl::histogram::get__name__ = "histogram_get";
 const char * const gsl::histogram::get__doc__ = "get the value of a histogram element";
 
 PyObject *
-gsl::histogram::get(PyObject *, PyObject * args) {
+gsl::histogram::get(PyObject *, PyObject * args)
+{
     // the arguments
     size_t index;
     PyObject * capsule;
     // unpack the argument tuple
     int status = PyArg_ParseTuple(args, "O!k:histogram_get", &PyCapsule_Type, &capsule, &index);
     // if something went wrong
-    if (!status) return 0;
+    if (!status) {
+        // bail
+        return 0;
+    }
     // bail out if the capsule is not valid
     if (!PyCapsule_IsValid(capsule, capsule_t)) {
         PyErr_SetString(PyExc_TypeError, "invalid histogram capsule");
@@ -768,16 +827,19 @@ const char * const gsl::histogram::add__name__ = "histogram_add";
 const char * const gsl::histogram::add__doc__ = "in-place addition of two histograms";
 
 PyObject *
-gsl::histogram::add(PyObject *, PyObject * args) {
+gsl::histogram::add(PyObject *, PyObject * args)
+{
     // the arguments
     PyObject * self;
     PyObject * other;
     // unpack the argument tuple
     int status = PyArg_ParseTuple(
-                                  args, "O!O!:histogram_add",
-                                  &PyCapsule_Type, &self, &PyCapsule_Type, &other);
+        args, "O!O!:histogram_add", &PyCapsule_Type, &self, &PyCapsule_Type, &other);
     // if something went wrong
-    if (!status) return 0;
+    if (!status) {
+        // bail
+        return 0;
+    }
     // bail out if the two capsules are not valid
     if (!PyCapsule_IsValid(self, capsule_t) || !PyCapsule_IsValid(other, capsule_t)) {
         PyErr_SetString(PyExc_TypeError, "invalid histogram capsule");
@@ -801,16 +863,19 @@ const char * const gsl::histogram::sub__name__ = "histogram_sub";
 const char * const gsl::histogram::sub__doc__ = "in-place subtraction of two histograms";
 
 PyObject *
-gsl::histogram::sub(PyObject *, PyObject * args) {
+gsl::histogram::sub(PyObject *, PyObject * args)
+{
     // the arguments
     PyObject * self;
     PyObject * other;
     // unpack the argument tuple
     int status = PyArg_ParseTuple(
-                                  args, "O!O!:histogram_sub",
-                                  &PyCapsule_Type, &self, &PyCapsule_Type, &other);
+        args, "O!O!:histogram_sub", &PyCapsule_Type, &self, &PyCapsule_Type, &other);
     // if something went wrong
-    if (!status) return 0;
+    if (!status) {
+        // bail
+        return 0;
+    }
     // bail out if the two capsules are not valid
     if (!PyCapsule_IsValid(self, capsule_t) || !PyCapsule_IsValid(other, capsule_t)) {
         PyErr_SetString(PyExc_TypeError, "invalid histogram capsule");
@@ -834,16 +899,19 @@ const char * const gsl::histogram::mul__name__ = "histogram_mul";
 const char * const gsl::histogram::mul__doc__ = "in-place multiplication of two histograms";
 
 PyObject *
-gsl::histogram::mul(PyObject *, PyObject * args) {
+gsl::histogram::mul(PyObject *, PyObject * args)
+{
     // the arguments
     PyObject * self;
     PyObject * other;
     // unpack the argument tuple
     int status = PyArg_ParseTuple(
-                                  args, "O!O!:histogram_mul",
-                                  &PyCapsule_Type, &self, &PyCapsule_Type, &other);
+        args, "O!O!:histogram_mul", &PyCapsule_Type, &self, &PyCapsule_Type, &other);
     // if something went wrong
-    if (!status) return 0;
+    if (!status) {
+        // bail
+        return 0;
+    }
     // bail out if the two capsules are not valid
     if (!PyCapsule_IsValid(self, capsule_t) || !PyCapsule_IsValid(other, capsule_t)) {
         PyErr_SetString(PyExc_TypeError, "invalid histogram capsule");
@@ -867,16 +935,19 @@ const char * const gsl::histogram::div__name__ = "histogram_div";
 const char * const gsl::histogram::div__doc__ = "in-place division of two histograms";
 
 PyObject *
-gsl::histogram::div(PyObject *, PyObject * args) {
+gsl::histogram::div(PyObject *, PyObject * args)
+{
     // the arguments
     PyObject * self;
     PyObject * other;
     // unpack the argument tuple
     int status = PyArg_ParseTuple(
-                                  args, "O!O!:histogram_div",
-                                  &PyCapsule_Type, &self, &PyCapsule_Type, &other);
+        args, "O!O!:histogram_div", &PyCapsule_Type, &self, &PyCapsule_Type, &other);
     // if something went wrong
-    if (!status) return 0;
+    if (!status) {
+        // bail
+        return 0;
+    }
     // bail out if the two capsules are not valid
     if (!PyCapsule_IsValid(self, capsule_t) || !PyCapsule_IsValid(other, capsule_t)) {
         PyErr_SetString(PyExc_TypeError, "invalid histogram capsule");
@@ -900,14 +971,18 @@ const char * const gsl::histogram::shift__name__ = "histogram_shift";
 const char * const gsl::histogram::shift__doc__ = "in-place addition of a constant to a histogram";
 
 PyObject *
-gsl::histogram::shift(PyObject *, PyObject * args) {
+gsl::histogram::shift(PyObject *, PyObject * args)
+{
     // the arguments
     double value;
     PyObject * self;
     // unpack the argument tuple
     int status = PyArg_ParseTuple(args, "O!d:histogram_shift", &PyCapsule_Type, &self, &value);
     // if something went wrong
-    if (!status) return 0;
+    if (!status) {
+        // bail
+        return 0;
+    }
     // bail out if the two capsules are not valid
     if (!PyCapsule_IsValid(self, capsule_t)) {
         PyErr_SetString(PyExc_TypeError, "invalid histogram capsule");
@@ -930,14 +1005,18 @@ const char * const gsl::histogram::scale__name__ = "histogram_scale";
 const char * const gsl::histogram::scale__doc__ = "in-place scaling of a histogram by a constant";
 
 PyObject *
-gsl::histogram::scale(PyObject *, PyObject * args) {
+gsl::histogram::scale(PyObject *, PyObject * args)
+{
     // the arguments
     double value;
     PyObject * self;
     // unpack the argument tuple
     int status = PyArg_ParseTuple(args, "O!d:histogram_scale", &PyCapsule_Type, &self, &value);
     // if something went wrong
-    if (!status) return 0;
+    if (!status) {
+        // bail
+        return 0;
+    }
     // bail out if the two capsules are not valid
     if (!PyCapsule_IsValid(self, capsule_t)) {
         PyErr_SetString(PyExc_TypeError, "invalid histogram capsule");
@@ -961,7 +1040,8 @@ void
 gsl::histogram::free(PyObject * capsule)
 {
     // bail out if the capsule is not valid
-    if (!PyCapsule_IsValid(capsule, gsl::histogram::capsule_t)) return;
+    if (!PyCapsule_IsValid(capsule, gsl::histogram::capsule_t))
+        return;
     // get the histogram
     gsl_histogram * v =
         static_cast<gsl_histogram *>(PyCapsule_GetPointer(capsule, gsl::histogram::capsule_t));

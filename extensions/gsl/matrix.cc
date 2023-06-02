@@ -22,13 +22,15 @@ const char * const gsl::matrix::alloc__name__ = "matrix_alloc";
 const char * const gsl::matrix::alloc__doc__ = "allocate a matrix";
 
 PyObject *
-gsl::matrix::alloc(PyObject *, PyObject * args) {
+gsl::matrix::alloc(PyObject *, PyObject * args)
+{
     // place holders for the python arguments
     size_t s0, s1;
     // unpack the argument tuple
     int status = PyArg_ParseTuple(args, "(kk):matrix_alloc", &s0, &s1);
     // if something went wrong
-    if (!status) return 0;
+    if (!status)
+        return 0;
 
     // allocate a matrix
     gsl_matrix * m = gsl_matrix_alloc(s0, s1);
@@ -44,19 +46,19 @@ const char * const gsl::matrix::view_alloc__name__ = "matrix_view_alloc";
 const char * const gsl::matrix::view_alloc__doc__ = "allocate a matrix view";
 
 PyObject *
-gsl::matrix::view_alloc(PyObject *, PyObject * args) {
+gsl::matrix::view_alloc(PyObject *, PyObject * args)
+{
     // place holders for the python arguments
     size_t origin0, origin1;
     size_t s0, s1;
     PyObject * capsule;
     // unpack the argument tuple
-    int status = PyArg_ParseTuple(args,
-                                  "O!(kk)(kk):matrix_view_alloc",
-                                  &PyCapsule_Type, &capsule,
-                                  &origin0, &origin1,
-                                  &s0, &s1);
+    int status = PyArg_ParseTuple(
+        args, "O!(kk)(kk):matrix_view_alloc", &PyCapsule_Type, &capsule, &origin0, &origin1, &s0,
+        &s1);
     // if something went wrong
-    if (!status) return 0;
+    if (!status)
+        return 0;
     // bail out if the matrix capsule is not valid
     if (!PyCapsule_IsValid(capsule, capsule_t)) {
         PyErr_SetString(PyExc_TypeError, "invalid matrix capsule");
@@ -87,13 +89,15 @@ const char * const gsl::matrix::zero__name__ = "matrix_zero";
 const char * const gsl::matrix::zero__doc__ = "zero out the elements of a matrix";
 
 PyObject *
-gsl::matrix::zero(PyObject *, PyObject * args) {
+gsl::matrix::zero(PyObject *, PyObject * args)
+{
     // the arguments
     PyObject * capsule;
     // unpack the argument tuple
     int status = PyArg_ParseTuple(args, "O!:matrix_zero", &PyCapsule_Type, &capsule);
     // if something went wrong
-    if (!status) return 0;
+    if (!status)
+        return 0;
     // bail out if the capsule is not valid
     if (!PyCapsule_IsValid(capsule, capsule_t)) {
         PyErr_SetString(PyExc_TypeError, "invalid matrix capsule");
@@ -117,14 +121,16 @@ const char * const gsl::matrix::fill__name__ = "matrix_fill";
 const char * const gsl::matrix::fill__doc__ = "set all elements of a matrix to a value";
 
 PyObject *
-gsl::matrix::fill(PyObject *, PyObject * args) {
+gsl::matrix::fill(PyObject *, PyObject * args)
+{
     // the arguments
     double value;
     PyObject * capsule;
     // unpack the argument tuple
     int status = PyArg_ParseTuple(args, "O!d:matrix_fill", &PyCapsule_Type, &capsule, &value);
     // if something went wrong
-    if (!status) return 0;
+    if (!status)
+        return 0;
     // bail out if the capsule is not valid
     if (!PyCapsule_IsValid(capsule, capsule_t)) {
         PyErr_SetString(PyExc_TypeError, "invalid matrix capsule");
@@ -148,13 +154,15 @@ const char * const gsl::matrix::identity__name__ = "matrix_identity";
 const char * const gsl::matrix::identity__doc__ = "build an identity matrix";
 
 PyObject *
-gsl::matrix::identity(PyObject *, PyObject * args) {
+gsl::matrix::identity(PyObject *, PyObject * args)
+{
     // the arguments
     PyObject * capsule;
     // unpack the argument tuple
     int status = PyArg_ParseTuple(args, "O!:matrix_identity", &PyCapsule_Type, &capsule);
     // if something went wrong
-    if (!status) return 0;
+    if (!status)
+        return 0;
     // bail out if the capsule is not valid
     if (!PyCapsule_IsValid(capsule, capsule_t)) {
         PyErr_SetString(PyExc_TypeError, "invalid matrix capsule");
@@ -178,18 +186,18 @@ const char * const gsl::matrix::copy__name__ = "matrix_copy";
 const char * const gsl::matrix::copy__doc__ = "build a copy of a matrix";
 
 PyObject *
-gsl::matrix::copy(PyObject *, PyObject * args) {
+gsl::matrix::copy(PyObject *, PyObject * args)
+{
     // the arguments
     PyObject * sourceCapsule;
     PyObject * destinationCapsule;
     // unpack the argument tuple
     int status = PyArg_ParseTuple(
-                                  args, "O!O!:matrix_copy",
-                                  &PyCapsule_Type, &destinationCapsule,
-                                  &PyCapsule_Type, &sourceCapsule
-                                  );
+        args, "O!O!:matrix_copy", &PyCapsule_Type, &destinationCapsule, &PyCapsule_Type,
+        &sourceCapsule);
     // if something went wrong
-    if (!status) return 0;
+    if (!status)
+        return 0;
     // bail out if the source capsule is not valid
     if (!PyCapsule_IsValid(sourceCapsule, capsule_t)) {
         PyErr_SetString(PyExc_TypeError, "invalid matrix capsule for source");
@@ -202,8 +210,7 @@ gsl::matrix::copy(PyObject *, PyObject * args) {
     }
 
     // get the matrices
-    gsl_matrix * source =
-        static_cast<gsl_matrix *>(PyCapsule_GetPointer(sourceCapsule, capsule_t));
+    gsl_matrix * source = static_cast<gsl_matrix *>(PyCapsule_GetPointer(sourceCapsule, capsule_t));
     gsl_matrix * destination =
         static_cast<gsl_matrix *>(PyCapsule_GetPointer(destinationCapsule, capsule_t));
 
@@ -221,16 +228,15 @@ const char * const gsl::matrix::tuple__name__ = "matrix_tuple";
 const char * const gsl::matrix::tuple__doc__ = "build a tuple of tuples out of a matrix";
 
 PyObject *
-gsl::matrix::tuple(PyObject *, PyObject * args) {
+gsl::matrix::tuple(PyObject *, PyObject * args)
+{
     // the arguments
     PyObject * capsule;
     // unpack the argument tuple
-    int status = PyArg_ParseTuple(
-                                  args, "O!:matrix_tuple",
-                                  &PyCapsule_Type, &capsule
-                                  );
+    int status = PyArg_ParseTuple(args, "O!:matrix_tuple", &PyCapsule_Type, &capsule);
     // if something went wrong
-    if (!status) return 0;
+    if (!status)
+        return 0;
     // bail out if the source capsule is not valid
     if (!PyCapsule_IsValid(capsule, capsule_t)) {
         PyErr_SetString(PyExc_TypeError, "invalid matrix capsule");
@@ -238,8 +244,7 @@ gsl::matrix::tuple(PyObject *, PyObject * args) {
     }
 
     // get the matrix
-    gsl_matrix * mat =
-        static_cast<gsl_matrix *>(PyCapsule_GetPointer(capsule, capsule_t));
+    gsl_matrix * mat = static_cast<gsl_matrix *>(PyCapsule_GetPointer(capsule, capsule_t));
 
     // get the shape
     size_t s1 = mat->size1;
@@ -248,11 +253,11 @@ gsl::matrix::tuple(PyObject *, PyObject * args) {
     // we return a tuple
     PyObject * result = PyTuple_New(s1);
     // go through the rows
-    for (size_t row=0; row<s1; ++row) {
+    for (size_t row = 0; row < s1; ++row) {
         // store the values in a tuple
-        PyObject * data  = PyTuple_New(s2);
+        PyObject * data = PyTuple_New(s2);
         // go through the columns
-        for (size_t col=0; col<s2; ++col) {
+        for (size_t col = 0; col < s2; ++col) {
             // grab the value, turn it into a float and attach it
             PyTuple_SET_ITEM(data, col, PyFloat_FromDouble(gsl_matrix_get(mat, row, col)));
         }
@@ -270,7 +275,8 @@ const char * const gsl::matrix::read__name__ = "matrix_read";
 const char * const gsl::matrix::read__doc__ = "read the values of a matrix from a binary file";
 
 PyObject *
-gsl::matrix::read(PyObject *, PyObject * args) {
+gsl::matrix::read(PyObject *, PyObject * args)
+{
     // the arguments
     char * filename;
     PyObject * capsule;
@@ -278,7 +284,8 @@ gsl::matrix::read(PyObject *, PyObject * args) {
     int status = PyArg_ParseTuple(args, "O!s:matrix_read", &PyCapsule_Type, &capsule, &filename);
 
     // if something went wrong
-    if (!status) return 0;
+    if (!status)
+        return 0;
     // bail out if the capsule is not valid
     if (!PyCapsule_IsValid(capsule, capsule_t)) {
         PyErr_SetString(PyExc_TypeError, "invalid matrix capsule for source");
@@ -294,8 +301,7 @@ gsl::matrix::read(PyObject *, PyObject * args) {
     }
 
     // get the matrix
-    gsl_matrix * m =
-        static_cast<gsl_matrix *>(PyCapsule_GetPointer(capsule, capsule_t));
+    gsl_matrix * m = static_cast<gsl_matrix *>(PyCapsule_GetPointer(capsule, capsule_t));
 
     // read the data
     gsl_matrix_fread(stream, m);
@@ -314,7 +320,8 @@ const char * const gsl::matrix::write__name__ = "matrix_write";
 const char * const gsl::matrix::write__doc__ = "write the values of a matrix to a binary file";
 
 PyObject *
-gsl::matrix::write(PyObject *, PyObject * args) {
+gsl::matrix::write(PyObject *, PyObject * args)
+{
     // the arguments
     char * filename;
     PyObject * capsule;
@@ -322,7 +329,8 @@ gsl::matrix::write(PyObject *, PyObject * args) {
     int status = PyArg_ParseTuple(args, "O!s:matrix_write", &PyCapsule_Type, &capsule, &filename);
 
     // if something went wrong
-    if (!status) return 0;
+    if (!status)
+        return 0;
     // bail out if the source capsule is not valid
     if (!PyCapsule_IsValid(capsule, capsule_t)) {
         PyErr_SetString(PyExc_TypeError, "invalid matrix capsule for source");
@@ -338,8 +346,7 @@ gsl::matrix::write(PyObject *, PyObject * args) {
     }
 
     // get the matrix
-    gsl_matrix * m =
-        static_cast<gsl_matrix *>(PyCapsule_GetPointer(capsule, capsule_t));
+    gsl_matrix * m = static_cast<gsl_matrix *>(PyCapsule_GetPointer(capsule, capsule_t));
 
     // write the data
     gsl_matrix_fwrite(stream, m);
@@ -357,7 +364,8 @@ const char * const gsl::matrix::scanf__name__ = "matrix_scanf";
 const char * const gsl::matrix::scanf__doc__ = "read the values of a matrix from a text file";
 
 PyObject *
-gsl::matrix::scanf(PyObject *, PyObject * args) {
+gsl::matrix::scanf(PyObject *, PyObject * args)
+{
     // the arguments
     char * filename;
     PyObject * capsule;
@@ -365,7 +373,8 @@ gsl::matrix::scanf(PyObject *, PyObject * args) {
     int status = PyArg_ParseTuple(args, "O!s:matrix_scanf", &PyCapsule_Type, &capsule, &filename);
 
     // if something went wrong
-    if (!status) return 0;
+    if (!status)
+        return 0;
     // bail out if the capsule is not valid
     if (!PyCapsule_IsValid(capsule, capsule_t)) {
         PyErr_SetString(PyExc_TypeError, "invalid matrix capsule for source");
@@ -381,8 +390,7 @@ gsl::matrix::scanf(PyObject *, PyObject * args) {
     }
 
     // get the matrix
-    gsl_matrix * m =
-        static_cast<gsl_matrix *>(PyCapsule_GetPointer(capsule, capsule_t));
+    gsl_matrix * m = static_cast<gsl_matrix *>(PyCapsule_GetPointer(capsule, capsule_t));
 
     // read the data
     gsl_matrix_fscanf(stream, m);
@@ -401,20 +409,19 @@ const char * const gsl::matrix::printf__name__ = "matrix_printf";
 const char * const gsl::matrix::printf__doc__ = "write the values of a matrix to a text file";
 
 PyObject *
-gsl::matrix::printf(PyObject *, PyObject * args) {
+gsl::matrix::printf(PyObject *, PyObject * args)
+{
     // the arguments
     char * filename;
     char * format;
     PyObject * capsule;
     // unpack the argument tuple
-    int status = PyArg_ParseTuple(args,
-                                  "O!ss:matrix_printf",
-                                  &PyCapsule_Type, &capsule,
-                                  &filename,
-                                  &format);
+    int status =
+        PyArg_ParseTuple(args, "O!ss:matrix_printf", &PyCapsule_Type, &capsule, &filename, &format);
 
     // if something went wrong
-    if (!status) return 0;
+    if (!status)
+        return 0;
     // bail out if the source capsule is not valid
     if (!PyCapsule_IsValid(capsule, capsule_t)) {
         PyErr_SetString(PyExc_TypeError, "invalid matrix capsule for source");
@@ -430,8 +437,7 @@ gsl::matrix::printf(PyObject *, PyObject * args) {
     }
 
     // get the matrix
-    gsl_matrix * m =
-        static_cast<gsl_matrix *>(PyCapsule_GetPointer(capsule, capsule_t));
+    gsl_matrix * m = static_cast<gsl_matrix *>(PyCapsule_GetPointer(capsule, capsule_t));
 
     // write the data
     gsl_matrix_fprintf(stream, m, format);
@@ -449,26 +455,24 @@ const char * const gsl::matrix::transpose__name__ = "matrix_transpose";
 const char * const gsl::matrix::transpose__doc__ = "build a transpose of a matrix";
 
 PyObject *
-gsl::matrix::transpose(PyObject *, PyObject * args) {
+gsl::matrix::transpose(PyObject *, PyObject * args)
+{
     // the arguments
     PyObject * sourceCapsule;
     PyObject * destinationCapsule;
     // unpack the argument tuple
     int status = PyArg_ParseTuple(
-                                  args, "O!O:matrix_transpose",
-                                  &PyCapsule_Type, &sourceCapsule,
-                                  &destinationCapsule
-                                  );
+        args, "O!O:matrix_transpose", &PyCapsule_Type, &sourceCapsule, &destinationCapsule);
     // if something went wrong
-    if (!status) return 0;
+    if (!status)
+        return 0;
     // bail out if the source capsule is not valid
     if (!PyCapsule_IsValid(sourceCapsule, capsule_t)) {
         PyErr_SetString(PyExc_TypeError, "invalid matrix capsule for source");
         return 0;
     }
     // get the source matrix
-    gsl_matrix * source =
-        static_cast<gsl_matrix *>(PyCapsule_GetPointer(sourceCapsule, capsule_t));
+    gsl_matrix * source = static_cast<gsl_matrix *>(PyCapsule_GetPointer(sourceCapsule, capsule_t));
 
     // check the destination object
     if (destinationCapsule == Py_None) {
@@ -480,10 +484,8 @@ gsl::matrix::transpose(PyObject *, PyObject * args) {
     }
 
     // otherwise, destinationCapsule must also be a valid matrix capsule
-    if (
-        !PyCapsule_CheckExact(destinationCapsule) ||
-        !PyCapsule_IsValid(destinationCapsule, capsule_t)
-        ) {
+    if (!PyCapsule_CheckExact(destinationCapsule)
+        || !PyCapsule_IsValid(destinationCapsule, capsule_t)) {
         PyErr_SetString(PyExc_TypeError, "invalid matrix capsule for destination");
         return 0;
     }
@@ -504,16 +506,17 @@ const char * const gsl::matrix::get__name__ = "matrix_get";
 const char * const gsl::matrix::get__doc__ = "get the value of a matrix element";
 
 PyObject *
-gsl::matrix::get(PyObject *, PyObject * args) {
+gsl::matrix::get(PyObject *, PyObject * args)
+{
     // the arguments
     PyObject * capsule;
     long index1, index2;
     // unpack the argument tuple
-    int status = PyArg_ParseTuple(
-                                  args, "O!(ll):matrix_get",
-                                  &PyCapsule_Type, &capsule, &index1, &index2);
+    int status =
+        PyArg_ParseTuple(args, "O!(ll):matrix_get", &PyCapsule_Type, &capsule, &index1, &index2);
     // bail out if something went wrong during argument unpacking
-    if (!status) return 0;
+    if (!status)
+        return 0;
     // bail out if the capsule is not valid
     if (!PyCapsule_IsValid(capsule, capsule_t)) {
         PyErr_SetString(PyExc_TypeError, "invalid matrix capsule");
@@ -524,8 +527,10 @@ gsl::matrix::get(PyObject *, PyObject * args) {
     gsl_matrix * m = static_cast<gsl_matrix *>(PyCapsule_GetPointer(capsule, capsule_t));
 
     // reflect negative indices about the end of the matrix
-    if (index1 < 0) index1 += m->size1;
-    if (index2 < 0) index2 += m->size2;
+    if (index1 < 0)
+        index1 += m->size1;
+    if (index2 < 0)
+        index2 += m->size2;
 
     // convert to unsigned values
     size_t i1 = index1;
@@ -554,8 +559,8 @@ gsl::matrix::get(PyObject *, PyObject * args) {
     // get the value
     double value = gsl_matrix_get(m, i1, i2);
     // std::cout
-        // << " gsl.matrix_get: matrix@" << m << ", index=" << index << ", value=" << value
-        // << std::endl;
+    // << " gsl.matrix_get: matrix@" << m << ", index=" << index << ", value=" << value
+    // << std::endl;
 
     // return the value
     return PyFloat_FromDouble(value);
@@ -566,17 +571,18 @@ const char * const gsl::matrix::set__name__ = "matrix_set";
 const char * const gsl::matrix::set__doc__ = "set the value of a matrix element";
 
 PyObject *
-gsl::matrix::set(PyObject *, PyObject * args) {
+gsl::matrix::set(PyObject *, PyObject * args)
+{
     // the arguments
     double value;
     PyObject * capsule;
     long index1, index2;
     // unpack the argument tuple
     int status = PyArg_ParseTuple(
-                                  args, "O!(ll)d:matrix_set",
-                                  &PyCapsule_Type, &capsule, &index1, &index2, &value);
+        args, "O!(ll)d:matrix_set", &PyCapsule_Type, &capsule, &index1, &index2, &value);
     // bail out if something went wrong during argument unpacking
-    if (!status) return 0;
+    if (!status)
+        return 0;
     // bail out if the capsule is not valid
     if (!PyCapsule_IsValid(capsule, capsule_t)) {
         PyErr_SetString(PyExc_TypeError, "invalid matrix capsule");
@@ -586,12 +592,14 @@ gsl::matrix::set(PyObject *, PyObject * args) {
     // get the matrix
     gsl_matrix * m = static_cast<gsl_matrix *>(PyCapsule_GetPointer(capsule, capsule_t));
     // std::cout
-        // << " gsl.matrix_set: matrix@" << m << ", index=" << index << ", value=" << value
-        // << std::endl;
+    // << " gsl.matrix_set: matrix@" << m << ", index=" << index << ", value=" << value
+    // << std::endl;
 
     // reflect negative indices about the end of the matrix
-    if (index1 < 0) index1 += m->size1;
-    if (index2 < 0) index2 += m->size2;
+    if (index1 < 0)
+        index1 += m->size1;
+    if (index2 < 0)
+        index2 += m->size2;
 
     // convert to unsigned values
     size_t i1 = index1;
@@ -631,16 +639,16 @@ const char * const gsl::matrix::get_col__name__ = "matrix_get_col";
 const char * const gsl::matrix::get_col__doc__ = "return a column of a matrix";
 
 PyObject *
-gsl::matrix::get_col(PyObject *, PyObject * args) {
+gsl::matrix::get_col(PyObject *, PyObject * args)
+{
     // the arguments
     long index;
     PyObject * capsule;
     // unpack the argument tuple
-    int status = PyArg_ParseTuple(
-                                  args, "O!l:matrix_get_col",
-                                  &PyCapsule_Type, &capsule, &index);
+    int status = PyArg_ParseTuple(args, "O!l:matrix_get_col", &PyCapsule_Type, &capsule, &index);
     // bail out if something went wrong during argument unpacking
-    if (!status) return 0;
+    if (!status)
+        return 0;
     // bail out if the capsule is not valid
     if (!PyCapsule_IsValid(capsule, capsule_t)) {
         PyErr_SetString(PyExc_TypeError, "invalid matrix capsule");
@@ -651,7 +659,8 @@ gsl::matrix::get_col(PyObject *, PyObject * args) {
     gsl_matrix * m = static_cast<gsl_matrix *>(PyCapsule_GetPointer(capsule, capsule_t));
 
     // reflect negative indices about the end of the matrix
-    if (index < 0 ) index += m->size2;
+    if (index < 0)
+        index += m->size2;
 
     // convert to unsigned values
     size_t i = index;
@@ -681,16 +690,16 @@ const char * const gsl::matrix::get_row__name__ = "matrix_get_row";
 const char * const gsl::matrix::get_row__doc__ = "return a row of a matrix";
 
 PyObject *
-gsl::matrix::get_row(PyObject *, PyObject * args) {
+gsl::matrix::get_row(PyObject *, PyObject * args)
+{
     // the arguments
     long index;
     PyObject * capsule;
     // unpack the argument tuple
-    int status = PyArg_ParseTuple(
-                                  args, "O!l:matrix_get_row",
-                                  &PyCapsule_Type, &capsule, &index);
+    int status = PyArg_ParseTuple(args, "O!l:matrix_get_row", &PyCapsule_Type, &capsule, &index);
     // bail out if something went wrong during argument unpacking
-    if (!status) return 0;
+    if (!status)
+        return 0;
     // bail out if the capsule is not valid
     if (!PyCapsule_IsValid(capsule, capsule_t)) {
         PyErr_SetString(PyExc_TypeError, "invalid matrix capsule");
@@ -701,7 +710,8 @@ gsl::matrix::get_row(PyObject *, PyObject * args) {
     gsl_matrix * m = static_cast<gsl_matrix *>(PyCapsule_GetPointer(capsule, capsule_t));
 
     // reflect negative indices about the end of the matrix
-    if (index < 0 ) index += m->size1;
+    if (index < 0)
+        index += m->size1;
 
     // convert to unsigned values
     size_t i = index;
@@ -731,20 +741,19 @@ const char * const gsl::matrix::set_col__name__ = "matrix_set_col";
 const char * const gsl::matrix::set_col__doc__ = "set a col of a matrix to the given vector";
 
 PyObject *
-gsl::matrix::set_col(PyObject *, PyObject * args) {
+gsl::matrix::set_col(PyObject *, PyObject * args)
+{
     // the arguments
     size_t index;
     PyObject * capsule;
     PyObject * vCapsule;
     // unpack the argument tuple
     int status = PyArg_ParseTuple(
-                                  args, "O!kO!:matrix_set_col",
-                                  &PyCapsule_Type, &capsule,
-                                  &index,
-                                  &PyCapsule_Type, &vCapsule
-                                  );
+        args, "O!kO!:matrix_set_col", &PyCapsule_Type, &capsule, &index, &PyCapsule_Type,
+        &vCapsule);
     // bail out if something went wrong during argument unpacking
-    if (!status) return 0;
+    if (!status)
+        return 0;
     // bail out if the matrix capsule is not valid
     if (!PyCapsule_IsValid(capsule, capsule_t)) {
         PyErr_SetString(PyExc_TypeError, "invalid matrix capsule");
@@ -757,8 +766,7 @@ gsl::matrix::set_col(PyObject *, PyObject * args) {
     }
 
     // get the matrix
-    gsl_matrix * m =
-        static_cast<gsl_matrix *>(PyCapsule_GetPointer(capsule, capsule_t));
+    gsl_matrix * m = static_cast<gsl_matrix *>(PyCapsule_GetPointer(capsule, capsule_t));
     // get the vector
     gsl_vector * v =
         static_cast<gsl_vector *>(PyCapsule_GetPointer(vCapsule, gsl::vector::capsule_t));
@@ -777,20 +785,19 @@ const char * const gsl::matrix::set_row__name__ = "matrix_set_row";
 const char * const gsl::matrix::set_row__doc__ = "set a row of a matrix to the given vector";
 
 PyObject *
-gsl::matrix::set_row(PyObject *, PyObject * args) {
+gsl::matrix::set_row(PyObject *, PyObject * args)
+{
     // the arguments
     size_t index;
     PyObject * capsule;
     PyObject * vCapsule;
     // unpack the argument tuple
     int status = PyArg_ParseTuple(
-                                  args, "O!kO!:matrix_set_row",
-                                  &PyCapsule_Type, &capsule,
-                                  &index,
-                                  &PyCapsule_Type, &vCapsule
-                                  );
+        args, "O!kO!:matrix_set_row", &PyCapsule_Type, &capsule, &index, &PyCapsule_Type,
+        &vCapsule);
     // bail out if something went wrong during argument unpacking
-    if (!status) return 0;
+    if (!status)
+        return 0;
     // bail out if the matrix capsule is not valid
     if (!PyCapsule_IsValid(capsule, capsule_t)) {
         PyErr_SetString(PyExc_TypeError, "invalid matrix capsule");
@@ -803,8 +810,7 @@ gsl::matrix::set_row(PyObject *, PyObject * args) {
     }
 
     // get the matrix
-    gsl_matrix * m =
-        static_cast<gsl_matrix *>(PyCapsule_GetPointer(capsule, capsule_t));
+    gsl_matrix * m = static_cast<gsl_matrix *>(PyCapsule_GetPointer(capsule, capsule_t));
     // get the vector
     gsl_vector * v =
         static_cast<gsl_vector *>(PyCapsule_GetPointer(vCapsule, gsl::vector::capsule_t));
@@ -823,14 +829,16 @@ const char * const gsl::matrix::contains__name__ = "matrix_contains";
 const char * const gsl::matrix::contains__doc__ = "check whether a given value appears in matrix";
 
 PyObject *
-gsl::matrix::contains(PyObject *, PyObject * args) {
+gsl::matrix::contains(PyObject *, PyObject * args)
+{
     // the arguments
     double value;
     PyObject * capsule;
     // unpack the argument tuple
     int status = PyArg_ParseTuple(args, "O!d:matrix_contains", &PyCapsule_Type, &capsule, &value);
     // if something went wrong
-    if (!status) return 0;
+    if (!status)
+        return 0;
     // bail out if the capsule is not valid
     if (!PyCapsule_IsValid(capsule, capsule_t)) {
         PyErr_SetString(PyExc_TypeError, "invalid matrix capsule");
@@ -840,15 +848,15 @@ gsl::matrix::contains(PyObject *, PyObject * args) {
     // get the matrix
     gsl_matrix * m = static_cast<gsl_matrix *>(PyCapsule_GetPointer(capsule, capsule_t));
     // std::cout
-        // << " gsl.matrix_contains: matrix@" << m << ", index=" << index << ", value=" << value
-        // << std::endl;
+    // << " gsl.matrix_contains: matrix@" << m << ", index=" << index << ", value=" << value
+    // << std::endl;
 
     // the answer
     PyObject * result = Py_False;
 
     // loop over the elements
-    for (size_t index0=0; index0 < m->size1; index0++) {
-        for (size_t index1=0; index1 < m->size2; index1++) {
+    for (size_t index0 = 0; index0 < m->size1; index0++) {
+        for (size_t index1 = 0; index1 < m->size2; index1++) {
             // if i have a match
             if (value == gsl_matrix_get(m, index0, index1)) {
                 // update the answer
@@ -870,13 +878,15 @@ const char * const gsl::matrix::max__name__ = "matrix_max";
 const char * const gsl::matrix::max__doc__ = "find the largest value contained";
 
 PyObject *
-gsl::matrix::max(PyObject *, PyObject * args) {
+gsl::matrix::max(PyObject *, PyObject * args)
+{
     // the arguments
     PyObject * capsule;
     // unpack the argument tuple
     int status = PyArg_ParseTuple(args, "O!:matrix_max", &PyCapsule_Type, &capsule);
     // if something went wrong
-    if (!status) return 0;
+    if (!status)
+        return 0;
     // bail out if the capsule is not valid
     if (!PyCapsule_IsValid(capsule, capsule_t)) {
         PyErr_SetString(PyExc_TypeError, "invalid matrix capsule");
@@ -901,13 +911,15 @@ const char * const gsl::matrix::min__name__ = "matrix_min";
 const char * const gsl::matrix::min__doc__ = "find the smallest value contained";
 
 PyObject *
-gsl::matrix::min(PyObject *, PyObject * args) {
+gsl::matrix::min(PyObject *, PyObject * args)
+{
     // the arguments
     PyObject * capsule;
     // unpack the argument tuple
     int status = PyArg_ParseTuple(args, "O!:matrix_min", &PyCapsule_Type, &capsule);
     // if something went wrong
-    if (!status) return 0;
+    if (!status)
+        return 0;
     // bail out if the capsule is not valid
     if (!PyCapsule_IsValid(capsule, capsule_t)) {
         PyErr_SetString(PyExc_TypeError, "invalid matrix capsule");
@@ -931,13 +943,15 @@ const char * const gsl::matrix::minmax__doc__ =
     "find both the smallest and the largest value contained";
 
 PyObject *
-gsl::matrix::minmax(PyObject *, PyObject * args) {
+gsl::matrix::minmax(PyObject *, PyObject * args)
+{
     // the arguments
     PyObject * capsule;
     // unpack the argument tuple
     int status = PyArg_ParseTuple(args, "O!:matrix_minmax", &PyCapsule_Type, &capsule);
     // if something went wrong
-    if (!status) return 0;
+    if (!status)
+        return 0;
     // bail out if the capsule is not valid
     if (!PyCapsule_IsValid(capsule, capsule_t)) {
         PyErr_SetString(PyExc_TypeError, "invalid matrix capsule");
@@ -949,8 +963,8 @@ gsl::matrix::minmax(PyObject *, PyObject * args) {
     double small, large;
     gsl_matrix_minmax(m, &small, &large);
     // std::cout
-        // << " gsl.matrix_max: matrix@" << m << ", min=" << small << ", max=" << large
-        // << std::endl;
+    // << " gsl.matrix_max: matrix@" << m << ", min=" << small << ", max=" << large
+    // << std::endl;
 
     // build the answer
     PyObject * answer = PyTuple_New(2);
@@ -966,18 +980,17 @@ const char * const gsl::matrix::equal__name__ = "matrix_equal";
 const char * const gsl::matrix::equal__doc__ = "check two matrices for equality";
 
 PyObject *
-gsl::matrix::equal(PyObject *, PyObject * args) {
+gsl::matrix::equal(PyObject *, PyObject * args)
+{
     // the arguments
     PyObject * leftCapsule;
     PyObject * rightCapsule;
     // unpack the argument tuple
     int status = PyArg_ParseTuple(
-                                  args, "O!O!:matrix_equal",
-                                  &PyCapsule_Type, &rightCapsule,
-                                  &PyCapsule_Type, &leftCapsule
-                                  );
+        args, "O!O!:matrix_equal", &PyCapsule_Type, &rightCapsule, &PyCapsule_Type, &leftCapsule);
     // if something went wrong
-    if (!status) return 0;
+    if (!status)
+        return 0;
     // bail out if the left capsule is not valid
     if (!PyCapsule_IsValid(leftCapsule, capsule_t)) {
         PyErr_SetString(PyExc_TypeError, "invalid matrix capsule for the left operand");
@@ -990,10 +1003,8 @@ gsl::matrix::equal(PyObject *, PyObject * args) {
     }
 
     // get the matrices
-    gsl_matrix * left =
-        static_cast<gsl_matrix *>(PyCapsule_GetPointer(leftCapsule, capsule_t));
-    gsl_matrix * right =
-        static_cast<gsl_matrix *>(PyCapsule_GetPointer(rightCapsule, capsule_t));
+    gsl_matrix * left = static_cast<gsl_matrix *>(PyCapsule_GetPointer(leftCapsule, capsule_t));
+    gsl_matrix * right = static_cast<gsl_matrix *>(PyCapsule_GetPointer(rightCapsule, capsule_t));
 
 
     PyObject * answer;
@@ -1011,16 +1022,17 @@ const char * const gsl::matrix::add__name__ = "matrix_add";
 const char * const gsl::matrix::add__doc__ = "in-place addition of two matrices";
 
 PyObject *
-gsl::matrix::add(PyObject *, PyObject * args) {
+gsl::matrix::add(PyObject *, PyObject * args)
+{
     // the arguments
     PyObject * self;
     PyObject * other;
     // unpack the argument tuple
-    int status = PyArg_ParseTuple(
-                                  args, "O!O!:matrix_add",
-                                  &PyCapsule_Type, &self, &PyCapsule_Type, &other);
+    int status =
+        PyArg_ParseTuple(args, "O!O!:matrix_add", &PyCapsule_Type, &self, &PyCapsule_Type, &other);
     // if something went wrong
-    if (!status) return 0;
+    if (!status)
+        return 0;
     // bail out if the two capsules are not valid
     if (!PyCapsule_IsValid(self, capsule_t) || !PyCapsule_IsValid(other, capsule_t)) {
         PyErr_SetString(PyExc_TypeError, "invalid matrix capsule");
@@ -1044,16 +1056,17 @@ const char * const gsl::matrix::sub__name__ = "matrix_sub";
 const char * const gsl::matrix::sub__doc__ = "in-place subtraction of two matrices";
 
 PyObject *
-gsl::matrix::sub(PyObject *, PyObject * args) {
+gsl::matrix::sub(PyObject *, PyObject * args)
+{
     // the arguments
     PyObject * self;
     PyObject * other;
     // unpack the argument tuple
-    int status = PyArg_ParseTuple(
-                                  args, "O!O!:matrix_sub",
-                                  &PyCapsule_Type, &self, &PyCapsule_Type, &other);
+    int status =
+        PyArg_ParseTuple(args, "O!O!:matrix_sub", &PyCapsule_Type, &self, &PyCapsule_Type, &other);
     // if something went wrong
-    if (!status) return 0;
+    if (!status)
+        return 0;
     // bail out if the two capsules are not valid
     if (!PyCapsule_IsValid(self, capsule_t) || !PyCapsule_IsValid(other, capsule_t)) {
         PyErr_SetString(PyExc_TypeError, "invalid matrix capsule");
@@ -1077,16 +1090,17 @@ const char * const gsl::matrix::mul__name__ = "matrix_mul";
 const char * const gsl::matrix::mul__doc__ = "in-place multiplication of two matrices";
 
 PyObject *
-gsl::matrix::mul(PyObject *, PyObject * args) {
+gsl::matrix::mul(PyObject *, PyObject * args)
+{
     // the arguments
     PyObject * self;
     PyObject * other;
     // unpack the argument tuple
-    int status = PyArg_ParseTuple(
-                                  args, "O!O!:matrix_mul",
-                                  &PyCapsule_Type, &self, &PyCapsule_Type, &other);
+    int status =
+        PyArg_ParseTuple(args, "O!O!:matrix_mul", &PyCapsule_Type, &self, &PyCapsule_Type, &other);
     // if something went wrong
-    if (!status) return 0;
+    if (!status)
+        return 0;
     // bail out if the two capsules are not valid
     if (!PyCapsule_IsValid(self, capsule_t) || !PyCapsule_IsValid(other, capsule_t)) {
         PyErr_SetString(PyExc_TypeError, "invalid matrix capsule");
@@ -1110,16 +1124,17 @@ const char * const gsl::matrix::div__name__ = "matrix_div";
 const char * const gsl::matrix::div__doc__ = "in-place division of two matrices";
 
 PyObject *
-gsl::matrix::div(PyObject *, PyObject * args) {
+gsl::matrix::div(PyObject *, PyObject * args)
+{
     // the arguments
     PyObject * self;
     PyObject * other;
     // unpack the argument tuple
-    int status = PyArg_ParseTuple(
-                                  args, "O!O!:matrix_div",
-                                  &PyCapsule_Type, &self, &PyCapsule_Type, &other);
+    int status =
+        PyArg_ParseTuple(args, "O!O!:matrix_div", &PyCapsule_Type, &self, &PyCapsule_Type, &other);
     // if something went wrong
-    if (!status) return 0;
+    if (!status)
+        return 0;
     // bail out if the two capsules are not valid
     if (!PyCapsule_IsValid(self, capsule_t) || !PyCapsule_IsValid(other, capsule_t)) {
         PyErr_SetString(PyExc_TypeError, "invalid matrix capsule");
@@ -1143,16 +1158,16 @@ const char * const gsl::matrix::shift__name__ = "matrix_shift";
 const char * const gsl::matrix::shift__doc__ = "in-place addition of a constant to a matrix";
 
 PyObject *
-gsl::matrix::shift(PyObject *, PyObject * args) {
+gsl::matrix::shift(PyObject *, PyObject * args)
+{
     // the arguments
     double value;
     PyObject * self;
     // unpack the argument tuple
-    int status = PyArg_ParseTuple(
-                                  args, "O!d:matrix_shift",
-                                  &PyCapsule_Type, &self, &value);
+    int status = PyArg_ParseTuple(args, "O!d:matrix_shift", &PyCapsule_Type, &self, &value);
     // if something went wrong
-    if (!status) return 0;
+    if (!status)
+        return 0;
     // bail out if the two capsules are not valid
     if (!PyCapsule_IsValid(self, capsule_t)) {
         PyErr_SetString(PyExc_TypeError, "invalid matrix capsule");
@@ -1175,16 +1190,16 @@ const char * const gsl::matrix::scale__name__ = "matrix_scale";
 const char * const gsl::matrix::scale__doc__ = "in-place scaling of a matrix by a constant";
 
 PyObject *
-gsl::matrix::scale(PyObject *, PyObject * args) {
+gsl::matrix::scale(PyObject *, PyObject * args)
+{
     // the arguments
     double value;
     PyObject * self;
     // unpack the argument tuple
-    int status = PyArg_ParseTuple(
-                                  args, "O!d:matrix_scale",
-                                  &PyCapsule_Type, &self, &value);
+    int status = PyArg_ParseTuple(args, "O!d:matrix_scale", &PyCapsule_Type, &self, &value);
     // if something went wrong
-    if (!status) return 0;
+    if (!status)
+        return 0;
     // bail out if the capsule is not valid
     if (!PyCapsule_IsValid(self, capsule_t)) {
         PyErr_SetString(PyExc_TypeError, "invalid matrix capsule");
@@ -1209,16 +1224,17 @@ const char * const gsl::matrix::eigen_symmetric__doc__ =
     "compute the eigenvalues and eigenvectors of a real symmetric matrix";
 
 PyObject *
-gsl::matrix::eigen_symmetric(PyObject *, PyObject * args) {
+gsl::matrix::eigen_symmetric(PyObject *, PyObject * args)
+{
     // the arguments
     size_t sort;
     PyObject * capsule;
     // unpack the argument tuple
-    int status = PyArg_ParseTuple(
-                                  args, "O!k:matrix_eigen_symmetric",
-                                  &PyCapsule_Type, &capsule, &sort);
+    int status =
+        PyArg_ParseTuple(args, "O!k:matrix_eigen_symmetric", &PyCapsule_Type, &capsule, &sort);
     // if something went wrong
-    if (!status) return 0;
+    if (!status)
+        return 0;
     // bail out if the capsule is not valid
     if (!PyCapsule_IsValid(capsule, capsule_t)) {
         PyErr_SetString(PyExc_TypeError, "invalid matrix capsule");
@@ -1227,22 +1243,22 @@ gsl::matrix::eigen_symmetric(PyObject *, PyObject * args) {
     // decode the sort type
     gsl_eigen_sort_t ordering;
     switch (sort) {
-    case 0:
-        ordering = GSL_EIGEN_SORT_VAL_ASC;
-        break;
-    case 1:
-        ordering = GSL_EIGEN_SORT_VAL_DESC;
-        break;
-    case 2:
-        ordering = GSL_EIGEN_SORT_ABS_ASC;
-        break;
-    case 3:
-        ordering = GSL_EIGEN_SORT_ABS_DESC;
-        break;
+        case 0:
+            ordering = GSL_EIGEN_SORT_VAL_ASC;
+            break;
+        case 1:
+            ordering = GSL_EIGEN_SORT_VAL_DESC;
+            break;
+        case 2:
+            ordering = GSL_EIGEN_SORT_ABS_ASC;
+            break;
+        case 3:
+            ordering = GSL_EIGEN_SORT_ABS_DESC;
+            break;
 
-    default:
-        PyErr_SetString(PyExc_ValueError, "invalid sort type");
-        return 0;
+        default:
+            PyErr_SetString(PyExc_ValueError, "invalid sort type");
+            return 0;
     }
 
     // get the matrix
@@ -1289,7 +1305,8 @@ void
 gsl::matrix::free(PyObject * capsule)
 {
     // bail out if the capsule is not valid
-    if (!PyCapsule_IsValid(capsule, gsl::matrix::capsule_t)) return;
+    if (!PyCapsule_IsValid(capsule, gsl::matrix::capsule_t))
+        return;
     // get the matrix
     gsl_matrix * m =
         static_cast<gsl_matrix *>(PyCapsule_GetPointer(capsule, gsl::matrix::capsule_t));
@@ -1305,7 +1322,8 @@ void
 gsl::matrix::freeview(PyObject * capsule)
 {
     // bail out if the capsule is not valid
-    if (!PyCapsule_IsValid(capsule, gsl::matrix::view_t)) return;
+    if (!PyCapsule_IsValid(capsule, gsl::matrix::view_t))
+        return;
     // get the matrix view
     gsl_matrix_view * m =
         static_cast<gsl_matrix_view *>(PyCapsule_GetPointer(capsule, gsl::matrix::view_t));
