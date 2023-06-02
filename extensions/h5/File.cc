@@ -26,7 +26,7 @@ pyre::h5::py::file(py::module & m)
     // constructor for accessing a local file
     cls.def(
         // the implementation
-        py::init([](std::string uri, std::string mode) {
+        py::init([](string_t uri, string_t mode) {
             // decode mode
             if (mode == "r") {
                 // read-only, file must exist
@@ -77,7 +77,7 @@ pyre::h5::py::file(py::module & m)
     // constructor for accessing a file with a custom access property list
     cls.def(
         // the implementation
-        py::init([](std::string uri, const FileAccessPropertyList & p, std::string mode) {
+        py::init([](string_t uri, const FileAccessPropertyList & p, string_t mode) {
             // decode mode
             if (mode == "r") {
                 // read-only, file must exist

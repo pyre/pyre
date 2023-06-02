@@ -45,8 +45,8 @@ pyre::h5::py::fapl(py::module & m)
         // the name
         "ros3",
         // the implementation
-        [](FileAccessPropertyList & plist, std::string region, std::string id, std::string key,
-           bool authenticate) -> FileAccessPropertyList & {
+        [](FileAccessPropertyList & plist, bool authenticate, string_t region, string_t id,
+           string_t key, string_t token) -> FileAccessPropertyList & {
             // make room for the driver parameters
             H5FD_ros3_fapl_t p;
             // populate
@@ -55,7 +55,13 @@ pyre::h5::py::fapl(py::module & m)
             std::strcpy(p.aws_region, region.data());
             std::strcpy(p.secret_id, id.data());
             std::strcpy(p.secret_key, key.data());
-            // and transfer
+#if H5FD_CURR_ROS3_FAPL_T_VERSION > 1
+            // the correct versions of libhdf5 have room for a session token
+            std::strcpy(p.session_token, token.data());
+#endif
+            // send to the {ros3} driver; this process includes runtime validation, so there is
+            // no need for extra checks that the struct we populated is understood by whatever
+            // runtime we have dynamically linked against
             auto status = H5Pset_fapl_ros3(plist.getId(), &p);
             // if the transfer failed
             if (status < 0) {
@@ -73,7 +79,7 @@ pyre::h5::py::fapl(py::module & m)
             return plist;
         },
         // the signature
-        "region"_a = "", "id"_a = "", "key"_a = "", "authenticate"_a = true,
+        "authenticate"_a = true, "region"_a = "", "id"_a = "", "key"_a = "", "token"_a = "",
         // the docstring
         "populate the property list with ros3 parameters");
 #endif
