@@ -33,12 +33,12 @@ namespace pyre::tensor {
     }
 
     template <class tensorT>
-    constexpr auto make_zeros() -> tensorT::diagonal_tensor_t
+    constexpr auto make_zeros() -> typename tensorT::diagonal_tensor_t
     {
         constexpr auto _make_zeros =
-            []<int... J>(integer_sequence<J...>)->tensorT::diagonal_tensor_t
+            []<int... J>(integer_sequence<J...>)->typename tensorT::diagonal_tensor_t
         {
-            constexpr auto fill_zeros = []<int>() consteval->tensorT::type
+            constexpr auto fill_zeros = []<int>() consteval->typename tensorT::type
             {
                 return 0;
             };
@@ -55,7 +55,7 @@ namespace pyre::tensor {
     {
         constexpr auto _make_ones = []<int... J>(integer_sequence<J...>)->tensorT
         {
-            constexpr auto fill_ones = []<int>() consteval->tensorT::type
+            constexpr auto fill_ones = []<int>() consteval->typename tensorT::type
             {
                 return 1;
             };
@@ -72,7 +72,7 @@ namespace pyre::tensor {
         constexpr auto make_basis_element_implementation() -> tensorT
         {
             // typedef for index type
-            using index_t = tensorT::index_t;
+            using index_t = typename tensorT::index_t;
             // wrap the parameter pack into an index
             index_t index(I...);
 
@@ -80,7 +80,7 @@ namespace pyre::tensor {
             constexpr auto _make_basis_element =
                 []<int... J>(index_t K, integer_sequence<J...>)->tensorT
             {
-                constexpr auto delta = [](int II, int JJ) -> tensorT::type {
+                constexpr auto delta = [](int II, int JJ) -> typename tensorT::type {
                     if (II == JJ)
                         return 1;
                     return 0;
@@ -113,7 +113,7 @@ namespace pyre::tensor {
     // make the element of the tensor basis that has a one at the index given by {I...}
     //  (diagonal version: index is on diagonal and tensor is square)
     template <class tensorT, int... I>
-    constexpr auto make_basis_element() -> tensorT::diagonal_tensor_t
+    constexpr auto make_basis_element() -> typename tensorT::diagonal_tensor_t
         requires(
             sizeof...(I) == tensorT::rank &&
             // diagonal entry
@@ -127,12 +127,13 @@ namespace pyre::tensor {
 
     // factory for identity tensor (for now only for second order tensors)
     template <class tensorT>
-    static constexpr auto make_identity() -> tensorT::diagonal_tensor_t
+    static constexpr auto make_identity() -> typename tensorT::diagonal_tensor_t
         requires(tensorT::rank == 2)
     {
-        constexpr auto _make_ones = []<int... J>(integer_sequence<J...>)->tensorT::diagonal_tensor_t
+        constexpr auto _make_ones =
+            []<int... J>(integer_sequence<J...>)->typename tensorT::diagonal_tensor_t
         {
-            constexpr auto fill_ones = []<int>() consteval->tensorT::type
+            constexpr auto fill_ones = []<int>() consteval->typename tensorT::type
             {
                 return 1;
             };
