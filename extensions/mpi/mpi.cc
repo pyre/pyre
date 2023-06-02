@@ -36,32 +36,27 @@ namespace mpi {
         { finalize__name__, finalize, METH_VARARGS, finalize__doc__ },
 
         // communicators
-        { communicator::create__name__,
-          communicator::create, METH_VARARGS, communicator::create__doc__ },
-        { communicator::size__name__,
-          communicator::size, METH_VARARGS, communicator::size__doc__ },
-        { communicator::rank__name__,
-          communicator::rank, METH_VARARGS, communicator::rank__doc__ },
-        { communicator::barrier__name__,
-          communicator::barrier, METH_VARARGS, communicator::barrier__doc__ },
-        { communicator::bcast__name__,
-          communicator::bcast, METH_VARARGS, communicator::bcast__doc__ },
-        { communicator::sum__name__,
-          communicator::sum, METH_VARARGS, communicator::sum__doc__ },
-        { communicator::product__name__,
-          communicator::product, METH_VARARGS, communicator::product__doc__ },
-        { communicator::max__name__,
-          communicator::max, METH_VARARGS, communicator::max__doc__ },
-        { communicator::min__name__,
-          communicator::min, METH_VARARGS, communicator::min__doc__ },
-        { communicator::sum_all__name__,
-          communicator::sum_all, METH_VARARGS, communicator::sum_all__doc__ },
-        { communicator::product_all__name__,
-          communicator::product_all, METH_VARARGS, communicator::product_all__doc__ },
-        { communicator::max_all__name__,
-          communicator::max_all, METH_VARARGS, communicator::max_all__doc__ },
-        { communicator::min_all__name__,
-          communicator::min_all, METH_VARARGS, communicator::min_all__doc__ },
+        { communicator::create__name__, communicator::create, METH_VARARGS,
+          communicator::create__doc__ },
+        { communicator::size__name__, communicator::size, METH_VARARGS, communicator::size__doc__ },
+        { communicator::rank__name__, communicator::rank, METH_VARARGS, communicator::rank__doc__ },
+        { communicator::barrier__name__, communicator::barrier, METH_VARARGS,
+          communicator::barrier__doc__ },
+        { communicator::bcast__name__, communicator::bcast, METH_VARARGS,
+          communicator::bcast__doc__ },
+        { communicator::sum__name__, communicator::sum, METH_VARARGS, communicator::sum__doc__ },
+        { communicator::product__name__, communicator::product, METH_VARARGS,
+          communicator::product__doc__ },
+        { communicator::max__name__, communicator::max, METH_VARARGS, communicator::max__doc__ },
+        { communicator::min__name__, communicator::min, METH_VARARGS, communicator::min__doc__ },
+        { communicator::sum_all__name__, communicator::sum_all, METH_VARARGS,
+          communicator::sum_all__doc__ },
+        { communicator::product_all__name__, communicator::product_all, METH_VARARGS,
+          communicator::product_all__doc__ },
+        { communicator::max_all__name__, communicator::max_all, METH_VARARGS,
+          communicator::max_all__doc__ },
+        { communicator::min_all__name__, communicator::min_all, METH_VARARGS,
+          communicator::min_all__doc__ },
 
         { cartesian::create__name__, cartesian::create, METH_VARARGS, cartesian::create__doc__ },
         { cartesian::coordinates__name__, cartesian::coordinates, METH_VARARGS,
@@ -85,7 +80,7 @@ namespace mpi {
         { port::recvString__name__, port::recvString, METH_VARARGS, port::recvString__doc__ },
 
         // sentinel
-        {0, 0, 0, 0}
+        { 0, 0, 0, 0 }
     };
 
     // the module documentation string
@@ -105,7 +100,7 @@ namespace mpi {
         module_methods
     };
 
-} // of namespace mpi
+} // namespace mpi
 
 
 // initialization function for the module

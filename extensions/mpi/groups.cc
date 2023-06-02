@@ -20,7 +20,8 @@
 const char * const mpi::group::isEmpty__name__ = "groupIsEmpty";
 const char * const mpi::group::isEmpty__doc__ = "check whether the given group is empty";
 
-PyObject * mpi::group::isEmpty(PyObject *, PyObject * args)
+PyObject *
+mpi::group::isEmpty(PyObject *, PyObject * args)
 {
     // placeholder for the python object
     PyObject * py_group;
@@ -49,7 +50,8 @@ PyObject * mpi::group::isEmpty(PyObject *, PyObject * args)
 const char * const mpi::group::create__name__ = "groupCreate";
 const char * const mpi::group::create__doc__ = "create a communicator group";
 
-PyObject * mpi::group::create(PyObject *, PyObject * args)
+PyObject *
+mpi::group::create(PyObject *, PyObject * args)
 {
     // placeholder for the python object
     PyObject * py_comm;
@@ -65,9 +67,8 @@ PyObject * mpi::group::create(PyObject *, PyObject * args)
     }
 
     // convert into the pyre::mpi object
-    pyre::mpi::communicator_t * comm =
-        static_cast<pyre::mpi::communicator_t *>
-        (PyCapsule_GetPointer(py_comm, mpi::communicator::capsule_t));
+    pyre::mpi::communicator_t * comm = static_cast<pyre::mpi::communicator_t *>(
+        PyCapsule_GetPointer(py_comm, mpi::communicator::capsule_t));
 
     // build the associated group
     pyre::mpi::group_t * group = new pyre::mpi::group_t(comm->group());
@@ -86,7 +87,8 @@ PyObject * mpi::group::create(PyObject *, PyObject * args)
 const char * const mpi::group::size__name__ = "groupSize";
 const char * const mpi::group::size__doc__ = "retrieve the group size";
 
-PyObject * mpi::group::size(PyObject *, PyObject * args)
+PyObject *
+mpi::group::size(PyObject *, PyObject * args)
 {
     // placeholder
     PyObject * py_group;
@@ -115,7 +117,8 @@ PyObject * mpi::group::size(PyObject *, PyObject * args)
 const char * const mpi::group::rank__name__ = "groupRank";
 const char * const mpi::group::rank__doc__ = "retrieve the rank of this process";
 
-PyObject * mpi::group::rank(PyObject *, PyObject * args)
+PyObject *
+mpi::group::rank(PyObject *, PyObject * args)
 {
     // placeholder
     PyObject * py_group;
@@ -144,16 +147,13 @@ PyObject * mpi::group::rank(PyObject *, PyObject * args)
 const char * const mpi::group::include__name__ = "groupInclude";
 const char * const mpi::group::include__doc__ = "include processors in this group";
 
-PyObject * mpi::group::include(PyObject *, PyObject * args)
+PyObject *
+mpi::group::include(PyObject *, PyObject * args)
 {
     PyObject * py_group;
     PyObject * rankSeq;
 
-    if (!PyArg_ParseTuple(
-                          args,
-                          "O!O:groupInclude",
-                          &PyCapsule_Type, &py_group,
-                          &rankSeq)) {
+    if (!PyArg_ParseTuple(args, "O!O:groupInclude", &PyCapsule_Type, &py_group, &rankSeq)) {
         return 0;
     }
     // check that we were handed the correct kind of capsule
@@ -190,16 +190,13 @@ PyObject * mpi::group::include(PyObject *, PyObject * args)
 const char * const mpi::group::exclude__name__ = "groupExclude";
 const char * const mpi::group::exclude__doc__ = "exclude processors from this group";
 
-PyObject * mpi::group::exclude(PyObject *, PyObject * args)
+PyObject *
+mpi::group::exclude(PyObject *, PyObject * args)
 {
     PyObject * py_group;
     PyObject * rankSeq;
 
-    if (!PyArg_ParseTuple(
-                          args,
-                          "O!O:groupExclude",
-                          &PyCapsule_Type, &py_group,
-                          &rankSeq)) {
+    if (!PyArg_ParseTuple(args, "O!O:groupExclude", &PyCapsule_Type, &py_group, &rankSeq)) {
         return 0;
     }
     // check that we were handed the correct kind of capsule
@@ -236,16 +233,14 @@ PyObject * mpi::group::exclude(PyObject *, PyObject * args)
 const char * const mpi::group::add__name__ = "groupUnion";
 const char * const mpi::group::add__doc__ = "build a group out of the union of two others";
 
-PyObject * mpi::group::add(PyObject *, PyObject * args)
+PyObject *
+mpi::group::add(PyObject *, PyObject * args)
 {
     PyObject * py_g1;
     PyObject * py_g2;
 
     if (!PyArg_ParseTuple(
-                          args,
-                          "O!O!:groupUnion",
-                          &PyCapsule_Type, &py_g1,
-                          &PyCapsule_Type, &py_g2)) {
+            args, "O!O!:groupUnion", &PyCapsule_Type, &py_g1, &PyCapsule_Type, &py_g2)) {
         return 0;
     }
     // check that we were handed the correct kind of capsules
@@ -278,16 +273,14 @@ const char * const mpi::group::intersect__name__ = "groupIntersection";
 const char * const mpi::group::intersect__doc__ =
     "build a group out of the intersection of two others";
 
-PyObject * mpi::group::intersect(PyObject *, PyObject * args)
+PyObject *
+mpi::group::intersect(PyObject *, PyObject * args)
 {
     PyObject * py_g1;
     PyObject * py_g2;
 
     if (!PyArg_ParseTuple(
-                          args,
-                          "O!O!:groupIntersection",
-                          &PyCapsule_Type, &py_g1,
-                          &PyCapsule_Type, &py_g2)) {
+            args, "O!O!:groupIntersection", &PyCapsule_Type, &py_g1, &PyCapsule_Type, &py_g2)) {
         return 0;
     }
     // check that we were handed the correct kind of capsules
@@ -320,16 +313,14 @@ const char * const mpi::group::subtract__name__ = "groupDifference";
 const char * const mpi::group::subtract__doc__ =
     "build a group out of the difference of two others";
 
-PyObject * mpi::group::subtract(PyObject *, PyObject * args)
+PyObject *
+mpi::group::subtract(PyObject *, PyObject * args)
 {
     PyObject * py_g1;
     PyObject * py_g2;
 
     if (!PyArg_ParseTuple(
-                          args,
-                          "O!O!:groupDifference",
-                          &PyCapsule_Type, &py_g1,
-                          &PyCapsule_Type, &py_g2)) {
+            args, "O!O!:groupDifference", &PyCapsule_Type, &py_g1, &PyCapsule_Type, &py_g2)) {
         return 0;
     }
     // check that we were handed the correct kind of capsules
@@ -358,8 +349,7 @@ PyObject * mpi::group::subtract(PyObject *, PyObject * args)
 
 // helpers
 void
-mpi::group::
-free(PyObject * py_group)
+mpi::group::free(PyObject * py_group)
 {
     // bail out if the capsule is not valid
     if (!PyCapsule_IsValid(py_group, capsule_t)) {
@@ -370,10 +360,7 @@ free(PyObject * py_group)
         static_cast<pyre::mpi::group_t *>(PyCapsule_GetPointer(py_group, capsule_t));
 
     pyre::journal::debug_t info("mpi.fini");
-    info
-        << pyre::journal::at(__HERE__)
-        << "group@" << group << ": deleting"
-        << pyre::journal::endl;
+    info << pyre::journal::at(__HERE__) << "group@" << group << ": deleting" << pyre::journal::endl;
 
     // delete it
     delete group;
