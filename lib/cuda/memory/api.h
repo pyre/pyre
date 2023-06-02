@@ -18,8 +18,7 @@ namespace pyre::cuda::memory {
     // read-only access
     template <typename T>
     using constmanaged_t = Managed<T, true>;
-}
-
+} // namespace pyre::cuda::memory
 
 
 #endif

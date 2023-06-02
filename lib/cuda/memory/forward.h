@@ -11,8 +11,9 @@
 // set up the namespace
 namespace pyre::cuda::memory {
     // managed memory block on the device with universal access
-    template <typename T, bool isConst> class Managed;
-};
+    template <typename T, bool isConst>
+    class Managed;
+}; // namespace pyre::cuda::memory
 
 
 #endif
