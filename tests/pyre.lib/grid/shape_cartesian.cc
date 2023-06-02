@@ -18,7 +18,9 @@ using shp4_t = pyre::grid::shape_t<4>;
 
 
 // exercise the cartesian product of two indices
-int main(int argc, char * argv[]) {
+int
+main(int argc, char * argv[])
+{
     // initialize the journal
     pyre::journal::init(argc, argv);
     pyre::journal::application("shape_cartesian");
@@ -40,17 +42,14 @@ int main(int argc, char * argv[]) {
     shp4_t expected { 2, 3, 4, 5 };
 
     // show me
-    channel
-        << "   shp_1: { " << shp_1 << " }" << pyre::journal::newline
-        << "   shp_3: { " << shp_3 << " }" << pyre::journal::newline
-        << "   shift: { " << shift << " }" << pyre::journal::newline
-        << "  sample: { " << sample << " }" << pyre::journal::newline
-        << "  actual: { " << actual << " }" << pyre::journal::newline
-        << "expected: { " << actual << " }" << pyre::journal::newline
-        << pyre::journal::endl(__HERE__);
+    channel << "   shp_1: { " << shp_1 << " }" << pyre::journal::newline << "   shp_3: { " << shp_3
+            << " }" << pyre::journal::newline << "   shift: { " << shift << " }"
+            << pyre::journal::newline << "  sample: { " << sample << " }" << pyre::journal::newline
+            << "  actual: { " << actual << " }" << pyre::journal::newline << "expected: { "
+            << actual << " }" << pyre::journal::newline << pyre::journal::endl(__HERE__);
 
     // check
-    assert(( actual == expected ));
+    assert((actual == expected));
 
     // all done
     return 0;

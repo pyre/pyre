@@ -16,7 +16,9 @@ using channel_t = pyre::journal::firewall_t;
 
 
 // verify that channels that have the same name share the same state
-int main() {
+int
+main()
+{
     // make a channel
     channel_t ch_1("tests.journal");
     // flip all state away from the defaults

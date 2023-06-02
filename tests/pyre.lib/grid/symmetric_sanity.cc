@@ -12,7 +12,9 @@
 
 
 // simple check that the map from index space to offsets is correct
-int main(int argc, char * argv[]) {
+int
+main(int argc, char * argv[])
+{
     // initialize the journal
     pyre::journal::init(argc, argv);
     pyre::journal::application("symmetric_visit");
@@ -36,25 +38,25 @@ int main(int argc, char * argv[]) {
         // make a canonical packing strategy
         constexpr symmetric_rank1_t packing { shape, origin };
         // compute the largest index
-        constexpr auto index = symmetric_rank1_t::index_type{ D - 1 } + origin;
+        constexpr auto index = symmetric_rank1_t::index_type { D - 1 } + origin;
         // compute the offset of the largest index
         constexpr auto offset = packing[index];
         // report
         channel << "rank 1: " << offset << pyre::journal::newline;
         // assert the offset of the largest index is the last element
-        static_assert( offset == packing.cells() - 1 );
-        // assert {packing[index]} is the inverse function of {packing[offset]} 
-        static_assert( offset == packing[packing[offset]] );
+        static_assert(offset == packing.cells() - 1);
+        // assert {packing[index]} is the inverse function of {packing[offset]}
+        static_assert(offset == packing[packing[offset]]);
         // visit every spot
         for (auto idx : packing) {
             std::sort(idx.begin(), idx.end());
-            // assert {packing[index]} is the inverse function of {packing[offset]} 
+            // assert {packing[index]} is the inverse function of {packing[offset]}
             assert(idx == packing[packing[idx]]);
         }
     }
 
     {
-        // type alias        
+        // type alias
         using symmetric_rank2_t = pyre::grid::symmetric_t<2>;
         // pick a shape
         constexpr symmetric_rank2_t::shape_type shape { D, D };
@@ -63,25 +65,25 @@ int main(int argc, char * argv[]) {
         // make a canonical packing strategy
         constexpr symmetric_rank2_t packing { shape, origin };
         // compute the largest index
-        constexpr auto index = symmetric_rank2_t::index_type{ D - 1, D - 1 } + origin;
+        constexpr auto index = symmetric_rank2_t::index_type { D - 1, D - 1 } + origin;
         // compute the offset of the largest index
         constexpr auto offset = packing[index];
         // report
         channel << "rank 2: " << offset << pyre::journal::newline;
         // assert the offset of the largest index is the last element
-        static_assert( offset == packing.cells() - 1 );
-        // assert {packing[index]} is the inverse function of {packing[offset]} 
-        static_assert( offset == packing[packing[offset]] );
+        static_assert(offset == packing.cells() - 1);
+        // assert {packing[index]} is the inverse function of {packing[offset]}
+        static_assert(offset == packing[packing[offset]]);
         // visit every spot
         for (auto idx : packing) {
             std::sort(idx.begin(), idx.end());
-            // assert {packing[index]} is the inverse function of {packing[offset]} 
+            // assert {packing[index]} is the inverse function of {packing[offset]}
             assert(idx == packing[packing[idx]]);
         }
     }
 
     {
-        // type alias        
+        // type alias
         using symmetric_rank3_t = pyre::grid::symmetric_t<3>;
         // pick a shape
         constexpr symmetric_rank3_t::shape_type shape { D, D, D };
@@ -90,25 +92,25 @@ int main(int argc, char * argv[]) {
         // make a canonical packing strategy
         constexpr symmetric_rank3_t packing { shape, origin };
         // compute the largest index
-        constexpr auto index = symmetric_rank3_t::index_type{ D - 1, D - 1, D - 1 } + origin;
+        constexpr auto index = symmetric_rank3_t::index_type { D - 1, D - 1, D - 1 } + origin;
         // compute the offset of the largest index
         constexpr auto offset = packing[index];
         // report
         channel << "rank 3: " << offset << pyre::journal::newline;
         // assert the offset of the largest index is the last element
-        static_assert( offset == packing.cells() - 1 );
-        // assert {packing[index]} is the inverse function of {packing[offset]} 
-        static_assert( offset == packing[packing[offset]] );
+        static_assert(offset == packing.cells() - 1);
+        // assert {packing[index]} is the inverse function of {packing[offset]}
+        static_assert(offset == packing[packing[offset]]);
         // visit every spot
         for (auto idx : packing) {
             std::sort(idx.begin(), idx.end());
-            // assert {packing[index]} is the inverse function of {packing[offset]} 
+            // assert {packing[index]} is the inverse function of {packing[offset]}
             assert(idx == packing[packing[idx]]);
         }
     }
 
     {
-        // type alias        
+        // type alias
         using symmetric_rank4_t = pyre::grid::symmetric_t<4>;
         // pick a shape
         constexpr symmetric_rank4_t::shape_type shape { D, D, D, D };
@@ -117,25 +119,26 @@ int main(int argc, char * argv[]) {
         // make a canonical packing strategy
         constexpr symmetric_rank4_t packing { shape, origin };
         // compute the largest index
-        constexpr auto index = symmetric_rank4_t::index_type{ D - 1, D - 1, D - 1, D - 1 } + origin;
+        constexpr auto index =
+            symmetric_rank4_t::index_type { D - 1, D - 1, D - 1, D - 1 } + origin;
         // compute the offset of the largest index
         constexpr auto offset = packing[index];
         // report
         channel << "rank 4: " << offset << pyre::journal::newline;
         // assert the offset of the largest index is the last element
-        static_assert( offset == packing.cells() - 1 );
-        // assert {packing[index]} is the inverse function of {packing[offset]} 
-        static_assert( offset == packing[packing[offset]] );
+        static_assert(offset == packing.cells() - 1);
+        // assert {packing[index]} is the inverse function of {packing[offset]}
+        static_assert(offset == packing[packing[offset]]);
         // visit every spot
         for (auto idx : packing) {
             std::sort(idx.begin(), idx.end());
-            // assert {packing[index]} is the inverse function of {packing[offset]} 
+            // assert {packing[index]} is the inverse function of {packing[offset]}
             assert(idx == packing[packing[idx]]);
         }
     }
 
     {
-        // type alias        
+        // type alias
         using symmetric_rank5_t = pyre::grid::symmetric_t<5>;
         // pick a shape
         constexpr symmetric_rank5_t::shape_type shape { D, D, D, D, D };
@@ -144,20 +147,20 @@ int main(int argc, char * argv[]) {
         // make a canonical packing strategy
         constexpr symmetric_rank5_t packing { shape, origin };
         // compute the largest index
-        constexpr auto index = symmetric_rank5_t::index_type{ D - 1, D - 1, D - 1, D - 1, D - 1 } 
-            + origin;
+        constexpr auto index =
+            symmetric_rank5_t::index_type { D - 1, D - 1, D - 1, D - 1, D - 1 } + origin;
         // compute the offset of the largest index
         constexpr auto offset = packing[index];
         // report
         channel << "rank 5: " << offset << pyre::journal::newline;
         // assert the offset of the largest index is the last element
-        static_assert( offset == packing.cells() - 1 );
-        // assert {packing[index]} is the inverse function of {packing[offset]} 
-        static_assert( offset == packing[packing[offset]] );
+        static_assert(offset == packing.cells() - 1);
+        // assert {packing[index]} is the inverse function of {packing[offset]}
+        static_assert(offset == packing[packing[offset]]);
         // visit every spot
         for (auto idx : packing) {
             std::sort(idx.begin(), idx.end());
-            // assert {packing[index]} is the inverse function of {packing[offset]} 
+            // assert {packing[index]} is the inverse function of {packing[offset]}
             assert(idx == packing[packing[idx]]);
         }
     }

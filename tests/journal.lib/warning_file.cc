@@ -15,7 +15,9 @@ using warning_t = pyre::journal::warning_t;
 
 
 // send all output to a log file
-int main() {
+int
+main()
+{
     // send all channel output to a log file
     warning_t::logfile("warning_file.log");
 
@@ -29,7 +31,8 @@ int main() {
         // some metadata
         << pyre::journal::note("time", "now")
         // a message with a newline
-        << "warning channel:" << pyre::journal::newline
+        << "warning channel:"
+        << pyre::journal::newline
         // another message and a flush
         << "    hello world!" << pyre::journal::endl;
 

@@ -20,7 +20,9 @@ using trash_t = pyre::journal::trash_t;
 
 
 // verify the cascade works correctly for errors
-int main() {
+int
+main()
+{
     // make a channel
     myerror_t parent("test.error.parent");
     // its activation state is what's expected

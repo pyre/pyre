@@ -16,7 +16,9 @@ using symmetric_t = pyre::grid::symmetric_t<5>;
 
 
 // simple check that the map from index space to offsets is correct
-int main(int argc, char * argv[]) {
+int
+main(int argc, char * argv[])
+{
     // initialize the journal
     pyre::journal::init(argc, argv);
     pyre::journal::application("symmetric_visit");
@@ -24,15 +26,13 @@ int main(int argc, char * argv[]) {
     pyre::journal::debug_t channel("pyre.grid.symmetric");
 
     // pick a shape
-    symmetric_t::shape_type shape { 4, 4, 4, 4, 4};
+    symmetric_t::shape_type shape { 4, 4, 4, 4, 4 };
     // make a canonical packing strategy
     symmetric_t packing { shape };
     // show me
-    channel
-        << "packing:" << pyre::journal::newline
-        << "  shape: " << packing.shape() << pyre::journal::newline
-        << "  order: " << packing.order() << pyre::journal::newline
-        << "  origin: " << packing.origin() << pyre::journal::endl(__HERE__);
+    channel << "packing:" << pyre::journal::newline << "  shape: " << packing.shape()
+            << pyre::journal::newline << "  order: " << packing.order() << pyre::journal::newline
+            << "  origin: " << packing.origin() << pyre::journal::endl(__HERE__);
 
     // sign on
     channel << "visiting in packing order:" << pyre::journal::newline;
@@ -41,12 +41,11 @@ int main(int argc, char * argv[]) {
         // get the offset of this index
         auto offset = packing[idx];
         // show me
-        channel << " at: " << idx << " -> " << offset
-                << pyre::journal::newline;
-        // sort the indices 
+        channel << " at: " << idx << " -> " << offset << pyre::journal::newline;
+        // sort the indices
         std::sort(idx.begin(), idx.end());
         // verify that we are visiting in packing order
-        assert(( idx == packing[offset] ));
+        assert((idx == packing[offset]));
     }
     // flush
     channel << pyre::journal::endl(__HERE__);

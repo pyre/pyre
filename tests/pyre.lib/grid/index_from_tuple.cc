@@ -15,18 +15,20 @@
 using idx_t = pyre::grid::index_t<4>;
 
 // converter
-auto convert = [](auto&& tuple) {
+auto convert = [](auto && tuple) {
     // the converter
-    constexpr auto array = [](auto&&... x) {
-        return idx_t { std::forward<decltype(x)>(x) ... };
+    constexpr auto array = [](auto &&... x) {
+        return idx_t { std::forward<decltype(x)>(x)... };
     };
     // invoked
     return std::apply(array, tuple);
- };
+};
 
 
 // exercise the filling constructor
-int main(int argc, char * argv[]) {
+int
+main(int argc, char * argv[])
+{
     // initialize the journal
     pyre::journal::init(argc, argv);
     pyre::journal::application("index_from_tuple");
@@ -34,15 +36,13 @@ int main(int argc, char * argv[]) {
     pyre::journal::debug_t channel("pyre.grid.index");
 
     // make a tuple
-    auto src = std::make_tuple(0,1,2,3);
+    auto src = std::make_tuple(0, 1, 2, 3);
 
     // convert to an index
     auto idx = convert(src);
 
     // show me
-    channel
-        << "idx: " << idx
-        << pyre::journal::endl(__HERE__);
+    channel << "idx: " << idx << pyre::journal::endl(__HERE__);
 
     // all done
     return 0;

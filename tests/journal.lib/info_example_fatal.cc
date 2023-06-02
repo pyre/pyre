@@ -15,7 +15,9 @@ using info_t = pyre::journal::info_t;
 
 
 // exercise a fatal channel
-int main() {
+int
+main()
+{
     // make an info channel
     info_t channel("tests.journal.info");
     // make it fatal
@@ -26,17 +28,15 @@ int main() {
     // we've asked for this to fail, so carefully
     try {
         // inject something into the channel
-        channel
-            << pyre::journal::at(__HERE__)
-            << pyre::journal::note("time", "now")
-            << "info channel:" << pyre::journal::newline
-            << "    hello world!" << pyre::journal::endl;
+        channel << pyre::journal::at(__HERE__) << pyre::journal::note("time", "now")
+                << "info channel:" << pyre::journal::newline << "    hello world!"
+                << pyre::journal::endl;
         // unreachable
         throw std::logic_error("unreachable");
         // if all goes well
     } catch (const info_t::exception_type & error) {
         // make sure the reason was recorded correctly
-        assert (error.what() == channel.name() + info_t::string_type(": info"));
+        assert(error.what() == channel.name() + info_t::string_type(": info"));
     }
 
     // all done

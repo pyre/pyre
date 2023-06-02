@@ -20,7 +20,9 @@ using trash_t = pyre::journal::trash_t;
 
 
 // verify the cascade works correctly for firewalls
-int main() {
+int
+main()
+{
     // make a channel
     firewall_t parent("test.firewall.parent");
     // its activation state is what's expected

@@ -16,7 +16,9 @@ using firewall_t = pyre::journal::firewall_t;
 
 
 // verify that empty injections in firewall work as expected
-int main() {
+int
+main()
+{
     // make a firewall
     firewall_t channel("tests.journal.firewall");
     // send the output to the trash
@@ -28,10 +30,10 @@ int main() {
         channel << pyre::journal::endl;
         // shouldn't be able to get here
         throw std::logic_error("unreachable");
-    // if all goes well
+        // if all goes well
     } catch (const firewall_t::exception_type & error) {
         // make sure the reason was recorded correctly
-        assert (error.what() == channel.name() + firewall_t::string_type(": FIREWALL BREACHED!"));
+        assert(error.what() == channel.name() + firewall_t::string_type(": FIREWALL BREACHED!"));
     }
 
     // all done

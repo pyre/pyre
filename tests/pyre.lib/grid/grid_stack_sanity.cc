@@ -13,7 +13,7 @@
 
 // verify the layout of a grid on the stack
 int
-main(int argc, char * argv [])
+main(int argc, char * argv[])
 {
     // initialize the journal
     pyre::journal::init(argc, argv);
@@ -39,14 +39,14 @@ main(int argc, char * argv [])
 
     // show me
     channel << "value: " << sizeof(grid_t::value_type) << " bytes, "
-            << "spacing: " << (&grid [{ 0, 0, 1 }] - &grid [{ 0, 0, 0 }]) << " cell, "
-            << "spacing: " << (&grid [1] - &grid [0]) << " cell" << pyre::journal::endl;
+            << "spacing: " << (&grid[{ 0, 0, 1 }] - &grid[{ 0, 0, 0 }]) << " cell, "
+            << "spacing: " << (&grid[1] - &grid[0]) << " cell" << pyre::journal::endl;
 
     // verify that the address of the second element is the same regardless of the way it is
     // computed
-    assert((&grid [{ 0, 0, 1 }] == &grid [1]));
+    assert((&grid[{ 0, 0, 1 }] == &grid[1]));
     // verify that the distance between consecutive entries is precisely one cell
-    assert(((&grid [{ 0, 0, 1 }] - &grid [{ 0, 0, 0 }]) == 1));
+    assert(((&grid[{ 0, 0, 1 }] - &grid[{ 0, 0, 0 }]) == 1));
 
     // all done
     return 0;

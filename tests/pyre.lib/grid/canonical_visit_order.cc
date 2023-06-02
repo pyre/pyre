@@ -15,7 +15,9 @@ using canonical_t = pyre::grid::canonical_t<3>;
 
 
 // simple check that the map from index space to offsets is correct
-int main(int argc, char * argv[]) {
+int
+main(int argc, char * argv[])
+{
     // initialize the journal
     pyre::journal::init(argc, argv);
     pyre::journal::application("canonical_visit_order");
@@ -23,17 +25,15 @@ int main(int argc, char * argv[]) {
     pyre::journal::debug_t channel("pyre.grid.canonical");
 
     // pick a shape
-    canonical_t::shape_type shape { 2,3,4 };
+    canonical_t::shape_type shape { 2, 3, 4 };
     // make a canonical packing strategy
     canonical_t packing { shape };
     // show me
-    channel
-        << "packing:" << pyre::journal::newline
-        << "  shape: " << packing.shape() << pyre::journal::newline
-        << "  order: " << packing.order() << pyre::journal::newline
-        << "  origin: " << packing.order() << pyre::journal::newline
-        << "  nudge: " << packing.nudge() << pyre::journal::newline
-        << "  strides: " << packing.strides() << pyre::journal::endl(__HERE__);
+    channel << "packing:" << pyre::journal::newline << "  shape: " << packing.shape()
+            << pyre::journal::newline << "  order: " << packing.order() << pyre::journal::newline
+            << "  origin: " << packing.order() << pyre::journal::newline
+            << "  nudge: " << packing.nudge() << pyre::journal::newline
+            << "  strides: " << packing.strides() << pyre::journal::endl(__HERE__);
 
     // sign on
     channel << "visiting:" << pyre::journal::newline;

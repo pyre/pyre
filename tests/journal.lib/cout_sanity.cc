@@ -15,11 +15,13 @@ using console_t = pyre::journal::cout_t;
 
 
 // instantiate the {cout} console and make sure its name is correct
-int main() {
+int
+main()
+{
     // instantiate
     console_t console;
     // check its name
-    assert (console.name() == "cout");
+    assert(console.name() == "cout");
 
     // all done
     return 0;

@@ -11,7 +11,9 @@
 
 
 // make sure empty injections into a warning work as expected
-int main() {
+int
+main()
+{
     // make a warning channel
     pyre::journal::warning_t channel("tests.journal.warning");
     // send the output to the trash

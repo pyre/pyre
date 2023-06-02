@@ -22,7 +22,9 @@ using movement_t = pyre::timers::movement_t<pyre::timers::wall_clock_t>;
 
 
 // verify that we can manipulate the movement state
-int main() {
+int
+main()
+{
     // take a timestamp
     auto zero = movement_t::clock_type::now();
     // nap duration
@@ -36,9 +38,9 @@ int main() {
     auto mark = movement.start();
 
     // verify it is now active
-    assert (movement.active() == true);
+    assert(movement.active() == true);
     // and that its timestamp is later than our mark
-    assert (mark > zero);
+    assert(mark > zero);
 
     // all done
     return 0;

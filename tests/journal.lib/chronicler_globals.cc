@@ -15,7 +15,9 @@ using chronicler_t = pyre::journal::chronicler_t;
 
 
 // verify that the chronicler is accessible
-int main() {
+int
+main()
+{
     // get the global metadata
     auto & notes = chronicler_t::notes();
 
@@ -28,18 +30,18 @@ int main() {
     // look for it
     auto direct = chronicler_t::notes().find(key);
     // verify its there
-    assert (direct != chronicler_t::notes().end());
+    assert(direct != chronicler_t::notes().end());
     // and it is the right one
-    assert (direct->first == key);
-    assert (direct->second == value);
+    assert(direct->first == key);
+    assert(direct->second == value);
 
     // all this should be true through our original access reference
     auto ref = notes.find(key);
     // verify its there
-    assert (ref != notes.end());
+    assert(ref != notes.end());
     // and it is the right one
-    assert (ref->first == key);
-    assert (ref->second == value);
+    assert(ref->first == key);
+    assert(ref->second == value);
 
     // all done
     return 0;

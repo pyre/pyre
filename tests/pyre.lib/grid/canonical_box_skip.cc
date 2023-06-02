@@ -15,7 +15,9 @@ using canonical_t = pyre::grid::canonical_t<2>;
 
 
 // simple check that the map from index space to offsets is correct
-int main(int argc, char * argv[]) {
+int
+main(int argc, char * argv[])
+{
     // initialize the journal
     pyre::journal::init(argc, argv);
     pyre::journal::application("canonical_box");
@@ -31,16 +33,14 @@ int main(int argc, char * argv[]) {
     // make a canonical packing strategy
     canonical_t packing { shape, origin, order };
     // show me
-    channel
-        << "packing:" << pyre::journal::newline
-        << "    shape: " << packing.shape() << pyre::journal::newline
-        << "    origin: " << packing.origin() << pyre::journal::newline
-        << "    order: " << packing.order() << pyre::journal::newline
-        << "    strides: " << packing.strides() << pyre::journal::newline
-        << "    cells: " << packing.cells() << pyre::journal::newline
-        << "    nudge: " << packing.nudge() << pyre::journal::newline
-        << "    begin: " << *packing.begin() << pyre::journal::newline
-        << "    end: " << *packing.end() << pyre::journal::endl(__HERE__);
+    channel << "packing:" << pyre::journal::newline << "    shape: " << packing.shape()
+            << pyre::journal::newline << "    origin: " << packing.origin()
+            << pyre::journal::newline << "    order: " << packing.order() << pyre::journal::newline
+            << "    strides: " << packing.strides() << pyre::journal::newline
+            << "    cells: " << packing.cells() << pyre::journal::newline
+            << "    nudge: " << packing.nudge() << pyre::journal::newline
+            << "    begin: " << *packing.begin() << pyre::journal::newline
+            << "    end: " << *packing.end() << pyre::journal::endl(__HERE__);
 
     // pick a spot
     canonical_t::index_type spot { 2, 3 };
@@ -50,20 +50,17 @@ int main(int argc, char * argv[]) {
     auto box = packing.box(spot, sliceShape);
     // show me
     channel
-        << "box:" << pyre::journal::newline
-        << "    base: " << spot << pyre::journal::newline
-        << "    shape: " << box.shape() << pyre::journal::newline
-        << "    origin: " << box.origin() << pyre::journal::newline
-        << "    order: " << box.order() << pyre::journal::newline
+        << "box:" << pyre::journal::newline << "    base: " << spot << pyre::journal::newline
+        << "    shape: " << box.shape() << pyre::journal::newline << "    origin: " << box.origin()
+        << pyre::journal::newline << "    order: " << box.order() << pyre::journal::newline
         << "    strides: " << box.strides() << pyre::journal::newline
-        << "    cells: " << box.cells() << pyre::journal::newline
-        << "    nudge: " << box.nudge() << pyre::journal::newline
-        << "    begin: " << *box.begin() << pyre::journal::newline
+        << "    cells: " << box.cells() << pyre::journal::newline << "    nudge: " << box.nudge()
+        << pyre::journal::newline << "    begin: " << *box.begin() << pyre::journal::newline
         << "    end: " << *box.end() << pyre::journal::endl(__HERE__);
 
     // verify that the iteration limits are as expected
-    assert(( *box.begin() == spot ));
-    assert(( *box.end() == spot + sliceShape ));
+    assert((*box.begin() == spot));
+    assert((*box.end() == spot + sliceShape));
 
     // set up a skip
     canonical_t::index_type skip { 4, 2 };
@@ -74,11 +71,10 @@ int main(int argc, char * argv[]) {
         // dereference to get the index
         auto idx = *i;
         // show me
-        channel
-            << "  " << idx << " -> " << box[idx] << " == " << packing[idx]
-            << pyre::journal::newline;
+        channel << "  " << idx << " -> " << box[idx] << " == " << packing[idx]
+                << pyre::journal::newline;
         // verify that the index resolves to the same spot in both layouts
-        assert(( packing[idx] == box[idx] ));
+        assert((packing[idx] == box[idx]));
     }
     // flush
     channel << pyre::journal::endl(__HERE__);

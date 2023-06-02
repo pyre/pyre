@@ -15,7 +15,9 @@ using array_t = pyre::memory::stack_t<9, double>;
 
 
 // verify that we can construct and use heap blocks
-int main(int argc, char * argv[]) {
+int
+main(int argc, char * argv[])
+{
     // initialize the journal
     pyre::journal::init(argc, argv);
     pyre::journal::application("stack_access");
@@ -34,14 +36,14 @@ int main(int argc, char * argv[]) {
     // verify we can iterate and read
     for (auto cell : block) {
         // check that we have what we expect
-        assert(( cell == 1.0 ));
+        assert((cell == 1.0));
     }
 
     // exercise operator []
     // write
-    block[cells/2] = 2.0;
+    block[cells / 2] = 2.0;
     // and read
-    assert(( block[cells/2] == 2.0 ));
+    assert((block[cells / 2] == 2.0));
 
     // all done
     return 0;

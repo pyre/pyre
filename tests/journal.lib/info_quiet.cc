@@ -11,7 +11,9 @@
 
 
 // verify we can suppress channel output
-int main() {
+int
+main()
+{
     // quiet {info} channels by sending the output to a trash can
     pyre::journal::info_t::quiet();
 
@@ -25,7 +27,8 @@ int main() {
         // some metadata
         << pyre::journal::note("time", "now")
         // a message with a newline
-        << "info channel:" << pyre::journal::newline
+        << "info channel:"
+        << pyre::journal::newline
         // another message and a flush
         << "    hello world!" << pyre::journal::endl;
 

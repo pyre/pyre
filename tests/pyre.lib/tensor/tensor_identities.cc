@@ -16,8 +16,9 @@ using namespace pyre::tensor;
 
 
 // main program
-int main(int argc, char* argv[]) {
-
+int
+main(int argc, char * argv[])
+{
     // vector a
     constexpr vector_t<3> a { -2.0, 2.0, 0.0 };
 
@@ -40,30 +41,30 @@ int main(int argc, char* argv[]) {
     static_assert(a * b == b * a);
 
     // cross product of a vector with itself is zero
-    static_assert(cross(a, a) == vector_t<3>::zero); 
+    static_assert(cross(a, a) == vector_t<3>::zero);
 
     // anti-commutativity of cross product
-    static_assert(cross(a, b) == - cross(b, a)); 
+    static_assert(cross(a, b) == -cross(b, a));
 
     // distributivity of multiplication by a scalar over addition
-    static_assert(alpha * (a + b) == alpha * a + alpha * b); 
+    static_assert(alpha * (a + b) == alpha * a + alpha * b);
 
     // distributivity of scalar product over addition
-    static_assert(c * (a + b) == c * a + c * b); 
+    static_assert(c * (a + b) == c * a + c * b);
 
-    // distributivity of vector product over addition: 
-    static_assert(cross(c, a + b) == cross(c, a) + cross(c, b)); 
+    // distributivity of vector product over addition:
+    static_assert(cross(c, a + b) == cross(c, a) + cross(c, b));
 
     // scalar triple product
-    static_assert(a * cross(b, c) == b * cross(c, a)); 
+    static_assert(a * cross(b, c) == b * cross(c, a));
 
     // vector triple product
-    static_assert(cross(a, cross(b, c)) == (a * c) * b - (a * b) * c ); 
+    static_assert(cross(a, cross(b, c)) == (a * c) * b - (a * b) * c);
 
     // Jacobi identity
-    static_assert(cross(a, cross(b, c)) + cross(c, cross(a, b)) + cross(b, cross(c, a)) 
-        == vector_t<3>::zero); 
-    
+    static_assert(
+        cross(a, cross(b, c)) + cross(c, cross(a, b)) + cross(b, cross(c, a)) == vector_t<3>::zero);
+
     // Binet-Cauchy identity
     static_assert(cross(a, b) * cross(c, d) == (a * c) * (b * d) - (b * c) * (a * d));
 

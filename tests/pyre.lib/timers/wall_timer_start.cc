@@ -22,7 +22,9 @@ using walltimer_t = pyre::timers::wall_timer_t;
 
 
 // verify that we can manipulate the timer state
-int main() {
+int
+main()
+{
     // take a timestamp
     auto zero = walltimer_t::clock_type::now();
     // nap duration
@@ -36,9 +38,9 @@ int main() {
     auto mark = timer.start();
 
     // verify it is now active
-    assert (timer.active() == true);
+    assert(timer.active() == true);
     // and that its timestamp is later than our mark
-    assert (mark > zero);
+    assert(mark > zero);
 
     // all done
     return 0;

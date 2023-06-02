@@ -15,24 +15,26 @@ using chronicler_t = pyre::journal::chronicler_t;
 
 
 // verify that the initial chronicler global state is as expected
-int main() {
+int
+main()
+{
     // verify that the default detail is at level 1
-    assert (chronicler_t::detail() == 1);
+    assert(chronicler_t::detail() == 1);
 
     // get the global metadata map
     chronicler_t::notes_type & notes = chronicler_t::notes();
 
     // there should be only one setting for now
-    assert (notes.size() == 1);
+    assert(notes.size() == 1);
     // verify the known contents
-    assert (notes.at("application") == "journal");
+    assert(notes.at("application") == "journal");
 
     // get the default device
     auto device_ptr = chronicler_t::device();
     // by default, it is the console; verify that it is not an empty pointer
     assert(device_ptr);
     // and that it's the console
-    assert ((*device_ptr).name() == "cout");
+    assert((*device_ptr).name() == "cout");
 
     // all done
     return 0;

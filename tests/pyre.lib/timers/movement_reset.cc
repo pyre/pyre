@@ -21,7 +21,9 @@ using movement_t = pyre::timers::movement_t<pyre::timers::wall_clock_t>;
 
 
 // verify that we can manipulate the movement state
-int main() {
+int
+main()
+{
     // make a movement
     movement_t movement;
     // and start it
@@ -36,9 +38,9 @@ int main() {
     // reset the movement
     movement.reset();
     // verify it is inactive
-    assert (movement.active() == false);
+    assert(movement.active() == false);
     // and that the accumulated time is reset to zero
-    assert (movement.read() == movement_t::duration_type::zero());
+    assert(movement.read() == movement_t::duration_type::zero());
 
     // all done
     return 0;

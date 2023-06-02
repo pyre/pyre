@@ -15,7 +15,9 @@ using idx_t = pyre::grid::index_t<4>;
 
 
 // exercise the filling constructor
-int main(int argc, char * argv[]) {
+int
+main(int argc, char * argv[])
+{
     // initialize the journal
     pyre::journal::init(argc, argv);
     pyre::journal::application("index_iterator");
@@ -23,18 +25,16 @@ int main(int argc, char * argv[]) {
     pyre::journal::debug_t channel("pyre.grid.index");
 
     // make a const index
-    constexpr idx_t idx { 0,1,2,3 };
+    constexpr idx_t idx { 0, 1, 2, 3 };
     // show me
-    channel
-        << "idx: " << idx
-        << pyre::journal::endl(__HERE__);
+    channel << "idx: " << idx << pyre::journal::endl(__HERE__);
 
     // make a ounter
     int i = 0;
     // go through the index ranks
     for (auto value : idx) {
         // verify it is as expected
-        assert(( value == i ));
+        assert((value == i));
         // get ready for the next one
         ++i;
     }

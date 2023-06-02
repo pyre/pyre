@@ -13,8 +13,9 @@
 using namespace pyre::tensor;
 
 // main program
-int main(int argc, char* argv[]) {
-
+int
+main(int argc, char * argv[])
+{
     // initialize the journal
     pyre::journal::init(argc, argv);
     pyre::journal::application("tensor_print");
@@ -51,7 +52,7 @@ int main(int argc, char* argv[]) {
     channel << pyre::journal::indent(1);
     channel << S << pyre::journal::newline;
     channel << "is symmetric = " << S.is_symmetric() << pyre::journal::newline;
-    channel << "shape = " << S.shape() << pyre::journal::newline; 
+    channel << "shape = " << S.shape() << pyre::journal::newline;
     channel << "data = " << pyre::journal::newline;
     channel << pyre::journal::indent(1);
     for (const auto s : S) {
@@ -65,7 +66,7 @@ int main(int argc, char* argv[]) {
     channel << R << pyre::journal::newline;
     channel << "is diagonal = " << R.is_diagonal() << pyre::journal::newline;
     channel << "is symmetric = " << R.is_symmetric() << pyre::journal::newline;
-    channel << "shape = " << R.shape() << pyre::journal::newline; 
+    channel << "shape = " << R.shape() << pyre::journal::newline;
     channel << "data = " << pyre::journal::newline;
     channel << pyre::journal::indent(1);
     for (const auto r : R) {

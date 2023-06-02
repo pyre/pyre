@@ -16,7 +16,9 @@ using file_t = pyre::journal::file_t;
 
 
 // exercise the file device
-int main() {
+int
+main()
+{
     // the filename
     auto filename = file_t::path_type("file_example.out");
 
@@ -28,10 +30,7 @@ int main() {
     channel.activate();
 
     // inject something
-    channel
-        << pyre::journal::at(__HERE__)
-        << "hello world!"
-        << pyre::journal::endl;
+    channel << pyre::journal::at(__HERE__) << "hello world!" << pyre::journal::endl;
 
     // all done
     return 0;

@@ -11,7 +11,9 @@
 
 
 // verify we can suppress journal output
-int main() {
+int
+main()
+{
     // suppress all outut
     pyre::journal::quiet();
 
@@ -27,7 +29,8 @@ int main() {
         // some metadata
         << pyre::journal::note("time", "now")
         // a message with a newline
-        << "debug channel:" << pyre::journal::newline
+        << "debug channel:"
+        << pyre::journal::newline
         // another message and a flush
         << "    hello world!" << pyre::journal::endl;
 

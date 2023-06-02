@@ -9,7 +9,9 @@
 
 
 // compile time sanity check: make sure the header file is accessible
-int main() {
+int
+main()
+{
     // nothing to do
     return 0;
 }

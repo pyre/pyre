@@ -19,12 +19,14 @@ using movement_t = pyre::timers::movement_t<pyre::timers::wall_clock_t>;
 
 
 // verify that we can manipulate the movement state
-int main() {
+int
+main()
+{
     // make a movement
     movement_t movement;
 
     // verify it is inactive, by default
-    assert (movement.active() == false);
+    assert(movement.active() == false);
 
     // all done
     return 0;

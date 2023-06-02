@@ -21,7 +21,9 @@ using walltimer_t = pyre::timers::wall_timer_t;
 
 
 // verify that we can manipulate the timer state
-int main() {
+int
+main()
+{
     // make a timer
     walltimer_t timer("tests.timer");
     // and start it
@@ -36,9 +38,9 @@ int main() {
     // reset the timer
     timer.reset();
     // verify it is inactive
-    assert (timer.active() == false);
+    assert(timer.active() == false);
     // and that the accumulated time is reset to zero
-    assert (timer.read() == walltimer_t::duration_type::zero());
+    assert(timer.read() == walltimer_t::duration_type::zero());
 
     // all done
     return 0;

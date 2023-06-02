@@ -21,7 +21,9 @@ using movement_t = pyre::timers::movement_t<pyre::timers::wall_clock_t>;
 
 
 // verify that we can manipulate the movement state
-int main() {
+int
+main()
+{
     // make a movement
     movement_t movement;
     // and start it
@@ -35,7 +37,7 @@ int main() {
     // stop it
     auto elapsed = movement.stop();
     // verify the elapsed time is roughly the same as the sleep time
-    assert (elapsed >= nap);
+    assert(elapsed >= nap);
 
     // all done
     return 0;

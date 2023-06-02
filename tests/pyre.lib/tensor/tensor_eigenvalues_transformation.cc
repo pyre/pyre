@@ -16,11 +16,16 @@ using namespace pyre::tensor;
 
 
 // main program
-int main(int argc, char* argv[]) {
-
+int
+main(int argc, char * argv[])
+{
     // define constexpr versions of exp and log
-    constexpr auto constexpr_exp = [](double x) { return exp(x); };
-    constexpr auto constexpr_log = [](double x) { return log(x); };
+    constexpr auto constexpr_exp = [](double x) {
+        return exp(x);
+    };
+    constexpr auto constexpr_log = [](double x) {
+        return log(x);
+    };
 
     // exp(zero) = one
     static_assert(function(matrix_t<2>::zero, constexpr_exp) == matrix_t<2>::identity);

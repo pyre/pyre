@@ -17,7 +17,9 @@ typedef pyre::mpi::group_t group_t;
 typedef pyre::mpi::communicator_t communicator_t;
 
 // main program
-int main() {
+int
+main()
+{
     // initialize
     MPI_Init(0, 0);
 
@@ -50,10 +52,10 @@ int main() {
 
         // check
         // the new group size if half the original
-        assert(size == (wsize+1)/2);
+        assert(size == (wsize + 1) / 2);
         // check my rank in the new group
         if (wrank % 2 == 0) {
-            assert (rank == wrank / 2);
+            assert(rank == wrank / 2);
         } else {
             assert(rank == MPI_UNDEFINED);
         }

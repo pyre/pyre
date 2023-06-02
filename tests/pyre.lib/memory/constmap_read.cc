@@ -16,7 +16,9 @@ using constmap_t = pyre::memory::constmap_t<cell_t>;
 
 
 // create a read-only map over an existing product
-int main(int argc, char * argv[]) {
+int
+main(int argc, char * argv[])
+{
     // initialize the journal
     pyre::journal::init(argc, argv);
     pyre::journal::application("constmap_read");
@@ -25,14 +27,14 @@ int main(int argc, char * argv[]) {
     constmap_t product("map.dat");
 
     // check the capacity of the block
-    assert(( product.cells() == 1024 ));
+    assert((product.cells() == 1024));
     // and the size in bytes
-    assert(( product.bytes() == product.cells() * sizeof(constmap_t::value_type) ));
+    assert((product.bytes() == product.cells() * sizeof(constmap_t::value_type)));
 
     // go through the entire block
     for (auto cell : product) {
         // verify the contents
-        assert(( cell == 2 ));
+        assert((cell == 2));
     }
 
     // all done

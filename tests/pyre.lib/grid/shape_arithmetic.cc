@@ -15,7 +15,9 @@ using shape_t = pyre::grid::shape_t<2>;
 
 
 // shape arithmetic
-int main(int argc, char * argv[]) {
+int
+main(int argc, char * argv[])
+{
     // initialize the journal
     pyre::journal::init(argc, argv);
     pyre::journal::application("shape_arithmetic");
@@ -30,14 +32,12 @@ int main(int argc, char * argv[]) {
     shape_t cor = sec - ref + shape_t::fill(1);
 
     // show me
-    channel
-        << "ref: " << ref << pyre::journal::newline
-        << "sec: " << sec << pyre::journal::newline
-        << "cor: " << cor << pyre::journal::endl(__HERE__);
+    channel << "ref: " << ref << pyre::journal::newline << "sec: " << sec << pyre::journal::newline
+            << "cor: " << cor << pyre::journal::endl(__HERE__);
 
     // verify
     for (auto axis = 0; axis < shape_t::rank(); ++axis) {
-        assert(( cor[axis] == sec[axis] - ref[axis] + 1 ));
+        assert((cor[axis] == sec[axis] - ref[axis] + 1));
     }
 
     // all done
