@@ -12,17 +12,15 @@
 // interface
 template <typename Resource>
 int
-pyre::mpi::Shareable<Resource>::
-acquire()
+pyre::mpi::Shareable<Resource>::acquire()
 {
     // increment the reference count and return it
-     return ++_count;
+    return ++_count;
 }
 
 template <typename Resource>
 int
-pyre::mpi::Shareable<Resource>::
-release()
+pyre::mpi::Shareable<Resource>::release()
 {
     // decrement the reference count
     if (--_count == 0 && !_immortal) {
@@ -35,8 +33,7 @@ release()
 
 template <typename Resource>
 int
-pyre::mpi::Shareable<Resource>::
-references() const
+pyre::mpi::Shareable<Resource>::references() const
 {
     // return the count of outstanding references
     return _count;
@@ -45,8 +42,7 @@ references() const
 
 template <typename Resource>
 typename pyre::mpi::Shareable<Resource>::handle_t
-pyre::mpi::Shareable<Resource>::
-handle() const
+pyre::mpi::Shareable<Resource>::handle() const
 {
     // return the MPI handle
     return _handle;
@@ -55,19 +51,17 @@ handle() const
 
 // destructor
 template <typename Resource>
-pyre::mpi::Shareable<Resource>::
-~Shareable()
+pyre::mpi::Shareable<Resource>::~Shareable()
 {}
 
 // constructor
 template <typename Resource>
-pyre::mpi::Shareable<Resource>::
-Shareable(handle_t handle, bool immortal) :
+pyre::mpi::Shareable<Resource>::Shareable(handle_t handle, bool immortal) :
     _count(0),
     _immortal(immortal),
     _handle(handle)
 {}
 
-# endif
+#endif
 
 // end of file

@@ -27,13 +27,11 @@
 
 
 // type declarations
-namespace pyre {
-    namespace mpi {
-        typedef Error error_t;
-        typedef Communicator communicator_t;
-        typedef Group group_t;
-    }
-}
+namespace pyre { namespace mpi {
+    typedef Error error_t;
+    typedef Communicator communicator_t;
+    typedef Group group_t;
+}} // namespace pyre::mpi
 
 #endif
 
