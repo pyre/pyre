@@ -102,7 +102,7 @@ class File(Group):
         # if there was no {profile} specification
         profile = "default" if profile is None else profile
         # ask for the credentials
-        id, secret, token = aws.credentials(profile="default")
+        id, secret, token = aws.credentials(profile=profile)
         # if both are non-trivial
         if id and secret:
             # turn authentication on
