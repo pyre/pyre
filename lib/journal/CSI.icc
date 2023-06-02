@@ -11,89 +11,63 @@
 
 // static interface
 auto
-pyre::journal::CSI::
-reset() -> rep_type
+pyre::journal::CSI::reset() -> rep_type
 {
     // initialize
-    rep_type esc { ASCII::ESC } ;
+    rep_type esc { ASCII::ESC };
     // assemble and return
     return esc + "[0m";
 }
 
 auto
-pyre::journal::CSI::
-csi3(int code, bool bright) -> rep_type
+pyre::journal::CSI::csi3(int code, bool bright) -> rep_type
 {
     // prime the escape sequence
     rep_type esc { ASCII::ESC };
     // assemble and return it
-    return esc
-        + "["
-        + (bright ? "1" : "0")
-        + ";" + std::to_string(code)
-        + "m";
+    return esc + "[" + (bright ? "1" : "0") + ";" + std::to_string(code) + "m";
 }
 
 
 auto
-pyre::journal::CSI::
-csi8(int red, int green, int blue, bool foreground) -> rep_type
+pyre::journal::CSI::csi8(int red, int green, int blue, bool foreground) -> rep_type
 {
     // prime the escape sequence
     rep_type esc { ASCII::ESC };
     // assemble and return it
-    return esc
-        + "["
-        + (foreground ? "38" : "48")
-        + ";5;"
-        + std::to_string(16 + blue + green*6 + red*6*6)
-        + "m";
+    return esc + "[" + (foreground ? "38" : "48") + ";5;"
+         + std::to_string(16 + blue + green * 6 + red * 6 * 6) + "m";
 }
 
 
 auto
-pyre::journal::CSI::
-csi8_gray(int gray, bool foreground) -> rep_type
+pyre::journal::CSI::csi8_gray(int gray, bool foreground) -> rep_type
 {
     // prime the escape sequence
     rep_type esc { ASCII::ESC };
     // assemble and return it
-    return esc
-        + "["
-        + (foreground ? "38" : "48")
-        + ";5;"
-        + std::to_string(232 + gray)
-        + "m";
+    return esc + "[" + (foreground ? "38" : "48") + ";5;" + std::to_string(232 + gray) + "m";
 }
 
 
 auto
-pyre::journal::CSI::
-csi24(int red, int green, int blue, bool foreground) -> rep_type
+pyre::journal::CSI::csi24(int red, int green, int blue, bool foreground) -> rep_type
 {
     // prime the escape sequence
     rep_type esc { ASCII::ESC };
     // assemble and return it
-    return esc
-        + "["
-        + (foreground ? "38" : "48")
-        + ";2;"
-        + std::to_string(red) + ";" + std::to_string(green) + ";" + std::to_string(blue)
-        + "m";
+    return esc + "[" + (foreground ? "38" : "48") + ";2;" + std::to_string(red) + ";"
+         + std::to_string(green) + ";" + std::to_string(blue) + "m";
 }
 
 
 auto
-pyre::journal::CSI::
-blink(bool state) -> rep_type
+pyre::journal::CSI::blink(bool state) -> rep_type
 {
     // prime the escape sequence
     rep_type esc { ASCII::ESC };
     // assemble and return it
-    return esc
-        + "["
-        + (state ? "5" : "25")
-        + "m";
+    return esc + "[" + (state ? "5" : "25") + "m";
 }
 
 

@@ -11,8 +11,7 @@
 
 // metamethods
 bool
-pyre::journal::Console::
-tty() const
+pyre::journal::Console::tty() const
 {
     // i have a flag for that...
     return _tty;

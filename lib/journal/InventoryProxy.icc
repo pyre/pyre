@@ -11,8 +11,7 @@
 
 // metamethods
 template <typename clientT>
-pyre::journal::InventoryProxy<clientT>::
-InventoryProxy(inventory_reference inventory) :
+pyre::journal::InventoryProxy<clientT>::InventoryProxy(inventory_reference inventory) :
     _inventory(inventory)
 {}
 
@@ -20,8 +19,7 @@ InventoryProxy(inventory_reference inventory) :
 // accessors
 template <typename clientT>
 auto
-pyre::journal::InventoryProxy<clientT>::
-active() const -> active_type
+pyre::journal::InventoryProxy<clientT>::active() const -> active_type
 {
     // ask my referent
     return _inventory.active();
@@ -30,8 +28,7 @@ active() const -> active_type
 
 template <typename clientT>
 auto
-pyre::journal::InventoryProxy<clientT>::
-fatal() const -> fatal_type
+pyre::journal::InventoryProxy<clientT>::fatal() const -> fatal_type
 {
     // ask my referent
     return _inventory.fatal();
@@ -40,8 +37,7 @@ fatal() const -> fatal_type
 
 template <typename clientT>
 auto
-pyre::journal::InventoryProxy<clientT>::
-device() const -> device_type
+pyre::journal::InventoryProxy<clientT>::device() const -> device_type
 {
     // first, look in my inventory for a local setting
     auto device = _inventory.device();
@@ -77,8 +73,7 @@ device() const -> device_type
 // mutators
 template <typename clientT>
 auto
-pyre::journal::InventoryProxy<clientT>::
-active(active_type active) -> client_reference
+pyre::journal::InventoryProxy<clientT>::active(active_type active) -> client_reference
 {
     // delegate
     _inventory.active(active);
@@ -89,8 +84,7 @@ active(active_type active) -> client_reference
 
 template <typename clientT>
 auto
-pyre::journal::InventoryProxy<clientT>::
-fatal(fatal_type fatal) -> client_reference
+pyre::journal::InventoryProxy<clientT>::fatal(fatal_type fatal) -> client_reference
 {
     // delegate
     _inventory.fatal(fatal);
@@ -101,8 +95,7 @@ fatal(fatal_type fatal) -> client_reference
 
 template <typename clientT>
 auto
-pyre::journal::InventoryProxy<clientT>::
-device(device_type device) -> client_reference
+pyre::journal::InventoryProxy<clientT>::device(device_type device) -> client_reference
 {
     // delegate
     _inventory.device(device);
@@ -114,8 +107,7 @@ device(device_type device) -> client_reference
 template <typename clientT>
 template <class deviceT, class... Args>
 auto
-pyre::journal::InventoryProxy<clientT>::
-device(Args&&... args) -> client_reference
+pyre::journal::InventoryProxy<clientT>::device(Args &&... args) -> client_reference
 {
     // delegate
     _inventory.device<deviceT>(std::forward<Args>(args)...);
@@ -127,8 +119,7 @@ device(Args&&... args) -> client_reference
 // interface
 template <typename clientT>
 auto
-pyre::journal::InventoryProxy<clientT>::
-activate() -> client_reference
+pyre::journal::InventoryProxy<clientT>::activate() -> client_reference
 {
     // set my activation
     active(true);
@@ -139,8 +130,7 @@ activate() -> client_reference
 
 template <typename clientT>
 auto
-pyre::journal::InventoryProxy<clientT>::
-deactivate() -> client_reference
+pyre::journal::InventoryProxy<clientT>::deactivate() -> client_reference
 {
     // set my activation
     active(false);
@@ -151,8 +141,7 @@ deactivate() -> client_reference
 
 // syntactic sugar
 template <typename clientT>
-pyre::journal::InventoryProxy<clientT>::
-operator active_type() const
+pyre::journal::InventoryProxy<clientT>::operator active_type() const
 {
     // return my activation state
     return active();
