@@ -33,7 +33,8 @@ namespace pyre::tensor {
 
     template <int D1, int D2, typename T, class packingT, int... J>
     std::ostream & _print_row(
-        std::ostream & os, const matrix_t<D1, D2, T, packingT> & tensor, int row, integer_sequence<J...>)
+        std::ostream & os, const matrix_t<D1, D2, T, packingT> & tensor, int row,
+        integer_sequence<J...>)
     {
         os << "[ ";
         if (sizeof...(J) > 0)
@@ -44,7 +45,7 @@ namespace pyre::tensor {
 
     template <int D1, int D2, typename T, class packingT, int... J>
     std::ostream & _print_comma_row(
-        std::ostream & os, const matrix_t<D1, D2, T, packingT> & tensor, int row, 
+        std::ostream & os, const matrix_t<D1, D2, T, packingT> & tensor, int row,
         integer_sequence<J...>)
     {
         os << ",";
@@ -71,16 +72,16 @@ namespace pyre::tensor {
 
     // overload operator<< for second order tensors
     template <int D1, int D2, typename T, class packingT>
-    std::ostream & operator<<(std::ostream & os, const pyre::tensor::matrix_t<D1, D2, T, packingT> & tensor)
+    std::ostream & operator<<(
+        std::ostream & os, const pyre::tensor::matrix_t<D1, D2, T, packingT> & tensor)
     {
-        return _print_matrix(os, tensor, make_integer_sequence<D1-1> {});
+        return _print_matrix(os, tensor, make_integer_sequence<D1 - 1> {});
     }
 
     template <typename T>
     constexpr bool is_equal(T lhs, T rhs)
     {
-        if ((lhs < rhs + epsilon_right(rhs)) && (lhs > rhs - epsilon_left(rhs)))
-        {
+        if ((lhs < rhs + epsilon_right(rhs)) && (lhs > rhs - epsilon_left(rhs))) {
             return true;
         }
 
@@ -88,13 +89,14 @@ namespace pyre::tensor {
     }
 
     template <typename T, class packingT, int... I>
-    constexpr bool is_equal(const Tensor<T, packingT, I...> & lhs, 
-        const Tensor<T, packingT, I...> & rhs)
+    constexpr bool is_equal(
+        const Tensor<T, packingT, I...> & lhs, const Tensor<T, packingT, I...> & rhs)
     {
         // helper function (component-wise)
-        constexpr auto _is_equal = []<int... J>(const Tensor<T, packingT, I...> & lhs, 
-            const Tensor<T, packingT, I...> & rhs, integer_sequence<J...>) {
-
+        constexpr auto _is_equal = []<int... J>(
+            const Tensor<T, packingT, I...> & lhs, const Tensor<T, packingT, I...> & rhs,
+            integer_sequence<J...>)
+        {
             // if all components are equal
             if ((is_equal(lhs[J], rhs[J]) && ...)) {
                 // then the tensors are equal
@@ -114,9 +116,9 @@ namespace pyre::tensor {
     constexpr bool is_zero(const Tensor<T, packingT, I...> & A, T tolerance)
     {
         // helper function (component-wise)
-        constexpr auto _is_zero = []<int... J>(const Tensor<T, packingT, I...> & A, 
-            T tolerance, integer_sequence<J...>) {
-
+        constexpr auto _is_zero =
+            []<int... J>(const Tensor<T, packingT, I...> & A, T tolerance, integer_sequence<J...>)
+        {
             // if all components are zero
             if (((A[J] <= tolerance) && ...)) {
                 // then the tensor is zero
@@ -134,8 +136,8 @@ namespace pyre::tensor {
 
     // helper function (compare J-th component)
     template <int J, typename T, class packingT, int... I>
-    constexpr auto is_less(const Tensor<T, packingT, I...>& lhs, 
-    const Tensor<T, packingT, I...>& rhs) -> bool 
+    constexpr auto is_less(
+        const Tensor<T, packingT, I...> & lhs, const Tensor<T, packingT, I...> & rhs) -> bool
         requires(J < Tensor<T, packingT, I...>::size)
     {
         // if the J-th component of {lhs} is less than J-th component of {rhs}
@@ -147,16 +149,16 @@ namespace pyre::tensor {
         if (lhs[J] != rhs[J]) {
             // then {lhs} is not less than {rhs}
             return false;
-        } 
+        }
         // if the J-th component of {lhs} is equal to J-th component of {rhs},
         // then compare the next component
-        return is_less<J+1>(lhs, rhs);
+        return is_less<J + 1>(lhs, rhs);
     }
 
     // helper function (compare J-th component)
     template <int J, typename T, class packingT, int... I>
-    constexpr auto is_less(const Tensor<T, packingT, I...>& lhs, 
-    const Tensor<T, packingT, I...>& rhs) -> bool 
+    constexpr auto is_less(
+        const Tensor<T, packingT, I...> & lhs, const Tensor<T, packingT, I...> & rhs) -> bool
         requires(J == Tensor<T, packingT, I...>::size)
     {
         // base case for recursion: all components are equal
@@ -164,14 +166,14 @@ namespace pyre::tensor {
     }
 
     template <typename T, class packingT, int... I>
-    inline bool operator< (const Tensor<T, packingT, I...>& lhs, 
-        const Tensor<T, packingT, I...>& rhs) 
+    inline bool operator<(
+        const Tensor<T, packingT, I...> & lhs, const Tensor<T, packingT, I...> & rhs)
     {
         // recursively compare all components starting from component 0
-        return is_less<0>(lhs, rhs); 
+        return is_less<0>(lhs, rhs);
     }
 
-}
+} // namespace pyre::tensor
 
 
 #endif

@@ -204,10 +204,10 @@ pyre::grid::Grid<packingT, storageT>::slice(
     // get the layout of the slice
     auto sliceLayout = _layout.template slice<sliceRank>(base, shape);
 
-    // TOFIX: not general, we should infer pyre::grid::canonical_t from packingT 
+    // TOFIX: not general, we should infer pyre::grid::canonical_t from packingT
     // sliced packing with rank sliceRank
     using sliced_pack_t = pyre::grid::canonical_t<sliceRank>;
-    
+
     // make a sliced grid and return it
     return Grid<sliced_pack_t, storageT>(sliceLayout, _data);
 }
