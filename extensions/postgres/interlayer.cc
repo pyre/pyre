@@ -20,14 +20,15 @@
 typedef PyObject * (*pythonizer_t)(const char *);
 
 // declarations of the converters; definitions at the bottom
-PyObject * asNone(const char *);
-PyObject * asString(const char *);
+PyObject *
+asNone(const char *);
+PyObject *
+asString(const char *);
 
 
 // convert the tuples in PGresult into a python tuple
 PyObject *
-pyre::extensions::postgres::
-buildResultTuple(PGresult * result)
+pyre::extensions::postgres::buildResultTuple(PGresult * result)
 {
     // set up the debug channel
     pyre::journal::debug_t debug("postgres.conversions");
@@ -37,7 +38,7 @@ buildResultTuple(PGresult * result)
     // and how many fields in each tuple
     int fields = PQnfields(result);
     // build a python tuple to hold the data
-    PyObject * data = PyTuple_New(tuples+1);
+    PyObject * data = PyTuple_New(tuples + 1);
 
     // build a tuple to hold the names of the fields
     PyObject * header = PyTuple_New(fields);
@@ -59,30 +60,20 @@ buildResultTuple(PGresult * result)
     for (int field = 0; field < fields; field++) {
         // text, binary, or what?
         if (PQfformat(result, field) == 0) {
-            debug
-                << pyre::journal::at(__HERE__)
-                << "field '" << PQfname(result, field) << "' is formatted as text"
-                << pyre::journal::endl;
+            debug << pyre::journal::at(__HERE__) << "field '" << PQfname(result, field)
+                  << "' is formatted as text" << pyre::journal::endl;
             converters.push_back(asString);
 
         } else if (PQfformat(result, field) == 1) {
             pyre::journal::firewall_t firewall("postgress.conversions");
-            firewall
-                << pyre::journal::at(__HERE__)
-                << "NYI: binary data for field '"
-                << PQfname(result, field)
-                << "'"
-                << pyre::journal::endl;
+            firewall << pyre::journal::at(__HERE__) << "NYI: binary data for field '"
+                     << PQfname(result, field) << "'" << pyre::journal::endl;
             converters.push_back(asNone);
 
         } else {
             pyre::journal::firewall_t firewall("postgress.conversions");
-            firewall
-                << pyre::journal::at(__HERE__)
-                << "unknown postgres format code for field '"
-                << PQfname(result, field)
-                << "'"
-                << pyre::journal::endl;
+            firewall << pyre::journal::at(__HERE__) << "unknown postgres format code for field '"
+                     << PQfname(result, field) << "'" << pyre::journal::endl;
             converters.push_back(asNone);
         }
     }
@@ -93,7 +84,6 @@ buildResultTuple(PGresult * result)
         PyObject * row = PyTuple_New(fields);
         // iterate over the data fields
         for (int field = 0; field < fields; field++) {
-
             // place-holder for the field value
             PyObject * item;
             // if it is not null
@@ -110,7 +100,7 @@ buildResultTuple(PGresult * result)
             PyTuple_SET_ITEM(row, field, item);
         }
         // and now that the row tuple is fully built, add it to the data set
-        PyTuple_SET_ITEM(data, tuple+1, row);
+        PyTuple_SET_ITEM(data, tuple + 1, row);
     }
 
     // return the data tuple
@@ -120,15 +110,12 @@ buildResultTuple(PGresult * result)
 
 // analyze and process the result set
 PyObject *
-pyre::extensions::postgres::
-processResult(string_t command, PGresult * result, resultProcessor_t processor)
+pyre::extensions::postgres::processResult(
+    string_t command, PGresult * result, resultProcessor_t processor)
 {
     // in case someone is listening...
     pyre::journal::debug_t debug("postgres.execution");
-    debug
-        << pyre::journal::at(__HERE__)
-        << "analyzing result set"
-        << pyre::journal::endl;
+    debug << pyre::journal::at(__HERE__) << "analyzing result set" << pyre::journal::endl;
 
     //  this is what we will return to the caller
     PyObject * value;
@@ -146,10 +133,8 @@ processResult(string_t command, PGresult * result, resultProcessor_t processor)
         // the command was executed successfully
         // diagnostics
         if (debug.active()) {
-            debug
-                << pyre::journal::at(__HERE__)
-                << "success: " << PQcmdStatus(result)
-                << pyre::journal::endl;
+            debug << pyre::journal::at(__HERE__) << "success: " << PQcmdStatus(result)
+                  << pyre::journal::endl;
         }
         // build the return value
         Py_INCREF(Py_None);
@@ -160,12 +145,9 @@ processResult(string_t command, PGresult * result, resultProcessor_t processor)
         if (debug.active()) {
             int fields = PQnfields(result);
             int tuples = PQntuples(result);
-            debug
-                << pyre::journal::at(__HERE__)
-                << "success: "
-                << tuples << " tuple" << (tuples == 1 ? "" : "s")
-                << " with " << fields << " field" << (fields == 1 ? "" : "s") << " each"
-                << pyre::journal::endl;
+            debug << pyre::journal::at(__HERE__) << "success: " << tuples << " tuple"
+                  << (tuples == 1 ? "" : "s") << " with " << fields << " field"
+                  << (fields == 1 ? "" : "s") << " each" << pyre::journal::endl;
         }
         // build the return value
         value = processor(result);
@@ -187,8 +169,7 @@ processResult(string_t command, PGresult * result, resultProcessor_t processor)
 // support for raising exceptions
 // raise an OperationalError exception
 PyObject *
-pyre::extensions::postgres::
-raiseOperationalError(string_t description)
+pyre::extensions::postgres::raiseOperationalError(string_t description)
 {
     PyObject * args = PyTuple_New(0);
     PyObject * kwds = Py_BuildValue("{s:s}", "description", description);
@@ -202,14 +183,10 @@ raiseOperationalError(string_t description)
 
 // raise a ProgrammingError exception
 PyObject *
-pyre::extensions::postgres::
-raiseProgrammingError(string_t description, string_t command)
+pyre::extensions::postgres::raiseProgrammingError(string_t description, string_t command)
 {
     PyObject * args = PyTuple_New(0);
-    PyObject * kwds = Py_BuildValue("{s:s, s:s}",
-                                    "diagnostic", description,
-                                    "command", command
-                                    );
+    PyObject * kwds = Py_BuildValue("{s:s, s:s}", "diagnostic", description, "command", command);
     PyObject * exception = PyObject_Call(ProgrammingError, args, kwds);
     // prepare to raise an instance of ProgrammingError
     PyErr_SetObject(ProgrammingError, exception);
@@ -219,15 +196,17 @@ raiseProgrammingError(string_t description, string_t command)
 
 
 // data converter definitions
- PyObject * asNone(const char * value)
- {
-     Py_INCREF(Py_None);
-     return Py_None;
- }
+PyObject *
+asNone(const char * value)
+{
+    Py_INCREF(Py_None);
+    return Py_None;
+}
 
- PyObject * asString(const char * value)
- {
-     return PyUnicode_FromString(value);
- }
+PyObject *
+asString(const char * value)
+{
+    return PyUnicode_FromString(value);
+}
 
 // end of file
