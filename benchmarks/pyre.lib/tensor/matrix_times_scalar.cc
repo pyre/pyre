@@ -33,7 +33,7 @@ matrix_times_scalar(int N)
 
     // ARRAY
     // a scalar
-    pyre::tensor::real scalar = sqrt(2);
+    pyre::tensor::real scalar = std::sqrt(2);
 
     // array tensor
     std::array<double, 9> tensor_c { 1.0, -1.0, 2.0, 1.0, 0.0, 1.0, 2.0, -1.0, 0.0 };
