@@ -41,7 +41,7 @@ main(int argc, char * argv[])
     static_assert(a * b == b * a);
 
     // cross product of a vector with itself is zero
-    static_assert(cross(a, a) == vector_t<3>::zero);
+    static_assert(cross(a, a) == zero<vector_t<3>>);
 
     // anti-commutativity of cross product
     static_assert(cross(a, b) == -cross(b, a));
@@ -63,7 +63,7 @@ main(int argc, char * argv[])
 
     // Jacobi identity
     static_assert(
-        cross(a, cross(b, c)) + cross(c, cross(a, b)) + cross(b, cross(c, a)) == vector_t<3>::zero);
+        cross(a, cross(b, c)) + cross(c, cross(a, b)) + cross(b, cross(c, a)) == zero<vector_t<3>>);
 
     // Binet-Cauchy identity
     static_assert(cross(a, b) * cross(c, d) == (a * c) * (b * d) - (b * c) * (a * d));

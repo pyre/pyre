@@ -28,16 +28,16 @@ main(int argc, char * argv[])
     };
 
     // exp(zero) = one
-    static_assert(function(matrix_t<2>::zero, constexpr_exp) == matrix_t<2>::identity);
+    static_assert(function(zero<matrix_t<2>>, constexpr_exp) == identity<matrix_t<2>>);
 
     // log(one) = zero
-    static_assert(function(matrix_t<2>::identity, constexpr_log) == matrix_t<2>::zero);
+    static_assert(function(identity<matrix_t<2>>, constexpr_log) == zero<matrix_t<2>>);
 
     // exp(zero) = one
-    static_assert(function(matrix_t<3>::zero, constexpr_exp) == matrix_t<3>::identity);
+    static_assert(function(zero<matrix_t<3>>, constexpr_exp) == identity<matrix_t<3>>);
 
     // log(one) = zero
-    static_assert(function(matrix_t<3>::identity, constexpr_log) == matrix_t<3>::zero);
+    static_assert(function(identity<matrix_t<3>>, constexpr_log) == zero<matrix_t<3>>);
 
     // all done
     return 0;

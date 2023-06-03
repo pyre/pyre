@@ -565,7 +565,7 @@ pyre::tensor::skew(const vector_t<3, T> & a) -> matrix_t<3, 3, T>
     using matrix_t = matrix_t<3, 3, T>;
 
     // instantiate the result
-    matrix_t A = matrix_t::zero;
+    matrix_t A = zero<matrix_t>;
 
     A[matrix_t::template getOffset<0, 1>()] = -a[2];
     A[matrix_t::template getOffset<0, 2>()] = a[1];
@@ -826,7 +826,7 @@ template <int D, typename T>
 constexpr auto
 pyre::tensor::skew(const symmetric_matrix_t<D, T> & A) -> auto
 {
-    return symmetric_matrix_t<D, T>::zero;
+    return zero<symmetric_matrix_t<D, T>>;
 }
 
 template <typename T>

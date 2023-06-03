@@ -32,6 +32,23 @@ namespace pyre::tensor {
     // typedef for diagonal matrices
     template <int D, typename T = real>
     using diagonal_matrix_t = matrix_t<D, D, T, pyre::grid::diagonal_t<2>>;
+
+    // the zero tensor
+    template <class tensorT>
+    constexpr auto zero = make_zeros<tensorT>();
+
+    // a tensor of ones
+    template <class tensorT>
+    constexpr auto ones = make_ones<tensorT>();
+
+    // the identity tensor
+    template <class tensorT>
+    constexpr auto identity = make_identity<tensorT>();
+
+    // the unit tensor with a one in the entry whose indices are specified in {J...}
+    template <class tensorT, int... J>
+    constexpr auto unit = make_basis_element<tensorT, J...>();
+
 } // namespace pyre::tensor
 
 

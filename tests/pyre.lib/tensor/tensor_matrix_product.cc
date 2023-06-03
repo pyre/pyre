@@ -20,15 +20,15 @@ int
 main(int argc, char * argv[])
 {
     // the packing-agnostic canonical basis of R^3x3
-    constexpr auto e00 = matrix_t<3>::unit<0, 0>;
-    constexpr auto e01 = matrix_t<3>::unit<0, 1>;
-    constexpr auto e02 = matrix_t<3>::unit<0, 2>;
-    constexpr auto e10 = matrix_t<3>::unit<1, 0>;
-    constexpr auto e11 = matrix_t<3>::unit<1, 1>;
-    constexpr auto e12 = matrix_t<3>::unit<1, 2>;
-    constexpr auto e20 = matrix_t<3>::unit<2, 0>;
-    constexpr auto e21 = matrix_t<3>::unit<2, 1>;
-    constexpr auto e22 = matrix_t<3>::unit<2, 2>;
+    constexpr auto e00 = unit<matrix_t<3>, 0, 0>;
+    constexpr auto e01 = unit<matrix_t<3>, 0, 1>;
+    constexpr auto e02 = unit<matrix_t<3>, 0, 2>;
+    constexpr auto e10 = unit<matrix_t<3>, 1, 0>;
+    constexpr auto e11 = unit<matrix_t<3>, 1, 1>;
+    constexpr auto e12 = unit<matrix_t<3>, 1, 2>;
+    constexpr auto e20 = unit<matrix_t<3>, 2, 0>;
+    constexpr auto e21 = unit<matrix_t<3>, 2, 1>;
+    constexpr auto e22 = unit<matrix_t<3>, 2, 2>;
 
     // pick a matrix
     constexpr auto B = 1.0 * e00 + 0.0 * e01 + 0.0 * e02 + 0.0 * e10 + 2.0 * e11 + 0.0 * e12

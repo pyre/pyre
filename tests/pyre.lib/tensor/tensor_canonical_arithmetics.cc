@@ -24,23 +24,23 @@ main(int argc, char * argv[])
 
 
     // vector R^2: (-1) * v == - v
-    static_assert(minus_one * vector_t<2>::ones == -vector_t<2>::ones);
+    static_assert(minus_one * ones<vector_t<2>> == -ones<vector_t<2>>);
     // vector R^2: v * (-1) == - v
-    static_assert(vector_t<2>::ones * minus_one == -vector_t<2>::ones);
+    static_assert(ones<vector_t<2>> * minus_one == -ones<vector_t<2>>);
     // vector R^3: v * (-1) == - v
-    static_assert(minus_one * vector_t<3>::ones == -vector_t<3>::ones);
+    static_assert(minus_one * ones<vector_t<3>> == -ones<vector_t<3>>);
     // vector R^3: v * (-1) == - v
-    static_assert(vector_t<3>::ones * minus_one == -vector_t<3>::ones);
+    static_assert(ones<vector_t<3>> * minus_one == -ones<vector_t<3>>);
 
 
     // matrix R^2x2: (-1) * A == - A
-    static_assert(minus_one * matrix_t<2, 2>::ones == -matrix_t<2, 2>::ones);
+    static_assert(minus_one * ones<matrix_t<2, 2>> == -ones<matrix_t<2, 2>>);
     // matrix R^2x2: A * (-1) == - A
-    static_assert(matrix_t<2, 2>::ones * minus_one == -matrix_t<2, 2>::ones);
+    static_assert(ones<matrix_t<2, 2>> * minus_one == -ones<matrix_t<2, 2>>);
     // matrix R^3x3: (-1) * A == - A
-    static_assert(minus_one * matrix_t<3, 3>::ones == -matrix_t<3, 3>::ones);
+    static_assert(minus_one * ones<matrix_t<3, 3>> == -ones<matrix_t<3, 3>>);
     // matrix R^3x3: A * (-1) == - A
-    static_assert(matrix_t<3, 3>::ones * minus_one == -matrix_t<3, 3>::ones);
+    static_assert(ones<matrix_t<3, 3>> * minus_one == -ones<matrix_t<3, 3>>);
 
 
     // a vector in R^2
