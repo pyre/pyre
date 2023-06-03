@@ -1,0 +1,195 @@
+// -*- c++ -*-
+//
+// bianca giovanardi
+// (c) 1998-2023 all rights reserved
+
+
+// code guard
+#if !defined(pyre_tensor_utilities_icc)
+#error this file contains implementation details for tensor utilities
+#else
+
+
+namespace {
+
+    // helper functions for print
+    template <typename Arg, typename... Args>
+    inline std::ostream & _print(std::ostream & os, Arg && arg, Args &&... args)
+    {
+        os << std::forward<Arg>(arg);
+        ((os << ", " << std::forward<Args>(args)), ...);
+        return os;
+    }
+
+    template <int D, typename T, int... J>
+    inline std::ostream & _print_vector(
+        std::ostream & os, const pyre::tensor::vector_t<D, T> & vector,
+        pyre::grid::integer_sequence<J...>)
+    {
+        os << "[ ";
+        if (sizeof...(J) > 0)
+            _print(os, vector[J]...);
+        os << " ]";
+        return os;
+    }
+
+    template <int D1, int D2, typename T, class packingT, int... J>
+    std::ostream & _print_row(
+        std::ostream & os, const pyre::tensor::matrix_t<D1, D2, T, packingT> & tensor, int row,
+        pyre::grid::integer_sequence<J...>)
+    {
+        os << "[ ";
+        if (sizeof...(J) > 0)
+            _print(os, tensor[{ row, J }]...);
+        os << " ]";
+        return os;
+    }
+
+    template <int D1, int D2, typename T, class packingT, int... J>
+    std::ostream & _print_comma_row(
+        std::ostream & os, const pyre::tensor::matrix_t<D1, D2, T, packingT> & tensor, int row,
+        pyre::grid::integer_sequence<J...>)
+    {
+        os << ",";
+        return _print_row(os, tensor, row, pyre::grid::make_integer_sequence<D2> {});
+    }
+
+    template <int D1, int D2, typename T, class packingT, int... J>
+    std::ostream & _print_matrix(
+        std::ostream & os, const pyre::tensor::matrix_t<D1, D2, T, packingT> & tensor,
+        pyre::grid::integer_sequence<J...>)
+    {
+        os << "[ ";
+        _print_row(os, tensor, 0, pyre::grid::make_integer_sequence<D2> {});
+        ((_print_comma_row(os, tensor, J + 1, pyre::grid::make_integer_sequence<D2> {})), ...);
+        os << " ]";
+        return os;
+    }
+
+} // namespace
+
+// overload operator<< for vectors
+template <int D, typename T>
+std::ostream &
+pyre::tensor::operator<<(std::ostream & os, const pyre::tensor::vector_t<D, T> & vector)
+{
+    return _print_vector(os, vector, pyre::grid::make_integer_sequence<D> {});
+}
+
+// overload operator<< for second order tensors
+template <int D1, int D2, typename T, class packingT>
+std::ostream &
+pyre::tensor::operator<<(
+    std::ostream & os, const pyre::tensor::matrix_t<D1, D2, T, packingT> & tensor)
+{
+    return _print_matrix(os, tensor, pyre::grid::make_integer_sequence<D1 - 1> {});
+}
+
+template <typename T>
+constexpr bool
+pyre::tensor::is_equal(T lhs, T rhs)
+{
+    if ((lhs < rhs + epsilon_right(rhs)) && (lhs > rhs - epsilon_left(rhs))) {
+        return true;
+    }
+
+    return false;
+}
+
+template <typename T, class packingT, int... I>
+constexpr bool
+pyre::tensor::is_equal(const Tensor<T, packingT, I...> & lhs, const Tensor<T, packingT, I...> & rhs)
+{
+    // helper function (component-wise)
+    constexpr auto _is_equal = []<int... J>(
+        const Tensor<T, packingT, I...> & lhs, const Tensor<T, packingT, I...> & rhs,
+        pyre::grid::integer_sequence<J...>)
+    {
+        // if all components are equal
+        if ((is_equal(lhs[J], rhs[J]) && ...)) {
+            // then the tensors are equal
+            return true;
+        }
+        // then the tensors differ
+        return false;
+    };
+
+    // the size of the tensor
+    constexpr int D = Tensor<T, packingT, I...>::size;
+    // all done
+    return _is_equal(lhs, rhs, pyre::grid::make_integer_sequence<D> {});
+}
+
+template <typename T, class packingT, int... I>
+constexpr bool
+pyre::tensor::is_zero(const Tensor<T, packingT, I...> & A, T tolerance)
+{
+    // helper function (component-wise)
+    constexpr auto _is_zero = []<int... J>(
+        const Tensor<T, packingT, I...> & A, T tolerance, pyre::grid::integer_sequence<J...>)
+    {
+        // if all components are zero
+        if (((A[J] <= tolerance) && ...)) {
+            // then the tensor is zero
+            return true;
+        }
+        // then the tensors is not zero
+        return false;
+    };
+
+    // the size of the tensor
+    constexpr int D = Tensor<T, packingT, I...>::size;
+    // all done
+    return _is_zero(A, tolerance, pyre::grid::make_integer_sequence<D> {});
+}
+
+namespace {
+
+    // helper function (compare J-th component)
+    template <int J, typename T, class packingT, int... I>
+    constexpr auto is_less(
+        const pyre::tensor::Tensor<T, packingT, I...> & lhs,
+        const pyre::tensor::Tensor<T, packingT, I...> & rhs) -> bool
+        requires(J < pyre::tensor::Tensor<T, packingT, I...>::size)
+    {
+        // if the J-th component of {lhs} is less than J-th component of {rhs}
+        if ((lhs[J] < rhs[J])) {
+            // then {lhs} is less than {rhs}
+            return true;
+        }
+        // if the J-th component of {lhs} is greater than J-th component of {rhs}
+        if (lhs[J] != rhs[J]) {
+            // then {lhs} is not less than {rhs}
+            return false;
+        }
+        // if the J-th component of {lhs} is equal to J-th component of {rhs},
+        // then compare the next component
+        return is_less<J + 1>(lhs, rhs);
+    }
+
+    // helper function (compare J-th component)
+    template <int J, typename T, class packingT, int... I>
+    constexpr auto is_less(
+        const pyre::tensor::Tensor<T, packingT, I...> & lhs,
+        const pyre::tensor::Tensor<T, packingT, I...> & rhs) -> bool
+        requires(J == pyre::tensor::Tensor<T, packingT, I...>::size)
+    {
+        // base case for recursion: all components are equal
+        return false;
+    }
+
+} // namespace
+
+template <typename T, class packingT, int... I>
+inline bool
+pyre::tensor::operator<(
+    const Tensor<T, packingT, I...> & lhs, const Tensor<T, packingT, I...> & rhs)
+{
+    // recursively compare all components starting from component 0
+    return is_less<0>(lhs, rhs);
+}
+
+
+#endif
+
+// end of file
