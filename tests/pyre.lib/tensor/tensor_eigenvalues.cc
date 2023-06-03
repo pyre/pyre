@@ -21,10 +21,10 @@ main(int argc, char * argv[])
 {
     {
         // the packing-agnostic canonical basis of R^2x2
-        constexpr auto e_00 = matrix_t<2>::unit<0, 0>;
-        constexpr auto e_01 = matrix_t<2>::unit<0, 1>;
-        constexpr auto e_10 = matrix_t<2>::unit<1, 0>;
-        constexpr auto e_11 = matrix_t<2>::unit<1, 1>;
+        constexpr auto e_00 = unit<matrix_t<2>, 0, 0>;
+        constexpr auto e_01 = unit<matrix_t<2>, 0, 1>;
+        constexpr auto e_10 = unit<matrix_t<2>, 1, 0>;
+        constexpr auto e_11 = unit<matrix_t<2>, 1, 1>;
         constexpr auto e_01s = symmetric(e_01 + e_10);
 
         // a symmetric matrix in R^2x2
@@ -54,15 +54,15 @@ main(int argc, char * argv[])
 
     {
         // the packing-agnostic canonical basis of R^3x3
-        constexpr auto e_00 = matrix_t<3>::unit<0, 0>;
-        constexpr auto e_01 = matrix_t<3>::unit<0, 1>;
-        constexpr auto e_02 = matrix_t<3>::unit<0, 2>;
-        constexpr auto e_10 = matrix_t<3>::unit<1, 0>;
-        constexpr auto e_11 = matrix_t<3>::unit<1, 1>;
-        constexpr auto e_12 = matrix_t<3>::unit<1, 2>;
-        constexpr auto e_20 = matrix_t<3>::unit<2, 0>;
-        constexpr auto e_21 = matrix_t<3>::unit<2, 1>;
-        constexpr auto e_22 = matrix_t<3>::unit<2, 2>;
+        constexpr auto e_00 = unit<matrix_t<3>, 0, 0>;
+        constexpr auto e_01 = unit<matrix_t<3>, 0, 1>;
+        constexpr auto e_02 = unit<matrix_t<3>, 0, 2>;
+        constexpr auto e_10 = unit<matrix_t<3>, 1, 0>;
+        constexpr auto e_11 = unit<matrix_t<3>, 1, 1>;
+        constexpr auto e_12 = unit<matrix_t<3>, 1, 2>;
+        constexpr auto e_20 = unit<matrix_t<3>, 2, 0>;
+        constexpr auto e_21 = unit<matrix_t<3>, 2, 1>;
+        constexpr auto e_22 = unit<matrix_t<3>, 2, 2>;
         constexpr auto e_01s = symmetric(e_01 + e_10);
         constexpr auto e_02s = symmetric(e_02 + e_20);
         constexpr auto e_12s = symmetric(e_12 + e_21);

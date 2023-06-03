@@ -20,58 +20,58 @@ int
 main(int argc, char * argv[])
 {
     // 2D vector: canonical basis
-    static_assert(vector_t<2>::unit<0> == vector_t<2> { 1, 0 });
-    static_assert(vector_t<2>::unit<1> == vector_t<2> { 0, 1 });
-    static_assert(vector_t<2>::unit<0> + vector_t<2>::unit<1> == vector_t<2>::ones);
+    static_assert(unit<vector_t<2>, 0> == vector_t<2> { 1, 0 });
+    static_assert(unit<vector_t<2>, 1> == vector_t<2> { 0, 1 });
+    static_assert(unit<vector_t<2>, 0> + unit<vector_t<2>, 1> == ones<vector_t<2>>);
 
     // 3D vector: canonical basis
-    static_assert(vector_t<3>::unit<0> == vector_t<3> { 1, 0, 0 });
-    static_assert(vector_t<3>::unit<1> == vector_t<3> { 0, 1, 0 });
-    static_assert(vector_t<3>::unit<2> == vector_t<3> { 0, 0, 1 });
+    static_assert(unit<vector_t<3>, 0> == vector_t<3> { 1, 0, 0 });
+    static_assert(unit<vector_t<3>, 1> == vector_t<3> { 0, 1, 0 });
+    static_assert(unit<vector_t<3>, 2> == vector_t<3> { 0, 0, 1 });
     static_assert(
-        vector_t<3>::unit<0> + vector_t<3>::unit<1> + vector_t<3>::unit<2> == vector_t<3>::ones);
+        unit<vector_t<3>, 0> + unit<vector_t<3>, 1> + unit<vector_t<3>, 2> == ones<vector_t<3>>);
 
     // 2D matrix: canonical basis
-    static_assert(matrix_t<2>::unit<0, 0> == matrix_t<2> { 1, 0, 0, 0 });
-    static_assert(matrix_t<2>::unit<0, 1> == matrix_t<2> { 0, 1, 0, 0 });
-    static_assert(matrix_t<2>::unit<1, 0> == matrix_t<2> { 0, 0, 1, 0 });
-    static_assert(matrix_t<2>::unit<1, 1> == matrix_t<2> { 0, 0, 0, 1 });
+    static_assert(unit<matrix_t<2>, 0, 0> == matrix_t<2> { 1, 0, 0, 0 });
+    static_assert(unit<matrix_t<2>, 0, 1> == matrix_t<2> { 0, 1, 0, 0 });
+    static_assert(unit<matrix_t<2>, 1, 0> == matrix_t<2> { 0, 0, 1, 0 });
+    static_assert(unit<matrix_t<2>, 1, 1> == matrix_t<2> { 0, 0, 0, 1 });
     static_assert(
-        matrix_t<2>::unit<0, 0> + matrix_t<2>::unit<0, 1> + matrix_t<2>::unit<1, 0>
-            + matrix_t<2>::unit<1, 1>
-        == matrix_t<2, 2>::ones);
+        unit<matrix_t<2>, 0, 0> + unit<matrix_t<2>, 0, 1> + unit<matrix_t<2>, 1, 0>
+            + unit<matrix_t<2>, 1, 1>
+        == ones<matrix_t<2>>);
 
     // 3D matrix: canonical basis
-    static_assert(matrix_t<3>::unit<0, 0> == matrix_t<3> { 1, 0, 0, 0, 0, 0, 0, 0, 0 });
-    static_assert(matrix_t<3>::unit<0, 1> == matrix_t<3> { 0, 1, 0, 0, 0, 0, 0, 0, 0 });
-    static_assert(matrix_t<3>::unit<0, 2> == matrix_t<3> { 0, 0, 1, 0, 0, 0, 0, 0, 0 });
-    static_assert(matrix_t<3>::unit<1, 0> == matrix_t<3> { 0, 0, 0, 1, 0, 0, 0, 0, 0 });
-    static_assert(matrix_t<3>::unit<1, 1> == matrix_t<3> { 0, 0, 0, 0, 1, 0, 0, 0, 0 });
-    static_assert(matrix_t<3>::unit<1, 2> == matrix_t<3> { 0, 0, 0, 0, 0, 1, 0, 0, 0 });
-    static_assert(matrix_t<3>::unit<2, 0> == matrix_t<3> { 0, 0, 0, 0, 0, 0, 1, 0, 0 });
-    static_assert(matrix_t<3>::unit<2, 1> == matrix_t<3> { 0, 0, 0, 0, 0, 0, 0, 1, 0 });
-    static_assert(matrix_t<3>::unit<2, 2> == matrix_t<3> { 0, 0, 0, 0, 0, 0, 0, 0, 1 });
+    static_assert(unit<matrix_t<3>, 0, 0> == matrix_t<3> { 1, 0, 0, 0, 0, 0, 0, 0, 0 });
+    static_assert(unit<matrix_t<3>, 0, 1> == matrix_t<3> { 0, 1, 0, 0, 0, 0, 0, 0, 0 });
+    static_assert(unit<matrix_t<3>, 0, 2> == matrix_t<3> { 0, 0, 1, 0, 0, 0, 0, 0, 0 });
+    static_assert(unit<matrix_t<3>, 1, 0> == matrix_t<3> { 0, 0, 0, 1, 0, 0, 0, 0, 0 });
+    static_assert(unit<matrix_t<3>, 1, 1> == matrix_t<3> { 0, 0, 0, 0, 1, 0, 0, 0, 0 });
+    static_assert(unit<matrix_t<3>, 1, 2> == matrix_t<3> { 0, 0, 0, 0, 0, 1, 0, 0, 0 });
+    static_assert(unit<matrix_t<3>, 2, 0> == matrix_t<3> { 0, 0, 0, 0, 0, 0, 1, 0, 0 });
+    static_assert(unit<matrix_t<3>, 2, 1> == matrix_t<3> { 0, 0, 0, 0, 0, 0, 0, 1, 0 });
+    static_assert(unit<matrix_t<3>, 2, 2> == matrix_t<3> { 0, 0, 0, 0, 0, 0, 0, 0, 1 });
     static_assert(
-        matrix_t<3>::unit<0, 0> + matrix_t<3>::unit<0, 1> + matrix_t<3>::unit<0, 2>
-            + matrix_t<3>::unit<1, 0> + matrix_t<3>::unit<1, 1> + matrix_t<3>::unit<1, 2>
-            + matrix_t<3>::unit<2, 0> + matrix_t<3>::unit<2, 1> + matrix_t<3>::unit<2, 2>
-        == matrix_t<3, 3>::ones);
+        unit<matrix_t<3>, 0, 0> + unit<matrix_t<3>, 0, 1> + unit<matrix_t<3>, 0, 2>
+            + unit<matrix_t<3>, 1, 0> + unit<matrix_t<3>, 1, 1> + unit<matrix_t<3>, 1, 2>
+            + unit<matrix_t<3>, 2, 0> + unit<matrix_t<3>, 2, 1> + unit<matrix_t<3>, 2, 2>
+        == ones<matrix_t<3>>);
 
     // 2D vector: basis vectors are orthogonal
-    static_assert(vector_t<2>::unit<0> * vector_t<2>::unit<1> == 0);
+    static_assert(unit<vector_t<2>, 0> * unit<vector_t<2>, 1> == 0);
 
     // 3D vector: basis vectors are orthogonal
-    static_assert(vector_t<3>::unit<0> * vector_t<3>::unit<1> == 0);
-    static_assert(vector_t<3>::unit<0> * vector_t<3>::unit<2> == 0);
-    static_assert(vector_t<3>::unit<1> * vector_t<3>::unit<2> == 0);
+    static_assert(unit<vector_t<3>, 0> * unit<vector_t<3>, 1> == 0);
+    static_assert(unit<vector_t<3>, 0> * unit<vector_t<3>, 2> == 0);
+    static_assert(unit<vector_t<3>, 1> * unit<vector_t<3>, 2> == 0);
 
     // the packing-agnostic canonical basis of R^2x2
-    constexpr auto e_00 = matrix_t<2>::unit<0, 0>;
-    constexpr auto e_01 = matrix_t<2>::unit<0, 1>;
-    constexpr auto e_10 = matrix_t<2>::unit<1, 0>;
-    constexpr auto e_11 = matrix_t<2>::unit<1, 1>;
+    constexpr auto e_00 = unit<matrix_t<2>, 0, 0>;
+    constexpr auto e_01 = unit<matrix_t<2>, 0, 1>;
+    constexpr auto e_10 = unit<matrix_t<2>, 1, 0>;
+    constexpr auto e_11 = unit<matrix_t<2>, 1, 1>;
     // the out-of-diagonal basis element for symmetric matrices
-    constexpr auto e_01_sym = symmetric_matrix_t<2>::unit<1, 2>;
+    constexpr auto e_01_sym = unit<symmetric_matrix_t<2>, 1, 2>;
 
     // assert diagonal basis matrices are diagonal (therefore symmetric)
     static_assert(e_00.is_diagonal() && e_00.is_symmetric());

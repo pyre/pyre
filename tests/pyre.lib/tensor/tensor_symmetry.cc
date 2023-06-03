@@ -27,10 +27,10 @@ main(int argc, char * argv[])
     static_assert(determinant(skew(A)) == 0.0);
 
     // symmetric matrices have zero skew part
-    static_assert(skew(symmetric(A)) == matrix_t<3, 3>::zero);
+    static_assert(skew(symmetric(A)) == zero<matrix_t<3>>);
 
     // skew-symmetric matrices have zero symmetric part
-    static_assert(symmetric(skew(A)) == matrix_t<3, 3>::zero);
+    static_assert(symmetric(skew(A)) == zero<matrix_t<3>>);
 
     // the skew part of a skew-symmetric matrix is equal to the skew-symmetric matrix
     static_assert(skew(skew(A)) == skew(A));

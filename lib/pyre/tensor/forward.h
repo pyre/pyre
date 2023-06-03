@@ -16,6 +16,45 @@ namespace pyre::tensor {
     template <typename T, class packingT, int... I>
     class Tensor;
 
+    // the zero tensor factory
+    template <class tensorT>
+    constexpr auto make_zeros() -> typename tensorT::diagonal_tensor_t;
+
+    // the ones tensor factory
+    template <class tensorT>
+    constexpr auto make_ones() -> tensorT;
+
+    // the identity tensor factory
+    template <class tensorT>
+    constexpr auto make_identity() -> typename tensorT::diagonal_tensor_t
+        requires(tensorT::rank == 2);
+
+    // returns whether the entries in a parameter pack {I...} are all equal
+    template <int... I>
+    constexpr auto entries_all_equal() -> bool;
+
+    // the basis tensors factory (general version)
+    template <class tensorT, int... I>
+    constexpr auto make_basis_element() -> tensorT
+        requires(
+            sizeof...(I) == tensorT::rank &&
+            // not a
+            !(
+                // diagonal entry
+                entries_all_equal<I...>() &&
+                // of a square tensor
+                tensorT::is_square()));
+
+    // the basis tensors factory (diagonal version)
+    template <class tensorT, int... I>
+    constexpr auto make_basis_element() -> typename tensorT::diagonal_tensor_t
+        requires(
+            sizeof...(I) == tensorT::rank &&
+            // diagonal entry
+            entries_all_equal<I...>() &&
+            // of a square tensor
+            tensorT::is_square());
+
 } // namespace pyre::tensor
 
 

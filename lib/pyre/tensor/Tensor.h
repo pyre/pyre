@@ -142,20 +142,6 @@ namespace pyre::tensor {
         template <int... J>
         constexpr void _reset(integer_sequence<J...>);
 
-    public:
-        // the zero tensor
-        static constexpr diagonal_tensor_t zero = make_zeros<tensor_t>();
-
-        // a tensor of ones
-        static constexpr tensor_t ones = make_ones<tensor_t>();
-
-        // the identity tensor
-        static constexpr diagonal_tensor_t identity = make_identity<tensor_t>();
-
-        // the unit tensor with a one in the entry whose indices are specified in {J...}
-        template <int... J>
-        static constexpr auto unit = make_basis_element<tensor_t, J...>();
-
         // accessors
     public:
         static constexpr const packingT & layout() { return _layout; }

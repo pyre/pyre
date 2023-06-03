@@ -127,7 +127,7 @@ namespace pyre::tensor {
 
     // factory for identity tensor (for now only for second order tensors)
     template <class tensorT>
-    static constexpr auto make_identity() -> typename tensorT::diagonal_tensor_t
+    constexpr auto make_identity() -> typename tensorT::diagonal_tensor_t
         requires(tensorT::rank == 2)
     {
         constexpr auto _make_ones =
@@ -144,6 +144,7 @@ namespace pyre::tensor {
         // fill tensor with zeros
         return _make_ones(make_integer_sequence<tensorT::diagonal_tensor_t::size> {});
     }
+
 } // namespace pyre::tensor
 
 
