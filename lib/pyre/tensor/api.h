@@ -9,7 +9,6 @@
 #define pyre_tensor_api_h
 
 
-// low level entities; you should probably stay away from them
 namespace pyre::tensor {
     // typedef for real values
     using real = double;
