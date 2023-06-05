@@ -10,7 +10,7 @@
 #else
 
 
-// compute the footprint of the given number of cells
+// access privileges
 template <typename T, bool isConst>
 constexpr auto
 pyre::memory::Cell<T, isConst>::readonly() -> bool
