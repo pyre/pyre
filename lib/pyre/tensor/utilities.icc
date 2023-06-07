@@ -150,6 +150,17 @@ namespace {
     constexpr auto is_less(
         const pyre::tensor::Tensor<T, packingT, I...> & lhs,
         const pyre::tensor::Tensor<T, packingT, I...> & rhs) -> bool
+        requires(J == pyre::tensor::Tensor<T, packingT, I...>::size)
+    {
+        // base case for recursion: all components are equal
+        return false;
+    }
+
+    // helper function (compare J-th component)
+    template <int J, typename T, class packingT, int... I>
+    constexpr auto is_less(
+        const pyre::tensor::Tensor<T, packingT, I...> & lhs,
+        const pyre::tensor::Tensor<T, packingT, I...> & rhs) -> bool
         requires(J < pyre::tensor::Tensor<T, packingT, I...>::size)
     {
         // if the J-th component of {lhs} is less than J-th component of {rhs}
@@ -165,17 +176,6 @@ namespace {
         // if the J-th component of {lhs} is equal to J-th component of {rhs},
         // then compare the next component
         return is_less<J + 1>(lhs, rhs);
-    }
-
-    // helper function (compare J-th component)
-    template <int J, typename T, class packingT, int... I>
-    constexpr auto is_less(
-        const pyre::tensor::Tensor<T, packingT, I...> & lhs,
-        const pyre::tensor::Tensor<T, packingT, I...> & rhs) -> bool
-        requires(J == pyre::tensor::Tensor<T, packingT, I...>::size)
-    {
-        // base case for recursion: all components are equal
-        return false;
     }
 
 } // namespace
