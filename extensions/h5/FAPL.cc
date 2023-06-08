@@ -15,7 +15,7 @@ void
 pyre::h5::py::fapl(py::module & m)
 {
     // add bindings for hdf5 file objects
-    auto cls = py::class_<FileAccessPropertyList>(
+    auto cls = py::class_<FAPL>(
         // in scope
         m,
         // class name
@@ -35,7 +35,7 @@ pyre::h5::py::fapl(py::module & m)
         // the name
         "getMetaBlockSize",
         // the implementation
-        &FileAccessPropertyList::getMetaBlockSize,
+        &FAPL::getMetaBlockSize,
         // the docstring
         "retrieve the metadata block size");
 
@@ -44,7 +44,7 @@ pyre::h5::py::fapl(py::module & m)
         // the name
         "setMetaBlockSize",
         // the implementation
-        &FileAccessPropertyList::setMetaBlockSize,
+        &FAPL::setMetaBlockSize,
         // the signature
         "size"_a,
         // the docstring
@@ -55,7 +55,7 @@ pyre::h5::py::fapl(py::module & m)
         // the name
         "close",
         // the implementation
-        &FileAccessPropertyList::close,
+        &FAPL::close,
         // the docstring
         "discard the property list");
 
@@ -65,8 +65,8 @@ pyre::h5::py::fapl(py::module & m)
         // the name
         "ros3",
         // the implementation
-        [](FileAccessPropertyList & plist, bool authenticate, string_t region, string_t id,
-           string_t key, string_t token) -> FileAccessPropertyList & {
+        [](FAPL & plist, bool authenticate, string_t region, string_t id,
+           string_t key, string_t token) -> FAPL & {
             // make room for the driver parameters
             H5FD_ros3_fapl_t p;
             // populate

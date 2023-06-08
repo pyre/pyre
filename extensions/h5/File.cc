@@ -77,23 +77,23 @@ pyre::h5::py::file(py::module & m)
     // constructor for accessing a file with a custom access property list
     cls.def(
         // the implementation
-        py::init([](string_t uri, const FileAccessPropertyList & p, string_t mode) {
+        py::init([](string_t uri, const FAPL & p, string_t mode) {
             // decode mode
             if (mode == "r") {
                 // read-only, file must exist
-                return File(uri, H5F_ACC_RDONLY, FileCreatePropertyList::DEFAULT, p);
+                return File(uri, H5F_ACC_RDONLY, FCPL::DEFAULT, p);
             }
             if (mode == "r+") {
                 // read/write, file must exist
-                return File(uri, H5F_ACC_RDWR, FileCreatePropertyList::DEFAULT, p);
+                return File(uri, H5F_ACC_RDWR, FCPL::DEFAULT, p);
             }
             if (mode == "w") {
                 // create file, truncate if it exists
-                return File(uri, H5F_ACC_TRUNC, FileCreatePropertyList::DEFAULT, p);
+                return File(uri, H5F_ACC_TRUNC, FCPL::DEFAULT, p);
             }
             if (mode == "w-" || mode == "x") {
                 // create file, fail if it exists
-                return File(uri, H5F_ACC_EXCL, FileCreatePropertyList::DEFAULT, p);
+                return File(uri, H5F_ACC_EXCL, FCPL::DEFAULT, p);
             }
 
             // h5py has one more valid {mode}

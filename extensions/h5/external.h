@@ -63,8 +63,8 @@ namespace pyre::h5::py {
     using Identifier = H5::IdComponent; // pure virtual
     // property lists derive from {Identifier}
     using PropList = H5::PropList;
-    using FileAccessPropertyList = H5::FileAccPropList;
-    using FileCreatePropertyList = H5::FileCreatPropList;
+    using FAPL = H5::FileAccPropList;
+    using FCPL = H5::FileCreatPropList;
     // dataspaces derive from {Identifier}
     using DataSpace = H5::DataSpace;
     // locations derive from {Identifier}
