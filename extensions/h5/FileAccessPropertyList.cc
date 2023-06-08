@@ -30,6 +30,26 @@ pyre::h5::py::fapl(py::module & m)
         // the docstring
         "create a file access property list");
 
+    // get the metadata block size
+    cls.def(
+        // the name
+        "getMetaBlockSize",
+        // the implementation
+        &FileAccessPropertyList::getMetaBlockSize,
+        // the docstring
+        "retrieve the metadata block size");
+
+    // set the page buffer settings
+    cls.def(
+        // the name
+        "setMetaBlockSize",
+        // the implementation
+        &FileAccessPropertyList::setMetaBlockSize,
+        // the signature
+        "size"_a,
+        // the docstring
+        "set the metadata cache parameters");
+
     // close the list
     cls.def(
         // the name
