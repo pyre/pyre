@@ -14,12 +14,17 @@ namespace pyre::h5::py {
     void api(py::module &);
 
     // wrappers for the C++ HDF5 api
+    // support
     void enums(py::module &);
+    // property lists
+    void pl(py::module &);
+    void fapl(py::module &);
+    // datasets
     void dataspace(py::module &);
     void dataset(py::module &);
-    void fapl(py::module &);
-    void file(py::module &);
+    // structural
     void group(py::module &);
+    void file(py::module &);
 } // namespace pyre::h5::py
 
 
