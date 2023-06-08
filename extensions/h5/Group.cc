@@ -105,20 +105,14 @@ pyre::h5::py::group(py::module & m)
         // the name
         "members",
         // the implementation
-        [](const Group & self) {
-            // we build (name, type) pairs
-            using info_t = string_t;
-            // in a container
-            using members_t = std::vector<info_t>;
-            // make one
-            auto members = members_t();
-            // go through them
+        [](const Group & self) -> names_t {
+            // make a pile
+            auto members = names_t();
+            // look up how many members i have and go through them
             for (auto index = 0; index < self.getNumObjs(); ++index) {
-                // get the name of the member at {index}y3j
+                // to get the name of the member at {index}
                 auto name = self.getObjnameByIdx(index);
-                // figure out its type
-                auto type = self.childObjType(name);
-                // and add the pair to the pile
+                // and add it to the pile
                 members.emplace_back(name);
             }
             // all done
