@@ -10,12 +10,12 @@
 #include "forward.h"
 
 
-// file objects
+// file access property lists
 void
 pyre::h5::py::fapl(py::module & m)
 {
-    // add bindings for hdf5 file objects
-    auto cls = py::class_<FAPL>(
+    // add bindings for hdf5 file access property lists
+    auto cls = py::class_<FAPL, PropList>(
         // in scope
         m,
         // class name
@@ -50,23 +50,14 @@ pyre::h5::py::fapl(py::module & m)
         // the docstring
         "set the metadata cache parameters");
 
-    // close the list
-    cls.def(
-        // the name
-        "close",
-        // the implementation
-        &FAPL::close,
-        // the docstring
-        "discard the property list");
-
 #if defined(H5_HAVE_ROS3_VFD)
     // populate the property list with ros3 parameters
     cls.def(
         // the name
         "ros3",
         // the implementation
-        [](FAPL & plist, bool authenticate, string_t region, string_t id,
-           string_t key, string_t token) -> FAPL & {
+        [](FAPL & self, bool authenticate, string_t region, string_t id, string_t key,
+           string_t token) -> FAPL & {
             // make room for the driver parameters
             H5FD_ros3_fapl_t p;
             // populate
@@ -82,7 +73,7 @@ pyre::h5::py::fapl(py::module & m)
             // send to the {ros3} driver; this process includes runtime validation, so there is
             // no need for extra checks that the struct we populated is understood by whatever
             // runtime we have dynamically linked against
-            auto status = H5Pset_fapl_ros3(plist.getId(), &p);
+            auto status = H5Pset_fapl_ros3(self.getId(), &p);
             // if the transfer failed
             if (status < 0) {
                 // make a channel
@@ -96,7 +87,7 @@ pyre::h5::py::fapl(py::module & m)
                     << pyre::journal::endl(__HERE__);
             }
             // all done
-            return plist;
+            return self;
         },
         // the signature
         "authenticate"_a = true, "region"_a = "", "id"_a = "", "key"_a = "", "token"_a = "",
