@@ -26,6 +26,7 @@ PYBIND11_MODULE(h5, m)
     pyre::h5::py::enums(m);
     // property lists
     pyre::h5::py::pl(m);
+    pyre::h5::py::fcpl(m);
     pyre::h5::py::fapl(m);
 
     // subpackages
