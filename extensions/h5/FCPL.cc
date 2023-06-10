@@ -23,6 +23,18 @@ pyre::h5::py::fcpl(py::module & m)
         // docstring
         "a file creation property list");
 
+    // static properties
+    cls.def_property_readonly_static(
+        // the name
+        "default",
+        // the implementation
+        [](const py::object &) {
+            // easy enough
+            return &FCPL::DEFAULT;
+        },
+        // docstring
+        "the default file creation property list");
+
     // constructor
     cls.def(
         // the implementation

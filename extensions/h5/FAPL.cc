@@ -23,6 +23,18 @@ pyre::h5::py::fapl(py::module & m)
         // docstring
         "a file access property list");
 
+    // static properties
+    cls.def_property_readonly_static(
+        // the name
+        "default",
+        // the implementation
+        [](const py::object &) {
+            // easy enough
+            return &FAPL::DEFAULT;
+        },
+        // docstring
+        "the default file access property list");
+
     // constructor
     cls.def(
         // the implementation
