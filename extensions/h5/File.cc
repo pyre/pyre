@@ -86,6 +86,24 @@ pyre::h5::py::file(py::module & m)
         // the docstring
         "get my h5 object category");
 
+    // creation property list
+    cls.def_property_readonly(
+        // the name
+        "fcpl",
+        // the implementation
+        &File::getCreatePlist,
+        // the docstring
+        "get my creation property list");
+
+    // access property list
+    cls.def_property_readonly(
+        // the name
+        "fapl",
+        // the implementation
+        &File::getAccessPlist,
+        // the docstring
+        "get my access property list");
+
     // close the file
     cls.def(
         // the name
