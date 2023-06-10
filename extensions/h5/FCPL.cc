@@ -52,6 +52,40 @@ pyre::h5::py::fcpl(py::module & m)
         // the docstring
         "set the file space page {size}");
 
+    // get the file space strategy
+    cls.def(
+        // the name
+        "getFilespaceStrategy",
+        // the implementation
+        [](FCPL & self) {
+            // make some room
+            H5F_fspace_strategy_t strategy;
+            hbool_t persist;
+            hsize_t threshold;
+            // read the strategy
+            self.getFileSpaceStrategy(strategy, persist, threshold);
+            // pack them and return them
+            return py::make_tuple(strategy, persist, threshold);
+        },
+        // the docstring
+        "get the current file space strategy");
+
+    // set the file space strategy
+    cls.def(
+        // the name
+        "setFilespaceStrategy",
+        // the implementation
+        [](FCPL & self, H5F_fspace_strategy_t strategy, hbool_t persist, hsize_t threshold) {
+            // set the strategy
+            self.setFileSpaceStrategy(strategy, persist, threshold);
+            // all done
+            return;
+        },
+        // the signature
+        "strategy"_a, "persist"_a, "threshold"_a,
+        // the docstring
+        "set the file space strategy");
+
     // all done
     return;
 }

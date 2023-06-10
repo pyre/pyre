@@ -168,6 +168,14 @@ pyre::h5::py::enums(py::module & m)
         .value("reserved_14", H5T_STR_RESERVED_14)
         .value("reserved_15", H5T_STR_RESERVED_15);
 
+    // file space handling strategies
+    py::enum_<H5F_fspace_strategy_t>(m, "FilespaceStrategy", "the file space strategies")
+        .value("fsm_aggr", H5F_FSPACE_STRATEGY_FSM_AGGR)
+        .value("page", H5F_FSPACE_STRATEGY_PAGE)
+        .value("aggr", H5F_FSPACE_STRATEGY_AGGR)
+        .value("none", H5F_FSPACE_STRATEGY_NONE)
+        .value("types", H5F_FSPACE_STRATEGY_NTYPES);
+
 
     // all done
     return;
