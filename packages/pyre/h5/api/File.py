@@ -36,8 +36,6 @@ class File(Group):
             layout = schema.group(name="root")
         # chain up
         super().__init__(at=at, layout=layout, **kwds)
-        # initialize my access property list
-        self._pyre_fapl = None
         # initially, i'm not attached to a particular file
         self._pyre_uri = None
         # all done
@@ -77,10 +75,10 @@ class File(Group):
     # attach to S3 buckets
     def _pyre_ros3(
         self,
-        region: typing.Optional[str],
-        profile: typing.Optional[str],
         bucket: str,
         key: str,
+        region: str = "",
+        profile: str = "default",
     ) -> "File":
         """
         Access the remote dataset {key} in the given S3 {bucket} using the {ROS3} driver
@@ -93,14 +91,8 @@ class File(Group):
             s3 = f"s3.{region}.amazonaws.com"
         # otherwise
         else:
-            # normalize it
-            region = ""
-            # and don't use it in the {s3} url
+            # don't use it in the {s3} url
             s3 = "s3.amazonaws.com"
-
-        region = "" if region is None else region
-        # if there was no {profile} specification
-        profile = "default" if profile is None else profile
         # ask for the credentials
         id, secret, token = aws.credentials(profile=profile)
         # if both are non-trivial
@@ -111,35 +103,20 @@ class File(Group):
         else:
             # turn it off and let the ros3 driver figure it out
             authenticate = False
-        # make a ros3 access parameter list and fill it with {ros3} information
-        fapl = libh5.FAPL().ros3(
+        # make a file access parameter list
+        fapl = libh5.FAPL()
+        # attach the required {ros3} driver information
+        fapl.ros3(
             region=region,
             id=id,
             key=secret,
             token=token,
             authenticate=authenticate,
         )
-        #
         # assemble the file uri
         uri = f"https://{bucket}.{s3}/{key}"
         # and delegate to the opener
         return self._pyre_open(uri=uri, mode="r", fapl=fapl)
-
-    # clean up
-    def _pyre_close(self):
-        """
-        Detach me from all h5 resources
-        """
-        # get my access parameter list
-        fapl = self._pyre_fapl
-        # if it's non-trivial
-        if fapl is not None:
-            # close it
-            fapl.close()
-            # and clear my state
-            self._pyre_fapl = None
-        # and chain up
-        return super()._pyre_close()
 
     # structural
     def _pyre_root(self) -> schema.group:
@@ -166,7 +143,7 @@ class File(Group):
         return handler(file=self, **kwds)
 
     # helpers
-    def _pyre_open(self, uri: pyre.primitives.pathlike, mode: str, fapl=None) -> "File":
+    def _pyre_open(self, uri: pyre.primitives.pathlike, **kwds) -> "File":
         """
         Access to the h5 file factory
 
@@ -175,14 +152,8 @@ class File(Group):
         """
         # record the uri
         self._pyre_uri = uri
-        # and the access property list
-        self._pyre_fapl = fapl
         # open the file
-        self._pyre_id = (
-            libh5.File(uri=str(uri), mode=mode)
-            if fapl is None
-            else libh5.File(uri=str(uri), mode=mode, fapl=fapl)
-        )
+        self._pyre_id = libh5.File(uri=str(uri), **kwds)
         # all done
         return self
 
