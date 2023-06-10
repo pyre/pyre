@@ -50,7 +50,7 @@ class Writer:
         if data is None:
             # i must have structure, so build it
             assembler = Assembler()
-            # by visiting the structure we are traversin
+            # by visiting the structure we are traversing
             data = assembler.visit(descriptor=query)
         # i need structure to traverse
         if query is None:
@@ -64,11 +64,17 @@ class Writer:
         return
 
     # metamethods
-    def __init__(self, uri: pyre.primitives.uri, mode: str = "w", **kwds):
+    def __init__(
+        self,
+        uri: pyre.primitives.uri,
+        mode: str = "w",
+        fcpl: libh5.FCPL = libh5.FCPL.default,
+        **kwds,
+    ):
         # chain up
         super().__init__(**kwds)
         # build the file object
-        self._file = self._pyre_open(uri=uri, mode=mode)
+        self._file = self._pyre_open(uri=uri, mode=mode, fcpl=fcpl)
         # all done
         return
 
