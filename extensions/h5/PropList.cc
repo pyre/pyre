@@ -82,6 +82,18 @@ pyre::h5::py::pl(py::module & m)
         // the docstring
         "delete the property associated with {name}");
 
+    // interface
+    // get the size of a property
+    cls.def(
+        // the name
+        "getPropertySize",
+        // the implementation
+        py::overload_cast<const string_t &>(&PropList::getPropSize, py::const_),
+        // the signature
+        "name"_a,
+        // the docstring
+        "retrieve the size of the named property");
+
     // close the list
     cls.def(
         // the name
