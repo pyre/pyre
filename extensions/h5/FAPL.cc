@@ -51,7 +51,7 @@ pyre::h5::py::fapl(py::module & m)
         // the docstring
         "retrieve the metadata block size");
 
-    // set the page buffer settings
+    // get the metadata block size
     cls.def(
         // the name
         "setMetaBlockSize",
@@ -61,6 +61,39 @@ pyre::h5::py::fapl(py::module & m)
         "size"_a,
         // the docstring
         "set the metadata cache parameters");
+
+    // get the page buffer characteristics
+    cls.def(
+        // the name
+        "getPageBufferSize",
+        // the implementation
+        [](const FAPL & self) {
+            // make some room
+            size_t buffer = 4 * 1024;
+            unsigned int meta = 0;
+            unsigned int raw = 0;
+            // get the info
+            H5Pget_page_buffer_size(self.getId(), &buffer, &meta, &raw);
+            // pack and ship
+            return py::make_tuple(buffer, meta, raw);
+        },
+        // the docstring
+        "retrieve the page buffer characteristics");
+
+    // set the page buffer characteristics
+    cls.def(
+        // the name
+        "setPageBufferSize",
+        // the implementation
+        [](const FAPL & self, size_t buffer, unsigned int meta, unsigned int raw) {
+            // set the values and return
+            return H5Pset_page_buffer_size(self.getId(), buffer, meta, raw);
+        },
+        // the signature
+        "page"_a, "meta"_a = 0, "raw"_a = 0,
+        // the docstring
+        "retrieve the page buffer characteristics");
+
 
 #if defined(H5_HAVE_ROS3_VFD)
     // populate the property list with ros3 parameters
