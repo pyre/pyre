@@ -56,7 +56,10 @@ class File(Group):
     # framework hooks
     # attach to local files
     def _pyre_local(
-        self, uri: pyre.primitives.pathlike, mode: str = "r", **kwds
+        self,
+        uri: pyre.primitives.pathlike,
+        mode: str = "r",
+        **kwds,
     ) -> "File":
         """
         Access the local h5 file at {uri}
@@ -79,6 +82,7 @@ class File(Group):
         key: str,
         region: str = "",
         profile: str = "default",
+        fapl: libh5.FAPL = libh5.FAPL.default,
     ) -> "File":
         """
         Access the remote dataset {key} in the given S3 {bucket} using the {ROS3} driver
@@ -103,9 +107,7 @@ class File(Group):
         else:
             # turn it off and let the ros3 driver figure it out
             authenticate = False
-        # make a file access parameter list
-        fapl = libh5.FAPL()
-        # attach the required {ros3} driver information
+        # attach the required {ros3} driver information to the fapl
         fapl.ros3(
             region=region,
             id=id,
