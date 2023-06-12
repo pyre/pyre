@@ -44,7 +44,7 @@ pyre::h5::py::pl(py::module & m)
 
     cls.def(
         // the name
-        "__in__",
+        "__contains__",
         // the implementation
         py::overload_cast<const string_t &>(&PropList::propExist, py::const_),
         // the signature
