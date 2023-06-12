@@ -85,12 +85,12 @@ class Writer:
         """
         # form the {dataset} name as known by its parent
         name = dataset._pyre_location.name
-        # attempt to
-        try:
+        # if {name} is already present in {dst}
+        if name in dst:
             # look up the {dataset} in the output file
             hid = dst.get(path=name)
         # if it doesn't exist
-        except RuntimeError:
+        else:
             # we have to make it; ask the {dataset} for its type and shape
             datatype, dataspace = dataset._pyre_describe()
             # with these two, we can create it
@@ -106,12 +106,12 @@ class Writer:
         """
         # form the name of the target group in the output
         name = group._pyre_location.name
-        # attempt to
-        try:
-            # look up a pre-existing group
+        # if {name} is already a member of {dst}
+        if name in dst:
+            # look it up
             hid = dst.get(path=name)
         # if it doesn't exist
-        except RuntimeError:
+        else:
             # make it
             hid = dst.create(path=name)
         # now, go through the group contents
