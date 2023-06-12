@@ -54,6 +54,16 @@ class Group(Object):
         return member
 
     def __setattr__(self, name: str, value: typing.Any) -> None:
+        # if the {name} is already registered
+        if hasattr(self, name):
+            # get the object
+            member = super().__getattribute__(name)
+            # if it is a dataset
+            if isinstance(member, Dataset):
+                # set its value
+                member.value = value
+                # and do no more
+                return
         # if {value} is an hdf5 object
         if isinstance(value, Object):
             # record it
