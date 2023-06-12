@@ -100,6 +100,20 @@ pyre::h5::py::group(py::module & m)
         // the docstring
         "close this group");
 
+    // check whether a name corresponds to a group member
+    cls.def(
+        // the name
+        "has",
+        // the implementation
+        [](const Group & self, const string_t & name) -> bool {
+            // check and return the result
+            return self.nameExists(name);
+        },
+        // the signature
+        "name"_a,
+        // the docstring
+        "check whether {name} is a group member");
+
     // extract information about my members
     cls.def(
         // the name
@@ -208,6 +222,19 @@ pyre::h5::py::group(py::module & m)
         },
         // the docstring
         "the number of group members");
+
+    cls.def(
+        // the name
+        "__contains__",
+        // the implementation
+        [](const Group & self, const string_t & name) -> bool {
+            // check and return the result
+            return self.nameExists(name);
+        },
+        // the signature
+        "name"_a,
+        // the docstring
+        "check whether {name} is a known member of this group");
 
     cls.def(
         // the name
