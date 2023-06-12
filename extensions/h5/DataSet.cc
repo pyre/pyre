@@ -463,14 +463,9 @@ pyre::h5::py::dataset(py::module & m)
             }
             // we have strings; let's find out how many
             // get my data space
-            auto space = self.getSpace();
+            auto dst = self.getSpace();
             // ask it for its rank
-            auto rank = space.getSimpleExtentNdims();
-            // make a correctly sized vector to hold the result
-            shape_t shape(rank);
-            // populate it
-            space.getSimpleExtentDims(&shape[0], nullptr);
-
+            auto rank = dst.getSimpleExtentNdims();
             // make sure i'm just a list
             if (rank != 1) {
                 // if not, make a channel
@@ -485,21 +480,24 @@ pyre::h5::py::dataset(py::module & m)
                 return;
             }
 
-            // shape now knows how many strings there are
+            // make a correctly sized vector to hold the result
+            shape_t shape(rank);
+            // populate it
+            dst.getSimpleExtentDims(&shape[0], nullptr);
+
+            // shape now knows how many strings this dataset can hold
             auto len = shape[0];
-            // make a slot
+            // we always write one string at a time from {value}
             const hsize_t one = 1;
-            // we always read one string at offset zero
-            auto read = DataSpace(1, &one);
-            // and write to the dataset space
-            auto write = self.getSpace();
+            // so make a data space that reflects that
+            auto src = DataSpace(rank, &one);
 
             // write as many times as there are strings to pull
             for (hsize_t idx = 0; idx < len; ++idx) {
-                // restrict the read dataspace to one string at offset {idx}
-                read.selectHyperslab(H5S_SELECT_SET, &one, &idx);
+                // pick the slot in the destination data space
+                dst.selectHyperslab(H5S_SELECT_SET, &one, &idx, nullptr, &one);
                 // unconditional/unrestricted write
-                self.write(value[idx], self.getStrType(), read, write);
+                self.write(value[idx], self.getStrType(), src, dst);
             }
 
             // all done
