@@ -85,7 +85,7 @@ class Strings(Dataset.list):
         """
         Construct representations for my on-disk datatype and dataspace
         """
-        # get the dataset value; it should be a list of string
+        # get the dataset value; it should be a list of strings
         value = dataset.value
         # the type width is the max of the lengths
         width = max([1] + list(map(len, value)))
