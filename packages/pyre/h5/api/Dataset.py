@@ -41,7 +41,7 @@ class Dataset(Object):
         Store my value
         """
         # process the incoming value and store it
-        self._value = self._pyre_layout.process(value)
+        self._value = self._pyre_layout.process(value=value, dataset=self)
         # all done
         return
 
@@ -186,15 +186,14 @@ class Dataset(Object):
         if spec is None:
             # there isn't much more i can do
             return None
-        # get my h5 handle
-        hid = self._pyre_id
         # if i don't have a connection to a file
-        if hid is None:
-            # process and return my default value; don't cache it so we can try again
-            # next time the value is requested
-            return spec.process(spec.default)
-        # if all is good, ask my spec to extract my value from the h5 store and process it
-        value = spec._pyre_pull(dataset=self)
+        if self._pyre_id is None:
+            # process my default value
+            value = spec.process(value=spec.default, dataset=self)
+        # if all is good
+        else:
+            # ask my spec to extract my value from the h5 store and process it
+            value = spec._pyre_pull(dataset=self)
         # update the cache
         self._value = value
         # and hand it off
