@@ -4,15 +4,11 @@
 # (c) 1998-2023 all rights reserved
 
 
-# externals
-import itertools
-
 # superclass
 from pyre.patterns.AttributeClassifier import AttributeClassifier
 
 # parts
 from .Descriptor import Descriptor
-from .Dataset import Dataset
 from .Inventory import Inventory
 
 # typing
