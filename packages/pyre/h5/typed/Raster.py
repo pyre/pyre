@@ -57,6 +57,24 @@ class Raster:
         # and return it
         return shape
 
+    @shape.setter
+    def shape(self, shape):
+        """
+        Set my shape
+        """
+        # get my on-disk rep
+        hid = self.dataset
+        # if it is non-trivial
+        if hid is not None:
+            # disallow setting the shape
+            raise RuntimeError(
+                "can't set the shape of a raster when attached to a dataset"
+            )
+        # otherwise, record the new value
+        self._shape = shape
+        # all done
+        return
+
     @property
     def disktype(self):
         """
