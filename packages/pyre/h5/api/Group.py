@@ -71,6 +71,12 @@ class Group(Object):
         # and make a normal assignment
         return super().__setattr__(name, value)
 
+    def __delattr__(self, name: str) -> None:
+        # forget {name}
+        self._pyre_contents.discard(name)
+        # and chain up to remove the attribute
+        return super().__delattr__(name)
+
     # member access
     def __getitem__(self, path):
         """
