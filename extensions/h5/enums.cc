@@ -15,14 +15,16 @@ void
 pyre::h5::py::enums(py::module & m)
 {
     // dataset fill timing
-    py::enum<H5D_fill_time_t>(m, "FillTime", "the timing for writing the dataset fill value")
+    py::enum_<H5D_fill_time_t>(m, "FillTime", "the timing for writing the dataset fill value")
+        // add the values
         .value("error", H5D_FILL_TIME_ERROR)
         .value("alloc", H5D_FILL_TIME_ALLOC)
         .value("never", H5D_FILL_TIME_NEVER)
         .value("if_set", H5D_FILL_TIME_IFSET);
 
     // dataset fill value
-    py::enum<H5D_fill_value_t>(m, "FillValue", "fill value strategies")
+    py::enum_<H5D_fill_value_t>(m, "FillValue", "fill value strategies")
+        // add the values
         .value("error", H5D_FILL_VALUE_ERROR)
         .value("undefined", H5D_FILL_VALUE_UNDEFINED)
         .value("default", H5D_FILL_VALUE_DEFAULT)
