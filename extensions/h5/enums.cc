@@ -14,6 +14,28 @@
 void
 pyre::h5::py::enums(py::module & m)
 {
+    // dataset fill timing
+    py::enum<H5D_fill_time_t>(m, "FillTime", "the timing for writing the dataset fill value")
+        .value("error", H5D_FILL_TIME_ERROR)
+        .value("alloc", H5D_FILL_TIME_ALLOC)
+        .value("never", H5D_FILL_TIME_NEVER)
+        .value("if_set", H5D_FILL_TIME_IFSET);
+
+    // dataset fill value
+    py::enum<H5D_fill_value_t>(m, "FillValue", "fill value strategies")
+        .value("error", H5D_FILL_VALUE_ERROR)
+        .value("undefined", H5D_FILL_VALUE_UNDEFINED)
+        .value("default", H5D_FILL_VALUE_DEFAULT)
+        .value("user_defined", H5D_FILL_VALUE_USER_DEFINED);
+
+    // file space handling strategies
+    py::enum_<H5F_fspace_strategy_t>(m, "FilespaceStrategy", "the file space strategies")
+        .value("fsm_aggr", H5F_FSPACE_STRATEGY_FSM_AGGR)
+        .value("page", H5F_FSPACE_STRATEGY_PAGE)
+        .value("aggr", H5F_FSPACE_STRATEGY_AGGR)
+        .value("none", H5F_FSPACE_STRATEGY_NONE)
+        .value("types", H5F_FSPACE_STRATEGY_NTYPES);
+
     // identifier types
     py::enum_<H5I_type_t>(m, "IdentifierType", "the types of h5 identifiers")
         // add the values
@@ -57,23 +79,6 @@ pyre::h5::py::enums(py::module & m)
 #endif
         .value("types", H5O_TYPE_NTYPES);
 
-    // dataset types
-    py::enum_<H5T_class_t>(m, "DataSetType", "the types of h5 datasets")
-        // add the values
-        .value("error", H5T_NO_CLASS)
-        .value("int", H5T_INTEGER)
-        .value("float", H5T_FLOAT)
-        .value("timestamp", H5T_TIME)
-        .value("str", H5T_STRING)
-        .value("bits", H5T_BITFIELD)
-        .value("opaque", H5T_OPAQUE)
-        .value("compound", H5T_COMPOUND)
-        .value("ref", H5T_REFERENCE)
-        .value("enum", H5T_ENUM)
-        .value("vlen", H5T_VLEN)
-        .value("array", H5T_ARRAY)
-        .value("classes", H5T_NCLASSES);
-
     // dataspace types
     py::enum_<H5S_class_t>(m, "DataSpaceType", "the types of h5 dataspaces")
         // add the values
@@ -95,38 +100,22 @@ pyre::h5::py::enums(py::module & m)
         .value("prepend", H5S_SELECT_PREPEND)
         .value("invalid", H5S_SELECT_INVALID);
 
-    // byte packing order
-    py::enum_<H5T_order_t>(m, "ByteOrder", "the byte packing strategies")
+    // dataset types
+    py::enum_<H5T_class_t>(m, "DataSetType", "the types of h5 datasets")
         // add the values
-        .value("error", H5T_ORDER_ERROR)
-        .value("littleEndian", H5T_ORDER_LE)
-        .value("bigEndian", H5T_ORDER_BE)
-        .value("vax", H5T_ORDER_VAX)
-        .value("mixed", H5T_ORDER_MIXED)
-        .value("none", H5T_ORDER_NONE);
-
-    // integer sign schemes
-    py::enum_<H5T_sign_t>(m, "Sign", "the sign schemes")
-        .value("error", H5T_SGN_ERROR)
-        .value("unsigned", H5T_SGN_NONE) // unsigned types
-        .value("complement", H5T_SGN_2)  // two's complement
-        .value("null", H5T_NSGN);
-
-    // datatype bit padding types
-    py::enum_<H5T_pad_t>(m, "PaddingType", "the bit padding strategies")
-        // add the values
-        .value("error", H5T_PAD_ERROR)
-        .value("zero", H5T_PAD_ZERO)
-        .value("one", H5T_PAD_ONE)
-        .value("background", H5T_PAD_BACKGROUND);
-
-    // floating point mantissa normalization strategies
-    py::enum_<H5T_norm_t>(m, "NormalizationType", "the mantissa normalization strategies")
-        // add the values
-        .value("error", H5T_NORM_ERROR)
-        .value("implied", H5T_NORM_IMPLIED)
-        .value("set", H5T_NORM_MSBSET)
-        .value("none", H5T_NORM_NONE);
+        .value("error", H5T_NO_CLASS)
+        .value("int", H5T_INTEGER)
+        .value("float", H5T_FLOAT)
+        .value("timestamp", H5T_TIME)
+        .value("str", H5T_STRING)
+        .value("bits", H5T_BITFIELD)
+        .value("opaque", H5T_OPAQUE)
+        .value("compound", H5T_COMPOUND)
+        .value("ref", H5T_REFERENCE)
+        .value("enum", H5T_ENUM)
+        .value("vlen", H5T_VLEN)
+        .value("array", H5T_ARRAY)
+        .value("classes", H5T_NCLASSES);
 
     // string character sets
     py::enum_<H5T_cset_t>(m, "CharacterSet", "the string character sets")
@@ -148,6 +137,39 @@ pyre::h5::py::enums(py::module & m)
         .value("reserved_14", H5T_CSET_RESERVED_14)
         .value("reserved_15", H5T_CSET_RESERVED_15);
 
+    // floating point mantissa normalization strategies
+    py::enum_<H5T_norm_t>(m, "NormalizationType", "the mantissa normalization strategies")
+        // add the values
+        .value("error", H5T_NORM_ERROR)
+        .value("implied", H5T_NORM_IMPLIED)
+        .value("set", H5T_NORM_MSBSET)
+        .value("none", H5T_NORM_NONE);
+
+    // byte packing order
+    py::enum_<H5T_order_t>(m, "ByteOrder", "the byte packing strategies")
+        // add the values
+        .value("error", H5T_ORDER_ERROR)
+        .value("littleEndian", H5T_ORDER_LE)
+        .value("bigEndian", H5T_ORDER_BE)
+        .value("vax", H5T_ORDER_VAX)
+        .value("mixed", H5T_ORDER_MIXED)
+        .value("none", H5T_ORDER_NONE);
+
+    // datatype bit padding types
+    py::enum_<H5T_pad_t>(m, "PaddingType", "the bit padding strategies")
+        // add the values
+        .value("error", H5T_PAD_ERROR)
+        .value("zero", H5T_PAD_ZERO)
+        .value("one", H5T_PAD_ONE)
+        .value("background", H5T_PAD_BACKGROUND);
+
+    // integer sign schemes
+    py::enum_<H5T_sign_t>(m, "Sign", "the sign schemes")
+        .value("error", H5T_SGN_ERROR)
+        .value("unsigned", H5T_SGN_NONE) // unsigned types
+        .value("complement", H5T_SGN_2)  // two's complement
+        .value("null", H5T_NSGN);
+
     // string padding shemes
     py::enum_<H5T_str_t>(m, "StringPadding", "the string padding schemes")
         .value("error", H5T_STR_ERROR)
@@ -167,14 +189,6 @@ pyre::h5::py::enums(py::module & m)
         .value("reserved_13", H5T_STR_RESERVED_13)
         .value("reserved_14", H5T_STR_RESERVED_14)
         .value("reserved_15", H5T_STR_RESERVED_15);
-
-    // file space handling strategies
-    py::enum_<H5F_fspace_strategy_t>(m, "FilespaceStrategy", "the file space strategies")
-        .value("fsm_aggr", H5F_FSPACE_STRATEGY_FSM_AGGR)
-        .value("page", H5F_FSPACE_STRATEGY_PAGE)
-        .value("aggr", H5F_FSPACE_STRATEGY_AGGR)
-        .value("none", H5F_FSPACE_STRATEGY_NONE)
-        .value("types", H5F_FSPACE_STRATEGY_NTYPES);
 
 
     // all done
