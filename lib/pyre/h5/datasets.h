@@ -143,10 +143,8 @@ pyre::h5::write(
     const dataset_t & self, memT & data, const datatype_t & memtype, const shape_t & origin,
     const shape_t shape) -> void
 {
-    // get the size of the buffer
-    hsize_t memsize = data.cells();
-    // the in-memory layout is one-dimensional
-    auto memspace = dataspace_t(1, &memsize);
+    // pretend the memory buffer is the same shape as the incoming tile
+    auto memspace = dataspace_t(shape.size(), &shape[0]);
     // make a block count
     shape_t count;
     // resize it to the same rank as the requested {shape} and fill it with ones
