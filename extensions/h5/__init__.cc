@@ -31,6 +31,7 @@ PYBIND11_MODULE(h5, m)
     pyre::h5::py::dxpl(m);
     pyre::h5::py::fapl(m);
     pyre::h5::py::fcpl(m);
+    pyre::h5::py::lcpl(m);
 
     // subpackages
     pyre::h5::py::datatypes::__init__(m);
