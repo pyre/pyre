@@ -18,6 +18,7 @@ namespace pyre::h5::py {
     void enums(py::module &);
     // property lists
     void pl(py::module &);
+    void dcpl(py::module &);
     void fcpl(py::module &);
     void fapl(py::module &);
     // datasets

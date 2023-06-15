@@ -22,7 +22,7 @@ pyre::h5::py::api(py::module & m)
         []() -> void {
             // turn off the native diagnostics; we commit to catching all exceptions and
             // generating our own messages
-            H5::Exception::dontPrint();
+            // H5::Exception::dontPrint();
             // all done
             return;
         },
