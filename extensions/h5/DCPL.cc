@@ -67,24 +67,33 @@ pyre::h5::py::dcpl(py::module & m)
         // the name
         "getChunk",
         // the implementation
-        &DCPL::getChunk,
+        [](const DCPL & self, int rank) {
+            // make a vector big enough to hold the answer
+            shape_t shape(rank);
+            // get the chunk size
+            self.getChunk(rank, &shape[0]);
+            // and return it
+            return shape;
+        },
+        // the signature
+        "rank"_a,
         // the docstring
-        "get the chunk size");
+        "get the chunk size given the dataset {rank}");
     // set the chunk size
     cls.def(
         // the name
         "setChunk",
         // the implementation
-        [](const DCPL & self, const shape_t & chunk) -> void {
+        [](const DCPL & self, const shape_t & shape) -> void {
             // set the chunk size and shape
-            self.setChunk(chunk.size(), &chunk[0]);
+            self.setChunk(shape.size(), &shape[0]);
             // all done
             return;
         },
         // the signature
-        "chunk"_a,
+        "shape"_a,
         // the docstring
-        "set the chunk size");
+        "set the chunk {shape}");
 
     // get the fill value writing time
     cls.def(
