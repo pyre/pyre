@@ -167,6 +167,24 @@ pyre::h5::py::dataset(py::module & m)
         // the docstring
         "get detailed information about my type");
 
+    // access property list
+    cls.def_property_readonly(
+        // the name
+        "dapl",
+        // the implementation
+        &DataSet::getAccessPlist,
+        // the docstring
+        "get my access property list");
+
+    // creation property list
+    cls.def_property_readonly(
+        // the name
+        "dcpl",
+        // the implementation
+        &DataSet::getCreatePlist,
+        // the docstring
+        "get my creation property list");
+
     // the on-disk size
     cls.def_property_readonly(
         // the name
