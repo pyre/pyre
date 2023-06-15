@@ -14,6 +14,15 @@
 void
 pyre::h5::py::enums(py::module & m)
 {
+    // dataset space allocation timing
+    py::enum_<H5D_alloc_time_t>(m, "AllocTime", "the timing for allocating dataset space")
+        // add the values
+        .value("error", H5D_ALLOC_TIME_ERROR)
+        .value("default", H5D_ALLOC_TIME_DEFAULT)
+        .value("early", H5D_ALLOC_TIME_EARLY)
+        .value("late", H5D_ALLOC_TIME_LATE)
+        .value("incr", H5D_ALLOC_TIME_INCR);
+
     // dataset fill timing
     py::enum_<H5D_fill_time_t>(m, "FillTime", "the timing for writing the dataset fill value")
         // add the values
@@ -29,6 +38,15 @@ pyre::h5::py::enums(py::module & m)
         .value("undefined", H5D_FILL_VALUE_UNDEFINED)
         .value("default", H5D_FILL_VALUE_DEFAULT)
         .value("user_defined", H5D_FILL_VALUE_USER_DEFINED);
+
+    // dataset layout strategy
+    py::enum_<H5D_layout_t>(m, "Layout", "dataset layout strategies")
+        .value("error", H5D_LAYOUT_ERROR)
+        .value("compact", H5D_COMPACT)
+        .value("contiguous", H5D_CONTIGUOUS)
+        .value("chunked", H5D_CHUNKED)
+        .value("virtual", H5D_VIRTUAL)
+        .value("layouts", H5D_NLAYOUTS);
 
     // file space handling strategies
     py::enum_<H5F_fspace_strategy_t>(m, "FilespaceStrategy", "the file space strategies")
