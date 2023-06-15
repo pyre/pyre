@@ -77,7 +77,7 @@ pyre::h5::py::lcpl(py::module & m)
         // the implementation
         &LCPL::setCharEncoding,
         // the signature
-        "create"_a,
+        "encoding"_a,
         // the docstring
         "set the string character encoding");
 
