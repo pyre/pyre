@@ -10,6 +10,7 @@ import pyre
 
 # support
 from .. import libh5
+from .File import File
 from .Explorer import Explorer
 
 # typing
@@ -18,7 +19,6 @@ from .. import schema
 from .Object import Object
 from .Dataset import Dataset
 from .Group import Group
-from .File import File
 from .Inspector import Inspector
 
 # type aliases
@@ -60,7 +60,7 @@ class Reader:
         self,
         uri: pyre.primitives.uri,
         mode: str = "r",
-        fapl: libh5.FAPL = libh5.FAPL.default,
+        fapl: typing.Optional[libh5.FAPL] = None,
         **kwds,
     ):
         # chain up
@@ -75,7 +75,7 @@ class Reader:
         self,
         uri: typing.Union[pyre.primitives.uri, str],
         mode: str = "r",
-        fapl: libh5.FAPL = libh5.FAPL.default,
+        fapl: typing.Optional[libh5.FAPL] = None,
         **kwds,
     ) -> typing.Optional[File]:
         """

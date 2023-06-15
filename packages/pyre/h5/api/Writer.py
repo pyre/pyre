@@ -68,7 +68,7 @@ class Writer:
         self,
         uri: pyre.primitives.uri,
         mode: str = "w",
-        fcpl: libh5.FCPL = libh5.FCPL.default,
+        fcpl: typing.Optional[libh5.FCPL] = None,
         **kwds,
     ):
         # chain up

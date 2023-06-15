@@ -82,7 +82,8 @@ class File(Group):
         key: str,
         region: str = "",
         profile: str = "default",
-        fapl: libh5.FAPL = libh5.FAPL.default,
+        fapl: typing.Optional[libh5.FAPL] = None,
+        **kwds,
     ) -> "File":
         """
         Access the remote dataset {key} in the given S3 {bucket} using the {ROS3} driver
@@ -107,7 +108,11 @@ class File(Group):
         else:
             # turn it off and let the ros3 driver figure it out
             authenticate = False
-        # attach the required {ros3} driver information to the fapl
+        # if the caller didn't supply a {fapl}
+        if fapl is None:
+            # set one up
+            fapl = libh5.FAPL()
+        # attach the required {ros3} driver information
         fapl.ros3(
             region=region,
             id=id,
@@ -118,7 +123,7 @@ class File(Group):
         # assemble the file uri
         uri = f"https://{bucket}.{s3}/{key}"
         # and delegate to the opener
-        return self._pyre_open(uri=uri, mode="r", fapl=fapl)
+        return self._pyre_open(uri=uri, mode="r", fapl=fapl, **kwds)
 
     # structural
     def _pyre_root(self) -> schema.group:
@@ -145,7 +150,13 @@ class File(Group):
         return handler(file=self, **kwds)
 
     # helpers
-    def _pyre_open(self, uri: pyre.primitives.pathlike, **kwds) -> "File":
+    def _pyre_open(
+        self,
+        uri: pyre.primitives.pathlike,
+        fcpl: typing.Optional[libh5.FCPL] = None,
+        fapl: typing.Optional[libh5.FAPL] = None,
+        **kwds,
+    ) -> "File":
         """
         Access to the h5 file factory
 
@@ -154,8 +165,16 @@ class File(Group):
         """
         # record the uri
         self._pyre_uri = uri
+        # if the supplied {fcpl} is trivial
+        if fcpl is None:
+            # get the default
+            fcpl = libh5.FCPL.default
+        # similarly, if the supplied {fapl} is trivial
+        if fapl is None:
+            # get the default
+            fapl = libh5.FAPL.default
         # open the file
-        self._pyre_id = libh5.File(uri=str(uri), **kwds)
+        self._pyre_id = libh5.File(uri=str(uri), fcpl=fcpl, fapl=fapl, **kwds)
         # all done
         return self
 
