@@ -93,7 +93,7 @@ class Strings(Dataset.list):
         # and the space
         space = libh5.DataSpace(shape=shape)
         # hand the pair off
-        return type, space
+        return type, space, None
 
 
 # end of file

@@ -53,7 +53,7 @@ class Bool:
         # with a length wide enough to hold the two possible values
         type = self.disktype(cells=5)
         # hand off the pair
-        return type, shape
+        return type, shape, None
 
 
 # end of file

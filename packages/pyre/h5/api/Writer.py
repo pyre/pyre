@@ -92,7 +92,7 @@ class Writer:
         # if it doesn't exist
         else:
             # we have to make it; ask the {dataset} for its type and shape
-            datatype, dataspace = dataset._pyre_describe()
+            datatype, dataspace, *_ = dataset._pyre_describe()
             # with these two, we can create it
             hid = dst.create(path=name, type=datatype, space=dataspace)
         # we have structure; make content

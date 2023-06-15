@@ -81,7 +81,7 @@ class Dataset(Descriptor):
         # as a result, their type does not depend on the value of the dataset
         type = self.disktype
         # hand off the pair
-        return type, scalar
+        return type, scalar, None
 
     # visiting
     def _pyre_identify(self, authority, **kwds):
