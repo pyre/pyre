@@ -20,6 +20,7 @@ namespace pyre::h5::py {
     void pl(py::module &);
     void dapl(py::module &);
     void dcpl(py::module &);
+    void dxpl(py::module &);
     void fapl(py::module &);
     void fcpl(py::module &);
     // datasets

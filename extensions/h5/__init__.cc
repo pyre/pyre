@@ -28,6 +28,7 @@ PYBIND11_MODULE(h5, m)
     pyre::h5::py::pl(m);
     pyre::h5::py::dapl(m);
     pyre::h5::py::dcpl(m);
+    pyre::h5::py::dxpl(m);
     pyre::h5::py::fapl(m);
     pyre::h5::py::fcpl(m);
 

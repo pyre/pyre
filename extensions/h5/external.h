@@ -66,6 +66,7 @@ namespace pyre::h5::py {
     using PropList = H5::PropList;
     using DAPL = H5::DSetAccPropList;
     using DCPL = H5::DSetCreatPropList;
+    using DXPL = H5::DSetMemXferPropList;
     using FAPL = H5::FileAccPropList;
     using FCPL = H5::FileCreatPropList;
     // dataspaces derive from {Identifier}
