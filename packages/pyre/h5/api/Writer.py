@@ -92,9 +92,22 @@ class Writer:
         # if it doesn't exist
         else:
             # we have to make it; ask the {dataset} for its type and shape
-            datatype, dataspace, *_ = dataset._pyre_describe()
-            # with these two, we can create it
-            hid = dst.create(path=name, type=datatype, space=dataspace)
+            datatype, dataspace, chunk, *_ = dataset._pyre_describe()
+            # creation configuration
+            dcpl = libh5.DCPL()
+            # and access configuration
+            dapl = libh5.DAPL()
+            # if the chunking strategy is non-trivial
+            if chunk:
+                # show me
+                print(f"{dataset}: {chunk=}")
+                # configure the dataset creation
+                dcpl.setChunk(chunk)
+                # MGA: what to do with the dapl chunk cache values?
+            # create the dataset
+            hid = dst.create(
+                path=name, type=datatype, space=dataspace, dcpl=dcpl, dapl=dapl
+            )
         # we have structure; make content
         dataset._pyre_write(dst=hid)
         # all done
