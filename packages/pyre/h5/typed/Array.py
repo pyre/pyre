@@ -46,6 +46,15 @@ class Array:
         # all done
         return value
 
+    # metamethods
+    def __init__(self, chunk=None, **kwds):
+        # chain up
+        super().__init__(**kwds)
+        # record the chunking strategy
+        self.chunk = chunk
+        # all done
+        return
+
     # value synchronization
     def _pyre_pull(self, dataset):
         """
@@ -100,10 +109,12 @@ class Array:
         """
         # the type is in my schema
         type = self.disktype
-        # get the shape from the {dataset} value
+        # get the actual shape from the {dataset} value
         space = libh5.DataSpace(shape=dataset.value.shape)
+        # i may have a chunking strategy
+        chunk = self.chunk
         # hand off the pair
-        return type, space
+        return type, space, chunk
 
 
 # end of file
