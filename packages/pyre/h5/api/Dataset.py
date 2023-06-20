@@ -126,6 +126,14 @@ class Dataset(Object):
         # easy enough
         return self._pyre_id.dcpl.getChunk(rank=len(self.shape))
 
+    @property
+    def filters(self):
+        """
+        The dataset chunk size
+        """
+        # easy enough
+        return self._pyre_id.dcpl.getFilters()
+
     # metamethods
     def __init__(self, **kwds):
         # chain up
