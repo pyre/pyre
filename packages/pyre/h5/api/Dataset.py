@@ -102,6 +102,30 @@ class Dataset(Object):
         # easy enough
         return self._pyre_id.type
 
+    @property
+    def dapl(self):
+        """
+        The dataset access property list
+        """
+        # easy enough
+        return self._pyre_id.dapl
+
+    @property
+    def dcpl(self):
+        """
+        The dataset creation property list
+        """
+        # easy enough
+        return self._pyre_id.dcpl
+
+    @property
+    def chunk(self):
+        """
+        The dataset chunk size
+        """
+        # easy enough
+        return self._pyre_id.dcpl.getChunk(rank=len(self.shape))
+
     # metamethods
     def __init__(self, **kwds):
         # chain up
