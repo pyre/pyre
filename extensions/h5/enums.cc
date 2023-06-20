@@ -190,7 +190,7 @@ pyre::h5::py::enums(py::module & m)
         .value("complement", H5T_SGN_2)  // two's complement
         .value("null", H5T_NSGN);
 
-    // string padding shemes
+    // string padding schemes
     py::enum_<H5T_str_t>(m, "StringPadding", "the string padding schemes")
         .value("error", H5T_STR_ERROR)
         .value("null_terminated", H5T_STR_NULLTERM)
@@ -209,7 +209,6 @@ pyre::h5::py::enums(py::module & m)
         .value("reserved_13", H5T_STR_RESERVED_13)
         .value("reserved_14", H5T_STR_RESERVED_14)
         .value("reserved_15", H5T_STR_RESERVED_15);
-
 
     // all done
     return;
