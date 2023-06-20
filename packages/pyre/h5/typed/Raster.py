@@ -107,6 +107,38 @@ class Raster:
         # easy enough
         return self._dataset._pyre_id.type
 
+    @property
+    def dapl(self):
+        """
+        The dataset access property list
+        """
+        # easy enough
+        return self._dataset._pyre_id.dapl
+
+    @property
+    def dcpl(self):
+        """
+        The dataset creation property list
+        """
+        # easy enough
+        return self._dataset._pyre_id.dcpl
+
+    @property
+    def chunk(self):
+        """
+        The dataset chunk size
+        """
+        # easy enough
+        return self.dcpl.getChunk(rank=len(self.shape))
+
+    @property
+    def filters(self):
+        """
+        The dataset chunk size
+        """
+        # easy enough
+        return self.dcpl.getFilters()
+
     # interface
     def read(self, shape=None, origin=None):
         """
