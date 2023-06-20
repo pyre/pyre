@@ -133,6 +133,38 @@ pyre::h5::py::dcpl(py::module & m)
         // the docstring
         "set the data layout strategy");
 
+    // filters
+    cls.def(
+        // the name
+        "getFilters",
+        // the implementation
+        [](const DCPL & self) {
+            // the filter info
+            using filter_info_t = std::tuple<H5Z_filter_t, string_t, unsigned int, unsigned int>;
+            // make a pile
+            auto filters = std::vector<filter_info_t>();
+
+            // go through the registered filters
+            for (int i = 0; i < self.getNfilters(); ++i) {
+                // make some room
+                unsigned int flags;
+                char name[256];
+                size_t clientDataElements = 0;
+                unsigned int * clientDataValues = nullptr;
+                unsigned int configuration;
+                // get the info
+                auto id = self.getFilter(
+                    i, flags, clientDataElements, clientDataValues, sizeof(name), name,
+                    configuration);
+                // store
+                filters.emplace_back(id, name, flags, configuration);
+            }
+            // all done
+            return filters;
+        },
+        // the docstring
+        "get the number of filters in the dataset pipeline");
+
     // compression
     // deflate
     cls.def(
