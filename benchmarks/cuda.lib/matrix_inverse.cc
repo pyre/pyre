@@ -41,8 +41,7 @@ computeInvariantsManaged(
 
 void
 computeInvariantsPinned(
-    int nTensors, int nThreadPerBlock, int nBlocks, const double * tensorArray,
-    double * inverseArray, double * gpuTensors, double * gpuInverses);
+    int nTensors, int nThreadPerBlock, int nBlocks, double * gpuTensors, double * gpuInverses);
 
 void
 computeInvariantsMapped(
@@ -267,15 +266,17 @@ pinnedInverses(pack_t tensorPack, int nThreadPerBlock, int nTensors)
     // start the wallclock timer
     walltimer.start();
 
+    // set the offset for the memory copy, zero if you copy the whole grid at once
+    int offset = 0;
+
     // synchronize the tensors between host and device
-    tensorArray.data()->synchronizeHostToDevice(
-        tensorArray.data()->data(), tensorArray.data()->device(), nTensors * 9);
+    tensorArray.data()->synchronizeHostToDevice();
 
 
     // execute the kernel wrapper
     computeInvariantsPinned(
-        nTensors, nThreadPerBlock, nBlocks, tensorArray.data()->data(), inverseArray.data()->data(),
-        tensorArray.data()->device(), inverseArray.data()->device());
+        nTensors, nThreadPerBlock, nBlocks, tensorArray.data()->device_data(),
+        inverseArray.data()->device_data());
 
     // wait for GPU to finish before synchronizing the inverse
     status = cudaDeviceSynchronize();
@@ -290,8 +291,7 @@ pinnedInverses(pack_t tensorPack, int nThreadPerBlock, int nTensors)
     }
 
     // and synchronize the inverse between device and host
-    inverseArray.data()->synchronizeDeviceToHost(
-        inverseArray.data()->data(), inverseArray.data()->device(), nTensors * 9);
+    inverseArray.data()->synchronizeDeviceToHost();
 
     // wait for GPU to finish before stopping the timer
     status = cudaDeviceSynchronize();
@@ -310,9 +310,6 @@ pinnedInverses(pack_t tensorPack, int nThreadPerBlock, int nTensors)
 
     // and stop the wallclock timer
     walltimer.stop();
-
-    // delete gpu memory
-    inverseArray.data()->deleteDevice();
 
     // make a channel
     pyre::journal::debug_t timerChannel("tests.timer");

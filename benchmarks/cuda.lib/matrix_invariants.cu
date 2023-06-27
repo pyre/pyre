@@ -50,8 +50,8 @@ computeInvariantsManaged(
 
 void
 computeInvariantsPinned(
-    int nTensors, int nThreadPerBlock, int nBlocks, const double * tensorArray, double * I1,
-    double * I2, double * I3, double * gpuTensors, double * gpuI1, double * gpuI2, double * gpuI3)
+    int nTensors, int nThreadPerBlock, int nBlocks, double * gpuTensors, double * gpuI1,
+    double * gpuI2, double * gpuI3)
 {
     // execute the kernel
     computeInvariants<<<nBlocks, nThreadPerBlock>>>(gpuTensors, gpuI1, gpuI2, gpuI3, nTensors);

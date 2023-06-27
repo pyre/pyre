@@ -42,8 +42,8 @@ computeInvariantsManaged(
 
 void
 computeInvariantsPinned(
-    int nTensors, int nThreadPerBlock, int nBlocks, const double * tensorArray, double * I1,
-    double * I2, double * I3, double * gpuTensors, double * gpuI1, double * gpuI2, double * gpuI3);
+    int nTensors, int nThreadPerBlock, int nBlocks, double * gpuTensors, double * gpuI1,
+    double * gpuI2, double * gpuI3);
 
 void
 computeInvariantsMapped(
@@ -246,15 +246,16 @@ pinnedInvariants(pack_t tensorPack, pack_t invariantPack, int nThreadPerBlock, i
     // start the wallclock timer
     walltimer.start();
 
+    // set the offset for the memory copy, zero if you copy the whole grid at once
+    int offset = 0;
+
     // synchronize the tensors between host and device
-    tensorArray.data()->synchronizeHostToDevice(
-        tensorArray.data()->data(), tensorArray.data()->device(), nTensors * 9);
+    tensorArray.data()->synchronizeHostToDevice(tensorPack.cells(), 0);
 
     // execute the kernel
     computeInvariantsPinned(
-        nTensors, nThreadPerBlock, nBlocks, tensorArray.data()->data(), I1.data()->data(),
-        I2.data()->data(), I3.data()->data(), tensorArray.data()->device(), I1.data()->device(),
-        I2.data()->device(), I3.data()->device());
+        nTensors, nThreadPerBlock, nBlocks, tensorArray.data()->device_data(),
+        I1.data()->device_data(), I2.data()->device_data(), I3.data()->device_data());
 
     // wait for GPU to finish before synchronizing the invariants
     status = cudaDeviceSynchronize();
@@ -269,11 +270,11 @@ pinnedInvariants(pack_t tensorPack, pack_t invariantPack, int nThreadPerBlock, i
     }
 
     // and synchronize the invariants between device and host
-    I1.data()->synchronizeDeviceToHost(I1.data()->data(), I1.data()->device(), nTensors);
+    I1.data()->synchronizeDeviceToHost(invariantPack.cells(), 0);
 
-    I2.data()->synchronizeDeviceToHost(I2.data()->data(), I2.data()->device(), nTensors);
+    I2.data()->synchronizeDeviceToHost();
 
-    I3.data()->synchronizeDeviceToHost(I3.data()->data(), I3.data()->device(), nTensors);
+    I3.data()->synchronizeDeviceToHost();
 
     // wait for GPU to finish before stopping the timer
     status = cudaDeviceSynchronize();
@@ -292,12 +293,6 @@ pinnedInvariants(pack_t tensorPack, pack_t invariantPack, int nThreadPerBlock, i
 
     // and stop the wallclock timer
     walltimer.stop();
-
-    // delethe the device memory
-    tensorArray.data()->deleteDevice();
-    I1.data()->deleteDevice();
-    I2.data()->deleteDevice();
-    I3.data()->deleteDevice();
 
     // make a channel
     pyre::journal::debug_t timerChannel("tests.timer");
@@ -444,7 +439,7 @@ main(int argc, char * argv[])
     pyre::journal::debug_t channel("pyre.cuda.benchmark");
 
     // determine the amount of tensors
-    int nTensors = 34e6;
+    int nTensors = 1e6;
 
     // determine the shape
     canonical_t::shape_type tensorShape { 9, nTensors };

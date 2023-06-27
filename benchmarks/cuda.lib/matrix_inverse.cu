@@ -59,8 +59,7 @@ computeInvariantsManaged(
 
 void
 computeInvariantsPinned(
-    int nTensors, int nThreadPerBlock, int nBlocks, const double * tensorArray,
-    double * inverseArray, double * gpuTensors, double * gpuInverses)
+    int nTensors, int nThreadPerBlock, int nBlocks, double * gpuTensors, double * gpuInverses)
 {
     // execute the kernel
     computeInverse<<<nBlocks, nThreadPerBlock>>>(gpuTensors, gpuInverses, nTensors);
