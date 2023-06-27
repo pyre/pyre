@@ -152,7 +152,7 @@ pyre::cuda::memory::Pinned<T, isConst>::bytes() const -> size_type
 // access to the data pointer
 template <class T, bool isConst>
 auto
-pyre::cuda::memory::Pinned<T, isConst>::host_data() const -> pointer
+pyre::cuda::memory::Pinned<T, isConst>::data() const -> pointer
 {
     // return the raw data pointer
     return _host_data.get();
@@ -185,8 +185,8 @@ pyre::cuda::memory::Pinned<T, isConst>::synchronizeHostToDevice()
     cudaError_t status;
 
     // copy the pinned memory
-    status = cudaMemcpy(
-        device_data(), host_data(), cells() * sizeof(value_type), cudaMemcpyHostToDevice);
+    status =
+        cudaMemcpy(device_data(), data(), cells() * sizeof(value_type), cudaMemcpyHostToDevice);
 
     // if something went wrong
     if (status != cudaSuccess) {
@@ -231,7 +231,7 @@ pyre::cuda::memory::Pinned<T, isConst>::synchronizeHostToDevice(
 
     // copy the pinned memory
     status = cudaMemcpy(
-        device_data() + offset, host_data() + offset, copySize * sizeof(value_type),
+        device_data() + offset, data() + offset, copySize * sizeof(value_type),
         cudaMemcpyHostToDevice);
 
     // if something went wrong
@@ -263,8 +263,8 @@ pyre::cuda::memory::Pinned<T, isConst>::synchronizeDeviceToHost()
     cudaError_t status;
 
     // copy the pinned memory
-    status = cudaMemcpy(
-        host_data(), device_data(), cells() * sizeof(value_type), cudaMemcpyDeviceToHost);
+    status =
+        cudaMemcpy(data(), device_data(), cells() * sizeof(value_type), cudaMemcpyDeviceToHost);
 
     // if something went wrong
     if (status != cudaSuccess) {
@@ -309,7 +309,7 @@ pyre::cuda::memory::Pinned<T, isConst>::synchronizeDeviceToHost(
 
     // copy the pinned memory
     status = cudaMemcpy(
-        host_data() + offset, device_data() + offset, copySize * sizeof(value_type),
+        data() + offset, device_data() + offset, copySize * sizeof(value_type),
         cudaMemcpyDeviceToHost);
 
     // if something went wrong
@@ -345,14 +345,14 @@ pyre::cuda::memory::Pinned<T, isConst>::at(size_type pos) const -> reference
         channel << "out of bounds access:" << pyre::journal::newline << "  index " << pos
                 << " must be less than " << cells() << pyre::journal::newline
                 << "  in pyre::cuda::memory::pinned_t::operator[]" << pyre::journal::newline
-                << "  with a block on the heap at " << host_data() << pyre::journal::endl(__HERE__);
+                << "  with a block on the heap at " << data() << pyre::journal::endl(__HERE__);
         // unreachable, unless the user has marked this error as non-fatal
         // clamp {pos} to the last element in the block
         pos = cells() - 1;
     }
 
     // return a reference to the cell at {pos}
-    return host_data()[pos];
+    return data()[pos];
 }
 
 template <class T, bool isConst>
@@ -360,7 +360,7 @@ auto
 pyre::cuda::memory::Pinned<T, isConst>::operator[](size_type pos) const -> reference
 {
     // return a reference to the cell at {pos}
-    return host_data()[pos];
+    return data()[pos];
 }
 
 #endif

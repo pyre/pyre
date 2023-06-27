@@ -40,7 +40,7 @@ public:
     // the memory footprint of the block
     inline auto bytes() const -> size_type;
     // access to the raw data pointer
-    inline auto host_data() const -> pointer;
+    inline auto data() const -> pointer;
     // the shared pointer
     inline auto handle() const -> handle_type;
     // access to the device data pointer

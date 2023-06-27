@@ -34,7 +34,7 @@ main(int argc, char * argv[])
     pinned_t arena(cells);
 
     // show me the address
-    channel << "allocated " << cells << " doubles at " << arena.host_data()
+    channel << "allocated " << cells << " doubles at " << arena.data()
             << pyre::journal::endl(__HERE__);
 
     // verify we can iterate and initialize all cells
