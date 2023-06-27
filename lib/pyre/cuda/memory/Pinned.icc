@@ -11,7 +11,7 @@ template <class T, bool isConst>
 pyre::cuda::memory::Pinned<T, isConst>::Pinned(
     cell_count_type cells) : // the cuda {malloc} api is not RAII friendly, so we initialize with a
                              // {nullptr} and replace it with the actual allocation
-    _cpu_data { nullptr },
+    _host_data { nullptr },
     _cells { cells }
 {
     // grab a spot
@@ -97,14 +97,37 @@ pyre::cuda::memory::Pinned<T, isConst>::Pinned(
     };
 
     // replace the {nullptr} with the new block and register the deallocator
-    _cpu_data.reset(cpu_spot, destructor);
+    _host_data.reset(cpu_spot, destructor);
 }
 
 template <class T, bool isConst>
-pyre::cuda::memory::Pinned<T, isConst>::Pinned(handle_type handle, cell_count_type cells) :
-    _cpu_data { handle },
+pyre::cuda::memory::Pinned<T, isConst>::Pinned(handle_type host_handle, cell_count_type cells) :
+    _host_data { host_handle },
     _cells { cells }
 {}
+
+// destructor
+template <class T, bool isConst>
+pyre::cuda::memory::Pinned<T, isConst>::~Pinned()
+{
+    // attempt to free the block of cpu memory
+    auto status = cudaFree(_device_data);
+    // if something went wrong
+    if (status != cudaSuccess) {
+        // make a channel
+        pyre::journal::error_t error("pyre.cuda");
+        // complain
+        error << "while deallocating " << _device_data
+              << " from device memory: " << pyre::journal::newline << cudaGetErrorName(status)
+              << " (" << status << ")" << pyre::journal::endl(__HERE__);
+    }
+    // all went well
+    pyre::journal::debug_t channel("pyre.cuda.pinned_t");
+    // so let me know
+    channel << "deallocated the device memory " << pyre::journal::endl(__HERE__);
+    // all done
+    return;
+}
 
 
 // interface
@@ -129,10 +152,10 @@ pyre::cuda::memory::Pinned<T, isConst>::bytes() const -> size_type
 // access to the data pointer
 template <class T, bool isConst>
 auto
-pyre::cuda::memory::Pinned<T, isConst>::data() const -> pointer
+pyre::cuda::memory::Pinned<T, isConst>::host_data() const -> pointer
 {
     // return the raw data pointer
-    return _cpu_data.get();
+    return _host_data.get();
 }
 
 // get the shared pointer
@@ -141,36 +164,36 @@ auto
 pyre::cuda::memory::Pinned<T, isConst>::handle() const -> handle_type
 {
     // easy
-    return _cpu_data;
+    return _host_data;
 }
 
 // get the device pointer
 template <class T, bool isConst>
 auto
-pyre::cuda::memory::Pinned<T, isConst>::device() const -> pointer
+pyre::cuda::memory::Pinned<T, isConst>::device_data() const -> pointer
 {
     // easy
     return _device_data;
 }
 
-// data synchronization
+// data synchronization host to device
 template <class T, bool isConst>
 auto
-pyre::cuda::memory::Pinned<T, isConst>::synchronizeHostToDevice(
-    pointer cpu_spot, pointer gpu_spot, cell_count_type cells)
+pyre::cuda::memory::Pinned<T, isConst>::synchronizeHostToDevice()
 {
     // set cuda error
     cudaError_t status;
 
     // copy the pinned memory
-    status = cudaMemcpy(gpu_spot, cpu_spot, cells * sizeof(value_type), cudaMemcpyHostToDevice);
+    status = cudaMemcpy(
+        device_data(), host_data(), cells() * sizeof(value_type), cudaMemcpyHostToDevice);
 
     // if something went wrong
     if (status != cudaSuccess) {
         // make a channel
         pyre::journal::error_t error("pyre.cuda");
         // complain
-        error << "while sending " << cells * sizeof(value_type)
+        error << "while sending " << cells() * sizeof(value_type)
               << " bytes to the device: " << pyre::journal::newline << cudaGetErrorName(status)
               << " (" << status << ")" << pyre::journal::endl(__HERE__);
     }
@@ -178,32 +201,77 @@ pyre::cuda::memory::Pinned<T, isConst>::synchronizeHostToDevice(
     // all went well
     pyre::journal::debug_t channel("pyre.cuda.pinned_t");
     // so let me know
-    channel << "send " << cells * sizeof(value_type) << " bytes to the device"
+    channel << "send " << cells() * sizeof(value_type) << " bytes to the device"
             << pyre::journal::endl(__HERE__);
 
     // all done
     return;
 }
 
-// data synchronization
-// get the device pointer
 template <class T, bool isConst>
 auto
-pyre::cuda::memory::Pinned<T, isConst>::synchronizeDeviceToHost(
-    pointer cpu_spot, pointer gpu_spot, cell_count_type cells)
-{
-    // set cuda error
+pyre::cuda::memory::Pinned<T, isConst>::synchronizeHostToDevice(
+    cell_count_type copySize, int offset)
+{ // set cuda error
     cudaError_t status;
 
+    // if the request is out of bounds
+    if (offset + copySize > cells()) {
+        // make a channel
+        pyre::journal::firewall_t channel("pyre.memory.bounds");
+        // and complain
+        channel << "out of bounds access:" << pyre::journal::newline << "  index "
+                << offset + copySize << " must be less than " << cells() << pyre::journal::newline
+                << "  in pyre::cuda::memory::pinned_t::synchronizeHostToDevice"
+                << pyre::journal::endl(__HERE__);
+        // unreachable, unless the user has marked this error as non-fatal
+        // clamp {pos} to the last element in the block
+        copySize = cells() - offset - 1;
+    }
+
     // copy the pinned memory
-    status = cudaMemcpy(cpu_spot, gpu_spot, cells * sizeof(value_type), cudaMemcpyDeviceToHost);
+    status = cudaMemcpy(
+        device_data() + offset, host_data() + offset, copySize * sizeof(value_type),
+        cudaMemcpyHostToDevice);
 
     // if something went wrong
     if (status != cudaSuccess) {
         // make a channel
         pyre::journal::error_t error("pyre.cuda");
         // complain
-        error << "while receiving " << cells * sizeof(value_type)
+        error << "while sending " << cells() * sizeof(value_type)
+              << " bytes to the device: " << pyre::journal::newline << cudaGetErrorName(status)
+              << " (" << status << ")" << pyre::journal::endl(__HERE__);
+    }
+
+    // all went well
+    pyre::journal::debug_t channel("pyre.cuda.pinned_t");
+    // so let me know
+    channel << "send " << copySize * sizeof(value_type) << " bytes to the device"
+            << pyre::journal::endl(__HERE__);
+
+    // all done
+    return;
+}
+
+// data synchronization device to host
+template <class T, bool isConst>
+auto
+pyre::cuda::memory::Pinned<T, isConst>::synchronizeDeviceToHost()
+{
+    // set cuda error
+    cudaError_t status;
+
+    // copy the pinned memory
+    status = cudaMemcpy(
+        host_data(), device_data(), cells() * sizeof(value_type), cudaMemcpyDeviceToHost);
+
+    // if something went wrong
+    if (status != cudaSuccess) {
+        // make a channel
+        pyre::journal::error_t error("pyre.cuda");
+        // complain
+        error << "while receiving " << cells() * sizeof(value_type)
               << " bytes from the device: " << pyre::journal::newline << cudaGetErrorName(status)
               << " (" << status << ")" << pyre::journal::endl(__HERE__);
     }
@@ -211,7 +279,53 @@ pyre::cuda::memory::Pinned<T, isConst>::synchronizeDeviceToHost(
     // all went well
     pyre::journal::debug_t channel("pyre.cuda.pinned_t");
     // so let me know
-    channel << "received " << cells * sizeof(value_type) << " bytes from the device"
+    channel << "received " << cells() * sizeof(value_type) << " bytes from the device"
+            << pyre::journal::endl(__HERE__);
+
+    // all done
+    return;
+}
+
+template <class T, bool isConst>
+auto
+pyre::cuda::memory::Pinned<T, isConst>::synchronizeDeviceToHost(
+    cell_count_type copySize, int offset)
+{ // set cuda error
+    cudaError_t status;
+
+    // if the request is out of bounds
+    if (offset + copySize > cells()) {
+        // make a channel
+        pyre::journal::firewall_t channel("pyre.memory.bounds");
+        // and complain
+        channel << "out of bounds access:" << pyre::journal::newline << "  index "
+                << offset + copySize << " must be less than " << cells() << pyre::journal::newline
+                << "  in pyre::cuda::memory::pinned_t::synchronizeHostToDevice"
+                << pyre::journal::endl(__HERE__);
+        // unreachable, unless the user has marked this error as non-fatal
+        // clamp {pos} to the last element in the block
+        copySize = cells() - offset - 1;
+    }
+
+    // copy the pinned memory
+    status = cudaMemcpy(
+        host_data() + offset, device_data() + offset, copySize * sizeof(value_type),
+        cudaMemcpyDeviceToHost);
+
+    // if something went wrong
+    if (status != cudaSuccess) {
+        // make a channel
+        pyre::journal::error_t error("pyre.cuda");
+        // complain
+        error << "while receiving " << copySize * sizeof(value_type)
+              << " bytes from the device: " << pyre::journal::newline << cudaGetErrorName(status)
+              << " (" << status << ")" << pyre::journal::endl(__HERE__);
+    }
+
+    // all went well
+    pyre::journal::debug_t channel("pyre.cuda.pinned_t");
+    // so let me know
+    channel << "received " << copySize * sizeof(value_type) << " bytes from the device"
             << pyre::journal::endl(__HERE__);
 
     // all done
@@ -231,14 +345,14 @@ pyre::cuda::memory::Pinned<T, isConst>::at(size_type pos) const -> reference
         channel << "out of bounds access:" << pyre::journal::newline << "  index " << pos
                 << " must be less than " << cells() << pyre::journal::newline
                 << "  in pyre::cuda::memory::pinned_t::operator[]" << pyre::journal::newline
-                << "  with a block on the heap at " << data() << pyre::journal::endl(__HERE__);
+                << "  with a block on the heap at " << host_data() << pyre::journal::endl(__HERE__);
         // unreachable, unless the user has marked this error as non-fatal
         // clamp {pos} to the last element in the block
         pos = cells() - 1;
     }
 
     // return a reference to the cell at {pos}
-    return data()[pos];
+    return host_data()[pos];
 }
 
 template <class T, bool isConst>
@@ -246,31 +360,7 @@ auto
 pyre::cuda::memory::Pinned<T, isConst>::operator[](size_type pos) const -> reference
 {
     // return a reference to the cell at {pos}
-    return data()[pos];
-}
-
-// delete device memory
-template <class T, bool isConst>
-auto
-pyre::cuda::memory::Pinned<T, isConst>::deleteDevice()
-{
-    // attempt to free the block of cpu memory
-    auto status = cudaFree(_device_data);
-    // if something went wrong
-    if (status != cudaSuccess) {
-        // make a channel
-        pyre::journal::error_t error("pyre.cuda");
-        // complain
-        error << "while deallocating " << _device_data
-              << " from device memory: " << pyre::journal::newline << cudaGetErrorName(status)
-              << " (" << status << ")" << pyre::journal::endl(__HERE__);
-    }
-    // all went well
-    pyre::journal::debug_t channel("pyre.cuda.pinned_t");
-    // so let me know
-    channel << "deallocated the device memory " << pyre::journal::endl(__HERE__);
-    // all done
-    return;
+    return host_data()[pos];
 }
 
 #endif

@@ -40,18 +40,22 @@ public:
     // the memory footprint of the block
     inline auto bytes() const -> size_type;
     // access to the raw data pointer
-    inline auto data() const -> pointer;
+    inline auto host_data() const -> pointer;
     // the shared pointer
     inline auto handle() const -> handle_type;
     // access to the device data pointer
-    inline auto device() const -> pointer;
+    inline auto device_data() const -> pointer;
 
     // cpu gpu synchronization
 public:
-    // synchronize memory from cpu to gpu
-    inline auto synchronizeHostToDevice(pointer, pointer, cell_count_type);
-    // synchronize memory from gpu to cpu
-    inline auto synchronizeDeviceToHost(pointer, pointer, cell_count_type);
+    // synchronize all memory from cpu to gpu
+    inline auto synchronizeHostToDevice();
+    // synchronize part off the memory from cpu to gpu
+    inline auto synchronizeHostToDevice(cell_count_type, int);
+    // synchronize all memory from gpu to cpu
+    inline auto synchronizeDeviceToHost();
+    // synchronize part off the memory from gpu to cpu
+    inline auto synchronizeDeviceToHost(cell_count_type, int);
 
     // data access
 public:
@@ -60,20 +64,16 @@ public:
     // without bounds checking
     inline auto operator[](size_type) const -> reference;
 
-    // delete the gpu memory
-public:
-    inline auto deleteDevice();
-
     // implementation details: data
 private:
-    handle_type _cpu_data;
+    handle_type _host_data;
     pointer _device_data;
     const cell_count_type _cells;
 
     // default metamethods
 public:
     // destructor
-    ~Pinned() = default;
+    ~Pinned();
     // constructors
     Pinned(const Pinned &) = default;
     Pinned(Pinned &&) = default;
