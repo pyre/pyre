@@ -28,10 +28,12 @@ class AWS(pyre.component):
         profiles = self._profiles
         # get the id
         id = profiles[profile].get("aws_access_key_id", "")
-        # and the secret
+        # the secret
         secret = profiles[profile].get("aws_secret_access_key", "")
-        # and pass them on
-        return id, secret
+        # and the session token
+        token = profiles[profile].get("aws_session_token", "")
+        # pass them on
+        return id, secret, token
 
     def profile(self, name: str = "default"):
         """
@@ -92,6 +94,12 @@ class AWS(pyre.component):
         if key is not None:
             # override the value in the default profile
             credentials["default"]["aws_secret_access_key"] = key
+        # check whether there is a session token in the environment
+        key = os.environ.get("AWS_SESSION_TOKEN", None)
+        # if there
+        if key is not None:
+            # override the value in the default profile
+            credentials["default"]["aws_session_token"] = key
 
         # NYI: there may be profile configurations in ~/.aws.config
 

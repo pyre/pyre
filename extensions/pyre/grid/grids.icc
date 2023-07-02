@@ -54,7 +54,6 @@ pyre::py::grid::makecls(py::module & m)
     using packing_t = pyre::grid::canonical_t<dim>;
     using grid_t = pyre::grid::grid_t<packing_t, storage_t>;
 
-
     // encode the dimension
     auto d = std::to_string(dim) + "D";
     // assemble the name

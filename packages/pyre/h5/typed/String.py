@@ -53,7 +53,7 @@ class String:
         # but the type knows the length of the value
         type = self.disktype(cells=max(1, len(self.string(dataset.value))))
         # hand off the pair
-        return type, shape
+        return type, shape, None
 
 
 # end of file

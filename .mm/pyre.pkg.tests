@@ -17,6 +17,7 @@ tests.pyre.pkg.filesystem.zip.clean := sample.zip
 tests.pyre.pkg.schemata.ostreams.clean := output.cfg
 tests.pyre.pkg.primitives.path_resolution.clean := scratch
 tests.pyre.pkg.pyre.clean := __pycache__
+tests.pyre.pkg.h5.api.writer.clean := writer.h5
 
 
 # the {filesystem.local-make} test modifies the current directory, which creates race

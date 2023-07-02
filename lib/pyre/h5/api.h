@@ -52,6 +52,12 @@ namespace pyre::h5 {
         const dataset_t & self, memT & data, const datatype_t & memtype, const shape_t & origin,
         const shape_t shape) -> void;
 
+    // support for writing from existing {pyre::grid} instances
+    template <class gridT>
+    auto writeGrid(
+        const dataset_t & self, gridT & data, const datatype_t & memtype, const shape_t & origin,
+        const shape_t shape) -> void;
+
 } // namespace pyre::h5
 
 

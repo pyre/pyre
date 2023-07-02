@@ -17,6 +17,7 @@
 #include <pyre/h5.h>
 #include <pyre/journal.h>
 #include <pyre/memory.h>
+#include <pyre/grid.h>
 // pybind11
 #include <pybind11/pybind11.h>
 #include <pybind11/complex.h>
@@ -45,6 +46,7 @@ namespace pyre::h5::py {
 
     // aliases for common STL classes
     using string_t = std::string;
+    using names_t = std::vector<string_t>;
     using ints_t = std::vector<long>;
     using doubles_t = std::vector<double>;
     using strings_t = std::vector<string_t>;
@@ -62,8 +64,13 @@ namespace pyre::h5::py {
     using Identifier = H5::IdComponent; // pure virtual
     // property lists derive from {Identifier}
     using PropList = H5::PropList;
-    using FileAccessPropertyList = H5::FileAccPropList;
-    using FileCreatePropertyList = H5::FileCreatPropList;
+    using DAPL = H5::DSetAccPropList;
+    using DCPL = H5::DSetCreatPropList;
+    using DXPL = H5::DSetMemXferPropList;
+    using FAPL = H5::FileAccPropList;
+    using FCPL = H5::FileCreatPropList;
+    using LAPL = H5::LinkAccPropList;
+    using LCPL = H5::LinkCreatPropList;
     // dataspaces derive from {Identifier}
     using DataSpace = H5::DataSpace;
     // locations derive from {Identifier}
@@ -100,6 +107,31 @@ namespace pyre::h5::py {
     using heap_double_t = pyre::memory::heap_t<double>;
     using heap_complexfloat_t = pyre::memory::heap_t<std::complex<float>>;
     using heap_complexdouble_t = pyre::memory::heap_t<std::complex<double>>;
+
+    using int8_heapgrid_2d_t =
+        pyre::grid::grid_t<pyre::grid::canonical_t<2>, pyre::memory::heap_t<int8_t>>;
+    using int16_heapgrid_2d_t =
+        pyre::grid::grid_t<pyre::grid::canonical_t<2>, pyre::memory::heap_t<int16_t>>;
+    using int32_heapgrid_2d_t =
+        pyre::grid::grid_t<pyre::grid::canonical_t<2>, pyre::memory::heap_t<int32_t>>;
+    using int64_heapgrid_2d_t =
+        pyre::grid::grid_t<pyre::grid::canonical_t<2>, pyre::memory::heap_t<int64_t>>;
+    using uint8_heapgrid_2d_t =
+        pyre::grid::grid_t<pyre::grid::canonical_t<2>, pyre::memory::heap_t<uint8_t>>;
+    using uint16_heapgrid_2d_t =
+        pyre::grid::grid_t<pyre::grid::canonical_t<2>, pyre::memory::heap_t<uint16_t>>;
+    using uint32_heapgrid_2d_t =
+        pyre::grid::grid_t<pyre::grid::canonical_t<2>, pyre::memory::heap_t<uint32_t>>;
+    using uint64_heapgrid_2d_t =
+        pyre::grid::grid_t<pyre::grid::canonical_t<2>, pyre::memory::heap_t<uint64_t>>;
+    using float_heapgrid_2d_t =
+        pyre::grid::grid_t<pyre::grid::canonical_t<2>, pyre::memory::heap_t<float>>;
+    using double_heapgrid_2d_t =
+        pyre::grid::grid_t<pyre::grid::canonical_t<2>, pyre::memory::heap_t<double>>;
+    using complexfloat_heapgrid_2d_t =
+        pyre::grid::grid_t<pyre::grid::canonical_t<2>, pyre::memory::heap_t<std::complex<float>>>;
+    using complexdouble_heapgrid_2d_t =
+        pyre::grid::grid_t<pyre::grid::canonical_t<2>, pyre::memory::heap_t<std::complex<double>>>;
 
 } // namespace pyre::h5::py
 

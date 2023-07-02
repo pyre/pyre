@@ -9,6 +9,58 @@
 // namespace setup
 #include "forward.h"
 
+// helpers
+namespace pyre::h5::py {
+
+    // bindings for reading dataset contents into {pyre::memory} buffers
+    template <class memT>
+    auto bindReadBuffer(py::class_<DataSet> & cls) -> void
+    {
+        // add a {write} overload for the given grid type
+        cls.def(
+            // the name
+            "read",
+            // the implementation
+            &read<memT>,
+            // the signature
+            "data"_a, "memtype"_a, "origin"_a, "shape"_a,
+            // the docstring
+            "fill {data} with the tile @{origin}+{shape}");
+    }
+
+    // bindings for writing out the contents of {pyre::memory} buffers
+    template <class memT>
+    auto bindWriteBuffer(py::class_<DataSet> & cls) -> void
+    {
+        // add a {write} overload for the given grid type
+        cls.def(
+            // the name
+            "write",
+            // the implementation
+            &write<memT>,
+            // the signature
+            "data"_a, "memtype"_a, "origin"_a, "shape"_a,
+            // the docstring
+            "fill {data} with the tile @{origin}+{shape}");
+    }
+
+    // bindings for writing out the contents of grids
+    template <class gridT>
+    auto bindWriteGrid(py::class_<DataSet> & cls) -> void
+    {
+        // add a {write} overload for the given grid type
+        cls.def(
+            // the name
+            "write",
+            // the implementation
+            &writeGrid<gridT>,
+            // the signature
+            "data"_a, "memtype"_a, "origin"_a, "shape"_a,
+            // the docstring
+            "fill {data} with the tile @{origin}+{shape}");
+    }
+} // namespace pyre::h5::py
+
 // datasets
 void
 pyre::h5::py::dataset(py::module & m)
@@ -114,6 +166,24 @@ pyre::h5::py::dataset(py::module & m)
         },
         // the docstring
         "get detailed information about my type");
+
+    // access property list
+    cls.def_property_readonly(
+        // the name
+        "dapl",
+        // the implementation
+        &DataSet::getAccessPlist,
+        // the docstring
+        "get my access property list");
+
+    // creation property list
+    cls.def_property_readonly(
+        // the name
+        "dcpl",
+        // the implementation
+        &DataSet::getCreatePlist,
+        // the docstring
+        "get my creation property list");
 
     // the on-disk size
     cls.def_property_readonly(
@@ -463,14 +533,9 @@ pyre::h5::py::dataset(py::module & m)
             }
             // we have strings; let's find out how many
             // get my data space
-            auto space = self.getSpace();
+            auto dst = self.getSpace();
             // ask it for its rank
-            auto rank = space.getSimpleExtentNdims();
-            // make a correctly sized vector to hold the result
-            shape_t shape(rank);
-            // populate it
-            space.getSimpleExtentDims(&shape[0], nullptr);
-
+            auto rank = dst.getSimpleExtentNdims();
             // make sure i'm just a list
             if (rank != 1) {
                 // if not, make a channel
@@ -485,21 +550,24 @@ pyre::h5::py::dataset(py::module & m)
                 return;
             }
 
-            // shape now knows how many strings there are
+            // make a correctly sized vector to hold the result
+            shape_t shape(rank);
+            // populate it
+            dst.getSimpleExtentDims(&shape[0], nullptr);
+
+            // shape now knows how many strings this dataset can hold
             auto len = shape[0];
-            // make a slot
+            // we always write one string at a time from {value}
             const hsize_t one = 1;
-            // we always read one string at offset zero
-            auto read = DataSpace(1, &one);
-            // and write to the dataset space
-            auto write = self.getSpace();
+            // so make a data space that reflects that
+            auto src = DataSpace(rank, &one);
 
             // write as many times as there are strings to pull
             for (hsize_t idx = 0; idx < len; ++idx) {
-                // restrict the read dataspace to one string at offset {idx}
-                read.selectHyperslab(H5S_SELECT_SET, &one, &idx);
+                // pick the slot in the destination data space
+                dst.selectHyperslab(H5S_SELECT_SET, &one, &idx, nullptr, &one);
                 // unconditional/unrestricted write
-                self.write(value[idx], self.getStrType(), read, write);
+                self.write(value[idx], self.getStrType(), src, dst);
             }
 
             // all done
@@ -520,207 +588,48 @@ pyre::h5::py::dataset(py::module & m)
         // the docstring
         "close the dataset");
 
-    // read a block of data from the dataset
-    cls.def(
-        // the name
-        "read",
-        // the implementation
-        &read<heap_int8_t>,
-        // the signature
-        "data"_a, "memtype"_a, "origin"_a, "shape"_a,
-        // the docstring
-        "fill {data} with the tile @{origin}+{shape}");
+    // reading
+    // into memory buffers
+    bindReadBuffer<heap_int8_t>(cls);
+    bindReadBuffer<heap_int16_t>(cls);
+    bindReadBuffer<heap_int32_t>(cls);
+    bindReadBuffer<heap_int64_t>(cls);
+    bindReadBuffer<heap_uint8_t>(cls);
+    bindReadBuffer<heap_uint16_t>(cls);
+    bindReadBuffer<heap_uint32_t>(cls);
+    bindReadBuffer<heap_uint64_t>(cls);
+    bindReadBuffer<heap_float_t>(cls);
+    bindReadBuffer<heap_double_t>(cls);
+    bindReadBuffer<heap_complexfloat_t>(cls);
+    bindReadBuffer<heap_complexdouble_t>(cls);
 
-    cls.def(
-        // the name
-        "read",
-        // the implementation
-        &read<heap_int16_t>,
-        // the signature
-        "data"_a, "memtype"_a, "origin"_a, "shape"_a,
-        // the docstring
-        "fill {data} with the tile @{origin}+{shape}");
-
-    cls.def(
-        // the name
-        "read",
-        // the implementation
-        &read<heap_int32_t>,
-        // the signature
-        "data"_a, "memtype"_a, "origin"_a, "shape"_a,
-        // the docstring
-        "fill {data} with the tile @{origin}+{shape}");
-
-    cls.def(
-        // the name
-        "read",
-        // the implementation
-        &read<heap_int64_t>,
-        // the signature
-        "data"_a, "memtype"_a, "origin"_a, "shape"_a,
-        // the docstring
-        "fill {data} with the tile @{origin}+{shape}");
-
-    cls.def(
-        // the name
-        "read",
-        // the implementation
-        &read<heap_uint8_t>,
-        // the signature
-        "data"_a, "memtype"_a, "origin"_a, "shape"_a,
-        // the docstring
-        "fill {data} with the tile @{origin}+{shape}");
-
-    cls.def(
-        // the name
-        "read",
-        // the implementation
-        &read<heap_uint16_t>,
-        // the signature
-        "data"_a, "memtype"_a, "origin"_a, "shape"_a,
-        // the docstring
-        "fill {data} with the tile @{origin}+{shape}");
-
-    cls.def(
-        // the name
-        "read",
-        // the implementation
-        &read<heap_uint32_t>,
-        // the signature
-        "data"_a, "memtype"_a, "origin"_a, "shape"_a,
-        // the docstring
-        "fill {data} with the tile @{origin}+{shape}");
-
-    cls.def(
-        // the name
-        "read",
-        // the implementation
-        &read<heap_uint64_t>,
-        // the signature
-        "data"_a, "memtype"_a, "origin"_a, "shape"_a,
-        // the docstring
-        "fill {data} with the tile @{origin}+{shape}");
-
-    cls.def(
-        // the name
-        "read",
-        // the implementation
-        &read<heap_float_t>,
-        // the signature
-        "data"_a, "memtype"_a, "origin"_a, "shape"_a,
-        // the docstring
-        "fill {data} with the tile @{origin}+{shape}");
-
-    cls.def(
-        // the name
-        "read",
-        // the implementation
-        &read<heap_double_t>,
-        // the signature
-        "data"_a, "memtype"_a, "origin"_a, "shape"_a,
-        // the docstring
-        "fill {data} with the tile @{origin}+{shape}");
-
-    cls.def(
-        // the name
-        "read",
-        // the implementation
-        &read<heap_complexfloat_t>,
-        // the signature
-        "data"_a, "memtype"_a, "origin"_a, "shape"_a,
-        // the docstring
-        "fill {data} with the tile @{origin}+{shape}");
-
-    cls.def(
-        // the name
-        "read",
-        // the implementation
-        &read<heap_complexdouble_t>,
-        // the signature
-        "data"_a, "memtype"_a, "origin"_a, "shape"_a,
-        // the docstring
-        "fill {data} with the tile @{origin}+{shape}");
-
-    // write a block of data to the dataset
-    cls.def(
-        // the name
-        "write",
-        // the implementation
-        &write<heap_int8_t>,
-        // the signature
-        "data"_a, "memtype"_a, "origin"_a, "shape"_a,
-        // the docstring
-        "fill {data} with the tile @{origin}+{shape}");
-
-    cls.def(
-        // the name
-        "write",
-        // the implementation
-        &write<heap_int16_t>,
-        // the signature
-        "data"_a, "memtype"_a, "origin"_a, "shape"_a,
-        // the docstring
-        "fill {data} with the tile @{origin}+{shape}");
-
-    cls.def(
-        // the name
-        "write",
-        // the implementation
-        &write<heap_int32_t>,
-        // the signature
-        "data"_a, "memtype"_a, "origin"_a, "shape"_a,
-        // the docstring
-        "fill {data} with the tile @{origin}+{shape}");
-
-    cls.def(
-        // the name
-        "write",
-        // the implementation
-        &write<heap_int64_t>,
-        // the signature
-        "data"_a, "memtype"_a, "origin"_a, "shape"_a,
-        // the docstring
-        "fill {data} with the tile @{origin}+{shape}");
-
-    cls.def(
-        // the name
-        "write",
-        // the implementation
-        &write<heap_float_t>,
-        // the signature
-        "data"_a, "memtype"_a, "origin"_a, "shape"_a,
-        // the docstring
-        "fill {data} with the tile @{origin}+{shape}");
-
-    cls.def(
-        // the name
-        "write",
-        // the implementation
-        &write<heap_double_t>,
-        // the signature
-        "data"_a, "memtype"_a, "origin"_a, "shape"_a,
-        // the docstring
-        "fill {data} with the tile @{origin}+{shape}");
-
-    cls.def(
-        // the name
-        "write",
-        // the implementation
-        &write<heap_complexfloat_t>,
-        // the signature
-        "data"_a, "memtype"_a, "origin"_a, "shape"_a,
-        // the docstring
-        "fill {data} with the tile @{origin}+{shape}");
-
-    cls.def(
-        // the name
-        "write",
-        // the implementation
-        &write<heap_complexdouble_t>,
-        // the signature
-        "data"_a, "memtype"_a, "origin"_a, "shape"_a,
-        // the docstring
-        "fill {data} with the tile @{origin}+{shape}");
+    // writing
+    // from memory buffers
+    bindWriteBuffer<heap_int8_t>(cls);
+    bindWriteBuffer<heap_int16_t>(cls);
+    bindWriteBuffer<heap_int32_t>(cls);
+    bindWriteBuffer<heap_int64_t>(cls);
+    bindWriteBuffer<heap_uint8_t>(cls);
+    bindWriteBuffer<heap_uint16_t>(cls);
+    bindWriteBuffer<heap_uint32_t>(cls);
+    bindWriteBuffer<heap_uint64_t>(cls);
+    bindWriteBuffer<heap_float_t>(cls);
+    bindWriteBuffer<heap_double_t>(cls);
+    bindWriteBuffer<heap_complexfloat_t>(cls);
+    bindWriteBuffer<heap_complexdouble_t>(cls);
+    // from 2d grids
+    bindWriteGrid<int8_heapgrid_2d_t>(cls);
+    bindWriteGrid<int16_heapgrid_2d_t>(cls);
+    bindWriteGrid<int32_heapgrid_2d_t>(cls);
+    bindWriteGrid<int64_heapgrid_2d_t>(cls);
+    bindWriteGrid<uint8_heapgrid_2d_t>(cls);
+    bindWriteGrid<uint16_heapgrid_2d_t>(cls);
+    bindWriteGrid<uint32_heapgrid_2d_t>(cls);
+    bindWriteGrid<uint64_heapgrid_2d_t>(cls);
+    bindWriteGrid<float_heapgrid_2d_t>(cls);
+    bindWriteGrid<double_heapgrid_2d_t>(cls);
+    bindWriteGrid<complexfloat_heapgrid_2d_t>(cls);
+    bindWriteGrid<complexdouble_heapgrid_2d_t>(cls);
 
     // all done
     return;

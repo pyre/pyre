@@ -54,12 +54,28 @@ class Group(Object):
         return member
 
     def __setattr__(self, name: str, value: typing.Any) -> None:
+        # if the {name} is already registered
+        if hasattr(self, name):
+            # get the object
+            member = super().__getattribute__(name)
+            # if it is a dataset
+            if isinstance(member, Dataset):
+                # set its value
+                member.value = value
+                # and do no more
+                return
         # if {value} is an hdf5 object
         if isinstance(value, Object):
             # record it
             self._pyre_contents.add(name)
         # and make a normal assignment
         return super().__setattr__(name, value)
+
+    def __delattr__(self, name: str) -> None:
+        # forget {name}
+        self._pyre_contents.discard(name)
+        # and chain up to remove the attribute
+        return super().__delattr__(name)
 
     # member access
     def __getitem__(self, path):
