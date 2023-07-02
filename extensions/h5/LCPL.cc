@@ -43,6 +43,8 @@ pyre::h5::py::lcpl(py::module & m)
         "build a link creation property list");
 
     // interface
+#if H5_VERSION_GE(1, 12, 0)
+    // MGA: this is my best guess as to how far this was back-ported
     // set the intermediate group creation strategy
     cls.def(
         // the name
@@ -61,6 +63,7 @@ pyre::h5::py::lcpl(py::module & m)
         "create"_a,
         // the docstring
         "set the intermediate group creation strategy");
+#endif
 
     // set the string character encoding
     cls.def(
