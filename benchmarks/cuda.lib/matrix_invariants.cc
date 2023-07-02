@@ -250,7 +250,7 @@ pinnedInvariants(pack_t tensorPack, pack_t invariantPack, int nThreadPerBlock, i
     int offset = 0;
 
     // synchronize the tensors between host and device
-    tensorArray.data()->synchronizeHostToDevice(tensorPack.cells(), 0);
+    tensorArray.data()->synchronizeHostToDevice(tensorPack.cells(), offset);
 
     // execute the kernel
     computeInvariantsPinned(
@@ -270,7 +270,7 @@ pinnedInvariants(pack_t tensorPack, pack_t invariantPack, int nThreadPerBlock, i
     }
 
     // and synchronize the invariants between device and host
-    I1.data()->synchronizeDeviceToHost(invariantPack.cells(), 0);
+    I1.data()->synchronizeDeviceToHost(invariantPack.cells(), offset);
 
     I2.data()->synchronizeDeviceToHost();
 
