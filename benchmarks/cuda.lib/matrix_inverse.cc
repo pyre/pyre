@@ -266,7 +266,7 @@ pinnedInverses(pack_t tensorPack, int nThreadPerBlock, int nTensors)
     int offset = 0;
 
     // synchronize the tensors between host and device
-    tensorArray.data()->synchronizeHostToDevice();
+    tensorArray.data()->synchronizeHostToDevice(tensorPack.cells(), offset);
 
 
     // execute the kernel wrapper
@@ -287,7 +287,7 @@ pinnedInverses(pack_t tensorPack, int nThreadPerBlock, int nTensors)
     }
 
     // and synchronize the inverse between device and host
-    inverseArray.data()->synchronizeDeviceToHost();
+    inverseArray.data()->synchronizeDeviceToHost(tensorPack.cells(), offset);
 
     // wait for GPU to finish before stopping the timer
     status = cudaDeviceSynchronize();

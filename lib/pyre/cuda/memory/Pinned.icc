@@ -242,7 +242,7 @@ pyre::cuda::memory::Pinned<T, isConst>::synchronizeHostToDevice(
         // make a channel
         pyre::journal::error_t error("pyre.cuda");
         // complain
-        error << "while sending " << cells() * sizeof(value_type)
+        error << "while sending " << copySize * sizeof(value_type)
               << " bytes to the device: " << pyre::journal::newline << cudaGetErrorName(status)
               << " (" << status << ")" << pyre::journal::endl(__HERE__);
     }
