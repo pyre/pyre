@@ -3,19 +3,13 @@
 // sebastiaan van paasen
 // (c) 1998-2023 all rights reserved
 
-// for the build system
-#include <portinfo>
-// support
-#include <cassert>
-// and the journal
+// get the journal
 #include <pyre/journal.h>
 // add the grid
 #include <pyre/grid.h>
 // add the cuda memory
 #include <pyre/cuda/memory.h>
-// add cuda runtime
-#include <cuda_runtime.h>
-// get the timers
+// and the timers
 #include <pyre/timers.h>
 
 // type alias

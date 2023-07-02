@@ -3,8 +3,6 @@
 // sebastiaan van paasen
 // (c) 1998-2023 all rights reserved
 
-#include <iostream>
-
 // function to compute the invariants of a 3x3 tensor
 __global__ void
 computeInverse(const double * A, double * Ainv, int size)
