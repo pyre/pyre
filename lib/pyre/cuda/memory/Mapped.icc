@@ -11,9 +11,9 @@
 // metamethods
 // constructor
 template <class T, bool isConst>
-pyre::cuda::memory::Mapped<T, isConst>::Mapped(
-    cell_count_type cells) : // the cuda {malloc} api is not RAII friendly, so we initialize with a
-                             // {nullptr} and replace it with the actual allocation
+pyre::cuda::memory::Mapped<T, isConst>::Mapped(cell_count_type cells) :
+    // the cuda {malloc} api is not RAII friendly, so we initialize with a
+    // {nullptr} and replace it with the actual allocation
     _cpu_data { nullptr },
     _device_data { nullptr },
     _cells { cells }

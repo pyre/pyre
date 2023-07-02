@@ -11,9 +11,9 @@
 // metamethods
 // constructor
 template <class T, bool isConst>
-pyre::cuda::memory::Pinned<T, isConst>::Pinned(
-    cell_count_type cells) : // the cuda {malloc} api is not RAII friendly, so we initialize with a
-                             // {nullptr} and replace it with the actual allocation
+pyre::cuda::memory::Pinned<T, isConst>::Pinned(cell_count_type cells) :
+    // the cuda {malloc} api is not RAII friendly, so we initialize with a
+    // {nullptr} and replace it with the actual allocation
     _host_data { nullptr },
     _cells { cells }
 {
