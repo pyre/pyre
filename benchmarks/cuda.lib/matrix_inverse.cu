@@ -1,5 +1,7 @@
 // -*- c++ -*-
 //
+// sebastiaan van paasen
+// (c) 1998-2023 all rights reserved
 
 #include <iostream>
 
