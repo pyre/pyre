@@ -18,7 +18,9 @@ using trash_t = pyre::journal::trash_t;
 
 
 // exercise the cascade feature of the channel state index
-int main() {
+int
+main()
+{
     // make an index
     index_t index(true, false);
 

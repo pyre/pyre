@@ -14,19 +14,19 @@ For more details, see http://pyre.orthologue.com.
 For terms of use, see pyre.license()
 """
 
-# check the version of python
+# version check
 import sys
+
+# get the version of python
 major, minor, micro, _, _ = sys.version_info
 # pack it
-current = (major, minor,  micro)
+current = (major, minor, micro)
 # minimum required
 required = (3, 7, 2)
 # check
 if current < required:
-    # get the exception type
-    from .framework.exceptions import PyreError
     # stringify the required version
-    required = '.'.join(map(str, required))
+    required = ".".join(map(str, required))
     # and complain
     raise RuntimeError(f"pyre requires python {required} or newer")
 
@@ -68,7 +68,6 @@ def computeCallerStackDepth():
 
 
 # administrative
-
 def copyright():
     """
     Return the pyre copyright note
@@ -109,12 +108,12 @@ def packageInfo():
         "prefix": prefix,
         "path": prefix / "bin",
         "ldpath": prefix / "lib",
-        "pythonpath" : home.parent,
-        "includes": f"-I{prefix}/include"
-        }
+        "pythonpath": home.parent,
+        "includes": f"-I{prefix}/include",
+    }
 
     # the libraries
-    libs = [ "pyre", "journal" ]
+    libs = ["pyre", "journal"]
     # get the host
     host = executive.host
     # if the host is a linux box
@@ -136,8 +135,10 @@ def where(configurable, attribute=None):
     Retrieve the location where the {attribute} of {configurable} got its value; if no
     {attribute} is specified, retrieve information about the {configurable} itself
     """
-    # if no attribute name is given, return the locator of the configurable
-    if attribute is None: return configurable.pyre_locator
+    # if no attribute name is given
+    if attribute is None:
+        # return the locator of the configurable
+        return configurable.pyre_locator
     # retrieve the trait descriptor
     trait = configurable.pyre_trait(alias=attribute)
     # grab the locator of the slot where the attribute value is stored
@@ -154,8 +155,13 @@ def boot():
     """
     # check whether the user has indicated we should skip booting
     try:
+        # get the main module
         import __main__
-        if __main__.pyre_noboot: return None
+
+        # and if the magic flag i set
+        if __main__.pyre_noboot:
+            # bail
+            return None
     # if anything goes wrong
     except:
         # just ignore it and carry on
@@ -183,6 +189,7 @@ def boot():
 
     # grab the executive factory
     from . import framework
+
     # build one and return it
     return framework.executive().boot()
 
@@ -204,6 +211,7 @@ def debug():
     packages = set()
     # get the __main__ module
     import __main__
+
     # attempt to
     try:
         # get the list of module names specified in the user's main script
@@ -231,8 +239,13 @@ debug()
 
 # version info
 from . import meta
+
+# this is expected to be here
+__version__ = meta.version
+
 # convenient access to parts of the framework
 from . import constraints, geometry, primitives, tracking
+
 # configurables and their support
 from .components.Actor import Actor as actor
 from .components.Role import Role as role
@@ -241,8 +254,10 @@ from .components.Component import Component as component
 from .components.Foundry import Foundry as foundry
 from .components.Monitor import Monitor as monitor
 from .components.Tracker import Tracker as tracker
+
 # traits
 from .traits import properties
+
 property = properties.identity
 from .traits.Behavior import Behavior as export
 from .traits.Behavior import Behavior as provides
@@ -255,22 +270,27 @@ from .framework.exceptions import PyreError
 executive = boot()
 # if the framework booted properly
 if executive:
-    # low level stuff
-    from .extensions import libh5
     # package managers
     from . import externals
+
     # platform managers
     from . import platforms
+
     # application shells
     from .shells import application, action, plexus, command, panel
+
     # support for filesystems
     from . import filesystem
+
     # hdf5
     from . import h5
+
     # workflows
     from . import flow
+
     # document rendering
     from . import weaver
+
     # the interprocess communication mechanisms
     from . import ipc, nexus, services
 
@@ -280,13 +300,15 @@ if executive:
     executive.activate()
 
     # register this package
-    package = executive.registerPackage(name='pyre', file=__file__)
+    package = executive.registerPackage(name="pyre", file=__file__)
     # and record its geography
     home, prefix, defaults = package.layout()
 
 
 # clean up the executive instance when the interpreter shuts down
 import atexit
+
+
 @atexit.register
 def shutdown():
     """

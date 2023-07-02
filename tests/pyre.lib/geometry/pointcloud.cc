@@ -12,15 +12,17 @@
 #include <pyre/geometry.h>
 
 // main
-int main() {
+int
+main()
+{
     // type alias
     typedef pyre::geometry::cloud_t<> cloud_t;
     // make a cloud
     cloud_t cloud(2);
 
     // add a couple of points
-    cloud[0] = {0., 0., 1.};
-    cloud[1] = {1., 0., 1.};
+    cloud[0] = { 0., 0., 1. };
+    cloud[1] = { 1., 0., 1. };
 
     // make a channel
     pyre::journal::debug_t channel("pyre.geometry");

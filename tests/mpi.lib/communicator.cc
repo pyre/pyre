@@ -17,7 +17,9 @@ typedef pyre::mpi::group_t group_t;
 typedef pyre::mpi::communicator_t communicator_t;
 
 // main program
-int main() {
+int
+main()
+{
     // initialize
     MPI_Init(0, 0);
 
@@ -53,9 +55,9 @@ int main() {
             int rank = newcom.rank();
             // check
             // the new communicator size if half the original
-            assert(size == wsize/2);
+            assert(size == wsize / 2);
             // so is my rank
-            assert (rank == wrank / 2);
+            assert(rank == wrank / 2);
         } else {
             // otherwise, verify that i got a null communicator
             assert(newcom.isNull());

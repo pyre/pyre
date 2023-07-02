@@ -15,7 +15,9 @@ using constview_t = pyre::memory::constview_t<double>;
 
 
 // make a const view over someone else's data
-int main(int argc, char * argv[]) {
+int
+main(int argc, char * argv[])
+{
     // initialize the journal
     pyre::journal::init(argc, argv);
     pyre::journal::application("constview_access");
@@ -25,7 +27,7 @@ int main(int argc, char * argv[]) {
     // allocate a memory block
     double * block = new double[cells];
     // initialize
-    for (std::size_t pos=0; pos<cells; ++pos) {
+    for (std::size_t pos = 0; pos < cells; ++pos) {
         // every cell
         block[pos] = 1.0;
     }
@@ -36,15 +38,15 @@ int main(int argc, char * argv[]) {
     // verify we can iterate and read
     for (auto cell : view) {
         // check that we have what we expect
-        assert(( cell == 1.0 ));
+        assert((cell == 1.0));
     }
 
     // exercise operator []
     // read from somewhere
-    assert(( view[cells/2] == 1.0 ));
+    assert((view[cells / 2] == 1.0));
 
     // clean up; after this, the memory of our view is invalid
-    delete [] block;
+    delete[] block;
 
     // all done
     return 0;

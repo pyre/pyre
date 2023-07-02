@@ -8,6 +8,7 @@
 
 # the framework
 import pyre
+import journal
 
 
 # the app
@@ -19,20 +20,32 @@ class configure(pyre.application):
     hdf5 = pyre.externals.hdf5()
     hdf5.doc = "the HDF5 installation"
 
-
     @pyre.export
     def main(self, *args, **kwds):
         """
         The main entry point
         """
         # get my channel
-        info = self.info
+        channel = journal.debug("pyre.externals.hdf5")
         # show me
-        info.line("{.pyre_name}:".format(self))
-        info.line("  host: {.pyre_host}".format(self))
-        info.line("  package manager: {.pyre_host.packager}".format(self))
+        channel.line(f"{self.pyre_name}:")
+        channel.indent()
+
+        channel.line(f"user: {self.pyre_user}")
+        channel.indent()
+        channel.line(f"name: {self.pyre_user.name}")
+        channel.line(f"email: {self.pyre_user.email}")
+        channel.line(f"externals: {self.pyre_user.externals}")
+        channel.outdent()
+
+        channel.line(f"host: {self.pyre_host}")
+        channel.indent()
+        channel.line(f"package manager: {self.pyre_host.packager}")
+        channel.line(f"externals: {self.pyre_host.externals}")
+
+        channel.outdent(levels=2)
         # flush
-        info.log()
+        channel.log()
 
         # attempt to
         try:
@@ -46,35 +59,35 @@ class configure(pyre.application):
             return 0
 
         # show me
-        info.line("hdf5:")
-        info.line("  package: {}".format(hdf5))
+        channel.line("hdf5:")
+        channel.line("  package: {}".format(hdf5))
         # if i have one
         if hdf5:
             # how did i get this
-            info.line("  locator: {}".format(hdf5.pyre_where()))
+            channel.line("  locator: {}".format(hdf5.pyre_where()))
             # version info
-            info.line("  version: {.version}".format(hdf5))
-            info.line("  prefix: {.prefix}".format(hdf5))
+            channel.line("  version: {.version}".format(hdf5))
+            channel.line("  prefix: {.prefix}".format(hdf5))
             # compile line
-            info.line("  compile:")
-            info.line("    defines: {}".format(hdf5.join(hdf5.defines)))
-            info.line("    headers: {}".format(hdf5.join(hdf5.incdir)))
+            channel.line("  compile:")
+            channel.line("    defines: {}".format(hdf5.join(hdf5.defines)))
+            channel.line("    headers: {}".format(hdf5.join(hdf5.incdir)))
             # link line
-            info.line("  link:")
-            info.line("    paths: {}".format(hdf5.join(hdf5.libdir)))
-            info.line("    libraries: {}".format(hdf5.join(hdf5.libraries)))
+            channel.line("  link:")
+            channel.line("    paths: {}".format(hdf5.join(hdf5.libdir)))
+            channel.line("    libraries: {}".format(hdf5.join(hdf5.libraries)))
 
             # get the configuration errors
             errors = hdf5.pyre_configurationErrors
             # if there were any
             if errors:
                 # tell me
-                info.line("  configuration errors that were auto-corrected:")
+                channel.line("  configuration errors that were auto-corrected:")
                 # and show me
                 for index, error in enumerate(errors):
-                    info.line("      {}: {}".format(index+1, error))
+                    channel.line("      {}: {}".format(index + 1, error))
         # flush
-        info.log()
+        channel.log()
 
         # all done
         return 0
@@ -84,10 +97,11 @@ class configure(pyre.application):
 if __name__ == "__main__":
     # get the journal
     import journal
+
     # activate the debug channel
     # journal.debug("app").activate()
     # make one
-    app = configure(name='configure')
+    app = configure(name="configure")
     # drive
     status = app.run()
     # all done

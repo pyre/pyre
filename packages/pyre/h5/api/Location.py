@@ -6,6 +6,7 @@
 
 # external
 import pyre
+import journal
 
 # superclass
 from .Identifier import Identifier
@@ -51,6 +52,27 @@ class Location(Identifier):
         """
         # nothing from me
         return []
+
+    # rendering
+    def _pyre_view(self, channel=None, flush=True):
+        """
+        Generate a textual representation of my structure in a journal {channel}
+        """
+        # get the explorer factory
+        from .Viewer import Viewer as viewer
+
+        # if we don't have a channel
+        if channel is None:
+            # make one
+            channel = journal.info("pyre.h5.object")
+        # build the report
+        channel.report(report=viewer().visit(location=self))
+        # if we were asked to flush the channel
+        if flush:
+            # do it
+            channel.log()
+        # all done
+        return
 
     # visiting
     def _pyre_identify(self, authority, **kwds):

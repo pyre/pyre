@@ -15,7 +15,9 @@
 using inventory_t = pyre::journal::firewall_t::inventory_type;
 
 // verify that we can manipulate the firewall inventory state
-int main() {
+int
+main()
+{
     // make a channel
     pyre::journal::firewall_t firewall("error");
 

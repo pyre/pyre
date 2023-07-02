@@ -15,13 +15,15 @@ using walltimer_t = pyre::timers::wall_timer_t;
 
 
 // compile time sanity check: make sure the header file is accessible
-int main() {
+int
+main()
+{
     // make a timer
     walltimer_t timer("tests.timer");
     // make sure it knows its name
-    assert (timer.name() == "tests.timer");
+    assert(timer.name() == "tests.timer");
     // and it starts out inactive
-    assert (timer.active() == false);
+    assert(timer.active() == false);
 
     // nothing to do
     return 0;

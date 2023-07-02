@@ -10,8 +10,7 @@
 
 // owner of the map (channel name -> shared channel state), as well as the severity wide defaults
 // each concrete {channel} maintains its own index as class data, shared among its instances
-class pyre::journal::Index : public Inventory
-{
+class pyre::journal::Index : public Inventory {
     // types
 public:
     // channel names
@@ -28,8 +27,8 @@ public:
     // let the compiler write the rest
     Index(const Index &) = default;
     Index(Index &&) = default;
-    Index & operator= (const Index &) = default;
-    Index & operator= (Index &&) = default;
+    Index & operator=(const Index &) = default;
+    Index & operator=(Index &&) = default;
 
     // interface
 public:

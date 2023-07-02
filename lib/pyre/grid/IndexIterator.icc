@@ -12,10 +12,8 @@
 // metamethods
 // shape, order, origin
 template <class packingT>
-constexpr
-pyre::grid::IndexIterator<packingT>::
-IndexIterator(shape_const_reference shape, order_const_reference order,
-              index_const_reference origin) :
+constexpr pyre::grid::IndexIterator<packingT>::IndexIterator(
+    shape_const_reference shape, order_const_reference order, index_const_reference origin) :
     _current { origin },
     _shape { shape },
     _order { order },
@@ -26,10 +24,9 @@ IndexIterator(shape_const_reference shape, order_const_reference order,
 
 // shape, order, origin, step
 template <class packingT>
-constexpr
-pyre::grid::IndexIterator<packingT>::
-IndexIterator(shape_const_reference shape, order_const_reference order,
-              index_const_reference origin, index_const_reference step) :
+constexpr pyre::grid::IndexIterator<packingT>::IndexIterator(
+    shape_const_reference shape, order_const_reference order, index_const_reference origin,
+    index_const_reference step) :
     _current { origin },
     _shape { shape },
     _order { order },
@@ -42,8 +39,7 @@ IndexIterator(shape_const_reference shape, order_const_reference order,
 // dereference
 template <class packingT>
 constexpr auto
-pyre::grid::IndexIterator<packingT>::
-operator*() const -> index_const_reference
+pyre::grid::IndexIterator<packingT>::operator*() const -> index_const_reference
 {
     // where i point
     return _current;
@@ -53,8 +49,7 @@ operator*() const -> index_const_reference
 // arithmetic: prefix
 template <class packingT>
 constexpr auto
-pyre::grid::IndexIterator<packingT>::
-operator++() -> iterator_reference
+pyre::grid::IndexIterator<packingT>::operator++() -> iterator_reference
 {
     // go through each rank in the given {order}
     for (auto rank : _order) {
@@ -82,8 +77,7 @@ operator++() -> iterator_reference
 // arithmetic: postfix
 template <class packingT>
 constexpr auto
-pyre::grid::IndexIterator<packingT>::
-operator++(int) -> iterator
+pyre::grid::IndexIterator<packingT>::operator++(int) -> iterator
 {
     // make a copy of me
     auto clone = *this;
@@ -98,8 +92,8 @@ operator++(int) -> iterator
 // equality
 template <class packingT>
 constexpr auto
-pyre::grid::
-operator==(const IndexIterator<packingT> & it1, const IndexIterator<packingT> & it2) -> bool
+pyre::grid::operator==(const IndexIterator<packingT> & it1, const IndexIterator<packingT> & it2)
+    -> bool
 {
     // iterators are equal if they point to the same index
     return *it1 == *it2;
@@ -109,8 +103,8 @@ operator==(const IndexIterator<packingT> & it1, const IndexIterator<packingT> & 
 // and not
 template <class packingT>
 constexpr auto
-pyre::grid::
-operator!=(const IndexIterator<packingT> & it1, const IndexIterator<packingT> & it2) -> bool
+pyre::grid::operator!=(const IndexIterator<packingT> & it1, const IndexIterator<packingT> & it2)
+    -> bool
 {
     // iterators are unequal iff they are not equal
     return !(it1 == it2);

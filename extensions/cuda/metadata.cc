@@ -15,8 +15,7 @@
 
 // copyright
 PyObject *
-pyre::extensions::cuda::
-copyright(PyObject *, PyObject *)
+pyre::extensions::cuda::copyright(PyObject *, PyObject *)
 {
     const char * const copyright_note = "cuda: (c) 1998-2023 orthologue";
     return Py_BuildValue("s", copyright_note);
@@ -25,8 +24,7 @@ copyright(PyObject *, PyObject *)
 
 // version
 PyObject *
-pyre::extensions::cuda::
-version(PyObject *, PyObject *)
+pyre::extensions::cuda::version(PyObject *, PyObject *)
 {
     const char * const version_string = "1.0";
     return Py_BuildValue("s", version_string);
@@ -35,12 +33,12 @@ version(PyObject *, PyObject *)
 
 // license
 PyObject *
-pyre::extensions::cuda::
-license(PyObject *, PyObject *)
+pyre::extensions::cuda::license(PyObject *, PyObject *)
 {
     const char * const license_string =
         "\n"
-        "    cuda " CUDA_VERSION "\n"
+        "    cuda " CUDA_VERSION
+        "\n"
         "    Copyright (c) 1998-2023 orthologue\n"
         "    All Rights Reserved\n"
         "\n"

@@ -11,16 +11,18 @@
 
 
 // verify that the debug diagnostic is off by default, and that we can manipulate its state
-int main() {
+int
+main()
+{
     // make a debug channel
     pyre::journal::debug_t channel("tests.journal.debug");
 
     // check its name
-    assert (channel.name() == "tests.journal.debug");
+    assert(channel.name() == "tests.journal.debug");
     // by default, it should be inactive
-    assert (channel.active() == false);
+    assert(channel.active() == false);
     // and non-fatal
-    assert (channel.fatal() == false);
+    assert(channel.fatal() == false);
 
     // all done
     return 0;

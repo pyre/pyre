@@ -45,13 +45,13 @@ pyre::h5::py::fapl(py::module & m)
         // the name
         "ros3",
         // the implementation
-        [](FileAccessPropertyList & plist, std::string region, std::string id,
-           std::string key) -> FileAccessPropertyList & {
+        [](FileAccessPropertyList & plist, std::string region, std::string id, std::string key,
+           bool authenticate) -> FileAccessPropertyList & {
             // make room for the driver parameters
             H5FD_ros3_fapl_t p;
             // populate
             p.version = H5FD_CURR_ROS3_FAPL_T_VERSION;
-            p.authenticate = 0;
+            p.authenticate = authenticate ? 1 : 0;
             std::strcpy(p.aws_region, region.data());
             std::strcpy(p.secret_id, id.data());
             std::strcpy(p.secret_key, key.data());
@@ -73,7 +73,7 @@ pyre::h5::py::fapl(py::module & m)
             return plist;
         },
         // the signature
-        "region"_a = "us-east-1", "id"_a = "", "key"_a = "",
+        "region"_a = "", "id"_a = "", "key"_a = "", "authenticate"_a = true,
         // the docstring
         "populate the property list with ros3 parameters");
 #endif

@@ -10,18 +10,13 @@
 
 
 // metamethods
-pyre::journal::Note::
-Note(key_type key, value_type value):
-    _key(key),
-    _value(value)
-{}
+pyre::journal::Note::Note(key_type key, value_type value) : _key(key), _value(value) {}
 
 
 // interface
 // accessors
 auto
-pyre::journal::Note::
-key() const -> const key_type &
+pyre::journal::Note::key() const -> const key_type &
 {
     // easy enough
     return _key;
@@ -29,14 +24,13 @@ key() const -> const key_type &
 
 
 auto
-pyre::journal::Note::
-value() const -> const value_type &
+pyre::journal::Note::value() const -> const value_type &
 {
     // easy enough
     return _value;
 }
 
 
-# endif
+#endif
 
 // end of file

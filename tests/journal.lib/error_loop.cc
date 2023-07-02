@@ -16,7 +16,9 @@ using trash_t = pyre::journal::trash_t;
 
 
 // verify that repeated injections work correctly
-int main() {
+int
+main()
+{
     // make an error channel
     myerror_t channel("tests.journal.error");
 
@@ -24,7 +26,7 @@ int main() {
     channel.device<trash_t>();
 
     // inject repeatedly
-    for (auto i=0; i<10; ++i) {
+    for (auto i = 0; i < 10; ++i) {
         // carefully
         try {
             // inject something
@@ -32,9 +34,9 @@ int main() {
             // errors are fatal by default, so we shouldn't be able to get here
             throw std::logic_error("unreachable");
             // if all goes well
-        }  catch (const myerror_t::exception_type & error) {
+        } catch (const myerror_t::exception_type & error) {
             // make sure the reason was recorded correctly
-            assert (error.what() == channel.name() + myerror_t::string_type(": application error"));
+            assert(error.what() == channel.name() + myerror_t::string_type(": application error"));
         }
     }
 

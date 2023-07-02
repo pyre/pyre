@@ -11,7 +11,9 @@
 
 
 // verify that injections work correctly in the absence of location information
-int main() {
+int
+main()
+{
     // make a warning channel
     pyre::journal::warning_t channel("tests.journal.warning");
 
@@ -19,9 +21,7 @@ int main() {
     channel.device<pyre::journal::trash_t>();
 
     // do not provide location information
-    channel
-        << "a warning without location information"
-        << pyre::journal::endl;
+    channel << "a warning without location information" << pyre::journal::endl;
 
     // all done
     return 0;

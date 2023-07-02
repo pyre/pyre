@@ -8,6 +8,7 @@
 
 # access to the pyre package
 import pyre
+
 # my ancestor
 from .LineMill import LineMill
 
@@ -18,11 +19,9 @@ class Make(LineMill):
     Support for makefiles
     """
 
-
     # user configurable state
-    languageMarker = pyre.properties.str(default='Makefile')
+    languageMarker = pyre.properties.str(default="Makefile")
     languageMarker.doc = "the language marker"
-
 
     # interface
     def builtin(self, func, args=[]):
@@ -31,10 +30,10 @@ class Make(LineMill):
         """
         # the arguments are a comma separated list
         rargs = ",".join(
-           # of space separated words
-           "".join(word for word in words)
-           # made up from the arguments to the built in
-           for words in args
+            # of space separated words
+            "".join(word for word in words)
+            # made up from the arguments to the built in
+            for words in args
         )
 
         # render
@@ -43,17 +42,16 @@ class Make(LineMill):
         # and done
         return
 
-
     def call(self, func, args=[]):
         """
         Call a user defined function
         """
         # the arguments are a comma separated list
         rargs = ",".join(
-           # of space separated words
-           "".join(word for word in words)
-           # made up from the arguments to the built in
-           for words in args
+            # of space separated words
+            "".join(word for word in words)
+            # made up from the arguments to the built in
+            for words in args
         )
 
         # render
@@ -61,14 +59,13 @@ class Make(LineMill):
         # all done
         return
 
-
     def ifeq(self, op1, op2, onTrue, onFalse=None):
         """
         Build a conditional block
         """
         # render the operands
-        rop1 = ''.join(op1)
-        rop2 = ''.join(op2)
+        rop1 = "".join(op1)
+        rop2 = "".join(op2)
 
         # build the condition
         yield f"ifeq ({rop1},{rop2})"
@@ -89,7 +86,6 @@ class Make(LineMill):
         # and done
         return
 
-
     def literal(self, value):
         """
         Render {value} as a literal
@@ -99,7 +95,6 @@ class Make(LineMill):
         # and done
         return
 
-
     def set(self, name, value="", multi=[]):
         """
         Set {name} to {value} immediately
@@ -107,14 +102,19 @@ class Make(LineMill):
         # pick the operator and delegate
         return self._set(name=name, value=value, multi=multi, op=":=")
 
+    def seti(self, name, value="", multi=[]):
+        """
+        Add {value} to {name}
+        """
+        # pick the operator and delegate
+        return self._set(name=name, value=value, multi=multi, op="+=")
 
     def setq(self, name, value="", multi=[]):
         """
-        Set {name} to {value}, delaying the evaluation of the wight hand side until used
+        Set {name} to {value}, delaying the evaluation of the right hand side until used
         """
         # pick the operator and delegate
         return self._set(name=name, value=value, multi=multi, op="=")
-
 
     def setu(self, name, value="", multi=[]):
         """
@@ -122,7 +122,6 @@ class Make(LineMill):
         """
         # pick the operator and delegate
         return self._set(name=name, value=value, multi=multi, op="?=")
-
 
     def value(self, var):
         """
@@ -132,7 +131,6 @@ class Make(LineMill):
         yield f"$({var})"
         # and done
         return
-
 
     # implementation details
     def _set(self, name, value, multi, op):
@@ -156,16 +154,17 @@ class Make(LineMill):
         for line in multi:
             # assemble the line
             rvalue = "".join(line)
-            # and render it
-            yield f"    {rvalue} {mark}"
+            # check whether there is anything there
+            if rvalue:
+                # and render it
+                yield f"    {rvalue} {mark}"
 
         # all done
         return
 
-
     # private data
-    comment = '#'
-    continuationMark = '\\'
+    comment = "#"
+    continuationMark = "\\"
 
 
 # end of file

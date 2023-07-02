@@ -15,7 +15,9 @@ using index_t = pyre::journal::index_t;
 
 
 // exercise the channel state index
-int main() {
+int
+main()
+{
     // make an index
     index_t index(true, true);
 

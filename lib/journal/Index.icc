@@ -10,8 +10,7 @@
 
 
 // metamethods
-pyre::journal::Index::
-Index(active_type active, fatal_type fatal):
+pyre::journal::Index::Index(active_type active, fatal_type fatal) :
     Inventory(active, fatal),
     _index {}
 {}
@@ -19,24 +18,21 @@ Index(active_type active, fatal_type fatal):
 
 // interface
 auto
-pyre::journal::Index::
-size() const
+pyre::journal::Index::size() const
 {
     return _index.size();
 }
 
 
 auto
-pyre::journal::Index::
-empty() const
+pyre::journal::Index::empty() const
 {
     return _index.empty();
 }
 
 
 auto
-pyre::journal::Index::
-contains(const name_type & channel) const
+pyre::journal::Index::contains(const name_type & channel) const
 {
     // attempt to locate the {channel}
     auto place = _index.find(channel);
@@ -51,8 +47,7 @@ contains(const name_type & channel) const
 
 
 auto
-pyre::journal::Index::
-emplace(const name_type & name, active_type active, fatal_type fatal)
+pyre::journal::Index::emplace(const name_type & name, active_type active, fatal_type fatal)
 {
     // easy enough
     return _index.emplace(name, inventory_type(active, fatal));
@@ -60,24 +55,21 @@ emplace(const name_type & name, active_type active, fatal_type fatal)
 
 
 auto
-pyre::journal::Index::
-begin() const
+pyre::journal::Index::begin() const
 {
     return _index.begin();
 }
 
 
 auto
-pyre::journal::Index::
-end() const
+pyre::journal::Index::end() const
 {
     return _index.end();
 }
 
 
 auto
-pyre::journal::Index::
-lookup(const name_type & channel) -> inventory_type &
+pyre::journal::Index::lookup(const name_type & channel) -> inventory_type &
 {
     // attempt to locate the {channel} state
     auto place = _index.find(channel);

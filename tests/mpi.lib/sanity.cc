@@ -16,8 +16,9 @@
 
 
 // main program
-int main(int argc, char *argv[]) {
-
+int
+main(int argc, char * argv[])
+{
     // initialize {mpi}
     MPI_Init(&argc, &argv);
     // initialize the journal
@@ -36,9 +37,7 @@ int main(int argc, char *argv[]) {
     channel.deactivate();
 
     // and say something
-    channel
-        << "[" << wrank << "/" << wsize << "]: hello world!"
-        << pyre::journal::endl(__HERE__);
+    channel << "[" << wrank << "/" << wsize << "]: hello world!" << pyre::journal::endl(__HERE__);
 
     // finalize mpi
     MPI_Finalize();

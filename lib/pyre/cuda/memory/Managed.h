@@ -72,8 +72,8 @@ public:
     // constructors
     Managed(const Managed &) = default;
     Managed(Managed &&) = default;
-    Managed & operator= (const Managed &) = default;
-    Managed & operator= (Managed &&) = default;
+    Managed & operator=(const Managed &) = default;
+    Managed & operator=(Managed &&) = default;
 };
 
 
@@ -83,6 +83,6 @@ public:
 #undef pyre_cuda_memory_Managed_icc
 
 
-# endif
+#endif
 
 // end of file

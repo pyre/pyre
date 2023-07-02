@@ -20,7 +20,9 @@ using trash_t = pyre::journal::trash_t;
 
 
 // verify the cascade works correctly for warnings
-int main() {
+int
+main()
+{
     // make a channel
     mywarning_t parent("test.warning.parent");
     // its activation state is what's expected

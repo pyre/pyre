@@ -25,57 +25,52 @@
 
 
 // put everything in my private namespace
-namespace pyre {
-    namespace extensions {
-        namespace cuda {
+namespace pyre ::extensions ::cuda {
 
-            // the module method table
-            PyMethodDef methods[] = {
-                // module metadata
-                // copyright
-                { copyright__name__, copyright, METH_VARARGS, copyright__doc__ },
-                // version
-                { version__name__, version, METH_VARARGS, version__doc__ },
-                // license
-                { license__name__, license, METH_VARARGS, license__doc__ },
+    // the module method table
+    PyMethodDef methods[] = {
+        // module metadata
+        // copyright
+        { copyright__name__, copyright, METH_VARARGS, copyright__doc__ },
+        // version
+        { version__name__, version, METH_VARARGS, version__doc__ },
+        // license
+        { license__name__, license, METH_VARARGS, license__doc__ },
 
-                // registration
-                { registerExceptions__name__,
-                  registerExceptions, METH_VARARGS, registerExceptions__doc__ },
+        // registration
+        { registerExceptions__name__, registerExceptions, METH_VARARGS, registerExceptions__doc__ },
 
-                // device management
-                { setDevice__name__, setDevice, METH_VARARGS, setDevice__doc__ },
-                { resetDevice__name__, resetDevice, METH_VARARGS, resetDevice__doc__ },
+        // device management
+        { setDevice__name__, setDevice, METH_VARARGS, setDevice__doc__ },
+        { resetDevice__name__, resetDevice, METH_VARARGS, resetDevice__doc__ },
 
-                // device discovery and other administrative tasks
-                // discover
-                { discover__name__, discover, METH_VARARGS, discover__doc__ },
+        // device discovery and other administrative tasks
+        // discover
+        { discover__name__, discover, METH_VARARGS, discover__doc__ },
 
-                // sentinel
-                {0, 0, 0, 0}
-            };
+        // sentinel
+        { 0, 0, 0, 0 }
+    };
 
 
-            // the module documentation string
-            const char * const doc = "provides access to CUDA enabled devices";
+    // the module documentation string
+    const char * const doc = "provides access to CUDA enabled devices";
 
-            // the module definition structure
-            PyModuleDef module = {
-                // header
-                PyModuleDef_HEAD_INIT,
-                // the name of the module
-                "cuda",
-                // the module documentation string
-                doc,
-                // size of the per-interpreter state of the module; -1 if this state is global
-                -1,
-                // the methods defined in this module
-                methods
-            };
+    // the module definition structure
+    PyModuleDef module = {
+        // header
+        PyModuleDef_HEAD_INIT,
+        // the name of the module
+        "cuda",
+        // the module documentation string
+        doc,
+        // size of the per-interpreter state of the module; -1 if this state is global
+        -1,
+        // the methods defined in this module
+        methods
+    };
 
-        } // of namespace cuda
-    } // of namespace extensions
-} // of namespace pyre
+} // namespace pyre::extensions::cuda
 
 // initialization function for the module
 // *must* be called PyInit_cuda

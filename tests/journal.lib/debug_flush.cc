@@ -11,7 +11,9 @@
 
 
 // verify that flushing the channel resets its buffers correctly
-int main() {
+int
+main()
+{
     // make a debug channel
     pyre::journal::debug_t channel("tests.journal.debug");
     // activate it
@@ -20,11 +22,9 @@ int main() {
     channel.device<pyre::journal::trash_t>();
 
     // try injecting something into the channel
-    channel
-        << pyre::journal::note("application", "debug_flush")
-        << pyre::journal::note("time", "now")
-        << "    hello world!"
-        << pyre::journal::endl(__HERE__);
+    channel << pyre::journal::note("application", "debug_flush")
+            << pyre::journal::note("time", "now") << "    hello world!"
+            << pyre::journal::endl(__HERE__);
 
     // all done
     return 0;

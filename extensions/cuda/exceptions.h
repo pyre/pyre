@@ -10,21 +10,17 @@
 
 
 // place everything in my private namespace
-namespace pyre {
-    namespace extensions {
-        namespace cuda {
+namespace pyre::extensions::cuda {
 
-            // exceptions
-            extern PyObject * Error;
+    // exceptions
+    extern PyObject * Error;
 
-            // exception registration
-            extern const char * const registerExceptions__name__;
-            extern const char * const registerExceptions__doc__;
-            PyObject * registerExceptions(PyObject *, PyObject *);
+    // exception registration
+    extern const char * const registerExceptions__name__;
+    extern const char * const registerExceptions__doc__;
+    PyObject * registerExceptions(PyObject *, PyObject *);
 
-        } // of namespace cuda
-    } // of namespace extensions
-} // of namespace pyre
+} // namespace pyre::extensions::cuda
 
 #endif
 

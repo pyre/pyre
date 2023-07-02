@@ -214,6 +214,26 @@ pyre::grid::operator*(const Rep<containerT1> & rep1, const Rep<containerT2> & re
 // scaling by integers
 template <class containerT>
 constexpr auto
+pyre::grid::operator*(const Rep<containerT> & i, std::size_t s) -> Rep<containerT>
+{
+    // get the rank of the rep
+    constexpr auto rank = Rep<containerT>::rank();
+    // make a default index
+    Rep<containerT> scaled;
+
+    // go through each axis
+    for (int axis = 0; axis < rank; ++axis) {
+        // do the math
+        scaled[axis] = s * i[axis];
+    }
+
+    // all done
+    return scaled;
+}
+
+
+template <class containerT>
+constexpr auto
 pyre::grid::operator*(const Rep<containerT> & i, int s) -> Rep<containerT>
 {
     // get the rank of the rep
@@ -229,6 +249,15 @@ pyre::grid::operator*(const Rep<containerT> & i, int s) -> Rep<containerT>
 
     // all done
     return scaled;
+}
+
+
+template <class containerT>
+constexpr auto
+pyre::grid::operator*(std::size_t s, const Rep<containerT> & i) -> Rep<containerT>
+{
+    // easy
+    return i * s;
 }
 
 

@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2023 all rights reserved
-#
 
 
 """
@@ -17,19 +15,19 @@ def test():
     import pyre.primitives
 
     # make one
-    root = pyre.primitives.path('/')
+    root = pyre.primitives.path("/")
     # check
-    assert str(root) == '/'
+    assert str(root) == "/"
 
     # make another
-    here = pyre.primitives.path('pyre-1.0/tests/pyre/primitives/path.py')
+    here = pyre.primitives.path("pyre-1.0/tests/pyre/primitives/path.py")
     # check
-    assert str(here) == 'pyre-1.0/tests/pyre/primitives/path.py'
+    assert str(here) == "pyre-1.0/tests/pyre/primitives/path.py"
 
     # make another
-    total = pyre.primitives.path(root, 'Users/mga/dv', here)
+    total = pyre.primitives.path(root, "Users/mga/dv", here)
     # check
-    assert str(total) == '/Users/mga/dv/pyre-1.0/tests/pyre/primitives/path.py'
+    assert str(total) == "/Users/mga/dv/pyre-1.0/tests/pyre/primitives/path.py"
 
     # check that construction fails when handed the wrong argument type
     try:

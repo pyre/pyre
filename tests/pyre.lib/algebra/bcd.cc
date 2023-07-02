@@ -19,14 +19,15 @@ typedef pyre::algebra::BCD<10> bcd;
 
 
 // main program
-int main(int argc, char* argv[]) {
-
+int
+main(int argc, char * argv[])
+{
     // default constructor
     bcd zero;
     assert(zero == 0);
 
     // constructor with explicit arguments
-    bcd one(1,0);
+    bcd one(1, 0);
     assert(one == 1);
 
     // copy constructor
@@ -54,7 +55,7 @@ int main(int argc, char* argv[]) {
     assert(another == 1);
 
     // exercise the overflow logic
-    bcd almost(0,9);
+    bcd almost(0, 9);
     assert(almost + almost == 1.8);
 
     // all done

@@ -196,6 +196,13 @@ class Application(pyre.component, metaclass=Director):
         # mount my folders
         self.pfs = self.pyre_mountPrivateFilespace()
 
+        # if i have a name
+        if name is not None:
+            # build a locator
+            loc = pyre.tracking.simple(f"while initializing application '{nickname}'")
+            # load any custom configuration files
+            self.pyre_loadConfiguration(locator=loc)
+
         # go through my requirements and build my dependency map
         # self.dependencies = self.pyre_resolveDependencies()
 
@@ -225,13 +232,9 @@ class Application(pyre.component, metaclass=Director):
         """
         Load my configuration files
         """
-        # get my name
-        name = self.pyre_name
-        # and the executive
-        executive = self.pyre_executive
-        # ask it to hunt down configuration files derived from my name
-        executive.configure(namespace=name, locator=locator)
-        # all done
+        # the loading of the application specific configuration files that are in the normal
+        # path is already done by the {director}, so there isn't much more to do here; subclasses
+        # can override to perform custom configuration steps
         return
 
     def pyre_explore(self):

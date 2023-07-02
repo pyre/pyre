@@ -15,7 +15,7 @@ namespace gsl {
     extern PyObject * Error;
     extern const char * const Error__name__;
 
-} // of namespace gsl
+} // namespace gsl
 
 #endif
 

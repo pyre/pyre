@@ -20,7 +20,9 @@ using trash_t = pyre::journal::trash_t;
 
 
 // verify the cascade works correctly for infos
-int main() {
+int
+main()
+{
     // make a channel
     myinfo_t parent("test.info.parent");
     // its activation state is what's expected

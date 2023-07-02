@@ -10,7 +10,7 @@ import merlin
 
 # base class for merlin products
 class Product(
-    merlin.flow.product, implements=merlin.protocols.specification, internal=True
+    merlin.flow.product, implements=merlin.protocols.flow.specification, internal=True
 ):
     """
     The base class for {merlin} products

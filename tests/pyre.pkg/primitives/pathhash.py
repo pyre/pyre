@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2023 all rights reserved
-#
 
 
 """
@@ -15,10 +13,11 @@ Check that path hashes work as advertised
 def test():
     # access the class
     import pyre.primitives
+
     # build one
     pathhash = pyre.primitives.pathhash()
     # here are a couple of multi-level addresses
-    separator = '.'
+    separator = "."
     moduleName = "pyre.primitives.PathHash".split(separator)
     klassName = moduleName + ["PathHash"]
 
@@ -32,7 +31,7 @@ def test():
     assert klass == module.hash(items=["PathHash"])
 
     # build an alias for the module
-    base = pathhash.hash(items=['pyre'])
+    base = pathhash.hash(items=["pyre"])
     alias = "pathhash"
     original = pathhash.hash(items="pyre.primitives.PathHash".split(separator))
 

@@ -15,10 +15,10 @@ class pyre::journal::InventoryProxy {
 public:
     // my client
     using client_type = clientT;
-    using client_reference = clientT&;
+    using client_reference = clientT &;
     // my object
     using inventory_type = Inventory;
-    using inventory_reference = inventory_type&;
+    using inventory_reference = inventory_type &;
     // its parts
     using active_type = inventory_type::active_type;
     using fatal_type = inventory_type::fatal_type;
@@ -41,7 +41,7 @@ public:
     inline auto device(device_type) -> client_reference;
 
     template <class deviceT, class... Args>
-    inline auto device(Args&&... args) -> client_reference;
+    inline auto device(Args &&... args) -> client_reference;
 
     // interface
 public:

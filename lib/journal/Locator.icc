@@ -11,8 +11,8 @@
 
 // metamethods
 // modern version
-pyre::journal::Locator::
-Locator(const value_type & file, const value_type & line, const value_type & function):
+pyre::journal::Locator::Locator(
+    const value_type & file, const value_type & line, const value_type & function) :
     _file(file),
     _line(line),
     _func(function)
@@ -20,8 +20,7 @@ Locator(const value_type & file, const value_type & line, const value_type & fun
 
 
 // legacy constructor
-pyre::journal::Locator::
-Locator(const char * file, int line, const char * function):
+pyre::journal::Locator::Locator(const char * file, int line, const char * function) :
     _file(file),
     _line(line > 0 ? std::to_string(line) : ""),
     _func(function)
@@ -31,8 +30,7 @@ Locator(const char * file, int line, const char * function):
 // interface
 // accessors
 auto
-pyre::journal::Locator::
-file() const -> const value_type &
+pyre::journal::Locator::file() const -> const value_type &
 {
     // easy enough
     return _file;
@@ -40,8 +38,7 @@ file() const -> const value_type &
 
 
 auto
-pyre::journal::Locator::
-line() const -> const value_type &
+pyre::journal::Locator::line() const -> const value_type &
 {
     // easy enough
     return _line;
@@ -49,14 +46,13 @@ line() const -> const value_type &
 
 
 auto
-pyre::journal::Locator::
-func() const -> const value_type &
+pyre::journal::Locator::func() const -> const value_type &
 {
     // easy enough
     return _func;
 }
 
 
-# endif
+#endif
 
 // end of file

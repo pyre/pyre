@@ -15,7 +15,8 @@ using product_t = pyre::grid::product_t<4>;
 
 
 // exercise iterating over products
-int main(int argc, char * argv[])
+int
+main(int argc, char * argv[])
 {
     // initialize the journal
     pyre::journal::init(argc, argv);
@@ -29,9 +30,7 @@ int main(int argc, char * argv[])
     constexpr order_t order { 1, 3, 2, 0 };
 
     // show me
-    channel
-        << "product in normal order: " << product
-        << pyre::journal::endl(__HERE__);
+    channel << "product in normal order: " << product << pyre::journal::endl(__HERE__);
 
     // make a counter
     product_t::value_type i = 0;
@@ -40,7 +39,7 @@ int main(int argc, char * argv[])
     // now, in sorted order
     for (auto it = product.begin(order); it != product.end(order); ++it) {
         // check that we are visiting in sorted order
-        assert(( *it == i ));
+        assert((*it == i));
         // show me
         channel << *it << " ";
         // update the counter

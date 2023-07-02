@@ -21,7 +21,8 @@
 const char * const mpi::initialize__name__ = "init";
 const char * const mpi::initialize__doc__ = "initialize MPI";
 
-PyObject * mpi::initialize(PyObject *, PyObject *)
+PyObject *
+mpi::initialize(PyObject *, PyObject *)
 {
     // check whether MPI is already intialized
     int isInitialized = 0;
@@ -50,10 +51,8 @@ PyObject * mpi::initialize(PyObject *, PyObject *)
         MPI_Comm_rank(MPI_COMM_WORLD, &rank);
         MPI_Comm_size(MPI_COMM_WORLD, &size);
         // and show
-        channel
-            << pyre::journal::at(__HERE__)
-            << "[" << rank << ":" << size << "] " << "mpi initialized successfully"
-            << pyre::journal::endl;
+        channel << pyre::journal::at(__HERE__) << "[" << rank << ":" << size << "] "
+                << "mpi initialized successfully" << pyre::journal::endl;
     }
 
     // and return
@@ -66,7 +65,8 @@ PyObject * mpi::initialize(PyObject *, PyObject *)
 const char * const mpi::finalize__name__ = "finalize";
 const char * const mpi::finalize__doc__ = "shut down MPI";
 
-PyObject * mpi::finalize(PyObject *, PyObject *)
+PyObject *
+mpi::finalize(PyObject *, PyObject *)
 {
     // plant a flag
     int isInitialized = 0;
@@ -101,10 +101,8 @@ PyObject * mpi::finalize(PyObject *, PyObject *)
         // build a channel
         pyre::journal::debug_t channel("mpi.init");
         // tell the user that mpi is down
-        channel
-            << pyre::journal::at(__HERE__)
-            << "[" << rank << ":" << size << "] " << "finalized mpi; status = " << success
-            << pyre::journal::endl;
+        channel << pyre::journal::at(__HERE__) << "[" << rank << ":" << size << "] "
+                << "finalized mpi; status = " << success << pyre::journal::endl;
     }
 
     // all done

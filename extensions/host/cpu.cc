@@ -20,7 +20,8 @@
 #endif
 
 // logical
-PyObject * pyre::extensions::host::logical(PyObject *, PyObject * args)
+PyObject *
+pyre::extensions::host::logical(PyObject *, PyObject * args)
 {
     // extract the arguments
     if (!PyArg_ParseTuple(args, ":logical")) {
@@ -48,7 +49,8 @@ PyObject * pyre::extensions::host::logical(PyObject *, PyObject * args)
 }
 
 // logicalMax
-PyObject * pyre::extensions::host::logicalMax(PyObject *, PyObject * args)
+PyObject *
+pyre::extensions::host::logicalMax(PyObject *, PyObject * args)
 {
     // extract the arguments
     if (!PyArg_ParseTuple(args, ":logicalMax")) {
@@ -76,7 +78,8 @@ PyObject * pyre::extensions::host::logicalMax(PyObject *, PyObject * args)
 }
 
 // physical
-PyObject * pyre::extensions::host::physical(PyObject *, PyObject * args)
+PyObject *
+pyre::extensions::host::physical(PyObject *, PyObject * args)
 {
     // extract the arguments
     if (!PyArg_ParseTuple(args, ":physical")) {
@@ -104,7 +107,8 @@ PyObject * pyre::extensions::host::physical(PyObject *, PyObject * args)
 }
 
 // physicalMax
-PyObject * pyre::extensions::host::physicalMax(PyObject *, PyObject * args)
+PyObject *
+pyre::extensions::host::physicalMax(PyObject *, PyObject * args)
 {
     // extract the arguments
     if (!PyArg_ParseTuple(args, ":physicalMax")) {

@@ -15,16 +15,18 @@ using file_t = pyre::journal::file_t;
 
 
 // exercise the stream device
-int main() {
+int
+main()
+{
     // the filename
     auto filename = file_t::path_type("file_sanity.out");
 
     // instantiate
     file_t file(filename);
     // check its name
-    assert (file.name() == "file");
+    assert(file.name() == "file");
     // and its path
-    assert (file.path() == filename);
+    assert(file.path() == filename);
 
     // all done
     return 0;

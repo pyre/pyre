@@ -9,8 +9,7 @@
 
 
 // notes are channel manipulators that decorate channels with metadata
-class pyre::journal::Note
-{
+class pyre::journal::Note {
     // types
 public:
     using key_type = key_t;

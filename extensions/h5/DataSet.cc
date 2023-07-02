@@ -229,6 +229,8 @@ pyre::h5::py::dataset(py::module & m)
             // all done
             return;
         },
+        // the signature
+        "value"_a,
         // the docstring
         "save my contents as an integer");
 
@@ -290,6 +292,8 @@ pyre::h5::py::dataset(py::module & m)
             // all done
             return;
         },
+        // the signature
+        "value"_a,
         // the docstring
         "save my contents as a double");
 
@@ -350,8 +354,10 @@ pyre::h5::py::dataset(py::module & m)
             // all done
             return;
         },
+        // the signature
+        "value"_a,
         // the docstring
-        "extract my contents as a string");
+        "save my contents as a string");
 
 
     // attempt to get the dataset contents as a list of strings
@@ -499,6 +505,8 @@ pyre::h5::py::dataset(py::module & m)
             // all done
             return;
         },
+        // the signature
+        "value"_a,
         // the docstring
         "save my contents as a list of strings");
 
@@ -548,6 +556,46 @@ pyre::h5::py::dataset(py::module & m)
         "read",
         // the implementation
         &read<heap_int64_t>,
+        // the signature
+        "data"_a, "memtype"_a, "origin"_a, "shape"_a,
+        // the docstring
+        "fill {data} with the tile @{origin}+{shape}");
+
+    cls.def(
+        // the name
+        "read",
+        // the implementation
+        &read<heap_uint8_t>,
+        // the signature
+        "data"_a, "memtype"_a, "origin"_a, "shape"_a,
+        // the docstring
+        "fill {data} with the tile @{origin}+{shape}");
+
+    cls.def(
+        // the name
+        "read",
+        // the implementation
+        &read<heap_uint16_t>,
+        // the signature
+        "data"_a, "memtype"_a, "origin"_a, "shape"_a,
+        // the docstring
+        "fill {data} with the tile @{origin}+{shape}");
+
+    cls.def(
+        // the name
+        "read",
+        // the implementation
+        &read<heap_uint32_t>,
+        // the signature
+        "data"_a, "memtype"_a, "origin"_a, "shape"_a,
+        // the docstring
+        "fill {data} with the tile @{origin}+{shape}");
+
+    cls.def(
+        // the name
+        "read",
+        // the implementation
+        &read<heap_uint64_t>,
         // the signature
         "data"_a, "memtype"_a, "origin"_a, "shape"_a,
         // the docstring

@@ -23,8 +23,7 @@
 
 // grab a device
 PyObject *
-pyre::extensions::cuda::
-setDevice(PyObject *, PyObject *args)
+pyre::extensions::cuda::setDevice(PyObject *, PyObject * args)
 {
     // allocate storage for the arguments
     int did;
@@ -41,11 +40,8 @@ setDevice(PyObject *, PyObject *args)
         // make an error channel
         pyre::journal::error_t error("cuda");
         // show me
-        error
-            << pyre::journal::at(__HERE__)
-            << "while reserving device " << did << ": "
-            << cudaGetErrorName(status) << " (" << status << ")"
-            << pyre::journal::endl;
+        error << pyre::journal::at(__HERE__) << "while reserving device " << did << ": "
+              << cudaGetErrorName(status) << " (" << status << ")" << pyre::journal::endl;
 
         // create an exception object
         // prep the constructor arguments
@@ -67,8 +63,7 @@ setDevice(PyObject *, PyObject *args)
 
 // reset a device
 PyObject *
-pyre::extensions::cuda::
-resetDevice(PyObject *, PyObject *args)
+pyre::extensions::cuda::resetDevice(PyObject *, PyObject * args)
 {
     // if I were not passed the expected arguments
     if (!PyArg_ParseTuple(args, ":resetDevice", &PyType_Type)) {
@@ -83,11 +78,9 @@ resetDevice(PyObject *, PyObject *args)
         // make an error channel
         pyre::journal::error_t error("cuda");
         // show me
-        error
-            << pyre::journal::at(__HERE__)
-            << "while resetting the current device: "
-            << cudaGetErrorName(status) << " (" << status << ")"
-            << pyre::journal::endl;
+        error << pyre::journal::at(__HERE__)
+              << "while resetting the current device: " << cudaGetErrorName(status) << " ("
+              << status << ")" << pyre::journal::endl;
 
         // create an exception object
         // prep the constructor arguments

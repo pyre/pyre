@@ -19,13 +19,15 @@ const char * const gsl::permutation::alloc__name__ = "permutation_alloc";
 const char * const gsl::permutation::alloc__doc__ = "allocate a permutation";
 
 PyObject *
-gsl::permutation::alloc(PyObject *, PyObject * args) {
+gsl::permutation::alloc(PyObject *, PyObject * args)
+{
     // place holders for the python arguments
     size_t shape;
     // unpack the argument tuple
     int status = PyArg_ParseTuple(args, "k:permutation_alloc", &shape);
     // if something went wrong
-    if (!status) return 0;
+    if (!status)
+        return 0;
 
     // allocate a permutation
     gsl_permutation * v = gsl_permutation_alloc(shape);
@@ -40,13 +42,15 @@ const char * const gsl::permutation::init__name__ = "permutation_init";
 const char * const gsl::permutation::init__doc__ = "initialize a permutation";
 
 PyObject *
-gsl::permutation::init(PyObject *, PyObject * args) {
+gsl::permutation::init(PyObject *, PyObject * args)
+{
     // the arguments
     PyObject * capsule;
     // unpack the argument tuple
     int status = PyArg_ParseTuple(args, "O!:permutation_init", &PyCapsule_Type, &capsule);
     // if something went wrong
-    if (!status) return 0;
+    if (!status)
+        return 0;
     // bail out if the capsule is not valid
     if (!PyCapsule_IsValid(capsule, capsule_t)) {
         PyErr_SetString(PyExc_TypeError, "invalid permutation capsule");
@@ -60,7 +64,7 @@ gsl::permutation::init(PyObject *, PyObject * args) {
 
     // std::cout << "permutation: ";
     // for (size_t i=0; i<gsl_permutation_size(p); i++) {
-        // std::cout << " " << gsl_permutation_get(p, i);
+    // std::cout << " " << gsl_permutation_get(p, i);
     // }
     // std::cout << std::endl;
 
@@ -75,18 +79,18 @@ const char * const gsl::permutation::copy__name__ = "permutation_copy";
 const char * const gsl::permutation::copy__doc__ = "build a copy of a permutation";
 
 PyObject *
-gsl::permutation::copy(PyObject *, PyObject * args) {
+gsl::permutation::copy(PyObject *, PyObject * args)
+{
     // the arguments
     PyObject * sourceCapsule;
     PyObject * destinationCapsule;
     // unpack the argument tuple
     int status = PyArg_ParseTuple(
-                                  args, "O!O!:permutation_copy",
-                                  &PyCapsule_Type, &destinationCapsule,
-                                  &PyCapsule_Type, &sourceCapsule
-                                  );
+        args, "O!O!:permutation_copy", &PyCapsule_Type, &destinationCapsule, &PyCapsule_Type,
+        &sourceCapsule);
     // if something went wrong
-    if (!status) return 0;
+    if (!status)
+        return 0;
     // bail out if the source capsule is not valid
     if (!PyCapsule_IsValid(sourceCapsule, capsule_t)) {
         PyErr_SetString(PyExc_TypeError, "invalid permutation capsule for source");
@@ -117,14 +121,16 @@ const char * const gsl::permutation::get__name__ = "permutation_get";
 const char * const gsl::permutation::get__doc__ = "get the value of a permutation element";
 
 PyObject *
-gsl::permutation::get(PyObject *, PyObject * args) {
+gsl::permutation::get(PyObject *, PyObject * args)
+{
     // the arguments
     size_t index;
     PyObject * capsule;
     // unpack the argument tuple
     int status = PyArg_ParseTuple(args, "O!k:permutation_get", &PyCapsule_Type, &capsule, &index);
     // if something went wrong
-    if (!status) return 0;
+    if (!status)
+        return 0;
     // bail out if the capsule is not valid
     if (!PyCapsule_IsValid(capsule, capsule_t)) {
         PyErr_SetString(PyExc_TypeError, "invalid permutation capsule");
@@ -147,17 +153,17 @@ const char * const gsl::permutation::swap__name__ = "permutation_swap";
 const char * const gsl::permutation::swap__doc__ = "swap the value of a permutation element";
 
 PyObject *
-gsl::permutation::swap(PyObject *, PyObject * args) {
+gsl::permutation::swap(PyObject *, PyObject * args)
+{
     // the arguments
     PyObject * capsule;
     size_t index1, index2;
     // unpack the argument tuple
     int status = PyArg_ParseTuple(
-                                  args, "O!kk:permutation_swap",
-                                  &PyCapsule_Type, &capsule,
-                                  &index1, &index2);
+        args, "O!kk:permutation_swap", &PyCapsule_Type, &capsule, &index1, &index2);
     // if something went wrong
-    if (!status) return 0;
+    if (!status)
+        return 0;
     // bail out if the capsule is not valid
     if (!PyCapsule_IsValid(capsule, capsule_t)) {
         PyErr_SetString(PyExc_TypeError, "invalid permutation capsule");
@@ -180,13 +186,15 @@ const char * const gsl::permutation::size__name__ = "permutation_size";
 const char * const gsl::permutation::size__doc__ = "return the size of a permutation";
 
 PyObject *
-gsl::permutation::size(PyObject *, PyObject * args) {
+gsl::permutation::size(PyObject *, PyObject * args)
+{
     // the arguments
     PyObject * capsule;
     // unpack the argument tuple
     int status = PyArg_ParseTuple(args, "O!:permutation_size", &PyCapsule_Type, &capsule);
     // bail out if something went wrong with the argument unpacking
-    if (!status) return 0;
+    if (!status)
+        return 0;
     // bail out if the capsule is not valid
     if (!PyCapsule_IsValid(capsule, capsule_t)) {
         PyErr_SetString(PyExc_TypeError, "invalid permutation capsule");
@@ -209,13 +217,15 @@ const char * const gsl::permutation::valid__name__ = "permutation_valid";
 const char * const gsl::permutation::valid__doc__ = "check whether the permutation is valid";
 
 PyObject *
-gsl::permutation::valid(PyObject *, PyObject * args) {
+gsl::permutation::valid(PyObject *, PyObject * args)
+{
     // the arguments
     PyObject * capsule;
     // unpack the argument tuple
     int status = PyArg_ParseTuple(args, "O!:permutation_valid", &PyCapsule_Type, &capsule);
     // if something went wrong
-    if (!status) return 0;
+    if (!status)
+        return 0;
     // bail out if the capsule is not valid
     if (!PyCapsule_IsValid(capsule, capsule_t)) {
         PyErr_SetString(PyExc_TypeError, "invalid permutation capsule");
@@ -239,13 +249,15 @@ const char * const gsl::permutation::reverse__name__ = "permutation_reverse";
 const char * const gsl::permutation::reverse__doc__ = "reverse a permutation";
 
 PyObject *
-gsl::permutation::reverse(PyObject *, PyObject * args) {
+gsl::permutation::reverse(PyObject *, PyObject * args)
+{
     // the arguments
     PyObject * capsule;
     // unpack the argument tuple
     int status = PyArg_ParseTuple(args, "O!:permutation_reverse", &PyCapsule_Type, &capsule);
     // if something went wrong
-    if (!status) return 0;
+    if (!status)
+        return 0;
     // bail out if the capsule is not valid
     if (!PyCapsule_IsValid(capsule, capsule_t)) {
         PyErr_SetString(PyExc_TypeError, "invalid permutation capsule");
@@ -268,13 +280,15 @@ const char * const gsl::permutation::inverse__name__ = "permutation_inverse";
 const char * const gsl::permutation::inverse__doc__ = "invert a permutation";
 
 PyObject *
-gsl::permutation::inverse(PyObject *, PyObject * args) {
+gsl::permutation::inverse(PyObject *, PyObject * args)
+{
     // the arguments
     PyObject * capsule;
     // unpack the argument tuple
     int status = PyArg_ParseTuple(args, "O!:permutation_inverse", &PyCapsule_Type, &capsule);
     // if something went wrong
-    if (!status) return 0;
+    if (!status)
+        return 0;
     // bail out if the capsule is not valid
     if (!PyCapsule_IsValid(capsule, capsule_t)) {
         PyErr_SetString(PyExc_TypeError, "invalid permutation capsule");
@@ -298,13 +312,15 @@ const char * const gsl::permutation::next__name__ = "permutation_next";
 const char * const gsl::permutation::next__doc__ = "compute the next permutation";
 
 PyObject *
-gsl::permutation::next(PyObject *, PyObject * args) {
+gsl::permutation::next(PyObject *, PyObject * args)
+{
     // the arguments
     PyObject * capsule;
     // unpack the argument tuple
     int status = PyArg_ParseTuple(args, "O!:permutation_next", &PyCapsule_Type, &capsule);
     // if something went wrong
-    if (!status) return 0;
+    if (!status)
+        return 0;
     // bail out if the capsule is not valid
     if (!PyCapsule_IsValid(capsule, capsule_t)) {
         PyErr_SetString(PyExc_TypeError, "invalid permutation capsule");
@@ -328,13 +344,15 @@ const char * const gsl::permutation::prev__name__ = "permutation_prev";
 const char * const gsl::permutation::prev__doc__ = "compute the prev permutation";
 
 PyObject *
-gsl::permutation::prev(PyObject *, PyObject * args) {
+gsl::permutation::prev(PyObject *, PyObject * args)
+{
     // the arguments
     PyObject * capsule;
     // unpack the argument tuple
     int status = PyArg_ParseTuple(args, "O!:permutation_prev", &PyCapsule_Type, &capsule);
     // if something went wrong
-    if (!status) return 0;
+    if (!status)
+        return 0;
     // bail out if the capsule is not valid
     if (!PyCapsule_IsValid(capsule, capsule_t)) {
         PyErr_SetString(PyExc_TypeError, "invalid permutation capsule");
@@ -358,7 +376,8 @@ void
 gsl::permutation::free(PyObject * capsule)
 {
     // bail out if the capsule is not valid
-    if (!PyCapsule_IsValid(capsule, gsl::permutation::capsule_t)) return;
+    if (!PyCapsule_IsValid(capsule, gsl::permutation::capsule_t))
+        return;
     // get the permutation
     gsl_permutation * v =
         static_cast<gsl_permutation *>(PyCapsule_GetPointer(capsule, gsl::permutation::capsule_t));

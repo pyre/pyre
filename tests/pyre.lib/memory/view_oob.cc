@@ -13,7 +13,9 @@ using view_t = pyre::memory::view_t<double>;
 
 
 // create a view over a foreign block of data
-int main(int argc, char * argv[]) {
+int
+main(int argc, char * argv[])
+{
     // initialize the journal
     pyre::journal::init(argc, argv);
     pyre::journal::application("view_oob");
@@ -35,13 +37,13 @@ int main(int argc, char * argv[]) {
         product.at(product.cells());
         // unreachable
         throw std::logic_error("unreachable");
-    // catch the firewall
+        // catch the firewall
     } catch (const pyre::journal::firewall_t::exception_type &) {
         // all good
     }
 
     // clean up
-    delete [] block;
+    delete[] block;
 
     // all done
     return 0;

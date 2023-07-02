@@ -10,44 +10,43 @@
 #define pyre_mpi_Shareable_h
 
 // place Shareable in namespace pyre::mpi
-namespace pyre {
-    namespace mpi {
-        template <typename Resource> class Shareable;
-    }
-}
+namespace pyre { namespace mpi {
+    template <typename Resource>
+    class Shareable;
+}} // namespace pyre::mpi
 
 
 // declaration
 template <typename Resource>
 class pyre::mpi::Shareable {
-    // types
+// types
 public:
-    typedef Resource resource_t;
-    typedef typename Resource::handle_t handle_t;
+typedef Resource resource_t;
+typedef typename Resource::handle_t handle_t;
 
-    // interface
+// interface
 public:
-    inline int acquire(); // increment the reference count
-    inline int release(); // decrement the reference count
-    inline int references() const; // return the number of outstanding references
+inline int acquire();          // increment the reference count
+inline int release();          // decrement the reference count
+inline int references() const; // return the number of outstanding references
 
-    inline handle_t handle() const; // return the low level MPI handle
+inline handle_t handle() const; // return the low level MPI handle
 
-    // meta methods
+// meta methods
 public:
-    inline ~Shareable();
-    inline Shareable(handle_t, bool);
+inline ~Shareable();
+inline Shareable(handle_t, bool);
 
-    // disallow the copy constructors
+// disallow the copy constructors
 private:
-    inline Shareable(const Shareable &);
-    inline const Shareable & operator=(const Shareable &);
+inline Shareable(const Shareable &);
+inline const Shareable & operator=(const Shareable &);
 
-    // data members
+// data members
 private:
-    int _count;
-    bool _immortal;
-    handle_t _handle;
+int _count;
+bool _immortal;
+handle_t _handle;
 };
 
 
@@ -57,5 +56,5 @@ private:
 #undef pyre_mpi_Shareable_icc
 
 
-# endif
+#endif
 // end of file

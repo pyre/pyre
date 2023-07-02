@@ -11,8 +11,7 @@
 // user facing channel ; meant for warning messages, i.e. when the applications detects
 // something wrong but it can work around the problem
 template <template <typename> typename proxyT>
-class pyre::journal::Warning : public Channel<Warning<proxyT>, proxyT>
-{
+class pyre::journal::Warning : public Channel<Warning<proxyT>, proxyT> {
     // types
 public:
     // my base
@@ -46,8 +45,8 @@ public:
 private:
     Warning(const Warning &) = delete;
     Warning(const Warning &&) = delete;
-    const Warning & operator= (const Warning &) = delete;
-    const Warning & operator= (const Warning &&) = delete;
+    const Warning & operator=(const Warning &) = delete;
+    const Warning & operator=(const Warning &&) = delete;
 };
 
 

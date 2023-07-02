@@ -34,8 +34,8 @@ private:
 private:
     Console(const Console &) = delete;
     Console(const Console &&) = delete;
-    const Console & operator= (const Console &) = delete;
-    const Console & operator= (const Console &&) = delete;
+    const Console & operator=(const Console &) = delete;
+    const Console & operator=(const Console &&) = delete;
 };
 
 

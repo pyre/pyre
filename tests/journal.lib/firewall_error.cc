@@ -13,8 +13,9 @@ using firewall_error = pyre::journal::firewall_error;
 
 
 // exercise throwing and catching {firewall_error}
-int main() {
-
+int
+main()
+{
     // make a headline
     firewall_error::headline_type headline = "firewall error example";
     // an empty message body
@@ -36,8 +37,7 @@ int main() {
             // indicate failure
             return 1;
         }
-    }
-    catch (...) {
+    } catch (...) {
         // something else happened; indicate failure
         return 1;
     }

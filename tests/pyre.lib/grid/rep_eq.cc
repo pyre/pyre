@@ -15,7 +15,9 @@ using rep_t = pyre::grid::rep_t<int, 5>;
 
 
 // make a {rep} that's filled with zeroes
-int main(int argc, char * argv[]) {
+int
+main(int argc, char * argv[])
+{
     // initialize the journal
     pyre::journal::init(argc, argv);
     pyre::journal::application("rep_eq");
@@ -28,13 +30,11 @@ int main(int argc, char * argv[]) {
     constexpr auto repyre = rep_t::zero();
 
     // verify they are equal
-    assert(( rep1 == repyre ));
+    assert((rep1 == repyre));
 
     // show me
-    channel
-        << "rep1: {" << rep1 << "}"
-        << "repyre: {" << repyre << "}"
-        << pyre::journal::endl(__HERE__);
+    channel << "rep1: {" << rep1 << "}"
+            << "repyre: {" << repyre << "}" << pyre::journal::endl(__HERE__);
 
     // all done
     return 0;

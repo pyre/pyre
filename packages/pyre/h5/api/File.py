@@ -5,12 +5,10 @@
 
 # support
 import journal
+from .. import libh5
 
 # superclass
 from .Group import Group
-
-# parts
-from .Inspector import Inspector
 
 # typing
 import pyre
@@ -30,7 +28,6 @@ class File(Group):
         self,
         at: pyre.primitives.pathlike = "/",
         layout: typing.Optional[schema.group] = None,
-        inspector=None,
         **kwds,
     ):
         # normalize the layout
@@ -43,12 +40,6 @@ class File(Group):
         self._pyre_fapl = None
         # initially, i'm not attached to a particular file
         self._pyre_uri = None
-        # if i wasn't given an explicit inspector
-        if inspector is None:
-            # make a default one
-            inspector = Inspector()
-        # attach it
-        self._pyre_inspector = inspector
         # all done
         return
 
@@ -85,29 +76,51 @@ class File(Group):
 
     # attach to S3 buckets
     def _pyre_ros3(
-        self, bucket: str, key: str, profile: typing.Optional[str] = None
+        self,
+        region: typing.Optional[str],
+        profile: typing.Optional[str],
+        bucket: str,
+        key: str,
     ) -> "File":
         """
         Access the remote dataset {key} in the given S3 {bucket} using the {ROS3} driver
         """
-        # grab the h5 bindings
-        h5 = pyre.libh5
-        # if the library doesn't have support for {ros3}
-        if not h5.ros3():
-            # make a channel
-            channel = journal.error("pyre.h5.file.ros3")
-            # complain
-            channel.line("this installation of libhdf5 has no support for ros3")
-            channel.line(f"while looking for key '{key}' in bucket '{bucket}'")
-            # flush
-            channel.log()
-            # and bail, just in case errors aren't fatal
-            return self
+        # get the user proxy so we can ask for AWS credentials
+        aws = pyre.executive.user.aws
+        # if the region is non-trivial
+        if region:
+            # fold into the {s3} url
+            s3 = f"s3.{region}.amazonaws.com"
+        # otherwise
+        else:
+            # normalize it
+            region = ""
+            # and don't use it in the {s3} url
+            s3 = "s3.amazonaws.com"
 
-        # make an access parameter list and fill it with {ros3} information
-        fapl = h5.FAPL().ros3()
+        region = "" if region is None else region
+        # if there was no {profile} specification
+        profile = "default" if profile is None else profile
+        # ask for the credentials
+        id, secret = aws.credentials(profile="default")
+        # if both are non-trivial
+        if id and secret:
+            # turn authentication on
+            authenticate = True
+        # otherwise
+        else:
+            # turn it off and let the ros3 driver figure it out
+            authenticate = False
+        # make a ros3 access parameter list and fill it with {ros3} information
+        fapl = libh5.FAPL().ros3(
+            region=region,
+            id=id,
+            key=secret,
+            authenticate=authenticate,
+        )
+        #
         # assemble the file uri
-        uri = f"https://{bucket}.s3.amazonaws.com{key}"
+        uri = f"https://{bucket}.{s3}/{key}"
         # and delegate to the opener
         return self._pyre_open(uri=uri, mode="r", fapl=fapl)
 
@@ -135,20 +148,6 @@ class File(Group):
         # get my layout; it's guaranteed to be a group with the correct name
         return self._pyre_layout
 
-    # member access
-    def __pyre_find(self, path: pyre.primitives.pathlike) -> typing.Optional[Object]:
-        """
-        Look up the h5 {object} associated with {path}
-        """
-        # normalize the input {path}
-        path = pyre.primitives.path(path)
-        # if the request is for the root object
-        if path == pyre.primitives.path.root:
-            # return me
-            return self
-        # otherwise, delegate to the {group} that i am to look up my members
-        return super()._pyre_find(path=path)
-
     # visiting
     def _pyre_identify(self, authority, **kwds):
         """
@@ -173,17 +172,15 @@ class File(Group):
         This is a lower level interface that does no error checking;
         it's probably not what you are looking for
         """
-        # grab the h5 bindings
-        h5 = pyre.libh5
         # record the uri
         self._pyre_uri = uri
         # and the access property list
         self._pyre_fapl = fapl
         # open the file
         self._pyre_id = (
-            h5.File(uri=str(uri), mode=mode)
+            libh5.File(uri=str(uri), mode=mode)
             if fapl is None
-            else h5.File(uri=str(uri), mode=mode, fapl=fapl)
+            else libh5.File(uri=str(uri), mode=mode, fapl=fapl)
         )
         # all done
         return self

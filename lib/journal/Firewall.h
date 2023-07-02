@@ -10,8 +10,7 @@
 
 // developer facing channel; usually gets turned off in release mode
 template <template <typename> typename proxyT>
-class pyre::journal::Firewall : public Channel<Firewall<proxyT>, proxyT>
-{
+class pyre::journal::Firewall : public Channel<Firewall<proxyT>, proxyT> {
     // types
 public:
     // my base
@@ -44,8 +43,8 @@ public:
 private:
     Firewall(const Firewall &) = delete;
     Firewall(const Firewall &&) = delete;
-    const Firewall & operator= (const Firewall &) = delete;
-    const Firewall & operator= (const Firewall &&) = delete;
+    const Firewall & operator=(const Firewall &) = delete;
+    const Firewall & operator=(const Firewall &&) = delete;
 };
 
 

@@ -15,11 +15,13 @@ using trash_t = pyre::journal::trash_t;
 
 
 // verify we can instantiate the trash can
-int main() {
+int
+main()
+{
     // instantiate
     trash_t trash;
     // check its name
-    assert (trash.name() == "trash");
+    assert(trash.name() == "trash");
 
     // all done
     return 0;

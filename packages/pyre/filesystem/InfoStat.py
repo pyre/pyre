@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2023 all rights reserved
-#
 
 
 # externals
@@ -27,7 +25,6 @@ class InfoStat:
     write = object()
     execute = object()
 
-
     # interface
     # decode the permissions
     def mode(self, entity=user, access=read):
@@ -38,7 +35,6 @@ class InfoStat:
         mask = self.masks[(entity, access)]
         # and extract the permissions
         return True if mask & self.permissions else False
-
 
     # meta methods
     def __init__(self, info, **kwds):
@@ -61,7 +57,6 @@ class InfoStat:
         # all done
         return
 
-
     # implementation details
     masks = {
         (user, read): stat.S_IRUSR,
@@ -75,9 +70,8 @@ class InfoStat:
         (other, execute): stat.S_IXOTH,
     }
 
-
     # debugging support
-    def dump(self, channel, indent=''):
+    def dump(self, channel, indent=""):
         """
         Place the known information about this file in the given {channel}
         """
@@ -89,7 +83,9 @@ class InfoStat:
         channel.line(f"{indent}  permissions: {self.permissions:o}")
         channel.line(f"{indent}  access time: {time.ctime(self.accessTime)}")
         channel.line(f"{indent}  creation time: {time.ctime(self.creationTime)}")
-        channel.line(f"{indent}  modification time: {time.ctime(self.modificationTime)}")
+        channel.line(
+            f"{indent}  modification time: {time.ctime(self.modificationTime)}"
+        )
         # all done
         return
 

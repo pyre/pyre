@@ -13,7 +13,9 @@ using heap_t = pyre::memory::heap_t<double>;
 
 
 // verify that we can construct and use heap blocks
-int main(int argc, char * argv[]) {
+int
+main(int argc, char * argv[])
+{
     // initialize the journal
     pyre::journal::init(argc, argv);
     pyre::journal::application("heap_oob");
@@ -32,7 +34,7 @@ int main(int argc, char * argv[]) {
         product.at(product.cells());
         // unreachable
         throw std::logic_error("unreachable");
-    // catch the firewall
+        // catch the firewall
     } catch (const pyre::journal::firewall_t::exception_type &) {
         // all good
     }

@@ -11,8 +11,7 @@
 
 // metamethods
 template <template <typename> typename proxyT>
-pyre::journal::Firewall<proxyT>::
-Firewall(const name_type & name, detail_type detail) :
+pyre::journal::Firewall<proxyT>::Firewall(const name_type & name, detail_type detail) :
     channel_type(name, detail)
 {
     // get my entry
@@ -26,8 +25,7 @@ Firewall(const name_type & name, detail_type detail) :
 // record the message to the chosen device
 template <template <typename> typename proxyT>
 void
-pyre::journal::Firewall<proxyT>::
-record()
+pyre::journal::Firewall<proxyT>::record()
 {
     // hunt down the device to use
     auto dev = this->device();
@@ -41,8 +39,7 @@ record()
 // raise an exception when fatal
 template <template <typename> typename proxyT>
 void
-pyre::journal::Firewall<proxyT>::
-die()
+pyre::journal::Firewall<proxyT>::die()
 {
     // prepare a message
     auto msg = this->name() + exception_type::headline_type(": FIREWALL BREACHED!");
@@ -54,8 +51,7 @@ die()
 // initialize the channel index
 template <template <typename> typename proxyT>
 auto
-pyre::journal::Firewall<proxyT>::
-initializeIndex() -> index_type
+pyre::journal::Firewall<proxyT>::initializeIndex() -> index_type
 {
     // make an empty index and return it; for {firewall}, channels are (active,fatal) by default
     return index_type(true, true);

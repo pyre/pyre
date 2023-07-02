@@ -19,15 +19,16 @@
 using namespace std::literals;
 
 // timer stub
-class proctimer_t {
-};
+class proctimer_t {};
 
 // convenience
 using proxy_t = pyre::timers::proxy_t<proctimer_t, pyre::timers::wall_clock_t>;
 
 
 // verify that we can manipulate the movement state
-int main() {
+int
+main()
+{
     // make a movement
     proxy_t::movement_type movement;
     // and its proxy
@@ -47,9 +48,7 @@ int main() {
     // activate it
     // channel.activate();
     // and show me
-    channel
-        << "elapsed time: " << proxy.sec()
-        << pyre::journal::endl(__HERE__);
+    channel << "elapsed time: " << proxy.sec() << pyre::journal::endl(__HERE__);
 
     // all done
     return 0;

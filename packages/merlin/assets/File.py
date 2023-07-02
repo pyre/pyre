@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis <nichael.aivazis@para-sim.com>
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2023 all rights reserved
 
 
@@ -13,17 +13,19 @@ from .RealAsset import RealAsset
 
 # class declaration
 class File(
-    RealAsset, family="merlin.assets.files.file", implements=merlin.protocols.file
+    RealAsset,
+    family="merlin.assets.files.file",
+    implements=merlin.protocols.assets.file,
 ):
     """
     Encapsulation of a file based project asset
     """
 
     # required configurable state
-    category = merlin.protocols.assetCategory()
+    category = merlin.protocols.assets.category()
     category.doc = "a clue about the type of this asset"
 
-    language = merlin.protocols.language()
+    language = merlin.protocols.languages.language()
     language.doc = "a clue about the toolchain that processes this asset"
 
     # hooks

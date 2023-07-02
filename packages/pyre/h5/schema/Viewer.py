@@ -21,6 +21,9 @@ class Viewer:
 
     # interface
     def visit(self, descriptor: Descriptor, margin: str = "", graphic: str = ""):
+        """
+        Generate a textual representation of the {descriptor} contents
+        """
         # delegate to the correct handler
         yield from descriptor._pyre_identify(
             authority=self, margin=margin, graphic=graphic

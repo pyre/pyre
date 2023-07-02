@@ -10,18 +10,14 @@
 
 
 // place everything in my private namespace
-namespace pyre {
-    namespace extensions {
-        namespace cuda {
+namespace pyre::extensions::cuda {
 
-            // discover
-            const char * const discover__name__ = "discover";
-            const char * const discover__doc__ = "device discovery";
-            PyObject * discover(PyObject *, PyObject *);
+    // discover
+    const char * const discover__name__ = "discover";
+    const char * const discover__doc__ = "device discovery";
+    PyObject * discover(PyObject *, PyObject *);
 
-        } // of namespace cuda
-    } // of namespace extensions
-} // of namespace pyre
+} // namespace pyre::extensions::cuda
 
 #endif
 

@@ -11,7 +11,9 @@
 
 
 // verify the basic layout of memory mapped grids
-int main(int argc, char * argv[]) {
+int
+main(int argc, char * argv[])
+{
     // initialize the journal
     pyre::journal::init(argc, argv);
     pyre::journal::application("grid_mmap_sanity");
@@ -26,7 +28,7 @@ int main(int argc, char * argv[]) {
     using grid_t = pyre::grid::grid_t<pack_t, storage_t>;
 
     // packing: 1024x1024x8
-    pack_t packing { {1024,1024, 8} };
+    pack_t packing { { 1024, 1024, 8 } };
     // instantiate the grid
     grid_t grid { packing, "grid_mmap.data", packing.cells() };
 
@@ -35,12 +37,10 @@ int main(int argc, char * argv[]) {
     // set a value
     grid[zero] = 42;
     // show me the value
-    channel
-        << "grid[0,0,0] = " << grid[{0,0,0}]
-        << pyre::journal::endl(__HERE__);
+    channel << "grid[0,0,0] = " << grid[{ 0, 0, 0 }] << pyre::journal::endl(__HERE__);
 
     // check
-    assert(( grid[zero] == 42 ));
+    assert((grid[zero] == 42));
 
     // all done
     return 0;

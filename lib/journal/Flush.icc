@@ -11,9 +11,7 @@
 
 // metamethods
 template <typename decoratorT>
-pyre::journal::Flush<decoratorT>::
-Flush(decorator_type decorator):
-    _decorator(decorator)
+pyre::journal::Flush<decoratorT>::Flush(decorator_type decorator) : _decorator(decorator)
 {}
 
 
@@ -21,14 +19,13 @@ Flush(decorator_type decorator):
 // accessors
 template <typename decoratorT>
 auto
-pyre::journal::Flush<decoratorT>::
-decorator() const -> const decorator_type &
+pyre::journal::Flush<decoratorT>::decorator() const -> const decorator_type &
 {
     // easy enough
     return _decorator;
 }
 
 
-# endif
+#endif
 
 // end of file

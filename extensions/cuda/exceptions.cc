@@ -13,30 +13,20 @@
 #include "exceptions.h"
 
 // allocate the global objects
-namespace pyre {
-    namespace extensions {
-        namespace cuda {
-            PyObject * Error = nullptr;
-        } // of namespace cuda
-    } // of namespace extensions
-} // of namespace pyre
+namespace pyre::extensions::cuda {
+    PyObject * Error = nullptr;
+} // namespace pyre::extensions::cuda
 
 
 // exception registration
-const char * const
-pyre::extensions::cuda::
-registerExceptions__name__ = "registerExceptions";
+const char * const pyre::extensions::cuda::registerExceptions__name__ = "registerExceptions";
 
-const char * const
-pyre::extensions::cuda::
-registerExceptions__doc__ =
+const char * const pyre::extensions::cuda::registerExceptions__doc__ =
     "register the classes that represent the standard exceptions raised by CUDA";
 
 PyObject *
-pyre::extensions::cuda::
-registerExceptions(PyObject * module, PyObject * args)
+pyre::extensions::cuda::registerExceptions(PyObject * module, PyObject * args)
 {
-
     // unpack the arguments
     PyObject * exceptions;
     if (!PyArg_ParseTuple(args, "O!:registerExceptions", &PyModule_Type, &exceptions)) {

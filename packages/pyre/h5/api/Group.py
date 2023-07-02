@@ -5,7 +5,6 @@
 
 
 # support
-import journal
 import pyre
 
 # superclass
@@ -14,11 +13,11 @@ from .Object import Object
 # typing
 import typing
 import collections.abc
-from .. import schema
+from .. import libh5
 from .Dataset import Dataset
 
 # type aliases
-H5ObjectType = pyre.libh5.ObjectType
+H5ObjectType = libh5.ObjectType
 
 
 # a basic h5 object
@@ -172,6 +171,9 @@ class Group(Object):
             return super()._pyre_identify(authority=authority, **kwds)
         # otherwise, invoke the handler
         return handler(group=self, **kwds)
+
+    # the inspector gets patched by the module initializer
+    _pyre_inspector = None
 
 
 # end of file

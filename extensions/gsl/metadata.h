@@ -27,7 +27,7 @@ namespace gsl {
     extern const char * const version__doc__;
     PyObject * version(PyObject *, PyObject *);
 
-} // of namespace gsl
+} // namespace gsl
 
 #endif
 

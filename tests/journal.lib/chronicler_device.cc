@@ -16,7 +16,9 @@ using chronicler_t = pyre::journal::chronicler_t;
 
 
 // exercise getting/setting the global default device
-int main() {
+int
+main()
+{
     // get the default device
     auto builtin = chronicler_t::device();
 
@@ -26,7 +28,7 @@ int main() {
     chronicler_t::device(custom);
 
     // check that the current device is the one we just installed
-    assert (chronicler_t::device().get() == custom.get());
+    assert(chronicler_t::device().get() == custom.get());
 
     // all done
     return 0;

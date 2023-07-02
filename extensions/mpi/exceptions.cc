@@ -12,15 +12,14 @@
 #include "exceptions.h"
 
 
-
-
 // the definition of the exception class
 PyObject * mpi::Error = 0;
 const char * const mpi::Error__name__ = "Error";
 
 // exception registration
-PyObject * mpi::registerExceptionHierarchy(PyObject * module) {
-
+PyObject *
+mpi::registerExceptionHierarchy(PyObject * module)
+{
     std::string stem = "mpi.";
 
     // the base class

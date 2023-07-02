@@ -11,7 +11,9 @@
 
 
 // verify that empty injections in info channels happens correctly
-int main() {
+int
+main()
+{
     // make an info channel
     pyre::journal::info_t channel("tests.journal.info");
     // send the output to the trash

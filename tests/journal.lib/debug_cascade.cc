@@ -20,7 +20,9 @@ using trash_t = pyre::journal::trash_t;
 
 
 // verify the cascade works correctly
-int main() {
+int
+main()
+{
     // make a channel
     mydebug_t parent("test.debug.parent");
     // its activation state is what's expected

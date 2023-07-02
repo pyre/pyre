@@ -9,11 +9,14 @@ import merlin
 
 
 # the manager of intermediate and final build products
-class FHS(merlin.component, family="merlin.layouts.fhs", implements=merlin.protocols.prefix):
+class FHS(
+    merlin.component,
+    family="merlin.layouts.fhs",
+    implements=merlin.protocols.flow.prefix,
+):
     """
     The manager of the all build products, both final and intermediate disposables
     """
-
 
     # required state
     bin = merlin.properties.path()

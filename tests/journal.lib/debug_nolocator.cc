@@ -11,7 +11,9 @@
 
 
 // verify that everything works correctly in the absence of location information
-int main() {
+int
+main()
+{
     // make a debug channel
     pyre::journal::debug_t channel("tests.journal.debug");
 
@@ -21,9 +23,7 @@ int main() {
     channel.device<pyre::journal::trash_t>();
 
     // do not provide location information
-    channel
-        << "a debug message without location information"
-        << pyre::journal::endl;
+    channel << "a debug message without location information" << pyre::journal::endl;
 
     // all done
     return 0;

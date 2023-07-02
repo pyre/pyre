@@ -34,7 +34,7 @@ main(int argc, char * argv[])
     matrix_t base { layout, layout.cells() };
 
     // we want to fill each quadrant with different values, so let's start by defining "quadrant"
-    auto quad = shape / 2;    // <- this is {dim/2, dim/2}
+    auto quad = shape / 2; // <- this is {dim/2, dim/2}
 
     // go through the four quadrants
     for (auto t = 0; t < 2; ++t) {
@@ -45,7 +45,7 @@ main(int argc, char * argv[])
             for (auto idx : box) {
                 // and set the value
                 // base[idx] = 2*t + b + 1;
-                base[idx] = layout[idx] + 1;    // add some spice
+                base[idx] = layout[idx] + 1; // add some spice
             }
         }
     }

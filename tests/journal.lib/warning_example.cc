@@ -11,7 +11,9 @@
 
 
 // exercise the common use case
-int main() {
+int
+main()
+{
     // make a warning channel
     pyre::journal::warning_t channel("tests.journal.warning");
 
@@ -19,11 +21,9 @@ int main() {
     channel.device<pyre::journal::trash_t>();
 
     // inject something into the channel
-    channel
-        << pyre::journal::at(__HERE__)
-        << pyre::journal::note("time", "now")
-        << "warning channel:" << pyre::journal::newline
-        << "    hello world!" << pyre::journal::endl;
+    channel << pyre::journal::at(__HERE__) << pyre::journal::note("time", "now")
+            << "warning channel:" << pyre::journal::newline << "    hello world!"
+            << pyre::journal::endl;
 
     // all done
     return 0;

@@ -13,7 +13,9 @@
 #include <pyre/geometry.h>
 
 // main
-int main() {
+int
+main()
+{
     // type aliases
     typedef pyre::geometry::point_t<3, double> point3d_t;
     typedef pyre::geometry::brick_t<3, point3d_t> brick3d_t;
@@ -32,10 +34,7 @@ int main() {
     // make a channel
     pyre::journal::debug_t info("pyre.geometry");
     // show me
-    info
-        << pyre::journal::at(__HERE__)
-        << "[" << cube << "]"
-        << pyre::journal::endl;
+    info << pyre::journal::at(__HERE__) << "[" << cube << "]" << pyre::journal::endl;
 
     // all done
     return 0;

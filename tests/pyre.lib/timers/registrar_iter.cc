@@ -16,7 +16,9 @@ using registrar_t = pyre::timers::registrar_t<movement_t>;
 
 
 // exercise iterating through the index contents
-int main() {
+int
+main()
+{
     // make an index
     registrar_t registrar;
 

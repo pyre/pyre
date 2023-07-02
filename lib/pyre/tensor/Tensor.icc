@@ -1,0 +1,217 @@
+// -*- C++ -*-
+//
+// bianca giovanardi
+// (c) 1998-2023 all rights reserved
+//
+
+
+// code guard
+#if !defined(pyre_tensor_Tensor_icc)
+#error this file contains implementation details for pyre::tensor::Tensor
+#else
+
+
+template <typename T, class packingT, int... I>
+constexpr pyre::tensor::Tensor<T, packingT, I...>::Tensor() : _data()
+{
+    // initialize memory
+    reset();
+
+    // all done
+    return;
+}
+
+template <typename T, class packingT, int... I>
+constexpr pyre::tensor::Tensor<T, packingT, I...>::Tensor(const data_t & data) : _data(data)
+{}
+
+template <typename T, class packingT, int... I>
+constexpr pyre::tensor::Tensor<T, packingT, I...>::Tensor(const data_t && data) :
+    _data(std::forward(data))
+{}
+
+template <typename T, class packingT, int... I>
+template <class... T2>
+constexpr pyre::tensor::Tensor<T, packingT, I...>::Tensor(T2... args)
+    requires(sizeof...(T2) == S)
+    : Tensor()
+{
+    // initialize with input arguments
+    _initialize(make_integer_sequence<S> {}, args...);
+
+    // all done
+    return;
+}
+
+template <typename T, class packingT, int... I>
+constexpr pyre::tensor::Tensor<T, packingT, I...>::~Tensor()
+{}
+
+template <typename T, class packingT, int... I>
+constexpr const T &
+pyre::tensor::Tensor<T, packingT, I...>::operator[](index_t i) const
+{
+    // get the offset that corresponds to this {index}
+    auto offset = _layout[i];
+    // get and return the value
+    return _data.at(offset);
+}
+
+template <typename T, class packingT, int... I>
+constexpr T &
+pyre::tensor::Tensor<T, packingT, I...>::operator[](index_t i)
+{
+    // get the offset that corresponds to this {index}
+    auto offset = _layout[i];
+    // get and return the value
+    return _data.at(offset);
+}
+
+template <typename T, class packingT, int... I>
+constexpr const T &
+pyre::tensor::Tensor<T, packingT, I...>::operator[](int i) const
+{
+    return _data.at(i);
+}
+
+template <typename T, class packingT, int... I>
+constexpr T &
+pyre::tensor::Tensor<T, packingT, I...>::operator[](int i)
+{
+    return _data.at(i);
+}
+
+template <typename T, class packingT, int... I>
+constexpr pyre::tensor::Tensor<T, packingT, I...>::operator T() const
+    requires(S == 1)
+{
+    return _data[0];
+}
+
+template <typename T, class packingT, int... I>
+constexpr pyre::tensor::Tensor<T, packingT, I...>::operator data_t() const
+{
+    return _data;
+}
+
+template <typename T, class packingT, int... I>
+constexpr pyre::tensor::Tensor<T, packingT, I...>::operator Tensor<
+    T, pyre::grid::canonical_t<N>, I...>() const
+{
+    pyre::tensor::Tensor<T, pyre::grid::canonical_t<N>, I...> result;
+
+    // iterate on the packing
+    for (auto idx : _layout) {
+        result[idx] = operator[](idx);
+    }
+
+    return result;
+}
+
+template <typename T, class packingT, int... I>
+constexpr pyre::tensor::Tensor<T, packingT, I...>::operator Tensor<
+    T, pyre::grid::symmetric_t<N>, I...>() const
+    requires(std::is_same_v<packingT, pyre::grid::diagonal_t<N>>)
+{
+    pyre::tensor::Tensor<T, pyre::grid::symmetric_t<N>, I...> result;
+
+    // iterate on the packing
+    for (auto idx : _layout) {
+        result[idx] = operator[](idx);
+    }
+
+    return result;
+}
+
+template <typename T, class packingT, int... I>
+constexpr const auto
+pyre::tensor::Tensor<T, packingT, I...>::begin() const
+{
+    return _data.cbegin();
+}
+
+template <typename T, class packingT, int... I>
+constexpr const auto
+pyre::tensor::Tensor<T, packingT, I...>::end() const
+{
+    return _data.cbegin() + S /* number of cells */;
+}
+
+template <typename T, class packingT, int... I>
+constexpr auto
+pyre::tensor::Tensor<T, packingT, I...>::begin()
+{
+    return _data.begin();
+}
+
+template <typename T, class packingT, int... I>
+constexpr auto
+pyre::tensor::Tensor<T, packingT, I...>::end()
+{
+    return _data.begin() + S /* number of cells */;
+}
+
+template <typename T, class packingT, int... I>
+constexpr void
+pyre::tensor::Tensor<T, packingT, I...>::reset()
+{
+    // reset to zero all entries
+    return _reset(make_integer_sequence<S> {});
+}
+
+template <typename T, class packingT, int... I>
+constexpr auto
+pyre::tensor::Tensor<T, packingT, I...>::shape() const
+{
+    return vector_t<N, int> { I... };
+}
+
+template <typename T, class packingT, int... I>
+constexpr bool
+pyre::tensor::Tensor<T, packingT, I...>::is_symmetric() const
+{
+    return std::is_same_v<packingT, pyre::grid::symmetric_t<N>>
+        || std::is_same_v<packingT, pyre::grid::diagonal_t<N>>;
+}
+
+template <typename T, class packingT, int... I>
+constexpr bool
+pyre::tensor::Tensor<T, packingT, I...>::is_diagonal() const
+{
+    return std::is_same_v<packingT, pyre::grid::diagonal_t<N>>;
+}
+
+template <typename T, class packingT, int... I>
+constexpr bool
+pyre::tensor::Tensor<T, packingT, I...>::is_square()
+{
+    // if all the entries {I1, ..., IN} in the parameter pack are equal then the tensor is square
+    return entries_all_equal<I...>();
+}
+
+template <typename T, class packingT, int... I>
+template <int... J, class... T2>
+constexpr void
+pyre::tensor::Tensor<T, packingT, I...>::_initialize(integer_sequence<J...>, T2... args)
+{
+    ((_data[J] = args), ...);
+
+    // all done
+    return;
+}
+
+template <typename T, class packingT, int... I>
+template <int... J>
+constexpr void
+pyre::tensor::Tensor<T, packingT, I...>::_reset(integer_sequence<J...>)
+{
+    ((_data[J] = T()), ...);
+
+    // all done
+    return;
+}
+
+
+#endif
+
+// end of file

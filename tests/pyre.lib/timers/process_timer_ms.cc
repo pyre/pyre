@@ -23,15 +23,17 @@ using proctimer_t = pyre::timers::process_timer_t;
 
 
 // verify that we can manipulate the timer state
-int main() {
+int
+main()
+{
     // make a timer
     proctimer_t timer("tests.timer");
     // and start it
     timer.start();
 
     // do something
-    double sum=0;
-    for (int i=0; i < 1000*1000; ++i) {
+    double sum = 0;
+    for (int i = 0; i < 1000 * 1000; ++i) {
         sum += i;
     }
 
@@ -45,10 +47,10 @@ int main() {
     // and show me
     channel
         // show me the sum
-        << "sum: " << sum << pyre::journal::newline
+        << "sum: " << sum
+        << pyre::journal::newline
         // show me the elapsed time
-        << "elapsed time: " << timer.ms()
-        << pyre::journal::endl(__HERE__);
+        << "elapsed time: " << timer.ms() << pyre::journal::endl(__HERE__);
 
     // all done
     return 0;

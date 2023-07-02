@@ -20,8 +20,7 @@ using proxy_t = pyre::journal::inventory_proxy_t<clientT>;
 
 
 // a client stub; the proxy relies on {crtp} to enable chaining
-class channel_t : public proxy_t<channel_t>
-{
+class channel_t : public proxy_t<channel_t> {
     // type aliases
 public:
     using proxy_type = proxy_t<channel_t>;
@@ -33,9 +32,7 @@ public:
 
     // metamethods
 public:
-    inline channel_t(inventory_reference inventory) :
-        proxy_type(inventory)
-    {}
+    inline channel_t(inventory_reference inventory) : proxy_type(inventory) {}
 
     // static interface
 public:
@@ -48,31 +45,37 @@ private:
 };
 
 // static interface
-auto channel_t::index() -> index_reference { return _index; }
+auto
+channel_t::index() -> index_reference
+{
+    return _index;
+}
 // static data
 channel_t::index_type channel_t::_index { true, false };
 
 
 // verify that we can manipulate the inventory state through a proxy
-int main() {
+int
+main()
+{
     // make the shared inventory instance
     channel_t::inventory_type inventory(true, false);
     // create a channel
     channel_t ch_1(inventory);
     // check that the client sees the state of the inventory
-    assert (ch_1.device() == pyre::journal::chronicler_t::device());
+    assert(ch_1.device() == pyre::journal::chronicler_t::device());
 
     // create another channel with access to the shared state
     channel_t ch_2(inventory);
     // it should also see the same device
-    assert (ch_2.device() == ch_1.device());
+    assert(ch_2.device() == ch_1.device());
 
     // install a custom device in the shared state
     inventory.device<pyre::journal::trash_t>();
 
     // check again
-    assert (ch_1.device() == inventory.device());
-    assert (ch_2.device() == ch_1.device());
+    assert(ch_1.device() == inventory.device());
+    assert(ch_2.device() == ch_1.device());
 
     // all done
     return 0;

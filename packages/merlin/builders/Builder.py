@@ -5,11 +5,12 @@
 
 
 # support
+import journal
 import merlin
 
 
 # the manager of intermediate and final build products
-class Builder(merlin.component, implements=merlin.protocols.builder):
+class Builder(merlin.component, implements=merlin.protocols.flow.builder):
     """
     The manager of the all build products, both final and intermediate disposables
     """
@@ -35,13 +36,13 @@ class Builder(merlin.component, implements=merlin.protocols.builder):
     prefix.default = "/tmp/{pyre.user.username}/products"
     prefix.doc = "the installation location of the final build products"
 
-    layout = merlin.protocols.prefix()
+    layout = merlin.protocols.flow.prefix()
     layout.doc = "the layout of the installation area"
 
     # interface
     def add(self, assets, **kwds):
         """
-        Add the given {asset} to the build pile
+        Add the given {assets} to the build pile
         """
         # go through the assets
         for asset in assets:
@@ -50,15 +51,11 @@ class Builder(merlin.component, implements=merlin.protocols.builder):
         # all done
         return
 
-    def build(self, assets, **kwds):
+    def build(self, **kwds):
         """
         Build the products
         """
-        # go through the assets
-        for asset in assets:
-            # ask each one to identify itself
-            asset.build(builder=self, **kwds)
-        # all done
+        # nothing to do, by default
         return
 
     # metamethods
@@ -81,8 +78,33 @@ class Builder(merlin.component, implements=merlin.protocols.builder):
         return
 
     # implementation details
+    # merlin hooks
+    def identify(self, visitor, **kwds):
+        """
+        Ask {visitor} to process a generic builder
+        """
+        # attempt to
+        try:
+            # ask the {visitor} for a generic builder handler
+            handler = visitor.builder
+        # if it doesn't exist
+        except AttributeError:
+            # this is almost certainly a bug; make a channel
+            channel = journal.firewall("merlin.builders.identify")
+            # complain
+            channel.line(f"unable to find builder support")
+            channel.line(
+                f"while looking through the interface of '{visitor.pyre_name}'"
+            )
+            # flush
+            channel.log()
+            # and fail, just in case firewalls aren't fatal
+            return None
+        # if it does, invoke it
+        return handler(builder=self, **kwds)
+
     # framework hooks
-    def merlin_initialized(self, plexus, **kwds):
+    def _merlin_initialized(self, plexus, **kwds):
         """
         Hook invoked after the {plexus} is fully initialized
         """
@@ -119,13 +141,13 @@ class Builder(merlin.component, implements=merlin.protocols.builder):
         # otherwise, get the compiler family
         suite = determinant.suite
         # and its version
-        major, _, _ = determinant.version()
+        major, _, _ = determinant.version
         # and fold them into the ABI
         abi = f"{suite}{major}"
         # all done
         return abi
 
-    def workspaceHash(self, plexus):
+    def _workspaceHash(self, plexus):
         """
         Hash the workspace location and the currently active branch into a build tag
         """
@@ -143,12 +165,18 @@ class Builder(merlin.component, implements=merlin.protocols.builder):
         except ValueError:
             # just use the trailing part of the workspace
             hash = ws.name
-        # get the active branch name
-        branch = plexus.scs.branch()
-        # fold it into the branch
-        tag = f"{hash}@{branch}"
-        # and return it
-        return tag
+        # get the source control system
+        scs = plexus.scs
+        # if we are within a workspace and we support the source control system
+        if scs:
+            # get the active branch name
+            branch = plexus.scs.branch()
+            # fold it into the branch
+            tag = f"{hash}@{branch}"
+            # and return it
+            return tag
+        # otherwise, return the name hash
+        return hash
 
 
 # end of file

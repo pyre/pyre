@@ -11,7 +11,6 @@ import typing
 
 # implementation details
 class URI:
-
     # types
     from .exceptions import ParsingError
 
@@ -35,6 +34,31 @@ class URI:
         )
         # assemble and return
         return "".join(parts)
+
+    @property
+    def server(self):
+        """
+        Extract the parts of my {authority}
+        """
+        # get my authority
+        authority = self.authority
+        # if it's blank
+        if not authority:
+            # not much to do
+            return (None,) * 4
+        # parse it
+        match = self._authorityParser.match(authority)
+        # if it fails
+        if not match:
+            # bail
+            return (None,) * 4
+        # otherwise, extract the username
+        user = match.group("user")
+        port = match.group("port")
+        password = match.group("passwd")
+        host = match.group("host")
+        # and return the fields
+        return host, port, user, password
 
     # interface
     @classmethod
@@ -65,7 +89,7 @@ class URI:
             # all done
             return value
         # parse it
-        match = cls._regex.match(value)
+        match = cls._uriParser.match(value)
         # if unsuccessful
         if not match:
             msg = "unrecognizable URI {0.value!r}"
@@ -161,17 +185,29 @@ class URI:
         return self.uri
 
     # implementation details
-    _regex = re.compile(
-        "".join(
-            (  # adapted from http://regexlib.com/Search.aspx?k=URL
-                r"^(?=[^&])",  # disallow '&' at the beginning of uri
-                r"(?:(?P<scheme>[^:/?#]+):)?",  # grab the scheme
-                r"(?://(?P<authority>[^/?#]*))?",  # grab the authority
-                r"(?P<address>[^?#]*)",  # grab the address, typically a path
-                r"(?:\?(?P<query>[^#]*))?",  # grab the query, i.e. the ?key=value&... chunks
-                r"(?:#(?P<fragment>.*))?",
-            )
-        )
+    _uriParser = re.compile(
+        # adapted from http://regexlib.com/Search.aspx?k=URL
+        # disallow '&' at the beginning of uri
+        r"^(?=[^&])"
+        # grab the scheme
+        r"(?:(?P<scheme>[^:/?#]+):)?"
+        # the authority
+        r"(?://(?P<authority>[^/?#]*))?"
+        # the address, typically a path
+        r"(?P<address>[^?#]*)"
+        # the query, i.e. the ?key=value&... chunks
+        r"(?:\?(?P<query>[^#]*))?"
+        # and the fragment
+        r"(?:#(?P<fragment>.*))?"
+    )
+
+    _authorityParser = re.compile(
+        # user info
+        r"((?P<user>[^@:]+)(:(?P<passwd>.*))?@)?"
+        # the host
+        r"(?P<host>[^@:]+)"
+        # the optional port number
+        r"(:(?P<port>\d+))?"
     )
 
     __slots__ = ("scheme", "authority", "address", "query", "fragment")

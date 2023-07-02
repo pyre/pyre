@@ -12,7 +12,8 @@ from .URI import URI as uri
 import os
 import typing
 
-# my shorthand; use {Union} since PEP604 is not available before python 3.10
+# my typing shorthands; use {Union} since PEP604 is not available before python 3.10
 pathlike = typing.Union[os.PathLike, str]
+urilike = typing.Union[uri, str]
 
 # end of file

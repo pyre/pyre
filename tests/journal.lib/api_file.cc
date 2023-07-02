@@ -15,7 +15,9 @@ using debug_t = pyre::journal::debug_t;
 
 
 // send all output to a log file
-int main() {
+int
+main()
+{
     // send all channel output to a log file
     pyre::journal::logfile("api_file.log");
 
@@ -31,7 +33,8 @@ int main() {
         // some metadata
         << pyre::journal::note("time", "now")
         // a message with a newline
-        << "debug channel:" << pyre::journal::newline
+        << "debug channel:"
+        << pyre::journal::newline
         // another message and a flush
         << "    hello world!" << pyre::journal::endl;
 

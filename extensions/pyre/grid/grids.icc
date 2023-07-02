@@ -68,6 +68,8 @@ pyre::py::grid::makecls(py::module & m)
         m,
         // name
         name.data(),
+        // support for the buffer protocol
+        py::buffer_protocol(),
         // docstring
         "a grid");
 
@@ -109,6 +111,29 @@ pyre::py::grid::read(py::class_<gridT> & cls)
         &gridT::layout,
         // the docstring
         "access my layout");
+
+    // buffer protocol: the magic factory
+    cls.def_buffer(
+        // the handler
+        [](gridT & self) -> py::buffer_info {
+            // build a buffer info object and return it
+            return py::buffer_info(
+                // the pointer  to the raw data
+                const_cast<typename gridT::value_type *>(self.data()->data()),
+                // the size of the cell
+                sizeof(typename gridT::value_type),
+                // the format descriptor
+                py::format_descriptor<typename gridT::value_type>::format(),
+                // the number of dimensions: memory buffers are flat
+                self.layout().rank(),
+                // the shape
+                self.layout().shape(),
+                // the strides
+                sizeof(typename gridT::value_type) * self.layout().strides(),
+                // access control
+                gridT::cell_type::readonly());
+        });
+
 
     // data access
     // by index

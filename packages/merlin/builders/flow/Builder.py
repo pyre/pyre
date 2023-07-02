@@ -12,7 +12,7 @@ import merlin
 from ..Builder import Builder as BaseBuilder
 
 # my parts
-from .LibFlow import LibFlow
+from .Library import Library
 
 
 # the manager of intermediate and final build products
@@ -22,9 +22,9 @@ class Builder(BaseBuilder, family="merlin.builders.flow"):
     """
 
     # configurable state
-    libflow = merlin.protocols.libflow()
-    libflow.default = LibFlow
-    libflow.doc = "the library workflow generator"
+    libFlow = merlin.protocols.flow.library()
+    libFlow.default = Library
+    libFlow.doc = "the library workflow generator"
 
     # interface
     def mkdir(self, path):
@@ -112,35 +112,50 @@ class Builder(BaseBuilder, family="merlin.builders.flow"):
         # all done
         return
 
-    # framework hooks
-    def merlin_initialized(self, plexus, **kwds):
+    # merlin hooks
+    def _merlin_initialized(self, plexus, **kwds):
         """
         Hook invoked after the {plexus} is fully initialized
         """
         # chain up
-        super().merlin_initialized(plexus=plexus, **kwds)
+        super()._merlin_initialized(plexus=plexus, **kwds)
 
         # grab my abi
         abi = self.abi(plexus=plexus)
 
         # prep the stage area
-        self.setupStage(plexus=plexus, abi=abi)
+        self._setupStage(plexus=plexus, abi=abi)
         # and the prefix
-        self.setupPrefix(plexus=plexus, abi=abi)
+        self._setupPrefix(plexus=plexus, abi=abi)
 
         # all done
         return
 
-    # implementation details
+    def identify(self, visitor, **kwds):
+        """
+        Ask {visitor} for builder specific support
+        """
+        # attempt to
+        try:
+            # ask the {visitor} for a {flow} handler
+            handler = visitor.flow
+        # if it doesn't exist
+        except AttributeError:
+            # chain up
+            return super().identify(visitor=visitor, **kwds)
+        # if it does, invoke it
+        return handler(builder=self, **kwds)
+
+    # asset visitor support
     def library(self, **kwds):
         """
         Build a {library}
         """
-        # delegate to the {libflow} generator
-        return self.libflow.library(builder=self, **kwds)
+        # delegate to the {libFlow} generator
+        return self.libFlow.library(builder=self, **kwds)
 
     # helpers
-    def setupPrefix(self, plexus, abi, **kwds):
+    def _setupPrefix(self, plexus, abi, **kwds):
         """
         Build a workflow that assembles my prefix layout
         """
@@ -230,14 +245,14 @@ class Builder(BaseBuilder, family="merlin.builders.flow"):
         # all done
         return
 
-    def setupStage(self, plexus, abi, **kwds):
+    def _setupStage(self, plexus, abi, **kwds):
         """
         Build a workflow that creates the staging are for the intermediate build products
         """
         # get the root of the virtual filesystem
         vfs = plexus.vfs
         # hash the workspace into a build tag
-        wstag = self.workspaceHash(plexus=plexus)
+        wstag = self._workspaceHash(plexus=plexus)
 
         # first, we have to create the stage area in the physical filesystem and mount it
         # at its canonical location in the virtual filesystem

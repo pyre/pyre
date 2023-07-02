@@ -12,11 +12,10 @@
 
 // add bindings to the inventory
 void
-pyre::journal::py::
-exceptions(py::module & m) {
+pyre::journal::py::exceptions(py::module & m)
+{
     // get the base exception as a raw {PyObject *}, which is what {register_exception} wants
-    auto journalError =
-        py::module::import("journal").attr("exceptions").attr("JournalError").ptr();
+    auto journalError = py::module::import("journal").attr("exceptions").attr("JournalError").ptr();
 
     // when {debug} channels are fatal
     py::register_exception<debug_error>(m, "DebugError", journalError);

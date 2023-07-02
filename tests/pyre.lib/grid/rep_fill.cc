@@ -15,7 +15,9 @@ using rep_t = pyre::grid::rep_t<int, 5>;
 
 
 // make a {rep} that's filled with zeroes
-int main(int argc, char * argv[]) {
+int
+main(int argc, char * argv[])
+{
     // initialize the journal
     pyre::journal::init(argc, argv);
     pyre::journal::application("rep_fill");
@@ -30,13 +32,11 @@ int main(int argc, char * argv[]) {
     // check that every entry
     for (auto rank : rep) {
         // is zero
-        assert(( rank == v ));
+        assert((rank == v));
     }
 
     // show me
-    channel
-        << "rep: {" << rep << "}"
-        << pyre::journal::endl(__HERE__);
+    channel << "rep: {" << rep << "}" << pyre::journal::endl(__HERE__);
 
     // all done
     return 0;

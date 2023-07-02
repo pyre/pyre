@@ -15,13 +15,13 @@ using heap_t = pyre::memory::heap_t<double>;
 
 
 // an initializer that takes a {heap_t} by value
-double initialize(heap_t block) {
+double
+initialize(heap_t block)
+{
     // make a channel
     pyre::journal::debug_t channel("pyre.memory.heap");
     // show me
-    channel
-        << "initialize: got a block at " << block.data()
-        << pyre::journal::endl(__HERE__);
+    channel << "initialize: got a block at " << block.data() << pyre::journal::endl(__HERE__);
 
     // pick a value
     double value = 42;
@@ -36,7 +36,9 @@ double initialize(heap_t block) {
 
 
 // verify that we can construct and use heap blocks
-int main(int argc, char *argv[]) {
+int
+main(int argc, char * argv[])
+{
     // initialize the journal
     pyre::journal::init(argc, argv);
     pyre::journal::application("heap_copy");
@@ -48,9 +50,7 @@ int main(int argc, char *argv[]) {
     // make a block on the heap
     heap_t block(cells);
     // show me
-    channel
-        << "main: made a block at " << block.data()
-        << pyre::journal::endl(__HERE__);
+    channel << "main: made a block at " << block.data() << pyre::journal::endl(__HERE__);
 
     // send it to the initializer
     auto value = initialize(block);
@@ -58,7 +58,7 @@ int main(int argc, char *argv[]) {
     // verify we can iterate and read
     for (auto cell : block) {
         // check that we have what we expect
-        assert(( cell == value ));
+        assert((cell == value));
     }
 
     // all done

@@ -15,7 +15,9 @@ using index_t = pyre::grid::index_t<2>;
 
 
 // index arithmetic
-int main(int argc, char * argv[]) {
+int
+main(int argc, char * argv[])
+{
     // initialize the journal
     pyre::journal::init(argc, argv);
     pyre::journal::application("index_arithmetic");
@@ -30,14 +32,12 @@ int main(int argc, char * argv[]) {
     index_t cor = sec - ref + index_t::one();
 
     // show me
-    channel
-        << "ref: " << ref << pyre::journal::newline
-        << "sec: " << sec << pyre::journal::newline
-        << "cor: " << cor << pyre::journal::endl(__HERE__);
+    channel << "ref: " << ref << pyre::journal::newline << "sec: " << sec << pyre::journal::newline
+            << "cor: " << cor << pyre::journal::endl(__HERE__);
 
     // verify
     for (auto axis = 0; axis < index_t::rank(); ++axis) {
-        assert(( cor[axis] == sec[axis] - ref[axis] + 1 ));
+        assert((cor[axis] == sec[axis] - ref[axis] + 1));
     }
 
     // all done

@@ -9,6 +9,7 @@ import journal
 import pyre
 
 # support
+from .. import libh5
 from .Explorer import Explorer
 
 # typing
@@ -36,8 +37,6 @@ class Reader:
     # interface
     def read(
         self,
-        uri: pyre.primitives.uri,
-        mode: str = "r",
         path: pyre.primitives.pathlike = "/",
         query: typing.Optional[schema.descriptor] = None,
         **kwds,
@@ -45,32 +44,25 @@ class Reader:
         """
         Open {uri} and extract an h5 {object} with the structure of {query} anchored at {path}
         """
-        # analyze the {uri} and build the h5 {file}, passing any extra arguments to it
-        file = self.open(uri=uri, mode=mode, **kwds)
-        # if anything went wrong
-        if file is None:
-            # assume that the error has already been reported and bail
-            return None
+        # get my file
+        file = self._file
         # ask the file for its inspector
         inspector = file._pyre_inspector
-        # normalize the starting path
+        # normalize the target path
         path = pyre.primitives.path(path)
-        # if it's the root group
-        if path == pyre.primitives.path.root:
-            # set the anchor at the file
-            anchor = file
-        # otherwise
-        else:
-            # get the anchor id
-            anchorId = file._pyre_id.get(str(path))
-            # ask the inspector to build an empty representation
-            anchor = inspector._pyre_inferObject(h5id=anchorId, path=path)
-        # if the traversal is unconstrained
-        if query is None:
-            # ask the inspector to infer the layout
-            return inspector._pyre_inferObject(h5id=anchor._pyre_id, path=path)
-        # otherwise, run the constrained traversal and return the resulting object
-        return inspector._pyre_queryObject(h5id=anchor._pyre_id, path=path, query=query)
+        # find the container group
+        anchor = file._pyre_id.get(path=str(path))
+        # and ask the inspector to infer the layout
+        return inspector._pyre_inspect(h5id=anchor, path=path, query=query)
+
+    # metamethods
+    def __init__(self, uri: pyre.primitives.uri, mode: str = "r", **kwds):
+        # chain up
+        super().__init__(**kwds)
+        # build the file object
+        self._file = self.open(uri=uri, mode=mode)
+        # all done
+        return
 
     # implementation details
     def open(
@@ -90,7 +82,7 @@ class Reader:
         # if the {scheme} points to an {s3} bucket
         if scheme == "s3":
             # check whether the installed {h5} library supports {ros3}
-            if not pyre.libh5.ros3():
+            if not libh5.ros3():
                 # make a channel
                 channel = journal.error("pyre.h5.reader")
                 # complain
@@ -100,28 +92,19 @@ class Reader:
                 channel.log()
                 # and bail
                 return None
-            # interpret the {authority} field as the {bucket} name
-            authority = uri.authority
-            # as such, it must be there; if not
-            if authority is None:
-                # make a channel
-                channel = journal.error("pyre.h5.reader")
-                # complain
-                channel.line(f"couldn't figure out the S3 bucket name")
-                channel.line(f"while parsing '{uri}':")
-                channel.line(f"the 'authority' field is null")
-                # flush
-                channel.log()
-                # and bail, in case errors aren't fatal
-                return None
-            # if it is there, take it apart
-            fields = authority.split("@")
-            # extract the authentication profile and the bucket name
-            profile, bucket = fields if len(fields) == 2 else ("", authority)
-            # get the object key
-            key = uri.address
+            # the supported uris are of the form
+            #
+            #   s3://profile@region/bucket/key
+            #
+            # parse the authority field
+            region, _, profile, _ = uri.server
+            # parse the path to the file
+            _, bucket, *key = pyre.primitives.path(uri.address)
             # open the remote file and return it
-            return File()._pyre_ros3(profile=profile, bucket=bucket, key=key)
+            return File()._pyre_ros3(
+                region=region, profile=profile, bucket=bucket, key="/".join(key)
+            )
+
         # if we get this far, the {uri} was malformed; make a channel
         channel = journal.error("pyre.h5.reader")
         # complain

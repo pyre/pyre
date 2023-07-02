@@ -11,18 +11,20 @@
 
 
 // verify that the null diagnostic is always off
-int main() {
+int
+main()
+{
     // make a null channel
     pyre::journal::null_t channel("tests.journal.null");
 
     // if it's active by default, we have a problem
-    assert (!channel);
+    assert(!channel);
 
     // attempt to activate
     channel.activate();
 
     // if it activated, we have a problem
-    assert (!channel);
+    assert(!channel);
 
     // nothing to do
     return 0;

@@ -15,16 +15,18 @@ using myerror_t = pyre::journal::error_t;
 
 
 // verify the basic channel state
-int main() {
+int
+main()
+{
     // make an error channel
     myerror_t channel("tests.journal.error");
 
     // check its name
-    assert (channel.name() == "tests.journal.error");
+    assert(channel.name() == "tests.journal.error");
     // by default, it should be active
-    assert (channel);
+    assert(channel);
     // and fatal
-    assert (channel.fatal());
+    assert(channel.fatal());
 
     // all done
     return 0;

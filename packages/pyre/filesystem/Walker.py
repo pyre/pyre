@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2023 all rights reserved
-#
 
 
 # class declaration
@@ -12,10 +10,8 @@ class Walker:
     Class that encapsulates listing the contents of a local directory
     """
 
-
     # exceptions
     from .exceptions import DirectoryListingError
-
 
     # interface
     @classmethod
@@ -26,7 +22,7 @@ class Walker:
         # attempt
         try:
             # to get the contents
-             return path.contents
+            return path.contents
         # if this fails
         except OSError as error:
             # raise a package specific exception

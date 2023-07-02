@@ -23,7 +23,9 @@ using walltimer_t = pyre::timers::wall_timer_t;
 
 
 // verify that we can manipulate the timer state
-int main() {
+int
+main()
+{
     // make a timer
     walltimer_t timer("tests.timer");
     // and start it
@@ -41,9 +43,7 @@ int main() {
     // activate it
     // channel.activate();
     // and show me
-    channel
-        << "elapsed time: " << timer.ms()
-        << pyre::journal::endl(__HERE__);
+    channel << "elapsed time: " << timer.ms() << pyre::journal::endl(__HERE__);
 
     // all done
     return 0;

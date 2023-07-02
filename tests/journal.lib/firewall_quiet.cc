@@ -15,7 +15,9 @@ using firewall_t = pyre::journal::firewall_t;
 
 
 // exercise the channel manipulators
-int main() {
+int
+main()
+{
     // quiet the firewall
     firewall_t::quiet();
 
@@ -25,17 +27,15 @@ int main() {
     // firewalls are fatal by default, so attempt
     try {
         // inject something into the channel
-        channel
-            << pyre::journal::at(__HERE__)
-            << pyre::journal::note("time", "now")
-            << "nasty bug:" << pyre::journal::newline
-            << "    hello world!" << pyre::journal::endl;
+        channel << pyre::journal::at(__HERE__) << pyre::journal::note("time", "now")
+                << "nasty bug:" << pyre::journal::newline << "    hello world!"
+                << pyre::journal::endl;
         // unreachable
         throw std::logic_error("unreachable");
-    // if all goes well
+        // if all goes well
     } catch (const firewall_t::exception_type & error) {
         // make sure the reason was recorded correctly
-        assert (error.what() == channel.name() + firewall_t::string_type(": FIREWALL BREACHED!"));
+        assert(error.what() == channel.name() + firewall_t::string_type(": FIREWALL BREACHED!"));
     }
 
     // all done

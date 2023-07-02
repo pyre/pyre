@@ -21,15 +21,15 @@
 #include <cuda_runtime.h>
 
 // helpers
-inline int coresPerProcessor(int major, int minor);
+inline int
+coresPerProcessor(int major, int minor);
 
 // device discovery
 PyObject *
-pyre::extensions::cuda::
-discover(PyObject *, PyObject *args)
+pyre::extensions::cuda::discover(PyObject *, PyObject * args)
 {
     // the device property class; it's supposed to be a class, so it's an instance of {type}
-    PyObject *sheetFactory;
+    PyObject * sheetFactory;
     // my journal channel; for debugging
     pyre::journal::debug_t channel("cuda");
 
@@ -47,11 +47,9 @@ discover(PyObject *, PyObject *args)
         // make a channel
         pyre::journal::warning_t channel("cuda");
         // complain
-        channel
-            << pyre::journal::at(__HERE__)
-            << "while getting device count: "
-            << cudaGetErrorName(status) << " (" << status << ")"
-            << pyre::journal::endl;
+        channel << pyre::journal::at(__HERE__)
+                << "while getting device count: " << cudaGetErrorName(status) << " (" << status
+                << ")" << pyre::journal::endl;
         // and pretend there are no CUDA capable devices
         return PyTuple_New(0);
     }
@@ -67,9 +65,9 @@ discover(PyObject *, PyObject *args)
     }
 
     // loop over the available devices
-    for (int index=0; index<count; ++index) {
+    for (int index = 0; index < count; ++index) {
         // make a device property sheet
-        PyObject *sheet = PyObject_CallObject(sheetFactory, 0);
+        PyObject * sheet = PyObject_CallObject(sheetFactory, 0);
         // add it to our pile
         PyTuple_SET_ITEM(result, index, sheet);
 
@@ -95,13 +93,13 @@ discover(PyObject *, PyObject *args)
 
         // version info
         int version;
-        PyObject *vtuple;
+        PyObject * vtuple;
         // get the driver version
         cudaDriverGetVersion(&version);
         // build a rep for the driver version
         vtuple = PyTuple_New(2);
-        PyTuple_SET_ITEM(vtuple, 0, PyLong_FromLong(version/1000));
-        PyTuple_SET_ITEM(vtuple, 1, PyLong_FromLong((version%100)/10));
+        PyTuple_SET_ITEM(vtuple, 0, PyLong_FromLong(version / 1000));
+        PyTuple_SET_ITEM(vtuple, 1, PyLong_FromLong((version % 100) / 10));
         // attach it
         PyObject_SetAttrString(sheet, "driverVersion", vtuple);
 
@@ -109,8 +107,8 @@ discover(PyObject *, PyObject *args)
         cudaRuntimeGetVersion(&version);
         // build a rep for the runtime version
         vtuple = PyTuple_New(2);
-        PyTuple_SET_ITEM(vtuple, 0, PyLong_FromLong(version/1000));
-        PyTuple_SET_ITEM(vtuple, 1, PyLong_FromLong((version%100)/10));
+        PyTuple_SET_ITEM(vtuple, 0, PyLong_FromLong(version / 1000));
+        PyTuple_SET_ITEM(vtuple, 1, PyLong_FromLong((version % 100) / 10));
         // attach it
         PyObject_SetAttrString(sheet, "runtimeVersion", vtuple);
 
@@ -118,13 +116,9 @@ discover(PyObject *, PyObject *args)
         PyObject_SetAttrString(sheet, "computeMode", PyLong_FromLong(prop.computeMode));
 
         // attach the managed memory flag
-        PyObject_SetAttrString(sheet,
-                               "managedMemory",
-                               PyBool_FromLong(prop.managedMemory));
+        PyObject_SetAttrString(sheet, "managedMemory", PyBool_FromLong(prop.managedMemory));
         // attach the unified addressing flag
-        PyObject_SetAttrString(sheet,
-                               "unifiedAddressing",
-                               PyBool_FromLong(prop.unifiedAddressing));
+        PyObject_SetAttrString(sheet, "unifiedAddressing", PyBool_FromLong(prop.unifiedAddressing));
 
         // get the number of multiprocessors
         int processors = prop.multiProcessorCount;
@@ -136,30 +130,22 @@ discover(PyObject *, PyObject *args)
         PyObject_SetAttrString(sheet, "coresPerProcessor", PyLong_FromLong(cores));
 
         // total global memory
-        PyObject_SetAttrString(sheet,
-                               "globalMemory",
-                               PyLong_FromUnsignedLong(prop.totalGlobalMem));
+        PyObject_SetAttrString(sheet, "globalMemory", PyLong_FromUnsignedLong(prop.totalGlobalMem));
         // total constant memory
-        PyObject_SetAttrString(sheet,
-                               "constantMemory",
-                               PyLong_FromUnsignedLong(prop.totalConstMem));
+        PyObject_SetAttrString(
+            sheet, "constantMemory", PyLong_FromUnsignedLong(prop.totalConstMem));
         // shared memory per block
-        PyObject_SetAttrString(sheet,
-                               "sharedMemoryPerBlock",
-                               PyLong_FromUnsignedLong(prop.sharedMemPerBlock));
+        PyObject_SetAttrString(
+            sheet, "sharedMemoryPerBlock", PyLong_FromUnsignedLong(prop.sharedMemPerBlock));
 
         // warp size
-        PyObject_SetAttrString(sheet,
-                               "warp",
-                               PyLong_FromLong(prop.warpSize));
+        PyObject_SetAttrString(sheet, "warp", PyLong_FromLong(prop.warpSize));
         // maximum number of threads per block
-        PyObject_SetAttrString(sheet,
-                               "maxThreadsPerBlock",
-                               PyLong_FromLong(prop.maxThreadsPerBlock));
+        PyObject_SetAttrString(
+            sheet, "maxThreadsPerBlock", PyLong_FromLong(prop.maxThreadsPerBlock));
         // maximum number of threads per processor
-        PyObject_SetAttrString(sheet,
-                               "maxThreadsPerProcessor",
-                               PyLong_FromLong(prop.maxThreadsPerMultiProcessor));
+        PyObject_SetAttrString(
+            sheet, "maxThreadsPerProcessor", PyLong_FromLong(prop.maxThreadsPerMultiProcessor));
 
         // build a rep for the max grid dimensions
         vtuple = PyTuple_New(3);
@@ -193,33 +179,35 @@ struct coreTableEntry {
 };
 
 // the known GPU generations
-static coreTableEntry coreTableMap [] = {
-    { 0x86, 64 },     // Ampere  (SM 8.6) GA100
-    { 0x80, 64 },     // Ampere  (SM 8.0) GA100
-    { 0x75, 64 },     // Turing  (SM 7.5) GV100
-    { 0x72, 64 },     // Volta   (SM 7.2) GV100
-    { 0x70, 64 },     // Volta   (SM 7.0) GV100
-    { 0x62, 128 },    // Pascal  (SM 6.2) GP10x
-    { 0x61, 128 },    // Pascal  (SM 6.1) GP10x
-    { 0x60, 64 },     // Pascal  (SM 6.0) GP100
-    { 0x53, 128 },    // Maxwell (SM 5.3) GM20x
-    { 0x52, 128 },    // Maxwell (SM 5.2) GM20x
-    { 0x50, 128 },    // Maxwell (SM 5.0) GM10x
-    { 0x37, 192 },    // Kepler  (SM 3.7) GK21x
-    { 0x35, 192 },    // Kepler  (SM 3.5) GK11x
-    { 0x32, 192 },    // Kepler  (SM 3.2) GK10x
-    { 0x30, 192 },    // Kepler  (SM 3.0) GK10x
+static coreTableEntry coreTableMap[] = {
+    { 0x86, 64 },  // Ampere  (SM 8.6) GA100
+    { 0x80, 64 },  // Ampere  (SM 8.0) GA100
+    { 0x75, 64 },  // Turing  (SM 7.5) GV100
+    { 0x72, 64 },  // Volta   (SM 7.2) GV100
+    { 0x70, 64 },  // Volta   (SM 7.0) GV100
+    { 0x62, 128 }, // Pascal  (SM 6.2) GP10x
+    { 0x61, 128 }, // Pascal  (SM 6.1) GP10x
+    { 0x60, 64 },  // Pascal  (SM 6.0) GP100
+    { 0x53, 128 }, // Maxwell (SM 5.3) GM20x
+    { 0x52, 128 }, // Maxwell (SM 5.2) GM20x
+    { 0x50, 128 }, // Maxwell (SM 5.0) GM10x
+    { 0x37, 192 }, // Kepler  (SM 3.7) GK21x
+    { 0x35, 192 }, // Kepler  (SM 3.5) GK11x
+    { 0x32, 192 }, // Kepler  (SM 3.2) GK10x
+    { 0x30, 192 }, // Kepler  (SM 3.0) GK10x
 };
 
 // the number of known GPU generations
-static const int nGenerations = sizeof(coreTableMap)/sizeof(coreTableEntry);
+static const int nGenerations = sizeof(coreTableMap) / sizeof(coreTableEntry);
 
 // scan through the table looking for the corresponding number of cores
-inline int coresPerProcessor(int major, int minor) {
+inline int
+coresPerProcessor(int major, int minor)
+{
     // go through the table
-    for (std::size_t index=0; index < nGenerations; ++index) {
+    for (std::size_t index = 0; index < nGenerations; ++index) {
         // check the encoded version number
-        if (coreTableMap[index].version == ((major<<4) + minor)) {
+        if (coreTableMap[index].version == ((major << 4) + minor)) {
             // if there is a match, look up the number of cores and return it
             return coreTableMap[index].cores;
         }
@@ -229,10 +217,8 @@ inline int coresPerProcessor(int major, int minor) {
     // create a firewall
     pyre::journal::firewall_t channel("cuda");
     // complain
-    channel
-        << pyre::journal::at(__HERE__)
-        << "core count for generation (" << major << "," << minor << ") is unknown"
-        << pyre::journal::endl;
+    channel << pyre::journal::at(__HERE__) << "core count for generation (" << major << "," << minor
+            << ") is unknown" << pyre::journal::endl;
 
     // return junk
     return 0;

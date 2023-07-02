@@ -19,7 +19,9 @@ using walltimer_t = pyre::timers::wall_timer_t;
 
 
 // verify that two timers that have the same name share the same movement
-int main() {
+int
+main()
+{
     // make a timer
     walltimer_t t("tests.timer");
     // start it
@@ -38,9 +40,7 @@ int main() {
     // activate it
     // channel.activate();
     // show me
-    channel
-        << "elapsed time: " << t.us()
-        << pyre::journal::endl(__HERE__);
+    channel << "elapsed time: " << t.us() << pyre::journal::endl(__HERE__);
 
     // all done
     return 0;

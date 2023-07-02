@@ -92,6 +92,10 @@ namespace pyre::h5::py {
     using heap_int16_t = pyre::memory::heap_t<std::int16_t>;
     using heap_int32_t = pyre::memory::heap_t<std::int32_t>;
     using heap_int64_t = pyre::memory::heap_t<std::int64_t>;
+    using heap_uint8_t = pyre::memory::heap_t<std::uint8_t>;
+    using heap_uint16_t = pyre::memory::heap_t<std::uint16_t>;
+    using heap_uint32_t = pyre::memory::heap_t<std::uint32_t>;
+    using heap_uint64_t = pyre::memory::heap_t<std::uint64_t>;
     using heap_float_t = pyre::memory::heap_t<float>;
     using heap_double_t = pyre::memory::heap_t<double>;
     using heap_complexfloat_t = pyre::memory::heap_t<std::complex<float>>;

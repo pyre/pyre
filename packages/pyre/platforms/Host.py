@@ -102,11 +102,19 @@ class Host(pyre.component, family="pyre.platforms.generic", implements=Platform)
 
     # feature support
     @classmethod
+    def object(cls, stem):
+        """
+        Convert {stem} into a likely filename for an object module
+        """
+        # add my suffix to the {stem}
+        return stem + cls.extension_object
+
+    @classmethod
     def dynamicLibrary(cls, stem):
         """
         Convert {stem} into a likely filename for a shared object
         """
-        # go through each one
+        # i have a template for that
         return cls.template_dynamicLibrary.format(cls, stem)
 
     @classmethod
@@ -114,8 +122,18 @@ class Host(pyre.component, family="pyre.platforms.generic", implements=Platform)
         """
         Convert {stem} into a likely filename for a static archive
         """
-        # go through each one
+        # i have a template for that
         return cls.template_staticLibrary.format(cls, stem)
+
+    @classmethod
+    def objects(cls, stems):
+        """
+        Convert the sequence of {stems} into likely filenames for object modules
+        """
+        # go through the {stems} and convert them
+        yield from (cls.object(stem) for stem in stems)
+        # all done
+        return
 
     @classmethod
     def dynamicLibraries(cls, stems):
@@ -123,7 +141,7 @@ class Host(pyre.component, family="pyre.platforms.generic", implements=Platform)
         Convert the sequence of {stems} into likely filenames for shared objects
         """
         # go through the {stems} and convert them
-        yield from (cls.template_dynamicLibrary.format(cls, stem) for stem in stems)
+        yield from (cls.dynamicLibrary(stem) for stem in stems)
         # all done
         return
 
@@ -133,7 +151,7 @@ class Host(pyre.component, family="pyre.platforms.generic", implements=Platform)
         Convert the sequence of {stems} into likely filenames for static archives
         """
         # go through the {stems} and convert them
-        yield from (cls.template_staticLibrary.format(cls, stem) for stem in stems)
+        yield from (cls.staticLibrary(stem) for stem in stems)
         # all done
         return
 

@@ -19,7 +19,7 @@ namespace mpi {
     extern PyObject * Error;
     extern const char * const Error__name__;
 
-} // of namespace mpi
+} // namespace mpi
 
 #endif
 

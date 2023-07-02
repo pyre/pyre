@@ -15,7 +15,9 @@ using idx_t = pyre::grid::index_t<4>;
 
 
 // exercise the filling constructor
-int main(int argc, char * argv[]) {
+int
+main(int argc, char * argv[])
+{
     // initialize the journal
     pyre::journal::init(argc, argv);
     pyre::journal::application("index_fill");
@@ -27,28 +29,24 @@ int main(int argc, char * argv[]) {
     // make a const index
     constexpr idx_t idx_1 { u };
     // show me
-    channel
-        << "idx_1: " << idx_1
-        << pyre::journal::endl(__HERE__);
+    channel << "idx_1: " << idx_1 << pyre::journal::endl(__HERE__);
     // verify the contents
-    static_assert (idx_1[0] == u);
-    static_assert (idx_1[1] == u);
-    static_assert (idx_1[2] == u);
-    static_assert (idx_1[3] == u);
+    static_assert(idx_1[0] == u);
+    static_assert(idx_1[1] == u);
+    static_assert(idx_1[2] == u);
+    static_assert(idx_1[3] == u);
 
     // again, at runtime
     idx_t::rank_type v = argc;
     // with another index
     const idx_t idx_2 { v };
     // show me
-    channel
-        << "idx_2: " << idx_2
-        << pyre::journal::endl(__HERE__);
+    channel << "idx_2: " << idx_2 << pyre::journal::endl(__HERE__);
     // verify the contents
-    assert(( idx_2[0] == v ));
-    assert(( idx_2[1] == v ));
-    assert(( idx_2[2] == v ));
-    assert(( idx_2[3] == v ));
+    assert((idx_2[0] == v));
+    assert((idx_2[1] == v));
+    assert((idx_2[2] == v));
+    assert((idx_2[3] == v));
 
     // all done
     return 0;

@@ -10,6 +10,9 @@ import journal
 # superclass
 from .Object import Object
 
+# typing
+from .. import libh5
+
 
 # a basic h5 object
 class Dataset(Object):
@@ -163,24 +166,12 @@ class Dataset(Object):
         # all done
         return
 
-    def _pyre_write(self, file: "File", src: "Dataset"):
+    def _pyre_write(self, dst: libh5.DataSet):
         """
         Write my cache value to disk
         """
-        # if i'm not mapped to an h5 file
-        if self._pyre_id is None:
-            # make a channel
-            channel = journal.warning("pyre.h5.sync")
-            # complain
-            channel.line(f"{self}")
-            channel.line(f"is not bound to an h5 file")
-            channel.line(f"while writing '{file._pyre_uri}'")
-            # flush
-            channel.log()
-            # and bail
-            return
-        # if all is well, delegate
-        self._pyre_push(src=src)
+        # forward the request
+        self._pyre_push(dst=dst)
         # all done
         return
 
@@ -199,8 +190,8 @@ class Dataset(Object):
         hid = self._pyre_id
         # if i don't have a connection to a file
         if hid is None:
-            # process and return my default value; don't cache it so we can try again next
-            # time the value is requested
+            # process and return my default value; don't cache it so we can try again
+            # next time the value is requested
             return spec.process(spec.default)
         # if all is good, ask my spec to extract my value from the h5 store and process it
         value = spec._pyre_pull(dataset=self)
@@ -209,16 +200,24 @@ class Dataset(Object):
         # and hand it off
         return value
 
-    def _pyre_push(self, src):
+    def _pyre_push(self, dst: libh5.DataSet):
         """
-        Flush my value  to disk
+        Flush my value to disk
         """
         # get my layout
         layout = self._pyre_layout
         # ask it to flush me to disk
-        layout._pyre_push(src=src, dest=self)
+        layout._pyre_push(src=self, dst=dst)
         # all done
         return
+
+    # creation metadata
+    def _pyre_describe(self):
+        """
+        Build a representation of my dataspace
+        """
+        # my layout knows how to do this
+        return self._pyre_layout._pyre_describe(dataset=self)
 
     # visiting
     def _pyre_identify(self, authority, **kwds):

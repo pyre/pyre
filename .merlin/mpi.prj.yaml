@@ -3,28 +3,29 @@
 # (c) 1998-2023 all rights reserved
 
 
-# the {journal} project contains
+# the {mpi} project contains
 mpi.prj:
     # a library
     libraries: "#libmpi"
 
 
-# libjournal
+# libmpi
 libmpi:
     # the name of the library
     name: mpi
     # all c++
-    languages: c++
+    # languages: c++
     # the location of its sources relative to the root of the project
     root: lib/mpi
     # external dependencies
     requires: mpi
-
-    # users #include <pyre/mpi.h>
+    # users access using "#include <pyre/mpi.h>"
     # so deposit all headers in the {pyre} namespace
     scope: pyre
     # except this one that acts as the gateway to the library
     gateway: mpi.h
+    # language specific configuration
+    languages.cxx.dialect: c++17
 
 
 # end of file
