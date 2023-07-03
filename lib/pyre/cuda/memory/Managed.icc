@@ -9,7 +9,6 @@
 #error this file contains implementation details for pyre::cuda::memory::Managed
 #else
 
-#include <cuda_runtime.h>
 
 // metamethods
 // constructor
