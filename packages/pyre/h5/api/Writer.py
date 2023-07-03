@@ -99,8 +99,6 @@ class Writer:
             dapl = libh5.DAPL()
             # if the chunking strategy is non-trivial
             if chunk:
-                # show me
-                print(f"{dataset}: {chunk=}")
                 # configure the dataset creation
                 dcpl.setChunk(chunk)
                 # MGA: what to do with the dapl chunk cache values?
