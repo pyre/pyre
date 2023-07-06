@@ -7,8 +7,6 @@
 function(pyre_cudaPackage)
   # if the user requested CUDA support
   if(WITH_CUDA)
-    find_package(CUDA 9.0 REQUIRED)
-
     # install the sources straight from the source directory
     install(
       DIRECTORY packages/cuda
@@ -44,7 +42,7 @@ function(pyre_kernel_target kernelobject driverfile)
     get_filename_component(driver_directory ${driverfile} DIRECTORY)
     # extract the driver basename
     get_filename_component(driver_basename ${driverfile} NAME_WE)
-    # assemble the cu filename associated with this {driverfile} 
+    # assemble the cu filename associated with this {driverfile}
     set(cudafile "${driver_directory}/${driver_basename}.cu")
     # generate the name of the target with the cuda kernel
     pyre_target(kernelobject ${cudafile})
