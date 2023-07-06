@@ -29,8 +29,16 @@ function(pyre_cudaLib)
          lib/cuda/*.h lib/cuda/*.icc
          )
     foreach(file ${files})
+      # skip the special header
+      if("${file}" STREQUAL "cuda.h")
+        continue()
+      endif()
       configure_file(lib/cuda/${file} lib/pyre/cuda/${file} COPYONLY)
     endforeach()
+
+    # and the cuda master header within the pyre directory
+    configure_file(lib/cuda/cuda.h lib/pyre/cuda.h COPYONLY)
+
   endif()
   # all done
 endfunction(pyre_cudaLib)
