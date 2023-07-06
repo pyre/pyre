@@ -57,19 +57,19 @@ function(pyre_benchmark_driver_cuda testfile)
   pyre_target(target ${testfile})
   # create the object file for the corresponding cuda kernel
   pyre_kernel_target(kernelobject ${testfile})
-  
+
   # schedule it to be compiled
   add_executable(${target} ${testfile})
   # with some macros
   target_compile_definitions(${target} PRIVATE PYRE_CORE WITH_CUDA)
   # link against my libraries
-  target_link_libraries(${target} PUBLIC pyre journal ${CUDA_LIBRARIES} ${kernelobject})
+  target_link_libraries(${target} PUBLIC pyre journal cuda ${kernelobject})
 
   # specify the directory for the target compilation products
   pyre_target_directory(${target} benchmarks)
 
   # all done
-endfunction() 
+endfunction()
 
 
 # end of file

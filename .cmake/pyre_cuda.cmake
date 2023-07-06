@@ -39,6 +39,12 @@ function(pyre_cudaLib)
     # and the cuda master header within the pyre directory
     configure_file(lib/cuda/cuda.h lib/pyre/cuda.h COPYONLY)
 
+    # the {cuda} target (INTERFACE since it is header-only)
+    add_library(cuda INTERFACE)
+    # specify the directory for the library compilation products
+    pyre_library_directory(cuda lib)
+    target_link_libraries(cuda INTERFACE ${CUDA_LIBRARIES})
+    add_library(pyre::cuda ALIAS cuda)
   endif()
   # all done
 endfunction(pyre_cudaLib)
