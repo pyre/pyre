@@ -173,7 +173,7 @@ pyre::cuda::memory::Pinned<T, isConst>::handle() const -> handle_type
 // get the device pointer
 template <class T, bool isConst>
 auto
-pyre::cuda::memory::Pinned<T, isConst>::device_data() const -> pointer
+pyre::cuda::memory::Pinned<T, isConst>::device() const -> pointer
 {
     // easy
     return _device_data;
@@ -188,8 +188,7 @@ pyre::cuda::memory::Pinned<T, isConst>::synchronizeHostToDevice()
     cudaError_t status;
 
     // copy the pinned memory
-    status =
-        cudaMemcpy(device_data(), data(), cells() * sizeof(value_type), cudaMemcpyHostToDevice);
+    status = cudaMemcpy(device(), data(), cells() * sizeof(value_type), cudaMemcpyHostToDevice);
 
     // if something went wrong
     if (status != cudaSuccess) {
@@ -214,27 +213,28 @@ pyre::cuda::memory::Pinned<T, isConst>::synchronizeHostToDevice()
 template <class T, bool isConst>
 auto
 pyre::cuda::memory::Pinned<T, isConst>::synchronizeHostToDevice(
-    cell_count_type copySize, int offset)
+    difference_type startOffset, cell_count_type copySize)
 { // set cuda error
     cudaError_t status;
 
     // if the request is out of bounds
-    if (offset + copySize > cells()) {
+    if (startOffset + copySize > cells()) {
         // make a channel
         pyre::journal::firewall_t channel("pyre.memory.bounds");
         // and complain
         channel << "out of bounds access:" << pyre::journal::newline << "  index "
-                << offset + copySize << " must be less than " << cells() << pyre::journal::newline
+                << startOffset + copySize << " must be less than " << cells()
+                << pyre::journal::newline
                 << "  in pyre::cuda::memory::pinned_t::synchronizeHostToDevice"
                 << pyre::journal::endl(__HERE__);
         // unreachable, unless the user has marked this error as non-fatal
         // clamp {pos} to the last element in the block
-        copySize = cells() - offset - 1;
+        copySize = cells() - startOffset - 1;
     }
 
     // copy the pinned memory
     status = cudaMemcpy(
-        device_data() + offset, data() + offset, copySize * sizeof(value_type),
+        device() + startOffset, data() + startOffset, copySize * sizeof(value_type),
         cudaMemcpyHostToDevice);
 
     // if something went wrong
@@ -266,8 +266,7 @@ pyre::cuda::memory::Pinned<T, isConst>::synchronizeDeviceToHost()
     cudaError_t status;
 
     // copy the pinned memory
-    status =
-        cudaMemcpy(data(), device_data(), cells() * sizeof(value_type), cudaMemcpyDeviceToHost);
+    status = cudaMemcpy(data(), device(), cells() * sizeof(value_type), cudaMemcpyDeviceToHost);
 
     // if something went wrong
     if (status != cudaSuccess) {
@@ -292,27 +291,28 @@ pyre::cuda::memory::Pinned<T, isConst>::synchronizeDeviceToHost()
 template <class T, bool isConst>
 auto
 pyre::cuda::memory::Pinned<T, isConst>::synchronizeDeviceToHost(
-    cell_count_type copySize, int offset)
+    difference_type startOffset, cell_count_type copySize)
 { // set cuda error
     cudaError_t status;
 
     // if the request is out of bounds
-    if (offset + copySize > cells()) {
+    if (startOffset + copySize > cells()) {
         // make a channel
         pyre::journal::firewall_t channel("pyre.memory.bounds");
         // and complain
         channel << "out of bounds access:" << pyre::journal::newline << "  index "
-                << offset + copySize << " must be less than " << cells() << pyre::journal::newline
+                << startOffset + copySize << " must be less than " << cells()
+                << pyre::journal::newline
                 << "  in pyre::cuda::memory::pinned_t::synchronizeHostToDevice"
                 << pyre::journal::endl(__HERE__);
         // unreachable, unless the user has marked this error as non-fatal
         // clamp {pos} to the last element in the block
-        copySize = cells() - offset - 1;
+        copySize = cells() - startOffset - 1;
     }
 
     // copy the pinned memory
     status = cudaMemcpy(
-        data() + offset, device_data() + offset, copySize * sizeof(value_type),
+        data() + startOffset, device() + startOffset, copySize * sizeof(value_type),
         cudaMemcpyDeviceToHost);
 
     // if something went wrong
@@ -333,6 +333,23 @@ pyre::cuda::memory::Pinned<T, isConst>::synchronizeDeviceToHost(
 
     // all done
     return;
+}
+
+// iterator support
+template <class T, bool isConst>
+auto
+pyre::cuda::memory::Pinned<T, isConst>::begin() const -> pointer
+{
+    // the beginning of the block
+    return data();
+}
+
+template <class T, bool isConst>
+auto
+pyre::cuda::memory::Pinned<T, isConst>::end() const -> pointer
+{
+    // one past the last cell in the block
+    return data() + cells();
 }
 
 // data access

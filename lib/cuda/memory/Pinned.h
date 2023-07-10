@@ -47,18 +47,23 @@ public:
     // the shared pointer
     inline auto handle() const -> handle_type;
     // access to the device data pointer
-    inline auto device_data() const -> pointer;
+    inline auto device() const -> pointer;
 
     // cpu gpu synchronization
 public:
     // synchronize all memory from cpu to gpu
     inline auto synchronizeHostToDevice();
     // synchronize part off the memory from cpu to gpu
-    inline auto synchronizeHostToDevice(cell_count_type, int);
+    inline auto synchronizeHostToDevice(difference_type, cell_count_type);
     // synchronize all memory from gpu to cpu
     inline auto synchronizeDeviceToHost();
     // synchronize part off the memory from gpu to cpu
-    inline auto synchronizeDeviceToHost(cell_count_type, int);
+    inline auto synchronizeDeviceToHost(difference_type, cell_count_type);
+
+    // iterator support
+public:
+    inline auto begin() const -> pointer;
+    inline auto end() const -> pointer;
 
     // data access
 public:
