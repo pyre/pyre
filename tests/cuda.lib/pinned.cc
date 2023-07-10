@@ -36,16 +36,17 @@ main(int argc, char * argv[])
             << pyre::journal::endl(__HERE__);
 
     // verify we can iterate and initialize all cells
-    for (int index = 0; index < cells; ++index) {
+    for (auto & cell : arena) {
         // to unity
-        arena[index] = 1.0;
+        cell = 1.0;
     }
 
     // verify we can iterate and read
-    for (int index = 0; index < cells; ++index) {
+    for (auto cell : arena) {
         // verify the memory contents are what we expect
-        assert((arena[index] == 1.0));
+        assert((cell == 1.0));
     }
+
 
     // all done
     return 0;
