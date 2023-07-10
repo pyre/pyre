@@ -242,16 +242,13 @@ pinnedInvariants(pack_t tensorPack, pack_t invariantPack, int nThreadPerBlock, i
     // start the wallclock timer
     walltimer.start();
 
-    // set the offset for the memory copy, zero if you copy the whole grid at once
-    int offset = 0;
-
     // synchronize the tensors between host and device
-    tensorArray.data()->synchronizeHostToDevice(tensorPack.cells(), offset);
+    tensorArray.data()->synchronizeHostToDevice();
 
     // execute the kernel
     computeInvariantsPinned(
-        nTensors, nThreadPerBlock, nBlocks, tensorArray.data()->device_data(),
-        I1.data()->device_data(), I2.data()->device_data(), I3.data()->device_data());
+        nTensors, nThreadPerBlock, nBlocks, tensorArray.data()->device(), I1.data()->device(),
+        I2.data()->device(), I3.data()->device());
 
     // wait for GPU to finish before synchronizing the invariants
     status = cudaDeviceSynchronize();
@@ -266,7 +263,7 @@ pinnedInvariants(pack_t tensorPack, pack_t invariantPack, int nThreadPerBlock, i
     }
 
     // and synchronize the invariants between device and host
-    I1.data()->synchronizeDeviceToHost(invariantPack.cells(), offset);
+    I1.data()->synchronizeDeviceToHost();
 
     I2.data()->synchronizeDeviceToHost();
 

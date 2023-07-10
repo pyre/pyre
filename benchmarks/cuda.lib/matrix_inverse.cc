@@ -262,17 +262,13 @@ pinnedInverses(pack_t tensorPack, int nThreadPerBlock, int nTensors)
     // start the wallclock timer
     walltimer.start();
 
-    // set the offset for the memory copy, zero if you copy the whole grid at once
-    int offset = 0;
-
     // synchronize the tensors between host and device
-    tensorArray.data()->synchronizeHostToDevice(tensorPack.cells(), offset);
-
+    tensorArray.data()->synchronizeHostToDevice();
 
     // execute the kernel wrapper
     computeInvariantsPinned(
-        nTensors, nThreadPerBlock, nBlocks, tensorArray.data()->device_data(),
-        inverseArray.data()->device_data());
+        nTensors, nThreadPerBlock, nBlocks, tensorArray.data()->device(),
+        inverseArray.data()->device());
 
     // wait for GPU to finish before synchronizing the inverse
     status = cudaDeviceSynchronize();
@@ -287,7 +283,7 @@ pinnedInverses(pack_t tensorPack, int nThreadPerBlock, int nTensors)
     }
 
     // and synchronize the inverse between device and host
-    inverseArray.data()->synchronizeDeviceToHost(tensorPack.cells(), offset);
+    inverseArray.data()->synchronizeDeviceToHost();
 
     // wait for GPU to finish before stopping the timer
     status = cudaDeviceSynchronize();
