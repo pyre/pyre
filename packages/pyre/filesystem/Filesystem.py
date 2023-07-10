@@ -1,15 +1,15 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2023 all rights reserved
-#
 
 
 # externals
-import weakref # for {vnodes}, the weak key dictionary
+import weakref  # for {vnodes}, the weak key dictionary
+
 # support
 from .. import primitives
+
 # base class
 from .Folder import Folder
 
@@ -24,10 +24,13 @@ class Filesystem(Folder):
     what the filesystem knows about them.
     """
 
-
     # exceptions
-    from .exceptions import NotFoundError, SourceNotFoundError, URISpecificationError, FolderError
-
+    from .exceptions import (
+        NotFoundError,
+        SourceNotFoundError,
+        URISpecificationError,
+        FolderError,
+    )
 
     # interface
     def info(self, node):
@@ -37,7 +40,6 @@ class Filesystem(Folder):
         # let the exceptions through, for now
         return self.vnodes[node]
 
-
     def checksum(self, node, **kwds):
         """
         Compute a checksum for the node
@@ -45,15 +47,14 @@ class Filesystem(Folder):
         # i don't know how to do anything smarter
         return id(node)
 
-
     def open(self, node, **kwds):
         """
         Open the file associated with {node}
         """
         # i don't know how to do it
         raise NotImplementedError(
-            "class {.__name__!r} does not implement 'open'".format(type(self)))
-
+            f"class '{type(self).__name__}' does not implement 'open'"
+        )
 
     def discover(self, root=None, **kwds):
         """
@@ -70,7 +71,6 @@ class Filesystem(Folder):
             return self
         # otherwise, ask the other filesystem to do the work
         return fs.discover(root=root, **kwds)
-
 
     # implementation details
     def attach(self, node, uri, metadata=None, **kwds):
@@ -91,7 +91,6 @@ class Filesystem(Folder):
         # and return it
         return metadata
 
-
     # meta methods
     def __init__(self, metadata=None, **kwds):
         # chain up to make me a valid node with me as the filesystem
@@ -99,7 +98,9 @@ class Filesystem(Folder):
         # my vnode table: a map from nodes to info structures
         self.vnodes = weakref.WeakKeyDictionary()
         # build an info structure for myself
-        metadata = self.metadata(uri=primitives.path('/')) if metadata is None else metadata
+        metadata = (
+            self.metadata(uri=primitives.path("/")) if metadata is None else metadata
+        )
         # add it to my vnode table
         self.vnodes[self] = metadata
         # all done

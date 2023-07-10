@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis <nichael.aivazis@para-sim.com>
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2023 all rights reserved
 
 
@@ -18,14 +18,14 @@ from .Directory import Directory
 class Folder(
     RealAsset,
     family="merlin.assets.folders.folder",
-    implements=merlin.protocols.folder,
+    implements=merlin.protocols.assets.folder,
 ):
     """
     Encapsulation of an asset container
     """
 
     # required configurable state
-    category = merlin.protocols.assetCategory()
+    category = merlin.protocols.assets.category()
     category.default = Directory
     category.doc = "a clue about the type of this asset"
 

@@ -11,7 +11,9 @@
 
 
 // read a previously constructed memory mapped grid
-int main(int argc, char * argv[]) {
+int
+main(int argc, char * argv[])
+{
     // initialize the journal
     pyre::journal::init(argc, argv);
     pyre::journal::application("grid_mmap_get");
@@ -26,19 +28,17 @@ int main(int argc, char * argv[]) {
     using grid_t = pyre::grid::grid_t<pack_t, storage_t>;
 
     // packing: 1024x1024x8
-    pack_t packing { {1024,1024, 8} };
+    pack_t packing { { 1024, 1024, 8 } };
     // instantiate the grid
     grid_t grid { packing, "grid_mmap.data" };
 
     // show me the value at the origin
-    channel
-        << "grid[0,0,0] = " << grid[{0,0,0}]
-        << pyre::journal::endl(__HERE__);
+    channel << "grid[0,0,0] = " << grid[{ 0, 0, 0 }] << pyre::journal::endl(__HERE__);
 
     // go through it in packing order
     for (const auto & idx : grid.layout()) {
         // and verify
-        assert(( grid[idx] == grid.layout()[idx] ));
+        assert((grid[idx] == grid.layout()[idx]));
     }
 
     // all done

@@ -16,12 +16,11 @@ using channel_t = pyre::journal::channel_t<severityT>;
 
 
 // severity stub
-class severity_t : public channel_t<severity_t>
-{
+class severity_t : public channel_t<severity_t> {
     // metamethods
 public:
     // index initialization is required...
-    inline severity_t(const name_type & name): channel_t<severity_t>(name) {}
+    inline severity_t(const name_type & name) : channel_t<severity_t>(name) {}
 };
 
 
@@ -30,7 +29,9 @@ using trash_t = pyre::journal::trash_t;
 
 
 // verify that we can control the default device
-int main() {
+int
+main()
+{
     // get the default device
     auto builtin = severity_t::index().device();
 
@@ -40,7 +41,7 @@ int main() {
     severity_t::index().device(custom);
 
     // check that the current device is the one we just installed
-    assert (severity_t::index().device() == custom);
+    assert(severity_t::index().device() == custom);
 
     // all done
     return 0;

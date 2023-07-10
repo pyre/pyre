@@ -36,7 +36,9 @@ public:
 
 
 // check the enums can be used as indices
-int main(int argc, char *argv[]) {
+int
+main(int argc, char * argv[])
+{
     // initialize the journal
     pyre::journal::init(argc, argv);
     pyre::journal::application("index_enum");
@@ -46,12 +48,10 @@ int main(int argc, char *argv[]) {
     // make an index
     constexpr idx_t idx { pol::hv, color::blue };
     // show me
-    channel
-        << "index: " << idx
-        << pyre::journal::endl(__HERE__);
+    channel << "index: " << idx << pyre::journal::endl(__HERE__);
     // verify it gets represented correctly
-    static_assert( idx[0] == pol::hv );
-    static_assert( idx[1] == color::blue );
+    static_assert(idx[0] == pol::hv);
+    static_assert(idx[1] == color::blue);
 
     // all done
     return 0;

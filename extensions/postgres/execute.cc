@@ -17,17 +17,13 @@
 
 
 // execute a query synchronously
-const char * const
-pyre::extensions::postgres::
-execute__name__ = "execute";
+const char * const pyre::extensions::postgres::execute__name__ = "execute";
 
-const char * const
-pyre::extensions::postgres::
-execute__doc__ = "execute a single command";
+const char * const pyre::extensions::postgres::execute__doc__ = "execute a single command";
 
 PyObject *
-pyre::extensions::postgres::
-execute(PyObject *, PyObject * args) {
+pyre::extensions::postgres::execute(PyObject *, PyObject * args)
+{
     // the connection specification
     const char * command;
     PyObject * py_connection;
@@ -46,10 +42,7 @@ execute(PyObject *, PyObject * args) {
 
     // in case someone is listening...
     pyre::journal::debug_t debug("postgres.execution");
-    debug
-        << pyre::journal::at(__HERE__)
-        << "executing '" << command << "'"
-        << pyre::journal::endl;
+    debug << pyre::journal::at(__HERE__) << "executing '" << command << "'" << pyre::journal::endl;
 
     // execute the command
     PGresult * result = PQexec(connection, command);
@@ -68,17 +61,14 @@ execute(PyObject *, PyObject * args) {
 
 
 // submit a query for asynchronous execution
-const char * const
-pyre::extensions::postgres::
-submit__name__ = "submit";
+const char * const pyre::extensions::postgres::submit__name__ = "submit";
 
-const char * const
-pyre::extensions::postgres::
-submit__doc__ = "submit a command for asynchronous execution";
+const char * const pyre::extensions::postgres::submit__doc__ =
+    "submit a command for asynchronous execution";
 
 PyObject *
-pyre::extensions::postgres::
-submit(PyObject *, PyObject * args) {
+pyre::extensions::postgres::submit(PyObject *, PyObject * args)
+{
     // the connection specification
     const char * command;
     PyObject * py_connection;
@@ -97,10 +87,7 @@ submit(PyObject *, PyObject * args) {
 
     // in case someone is listening...
     pyre::journal::debug_t debug("postgres.execution");
-    debug
-        << pyre::journal::at(__HERE__)
-        << "submitting '" << command << "'"
-        << pyre::journal::endl;
+    debug << pyre::journal::at(__HERE__) << "submitting '" << command << "'" << pyre::journal::endl;
 
     // submit the query
     int status = PQsendQuery(connection, command);
@@ -121,17 +108,14 @@ submit(PyObject *, PyObject * args) {
 
 
 // check whether a query result set has been computed
-const char * const
-pyre::extensions::postgres::
-consume__name__ = "consume";
+const char * const pyre::extensions::postgres::consume__name__ = "consume";
 
-const char * const
-pyre::extensions::postgres::
-consume__doc__ = "check with the server for any partial results and fetch them if available";
+const char * const pyre::extensions::postgres::consume__doc__ =
+    "check with the server for any partial results and fetch them if available";
 
 PyObject *
-pyre::extensions::postgres::
-consume(PyObject *, PyObject * args) {
+pyre::extensions::postgres::consume(PyObject *, PyObject * args)
+{
     // the connection specification
     PyObject * py_connection;
     // extract the arguments
@@ -149,10 +133,8 @@ consume(PyObject *, PyObject * args) {
 
     // in case someone is listening...
     pyre::journal::debug_t debug("postgres.execution");
-    debug
-        << pyre::journal::at(__HERE__)
-        << "consuming partial results from the server"
-        << pyre::journal::endl;
+    debug << pyre::journal::at(__HERE__) << "consuming partial results from the server"
+          << pyre::journal::endl;
 
     // consume the available partial result
     PQconsumeInput(connection);
@@ -164,17 +146,14 @@ consume(PyObject *, PyObject * args) {
 
 
 // retrieve a query result
-const char * const
-pyre::extensions::postgres::
-retrieve__name__ = "retrieve";
+const char * const pyre::extensions::postgres::retrieve__name__ = "retrieve";
 
-const char * const
-pyre::extensions::postgres::
-retrieve__doc__ = "retrieve a result set from a previously submitted asynchronous query";
+const char * const pyre::extensions::postgres::retrieve__doc__ =
+    "retrieve a result set from a previously submitted asynchronous query";
 
 PyObject *
-pyre::extensions::postgres::
-retrieve(PyObject *, PyObject * args) {
+pyre::extensions::postgres::retrieve(PyObject *, PyObject * args)
+{
     // the connection specification
     PyObject * py_connection;
     // extract the arguments
@@ -199,17 +178,14 @@ retrieve(PyObject *, PyObject * args) {
 
 
 // check whether a query result set has been computed
-const char * const
-pyre::extensions::postgres::
-busy__name__ = "busy";
+const char * const pyre::extensions::postgres::busy__name__ = "busy";
 
-const char * const
-pyre::extensions::postgres::
-busy__doc__ = "check the availability of a result set from a previously submitted query";
+const char * const pyre::extensions::postgres::busy__doc__ =
+    "check the availability of a result set from a previously submitted query";
 
 PyObject *
-pyre::extensions::postgres::
-busy(PyObject *, PyObject * args) {
+pyre::extensions::postgres::busy(PyObject *, PyObject * args)
+{
     // the connection specification
     PyObject * py_connection;
     // extract the arguments
@@ -227,10 +203,7 @@ busy(PyObject *, PyObject * args) {
 
     // in case someone is listening...
     pyre::journal::debug_t debug("postgres.execution");
-    debug
-        << pyre::journal::at(__HERE__)
-        << "checking for query completion"
-        << pyre::journal::endl;
+    debug << pyre::journal::at(__HERE__) << "checking for query completion" << pyre::journal::endl;
 
     // check
     if (PQisBusy(connection)) {

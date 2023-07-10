@@ -11,8 +11,7 @@
 
 // metamethods
 template <template <typename> typename proxyT>
-pyre::journal::Warning<proxyT>::
-Warning(const name_type & name, detail_type detail) :
+pyre::journal::Warning<proxyT>::Warning(const name_type & name, detail_type detail) :
     channel_type(name, detail)
 {
     // get my entry
@@ -26,8 +25,7 @@ Warning(const name_type & name, detail_type detail) :
 // record the message to the chosen device
 template <template <typename> typename proxyT>
 void
-pyre::journal::Warning<proxyT>::
-record()
+pyre::journal::Warning<proxyT>::record()
 {
     // hunt down the device to use
     auto dev = this->device();
@@ -40,8 +38,7 @@ record()
 
 template <template <typename> typename proxyT>
 void
-pyre::journal::Warning<proxyT>::
-die()
+pyre::journal::Warning<proxyT>::die()
 {
     // prepare a message
     auto msg = this->name() + exception_type::headline_type(": warning");
@@ -53,8 +50,7 @@ die()
 // initialize the channel index
 template <template <typename> typename proxyT>
 auto
-pyre::journal::Warning<proxyT>::
-initializeIndex() -> index_type
+pyre::journal::Warning<proxyT>::initializeIndex() -> index_type
 {
     // make an empty index; for {warning}, channels are (active,non-fatal) by default
     index_type index(true, false);

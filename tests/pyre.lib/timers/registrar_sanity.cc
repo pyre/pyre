@@ -16,7 +16,9 @@ using registrar_t = pyre::timers::registrar_t<movement_t>;
 
 
 // verify that the timer state index can be instantiated
-int main() {
+int
+main()
+{
     // make an index
     registrar_t registrar;
 

@@ -15,11 +15,13 @@ using console_t = pyre::journal::cerr_t;
 
 
 // exercise the {cerr} console
-int main() {
+int
+main()
+{
     // instantiate
     console_t console;
     // check its name
-    assert (console.name() == "cerr");
+    assert(console.name() == "cerr");
 
     // all done
     return 0;

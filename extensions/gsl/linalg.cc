@@ -22,13 +22,17 @@ const char * const gsl::linalg::LU_decomp__name__ = "linalg_LU_decomp";
 const char * const gsl::linalg::LU_decomp__doc__ = "compute the LU decomposition of a matrix";
 
 PyObject *
-gsl::linalg::LU_decomp(PyObject *, PyObject * args) {
+gsl::linalg::LU_decomp(PyObject *, PyObject * args)
+{
     // the arguments
     PyObject * capsule;
     // unpack the argument tuple
     int status = PyArg_ParseTuple(args, "O!:linalg_LU_decomp", &PyCapsule_Type, &capsule);
     // if something went wrong
-    if (!status) return 0;
+    if (!status) {
+        // bail
+        return 0;
+    }
     // bail out if the capsule is not valid
     if (!PyCapsule_IsValid(capsule, gsl::matrix::capsule_t)) {
         PyErr_SetString(PyExc_TypeError, "the argument must be a matrix");
@@ -50,8 +54,8 @@ gsl::linalg::LU_decomp(PyObject *, PyObject * args) {
     // return a tuple
     PyObject * answer = PyTuple_New(3);
     PyTuple_SET_ITEM(answer, 0, capsule);
-    PyTuple_SET_ITEM(answer, 1,
-                     PyCapsule_New(p, gsl::permutation::capsule_t, gsl::permutation::free));
+    PyTuple_SET_ITEM(
+        answer, 1, PyCapsule_New(p, gsl::permutation::capsule_t, gsl::permutation::free));
     PyTuple_SET_ITEM(answer, 2, PyLong_FromLong(sign));
 
     // and return
@@ -64,17 +68,19 @@ const char * const gsl::linalg::LU_invert__name__ = "linalg_LU_invert";
 const char * const gsl::linalg::LU_invert__doc__ = "invert a matrix from its LU decomposition";
 
 PyObject *
-gsl::linalg::LU_invert(PyObject *, PyObject * args) {
+gsl::linalg::LU_invert(PyObject *, PyObject * args)
+{
     // the arguments
     PyObject * mcapsule;
     PyObject * pcapsule;
     // unpack the argument tuple
     int status = PyArg_ParseTuple(
-                                  args, "O!O!:linalg_LU_invert",
-                                  &PyCapsule_Type, &mcapsule,
-                                  &PyCapsule_Type, &pcapsule);
+        args, "O!O!:linalg_LU_invert", &PyCapsule_Type, &mcapsule, &PyCapsule_Type, &pcapsule);
     // if something went wrong
-    if (!status) return 0;
+    if (!status) {
+        // bail
+        return 0;
+    }
     // bail out if the two capsules are not valid
     if (!PyCapsule_IsValid(mcapsule, gsl::matrix::capsule_t)) {
         PyErr_SetString(PyExc_TypeError, "the first argument must be a matrix");
@@ -107,14 +113,18 @@ const char * const gsl::linalg::LU_det__doc__ =
     "compute the determinant of a matrix from its LU decomposition";
 
 PyObject *
-gsl::linalg::LU_det(PyObject *, PyObject * args) {
+gsl::linalg::LU_det(PyObject *, PyObject * args)
+{
     // the arguments
     int sign;
     PyObject * capsule;
     // unpack the argument tuple
     int status = PyArg_ParseTuple(args, "O!i:linalg_LU_det", &PyCapsule_Type, &capsule, &sign);
     // if something went wrong
-    if (!status) return 0;
+    if (!status) {
+        // bail
+        return 0;
+    }
     // bail out if the capsule is not valid
     if (!PyCapsule_IsValid(capsule, gsl::matrix::capsule_t)) {
         PyErr_SetString(PyExc_TypeError, "the first argument must be a matrix");
@@ -125,7 +135,7 @@ gsl::linalg::LU_det(PyObject *, PyObject * args) {
         static_cast<gsl_matrix *>(PyCapsule_GetPointer(capsule, gsl::matrix::capsule_t));
 
     // compute the determinant
-    double det =  gsl_linalg_LU_det(m, sign);
+    double det = gsl_linalg_LU_det(m, sign);
 
     // compute the determinant and return
     return PyFloat_FromDouble(det);
@@ -138,13 +148,17 @@ const char * const gsl::linalg::LU_lndet__doc__ =
     "compute the determinant of a matrix from its LU decomposition";
 
 PyObject *
-gsl::linalg::LU_lndet(PyObject *, PyObject * args) {
+gsl::linalg::LU_lndet(PyObject *, PyObject * args)
+{
     // the arguments
     PyObject * capsule;
     // unpack the argument tuple
     int status = PyArg_ParseTuple(args, "O!:linalg_LU_lndet", &PyCapsule_Type, &capsule);
     // if something went wrong
-    if (!status) return 0;
+    if (!status) {
+        // bail
+        return 0;
+    }
     // bail out if the capsule is not valid
     if (!PyCapsule_IsValid(capsule, gsl::matrix::capsule_t)) {
         PyErr_SetString(PyExc_TypeError, "the first argument must be a matrix");
@@ -168,13 +182,17 @@ const char * const gsl::linalg::cholesky_decomp__doc__ =
     "compute the Cholesky decomposition of a matrix";
 
 PyObject *
-gsl::linalg::cholesky_decomp(PyObject *, PyObject * args) {
+gsl::linalg::cholesky_decomp(PyObject *, PyObject * args)
+{
     // the arguments
     PyObject * capsule;
     // unpack the argument tuple
     int status = PyArg_ParseTuple(args, "O!:linalg_cholesky_decomp", &PyCapsule_Type, &capsule);
     // if something went wrong
-    if (!status) return 0;
+    if (!status) {
+        // bail
+        return 0;
+    }
     // bail out if the two capsules are not valid
     if (!PyCapsule_IsValid(capsule, gsl::matrix::capsule_t)) {
         PyErr_SetString(PyExc_TypeError, "the argument must be a matrix");

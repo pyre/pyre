@@ -16,7 +16,9 @@ using firewall_t = pyre::journal::firewall_t;
 
 
 // exercise a non-fatal channel
-int main() {
+int
+main()
+{
     // make a firewall
     firewall_t channel("tests.journal.firewall");
 
@@ -28,12 +30,10 @@ int main() {
     // firewalls are fatal by default, so attempt to
     try {
         // inject something into the channel
-        channel
-            << pyre::journal::at(__HERE__)
-            << pyre::journal::note("time", "now")
-            << "nasty bug:" << pyre::journal::newline
-            << "    hello world!" << pyre::journal::endl;
-    // if the firewall triggered the exception
+        channel << pyre::journal::at(__HERE__) << pyre::journal::note("time", "now")
+                << "nasty bug:" << pyre::journal::newline << "    hello world!"
+                << pyre::journal::endl;
+        // if the firewall triggered the exception
     } catch (const firewall_t::exception_type &) {
         // unreachable
         throw std::logic_error("unreachable");

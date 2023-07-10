@@ -31,6 +31,8 @@ public:
     // my parts
     using storage_pointer = std::shared_ptr<storage_type>;
     using packing_const_reference = const packing_type &;
+    // my cell
+    using cell_type = typename storage_type::cell_type;
     // my shape
     using shape_type = typename packing_type::shape_type;
     using shape_const_reference = const shape_type &;

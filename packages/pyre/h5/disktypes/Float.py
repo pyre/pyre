@@ -5,11 +5,11 @@
 
 
 # my superclass is in libh5
-import pyre
+from .. import libh5
 
 
 # floats
-class Float(pyre.libh5.datatypes.FloatType):
+class Float(libh5.datatypes.FloatType):
     """
     An h5 FloatType
     """

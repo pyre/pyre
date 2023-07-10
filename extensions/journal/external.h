@@ -26,7 +26,7 @@ namespace pyre::journal::py {
     namespace py = pybind11;
     // get the special {pybind11} literals
     using namespace py::literals;
-}    // namespace pyre::journal::py
+} // namespace pyre::journal::py
 
 
 #endif

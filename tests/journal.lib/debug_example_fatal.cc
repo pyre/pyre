@@ -15,7 +15,9 @@ using debug_t = pyre::journal::debug_t;
 
 
 // exercise the channel manipulators
-int main() {
+int
+main()
+{
     // make a debug channel
     debug_t channel("tests.journal.debug");
     // activate it
@@ -34,15 +36,16 @@ int main() {
             // some metadata
             << pyre::journal::note("time", "now")
             // a message with a newline
-            << "debug channel:" << pyre::journal::newline
+            << "debug channel:"
+            << pyre::journal::newline
             // another message and a flush
             << "    hello world!" << pyre::journal::endl;
         // unreachable
         throw std::logic_error("unreachable");
-    // if all goes well
+        // if all goes well
     } catch (const debug_t::exception_type & error) {
         // make sure the reason was recorded correctly
-        assert (error.what() == channel.name() + debug_t::string_type(": debug"));
+        assert(error.what() == channel.name() + debug_t::string_type(": debug"));
     }
 
     // all done

@@ -17,7 +17,9 @@ typedef pyre::mpi::group_t group_t;
 typedef pyre::mpi::communicator_t communicator_t;
 
 // main program
-int main() {
+int
+main()
+{
     // initialize
     MPI_Init(0, 0);
 
@@ -56,7 +58,6 @@ int main() {
         group_t gd = pyre::mpi::groupDifference(whole, odd);
         // verify it is the same size as the even group
         assert(gd.size() == even.size());
-
     }
 
     // shutdown

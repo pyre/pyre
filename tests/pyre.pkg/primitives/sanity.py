@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2023 all rights reserved
-#
 
 
 """
@@ -13,7 +11,10 @@ Sanity check: verify that the package is accessible
 
 
 def test():
+    # access the package
     import pyre.primitives
+
+    # and do nothing else
     return
 
 

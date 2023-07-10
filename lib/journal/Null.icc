@@ -39,21 +39,24 @@ pyre::journal::Null::device() const -> device_type
 
 
 // accessors
-constexpr auto pyre::journal::Null::active(active_type) -> Null &
+constexpr auto
+pyre::journal::Null::active(active_type) -> Null &
 {
     // all done
     return *this;
 }
 
 
-constexpr auto pyre::journal::Null::fatal(fatal_type) -> Null &
+constexpr auto
+pyre::journal::Null::fatal(fatal_type) -> Null &
 {
     // all done
     return *this;
 }
 
 
-constexpr auto pyre::journal::Null::device(device_type) -> Null &
+constexpr auto
+pyre::journal::Null::device(device_type) -> Null &
 {
     // all done
     return *this;

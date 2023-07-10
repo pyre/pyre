@@ -65,7 +65,7 @@ constexpr auto
 pyre::grid::Grid<packingT, storageT>::at(index_const_reference index) const -> reference
 {
     // get the offset that corresponds to this {index}
-    auto offset = _layout [index];
+    auto offset = _layout[index];
     // get and return the value
     return _data->at(offset);
 }
@@ -77,7 +77,7 @@ constexpr auto
 pyre::grid::Grid<packingT, storageT>::operator[](difference_type offset) const -> reference
 {
     // get and return the value
-    return (*_data) [offset];
+    return (*_data)[offset];
 }
 
 
@@ -86,9 +86,9 @@ constexpr auto
 pyre::grid::Grid<packingT, storageT>::operator[](index_const_reference index) const -> reference
 {
     // get the offset that corresponds to this {index}
-    auto offset = _layout [index];
+    auto offset = _layout[index];
     // get and return the value
-    return (*_data) [offset];
+    return (*_data)[offset];
 }
 
 
@@ -203,8 +203,13 @@ pyre::grid::Grid<packingT, storageT>::slice(
 {
     // get the layout of the slice
     auto sliceLayout = _layout.template slice<sliceRank>(base, shape);
-    // make a grid and return it
-    return Grid(sliceLayout, _data);
+
+    // TOFIX: not general, we should infer pyre::grid::canonical_t from packingT
+    // sliced packing with rank sliceRank
+    using sliced_pack_t = pyre::grid::canonical_t<sliceRank>;
+
+    // make a sliced grid and return it
+    return Grid<sliced_pack_t, storageT>(sliceLayout, _data);
 }
 
 

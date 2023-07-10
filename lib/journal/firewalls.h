@@ -16,14 +16,16 @@
 extern "C" {
 #endif
 
-    void firewall_hit(const char * channel, __HERE_DECL__, const char * fmt, ...);
-    void firewall_check(const char * channel, int condition, __HERE_DECL__, const char * fmt, ...);
+void
+firewall_hit(const char * channel, __HERE_DECL__, const char * fmt, ...);
+void
+firewall_check(const char * channel, int condition, __HERE_DECL__, const char * fmt, ...);
 
 #ifdef __cplusplus
 }
 #endif
 
 
-# endif
+#endif
 
 /* end of file */

@@ -19,7 +19,9 @@ using inventory_t = pyre::journal::inventory_t;
 
 
 // verify that we can manipulate the inventory state
-int main() {
+int
+main()
+{
     // make a default inventory
     inventory_t on(true, true);
     // verify it is on

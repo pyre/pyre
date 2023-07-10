@@ -9,8 +9,7 @@
 
 
 // the null channel conforms to the API but has no effect
-class pyre::journal::Null
-{
+class pyre::journal::Null {
     // types
 public:
     // channel names
@@ -49,14 +48,14 @@ public:
     inline constexpr void deactivate() const;
 
     // bulk activation
-    static constexpr inline void activateChannels(const nameset_type &);
+    static constexpr void activateChannels(const nameset_type &);
 
     // disallow
 private:
     Null(const Null &) = delete;
     Null(const Null &&) = delete;
-    const Null & operator= (const Null &) = delete;
-    const Null & operator= (const Null &&) = delete;
+    const Null & operator=(const Null &) = delete;
+    const Null & operator=(const Null &&) = delete;
 };
 
 

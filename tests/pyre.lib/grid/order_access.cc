@@ -15,7 +15,9 @@ using order_t = pyre::grid::order_t<4>;
 
 
 // exercise operator[]
-int main(int argc, char * argv[]) {
+int
+main(int argc, char * argv[])
+{
     // initialize the journal
     pyre::journal::init(argc, argv);
     pyre::journal::application("order_access");
@@ -26,18 +28,16 @@ int main(int argc, char * argv[]) {
     constexpr order_t order_1 { 0, 1, 2, 3 };
 
     // show me
-    channel
-        << "[0,1,2,3]: " << order_1
-        << pyre::journal::endl(__HERE__);
+    channel << "[0,1,2,3]: " << order_1 << pyre::journal::endl(__HERE__);
 
     // verify the contents are available at compile time
-    static_assert (order_1[0] == 0);
-    static_assert (order_1[1] == 1);
-    static_assert (order_1[2] == 2);
-    static_assert (order_1[3] == 3);
+    static_assert(order_1[0] == 0);
+    static_assert(order_1[1] == 1);
+    static_assert(order_1[2] == 2);
+    static_assert(order_1[3] == 3);
 
     // make a writable one
-    order_t order_2 { 0,0,0,0 };
+    order_t order_2 { 0, 0, 0, 0 };
 
     // set it
     order_2[0] = 0;
@@ -46,15 +46,13 @@ int main(int argc, char * argv[]) {
     order_2[3] = 3;
 
     // show me
-    channel
-        << "[0,1,2,3]: " << order_2
-        << pyre::journal::endl(__HERE__);
+    channel << "[0,1,2,3]: " << order_2 << pyre::journal::endl(__HERE__);
 
     // check it
-    assert(( order_2[0] == 0 ));
-    assert(( order_2[1] == 1 ));
-    assert(( order_2[2] == 2 ));
-    assert(( order_2[3] == 3 ));
+    assert((order_2[0] == 0));
+    assert((order_2[1] == 1));
+    assert((order_2[2] == 2));
+    assert((order_2[3] == 3));
 
     // all done
     return 0;

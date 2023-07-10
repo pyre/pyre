@@ -13,10 +13,19 @@
 // compute the footprint of the given number of cells
 template <typename T, bool isConst>
 constexpr auto
+pyre::memory::Cell<T, isConst>::readonly() -> bool
+{
+    // easy
+    return isConst;
+}
+
+
+template <typename T, bool isConst>
+constexpr auto
 pyre::memory::Cell<T, isConst>::writable() -> bool
 {
     // easy
-    return !isConst;
+    return !readonly();
 }
 
 

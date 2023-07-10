@@ -45,7 +45,7 @@ public:
     inline auto data() const -> pointer;
 
     // syntactic sugar
-    inline operator pointer () const;
+    inline operator pointer() const;
 
     // implementation details: methods
 private:
@@ -57,19 +57,19 @@ private:
     // implementation details: data
 private:
     // client supplied
-    uri_type _uri;            // the path to my backing store
-    writable_type _writable;  // access control
+    uri_type _uri;           // the path to my backing store
+    writable_type _writable; // access control
     // bookkeeping
-    pointer _data;            // the address of the memory block
-    size_type _bytes;         // the memory footprint of the block
-    info_type _info;          // information about the backing store; retrieved by {::stat}
+    pointer _data;    // the address of the memory block
+    size_type _bytes; // the memory footprint of the block
+    info_type _info;  // information about the backing store; retrieved by {::stat}
 
     // disallow
 private:
     FileMap(const FileMap &) = delete;
     FileMap(FileMap &&) = delete;
-    FileMap & operator= (const FileMap &) = delete;
-    FileMap & operator= (FileMap &&) = delete;
+    FileMap & operator=(const FileMap &) = delete;
+    FileMap & operator=(FileMap &&) = delete;
 };
 
 

@@ -70,7 +70,7 @@ class Darwin(POSIX, family="pyre.platforms.darwin"):
         # for the release number
         release, _, _ = platform.mac_ver()
         # extract the major release
-        major, minor = map(int, release.split(".")[:2])
+        major, minor, *_ = map(int, release.split(".")[:2])
         # after {big sur}, the codename is determined by {major}
         # the older releases use {minor} as well
         tag = f"{major}.x" if major >= 11 else f"{major}.{minor}"

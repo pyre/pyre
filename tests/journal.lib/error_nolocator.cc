@@ -15,7 +15,9 @@ using myerror_t = pyre::journal::error_t;
 
 
 // verify that injection works correctly in the absence of location information
-int main() {
+int
+main()
+{
     // make an error channel
     myerror_t channel("tests.journal.error");
 
@@ -25,15 +27,13 @@ int main() {
     // carefully
     try {
         // inject without providing location information
-        channel
-            << "an error message without location information"
-            << pyre::journal::endl;
+        channel << "an error message without location information" << pyre::journal::endl;
         // errors are fatal by default, so we shouldn't be able to get here
         throw std::logic_error("unreachable");
-    // if all goes well
-    }  catch (const myerror_t::exception_type & error) {
+        // if all goes well
+    } catch (const myerror_t::exception_type & error) {
         // make sure the reason was recorded correctly
-        assert (error.what() == channel.name() + myerror_t::string_type(": application error"));
+        assert(error.what() == channel.name() + myerror_t::string_type(": application error"));
     }
 
     // all done

@@ -21,7 +21,9 @@ using walltimer_t = pyre::timers::wall_timer_t;
 
 
 // verify that we can manipulate the timer state
-int main() {
+int
+main()
+{
     // make a timer
     walltimer_t timer("tests.timer");
     // and start it
@@ -35,7 +37,7 @@ int main() {
     // stop it
     auto elapsed = timer.stop();
     // verify the elapsed time is roughly the same as the sleep time
-    assert (elapsed >= nap);
+    assert(elapsed >= nap);
 
     // all done
     return 0;

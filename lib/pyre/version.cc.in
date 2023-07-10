@@ -7,11 +7,11 @@
 // my declarations
 #include "version.h"
 
-// build and return the version tuple
+// the pyre version tuple
 auto
 pyre::version::version() -> version_t
 {
-    // easy enough
+    // build and return the version tuple as it was seen at the time {libpyre} was compiled
     return version_t { major, minor, micro, revision };
 }
 

@@ -14,8 +14,8 @@
 class severity_t : public pyre::journal::channel_t<severity_t> {
     // metamethods
 public:
-    inline explicit severity_t(const name_type & name) :
-        pyre::journal::channel_t<severity_t>(name) {}
+    inline explicit severity_t(const name_type & name) : pyre::journal::channel_t<severity_t>(name)
+    {}
 
     // implementation details
     inline void record() {}
@@ -24,16 +24,15 @@ public:
 
 
 // compile time: make sure injection works as expected
-int main() {
+int
+main()
+{
     // make a channel
     severity_t channel("channel");
 
     // inject something
-    channel
-        << pyre::journal::at(__HERE__)
-        << pyre::journal::note("time", "now")
-        << "hello world!" << pyre::journal::newline
-        << pyre::journal::endl;
+    channel << pyre::journal::at(__HERE__) << pyre::journal::note("time", "now") << "hello world!"
+            << pyre::journal::newline << pyre::journal::endl;
 
     // all done
     return 0;

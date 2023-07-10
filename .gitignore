@@ -6,9 +6,11 @@
 # machine-dependent config
 /.mm/config.def
 
-# the default build locations
+# the default build locations (mm)
 /builds
 /products
+# the default build locations (cmake)
+/build
 
 # auctex lint
 /doc/**/auto
@@ -26,5 +28,11 @@
 /doc/**/*.pdf
 # but not those that are figures
 !doc/**/figures/*.pdf
+
+# mac folder attributes 
+**.DS_Store
+
+# python cache
+**__pycache__
 
 # end of file

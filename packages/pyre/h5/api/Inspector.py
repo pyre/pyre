@@ -11,20 +11,22 @@ from . import exceptions
 # h5 object factories
 from .Group import Group
 from .Dataset import Dataset
+from .Datatype import Datatype
 
 # typing
 import pyre
 import typing
+from .. import libh5
 from .. import disktypes
 from .. import memtypes
 from .. import schema
 from .Object import Object
 
 # type aliases
-H5Group = pyre.libh5.Group
-H5DataSet = pyre.libh5.DataSet
-H5DataType = pyre.libh5.datatypes.DataType
-H5ObjectType = pyre.libh5.ObjectType
+H5Group = libh5.Group
+H5DataSet = libh5.DataSet
+H5DataType = libh5.datatypes.DataType
+H5ObjectType = libh5.ObjectType
 
 
 # libh5 bridge mixin
@@ -37,6 +39,29 @@ class Inspector:
     and extract a subset of the information
     """
 
+    # convenient access
+    def _pyre_inspect(
+        self,
+        h5id: typing.Union[H5DataSet, H5Group],
+        path: pyre.primitives.path,
+        query: typing.Optional[schema.descriptor] = None,
+        depth: typing.Optional[int] = None,
+    ) -> Object:
+        """
+        Build the hierarchy rooted at {path} that is contained within the given {h5id}
+
+        The optional {query} can be used to constrain the traversal to its structure,
+        while a non-trivial {depth} value will limit how far to look
+        """
+        # if this is a constrained traversal
+        if query is not None:
+            # visit only the specified file locations
+            return self._pyre_queryObject(
+                h5id=h5id, path=path, query=query, depth=depth
+            )
+        # otherwise, grab everything
+        return self._pyre_inferObject(h5id=h5id, path=path, depth=depth)
+
     # support for querying the hierarchy by following a spec
     # object factories
     def _pyre_queryObject(
@@ -44,9 +69,10 @@ class Inspector:
         h5id: typing.Union[H5DataSet, H5Group],
         path: pyre.primitives.path,
         query: schema.descriptor,
-    ):
+        depth: typing.Optional[int] = None,
+    ) -> Object:
         """
-        Build the hierarchy root at {path} that is contained within the given {h5id},
+        Build the hierarchy rooted at {path} that is contained within the given {h5id},
         using {query} as a constraint on the traversal
         """
         # get the type of the object at {h5id}
@@ -56,13 +82,17 @@ class Inspector:
         # look up the object factory
         factory = getattr(self, f"_pyre_query{tag}")
         # invoke it
-        h5object = factory(h5id=h5id, path=path, query=query)
+        h5object = factory(h5id=h5id, path=path, query=query, depth=depth)
         # and return what was built
         return h5object
 
     def _pyre_queryGroup(
-        self, h5id: H5Group, path: pyre.primitives.path, query: schema.group
-    ):
+        self,
+        h5id: H5Group,
+        path: pyre.primitives.path,
+        query: schema.group,
+        depth: typing.Optional[int] = None,
+    ) -> Group:
         """
         Build a group at {path}
         """
@@ -70,6 +100,14 @@ class Inspector:
         spec = schema.group(name=path.name)
         # and attach it to an empty group
         group = Group(id=h5id, at=path, layout=spec)
+        # check the depth limit
+        if depth is not None:
+            # if we have reached the bottom
+            if depth <= 0:
+                # go no further
+                return group
+            # otherwise, adjust it
+            depth -= 1
         # go through the members in {query}
         for memberName, attributeName in query._pyre_aliases.items():
             # carefully
@@ -86,7 +124,7 @@ class Inspector:
             memberSpec = getattr(query, attributeName)
             # build it
             member = self._pyre_queryObject(
-                h5id=memberId, path=memberPath, query=memberSpec
+                h5id=memberId, path=memberPath, query=memberSpec, depth=depth
             )
             # add it to the group contents
             setattr(group, attributeName, member)
@@ -96,8 +134,8 @@ class Inspector:
         return group
 
     def _pyre_queryDataset(
-        self, h5id: H5DataSet, path: pyre.primitives.path, query: schema.dataset
-    ):
+        self, h5id: H5DataSet, path: pyre.primitives.path, query: schema.dataset, **kwds
+    ) -> Dataset:
         """
         Build the dataset at {path}
         """
@@ -172,18 +210,18 @@ class Inspector:
         """
         Build a group at {path}
         """
-        # check the depth limit
-        if depth is not None:
-            # if we have reached the bottom
-            if depth <= 0:
-                # make an empty group and go no further
-                return Group(id=h5id, at=path)
-            # otherwise, adjust it
-            depth -= 1
         # build an empty spec
         spec = schema.group(name=path.name)
         # and attach it to an empty group
         group = Group(id=h5id, at=path, layout=spec)
+        # check the depth limit
+        if depth is not None:
+            # if we have reached the bottom
+            if depth <= 0:
+                # go no further
+                return group
+            # otherwise, adjust it
+            depth -= 1
         # infer my structure
         for memberName in h5id.members():
             # look up the member
@@ -211,6 +249,17 @@ class Inspector:
         dataset = Dataset(id=h5id, at=path, layout=spec)
         # and return it
         return dataset
+
+    def _pyre_inferDatatype(
+        self, h5id: H5DataType, path: pyre.primitives.path, **kwds
+    ) -> Datatype:
+        """
+        Build a named data type at {path}
+        """
+        # make a named datatype
+        datatype = Datatype(id=h5id, at=path)
+        # and return it
+        return datatype
 
     # descriptor factories
     def _pyre_inferDescriptor(
@@ -317,7 +366,7 @@ class Inspector:
         """
         # check for a complex number
         if h5type.members == 2 and (
-            h5type.type(0).cell == h5type.type(1).cell == pyre.libh5.DataSetType.float
+            h5type.type(0).cell == h5type.type(1).cell == libh5.DataSetType.float
         ):
             # get the total bits
             bits = sum(h5type.type(n).precision for n in range(2))
@@ -358,7 +407,7 @@ class Inspector:
         Build an {int} descriptor
         """
         # build the tags
-        sign = "u" if h5type.sign == pyre.libh5.Sign.unsigned else ""
+        sign = "u" if h5type.sign == libh5.Sign.unsigned else ""
         bits = h5type.precision
         # assemble the factory name
         factory = f"{sign}int{bits}"

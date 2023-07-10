@@ -18,7 +18,9 @@ using chronicler_t = pyre::journal::chronicler_t;
 
 // verify that the chronicler command line parser can handle comma separated values correctly
 // on the command line
-int main() {
+int
+main()
+{
     // form the test case
     string_t input = ",,,foo,bar,,baz,,bab,,,";
     // the correct answer
@@ -26,7 +28,7 @@ int main() {
     // ask the {chronicler} to parse it
     auto names = chronicler_t::nameset(input);
     // verify
-    assert (names == expected);
+    assert(names == expected);
 
     // all done
     return 0;

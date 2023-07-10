@@ -63,6 +63,7 @@ class Debug(merlin.shells.command, family="merlin.cli.debug"):
         # and the name server
         nameserver = self.pyre_nameserver
 
+        projects = plexus.projects
         # indent
         channel.indent()
         # get all nodes that match my {prefix}

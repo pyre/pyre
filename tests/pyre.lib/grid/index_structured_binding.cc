@@ -15,7 +15,9 @@ using index_t = pyre::grid::index_t<3>;
 
 
 // verify that structured bindings work
-int main(int argc, char * argv[]) {
+int
+main(int argc, char * argv[])
+{
     // initialize the journal
     pyre::journal::init(argc, argv);
     pyre::journal::application("index_structured_binding");
@@ -28,15 +30,13 @@ int main(int argc, char * argv[]) {
     auto [x, y, z] = idx;
 
     // show me
-    channel
-        << "idx: {" << idx << "}" << pyre::journal::newline
-        << "unpacked: {" << x << ", " << y << ", " << z << "}"
-        << pyre::journal::endl(__HERE__);
+    channel << "idx: {" << idx << "}" << pyre::journal::newline << "unpacked: {" << x << ", " << y
+            << ", " << z << "}" << pyre::journal::endl(__HERE__);
 
     // check
-    assert(( x == idx[0] ));
-    assert(( y == idx[1] ));
-    assert(( z == idx[2] ));
+    assert((x == idx[0]));
+    assert((y == idx[1]));
+    assert((z == idx[2]));
 
     // all done
     return 0;

@@ -10,23 +10,19 @@
 
 
 // metamethods
-pyre::journal::Detail::
-Detail(detail_type detail):
-    _detail(detail)
-{}
+pyre::journal::Detail::Detail(detail_type detail) : _detail(detail) {}
 
 
 // interface
 // accessors
 auto
-pyre::journal::Detail::
-detail() const -> detail_type
+pyre::journal::Detail::detail() const -> detail_type
 {
     // easy enough
     return _detail;
 }
 
 
-# endif
+#endif
 
 // end of file

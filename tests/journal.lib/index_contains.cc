@@ -15,7 +15,9 @@ using index_t = pyre::journal::index_t;
 
 
 // verify that looking up channel names in the index creates nodes
-int main() {
+int
+main()
+{
     // make an index
     index_t index(true, true);
 
@@ -24,10 +26,10 @@ int main() {
     index.lookup("test.index.2");
 
     // make sure the index contains two names
-    assert (index.size() == 2);
+    assert(index.size() == 2);
     // and that out names are the ones there
-    assert (index.contains("test.index.1"));
-    assert (index.contains("test.index.2"));
+    assert(index.contains("test.index.1"));
+    assert(index.contains("test.index.2"));
 
     // all done
     return 0;

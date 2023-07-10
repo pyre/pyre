@@ -16,7 +16,9 @@ using canonical_t = pyre::grid::canonical_t<3>;
 
 // simple check that the map to and from index space is correct in the presence of a
 // non-trivial origin
-int main(int argc, char * argv[]) {
+int
+main(int argc, char * argv[])
+{
     // initialize the journal
     pyre::journal::init(argc, argv);
     pyre::journal::application("canonical_map_origin");
@@ -33,11 +35,11 @@ int main(int argc, char * argv[]) {
     canonical_t packing { shape, origin, order };
 
     // verify that the offset of the {origin} is zero
-    assert(( packing.offset(origin) == 0 ));
+    assert((packing.offset(origin) == 0));
     // verify that the offset of {0,0,0}
     canonical_t::index_type zero {};
     // is equal to the nudge
-    assert(( packing.offset(zero) == packing.nudge() ));
+    assert((packing.offset(zero) == packing.nudge()));
 
     // make an index
     canonical_t::index_type index { 1, 2, 3 };
@@ -48,19 +50,16 @@ int main(int argc, char * argv[]) {
 
     // show me
     channel
-        << "shape: " << packing.shape() << pyre::journal::newline
-        << "origin: " << packing.origin() << pyre::journal::newline
-        << "order: " << packing.order() << pyre::journal::newline
+        << "shape: " << packing.shape() << pyre::journal::newline << "origin: " << packing.origin()
+        << pyre::journal::newline << "order: " << packing.order() << pyre::journal::newline
         << "strides: " << packing.strides() << pyre::journal::newline
-        << "nudge: " << packing.nudge() << pyre::journal::newline
-        << "begin: " << *packing.begin() << pyre::journal::newline
-        << "end: " << *packing.end() << pyre::journal::newline
-        << "index: " << index << pyre::journal::newline
-        << "offset: " << offset << pyre::journal::newline
-        << "image: " << image << pyre::journal::endl(__HERE__);
+        << "nudge: " << packing.nudge() << pyre::journal::newline << "begin: " << *packing.begin()
+        << pyre::journal::newline << "end: " << *packing.end() << pyre::journal::newline
+        << "index: " << index << pyre::journal::newline << "offset: " << offset
+        << pyre::journal::newline << "image: " << image << pyre::journal::endl(__HERE__);
 
     // verify that the {image} is our original index
-    assert(( image == index ));
+    assert((image == index));
 
     // all done
     return 0;

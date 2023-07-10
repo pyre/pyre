@@ -20,7 +20,8 @@
 const char * const mpi::port::sendBytes__name__ = "sendBytes";
 const char * const mpi::port::sendBytes__doc__ = "send bytes to a peer";
 
-PyObject * mpi::port::sendBytes(PyObject *, PyObject * args)
+PyObject *
+mpi::port::sendBytes(PyObject *, PyObject * args)
 {
     // placeholder for the arguments
     int tag;
@@ -31,11 +32,7 @@ PyObject * mpi::port::sendBytes(PyObject *, PyObject * args)
 
     // extract the arguments from the tuple
     if (!PyArg_ParseTuple(
-                          args,
-                          "O!iiy#:sendBytes",
-                          &PyCapsule_Type, &py_comm,
-                          &peer, &tag,
-                          &str, &len)) {
+            args, "O!iiy#:sendBytes", &PyCapsule_Type, &py_comm, &peer, &tag, &str, &len)) {
         return 0;
     }
 
@@ -46,18 +43,13 @@ PyObject * mpi::port::sendBytes(PyObject *, PyObject * args)
     }
 
     // convert into the pyre::mpi object
-    pyre::mpi::communicator_t * comm =
-        static_cast<pyre::mpi::communicator_t *>
-        (PyCapsule_GetPointer(py_comm, mpi::communicator::capsule_t));
+    pyre::mpi::communicator_t * comm = static_cast<pyre::mpi::communicator_t *>(
+        PyCapsule_GetPointer(py_comm, mpi::communicator::capsule_t));
 
     // dump arguments
     pyre::journal::debug_t info("mpi.ports");
-    info
-        << pyre::journal::at(__HERE__)
-        << "peer={" << peer
-        << "}, tag={" << tag
-        << "}, bytes={" << len << "} at " << (void *)str
-        << pyre::journal::endl;
+    info << pyre::journal::at(__HERE__) << "peer={" << peer << "}, tag={" << tag << "}, bytes={"
+         << len << "} at " << (void *) str << pyre::journal::endl;
 
     // send the data
     MPI_Send(str, len, MPI_BYTE, peer, tag, comm->handle());
@@ -72,7 +64,8 @@ PyObject * mpi::port::sendBytes(PyObject *, PyObject * args)
 const char * const mpi::port::recvBytes__name__ = "recvBytes";
 const char * const mpi::port::recvBytes__doc__ = "receive bytes from a peer";
 
-PyObject * mpi::port::recvBytes(PyObject *, PyObject * args)
+PyObject *
+mpi::port::recvBytes(PyObject *, PyObject * args)
 {
     // placeholders for the arguments
     int tag;
@@ -80,11 +73,7 @@ PyObject * mpi::port::recvBytes(PyObject *, PyObject * args)
     PyObject * py_comm;
 
     // extract the arguments from the tuple
-    if (!PyArg_ParseTuple(
-                          args,
-                          "O!ii:recvBytes",
-                          &PyCapsule_Type, &py_comm,
-                          &peer, &tag)) {
+    if (!PyArg_ParseTuple(args, "O!ii:recvBytes", &PyCapsule_Type, &py_comm, &peer, &tag)) {
         return 0;
     }
 
@@ -95,9 +84,8 @@ PyObject * mpi::port::recvBytes(PyObject *, PyObject * args)
     }
 
     // convert into the pyre::mpi object
-    pyre::mpi::communicator_t * comm =
-        static_cast<pyre::mpi::communicator_t *>
-        (PyCapsule_GetPointer(py_comm, mpi::communicator::capsule_t));
+    pyre::mpi::communicator_t * comm = static_cast<pyre::mpi::communicator_t *>(
+        PyCapsule_GetPointer(py_comm, mpi::communicator::capsule_t));
 
     int len;
     char * str;
@@ -113,18 +101,14 @@ PyObject * mpi::port::recvBytes(PyObject *, PyObject * args)
 
     // dump message
     pyre::journal::debug_t info("mpi.ports");
-    info
-        << pyre::journal::at(__HERE__)
-        << "peer={" << peer
-        << "}, tag={" << tag
-        << "}, bytes={" << len << "} at " << (void *)str
-        << pyre::journal::endl;
+    info << pyre::journal::at(__HERE__) << "peer={" << peer << "}, tag={" << tag << "}, bytes={"
+         << len << "} at " << (void *) str << pyre::journal::endl;
 
     // build the return value
     PyObject * value = Py_BuildValue("y#", str, len);
 
     // clean up
-    delete [] str;
+    delete[] str;
 
     // return
     return value;
@@ -134,7 +118,8 @@ PyObject * mpi::port::recvBytes(PyObject *, PyObject * args)
 const char * const mpi::port::sendString__name__ = "sendString";
 const char * const mpi::port::sendString__doc__ = "send a string to a peer";
 
-PyObject * mpi::port::sendString(PyObject *, PyObject * args)
+PyObject *
+mpi::port::sendString(PyObject *, PyObject * args)
 {
     // placeholder for the arguments
     int tag;
@@ -145,11 +130,7 @@ PyObject * mpi::port::sendString(PyObject *, PyObject * args)
 
     // extract the arguments from the tuple
     if (!PyArg_ParseTuple(
-                          args,
-                          "O!iis#:sendString",
-                          &PyCapsule_Type, &py_comm,
-                          &peer, &tag,
-                          &str, &len)) {
+            args, "O!iis#:sendString", &PyCapsule_Type, &py_comm, &peer, &tag, &str, &len)) {
         return 0;
     }
 
@@ -160,21 +141,16 @@ PyObject * mpi::port::sendString(PyObject *, PyObject * args)
     }
 
     // convert into the pyre::mpi object
-    pyre::mpi::communicator_t * comm =
-        static_cast<pyre::mpi::communicator_t *>
-        (PyCapsule_GetPointer(py_comm, mpi::communicator::capsule_t));
+    pyre::mpi::communicator_t * comm = static_cast<pyre::mpi::communicator_t *>(
+        PyCapsule_GetPointer(py_comm, mpi::communicator::capsule_t));
 
     // dump arguments
     pyre::journal::debug_t info("mpi.ports");
-    info
-        << pyre::journal::at(__HERE__)
-        << "peer={" << peer
-        << "}, tag={" << tag
-        << "}, string={" << str << "}@" << len
-        << pyre::journal::endl;
+    info << pyre::journal::at(__HERE__) << "peer={" << peer << "}, tag={" << tag << "}, string={"
+         << str << "}@" << len << pyre::journal::endl;
 
     // send the data (along with the terminating null)
-    MPI_Send(str, len+1, MPI_CHAR, peer, tag, comm->handle());
+    MPI_Send(str, len + 1, MPI_CHAR, peer, tag, comm->handle());
 
     // return
     Py_INCREF(Py_None);
@@ -186,7 +162,8 @@ PyObject * mpi::port::sendString(PyObject *, PyObject * args)
 const char * const mpi::port::recvString__name__ = "recvString";
 const char * const mpi::port::recvString__doc__ = "receive a string from a peer";
 
-PyObject * mpi::port::recvString(PyObject *, PyObject * args)
+PyObject *
+mpi::port::recvString(PyObject *, PyObject * args)
 {
     // placeholders for the arguments
     int tag;
@@ -194,11 +171,7 @@ PyObject * mpi::port::recvString(PyObject *, PyObject * args)
     PyObject * py_comm;
 
     // extract the arguments from the tuple
-    if (!PyArg_ParseTuple(
-                          args,
-                          "O!ii:recvString",
-                          &PyCapsule_Type, &py_comm,
-                          &peer, &tag)) {
+    if (!PyArg_ParseTuple(args, "O!ii:recvString", &PyCapsule_Type, &py_comm, &peer, &tag)) {
         return 0;
     }
 
@@ -209,9 +182,8 @@ PyObject * mpi::port::recvString(PyObject *, PyObject * args)
     }
 
     // convert into the pyre::mpi object
-    pyre::mpi::communicator_t * comm =
-        static_cast<pyre::mpi::communicator_t *>
-        (PyCapsule_GetPointer(py_comm, mpi::communicator::capsule_t));
+    pyre::mpi::communicator_t * comm = static_cast<pyre::mpi::communicator_t *>(
+        PyCapsule_GetPointer(py_comm, mpi::communicator::capsule_t));
 
     int len;
     char * str;
@@ -227,18 +199,14 @@ PyObject * mpi::port::recvString(PyObject *, PyObject * args)
 
     // dump message
     pyre::journal::debug_t info("mpi.ports");
-    info
-        << pyre::journal::at(__HERE__)
-        << "peer={" << peer
-        << "}, tag={" << tag
-        << "}, string={" << str << "}@" << len
-        << pyre::journal::endl;
+    info << pyre::journal::at(__HERE__) << "peer={" << peer << "}, tag={" << tag << "}, string={"
+         << str << "}@" << len << pyre::journal::endl;
 
     // build the return value
     PyObject * value = Py_BuildValue("s", str);
 
     // clean up
-    delete [] str;
+    delete[] str;
 
     // return
     return value;

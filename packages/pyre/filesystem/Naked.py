@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2023 all rights reserved
-#
 
 
 # support
@@ -16,14 +14,11 @@ class Naked:
     A thin wrapper around local regular files
     """
 
-
     # types
     from .Stat import Stat as recognizer
 
-
     # constants
     isFolder = False
-
 
     # public data
     @property
@@ -34,7 +29,6 @@ class Naked:
         # easy enough
         return self._metadata.marker
 
-
     # interface
     def open(self, **kwds):
         """
@@ -42,7 +36,6 @@ class Naked:
         """
         # easy enough
         return self.uri.open(**kwds)
-
 
     # filesystem obligations
     def metadata(self, uri, **kwds):
@@ -52,7 +45,6 @@ class Naked:
         # ignore the {uri} argument: it is just the path relative to the containing filesystem
         # ask my recognizer to do his job
         return self._metadata
-
 
     # meta-methods
     def __init__(self, uri, **kwds):

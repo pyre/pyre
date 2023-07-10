@@ -17,15 +17,15 @@
 #include "exceptions.h"
 #include "metadata.h"
 
-#include "blas.h" // blas
-#include "histogram.h" // linear algebra
-#include "linalg.h" // linear algebra
-#include "matrix.h" // matrices
-#include "pdf.h" // probability distribution functions
+#include "blas.h"        // blas
+#include "histogram.h"   // linear algebra
+#include "linalg.h"      // linear algebra
+#include "matrix.h"      // matrices
+#include "pdf.h"         // probability distribution functions
 #include "permutation.h" // permutations
-#include "rng.h" // random numbers
-#include "vector.h" // vectors
-#include "stats.h" // stats
+#include "rng.h"         // random numbers
+#include "vector.h"      // vectors
+#include "stats.h"       // stats
 
 // mpi support
 #if defined(WITH_MPI)
@@ -249,13 +249,15 @@ namespace gsl {
 #endif
 
         // more statistics
-        { stats::correlation__name__, stats::correlation, METH_VARARGS, stats::correlation__doc__},
-        { stats::covariance__name__, stats::covariance, METH_VARARGS, stats::covariance__doc__},
-        { stats::matrix_mean__name__, stats::matrix_mean, METH_VARARGS, stats::matrix_mean__doc__},
-        { stats::matrix_mean_sd__name__, stats::matrix_mean_sd, METH_VARARGS, stats::matrix_mean_sd__doc__},
-        { stats::matrix_mean_std__name__, stats::matrix_mean_std, METH_VARARGS, stats::matrix_mean_std__doc__},
+        { stats::correlation__name__, stats::correlation, METH_VARARGS, stats::correlation__doc__ },
+        { stats::covariance__name__, stats::covariance, METH_VARARGS, stats::covariance__doc__ },
+        { stats::matrix_mean__name__, stats::matrix_mean, METH_VARARGS, stats::matrix_mean__doc__ },
+        { stats::matrix_mean_sd__name__, stats::matrix_mean_sd, METH_VARARGS,
+          stats::matrix_mean_sd__doc__ },
+        { stats::matrix_mean_std__name__, stats::matrix_mean_std, METH_VARARGS,
+          stats::matrix_mean_std__doc__ },
 
-        // mpi support
+    // mpi support
 #if defined(WITH_MPI)
         // matrix partitioning
         { mpi::bcastMatrix__name__, mpi::bcastMatrix, METH_VARARGS, mpi::bcastMatrix__doc__ },
@@ -268,7 +270,7 @@ namespace gsl {
 #endif
 
         // sentinel
-        {0, 0, 0, 0}
+        { 0, 0, 0, 0 }
     };
 
     // the module documentation string
@@ -287,11 +289,13 @@ namespace gsl {
         // the methods defined in this module
         module_methods
     };
-} // of namespace gsl
+} // namespace gsl
 
 
 // my error handler
-static void errorHandler(const char * reason, const char * file, int line, int gsl_errno) {
+static void
+errorHandler(const char * reason, const char * file, int line, int gsl_errno)
+{
     // for now, just print the reason for the error
     std::cerr << " ** ** ** GSL error: " << reason << std::endl;
     // throw an exception

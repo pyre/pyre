@@ -4,7 +4,7 @@
 # (c) 1998-2023 all rights reserved
 
 
-# build the journal pcckage
+# build the journal package
 function(pyre_journalPackage)
   # install the sources straight from the source directory
   install(

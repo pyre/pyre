@@ -11,25 +11,23 @@
 
 // application_error
 // constructor
-pyre::journal::application_error::
-application_error(const headline_type & what, const page_type & page, const notes_type & notes) :
+pyre::journal::application_error::application_error(
+    const headline_type & what, const page_type & page, const notes_type & notes) :
     std::runtime_error(what),
-    _page{ page },
-    _notes{ notes }
+    _page { page },
+    _notes { notes }
 {}
 
 // accessors
 auto
-pyre::journal::application_error::
-page() const -> page_const_reference
+pyre::journal::application_error::page() const -> page_const_reference
 {
     // easy enough
     return _page;
 }
 
 auto
-pyre::journal::application_error::
-notes() const -> notes_const_reference
+pyre::journal::application_error::notes() const -> notes_const_reference
 {
     // easy enough
     return _notes;
@@ -38,25 +36,23 @@ notes() const -> notes_const_reference
 
 // firewall_error
 // constructor
-pyre::journal::firewall_error::
-firewall_error(const headline_type & what, const page_type & page, const notes_type & notes) :
+pyre::journal::firewall_error::firewall_error(
+    const headline_type & what, const page_type & page, const notes_type & notes) :
     std::logic_error(what),
-    _page{ page },
-    _notes{ notes }
+    _page { page },
+    _notes { notes }
 {}
 
 // accessors
 auto
-pyre::journal::firewall_error::
-page() const -> page_const_reference
+pyre::journal::firewall_error::page() const -> page_const_reference
 {
     // easy enough
     return _page;
 }
 
 auto
-pyre::journal::firewall_error::
-notes() const -> notes_const_reference
+pyre::journal::firewall_error::notes() const -> notes_const_reference
 {
     // easy enough
     return _notes;
@@ -65,31 +61,29 @@ notes() const -> notes_const_reference
 
 // debug
 // constructor
-pyre::journal::debug_error::
-debug_error(const headline_type & what, const page_type & page, const notes_type & notes) :
+pyre::journal::debug_error::debug_error(
+    const headline_type & what, const page_type & page, const notes_type & notes) :
     std::logic_error(what),
-    _page{ page },
-    _notes{ notes }
+    _page { page },
+    _notes { notes }
 {}
 
 // accessors
 auto
-pyre::journal::debug_error::
-page() const -> page_const_reference
+pyre::journal::debug_error::page() const -> page_const_reference
 {
     // easy enough
     return _page;
 }
 
 auto
-pyre::journal::debug_error::
-notes() const -> notes_const_reference
+pyre::journal::debug_error::notes() const -> notes_const_reference
 {
     // easy enough
     return _notes;
 }
 
 
-# endif
+#endif
 
 // end of file

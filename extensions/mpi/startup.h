@@ -20,7 +20,7 @@ namespace mpi {
     extern const char * const finalize__doc__;
     PyObject * finalize(PyObject *, PyObject *);
 
-} // of namespace mpi
+} // namespace mpi
 
 #endif
 

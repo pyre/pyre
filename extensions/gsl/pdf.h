@@ -10,115 +10,113 @@
 
 
 // place everything in my private namespace
-namespace gsl {
-    namespace pdf {
-        // the uniform distribution
-        namespace uniform {
-            // sample
-            extern const char * const sample__name__;
-            extern const char * const sample__doc__;
-            PyObject * sample(PyObject *, PyObject *);
+namespace gsl::pdf {
+    // the uniform distribution
+    namespace uniform {
+        // sample
+        extern const char * const sample__name__;
+        extern const char * const sample__doc__;
+        PyObject * sample(PyObject *, PyObject *);
 
-            // density
-            extern const char * const density__name__;
-            extern const char * const density__doc__;
-            PyObject * density(PyObject *, PyObject *);
+        // density
+        extern const char * const density__name__;
+        extern const char * const density__doc__;
+        PyObject * density(PyObject *, PyObject *);
 
-            // fills
-            extern const char * const vector__name__;
-            extern const char * const vector__doc__;
-            PyObject * vector(PyObject *, PyObject *);
+        // fills
+        extern const char * const vector__name__;
+        extern const char * const vector__doc__;
+        PyObject * vector(PyObject *, PyObject *);
 
-            extern const char * const matrix__name__;
-            extern const char * const matrix__doc__;
-            PyObject * matrix(PyObject *, PyObject *);
-        } // of namespace uniform
+        extern const char * const matrix__name__;
+        extern const char * const matrix__doc__;
+        PyObject * matrix(PyObject *, PyObject *);
+    } // namespace uniform
 
-        // the positive uniform distribution
-        namespace uniform_pos {
-            // sample
-            extern const char * const sample__name__;
-            extern const char * const sample__doc__;
-            PyObject * sample(PyObject *, PyObject *);
+    // the positive uniform distribution
+    namespace uniform_pos {
+        // sample
+        extern const char * const sample__name__;
+        extern const char * const sample__doc__;
+        PyObject * sample(PyObject *, PyObject *);
 
-            // fills
-            extern const char * const vector__name__;
-            extern const char * const vector__doc__;
-            PyObject * vector(PyObject *, PyObject *);
+        // fills
+        extern const char * const vector__name__;
+        extern const char * const vector__doc__;
+        PyObject * vector(PyObject *, PyObject *);
 
-            extern const char * const matrix__name__;
-            extern const char * const matrix__doc__;
-            PyObject * matrix(PyObject *, PyObject *);
-        } // of namespace uniform_pos
+        extern const char * const matrix__name__;
+        extern const char * const matrix__doc__;
+        PyObject * matrix(PyObject *, PyObject *);
+    } // namespace uniform_pos
 
-        // the gaussian distribution
-        namespace gaussian {
-            // sample
-            extern const char * const sample__name__;
-            extern const char * const sample__doc__;
-            PyObject * sample(PyObject *, PyObject *);
+    // the gaussian distribution
+    namespace gaussian {
+        // sample
+        extern const char * const sample__name__;
+        extern const char * const sample__doc__;
+        PyObject * sample(PyObject *, PyObject *);
 
-            // density
-            extern const char * const density__name__;
-            extern const char * const density__doc__;
-            PyObject * density(PyObject *, PyObject *);
+        // density
+        extern const char * const density__name__;
+        extern const char * const density__doc__;
+        PyObject * density(PyObject *, PyObject *);
 
-            // fills
-            extern const char * const vector__name__;
-            extern const char * const vector__doc__;
-            PyObject * vector(PyObject *, PyObject *);
+        // fills
+        extern const char * const vector__name__;
+        extern const char * const vector__doc__;
+        PyObject * vector(PyObject *, PyObject *);
 
-            extern const char * const matrix__name__;
-            extern const char * const matrix__doc__;
-            PyObject * matrix(PyObject *, PyObject *);
-        } // of namespace gaussian
+        extern const char * const matrix__name__;
+        extern const char * const matrix__doc__;
+        PyObject * matrix(PyObject *, PyObject *);
+    } // namespace gaussian
 
-        // the ugaussian distribution
-        namespace ugaussian {
-            // sample
-            extern const char * const sample__name__;
-            extern const char * const sample__doc__;
-            PyObject * sample(PyObject *, PyObject *);
+    // the ugaussian distribution
+    namespace ugaussian {
+        // sample
+        extern const char * const sample__name__;
+        extern const char * const sample__doc__;
+        PyObject * sample(PyObject *, PyObject *);
 
-            // density
-            extern const char * const density__name__;
-            extern const char * const density__doc__;
-            PyObject * density(PyObject *, PyObject *);
+        // density
+        extern const char * const density__name__;
+        extern const char * const density__doc__;
+        PyObject * density(PyObject *, PyObject *);
 
-            // fills
-            extern const char * const vector__name__;
-            extern const char * const vector__doc__;
-            PyObject * vector(PyObject *, PyObject *);
+        // fills
+        extern const char * const vector__name__;
+        extern const char * const vector__doc__;
+        PyObject * vector(PyObject *, PyObject *);
 
-            extern const char * const matrix__name__;
-            extern const char * const matrix__doc__;
-            PyObject * matrix(PyObject *, PyObject *);
-        } // of namespace ugaussian
+        extern const char * const matrix__name__;
+        extern const char * const matrix__doc__;
+        PyObject * matrix(PyObject *, PyObject *);
+    } // namespace ugaussian
 
-        // the dirichlet distribution
-        namespace dirichlet {
-            // sample            
-            extern const char * const sample__name__;
-            extern const char * const sample__doc__;
-            PyObject * sample(PyObject *, PyObject *);
+    // the dirichlet distribution
+    namespace dirichlet {
+        // sample
+        extern const char * const sample__name__;
+        extern const char * const sample__doc__;
+        PyObject * sample(PyObject *, PyObject *);
 
-            // density
-            extern const char * const density__name__;
-            extern const char * const density__doc__;
-            PyObject * density(PyObject *, PyObject *);
-            
-            // fills
-            extern const char * const vector__name__;
-            extern const char * const vector__doc__;
-            PyObject * vector(PyObject *, PyObject *);
+        // density
+        extern const char * const density__name__;
+        extern const char * const density__doc__;
+        PyObject * density(PyObject *, PyObject *);
 
-            extern const char * const matrix__name__;
-            extern const char * const matrix__doc__;
-            PyObject * matrix(PyObject *, PyObject *);
-        } // of namespace dirichlet
+        // fills
+        extern const char * const vector__name__;
+        extern const char * const vector__doc__;
+        PyObject * vector(PyObject *, PyObject *);
 
-    } // of namespace pdf
-} // of namespace gsl
+        extern const char * const matrix__name__;
+        extern const char * const matrix__doc__;
+        PyObject * matrix(PyObject *, PyObject *);
+    } // namespace dirichlet
+
+} // namespace gsl::pdf
 
 #endif
 

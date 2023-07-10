@@ -11,6 +11,9 @@ import textwrap
 # support
 import merlin
 
+# my parts
+from .Palette import Palette
+
 
 # declaration
 class Merlin(merlin.plexus, family="merlin.shells.plexus"):
@@ -25,17 +28,26 @@ class Merlin(merlin.plexus, family="merlin.shells.plexus"):
     from .Action import Action as pyre_action
 
     # configurable state
-    builder = merlin.protocols.builder()
+    builder = merlin.protocols.flow.builder()
     builder.doc = "the component that manages the various build products"
 
-    compilers = merlin.properties.tuple(schema=merlin.protocols.compiler())
-    compilers.doc = "the list of compilers to use while building projects"
+    compilers = merlin.protocols.external.compilers()
+    compilers.doc = "the table of compilers for each supported language"
 
-    projects = merlin.properties.tuple(schema=merlin.protocols.project())
+    projects = merlin.properties.tuple(schema=merlin.protocols.assets.project())
     projects.doc = "the list of projects in the current workspace"
 
-    scs = merlin.protocols.scs()
+    scs = merlin.protocols.external.scs()
     scs.doc = "the source control system"
+
+    # metamethods
+    def __init__(self, **kwds):
+        # chain up
+        super().__init__(**kwds)
+        # set up my color palette
+        self.palette = Palette(terminal=self.executive.terminal)
+        # all done
+        return
 
     # framework hooks
     # post instantiation hook
@@ -44,7 +56,7 @@ class Merlin(merlin.plexus, family="merlin.shells.plexus"):
         Go through my traits and force them to materialize
         """
         # give my children their context
-        self.builder.merlin_initialized(plexus=self)
+        self.builder._merlin_initialized(plexus=self)
 
         # and indicate that nothing is amiss
         return []

@@ -11,7 +11,9 @@
 
 
 // a non-trivial example: a sum area table; the calculations are done with raw indices
-int main(int argc, char * argv[]) {
+int
+main(int argc, char * argv[])
+{
     // initialize the journal
     pyre::journal::init(argc, argv);
     pyre::journal::application("grid_sat");
@@ -43,32 +45,32 @@ int main(int argc, char * argv[]) {
     grid_t sat { packing, packing.cells() };
 
     // fill the top corner
-    sat[{0,0}] = grid[{0,0}];
+    sat[{ 0, 0 }] = grid[{ 0, 0 }];
     // fill the top row
-    for (auto col=1; col < shape[1]; ++col) {
+    for (auto col = 1; col < shape[1]; ++col) {
         // just skip the terms that would cause out of bounds accesses
-        sat[{0,col}] = grid[{0,col}] + sat[{0,col-1}];
+        sat[{ 0, col }] = grid[{ 0, col }] + sat[{ 0, col - 1 }];
     }
     // fill the left column
-    for (auto row=1; row < shape[0]; ++row) {
+    for (auto row = 1; row < shape[0]; ++row) {
         // just skip the terms that would cause out of bounds accesses
-        sat[{row,0}] = grid[{row,0}] + sat[{row-1,0}];
+        sat[{ row, 0 }] = grid[{ row, 0 }] + sat[{ row - 1, 0 }];
     }
     // fill the rest of the table
-    for (auto row=1; row < shape[0]; ++row) {
-        for (auto col=1; col < shape[1]; ++col) {
+    for (auto row = 1; row < shape[0]; ++row) {
+        for (auto col = 1; col < shape[1]; ++col) {
             // this is the general form
-            sat[{row,col}] =
-                grid[{row,col}] + sat[{row-1,col}] + sat[{row,col-1}] - sat[{row-1,col-1}];
+            sat[{ row, col }] = grid[{ row, col }] + sat[{ row - 1, col }] + sat[{ row, col - 1 }]
+                              - sat[{ row - 1, col - 1 }];
         }
     }
 
     // verify
     for (const auto & idx : sat.layout()) {
         // the expected value
-        double expected = (idx[0]+1) * (idx[1]+1) * value;
+        double expected = (idx[0] + 1) * (idx[1] + 1) * value;
         // compare
-        assert(( sat[idx] == expected ));
+        assert((sat[idx] == expected));
     }
 
     // all done

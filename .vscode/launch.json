@@ -28,7 +28,7 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "merlin: debug merlin make builder",
+            "name": "merlin: debug make builder",
             "type": "python",
             "request": "launch",
             "python": "${command:python.interpreterPath}",
@@ -38,6 +38,20 @@
                 "lib",
                 "build",
                 "--builder=make"
+            ],
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "merlin: debug journal sources",
+            "type": "python",
+            "request": "launch",
+            "python": "${command:python.interpreterPath}",
+            "cwd": "${workspaceFolder}",
+            "program": "${env:mm_prefix}/bin/merlin",
+            "args": [
+                "lib",
+                "sources",
+                "--only=journal"
             ],
             "console": "integratedTerminal"
         },

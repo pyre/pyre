@@ -82,7 +82,7 @@ namespace mpi {
         extern const char * const min_all__doc__;
         PyObject * min_all(PyObject *, PyObject *);
 
-    } // of namespace communicator
+    } // namespace communicator
 
     namespace cartesian {
         // create a cartesian communicator (MPI_Cart_create)
@@ -94,9 +94,9 @@ namespace mpi {
         extern const char * const coordinates__name__;
         extern const char * const coordinates__doc__;
         PyObject * coordinates(PyObject *, PyObject *);
-    } // of namespace cartesian
+    } // namespace cartesian
 
-} // of namespace mpi
+} // namespace mpi
 
 #endif
 

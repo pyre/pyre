@@ -51,8 +51,8 @@ private:
     // disable
     ANSI(const ANSI &) = delete;
     ANSI(const ANSI &&) = delete;
-    const ANSI & operator= (const ANSI &) = delete;
-    const ANSI & operator= (const ANSI &&) = delete;
+    const ANSI & operator=(const ANSI &) = delete;
+    const ANSI & operator=(const ANSI &&) = delete;
 
     // data
 private:

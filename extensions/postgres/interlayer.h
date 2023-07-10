@@ -10,29 +10,22 @@
 
 
 // place everything in my private namespace
-namespace pyre {
-    namespace extensions {
-        namespace postgres {
+namespace pyre { namespace extensions { namespace postgres {
 
-            // types
-            typedef const char * const string_t;
-            typedef PyObject * (*resultProcessor_t)(PGresult *);
+    // types
+    typedef const char * const string_t;
+    typedef PyObject * (*resultProcessor_t)(PGresult *);
 
-            // other utilities
-            PyObject * buildResultTuple(PGresult *);
+    // other utilities
+    PyObject * buildResultTuple(PGresult *);
 
-            PyObject * processResult(
-                                     string_t command,
-                                     PGresult * result,
-                                     resultProcessor_t processor);
+    PyObject * processResult(string_t command, PGresult * result, resultProcessor_t processor);
 
-            // exceptions
-            PyObject * raiseOperationalError(string_t description);
-            PyObject * raiseProgrammingError(string_t description, string_t command);
+    // exceptions
+    PyObject * raiseOperationalError(string_t description);
+    PyObject * raiseProgrammingError(string_t description, string_t command);
 
-        } // of namespace postgres
-    } // of namespace extensions
-} // of namespace pyre
+}}} // namespace pyre::extensions::postgres
 
 #endif
 

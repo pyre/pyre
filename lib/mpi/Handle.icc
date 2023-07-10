@@ -11,8 +11,7 @@
 
 // interface
 template <typename Resource>
-pyre::mpi::Handle<Resource>::
-operator pyre::mpi::Handle<Resource>::handle_t () const
+pyre::mpi::Handle<Resource>::operator pyre::mpi::Handle<Resource>::handle_t() const
 {
     // get and return the mpi handle
     return _shared->handle();
@@ -21,8 +20,7 @@ operator pyre::mpi::Handle<Resource>::handle_t () const
 
 // destructor
 template <typename Resource>
-pyre::mpi::Handle<Resource>::
-~Handle()
+pyre::mpi::Handle<Resource>::~Handle()
 {
     // notify the shareable that I am done with it
     if (_shared->release() == 0) {
@@ -35,8 +33,7 @@ pyre::mpi::Handle<Resource>::
 
 // the default constructor
 template <typename Resource>
-pyre::mpi::Handle<Resource>::
-Handle(handle_t handle, bool immortal) :
+pyre::mpi::Handle<Resource>::Handle(handle_t handle, bool immortal) :
     _shared(new shared_t(handle, immortal))
 {
     // grab a reference to the shared handle
@@ -45,8 +42,7 @@ Handle(handle_t handle, bool immortal) :
 
 // the copy constructor
 template <typename Resource>
-pyre::mpi::Handle<Resource>::
-Handle(const pyre::mpi::Handle<Resource> & other) :
+pyre::mpi::Handle<Resource>::Handle(const pyre::mpi::Handle<Resource> & other) :
     _shared(other._shared)
 {
     // grab a reference to the shared handle
@@ -56,8 +52,7 @@ Handle(const pyre::mpi::Handle<Resource> & other) :
 // operator =
 template <typename Resource>
 pyre::mpi::Handle<Resource> &
-pyre::mpi::Handle<Resource>::
-operator = (const pyre::mpi::Handle<Resource> & other)
+pyre::mpi::Handle<Resource>::operator=(const pyre::mpi::Handle<Resource> & other)
 {
     // if {other} and I point to different shared handles
     if (other._shared != _shared) {
@@ -76,5 +71,5 @@ operator = (const pyre::mpi::Handle<Resource> & other)
     return *this;
 }
 
-# endif
+#endif
 // end of file

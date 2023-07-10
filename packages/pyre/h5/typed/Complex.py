@@ -5,6 +5,7 @@
 
 
 # types
+from .. import libh5
 from .. import disktypes
 from .. import memtypes
 
@@ -32,7 +33,7 @@ class Complex:
         # and return the raw contents
         return value
 
-    def _pyre_push(self, src, dest):
+    def _pyre_push(self, src, dst: libh5.DataSet):
         """
         Push my cache value to disk
         """

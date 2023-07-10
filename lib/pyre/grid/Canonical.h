@@ -41,17 +41,13 @@ public:
     // metamethods
 public:
     // constructor that deduces {_strides} and {_nudge}
-    constexpr explicit
-    Canonical(shape_const_reference shape,
-              index_const_reference origin = index_type::zero(),
-              order_const_reference order = order_type::c());
+    constexpr explicit Canonical(
+        shape_const_reference shape, index_const_reference origin = index_type::zero(),
+        order_const_reference order = order_type::c());
     // constructor that requires a detailed description of the packing; useful for making slices
-    constexpr
-    Canonical(shape_const_reference shape,
-              index_const_reference origin,
-              order_const_reference order,
-              strides_const_reference strides,
-              difference_type nudge);
+    constexpr Canonical(
+        shape_const_reference shape, index_const_reference origin, order_const_reference order,
+        strides_const_reference strides, difference_type nudge);
 
     // interface
 public:
@@ -99,8 +95,7 @@ public:
     constexpr auto end() const -> index_iterator;
 
     // use an existing layout to derive a new one
-    constexpr auto
-    box(index_const_reference, shape_const_reference) const -> canonical_type;
+    constexpr auto box(index_const_reference, shape_const_reference) const -> canonical_type;
 
     // static interface
 public:
@@ -110,8 +105,8 @@ public:
     // implementation details: static helpers
 protected:
     // given a {shape} and an {order}, infer the axis strides assuming tight packing
-    static constexpr auto _initStrides(shape_const_reference,
-                                       order_const_reference) -> strides_type;
+    static constexpr auto _initStrides(shape_const_reference, order_const_reference)
+        -> strides_type;
     // given the packing {strides}, compute the shift that maps the lowest possible index to
     // zero offset
     static constexpr auto _initShift(index_const_reference, strides_const_reference)
@@ -120,12 +115,12 @@ protected:
     // implementation details: data
 private:
     // supplied by the caller
-    const shape_type _shape;         // my shape
-    const order_type _order;         // the packing order of the axes
-    const index_type _origin;        // the smallest allowable index value
+    const shape_type _shape;  // my shape
+    const order_type _order;  // the packing order of the axes
+    const index_type _origin; // the smallest allowable index value
     // deduced
-    const strides_type _strides;     // the vector of strides for axis
-    const difference_type _nudge;    // offset correction when {_origin} is not {zero}
+    const strides_type _strides;  // the vector of strides for axis
+    const difference_type _nudge; // offset correction when {_origin} is not {zero}
 
     // metamethods with default implementations
 public:
@@ -133,9 +128,9 @@ public:
     ~Canonical() = default;
     // constructors
     Canonical(const Canonical &) = default;
-    Canonical & operator= (const Canonical &) = default;
+    Canonical & operator=(const Canonical &) = default;
     Canonical(Canonical &&) = default;
-    Canonical & operator= (Canonical &&) = default;
+    Canonical & operator=(Canonical &&) = default;
 };
 
 

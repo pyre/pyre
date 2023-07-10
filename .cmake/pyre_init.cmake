@@ -28,12 +28,6 @@ function(pyre_cmakeInit)
   # quiet install
   set(CMAKE_INSTALL_MESSAGE LAZY PARENT_SCOPE)
 
-  # if the user asked for CUDA support
-  if (WITH_CUDA)
-    # turn it on
-    enable_language(CUDA)
-  endif()
-
   # all done
 endfunction(pyre_cmakeInit)
 

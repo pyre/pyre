@@ -12,7 +12,9 @@ import merlin
 
 
 # base class for all supported languages
-class Language(merlin.component, implements=merlin.protocols.language, internal=True):
+class Language(
+    merlin.component, implements=merlin.protocols.languages.language, internal=True
+):
     """
     A category of source artifacts, usually associated with a family of processing workflows
     """
@@ -66,6 +68,15 @@ class Language(merlin.component, implements=merlin.protocols.language, internal=
             return None
         # if it does, invoke it
         return handler(language=self, **kwds)
+
+    def report(self):
+        """
+        Generate a report
+        """
+        # sign on
+        yield f"{self.name}:"
+        # all done
+        return
 
     # framework hooks
     @classmethod

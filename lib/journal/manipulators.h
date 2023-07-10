@@ -112,14 +112,14 @@ template <typename severityT, template <class> typename proxyT>
 auto
 pyre::journal::indent(Channel<severityT, proxyT> & channel) -> Channel<severityT, proxyT> &
 {
-    // ask the channel entry to mark the end of a line of output
+    // push in by one step
     return channel.indent();
 }
 
 auto
 pyre::journal::indent(dent_t level) -> Dent
 {
-    // easy enough
+    // push in by {level} steps
     return Dent(level);
 }
 
@@ -128,14 +128,14 @@ template <typename severityT, template <class> typename proxyT>
 auto
 pyre::journal::outdent(Channel<severityT, proxyT> & channel) -> Channel<severityT, proxyT> &
 {
-    // ask the channel entry to mark the end of a line of output
+    // pull out by one step
     return channel.outdent();
 }
 
 auto
 pyre::journal::outdent(dent_t level) -> Dent
 {
-    // easy enough
+    // pull out by {level} steps
     return Dent(-level);
 }
 
@@ -273,7 +273,8 @@ pyre::journal::endl(decoratorT decorator) -> Flush<decoratorT>
 
 
 // recognize the locator special signature and convert it into a flushable
-auto pyre::journal::endl(__HERE_DECL__) -> Flush<Locator>
+auto
+pyre::journal::endl(__HERE_DECL__) -> Flush<Locator>
 {
     return Flush(Locator(__HERE_ARGS__));
 }

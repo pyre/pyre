@@ -25,12 +25,12 @@ class Mkdir(Factory, family="merlin.factories.mkdir"):
     name.doc = "the name of the subdirectory to create"
 
     # input
-    parent = merlin.protocols.folder.input()
+    parent = merlin.protocols.assets.folder.input()
     parent.default = None
     parent.doc = "the parent directory"
 
     # output
-    child = merlin.protocols.folder.output()
+    child = merlin.protocols.assets.folder.output()
     child.default = None
     child.doc = "the child directory i create"
 

@@ -12,7 +12,9 @@
 
 
 // verify that we can manipulate the error inventory state
-int main() {
+int
+main()
+{
     // make a default inventory
     pyre::journal::error_t error("error");
 

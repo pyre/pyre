@@ -15,16 +15,18 @@ using firewall_t = pyre::journal::firewall_t;
 
 
 // verify the basic channel state
-int main() {
+int
+main()
+{
     // make a firewall
     firewall_t channel("tests.journal.firewall");
 
     // check its name
-    assert (channel.name() == "tests.journal.firewall");
+    assert(channel.name() == "tests.journal.firewall");
     // by default, it should be active
-    assert (channel);
+    assert(channel);
     // and fatal
-    assert (channel.fatal());
+    assert(channel.fatal());
 
     // all done
     return 0;

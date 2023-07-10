@@ -10,16 +10,12 @@
 
 
 // metamethods
-pyre::journal::Device::
-Device(const name_type & name) :
-    _name(name)
-{}
+pyre::journal::Device::Device(const name_type & name) : _name(name) {}
 
 
 // interface
 auto
-pyre::journal::Device::
-name() const -> const name_type &
+pyre::journal::Device::name() const -> const name_type &
 {
     // easy enogh
     return _name;

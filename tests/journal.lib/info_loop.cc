@@ -16,7 +16,9 @@ using trash_t = pyre::journal::trash_t;
 
 
 // make sure repeated use doesn't leave junk behind
-int main() {
+int
+main()
+{
     // make an info channel
     info_t channel("tests.journal.info");
 
@@ -24,7 +26,7 @@ int main() {
     channel.device<trash_t>();
 
     // inject repeatedly
-    for (auto i=0; i<10; ++i) {
+    for (auto i = 0; i < 10; ++i) {
         channel << "i: " << i << pyre::journal::endl;
     }
 

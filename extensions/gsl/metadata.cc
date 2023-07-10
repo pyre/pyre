@@ -18,8 +18,7 @@
 const char * const gsl::copyright__name__ = "copyright";
 const char * const gsl::copyright__doc__ = "the module copyright string";
 PyObject *
-gsl::
-copyright(PyObject *, PyObject *)
+gsl::copyright(PyObject *, PyObject *)
 {
     const char * const copyright_note = "gsl: (c) 1998-2023 orthologue";
     return Py_BuildValue("s", copyright_note);
@@ -30,12 +29,12 @@ copyright(PyObject *, PyObject *)
 const char * const gsl::license__name__ = "license";
 const char * const gsl::license__doc__ = "the module license string";
 PyObject *
-gsl::
-license(PyObject *, PyObject *)
+gsl::license(PyObject *, PyObject *)
 {
     const char * const license_string =
         "\n"
-        "    gsl " GSL_VERSION "\n"
+        "    gsl " GSL_VERSION
+        "\n"
         "    Copyright (c) 1998-2023 orthologue\n"
         "    All Rights Reserved\n"
         "\n"
@@ -76,8 +75,7 @@ license(PyObject *, PyObject *)
 const char * const gsl::version__name__ = "version";
 const char * const gsl::version__doc__ = "the module version string";
 PyObject *
-gsl::
-version(PyObject *, PyObject *)
+gsl::version(PyObject *, PyObject *)
 {
     const char * const version_string = GSL_VERSION;
     return Py_BuildValue("s", version_string);

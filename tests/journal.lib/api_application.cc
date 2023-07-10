@@ -11,7 +11,9 @@
 
 
 // verify that the initial chronicler global state is as expected
-int main() {
+int
+main()
+{
     // make a name
     pyre::journal::value_t app("api");
     // register the name
@@ -20,7 +22,7 @@ int main() {
     // get the chronicler notes
     auto & notes = pyre::journal::chronicler_t::notes();
     // verify that the key is present and has the right value
-    assert (notes.at("application") == app);
+    assert(notes.at("application") == app);
 
     // all done
     return 0;

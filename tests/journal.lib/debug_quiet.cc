@@ -11,7 +11,9 @@
 
 
 // exercise the channel manipulators
-int main() {
+int
+main()
+{
     // quiet {debug} channels by sending the output to a trash can
     pyre::journal::debug_t::quiet();
 
@@ -27,7 +29,8 @@ int main() {
         // some metadata
         << pyre::journal::note("time", "now")
         // a message with a newline
-        << "debug channel:" << pyre::journal::newline
+        << "debug channel:"
+        << pyre::journal::newline
         // another message and a flush
         << "    hello world!" << pyre::journal::endl;
 

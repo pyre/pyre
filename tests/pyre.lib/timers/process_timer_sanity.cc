@@ -15,13 +15,15 @@ using proctimer_t = pyre::timers::process_timer_t;
 
 
 // compile time sanity check: make sure the header file is accessible
-int main() {
+int
+main()
+{
     // make a timer
     proctimer_t timer("tests.timer");
     // make sure it knows its name
-    assert (timer.name() == "tests.timer");
+    assert(timer.name() == "tests.timer");
     // and it starts out inactive
-    assert (timer.active() == false);
+    assert(timer.active() == false);
 
     // nothing to do
     return 0;

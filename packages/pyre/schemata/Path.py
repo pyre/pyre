@@ -51,5 +51,17 @@ class Path(Schema):
         # represent as a string
         return self.string(value)
 
+    # metamethods
+    def __init__(self, default=object, **kwds):
+        # adjust the default; carefully, so we don't all end up using the same global container
+        # checking for {None} is not appropriate here; the user may want {None} as the default
+        # value; we need a way to know that {default} was not supplied: use a TYPE (in this
+        # case object) as the marker
+        default = primitives.path() if default is object else default
+        # chain up with my default
+        super().__init__(default=default, **kwds)
+        # all done
+        return
+
 
 # end of file

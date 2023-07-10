@@ -28,6 +28,10 @@
 #include "Index.h"
 #include "IndexIterator.h"
 #include "Canonical.h"
+#ifdef HAVE_COMPACT_PACKINGS
+#include "Symmetric.h"
+#include "Diagonal.h"
+#endif
 // the grid
 #include "Grid.h"
 #include "GridIterator.h"

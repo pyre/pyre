@@ -18,7 +18,7 @@ pyre::py::memory::heap(py::module & m, classname_t name, docstring_t docstring)
     using heap_t = pyre::memory::heap_t<cellT>;
 
     // build the class record
-    auto cls = shared_holder_t<heap_t>(m, name, docstring);
+    auto cls = shared_holder_t<heap_t>(m, name, py::buffer_protocol(), docstring);
 
     // constructor
     cls.def(
@@ -33,6 +33,8 @@ pyre::py::memory::heap(py::module & m, classname_t name, docstring_t docstring)
     bindConstStorage<heap_t>(cls);
     // read/write access
     bindStorage<heap_t>(cls);
+    // read+write buffer protocol
+    bindBufferProtocol<heap_t>(cls);
 
     // all done
     return;

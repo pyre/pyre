@@ -13,8 +13,7 @@
 
 // copyright
 PyObject *
-pyre::extensions::host::
-copyright(PyObject *, PyObject *)
+pyre::extensions::host::copyright(PyObject *, PyObject *)
 {
     const char * const copyright_note = "host: (c) 1998-2023 Michael A.G. Aïvázis";
     return Py_BuildValue("s", copyright_note);
@@ -23,8 +22,7 @@ copyright(PyObject *, PyObject *)
 
 // version
 PyObject *
-pyre::extensions::host::
-version(PyObject *, PyObject *)
+pyre::extensions::host::version(PyObject *, PyObject *)
 {
     const char * const version_string = "1.0";
     return Py_BuildValue("s", version_string);

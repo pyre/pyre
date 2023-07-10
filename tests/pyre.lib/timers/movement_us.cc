@@ -23,7 +23,9 @@ using movement_t = pyre::timers::movement_t<pyre::timers::wall_clock_t>;
 
 
 // verify that we can manipulate the movement state
-int main() {
+int
+main()
+{
     // make a movement
     movement_t movement;
     // and start it
@@ -41,9 +43,7 @@ int main() {
     // activate it
     // channel.activate();
     // and show me
-    channel
-        << "elapsed time: " << movement.us()
-        << pyre::journal::endl(__HERE__);
+    channel << "elapsed time: " << movement.us() << pyre::journal::endl(__HERE__);
 
     // all done
     return 0;

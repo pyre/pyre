@@ -11,6 +11,8 @@
 
 // the common storage binders
 #include "bindings.h"
+// buffer protocol
+#include "buffer_protocol.h"
 // my maps
 #include "maps.h"
 

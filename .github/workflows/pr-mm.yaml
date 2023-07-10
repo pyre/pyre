@@ -1,0 +1,176 @@
+# -*- yaml -*-
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2023 all rights reserved
+
+name: pr-mm
+on:
+  pull_request:
+jobs:
+  # build and test the ref that launched this action
+  build:
+    name: >-
+      ${{matrix.target}}
+      python-${{matrix.python}}+${{matrix.compiler}}
+      on ${{matrix.os}}
+    runs-on: ${{matrix.os}}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-22.04]
+        target: [debug, opt]
+        python: ["3.11"]
+        compiler: ["gcc-12", "clang-14"]
+        # define the names of the compilers
+        include:
+          - compiler: gcc-12
+            suite: gcc
+            suiteVersion: 12
+            cc: gcc-12
+            cxx: g++-12
+          - compiler: clang-14
+            suite: clang
+            suiteVersion: 14
+            cc: clang-14
+            cxx: clang++-14
+
+    steps:
+      - name: ${{matrix.os}} refresh
+        run: |
+          echo " -- update the package cache"
+          sudo apt update
+          echo " -- upgradables"
+          sudo apt list --upgradable
+          echo " -- upgrade"
+          sudo apt dist-upgrade
+          echo " -- install our dependencies"
+          sudo apt install -y make openssh-server libgsl-dev libopenmpi-dev libhdf5-dev
+
+      - name: python ${{matrix.python}} setup
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{matrix.python}}
+
+      - name: install dependencies
+        run: |
+          python${pythonVersion} -m pip install --upgrade pip
+          pip3 install distro graphene numpy pybind11 PyYAML
+        env:
+          pythonVersion: ${{matrix.python}}
+
+      - name: list system packages
+        run: |
+          dpkg -l
+
+      - name: versions
+        run: |
+          echo " -- platform tag from python"
+          python${pythonVersion} -c "import sys; print(sys.platform)"
+          echo " -- distribution tag from python"
+          python${pythonVersion} -c "import distro; print(distro.linux_distribution(full_distribution_name=False))"
+          echo " -- make"
+          make --version
+          echo " -- python"
+          python${pythonVersion} --version
+          echo "    -- prefix"
+          python${pythonVersion}-config --prefix
+          echo "    -- includes"
+          python${pythonVersion}-config --includes
+          echo "    -- libs"
+          python${pythonVersion}-config --libs
+          echo " -- ${{matrix.cc}}"
+          ${{matrix.cc}} --version
+          echo " -- ${{matrix.cxx}}"
+          ${{matrix.cxx}} --version
+        env:
+          pythonVersion: ${{matrix.python}}
+
+      - name: external dependencies
+        run: |
+          echo " -- gsl"
+          sudo dpkg-query -L libgsl-dev
+          echo " -- openmpi"
+          sudo dpkg-query -L libopenmpi-dev
+          echo " -- hdf5"
+          sudo dpkg-query -L libhdf5-dev
+
+      - name: locations of python packages
+        run: |
+          echo " -- distro"
+          pip3 show distro
+          echo " -- graphene"
+          pip3 show graphene
+          echo " -- numpy"
+          pip3 show numpy
+          echo " -- its headers"
+          find ${pythonLocation}/lib/python${pythonVersion}/site-packages/numpy/core/include
+          echo " -- pybind11"
+          pip3 show pybind11
+          echo " -- its headers"
+          find ${pythonLocation}/lib/python${pythonVersion}/site-packages/pybind11
+          echo " -- yaml"
+          pip3 show PyYAML
+        env:
+          pythonVersion: ${{matrix.python}}
+
+      - name: clone mm
+        run: |
+          echo " -- cloning mm"
+          git clone https://github.com/aivazis/mm
+
+      - name: checkout pyre
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          path: 'pyre'
+
+      - name: mm diagnostics
+        run: |
+          echo " -- switching to the pyre home directory"
+          cd pyre
+          echo " -- checking whether mm can run from here"
+          echo now at: ${PWD}
+          echo mm: ${mm}
+          ${mm} --help
+          ${mm} host.info
+          ${mm} builder.info
+          ${mm} make.info
+          echo " -- verifying external packages"
+          ${mm} extern.gsl.info
+          ${mm} extern.mpi.info
+          ${mm} extern.hdf5.info
+          ${mm} extern.numpy.info
+          ${mm} extern.pybind11.info
+        env:
+          mm: python3 ${{github.workspace}}/mm/mm.py --config=.github/matrix/mm.pfg
+          target: ${{matrix.target}}
+          suite: ${{matrix.suite}}
+          suiteVersion: ${{matrix.suiteVersion}}
+          pythonVersion: ${{matrix.python}}
+
+      - name: build pyre
+        run: |
+          echo " -- switching to the pyre home directory"
+          cd pyre
+          echo " -- building pyre"
+          ${mm}
+        env:
+          mm: python3 ${{github.workspace}}/mm/mm.py --config=.github/matrix/mm.pfg
+          target: ${{matrix.target}}
+          suite: ${{matrix.suite}}
+          suiteVersion: ${{matrix.suiteVersion}}
+          pythonVersion: ${{matrix.python}}
+
+      - name: test pyre
+        run: |
+          echo " -- switching to the pyre home directory"
+          cd pyre
+          echo " -- testing pyre"
+          ${mm} tests
+        env:
+          mm: python3 ${{github.workspace}}/mm/mm.py --config=.github/matrix/mm.pfg
+          target: ${{matrix.target}}
+          suite: ${{matrix.suite}}
+          suiteVersion: ${{matrix.suiteVersion}}
+          pythonVersion: ${{matrix.python}}
+#
+# end of file

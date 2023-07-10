@@ -15,11 +15,7 @@ class Identifier:
     """
 
     # metamethods
-    def __init__(
-        self,
-        id: typing.Any = None,
-        **kwds,
-    ):
+    def __init__(self, id: typing.Any = None, **kwds):
         # chain up
         super().__init__(**kwds)
         # the handle to my HDF5 object

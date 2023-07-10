@@ -9,8 +9,7 @@
 
 
 // information about the location of the channel invocation
-class pyre::journal::Locator
-{
+class pyre::journal::Locator {
     // types
 public:
     // the data held by {Locator} are used to create message notes

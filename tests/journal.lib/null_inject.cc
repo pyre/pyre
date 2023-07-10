@@ -9,7 +9,9 @@
 
 
 // exercise injections into a null diagnostic
-int main() {
+int
+main()
+{
     // make a null channel
     pyre::journal::null_t channel("tests.journal.null");
 

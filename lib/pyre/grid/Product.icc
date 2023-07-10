@@ -11,10 +11,7 @@
 // metamethods
 template <class containerT>
 template <typename... argT>
-constexpr
-pyre::grid::Product<containerT>::
-Product(argT... idx) :
-    rep_type(idx...)
+constexpr pyre::grid::Product<containerT>::Product(argT... idx) : rep_type(idx...)
 {}
 
 
@@ -22,8 +19,7 @@ Product(argT... idx) :
 template <class containerT>
 template <class orderT>
 constexpr auto
-pyre::grid::Product<containerT>::
-begin(const orderT & order) -> iterator<orderT>
+pyre::grid::Product<containerT>::begin(const orderT & order) -> iterator<orderT>
 {
     // make an iterator that points to the beginning and return it
     return iterator<orderT> { *this, order.begin() };
@@ -33,8 +29,7 @@ begin(const orderT & order) -> iterator<orderT>
 template <class containerT>
 template <class orderT>
 constexpr auto
-pyre::grid::Product<containerT>::
-begin(const orderT & order) const -> const_iterator<orderT>
+pyre::grid::Product<containerT>::begin(const orderT & order) const -> const_iterator<orderT>
 {
     // make an iterator that points to the beginning and return it
     return const_iterator<orderT> { *this, order.begin() };
@@ -44,8 +39,7 @@ begin(const orderT & order) const -> const_iterator<orderT>
 template <class containerT>
 template <class orderT>
 constexpr auto
-pyre::grid::Product<containerT>::
-end(const orderT & order) -> iterator<orderT>
+pyre::grid::Product<containerT>::end(const orderT & order) -> iterator<orderT>
 {
     // make an iterator that points to the end and return it
     return iterator<orderT> { *this, order.end() };
@@ -55,8 +49,7 @@ end(const orderT & order) -> iterator<orderT>
 template <class containerT>
 template <class orderT>
 constexpr auto
-pyre::grid::Product<containerT>::
-end(const orderT & order) const -> const_iterator<orderT>
+pyre::grid::Product<containerT>::end(const orderT & order) const -> const_iterator<orderT>
 {
     // make an iterator that points to the end and return it
     return const_iterator<orderT> { *this, order.end() };
@@ -67,8 +60,7 @@ end(const orderT & order) const -> const_iterator<orderT>
 template <class containerT>
 template <class orderT>
 constexpr auto
-pyre::grid::Product<containerT>::
-rbegin(const orderT & order) -> reverse_iterator<orderT>
+pyre::grid::Product<containerT>::rbegin(const orderT & order) -> reverse_iterator<orderT>
 {
     // make an iterator that points to the beginning and return it
     return reverse_iterator<orderT> { *this, order.rbegin() };
@@ -78,8 +70,8 @@ rbegin(const orderT & order) -> reverse_iterator<orderT>
 template <class containerT>
 template <class orderT>
 constexpr auto
-pyre::grid::Product<containerT>::
-rbegin(const orderT & order) const -> const_reverse_iterator<orderT>
+pyre::grid::Product<containerT>::rbegin(const orderT & order) const
+    -> const_reverse_iterator<orderT>
 {
     // make an iterator that points to the beginning and return it
     return const_reverse_iterator<orderT> { *this, order.rbegin() };
@@ -89,8 +81,7 @@ rbegin(const orderT & order) const -> const_reverse_iterator<orderT>
 template <class containerT>
 template <class orderT>
 constexpr auto
-pyre::grid::Product<containerT>::
-rend(const orderT & order) -> reverse_iterator<orderT>
+pyre::grid::Product<containerT>::rend(const orderT & order) -> reverse_iterator<orderT>
 {
     // make an iterator that points to the end and return it
     return reverse_iterator<orderT> { *this, order.rend() };
@@ -100,8 +91,7 @@ rend(const orderT & order) -> reverse_iterator<orderT>
 template <class containerT>
 template <class orderT>
 constexpr auto
-pyre::grid::Product<containerT>::
-rend(const orderT & order) const -> const_reverse_iterator<orderT>
+pyre::grid::Product<containerT>::rend(const orderT & order) const -> const_reverse_iterator<orderT>
 {
     // make an iterator that points to the end and return it
     return const_reverse_iterator<orderT> { *this, order.rend() };
@@ -112,8 +102,7 @@ rend(const orderT & order) const -> const_reverse_iterator<orderT>
 template <class containerT>
 template <class orderT>
 constexpr auto
-pyre::grid::Product<containerT>::
-cbegin(const orderT & order) const -> const_iterator<orderT>
+pyre::grid::Product<containerT>::cbegin(const orderT & order) const -> const_iterator<orderT>
 {
     // make an iterator that points to the beginning and return it
     return const_iterator<orderT> { *this, order.begin() };
@@ -123,8 +112,7 @@ cbegin(const orderT & order) const -> const_iterator<orderT>
 template <class containerT>
 template <class orderT>
 constexpr auto
-pyre::grid::Product<containerT>::
-cend(const orderT & order) const -> const_iterator<orderT>
+pyre::grid::Product<containerT>::cend(const orderT & order) const -> const_iterator<orderT>
 {
     // make an iterator that points to the end and return it
     return const_iterator<orderT> { *this, order.end() };
@@ -134,8 +122,8 @@ cend(const orderT & order) const -> const_iterator<orderT>
 template <class containerT>
 template <class orderT>
 constexpr auto
-pyre::grid::Product<containerT>::
-crbegin(const orderT & order) const -> const_reverse_iterator<orderT>
+pyre::grid::Product<containerT>::crbegin(const orderT & order) const
+    -> const_reverse_iterator<orderT>
 {
     // make an iterator that points to the beginning and return it
     return const_reverse_iterator<orderT> { *this, order.rbegin() };
@@ -145,8 +133,7 @@ crbegin(const orderT & order) const -> const_reverse_iterator<orderT>
 template <class containerT>
 template <class orderT>
 constexpr auto
-pyre::grid::Product<containerT>::
-crend(const orderT & order) const -> const_reverse_iterator<orderT>
+pyre::grid::Product<containerT>::crend(const orderT & order) const -> const_reverse_iterator<orderT>
 {
     // make an iterator that points to the end and return it
     return const_reverse_iterator<orderT> { *this, order.rend() };

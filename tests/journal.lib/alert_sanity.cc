@@ -16,7 +16,9 @@ using chronicler_t = pyre::journal::chronicler_t;
 
 
 // exercise the {alert} renderer
-int main() {
+int
+main()
+{
     // grab the global metadata table from chronicler
     auto & globals = chronicler_t::notes();
     // set some metadata
@@ -26,14 +28,9 @@ int main() {
     // use a channel to build a document and its metadata
     info_t channel("alert");
     // put some stuff in it; careful not to flush so we don't lose everything
-    channel
-        << pyre::journal::at(__HERE__)
-        << pyre::journal::note("time", "now")
-        << pyre::journal::note("device", "null")
-        << "simon says:"
-        << pyre::journal::newline
-        << "hello world!"
-        << pyre::journal::newline;
+    channel << pyre::journal::at(__HERE__) << pyre::journal::note("time", "now")
+            << pyre::journal::note("device", "null") << "simon says:" << pyre::journal::newline
+            << "hello world!" << pyre::journal::newline;
 
     // make a palette
     alert_t::palette_type palette;

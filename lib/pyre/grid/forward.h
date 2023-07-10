@@ -60,9 +60,15 @@ namespace pyre::grid {
     // an ordered index generator
     template <class packingT>
     class IndexIterator;
-    // the packing strategy
+    // the canonical packing strategy
     template <int N, template <typename, std::size_t> class containerT>
     class Canonical;
+    // the symmetric packing strategy
+    template <int N, template <typename, std::size_t> class containerT>
+    class Symmetric;
+    // the diagonal packing strategy
+    template <int N, template <typename, std::size_t> class containerT>
+    class Diagonal;
 
     // bringing it all together
     template <class packingT, class storageT>
@@ -104,6 +110,12 @@ namespace pyre::grid {
         -> Rep<containerY<int, std::tuple_size_v<containerT1> + std::tuple_size_v<containerT2>>>;
 
     // scaling by integers
+    template <class containerT>
+    constexpr auto operator*(std::size_t, const Rep<containerT> &) -> Rep<containerT>;
+
+    template <class containerT>
+    constexpr auto operator*(const Rep<containerT> &, std::size_t) -> Rep<containerT>;
+
     template <class containerT>
     constexpr auto operator*(int, const Rep<containerT> &) -> Rep<containerT>;
 

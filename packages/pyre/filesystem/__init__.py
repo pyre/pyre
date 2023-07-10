@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2023 all rights reserved
-#
 
 
 # external
 import re
+
 # support
 from .. import primitives
 
@@ -18,7 +17,10 @@ def virtual(**kwds):
     """
     Build a virtual filesystem
     """
+    # get the virtual filesystem factory
     from .Filesystem import Filesystem
+
+    # make one and return it
     return Filesystem(**kwds)
 
 
@@ -37,7 +39,6 @@ def local(root, listdir=None, recognizer=None, **kwds):
     # build a recognizer
     recognizer = stat() if recognizer is None else recognizer
 
-
     # ensure that {root} is an absolute path so that we can protect the filesystem
     # representation in case the application manipulates the current working directory of the
     # process
@@ -48,26 +49,29 @@ def local(root, listdir=None, recognizer=None, **kwds):
     # if the location doesn't exist
     if not info:
         # complain
-        raise MountPointError(uri=root, error='mount point not found')
+        raise MountPointError(uri=root, error="mount point not found")
 
     # if the root is a directory
     if info.isFolder:
         # access the local filesystem factory
         from .Local import Local
+
         # build one
         return Local(metadata=info, walker=listdir, recognizer=recognizer, **kwds)
 
     # perhaps it is a zipfile
     import zipfile
+
     # so check, and if so
     if zipfile.is_zipfile(str(root)):
         # access the zip filesystem factory
         from .Zip import Zip
+
         # build one and return it
         return Zip(metadata=info)
 
     # out of ideas
-    raise MountPointError(uri=root, error='invalid mount point')
+    raise MountPointError(uri=root, error="invalid mount point")
 
 
 def zip(root, **kwds):
@@ -80,10 +84,11 @@ def zip(root, **kwds):
     # check whether the location exists
     if not root.exists():
         # and if not, complain
-        raise MountPointError(uri=root, error='mount point not found')
+        raise MountPointError(uri=root, error="mount point not found")
 
     # access the zip package
     import zipfile
+
     # if {root} does not point to a valid archive
     if not zipfile.is_zipfile(str(root)):
         # complain
@@ -93,6 +98,7 @@ def zip(root, **kwds):
     info = stat().recognize(root)
     # access the zip filesystem factory
     from .Zip import Zip
+
     # build one and return it
     return Zip(metadata=info)
 
@@ -106,6 +112,7 @@ def naked(**kwds):
     """
     # get the constructor
     from .Naked import Naked
+
     # build one and return it
     return Naked(**kwds)
 
@@ -117,20 +124,25 @@ def finder(**kwds):
     pairs that match an optional {pattern}
     """
     from .Finder import Finder
+
     return Finder(**kwds)
+
 
 def treeExplorer(**kwds):
     """
     Build an explorer that creates a report of filesystem contents formatted like a tree
     """
     from .TreeExplorer import TreeExplorer
+
     return TreeExplorer(**kwds)
+
 
 def simpleExplorer(**kwds):
     """
     Build an explorer that creates a simple report of filesystem contents
     """
     from .SimpleExplorer import SimpleExplorer
+
     return SimpleExplorer(**kwds)
 
 
@@ -140,13 +152,16 @@ def stat():
     Build a recognizer of the contents of local filesystems based on {os.stat}
     """
     from .Stat import Stat
+
     return Stat
+
 
 def walker():
     """
     Build an object that can list the contents of locally mounted folders
     """
     from .Walker import Walker
+
     return Walker
 
 
@@ -159,6 +174,7 @@ from .exceptions import MountPointError
 #     to change the runtime behavior of these objects
 _metaclass_Node = type
 
+
 def debug():
     """
     Support for debugging the filesystem package
@@ -167,6 +183,7 @@ def debug():
     # attach {Extent} as the metaclass of Node and Filesystem so we can verify that all
     # instances of these classes are properly garbage collected
     from ..patterns.Extent import Extent
+
     global _metaclass_Node
     _metaclass_Node = Extent
     # all done

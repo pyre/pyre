@@ -1,9 +1,7 @@
 // -*- C++ -*-
 //
-// michael a.g. aïvázis
-// orthologue
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
 // (c) 1998-2023 all rights reserved
-//
 
 // code guard
 #if !defined(pyre_geometry_Brick_icc)
@@ -11,40 +9,39 @@
 #endif
 
 // inlines
-template <std::size_t dim, typename nodeT> template <typename... cornerT>
-pyre::geometry::Brick<dim, nodeT>::
-Brick(cornerT... corner) :
-    _corners{corner...}
+template <std::size_t dim, typename nodeT>
+template <typename... cornerT>
+pyre::geometry::Brick<dim, nodeT>::Brick(cornerT... corner) : _corners { corner... }
 {}
 
 template <std::size_t dim, typename nodeT>
 constexpr auto
-pyre::geometry::Brick<dim, nodeT>::
-dimension() {
+pyre::geometry::Brick<dim, nodeT>::dimension()
+{
     // my node type knows this one
     return node_type::dimension();
 }
 
 template <std::size_t dim, typename nodeT>
 constexpr auto
-pyre::geometry::Brick<dim, nodeT>::
-intrinsicDimension() {
+pyre::geometry::Brick<dim, nodeT>::intrinsicDimension()
+{
     // i know this one
     return dim;
 }
 
 template <std::size_t dim, typename nodeT>
 constexpr auto
-pyre::geometry::Brick<dim, nodeT>::
-size() {
+pyre::geometry::Brick<dim, nodeT>::size()
+{
     // ask my point container
     return 1 << dimension();
 }
 
 template <std::size_t dim, typename nodeT>
 auto
-pyre::geometry::Brick<dim, nodeT>::
-interior(const node_type & p) const {
+pyre::geometry::Brick<dim, nodeT>::interior(const node_type & p) const
+{
     // i return a tuple of integers indicating the relative position of {p}
     std::array<int, dim> flag {};
     // rough check: get my bounding box
@@ -54,7 +51,7 @@ interior(const node_type & p) const {
     auto & high = bbox.second;
 
     // go through each axis
-    for (size_t axis=0; axis < dimension(); ++axis) {
+    for (size_t axis = 0; axis < dimension(); ++axis) {
         // if the point coordinate is less than my bounding box
         if (p[axis] < low[axis]) {
             // mark as such
@@ -80,16 +77,16 @@ interior(const node_type & p) const {
 
 template <std::size_t dim, typename nodeT>
 double
-pyre::geometry::Brick<dim, nodeT>::
-eigenlen() const {
+pyre::geometry::Brick<dim, nodeT>::eigenlen() const
+{
     // what?
     return 0;
 }
 
 template <std::size_t dim, typename nodeT>
 auto
-pyre::geometry::Brick<dim, nodeT>::
-box() const {
+pyre::geometry::Brick<dim, nodeT>::box() const
+{
     // make a trivial one
     box_type box { _corners[0].data(), _corners[0].data() };
     // enlarge it to fit me
@@ -100,15 +97,15 @@ box() const {
 
 template <std::size_t dim, typename nodeT>
 auto
-pyre::geometry::Brick<dim, nodeT>::
-fit(box_type & box) const {
+pyre::geometry::Brick<dim, nodeT>::fit(box_type & box) const
+{
     // unpack
     auto & low = box.first;
     auto & high = box.second;
     // go through my nodes
     for (auto & p : *this) {
         // and all axes
-        for (size_t axis=0; axis < p.dimension(); ++axis) {
+        for (size_t axis = 0; axis < p.dimension(); ++axis) {
             // compare with {low}
             if (p[axis] < low[axis]) {
                 // and adjust if necessary
@@ -128,24 +125,24 @@ fit(box_type & box) const {
 
 template <std::size_t dim, typename nodeT>
 auto
-pyre::geometry::Brick<dim, nodeT>::
-operator[](size_type index) const {
+pyre::geometry::Brick<dim, nodeT>::operator[](size_type index) const
+{
     // delegate
     return _corners[index];
 }
 
 template <std::size_t dim, typename nodeT>
 auto
-pyre::geometry::Brick<dim, nodeT>::
-begin() const {
+pyre::geometry::Brick<dim, nodeT>::begin() const
+{
     // delegate
     return _corners.cbegin();
 }
 
 template <std::size_t dim, typename nodeT>
 auto
-pyre::geometry::Brick<dim, nodeT>::
-end() const {
+pyre::geometry::Brick<dim, nodeT>::end() const
+{
     // delegate
     return _corners.cend();
 }
@@ -153,28 +150,28 @@ end() const {
 // global operators
 template <std::size_t dim, typename nodeT>
 auto
-pyre::geometry::
-operator==(const brick_t<dim, nodeT> & b1, const brick_t<dim, nodeT> & b2) {
+pyre::geometry::operator==(const brick_t<dim, nodeT> & b1, const brick_t<dim, nodeT> & b2)
+{
     // delegate
     return std::equal(b1.begin(), b1.end(), b2.begin());
 }
 
 template <std::size_t dim, typename nodeT>
 auto
-pyre::geometry::
-operator!=(const brick_t<dim, nodeT> & b1, const brick_t<dim, nodeT> & b2) {
+pyre::geometry::operator!=(const brick_t<dim, nodeT> & b1, const brick_t<dim, nodeT> & b2)
+{
     // delegate
     return !(b1 == b2);
 }
 
 template <std::size_t dim, typename nodeT>
 auto &
-pyre::geometry::
-operator<<(std::ostream & stream, const pyre::geometry::Brick<dim, nodeT> & brick) {
+pyre::geometry::operator<<(std::ostream & stream, const pyre::geometry::Brick<dim, nodeT> & brick)
+{
     // initialize; do it in this scope scope so we can use the iterator after the loop
     auto b = brick.begin();
     // inject up to the last point
-    for (; b != brick.end()-1; ++b) {
+    for (; b != brick.end() - 1; ++b) {
         stream << "(" << *b << "), ";
     }
     // and now the last one

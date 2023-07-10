@@ -12,7 +12,9 @@
 
 
 // verify the layout of a grid on the heap
-int main(int argc, char * argv[]) {
+int
+main(int argc, char * argv[])
+{
     // initialize the journal
     pyre::journal::init(argc, argv);
     pyre::journal::application("grid_heap_sanity");
@@ -36,22 +38,20 @@ int main(int argc, char * argv[]) {
     using grid_t = pyre::grid::grid_t<pack_t, storage_t>;
 
     // packing: 1024x1024x8
-    pack_t packing { {1024, 1024, 8} };
+    pack_t packing { { 1024, 1024, 8 } };
     // instantiate the grid
     grid_t grid { packing, packing.cells() };
 
     // show me
-    channel
-        << "value: " << sizeof(grid_t::value_type) << " bytes, "
-        << "spacing: " << (&grid[{0,0,1}] - &grid[{0,0,0}]) << " cell, "
-        << "spacing: " << (&grid[1] - &grid[0]) << " cell"
-        << pyre::journal::endl;
+    channel << "value: " << sizeof(grid_t::value_type) << " bytes, "
+            << "spacing: " << (&grid[{ 0, 0, 1 }] - &grid[{ 0, 0, 0 }]) << " cell, "
+            << "spacing: " << (&grid[1] - &grid[0]) << " cell" << pyre::journal::endl;
 
     // verify that the address of the second element is the same regardless of the way it is
     // computed
-    assert(( &grid[{0,0,1}] == &grid[1] ));
+    assert((&grid[{ 0, 0, 1 }] == &grid[1]));
     // verify that the distance between consecutive entries is precisely one cell
-    assert(( (&grid[{0,0,1}] - &grid[{0,0,0}]) == 1 ));
+    assert(((&grid[{ 0, 0, 1 }] - &grid[{ 0, 0, 0 }]) == 1));
 
     // all done
     return 0;

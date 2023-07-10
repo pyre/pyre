@@ -198,6 +198,33 @@ function(pyre_test_driver testfile)
 endfunction()
 
 
+# register a test case based on a compiled driver
+function(pyre_test_driver_cxx20 testfile)
+
+  # generate the name of the testcase
+  pyre_test_testcase(testname ${testfile} ${ARGN})
+  # generate the name of the target
+  pyre_target(target ${testfile})
+
+  # schedule it to be compiled
+  add_executable(${target} ${testfile})
+  # with some macros
+  target_compile_definitions(${target} PRIVATE PYRE_CORE)
+  # link against my libraries
+  target_link_libraries(${target} PUBLIC pyre journal)
+  # specify the directory for the target compilation products
+  pyre_target_directory(${target} tests)
+  # request c++20 to build the target
+  target_compile_features(${target} PUBLIC cxx_std_20)
+  target_compile_definitions(${target} PRIVATE WITH_CXX20)
+
+  # make it a test case
+  add_test(NAME ${testname} COMMAND ${target} ${ARGN})
+
+  # all done
+endfunction()
+
+
 # register a test case based on an existing compiled driver
 function(pyre_test_driver_case testfile)
   # generate the name of the testcase
@@ -294,7 +321,7 @@ function(pyre_test_driver_cuda testfile)
   # with some macros
   target_compile_definitions(${target} PRIVATE PYRE_CORE WITH_CUDA)
   # link against my libraries
-  target_link_libraries(${target} PUBLIC pyre journal ${CUDA_LIBRARIES})
+  target_link_libraries(${target} PUBLIC pyre journal cuda)
 
   # make it a test case
   add_test(NAME ${testname} COMMAND ${target} ${ARGN})

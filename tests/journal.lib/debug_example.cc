@@ -11,7 +11,9 @@
 
 
 // exercise the channel manipulators
-int main() {
+int
+main()
+{
     // make a debug channel
     pyre::journal::debug_t channel("tests.journal.debug");
 
@@ -27,7 +29,8 @@ int main() {
         // some metadata
         << pyre::journal::note("time", "now")
         // a message with a newline
-        << "debug channel:" << pyre::journal::newline
+        << "debug channel:"
+        << pyre::journal::newline
         // another message and a flush
         << "    hello world!" << pyre::journal::endl;
 

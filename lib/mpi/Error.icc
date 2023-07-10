@@ -13,16 +13,11 @@
 
 
 // destructor
-pyre::mpi::Error::
-~Error()
- {}
+pyre::mpi::Error::~Error() {}
 
 
 // constructor
-pyre::mpi::Error::Error(int code):
-    std::exception(),
-    _code(code)
-{}
+pyre::mpi::Error::Error(int code) : std::exception(), _code(code) {}
 
 
 // interface

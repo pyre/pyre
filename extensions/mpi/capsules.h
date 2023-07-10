@@ -15,14 +15,14 @@ namespace mpi {
     namespace communicator {
         const char * const capsule_t = "mpi.communicator";
         void free(PyObject *);
-    }
+    } // namespace communicator
     // group
     namespace group {
         const char * const capsule_t = "mpi.group";
         void free(PyObject *);
-    }
+    } // namespace group
 
-}
+} // namespace mpi
 #endif
 
 // end of file

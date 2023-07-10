@@ -4,8 +4,6 @@
 // (c) 1998-2023 all rights reserved
 
 
-// for the build system
-#include <portinfo>
 // support
 #include <cassert>
 // access to the CUDA memory allocators

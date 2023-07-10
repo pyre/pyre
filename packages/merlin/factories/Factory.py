@@ -9,7 +9,9 @@ import merlin
 
 
 # base class for merlin factories
-class Factory(merlin.flow.factory, implements=merlin.protocols.producer, internal=True):
+class Factory(
+    merlin.flow.factory, implements=merlin.protocols.flow.producer, internal=True
+):
     """
     The base class for {merlin} factories
     """

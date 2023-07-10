@@ -22,7 +22,7 @@ namespace mpi {
     extern const char * const version__doc__;
     PyObject * version(PyObject *, PyObject *);
 
-} // of namespace mpi
+} // namespace mpi
 
 #endif
 

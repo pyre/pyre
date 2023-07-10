@@ -19,7 +19,9 @@ using registrar_t = pyre::timers::registrar_t<movement_t>;
 
 
 // exercise the timer state index
-int main() {
+int
+main()
+{
     // make an index
     registrar_t registrar;
 
@@ -28,7 +30,7 @@ int main() {
     // start the movement
     m1.start();
     // it should now be active
-    assert (m1.active() == true);
+    assert(m1.active() == true);
 
     // nap duration
     auto nap = 50ms;
@@ -38,15 +40,15 @@ int main() {
     // make another proxy to the same movement
     movement_t & m2(registrar.lookup("test.registrar"));
     // verify it is running
-    assert (m2.active() == true);
+    assert(m2.active() == true);
     // stop it
     m2.stop();
 
     // verify that the two timers are now stopped
-    assert (m1.active() == false);
-    assert (m2.active() == false);
+    assert(m1.active() == false);
+    assert(m2.active() == false);
     // and that they show the same accumulated time
-    assert (m1.read() == m2.read());
+    assert(m1.read() == m2.read());
 
     // all done
     return 0;
