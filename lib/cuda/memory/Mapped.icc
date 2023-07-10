@@ -14,7 +14,7 @@ template <class T, bool isConst>
 pyre::cuda::memory::Mapped<T, isConst>::Mapped(cell_count_type cells) :
     // the cuda {malloc} api is not RAII friendly, so we initialize with a
     // {nullptr} and replace it with the actual allocation
-    _cpu_data { nullptr },
+    _host_data { nullptr },
     _device_data { nullptr },
     _cells { cells }
 {
@@ -99,12 +99,12 @@ pyre::cuda::memory::Mapped<T, isConst>::Mapped(cell_count_type cells) :
     };
 
     // replace the {nullptr} with the new block and register the deallocator
-    _cpu_data.reset(spot, destructor);
+    _host_data.reset(spot, destructor);
 }
 
 template <class T, bool isConst>
 pyre::cuda::memory::Mapped<T, isConst>::Mapped(handle_type handle, cell_count_type cells) :
-    _cpu_data { handle },
+    _host_data { handle },
     _cells { cells }
 {}
 
@@ -133,7 +133,7 @@ auto
 pyre::cuda::memory::Mapped<T, isConst>::data() const -> pointer
 {
     // return the raw data pointer
-    return _cpu_data.get();
+    return _host_data.get();
 }
 
 // get the shared pointer
@@ -142,7 +142,7 @@ auto
 pyre::cuda::memory::Mapped<T, isConst>::handle() const -> handle_type
 {
     // easy
-    return _cpu_data;
+    return _host_data;
 }
 
 // get the device pointer

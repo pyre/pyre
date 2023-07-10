@@ -63,7 +63,7 @@ public:
 
     // implementation details: data
 private:
-    handle_type _cpu_data;
+    handle_type _host_data;
     pointer _device_data;
     const cell_count_type _cells;
 
