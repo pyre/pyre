@@ -15,7 +15,7 @@ import {{ Context }} from './context'
 export default () => {{
     // flexing support
     const {{
-        panels, mainExtent, etFlexingPanel, setDownstreamPanels
+        panels, mainExtent, flexingPanel, setFlexingPanel, setDownstreamPanels
     }} = React.useContext(Context)
 
     // when flexing ends
