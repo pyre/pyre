@@ -9,7 +9,7 @@
 
 
 // support
-#include "cuda/memory/public.h"
+#include "cuda/memory.h"
 
 
 #endif
