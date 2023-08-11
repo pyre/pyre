@@ -139,6 +139,7 @@ function(pyre_pyreModule)
     extensions/pyre/grid/packings.cc
     extensions/pyre/grid/shapes.cc
     extensions/pyre/memory/__init__.cc
+    extensions/pyre/memory/heaps.cc
     extensions/pyre/memory/maps.cc
     extensions/pyre/timers/__init__.cc
     extensions/pyre/timers/process_timers.cc
@@ -250,7 +251,7 @@ endfunction()
 
 # add definitions to compilation of file
 function(pyre_add_definitions driverfile)
-  
+
   # the argument list is the list of definitions
   set(definitions ${ARGN})
 
