@@ -376,7 +376,7 @@ pyre::tensor::matrix_row(const vector_t<D, T> & v) -> matrix_t<D, D, T>
         return A;
     };
     // fill row K of a zero matrix with vector v
-    return _fill_matrix_row(matrix_result_t::zero, v, make_integer_sequence<D> {});
+    return _fill_matrix_row(zero<matrix_result_t>, v, make_integer_sequence<D> {});
 }
 
 // builds a square matrix with all zeros except the K-th column is equal to v
@@ -395,7 +395,7 @@ pyre::tensor::matrix_column(const vector_t<D, T> & v) -> matrix_t<D, D, T>
         return A;
     };
     // fill column K of a zero matrix with vector v
-    return _fill_matrix_column(matrix_result_t::zero, v, make_integer_sequence<D> {});
+    return _fill_matrix_column(zero<matrix_result_t>, v, make_integer_sequence<D> {});
 }
 
 // builds a square matrix with all zeros except the diagonal is equal to v
@@ -980,7 +980,7 @@ constexpr auto
 pyre::tensor::eigenvectors(const diagonal_matrix_t<D, T> & A) -> auto
 {
     // the canonical basis is the set of eigenvectors
-    return diagonal_matrix_t<D, T>::identity;
+    return identity<diagonal_matrix_t<D, T>>;
 }
 
 // extract row {I} of a matrix
