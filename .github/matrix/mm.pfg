@@ -9,6 +9,11 @@ mm:
     ; compilers
     compilers = {pyre.environ.suite}, python/python3
 
+    ; final products
+    prefix = ./products
+    ; intermediate build products
+    bldroot = ./build
+
     ; other settings
     ; the location of the configuration file
     runcfg = .github/matrix
