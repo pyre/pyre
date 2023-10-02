@@ -162,6 +162,16 @@ jobs:
 
       - name: build pyre
         run: |
+          echo " -- pwd"
+          pwd
+          echo " -- creating ~/.pyre"
+          mkdir ~/.pyre
+          echo " -- copying the mm configuration file"
+          cp .github/matrix/mm.pfg ~/.pyre
+          echo " -- creating ~/.mm"
+          mkdir ~/.mm
+          echo " -- copying the configuration file there"
+          cp .github/matrix/config.mm ~/.mm
           echo " -- switching to the pyre home directory"
           cd pyre
           echo " -- building pyre"
@@ -175,6 +185,8 @@ jobs:
 
       - name: test pyre
         run: |
+          echo " -- pwd"
+          pwd
           echo " -- switching to the pyre home directory"
           cd pyre
           echo " -- testing pyre"
@@ -185,5 +197,6 @@ jobs:
           suite: ${{matrix.suite}}
           suiteVersion: ${{matrix.suiteVersion}}
           pythonVersion: ${{matrix.python}}
+          LD_LIBRARY_PATH: /home/runner/products/lib
 #
 # end of file
