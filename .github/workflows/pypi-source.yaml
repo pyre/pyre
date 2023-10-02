@@ -1,4 +1,4 @@
-name: pypi
+name: pypi-source
 
 # publish when a (published) GitHub Release is created, use the following:
 on:
@@ -10,24 +10,6 @@ on:
       - published
 
 jobs:
-  build_wheels:
-    name: build wheel on ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-20.04, macos-11]
-        python: [cp38, cp39, cp310, cp311]
-
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: build wheels
-        uses: pypa/cibuildwheel@v2.11.4
-
-      - uses: actions/upload-artifact@v3
-        with:
-          path: ./wheelhouse/*.whl
-
   build_sdist:
     name: build source distribution
     runs-on: ubuntu-latest
@@ -42,7 +24,7 @@ jobs:
           path: dist/*.tar.gz
 
   upload_pypi:
-    needs: [build_wheels, build_sdist]
+    needs: [build_sdist]
     runs-on: ubuntu-latest
     # publish when a GitHub Release is created, use the following rule:
     if: github.event_name == 'release' && github.event.action == 'published'
@@ -54,7 +36,7 @@ jobs:
           name: artifact
           path: dist
 
-      - uses: pypa/gh-action-pypi-publish@v1.5.0
+      - uses: pypa/gh-action-pypi-publish@v1.8.10
         with:
           user: __token__
           password: ${{ secrets.pypi_password }}

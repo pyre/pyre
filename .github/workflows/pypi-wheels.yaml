@@ -1,0 +1,47 @@
+name: pypi-wheels
+
+# publish when a (published) GitHub Release is created, use the following:
+on:
+  push:
+    branches:
+      - main
+  release:
+    types:
+      - published
+
+jobs:
+  build_wheels:
+    name: build wheel on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-20.04, macos-11]
+        python: [cp38, cp39, cp310, cp311]
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: build wheels
+        uses: pypa/cibuildwheel@v2.16.1
+
+      - uses: actions/upload-artifact@v3
+        with:
+          path: ./wheelhouse/*.whl
+
+  upload_pypi:
+    needs: [build_wheels]
+    runs-on: ubuntu-latest
+    # publish when a GitHub Release is created, use the following rule:
+    if: github.event_name == 'release' && github.event.action == 'published'
+    steps:
+      - uses: actions/download-artifact@v3
+        with:
+          # unpacks default artifact into dist/
+          # if `name: artifact` is omitted, the action will create extra parent dir
+          name: artifact
+          path: dist
+
+      - uses: pypa/gh-action-pypi-publish@v1.8.10
+        with:
+          user: __token__
+          password: ${{ secrets.pypi_password }}
