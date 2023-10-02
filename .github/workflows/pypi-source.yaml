@@ -39,14 +39,13 @@ jobs:
     # to publish on every push
     if: github.event_name == 'push'
     steps:
-      - uses: actions/download-artifact@v3
+      - name: unpack
+        uses: actions/download-artifact@v3
         with:
           # unpacks default artifact into dist/
           # if `name: artifact` is omitted, the action will create extra parent dir
           name: artifact
           path: dist
 
-      - uses: pypa/gh-action-pypi-publish@release/v1
-        with:
-          user: __token__
-          password: ${{ secrets.pypi_password }}
+      - name: upload
+        uses: pypa/gh-action-pypi-publish@release/v1
