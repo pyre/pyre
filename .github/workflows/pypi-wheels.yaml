@@ -45,7 +45,7 @@ jobs:
     permissions:
       id-token: write
     # publish only when a GitHub release is created
-    # if: github.event_name == 'release' && github.event.action == 'published'
+    if: github.event_name == 'release' && github.event.action == 'published'
     steps:
       - uses: actions/download-artifact@v3
         with:
