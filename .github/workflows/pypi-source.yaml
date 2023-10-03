@@ -35,9 +35,7 @@ jobs:
     name: upload source to pypi
     needs: [build]
     runs-on: ubuntu-latest
-    environment:
-      name: pypi
-      url: https://pypi.org/p/pyre
+    environment: pypi
     permissions:
       id-token: write
     # to publish when a GitHub release is created, use the following rule:
