@@ -12,6 +12,7 @@ jobs:
     name: build {{ matrix.python }} wheel on ${{ matrix.platforms[1] }}
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
         platforms:
           - [ubuntu-20.04, manylinux_x86_64]
