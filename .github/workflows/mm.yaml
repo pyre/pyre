@@ -137,10 +137,22 @@ jobs:
 
       - name: checkout pyre
         run: |
-          echo " -- switching to the pyre home directory"
+          echo " -- runner home"
+          pwd
+          echo " -- switching to the pyre source directory"
           cd pyre
+          echo " -- pyre source directory"
+          pwd
           echo " -- checking out the correct ref"
           git checkout ${GITHUB_SHA}
+          echo " -- creating ~/.pyre"
+          mkdir ~/.pyre
+          echo " -- copying the mm configuration file"
+          cp .github/matrix/mm.pfg ~/.pyre
+          echo " -- creating ~/.mm"
+          mkdir ~/.mm
+          echo " -- copying the package configuration file there"
+          cp .github/matrix/config.mm ~/.mm
           echo " -- checking whether mm can run from here"
           echo now at: ${PWD}
           echo mm: ${mm}
@@ -163,20 +175,8 @@ jobs:
 
       - name: build pyre
         run: |
-          echo " -- runner home"
-          pwd
           echo " -- switching to the pyre source directory"
           cd pyre
-          echo " -- pyre source directory"
-          pwd
-          echo " -- creating ~/.pyre"
-          mkdir ~/.pyre
-          echo " -- copying the mm configuration file"
-          cp .github/matrix/mm.pfg ~/.pyre
-          echo " -- creating ~/.mm"
-          mkdir ~/.mm
-          echo " -- copying the configuration file there"
-          cp .github/matrix/config.mm ~/.mm
           echo " -- building pyre"
           ${mm}
         env:
@@ -200,6 +200,6 @@ jobs:
           suite: ${{matrix.suite}}
           suiteVersion: ${{matrix.suiteVersion}}
           pythonVersion: ${{matrix.python}}
-          LD_LIBRARY_PATH: /home/runner/products/lib
+          LD_LIBRARY_PATH: /home/runner/work/products/lib
 #
 # end of file
