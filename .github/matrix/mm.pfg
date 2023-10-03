@@ -10,9 +10,9 @@ mm:
     compilers = {pyre.environ.suite}, python/python3
 
     ; final products
-    prefix = {pyre.env.HOME}/products
+    prefix = /home/runner/work/products
     ; intermediate build products
-    bldroot = {pyre.env.HOME}/build
+    bldroot = /home/runner/work/build
 
     ; other settings
     ; the location of the configuration file
