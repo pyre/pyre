@@ -19,7 +19,7 @@ build-backend = "setuptools.build_meta"
 # install time
 [project]
 name = "pyre"
-version = "1.12.2"
+version = "1.12.3"
 description = "A framework for building scientific applications"
 readme = "README.md"
 authors = [
