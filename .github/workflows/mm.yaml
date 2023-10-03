@@ -163,7 +163,11 @@ jobs:
 
       - name: build pyre
         run: |
-          echo " -- pwd"
+          echo " -- runner home"
+          pwd
+          echo " -- switching to the pyre source directory"
+          cd pyre
+          echo " -- pyre source directory"
           pwd
           echo " -- creating ~/.pyre"
           mkdir ~/.pyre
@@ -173,8 +177,6 @@ jobs:
           mkdir ~/.mm
           echo " -- copying the configuration file there"
           cp .github/matrix/config.mm ~/.mm
-          echo " -- switching to the pyre home directory"
-          cd pyre
           echo " -- building pyre"
           ${mm}
         env:
