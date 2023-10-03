@@ -23,14 +23,8 @@ jobs:
       - name: checkout
         uses: actions/checkout@v4
 
-      - name: setup python
-        uses: actions/setup-python@v4
-
-      - name: install cibuildwheel
-        run: python3 -m pip install cibuildwheel==2.16.1
-
       - name: build wheels
-        run: python3 -m cibuildwheel --output-dir wheelhouse
+        uses: pypa/cibuildwheel@v2.16.1
 
       - name: archive
         uses: actions/upload-artifact@v3
