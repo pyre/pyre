@@ -4,6 +4,7 @@
 
 name: mm
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
