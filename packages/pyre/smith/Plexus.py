@@ -37,7 +37,7 @@ class Plexus(ProjectTemplate, family="pyre.smith.projects.plexus"):
     blacklist = re.compile(
         "|".join(
             [
-                ".+\.png",
+                r".+\.png",
             ]
         )
     )
