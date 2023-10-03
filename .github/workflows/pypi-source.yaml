@@ -14,7 +14,7 @@ jobs:
     name: build source distribution
     runs-on: ubuntu-latest
     steps:
-      - name: chec out
+      - name: checkout
         uses: actions/checkout@v4
 
       - name: set up python
