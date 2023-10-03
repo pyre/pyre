@@ -9,7 +9,7 @@ on:
 
 jobs:
   build:
-    name: build {{ matrix.python }} wheel on ${{ matrix.platforms[1] }}
+    name: build ${{ matrix.python }} wheel on ${{ matrix.platforms[1] }}
     runs-on: ${{ matrix.platforms[0] }}
     strategy:
       fail-fast: false
@@ -27,7 +27,7 @@ jobs:
       - name: build wheels
         uses: pypa/cibuildwheel@v2.16.1
         env:
-          CIBW_BUILD: ${{ matrix.python }}-{{ matrix.platforms[1] }}
+          CIBW_BUILD: ${{ matrix.python }}-${{ matrix.platforms[1] }}
           CIBW_SKIP: pp*
 
       - name: archive
