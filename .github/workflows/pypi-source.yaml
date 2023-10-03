@@ -3,9 +3,6 @@ name: pypi-source
 # publish when a (published) GitHub Release is created, use the following:
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - main
   release:
     types:
       - published
@@ -39,12 +36,8 @@ jobs:
     environment: pypi
     permissions:
       id-token: write
-    # to publish when a GitHub release is created, use the following rule:
-    # if: github.event_name == 'release' && github.event.action == 'published'
-    # to publish when a tagged commit is pushed
-    # if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags')
-    # to publish on every push
-    if: github.event_name == 'push'
+    # publish only when a GitHub release is created
+    if: github.event_name == 'release' && github.event.action == 'published'
     steps:
       - name: unpack
         uses: actions/download-artifact@v3
