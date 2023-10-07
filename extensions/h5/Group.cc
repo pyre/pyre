@@ -271,6 +271,9 @@ pyre::h5::py::group(py::module & m)
         // keep the group around while its iterator is in use
         py::keep_alive<0, 1>());
 
+    // access to the group attributes
+    attributes(cls);
+
     // all done
     return;
 }

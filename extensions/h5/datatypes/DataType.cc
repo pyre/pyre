@@ -128,6 +128,9 @@ pyre::h5::py::datatypes::datatype(py::module & m)
         // the docstring
         "decode the binary object description");
 
+    // access to the datatype attributes
+    attributes(cls);
+
     // all done
     return;
 }

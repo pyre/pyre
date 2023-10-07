@@ -25,6 +25,8 @@ namespace pyre::h5::py {
     void fcpl(py::module &);
     void lapl(py::module &);
     void lcpl(py::module &);
+    // attributes
+    void attribute(py::module &);
     // datasets
     void dataspace(py::module &);
     void dataset(py::module &);
@@ -32,6 +34,11 @@ namespace pyre::h5::py {
     void group(py::module &);
     void file(py::module &);
 } // namespace pyre::h5::py
+
+
+// get the helpers
+#include "attributes.h"
+#include "data.h"
 
 
 #endif

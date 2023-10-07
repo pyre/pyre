@@ -8,6 +8,9 @@
 #define h5_py_datatypes_forward_h
 
 
+// the helpers
+#include "../attributes.h"
+
 // the local binders
 namespace pyre::h5::py::datatypes {
     // datatype classes

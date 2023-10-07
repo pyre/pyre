@@ -39,6 +39,7 @@ PYBIND11_MODULE(h5, m)
 
     // object bindings
     pyre::h5::py::dataspace(m);
+    pyre::h5::py::attribute(m);
     pyre::h5::py::dataset(m);
     pyre::h5::py::group(m);
     pyre::h5::py::file(m);

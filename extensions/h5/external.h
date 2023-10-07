@@ -75,6 +75,8 @@ namespace pyre::h5::py {
     using DataSpace = H5::DataSpace;
     // locations derive from {Identifier}
     using Location = H5::H5Location; // pure virtual
+    // attributes derive from {Location}
+    using Attribute = H5::Attribute;
     // objects derive from {Location}
     using Object = H5::H5Object; // pure virtual
     // groups derive from {Object}
