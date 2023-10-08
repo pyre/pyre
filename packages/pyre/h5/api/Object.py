@@ -7,6 +7,9 @@
 # superclass
 from .Location import Location
 
+# my parts
+from .Attribute import Attribute
+
 # typing
 import typing
 from .. import schema
@@ -17,6 +20,16 @@ class Object(Location):
     """
     The base class for all publicly visible h5 objects
     """
+
+    # attribute access
+    def pyre_attribute(self, name):
+        """
+        Retrieve the attribute with the given {name}
+        """
+        # retrieve the attribute handle
+        id = self._pyre_id.getAttribute(name=name)
+        # dress it up and return
+        return Attribute(id=id)
 
     # metamethods
     def __init__(self, layout: typing.Optional[schema.descriptor] = None, **kwds):
