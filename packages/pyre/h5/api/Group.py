@@ -26,14 +26,6 @@ class Group(Object):
     A container of h5 objects
     """
 
-    # interface
-    def pyre_member(self, name):
-        """
-        Retrieve the descriptor for the member with the given {name}
-        """
-        # easy enough
-        return self._pyre_descriptor(path=name)
-
     # metamethods
     def __init__(
         self,
@@ -47,7 +39,15 @@ class Group(Object):
         # all done
         return
 
-    # attribute access
+    # interface
+    def _pyre_member(self, name):
+        """
+        Retrieve the descriptor for the member with the given {name}
+        """
+        # easy enough
+        return self._pyre_descriptor(path=name)
+
+    # member access
     def __getattribute__(self, name: str) -> typing.Any:
         """
         Look up {name}

@@ -21,16 +21,6 @@ class Object(Location):
     The base class for all publicly visible h5 objects
     """
 
-    # attribute access
-    def pyre_attribute(self, name):
-        """
-        Retrieve the attribute with the given {name}
-        """
-        # retrieve the attribute handle
-        id = self._pyre_id.getAttribute(name=name)
-        # dress it up and return
-        return Attribute(id=id)
-
     # metamethods
     def __init__(self, layout: typing.Optional[schema.descriptor] = None, **kwds):
         # chain up
@@ -39,6 +29,17 @@ class Object(Location):
         self._pyre_layout = layout
         # all done
         return
+
+    # interface
+    # attribute access
+    def _pyre_attribute(self, name):
+        """
+        Retrieve the attribute with the given {name}
+        """
+        # retrieve the attribute handle
+        id = self._pyre_id.getAttribute(name=name)
+        # dress it up and return
+        return Attribute(id=id)
 
     # framework hooks
     # properties
