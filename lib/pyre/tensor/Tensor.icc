@@ -170,15 +170,14 @@ template <typename T, class packingT, int... I>
 constexpr bool
 pyre::tensor::Tensor<T, packingT, I...>::is_symmetric() const
 {
-    return std::is_same_v<packingT, pyre::grid::symmetric_t<N>>
-        || std::is_same_v<packingT, pyre::grid::diagonal_t<N>>;
+    return symmetric;
 }
 
 template <typename T, class packingT, int... I>
 constexpr bool
 pyre::tensor::Tensor<T, packingT, I...>::is_diagonal() const
 {
-    return std::is_same_v<packingT, pyre::grid::diagonal_t<N>>;
+    return diagonal;
 }
 
 template <typename T, class packingT, int... I>
