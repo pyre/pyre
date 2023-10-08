@@ -7,6 +7,9 @@
 # the local exceptions
 from . import exceptions
 
+# the metaclass
+from .Schema import Schema as schema
+
 # the structural elements
 from .Descriptor import Descriptor as descriptor
 from .Group import Group as group
@@ -29,6 +32,15 @@ list = dataset.list
 tuple = dataset.tuple
 # derived
 from ..typed.Strings import Strings as strings
+
+
+# convenience schema factory
+def make(name, bases=(group,), attributes={}, **kwds):
+    """
+    Make a new schema class
+    """
+    # easy enough
+    return schema(name, bases, attributes, **kwds)
 
 
 # end of file
