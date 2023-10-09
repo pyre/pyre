@@ -50,7 +50,7 @@ pyre::h5::py::attribute(py::module & m)
         "identifierType",
         // the implementation
         [](const py::object &) -> H5I_type_t {
-            // i am a group
+            // i am an attribute
             return H5I_ATTR;
         },
         // the docstring
