@@ -34,7 +34,7 @@ class Attribute(Location):
     @property
     def cell(self):
         """
-        The dataset cell type, a DataSetType enum
+        The attribute cell type, a DataSetType enum
         """
         # easy enough
         return self._pyre_id.cell
@@ -42,7 +42,7 @@ class Attribute(Location):
     @property
     def disksize(self):
         """
-        The on-disk size of the dataset
+        The on-disk size of the attribute
         """
         # easy enough
         return self._pyre_id.disksize
@@ -50,7 +50,7 @@ class Attribute(Location):
     @property
     def memsize(self):
         """
-        The in-memory size of the dataset
+        The in-memory size of the attribute
         """
         # easy enough
         return self._pyre_id.memsize
@@ -58,7 +58,7 @@ class Attribute(Location):
     @property
     def shape(self):
         """
-        The dataset shape
+        The attribute shape
         """
         # easy enough
         return self._pyre_id.shape
@@ -66,7 +66,7 @@ class Attribute(Location):
     @property
     def space(self):
         """
-        The dataset space
+        The attribute space
         """
         # easy enough
         return self._pyre_id.space
@@ -74,7 +74,7 @@ class Attribute(Location):
     @property
     def type(self):
         """
-        The dataset type
+        The attribute type
         """
         # easy enough
         return self._pyre_id.type
@@ -93,7 +93,7 @@ class Attribute(Location):
             # chain up
             return super()._pyre_identify(authority=authority, **kwds)
         # otherwise, invoke the handler
-        return handler(dataset=self, **kwds)
+        return handler(attribute=self, **kwds)
 
 
 # end of file
