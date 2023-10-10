@@ -32,6 +32,13 @@ class Object(Location):
 
     # interface
     # attribute access
+    def _pyre_attributes(self):
+        """
+        Retrieve the names of all the attributes
+        """
+        # easy enough
+        return self._pyre_id.attributes()
+
     def _pyre_attribute(self, name):
         """
         Retrieve the attribute with the given {name}
@@ -40,6 +47,31 @@ class Object(Location):
         id = self._pyre_id.getAttribute(name=name)
         # dress it up and return
         return Attribute(id=id)
+
+    def _pyre_hasAttribute(self, name):
+        """
+        Check whether an attribute by the given {name} exists
+        """
+        # easy enough
+        return self._pyre_id.hasAttribute(name=name)
+
+    def _pyre_createAttribute(self):
+        """
+        Create an attribute given type and layout information
+        """
+
+    def _pyre_renameAttribute(self, old, new):
+        """
+        Rename the {old} attribute to {new}
+        """
+        # easy enough
+        return self._pyre_id.renameAttribute(old=old, new=new)
+
+    def _pyre_removeAttribute(self, name):
+        """
+        Remove the attribute with the given {name}
+        """
+        return self._pyre_id.removeAttribute(name=name)
 
     # framework hooks
     # properties
