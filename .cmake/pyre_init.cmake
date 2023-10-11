@@ -40,16 +40,8 @@ endfunction(pyre_cmakeInit)
 
 # setup python
 function(pyre_pythonInit)
-  # ask the executable for the module suffix
-  execute_process(
-    COMMAND ${Python_EXECUTABLE} -c
-        "from distutils.sysconfig import *; print(get_config_var('EXT_SUFFIX'))"
-    RESULT_VARIABLE PYTHON3_SUFFIX_STATUS
-    OUTPUT_VARIABLE PYTHON3_SUFFIX
-    OUTPUT_STRIP_TRAILING_WHITESPACE
-    )
-  # export
-  set(PYTHON3_SUFFIX ${PYTHON3_SUFFIX} PARENT_SCOPE)
+  # save the module suffix
+  set(PYTHON3_SUFFIX ${Python_SOABI} PARENT_SCOPE)
   # all done
 endfunction(pyre_pythonInit)
 
