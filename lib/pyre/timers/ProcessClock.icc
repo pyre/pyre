@@ -13,6 +13,8 @@
 auto
 pyre::timers::ProcessClock::now() -> time_point_type
 {
+    // if there is support for the cpu timer
+#if defined(CLOCK_PROCESS_CPUTIME_ID)
     // make some room
     timespec t;
     // get the process CPU time
@@ -21,6 +23,11 @@ pyre::timers::ProcessClock::now() -> time_point_type
     duration_type since_epoch(1000 * 1000 * 1000 * t.tv_sec + t.tv_nsec);
     // turn that into a time stamp and return it
     return time_point_type(since_epoch);
+// otherwise
+#else
+    // complain
+    throw std::runtime_error("this platform doesn't have support for CLOCK_PROCESS_CPUTIME_ID")
+#endif
 }
 
 
