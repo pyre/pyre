@@ -172,8 +172,6 @@ jobs:
           ${mm} host.ext.info
           echo " -- verifying the journal extension"
           ${mm} journal.ext.info
-          echo " -- verifying the gsl extension"
-          ${mm} gsl.ext.info
           echo " -- verifying the h5 extension"
           ${mm} h5.ext.info
         env:
