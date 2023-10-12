@@ -156,6 +156,6 @@ jobs:
           echo " -- switching to the build directory"
           cd ${{runner.temp}}/build
           echo " -- testing pyre"
-          ctest -E postgres.ext
+          ctest --output-on-failure -E postgres.ext
 
 # end of file
