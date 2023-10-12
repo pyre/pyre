@@ -41,7 +41,7 @@ endfunction(pyre_cmakeInit)
 # setup python
 function(pyre_pythonInit)
   # save the module suffix
-  set(PYTHON3_SUFFIX ".${Python_SOABI}" PARENT_SCOPE)
+  set(PYTHON3_SUFFIX ".${Python_SOABI}${CMAKE_SHARED_MODULE_SUFFIX}" PARENT_SCOPE)
   # all done
 endfunction(pyre_pythonInit)
 
