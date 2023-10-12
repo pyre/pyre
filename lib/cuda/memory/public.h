@@ -16,14 +16,9 @@
 // published type aliases; this is the file you are looking for...
 #include "api.h"
 
-// implementation
-// managed memory
+// strategies
 #include "Managed.h"
-
-// pinned memory
 #include "Pinned.h"
-
-// mapped memory
 #include "Mapped.h"
 
 #endif
