@@ -166,6 +166,16 @@ jobs:
           ${mm} extern.hdf5.info
           ${mm} extern.numpy.info
           ${mm} extern.pybind11.info
+          echo " -- verifying the pyre extension"
+          ${mm} pyre.ext.info
+          echo " -- verifying the pyre host extension"
+          ${mm} host.ext.info
+          echo " -- verifying the journal extension"
+          ${mm} journal.ext.info
+          echo " -- verifying the gsl extension"
+          ${mm} gsl.ext.info
+          echo " -- verifying the h5 extension"
+          ${mm} h5.ext.info
         env:
           mm: python3 ${{github.workspace}}/mm/mm.py --config=.github/matrix/mm.pfg
           target: ${{matrix.target}}

@@ -125,8 +125,20 @@ jobs:
 
       - name: mm diagnostics
         run: |
+          echo " -- runner home"
+          pwd
           echo " -- switching to the pyre home directory"
           cd pyre
+          echo " -- pyre source directory"
+          pwd
+          echo " -- creating ~/.pyre"
+          mkdir ~/.pyre
+          echo " -- copying the mm configuration file"
+          cp .github/matrix/mm.pfg ~/.pyre
+          echo " -- creating ~/.mm"
+          mkdir ~/.mm
+          echo " -- copying the package configuration file there"
+          cp .github/matrix/config.mm ~/.mm
           echo " -- checking whether mm can run from here"
           echo now at: ${PWD}
           echo mm: ${mm}
