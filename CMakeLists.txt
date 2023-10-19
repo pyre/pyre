@@ -96,10 +96,13 @@ find_package(GSL)
 if(${MPI_FOUND})
     # prefer the parallel version of hdf5
     set(HDF5_PREFER_PARALLEL ON)
+    # leave a marker
+    message(STATUS "We have MPI; ask for parallel HDF5: ${HDF5_PREFER_PARALLEL}")
 endif()
-message(STATUS "Parallel HDF5: ${HDF5_PREFER_PARALLEL}")
 # hunt it down
 find_package(HDF5 COMPONENTS CXX HL)
+# report
+message(STATUS "Parallel HDF5: ${HDF5_IS_PARALLEL}")
 
 # find cuda if it is required
 if(${WITH_CUDA})
