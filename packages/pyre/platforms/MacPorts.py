@@ -39,7 +39,7 @@ class MacPorts(Managed, family="pyre.platforms.packagers.macports"):
     # implementation details
     def getInstalledPackages(self):
         """
-        Grant access to the installed package indexx
+        Grant access to the installed package index
         """
         # grab the index
         installed = self._installed
