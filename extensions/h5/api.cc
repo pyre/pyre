@@ -29,6 +29,18 @@ pyre::h5::py::api(py::module & m)
         // the docstring
         "initialize the hdf5 runtime");
 
+    // get the version
+    m.def(
+        // the name
+        "version",
+        // the handler
+        []() {
+            // get the version and return it
+            return std::make_tuple(H5_VERS_MAJOR, H5_VERS_MINOR, H5_VERS_RELEASE);
+        },
+        // the docstring
+        "initialize the hdf5 runtime");
+
     // check whether there is ROS3 support
     m.def(
         // the name
