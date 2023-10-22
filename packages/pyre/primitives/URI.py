@@ -80,11 +80,11 @@ class URI:
                 value.scheme = scheme
             # if necessary
             if value.authority is None:
-                # adjust the scheme
+                # adjust the authority
                 value.authority = authority
             # if necessary
             if value.address is None:
-                # adjust the scheme
+                # adjust the address
                 value.address = address
             # all done
             return value
