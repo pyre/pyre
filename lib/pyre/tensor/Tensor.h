@@ -66,10 +66,14 @@ namespace pyre::tensor {
         // constructor with underlying data type (need this for return value optimization)
         constexpr Tensor(const data_t &&);
 
-        // constructor from brace-enclosed initializer list
+        // constructor from parameter pack
         template <class... T2>
         constexpr Tensor(T2...)
             requires(sizeof...(T2) == S);
+
+        // constructor from brace-enclosed initializer list
+        template <class T2>
+        constexpr Tensor(T2 (&)[S]);
 
         // copy constructor
         constexpr Tensor(const Tensor &) = default;
@@ -142,6 +146,10 @@ namespace pyre::tensor {
         // helper function for index sequence
         template <int... J, class... T2>
         constexpr void _initialize(integer_sequence<J...>, T2...);
+
+        // helper function for index sequence
+        template <int... J, class T2>
+        constexpr void _initialize(integer_sequence<J...>, T2 (&)[S]);
 
         // helper function for index sequence
         template <int... J>
