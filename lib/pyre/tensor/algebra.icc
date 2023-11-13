@@ -681,6 +681,16 @@ pyre::tensor::determinant(const matrix_t<2, 2, T, packingT> & A) -> T
 
 template <typename T, class packingT>
 constexpr auto
+pyre::tensor::determinant(const matrix_t<1, 1, T, packingT> & A) -> T
+{
+    // the type of matrix {A}
+    using matrix_t = matrix_t<1, 1, T, packingT>;
+
+    return A[matrix_t::template getOffset<0, 0>()];
+}
+
+template <typename T, class packingT>
+constexpr auto
 pyre::tensor::inverse(const matrix_t<3, 3, T, packingT> & A) -> matrix_t<3, 3, T, packingT>
 {
     // the type of matrix {A}
@@ -733,6 +743,16 @@ pyre::tensor::inverse(const matrix_t<2, 2, T, packingT> & A) -> matrix_t<2, 2, T
     invA[matrix_t::template getOffset<1, 0>()] = detinv * (-a21);
     invA[matrix_t::template getOffset<1, 1>()] = detinv * a11;
     return invA;
+}
+
+template <typename T, class packingT>
+constexpr auto
+pyre::tensor::inverse(const matrix_t<1, 1, T, packingT> & A) -> matrix_t<1, 1, T, packingT>
+{
+    // the type of matrix {A}
+    using matrix_t = matrix_t<1, 1, T, packingT>;
+
+    return 1.0 / A[matrix_t::template getOffset<0, 0>()];
 }
 
 template <int D, typename T, class packingT>
