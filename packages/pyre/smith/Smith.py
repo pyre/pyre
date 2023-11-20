@@ -44,6 +44,9 @@ class Smith(pyre.application, family="pyre.applications.smith", namespace="smith
         # make a channel for reporting progress
         info = journal.info("smith")
 
+        # show me
+        info.log(f"template: {self.project}")
+
         # get the name of the project
         project = self.project.name
         # get the nameserver
