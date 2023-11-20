@@ -1,0 +1,20 @@
+# ignore rules
+
+*~
+
+# machine-dependent config
+/.mm/config.def
+
+# the default build locations (mm)
+/builds
+/products
+# the default build locations (cmake)
+/build
+
+# mac folder attributes 
+**.DS_Store
+
+# python cache
+**__pycache__
+
+# end of file
