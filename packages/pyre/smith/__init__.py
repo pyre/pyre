@@ -31,6 +31,19 @@ def smith(**kwds):
     return Smith(**kwds)
 
 
+# bare bones app
+@foundry(implements=project)
+def basic():
+    """
+    A basic project
+    """
+    # grab the component class
+    from .Basic import Basic as basic
+
+    # and publish
+    return basic
+
+
 # bare bones command line interface
 @foundry(implements=project)
 def plexus():
