@@ -1,4 +1,4 @@
-# -*- Makefile -*-
+# -*- makefile -*-
 #
 # {project.authors}
 # (c) {project.span} all rights reserved
