@@ -29,9 +29,7 @@ class Managed(pyre.component, implements=PackageManager):
         """
         # the base class doesn't have one; subclasses must provide a unique name that enables
         # package categories to identify with which package manager they are collaborating
-        raise NotImplementedError(
-            "class {.__name__} must supply a 'name'".format(type(self))
-        )
+        raise NotImplementedError(f"class '{type(self).__name__}' must supply a 'name'")
 
     @property
     def client(self):
@@ -43,11 +41,11 @@ class Managed(pyre.component, implements=PackageManager):
 
         # the error message template
         msg = (
-            "class {.__name__} must supply 'client', "
-            "the name or path to the package manager front end"
+            f"class '{type(self).__name__}' must supply 'client', "
+            "the path to the package manager front end"
         )
         # instantiate and complain
-        raise NotImplementedError(msg.format(type(self)))
+        raise NotImplementedError(msg)
 
     # protocol obligations
     @pyre.export
@@ -74,7 +72,7 @@ class Managed(pyre.component, implements=PackageManager):
             # if it's not there
             if not client.exists():
                 # build the message
-                msg = "could not locate {.manager!r}".format(self)
+                msg = f"could not locate '{self.manager}'"
                 # complain
                 raise self.ConfigurationError(configurable=self, errors=[msg])
 
@@ -105,7 +103,7 @@ class Managed(pyre.component, implements=PackageManager):
         # send what the index has
         return self.getInstalledPackages()[package]
 
-    @pyre.provides
+    @pyre.export
     def packages(self, category):
         """
         Provide a sequence of package names that provide compatible installations for the given
@@ -114,13 +112,11 @@ class Managed(pyre.component, implements=PackageManager):
         # check whether this package category can interact with me
         try:
             # by looking for my handler
-            choices = getattr(category, "{}Packages".format(self.name))
+            choices = getattr(category, f"{self.name}Packages")
         # if it can't
         except AttributeError:
             # the error message template
-            template = "the package category {.category!r} does not support {.name!r}"
-            # build the message
-            msg = template.format(category, self)
+            msg = f"the package category '{category.category}' does not support '{self.name}'"
             # complain
             raise self.ConfigurationError(configurable=category, errors=[msg])
 
@@ -140,7 +136,7 @@ class Managed(pyre.component, implements=PackageManager):
         # all done
         return
 
-    @pyre.provides
+    @pyre.export
     def configure(self, installation):
         """
         Dispatch to the {installation} configuration procedure that is specific to this package
@@ -153,9 +149,7 @@ class Managed(pyre.component, implements=PackageManager):
         # if it can't
         except AttributeError:
             # the error message template
-            template = "the package flavor {.flavor!r} does not support {.name!r}"
-            # build the message
-            msg = template.format(installation, self)
+            msg = f"the package flavor '{installation.flavor}' does not support '{self.name}'"
             # complain
             raise self.ConfigurationError(configurable=installation, errors=[msg])
 
@@ -191,7 +185,7 @@ class Managed(pyre.component, implements=PackageManager):
         Locate the path to {target} in the {contents} of some package
         """
         # form the regex
-        regex = "(?P<path>.*)/{}$".format(target)
+        regex = rf"(?P<path>.*)/{target}$"
         # search for it in contents
         for match in self.find(target=regex, pile=contents):
             # extract the folder
