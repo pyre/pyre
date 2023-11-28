@@ -9,7 +9,7 @@
 
 
 // the HL to RGB conversion kernel
-// the kernel maps two values, hue and luminosity to RGB using a colorpmap that is
+// the kernel maps two values, hue and luminosity to RGB using a colormap that is
 // designed for displaying complex values [zebker@stanford.edu, private communication]
 auto
 pyre::viz::colorspaces::hl(double h, double l, double threshold) -> viz::rgb_t
