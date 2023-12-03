@@ -24,6 +24,8 @@ namespace pyre::viz {
     //      trouble building streams over {unsigned char}
     // LAST CHECKED: 20220502 with llvm-13:
     //      implicit instantiation of undefined template std::codecvt<unsigned char, ...>
+    // LAST CHECKED: 20231201 with macports llvm-17
+    //      seems to work; must verify i'm linking against libc++
     using fstream_t = std::fstream;
     using ifstream_t = std::ifstream;
     using ofstream_t = std::ofstream;
