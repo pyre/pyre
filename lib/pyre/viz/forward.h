@@ -96,8 +96,10 @@ namespace pyre::viz {
 
 
     // codecs
-    // microsoft bitmap
-    class BMP;
+    namespace codecs {
+        // microsoft bitmap
+        class BMP;
+    } // namespace codecs
 
 } // namespace pyre::viz
 

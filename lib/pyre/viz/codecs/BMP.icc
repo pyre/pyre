@@ -5,12 +5,12 @@
 
 // code guard
 #if !defined(pyre_viz_codecs_BMP_icc)
-#error this file contains implementation details for pyre::viz::BMP
+#error this file contains implementation details for pyre::viz::codecs::BMP
 #else
 
 // metamethods
 // destructor
-pyre::viz::BMP::~BMP()
+pyre::viz::codecs::BMP::~BMP()
 {
     // clean up
     delete[] _data;
@@ -18,7 +18,7 @@ pyre::viz::BMP::~BMP()
 
 
 // constructor
-pyre::viz::BMP::BMP(int height, int width) :
+pyre::viz::codecs::BMP::BMP(int height, int width) :
     _width { width },
     _height { height },
     // lines are padded out to the nearest multiple of four bytes; so, the number of pad bytes
@@ -34,7 +34,7 @@ pyre::viz::BMP::BMP(int height, int width) :
 
 
 // move constructor
-pyre::viz::BMP::BMP(BMP && other) :
+pyre::viz::codecs::BMP::BMP(BMP && other) :
     _width { other._width },
     _height { other._height },
     _padBytesPerLine { other._padBytesPerLine },
@@ -48,8 +48,8 @@ pyre::viz::BMP::BMP(BMP && other) :
 
 
 // move assignment operator
-pyre::viz::BMP &
-pyre::viz::BMP::operator=(BMP && other)
+pyre::viz::codecs::BMP &
+pyre::viz::codecs::BMP::operator=(BMP && other)
 {
     // if i'm reading from myself
     if (this == &other) {
@@ -79,7 +79,7 @@ pyre::viz::BMP::operator=(BMP && other)
 // interface
 // get the total size of the bitmap, in bytes
 auto
-pyre::viz::BMP::bytes() const -> int
+pyre::viz::codecs::BMP::bytes() const -> int
 {
     return _bitmapSz;
 }
@@ -87,7 +87,7 @@ pyre::viz::BMP::bytes() const -> int
 
 // access the data buffer
 auto
-pyre::viz::BMP::data() const -> buffer_type
+pyre::viz::codecs::BMP::data() const -> buffer_type
 {
     return _data;
 }
@@ -95,7 +95,7 @@ pyre::viz::BMP::data() const -> buffer_type
 
 template <class iteratorT>
 auto
-pyre::viz::BMP::encode(iteratorT & source, bool topdown) const -> buffer_type
+pyre::viz::codecs::BMP::encode(iteratorT & source, bool topdown) const -> buffer_type
 {
     // if i don't own any memory
     if (_data == nullptr) {

@@ -13,7 +13,7 @@ namespace pyre::viz {
 
     // codecs
     // microsoft bmp
-    using bmp_t = BMP;
+    using bmp_t = codecs::BMP;
 
     // and correctly typed file streams for reading and writing to avoid having to cast
     // {byte_t *} to {char *}
