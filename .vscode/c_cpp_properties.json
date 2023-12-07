@@ -22,8 +22,8 @@
                 "${workspaceFolder}/**",
                 "${env:vs_prefix_prj}/include/**",
                 "${env:vs_prefix_usr}/include/**",
-                "/opt/local/Library/Frameworks/Python.framework/Versions/3.10/include/**",
-                "/opt/local/Library/Frameworks/Python.framework/Versions/3.10/lib/python3.10/site-packages/pybind11/include",
+                "/opt/local/Library/Frameworks/Python.framework/Versions/3.11/include/**",
+                "/opt/local/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages/pybind11/include",
                 "/opt/local/include/**"
             ],
             "defines": [],
