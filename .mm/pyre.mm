@@ -50,6 +50,7 @@ pyre.pkg.ext := extensions/
 pyre.lib.root := lib/pyre/
 pyre.lib.stem := pyre
 pyre.lib.prerequisites += journal.lib
+pyre.lib.c++.defines += PYRE_CORE
 pyre.lib.c++.flags += $($(compiler.c++).std.c++17)
 # external dependencies
 pyre.lib.extern := \
@@ -68,6 +69,7 @@ pyre.ext.pkg := pyre.pkg
 pyre.ext.wraps := pyre.lib
 pyre.ext.capsule :=
 pyre.ext.extern := journal.lib pybind11 python
+pyre.ext.lib.c++.defines += PYRE_CORE
 pyre.ext.lib.c++.flags += $($(compiler.c++).std.c++17)
 pyre.ext.lib.prerequisites += journal.lib # pyre.lib is added automatically
 # host info
