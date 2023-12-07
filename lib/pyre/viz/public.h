@@ -48,6 +48,8 @@
 #include "colormaps/RGB.h"
 // encodings
 #include "codecs/BMP.h"
+// products
+#include "products/BMP.h"
 
 
 #endif

@@ -9,14 +9,17 @@
 
 
 // externals
+#include <algorithm>
 #include <cassert>
 #include <cmath>
 #include <complex>
+#include <memory>
 #include <tuple>
-#include <algorithm>
 
 // support
 #include <pyre/journal.h>
+#include <pyre/memory.h>
+#include <pyre/flow.h>
 
 
 #endif

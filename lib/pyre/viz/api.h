@@ -115,6 +115,13 @@ namespace pyre::viz::colormaps {
 } // namespace pyre::viz::colormaps
 
 
+// products
+namespace pyre::viz::products {
+    // microsoft bitmaps
+    using bmp_t = BMP;
+} // namespace pyre::viz::products
+
+
 #endif
 
 // end of file

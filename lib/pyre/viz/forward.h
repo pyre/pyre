@@ -101,6 +101,14 @@ namespace pyre::viz {
         class BMP;
     } // namespace codecs
 
+
+    // products
+    namespace products {
+        // others
+        class BMP;
+    } // namespace products
+
+
 } // namespace pyre::viz
 
 

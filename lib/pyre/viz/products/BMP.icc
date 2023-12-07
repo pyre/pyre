@@ -1,0 +1,91 @@
+// -*- c++ -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2023 all rights reserved
+
+// code guard
+#pragma once
+
+// factory
+auto
+pyre::viz::products::BMP::create() -> ref_type
+{
+    // build an instance and wrap it in a shared pointer
+    return std::make_shared<BMP>(private_type());
+}
+
+// build a reference
+auto
+pyre::viz::products::BMP::ref() -> ref_type
+{
+    // build an instance and wrap it in a shared pointer
+    return std::dynamic_pointer_cast<BMP>(shared_from_this());
+}
+
+// constructor
+pyre::viz::products::BMP::BMP(private_type) :
+    // base class
+    pyre::flow::product_t(),
+    // members
+    _shape { 0, 0 },
+    _data { nullptr }
+{}
+
+// accessors
+auto
+pyre::viz::products::BMP::shape() const -> shape_type
+{
+    // easy enough
+    return _shape;
+}
+
+auto
+pyre::viz::products::BMP::data() const -> constview_type
+{
+    // if i'm stale
+    if (stale()) {
+        // ask my factory to make me
+    }
+    // unpack my shape
+    auto [width, height] = _shape;
+    // compute my size
+    auto cells = width * height;
+    // build a view to my data and return it
+    return constview_type(_data, cells);
+}
+
+// mutators
+auto
+pyre::viz::products::BMP::shape(shape_type shape) -> void
+{
+    // things have changed
+    flush();
+    // remember the new shape
+    _shape = shape;
+    // unpack my shape
+    auto [width, height] = _shape;
+    // compute my size
+    auto cells = width * height;
+    // grab some memory
+    _data = new cell_type[cells];
+    // all done
+    return;
+}
+
+auto
+pyre::viz::products::BMP::data() -> view_type
+{
+    // unpack my shape
+    auto [width, height] = _shape;
+    // compute my size
+    auto cells = width * height;
+    // if i don't own any memory
+    if (_data == nullptr) {
+        // grab some
+        _data = new cell_type[cells];
+    }
+    // build a view to my data and return it
+    return view_type(_data, cells);
+}
+
+// end of file
