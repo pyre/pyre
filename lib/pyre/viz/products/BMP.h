@@ -47,6 +47,7 @@ public:
     // interface
 public:
     inline auto ref() -> ref_type;
+    auto dump() const -> void;
 
     // implementation details - interface
 protected:

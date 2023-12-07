@@ -56,4 +56,31 @@ pyre::viz::products::BMP::flush() -> void
     return;
 }
 
+auto
+pyre::viz::products::BMP::dump() const -> void
+{
+    // make a channel
+    auto channel = pyre::journal::debug_t("pyre.viz.products.bmp");
+    // show me
+    channel
+        // the product
+        << "bmp: at " << (void *) this
+        << pyre::journal::newline
+        // indent
+        << pyre::journal::indent
+        // its data buffer location
+        << "data: " << data().where()
+        << pyre::journal::newline
+        // its size
+        << "cells: " << data().cells()
+        << pyre::journal::newline
+        // outdent
+        << pyre::journal::outdent
+        // flush
+        << pyre::journal::endl(__HERE__);
+
+    // all done
+    return;
+}
+
 // end of file
