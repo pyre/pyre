@@ -43,12 +43,12 @@ public:
 
     // interface
 public:
+    // build a reference to me
     inline auto ref() -> ref_type;
-    auto dump() const -> void;
-
-    // implementation details - interface
-protected:
+    // invalidate me
     virtual auto flush() -> void override;
+    // debugging support
+    auto dump() const -> void;
 
     // implementation details - data
 protected:
