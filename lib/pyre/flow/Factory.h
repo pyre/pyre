@@ -10,7 +10,7 @@ class pyre::flow::Factory : public Node {
     // metamethods
 protected:
     // constructors
-    inline Factory();
+    inline Factory(sentinel_type);
 
     // implementation details - interface
 protected:

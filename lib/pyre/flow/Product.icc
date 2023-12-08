@@ -7,6 +7,6 @@
 #pragma once
 
 // constructors
-pyre::flow::Product::Product() : Node() {}
+pyre::flow::Product::Product(sentinel_type sentinel) : Node(sentinel) {}
 
 // end of file

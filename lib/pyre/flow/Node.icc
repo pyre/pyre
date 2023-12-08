@@ -7,7 +7,7 @@
 #pragma once
 
 // constructors
-pyre::flow::Node::Node() : _stale(true) {}
+pyre::flow::Node::Node(sentinel_type) : _stale(true) {}
 
 // accessors
 auto

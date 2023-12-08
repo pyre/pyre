@@ -10,7 +10,7 @@ class pyre::flow::Product : public Node {
     // metamethods
 protected:
     // constructors
-    inline Product();
+    inline Product(sentinel_type);
 
     // implementation details - interface
 protected:

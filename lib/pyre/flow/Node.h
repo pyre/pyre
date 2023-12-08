@@ -7,10 +7,14 @@
 #pragma once
 
 class pyre::flow::Node : public std::enable_shared_from_this<Node> {
+    // type aliases
+protected:
+    struct sentinel_type {};
+
     // metamethods
 protected:
     // constructors
-    inline Node();
+    inline Node(sentinel_type);
 
     // accessors
 public:
