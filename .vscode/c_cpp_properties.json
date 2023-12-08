@@ -10,7 +10,10 @@
                 "/usr/include/hdf5/openmpi/**",
                 "/usr/include/python3.9/**"
             ],
-            "defines": [],
+            "defines": [
+                "PYRE_CORE",
+                "WITH_JOURNAL"
+            ],
             "compilerPath": "/usr/bin/${env:vs_compiler}",
             "cStandard": "c17",
             "cppStandard": "c++20",
@@ -26,7 +29,10 @@
                 "/opt/local/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages/pybind11/include",
                 "/opt/local/include/**"
             ],
-            "defines": [],
+            "defines": [
+                "PYRE_CORE",
+                "WITH_JOURNAL"
+            ],
             "macFrameworkPath": [
                 "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/System/Library/Frameworks"
             ],
