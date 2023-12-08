@@ -19,9 +19,6 @@ public:
     // shared pointers to my instances
     using ref_type = std::shared_ptr<BMP>;
 
-protected:
-    struct sentinel_type {};
-
     // factory
 public:
     inline static auto create(shape_type = shape_type { 512, 512 }) -> ref_type;

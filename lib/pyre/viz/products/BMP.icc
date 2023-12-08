@@ -23,9 +23,9 @@ pyre::viz::products::BMP::ref() -> ref_type
 }
 
 // constructor
-pyre::viz::products::BMP::BMP(sentinel_type, shape_type shape) :
+pyre::viz::products::BMP::BMP(sentinel_type sentinel, shape_type shape) :
     // base class
-    pyre::flow::product_t(),
+    pyre::flow::product_t(sentinel),
     // members
     _shape { shape },
     _data { new cell_type[std::get<0>(shape) * std::get<1>(shape)] }
