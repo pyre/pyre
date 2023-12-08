@@ -19,19 +19,19 @@ public:
     // shared pointers to my instances
     using ref_type = std::shared_ptr<BMP>;
 
-private:
-    struct private_type {};
+protected:
+    struct sentinel_type {};
 
     // factory
 public:
-    inline static auto create() -> ref_type;
+    inline static auto create(shape_type = shape_type { 512, 512 }) -> ref_type;
 
     // metamethods
 public:
     // destructor
     virtual ~BMP();
     // constructor: DON'T CALL
-    inline BMP(private_type);
+    inline BMP(sentinel_type, shape_type);
 
 private:
     // accessors
