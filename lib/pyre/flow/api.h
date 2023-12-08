@@ -14,6 +14,11 @@ namespace pyre::flow {
     using factory_t = Factory;
     using product_t = Product;
 
+    // pointers
+    using node_ref_t = std::shared_ptr<Node>;
+    using factory_ref_t = std::shared_ptr<Factory>;
+    using product_ref_t = std::shared_ptr<Product>;
+
 } // namespace pyre::flow
 
 // end of file

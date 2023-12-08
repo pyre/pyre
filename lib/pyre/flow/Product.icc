@@ -7,6 +7,45 @@
 #pragma once
 
 // constructors
-pyre::flow::Product::Product(sentinel_type sentinel) : Node(sentinel) {}
+pyre::flow::Product::Product(sentinel_type sentinel) :
+    // superclass
+    Node(sentinel),
+    // data members
+    _stale { true },
+    _readers {},
+    _writers {}
+{}
+
+// accessors
+auto
+pyre::flow::Product::stale() const -> bool
+{
+    // easy enough
+    return _stale;
+}
+
+auto
+pyre::flow::Product::readers() const -> const connections_type &
+{
+    // easy enough
+    return _readers;
+}
+
+auto
+pyre::flow::Product::writers() const -> const connections_type &
+{
+    // easy enough
+    return _writers;
+}
+
+// mutators
+auto
+pyre::flow::Product::clean() -> void
+{
+    // clear the flag
+    _stale = false;
+    // all done
+    return;
+}
 
 // end of file

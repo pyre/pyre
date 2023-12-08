@@ -7,14 +7,6 @@
 #pragma once
 
 // constructors
-pyre::flow::Node::Node(sentinel_type) : _stale(true) {}
-
-// accessors
-auto
-pyre::flow::Node ::stale() const -> bool
-{
-    // easy enough
-    return _stale;
-}
+pyre::flow::Node::Node(sentinel_type) {}
 
 // end of file

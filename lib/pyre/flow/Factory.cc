@@ -3,25 +3,49 @@
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
 // (c) 1998-2023 all rights reserved
 
-// externals
-#include "external.h"
-// forward declarations
-#include "forward.h"
-// type aliases
-#include "api.h"
+// support
+#include "public.h"
 
-// super class
-#include "Node.h"
-// my class declaration
-#include "Factory.h"
-
-// internals
+// invalidate my downstream graph
 auto
 pyre::flow::Factory::flush() -> void
 {
     // chain up
     Node::flush();
+    // go through my output slots
+    for (auto [name, product] : _outputs) {
+        // and invalidate them
+        product->flush();
+    }
     // all done
+    return;
+}
+
+// rebuild the product bound to a slot
+auto
+pyre::flow::Factory::refresh(name_type slot, product_ref_type product) -> void
+{
+    // make a channel
+    auto channel = pyre::journal::debug_t("pyre.flow.factories.refresh");
+    // show me
+    channel
+        // the product
+        << "refreshing product " << (void *) product.get()
+        << pyre::journal::newline
+        // indent
+        << pyre::journal::indent
+        // the slot
+        << "connected to slot '" << slot << "'"
+        << pyre::journal::newline
+        // the factory
+        << "of factory " << (void *) this
+        << pyre::journal::newline
+        // outdent
+        << pyre::journal::outdent
+        // flush
+        << pyre::journal::endl(__HERE__);
+
+    // i don't know how to do anything else
     return;
 }
 

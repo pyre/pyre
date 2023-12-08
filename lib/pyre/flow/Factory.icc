@@ -7,6 +7,49 @@
 #pragma once
 
 // constructors
-pyre::flow::Factory::Factory(sentinel_type sentinel) : Node(sentinel) {}
+pyre::flow::Factory::Factory(sentinel_type sentinel) :
+    // superclass
+    Node(sentinel),
+    // data members
+    _inputs {},
+    _outputs {}
+{}
+
+// accessors
+auto
+pyre::flow::Factory::inputs() const -> const connectors_type &
+{
+    // easy enough
+    return _inputs;
+}
+
+// interface
+auto
+pyre::flow::Factory::input(const name_type & name) -> product_ref_type
+{
+    // look up the name
+    auto spot = _inputs.find(name);
+    // if it's not there
+    if (spot == _inputs.end()) {
+        // there is no binding
+        return product_ref_type(nullptr);
+    }
+    // otherwise, return the binding
+    return spot->second;
+}
+
+auto
+pyre::flow::Factory::output(const name_type & name) -> product_ref_type
+{
+    // look up the name
+    auto spot = _outputs.find(name);
+    // if it's not there
+    if (spot == _outputs.end()) {
+        // there is no binding
+        return product_ref_type(nullptr);
+    }
+    // otherwise, return the binding
+    return spot->second;
+}
 
 // end of file

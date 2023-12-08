@@ -8,7 +8,17 @@
 
 class pyre::flow::Node : public std::enable_shared_from_this<Node> {
     // type aliases
+public:
+    // names
+    using name_type = string_t;
+    // shared pointers to nodes
+    using node_ref_type = node_ref_t;
+    using factory_ref_type = factory_ref_t;
+    using product_ref_type = product_ref_t;
+
 protected:
+    // internal type that is used to prohibit external access to the constructors
+    // of all classes in my hierarchy
     struct sentinel_type {};
 
     // metamethods
@@ -16,12 +26,9 @@ protected:
     // constructors
     inline Node(sentinel_type);
 
-    // accessors
+    // interface
 public:
-    inline auto stale() const -> bool;
-
-    // implementation details - interface
-protected:
+    // invalidate me
     virtual auto flush() -> void;
 
     // implementation details - data
@@ -33,7 +40,7 @@ public:
     // destructor
     virtual ~Node() = default;
 
-    // suppressed constructors
+    // suppressed metamethods
 private:
     // constructors
     Node(const Node &) = delete;
