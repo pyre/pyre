@@ -59,6 +59,10 @@ pyre::viz::products::BMP::flush() -> void
 auto
 pyre::viz::products::BMP::dump() const -> void
 {
+    // unpack my shape
+    auto [width, height] = _shape;
+    // and build a view over my buffer
+    auto view = data();
     // make a channel
     auto channel = pyre::journal::debug_t("pyre.viz.products.bmp");
     // show me
@@ -68,11 +72,14 @@ pyre::viz::products::BMP::dump() const -> void
         << pyre::journal::newline
         // indent
         << pyre::journal::indent
-        // its data buffer location
-        << "data: " << data().where()
+        // its shape
+        << "shape: " << width << " x " << height
         << pyre::journal::newline
         // its size
-        << "cells: " << data().cells()
+        << "cells: " << view.cells()
+        << pyre::journal::newline
+        // its data buffer location
+        << "data: " << view.where()
         << pyre::journal::newline
         // outdent
         << pyre::journal::outdent
