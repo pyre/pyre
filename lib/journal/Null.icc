@@ -112,6 +112,22 @@ pyre::journal::newline(const Null & null) -> const Null &
 }
 
 
+constexpr auto
+pyre::journal::indent(const Null & null) -> const Null &
+{
+    // leave the channel alone
+    return null;
+}
+
+
+constexpr auto
+pyre::journal::outdent(const Null & null) -> const Null &
+{
+    // leave the channel alone
+    return null;
+}
+
+
 // the injection operators
 // color
 constexpr auto
