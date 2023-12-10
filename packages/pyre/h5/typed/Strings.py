@@ -84,8 +84,8 @@ class Strings(Dataset.list):
         """
         # get the dataset value; it should be a list of strings
         value = dataset.value
-        # the type width is the max of the lengths
-        width = max([1] + list(map(len, value)))
+        # the type width is the max of the lengths of the strings in the list
+        width = max(1, max(len(item) for item in value))
         # the space is determined by the number of strings
         shape = [len(value)]
         # build the type
