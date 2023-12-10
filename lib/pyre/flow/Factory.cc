@@ -29,16 +29,16 @@ pyre::flow::Factory::refresh(name_type slot, product_ref_type product) -> void
     auto channel = pyre::journal::debug_t("pyre.flow.factories.refresh");
     // show me
     channel
-        // the product
-        << "refreshing product " << (void *) product.get()
+        // the factory
+        << "factory " << (void *) this
         << pyre::journal::newline
         // indent
         << pyre::journal::indent
+        // the product
+        << "is refreshing product " << (void *) product.get()
+        << pyre::journal::newline
         // the slot
         << "connected to slot '" << slot << "'"
-        << pyre::journal::newline
-        // the factory
-        << "of factory " << (void *) this
         << pyre::journal::newline
         // outdent
         << pyre::journal::outdent
