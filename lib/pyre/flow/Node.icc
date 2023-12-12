@@ -9,4 +9,12 @@
 // constructors
 pyre::flow::Node::Node(sentinel_type) {}
 
+// build a reference
+auto
+pyre::flow::Node::ref() -> node_ref_type
+{
+    // build an instance and wrap it in a shared pointer
+    return shared_from_this();
+}
+
 // end of file

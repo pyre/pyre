@@ -13,13 +13,18 @@
 // my class declaration
 #include "Node.h"
 
+// destructor
+pyre::flow::Node::~Node()
+{
+    // nothing to do
+    return;
+}
+
 // internals
 auto
 pyre::flow::Node::flush() -> void
 {
-    // mark me as stale
-    _stale = true;
-    // all done
+    // nothing to do here, for now
     return;
 }
 

@@ -15,6 +15,10 @@ public:
     using node_ref_type = node_ref_t;
     using factory_ref_type = factory_ref_t;
     using product_ref_type = product_ref_t;
+    // weak pointers to nodes
+    using node_weakref_type = node_weakref_t;
+    using factory_weakref_type = factory_weakref_t;
+    using product_weakref_type = product_weakref_t;
 
 protected:
     // internal type that is used to prohibit external access to the constructors
@@ -23,22 +27,17 @@ protected:
 
     // metamethods
 protected:
+    // destructor
+    virtual ~Node();
     // constructors
     inline Node(sentinel_type);
 
     // interface
 public:
+    // build a reference to me
+    inline auto ref() -> node_ref_type;
     // invalidate me
     virtual auto flush() -> void;
-
-    // implementation details - data
-private:
-    bool _stale;
-
-    // default metamethods
-public:
-    // destructor
-    virtual ~Node() = default;
 
     // suppressed metamethods
 private:
