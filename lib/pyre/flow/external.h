@@ -9,6 +9,7 @@
 // STL
 #include <map>
 #include <memory>
+#include <set>
 #include <string>
 
 // support
