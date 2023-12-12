@@ -6,6 +6,25 @@
 // code guard
 #pragma once
 
+// factory
+auto
+pyre::flow::Factory::create() -> factory_ref_type
+{
+    // build an instance and wrap it in a shared pointer
+    auto ref = std::make_shared<Factory>(sentinel_type());
+    // make a channel
+    auto channel = pyre::journal::debug_t("pyre.flow.factories.create");
+    // show me
+    channel
+        // the factory
+        << "factory " << ref.get() << ": create"
+        << pyre::journal::newline
+        // flush
+        << pyre::journal::endl(__HERE__);
+    // hand off the ref
+    return ref;
+}
+
 // constructors
 pyre::flow::Factory::Factory(sentinel_type sentinel) :
     // superclass
@@ -23,7 +42,22 @@ pyre::flow::Factory::inputs() const -> const connectors_type &
     return _inputs;
 }
 
+auto
+pyre::flow::Factory::outputs() const -> const connectors_type &
+{
+    // easy enough
+    return _outputs;
+}
+
 // interface
+// build a reference
+auto
+pyre::flow::Factory::ref() -> factory_ref_type
+{
+    // build an instance and wrap it in a shared pointer
+    return std::dynamic_pointer_cast<Factory>(shared_from_this());
+}
+
 auto
 pyre::flow::Factory::input(const name_type & name) -> product_ref_type
 {

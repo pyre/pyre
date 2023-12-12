@@ -12,9 +12,15 @@ public:
     // connectors
     using connectors_type = std::map<name_type, product_ref_type>;
 
+    // factory
+public:
+    inline static auto create() -> factory_ref_type;
+
     // metamethods
-protected:
-    // constructors
+public:
+    // destructor
+    virtual ~Factory();
+    // constructor; not usable directly. call {create} instead
     inline Factory(sentinel_type);
 
     // accessors
@@ -24,25 +30,29 @@ public:
 
     // interface
 public:
+    // bindings
+    virtual auto addInput(const name_type & slot, product_ref_type product) -> factory_ref_type;
+    virtual auto addOutput(const name_type & slot, product_ref_type product) -> factory_ref_type;
+
+    virtual auto removeInput(const name_type & slot) -> factory_ref_type;
+    virtual auto removeOutput(const name_type & slot) -> factory_ref_type;
+
     // look up the product bound to an input {slot}
     inline auto input(const name_type & slot) -> product_ref_type;
     // look up the product bound to an output {slot}
     inline auto output(const name_type & name) -> product_ref_type;
 
+    // build a reference to me
+    inline auto ref() -> factory_ref_type;
     // invalidate me
     virtual auto flush() -> void override;
     // rebuild the product connected to one of my slots
-    virtual auto refresh(name_type slot, product_ref_type product) -> void;
+    virtual auto make(name_type slot, product_ref_type product) -> factory_ref_type;
 
     // implementation details - data
 private:
     connectors_type _inputs;
     connectors_type _outputs;
-
-    // default metamethods
-public:
-    // destructor
-    virtual ~Factory() = default;
 
     // suppressed metamethods
 private:
