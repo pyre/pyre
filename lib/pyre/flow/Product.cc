@@ -6,15 +6,79 @@
 // support
 #include "public.h"
 
+// destructor
+pyre::flow::Product::~Product()
+{
+    // make a channel
+    auto channel = pyre::journal::debug_t("pyre.flow.products.destroy");
+    // show me
+    channel
+        // the product
+        << "product " << this << ": destroy"
+        << pyre::journal::newline
+        // flush
+        << pyre::journal::endl(__HERE__);
+    // all done
+    return;
+}
+
+// bindings
+auto
+pyre::flow::Product::addReader(name_type slot, factory_ref_type factory) -> product_ref_type
+{
+    // add the factory to my pile of readers
+    _readers.insert({ slot, factory });
+    // return a reference to me
+    return ref();
+};
+
+auto
+pyre::flow::Product::addWriter(name_type slot, factory_ref_type factory) -> product_ref_type
+{
+    // add the factory to my pile of writers
+    _writers.insert({ slot, factory });
+    // return a reference to me
+    return ref();
+};
+
+auto
+pyre::flow::Product::removeReader(name_type slot, factory_ref_type factory) -> product_ref_type
+{
+    // remove the factory from my pile of readers
+    _readers.extract({ slot, factory });
+    // return a reference to me
+    return ref();
+};
+
+auto
+pyre::flow::Product::removeWriter(name_type slot, factory_ref_type factory) -> product_ref_type
+{
+    // remove the factory from my pile of writers
+    _writers.extract({ slot, factory });
+    // return a reference to me
+    return ref();
+};
+
 // internals
 auto
 pyre::flow::Product::flush() -> void
 {
+    // make a channel
+    auto channel = pyre::journal::debug_t("pyre.flow.products.flush");
+    // show me
+    channel
+        // the product
+        << "product " << this << ": flush"
+        << pyre::journal::newline
+        // flush
+        << pyre::journal::endl(__HERE__);
     // chain up
     Node::flush();
+    // mark me
+    dirty();
     // go through my readers
-    for (auto [slot, reader] : _readers) {
-        // and flush them
+    for (auto & [slot, reader] : _readers) {
+        // and flush each one
         reader->flush();
     }
     // all done
@@ -22,16 +86,32 @@ pyre::flow::Product::flush() -> void
 }
 
 auto
-pyre::flow::Product::sync() -> void
+pyre::flow::Product::make() -> product_ref_type
 {
-    // go through my writers
-    for (auto [slot, writer] : _writers) {
-        // and ask each one to refresh me
+    // make a channel
+    auto channel = pyre::journal::debug_t("pyre.flow.products.make");
+    // show me
+    channel
+        // sign on
+        << "product " << this << ": make"
+        << pyre::journal::newline
+        // flush
+        << pyre::journal::endl(__HERE__);
+
+    // make a reference
+    auto self = ref();
+    // if i'm stale
+    if (_stale) {
+        // go through my writers
+        for (auto & [slot, writer] : _writers) {
+            // ask each one to refresh me
+            writer->make(slot, self);
+        }
+        // mark me as clean
+        clean();
     }
-    // mark me as clean
-    clean();
     // all done
-    return;
+    return self;
 }
 
 // end of file
