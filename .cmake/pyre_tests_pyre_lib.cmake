@@ -183,6 +183,10 @@ pyre_test_driver(tests/pyre.lib/timers/wall_timer_start.cc)
 pyre_test_driver(tests/pyre.lib/timers/wall_timer_stop.cc)
 
 
+# flow
+pyre_test_driver(tests/pyre.lib/flow/flow.cc)
+
+
 # viz
 pyre_test_driver(tests/pyre.lib/viz/amplitude.cc)
 pyre_test_driver(tests/pyre.lib/viz/bmp.cc)
