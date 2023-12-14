@@ -41,24 +41,15 @@ pyre::viz::products::BMP::flush() -> void
     pyre::flow::product_t::flush();
     // invalidate my memory buffer
     delete[] _data;
-
-    // make a channel
-    auto channel = pyre::journal::debug_t("pyre.viz.products.bmp");
-    // let me know
-    channel
-        // mark
-        << "bmp: flushing bitmap at "
-        << (void *) this
-        // flush
-        << pyre::journal::endl(__HERE__);
-
     // all done
     return;
 }
 
 auto
-pyre::viz::products::BMP::dump() const -> void
+pyre::viz::products::BMP::dump() -> ref_type
 {
+    // build a reference
+    auto self = std::dynamic_pointer_cast<BMP>(ref());
     // unpack my shape
     auto [width, height] = _shape;
     // and build a view over my buffer
@@ -68,7 +59,7 @@ pyre::viz::products::BMP::dump() const -> void
     // show me
     channel
         // the product
-        << "bmp: at " << (void *) this
+        << "bmp " << this
         << pyre::journal::newline
         // indent
         << pyre::journal::indent
@@ -87,7 +78,7 @@ pyre::viz::products::BMP::dump() const -> void
         << pyre::journal::endl(__HERE__);
 
     // all done
-    return;
+    return self;
 }
 
 // end of file
