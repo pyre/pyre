@@ -34,21 +34,19 @@ private:
     // accessors
 public:
     inline auto shape() const -> shape_type;
-    inline auto data() const -> constview_type;
 
     // mutators
 public:
-    inline auto shape(shape_type) -> void;
-    inline auto data() -> view_type;
+    inline auto shape(shape_type) -> ref_type;
 
     // interface
 public:
-    // build a reference to me
-    inline auto ref() -> ref_type;
+    // access to my data
+    inline auto data() -> view_type;
     // invalidate me
     virtual auto flush() -> void override;
     // debugging support
-    auto dump() const -> void;
+    auto dump() -> ref_type;
 
     // implementation details - data
 protected:

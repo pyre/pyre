@@ -14,14 +14,6 @@ pyre::viz::products::BMP::create(shape_type shape) -> ref_type
     return std::make_shared<BMP>(sentinel_type(), shape);
 }
 
-// build a reference
-auto
-pyre::viz::products::BMP::ref() -> ref_type
-{
-    // build an instance and wrap it in a shared pointer
-    return std::dynamic_pointer_cast<BMP>(shared_from_this());
-}
-
 // constructor
 pyre::viz::products::BMP::BMP(sentinel_type sentinel, shape_type shape) :
     // base class
@@ -39,29 +31,16 @@ pyre::viz::products::BMP::shape() const -> shape_type
     return _shape;
 }
 
-auto
-pyre::viz::products::BMP::data() const -> constview_type
-{
-    // if i'm stale
-    if (stale()) {
-        // ask my factory to make me
-    }
-    // unpack my shape
-    auto [width, height] = _shape;
-    // compute my size
-    auto cells = width * height;
-    // build a view to my data and return it
-    return constview_type(_data, cells);
-}
-
 // mutators
 auto
-pyre::viz::products::BMP::shape(shape_type shape) -> void
+pyre::viz::products::BMP::shape(shape_type shape) -> ref_type
 {
+    // build a reference
+    auto self = std::dynamic_pointer_cast<BMP>(ref());
     // if the shape didn't change
     if (shape == _shape) {
         // bail
-        return;
+        return self;
     }
     // things have changed
     flush();
@@ -74,7 +53,7 @@ pyre::viz::products::BMP::shape(shape_type shape) -> void
     // grab some memory
     _data = new cell_type[cells];
     // all done
-    return;
+    return self;
 }
 
 auto
@@ -88,6 +67,11 @@ pyre::viz::products::BMP::data() -> view_type
     if (_data == nullptr) {
         // grab some
         _data = new cell_type[cells];
+    }
+    // if i'm stale
+    if (stale()) {
+        // refresh me
+        make();
     }
     // build a view to my data and return it
     return view_type(_data, cells);
