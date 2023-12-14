@@ -90,7 +90,15 @@ function(pyre_pyreLib)
   # add the sources
   target_sources(pyre
     PRIVATE
+    # memory
     lib/pyre/memory/FileMap.cc
+    # flow
+    lib/pyre/flow/Factory.cc
+    lib/pyre/flow/Node.cc
+    lib/pyre/flow/Product.cc
+    # viz
+    lib/pyre/viz/products/BMP.cc
+    # version
     ${CMAKE_CURRENT_BINARY_DIR}/lib/pyre/version.cc
     )
   # and the link dependencies
