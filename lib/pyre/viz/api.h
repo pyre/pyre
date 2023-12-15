@@ -35,7 +35,7 @@ namespace pyre::viz::iterators::codecs {
 
 
 // filters
-namespace pyre::viz::filters {
+namespace pyre::viz::iterators::filters {
     // a filter that adds two others
     template <class op1T, class op2T>
     using add_t = Add<op1T, op2T>;
@@ -85,7 +85,7 @@ namespace pyre::viz::filters {
     // a filter that maps values in [0,1] to the index of of a call in a uniformly spaced grid
     template <class sourceT>
     using uniform_t = Uniform<sourceT>;
-} // namespace pyre::viz::filters
+} // namespace pyre::viz::iterators::filters
 
 // conversions from other color spaces to {rgb}
 namespace pyre::viz::colorspaces {
