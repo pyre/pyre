@@ -20,12 +20,12 @@ using dataset_t = std::vector<data_t>;
 using cursor_t = dataset_t::const_iterator;
 
 // my filter
-using amplitude_t = pyre::viz::filters::amplitude_t<cursor_t>;
+using amplitude_t = pyre::viz::iterators::filters::logsaw_t<cursor_t>;
 // my color map
-using graymap_t = pyre::viz::colormaps::gray_t<amplitude_t>;
+using graymap_t = pyre::viz::iterators::colormaps::gray_t<amplitude_t>;
 
 // the workflow terminal
-using bmp_t = pyre::viz::bmp_t;
+using bmp_t = pyre::viz::iterators::codecs::bmp_t;
 // and a stream to write it into
 using ofstream_t = pyre::viz::ofstream_t;
 
@@ -69,7 +69,7 @@ main(int argc, char * argv[])
     const char * img = reinterpret_cast<char *>(bmp.encode(colormap));
 
     // open a file
-    ofstream_t str("amplitude.bmp", std::ios::out | std::ios::binary);
+    ofstream_t str("logsaw.bmp", std::ios::out | std::ios::binary);
     // if we succeeded
     if (str.is_open()) {
         // ask for the stream size

@@ -28,16 +28,16 @@ using shape_t = dataset_t::shape_type;
 
 
 // my filters
-using decimate_t = pyre::viz::filters::decimate_t<dataset_t>;
-using phase_t = pyre::viz::filters::phase_t<decimate_t>;
-using mag_t = pyre::viz::filters::logsaw_t<decimate_t>;
-using pol_t = pyre::viz::filters::polarsaw_t<phase_t>;
-using mul_t = pyre::viz::filters::mul_t<mag_t, pol_t>;
+using decimate_t = pyre::viz::iterators::filters::decimate_t<dataset_t>;
+using phase_t = pyre::viz::iterators::filters::phase_t<decimate_t>;
+using mag_t = pyre::viz::iterators::filters::logsaw_t<decimate_t>;
+using pol_t = pyre::viz::iterators::filters::polarsaw_t<phase_t>;
+using mul_t = pyre::viz::iterators::filters::mul_t<mag_t, pol_t>;
 // my color map
-using hl_t = pyre::viz::colormaps::hl_t<phase_t, mul_t>;
+using hl_t = pyre::viz::iterators::colormaps::hl_t<phase_t, mul_t>;
 
 // the workflow terminal
-using bmp_t = pyre::viz::bmp_t;
+using bmp_t = pyre::viz::iterators::codecs::bmp_t;
 // and a stream to write it into
 using ofstream_t = pyre::viz::ofstream_t;
 
