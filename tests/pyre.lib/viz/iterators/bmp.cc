@@ -12,7 +12,7 @@
 
 
 // type aliases
-using bmp_t = pyre::viz::bmp_t;
+using bmp_t = pyre::viz::iterators::codecs::bmp_t;
 using color_t = pyre::viz::color_t;
 using ofstream_t = pyre::viz::ofstream_t;
 

@@ -20,13 +20,13 @@ using dataset_t = std::vector<data_t>;
 using cursor_t = dataset_t::const_iterator;
 
 // my filters
-using phase_t = pyre::viz::filters::phase_t<cursor_t>;
-using constant_t = pyre::viz::filters::constant_t<double>;
+using phase_t = pyre::viz::iterators::filters::phase_t<cursor_t>;
+using polar_t = pyre::viz::iterators::filters::polarsaw_t<phase_t>;
 // my color map
-using hsb_t = pyre::viz::colormaps::hsb_t<phase_t, constant_t, constant_t>;
+using graymap_t = pyre::viz::iterators::colormaps::gray_t<polar_t>;
 
 // the workflow terminal
-using bmp_t = pyre::viz::bmp_t;
+using bmp_t = pyre::viz::iterators::codecs::bmp_t;
 // and a stream to write it into
 using ofstream_t = pyre::viz::ofstream_t;
 
@@ -35,7 +35,7 @@ using ofstream_t = pyre::viz::ofstream_t;
 int
 main(int argc, char * argv[])
 {
-    // we are discretizing a square of side 4 centered at the origin
+    // we are discretizing the unit square centered at the origin
     // for a given number of bins
     const int bins = 1001;
     // the spacing is
@@ -60,20 +60,18 @@ main(int argc, char * argv[])
     // set up the workflow
     // point to the beginning of the data
     auto start = data.begin();
-    // make a phase filter for the hue
-    auto hue = phase_t(start);
-    // and a couple of constant filters for saturation and value
-    auto saturation = constant_t(1.0);
-    auto value = constant_t(0.75);
+    // make an amplitude filter
+    phase_t phase(start);
+    polar_t polar(phase);
     // make a color map
-    hsb_t colormap(hue, saturation, value);
+    graymap_t colormap(polar);
     // make a bitmap
     bmp_t bmp(bins, bins);
     // connect it to the color map
     const char * img = reinterpret_cast<char *>(bmp.encode(colormap));
 
     // open a file
-    ofstream_t str("phase.bmp", std::ios::out | std::ios::binary);
+    ofstream_t str("polarsaw.bmp", std::ios::out | std::ios::binary);
     // if we succeeded
     if (str.is_open()) {
         // ask for the stream size

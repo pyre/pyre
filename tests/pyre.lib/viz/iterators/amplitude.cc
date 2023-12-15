@@ -19,14 +19,13 @@ using dataset_t = std::vector<data_t>;
 // and an iterator over it
 using cursor_t = dataset_t::const_iterator;
 
-// my filters
-using phase_t = pyre::viz::filters::phase_t<cursor_t>;
-using polar_t = pyre::viz::filters::polarsaw_t<phase_t>;
+// my filter
+using amplitude_t = pyre::viz::iterators::filters::amplitude_t<cursor_t>;
 // my color map
-using graymap_t = pyre::viz::colormaps::gray_t<polar_t>;
+using graymap_t = pyre::viz::iterators::colormaps::gray_t<amplitude_t>;
 
 // the workflow terminal
-using bmp_t = pyre::viz::bmp_t;
+using bmp_t = pyre::viz::iterators::codecs::bmp_t;
 // and a stream to write it into
 using ofstream_t = pyre::viz::ofstream_t;
 
@@ -61,17 +60,16 @@ main(int argc, char * argv[])
     // point to the beginning of the data
     auto start = data.begin();
     // make an amplitude filter
-    phase_t phase(start);
-    polar_t polar(phase);
+    auto filter = amplitude_t(start);
     // make a color map
-    graymap_t colormap(polar);
+    graymap_t colormap(filter);
     // make a bitmap
     bmp_t bmp(bins, bins);
     // connect it to the color map
     const char * img = reinterpret_cast<char *>(bmp.encode(colormap));
 
     // open a file
-    ofstream_t str("polarsaw.bmp", std::ios::out | std::ios::binary);
+    ofstream_t str("amplitude.bmp", std::ios::out | std::ios::binary);
     // if we succeeded
     if (str.is_open()) {
         // ask for the stream size
