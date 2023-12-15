@@ -10,7 +10,7 @@
 
 // map three color sources to {rgb_t}
 template <class redSourceT, class greenSourceT, class blueSourceT>
-class pyre::viz::colormaps::RGB {
+class pyre::viz::iterators::colormaps::RGB {
     // types
 public:
     // my template parameters

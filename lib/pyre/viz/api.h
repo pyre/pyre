@@ -95,7 +95,7 @@ namespace pyre::viz::iterators::colorspaces {
 } // namespace pyre::viz::iterators::colorspaces
 
 // color maps
-namespace pyre::viz::colormaps {
+namespace pyre::viz::iterators::colormaps {
     template <class sourceT>
     using complex_t = Complex<sourceT>;
 
@@ -113,7 +113,7 @@ namespace pyre::viz::colormaps {
 
     template <class redSourceT, class greenSourceT, class blueSourceT>
     using rgb_t = RGB<redSourceT, greenSourceT, blueSourceT>;
-} // namespace pyre::viz::colormaps
+} // namespace pyre::viz::iterators::colormaps
 
 
 // products
