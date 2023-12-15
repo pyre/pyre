@@ -30,7 +30,7 @@ namespace pyre::viz {
 // codecs
 namespace pyre::viz::iterators::codecs {
     // microsoft bmp
-    using bmp_t = codecs::BMP;
+    using bmp_t = BMP;
 } // namespace pyre::viz::iterators::codecs
 
 
