@@ -5,12 +5,12 @@
 
 // code guard
 #if !defined(pyre_viz_colormaps_HL_icc)
-#error this file contains implementation details for pyre::viz::colormaps::HL
+#error this file contains implementation details for pyre::viz::iterators::colormaps::HL
 #else
 
 // metamethods
 template <class hueSourceT, class luminositySourceT>
-pyre::viz::colormaps::HL<hueSourceT, luminositySourceT>::HL(
+pyre::viz::iterators::colormaps::HL<hueSourceT, luminositySourceT>::HL(
     // the sources
     hue_source_const_reference hue, luminosity_source_const_reference luminosity,
     // the free parameters
@@ -24,7 +24,7 @@ pyre::viz::colormaps::HL<hueSourceT, luminositySourceT>::HL(
 // interface
 template <class hueSourceT, class luminositySourceT>
 auto
-pyre::viz::colormaps::HL<hueSourceT, luminositySourceT>::operator*() const -> rgb_type
+pyre::viz::iterators::colormaps::HL<hueSourceT, luminositySourceT>::operator*() const -> rgb_type
 {
     // get values from my data sources
     auto hue = *_hue;
@@ -37,7 +37,7 @@ pyre::viz::colormaps::HL<hueSourceT, luminositySourceT>::operator*() const -> rg
 
 template <class hueSourceT, class luminositySourceT>
 auto
-pyre::viz::colormaps::HL<hueSourceT, luminositySourceT>::operator++() -> void
+pyre::viz::iterators::colormaps::HL<hueSourceT, luminositySourceT>::operator++() -> void
 {
     // make my sources point to the next value
     ++_hue;

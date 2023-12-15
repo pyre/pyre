@@ -10,7 +10,7 @@
 
 // interpret three input sources as {hue, saturation, luminosity} and generate {rgb_t} color
 template <class hueSourceT, class luminositySourceT>
-class pyre::viz::colormaps::HL {
+class pyre::viz::iterators::colormaps::HL {
     // types
 public:
     // my template parameters

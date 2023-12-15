@@ -10,7 +10,7 @@
 
 // map a single value to a shade of gray
 template <class sourceT>
-class pyre::viz::colormaps::Gray {
+class pyre::viz::iterators::colormaps::Gray {
     // types
 public:
     // my template parameter
