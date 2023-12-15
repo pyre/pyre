@@ -188,81 +188,81 @@ pyre_test_driver(tests/pyre.lib/flow/flow.cc)
 
 
 # viz
-pyre_test_driver(tests/pyre.lib/viz/amplitude.cc)
-pyre_test_driver(tests/pyre.lib/viz/bmp.cc)
-pyre_test_driver(tests/pyre.lib/viz/complex.cc)
-pyre_test_driver(tests/pyre.lib/viz/decimate.cc)
-pyre_test_driver(tests/pyre.lib/viz/domain_coloring.cc)
-pyre_test_driver(tests/pyre.lib/viz/hsb.cc)
-pyre_test_driver(tests/pyre.lib/viz/hsl.cc)
-pyre_test_driver(tests/pyre.lib/viz/logsaw.cc)
-pyre_test_driver(tests/pyre.lib/viz/phase.cc)
-pyre_test_driver(tests/pyre.lib/viz/polarsaw.cc)
+pyre_test_driver(tests/pyre.lib/viz/iterators/amplitude.cc)
+pyre_test_driver(tests/pyre.lib/viz/iterators/bmp.cc)
+pyre_test_driver(tests/pyre.lib/viz/iterators/complex.cc)
+pyre_test_driver(tests/pyre.lib/viz/iterators/decimate.cc)
+pyre_test_driver(tests/pyre.lib/viz/iterators/domain_coloring.cc)
+pyre_test_driver(tests/pyre.lib/viz/iterators/hsb.cc)
+pyre_test_driver(tests/pyre.lib/viz/iterators/hsl.cc)
+pyre_test_driver(tests/pyre.lib/viz/iterators/logsaw.cc)
+pyre_test_driver(tests/pyre.lib/viz/iterators/phase.cc)
+pyre_test_driver(tests/pyre.lib/viz/iterators/polarsaw.cc)
 
 # some tests require cleanup
-add_test(NAME tests.pyre.lib.viz.amplitude.cleanup
+add_test(NAME tests.pyre.lib.viz.iterators.amplitude.cleanup
   COMMAND ${BASH_PROGRAM} -c "rm amplitude.bmp"
   )
 
-add_test(NAME tests.pyre.lib.viz.bmp.cleanup
+add_test(NAME tests.pyre.lib.viz.iterators.bmp.cleanup
   COMMAND ${BASH_PROGRAM} -c "rm chip.bmp"
   )
 
-add_test(NAME tests.pyre.lib.viz.complex.cleanup
+add_test(NAME tests.pyre.lib.viz.iterators.complex.cleanup
   COMMAND ${BASH_PROGRAM} -c "rm complex.bmp"
   )
 
-add_test(NAME tests.pyre.lib.viz.decimate.cleanup
+add_test(NAME tests.pyre.lib.viz.iterators.decimate.cleanup
   COMMAND ${BASH_PROGRAM} -c "rm decimate.bmp"
   )
 
-add_test(NAME tests.pyre.lib.viz.domain_coloring.cleanup
+add_test(NAME tests.pyre.lib.viz.iterators.domain_coloring.cleanup
   COMMAND ${BASH_PROGRAM} -c "rm domain_coloring.bmp"
   )
 
-add_test(NAME tests.pyre.lib.viz.logsaw.cleanup
+add_test(NAME tests.pyre.lib.viz.iterators.logsaw.cleanup
   COMMAND ${BASH_PROGRAM} -c "rm logsaw.bmp"
   )
 
-add_test(NAME tests.pyre.lib.viz.phase.cleanup
+add_test(NAME tests.pyre.lib.viz.iterators.phase.cleanup
   COMMAND ${BASH_PROGRAM} -c "rm phase.bmp"
   )
 
-add_test(NAME tests.pyre.lib.viz.polarsaw.cleanup
+add_test(NAME tests.pyre.lib.viz.iterators.polarsaw.cleanup
   COMMAND ${BASH_PROGRAM} -c "rm polarsaw.bmp"
   )
 
 # some tests must happen in a specific order
-set_property(TEST tests.pyre.lib.viz.amplitude.cleanup PROPERTY
-  DEPENDS tests.pyre.lib.viz.amplitude.cc
+set_property(TEST tests.pyre.lib.viz.iterators.amplitude.cleanup PROPERTY
+  DEPENDS tests.pyre.lib.viz.iterators.amplitude.cc
   )
 
-set_property(TEST tests.pyre.lib.viz.bmp.cleanup PROPERTY
-  DEPENDS tests.pyre.lib.viz.bmp.cc
+set_property(TEST tests.pyre.lib.viz.iterators.bmp.cleanup PROPERTY
+  DEPENDS tests.pyre.lib.viz.iterators.bmp.cc
   )
 
-set_property(TEST tests.pyre.lib.viz.complex.cleanup PROPERTY
-  DEPENDS tests.pyre.lib.viz.complex.cc
+set_property(TEST tests.pyre.lib.viz.iterators.complex.cleanup PROPERTY
+  DEPENDS tests.pyre.lib.viz.iterators.complex.cc
   )
 
-set_property(TEST tests.pyre.lib.viz.decimate.cleanup PROPERTY
-  DEPENDS tests.pyre.lib.viz.decimate.cc
+set_property(TEST tests.pyre.lib.viz.iterators.decimate.cleanup PROPERTY
+  DEPENDS tests.pyre.lib.viz.iterators.decimate.cc
   )
 
-set_property(TEST tests.pyre.lib.viz.domain_coloring.cleanup PROPERTY
-  DEPENDS tests.pyre.lib.viz.domain_coloring.cc
+set_property(TEST tests.pyre.lib.viz.iterators.domain_coloring.cleanup PROPERTY
+  DEPENDS tests.pyre.lib.viz.iterators.domain_coloring.cc
   )
 
-set_property(TEST tests.pyre.lib.viz.logsaw.cleanup PROPERTY
-  DEPENDS tests.pyre.lib.viz.logsaw.cc
+set_property(TEST tests.pyre.lib.viz.iterators.logsaw.cleanup PROPERTY
+  DEPENDS tests.pyre.lib.viz.iterators.logsaw.cc
   )
 
-set_property(TEST tests.pyre.lib.viz.phase.cleanup PROPERTY
-  DEPENDS tests.pyre.lib.viz.phase.cc
+set_property(TEST tests.pyre.lib.viz.iterators.phase.cleanup PROPERTY
+  DEPENDS tests.pyre.lib.viz.iterators.phase.cc
   )
 
-set_property(TEST tests.pyre.lib.viz.polarsaw.cleanup PROPERTY
-  DEPENDS tests.pyre.lib.viz.polarsaw.cc
+set_property(TEST tests.pyre.lib.viz.iterators.polarsaw.cleanup PROPERTY
+  DEPENDS tests.pyre.lib.viz.iterators.polarsaw.cc
   )
 
 
