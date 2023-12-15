@@ -14,7 +14,7 @@
 void
 pyre::py::viz::bmp(py::module & m)
 {
-    // turn {pyre::viz::bmp_t} into a {buffer}
+    // turn {pyre::viz::iterators::codecs::bmp_t} into a {buffer}
     auto bmp = py::class_<bmp_t>(
         // the scope
         m,

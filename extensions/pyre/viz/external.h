@@ -17,7 +17,7 @@
 // aliases
 namespace pyre::py::viz {
     // bitmaps
-    using bmp_t = pyre::viz::bmp_t;
+    using bmp_t = pyre::viz::iterators::codecs::bmp_t;
 
 } // namespace pyre::py::viz
 
