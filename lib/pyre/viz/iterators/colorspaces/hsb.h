@@ -15,7 +15,7 @@
 //   s in [0, 1]
 //   b in [0, 1]
 auto
-pyre::viz::colorspaces::hsb(double h, double s, double b) -> viz::rgb_t
+pyre::viz::iterators::colorspaces::hsb(double h, double s, double b) -> viz::rgb_t
 {
     // convert the hue from radians to degrees
     h *= 180 / M_PI;

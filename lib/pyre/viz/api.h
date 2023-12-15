@@ -88,11 +88,11 @@ namespace pyre::viz::iterators::filters {
 } // namespace pyre::viz::iterators::filters
 
 // conversions from other color spaces to {rgb}
-namespace pyre::viz::colorspaces {
+namespace pyre::viz::iterators::colorspaces {
     inline auto hl(double h, double l, double threshold = 0.4) -> viz::rgb_t;
     inline auto hsb(double h, double s, double b) -> viz::rgb_t;
     inline auto hsl(double h, double s, double l) -> viz::rgb_t;
-} // namespace pyre::viz::colorspaces
+} // namespace pyre::viz::iterators::colorspaces
 
 // color maps
 namespace pyre::viz::colormaps {
