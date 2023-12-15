@@ -8,7 +8,7 @@
 #define pyre_viz_codecs_BMP_h
 
 
-class pyre::viz::codecs::BMP {
+class pyre::viz::iterators::codecs::BMP {
     // type aliases
 public:
     // aliases from package level
