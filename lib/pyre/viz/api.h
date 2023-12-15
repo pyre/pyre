@@ -10,12 +10,7 @@
 
 // publicly visible types
 namespace pyre::viz {
-
-    // codecs
-    // microsoft bmp
-    using bmp_t = codecs::BMP;
-
-    // and correctly typed file streams for reading and writing to avoid having to cast
+    // correctly typed file streams for reading and writing to avoid having to cast
     // {byte_t *} to {char *}
     // using fstream_t = std::basic_fstream<byte_t>;
     // using ifstream_t = std::basic_ifstream<byte_t>;
@@ -31,6 +26,12 @@ namespace pyre::viz {
     using ofstream_t = std::ofstream;
 
 } // namespace pyre::viz
+
+// codecs
+namespace pyre::viz::iterators::codecs {
+    // microsoft bmp
+    using bmp_t = codecs::BMP;
+} // namespace pyre::viz::iterators::codecs
 
 
 // filters
