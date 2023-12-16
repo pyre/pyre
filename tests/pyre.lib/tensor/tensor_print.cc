@@ -5,8 +5,6 @@
 //
 
 
-// system includes
-#include <iostream>
 // dependencies
 #include <pyre/tensor.h>
 

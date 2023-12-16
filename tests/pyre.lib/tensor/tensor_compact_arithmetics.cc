@@ -6,7 +6,6 @@
 
 // support
 #include <cassert>
-#include <iostream>
 
 // get the tensor algebra
 #include <pyre/tensor.h>
