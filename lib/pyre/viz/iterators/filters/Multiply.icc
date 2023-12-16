@@ -24,7 +24,7 @@ template <class op1T, class op2T>
 auto
 pyre::viz::iterators::filters::Multiply<op1T, op2T>::operator*() const
 {
-    // grab the values of my two operands and add them together
+    // grab the values of my two operands and multiply them together
     return *_op1 * *_op2;
 }
 
