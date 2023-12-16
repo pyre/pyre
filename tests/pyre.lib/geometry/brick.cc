@@ -8,7 +8,6 @@
 // config
 #include <portinfo>
 // externals
-#include <iostream>
 #include <pyre/journal.h>
 #include <pyre/geometry.h>
 
