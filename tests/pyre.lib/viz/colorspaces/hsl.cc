@@ -6,8 +6,6 @@
 
 // support
 #include <cassert>
-// STL
-#include <iostream>
 // support
 #include <pyre/viz.h>
 
