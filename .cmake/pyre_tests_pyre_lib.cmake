@@ -188,13 +188,13 @@ pyre_test_driver(tests/pyre.lib/flow/flow.cc)
 
 
 # viz
+pyre_test_driver(tests/pyre.lib/viz/colorspaces/hsb.cc)
+pyre_test_driver(tests/pyre.lib/viz/colorspaces/hsl.cc)
 pyre_test_driver(tests/pyre.lib/viz/iterators/amplitude.cc)
 pyre_test_driver(tests/pyre.lib/viz/iterators/bmp.cc)
 pyre_test_driver(tests/pyre.lib/viz/iterators/complex.cc)
 pyre_test_driver(tests/pyre.lib/viz/iterators/decimate.cc)
 pyre_test_driver(tests/pyre.lib/viz/iterators/domain_coloring.cc)
-pyre_test_driver(tests/pyre.lib/viz/iterators/hsb.cc)
-pyre_test_driver(tests/pyre.lib/viz/iterators/hsl.cc)
 pyre_test_driver(tests/pyre.lib/viz/iterators/logsaw.cc)
 pyre_test_driver(tests/pyre.lib/viz/iterators/phase.cc)
 pyre_test_driver(tests/pyre.lib/viz/iterators/polarsaw.cc)
