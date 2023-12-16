@@ -8,7 +8,6 @@
 #error this file contains implementation details for pyre::py::grid::grids
 #else
 
-#include <iostream>
 
 // the read/write class record factory
 template <typename storageT, int dim>
