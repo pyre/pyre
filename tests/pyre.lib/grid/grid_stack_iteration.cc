@@ -4,7 +4,6 @@
 // (c) 1998-2023 all rights reserved
 
 
-#include <iostream>
 // support
 #include <cassert>
 // get the grid
