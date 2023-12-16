@@ -12,7 +12,7 @@
 // the kernel maps two values, hue and luminosity to RGB using a colormap that is
 // designed for displaying complex values [zebker@stanford.edu, private communication]
 auto
-pyre::viz::iterators::colorspaces::hl(double h, double l, double threshold) -> viz::rgb_t
+pyre::viz::colorspaces::hl(double h, double l, double threshold) -> viz::rgb_t
 {
     // 2 * π / 3
     const auto angle = 2 * M_PI / 3;

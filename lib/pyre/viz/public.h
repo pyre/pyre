@@ -18,6 +18,12 @@
 #include "api.h"
 
 // local support
+// color spaces
+#include "colorspaces/hl.h"
+#include "colorspaces/hsb.h"
+#include "colorspaces/hsl.h"
+
+// iterators
 // filters
 #include "iterators/filters/Add.h"
 #include "iterators/filters/Affine.h"
@@ -35,10 +41,6 @@
 #include "iterators/filters/Power.h"
 #include "iterators/filters/Real.h"
 #include "iterators/filters/Uniform.h"
-// color spaces
-#include "iterators/colorspaces/hl.h"
-#include "iterators/colorspaces/hsb.h"
-#include "iterators/colorspaces/hsl.h"
 // color maps
 #include "iterators/colormaps/Complex.h"
 #include "iterators/colormaps/Gray.h"
@@ -48,6 +50,7 @@
 #include "iterators/colormaps/RGB.h"
 // encodings
 #include "iterators/codecs/BMP.h"
+
 // products
 #include "products/BMP.h"
 

@@ -24,15 +24,23 @@ namespace pyre::viz {
     using fstream_t = std::fstream;
     using ifstream_t = std::ifstream;
     using ofstream_t = std::ofstream;
-
 } // namespace pyre::viz
 
+
+// conversions from other color spaces to {rgb}
+namespace pyre::viz::colorspaces {
+    inline auto hl(double h, double l, double threshold = 0.4) -> rgb_t;
+    inline auto hsb(double h, double s, double b) -> rgb_t;
+    inline auto hsl(double h, double s, double l) -> rgb_t;
+} // namespace pyre::viz::colorspaces
+
+
+// iterators
 // codecs
 namespace pyre::viz::iterators::codecs {
     // microsoft bmp
     using bmp_t = BMP;
 } // namespace pyre::viz::iterators::codecs
-
 
 // filters
 namespace pyre::viz::iterators::filters {
@@ -86,13 +94,6 @@ namespace pyre::viz::iterators::filters {
     template <class sourceT>
     using uniform_t = Uniform<sourceT>;
 } // namespace pyre::viz::iterators::filters
-
-// conversions from other color spaces to {rgb}
-namespace pyre::viz::iterators::colorspaces {
-    inline auto hl(double h, double l, double threshold = 0.4) -> viz::rgb_t;
-    inline auto hsb(double h, double s, double b) -> viz::rgb_t;
-    inline auto hsl(double h, double s, double l) -> viz::rgb_t;
-} // namespace pyre::viz::iterators::colorspaces
 
 // color maps
 namespace pyre::viz::iterators::colormaps {
