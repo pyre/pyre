@@ -4,17 +4,17 @@
 // (c) 1998-2023 all rights reserved
 
 // externals
-#include "../external.h"
+#include "../../public.h"
 // forward declarations
-#include "../forward.h"
+#include "../../forward.h"
 // type aliases
-#include "../api.h"
+#include "../../api.h"
 
 // my class declaration
 #include "BMP.h"
 
 // destructor
-pyre::viz::products::BMP::~BMP()
+pyre::viz::products::images::BMP::~BMP()
 {
     // free my buffer
     delete[] _data;
@@ -35,7 +35,7 @@ pyre::viz::products::BMP::~BMP()
 
 // internals
 auto
-pyre::viz::products::BMP::flush() -> void
+pyre::viz::products::images::BMP::flush() -> void
 {
     // chain up
     pyre::flow::product_t::flush();
@@ -46,7 +46,7 @@ pyre::viz::products::BMP::flush() -> void
 }
 
 auto
-pyre::viz::products::BMP::dump() -> ref_type
+pyre::viz::products::images::BMP::dump() -> ref_type
 {
     // build a reference
     auto self = std::dynamic_pointer_cast<BMP>(ref());

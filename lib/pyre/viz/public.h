@@ -23,6 +23,10 @@
 #include "colorspaces/hsb.h"
 #include "colorspaces/hsl.h"
 
+// products
+// images
+#include "products/images/BMP.h"
+
 // iterators
 // filters
 #include "iterators/filters/Add.h"
@@ -50,9 +54,6 @@
 #include "iterators/colormaps/RGB.h"
 // encodings
 #include "iterators/codecs/BMP.h"
-
-// products
-#include "products/BMP.h"
 
 
 #endif
