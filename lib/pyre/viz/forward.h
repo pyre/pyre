@@ -20,6 +20,17 @@ namespace pyre::viz {
     // just to make sure we are all on the same page, wherever it matters
     using byte_t = unsigned char;
 
+
+    // products
+    namespace products {
+        // images
+        namespace images {
+            // microsoft bitmaps
+            class BMP;
+        } // namespace images
+    }     // namespace products
+
+
     // iterators
     namespace iterators {
         // filters
@@ -104,13 +115,6 @@ namespace pyre::viz {
             class BMP;
         } // namespace codecs
     }     // namespace iterators
-
-
-    // products
-    namespace products {
-        // others
-        class BMP;
-    } // namespace products
 
 
 } // namespace pyre::viz

@@ -6,13 +6,13 @@
 // code guard
 #pragma once
 
-class pyre::viz::products::BMP : public pyre::flow::product_t {
+class pyre::viz::products::images::BMP : public pyre::flow::product_t {
     // type aliases
 public:
     // my shape
     using shape_type = std::tuple<int, int>;
     // my cell type
-    using cell_type = unsigned char;
+    using cell_type = byte_t;
     // access to my data buffer
     using view_type = pyre::memory::view_t<cell_type>;
     using constview_type = pyre::memory::constview_t<cell_type>;

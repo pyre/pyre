@@ -27,6 +27,14 @@ namespace pyre::viz {
 } // namespace pyre::viz
 
 
+// products
+// images
+namespace pyre::viz::products::images {
+    // microsoft bitmaps
+    using bmp_t = BMP;
+} // namespace pyre::viz::products::images
+
+
 // conversions from other color spaces to {rgb}
 namespace pyre::viz::colorspaces {
     inline auto hl(double h, double l, double threshold = 0.4) -> rgb_t;
@@ -115,13 +123,6 @@ namespace pyre::viz::iterators::colormaps {
     template <class redSourceT, class greenSourceT, class blueSourceT>
     using rgb_t = RGB<redSourceT, greenSourceT, blueSourceT>;
 } // namespace pyre::viz::iterators::colormaps
-
-
-// products
-namespace pyre::viz::products {
-    // microsoft bitmaps
-    using bmp_t = BMP;
-} // namespace pyre::viz::products
 
 
 #endif

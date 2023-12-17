@@ -8,14 +8,14 @@
 
 // factory
 auto
-pyre::viz::products::BMP::create(shape_type shape) -> ref_type
+pyre::viz::products::images::BMP::create(shape_type shape) -> ref_type
 {
     // build an instance and wrap it in a shared pointer
     return std::make_shared<BMP>(sentinel_type(), shape);
 }
 
 // constructor
-pyre::viz::products::BMP::BMP(sentinel_type sentinel, shape_type shape) :
+pyre::viz::products::images::BMP::BMP(sentinel_type sentinel, shape_type shape) :
     // base class
     pyre::flow::product_t(sentinel),
     // members
@@ -25,7 +25,7 @@ pyre::viz::products::BMP::BMP(sentinel_type sentinel, shape_type shape) :
 
 // accessors
 auto
-pyre::viz::products::BMP::shape() const -> shape_type
+pyre::viz::products::images::BMP::shape() const -> shape_type
 {
     // easy enough
     return _shape;
@@ -33,7 +33,7 @@ pyre::viz::products::BMP::shape() const -> shape_type
 
 // mutators
 auto
-pyre::viz::products::BMP::shape(shape_type shape) -> ref_type
+pyre::viz::products::images::BMP::shape(shape_type shape) -> ref_type
 {
     // build a reference
     auto self = std::dynamic_pointer_cast<BMP>(ref());
@@ -57,7 +57,7 @@ pyre::viz::products::BMP::shape(shape_type shape) -> ref_type
 }
 
 auto
-pyre::viz::products::BMP::data() -> view_type
+pyre::viz::products::images::BMP::data() -> view_type
 {
     // unpack my shape
     auto [width, height] = _shape;
