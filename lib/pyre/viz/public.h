@@ -24,6 +24,8 @@
 #include "colorspaces/hsl.h"
 
 // products
+// memory
+#include "products/memory/I1.h"
 // images
 #include "products/images/BMP.h"
 

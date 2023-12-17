@@ -13,6 +13,7 @@
 #include <cassert>
 #include <cmath>
 #include <complex>
+#include <cstdint>
 #include <memory>
 #include <tuple>
 

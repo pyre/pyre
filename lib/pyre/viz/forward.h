@@ -17,12 +17,68 @@ namespace pyre::viz {
     using color_t = float;
     // {r,g,b} triplets
     using rgb_t = std::tuple<color_t, color_t, color_t>;
+
     // just to make sure we are all on the same page, wherever it matters
     using byte_t = unsigned char;
 
+    // aliases for the atomic types
+    // signed integers
+    using i1_t = std::int8_t;
+    using i2_t = std::int16_t;
+    using i4_t = std::int32_t;
+    using i8_t = std::int64_t;
+    // unsigned integers
+    using u1_t = std::uint8_t;
+    using u2_t = std::uint16_t;
+    using u4_t = std::uint32_t;
+    using u8_t = std::uint64_t;
+    // floats
+    using f4_t = float;
+    using f8_t = double;
+    // complex
+    using c8_t = std::complex<float>;
+    using c16_t = std::complex<double>;
 
     // products
     namespace products {
+        // memory
+        namespace memory {
+            // atoms
+            // signed integers
+            class I1;
+            class I2;
+            class I4;
+            class I8;
+            // unsigned integers
+            class U1;
+            class U2;
+            class U4;
+            class U8;
+            // floats
+            class F4;
+            class F8;
+            // complex
+            class C8;
+            class C16;
+
+            // tiles
+            // signed integers
+            class TileI1;
+            class TileI2;
+            class TileI4;
+            class TileI8;
+            // unsigned integers
+            class TileU1;
+            class TileU2;
+            class TileU4;
+            class TileU8;
+            // floats
+            class TileF4;
+            class TileF8;
+            // complex
+            class TileC8;
+            class TileC16;
+        } // namespace memory
         // images
         namespace images {
             // microsoft bitmaps
