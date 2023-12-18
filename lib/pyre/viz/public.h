@@ -29,6 +29,10 @@
 // images
 #include "products/images/BMP.h"
 
+// factories
+// arithmetic
+#include "factories/arithmetic/AddI1.h"
+
 // iterators
 // filters
 #include "iterators/filters/Add.h"

@@ -74,6 +74,14 @@ namespace pyre::viz::products::images {
 } // namespace pyre::viz::products::images
 
 
+// factories
+// arithmetic
+namespace pyre::viz::factories::arithmetic {
+    // operators
+    using add_i1_t = AddI1;
+} // namespace pyre::viz::factories::arithmetic
+
+
 // conversions from other color spaces to {rgb}
 namespace pyre::viz::colorspaces {
     inline auto hl(double h, double l, double threshold = 0.4) -> rgb_t;
