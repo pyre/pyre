@@ -24,7 +24,7 @@ main(int argc, char * argv[])
     // make a channel
     auto channel = pyre::journal::debug_t("pyre.flow");
     // turn it on
-    channel.activate();
+    // channel.activate();
 
     // make the operands
     auto op1 = product_t::create(1);
