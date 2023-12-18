@@ -4,11 +4,11 @@
 // (c) 1998-2023 all rights reserved
 
 // externals
-#include "../../public.h"
+#include "../external.h"
 // forward declarations
-#include "../../forward.h"
+#include "../forward.h"
 // type aliases
-#include "../../api.h"
+#include "../api.h"
 
 // my class declaration
 #include "I1.h"
