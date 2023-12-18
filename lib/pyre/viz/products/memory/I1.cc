@@ -21,11 +21,13 @@ pyre::viz::products::memory::I1::~I1()
     // let me know
     channel
         // mark
-        << "i1: destroying cell at "
-        << this
+        << "i1 " << this << ": destroy"
+        << pyre::journal::newline
         // flush
         << pyre::journal::endl(__HERE__);
 
     // all done
     return;
 }
+
+// end of file
