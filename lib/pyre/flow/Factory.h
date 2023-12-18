@@ -40,7 +40,7 @@ public:
     // look up the product bound to an input {slot}
     inline auto input(const name_type & slot) -> product_ref_type;
     // look up the product bound to an output {slot}
-    inline auto output(const name_type & name) -> product_ref_type;
+    inline auto output(const name_type & slot) -> product_ref_type;
 
     // build a reference to me
     inline auto ref() -> factory_ref_type;
