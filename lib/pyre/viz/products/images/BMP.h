@@ -30,7 +30,6 @@ public:
     // constructor: DON'T CALL
     inline BMP(sentinel_type, shape_type);
 
-private:
     // accessors
 public:
     inline auto shape() const -> shape_type;
@@ -42,7 +41,8 @@ public:
     // interface
 public:
     // access to my data
-    inline auto data() -> view_type;
+    inline auto read() -> constview_type;
+    inline auto write() -> view_type;
     // invalidate me
     virtual auto flush() -> void override;
     // debugging support

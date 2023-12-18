@@ -16,8 +16,8 @@ pyre::viz::products::images::BMP::create(shape_type shape) -> ref_type
 
 // constructor
 pyre::viz::products::images::BMP::BMP(sentinel_type sentinel, shape_type shape) :
-    // base class
-    pyre::flow::product_t(sentinel),
+    // base class; make sure i start out as stale since i own memory but it isn't populated
+    pyre::flow::product_t(sentinel, true),
     // members
     _shape { shape },
     _data { new cell_type[std::get<0>(shape) * std::get<1>(shape)] }
@@ -57,7 +57,7 @@ pyre::viz::products::images::BMP::shape(shape_type shape) -> ref_type
 }
 
 auto
-pyre::viz::products::images::BMP::data() -> view_type
+pyre::viz::products::images::BMP::read() -> constview_type
 {
     // unpack my shape
     auto [width, height] = _shape;
@@ -68,10 +68,23 @@ pyre::viz::products::images::BMP::data() -> view_type
         // grab some
         _data = new cell_type[cells];
     }
-    // if i'm stale
-    if (stale()) {
-        // refresh me
-        make();
+    // refresh me
+    make();
+    // build a view to my data and return it
+    return constview_type(_data, cells);
+}
+
+auto
+pyre::viz::products::images::BMP::write() -> view_type
+{
+    // unpack my shape
+    auto [width, height] = _shape;
+    // compute my size
+    auto cells = width * height;
+    // if i don't own any memory
+    if (_data == nullptr) {
+        // grab some
+        _data = new cell_type[cells];
     }
     // build a view to my data and return it
     return view_type(_data, cells);
