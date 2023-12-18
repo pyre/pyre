@@ -22,15 +22,33 @@ pyre::viz::products::memory::I1::I1(sentinel_type sentinel, cell_type value) :
     _value { value }
 {}
 
-// value access
+// my value as a slot
+auto
+pyre::viz::products::memory::I1::value() -> cell_type
+{
+    // get my value and return it
+    return read();
+}
+
+auto
+pyre::viz::products::memory::I1::value(cell_type value) -> ref_type
+{
+    // notify the downstream graph that my value has changed
+    flush();
+    // record the new value
+    auto self = write(value);
+    // mark me as clean
+    clean();
+    // all done
+    return self;
+}
+
+// value access by factories
 auto
 pyre::viz::products::memory::I1::read() -> cell_type
 {
-    // if i'm stale
-    if (stale()) {
-        // refresh me
-        make();
-    }
+    // refresh me
+    make();
     // return my value
     return _value;
 }

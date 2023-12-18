@@ -25,9 +25,14 @@ public:
     // constructor; DON'T CALL
     inline I1(sentinel_type, cell_type);
 
+    // my value as a control slot
+public:
+    inline auto value() -> cell_type;
+    inline auto value(cell_type) -> ref_type;
+
     // interface
 public:
-    // access to my data
+    // value access by factories
     inline auto read() -> cell_type;
     inline auto write(cell_type value) -> ref_type;
 
