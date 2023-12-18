@@ -203,7 +203,7 @@ pyre::viz::iterators::codecs::BMP::encode(iteratorT & source, bool topdown) cons
         for (auto col = 0; col < _width; ++col) {
             // get the color triplet
             auto [red, green, blue] = *source;
-            // write it in the file; note that the encoding order is {brg}, not {rgb}
+            // write it in the file; note that the encoding order is {bgr}, not {rgb}
             // and we scale the values to the range [0,255]
             _data[cur++] = 255 * blue;
             _data[cur++] = 255 * green;
