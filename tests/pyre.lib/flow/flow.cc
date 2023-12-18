@@ -8,11 +8,9 @@
 #include <portinfo>
 // STL
 #include <cassert>
-#include <vector>
-#include <fstream>
 // support
 #include <pyre/journal.h>
-#include <pyre/viz.h>
+#include <pyre/flow.h>
 
 
 // type aliases
