@@ -45,7 +45,7 @@ public:
     auto op2(product_ref_type) -> factory_ref_type;
     auto result(product_ref_type) -> factory_ref_type;
 
-    // interface
+    // flow protocol
 public:
     virtual auto make(name_type slot, base_type::product_ref_type product)
         -> base_type::factory_ref_type override;
