@@ -16,8 +16,8 @@ pyre::viz::products::memory::I1::create(cell_type value) -> ref_type
 
 // constructor
 pyre::viz::products::memory::I1::I1(sentinel_type sentinel, cell_type value) :
-    // base class
-    pyre::flow::product_t(sentinel),
+    // base class; start out clean and initialized
+    pyre::flow::product_t(sentinel, false),
     // member
     _value { value }
 {}
