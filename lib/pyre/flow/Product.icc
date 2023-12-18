@@ -8,10 +8,10 @@
 
 // factory
 auto
-pyre::flow::Product::create() -> product_ref_type
+pyre::flow::Product::create(bool stale) -> product_ref_type
 {
     // build an instance and wrap it in a shared pointer
-    auto ref = std::make_shared<Product>(sentinel_type());
+    auto ref = std::make_shared<Product>(sentinel_type(), stale);
     // make a channel
     auto channel = pyre::journal::debug_t("pyre.flow.products.create");
     // show me
@@ -26,11 +26,11 @@ pyre::flow::Product::create() -> product_ref_type
 }
 
 // constructors
-pyre::flow::Product::Product(sentinel_type sentinel) :
+pyre::flow::Product::Product(sentinel_type sentinel, bool stale) :
     // superclass
     Node(sentinel),
     // data members
-    _stale { true },
+    _stale { stale },
     _readers {},
     _writers {}
 {}
