@@ -24,7 +24,7 @@ main(int argc, char * argv[])
     // make a channel
     auto channel = pyre::journal::debug_t("pyre.flow");
     // turn it on
-    channel.activate();
+    // channel.activate();
 
     // make the operands
     auto op1 = product_t::create(1);
@@ -42,6 +42,18 @@ main(int argc, char * argv[])
     add->op1(op1);
     add->op2(op2);
     add->result(result);
+
+    // get the bindings
+    const auto & inputs = add->inputs();
+    const auto & outputs = add->outputs();
+    // verify the factory arity
+    assert((inputs.size() == 2));
+    assert((outputs.size() == 1));
+    // and the slot contents
+    assert(inputs.find("op1")->second == op1);
+    assert(inputs.find("op2")->second == op2);
+    assert(outputs.find("result")->second == result);
+
     // read the value
     int value = result->read();
     // show me
