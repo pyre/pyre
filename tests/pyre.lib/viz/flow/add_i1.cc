@@ -24,7 +24,7 @@ main(int argc, char * argv[])
     // make a channel
     auto channel = pyre::journal::debug_t("pyre.flow");
     // turn it on
-    // channel.activate();
+    channel.activate();
 
     // make the operands
     auto op1 = product_t::create(1);
@@ -32,9 +32,9 @@ main(int argc, char * argv[])
     // make the result
     auto result = product_t::create(0);
     // check the initial values
-    assert(op1->read() == 1);
-    assert(op2->read() == 2);
-    assert(result->read() == 0);
+    assert(op1->value() == 1);
+    assert(op2->value() == 2);
+    assert(result->value() == 0);
 
     // make the operator
     auto add = factory_t::create();
@@ -55,7 +55,7 @@ main(int argc, char * argv[])
     assert(outputs.find("result")->second == result);
 
     // read the value
-    int value = result->read();
+    int value = result->value();
     // show me
     channel
         // the value
@@ -66,8 +66,10 @@ main(int argc, char * argv[])
     // check it
     assert((value == 3));
 
+    // update one of the operands
+    op1->value(3);
     // again, read the value
-    value = result->read();
+    value = result->value();
     // show me
     channel
         // the value
@@ -76,7 +78,7 @@ main(int argc, char * argv[])
         // flush
         << pyre::journal::endl(__HERE__);
     // check it gain
-    assert((value == 3));
+    assert((value == 5));
 
     // all done
     return 0;
