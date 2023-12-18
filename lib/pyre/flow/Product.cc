@@ -37,6 +37,8 @@ pyre::flow::Product::addWriter(name_type slot, factory_ref_type factory) -> prod
 {
     // add the factory to my pile of writers
     _writers.insert({ slot, factory });
+    // invalidate me
+    flush();
     // return a reference to me
     return ref();
 };
