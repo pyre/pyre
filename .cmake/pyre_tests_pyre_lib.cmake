@@ -198,6 +198,7 @@ pyre_test_driver(tests/pyre.lib/viz/iterators/domain_coloring.cc)
 pyre_test_driver(tests/pyre.lib/viz/iterators/logsaw.cc)
 pyre_test_driver(tests/pyre.lib/viz/iterators/phase.cc)
 pyre_test_driver(tests/pyre.lib/viz/iterators/polarsaw.cc)
+pyre_test_driver(tests/pyre.lib/viz/flow/add_i1.cc)
 
 # some tests require cleanup
 add_test(NAME tests.pyre.lib.viz.iterators.amplitude.cleanup
