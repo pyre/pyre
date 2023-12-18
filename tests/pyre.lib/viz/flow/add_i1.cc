@@ -31,14 +31,17 @@ main(int argc, char * argv[])
     auto op2 = product_t::create(2);
     // make the result
     auto result = product_t::create(0);
+    // check the initial values
+    assert(op1->read() == 1);
+    assert(op2->read() == 2);
+    assert(result->read() == 0);
+
     // make the operator
     auto add = factory_t::create();
-
-    // connect them
+    // wire the workflow
     add->op1(op1);
     add->op2(op2);
     add->result(result);
-
     // read the value
     int value = result->read();
     // show me
