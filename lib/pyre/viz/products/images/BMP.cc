@@ -20,12 +20,12 @@ pyre::viz::products::images::BMP::~BMP()
     delete[] _data;
 
     // make a channel
-    auto channel = pyre::journal::debug_t("pyre.viz.products.bmp");
+    auto channel = pyre::journal::debug_t("pyre.viz.products.images.bmp");
     // let me know
     channel
         // mark
-        << "bmp: destroying bitmap at "
-        << (void *) this
+        << "bmp at " << this << ": destroy"
+        << pyre::journal::newline
         // flush
         << pyre::journal::endl(__HERE__);
 
@@ -39,8 +39,10 @@ pyre::viz::products::images::BMP::flush() -> void
 {
     // chain up
     pyre::flow::product_t::flush();
-    // invalidate my memory buffer
+    // clean up
     delete[] _data;
+    // invalidate my memory buffer
+    _data = nullptr;
     // all done
     return;
 }
@@ -53,9 +55,9 @@ pyre::viz::products::images::BMP::dump() -> ref_type
     // unpack my shape
     auto [width, height] = _shape;
     // and build a view over my buffer
-    auto view = data();
+    auto view = read();
     // make a channel
-    auto channel = pyre::journal::debug_t("pyre.viz.products.bmp");
+    auto channel = pyre::journal::debug_t("pyre.viz.products.images.bmp");
     // show me
     channel
         // the product
