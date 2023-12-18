@@ -48,6 +48,8 @@ main(int argc, char * argv[])
         << pyre::journal::newline
         // flush
         << pyre::journal::endl(__HERE__);
+    // check it
+    assert((value == 3));
 
     // again, read the value
     value = result->read();
@@ -58,6 +60,8 @@ main(int argc, char * argv[])
         << pyre::journal::newline
         // flush
         << pyre::journal::endl(__HERE__);
+    // check it gain
+    assert((value == 3));
 
     // all done
     return 0;
