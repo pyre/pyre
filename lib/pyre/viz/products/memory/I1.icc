@@ -40,8 +40,6 @@ pyre::viz::products::memory::I1::write(cell_type value) -> ref_type
 {
     // record the new value
     _value = value;
-    // invalidate me
-    flush();
     // build a self reference
     auto self = std::dynamic_pointer_cast<I1>(ref());
     // and return it
