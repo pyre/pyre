@@ -86,6 +86,14 @@ namespace pyre::viz {
         } // namespace images
     }     // namespace products
 
+    // factories
+    namespace factories {
+        // arithmetic
+        namespace arithmetic {
+            // operators
+            class AddI1;
+        } // namespace arithmetic
+    }     // namespace factories
 
     // iterators
     namespace iterators {
