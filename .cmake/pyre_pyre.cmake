@@ -97,7 +97,9 @@ function(pyre_pyreLib)
     lib/pyre/flow/Node.cc
     lib/pyre/flow/Product.cc
     # viz
-    lib/pyre/viz/products/BMP.cc
+    lib/pyre/viz/products/memory/I1.cc
+    lib/pyre/viz/products/images/BMP.cc
+    lib/pyre/viz/factories/arithmetic/AddI1.cc
     # version
     ${CMAKE_CURRENT_BINARY_DIR}/lib/pyre/version.cc
     )
