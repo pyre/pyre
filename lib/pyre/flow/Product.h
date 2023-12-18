@@ -19,14 +19,14 @@ public:
 
     // factory
 public:
-    inline static auto create() -> product_ref_type;
+    inline static auto create(bool stale = false) -> product_ref_type;
 
     // metamethods
 public:
     // destructor
     virtual ~Product();
     // constructor; not usable directly. call {create} instead
-    inline Product(sentinel_type);
+    inline Product(sentinel_type, bool stale);
 
     // accessors
 public:
