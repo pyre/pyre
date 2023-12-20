@@ -8,7 +8,7 @@
 #define pyre_memory_Heap_h
 
 
-// a file-backed block of cells
+// a block of cells on the heap
 template <class T, bool isConst>
 class pyre::memory::Heap {
     // types
