@@ -21,7 +21,6 @@ public:
     // and to my products
     using product_ref_type = std::shared_ptr<product_type>;
 
-
     // factory
 public:
     inline static auto create() -> factory_ref_type;
