@@ -80,6 +80,11 @@ namespace pyre::viz::factories::arithmetic {
     // operators
     using add_i1_t = AddI1;
 } // namespace pyre::viz::factories::arithmetic
+// codecs
+namespace pyre::viz::factories::codecs {
+    // microsoft bitmaps
+    using bmp_t = BMP;
+} // namespace pyre::viz::factories::codecs
 
 
 // conversions from other color spaces to {rgb}

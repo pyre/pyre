@@ -93,6 +93,11 @@ namespace pyre::viz {
             // operators
             class AddI1;
         } // namespace arithmetic
+        // codecs
+        namespace codecs {
+            // microsoft bitmaps
+            class BMP;
+        } // namespace codecs
     }     // namespace factories
 
     // iterators
