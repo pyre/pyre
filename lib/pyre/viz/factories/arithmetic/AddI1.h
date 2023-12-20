@@ -34,9 +34,9 @@ public:
 
     // accessors
 public:
-    inline auto op1() -> product_ref_type;
-    inline auto op2() -> product_ref_type;
-    inline auto result() -> product_ref_type;
+    auto op1() -> product_ref_type;
+    auto op2() -> product_ref_type;
+    auto result() -> product_ref_type;
 
     // mutators
 public:
