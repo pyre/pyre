@@ -20,6 +20,7 @@
 // support
 #include <pyre/journal.h>
 #include <pyre/memory.h>
+#include <pyre/grid.h>
 #include <pyre/flow.h>
 
 

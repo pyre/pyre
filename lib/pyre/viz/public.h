@@ -26,12 +26,15 @@
 // products
 // memory
 #include "products/memory/I1.h"
+#include "products/memory/TileF4.h"
 // images
 #include "products/images/BMP.h"
 
 // factories
 // arithmetic
 #include "factories/arithmetic/AddI1.h"
+// codecs
+#include "factories/codecs/BMP.h"
 
 // iterators
 // filters
