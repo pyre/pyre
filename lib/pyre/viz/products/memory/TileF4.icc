@@ -27,6 +27,14 @@ pyre::viz::products::memory::TileF4::TileF4(
     std::fill(_data.begin(), _data.end(), value);
 }
 
+// accessors
+auto
+pyre::viz::products::memory::TileF4::shape() const -> shape_type
+{
+    // easy enough
+    return _shape;
+}
+
 // value access by factories
 auto
 pyre::viz::products::memory::TileF4::read() -> const grid_type &

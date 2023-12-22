@@ -33,6 +33,10 @@ public:
     // constructor; DON'T CALL
     inline TileF4(sentinel_type, shape_type, cell_type);
 
+    // accessors
+public:
+    inline auto shape() const -> shape_type;
+
     // interface
 public:
     // value access by factories
