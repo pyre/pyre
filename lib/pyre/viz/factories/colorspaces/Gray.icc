@@ -18,7 +18,7 @@ pyre::viz::factories::colorspaces::Gray::create() -> factory_ref_type
     // show me
     channel
         // the factory
-        << "bmp " << ref.get() << ": create"
+        << "gray " << ref.get() << ": create"
         << pyre::journal::newline
         // flush
         << pyre::journal::endl(__HERE__);
