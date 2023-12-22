@@ -141,7 +141,7 @@ pyre::viz::factories::codecs::BMP::make(name_type slot, base_type::product_ref_t
             << pyre::journal::newline
             // outdent
             << pyre::journal::outdent
-            // inputs
+            // outputs
             << "outputs "
             << pyre::journal::newline
             // indent
