@@ -35,19 +35,6 @@ pyre::viz::products::images::BMP::~BMP()
 
 // internals
 auto
-pyre::viz::products::images::BMP::flush() -> void
-{
-    // chain up
-    pyre::flow::product_t::flush();
-    // clean up
-    delete[] _data;
-    // invalidate my memory buffer
-    _data = nullptr;
-    // all done
-    return;
-}
-
-auto
 pyre::viz::products::images::BMP::dump() -> ref_type
 {
     // build a reference
