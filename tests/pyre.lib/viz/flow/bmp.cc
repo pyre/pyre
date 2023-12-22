@@ -25,7 +25,7 @@ main(int argc, char * argv[])
     // make a channel
     auto channel = pyre::journal::debug_t("pyre.flow");
     // turn it on
-    channel.activate();
+    // channel.activate();
 
     // pick a shape
     auto shape = channel_t::shape_type(512, 512);
