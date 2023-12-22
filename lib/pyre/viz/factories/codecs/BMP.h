@@ -17,6 +17,9 @@ public:
     // my output slot
     using image_type = pyre::viz::products::images::bmp_t;
 
+    /// the pixel type
+    using pixel_type = image_type::cell_type;
+
     // ref to me
     using factory_ref_type = std::shared_ptr<BMP>;
     // my input slots

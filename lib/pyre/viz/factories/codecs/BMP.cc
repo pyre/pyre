@@ -10,11 +10,11 @@
 // type aliases
 #include "../api.h"
 
-// my class declaration
-#include "BMP.h"
 // my slots
 #include "../../products/images/BMP.h"
 #include "../../products/memory/TileF4.h"
+// my class declaration
+#include "BMP.h"
 
 // destructor
 pyre::viz::factories::codecs::BMP::~BMP() {}
@@ -100,14 +100,91 @@ pyre::viz::factories::codecs::BMP::make(name_type slot, base_type::product_ref_t
     // chain up
     auto self = base_type::make(slot, product);
 
-    // make a channel
-    auto channel = pyre::journal::firewall_t("pyre.viz.factories.codecs.bmp");
-    // complain
-    channel
-        // what
-        << "NYI: 'make' is not implemented"
-        // flush
-        << pyre::journal::endl(__HERE__);
+    // get my color channels
+    auto r = red();
+    auto g = green();
+    auto b = blue();
+    // get my image
+    auto bmp = image();
+
+    // verify consistency
+    bool ok = r->shape() == g->shape() && g->shape() == b->shape() && b->shape() == bmp->shape();
+    // if something is off
+    if (!ok) {
+        // make a channel
+        auto channel = pyre::journal::error_t("pyre.viz.factories.bmp");
+        // complain
+        channel
+            // who
+            << "bmp factory at " << this << ":"
+            << pyre::journal::newline
+            // what
+            << "shape mismatch in the input and output slots"
+            << pyre::journal::newline
+            // when
+            << "while making the image at " << bmp.get()
+            << pyre::journal::newline
+            // inputs
+            << "inputs: "
+            << pyre::journal::newline
+            // indent
+            << pyre::journal::indent
+            // details
+            // red
+            << "red: " << r->shape()
+            << pyre::journal::newline
+            // green
+            << "green: " << g->shape()
+            << pyre::journal::newline
+            // blue
+            << "blue: " << b->shape()
+            << pyre::journal::newline
+            // outdent
+            << pyre::journal::outdent
+            // inputs
+            << "outputs "
+            << pyre::journal::newline
+            // indent
+            << pyre::journal::indent
+            // image
+            << "image: " << bmp->shape()
+            << pyre::journal::newline
+            // outdent
+            << pyre::journal::outdent
+            // flush
+            << pyre::journal::endl(__HERE__);
+        // and bail, just in case errors aren't fatal
+        return self;
+    }
+
+    // unpack the shape
+    auto [height, width] = r->shape();
+    // make iterators to the input channels
+    auto redData = r->read().begin();
+    auto greenData = g->read().begin();
+    auto blueData = b->read().begin();
+    // make an iterator to the image payload
+    auto imageData = bmp->write().begin();
+
+    // encode: go through the rows
+    for (auto row = 0; row < height; ++row) {
+        // go through the columns
+        for (auto col = 0; col < width; ++col) {
+            // get the pixel values
+            pixel_type redPixel = static_cast<pixel_type>(0xff * (*redData++)) & 0xff;
+            pixel_type greenPixel = static_cast<pixel_type>(0xff * (*greenData++)) & 0xff;
+            pixel_type bluePixel = static_cast<pixel_type>(0xff * (*blueData++)) & 0xff;
+            // encode; note that the order is {blue, green, red}
+            *imageData++ = bluePixel;
+            *imageData++ = greenPixel;
+            *imageData++ = redPixel;
+        }
+        // done with this line
+        for (auto pad = 0; pad < bmp->padding(); ++pad) {
+            // add the pad bytes
+            *imageData++ = 0;
+        }
+    }
 
     // all done
     return self;
