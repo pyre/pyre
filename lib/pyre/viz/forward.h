@@ -98,6 +98,11 @@ namespace pyre::viz {
             // microsoft bitmaps
             class BMP;
         } // namespace codecs
+        // colorspaces
+        namespace colorspaces {
+            // grayscale
+            class Gray;
+        } // namespace colorspaces
     }     // namespace factories
 
     // iterators

@@ -35,6 +35,8 @@
 #include "factories/arithmetic/AddI1.h"
 // codecs
 #include "factories/codecs/BMP.h"
+// colorspaces
+#include "factories/colorspaces/Gray.h"
 
 // iterators
 // filters

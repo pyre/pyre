@@ -85,6 +85,11 @@ namespace pyre::viz::factories::codecs {
     // microsoft bitmaps
     using bmp_t = BMP;
 } // namespace pyre::viz::factories::codecs
+// colorspaces
+namespace pyre::viz::factories::colorspaces {
+    // grayscale
+    using gray_t = Gray;
+} // namespace pyre::viz::factories::colorspaces
 
 
 // conversions from other color spaces to {rgb}
