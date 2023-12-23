@@ -37,6 +37,7 @@
 #include "factories/codecs/BMP.h"
 // colorspaces
 #include "factories/colorspaces/Gray.h"
+#include "factories/colorspaces/HSB.h"
 #include "factories/colorspaces/HSL.h"
 
 // iterators

@@ -90,6 +90,7 @@ namespace pyre::viz::factories::colorspaces {
     // grayscale
     using gray_t = Gray;
     // hue based spaces
+    using hsb_t = HSB;
     using hsl_t = HSL;
 } // namespace pyre::viz::factories::colorspaces
 

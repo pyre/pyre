@@ -103,6 +103,7 @@ namespace pyre::viz {
             // grayscale
             class Gray;
             // hue based spaces
+            class HSB;
             class HSL;
         } // namespace colorspaces
     }     // namespace factories
