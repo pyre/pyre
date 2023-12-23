@@ -181,4 +181,5 @@ pyre::viz::factories::colormaps::Gray::make(name_type slot, base_type::product_r
     // all done
     return self;
 }
+
 // end of file
