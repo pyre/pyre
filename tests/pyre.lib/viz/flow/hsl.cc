@@ -16,7 +16,7 @@
 // type aliases
 using channel_t = pyre::viz::products::memory::tile_f4_t;
 using image_t = pyre::viz::products::images::bmp_t;
-using color_t = pyre::viz::factories::colorspaces::hsl_t;
+using color_t = pyre::viz::factories::colormaps::hsl_t;
 using codec_t = pyre::viz::factories::codecs::bmp_t;
 
 // driver

@@ -7,7 +7,7 @@
 #pragma once
 
 // encode three color channels into a microsoft bitmap
-class pyre::viz::factories::colorspaces::HSB : public pyre::flow::factory_t {
+class pyre::viz::factories::colormaps::HSB : public pyre::flow::factory_t {
     // type aliases
 public:
     // my base class

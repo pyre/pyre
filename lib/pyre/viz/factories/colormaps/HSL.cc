@@ -10,38 +10,54 @@
 // type aliases
 #include "../api.h"
 
+// my color projections
+#include "../../colorspaces/hsl.h"
 // my slots
 #include "../../products/memory/TileF4.h"
 // my class declaration
-#include "Gray.h"
+#include "HSL.h"
 
 // destructor
-pyre::viz::factories::colorspaces::Gray::~Gray() {}
+pyre::viz::factories::colormaps::HSL::~HSL() {}
 
 // accessors
 auto
-pyre::viz::factories::colorspaces::Gray::data() -> channel_ref_type
+pyre::viz::factories::colormaps::HSL::hue() -> channel_ref_type
 {
     // look up the product bound to my {data} slot and return it
-    return std::dynamic_pointer_cast<channel_type>(input("data"));
+    return std::dynamic_pointer_cast<channel_type>(input("hue"));
 }
 
 auto
-pyre::viz::factories::colorspaces::Gray::red() -> channel_ref_type
+pyre::viz::factories::colormaps::HSL::saturation() -> channel_ref_type
+{
+    // look up the product bound to my {data} slot and return it
+    return std::dynamic_pointer_cast<channel_type>(input("saturation"));
+}
+
+auto
+pyre::viz::factories::colormaps::HSL::luminosity() -> channel_ref_type
+{
+    // look up the product bound to my {data} slot and return it
+    return std::dynamic_pointer_cast<channel_type>(input("luminosity"));
+}
+
+auto
+pyre::viz::factories::colormaps::HSL::red() -> channel_ref_type
 {
     // look up the product bound to my {red} slot and return it
     return std::dynamic_pointer_cast<channel_type>(output("red"));
 }
 
 auto
-pyre::viz::factories::colorspaces::Gray::green() -> channel_ref_type
+pyre::viz::factories::colormaps::HSL::green() -> channel_ref_type
 {
     // look up the product bound to my {green} slot and return it
     return std::dynamic_pointer_cast<channel_type>(output("green"));
 }
 
 auto
-pyre::viz::factories::colorspaces::Gray::blue() -> channel_ref_type
+pyre::viz::factories::colormaps::HSL::blue() -> channel_ref_type
 {
     // look up the product bound to my {blue} slot and return it
     return std::dynamic_pointer_cast<channel_type>(output("blue"));
@@ -49,58 +65,82 @@ pyre::viz::factories::colorspaces::Gray::blue() -> channel_ref_type
 
 // mutators
 auto
-pyre::viz::factories::colorspaces::Gray::data(channel_ref_type data) -> factory_ref_type
+pyre::viz::factories::colormaps::HSL::hue(channel_ref_type hue) -> factory_ref_type
 {
     // connect my {data} slot
-    addInput("data", std::static_pointer_cast<pyre::flow::product_t>(data));
+    addInput("hue", std::static_pointer_cast<pyre::flow::product_t>(hue));
     // make a self reference
-    auto self = std::dynamic_pointer_cast<Gray>(ref());
+    auto self = std::dynamic_pointer_cast<HSL>(ref());
     // and return it
     return self;
 }
 
 auto
-pyre::viz::factories::colorspaces::Gray::red(channel_ref_type red) -> factory_ref_type
+pyre::viz::factories::colormaps::HSL::saturation(channel_ref_type saturation) -> factory_ref_type
+{
+    // connect my {data} slot
+    addInput("saturation", std::static_pointer_cast<pyre::flow::product_t>(saturation));
+    // make a self reference
+    auto self = std::dynamic_pointer_cast<HSL>(ref());
+    // and return it
+    return self;
+}
+
+auto
+pyre::viz::factories::colormaps::HSL::luminosity(channel_ref_type luminosity) -> factory_ref_type
+{
+    // connect my {data} slot
+    addInput("luminosity", std::static_pointer_cast<pyre::flow::product_t>(luminosity));
+    // make a self reference
+    auto self = std::dynamic_pointer_cast<HSL>(ref());
+    // and return it
+    return self;
+}
+
+auto
+pyre::viz::factories::colormaps::HSL::red(channel_ref_type red) -> factory_ref_type
 {
     // connect my {red} slot
     addOutput("red", std::static_pointer_cast<pyre::flow::product_t>(red));
     // make a self reference
-    auto self = std::dynamic_pointer_cast<Gray>(ref());
+    auto self = std::dynamic_pointer_cast<HSL>(ref());
     // and return it
     return self;
 }
 
 auto
-pyre::viz::factories::colorspaces::Gray::green(channel_ref_type green) -> factory_ref_type
+pyre::viz::factories::colormaps::HSL::green(channel_ref_type green) -> factory_ref_type
 {
     // connect my {green} slot
     addOutput("green", std::static_pointer_cast<pyre::flow::product_t>(green));
     // make a self reference
-    auto self = std::dynamic_pointer_cast<Gray>(ref());
+    auto self = std::dynamic_pointer_cast<HSL>(ref());
     // and return it
     return self;
 }
 
 auto
-pyre::viz::factories::colorspaces::Gray::blue(channel_ref_type blue) -> factory_ref_type
+pyre::viz::factories::colormaps::HSL::blue(channel_ref_type blue) -> factory_ref_type
 {
     // connect my {blue} slot
     addOutput("blue", std::static_pointer_cast<pyre::flow::product_t>(blue));
     // make a self reference
-    auto self = std::dynamic_pointer_cast<Gray>(ref());
+    auto self = std::dynamic_pointer_cast<HSL>(ref());
     // and return it
     return self;
 }
 
 auto
-pyre::viz::factories::colorspaces::Gray::make(name_type slot, base_type::product_ref_type product)
+pyre::viz::factories::colormaps::HSL::make(name_type slot, base_type::product_ref_type product)
     -> base_type::factory_ref_type
 {
     // chain up
     auto self = base_type::make(slot, product);
 
     // get my data
-    auto i = data();
+    auto h = hue();
+    auto s = saturation();
+    auto l = luminosity();
     // get my color channels
     auto r = red();
     auto g = green();
@@ -108,9 +148,13 @@ pyre::viz::factories::colorspaces::Gray::make(name_type slot, base_type::product
 
     // the bound products must be shape compatible; the current implementation only requires
     // that products have the same number of cells
-    auto pixels = i->shape().cells();
+    auto pixels = h->shape().cells();
     // verify consistency
     bool ok =
+        // check s
+        pixels == s->shape().cells() &&
+        // check l
+        pixels == l->shape().cells() &&
         // check r
         pixels == r->shape().cells() &&
         // check g
@@ -124,7 +168,7 @@ pyre::viz::factories::colorspaces::Gray::make(name_type slot, base_type::product
         // complain
         channel
             // who
-            << "gray factory at " << this << ":"
+            << "hsl factory at " << this << ":"
             << pyre::journal::newline
             // what
             << "shape mismatch in the input and output slots"
@@ -134,8 +178,14 @@ pyre::viz::factories::colorspaces::Gray::make(name_type slot, base_type::product
             << pyre::journal::newline
             // indent
             << pyre::journal::indent
-            // image
-            << "data: " << i->shape()
+            // hue
+            << "hue: " << h->shape()
+            << pyre::journal::newline
+            // saturation
+            << "saturation: " << s->shape()
+            << pyre::journal::newline
+            // luminosity
+            << "luminosity: " << l->shape()
             << pyre::journal::newline
             // outdent
             << pyre::journal::outdent
@@ -162,20 +212,26 @@ pyre::viz::factories::colorspaces::Gray::make(name_type slot, base_type::product
         return self;
     }
 
-    // gray is boring: it copies its input to its three output slots
     // get the data buffers
-    auto iData = i->read();
+    auto hData = h->read();
+    auto sData = s->read();
+    auto lData = l->read();
     auto rData = r->write();
     auto gData = g->write();
     auto bData = b->write();
-    // copy
+
+    // color convert
     for (auto pixel = 0; pixel < pixels; ++pixel) {
         // read
-        auto value = iData[pixel];
-        // write
-        rData[pixel] = value;
-        gData[pixel] = value;
-        bData[pixel] = value;
+        auto hValue = hData[pixel];
+        auto sValue = sData[pixel];
+        auto lValue = lData[pixel];
+        // project to rgb
+        auto [rValue, gValue, bValue] = pyre::viz::colorspaces::hsl(hValue, sValue, lValue);
+        // and write
+        rData[pixel] = rValue;
+        gData[pixel] = gValue;
+        bData[pixel] = bValue;
     }
 
     // all done
