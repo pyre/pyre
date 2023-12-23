@@ -106,6 +106,8 @@ namespace pyre::viz {
             class HL;
             class HSB;
             class HSL;
+            // a factory for complex inputs
+            class Complex;
         } // namespace colormaps
     }     // namespace factories
 

@@ -26,6 +26,7 @@
 // products
 // memory
 #include "products/memory/I1.h"
+#include "products/memory/TileC8.h"
 #include "products/memory/TileF4.h"
 // images
 #include "products/images/BMP.h"
@@ -35,7 +36,8 @@
 #include "factories/arithmetic/AddI1.h"
 // codecs
 #include "factories/codecs/BMP.h"
-// colorspaces
+// color maps
+#include "factories/colormaps/Complex.h"
 #include "factories/colormaps/Gray.h"
 #include "factories/colormaps/HL.h"
 #include "factories/colormaps/HSB.h"

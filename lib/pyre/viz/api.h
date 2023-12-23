@@ -93,6 +93,8 @@ namespace pyre::viz::factories::colormaps {
     using hl_t = HL;
     using hsb_t = HSB;
     using hsl_t = HSL;
+    // complex data
+    using complex_t = Complex;
 } // namespace pyre::viz::factories::colormaps
 
 
