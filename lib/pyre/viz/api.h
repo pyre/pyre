@@ -86,13 +86,13 @@ namespace pyre::viz::factories::codecs {
     using bmp_t = BMP;
 } // namespace pyre::viz::factories::codecs
 // colorspaces
-namespace pyre::viz::factories::colorspaces {
+namespace pyre::viz::factories::colormaps {
     // grayscale
     using gray_t = Gray;
     // hue based spaces
     using hsb_t = HSB;
     using hsl_t = HSL;
-} // namespace pyre::viz::factories::colorspaces
+} // namespace pyre::viz::factories::colormaps
 
 
 // conversions from other color spaces to {rgb}

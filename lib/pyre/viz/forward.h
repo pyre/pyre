@@ -99,13 +99,13 @@ namespace pyre::viz {
             class BMP;
         } // namespace codecs
         // colorspaces
-        namespace colorspaces {
+        namespace colormaps {
             // grayscale
             class Gray;
             // hue based spaces
             class HSB;
             class HSL;
-        } // namespace colorspaces
+        } // namespace colormaps
     }     // namespace factories
 
     // iterators
