@@ -24,21 +24,21 @@ pyre::viz::factories::colormaps::HSB::~HSB() {}
 auto
 pyre::viz::factories::colormaps::HSB::hue() -> channel_ref_type
 {
-    // look up the product bound to my {data} slot and return it
+    // look up the product bound to my {hue} slot and return it
     return std::dynamic_pointer_cast<channel_type>(input("hue"));
 }
 
 auto
 pyre::viz::factories::colormaps::HSB::saturation() -> channel_ref_type
 {
-    // look up the product bound to my {data} slot and return it
+    // look up the product bound to my {saturation} slot and return it
     return std::dynamic_pointer_cast<channel_type>(input("saturation"));
 }
 
 auto
 pyre::viz::factories::colormaps::HSB::brightness() -> channel_ref_type
 {
-    // look up the product bound to my {data} slot and return it
+    // look up the product bound to my {brightness} slot and return it
     return std::dynamic_pointer_cast<channel_type>(input("brightness"));
 }
 
@@ -67,7 +67,7 @@ pyre::viz::factories::colormaps::HSB::blue() -> channel_ref_type
 auto
 pyre::viz::factories::colormaps::HSB::hue(channel_ref_type hue) -> factory_ref_type
 {
-    // connect my {data} slot
+    // connect my {hue} slot
     addInput("hue", std::static_pointer_cast<pyre::flow::product_t>(hue));
     // make a self reference
     auto self = std::dynamic_pointer_cast<HSB>(ref());
@@ -78,7 +78,7 @@ pyre::viz::factories::colormaps::HSB::hue(channel_ref_type hue) -> factory_ref_t
 auto
 pyre::viz::factories::colormaps::HSB::saturation(channel_ref_type saturation) -> factory_ref_type
 {
-    // connect my {data} slot
+    // connect my {saturation} slot
     addInput("saturation", std::static_pointer_cast<pyre::flow::product_t>(saturation));
     // make a self reference
     auto self = std::dynamic_pointer_cast<HSB>(ref());
@@ -89,7 +89,7 @@ pyre::viz::factories::colormaps::HSB::saturation(channel_ref_type saturation) ->
 auto
 pyre::viz::factories::colormaps::HSB::brightness(channel_ref_type brightness) -> factory_ref_type
 {
-    // connect my {data} slot
+    // connect my {brightness} slot
     addInput("brightness", std::static_pointer_cast<pyre::flow::product_t>(brightness));
     // make a self reference
     auto self = std::dynamic_pointer_cast<HSB>(ref());
@@ -237,4 +237,5 @@ pyre::viz::factories::colormaps::HSB::make(name_type slot, base_type::product_re
     // all done
     return self;
 }
+
 // end of file
