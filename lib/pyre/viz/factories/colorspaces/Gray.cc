@@ -106,8 +106,17 @@ pyre::viz::factories::colorspaces::Gray::make(name_type slot, base_type::product
     auto g = green();
     auto b = blue();
 
+    // the bound products must be shape compatible; the current implementation only requires
+    // that products have the same number of cells
+    auto pixels = i->shape().cells();
     // verify consistency
-    bool ok = r->shape() == g->shape() && g->shape() == b->shape() && b->shape() == i->shape();
+    bool ok =
+        // check r
+        pixels == r->shape().cells() &&
+        // check g
+        pixels == g->shape().cells() &&
+        // check b
+        pixels == b->shape().cells();
     // if something is off
     if (!ok) {
         // make a channel
@@ -160,9 +169,14 @@ pyre::viz::factories::colorspaces::Gray::make(name_type slot, base_type::product
     auto gData = g->write();
     auto bData = b->write();
     // copy
-    std::copy(iData.begin(), iData.end(), rData.begin());
-    std::copy(iData.begin(), iData.end(), gData.begin());
-    std::copy(iData.begin(), iData.end(), bData.begin());
+    for (auto pixel = 0; pixel < pixels; ++pixel) {
+        // read
+        auto value = iData[pixel];
+        // write
+        rData[pixel] = value;
+        gData[pixel] = value;
+        bData[pixel] = value;
+    }
 
     // all done
     return self;
