@@ -37,6 +37,7 @@
 #include "factories/codecs/BMP.h"
 // colorspaces
 #include "factories/colormaps/Gray.h"
+#include "factories/colormaps/HL.h"
 #include "factories/colormaps/HSB.h"
 #include "factories/colormaps/HSL.h"
 

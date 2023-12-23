@@ -90,6 +90,7 @@ namespace pyre::viz::factories::colormaps {
     // grayscale
     using gray_t = Gray;
     // hue based spaces
+    using hl_t = HL;
     using hsb_t = HSB;
     using hsl_t = HSL;
 } // namespace pyre::viz::factories::colormaps
