@@ -8,16 +8,16 @@
 
 // factory
 auto
-pyre::flow::Factory::create() -> factory_ref_type
+pyre::flow::Factory::create(const name_type & name) -> factory_ref_type
 {
     // build an instance and wrap it in a shared pointer
-    auto ref = std::make_shared<Factory>(sentinel_type());
+    auto ref = std::make_shared<Factory>(sentinel_type(), name);
     // make a channel
     auto channel = pyre::journal::debug_t("pyre.flow.factories.create");
     // show me
     channel
         // the factory
-        << "factory " << ref.get() << ": create"
+        << "factory '" << ref->name() << "' at " << ref.get() << " : create "
         << pyre::journal::newline
         // flush
         << pyre::journal::endl(__HERE__);
@@ -26,9 +26,9 @@ pyre::flow::Factory::create() -> factory_ref_type
 }
 
 // constructors
-pyre::flow::Factory::Factory(sentinel_type sentinel) :
+pyre::flow::Factory::Factory(sentinel_type sentinel, const name_type & name) :
     // superclass
-    Node(sentinel),
+    Node(sentinel, name),
     // data members
     _inputs {},
     _outputs {}

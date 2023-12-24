@@ -14,7 +14,7 @@ pyre::flow::Factory::~Factory()
     // show me
     channel
         // the factory
-        << "factory " << this << ": destroy"
+        << "factory '" << name() << "' at " << this << ": destroy"
         << pyre::journal::newline
         // flush
         << pyre::journal::endl(__HERE__);
@@ -31,7 +31,7 @@ pyre::flow::Factory::addInput(const name_type & slot, product_ref_type product) 
     // show me
     channel
         // the factory
-        << "factory " << this << ": adding an input"
+        << "factory '" << name() << "' at " << this << ": adding an input"
         << pyre::journal::newline
         // indent
         << pyre::journal::indent
@@ -39,7 +39,7 @@ pyre::flow::Factory::addInput(const name_type & slot, product_ref_type product) 
         << "slot: " << slot
         << pyre::journal::newline
         // the product
-        << "product: " << product.get()
+        << "product: '" << product->name() << "' at " << product.get()
         << pyre::journal::newline
         // outdent
         << pyre::journal::outdent
@@ -61,7 +61,7 @@ pyre::flow::Factory::addOutput(const name_type & slot, product_ref_type product)
     // show me
     channel
         // the factory
-        << "factory " << this << ": adding an output"
+        << "factory '" << name() << "' at " << this << ": adding an output"
         << pyre::journal::newline
         // indent
         << pyre::journal::indent
@@ -100,7 +100,7 @@ pyre::flow::Factory::removeInput(const name_type & slot) -> factory_ref_type
     // show me
     channel
         // the factory
-        << "factory " << this << ": removing an input"
+        << "factory '" << name() << "' at " << this << ": removing an input"
         << pyre::journal::newline
         // indent
         << pyre::journal::indent
@@ -136,7 +136,7 @@ pyre::flow::Factory::removeOutput(const name_type & slot) -> factory_ref_type
     // show me
     channel
         // the factory
-        << "factory " << this << ": removing an output"
+        << "factory '" << name() << "' at " << this << ": removing an output"
         << pyre::journal::newline
         // indent
         << pyre::journal::indent
@@ -164,7 +164,7 @@ pyre::flow::Factory::flush() -> void
     // show me
     channel
         // the factory
-        << "factory " << this << ": flush"
+        << "factory '" << name() << "' at " << this << ": flush"
         << pyre::journal::newline
         // flush
         << pyre::journal::endl(__HERE__);
@@ -181,19 +181,19 @@ pyre::flow::Factory::flush() -> void
 
 // rebuild the product bound to a slot
 auto
-pyre::flow::Factory::make(name_type slot, product_ref_type product) -> factory_ref_type
+pyre::flow::Factory::make(const name_type & slot, product_ref_type product) -> factory_ref_type
 {
     // make a channel
     auto channel = pyre::journal::debug_t("pyre.flow.factories.make");
     // show me
     channel
         // the factory
-        << "factory " << this << ": make"
+        << "factory '" << name() << "' at " << this << ": make"
         << pyre::journal::newline
         // indent
         << pyre::journal::indent
         // the product
-        << "product: " << (void *) product.get()
+        << "product: '" << product->name() << "' at " << product.get()
         << pyre::journal::newline
         // the slot
         << "slot: '" << slot << "'"
@@ -205,10 +205,38 @@ pyre::flow::Factory::make(name_type slot, product_ref_type product) -> factory_r
 
     // go through my inputs
     for (auto & [slot, product] : _inputs) {
-        // and make sure that stale ones
+        // find the stale ones
         if (product->stale()) {
-            // are refreshed
+            // show me
+            channel
+                // the factory
+                << "factory '" << name() << "' at " << this << ": make"
+                << pyre::journal::newline
+                // indent
+                << pyre::journal::indent
+                // the product
+                << "making product: '" << product->name() << "' at " << product.get()
+                << pyre::journal::newline
+                // outdent
+                << pyre::journal::outdent
+                // flush
+                << pyre::journal::endl(__HERE__);
+            // and refresh them
             product->make();
+            // show me
+            channel
+                // the factory
+                << "factory '" << name() << "' at " << this << ": make"
+                << pyre::journal::newline
+                // indent
+                << pyre::journal::indent
+                // the product
+                << "done making product: '" << product->name() << "' at " << product.get()
+                << pyre::journal::newline
+                // outdent
+                << pyre::journal::outdent
+                // flush
+                << pyre::journal::endl(__HERE__);
         }
     }
 

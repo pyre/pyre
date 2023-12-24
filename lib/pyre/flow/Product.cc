@@ -70,7 +70,7 @@ pyre::flow::Product::flush() -> void
     // show me
     channel
         // the product
-        << "product " << this << ": flush"
+        << "product '" << name() << "' at " << this << ": flush"
         << pyre::journal::newline
         // flush
         << pyre::journal::endl(__HERE__);
@@ -95,7 +95,7 @@ pyre::flow::Product::make() -> product_ref_type
     // show me
     channel
         // sign on
-        << "product " << this << ": make"
+        << "product '" << name() << "' at " << this << ": make"
         << pyre::journal::newline
         // flush
         << pyre::journal::endl(__HERE__);
