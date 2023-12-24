@@ -143,7 +143,7 @@ pyre::viz::factories::colormaps::HL::make(
     // if something is off
     if (!ok) {
         // make a channel
-        auto channel = pyre::journal::error_t("pyre.viz.factories.bmp");
+        auto channel = pyre::journal::error_t("pyre.viz.factories.colormaps.hl");
         // complain
         channel
             // who
