@@ -16,14 +16,14 @@ public:
 
     // factory
 public:
-    inline static auto create(cell_type value = 0) -> ref_type;
+    inline static auto create(const name_type & name = "", cell_type value = 0) -> ref_type;
 
     // metamethods
 public:
     // destructor
     virtual ~I1();
     // constructor; DON'T CALL
-    inline I1(sentinel_type, cell_type);
+    inline I1(sentinel_type, const name_type &, cell_type);
 
     // my value as a control slot
 public:
