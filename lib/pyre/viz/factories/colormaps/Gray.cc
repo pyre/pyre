@@ -164,9 +164,11 @@ pyre::viz::factories::colormaps::Gray::make(
 
     // gray is boring: it copies its input to its three output slots
     // get the data buffers
+    // inputs
     auto iData = i->read();
     auto rData = r->write();
     auto gData = g->write();
+    // outputs
     auto bData = b->write();
     // copy
     for (auto pixel = 0; pixel < pixels; ++pixel) {
@@ -177,6 +179,11 @@ pyre::viz::factories::colormaps::Gray::make(
         gData[pixel] = value;
         bData[pixel] = value;
     }
+
+    // mark all products as clean
+    r->clean();
+    g->clean();
+    b->clean();
 
     // all done
     return self;

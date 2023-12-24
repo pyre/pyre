@@ -166,7 +166,9 @@ pyre::viz::factories::colormaps::Complex::make(
     }
 
     // get the data buffers
+    // inputs
     auto sData = s->read();
+    // outputs
     auto rData = r->write();
     auto gData = g->write();
     auto bData = b->write();
@@ -208,6 +210,11 @@ pyre::viz::factories::colormaps::Complex::make(
         gData[pixel] = gValue;
         bData[pixel] = bValue;
     }
+
+    // mark all products as clean
+    r->clean();
+    g->clean();
+    b->clean();
 
     // all done
     return self;
