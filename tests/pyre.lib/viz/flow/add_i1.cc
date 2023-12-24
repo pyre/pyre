@@ -27,17 +27,17 @@ main(int argc, char * argv[])
     // channel.activate();
 
     // make the operands
-    auto op1 = product_t::create(1);
-    auto op2 = product_t::create(2);
+    auto op1 = product_t::create("op1", 1);
+    auto op2 = product_t::create("op2", 2);
     // make the result
-    auto result = product_t::create(0);
+    auto result = product_t::create("result", 0);
     // check the initial values
     assert(op1->value() == 1);
     assert(op2->value() == 2);
     assert(result->value() == 0);
 
     // make the operator
-    auto add = factory_t::create();
+    auto add = factory_t::create("add");
     // wire the workflow
     add->op1(op1);
     add->op2(op2);

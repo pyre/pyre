@@ -26,23 +26,23 @@ main(int argc, char * argv[])
     // make a channel
     auto channel = pyre::journal::debug_t("pyre.flow");
     // turn it on
-    // channel.activate();
+    channel.activate();
 
     // pick a shape
     auto shape = channel_t::shape_type(512, 512);
     // make the input data
-    auto hue = channel_t::create(shape, 2 * 2 * M_PI / 3);
-    auto saturation = channel_t::create(shape, 1.0);
-    auto brightness = channel_t::create(shape, 1.0);
+    auto hue = channel_t::create("hue", shape, 2 * 2 * M_PI / 3);
+    auto saturation = channel_t::create("saturation", shape, 1.0);
+    auto brightness = channel_t::create("brightness", shape, 1.0);
     // make the color channels
-    auto red = channel_t::create(shape, 0.25);
-    auto green = channel_t::create(shape, 0.50);
-    auto blue = channel_t::create(shape, 1.00);
+    auto red = channel_t::create("red", shape, 0.25);
+    auto green = channel_t::create("green", shape, 0.50);
+    auto blue = channel_t::create("blue", shape, 1.00);
     // and the resulting image
-    auto image = image_t::create(shape);
+    auto image = image_t::create("img", shape);
 
     // make the colorspace
-    auto hsb = color_t::create();
+    auto hsb = color_t::create("hsb");
     // wire it
     hsb->hue(hue);
     hsb->saturation(saturation);
@@ -52,7 +52,7 @@ main(int argc, char * argv[])
     hsb->blue(blue);
 
     // make the encoder
-    auto codec = codec_t::create();
+    auto codec = codec_t::create("bmp");
     // wire it
     codec->red(red);
     codec->green(green);

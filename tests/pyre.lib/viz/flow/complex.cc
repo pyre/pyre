@@ -35,7 +35,7 @@ main(int argc, char * argv[])
     // pick a shape
     auto shape = channel_t::shape_type(1001, 1001);
     // make the input data
-    auto signal = signal_t::create(shape, 0.0);
+    auto signal = signal_t::create("signal", shape, 0.0);
     // its data grid
     auto & grid = signal->write();
     // we are discretizing the unit square centered at the origin
@@ -52,14 +52,14 @@ main(int argc, char * argv[])
     }
 
     // make the color channels
-    auto red = channel_t::create(shape, 0.0);
-    auto green = channel_t::create(shape, 0.0);
-    auto blue = channel_t::create(shape, 0.0);
+    auto red = channel_t::create("red", shape, 0.0);
+    auto green = channel_t::create("green", shape, 0.0);
+    auto blue = channel_t::create("blue", shape, 0.0);
     // and the resulting image
-    auto image = image_t::create(shape);
+    auto image = image_t::create("image", shape);
 
     // make the colorspace
-    auto color = color_t::create(360, 1.0, .25, 1.0);
+    auto color = color_t::create("complex", 360, 1.0, .25, 1.0);
     // wire it
     color->signal(signal);
     color->red(red);
@@ -67,7 +67,7 @@ main(int argc, char * argv[])
     color->blue(blue);
 
     // make the encoder
-    auto codec = codec_t::create();
+    auto codec = codec_t::create("codec");
     // wire it
     codec->red(red);
     codec->green(green);

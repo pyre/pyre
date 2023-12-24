@@ -27,22 +27,22 @@ main(int argc, char * argv[])
     // channel.activate();
 
     // make the operands
-    auto op1 = product_t::create(1);
-    auto op2 = product_t::create(2);
-    auto op3 = product_t::create(3);
+    auto op1 = product_t::create("op1", 1);
+    auto op2 = product_t::create("op2", 2);
+    auto op3 = product_t::create("op3", 3);
     // the intermediate
-    auto tmp = product_t::create(0);
+    auto tmp = product_t::create("tmp", 0);
     // and the result
-    auto result = product_t::create(0);
+    auto result = product_t::create("result", 0);
 
     // make the first operator
-    auto add1 = factory_t::create();
+    auto add1 = factory_t::create("add1");
     // wire it
     add1->op1(op1);
     add1->op2(op2);
     add1->result(tmp);
     // make the second operator
-    auto add2 = factory_t::create();
+    auto add2 = factory_t::create("add2");
     // wire it
     add2->op1(tmp);
     add2->op2(op3);
