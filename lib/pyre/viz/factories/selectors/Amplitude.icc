@@ -14,7 +14,7 @@ pyre::viz::factories::selectors::Amplitude::create(const name_type & name) -> fa
     // build an instance and wrap it in a shared pointer
     auto ref = std::make_shared<Amplitude>(sentinel_type(), name);
     // make a channel
-    auto channel = pyre::journal::debug_t("pyre.viz.factories.selectors.hsb.create");
+    auto channel = pyre::journal::debug_t("pyre.viz.factories.selectors.amplitude.create");
     // show me
     channel
         // the factory
