@@ -14,7 +14,7 @@ pyre::viz::factories::colormaps::HSB::create(const name_type & name) -> factory_
     // build an instance and wrap it in a shared pointer
     auto ref = std::make_shared<HSB>(sentinel_type(), name);
     // make a channel
-    auto channel = pyre::journal::debug_t("pyre.viz.factories.colorspaces.hsb.create");
+    auto channel = pyre::journal::debug_t("pyre.viz.factories.colormaps.hsb.create");
     // show me
     channel
         // the factory
