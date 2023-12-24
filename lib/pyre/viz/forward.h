@@ -109,6 +109,11 @@ namespace pyre::viz {
             // a factory for complex inputs
             class Complex;
         } // namespace colormaps
+        // selectors
+        namespace selectors {
+            // complex parts
+            class Amplitude;
+        } // namespace selectors
     }     // namespace factories
 
     // iterators

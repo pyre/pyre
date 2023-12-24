@@ -1,0 +1,36 @@
+// -*- c++ -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2023 all rights reserved
+
+// code guard
+#pragma once
+
+
+// factory
+auto
+pyre::viz::factories::selectors::Amplitude::create(const name_type & name) -> factory_ref_type
+{
+    // build an instance and wrap it in a shared pointer
+    auto ref = std::make_shared<Amplitude>(sentinel_type(), name);
+    // make a channel
+    auto channel = pyre::journal::debug_t("pyre.viz.factories.selectors.hsb.create");
+    // show me
+    channel
+        // the factory
+        << "amplitude '" << ref->name() << "' at " << ref.get() << ": create"
+        << pyre::journal::newline
+        // flush
+        << pyre::journal::endl(__HERE__);
+    // return it
+    return ref;
+}
+
+// constructor
+pyre::viz::factories::selectors::Amplitude::Amplitude(
+    sentinel_type sentinel, const name_type & name) :
+    // superclass
+    base_type(sentinel, name)
+{}
+
+// end of file
