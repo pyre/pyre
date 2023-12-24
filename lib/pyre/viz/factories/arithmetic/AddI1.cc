@@ -92,8 +92,8 @@ pyre::viz::factories::arithmetic::AddI1::result(product_ref_type arg) -> factory
 
 // interface
 auto
-pyre::viz::factories::arithmetic::AddI1::make(name_type slot, base_type::product_ref_type product)
-    -> base_type::factory_ref_type
+pyre::viz::factories::arithmetic::AddI1::make(
+    const name_type & slot, base_type::product_ref_type product) -> base_type::factory_ref_type
 {
     // chain up
     auto self = base_type::make(slot, product);
