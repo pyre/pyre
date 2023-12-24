@@ -213,9 +213,11 @@ pyre::viz::factories::colormaps::HSL::make(
     }
 
     // get the data buffers
+    // inputs
     auto hData = h->read();
     auto sData = s->read();
     auto lData = l->read();
+    // outputs
     auto rData = r->write();
     auto gData = g->write();
     auto bData = b->write();

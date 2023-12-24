@@ -189,8 +189,10 @@ pyre::viz::factories::colormaps::HL::make(
     }
 
     // get the data buffers
+    // inputs
     auto hData = h->read();
     auto lData = l->read();
+    // outputs
     auto rData = r->write();
     auto gData = g->write();
     auto bData = b->write();
@@ -207,6 +209,11 @@ pyre::viz::factories::colormaps::HL::make(
         gData[pixel] = gValue;
         bData[pixel] = bValue;
     }
+
+    // mark all products as clean
+    r->clean();
+    g->clean();
+    b->clean();
 
     // all done
     return self;
