@@ -14,14 +14,14 @@ public:
 
     // factory
 public:
-    inline static auto create() -> factory_ref_type;
+    inline static auto create(const name_type & name = "") -> factory_ref_type;
 
     // metamethods
 public:
     // destructor
     virtual ~Factory();
     // constructor; not usable directly. call {create} instead
-    inline Factory(sentinel_type);
+    inline Factory(sentinel_type, const name_type &);
 
     // accessors
 public:
@@ -48,7 +48,7 @@ public:
     // invalidate me
     virtual auto flush() -> void override;
     // rebuild the product connected to one of my slots
-    virtual auto make(name_type slot, product_ref_type product) -> factory_ref_type;
+    virtual auto make(const name_type & slot, product_ref_type product) -> factory_ref_type;
 
     // implementation details - data
 private:

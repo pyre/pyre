@@ -30,7 +30,17 @@ protected:
     // destructor
     virtual ~Node();
     // constructors
-    inline Node(sentinel_type);
+    inline Node(sentinel_type, const name_type &);
+
+    // accessors
+public:
+    // my name
+    inline auto name() const -> const name_type &;
+
+    // mutators
+public:
+    // my name
+    inline auto name(const name_type & name) -> node_ref_type;
 
     // interface
 public:
@@ -38,6 +48,11 @@ public:
     inline auto ref() -> node_ref_type;
     // invalidate me
     virtual auto flush() -> void;
+
+    // implementation detail
+private:
+    // my name
+    name_type _name;
 
     // suppressed metamethods
 private:
