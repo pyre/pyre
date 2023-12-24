@@ -21,15 +21,16 @@ public:
 
     // factory
 public:
-    inline static auto create(shape_type shape = shape_type { 512, 512 }, bool topdown = true)
-        -> ref_type;
+    inline static auto create(
+        const name_type & name = "", shape_type shape = shape_type { 512, 512 },
+        bool topdown = true) -> ref_type;
 
     // metamethods
 public:
     // destructor
     virtual ~BMP();
     // constructor: DON'T CALL
-    inline BMP(sentinel_type, shape_type, bool);
+    inline BMP(sentinel_type, const name_type &, shape_type, bool);
 
     // accessors
 public:

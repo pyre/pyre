@@ -8,16 +8,18 @@
 
 // factory
 auto
-pyre::viz::products::images::BMP::create(shape_type shape, bool topdown) -> ref_type
+pyre::viz::products::images::BMP::create(const name_type & name, shape_type shape, bool topdown)
+    -> ref_type
 {
     // build an instance and wrap it in a shared pointer
-    return std::make_shared<BMP>(sentinel_type(), shape, topdown);
+    return std::make_shared<BMP>(sentinel_type(), name, shape, topdown);
 }
 
 // constructor
-pyre::viz::products::images::BMP::BMP(sentinel_type sentinel, shape_type shape, bool topdown) :
+pyre::viz::products::images::BMP::BMP(
+    sentinel_type sentinel, const name_type & name, shape_type shape, bool topdown) :
     // base class; make sure i start out as stale since i own memory but it isn't populated
-    pyre::flow::product_t(sentinel, true),
+    pyre::flow::product_t(sentinel, name, true),
     // members
     // the shape of the bitmap: rows x cols -> (slow index, fast index)
     _shape { shape },
