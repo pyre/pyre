@@ -121,11 +121,11 @@ pyre::viz::factories::selectors::Real::make(
     // outputs
     auto rData = r->write();
 
-    // color convert
+    // go through the cells
     for (auto pixel = 0; pixel < pixels; ++pixel) {
         // read
         auto sValue = sData[pixel];
-        // compute the real and write
+        // compute the real part and write
         rData[pixel] = sValue.real();
     }
 
