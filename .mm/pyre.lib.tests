@@ -21,7 +21,8 @@ tests.pyre.lib.viz.iterators.clean += \
     amplitude.bmp chip.bmp complex.bmp decimate.bmp domain_coloring.bmp \
     logsaw.bmp phase.bmp polarsaw.bmp
 tests.pyre.lib.viz.flow.clean += \
-    amplitude.bmp bmp.bmp complex.bmp gray.bmp hl.bmp hsb.bmp hsl.bmp phase.bmp real.bmp
+    bmp.bmp complex.bmp gray.bmp hl.bmp hsb.bmp hsl.bmp \
+    amplitude.bmp imaginary.bmp phase.bmp real.bmp
 
 # test case configuration
 # the {pyre::memory} tests must be executed in a specific order
