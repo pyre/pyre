@@ -103,6 +103,7 @@ namespace pyre::viz::factories::colormaps {
 namespace pyre::viz::factories::selectors {
     // complex parts
     using amplitude_t = Amplitude;
+    using phase_t = Phase;
 } // namespace pyre::viz::factories::selectors
 
 
