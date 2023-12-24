@@ -80,11 +80,13 @@ namespace pyre::viz::factories::arithmetic {
     // operators
     using add_i1_t = AddI1;
 } // namespace pyre::viz::factories::arithmetic
+
 // codecs
 namespace pyre::viz::factories::codecs {
     // microsoft bitmaps
     using bmp_t = BMP;
 } // namespace pyre::viz::factories::codecs
+
 // colorspaces
 namespace pyre::viz::factories::colormaps {
     // grayscale
@@ -96,6 +98,12 @@ namespace pyre::viz::factories::colormaps {
     // complex data
     using complex_t = Complex;
 } // namespace pyre::viz::factories::colormaps
+
+// selectors
+namespace pyre::viz::factories::selectors {
+    // complex parts
+    using amplitude_t = Amplitude;
+} // namespace pyre::viz::factories::selectors
 
 
 // conversions from other color spaces to {rgb}

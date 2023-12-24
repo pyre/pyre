@@ -42,6 +42,8 @@
 #include "factories/colormaps/HL.h"
 #include "factories/colormaps/HSB.h"
 #include "factories/colormaps/HSL.h"
+// selectors
+#include "factories/selectors/Amplitude.h"
 
 // iterators
 // filters
