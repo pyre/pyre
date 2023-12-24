@@ -114,6 +114,7 @@ namespace pyre::viz {
             // complex parts
             class Amplitude;
             class Phase;
+            class Real;
         } // namespace selectors
     }     // namespace factories
 

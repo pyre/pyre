@@ -45,6 +45,7 @@
 // selectors
 #include "factories/selectors/Amplitude.h"
 #include "factories/selectors/Phase.h"
+#include "factories/selectors/Real.h"
 
 // iterators
 // filters
