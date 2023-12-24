@@ -94,7 +94,7 @@ pyre::viz::factories::codecs::BMP::image(image_ref_type image) -> factory_ref_ty
 }
 
 auto
-pyre::viz::factories::codecs::BMP::make(name_type slot, base_type::product_ref_type product)
+pyre::viz::factories::codecs::BMP::make(const name_type & slot, base_type::product_ref_type product)
     -> base_type::factory_ref_type
 {
     // chain up
