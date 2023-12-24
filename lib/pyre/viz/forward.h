@@ -113,6 +113,7 @@ namespace pyre::viz {
         namespace selectors {
             // complex parts
             class Amplitude;
+            class Phase;
         } // namespace selectors
     }     // namespace factories
 
