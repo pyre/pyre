@@ -122,7 +122,7 @@ pyre::viz::factories::selectors::Amplitude::make(
     // outputs
     auto aData = a->write();
 
-    // color convert
+    // go through the cells
     for (auto pixel = 0; pixel < pixels; ++pixel) {
         // read
         auto sValue = sData[pixel];

@@ -122,11 +122,11 @@ pyre::viz::factories::selectors::Imaginary::make(
     // outputs
     auto iData = i->write();
 
-    // color convert
+    // go through the cells
     for (auto pixel = 0; pixel < pixels; ++pixel) {
         // read
         auto sValue = sData[pixel];
-        // compute the imaginary and write
+        // compute the imaginary part and write
         iData[pixel] = sValue.imag();
     }
 

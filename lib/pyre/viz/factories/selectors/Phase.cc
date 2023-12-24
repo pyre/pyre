@@ -121,7 +121,7 @@ pyre::viz::factories::selectors::Phase::make(
     // outputs
     auto pData = p->write();
 
-    // color convert
+    // go through the cells
     for (auto pixel = 0; pixel < pixels; ++pixel) {
         // read
         auto sValue = sData[pixel];
