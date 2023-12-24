@@ -30,14 +30,14 @@ main(int argc, char * argv[])
     // pick a shape
     auto shape = channel_t::shape_type(512, 512);
     // make the color channels
-    auto red = channel_t::create(shape, 0.25);
-    auto green = channel_t::create(shape, 0.50);
-    auto blue = channel_t::create(shape, 1.00);
+    auto red = channel_t::create("red", shape, 0.25);
+    auto green = channel_t::create("green", shape, 0.50);
+    auto blue = channel_t::create("blue", shape, 1.00);
     // and the resulting image
-    auto image = image_t::create(shape);
+    auto image = image_t::create("img", shape);
 
     // make the encoder
-    auto codec = codec_t::create();
+    auto codec = codec_t::create("codec");
     // wire it
     codec->red(red);
     codec->green(green);
