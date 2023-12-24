@@ -22,14 +22,14 @@ public:
 
     // factory
 public:
-    inline static auto create() -> factory_ref_type;
+    inline static auto create(const name_type & name = "") -> factory_ref_type;
 
     // metamethods
 public:
     // destructor
     virtual ~HSB();
     // constructor: DON'T CALL
-    inline HSB(sentinel_type);
+    inline HSB(sentinel_type, const name_type &);
 
     // accessors
 public:
@@ -55,7 +55,7 @@ public:
 
     // flow protocol
 public:
-    virtual auto make(name_type slot, base_type::product_ref_type product)
+    virtual auto make(const name_type & slot, base_type::product_ref_type product)
         -> base_type::factory_ref_type override;
 
     // suppressed metamethods

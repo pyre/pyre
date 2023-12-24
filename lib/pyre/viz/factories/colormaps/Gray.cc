@@ -93,8 +93,8 @@ pyre::viz::factories::colormaps::Gray::blue(channel_ref_type blue) -> factory_re
 }
 
 auto
-pyre::viz::factories::colormaps::Gray::make(name_type slot, base_type::product_ref_type product)
-    -> base_type::factory_ref_type
+pyre::viz::factories::colormaps::Gray::make(
+    const name_type & slot, base_type::product_ref_type product) -> base_type::factory_ref_type
 {
     // chain up
     auto self = base_type::make(slot, product);

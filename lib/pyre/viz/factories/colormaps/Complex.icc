@@ -10,6 +10,7 @@
 // factory
 auto
 pyre::viz::factories::colormaps::Complex::create(
+    const name_type & name,
     // number of bins
     int bins,
     // the color saturation
@@ -23,8 +24,8 @@ pyre::viz::factories::colormaps::Complex::create(
 {
     // build an instance and wrap it in a shared pointer
     auto ref = std::make_shared<Complex>(
-        sentinel_type(), bins, saturation, minBrightness, maxBrightness, minAmplitude, maxAmplitude,
-        underflow, overflow);
+        sentinel_type(), name, bins, saturation, minBrightness, maxBrightness, minAmplitude,
+        maxAmplitude, underflow, overflow);
     // make a channel
     auto channel = pyre::journal::debug_t("pyre.viz.factories.colorspaces.complex.create");
     // show me
@@ -40,10 +41,11 @@ pyre::viz::factories::colormaps::Complex::create(
 
 // constructor
 pyre::viz::factories::colormaps::Complex::Complex(
-    sentinel_type sentinel, int bins, double saturation, double minBrightness, double maxBrightness,
-    double minAmplitude, double maxAmplitude, rgb_type underflow, rgb_type overflow) :
+    sentinel_type sentinel, const name_type & name, int bins, double saturation,
+    double minBrightness, double maxBrightness, double minAmplitude, double maxAmplitude,
+    rgb_type underflow, rgb_type overflow) :
     // superclass
-    base_type(sentinel),
+    base_type(sentinel, name),
     // members
     _bins { bins },
     _saturation { saturation },

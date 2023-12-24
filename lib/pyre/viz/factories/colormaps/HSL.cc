@@ -131,8 +131,8 @@ pyre::viz::factories::colormaps::HSL::blue(channel_ref_type blue) -> factory_ref
 }
 
 auto
-pyre::viz::factories::colormaps::HSL::make(name_type slot, base_type::product_ref_type product)
-    -> base_type::factory_ref_type
+pyre::viz::factories::colormaps::HSL::make(
+    const name_type & slot, base_type::product_ref_type product) -> base_type::factory_ref_type
 {
     // chain up
     auto self = base_type::make(slot, product);
@@ -233,6 +233,11 @@ pyre::viz::factories::colormaps::HSL::make(name_type slot, base_type::product_re
         gData[pixel] = gValue;
         bData[pixel] = bValue;
     }
+
+    // mark all products as clean
+    r->clean();
+    g->clean();
+    b->clean();
 
     // all done
     return self;

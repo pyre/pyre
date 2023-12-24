@@ -28,6 +28,8 @@ public:
     // factory
 public:
     inline static auto create(
+        // the node name
+        const name_type & name = "",
         // color map configuration
         int bins = 32,
         // the amount of color to inject
@@ -48,8 +50,9 @@ public:
     virtual ~Complex();
     // constructor: DON'T CALL
     inline Complex(
-        sentinel_type, int bins, double saturation, double minBrightness, double maxBrightness,
-        double minAmplitude, double maxAmplitude, rgb_type underflow, rgb_type overflow);
+        sentinel_type, const name_type & name, int bins, double saturation, double minBrightness,
+        double maxBrightness, double minAmplitude, double maxAmplitude, rgb_type underflow,
+        rgb_type overflow);
 
     // accessors
 public:
@@ -71,7 +74,7 @@ public:
 
     // flow protocol
 public:
-    virtual auto make(name_type slot, base_type::product_ref_type product)
+    virtual auto make(const name_type & slot, base_type::product_ref_type product)
         -> base_type::factory_ref_type override;
 
     // implementation details

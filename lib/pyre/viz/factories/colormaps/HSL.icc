@@ -9,16 +9,16 @@
 
 // factory
 auto
-pyre::viz::factories::colormaps::HSL::create() -> factory_ref_type
+pyre::viz::factories::colormaps::HSL::create(const name_type & name) -> factory_ref_type
 {
     // build an instance and wrap it in a shared pointer
-    auto ref = std::make_shared<HSL>(sentinel_type());
+    auto ref = std::make_shared<HSL>(sentinel_type(), name);
     // make a channel
     auto channel = pyre::journal::debug_t("pyre.viz.factories.colorspaces.hsl.create");
     // show me
     channel
         // the factory
-        << "hsl " << ref.get() << ": create"
+        << "hsl '" << ref->name() << "' at " << ref.get() << ": create"
         << pyre::journal::newline
         // flush
         << pyre::journal::endl(__HERE__);
@@ -27,9 +27,9 @@ pyre::viz::factories::colormaps::HSL::create() -> factory_ref_type
 }
 
 // constructor
-pyre::viz::factories::colormaps::HSL::HSL(sentinel_type sentinel) :
+pyre::viz::factories::colormaps::HSL::HSL(sentinel_type sentinel, const name_type & name) :
     // superclass
-    base_type(sentinel)
+    base_type(sentinel, name)
 {}
 
 // end of file
