@@ -9,16 +9,17 @@
 
 // factory
 auto
-pyre::viz::factories::colormaps::HL::create(double threshold) -> factory_ref_type
+pyre::viz::factories::colormaps::HL::create(const name_type & name, double threshold)
+    -> factory_ref_type
 {
     // build an instance and wrap it in a shared pointer
-    auto ref = std::make_shared<HL>(sentinel_type(), threshold);
+    auto ref = std::make_shared<HL>(sentinel_type(), name, threshold);
     // make a channel
     auto channel = pyre::journal::debug_t("pyre.viz.factories.colorspaces.hl.create");
     // show me
     channel
         // the factory
-        << "hl " << ref.get() << ": create"
+        << "hl '" << ref->name() << "' at " << ref.get() << ": create"
         << pyre::journal::newline
         // flush
         << pyre::journal::endl(__HERE__);
@@ -27,9 +28,10 @@ pyre::viz::factories::colormaps::HL::create(double threshold) -> factory_ref_typ
 }
 
 // constructor
-pyre::viz::factories::colormaps::HL::HL(sentinel_type sentinel, double threshold) :
+pyre::viz::factories::colormaps::HL::HL(
+    sentinel_type sentinel, const name_type & name, double threshold) :
     // superclass
-    base_type(sentinel),
+    base_type(sentinel, name),
     // members
     _threshold(threshold)
 {}

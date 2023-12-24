@@ -22,14 +22,15 @@ public:
 
     // factory
 public:
-    inline static auto create(double threshold = 0.4) -> factory_ref_type;
+    inline static auto create(const name_type & name = "", double threshold = 0.4)
+        -> factory_ref_type;
 
     // metamethods
 public:
     // destructor
     virtual ~HL();
     // constructor: DON'T CALL
-    inline HL(sentinel_type, double);
+    inline HL(sentinel_type, const name_type &, double);
 
     // accessors
 public:
@@ -53,7 +54,7 @@ public:
 
     // flow protocol
 public:
-    virtual auto make(name_type slot, base_type::product_ref_type product)
+    virtual auto make(const name_type & slot, base_type::product_ref_type product)
         -> base_type::factory_ref_type override;
 
     // implementation details

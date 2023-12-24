@@ -22,14 +22,14 @@ public:
 
     // factory
 public:
-    inline static auto create() -> factory_ref_type;
+    inline static auto create(const name_type & = "") -> factory_ref_type;
 
     // metamethods
 public:
     // destructor
     virtual ~Gray();
     // constructor: DON'T CALL
-    inline Gray(sentinel_type);
+    inline Gray(sentinel_type, const name_type &);
 
     // accessors
 public:
@@ -51,7 +51,7 @@ public:
 
     // flow protocol
 public:
-    virtual auto make(name_type slot, base_type::product_ref_type product)
+    virtual auto make(const name_type & slot, base_type::product_ref_type product)
         -> base_type::factory_ref_type override;
 
     // suppressed metamethods

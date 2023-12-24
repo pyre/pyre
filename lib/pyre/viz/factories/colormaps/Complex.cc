@@ -96,8 +96,8 @@ pyre::viz::factories::colormaps::Complex::blue(channel_ref_type blue) -> factory
 }
 
 auto
-pyre::viz::factories::colormaps::Complex::make(name_type slot, base_type::product_ref_type product)
-    -> base_type::factory_ref_type
+pyre::viz::factories::colormaps::Complex::make(
+    const name_type & slot, base_type::product_ref_type product) -> base_type::factory_ref_type
 {
     // chain up
     auto self = base_type::make(slot, product);
