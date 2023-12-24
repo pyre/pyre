@@ -8,17 +8,18 @@
 
 // factory
 auto
-pyre::viz::products::memory::TileC8::create(shape_type shape, cell_type value) -> ref_type
+pyre::viz::products::memory::TileC8::create(
+    const name_type & name, shape_type shape, cell_type value) -> ref_type
 {
     // build an instance and wrap it in a shared pointer
-    return std::make_shared<TileC8>(sentinel_type(), shape, value);
+    return std::make_shared<TileC8>(sentinel_type(), name, shape, value);
 }
 
 // constructor
 pyre::viz::products::memory::TileC8::TileC8(
-    sentinel_type sentinel, shape_type shape, cell_type value) :
+    sentinel_type sentinel, const name_type & name, shape_type shape, cell_type value) :
     // base class; start out clean and initialized
-    pyre::flow::product_t(sentinel, false),
+    pyre::flow::product_t(sentinel, name, false),
     // members
     _shape { shape },
     _data { packing_type(shape), shape.cells() }

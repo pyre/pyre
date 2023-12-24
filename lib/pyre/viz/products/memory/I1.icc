@@ -8,16 +8,17 @@
 
 // factory
 auto
-pyre::viz::products::memory::I1::create(cell_type value) -> ref_type
+pyre::viz::products::memory::I1::create(const name_type & name, cell_type value) -> ref_type
 {
     // build an instance and wrap it in a shared pointer
-    return std::make_shared<I1>(sentinel_type(), value);
+    return std::make_shared<I1>(sentinel_type(), name, value);
 }
 
 // constructor
-pyre::viz::products::memory::I1::I1(sentinel_type sentinel, cell_type value) :
+pyre::viz::products::memory::I1::I1(
+    sentinel_type sentinel, const name_type & name, cell_type value) :
     // base class; start out clean and initialized
-    pyre::flow::product_t(sentinel, false),
+    pyre::flow::product_t(sentinel, name, false),
     // member
     _value { value }
 {}

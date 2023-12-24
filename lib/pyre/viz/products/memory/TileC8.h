@@ -24,14 +24,15 @@ public:
 
     // factory
 public:
-    inline static auto create(shape_type shape, cell_type value = 0) -> ref_type;
+    inline static auto create(const name_type & name, shape_type shape, cell_type value = 0)
+        -> ref_type;
 
     // metamethods
 public:
     // destructor
     virtual ~TileC8();
     // constructor; DON'T CALL
-    inline TileC8(sentinel_type, shape_type, cell_type);
+    inline TileC8(sentinel_type, const name_type &, shape_type, cell_type);
 
     // accessors
 public:
