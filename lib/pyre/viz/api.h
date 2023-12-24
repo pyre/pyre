@@ -104,6 +104,7 @@ namespace pyre::viz::factories::selectors {
     // complex parts
     using amplitude_t = Amplitude;
     using phase_t = Phase;
+    using real_t = Real;
 } // namespace pyre::viz::factories::selectors
 
 
