@@ -69,13 +69,13 @@ pyre::viz::factories::selectors::Real::make(
     // get my input
     auto s = signal();
     // get my output
-    auto a = real();
+    auto r = real();
 
     // the bound products must be shape compatible; the current implementation only requires
     // that products have the same number of cells
     auto pixels = s->shape().cells();
     // verify consistency
-    bool ok = pixels == a->shape().cells();
+    bool ok = pixels == r->shape().cells();
     // if something is off
     if (!ok) {
         // make a channel
@@ -105,7 +105,7 @@ pyre::viz::factories::selectors::Real::make(
             << pyre::journal::indent
             // details
             // real
-            << "real: " << a->shape()
+            << "real: " << r->shape()
             << pyre::journal::newline
             // outdent
             << pyre::journal::outdent
@@ -119,14 +119,14 @@ pyre::viz::factories::selectors::Real::make(
     // inputs
     auto sData = s->read();
     // outputs
-    auto aData = a->write();
+    auto rData = r->write();
 
     // color convert
     for (auto pixel = 0; pixel < pixels; ++pixel) {
         // read
         auto sValue = sData[pixel];
         // compute the real and write
-        aData[pixel] = sValue.real();
+        rData[pixel] = sValue.real();
     }
 
     // all done

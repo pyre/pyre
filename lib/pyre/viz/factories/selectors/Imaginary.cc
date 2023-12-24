@@ -70,13 +70,13 @@ pyre::viz::factories::selectors::Imaginary::make(
     // get my input
     auto s = signal();
     // get my output
-    auto a = imaginary();
+    auto i = imaginary();
 
     // the bound products must be shape compatible; the current implementation only requires
     // that products have the same number of cells
     auto pixels = s->shape().cells();
     // verify consistency
-    bool ok = pixels == a->shape().cells();
+    bool ok = pixels == i->shape().cells();
     // if something is off
     if (!ok) {
         // make a channel
@@ -106,7 +106,7 @@ pyre::viz::factories::selectors::Imaginary::make(
             << pyre::journal::indent
             // details
             // imaginary
-            << "imaginary: " << a->shape()
+            << "imaginary: " << i->shape()
             << pyre::journal::newline
             // outdent
             << pyre::journal::outdent
@@ -120,14 +120,14 @@ pyre::viz::factories::selectors::Imaginary::make(
     // inputs
     auto sData = s->read();
     // outputs
-    auto aData = a->write();
+    auto iData = i->write();
 
     // color convert
     for (auto pixel = 0; pixel < pixels; ++pixel) {
         // read
         auto sValue = sData[pixel];
         // compute the imaginary and write
-        aData[pixel] = sValue.imag();
+        iData[pixel] = sValue.imag();
     }
 
     // all done
