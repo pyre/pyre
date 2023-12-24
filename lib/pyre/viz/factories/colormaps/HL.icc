@@ -15,7 +15,7 @@ pyre::viz::factories::colormaps::HL::create(const name_type & name, double thres
     // build an instance and wrap it in a shared pointer
     auto ref = std::make_shared<HL>(sentinel_type(), name, threshold);
     // make a channel
-    auto channel = pyre::journal::debug_t("pyre.viz.factories.colorspaces.hl.create");
+    auto channel = pyre::journal::debug_t("pyre.viz.factories.colormaps.hl.create");
     // show me
     channel
         // the factory

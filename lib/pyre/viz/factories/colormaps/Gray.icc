@@ -14,7 +14,7 @@ pyre::viz::factories::colormaps::Gray::create(const name_type & name) -> factory
     // build an instance and wrap it in a shared pointer
     auto ref = std::make_shared<Gray>(sentinel_type(), name);
     // make a channel
-    auto channel = pyre::journal::debug_t("pyre.viz.factories.colorspaces.gray.create");
+    auto channel = pyre::journal::debug_t("pyre.viz.factories.colormaps.gray.create");
     // show me
     channel
         // the factory

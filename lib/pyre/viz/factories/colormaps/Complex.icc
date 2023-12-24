@@ -27,7 +27,7 @@ pyre::viz::factories::colormaps::Complex::create(
         sentinel_type(), name, bins, saturation, minBrightness, maxBrightness, minAmplitude,
         maxAmplitude, underflow, overflow);
     // make a channel
-    auto channel = pyre::journal::debug_t("pyre.viz.factories.colorspaces.complex.create");
+    auto channel = pyre::journal::debug_t("pyre.viz.factories.colormaps.complex.create");
     // show me
     channel
         // the factory
