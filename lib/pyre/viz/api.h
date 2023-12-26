@@ -130,7 +130,8 @@ namespace pyre::viz::factories::selectors {
     template <class signalT, class phaseT>
     using phase_t = Phase<signalT, phaseT>;
 
-    using real_t = Real;
+    template <class signalT, class realT>
+    using real_t = Real<signalT, realT>;
 } // namespace pyre::viz::factories::selectors
 
 
