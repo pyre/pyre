@@ -88,7 +88,7 @@ namespace pyre::viz::factories::codecs {
 // colorspaces
 namespace pyre::viz::factories::colormaps {
     // grayscale
-    template <class signalT, class redT, class greenT = redT, class blueT = redT>
+    template <class signalT, class redT = signalT, class greenT = redT, class blueT = redT>
     using gray_t = Gray<signalT, redT, greenT, blueT>;
 
     // hue based spaces
@@ -121,7 +121,9 @@ namespace pyre::viz::factories::filters {
 // selectors
 namespace pyre::viz::factories::selectors {
     // complex parts
-    using amplitude_t = Amplitude;
+    template <class signalT, class amplitudeT>
+    using amplitude_t = Amplitude<signalT, amplitudeT>;
+
     using imaginary_t = Imaginary;
     using phase_t = Phase;
     using real_t = Real;

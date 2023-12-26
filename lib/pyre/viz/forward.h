@@ -129,7 +129,9 @@ namespace pyre::viz {
         // selectors
         namespace selectors {
             // complex parts
+            template <class signalT, class amplitudeT>
             class Amplitude;
+
             class Imaginary;
             class Phase;
             class Real;
