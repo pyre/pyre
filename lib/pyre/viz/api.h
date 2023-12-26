@@ -81,7 +81,8 @@ namespace pyre::viz::products::images {
 // codecs
 namespace pyre::viz::factories::codecs {
     // microsoft bitmaps
-    using bmp_t = BMP;
+    template <class redT, class greenT = redT, class blueT = redT>
+    using bmp_t = BMP<redT, greenT, blueT>;
 } // namespace pyre::viz::factories::codecs
 
 // colorspaces
