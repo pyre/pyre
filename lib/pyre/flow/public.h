@@ -16,8 +16,8 @@
 #include "api.h"
 
 // implementation
-#include "Node.h"
-#include "Factory.h"
-#include "Product.h"
+#include "protocol/Node.h"
+#include "protocol/Factory.h"
+#include "protocol/Product.h"
 
 // end of file

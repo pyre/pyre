@@ -6,14 +6,14 @@
 // code guard
 #pragma once
 
-// set up the namespace
-namespace pyre::flow {
+// base classes
+namespace pyre::flow::protocol {
 
     // base classes
     class Node;
     class Product;
     class Factory;
 
-} // namespace pyre::flow
+} // namespace pyre::flow::protocol
 
 // end of file

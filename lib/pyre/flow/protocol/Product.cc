@@ -4,10 +4,10 @@
 // (c) 1998-2023 all rights reserved
 
 // support
-#include "public.h"
+#include "../public.h"
 
 // destructor
-pyre::flow::Product::~Product()
+pyre::flow::protocol::Product::~Product()
 {
     // make a channel
     auto channel = pyre::journal::debug_t("pyre.flow.products.destroy");
@@ -24,7 +24,8 @@ pyre::flow::Product::~Product()
 
 // bindings
 auto
-pyre::flow::Product::addReader(name_type slot, factory_ref_type factory) -> product_ref_type
+pyre::flow::protocol::Product::addReader(name_type slot, factory_ref_type factory)
+    -> product_ref_type
 {
     // add the factory to my pile of readers
     _readers.insert({ slot, factory });
@@ -33,7 +34,8 @@ pyre::flow::Product::addReader(name_type slot, factory_ref_type factory) -> prod
 };
 
 auto
-pyre::flow::Product::addWriter(name_type slot, factory_ref_type factory) -> product_ref_type
+pyre::flow::protocol::Product::addWriter(name_type slot, factory_ref_type factory)
+    -> product_ref_type
 {
     // add the factory to my pile of writers
     _writers.insert({ slot, factory });
@@ -44,7 +46,8 @@ pyre::flow::Product::addWriter(name_type slot, factory_ref_type factory) -> prod
 };
 
 auto
-pyre::flow::Product::removeReader(name_type slot, factory_ref_type factory) -> product_ref_type
+pyre::flow::protocol::Product::removeReader(name_type slot, factory_ref_type factory)
+    -> product_ref_type
 {
     // remove the factory from my pile of readers
     _readers.extract({ slot, factory });
@@ -53,7 +56,8 @@ pyre::flow::Product::removeReader(name_type slot, factory_ref_type factory) -> p
 };
 
 auto
-pyre::flow::Product::removeWriter(name_type slot, factory_ref_type factory) -> product_ref_type
+pyre::flow::protocol::Product::removeWriter(name_type slot, factory_ref_type factory)
+    -> product_ref_type
 {
     // remove the factory from my pile of writers
     _writers.extract({ slot, factory });
@@ -63,7 +67,7 @@ pyre::flow::Product::removeWriter(name_type slot, factory_ref_type factory) -> p
 
 // internals
 auto
-pyre::flow::Product::flush() -> void
+pyre::flow::protocol::Product::flush() -> void
 {
     // make a channel
     auto channel = pyre::journal::debug_t("pyre.flow.products.flush");
@@ -88,7 +92,7 @@ pyre::flow::Product::flush() -> void
 }
 
 auto
-pyre::flow::Product::make() -> product_ref_type
+pyre::flow::protocol::Product::make() -> product_ref_type
 {
     // make a channel
     auto channel = pyre::journal::debug_t("pyre.flow.products.make");

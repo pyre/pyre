@@ -6,7 +6,7 @@
 // code guard
 #pragma once
 
-class pyre::flow::Factory : public Node {
+class pyre::flow::protocol::Factory : public Node {
     // type aliases
 public:
     // connectors
