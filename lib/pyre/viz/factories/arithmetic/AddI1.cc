@@ -18,14 +18,12 @@
 // destructor
 pyre::viz::factories::arithmetic::AddI1::~AddI1()
 {
-    std::complex<float> a;
-    a = { 1, 1 };
     // make a channel
     auto channel = pyre::journal::debug_t("pyre.viz.factories.arithmetic.addi1");
     // let me know
     channel
         // mark
-        << "addi1 " << this << ": destroy"
+        << "addi1 '" << name() << "' at " << this << ": destroy"
         << pyre::journal::newline
         // flush
         << pyre::journal::endl(__HERE__);
