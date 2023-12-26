@@ -12,16 +12,26 @@
 #include <pyre/journal.h>
 #include <pyre/viz.h>
 
-
 // type aliases
+// all tiles are two dimensional
+using packing_t = pyre::grid::canonical_t<2>;
+// the input signal
+// entries
 using data_t = std::complex<double>;
-// products
-using signal_t = pyre::viz::products::memory::tile_c8_t;
-using channel_t = pyre::viz::products::memory::tile_f4_t;
+using signal_storage_t = pyre::memory::heap_t<data_t>;
+using signal_grid_t = pyre::grid::grid_t<packing_t, signal_storage_t>;
+using signal_t = pyre::flow::products::tile_t<signal_grid_t>;
+// the color channels
+using pixel_t = float;
+using color_storage_t = pyre::memory::heap_t<pixel_t>;
+using color_grid_t = pyre::grid::grid_t<packing_t, color_storage_t>;
+using channel_t = pyre::flow::products::tile_t<color_grid_t>;
+// the image
 using image_t = pyre::viz::products::images::bmp_t;
-// factories
-using color_t = pyre::viz::factories::colormaps::complex_t;
-using codec_t = pyre::viz::factories::codecs::bmp_t;
+// the colormap
+using color_t = pyre::viz::factories::colormaps::complex_t<signal_t, channel_t>;
+// the codec
+using codec_t = pyre::viz::factories::codecs::bmp_t<channel_t>;
 
 // driver
 int

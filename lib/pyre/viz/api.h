@@ -94,7 +94,8 @@ namespace pyre::viz::factories::colormaps {
     using hsb_t = HSB;
     using hsl_t = HSL;
     // complex data
-    using complex_t = Complex;
+    template <class signalT, class redT, class greenT = redT, class blueT = redT>
+    using complex_t = Complex<signalT, redT, greenT, blueT>;
 } // namespace pyre::viz::factories::colormaps
 
 // filters
