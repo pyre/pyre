@@ -54,21 +54,21 @@ main(int argc, char * argv[])
 
     // verify that amplitude has no bindings
     // get its inputs
-    auto amplitudeInputs = amplitude->inputs();
+    auto & amplitudeInputs = amplitude->inputs();
     // verify its an empty container
     assert(amplitudeInputs.size() == 0);
     // get its outputs
-    auto amplitudeOutputs = amplitude->outputs();
+    auto & amplitudeOutputs = amplitude->outputs();
     // verify its an empty container
     assert(amplitudeOutputs.size() == 0);
 
     // verify that encoder has no bindings
     // get its inputs
-    auto encoderInputs = encoder->inputs();
+    auto & encoderInputs = encoder->inputs();
     // verify its an empty container
     assert(encoderInputs.size() == 0);
     // get its outputs
-    auto encoderOutputs = encoder->outputs();
+    auto & encoderOutputs = encoder->outputs();
     // verify its an empty container
     assert(encoderOutputs.size() == 0);
 
