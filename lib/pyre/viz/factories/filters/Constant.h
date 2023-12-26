@@ -7,14 +7,14 @@
 #pragma once
 
 // generate a tile filled with a value
-template <class tileT>
+template <class constantT>
 class pyre::viz::factories::filters::Constant : public pyre::flow::factory_t {
     // type aliases
 public:
     // my base class
     using base_type = pyre::flow::factory_t;
     // my product
-    using product_type = tileT;
+    using product_type = constantT;
     // my value type
     using cell_type = typename product_type::cell_type;
 

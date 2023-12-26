@@ -17,7 +17,8 @@
 using cell_t = float;
 using packing_t = pyre::grid::canonical_t<2>;
 using storage_t = pyre::memory::heap_t<cell_t>;
-using tile_t = pyre::viz::products::memory::tile_t<packing_t, storage_t>;
+using grid_t = pyre::grid::grid_t<packing_t, storage_t>;
+using tile_t = pyre::flow::products::tile_t<grid_t>;
 using constant_t = pyre::viz::factories::filters::constant_t<tile_t>;
 
 // driver
