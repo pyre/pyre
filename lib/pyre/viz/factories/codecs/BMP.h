@@ -7,13 +7,16 @@
 #pragma once
 
 // encode three color channels into a microsoft bitmap
+template <class redT, class greenT, class blueT>
 class pyre::viz::factories::codecs::BMP : public pyre::flow::factory_t {
     // type aliases
 public:
     // my base class
     using base_type = pyre::flow::factory_t;
     // my input slots
-    using channel_type = pyre::viz::products::memory::tile_f4_t;
+    using red_type = redT;
+    using green_type = greenT;
+    using blue_type = blueT;
     // my output slot
     using image_type = pyre::viz::products::images::bmp_t;
 
@@ -23,7 +26,9 @@ public:
     // ref to me
     using factory_ref_type = std::shared_ptr<BMP>;
     // my input slots
-    using channel_ref_type = std::shared_ptr<channel_type>;
+    using red_ref_type = std::shared_ptr<red_type>;
+    using green_ref_type = std::shared_ptr<green_type>;
+    using blue_ref_type = std::shared_ptr<blue_type>;
     // and output slots
     using image_ref_type = std::shared_ptr<image_type>;
 
@@ -34,27 +39,27 @@ public:
     // metamethods
 public:
     // destructor
-    virtual ~BMP();
+    inline virtual ~BMP();
     // constructor: DON'T CALL
     inline BMP(sentinel_type, const name_type &);
 
     // accessors
 public:
-    auto red() -> channel_ref_type;
-    auto green() -> channel_ref_type;
-    auto blue() -> channel_ref_type;
-    auto image() -> image_ref_type;
+    inline auto red() -> red_ref_type;
+    inline auto green() -> green_ref_type;
+    inline auto blue() -> blue_ref_type;
+    inline auto image() -> image_ref_type;
 
     // mutators
 public:
-    auto red(channel_ref_type) -> factory_ref_type;
-    auto green(channel_ref_type) -> factory_ref_type;
-    auto blue(channel_ref_type) -> factory_ref_type;
-    auto image(image_ref_type) -> factory_ref_type;
+    inline auto red(red_ref_type) -> factory_ref_type;
+    inline auto green(green_ref_type) -> factory_ref_type;
+    inline auto blue(blue_ref_type) -> factory_ref_type;
+    inline auto image(image_ref_type) -> factory_ref_type;
 
     // flow protocol
 public:
-    virtual auto make(const name_type & slot, base_type::product_ref_type product)
+    inline virtual auto make(const name_type & slot, base_type::product_ref_type product)
         -> base_type::factory_ref_type override;
 
     // suppressed metamethods

@@ -94,6 +94,7 @@ namespace pyre::viz {
         // codecs
         namespace codecs {
             // microsoft bitmaps
+            template <class redT, class greenT, class blueT>
             class BMP;
         } // namespace codecs
         // colorspaces
