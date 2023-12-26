@@ -91,11 +91,6 @@ namespace pyre::viz {
 
     // factories
     namespace factories {
-        // arithmetic
-        namespace arithmetic {
-            // operators
-            class AddI1;
-        } // namespace arithmetic
         // codecs
         namespace codecs {
             // microsoft bitmaps

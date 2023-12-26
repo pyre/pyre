@@ -33,8 +33,6 @@
 #include "products/images/BMP.h"
 
 // factories
-// arithmetic
-#include "factories/arithmetic/AddI1.h"
 // codecs
 #include "factories/codecs/BMP.h"
 // color maps
