@@ -49,6 +49,9 @@ namespace pyre::viz::products::memory {
     using c16_t = C16;
 
     // tiles
+    // generic
+    template <class packingT, class storageT>
+    using tile_t = Tile<packingT, storageT>;
     // signed integers
     using tile_i1_t = TileI1;
     using tile_i2_t = TileI2;
@@ -98,6 +101,12 @@ namespace pyre::viz::factories::colormaps {
     // complex data
     using complex_t = Complex;
 } // namespace pyre::viz::factories::colormaps
+
+// filters
+namespace pyre::viz::factories::filters {
+    template <class tileT>
+    using constant_t = Constant<tileT>;
+}
 
 // selectors
 namespace pyre::viz::factories::selectors {

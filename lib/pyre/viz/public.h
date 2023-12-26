@@ -26,6 +26,7 @@
 // products
 // memory
 #include "products/memory/I1.h"
+#include "products/memory/Tile.h"
 #include "products/memory/TileC8.h"
 #include "products/memory/TileF4.h"
 // images
@@ -42,6 +43,8 @@
 #include "factories/colormaps/HL.h"
 #include "factories/colormaps/HSB.h"
 #include "factories/colormaps/HSL.h"
+// filters
+#include "factories/filters/Constant.h"
 // selectors
 #include "factories/selectors/Amplitude.h"
 #include "factories/selectors/Imaginary.h"
