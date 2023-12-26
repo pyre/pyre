@@ -100,6 +100,7 @@ namespace pyre::viz {
         // colorspaces
         namespace colormaps {
             // grayscale
+            template <class signalT, class redT, class greenT, class blueT>
             class Gray;
             // hue based spaces
             class HL;

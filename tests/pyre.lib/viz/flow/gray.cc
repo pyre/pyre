@@ -12,12 +12,26 @@
 #include <pyre/journal.h>
 #include <pyre/viz.h>
 
-
 // type aliases
-using channel_t = pyre::viz::products::memory::tile_f4_t;
+// all tiles are two dimensional
+using packing_t = pyre::grid::canonical_t<2>;
+// the input signal
+// entries
+using data_t = double;
+using signal_storage_t = pyre::memory::heap_t<data_t>;
+using signal_grid_t = pyre::grid::grid_t<packing_t, signal_storage_t>;
+using signal_t = pyre::flow::products::tile_t<signal_grid_t>;
+// the color channels
+using pixel_t = float;
+using color_storage_t = pyre::memory::heap_t<pixel_t>;
+using color_grid_t = pyre::grid::grid_t<packing_t, color_storage_t>;
+using channel_t = pyre::flow::products::tile_t<color_grid_t>;
+// the image
 using image_t = pyre::viz::products::images::bmp_t;
-using color_t = pyre::viz::factories::colormaps::gray_t;
-using codec_t = pyre::viz::factories::codecs::bmp_t;
+// the colormap
+using color_t = pyre::viz::factories::colormaps::gray_t<signal_t, channel_t>;
+// the codec
+using codec_t = pyre::viz::factories::codecs::bmp_t<channel_t>;
 
 // driver
 int
@@ -31,11 +45,11 @@ main(int argc, char * argv[])
     // pick a shape
     auto shape = channel_t::shape_type(512, 512);
     // make the input data
-    auto data = channel_t::create("data", shape, 0.85);
+    auto data = signal_t::create("data", shape, 0.5);
     // make the color channels
-    auto red = channel_t::create("red", shape, 0.25);
-    auto green = channel_t::create("green", shape, 0.50);
-    auto blue = channel_t::create("blue", shape, 1.00);
+    auto red = channel_t::create("red", shape, 0);
+    auto green = channel_t::create("green", shape, 0);
+    auto blue = channel_t::create("blue", shape, 0);
     // and the resulting image
     auto image = image_t::create("img", shape);
 

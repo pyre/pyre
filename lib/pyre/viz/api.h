@@ -88,7 +88,8 @@ namespace pyre::viz::factories::codecs {
 // colorspaces
 namespace pyre::viz::factories::colormaps {
     // grayscale
-    using gray_t = Gray;
+    template <class signalT, class redT, class greenT = redT, class blueT = redT>
+    using gray_t = Gray<signalT, redT, greenT, blueT>;
     // hue based spaces
     using hl_t = HL;
     using hsb_t = HSB;
