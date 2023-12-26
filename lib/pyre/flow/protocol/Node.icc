@@ -7,14 +7,14 @@
 #pragma once
 
 // constructors
-pyre::flow::Node::Node(sentinel_type, const name_type & name) :
+pyre::flow::protocol::Node::Node(sentinel_type, const name_type & name) :
     // members
     _name { name }
 {}
 
 // accessors
 auto
-pyre::flow::Node::name() const -> const name_type &
+pyre::flow::protocol::Node::name() const -> const name_type &
 {
     // easy enough
     return _name;
@@ -22,7 +22,7 @@ pyre::flow::Node::name() const -> const name_type &
 
 // mutators
 auto
-pyre::flow::Node::name(const name_type & name) -> node_ref_type
+pyre::flow::protocol::Node::name(const name_type & name) -> node_ref_type
 {
     // reassign my name
     _name = name;
@@ -33,7 +33,7 @@ pyre::flow::Node::name(const name_type & name) -> node_ref_type
 // interface
 // build a reference
 auto
-pyre::flow::Node::ref() -> node_ref_type
+pyre::flow::protocol::Node::ref() -> node_ref_type
 {
     // build an instance and wrap it in a shared pointer
     return shared_from_this();

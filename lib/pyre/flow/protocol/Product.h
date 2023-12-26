@@ -6,7 +6,7 @@
 // code guard
 #pragma once
 
-class pyre::flow::Product : public Node {
+class pyre::flow::protocol::Product : public Node {
     // type aliases
 public:
     // pair the factory slot name with a reference to the factory

@@ -3,18 +3,11 @@
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
 // (c) 1998-2023 all rights reserved
 
-// externals
-#include "external.h"
-// forward declarations
-#include "forward.h"
-// type aliases
-#include "api.h"
-
-// my class declaration
-#include "Node.h"
+// support
+#include "../public.h"
 
 // destructor
-pyre::flow::Node::~Node()
+pyre::flow::protocol::Node::~Node()
 {
     // nothing to do
     return;
@@ -22,7 +15,7 @@ pyre::flow::Node::~Node()
 
 // internals
 auto
-pyre::flow::Node::flush() -> void
+pyre::flow::protocol::Node::flush() -> void
 {
     // nothing to do here, for now
     return;

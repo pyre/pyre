@@ -4,10 +4,10 @@
 // (c) 1998-2023 all rights reserved
 
 // support
-#include "public.h"
+#include "../public.h"
 
 // destructor
-pyre::flow::Factory::~Factory()
+pyre::flow::protocol::Factory::~Factory()
 {
     // make a channel
     auto channel = pyre::journal::debug_t("pyre.flow.factories.destroy");
@@ -24,7 +24,7 @@ pyre::flow::Factory::~Factory()
 
 // bindings
 auto
-pyre::flow::Factory::addInput(const name_type & slot, product_ref_type product) -> factory_ref_type
+pyre::flow::protocol::Factory::addInput(const name_type & slot, product_ref_type product) -> factory_ref_type
 {
     // make a channel
     auto channel = pyre::journal::debug_t("pyre.flow.factories.input");
@@ -54,7 +54,7 @@ pyre::flow::Factory::addInput(const name_type & slot, product_ref_type product) 
 };
 
 auto
-pyre::flow::Factory::addOutput(const name_type & slot, product_ref_type product) -> factory_ref_type
+pyre::flow::protocol::Factory::addOutput(const name_type & slot, product_ref_type product) -> factory_ref_type
 {
     // make a channel
     auto channel = pyre::journal::debug_t("pyre.flow.factories.output");
@@ -84,7 +84,7 @@ pyre::flow::Factory::addOutput(const name_type & slot, product_ref_type product)
 };
 
 auto
-pyre::flow::Factory::removeInput(const name_type & slot) -> factory_ref_type
+pyre::flow::protocol::Factory::removeInput(const name_type & slot) -> factory_ref_type
 {
     // make a handle to me
     auto self = ref();
@@ -120,7 +120,7 @@ pyre::flow::Factory::removeInput(const name_type & slot) -> factory_ref_type
 };
 
 auto
-pyre::flow::Factory::removeOutput(const name_type & slot) -> factory_ref_type
+pyre::flow::protocol::Factory::removeOutput(const name_type & slot) -> factory_ref_type
 {
     // make a handle to me
     auto self = ref();
@@ -157,7 +157,7 @@ pyre::flow::Factory::removeOutput(const name_type & slot) -> factory_ref_type
 
 // invalidate my downstream graph
 auto
-pyre::flow::Factory::flush() -> void
+pyre::flow::protocol::Factory::flush() -> void
 {
     // make a channel
     auto channel = pyre::journal::debug_t("pyre.flow.factories.flush");
@@ -181,7 +181,7 @@ pyre::flow::Factory::flush() -> void
 
 // rebuild the product bound to a slot
 auto
-pyre::flow::Factory::make(const name_type & slot, product_ref_type product) -> factory_ref_type
+pyre::flow::protocol::Factory::make(const name_type & slot, product_ref_type product) -> factory_ref_type
 {
     // make a channel
     auto channel = pyre::journal::debug_t("pyre.flow.factories.make");
