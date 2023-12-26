@@ -16,4 +16,38 @@ namespace pyre::flow::protocol {
 
 } // namespace pyre::flow::protocol
 
+// products
+namespace pyre::flow::products {
+
+    // atoms
+    template <typename valueT>
+    class Variable;
+
+    // tiles over grids
+    template <class gridT>
+    class Tile;
+
+} // namespace pyre::flow::products
+
+// factories
+namespace pyre::flow::factories {
+    // arithmetic
+
+    // binary operators
+    template <template <typename> class categoryT, class op1T, class op2T, class resultT>
+    class Binary;
+
+    // addition
+    // the general case; not implemented
+    template <template <typename> class categoryT, class op1T, class op2T, class resultT>
+    class Add;
+    // adding tiles
+    template <class op1T, class op2T, class resultT>
+    class Add<products::Tile, op1T, op2T, resultT>;
+    // adding variables
+    template <class op1T, class op2T, class resultT>
+    class Add<products::Variable, op1T, op2T, resultT>;
+
+} // namespace pyre::flow::factories
+
 // end of file

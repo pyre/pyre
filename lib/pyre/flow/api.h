@@ -26,4 +26,25 @@ namespace pyre::flow {
 
 } // namespace pyre::flow
 
+// products
+namespace pyre::flow::products {
+    // atoms
+    template <typename valueT>
+    using var_t = Variable<valueT>;
+    // tiles
+    template <class gridT>
+    using tile_t = Tile<gridT>;
+} // namespace pyre::flow::products
+
+// factories
+namespace pyre::flow::factories {
+    // addition
+    // atoms
+    template <class op1T, class op2T = op1T, class resultT = op1T>
+    using add_variables_t = Add<products::var_t, op1T, op2T, resultT>;
+    // tiles
+    template <class op1T, class op2T = op1T, class resultT = op1T>
+    using add_tiles_t = Add<products::tile_t, op1T, op2T, resultT>;
+} // namespace pyre::flow::factories
+
 // end of file

@@ -14,6 +14,7 @@
 
 // support
 #include <pyre/journal.h>
+#include <pyre/grid.h>
 
 // aliases
 namespace pyre::flow {
