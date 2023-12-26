@@ -138,6 +138,7 @@ namespace pyre::viz {
             template <class signalT, class phaseT>
             class Phase;
 
+            template <class signalT, class realT>
             class Real;
         } // namespace selectors
     }     // namespace factories
