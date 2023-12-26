@@ -91,8 +91,13 @@ namespace pyre::viz::factories::colormaps {
     template <class signalT, class redT, class greenT = redT, class blueT = redT>
     using gray_t = Gray<signalT, redT, greenT, blueT>;
     // hue based spaces
-    using hl_t = HL;
+    template <
+        class hueT, class luminosityT = hueT, class redT = hueT, class greenT = hueT,
+        class blueT = hueT>
+    using hl_t = HL<hueT, luminosityT, redT, greenT, blueT>;
+
     using hsb_t = HSB;
+
     using hsl_t = HSL;
     // complex data
     template <class signalT, class redT, class greenT = redT, class blueT = redT>
