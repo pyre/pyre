@@ -7,18 +7,30 @@
 #pragma once
 
 // encode three color channels into a microsoft bitmap
+template <class hueT, class saturationT, class brightnessT, class redT, class greenT, class blueT>
 class pyre::viz::factories::colormaps::HSB : public pyre::flow::factory_t {
     // type aliases
 public:
     // my base class
     using base_type = pyre::flow::factory_t;
-    // my slots
-    using channel_type = pyre::viz::products::memory::tile_f4_t;
+    // my input slots
+    using hue_type = hueT;
+    using saturation_type = saturationT;
+    using brightness_type = brightnessT;
+    // my output slots
+    using red_type = redT;
+    using green_type = greenT;
+    using blue_type = blueT;
 
     // ref to me
     using factory_ref_type = std::shared_ptr<HSB>;
-    // my input slots
-    using channel_ref_type = std::shared_ptr<channel_type>;
+    // and my slots
+    using hue_ref_type = std::shared_ptr<hue_type>;
+    using saturation_ref_type = std::shared_ptr<saturation_type>;
+    using brightness_ref_type = std::shared_ptr<brightness_type>;
+    using red_ref_type = std::shared_ptr<red_type>;
+    using green_ref_type = std::shared_ptr<green_type>;
+    using blue_ref_type = std::shared_ptr<blue_type>;
 
     // factory
 public:
@@ -34,24 +46,24 @@ public:
     // accessors
 public:
     // input slots
-    auto hue() -> channel_ref_type;
-    auto saturation() -> channel_ref_type;
-    auto brightness() -> channel_ref_type;
+    auto hue() -> hue_ref_type;
+    auto saturation() -> saturation_ref_type;
+    auto brightness() -> brightness_ref_type;
     // output slots
-    auto red() -> channel_ref_type;
-    auto green() -> channel_ref_type;
-    auto blue() -> channel_ref_type;
+    auto red() -> red_ref_type;
+    auto green() -> green_ref_type;
+    auto blue() -> blue_ref_type;
 
     // mutators
 public:
     // input slots
-    auto hue(channel_ref_type) -> factory_ref_type;
-    auto saturation(channel_ref_type) -> factory_ref_type;
-    auto brightness(channel_ref_type) -> factory_ref_type;
+    auto hue(hue_ref_type) -> factory_ref_type;
+    auto saturation(saturation_ref_type) -> factory_ref_type;
+    auto brightness(brightness_ref_type) -> factory_ref_type;
     // output slots
-    auto red(channel_ref_type) -> factory_ref_type;
-    auto green(channel_ref_type) -> factory_ref_type;
-    auto blue(channel_ref_type) -> factory_ref_type;
+    auto red(red_ref_type) -> factory_ref_type;
+    auto green(green_ref_type) -> factory_ref_type;
+    auto blue(blue_ref_type) -> factory_ref_type;
 
     // flow protocol
 public:

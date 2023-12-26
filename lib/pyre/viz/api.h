@@ -96,7 +96,10 @@ namespace pyre::viz::factories::colormaps {
         class blueT = hueT>
     using hl_t = HL<hueT, luminosityT, redT, greenT, blueT>;
 
-    using hsb_t = HSB;
+    template <
+        class hueT, class saturationT = hueT, class brightnessT = hueT, class redT = hueT,
+        class greenT = hueT, class blueT = hueT>
+    using hsb_t = HSB<hueT, saturationT, brightnessT, redT, greenT, blueT>;
 
     using hsl_t = HSL;
     // complex data
