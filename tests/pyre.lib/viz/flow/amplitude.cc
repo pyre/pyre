@@ -14,15 +14,26 @@
 
 
 // type aliases
+// all tiles are two dimensional
+using packing_t = pyre::grid::canonical_t<2>;
+// signal
 using data_t = std::complex<double>;
-// products
-using signal_t = pyre::viz::products::memory::tile_c8_t;
-using channel_t = pyre::viz::products::memory::tile_f4_t;
+using signal_storage_t = pyre::memory::heap_t<data_t>;
+using signal_grid_t = pyre::grid::grid_t<packing_t, signal_storage_t>;
+using signal_t = pyre::flow::products::tile_t<signal_grid_t>;
+// color
+using pixel_t = float;
+using channel_storage_t = pyre::memory::heap_t<pixel_t>;
+using channel_grid_t = pyre::grid::grid_t<packing_t, channel_storage_t>;
+using channel_t = pyre::flow::products::tile_t<channel_grid_t>;
+// image
 using image_t = pyre::viz::products::images::bmp_t;
-// factories
-using amplitude_t = pyre::viz::factories::selectors::amplitude_t;
-using colormap_t = pyre::viz::factories::colormaps::gray_t;
-using codec_t = pyre::viz::factories::codecs::bmp_t;
+// selector
+using amplitude_t = pyre::viz::factories::selectors::amplitude_t<signal_t, channel_t>;
+// color map
+using colormap_t = pyre::viz::factories::colormaps::gray_t<channel_t>;
+// encoder
+using codec_t = pyre::viz::factories::codecs::bmp_t<channel_t>;
 
 // driver
 int
