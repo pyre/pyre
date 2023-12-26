@@ -132,7 +132,9 @@ namespace pyre::viz {
             template <class signalT, class amplitudeT>
             class Amplitude;
 
+            template <class signalT, class imaginaryT>
             class Imaginary;
+
             class Phase;
             class Real;
         } // namespace selectors

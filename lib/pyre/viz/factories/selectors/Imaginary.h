@@ -7,14 +7,15 @@
 #pragma once
 
 // encode three color channels into a microsoft bitmap
+template <class signalT, class imaginaryT>
 class pyre::viz::factories::selectors::Imaginary : public pyre::flow::factory_t {
     // type aliases
 public:
     // my base class
     using base_type = pyre::flow::factory_t;
     // my slots
-    using signal_type = pyre::viz::products::memory::tile_c8_t;
-    using imaginary_type = pyre::viz::products::memory::tile_f4_t;
+    using signal_type = signalT;
+    using imaginary_type = imaginaryT;
 
     // ref to me
     using factory_ref_type = std::shared_ptr<Imaginary>;

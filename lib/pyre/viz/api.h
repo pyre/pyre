@@ -124,7 +124,9 @@ namespace pyre::viz::factories::selectors {
     template <class signalT, class amplitudeT>
     using amplitude_t = Amplitude<signalT, amplitudeT>;
 
-    using imaginary_t = Imaginary;
+    template <class signalT, class imaginaryT>
+    using imaginary_t = Imaginary<signalT, imaginaryT>;
+
     using phase_t = Phase;
     using real_t = Real;
 } // namespace pyre::viz::factories::selectors
