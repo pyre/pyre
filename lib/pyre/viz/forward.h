@@ -62,6 +62,9 @@ namespace pyre::viz {
             class C16;
 
             // tiles
+            // generic
+            template <class packingT, class storageT>
+            class Tile;
             // signed integers
             class TileI1;
             class TileI2;
@@ -109,6 +112,11 @@ namespace pyre::viz {
             // a factory for complex inputs
             class Complex;
         } // namespace colormaps
+        // filters
+        namespace filters {
+            template <class tileT>
+            class Constant;
+        }
         // selectors
         namespace selectors {
             // complex parts
