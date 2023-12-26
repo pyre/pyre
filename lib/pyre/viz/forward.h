@@ -103,6 +103,7 @@ namespace pyre::viz {
             template <class signalT, class redT, class greenT, class blueT>
             class Gray;
             // hue based spaces
+            template <class hueT, class luminosityT, class redT, class greenT, class blueT>
             class HL;
             class HSB;
             class HSL;
