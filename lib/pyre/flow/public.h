@@ -15,9 +15,20 @@
 // this is the file you are looking for
 #include "api.h"
 
-// implementation
+// base classes
 #include "protocol/Node.h"
 #include "protocol/Factory.h"
 #include "protocol/Product.h"
+
+// products
+#include "products/Tile.h"
+#include "products/Variable.h"
+
+// factories
+// arithmetic
+#include "factories/Binary.h"
+// addition
+#include "factories/AddTiles.h"
+#include "factories/AddVariables.h"
 
 // end of file
