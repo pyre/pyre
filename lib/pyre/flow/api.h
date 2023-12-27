@@ -45,6 +45,14 @@ namespace pyre::flow::factories {
     // tiles
     template <class op1T, class op2T = op1T, class resultT = op1T>
     using add_tiles_t = Add<products::tile_t, op1T, op2T, resultT>;
+
+    // multiplication
+    // atoms
+    template <class op1T, class op2T = op1T, class resultT = op1T>
+    using multiply_variables_t = Multiply<products::var_t, op1T, op2T, resultT>;
+    // tiles
+    template <class op1T, class op2T = op1T, class resultT = op1T>
+    using multiply_tiles_t = Multiply<products::tile_t, op1T, op2T, resultT>;
 } // namespace pyre::flow::factories
 
 // end of file
