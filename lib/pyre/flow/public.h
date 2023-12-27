@@ -30,5 +30,8 @@
 // addition
 #include "factories/AddTiles.h"
 #include "factories/AddVariables.h"
+// multiplication
+#include "factories/MultiplyTiles.h"
+#include "factories/MultiplyVariables.h"
 
 // end of file
