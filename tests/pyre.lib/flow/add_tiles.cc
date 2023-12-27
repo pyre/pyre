@@ -36,11 +36,13 @@ main(int argc, char * argv[])
     // turn it on
     // channel.activate();
 
+    // pick a shape
+    auto shape = product_t::shape_type(512, 512);
     // make the operands
-    auto op1 = product_t::create("op1", 1);
-    auto op2 = product_t::create("op2", 2);
+    auto op1 = product_t::create("op1", shape, 1);
+    auto op2 = product_t::create("op2", shape, 2);
     // make the result
-    auto result = product_t::create("result", 0);
+    auto result = product_t::create("result", shape, 0);
 
     // make the operator
     auto add = factory_t::create("add");
