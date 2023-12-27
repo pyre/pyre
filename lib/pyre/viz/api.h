@@ -28,48 +28,6 @@ namespace pyre::viz {
 
 
 // products
-// memory
-namespace pyre::viz::products::memory {
-    // atoms
-    // signed integers
-    using i1_t = I1;
-    using i2_t = I2;
-    using i4_t = I4;
-    using i8_t = I8;
-    // unsigned integers
-    using u1_t = U1;
-    using u2_t = U2;
-    using u4_t = U4;
-    using u8_t = U8;
-    // floats
-    using f4_t = F4;
-    using f8_t = F8;
-    // complex
-    using c8_t = C8;
-    using c16_t = C16;
-
-    // tiles
-    // generic
-    template <class packingT, class storageT>
-    using tile_t = Tile<packingT, storageT>;
-    // signed integers
-    using tile_i1_t = TileI1;
-    using tile_i2_t = TileI2;
-    using tile_i4_t = TileI4;
-    using tile_i8_t = TileI8;
-    // unsigned integers
-    using tile_u1_t = TileU1;
-    using tile_u2_t = TileU2;
-    using tile_u4_t = TileU4;
-    using tile_u8_t = TileU8;
-    // floats
-    using tile_f4_t = TileF4;
-    using tile_f8_t = TileF8;
-    // complex
-    using tile_c8_t = TileC8;
-    using tile_c16_t = TileC16;
-} // namespace pyre::viz::products::memory
-
 // images
 namespace pyre::viz::products::images {
     // microsoft bitmaps

@@ -41,47 +41,6 @@ namespace pyre::viz {
 
     // products
     namespace products {
-        // memory
-        namespace memory {
-            // atoms
-            // signed integers
-            class I1;
-            class I2;
-            class I4;
-            class I8;
-            // unsigned integers
-            class U1;
-            class U2;
-            class U4;
-            class U8;
-            // floats
-            class F4;
-            class F8;
-            // complex
-            class C8;
-            class C16;
-
-            // tiles
-            // generic
-            template <class packingT, class storageT>
-            class Tile;
-            // signed integers
-            class TileI1;
-            class TileI2;
-            class TileI4;
-            class TileI8;
-            // unsigned integers
-            class TileU1;
-            class TileU2;
-            class TileU4;
-            class TileU8;
-            // floats
-            class TileF4;
-            class TileF8;
-            // complex
-            class TileC8;
-            class TileC16;
-        } // namespace memory
         // images
         namespace images {
             // microsoft bitmaps

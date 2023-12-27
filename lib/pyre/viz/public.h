@@ -24,11 +24,6 @@
 #include "colorspaces/hsl.h"
 
 // products
-// memory
-#include "products/memory/I1.h"
-#include "products/memory/Tile.h"
-#include "products/memory/TileC8.h"
-#include "products/memory/TileF4.h"
 // images
 #include "products/images/BMP.h"
 
