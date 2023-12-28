@@ -72,9 +72,14 @@ namespace pyre::viz::factories::colormaps {
 
 // filters
 namespace pyre::viz::factories::filters {
-    template <class tileT>
-    using constant_t = Constant<tileT>;
-}
+    // generate a tile filled with a constant
+    template <class constantT>
+    using constant_t = Constant<constantT>;
+
+    // map values in [0,1] into uniformly spaced bins
+    template <class signalT, class binT>
+    using uniform_t = Uniform<signalT, binT>;
+} // namespace pyre::viz::factories::filters
 
 // selectors
 namespace pyre::viz::factories::selectors {
