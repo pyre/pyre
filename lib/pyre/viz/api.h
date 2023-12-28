@@ -76,6 +76,10 @@ namespace pyre::viz::factories::filters {
     template <class signalT, class affineT>
     using affine_t = Affine<signalT, affineT>;
 
+    // a filter that maps the phase of its complex source to [0,1]
+    template <class signalT, class cycleT>
+    using cycle_t = Cycle<signalT, cycleT>;
+
     // generate a tile filled with a constant
     template <class constantT>
     using constant_t = Constant<constantT>;
