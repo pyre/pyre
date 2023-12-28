@@ -37,6 +37,7 @@
 #include "factories/colormaps/HSB.h"
 #include "factories/colormaps/HSL.h"
 // filters
+#include "factories/filters/Affine.h"
 #include "factories/filters/Constant.h"
 #include "factories/filters/Uniform.h"
 // selectors

@@ -82,8 +82,12 @@ namespace pyre::viz {
         } // namespace colormaps
         // filters
         namespace filters {
+            template <class signalT, class affineT>
+            class Affine;
+
             template <class constantT>
             class Constant;
+
             template <class signalT, class binT>
             class Uniform;
         } // namespace filters

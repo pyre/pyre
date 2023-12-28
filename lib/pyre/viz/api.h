@@ -72,6 +72,10 @@ namespace pyre::viz::factories::colormaps {
 
 // filters
 namespace pyre::viz::factories::filters {
+    // map [0,1] onto [a,b]
+    template <class signalT, class affineT>
+    using affine_t = Affine<signalT, affineT>;
+
     // generate a tile filled with a constant
     template <class constantT>
     using constant_t = Constant<constantT>;
