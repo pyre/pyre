@@ -85,6 +85,9 @@ namespace pyre::viz {
             template <class signalT, class affineT>
             class Affine;
 
+            template <class signalT, class cycleT>
+            class Cycle;
+
             template <class constantT>
             class Constant;
 
