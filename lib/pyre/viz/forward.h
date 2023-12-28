@@ -92,6 +92,9 @@ namespace pyre::viz {
             class Constant;
 
             template <class signalT, class binT>
+            class Geometric;
+
+            template <class signalT, class binT>
             class Uniform;
         } // namespace filters
         // selectors

@@ -84,6 +84,10 @@ namespace pyre::viz::factories::filters {
     template <class constantT>
     using constant_t = Constant<constantT>;
 
+    // map values in [0,1] into geometrically spaced bins
+    template <class signalT, class binT>
+    using geometric_t = Geometric<signalT, binT>;
+
     // map values in [0,1] into uniformly spaced bins
     template <class signalT, class binT>
     using uniform_t = Uniform<signalT, binT>;
