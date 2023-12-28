@@ -38,6 +38,7 @@
 #include "factories/colormaps/HSL.h"
 // filters
 #include "factories/filters/Constant.h"
+#include "factories/filters/Uniform.h"
 // selectors
 #include "factories/selectors/Amplitude.h"
 #include "factories/selectors/Imaginary.h"

@@ -82,9 +82,11 @@ namespace pyre::viz {
         } // namespace colormaps
         // filters
         namespace filters {
-            template <class tileT>
+            template <class constantT>
             class Constant;
-        }
+            template <class signalT, class binT>
+            class Uniform;
+        } // namespace filters
         // selectors
         namespace selectors {
             // complex parts
