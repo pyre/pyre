@@ -31,7 +31,7 @@ main(int argc, char * argv[])
     // channel.activate();
 
     // make a tile
-    auto tile = tile_t::create("tile_f4_heap", { 2, 2 });
+    auto tile = tile_t::create("tile_f4_heap", { 512, 512 });
     // pick a value
     cell_t value = 1;
     // make the factory
