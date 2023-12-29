@@ -97,6 +97,11 @@ namespace pyre::viz::factories::filters {
     template <class signalT, class binT>
     using parametric_t = Parametric<signalT, binT>;
 
+    // map phase to [0,1]
+    // works on both real and complex data
+    template <class signalT, class polarsawT>
+    using polarsaw_t = PolarSaw<signalT, polarsawT>;
+
     // map values in [0,1] into uniformly spaced bins
     template <class signalT, class binT>
     using uniform_t = Uniform<signalT, binT>;
