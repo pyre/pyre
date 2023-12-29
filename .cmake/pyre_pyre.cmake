@@ -93,9 +93,9 @@ function(pyre_pyreLib)
     # memory
     lib/pyre/memory/FileMap.cc
     # flow
-    lib/pyre/flow/Factory.cc
-    lib/pyre/flow/Node.cc
-    lib/pyre/flow/Product.cc
+    lib/pyre/flow/protocol/Factory.cc
+    lib/pyre/flow/protocol/Node.cc
+    lib/pyre/flow/protocol/Product.cc
     # version
     ${CMAKE_CURRENT_BINARY_DIR}/lib/pyre/version.cc
     )
