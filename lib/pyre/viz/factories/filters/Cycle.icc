@@ -102,7 +102,7 @@ auto
 pyre::viz::factories::filters::Cycle<signalT, cycleT>::signal(signal_ref_type signal)
     -> factory_ref_type
 {
-    // cycled {signal} to my slot
+    // bind {signal} to my slot
     addInput("signal", std::static_pointer_cast<pyre::flow::product_t>(signal));
     // make a self reference
     auto self = std::dynamic_pointer_cast<Cycle>(ref());
@@ -115,7 +115,7 @@ auto
 pyre::viz::factories::filters::Cycle<signalT, cycleT>::cycle(cycle_ref_type cycle)
     -> factory_ref_type
 {
-    // cycled {cycle} to my slot
+    // bind {cycle} to my slot
     addOutput("cycle", std::static_pointer_cast<pyre::flow::product_t>(cycle));
     // make a self reference
     auto self = std::dynamic_pointer_cast<Cycle>(ref());

@@ -77,7 +77,7 @@ auto
 pyre::viz::factories::filters::PolarSaw<signalT, polarsawT>::signal(signal_ref_type signal)
     -> factory_ref_type
 {
-    // polarsawd {signal} to my slot
+    // bind {signal} to my slot
     addInput("signal", std::static_pointer_cast<pyre::flow::product_t>(signal));
     // make a self reference
     auto self = std::dynamic_pointer_cast<PolarSaw>(ref());
@@ -90,7 +90,7 @@ auto
 pyre::viz::factories::filters::PolarSaw<signalT, polarsawT>::polarsaw(polarsaw_ref_type polarsaw)
     -> factory_ref_type
 {
-    // polarsawd {polarsaw} to my slot
+    // bind {polarsaw} to my slot
     addOutput("polarsaw", std::static_pointer_cast<pyre::flow::product_t>(polarsaw));
     // make a self reference
     auto self = std::dynamic_pointer_cast<PolarSaw>(ref());
