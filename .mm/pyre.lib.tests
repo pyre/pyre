@@ -18,11 +18,14 @@ pyre.lib.tests.c++.flags += -Wall $($(compiler.c++).std.c++17)
 tests.pyre.lib.grid.clean += grid_mmap.data
 tests.pyre.lib.memory.clean += filemap.dat map.dat
 tests.pyre.lib.viz.iterators.clean += \
-    amplitude.bmp chip.bmp complex.bmp decimate.bmp domain_coloring.bmp \
-    logsaw.bmp phase.bmp polarsaw.bmp
+    pyre_viz_iterators_amplitude.bmp pyre_viz_iterators_bmp.bmp pyre_viz_iterators_complex.bmp \
+    pyre_viz_iterators_decimate.bmp pyre_viz_iterators_domain_coloring.bmp \
+    pyre_viz_iterators_logsaw.bmp pyre_viz_iterators_phase.bmp pyre_viz_iterators_polarsaw.bmp
 tests.pyre.lib.viz.flow.clean += \
-    bmp.bmp complex.bmp decimate.bmp gray.bmp hl.bmp hsb.bmp hsl.bmp \
-    amplitude.bmp imaginary.bmp phase.bmp real.bmp
+    pyre_viz_flow_amplitude.bmp pyre_viz_flow_bmp.bmp pyre_viz_flow_complex.bmp \
+    pyre_viz_flow_decimate.bmp pyre_viz_flow_gray.bmp pyre_viz_flow_hl.bmp pyre_viz_flow_hsb.bmp \
+    pyre_viz_flow_hsl.bmp pyre_viz_flow_amplitude.bmp pyre_viz_flow_imaginary.bmp \
+    pyre_viz_flow_phase.bmp pyre_viz_flow_real.bmp
 
 # test case configuration
 # the {pyre::memory} tests must be executed in a specific order
