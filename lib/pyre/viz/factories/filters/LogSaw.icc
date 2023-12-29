@@ -77,7 +77,7 @@ auto
 pyre::viz::factories::filters::LogSaw<signalT, logsawT>::signal(signal_ref_type signal)
     -> factory_ref_type
 {
-    // logsawd {signal} to my slot
+    // bind {signal} to my slot
     addInput("signal", std::static_pointer_cast<pyre::flow::product_t>(signal));
     // make a self reference
     auto self = std::dynamic_pointer_cast<LogSaw>(ref());
@@ -90,7 +90,7 @@ auto
 pyre::viz::factories::filters::LogSaw<signalT, logsawT>::logsaw(logsaw_ref_type logsaw)
     -> factory_ref_type
 {
-    // logsawd {logsaw} to my slot
+    // bind {logsaw} to my slot
     addOutput("logsaw", std::static_pointer_cast<pyre::flow::product_t>(logsaw));
     // make a self reference
     auto self = std::dynamic_pointer_cast<LogSaw>(ref());

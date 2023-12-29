@@ -102,7 +102,7 @@ auto
 pyre::viz::factories::filters::Affine<signalT, affineT>::signal(signal_ref_type signal)
     -> factory_ref_type
 {
-    // affined {signal} to my slot
+    // bind {signal} to my slot
     addInput("signal", std::static_pointer_cast<pyre::flow::product_t>(signal));
     // make a self reference
     auto self = std::dynamic_pointer_cast<Affine>(ref());
@@ -115,7 +115,7 @@ auto
 pyre::viz::factories::filters::Affine<signalT, affineT>::affine(affine_ref_type affine)
     -> factory_ref_type
 {
-    // affined {affine} to my slot
+    // bind {affine} to my slot
     addOutput("affine", std::static_pointer_cast<pyre::flow::product_t>(affine));
     // make a self reference
     auto self = std::dynamic_pointer_cast<Affine>(ref());
