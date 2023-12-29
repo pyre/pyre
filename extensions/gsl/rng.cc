@@ -8,6 +8,7 @@
 
 #include <portinfo>
 #include <Python.h>
+#include <string>
 #include <map>
 #include <gsl/gsl_rng.h>
 
