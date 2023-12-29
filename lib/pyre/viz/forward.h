@@ -94,6 +94,9 @@ namespace pyre::viz {
             template <class signalT, class binT>
             class Geometric;
 
+            template <class signalT, class logsawT>
+            class LogSaw;
+
             template <class signalT, class parametricT>
             class Parametric;
 

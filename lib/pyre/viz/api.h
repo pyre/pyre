@@ -88,6 +88,11 @@ namespace pyre::viz::factories::filters {
     template <class signalT, class binT>
     using geometric_t = Geometric<signalT, binT>;
 
+    // map the log of the absolute value of the signal to [0,1]
+    // works on both real and complex data
+    template <class signalT, class logsawT>
+    using logsaw_t = LogSaw<signalT, logsawT>;
+
     // map values in [a,b] to [0,1]
     template <class signalT, class binT>
     using parametric_t = Parametric<signalT, binT>;
