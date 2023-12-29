@@ -96,6 +96,8 @@ function(pyre_pyreLib)
     lib/pyre/flow/protocol/Factory.cc
     lib/pyre/flow/protocol/Node.cc
     lib/pyre/flow/protocol/Product.cc
+    # viz
+    lib/pyre/viz/products/images/BMP.cc
     # version
     ${CMAKE_CURRENT_BINARY_DIR}/lib/pyre/version.cc
     )
