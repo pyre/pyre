@@ -41,6 +41,7 @@
 #include "factories/filters/Constant.h"
 #include "factories/filters/Cycle.h"
 #include "factories/filters/Geometric.h"
+#include "factories/filters/Parametric.h"
 #include "factories/filters/Uniform.h"
 // selectors
 #include "factories/selectors/Amplitude.h"
