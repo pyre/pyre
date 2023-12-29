@@ -78,7 +78,7 @@ main(int argc, char * argv[])
         << pyre::journal::endl(__HERE__);
 
     // open a file
-    auto stream = std::ofstream("hsb.bmp", std::ios::out | std::ios::binary);
+    auto stream = std::ofstream("pyre_viz_flow_hsb.bmp", std::ios::out | std::ios::binary);
     // if successful
     if (stream.is_open()) {
         // write the bytes

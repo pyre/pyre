@@ -63,7 +63,7 @@ main(int argc, char * argv[])
     auto img = reinterpret_cast<const char *>(bmp.encode(colormap));
 
     // open a file
-    ofstream_t str("complex.bmp", std::ios::out | std::ios::binary);
+    ofstream_t str("pyre_viz_iterators_complex.bmp", std::ios::out | std::ios::binary);
     // if we succeeded
     if (str.is_open()) {
         // ask for the stream size
