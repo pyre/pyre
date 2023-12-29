@@ -40,6 +40,7 @@
 #include "factories/filters/Affine.h"
 #include "factories/filters/Constant.h"
 #include "factories/filters/Cycle.h"
+#include "factories/filters/Decimate.h"
 #include "factories/filters/Geometric.h"
 #include "factories/filters/LogSaw.h"
 #include "factories/filters/Parametric.h"

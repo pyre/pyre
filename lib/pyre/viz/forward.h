@@ -91,6 +91,9 @@ namespace pyre::viz {
             template <class constantT>
             class Constant;
 
+            template <class signalT>
+            class Decimate;
+
             template <class signalT, class binT>
             class Geometric;
 

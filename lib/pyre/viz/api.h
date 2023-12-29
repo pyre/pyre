@@ -84,6 +84,10 @@ namespace pyre::viz::factories::filters {
     template <class constantT>
     using constant_t = Constant<constantT>;
 
+    // zoom by a factor of 2
+    template <class signalT>
+    using decimate_t = Decimate<signalT>;
+
     // map values in [0,1] into geometrically spaced bins
     template <class signalT, class binT>
     using geometric_t = Geometric<signalT, binT>;
