@@ -106,6 +106,10 @@ namespace pyre::viz::factories::filters {
     template <class signalT, class polarsawT>
     using polarsaw_t = PolarSaw<signalT, polarsawT>;
 
+    // map signal to scale * (signal/mean)^exponent
+    template <class signalT, class powerT>
+    using power_t = Power<signalT, powerT>;
+
     // map values in [0,1] into uniformly spaced bins
     template <class signalT, class binT>
     using uniform_t = Uniform<signalT, binT>;

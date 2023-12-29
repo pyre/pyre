@@ -45,6 +45,7 @@
 #include "factories/filters/LogSaw.h"
 #include "factories/filters/Parametric.h"
 #include "factories/filters/PolarSaw.h"
+#include "factories/filters/Power.h"
 #include "factories/filters/Uniform.h"
 // selectors
 #include "factories/selectors/Amplitude.h"
