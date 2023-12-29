@@ -106,6 +106,9 @@ namespace pyre::viz {
             template <class signalT, class polarsawT>
             class PolarSaw;
 
+            template <class signalT, class powerT>
+            class Power;
+
             template <class signalT, class binT>
             class Uniform;
         } // namespace filters
