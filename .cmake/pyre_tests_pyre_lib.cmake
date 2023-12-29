@@ -184,13 +184,39 @@ pyre_test_driver(tests/pyre.lib/timers/wall_timer_stop.cc)
 
 
 # flow
+pyre_test_driver(tests/pyre.lib/flow/add_tiles.cc)
+pyre_test_driver(tests/pyre.lib/flow/add_variables.cc)
+pyre_test_driver(tests/pyre.lib/flow/calc_tiles.cc)
+pyre_test_driver(tests/pyre.lib/flow/calc_variables.cc)
 pyre_test_driver(tests/pyre.lib/flow/flow.cc)
+pyre_test_driver(tests/pyre.lib/flow/multiply_tiles.cc)
+pyre_test_driver(tests/pyre.lib/flow/multiply_variables.cc)
 
 
 # viz
 pyre_test_driver(tests/pyre.lib/viz/colorspaces/hsb.cc)
 pyre_test_driver(tests/pyre.lib/viz/colorspaces/hsl.cc)
 pyre_test_driver(tests/pyre.lib/viz/iterators/amplitude.cc)
+pyre_test_driver(tests/pyre.lib/viz/flow/affine.cc)
+pyre_test_driver(tests/pyre.lib/viz/flow/amplitude.cc)
+pyre_test_driver(tests/pyre.lib/viz/flow/bmp.cc)
+pyre_test_driver(tests/pyre.lib/viz/flow/complex.cc)
+pyre_test_driver(tests/pyre.lib/viz/flow/constant.cc)
+pyre_test_driver(tests/pyre.lib/viz/flow/cycle.cc)
+pyre_test_driver(tests/pyre.lib/viz/flow/decimate.cc)
+pyre_test_driver(tests/pyre.lib/viz/flow/geometric.cc)
+pyre_test_driver(tests/pyre.lib/viz/flow/gray.cc)
+pyre_test_driver(tests/pyre.lib/viz/flow/hl.cc)
+pyre_test_driver(tests/pyre.lib/viz/flow/hsb.cc)
+pyre_test_driver(tests/pyre.lib/viz/flow/hsl.cc)
+pyre_test_driver(tests/pyre.lib/viz/flow/imaginary.cc)
+pyre_test_driver(tests/pyre.lib/viz/flow/logsaw.cc)
+pyre_test_driver(tests/pyre.lib/viz/flow/parametric.cc)
+pyre_test_driver(tests/pyre.lib/viz/flow/phase.cc)
+pyre_test_driver(tests/pyre.lib/viz/flow/polarsaw.cc)
+pyre_test_driver(tests/pyre.lib/viz/flow/power.cc)
+pyre_test_driver(tests/pyre.lib/viz/flow/real.cc)
+pyre_test_driver(tests/pyre.lib/viz/flow/uniform.cc)
 pyre_test_driver(tests/pyre.lib/viz/iterators/bmp.cc)
 pyre_test_driver(tests/pyre.lib/viz/iterators/complex.cc)
 pyre_test_driver(tests/pyre.lib/viz/iterators/decimate.cc)
@@ -198,9 +224,52 @@ pyre_test_driver(tests/pyre.lib/viz/iterators/domain_coloring.cc)
 pyre_test_driver(tests/pyre.lib/viz/iterators/logsaw.cc)
 pyre_test_driver(tests/pyre.lib/viz/iterators/phase.cc)
 pyre_test_driver(tests/pyre.lib/viz/iterators/polarsaw.cc)
-pyre_test_driver(tests/pyre.lib/viz/flow/add_i1.cc)
 
 # some tests require cleanup
+add_test(NAME tests.pyre.lib.viz.flow.amplitude.cleanup
+  COMMAND ${BASH_PROGRAM} -c "rm amplitude.bmp"
+  )
+
+add_test(NAME tests.pyre.lib.viz.flow.bmp.cleanup
+  COMMAND ${BASH_PROGRAM} -c "rm bmp.bmp"
+  )
+
+add_test(NAME tests.pyre.lib.viz.flow.complex.cleanup
+  COMMAND ${BASH_PROGRAM} -c "rm complex.bmp"
+  )
+
+add_test(NAME tests.pyre.lib.viz.flow.decimate.cleanup
+  COMMAND ${BASH_PROGRAM} -c "rm decimate.bmp"
+  )
+
+add_test(NAME tests.pyre.lib.viz.flow.gray.cleanup
+  COMMAND ${BASH_PROGRAM} -c "rm gray.bmp"
+  )
+
+add_test(NAME tests.pyre.lib.viz.flow.hl.cleanup
+  COMMAND ${BASH_PROGRAM} -c "rm hl.bmp"
+  )
+
+add_test(NAME tests.pyre.lib.viz.flow.hsb.cleanup
+  COMMAND ${BASH_PROGRAM} -c "rm hsb.bmp"
+  )
+
+add_test(NAME tests.pyre.lib.viz.flow.hsl.cleanup
+  COMMAND ${BASH_PROGRAM} -c "rm hsl.bmp"
+  )
+
+add_test(NAME tests.pyre.lib.viz.flow.imaginary.cleanup
+  COMMAND ${BASH_PROGRAM} -c "rm imaginary.bmp"
+  )
+
+add_test(NAME tests.pyre.lib.viz.flow.phase.cleanup
+  COMMAND ${BASH_PROGRAM} -c "rm phase.bmp"
+  )
+
+add_test(NAME tests.pyre.lib.viz.flow.real.cleanup
+  COMMAND ${BASH_PROGRAM} -c "rm real.bmp"
+  )
+
 add_test(NAME tests.pyre.lib.viz.iterators.amplitude.cleanup
   COMMAND ${BASH_PROGRAM} -c "rm amplitude.bmp"
   )
