@@ -69,7 +69,7 @@ main(int argc, char * argv[])
     const char * img = reinterpret_cast<char *>(bmp.encode(colormap));
 
     // open a file
-    ofstream_t str("logsaw.bmp", std::ios::out | std::ios::binary);
+    ofstream_t str("pyre_viz_iterators_logsaw.bmp", std::ios::out | std::ios::binary);
     // if we succeeded
     if (str.is_open()) {
         // ask for the stream size
