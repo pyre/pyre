@@ -7,5 +7,6 @@
 
 # install
 pyre_pyreDefaults()
+pyre_pyreShare()
 
 # end of file

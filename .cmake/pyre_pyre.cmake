@@ -32,6 +32,18 @@ function(pyre_portinfo)
   # all done
 endfunction(pyre_portinfo)
 
+# copy the shared files
+function(pyre_pyreShare)
+  # install the share files
+  install(
+    DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/share/mm
+    DESTINATION ${PYRE_DEST_SHARE}
+    FILES_MATCHING PATTERN *
+    )
+  # all done
+endfunction(pyre_pyreShare)
+
+
 
 # build the pyre package
 function(pyre_pyrePackage)
@@ -67,6 +79,16 @@ function(pyre_pyreLib)
     lib/pyre/version.cc.in lib/pyre/version.cc
     @ONLY
     )
+  # copy the portinfo headers over to the staging area
+  file(GLOB_RECURSE files
+       RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}/lib/mm
+       CONFIGURE_DEPENDS
+       lib/mm/portinfo lib/mm/*.h lib/mm/*.icc
+       )
+  foreach(file ${files})
+    configure_file(lib/mm/${file} lib/mm/${file} COPYONLY)
+  endforeach()
+
   # copy the pyre headers over to the staging area
   file(GLOB_RECURSE files
        RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}/lib/pyre
@@ -107,7 +129,14 @@ function(pyre_pyreLib)
     journal
     )
 
-  # install all the pyre headers
+  # install the mm headers
+  install(
+    DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/lib/mm
+    DESTINATION ${PYRE_DEST_INCLUDE}
+    FILES_MATCHING PATTERN portinfo PATTERN *.h PATTERN *.icc
+    )
+
+  # install the pyre headers
   install(
     DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/lib/pyre
     DESTINATION ${PYRE_DEST_INCLUDE}
@@ -203,7 +232,7 @@ function(pyre_pyreBin)
   endif()
   # install the scripts
   install(
-    PROGRAMS bin/pyre bin/pyre-config bin/merlin bin/smith.pyre
+    PROGRAMS bin/pyre bin/pyre-config bin/merlin bin/mm bin/smith.pyre
     DESTINATION ${CMAKE_INSTALL_BINDIR}
     )
   # all done
