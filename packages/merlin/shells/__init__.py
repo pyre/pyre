@@ -13,5 +13,8 @@ from .Command import Command as command
 # factories for the local objects
 from .Merlin import Merlin as merlin
 
+# the legace builder
+from .MM import MM as mm
+
 
 # end of file
