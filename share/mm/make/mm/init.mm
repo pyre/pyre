@@ -21,7 +21,7 @@ mm.pkgdb ?= adhoc
 
 # contributions to the build
 mm.flags ?=
-mm.defines ?=
+mm.defines ?= WITH_MM
 mm.incpath ?=
 mm.ldflags ?=
 mm.libpath ?=
