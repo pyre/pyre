@@ -26,7 +26,7 @@ pyre::timers::ProcessClock::now() -> time_point_type
 // otherwise
 #else
     // complain
-    throw std::runtime_error("this platform doesn't have support for CLOCK_PROCESS_CPUTIME_ID")
+    throw std::runtime_error("this platform doesn't have support for CLOCK_PROCESS_CPUTIME_ID");
 #endif
 }
 
