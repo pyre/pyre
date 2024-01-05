@@ -1,7 +1,7 @@
 // -*- coding: utf-8 -*-
 //
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
-// (c) 1998-2024 all rights reserved
+// (c) 1998-2023 all rights reserved
 
 
 // support
@@ -13,7 +13,7 @@
 
 
 // type alias
-using managed_t = pyre::cuda::memory::managed_t<double>;
+using pinned_t = pyre::cuda::memory::pinned_t<double>;
 
 
 // main program
@@ -29,7 +29,7 @@ main(int argc, char * argv[])
     // pick a number
     const int cells = 1024 * 1024;
     // allocate some memory
-    managed_t arena(cells);
+    pinned_t arena(cells);
 
     // show me the address
     channel << "allocated " << cells << " doubles at " << arena.data()
@@ -46,6 +46,7 @@ main(int argc, char * argv[])
         // verify the memory contents are what we expect
         assert((cell == 1.0));
     }
+
 
     // all done
     return 0;

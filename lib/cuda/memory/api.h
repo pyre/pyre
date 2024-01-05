@@ -10,14 +10,29 @@
 
 // user facing types
 namespace pyre::cuda::memory {
-    // export managed memory blocks
-    // read/write access
+    // managed memory
+    // read/write
     template <typename T>
     using managed_t = Managed<T, false>;
-
-    // read-only access
+    // read-only
     template <typename T>
     using constmanaged_t = Managed<T, true>;
+
+    // pinned memory
+    // read/write
+    template <typename T>
+    using pinned_t = Pinned<T, false>;
+    // read-only
+    template <typename T>
+    using constpinned_t = Pinned<T, true>;
+
+    // mapped memory
+    // read/write
+    template <typename T>
+    using mapped_t = Mapped<T, false>;
+    // read-only
+    template <typename T>
+    using constmapped_t = Mapped<T, true>;
 } // namespace pyre::cuda::memory
 
 

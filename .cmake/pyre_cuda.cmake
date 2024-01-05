@@ -29,11 +29,44 @@ function(pyre_cudaLib)
          lib/cuda/*.h lib/cuda/*.icc
          )
     foreach(file ${files})
+      # skip the special header
+      if("${file}" STREQUAL "cuda.h")
+        continue()
+      endif()
       configure_file(lib/cuda/${file} lib/pyre/cuda/${file} COPYONLY)
     endforeach()
+
+    # and the cuda master header within the pyre directory
+    configure_file(lib/cuda/cuda.h lib/pyre/cuda.h COPYONLY)
+
+    # the {cuda} target (INTERFACE since it is header-only)
+    add_library(cuda INTERFACE)
+    # specify the directory for the library compilation products
+    pyre_library_directory(cuda lib)
+    target_link_libraries(cuda INTERFACE ${CUDA_LIBRARIES})
+    add_library(pyre::cuda ALIAS cuda)
   endif()
   # all done
 endfunction(pyre_cudaLib)
 
+
+# build the cuda kernel associated with this {driverfile}
+function(pyre_kernel_target kernelobject driverfile)
+    # extract the driver directory
+    get_filename_component(driver_directory ${driverfile} DIRECTORY)
+    # extract the driver basename
+    get_filename_component(driver_basename ${driverfile} NAME_WE)
+    # assemble the cu filename associated with this {driverfile}
+    set(cudafile "${driver_directory}/${driver_basename}.cu")
+    # generate the name of the target with the cuda kernel
+    pyre_target(kernelobject ${cudafile})
+    # rename the kernel target to distinguish it from the driver target
+    set(kernelobject "${kernelobject}_kernel")
+    # propagate definition of variable to parent scope
+    set(kernelobject "${kernelobject}" PARENT_SCOPE)
+    # sign up the kernel target for build based on the cuda source file
+    add_library("${kernelobject}" STATIC ${cudafile})
+  # all done
+endfunction()
 
 # end of file

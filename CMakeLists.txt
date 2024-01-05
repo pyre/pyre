@@ -124,6 +124,7 @@ find_package(Python 3.7
 # for building bindings
 # require c++17
 set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CUDA_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(PYBIND11_CPP_STANDARD -std=c++17)
@@ -221,6 +222,7 @@ if(PYRE_BUILD_TESTING)
 
   # if we have CUDA and the user cares
   if(WITH_CUDA)
+    include(pyre_tests_cuda_lib)
     include(pyre_tests_cuda_pkg)
   endif()
 
@@ -250,6 +252,13 @@ if(PYRE_BUILD_BENCHMARKS)
 
   # add the benchmarks to the pile
   include(pyre_benchmarks_pyre_lib)
+
+  # if we have CUDA and the user cares
+  if(WITH_CUDA)
+    # add the cuda benchmarks to the pile
+    include(pyre_benchmarks_cuda_lib)
+  endif()
+
 endif()
 
 
