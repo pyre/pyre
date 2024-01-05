@@ -9,6 +9,8 @@
 pyre_journalModule()
 # the host and timers extensions`
 pyre_pyreModule()
+# cuda
+pyre_cudaModule()
 # mpi
 pyre_mpiModule()
 # gsl

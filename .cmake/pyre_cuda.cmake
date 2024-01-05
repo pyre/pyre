@@ -50,6 +50,38 @@ function(pyre_cudaLib)
 endfunction(pyre_cudaLib)
 
 
+# build the cuda extension module
+function(pyre_cudaModule)
+  # if the user requested CUDA support
+  if(WITH_CUDA)
+    # the cuda bindings
+    Python_add_library(cudamodule MODULE)
+    # adjust the name to match what python expects
+    set_target_properties(cudamodule PROPERTIES LIBRARY_OUTPUT_NAME cuda)
+    set_target_properties(cudamodule PROPERTIES SUFFIX ${PYTHON3_SUFFIX})
+    # specify the directory for the module compilation products
+    pyre_library_directory(cudamodule extensions)
+    # set the libraries to link against
+    target_link_libraries(cudamodule PRIVATE pyre journal pybind11::module ${CUDA_LIBRARIES})
+    # add the sources
+    target_sources(cudamodule PRIVATE
+      extensions/cuda/cuda.cc
+      extensions/cuda/device.cc
+      extensions/cuda/discover.cc
+      extensions/cuda/exceptions.cc
+      extensions/cuda/metadata.cc
+    )
+
+    # install the cuda extensions
+    install(
+      TARGETS cudamodule
+      LIBRARY
+      DESTINATION ${PYRE_DEST_PACKAGES}/cuda
+      )
+  endif()
+endfunction(pyre_cudaModule)
+
+
 # build the cuda kernel associated with this {driverfile}
 function(pyre_kernel_target kernelobject driverfile)
     # extract the driver directory
