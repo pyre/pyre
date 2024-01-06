@@ -44,6 +44,8 @@ function(pyre_cudaLib)
     # specify the directory for the library compilation products
     pyre_library_directory(cuda lib)
     target_link_libraries(cuda INTERFACE ${CUDA_LIBRARIES})
+    # set the include directories
+    target_include_directories(cuda INTERFACE ${CUDA_INCLUDE_DIRS})
     add_library(pyre::cuda ALIAS cuda)
   endif()
   # all done
@@ -63,6 +65,8 @@ function(pyre_cudaModule)
     pyre_library_directory(cudamodule extensions)
     # set the libraries to link against
     target_link_libraries(cudamodule PRIVATE pyre journal pybind11::module ${CUDA_LIBRARIES})
+    # set the include directories
+    target_include_directories(cudamodule PRIVATE ${CUDA_INCLUDE_DIRS})
     # add the sources
     target_sources(cudamodule PRIVATE
       extensions/cuda/cuda.cc
