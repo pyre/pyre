@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2024 all rights reserved
-#
 
 
 # exceptions
@@ -15,6 +13,7 @@ class Continue(ProtocolError):
     """
     Continue
     """
+
     # state
     code = 100
     status = " ".join(filter(None, (line.strip() for line in __doc__.splitlines())))
@@ -25,6 +24,7 @@ class SwitchingProtocols(ProtocolError):
     """
     Switching Protocols
     """
+
     # state
     code = 101
     status = " ".join(filter(None, (line.strip() for line in __doc__.splitlines())))
@@ -35,6 +35,7 @@ class Created(ProtocolError):
     """
     Created
     """
+
     # state
     code = 201
     status = " ".join(filter(None, (line.strip() for line in __doc__.splitlines())))
@@ -45,6 +46,7 @@ class Accepted(ProtocolError):
     """
     Accepted
     """
+
     # state
     code = 202
     status = " ".join(filter(None, (line.strip() for line in __doc__.splitlines())))
@@ -55,6 +57,7 @@ class NonAuthoritativeInformation(ProtocolError):
     """
     Non-Authoritative Information
     """
+
     # state
     code = 203
     status = " ".join(filter(None, (line.strip() for line in __doc__.splitlines())))
@@ -65,6 +68,7 @@ class NoContent(ProtocolError):
     """
     No Content
     """
+
     # state
     code = 204
     status = " ".join(filter(None, (line.strip() for line in __doc__.splitlines())))
@@ -75,17 +79,18 @@ class ResetContent(ProtocolError):
     """
     Reset Content
     """
+
     # state
     code = 205
     status = " ".join(filter(None, (line.strip() for line in __doc__.splitlines())))
     description = "Clear input form for further input"
 
 
-
 class PartialContent(ProtocolError):
     """
     Partial Content
     """
+
     # state
     code = 206
     status = " ".join(filter(None, (line.strip() for line in __doc__.splitlines())))
@@ -96,6 +101,7 @@ class MultipleChoices(ProtocolError):
     """
     Multiple Choices
     """
+
     # state
     code = 300
     status = " ".join(filter(None, (line.strip() for line in __doc__.splitlines())))
@@ -106,6 +112,7 @@ class MovedPermanently(ProtocolError):
     """
     Moved Permanently
     """
+
     # state
     code = 301
     status = " ".join(filter(None, (line.strip() for line in __doc__.splitlines())))
@@ -116,6 +123,7 @@ class Found(ProtocolError):
     """
     Found
     """
+
     # state
     code = 302
     status = " ".join(filter(None, (line.strip() for line in __doc__.splitlines())))
@@ -126,6 +134,7 @@ class SeeOther(ProtocolError):
     """
     See Other
     """
+
     # state
     code = 303
     status = " ".join(filter(None, (line.strip() for line in __doc__.splitlines())))
@@ -136,6 +145,7 @@ class NotModified(ProtocolError):
     """
     Not Modified
     """
+
     # state
     code = 304
     status = " ".join(filter(None, (line.strip() for line in __doc__.splitlines())))
@@ -146,6 +156,7 @@ class UseProxy(ProtocolError):
     """
     Use Proxy
     """
+
     # state
     code = 305
     status = " ".join(filter(None, (line.strip() for line in __doc__.splitlines())))
@@ -156,6 +167,7 @@ class TemporaryRedirect(ProtocolError):
     """
     Temporary Redirect
     """
+
     # state
     code = 307
     status = " ".join(filter(None, (line.strip() for line in __doc__.splitlines())))
@@ -166,6 +178,7 @@ class BadRequestSyntax(ProtocolError):
     """
     Bad Request
     """
+
     # state
     code = 400
     status = " ".join(filter(None, (line.strip() for line in __doc__.splitlines())))
@@ -176,6 +189,7 @@ class Unauthorized(ProtocolError):
     """
     Unauthorized
     """
+
     # state
     code = 401
     status = " ".join(filter(None, (line.strip() for line in __doc__.splitlines())))
@@ -186,6 +200,7 @@ class PaymentRequired(ProtocolError):
     """
     Payment Required
     """
+
     # state
     code = 402
     status = " ".join(filter(None, (line.strip() for line in __doc__.splitlines())))
@@ -196,6 +211,7 @@ class Forbidden(ProtocolError):
     """
     Forbidden
     """
+
     # state
     code = 403
     status = " ".join(filter(None, (line.strip() for line in __doc__.splitlines())))
@@ -206,6 +222,7 @@ class NotFound(ProtocolError):
     """
     Not Found
     """
+
     # state
     code = 404
     status = " ".join(filter(None, (line.strip() for line in __doc__.splitlines())))
@@ -216,6 +233,7 @@ class MethodNotAllowed(ProtocolError):
     """
     Method Not Allowed
     """
+
     # state
     code = 405
     status = " ".join(filter(None, (line.strip() for line in __doc__.splitlines())))
@@ -226,6 +244,7 @@ class NotAcceptable(ProtocolError):
     """
     Not Acceptable
     """
+
     # state
     code = 406
     status = " ".join(filter(None, (line.strip() for line in __doc__.splitlines())))
@@ -236,6 +255,7 @@ class ProxyAuthenticationRequired(ProtocolError):
     """
     Proxy Authentication Required
     """
+
     # state
     code = 407
     status = " ".join(filter(None, (line.strip() for line in __doc__.splitlines())))
@@ -246,6 +266,7 @@ class RequestTimeout(ProtocolError):
     """
     Request Timeout
     """
+
     # state
     code = 408
     status = " ".join(filter(None, (line.strip() for line in __doc__.splitlines())))
@@ -256,6 +277,7 @@ class Conflict(ProtocolError):
     """
     Conflict
     """
+
     # state
     code = 409
     status = " ".join(filter(None, (line.strip() for line in __doc__.splitlines())))
@@ -266,6 +288,7 @@ class Gone(ProtocolError):
     """
     Gone
     """
+
     # state
     code = 410
     status = " ".join(filter(None, (line.strip() for line in __doc__.splitlines())))
@@ -276,6 +299,7 @@ class LengthRequired(ProtocolError):
     """
     Length Required
     """
+
     # state
     code = 411
     status = " ".join(filter(None, (line.strip() for line in __doc__.splitlines())))
@@ -286,6 +310,7 @@ class PreconditionFailed(ProtocolError):
     """
     Precondition Failed
     """
+
     # state
     code = 412
     status = " ".join(filter(None, (line.strip() for line in __doc__.splitlines())))
@@ -296,6 +321,7 @@ class RequestEntityTooLarge(ProtocolError):
     """
     Request Entity Too Large
     """
+
     # state
     code = 413
     status = " ".join(filter(None, (line.strip() for line in __doc__.splitlines())))
@@ -306,6 +332,7 @@ class RequestURITooLong(ProtocolError):
     """
     Request-URI Too Long
     """
+
     # state
     code = 414
     status = " ".join(filter(None, (line.strip() for line in __doc__.splitlines())))
@@ -316,6 +343,7 @@ class UnsupportedMediaType(ProtocolError):
     """
     Unsupported Media Type
     """
+
     # state
     code = 415
     status = " ".join(filter(None, (line.strip() for line in __doc__.splitlines())))
@@ -326,6 +354,7 @@ class RequestedRangeNotSatisfiable(ProtocolError):
     """
     Requested Range Not Satisfiable
     """
+
     # state
     code = 416
     status = " ".join(filter(None, (line.strip() for line in __doc__.splitlines())))
@@ -336,6 +365,7 @@ class ExpectationFailed(ProtocolError):
     """
     Expectation Failed
     """
+
     # state
     code = 417
     status = " ".join(filter(None, (line.strip() for line in __doc__.splitlines())))
@@ -346,6 +376,7 @@ class PreconditionRequired(ProtocolError):
     """
     Precondition Required
     """
+
     # state
     code = 428
     status = " ".join(filter(None, (line.strip() for line in __doc__.splitlines())))
@@ -356,27 +387,34 @@ class TooManyRequests(ProtocolError):
     """
     Too Many Requests
     """
+
     # state
     code = 429
     status = " ".join(filter(None, (line.strip() for line in __doc__.splitlines())))
-    description = "The user has sent too many requests in a given amount of time (rate limiting)"
+    description = (
+        "The user has sent too many requests in a given amount of time (rate limiting)"
+    )
 
 
 class RequestHeaderFieldsTooLarge(ProtocolError):
     """
     Request Header Fields Too Large
     """
+
     # state
     code = 431
     status = " ".join(filter(None, (line.strip() for line in __doc__.splitlines())))
-    description = ("The server is unwilling to process the request because its header fields "
-                  "are too large")
+    description = (
+        "The server is unwilling to process the request because its header fields "
+        "are too large"
+    )
 
 
 class InternalServerError(ProtocolError):
     """
     Internal Server Error
     """
+
     # state
     code = 500
     status = " ".join(filter(None, (line.strip() for line in __doc__.splitlines())))
@@ -387,6 +425,7 @@ class NotImplemented(ProtocolError):
     """
     Not Implemented
     """
+
     # state
     code = 501
     status = " ".join(filter(None, (line.strip() for line in __doc__.splitlines())))
@@ -397,6 +436,7 @@ class BadGateway(ProtocolError):
     """
     Bad Gateway
     """
+
     # state
     code = 502
     status = " ".join(filter(None, (line.strip() for line in __doc__.splitlines())))
@@ -407,6 +447,7 @@ class ServiceUnavailable(ProtocolError):
     """
     Service Unavailable
     """
+
     # state
     code = 503
     status = " ".join(filter(None, (line.strip() for line in __doc__.splitlines())))
@@ -417,6 +458,7 @@ class GatewayTimeout(ProtocolError):
     """
     Gateway Timeout
     """
+
     # state
     code = 504
     status = " ".join(filter(None, (line.strip() for line in __doc__.splitlines())))
@@ -427,6 +469,7 @@ class HTTPVersionNotSupported(ProtocolError):
     """
     HTTP Version Not Supported
     """
+
     # state
     code = 505
     status = " ".join(filter(None, (line.strip() for line in __doc__.splitlines())))
@@ -437,6 +480,7 @@ class NetworkAuthenticationRequired(ProtocolError):
     """
     Network Authentication Required
     """
+
     # state
     code = 511
     status = " ".join(filter(None, (line.strip() for line in __doc__.splitlines())))

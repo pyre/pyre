@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2024 all rights reserved
-#
 
 
 # externals
@@ -12,23 +10,21 @@ import pyre
 
 
 # my declaration
-class Server(pyre.nexus.server, family='pyre.nexus.servers.http'):
+class Server(pyre.nexus.server, family="pyre.nexus.servers.http"):
     """
     A server that understands HTTP
     """
 
-
     # types
     from .Request import Request as request
     from .Response import Response as response
+
     # exceptions
     from . import exceptions, responses, documents
 
-
     # user configurable state
-    renderer = pyre.weaver.language(default='http')
-    renderer.doc = 'the renderer of the server responses to client requests'
-
+    renderer = pyre.weaver.language(default="http")
+    renderer.doc = "the renderer of the server responses to client requests"
 
     # public state
     @property
@@ -39,7 +35,6 @@ class Server(pyre.nexus.server, family='pyre.nexus.servers.http'):
         # build an identification string
         return "pyre/{}.{}.{}".format(*self.version)
 
-
     @property
     def version(self):
         """
@@ -48,9 +43,8 @@ class Server(pyre.nexus.server, family='pyre.nexus.servers.http'):
         # inherit the version of the framework
         return pyre.version()
 
-
     # protocol obligations
-    @pyre.export(tip='respond to the peer request')
+    @pyre.export(tip="respond to the peer request")
     def process(self, channel):
         """
         Initiate or continue a conversation with a peer over {channel}
@@ -76,14 +70,14 @@ class Server(pyre.nexus.server, family='pyre.nexus.servers.http'):
         # get the application context
         application = self.application
         # show me
-        application.debug.log('reading data from {}'.format(channel.peer))
+        application.debug.log("reading data from {}".format(channel.peer))
         # get whatever data is available at this point
         chunk = channel.read(maxlen=self.MAX_BYTES)
 
         # if there was nothing to read
         if len(chunk) == 0:
             # show me
-            application.debug.log('connection from {} was closed'.format(channel.peer))
+            application.debug.log("connection from {} was closed".format(channel.peer))
             # close the connection
             channel.close()
             # check whether we know this peer
@@ -161,7 +155,6 @@ class Server(pyre.nexus.server, family='pyre.nexus.servers.http'):
         # if all goes well, respond
         return self.respond(channel=channel, request=request, response=response)
 
-
     # interface
     def fulfill(self, request):
         """
@@ -170,16 +163,15 @@ class Server(pyre.nexus.server, family='pyre.nexus.servers.http'):
         # delegate to the app to build a response and return it
         return self.application.pyre_respond(server=self, request=request)
 
-
     def respond(self, channel, request, response):
         # attempt to
         try:
             # ask the renderer to put together the byte stream
-            stream = b'\r\n'.join(self.renderer.render(server=self, document=response))
+            stream = b"\r\n".join(self.renderer.render(server=self, document=response))
         # if something goes wrong
         except self.exceptions.ProtocolError as error:
             # render the error
-            stream = b'\r\n'.join(self.renderer.render(server=self, document=error))
+            stream = b"\r\n".join(self.renderer.render(server=self, document=error))
 
         # either way, attempt to
         try:
@@ -206,11 +198,10 @@ class Server(pyre.nexus.server, family='pyre.nexus.servers.http'):
         # if the application wants to terminate
         if response.abort:
             # do it
-            raise SystemExit(0)
+            raise SystemExit(response.code)
 
         # otherwise, let the response document decide whether we should keep the channel alive
         return response.alive
-
 
     # meta-methods
     def __init__(self, **kwds):
@@ -220,7 +211,6 @@ class Server(pyre.nexus.server, family='pyre.nexus.servers.http'):
         self.requests = {}
         # all done
         return
-
 
     # implementation details
     # private data

@@ -1,14 +1,13 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2024 all rights reserved
-#
 
 
 # externals
-import time # to generate timestamps
-import collections # for ordered dict
+import time  # to generate timestamps
+import collections  # for ordered dict
+
 # my superclass
 from ..nexus.exceptions import NexusError
 
@@ -27,16 +26,16 @@ class Response(NexusError):
     # the work...
 
     # public data
-    code = None           # a numeric code indicating the type of HTTP response
-    status = ''           # a very short description of the type of HTTP response
-    server = None         # the server that accepted the client request
-    headers = None        # meta data about the response
-    encoding = 'utf-8'    # the default encoding for the response payload
-    version = (1,1)       # the HTTP version spoken here
+    code = None  # a numeric code indicating the type of HTTP response
+    status = ""  # a very short description of the type of HTTP response
+    server = None  # the server that accepted the client request
+    headers = None  # meta data about the response
+    encoding = "utf-8"  # the default encoding for the response payload
+    version = (1, 1)  # the HTTP version spoken here
 
-    alive = True          # keep the connection alive after serving this response
-    abort = False         # terminate the process after serving this response
-
+    alive = True  # keep the connection alive after serving this response
+    abort = False  # terminate the process after serving this response
+    code = 0  # the exit code to pass to the shell upon exiting
 
     # meta-methods
     def __init__(self, server, version=version, encoding=encoding, **kwds):
@@ -58,7 +57,6 @@ class Response(NexusError):
         # all done
         return
 
-
     # implementation details
     def timestamp(self, tick=None):
         """
@@ -72,17 +70,27 @@ class Response(NexusError):
         year, month, day, hh, mm, ss, wd, y, z = time.gmtime(tick)
         # render and return
         return "{}, {:02} {} {} {:02}:{:02}:{:02} GMT".format(
-            self.weekdays[wd], day, self.months[month], year,
-            hh, mm, ss
-            )
-
+            self.weekdays[wd], day, self.months[month], year, hh, mm, ss
+        )
 
     # private data
     months = (
         None,
-        'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec')
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr",
+        "May",
+        "Jun",
+        "Jul",
+        "Aug",
+        "Sep",
+        "Oct",
+        "Nov",
+        "Dec",
+    )
 
-    weekdays = ('Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun')
+    weekdays = ("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
 
 
 # end of file

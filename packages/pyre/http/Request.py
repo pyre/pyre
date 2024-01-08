@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2024 all rights reserved
-#
 
 
 # externals
@@ -17,19 +15,16 @@ class Request:
     Parse and analyze an HTTP request
     """
 
-
     # exceptions
     from . import responses
 
-
     # public state
-    url = None # the url the peer requested
-    command = None # the type of request
-    version = None # the http protocol version requested
+    url = None  # the url the peer requested
+    command = None  # the type of request
+    version = None  # the http protocol version requested
 
-    headers = None # dictionary of request headers
-    payload = None # the request payload
-
+    headers = None  # dictionary of request headers
+    payload = None  # the request payload
 
     # interface
     def extract(self, server, chunk):
@@ -40,7 +35,6 @@ class Request:
         offset = self.extractHeaders(server=server, chunk=chunk)
         # whatever is left is request payload
         return self.extractPayload(server=server, chunk=chunk, offset=offset)
-
 
     # implementation details
     def extractHeaders(self, server, chunk):
@@ -106,13 +100,13 @@ class Request:
         # and pass on how much of {chunk} i took care of
         return match.end()
 
-
     def extractPayload(self, server, chunk, offset):
         """
         Extract a {chunk} of bytes and store them
         """
         # if i am done, i am done
-        if self.complete: return True
+        if self.complete:
+            return True
 
         # compute the actual size of the unprocessed part of {chunk}
         actual = len(chunk) - offset
@@ -120,7 +114,7 @@ class Request:
         # check whether
         try:
             # the client specified what my payload size is
-            size = self.headers['Content-Length']
+            size = self.headers["Content-Length"]
         # if not
         except (KeyError, TypeError) as error:
             # the only option is that this is the end of the chunk
@@ -128,7 +122,8 @@ class Request:
                 # in which case mark me as done
                 self.complete = True
                 # normalize my payload, if necessary
-                if self.payload is None: self.payload = []
+                if self.payload is None:
+                    self.payload = []
                 # and get out of here
                 return True
             # otherwise, complain
@@ -139,7 +134,8 @@ class Request:
             size = int(size)
 
         # initialize the storage for my payload
-        if self.payload is None: self.payload = []
+        if self.payload is None:
+            self.payload = []
 
         # compute the total payload size, including what I have gathered so far
         for portion in self.payload:
@@ -157,9 +153,8 @@ class Request:
         # and pass this info on
         return self.complete
 
-
     # debugging support
-    def dump(self, channel, indent='', showHeaders=True, showPayload=True):
+    def dump(self, channel, indent="", showHeaders=True, showPayload=True):
         """
         Place debugging information in the given channel
         """
@@ -189,25 +184,23 @@ class Request:
         # all done
         return
 
-
     # implementation details
     # state
-    described = False # am i done processing the request meta-data
-    complete = False # have i received everything i expect from the client?
+    described = False  # am i done processing the request meta-data
+    complete = False  # have i received everything i expect from the client?
 
     # constants
     # the expected encoding of the headers
-    HEADER_ENCODING = 'iso-8859-1'
+    HEADER_ENCODING = "iso-8859-1"
     # scanners
     blank = re.compile(b"\r?\n")
-    keyval = re.compile(
-        br"(?P<key>[^:]+):\s+(?P<value>[^\r\n]+)" +
-        b"\r?\n")
+    keyval = re.compile(rb"(?P<key>[^:]+):\s+(?P<value>[^\r\n]+)" + b"\r?\n")
     protocol = re.compile(
-        br"(?P<command>[^\s]+)" +
-        br"\s+(?P<url>[^\s]+)" +
-        br"(?:\s+HTTP/(?P<major>\d+).(?P<minor>\d+))" +
-        b"\r?\n")
+        rb"(?P<command>[^\s]+)"
+        + rb"\s+(?P<url>[^\s]+)"
+        + rb"(?:\s+HTTP/(?P<major>\d+).(?P<minor>\d+))"
+        + b"\r?\n"
+    )
 
 
 # end of file
