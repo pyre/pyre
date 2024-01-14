@@ -387,6 +387,16 @@ class Inspector:
         # and raise the exception, just in case firewalls aren't fatal
         raise problem
 
+    def _pyre_inferEnumDescriptor(self, name: str, h5type: H5DataType):
+        """
+        Build an {enum} descriptor
+        """
+        # it is not clear what's the right thing to do here; the hdf5 documentation on
+        # enum types is not vey clear about what the in-memory representation of enum
+        # instances is supposed to look like. so bail, until we figure out how to extract
+        # the type info from h5 and build the corresponding python enum
+        return None
+
     def _pyre_inferFloatDescriptor(
         self, name: str, h5type: H5DataType
     ) -> schema.dataset:
