@@ -11,7 +11,7 @@ class Schema:
     """
 
     # exception
-    from .exceptions import CastingError
+    from .exceptions import CastingError, EnumError
 
     # constants
     typename = "identity"

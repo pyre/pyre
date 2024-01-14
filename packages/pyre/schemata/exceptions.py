@@ -29,4 +29,24 @@ class CastingError(SchemaError):
         return
 
 
+class EnumError(SchemaError):
+    """
+    Exception raised on failed attempts to convert an enum value to its actual type
+    """
+
+    # the complaint
+    description = "could not coerce {0.value!r} into an enum of type {0.enum!r}"
+
+    # meta-methods
+    def __init__(self, enum, value, error, **kwds):
+        # chain up
+        super().__init__(**kwds)
+        # save the error info
+        self.enum = enum
+        self.value = value
+        self.error = error
+        # all done
+        return
+
+
 # end of file

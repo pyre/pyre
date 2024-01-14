@@ -22,6 +22,7 @@ from .Viewer import Viewer as viewer
 # scalars
 bool = dataset.bool
 complex = dataset.complex
+enum = dataset.enum
 float = dataset.float
 int = dataset.int
 str = dataset.str

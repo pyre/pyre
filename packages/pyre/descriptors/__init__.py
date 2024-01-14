@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2024 all rights reserved
-#
 
 
 # the descriptor base class
@@ -18,15 +16,19 @@ from .Validator import Validator as validator
 # get the schemata
 from .. import schemata
 
+
 # build the typed descriptors
 @schemata.typed
-class descriptor(stem.variable): pass
+class descriptor(stem.variable):
+    pass
+
 
 # for convenience, expose the typed ones
 # the simple ones
 bool = descriptor.bool
 complex = descriptor.complex
 decimal = descriptor.decimal
+enum = descriptor.enum
 float = descriptor.float
 inet = descriptor.inet
 int = descriptor.int
