@@ -25,10 +25,19 @@ pyre::h5::py::datatypes::enum_(py::module & m)
         // class name
         "EnumType",
         // docstring
-        "an HDF5 array datatype");
+        "an HDF5 enum datatype");
 
     // constructor
     enumType.def(py::init<>());
+
+    // the number of members
+    enumType.def_property_readonly(
+        // the name
+        "members",
+        // the implementation
+        &EnumType::getNmembers,
+        // the docstring
+        "the number of members in this enum type");
 
     // all done
     return;
