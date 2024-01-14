@@ -8,6 +8,7 @@
 from .Array import Array as array
 from .Bool import Bool as bool
 from .Complex import Complex as complex
+from .Enum import Enum as enum
 from .Float import Float as float
 from .Integer import Integer as int
 from .String import String as str
