@@ -25,7 +25,17 @@ class Dataset(Descriptor):
     """
 
     # my mixins
-    from ..typed import array, bool, complex, float, int, str, timestamp, containers
+    from ..typed import (
+        array,
+        bool,
+        complex,
+        enum,
+        float,
+        int,
+        str,
+        timestamp,
+        containers,
+    )
 
     # metamethods
     # construction
