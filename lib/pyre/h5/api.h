@@ -23,7 +23,7 @@ namespace pyre::h5 {
         // the shape of the block
         const typename gridT::shape_type & shape,
         // and the strides
-        const typename gridT::shape_type & strides) -> gridT;
+        const typename gridT::index_type & stride) -> gridT;
 
     // support for reading datasets into a {pyre::grid} when the caller supplies
     // the correct HDF5 data type
@@ -38,7 +38,7 @@ namespace pyre::h5 {
         // the shape of the block
         const typename gridT::shape_type & shape,
         // and the strides
-        const typename gridT::shape_type & strides) -> gridT;
+        const typename gridT::index_type & stride) -> gridT;
 
     // support for reading into existing {pyre::memory} buffers
     template <class memT>

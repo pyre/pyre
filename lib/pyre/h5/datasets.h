@@ -21,12 +21,12 @@ pyre::h5::read(
     // the shape of the block
     const typename gridT::shape_type & shape,
     // and the strides, which lets us implement zoom directly
-    const typename gridT::shape_type & strides) -> gridT
+    const typename gridT::index_type & stride) -> gridT
 {
     // deduce the memory layout description
     const datatype_t & memtype = datatype<typename gridT::value_type>();
     // and delegate
-    return read(dataset, memtype, origin, shape, strides);
+    return read(dataset, memtype, origin, shape, stride);
 }
 
 
@@ -44,7 +44,7 @@ pyre::h5::read(
     // and the shape of the block
     const typename gridT::shape_type & shape,
     // and the strides, which lets us implement zoom directly
-    const typename gridT::shape_type & strides) -> gridT
+    const typename gridT::index_type & stride) -> gridT
 {
     // alias my grid type and its parts
     using grid_t = gridT;
@@ -71,7 +71,7 @@ pyre::h5::read(
     // and the strides
     h5info_t skip;
     // populate
-    std::transform(strides.begin(), strides.end(), skip.begin(), cast);
+    std::transform(stride.begin(), stride.end(), skip.begin(), cast);
     // ask the dataset for a dataspace
     auto fileSpace = dataset.getSpace();
     // select the hyperslab that corresponds to our target region
@@ -98,7 +98,7 @@ pyre::h5::read(
             << pyre::journal::newline
             // shape
             << "while reading a (" << shape << ") tile from (" << origin << ") with strides ("
-            << strides << ")"
+            << stride << ")"
             << pyre::journal::newline
             // dataset
             << "from the dataset '" << dataset.getObjName()
