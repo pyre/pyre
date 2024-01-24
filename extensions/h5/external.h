@@ -47,10 +47,15 @@ namespace pyre::h5::py {
 
     // aliases for common STL classes
     using string_t = std::string;
+    using name_t = string_t;
     using names_t = std::vector<string_t>;
     using ints_t = std::vector<long>;
     using doubles_t = std::vector<double>;
     using strings_t = std::vector<string_t>;
+
+    // key/value pairs
+    template <typename valueT>
+    using kv_t = std::map<name_t, valueT>;
 
     // for specifying dataspace coordinates and shapes
     using shape_t = std::vector<hsize_t>;
