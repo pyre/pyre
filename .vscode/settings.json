@@ -6,7 +6,9 @@
         "*.icc": "cpp",
         "*.js": "javascriptreact",
         "*.mm": "makefile",
-        "type_traits": "cpp"
+        "type_traits": "cpp",
+        "compare": "cpp",
+        "limits": "cpp"
     },
     "python.analysis.typeCheckingMode": "basic"
 }
