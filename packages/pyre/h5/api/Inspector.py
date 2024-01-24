@@ -391,11 +391,16 @@ class Inspector:
         """
         Build an {enum} descriptor
         """
-        # it is not clear what's the right thing to do here; the hdf5 documentation on
-        # enum types is not vey clear about what the in-memory representation of enum
-        # instances is supposed to look like. so bail, until we figure out how to extract
-        # the type info from h5 and build the corresponding python enum
-        return None
+        # it is not clear what's the right thing to do here; there doesn't seem to be a way to
+        # deduce the base type of the enum using the public h5 api. at the other end, the python
+        # enum class doesn't have a constructor powerful enough to build a class dynamically
+
+        # get the in-memory type; must be some type of int
+        memtype = getattr(memtypes, f"int32")
+        # build the descriptor
+        enum = schema.int(name=name, memtype=memtype, disktype=h5type)
+        # and return it
+        return enum
 
     def _pyre_inferFloatDescriptor(
         self, name: str, h5type: H5DataType
