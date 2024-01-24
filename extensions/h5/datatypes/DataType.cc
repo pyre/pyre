@@ -71,7 +71,7 @@ pyre::h5::py::datatypes::datatype(py::module & m)
         "objectType",
         // the implementation
         [](const py::object &) -> H5O_type_t {
-            // i am a group
+            // i am a named datatype
             return H5O_TYPE_NAMED_DATATYPE;
         },
         // the docstring
