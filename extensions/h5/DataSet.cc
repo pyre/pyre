@@ -470,6 +470,68 @@ pyre::h5::py::dataset(py::module & m)
         // the docstring
         "save my contents as a list of strings");
 
+    // attempt to read the contents of the dataset as an enum
+    cls.def(
+        // the name
+        "enum",
+        // the implementation
+        [](const DataSet & self) -> long {
+            // get my type
+            auto type = self.getTypeClass();
+            // check whether i am an enumeration
+            if (type != H5T_ENUM) {
+                // if not, make a channel
+                auto channel = pyre::journal::error_t("pyre.hdf5");
+                // complain
+                channel
+                    // what
+                    << "the dataset does not contain an enumeration"
+                    // where
+                    << pyre::journal::endl(__HERE__);
+                // and bail
+                return 0;
+            }
+            // make some room
+            long result;
+            // read the data
+            self.read(&result, PredType::NATIVE_LONG);
+            // all done
+            return result;
+        },
+        // the docstring
+        "read an enum");
+
+    // attempt to save the contents of the dataset as an enum
+    cls.def(
+        // the name
+        "enum",
+        // the implementation
+        [](const DataSet & self, long value) -> void {
+            // get my type
+            auto type = self.getTypeClass();
+            // check whether i am an enumeration
+            if (type != H5T_ENUM) {
+                // if not, make a channel
+                auto channel = pyre::journal::error_t("pyre.hdf5");
+                // complain
+                channel
+                    // what
+                    << "the dataset does not contain an enumeration"
+                    // where
+                    << pyre::journal::endl(__HERE__);
+                // and bail
+                return;
+            }
+            // write the data
+            self.write(&value, PredType::NATIVE_LONG);
+            // all done
+            return;
+        },
+        // the signature
+        "value",
+        // the docstring
+        "read an enum");
+
 
     // close the dataset
     cls.def(
