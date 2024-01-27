@@ -95,6 +95,26 @@ pyre::h5::py::datatypes::datatype(py::module & m)
         // the docstring
         "retrieve the size of this data type");
 
+    // retrieve the base type of a type
+    cls.def_property_readonly(
+        // the name
+        "super",
+        // the implementation
+        &DataType::getSuper,
+        // the docstring
+        "retrieve the base type from which this one is derived");
+
+    // check whether this datatype is a certain type of datatype
+    cls.def(
+        // the name
+        "isA",
+        // the implementation
+        py::overload_cast<H5T_class_t>(&DataType::detectClass, py::const_),
+        // the signature
+        "type"_a,
+        // the docsting
+        "check whether this data type is of a given type");
+
     // interface
     cls.def(
         // the name
