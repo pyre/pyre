@@ -39,7 +39,7 @@ class Datatype(Object):
             # chain up
             return super()._pyre_identify(authority=authority, **kwds)
         # otherwise, invoke the handler
-        return handler(dataset=self, **kwds)
+        return handler(datatype=self, **kwds)
 
 
 # end of file
