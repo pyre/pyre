@@ -183,8 +183,10 @@ class Raster:
         return
 
     def __str__(self):
-        # easy enough
-        return "raster"
+        # make the shape tag
+        tag = "x".join(map(str, self.shape))
+        # render
+        return f"raster [{tag}]"
 
 
 # end of file
