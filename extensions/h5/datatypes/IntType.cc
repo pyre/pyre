@@ -28,7 +28,16 @@ pyre::h5::py::datatypes::int_(py::module & m)
         "an HDF5 int datatype");
 
     // constructors
-    // from a predefined float type
+    // from an existing type
+    cls.def(
+        // the implementation
+        py::init<hid_t>(),
+        // the signature
+        "id"_a,
+        // the docstring
+        "make an integer type using the id of an existing one");
+
+    // from a predefined integer type
     cls.def(
         // the implementation
         py::init<const PredType &>(),

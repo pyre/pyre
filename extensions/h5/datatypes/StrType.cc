@@ -28,6 +28,15 @@ pyre::h5::py::datatypes::str(py::module & m)
         "an HDF5 string datatype");
 
     // constructors
+    // from an existing type
+    cls.def(
+        // the implementation
+        py::init<hid_t>(),
+        // the signature
+        "id"_a,
+        // the docstring
+        "make a string type using the id of an existing one");
+
     // from a specific predefined type
     cls.def(
         // the implementation

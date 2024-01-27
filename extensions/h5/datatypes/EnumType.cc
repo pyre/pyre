@@ -27,8 +27,17 @@ pyre::h5::py::datatypes::enum_(py::module & m)
         // docstring
         "an HDF5 enum datatype");
 
-    // constructor
+    // constructors
     enumType.def(py::init<>());
+
+    // from an existing type
+    enumType.def(
+        // the implementation
+        py::init<hid_t>(),
+        // the signature
+        "id"_a,
+        // the docstring
+        "make an enum type using the id of an existing one");
 
     // the number of members
     enumType.def_property_readonly(
