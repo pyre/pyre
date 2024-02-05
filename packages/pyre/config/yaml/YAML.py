@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2024 all rights reserved
-#
 
 
 # my superclass
@@ -16,10 +14,8 @@ class YAML(Codec):
     A reader/writer for yaml encoded configurations
     """
 
-
     # constants
     encoding = "yaml"
-
 
     # interface
     @classmethod
@@ -29,6 +25,7 @@ class YAML(Codec):
         """
         # get the parser factory
         from .Parser import Parser
+
         # make a parser
         parser = Parser()
         # harvest the configuration events
