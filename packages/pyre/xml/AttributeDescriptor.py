@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2024 all rights reserved
-#
 
 
+# superclass
 from .Descriptor import Descriptor
 
 
+# attribute descriptors
 class AttributeDescriptor(Descriptor):
     """
     This class serves as the resting place for element metadata provided by the user during
@@ -18,9 +18,8 @@ class AttributeDescriptor(Descriptor):
     This capability is not yet fully developed.
     """
 
-
     # attribute metadata
-    name = None # set by Named
+    name = None  # set by Named
 
     # the attriibute type
     # may be one of CDATA, ID, IDREFS, NMTOKEN, NMTOKENS, ENTITY, ENTITIES, NOTATION, XML
@@ -39,7 +38,7 @@ class AttributeDescriptor(Descriptor):
     presence = None
 
     # the default value
-    default = None # the default value for the attribute
+    default = None  # the default value for the attribute
 
 
 # end of file

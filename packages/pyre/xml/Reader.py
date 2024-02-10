@@ -1,36 +1,41 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2024 all rights reserved
-#
 
 
+# support
 import xml.sax
 from . import newLocator
 
 
+# the parser
 class Reader(xml.sax.ContentHandler):
     """
     An event driver reader for XML documents
     """
 
-
     # types
     # exceptions
-    from .exceptions import DTDError, ParsingError, ProcessingError, UnsupportedFeatureError
-
+    from .exceptions import (
+        DTDError,
+        ParsingError,
+        ProcessingError,
+        UnsupportedFeatureError,
+    )
 
     # public data
     ignoreWhitespace = False
 
-
     # features
     from xml.sax.handler import (
-        feature_namespaces, feature_namespace_prefixes, feature_string_interning,
-        feature_validation, feature_external_ges, feature_external_pes
-        )
-
+        feature_namespaces,
+        feature_namespace_prefixes,
+        feature_string_interning,
+        feature_validation,
+        feature_external_ges,
+        feature_external_pes,
+    )
 
     # interface
     def read(self, *, stream, document, features=(), saxparser=None):
@@ -75,8 +80,11 @@ class Reader(xml.sax.ContentHandler):
         except xml.sax.SAXParseException as error:
             # something bad happened; normalize the exception
             raise self.ProcessingError(
-                parser=self, document=document, description=error.getMessage(),
-                saxlocator=self._locator) from error
+                parser=self,
+                document=document,
+                description=error.getMessage(),
+                saxlocator=self._locator,
+            ) from error
         except self.ParsingError as error:
             error.parser = self
             error.document = document
@@ -87,15 +95,14 @@ class Reader(xml.sax.ContentHandler):
         # and return the decorated data structure
         return self._document.dom
 
-
     # content handling: these methods are called by the underlying parser
     def startDocument(self):
         """
         Handler for the beginning of the document
         """
         # print(
-            # "line {0}, col {1}: start document".format(
-                # self._locator.getLineNumber(), self._locator.getColumnNumber()))
+        # "line {0}, col {1}: start document".format(
+        # self._locator.getLineNumber(), self._locator.getColumnNumber()))
 
         # initialize the parsing variables
         self._nodeStack = []
@@ -106,19 +113,19 @@ class Reader(xml.sax.ContentHandler):
 
         return
 
-
     def startElement(self, name, attributes):
         """
         Handler for the beginning of an element
         """
         # print(
-            # "line {0}, col {1}: start element {2!r}".format(
-                # self._locator.getLineNumber(), self._locator.getColumnNumber(), name))
+        # "line {0}, col {1}: start element {2!r}".format(
+        # self._locator.getLineNumber(), self._locator.getColumnNumber(), name))
 
         # get the current node to build me a rep for the requested child node
         try:
             node = self._currentNode.newNode(
-                name=name, attributes=attributes, locator=self._locator)
+                name=name, attributes=attributes, locator=self._locator
+            )
         # catch DTDErrors and decorate them
         except self.DTDError as error:
             error.parser = self
@@ -134,7 +141,6 @@ class Reader(xml.sax.ContentHandler):
             self._currentNode = node
 
         return
-
 
     def startElementNS(self, name, qname, attributes):
         """
@@ -158,7 +164,7 @@ class Reader(xml.sax.ContentHandler):
         # print(" ***     qnames:", attributes.getQNames())
         # print(" ***   contents:", attributes.items())
         normalized = {}
-        for ((namespace, name), value) in attributes.items():
+        for (namespace, name), value in attributes.items():
             normalized[name] = value
 
         # use the correct factory to build a new Node instance
@@ -174,10 +180,15 @@ class Reader(xml.sax.ContentHandler):
             # document
             if namespace is None or namespace == self._currentNode.namespace:
                 node = self._currentNode.newNode(
-                    name=tag, attributes=normalized, locator=self._locator)
+                    name=tag, attributes=normalized, locator=self._locator
+                )
             else:
                 node = self._currentNode.newQNode(
-                    name=name, namespace=namespace, attributes=normalized, locator=self._locator)
+                    name=name,
+                    namespace=namespace,
+                    attributes=normalized,
+                    locator=self._locator,
+                )
         # catch DTDErrors and decorate them
         except self.DTDError as error:
             error.parser = self
@@ -192,7 +203,6 @@ class Reader(xml.sax.ContentHandler):
 
         return
 
-
     def characters(self, content):
         """
         Handler for the content of a tag
@@ -203,30 +213,32 @@ class Reader(xml.sax.ContentHandler):
 
         if content:
             # print(
-                # "line {0}, col {1}: characters {2!r}".format(
-                    # self._locator.getLineNumber(), self._locator.getColumnNumber(), content))
+            # "line {0}, col {1}: characters {2!r}".format(
+            # self._locator.getLineNumber(), self._locator.getColumnNumber(), content))
             try:
                 # get the current node handler to process the element content
                 self._currentNode.content(text=content, locator=self._locator)
             except AttributeError as error:
                 # raise an error if it doesn't have one
-                msg = (
-                    "element {0._currentNode._pyre_tag!r} does not accept character data"
-                    .format(self))
+                msg = "element {0._currentNode._pyre_tag!r} does not accept character data".format(
+                    self
+                )
                 raise self.DTDError(
-                    parser=self, document=self._document,
-                    description=msg, locator=self._locator) from error
+                    parser=self,
+                    document=self._document,
+                    description=msg,
+                    locator=self._locator,
+                ) from error
 
         return
-
 
     def endElement(self, name):
         """
         Handler for the end of an element
         """
         # print(
-            # "line {0}, col {1}: end element {2!r}".format(
-                # self._locator.getLineNumber(), self._locator.getColumnNumber(), name))
+        # "line {0}, col {1}: end element {2!r}".format(
+        # self._locator.getLineNumber(), self._locator.getColumnNumber(), name))
 
         # grab the current node and its parent
         node = self._currentNode
@@ -237,18 +249,23 @@ class Reader(xml.sax.ContentHandler):
             # let the parent node know we reached an element end
             node.notify(parent=self._currentNode, locator=self._locator)
         # leave our own exception alone
-        except self.ParsingError: raise
+        except self.ParsingError:
+            raise
         # convert everything else to a ProcessingError
         except Exception as error:
             # the reason
-            msg = "error while calling the method 'notify' of {}".format(self._currentNode)
+            msg = "error while calling the method 'notify' of {}".format(
+                self._currentNode
+            )
             # the error
             raise self.ProcessingError(
-                parser=self, document=self._document,
-                description=msg, saxlocator=self._locator) from error
+                parser=self,
+                document=self._document,
+                description=msg,
+                saxlocator=self._locator,
+            ) from error
 
         return
-
 
     def endElementNS(self, name, qname):
         """
@@ -260,15 +277,14 @@ class Reader(xml.sax.ContentHandler):
         """
         return self.endElement(name)
 
-
     def endDocument(self):
         """
         Handler for the end of the document
         """
 
         # print(
-            # "line {0}, col {1}: end document".format(
-                # self._locator.getLineNumber(), self._locator.getColumnNumber()))
+        # "line {0}, col {1}: end document".format(
+        # self._locator.getLineNumber(), self._locator.getColumnNumber()))
 
         self._document.finalize(locator=self._locator)
 

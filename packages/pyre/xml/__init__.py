@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2024 all rights reserved
-#
 
 
 """
@@ -56,7 +54,10 @@ def newReader(**kwds):
     """
     Create a new reader
     """
+    # get the reader factory
     from .Reader import Reader
+
+    # instantiate one and return it
     return Reader(**kwds)
 
 
@@ -66,7 +67,9 @@ def newLocator(saxlocator):
     """
     return pyre.tracking.file(
         source=saxlocator.getSystemId(),
-        line=saxlocator.getLineNumber(), column=saxlocator.getColumnNumber())
+        line=saxlocator.getLineNumber(),
+        column=saxlocator.getColumnNumber(),
+    )
 
 
 # support for document descriptors
