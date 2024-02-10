@@ -64,7 +64,7 @@ class Node:
         # if the tag lookup fails
         except KeyError as error:
             # build the report
-            msg = f"node {name}: unknown attribute '{error.args[0]}'"
+            msg = f"node '{name}': unknown attribute '{error.args[0]}'"
             # complain
             raise self.DTDError(description=msg) from error
 
@@ -102,7 +102,7 @@ class Node:
         # if the tag lookup fails
         except KeyError as error:
             # build the report
-            msg = "node {0!r}: unknown attribute {1!r}".format(name, error.args[0])
+            msg = f"node '{name}': unknown attribute '{error.args[0]}'"
             # complain
             raise self.DTDError(description=msg) from error
 
@@ -121,7 +121,7 @@ class Node:
         The handler that is invoked when the parser encounters my closing tag
         """
         raise NotImplementedError(
-            "class {.__name__!r} must override 'notify'".format(type(self))
+            f"class '{type(self).__name__}' must override 'notify'"
         )
 
     # turn the locator factory into a method of mine
