@@ -1,24 +1,22 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2024 all rights reserved
-#
 
 
+# superclass
 from ..patterns.AttributeClassifier import AttributeClassifier
 
 
+# metaclass for XML documents
 class DTD(AttributeClassifier):
     """
     Metaclass that scans the class record of a Document descendant for element descriptors and
     builds the necessary machinery for parsing the XML document
     """
 
-
     # types
     from .Descriptor import Descriptor
-
 
     # meta methods
     def __new__(cls, name, bases, attributes, **kwds):
@@ -28,10 +26,8 @@ class DTD(AttributeClassifier):
         # storage for the document nodes
         nodes = []
         # harvest them
-        for name, node in cls.pyre_harvest(attributes, cls.Descriptor):
-            # record the name name
-            node.name = name
-            # and add it to the pile
+        for _, node in cls.pyre_harvest(attributes, cls.Descriptor):
+            # and add them to the pile
             nodes.append(node)
 
         # record them as the DTD
@@ -52,7 +48,7 @@ class DTD(AttributeClassifier):
         # the parent tag, look in _pyre_nodeIndex; if not look it up in _pyre_nodeQIndex
 
         # build a (element name -> handler) map
-        index = { element.name: element for element in dtd }
+        index = {element.name: element for element in dtd}
 
         # now, build the dtd for each handler
         for element in dtd:
@@ -80,7 +76,7 @@ class DTD(AttributeClassifier):
         if node.root is not None:
             root = index[node.root].handler
             node.namespace = root.namespace
-            node._pyre_nodeIndex = { node.root: root }
+            node._pyre_nodeIndex = {node.root: root}
 
         # return the node to the caller
         return node
