@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2024 all rights reserved
-#
+
 
 """
 Read an empty document
@@ -16,7 +15,6 @@ def test():
     import pyre.xml
     from pyre.xml.Node import Node as BaseNode
     from pyre.xml.Document import Document
-
 
     class Node(BaseNode):
         """Base class for node handlers of this document"""
@@ -34,11 +32,9 @@ def test():
 
     class IDoc(Document):
         """Document class"""
-        # the top-level
-        root = "inventory"
-        # declare the handler
-        inventory = pyre.xml.element(tag="inventory", handler=Inventory)
 
+        # declare the handler
+        inventory = pyre.xml.element(tag="inventory", handler=Inventory, root=True)
 
     # build the trivial document
     document = IDoc()
@@ -49,8 +45,8 @@ def test():
     reader.read(
         stream=open("sample-namespaces.xml"),
         document=document,
-        features=[(reader.feature_namespaces, True)]
-        )
+        features=[(reader.feature_namespaces, True)],
+    )
 
     return document
 

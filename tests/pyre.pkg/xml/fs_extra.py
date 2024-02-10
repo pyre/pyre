@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2024 all rights reserved
-#
 
 
 """
@@ -19,13 +17,13 @@ def test():
     class File(pyre.xml.node):
         """Handle the file tag"""
 
-        def notify(self, parent, locator): return
+        def notify(self, parent, locator):
+            return
 
         def __init__(self, parent, attributes, locator):
-            self.name = attributes['name']
+            self.name = attributes["name"]
             self.node = parent.node.folder()
             parent.addEntry(self)
-
 
     class Folder(File):
         """Handle the folder tag"""
@@ -36,7 +34,6 @@ def test():
             """Add a file to my contents"""
             self.node[entry.name] = entry.node
 
-
     class Filesystem(Folder):
         """The top level document element"""
 
@@ -45,7 +42,6 @@ def test():
 
         def __init__(self, parent, attributes, locator):
             self.node = pyre.filesystem.virtual()
-
 
     class FSD(pyre.xml.document):
         """Document class"""
@@ -60,7 +56,6 @@ def test():
 
         metadata = pyre.xml.element(tag="metadata", handler=pyre.xml.ignorable)
 
-
     # build a parser
     reader = pyre.xml.newReader()
     # don't call my handlers on empty element content
@@ -70,7 +65,7 @@ def test():
     fs = reader.read(stream=open("sample-fs-extra.xml"), document=FSD())
 
     # dump the contents
-    fs.dump(False) # switch to True to see the contents
+    fs.dump(False)  # switch to True to see the contents
 
     # verify
     assert fs is not None

@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2024 all rights reserved
-#
 
 
 """
@@ -18,17 +16,16 @@ def test():
     from pyre.xml.Node import Node
     from pyre.xml.Document import Document
 
-
     class File(Node):
         """Handle the file tag"""
 
-        def notify(self, parent, locator): return
+        def notify(self, parent, locator):
+            return
 
         def __init__(self, parent, attributes, locator):
-            self.name = attributes['name']
+            self.name = attributes["name"]
             self.node = parent.node.folder()
             parent.addEntry(self)
-
 
     class Folder(File):
         """Handle the folder tag"""
@@ -39,7 +36,6 @@ def test():
             """Add a file to my contents"""
             self.node[entry.name] = entry.node
 
-
     class Filesystem(Folder):
         """The top level document element"""
 
@@ -49,18 +45,13 @@ def test():
         def __init__(self, parent, attributes, locator):
             self.node = pyre.filesystem.virtual()
 
-
     class FSD(Document):
         """Document class"""
 
-        # the top-level element tag name
-        root = "filesystem"
-
         # the element descriptors
+        filesystem = pyre.xml.element(tag="filesystem", handler=Filesystem, root=True)
         file = pyre.xml.element(tag="file", handler=File)
         folder = pyre.xml.element(tag="folder", handler=Folder)
-        filesystem = pyre.xml.element(tag="filesystem", handler=Filesystem)
-
 
     # build a parser
     reader = pyre.xml.newReader()
@@ -71,7 +62,7 @@ def test():
     fs = reader.read(stream=open("sample-fs.xml"), document=FSD())
 
     # dump the contents
-    fs.dump(False) # switch to True to see the contents
+    fs.dump(False)  # switch to True to see the contents
 
     # verify
     assert fs is not None

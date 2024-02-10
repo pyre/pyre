@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2024 all rights reserved
-#
 
 """
 Read an empty document
@@ -16,7 +14,6 @@ def test():
     from pyre.xml.Node import Node
     from pyre.xml.Document import Document
 
-
     class Filesystem(Node):
         """The top level document element"""
 
@@ -26,13 +23,11 @@ def test():
         def __init__(self, parent, attributes, locator):
             """do nothing"""
 
-
     class FSD(Document):
         """Document class"""
-        # the top-level
-        root = "filesystem"
+
         # declare the handler
-        filesystem = pyre.xml.element(tag="filesystem", handler=Filesystem)
+        filesystem = pyre.xml.element(tag="filesystem", handler=Filesystem, root=True)
 
     # build the trivial document
     document = FSD()

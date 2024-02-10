@@ -1,21 +1,23 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2024 all rights reserved
-#
 
 
 """
 Tests for all the exceptions raised by this package
 """
 
+
 def test():
 
     from pyre.xml.exceptions import (
-        ParsingError, UnsupportedFeatureError, DTDError, ProcessingError
-        )
+        ParsingError,
+        UnsupportedFeatureError,
+        DTDError,
+        ProcessingError,
+    )
 
     try:
         raise ParsingError()
