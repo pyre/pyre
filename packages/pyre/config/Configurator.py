@@ -1,14 +1,12 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2024 all rights reserved
-#
 
 
 # externals
-import weakref # for access to my executive
-import collections # for defaultdict
+import weakref  # for access to my executive
+import collections  # for defaultdict
 from .. import tracking
 
 
@@ -18,17 +16,15 @@ class Configurator:
     The manager of the configuration store
     """
 
-
     # types
     from . import events
     from . import exceptions
 
     # constants
-    locator = tracking.simple('during pyre startup') # the default locator
+    locator = tracking.simple("during pyre startup")  # the default locator
 
     # public data
     codecs = None
-
 
     # interface
     def loadConfiguration(self, uri, source, locator, priority):
@@ -44,7 +40,7 @@ class Configurator:
         # get the address
         address = uri.address
         # deduce the encoding
-        encoding = address[address.rfind('.')+1:]
+        encoding = address[address.rfind(".") + 1 :]
         # attempt to
         try:
             # find the appropriate reader
@@ -53,7 +49,8 @@ class Configurator:
         except KeyError:
             # build an error indicator
             error = self.exceptions.UnknownEncodingError(
-                uri=uri, encoding=encoding, locator=locator)
+                uri=uri, encoding=encoding, locator=locator
+            )
             # add it to my pile
             errors.append(error)
             # and get out of here
@@ -66,6 +63,17 @@ class Configurator:
         # and return the errors
         return errors
 
+    # consume commands
+    def consumeCommands(self):
+        """
+        Provide access to the unprocessed command line arguments in a destructive way
+        """
+        # hand off all commands
+        yield from self.commands
+        # reset the pile
+        self.commands = []
+        # all done
+        return
 
     # access to codecs
     def codec(self, encoding):
@@ -74,7 +82,6 @@ class Configurator:
         """
         # easy enough
         return self.codecs[encoding]
-
 
     def register(self, codec):
         """
@@ -85,14 +92,12 @@ class Configurator:
         # all done
         return
 
-
     def encodings(self):
         """
         Return the registered encodings
         """
         # easy enough
         return self.codecs.keys()
-
 
     # event processing
     def processEvents(self, events, priority):
@@ -110,7 +115,6 @@ class Configurator:
         # all done
         return errors
 
-
     def assign(self, assignment, priority):
         """
         Process {assignment} by building a slot and placing it in the nameserver
@@ -127,10 +131,11 @@ class Configurator:
         # get the model
         nameserver = self.executive.nameserver
         # insert the value in the model
-        key, _, _ = nameserver.insert(split=split, value=value, locator=locator, priority=priority)
+        key, _, _ = nameserver.insert(
+            split=split, value=value, locator=locator, priority=priority
+        )
         # and return the associated key
         return key
-
 
     def defer(self, assignment, priority):
         """
@@ -154,7 +159,6 @@ class Configurator:
         # all done
         return self
 
-
     def execute(self, command, priority):
         """
         Record a request to execute a command
@@ -165,7 +169,6 @@ class Configurator:
         self.commands.append(command)
         # all done
         return self
-
 
     def load(self, request, priority):
         """
@@ -180,7 +183,6 @@ class Configurator:
         # and return
         return self
 
-
     # implementation details for component configuration
     def configureComponentClass(self, component):
         """
@@ -193,7 +195,6 @@ class Configurator:
 
         # and return the class record
         return component
-
 
     def configureComponentInstance(self, instance):
         """
@@ -208,7 +209,9 @@ class Configurator:
             # and the locator
             locator = assignment.locator
             # ask the instance to set the value
-            instance.pyre_setTrait(alias=alias, value=value, priority=priority, locator=locator)
+            instance.pyre_setTrait(
+                alias=alias, value=value, priority=priority, locator=locator
+            )
 
         # notify each trait
         for trait in instance.pyre_traits():
@@ -217,7 +220,6 @@ class Configurator:
 
         # all done
         return instance
-
 
     def retrieveDirectAssignments(self, key):
         """
@@ -235,7 +237,6 @@ class Configurator:
 
         # all done
         return
-
 
     def retrieveDeferredAssignments(self, key=None, instance=None):
         """
@@ -285,22 +286,22 @@ class Configurator:
         # all done
         return
 
-
     # bootstrapping
     def initializeNamespace(self):
         """
         Place my default settings in the global namespace
         """
         from ..traits import properties
+
         # get the nameserver
         nameserver = self.executive.nameserver
         # and the fileserver
         fileserver = self.executive.fileserver
 
         # the name of the configuration path slot
-        name = 'pyre.configpath'
+        name = "pyre.configpath"
         # the default value
-        value = [ 'vfs:{}'.format(folder) for folder in fileserver.systemFolders ]
+        value = ["vfs:{}".format(folder) for folder in fileserver.systemFolders]
         # get the locator
         locator = self.locator
         # build a priority
@@ -309,13 +310,16 @@ class Configurator:
         configpath = properties.uris(name=name, default=value)
 
         # place the trait in the model
-        nameserver.insert(name=name, value=value,
-                          factory=configpath.instanceSlot,
-                          priority=priority, locator=locator)
+        nameserver.insert(
+            name=name,
+            value=value,
+            factory=configpath.instanceSlot,
+            priority=priority,
+            locator=locator,
+        )
 
         # all done
         return self
-
 
     # meta-methods
     def __init__(self, executive=None, **kwds):
@@ -338,7 +342,6 @@ class Configurator:
         # all done
         return
 
-
     # implementation details
     def _indexDefaultCodecs(self):
         """
@@ -349,18 +352,22 @@ class Configurator:
 
         # add the {pml} codec
         from .pml import pml
+
         index[pml.encoding] = pml
 
         # add the {cfg} codec
         from .cfg import cfg
+
         index[cfg.encoding] = cfg
 
         # add the {pfg} codec
         from .pfg import pfg
+
         index[pfg.encoding] = pfg
 
         # add the {yaml} codec
         from .yaml import yaml
+
         index[yaml.encoding] = yaml
 
         # all done
