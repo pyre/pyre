@@ -73,7 +73,7 @@ namespace pyre::tensor {
 
         // constructor from brace-enclosed initializer list
         template <class T2>
-        constexpr Tensor(T2 (&)[S]);
+        constexpr Tensor(T2 (&&)[S]);
 
         // copy constructor
         constexpr Tensor(const Tensor &) = default;
