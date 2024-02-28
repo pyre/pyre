@@ -26,7 +26,7 @@ constexpr pyre::tensor::Tensor<T, packingT, I...>::Tensor(const data_t & data) :
 {}
 
 template <typename T, class packingT, int... I>
-constexpr pyre::tensor::Tensor<T, packingT, I...>::Tensor(const data_t && data) :
+constexpr pyre::tensor::Tensor<T, packingT, I...>::Tensor(data_t && data) noexcept :
     _data(std::forward(data))
 {}
 
