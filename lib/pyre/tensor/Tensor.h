@@ -64,7 +64,7 @@ namespace pyre::tensor {
         constexpr Tensor(const data_t &);
 
         // constructor with underlying data type (need this for return value optimization)
-        constexpr Tensor(const data_t &&);
+        constexpr Tensor(data_t &&) noexcept;
 
         // constructor from parameter pack
         template <class... T2>
@@ -79,13 +79,13 @@ namespace pyre::tensor {
         constexpr Tensor(const Tensor &) = default;
 
         // move constructor
-        constexpr Tensor(Tensor &&) = default;
+        constexpr Tensor(Tensor &&) noexcept = default;
 
         // copy assignment operator
         constexpr Tensor & operator=(const Tensor &) = default;
 
         // move assignment operator
-        constexpr Tensor & operator=(Tensor &&) = default;
+        constexpr Tensor & operator=(Tensor &&) noexcept = default;
 
         // destructor
         constexpr ~Tensor();
