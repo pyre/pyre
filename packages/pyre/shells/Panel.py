@@ -50,10 +50,10 @@ class Panel(Command):
 
             # otherwise, all is well; attempt to
             try:
-                # execute the command; hand it a reference to me, so that it has access to the
-                # application context, and the argument vector, in case it has opinions about
-                # how to interpret the unprocessed command line
-                status = method(plexus=plexus, argv=argv)
+                # execute the command; hand it a reference to the plexus, so that it has access to
+                # the application context, its panel, and the argument vector, in case it has
+                # opinions about how to interpret the unprocessed command line
+                status = method(plexus=plexus, panel=self, argv=argv[1:])
                 # N.B.: there is no need to translate {None} into a numeric value at this
                 # point; properly constructed {pyre} harnesses return control to the shell by
                 # raising {SystemExit}, which performs this translation
