@@ -1,15 +1,17 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2024 all rights reserved
-#
 
 
 # access to the framework
 import pyre
+
 # superclass
 from .Application import Application
+
+# my parts
+from .Repertoire import Repertoire
 
 
 # class declaration
@@ -30,7 +32,6 @@ class Plexus(Application):
     name by the framework. This way the language used to specify the actions and their behavior
     can remain natural to the context of the application.
     """
-
 
     # interface
     @pyre.export
@@ -58,7 +59,6 @@ class Plexus(Application):
         # otherwise, just show the help screen
         return self.help()
 
-
     @pyre.export
     def help(self, **kwds):
         """
@@ -85,7 +85,6 @@ class Plexus(Application):
         # command; display the general help screen
         return super().help(**kwds)
 
-
     # meta-methods
     def __init__(self, **kwds):
         # chain up
@@ -95,20 +94,50 @@ class Plexus(Application):
         # all done
         return
 
-
     # implementation details
     # hooks
     def pyre_newRepertoire(self):
         """
         Factory for the manager of actions
         """
-        # get the default implementation
-        from .Repertoire import Repertoire
-        # build one and return it
+        # build one using the default implementation and return it
         return Repertoire(protocol=self.pyre_action)
 
-
     # convenience
+    def pyre_actions(self):
+        """
+        Retrieve all known implementations of my action
+        """
+        # initialize my cache
+        actions = {}
+        # ask my action specification for help
+        for uri, name, action, tip in self.pyre_action.pyre_actions(plexus=self):
+            # if i already know this one
+            if name in actions:
+                # move on
+                continue
+            # otherwise, add it to the pile
+            actions[name] = (uri, action, tip)
+            # and make it available
+            yield uri, name, action, tip
+        # all done
+        return
+
+    def pyre_documentedActions(self):
+        """
+        Retrieve all public implementations of my action
+        """
+        # go through all the actions
+        for uri, name, action, tip in self.pyre_actions():
+            # undocumented ones
+            if tip is None:
+                # get skipped
+                continue
+            # everything else is good
+            yield uri, name, action, tip
+        # all done
+        return
+
     def pyre_invoke(self, action, argv=None):
         """
         Invoke the named {action} with {argv} as additional arguments
@@ -118,9 +147,8 @@ class Plexus(Application):
         # resolve and invoke; typos and such get handled by {pyre_repertoire}
         return self.pyre_repertoire.invoke(plexus=self, action=action, argv=argv)
 
-
     # support for the help system
-    def pyre_help(self, indent=' '*2, **kwds):
+    def pyre_help(self, indent=" " * 2, **kwds):
         """
         Hook for the plexus help system
         """
@@ -133,8 +161,7 @@ class Plexus(Application):
         # all done
         return
 
-
-    def pyre_documentActions(self, indent=' '*2):
+    def pyre_documentActions(self, indent=" " * 2):
         """
         Place information about the available actions in my {info} channel
         """
@@ -160,7 +187,6 @@ class Plexus(Application):
 
         # all done
         return
-
 
     # data
     pyre_repertoire = None
