@@ -41,23 +41,13 @@ class Plexus(Application):
         as the name of an action to perform
         """
         # grab my command line arguments
-        argv = self.argv
-        # attempt to
-        try:
-            # get the name of the command
-            name = next(argv)
-        # if there aren't any
-        except StopIteration:
-            # we will deal with this case later; it is important to do as little as possible
-            # here so we can exit the exception block quickly and cleanly
-            pass
-        # if there is something to invoke
-        else:
-            # do it
-            return self.pyre_invoke(action=name, argv=argv)
-
-        # otherwise, just show the help screen
-        return self.help()
+        argv = tuple(self.argv)
+        # if there is nothing to invoke
+        if not argv:
+            # just show the help screen
+            return self.help()
+        # otherwise, interpret the first argument as a command and invoke it
+        return self.pyre_invoke(action=argv[0], argv=argv[1:])
 
     @pyre.export
     def help(self, **kwds):
