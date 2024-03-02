@@ -41,13 +41,13 @@ class Plexus(Application):
         as the name of an action to perform
         """
         # grab my command line arguments
-        argv = tuple(self.argv)
+        argv = list(self.argv)
         # if there is nothing to invoke
         if not argv:
             # just show the help screen
             return self.help()
         # otherwise, interpret the first argument as a command and invoke it
-        return self.pyre_invoke(action=argv[0], argv=argv[1:])
+        return self.pyre_invoke(action=argv.pop(0), argv=argv)
 
     @pyre.export
     def help(self, **kwds):
