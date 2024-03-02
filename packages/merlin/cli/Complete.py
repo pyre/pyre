@@ -20,7 +20,6 @@ class Complete(merlin.shells.command, family="merlin.cli.complete"):
     line = merlin.properties.str()
     line.doc = "the partial command line"
 
-
     # administrative
     @merlin.export(tip="generate completions candidates from a partial command line")
     def main(self, plexus, argv, **kwds):
@@ -28,10 +27,7 @@ class Complete(merlin.shells.command, family="merlin.cli.complete"):
         Suggest possible completions for the partial argument list
         """
         # ask the plexus for the names of all public actions
-        actions = plexus.pyre_action.pyre_documentedActions(plexus=plexus)
-        # collect their names
-        names = tuple(name for _, name, _, _ in actions)
-
+        names = tuple(name for _, name, _, _ in plexus.pyre_documentedActions())
         # get the args
         args = self.line.split()
         # and the partial word
