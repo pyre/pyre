@@ -131,6 +131,11 @@ pyre::h5::py::fapl(py::module & m)
                     // and flush
                     << pyre::journal::endl(__HERE__);
             }
+// for the right version
+#if H5_VERSION_GE(1, 14, 2)
+            // attach the security token for temporary credentials
+            H5Pset_fapl_ros3_token(self.getId(), token.data());
+#endif
             // all done
             return self;
         },
