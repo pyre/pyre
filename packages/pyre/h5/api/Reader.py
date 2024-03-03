@@ -113,7 +113,7 @@ class Reader:
             # open the remote file and return it
             return File()._pyre_ros3(
                 fapl=fapl,
-                region=region,
+                region=region if region is not None else "",
                 profile=profile,
                 bucket=bucket,
                 key="/".join(key),
