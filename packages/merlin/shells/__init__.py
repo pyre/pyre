@@ -13,7 +13,7 @@ from .Command import Command as command
 # factories for the local objects
 from .Merlin import Merlin as merlin
 
-# the legace builder
+# the legacy builder
 from .MM import MM as mm
 
 
