@@ -1221,7 +1221,7 @@ class MM(pyre.application, family="pyre.applications.mm", namespace="mm"):
         Generate the application banner
         """
         # sign on
-        yield "  mm {}.{}.{} rev {}".format(*merlin.meta.version)
+        yield "  merlin mm {}.{}.{} rev {}".format(*merlin.meta.version)
         # all done
         return
 
