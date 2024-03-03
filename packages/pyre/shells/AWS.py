@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2024 all rights reserved
-#
 
 
 # externals
@@ -11,6 +9,15 @@ import os
 import pyre
 import collections
 import configparser
+
+# boto3 is useful, but not universally available
+try:
+    # get it
+    import boto3
+# if something goes wrong
+except ImportError:
+    # mark it as unavailable
+    boto3 = None
 
 
 # declaration
@@ -82,19 +89,55 @@ class AWS(pyre.component):
                     profile[key.lower()] = value
                 # attach the profile to the pile
                 credentials[section.lower()] = profile
-        # check whether there an access key in the user environment
+
+        # another source of credentials for the default profile is a token from a web identity
+        # provider; to get that we need boto3
+        if boto3:
+            # get the role arn
+            arn = os.getenv("AWS_ROLE_ARN")
+            # initialize the token
+            token = ""
+            # and the path to the web token
+            link = os.getenv("AWS_WEB_IDENTITY_TOKEN_FILE")
+            # if it exists
+            if link:
+                # open it
+                with open(link, mode="r") as stream:
+                    # and extract the token
+                    token = stream.read()
+            # if we have both an arn and a token
+            if arn and token:
+                # talk to STS
+                sts = boto3.client(service_name="sts")
+                # assume the role
+                role = sts.assume_role_with_web_identity(
+                    RoleArn=arn, RoleSessionName="assume-role", WebIdentityToken=token
+                )
+                # extract the credentials
+                auth = role["Credentials"]
+                # and from there the signing parameters
+                aws_access_key_id = auth["AccessKeyId"]
+                aws_secret_access_key = auth["SecretAccessKey"]
+                aws_session_token = auth["SessionToken"]
+                # store them in the default profile
+                credentials["default"]["aws_access_key_id"] = aws_access_key_id
+                credentials["default"]["aws_secret_access_key"] = aws_secret_access_key
+                credentials["default"]["aws_session_token"] = aws_session_token
+
+        # now, look for individual values form the environment
+        # first, check whether there an access key in the user environment
         key = os.environ.get("AWS_ACCESS_KEY_ID", None)
         # if it's there
         if key is not None:
             # override the value in the default profile
             credentials["default"]["aws_access_key_id"] = key
-        # check whether there is a secret key in the environment
+        # next, whether there is a secret key in the environment
         key = os.environ.get("AWS_SECRET_ACCESS_KEY", None)
         # if there
         if key is not None:
             # override the value in the default profile
             credentials["default"]["aws_secret_access_key"] = key
-        # check whether there is a session token in the environment
+        # and finally whether there is a session token in the environment
         key = os.environ.get("AWS_SESSION_TOKEN", None)
         # if there
         if key is not None:
