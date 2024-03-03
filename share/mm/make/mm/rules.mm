@@ -7,7 +7,7 @@
 # administrivia
 mm.banner:
 	@$(log)
-	@$(log) $(palette.banner)"    mm $(mm.version)"$(palette.normal)
+	@$(log) $(palette.banner)"    merlin $(mm.version)"$(palette.normal)
 	@$(log) "    Michael Aïvázis <michael.aivazis@para-sim.com>"
 	@$(log) "    copyright 1998-2024 all rights reserved"
 	@$(log)
