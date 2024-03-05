@@ -18,10 +18,14 @@ public:
     // metamethods
 public:
     // constructor
+#if defined(__cpp_lib_source_location)
+    // very modern version: the compiler does the work
+    inline Locator(const std::source_location = std::source_location::current());
+#endif
     // modern version; preferred when instantiating explicitly
     inline Locator(const value_type &, const value_type &, const value_type &);
     // legacy version; used by the {__HERE__} locator factories
-    inline explicit Locator(const char * = "", int = 0, const char * = "");
+    inline explicit Locator(const char *, int = 0, const char * = "");
 
     // interface
 public:

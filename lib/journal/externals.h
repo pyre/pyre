@@ -22,6 +22,9 @@
 #include <sstream>
 #include <iomanip>
 
+#if defined(__cpp_lib_source_location)
+#include <source_location>
+#endif
 
 // aliases for fundamental types that define implementation choices
 namespace pyre::journal {
