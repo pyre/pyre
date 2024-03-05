@@ -32,8 +32,8 @@ main(int argc, char * argv[])
     // show me
     channel
         // the default detail level
-        << "global default detail cap: "
-        << cap
+        << "global default detail cap: " << cap
+        << pyre::journal::newline
         // the channel default detail level
         << "channel default detail level: "
         << defcap
