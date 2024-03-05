@@ -207,9 +207,18 @@ pyre::journal::Memo::footer(
                 continue;
             }
             // otherwise, render it
-            buffer << palette[severity] << _footerMarker << palette["reset"] << palette[severity]
-                   << key << palette["reset"] << ": " << palette[severity] << value
-                   << palette["reset"] << std::endl;
+            buffer
+                // the marker
+                << palette[severity] << _footerMarker
+                << palette["reset"]
+                // the severity
+                << palette[severity] << key << palette["reset"]
+                << ": "
+                // the value
+                << palette[severity] << value
+                << palette["reset"]
+                // flush
+                << std::endl;
         }
     }
 
