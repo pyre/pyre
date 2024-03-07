@@ -56,20 +56,20 @@ class AWS(pyre.component):
         # chain up
         super().__init__(**kwds)
         # the cache for aws credentials
-        self._profiles = self._loadCredentials()
+        self._profiles = self._loadProfiles()
         # all done
         return
 
     # implementation details
-    def _loadCredentials(self) -> dict:
+    def _loadProfiles(self) -> dict:
         """
         Load the AWS credentials
         """
         # prime
-        credentials = collections.defaultdict(dict)
+        profiles = collections.defaultdict(dict)
         # locate the file with the shared credentials
         path = pyre.primitives.path(
-            os.environ.get("AWS_SHARED_CREDENTIALS_FILE", "~/.aws/credentials")
+            os.getenv("AWS_SHARED_CREDENTIALS_FILE", "~/.aws/credentials")
         )
         # if it's there
         if path.exists():
@@ -88,7 +88,39 @@ class AWS(pyre.component):
                     # and set it
                     profile[key.lower()] = value
                 # attach the profile to the pile
-                credentials[section.lower()] = profile
+                profiles[section.lower()] = profile
+
+        # now, look for individual values from the environment
+        # first up, the default region
+        key = os.getenv("AWS_DEFAULT_REGION", None)
+        # if it's there
+        if key is not None:
+            # set the value
+            profiles["default"]["region"] = key
+        # it is overridden by an explicit setting of the region
+        key = os.getenv("AWS_REGION", None)
+        # if it's there
+        if key is not None:
+            # set the value
+            profiles["default"]["region"] = key
+        # next, check whether there an access key in the user environment
+        key = os.getenv("AWS_ACCESS_KEY_ID", None)
+        # if it's there
+        if key is not None:
+            # override the value in the default profile
+            profiles["default"]["aws_access_key_id"] = key
+        # next, whether there is a secret key in the environment
+        key = os.getenv("AWS_SECRET_ACCESS_KEY", None)
+        # if there
+        if key is not None:
+            # override the value in the default profile
+            profiles["default"]["aws_secret_access_key"] = key
+        # and finally whether there is a session token in the environment
+        key = os.getenv("AWS_SESSION_TOKEN", None)
+        # if there
+        if key is not None:
+            # override the value in the default profile
+            profiles["default"]["aws_session_token"] = key
 
         # another source of credentials for the default profile is a token from a web identity
         # provider; to get that we need boto3
@@ -120,34 +152,14 @@ class AWS(pyre.component):
                 aws_secret_access_key = auth["SecretAccessKey"]
                 aws_session_token = auth["SessionToken"]
                 # store them in the default profile
-                credentials["default"]["aws_access_key_id"] = aws_access_key_id
-                credentials["default"]["aws_secret_access_key"] = aws_secret_access_key
-                credentials["default"]["aws_session_token"] = aws_session_token
-
-        # now, look for individual values form the environment
-        # first, check whether there an access key in the user environment
-        key = os.environ.get("AWS_ACCESS_KEY_ID", None)
-        # if it's there
-        if key is not None:
-            # override the value in the default profile
-            credentials["default"]["aws_access_key_id"] = key
-        # next, whether there is a secret key in the environment
-        key = os.environ.get("AWS_SECRET_ACCESS_KEY", None)
-        # if there
-        if key is not None:
-            # override the value in the default profile
-            credentials["default"]["aws_secret_access_key"] = key
-        # and finally whether there is a session token in the environment
-        key = os.environ.get("AWS_SESSION_TOKEN", None)
-        # if there
-        if key is not None:
-            # override the value in the default profile
-            credentials["default"]["aws_session_token"] = key
+                profiles["default"]["aws_access_key_id"] = aws_access_key_id
+                profiles["default"]["aws_secret_access_key"] = aws_secret_access_key
+                profiles["default"]["aws_session_token"] = aws_session_token
 
         # NYI: there may be profile configurations in ~/.aws.config
 
         # all done
-        return credentials
+        return profiles
 
 
 # end of file
