@@ -90,24 +90,22 @@ class File(Group):
         """
         # get the user proxy so we can ask for AWS credentials
         aws = pyre.executive.user.aws
-        # if the region is non-trivial
-        if region:
-            # fold into the {s3} url
-            s3 = f"s3.{region}.amazonaws.com"
-        # otherwise
-        else:
-            # don't use it in the {s3} url
-            s3 = "s3.amazonaws.com"
+        # get the profile
+        config = aws.profile(name=profile)
+        # if we don't have an explicit region
+        if not region:
+            # check whether the profile has one
+            region = config.get("region", "")
+        # fold into the {s3} url
+        s3 = f"s3.{region}.amazonaws.com" if region else "s3.amazonaws.com"
+        # assemble the file uri
+        uri = f"https://{bucket}.{s3}/{key}"
         # ask for the credentials
-        id, secret, token = aws.credentials(profile=profile)
-        # if both are non-trivial
-        if id and secret:
-            # turn authentication on
-            authenticate = True
-        # otherwise
-        else:
-            # turn it off and let the ros3 driver figure it out
-            authenticate = False
+        id = config.get("aws_access_key_id", "")
+        secret = config.get("aws_access_key_id", "")
+        token = config.get("aws_session_token", "")
+        # decide whether we require authentication
+        authenticate = id != "" and secret != ""
         # if the caller didn't supply a {fapl}
         if fapl is None:
             # set one up
@@ -120,8 +118,6 @@ class File(Group):
             token=token,
             authenticate=authenticate,
         )
-        # assemble the file uri
-        uri = f"https://{bucket}.{s3}/{key}"
         # and delegate to the opener
         return self._pyre_open(uri=uri, mode="r", fapl=fapl, **kwds)
 
