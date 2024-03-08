@@ -102,7 +102,7 @@ class File(Group):
         uri = f"https://{bucket}.{s3}/{key}"
         # ask for the credentials
         id = config.get("aws_access_key_id", "")
-        secret = config.get("aws_access_key_id", "")
+        secret = config.get("aws_secret_access_key", "")
         token = config.get("aws_session_token", "")
         # decide whether we require authentication
         authenticate = id != "" and secret != ""
