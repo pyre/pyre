@@ -1,15 +1,15 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2024 all rights reserved
-#
 
 
 # externals
 import sys
+
 # support
 from ... import primitives, tracking
+
 # superclass
 from ..Loader import Loader
 
@@ -32,14 +32,11 @@ class Importer(Loader):
     returned.
     """
 
-
     # types
     from .Shelf import Shelf as shelf
 
-
     # public data
-    schemes = ('import',)
-
+    schemes = ("import",)
 
     # interface
     @classmethod
@@ -65,12 +62,12 @@ class Importer(Loader):
             # print(f"      error: {error}")
             # complain
             raise cls.LoadingError(
-                codec=cls, uri=uri, locator=locator, description=str(error)) from error
+                codec=cls, uri=uri, locator=locator, description=str(error)
+            ) from error
         # all other exceptions are probably caused by the contents of the module; let them
         # propagate to the user; on success, look up {module} in the global list of modules and
         # return it dressed up as a shelf
         return cls.shelf(module=sys.modules[source], uri=uri, locator=locator)
-
 
     @classmethod
     def locateShelves(cls, protocol, scheme, context, **kwds):
@@ -82,29 +79,28 @@ class Importer(Loader):
 
         # chain up for the rest
         for candidate in super().locateShelves(
-                protocol=protocol, scheme=scheme, context=context, **kwds):
+            protocol=protocol, scheme=scheme, context=context, **kwds
+        ):
             # make a uri
-            uri = cls.uri(scheme='import', address=candidate)
+            uri = cls.uri(scheme="import", address=candidate)
             # and send it off
             yield uri
 
         # all done
         return
 
-
     # context handling
     @classmethod
     def interpret(cls, request):
         """
-        Attempt to extract to extract a resolution context and a symbol from the {request}
+        Attempt to extract a resolution context and a symbol from the {request}
         """
         # i deal with python package specifications
-        context = request.address.split('.')
+        context = request.address.split(".")
         # the symbol is just the last entry
-        symbol = '' if not context else context[-1]
+        symbol = "" if not context else context[-1]
         # return the pair
         return context, symbol
-
 
     @classmethod
     def assemble(cls, context):
@@ -112,8 +108,7 @@ class Importer(Loader):
         Assemble the sequence of directories in to a form suitable for the address part of a uri
         """
         # i make module paths
-        return '.'.join(context)
-
+        return ".".join(context)
 
     # initialization
     @classmethod
@@ -142,9 +137,9 @@ class Importer(Loader):
         # resolve the file name
         filename = str(primitives.path(filename).resolve())
         # make a uri
-        uri = cls.uri(scheme='file', address=filename)
+        uri = cls.uri(scheme="file", address=filename)
         # and a locator
-        here = tracking.simple('while priming the {.__name__} loader'.format(cls))
+        here = tracking.simple("while priming the {.__name__} loader".format(cls))
         # make a shelf
         shelf = cls.shelf(module=__main__, uri=uri, locator=here)
         # attach it to the linker
