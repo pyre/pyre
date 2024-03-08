@@ -110,6 +110,17 @@ class Reader:
             region, _, profile, _ = uri.server
             # parse the path to the file
             _, bucket, *key = pyre.primitives.path(uri.address)
+            # make a channel
+            channel = journal.info("pyre.h5.file")
+            # show me
+            channel.line(f"opening '{uri}'")
+            channel.indent()
+            channel.line(f"profile: {profile}")
+            channel.line(f"region: {region}")
+            channel.line(f"bucket: {bucket}")
+            channel.line(f"key: {key}")
+            channel.outdent()
+            channel.log()
             # open the remote file and return it
             return File()._pyre_ros3(
                 fapl=fapl,
