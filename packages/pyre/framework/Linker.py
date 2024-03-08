@@ -16,16 +16,17 @@ class Linker:
     Class responsible for accessing components from a variety of persistent stores
     """
 
-
     # types
-    from .exceptions import FrameworkError, ComponentNotFoundError, BadResourceLocatorError
+    from .exceptions import (
+        FrameworkError,
+        ComponentNotFoundError,
+        BadResourceLocatorError,
+    )
     from ..schemata import uri
-
 
     # public data
     codecs = None
     shelves = None
-
 
     # support for framework requests
     def loadShelf(self, uri, **kwds):
@@ -39,7 +40,6 @@ class Linker:
         # ask it to load the shelf and return it
         return codec.load(uri=uri, **kwds)
 
-
     def resolve(self, executive, uri, protocol, **kwds):
         """
         Attempt to locate the component class specified by {uri}
@@ -52,7 +52,7 @@ class Linker:
         # order they were registered
         try:
             # make the pile
-            codecs = [ self.schemes[scheme] ] if scheme else self.codecs
+            codecs = [self.schemes[scheme]] if scheme else self.codecs
         # and if the look up fails
         except KeyError:
             # it's because we don't recognize the scheme
@@ -75,28 +75,43 @@ class Linker:
             symbols.add(symbol)
 
             # and ask each one for all relevant shelves
-            for shelf in codec.loadShelves(executive=executive, protocol=protocol, uri=uri,
-                                           scheme=scheme, context=context, symbol=symbol,
-                                           **kwds):
+            for shelf in codec.loadShelves(
+                executive=executive,
+                protocol=protocol,
+                uri=uri,
+                scheme=scheme,
+                context=context,
+                symbol=symbol,
+                **kwds,
+            ):
                 # got one; show me
                 # print(f"    shelf contents: {shelf}")
                 # check whether it contains our symbol by attempting to
                 try:
                     # extract it
-                    descriptor = shelf.retrieveSymbol(symbol)
-                    # if it's not there
+                    yield shelf.retrieveSymbol(symbol)
+                # if it's not there
                 except shelf.SymbolNotFoundError as error:
                     # show me
                     # print(f" ## error: {error}")
-                    # not there; try the next match
-                    continue
-                # otherwise, we have a candidate; show me
-                # print(f"pyre.framework.Linker.resolve:")
-                # print(f"  uri: {uri}")
-                # print(f"  protocol: {protocol}")
-                # print(f"  candidate: {descriptor}")
-                # let the client evaluate it further
-                yield descriptor
+                    # and let's try something else
+                    pass
+                # if we have a protocol
+                if protocol:
+                    # ask it for its auto sniffer
+                    auto = protocol.pyre_auto(context=context, symbol=symbol)
+                    # if it has one
+                    if auto:
+                        # check whether
+                        try:
+                            # it's present in the current shelf
+                            yield shelf.retrieveSymbol(auto)
+                        # if not
+                        except shelf.SymbolNotFoundError as error:
+                            # show me
+                            # print(f" ## error: {error}")
+                            # and let's try something else
+                            pass
 
         # ok, no dice. can we get some help from the protocol?
         if not protocol:
@@ -126,7 +141,6 @@ class Linker:
         # out of ideas
         return
 
-
     # meta-methods
     def __init__(self, executive, **kwds):
         # chain up
@@ -148,7 +162,6 @@ class Linker:
         # nothing else
         return
 
-
     # implementation details
     def indexDefaultCodecs(self):
         """
@@ -157,6 +170,7 @@ class Linker:
         # get the codecs i know about
         from ..config.odb import odb
         from ..config.native import native
+
         # put them in a pile
         codecs = [odb, native]
 
