@@ -46,6 +46,7 @@ class Protocol(Configurable, metaclass=Role, internal=True):
 
     # set to a dispatching foundry that can deduce the correct implementation
     # from context available at construction time
+    @classmethod
     def pyre_auto(cls, **kwds):
         """
         The name of a foundry that can deduce the correct implementor from
