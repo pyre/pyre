@@ -1,0 +1,29 @@
+# -*- yaml -*-
+#
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2024 all rights reserved
+
+
+# application configuration
+inject.app:
+    # a component
+    reader: flat#c16
+
+# the reader
+c16:
+  # its type
+  dtype: complex128
+
+# its view
+c16.view:
+  # the channel
+  channel: complex
+  # the zoom level
+  zoom: -1
+  # the sync table
+  sync:
+    # turn on the path
+    path: True
+
+
+# end of file
