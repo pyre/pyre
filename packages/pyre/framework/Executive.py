@@ -587,10 +587,12 @@ class Executive:
                 channel = journal.warning("pyre.config")
                 # complain
                 channel.line(f"{error}")
-                channel.line(f" -- while compiling the regex '{regex}'")
-                channel.line(f" -- for '{info.name}'")
-                channel.line(f" -- in {info.locator}")
-                channel.log(f" -- discarding and moving on...")
+                channel.indent()
+                channel.line(f"while compiling the regex '{regex}'")
+                channel.line(f"for '{info.name}'")
+                channel.line(f"in {info.locator}")
+                channel.outdent()
+                channel.log(f"discarding and moving on...")
                 # complain
                 continue
             # if either my hostname or my fully qualified domain name is a match
