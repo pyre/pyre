@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2024 all rights reserved
-#
 
 
 # externals
@@ -23,22 +21,24 @@ class Configurable(Dashboard):
     common to both components and interfaces
     """
 
-
     # types
     from .exceptions import (
-        FrameworkError, CategoryMismatchError, TraitNotFoundError, ConfigurationError,
-        ProtocolCompatibilityError, ResolutionError
-        )
-
+        FrameworkError,
+        CategoryMismatchError,
+        TraitNotFoundError,
+        ConfigurationError,
+        ProtocolCompatibilityError,
+        ResolutionError,
+    )
 
     # framework data; every class record gets a fresh set of these values
-    pyre_pedigree = None # my ancestors that are configurables, in mro
-    pyre_localTraits = () # the traits explicitly specified in my declaration
-    pyre_inheritedTraits = () # the traits inherited from my superclasses
-    pyre_namemap = None # the map of trait aliases to their canonical names
-    pyre_traitmap = None # the map of trait names to trait descriptors
-    pyre_locator = None # the location of the configurable declaration
-    pyre_internal = True # mark this configurable as not visible to end users
+    pyre_pedigree = None  # my ancestors that are configurables, in mro
+    pyre_localTraits = ()  # the traits explicitly specified in my declaration
+    pyre_inheritedTraits = ()  # the traits inherited from my superclasses
+    pyre_namemap = None  # the map of trait aliases to their canonical names
+    pyre_traitmap = None  # the map of trait names to trait descriptors
+    pyre_locator = None  # the location of the configurable declaration
+    pyre_internal = True  # mark this configurable as not visible to end users
 
     pyre_isProtocol = False
     pyre_isComponent = False
@@ -47,7 +47,7 @@ class Configurable(Dashboard):
     pyre_tip = None
 
     # basic support for the help system
-    def pyre_help(self, indent=' '*4, **kwds):
+    def pyre_help(self, indent=" " * 4, **kwds):
         """
         Hook for the application help system
         """
@@ -58,29 +58,29 @@ class Configurable(Dashboard):
         # all done
         return
 
-
     def pyre_renderTraitValues(self, renderer):
         """
         Generate a persistent representation of the values of my traits using {renderer}
         """
         # set up the workload
-        workload = [ self ]
+        workload = [self]
         # while there is still something to do
         for configurable in workload:
             # invoke the worker
-            yield from configurable._pyre_renderTraitValues(renderer=renderer, workload=workload)
+            yield from configurable._pyre_renderTraitValues(
+                renderer=renderer, workload=workload
+            )
         # all done
         return
 
-
-    def pyre_showConfiguration(self, indent='', deep=False):
+    def pyre_showConfiguration(self, indent="", deep=False):
         """
         Traverse my configuration tree and display trait metadata
         """
         # prepare the indent levels
-        one = indent + ' '*2
-        two = one + ' '*2
-        three = two + ' '*2
+        one = indent + " " * 2
+        two = one + " " * 2
+        three = two + " " * 2
         # sign on
         yield "{}{.pyre_name}:".format(indent, self)
 
@@ -112,7 +112,6 @@ class Configurable(Dashboard):
         # all done
         return
 
-
     def pyre_renderConfiguration(self, deep=True):
         """
         Traverse my configuration and represent it in a JSON friendly way
@@ -127,13 +126,13 @@ class Configurable(Dashboard):
         components = {}
 
         # add my state
-        doc['name'] = self.pyre_name
-        doc['schema'] = self.pyre_family()
-        doc['value'] = self.pyre_family()
-        doc['doc'] = self.__doc__
-        doc['traits'] = traits
-        doc['properties'] = properties
-        doc['components'] = components
+        doc["name"] = self.pyre_name
+        doc["schema"] = self.pyre_family()
+        doc["value"] = self.pyre_family()
+        doc["doc"] = self.__doc__
+        doc["traits"] = traits
+        doc["properties"] = properties
+        doc["components"] = components
 
         # get my key
         key = self.pyre_key
@@ -141,7 +140,9 @@ class Configurable(Dashboard):
         scope = list(self.pyre_nameserver.getInfo(key).split)
 
         # determine how deep to go
-        configurables = self.pyre_configurables() if deep else self.pyre_localConfigurables()
+        configurables = (
+            self.pyre_configurables() if deep else self.pyre_localConfigurables()
+        )
 
         # go through my traits
         for trait in configurables:
@@ -159,13 +160,13 @@ class Configurable(Dashboard):
 
             # initialize the trait description
             traits[traitName] = {
-                'name': traitName,
-                'scope': scope,
-                'aliases': list(traitAliases),
-                'category': traitCategory,
-                'schema': traitType,
-                'doc': traitDoc,
-                'tip': traitTip,
+                "name": traitName,
+                "scope": scope,
+                "aliases": list(traitAliases),
+                "category": traitCategory,
+                "schema": traitType,
+                "doc": traitDoc,
+                "tip": traitTip,
             }
 
             # now, for the tricky part
@@ -175,22 +176,21 @@ class Configurable(Dashboard):
             if trait.isFacility:
                 # if there is something bound to the facility, ask it to describe itself
                 components[traitName] = {
-                    'name': value.pyre_name,
-                    'value': value.pyre_name,
+                    "name": value.pyre_name,
+                    "value": value.pyre_name,
                 }
                 # and move on
                 continue
 
             # with properties, attach the property meta-data
             properties[traitName] = {
-                'name': traitName,
-                'value': trait.json(value),
-                'default': trait.default,
+                "name": traitName,
+                "value": trait.json(value),
+                "default": trait.default,
             }
 
         # all done
         return doc
-
 
     def pyre_showSummary(self, indent, **kwds):
         """
@@ -207,8 +207,7 @@ class Configurable(Dashboard):
         # all done
         return
 
-
-    def pyre_showConfigurables(self, indent='', **kwds):
+    def pyre_showConfigurables(self, indent="", **kwds):
         """
         Generate a description of my configurable state
         """
@@ -222,8 +221,10 @@ class Configurable(Dashboard):
             schema = trait.typename
             # and the tip
             tip = trait.tip or trait.doc
-            # skip nameless undocumented ones
-            if not name or not tip: continue
+            # nameless undocumented ones
+            if not name or not tip:
+                # get skipped
+                continue
             # pile the rest
             public.append((name, schema, tip))
 
@@ -232,7 +233,7 @@ class Configurable(Dashboard):
             # the {options} section
             yield "options:"
             # figure out how much space we need
-            width = max(len(name) for name,_,_ in public) + 2 # for the dashes
+            width = max(len(name) for name, _, _ in public) + 2  # for the dashes
             # for each public trait
             for name, schema, tip in public:
                 # make a tag out of the name
@@ -243,7 +244,6 @@ class Configurable(Dashboard):
             yield ""
         # all done
         return
-
 
     def pyre_showBehaviors(self, spec, indent, **kwds):
         """
@@ -257,8 +257,10 @@ class Configurable(Dashboard):
             name = behavior.name
             # get the tip
             tip = behavior.tip
-            # if there is no tip, assume it is internal and skip it
-            if not tip: continue
+            # if there is no tip, assume it is internal
+            if not tip:
+                # and skip it
+                continue
             # everything else gets saved
             behaviors.append((name, tip))
 
@@ -273,9 +275,9 @@ class Configurable(Dashboard):
             # leave some space
             yield ""
             # the beginning of the section with more details
-            yield 'where [command] is one of'
+            yield "where [command] is one of"
             # figure out how much space we need
-            width = max(len(name) for name,_ in behaviors)
+            width = max(len(name) for name, _ in behaviors)
             # for each behavior
             for behavior, tip in behaviors:
                 # show the details
@@ -284,7 +286,6 @@ class Configurable(Dashboard):
             yield ""
             # all done
             return
-
 
     # introspection
     @classmethod
@@ -299,14 +300,12 @@ class Configurable(Dashboard):
         # traits that i inherited
         return itertools.chain(cls.pyre_localTraits, cls.pyre_inheritedTraits)
 
-
     @classmethod
     def pyre_configurables(cls):
         """
         Generate a sequence of all my trait descriptors that are marked as configurable.
         """
         return filter(lambda trait: trait.isConfigurable, cls.pyre_traits())
-
 
     @classmethod
     def pyre_behaviors(cls):
@@ -315,14 +314,12 @@ class Configurable(Dashboard):
         """
         return filter(lambda trait: trait.isBehavior, cls.pyre_traits())
 
-
     @classmethod
     def pyre_properties(cls):
         """
         Generate a sequence of all my trait descriptors that are marked as properties
         """
         return filter(lambda trait: trait.isProperty, cls.pyre_traits())
-
 
     @classmethod
     def pyre_facilities(cls):
@@ -331,14 +328,12 @@ class Configurable(Dashboard):
         """
         return filter(lambda trait: trait.isFacility, cls.pyre_traits())
 
-
     @classmethod
     def pyre_localConfigurables(cls):
         """
         Generate a sequence of my local trait descriptors that are marked as configurable.
         """
         return filter(lambda trait: trait.isConfigurable, cls.pyre_localTraits)
-
 
     @classmethod
     def pyre_localBehaviors(cls):
@@ -347,7 +342,6 @@ class Configurable(Dashboard):
         """
         return filter(lambda trait: trait.isBehavior, cls.pyre_localTraits)
 
-
     @classmethod
     def pyre_localProperties(cls):
         """
@@ -355,14 +349,12 @@ class Configurable(Dashboard):
         """
         return filter(lambda trait: trait.isProperty, cls.pyre_localTraits)
 
-
     @classmethod
     def pyre_localFacilities(cls):
         """
         Generate a sequence of all my trait descriptors that are marked as facilities
         """
         return filter(lambda trait: trait.isFacility, cls.pyre_localTraits)
-
 
     @classmethod
     def pyre_trait(cls, alias):
@@ -384,12 +376,12 @@ class Configurable(Dashboard):
         except KeyError:
             # we have a bug
             import journal
+
             firewall = journal.firewall("pyre.components")
             raise firewall.log("UNREACHABLE")
 
         # return the trait
         return trait
-
 
     # framework notifications
     @classmethod
@@ -401,7 +393,6 @@ class Configurable(Dashboard):
         # do nothing
         return cls
 
-
     @classmethod
     def pyre_classConfigured(cls):
         """
@@ -411,7 +402,6 @@ class Configurable(Dashboard):
         # do nothing
         return cls
 
-
     @classmethod
     def pyre_classInitialized(cls):
         """
@@ -420,7 +410,6 @@ class Configurable(Dashboard):
         """
         # do nothing
         return cls
-
 
     # additional configuration support
     @classmethod
@@ -433,12 +422,11 @@ class Configurable(Dashboard):
         # my configurable traits
         traits = cls.pyre_configurables()
         # build the set of names
-        aliases = { alias for trait in traits for alias in trait.aliases }
+        aliases = {alias for trait in traits for alias in trait.aliases}
         # merge global settings
         nameserver.pullGlobalSettingsIntoScope(scope=scope, symbols=aliases)
         # and done
         return
-
 
     # compatibility check
     @classmethod
@@ -458,8 +446,10 @@ class Configurable(Dashboard):
         """
         # get the generic trait type that everybody is compatible with
         from pyre.traits.properties import identity
+
         # get the report factory
         from .CompatibilityReport import CompatibilityReport
+
         # to build an empty one
         report = CompatibilityReport(cls, spec)
 
@@ -475,8 +465,10 @@ class Configurable(Dashboard):
                 error = cls.TraitNotFoundError(configurable=cls, name=hers.name)
                 # add it to the report
                 report.incompatibilities[hers].append(error)
-                # if we are in fast mode, we have done enough
-                if fast: return report
+                # if we are in fast mode
+                if fast:
+                    # we have done enough
+                    return report
                 # move on to the next trait
                 continue
 
@@ -495,7 +487,9 @@ class Configurable(Dashboard):
                 continue
 
             # if we get this far, we have an incompatibility; build an error description
-            error = cls.CategoryMismatchError(configurable=cls, target=spec, name=hers.name)
+            error = cls.CategoryMismatchError(
+                configurable=cls, target=spec, name=hers.name
+            )
             # add it to the report
             report.incompatibilities[hers].append(error)
             # if we are in fast mode
@@ -507,7 +501,6 @@ class Configurable(Dashboard):
 
         # all done
         return report
-
 
     # implementation details
     def _pyre_renderTraitValues(self, renderer, workload):
@@ -523,8 +516,6 @@ class Configurable(Dashboard):
         inventory = self.pyre_inventory
         # go through them
         for trait in traits:
-            # get the trait name
-            name = trait.name
             # get the value
             value = inventory.getTraitValue(trait=trait)
             # get the trait to render the value
