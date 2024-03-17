@@ -52,12 +52,13 @@ class S3(Filesystem):
         # make a paginator
         paginator = s3.get_paginator("list_objects_v2")
         # set up its options
-        options = {
-            # the bucket
-            "Bucket": self.bucket,
-            # the search prefix
-            "Prefix": str(prefix),
-        }
+        options = {}
+        # add the bucket
+        options["Bucket"] = self.bucket
+        # if the search prefix is non-trivial
+        if prefix:
+            # add it to the options
+            options["Prefix"] = str(prefix)
         # go through the pages
         for page in paginator.paginate(**options):
             # retrieve the contents
@@ -66,8 +67,10 @@ class S3(Filesystem):
             for entry in contents:
                 # get each key
                 key = entry["Key"]
+                # if the key ends in a slash, make a folder; otherwise, a plain file
+                node = self.folder() if key.endswith("/") else self.node()
                 # and add it to my pile
-                self[key] = self.node()
+                self[key] = node
 
         # all done
         return self
@@ -106,12 +109,8 @@ class S3(Filesystem):
         uri = pyre.primitives.uri.parse(value=uri, scheme="s3")
         # unpack the server info
         region, _, profile, _ = uri.server
-        # if the {profile} is trivial
-        if not profile:
-            # set it to {default}
-            profile = "default"
         # get the profile configuration
-        config = pyre.executive.user.aws.profile(name=profile)
+        config = pyre.executive.user.aws.profile(name=profile or "default")
         # if the {region} is trivial
         if not region:
             # ask the profile
@@ -120,8 +119,10 @@ class S3(Filesystem):
         address = pyre.primitives.path(uri.address)
         # the bucket is the root
         bucket = address[1]
-        # and the rest is the prefix
-        prefix = pyre.primitives.path(address[2:])
+        # and the rest is the prefix path
+        prefix = address[2:]
+        # if it's non-trivial, turn it into a path
+        prefix = pyre.primitives.path(prefix) if prefix else None
         # all done
         return profile, region, bucket, prefix
 
