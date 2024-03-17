@@ -6,6 +6,7 @@
 
 # support
 import pyre
+import journal
 
 # external
 import boto3
