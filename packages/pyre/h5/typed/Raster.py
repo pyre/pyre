@@ -156,7 +156,7 @@ class Raster:
         # look up my in-memory type
         memtype = self.memtype
         # ask it for enough memory to hold the requested data
-        data = memtype.heap(cells=math.prod(shape))
+        data = memtype.grid(shape=shape)
         # get my dataset handle
         hid = self._dataset._pyre_id
         # if i'm connected to a source
