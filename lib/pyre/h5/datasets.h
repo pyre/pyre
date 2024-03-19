@@ -162,6 +162,21 @@ pyre::h5::write(
 
 template <class gridT>
 auto
+pyre::h5::readGrid(
+    const dataset_t & self, gridT & data, const datatype_t & memtype, const shape_t & origin,
+    const shape_t shape) -> void
+{
+    // get my storage
+    auto & storage = *data.data();
+    // access the underlying store and delegate
+    read(self, storage, memtype, origin, shape);
+    // all done
+    return;
+}
+
+
+template <class gridT>
+auto
 pyre::h5::writeGrid(
     const dataset_t & self, gridT & data, const datatype_t & memtype, const shape_t & origin,
     const shape_t shape) -> void
