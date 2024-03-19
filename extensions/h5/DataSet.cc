@@ -41,6 +41,22 @@ namespace pyre::h5::py {
             // the signature
             "data"_a, "memtype"_a, "origin"_a, "shape"_a,
             // the docstring
+            "write the contents of {data} to the tile @{origin}+{shape}");
+    }
+
+    // bindings for reading dataset contents into {pyre::grid} buffers
+    template <class gridT>
+    auto bindReadGrid(py::class_<DataSet> & cls) -> void
+    {
+        // add a {write} overload for the given grid type
+        cls.def(
+            // the name
+            "read",
+            // the implementation
+            &readGrid<gridT>,
+            // the signature
+            "data"_a, "memtype"_a, "origin"_a, "shape"_a,
+            // the docstring
             "fill {data} with the tile @{origin}+{shape}");
     }
 
@@ -57,7 +73,7 @@ namespace pyre::h5::py {
             // the signature
             "data"_a, "memtype"_a, "origin"_a, "shape"_a,
             // the docstring
-            "fill {data} with the tile @{origin}+{shape}");
+            "write the contents of {data} to the tile @{origin}+{shape}");
     }
 } // namespace pyre::h5::py
 
@@ -561,6 +577,33 @@ pyre::h5::py::dataset(py::module & m)
     bindReadBuffer<heap_double_t>(cls);
     bindReadBuffer<heap_complexfloat_t>(cls);
     bindReadBuffer<heap_complexdouble_t>(cls);
+    // into 2d grids
+    bindReadGrid<int8_heapgrid_2d_t>(cls);
+    bindReadGrid<int16_heapgrid_2d_t>(cls);
+    bindReadGrid<int32_heapgrid_2d_t>(cls);
+    bindReadGrid<int64_heapgrid_2d_t>(cls);
+    bindReadGrid<uint8_heapgrid_2d_t>(cls);
+    bindReadGrid<uint16_heapgrid_2d_t>(cls);
+    bindReadGrid<uint32_heapgrid_2d_t>(cls);
+    bindReadGrid<uint64_heapgrid_2d_t>(cls);
+    bindReadGrid<float_heapgrid_2d_t>(cls);
+    bindReadGrid<double_heapgrid_2d_t>(cls);
+    bindReadGrid<complexfloat_heapgrid_2d_t>(cls);
+    bindReadGrid<complexdouble_heapgrid_2d_t>(cls);
+    // into 3d grids
+    bindReadGrid<int8_heapgrid_3d_t>(cls);
+    bindReadGrid<int16_heapgrid_3d_t>(cls);
+    bindReadGrid<int32_heapgrid_3d_t>(cls);
+    bindReadGrid<int64_heapgrid_3d_t>(cls);
+    bindReadGrid<uint8_heapgrid_3d_t>(cls);
+    bindReadGrid<uint16_heapgrid_3d_t>(cls);
+    bindReadGrid<uint32_heapgrid_3d_t>(cls);
+    bindReadGrid<uint64_heapgrid_3d_t>(cls);
+    bindReadGrid<float_heapgrid_3d_t>(cls);
+    bindReadGrid<double_heapgrid_3d_t>(cls);
+    bindReadGrid<complexfloat_heapgrid_3d_t>(cls);
+    bindReadGrid<complexdouble_heapgrid_3d_t>(cls);
+
 
     // writing
     // from memory buffers
@@ -589,6 +632,19 @@ pyre::h5::py::dataset(py::module & m)
     bindWriteGrid<double_heapgrid_2d_t>(cls);
     bindWriteGrid<complexfloat_heapgrid_2d_t>(cls);
     bindWriteGrid<complexdouble_heapgrid_2d_t>(cls);
+    // from 3d grids
+    bindWriteGrid<int8_heapgrid_3d_t>(cls);
+    bindWriteGrid<int16_heapgrid_3d_t>(cls);
+    bindWriteGrid<int32_heapgrid_3d_t>(cls);
+    bindWriteGrid<int64_heapgrid_3d_t>(cls);
+    bindWriteGrid<uint8_heapgrid_3d_t>(cls);
+    bindWriteGrid<uint16_heapgrid_3d_t>(cls);
+    bindWriteGrid<uint32_heapgrid_3d_t>(cls);
+    bindWriteGrid<uint64_heapgrid_3d_t>(cls);
+    bindWriteGrid<float_heapgrid_3d_t>(cls);
+    bindWriteGrid<double_heapgrid_3d_t>(cls);
+    bindWriteGrid<complexfloat_heapgrid_3d_t>(cls);
+    bindWriteGrid<complexdouble_heapgrid_3d_t>(cls);
 
     // all done
     return;
