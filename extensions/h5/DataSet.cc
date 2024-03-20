@@ -75,6 +75,67 @@ namespace pyre::h5::py {
             // the docstring
             "write the contents of {data} to the tile @{origin}+{shape}");
     }
+
+    auto trim(const DataSet & self, string_t & result) -> string_t
+    {
+        // to trim the possible padding, get my actual datatype descriptor
+        auto strtype = self.getStrType();
+        // deduce the termination method
+        auto method = strtype.getStrpad();
+        // use it to figure out what the terminator looks like
+        switch (method) {
+            // null padded or null terminated string
+            case H5T_STR_NULLPAD:
+            case H5T_STR_NULLTERM:
+                // these are handled the same way: find the first null and trim the string
+                for (auto here = result.cbegin(); here != result.cend(); ++here) {
+                    // if this is not the terminator
+                    if (*here != '\0') {
+                        // move on
+                        continue;
+                    }
+                    // otherwise, trim
+                    result.erase(here, result.end());
+                    // and bail
+                    break;
+                }
+                // and done
+                break;
+            // fortran style padded strings
+            case H5T_STR_SPACEPAD:
+                // search from the end for the first non-space
+                for (auto here = result.cend() - 1; here != result.cbegin(); --here) {
+                    // this is still the padding character
+                    if (*here == ' ') {
+                        // move one
+                        continue;
+                    }
+                    // otherwise, trim
+                    result.erase(++here, result.cend());
+                    // and bail
+                    break;
+                }
+                // and done
+                break;
+            // everything else
+            default: {
+                // is a bug: hdf5 has added another method we don't know about
+                auto channel = pyre::journal::firewall_t("pyre.h5");
+                // complain
+                channel
+                    // what
+                    << "unknown string padding method "
+                    << method
+                    // where
+                    << pyre::journal::endl(__HERE__);
+                // send it off anyway, in case firewalls aren't fatal
+                break;
+            }
+        }
+        // all done
+        return result;
+    }
+
 } // namespace pyre::h5::py
 
 // datasets
@@ -161,7 +222,7 @@ pyre::h5::py::dataset(py::module & m)
             // check whether i am compatible with an integer
             if (type != H5T_INTEGER) {
                 // if not, make a channel
-                auto channel = pyre::journal::error_t("pyre.hdf5");
+                auto channel = pyre::journal::error_t("pyre.h5");
                 // complain
                 channel
                     // what
@@ -192,7 +253,7 @@ pyre::h5::py::dataset(py::module & m)
             // check whether i am compatible with an integer
             if (type != H5T_INTEGER) {
                 // if not, make a channel
-                auto channel = pyre::journal::error_t("pyre.hdf5");
+                auto channel = pyre::journal::error_t("pyre.h5");
                 // complain
                 channel
                     // what
@@ -224,7 +285,7 @@ pyre::h5::py::dataset(py::module & m)
             // check whether i am compatible with a floating point number
             if (type != H5T_FLOAT) {
                 // if not, make a channel
-                auto channel = pyre::journal::error_t("pyre.hdf5");
+                auto channel = pyre::journal::error_t("pyre.h5");
                 // complain
                 channel
                     // what
@@ -255,7 +316,7 @@ pyre::h5::py::dataset(py::module & m)
             // check whether i am compatible with a floating point number
             if (type != H5T_FLOAT) {
                 // if not, make a channel
-                auto channel = pyre::journal::error_t("pyre.hdf5");
+                auto channel = pyre::journal::error_t("pyre.h5");
                 // complain
                 channel
                     // what
@@ -286,7 +347,7 @@ pyre::h5::py::dataset(py::module & m)
             // check whether i can be converted to a string
             if (type != H5T_STRING) {
                 // if not, make a channel
-                auto channel = pyre::journal::error_t("pyre.hdf5");
+                auto channel = pyre::journal::error_t("pyre.h5");
                 // complain
                 channel
                     // what
@@ -301,7 +362,7 @@ pyre::h5::py::dataset(py::module & m)
             // read the data
             self.read(result, self.getStrType());
             // all done
-            return result;
+            return trim(self, result);
         },
         // the docstring
         "extract my contents as a string");
@@ -317,7 +378,7 @@ pyre::h5::py::dataset(py::module & m)
             // check whether i can be converted to a string
             if (type != H5T_STRING) {
                 // if not, make a channel
-                auto channel = pyre::journal::error_t("pyre.hdf5");
+                auto channel = pyre::journal::error_t("pyre.h5");
                 // complain
                 channel
                     // what
@@ -349,7 +410,7 @@ pyre::h5::py::dataset(py::module & m)
             // check whether i can be converted to a list of strings
             if (type != H5T_STRING) {
                 // if not, make a channel
-                auto channel = pyre::journal::error_t("pyre.hdf5");
+                auto channel = pyre::journal::error_t("pyre.h5");
                 // complain
                 channel
                     // what
@@ -366,10 +427,10 @@ pyre::h5::py::dataset(py::module & m)
             auto space = self.getSpace();
             // ask it for its rank
             auto rank = space.getSimpleExtentNdims();
-            // make sure i'm just a list;
+            // make sure i'm just a list
             if (rank > 1) {
                 // if not, make a channel
-                auto channel = pyre::journal::error_t("pyre.hdf5");
+                auto channel = pyre::journal::error_t("pyre.h5");
                 // complain
                 channel
                     // what
@@ -383,11 +444,15 @@ pyre::h5::py::dataset(py::module & m)
             }
             // if the {rank} is zero, we have a single string; deal with it
             if (rank == 0) {
+                // make some room
+                string_t result;
+                // read the data
+                self.read(result, self.getStrType());
                 // build a list of one string
                 auto strings = strings_t(1);
-                // read the data
-                self.read(strings[0], self.getStrType());
-                // and return
+                // trim and assign
+                strings[0] = trim(self, result);
+                // all done
                 return strings;
             }
             // if we get this far, we have a list of strings
@@ -409,8 +474,12 @@ pyre::h5::py::dataset(py::module & m)
             for (hsize_t idx = 0; idx < len; ++idx) {
                 // restrict the read dataspace to one string at offset {idx}
                 read.selectHyperslab(H5S_SELECT_SET, &one, &idx);
+                // make some room
+                string_t result;
                 // unconditional/unrestricted read
-                self.read(strings[idx], self.getStrType(), write, read);
+                self.read(result, self.getStrType(), write, read);
+                // trim and assign
+                strings[idx] = trim(self, result);
             }
             // all done
             return strings;
@@ -429,7 +498,7 @@ pyre::h5::py::dataset(py::module & m)
             // check whether i can be converted to a list of strings
             if (type != H5T_STRING) {
                 // if not, make a channel
-                auto channel = pyre::journal::error_t("pyre.hdf5");
+                auto channel = pyre::journal::error_t("pyre.h5");
                 // complain
                 channel
                     // what
@@ -447,7 +516,7 @@ pyre::h5::py::dataset(py::module & m)
             // make sure i'm just a list
             if (rank != 1) {
                 // if not, make a channel
-                auto channel = pyre::journal::error_t("pyre.hdf5");
+                auto channel = pyre::journal::error_t("pyre.h5");
                 // complain
                 channel
                     // what
@@ -497,7 +566,7 @@ pyre::h5::py::dataset(py::module & m)
             // check whether i am an enumeration
             if (type != H5T_ENUM) {
                 // if not, make a channel
-                auto channel = pyre::journal::error_t("pyre.hdf5");
+                auto channel = pyre::journal::error_t("pyre.h5");
                 // complain
                 channel
                     // what
@@ -528,7 +597,7 @@ pyre::h5::py::dataset(py::module & m)
             // check whether i am an enumeration
             if (type != H5T_ENUM) {
                 // if not, make a channel
-                auto channel = pyre::journal::error_t("pyre.hdf5");
+                auto channel = pyre::journal::error_t("pyre.h5");
                 // complain
                 channel
                     // what
@@ -603,7 +672,6 @@ pyre::h5::py::dataset(py::module & m)
     bindReadGrid<double_heapgrid_3d_t>(cls);
     bindReadGrid<complexfloat_heapgrid_3d_t>(cls);
     bindReadGrid<complexdouble_heapgrid_3d_t>(cls);
-
 
     // writing
     // from memory buffers
