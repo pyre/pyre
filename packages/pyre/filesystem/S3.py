@@ -23,6 +23,21 @@ class S3(Filesystem):
     """
 
     # interface
+    def location(self):
+        """
+        Assemble my location
+        """
+        # get the parts of my uri
+        scheme = self.scheme
+        profile = self.profile or "default"
+        region = self.region
+        # assemble the authority
+        authority = f"{profile}@{region}"
+        # make sure my {address} is a path; clients will want to do arithmetic with it
+        address = pyre.primitives.path(f"/{self.bucket}")
+        # build the location and return it
+        return pyre.primitives.uri(scheme=scheme, authority=authority, address=address)
+
     def discover(self, prefix=None, **kwds):
         """
         Fill my structure with contents that match {prefix}
@@ -85,17 +100,11 @@ class S3(Filesystem):
         # deconstruct my root
         profile, region, bucket, prefix = self._parse(uri=root)
         # save my parts
+        self.scheme = "s3"
         self.profile = profile
         self.region = region
         self.bucket = bucket
         self.prefix = prefix
-        # assemble my location
-        self.location = pyre.primitives.uri(
-            scheme="s3",
-            authority=f"{profile}@{region}",
-            address=pyre.primitives.path(f"/{bucket}"),
-        )
-
         # all done
         return
 
