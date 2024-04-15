@@ -21,6 +21,8 @@ slepc.incpath ?= $(slepc.dir)/include
 slepc.ldflags ?=
 # the canonical form of the lib directory
 slepc.libpath ?= $(slepc.dir)/lib
+# its rpath
+slepc.rpath = $(slepc.libpath)
 # the names of the libraries
 slepc.libraries := slepc
 

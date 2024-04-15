@@ -21,6 +21,8 @@ pybind11.incpath ?= $(pybind11.dir)/include
 pybind11.ldflags ?=
 # the canonical form of the lib directory
 pybind11.libpath ?=
+# its rpath
+pybind11.rpath = $(pybind11.libpath)
 # the names of the libraries
 pybind11.libraries :=
 

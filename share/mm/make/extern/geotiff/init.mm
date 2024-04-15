@@ -21,6 +21,8 @@ geotiff.incpath ?= $(geotiff.dir)/include
 geotiff.ldflags ?=
 # the canonical form of the lib directory
 geotiff.libpath ?= $(geotiff.dir)/lib
+# its rpath
+geotiff.rpath = $(geotiff.libpath)
 # the names of the libraries
 geotiff.libraries := geotiff tiff
 

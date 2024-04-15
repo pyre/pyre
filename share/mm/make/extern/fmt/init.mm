@@ -21,6 +21,8 @@ fmt.incpath ?= $(fmt.dir)/include
 fmt.ldflags ?=
 # the canonical form of the lib directory
 fmt.libpath ?= $(fmt.dir)/lib
+# its rpath
+fmt.rpath = $(fmt.libpath)
 # the names of the libraries
 fmt.libraries ?=  fmt
 

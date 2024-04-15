@@ -21,6 +21,8 @@ gdal.incpath ?= $(gdal.dir)/include
 gdal.ldflags ?=
 # the canonical form of the lib directory
 gdal.libpath ?= $(gdal.dir)/lib
+# its rpath
+gdal.rpath = $(gdal.libpath)
 # the names of the libraries
 gdal.libraries := gdal
 

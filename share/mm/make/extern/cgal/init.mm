@@ -21,6 +21,8 @@ cgal.incpath ?= $(cgal.dir)/include
 cgal.ldflags ?=
 # the canonical form of the lib directory
 cgal.libpath ?=
+# its rpath
+cgal.rpath = $(cgal.libpath)
 # the name of the library
 cgal.libraries :=
 

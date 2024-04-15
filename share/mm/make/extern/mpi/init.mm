@@ -32,6 +32,8 @@ mpi.incpath ?= $(mpi.dir)/include
 mpi.ldflags ?=
 # the canonical form of the lib directory
 mpi.libpath ?= $(mpi.dir)/lib
+# its rpath
+mpi.rpath = $(mpi.libpath)
 # the names of the libraries are flavor dependent
 mpi.libraries := \
     ${if ${findstring openmpi,$(mpi.flavor)},mpi_cxx mpi $(mpi.required),}

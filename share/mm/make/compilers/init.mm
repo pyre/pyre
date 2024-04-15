@@ -59,6 +59,21 @@ ${strip
 }
 endef
 
+# build a linker command line that creates an extension
+#   usage: compiler.dll {language} {compiler} {source} {dll} {dependencies}
+define compiler.ext =
+${strip
+    $($(2).driver)
+        $($(2).link.ext)
+        $(3)
+        $($(2).link.output) $(4)
+        $($(2).compile.base)
+        ${call compiler.compile.options,$(1),$(2),$(5)}
+        ${call compiler.link.options,$(1),$(2),$(5)}
+}
+endef
+
+
 # helpers
 
 # assemble the compile time options from the various sources

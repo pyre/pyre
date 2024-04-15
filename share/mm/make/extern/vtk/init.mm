@@ -24,6 +24,8 @@ vtk.incpath ?= $(vtk.dir)/include/vtk-$(vtk.version)
 vtk.ldflags ?=
 # the canonical form of the lib directory
 vtk.libpath ?= $(vtk.dir)/lib
+# its rpath
+vtk.rpath = $(vtk.libpath)
 # the way library names are formed is version dependent; we support 6.x and higher
 vtk.libraries := \
     ${foreach \

@@ -21,6 +21,8 @@ gtest.incpath ?= $(gtest.dir)/include
 gtest.ldflags ?=
 # the canonical form of the lib directory
 gtest.libpath ?= $(gtest.dir)/lib
+# its rpath
+gtest.rpath = $(gtest.libpath)
 # the names of the libraries
 gtest.libraries += gtest pthread
 

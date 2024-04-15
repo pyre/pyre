@@ -17,6 +17,7 @@ gcc.prefix.incpath := -I
 
 gcc.prefix.ldflags :=
 gcc.prefix.libpath := -L
+gcc.prefix.rpath := -Wl,-rpath,
 gcc.prefix.libraries := -l
 
 # compile time flags
@@ -24,6 +25,7 @@ gcc.compile.only := -c
 gcc.compile.output := -o
 gcc.compile.makedep := -MD
 gcc.compile.base := -fno-diagnostics-color -pipe $(gcc.compile.makedep)
+gcc.compile.isysroot := -isysroot
 
 # symbols and optimization
 gcc.debug := -g
@@ -42,7 +44,9 @@ gcc.std.c11 := -std=c11
 # link time flags
 gcc.link.output := -o
 # link a dynamically loadable library
-gcc.link.dll := -shared
+gcc.link.dll = $(platform.c.dll)
+# link an extension
+gcc.link.ext = $(platform.c.ext)
 
 # command line options
 gcc.defines = MM_COMPILER_gcc

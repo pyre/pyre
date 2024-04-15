@@ -21,6 +21,8 @@ cantera.incpath ?= $(cantera.dir)/include
 cantera.ldflags ?=
 # the canonical form of the lib directory
 cantera.libpath ?= $(cantera.dir)/lib
+# its rpath
+cantera.rpath = $(cantera.libpath)
 # the names of the libraries
 cantera.libraries ?= cantera cantera_fortran
 

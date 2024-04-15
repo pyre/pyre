@@ -21,6 +21,8 @@ p2.incpath ?= $(p2.dir)/include
 p2.ldflags ?=
 # the canonical form of the lib directory
 p2.libpath ?= $(p2.dir)/lib
+# its rpath
+p2.rpath = $(p2.libpath)
 # the names of the libraries
 p2.libraries ?= # p2
 

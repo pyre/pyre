@@ -60,6 +60,7 @@ define tests.init =
     ${eval $(2).incpath ?=}
     ${eval $(2).ldflags ?=}
     ${eval $(2).libpath ?=}
+    ${eval $(2).rpath ?=}
     ${eval $(2).libraries ?=}
 
     # derived quantities
@@ -196,6 +197,7 @@ define test.staging.target =
         ${eval $(_trgt).incpath ?= $($(1).incpath)}
         ${eval $(_trgt).ldflags ?= $($(1).ldflags)}
         ${eval $(_trgt).libpath ?= $($(1).libpath)}
+        ${eval $(_trgt).rpath ?= $($(1).rpath)}
         ${eval $(_trgt).libraries ?= $($(1).libraries)}
         ${foreach category,$(languages.$($(_trgt).language).categories.compile), \
             ${eval $(_trgt).$($(_trgt).language).$(category) ?=} \

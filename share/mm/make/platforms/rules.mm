@@ -11,6 +11,13 @@ platform.info:
 	@${call log.var,architecture,$(platform.arch)}
 	@${call log.var,tag,$(platform)}
 	@${call log.var,macro,$(platform.macro)}
+	@${foreach language, $(languages), \
+		${call log.sec,$(language),}; \
+		${foreach category, $(languages.$(language).categories), \
+			${call log.var,platform.$(language).$(category),$(platform.$(language).$(category))}; \
+		} \
+	}
+
 
 
 # end of file

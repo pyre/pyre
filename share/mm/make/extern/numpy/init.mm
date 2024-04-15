@@ -21,6 +21,8 @@ numpy.incpath ?= $(numpy.dir)/include
 numpy.ldflags ?=
 # the canonical form of the lib directory
 numpy.libpath ?= $(numpy.dir)/lib
+# its rpath
+numpy.rpath = $(numpy.libpath)
 # the names of the libraries
 numpy.libraries := npymath
 

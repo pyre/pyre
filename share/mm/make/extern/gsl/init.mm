@@ -21,6 +21,8 @@ gsl.incpath ?= $(gsl.dir)/include
 gsl.ldflags ?=
 # the canonical form of the lib directory
 gsl.libpath ?= $(gsl.dir)/lib
+# its rpath
+gsl.rpath = $(gsl.libpath)
 # the name of the library
 gsl.libraries := gsl
 

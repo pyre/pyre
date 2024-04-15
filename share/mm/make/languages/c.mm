@@ -14,7 +14,7 @@ languages.c.interpreted :=
 
 # flags
 languages.c.categories.compile := flags defines incpath
-languages.c.categories.link := ldflags libpath libraries
+languages.c.categories.link := ldflags libpath rpath libraries
 
 
 # build a compile command line
@@ -30,6 +30,11 @@ languages.c.link = ${call compiler.link,c,$(compiler.c),$(1),$(2),$(3)}
 # build a link command line that builds a dll
 #  usage: languages.c.dll {source-file} {dll} {dependencies}
 languages.c.dll = ${call compiler.dll,c,$(compiler.c),$(1),$(2),$(3)}
+
+
+# build a link command line that builds an extension
+#  usage: languages.c.ext {source-file} {ext} {dependencies}
+languages.c.ext = ${call compiler.ext,c,$(compiler.c),$(1),$(2),$(3)}
 
 
 # end of file

@@ -117,6 +117,7 @@ define libraries.init =
     # link time
     $(2).internal.ldflags ?=
     $(2).internal.libpath ?=
+    $(2).internal.rpath ?=
     $(2).internal.libraries ?=
 
     # implement the external protocol
@@ -127,7 +128,8 @@ define libraries.init =
     $(2).incpath ?= $(builder.dest.inc) # note: NOT ($(2).incdir)
     # link time
     $(2).ldflags ?=
-    $(2).libpath ?= ${if $($(2).sources),$(builder.dest.lib),} # that's where we put it
+    $(2).libpath ?= ${if $($(2).sources),$(builder.dest.lib:%/=%),} # that's where we put it
+    $(2).rpath ?= $$($(2).libpath)
     $(2).libraries ?= ${if $($(2).sources),$($(2).libstem),} # that's what we call it
 
     # documentation
@@ -147,7 +149,7 @@ define libraries.init =
     $(2).meta.locations := incdir libdir tmpdir
     $(2).meta.artifacts := root prefix directories sources headers
     $(2).meta.derived := staging.archive staging.objects staging.incdirs staging.headers
-    $(2).meta.external := flags defines incpath ldflags libpath libraries
+    $(2).meta.external := flags defines incpath ldflags libpath rpath libraries
 
     # document each one
     # general
@@ -179,6 +181,7 @@ define libraries.init =
     $(2).metadoc.incpath := "tell the compiler where the headers are"
     $(2).metadoc.ldflags := "link time flags"
     $(2).metadoc.libpath := "the path to the archives"
+    $(2).metadoc.rpath := "the rpath to the archives"
     $(2).metadoc.libraries := "the list of archives to place on the link line"
 
 # all done
@@ -207,9 +210,7 @@ define library.sources
     ${strip
         ${filter-out $($(1).sources.exclude),
             ${foreach directory, $($(1).directories),
-                ${wildcard
-                    ${addprefix $(directory)*,$(languages.sources)}
-                }
+                ${wildcard ${addprefix $(directory)*,$(languages.sources)}}
             }
         }
         ${addprefix $($(1).prefix),$($(1).sources.extra)}
@@ -238,9 +239,7 @@ define library.headers
     ${strip
         ${filter-out $($(1).headers.exclude) $($(1).headers.gateway),
             ${foreach directory, $($(1).directories),
-                ${wildcard
-                    ${addprefix $(directory)*,$(languages.headers)}
-                }
+                ${wildcard ${addprefix $(directory)*,$(languages.headers)}}
             }
         }
         ${addprefix $($(1).prefix),$($(1).headers.extra)}

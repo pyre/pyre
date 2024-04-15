@@ -21,6 +21,8 @@ gmsh.incpath ?= $(gmsh.dir)/include
 gmsh.ldflags ?=
 # the canonical form of the lib directory
 gmsh.libpath ?= $(gmsh.dir)/lib
+# its rpath
+gmsh.rpath = $(gmsh.libpath)
 # the names of the libraries
 gmsh.libraries := gmsh
 

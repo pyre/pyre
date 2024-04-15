@@ -21,6 +21,8 @@ petsc.incpath ?= $(petsc.dir)/include
 petsc.ldflags ?=
 # the canonical form of the lib directory
 petsc.libpath ?= $(petsc.dir)/lib
+# its rpath
+petsc.rpath = $(petsc.libpath)
 # the names of the libraries
 petsc.libraries := petsc
 

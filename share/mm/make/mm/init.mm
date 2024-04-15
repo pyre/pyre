@@ -25,6 +25,7 @@ mm.defines ?= WITH_MM
 mm.incpath ?=
 mm.ldflags ?=
 mm.libpath ?=
+mm.rpath ?=
 mm.libraries ?=
 
 # influence the build
@@ -36,7 +37,8 @@ mm.compile.options = \
 # add a library search path to the build to facilitate linking products against specific targets
 #   usage: mm.link.options {language}
 mm.link.options = \
-    ${addprefix $($(compiler.$(1)).prefix.libpath),$(mm.libpath)}
+    ${addprefix $($(compiler.$(1)).prefix.libpath),$(mm.libpath)} \
+    ${addprefix $($(compiler.$(1)).prefix.rpath),$(mm.rpath)}
 
 # contribution to the config path
 mm.config := $(mm.home)

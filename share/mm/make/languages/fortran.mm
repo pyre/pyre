@@ -15,7 +15,7 @@ languages.fortran.interpreted :=
 
 # flags
 languages.fortran.categories.compile := flags defines incpath
-languages.fortran.categories.link := ldflags libpath libraries
+languages.fortran.categories.link := ldflags libpath rpath libraries
 
 
 # build a compile command line

@@ -23,6 +23,8 @@ yaml.incpath ?= $(yaml.dir)/include
 yaml.ldflags ?=
 # the canonical form of the lib directory
 yaml.libpath ?= $(yaml.dir)/lib
+# its rpath
+yaml.rpath = $(yaml.libpath)
 # the name of the library
 yaml.libraries := yaml$(yaml.flavor)
 

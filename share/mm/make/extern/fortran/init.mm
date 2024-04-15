@@ -21,6 +21,8 @@ fortran.incpath ?= $($(compiler.fortran).mixed.incpath)
 fortran.ldflags ?= $($(compiler.fortran).mixed.ldflags)
 # the canonical form of the lib directory
 fortran.libpath ?= $($(compiler.fortran).mixed.libpath)
+# its rpath
+fortran.rpath = $(fortran.libpath)
 # the names of the libraries
 fortran.libraries ?= $($(compiler.fortran).mixed.libraries)
 

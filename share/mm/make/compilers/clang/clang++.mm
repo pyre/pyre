@@ -17,6 +17,7 @@ clang++.prefix.incpath := -I
 
 clang++.prefix.ldflags :=
 clang++.prefix.libpath := -L
+clang++.prefix.rpath := -Wl,-rpath,
 clang++.prefix.libraries := -l
 
 # compile time flags
@@ -24,6 +25,7 @@ clang++.compile.only := -c
 clang++.compile.output := -o
 clang++.compile.makedep := -MD
 clang++.compile.base += -pipe $(clang++.compile.makedep)
+clang++.compile.isysroot := -isysroot
 
 # the STL that comes with older versions of {libc++} has multiple deficiencies
 # on macs with macports, uncomment to force the GNU {libstdc++}
@@ -50,7 +52,9 @@ clang++.std.c++20 := -std=c++20
 clang++.link.output := -o
 clang++.link.shared :=
 # link a dynamically loadable library
-clang++.link.dll := -shared
+clang++.link.dll = $(platform.c++.dll)
+# link an extension
+clang++.link.ext = $(platform.c++.ext)
 
 # command line options
 clang++.defines = MM_COMPILER_clang

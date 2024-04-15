@@ -21,6 +21,8 @@ summit.incpath ?= $(summit.dir)/include
 summit.ldflags ?=
 # the canonical form of the lib directory
 summit.libpath ?= $(summit.dir)/lib
+# its rpath
+summit.rpath = $(summit.libpath)
 # the names of the libraries
 summit.libraries ?= summit tetra
 

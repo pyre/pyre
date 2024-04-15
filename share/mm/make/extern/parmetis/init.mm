@@ -21,6 +21,8 @@ parmetis.incpath ?= $(parmetis.dir)/include
 parmetis.ldflags ?=
 # the canonical form of the lib directory
 parmetis.libpath ?= $(parmetis.dir)/lib
+# its rpath
+parmetis.rpath = $(parmetis.libpath)
 # the names of the libraries
 parmetis.libraries := parmetis
 

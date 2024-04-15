@@ -21,6 +21,8 @@ libpq.incpath ?= $(libpq.dir)/include
 libpq.ldflags ?=
 # the canonical form of the lib directory
 libpq.libpath ?= $(libpq.dir)/lib
+# its rpath
+libpq.rpath = $(libpq.libpath)
 # the names of the libraries
 libpq.libraries := pq
 

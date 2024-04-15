@@ -21,6 +21,8 @@ pyre.incpath ?= $(pyre.dir)/include
 pyre.ldflags ?=
 # the canonical form of the lib directory
 pyre.libpath ?= $(pyre.dir)/lib
+# its rpath
+pyre.rpath = $(pyre.libpath)
 # the names of the libraries
 pyre.libraries ?= pyre journal
 

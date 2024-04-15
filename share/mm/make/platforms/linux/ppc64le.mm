@@ -11,5 +11,19 @@ platform.compilers = gcc nvcc python cython
 #     platform.clean {stem}
 platform.clean :=
 
+# the location of the system headers
+platform.isysroot :=
+
+# c
+platform.c.flags :=
+platform.c.ldflags :=
+platform.c.dll = -shared
+platform.c.ext = -shared
+# c++
+platform.c++.flags :=
+platform.c++.ldflags :=
+platform.c++.dll = -shared
+platform.c++.ext = -shared
+
 
 # end of file

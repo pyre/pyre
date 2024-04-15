@@ -61,7 +61,7 @@ $(1).extension: $($(1).module.so)
 
 $($(1).module.so): ${call extension.workflows.dependencies,$(1)}
 	@${call log.action,"module",${subst $($(1).home),,$($(1).module.init)}}
-	${call languages.$($(1).module.language).dll,\
+	${call languages.$($(1).module.language).ext,\
             $($(1).module.init), \
             $($(1).module.so), \
             $($(1).lib).$($(1).module.language) $($(1).lib) $($(1).wraps) $($(1).extern)}
@@ -127,7 +127,7 @@ define extension.workflows.makeinit
     ${eval module.sources := \
         ${strip \
             ${foreach directory,$(module.directories), \
-                ${wildcard
+                ${wildcard \
                     ${addprefix \
                         $(directory)*,\
                         $(languages.$(module.language).sources) \

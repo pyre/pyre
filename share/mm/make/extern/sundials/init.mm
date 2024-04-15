@@ -21,6 +21,8 @@ sundials.incpath ?= $(sundials.dir)/include
 sundials.ldflags ?=
 # the canonical form of the lib directory
 sundials.libpath ?= $(sundials.dir)/lib
+# its rpath
+sundials.rpath = $(sundials.libpath)
 # the names of the libraries
 sundials.libraries ?= sundials_cvodes sundials_ida sundials_nvecserial sundials_sunlinsoldense sundials_sunlinsolband
 

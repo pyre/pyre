@@ -170,8 +170,10 @@ endef
 # make a pile with all the javascript sources
 define webpack.source.app.sources =
     ${strip
-        ${shell find ${realpath ${addprefix $($(1).prefix),$($(1).bundle)}} -type f -name \*.js}
-        ${shell find ${realpath ${addprefix $($(1).prefix),$($(1).bundle)}} -type f -name \*.gql}
+        ${foreach directory, $($(1).source.app.dirs),
+            ${wildcard ${addprefix $(directory)*,$(languages.javascript.sources)}}
+            ${wildcard ${addprefix $(directory)*,$(languages.graphql.sources)}}
+        }
     }
 # all done
 endef

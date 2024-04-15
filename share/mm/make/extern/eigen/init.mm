@@ -21,6 +21,8 @@ eigen.incpath ?= $(eigen.dir)/include/eigen3
 eigen.ldflags ?=
 # the canonical form of the lib directory
 eigen.libpath ?=
+# its rpath
+eigen.rpath = $(eigen.libpath)
 # the names of the libraries
 eigen.libraries :=
 

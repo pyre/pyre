@@ -24,6 +24,8 @@ fftw.incpath ?= $(fftw.dir)/include
 fftw.ldflags ?=
 # the canonical form of the lib directory
 fftw.libpath ?= $(fftw.dir)/lib
+# its rpath
+fftw.rpath = $(fftw.libpath)
 # the name of the library is flavor dependent
 fftw.libraries := ${addprefix fftw,$(fftw.flavor)}
 

@@ -21,6 +21,8 @@ metis.incpath ?= $(metis.dir)/include
 metis.ldflags ?=
 # the canonical form of the lib directory
 metis.libpath ?= $(metis.dir)/lib
+# its rpath
+metis.rpath = $(metis.libpath)
 # the names of the libraries
 metis.libraries := metis
 

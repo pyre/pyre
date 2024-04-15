@@ -21,6 +21,8 @@ openblas.incpath ?= $(openblas.dir)/include
 openblas.ldflags ?=
 # the canonical form of the lib directory
 openblas.libpath ?= $(openblas.dir)/lib
+# its rpath
+openblas.rpath = $(openblas.libpath)
 # the name of the library
 openblas.libraries := openblas
 

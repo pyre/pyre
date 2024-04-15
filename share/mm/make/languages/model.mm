@@ -5,7 +5,7 @@
 
 
 # initialize the list of known languages
-languages := c c++ fortran python cython cuda
+languages := c c++ fortran python cython cuda javascript graphql
 
 # load the known languages
 include $(languages:%=make/languages/%.mm)
@@ -116,6 +116,18 @@ define languages.dll =
 ${strip
     ${if $(compiler.$(1)),
         ${call languages.$(1).dll,$(2),$(3),$(4)},
+        ${call log.error,"no $(1) compiler available"}
+    }
+}
+endef
+
+
+# dispatch an ext event to the registered compiler for a given language
+#   usage: languages.ext {language} {source} {ext} {external dependencies}
+define languages.ext =
+${strip
+    ${if $(compiler.$(1)),
+        ${call languages.$(1).ext,$(2),$(3),$(4)},
         ${call log.error,"no $(1) compiler available"}
     }
 }

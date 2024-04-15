@@ -17,6 +17,7 @@ g++.prefix.incpath := -I
 
 g++.prefix.ldflags :=
 g++.prefix.libpath := -L
+g++.prefix.rpath := -Wl,-rpath,
 g++.prefix.libraries := -l
 
 # compile time flags
@@ -24,6 +25,7 @@ g++.compile.only := -c
 g++.compile.output := -o
 g++.compile.makedep := -MD
 g++.compile.base := -fno-diagnostics-color -pipe $(g++.compile.makedep)
+g++.compile.isysroot := -isysroot
 
 # symbols and optimization
 g++.debug := -g
@@ -44,7 +46,9 @@ g++.std.c++20 := -std=c++20
 g++.link.output := -o
 g++.link.shared :=
 # link a dynamically loadable library
-g++.link.dll := -shared
+g++.link.dll = $(platform.c++.dll)
+# link an extension
+g++.link.ext = $(platform.c++.ext)
 
 # command line options
 g++.defines = MM_COMPILER_gcc

@@ -23,6 +23,8 @@ hdf5.incpath ?= $(hdf5.dir)/include
 hdf5.ldflags ?=
 # the canonical form of the lib directory
 hdf5.libpath ?= $(hdf5.dir)/lib
+# its rpath
+hdf5.rpath = $(hdf5.libpath)
 # the names of the libraries
 hdf5.libraries := hdf5_cpp hdf5
 
