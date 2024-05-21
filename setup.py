@@ -21,7 +21,7 @@ skbuild.setup(
         # pybind11
         f"-Dpybind11_DIR={pybind11.get_cmake_dir()}",
         # pyre version, in case the build happens outside the git repo
-        f"-DPYRE_VERSION=1.12.4",
+        f"-DPYRE_VERSION=1.12.5",
         # put packages in {site-packages}
         f"-DPYRE_DEST_PACKAGES={packageDir}",
     ]

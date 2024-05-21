@@ -23,7 +23,7 @@ except ImportError:
     # for the pyre repo
     _pyre_repo = "https://github.com/pyre/pyre/releases/download"
     # we will download the canonical version
-    _pyre_release = "v1.12.4"
+    _pyre_release = "v1.12.5"
     # of the bootstrapping archive
     _pyre_boot = "pyre-boot.zip"
     # and deposit it in a temporary directory

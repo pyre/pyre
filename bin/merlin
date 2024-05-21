@@ -27,7 +27,7 @@ except ImportError:
     # force the existence of the directory
     os.makedirs(name=xdg, exist_ok=True)
     # pick the target release of pyre
-    release = "v1.12.4"
+    release = "v1.12.5"
     # the pyre installation is in a zip file
     pyre = f"pyre-{release}.zip"
     # which we place in the pyre specific configuration directory
