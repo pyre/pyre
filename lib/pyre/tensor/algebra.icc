@@ -465,15 +465,6 @@ pyre::tensor::operator*(const matrix_t<D1, D2, T, packingT> & A, const vector_t<
     return _matrix_times_vector(A, v, make_integer_sequence<D1> {});
 }
 
-// vector-matrix multiplication
-template <int D1, int D2, typename T, class packingT>
-constexpr auto
-pyre::tensor::operator*(const vector_t<D2, T> & v, const matrix_t<D1, D2, T, packingT> & A)
-    -> vector_t<D1, T>
-{
-    return transpose(A) * v;
-}
-
 // matrix-matrix multiplication
 template <int D1, int D2, int D3, typename T, class packingT1, class packingT2>
 constexpr auto
