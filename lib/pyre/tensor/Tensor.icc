@@ -101,12 +101,6 @@ constexpr pyre::tensor::Tensor<T, packingT, I...>::operator T() const
 }
 
 template <typename T, class packingT, int... I>
-constexpr pyre::tensor::Tensor<T, packingT, I...>::operator data_t() const
-{
-    return _data;
-}
-
-template <typename T, class packingT, int... I>
 constexpr pyre::tensor::Tensor<T, packingT, I...>::operator Tensor<
     T, pyre::grid::canonical_t<N>, I...>() const
 {
