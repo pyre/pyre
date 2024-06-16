@@ -462,7 +462,7 @@ pyre::tensor::operator*(const matrix_t<D1, D2, T, packingT> & A, const vector_t<
     {
         return vector_t<D1, T>((row<K>(A) * v)...);
     };
-    return _matrix_times_vector(A, v, make_integer_sequence<D2> {});
+    return _matrix_times_vector(A, v, make_integer_sequence<D1> {});
 }
 
 // vector-matrix multiplication
@@ -526,11 +526,11 @@ pyre::tensor::operator*(
         };
 
         // fill the {I, J} components
-        (_fill_J.template operator()<K>(A1, A2, result, make_integer_sequence<D3> {}), ...);
+        (_fill_J.template operator()<K>(A1, A2, result, make_integer_sequence<D1> {}), ...);
     };
 
     // fill the {I, ...} components
-    _fill_I(A1, A2, result, make_integer_sequence<D1> {});
+    _fill_I(A1, A2, result, make_integer_sequence<D3> {});
 
     // all done
     return result;
@@ -1021,7 +1021,7 @@ pyre::tensor::row(const matrix_t<D1, D2, T, packingT> & A) -> vector_t<D2, T>
         // return a vector filled with entries (I, J) for all J...
         return vector_t<D2, T>(entry_IK.template operator()<J>()...);
     };
-    return _row(make_integer_sequence<D1> {});
+    return _row(make_integer_sequence<D2> {});
 }
 
 // extract column {I} of a matrix
