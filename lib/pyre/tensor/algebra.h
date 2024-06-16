@@ -57,8 +57,7 @@ namespace pyre::tensor {
     template <int D1, int D2, int D3, typename T, class packingT1, class packingT2>
     constexpr auto operator*(
         const matrix_t<D1, D2, T, packingT1> & A1, const matrix_t<D2, D3, T, packingT2> & A2)
-        -> matrix_t<D1, D3, T, typename repacking_prod<packingT1, packingT2>::packing_type>
-        requires(D1 != 1 && D2 != 1 && D3 != 1);
+        -> matrix_t<D1, D3, T, typename repacking_prod<packingT1, packingT2>::packing_type>;
 
     // tensor divided scalar
     template <typename T2, typename T, class packingT, int... I>
@@ -215,6 +214,11 @@ namespace pyre::tensor {
     template <int D1, int D2, typename T, class packingT>
     constexpr auto transpose(const matrix_t<D1, D2, T, packingT> & A)
         -> matrix_t<D2, D1, T, packingT>;
+
+    // the transpose of a vector (returns a 1xD matrix, aka row vector)
+    template <int D, typename T>
+    constexpr auto transpose(const vector_t<D, T> & v)
+        -> matrix_t<1, D, T>;
 
     // the eigenvalues of a 2x2 matrix
     template <typename T>

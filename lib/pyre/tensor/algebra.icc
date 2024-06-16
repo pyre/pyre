@@ -471,7 +471,6 @@ constexpr auto
 pyre::tensor::operator*(
     const matrix_t<D1, D2, T, packingT1> & A1, const matrix_t<D2, D3, T, packingT2> & A2)
     -> matrix_t<D1, D3, T, typename repacking_prod<packingT1, packingT2>::packing_type>
-    requires(D1 != 1 && D2 != 1 && D3 != 1)
 {
     // the type of A1
     using matrix1_t = matrix_t<D1, D2, T, packingT1>;
@@ -783,6 +782,24 @@ pyre::tensor::transpose(const matrix_t<D1, D2, T, packingT> & A) -> matrix_t<D2,
     };
     _transposeJ(make_integer_sequence<D2> {});
     return AT;
+}
+
+template <int D, typename T>
+constexpr auto
+pyre::tensor::transpose(const vector_t<D, T> & v) -> matrix_t<1, D, T>
+{
+    // the type of {v} transposed, that is a 1xD matrix, aka row vector
+    using matrix_result_t = matrix_t<1, D, T>;
+
+    // helper function to transpose {v}
+    auto _transpose = [&v]<int... I>(integer_sequence<I...>)
+    {
+        // build a 1xD matrix with the content of {v}
+        return matrix_result_t {v[I]...};
+    };
+
+    // all done
+    return _transpose(make_integer_sequence<D> {});
 }
 
 template <int D, typename T, class packingT>
