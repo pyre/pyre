@@ -111,9 +111,6 @@ namespace pyre::tensor {
         constexpr operator T() const
             requires(S == 1);
 
-        // cast to underlying data structure
-        constexpr operator data_t() const;
-
         // cast to canonical packing
         constexpr operator canonical_tensor_t() const;
 
