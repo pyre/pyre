@@ -53,11 +53,6 @@ namespace pyre::tensor {
     constexpr auto operator*(const matrix_t<D1, D2, T, packingT> & A, const vector_t<D2, T> & v)
         -> vector_t<D1, T>;
 
-    // vector-matrix multiplication
-    template <int D1, int D2, typename T, class packingT>
-    constexpr auto operator*(const vector_t<D2, T> & v, const matrix_t<D1, D2, T, packingT> & A)
-        -> vector_t<D1, T>;
-
     // matrix-matrix multiplication
     template <int D1, int D2, int D3, typename T, class packingT1, class packingT2>
     constexpr auto operator*(
