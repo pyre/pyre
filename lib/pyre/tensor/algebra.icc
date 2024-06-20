@@ -448,7 +448,7 @@ pyre::tensor::operator*(const vector_t<D, T> & v1, const vector_t<D, T> & v2) ->
     return _vector_times_vector(v1, v2, make_integer_sequence<D> {});
 }
 
-// matrix-vector multiplication
+// matrix-vector multiplication (contract on matrix second index)
 template <int D1, int D2, typename T, class packingT>
 constexpr auto
 pyre::tensor::operator*(const matrix_t<D1, D2, T, packingT> & A, const vector_t<D2, T> & v)
@@ -463,6 +463,22 @@ pyre::tensor::operator*(const matrix_t<D1, D2, T, packingT> & A, const vector_t<
         return vector_t<D1, T>((row<K>(A) * v)...);
     };
     return _matrix_times_vector(A, v, make_integer_sequence<D1> {});
+}
+
+// vector-matrix multiplication (contract on first matrix index)
+template <int D1, int D2, typename T, class packingT>
+constexpr auto pyre::tensor::operator*(const vector_t<D1, T> & v, const matrix_t<D1, D2, T, packingT> & A)
+    -> vector_t<D2, T>
+{
+    // helper function
+    constexpr auto _matrix_times_vector = []<int... K>(
+                                              const matrix_t<D1, D2, T, packingT> & A,
+                                              const vector_t<D1, T> & v, integer_sequence<K...>)
+                                              ->vector_t<D1, T>
+    {
+        return vector_t<D2, T>((col<K>(A) * v)...);
+    };
+    return _matrix_times_vector(A, v, make_integer_sequence<D2> {});
 }
 
 // matrix-matrix multiplication
@@ -786,20 +802,10 @@ pyre::tensor::transpose(const matrix_t<D1, D2, T, packingT> & A) -> matrix_t<D2,
 
 template <int D, typename T>
 constexpr auto
-pyre::tensor::transpose(const vector_t<D, T> & v) -> matrix_t<1, D, T>
+pyre::tensor::transpose(const vector_t<D, T> & v) -> vector_t<D, T>
 {
-    // the type of {v} transposed, that is a 1xD matrix, aka row vector
-    using matrix_result_t = matrix_t<1, D, T>;
-
-    // helper function to transpose {v}
-    auto _transpose = [&v]<int... I>(integer_sequence<I...>)
-    {
-        // build a 1xD matrix with the content of {v}
-        return matrix_result_t {v[I]...};
-    };
-
-    // all done
-    return _transpose(make_integer_sequence<D> {});
+    // nothing to be done, transpose is trivial for vectors
+    return v;
 }
 
 template <int D, typename T, class packingT>
