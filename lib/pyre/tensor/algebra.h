@@ -48,10 +48,15 @@ namespace pyre::tensor {
     template <int D, typename T>
     constexpr auto operator*(const vector_t<D, T> & v1, const vector_t<D, T> & v2) -> T;
 
-    // matrix-vector multiplication
+    // matrix-vector multiplication (contract on matrix second index)
     template <int D1, int D2, typename T, class packingT>
     constexpr auto operator*(const matrix_t<D1, D2, T, packingT> & A, const vector_t<D2, T> & v)
         -> vector_t<D1, T>;
+
+    // vector-matrix multiplication (contract on matrix first index)
+    template <int D1, int D2, typename T, class packingT>
+    constexpr auto operator*(const vector_t<D1, T> & v, const matrix_t<D1, D2, T, packingT> & A)
+        -> vector_t<D2, T>;
 
     // matrix-matrix multiplication
     template <int D1, int D2, int D3, typename T, class packingT1, class packingT2>
@@ -215,10 +220,10 @@ namespace pyre::tensor {
     constexpr auto transpose(const matrix_t<D1, D2, T, packingT> & A)
         -> matrix_t<D2, D1, T, packingT>;
 
-    // the transpose of a vector (returns a 1xD matrix, aka row vector)
+    // the transpose of a vector
     template <int D, typename T>
     constexpr auto transpose(const vector_t<D, T> & v)
-        -> matrix_t<1, D, T>;
+        -> vector_t<D, T>;
 
     // the eigenvalues of a 2x2 matrix
     template <typename T>
