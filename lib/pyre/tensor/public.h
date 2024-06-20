@@ -17,6 +17,9 @@
 // published type aliases; this is the file you are looking for...
 #include "api.h"
 
+// get the concepts
+#include "concepts.h"
+
 // implementation
 // functions to create tensors
 #include "factories.h"

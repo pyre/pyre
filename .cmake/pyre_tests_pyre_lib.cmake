@@ -278,6 +278,9 @@ endif()
 if (HAVE_TENSOR)
 set(definitions "HAVE_COMPACT_PACKINGS")
 
+pyre_test_driver_cxx20(tests/pyre.lib/tensor/tensor_concepts.cc)
+pyre_add_definitions(tests/pyre.lib/tensor/tensor_concepts.cc ${definitions})
+
 pyre_test_driver_cxx20(tests/pyre.lib/tensor/tensor_canonical_arithmetics.cc)
 pyre_add_definitions(tests/pyre.lib/tensor/tensor_canonical_arithmetics.cc ${definitions})
 
