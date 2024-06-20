@@ -13,9 +13,6 @@ namespace pyre::tensor {
     // typedef for real values
     using real = double;
 
-    // typedef for scalars
-    using scalar_t = real;
-
     // typedef for vectors
     template <int D, typename T = real, class packingT = pyre::grid::canonical_t<1>>
     using vector_t = pyre::tensor::Tensor<T, packingT, D>;

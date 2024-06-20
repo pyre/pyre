@@ -87,7 +87,7 @@ vector_scalar_product(int N)
     // tensor vector
     pyre::tensor::vector_t<3> vector_1 { 1.0, -1.0, 2.0 };
     pyre::tensor::vector_t<3> vector_2 { 1.0, 1.0, 2.0 };
-    pyre::tensor::scalar_t result_tensor = 0.0;
+    auto result_tensor = 0.0;
 
     // reset timer
     t.reset();
