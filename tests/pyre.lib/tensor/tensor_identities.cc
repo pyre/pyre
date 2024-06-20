@@ -32,7 +32,7 @@ main(int argc, char * argv[])
     constexpr vector_t<3> d { 0.0, 1.5, -1.5 };
 
     // scalar alpha
-    constexpr scalar_t alpha = 5.0;
+    constexpr auto alpha = 5.0;
 
     // commutativity of addition
     static_assert(a + b == b + a);

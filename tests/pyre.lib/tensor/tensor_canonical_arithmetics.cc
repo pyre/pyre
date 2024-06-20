@@ -20,7 +20,7 @@ int
 main(int argc, char * argv[])
 {
     // negative one
-    constexpr scalar_t minus_one = -1.0;
+    constexpr auto minus_one = -1.0;
 
 
     // vector R^2: (-1) * v == - v
