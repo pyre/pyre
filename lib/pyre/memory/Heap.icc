@@ -66,6 +66,36 @@ pyre::memory::Heap<T, isConst>::where() const -> const void *
 }
 
 
+// human readable form of my expansion
+template <typename T, bool isConst>
+auto
+pyre::memory::Heap<T, isConst>::name() -> string_t
+{
+    // resolve the name and return it
+    return strategyName() + cellName();
+}
+
+
+// human readable form of my {cell_type}
+template <typename T, bool isConst>
+auto
+pyre::memory::Heap<T, isConst>::cellName() -> string_t
+{
+    // resolve the name and return it
+    return CellName<value_type>::name();
+}
+
+
+// human readable form of my storage strategy
+template <typename T, bool isConst>
+auto
+pyre::memory::Heap<T, isConst>::strategyName() -> string_t
+{
+    // build the name and return it
+    return (isConst ? "Const" : "") + string_t("Heap");
+}
+
+
 // get the shared pointer
 template <class T, bool isConst>
 auto
