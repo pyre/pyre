@@ -42,12 +42,22 @@ namespace pyre::memory {
     // const view to someone else's data
     template <typename T>
     using constview_t = View<T, true>;
+} // namespace pyre::memory
 
+
+// low level entities; you should probably stay away from them
+namespace pyre::memory {
+    // support for managing file-backed memory undifferentiated blocks
+    // used by {map_t} and {constmap_t} above
+    using filemap_t = FileMap;
+
+    // expansion api
     // basic types
-    template <typename... cellT>
-    using cells_t = CellTypes<cellT...>;
+    template <typename... typeT>
+    using types_t = Types<typeT...>;
+
     // datatypes
-    using cellTypes_t = cells_t<
+    using cellTypes_t = types_t<
         // signed integers
         int8_t, int16_t, int32_t, int64_t,
         // unsigned integers
@@ -57,14 +67,26 @@ namespace pyre::memory {
         // complex
         complex64_t, complex128_t>;
 
-} // namespace pyre::memory
+    // storage strategies
+    template <template <typename typeT> class... strategiesT>
+    using storageStrategies_t = StorageStrategies<strategiesT...>;
 
+    // the read-only storage strategies
+    using constStorageStrategies_t = storageStrategies_t<
+        // const heaps, maps, views
+        constheap_t, constmap_t, constview_t>;
 
-// low level entities; you should probably stay away from them
-namespace pyre::memory {
-    // support for managing file-backed memory undifferentiated blocks
-    // used by {map_t} and {constmap_t} above
-    using filemap_t = FileMap;
+    // the read/write storage strategies
+    using mutableStorageStrategies_t = storageStrategies_t<
+        // writeable heaps, maps, view
+        heap_t, map_t, view_t>;
+
+    // all storage strategies
+    using allStorageStrategies_t = Concat<constStorageStrategies_t, mutableStorageStrategies_t>;
+
+    // type list concatenation
+    template <typename... listT>
+    using concat_t = Concat<listT...>;
 } // namespace pyre::memory
 
 

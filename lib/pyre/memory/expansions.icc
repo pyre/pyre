@@ -1,0 +1,55 @@
+// -*- c++ -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2024 all rights reserved
+
+
+// code guard
+#if !defined(pyre_memory_expansions_icc)
+#error this file contains implementation details for pyre::memory::expansions
+#else
+
+// compile-time type lists
+template <typename... typeT>
+struct pyre::memory::Types {};
+
+// storage strategy choices
+template <template <typename> class... strategiesT>
+struct pyre::memory::StorageStrategies {};
+
+// type list concatenation
+// base case: leave single list alone
+template <typename listT>
+struct pyre::memory::Concat<listT> {
+    using type = listT;
+};
+
+// recursion: concatenate two lists and recurse for the rest
+template <typename list1T, typename list2T, typename... restT>
+struct pyre::memory::Concat<list1T, list2T, restT...> {
+    using type = typename Concat<typename Concat<list1T, list2T>::type, restT...>::type;
+};
+
+// combine two type lists
+template <typename... type1T, typename... type2T>
+struct pyre::memory::Concat<pyre::memory::Types<type1T...>, pyre::memory::Types<type2T...>> {
+    using type = pyre::memory::Types<type1T..., type2T...>;
+};
+
+// compose a strategy with a data type
+template <template <typename> class strategyT, typename... cellT>
+struct pyre::memory::Compose<strategyT, pyre::memory::Types<cellT...>> {
+    using type = pyre::memory::Types<strategyT<cellT>...>;
+};
+
+// expand
+template <template <typename> class... strategyT, typename cellT>
+struct pyre::memory::Expand<pyre::memory::StorageStrategies<strategyT...>, cellT> {
+    // assemble the expansions
+    using type = typename Concat<typename Compose<strategyT, cellT>::type...>::type;
+};
+
+
+#endif
+
+// end of file

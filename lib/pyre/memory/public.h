@@ -12,6 +12,8 @@
 #include "externals.h"
 // get the forward declarations
 #include "forward.h"
+// the template expansion machinery
+#include "expansions.h"
 
 // published type aliases; this is the file you are looking for...
 #include "api.h"

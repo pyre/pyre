@@ -38,11 +38,6 @@ pyre::memory::Cell<T, isConst>::bytes(cell_count_type n) -> size_type
     return n * sizeof(T);
 }
 
-// compile-time type lists
-template <typename... cellT>
-struct pyre::memory::CellTypes {};
-
-
 // the datatype name specializations
 template <>
 struct pyre::memory::CellName<pyre::memory::int8_t> {

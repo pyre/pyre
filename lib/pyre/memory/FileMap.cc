@@ -8,6 +8,8 @@
 #include "externals.h"
 // forward declarations
 #include "forward.h"
+// expansions
+#include "expansions.h"
 // type aliases
 #include "api.h"
 
