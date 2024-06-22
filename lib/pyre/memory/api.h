@@ -42,6 +42,21 @@ namespace pyre::memory {
     // const view to someone else's data
     template <typename T>
     using constview_t = View<T, true>;
+
+    // basic types
+    template <typename... cellT>
+    using cells_t = CellTypes<cellT...>;
+    // datatypes
+    using cellTypes_t = cells_t<
+        // signed integers
+        int8_t, int16_t, int32_t, int64_t,
+        // unsigned integers
+        uint8_t, uint16_t, uint32_t, uint64_t,
+        // floating point
+        float32_t, float64_t,
+        // complex
+        complex64_t, complex128_t>;
+
 } // namespace pyre::memory
 
 

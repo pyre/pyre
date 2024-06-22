@@ -38,6 +38,83 @@ pyre::memory::Cell<T, isConst>::bytes(cell_count_type n) -> size_type
     return n * sizeof(T);
 }
 
+// compile-time type lists
+template <typename... cellT>
+struct pyre::memory::CellTypes {};
+
+
+// the datatype name specializations
+template <>
+struct pyre::memory::CellName<pyre::memory::int8_t> {
+    // the name
+    static auto name() -> string_t { return "Int8"; }
+};
+
+template <>
+struct pyre::memory::CellName<pyre::memory::int16_t> {
+    // the name
+    static auto name() -> string_t { return "Int16"; }
+};
+
+template <>
+struct pyre::memory::CellName<pyre::memory::int32_t> {
+    // the name
+    static auto name() -> string_t { return "Int32"; }
+};
+
+template <>
+struct pyre::memory::CellName<pyre::memory::int64_t> {
+    // the name
+    static auto name() -> string_t { return "Int64"; }
+};
+
+template <>
+struct pyre::memory::CellName<pyre::memory::uint8_t> {
+    // the name
+    static auto name() -> string_t { return "UInt8"; }
+};
+
+template <>
+struct pyre::memory::CellName<pyre::memory::uint16_t> {
+    // the name
+    static auto name() -> string_t { return "UInt16"; }
+};
+
+template <>
+struct pyre::memory::CellName<pyre::memory::uint32_t> {
+    // the name
+    static auto name() -> string_t { return "UInt32"; }
+};
+
+template <>
+struct pyre::memory::CellName<pyre::memory::uint64_t> {
+    // the name
+    static auto name() -> string_t { return "UInt64"; }
+};
+
+template <>
+struct pyre::memory::CellName<pyre::memory::float32_t> {
+    // the name
+    static auto name() -> string_t { return "Float"; }
+};
+
+template <>
+struct pyre::memory::CellName<pyre::memory::float64_t> {
+    // the name
+    static auto name() -> string_t { return "Double"; }
+};
+
+template <>
+struct pyre::memory::CellName<pyre::memory::complex64_t> {
+    // the name
+    static auto name() -> string_t { return "ComplexFloat"; }
+};
+
+template <>
+struct pyre::memory::CellName<pyre::memory::complex128_t> {
+    // the name
+    static auto name() -> string_t { return "ComplexDouble"; }
+};
 
 #endif
 
