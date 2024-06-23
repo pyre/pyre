@@ -69,7 +69,7 @@ jobs:
       - name: install dependencies
         run: |
           python${pythonVersion} -m pip install --upgrade pip
-          pip3 install distro graphene numpy pybind11 PyYAML
+          pip3 install distro graphene 'numpy<2.0' pybind11 PyYAML
         env:
           pythonVersion: ${{matrix.python}}
 
