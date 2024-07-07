@@ -52,7 +52,7 @@ namespace pyre::tensor {
         static constexpr int size = S;
         // export whether the tensor is symmetric
         static constexpr bool symmetric = std::is_same_v<packingT, pyre::grid::symmetric_t<N>>
-        || std::is_same_v<packingT, pyre::grid::diagonal_t<N>>;
+                                       || std::is_same_v<packingT, pyre::grid::diagonal_t<N>>;
         // export whether the tensor is diagonal
         static constexpr bool diagonal = std::is_same_v<packingT, pyre::grid::diagonal_t<N>>;
 

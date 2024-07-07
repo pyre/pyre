@@ -37,7 +37,7 @@ constexpr pyre::tensor::Tensor<T, packingT, I...>::Tensor(T2... args)
     : Tensor()
 {
     // initialize with input arguments
-    _initialize(make_integer_sequence<S>{}, args...);
+    _initialize(make_integer_sequence<S> {}, args...);
 
     // all done
     return;
@@ -45,11 +45,10 @@ constexpr pyre::tensor::Tensor<T, packingT, I...>::Tensor(T2... args)
 
 template <typename T, class packingT, int... I>
 template <class T2>
-constexpr pyre::tensor::Tensor<T, packingT, I...>::Tensor(T2 (&&args)[S])
-    : Tensor()
+constexpr pyre::tensor::Tensor<T, packingT, I...>::Tensor(T2 (&&args)[S]) : Tensor()
 {
     // initialize with input arguments
-    _initialize(make_integer_sequence<S>{}, args);
+    _initialize(make_integer_sequence<S> {}, args);
 
     // all done
     return;
