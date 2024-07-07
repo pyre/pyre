@@ -19,18 +19,18 @@ int
 main(int argc, char * argv[])
 {
     // a 2x1 matrix (aka column vector)
-    constexpr auto a1 = matrix_t<2, 1> {1.0, 1.0};
+    constexpr auto a1 = matrix_t<2, 1> { 1.0, 1.0 };
     // a 2x2 matrix
-    constexpr auto C1 = matrix_t<2, 2> {2.0, 0.0, 1.0, 2.0};
+    constexpr auto C1 = matrix_t<2, 2> { 2.0, 0.0, 1.0, 2.0 };
     // a quadratic form
     constexpr auto q1 = transpose(a1) * C1 * a1;
     // check that the value is correct
     static_assert(q1 == 5.0);
 
     // a 2D vector
-    constexpr auto a2 = vector_t<2> {1.0, 1.0};
+    constexpr auto a2 = vector_t<2> { 1.0, 1.0 };
     // a 2x2 matrix
-    constexpr auto C2 = matrix_t<2, 2> {2.0, 0.0, 1.0, 2.0};
+    constexpr auto C2 = matrix_t<2, 2> { 2.0, 0.0, 1.0, 2.0 };
     // a quadratic form
     constexpr auto q2 = transpose(a2) * C2 * a2;
     // check that the value is correct

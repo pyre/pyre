@@ -222,8 +222,7 @@ namespace pyre::tensor {
 
     // the transpose of a vector
     template <int D, typename T>
-    constexpr auto transpose(const vector_t<D, T> & v)
-        -> vector_t<D, T>;
+    constexpr auto transpose(const vector_t<D, T> & v) -> vector_t<D, T>;
 
     // the eigenvalues of a 2x2 matrix
     template <typename T>
