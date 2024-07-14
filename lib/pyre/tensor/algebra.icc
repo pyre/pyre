@@ -214,7 +214,7 @@ template <pyre::tensor::tensor_c tensorT1, pyre::tensor::tensor_c tensorT2>
 constexpr auto
 pyre::tensor::operator+(const tensorT1 & y1, const tensorT2 & y2) ->
     typename sum<tensorT1, tensorT2>::type
-// TOFIX: add requires clause here
+    requires(tensorT1::dims == tensorT2::dims)
 {
     // compute component-wise summation
     return _tensor_sum(y1, y2);
@@ -224,7 +224,9 @@ pyre::tensor::operator+(const tensorT1 & y1, const tensorT2 & y2) ->
 template <pyre::tensor::tensor_c tensorT1, pyre::tensor::tensor_c tensorT2>
 constexpr auto
 pyre::tensor::operator+(const tensorT1 & y1, tensorT2 && y2) -> tensorT2
-    requires(std::is_same_v<typename sum<tensorT1, tensorT2>::type, tensorT2>)
+    requires(
+        tensorT1::dims == tensorT2::dims
+        && std::is_same_v<typename sum<tensorT1, tensorT2>::type, tensorT2>)
 {
     // compute component-wise summation and write the result on y2
     return _tensor_sum(y1, y2, y2);
@@ -234,7 +236,9 @@ pyre::tensor::operator+(const tensorT1 & y1, tensorT2 && y2) -> tensorT2
 template <pyre::tensor::tensor_c tensorT1, pyre::tensor::tensor_c tensorT2>
 constexpr auto
 pyre::tensor::operator+(tensorT1 && y1, const tensorT2 & y2) -> tensorT1
-    requires(std::is_same_v<typename sum<tensorT1, tensorT2>::type, tensorT1>)
+    requires(
+        tensorT1::dims == tensorT2::dims
+        && std::is_same_v<typename sum<tensorT1, tensorT2>::type, tensorT1>)
 {
     // easy enough
     return y2 + std::move(y1);
@@ -244,7 +248,9 @@ pyre::tensor::operator+(tensorT1 && y1, const tensorT2 & y2) -> tensorT1
 template <pyre::tensor::tensor_c tensorT1, pyre::tensor::tensor_c tensorT2>
 constexpr auto
 pyre::tensor::operator+(tensorT1 && y1, tensorT2 && y2) -> tensorT1
-    requires(std::is_same_v<typename sum<tensorT1, tensorT2>::type, tensorT1>)
+    requires(
+        tensorT1::dims == tensorT2::dims
+        && std::is_same_v<typename sum<tensorT1, tensorT2>::type, tensorT1>)
 {
     // pass down y1 as temporary and y2 as const reference
     return std::move(y1) + std::as_const(y2);
@@ -255,7 +261,8 @@ template <pyre::tensor::tensor_c tensorT1, pyre::tensor::tensor_c tensorT2>
 constexpr auto
 pyre::tensor::operator+(tensorT1 && y1, tensorT2 && y2) -> tensorT2
     requires(
-        std::is_same_v<typename sum<tensorT1, tensorT2>::type, tensorT2>
+        tensorT1::dims == tensorT2::dims
+        && std::is_same_v<typename sum<tensorT1, tensorT2>::type, tensorT2>
         && !std::is_same_v<typename sum<tensorT1, tensorT2>::type, tensorT1>)
 {
     // pass down y2 as temporary and y1 as const reference
@@ -296,6 +303,7 @@ pyre::tensor::operator-(tensorT && y) -> tensorT
 template <pyre::tensor::tensor_c tensorT1, pyre::tensor::tensor_c tensorT2>
 constexpr auto
 pyre::tensor::operator-(const tensorT1 & y1, const tensorT2 & y2) -> auto
+    requires(tensorT1::dims == tensorT2::dims)
 {
     // std::cout << "operator- & &" << std::endl;
     return y1 + (-y2);
@@ -305,6 +313,7 @@ pyre::tensor::operator-(const tensorT1 & y1, const tensorT2 & y2) -> auto
 template <pyre::tensor::tensor_c tensorT1, pyre::tensor::tensor_c tensorT2>
 constexpr auto
 pyre::tensor::operator-(tensorT1 && y1, const tensorT2 & y2) -> auto
+    requires(tensorT1::dims == tensorT2::dims)
 {
     // std::cout << "operator- && &" << std::endl;
     return std::move(y1) + (-y2);
@@ -314,6 +323,7 @@ pyre::tensor::operator-(tensorT1 && y1, const tensorT2 & y2) -> auto
 template <pyre::tensor::tensor_c tensorT1, pyre::tensor::tensor_c tensorT2>
 constexpr auto
 pyre::tensor::operator-(const tensorT1 & y1, tensorT2 && y2) -> auto
+    requires(tensorT1::dims == tensorT2::dims)
 {
     // std::cout << "operator- & &&" << std::endl;
     return y1 + (-std::move(y2));
@@ -323,6 +333,7 @@ pyre::tensor::operator-(const tensorT1 & y1, tensorT2 && y2) -> auto
 template <pyre::tensor::tensor_c tensorT1, pyre::tensor::tensor_c tensorT2>
 constexpr auto
 pyre::tensor::operator-(tensorT1 && y1, tensorT2 && y2) -> auto
+    requires(tensorT1::dims == tensorT2::dims)
 {
     // std::cout << "operator- && &&" << std::endl;
     return std::move(y1) + std::move(-std::move(y2));
