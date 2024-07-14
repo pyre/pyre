@@ -111,13 +111,6 @@ namespace pyre::tensor {
         constexpr operator T() const
             requires(S == 1);
 
-        // cast to canonical packing
-        constexpr operator canonical_tensor_t() const;
-
-        // cast to symmetric packing (enable only for diagonal packing)
-        constexpr operator symmetric_tensor_t() const
-            requires(std::is_same_v<packingT, pyre::grid::diagonal_t<N>>);
-
         // support for ranged for loops
         constexpr const auto begin() const;
         constexpr const auto end() const;

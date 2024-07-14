@@ -100,35 +100,6 @@ constexpr pyre::tensor::Tensor<T, packingT, I...>::operator T() const
 }
 
 template <typename T, class packingT, int... I>
-constexpr pyre::tensor::Tensor<T, packingT, I...>::operator Tensor<
-    T, pyre::grid::canonical_t<N>, I...>() const
-{
-    pyre::tensor::Tensor<T, pyre::grid::canonical_t<N>, I...> result;
-
-    // iterate on the packing
-    for (auto idx : _layout) {
-        result[idx] = operator[](idx);
-    }
-
-    return result;
-}
-
-template <typename T, class packingT, int... I>
-constexpr pyre::tensor::Tensor<T, packingT, I...>::operator Tensor<
-    T, pyre::grid::symmetric_t<N>, I...>() const
-    requires(std::is_same_v<packingT, pyre::grid::diagonal_t<N>>)
-{
-    pyre::tensor::Tensor<T, pyre::grid::symmetric_t<N>, I...> result;
-
-    // iterate on the packing
-    for (auto idx : _layout) {
-        result[idx] = operator[](idx);
-    }
-
-    return result;
-}
-
-template <typename T, class packingT, int... I>
 constexpr const auto
 pyre::tensor::Tensor<T, packingT, I...>::begin() const
 {

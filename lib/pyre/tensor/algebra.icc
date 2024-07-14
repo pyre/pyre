@@ -419,7 +419,7 @@ pyre::tensor::matrix_column(const vector_t<D, T> & v) -> matrix_t<D, D, T>
         return A;
     };
     // fill column K of a zero matrix with vector v
-    return _fill_matrix_column(zero<matrix_result_t>, v, make_integer_sequence<D> {});
+    return _fill_matrix_column(matrix_result_t(), v, make_integer_sequence<D> {});
 }
 
 // builds a square matrix with all zeros except the diagonal is equal to v
@@ -588,7 +588,7 @@ pyre::tensor::skew(const vector_t<3, T> & a) -> matrix_t<3, 3, T>
     using matrix_t = matrix_t<3, 3, T>;
 
     // instantiate the result
-    matrix_t A = zero<matrix_t>;
+    matrix_t A;
 
     A[matrix_t::template getOffset<0, 1>()] = -a[2];
     A[matrix_t::template getOffset<0, 2>()] = a[1];
