@@ -55,6 +55,8 @@ namespace pyre::tensor {
                                        || std::is_same_v<packingT, pyre::grid::diagonal_t<N>>;
         // export whether the tensor is diagonal
         static constexpr bool diagonal = std::is_same_v<packingT, pyre::grid::diagonal_t<N>>;
+        // dimensions (the maximum index value for each index)
+        static constexpr std::array<int, N> dims { I... };
 
     public:
         // default constructor
@@ -106,10 +108,6 @@ namespace pyre::tensor {
         {
             return _layout.offset({ J... });
         }
-
-        // cast to underlying type T (enable if S = 1, i.e. scalar)
-        constexpr operator T() const
-            requires(S == 1);
 
         // support for ranged for loops
         constexpr const auto begin() const;

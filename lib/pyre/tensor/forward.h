@@ -16,6 +16,10 @@ namespace pyre::tensor {
     template <typename T, class packingT, int... I>
     class Tensor;
 
+    // alias for tensor
+    template <typename T, class packingT, int... I>
+    using tensor_t = Tensor<T, packingT, I...>;
+
     // the zero tensor factory
     template <class tensorT>
     constexpr auto make_zeros() -> typename tensorT::diagonal_tensor_t;

@@ -18,7 +18,7 @@ namespace pyre::tensor {
         // require that F only binds to {Tensor} specializations
         []<typename T, class packingT, int... I>(const Tensor<T, packingT, I...> &) {
         }(c);
-    };
+    } and F::size != 1;
 
     // concept of a matrix
     template <class F>
@@ -27,6 +27,17 @@ namespace pyre::tensor {
         []<int D1, int D2, typename T, class packingT>(const matrix_t<D1, D2, T, packingT> &)
             // with D1 and D2 different than 1 (otherwise it is a vector)
             requires(D1 != 1 && D2 != 1)
+        {}
+        (c);
+    };
+
+    // concept of a square matrix
+    template <class F>
+    concept square_matrix_c = requires(F c) {
+        // require that F only binds to square {matrix_t} specializations
+        []<int D, typename T, class packingT>(const matrix_t<D, D, T, packingT> &)
+            // with D different than 1 (otherwise it is a scalar)
+            requires(D != 1)
         {}
         (c);
     };
