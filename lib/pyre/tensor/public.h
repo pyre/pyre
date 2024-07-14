@@ -17,8 +17,12 @@
 // published type aliases; this is the file you are looking for...
 #include "api.h"
 
+// the repacking strategies
+#include "repacking.h"
 // get the concepts
 #include "concepts.h"
+// get the type traits
+#include "traits.h"
 
 // implementation
 // functions to create tensors
@@ -27,8 +31,6 @@
 #include "Tensor.h"
 // useful functions for {Tensor}
 #include "utilities.h"
-// the repacking strategies
-#include "repacking.h"
 // the algebra on tensors
 #include "algebra.h"
 

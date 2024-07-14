@@ -21,6 +21,10 @@ namespace pyre::tensor {
     template <int D1, int D2 = D1, typename T = real, class packingT = pyre::grid::canonical_t<2>>
     using matrix_t = pyre::tensor::Tensor<T, packingT, D1, D2>;
 
+    // typedef for square matrices
+    template <int D, typename T = real, class packingT = pyre::grid::canonical_t<2>>
+    using square_matrix_t = matrix_t<D, D, T, packingT>;
+
     // typedef for symmetric matrices
     template <int D, typename T = real>
     using symmetric_matrix_t = matrix_t<D, D, T, pyre::grid::symmetric_t<2>>;

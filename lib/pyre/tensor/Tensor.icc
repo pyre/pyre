@@ -93,13 +93,6 @@ pyre::tensor::Tensor<T, packingT, I...>::operator[](int i)
 }
 
 template <typename T, class packingT, int... I>
-constexpr pyre::tensor::Tensor<T, packingT, I...>::operator T() const
-    requires(S == 1)
-{
-    return _data[0];
-}
-
-template <typename T, class packingT, int... I>
 constexpr const auto
 pyre::tensor::Tensor<T, packingT, I...>::begin() const
 {
