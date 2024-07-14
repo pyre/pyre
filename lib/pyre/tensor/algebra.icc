@@ -1064,7 +1064,7 @@ pyre::tensor::col(const matrixT & A) -> vector_t<matrixT::dims[0], typename matr
         // return a vector filled with entries (J, I) for all J...
         return vector_t<D1, T>(entry_KI.template operator()<J>()...);
     };
-    return _col(make_integer_sequence<D2> {});
+    return _col(make_integer_sequence<D1> {});
 }
 
 template <pyre::tensor::square_matrix_c matrixT>
