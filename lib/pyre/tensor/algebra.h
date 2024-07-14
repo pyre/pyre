@@ -74,28 +74,36 @@ namespace pyre::tensor {
     // tensor plus tensor
     template <tensor_c tensorT1, tensor_c tensorT2>
     constexpr auto operator+(const tensorT1 & y1, const tensorT2 & y2) ->
-        typename sum<tensorT1, tensorT2>::type;
+        typename sum<tensorT1, tensorT2>::type
+        requires(tensorT1::dims == tensorT2::dims);
 
     // tensor plus (temporary) tensor
     template <tensor_c tensorT1, tensor_c tensorT2>
     constexpr auto operator+(const tensorT1 & y1, tensorT2 && y2) -> tensorT2
-        requires(std::is_same_v<typename sum<tensorT1, tensorT2>::type, tensorT2>);
+        requires(
+            tensorT1::dims == tensorT2::dims
+            && std::is_same_v<typename sum<tensorT1, tensorT2>::type, tensorT2>);
 
     // (temporary) tensor plus tensor
     template <tensor_c tensorT1, tensor_c tensorT2>
     constexpr auto operator+(tensorT1 && y1, const tensorT2 & y2) -> tensorT1
-        requires(std::is_same_v<typename sum<tensorT1, tensorT2>::type, tensorT1>);
+        requires(
+            tensorT1::dims == tensorT2::dims
+            && std::is_same_v<typename sum<tensorT1, tensorT2>::type, tensorT1>);
 
     // (temporary) tensor plus (temporary) tensor
     template <tensor_c tensorT1, tensor_c tensorT2>
     constexpr auto operator+(tensorT1 && y1, tensorT2 && y2) -> tensorT1
-        requires(std::is_same_v<typename sum<tensorT1, tensorT2>::type, tensorT1>);
+        requires(
+            tensorT1::dims == tensorT2::dims
+            && std::is_same_v<typename sum<tensorT1, tensorT2>::type, tensorT1>);
 
     // (temporary) tensor plus (temporary) tensor
     template <tensor_c tensorT1, tensor_c tensorT2>
     constexpr auto operator+(tensorT1 && y1, tensorT2 && y2) -> tensorT2
         requires(
-            std::is_same_v<typename sum<tensorT1, tensorT2>::type, tensorT2>
+            tensorT1::dims == tensorT2::dims
+            && std::is_same_v<typename sum<tensorT1, tensorT2>::type, tensorT2>
             && !std::is_same_v<typename sum<tensorT1, tensorT2>::type, tensorT1>);
 
     // (unary) minus tensor
@@ -108,19 +116,24 @@ namespace pyre::tensor {
 
     // tensor minus tensor
     template <tensor_c tensorT1, tensor_c tensorT2>
-    constexpr auto operator-(const tensorT1 & y1, const tensorT2 & y2) -> auto;
+    constexpr auto operator-(const tensorT1 & y1, const tensorT2 & y2) -> auto
+        requires(tensorT1::dims == tensorT2::dims);
 
     // (temporary) tensor minus tensor
     template <tensor_c tensorT1, tensor_c tensorT2>
-    constexpr auto operator-(tensorT1 && y1, const tensorT2 & y2) -> auto;
+    constexpr auto operator-(tensorT1 && y1, const tensorT2 & y2) -> auto
+        requires(tensorT1::dims == tensorT2::dims);
 
     // tensor minus (temporary) tensor
     template <tensor_c tensorT1, tensor_c tensorT2>
-    constexpr auto operator-(const tensorT1 & y1, tensorT2 && y2) -> auto;
+    constexpr auto operator-(const tensorT1 & y1, tensorT2 && y2) -> auto
+        requires(tensorT1::dims == tensorT2::dims);
+
 
     // (temporary) tensor minus (temporary) tensor
     template <tensor_c tensorT1, tensor_c tensorT2>
-    constexpr auto operator-(tensorT1 && y1, tensorT2 && y2) -> auto;
+    constexpr auto operator-(tensorT1 && y1, tensorT2 && y2) -> auto
+        requires(tensorT1::dims == tensorT2::dims);
 
     // Tensor operator*=
     template <tensor_c tensorT, class TENSOR>
