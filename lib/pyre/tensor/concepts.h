@@ -18,7 +18,7 @@ namespace pyre::tensor {
         // require that F only binds to {Tensor} specializations
         []<typename T, class packingT, int... I>(const Tensor<T, packingT, I...> &) {
         }(c);
-    } and F::size != 1;
+    };
 
     // concept of a matrix
     template <class F>

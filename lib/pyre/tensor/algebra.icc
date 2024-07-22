@@ -110,6 +110,7 @@ namespace {
 template <pyre::tensor::tensor_c tensorT>
 constexpr auto
 pyre::tensor::operator*(const typename tensorT::scalar_type & a, const tensorT & y) -> tensorT
+    requires(tensorT::size != 1)
 {
     // instantiate the result
     tensorT result;
@@ -122,6 +123,7 @@ pyre::tensor::operator*(const typename tensorT::scalar_type & a, const tensorT &
 template <pyre::tensor::tensor_c tensorT>
 constexpr auto
 pyre::tensor::operator*(const tensorT & y, const typename tensorT::scalar_type & a) -> tensorT
+    requires(tensorT::size != 1)
 {
     return a * y;
 }
@@ -130,6 +132,7 @@ pyre::tensor::operator*(const tensorT & y, const typename tensorT::scalar_type &
 template <pyre::tensor::tensor_c tensorT>
 constexpr auto
 pyre::tensor::operator*(const typename tensorT::scalar_type & a, tensorT && y) -> tensorT
+    requires(tensorT::size != 1)
 {
     constexpr int D = tensorT::size;
     _tensor_times_scalar(a, y, y, make_integer_sequence<D> {});
@@ -140,6 +143,7 @@ pyre::tensor::operator*(const typename tensorT::scalar_type & a, tensorT && y) -
 template <pyre::tensor::tensor_c tensorT>
 constexpr auto
 pyre::tensor::operator*(tensorT && y, const typename tensorT::scalar_type & a) -> tensorT
+    requires(tensorT::size != 1)
 {
     return a * std::move(y);
 }
@@ -361,6 +365,7 @@ pyre::tensor::operator-=(tensorT & lhs, TENSOR && rhs) -> tensorT &
 template <pyre::tensor::tensor_c tensorT>
 constexpr auto
 pyre::tensor::operator/(const tensorT & y, typename tensorT::scalar_type a) -> tensorT
+    requires(tensorT::size != 1)
 {
     return (1.0 / a) * y;
 }
@@ -369,6 +374,7 @@ pyre::tensor::operator/(const tensorT & y, typename tensorT::scalar_type a) -> t
 template <pyre::tensor::tensor_c tensorT>
 constexpr auto
 pyre::tensor::operator/(tensorT && y, typename tensorT::scalar_type a) -> tensorT
+    requires(tensorT::size != 1)
 {
     return (1.0 / a) * std::move(y);
 }
