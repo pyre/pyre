@@ -109,6 +109,10 @@ namespace pyre::tensor {
             return _layout.offset({ J... });
         }
 
+        // cast to underlying type T (enable if S = 1, i.e. scalar)
+        constexpr operator T() const
+            requires(S == 1);
+
         // support for ranged for loops
         constexpr const auto begin() const;
         constexpr const auto end() const;
