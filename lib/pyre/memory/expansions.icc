@@ -38,15 +38,15 @@ struct pyre::memory::Concat<pyre::memory::Types<type1T...>, pyre::memory::Types<
 
 // compose a strategy with a data type
 template <template <typename> class strategyT, typename... cellT>
-struct pyre::memory::Compose<strategyT, pyre::memory::Types<cellT...>> {
+struct pyre::memory::ComposeStorageStrategy<strategyT, pyre::memory::Types<cellT...>> {
     using type = pyre::memory::Types<strategyT<cellT>...>;
 };
 
 // expand
 template <template <typename> class... strategyT, typename cellT>
-struct pyre::memory::Expand<pyre::memory::StorageStrategies<strategyT...>, cellT> {
+struct pyre::memory::ExpandStorageStrategies<pyre::memory::StorageStrategies<strategyT...>, cellT> {
     // assemble the expansions
-    using type = typename Concat<typename Compose<strategyT, cellT>::type...>::type;
+    using type = typename Concat<typename ComposeStorageStrategy<strategyT, cellT>::type...>::type;
 };
 
 

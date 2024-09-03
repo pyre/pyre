@@ -24,11 +24,11 @@ namespace pyre::memory {
 
     // compose a storage strategy with a set of types
     template <template <typename> class strategyT, typename... cellsT>
-    struct Compose;
+    struct ComposeStorageStrategy;
 
     // a helper that expands a set of strategies and a set of cells
     template <typename strategiesT, typename cellsT>
-    struct Expand;
+    struct ExpandStorageStrategies;
 } // namespace pyre::memory
 
 
