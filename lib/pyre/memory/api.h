@@ -14,6 +14,10 @@ namespace pyre::memory {
     template <typename T, bool isConst>
     using cell_t = Cell<T, isConst>;
 
+    // helper that generates a human readable name for each supported datatype
+    template <typename T>
+    using cellname_t = CellName<T>;
+
     // block on the stack
     template <int D, typename T>
     using stack_t = Stack<D, T, false>;
