@@ -71,21 +71,10 @@ namespace pyre::tensor {
             // wrap the parameter pack into an index
             index_t index(I...);
 
-            // make an element of the basis by the Kronecker delta
-            constexpr auto _make_basis_element =
-                []<int... J>(index_t K, integer_sequence<J...>)->tensorT
-            {
-                constexpr auto delta = [](int II, int JJ) -> typename tensorT::scalar_type {
-                    if (II == JJ)
-                        return 1;
-                    return 0;
-                };
+            auto result = tensorT();
+            result[index] = 1;
 
-                // fill tensor with delta_ij
-                return tensorT(delta(tensorT::layout()[K] /* I */, J)...);
-            };
-
-            return _make_basis_element(index, make_integer_sequence<tensorT::size> {});
+            return result;
         }
     } // namespace
 
