@@ -71,7 +71,7 @@ main(int argc, char * argv[])
     constexpr auto e_10 = unit<matrix_t<2>, 1, 0>;
     constexpr auto e_11 = unit<matrix_t<2>, 1, 1>;
     // the out-of-diagonal basis element for symmetric matrices
-    constexpr auto e_01_sym = unit<symmetric_matrix_t<2>, 1, 2>;
+    constexpr auto e_01_sym = unit<symmetric_matrix_t<2>, 0, 1>;
 
     // assert diagonal basis matrices are diagonal (therefore symmetric)
     static_assert(e_00.is_diagonal() && e_00.is_symmetric());
