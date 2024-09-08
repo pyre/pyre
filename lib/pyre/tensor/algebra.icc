@@ -11,11 +11,11 @@
 #else
 
 
-// TOFIX: this is buggy for symmetric tensors
 // compute 2-norm of tensor
 template <pyre::tensor::tensor_c tensorT>
 constexpr auto
 pyre::tensor::norm(const tensorT & tensor) -> tensorT::scalar_type
+    requires(tensorT::rank <= 2)
 {
     using T = typename tensorT::scalar_type;
 
@@ -28,8 +28,37 @@ pyre::tensor::norm(const tensorT & tensor) -> tensorT::scalar_type
 
     // the size of the tensor
     constexpr int D = tensorT::size;
-    // delegate to helper fuction
-    return std::sqrt(_norm_square(tensor, make_integer_sequence<D> {}));
+
+    // the norm square
+    auto norm_square = _norm_square(tensor, make_integer_sequence<D> {});
+
+    // correction for a symmetric tensor
+    // this correction is needed because for a symmetric tensor we do not store the lower diagonal
+    // components explicitly, therefore the sum of all squared components does not include the
+    // lower diagonal ones
+    // QUESTION: how to handle the symmetric case for a rank > 2?
+    if constexpr (tensorT::symmetric && !tensorT::diagonal) {
+        // extract the tensor diagonal
+        auto diagonal = matrix_diagonal(tensor);
+
+        // the length of the diagonal
+        constexpr int L = decltype(diagonal)::size;
+
+        // helper function to sum the squares of all {diagonal} components
+        constexpr auto _diag_squares = []<int... J>(
+                                           const auto & diagonal, integer_sequence<J...>) -> T {
+            // return sum of all square components
+            return ((diagonal[J] * diagonal[J]) + ...);
+        };
+
+        // double the upper diagonal norm
+        norm_square *= 2;
+        // remove the double contribution of the diagonal
+        norm_square -= _diag_squares(diagonal, make_integer_sequence<L> {});
+    }
+
+    // take the square root
+    return std::sqrt(norm_square);
 }
 
 // normalize a tensor with its 2-norm

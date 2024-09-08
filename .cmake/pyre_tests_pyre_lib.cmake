@@ -385,6 +385,9 @@ pyre_add_definitions(tests/pyre.lib/tensor/tensor_iterators.cc ${definitions})
 pyre_test_driver_cxx20(tests/pyre.lib/tensor/tensor_literals.cc)
 pyre_add_definitions(tests/pyre.lib/tensor/tensor_literals.cc ${definitions})
 
+pyre_test_driver_cxx20(tests/pyre.lib/tensor/tensor_matrix_norm.cc)
+pyre_add_definitions(tests/pyre.lib/tensor/tensor_matrix_norm.cc ${definitions})
+
 pyre_test_driver_cxx20(tests/pyre.lib/tensor/tensor_matrix_product.cc)
 pyre_add_definitions(tests/pyre.lib/tensor/tensor_matrix_product.cc ${definitions})
 
