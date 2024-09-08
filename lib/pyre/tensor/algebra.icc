@@ -447,7 +447,7 @@ pyre::tensor::matrix_diagonal(const matrixT & A)
     -> vector_t<matrixT::dims[0], typename matrixT::scalar_type>
 {
     // the type of the matrix to be returned
-    using vector_result_t = vector_t<matrixT::size, typename matrixT::scalar_type>;
+    using vector_result_t = vector_t<matrixT::dims[0], typename matrixT::scalar_type>;
     using T = typename vector_result_t::scalar_type;
 
     auto _fill_vector_with_matrix_diagonal =
