@@ -13,8 +13,7 @@ namespace pyre::tensor {
         constexpr std::array<int, sizeof...(I)> index { I... };
 
         // helper function to check whether all entries in {index} are equal
-        constexpr auto _entries_all_equal = [index]<int... J>(integer_sequence<J...>)
-        {
+        constexpr auto _entries_all_equal = [index]<int... J>(integer_sequence<J...>) {
             // if all entries in the index are equal
             if constexpr (((index[J] == index[J + 1]) && ...)) {
                 // then the index is diagonal
@@ -35,16 +34,14 @@ namespace pyre::tensor {
     template <class tensorT>
     constexpr auto make_zeros() -> typename tensorT::diagonal_tensor_t
     {
-        constexpr auto _make_zeros =
-            []<int... J>(integer_sequence<J...>)->typename tensorT::diagonal_tensor_t
-        {
-            constexpr auto fill_zeros = []<int>() consteval->typename tensorT::scalar_type
-            {
-                return 0;
+        constexpr auto _make_zeros = []<int... J>(integer_sequence<J...>) ->
+            typename tensorT::diagonal_tensor_t {
+                constexpr auto fill_zeros = []<int>() consteval -> typename tensorT::scalar_type {
+                    return 0;
+                };
+                // return a tensor filled with zeros
+                return typename tensorT::diagonal_tensor_t(fill_zeros.template operator()<J>()...);
             };
-            // return a tensor filled with zeros
-            return typename tensorT::diagonal_tensor_t(fill_zeros.template operator()<J>()...);
-        };
 
         // fill tensor with zeros
         return _make_zeros(make_integer_sequence<tensorT::diagonal_tensor_t::size> {});
@@ -53,10 +50,8 @@ namespace pyre::tensor {
     template <class tensorT>
     constexpr auto make_ones() -> tensorT
     {
-        constexpr auto _make_ones = []<int... J>(integer_sequence<J...>)->tensorT
-        {
-            constexpr auto fill_ones = []<int>() consteval->typename tensorT::scalar_type
-            {
+        constexpr auto _make_ones = []<int... J>(integer_sequence<J...>) -> tensorT {
+            constexpr auto fill_ones = []<int>() consteval -> typename tensorT::scalar_type {
                 return 1;
             };
             // return a tensor filled with ones
@@ -130,16 +125,14 @@ namespace pyre::tensor {
     constexpr auto make_identity() -> typename tensorT::diagonal_tensor_t
         requires(tensorT::rank == 2)
     {
-        constexpr auto _make_ones =
-            []<int... J>(integer_sequence<J...>)->typename tensorT::diagonal_tensor_t
-        {
-            constexpr auto fill_ones = []<int>() consteval->typename tensorT::scalar_type
-            {
-                return 1;
+        constexpr auto _make_ones = []<int... J>(integer_sequence<J...>) ->
+            typename tensorT::diagonal_tensor_t {
+                constexpr auto fill_ones = []<int>() consteval -> typename tensorT::scalar_type {
+                    return 1;
+                };
+                // return a tensor filled with zeros
+                return typename tensorT::diagonal_tensor_t(fill_ones.template operator()<J>()...);
             };
-            // return a tensor filled with zeros
-            return typename tensorT::diagonal_tensor_t(fill_ones.template operator()<J>()...);
-        };
 
         // fill tensor with zeros
         return _make_ones(make_integer_sequence<tensorT::diagonal_tensor_t::size> {});
