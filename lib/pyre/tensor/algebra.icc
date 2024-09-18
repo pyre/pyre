@@ -789,6 +789,28 @@ pyre::tensor::inverse(const square_matrix_t<3, T, packingT> & A) -> square_matri
     return invA;
 }
 
+template <typename T>
+constexpr auto
+pyre::tensor::inverse(const square_matrix_t<3, T, pyre::grid::diagonal_t<3>> & A)
+    -> square_matrix_t<3, T, pyre::grid::diagonal_t<3>>
+{
+    // the type of matrix {A}
+    using matrix_t = square_matrix_t<3, T, pyre::grid::diagonal_t<3>>;
+
+    T a11 = A[matrix_t::template getOffset<0, 0>()];
+    T a22 = A[matrix_t::template getOffset<1, 1>()];
+    T a33 = A[matrix_t::template getOffset<2, 2>()];
+
+    matrix_t invA;
+    assert(a11 != 0.0 && a22 != 0.0 && a33 != 0.0);
+
+    invA[matrix_t::template getOffset<0, 0>()] = 1 / a11;
+    invA[matrix_t::template getOffset<1, 1>()] = 1 / a22;
+    invA[matrix_t::template getOffset<2, 2>()] = 1 / a33;
+
+    return invA;
+}
+
 template <typename T, class packingT>
 constexpr auto
 pyre::tensor::inverse(const square_matrix_t<2, T, packingT> & A) -> square_matrix_t<2, T, packingT>
@@ -809,6 +831,26 @@ pyre::tensor::inverse(const square_matrix_t<2, T, packingT> & A) -> square_matri
     invA[matrix_t::template getOffset<0, 1>()] = detinv * (-a12);
     invA[matrix_t::template getOffset<1, 0>()] = detinv * (-a21);
     invA[matrix_t::template getOffset<1, 1>()] = detinv * a11;
+    return invA;
+}
+
+template <typename T>
+constexpr auto
+pyre::tensor::inverse(const square_matrix_t<2, T, pyre::grid::diagonal_t<2>> & A)
+    -> square_matrix_t<2, T, pyre::grid::diagonal_t<2>>
+{
+    // the type of matrix {A}
+    using matrix_t = square_matrix_t<2, T, pyre::grid::diagonal_t<2>>;
+
+    T a11 = A[matrix_t::template getOffset<0, 0>()];
+    T a22 = A[matrix_t::template getOffset<1, 1>()];
+
+    matrix_t invA;
+    assert(a11 != 0.0 && a22 != 0.0);
+
+    invA[matrix_t::template getOffset<0, 0>()] = 1 / a11;
+    invA[matrix_t::template getOffset<1, 1>()] = 1 / a22;
+
     return invA;
 }
 
