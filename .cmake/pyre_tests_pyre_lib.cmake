@@ -302,6 +302,9 @@ pyre_add_definitions(tests/pyre.lib/tensor/tensor_eigenvalues_transformation.cc 
 pyre_test_driver_cxx20(tests/pyre.lib/tensor/tensor_identities.cc)
 pyre_add_definitions(tests/pyre.lib/tensor/tensor_identities.cc ${definitions})
 
+pyre_test_driver_cxx20(tests/pyre.lib/tensor/tensor_diagonal_inverse.cc)
+pyre_add_definitions(tests/pyre.lib/tensor/tensor_diagonal_inverse.cc ${definitions})
+
 pyre_test_driver_cxx20(tests/pyre.lib/tensor/tensor_linear_system.cc)
 pyre_add_definitions(tests/pyre.lib/tensor/tensor_linear_system.cc ${definitions})
 
