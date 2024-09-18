@@ -239,6 +239,10 @@ namespace pyre::tensor {
     constexpr auto inverse(const matrixT & A) -> matrixT
         requires(matrixT::dims[0] == 1);
 
+    // the inverse of a NxN diagonal matrix
+    template <diagonal_matrix_c matrixT>
+    constexpr auto inverse(const matrixT & A) -> matrixT;
+
     // the trace of a matrix
     template <square_matrix_c matrixT>
     constexpr auto trace(const matrixT & A) -> typename matrixT::scalar_type;
