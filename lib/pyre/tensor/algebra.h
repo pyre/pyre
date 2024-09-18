@@ -205,35 +205,39 @@ namespace pyre::tensor {
     constexpr auto factorial() -> int;
 
     // the determinant of a 4x4 matrix
-    template <typename T, class packingT>
-    constexpr auto determinant(const square_matrix_t<4, T, packingT> & A) -> T;
+    template <square_matrix_c matrixT>
+    constexpr auto determinant(const matrixT & A) -> typename matrixT::scalar_type
+        requires(matrixT::dims[0] == 4);
 
     // the determinant of a 3x3 matrix
-    template <typename T, class packingT>
-    constexpr auto determinant(const square_matrix_t<3, T, packingT> & A) -> T;
+    template <square_matrix_c matrixT>
+    constexpr auto determinant(const matrixT & A) -> typename matrixT::scalar_type
+        requires(matrixT::dims[0] == 3);
 
     // the determinant of a 2x2 matrix
-    template <typename T, class packingT>
-    constexpr auto determinant(const square_matrix_t<2, T, packingT> & A) -> T;
+    template <square_matrix_c matrixT>
+    constexpr auto determinant(const matrixT & A) -> typename matrixT::scalar_type
+        requires(matrixT::dims[0] == 2);
 
     // the determinant of a 1x1 matrix
-    template <typename T, class packingT>
-    constexpr auto determinant(const square_matrix_t<1, T, packingT> & A) -> T;
+    template <square_matrix_c matrixT>
+    constexpr auto determinant(const matrixT & A) -> typename matrixT::scalar_type
+        requires(matrixT::dims[0] == 1);
 
     // the inverse of a 3x3 matrix
-    template <typename T, class packingT>
-    constexpr auto inverse(const square_matrix_t<3, T, packingT> & A)
-        -> square_matrix_t<3, T, packingT>;
+    template <square_matrix_c matrixT>
+    constexpr auto inverse(const matrixT & A) -> matrixT
+        requires(matrixT::dims[0] == 3 && !diagonal_matrix_c<matrixT>);
 
     // the inverse of a 2x2 matrix
-    template <typename T, class packingT>
-    constexpr auto inverse(const square_matrix_t<2, T, packingT> & A)
-        -> square_matrix_t<2, T, packingT>;
+    template <square_matrix_c matrixT>
+    constexpr auto inverse(const matrixT & A) -> matrixT
+        requires(matrixT::dims[0] == 2 && !diagonal_matrix_c<matrixT>);
 
     // the inverse of a 1x1 matrix
-    template <typename T, class packingT>
-    constexpr auto inverse(const square_matrix_t<1, T, packingT> & A)
-        -> square_matrix_t<1, T, packingT>;
+    template <square_matrix_c matrixT>
+    constexpr auto inverse(const matrixT & A) -> matrixT
+        requires(matrixT::dims[0] == 1);
 
     // the trace of a matrix
     template <square_matrix_c matrixT>

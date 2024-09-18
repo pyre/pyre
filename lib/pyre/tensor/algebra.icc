@@ -676,29 +676,33 @@ pyre::tensor::factorial<1>() -> int
     return 1;
 }
 
-template <typename T, class packingT>
+template <pyre::tensor::square_matrix_c matrixT>
 constexpr auto
-pyre::tensor::determinant(const square_matrix_t<4, T, packingT> & A) -> T
+pyre::tensor::determinant(const matrixT & A) -> typename matrixT::scalar_type
+    requires(matrixT::dims[0] == 4) // 4x4 matrix
 {
     // the type of matrix {A}
-    using matrix_t = square_matrix_t<4, T, packingT>;
+    using matrix_t = matrixT;
 
-    T a11 = A[matrix_t::template getOffset<0, 0>()];
-    T a12 = A[matrix_t::template getOffset<0, 1>()];
-    T a13 = A[matrix_t::template getOffset<0, 2>()];
-    T a14 = A[matrix_t::template getOffset<0, 3>()];
-    T a21 = A[matrix_t::template getOffset<1, 0>()];
-    T a22 = A[matrix_t::template getOffset<1, 1>()];
-    T a23 = A[matrix_t::template getOffset<1, 2>()];
-    T a24 = A[matrix_t::template getOffset<1, 3>()];
-    T a31 = A[matrix_t::template getOffset<2, 0>()];
-    T a32 = A[matrix_t::template getOffset<2, 1>()];
-    T a33 = A[matrix_t::template getOffset<2, 2>()];
-    T a34 = A[matrix_t::template getOffset<2, 3>()];
-    T a41 = A[matrix_t::template getOffset<3, 0>()];
-    T a42 = A[matrix_t::template getOffset<3, 1>()];
-    T a43 = A[matrix_t::template getOffset<3, 2>()];
-    T a44 = A[matrix_t::template getOffset<3, 3>()];
+    // the underlying scalar type
+    using scalar_t = typename matrixT::scalar_type;
+
+    scalar_t a11 = A[matrix_t::template getOffset<0, 0>()];
+    scalar_t a12 = A[matrix_t::template getOffset<0, 1>()];
+    scalar_t a13 = A[matrix_t::template getOffset<0, 2>()];
+    scalar_t a14 = A[matrix_t::template getOffset<0, 3>()];
+    scalar_t a21 = A[matrix_t::template getOffset<1, 0>()];
+    scalar_t a22 = A[matrix_t::template getOffset<1, 1>()];
+    scalar_t a23 = A[matrix_t::template getOffset<1, 2>()];
+    scalar_t a24 = A[matrix_t::template getOffset<1, 3>()];
+    scalar_t a31 = A[matrix_t::template getOffset<2, 0>()];
+    scalar_t a32 = A[matrix_t::template getOffset<2, 1>()];
+    scalar_t a33 = A[matrix_t::template getOffset<2, 2>()];
+    scalar_t a34 = A[matrix_t::template getOffset<2, 3>()];
+    scalar_t a41 = A[matrix_t::template getOffset<3, 0>()];
+    scalar_t a42 = A[matrix_t::template getOffset<3, 1>()];
+    scalar_t a43 = A[matrix_t::template getOffset<3, 2>()];
+    scalar_t a44 = A[matrix_t::template getOffset<3, 3>()];
 
     return a12 * a34 * a43 * a21 - a12 * a33 * a44 * a21 - a34 * a42 * a13 * a21
          + a33 * a42 * a14 * a21 - a11 * a34 * a43 * a22 + a11 * a33 * a44 * a22
@@ -710,73 +714,86 @@ pyre::tensor::determinant(const square_matrix_t<4, T, packingT> & A) -> T
          + a41 * a14 * a23 * a32 + a11 * a43 * a24 * a32 - a41 * a13 * a24 * a32;
 }
 
-template <typename T, class packingT>
+template <pyre::tensor::square_matrix_c matrixT>
 constexpr auto
-pyre::tensor::determinant(const square_matrix_t<3, T, packingT> & A) -> T
+pyre::tensor::determinant(const matrixT & A) -> typename matrixT::scalar_type
+    requires(matrixT::dims[0] == 3) // 3x3 matrix
 {
     // the type of matrix {A}
-    using matrix_t = square_matrix_t<3, T, packingT>;
+    using matrix_t = matrixT;
 
-    T a11 = A[matrix_t::template getOffset<0, 0>()];
-    T a12 = A[matrix_t::template getOffset<0, 1>()];
-    T a13 = A[matrix_t::template getOffset<0, 2>()];
-    T a21 = A[matrix_t::template getOffset<1, 0>()];
-    T a22 = A[matrix_t::template getOffset<1, 1>()];
-    T a23 = A[matrix_t::template getOffset<1, 2>()];
-    T a31 = A[matrix_t::template getOffset<2, 0>()];
-    T a32 = A[matrix_t::template getOffset<2, 1>()];
-    T a33 = A[matrix_t::template getOffset<2, 2>()];
+    // the underlying scalar type
+    using scalar_t = typename matrixT::scalar_type;
+
+    scalar_t a11 = A[matrix_t::template getOffset<0, 0>()];
+    scalar_t a12 = A[matrix_t::template getOffset<0, 1>()];
+    scalar_t a13 = A[matrix_t::template getOffset<0, 2>()];
+    scalar_t a21 = A[matrix_t::template getOffset<1, 0>()];
+    scalar_t a22 = A[matrix_t::template getOffset<1, 1>()];
+    scalar_t a23 = A[matrix_t::template getOffset<1, 2>()];
+    scalar_t a31 = A[matrix_t::template getOffset<2, 0>()];
+    scalar_t a32 = A[matrix_t::template getOffset<2, 1>()];
+    scalar_t a33 = A[matrix_t::template getOffset<2, 2>()];
 
     return a11 * (a22 * a33 - a23 * a32) - a12 * (a21 * a33 - a23 * a31)
          + a13 * (a21 * a32 - a22 * a31);
 }
 
-template <typename T, class packingT>
+template <pyre::tensor::square_matrix_c matrixT>
 constexpr auto
-pyre::tensor::determinant(const square_matrix_t<2, T, packingT> & A) -> T
+pyre::tensor::determinant(const matrixT & A) -> typename matrixT::scalar_type
+    requires(matrixT::dims[0] == 2) // 2x2 matrix
 {
     // the type of matrix {A}
-    using matrix_t = square_matrix_t<2, T, packingT>;
+    using matrix_t = matrixT;
 
-    T a11 = A[matrix_t::template getOffset<0, 0>()];
-    T a22 = A[matrix_t::template getOffset<1, 1>()];
-    T a12 = A[matrix_t::template getOffset<0, 1>()];
-    T a21 = A[matrix_t::template getOffset<1, 0>()];
+    // the underlying scalar type
+    using scalar_t = typename matrixT::scalar_type;
+
+    scalar_t a11 = A[matrix_t::template getOffset<0, 0>()];
+    scalar_t a22 = A[matrix_t::template getOffset<1, 1>()];
+    scalar_t a12 = A[matrix_t::template getOffset<0, 1>()];
+    scalar_t a21 = A[matrix_t::template getOffset<1, 0>()];
 
     return a11 * a22 - a12 * a21;
 }
 
-template <typename T, class packingT>
+template <pyre::tensor::square_matrix_c matrixT>
 constexpr auto
-pyre::tensor::determinant(const square_matrix_t<1, T, packingT> & A) -> T
+pyre::tensor::determinant(const matrixT & A) -> typename matrixT::scalar_type
+    requires(matrixT::dims[0] == 1) // 1x1 matrix
 {
     // the type of matrix {A}
-    using matrix_t = square_matrix_t<1, T, packingT>;
+    using matrix_t = matrixT;
 
     return A[matrix_t::template getOffset<0, 0>()];
 }
 
-template <typename T, class packingT>
+template <pyre::tensor::square_matrix_c matrixT>
 constexpr auto
-pyre::tensor::inverse(const square_matrix_t<3, T, packingT> & A) -> square_matrix_t<3, T, packingT>
+pyre::tensor::inverse(const matrixT & A) -> matrixT
+    requires(matrixT::dims[0] == 3 && !diagonal_matrix_c<matrixT>) // 3x3 matrix
 {
     // the type of matrix {A}
-    using matrix_t = square_matrix_t<3, T, packingT>;
+    using matrix_t = matrixT;
 
-    T a11 = A[matrix_t::template getOffset<0, 0>()];
-    T a12 = A[matrix_t::template getOffset<0, 1>()];
-    T a13 = A[matrix_t::template getOffset<0, 2>()];
-    T a21 = A[matrix_t::template getOffset<1, 0>()];
-    T a22 = A[matrix_t::template getOffset<1, 1>()];
-    T a23 = A[matrix_t::template getOffset<1, 2>()];
-    T a31 = A[matrix_t::template getOffset<2, 0>()];
-    T a32 = A[matrix_t::template getOffset<2, 1>()];
-    T a33 = A[matrix_t::template getOffset<2, 2>()];
+    // the underlying scalar type
+    using scalar_t = typename matrixT::scalar_type;
+
+    scalar_t a11 = A[matrix_t::template getOffset<0, 0>()];
+    scalar_t a12 = A[matrix_t::template getOffset<0, 1>()];
+    scalar_t a13 = A[matrix_t::template getOffset<0, 2>()];
+    scalar_t a21 = A[matrix_t::template getOffset<1, 0>()];
+    scalar_t a22 = A[matrix_t::template getOffset<1, 1>()];
+    scalar_t a23 = A[matrix_t::template getOffset<1, 2>()];
+    scalar_t a31 = A[matrix_t::template getOffset<2, 0>()];
+    scalar_t a32 = A[matrix_t::template getOffset<2, 1>()];
+    scalar_t a33 = A[matrix_t::template getOffset<2, 2>()];
 
     matrix_t invA;
-    T det = determinant(A);
+    scalar_t det = determinant(A);
     assert(det != 0.0);
-    T detinv = 1.0 / det;
+    scalar_t detinv = 1.0 / det;
     invA[matrix_t::template getOffset<0, 0>()] = detinv * (a22 * a33 - a23 * a32);
     invA[matrix_t::template getOffset<0, 1>()] = detinv * (-a12 * a33 + a13 * a32);
     invA[matrix_t::template getOffset<0, 2>()] = detinv * (a12 * a23 - a13 * a22);
@@ -811,22 +828,26 @@ pyre::tensor::inverse(const square_matrix_t<3, T, pyre::grid::diagonal_t<3>> & A
     return invA;
 }
 
-template <typename T, class packingT>
+template <pyre::tensor::square_matrix_c matrixT>
 constexpr auto
-pyre::tensor::inverse(const square_matrix_t<2, T, packingT> & A) -> square_matrix_t<2, T, packingT>
+pyre::tensor::inverse(const matrixT & A) -> matrixT
+    requires(matrixT::dims[0] == 2 && !diagonal_matrix_c<matrixT>) // 2x2 matrix
 {
     // the type of matrix {A}
-    using matrix_t = square_matrix_t<2, T, packingT>;
+    using matrix_t = matrixT;
 
-    T a11 = A[matrix_t::template getOffset<0, 0>()];
-    T a22 = A[matrix_t::template getOffset<1, 1>()];
-    T a12 = A[matrix_t::template getOffset<0, 1>()];
-    T a21 = A[matrix_t::template getOffset<1, 0>()];
+    // the underlying scalar type
+    using scalar_t = typename matrixT::scalar_type;
+
+    scalar_t a11 = A[matrix_t::template getOffset<0, 0>()];
+    scalar_t a22 = A[matrix_t::template getOffset<1, 1>()];
+    scalar_t a12 = A[matrix_t::template getOffset<0, 1>()];
+    scalar_t a21 = A[matrix_t::template getOffset<1, 0>()];
 
     matrix_t invA;
-    T det = determinant(A);
+    scalar_t det = determinant(A);
     assert(det != 0.0);
-    T detinv = 1.0 / det;
+    scalar_t detinv = 1.0 / det;
     invA[matrix_t::template getOffset<0, 0>()] = detinv * a22;
     invA[matrix_t::template getOffset<0, 1>()] = detinv * (-a12);
     invA[matrix_t::template getOffset<1, 0>()] = detinv * (-a21);
@@ -854,12 +875,13 @@ pyre::tensor::inverse(const square_matrix_t<2, T, pyre::grid::diagonal_t<2>> & A
     return invA;
 }
 
-template <typename T, class packingT>
+template <pyre::tensor::square_matrix_c matrixT>
 constexpr auto
-pyre::tensor::inverse(const square_matrix_t<1, T, packingT> & A) -> square_matrix_t<1, T, packingT>
+pyre::tensor::inverse(const matrixT & A) -> matrixT
+    requires(matrixT::dims[0] == 1) // 1x1 matrix (scalar)
 {
     // the type of matrix {A}
-    using matrix_t = square_matrix_t<1, T, packingT>;
+    using matrix_t = matrixT;
 
     return 1.0 / A[matrix_t::template getOffset<0, 0>()];
 }
