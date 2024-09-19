@@ -91,6 +91,8 @@ class Darwin(POSIX, family="pyre.platforms.darwin"):
     # private data
     # the known code names
     codenames = {
+        # sequoia
+        "15.x": "sequoia",
         # sonoma
         "14.x": "sonoma",
         # ventura
