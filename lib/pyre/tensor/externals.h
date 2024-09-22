@@ -13,6 +13,7 @@
 #include <cassert>
 #include <cmath>
 #include <functional>
+#include <complex>
 
 // support
 #include <pyre/journal.h>
