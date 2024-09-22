@@ -89,7 +89,8 @@ template <typename T>
 constexpr bool
 pyre::tensor::is_equal(T lhs, T rhs)
 {
-    if ((lhs < rhs + epsilon_right(rhs)) && (lhs > rhs - epsilon_left(rhs))) {
+    if ((lhs < rhs + pyre::algebra::epsilon_right(rhs))
+        && (lhs > rhs - pyre::algebra::epsilon_left(rhs))) {
         return true;
     }
 
