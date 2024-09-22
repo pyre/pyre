@@ -49,6 +49,12 @@ namespace pyre::tensor {
     template <class tensorT, int... J>
     constexpr auto unit = make_basis_element<tensorT, J...>();
 
+    // typedef for complex numbers
+    using complex_t = std::complex<double>;
+
+    // typedef for quaternions
+    using quaternion_t = UnitQuaternion<complex_t>;
+
 } // namespace pyre::tensor
 
 

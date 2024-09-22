@@ -1,0 +1,60 @@
+// -*- C++ -*-
+//
+// bianca giovanardi
+// (c) 1998-2024 all rights reserved
+//
+
+
+// code guard
+#if !defined(pyre_tensor_UnitQuaternion_icc)
+#error this file contains implementation details for pyre::tensor::UnitQuaternion
+#else
+
+
+template <typename T>
+constexpr pyre::tensor::UnitQuaternion<T>::UnitQuaternion(real_type (&&args)[4]) :
+    _qr(args[0]),
+    _qi(args[1]),
+    _qj(args[2]),
+    _qk(args[3]),
+    _matrix({ T(_qr, _qi), T(_qj, _qk), -std::conj(T(_qj, _qk)), std::conj(T(_qr, _qi)) })
+{}
+
+template <typename T>
+constexpr pyre::tensor::UnitQuaternion<T>::UnitQuaternion(
+    const real_type & theta, const vector_t<3> & axis) :
+    UnitQuaternion({ std::cos(0.5 * theta), axis[0] * std::sin(0.5 * theta),
+                     axis[1] * std::sin(0.5 * theta), axis[2] * std::sin(0.5 * theta) })
+{}
+
+template <typename T>
+constexpr auto
+pyre::tensor::UnitQuaternion<T>::rotation() const -> rotation_matrix_type
+{
+    return rotation_matrix_type(
+        { 1.0 - 2.0 * (_qj * _qj + _qk * _qk), 2.0 * (_qi * _qj - _qk * _qr),
+          2.0 * (_qi * _qk + _qj * _qr), 2.0 * (_qi * _qj + _qk * _qr),
+          1.0 - 2.0 * (_qi * _qi + _qk * _qk), 2.0 * (_qj * _qk - _qi * _qr),
+          2.0 * (_qi * _qk - _qj * _qr), 2.0 * (_qj * _qk + _qi * _qr),
+          1.0 - 2.0 * (_qi * _qi + _qj * _qj) });
+}
+
+template <typename T>
+constexpr auto
+pyre::tensor::UnitQuaternion<T>::axis() const -> rotation_axis_type
+{
+    real_type norm = std::sqrt(_qi * _qi + _qj * _qj + _qk * _qk);
+    return rotation_axis_type({ _qi / norm, _qj / norm, _qk / norm });
+}
+
+template <typename T>
+constexpr auto
+pyre::tensor::UnitQuaternion<T>::angle() const -> real_type
+{
+    return 2.0 * std::atan2(std::sqrt(_qi * _qi + _qj * _qj + _qk * _qk), _qr);
+}
+
+
+#endif
+
+// end of file

@@ -33,6 +33,8 @@
 #include "utilities.h"
 // the algebra on tensors
 #include "algebra.h"
+// the quaternions
+#include "UnitQuaternion.h"
 
 
 #endif
