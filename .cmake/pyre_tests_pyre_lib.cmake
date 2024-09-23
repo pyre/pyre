@@ -335,6 +335,9 @@ pyre_add_definitions(tests/pyre.lib/tensor/tensor_transpose.cc ${definitions})
 pyre_test_driver_cxx20(tests/pyre.lib/tensor/tensor_utilities.cc)
 pyre_add_definitions(tests/pyre.lib/tensor/tensor_utilities.cc ${definitions})
 
+pyre_test_driver_cxx20(tests/pyre.lib/tensor/quaternion_composition.cc)
+pyre_add_definitions(tests/pyre.lib/tensor/quaternion_composition.cc ${definitions})
+
 pyre_test_driver_cxx20(tests/pyre.lib/tensor/quaternion_inverse.cc)
 pyre_add_definitions(tests/pyre.lib/tensor/quaternion_inverse.cc ${definitions})
 

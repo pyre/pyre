@@ -33,6 +33,9 @@ namespace pyre::tensor {
         // constructor from four real arguments
         constexpr UnitQuaternion(real_type (&&)[4]);
 
+        // constructor from a complex matrix representation
+        constexpr UnitQuaternion(const matrix_representation_type &);
+
         // constructor with an angle and an axis of rotation
         constexpr UnitQuaternion(const real_type &, const rotation_axis_type &);
 
@@ -60,6 +63,9 @@ namespace pyre::tensor {
 
         // get the rotation angle associated with this quaternion
         constexpr auto angle() const -> real_type;
+
+        // composition of this quaternion with one another (apply the other first, then this)
+        constexpr auto operator*(const unit_quaternion_type &) const -> unit_quaternion_type;
 
     private:
         // the components of the quaternion

@@ -35,6 +35,8 @@
 #include "algebra.h"
 // the quaternions
 #include "UnitQuaternion.h"
+// the quaternions utilities
+#include "quaternion.h"
 
 
 #endif
