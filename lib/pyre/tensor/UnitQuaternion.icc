@@ -22,6 +22,16 @@ constexpr pyre::tensor::UnitQuaternion<T>::UnitQuaternion(real_type (&&args)[4])
 
 template <typename T>
 constexpr pyre::tensor::UnitQuaternion<T>::UnitQuaternion(
+    const matrix_representation_type & matrix) :
+    _qr(std::real(matrix[0])),
+    _qi(std::imag(matrix[0])),
+    _qj(std::real(matrix[1])),
+    _qk(std::imag(matrix[1])),
+    _matrix(matrix)
+{}
+
+template <typename T>
+constexpr pyre::tensor::UnitQuaternion<T>::UnitQuaternion(
     const real_type & theta, const vector_t<3> & axis) :
     UnitQuaternion({ std::cos(0.5 * theta), axis[0] * std::sin(0.5 * theta),
                      axis[1] * std::sin(0.5 * theta), axis[2] * std::sin(0.5 * theta) })
@@ -52,6 +62,14 @@ constexpr auto
 pyre::tensor::UnitQuaternion<T>::angle() const -> real_type
 {
     return 2.0 * std::atan2(std::sqrt(_qi * _qi + _qj * _qj + _qk * _qk), _qr);
+}
+
+template <typename T>
+constexpr auto
+pyre::tensor::UnitQuaternion<T>::operator*(const unit_quaternion_type & rhs) const
+    -> unit_quaternion_type
+{
+    return unit_quaternion_type(_matrix * rhs._matrix);
 }
 
 
