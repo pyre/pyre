@@ -38,7 +38,7 @@ main(int argc, char * argv[])
     constexpr auto quaternion_2 = quaternion_t(angle_2, axis_2);
 
     // compose the two quaternions
-    constexpr auto quaternion_3 = compose(quaternion_2, quaternion_1);
+    constexpr auto quaternion_3 = quaternion_2 * quaternion_1;
 
     // pick a 3D vector
     constexpr auto a = vector_t<3> { 1.0, 0.0, 0.0 };
