@@ -367,6 +367,9 @@ pyre_add_definitions(tests/pyre.lib/tensor/tensor_cayley_hamilton_theorem.cc ${d
 pyre_test_driver_cxx20(tests/pyre.lib/tensor/tensor_compact_arithmetics.cc)
 pyre_add_definitions(tests/pyre.lib/tensor/tensor_compact_arithmetics.cc ${definitions})
 
+pyre_test_driver_cxx20(tests/pyre.lib/tensor/tensor_dyadic.cc)
+pyre_add_definitions(tests/pyre.lib/tensor/tensor_dyadic.cc ${definitions})
+
 pyre_test_driver_cxx20(tests/pyre.lib/tensor/tensor_eigenvalues.cc)
 pyre_add_definitions(tests/pyre.lib/tensor/tensor_eigenvalues.cc ${definitions})
 

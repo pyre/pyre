@@ -63,6 +63,22 @@ namespace pyre::tensor {
         using type = matrix_t<D1, D3, scalar_type, repacking_type>;
     };
 
+    // the type resulting from the product of {T1} and {T2}
+    template <class T1, class T2>
+    struct dyadic_product;
+
+    // the vector type resulting from the dyadic product of {vectorT1} and {vectorT2}
+    template <vector_c vectorT1, vector_c vectorT2>
+    struct dyadic_product<vectorT1, vectorT2> {
+    private:
+        using T1 = typename vectorT1::scalar_type;
+        using T2 = typename vectorT2::scalar_type;
+        using scalar_type = typename std::result_of<std::multiplies<>(T1, T2)>::type;
+
+    public:
+        using type = matrix_t<vectorT1::size, vectorT2::size, scalar_type>;
+    };
+
     // the type resulting from the sum of {T1} and {T2}
     template <class T1, class T2>
     struct sum;
