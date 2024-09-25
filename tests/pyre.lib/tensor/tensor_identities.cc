@@ -68,6 +68,15 @@ main(int argc, char * argv[])
     // Binet-Cauchy identity
     static_assert(cross(a, b) * cross(c, d) == (a * c) * (b * d) - (b * c) * (a * d));
 
+    // definition of tensor product
+    static_assert(dyadic(a, b) * c == (b * c) * a);
+
+    // transpose of dyadic
+    static_assert(transpose(dyadic(a, b)) == dyadic(b, a));
+
+    // tensor product identity
+    static_assert(dyadic(a, b) * dyadic(c, d) == b * c * dyadic(a, d));
+
     // all done
     return 0;
 }
