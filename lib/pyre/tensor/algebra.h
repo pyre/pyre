@@ -157,6 +157,11 @@ namespace pyre::tensor {
     template <tensor_c tensorT, class TENSOR>
     constexpr auto operator-=(tensorT & lhs, TENSOR && rhs) -> tensorT &;
 
+    // dyadic vector product
+    template <vector_c vectorT1, vector_c vectorT2>
+    constexpr auto dyadic(const vectorT1 & v1, const vectorT2 & v2)
+        -> dyadic_product<vectorT1, vectorT2>::type;
+
     // builds a square matrix with all zeros except the K-th row is equal to v
     template <int K, class packingT = pyre::grid::canonical_t<2>, vector_c vectorT>
     constexpr auto matrix_row(const vectorT & v)

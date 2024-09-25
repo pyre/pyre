@@ -408,6 +408,35 @@ pyre::tensor::operator/(tensorT && y, typename tensorT::scalar_type a) -> tensor
     return (1.0 / a) * std::move(y);
 }
 
+// dyadic vector product
+template <pyre::tensor::vector_c vectorT1, pyre::tensor::vector_c vectorT2>
+constexpr auto
+pyre::tensor::dyadic(const vectorT1 & v1, const vectorT2 & v2)
+    -> pyre::tensor::dyadic_product<vectorT1, vectorT2>::type
+{
+    // the type of the matrix to be returned
+    using matrix_result_t = typename dyadic_product<vectorT1, vectorT2>::type;
+
+    constexpr auto _fill_matrix_row = []<int... I>(
+                                          matrix_result_t & A, const vectorT1 & v1,
+                                          const vectorT2 & v2,
+                                          integer_sequence<I...>) -> matrix_result_t {
+        constexpr auto _fill_matrix_column = []<int K, int... J>(
+                                                 matrix_result_t & A, const vectorT1 & v1,
+                                                 const vectorT2 & v2,
+                                                 integer_sequence<J...>) -> void {
+            ((A[matrix_result_t::template getOffset<K, J>()] = v1[{ K }] * v2[{ J }]), ...);
+        };
+        ((_fill_matrix_column.template operator()<I>(
+             A, v1, v2, make_integer_sequence<vectorT2::size> {})),
+         ...);
+        return A;
+    };
+
+    matrix_result_t A;
+    return _fill_matrix_row(A, v1, v2, make_integer_sequence<vectorT1::size> {});
+}
+
 // builds a square matrix with all zeros except the K-th row is equal to v
 template <int K, class packingT, pyre::tensor::vector_c vectorT>
 constexpr auto
