@@ -525,7 +525,6 @@ template <pyre::tensor::vector_c vectorT1, pyre::tensor::vector_c vectorT2>
 constexpr auto
 pyre::tensor::operator*(const vectorT1 & v1, const vectorT2 & v2)
     -> product<vectorT1, vectorT2>::type
-    // TOFIX: rename these requires in terms of 'compatibility'
     requires(vectorT1::size == vectorT2::size)
 {
     using scalar_return_type = product<vectorT1, vectorT2>::type;
