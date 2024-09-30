@@ -45,7 +45,7 @@ namespace pyre::tensor {
     // concept of a diagonal matrix
     template <class F>
     concept diagonal_matrix_c = requires(F c) {
-        // require that F only binds to square {matrix_t} specializations
+        // require that F only binds to diagonal {matrix_t} specializations
         []<int D, typename T>(const matrix_t<D, D, T, pyre::grid::diagonal_t<D>> &)
             // with D different than 1 (otherwise it is a scalar)
             requires(D != 1)
