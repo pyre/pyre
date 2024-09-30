@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
-# (c) 1998-2023 all rights reserved
-#
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2024 all rights reserved
 
 """
 Read an empty document
@@ -16,7 +14,6 @@ def test():
     from pyre.xml.Node import Node
     from pyre.xml.Document import Document
 
-
     class Inventory(Node):
         """The top level document element"""
 
@@ -26,14 +23,11 @@ def test():
         def __init__(self, parent, attributes, locator):
             """do nothing"""
 
-
     class IDoc(Document):
         """Document class"""
-        # the top-level
-        root = "inventory"
-        # declare the handler
-        inventory = pyre.xml.element(tag="inventory", handler=Inventory)
 
+        # declare the handler
+        inventory = pyre.xml.element(tag="inventory", handler=Inventory, root=True)
 
     # build the trivial document
     document = IDoc()

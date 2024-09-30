@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
-# (c) 1998-2023 all rights reserved
-#
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2024 all rights reserved
 
 
 # externals
 import json
+
 # the base class
 from .Response import Response
 
@@ -17,6 +16,7 @@ class OK(Response):
     """
     OK
     """
+
     # state
     code = 200
     status = " ".join(filter(None, (line.strip() for line in __doc__.splitlines())))
@@ -28,7 +28,7 @@ class OK(Response):
         Generate the payload
         """
         # nothing to do
-        return b''
+        return b""
 
 
 # windows bitmap
@@ -50,7 +50,7 @@ class BMP(OK):
         # chain up
         super().__init__(**kwds)
         # add the content type to the headers
-        self.headers['Content-Type'] = f'image/bmp'
+        self.headers["Content-Type"] = f"image/bmp"
         # save the value
         self.bmp = bmp
         # all done
@@ -66,6 +66,15 @@ class Exit(OK):
     # public data
     abort = True
 
+    # metamethods
+    def __init__(self, code=OK.code, **kwds):
+        # chain up
+        super().__init__(**kwds)
+        # set my exit code
+        self.code = code
+        # all done
+        return
+
 
 # a string literal
 class Literal(OK):
@@ -74,7 +83,7 @@ class Literal(OK):
     """
 
     # public data
-    encoding = 'utf-8' # the encoding to use when converting to bytes
+    encoding = "utf-8"  # the encoding to use when converting to bytes
 
     # interface
     def render(self, **kwds):
@@ -105,7 +114,7 @@ class CSV(Literal):
         # chain up
         super().__init__(**kwds)
         # add my content type to the headers
-        self.headers['Content-Type'] = 'text/csv'
+        self.headers["Content-Type"] = "text/csv"
         # all done
         return
 
@@ -121,7 +130,7 @@ class JSON(Literal):
         # chain up after {json} encoding {value}
         super().__init__(value=json.dumps(value), **kwds)
         # add my content type to the headers
-        self.headers['Content-Type'] = f'application/json; charset={self.encoding}'
+        self.headers["Content-Type"] = f"application/json; charset={self.encoding}"
         # all done
         return
 
@@ -148,7 +157,7 @@ class File(Document):
     """
 
     # public data
-    uri = None # the file to serve
+    uri = None  # the file to serve
 
     # interface
     def render(self, server, **kwds):
@@ -162,7 +171,7 @@ class File(Document):
         # attempt to
         try:
             # open the file
-            stream = app.pfs[uri].open(mode='rb')
+            stream = app.pfs[uri].open(mode="rb")
         # if something goes wrong
         except app.pfs.GenericError:
             # raise something bad
@@ -186,14 +195,14 @@ class CSS(File):
     """
 
     # public data
-    encoding = 'utf-8' # the encoding to use when converting to bytes
+    encoding = "utf-8"  # the encoding to use when converting to bytes
 
     # metamethods
     def __init__(self, **kwds):
         # chain up
         super().__init__(**kwds)
         # mark as javascript
-        self.headers['Content-Type'] = f'text/css; charset={self.encoding}'
+        self.headers["Content-Type"] = f"text/css; charset={self.encoding}"
         # all done
         return
 
@@ -204,14 +213,14 @@ class Javascript(File):
     """
 
     # public data
-    encoding = 'utf-8' # the encoding to use when converting to bytes
+    encoding = "utf-8"  # the encoding to use when converting to bytes
 
     # metamethods
     def __init__(self, **kwds):
         # chain up
         super().__init__(**kwds)
         # mark as javascript
-        self.headers['Content-Type'] = f'text/javascript; charset={self.encoding}'
+        self.headers["Content-Type"] = f"text/javascript; charset={self.encoding}"
         # all done
         return
 

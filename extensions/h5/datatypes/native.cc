@@ -1,7 +1,7 @@
 // -*- c++ -*-
 //
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
-// (c) 1998-2023 all rights reserved
+// (c) 1998-2024 all rights reserved
 
 
 // externals
@@ -87,7 +87,7 @@ pyre::h5::py::datatypes::native(py::module & m)
     // save it
     native.attr("half") = nh;
     // allocate the complex type
-    auto ch = H5::CompType(2 + nh.getSize());
+    auto ch = H5::CompType(2 * nh.getSize());
     // insert the real and imaginary parts
     ch.insertMember("r", 0, nh);
     ch.insertMember("i", nh.getSize(), nh);

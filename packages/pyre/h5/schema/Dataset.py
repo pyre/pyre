@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
-# (c) 1998-2023 all rights reserved
+# (c) 1998-2024 all rights reserved
 
 
 # support
@@ -25,7 +25,17 @@ class Dataset(Descriptor):
     """
 
     # my mixins
-    from ..typed import array, bool, complex, float, int, str, timestamp, containers
+    from ..typed import (
+        array,
+        bool,
+        complex,
+        enum,
+        float,
+        int,
+        str,
+        timestamp,
+        containers,
+    )
 
     # metamethods
     # construction
@@ -81,7 +91,7 @@ class Dataset(Descriptor):
         # as a result, their type does not depend on the value of the dataset
         type = self.disktype
         # hand off the pair
-        return type, scalar
+        return type, scalar, None
 
     # visiting
     def _pyre_identify(self, authority, **kwds):

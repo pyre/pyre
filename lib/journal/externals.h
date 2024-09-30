@@ -1,7 +1,7 @@
 // -*- c++ -*-
 //
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
-// (c) 1998-2023 all rights reserved
+// (c) 1998-2024 all rights reserved
 
 // code guard
 #if !defined(pyre_journal_externals_h)
@@ -22,6 +22,9 @@
 #include <sstream>
 #include <iomanip>
 
+#if defined(__cpp_lib_source_location)
+#include <source_location>
+#endif
 
 // aliases for fundamental types that define implementation choices
 namespace pyre::journal {

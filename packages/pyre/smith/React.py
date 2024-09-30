@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
-# (c) 1998-2023 all rights reserved
+# (c) 1998-2024 all rights reserved
 
 
 # externals
@@ -37,10 +37,10 @@ class React(ProjectTemplate, family="pyre.smith.projects.react"):
     blacklist = re.compile(
         "|".join(
             [
-                ".+\.png",
-                ".+\.ttf",
-                "ambiance\.css",
-                "graphiql\.css",
+                r".+\.png",
+                r".+\.ttf",
+                r"ambiance\.css",
+                r"graphiql\.css",
             ]
         )
     )

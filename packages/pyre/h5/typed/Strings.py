@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
-# (c) 1998-2023 all rights reserved
+# (c) 1998-2024 all rights reserved
 
 
 # support
@@ -17,9 +17,6 @@ class Strings(Dataset.list):
     """
     Implementation details of the dataset mixin that supports a {list} of {str}
     """
-
-    # constants
-    typename = "strings"  # the name of my type
 
     # metamethods
     def __init__(self, schema=None, **kwds):
@@ -85,10 +82,10 @@ class Strings(Dataset.list):
         """
         Construct representations for my on-disk datatype and dataspace
         """
-        # get the dataset value; it should be a list of string
+        # get the dataset value; it should be a list of strings
         value = dataset.value
-        # the type width is the max of the lengths
-        width = max([1] + list(map(len, value)))
+        # the type width is the max of the lengths of the strings in the list
+        width = max(1, max(len(item) for item in value))
         # the space is determined by the number of strings
         shape = [len(value)]
         # build the type
@@ -96,7 +93,7 @@ class Strings(Dataset.list):
         # and the space
         space = libh5.DataSpace(shape=shape)
         # hand the pair off
-        return type, space
+        return type, space, None
 
 
 # end of file

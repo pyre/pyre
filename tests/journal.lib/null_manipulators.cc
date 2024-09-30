@@ -1,7 +1,7 @@
 // -*- c++ -*-
 //
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
-// (c) 1998-2023 all rights reserved
+// (c) 1998-2024 all rights reserved
 
 
 // get the journal
@@ -16,9 +16,25 @@ main()
     pyre::journal::null_t channel("tests.journal.null");
 
     // inject the manipulators
-    channel << pyre::journal::at(__HERE__) << pyre::journal::note("time", "now")
-            << "null channel:" << pyre::journal::newline << "    Hello world!"
-            << pyre::journal::endl;
+    channel
+        // location
+        << pyre::journal::at(__HERE__)
+        // notes
+        << pyre::journal::note("time", "now")
+        // message
+        << "null channel:"
+        // new line
+        << pyre::journal::newline
+        // indent two ways
+        << pyre::journal::indent
+        << pyre::journal::indent(2)
+        // more message
+        << "    Hello world!"
+        // outdent two ways
+        << pyre::journal::outdent(2)
+        << pyre::journal::outdent
+        // flush
+        << pyre::journal::endl;
 
     // all done
     return 0;

@@ -1,7 +1,7 @@
 ## -*- docker-image-name: "pyre:jammy-gcc" -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
-# (c) 1998-2023 all rights reserved
+# (c) 1998-2024 all rights reserved
 
 # based on ubuntu
 FROM ubuntu:jammy
@@ -87,10 +87,10 @@ COPY . pyre
 
 # go to the {pyre} top level directory
 WORKDIR ${srcdir}/pyre
-# build
-RUN ${mm}
 # show me the build context
 RUN ${mm} --serial host.info builder.info compilers.info
+# build
+RUN ${mm}
 
 # and test
 CMD service ssh start && ${MM} tests

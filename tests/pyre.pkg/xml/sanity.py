@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
-# (c) 1998-2023 all rights reserved
-#
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2024 all rights reserved
 
 
 """
@@ -14,6 +12,7 @@ Sanity check: verify that the package is accessible
 
 def test():
     import pyre.xml
+
     return
 
 

@@ -1,7 +1,7 @@
 // -*- c++ -*-
 //
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
-// (c) 1998-2023 all rights reserved
+// (c) 1998-2024 all rights reserved
 
 
 // externals
@@ -44,6 +44,28 @@ pyre::h5::py::datatypes::compound(py::module & m)
         &CompType::getNmembers,
         // the docstring
         "the number of members in this compound type");
+
+    // my names of the group members
+    cls.def_property_readonly(
+        // the name
+        "names",
+        // the implementation
+        [](const CompType & self) -> names_t {
+            // get the number of members
+            auto members = self.getNmembers();
+            // make a pile
+            auto names = names_t(members);
+            // go through the known members
+            for (int idx = 0; idx < members; ++idx) {
+                // get the name of each one and put it in the pile
+                names[idx] = self.getMemberName(idx);
+            }
+            // all done
+            return names;
+        },
+        // the docstring
+        "the names of the members of this compound type");
+
 
     cls.def_property(
         // the name

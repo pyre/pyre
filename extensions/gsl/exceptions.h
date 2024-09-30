@@ -2,7 +2,7 @@
 //
 // michael a.g. aïvázis
 // orthologue
-// (c) 1998-2023 all rights reserved
+// (c) 1998-2024 all rights reserved
 //
 
 #if !defined(gsl_extension_exceptions_h)

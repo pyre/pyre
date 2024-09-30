@@ -1,7 +1,7 @@
 // -*- c++ -*-
 //
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
-// (c) 1998-2023 all rights reserved
+// (c) 1998-2024 all rights reserved
 
 
 // externals
@@ -28,7 +28,16 @@ pyre::h5::py::datatypes::datatype(py::module & m)
         "the base HDF5 datatype");
 
     // constructor
-    // from a predefined float type
+    // from an existing type
+    cls.def(
+        // the implementation
+        py::init<hid_t>(),
+        // the signature
+        "id"_a,
+        // the docstring
+        "make a type using the id of an existing one");
+
+    // from a predefined type
     cls.def(
         // the implementation
         py::init<const PredType &>(),
@@ -71,7 +80,7 @@ pyre::h5::py::datatypes::datatype(py::module & m)
         "objectType",
         // the implementation
         [](const py::object &) -> H5O_type_t {
-            // i am a group
+            // i am a named datatype
             return H5O_TYPE_NAMED_DATATYPE;
         },
         // the docstring
@@ -94,6 +103,26 @@ pyre::h5::py::datatypes::datatype(py::module & m)
         &DataType::getSize,
         // the docstring
         "retrieve the size of this data type");
+
+    // retrieve the base type of a type
+    cls.def_property_readonly(
+        // the name
+        "super",
+        // the implementation
+        &DataType::getSuper,
+        // the docstring
+        "retrieve the base type from which this one is derived");
+
+    // check whether this datatype is a certain type of datatype
+    cls.def(
+        // the name
+        "isA",
+        // the implementation
+        py::overload_cast<H5T_class_t>(&DataType::detectClass, py::const_),
+        // the signature
+        "type"_a,
+        // the docsting
+        "check whether this data type is of a given type");
 
     // interface
     cls.def(
@@ -127,6 +156,9 @@ pyre::h5::py::datatypes::datatype(py::module & m)
         },
         // the docstring
         "decode the binary object description");
+
+    // access to the datatype attributes
+    attributes(cls);
 
     // all done
     return;

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
-# (c) 1998-2023 all rights reserved
+# (c) 1998-2024 all rights reserved
 
 
 # externals
@@ -19,13 +19,14 @@ from .Managed import Managed
 # declaration
 class MacPorts(Managed, family="pyre.platforms.packagers.macports"):
     """
-    Support for the macport package manager
+    Support for the macports package manager
     """
 
     # constants
     name = "macports"
-    client = "port"
-    defaultLocation = pyre.primitives.path("/opt/local/bin")
+
+    # user configurable state
+    client = pyre.primitives.path("/opt/local/bin/port")
 
     # meta-methods
     def __init__(self, **kwds):
@@ -39,7 +40,7 @@ class MacPorts(Managed, family="pyre.platforms.packagers.macports"):
     # implementation details
     def getInstalledPackages(self):
         """
-        Grant access to the installed package indexx
+        Grant access to the installed package index
         """
         # grab the index
         installed = self._installed
@@ -114,13 +115,11 @@ class MacPorts(Managed, family="pyre.platforms.packagers.macports"):
                 vinfo, *variants = info.split("+")
                 # the version info starts with an @ sign
                 if vinfo[0] != "@":
-                    # something has changes in the macports versioning scheme
+                    # something has changed in the macports versioning scheme
                     import journal
 
                     # describe the problem
-                    msg = "unexpected character {!r} in macports version field".format(
-                        vinfo[0]
-                    )
+                    msg = f"unexpected character '{vinfo[0]}' in macports version field"
                     # and let me know
                     raise journal.firewall(self.pyre_family()).log(msg)
                 # and has two parts; apparently there are ports with '_' in their version
@@ -200,9 +199,7 @@ class MacPorts(Managed, family="pyre.platforms.packagers.macports"):
                         import journal
 
                         # build a message
-                        msg = "the {!r} port selection is in inconsistent state".format(
-                            group
-                        )
+                        msg = f"the '{group}' port selection is in inconsistent state"
                         # and warn the user
                         journal.warning("pyre.platforms").log(msg)
                     # and put it at the top of the pile
@@ -338,9 +335,9 @@ class MacPorts(Managed, family="pyre.platforms.packagers.macports"):
         # if it doesn't
         except AttributeError:
             # describe what went wrong
-            msg = "could not find a package installation for {!r}".format(name)
+            msg = f"could not find a package installation for '{name}'"
             # and report it
-            raise package.ConfigurationError(configurable=self, errors=[msg])
+            raise installation.ConfigurationError(configurable=self, errors=[msg])
 
         # perhaps the flavor is the package name
         if flavor in installed:
@@ -350,9 +347,7 @@ class MacPorts(Managed, family="pyre.platforms.packagers.macports"):
         # beyond this point, nothing works unless this package belongs to a selection group
         if not alternatives:
             # it isn't
-            msg = "could not locate a {.category!r} package for {!r}".format(
-                installation, name
-            )
+            msg = f"no '{installation.category}' package for '{name}'"
             # complain
             raise installation.ConfigurationError(configurable=self, errors=[msg])
 
@@ -369,16 +364,15 @@ class MacPorts(Managed, family="pyre.platforms.packagers.macports"):
         # if there were no viable candidates
         if not candidates:
             # describe what went wrong
-            msg = "no viable candidates for {.category!r}; please select one of {}".format(
-                installation, alternatives
+            msg = (
+                f"no viable candidates for '{installation.category}'; "
+                f"please select one of {alternatives}"
             )
             # and report it
             raise installation.ConfigurationError(configurable=self, errors=[msg])
 
         # otherwise, there were more than one candidate; describe what went wrong
-        msg = "multiple candidates for {!r}: {}; please select one".format(
-            flavor, candidates
-        )
+        msg = f"multiple candidates for '{flavor}': {candidates}; please select one"
         # and report it
         raise installation.ConfigurationError(configurable=self, errors=[msg])
 

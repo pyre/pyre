@@ -1,7 +1,7 @@
 # -*- cmake -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
-# (c) 1998-2023 all rights reserved
+# (c) 1998-2024 all rights reserved
 
 
 # setup cmake
@@ -28,28 +28,14 @@ function(pyre_cmakeInit)
   # quiet install
   set(CMAKE_INSTALL_MESSAGE LAZY PARENT_SCOPE)
 
-  # if the user asked for CUDA support
-  if (WITH_CUDA)
-    # turn it on
-    enable_language(CUDA)
-  endif()
-
   # all done
 endfunction(pyre_cmakeInit)
 
 
 # setup python
 function(pyre_pythonInit)
-  # ask the executable for the module suffix
-  execute_process(
-    COMMAND ${Python_EXECUTABLE} -c
-        "from distutils.sysconfig import *; print(get_config_var('EXT_SUFFIX'))"
-    RESULT_VARIABLE PYTHON3_SUFFIX_STATUS
-    OUTPUT_VARIABLE PYTHON3_SUFFIX
-    OUTPUT_STRIP_TRAILING_WHITESPACE
-    )
-  # export
-  set(PYTHON3_SUFFIX ${PYTHON3_SUFFIX} PARENT_SCOPE)
+  # save the module suffix
+  set(PYTHON3_SUFFIX ".${Python_SOABI}${CMAKE_SHARED_MODULE_SUFFIX}" PARENT_SCOPE)
   # all done
 endfunction(pyre_pythonInit)
 
@@ -66,6 +52,7 @@ endfunction(pyre_stagingInit)
 function(pyre_destinationInit)
   # create variables to hold the roots in the install directory
   set(PYRE_DEST_INCLUDE ${CMAKE_INSTALL_INCLUDEDIR} PARENT_SCOPE)
+  set(PYRE_DEST_SHARE ${CMAKE_INSTALL_PREFIX}/share PARENT_SCOPE)
   if(NOT DEFINED PYRE_DEST_PACKAGES)
       set(PYRE_DEST_PACKAGES packages CACHE STRING
           "Python package install location, absolute or relative to install prefix")

@@ -1,0 +1,51 @@
+name: pypi-source
+
+# publish when a (published) GitHub Release is created, use the following:
+on:
+  workflow_dispatch:
+  release:
+    types:
+      - published
+
+jobs:
+  build:
+    name: build source distribution
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+
+      - name: set up python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: build the artifact
+        run: pipx run build --sdist
+
+      - name: archive
+        uses: actions/upload-artifact@v3
+        with:
+          name: pyre-source
+          path: dist/
+
+  upload:
+    name: upload source to pypi
+    needs: [build]
+    runs-on: ubuntu-latest
+    environment: pypi
+    permissions:
+      id-token: write
+    # publish only when a GitHub release is created
+    if: github.event_name == 'release' && github.event.action == 'published'
+    steps:
+      - name: unpack
+        uses: actions/download-artifact@v3
+        with:
+          # unpacks default artifact into dist/
+          # if `name: artifact` is omitted, the action will create extra parent dir
+          name: pyre-source
+          path: dist
+
+      - name: upload
+        uses: pypa/gh-action-pypi-publish@release/v1

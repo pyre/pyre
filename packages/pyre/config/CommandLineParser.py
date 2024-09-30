@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2023 all rights reserved
+# (c) 1998-2024 all rights reserved
 #
 
 
@@ -62,18 +62,19 @@ class CommandLineParser:
     from .events import Command, Assignment
 
     # interface
-    def parse(self, argv):
+    def parse(self, argv, **kwds):
         """
         Harvest the configuration events in {argv} and store them in a {configuration}
 
         parameters:
-            {argv}: a container of strings of the form "--key=value"
-            {locator}: an optional locator; not used by this decoder
+            {argv}: a sequence of command line arguments
         """
         # build a configuration object to store the processed command line
         configuration = []
+        # set up the argument enumerator
+        collated = enumerate(argv)
         # run through the command line
-        for index, arg in enumerate(argv):
+        for index, arg in collated:
             # look for an assignment
             match = self.assignmentScanner.match(arg)
             # if we have one

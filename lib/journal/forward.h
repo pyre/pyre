@@ -1,7 +1,7 @@
 // -*- c++ -*-
 //
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
-// (c) 1998-2023 all rights reserved
+// (c) 1998-2024 all rights reserved
 
 // code guard
 #if !defined(pyre_journal_forward_h)
@@ -60,6 +60,10 @@ namespace pyre::journal {
     inline constexpr auto endl(const Null &) -> const Null &;
     // mark the end of a line of output
     inline constexpr auto newline(const Null &) -> const Null &;
+    // indent
+    inline constexpr auto indent(const Null &) -> const Null &;
+    // outdent
+    inline constexpr auto outdent(const Null &) -> const Null &;
     // injection operators
     // color
     inline constexpr auto operator<<(const Null &, const Color &) -> const Null &;

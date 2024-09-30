@@ -1,0 +1,104 @@
+// -*- c++ -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2024 all rights reserved
+
+// code guard
+#pragma once
+
+// factory
+template <class gridT>
+auto
+pyre::flow::products::Tile<gridT>::create(const name_type & name, shape_type shape, cell_type value)
+    -> ref_type
+{
+    // build an instance and wrap it in a shared pointer
+    auto ref = std::make_shared<Tile>(sentinel_type(), name, shape, value);
+    // make a channel
+    auto channel = pyre::journal::debug_t("pyre.flow.products.tile");
+    // let me know
+    channel
+        // mark
+        << "tile '" << ref->name() << "' at " << ref.get() << ": create"
+        << pyre::journal::newline
+        // flush
+        << pyre::journal::endl(__HERE__);
+    // hand off the ref
+    return ref;
+}
+
+// destructor
+template <class gridT>
+pyre::flow::products::Tile<gridT>::~Tile()
+{
+    // make a channel
+    auto channel = pyre::journal::debug_t("pyre.flow.products.tile");
+    // let me know
+    channel
+        // mark
+        << "tile '" << name() << "' at " << this << ": destroy"
+        << pyre::journal::newline
+        // flush
+        << pyre::journal::endl(__HERE__);
+
+    // all done
+    return;
+}
+
+// constructor
+template <class gridT>
+pyre::flow::products::Tile<gridT>::Tile(
+    sentinel_type sentinel, const name_type & name, shape_type shape, cell_type value) :
+    // base class; start out clean and initialized
+    pyre::flow::product_t(sentinel, name, false),
+    // members
+    _data { packing_type(shape), shape.cells() }
+{
+    // initialize
+    std::fill(_data.begin(), _data.end(), value);
+}
+
+// accessors
+template <class gridT>
+auto
+pyre::flow::products::Tile<gridT>::shape() const -> shape_type
+{
+    // easy enough
+    return _data.layout().shape();
+}
+
+// mutators
+template <class gridT>
+auto
+pyre::flow::products::Tile<gridT>::value(cell_type value) -> void
+{
+    // initialize
+    std::fill(_data.begin(), _data.end(), value);
+    // invalidate my downstream graph
+    flush();
+    // but mark me as clean
+    clean();
+    // all done
+    return;
+}
+
+// value access by factories
+template <class gridT>
+auto
+pyre::flow::products::Tile<gridT>::read() -> const grid_type &
+{
+    // refresh me
+    make();
+    // return my value
+    return _data;
+}
+
+template <class gridT>
+auto
+pyre::flow::products::Tile<gridT>::write() -> grid_type &
+{
+    // grant access to my data
+    return _data;
+}
+
+// end of file

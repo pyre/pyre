@@ -1,0 +1,129 @@
+// -*- c++ -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2024 all rights reserved
+
+// code guard
+#pragma once
+
+// factory
+template <class op1T, class op2T, class resultT>
+auto
+pyre::flow::factories::Add<pyre::flow::products::tile_t, op1T, op2T, resultT>::create(
+    const name_type & name) -> factory_ref_type
+{
+    // make an instance and wrap it in a shared pointer
+    auto ref = std::make_shared<Add>(sentinel_type(), name);
+    // make a channel
+    auto channel = pyre::journal::debug_t("pyre.flow.factories.add");
+    // let me know
+    channel
+        // mark
+        << "tile add '" << ref->name() << "' at " << ref.get() << ": create"
+        << pyre::journal::newline
+        // flush
+        << pyre::journal::endl(__HERE__);
+
+    // all done
+    return ref;
+}
+
+// destructor
+template <class op1T, class op2T, class resultT>
+pyre::flow::factories::Add<pyre::flow::products::tile_t, op1T, op2T, resultT>::~Add()
+{
+    // make a channel
+    auto channel = pyre::journal::debug_t("pyre.flow.factories.add");
+    // let me know
+    channel
+        // mark
+        << "tile add '" << this->name() << "' at " << this << ": destroy"
+        << pyre::journal::newline
+        // flush
+        << pyre::journal::endl(__HERE__);
+
+    // all done
+    return;
+}
+
+// constructor
+template <class op1T, class op2T, class resultT>
+pyre::flow::factories::Add<pyre::flow::products::tile_t, op1T, op2T, resultT>::Add(
+    sentinel_type sentinel, const name_type & name) :
+    // base class
+    base_type(sentinel, name)
+{}
+
+template <class op1T, class op2T, class resultT>
+auto
+pyre::flow::factories::Add<pyre::flow::products::tile_t, op1T, op2T, resultT>::make(
+    const name_type & slot, typename base_type::product_ref_type product) ->
+    typename base_type::factory_ref_type
+{
+    // chain up
+    auto self = base_type::make(slot, product);
+    // get read access to the input data
+    auto & op1 = this->op1()->read();
+    auto & op2 = this->op2()->read();
+    // and write access to the result
+    auto & result = this->result()->write();
+
+    // the bound products must be shape compatible; the current implementation only requires
+    // that products have the same number of cells
+    auto cells = result.layout().shape().cells();
+    // verify consistency
+    bool ok =
+        // check op1
+        cells == op1.layout().shape().cells() &&
+        // check op2
+        cells == op2.layout().shape().cells();
+    // if something is off
+    if (!ok) {
+        // make a channel
+        auto channel = pyre::journal::error_t("pyre.flow.factories.add");
+        // complain
+        channel
+            // who
+            << "tile add factory at " << this << ":"
+            << pyre::journal::newline
+            // what
+            << "shape mismatch in the input and output slots"
+            << pyre::journal::newline
+            // inputs
+            << "inputs "
+            << pyre::journal::newline
+            // indent
+            << pyre::journal::indent
+            // op1
+            << "op1: " << op1.layout().shape()
+            << pyre::journal::newline
+            // op2
+            << "op2: " << op2.layout().shape()
+            << pyre::journal::newline
+            // outdent
+            << pyre::journal::outdent
+            // outputs
+            << "outputs: "
+            << pyre::journal::newline
+            // indent
+            << pyre::journal::indent
+            // result
+            << "result: " << result.layout().shape()
+            << pyre::journal::newline
+            // outdent
+            << pyre::journal::outdent
+            // flush
+            << pyre::journal::endl(__HERE__);
+    }
+
+    // go through its data
+    for (auto cell = 0; cell < cells; ++cell) {
+        // read the values of the two operands, add, and save
+        result[cell] = op1[cell] + op2[cell];
+    }
+
+    // all done
+    return self;
+}
+
+// end of file

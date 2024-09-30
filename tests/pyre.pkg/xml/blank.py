@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
-# (c) 1998-2023 all rights reserved
-#
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2024 all rights reserved
 
 
 """
@@ -18,6 +16,7 @@ def test():
 
     # create a trivial document
     from pyre.xml.Document import Document
+
     document = Document()
 
     # build a parser
@@ -27,7 +26,9 @@ def test():
         reader.read(stream=open("sample-blank.xml"), document=document)
         assert False
     except reader.ParsingError as error:
-        assert str(error) == "file='sample-blank.xml', line=11, column=0: no element found"
+        assert (
+            str(error) == "file='sample-blank.xml', line=11, column=0: no element found"
+        )
 
     return document
 

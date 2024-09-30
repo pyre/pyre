@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
-# (c) 1998-2023 all rights reserved
+# (c) 1998-2024 all rights reserved
 
 
 # externals
@@ -37,7 +37,7 @@ class Plexus(ProjectTemplate, family="pyre.smith.projects.plexus"):
     blacklist = re.compile(
         "|".join(
             [
-                ".+\.png",
+                r".+\.png",
             ]
         )
     )

@@ -1,13 +1,13 @@
 # -*- Makefile -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
-# (c) 1998-2023 all rights reserved
+# (c) 1998-2024 all rights reserved
 
 
 # external dependencies
 # system tools
 sys.prefix := /usr
-sys.lib := ${sys.prefix}/lib/x86_64-linux-gnu
+sys.lib := ${sys.prefix}/lib/${host.arch}-linux-gnu
 
 # gsl
 gsl.version := 2.6

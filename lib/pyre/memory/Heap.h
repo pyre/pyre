@@ -1,14 +1,14 @@
 // -*- c++ -*-
 //
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
-// (c) 1998-2023 all rights reserved
+// (c) 1998-2024 all rights reserved
 
 // code guard
 #if !defined(pyre_memory_Heap_h)
 #define pyre_memory_Heap_h
 
 
-// a file-backed block of cells
+// a block of cells on the heap
 template <class T, bool isConst>
 class pyre::memory::Heap {
     // types
@@ -49,6 +49,13 @@ public:
     inline auto where() const -> const void *;
     // the shared pointer
     inline auto handle() const -> handle_type;
+
+    // human readable rendering of my expansion
+    static inline auto name() -> string_t;
+    // human readable rendering of my storage strategy
+    static inline auto strategyName() -> string_t;
+    // human readable rendering of my {cell_type}
+    static inline auto cellName() -> string_t;
 
     // iterator support
 public:

@@ -1,7 +1,7 @@
 // -*- c++ -*-
 //
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
-// (c) 1998-2023 all rights reserved
+// (c) 1998-2024 all rights reserved
 
 
 // externals
@@ -14,7 +14,7 @@
 void
 pyre::py::viz::bmp(py::module & m)
 {
-    // turn {pyre::viz::bmp_t} into a {buffer}
+    // turn {pyre::viz::iterators::codecs::bmp_t} into a {buffer}
     auto bmp = py::class_<bmp_t>(
         // the scope
         m,

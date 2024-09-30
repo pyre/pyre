@@ -1,7 +1,7 @@
 // -*- c++ -*-
 //
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
-// (c) 1998-2023 all rights reserved
+// (c) 1998-2024 all rights reserved
 
 // code guard
 #if !defined(pyre_journal_Locator_icc)
@@ -10,6 +10,15 @@
 
 
 // metamethods
+#if defined(__cpp_lib_source_location)
+// very modern version
+pyre::journal::Locator::Locator(const std::source_location location) :
+    _file(location.file_name()),
+    _line(std::to_string(location.line())),
+    _func(location.function_name())
+{}
+#endif
+
 // modern version
 pyre::journal::Locator::Locator(
     const value_type & file, const value_type & line, const value_type & function) :

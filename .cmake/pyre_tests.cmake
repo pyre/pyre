@@ -1,7 +1,7 @@
 # -*- cmake -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
-# (c) 1998-2023 all rights reserved
+# (c) 1998-2024 all rights reserved
 
 
 # generate a unique test case name that incorporate the command line arguments
@@ -321,7 +321,7 @@ function(pyre_test_driver_cuda testfile)
   # with some macros
   target_compile_definitions(${target} PRIVATE PYRE_CORE WITH_CUDA)
   # link against my libraries
-  target_link_libraries(${target} PUBLIC pyre journal ${CUDA_LIBRARIES})
+  target_link_libraries(${target} PUBLIC pyre journal cuda)
 
   # make it a test case
   add_test(NAME ${testname} COMMAND ${target} ${ARGN})

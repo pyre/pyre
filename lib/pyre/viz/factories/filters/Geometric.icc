@@ -1,0 +1,192 @@
+// -*- c++ -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2024 all rights reserved
+
+// code guard
+#pragma once
+
+// factory
+template <class signalT, class binT>
+auto
+pyre::viz::factories::filters::Geometric<signalT, binT>::create(
+    const name_type & name, int bins, double ratio) -> factory_ref_type
+{
+    // make an instance and wrap it in a shared pointer
+    auto ref = std::make_shared<Geometric>(sentinel_type(), name, bins, ratio);
+    // make a channel
+    auto channel = pyre::journal::debug_t("pyre.viz.factories.filters.geometric");
+    // let me know
+    channel
+        // mark
+        << "geometric '" << ref->name() << "' at " << ref.get() << ": create"
+        << pyre::journal::newline
+        // flush
+        << pyre::journal::endl(__HERE__);
+
+    // all done
+    return ref;
+}
+
+// destructor
+template <class signalT, class binT>
+pyre::viz::factories::filters::Geometric<signalT, binT>::~Geometric()
+{
+    // make a channel
+    auto channel = pyre::journal::debug_t("pyre.viz.factories.filters.geometric");
+    // let me know
+    channel
+        // mark
+        << "geometric '" << name() << "' at " << this << ": destroy"
+        << pyre::journal::newline
+        // flush
+        << pyre::journal::endl(__HERE__);
+
+    // all done
+    return;
+}
+
+// constructor
+template <class signalT, class binT>
+pyre::viz::factories::filters::Geometric<signalT, binT>::Geometric(
+    sentinel_type sentinel, const name_type & name, int bins, double ratio) :
+    // superclass
+    base_type(sentinel, name),
+    // the number of bins
+    _bins { bins },
+    // {_scale} is the inverse of the sum of the geometric series
+    // 1 + {factor} + {factor}^2 + ... + {factor}^{bins-1}
+    _scale { (ratio - 1) / (std::pow(ratio, bins) - 1) },
+    // make room for the tick marks
+    _ticks(bins + 1)
+{
+    // the ticks start at zero
+    _ticks[0] = 0.0;
+    // the intermediate value are deduced from the powers of the {_scale}
+    for (auto i = 1; i < _bins; ++i) {
+        // each one builds on the one before
+        _ticks[i] = _ticks[i - 1] + std::pow(_scale, _bins - i);
+    }
+    // the last one is at one
+    _ticks[_bins] = 1.0;
+    // all done
+    return;
+}
+
+// accessors
+template <class signalT, class binT>
+auto
+pyre::viz::factories::filters::Geometric<signalT, binT>::signal() -> signal_ref_type
+{
+    // look up the product bound to my {signal} slot and return it
+    return std::dynamic_pointer_cast<signal_type>(input("signal"));
+}
+
+template <class signalT, class binT>
+auto
+pyre::viz::factories::filters::Geometric<signalT, binT>::bin() -> bin_ref_type
+{
+    // look up the product bound to my {signal} slot and return it
+    return std::dynamic_pointer_cast<bin_type>(output("bin"));
+}
+
+// mutators
+template <class signalT, class binT>
+auto
+pyre::viz::factories::filters::Geometric<signalT, binT>::signal(signal_ref_type signal)
+    -> factory_ref_type
+{
+    // bind {signal} to my slot
+    addInput("signal", std::static_pointer_cast<pyre::flow::product_t>(signal));
+    // make a self reference
+    auto self = std::dynamic_pointer_cast<Geometric>(ref());
+    // and return it
+    return self;
+}
+
+template <class signalT, class binT>
+auto
+pyre::viz::factories::filters::Geometric<signalT, binT>::bin(bin_ref_type bin) -> factory_ref_type
+{
+    // bind {bin} to my slot
+    addOutput("bin", std::static_pointer_cast<pyre::flow::product_t>(bin));
+    // make a self reference
+    auto self = std::dynamic_pointer_cast<Geometric>(ref());
+    // and return it
+    return self;
+}
+
+// interface
+template <class signalT, class binT>
+auto
+pyre::viz::factories::filters::Geometric<signalT, binT>::make(
+    const name_type & slot, base_type::product_ref_type product) -> base_type::factory_ref_type
+{
+    // chain up
+    auto self = base_type::make(slot, product);
+    // get read access to the signal
+    auto & signal = this->signal()->read();
+    // get write access to the bin data
+    auto & bin = this->bin()->write();
+    // get the number cells in the output tile
+    auto cells = bin.layout().cells();
+    // make sure the input is compatible
+    bool ok = cells == signal.layout().cells();
+    // if not
+    if (!ok) {
+        // make a channel
+        auto channel = pyre::journal::error_t("pyre.viz.factories.filters.geometric");
+        // complain
+        channel
+            // who
+            << "geometric " << this->name() << "' at " << this << ":"
+            << pyre::journal::newline
+            // what
+            << "shape mismatch in the input and output slots"
+            << pyre::journal::newline
+            // inputs
+            << "inputs "
+            << pyre::journal::newline
+            // indent
+            << pyre::journal::indent
+            // signal
+            << "signal: " << signal.layout().cells()
+            << pyre::journal::newline
+            // outdent
+            << pyre::journal::outdent
+            // outputs
+            << "outputs: "
+            << pyre::journal::newline
+            // indent
+            << pyre::journal::indent
+            // bins
+            << "bins: " << bin.layout().cells()
+            << pyre::journal::newline
+            // outdent
+            << pyre::journal::outdent
+            // flush
+            << pyre::journal::endl(__HERE__);
+        // and bail, just in case errors aren't fatal
+        return self;
+    }
+
+    // go over the cells
+    for (auto cell = 0; cell < cells; ++cell) {
+        // get the value
+        auto value = signal[cell];
+        // when {_bins} is small, linear search is not a bad way to go
+        for (int b = 0; b <= _bins; ++b) {
+            // get the current tick value
+            auto tick = _ticks[b];
+            // if the value is smaller than the current tick
+            if (value < tick) {
+                // it belongs to the previous bin
+                bin[cell] = b - 1;
+            }
+        }
+    }
+    // all done
+    return self;
+}
+
+// end of file

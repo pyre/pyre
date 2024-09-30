@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
-# (c) 1998-2023 all rights reserved
+# (c) 1998-2024 all rights reserved
 
 
 # parts
@@ -17,38 +17,43 @@ class Array:
     Implementation details of the {array} dataset mixin
     """
 
-    # type info
-    # metamethods
-    def __init__(self, shape=None, **kwds):
-        # chain up the mixin hierarchy
-        super().__init__(shape=shape, **kwds)
-        # if my {shape} is trivial
-        if shape is None:
-            # the default raster object has a trivial shape
-            defaultShape = []
-        # otherwise
-        else:
-            # expand the shape, replacing unknown extents with zeros
-            defaultShape = [0 if s is Ellipsis else s for s in shape]
-        # build the default raster and attach it
-        self._default = Raster(
-            dataset=None,
-            shape=defaultShape,
-            memtype=self.memtype,
-            disktype=self.disktype,
-        )
-        # all done
-        return
-
     # interface
-    def coerce(self, value, **kwds):
+    def coerce(self, value, dataset, **kwds):
         """
         Convert {value} into an array
         """
         # this is sufficiently high up in the conversion process to suffice; the only thing higher
         # is {process}, and its implementation in {schema} just delegates to {coerce} immediately;
-        # so, leave alone, for now
+        # if value is trivial
+        if value is self._default:
+            # get my shape
+            shape = self.shape
+            # if it is trivial
+            if shape is None:
+                # replace it with an empty list
+                shape = []
+            # otherwise
+            else:
+                # expand it, replacing unknown extents with zeros
+                shape = [0 if s is Ellipsis else s for s in shape]
+            # and use it to build a default raster with my memory and on-disk reps
+            value = Raster(
+                dataset=dataset,
+                shape=shape,
+                memtype=self.memtype,
+                disktype=self.disktype,
+            )
+        # all done
         return value
+
+    # metamethods
+    def __init__(self, chunk=None, **kwds):
+        # chain up
+        super().__init__(**kwds)
+        # record the chunking strategy
+        self.chunk = chunk
+        # all done
+        return
 
     # value synchronization
     def _pyre_pull(self, dataset):
@@ -104,10 +109,12 @@ class Array:
         """
         # the type is in my schema
         type = self.disktype
-        # get the shape from the {dataset} value
+        # get the actual shape from the {dataset} value
         space = libh5.DataSpace(shape=dataset.value.shape)
+        # i may have a chunking strategy
+        chunk = self.chunk
         # hand off the pair
-        return type, space
+        return type, space, chunk
 
 
 # end of file

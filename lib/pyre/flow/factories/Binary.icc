@@ -1,0 +1,82 @@
+// -*- c++ -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2024 all rights reserved
+
+// code guard
+#pragma once
+
+// constructor
+template <template <class> class categoryT, class op1T, class op2T, class resultT>
+pyre::flow::factories::Binary<categoryT, op1T, op2T, resultT>::Binary(
+    sentinel_type sentinel, const name_type & name) :
+    // base class
+    base_type(sentinel, name)
+{}
+
+// accessors
+template <template <class> class categoryT, class op1T, class op2T, class resultT>
+auto
+pyre::flow::factories::Binary<categoryT, op1T, op2T, resultT>::op1() -> op1_ref_type
+{
+    // look up the product bound to my {op1} slot and return it
+    return std::dynamic_pointer_cast<op1_type>(input("op1"));
+}
+
+template <template <class> class categoryT, class op1T, class op2T, class resultT>
+auto
+pyre::flow::factories::Binary<categoryT, op1T, op2T, resultT>::op2() -> op2_ref_type
+{
+    // look up the product bound to my {op2} slot and return it
+    return std::dynamic_pointer_cast<op2_type>(input("op2"));
+}
+
+template <template <class> class categoryT, class op1T, class op2T, class resultT>
+auto
+pyre::flow::factories::Binary<categoryT, op1T, op2T, resultT>::result() -> result_ref_type
+{
+    // look up the product bound to my {result} slot and return it
+    return std::dynamic_pointer_cast<result_type>(output("result"));
+}
+
+// mutators
+template <template <class> class categoryT, class op1T, class op2T, class resultT>
+auto
+pyre::flow::factories::Binary<categoryT, op1T, op2T, resultT>::op1(op1_ref_type op1)
+    -> factory_ref_type
+{
+    // bind {op1} to its slots
+    addInput("op1", std::static_pointer_cast<pyre::flow::product_t>(op1));
+    // make a self reference
+    auto self = std::dynamic_pointer_cast<Binary>(ref());
+    // and return it
+    return self;
+}
+
+template <template <class> class categoryT, class op1T, class op2T, class resultT>
+auto
+pyre::flow::factories::Binary<categoryT, op1T, op2T, resultT>::op2(op2_ref_type op2)
+    -> factory_ref_type
+{
+    // bind {op2} to its slots
+    addInput("op2", std::static_pointer_cast<pyre::flow::product_t>(op2));
+    // make a self reference
+    auto self = std::dynamic_pointer_cast<Binary>(ref());
+    // and return it
+    return self;
+}
+
+template <template <class> class categoryT, class op1T, class op2T, class resultT>
+auto
+pyre::flow::factories::Binary<categoryT, op1T, op2T, resultT>::result(result_ref_type result)
+    -> factory_ref_type
+{
+    // bind {result} to its slots
+    addOutput("result", std::static_pointer_cast<pyre::flow::product_t>(result));
+    // make a self reference
+    auto self = std::dynamic_pointer_cast<Binary>(ref());
+    // and return it
+    return self;
+}
+
+// end of file

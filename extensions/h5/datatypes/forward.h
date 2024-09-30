@@ -1,12 +1,15 @@
 // -*- c++ -*-
 //
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
-// (c) 1998-2023 all rights reserved
+// (c) 1998-2024 all rights reserved
 
 // code guard
 #if !defined(h5_py_datatypes_forward_h)
 #define h5_py_datatypes_forward_h
 
+
+// the helpers
+#include "../attributes.h"
 
 // the local binders
 namespace pyre::h5::py::datatypes {

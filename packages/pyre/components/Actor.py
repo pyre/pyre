@@ -2,13 +2,14 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2023 all rights reserved
+# (c) 1998-2024 all rights reserved
 #
 
 
 # externals
 import collections, itertools
 from .. import tracking
+
 # superclass
 from .Requirement import Requirement
 
@@ -22,13 +23,11 @@ class Actor(Requirement):
     configurable entity that coöperates fully with the framework
     """
 
-
     # types
     from .Role import Role
     from .PublicInventory import PublicInventory
     from .PrivateInventory import PrivateInventory
     from .exceptions import ImplementationSpecificationError, ProtocolError
-
 
     # public data
     @property
@@ -37,7 +36,6 @@ class Actor(Requirement):
         Return the component's family name
         """
         return self.pyre_family()
-
 
     # meta-methods
     def __new__(cls, name, bases, attributes, *, family=None, implements=None, **kwds):
@@ -65,7 +63,6 @@ class Actor(Requirement):
         # and pass the component on
         return component
 
-
     def __init__(self, name, bases, attributes, *, family=None, **kwds):
         """
         Initialize a new component class record
@@ -74,7 +71,8 @@ class Actor(Requirement):
         super().__init__(name, bases, attributes, **kwds)
 
         # if this is an internal component, there is nothing further to do
-        if self.pyre_internal: return
+        if self.pyre_internal:
+            return
 
         # pick the appropriate inventory strategy
         inventory = self.PublicInventory if family else self.PrivateInventory
@@ -100,8 +98,9 @@ class Actor(Requirement):
         # all done
         return
 
-
-    def __call__(self, name=None, locator=None, implicit=False, globalAliases=False, **kwds):
+    def __call__(
+        self, name=None, locator=None, implicit=False, globalAliases=False, **kwds
+    ):
         """
         Build an instance of one of my classes
         """
@@ -154,7 +153,9 @@ class Actor(Requirement):
                     # assign a priority
                     priority = executive.priority.construction()
                     # make a configuration entry
-                    nameserver.insert(name=full, value=value, locator=locator, priority=priority)
+                    nameserver.insert(
+                        name=full, value=value, locator=locator, priority=priority
+                    )
                     # and add it to the discard pile
                     discard.add(key)
 
@@ -166,7 +167,9 @@ class Actor(Requirement):
         # invoke the pre-instantiation hooks
         self.pyre_staged(name=name, locator=locator, implicit=implicit)
         # build the instance
-        instance = super().__call__(name=name, locator=locator, implicit=implicit, **kwds)
+        instance = super().__call__(
+            name=name, locator=locator, implicit=implicit, **kwds
+        )
 
         # invoke the instantiation hook and harvest any errors
         initializationErrors = list(instance.pyre_initialized())
@@ -176,7 +179,9 @@ class Actor(Requirement):
         # if there were any
         if initializationErrors:
             # complain
-            raise instance.ConfigurationError(configurable=instance, errors=initializationErrors)
+            raise instance.ConfigurationError(
+                configurable=instance, errors=initializationErrors
+            )
 
         # register with the component registrar
         registrar.registerComponentInstance(instance=instance)
@@ -189,7 +194,6 @@ class Actor(Requirement):
         # and return it
         return instance
 
-
     def __setattr__(self, name, value):
         """
         Trap attribute setting in my class record instances to support setting the default
@@ -198,7 +202,7 @@ class Actor(Requirement):
         # print(f"Actor.__setattr__: '{name}'<-'{value}'")
         # in the early states of decorating component class records, it is important to
         # recognize internal attributes
-        if name.startswith('pyre_'):
+        if name.startswith("pyre_"):
             # and process them normally without attempting to lookup the attribute name in the
             # name map, which might not have been built yet
             return super().__setattr__(name, value)
@@ -219,11 +223,14 @@ class Actor(Requirement):
         priority = self.pyre_executive.priority.explicit()
         # set the value
         self.pyre_inventory.setTraitValue(
-            trait=trait, factory=trait.classSlot,
-            value=value, priority=priority, locator=locator)
+            trait=trait,
+            factory=trait.classSlot,
+            value=value,
+            priority=priority,
+            locator=locator,
+        )
         # and return
         return
-
 
     def __str__(self):
         # get my family name
@@ -234,7 +241,6 @@ class Actor(Requirement):
             return f"component '{family}'"
         # otherwise, use my class name
         return f"component '{self.__name__}'"
-
 
     # implementation details
     @classmethod
@@ -248,7 +254,7 @@ class Actor(Requirement):
             # if {implements} is a single protocol
             if cls.pyre_isProtocol(implements):
                 # make a pile with one entry
-                mine = implements,
+                mine = (implements,)
             # the only legal alternative is an iterable of {Protocol} subclasses
             elif isinstance(implements, collections.abc.Iterable):
                 # go through its contents and collect the ones that are not protocols
@@ -262,7 +268,9 @@ class Actor(Requirement):
             # in any other case
             else:
                 # the entire specification is unrecognizable, so complain
-                raise cls.ImplementationSpecificationError(name=name, errors=[implements])
+                raise cls.ImplementationSpecificationError(
+                    name=name, errors=[implements]
+                )
         # otherwise
         else:
             # i don't have an implementation specification
@@ -272,19 +280,24 @@ class Actor(Requirement):
         inherited = tuple(
             base.pyre_implements
             for base in bases
-            if cls.pyre_isComponent(base) and base.pyre_implements is not None)
+            if cls.pyre_isComponent(base) and base.pyre_implements is not None
+        )
 
         # assemble the full set
         protocols = mine + inherited
-        # bail out if we didn't manage to find any protocols
-        if not protocols: return None
+        # if we didn't manage to find any protocols
+        if not protocols:
+            # bail out
+            return None
         # if there is only one protocol on my pile
         if len(protocols) == 1:
             # use it directly
             return protocols[0]
-        # otherwise, derive a protocol from the harvested ones and return it as the
-        # implementation specification
-        return cls.Role("protocol", protocols, dict(), internal=True)
+        # otherwise, go through the protocols and remove any duplicates while preserving the order
+        trimmed = tuple(dict((p, None) for p in protocols))
+        # derive a protocol from the harvested ones and return it as the implementation
+        # specification
+        return cls.Role("role", trimmed, dict(), internal=True)
 
 
 # end of file

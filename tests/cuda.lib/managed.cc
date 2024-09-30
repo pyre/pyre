@@ -1,11 +1,9 @@
 // -*- coding: utf-8 -*-
 //
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
-// (c) 1998-2023 all rights reserved
+// (c) 1998-2024 all rights reserved
 
 
-// for the build system
-#include <portinfo>
 // support
 #include <cassert>
 // access to the CUDA memory allocators

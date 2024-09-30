@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
-# (c) 1998-2023 all rights reserved
+# (c) 1998-2024 all rights reserved
 
 
 # attempt to
@@ -27,7 +27,7 @@ except ImportError:
     # force the existence of the directory
     os.makedirs(name=xdg, exist_ok=True)
     # pick the target release of pyre
-    release = "v1.12.0"
+    release = "v1.12.5"
     # the pyre installation is in a zip file
     pyre = f"pyre-{release}.zip"
     # which we place in the pyre specific configuration directory

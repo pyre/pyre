@@ -1,18 +1,14 @@
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
-# (c) 1998-2023 all rights reserved
+# (c) 1998-2024 all rights reserved
 
-
-# externals
-import itertools
 
 # superclass
 from pyre.patterns.AttributeClassifier import AttributeClassifier
 
 # parts
 from .Descriptor import Descriptor
-from .Dataset import Dataset
 from .Inventory import Inventory
 
 # typing

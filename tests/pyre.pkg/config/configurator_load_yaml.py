@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2023 all rights reserved
+# (c) 1998-2024 all rights reserved
 #
 
 
@@ -45,26 +45,30 @@ def test():
     errors = executive.errors
     if errors and executive.verbose:
         count = len(errors)
-        s = '' if count == 1 else 's'
-        print(' ** during configuration: {} error{}:'.format(len(errors), s))
+        s = "" if count == 1 else "s"
+        print(" ** during configuration: {} error{}:".format(len(errors), s))
         for error in errors:
-            print(' -- {}'.format(error))
-    # ns.dump()
-    return 0
+            print(" -- {}".format(error))
 
     # try again
     assert ns["sample.user.name"] == "michael a.g. aïvázis"
     assert ns["sample.user.email"] == "michael.aivazis@orthologue.com"
     assert ns["sample.user.affiliation"] == "orthologue"
     # and the local one
-    assert ns["sample.user.byline"] == "michael a.g. aïvázis -- michael.aivazis@orthologue.com"
+    assert (
+        ns["sample.user.byline"]
+        == "michael a.g. aïvázis -- michael.aivazis@orthologue.com"
+    )
 
     # make a change
     ns["sample.user.affiliation"] = "orthologue"
     ns["sample.user.email"] = "michael.aivazis@orthologue.com"
     # check
     assert ns["sample.user.affiliation"] == "orthologue"
-    assert ns["sample.user.byline"] == "michael a.g. aïvázis -- michael.aivazis@orthologue.com"
+    assert (
+        ns["sample.user.byline"]
+        == "michael a.g. aïvázis -- michael.aivazis@orthologue.com"
+    )
 
     # all good
     return executive

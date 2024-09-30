@@ -1,11 +1,23 @@
 # -*- yaml -*-
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
-# (c) 1998-2023 all rights reserved
+# (c) 1998-2024 all rights reserved
 
+#
+# 4d832c4ac20267cacba19b6613f26f2cd19e7d86 fixes a bug that was causing the constraints of the first
+# conditional assignment to pollute all subsequent parsing, so we add one at the top here to make
+# sure this is fixed
+
+# control the shell setting of some imaginary app
+pyre.shells.web#app.shell:
+  auto: no
+
+# the configuration used by the test driver
 sample.user:
+  # another fictitious conditional assignment; this time in-scope
+  pyre.vegetables.potato#side: fries
+  # the settings
   name: michael a.g. aïvázis # the name of the user
   email: michael.aivazis@orthologue.com # the email address of the user
   affiliation: orthologue # the affiliation of the user
-  "pyre.vegetables.potato # side": fries
 
 # end of file

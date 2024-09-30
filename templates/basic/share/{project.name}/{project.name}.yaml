@@ -1,0 +1,15 @@
+#
+# {project.authors}
+# (c) {project.span} all rights reserved
+
+
+# project info
+project:
+  name: {project.name}
+  capname: {project.capname}
+  authors: {project.authors}
+  span: {project.span}
+  github: {project.github}
+
+
+# end of file

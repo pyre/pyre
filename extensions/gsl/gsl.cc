@@ -2,14 +2,14 @@
 //
 // michael a.g. aïvázis
 // orthologue
-// (c) 1998-2023 all rights reserved
+// (c) 1998-2024 all rights reserved
 //
 
 // for the build system
 #include <portinfo>
 // external dependencies
-#include <iostream>
 #include <string>
+#include <pyre/journal.h>
 #include <Python.h>
 #include <gsl/gsl_errno.h>
 
@@ -296,8 +296,15 @@ namespace gsl {
 static void
 errorHandler(const char * reason, const char * file, int line, int gsl_errno)
 {
+    // make a channel
+    auto channel = pyre::journal::warning_t("gsl");
     // for now, just print the reason for the error
-    std::cerr << " ** ** ** GSL error: " << reason << std::endl;
+    channel
+        // the reason
+        << " GSL error: "
+        << reason
+        // flush
+        << pyre::journal::endl(__HERE__);
     // throw an exception
     return;
 }

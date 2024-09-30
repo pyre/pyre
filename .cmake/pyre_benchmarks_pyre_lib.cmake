@@ -1,15 +1,10 @@
 # -*- cmake -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
-# (c) 1998-2021 all rights reserved
-#
+# (c) 1998-2024 all rights reserved
 
 
-#
 # pyre
-#
-
-
 # tensor
 if (HAVE_TENSOR)
 set(definitions "HAVE_TENSOR" "HAVE_COMPACT_PACKINGS")

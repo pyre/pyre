@@ -1,7 +1,7 @@
 // -*- c++ -*-
 //
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
-// (c) 1998-2023 all rights reserved
+// (c) 1998-2024 all rights reserved
 
 // code guard
 #if !defined(pyre_cuda_memory_public_h)
@@ -16,9 +16,10 @@
 // published type aliases; this is the file you are looking for...
 #include "api.h"
 
-// implementation
+// strategies
 #include "Managed.h"
-
+#include "Pinned.h"
+#include "Mapped.h"
 
 #endif
 

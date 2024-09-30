@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
-# (c) 1998-2023 all rights reserved
+# (c) 1998-2024 all rights reserved
 
 
 # external
@@ -50,7 +50,7 @@ class Writer:
         if data is None:
             # i must have structure, so build it
             assembler = Assembler()
-            # by visiting the structure we are traversin
+            # by visiting the structure we are traversing
             data = assembler.visit(descriptor=query)
         # i need structure to traverse
         if query is None:
@@ -64,11 +64,17 @@ class Writer:
         return
 
     # metamethods
-    def __init__(self, uri: pyre.primitives.uri, mode: str = "w", **kwds):
+    def __init__(
+        self,
+        uri: pyre.primitives.uri,
+        mode: str = "w",
+        fcpl: typing.Optional[libh5.FCPL] = None,
+        **kwds,
+    ):
         # chain up
         super().__init__(**kwds)
         # build the file object
-        self._file = self._pyre_open(uri=uri, mode=mode)
+        self._file = self._pyre_open(uri=uri, mode=mode, fcpl=fcpl)
         # all done
         return
 
@@ -79,16 +85,27 @@ class Writer:
         """
         # form the {dataset} name as known by its parent
         name = dataset._pyre_location.name
-        # attempt to
-        try:
+        # if {name} is already present in {dst}
+        if name in dst:
             # look up the {dataset} in the output file
             hid = dst.get(path=name)
         # if it doesn't exist
-        except RuntimeError:
+        else:
             # we have to make it; ask the {dataset} for its type and shape
-            datatype, dataspace = dataset._pyre_describe()
-            # with these two, we can create it
-            hid = dst.create(path=name, type=datatype, space=dataspace)
+            datatype, dataspace, chunk, *_ = dataset._pyre_describe()
+            # creation configuration
+            dcpl = libh5.DCPL()
+            # and access configuration
+            dapl = libh5.DAPL()
+            # if the chunking strategy is non-trivial
+            if chunk:
+                # configure the dataset creation
+                dcpl.setChunk(chunk)
+                # MGA: what to do with the dapl chunk cache values?
+            # create the dataset
+            hid = dst.create(
+                path=name, type=datatype, space=dataspace, dcpl=dcpl, dapl=dapl
+            )
         # we have structure; make content
         dataset._pyre_write(dst=hid)
         # all done
@@ -100,12 +117,12 @@ class Writer:
         """
         # form the name of the target group in the output
         name = group._pyre_location.name
-        # attempt to
-        try:
-            # look up a pre-existing group
+        # if {name} is already a member of {dst}
+        if name in dst:
+            # look it up
             hid = dst.get(path=name)
         # if it doesn't exist
-        except RuntimeError:
+        else:
             # make it
             hid = dst.create(path=name)
         # now, go through the group contents

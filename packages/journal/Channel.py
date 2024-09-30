@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
-# (c) 1998-2023 all rights reserved
+# (c) 1998-2024 all rights reserved
 
 
 # externals
@@ -181,6 +181,24 @@ class Channel(pyre.patterns.named):
         self.active = False
         # all done
         return self
+
+    def indent(self, levels=1):
+        """
+        Increase my indentation by {levels}
+        """
+        # clip from below and apply
+        self.dent = max(0, self.dent + levels)
+        # all done
+        return
+
+    def outdent(self, levels=1):
+        """
+        Decrease my indentation by {levels}
+        """
+        # clip from below and apply
+        self.dent = max(0, self.dent - levels)
+        # all done
+        return
 
     def line(self, message=""):
         """

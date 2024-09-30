@@ -1,0 +1,170 @@
+// -*- c++ -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2024 all rights reserved
+
+// code guard
+#pragma once
+
+// factory
+template <class signalT, class logsawT>
+auto
+pyre::viz::factories::filters::LogSaw<signalT, logsawT>::create(const name_type & name)
+    -> factory_ref_type
+{
+    // make an instance and wrap it in a shared pointer
+    auto ref = std::make_shared<LogSaw>(sentinel_type(), name);
+    // make a channel
+    auto channel = pyre::journal::debug_t("pyre.viz.factories.filters.logsaw");
+    // let me know
+    channel
+        // mark
+        << "logsaw '" << ref->name() << "' at " << ref.get() << ": create"
+        << pyre::journal::newline
+        // flush
+        << pyre::journal::endl(__HERE__);
+
+    // all done
+    return ref;
+}
+
+// destructor
+template <class signalT, class logsawT>
+pyre::viz::factories::filters::LogSaw<signalT, logsawT>::~LogSaw()
+{
+    // make a channel
+    auto channel = pyre::journal::debug_t("pyre.viz.factories.filters.logsaw");
+    // let me know
+    channel
+        // mark
+        << "logsaw '" << name() << "' at " << this << ": destroy"
+        << pyre::journal::newline
+        // flush
+        << pyre::journal::endl(__HERE__);
+
+    // all done
+    return;
+}
+
+// constructor
+template <class signalT, class logsawT>
+pyre::viz::factories::filters::LogSaw<signalT, logsawT>::LogSaw(
+    sentinel_type sentinel, const name_type & name) :
+    // superclass
+    base_type(sentinel, name)
+{}
+
+// accessors
+template <class signalT, class logsawT>
+auto
+pyre::viz::factories::filters::LogSaw<signalT, logsawT>::signal() -> signal_ref_type
+{
+    // look up the product bound to my {signal} slot and return it
+    return std::dynamic_pointer_cast<signal_type>(input("signal"));
+}
+
+template <class signalT, class logsawT>
+auto
+pyre::viz::factories::filters::LogSaw<signalT, logsawT>::logsaw() -> logsaw_ref_type
+{
+    // look up the product bound to my {signal} slot and return it
+    return std::dynamic_pointer_cast<logsaw_type>(output("logsaw"));
+}
+
+// mutators
+template <class signalT, class logsawT>
+auto
+pyre::viz::factories::filters::LogSaw<signalT, logsawT>::signal(signal_ref_type signal)
+    -> factory_ref_type
+{
+    // bind {signal} to my slot
+    addInput("signal", std::static_pointer_cast<pyre::flow::product_t>(signal));
+    // make a self reference
+    auto self = std::dynamic_pointer_cast<LogSaw>(ref());
+    // and return it
+    return self;
+}
+
+template <class signalT, class logsawT>
+auto
+pyre::viz::factories::filters::LogSaw<signalT, logsawT>::logsaw(logsaw_ref_type logsaw)
+    -> factory_ref_type
+{
+    // bind {logsaw} to my slot
+    addOutput("logsaw", std::static_pointer_cast<pyre::flow::product_t>(logsaw));
+    // make a self reference
+    auto self = std::dynamic_pointer_cast<LogSaw>(ref());
+    // and return it
+    return self;
+}
+
+// interface
+template <class signalT, class logsawT>
+auto
+pyre::viz::factories::filters::LogSaw<signalT, logsawT>::make(
+    const name_type & slot, base_type::product_ref_type product) -> base_type::factory_ref_type
+{
+    // chain up
+    auto self = base_type::make(slot, product);
+    // get read access to the signal
+    auto & signal = this->signal()->read();
+    // get write access to the logsaw data
+    auto & logsaw = this->logsaw()->write();
+    // get the number cells in the output tile
+    auto cells = logsaw.layout().cells();
+    // make sure the input is compatible
+    bool ok = cells == signal.layout().cells();
+    // if not
+    if (!ok) {
+        // make a channel
+        auto channel = pyre::journal::error_t("pyre.viz.factories.filters.logsaw");
+        // complain
+        channel
+            // who
+            << "logsaw " << this->name() << "' at " << this << ":"
+            << pyre::journal::newline
+            // what
+            << "shape mismatch in the input and output slots"
+            << pyre::journal::newline
+            // inputs
+            << "inputs "
+            << pyre::journal::newline
+            // indent
+            << pyre::journal::indent
+            // signal
+            << "signal: " << signal.layout().cells()
+            << pyre::journal::newline
+            // outdent
+            << pyre::journal::outdent
+            // outputs
+            << "outputs: "
+            << pyre::journal::newline
+            // indent
+            << pyre::journal::indent
+            // logsaw
+            << "logsaw: " << logsaw.layout().cells()
+            << pyre::journal::newline
+            // outdent
+            << pyre::journal::outdent
+            // flush
+            << pyre::journal::endl(__HERE__);
+        // and bail, just in case errors aren't fatal
+        return self;
+    }
+
+    // go over the cells
+    for (auto cell = 0; cell < cells; ++cell) {
+        // read the value from the signal and get its magnitude
+        auto mag = std::abs(signal[cell]);
+        // compute its log
+        auto log = std::log2(mag);
+        // project it into [0,1]
+        auto value = std::abs(log - std::trunc(log));
+        // and store
+        logsaw[cell] = value;
+    }
+    // all done
+    return self;
+}
+
+// end of file

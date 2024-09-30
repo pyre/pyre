@@ -1,7 +1,7 @@
 # -*- cmake -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
-# (c) 1998-2023 all rights reserved
+# (c) 1998-2024 all rights reserved
 
 
 #
@@ -183,82 +183,156 @@ pyre_test_driver(tests/pyre.lib/timers/wall_timer_start.cc)
 pyre_test_driver(tests/pyre.lib/timers/wall_timer_stop.cc)
 
 
+# flow
+pyre_test_driver(tests/pyre.lib/flow/add_tiles.cc)
+pyre_test_driver(tests/pyre.lib/flow/add_variables.cc)
+pyre_test_driver(tests/pyre.lib/flow/calc_tiles.cc)
+pyre_test_driver(tests/pyre.lib/flow/calc_variables.cc)
+pyre_test_driver(tests/pyre.lib/flow/flow.cc)
+pyre_test_driver(tests/pyre.lib/flow/multiply_tiles.cc)
+pyre_test_driver(tests/pyre.lib/flow/multiply_variables.cc)
+
+
 # viz
-pyre_test_driver(tests/pyre.lib/viz/amplitude.cc)
-pyre_test_driver(tests/pyre.lib/viz/bmp.cc)
-pyre_test_driver(tests/pyre.lib/viz/complex.cc)
-pyre_test_driver(tests/pyre.lib/viz/decimate.cc)
-pyre_test_driver(tests/pyre.lib/viz/domain_coloring.cc)
-pyre_test_driver(tests/pyre.lib/viz/hsb.cc)
-pyre_test_driver(tests/pyre.lib/viz/hsl.cc)
-pyre_test_driver(tests/pyre.lib/viz/logsaw.cc)
-pyre_test_driver(tests/pyre.lib/viz/phase.cc)
-pyre_test_driver(tests/pyre.lib/viz/polarsaw.cc)
+pyre_test_driver(tests/pyre.lib/viz/colorspaces/hsb.cc)
+pyre_test_driver(tests/pyre.lib/viz/colorspaces/hsl.cc)
+pyre_test_driver(tests/pyre.lib/viz/iterators/amplitude.cc)
+pyre_test_driver(tests/pyre.lib/viz/flow/affine.cc)
+pyre_test_driver(tests/pyre.lib/viz/flow/amplitude.cc)
+pyre_test_driver(tests/pyre.lib/viz/flow/bmp.cc)
+pyre_test_driver(tests/pyre.lib/viz/flow/complex.cc)
+pyre_test_driver(tests/pyre.lib/viz/flow/constant.cc)
+pyre_test_driver(tests/pyre.lib/viz/flow/cycle.cc)
+pyre_test_driver(tests/pyre.lib/viz/flow/decimate.cc)
+pyre_test_driver(tests/pyre.lib/viz/flow/geometric.cc)
+pyre_test_driver(tests/pyre.lib/viz/flow/gray.cc)
+pyre_test_driver(tests/pyre.lib/viz/flow/hl.cc)
+pyre_test_driver(tests/pyre.lib/viz/flow/hsb.cc)
+pyre_test_driver(tests/pyre.lib/viz/flow/hsl.cc)
+pyre_test_driver(tests/pyre.lib/viz/flow/imaginary.cc)
+pyre_test_driver(tests/pyre.lib/viz/flow/logsaw.cc)
+pyre_test_driver(tests/pyre.lib/viz/flow/parametric.cc)
+pyre_test_driver(tests/pyre.lib/viz/flow/phase.cc)
+pyre_test_driver(tests/pyre.lib/viz/flow/polarsaw.cc)
+pyre_test_driver(tests/pyre.lib/viz/flow/power.cc)
+pyre_test_driver(tests/pyre.lib/viz/flow/real.cc)
+pyre_test_driver(tests/pyre.lib/viz/flow/uniform.cc)
+pyre_test_driver(tests/pyre.lib/viz/iterators/bmp.cc)
+pyre_test_driver(tests/pyre.lib/viz/iterators/complex.cc)
+pyre_test_driver(tests/pyre.lib/viz/iterators/decimate.cc)
+pyre_test_driver(tests/pyre.lib/viz/iterators/domain_coloring.cc)
+pyre_test_driver(tests/pyre.lib/viz/iterators/logsaw.cc)
+pyre_test_driver(tests/pyre.lib/viz/iterators/phase.cc)
+pyre_test_driver(tests/pyre.lib/viz/iterators/polarsaw.cc)
 
 # some tests require cleanup
-add_test(NAME tests.pyre.lib.viz.amplitude.cleanup
-  COMMAND ${BASH_PROGRAM} -c "rm amplitude.bmp"
+add_test(NAME tests.pyre.lib.viz.flow.amplitude.cleanup
+  COMMAND ${BASH_PROGRAM} -c "rm pyre_viz_flow_amplitude.bmp"
   )
 
-add_test(NAME tests.pyre.lib.viz.bmp.cleanup
-  COMMAND ${BASH_PROGRAM} -c "rm chip.bmp"
+add_test(NAME tests.pyre.lib.viz.flow.bmp.cleanup
+  COMMAND ${BASH_PROGRAM} -c "rm pyre_viz_flow_bmp.bmp"
   )
 
-add_test(NAME tests.pyre.lib.viz.complex.cleanup
-  COMMAND ${BASH_PROGRAM} -c "rm complex.bmp"
+add_test(NAME tests.pyre.lib.viz.flow.complex.cleanup
+  COMMAND ${BASH_PROGRAM} -c "rm pyre_viz_flow_complex.bmp"
   )
 
-add_test(NAME tests.pyre.lib.viz.decimate.cleanup
-  COMMAND ${BASH_PROGRAM} -c "rm decimate.bmp"
+add_test(NAME tests.pyre.lib.viz.flow.decimate.cleanup
+  COMMAND ${BASH_PROGRAM} -c "rm pyre_viz_flow_decimate.bmp"
   )
 
-add_test(NAME tests.pyre.lib.viz.domain_coloring.cleanup
-  COMMAND ${BASH_PROGRAM} -c "rm domain_coloring.bmp"
+add_test(NAME tests.pyre.lib.viz.flow.gray.cleanup
+  COMMAND ${BASH_PROGRAM} -c "rm pyre_viz_flow_gray.bmp"
   )
 
-add_test(NAME tests.pyre.lib.viz.logsaw.cleanup
-  COMMAND ${BASH_PROGRAM} -c "rm logsaw.bmp"
+add_test(NAME tests.pyre.lib.viz.flow.hl.cleanup
+  COMMAND ${BASH_PROGRAM} -c "rm pyre_viz_flow_hl.bmp"
   )
 
-add_test(NAME tests.pyre.lib.viz.phase.cleanup
-  COMMAND ${BASH_PROGRAM} -c "rm phase.bmp"
+add_test(NAME tests.pyre.lib.viz.flow.hsb.cleanup
+  COMMAND ${BASH_PROGRAM} -c "rm pyre_viz_flow_hsb.bmp"
   )
 
-add_test(NAME tests.pyre.lib.viz.polarsaw.cleanup
-  COMMAND ${BASH_PROGRAM} -c "rm polarsaw.bmp"
+add_test(NAME tests.pyre.lib.viz.flow.hsl.cleanup
+  COMMAND ${BASH_PROGRAM} -c "rm pyre_viz_flow_hsl.bmp"
+  )
+
+add_test(NAME tests.pyre.lib.viz.flow.imaginary.cleanup
+  COMMAND ${BASH_PROGRAM} -c "rm pyre_viz_flow_imaginary.bmp"
+  )
+
+add_test(NAME tests.pyre.lib.viz.flow.phase.cleanup
+  COMMAND ${BASH_PROGRAM} -c "rm pyre_viz_flow_phase.bmp"
+  )
+
+add_test(NAME tests.pyre.lib.viz.flow.real.cleanup
+  COMMAND ${BASH_PROGRAM} -c "rm pyre_viz_flow_real.bmp"
+  )
+
+add_test(NAME tests.pyre.lib.viz.iterators.amplitude.cleanup
+  COMMAND ${BASH_PROGRAM} -c "rm pyre_viz_iterators_amplitude.bmp"
+  )
+
+add_test(NAME tests.pyre.lib.viz.iterators.bmp.cleanup
+  COMMAND ${BASH_PROGRAM} -c "rm pyre_viz_iterators_bmp.bmp"
+  )
+
+add_test(NAME tests.pyre.lib.viz.iterators.complex.cleanup
+  COMMAND ${BASH_PROGRAM} -c "rm pyre_viz_iterators_complex.bmp"
+  )
+
+add_test(NAME tests.pyre.lib.viz.iterators.decimate.cleanup
+  COMMAND ${BASH_PROGRAM} -c "rm pyre_viz_iterators_decimate.bmp"
+  )
+
+add_test(NAME tests.pyre.lib.viz.iterators.domain_coloring.cleanup
+  COMMAND ${BASH_PROGRAM} -c "rm pyre_viz_iterators_domain_coloring.bmp"
+  )
+
+add_test(NAME tests.pyre.lib.viz.iterators.logsaw.cleanup
+  COMMAND ${BASH_PROGRAM} -c "rm pyre_viz_iterators_logsaw.bmp"
+  )
+
+add_test(NAME tests.pyre.lib.viz.iterators.phase.cleanup
+  COMMAND ${BASH_PROGRAM} -c "rm pyre_viz_iterators_phase.bmp"
+  )
+
+add_test(NAME tests.pyre.lib.viz.iterators.polarsaw.cleanup
+  COMMAND ${BASH_PROGRAM} -c "rm pyre_viz_iterators_polarsaw.bmp"
   )
 
 # some tests must happen in a specific order
-set_property(TEST tests.pyre.lib.viz.amplitude.cleanup PROPERTY
-  DEPENDS tests.pyre.lib.viz.amplitude.cc
+set_property(TEST tests.pyre.lib.viz.iterators.amplitude.cleanup PROPERTY
+  DEPENDS tests.pyre.lib.viz.iterators.amplitude.cc
   )
 
-set_property(TEST tests.pyre.lib.viz.bmp.cleanup PROPERTY
-  DEPENDS tests.pyre.lib.viz.bmp.cc
+set_property(TEST tests.pyre.lib.viz.iterators.bmp.cleanup PROPERTY
+  DEPENDS tests.pyre.lib.viz.iterators.bmp.cc
   )
 
-set_property(TEST tests.pyre.lib.viz.complex.cleanup PROPERTY
-  DEPENDS tests.pyre.lib.viz.complex.cc
+set_property(TEST tests.pyre.lib.viz.iterators.complex.cleanup PROPERTY
+  DEPENDS tests.pyre.lib.viz.iterators.complex.cc
   )
 
-set_property(TEST tests.pyre.lib.viz.decimate.cleanup PROPERTY
-  DEPENDS tests.pyre.lib.viz.decimate.cc
+set_property(TEST tests.pyre.lib.viz.iterators.decimate.cleanup PROPERTY
+  DEPENDS tests.pyre.lib.viz.iterators.decimate.cc
   )
 
-set_property(TEST tests.pyre.lib.viz.domain_coloring.cleanup PROPERTY
-  DEPENDS tests.pyre.lib.viz.domain_coloring.cc
+set_property(TEST tests.pyre.lib.viz.iterators.domain_coloring.cleanup PROPERTY
+  DEPENDS tests.pyre.lib.viz.iterators.domain_coloring.cc
   )
 
-set_property(TEST tests.pyre.lib.viz.logsaw.cleanup PROPERTY
-  DEPENDS tests.pyre.lib.viz.logsaw.cc
+set_property(TEST tests.pyre.lib.viz.iterators.logsaw.cleanup PROPERTY
+  DEPENDS tests.pyre.lib.viz.iterators.logsaw.cc
   )
 
-set_property(TEST tests.pyre.lib.viz.phase.cleanup PROPERTY
-  DEPENDS tests.pyre.lib.viz.phase.cc
+set_property(TEST tests.pyre.lib.viz.iterators.phase.cleanup PROPERTY
+  DEPENDS tests.pyre.lib.viz.iterators.phase.cc
   )
 
-set_property(TEST tests.pyre.lib.viz.polarsaw.cleanup PROPERTY
-  DEPENDS tests.pyre.lib.viz.polarsaw.cc
+set_property(TEST tests.pyre.lib.viz.iterators.polarsaw.cleanup PROPERTY
+  DEPENDS tests.pyre.lib.viz.iterators.polarsaw.cc
   )
 
 

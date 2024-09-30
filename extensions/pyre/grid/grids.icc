@@ -1,14 +1,13 @@
 // -*- c++ -*-
 //
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
-// (c) 1998-2023 all rights reserved
+// (c) 1998-2024 all rights reserved
 
 // code guard
 #if !defined(pyre_py_grid_grids_icc)
 #error this file contains implementation details for pyre::py::grid::grids
 #else
 
-#include <iostream>
 
 // the read/write class record factory
 template <typename storageT, int dim>
@@ -53,7 +52,6 @@ pyre::py::grid::makecls(py::module & m)
     using cell_t = typename storage_t::cell_type;
     using packing_t = pyre::grid::canonical_t<dim>;
     using grid_t = pyre::grid::grid_t<packing_t, storage_t>;
-
 
     // encode the dimension
     auto d = std::to_string(dim) + "D";

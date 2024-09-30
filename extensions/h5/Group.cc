@@ -1,7 +1,7 @@
 // -*- c++ -*-
 //
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
-// (c) 1998-2023 all rights reserved
+// (c) 1998-2024 all rights reserved
 
 
 // externals
@@ -100,25 +100,33 @@ pyre::h5::py::group(py::module & m)
         // the docstring
         "close this group");
 
+    // check whether a name corresponds to a group member
+    cls.def(
+        // the name
+        "has",
+        // the implementation
+        [](const Group & self, const string_t & name) -> bool {
+            // check and return the result
+            return self.nameExists(name);
+        },
+        // the signature
+        "name"_a,
+        // the docstring
+        "check whether {name} is a group member");
+
     // extract information about my members
     cls.def(
         // the name
         "members",
         // the implementation
-        [](const Group & self) {
-            // we build (name, type) pairs
-            using info_t = string_t;
-            // in a container
-            using members_t = std::vector<info_t>;
-            // make one
-            auto members = members_t();
-            // go through them
+        [](const Group & self) -> names_t {
+            // make a pile
+            auto members = names_t();
+            // look up how many members i have and go through them
             for (auto index = 0; index < self.getNumObjs(); ++index) {
-                // get the name of the member at {index}y3j
+                // to get the name of the member at {index}
                 auto name = self.getObjnameByIdx(index);
-                // figure out its type
-                auto type = self.childObjType(name);
-                // and add the pair to the pile
+                // and add it to the pile
                 members.emplace_back(name);
             }
             // all done
@@ -194,12 +202,12 @@ pyre::h5::py::group(py::module & m)
         "create",
         // the implementation
         [](const Group & self, const string_t & path, const DataType & type,
-           const DataSpace & space) -> DataSet {
+           const DataSpace & space, const DCPL & dcpl, const DAPL & dapl) -> DataSet {
             // make the dataset and return it
-            return self.createDataSet(path, type, space);
+            return self.createDataSet(path, type, space, dcpl, dapl);
         },
         // the signature
-        "path"_a, "type"_a, "space"_a,
+        "path"_a, "type"_a, "space"_a, "dcpl"_a = DCPL::DEFAULT, "dapl"_a = DAPL::DEFAULT,
         // the docstring
         "create a new dataset at the given {name} given its {type} and data {space}");
 
@@ -214,6 +222,19 @@ pyre::h5::py::group(py::module & m)
         },
         // the docstring
         "the number of group members");
+
+    cls.def(
+        // the name
+        "__contains__",
+        // the implementation
+        [](const Group & self, const string_t & name) -> bool {
+            // check and return the result
+            return self.nameExists(name);
+        },
+        // the signature
+        "name"_a,
+        // the docstring
+        "check whether {name} is a known member of this group");
 
     cls.def(
         // the name
@@ -249,6 +270,9 @@ pyre::h5::py::group(py::module & m)
         "iterate over my members",
         // keep the group around while its iterator is in use
         py::keep_alive<0, 1>());
+
+    // access to the group attributes
+    attributes(cls);
 
     // all done
     return;

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
-# (c) 1998-2023 all rights reserved
+# (c) 1998-2024 all rights reserved
 
 
 # externals
@@ -43,6 +43,9 @@ class Smith(pyre.application, family="pyre.applications.smith", namespace="smith
     def main(self, *args, **kwds):
         # make a channel for reporting progress
         info = journal.info("smith")
+
+        # show me
+        info.log(f"template: {self.project}")
 
         # get the name of the project
         project = self.project.name

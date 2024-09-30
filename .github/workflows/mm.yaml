@@ -1,9 +1,10 @@
 # -*- yaml -*-
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
-# (c) 1998-2023 all rights reserved
+# (c) 1998-2024 all rights reserved
 
 name: mm
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
@@ -18,25 +19,15 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-20.04, ubuntu-22.04]
+        os: [ubuntu-22.04]
         target: [debug, opt]
         python: ["3.8", "3.9", "3.10", "3.11"]
         compiler: [
-          "gcc-9", "gcc-10", "gcc-11", "gcc-12",
-          "clang-10", "clang-11", "clang-12", "clang-13", "clang-14"
+          "gcc-11", "gcc-12",
+          "clang-13", "clang-14"
         ]
         # define the names of the compilers
         include:
-          - compiler: gcc-9
-            suite: gcc
-            suiteVersion: 9
-            cc: gcc-9
-            cxx: g++-9
-          - compiler: gcc-10
-            suite: gcc
-            suiteVersion: 10
-            cc: gcc-10
-            cxx: g++-10
           - compiler: gcc-11
             suite: gcc
             suiteVersion: 11
@@ -47,21 +38,6 @@ jobs:
             suiteVersion: 12
             cc: gcc-12
             cxx: g++-12
-          - compiler: clang-10
-            suite: clang
-            suiteVersion: 10
-            cc: clang-10
-            cxx: clang++-10
-          - compiler: clang-11
-            suite: clang
-            suiteVersion: 11
-            cc: clang-11
-            cxx: clang++-11
-          - compiler: clang-12
-            suite: clang
-            suiteVersion: 12
-            cc: clang-12
-            cxx: clang++-12
           - compiler: clang-13
             suite: clang
             suiteVersion: 13
@@ -72,24 +48,6 @@ jobs:
             suiteVersion: 14
             cc: clang-14
             cxx: clang++-14
-        # disable the unsupported combinations
-        exclude:
-          # unsupported compilers on ubuntu-20.04
-          - os: ubuntu-20.04
-            compiler: gcc-11
-          - os: ubuntu-20.04
-            compiler: gcc-12
-          - os: ubuntu-20.04
-            compiler: clang-13
-          - os: ubuntu-20.04
-            compiler: clang-14
-          # unsupported compilers on ubuntu-22.04
-          - os: ubuntu-22.04
-            compiler: gcc-9
-          - os: ubuntu-22.04
-            compiler: clang-10
-          - os: ubuntu-22.04
-            compiler: clang-11
 
     steps:
       - name: ${{matrix.os}} refresh
@@ -104,14 +62,14 @@ jobs:
           sudo apt install -y make openssh-server libgsl-dev libopenmpi-dev libhdf5-dev
 
       - name: python ${{matrix.python}} setup
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: ${{matrix.python}}
 
       - name: install dependencies
         run: |
           python${pythonVersion} -m pip install --upgrade pip
-          pip3 install distro graphene numpy pybind11 PyYAML
+          pip3 install distro graphene 'numpy<2.0' pybind11 PyYAML
         env:
           pythonVersion: ${{matrix.python}}
 
@@ -179,10 +137,22 @@ jobs:
 
       - name: checkout pyre
         run: |
-          echo " -- switching to the pyre home directory"
+          echo " -- runner home"
+          pwd
+          echo " -- switching to the pyre source directory"
           cd pyre
+          echo " -- pyre source directory"
+          pwd
           echo " -- checking out the correct ref"
           git checkout ${GITHUB_SHA}
+          echo " -- creating ~/.pyre"
+          mkdir ~/.pyre
+          echo " -- copying the mm configuration file"
+          cp .github/matrix/mm.pfg ~/.pyre
+          echo " -- creating ~/.mm"
+          mkdir ~/.mm
+          echo " -- copying the package configuration file there"
+          cp .github/matrix/config.mm ~/.mm
           echo " -- checking whether mm can run from here"
           echo now at: ${PWD}
           echo mm: ${mm}
@@ -196,6 +166,14 @@ jobs:
           ${mm} extern.hdf5.info
           ${mm} extern.numpy.info
           ${mm} extern.pybind11.info
+          echo " -- verifying the pyre extension"
+          ${mm} pyre.ext.info
+          echo " -- verifying the pyre host extension"
+          ${mm} host.ext.info
+          echo " -- verifying the journal extension"
+          ${mm} journal.ext.info
+          echo " -- verifying the h5 extension"
+          ${mm} h5.ext.info
         env:
           mm: python3 ${{github.workspace}}/mm/mm.py --config=.github/matrix/mm.pfg
           target: ${{matrix.target}}
@@ -205,7 +183,7 @@ jobs:
 
       - name: build pyre
         run: |
-          echo " -- switching to the pyre home directory"
+          echo " -- switching to the pyre source directory"
           cd pyre
           echo " -- building pyre"
           ${mm}
@@ -218,6 +196,8 @@ jobs:
 
       - name: test pyre
         run: |
+          echo " -- pwd"
+          pwd
           echo " -- switching to the pyre home directory"
           cd pyre
           echo " -- testing pyre"
@@ -228,5 +208,6 @@ jobs:
           suite: ${{matrix.suite}}
           suiteVersion: ${{matrix.suiteVersion}}
           pythonVersion: ${{matrix.python}}
+          LD_LIBRARY_PATH: /home/runner/work/products/lib
 #
 # end of file

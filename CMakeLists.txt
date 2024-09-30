@@ -2,11 +2,11 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2023 all rights reserved
+# (c) 1998-2024 all rights reserved
 #
 
 # cmake setup
-# v3.18 is needed to pass Development.Module to FIndPython
+# v3.18 is needed to pass Development.Module to FindPython
 cmake_minimum_required(VERSION 3.19...3.25)
 
 # options
@@ -45,7 +45,7 @@ endif()
 # default to build tests only when root project, but allow user to choose
 option(PYRE_BUILD_TESTING "Build pyre's test suite" ${PYRE_IS_ROOT_PROJECT})
 
-# default not to build the pyre benchmarks   
+# default not to build the pyre benchmarks
 option(PYRE_BUILD_BENCHMARKS "Build pyre's benchmark suite" OFF)
 
 # hmmmmm
@@ -96,10 +96,13 @@ find_package(GSL)
 if(${MPI_FOUND})
     # prefer the parallel version of hdf5
     set(HDF5_PREFER_PARALLEL ON)
+    # leave a marker
+    message(STATUS "We have MPI; ask for parallel HDF5: ${HDF5_PREFER_PARALLEL}")
 endif()
-message(STATUS "Parallel HDF5: ${HDF5_PREFER_PARALLEL}")
 # hunt it down
 find_package(HDF5 COMPONENTS CXX HL)
+# report
+message(STATUS "Parallel HDF5: ${HDF5_IS_PARALLEL}")
 
 # find cuda if it is required
 if(${WITH_CUDA})
@@ -121,6 +124,7 @@ find_package(Python 3.7
 # for building bindings
 # require c++17
 set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CUDA_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(PYBIND11_CPP_STANDARD -std=c++17)
@@ -169,7 +173,7 @@ include(CMakePackageConfigHelpers)
 write_basic_package_version_file(
     pyre-config-version.cmake
     VERSION ${PROJECT_VERSION}
-    COMPATIBILITY SameMinorVersion
+    COMPATIBILITY SameMajorVersion
     )
 
 # install config file for find_package
@@ -218,6 +222,7 @@ if(PYRE_BUILD_TESTING)
 
   # if we have CUDA and the user cares
   if(WITH_CUDA)
+    include(pyre_tests_cuda_lib)
     include(pyre_tests_cuda_pkg)
   endif()
 
@@ -247,6 +252,13 @@ if(PYRE_BUILD_BENCHMARKS)
 
   # add the benchmarks to the pile
   include(pyre_benchmarks_pyre_lib)
+
+  # if we have CUDA and the user cares
+  if(WITH_CUDA)
+    # add the cuda benchmarks to the pile
+    include(pyre_benchmarks_cuda_lib)
+  endif()
+
 endif()
 
 

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
-# (c) 1998-2023 all rights reserved
+# (c) 1998-2024 all rights reserved
 
 
 # support
@@ -39,7 +39,7 @@ class Datatype(Object):
             # chain up
             return super()._pyre_identify(authority=authority, **kwds)
         # otherwise, invoke the handler
-        return handler(dataset=self, **kwds)
+        return handler(datatype=self, **kwds)
 
 
 # end of file

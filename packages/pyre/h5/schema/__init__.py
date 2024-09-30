@@ -1,11 +1,14 @@
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
-# (c) 1998-2023 all rights reserved
+# (c) 1998-2024 all rights reserved
 
 
 # the local exceptions
 from . import exceptions
+
+# the metaclass
+from .Schema import Schema as schema
 
 # the structural elements
 from .Descriptor import Descriptor as descriptor
@@ -19,6 +22,7 @@ from .Viewer import Viewer as viewer
 # scalars
 bool = dataset.bool
 complex = dataset.complex
+enum = dataset.enum
 float = dataset.float
 int = dataset.int
 str = dataset.str
@@ -29,6 +33,15 @@ list = dataset.list
 tuple = dataset.tuple
 # derived
 from ..typed.Strings import Strings as strings
+
+
+# convenience schema factory
+def make(name, bases=(group,), attributes={}, **kwds):
+    """
+    Make a new schema class
+    """
+    # easy enough
+    return schema(name, bases, attributes, **kwds)
 
 
 # end of file

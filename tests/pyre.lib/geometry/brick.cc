@@ -2,13 +2,12 @@
 //
 // michael a.g. aïvázis
 // orthologue
-// (c) 1998-2023 all rights reserved
+// (c) 1998-2024 all rights reserved
 //
 
 // config
 #include <portinfo>
 // externals
-#include <iostream>
 #include <pyre/journal.h>
 #include <pyre/geometry.h>
 

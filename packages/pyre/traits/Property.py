@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
-# (c) 1998-2023 all rights reserved
+# (c) 1998-2024 all rights reserved
 
 
 # externals
@@ -112,7 +112,7 @@ class Property(Slotted):
         return
 
     def __str__(self):
-        return f"{self.name}: a property of type '{self.typename}'"
+        return f"'{self.name}': a property of type '{self.typename}'"
 
 
 # end of file

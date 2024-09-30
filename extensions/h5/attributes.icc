@@ -1,0 +1,134 @@
+// -*- c++ -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2024 all rights reserved
+
+
+// code guard
+#if !defined(h5_py_attributes_icc)
+#error this file contains implementation details for pyre::h5::py attributes
+#else
+
+template <class objectT>
+void
+pyre::h5::py::attributes(py::class_<objectT> & cls)
+{
+    // extract the names of my attributes
+    cls.def(
+        // the name
+        "attributes",
+        // the implementation
+        [](const objectT & self) -> names_t {
+            // make a pile
+            auto attributes = names_t();
+            // look up how many members i have and go through them
+            for (auto index = 0; index < self.getNumAttrs(); ++index) {
+                // get the attribute
+                auto attribute = self.openAttribute(index);
+                // to get the name of the member at {index}
+                auto name = attribute.getName();
+                // and add it to the pile
+                attributes.emplace_back(name);
+            }
+            // all done
+            return attributes;
+        },
+        // the docstring
+        "extract information about my members");
+
+    // create an attribute
+    cls.def(
+        // the name
+        "createAttribute",
+        // the implementation
+        [](const objectT & self, const string_t & name, const DataType & type,
+           const DataSpace & space, const PropList & plist) -> Attribute {
+            // easy enough
+            return self.createAttribute(name, type, space, plist);
+        },
+        // the signature
+        "name"_a, "type"_a, "space"_a, "props"_a = PropList::DEFAULT,
+        // the docstring
+        "create an attribute given its {name}, {type}, {space}, and property list");
+
+    // check whether there is an attribute by the given name
+    cls.def(
+        // the name
+        "hasAttribute",
+        // the implementation
+        [](const objectT & self, const string_t & name) -> bool {
+            // check and return
+            return self.attrExists(name);
+        },
+        // the signature
+        "name"_a,
+        // the docstring
+        "check whether there is an attribute by the given {name}");
+
+    // get an attribute by index
+    cls.def(
+        // the name
+        "getAttribute",
+        // the implementation
+        [](const objectT & self, unsigned int index) -> Attribute {
+            // get the attribute and return it
+            return self.openAttribute(index);
+        },
+        // the signature
+        "index"_a,
+        // the docstring
+        "retrieve the attribute at the given index");
+
+    // get an attribute by name
+    cls.def(
+        // the name
+        "getAttribute",
+        // the implementation
+        [](const objectT & self, const string_t & name) -> Attribute {
+            // get the attribute and return it
+            return self.openAttribute(name);
+        },
+        // the signature
+        "name"_a,
+        // the docstring
+        "retrieve the attribute by the given name");
+
+    // rename an attribute
+    cls.def(
+        // the name
+        "renameAttribute",
+        // the implementation
+        [](const objectT & self, const string_t & oldName, const string_t & newName) -> void {
+            // rename the attribute
+            self.renameAttr(oldName, newName);
+            // all done
+            return;
+        },
+        // the signature
+        "old"_a, "new"_a,
+        // the docstring
+        "rename an attribute from {old} to {new}");
+
+    // delete an attribute
+    cls.def(
+        // the name
+        "removeAttribute",
+        // the implementation
+        [](const objectT & self, const string_t & name) -> void {
+            // rename the attribute
+            self.removeAttr(name);
+            // all done
+            return;
+        },
+        // the signature
+        "name"_a,
+        // the docstring
+        "remove the attribute of the given {name}");
+
+    // all done
+    return;
+}
+
+#endif
+
+// end of file

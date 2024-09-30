@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
-# (c) 1998-2023 all rights reserved
+# (c) 1998-2024 all rights reserved
 
 
 # externals
@@ -80,11 +80,11 @@ class URI:
                 value.scheme = scheme
             # if necessary
             if value.authority is None:
-                # adjust the scheme
+                # adjust the authority
                 value.authority = authority
             # if necessary
             if value.address is None:
-                # adjust the scheme
+                # adjust the address
                 value.address = address
             # all done
             return value

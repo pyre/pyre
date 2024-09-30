@@ -1,7 +1,7 @@
 // -*- c++ -*-
 //
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
-// (c) 1998-2023 all rights reserved
+// (c) 1998-2024 all rights reserved
 
 
 // external dependencies
@@ -25,13 +25,21 @@ PYBIND11_MODULE(h5, m)
     // enums
     pyre::h5::py::enums(m);
     // property lists
+    pyre::h5::py::pl(m);
+    pyre::h5::py::dapl(m);
+    pyre::h5::py::dcpl(m);
+    pyre::h5::py::dxpl(m);
     pyre::h5::py::fapl(m);
+    pyre::h5::py::fcpl(m);
+    pyre::h5::py::lapl(m);
+    pyre::h5::py::lcpl(m);
 
     // subpackages
     pyre::h5::py::datatypes::__init__(m);
 
     // object bindings
     pyre::h5::py::dataspace(m);
+    pyre::h5::py::attribute(m);
     pyre::h5::py::dataset(m);
     pyre::h5::py::group(m);
     pyre::h5::py::file(m);

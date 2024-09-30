@@ -1,0 +1,170 @@
+// -*- c++ -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2024 all rights reserved
+
+// code guard
+#pragma once
+
+// factory
+auto
+pyre::viz::products::images::BMP::create(const name_type & name, shape_type shape, bool topdown)
+    -> ref_type
+{
+    // build an instance and wrap it in a shared pointer
+    return std::make_shared<BMP>(sentinel_type(), name, shape, topdown);
+}
+
+// constructor
+pyre::viz::products::images::BMP::BMP(
+    sentinel_type sentinel, const name_type & name, shape_type shape, bool topdown) :
+    // base class; make sure i start out as stale since i own memory but it isn't populated
+    pyre::flow::product_t(sentinel, name, true),
+    // members
+    // the shape of the bitmap: rows x cols -> (slow index, fast index)
+    _shape { shape },
+    // the bitmap orientation is encoded using signed values for its height
+    _topdown { topdown ? -1 : 1 },
+    // individual lines are padded out to the nearest DWORD
+    _padBytesPerLine { (4 - (shape[1] * _pixelSz) % 4) % 4 },
+    // the size of the pixel payload
+    _payloadSz { static_cast<int>(shape.cells() * _pixelSz + shape[1] * _padBytesPerLine) },
+    // the total bitmap size
+    _bitmapSz { _payloadOffset + _payloadSz },
+    // the data buffer with the encoded image
+    _data { new cell_type[_bitmapSz] }
+{
+    // initialize the image headers
+    // start at the beginning
+    auto cur = _data;
+
+    // the file header
+    // encode the file type
+    *cur++ = 'B';
+    *cur++ = 'M';
+    // encode the file size as a little endian DWORD
+    *cur++ = (_bitmapSz & 0x000000FF) >> 0x00;
+    *cur++ = (_bitmapSz & 0x0000FF00) >> 0x08;
+    *cur++ = (_bitmapSz & 0x00FF0000) >> 0x10;
+    *cur++ = (_bitmapSz & 0xFF000000) >> 0x18;
+    // write the four reserved bytes
+    *cur++ = 0;
+    *cur++ = 0;
+    *cur++ = 0;
+    *cur++ = 0;
+    // write the offset to the beginning of the payload
+    *cur++ = (_payloadOffset & 0x000000FF) >> 0x00;
+    *cur++ = (_payloadOffset & 0x0000FF00) >> 0x08;
+    *cur++ = (_payloadOffset & 0x00FF0000) >> 0x10;
+    *cur++ = (_payloadOffset & 0xFF000000) >> 0x18;
+
+    // the info header
+    // its size
+    *cur++ = (_infoHeaderSz & 0x000000FF) >> 0x00;
+    *cur++ = (_infoHeaderSz & 0x0000FF00) >> 0x08;
+    *cur++ = (_infoHeaderSz & 0x00FF0000) >> 0x10;
+    *cur++ = (_infoHeaderSz & 0xFF000000) >> 0x18;
+    // unpack the shape
+    auto [height, width] = _shape;
+    // encode the width
+    *cur++ = (width & 0x000000FF) >> 0x00;
+    *cur++ = (width & 0x0000FF00) >> 0x08;
+    *cur++ = (width & 0x00FF0000) >> 0x10;
+    *cur++ = (width & 0xFF000000) >> 0x18;
+    // adjust the height to accommodate the bitmap direction
+    height *= _topdown;
+    // encode the height
+    *cur++ = (height & 0x000000FF) >> 0x00;
+    *cur++ = (height & 0x0000FF00) >> 0x08;
+    *cur++ = (height & 0x00FF0000) >> 0x10;
+    *cur++ = (height & 0xFF000000) >> 0x18;
+    // encode the number of bit planes as little endian WORD
+    *cur++ = 1;
+    *cur++ = 0;
+    // encode the number of bits per pixel
+    *cur++ = _bitsPerPixel;
+    *cur++ = 0;
+    // mark this as an uncompressed {BI_RGB} stream
+    *cur++ = 0;
+    *cur++ = 0;
+    *cur++ = 0;
+    *cur++ = 0;
+    // encode the size of the compressed payload: 0 for BI_RGB streams
+    *cur++ = 0;
+    *cur++ = 0;
+    *cur++ = 0;
+    *cur++ = 0;
+    // encode the number of X pixels per meter; set to zero
+    *cur++ = 0;
+    *cur++ = 0;
+    *cur++ = 0;
+    *cur++ = 0;
+    // encode the number of Y pixels per meter; set to zero
+    *cur++ = 0;
+    *cur++ = 0;
+    *cur++ = 0;
+    *cur++ = 0;
+    // encode the number of colors used; set to zero
+    *cur++ = 0;
+    *cur++ = 0;
+    *cur++ = 0;
+    *cur++ = 0;
+    // encode the number of important colors; set to zero
+    *cur++ = 0;
+    *cur++ = 0;
+    *cur++ = 0;
+    *cur++ = 0;
+
+    // check that we are done with the header
+    if (cur != _data + _payloadOffset) {
+        // if not, we have a bug
+        auto channel = pyre::journal::info_t("pyre.viz.products.images.bmp");
+        // complain
+        channel
+            // what
+            << "the insertion cursor is at " << (cur - _data) << "instead of " << _payloadOffset
+            << pyre::journal::newline
+            // when
+            << "after injecting the header of a " << height << "x" << width
+            << " BMP"
+            // flush
+            << pyre::journal::endl(__HERE__);
+    }
+
+    // all done
+    return;
+}
+
+// accessors
+auto
+pyre::viz::products::images::BMP::shape() const -> shape_type
+{
+    // easy enough
+    return _shape;
+}
+
+auto
+pyre::viz::products::images::BMP::padding() const -> int
+{
+    // easy enough
+    return _padBytesPerLine;
+}
+
+// factory access
+auto
+pyre::viz::products::images::BMP::read() -> constview_type
+{
+    // refresh me
+    make();
+    // build a view to my data and return it
+    return constview_type(_data, _bitmapSz);
+}
+
+auto
+pyre::viz::products::images::BMP::write() -> view_type
+{
+    // build a view to my color payload and return it
+    return view_type(_data + _payloadOffset, _payloadSz);
+}
+
+// end of file

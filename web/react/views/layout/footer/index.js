@@ -2,7 +2,7 @@
 //
 // michael a.g. aïvázis
 // orthologue
-// (c) 1998-2023 all rights reserved
+// (c) 1998-2024 all rights reserved
 //
 
 // externals
@@ -15,7 +15,7 @@ const Footer = () => (
     <footer style={styles.footer}>
         <div style={styles.colophon}>
             <span style={styles.copyright}>
-                copyright &copy; 1998-2023
+                copyright &copy; 1998-2024
                 &nbsp;
                 <a href="http://www.orthologue.com/michael.aivazis">
                     michael aïvázis

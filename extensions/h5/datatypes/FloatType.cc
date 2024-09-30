@@ -1,7 +1,7 @@
 // -*- c++ -*-
 //
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
-// (c) 1998-2023 all rights reserved
+// (c) 1998-2024 all rights reserved
 
 
 // externals
@@ -28,6 +28,15 @@ pyre::h5::py::datatypes::float_(py::module & m)
         "an HDF5 float datatype");
 
     // constructors
+    // from an existing type
+    cls.def(
+        // the implementation
+        py::init<hid_t>(),
+        // the signature
+        "id"_a,
+        // the docstring
+        "make a float type using the id of an existing one");
+
     // from a predefined float type
     cls.def(
         // the implementation

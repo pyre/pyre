@@ -1,7 +1,7 @@
 // -*- c++ -*-
 //
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
-// (c) 1998-2023 all rights reserved
+// (c) 1998-2024 all rights reserved
 
 
 // externals
@@ -22,9 +22,21 @@ pyre::h5::py::api(py::module & m)
         []() -> void {
             // turn off the native diagnostics; we commit to catching all exceptions and
             // generating our own messages
-            H5::Exception::dontPrint();
+            // H5::Exception::dontPrint();
             // all done
             return;
+        },
+        // the docstring
+        "initialize the hdf5 runtime");
+
+    // get the version
+    m.def(
+        // the name
+        "version",
+        // the handler
+        []() {
+            // get the version and return it
+            return std::make_tuple(H5_VERS_MAJOR, H5_VERS_MINOR, H5_VERS_RELEASE);
         },
         // the docstring
         "initialize the hdf5 runtime");

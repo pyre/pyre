@@ -1,17 +1,18 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
-# (c) 1998-2023 all rights reserved
-#
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2024 all rights reserved
 
 
 # externals
 import itertools
+
 # support
 from .. import tracking
+
 # metaclass
 from .Role import Role
+
 # superclass
 from .Configurable import Configurable
 
@@ -22,7 +23,6 @@ class Protocol(Configurable, metaclass=Role, internal=True):
     The base class for requirement specifications
     """
 
-
     # types
     from ..schemata import uri
     from .exceptions import FrameworkError, DefaultError, ResolutionError
@@ -30,11 +30,9 @@ class Protocol(Configurable, metaclass=Role, internal=True):
     from .Foundry import Foundry as foundry
     from .Component import Component as component
 
-
     # framework data
     pyre_key = None
     pyre_isProtocol = True
-
 
     # override this in your protocols to provide the default implementation
     @classmethod
@@ -46,6 +44,16 @@ class Protocol(Configurable, metaclass=Role, internal=True):
         # actual protocols should override
         return None
 
+    # set to a dispatching foundry that can deduce the correct implementation
+    # from context available at construction time
+    @classmethod
+    def pyre_auto(cls, **kwds):
+        """
+        The name of a foundry that can deduce the correct implementor from
+        context available at construction time
+        """
+        # actual protocols may override
+        return None
 
     # configuration hooks
     @classmethod
@@ -56,7 +64,6 @@ class Protocol(Configurable, metaclass=Role, internal=True):
         """
         # do nothing; subclasses may override
         return
-
 
     # value processing hooks
     # specifications
@@ -69,7 +76,6 @@ class Protocol(Configurable, metaclass=Role, internal=True):
         # by default, do nothing
         return value
 
-
     @classmethod
     def pyre_normalize(cls, value, **kwds):
         """
@@ -78,7 +84,6 @@ class Protocol(Configurable, metaclass=Role, internal=True):
         """
         # by default, do nothing
         return value
-
 
     @classmethod
     def pyre_validate(cls, value, **kwds):
@@ -104,7 +109,7 @@ class Protocol(Configurable, metaclass=Role, internal=True):
             raise cls.ResolutionError(protocol=cls, value=value)
 
         # check that the component is compatible with me
-        report =  component.pyre_isCompatible(spec=cls)
+        report = component.pyre_isCompatible(spec=cls)
         # if the report is clean
         if report.isClean:
             # we are done
@@ -112,7 +117,6 @@ class Protocol(Configurable, metaclass=Role, internal=True):
 
         # otherwise, complain
         raise cls.ResolutionError(protocol=cls, value=value, report=report)
-
 
     # the last step in the value processing flow is component instantiation
     @classmethod
@@ -130,7 +134,6 @@ class Protocol(Configurable, metaclass=Role, internal=True):
         # facility processing, rather than explicitly
         return component(name=name, locator=locator, implicit=True)
 
-
     # introspection
     @classmethod
     def pyre_family(cls):
@@ -142,7 +145,6 @@ class Protocol(Configurable, metaclass=Role, internal=True):
         # if i don't have a key, i don't have a family; otherwise, ask the nameserver
         return cls.pyre_nameserver.getName(cls.pyre_key) if key is not None else None
 
-
     @classmethod
     def pyre_familyFragments(cls):
         """
@@ -151,8 +153,9 @@ class Protocol(Configurable, metaclass=Role, internal=True):
         # get my key
         key = cls.pyre_key
         # if i don't have a key, i don't have a family, otherwise, ask the nameserver
-        return cls.pyre_nameserver.getSplitName(cls.pyre_key) if key is not None else None
-
+        return (
+            cls.pyre_nameserver.getSplitName(cls.pyre_key) if key is not None else None
+        )
 
     @classmethod
     def pyre_package(cls):
@@ -160,7 +163,8 @@ class Protocol(Configurable, metaclass=Role, internal=True):
         Deduce my package name
         """
         # if i don't have a key, i don't have a package
-        if cls.pyre_key is None: return None
+        if cls.pyre_key is None:
+            return None
         # otherwise, get the name server
         ns = cls.pyre_executive.nameserver
         # ask in for the split family name
@@ -170,17 +174,17 @@ class Protocol(Configurable, metaclass=Role, internal=True):
         # use it to look up the package
         return ns[pkgName]
 
-
     @classmethod
     def pyre_public(cls):
         """
         Generate the sequence of my public ancestors, i.e. the ones that have a non-trivial family
         """
         # filter public ancestors from my pedigree
-        yield from (ancestor for ancestor in cls.pyre_pedigree if ancestor.pyre_key is not None)
+        yield from (
+            ancestor for ancestor in cls.pyre_pedigree if ancestor.pyre_key is not None
+        )
         # all done
         return
-
 
     @classmethod
     def pyre_render(cls, renderer, name, component, workload):
@@ -205,7 +209,6 @@ class Protocol(Configurable, metaclass=Role, internal=True):
 
         # all done
         return
-
 
     # support for framework requests
     @classmethod
@@ -241,17 +244,15 @@ class Protocol(Configurable, metaclass=Role, internal=True):
         # if we get this far, i just couldn't pull it off
         raise cls.ResolutionError(protocol=cls, value=spec)
 
-
     @classmethod
     def pyre_resolutionContext(cls):
         """
         Return an iterable over portions of my family name
         """
         # go through my public ancestors, get the family name fragments and send them off
-        yield from ( base.pyre_familyFragments() for base in cls.pyre_public() )
+        yield from (base.pyre_familyFragments() for base in cls.pyre_public())
         # all done
         return
-
 
     @classmethod
     def pyre_locateAllImplementers(cls, namespace):
@@ -270,7 +271,6 @@ class Protocol(Configurable, metaclass=Role, internal=True):
         yield from cls.pyre_locateAllImportableImplementers(namespace=namespace)
         # all done
         return
-
 
     @classmethod
     def pyre_locateAllRegisteredImplementers(cls, namespace):
@@ -300,7 +300,6 @@ class Protocol(Configurable, metaclass=Role, internal=True):
         # all done
         return
 
-
     @classmethod
     def pyre_locateAllImportableImplementers(cls, namespace):
         """
@@ -315,18 +314,17 @@ class Protocol(Configurable, metaclass=Role, internal=True):
         # inject the given {namespace} in the search path
         fragments = tuple(cls.pyre_nameserver.split(namespace)) + fragments[1:]
         # splice the search path together to form a module name
-        uri = '.'.join(fragments)
+        uri = ".".join(fragments)
         # attempt to
         try:
             # hunt the implementers down
-            yield from cls.pyre_implementers(uri=f'import:{uri}')
+            yield from cls.pyre_implementers(uri=f"import:{uri}")
         # if anything goes wrong
         except cls.FrameworkError:
             # skip this step
             pass
         # all done
         return
-
 
     @classmethod
     def pyre_locateAllLoadableImplementers(cls, namespace):
@@ -354,7 +352,7 @@ class Protocol(Configurable, metaclass=Role, internal=True):
         # if it is there
         else:
             # reset the workload
-            todo = [ (uri, node) ]
+            todo = [(uri, node)]
             # go through all nodes
             for path, folder in todo:
                 # grab the contents
@@ -368,12 +366,12 @@ class Protocol(Configurable, metaclass=Role, internal=True):
                     # otherwise
                     else:
                         # treat it as a shelf; assemble its address
-                        shelf = f'vfs:{name}'
+                        shelf = f"vfs:{name}"
                         # and get its contents
                         yield from cls.pyre_implementers(uri=shelf)
 
         # the last thing to try is a shelf named after my family
-        uri = uri.withSuffix(suffix='.py')
+        uri = uri.withSuffix(suffix=".py")
         # check whether
         try:
             # such a node exists
@@ -385,11 +383,10 @@ class Protocol(Configurable, metaclass=Role, internal=True):
         # otherwise
         else:
             # yield its contents
-            yield from cls.pyre_implementers(uri='vfs:'+str(uri))
+            yield from cls.pyre_implementers(uri="vfs:" + str(uri))
 
         # all done
         return
-
 
     @classmethod
     def pyre_implementers(cls, uri):
@@ -430,11 +427,11 @@ class Protocol(Configurable, metaclass=Role, internal=True):
 
             # other kinds?
             import journal
+
             return journal.firewall.log(f"new kind of symbol in shelf '{uri}'")
 
         # all done
         return
-
 
     # compatibility checks
     @classmethod
@@ -453,15 +450,16 @@ class Protocol(Configurable, metaclass=Role, internal=True):
         if spec.pyre_isComponent:
             # in fact, let's treat asking the question as a bug
             import journal
+
             # so complain
-            raise journal.firewall('pyre.components').log(
-                'PC compatibility checks are not supported')
+            raise journal.firewall("pyre.components").log(
+                "PC compatibility checks are not supported"
+            )
 
         # do the assignment compatibility check
         report = super().pyre_isCompatible(spec=spec, fast=fast)
         # and report any errors
         return report
-
 
     @classmethod
     def pyre_isTypeCompatible(cls, protocol):
@@ -530,9 +528,8 @@ class Protocol(Configurable, metaclass=Role, internal=True):
         # otherwise
         return False
 
-
     # constants
-    EXTENSION = '.py'
+    EXTENSION = ".py"
 
 
 # end of file

@@ -1,7 +1,7 @@
 // -*- c++ -*-
 //
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
-// (c) 1998-2023 all rights reserved
+// (c) 1998-2024 all rights reserved
 
 // code guard
 #if !defined(pyre_memory_forward_h)
@@ -13,6 +13,10 @@ namespace pyre::memory {
     // utility that normalizes type access
     template <typename T, bool isConst>
     class Cell;
+
+    // helper that generates a human readable name for each supported datatype
+    template <typename T>
+    struct CellName;
 
     // block on the stack
     template <int D, typename T, bool isConst>

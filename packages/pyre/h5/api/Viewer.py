@@ -1,10 +1,14 @@
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
-# (c) 1998-2023 all rights reserved
+# (c) 1998-2024 all rights reserved
 
+
+# externals
+import journal
 
 # typing
+from .Datatype import Datatype
 from .Dataset import Dataset
 from .Group import Group
 from .Location import Location
@@ -31,14 +35,24 @@ class Viewer:
         """
         Process a {dataset}
         """
-        # get the value
-        value = dataset.value
         # the schema
         layout = dataset._pyre_layout
         # the type
         typename = layout.type
         # and the location
         loc = dataset._pyre_location.name
+        # attempt to
+        try:
+            # get the value
+            value = dataset.value
+        # if something goes wrong
+        except journal.ApplicationError as error:
+            # make a channel
+            channel = journal.warning("pyre.h5.api.viewer")
+            # report
+            channel.log(f"unable to read the value of '{dataset._pyre_location}'")
+            # and bail
+            return
         # build a representation for the value
         rep = layout.string(value=value)
         # assemble the label
@@ -58,6 +72,17 @@ class Viewer:
         for location in group._pyre_locations():
             # and visit each one
             yield from location._pyre_identify(authority=self, graphic=graphic)
+        # all done
+        return
+
+    def _pyre_onDatatype(self, datatype: Datatype, graphic: str = ""):
+        """
+        Process a datatype
+        """
+        # and the location
+        loc = datatype._pyre_location.name
+        # assemble the label
+        yield f"{graphic}{loc}: datatype declaration"
         # all done
         return
 

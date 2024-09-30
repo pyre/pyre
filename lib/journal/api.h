@@ -1,7 +1,7 @@
 // -*- c++ -*-
 //
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
-// (c) 1998-2023 all rights reserved
+// (c) 1998-2024 all rights reserved
 
 // code guard
 #if !defined(pyre_journal_api_h)
@@ -39,6 +39,7 @@ namespace pyre::journal {
 
     // manipulators
     using at = Locator;
+    using here = Locator;
     using note = Note;
     using detail = Detail;
     // the backwards compatible api; deprecated, and will be removed in 2.0

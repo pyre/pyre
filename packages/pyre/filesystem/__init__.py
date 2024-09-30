@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
-# (c) 1998-2023 all rights reserved
+# (c) 1998-2024 all rights reserved
 
 
 # external
@@ -101,6 +101,34 @@ def zip(root, **kwds):
 
     # build one and return it
     return Zip(metadata=info)
+
+
+def s3(root, **kwds):
+    """
+    Attempt to build a filesystem out of {root}, expected to be a uri to an S3 bucket
+    """
+    # carefully, because not everybody has support for it
+    try:
+        # get the factory
+        from .S3 import S3
+    # if that fails
+    except ImportError as error:
+        # we have a problem
+        import journal
+
+        # make a channel
+        channel = journal.error("pyre.filesystem.s3")
+        # complain
+        channel.line(f"got: {error}")
+        channel.line(f"while attempting to connect to '{root}'")
+        channel.line(f"is 'boto3' available and installed correctly?")
+        channel.line(f"try importing it in an interactive python session")
+        # flush
+        channel.log()
+        # and bail
+        return
+    # if all goes well, mount {root} and return the filesystem
+    return S3(root=root, **kwds)
 
 
 # nodes

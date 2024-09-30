@@ -1,0 +1,168 @@
+// -*- c++ -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2024 all rights reserved
+
+// code guard
+#pragma once
+
+// factory
+template <class signalT, class polarsawT>
+auto
+pyre::viz::factories::filters::PolarSaw<signalT, polarsawT>::create(const name_type & name)
+    -> factory_ref_type
+{
+    // make an instance and wrap it in a shared pointer
+    auto ref = std::make_shared<PolarSaw>(sentinel_type(), name);
+    // make a channel
+    auto channel = pyre::journal::debug_t("pyre.viz.factories.filters.polarsaw");
+    // let me know
+    channel
+        // mark
+        << "polarsaw '" << ref->name() << "' at " << ref.get() << ": create"
+        << pyre::journal::newline
+        // flush
+        << pyre::journal::endl(__HERE__);
+
+    // all done
+    return ref;
+}
+
+// destructor
+template <class signalT, class polarsawT>
+pyre::viz::factories::filters::PolarSaw<signalT, polarsawT>::~PolarSaw()
+{
+    // make a channel
+    auto channel = pyre::journal::debug_t("pyre.viz.factories.filters.polarsaw");
+    // let me know
+    channel
+        // mark
+        << "polarsaw '" << name() << "' at " << this << ": destroy"
+        << pyre::journal::newline
+        // flush
+        << pyre::journal::endl(__HERE__);
+
+    // all done
+    return;
+}
+
+// constructor
+template <class signalT, class polarsawT>
+pyre::viz::factories::filters::PolarSaw<signalT, polarsawT>::PolarSaw(
+    sentinel_type sentinel, const name_type & name) :
+    // superclass
+    base_type(sentinel, name)
+{}
+
+// accessors
+template <class signalT, class polarsawT>
+auto
+pyre::viz::factories::filters::PolarSaw<signalT, polarsawT>::signal() -> signal_ref_type
+{
+    // look up the product bound to my {signal} slot and return it
+    return std::dynamic_pointer_cast<signal_type>(input("signal"));
+}
+
+template <class signalT, class polarsawT>
+auto
+pyre::viz::factories::filters::PolarSaw<signalT, polarsawT>::polarsaw() -> polarsaw_ref_type
+{
+    // look up the product bound to my {signal} slot and return it
+    return std::dynamic_pointer_cast<polarsaw_type>(output("polarsaw"));
+}
+
+// mutators
+template <class signalT, class polarsawT>
+auto
+pyre::viz::factories::filters::PolarSaw<signalT, polarsawT>::signal(signal_ref_type signal)
+    -> factory_ref_type
+{
+    // bind {signal} to my slot
+    addInput("signal", std::static_pointer_cast<pyre::flow::product_t>(signal));
+    // make a self reference
+    auto self = std::dynamic_pointer_cast<PolarSaw>(ref());
+    // and return it
+    return self;
+}
+
+template <class signalT, class polarsawT>
+auto
+pyre::viz::factories::filters::PolarSaw<signalT, polarsawT>::polarsaw(polarsaw_ref_type polarsaw)
+    -> factory_ref_type
+{
+    // bind {polarsaw} to my slot
+    addOutput("polarsaw", std::static_pointer_cast<pyre::flow::product_t>(polarsaw));
+    // make a self reference
+    auto self = std::dynamic_pointer_cast<PolarSaw>(ref());
+    // and return it
+    return self;
+}
+
+// interface
+template <class signalT, class polarsawT>
+auto
+pyre::viz::factories::filters::PolarSaw<signalT, polarsawT>::make(
+    const name_type & slot, base_type::product_ref_type product) -> base_type::factory_ref_type
+{
+    // chain up
+    auto self = base_type::make(slot, product);
+    // get read access to the signal
+    auto & signal = this->signal()->read();
+    // get write access to the polarsaw data
+    auto & polarsaw = this->polarsaw()->write();
+    // get the number cells in the output tile
+    auto cells = polarsaw.layout().cells();
+    // make sure the input is compatible
+    bool ok = cells == signal.layout().cells();
+    // if not
+    if (!ok) {
+        // make a channel
+        auto channel = pyre::journal::error_t("pyre.viz.factories.filters.polarsaw");
+        // complain
+        channel
+            // who
+            << "polarsaw " << this->name() << "' at " << this << ":"
+            << pyre::journal::newline
+            // what
+            << "shape mismatch in the input and output slots"
+            << pyre::journal::newline
+            // inputs
+            << "inputs "
+            << pyre::journal::newline
+            // indent
+            << pyre::journal::indent
+            // signal
+            << "signal: " << signal.layout().cells()
+            << pyre::journal::newline
+            // outdent
+            << pyre::journal::outdent
+            // outputs
+            << "outputs: "
+            << pyre::journal::newline
+            // indent
+            << pyre::journal::indent
+            // polarsaw
+            << "polarsaw: " << polarsaw.layout().cells()
+            << pyre::journal::newline
+            // outdent
+            << pyre::journal::outdent
+            // flush
+            << pyre::journal::endl(__HERE__);
+        // and bail, just in case errors aren't fatal
+        return self;
+    }
+
+    // go over the cells
+    for (auto cell = 0; cell < cells; ++cell) {
+        // read the value from the signal and get its magnitude
+        auto saw = signal[cell] * 6 / M_PI;
+        // project it into [0,1]
+        auto value = std::abs(saw - std::trunc(saw));
+        // and store
+        polarsaw[cell] = value;
+    }
+    // all done
+    return self;
+}
+
+// end of file

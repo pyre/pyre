@@ -1,7 +1,7 @@
 # -*- cmake -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
-# (c) 1998-2023 all rights reserved
+# (c) 1998-2024 all rights reserved
 
 
 # build the h5 python extension
@@ -24,12 +24,20 @@ function(pyre_h5Module)
     target_sources(h5module PRIVATE
       extensions/h5/__init__.cc
       extensions/h5/api.cc
+      extensions/h5/Attribute.cc
+      extensions/h5/DAPL.cc
+      extensions/h5/DCPL.cc
+      extensions/h5/DXPL.cc
       extensions/h5/DataSet.cc
       extensions/h5/DataSpace.cc
       extensions/h5/enums.cc
+      extensions/h5/FAPL.cc
+      extensions/h5/FCPL.cc
       extensions/h5/File.cc
-      extensions/h5/FileAccessPropertyList.cc
       extensions/h5/Group.cc
+      extensions/h5/LAPL.cc
+      extensions/h5/LCPL.cc
+      extensions/h5/PropList.cc
       extensions/h5/datatypes/__init__.cc
       extensions/h5/datatypes/ArrayType.cc
       extensions/h5/datatypes/AtomType.cc

@@ -1,0 +1,120 @@
+// -*- c++ -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2024 all rights reserved
+
+// code guard
+#pragma once
+
+// factory
+template <class constantT>
+auto
+pyre::viz::factories::filters::Constant<constantT>::create(const name_type & name, cell_type value)
+    -> factory_ref_type
+{
+    // make an instance and wrap it in a shared pointer
+    auto ref = std::make_shared<Constant>(sentinel_type(), name, value);
+    // make a channel
+    auto channel = pyre::journal::debug_t("pyre.viz.factories.filters.constant");
+    // let me know
+    channel
+        // mark
+        << "constant '" << ref->name() << "' at " << ref.get() << ": create"
+        << pyre::journal::newline
+        // flush
+        << pyre::journal::endl(__HERE__);
+
+    // all done
+    return ref;
+}
+
+// destructor
+template <class constantT>
+pyre::viz::factories::filters::Constant<constantT>::~Constant()
+{
+    // make a channel
+    auto channel = pyre::journal::debug_t("pyre.viz.factories.filters.constant");
+    // let me know
+    channel
+        // mark
+        << "constant '" << name() << "' at " << this << ": destroy"
+        << pyre::journal::newline
+        // flush
+        << pyre::journal::endl(__HERE__);
+
+    // all done
+    return;
+}
+
+// constructor
+template <class constantT>
+pyre::viz::factories::filters::Constant<constantT>::Constant(
+    sentinel_type sentinel, const name_type & name, cell_type value) :
+    // superclass
+    base_type(sentinel, name),
+    // members
+    _value(value)
+{}
+
+// accessors
+template <class constantT>
+auto
+pyre::viz::factories::filters::Constant<constantT>::value() const -> cell_type
+{
+    // easy enough
+    return _value;
+}
+
+template <class constantT>
+auto
+pyre::viz::factories::filters::Constant<constantT>::tile() -> product_ref_type
+{
+    // look up the product bound to my {tile} slot and return it
+    return std::dynamic_pointer_cast<product_type>(output("tile"));
+}
+
+// mutators
+template <class constantT>
+auto
+pyre::viz::factories::filters::Constant<constantT>::value(cell_type value) -> factory_ref_type
+{
+    // update the value
+    _value = value;
+    // invalidate the downstream graph
+    flush();
+    // make a self reference
+    auto self = std::dynamic_pointer_cast<Constant>(ref());
+    // and return it
+    return self;
+}
+
+template <class constantT>
+auto
+pyre::viz::factories::filters::Constant<constantT>::tile(product_ref_type tile) -> factory_ref_type
+{
+    // bind {tile} to my slot
+    addOutput("tile", std::static_pointer_cast<pyre::flow::product_t>(tile));
+    // make a self reference
+    auto self = std::dynamic_pointer_cast<Constant>(ref());
+    // and return it
+    return self;
+}
+
+
+// interface
+template <class constantT>
+auto
+pyre::viz::factories::filters::Constant<constantT>::make(
+    const name_type & slot, base_type::product_ref_type product) -> base_type::factory_ref_type
+{
+    // chain up
+    auto self = base_type::make(slot, product);
+    // get write access to the tile data
+    auto & data = tile()->write();
+    // fill it with my value
+    std::fill(data.begin(), data.end(), _value);
+    // all done
+    return self;
+}
+
+// end of file

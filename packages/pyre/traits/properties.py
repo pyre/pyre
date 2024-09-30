@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
-# (c) 1998-2023 all rights reserved
-#
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2024 all rights reserved
+# (c) 1998-2024 all rights reserved
 
 
 """
@@ -18,6 +17,7 @@ from .Property import Property as property
 bool = property.bool
 complex = property.complex
 decimal = property.decimal
+enum = property.enum
 float = property.float
 inet = property.inet
 int = property.int
@@ -33,7 +33,7 @@ time = property.time
 uri = property.uri
 
 # containers
-array = property.array
+# array needs a patch; see below
 list = property.list
 set = property.set
 tuple = property.tuple
@@ -53,6 +53,16 @@ from .Dict import Dict as dict
 
 # the decorators
 from ..descriptors import converter, normalizer, validator
+
+
+# patch array so it can get a workable default schema
+class array(property.array):
+    # metamethods
+    def __init__(self, schema=float, **kwds):
+        # chain up
+        super().__init__(schema=schema, **kwds)
+        # all done
+        return
 
 
 # common meta-descriptors
@@ -80,24 +90,42 @@ def uris(**kwds):
     return list(schema=uri(), **kwds)
 
 
-def kv(default={}, **kwds):
+def kv(default=object, **kwds):
     """
     A (key, value) table of strings
     """
+    # normalize the default
+    default = {} if default is object else default
     # build a dictionary that maps strings to strings
     return dict(schema=str(), default=default, **kwds)
 
 
-def catalog(default={}, schema=None, **kwds):
+def catalog(default=object, schema=None, **kwds):
     """
     A {dict} of {list}s
     """
+    # normalize the default
+    default = {} if default is object else default
     # if the user didn't specify a schema
     if schema is None:
         # default to string
         schema = str()
     # build a dictionary that maps strings to lists
     return dict(schema=list(schema=schema, **kwds), default=default)
+
+
+def choices(default=object, schema=None, **kwds):
+    """
+    A {dict} of {set}s
+    """
+    # normalize the default
+    default = {} if default is object else default
+    # if the user didn't specify a schema
+    if schema is None:
+        # default to string
+        schema = str()
+    # build a dictionary that map strings to sets
+    return dict(schema=set(schema=schema, **kwds), default=default)
 
 
 # end of file

@@ -1,0 +1,42 @@
+// -*- c++ -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2024 all rights reserved
+
+// code guard
+#pragma once
+
+// constructors
+pyre::flow::protocol::Node::Node(sentinel_type, const name_type & name) :
+    // members
+    _name { name }
+{}
+
+// accessors
+auto
+pyre::flow::protocol::Node::name() const -> const name_type &
+{
+    // easy enough
+    return _name;
+}
+
+// mutators
+auto
+pyre::flow::protocol::Node::name(const name_type & name) -> node_ref_type
+{
+    // reassign my name
+    _name = name;
+    // build an instance and wrap it in a shared pointer
+    return shared_from_this();
+}
+
+// interface
+// build a reference
+auto
+pyre::flow::protocol::Node::ref() -> node_ref_type
+{
+    // build an instance and wrap it in a shared pointer
+    return shared_from_this();
+}
+
+// end of file

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
-# (c) 1998-2023 all rights reserved
+# (c) 1998-2024 all rights reserved
 
 
 # support
@@ -386,6 +386,15 @@ class Inspector:
         channel.log()
         # and raise the exception, just in case firewalls aren't fatal
         raise problem
+
+    def _pyre_inferEnumDescriptor(self, name: str, h5type: H5DataType):
+        """
+        Build an {enum} descriptor
+        """
+        # build the descriptor
+        enum = schema.enum(name=name, disktype=h5type)
+        # and return it
+        return enum
 
     def _pyre_inferFloatDescriptor(
         self, name: str, h5type: H5DataType

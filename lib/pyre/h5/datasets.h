@@ -1,7 +1,7 @@
 // -*- c++ -*-
 //
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
-// (c) 1998-2023 all rights reserved
+// (c) 1998-2024 all rights reserved
 
 
 // code guard
@@ -21,12 +21,12 @@ pyre::h5::read(
     // the shape of the block
     const typename gridT::shape_type & shape,
     // and the strides, which lets us implement zoom directly
-    const typename gridT::shape_type & strides) -> gridT
+    const typename gridT::index_type & stride) -> gridT
 {
     // deduce the memory layout description
     const datatype_t & memtype = datatype<typename gridT::value_type>();
     // and delegate
-    return read(dataset, memtype, origin, shape, strides);
+    return read(dataset, memtype, origin, shape, stride);
 }
 
 
@@ -44,7 +44,7 @@ pyre::h5::read(
     // and the shape of the block
     const typename gridT::shape_type & shape,
     // and the strides, which lets us implement zoom directly
-    const typename gridT::shape_type & strides) -> gridT
+    const typename gridT::index_type & stride) -> gridT
 {
     // alias my grid type and its parts
     using grid_t = gridT;
@@ -71,7 +71,7 @@ pyre::h5::read(
     // and the strides
     h5info_t skip;
     // populate
-    std::transform(strides.begin(), strides.end(), skip.begin(), cast);
+    std::transform(stride.begin(), stride.end(), skip.begin(), cast);
     // ask the dataset for a dataspace
     auto fileSpace = dataset.getSpace();
     // select the hyperslab that corresponds to our target region
@@ -98,7 +98,7 @@ pyre::h5::read(
             << pyre::journal::newline
             // shape
             << "while reading a (" << shape << ") tile from (" << origin << ") with strides ("
-            << strides << ")"
+            << stride << ")"
             << pyre::journal::newline
             // dataset
             << "from the dataset '" << dataset.getObjName()
@@ -135,7 +135,7 @@ pyre::h5::read(
     self.read(data.data(), memtype, memspace, filespace);
     // all done
     return;
-};
+}
 
 template <class memT>
 auto
@@ -143,10 +143,8 @@ pyre::h5::write(
     const dataset_t & self, memT & data, const datatype_t & memtype, const shape_t & origin,
     const shape_t shape) -> void
 {
-    // get the size of the buffer
-    hsize_t memsize = data.cells();
-    // the in-memory layout is one-dimensional
-    auto memspace = dataspace_t(1, &memsize);
+    // pretend the memory buffer is the same shape as the incoming tile
+    auto memspace = dataspace_t(shape.size(), &shape[0]);
     // make a block count
     shape_t count;
     // resize it to the same rank as the requested {shape} and fill it with ones
@@ -160,7 +158,36 @@ pyre::h5::write(
     self.write(data.data(), memtype, memspace, filespace);
     // all done
     return;
-};
+}
+
+template <class gridT>
+auto
+pyre::h5::readGrid(
+    const dataset_t & self, gridT & data, const datatype_t & memtype, const shape_t & origin,
+    const shape_t shape) -> void
+{
+    // get my storage
+    auto & storage = *data.data();
+    // access the underlying store and delegate
+    read(self, storage, memtype, origin, shape);
+    // all done
+    return;
+}
+
+
+template <class gridT>
+auto
+pyre::h5::writeGrid(
+    const dataset_t & self, gridT & data, const datatype_t & memtype, const shape_t & origin,
+    const shape_t shape) -> void
+{
+    // get my storage
+    auto & storage = *data.data();
+    // access the underlying store and delegate
+    write(self, storage, memtype, origin, shape);
+    // all done
+    return;
+}
 
 
 #endif

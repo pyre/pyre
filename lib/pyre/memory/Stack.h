@@ -1,7 +1,7 @@
 // -*- c++ -*-
 //
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
-// (c) 1998-2023 all rights reserved
+// (c) 1998-2024 all rights reserved
 
 // code guard
 #if !defined(pyre_memory_Stack_h)
@@ -49,6 +49,13 @@ public:
     constexpr auto data() const -> pointer;
     // access to the raw data pointer in a form suitable for diagnostics
     constexpr auto where() const -> const void *;
+
+    // human readable rendering of my expansion
+    static inline auto name() -> string_t;
+    // human readable rendering of my storage strategy
+    static inline auto strategyName() -> string_t;
+    // human readable rendering of my {cell_type}
+    static inline auto cellName() -> string_t;
 
     // iterator support
 public:

@@ -1,0 +1,13 @@
+#!/usr/bin/env python3
+# -*- Python -*-
+# -*- coding: utf-8 -*-
+#
+# {project.authors}
+# (c) {project.span} all rights reserved
+
+
+# get the package
+import {project.name}
+
+
+# end of file

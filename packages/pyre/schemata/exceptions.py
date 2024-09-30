@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
-# (c) 1998-2023 all rights reserved
+# (c) 1998-2024 all rights reserved
 
 
 # exceptions
@@ -25,6 +25,26 @@ class CastingError(SchemaError):
         super().__init__(**kwds)
         # save the error info
         self.value = value
+        # all done
+        return
+
+
+class EnumError(SchemaError):
+    """
+    Exception raised on failed attempts to convert an enum value to its actual type
+    """
+
+    # the complaint
+    description = "could not coerce {0.value!r} into an enum of type {0.enum!r}"
+
+    # meta-methods
+    def __init__(self, enum, value, error, **kwds):
+        # chain up
+        super().__init__(**kwds)
+        # save the error info
+        self.enum = enum
+        self.value = value
+        self.error = error
         # all done
         return
 

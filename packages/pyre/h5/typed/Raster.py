@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
-# (c) 1998-2023 all rights reserved
+# (c) 1998-2024 all rights reserved
 
 # support
 import math
@@ -57,6 +57,24 @@ class Raster:
         # and return it
         return shape
 
+    @shape.setter
+    def shape(self, shape):
+        """
+        Set my shape
+        """
+        # get my on-disk rep
+        hid = self.dataset
+        # if it is non-trivial
+        if hid is not None:
+            # disallow setting the shape
+            raise RuntimeError(
+                "can't set the shape of a raster when attached to a dataset"
+            )
+        # otherwise, record the new value
+        self._shape = shape
+        # all done
+        return
+
     @property
     def disktype(self):
         """
@@ -89,6 +107,38 @@ class Raster:
         # easy enough
         return self._dataset._pyre_id.type
 
+    @property
+    def dapl(self):
+        """
+        The dataset access property list
+        """
+        # easy enough
+        return self._dataset._pyre_id.dapl
+
+    @property
+    def dcpl(self):
+        """
+        The dataset creation property list
+        """
+        # easy enough
+        return self._dataset._pyre_id.dcpl
+
+    @property
+    def chunk(self):
+        """
+        The dataset chunk size
+        """
+        # easy enough
+        return self.dcpl.getChunk(rank=len(self.shape))
+
+    @property
+    def filters(self):
+        """
+        The dataset chunk size
+        """
+        # easy enough
+        return self.dcpl.getFilters()
+
     # interface
     def read(self, shape=None, origin=None):
         """
@@ -106,7 +156,7 @@ class Raster:
         # look up my in-memory type
         memtype = self.memtype
         # ask it for enough memory to hold the requested data
-        data = memtype.heap(cells=math.prod(shape))
+        data = memtype.grid(shape=shape)
         # get my dataset handle
         hid = self._dataset._pyre_id
         # if i'm connected to a source
@@ -133,8 +183,10 @@ class Raster:
         return
 
     def __str__(self):
-        # easy enough
-        return "raster"
+        # make the shape tag
+        tag = "x".join(map(str, self.shape))
+        # render
+        return f"raster [{tag}]"
 
 
 # end of file

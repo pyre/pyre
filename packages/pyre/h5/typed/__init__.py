@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
-# (c) 1998-2023 all rights reserved
+# (c) 1998-2024 all rights reserved
 
 
 # the type specific dataset mixins
 from .Array import Array as array
 from .Bool import Bool as bool
 from .Complex import Complex as complex
+from .Enum import Enum as enum
 from .Float import Float as float
 from .Integer import Integer as int
 from .String import String as str

@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
-# (c) 1998-2023 all rights reserved
-#
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2024 all rights reserved
 
 
 # extract configurations from {yaml} files
@@ -12,14 +10,12 @@ class Parser:
     A parser that extract configuration events from {yaml} files
     """
 
-
     # types
     from ..events import Assignment, ConditionalAssignment
 
     # constants
     typeSeparator = "#"
     scopeSeparator = "."
-
 
     # interface
     def parse(self, uri, stream, locator):
@@ -49,6 +45,7 @@ class Parser:
 
         # if we get this far, we couldn't find {yaml} support
         import journal
+
         # make a channel
         channel = journal.warning("pyre.config.yaml")
         # and complain
@@ -59,7 +56,6 @@ class Parser:
         # all done
         return []
 
-
     # metamethods
     def __init__(self, **kwds):
         # chain up
@@ -68,7 +64,6 @@ class Parser:
         self.errors = []
         # all done
         return
-
 
     # implementation details
     def process(self, doc, uri, locator):
@@ -82,9 +77,15 @@ class Parser:
         # and return them
         return configuration
 
-
-    def harvest(self, node, scope=None, constraints=None,
-                locator=None, typesep=typeSeparator, scopesep=scopeSeparator):
+    def harvest(
+        self,
+        node,
+        scope=None,
+        constraints=None,
+        locator=None,
+        typesep=typeSeparator,
+        scopesep=scopeSeparator,
+    ):
         # if the current node is trivial
         if not node:
             # nothing to do
@@ -101,6 +102,8 @@ class Parser:
 
         # otherwise, go through its contents
         for key, value in node.items():
+            # make a copy of the constraints
+            conditions = constraints[0:]
             # the key is always a string; yaml interprets keys that are valid numbers
             key = str(key)
             # take apart the token by splitting it on the type separator
@@ -121,30 +124,37 @@ class Parser:
             # assemble the constraints
             if family:
                 # add a constraint
-                constraints.append((scope+name, family))
+                conditions.append((scope + name, family))
 
             # if {value} is a nested scope
             if type(value) is type(node):
                 # process it
-                yield from self.harvest(node=value, scope=scope+name, constraints=constraints,
-                                        locator=locator)
+                yield from self.harvest(
+                    node=value,
+                    scope=scope + name,
+                    constraints=conditions,
+                    locator=locator,
+                )
                 # and move on
                 continue
 
             # otherwise, we have an assignment; figure out which kind: if it's conditional
-            if constraints:
+            if conditions:
                 # the component that owns the assignment is encoded in the last constraint
-                component, _ = constraints[-1]
+                component, _ = conditions[-1]
                 # make a conditional assignment
-                yield self.ConditionalAssignment(key = name, value = value,
-                                                 component = component,
-                                                 conditions = reversed(constraints),
-                                                 locator = locator)
+                yield self.ConditionalAssignment(
+                    key=name,
+                    value=value,
+                    component=component,
+                    conditions=reversed(conditions),
+                    locator=locator,
+                )
                 # and move on
                 continue
 
             # otherwise, it's a raw assignment
-            yield self.Assignment(key=scope+name, value=value, locator=locator)
+            yield self.Assignment(key=scope + name, value=value, locator=locator)
 
         # all done
         return

@@ -1,6 +1,6 @@
 # -*- yaml -*-
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
-# (c) 1998-2023 all rights reserved
+# (c) 1998-2024 all rights reserved
 
 name: pr-mm
 on:
@@ -46,14 +46,14 @@ jobs:
           sudo apt install -y make openssh-server libgsl-dev libopenmpi-dev libhdf5-dev
 
       - name: python ${{matrix.python}} setup
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: ${{matrix.python}}
 
       - name: install dependencies
         run: |
           python${pythonVersion} -m pip install --upgrade pip
-          pip3 install distro graphene numpy pybind11 PyYAML
+          pip3 install distro graphene 'numpy<2.0' pybind11 PyYAML
         env:
           pythonVersion: ${{matrix.python}}
 
@@ -125,8 +125,20 @@ jobs:
 
       - name: mm diagnostics
         run: |
+          echo " -- runner home"
+          pwd
           echo " -- switching to the pyre home directory"
           cd pyre
+          echo " -- pyre source directory"
+          pwd
+          echo " -- creating ~/.pyre"
+          mkdir ~/.pyre
+          echo " -- copying the mm configuration file"
+          cp .github/matrix/mm.pfg ~/.pyre
+          echo " -- creating ~/.mm"
+          mkdir ~/.mm
+          echo " -- copying the package configuration file there"
+          cp .github/matrix/config.mm ~/.mm
           echo " -- checking whether mm can run from here"
           echo now at: ${PWD}
           echo mm: ${mm}

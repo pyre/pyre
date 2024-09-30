@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
-# (c) 1998-2023 all rights reserved
-#
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2024 all rights reserved
 
 
+# metaclass
 from .DTD import DTD
+
+# superclass
 from .Node import Node
 
 
@@ -17,13 +18,12 @@ class Document(Node, metaclass=DTD):
     Instances of your derived class will form the interface between the XML parser and the
     application specific data structure being decorated with the contents of the XML stream.
 
-    This object is the anchor for the handler of the top element handler that is reposinsible
+    This object is the anchor for the handler of the top element handler that is responsible
     for the root of the XML document.
 
     The DTD metaclass scans through the class record, identifies the element declarations and
     builds the DTF for the document
     """
-
 
     # public data
     # inherited
@@ -42,13 +42,11 @@ class Document(Node, metaclass=DTD):
         """
         return
 
-
     def finalize(self, locator):
         """
         Handler for the event generated when parsing of the XML document is finished
         """
         return
-
 
     # private data
     # inherited from Node

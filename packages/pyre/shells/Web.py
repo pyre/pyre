@@ -1,31 +1,30 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
-# (c) 1998-2023 all rights reserved
-#
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2024 all rights reserved
 
 
 # externals
 import pyre
+import webbrowser
+
 # my superclass
 from .Script import Script
 
 
 # declaration
-class Web(Script, family='pyre.shells.web'):
+class Web(Script, family="pyre.shells.web"):
     """
     A shell enables application interactivity over the web
     """
 
     # user configurable state
     auto = pyre.properties.bool(default=True)
-    auto.doc = 'controls whether to automatically launch the browser'
+    auto.doc = "controls whether to automatically launch the browser"
 
     # a marker that enables applications to deduce the type of shell that is hosting them
-    model = pyre.properties.str(default='web')
+    model = pyre.properties.str(default="web")
     model.doc = "the programming model"
-
 
     # interface
     @pyre.export
@@ -45,30 +44,30 @@ class Web(Script, family='pyre.shells.web'):
                 return application.help(*args, **kwds)
 
         # ok, we are in business; create a nexus
-        nexus = pyre.nexus.node(name="{.pyre_name}.nexus".format(application))
+        nexus = pyre.nexus.node(name=f"{application.pyre_name}.nexus")
         # attach it to the application
         application.nexus = nexus
         # register it with the nexus
-        nexus.services['web'] = 'http'
+        nexus.services["web"] = "http"
         # activate
         nexus.prepare(application=application)
         # get the web server
-        web = nexus.services['web']
+        web = nexus.services["web"]
         # get the address of the web server
         address = web.address
         # show me
-        application.info.log('web server on {}'.format(address))
+        application.info.log("web server on {}".format(address))
         # if we were asked to launch a browser
         if self.auto:
-            # grab the package with the browser selection logic
-            import webbrowser
             # form a url
-            url = 'http://localhost:{.port}/'.format(address)
+            url = f"http://localhost:{address.port}/"
             # launch the browser
             webbrowser.open(url)
 
         # set up a net
         try:
+            # let the application know we are ready to go
+            application.launched()
             # get the nexus to do its thing
             # N.B. this is an infinite loop; it is the responsibility of the application to
             # terminate the interaction with the user and exit gracefully
@@ -78,10 +77,9 @@ class Web(Script, family='pyre.shells.web'):
             # launch the handler
             return application.pyre_interrupted(info=event)
 
-        # if all went well
+        # when the nexus exits its watch, shut down the application
         application.pyre_shutdown(status=status)
-
-        # in any case, we are all done
+        # share the {status} with the user's shell
         return status
 
 

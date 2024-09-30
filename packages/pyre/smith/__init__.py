@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
-# (c) 1998-2023 all rights reserved
+# (c) 1998-2024 all rights reserved
 
 
 """
@@ -29,6 +29,19 @@ def smith(**kwds):
 
     # build a facility and return it
     return Smith(**kwds)
+
+
+# bare bones app
+@foundry(implements=project)
+def basic():
+    """
+    A basic project
+    """
+    # grab the component class
+    from .Basic import Basic as basic
+
+    # and publish
+    return basic
 
 
 # bare bones command line interface

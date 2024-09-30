@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
-# (c) 1998-2023 all rights reserved
-#
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2024 all rights reserved
 
 
 # exceptions
@@ -16,17 +14,15 @@ class ProtocolError(Response):
     Base exceptions for all error conditions detected by http components
     """
 
-
     # interface
     def render(self, **kwds):
         """
         Create a representation of the error suitable for transporting to the user agent
         """
         # assemble the page
-        page = str(self).encode(self.encoding, 'strict')
+        page = str(self).encode(self.encoding, "strict")
         # and send it off
         return page
-
 
     # meta-methods
     def __init__(self, **kwds):
@@ -35,12 +31,11 @@ class ProtocolError(Response):
         # get my headers so i can add the standard headers for an error condition
         headers = self.headers
         # the error content type
-        headers['Content-Type'] = 'text/html;charset={.encoding}'.format(self)
+        headers["Content-Type"] = "text/html;charset={.encoding}".format(self)
         # tell the client what to do with the connection
-        headers['Connection'] = 'close'
+        headers["Connection"] = "close"
         # all done
         return
-
 
     def __str__(self):
         """
@@ -59,7 +54,9 @@ class ProtocolError(Response):
           <p>The standard description for this error is: <em>{0.__doc__}</em></p>
           <p>{0.description}</p>
         </body>
-        """.format(self)
+        """.format(
+            self
+        )
 
 
 # end of file

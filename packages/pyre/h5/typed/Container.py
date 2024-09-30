@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
-# (c) 1998-2023 all rights reserved
+# (c) 1998-2024 all rights reserved
 
 
 # access the bindings
@@ -16,11 +16,10 @@ class Container:
 
     # metamethods
     def __init__(self, schema, shape=None, **kwds):
-        # extract my {memtype} and {disktype} from my {schema}
-        memtype = schema.memtype
-        disktype = schema.disktype
-        # chain up
-        super().__init__(schema=schema, memtype=memtype, disktype=disktype, **kwds)
+        # extract my {memtype} and {disktype} from my {schema} and chain up
+        super().__init__(
+            schema=schema, memtype=schema.memtype, disktype=schema.disktype, **kwds
+        )
         # save the shape
         self.shape = shape
         # all done

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
-# (c) 1998-2023 all rights reserved
+# (c) 1998-2024 all rights reserved
 
 # types
 from .. import libh5
@@ -53,7 +53,7 @@ class String:
         # but the type knows the length of the value
         type = self.disktype(cells=max(1, len(self.string(dataset.value))))
         # hand off the pair
-        return type, shape
+        return type, shape, None
 
 
 # end of file

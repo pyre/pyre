@@ -1,0 +1,199 @@
+// -*- c++ -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2024 all rights reserved
+
+// code guard
+#pragma once
+
+// factory
+template <class signalT, class affineT>
+auto
+pyre::viz::factories::filters::Affine<signalT, affineT>::create(
+    const name_type & name, interval_type interval) -> factory_ref_type
+{
+    // make an instance and wrap it in a shared pointer
+    auto ref = std::make_shared<Affine>(sentinel_type(), name, interval);
+    // make a channel
+    auto channel = pyre::journal::debug_t("pyre.viz.factories.filters.affine");
+    // let me know
+    channel
+        // mark
+        << "affine '" << ref->name() << "' at " << ref.get() << ": create"
+        << pyre::journal::newline
+        // flush
+        << pyre::journal::endl(__HERE__);
+
+    // all done
+    return ref;
+}
+
+// destructor
+template <class signalT, class affineT>
+pyre::viz::factories::filters::Affine<signalT, affineT>::~Affine()
+{
+    // make a channel
+    auto channel = pyre::journal::debug_t("pyre.viz.factories.filters.affine");
+    // let me know
+    channel
+        // mark
+        << "affine '" << name() << "' at " << this << ": destroy"
+        << pyre::journal::newline
+        // flush
+        << pyre::journal::endl(__HERE__);
+
+    // all done
+    return;
+}
+
+// constructor
+template <class signalT, class affineT>
+pyre::viz::factories::filters::Affine<signalT, affineT>::Affine(
+    sentinel_type sentinel, const name_type & name, interval_type interval) :
+    // superclass
+    base_type(sentinel, name),
+    // members
+    _interval(interval)
+{}
+
+// accessors
+template <class signalT, class affineT>
+auto
+pyre::viz::factories::filters::Affine<signalT, affineT>::interval() const -> interval_type
+{
+    // easy enough
+    return _interval;
+}
+
+template <class signalT, class affineT>
+auto
+pyre::viz::factories::filters::Affine<signalT, affineT>::signal() -> signal_ref_type
+{
+    // look up the product bound to my {signal} slot and return it
+    return std::dynamic_pointer_cast<signal_type>(input("signal"));
+}
+
+template <class signalT, class affineT>
+auto
+pyre::viz::factories::filters::Affine<signalT, affineT>::affine() -> affine_ref_type
+{
+    // look up the product bound to my {signal} slot and return it
+    return std::dynamic_pointer_cast<affine_type>(output("affine"));
+}
+
+// mutators
+template <class signalT, class affineT>
+auto
+pyre::viz::factories::filters::Affine<signalT, affineT>::interval(interval_type interval)
+    -> factory_ref_type
+{
+    // update the interval
+    _interval = interval;
+    // invalidate the downstream graph
+    flush();
+    // make a self reference
+    auto self = std::dynamic_pointer_cast<Affine>(ref());
+    // and return it
+    return self;
+}
+
+template <class signalT, class affineT>
+auto
+pyre::viz::factories::filters::Affine<signalT, affineT>::signal(signal_ref_type signal)
+    -> factory_ref_type
+{
+    // bind {signal} to my slot
+    addInput("signal", std::static_pointer_cast<pyre::flow::product_t>(signal));
+    // make a self reference
+    auto self = std::dynamic_pointer_cast<Affine>(ref());
+    // and return it
+    return self;
+}
+
+template <class signalT, class affineT>
+auto
+pyre::viz::factories::filters::Affine<signalT, affineT>::affine(affine_ref_type affine)
+    -> factory_ref_type
+{
+    // bind {affine} to my slot
+    addOutput("affine", std::static_pointer_cast<pyre::flow::product_t>(affine));
+    // make a self reference
+    auto self = std::dynamic_pointer_cast<Affine>(ref());
+    // and return it
+    return self;
+}
+
+// interface
+template <class signalT, class affineT>
+auto
+pyre::viz::factories::filters::Affine<signalT, affineT>::make(
+    const name_type & slot, base_type::product_ref_type product) -> base_type::factory_ref_type
+{
+    // chain up
+    auto self = base_type::make(slot, product);
+    // get read access to the signal
+    auto & signal = this->signal()->read();
+    // get write access to the affine data
+    auto & affine = this->affine()->write();
+    // get the number cells in the output tile
+    auto cells = affine.layout().cells();
+    // make sure the input is compatible
+    bool ok = cells == signal.layout().cells();
+    // if not
+    if (!ok) {
+        // make a channel
+        auto channel = pyre::journal::error_t("pyre.viz.factories.filters.affine");
+        // complain
+        channel
+            // who
+            << "affine " << this->name() << "' at " << this << ":"
+            << pyre::journal::newline
+            // what
+            << "shape mismatch in the input and output slots"
+            << pyre::journal::newline
+            // inputs
+            << "inputs "
+            << pyre::journal::newline
+            // indent
+            << pyre::journal::indent
+            // signal
+            << "signal: " << signal.layout().cells()
+            << pyre::journal::newline
+            // outdent
+            << pyre::journal::outdent
+            // outputs
+            << "outputs: "
+            << pyre::journal::newline
+            // indent
+            << pyre::journal::indent
+            // affine
+            << "affine: " << affine.layout().cells()
+            << pyre::journal::newline
+            // outdent
+            << pyre::journal::outdent
+            // flush
+            << pyre::journal::endl(__HERE__);
+        // and bail, just in case errors aren't fatal
+        return self;
+    }
+
+    // unpack my interval
+    auto [low, high] = _interval;
+    // compute its length
+    auto delta = high - low;
+    // go over the cells
+    for (auto cell = 0; cell < cells; ++cell) {
+        // read the value from the signal
+        double value = signal[cell];
+        // clip it
+        value = std::max(0.0, std::min(1.0, value));
+        // map it
+        auto p = low + value * delta;
+        // and store it
+        affine[cell] = p;
+    }
+    // all done
+    return self;
+}
+
+// end of file

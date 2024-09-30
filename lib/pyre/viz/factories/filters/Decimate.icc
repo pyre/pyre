@@ -1,0 +1,188 @@
+// -*- c++ -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2024 all rights reserved
+
+// code guard
+#pragma once
+
+// factory
+template <class signalT>
+auto
+pyre::viz::factories::filters::Decimate<signalT>::create(const name_type & name, int level)
+    -> factory_ref_type
+{
+    // make an instance and wrap it in a shared pointer
+    auto ref = std::make_shared<Decimate>(sentinel_type(), name, level);
+    // make a channel
+    auto channel = pyre::journal::debug_t("pyre.viz.factories.filters.constant");
+    // let me know
+    channel
+        // mark
+        << "constant '" << ref->name() << "' at " << ref.get() << ": create"
+        << pyre::journal::newline
+        // flush
+        << pyre::journal::endl(__HERE__);
+
+    // all done
+    return ref;
+}
+
+// destructor
+template <class signalT>
+pyre::viz::factories::filters::Decimate<signalT>::~Decimate()
+{
+    // make a channel
+    auto channel = pyre::journal::debug_t("pyre.viz.factories.filters.constant");
+    // let me know
+    channel
+        // mark
+        << "constant '" << name() << "' at " << this << ": destroy"
+        << pyre::journal::newline
+        // flush
+        << pyre::journal::endl(__HERE__);
+
+    // all done
+    return;
+}
+
+// constructor
+template <class signalT>
+pyre::viz::factories::filters::Decimate<signalT>::Decimate(
+    sentinel_type sentinel, const name_type & name, int level) :
+    // superclass
+    base_type(sentinel, name),
+    // members
+    _level(level)
+{}
+
+// accessors
+template <class signalT>
+auto
+pyre::viz::factories::filters::Decimate<signalT>::level() const -> int
+{
+    // easy enough
+    return _level;
+}
+
+template <class signalT>
+auto
+pyre::viz::factories::filters::Decimate<signalT>::signal() -> signal_ref_type
+{
+    // look up the product bound to my {signal} slot and return it
+    return std::dynamic_pointer_cast<signal_type>(input("signal"));
+}
+
+template <class signalT>
+auto
+pyre::viz::factories::filters::Decimate<signalT>::decimated() -> signal_ref_type
+{
+    // look up the product bound to my {decimated} slot and return it
+    return std::dynamic_pointer_cast<signal_type>(output("decimated"));
+}
+
+// mutators
+template <class signalT>
+auto
+pyre::viz::factories::filters::Decimate<signalT>::level(int level) -> factory_ref_type
+{
+    // update the zoom factor
+    _level = level;
+    // invalidate the downstream graph
+    flush();
+    // make a self reference
+    auto self = std::dynamic_pointer_cast<Decimate>(ref());
+    // and return it
+    return self;
+}
+
+template <class signalT>
+auto
+pyre::viz::factories::filters::Decimate<signalT>::signal(signal_ref_type signal) -> factory_ref_type
+{
+    // bind {tile} to my slot
+    addInput("signal", std::static_pointer_cast<pyre::flow::product_t>(signal));
+    // make a self reference
+    auto self = std::dynamic_pointer_cast<Decimate>(ref());
+    // and return it
+    return self;
+}
+
+template <class signalT>
+auto
+pyre::viz::factories::filters::Decimate<signalT>::decimated(signal_ref_type decimated)
+    -> factory_ref_type
+{
+    // bind {decimated} to my slot
+    addOutput("decimated", std::static_pointer_cast<pyre::flow::product_t>(decimated));
+    // make a self reference
+    auto self = std::dynamic_pointer_cast<Decimate>(ref());
+    // and return it
+    return self;
+}
+
+// interface
+template <class signalT>
+auto
+pyre::viz::factories::filters::Decimate<signalT>::make(
+    const name_type & slot, base_type::product_ref_type product) -> base_type::factory_ref_type
+{
+    // chain up
+    auto self = base_type::make(slot, product);
+    // get read access to the signal
+    auto & signal = this->signal()->read();
+    // get write access to the zoomed data
+    auto & decimated = this->decimated()->write();
+    // compute the zoom factor
+    auto factor = 1 << _level;
+    // check compatibility
+    bool ok = (factor * decimated.layout().shape()) == signal.layout().shape();
+    // if the input and output are not compatible
+    if (!ok) {
+        // make a channel
+        auto channel = pyre::journal::error_t("pyre.viz.factories.filters.logsaw");
+        // complain
+        channel
+            // who
+            << "decimate " << this->name() << "' at " << this << ":"
+            << pyre::journal::newline
+            // what
+            << "shape mismatch in the input and output slots"
+            << pyre::journal::newline
+            // inputs
+            << "inputs "
+            << pyre::journal::newline
+            // indent
+            << pyre::journal::indent
+            // signal
+            << "signal: " << signal.layout().cells()
+            << pyre::journal::newline
+            // outdent
+            << pyre::journal::outdent
+            // outputs
+            << "outputs: "
+            << pyre::journal::newline
+            // indent
+            << pyre::journal::indent
+            // decimated
+            << "decimated: " << decimated.layout().cells()
+            << pyre::journal::newline
+            // outdent
+            << pyre::journal::outdent
+            // flush
+            << pyre::journal::endl(__HERE__);
+        // and bail, just in case errors aren't fatal
+        return self;
+    }
+
+    // go through the output cells
+    for (auto idx : decimated.layout()) {
+        // and copy the corresponding pixel
+        decimated[idx] = signal[factor * idx];
+    }
+
+    // all done
+    return self;
+}
+
+// end of file
