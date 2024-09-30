@@ -33,7 +33,7 @@ constexpr pyre::tensor::UnitQuaternion<T>::UnitQuaternion(
 
 template <typename T>
 constexpr pyre::tensor::UnitQuaternion<T>::UnitQuaternion(
-    const real_type & theta, const vector_t<3> & axis) :
+    const real_type & theta, const rotation_axis_type & axis) :
     UnitQuaternion({ std::cos(0.5 * theta), axis[0] * std::sin(0.5 * theta),
                      axis[1] * std::sin(0.5 * theta), axis[2] * std::sin(0.5 * theta) })
 {}
