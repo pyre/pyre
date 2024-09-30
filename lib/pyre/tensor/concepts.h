@@ -1,7 +1,7 @@
 // -*- c++ -*-
 //
 // bianca giovanardi
-// (c) 1998-2023 all rights reserved
+// (c) 1998-2024 all rights reserved
 
 
 // code guard
