@@ -48,14 +48,21 @@ pyre.lib.tests.drivers.exclude += \
     tensor/tensor_canonical_basis.cc \
     tensor/tensor_cayley_hamilton_theorem.cc \
     tensor/tensor_compact_arithmetics.cc \
+    tensor/tensor_concepts.cc \
+    tensor/tensor_diagonal_inverse.cc \
+    tensor/tensor_dyadic.cc \
     tensor/tensor_eigenvalues.cc \
     tensor/tensor_eigenvalues_transformation.cc \
     tensor/tensor_identities.cc \
-    tensor/tensor_inverse.cc \
     tensor/tensor_iterators.cc \
+    tensor/tensor_linear_system.cc \
     tensor/tensor_literals.cc \
+    tensor/tensor_matrix_norm.cc \
+    tensor/tensor_matrix_vector_product.cc \
     tensor/tensor_matrix_product.cc \
     tensor/tensor_print.cc \
+    tensor/tensor_quaternion_composition.cc \
+    tensor/tensor_quaternion_inverse.cc \
     tensor/tensor_symmetry.cc \
     tensor/tensor_transpose.cc \
     tensor/tensor_utilities.cc \
