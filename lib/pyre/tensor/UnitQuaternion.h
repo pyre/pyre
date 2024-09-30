@@ -62,10 +62,10 @@ namespace pyre::tensor {
 
     private:
         // the components of the quaternion
-        real_type _qr, _qi, _qj, _qk;
+        const real_type _qr, _qi, _qj, _qk;
 
         // the matrix representation of the quaternion
-        matrix_representation_type _matrix;
+        const matrix_representation_type _matrix;
     };
 } // namespace pyre::tensor
 
