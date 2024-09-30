@@ -39,19 +39,12 @@ namespace pyre::tensor {
         // constructor with an angle and an axis of rotation
         constexpr UnitQuaternion(const real_type &, const rotation_axis_type &);
 
-        // copy constructor
+    public:
+        // default metamethods
         constexpr UnitQuaternion(const UnitQuaternion &) = default;
-
-        // move constructor
         constexpr UnitQuaternion(UnitQuaternion &&) = default;
-
-        // copy assignment operator
         constexpr UnitQuaternion & operator=(const UnitQuaternion &) = default;
-
-        // move assignment operator
         constexpr UnitQuaternion & operator=(UnitQuaternion &&) = default;
-
-        // destructor
         constexpr ~UnitQuaternion() = default;
 
     public:
