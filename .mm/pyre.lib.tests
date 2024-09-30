@@ -61,8 +61,8 @@ pyre.lib.tests.drivers.exclude += \
     tensor/tensor_matrix_vector_product.cc \
     tensor/tensor_matrix_product.cc \
     tensor/tensor_print.cc \
-    tensor/tensor_quaternion_composition.cc \
-    tensor/tensor_quaternion_inverse.cc \
+    tensor/quaternion_composition.cc \
+    tensor/quaternion_inverse.cc \
     tensor/tensor_symmetry.cc \
     tensor/tensor_transpose.cc \
     tensor/tensor_utilities.cc \
