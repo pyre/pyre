@@ -17,7 +17,8 @@ constexpr pyre::tensor::UnitQuaternion<T>::UnitQuaternion(real_type (&&args)[4])
     _qi(args[1]),
     _qj(args[2]),
     _qk(args[3]),
-    _matrix({ T(_qr, _qi), T(_qj, _qk), -std::conj(T(_qj, _qk)), std::conj(T(_qr, _qi)) })
+    _matrix({ complex_type(_qr, _qi), complex_type(_qj, _qk), -std::conj(complex_type(_qj, _qk)),
+              std::conj(complex_type(_qr, _qi)) })
 {}
 
 template <typename T>

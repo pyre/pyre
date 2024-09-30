@@ -23,7 +23,7 @@ namespace pyre::tensor {
 
     private:
         // my matrix representation type
-        using matrix_representation_type = matrix_t<2, 2, T, pyre::grid::canonical_t<2>>;
+        using matrix_representation_type = matrix_t<2, 2, complex_type, pyre::grid::canonical_t<2>>;
         // representation type as a rotation matrix
         using rotation_matrix_type = matrix_t<3, 3, real_type, pyre::grid::canonical_t<2>>;
         // the axis type
