@@ -65,6 +65,7 @@ namespace pyre::tensor {
     } or requires(F c) {
         // require that F only binds to {vector_t} specializations
         []<int D, typename T, class packingT>(const vector_t<D, T, packingT> &)
+            // with D different than 1 (otherwise it is a scalar)
             requires(D != 1)
         {}
         (c);
