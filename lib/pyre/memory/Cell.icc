@@ -38,6 +38,16 @@ pyre::memory::Cell<T, isConst>::bytes(cell_count_type n) -> size_type
     return n * sizeof(T);
 }
 
+// human readable form of my {cell_type}
+template <typename T, bool isConst>
+auto
+pyre::memory::Cell<T, isConst>::name() -> string_type
+{
+    // resolve the name and return it
+    return CellName<value_type>::name();
+}
+
+
 // the datatype name specializations
 template <>
 struct pyre::memory::CellName<pyre::memory::int8_t> {

@@ -28,6 +28,8 @@ public:
     using size_type = size_t;
     // number of cells
     using cell_count_type = size_type;
+    // names
+    using string_type = string_t;
 
     // interface
 public:
@@ -36,6 +38,8 @@ public:
     static constexpr auto writable() -> bool;
     // compute the footprint of {n} cells
     static constexpr auto bytes(cell_count_type = 1) -> size_type;
+    // generate a human readable name for my type
+    static inline auto name() -> string_type;
 };
 
 
