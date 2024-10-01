@@ -58,6 +58,25 @@ pyre::memory::Stack<D, T, isConst>::where() const -> const void *
 }
 
 
+// access privileges
+template <int D, typename T, bool isConst>
+constexpr auto
+pyre::memory::Stack<D, T, isConst>::readonly() -> bool
+{
+    // easy
+    return isConst;
+}
+
+
+template <int D, typename T, bool isConst>
+constexpr auto
+pyre::memory::Stack<D, T, isConst>::writable() -> bool
+{
+    // easy
+    return !readonly();
+}
+
+
 // human readable form of my expansion
 template <int D, class T, bool isConst>
 auto

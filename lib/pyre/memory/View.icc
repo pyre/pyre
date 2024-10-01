@@ -59,6 +59,25 @@ pyre::memory::View<T, isConst>::where() const -> const void *
 }
 
 
+// access privileges
+template <typename T, bool isConst>
+constexpr auto
+pyre::memory::View<T, isConst>::readonly() -> bool
+{
+    // easy
+    return isConst;
+}
+
+
+template <typename T, bool isConst>
+constexpr auto
+pyre::memory::View<T, isConst>::writable() -> bool
+{
+    // easy
+    return !readonly();
+}
+
+
 // human readable form of my expansion
 template <typename T, bool isConst>
 auto

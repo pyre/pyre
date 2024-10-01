@@ -44,6 +44,9 @@ public:
     // access to the raw data pointer in a form suitable for diagnostics
     inline auto where() const -> const void *;
 
+    // expose my constness
+    static constexpr auto readonly() -> bool;
+    static constexpr auto writable() -> bool;
     // human readable rendering of my expansion
     static inline auto name() -> string_t;
     // human readable rendering of my storage strategy
