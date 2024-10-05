@@ -15,50 +15,36 @@
 template <pyre::tensor::tensor_c tensorT>
 constexpr auto
 pyre::tensor::norm(const tensorT & tensor) -> tensorT::scalar_type
-    requires(tensorT::rank <= 2)
 {
+    // the type stored in the tensor
     using T = typename tensorT::scalar_type;
 
+    // the canonical tensor type
+    using canonical_tensor_t = typename tensorT::canonical_tensor_t;
+
+    // the number of components of the canonical tensor
+    constexpr int D = canonical_tensor_t::size;
+
     // helper function
-    constexpr auto _norm_square = []<int... J>(
-                                      const tensorT & tensor, integer_sequence<J...>) -> T {
-        // return sum of all square components
-        return ((tensor[J] * tensor[J]) + ...);
+    constexpr auto _norm_square = []<int... I>(
+                                      const tensorT & tensor, integer_sequence<I...>) -> T {
+        // return the sum of all tensor squared components
+        return (
+            // sum all the square values ...
+            (std::pow(
+                // ... of {tensor} at...
+                tensor[
+                    // ... the offset for the packing of {tensor} of ...
+                    tensorT::layout().offset(
+                        // ... the index corresponding to the I-th entry, I = 0, ..., D-1, in a
+                        // tensor with canonical layout
+                        canonical_tensor_t::layout().index(I))],
+                2))
+            + ...);
     };
 
-    // the size of the tensor
-    constexpr int D = tensorT::size;
-
-    // the norm square
-    auto norm_square = _norm_square(tensor, make_integer_sequence<D> {});
-
-    // correction for a symmetric tensor
-    // this correction is needed because for a symmetric tensor we do not store the lower diagonal
-    // components explicitly, therefore the sum of all squared components does not include the
-    // lower diagonal ones
-    // QUESTION: how to handle the symmetric case for a rank > 2?
-    if constexpr (tensorT::symmetric && !tensorT::diagonal) {
-        // extract the tensor diagonal
-        auto diagonal = matrix_diagonal(tensor);
-
-        // the length of the diagonal
-        constexpr int L = decltype(diagonal)::size;
-
-        // helper function to sum the squares of all {diagonal} components
-        constexpr auto _diag_squares = []<int... J>(
-                                           const auto & diagonal, integer_sequence<J...>) -> T {
-            // return sum of all square components
-            return ((diagonal[J] * diagonal[J]) + ...);
-        };
-
-        // double the upper diagonal norm
-        norm_square *= 2;
-        // remove the double contribution of the diagonal
-        norm_square -= _diag_squares(diagonal, make_integer_sequence<L> {});
-    }
-
-    // take the square root
-    return std::sqrt(norm_square);
+    // take the square root of the squared norm
+    return std::sqrt(_norm_square(tensor, make_integer_sequence<D> {}));
 }
 
 // normalize a tensor with its 2-norm
