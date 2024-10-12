@@ -5,6 +5,11 @@
 //
 
 
+// code guard
+#if !defined(pyre_tensor_repacking_h)
+#define pyre_tensor_repacking_h
+
+
 namespace pyre::tensor {
     template <class T, class S>
     struct repacking_sum;
@@ -121,5 +126,7 @@ namespace pyre::tensor {
 
 } // namespace pyre::tensor
 
+
+#endif
 
 // end of file

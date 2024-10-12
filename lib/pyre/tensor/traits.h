@@ -5,6 +5,11 @@
 //
 
 
+// code guard
+#if !defined(pyre_tensor_traits_h)
+#define pyre_tensor_traits_h
+
+
 namespace pyre::tensor {
 
     // the type resulting from the product of {T1} and {T2}
@@ -96,5 +101,7 @@ namespace pyre::tensor {
 
 } // namespace pyre::tensor
 
+
+#endif
 
 // end of file
