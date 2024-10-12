@@ -1,3 +1,9 @@
+// -*- c++ -*-
+//
+// bianca giovanardi
+// (c) 1998-2024 all rights reserved
+
+
 // code guard
 #if !defined(pyre_tensor_factories_h)
 #define pyre_tensor_factories_h
