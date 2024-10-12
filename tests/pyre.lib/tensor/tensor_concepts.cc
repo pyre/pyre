@@ -24,6 +24,9 @@ main(int argc, char * argv[])
     // a 1x1 matrix is not a (proper) matrix
     static_assert(matrix_c<matrix_t<1, 1>> == false);
 
+    // a 1x1 matrix is a scalar
+    static_assert(scalar_c<matrix_t<1, 1>> == true);
+
     // a 1x1 matrix is not a vector
     static_assert(vector_c<matrix_t<1, 1>> == false);
 
