@@ -24,14 +24,18 @@ namespace pyre::tensor {
     template <class F>
     concept scalar_c = tensor_c<F> and F::size == 1;
 
+    // concept of an improper matrix
+    template <class F>
+    concept improper_matrix_c = tensor_c<F> and F::rank == 2 and (F::dims[0] == 1 or F::dims[1] == 1);
+
     // concept of a vector
     template <class F>
-    concept vector_c = tensor_c<F> and not scalar_c<F> and (F::rank == 1 || (F::rank == 2 && (F::dims[0] == 1 || F::dims[1] == 1)));
+    concept vector_c = tensor_c<F> and (F::rank == 1 or improper_matrix_c<F>) and not scalar_c<F>;
 
     // concept of a matrix
     template <class F>
     concept matrix_c =
-        tensor_c<F> and not scalar_c<F> and F::rank == 2 and (F::dims[0] != 1 && F::dims[1] != 1);
+        tensor_c<F> and F::rank == 2 and not improper_matrix_c<F> and not scalar_c<F>;
 
     // concept of a square matrix
     template <class F>
