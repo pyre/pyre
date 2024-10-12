@@ -21,10 +21,10 @@ main(int argc, char * argv[])
 {
     // define constexpr versions of exp and log
     constexpr auto constexpr_exp = [](double x) {
-        return exp(x);
+        return std::exp(x);
     };
     constexpr auto constexpr_log = [](double x) {
-        return log(x);
+        return std::log(x);
     };
 
     // exp(zero) = one

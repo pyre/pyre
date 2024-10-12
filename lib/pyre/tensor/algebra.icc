@@ -1046,11 +1046,11 @@ pyre::tensor::eigenvalues(const symmetric_matrix_t<3, T> & A) -> vector_t<3, T>
     T q = -13.5 * c0 - c2 * c2 * c2 + 4.5 * c1 * c2;
     T num = std::sqrt(27.0 * (0.25 * c1 * c1 * (p - c1) + c0 * (q + 6.75 * c0)));
     T den = q;
-    T phi = 1.0 / 3.0 * atan2(num, den);
+    T phi = 1.0 / 3.0 * std::atan2(num, den);
 
-    T x1 = 2.0 * cos(phi);
-    T x2 = -cos(phi) - std::sqrt(3.0) * sin(phi);
-    T x3 = -cos(phi) + std::sqrt(3.0) * sin(phi);
+    T x1 = 2.0 * std::cos(phi);
+    T x2 = -std::cos(phi) - std::sqrt(3.0) * std::sin(phi);
+    T x3 = -std::cos(phi) + std::sqrt(3.0) * std::sin(phi);
 
     T p_sqrt_3 = std::sqrt(p) / 3.0;
 
