@@ -19,7 +19,7 @@ namespace pyre::tensor {
         using T2 = typename vectorT2::scalar_type;
 
     public:
-        using type = typename std::result_of<std::multiplies<>(T1, T2)>::type;
+        using type = typename std::invoke_result<std::multiplies<>, T1, T2>::type;
     };
 
     // the vector type resulting from the row-column product of {matrixT} and {vectorT}
@@ -28,7 +28,7 @@ namespace pyre::tensor {
     private:
         using T1 = typename matrixT::scalar_type;
         using T2 = typename vectorT::scalar_type;
-        using scalar_type = typename std::result_of<std::multiplies<>(T1, T2)>::type;
+        using scalar_type = typename std::invoke_result<std::multiplies<>, T1, T2>::type;
 
     public:
         using type = vector_t<matrixT::dims[0], scalar_type>;
@@ -40,7 +40,7 @@ namespace pyre::tensor {
     private:
         using T1 = typename vectorT::scalar_type;
         using T2 = typename matrixT::scalar_type;
-        using scalar_type = typename std::result_of<std::multiplies<>(T1, T2)>::type;
+        using scalar_type = typename std::invoke_result<std::multiplies<>, T1, T2>::type;
 
     public:
         using type = vector_t<matrixT::dims[1], scalar_type>;
@@ -52,7 +52,7 @@ namespace pyre::tensor {
     private:
         using T1 = typename matrixT1::scalar_type;
         using T2 = typename matrixT2::scalar_type;
-        using scalar_type = typename std::result_of<std::multiplies<>(T1, T2)>::type;
+        using scalar_type = typename std::invoke_result<std::multiplies<>, T1, T2>::type;
         using packingT1 = typename matrixT1::pack_t;
         using packingT2 = typename matrixT2::pack_t;
         using repacking_type = typename repacking_prod<packingT1, packingT2>::packing_type;
@@ -73,7 +73,7 @@ namespace pyre::tensor {
     private:
         using T1 = typename vectorT1::scalar_type;
         using T2 = typename vectorT2::scalar_type;
-        using scalar_type = typename std::result_of<std::multiplies<>(T1, T2)>::type;
+        using scalar_type = typename std::invoke_result<std::multiplies<>, T1, T2>::type;
 
     public:
         using type = matrix_t<vectorT1::size, vectorT2::size, scalar_type>;
@@ -87,7 +87,7 @@ namespace pyre::tensor {
     template <typename T1, typename T2, class packingT1, class packingT2, int... I>
     struct sum<tensor_t<T1, packingT1, I...>, tensor_t<T2, packingT2, I...>> {
     private:
-        using scalar_type = typename std::result_of<std::plus<>(T1, T2)>::type;
+        using scalar_type = typename std::invoke_result<std::plus<>, T1, T2>::type;
         using repacking_type = typename repacking_sum<packingT1, packingT2>::packing_type;
 
     public:
