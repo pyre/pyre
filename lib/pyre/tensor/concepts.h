@@ -20,56 +20,26 @@ namespace pyre::tensor {
         }(c);
     };
 
-    // concept of a matrix
+    // concept of a scalar
     template <class F>
-    concept matrix_c = requires(F c) {
-        // require that F only binds to {matrix_t} specializations
-        []<int D1, int D2, typename T, class packingT>(const matrix_t<D1, D2, T, packingT> &)
-            // with D1 and D2 different than 1 (otherwise it is a vector)
-            requires(D1 != 1 && D2 != 1)
-        {}
-        (c);
-    };
-
-    // concept of a square matrix
-    template <class F>
-    concept square_matrix_c = requires(F c) {
-        // require that F only binds to square {matrix_t} specializations
-        []<int D, typename T, class packingT>(const matrix_t<D, D, T, packingT> &)
-            // with D different than 1 (otherwise it is a scalar)
-            requires(D != 1)
-        {}
-        (c);
-    };
-
-    // concept of a diagonal matrix
-    template <class F>
-    concept diagonal_matrix_c = requires(F c) {
-        // require that F only binds to diagonal {matrix_t} specializations
-        []<int D, typename T>(const matrix_t<D, D, T, pyre::grid::diagonal_t<D>> &)
-            // with D different than 1 (otherwise it is a scalar)
-            requires(D != 1)
-        {}
-        (c);
-    };
+    concept scalar_c = tensor_c<F> and F::size == 1;
 
     // concept of a vector
     template <class F>
-    concept vector_c = requires(F c) {
-        // require that F only binds to {matrix_t} specializations
-        []<int D1, int D2, typename T, class packingT>(const matrix_t<D1, D2, T, packingT> &)
-            // with either D1 or D2 equal to 1 (but not both)
-            requires(!(D1 == 1) != !(D2 == 1))
-        {}
-        (c);
-    } or requires(F c) {
-        // require that F only binds to {vector_t} specializations
-        []<int D, typename T, class packingT>(const vector_t<D, T, packingT> &)
-            // with D different than 1 (otherwise it is a scalar)
-            requires(D != 1)
-        {}
-        (c);
-    };
+    concept vector_c = tensor_c<F> and not scalar_c<F> and (F::rank == 1 || (F::rank == 2 && (F::dims[0] == 1 || F::dims[1] == 1)));
+
+    // concept of a matrix
+    template <class F>
+    concept matrix_c =
+        tensor_c<F> and not scalar_c<F> and F::rank == 2 and (F::dims[0] != 1 && F::dims[1] != 1);
+
+    // concept of a square matrix
+    template <class F>
+    concept square_matrix_c = matrix_c<F> and F::dims[0] == F::dims[1];
+
+    // concept of a diagonal matrix
+    template <class F>
+    concept diagonal_matrix_c = square_matrix_c<F> and F::diagonal;
 
 } // namespace pyre::tensor
 
