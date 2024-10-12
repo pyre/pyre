@@ -36,7 +36,7 @@ namespace pyre::tensor {
     {
         constexpr auto _make_zeros = []<int... J>(integer_sequence<J...>) ->
             typename tensorT::diagonal_tensor_t {
-                constexpr auto fill_zeros = []<int>() consteval -> typename tensorT::scalar_type {
+                constexpr auto fill_zeros = []<int>() -> typename tensorT::scalar_type {
                     return 0;
                 };
                 // return a tensor filled with zeros
@@ -51,7 +51,7 @@ namespace pyre::tensor {
     constexpr auto make_ones() -> tensorT
     {
         constexpr auto _make_ones = []<int... J>(integer_sequence<J...>) -> tensorT {
-            constexpr auto fill_ones = []<int>() consteval -> typename tensorT::scalar_type {
+            constexpr auto fill_ones = []<int>() -> typename tensorT::scalar_type {
                 return 1;
             };
             // return a tensor filled with ones
@@ -116,7 +116,7 @@ namespace pyre::tensor {
     {
         constexpr auto _make_ones = []<int... J>(integer_sequence<J...>) ->
             typename tensorT::diagonal_tensor_t {
-                constexpr auto fill_ones = []<int>() consteval -> typename tensorT::scalar_type {
+                constexpr auto fill_ones = []<int>() -> typename tensorT::scalar_type {
                     return 1;
                 };
                 // return a tensor filled with zeros
