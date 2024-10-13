@@ -25,23 +25,19 @@ namespace pyre::tensor {
 
     // scalar times tensor
     template <tensor_c tensorT>
-    constexpr auto operator*(const typename tensorT::scalar_type & a, const tensorT & y) -> tensorT
-        requires(tensorT::size != 1);
+    constexpr auto operator*(const typename tensorT::scalar_type & a, const tensorT & y) -> tensorT;
 
     // tensor times scalar
     template <tensor_c tensorT>
-    constexpr auto operator*(const tensorT & y, const typename tensorT::scalar_type & a) -> tensorT
-        requires(tensorT::size != 1);
+    constexpr auto operator*(const tensorT & y, const typename tensorT::scalar_type & a) -> tensorT;
 
     // scalar times (temporary) tensor
     template <tensor_c tensorT>
-    constexpr auto operator*(const typename tensorT::scalar_type & a, tensorT && y) -> tensorT
-        requires(tensorT::size != 1);
+    constexpr auto operator*(const typename tensorT::scalar_type & a, tensorT && y) -> tensorT;
 
     // (temporary) tensor times scalar
     template <tensor_c tensorT>
-    constexpr auto operator*(tensorT && y, const typename tensorT::scalar_type & a) -> tensorT
-        requires(tensorT::size != 1);
+    constexpr auto operator*(tensorT && y, const typename tensorT::scalar_type & a) -> tensorT;
 
     // row-column vector product
     template <vector_c vectorT1, vector_c vectorT2>
@@ -69,13 +65,11 @@ namespace pyre::tensor {
 
     // tensor divided scalar
     template <tensor_c tensorT>
-    constexpr auto operator/(const tensorT & y, typename tensorT::scalar_type a) -> tensorT
-        requires(tensorT::size != 1);
+    constexpr auto operator/(const tensorT & y, typename tensorT::scalar_type a) -> tensorT;
 
     // (temporary) tensor divided scalar
     template <tensor_c tensorT>
-    constexpr auto operator/(tensorT && y, typename tensorT::scalar_type a) -> tensorT
-        requires(tensorT::size != 1);
+    constexpr auto operator/(tensorT && y, typename tensorT::scalar_type a) -> tensorT;
 
     // tensor plus tensor
     template <tensor_c tensorT1, tensor_c tensorT2>
