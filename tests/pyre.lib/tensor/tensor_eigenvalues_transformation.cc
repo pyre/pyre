@@ -19,25 +19,17 @@ using namespace pyre::tensor;
 int
 main(int argc, char * argv[])
 {
-    // define constexpr versions of exp and log
-    constexpr auto constexpr_exp = [](double x) {
-        return std::exp(x);
-    };
-    constexpr auto constexpr_log = [](double x) {
-        return std::log(x);
-    };
-
     // exp(zero) = one
-    static_assert(function(zero<matrix_t<2>>, constexpr_exp) == identity<matrix_t<2>>);
+    static_assert(function(zero<matrix_t<2>>, pyre::tensor::exp) == identity<matrix_t<2>>);
 
     // log(one) = zero
-    static_assert(function(identity<matrix_t<2>>, constexpr_log) == zero<matrix_t<2>>);
+    static_assert(function(identity<matrix_t<2>>, pyre::tensor::log) == zero<matrix_t<2>>);
 
     // exp(zero) = one
-    static_assert(function(zero<matrix_t<3>>, constexpr_exp) == identity<matrix_t<3>>);
+    static_assert(function(zero<matrix_t<3>>, pyre::tensor::exp) == identity<matrix_t<3>>);
 
     // log(one) = zero
-    static_assert(function(identity<matrix_t<3>>, constexpr_log) == zero<matrix_t<3>>);
+    static_assert(function(identity<matrix_t<3>>, pyre::tensor::log) == zero<matrix_t<3>>);
 
     // all done
     return 0;

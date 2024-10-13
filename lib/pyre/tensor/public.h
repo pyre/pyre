@@ -31,6 +31,8 @@
 #include "Tensor.h"
 // useful functions for {Tensor}
 #include "utilities.h"
+// the {constexpr} implementation of transcendental functions (until c++26)
+#include "transcendental.h"
 // the algebra on tensors
 #include "algebra.h"
 // the quaternions

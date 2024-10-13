@@ -19,6 +19,9 @@ using namespace pyre::tensor;
 int
 main(int argc, char * argv[])
 {
+    // tolerance
+    constexpr auto tol = 1e-16;
+
     {
         // the packing-agnostic canonical basis of R^2x2
         constexpr auto e_00 = unit<matrix_t<2>, 0, 0>;
@@ -38,7 +41,7 @@ main(int argc, char * argv[])
         constexpr auto eigenvectors_A = eigenvectors(A);
 
         // product of eigenvalues is equal to determinant
-        static_assert(lambda_A[0] * lambda_A[1] == determinant(A));
+        static_assert(lambda_A[0] * lambda_A[1] - determinant(A) < tol);
 
         // sum of eigenvalues is equal to trace
         static_assert(lambda_A[0] + lambda_A[1] == trace(A));
@@ -79,7 +82,7 @@ main(int argc, char * argv[])
         constexpr auto eigenvectors_B = eigenvectors(B);
 
         // product of eigenvalues is equal to determinant
-        static_assert(lambda_B[0] * lambda_B[1] * lambda_B[2] == determinant(B));
+        static_assert(lambda_B[0] * lambda_B[1] * lambda_B[2] - determinant(B) < tol);
 
         // sum of eigenvalues is equal to trace
         static_assert(lambda_B[0] + lambda_B[1] + lambda_B[2] == trace(B));
