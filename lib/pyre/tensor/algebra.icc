@@ -841,17 +841,6 @@ pyre::tensor::inverse(const matrixT & A) -> matrixT
     return invA;
 }
 
-template <pyre::tensor::square_matrix_c matrixT>
-constexpr auto
-pyre::tensor::inverse(const matrixT & A) -> matrixT
-    requires(matrixT::dims[0] == 1) // 1x1 matrix (scalar)
-{
-    // the type of matrix {A}
-    using matrix_t = matrixT;
-
-    return 1.0 / A[matrix_t::template getOffset<0, 0>()];
-}
-
 template <pyre::tensor::diagonal_matrix_c matrixT>
 constexpr auto
 pyre::tensor::inverse(const matrixT & A) -> matrixT

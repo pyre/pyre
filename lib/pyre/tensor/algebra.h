@@ -233,11 +233,6 @@ namespace pyre::tensor {
     constexpr auto inverse(const matrixT & A) -> matrixT
         requires(matrixT::dims[0] == 2 && !diagonal_matrix_c<matrixT>);
 
-    // the inverse of a 1x1 matrix
-    template <square_matrix_c matrixT>
-    constexpr auto inverse(const matrixT & A) -> matrixT
-        requires(matrixT::dims[0] == 1);
-
     // the inverse of a NxN diagonal matrix
     template <diagonal_matrix_c matrixT>
     constexpr auto inverse(const matrixT & A) -> matrixT;
