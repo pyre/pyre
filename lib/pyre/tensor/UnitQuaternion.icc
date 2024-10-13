@@ -34,8 +34,8 @@ constexpr pyre::tensor::UnitQuaternion<T>::UnitQuaternion(
 template <typename T>
 constexpr pyre::tensor::UnitQuaternion<T>::UnitQuaternion(
     const real_type & theta, const rotation_axis_type & axis) :
-    UnitQuaternion({ std::cos(0.5 * theta), axis[0] * std::sin(0.5 * theta),
-                     axis[1] * std::sin(0.5 * theta), axis[2] * std::sin(0.5 * theta) })
+    UnitQuaternion({ pyre::tensor::cos(0.5 * theta), axis[0] * pyre::tensor::sin(0.5 * theta),
+                     axis[1] * pyre::tensor::sin(0.5 * theta), axis[2] * pyre::tensor::sin(0.5 * theta) })
 {}
 
 template <typename T>
@@ -54,7 +54,7 @@ template <typename T>
 constexpr auto
 pyre::tensor::UnitQuaternion<T>::axis() const -> rotation_axis_type
 {
-    real_type norm = std::sqrt(_qi * _qi + _qj * _qj + _qk * _qk);
+    real_type norm = pyre::tensor::sqrt(_qi * _qi + _qj * _qj + _qk * _qk);
     return rotation_axis_type({ _qi / norm, _qj / norm, _qk / norm });
 }
 
@@ -62,7 +62,7 @@ template <typename T>
 constexpr auto
 pyre::tensor::UnitQuaternion<T>::angle() const -> real_type
 {
-    return 2.0 * std::atan2(std::sqrt(_qi * _qi + _qj * _qj + _qk * _qk), _qr);
+    return 2.0 * pyre::tensor::atan2(pyre::tensor::sqrt(_qi * _qi + _qj * _qj + _qk * _qk), _qr);
 }
 
 template <typename T>
