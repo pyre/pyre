@@ -33,6 +33,11 @@ namespace pyre::tensor {
     template <int D, typename T = real>
     using diagonal_matrix_t = matrix_t<D, D, T, pyre::grid::diagonal_t<2>>;
 
+    // typedef for fourth order tensors
+    template <int D1, int D2 = D1, int D3 = D2, int D4 = D3, typename T = real>
+    using fourth_order_tensor_t =
+      pyre::tensor::Tensor<T, pyre::grid::canonical_t<4>, D1, D2, D3, D4>;
+
     // the zero tensor
     template <class tensorT>
     constexpr auto zero = make_zeros<tensorT>();
