@@ -1,13 +1,7 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2024 all rights reserved
-#
-
-
-# support
-import pyre
 
 
 # declaration
@@ -15,7 +9,6 @@ class Binder:
     """
     Method decorator that constructs {operator} nodes to connect {inputs} to {outputs}
     """
-
 
     # meta-methods
     def __new__(cls, method=None, inputs=None, outputs=None, **kwds):
@@ -52,7 +45,6 @@ class Binder:
         # to hand over
         return build
 
-
     def __init__(self, method, inputs=None, outputs=None, **kwds):
         # chain up
         super().__init__(**kwds)
@@ -71,14 +63,12 @@ class Binder:
         # all done
         return
 
-
     def __get__(self, instance, cls):
         """
         Access to the method
         """
         # delegate
         return self.method.__get__(instance, cls)
-
 
     # implementation details
     # private data

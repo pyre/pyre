@@ -1,15 +1,12 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2024 all rights reserved
-#
 
 
-# framework
-import pyre
 # my superclass
 from .FlowMaster import FlowMaster
+
 # the product protocol
 from .Specification import Specification
 
@@ -19,7 +16,6 @@ class FactoryMaker(FlowMaster):
     """
     The meta-class of flow nodes
     """
-
 
     # methods
     def __new__(cls, name, bases, attributes, **kwds):
@@ -33,7 +29,6 @@ class FactoryMaker(FlowMaster):
         factory = super().__new__(cls, name, bases, attributes, **kwds)
         # and pass it on
         return factory
-
 
     def __init__(self, name, bases, attributes, **kwds):
         """
@@ -53,7 +48,6 @@ class FactoryMaker(FlowMaster):
         self.pyre_outputTraits = tuple(outputs)
         # all done
         return
-
 
     def pyre_classifyProducts(self):
         """

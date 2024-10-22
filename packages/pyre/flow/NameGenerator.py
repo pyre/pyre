@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2024 all rights reserved
-#
 
 
 # the id generator
@@ -16,11 +14,9 @@ class NameGenerator:
     A generator of globally unique names
     """
 
-
     # public data
     # the legal symbols in value order; a scramble of digits and letters
     alphabet = "V7MWCTZESF6DQU5IX0JOBG3YAPKN248HLR91"
-
 
     # interface
     def uid(self):
@@ -32,12 +28,11 @@ class NameGenerator:
         # convert it into a string
         name = "".join(self._encode(uid))
         # pad it to a multiple of 4 by pulling letters in alphabet order
-        name += self.alphabet[:4-len(name)%4]
+        name += self.alphabet[: 4 - len(name) % 4]
         # make it more legible
-        name = "-".join(name[q:q+4] for q in range(0, len(name), 4))
+        name = "-".join(name[q : q + 4] for q in range(0, len(name), 4))
         # and return it
         return name
-
 
     # meta-methods
     def __init__(self, alphabet=alphabet, **kwds):
@@ -49,7 +44,6 @@ class NameGenerator:
         self.base = len(alphabet)
         # all done
         return
-
 
     # implementation details
     def _encode(self, uid):

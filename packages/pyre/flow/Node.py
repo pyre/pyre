@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2024 all rights reserved
-#
 
 
 # support
 import pyre
+
 # my meta-class
 from .FlowMaster import FlowMaster
 
@@ -18,11 +17,9 @@ class Node(pyre.component, metaclass=FlowMaster, internal=True):
     Base class for entities that participate in workflows
     """
 
-
     # public data
     # the object that watches over my traits
     pyre_status = None
-
 
     # public data
     @property
@@ -43,7 +40,6 @@ class Node(pyre.component, metaclass=FlowMaster, internal=True):
         # all done
         return
 
-
     # meta-methods
     def __init__(self, **kwds):
         # chain up
@@ -52,7 +48,6 @@ class Node(pyre.component, metaclass=FlowMaster, internal=True):
         self.pyre_status = self.pyre_newStatus(node=self)
         # all done
         return
-
 
     # persistence
     def pyre_save(self):
@@ -64,7 +59,7 @@ class Node(pyre.component, metaclass=FlowMaster, internal=True):
         # set the encoding
         weaver.language = self.encoding
         # open a file
-        with open(f"{self.pyre_name}.{self.encoding}", mode='w') as stream:
+        with open(f"{self.pyre_name}.{self.encoding}", mode="w") as stream:
             # assemble the document
             document = self.pyre_renderTraitValues(renderer=weaver.language)
             # get the weaver to do its things
@@ -74,18 +69,18 @@ class Node(pyre.component, metaclass=FlowMaster, internal=True):
         # all done
         return
 
-
     # flow hooks
     def pyre_newStatus(self, **kwds):
         """
         Build a handler for my status changes
         """
         # the handler is differentiated based on the type of flow node
-        raise NotImplementedError(f"class '{type(self).__name__}' must override 'pyre_newStatus'")
-
+        raise NotImplementedError(
+            f"class '{type(self).__name__}' must override 'pyre_newStatus'"
+        )
 
     # debugging support
-    def pyre_dump(self, channel, indent=' '*2, level=0):
+    def pyre_dump(self, channel, indent=" " * 2, level=0):
         """
         Display information about me
         """
@@ -106,9 +101,8 @@ class Node(pyre.component, metaclass=FlowMaster, internal=True):
         # all done
         return self
 
-
     # constants
-    encoding = 'pfg'
+    encoding = "pfg"
 
 
 # end of file

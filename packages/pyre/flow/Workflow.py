@@ -1,29 +1,25 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2024 all rights reserved
-#
 
 
-# externals
-import itertools
 # support
 import pyre
+
 # protocols
 from .Flow import Flow
 from .Producer import Producer
-from .Specification import Specification
+
 # my superclass
 from .Factory import Factory
 
 
 # class declaration
-class Workflow(Factory, family='pyre.flow.workflow', implements=Flow):
+class Workflow(Factory, family="pyre.flow.workflow", implements=Flow):
     """
     A container of flow products and factories
     """
-
 
     # flow hooks
     @pyre.export
@@ -38,17 +34,18 @@ class Workflow(Factory, family='pyre.flow.workflow', implements=Flow):
         # if all went well, we are done
         return
 
-
     # interface
     def pyre_inputs(self):
         """
         Generate the sequence of my input products
         """
         # collect all non-trivial outputs from my factories
-        outputs = { product
-                    for factory in self.pyre_factories()
-                    for product, _ in factory.pyre_outputs()
-                    if product is not None }
+        outputs = {
+            product
+            for factory in self.pyre_factories()
+            for product, _ in factory.pyre_outputs()
+            if product is not None
+        }
 
         # go through my factories
         for factory in self.pyre_factories():
@@ -64,16 +61,17 @@ class Workflow(Factory, family='pyre.flow.workflow', implements=Flow):
         # all done
         return
 
-
     def pyre_outputs(self):
         """
         Generate the sequence of my output products
         """
         # collect all non-trivial inputs from my factories
-        inputs = { product
-                   for factory in self.pyre_factories()
-                   for product, _ in factory.pyre_inputs()
-                   if product is not None }
+        inputs = {
+            product
+            for factory in self.pyre_factories()
+            for product, _ in factory.pyre_inputs()
+            if product is not None
+        }
 
         # go through my factories
         for factory in self.pyre_factories():
@@ -88,7 +86,6 @@ class Workflow(Factory, family='pyre.flow.workflow', implements=Flow):
 
         # all done
         return
-
 
     def pyre_factories(self):
         """

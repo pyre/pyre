@@ -1,17 +1,18 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2024 all rights reserved
-#
 
 
 # externals
 import weakref
+
 # support
 import pyre
+
 # my protocol
 from .Specification import Specification
+
 # my superclass
 from .Node import Node
 
@@ -21,7 +22,6 @@ class Product(Node, implements=Specification, internal=True):
     """
     The base class for data products
     """
-
 
     # protocol obligations
     @pyre.export
@@ -42,7 +42,6 @@ class Product(Node, implements=Specification, internal=True):
         # all done
         return self
 
-
     @pyre.export
     def pyre_tasklist(self, **kwds):
         """
@@ -58,7 +57,6 @@ class Product(Node, implements=Specification, internal=True):
             yield from factory.pyre_tasklist(**kwds)
         # all done
         return
-
 
     @pyre.export
     def pyre_targets(self, **kwds):
@@ -78,7 +76,6 @@ class Product(Node, implements=Specification, internal=True):
         # all done
         return
 
-
     # interface
     def pyre_done(self, **kwds):
         """
@@ -89,7 +86,6 @@ class Product(Node, implements=Specification, internal=True):
         # all done
         return
 
-
     # meta-methods
     def __init__(self, **kwds):
         # chain up
@@ -99,7 +95,6 @@ class Product(Node, implements=Specification, internal=True):
         # all done
         return
 
-
     # flow hooks
     def pyre_newStatus(self, **kwds):
         """
@@ -107,9 +102,9 @@ class Product(Node, implements=Specification, internal=True):
         """
         # grab the factory
         from .ProductStatus import ProductStatus
+
         # make one and return it
         return ProductStatus(**kwds)
-
 
     def pyre_addInputBinding(self, factory):
         """
@@ -120,7 +115,6 @@ class Product(Node, implements=Specification, internal=True):
         # all done
         return
 
-
     def pyre_removeInputBinding(self, factory):
         """
         Unbind me as an input to the given {factory}
@@ -129,7 +123,6 @@ class Product(Node, implements=Specification, internal=True):
         self.pyre_status.removeInputBinding(factory=factory, product=self)
         # all done
         return
-
 
     def pyre_addOutputBinding(self, factory):
         """
@@ -141,7 +134,6 @@ class Product(Node, implements=Specification, internal=True):
         self.pyre_status.addOutputBinding(factory=factory, product=self)
         # all done
         return
-
 
     def pyre_removeOutputBinding(self, factory):
         """

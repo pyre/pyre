@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2024 all rights reserved
-#
 
 
 # my superclasses
@@ -26,7 +24,6 @@ class ProductStatus(Status):
         # and chain up
         return super().addInputBinding(factory=factory, product=product)
 
-
     def removeInputBinding(self, factory, product):
         """
         My client {product} is no longer an input to {factory}
@@ -35,7 +32,6 @@ class ProductStatus(Status):
         self.removeObserver(observer=factory.pyre_status)
         # and chain up
         return super().removeInputBinding(factory=factory, product=product)
-
 
     def addOutputBinding(self, factory, product):
         """

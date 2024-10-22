@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2024 all rights reserved
-#
 
 
 # support
@@ -18,7 +16,6 @@ class Specification(pyre.protocol):
     Specifications are snapshots of product attributes
     """
 
-
     # required interface
     @pyre.provides
     def pyre_make(self, **kwds):
@@ -26,20 +23,17 @@ class Specification(pyre.protocol):
         Ask my factories to rebuild me
         """
 
-
     @pyre.provides
     def pyre_tasklist(self, **kwds):
         """
         Generate the sequence of factories that must be invoked to rebuild me
         """
 
-
     @pyre.provides
     def pyre_targets(self, **kwds):
         """
         Generate the sequence of products that must be refreshed to rebuild me
         """
-
 
     # facility makers
     @classmethod
@@ -51,7 +45,6 @@ class Specification(pyre.protocol):
         facility = cls(input=True, **kwds)
         # and return it
         return facility
-
 
     @classmethod
     def output(cls, **kwds):

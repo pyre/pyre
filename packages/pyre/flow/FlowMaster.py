@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2024 all rights reserved
-#
 
 
 # framework
 import pyre
+
 # local support
 from .NameGenerator import NameGenerator
 
@@ -18,10 +17,8 @@ class FlowMaster(pyre.actor):
     The meta-class of flow nodes
     """
 
-
     # public data
     pyre_nameGenerator = NameGenerator()
-
 
     # meta-methods
     def __call__(self, name=None, locator=None, implicit=False, **kwds):
@@ -38,7 +35,9 @@ class FlowMaster(pyre.actor):
         locator = pyre.tracking.here(1) if locator is None else locator
 
         # create the instance
-        instance = super().__call__(name=name, locator=locator, implicit=implicit, **kwds)
+        instance = super().__call__(
+            name=name, locator=locator, implicit=implicit, **kwds
+        )
         # and return it
         return instance
 

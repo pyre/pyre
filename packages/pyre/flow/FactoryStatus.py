@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2024 all rights reserved
-#
 
 
 # my superclass
@@ -16,7 +14,6 @@ class FactoryStatus(Status):
     A helper that watches over the traits of factories and records value changes
     """
 
-
     # interface
     def addOutputBinding(self, factory, product):
         """
@@ -26,7 +23,6 @@ class FactoryStatus(Status):
         self.addObserver(observer=product.pyre_status)
         # and chain up
         return super().addOutputBinding(factory=factory, product=product)
-
 
     def removeOutputBinding(self, factory, product):
         """

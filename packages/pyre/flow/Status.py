@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2024 all rights reserved
-#
 
 
 # support
@@ -15,7 +13,6 @@ class Status(pyre.tracker):
     """
     A helper that watches over a component's traits and records value changes
     """
-
 
     # public data
     @property
@@ -40,7 +37,6 @@ class Status(pyre.tracker):
         # all done
         return self
 
-
     # interface
     def playback(self, node, alias):
         """
@@ -55,7 +51,6 @@ class Status(pyre.tracker):
         # all done
         return
 
-
     # input binding
     def addInputBinding(self, **kwds):
         """
@@ -66,7 +61,6 @@ class Status(pyre.tracker):
         # all done
         return self
 
-
     def removeInputBinding(self, **kwds):
         """
         The given {product} is no longer an input to {factory}
@@ -75,7 +69,6 @@ class Status(pyre.tracker):
         # self.log(activity="removing input", **kwds)
         # all done
         return self
-
 
     # output binding
     def addOutputBinding(self, **kwds):
@@ -87,7 +80,6 @@ class Status(pyre.tracker):
         # all done
         return self
 
-
     def removeOutputBinding(self, **kwds):
         """
         The given {product} is no longer an output of {factory}
@@ -96,7 +88,6 @@ class Status(pyre.tracker):
         # self.log(activity="removing output", **kwds)
         # all done
         return self
-
 
     # meta-methods
     def __init__(self, node, stale=False, **kwds):
@@ -109,7 +100,6 @@ class Status(pyre.tracker):
         # all done
         return
 
-
     # hooks
     def flush(self, **kwds):
         """
@@ -119,7 +109,6 @@ class Status(pyre.tracker):
         self._stale = True
         # chain up
         return super().flush(**kwds)
-
 
     # implementation details
     def log(self, activity, factory, product):
@@ -131,7 +120,6 @@ class Status(pyre.tracker):
         print(f"")
         # all done
         return
-
 
     # private data
     _stale = None

@@ -1,17 +1,18 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2024 all rights reserved
-#
 
 
 # support
 import pyre
+
 # my protocol
 from .Producer import Producer
+
 # my superclass
 from .Node import Node
+
 # my meta-class
 from .FactoryMaker import FactoryMaker
 
@@ -22,10 +23,8 @@ class Factory(Node, metaclass=FactoryMaker, implements=Producer, internal=True):
     The base class for creators of data products
     """
 
-
     # types
     from .exceptions import IncompleteFlowError
-
 
     # protocol obligations
     @pyre.export
@@ -55,7 +54,6 @@ class Factory(Node, metaclass=FactoryMaker, implements=Producer, internal=True):
         # all done
         return
 
-
     @pyre.export
     def pyre_tasklist(self, **kwds):
         """
@@ -78,7 +76,6 @@ class Factory(Node, metaclass=FactoryMaker, implements=Producer, internal=True):
         # all done
         return
 
-
     @pyre.export
     def pyre_targets(self, context=None):
         """
@@ -99,7 +96,6 @@ class Factory(Node, metaclass=FactoryMaker, implements=Producer, internal=True):
         # all done
         return
 
-
     # interface
     def pyre_inputs(self):
         """
@@ -111,12 +107,11 @@ class Factory(Node, metaclass=FactoryMaker, implements=Producer, internal=True):
         for trait in self.pyre_inputTraits:
             # get the associated product
             product = inventory[trait].value
-            # pass it on along with me as its factory, and the trait meta-data
-            # N.B. the strangely articulated meta-data form is meant to accommodate workflows
+            # pass it on along with me as its factory, and the trait metadata
+            # N.B. the strangely articulated metadata form is meant to accommodate workflows
             yield product, [(self, trait)]
         # all done
         return
-
 
     def pyre_outputs(self):
         """
@@ -134,7 +129,6 @@ class Factory(Node, metaclass=FactoryMaker, implements=Producer, internal=True):
         # all done
         return
 
-
     def pyre_factories(self):
         """
         Generate the sequence of my factories
@@ -143,7 +137,6 @@ class Factory(Node, metaclass=FactoryMaker, implements=Producer, internal=True):
         yield self
         # all done
         return
-
 
     def pyre_closed(self):
         """
@@ -164,7 +157,6 @@ class Factory(Node, metaclass=FactoryMaker, implements=Producer, internal=True):
         # otherwise, we are good
         return True
 
-
     # meta-methods
     def __init__(self, **kwds):
         # chain up
@@ -182,7 +174,6 @@ class Factory(Node, metaclass=FactoryMaker, implements=Producer, internal=True):
         # all done
         return
 
-
     # flow hooks
     # deployment
     def pyre_run(self, **kwds):
@@ -192,7 +183,6 @@ class Factory(Node, metaclass=FactoryMaker, implements=Producer, internal=True):
         # nothing to do
         return self
 
-
     # status management
     def pyre_newStatus(self, **kwds):
         """
@@ -200,9 +190,9 @@ class Factory(Node, metaclass=FactoryMaker, implements=Producer, internal=True):
         """
         # grab the factory
         from .FactoryStatus import FactoryStatus
+
         # make one and return it
         return FactoryStatus(**kwds)
-
 
     # introspection
     def pyre_classifyInputs(self):
@@ -234,7 +224,6 @@ class Factory(Node, metaclass=FactoryMaker, implements=Producer, internal=True):
         # return the three piles
         return unbound, stale, fresh
 
-
     def pyre_classifyOutputs(self):
         """
         Go through my outputs and sort them into two piles: unbound and bound
@@ -256,7 +245,6 @@ class Factory(Node, metaclass=FactoryMaker, implements=Producer, internal=True):
         # all done
         return unbound, bound
 
-
     # connectivity maintenance
     def pyre_bindInputs(self, *inputs):
         """
@@ -277,7 +265,6 @@ class Factory(Node, metaclass=FactoryMaker, implements=Producer, internal=True):
         # all done
         return self
 
-
     def pyre_unbindInputs(self, *inputs):
         """
         Unbind me to the sequence of products in {inputs}
@@ -296,7 +283,6 @@ class Factory(Node, metaclass=FactoryMaker, implements=Producer, internal=True):
             monitor.removeInputBinding(factory=self, product=product)
         # all done
         return self
-
 
     def pyre_bindOutputs(self, *outputs):
         """
@@ -317,7 +303,6 @@ class Factory(Node, metaclass=FactoryMaker, implements=Producer, internal=True):
         # all done
         return self
 
-
     def pyre_unbindOutputs(self, *outputs):
         """
         Unbind me to the sequence of products in {outputs}
@@ -336,7 +321,6 @@ class Factory(Node, metaclass=FactoryMaker, implements=Producer, internal=True):
             monitor.removeOutputBinding(factory=self, product=product)
         # all done
         return self
-
 
     # framework hooks
     def pyre_traitModified(self, trait, new, old):
@@ -361,7 +345,6 @@ class Factory(Node, metaclass=FactoryMaker, implements=Producer, internal=True):
             self.pyre_bindOutputs(newValue)
         # chain up
         return super().pyre_traitModified(trait=trait, new=new, old=old)
-
 
     # private data
     pyre_inputTraits = ()

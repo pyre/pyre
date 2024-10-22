@@ -1,13 +1,9 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2024 all rights reserved
-#
 
 
-# external
-import itertools
 # superclass
 from .Producer import Producer
 
@@ -18,7 +14,6 @@ class Flow(Producer, family="pyre.flow"):
     A container of flow nodes
     """
 
-
     # framework hooks
     @classmethod
     def pyre_default(cls, **kwds):
@@ -27,9 +22,9 @@ class Flow(Producer, family="pyre.flow"):
         """
         # use the default container
         from .Workflow import Workflow
+
         # and publish it
         return Workflow
-
 
     @classmethod
     def pyre_normalize(cls, descriptor, value, node, **kwds):
