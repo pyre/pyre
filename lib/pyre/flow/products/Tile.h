@@ -26,6 +26,9 @@ public:
 
     // factory
 public:
+    // make a tile and fill it and leave it uninitialized
+    inline static auto create(const name_type & name, shape_type shape) -> ref_type;
+    // make a tile and fill it with a given value
     inline static auto create(const name_type & name, shape_type shape, cell_type value = 0)
         -> ref_type;
 
@@ -33,7 +36,8 @@ public:
 public:
     // destructor
     inline virtual ~Tile();
-    // constructor; DON'T CALL
+    // constructors; DON'T CALL
+    inline Tile(sentinel_type, const name_type &, shape_type);
     inline Tile(sentinel_type, const name_type &, shape_type, cell_type);
 
     // accessors
