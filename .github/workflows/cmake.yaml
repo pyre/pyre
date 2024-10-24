@@ -63,7 +63,7 @@ jobs:
         run: |
           sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
           sudo apt-get update -y
-          sudo apt-get install gcc-13
+          sudo apt-get install gcc-13 g++-13
 
       - name: python ${{matrix.python}} setup
         uses: actions/setup-python@v5
