@@ -57,6 +57,14 @@ jobs:
           echo " -- install our dependencies"
           sudo apt install -y make cmake openssh-server libgsl-dev libopenmpi-dev libhdf5-dev
 
+      # https://github.com/actions/runner-images/issues/9866#issuecomment-2114583692
+      - name: install GCC 13
+        if: matrix.compiler == "gcc-13"
+        run: |
+          sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
+          sudo apt-get update -y
+          sudo apt-get install gcc-13
+
       - name: python ${{matrix.python}} setup
         uses: actions/setup-python@v5
         with:
