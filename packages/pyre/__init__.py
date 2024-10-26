@@ -286,6 +286,9 @@ if executive:
     # workflows
     from . import flow
 
+    # visualization support
+    from . import viz
+
     # document rendering
     from . import weaver
 
