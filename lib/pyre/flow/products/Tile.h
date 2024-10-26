@@ -29,7 +29,7 @@ public:
     // make a tile and fill it and leave it uninitialized
     inline static auto create(const name_type & name, shape_type shape) -> ref_type;
     // make a tile and fill it with a given value
-    inline static auto create(const name_type & name, shape_type shape, cell_type value = 0)
+    inline static auto create(const name_type & name, shape_type shape, cell_type value)
         -> ref_type;
 
     // metamethods
