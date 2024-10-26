@@ -30,8 +30,10 @@ main(int argc, char * argv[])
     // turn it on
     // channel.activate();
 
+    // pick a shape
+    auto shape = tile_t::shape_type(512, 512);
     // make a tile
-    auto tile = tile_t::create("tile_f4_heap", { 512, 512 });
+    auto tile = tile_t::create("tile_f4_heap", shape);
     // pick a value
     cell_t value = 1;
     // make the factory
@@ -58,5 +60,6 @@ main(int argc, char * argv[])
     // all done
     return 0;
 }
+
 
 // end of file
