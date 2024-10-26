@@ -182,14 +182,14 @@ pyre::viz::factories::filters::Cycle<signalT, cycleT>::make(
     // compute its length
     auto delta = high - low;
     // go over the cells
-    for (auto cell = 0; cell < cells; ++cell) {
+    for (auto cell = 0ul; cell < cells; ++cell) {
         // read the value from the signal
         auto value = signal[cell];
         // compute the phase and map it to [-0.5, 0.5]
         auto phase = std::arg(value) / (2 * M_PI);
         // fold the negative range
         if (phase < 0) {
-            // by shifting it ove
+            // by shifting it over
             phase += 1;
         }
         // scale it and and store it

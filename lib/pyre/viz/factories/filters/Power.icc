@@ -223,7 +223,7 @@ pyre::viz::factories::filters::Power<signalT, powerT>::make(
     }
 
     // go over the cells
-    for (auto cell = 0; cell < cells; ++cell) {
+    for (auto cell = 0ul; cell < cells; ++cell) {
         // filter and store
         power[cell] = _scale * std::pow(signal[cell] / _mean, _exponent);
     }

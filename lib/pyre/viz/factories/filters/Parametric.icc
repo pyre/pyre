@@ -182,7 +182,7 @@ pyre::viz::factories::filters::Parametric<signalT, parametricT>::make(
     // compute its length
     auto delta = high - low;
     // go over the cells
-    for (auto cell = 0; cell < cells; ++cell) {
+    for (auto cell = 0ul; cell < cells; ++cell) {
         // read the value from the signal
         double value = signal[cell];
         // clip it

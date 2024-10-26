@@ -153,7 +153,7 @@ pyre::viz::factories::filters::PolarSaw<signalT, polarsawT>::make(
     }
 
     // go over the cells
-    for (auto cell = 0; cell < cells; ++cell) {
+    for (auto cell = 0ul; cell < cells; ++cell) {
         // read the value from the signal and get its magnitude
         auto saw = signal[cell] * 6 / M_PI;
         // project it into [0,1]
