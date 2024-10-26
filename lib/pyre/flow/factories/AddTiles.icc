@@ -117,7 +117,7 @@ pyre::flow::factories::Add<pyre::flow::products::tile_t, op1T, op2T, resultT>::m
     }
 
     // go through its data
-    for (auto cell = 0; cell < cells; ++cell) {
+    for (auto cell = 0ul; cell < cells; ++cell) {
         // read the values of the two operands, add, and save
         result[cell] = op1[cell] + op2[cell];
     }
