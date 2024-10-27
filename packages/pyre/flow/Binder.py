@@ -10,10 +10,10 @@ class Binder:
     Method decorator that constructs {operator} nodes to connect {inputs} to {outputs}
     """
 
-    # meta-methods
+    # metamethods
     def __new__(cls, method=None, inputs=None, outputs=None, **kwds):
         """
-        Trap the invocation with meta-data and delay the decoration of the method
+        Trap the invocation with metadata and delay the decoration of the method
         """
         # show me
         print(f"Binder.__new__:")

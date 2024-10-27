@@ -11,9 +11,7 @@ import pyre
 # class declaration
 class Specification(pyre.protocol):
     """
-    The protocol of product specifications
-
-    Specifications are snapshots of product attributes
+    The requirements that all products must implement
     """
 
     # required interface
@@ -41,7 +39,7 @@ class Specification(pyre.protocol):
         """
         Make an input descriptor
         """
-        # ask my meta-class to build a descriptor marked as input
+        # ask my metaclass to build a descriptor marked as input
         facility = cls(input=True, **kwds)
         # and return it
         return facility
@@ -51,7 +49,7 @@ class Specification(pyre.protocol):
         """
         Make an output descriptor
         """
-        # ask my meta-class to build a descriptor marked as output
+        # ask my metaclass to build a descriptor marked as output
         facility = cls(output=True, **kwds)
         # and return it
         return facility

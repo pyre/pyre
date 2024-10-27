@@ -89,7 +89,7 @@ class Status(pyre.tracker):
         # all done
         return self
 
-    # meta-methods
+    # metamethods
     def __init__(self, node, stale=False, **kwds):
         # chain up
         super().__init__(**kwds)

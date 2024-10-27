@@ -34,7 +34,7 @@ class NameGenerator:
         # and return it
         return name
 
-    # meta-methods
+    # metamethods
     def __init__(self, alphabet=alphabet, **kwds):
         # chain up
         super().__init__(**kwds)

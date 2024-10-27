@@ -14,13 +14,13 @@ from .NameGenerator import NameGenerator
 # declaration
 class FlowMaster(pyre.actor):
     """
-    The meta-class of flow nodes
+    The metaclass of flow nodes
     """
 
     # public data
     pyre_nameGenerator = NameGenerator()
 
-    # meta-methods
+    # metamethods
     def __call__(self, name=None, locator=None, implicit=False, **kwds):
         """
         Build an instance of one of my classes

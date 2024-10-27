@@ -13,7 +13,7 @@ from .Producer import Producer
 # my superclass
 from .Node import Node
 
-# my meta-class
+# my metaclass
 from .FactoryMaker import FactoryMaker
 
 
@@ -123,8 +123,8 @@ class Factory(Node, metaclass=FactoryMaker, implements=Producer, internal=True):
         for trait in self.pyre_outputTraits:
             # get the associated product
             product = inventory[trait].value
-            # pass it on along with me as its factory, and the trait meta-data
-            # N.B. the strangely articulated meta-data form is meant to accommodate workflows
+            # pass it on along with me as its factory, and the trait metadata
+            # N.B. the strangely articulated metadata form is meant to accommodate workflows
             yield product, [(self, trait)]
         # all done
         return
@@ -157,7 +157,7 @@ class Factory(Node, metaclass=FactoryMaker, implements=Producer, internal=True):
         # otherwise, we are good
         return True
 
-    # meta-methods
+    # metamethods
     def __init__(self, **kwds):
         # chain up
         super().__init__(**kwds)
@@ -209,7 +209,7 @@ class Factory(Node, metaclass=FactoryMaker, implements=Producer, internal=True):
         for product, meta in self.pyre_inputs():
             # if the product is unbound
             if product is None:
-                # add its meta-data to the pile
+                # add its metadata to the pile
                 unbound.append(meta)
                 # and move on
                 continue
