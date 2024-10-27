@@ -54,7 +54,7 @@ class Flow(Producer, family="pyre.flow"):
             executive = cls.pyre_executive
             # and the name server
             ns = executive.nameserver
-            # grab the node meta-data
+            # grab the node metadata
             info = ns.getInfo(node.key)
             # extract the locator
             locator = info.locator
