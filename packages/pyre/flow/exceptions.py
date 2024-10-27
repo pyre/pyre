@@ -22,7 +22,7 @@ class FlowError(FrameworkError):
     # public data
     description = "generic flow error: {0.node}"
 
-    # meta-methods
+    # metamethods
     def __init__(self, node=None, **kwds):
         # chain up
         super().__init__(**kwds)
@@ -40,7 +40,7 @@ class IncompleteFlowError(FlowError):
     # public data
     description = "{0.node}, has encountered unbound products"
 
-    # meta-methods
+    # metamethods
     def __init__(self, traits, **kwds):
         # chain up
         super().__init__(**kwds)
