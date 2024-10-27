@@ -14,7 +14,7 @@ from .Specification import Specification
 # declaration
 class FactoryMaker(FlowMaster):
     """
-    The meta-class of flow nodes
+    The metaclass of flow nodes
     """
 
     # methods
