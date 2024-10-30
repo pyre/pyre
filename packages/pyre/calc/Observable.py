@@ -1,15 +1,14 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@orthologue.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # externals
 import weakref
-# the superclas
-from .Reactor import  Reactor
+
+# the superclass
+from .Reactor import Reactor
 
 
 # class declaration
@@ -38,7 +37,6 @@ class Observable(Reactor):
         # all done
         return
 
-
     # observer management
     def addObserver(self, observer):
         """
@@ -49,7 +47,6 @@ class Observable(Reactor):
         # all done
         return self
 
-
     def removeObserver(self, observer):
         """
         Remove {observer} from my pile
@@ -58,7 +55,6 @@ class Observable(Reactor):
         self._observers.remove(weakref.ref(observer))
         # all done
         return self
-
 
     def replace(self, obsolete):
         """
@@ -81,12 +77,11 @@ class Observable(Reactor):
         # all done
         return super().replace(obsolete=obsolete)
 
-
     # signaling
     def flush(self, **kwds):
         """
         Handler of the notification event from one of my observables
-       """
+        """
         # take this opportunity to clean up my observers
         observers = set(self.observers)
         # go through the pile
@@ -98,13 +93,12 @@ class Observable(Reactor):
         # chain up
         return super().flush(**kwds)
 
-
     # meta-methods
     def __init__(self, **kwds):
         # chain up
         super().__init__(**kwds)
         # initialize the set of my observers
-        self._observers = set() # should have been a weak set, but I can do better...
+        self._observers = set()  # should have been a weak set, but I can do better...
         # all done
         return
 
