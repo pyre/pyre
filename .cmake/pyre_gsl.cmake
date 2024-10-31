@@ -23,10 +23,9 @@ endfunction(pyre_gslPackage)
 function(pyre_gslModule)
   # if we have gsl
   if (${GSL_FOUND})
-    Python_add_library(gslmodule MODULE)
+    Python_add_library(gslmodule MODULE WITH_SOABI)
     # adjust the name to match what python expects
     set_target_properties(gslmodule PROPERTIES LIBRARY_OUTPUT_NAME gsl)
-    set_target_properties(gslmodule PROPERTIES SUFFIX ${PYTHON3_SUFFIX})
     # specify the directory for the module compilation products
     pyre_library_directory(gslmodule extensions)
     # set the include directories

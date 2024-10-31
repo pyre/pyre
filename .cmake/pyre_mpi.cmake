@@ -70,10 +70,9 @@ endfunction(pyre_mpiLib)
 function(pyre_mpiModule)
   # if we have mpi
   if (${MPI_FOUND})
-    Python_add_library(mpimodule MODULE)
+    Python_add_library(mpimodule MODULE WITH_SOABI)
     # adjust the name to match what python expects
     set_target_properties(mpimodule PROPERTIES LIBRARY_OUTPUT_NAME mpi)
-    set_target_properties(mpimodule PROPERTIES SUFFIX ${PYTHON3_SUFFIX})
     # specify the directory for the module compilation products
     pyre_library_directory(mpimodule extensions)
     # set the libraries to link against

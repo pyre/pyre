@@ -157,10 +157,9 @@ endfunction(pyre_pyreLib)
 # build the pyre extension modules
 function(pyre_pyreModule)
   # the pyre bindings
-  Python_add_library(pyremodule MODULE)
+  Python_add_library(pyremodule MODULE WITH_SOABI)
   # adjust the name to match what python expects
   set_target_properties(pyremodule PROPERTIES LIBRARY_OUTPUT_NAME pyre)
-  set_target_properties(pyremodule PROPERTIES SUFFIX ${PYTHON3_SUFFIX})
   # specify the directory for the module compilation products
   pyre_library_directory(pyremodule extensions)
   # set the libraries to link against
@@ -186,10 +185,9 @@ function(pyre_pyreModule)
   )
 
   # host
-  Python_add_library(hostmodule MODULE)
+  Python_add_library(hostmodule MODULE WITH_SOABI)
   # adjust the name to match what python expects
   set_target_properties(hostmodule PROPERTIES LIBRARY_OUTPUT_NAME host)
-  set_target_properties(hostmodule PROPERTIES SUFFIX ${PYTHON3_SUFFIX})
   # specify the directory for the module compilation products
   pyre_library_directory(hostmodule extensions)
   # set the libraries to link against

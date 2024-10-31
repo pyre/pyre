@@ -8,10 +8,9 @@
 function(pyre_h5Module)
   if(HDF5_FOUND)
     # h5
-    Python_add_library(h5module MODULE)
+    Python_add_library(h5module MODULE WITH_SOABI)
     # adjust the name to match what python expects
     set_target_properties(h5module PROPERTIES LIBRARY_OUTPUT_NAME h5)
-    set_target_properties(h5module PROPERTIES SUFFIX ${PYTHON3_SUFFIX})
     # specify the directory for the module compilation products
     pyre_library_directory(h5module extensions)
     # set the libraries to link against
