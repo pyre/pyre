@@ -57,10 +57,9 @@ function(pyre_cudaModule)
   # if the user requested CUDA support
   if(WITH_CUDA)
     # the cuda bindings
-    Python_add_library(cudamodule MODULE)
+    Python_add_library(cudamodule MODULE WITH_SOABI)
     # adjust the name to match what python expects
     set_target_properties(cudamodule PROPERTIES LIBRARY_OUTPUT_NAME cuda)
-    set_target_properties(cudamodule PROPERTIES SUFFIX ${PYTHON3_SUFFIX})
     # specify the directory for the module compilation products
     pyre_library_directory(cudamodule extensions)
     # set the libraries to link against
