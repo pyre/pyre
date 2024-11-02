@@ -28,18 +28,19 @@ pyre::tensor::norm(const tensorT & tensor) -> tensorT::scalar_type
     // helper function
     constexpr auto _norm_square = []<int... I>(
                                       const tensorT & tensor, integer_sequence<I...>) -> T {
+        // get the offset of the {tensorT} packing corresponding to the J-th tensor entry
+        constexpr auto _entry_to_offset = []<int J>() {
+            // ... the offset for the packing of {tensor} of ...
+            return tensorT::layout().offset(
+                // ... the index corresponding to the J-th entry, J = 0, ..., D-1, in a
+                // tensor with canonical layout
+                canonical_tensor_t::layout().index(J));
+        };
+
         // return the sum of all tensor squared components
         return (
-            // sum all the square values ...
-            (pyre::tensor::pow(
-                // ... of {tensor} at...
-                tensor[
-                    // ... the offset for the packing of {tensor} of ...
-                    tensorT::layout().offset(
-                        // ... the index corresponding to the I-th entry, I = 0, ..., D-1, in a
-                        // tensor with canonical layout
-                        canonical_tensor_t::layout().index(I))],
-                2))
+            (tensor[_entry_to_offset.template operator()<I>()]
+             * tensor[_entry_to_offset.template operator()<I>()])
             + ...);
     };
 
