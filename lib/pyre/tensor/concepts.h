@@ -26,7 +26,8 @@ namespace pyre::tensor {
 
     // concept of an improper matrix
     template <class F>
-    concept improper_matrix_c = tensor_c<F> and F::rank == 2 and (F::dims[0] == 1 or F::dims[1] == 1);
+    concept improper_matrix_c =
+        tensor_c<F> and F::rank == 2 and (F::dims[0] == 1 or F::dims[1] == 1);
 
     // concept of a vector
     template <class F>
