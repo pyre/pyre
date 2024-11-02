@@ -109,6 +109,10 @@ namespace pyre::tensor {
             return _layout.offset({ J... });
         }
 
+        // cast to atomic type T (enable the tensor is a scalar)
+        constexpr operator T() const
+            requires(scalar_c<tensor_t>);
+
         // support for ranged for loops
         constexpr const auto begin() const;
         constexpr const auto end() const;

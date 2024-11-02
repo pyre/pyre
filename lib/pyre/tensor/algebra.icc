@@ -104,6 +104,7 @@ namespace {
 template <pyre::tensor::tensor_c tensorT1, pyre::tensor::tensor_c tensorT2>
 constexpr auto
 pyre::tensor::operator==(const tensorT1 & lhs, const tensorT2 & rhs) -> bool
+    requires(tensor_same_shape_c<tensorT1, tensorT2> and !scalar_c<tensorT1>)
 {
     // perform component-by-component comparison
     return _tensor_equal(lhs, rhs);
@@ -125,6 +126,7 @@ namespace {
 template <pyre::tensor::tensor_c tensorT>
 constexpr auto
 pyre::tensor::operator*(const typename tensorT::scalar_type & a, const tensorT & y) -> tensorT
+    requires(!scalar_c<tensorT>)
 {
     // instantiate the result
     tensorT result;
@@ -137,6 +139,7 @@ pyre::tensor::operator*(const typename tensorT::scalar_type & a, const tensorT &
 template <pyre::tensor::tensor_c tensorT>
 constexpr auto
 pyre::tensor::operator*(const tensorT & y, const typename tensorT::scalar_type & a) -> tensorT
+    requires(!scalar_c<tensorT>)
 {
     return a * y;
 }
@@ -145,6 +148,7 @@ pyre::tensor::operator*(const tensorT & y, const typename tensorT::scalar_type &
 template <pyre::tensor::tensor_c tensorT>
 constexpr auto
 pyre::tensor::operator*(const typename tensorT::scalar_type & a, tensorT && y) -> tensorT
+    requires(!scalar_c<tensorT>)
 {
     constexpr int D = tensorT::size;
     _tensor_times_scalar(a, y, y, make_integer_sequence<D> {});
@@ -155,6 +159,7 @@ pyre::tensor::operator*(const typename tensorT::scalar_type & a, tensorT && y) -
 template <pyre::tensor::tensor_c tensorT>
 constexpr auto
 pyre::tensor::operator*(tensorT && y, const typename tensorT::scalar_type & a) -> tensorT
+    requires(!scalar_c<tensorT>)
 {
     return a * std::move(y);
 }
@@ -229,7 +234,7 @@ template <pyre::tensor::tensor_c tensorT1, pyre::tensor::tensor_c tensorT2>
 constexpr auto
 pyre::tensor::operator+(const tensorT1 & y1, const tensorT2 & y2) ->
     typename sum<tensorT1, tensorT2>::type
-    requires(tensorT1::dims == tensorT2::dims)
+    requires(tensor_same_shape_c<tensorT1, tensorT2> and !scalar_c<tensorT1>)
 {
     // compute component-wise summation
     return _tensor_sum(y1, y2);
@@ -240,8 +245,8 @@ template <pyre::tensor::tensor_c tensorT1, pyre::tensor::tensor_c tensorT2>
 constexpr auto
 pyre::tensor::operator+(const tensorT1 & y1, tensorT2 && y2) -> tensorT2
     requires(
-        tensorT1::dims == tensorT2::dims
-        && std::is_same_v<typename sum<tensorT1, tensorT2>::type, tensorT2>)
+        tensor_same_shape_c<tensorT1, tensorT2> and !scalar_c<tensorT1>
+        and std::is_same_v<typename sum<tensorT1, tensorT2>::type, tensorT2>)
 {
     // compute component-wise summation and write the result on y2
     return _tensor_sum(y1, y2, y2);
@@ -252,8 +257,8 @@ template <pyre::tensor::tensor_c tensorT1, pyre::tensor::tensor_c tensorT2>
 constexpr auto
 pyre::tensor::operator+(tensorT1 && y1, const tensorT2 & y2) -> tensorT1
     requires(
-        tensorT1::dims == tensorT2::dims
-        && std::is_same_v<typename sum<tensorT1, tensorT2>::type, tensorT1>)
+        tensor_same_shape_c<tensorT1, tensorT2> and !scalar_c<tensorT1>
+        and std::is_same_v<typename sum<tensorT1, tensorT2>::type, tensorT1>)
 {
     // easy enough
     return y2 + std::move(y1);
@@ -264,8 +269,8 @@ template <pyre::tensor::tensor_c tensorT1, pyre::tensor::tensor_c tensorT2>
 constexpr auto
 pyre::tensor::operator+(tensorT1 && y1, tensorT2 && y2) -> tensorT1
     requires(
-        tensorT1::dims == tensorT2::dims
-        && std::is_same_v<typename sum<tensorT1, tensorT2>::type, tensorT1>)
+        tensor_same_shape_c<tensorT1, tensorT2> and !scalar_c<tensorT1>
+        and std::is_same_v<typename sum<tensorT1, tensorT2>::type, tensorT1>)
 {
     // pass down y1 as temporary and y2 as const reference
     return std::move(y1) + std::as_const(y2);
@@ -276,9 +281,9 @@ template <pyre::tensor::tensor_c tensorT1, pyre::tensor::tensor_c tensorT2>
 constexpr auto
 pyre::tensor::operator+(tensorT1 && y1, tensorT2 && y2) -> tensorT2
     requires(
-        tensorT1::dims == tensorT2::dims
-        && std::is_same_v<typename sum<tensorT1, tensorT2>::type, tensorT2>
-        && !std::is_same_v<typename sum<tensorT1, tensorT2>::type, tensorT1>)
+        tensor_same_shape_c<tensorT1, tensorT2> and !scalar_c<tensorT1>
+        and std::is_same_v<typename sum<tensorT1, tensorT2>::type, tensorT2>
+        and !std::is_same_v<typename sum<tensorT1, tensorT2>::type, tensorT1>)
 {
     // pass down y2 as temporary and y1 as const reference
     return std::move(y2) + std::as_const(y1);
@@ -288,6 +293,7 @@ pyre::tensor::operator+(tensorT1 && y1, tensorT2 && y2) -> tensorT2
 template <pyre::tensor::tensor_c tensorT>
 constexpr auto
 pyre::tensor::operator-(const tensorT & y) -> tensorT
+    requires(!scalar_c<tensorT>)
 {
     // get the tensor size (number of components)
     constexpr int D = tensorT::size;
@@ -307,6 +313,7 @@ pyre::tensor::operator-(const tensorT & y) -> tensorT
 template <pyre::tensor::tensor_c tensorT>
 constexpr auto
 pyre::tensor::operator-(tensorT && y) -> tensorT
+    requires(!scalar_c<tensorT>)
 {
     // write the result on the temporary
     y = -std::as_const(y);
@@ -318,7 +325,7 @@ pyre::tensor::operator-(tensorT && y) -> tensorT
 template <pyre::tensor::tensor_c tensorT1, pyre::tensor::tensor_c tensorT2>
 constexpr auto
 pyre::tensor::operator-(const tensorT1 & y1, const tensorT2 & y2) -> auto
-    requires(tensorT1::dims == tensorT2::dims)
+    requires(tensor_same_shape_c<tensorT1, tensorT2> and !scalar_c<tensorT1>)
 {
     // std::cout << "operator- & &" << std::endl;
     return y1 + (-y2);
@@ -328,7 +335,7 @@ pyre::tensor::operator-(const tensorT1 & y1, const tensorT2 & y2) -> auto
 template <pyre::tensor::tensor_c tensorT1, pyre::tensor::tensor_c tensorT2>
 constexpr auto
 pyre::tensor::operator-(tensorT1 && y1, const tensorT2 & y2) -> auto
-    requires(tensorT1::dims == tensorT2::dims)
+    requires(tensor_same_shape_c<tensorT1, tensorT2> and !scalar_c<tensorT1>)
 {
     // std::cout << "operator- && &" << std::endl;
     return std::move(y1) + (-y2);
@@ -338,7 +345,7 @@ pyre::tensor::operator-(tensorT1 && y1, const tensorT2 & y2) -> auto
 template <pyre::tensor::tensor_c tensorT1, pyre::tensor::tensor_c tensorT2>
 constexpr auto
 pyre::tensor::operator-(const tensorT1 & y1, tensorT2 && y2) -> auto
-    requires(tensorT1::dims == tensorT2::dims)
+    requires(tensor_same_shape_c<tensorT1, tensorT2> and !scalar_c<tensorT1>)
 {
     // std::cout << "operator- & &&" << std::endl;
     return y1 + (-std::move(y2));
@@ -348,7 +355,7 @@ pyre::tensor::operator-(const tensorT1 & y1, tensorT2 && y2) -> auto
 template <pyre::tensor::tensor_c tensorT1, pyre::tensor::tensor_c tensorT2>
 constexpr auto
 pyre::tensor::operator-(tensorT1 && y1, tensorT2 && y2) -> auto
-    requires(tensorT1::dims == tensorT2::dims)
+    requires(tensor_same_shape_c<tensorT1, tensorT2> and !scalar_c<tensorT1>)
 {
     // std::cout << "operator- && &&" << std::endl;
     return std::move(y1) + std::move(-std::move(y2));
@@ -376,6 +383,7 @@ pyre::tensor::operator-=(tensorT & lhs, TENSOR && rhs) -> tensorT &
 template <pyre::tensor::tensor_c tensorT>
 constexpr auto
 pyre::tensor::operator/(const tensorT & y, typename tensorT::scalar_type a) -> tensorT
+    requires(!scalar_c<tensorT>)
 {
     return (1.0 / a) * y;
 }
@@ -384,6 +392,7 @@ pyre::tensor::operator/(const tensorT & y, typename tensorT::scalar_type a) -> t
 template <pyre::tensor::tensor_c tensorT>
 constexpr auto
 pyre::tensor::operator/(tensorT && y, typename tensorT::scalar_type a) -> tensorT
+    requires(!scalar_c<tensorT>)
 {
     return (1.0 / a) * std::move(y);
 }
@@ -766,15 +775,11 @@ pyre::tensor::determinant(const matrixT & A) -> typename matrixT::scalar_type
     return a11 * a22 - a12 * a21;
 }
 
-template <pyre::tensor::square_matrix_c matrixT>
+template <pyre::tensor::scalar_c scalarT>
 constexpr auto
-pyre::tensor::determinant(const matrixT & A) -> typename matrixT::scalar_type
-    requires(matrixT::dims[0] == 1) // 1x1 matrix
+pyre::tensor::determinant(const scalarT & A) -> typename scalarT::scalar_type
 {
-    // the type of matrix {A}
-    using matrix_t = matrixT;
-
-    return A[matrix_t::template getOffset<0, 0>()];
+    return A;
 }
 
 template <pyre::tensor::square_matrix_c matrixT>
@@ -841,6 +846,14 @@ pyre::tensor::inverse(const matrixT & A) -> matrixT
     return invA;
 }
 
+template <pyre::tensor::scalar_c scalarT>
+constexpr auto
+pyre::tensor::inverse(const scalarT & A) -> scalarT
+{
+    return scalarT { 1.0 / A };
+}
+
+
 template <pyre::tensor::diagonal_matrix_c matrixT>
 constexpr auto
 pyre::tensor::inverse(const matrixT & A) -> matrixT
@@ -881,6 +894,13 @@ pyre::tensor::trace(const matrixT & A) -> typename matrixT::scalar_type
         return (A[matrixT::template getOffset<J, J>()] + ...);
     };
     return _trace(make_integer_sequence<D> {});
+}
+
+template <pyre::tensor::scalar_c scalarT>
+constexpr auto
+pyre::tensor::trace(const scalarT & A) -> typename scalarT::scalar_type
+{
+    return A;
 }
 
 template <int D1, int D2, typename T, class packingT>
