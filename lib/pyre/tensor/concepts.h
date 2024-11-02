@@ -46,6 +46,10 @@ namespace pyre::tensor {
     template <class F>
     concept diagonal_matrix_c = square_matrix_c<F> and F::diagonal;
 
+    // concept of a symmetric matrix
+    template <class F>
+    concept symmetric_matrix_c = square_matrix_c<F> and F::symmetric;
+
 } // namespace pyre::tensor
 
 
