@@ -314,6 +314,11 @@ namespace pyre::tensor {
     constexpr auto operator*(const tensorT & C, const matrixT & A) ->
         typename contraction<tensorT, matrixT>::type;
 
+    // second-order tensor contraction with fourth-order tensor
+    template <matrix_c matrixT, fourth_order_tensor_c tensorT>
+    constexpr auto operator*(const matrixT & A, const tensorT & C) ->
+        typename contraction<matrixT, tensorT>::type;
+
 } // namespace pyre::tensor
 
 
