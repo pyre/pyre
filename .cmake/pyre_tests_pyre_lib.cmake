@@ -406,6 +406,9 @@ pyre_add_definitions(tests/pyre.lib/tensor/tensor_matrix_product.cc ${definition
 pyre_test_driver_cxx20(tests/pyre.lib/tensor/tensor_matrix_vector_product.cc)
 pyre_add_definitions(tests/pyre.lib/tensor/tensor_matrix_vector_product.cc ${definitions})
 
+pyre_test_driver_cxx20(tests/pyre.lib/tensor/tensor_fourth_order_contraction.cc)
+pyre_add_definitions(tests/pyre.lib/tensor/tensor_fourth_order_contraction.cc ${definitions})
+
 pyre_test_driver_cxx20(tests/pyre.lib/tensor/tensor_print.cc)
 pyre_add_definitions(tests/pyre.lib/tensor/tensor_print.cc ${definitions})
 

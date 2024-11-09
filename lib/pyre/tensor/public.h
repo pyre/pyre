@@ -33,6 +33,8 @@
 #include "utilities.h"
 // the {constexpr} implementation of transcendental functions (until c++26)
 #include "transcendental.h"
+// {constexpr} version of {for} loops
+#include "constexpr_for.h"
 // the algebra on tensors
 #include "algebra.h"
 // the quaternions

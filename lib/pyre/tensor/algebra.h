@@ -309,6 +309,11 @@ namespace pyre::tensor {
             std::is_same_v<typename matrixT::pack_t, pyre::grid::symmetric_t<2>>
             || std::is_same_v<typename matrixT::pack_t, pyre::grid::diagonal_t<2>>);
 
+    // fourth-order tensor contraction with second-order tensor
+    template <fourth_order_tensor_c tensorT, matrix_c matrixT>
+    constexpr auto operator*(const tensorT & C, const matrixT & A) ->
+        typename contraction<tensorT, matrixT>::type;
+
 } // namespace pyre::tensor
 
 
