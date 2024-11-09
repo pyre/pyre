@@ -54,6 +54,10 @@ namespace pyre::tensor {
     template <class F1, class F2>
     concept tensor_same_shape_c = tensor_c<F1> and tensor_c<F2> and F1::dims == F2::dims;
 
+    // concept of a fourth-order tensor
+    template <class F>
+    concept fourth_order_tensor_c = tensor_c<F> and F::rank == 4;
+
 } // namespace pyre::tensor
 
 

@@ -1213,6 +1213,23 @@ pyre::tensor::function(const matrixT & A, auto f) -> auto
     return symmetric(P * lambda * inverse(P));
 }
 
+// fourth-order tensor contraction with second-order tensor
+template <pyre::tensor::fourth_order_tensor_c tensorT, pyre::tensor::matrix_c matrixT>
+constexpr auto
+pyre::tensor::operator*(const tensorT & C, const matrixT & A) ->
+    typename contraction<tensorT, matrixT>::type
+{
+    using output_type = typename contraction<tensorT, matrixT>::type;
+    output_type result;
+
+    constexpr_for_4<tensorT::dims[0], tensorT::dims[1], tensorT::dims[2], tensorT::dims[3]>(
+        [&C, &A, &result]<int i, int j, int k, int l>() {
+            result[{ i, j }] += C[{ i, j, k, l }] * A[{ k, l }];
+        });
+
+    //
+    return result;
+}
 
 #endif
 
