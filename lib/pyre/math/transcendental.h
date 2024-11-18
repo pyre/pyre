@@ -7,11 +7,11 @@
 // Constexpr implementation of transcendental functions until C++26 implements them
 
 // code guard
-#if !defined(pyre_tensor_transcendental_h)
-#define pyre_tensor_transcendental_h
+#if !defined(pyre_math_transcendental_h)
+#define pyre_math_transcendental_h
 
 
-namespace pyre::tensor {
+namespace pyre::math {
 
     // helper function to compute factorial
     constexpr double factorial(int n)
@@ -79,7 +79,7 @@ namespace pyre::tensor {
             return std::log(x);
         }
     }
-    
+
     // helper function to compute sqrt using Newton's method
     constexpr double sqrt_newton(double x, double guess = 1.0, int iterations = 15)
     {
@@ -207,7 +207,7 @@ namespace pyre::tensor {
         }
     }
 
-} // namespace pyre::tensor
+} // namespace pyre::math
 
 
 #endif

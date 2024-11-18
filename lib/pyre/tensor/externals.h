@@ -11,7 +11,6 @@
 
 // externals
 #include <cassert>
-#include <cmath>
 #include <functional>
 #include <complex>
 
@@ -19,6 +18,7 @@
 #include <pyre/journal.h>
 #include <pyre/grid.h>
 #include <pyre/algebra/epsilon.h>
+#include <pyre/math.h>
 
 
 // aliases that define implementation choices
