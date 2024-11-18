@@ -45,7 +45,7 @@ pyre::tensor::norm(const tensorT & tensor) -> tensorT::scalar_type
     };
 
     // take the square root of the squared norm
-    return pyre::tensor::sqrt(_norm_square(tensor, make_integer_sequence<D> {}));
+    return pyre::math::sqrt(_norm_square(tensor, make_integer_sequence<D> {}));
 }
 
 // normalize a tensor with its 2-norm
@@ -997,7 +997,7 @@ pyre::tensor::eigenvalues(const symmetric_matrix_t<2, T> & A) -> vector_t<2, T>
     T a22 = A[matrix_input_t::template getOffset<1, 1>()];
     T a12 = A[matrix_input_t::template getOffset<0, 1>()];
 
-    T delta = pyre::tensor::sqrt(4.0 * a12 * a12 + (a11 - a22) * (a11 - a22));
+    T delta = pyre::math::sqrt(4.0 * a12 * a12 + (a11 - a22) * (a11 - a22));
     return vector_t<2, T> { 0.5 * (a11 + a22 + delta), 0.5 * (a11 + a22 - delta) };
 }
 
@@ -1012,7 +1012,7 @@ pyre::tensor::eigenvectors(const symmetric_matrix_t<2, T> & A) -> matrix_t<2, 2,
     T a22 = A[matrix_input_t::template getOffset<1, 1>()];
     T a12 = A[matrix_input_t::template getOffset<0, 1>()];
 
-    T delta = pyre::tensor::sqrt(4.0 * a12 * a12 + (a11 - a22) * (a11 - a22));
+    T delta = pyre::math::sqrt(4.0 * a12 * a12 + (a11 - a22) * (a11 - a22));
 
     // the type of eigenvectors matrix
     using matrix_eigenvector_t = matrix_t<2, 2, T>;
@@ -1048,15 +1048,15 @@ pyre::tensor::eigenvalues(const symmetric_matrix_t<3, T> & A) -> vector_t<3, T>
 
     T p = c2 * c2 - 3.0 * c1;
     T q = -13.5 * c0 - c2 * c2 * c2 + 4.5 * c1 * c2;
-    T num = pyre::tensor::sqrt(27.0 * (0.25 * c1 * c1 * (p - c1) + c0 * (q + 6.75 * c0)));
+    T num = pyre::math::sqrt(27.0 * (0.25 * c1 * c1 * (p - c1) + c0 * (q + 6.75 * c0)));
     T den = q;
-    T phi = 1.0 / 3.0 * pyre::tensor::atan2(num, den);
+    T phi = 1.0 / 3.0 * pyre::math::atan2(num, den);
 
-    T x1 = 2.0 * pyre::tensor::cos(phi);
-    T x2 = -pyre::tensor::cos(phi) - pyre::tensor::sqrt(3.0) * pyre::tensor::sin(phi);
-    T x3 = -pyre::tensor::cos(phi) + pyre::tensor::sqrt(3.0) * pyre::tensor::sin(phi);
+    T x1 = 2.0 * pyre::math::cos(phi);
+    T x2 = -pyre::math::cos(phi) - pyre::math::sqrt(3.0) * pyre::math::sin(phi);
+    T x3 = -pyre::math::cos(phi) + pyre::math::sqrt(3.0) * pyre::math::sin(phi);
 
-    T p_sqrt_3 = pyre::tensor::sqrt(p) / 3.0;
+    T p_sqrt_3 = pyre::math::sqrt(p) / 3.0;
 
     return vector_t<3, T> { p_sqrt_3 * x1 - c2 / 3.0, p_sqrt_3 * x2 - c2 / 3.0,
                             p_sqrt_3 * x3 - c2 / 3.0 };
