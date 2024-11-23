@@ -11,36 +11,34 @@
 #define pyre_math_transcendental_h
 
 
-// TOFIX: switch to auto ->
-
 namespace pyre::math {
 
     // function to compute factorial of an integer
-    constexpr double factorial(int n);
+    constexpr auto factorial(int n) -> double;
 
     // {constexpr} pow for integer exponents
-    constexpr double pow(double base, int exp);
+    constexpr auto pow(double base, int exp) -> double;
 
     // {constexpr} exp function
-    constexpr double exp(double x);
+    constexpr auto exp(double x) -> double;
 
     // {constexpr} log function
-    constexpr double log(double x);
+    constexpr auto log(double x) -> double;
 
     // {constexpr} sqrt function
-    constexpr double sqrt(double x);
+    constexpr auto sqrt(double x) -> double;
 
     // {constexpr} sin function
-    constexpr double sin(double x);
+    constexpr auto sin(double x) -> double;
 
     // {constexpr} cos function
-    constexpr double cos(double x);
+    constexpr auto cos(double x) -> double;
 
     // {constexpr} atan function
-    constexpr double atan(double x);
+    constexpr auto atan(double x) -> double;
 
     // {constexpr} atan2 function
-    constexpr double atan2(double y, double x);
+    constexpr auto atan2(double y, double x) -> double;
 
 } // namespace pyre::math
 
