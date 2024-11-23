@@ -22,9 +22,9 @@ namespace {
     // helper function to compute power
     constexpr auto pow_helper(double base, int exp) -> double
     {
-        return (exp == 0) ? 1 :
+        return (exp == 0) ? 1.0 :
                (exp > 0)  ? base * pow_helper(base, exp - 1) :
-                            1 / pow_helper(base, -exp);
+                            1.0 / pow_helper(base, -exp);
     }
 } // namespace
 
@@ -41,11 +41,11 @@ pyre::math::pow(double base, int exp) -> double
 
 namespace {
     // helper function to compute the series sum
-    constexpr auto exp_series(double x, int terms = 15) -> double
+    constexpr auto exp_taylor(double x, int terms = 15) -> double
     {
-        return (terms == 0) ? 1 :
+        return (terms == 0) ? 1.0 :
                               pyre::math::pow(x, terms) / pyre::math::factorial(terms)
-                                  + exp_series(x, terms - 1);
+                                  + exp_taylor(x, terms - 1);
     }
 } // namespace
 
@@ -54,7 +54,7 @@ constexpr auto
 pyre::math::exp(double x) -> double
 {
     if (std::is_constant_evaluated()) {
-        return exp_series(x);
+        return exp_taylor(x);
     } else {
         return std::exp(x);
     }
@@ -74,9 +74,9 @@ namespace {
     // {constexpr} log function
     constexpr auto log_helper(double x) -> double
     {
-        return (x < 0)  ? std::numeric_limits<double>::quiet_NaN() :
-               (x == 0) ? -std::numeric_limits<double>::infinity() :
-               (x == 1) ? 0.0 :
+        return (x < 0.0)  ? std::numeric_limits<double>::quiet_NaN() :
+               (x == 0.0) ? -std::numeric_limits<double>::infinity() :
+               (x == 1.0) ? 0.0 :
                           log_newton(x);
     }
 } // namespace
@@ -103,7 +103,7 @@ namespace {
     // {constexpr} sqrt function
     constexpr auto sqrt_helper(double x) -> double
     {
-        return (x < 0) ? std::numeric_limits<double>::quiet_NaN() : (x == 0) ? 0.0 : sqrt_newton(x);
+        return (x < 0.0) ? std::numeric_limits<double>::quiet_NaN() : (x == 0.0) ? 0.0 : sqrt_newton(x);
     }
 } // namespace
 
@@ -124,10 +124,11 @@ namespace {
     {
         double result = 0.0;
         double power = x;
+        int sign = 1;
         for (int i = 0; i < terms; ++i) {
-            int sign = (i % 2 == 0) ? 1 : -1;
             result += sign * power / pyre::math::factorial(2 * i + 1);
             power *= x * x;
+            sign = -sign;
         }
         return result;
     }
@@ -150,10 +151,11 @@ namespace {
     {
         double result = 0.0;
         double power = 1.0;
+        int sign = 1;
         for (int i = 0; i < terms; ++i) {
-            int sign = (i % 2 == 0) ? 1 : -1;
             result += sign * power / pyre::math::factorial(2 * i);
             power *= x * x;
+            sign = -sign;
         }
         return result;
     }
@@ -175,9 +177,9 @@ namespace {
     constexpr auto atan_poly(double x, int terms = 15) -> double
     {
         if (x > 1.0) {
-            return M_PI / 2 - pyre::math::atan(1 / x);
+            return M_PI / 2.0 - pyre::math::atan(1.0 / x);
         } else if (x < -1.0) {
-            return -M_PI / 2 - pyre::math::atan(1 / x);
+            return -M_PI / 2.0 - pyre::math::atan(1.0 / x);
         } else {
             double result = 0.0;
             double term = x;
@@ -204,19 +206,19 @@ pyre::math::atan(double x) -> double
 }
 
 namespace {
-    // Taylor series expansion for arctangent
-    constexpr auto atan2_poly(double y, double x) -> double
+    // manage the cases for the specific quadrants
+    constexpr auto atan2_helper(double y, double x) -> double
     {
-        if (x > 0) {
+        if (x > 0.0) {
             return pyre::math::atan(y / x);
-        } else if (x < 0 && y >= 0) {
+        } else if (x < 0.0 && y >= 0.0) {
             return pyre::math::atan(y / x) + M_PI;
-        } else if (x < 0 && y < 0) {
+        } else if (x < 0.0 && y < 0.0) {
             return pyre::math::atan(y / x) - M_PI;
-        } else if (x == 0 && y > 0) {
-            return M_PI / 2;
-        } else if (x == 0 && y < 0) {
-            return -M_PI / 2;
+        } else if (x == 0.0 && y > 0.0) {
+            return M_PI / 2.0;
+        } else if (x == 0.0 && y < 0.0) {
+            return -M_PI / 2.0;
         }
         // undefined case when x == 0 and y == 0
         return 0.0;
@@ -228,7 +230,7 @@ constexpr auto
 pyre::math::atan2(double y, double x) -> double
 {
     if (std::is_constant_evaluated()) {
-        return atan2_poly(y, x);
+        return atan2_helper(y, x);
     } else {
         return std::atan2(y, x);
     }
