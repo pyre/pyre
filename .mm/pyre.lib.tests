@@ -49,10 +49,12 @@ pyre.lib.tests.drivers.exclude += \
     tensor/tensor_cayley_hamilton_theorem.cc \
     tensor/tensor_compact_arithmetics.cc \
     tensor/tensor_concepts.cc \
+    tensor/tensor_contractions.cc \
     tensor/tensor_diagonal_inverse.cc \
     tensor/tensor_dyadic.cc \
     tensor/tensor_eigenvalues.cc \
     tensor/tensor_eigenvalues_transformation.cc \
+    tensor/tensor_fourth_order_contraction.cc \
     tensor/tensor_identities.cc \
     tensor/tensor_iterators.cc \
     tensor/tensor_linear_system.cc \
