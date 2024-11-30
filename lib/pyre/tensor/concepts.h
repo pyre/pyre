@@ -58,6 +58,16 @@ namespace pyre::tensor {
     template <class F>
     concept fourth_order_tensor_c = tensor_c<F> and F::rank == 4;
 
+    // concept of a compatible pair of tensors
+    // (an instance of {tensorT1} can be assigned to an instance of {tensorT2})
+    template <class tensorT1, class tensorT2>
+    concept compatible_tensor_c =
+        tensor_c<tensorT1> and tensor_c<tensorT2>
+        and std::is_same_v<
+            typename repacking_sum<
+                typename tensorT1::pack_t, typename tensorT2::pack_t>::packing_type,
+            typename tensorT2::pack_t>;
+
 } // namespace pyre::tensor
 
 

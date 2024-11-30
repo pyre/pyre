@@ -80,7 +80,7 @@ namespace pyre::tensor {
         // copy constructor from a tensor with (potentially) different packing
         template <tensor_c tensorT>
         constexpr Tensor(const tensorT & rhs)
-            requires(std::is_same_v<typename sum<tensor_t, tensorT>::type, tensor_t>);
+            requires(compatible_tensor_c<tensorT, tensor_t>);
 
         // move constructor from a tensor with exact same packing
         template <tensor_c tensorT>
@@ -90,7 +90,7 @@ namespace pyre::tensor {
         // copy assignment operator from a tensor with (potentially) different packing
         template <tensor_c tensorT>
         constexpr Tensor & operator=(const tensorT & rhs)
-            requires(std::is_same_v<typename sum<tensor_t, tensorT>::type, tensor_t>);
+            requires(compatible_tensor_c<tensorT, tensor_t>);
 
         // move assignment operator from a tensor with exact same packing
         template <tensor_c tensorT>
