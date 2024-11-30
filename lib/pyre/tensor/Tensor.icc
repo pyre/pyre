@@ -98,11 +98,9 @@ pyre::tensor::Tensor<T, packingT, I...>::operator=(const tensorT & rhs)
         // helper function to assign component at offset K (enumeration relative to the {lhs} packing)
         constexpr auto _component_assignment = []<int K>(
                                                    tensor1_t & lhs, const tensor2_t & rhs) -> void {
-            // TOFIX: perhaps we should put this into a function
-            // get the index corresponding to the offset K in the canonical packing
-            constexpr auto index = tensor1_t::layout().index(K);
-            // map the index into the offset for the packing of {rhs}
-            constexpr auto K2 = tensor2_t::layout().offset(index);
+            // given {K}, offset in the {tensor1_t} packing, get the offset for the same component
+            // in the {tensor2_t} packing
+            constexpr auto K2 = map_offset<K, tensor1_t, tensor2_t>();
             // assign the right-hand side to the left-hand side
             lhs[K] = rhs[K2];
             // all done
