@@ -54,6 +54,90 @@ constexpr pyre::tensor::Tensor<T, packingT, I...>::Tensor(T2 (&&args)[S]) : Tens
     return;
 }
 
+// copy constructor from a tensor with (potentially) different packing
+template <typename T, class packingT, int... I>
+template <pyre::tensor::tensor_c tensorT>
+constexpr pyre::tensor::Tensor<T, packingT, I...>::Tensor(const tensorT & rhs)
+    requires(std::is_same_v<typename sum<tensor_t, tensorT>::type, tensor_t>)
+    : _data()
+{
+    // assign rhs to this
+    *this = rhs;
+
+    // all done
+    return;
+}
+
+// move constructor from a tensor with exact same packing
+template <typename T, class packingT, int... I>
+template <pyre::tensor::tensor_c tensorT>
+constexpr pyre::tensor::Tensor<T, packingT, I...>::Tensor(tensorT && other)
+    requires(std::is_same_v<tensor_t, tensorT>)
+    : _data(std::move(other._data))
+{}
+
+// copy assignment operator from a tensor with (potentially) different packing
+template <typename T, class packingT, int... I>
+template <pyre::tensor::tensor_c tensorT>
+constexpr pyre::tensor::Tensor<T, packingT, I...> &
+pyre::tensor::Tensor<T, packingT, I...>::operator=(const tensorT & rhs)
+// TOFIX: define a concept of {compatible} tensors
+    requires(std::is_same_v<typename pyre::tensor::sum<tensor_t, tensorT>::type, tensor_t>)
+{
+    // the type of tensor {lhs} (my type)
+    using tensor1_t = tensor_t;
+    // the type of tensor {rhs} (the type of the right-hand side)
+    using tensor2_t = tensorT;
+
+    // the number of components of the target tensor (lhs)
+    constexpr int D = tensor1_t::size;
+
+    // helper function to perform component-by-component assignment
+    constexpr auto _component_wise_assignment = []<int... J>(
+                                                    tensor1_t & lhs, const tensor2_t & rhs,
+                                                    pyre::tensor::integer_sequence<J...>) -> void {
+        // helper function to assign component at offset K (enumeration relative to the {lhs} packing)
+        constexpr auto _component_assignment = []<int K>(
+                                                   tensor1_t & lhs, const tensor2_t & rhs) -> void {
+            // TOFIX: perhaps we should put this into a function
+            // get the index corresponding to the offset K in the canonical packing
+            constexpr auto index = tensor1_t::layout().index(K);
+            // map the index into the offset for the packing of {rhs}
+            constexpr auto K2 = tensor2_t::layout().offset(index);
+            // assign the right-hand side to the left-hand side
+            lhs[K] = rhs[K2];
+            // all done
+            return;
+        };
+
+        // do assignment for all components
+        ((_component_assignment.template operator()<J>(lhs, rhs)), ...);
+
+        // all done
+        return;
+    };
+
+    // perform component-by-component assignment
+    _component_wise_assignment(*this, rhs, pyre::tensor::make_integer_sequence<D> {});
+
+    // all done
+    return *this;
+}
+
+// move assignment operator from a tensor with exact same packing
+template <typename T, class packingT, int... I>
+template <pyre::tensor::tensor_c tensorT>
+constexpr pyre::tensor::Tensor<T, packingT, I...> &
+pyre::tensor::Tensor<T, packingT, I...>::operator=(tensorT && other)
+    requires(std::is_same_v<tensor_t, tensorT>)
+{
+    // move the data
+    _data = std::move(other._data);
+
+    // all done
+    return *this;
+}
+
 template <typename T, class packingT, int... I>
 constexpr pyre::tensor::Tensor<T, packingT, I...>::~Tensor()
 {}

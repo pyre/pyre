@@ -59,6 +59,7 @@ pyre.lib.tests.drivers.exclude += \
     tensor/tensor_iterators.cc \
     tensor/tensor_linear_system.cc \
     tensor/tensor_literals.cc \
+    tensor/tensor_matrix_assignment.cc \
     tensor/tensor_matrix_equal.cc \
     tensor/tensor_matrix_norm.cc \
     tensor/tensor_matrix_vector_product.cc \
