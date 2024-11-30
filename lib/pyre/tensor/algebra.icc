@@ -82,12 +82,12 @@ namespace {
             // helper function to sum of component K (enumeration relative to the repacking)
             constexpr auto _component_equal = []<int K>(
                                                   const auto & lhs, const auto & rhs) -> bool {
-                // get the index corresponding to the offset K in the repacking
-                constexpr auto index = repacked_tensor_t::layout().index(K);
-                // map the index into the offset for the packing of y1
-                constexpr auto K1 = tensor1_t::layout().offset(index);
-                // map the index into the offset for the packing of y2
-                constexpr auto K2 = tensor2_t::layout().offset(index);
+                // given {K}, offset in the {repacked_tensor_t} packing, get the offset for the same
+                // component for the packing of {y1}
+                constexpr auto K1 = pyre::tensor::map_offset<K, repacked_tensor_t, tensor1_t>();
+                // given {K}, offset in the {repacked_tensor_t} packing, get the offset for the same
+                // component for the packing of {y2}
+                constexpr auto K2 = pyre::tensor::map_offset<K, repacked_tensor_t, tensor2_t>();
                 // all done
                 return lhs[K1] == rhs[K2];
             };
@@ -187,16 +187,14 @@ namespace {
             // helper function to sum of component K (enumeration relative to the repacking)
             constexpr auto _component_sum =
                 []<int K>(const tensorT1 & y1, const tensorT2 & y2, result_tensor_t & result) {
-                    // get the index corresponding to the offset K in the repacking
-                    constexpr auto index = result_tensor_t::layout().index(K);
-                    // map the index into the offset for the packing of y1
-                    constexpr auto K1 = tensorT1::layout().offset(index);
-                    // map the index into the offset for the packing of y2
-                    constexpr auto K2 = tensorT2::layout().offset(index);
-
+                    // given {K}, offset in the {result_tensor_t} packing, get the offset for the
+                    // same component for the packing of {y1}
+                    constexpr auto K1 = pyre::tensor::map_offset<K, result_tensor_t, tensorT1>();
+                    // given {K}, offset in the {result_tensor_t} packing, get the offset for the
+                    // same component for the packing of {y2}
+                    constexpr auto K2 = pyre::tensor::map_offset<K, result_tensor_t, tensorT2>();
                     // perform the sum of the corresponding entries
                     result[K] = y1[K1] + y2[K2];
-
                     // all done
                     return;
                 };
