@@ -58,7 +58,7 @@ constexpr pyre::tensor::Tensor<T, packingT, I...>::Tensor(T2 (&&args)[S]) : Tens
 template <typename T, class packingT, int... I>
 template <pyre::tensor::tensor_c tensorT>
 constexpr pyre::tensor::Tensor<T, packingT, I...>::Tensor(const tensorT & rhs)
-    requires(std::is_same_v<typename sum<tensor_t, tensorT>::type, tensor_t>)
+    requires(compatible_tensor_c<tensorT, tensor_t>)
     : _data()
 {
     // assign rhs to this
@@ -81,8 +81,7 @@ template <typename T, class packingT, int... I>
 template <pyre::tensor::tensor_c tensorT>
 constexpr pyre::tensor::Tensor<T, packingT, I...> &
 pyre::tensor::Tensor<T, packingT, I...>::operator=(const tensorT & rhs)
-// TOFIX: define a concept of {compatible} tensors
-    requires(std::is_same_v<typename pyre::tensor::sum<tensor_t, tensorT>::type, tensor_t>)
+    requires(compatible_tensor_c<tensorT, tensor_t>)
 {
     // the type of tensor {lhs} (my type)
     using tensor1_t = tensor_t;
