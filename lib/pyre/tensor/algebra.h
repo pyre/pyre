@@ -19,6 +19,11 @@ namespace pyre::tensor {
     template <tensor_c tensorT>
     constexpr auto normalize(const tensorT & tensor) -> tensorT;
 
+    // dot product of tensors
+    template <tensor_c tensorT1, tensor_c tensorT2>
+    constexpr auto dot(const tensorT1 & y1, const tensorT2 & y2)
+        requires(tensor_same_shape_c<tensorT1, tensorT2> and !scalar_c<tensorT1>);
+
     // tensors operator==
     template <tensor_c tensorT1, tensor_c tensorT2>
     constexpr auto operator==(const tensorT1 & lhs, const tensorT2 & rhs) -> bool
