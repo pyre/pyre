@@ -68,6 +68,25 @@ namespace pyre::tensor {
         return _make_ones(make_integer_sequence<tensorT::size> {});
     }
 
+    // returns a tensor of class {tensorT} filled with random numbers
+    template <tensor_c tensorT>
+    auto random(const typename tensorT::scalar_type amplitude) -> tensorT
+    {
+        // the scalar type of the tensor
+        using scalar_type = typename tensorT::scalar_type;
+
+        auto _make_random = [&amplitude]<int... J>(integer_sequence<J...>) -> tensorT {
+            auto fill_random = [&amplitude]<int>() -> scalar_type {
+                return amplitude * (2.0 * (scalar_type) rand() / RAND_MAX - 1.0);
+            };
+            // return a tensor filled with random numbers
+            return tensorT(fill_random.template operator()<J>()...);
+        };
+
+        // fill tensor with random numbers
+        return _make_random(make_integer_sequence<tensorT::size> {});
+    }
+
     namespace {
         template <class tensorT, int... I>
         constexpr auto make_basis_element_implementation() -> tensorT
