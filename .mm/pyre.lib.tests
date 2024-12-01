@@ -51,6 +51,7 @@ pyre.lib.tests.drivers.exclude += \
     tensor/tensor_concepts.cc \
     tensor/tensor_contractions.cc \
     tensor/tensor_diagonal_inverse.cc \
+    tensor/tensor_dot.cc \
     tensor/tensor_dyadic.cc \
     tensor/tensor_eigenvalues.cc \
     tensor/tensor_eigenvalues_transformation.cc \

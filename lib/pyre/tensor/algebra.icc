@@ -165,6 +165,41 @@ pyre::tensor::operator*(tensorT && y, const typename tensorT::scalar_type & a) -
     return a * std::move(y);
 }
 
+// dot product of tensors
+template <pyre::tensor::tensor_c tensorT1, pyre::tensor::tensor_c tensorT2>
+constexpr auto
+pyre::tensor::dot(const tensorT1 & y1, const tensorT2 & y2)
+    requires(tensor_same_shape_c<tensorT1, tensorT2> and !scalar_c<tensorT1>)
+{
+    // an equivalent canonically packed tensor
+    using canonical_repacking_t = typename tensorT1::canonical_tensor_t;
+    // the number of components of the equivalent canonically packed tensor
+    constexpr int D = canonical_repacking_t::size;
+
+    // helper function to sum component-by-component product
+    constexpr auto _component_wise_dot_sum = []<int... J>(
+                                                 const tensorT1 & lhs, const tensorT2 & rhs,
+                                                 pyre::tensor::integer_sequence<J...>) {
+        // helper function to sum of component K (enumeration relative to the repacking)
+        constexpr auto _component_dot = []<int K>(const tensorT1 & lhs, const tensorT2 & rhs) {
+            // given {K}, offset in the {canonical_repacking_t} packing, get the offset for the same
+            // component for the packing of {lhs}
+            constexpr auto K1 = pyre::tensor::map_offset<K, canonical_repacking_t, tensorT1>();
+            // given {K}, offset in the {canonical_repacking_t} packing, get the offset for the same
+            // component for the packing of {rhs}
+            constexpr auto K2 = pyre::tensor::map_offset<K, canonical_repacking_t, tensorT2>();
+            // all done
+            return lhs[K1] * rhs[K2];
+        };
+
+        // compute product of each component and sum them
+        return (((_component_dot.template operator()<J>(lhs, rhs)) + ...));
+    };
+
+    // sum component-by-component product
+    return _component_wise_dot_sum(y1, y2, pyre::tensor::make_integer_sequence<D> {});
+}
+
 namespace {
     // tensor plus tensor (implementation)
     template <pyre::tensor::tensor_c tensorT1, pyre::tensor::tensor_c tensorT2>
