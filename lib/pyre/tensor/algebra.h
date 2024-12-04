@@ -19,29 +19,35 @@ namespace pyre::tensor {
     template <tensor_c tensorT>
     constexpr auto normalize(const tensorT & tensor) -> tensorT;
 
+    // dot product of tensors
+    template <tensor_c tensorT1, tensor_c tensorT2>
+    constexpr auto dot(const tensorT1 & y1, const tensorT2 & y2)
+        requires(tensor_same_shape_c<tensorT1, tensorT2> and !scalar_c<tensorT1>);
+
     // tensors operator==
     template <tensor_c tensorT1, tensor_c tensorT2>
-    constexpr auto operator==(const tensorT1 & lhs, const tensorT2 & rhs) -> bool;
+    constexpr auto operator==(const tensorT1 & lhs, const tensorT2 & rhs) -> bool
+        requires(tensor_same_shape_c<tensorT1, tensorT2> and !scalar_c<tensorT1>);
 
     // scalar times tensor
     template <tensor_c tensorT>
     constexpr auto operator*(const typename tensorT::scalar_type & a, const tensorT & y) -> tensorT
-        requires(tensorT::size != 1);
+        requires(!scalar_c<tensorT>);
 
     // tensor times scalar
     template <tensor_c tensorT>
     constexpr auto operator*(const tensorT & y, const typename tensorT::scalar_type & a) -> tensorT
-        requires(tensorT::size != 1);
+        requires(!scalar_c<tensorT>);
 
     // scalar times (temporary) tensor
     template <tensor_c tensorT>
     constexpr auto operator*(const typename tensorT::scalar_type & a, tensorT && y) -> tensorT
-        requires(tensorT::size != 1);
+        requires(!scalar_c<tensorT>);
 
     // (temporary) tensor times scalar
     template <tensor_c tensorT>
     constexpr auto operator*(tensorT && y, const typename tensorT::scalar_type & a) -> tensorT
-        requires(tensorT::size != 1);
+        requires(!scalar_c<tensorT>);
 
     // row-column vector product
     template <vector_c vectorT1, vector_c vectorT2>
@@ -70,76 +76,78 @@ namespace pyre::tensor {
     // tensor divided scalar
     template <tensor_c tensorT>
     constexpr auto operator/(const tensorT & y, typename tensorT::scalar_type a) -> tensorT
-        requires(tensorT::size != 1);
+        requires(!scalar_c<tensorT>);
 
     // (temporary) tensor divided scalar
     template <tensor_c tensorT>
     constexpr auto operator/(tensorT && y, typename tensorT::scalar_type a) -> tensorT
-        requires(tensorT::size != 1);
+        requires(!scalar_c<tensorT>);
 
     // tensor plus tensor
     template <tensor_c tensorT1, tensor_c tensorT2>
     constexpr auto operator+(const tensorT1 & y1, const tensorT2 & y2) ->
         typename sum<tensorT1, tensorT2>::type
-        requires(tensorT1::dims == tensorT2::dims);
+        requires(tensor_same_shape_c<tensorT1, tensorT2> and !scalar_c<tensorT1>);
 
     // tensor plus (temporary) tensor
     template <tensor_c tensorT1, tensor_c tensorT2>
     constexpr auto operator+(const tensorT1 & y1, tensorT2 && y2) -> tensorT2
         requires(
-            tensorT1::dims == tensorT2::dims
-            && std::is_same_v<typename sum<tensorT1, tensorT2>::type, tensorT2>);
+            tensor_same_shape_c<tensorT1, tensorT2> and !scalar_c<tensorT1>
+            and std::is_same_v<typename sum<tensorT1, tensorT2>::type, tensorT2>);
 
     // (temporary) tensor plus tensor
     template <tensor_c tensorT1, tensor_c tensorT2>
     constexpr auto operator+(tensorT1 && y1, const tensorT2 & y2) -> tensorT1
         requires(
-            tensorT1::dims == tensorT2::dims
-            && std::is_same_v<typename sum<tensorT1, tensorT2>::type, tensorT1>);
+            tensor_same_shape_c<tensorT1, tensorT2> and !scalar_c<tensorT1>
+            and std::is_same_v<typename sum<tensorT1, tensorT2>::type, tensorT1>);
 
     // (temporary) tensor plus (temporary) tensor
     template <tensor_c tensorT1, tensor_c tensorT2>
     constexpr auto operator+(tensorT1 && y1, tensorT2 && y2) -> tensorT1
         requires(
-            tensorT1::dims == tensorT2::dims
-            && std::is_same_v<typename sum<tensorT1, tensorT2>::type, tensorT1>);
+            tensor_same_shape_c<tensorT1, tensorT2> and !scalar_c<tensorT1>
+            and std::is_same_v<typename sum<tensorT1, tensorT2>::type, tensorT1>);
 
     // (temporary) tensor plus (temporary) tensor
     template <tensor_c tensorT1, tensor_c tensorT2>
     constexpr auto operator+(tensorT1 && y1, tensorT2 && y2) -> tensorT2
         requires(
-            tensorT1::dims == tensorT2::dims
-            && std::is_same_v<typename sum<tensorT1, tensorT2>::type, tensorT2>
-            && !std::is_same_v<typename sum<tensorT1, tensorT2>::type, tensorT1>);
+            tensor_same_shape_c<tensorT1, tensorT2> and !scalar_c<tensorT1>
+            and std::is_same_v<typename sum<tensorT1, tensorT2>::type, tensorT2>
+            and !std::is_same_v<typename sum<tensorT1, tensorT2>::type, tensorT1>);
 
     // (unary) minus tensor
     template <tensor_c tensorT>
-    constexpr auto operator-(const tensorT & y) -> tensorT;
+    constexpr auto operator-(const tensorT & y) -> tensorT
+        requires(!scalar_c<tensorT>);
 
     // (unary) minus (temporary) tensor
     template <tensor_c tensorT>
-    constexpr auto operator-(tensorT && y) -> tensorT;
+    constexpr auto operator-(tensorT && y) -> tensorT
+        requires(!scalar_c<tensorT>);
 
     // tensor minus tensor
     template <tensor_c tensorT1, tensor_c tensorT2>
     constexpr auto operator-(const tensorT1 & y1, const tensorT2 & y2) -> auto
-        requires(tensorT1::dims == tensorT2::dims);
+        requires(tensor_same_shape_c<tensorT1, tensorT2> and !scalar_c<tensorT1>);
 
     // (temporary) tensor minus tensor
     template <tensor_c tensorT1, tensor_c tensorT2>
     constexpr auto operator-(tensorT1 && y1, const tensorT2 & y2) -> auto
-        requires(tensorT1::dims == tensorT2::dims);
+        requires(tensor_same_shape_c<tensorT1, tensorT2> and !scalar_c<tensorT1>);
 
     // tensor minus (temporary) tensor
     template <tensor_c tensorT1, tensor_c tensorT2>
     constexpr auto operator-(const tensorT1 & y1, tensorT2 && y2) -> auto
-        requires(tensorT1::dims == tensorT2::dims);
+        requires(tensor_same_shape_c<tensorT1, tensorT2> and !scalar_c<tensorT1>);
 
 
     // (temporary) tensor minus (temporary) tensor
     template <tensor_c tensorT1, tensor_c tensorT2>
     constexpr auto operator-(tensorT1 && y1, tensorT2 && y2) -> auto
-        requires(tensorT1::dims == tensorT2::dims);
+        requires(tensor_same_shape_c<tensorT1, tensorT2> and !scalar_c<tensorT1>);
 
     // Tensor operator*=
     template <tensor_c tensorT, class TENSOR>
@@ -242,7 +250,7 @@ namespace pyre::tensor {
     // the inverse of a 1x1 matrix
     template <square_matrix_c matrixT>
     constexpr auto inverse(const matrixT & A) -> matrixT
-        requires(matrixT::dims[0] == 1);
+        requires(matrixT::dims[0] == 1 && !diagonal_matrix_c<matrixT>);
 
     // the inverse of a NxN diagonal matrix
     template <diagonal_matrix_c matrixT>
@@ -303,6 +311,16 @@ namespace pyre::tensor {
         requires(
             std::is_same_v<typename matrixT::pack_t, pyre::grid::symmetric_t<2>>
             || std::is_same_v<typename matrixT::pack_t, pyre::grid::diagonal_t<2>>);
+
+    // fourth-order tensor contraction with second-order tensor
+    template <fourth_order_tensor_c tensorT, matrix_c matrixT>
+    constexpr auto operator*(const tensorT & C, const matrixT & A) ->
+        typename contraction<tensorT, matrixT>::type;
+
+    // second-order tensor contraction with fourth-order tensor
+    template <matrix_c matrixT, fourth_order_tensor_c tensorT>
+    constexpr auto operator*(const matrixT & A, const tensorT & C) ->
+        typename contraction<matrixT, tensorT>::type;
 
 } // namespace pyre::tensor
 

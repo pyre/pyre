@@ -1,3 +1,9 @@
+// -*- c++ -*-
+//
+// bianca giovanardi
+// (c) 1998-2024 all rights reserved
+
+
 // code guard
 #if !defined(pyre_tensor_factories_h)
 #define pyre_tensor_factories_h
@@ -36,7 +42,7 @@ namespace pyre::tensor {
     {
         constexpr auto _make_zeros = []<int... J>(integer_sequence<J...>) ->
             typename tensorT::diagonal_tensor_t {
-                constexpr auto fill_zeros = []<int>() consteval -> typename tensorT::scalar_type {
+                constexpr auto fill_zeros = []<int>() -> typename tensorT::scalar_type {
                     return 0;
                 };
                 // return a tensor filled with zeros
@@ -51,7 +57,7 @@ namespace pyre::tensor {
     constexpr auto make_ones() -> tensorT
     {
         constexpr auto _make_ones = []<int... J>(integer_sequence<J...>) -> tensorT {
-            constexpr auto fill_ones = []<int>() consteval -> typename tensorT::scalar_type {
+            constexpr auto fill_ones = []<int>() -> typename tensorT::scalar_type {
                 return 1;
             };
             // return a tensor filled with ones
@@ -60,6 +66,25 @@ namespace pyre::tensor {
 
         // fill tensor with ones
         return _make_ones(make_integer_sequence<tensorT::size> {});
+    }
+
+    // returns a tensor of class {tensorT} filled with random numbers
+    template <tensor_c tensorT>
+    auto random(const typename tensorT::scalar_type amplitude) -> tensorT
+    {
+        // the scalar type of the tensor
+        using scalar_type = typename tensorT::scalar_type;
+
+        auto _make_random = [&amplitude]<int... J>(integer_sequence<J...>) -> tensorT {
+            auto fill_random = [&amplitude]<int>() -> scalar_type {
+                return amplitude * (2.0 * (scalar_type) rand() / RAND_MAX - 1.0);
+            };
+            // return a tensor filled with random numbers
+            return tensorT(fill_random.template operator()<J>()...);
+        };
+
+        // fill tensor with random numbers
+        return _make_random(make_integer_sequence<tensorT::size> {});
     }
 
     namespace {
@@ -116,7 +141,7 @@ namespace pyre::tensor {
     {
         constexpr auto _make_ones = []<int... J>(integer_sequence<J...>) ->
             typename tensorT::diagonal_tensor_t {
-                constexpr auto fill_ones = []<int>() consteval -> typename tensorT::scalar_type {
+                constexpr auto fill_ones = []<int>() -> typename tensorT::scalar_type {
                     return 1;
                 };
                 // return a tensor filled with zeros

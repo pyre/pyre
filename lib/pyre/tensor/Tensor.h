@@ -77,17 +77,25 @@ namespace pyre::tensor {
         template <class T2>
         constexpr Tensor(T2 (&&)[S]);
 
-        // copy constructor
-        constexpr Tensor(const Tensor &) = default;
+        // copy constructor from a tensor with (potentially) different packing
+        template <tensor_c tensorT>
+        constexpr Tensor(const tensorT & rhs)
+            requires(compatible_tensor_c<tensorT, tensor_t>);
 
-        // move constructor
-        constexpr Tensor(Tensor &&) noexcept = default;
+        // move constructor from a tensor with exact same packing
+        template <tensor_c tensorT>
+        constexpr Tensor(tensorT &&)
+            requires(std::is_same_v<tensor_t, tensorT>);
 
-        // copy assignment operator
-        constexpr Tensor & operator=(const Tensor &) = default;
+        // copy assignment operator from a tensor with (potentially) different packing
+        template <tensor_c tensorT>
+        constexpr Tensor & operator=(const tensorT & rhs)
+            requires(compatible_tensor_c<tensorT, tensor_t>);
 
-        // move assignment operator
-        constexpr Tensor & operator=(Tensor &&) noexcept = default;
+        // move assignment operator from a tensor with exact same packing
+        template <tensor_c tensorT>
+        constexpr Tensor & operator=(tensorT &&)
+            requires(std::is_same_v<tensor_t, tensorT>);
 
         // destructor
         constexpr ~Tensor();
@@ -108,6 +116,10 @@ namespace pyre::tensor {
         {
             return _layout.offset({ J... });
         }
+
+        // cast to atomic type T (enable the tensor is a scalar)
+        constexpr operator T() const
+            requires(scalar_c<tensor_t>);
 
         // support for ranged for loops
         constexpr const auto begin() const;
