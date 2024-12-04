@@ -809,9 +809,10 @@ pyre::tensor::determinant(const matrixT & A) -> typename matrixT::scalar_type
     return a11 * a22 - a12 * a21;
 }
 
-template <pyre::tensor::scalar_c scalarT>
+template <pyre::tensor::square_matrix_c matrixT>
 constexpr auto
-pyre::tensor::determinant(const scalarT & A) -> typename scalarT::scalar_type
+pyre::tensor::determinant(const matrixT & A) -> typename matrixT::scalar_type
+    requires(matrixT::dims[0] == 1) // 1x1 matrix
 {
     return A;
 }
@@ -880,11 +881,12 @@ pyre::tensor::inverse(const matrixT & A) -> matrixT
     return invA;
 }
 
-template <pyre::tensor::scalar_c scalarT>
+template <pyre::tensor::square_matrix_c matrixT>
 constexpr auto
-pyre::tensor::inverse(const scalarT & A) -> scalarT
+pyre::tensor::inverse(const matrixT & A) -> matrixT
+    requires(matrixT::dims[0] == 1 && !diagonal_matrix_c<matrixT>) // 1x1 matrix
 {
-    return scalarT { 1.0 / A };
+    return matrixT { 1.0 / A };
 }
 
 
@@ -928,13 +930,6 @@ pyre::tensor::trace(const matrixT & A) -> typename matrixT::scalar_type
         return (A[matrixT::template getOffset<J, J>()] + ...);
     };
     return _trace(make_integer_sequence<D> {});
-}
-
-template <pyre::tensor::scalar_c scalarT>
-constexpr auto
-pyre::tensor::trace(const scalarT & A) -> typename scalarT::scalar_type
-{
-    return A;
 }
 
 template <int D1, int D2, typename T, class packingT>

@@ -232,9 +232,10 @@ namespace pyre::tensor {
     constexpr auto determinant(const matrixT & A) -> typename matrixT::scalar_type
         requires(matrixT::dims[0] == 2);
 
-    // the determinant of a scalar (1x1 improper matrix)
-    template <scalar_c scalarT>
-    constexpr auto determinant(const scalarT & A) -> typename scalarT::scalar_type;
+    // the determinant of a 1x1 matrix
+    template <square_matrix_c matrixT>
+    constexpr auto determinant(const matrixT & A) -> typename matrixT::scalar_type
+        requires(matrixT::dims[0] == 1);
 
     // the inverse of a 3x3 matrix
     template <square_matrix_c matrixT>
@@ -246,9 +247,10 @@ namespace pyre::tensor {
     constexpr auto inverse(const matrixT & A) -> matrixT
         requires(matrixT::dims[0] == 2 && !diagonal_matrix_c<matrixT>);
 
-    // the inverse of a scalar (1x1 improper matrix)
-    template <scalar_c scalarT>
-    constexpr auto inverse(const scalarT & A) -> scalarT;
+    // the inverse of a 1x1 matrix
+    template <square_matrix_c matrixT>
+    constexpr auto inverse(const matrixT & A) -> matrixT
+        requires(matrixT::dims[0] == 1 && !diagonal_matrix_c<matrixT>);
 
     // the inverse of a NxN diagonal matrix
     template <diagonal_matrix_c matrixT>
@@ -257,10 +259,6 @@ namespace pyre::tensor {
     // the trace of a matrix
     template <square_matrix_c matrixT>
     constexpr auto trace(const matrixT & A) -> typename matrixT::scalar_type;
-
-    // the trace of a scalar (1x1 improper matrix)
-    template <scalar_c scalarT>
-    constexpr auto trace(const scalarT & A) -> typename scalarT::scalar_type;
 
     // the transpose of a matrix
     template <int D1, int D2, typename T, class packingT>
