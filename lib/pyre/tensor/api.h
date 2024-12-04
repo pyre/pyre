@@ -15,11 +15,11 @@ namespace pyre::tensor {
 
     // typedef for vectors
     template <int D, typename T = real, class packingT = pyre::grid::canonical_t<1>>
-    using vector_t = pyre::tensor::Tensor<T, packingT, D>;
+    using vector_t = Tensor<T, packingT, D>;
 
     // typedef for matrices
     template <int D1, int D2 = D1, typename T = real, class packingT = pyre::grid::canonical_t<2>>
-    using matrix_t = pyre::tensor::Tensor<T, packingT, D1, D2>;
+    using matrix_t = Tensor<T, packingT, D1, D2>;
 
     // typedef for square matrices
     template <int D, typename T = real, class packingT = pyre::grid::canonical_t<2>>
@@ -36,7 +36,7 @@ namespace pyre::tensor {
     // typedef for fourth order tensors
     template <int D1, int D2 = D1, int D3 = D2, int D4 = D3, typename T = real>
     using fourth_order_tensor_t =
-        pyre::tensor::Tensor<T, pyre::grid::canonical_t<4>, D1, D2, D3, D4>;
+        Tensor<T, pyre::grid::canonical_t<4>, D1, D2, D3, D4>;
 
     // the zero tensor
     template <class tensorT>
