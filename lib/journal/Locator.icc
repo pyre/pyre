@@ -17,6 +17,8 @@ pyre::journal::Locator::Locator(const std::source_location location) :
     _line(std::to_string(location.line())),
     _func(location.function_name())
 {}
+#else
+pyre::journal::Locator::Locator() : _file("unknown"), _line(0), _func("unknown") {}
 #endif
 
 // modern version

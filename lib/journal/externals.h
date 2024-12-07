@@ -22,7 +22,9 @@
 #include <sstream>
 #include <iomanip>
 
-#if defined(__cpp_lib_source_location)
+// it seems that g++ does not define the __cpp_lib_source_location feature macro until
+// the header is included, so we need to check whether the header exists instead
+#if __has_include(<source_location>)
 #include <source_location>
 #endif
 

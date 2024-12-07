@@ -21,6 +21,8 @@ public:
 #if defined(__cpp_lib_source_location)
     // very modern version: the compiler does the work
     inline Locator(const std::source_location = std::source_location::current());
+#else
+    inline Locator();
 #endif
     // modern version; preferred when instantiating explicitly
     inline Locator(const value_type &, const value_type &, const value_type &);
