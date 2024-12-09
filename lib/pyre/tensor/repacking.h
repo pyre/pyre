@@ -5,7 +5,25 @@
 //
 
 
+// code guard
+#if !defined(pyre_tensor_repacking_h)
+#define pyre_tensor_repacking_h
+
+
 namespace pyre::tensor {
+
+    // function to map the offset of a tensor {tensor1} with a given packing to the offset of
+    // another tensor {tensor2} with a different packing
+    template <int K, class tensor1, class tensor2>
+    consteval auto map_offset()
+        requires(tensor1::dims == tensor2::dims)
+    {
+        // get the index corresponding to the offset K in the packing of {tensor1}
+        constexpr auto index = tensor1::layout().index(K);
+        // return the offset corresponding to {index} in the packing of {tensor2}
+        return tensor2::layout().offset(index);
+    };
+
     template <class T, class S>
     struct repacking_sum;
 
@@ -121,5 +139,7 @@ namespace pyre::tensor {
 
 } // namespace pyre::tensor
 
+
+#endif
 
 // end of file

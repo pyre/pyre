@@ -31,6 +31,8 @@
 #include "Tensor.h"
 // useful functions for {Tensor}
 #include "utilities.h"
+// {constexpr} version of {for} loops
+#include "constexpr_for.h"
 // the algebra on tensors
 #include "algebra.h"
 // the quaternions

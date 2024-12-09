@@ -7,7 +7,6 @@
 
 // get array
 #include <array>
-#include <iostream>
 
 // get support
 #include <pyre/timers.h>

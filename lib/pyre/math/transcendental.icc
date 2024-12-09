@@ -1,0 +1,242 @@
+// -*- coding: utf-8 -*-
+//
+// bianca giovanardi
+// (c) 1998-2024 all rights reserved
+//
+
+
+// code guard
+#if !defined(pyre_tensor_transcendental_icc)
+#error this file contains implementation details for math transcendental functions
+#else
+
+
+// function to compute factorial of an integer
+constexpr auto
+pyre::math::factorial(int n) -> double
+{
+    return (n <= 1) ? 1 : n * factorial(n - 1);
+}
+
+namespace {
+    // helper function to compute power
+    constexpr auto pow_helper(double base, int exp) -> double
+    {
+        return (exp == 0) ? 1.0 :
+               (exp > 0)  ? base * pow_helper(base, exp - 1) :
+                            1.0 / pow_helper(base, -exp);
+    }
+} // namespace
+
+// {constexpr} pow for integer exponents
+constexpr auto
+pyre::math::pow(double base, int exp) -> double
+{
+    if (std::is_constant_evaluated()) {
+        return pow_helper(base, exp);
+    } else {
+        return std::pow(base, exp);
+    }
+}
+
+namespace {
+    // helper function to compute the series sum
+    constexpr auto exp_taylor(double x, int terms = 15) -> double
+    {
+        return (terms == 0) ? 1.0 :
+                              pyre::math::pow(x, terms) / pyre::math::factorial(terms)
+                                  + exp_taylor(x, terms - 1);
+    }
+} // namespace
+
+// {constexpr} exp function
+constexpr auto
+pyre::math::exp(double x) -> double
+{
+    if (std::is_constant_evaluated()) {
+        return exp_taylor(x);
+    } else {
+        return std::exp(x);
+    }
+}
+
+namespace {
+    // helper function to compute log using Newton's method
+    constexpr auto log_newton(double x, double guess = 1.0, int iterations = 15) -> double
+    {
+        return (iterations == 0) ?
+                   guess :
+                   log_newton(
+                       x, guess - (pyre::math::exp(guess) - x) / pyre::math::exp(guess),
+                       iterations - 1);
+    }
+
+    // {constexpr} log function
+    constexpr auto log_helper(double x) -> double
+    {
+        return (x < 0.0)  ? std::numeric_limits<double>::quiet_NaN() :
+               (x == 0.0) ? -std::numeric_limits<double>::infinity() :
+               (x == 1.0) ? 0.0 :
+                          log_newton(x);
+    }
+} // namespace
+
+// {constexpr} log function
+constexpr auto
+pyre::math::log(double x) -> double
+{
+    if (std::is_constant_evaluated()) {
+        return log_helper(x);
+    } else {
+        return std::log(x);
+    }
+}
+
+namespace {
+    // helper function to compute sqrt using Newton's method
+    constexpr auto sqrt_newton(double x, double guess = 1.0, int iterations = 15) -> double
+    {
+        return (iterations == 0) ? guess :
+                                   sqrt_newton(x, 0.5 * (guess + x / guess), iterations - 1);
+    }
+
+    // {constexpr} sqrt function
+    constexpr auto sqrt_helper(double x) -> double
+    {
+        return (x < 0.0) ? std::numeric_limits<double>::quiet_NaN() : (x == 0.0) ? 0.0 : sqrt_newton(x);
+    }
+} // namespace
+
+// {constexpr} sqrt function
+constexpr auto
+pyre::math::sqrt(double x) -> double
+{
+    if (std::is_constant_evaluated()) {
+        return sqrt_helper(x);
+    } else {
+        return std::sqrt(x);
+    }
+}
+
+namespace {
+    // Taylor series expansion for sine
+    constexpr auto sin_taylor(double x, int terms = 15) -> double
+    {
+        double result = 0.0;
+        double power = x;
+        int sign = 1;
+        for (int i = 0; i < terms; ++i) {
+            result += sign * power / pyre::math::factorial(2 * i + 1);
+            power *= x * x;
+            sign = -sign;
+        }
+        return result;
+    }
+} // namespace
+
+// {constexpr} sin function
+constexpr auto
+pyre::math::sin(double x) -> double
+{
+    if (std::is_constant_evaluated()) {
+        return sin_taylor(x);
+    } else {
+        return std::sin(x);
+    }
+}
+
+namespace {
+    // Taylor series expansion for cosine
+    constexpr auto cos_taylor(double x, int terms = 15) -> double
+    {
+        double result = 0.0;
+        double power = 1.0;
+        int sign = 1;
+        for (int i = 0; i < terms; ++i) {
+            result += sign * power / pyre::math::factorial(2 * i);
+            power *= x * x;
+            sign = -sign;
+        }
+        return result;
+    }
+} // namespace
+
+// {constexpr} cos function
+constexpr auto
+pyre::math::cos(double x) -> double
+{
+    if (std::is_constant_evaluated()) {
+        return cos_taylor(x);
+    } else {
+        return std::cos(x);
+    }
+}
+
+namespace {
+    // Taylor series expansion for tangent
+    constexpr auto atan_poly(double x, int terms = 15) -> double
+    {
+        if (x > 1.0) {
+            return M_PI / 2.0 - pyre::math::atan(1.0 / x);
+        } else if (x < -1.0) {
+            return -M_PI / 2.0 - pyre::math::atan(1.0 / x);
+        } else {
+            double result = 0.0;
+            double term = x;
+            int sign = 1;
+            for (int i = 1; i <= terms; ++i) {
+                result += sign * term / (2 * i - 1);
+                term *= x * x;
+                sign = -sign;
+            }
+            return result;
+        }
+    }
+} // namespace
+
+// {constexpr} atan function
+constexpr auto
+pyre::math::atan(double x) -> double
+{
+    if (std::is_constant_evaluated()) {
+        return atan_poly(x);
+    } else {
+        return std::atan(x);
+    }
+}
+
+namespace {
+    // manage the cases for the specific quadrants
+    constexpr auto atan2_helper(double y, double x) -> double
+    {
+        if (x > 0.0) {
+            return pyre::math::atan(y / x);
+        } else if (x < 0.0 && y >= 0.0) {
+            return pyre::math::atan(y / x) + M_PI;
+        } else if (x < 0.0 && y < 0.0) {
+            return pyre::math::atan(y / x) - M_PI;
+        } else if (x == 0.0 && y > 0.0) {
+            return M_PI / 2.0;
+        } else if (x == 0.0 && y < 0.0) {
+            return -M_PI / 2.0;
+        }
+        // undefined case when x == 0 and y == 0
+        return 0.0;
+    }
+} // namespace
+
+// {constexpr} atan2 function
+constexpr auto
+pyre::math::atan2(double y, double x) -> double
+{
+    if (std::is_constant_evaluated()) {
+        return atan2_helper(y, x);
+    } else {
+        return std::atan2(y, x);
+    }
+}
+
+
+#endif
+
+// end of file

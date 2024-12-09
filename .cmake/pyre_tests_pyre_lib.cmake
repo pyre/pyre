@@ -355,6 +355,9 @@ set(definitions "HAVE_COMPACT_PACKINGS")
 pyre_test_driver_cxx20(tests/pyre.lib/tensor/tensor_concepts.cc)
 pyre_add_definitions(tests/pyre.lib/tensor/tensor_concepts.cc ${definitions})
 
+pyre_test_driver_cxx20(tests/pyre.lib/tensor/tensor_contractions.cc)
+pyre_add_definitions(tests/pyre.lib/tensor/tensor_contractions.cc ${definitions})
+
 pyre_test_driver_cxx20(tests/pyre.lib/tensor/tensor_canonical_arithmetics.cc)
 pyre_add_definitions(tests/pyre.lib/tensor/tensor_canonical_arithmetics.cc ${definitions})
 
@@ -366,6 +369,9 @@ pyre_add_definitions(tests/pyre.lib/tensor/tensor_cayley_hamilton_theorem.cc ${d
 
 pyre_test_driver_cxx20(tests/pyre.lib/tensor/tensor_compact_arithmetics.cc)
 pyre_add_definitions(tests/pyre.lib/tensor/tensor_compact_arithmetics.cc ${definitions})
+
+pyre_test_driver_cxx20(tests/pyre.lib/tensor/tensor_dot.cc)
+pyre_add_definitions(tests/pyre.lib/tensor/tensor_dot.cc ${definitions})
 
 pyre_test_driver_cxx20(tests/pyre.lib/tensor/tensor_dyadic.cc)
 pyre_add_definitions(tests/pyre.lib/tensor/tensor_dyadic.cc ${definitions})
@@ -391,6 +397,9 @@ pyre_add_definitions(tests/pyre.lib/tensor/tensor_iterators.cc ${definitions})
 pyre_test_driver_cxx20(tests/pyre.lib/tensor/tensor_literals.cc)
 pyre_add_definitions(tests/pyre.lib/tensor/tensor_literals.cc ${definitions})
 
+pyre_test_driver_cxx20(tests/pyre.lib/tensor/tensor_matrix_assignment.cc)
+pyre_add_definitions(tests/pyre.lib/tensor/tensor_matrix_assignment.cc ${definitions})
+
 pyre_test_driver_cxx20(tests/pyre.lib/tensor/tensor_matrix_equal.cc)
 pyre_add_definitions(tests/pyre.lib/tensor/tensor_matrix_equal.cc ${definitions})
 
@@ -402,6 +411,9 @@ pyre_add_definitions(tests/pyre.lib/tensor/tensor_matrix_product.cc ${definition
 
 pyre_test_driver_cxx20(tests/pyre.lib/tensor/tensor_matrix_vector_product.cc)
 pyre_add_definitions(tests/pyre.lib/tensor/tensor_matrix_vector_product.cc ${definitions})
+
+pyre_test_driver_cxx20(tests/pyre.lib/tensor/tensor_fourth_order_contraction.cc)
+pyre_add_definitions(tests/pyre.lib/tensor/tensor_fourth_order_contraction.cc ${definitions})
 
 pyre_test_driver_cxx20(tests/pyre.lib/tensor/tensor_print.cc)
 pyre_add_definitions(tests/pyre.lib/tensor/tensor_print.cc ${definitions})
