@@ -41,6 +41,31 @@ pyre::py::memory::bindConstStorage(shared_holder_t<memT> & cls)
         // the docstring
         "the memory footprint of the map, in bytes");
 
+    // name
+    cls.def_property_readonly_static(
+        // the name of the property
+        "name",
+        // the getter
+        [](py::object /* self */) { return memT::name(); },
+        // the docstring
+        "the fully expanded name of the storage strategy");
+
+    cls.def_property_readonly_static(
+        // the name of the property
+        "strategyName",
+        // the getter
+        [](py::object /* self */) { return memT::strategyName(); },
+        // the docstring
+        "the name of the storage strategy type");
+
+    cls.def_property_readonly_static(
+        // the name of the property
+        "cellName",
+        // the getter
+        [](py::object /* self */) { return memT::cellName(); },
+        // the docstring
+        "the name of the cell type");
+
     // metamethods
     cls.def(
         // the name
@@ -53,7 +78,7 @@ pyre::py::memory::bindConstStorage(shared_holder_t<memT> & cls)
     cls.def(
         // the name
         "__getitem__",
-        // the implementtaion
+        // the implementation
         &memT::at,
         // the docstring
         "get the value of the cell at a given index");
