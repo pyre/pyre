@@ -50,6 +50,12 @@ pyre::memory::Cell<T, isConst>::name() -> string_type
 
 // the datatype name specializations
 template <>
+struct pyre::memory::CellName<char> {
+    // the name
+    static auto name() -> string_t { return "Char"; }
+};
+
+template <>
 struct pyre::memory::CellName<pyre::memory::int8_t> {
     // the name
     static auto name() -> string_t { return "Int8"; }
