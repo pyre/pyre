@@ -144,7 +144,7 @@ pyre::journal::Alert::footer(
             // make some room and turn on location formatting
             buffer << severityColor << _footerMarker << resetColor << "from ";
             // set a maximum length for the rendered filename
-            const line_type::size_type maxlen = 60;
+            const line_type::size_type maxlen = 80;
             // get the filename size
             auto len = filename.size();
             // so that names that are longer than this maximum
@@ -166,16 +166,25 @@ pyre::journal::Alert::footer(
                 // render it
                 buffer << line << ":";
             }
+            // save this much
+            buffer << std::endl;
 
-            // same with the function name
+            // get the function name
             auto & function = notes.at("function");
             // if we know it
             if (!function.empty()) {
-                // render it
-                buffer << function;
+                // render
+                buffer
+                    // make some room and turn on location formatting
+                    << severityColor << _footerMarker
+                    << resetColor
+                    // the intro
+                    << "in '"
+                    // the function name
+                    << function
+                    // terminate and flush
+                    << "'" << std::endl;
             }
-            // wrap up the location info
-            buffer << std::endl;
         }
     }
 
