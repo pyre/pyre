@@ -29,6 +29,9 @@ public:
     using cell_count_type = typename cell_type::cell_count_type;
     // my handle
     using handle_type = std::shared_ptr<value_type[]>;
+    // strings
+    using uri_type = string_t;
+    using string_type = string_t;
 
     // metamethods
 public:
@@ -39,6 +42,8 @@ public:
 
     // accessors
 public:
+    // human readable form of my location
+    inline auto uri() const -> uri_type;
     // the number of cells
     inline auto cells() const -> cell_count_type;
     // the memory footprint of the block

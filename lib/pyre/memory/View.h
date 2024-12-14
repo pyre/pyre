@@ -27,6 +27,9 @@ public:
     // sizes of things
     using size_type = typename cell_type::size_type;
     using cell_count_type = typename cell_type::cell_count_type;
+    // strings
+    using uri_type = string_t;
+    using string_type = string_t;
 
     // metamethods
 public:
@@ -35,6 +38,8 @@ public:
 
     // interface
 public:
+    // human readable form of my location
+    inline auto uri() const -> uri_type;
     // the number of cells
     inline auto cells() const -> cell_count_type;
     // the memory footprint of the block
@@ -48,11 +53,11 @@ public:
     static constexpr auto readonly() -> bool;
     static constexpr auto writable() -> bool;
     // human readable rendering of my expansion
-    static inline auto name() -> string_t;
+    static inline auto name() -> string_type;
     // human readable rendering of my storage strategy
-    static inline auto strategyName() -> string_t;
+    static inline auto strategyName() -> string_type;
     // human readable rendering of my {cell_type}
-    static inline auto cellName() -> string_t;
+    static inline auto cellName() -> string_type;
 
     // iterator support
 public:

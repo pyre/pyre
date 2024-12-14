@@ -22,6 +22,20 @@ pyre::memory::View<T, isConst>::View(pointer data, cell_count_type cells) :
 // get the number of cells in the block
 template <class T, bool isConst>
 auto
+pyre::memory::View<T, isConst>::uri() const -> uri_type
+{
+    // make a buffer
+    auto buffer = std::stringstream();
+    // build the tag
+    buffer << "view:<borrowed memory at " << where() << ">" << std::endl;
+    // and return it
+    return buffer.str();
+}
+
+
+// get the number of cells in the block
+template <class T, bool isConst>
+auto
 pyre::memory::View<T, isConst>::cells() const -> cell_count_type
 {
     // easy
@@ -81,7 +95,7 @@ pyre::memory::View<T, isConst>::writable() -> bool
 // human readable form of my expansion
 template <typename T, bool isConst>
 auto
-pyre::memory::View<T, isConst>::name() -> string_t
+pyre::memory::View<T, isConst>::name() -> string_type
 {
     // resolve the name and return it
     return strategyName() + cellName();
@@ -91,7 +105,7 @@ pyre::memory::View<T, isConst>::name() -> string_t
 // human readable form of my {cell_type}
 template <typename T, bool isConst>
 auto
-pyre::memory::View<T, isConst>::cellName() -> string_t
+pyre::memory::View<T, isConst>::cellName() -> string_type
 {
     // resolve the name and return it
     return CellName<value_type>::name();
@@ -101,10 +115,10 @@ pyre::memory::View<T, isConst>::cellName() -> string_t
 // human readable form of my storage strategy
 template <typename T, bool isConst>
 auto
-pyre::memory::View<T, isConst>::strategyName() -> string_t
+pyre::memory::View<T, isConst>::strategyName() -> string_type
 {
     // build the name and return it
-    return (isConst ? "Const" : "") + string_t("View");
+    return (isConst ? "Const" : "") + string_type("View");
 }
 
 
