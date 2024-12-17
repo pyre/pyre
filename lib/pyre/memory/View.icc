@@ -27,7 +27,7 @@ pyre::memory::View<T, isConst>::uri() const -> uri_type
     // make a buffer
     auto buffer = std::stringstream();
     // build the tag
-    buffer << "view:<borrowed memory at " << where() << ">" << std::endl;
+    buffer << "view:<borrowed memory at " << where() << ">";
     // and return it
     return buffer.str();
 }
