@@ -246,6 +246,8 @@ endif()
 
 # if we are building the benchmarks
 if(PYRE_BUILD_BENCHMARKS)
+  # find the benchmark library
+  find_package(benchmark REQUIRED)
 
   # get my functions
   include(pyre_benchmarks)
