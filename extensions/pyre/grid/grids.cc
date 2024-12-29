@@ -92,6 +92,44 @@ pyre::py::grid::grids(py::module & m)
     typenames[std::type_index(typeid(constmap_complexfloat_t))] = "ComplexFloatConstMap";
     typenames[std::type_index(typeid(constmap_complexdouble_t))] = "ComplexDoubleConstMap";
 
+    // view
+    typenames[std::type_index(typeid(view_char_t))] = "CharView";
+    // signed integral types
+    typenames[std::type_index(typeid(view_int8_t))] = "Int8View";
+    typenames[std::type_index(typeid(view_int16_t))] = "Int16View";
+    typenames[std::type_index(typeid(view_int32_t))] = "Int32View";
+    typenames[std::type_index(typeid(view_int64_t))] = "Int64View";
+    // unsigned integral types
+    typenames[std::type_index(typeid(view_uint8_t))] = "UInt8View";
+    typenames[std::type_index(typeid(view_uint16_t))] = "UInt16View";
+    typenames[std::type_index(typeid(view_uint32_t))] = "UInt32View";
+    typenames[std::type_index(typeid(view_uint64_t))] = "UInt64View";
+    // floating point types
+    typenames[std::type_index(typeid(view_float_t))] = "FloatView";
+    typenames[std::type_index(typeid(view_double_t))] = "DoubleView";
+    // complex types
+    typenames[std::type_index(typeid(view_complexfloat_t))] = "ComplexFloatView";
+    typenames[std::type_index(typeid(view_complexdouble_t))] = "ComplexDoubleView";
+
+    // constmap
+    typenames[std::type_index(typeid(constview_char_t))] = "CharConstView";
+    // signed integral types
+    typenames[std::type_index(typeid(constview_int8_t))] = "Int8ConstView";
+    typenames[std::type_index(typeid(constview_int16_t))] = "Int16ConstView";
+    typenames[std::type_index(typeid(constview_int32_t))] = "Int32ConstView";
+    typenames[std::type_index(typeid(constview_int64_t))] = "Int64ConstView";
+    // unsigned integral types
+    typenames[std::type_index(typeid(constview_uint8_t))] = "UInt8ConstView";
+    typenames[std::type_index(typeid(constview_uint16_t))] = "UInt16ConstView";
+    typenames[std::type_index(typeid(constview_uint32_t))] = "UInt32ConstView";
+    typenames[std::type_index(typeid(constview_uint64_t))] = "UInt64ConstView";
+    // floating point types
+    typenames[std::type_index(typeid(constview_float_t))] = "FloatConstView";
+    typenames[std::type_index(typeid(constview_double_t))] = "DoubleConstView";
+    // complex types
+    typenames[std::type_index(typeid(constview_complexfloat_t))] = "ComplexFloatConstView";
+    typenames[std::type_index(typeid(constview_complexdouble_t))] = "ComplexDoubleConstView";
+
     // build the class records
     // 2d grids
     // heap
@@ -150,6 +188,34 @@ pyre::py::grid::grids(py::module & m)
     bindconst<constmap_double_t, 2>(m);
     bindconst<constmap_complexfloat_t, 2>(m);
     bindconst<constmap_complexdouble_t, 2>(m);
+    // view
+    bind<view_char_t, 2>(m);
+    bind<view_int8_t, 2>(m);
+    bind<view_int16_t, 2>(m);
+    bind<view_int32_t, 2>(m);
+    bind<view_int64_t, 2>(m);
+    bind<view_uint8_t, 2>(m);
+    bind<view_uint16_t, 2>(m);
+    bind<view_uint32_t, 2>(m);
+    bind<view_uint64_t, 2>(m);
+    bind<view_float_t, 2>(m);
+    bind<view_double_t, 2>(m);
+    bind<view_complexfloat_t, 2>(m);
+    bind<view_complexdouble_t, 2>(m);
+    // constview
+    bindconst<constview_char_t, 2>(m);
+    bindconst<constview_int8_t, 2>(m);
+    bindconst<constview_int16_t, 2>(m);
+    bindconst<constview_int32_t, 2>(m);
+    bindconst<constview_int64_t, 2>(m);
+    bindconst<constview_uint8_t, 2>(m);
+    bindconst<constview_uint16_t, 2>(m);
+    bindconst<constview_uint32_t, 2>(m);
+    bindconst<constview_uint64_t, 2>(m);
+    bindconst<constview_float_t, 2>(m);
+    bindconst<constview_double_t, 2>(m);
+    bindconst<constview_complexfloat_t, 2>(m);
+    bindconst<constview_complexdouble_t, 2>(m);
 
     // 3d grids
     // heap
@@ -208,6 +274,34 @@ pyre::py::grid::grids(py::module & m)
     bindconst<constmap_double_t, 3>(m);
     bindconst<constmap_complexfloat_t, 3>(m);
     bindconst<constmap_complexdouble_t, 3>(m);
+    // view
+    bind<view_char_t, 3>(m);
+    bind<view_int8_t, 3>(m);
+    bind<view_int16_t, 3>(m);
+    bind<view_int32_t, 3>(m);
+    bind<view_int64_t, 3>(m);
+    bind<view_uint8_t, 3>(m);
+    bind<view_uint16_t, 3>(m);
+    bind<view_uint32_t, 3>(m);
+    bind<view_uint64_t, 3>(m);
+    bind<view_float_t, 3>(m);
+    bind<view_double_t, 3>(m);
+    bind<view_complexfloat_t, 3>(m);
+    bind<view_complexdouble_t, 3>(m);
+    // constview
+    bindconst<constview_char_t, 3>(m);
+    bindconst<constview_int8_t, 3>(m);
+    bindconst<constview_int16_t, 3>(m);
+    bindconst<constview_int32_t, 3>(m);
+    bindconst<constview_int64_t, 3>(m);
+    bindconst<constview_uint8_t, 3>(m);
+    bindconst<constview_uint16_t, 3>(m);
+    bindconst<constview_uint32_t, 3>(m);
+    bindconst<constview_uint64_t, 3>(m);
+    bindconst<constview_float_t, 3>(m);
+    bindconst<constview_double_t, 3>(m);
+    bindconst<constview_complexfloat_t, 3>(m);
+    bindconst<constview_complexdouble_t, 3>(m);
 
     // 4d grids
     // heap
@@ -266,6 +360,34 @@ pyre::py::grid::grids(py::module & m)
     bindconst<constmap_double_t, 4>(m);
     bindconst<constmap_complexfloat_t, 4>(m);
     bindconst<constmap_complexdouble_t, 4>(m);
+    // view
+    bind<view_char_t, 4>(m);
+    bind<view_int8_t, 4>(m);
+    bind<view_int16_t, 4>(m);
+    bind<view_int32_t, 4>(m);
+    bind<view_int64_t, 4>(m);
+    bind<view_uint8_t, 4>(m);
+    bind<view_uint16_t, 4>(m);
+    bind<view_uint32_t, 4>(m);
+    bind<view_uint64_t, 4>(m);
+    bind<view_float_t, 4>(m);
+    bind<view_double_t, 4>(m);
+    bind<view_complexfloat_t, 4>(m);
+    bind<view_complexdouble_t, 4>(m);
+    // constview
+    bindconst<constview_char_t, 4>(m);
+    bindconst<constview_int8_t, 4>(m);
+    bindconst<constview_int16_t, 4>(m);
+    bindconst<constview_int32_t, 4>(m);
+    bindconst<constview_int64_t, 4>(m);
+    bindconst<constview_uint8_t, 4>(m);
+    bindconst<constview_uint16_t, 4>(m);
+    bindconst<constview_uint32_t, 4>(m);
+    bindconst<constview_uint64_t, 4>(m);
+    bindconst<constview_float_t, 4>(m);
+    bindconst<constview_double_t, 4>(m);
+    bindconst<constview_complexfloat_t, 4>(m);
+    bindconst<constview_complexdouble_t, 4>(m);
 
     // all done
     return;

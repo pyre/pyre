@@ -75,6 +75,36 @@ namespace pyre::py::grid {
     using constmap_complexfloat_t = pyre::memory::constmap_t<std::complex<float>>;
     using constmap_complexdouble_t = pyre::memory::constmap_t<std::complex<double>>;
 
+    // view
+    using view_char_t = pyre::memory::view_t<char>;
+    using view_int8_t = pyre::memory::view_t<std::int8_t>;
+    using view_int16_t = pyre::memory::view_t<std::int16_t>;
+    using view_int32_t = pyre::memory::view_t<std::int32_t>;
+    using view_int64_t = pyre::memory::view_t<std::int64_t>;
+    using view_uint8_t = pyre::memory::view_t<std::uint8_t>;
+    using view_uint16_t = pyre::memory::view_t<std::uint16_t>;
+    using view_uint32_t = pyre::memory::view_t<std::uint32_t>;
+    using view_uint64_t = pyre::memory::view_t<std::uint64_t>;
+    using view_float_t = pyre::memory::view_t<float>;
+    using view_double_t = pyre::memory::view_t<double>;
+    using view_complexfloat_t = pyre::memory::view_t<std::complex<float>>;
+    using view_complexdouble_t = pyre::memory::view_t<std::complex<double>>;
+
+    // constview
+    using constview_char_t = pyre::memory::constview_t<char>;
+    using constview_int8_t = pyre::memory::constview_t<std::int8_t>;
+    using constview_int16_t = pyre::memory::constview_t<std::int16_t>;
+    using constview_int32_t = pyre::memory::constview_t<std::int32_t>;
+    using constview_int64_t = pyre::memory::constview_t<std::int64_t>;
+    using constview_uint8_t = pyre::memory::constview_t<std::uint8_t>;
+    using constview_uint16_t = pyre::memory::constview_t<std::uint16_t>;
+    using constview_uint32_t = pyre::memory::constview_t<std::uint32_t>;
+    using constview_uint64_t = pyre::memory::constview_t<std::uint64_t>;
+    using constview_float_t = pyre::memory::constview_t<float>;
+    using constview_double_t = pyre::memory::constview_t<double>;
+    using constview_complexfloat_t = pyre::memory::constview_t<std::complex<float>>;
+    using constview_complexdouble_t = pyre::memory::constview_t<std::complex<double>>;
+
 
 } // namespace pyre::py::grid
 
