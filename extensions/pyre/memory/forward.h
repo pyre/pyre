@@ -14,6 +14,8 @@ namespace pyre::py::memory {
     void heaps(py::module &);
     // bindings for file backed storage
     void maps(py::module &);
+    // bindings for borrowed memory
+    void views(py::module &);
 } // namespace pyre::py::memory
 
 

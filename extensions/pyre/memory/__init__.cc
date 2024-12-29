@@ -27,6 +27,8 @@ pyre::py::memory::__init__(py::module & m)
     heaps(memory);
     // file backed memory
     maps(memory);
+    // borrowed memory
+    views(memory);
 
     // all done
     return;

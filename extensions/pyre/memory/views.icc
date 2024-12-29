@@ -1,0 +1,48 @@
+// -*- c++ -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2024 all rights reserved
+
+// code guard
+#if !defined(pyre_py_memory_views_icc)
+#error this file contains implementation details for pyre::py::memory views
+#else
+
+
+// views
+template <class cellT>
+void
+pyre::py::memory::view(py::module & m, classname_t name, docstring_t docstring)
+{
+    // type alias
+    using view_t = pyre::memory::view_t<cellT>;
+
+    // build the class record
+    auto cls = shared_holder_t<view_t>(m, name, py::buffer_protocol(), docstring);
+
+#if defined(NYI)
+    // constructor
+    cls.def(
+        // the constructor
+        py::init<typename view_t::size_type>(),
+        // the docstring
+        "create a new view with the given number of {cells}",
+        // the signature
+        "location"_a, "cells"_a);
+#endif
+
+    // read-only access
+    bindConstStorage<view_t>(cls);
+    // read/write access
+    bindStorage<view_t>(cls);
+    // read+write buffer protocol
+    bindBufferProtocol<view_t>(cls);
+
+    // all done
+    return;
+}
+
+
+#endif
+
+// end of file
