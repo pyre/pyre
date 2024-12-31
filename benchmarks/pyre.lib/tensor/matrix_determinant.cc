@@ -5,309 +5,181 @@
 //
 
 
+// get the benchmark library
+#include <benchmark/benchmark.h>
+
 // get array
 #include <array>
-
-// get support
-#include <pyre/timers.h>
-#include <pyre/journal.h>
+// get tensor
 #include <pyre/tensor.h>
 
 
-// type aliases
-using process_timer_t = pyre::timers::process_timer_t;
-
-
-void
-determinant_2D(int N)
+auto
+determinant_2D_array(const auto & matrix)
 {
-    // make a channel
-    pyre::journal::info_t channel("tests.timer.determinant");
+    // return the determinant
+    return matrix[0] * matrix[3] - matrix[1] * matrix[2];
+}
 
-    // make a timer
-    process_timer_t t("tests.timer");
+auto
+determinant_3D_array(const auto & matrix)
+{
+    // return the determinant
+    return matrix[0] * (matrix[4] * matrix[8] - matrix[5] * matrix[7])
+         - matrix[1] * (matrix[3] * matrix[8] - matrix[5] * matrix[6])
+         + matrix[2] * (matrix[3] * matrix[7] - matrix[4] * matrix[6]);
+}
 
-    channel << "Computing " << N << " determinants (2x2)" << pyre::journal::endl;
+auto
+determinant_3D_diagonal_array(const auto & matrix)
+{
+    // return the determinant
+    return matrix[0] * matrix[1] * matrix[2];
+}
 
+auto
+determinant_3D_symmetric_array(const auto & matrix)
+{
+    // return the determinant
+    return matrix[0] * (matrix[3] * matrix[5] - matrix[4] * matrix[4])
+         - matrix[1] * (matrix[1] * matrix[5] - matrix[4] * matrix[2])
+         + matrix[2] * (matrix[1] * matrix[4] - matrix[3] * matrix[2]);
+}
 
-    // ARRAY
+auto
+determinant_tensor(const auto & matrix)
+{
+    // return the determinant
+    return pyre::tensor::determinant(matrix);
+}
 
-    // array tensor
-    std::array<double, 4> tensor_c { 1.0, -1.0, 2.0, 1.0 };
-    double result_c = 0;
+static void
+Determinant2DArray(benchmark::State & state)
+{
+    // build the matrix
+    auto matrix = std::array<double, 4> { 1.0, -1.0, 2.0, 1.0 };
 
-    // reset timer
-    t.reset();
-    // start timer
-    t.start();
-
-    for (int n = 0; n < N; ++n) {
-        // determinant (array)
-        result_c += tensor_c[0] * tensor_c[3] - tensor_c[1] * tensor_c[2];
+    // repeat the operation sufficient number of times
+    for (auto _ : state) {
+        benchmark::DoNotOptimize(determinant_2D_array(matrix));
     }
+}
 
-    // stop the timer
-    t.stop();
+static void
+Determinant2DTensor(benchmark::State & state)
+{
+    // build the matrix
+    auto matrix = pyre::tensor::matrix_t<2> { 1.0, -1.0, 2.0, 1.0 };
 
-    // report
-    channel << "array " << pyre::journal::newline << pyre::journal::indent(1)
-            << "result = " << result_c << pyre::journal::newline << "process time = " << t.ms()
-            << " ms " << pyre::journal::newline << pyre::journal::outdent(1) << pyre::journal::endl;
-
-
-    // PYRE TENSOR
-    // tensor matrix
-    pyre::tensor::matrix_t<2> tensor { 1.0, -1.0, 2.0, 1.0 };
-    pyre::tensor::real result_tensor = 0.;
-
-    // reset timer
-    t.reset();
-    // start timer
-    t.start();
-
-    for (int n = 0; n < N; ++n) {
-        // determinant (tensor)
-        result_tensor += pyre::tensor::determinant(tensor);
+    // repeat the operation sufficient number of times
+    for (auto _ : state) {
+        benchmark::DoNotOptimize(determinant_tensor(matrix));
     }
+}
 
-    // stop the timer
-    t.stop();
+static void
+Determinant3DArray(benchmark::State & state)
+{
+    // build the matrix
+    auto matrix = std::array<double, 9> { 1.0, -1.0, 2.0, 1.0, 0.0, 1.0, -1.0, 2.0, -2.0 };
 
-    // report
-    channel << "pyre tensor" << pyre::journal::newline << pyre::journal::indent(1)
-            << "result = " << result_tensor << pyre::journal::newline << "process time = " << t.ms()
-            << " ms " << pyre::journal::newline << pyre::journal::outdent(1) << pyre::journal::endl;
+    // repeat the operation sufficient number of times
+    for (auto _ : state) {
+        benchmark::DoNotOptimize(determinant_3D_array(matrix));
+    }
+}
 
-    // all done
-    return;
+static void
+Determinant3DTensor(benchmark::State & state)
+{
+    // build the matrix
+    auto matrix = pyre::tensor::matrix_t<3> { 1.0, -1.0, 2.0, 1.0, 0.0, 1.0, -1.0, 2.0, -2.0 };
+
+    // repeat the operation sufficient number of times
+    for (auto _ : state) {
+        benchmark::DoNotOptimize(determinant_tensor(matrix));
+    }
+}
+
+static void
+Determinant3DSymmetricArray(benchmark::State & state)
+{
+    // build the matrix
+    auto matrix = std::array<double, 6> { 1.0,
+                                          -1.0,
+                                          2.0,
+                                          /*-1.0,*/ 1.0,
+                                          0.0,
+                                          /*2.0, 0.0,*/ 1.0 };
+
+    // repeat the operation sufficient number of times
+    for (auto _ : state) {
+        benchmark::DoNotOptimize(determinant_3D_symmetric_array(matrix));
+    }
+}
+
+static void
+Determinant3DSymmetricTensor(benchmark::State & state)
+{
+    // build the matrix
+    auto matrix = pyre::tensor::symmetric_matrix_t<3> { 1.0,
+                                                        -1.0,
+                                                        2.0,
+                                                        /*-1.0,*/ 1.0,
+                                                        0.0,
+                                                        /*2.0, 0.0,*/ 1.0 };
+
+    // repeat the operation sufficient number of times
+    for (auto _ : state) {
+        benchmark::DoNotOptimize(determinant_tensor(matrix));
+    }
+}
+
+static void
+Determinant3DDiagonalArray(benchmark::State & state)
+{
+    // build the matrix
+    auto matrix = std::array<double, 3> { 1.0, -1.0, 2.0 };
+
+    // repeat the operation sufficient number of times
+    for (auto _ : state) {
+        benchmark::DoNotOptimize(determinant_3D_diagonal_array(matrix));
+    }
+}
+
+static void
+Determinant3DDiagonalTensor(benchmark::State & state)
+{
+    // build the matrix
+    auto matrix = pyre::tensor::diagonal_matrix_t<3> { 1.0, -1.0, 2.0 };
+
+    // repeat the operation sufficient number of times
+    for (auto _ : state) {
+        benchmark::DoNotOptimize(determinant_tensor(matrix));
+    }
 }
 
 
-void
-determinant_3D(int N)
-{
-    // make a channel
-    pyre::journal::info_t channel("tests.timer.determinant");
-
-    // make a timer
-    process_timer_t t("tests.timer");
-
-    channel << "Computing " << N << " determinants (3x3)" << pyre::journal::endl;
-
-
-    // ARRAY
-
-    // array tensor
-    std::array<double, 9> tensor_c { 1.0, -1.0, 2.0, 1.0, 0.0, 1.0, -1.0, 2.0, -2.0 };
-    double result_c = 0;
-
-    // reset timer
-    t.reset();
-    // start timer
-    t.start();
-
-    for (int n = 0; n < N; ++n) {
-        // determinant (array)
-        result_c += tensor_c[0] * (tensor_c[4] * tensor_c[8] - tensor_c[5] * tensor_c[7])
-                  - tensor_c[1] * (tensor_c[3] * tensor_c[8] - tensor_c[5] * tensor_c[6])
-                  + tensor_c[2] * (tensor_c[3] * tensor_c[7] - tensor_c[4] * tensor_c[6]);
-    }
-
-    // stop the timer
-    t.stop();
-
-    // report
-    channel << "array " << pyre::journal::newline << pyre::journal::indent(1)
-            << "result = " << result_c << pyre::journal::newline << "process time = " << t.ms()
-            << " ms " << pyre::journal::newline << pyre::journal::outdent(1) << pyre::journal::endl;
+// run benchmark for 2D matrix (array)
+BENCHMARK(Determinant2DArray);
+// run benchmark for 2D matrix (tensor)
+BENCHMARK(Determinant2DTensor);
+// run benchmark for 3D matrix (array)
+BENCHMARK(Determinant3DArray);
+// run benchmark for 3D matrix (tensor)
+BENCHMARK(Determinant3DTensor);
+// run benchmark for 3D symmetric matrix (array)
+BENCHMARK(Determinant3DSymmetricArray);
+// run benchmark for 3D symmetric matrix (tensor)
+BENCHMARK(Determinant3DSymmetricTensor);
+// run benchmark for 3D diagonal matrix (array)
+BENCHMARK(Determinant3DDiagonalArray);
+// run benchmark for 3D diagonal matrix (tensor)
+BENCHMARK(Determinant3DDiagonalTensor);
 
 
-    // PYRE TENSOR
-    // tensor matrix
-    pyre::tensor::matrix_t<3> tensor { 1.0, -1.0, 2.0, 1.0, 0.0, 1.0, -1.0, 2.0, -2.0 };
-    pyre::tensor::real result_tensor = 0.;
-
-    // reset timer
-    t.reset();
-    // start timer
-    t.start();
-
-    for (int n = 0; n < N; ++n) {
-        // determinant (tensor)
-        result_tensor += pyre::tensor::determinant(tensor);
-    }
-
-    // stop the timer
-    t.stop();
-
-    // report
-    channel << "pyre tensor" << pyre::journal::newline << pyre::journal::indent(1)
-            << "result = " << result_tensor << pyre::journal::newline << "process time = " << t.ms()
-            << " ms " << pyre::journal::newline << pyre::journal::outdent(1) << pyre::journal::endl;
-
-    // all done
-    return;
-}
-
-
-void
-determinant_3D_symmetric(int N)
-{
-    // make a channel
-    pyre::journal::info_t channel("tests.timer.determinant");
-
-    // make a timer
-    process_timer_t t("tests.timer");
-
-    channel << "Computing " << N << " determinants (3x3, symmetric)" << pyre::journal::endl;
-
-
-    // ARRAY
-
-    // array tensor
-    std::array<double, 9> tensor_c { 1.0, -1.0, 2.0, -1.0, 1.0, 0.0, 2.0, 0.0, 1.0 };
-    double result_c = 0;
-
-    // reset timer
-    t.reset();
-    // start timer
-    t.start();
-
-    for (int n = 0; n < N; ++n) {
-        // determinant (array)
-        result_c += tensor_c[0] * (tensor_c[4] * tensor_c[8] - tensor_c[5] * tensor_c[7])
-                  - tensor_c[1] * (tensor_c[3] * tensor_c[8] - tensor_c[5] * tensor_c[6])
-                  + tensor_c[2] * (tensor_c[3] * tensor_c[7] - tensor_c[4] * tensor_c[6]);
-    }
-
-    // stop the timer
-    t.stop();
-
-    // report
-    channel << "array " << pyre::journal::newline << pyre::journal::indent(1)
-            << "result = " << result_c << pyre::journal::newline << "process time = " << t.ms()
-            << " ms " << pyre::journal::newline << pyre::journal::outdent(1) << pyre::journal::endl;
-
-
-    // PYRE TENSOR
-    // tensor matrix
-    pyre::tensor::symmetric_matrix_t<3> tensor { 1.0,
-                                                 -1.0,
-                                                 2.0,
-                                                 /*-1.0,*/ 1.0,
-                                                 0.0,
-                                                 /*2.0, 0.0,*/ 1.0 };
-    pyre::tensor::real result_tensor = 0.;
-
-    // reset timer
-    t.reset();
-    // start timer
-    t.start();
-
-    for (int n = 0; n < N; ++n) {
-        // determinant (tensor)
-        result_tensor += pyre::tensor::determinant(tensor);
-    }
-
-    // stop the timer
-    t.stop();
-
-    // report
-    channel << "pyre tensor" << pyre::journal::newline << pyre::journal::indent(1)
-            << "result = " << result_tensor << pyre::journal::newline << "process time = " << t.ms()
-            << " ms " << pyre::journal::newline << pyre::journal::outdent(1) << pyre::journal::endl;
-
-    // all done
-    return;
-}
-
-
-void
-determinant_3D_diagonal(int N)
-{
-    // make a channel
-    pyre::journal::info_t channel("tests.timer.determinant");
-
-    // make a timer
-    process_timer_t t("tests.timer");
-
-    channel << "Computing " << N << " determinants (3x3, diagonal)" << pyre::journal::endl;
-
-
-    // ARRAY
-
-    // array tensor
-    std::array<double, 3> tensor_c { 1.0, -1.0, 2.0 };
-    double result_c = 0;
-
-    // reset timer
-    t.reset();
-    // start timer
-    t.start();
-
-    for (int n = 0; n < N; ++n) {
-        // determinant (array)
-        result_c += tensor_c[0] * tensor_c[1] * tensor_c[2];
-    }
-
-    // stop the timer
-    t.stop();
-
-    // report
-    channel << "array " << pyre::journal::newline << pyre::journal::indent(1)
-            << "result = " << result_c << pyre::journal::newline << "process time = " << t.ms()
-            << " ms " << pyre::journal::newline << pyre::journal::outdent(1) << pyre::journal::endl;
-
-
-    // PYRE TENSOR
-    // tensor matrix
-    pyre::tensor::diagonal_matrix_t<3> tensor { 1.0, -1.0, 2.0 };
-    pyre::tensor::real result_tensor = 0.;
-
-    // reset timer
-    t.reset();
-    // start timer
-    t.start();
-
-    for (int n = 0; n < N; ++n) {
-        // determinant (tensor)
-        result_tensor += pyre::tensor::determinant(tensor);
-    }
-
-    // stop the timer
-    t.stop();
-
-    // report
-    channel << "pyre tensor" << pyre::journal::newline << pyre::journal::indent(1)
-            << "result = " << result_tensor << pyre::journal::newline << "process time = " << t.ms()
-            << " ms " << pyre::journal::newline << pyre::journal::outdent(1) << pyre::journal::endl;
-
-    // all done
-    return;
-}
-
-
-int
-main()
-{
-    // number of times to do operation
-    int N = 1 << 25;
-
-    // run benchmark for 2D matrix
-    determinant_2D(N);
-
-    // run benchmark for 3D matrix
-    determinant_3D(N);
-
-    // run benchmark for 3D symmetric matrix
-    determinant_3D_symmetric(N);
-
-    // run benchmark for 3D diagonal matrix
-    determinant_3D_diagonal(N);
-
-    // all done
-    return 0;
-}
+// run all benchmarks
+BENCHMARK_MAIN();
 
 
 // end of file

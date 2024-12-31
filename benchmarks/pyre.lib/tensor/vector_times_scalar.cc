@@ -5,101 +5,70 @@
 //
 
 
+// get the benchmark library
+#include <benchmark/benchmark.h>
+
 // get array
 #include <array>
-
-// get support
-#include <pyre/timers.h>
-#include <pyre/journal.h>
+// get tensor
 #include <pyre/tensor.h>
 
 
-// type aliases
-using process_timer_t = pyre::timers::process_timer_t;
-
-
-void
-vector_times_scalar(int N)
+auto
+times_tensor(const auto & vector, const auto & scalar)
 {
-    // make a channel
-    pyre::journal::info_t channel("tests.timer.vector_times_scalar");
+    // return the multiplication times scalar
+    return scalar * vector;
+}
 
-    // make a timer
-    process_timer_t t("tests.timer");
-
-    channel << "Computing " << N << " scalar-vector multiplications" << pyre::journal::endl;
-
-
-    // ARRAY
-    // a scalar
-    pyre::tensor::real scalar = std::sqrt(2);
-
-    // array vector
-    std::array<double, 3> vector_c { 1.0, -1.0, 2.0 };
-    std::array<double, 3> result_c { 0.0, 0.0, 0.0 };
-
-    // reset timer
-    t.reset();
-    // start timer
-    t.start();
-
-    for (int n = 0; n < N; ++n) {
-        // scalar * vector (array)
-        for (size_t i = 0; i < vector_c.size(); ++i) {
-            result_c[i] += scalar * vector_c[i];
-        }
+auto
+times_array(const auto & vector, const auto & scalar)
+{
+    // compute the sum of the two vectors
+    auto result = std::array<double, 3> { 0.0, 0.0, 0.0 };
+    for (size_t i = 0; i < result.size(); ++i) {
+        result[i] += scalar * vector[i];
     }
 
-    // stop the timer
-    t.stop();
+    // return the result
+    return result;
+}
 
-    // report
-    channel << "array (for loop) " << pyre::journal::newline << pyre::journal::indent(1)
-            << "result = [ " << result_c[0] << ", " << result_c[1] << ", " << result_c[2] << " ]"
-            << pyre::journal::newline << "process time = " << t.ms() << " ms "
-            << pyre::journal::newline << pyre::journal::outdent(1) << pyre::journal::endl;
+static void
+VectorTimesScalarArray(benchmark::State & state)
+{
+    // build the vector
+    auto vector = std::array<double, 3> { 1.0, -1.0, 2.0 };
+    auto scalar = std::sqrt(2);
 
-
-    // PYRE TENSOR
-    // tensor vector
-    pyre::tensor::vector_t<3> vector { 1.0, -1.0, 2.0 };
-    pyre::tensor::vector_t<3> result_tensor { 0.0, 0.0, 0.0 };
-
-    // reset timer
-    t.reset();
-    // start timer
-    t.start();
-
-    for (int n = 0; n < N; ++n) {
-        // scalar * vector (tensor)
-        result_tensor += scalar * vector;
+    // repeat the operation sufficient number of times
+    for (auto _ : state) {
+        benchmark::DoNotOptimize(times_array(vector, scalar));
     }
+}
 
-    // stop the timer
-    t.stop();
+static void
+VectorTimesScalarTensor(benchmark::State & state)
+{
+    // build the vector
+    auto vector = pyre::tensor::vector_t<3> { 1.0, -1.0, 2.0 };
+    auto scalar = std::sqrt(2);
 
-    // report
-    channel << "pyre tensor" << pyre::journal::newline << pyre::journal::indent(1)
-            << "result = " << result_tensor << pyre::journal::newline << "process time = " << t.ms()
-            << " ms " << pyre::journal::newline << pyre::journal::outdent(1) << pyre::journal::endl;
-
-    // all done
-    return;
+    // repeat the operation sufficient number of times
+    for (auto _ : state) {
+        benchmark::DoNotOptimize(times_tensor(vector, scalar));
+    }
 }
 
 
-int
-main()
-{
-    // number of times to do operation
-    int N = 1 << 25;
+// run benchmark for 3D vector (array)
+BENCHMARK(VectorTimesScalarArray);
+// run benchmark for 3D vector (tensor)
+BENCHMARK(VectorTimesScalarTensor);
 
-    // scalar * vector
-    vector_times_scalar(N);
 
-    // all done
-    return 0;
-}
+// run all benchmarks
+BENCHMARK_MAIN();
 
 
 // end of file
