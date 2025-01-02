@@ -13,25 +13,25 @@
 //
 //    Z_s1 x ... x Z_sn -> Z_(s1 * ... * sn)
 //
-template <int N, template <typename, std::size_t> class containerT>
+template <int N, typename T, template <typename, std::size_t> class containerT>
 class pyre::grid::Canonical {
     // types
 public:
     // alias for me
-    using canonical_type = Canonical<N, containerT>;
+    using canonical_type = Canonical<N, T, containerT>;
     using canonical_const_reference = const canonical_type &;
     // my parts
     // rank order
-    using order_type = Order<containerT<int, N>>;
+    using order_type = Order<containerT<T, N>>;
     using order_const_reference = const order_type &;
     // rank specifications
-    using shape_type = Shape<containerT<int, N>>;
+    using shape_type = Shape<containerT<T, N>>;
     using shape_const_reference = const shape_type &;
     // indices
-    using index_type = Index<containerT<int, N>>;
+    using index_type = Index<containerT<T, N>>;
     using index_const_reference = const index_type &;
     // strides are like shapes with a wide type so overflow is less likely
-    using strides_type = Shape<containerT<int, N>>;
+    using strides_type = Shape<containerT<T, N>>;
     using strides_const_reference = const strides_type &;
     // offsets
     using difference_type = typename index_type::difference_type;
@@ -81,10 +81,10 @@ public:
     // slicing
 public:
     // when the shape is known at compile time
-    template <int... shape>
+    template <T... shape>
     constexpr auto cslice(index_const_reference base) const;
     // when only the rank of the slice is known at compile time
-    template <int sliceRank = N>
+    template <T sliceRank = N>
     constexpr auto slice(index_const_reference base, shape_const_reference shape) const;
 
     // iteration support: iterators generate sequences of indices
@@ -100,7 +100,7 @@ public:
     // static interface
 public:
     // the number of axes
-    static constexpr auto rank() -> int;
+    static constexpr auto rank() -> T;
 
     // implementation details: static helpers
 protected:

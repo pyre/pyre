@@ -13,8 +13,8 @@
 
 // constructor that assumes that the physical layout corresponds to the parameters given and
 // infers the strides and the nudge
-template <int N, template <typename, std::size_t> class containerT>
-constexpr pyre::grid::Canonical<N, containerT>::Canonical(
+template <int N, typename T, template <typename, std::size_t> class containerT>
+constexpr pyre::grid::Canonical<N, T, containerT>::Canonical(
     shape_const_reference shape, index_const_reference origin, order_const_reference order) :
     _shape { shape },
     _order { order },
@@ -29,8 +29,8 @@ constexpr pyre::grid::Canonical<N, containerT>::Canonical(
 // constructor that requires a complete layout specification; useful for deriving layouts
 // different from the physical one that is fixed by the owner of the underlying memory
 // representation
-template <int N, template <typename, std::size_t> class containerT>
-constexpr pyre::grid::Canonical<N, containerT>::Canonical(
+template <int N, typename T, template <typename, std::size_t> class containerT>
+constexpr pyre::grid::Canonical<N, T, containerT>::Canonical(
     shape_const_reference shape, index_const_reference origin, order_const_reference order,
     strides_const_reference strides, difference_type nudge) :
     _shape { shape },
@@ -43,27 +43,27 @@ constexpr pyre::grid::Canonical<N, containerT>::Canonical(
 
 // interface
 // accessors for the user supplied information
-template <int N, template <typename, std::size_t> class containerT>
+template <int N, typename T, template <typename, std::size_t> class containerT>
 constexpr auto
-pyre::grid::Canonical<N, containerT>::shape() const -> shape_type
+pyre::grid::Canonical<N, T, containerT>::shape() const -> shape_type
 {
     // easy enough
     return _shape;
 }
 
 
-template <int N, template <typename, std::size_t> class containerT>
+template <int N, typename T, template <typename, std::size_t> class containerT>
 constexpr auto
-pyre::grid::Canonical<N, containerT>::order() const -> order_type
+pyre::grid::Canonical<N, T, containerT>::order() const -> order_type
 {
     // easy enough
     return _order;
 }
 
 
-template <int N, template <typename, std::size_t> class containerT>
+template <int N, typename T, template <typename, std::size_t> class containerT>
 constexpr auto
-pyre::grid::Canonical<N, containerT>::origin() const -> index_type
+pyre::grid::Canonical<N, T, containerT>::origin() const -> index_type
 {
     // easy enough
     return _origin;
@@ -71,27 +71,27 @@ pyre::grid::Canonical<N, containerT>::origin() const -> index_type
 
 
 // accessors for the deduced information
-template <int N, template <typename, std::size_t> class containerT>
+template <int N, typename T, template <typename, std::size_t> class containerT>
 constexpr auto
-pyre::grid::Canonical<N, containerT>::strides() const -> strides_type
+pyre::grid::Canonical<N, T, containerT>::strides() const -> strides_type
 {
     // easy enough
     return _strides;
 }
 
 
-template <int N, template <typename, std::size_t> class containerT>
+template <int N, typename T, template <typename, std::size_t> class containerT>
 constexpr auto
-pyre::grid::Canonical<N, containerT>::nudge() const -> difference_type
+pyre::grid::Canonical<N, T, containerT>::nudge() const -> difference_type
 {
     // easy enough
     return _nudge;
 }
 
 
-template <int N, template <typename, std::size_t> class containerT>
+template <int N, typename T, template <typename, std::size_t> class containerT>
 constexpr auto
-pyre::grid::Canonical<N, containerT>::cells() const -> std::size_t
+pyre::grid::Canonical<N, T, containerT>::cells() const -> std::size_t
 {
     // my {shape} knows
     return _shape.cells();
@@ -99,9 +99,9 @@ pyre::grid::Canonical<N, containerT>::cells() const -> std::size_t
 
 
 // mutators
-template <int N, template <typename, std::size_t> class containerT>
+template <int N, typename T, template <typename, std::size_t> class containerT>
 constexpr auto
-pyre::grid::Canonical<N, containerT>::order(order_const_reference order) const -> canonical_type
+pyre::grid::Canonical<N, T, containerT>::order(order_const_reference order) const -> canonical_type
 {
     // make a new packing using my info and the supplied {order}
     canonical_type reordered { _shape, _origin, order };
@@ -111,9 +111,9 @@ pyre::grid::Canonical<N, containerT>::order(order_const_reference order) const -
 
 
 // from {difference_type} to {index_type}
-template <int N, template <typename, std::size_t> class containerT>
+template <int N, typename T, template <typename, std::size_t> class containerT>
 constexpr auto
-pyre::grid::Canonical<N, containerT>::index(difference_type offset) const -> index_type
+pyre::grid::Canonical<N, T, containerT>::index(difference_type offset) const -> index_type
 {
     // make an empty index
     index_type index;
@@ -136,9 +136,10 @@ pyre::grid::Canonical<N, containerT>::index(difference_type offset) const -> ind
 
 
 // from {index_type} to {difference_type}
-template <int N, template <typename, std::size_t> class containerT>
+template <int N, typename T, template <typename, std::size_t> class containerT>
 constexpr auto
-pyre::grid::Canonical<N, containerT>::offset(index_const_reference index) const -> difference_type
+pyre::grid::Canonical<N, T, containerT>::offset(index_const_reference index) const
+    -> difference_type
 {
     // the initial value; here so we can be explicit about the return type
     difference_type zero = 0;
@@ -150,18 +151,18 @@ pyre::grid::Canonical<N, containerT>::offset(index_const_reference index) const 
 
 
 // syntactic sugar for the packing isomorphism
-template <int N, template <typename, std::size_t> class containerT>
+template <int N, typename T, template <typename, std::size_t> class containerT>
 constexpr auto
-pyre::grid::Canonical<N, containerT>::operator[](difference_type offset) const -> index_type
+pyre::grid::Canonical<N, T, containerT>::operator[](difference_type offset) const -> index_type
 {
     // easy enough
     return index(offset);
 }
 
 
-template <int N, template <typename, std::size_t> class containerT>
+template <int N, typename T, template <typename, std::size_t> class containerT>
 constexpr auto
-pyre::grid::Canonical<N, containerT>::operator[](index_const_reference index) const
+pyre::grid::Canonical<N, T, containerT>::operator[](index_const_reference index) const
     -> difference_type
 {
     // easy enough
@@ -171,17 +172,17 @@ pyre::grid::Canonical<N, containerT>::operator[](index_const_reference index) co
 
 // slicing
 // when the shape is known at compile time
-template <int N, template <typename, std::size_t> class containerT>
-template <int... args>
+template <int N, typename T, template <typename, std::size_t> class containerT>
+template <T... args>
 constexpr auto
-pyre::grid::Canonical<N, containerT>::cslice(index_const_reference base) const
+pyre::grid::Canonical<N, T, containerT>::cslice(index_const_reference base) const
 {
     // count the non-zero entries in the shape specification to figure out the dimensionality
     // of the slice
-    constexpr int M = (0 + ... + (args == 0 ? 0 : 1));
+    constexpr T M = (0 + ... + (args == 0 ? 0 : 1));
 
     // we now know enough to make an alias for the slice packing
-    using slice_t = canonical_t<M, containerT>;
+    using slice_t = canonical_t<M, T, containerT>;
     // and instantiate blank slice info
     typename slice_t::shape_type sliceShape {};
     typename slice_t::index_type sliceOrigin {};
@@ -196,7 +197,7 @@ pyre::grid::Canonical<N, containerT>::cslice(index_const_reference base) const
     // initialize the map from my ranks to the slice tanks
     shape_type rankMap {};
     // go through the raw shape spec
-    for (int i = 0, j = 0; i < N; ++i) {
+    for (T i = 0, j = 0; i < N; ++i) {
         // get the {ith} value
         auto s = rawShape[i];
         // if it's zero
@@ -215,7 +216,7 @@ pyre::grid::Canonical<N, containerT>::cslice(index_const_reference base) const
     }
 
     // now, to set the packing order
-    int i = 0;
+    T i = 0;
     // get my order
     const auto & myOrder = order();
     // visit the ranks in order
@@ -239,14 +240,14 @@ pyre::grid::Canonical<N, containerT>::cslice(index_const_reference base) const
 
 
 // when the shape is not known at compile time
-template <int N, template <typename, std::size_t> class containerT>
-template <int sliceRank>
+template <int N, typename T, template <typename, std::size_t> class containerT>
+template <T sliceRank>
 constexpr auto
-pyre::grid::Canonical<N, containerT>::slice(
+pyre::grid::Canonical<N, T, containerT>::slice(
     index_const_reference base, shape_const_reference rawShape) const
 {
     // make an alias for the slice packing
-    using slice_t = canonical_t<sliceRank, containerT>;
+    using slice_t = canonical_t<sliceRank, T, containerT>;
     // and instantiate blank slice info
     typename slice_t::shape_type sliceShape {};
     typename slice_t::index_type sliceOrigin {};
@@ -259,7 +260,7 @@ pyre::grid::Canonical<N, containerT>::slice(
     // initialize the map from my ranks to the slice ranks
     shape_type rankMap {};
     // go through the raw shape spec
-    for (int i = 0, j = 0; i < N; ++i) {
+    for (T i = 0, j = 0; i < N; ++i) {
         // get the {ith} value
         auto s = rawShape[i];
         // if it's zero
@@ -278,7 +279,7 @@ pyre::grid::Canonical<N, containerT>::slice(
     }
 
     // now, to set the packing order
-    int i = 0;
+    T i = 0;
     // get my order
     const auto & myOrder = order();
     // visit the ranks in order
@@ -302,27 +303,27 @@ pyre::grid::Canonical<N, containerT>::slice(
 
 
 // iteration support
-template <int N, template <typename, std::size_t> class containerT>
+template <int N, typename T, template <typename, std::size_t> class containerT>
 constexpr auto
-pyre::grid::Canonical<N, containerT>::begin() const -> index_iterator
+pyre::grid::Canonical<N, T, containerT>::begin() const -> index_iterator
 {
     // make an iterator that generates index in my packing {order}, starting at my {origin}
     return index_iterator(shape(), order(), origin());
 }
 
 
-template <int N, template <typename, std::size_t> class containerT>
+template <int N, typename T, template <typename, std::size_t> class containerT>
 constexpr auto
-pyre::grid::Canonical<N, containerT>::begin(index_const_reference step) const -> index_iterator
+pyre::grid::Canonical<N, T, containerT>::begin(index_const_reference step) const -> index_iterator
 {
     // make an iterator that generates index in my packing {order}, starting at my {origin}
     return index_iterator(shape(), order(), origin(), step);
 }
 
 
-template <int N, template <typename, std::size_t> class containerT>
+template <int N, typename T, template <typename, std::size_t> class containerT>
 constexpr auto
-pyre::grid::Canonical<N, containerT>::end() const -> index_iterator
+pyre::grid::Canonical<N, T, containerT>::end() const -> index_iterator
 {
     // form the end of the container
     auto end = _origin + _shape;
@@ -331,9 +332,9 @@ pyre::grid::Canonical<N, containerT>::end() const -> index_iterator
 }
 
 
-template <int N, template <typename, std::size_t> class containerT>
+template <int N, typename T, template <typename, std::size_t> class containerT>
 constexpr auto
-pyre::grid::Canonical<N, containerT>::box(
+pyre::grid::Canonical<N, T, containerT>::box(
     index_const_reference base, shape_const_reference shape) const -> canonical_type
 {
     // make a layout
@@ -348,9 +349,9 @@ pyre::grid::Canonical<N, containerT>::box(
 
 
 // static interface
-template <int N, template <typename, std::size_t> class containerT>
+template <int N, typename T, template <typename, std::size_t> class containerT>
 constexpr auto
-pyre::grid::Canonical<N, containerT>::rank() -> int
+pyre::grid::Canonical<N, T, containerT>::rank() -> T
 {
     // easy enough
     return N;
@@ -359,9 +360,9 @@ pyre::grid::Canonical<N, containerT>::rank() -> int
 
 // static helpers
 // compute the packing strides, i.e. the offsets from a cell to its neighbor along each axis
-template <int N, template <typename, std::size_t> class containerT>
+template <int N, typename T, template <typename, std::size_t> class containerT>
 constexpr auto
-pyre::grid::Canonical<N, containerT>::_initStrides(
+pyre::grid::Canonical<N, T, containerT>::_initStrides(
     shape_const_reference shape, order_const_reference order) -> strides_type
 {
     // make an empty shape to store the answer
@@ -378,9 +379,9 @@ pyre::grid::Canonical<N, containerT>::_initStrides(
 
 
 // compute the shift necessary so that {origin}, i.e. the smallest index, maps to offset zero
-template <int N, template <typename, std::size_t> class containerT>
+template <int N, typename T, template <typename, std::size_t> class containerT>
 constexpr auto
-pyre::grid::Canonical<N, containerT>::_initShift(
+pyre::grid::Canonical<N, T, containerT>::_initShift(
     index_const_reference origin, strides_const_reference strides) -> difference_type
 {
     // the initial value; here so we can be explicit about the return type

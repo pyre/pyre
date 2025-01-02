@@ -43,8 +43,9 @@ namespace pyre::grid {
     template <class packingT>
     using index_iterator_t = IndexIterator<packingT>;
     // the canonical packing strategy
-    template <int N, template <typename, std::size_t> class containerT = std::array>
-    using canonical_t = Canonical<N, containerT>;
+    template <
+        int N, typename T = int, template <typename, std::size_t> class containerT = std::array>
+    using canonical_t = Canonical<N, T, containerT>;
     // the symmetric packing strategy
     template <int N, template <typename, std::size_t> class containerT = std::array>
     using symmetric_t = Symmetric<N, containerT>;
