@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2024 all rights reserved
+# (c) 1998-2025 all rights reserved
 #
 
 
@@ -25,7 +25,7 @@ def test():
         'c',
         'c Michael A.G. Aïvázis',
         'c Orthologue',
-        'c (c) 1998-2024 All Rights Reserved',
+        'c (c) 1998-2025 All Rights Reserved',
         'c',
         '',
         '',

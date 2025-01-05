@@ -1,7 +1,7 @@
 # -*- Makefile -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
-# (c) 1998-2024 all rights reserved
+# (c) 1998-2025 all rights reserved
 
 
 # the list of special packages that don't need actual install locations to be available

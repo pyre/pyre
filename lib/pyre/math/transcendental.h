@@ -1,7 +1,7 @@
 // -*- coding: utf-8 -*-
 //
 // bianca giovanardi
-// (c) 1998-2024 all rights reserved
+// (c) 1998-2025 all rights reserved
 //
 
 // Constexpr implementation of transcendental functions until C++26 implements them

@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
-// (c) 1998-2024 all rights reserved
+// (c) 1998-2025 all rights reserved
 
 #if !defined(mm_platforms_linux_x86_64)
 // user code can use the code guard to know the specific architecture

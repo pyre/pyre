@@ -2,7 +2,7 @@
 //
 // michael a.g. aïvázis
 // orthologue
-// (c) 1998-2024 all rights reserved
+// (c) 1998-2025 all rights reserved
 //
 
 #include <portinfo>
@@ -20,7 +20,7 @@ const char * const gsl::copyright__doc__ = "the module copyright string";
 PyObject *
 gsl::copyright(PyObject *, PyObject *)
 {
-    const char * const copyright_note = "gsl: (c) 1998-2024 orthologue";
+    const char * const copyright_note = "gsl: (c) 1998-2025 orthologue";
     return Py_BuildValue("s", copyright_note);
 }
 
@@ -35,7 +35,7 @@ gsl::license(PyObject *, PyObject *)
         "\n"
         "    gsl " GSL_VERSION
         "\n"
-        "    Copyright (c) 1998-2024 orthologue\n"
+        "    Copyright (c) 1998-2025 orthologue\n"
         "    All Rights Reserved\n"
         "\n"
         "    Redistribution and use in source and binary forms, with or without\n"

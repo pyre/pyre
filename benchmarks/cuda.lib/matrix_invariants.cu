@@ -1,7 +1,7 @@
 // -*- c++ -*-
 //
 // sebastiaan van paasen
-// (c) 1998-2024 all rights reserved
+// (c) 1998-2025 all rights reserved
 
 // function to compute the invariants of a 3x3 tensor
 __global__ void
