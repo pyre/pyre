@@ -55,7 +55,7 @@ pyre.lib.c++.flags += -Wall $($(compiler.c++).std.c++17)
 
 # additional macros that enable features sensitive to the c++ standard version
 pyre.lib.c++.defines += \
-  ${if ${findstring $($(compiler.c++).std.c++17),$(pyre.lib.c++.flags)},,\
+  ${if ${findstring $($(compiler.c++).std.c++20),$(pyre.lib.c++.flags)},,\
     HAVE_COMPACT_PACKINGS WITH_CXX20 \
   }
 
