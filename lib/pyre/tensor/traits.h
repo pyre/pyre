@@ -87,7 +87,7 @@ namespace pyre::tensor {
         // using packingT2 = typename tensorT2::pack_t;
         // using repacking_type = typename repacking_prod<packingT1, packingT2>::packing_type;
         using repacking_type =
-            typename pyre::grid::Canonical<rank, std::array>; // TOFIX not general wrt packings
+            typename pyre::grid::Canonical<rank, int, std::array>; // TOFIX not general wrt packings
 
     public:
         using type = typename tensor<scalar_type, repacking_type, dims>::type;
