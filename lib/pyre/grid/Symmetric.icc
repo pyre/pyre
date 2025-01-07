@@ -107,10 +107,10 @@ pyre::grid::Symmetric<N, T, containerT>::_offset(int D, int i)
 
 
 template <int N, typename T, template <typename, std::size_t> class containerT>
-template <int M, class... T>
+template <int M, class... S>
 constexpr int
-pyre::grid::Symmetric<N, T, containerT>::_offset(int D, int i, T... j)
-    requires(sizeof...(T) == M - 1 && M > 1)
+pyre::grid::Symmetric<N, T, containerT>::_offset(int D, int i, S... j)
+    requires(sizeof...(S) == M - 1 && M > 1)
 {
     // calculate the offset associated with the rank M index {i, j...}
     return

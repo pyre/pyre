@@ -19,7 +19,7 @@ class pyre::grid::Symmetric {
     // types
 public:
     // alias for me
-    using symmetric_type = Symmetric<N, containerT>;
+    using symmetric_type = Symmetric<N, int, containerT>;
     using symmetric_const_reference = const symmetric_type &;
     // my parts
     // rank order
@@ -94,9 +94,9 @@ private:
 
     // the offset associated with the M-rank index {i, j...} in a symmetric packing of rank {M} and
     // dimension {D}
-    template <int M, class... T>
-    static constexpr int _offset(int D, int i, T... j)
-        requires(sizeof...(T) == M - 1 && M > 1);
+    template <int M, class... S>
+    static constexpr int _offset(int D, int i, S... j)
+        requires(sizeof...(S) == M - 1 && M > 1);
     template <int M>
     static constexpr int _offset(int D, int i)
         requires(M == 1);
