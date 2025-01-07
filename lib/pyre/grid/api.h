@@ -47,11 +47,13 @@ namespace pyre::grid {
         int N, typename T = int, template <typename, std::size_t> class containerT = std::array>
     using canonical_t = Canonical<N, T, containerT>;
     // the symmetric packing strategy
-    template <int N, template <typename, std::size_t> class containerT = std::array>
-    using symmetric_t = Symmetric<N, containerT>;
+    template <
+        int N, typename T = int, template <typename, std::size_t> class containerT = std::array>
+    using symmetric_t = Symmetric<N, T, containerT>;
     // the diagonal packing strategy
-    template <int N, template <typename, std::size_t> class containerT = std::array>
-    using diagonal_t = Diagonal<N, containerT>;
+    template <
+        int N, typename T = int, template <typename, std::size_t> class containerT = std::array>
+    using diagonal_t = Diagonal<N, T, containerT>;
 
     // the grid
     template <class packingT, class storageT>

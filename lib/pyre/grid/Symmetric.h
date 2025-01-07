@@ -14,7 +14,7 @@
 //
 //    Z_s1 x ... x Z_sn -> Z_(s1 * ... * sn)
 //
-template <int N, template <typename, std::size_t> class containerT>
+template <int N, typename T, template <typename, std::size_t> class containerT>
 class pyre::grid::Symmetric {
     // types
 public:
@@ -23,13 +23,13 @@ public:
     using symmetric_const_reference = const symmetric_type &;
     // my parts
     // rank order
-    using order_type = Order<containerT<int, N>>;
+    using order_type = Order<containerT<T, N>>;
     using order_const_reference = const order_type &;
     // rank specifications
-    using shape_type = Shape<containerT<int, N>>;
+    using shape_type = Shape<containerT<T, N>>;
     using shape_const_reference = const shape_type &;
     // indices
-    using index_type = Index<containerT<int, N>>;
+    using index_type = Index<containerT<T, N>>;
     using index_const_reference = const index_type &;
     // offsets
     using difference_type = typename index_type::difference_type;
