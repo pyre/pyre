@@ -19,7 +19,7 @@ class pyre::grid::Diagonal {
     // types
 public:
     // alias for me
-    using diagonal_type = Diagonal<N, containerT>;
+    using diagonal_type = Diagonal<N, int, containerT>;
     using diagonal_const_reference = const diagonal_type &;
     // my parts
     // rank order
