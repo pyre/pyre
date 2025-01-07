@@ -100,7 +100,7 @@ public:
     // static interface
 public:
     // the number of axes
-    static constexpr auto rank() -> T;
+    static constexpr auto rank() -> int;
 
     // implementation details: static helpers
 protected:
