@@ -14,8 +14,8 @@
 
 // constructor that assumes that the physical layout corresponds to the parameters given and
 // infers the nudge
-template <int N, template <typename, std::size_t> class containerT>
-constexpr pyre::grid::Symmetric<N, containerT>::Symmetric(
+template <int N, typename T, template <typename, std::size_t> class containerT>
+constexpr pyre::grid::Symmetric<N, T, containerT>::Symmetric(
     shape_const_reference shape, index_const_reference origin, order_const_reference order) :
     _shape { shape },
     _order { order },
@@ -26,37 +26,37 @@ constexpr pyre::grid::Symmetric<N, containerT>::Symmetric(
 
 // interface
 // accessors for the user supplied information
-template <int N, template <typename, std::size_t> class containerT>
+template <int N, typename T, template <typename, std::size_t> class containerT>
 constexpr auto
-pyre::grid::Symmetric<N, containerT>::shape() const -> shape_type
+pyre::grid::Symmetric<N, T, containerT>::shape() const -> shape_type
 {
     // easy enough
     return _shape;
 }
 
 
-template <int N, template <typename, std::size_t> class containerT>
+template <int N, typename T, template <typename, std::size_t> class containerT>
 constexpr auto
-pyre::grid::Symmetric<N, containerT>::order() const -> order_type
+pyre::grid::Symmetric<N, T, containerT>::order() const -> order_type
 {
     // easy enough
     return _order;
 }
 
 
-template <int N, template <typename, std::size_t> class containerT>
+template <int N, typename T, template <typename, std::size_t> class containerT>
 constexpr auto
-pyre::grid::Symmetric<N, containerT>::origin() const -> index_type
+pyre::grid::Symmetric<N, T, containerT>::origin() const -> index_type
 {
     // easy enough
     return _origin;
 }
 
 
-template <int N, template <typename, std::size_t> class containerT>
+template <int N, typename T, template <typename, std::size_t> class containerT>
 template <int M>
 constexpr int
-pyre::grid::Symmetric<N, containerT>::_entries(int D)
+pyre::grid::Symmetric<N, T, containerT>::_entries(int D)
     requires(M == 1)
 {
     // easy enough
@@ -64,10 +64,10 @@ pyre::grid::Symmetric<N, containerT>::_entries(int D)
 }
 
 
-template <int N, template <typename, std::size_t> class containerT>
+template <int N, typename T, template <typename, std::size_t> class containerT>
 template <int M>
 constexpr int
-pyre::grid::Symmetric<N, containerT>::_entries(int D)
+pyre::grid::Symmetric<N, T, containerT>::_entries(int D)
     requires(M > 1)
 {
     // add up the total number of entries for all ranks
@@ -80,10 +80,10 @@ pyre::grid::Symmetric<N, containerT>::_entries(int D)
 }
 
 
-template <int N, template <typename, std::size_t> class containerT>
+template <int N, typename T, template <typename, std::size_t> class containerT>
 template <int M>
 constexpr int
-pyre::grid::Symmetric<N, containerT>::_entriesBeforeRank(int i, int D)
+pyre::grid::Symmetric<N, T, containerT>::_entriesBeforeRank(int i, int D)
 {
     // add up the total number of entries for each rank less than {i}
     int result = 0;
@@ -95,10 +95,10 @@ pyre::grid::Symmetric<N, containerT>::_entriesBeforeRank(int i, int D)
 }
 
 
-template <int N, template <typename, std::size_t> class containerT>
+template <int N, typename T, template <typename, std::size_t> class containerT>
 template <int M>
 constexpr int
-pyre::grid::Symmetric<N, containerT>::_offset(int D, int i)
+pyre::grid::Symmetric<N, T, containerT>::_offset(int D, int i)
     requires(M == 1)
 {
     // easy enough
@@ -106,10 +106,10 @@ pyre::grid::Symmetric<N, containerT>::_offset(int D, int i)
 }
 
 
-template <int N, template <typename, std::size_t> class containerT>
+template <int N, typename T, template <typename, std::size_t> class containerT>
 template <int M, class... T>
 constexpr int
-pyre::grid::Symmetric<N, containerT>::_offset(int D, int i, T... j)
+pyre::grid::Symmetric<N, T, containerT>::_offset(int D, int i, T... j)
     requires(sizeof...(T) == M - 1 && M > 1)
 {
     // calculate the offset associated with the rank M index {i, j...}
@@ -120,20 +120,20 @@ pyre::grid::Symmetric<N, containerT>::_offset(int D, int i, T... j)
         + _offset<M - 1>(D - i, j...);
 }
 
-template <int N, template <typename, std::size_t> class containerT>
+template <int N, typename T, template <typename, std::size_t> class containerT>
 template <int M>
 constexpr int
-pyre::grid::Symmetric<N, containerT>::_getFirstRankIndex(int D, int & offset)
+pyre::grid::Symmetric<N, T, containerT>::_getFirstRankIndex(int D, int & offset)
     requires(M == 1)
 {
     // easy enough
     return offset;
 }
 
-template <int N, template <typename, std::size_t> class containerT>
+template <int N, typename T, template <typename, std::size_t> class containerT>
 template <int M>
 constexpr int
-pyre::grid::Symmetric<N, containerT>::_getFirstRankIndex(int D, int & offset)
+pyre::grid::Symmetric<N, T, containerT>::_getFirstRankIndex(int D, int & offset)
     requires(M > 1)
 {
     // guess an index for this rank (start from the top)
@@ -158,9 +158,9 @@ pyre::grid::Symmetric<N, containerT>::_getFirstRankIndex(int D, int & offset)
     return K;
 }
 
-template <int N, template <typename, std::size_t> class containerT>
+template <int N, typename T, template <typename, std::size_t> class containerT>
 constexpr auto
-pyre::grid::Symmetric<N, containerT>::cells() const -> std::size_t
+pyre::grid::Symmetric<N, T, containerT>::cells() const -> std::size_t
 {
     // the number of cells in the upper- (or lower-) diagonal part
     return _entries<N>(_D);
@@ -168,9 +168,9 @@ pyre::grid::Symmetric<N, containerT>::cells() const -> std::size_t
 
 
 // from {difference_type} to {index_type}
-template <int N, template <typename, std::size_t> class containerT>
+template <int N, typename T, template <typename, std::size_t> class containerT>
 constexpr auto
-pyre::grid::Symmetric<N, containerT>::index(difference_type offset) const -> index_type
+pyre::grid::Symmetric<N, T, containerT>::index(difference_type offset) const -> index_type
 {
     // the index to fill in
     index_type index;
@@ -182,8 +182,7 @@ pyre::grid::Symmetric<N, containerT>::index(difference_type offset) const -> ind
     index[0] = _getFirstRankIndex<N>(_D, offset_);
 
     // helper function to get the next indices (i = 1, ..., N - 1)
-    auto _getIndices = [&offset_]<int... I>(index_t<N> & idx, int D, integer_sequence<I...>)
-    {
+    auto _getIndices = [&offset_]<int... I>(index_t<N> & idx, int D, integer_sequence<I...>) {
         // get the next index (I + 1) as:
         ((idx[I + 1] =
               // the first index (corresponding to this offset) in a rank (N - (I + 1)) packing of
@@ -203,17 +202,17 @@ pyre::grid::Symmetric<N, containerT>::index(difference_type offset) const -> ind
 
 
 // from {index_type} to {difference_type}
-template <int N, template <typename, std::size_t> class containerT>
+template <int N, typename T, template <typename, std::size_t> class containerT>
 constexpr auto
-pyre::grid::Symmetric<N, containerT>::offset(index_const_reference index) const -> difference_type
+pyre::grid::Symmetric<N, T, containerT>::offset(index_const_reference index) const
+    -> difference_type
 {
     // shift by the origin and sort the indices
     index_type sorted_index = index - _origin;
     std::sort(sorted_index.begin(), sorted_index.end());
 
     // helper function to shift the indices (i, j, k, ...) into (i, j - i, k - j, ...)
-    auto _shiftIndices = []<int... I>(index_t<N> & idx, integer_sequence<I...>)
-    {
+    auto _shiftIndices = []<int... I>(index_t<N> & idx, integer_sequence<I...>) {
         // iterate in reverse order to avoid overwriting entries before using them
         ((idx[(N - 2 - I) + 1] -= idx[N - 2 - I]), ...);
         // all done
@@ -224,8 +223,7 @@ pyre::grid::Symmetric<N, containerT>::offset(index_const_reference index) const 
     _shiftIndices(sorted_index, make_integer_sequence<N - 1> {});
 
     // helper function needed to expand the array in a parameter pack
-    auto _getOffset = []<int... I>(index_t<N> idx, int D, integer_sequence<I...>)
-    {
+    auto _getOffset = []<int... I>(index_t<N> idx, int D, integer_sequence<I...>) {
         return _offset<N>(D, idx[I]...);
     };
 
@@ -235,18 +233,18 @@ pyre::grid::Symmetric<N, containerT>::offset(index_const_reference index) const 
 
 
 // syntactic sugar for the packing isomorphism
-template <int N, template <typename, std::size_t> class containerT>
+template <int N, typename T, template <typename, std::size_t> class containerT>
 constexpr auto
-pyre::grid::Symmetric<N, containerT>::operator[](difference_type offset) const -> index_type
+pyre::grid::Symmetric<N, T, containerT>::operator[](difference_type offset) const -> index_type
 {
     // easy enough
     return index(offset);
 }
 
 
-template <int N, template <typename, std::size_t> class containerT>
+template <int N, typename T, template <typename, std::size_t> class containerT>
 constexpr auto
-pyre::grid::Symmetric<N, containerT>::operator[](index_const_reference index) const
+pyre::grid::Symmetric<N, T, containerT>::operator[](index_const_reference index) const
     -> difference_type
 {
     // easy enough
@@ -255,27 +253,27 @@ pyre::grid::Symmetric<N, containerT>::operator[](index_const_reference index) co
 
 
 // iteration support
-template <int N, template <typename, std::size_t> class containerT>
+template <int N, typename T, template <typename, std::size_t> class containerT>
 constexpr auto
-pyre::grid::Symmetric<N, containerT>::begin() const -> index_iterator
+pyre::grid::Symmetric<N, T, containerT>::begin() const -> index_iterator
 {
     // make an iterator that generates index in my packing {order}, starting at my {origin}
     return index_iterator(shape(), order(), origin());
 }
 
 
-template <int N, template <typename, std::size_t> class containerT>
+template <int N, typename T, template <typename, std::size_t> class containerT>
 constexpr auto
-pyre::grid::Symmetric<N, containerT>::begin(index_const_reference step) const -> index_iterator
+pyre::grid::Symmetric<N, T, containerT>::begin(index_const_reference step) const -> index_iterator
 {
     // make an iterator that generates index in my packing {order}, starting at my {origin}
     return index_iterator(shape(), order(), origin(), step);
 }
 
 
-template <int N, template <typename, std::size_t> class containerT>
+template <int N, typename T, template <typename, std::size_t> class containerT>
 constexpr auto
-pyre::grid::Symmetric<N, containerT>::end() const -> index_iterator
+pyre::grid::Symmetric<N, T, containerT>::end() const -> index_iterator
 {
     // form the end of the container
     auto end = _origin + _shape;
@@ -285,9 +283,9 @@ pyre::grid::Symmetric<N, containerT>::end() const -> index_iterator
 
 
 // static interface
-template <int N, template <typename, std::size_t> class containerT>
+template <int N, typename T, template <typename, std::size_t> class containerT>
 constexpr auto
-pyre::grid::Symmetric<N, containerT>::rank() -> int
+pyre::grid::Symmetric<N, T, containerT>::rank() -> int
 {
     // easy enough
     return N;
