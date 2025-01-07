@@ -35,49 +35,50 @@ namespace pyre::tensor {
 
     template <int N, template <typename, std::size_t> class containerT>
     struct repacking_sum<
-        pyre::grid::Canonical<N, int, containerT>, pyre::grid::Symmetric<N, containerT>> {
+        pyre::grid::Canonical<N, int, containerT>, pyre::grid::Symmetric<N, int, containerT>> {
         using packing_type = pyre::grid::Canonical<N, int, containerT>;
     };
 
     template <int N, template <typename, std::size_t> class containerT>
     struct repacking_sum<
-        pyre::grid::Symmetric<N, containerT>, pyre::grid::Canonical<N, int, containerT>> {
+        pyre::grid::Symmetric<N, int, containerT>, pyre::grid::Canonical<N, int, containerT>> {
         using packing_type = pyre::grid::Canonical<N, int, containerT>;
     };
 
     template <int N, template <typename, std::size_t> class containerT>
     struct repacking_sum<
-        pyre::grid::Symmetric<N, containerT>, pyre::grid::Symmetric<N, containerT>> {
-        using packing_type = pyre::grid::Symmetric<N, containerT>;
+        pyre::grid::Symmetric<N, int, containerT>, pyre::grid::Symmetric<N, int, containerT>> {
+        using packing_type = pyre::grid::Symmetric<N, int, containerT>;
     };
 
     template <int N, template <typename, std::size_t> class containerT>
     struct repacking_sum<
-        pyre::grid::Diagonal<N, containerT>, pyre::grid::Canonical<N, int, containerT>> {
+        pyre::grid::Diagonal<N, int, containerT>, pyre::grid::Canonical<N, int, containerT>> {
         using packing_type = pyre::grid::Canonical<N, int, containerT>;
     };
 
     template <int N, template <typename, std::size_t> class containerT>
     struct repacking_sum<
-        pyre::grid::Canonical<N, int, containerT>, pyre::grid::Diagonal<N, containerT>> {
+        pyre::grid::Canonical<N, int, containerT>, pyre::grid::Diagonal<N, int, containerT>> {
         using packing_type = pyre::grid::Canonical<N, int, containerT>;
     };
 
     template <int N, template <typename, std::size_t> class containerT>
-    struct repacking_sum<pyre::grid::Diagonal<N, containerT>, pyre::grid::Diagonal<N, containerT>> {
-        using packing_type = pyre::grid::Diagonal<N, containerT>;
+    struct repacking_sum<
+        pyre::grid::Diagonal<N, int, containerT>, pyre::grid::Diagonal<N, int, containerT>> {
+        using packing_type = pyre::grid::Diagonal<N, int, containerT>;
     };
 
     template <int N, template <typename, std::size_t> class containerT>
     struct repacking_sum<
-        pyre::grid::Diagonal<N, containerT>, pyre::grid::Symmetric<N, containerT>> {
-        using packing_type = pyre::grid::Symmetric<N, containerT>;
+        pyre::grid::Diagonal<N, int, containerT>, pyre::grid::Symmetric<N, int, containerT>> {
+        using packing_type = pyre::grid::Symmetric<N, int, containerT>;
     };
 
     template <int N, template <typename, std::size_t> class containerT>
     struct repacking_sum<
-        pyre::grid::Symmetric<N, containerT>, pyre::grid::Diagonal<N, containerT>> {
-        using packing_type = pyre::grid::Symmetric<N, containerT>;
+        pyre::grid::Symmetric<N, int, containerT>, pyre::grid::Diagonal<N, int, containerT>> {
+        using packing_type = pyre::grid::Symmetric<N, int, containerT>;
     };
 
     template <class T, class S>
@@ -91,49 +92,49 @@ namespace pyre::tensor {
 
     template <int N, template <typename, std::size_t> class containerT>
     struct repacking_prod<
-        pyre::grid::Canonical<N, int, containerT>, pyre::grid::Symmetric<N, containerT>> {
+        pyre::grid::Canonical<N, int, containerT>, pyre::grid::Symmetric<N, int, containerT>> {
         using packing_type = pyre::grid::Canonical<N, int, containerT>;
     };
 
     template <int N, template <typename, std::size_t> class containerT>
     struct repacking_prod<
-        pyre::grid::Symmetric<N, containerT>, pyre::grid::Canonical<N, int, containerT>> {
+        pyre::grid::Symmetric<N, int, containerT>, pyre::grid::Canonical<N, int, containerT>> {
         using packing_type = pyre::grid::Canonical<N, int, containerT>;
     };
 
     template <int N, template <typename, std::size_t> class containerT>
     struct repacking_prod<
-        pyre::grid::Symmetric<N, containerT>, pyre::grid::Symmetric<N, containerT>> {
-        using packing_type = pyre::grid::Symmetric<N, containerT>;
+        pyre::grid::Symmetric<N, int, containerT>, pyre::grid::Symmetric<N, int, containerT>> {
+        using packing_type = pyre::grid::Symmetric<N, int, containerT>;
     };
 
     template <int N, template <typename, std::size_t> class containerT>
     struct repacking_prod<
-        pyre::grid::Diagonal<N, containerT>, pyre::grid::Canonical<N, int, containerT>> {
+        pyre::grid::Diagonal<N, int, containerT>, pyre::grid::Canonical<N, int, containerT>> {
         using packing_type = pyre::grid::Canonical<N, int, containerT>;
     };
 
     template <int N, template <typename, std::size_t> class containerT>
     struct repacking_prod<
-        pyre::grid::Canonical<N, int, containerT>, pyre::grid::Diagonal<N, containerT>> {
+        pyre::grid::Canonical<N, int, containerT>, pyre::grid::Diagonal<N, int, containerT>> {
         using packing_type = pyre::grid::Canonical<N, int, containerT>;
     };
 
     template <int N, template <typename, std::size_t> class containerT>
     struct repacking_prod<
-        pyre::grid::Diagonal<N, containerT>, pyre::grid::Diagonal<N, containerT>> {
-        using packing_type = pyre::grid::Diagonal<N, containerT>;
+        pyre::grid::Diagonal<N, int, containerT>, pyre::grid::Diagonal<N, int, containerT>> {
+        using packing_type = pyre::grid::Diagonal<N, int, containerT>;
     };
 
     template <int N, template <typename, std::size_t> class containerT>
     struct repacking_prod<
-        pyre::grid::Diagonal<N, containerT>, pyre::grid::Symmetric<N, containerT>> {
+        pyre::grid::Diagonal<N, int, containerT>, pyre::grid::Symmetric<N, int, containerT>> {
         using packing_type = pyre::grid::Canonical<N, int, containerT>;
     };
 
     template <int N, template <typename, std::size_t> class containerT>
     struct repacking_prod<
-        pyre::grid::Symmetric<N, containerT>, pyre::grid::Diagonal<N, containerT>> {
+        pyre::grid::Symmetric<N, int, containerT>, pyre::grid::Diagonal<N, int, containerT>> {
         using packing_type = pyre::grid::Canonical<N, int, containerT>;
     };
 
