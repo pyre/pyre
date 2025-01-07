@@ -34,8 +34,10 @@ pyre-cuda.lib.incdir := $(builder.dest.inc)pyre/cuda/
 pyre-cuda.lib.languages := c++ cuda
 pyre-cuda.lib.prerequisites := journal.lib pyre.lib
 pyre-cuda.lib.extern := pyre.lib pyre cuda
-pyre-cuda.lib.c++.flags += $($(compiler.c++).std.c++17)
-pyre-cuda.lib.cuda.flags += $(nvcc.std.c++17)
+pyre-cuda.lib.c++.flags += $(pyre.lib.c++.flags)
+pyre-cuda.lib.c++.defines += $(pyre.lib.c++.defines)
+pyre-cuda.lib.cuda.flags += $(nvcc.std.c++20)
+pyre-cuda.lib.cuda.defines += $(pyre.lib.c++.defines)
 
 # the extension
 pyre-cuda.ext.root := extensions/cuda/
@@ -44,7 +46,8 @@ pyre-cuda.ext.pkg := pyre-cuda.pkg
 pyre-cuda.ext.wraps :=
 pyre-cuda.ext.capsule :=
 pyre-cuda.ext.extern := pyre.lib journal.lib cuda python
-pyre-cuda.ext.lib.c++.flags += $($(compiler.c++).std.c++17)
+pyre-cuda.ext.lib.c++.flags += $(pyre-cuda.lib.c++.flags)
+pyre-cuda.ext.lib.c++.defines += $(pyre-cuda.lib.c++.defines)
 pyre-cuda.ext.lib.prerequisites += journal.lib pyre.lib
 
 # cuda configuration: make sure linking includes these libraries

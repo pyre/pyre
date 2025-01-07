@@ -37,7 +37,8 @@ pyre-gsl.ext.wraps :=
 pyre-gsl.ext.capsule.destination := pyre/gsl/
 pyre-gsl.ext.lib.prerequisites := journal.lib pyre.lib
 pyre-gsl.ext.extern := pyre.lib journal.lib gsl
-pyre-gsl.ext.lib.c++.flags += $($(compiler.c++).std.c++17)
+pyre-gsl.ext.lib.c++.flags += $(pyre.lib.c++.flags)
+pyre-gsl.ext.lib.c++.defines += $(pyre.lib.c++.defines)
 
 #
 # adjustments that depend on  the availability of external dependencies

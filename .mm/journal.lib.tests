@@ -15,8 +15,9 @@ journal.lib.tests.harness :=
 # arguments to pass to each test case
 journal.lib.tests.argv :=
 # c++ compiler arguments
-journal.lib.tests.c++.defines := PYRE_CORE
-journal.lib.tests.c++.flags += -Wall $($(compiler.c++).std.c++17)
+journal.lib.tests.c++.flags += $(journal.lib.c++.flags)
+journal.lib.tests.c++.defines += $(journal.lib.c++.defines)
+
 # c compiler arguments
 journal.lib.tests.c.defines := PYRE_CORE
 journal.lib.tests.c.flags += -Wall $($(compiler.c).std.c11)

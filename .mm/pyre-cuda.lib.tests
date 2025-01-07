@@ -10,8 +10,8 @@ pyre-cuda.lib.tests.prerequisites := pyre-cuda.lib
 pyre-cuda.lib.tests.extern := pyre-cuda.lib pyre.lib journal.lib cuda
 
 # c++ compiler arguments
-pyre-cuda.lib.tests.c++.defines := PYRE_CORE
-pyre-cuda.lib.tests.c++.flags += -Wall $($(compiler.c++).std.c++17)
+pyre-cuda.lib.tests.c++.defines += $(pyre.lib.c++.defines)
+pyre-cuda.lib.tests.c++.flags += -Wall $(pyre.lib.c++.flags)
 
 
 # end of file

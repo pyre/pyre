@@ -51,7 +51,14 @@ pyre.lib.root := lib/pyre/
 pyre.lib.stem := pyre
 pyre.lib.prerequisites += journal.lib
 pyre.lib.c++.defines += PYRE_CORE
-pyre.lib.c++.flags += $($(compiler.c++).std.c++17)
+pyre.lib.c++.flags += -Wall $($(compiler.c++).std.c++17)
+
+# additional macros that enable features sensitive to the c++ standard version
+pyre.lib.c++.defines += \
+  ${if ${findstring $($(compiler.c++).std.c++17),$(pyre.lib.c++.flags)},,\
+    HAVE_COMPACT_PACKINGS WITH_CXX20 \
+  }
+
 # external dependencies
 pyre.lib.extern := \
     journal.lib \
@@ -79,7 +86,8 @@ host.ext.pkg := pyre.pkg
 host.ext.wraps := pyre.lib
 host.ext.capsule :=
 host.ext.extern := journal.lib python
-host.ext.lib.c++.flags += $($(compiler.c++).std.c++17)
+host.ext.lib.c++.defines += $(pyre.lib.c++.defines)
+host.ext.lib.c++.flags += $(pyre.lib.c++.flags)
 host.ext.lib.prerequisites += journal.lib # pyre.lib is added automatically
 
 
@@ -90,7 +98,8 @@ h5.ext.pkg := pyre.pkg
 h5.ext.wraps := pyre.lib
 h5.ext.capsule :=
 h5.ext.extern = journal.lib hdf5 ${if ${findstring mpi,$(hdf5.parallel)},mpi} pybind11 python
-h5.ext.lib.c++.flags += $($(compiler.c++).std.c++17)
+h5.ext.lib.c++.defines += $(pyre.lib.c++.defines)
+h5.ext.lib.c++.flags += $(pyre.lib.c++.flags)
 h5.ext.lib.prerequisites += journal.lib # pyre.lib is added automatically
 
 
@@ -101,7 +110,8 @@ postgres.ext.pkg := pyre.pkg
 postgres.ext.wraps := pyre.lib
 postgres.ext.capsule :=
 postgres.ext.extern := journal.lib libpq python
-postgres.ext.lib.c++.flags += $($(compiler.c++).std.c++17)
+postgres.ext.lib.c++.defines += $(pyre.lib.c++.defines)
+postgres.ext.lib.c++.flags += $(pyre.lib.c++.flags)
 postgres.ext.lib.prerequisites += journal.lib # pyre.lib is added automatically
 
 
