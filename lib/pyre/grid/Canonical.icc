@@ -241,7 +241,7 @@ pyre::grid::Canonical<N, T, containerT>::cslice(index_const_reference base) cons
 
 // when the shape is not known at compile time
 template <int N, typename T, template <typename, std::size_t> class containerT>
-template <T sliceRank>
+template <int sliceRank>
 constexpr auto
 pyre::grid::Canonical<N, T, containerT>::slice(
     index_const_reference base, shape_const_reference rawShape) const

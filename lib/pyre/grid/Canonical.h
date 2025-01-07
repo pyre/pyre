@@ -84,7 +84,7 @@ public:
     template <T... shape>
     constexpr auto cslice(index_const_reference base) const;
     // when only the rank of the slice is known at compile time
-    template <T sliceRank = N>
+    template <int sliceRank = N>
     constexpr auto slice(index_const_reference base, shape_const_reference shape) const;
 
     // iteration support: iterators generate sequences of indices
