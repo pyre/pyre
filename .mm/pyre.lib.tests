@@ -42,8 +42,12 @@ tests.pyre.lib.memory.constmap_oob.pre := tests.pyre.lib.memory.map_write
 tests.pyre.lib.grid.grid_mmap_set.pre := tests.pyre.lib.grid.grid_mmap_sanity
 tests.pyre.lib.grid.grid_mmap_get.pre := tests.pyre.lib.grid.grid_mmap_set
 
-# exclude the tensor tests (require c++20)
+# conditionally exclude tensor tests that require c++20 or greater
+# NOTE:
+#  - remove the check when c++20 becomes the minimum required
+#  - in the meantime, add more versions as they are supported
 pyre.lib.tests.drivers.exclude += \
+${if ${findstring $($(compiler.c++).std.c++20),$(pyre.lib.tests.c++.flags)},,\
     tensor/tensor_canonical_arithmetics.cc \
     tensor/tensor_canonical_basis.cc \
     tensor/tensor_cayley_hamilton_theorem.cc \
@@ -71,13 +75,19 @@ pyre.lib.tests.drivers.exclude += \
     tensor/tensor_symmetry.cc \
     tensor/tensor_transpose.cc \
     tensor/tensor_utilities.cc \
+}
 
 
-# exclude the compact packing tests (require c++20)
+# conditionally exclude compact packing tests that require c++20 or greater
+# NOTE:
+#  - remove the check when c++20 becomes the minimum required
+#  - in the meantime, add more versions as they are supported
 pyre.lib.tests.drivers.exclude += \
+${if ${findstring $($(compiler.c++).std.c++20),$(pyre.lib.tests.c++.flags)},,\
     grid/symmetric_sanity.cc \
     grid/symmetric_visit.cc \
     grid/diagonal_visit.cc \
+}
 
 
 # end of file
