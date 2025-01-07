@@ -10,8 +10,8 @@ pyre.lib.tests.prerequisites := pyre.lib journal.lib
 pyre.lib.tests.extern := pyre.lib $(pyre.lib.extern)
 
 # c++ compiler arguments
-pyre.lib.tests.c++.defines := PYRE_CORE
-pyre.lib.tests.c++.flags += -Wall $($(compiler.c++).std.c++17)
+pyre.lib.tests.c++.defines += $(pyre.lib.c++.defines)
+pyre.lib.tests.c++.flags += -Wall $(pyre.lib.c++.flags)
 
 
 # cleanup

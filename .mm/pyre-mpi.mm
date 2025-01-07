@@ -33,7 +33,8 @@ pyre-mpi.lib.incdir := $(builder.dest.inc)pyre/mpi/
 pyre-mpi.lib.gateway := mpi.h
 pyre-mpi.lib.prerequisites := journal.lib
 pyre-mpi.lib.extern := journal.lib mpi
-pyre-mpi.lib.c++.flags += $($(compiler.c++).std.c++17)
+pyre-mpi.lib.c++.flags += $(pyre.lib.c++.flags)
+pyre-mpi.lib.c++.defines += $(pyre.lib.c++.defines)
 
 # the mpi extension meta-data
 pyre-mpi.ext.root := extensions/mpi/
@@ -43,7 +44,8 @@ pyre-mpi.ext.wraps := pyre-mpi.lib
 pyre-mpi.ext.capsule.destination := pyre/mpi/
 pyre-mpi.ext.lib.prerequisites := pyre-mpi.lib pyre.lib
 pyre-mpi.ext.extern := pyre.lib journal.lib mpi python
-pyre-mpi.ext.lib.c++.flags += $($(compiler.c++).std.c++17)
+pyre-mpi.ext.lib.c++.flags += $(pyre-mpi.lib.c++.flags)
+pyre-mpi.ext.lib.c++.defines += $(pyre-mpi.lib.c++.defines)
 
 
 # get the testsuites

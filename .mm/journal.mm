@@ -28,8 +28,8 @@ journal.lib.incdir := $(builder.dest.inc)pyre/journal/
 # the main api header file; it is deposited one level above the rest
 journal.lib.gateway := journal.h
 # compiler control
-journal.lib.c++.defines += PYRE_CORE
-journal.lib.c++.flags += $($(compiler.c++).std.c++17)
+journal.lib.c++.flags += $(pyre.lib.c++.flags)
+journal.lib.c++.defines += $(pyre.lib.c++.defines)
 
 
 # the journal extension meta-data
@@ -42,8 +42,8 @@ journal.ext.capsule :=
 journal.ext.wraps := journal.lib
 journal.ext.extern := pybind11 python
 # compiler control
-journal.ext.lib.c++.defines += PYRE_CORE
-journal.ext.lib.c++.flags += $($(compiler.c++).std.c++17)
+journal.ext.lib.c++.flags += $(journal.lib.c++.flags)
+journal.ext.lib.c++.defines += $(journal.lib.c++.defines)
 
 
 # get the testsuites
