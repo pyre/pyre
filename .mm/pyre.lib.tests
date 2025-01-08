@@ -47,7 +47,7 @@ tests.pyre.lib.grid.grid_mmap_get.pre := tests.pyre.lib.grid.grid_mmap_set
 #  - remove the check when c++20 becomes the minimum required
 #  - in the meantime, add more versions as they are supported
 pyre.lib.tests.drivers.exclude += \
-${if ${findstring $($(compiler.c++).std.c++20),$(pyre.lib.tests.c++.flags)},,\
+${if $(pyre.c++20),,\
     tensor/tensor_canonical_arithmetics.cc \
     tensor/tensor_canonical_basis.cc \
     tensor/tensor_cayley_hamilton_theorem.cc \
@@ -83,7 +83,7 @@ ${if ${findstring $($(compiler.c++).std.c++20),$(pyre.lib.tests.c++.flags)},,\
 #  - remove the check when c++20 becomes the minimum required
 #  - in the meantime, add more versions as they are supported
 pyre.lib.tests.drivers.exclude += \
-${if ${findstring $($(compiler.c++).std.c++20),$(pyre.lib.tests.c++.flags)},,\
+${if $(pyre.c++20),,\
     grid/symmetric_sanity.cc \
     grid/symmetric_visit.cc \
     grid/diagonal_visit.cc \
