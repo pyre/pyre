@@ -113,7 +113,7 @@ define vite.workflows.sources.stage.dir =
 	# form the path relative to home of the sources
 	${eval _naked := $(_dir:$($(_bundle).root.sources)%=%)}
 	# the absolute path of the destination
-	${eval _dst := $($(_bundle).staging.prefix)src/$(_naked)}
+	${eval _dst := $($(_bundle).staging.src)$(_naked)}
 
 # add the directory to the pile
 $(_bundle).stage.dirs:: $(_dst)
@@ -140,7 +140,7 @@ define vite.workflows.sources.stage.file =
 	# the absolute path of the source file
 	${eval _src := $($(_bundle).prefix.sources)$(_naked)}
 	# the absolute path of the destination
-	${eval _dst := $($(_bundle).staging.prefix)src/$(_naked)}
+	${eval _dst := $($(_bundle).staging.src)$(_naked)}
 
 # add the file to the bundle
 $(_bundle).stage.files:: $(_dst)

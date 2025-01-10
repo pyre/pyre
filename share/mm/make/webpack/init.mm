@@ -58,6 +58,7 @@ define webpack.init
     ${eval $(2).staging.babel_config ?= $($(2).staging.prefix).babelrc}
     ${eval $(2).staging.webpack_config ?= $($(2).staging.prefix)webpack.config.js}
     ${eval $(2).staging.ts_config ?= $($(2).staging.prefix)tsconfig.json}
+    ${eval $(2).staging.relay_generated ?= $($(2).staging.prefix)generated}
     # the list of sources
     ${eval $(2).staging.app.dirs := ${call webpack.staging.app.dirs,$(2)}}
     ${eval $(2).staging.app.sources := ${call webpack.staging.app.sources,$(2)}}

@@ -15,6 +15,9 @@ palette.topic := $(palette.lavender)
 # variables
 palette.variable.name := $(palette.sage)
 palette.variable.value := $(palette.normal)
+# locations
+palette.location.name := $(palette.sage)
+palette.location.value := $(palette.normal)
 
 # list of known targets
 palette.targets := $(palette.steel-blue)

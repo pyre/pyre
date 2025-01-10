@@ -43,6 +43,7 @@ nvcc.std.c++03 := --std=c++03
 nvcc.std.c++11 := --std=c++11
 nvcc.std.c++14 := --std=c++14
 nvcc.std.c++17 := --std=c++17
+nvcc.std.c++20 := --std=c++20 # cuda 12.x
 
 # link time flags
 nvcc.link.output := -o
@@ -60,10 +61,10 @@ nvcc.clean = $(1).d
 
 # dependency generation
 # nvcc does this in two passes: the dependency file gets generated during an additional compilation
-# phase so there is an extra step necessary to build it
+# phase, so there is an extra step necessary to build it
 # N.B. the adjustments necessary to transform the dependency file into canonical form appear to be
-# the same as {gcc}; this may be the case if nvcc uses a different compiler underneath, so this is
-# something that has to be investigated
+#      the same as {gcc}; this may not be the case if nvcc uses a different compiler underneath, so
+#      this is something that has to be investigated
 #   usage: nvcc.makedep {source} {depfile} {external dependencies}
 define nvcc.makedep =
     nvcc \

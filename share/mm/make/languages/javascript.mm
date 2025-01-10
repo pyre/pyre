@@ -5,7 +5,7 @@
 
 
 # javascript
-languages.javascript.sources := .ts .tsx .js .jsx
+languages.javascript.sources := .ts .tsx .js .jsx .md .mdx
 languages.javascript.headers :=
 
 # language predicates

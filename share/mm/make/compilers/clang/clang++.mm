@@ -47,6 +47,7 @@ clang++.std.c++11 := -std=c++11
 clang++.std.c++14 := -std=c++14
 clang++.std.c++17 := -std=c++17
 clang++.std.c++20 := -std=c++20
+clang++.std.c++23 := -std=c++23
 
 # link time flags
 clang++.link.output := -o

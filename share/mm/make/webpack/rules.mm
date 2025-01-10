@@ -43,7 +43,7 @@ $(1).clean:
 	$(rm.force-recurse) $($(1).staging.prefix)
 
 # the webpack bundle
-$(1).generated: $($(1).install.generated.assets)
+$(1).generated: $($(1).staging.relay_generated) $($(1).install.generated.assets)
 
 # chunks from the external dependencies
 $(1).chunks: ${foreach chunk,$($(1).chunks),$(1).chunks.$(chunk)}
@@ -101,6 +101,11 @@ $($(1).staging.ts_config): $($(1).source.ts_config) | $($(1).staging.prefix)
 
 # the staging area
 $($(1).staging.prefix):
+	$(mkdirp) $$@
+	@${call log.action,"mkdir",$$@}
+
+# the relay generated types
+$($(1).staging.relay_generated):
 	$(mkdirp) $$@
 	@${call log.action,"mkdir",$$@}
 
