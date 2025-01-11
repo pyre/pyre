@@ -1175,7 +1175,6 @@ template <int I, pyre::tensor::matrix_c matrixT>
 constexpr auto
 pyre::tensor::row(const matrixT & A) -> vector_t<matrixT::dims[1], typename matrixT::scalar_type>
 {
-    constexpr int D1 = matrixT::dims[0];
     constexpr int D2 = matrixT::dims[1];
     using T = typename matrixT::scalar_type;
 
@@ -1197,7 +1196,6 @@ constexpr auto
 pyre::tensor::col(const matrixT & A) -> vector_t<matrixT::dims[0], typename matrixT::scalar_type>
 {
     constexpr int D1 = matrixT::dims[0];
-    constexpr int D2 = matrixT::dims[1];
     using T = typename matrixT::scalar_type;
 
     auto _col = [&A]<int... J>(integer_sequence<J...>) -> vector_t<D1, T> {
