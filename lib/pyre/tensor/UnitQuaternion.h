@@ -39,6 +39,9 @@ namespace pyre::tensor {
         // constructor with an angle and an axis of rotation
         constexpr UnitQuaternion(const real_type &, const rotation_axis_type &);
 
+        // constructor from a rotation matrix representation
+        constexpr UnitQuaternion(const rotation_matrix_type &);
+
     public:
         // default metamethods
         constexpr UnitQuaternion(const UnitQuaternion &) = default;

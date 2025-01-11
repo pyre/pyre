@@ -39,6 +39,14 @@ constexpr pyre::tensor::UnitQuaternion<T>::UnitQuaternion(
                      axis[2] * pyre::math::sin(0.5 * theta) })
 {}
 
+// constructor from a rotation matrix representation
+template <typename T>
+constexpr pyre::tensor::UnitQuaternion<T>::UnitQuaternion(const rotation_matrix_type & matrix) :
+    UnitQuaternion(
+        pyre::math::acos(0.5 * (pyre::tensor::trace(matrix) - 1.0)),
+        pyre::tensor::normalize(pyre::tensor::axis(pyre::tensor::skew(matrix))))
+{}
+
 template <typename T>
 constexpr auto
 pyre::tensor::UnitQuaternion<T>::rotation() const -> rotation_matrix_type
