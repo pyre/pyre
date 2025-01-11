@@ -694,6 +694,26 @@ pyre::tensor::skew(const vectorT & a) -> square_matrix_t<3, typename vectorT::sc
     return A;
 }
 
+// the vector representing a skew symmetric matrix
+template <pyre::tensor::square_matrix_c matrixT>
+constexpr auto
+pyre::tensor::axis(const matrixT & A) -> vector_t<3, typename matrixT::scalar_type>
+    requires(matrixT::dims[0] == 3)
+{
+    // the type of the vector to be returned
+    using vector_t = vector_t<3, typename matrixT::scalar_type>;
+
+    // assert that the matrix is skew symmetric
+    assert((A[matrixT::template getOffset<2, 1>()] == -A[matrixT::template getOffset<1, 2>()]));
+    assert((A[matrixT::template getOffset<0, 2>()] == -A[matrixT::template getOffset<2, 0>()]));
+    assert((A[matrixT::template getOffset<1, 0>()] == -A[matrixT::template getOffset<0, 1>()]));
+
+    // all done
+    return vector_t { A[matrixT::template getOffset<2, 1>()],
+                      A[matrixT::template getOffset<0, 2>()],
+                      A[matrixT::template getOffset<1, 0>()] };
+}
+
 template <pyre::tensor::vector_c vectorT>
 constexpr auto
 pyre::tensor::cross(const vectorT & a, const vectorT & b) -> auto
