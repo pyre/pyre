@@ -5,184 +5,107 @@
 //
 
 
+// get the benchmark library
+#include <benchmark/benchmark.h>
+
 // get array
 #include <array>
-
-// get support
-#include <pyre/timers.h>
-#include <pyre/journal.h>
+// get tensor
 #include <pyre/tensor.h>
 
 
-// type aliases
-using process_timer_t = pyre::timers::process_timer_t;
-
-
-void
-matrix_times_vector(int N)
+auto
+multiply_tensor(const auto & matrix, const auto & vector)
 {
-    // make a channel
-    pyre::journal::info_t channel("tests.timer.matrix_times_vector");
+    // return the multiplication
+    return matrix * vector;
+}
 
-    // make a timer
-    process_timer_t t("tests.timer");
-
-    channel << "Computing " << N << " matrix-vector multiplications" << pyre::journal::endl;
-
-
-    // ARRAY
-
-    // array vector
-    std::array<double, 3> vector_c { 1.0, -1.0, 2.0 };
-    std::array<double, 9> tensor_c { 1.0, -1.0, 2.0, 1.0, 0.0, 1.0, 2.0, -1.0, 0.0 };
-    std::array<double, 3> result_c { 0.0, 0.0, 0.0 };
-
-    // reset timer
-    t.reset();
-    // start timer
-    t.start();
-
-    for (int n = 0; n < N; ++n) {
-        // matrix * vector (array)
-        for (size_t i = 0; i < vector_c.size(); ++i) {
-            for (size_t j = 0; j < vector_c.size(); ++j) {
-                result_c[i] += tensor_c[i * 3 + j] * vector_c[j];
-            }
+auto
+multiply_array(const auto & matrix, const auto & vector)
+{
+    // multiply the matrix by the scalar
+    auto result = std::array<double, 3> { 0.0, 0.0, 0.0 };
+    for (size_t i = 0; i < vector.size(); ++i) {
+        for (size_t j = 0; j < vector.size(); ++j) {
+            result[i] += matrix[i * 3 + j] * vector[j];
         }
     }
 
-    // stop the timer
-    t.stop();
-
-    // report
-    channel << "array (for loop) " << pyre::journal::newline << pyre::journal::indent(1)
-            << "result = [ " << result_c[0] << ", " << result_c[1] << ", " << result_c[2] << " ]"
-            << pyre::journal::newline << "process time = " << t.ms() << " ms "
-            << pyre::journal::newline << pyre::journal::outdent(1) << pyre::journal::endl;
-
-
-    // PYRE TENSOR
-    // tensor vector
-    pyre::tensor::vector_t<3> vector { 1.0, -1.0, 2.0 };
-    pyre::tensor::matrix_t<3> tensor { 1.0, -1.0, 2.0, 1.0, 0.0, 1.0, 2.0, -1.0, 0.0 };
-    pyre::tensor::vector_t<3> result_tensor { 0.0, 0.0, 0.0 };
-
-    // reset timer
-    t.reset();
-    // start timer
-    t.start();
-
-    for (int n = 0; n < N; ++n) {
-        // matrix * vector (tensor)
-        result_tensor += tensor * vector;
-    }
-
-    // stop the timer
-    t.stop();
-
-    // report
-    channel << "pyre tensor" << pyre::journal::newline << pyre::journal::indent(1)
-            << "result = " << result_tensor << pyre::journal::newline << "process time = " << t.ms()
-            << " ms " << pyre::journal::newline << pyre::journal::outdent(1) << pyre::journal::endl;
-
-    // all done
-    return;
+    // return the result
+    return result;
 }
 
-
-void
-symmetric_matrix_times_vector(int N)
+static void
+MatrixTimesVectorArray(benchmark::State & state)
 {
-    // make a channel
-    pyre::journal::info_t channel("tests.timer.matrix_times_vector");
+    // build the matrices
+    auto matrix = std::array<double, 9> { 1.0, -1.0, 2.0, 1.0, 0.0, 1.0, 2.0, -1.0, 0.0 };
+    auto vector = std::array<double, 3> { 1.0, -1.0, 2.0 };
 
-    // make a timer
-    process_timer_t t("tests.timer");
-
-    channel << "Computing " << N << " matrix-vector multiplications (symmetric matrix)"
-            << pyre::journal::endl;
-
-
-    // ARRAY
-
-    // array vector
-    std::array<double, 3> vector_c { 1.0, -1.0, 2.0 };
-    std::array<double, 9> tensor_c { 1.0, -1.0, 2.0, -1.0, 1.0, 0.0, 2.0, 0.0, 1.0 };
-    std::array<double, 3> result_c { 0.0, 0.0, 0.0 };
-
-    // reset timer
-    t.reset();
-    // start timer
-    t.start();
-
-    for (int n = 0; n < N; ++n) {
-        // matrix * vector (array)
-        for (size_t i = 0; i < vector_c.size(); ++i) {
-            for (size_t j = 0; j < vector_c.size(); ++j) {
-                result_c[i] += tensor_c[i * 3 + j] * vector_c[j];
-            }
-        }
+    // repeat the operation sufficient number of times
+    for (auto _ : state) {
+        benchmark::DoNotOptimize(multiply_array(matrix, vector));
     }
-
-    // stop the timer
-    t.stop();
-
-    // report
-    channel << "array (for loop) " << pyre::journal::newline << pyre::journal::indent(1)
-            << "result = [ " << result_c[0] << ", " << result_c[1] << ", " << result_c[2] << " ]"
-            << pyre::journal::newline << "process time = " << t.ms() << " ms "
-            << pyre::journal::newline << pyre::journal::outdent(1) << pyre::journal::endl;
-
-
-    // PYRE TENSOR
-    // tensor vector
-    pyre::tensor::vector_t<3> vector { 1.0, -1.0, 2.0 };
-    pyre::tensor::symmetric_matrix_t<3> tensor { 1.0,
-                                                 -1.0,
-                                                 2.0,
-                                                 /*-1.0,*/ 1.0,
-                                                 0.0,
-                                                 /*2.0, 0.0,*/ 1.0 };
-    pyre::tensor::vector_t<3> result_tensor { 0.0, 0.0, 0.0 };
-
-    // reset timer
-    t.reset();
-    // start timer
-    t.start();
-
-    for (int n = 0; n < N; ++n) {
-        // matrix * vector (tensor)
-        result_tensor += tensor * vector;
-    }
-
-    // stop the timer
-    t.stop();
-
-    // report
-    channel << "pyre tensor" << pyre::journal::newline << pyre::journal::indent(1)
-            << "result = " << result_tensor << pyre::journal::newline << "process time = " << t.ms()
-            << " ms " << pyre::journal::newline << pyre::journal::outdent(1) << pyre::journal::endl;
-
-    // all done
-    return;
 }
 
-
-int
-main()
+static void
+MatrixTimesVectorTensor(benchmark::State & state)
 {
-    // number of times to do operation
-    int N = 1 << 25;
+    // build the matrices
+    auto matrix = pyre::tensor::matrix_t<3> { 1.0, -1.0, 2.0, 1.0, 0.0, 1.0, 2.0, -1.0, 0.0 };
+    auto vector = pyre::tensor::vector_t<3> { 1.0, -1.0, 2.0 };
 
-    // matrix times vector
-    matrix_times_vector(N);
-
-    // symmetric matrix times vector
-    symmetric_matrix_times_vector(N);
-
-    // all done
-    return 0;
+    // repeat the operation sufficient number of times
+    for (auto _ : state) {
+        benchmark::DoNotOptimize(multiply_tensor(matrix, vector));
+    }
 }
+
+static void
+SymmetricMatrixTimesVectorArray(benchmark::State & state)
+{
+    // build the matrices
+    auto matrix = std::array<double, 9> { 1.0, -1.0, 2.0, -1.0, 1.0, 0.0, 2.0, 0.0, 1.0 };
+    auto vector = std::array<double, 3> { 1.0, -1.0, 2.0 };
+
+    // repeat the operation sufficient number of times
+    for (auto _ : state) {
+        benchmark::DoNotOptimize(multiply_array(matrix, vector));
+    }
+}
+
+static void
+SymmetricMatrixTimesVectorTensor(benchmark::State & state)
+{
+    // build the matrices
+    auto matrix = pyre::tensor::symmetric_matrix_t<3> { 1.0,
+                                                        -1.0,
+                                                        2.0,
+                                                        /*-1.0,*/ 1.0,
+                                                        0.0,
+                                                        /*2.0, 0.0,*/ 1.0 };
+    auto vector = pyre::tensor::vector_t<3> { 1.0, -1.0, 2.0 };
+
+    // repeat the operation sufficient number of times
+    for (auto _ : state) {
+        benchmark::DoNotOptimize(multiply_tensor(matrix, vector));
+    }
+}
+
+
+// run benchmark for 3D matrices (array)
+BENCHMARK(MatrixTimesVectorArray);
+// run benchmark for 3D matrices (tensor)
+BENCHMARK(MatrixTimesVectorTensor);
+// run benchmark for 3D symmetric matrices (array)
+BENCHMARK(SymmetricMatrixTimesVectorArray);
+// run benchmark for 3D symmetric matrices (tensor)
+BENCHMARK(SymmetricMatrixTimesVectorTensor);
+
+
+// run all benchmarks
+BENCHMARK_MAIN();
 
 
 // end of file

@@ -5,96 +5,62 @@
 //
 
 
+// get the benchmark library
+#include <benchmark/benchmark.h>
+
 // get array
 #include <array>
-
-// get support
-#include <pyre/timers.h>
-#include <pyre/journal.h>
+// get tensor
 #include <pyre/tensor.h>
 
 
-// type aliases
-using process_timer_t = pyre::timers::process_timer_t;
-
-
-void
-trace_3D(int N)
+auto
+trace_tensor(const auto & matrix)
 {
-    // make a channel
-    pyre::journal::info_t channel("tests.timer.trace");
+    // return the trace of the matrix
+    return pyre::tensor::trace(matrix);
+}
 
-    // make a timer
-    process_timer_t t("tests.timer");
+auto
+trace_array(const auto & matrix)
+{
+    // return the trace of the matrix
+    return matrix[0] + matrix[4] + matrix[8];
+}
 
-    channel << "Computing " << N << " traces (3x3)" << pyre::journal::endl;
+static void
+MatrixTraceArray(benchmark::State & state)
+{
+    // build the matrices
+    auto matrix = std::array<double, 9> { 1.0, -1.0, 2.0, 1.0, 0.0, 1.0, -1.0, 2.0, -2.0 };
 
-
-    // ARRAY
-
-    // array tensor
-    std::array<double, 9> tensor_c { 1.0, -1.0, 2.0, 1.0, 0.0, 1.0, -1.0, 2.0, -2.0 };
-    double result_c = 0;
-
-    // reset timer
-    t.reset();
-    // start timer
-    t.start();
-
-    for (int n = 0; n < N; ++n) {
-        // trace (array)
-        result_c += tensor_c[0] + tensor_c[4] + tensor_c[8];
+    // repeat the operation sufficient number of times
+    for (auto _ : state) {
+        benchmark::DoNotOptimize(trace_array(matrix));
     }
+}
 
-    // stop the timer
-    t.stop();
+static void
+MatrixTraceTensor(benchmark::State & state)
+{
+    // build the matrices
+    auto matrix = pyre::tensor::matrix_t<3> { 1.0, -1.0, 2.0, 1.0, 0.0, 1.0, -1.0, 2.0, -2.0 };
 
-    // report
-    channel << "array " << pyre::journal::newline << pyre::journal::indent(1)
-            << "result = " << result_c << pyre::journal::newline << "process time = " << t.ms()
-            << " ms " << pyre::journal::newline << pyre::journal::outdent(1) << pyre::journal::endl;
-
-
-    // PYRE TENSOR
-    // tensor matrix
-    pyre::tensor::matrix_t<3> tensor { 1.0, -1.0, 2.0, 1.0, 0.0, 1.0, -1.0, 2.0, -2.0 };
-    pyre::tensor::real result_tensor = 0.;
-
-    // reset timer
-    t.reset();
-    // start timer
-    t.start();
-
-    for (int n = 0; n < N; ++n) {
-        // trace (tensor)
-        result_tensor += pyre::tensor::trace(tensor);
+    // repeat the operation sufficient number of times
+    for (auto _ : state) {
+        benchmark::DoNotOptimize(trace_tensor(matrix));
     }
-
-    // stop the timer
-    t.stop();
-
-    // report
-    channel << "pyre tensor" << pyre::journal::newline << pyre::journal::indent(1)
-            << "result = " << result_tensor << pyre::journal::newline << "process time = " << t.ms()
-            << " ms " << pyre::journal::newline << pyre::journal::outdent(1) << pyre::journal::endl;
-
-    // all done
-    return;
 }
 
 
-int
-main()
-{
-    // number of times to do operation
-    int N = 1 << 25;
+// run benchmark for 3D matrix (array)
+BENCHMARK(MatrixTraceArray);
+// run benchmark for 3D matrix (tensor)
+BENCHMARK(MatrixTraceTensor);
 
-    // run benchmark for 3D matrix
-    trace_3D(N);
 
-    // all done
-    return 0;
-}
+// run all benchmarks
+BENCHMARK_MAIN();
 
 
 // end of file

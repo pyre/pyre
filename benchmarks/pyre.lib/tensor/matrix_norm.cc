@@ -5,239 +5,141 @@
 //
 
 
+// get the benchmark library
+#include <benchmark/benchmark.h>
+
 // get array
 #include <array>
-
-// get support
-#include <pyre/timers.h>
-#include <pyre/journal.h>
+// get tensor
 #include <pyre/tensor.h>
 
 
-// type aliases
-using process_timer_t = pyre::timers::process_timer_t;
-
-
-void
-norm_3D(int N)
+auto
+norm_3D_array(const auto & matrix)
 {
-    // make a channel
-    pyre::journal::info_t channel("tests.timer.norm");
-
-    // make a timer
-    process_timer_t t("tests.timer");
-
-    channel << "Computing " << N << " norms (3x3)" << pyre::journal::endl;
-
-
-    // ARRAY
-
-    // array tensor
-    std::array<double, 9> tensor_c { 1.0, -1.0, 2.0, 1.0, 0.0, 1.0, -1.0, 2.0, -2.0 };
-    double result_c = 0;
-
-    // reset timer
-    t.reset();
-    // start timer
-    t.start();
-
-    for (int n = 0; n < N; ++n) {
-        // norm (array)
-        result_c += std::sqrt(
-            tensor_c[0] * tensor_c[0] + tensor_c[1] * tensor_c[1] + tensor_c[2] * tensor_c[2]
-            + tensor_c[3] * tensor_c[3] + tensor_c[4] * tensor_c[4] + tensor_c[5] * tensor_c[5]
-            + tensor_c[6] * tensor_c[6] + tensor_c[7] * tensor_c[7] + tensor_c[8] * tensor_c[8]);
-    }
-
-    // stop the timer
-    t.stop();
-
-    // report
-    channel << "array " << pyre::journal::newline << pyre::journal::indent(1)
-            << "result = " << result_c << pyre::journal::newline << "process time = " << t.ms()
-            << " ms " << pyre::journal::newline << pyre::journal::outdent(1) << pyre::journal::endl;
-
-
-    // PYRE TENSOR
-    // tensor matrix
-    pyre::tensor::matrix_t<3> tensor { 1.0, -1.0, 2.0, 1.0, 0.0, 1.0, -1.0, 2.0, -2.0 };
-    pyre::tensor::real result_tensor = 0.;
-
-    // reset timer
-    t.reset();
-    // start timer
-    t.start();
-
-    for (int n = 0; n < N; ++n) {
-        // norm (tensor)
-        result_tensor += pyre::tensor::norm(tensor);
-    }
-
-    // stop the timer
-    t.stop();
-
-    // report
-    channel << "pyre tensor" << pyre::journal::newline << pyre::journal::indent(1)
-            << "result = " << result_tensor << pyre::journal::newline << "process time = " << t.ms()
-            << " ms " << pyre::journal::newline << pyre::journal::outdent(1) << pyre::journal::endl;
-
-    // all done
-    return;
+    // return the norm of the matrix
+    return std::sqrt(
+        matrix[0] * matrix[0] + matrix[1] * matrix[1] + matrix[2] * matrix[2]
+        + matrix[3] * matrix[3] + matrix[4] * matrix[4] + matrix[5] * matrix[5]
+        + matrix[6] * matrix[6] + matrix[7] * matrix[7] + matrix[8] * matrix[8]);
 }
 
-void
-norm_9D_diag(int N)
+auto
+norm_3D_symmetric_array(const auto & matrix)
 {
-    // make a channel
-    pyre::journal::info_t channel("tests.timer.norm");
-
-    // make a timer
-    process_timer_t t("tests.timer");
-
-    channel << "Computing " << N << " norms (9x9, diagonal)" << pyre::journal::endl;
-
-
-    // ARRAY
-
-    // array tensor
-    std::array<double, 9> tensor_c { 1.0, -1.0, 2.0, 1.0, 0.0, 1.0, -1.0, 2.0, -2.0 };
-    double result_c = 0;
-
-    // reset timer
-    t.reset();
-    // start timer
-    t.start();
-
-    for (int n = 0; n < N; ++n) {
-        // norm (array)
-        result_c += std::sqrt(
-            tensor_c[0] * tensor_c[0] + tensor_c[1] * tensor_c[1] + tensor_c[2] * tensor_c[2]
-            + tensor_c[3] * tensor_c[3] + tensor_c[4] * tensor_c[4] + tensor_c[5] * tensor_c[5]
-            + tensor_c[6] * tensor_c[6] + tensor_c[7] * tensor_c[7] + tensor_c[8] * tensor_c[8]);
-    }
-
-    // stop the timer
-    t.stop();
-
-    // report
-    channel << "array " << pyre::journal::newline << pyre::journal::indent(1)
-            << "result = " << result_c << pyre::journal::newline << "process time = " << t.ms()
-            << " ms " << pyre::journal::newline << pyre::journal::outdent(1) << pyre::journal::endl;
-
-
-    // PYRE TENSOR
-    // tensor matrix
-    pyre::tensor::diagonal_matrix_t<9> tensor = { 1.0, -1.0, 2.0, 1.0, 0.0, 1.0, -1.0, 2.0, -2.0 };
-    pyre::tensor::real result_tensor = 0.;
-
-    // reset timer
-    t.reset();
-    // start timer
-    t.start();
-
-    for (int n = 0; n < N; ++n) {
-        // norm (tensor)
-        result_tensor += pyre::tensor::norm(tensor);
-    }
-
-    // stop the timer
-    t.stop();
-
-    // report
-    channel << "pyre tensor" << pyre::journal::newline << pyre::journal::indent(1)
-            << "result = " << result_tensor << pyre::journal::newline << "process time = " << t.ms()
-            << " ms " << pyre::journal::newline << pyre::journal::outdent(1) << pyre::journal::endl;
-
-    // all done
-    return;
+    // return the norm of the matrix
+    return std::sqrt(
+        matrix[0] * matrix[0] + 2.0 * matrix[1] * matrix[1] + 2.0 * matrix[2] * matrix[2]
+        + 2.0 * matrix[3] * matrix[3] + matrix[4] * matrix[4]);
 }
 
-void
-norm_3D_sym(int N)
+auto
+norm_9D_diagonal_array(const auto & matrix)
 {
-    // make a channel
-    pyre::journal::info_t channel("tests.timer.norm");
+    // return the norm of the matrix
+    return std::sqrt(
+        matrix[0] * matrix[0] + matrix[1] * matrix[1] + matrix[2] * matrix[2]
+        + matrix[3] * matrix[3] + matrix[4] * matrix[4] + matrix[5] * matrix[5]
+        + matrix[6] * matrix[6] + matrix[7] * matrix[7] + matrix[8] * matrix[8]);
+}
 
-    // make a timer
-    process_timer_t t("tests.timer");
+auto
+norm_tensor(const auto & matrix)
+{
+    // return the norm of the matrix
+    return pyre::tensor::norm(matrix);
+}
 
-    channel << "Computing " << N << " norms (3x3, symmetric)" << pyre::journal::endl;
+static void
+Norm3DArray(benchmark::State & state)
+{
+    // build the matrix
+    auto matrix = std::array<double, 9> { 1.0, -1.0, 2.0, 1.0, 0.0, 1.0, -1.0, 2.0, -2.0 };
 
-
-    // ARRAY
-
-    // array tensor
-    std::array<double, 6> tensor_c { 1.0, -1.0, 2.0, 1.0, 0.0, 1.0 };
-    double result_c = 0;
-
-    // reset timer
-    t.reset();
-    // start timer
-    t.start();
-
-    for (int n = 0; n < N; ++n) {
-        // norm (array)
-        result_c += std::sqrt(
-            tensor_c[0] * tensor_c[0] + 2.0 * tensor_c[1] * tensor_c[1]
-            + 2.0 * tensor_c[2] * tensor_c[2] + 2.0 * tensor_c[3] * tensor_c[3]
-            + tensor_c[4] * tensor_c[4]);
+    // repeat the operation sufficient number of times
+    for (auto _ : state) {
+        benchmark::DoNotOptimize(norm_3D_array(matrix));
     }
+}
 
-    // stop the timer
-    t.stop();
+static void
+Norm3DTensor(benchmark::State & state)
+{
+    // build the matrix
+    auto matrix = pyre::tensor::matrix_t<3> { 1.0, -1.0, 2.0, 1.0, 0.0, 1.0, -1.0, 2.0, -2.0 };
 
-    // report
-    channel << "array " << pyre::journal::newline << pyre::journal::indent(1)
-            << "result = " << result_c << pyre::journal::newline << "process time = " << t.ms()
-            << " ms " << pyre::journal::newline << pyre::journal::outdent(1) << pyre::journal::endl;
-
-
-    // PYRE TENSOR
-    // tensor matrix
-    pyre::tensor::symmetric_matrix_t<3> tensor = { 1.0, -1.0, 2.0, 1.0, 0.0, 1.0 };
-    pyre::tensor::real result_tensor = 0.;
-
-    // reset timer
-    t.reset();
-    // start timer
-    t.start();
-
-    for (int n = 0; n < N; ++n) {
-        // norm (tensor)
-        result_tensor += pyre::tensor::norm(tensor);
+    // repeat the operation sufficient number of times
+    for (auto _ : state) {
+        benchmark::DoNotOptimize(norm_tensor(matrix));
     }
+}
 
-    // stop the timer
-    t.stop();
+static void
+Norm3DSymmetricArray(benchmark::State & state)
+{
+    // build the matrix
+    auto matrix = std::array<double, 6> { 1.0, -1.0, 2.0, 1.0, 0.0, 1.0 };
 
-    // report
-    channel << "pyre tensor" << pyre::journal::newline << pyre::journal::indent(1)
-            << "result = " << result_tensor << pyre::journal::newline << "process time = " << t.ms()
-            << " ms " << pyre::journal::newline << pyre::journal::outdent(1) << pyre::journal::endl;
+    // repeat the operation sufficient number of times
+    for (auto _ : state) {
+        benchmark::DoNotOptimize(norm_3D_symmetric_array(matrix));
+    }
+}
 
-    // all done
-    return;
+static void
+Norm3DSymmetricTensor(benchmark::State & state)
+{
+    // build the matrix
+    auto matrix = pyre::tensor::symmetric_matrix_t<3> { 1.0, -1.0, 2.0, 1.0, 0.0, 1.0 };
+
+    // repeat the operation sufficient number of times
+    for (auto _ : state) {
+        benchmark::DoNotOptimize(norm_tensor(matrix));
+    }
+}
+
+static void
+Norm9DDiagonalArray(benchmark::State & state)
+{
+    // build the matrix
+    auto matrix = std::array<double, 9> { 1.0, -1.0, 2.0, 1.0, 0.0, 1.0, -1.0, 2.0, -2.0 };
+
+    // repeat the operation sufficient number of times
+    for (auto _ : state) {
+        benchmark::DoNotOptimize(norm_9D_diagonal_array(matrix));
+    }
+}
+
+static void
+Norm9DDiagonalTensor(benchmark::State & state)
+{
+    // build the matrix
+    auto matrix =
+        pyre::tensor::diagonal_matrix_t<9> { 1.0, -1.0, 2.0, 1.0, 0.0, 1.0, -1.0, 2.0, -2.0 };
+
+    // repeat the operation sufficient number of times
+    for (auto _ : state) {
+        benchmark::DoNotOptimize(norm_tensor(matrix));
+    }
 }
 
 
-int
-main()
-{
-    // number of times to do operation
-    int N = 1 << 25;
+// run benchmark for 3D matrix (array)
+BENCHMARK(Norm3DArray);
+// run benchmark for 3D matrix (tensor)
+BENCHMARK(Norm3DTensor);
+// run benchmark for 3D symmetric matrix (array)
+BENCHMARK(Norm3DSymmetricArray);
+// run benchmark for 3D symmetric matrix (tensor)
+BENCHMARK(Norm3DSymmetricTensor);
+// run benchmark for 9D diagonal matrix (array)
+BENCHMARK(Norm9DDiagonalArray);
+// run benchmark for 9D diagonal matrix (tensor)
+BENCHMARK(Norm9DDiagonalTensor);
 
-    // run benchmark for 3D matrix
-    norm_3D(N);
 
-    // run benchmark for a 9D diagonal matrix
-    norm_9D_diag(N);
-
-    // run benchmark for a 3D symmetric matrix
-    norm_3D_sym(N);
-
-    // all done
-    return 0;
-}
+// run all benchmarks
+BENCHMARK_MAIN();
 
 
 // end of file

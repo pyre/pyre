@@ -17,7 +17,7 @@ function(pyre_benchmark_driver benchmarkfile)
   # with some macros
   target_compile_definitions(${target} PRIVATE PYRE_CORE)
   # link against my libraries
-  target_link_libraries(${target} PUBLIC pyre journal)
+  target_link_libraries(${target} PUBLIC pyre journal benchmark::benchmark)
   # specify the directory for the target compilation products
   pyre_target_directory(${target} benchmarks)
 
@@ -38,7 +38,7 @@ function(pyre_benchmark_driver_cxx20 benchmarkfile)
   # with some macros
   target_compile_definitions(${target} PRIVATE PYRE_CORE)
   # link against my libraries
-  target_link_libraries(${target} PUBLIC pyre journal)
+  target_link_libraries(${target} PUBLIC pyre journal benchmark::benchmark)
   # request c++20 to build the target
   target_compile_features(${target} PUBLIC cxx_std_20)
   target_compile_definitions(${target} PRIVATE WITH_CXX20)
