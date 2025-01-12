@@ -987,6 +987,9 @@ template <pyre::tensor::square_matrix_c matrixT>
 constexpr auto
 pyre::tensor::symmetric(const matrixT & A) -> typename matrixT::symmetric_tensor_t
 {
+    if constexpr (symmetric_matrix_c<matrixT>)
+        return A;
+
     // the type of matrix for the result
     using matrix_result_t = typename matrixT::symmetric_tensor_t;
 
@@ -1009,8 +1012,8 @@ pyre::tensor::symmetric(const matrixT & A) -> typename matrixT::symmetric_tensor
             // all done
             return;
         };
-        // fill all rows in column K
-        (_fill_row.template operator()<K>(make_integer_sequence<D> {}), ...);
+        // fill all (lower diagonal, diagonal included) rows in column K
+        (_fill_row.template operator()<K>(make_integer_sequence<K+1> {}), ...);
     };
 
     // fill all columns
@@ -1024,12 +1027,8 @@ template <pyre::tensor::square_matrix_c matrixT>
 constexpr auto
 pyre::tensor::skew(const matrixT & A) -> auto
 {
-    constexpr int D = matrixT::dims[0];
-    using packing_type = typename matrixT::pack_t;
-    using scalar_type = typename matrixT::scalar_type;
-
-    if constexpr (std::is_same_v<packing_type, pyre::grid::symmetric_t<2>>)
-        return zero<symmetric_matrix_t<D, scalar_type>>;
+    if constexpr (symmetric_matrix_c<matrixT>)
+        return zero<matrixT>;
     else
         return 0.5 * (A - transpose(A));
 }
