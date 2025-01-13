@@ -92,12 +92,11 @@ endfunction(pyre_journalLib)
 # build the journal python extension
 function(pyre_journalModule)
   # journal
-  Python_add_library(journalmodule MODULE)
+  Python_add_library(journalmodule MODULE WITH_SOABI)
   # turn on the core macro
   set_target_properties(journalmodule PROPERTIES COMPILE_DEFINITIONS PYRE_CORE)
   # adjust the name to match what python expects
   set_target_properties(journalmodule PROPERTIES LIBRARY_OUTPUT_NAME journal)
-  set_target_properties(journalmodule PROPERTIES SUFFIX ${PYTHON3_SUFFIX})
   # specify the directory for the module compilation products
   pyre_library_directory(journalmodule extensions)
   # set the libraries to link against
