@@ -9,9 +9,12 @@
 
 // forward declarations
 namespace pyre::typelists {
-    // the basic data structure
+    // the basic data structures
     template <typename...>
     struct types_t;
+
+    template <template <typename...> class...>
+    struct templates_t;
 
     // prepend a type to the beginning of a type list
     template <typename...>
@@ -32,6 +35,11 @@ namespace pyre::typelists {
     // the cartesian product of type lists
     template <typename...>
     struct cartesian_t;
+
+    // apply a list of templates to a list of types
+    template <typename...>
+    struct apply_t;
+
 } // namespace pyre::typelists
 
 
