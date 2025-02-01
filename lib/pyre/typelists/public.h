@@ -11,7 +11,7 @@
 #include "forward.h"
 
 // the basic data structure
-#include "typelist.h"
+#include "types.h"
 
 // operations
 #include "append.h"
