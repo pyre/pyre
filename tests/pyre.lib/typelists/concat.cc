@@ -16,63 +16,49 @@
 int
 main()
 {
-    // make two type lists
-    using narrow_t = pyre::typelists::types_t<std::int8_t, std::int16_t>;
-    using wide_t = pyre::typelists::types_t<std::int32_t, std::int64_t>;
-    using real_t = pyre::typelists::types_t<std::float_t, std::double_t>;
+    // the empty list
+    using nil_t = pyre::typelists::types_t<>;
+    // and a couple of non empty lists
+    using ints_t = pyre::typelists::types_t<char, int, long>;
+    using uints_t = pyre::typelists::types_t<unsigned char, unsigned int, unsigned long>;
+    using floats_t = pyre::typelists::types_t<float, double>;
 
-    // splice two together
-    using lcl_t = pyre::typelists::concat_t<narrow_t, wide_t>::type;
-    // splice three together
-    using lclcl_t = pyre::typelists::concat_t<narrow_t, wide_t, real_t>::type;
+    // no arguments
+    using zero_t = pyre::typelists::concat_t<>::type;
+    // verify
+    static_assert(std::is_same_v<zero_t, nil_t>, "mismatch in zero_t");
 
-    // edge cases
-    using nil_t = pyre::typelists::concat_t<>::type;
-    using one_t = pyre::typelists::concat_t<narrow_t>::type;
-    using lcn_t = pyre::typelists::concat_t<narrow_t, pyre::typelists::types_t<>>::type;
-    using ncl_t = pyre::typelists::concat_t<pyre::typelists::types_t<>, narrow_t>::type;
+    // one argument
+    using one_t = pyre::typelists::concat_t<ints_t>::type;
+    // verify
+    static_assert(std::is_same_v<one_t, ints_t>, "mismatch in one_t");
 
-    // check
-    // the common two list case
+    // list U nil
+    using lUn_t = pyre::typelists::concat_t<ints_t, nil_t>::type;
+    // verify
+    static_assert(std::is_same_v<lUn_t, ints_t>, "mismatch in lUn_t");
+
+    // nil U list
+    using nUl_t = pyre::typelists::concat_t<nil_t, ints_t>::type;
+    // verify
+    static_assert(std::is_same_v<nUl_t, ints_t>, "mismatch in nUl_t");
+
+    // list U list
+    using lUl_t = pyre::typelists::concat_t<ints_t, floats_t>::type;
+    // verify
+    static_assert(
+        std::is_same_v<lUl_t, pyre::typelists::types_t<char, int, long, float, double>>,
+        "mismatch in lUl_t");
+
+    // list U list U list
+    using lUlUl_t = pyre::typelists::concat_t<ints_t, uints_t, floats_t>::type;
+    // verify
     static_assert(
         std::is_same_v<
-            // check
-            lcl_t, pyre::typelists::types_t<std::int8_t, std::int16_t, std::int32_t, std::int64_t>>,
-        "mismatch in lcl_t");
-
-    // the common three list case
-    static_assert(
-        std::is_same_v<
-            // check
-            lclcl_t, pyre::typelists::types_t<
-                         std::int8_t, std::int16_t, std::int32_t, std::int64_t, std::float_t,
-                         std::double_t>>,
-        "mismatch in lcl_t");
-
-    // edge cases
-    static_assert(
-        std::is_same_v<
-            // check
-            nil_t, pyre::typelists::types_t<>>,
-        "mismatch in nil_t");
-
-    static_assert(
-        std::is_same_v<
-            // check
-            one_t, narrow_t>,
-        "mismatch in one_t");
-
-    static_assert(
-        std::is_same_v<
-            // check
-            lcn_t, narrow_t>,
-        "mismatch in lcn_t");
-
-    static_assert(
-        std::is_same_v<
-            // check
-            ncl_t, narrow_t>,
-        "mismatch in ncl_t");
+            lUlUl_t,
+            pyre::typelists::types_t<
+                char, int, long, unsigned char, unsigned int, unsigned long, float, double>>,
+        "mismatch in lUlUl_t");
 
     // all done
     return 0;
