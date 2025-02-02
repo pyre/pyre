@@ -19,6 +19,7 @@
 #include "concat.h"
 #include "merge.h"
 #include "cartesian.h"
+#include "apply.h"
 
 
 // end of file
