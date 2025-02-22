@@ -4,8 +4,13 @@
 // (c) 1998-2025 all rights reserved
 
 // code guard
-#if !defined(pyre_memory_Cell_h)
-#define pyre_memory_Cell_h
+#pragma once
+
+
+// externals
+#include "externals.h"
+// forward declarations
+#include "forward.h"
 
 
 // normalize access to a type
@@ -37,6 +42,7 @@ public:
     static constexpr auto readonly() -> bool;
     static constexpr auto writable() -> bool;
     // compute the footprint of {n} cells
+    static constexpr auto bits(cell_count_type = 1) -> size_type;
     static constexpr auto bytes(cell_count_type = 1) -> size_type;
     // generate a human readable name for my type
     static inline auto name() -> string_type;
@@ -44,11 +50,7 @@ public:
 
 
 // get the inline definitions
-#define pyre_memory_Cell_icc
 #include "Cell.icc"
-#undef pyre_memory_Cell_icc
 
-
-#endif
 
 // end of file

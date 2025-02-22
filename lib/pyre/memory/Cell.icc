@@ -5,9 +5,11 @@
 
 
 // code guard
-#if !defined(pyre_memory_Cell_icc)
-#error this file contains implementation details for pyre::memory::Cell
-#else
+#pragma once
+
+
+// the declarations
+#include "Cell.h"
 
 
 // access privileges
@@ -32,6 +34,14 @@ pyre::memory::Cell<T, isConst>::writable() -> bool
 // compute the footprint of the given number of cells
 template <typename T, bool isConst>
 constexpr auto
+pyre::memory::Cell<T, isConst>::bits(cell_count_type n) -> size_type
+{
+    // easy
+    return 8 * bytes(n);
+}
+
+template <typename T, bool isConst>
+constexpr auto
 pyre::memory::Cell<T, isConst>::bytes(cell_count_type n) -> size_type
 {
     // easy
@@ -44,7 +54,7 @@ auto
 pyre::memory::Cell<T, isConst>::name() -> string_type
 {
     // resolve the name and return it
-    return CellName<value_type>::name();
+    return (isConst ? "Const" : "") + CellName<value_type>::name();
 }
 
 
@@ -127,6 +137,5 @@ struct pyre::memory::CellName<pyre::memory::complex128_t> {
     static auto name() -> string_t { return "ComplexDouble"; }
 };
 
-#endif
 
 // end of file
