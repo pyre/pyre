@@ -3,17 +3,7 @@
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
 // (c) 1998-2025 all rights reserved
 
-
-// externals
-#include "externals.h"
-// forward declarations
-#include "forward.h"
-// expansions
-#include "expansions.h"
-// type aliases
-#include "api.h"
-
-// my class declaration
+// declarations
 #include "FileMap.h"
 
 

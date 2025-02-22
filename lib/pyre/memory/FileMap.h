@@ -4,8 +4,15 @@
 // (c) 1998-2025 all rights reserved
 
 // code guard
-#if !defined(pyre_memory_FileMap_h)
-#define pyre_memory_FileMap_h
+#pragma once
+
+
+// externals
+#include "externals.h"
+// forward declarations
+#include "forward.h"
+// my class declaration
+#include "FileMap.h"
 
 
 // a file-backed memory map
@@ -73,12 +80,8 @@ private:
 };
 
 
-// get the inline definitions
-#define pyre_memory_FileMap_icc
+// definitions
 #include "FileMap.icc"
-#undef pyre_memory_FileMap_icc
 
-
-#endif
 
 // end of file

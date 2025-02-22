@@ -4,9 +4,11 @@
 // (c) 1998-2025 all rights reserved
 
 // code guard
-#if !defined(pyre_memory_FileMap_icc)
-#error this file contains implementation details for pyre::memory::FileMap
-#else
+#pragma once
+
+
+// declarations
+#include "FileMap.h"
 
 
 // metamethods
@@ -114,7 +116,5 @@ pyre::memory::FileMap::operator pointer() const
     return data();
 }
 
-
-#endif
 
 // end of file
