@@ -4,8 +4,7 @@
 // (c) 1998-2025 all rights reserved
 
 // code guard
-#if !defined(pyre_memory_externals_h)
-#define pyre_memory_externals_h
+#pragma once
 
 
 // standard library
@@ -25,6 +24,7 @@
 
 // support
 #include <pyre/journal.h>
+#include <pyre/typelists.h>
 
 
 // aliases that define implementation choices
@@ -62,7 +62,5 @@ namespace pyre::memory {
     using complex128_t = std::complex<double>;
 } // namespace pyre::memory
 
-
-#endif
 
 // end of file

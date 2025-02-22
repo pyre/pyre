@@ -4,19 +4,17 @@
 // (c) 1998-2025 all rights reserved
 
 // code guard
-#if !defined(pyre_memory_public_h)
-#define pyre_memory_public_h
+#pragma once
 
 
 // external packages
 #include "externals.h"
 // get the forward declarations
 #include "forward.h"
-// the template expansion machinery
-#include "expansions.h"
-
 // published type aliases; this is the file you are looking for...
 #include "api.h"
+// the template expansion machinery
+#include "expansions.h"
 
 // implementation
 #include "Cell.h"
@@ -30,7 +28,5 @@
 // foreign data
 #include "View.h"
 
-
-#endif
 
 // end of file
