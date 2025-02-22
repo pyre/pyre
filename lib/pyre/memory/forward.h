@@ -4,8 +4,7 @@
 // (c) 1998-2025 all rights reserved
 
 // code guard
-#if !defined(pyre_memory_forward_h)
-#define pyre_memory_forward_h
+#pragma once
 
 
 // set up the namespace
@@ -35,9 +34,12 @@ namespace pyre::memory {
     // a view to someone else's data
     template <typename T, bool isConst>
     class View;
-}; // namespace pyre::memory
 
+    // the cell expander
+    template <typename...>
+    struct celltypes_t;
 
-#endif
+} // namespace pyre::memory
+
 
 // end of file
