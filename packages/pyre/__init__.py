@@ -280,6 +280,9 @@ if executive:
     # support for filesystems
     from . import filesystem
 
+    # memory
+    from . import memory
+
     # hdf5
     from . import h5
 
