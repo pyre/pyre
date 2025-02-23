@@ -4,17 +4,13 @@
 // (c) 1998-2025 all rights reserved
 
 
-// externals
-#include "external.h"
-// namespace setup
-#include "forward.h"
 // my package declarations
 #include "__init__.h"
 
-// wrappers over {pyre::memory} template expansions
-// build the submodule
-void
-pyre::py::memory::__init__(py::module & m)
+
+// the submodule
+auto
+pyre::py::memory::__init__(py::module & m) -> void
 {
     // create a {memory} submodule
     auto memory = m.def_submodule(
@@ -23,12 +19,17 @@ pyre::py::memory::__init__(py::module & m)
         // its docstring
         "wrappers over {pyre::memory} template expansions");
 
+    // cells
+    cells::__init__(memory);
+    // storage strategies
+
+
     // buffers on the heap
-    heaps(memory);
+    heaps::__init__(memory);
     // file backed memory
-    maps(memory);
+    maps::__init__(memory);
     // borrowed memory
-    views(memory);
+    views::__init__(memory);
 
     // all done
     return;
