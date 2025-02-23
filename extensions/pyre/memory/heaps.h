@@ -4,23 +4,38 @@
 // (c) 1998-2025 all rights reserved
 
 // code guard
-#if !defined(pyre_py_memory_heaps_h)
-#define pyre_py_memory_heaps_h
+#pragma once
+
+// external
+#include "external.h"
 
 
 // the {pyre} extension namespace
-namespace pyre::py::memory {
-    // class record factory
-    template <class cellT>
-    void heap(py::module &, classname_t, docstring_t);
-} // namespace pyre::py::memory
+namespace pyre::py::memory::heaps {
+    // the pybind11 class record
+    template <typename heapT>
+    using pyheap_t = shared_holder_t<heapT>;
+
+    // the type registrar
+    template <class... heapT>
+    inline auto expand(py::module &, pyre::typelists::types_t<heapT...> &&) -> void;
+
+    // the heap record builder
+    template <class heapT>
+    inline auto heap(py::module &) -> void;
+
+    // the class docstring
+    template <class heapT>
+    inline auto docstring() -> string_t;
+
+    // constructors
+    template <class heapT>
+    inline auto constructors(pyheap_t<heapT> &) -> void;
+} // namespace pyre::py::memory::heaps
 
 
-// get the implementation
-#define pyre_py_memory_heaps_icc
+// implementations
 #include "heaps.icc"
-#undef pyre_py_memory_heaps_icc
 
-#endif
 
 // end of file
