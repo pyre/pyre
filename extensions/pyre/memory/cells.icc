@@ -1,0 +1,157 @@
+// -*- c++ -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2025 all rights reserved
+
+// code guard
+#pragma once
+
+
+// declarations
+#include "cells.h"
+
+
+// the type registrar
+template <typename... cellT>
+auto
+pyre::py::memory::cells::expand(py::module & memory, pyre::typelists::types_t<cellT...> &&) -> void
+{
+    // register the cell type expansions
+    (cell<cellT>(memory), ...);
+    // all done
+    return;
+}
+
+
+// the cell class record builder
+template <class cellT>
+auto
+pyre::py::memory::cells::cell(py::module & memory) -> void
+{
+    // the cell type
+    using cell_t = cellT;
+    // the name of the class
+    auto clsName = cell_t::name();
+    // the docstring
+    auto clsDocstring = docstring<cell_t>();
+    // build the class
+    auto cell = pycell_t<cell_t>(
+        // scope
+        memory,
+        // name
+        clsName.data(),
+        // docstring
+        clsDocstring.data());
+
+    // constructors
+    constructors(cell);
+    // accessors
+    accessors(cell);
+
+    // all done
+    return;
+}
+
+
+// the docstring builder
+template <class cellT>
+auto
+pyre::py::memory::cells::docstring() -> string_t
+{
+    // alias
+    using cell_t = cellT;
+    // build the docstring
+    auto docstring =
+        // flavor
+        string_t("the descriptor for ")
+        // the cell type
+        + cell_t::name()
+        // more flavor
+        + string_t(" cell types");
+    // all done
+    return docstring;
+}
+
+
+// the class constructors
+template <class cellT>
+auto
+pyre::py::memory::cells::constructors(pycell_t<cellT> & pycell) -> void
+{
+    // default constructor
+    pycell.def(
+        // the implementation
+        py::init(),
+        // the docstring
+        "build an instance of the cell descriptor");
+    // all done
+    return;
+}
+
+
+// accessors
+template <class cellT>
+auto
+pyre::py::memory::cells::accessors(pycell_t<cellT> & pycell) -> void
+{
+    // name
+    pycell.def_property_readonly_static(
+        // the name
+        "name",
+        // the implementation
+        [](py::object *) -> string_t {
+            // easy enough
+            return cellT::name();
+        },
+        // the docstring
+        "the name of the cell type");
+
+    pycell.def_property_readonly_static(
+        // the name
+        "readonly",
+        // the implementation
+        [](py::object *) -> bool {
+            // easy enough
+            return cellT::readonly();
+        },
+        // the docstring
+        "a flag that is true for const cells");
+
+    pycell.def_property_readonly_static(
+        // the name
+        "writable",
+        // the implementation
+        [](py::object *) -> bool {
+            // easy enough
+            return cellT::writable();
+        },
+        // the docstring
+        "a flag that is true for non-const cells");
+
+    // memory footprint
+    pycell.def_static(
+        // the name
+        "bits",
+        // the implementation
+        &cellT::bits,
+        // the signature
+        "count"_a = 1,
+        // the docstring
+        "memory footprint, in bits");
+
+    pycell.def_static(
+        // the name
+        "bytes",
+        // the implementation
+        &cellT::bytes,
+        // the signature
+        "count"_a = 1,
+        // the docstring
+        "memory footprint, in bytes");
+
+    // all done
+    return;
+}
+
+
+// end of file
