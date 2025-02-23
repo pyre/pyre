@@ -5,9 +5,10 @@
 
 
 // code guard
-#if !defined(pyre_memory_Heap_icc)
-#error this file contains implementation details for pyre::memory::Heap
-#else
+#pragma once
+
+// declarations
+#include "Heap.h"
 
 
 // metamethods
@@ -119,6 +120,16 @@ pyre::memory::Heap<T, isConst>::cellName() -> string_type
 }
 
 
+// my {cell_type} declaration string
+template <typename T, bool isConst>
+auto
+pyre::memory::Heap<T, isConst>::cellDecl() -> string_type
+{
+    // resolve the name and return it
+    return CellName<value_type>::decl();
+}
+
+
 // human readable form of my storage strategy
 template <typename T, bool isConst>
 auto
@@ -190,7 +201,5 @@ pyre::memory::Heap<T, isConst>::operator[](size_type pos) const -> reference
     return _data[pos];
 }
 
-
-#endif
 
 // end of file

@@ -4,8 +4,12 @@
 // (c) 1998-2025 all rights reserved
 
 // code guard
-#if !defined(pyre_memory_Heap_h)
-#define pyre_memory_Heap_h
+#pragma once
+
+// externals
+#include "externals.h"
+// forward declarations
+#include "forward.h"
 
 
 // a block of cells on the heap
@@ -64,6 +68,8 @@ public:
     static inline auto strategyName() -> string_t;
     // human readable rendering of my {cell_type}
     static inline auto cellName() -> string_t;
+    // my {cell_type} decl
+    static inline auto cellDecl() -> string_t;
 
     // iterator support
 public:
@@ -94,12 +100,8 @@ public:
 };
 
 
-// get the inline definitions
-#define pyre_memory_Heap_icc
+// inline definitions
 #include "Heap.icc"
-#undef pyre_memory_Heap_icc
 
-
-#endif
 
 // end of file

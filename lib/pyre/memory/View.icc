@@ -5,9 +5,10 @@
 
 
 // code guard
-#if !defined(pyre_memory_View_icc)
-#error this file contains implementation details for pyre::memory::View
-#else
+#pragma once
+
+// declarations
+#include "View.h"
 
 
 // metamethods
@@ -112,6 +113,16 @@ pyre::memory::View<T, isConst>::cellName() -> string_type
 }
 
 
+// my {cell_type} declaration string
+template <typename T, bool isConst>
+auto
+pyre::memory::View<T, isConst>::cellDecl() -> string_type
+{
+    // resolve the name and return it
+    return CellName<value_type>::decl();
+}
+
+
 // human readable form of my storage strategy
 template <typename T, bool isConst>
 auto
@@ -173,7 +184,5 @@ pyre::memory::View<T, isConst>::operator[](size_type pos) const -> reference
     return _data[pos];
 }
 
-
-#endif
 
 // end of file
