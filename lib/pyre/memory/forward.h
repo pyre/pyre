@@ -13,10 +13,6 @@ namespace pyre::memory {
     template <typename T, bool isConst>
     class Cell;
 
-    // helper that generates a human readable name for each supported datatype
-    template <typename T>
-    struct CellName;
-
     // block on the stack
     template <int D, typename T, bool isConst>
     class Stack;
@@ -34,12 +30,14 @@ namespace pyre::memory {
     // a view to someone else's data
     template <typename T, bool isConst>
     class View;
-
-    // the cell expander
-    template <typename...>
-    struct celltypes_t;
-
 } // namespace pyre::memory
 
+
+// helpers
+namespace pyre::memory {
+    // generator of a human readable name for each supported datatype
+    template <typename T>
+    struct CellName;
+} // namespace pyre::memory
 
 // end of file
