@@ -4,106 +4,140 @@
 // (c) 1998-2025 all rights reserved
 
 // code guard
-#if !defined(pyre_py_memory_maps_icc)
-#error this file contains implementation details for pyre::py::memory maps
-#else
+#pragma once
 
 
-// const maps
-template <class cellT>
-void
-pyre::py::memory::constmap(py::module & m, classname_t name, docstring_t docstring)
+// declarations
+#include "maps.h"
+// common properties
+#include "properties.h"
+// accessors
+#include "accessors.h"
+// mutators
+#include "mutators.h"
+// buffer protocol
+#include "buffer_protocol.h"
+
+
+// the type registrar
+template <class... mapT>
+auto
+pyre::py::memory::maps::expand(py::module & memory, pyre::typelists::types_t<mapT...> &&) -> void
 {
-    // type alias
-    using map_t = pyre::memory::constmap_t<cellT>;
-
-    // build the class record
-    auto cls = shared_holder_t<map_t>(m, name, py::buffer_protocol(), docstring);
-
-    // constructor
-    cls.def(
-        // the constructor
-        py::init([](typename map_t::uri_type uri) {
-            // get {os.fspath}
-            auto fspath = py::module::import("os").attr("fspath");
-            // call it to convert {uri}into a string
-            auto filename = py::str(fspath(uri));
-            // make a map and return it
-            return new map_t(filename);
-        }),
-        // the docstring
-        "create a read-only memory map backed by an existing file",
-        // the signature
-        "uri"_a);
-
-    // uri
-    cls.def_property_readonly(
-        // the name of the property
-        "uri",
-        // the getter
-        &map_t::uri,
-        // the docstring
-        "the path to the backing store");
-
-    // read-only access
-    bindConstStorage<map_t>(cls);
-    // read only buffer protocol
-    bindBufferProtocol<map_t>(cls);
-
+    // register the map types
+    (map<mapT>(memory), ...);
     // all done
     return;
 }
 
-
-// maps
-template <class cellT>
-void
-pyre::py::memory::map(py::module & m, classname_t name, docstring_t docstring)
+// the map class record builder
+template <class mapT>
+auto
+pyre::py::memory::maps::map(py::module & memory) -> void
 {
-    // type alias
-    using map_t = pyre::memory::map_t<cellT>;
+    // alias the map type
+    using map_t = mapT;
 
-    // build the class record
-    auto cls = shared_holder_t<map_t>(m, name, py::buffer_protocol(), docstring);
+    // build the name of the class
+    auto clsName = map_t::name();
+    // the docstring
+    auto clsDocstring = docstring<map_t>();
+
+    // assemble the class record
+    auto map = pymap_t<map_t>(
+        // scope
+        memory,
+        // name
+        clsName.data(),
+        // add support for the buffer protocol
+        py::buffer_protocol(),
+        // docstring
+        clsDocstring.data());
 
     // constructors
-    cls.def(
-        // the constructor
-        py::init<typename map_t::uri_type, bool>(),
-        // the docstring
-        "create a memory map backed by an existing file",
-        // the signature
-        "uri"_a, "writable"_a = true);
+    constructors(map);
+    // properties
+    properties(map);
+    // accessors
+    accessors(map);
+    // mutable maps
+    if constexpr (!map_t::readonly()) {
+        // get mutators
+        mutators(map);
+    }
+    // buffer protocol support
+    bufferProtocol(map);
 
-    cls.def(
-        // the constructor
-        py::init<typename map_t::uri_type, typename map_t::size_type>(),
-        // the docstring
-        "create a new memory map with the given number of {cells}",
-        // the signature
-        "uri"_a, "cells"_a);
+    // all done
+    return;
+}
 
-    // uri
-    cls.def_property_readonly(
-        // the name of the property
-        "uri",
-        // the getter
-        &map_t::uri,
-        // the docstring
-        "the path to the backing store");
+// constructors
+template <class mapT>
+auto
+pyre::py::memory::maps::constructors(pymap_t<mapT> & cls) -> void
+{
+    // alias the map
+    using map_t = mapT;
 
-    // read-only access
-    bindConstStorage<map_t>(cls);
-    // read/write access
-    bindStorage<map_t>(cls);
-    // read+write buffer protocol
-    bindBufferProtocol<map_t>(cls);
+    // const maps
+    if constexpr (map_t::readonly()) {
+        // get a constructor that expects an existing filename
+        cls.def(
+            // the constructor
+            py::init([](typename map_t::uri_type uri) {
+                // make a map and return it
+                return map_t(uri);
+            }),
+            // the signature
+            "uri"_a,
+            // the docstring
+            "create a read-only memory map backed by an existing file");
+    }
+    // mutable maps
+    else {
+        // get a constructor with write access to an existing file
+        cls.def(
+            // the constructor
+            py::init<typename map_t::uri_type, bool>(),
+            // the docstring
+            "create a memory map backed by an existing file",
+            // the signature
+            "uri"_a, "writable"_a = true);
+
+        // and a constructor that creates new file backed storage
+        cls.def(
+            // the constructor
+            py::init<typename map_t::uri_type, typename map_t::size_type>(),
+            // the docstring
+            "create a new memory map with the given number of {cells}",
+            // the signature
+            "uri"_a, "cells"_a);
+    }
 
     // all done
     return;
 }
 
 
-#endif
+// the docstring builder
+template <class mapT>
+auto
+pyre::py::memory::maps::docstring() -> string_t
+{
+    // alias the map
+    using map_t = mapT;
+    // build the docstring
+    auto docstring =
+        // access rights
+        string_t(map_t::readonly() ? "const" : "mutable")
+        // flavor
+        + " file backed buffer of "
+        // cell type
+        + map_t::cellDecl();
+    // all done
+    return docstring;
+}
+
 
 // end of file
