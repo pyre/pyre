@@ -4,42 +4,46 @@
 // (c) 1998-2025 all rights reserved
 
 // code guard
-#if !defined(pyre_py_memory_buffer_protocol_icc)
-#error this file contains implementation details for pyre::py::memory buffer_protocol
-#else
+#pragma once
+
+
+// declarations
+#include "buffer_protocol.h"
 
 
 // add support for the python buffer protocol
-template <class memT>
+template <class T>
 void
-pyre::py::memory::bindBufferProtocol(shared_holder_t<memT> & cls)
+pyre::py::memory::bufferProtocol(shared_holder_t<T> & cls)
 {
+    // alias the storage strategy
+    using mem_t = T;
+
     // the magic factory
     cls.def_buffer(
         // the handler
-        [](memT & mem) -> py::buffer_info {
+        [](mem_t & mem) -> py::buffer_info {
             // build a buffer info object and return it
             return py::buffer_info(
-                // the pointer  to the raw data
-                const_cast<typename memT::value_type *>(mem.data()),
+                // the pointer to the raw data
+                const_cast<typename mem_t::value_type *>(mem.data()),
                 // the size of the cell
-                sizeof(typename memT::value_type),
+                sizeof(typename mem_t::value_type),
                 // the format descriptor
-                py::format_descriptor<typename memT::value_type>::format(),
+                py::format_descriptor<typename mem_t::value_type>::format(),
                 // the number of dimensions: memory buffers are flat
                 1,
                 // the shape
                 { mem.cells() },
                 // the strides
-                { sizeof(typename memT::value_type) },
+                { sizeof(typename mem_t::value_type) },
                 // access control
-                memT::cell_type::readonly());
+                mem.readonly());
         });
+
     // all done
     return;
 }
 
-
-#endif
 
 // end of file
