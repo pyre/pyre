@@ -14,6 +14,31 @@
 #include "api.h"
 
 
+// expansion helpers
+namespace pyre::memory {
+    // the cell expander
+    template <typename...>
+    struct celltypes_t;
+    // build a typelist with both const and mutable cells from a pile of basic types
+    template <typename... T>
+    struct celltypes_t<pyre::typelists::types_t<T...>> {
+        using type = typename pyre::typelists::concat_t<
+            pyre::typelists::types_t<cell_t<T, false>...>,
+            pyre::typelists::types_t<cell_t<T, true>...>>::type;
+    };
+
+    // the storage strategy expander
+    template <typename...>
+    struct storageCells_t;
+    // build a typelist of storage template expansion arguments suitable for handing off
+    // to {pyre::typelists::apply_t}
+    template <typename... T>
+    struct storageCells_t<pyre::typelists::types_t<T...>> {
+        using type = pyre::typelists::types_t<pyre::typelists::types_t<T>...>;
+    };
+} // namespace pyre::memory
+
+
 // low level entities; you should probably stay away from them
 namespace pyre::memory {
     // access rights
@@ -29,25 +54,29 @@ namespace pyre::memory {
         // complex
         complex64_t, complex128_t>;
 
-    // the cell expander
-    template <typename... baseT>
-    struct celltypes_t<pyre::typelists::types_t<baseT...>> {
-        using type = typename pyre::typelists::concat_t<
-            pyre::typelists::types_t<cell_t<baseT, false>...>,
-            pyre::typelists::types_t<cell_t<baseT, true>...>>::type;
-    };
-
     // the pile of cell types
     using cells_t = typename celltypes_t<basetypes_t>::type;
 
-    // storage strategies by category
-    using heaps_t = pyre::typelists::templates_t<constheap_t, heap_t>;
-    using maps_t = pyre::typelists::templates_t<constmap_t, map_t>;
-    using views_t = pyre::typelists::templates_t<constview_t, view_t>;
+    // heaps over all base types
+    using heaps_t = typename pyre::typelists::apply_t<
+        // the heaps
+        pyre::typelists::templates_t<heap_t, constheap_t>,
+        // the cells
+        typename storageCells_t<basetypes_t>::type>::type;
 
-    // all storage strategies
-    using storageStrategies =
-        pyre::typelists::templates_t<constheap_t, constmap_t, constview_t, heap_t, map_t, view_t>;
+    // maps over all base types
+    using maps_t = typename pyre::typelists::apply_t<
+        // the heaps
+        pyre::typelists::templates_t<map_t, constmap_t>,
+        // the cells
+        typename storageCells_t<basetypes_t>::type>::type;
+
+    // views over all base types
+    using views_t = typename pyre::typelists::apply_t<
+        // the heaps
+        pyre::typelists::templates_t<view_t, constview_t>,
+        // the cells
+        typename storageCells_t<basetypes_t>::type>::type;
 } // namespace pyre::memory
 
 
