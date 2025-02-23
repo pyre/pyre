@@ -46,6 +46,8 @@ public:
     static constexpr auto bytes(cell_count_type = 1) -> size_type;
     // generate a human readable name for my type
     static inline auto name() -> string_type;
+    // generate a string that looks like the c++ declaration of the cell value type
+    static inline auto decl() -> string_type;
 };
 
 

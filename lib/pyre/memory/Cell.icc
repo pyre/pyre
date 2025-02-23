@@ -57,84 +57,119 @@ pyre::memory::Cell<T, isConst>::name() -> string_type
     return (isConst ? "Const" : "") + CellName<value_type>::name();
 }
 
+// string that looks like a C++ declaration of the cell value type
+template <typename T, bool isConst>
+auto
+pyre::memory::Cell<T, isConst>::decl() -> string_type
+{
+    // resolve the name and return it
+    return (isConst ? "const " : "") + CellName<value_type>::decl();
+}
+
 
 // the datatype name specializations
 template <>
 struct pyre::memory::CellName<char> {
     // the name
-    static auto name() -> string_t { return "Char"; }
+    inline static auto name() -> string_t { return "Char"; }
+    // c++ decl string
+    inline static auto decl() -> string_t { return "char"; }
 };
 
 template <>
 struct pyre::memory::CellName<pyre::memory::int8_t> {
     // the name
-    static auto name() -> string_t { return "Int8"; }
+    inline static auto name() -> string_t { return "Int8"; }
+    // c++ decl string
+    inline static auto decl() -> string_t { return "std::int8_t"; }
 };
 
 template <>
 struct pyre::memory::CellName<pyre::memory::int16_t> {
     // the name
-    static auto name() -> string_t { return "Int16"; }
+    inline static auto name() -> string_t { return "Int16"; }
+    // c++ decl string
+    inline static auto decl() -> string_t { return "std::int16_t"; }
 };
 
 template <>
 struct pyre::memory::CellName<pyre::memory::int32_t> {
     // the name
-    static auto name() -> string_t { return "Int32"; }
+    inline static auto name() -> string_t { return "Int32"; }
+    // c++ decl string
+    inline static auto decl() -> string_t { return "std::int32_t"; }
 };
 
 template <>
 struct pyre::memory::CellName<pyre::memory::int64_t> {
     // the name
-    static auto name() -> string_t { return "Int64"; }
+    inline static auto name() -> string_t { return "Int64"; }
+    // c++ decl string
+    inline static auto decl() -> string_t { return "std::int64_t"; }
 };
 
 template <>
 struct pyre::memory::CellName<pyre::memory::uint8_t> {
     // the name
-    static auto name() -> string_t { return "UInt8"; }
+    inline static auto name() -> string_t { return "UInt8"; }
+    // c++ decl string
+    inline static auto decl() -> string_t { return "std::uint8_t"; }
 };
 
 template <>
 struct pyre::memory::CellName<pyre::memory::uint16_t> {
     // the name
-    static auto name() -> string_t { return "UInt16"; }
+    inline static auto name() -> string_t { return "UInt16"; }
+    // c++ decl string
+    inline static auto decl() -> string_t { return "std::uint16_t"; }
 };
 
 template <>
 struct pyre::memory::CellName<pyre::memory::uint32_t> {
     // the name
-    static auto name() -> string_t { return "UInt32"; }
+    inline static auto name() -> string_t { return "UInt32"; }
+    // c++ decl string
+    inline static auto decl() -> string_t { return "std::uint32_t"; }
 };
 
 template <>
 struct pyre::memory::CellName<pyre::memory::uint64_t> {
     // the name
-    static auto name() -> string_t { return "UInt64"; }
+    inline static auto name() -> string_t { return "UInt64"; }
+    // c++ decl string
+    inline static auto decl() -> string_t { return "std::uint64_t"; }
 };
 
 template <>
 struct pyre::memory::CellName<pyre::memory::float32_t> {
     // the name
-    static auto name() -> string_t { return "Float"; }
+    inline static auto name() -> string_t { return "Float"; }
+    // c++ decl string
+    inline static auto decl() -> string_t { return "std::float_t"; }
 };
 
 template <>
 struct pyre::memory::CellName<pyre::memory::float64_t> {
     // the name
-    static auto name() -> string_t { return "Double"; }
+    inline static auto name() -> string_t { return "Double"; }
+    // c++ decl string
+    inline static auto decl() -> string_t { return "std::double_t"; }
 };
 
 template <>
 struct pyre::memory::CellName<pyre::memory::complex64_t> {
     // the name
-    static auto name() -> string_t { return "ComplexFloat"; }
+    inline static auto name() -> string_t { return "ComplexFloat"; }
+    // c++ decl string
+    inline static auto decl() -> string_t { return "std::complex<std::float_t>"; }
 };
 
 template <>
 struct pyre::memory::CellName<pyre::memory::complex128_t> {
     // the name
-    static auto name() -> string_t { return "ComplexDouble"; }
+    inline static auto name() -> string_t { return "ComplexDouble"; }
+    // c++ decl string
+    inline static auto decl() -> string_t { return "std::complex<std::double_t>"; }
 };
 
 
