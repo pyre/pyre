@@ -5,9 +5,10 @@
 
 
 // code guard
-#if !defined(pyre_memory_Map_icc)
-#error this file contains implementation details for pyre::memory::Map
-#else
+#pragma once
+
+// declarations
+#include "Map.h"
 
 
 // map over an existing data product
@@ -99,7 +100,7 @@ pyre::memory::Map<T, isConst>::writable() -> bool
 // human readable form of my expansion
 template <typename T, bool isConst>
 auto
-pyre::memory::Map<T, isConst>::name() -> string_t
+pyre::memory::Map<T, isConst>::name() -> string_type
 {
     // resolve the name and return it
     return strategyName() + cellName();
@@ -109,20 +110,30 @@ pyre::memory::Map<T, isConst>::name() -> string_t
 // human readable form of my {cell_type}
 template <typename T, bool isConst>
 auto
-pyre::memory::Map<T, isConst>::cellName() -> string_t
+pyre::memory::Map<T, isConst>::cellName() -> string_type
 {
     // resolve the name and return it
     return CellName<value_type>::name();
 }
 
 
+// my {cell_type} declaration string
+template <typename T, bool isConst>
+auto
+pyre::memory::Map<T, isConst>::cellDecl() -> string_type
+{
+    // resolve the name and return it
+    return CellName<value_type>::decl();
+}
+
+
 // human readable form of my storage strategy
 template <typename T, bool isConst>
 auto
-pyre::memory::Map<T, isConst>::strategyName() -> string_t
+pyre::memory::Map<T, isConst>::strategyName() -> string_type
 {
     // build the name and return it
-    return (isConst ? "Const" : "") + string_t("Map");
+    return (isConst ? "Const" : "") + string_type("Map");
 }
 
 
@@ -178,7 +189,5 @@ pyre::memory::Map<T, isConst>::operator[](size_type pos) const -> reference
     return data()[pos];
 }
 
-
-#endif
 
 // end of file

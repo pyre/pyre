@@ -4,8 +4,12 @@
 // (c) 1998-2025 all rights reserved
 
 // code guard
-#if !defined(pyre_memory_Map_h)
-#define pyre_memory_Map_h
+#pragma once
+
+// externals
+#include "externals.h"
+// forward declarations
+#include "forward.h"
 
 
 // a file-backed block of cells
@@ -28,6 +32,8 @@ public:
     using size_type = typename cell_type::size_type;
     using cell_count_type = typename cell_type::cell_count_type;
 
+    // strings
+    using string_type = string_t;
     // file paths
     using uri_type = FileMap::uri_type;
     // permissions
@@ -59,11 +65,13 @@ public:
     static constexpr auto readonly() -> bool;
     static constexpr auto writable() -> bool;
     // human readable rendering of my expansion
-    static inline auto name() -> string_t;
+    static inline auto name() -> string_type;
     // human readable rendering of my storage strategy
-    static inline auto strategyName() -> string_t;
+    static inline auto strategyName() -> string_type;
     // human readable rendering of my {cell_type}
-    static inline auto cellName() -> string_t;
+    static inline auto cellName() -> string_type;
+    // my {cell_type} decl
+    static inline auto cellDecl() -> string_type;
 
     // iterator support
 public:
@@ -93,12 +101,8 @@ public:
 };
 
 
-// get the inline definitions
-#define pyre_memory_Map_icc
+// inline definitions
 #include "Map.icc"
-#undef pyre_memory_Map_icc
 
-
-#endif
 
 // end of file
