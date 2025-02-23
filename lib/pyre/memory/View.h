@@ -4,8 +4,12 @@
 // (c) 1998-2025 all rights reserved
 
 // code guard
-#if !defined(pyre_memory_View_h)
-#define pyre_memory_View_h
+#pragma once
+
+// externals
+#include "externals.h"
+// forward declarations
+#include "forward.h"
 
 
 // a block of cells whose memory belongs to someone else
@@ -58,6 +62,8 @@ public:
     static inline auto strategyName() -> string_type;
     // human readable rendering of my {cell_type}
     static inline auto cellName() -> string_type;
+    // my {cell_type} decl
+    static inline auto cellDecl() -> string_type;
 
     // iterator support
 public:
@@ -88,12 +94,8 @@ public:
 };
 
 
-// get the inline definitions
-#define pyre_memory_View_icc
+// inline definitions
 #include "View.icc"
-#undef pyre_memory_View_icc
 
-
-#endif
 
 // end of file

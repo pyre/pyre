@@ -5,9 +5,10 @@
 
 
 // code guard
-#if !defined(pyre_memory_Stack_icc)
-#error this file contains implementation details for pyre::memory::Stack
-#else
+#pragma once
+
+// declarations
+#include "Stack.h"
 
 
 // metamethods
@@ -80,7 +81,7 @@ pyre::memory::Stack<D, T, isConst>::writable() -> bool
 // human readable form of my expansion
 template <int D, class T, bool isConst>
 auto
-pyre::memory::Stack<D, T, isConst>::name() -> string_t
+pyre::memory::Stack<D, T, isConst>::name() -> string_type
 {
     // resolve the name and return it
     return strategyName() + cellName();
@@ -90,20 +91,30 @@ pyre::memory::Stack<D, T, isConst>::name() -> string_t
 // human readable form of my {cell_type}
 template <int D, class T, bool isConst>
 auto
-pyre::memory::Stack<D, T, isConst>::cellName() -> string_t
+pyre::memory::Stack<D, T, isConst>::cellName() -> string_type
 {
     // resolve the name and return it
     return CellName<value_type>::name();
 }
 
 
+// my {cell_type} declaration string
+template <int D, class T, bool isConst>
+auto
+pyre::memory::Stack<D, T, isConst>::cellDecl() -> string_type
+{
+    // resolve the name and return it
+    return CellName<value_type>::decl();
+}
+
+
 // human readable form of my storage strategy
 template <int D, class T, bool isConst>
 auto
-pyre::memory::Stack<D, T, isConst>::strategyName() -> string_t
+pyre::memory::Stack<D, T, isConst>::strategyName() -> string_type
 {
     // build the name and return it
-    return (isConst ? "Const" : "") + string_t("Stack");
+    return (isConst ? "Const" : "") + string_type("Stack");
 }
 
 
@@ -179,7 +190,5 @@ pyre::memory::Stack<D, T, isConst>::operator[](size_type pos) const -> const_ref
     return _data[pos];
 }
 
-
-#endif
 
 // end of file
