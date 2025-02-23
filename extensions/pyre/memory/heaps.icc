@@ -4,43 +4,115 @@
 // (c) 1998-2025 all rights reserved
 
 // code guard
-#if !defined(pyre_py_memory_heaps_icc)
-#error this file contains implementation details for pyre::py::memory heaps
-#else
+#pragma once
+
+// declarations
+#include "heaps.h"
+// common properties
+#include "properties.h"
+// accessors
+#include "accessors.h"
+// mutators
+#include "mutators.h"
+// buffer protocol
+#include "buffer_protocol.h"
 
 
-// heaps
-template <class cellT>
-void
-pyre::py::memory::heap(py::module & m, classname_t name, docstring_t docstring)
+// the type registrar
+template <class... heapT>
+auto
+pyre::py::memory::heaps::expand(py::module & memory, pyre::typelists::types_t<heapT...> &&) -> void
 {
-    // type alias
-    using heap_t = pyre::memory::heap_t<cellT>;
+    // register the heap types
+    (heap<heapT>(memory), ...);
+    // all done
+    return;
+}
 
-    // build the class record
-    auto cls = shared_holder_t<heap_t>(m, name, py::buffer_protocol(), docstring);
+// the heap class record builder
+template <class heapT>
+auto
+pyre::py::memory::heaps::heap(py::module & memory) -> void
+{
+    // alias the heap type
+    using heap_t = heapT;
 
-    // constructor
+    // build the name of the class
+    auto clsName = heap_t::name();
+    // the docstring
+    auto clsDocstring = docstring<heap_t>();
+
+    // assemble the class record
+    auto heap = pyheap_t<heap_t>(
+        // scope
+        memory,
+        // name
+        clsName.data(),
+        // add support for the buffer protocol
+        py::buffer_protocol(),
+        // docstring
+        clsDocstring.data());
+
+    // constructors
+    constructors(heap);
+    // properties
+    properties(heap);
+    // accessors
+    accessors(heap);
+    // mutable heaps
+    if constexpr (!heap_t::readonly()) {
+        // get mutators
+        mutators(heap);
+    }
+    // buffer protocol support
+    bufferProtocol(heap);
+
+    // all done
+    return;
+}
+
+// constructors
+template <class heapT>
+auto
+pyre::py::memory::heaps::constructors(pyheap_t<heapT> & cls) -> void
+{
+    // alias the heap
+    using heap_t = heapT;
+
+    // build with a given number of cells
     cls.def(
-        // the constructor
-        py::init<typename heap_t::size_type>(),
-        // the docstring
-        "create a new buffer on the heap with the given number of {cells}",
+        // the implementation
+        py::init<typename heap_t::cell_count_type>(),
         // the signature
-        "cells"_a);
-
-    // read-only access
-    bindConstStorage<heap_t>(cls);
-    // read/write access
-    bindStorage<heap_t>(cls);
-    // read+write buffer protocol
-    bindBufferProtocol<heap_t>(cls);
+        "cells"_a,
+        // the docstring
+        "allocate a buffer with the given number of {cells} on the heap");
 
     // all done
     return;
 }
 
 
-#endif
+// the docstring builder
+template <class heapT>
+auto
+pyre::py::memory::heaps::docstring() -> string_t
+{
+    // alias the heap
+    using heap_t = heapT;
+    // build the docstring
+    auto docstring =
+        // access rights
+        string_t(heap_t::readonly() ? "const" : "mutable")
+        // flavor
+        + " buffer of "
+        // cell type
+        + heap_t::cellDecl()
+        // more flavor
+        + " on the heap";
+    // all done
+    return docstring;
+}
+
 
 // end of file
