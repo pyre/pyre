@@ -4,45 +4,102 @@
 // (c) 1998-2025 all rights reserved
 
 // code guard
-#if !defined(pyre_py_memory_views_icc)
-#error this file contains implementation details for pyre::py::memory views
-#else
+#pragma once
+
+// declarations
+#include "views.h"
+// common properties
+#include "properties.h"
+// accessors
+#include "accessors.h"
+// mutators
+#include "mutators.h"
+// buffer protocol
+#include "buffer_protocol.h"
 
 
-// views
-template <class cellT>
-void
-pyre::py::memory::view(py::module & m, classname_t name, docstring_t docstring)
+// the type registrar
+template <class... viewT>
+auto
+pyre::py::memory::views::expand(py::module & memory, pyre::typelists::types_t<viewT...> &&) -> void
 {
-    // type alias
-    using view_t = pyre::memory::view_t<cellT>;
+    // register the view types
+    (view<viewT>(memory), ...);
+    // all done
+    return;
+}
 
-    // build the class record
-    auto cls = shared_holder_t<view_t>(m, name, py::buffer_protocol(), docstring);
+// the view class record builder
+template <class viewT>
+auto
+pyre::py::memory::views::view(py::module & memory) -> void
+{
+    // alias the view type
+    using view_t = viewT;
 
-#if defined(NYI)
-    // constructor
-    cls.def(
-        // the constructor
-        py::init<typename view_t::size_type>(),
-        // the docstring
-        "create a new view with the given number of {cells}",
-        // the signature
-        "location"_a, "cells"_a);
-#endif
+    // build the name of the class
+    auto clsName = view_t::name();
+    // the docstring
+    auto clsDocstring = docstring<view_t>();
 
-    // read-only access
-    bindConstStorage<view_t>(cls);
-    // read/write access
-    bindStorage<view_t>(cls);
-    // read+write buffer protocol
-    bindBufferProtocol<view_t>(cls);
+    // assemble the class record
+    auto view = pyview_t<view_t>(
+        // scope
+        memory,
+        // name
+        clsName.data(),
+        // add support for the buffer protocol
+        py::buffer_protocol(),
+        // docstring
+        clsDocstring.data());
+
+    // constructors
+    constructors(view);
+    // properties
+    properties(view);
+    // accessors
+    accessors(view);
+    // mutable views
+    if constexpr (!view_t::readonly()) {
+        // get mutators
+        mutators(view);
+    }
+    // buffer protocol support
+    bufferProtocol(view);
 
     // all done
     return;
 }
 
+// constructors
+template <class viewT>
+auto
+pyre::py::memory::views::constructors(pyview_t<viewT> & cls) -> void
+{
+    // NYI
+    // all done
+    return;
+}
 
-#endif
+
+// the docstring builder
+template <class viewT>
+auto
+pyre::py::memory::views::docstring() -> string_t
+{
+    // alias the view
+    using view_t = viewT;
+    // build the docstring
+    auto docstring =
+        // access rights
+        string_t(view_t::readonly() ? "const" : "mutable")
+        // flavor
+        + " view of a buffer of "
+        // cell type
+        + view_t::cellDecl();
+    // all done
+    return docstring;
+}
+
 
 // end of file

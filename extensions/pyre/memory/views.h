@@ -4,23 +4,39 @@
 // (c) 1998-2025 all rights reserved
 
 // code guard
-#if !defined(pyre_py_memory_views_h)
-#define pyre_py_memory_views_h
+#pragma once
+
+// external
+#include "external.h"
 
 
 // the {pyre} extension namespace
-namespace pyre::py::memory {
-    // class record factory
-    template <class cellT>
-    void view(py::module &, classname_t, docstring_t);
-} // namespace pyre::py::memory
+namespace pyre::py::memory::views {
+    // the pybind11 class record
+    template <typename viewT>
+    using pyview_t = shared_holder_t<viewT>;
+
+    // the type registrar
+    template <class... viewT>
+    inline auto expand(py::module &, pyre::typelists::types_t<viewT...> &&) -> void;
+
+    // the view record builder
+    template <class viewT>
+    inline auto view(py::module &) -> void;
+
+    // the class docstring
+    template <class viewT>
+    inline auto docstring() -> string_t;
+
+    // constructors
+    template <class viewT>
+    inline auto constructors(pyview_t<viewT> &) -> void;
+
+} // namespace pyre::py::memory::views
 
 
-// get the implementation
-#define pyre_py_memory_views_icc
+// implementations
 #include "views.icc"
-#undef pyre_py_memory_views_icc
 
-#endif
 
 // end of file
