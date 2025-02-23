@@ -8,7 +8,7 @@
                 "${env:vs_prefix_usr}/include/**",
                 "/usr/lib/x86_64-linux-gnu/openmpi/include/**",
                 "/usr/include/hdf5/openmpi/**",
-                "/usr/include/python3.9/**"
+                "/usr/include/python3.12/**"
             ],
             "defines": [
                 "PYRE_CORE",
@@ -17,7 +17,7 @@
             "compilerPath": "/usr/bin/${env:vs_compiler}",
             "cStandard": "c17",
             "cppStandard": "c++20",
-            "intelliSenseMode": "linux-${env:vs_compiler}-${env:vs_arch}"
+            "intelliSenseMode": "linux-gcc-x64"
         },
         {
             "name": "mm: mac",
@@ -25,9 +25,9 @@
                 "${workspaceFolder}/**",
                 "${env:vs_prefix_prj}/include/**",
                 "${env:vs_prefix_usr}/include/**",
-                "/opt/local/Library/Frameworks/Python.framework/Versions/3.11/include/**",
-                "/opt/local/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages/pybind11/include",
-                "/opt/local/include/**"
+                "${env:vs_prefix_sys}/include/**",
+                "${env:vs_prefix_sys}/include/python3.12/**",
+                "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/System/Library/Frameworks/**"
             ],
             "defines": [
                 "PYRE_CORE",
@@ -36,10 +36,10 @@
             "macFrameworkPath": [
                 "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/System/Library/Frameworks"
             ],
-            "compilerPath": "/opt/local/bin/${env:vs_compiler}",
+            "compilerPath": "${env:vs_prefix_sys}/bin/${env:vs_compiler}",
             "cStandard": "c17",
             "cppStandard": "c++20",
-            "intelliSenseMode": "macos-${env:vs_compiler}-${env:vs_arch}"
+            "intelliSenseMode": "macos-clang-arm64"
         }
     ],
     "version": 4
