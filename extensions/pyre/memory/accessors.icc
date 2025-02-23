@@ -1,0 +1,44 @@
+// -*- c++ -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2025 all rights reserved
+
+// code guard
+#pragma once
+
+
+// declarations
+#include "accessors.h"
+
+
+// decorator that adds interface common to all storage strategies
+template <class T>
+auto
+pyre::py::memory::accessors(shared_holder_t<T> & cls) -> void
+{
+    // alias the storage strategy
+    using mem_t = T;
+
+    // metamethods
+    cls.def(
+        // the name
+        "__len__",
+        // the implementation
+        &mem_t::cells,
+        // the docstring
+        "the number of data cells");
+
+    cls.def(
+        // the name
+        "__getitem__",
+        // the implementation
+        &mem_t::at,
+        // the docstring
+        "get the value of the cell at a given index");
+
+    // all done
+    return;
+}
+
+
+// end of file
