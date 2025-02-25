@@ -138,7 +138,7 @@ mm:
   # the location of final products
   prefix: "{pyre.environ.CONDA_PREFIX}"
   # the installation location of the python packages, relative to {prefix}
-  pycPrefix: "lib/python3.12/site-packages"
+  pycPrefix: "lib/python3.13/site-packages"
   # the location of the temporary intermediate build products
   bldroot: "{pyre.environ.HOME}/tmp/builds/mm/{pyre.environ.CONDA_DEFAULT_ENV}"
 
@@ -170,7 +170,7 @@ pybind11.version := 2.11.1
 pybind11.dir = $(sys.prefix)
 
 # python: just major.minor
-python.version := 3.12
+python.version := 3.13
 python.dir := $(sys.prefix)
 
 # pyre
@@ -212,13 +212,13 @@ builder directory layout:
   staging layout:
            tmp = /Users/mga/tmp/builds/mm/clang/opt-shared-darwin-arm64/
   install layout:
-        prefix = /Users/mga/.local/envs/pet
-           bin = /Users/mga/.local/envs/pet/bin/
-           doc = /Users/mga/.local/envs/pet/doc/
-           inc = /Users/mga/.local/envs/pet/include/
-           lib = /Users/mga/.local/envs/pet/lib/
-         share = /Users/mga/.local/envs/pet/share/
-           pyc = /Users/mga/.local/envs/pet/lib/python3.12/site-packages/
+        prefix = /Users/mga/.local/envs/pyre
+           bin = /Users/mga/.local/envs/pyre/bin/
+           doc = /Users/mga/.local/envs/pyre/doc/
+           inc = /Users/mga/.local/envs/pyre/include/
+           lib = /Users/mga/.local/envs/pyre/lib/
+         share = /Users/mga/.local/envs/pyre/share/
+           pyc = /Users/mga/.local/envs/pyre/lib/python3.13/site-packages/
 ~/dv/pyre>
 ```
 
