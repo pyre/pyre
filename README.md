@@ -174,7 +174,7 @@ python.version := 3.13
 python.dir := $(sys.prefix)
 
 # pyre
-pyre.version := 1.12.4
+pyre.version := 1.12.5
 pyre.dir := $(sys.prefix)
 
 # end of file
