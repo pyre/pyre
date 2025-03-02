@@ -139,9 +139,12 @@ class Actor(Requirement):
             if kwds:
                 # make a discard pile
                 discard = set()
-                # build a table of my trait names
-                traits = {trait.name for trait in self.pyre_configurables()}
-
+                # build a table that maps my trait aliases to the canonical trait name
+                traits = {
+                    alias: trait.name
+                    for trait in self.pyre_configurables()
+                    for alias in trait.aliases
+                }
                 # go through the extra arguments and their values
                 for key, value in kwds.items():
                     # if the argument does not correspond to one of my traits
@@ -149,7 +152,7 @@ class Actor(Requirement):
                         # skip it
                         continue
                     # otherwise, form its full name
-                    full = nameserver.join(name, key)
+                    full = nameserver.join(name, traits[key])
                     # assign a priority
                     priority = executive.priority.construction()
                     # make a configuration entry
