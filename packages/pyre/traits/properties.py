@@ -30,6 +30,7 @@ date = property.date
 dimensional = property.dimensional
 path = property.path
 time = property.time
+timestamp = property.timestamp
 uri = property.uri
 
 # containers
