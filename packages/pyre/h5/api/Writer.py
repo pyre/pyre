@@ -28,8 +28,7 @@ class Writer:
     """
     The base writer of h5 data products
 
-    This is a visitor that populates an h5 file from the contents of a in memory object given
-    a {query} that describes a subset of the data hierarchy
+    This is a visitor that persists the contents of an in-memory object to an HDF5 file.
     """
 
     # interface
@@ -40,25 +39,26 @@ class Writer:
         **kwds,
     ) -> None:
         """
-        Open save an h5 {data} product with the structure of {query} in my file
+        Persist an h5 {data} product; the optional {query} argument is a {schema} that constrains
+        the traversal and provides complete control over what gets written to the file
         """
         # make sure there is something to write
         if data is None and query is None:
             # if not, there is nothing to do
             return None
-        # if i don't gave {data}
+        # if i don't have {data}
         if data is None:
-            # i must have structure, so build it
+            # i must have structure, so build an empty data object
             assembler = Assembler()
-            # by visiting the structure we are traversing
+            # using the structure we are traversing
             data = assembler.visit(descriptor=query)
-        # i need structure to traverse
+        # the traversal requires structure,
         if query is None:
             # so if the user didn't provide a map, borrow from the data object
             query = data._pyre_layout
         # get the destination handle; assume i am attached to valid {file}
         dst = self._file._pyre_id
-        # traverse the structure and build the content
+        # traverse the structure and persist the content
         data._pyre_identify(authority=self, dst=dst, **kwds)
         # all done
         return
