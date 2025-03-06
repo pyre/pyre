@@ -14,7 +14,7 @@
 // decorator that adds properties common to all storage strategies
 template <class T>
 auto
-pyre::py::memory::properties(shared_holder_t<T> & cls) -> void
+pyre::py::memory::properties(pymem_t<T> & cls) -> void
 {
     // alias the storage strategy
     using mem_t = T;

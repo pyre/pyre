@@ -24,6 +24,11 @@ namespace pyre::py::memory::cells {
     auto __init__(py::module &) -> void;
 } // namespace pyre::py::memory::cells
 
+// bindings for buffers
+namespace pyre::py::memory::buffers {
+    auto __init__(py::module &) -> void;
+}
+
 // bindings for buffers on the heap
 namespace pyre::py::memory::heaps {
     auto __init__(py::module &) -> void;
@@ -38,6 +43,13 @@ namespace pyre::py::memory::maps {
 namespace pyre::py::memory::views {
     auto __init__(py::module &) -> void;
 } // namespace pyre::py::memory::views
+
+
+// type aliases
+namespace pyre::py::memory {
+    template <typename T>
+    using pymem_t = py::class_<T, typename T::super_type, std::shared_ptr<T>>;
+}
 
 
 // end of file

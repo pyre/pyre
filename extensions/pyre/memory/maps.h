@@ -14,7 +14,7 @@
 namespace pyre::py::memory::maps {
     // the pybind11 class record
     template <typename mapT>
-    using pymap_t = shared_holder_t<mapT>;
+    using pymap_t = pymem_t<mapT>;
 
     // the type registrar
     template <class... mapT>

@@ -14,7 +14,7 @@
 // decorator that adds interface common to all storage strategies
 template <class T>
 auto
-pyre::py::memory::accessors(shared_holder_t<T> & cls) -> void
+pyre::py::memory::accessors(pymem_t<T> & cls) -> void
 {
     // alias the storage strategy
     using mem_t = T;

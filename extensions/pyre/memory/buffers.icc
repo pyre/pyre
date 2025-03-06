@@ -1,0 +1,80 @@
+// -*- c++ -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2025 all rights reserved
+
+// code guard
+#pragma once
+
+// declarations
+#include "buffers.h"
+// common properties
+#include "properties.h"
+// accessors
+#include "accessors.h"
+// mutators
+#include "mutators.h"
+// buffer protocol
+#include "buffer_protocol.h"
+
+
+// the type registrar
+template <class... bufferT>
+auto
+pyre::py::memory::buffers::expand(py::module & memory, pyre::typelists::types_t<bufferT...> &&)
+    -> void
+{
+    // register the buffer types
+    (buffer<bufferT>(memory), ...);
+    // all done
+    return;
+}
+
+// the buffer class record builder
+template <class bufferT>
+auto
+pyre::py::memory::buffers::buffer(py::module & memory) -> void
+{
+    // alias the buffer type
+    using buffer_t = bufferT;
+
+    // build the name of the class
+    auto clsName = buffer_t::name();
+    // the docstring
+    auto clsDocstring = docstring<buffer_t>();
+
+    // assemble the class record
+    auto buffer = pybuffer_t<buffer_t>(
+        // scope
+        memory,
+        // name
+        clsName.data(),
+        // add support for the buffer protocol
+        py::buffer_protocol(),
+        // docstring
+        clsDocstring.data());
+    // all done
+    return;
+}
+
+// the docstring builder
+template <class bufferT>
+auto
+pyre::py::memory::buffers::docstring() -> string_t
+{
+    // alias the buffer
+    using buffer_t = bufferT;
+    // build the docstring
+    auto docstring =
+        // access rights
+        string_t(buffer_t::readonly() ? "const" : "mutable")
+        // flavor
+        + " buffer of "
+        // cell type
+        + buffer_t::cellDecl();
+    // all done
+    return docstring;
+}
+
+
+// end of file

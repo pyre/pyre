@@ -14,7 +14,7 @@
 // decorator that adds interface common to all writable strategies
 template <class T>
 auto
-pyre::py::memory::mutators(shared_holder_t<T> & cls) -> void
+pyre::py::memory::mutators(pymem_t<T> & cls) -> void
 {
     // alias the storage strategy
     using mem_t = T;

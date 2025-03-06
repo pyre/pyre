@@ -15,7 +15,7 @@
 namespace pyre::py::memory {
     // read-only interface
     template <class T>
-    auto accessors(shared_holder_t<T> &) -> void;
+    auto accessors(pymem_t<T> &) -> void;
 } // namespace pyre::py::memory
 
 

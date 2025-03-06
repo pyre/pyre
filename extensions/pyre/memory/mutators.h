@@ -14,7 +14,7 @@
 // decorator that adds interface common to all storage strategies
 namespace pyre::py::memory {
     template <class T>
-    auto mutators(shared_holder_t<T> &) -> void;
+    auto mutators(pymem_t<T> &) -> void;
 }
 
 

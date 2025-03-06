@@ -14,7 +14,7 @@
 // decorator that adds properties common to all storage strategies
 namespace pyre::py::memory {
     template <class T>
-    auto properties(shared_holder_t<T> &) -> void;
+    auto properties(pymem_t<T> &) -> void;
 }
 
 
