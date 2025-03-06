@@ -55,6 +55,14 @@ namespace pyre::memory {
 
 // low level entities; you should probably stay away from them
 namespace pyre::memory {
+    // the base buffer types
+    // mutable version
+    template <typename T>
+    using buffer_t = Buffer<T, false>;
+    // read-only version
+    template <typename T>
+    using constbuffer_t = Buffer<T, true>;
+
     // support for managing file-backed memory undifferentiated blocks
     // used by {map_t} and {constmap_t} above
     using filemap_t = FileMap;

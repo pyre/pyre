@@ -18,6 +18,8 @@
 
 // implementation
 #include "Cell.h"
+// bas class for memory buffers
+#include "Buffer.h"
 // memory block on the stack
 #include "Stack.h"
 // memory block on the heap

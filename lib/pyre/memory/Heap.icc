@@ -15,6 +15,7 @@
 // constructor
 template <class T, bool isConst>
 pyre::memory::Heap<T, isConst>::Heap(cell_count_type cells) :
+    super_type(),
     _data { new value_type[cells] },
     _cells { cells }
 {}
@@ -22,6 +23,7 @@ pyre::memory::Heap<T, isConst>::Heap(cell_count_type cells) :
 
 template <class T, bool isConst>
 pyre::memory::Heap<T, isConst>::Heap(handle_type handle, cell_count_type cells) :
+    super_type(),
     _data { handle },
     _cells { cells }
 {}
