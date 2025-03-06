@@ -129,23 +129,25 @@ pyre::py::memory::cells::accessors(pycell_t<cellT> & pycell) -> void
         "a flag that is true for non-const cells");
 
     // memory footprint
-    pycell.def_static(
+    pycell.def_property_readonly_static(
         // the name
         "bits",
         // the implementation
-        &cellT::bits,
-        // the signature
-        "count"_a = 1,
+        [](py::object *) -> size_t {
+            // easy enough
+            return cellT::bits();
+        },
         // the docstring
         "memory footprint, in bits");
 
-    pycell.def_static(
+    pycell.def_property_readonly_static(
         // the name
         "bytes",
         // the implementation
-        &cellT::bytes,
-        // the signature
-        "count"_a = 1,
+        [](py::object *) -> size_t {
+            // easy enough
+            return cellT::bytes();
+        },
         // the docstring
         "memory footprint, in bytes");
 
