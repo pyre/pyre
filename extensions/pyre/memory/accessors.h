@@ -9,6 +9,8 @@
 
 // externals
 #include "external.h"
+// local declarations
+#include "__init__.h"
 
 
 // decorator that adds interface common to all storage strategies
