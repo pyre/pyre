@@ -9,7 +9,8 @@
 
 // externals
 #include "external.h"
-
+// local declarations
+#include "__init__.h"
 
 // the {pyre} extension namespace
 namespace pyre::py::memory {
