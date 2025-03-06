@@ -15,6 +15,7 @@ from .Property import Property as property
 # for convenience, expose the typed ones
 # the simple ones
 bool = property.bool
+cell = property.cell
 complex = property.complex
 decimal = property.decimal
 enum = property.enum
