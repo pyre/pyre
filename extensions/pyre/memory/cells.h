@@ -14,7 +14,7 @@
 namespace pyre::py::memory::cells {
     // the pybind11 class record
     template <typename cellT>
-    using pycell_t = py::class_<cellT>;
+    using pycell_t = py::class_<cellT, pyre::memory::cell_t<void, true>>;
 
     // the type registrar
     template <class... cellT>
