@@ -57,6 +57,13 @@ namespace pyre::memory {
     // the pile of cell types
     using cells_t = typename celltypes_t<basetypes_t>::type;
 
+    // base buffers
+    using buffers_t = typename pyre::typelists::apply_t<
+        // the heaps
+        pyre::typelists::templates_t<buffer_t, constbuffer_t>,
+        // the cells
+        typename storageCells_t<basetypes_t>::type>::type;
+
     // heaps over all base types
     using heaps_t = typename pyre::typelists::apply_t<
         // the heaps

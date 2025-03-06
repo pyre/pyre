@@ -14,6 +14,7 @@
 // map over an existing data product
 template <typename T, bool isConst>
 pyre::memory::Map<T, isConst>::Map(uri_type uri, writable_type writable) :
+    super_type(),
     _map { std::make_shared<FileMap>(uri, writable) }
 {}
 
@@ -21,6 +22,7 @@ pyre::memory::Map<T, isConst>::Map(uri_type uri, writable_type writable) :
 // create a new one
 template <typename T, bool isConst>
 pyre::memory::Map<T, isConst>::Map(uri_type uri, size_type cells) :
+    super_type(),
     // scale up the number of cells to the number of bytes
     _map { std::make_shared<FileMap>(uri, cell_type::bytes(cells)) }
 {}

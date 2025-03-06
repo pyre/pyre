@@ -35,6 +35,10 @@ namespace pyre::memory {
 
 // helpers
 namespace pyre::memory {
+    // the base buffer type; not really useful on its own
+    template <typename T, bool isConst>
+    class Buffer;
+
     // generator of a human readable name for each supported datatype
     template <typename T>
     struct CellName;

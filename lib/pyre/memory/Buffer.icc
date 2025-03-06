@@ -1,0 +1,73 @@
+// -*- c++ -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2025 all rights reserved
+
+
+// code guard
+#pragma once
+
+// declarations
+#include "Buffer.h"
+
+
+// access privileges
+template <typename T, bool isConst>
+constexpr auto
+pyre::memory::Buffer<T, isConst>::readonly() -> bool
+{
+    // easy
+    return isConst;
+}
+
+
+template <typename T, bool isConst>
+constexpr auto
+pyre::memory::Buffer<T, isConst>::writable() -> bool
+{
+    // easy
+    return !readonly();
+}
+
+
+// human readable form of my expansion
+template <typename T, bool isConst>
+auto
+pyre::memory::Buffer<T, isConst>::name() -> string_type
+{
+    // resolve the name and return it
+    return strategyName() + cellName();
+}
+
+
+// human readable form of my {cell_type}
+template <typename T, bool isConst>
+auto
+pyre::memory::Buffer<T, isConst>::cellName() -> string_type
+{
+    // resolve the name and return it
+    return CellName<value_type>::name();
+}
+
+
+// my {cell_type} declaration string
+template <typename T, bool isConst>
+auto
+pyre::memory::Buffer<T, isConst>::cellDecl() -> string_type
+{
+    // resolve the name and return it
+    return CellName<value_type>::decl();
+}
+
+
+// human readable form of my storage strategy
+template <typename T, bool isConst>
+auto
+pyre::memory::Buffer<T, isConst>::strategyName() -> string_type
+{
+    // build the name and return it
+    return (isConst ? "Const" : "") + string_type("Buffer");
+}
+
+
+// end of file
