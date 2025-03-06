@@ -13,9 +13,14 @@
 #include "forward.h"
 
 
+// sentinel, used as a marker for the base of the cell type hierarchy
+template <>
+class pyre::memory::Cell<void, true> {};
+
+
 // normalize access to a type
 template <class T, bool isConst>
-class pyre::memory::Cell {
+class pyre::memory::Cell : public Cell<void, true> {
     // types
 public:
     // my cell
