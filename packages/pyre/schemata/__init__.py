@@ -9,6 +9,7 @@ from .Schema import Schema as identity
 
 # simple types
 from .Boolean import Boolean as bool
+from .Cell import Cell as cell
 from .Complex import Complex as complex
 from .Decimal import Decimal as decimal
 from .Enum import Enum as enum
@@ -45,7 +46,7 @@ from .EnvPath import EnvPath as envpath
 
 
 # put the schemata in piles
-basic = (identity, bool, complex, decimal, enum, float, fraction, inet, int, str)
+basic = (identity, bool, cell, complex, decimal, enum, float, fraction, inet, int, str)
 composite = (date, dimensional, path, time, timestamp, uri)
 containers = (sequence, array, list, set, tuple, mapping, catalog)
 meta = (istream, ostream, envvar, envpath)
