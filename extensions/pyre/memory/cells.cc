@@ -21,6 +21,15 @@ pyre::py::memory::cells::__init__(py::module & memory) -> void
         // its docstring
         "the cell type definitions");
 
+    // bind the sentinel class
+    auto cell = py::class_<pyre::memory::cell_t<void, true>>(
+        // scope
+        cells,
+        // name
+        "Cell",
+        // docstring
+        "base cell type, used as a sentinel for type identification");
+
     // get the pile of cell types
     using cells_t = pyre::memory::cells_t;
     // build the classes
