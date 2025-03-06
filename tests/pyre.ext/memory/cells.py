@@ -32,9 +32,9 @@ def intCells() -> None:
         # check the name
         assert name == cell.name
         # check the size, in bits
-        assert size == cell.bits()
+        assert size == cell.bits
         # check the size, in bytes
-        assert size == 8 * cell.bytes()
+        assert size == 8 * cell.bytes
         # check the access rights
         assert perm == ("Const" if cell.readonly else "")
         # both ways
@@ -65,9 +65,9 @@ def floatCells() -> None:
         # check the name
         assert name == cell.name
         # check the size, in bits
-        assert size == cell.bits()
+        assert size == cell.bits
         # check the size, in bytes
-        assert size == 8 * cell.bytes()
+        assert size == 8 * cell.bytes
         # check the access rights
         assert perm == ("Const" if cell.readonly else "")
         # both ways
@@ -98,9 +98,9 @@ def complexCells() -> None:
         # check the name
         assert name == cell.name
         # check the size, in bits
-        assert size == cell.bits()
+        assert size == cell.bits
         # check the size, in bytes
-        assert size == 8 * cell.bytes()
+        assert size == 8 * cell.bytes
         # check the access rights
         assert perm == ("Const" if cell.readonly else "")
         # both ways
