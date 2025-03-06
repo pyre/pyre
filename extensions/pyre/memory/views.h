@@ -14,7 +14,7 @@
 namespace pyre::py::memory::views {
     // the pybind11 class record
     template <typename viewT>
-    using pyview_t = shared_holder_t<viewT>;
+    using pyview_t = pymem_t<viewT>;
 
     // the type registrar
     template <class... viewT>

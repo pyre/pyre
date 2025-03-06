@@ -15,7 +15,7 @@
 namespace pyre::py::memory {
     // add support for the python buffer protocol
     template <class T>
-    void bufferProtocol(shared_holder_t<T> &);
+    void bufferProtocol(pymem_t<T> &);
 } // namespace pyre::py::memory
 
 

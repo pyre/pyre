@@ -14,7 +14,7 @@
 namespace pyre::py::memory::heaps {
     // the pybind11 class record
     template <typename heapT>
-    using pyheap_t = shared_holder_t<heapT>;
+    using pyheap_t = pymem_t<heapT>;
 
     // the type registrar
     template <class... heapT>

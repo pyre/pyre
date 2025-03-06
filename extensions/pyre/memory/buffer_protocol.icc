@@ -14,7 +14,7 @@
 // add support for the python buffer protocol
 template <class T>
 void
-pyre::py::memory::bufferProtocol(shared_holder_t<T> & cls)
+pyre::py::memory::bufferProtocol(pymem_t<T> & cls)
 {
     // alias the storage strategy
     using mem_t = T;
