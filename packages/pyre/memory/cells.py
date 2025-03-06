@@ -12,6 +12,9 @@ import pyre
 cells = pyre.libpyre.memory.cells
 
 # publish
+# the sentinel
+cell = cells.Cell
+
 # signed integral types
 int8 = cells.Int8
 int16 = cells.Int16
