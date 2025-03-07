@@ -184,4 +184,16 @@ pyre::memory::View<T, isConst>::operator[](size_type pos) const -> reference
 }
 
 
+// interface
+template <class T, bool isConst>
+auto
+pyre::memory::View<T, isConst>::fill(value_type value) const -> const self_type &
+{
+    // fill the buffer with {value}
+    std::fill(this->begin(), this->end(), value);
+    // return a reference to me
+    return *this;
+}
+
+
 // end of file

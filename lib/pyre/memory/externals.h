@@ -9,12 +9,13 @@
 
 // standard library
 #include <stdexcept>
+#include <algorithm>
 #include <array>
+#include <complex>
 #include <fstream>
 #include <utility>
 
 // low level stuff
-#include <complex>    // for {complex}
 #include <cstdint>    // for type aliases for the basic types
 #include <cstring>    // for {strerror}
 #include <fcntl.h>    // for {open}
