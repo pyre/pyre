@@ -31,6 +31,7 @@ namespace pyre::py::memory::heaps {
     // constructors
     template <class heapT>
     inline auto constructors(pyheap_t<heapT> &) -> void;
+
 } // namespace pyre::py::memory::heaps
 
 
