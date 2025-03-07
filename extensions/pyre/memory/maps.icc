@@ -39,7 +39,7 @@ pyre::py::memory::maps::map(py::module & memory) -> void
     using map_t = mapT;
 
     // build the name of the class
-    auto clsName = map_t::name();
+    auto clsName = map_t::className();
     // the docstring
     auto clsDocstring = docstring<map_t>();
 
@@ -134,7 +134,7 @@ pyre::py::memory::maps::docstring() -> string_t
         // flavor
         + " file backed buffer of "
         // cell type
-        + map_t::cellDecl();
+        + map_t::declValue();
     // all done
     return docstring;
 }

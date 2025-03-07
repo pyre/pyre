@@ -70,17 +70,6 @@ pyre::py::memory::properties(pymem_t<T> & cls) -> void
 
     cls.def_property_readonly_static(
         // the name
-        "_category",
-        // the implementation
-        [](py::object &) -> typename mem_t::string_type {
-            // ask
-            return mem_t::strategyName();
-        },
-        // the docstring
-        "human readable form of my storage strategy");
-
-    cls.def_property_readonly_static(
-        // the name
         "_cell",
         // the implementation
         [](py::object &) -> typename mem_t::cell_type {
@@ -89,6 +78,30 @@ pyre::py::memory::properties(pymem_t<T> & cls) -> void
         },
         // the docstring
         "human readable form of my cell type");
+
+    cls.def_property_readonly_static(
+        // the name
+        "_declSelf",
+        // the implementation
+        [](py::object &) -> string_t {
+            // ask the memory strategy
+            return mem_t::declSelf();
+        },
+        // the docstring
+        "a simulation of the c++ declaration of my underlying object");
+
+
+    cls.def_property_readonly_static(
+        // the name
+        "_declValue",
+        // the implementation
+        [](py::object &) -> string_t {
+            // ask the memory strategy
+            return mem_t::declValue();
+        },
+        // the docstring
+        "a simulation of the c++ declaration of my underlying object");
+
 
     // all done
     return;

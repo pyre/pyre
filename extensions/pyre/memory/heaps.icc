@@ -38,7 +38,7 @@ pyre::py::memory::heaps::heap(py::module & memory) -> void
     using heap_t = heapT;
 
     // build the name of the class
-    auto clsName = heap_t::name();
+    auto clsName = heap_t::className();
     // the docstring
     auto clsDocstring = docstring<heap_t>();
 
@@ -107,7 +107,7 @@ pyre::py::memory::heaps::docstring() -> string_t
         // flavor
         + " buffer of "
         // cell type
-        + heap_t::cellDecl()
+        + heap_t::declValue()
         // more flavor
         + " on the heap";
     // all done
