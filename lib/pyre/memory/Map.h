@@ -72,14 +72,13 @@ public:
     // expose my constness
     static constexpr auto readonly() -> bool;
     static constexpr auto writable() -> bool;
-    // human readable rendering of my expansion
-    static inline auto name() -> string_type;
-    // human readable rendering of my storage strategy
-    static inline auto strategyName() -> string_type;
-    // human readable rendering of my {cell_type}
-    static inline auto cellName() -> string_type;
-    // my {cell_type} decl
-    static inline auto cellDecl() -> string_type;
+
+    // simulate my c++ declaration
+    static inline auto declSelf() -> string_type;
+    // simulate the c++ declaration of my template parameter
+    static inline auto declValue() -> string_type;
+    // human readable name for my type
+    static inline auto className() -> string_type;
 
     // iterator support
 public:
