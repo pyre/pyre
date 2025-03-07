@@ -30,43 +30,41 @@ pyre::memory::Buffer<T, isConst>::writable() -> bool
 }
 
 
+// simulate my c++ declaration
+template <typename T, bool isConst>
+auto
+pyre::memory::Buffer<T, isConst>::declSelf() -> string_type
+{
+    // assemble and return
+    return
+        // namespace
+        string_type("pyre::memory::") +
+        // the type alias
+        (isConst ? "const" : "") + "buffer_t<" +
+        // the template parameter
+        cell_type::declValue() +
+        // and done
+        ">";
+}
+
+
+// simulate the c++ declaration of my value
+template <typename T, bool isConst>
+auto
+pyre::memory::Buffer<T, isConst>::declValue() -> string_type
+{
+    // ask my cell
+    return cell_type::declValue();
+}
+
+
 // human readable form of my expansion
 template <typename T, bool isConst>
 auto
-pyre::memory::Buffer<T, isConst>::name() -> string_type
+pyre::memory::Buffer<T, isConst>::className() -> string_type
 {
     // resolve the name and return it
-    return strategyName() + cellName();
-}
-
-
-// human readable form of my {cell_type}
-template <typename T, bool isConst>
-auto
-pyre::memory::Buffer<T, isConst>::cellName() -> string_type
-{
-    // resolve the name and return it
-    return CellName<value_type>::name();
-}
-
-
-// my {cell_type} declaration string
-template <typename T, bool isConst>
-auto
-pyre::memory::Buffer<T, isConst>::cellDecl() -> string_type
-{
-    // resolve the name and return it
-    return CellName<value_type>::decl();
-}
-
-
-// human readable form of my storage strategy
-template <typename T, bool isConst>
-auto
-pyre::memory::Buffer<T, isConst>::strategyName() -> string_type
-{
-    // build the name and return it
-    return (isConst ? "Const" : "") + string_type("Buffer");
+    return string_type("Buffer") + cell_type::className();
 }
 
 
