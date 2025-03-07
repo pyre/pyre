@@ -39,7 +39,7 @@ pyre::py::memory::buffers::buffer(py::module & memory) -> void
     using buffer_t = bufferT;
 
     // build the name of the class
-    auto clsName = buffer_t::name();
+    auto clsName = buffer_t::className();
     // the docstring
     auto clsDocstring = docstring<buffer_t>();
 
@@ -71,7 +71,7 @@ pyre::py::memory::buffers::docstring() -> string_t
         // flavor
         + " buffer of "
         // cell type
-        + buffer_t::cellDecl();
+        + buffer_t::declValue();
     // all done
     return docstring;
 }

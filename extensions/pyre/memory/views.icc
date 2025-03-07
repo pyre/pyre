@@ -38,7 +38,7 @@ pyre::py::memory::views::view(py::module & memory) -> void
     using view_t = viewT;
 
     // build the name of the class
-    auto clsName = view_t::name();
+    auto clsName = view_t::className();
     // the docstring
     auto clsDocstring = docstring<view_t>();
 
@@ -96,7 +96,7 @@ pyre::py::memory::views::docstring() -> string_t
         // flavor
         + " view of a buffer of "
         // cell type
-        + view_t::cellDecl();
+        + view_t::declValue();
     // all done
     return docstring;
 }
