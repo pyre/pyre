@@ -39,7 +39,7 @@ def heaps():
     ]
     # build all possible names
     names = [
-        f"{permission}Heap{type}"
+        f"Heap{type}{permission}"
         for permission, type in itertools.product(permissions, types)
     ]
     # go through them

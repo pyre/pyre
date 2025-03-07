@@ -39,7 +39,7 @@ def maps():
     ]
     # build all possible names
     names = [
-        f"{permission}Map{type}"
+        f"Map{type}{permission}"
         for permission, type in itertools.product(permissions, types)
     ]
     # go through them
