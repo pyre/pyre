@@ -92,6 +92,10 @@ public:
     // without bounds checking
     inline auto operator[](size_type) const -> reference;
 
+    // interface
+public:
+    inline auto fill(const value_type value) const -> const self_type &;
+
     // implementation details: data
 private:
     handle_type _map;
