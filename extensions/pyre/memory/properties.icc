@@ -59,18 +59,18 @@ pyre::py::memory::properties(pymem_t<T> & cls) -> void
     // static properties
     cls.def_property_readonly_static(
         // the name
-        "name",
+        "mutable",
         // the implementation
-        [](py::object &) -> typename mem_t::string_type {
+        [](py::object &) -> bool {
             // ask
-            return mem_t::name();
+            return mem_t::writable();
         },
         // the docstring
-        "human readable form of my type");
+        "predicate that indicates whether the buffer is mutable");
 
     cls.def_property_readonly_static(
         // the name
-        "strategyName",
+        "_category",
         // the implementation
         [](py::object &) -> typename mem_t::string_type {
             // ask
@@ -81,47 +81,14 @@ pyre::py::memory::properties(pymem_t<T> & cls) -> void
 
     cls.def_property_readonly_static(
         // the name
-        "cellName",
+        "_cell",
         // the implementation
-        [](py::object &) -> typename mem_t::string_type {
+        [](py::object &) -> typename mem_t::cell_type {
             // ask
-            return mem_t::cellName();
+            return typename mem_t::cell_type();
         },
         // the docstring
         "human readable form of my cell type");
-
-    cls.def_property_readonly_static(
-        // the name
-        "cellDecl",
-        // the implementation
-        [](py::object &) -> typename mem_t::string_type {
-            // ask
-            return mem_t::cellDecl();
-        },
-        // the docstring
-        "the c++ equivalent declaration for my cell type");
-
-    cls.def_property_readonly_static(
-        // the name
-        "readonly",
-        // the implementation
-        [](py::object &) -> bool {
-            // ask
-            return mem_t::readonly();
-        },
-        // the docstring
-        "predicate that indicates whether the buffer is immutable");
-
-    cls.def_property_readonly_static(
-        // the name
-        "writable",
-        // the implementation
-        [](py::object &) -> bool {
-            // ask
-            return mem_t::writable();
-        },
-        // the docstring
-        "predicate that indicates whether the buffer is mutable");
 
     // all done
     return;
