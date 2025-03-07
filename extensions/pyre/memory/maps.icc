@@ -15,6 +15,8 @@
 #include "accessors.h"
 // mutators
 #include "mutators.h"
+// interface
+#include "interface.h"
 // buffer protocol
 #include "buffer_protocol.h"
 
@@ -62,8 +64,10 @@ pyre::py::memory::maps::map(py::module & memory) -> void
     accessors(map);
     // mutable maps
     if constexpr (!map_t::readonly()) {
-        // get mutators
+        // add the mutators
         mutators(map);
+        // and the interface
+        interface(map);
     }
     // buffer protocol support
     bufferProtocol(map);
