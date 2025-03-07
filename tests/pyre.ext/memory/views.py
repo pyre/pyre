@@ -39,7 +39,7 @@ def views():
     ]
     # build all possible names
     names = [
-        f"{permission}View{type}"
+        f"View{type}{permission}"
         for permission, type in itertools.product(permissions, types)
     ]
     # go through them
