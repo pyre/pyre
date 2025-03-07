@@ -26,19 +26,17 @@ def intCells() -> None:
     # build the integral type names
     for perm, sign, size in itertools.product(const, signs, sizes):
         # assemble the name
-        name = f"{perm}{sign}Int{size}"
+        name = f"{sign}Int{size}{perm}"
         # verify that the bindings exist
         cell = getattr(cells, name)
-        # check the name
-        assert name == cell.name
+        # check the name of the class
+        assert name == cell.__name__
         # check the size, in bits
         assert size == cell.bits
         # check the size, in bytes
         assert size == 8 * cell.bytes
         # check the access rights
-        assert perm == ("Const" if cell.readonly else "")
-        # both ways
-        assert perm == ("" if cell.writable else "Const")
+        assert perm == ("" if cell.mutable else "Const")
 
     # all done
     return
@@ -59,19 +57,17 @@ def floatCells() -> None:
     # build the integral type names
     for perm, (marker, size) in itertools.product(const, sizes):
         # assemble the name
-        name = f"{perm}{marker}"
+        name = f"{marker}{perm}"
         # verify that the bindings exist
         cell = getattr(cells, name)
-        # check the name
-        assert name == cell.name
+        # check the name of the class
+        assert name == cell.__name__
         # check the size, in bits
         assert size == cell.bits
         # check the size, in bytes
         assert size == 8 * cell.bytes
         # check the access rights
-        assert perm == ("Const" if cell.readonly else "")
-        # both ways
-        assert perm == ("" if cell.writable else "Const")
+        assert perm == ("" if cell.mutable else "Const")
 
     # all done
     return
@@ -92,19 +88,17 @@ def complexCells() -> None:
     # build the integral type names
     for perm, (marker, size) in itertools.product(const, sizes):
         # assemble the name
-        name = f"{perm}{marker}"
+        name = f"{marker}{perm}"
         # verify that the bindings exist
         cell = getattr(cells, name)
-        # check the name
-        assert name == cell.name
+        # check the name of the class
+        assert name == cell.__name__
         # check the size, in bits
         assert size == cell.bits
         # check the size, in bytes
         assert size == 8 * cell.bytes
         # check the access rights
-        assert perm == ("Const" if cell.readonly else "")
-        # both ways
-        assert perm == ("" if cell.writable else "Const")
+        assert perm == ("" if cell.mutable else "Const")
 
     # all done
     return
