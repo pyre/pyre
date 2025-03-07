@@ -34,21 +34,21 @@ complexDouble = cells.ComplexDouble
 
 # const versions
 # signed integral types
-int8Const = cells.ConstInt8
-int16Const = cells.ConstInt16
-int32Const = cells.ConstInt32
-int64Const = cells.ConstInt64
+int8Const = cells.Int8Const
+int16Const = cells.Int16Const
+int32Const = cells.Int32Const
+int64Const = cells.Int64Const
 # unsigned integral types
-uint8Const = cells.ConstUInt8
-uint16Const = cells.ConstUInt16
-uint32Const = cells.ConstUInt32
-uint64Const = cells.ConstUInt64
+uint8Const = cells.UInt8Const
+uint16Const = cells.UInt16Const
+uint32Const = cells.UInt32Const
+uint64Const = cells.UInt64Const
 # floats
-floatConst = cells.ConstFloat
-doubleConst = cells.ConstDouble
+floatConst = cells.FloatConst
+doubleConst = cells.DoubleConst
 # complex
-complexFloatConst = cells.ConstComplexFloat
-complexDoubleConst = cells.ConstComplexDouble
+complexFloatConst = cells.ComplexFloatConst
+complexDoubleConst = cells.ComplexDoubleConst
 
 
 # end of file
