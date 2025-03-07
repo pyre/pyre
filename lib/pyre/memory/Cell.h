@@ -23,7 +23,9 @@ template <class T, bool isConst>
 class pyre::memory::Cell : public Cell<void, true> {
     // types
 public:
-    // my cell
+    // my type
+    using self_type = Cell<T, isConst>;
+    // my value
     using value_type = T;
     // derived types
     using pointer = std::conditional_t<isConst, const value_type *, value_type *>;
@@ -49,10 +51,13 @@ public:
     // compute the footprint of {n} cells
     static constexpr auto bits(cell_count_type = 1) -> size_type;
     static constexpr auto bytes(cell_count_type = 1) -> size_type;
+
+    // simulate my c++ declaration
+    static inline auto declSelf() -> string_type;
+    // simulate the c++ declaration of the template parameter
+    static inline auto declValue() -> string_type;
     // generate a human readable name for my type
-    static inline auto name() -> string_type;
-    // generate a string that looks like the c++ declaration of the cell value type
-    static inline auto decl() -> string_type;
+    static inline auto className() -> string_type;
 };
 
 
