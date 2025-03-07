@@ -48,22 +48,39 @@ pyre::memory::Cell<T, isConst>::bytes(cell_count_type n) -> size_type
     return n * sizeof(T);
 }
 
-// human readable form of my {cell_type}
+// simulation of my declaration
 template <typename T, bool isConst>
 auto
-pyre::memory::Cell<T, isConst>::name() -> string_type
+pyre::memory::Cell<T, isConst>::declSelf() -> string_type
 {
-    // resolve the name and return it
-    return (isConst ? "Const" : "") + CellName<value_type>::name();
+    // assemble and return
+    return
+        // namespace
+        string_type("pyre::memory::cell_t<") +
+        // the value type
+        declValue() +
+        // the permissions
+        ", " + (isConst ? "true" : "false") +
+        // done
+        ">";
 }
 
-// string that looks like a C++ declaration of the cell value type
+// simulation of the c++ declaration of the template parameter
 template <typename T, bool isConst>
 auto
-pyre::memory::Cell<T, isConst>::decl() -> string_type
+pyre::memory::Cell<T, isConst>::declValue() -> string_type
 {
     // resolve the name and return it
-    return (isConst ? "const " : "") + CellName<value_type>::decl();
+    return CellName<value_type>::decl();
+}
+
+// human readable form of my class name
+template <typename T, bool isConst>
+auto
+pyre::memory::Cell<T, isConst>::className() -> string_type
+{
+    // resolve the name and return it
+    return CellName<value_type>::name() + (isConst ? "Const" : "");
 }
 
 
