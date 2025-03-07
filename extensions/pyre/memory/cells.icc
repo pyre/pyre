@@ -31,7 +31,7 @@ pyre::py::memory::cells::cell(py::module & memory) -> void
     // the cell type
     using cell_t = cellT;
     // the name of the class
-    auto clsName = cell_t::name();
+    auto clsName = cell_t::className();
     // the docstring
     auto clsDocstring = docstring<cell_t>();
     // build the class
@@ -65,7 +65,7 @@ pyre::py::memory::cells::docstring() -> string_t
         // flavor
         string_t("the descriptor for ")
         // the cell type
-        + cell_t::name()
+        + cell_t::className()
         // more flavor
         + string_t(" cell types");
     // all done
@@ -94,39 +94,17 @@ template <class cellT>
 auto
 pyre::py::memory::cells::accessors(pycell_t<cellT> & pycell) -> void
 {
-    // name
+    // constness
     pycell.def_property_readonly_static(
         // the name
-        "name",
-        // the implementation
-        [](py::object *) -> string_t {
-            // easy enough
-            return cellT::name();
-        },
-        // the docstring
-        "the name of the cell type");
-
-    pycell.def_property_readonly_static(
-        // the name
-        "readonly",
-        // the implementation
-        [](py::object *) -> bool {
-            // easy enough
-            return cellT::readonly();
-        },
-        // the docstring
-        "a flag that is true for const cells");
-
-    pycell.def_property_readonly_static(
-        // the name
-        "writable",
+        "mutable",
         // the implementation
         [](py::object *) -> bool {
             // easy enough
             return cellT::writable();
         },
         // the docstring
-        "a flag that is true for non-const cells");
+        "a flag that indicates whether the cell describes const memory");
 
     // memory footprint
     pycell.def_property_readonly_static(
@@ -150,6 +128,30 @@ pyre::py::memory::cells::accessors(pycell_t<cellT> & pycell) -> void
         },
         // the docstring
         "memory footprint, in bytes");
+
+    // a simulation of the c++ declaration of the template parameter
+    pycell.def_property_readonly_static(
+        // the name
+        "_declSelf",
+        // the implementation
+        [](py::object *) -> string_t {
+            // easy enough
+            return cellT::declSelf();
+        },
+        // the docstring
+        "the name of the cell type");
+
+    // a simulation of the c++ declaration to which this cell corresponds
+    pycell.def_property_readonly_static(
+        // the name
+        "_declValue",
+        // the implementation
+        [](py::object *) -> string_t {
+            // easy enough
+            return cellT::declValue();
+        },
+        // the docstring
+        "the name of the cell type");
 
     // all done
     return;
