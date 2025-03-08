@@ -23,9 +23,9 @@ pyre::py::memory::mutators(pymem_t<T> & cls) -> void
         // the name
         "__setitem__",
         // the implementation
-        [](mem_t & mem, typename mem_t::size_type index, typename mem_t::value_type value) {
+        [](mem_t & self, typename mem_t::size_type index, typename mem_t::value_type value) {
             // set the {value} at {index}
-            mem.at(index) = value;
+            self.at(index) = value;
             // all done
             return;
         },
