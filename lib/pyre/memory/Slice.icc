@@ -1,0 +1,93 @@
+// -*- c++ -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2025 all rights reserved
+
+
+// code guard
+#pragma once
+
+// declarations
+#include "Slice.h"
+
+
+// constructors
+template <class memT>
+constexpr pyre::memory::Slice<memT>::Slice(const storage_type & storage, index_type start) :
+    _storage { storage },
+    _index { start }
+{}
+
+
+// accessors
+template <class memT>
+auto constexpr pyre::memory::Slice<memT>::storage() const -> const storage_type &
+{
+    // easy enough
+    return _storage;
+}
+
+template <class memT>
+auto constexpr pyre::memory::Slice<memT>::index() const -> index_type
+{
+    // easy enough
+    return _index;
+}
+
+
+// iterator protocol
+// dereference
+template <class memT>
+constexpr auto
+pyre::memory::Slice<memT>::operator*() const -> typename storage_type::reference
+{
+    // easy enough
+    return _storage[_index];
+}
+
+// arithmetic
+template <class memT>
+constexpr auto
+pyre::memory::Slice<memT>::operator++() -> self_type &
+{
+    // update my index
+    ++_index;
+    // all done
+    return *this;
+}
+
+template <class memT>
+constexpr auto
+pyre::memory::Slice<memT>::operator++(int) -> self_type
+{
+    // clone me
+    auto clone = *this;
+    // increment me
+    ++(*this);
+    // and return the clone
+    return clone;
+}
+
+
+// the global operators
+// equality
+template <class memT>
+constexpr auto
+pyre::memory::operator==(const Slice<memT> & it1, const Slice<memT> & it2) -> bool
+{
+    //  iterators are equal if they point to the same storage
+    return (&it1.storage() == &it2.storage()) && (it1.index() == it2.index());
+}
+
+
+// inequality
+template <class memT>
+constexpr auto
+pyre::memory::operator!=(const Slice<memT> & it1, const Slice<memT> & it2) -> bool
+{
+    //  iterators are equal if they point to the same storage
+    return !(it1 == it2);
+}
+
+
+// end of file
