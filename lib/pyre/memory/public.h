@@ -27,8 +27,10 @@
 // file-backed memory blocks
 #include "FileMap.h"
 #include "Map.h"
-// foreign data
+// views on foreign data
 #include "View.h"
+// non-trivial iterator
+#include "Slice.h"
 
 
 // end of file
