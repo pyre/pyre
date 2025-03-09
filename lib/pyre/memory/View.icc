@@ -13,10 +13,11 @@
 
 // metamethods
 template <class T, bool isConst>
-pyre::memory::View<T, isConst>::View(pointer data, cell_count_type cells) :
+pyre::memory::View<T, isConst>::View(pointer data, cell_count_type cells, cell_count_type stride) :
     super_type(),
     _data { data },
-    _cells { cells }
+    _cells { cells },
+    _stride { stride }
 {}
 
 
@@ -135,19 +136,19 @@ pyre::memory::View<T, isConst>::className() -> string_type
 // iterator support
 template <class T, bool isConst>
 auto
-pyre::memory::View<T, isConst>::begin() const -> pointer
+pyre::memory::View<T, isConst>::begin() const -> slice_type
 {
     // the beginning of the block
-    return data();
+    return slice_type(*this, 0);
 }
 
 
 template <class T, bool isConst>
 auto
-pyre::memory::View<T, isConst>::end() const -> pointer
+pyre::memory::View<T, isConst>::end() const -> slice_type
 {
     // one past the last cell in the block
-    return data() + cells();
+    return slice_type(*this, cells());
 }
 
 
@@ -171,7 +172,7 @@ pyre::memory::View<T, isConst>::at(size_type pos) const -> reference
     }
 
     // return a reference to the cell at {pos}
-    return _data[pos];
+    return _data[_stride * pos];
 }
 
 
@@ -180,7 +181,7 @@ auto
 pyre::memory::View<T, isConst>::operator[](size_type pos) const -> reference
 {
     // return a reference to the cell at {pos}
-    return _data[pos];
+    return _data[_stride * pos];
 }
 
 
