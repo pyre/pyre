@@ -13,6 +13,8 @@
 
 // base class
 #include "Buffer.h"
+// non-trivial iterator
+#include "Slice.h"
 
 
 // a block of cells whose memory belongs to someone else
@@ -24,6 +26,8 @@ public:
     using self_type = View<T, isConst>;
     // my base class
     using super_type = Buffer<T, isConst>;
+    // my iterator
+    using slice_type = Slice<self_type>;
 
     // my cell
     using typename super_type::cell_type;
@@ -46,7 +50,7 @@ public:
     // metamethods
 public:
     // map an existing data product
-    inline View(pointer, cell_count_type);
+    inline View(pointer data, cell_count_type cells, cell_count_type stride = 1);
 
     // interface
 public:
@@ -74,8 +78,8 @@ public:
 
     // iterator support
 public:
-    inline auto begin() const -> pointer;
-    inline auto end() const -> pointer;
+    inline auto begin() const -> slice_type;
+    inline auto end() const -> slice_type;
 
     // data access
 public:
@@ -92,6 +96,7 @@ public:
 private:
     const pointer _data;
     const cell_count_type _cells;
+    const cell_count_type _stride;
 
     // default metamethods
 public:
