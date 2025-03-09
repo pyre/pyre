@@ -180,6 +180,21 @@ namespace pyre::tensor {
         using type = tensor_t<scalar_type, repacking_type, I...>;
     };
 
+    namespace traits {
+        // the matrix type resulting from transposing {matrixT}
+        template <matrix_c matrixT>
+        struct transpose {
+        private:
+            using scalar_type = typename matrixT::scalar_type;
+            static constexpr auto D1 = matrixT::dims[0];
+            static constexpr auto D2 = matrixT::dims[1];
+            using packingT = typename matrixT::pack_t;
+
+        public:
+            using type = matrix_t<D2, D1, scalar_type, packingT>;
+        };
+    } // namespace traits
+
 } // namespace pyre::tensor
 
 

@@ -34,6 +34,9 @@ main(int argc, char * argv[])
     // transpose preserves determinant
     static_assert(determinant(At) == determinant(A));
 
+    // check the shape of the transpose for a non square matrix
+    static_assert(std::is_same_v<traits::transpose<matrix_t<3, 2>>::type, matrix_t<2, 3>>);
+
     // all done
     return 0;
 }
