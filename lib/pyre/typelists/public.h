@@ -15,6 +15,7 @@
 
 // type collections
 #include "list.h"
+#include "tuple.h"
 
 // operations
 #include "append.h"

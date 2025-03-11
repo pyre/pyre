@@ -22,6 +22,10 @@ namespace pyre::typelists {
     template <typename T, int N, typename seqT = std::make_index_sequence<N>>
     struct list_t;
 
+    // turning type lists into tuples
+    template <typename...>
+    struct tuple_t;
+
     // prepend a type to the beginning of a type list
     template <typename...>
     struct prepend_t;
