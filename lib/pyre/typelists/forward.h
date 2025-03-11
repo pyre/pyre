@@ -9,12 +9,18 @@
 
 // forward declarations
 namespace pyre::typelists {
-    // the basic data structures
+    // a declarator of a given type {T}; the dummy {int} argument is used while expanding parameter
+    // packs
+    template <typename T, int>
+    struct type_t;
+
+    // a collection of types
     template <typename...>
     struct types_t;
 
-    template <template <typename...> class...>
-    struct templates_t;
+    // a collection of {N} copies of the type {T}
+    template <typename T, int N, typename seqT = std::make_index_sequence<N>>
+    struct list_t;
 
     // prepend a type to the beginning of a type list
     template <typename...>
@@ -40,6 +46,9 @@ namespace pyre::typelists {
     template <typename...>
     struct apply_t;
 
+    // a collection of templates
+    template <template <typename...> class...>
+    struct templates_t;
 } // namespace pyre::typelists
 
 
