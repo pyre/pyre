@@ -13,6 +13,9 @@
 // the basic data structure
 #include "types.h"
 
+// type collections
+#include "list.h"
+
 // operations
 #include "append.h"
 #include "prepend.h"
