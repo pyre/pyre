@@ -14,6 +14,7 @@
 // subpackages
 #include "memory/__init__.h"
 #include "grid/__init__.h"
+#include "_grid_/__init__.h"
 #include "timers/__init__.h"
 #include "viz/__init__.h"
 
@@ -30,6 +31,7 @@ PYBIND11_MODULE(pyre, m)
     pyre::py::memory::__init__(m);
     // grid
     pyre::py::grid::__init__(m);
+    pyre::py::_grid_::__init__(m);
     // timers
     pyre::py::timers::__init__(m);
     // viz
