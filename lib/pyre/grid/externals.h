@@ -4,8 +4,7 @@
 // (c) 1998-2025 all rights reserved
 
 // code guard
-#if !defined(pyre_grid_externals_h)
-#define pyre_grid_externals_h
+#pragma once
 
 
 // externals
@@ -55,7 +54,5 @@ namespace pyre::grid {
 
 } // namespace pyre::grid
 
-
-#endif
 
 // end of file

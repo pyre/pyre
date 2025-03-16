@@ -4,9 +4,11 @@
 // (c) 1998-2025 all rights reserved
 
 // code guard
-#if !defined(pyre_grid_IndexIterator_icc)
-#error this file contains implementation details for pyre::grid::IndexIterator
-#else
+#pragma once
+
+
+// declarations
+#include "IndexIterator.h"
 
 // metamethods
 // shape, order, origin
@@ -108,9 +110,6 @@ pyre::grid::operator!=(const IndexIterator<packingT> & it1, const IndexIterator<
     // iterators are unequal iff they are not equal
     return !(it1 == it2);
 }
-
-
-#endif
 
 
 // end of file

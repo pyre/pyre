@@ -5,9 +5,11 @@
 
 
 // code guard
-#if !defined(pyre_grid_Diagonal_icc)
-#error this file contains implementation details for pyre::grid::Diagonal
-#else
+#pragma once
+
+
+// declarations
+#include "Diagonal.h"
 
 
 // metamethods
@@ -202,7 +204,5 @@ pyre::grid::Diagonal<N, T, containerT>::_initShift(index_const_reference origin)
     return origin[0];
 }
 
-
-#endif
 
 // end of file

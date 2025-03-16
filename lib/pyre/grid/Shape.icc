@@ -4,9 +4,11 @@
 // (c) 1998-2025 all rights reserved
 
 // code guard
-#if !defined(pyre_grid_Shape_icc)
-#error this file contains implementation details for pyre::grid::Shape
-#else
+#pragma once
+
+
+// declarations
+#include "Shape.h"
 
 
 // metamethods
@@ -44,7 +46,5 @@ struct std::tuple_element<I, pyre::grid::Shape<containerT>> {
     using type = typename containerT::value_type;
 };
 
-
-#endif
 
 // end of file

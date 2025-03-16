@@ -5,9 +5,11 @@
 
 
 // code guard
-#if !defined(pyre_grid_Symmetric_icc)
-#error this file contains implementation details for pyre::grid::Symmetric
-#else
+#pragma once
+
+
+// declarations
+#include "Symmetric.h"
 
 
 // metamethods
@@ -291,7 +293,5 @@ pyre::grid::Symmetric<N, T, containerT>::rank() -> int
     return N;
 }
 
-
-#endif
 
 // end of file

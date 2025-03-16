@@ -4,8 +4,7 @@
 // (c) 1998-2025 all rights reserved
 
 // code guard
-#if !defined(pyre_grid_Product_h)
-#define pyre_grid_Product_h
+#pragma once
 
 
 // thin wrapper over {rep_t} that serves as the base for all classes that encapsulate cartesian
@@ -113,11 +112,7 @@ public:
 
 
 // get the inline definitions
-#define pyre_grid_Product_icc
 #include "Product.icc"
-#undef pyre_grid_Product_icc
 
-
-#endif
 
 // end of file

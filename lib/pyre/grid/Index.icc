@@ -4,9 +4,10 @@
 // (c) 1998-2025 all rights reserved
 
 // code guard
-#if !defined(pyre_grid_Index_icc)
-#error this file contains implementation details for pyre::grid::Index
-#else
+#pragma once
+
+// declarations
+#include "Index.h"
 
 
 // metamethods
@@ -67,7 +68,5 @@ struct std::tuple_element<I, pyre::grid::Index<containerT>> {
     using type = typename containerT::value_type;
 };
 
-
-#endif
 
 // end of file
