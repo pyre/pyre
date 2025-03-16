@@ -6,16 +6,44 @@
 
 // code guard
 #pragma once
-// the declarations
+
+// declarations
 #include "Rep.h"
 
 
 // metamethods
+// constructors
+template <class containerT>
+constexpr pyre::grid::Rep<containerT>::Rep() : container_type {}
+{}
+
+#if defined(PYRE_GRID_SFINAE)
+template <class containerT>
+template <typename... argT, typename>
+constexpr pyre::grid::Rep<containerT>::Rep(argT... args) :
+    container_type { static_cast<value_type>(args)... }
+{}
+#else
 template <class containerT>
 template <typename... argT>
 constexpr pyre::grid::Rep<containerT>::Rep(argT... args) :
     container_type { static_cast<value_type>(args)... }
 {}
+#endif
+
+#if NYI_MOVE_TO_THE_BINDINGS
+template <class containerT>
+template <typename tupleT>
+constexpr pyre::grid::Rep<containerT>::Rep(tupleT && tuple) :
+    container_type(
+        // apply
+        std::apply(
+            // the functor
+            [](auto &&... args) -> container_type { return { static_cast<value_type>(args)... }; },
+            // to the tuple in the constructor argument
+            std::forward<container_type>(tuple)))
+{}
+#endif
 
 
 // interface
