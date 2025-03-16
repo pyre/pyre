@@ -4,8 +4,7 @@
 // (c) 1998-2025 all rights reserved
 
 // code guard
-#if !defined(pyre_grid_Shape_h)
-#define pyre_grid_Shape_h
+#pragma once
 
 
 // the specification of the number of possible index values along each dimension
@@ -50,11 +49,7 @@ public:
 
 
 // get the inline definitions
-#define pyre_grid_Shape_icc
 #include "Shape.icc"
-#undef pyre_grid_Shape_icc
 
-
-#endif
 
 // end of file

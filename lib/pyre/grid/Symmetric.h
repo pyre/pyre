@@ -5,8 +5,7 @@
 
 
 // code guard
-#if !defined(pyre_grid_Symmetric_h)
-#define pyre_grid_Symmetric_h
+#pragma once
 
 
 // encapsulation of the symmetric packing strategy
@@ -132,11 +131,7 @@ public:
 
 
 // get the inline definitions
-#define pyre_grid_Symmetric_icc
 #include "Symmetric.icc"
-#undef pyre_grid_Symmetric_icc
 
-
-#endif
 
 // end of file

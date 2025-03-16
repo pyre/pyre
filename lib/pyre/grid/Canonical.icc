@@ -4,9 +4,11 @@
 // (c) 1998-2025 all rights reserved
 
 // code guard
-#if !defined(pyre_grid_Canonical_icc)
-#error this file contains implementation details for pyre::grid::Canonical
-#else
+#pragma once
+
+
+// declarations
+#include "Canonical.h"
 
 
 // metamethods
@@ -390,7 +392,5 @@ pyre::grid::Canonical<N, T, containerT>::_initShift(
     return std::inner_product(origin.begin(), origin.end(), strides.begin(), init);
 }
 
-
-#endif
 
 // end of file

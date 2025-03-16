@@ -4,8 +4,7 @@
 // (c) 1998-2025 all rights reserved
 
 // code guard
-#if !defined(pyre_grid_Canonical_h)
-#define pyre_grid_Canonical_h
+#pragma once
 
 
 // encapsulation of the canonical packing strategy
@@ -135,11 +134,7 @@ public:
 
 
 // get the inline definitions
-#define pyre_grid_Canonical_icc
 #include "Canonical.icc"
-#undef pyre_grid_Canonical_icc
 
-
-#endif
 
 // end of file

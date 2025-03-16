@@ -4,9 +4,11 @@
 // (c) 1998-2025 all rights reserved
 
 // code guard
-#if !defined(pyre_grid_GridIterator_icc)
-#error this file contains implementation details for pyre::grid::GridIterator
-#else
+#pragma once
+
+
+// declarations
+#include "GridIterator.h"
 
 
 // metamethods
@@ -98,9 +100,6 @@ pyre::grid::operator!=(
     // iterators are unequal iff they are not equal
     return !(it1 == it2);
 }
-
-
-#endif
 
 
 // end of file

@@ -4,9 +4,11 @@
 // (c) 1998-2025 all rights reserved
 
 // code guard
-#if !defined(pyre_grid_Order_icc)
-#error this file contains implementation details for pyre::grid::Order
-#else
+#pragma once
+
+
+// declarations
+#include "Order.h"
 
 
 // metamethods
@@ -88,7 +90,5 @@ pyre::grid::Order<containerT>::_rowMajor(std::index_sequence<seq...>) -> order_t
     return order_type { sizeof...(seq) - 1 - seq... };
 }
 
-
-#endif
 
 // end of file

@@ -4,8 +4,7 @@
 // (c) 1998-2025 all rights reserved
 
 // code guard
-#if !defined(pyre_grid_IndexIterator_h)
-#define pyre_grid_IndexIterator_h
+#pragma once
 
 
 // iterators generate sequences of indices from a packing strategy according to a specific
@@ -71,11 +70,7 @@ public:
 
 
 // get the inline definitions
-#define pyre_grid_IndexIterator_icc
 #include "IndexIterator.icc"
-#undef pyre_grid_IndexIterator_icc
 
-
-#endif
 
 // end of file

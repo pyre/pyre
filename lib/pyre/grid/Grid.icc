@@ -5,9 +5,11 @@
 
 
 // code guard
-#if !defined(pyre_grid_Grid_icc)
-#error this file contains implementation details for pyre::grid::Grid
-#else
+#pragma once
+
+
+// declarations
+#include "Grid.h"
 
 
 // metamethods
@@ -212,7 +214,5 @@ pyre::grid::Grid<packingT, storageT>::slice(
     return Grid<sliced_pack_t, storageT>(sliceLayout, _data);
 }
 
-
-#endif
 
 // end of file

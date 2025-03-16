@@ -4,8 +4,7 @@
 // (c) 1998-2025 all rights reserved
 
 // code guard
-#if !defined(pyre_grid_GridIterator_h)
-#define pyre_grid_GridIterator_h
+#pragma once
 
 
 // in iterator that visit the cells of a grid in a specific order
@@ -66,11 +65,7 @@ public:
 
 
 // get the inline definitions
-#define pyre_grid_GridIterator_icc
 #include "GridIterator.icc"
-#undef pyre_grid_GridIterator_icc
 
-
-#endif
 
 // end of file
