@@ -5,17 +5,45 @@
 
 
 // code guard
-#if !defined(pyre_grid_Rep_icc)
-#error this file contains implementation details for pyre::grid::Rep
-#else
+#pragma once
+
+// declarations
+#include "Rep.h"
 
 
 // metamethods
+// constructors
+template <class containerT>
+constexpr pyre::grid::Rep<containerT>::Rep() : container_type {}
+{}
+
+#if defined(PYRE_GRID_SFINAE)
+template <class containerT>
+template <typename... argT, typename>
+constexpr pyre::grid::Rep<containerT>::Rep(argT... args) :
+    container_type { static_cast<value_type>(args)... }
+{}
+#else
 template <class containerT>
 template <typename... argT>
 constexpr pyre::grid::Rep<containerT>::Rep(argT... args) :
     container_type { static_cast<value_type>(args)... }
 {}
+#endif
+
+#if NYI_MOVE_TO_THE_BINDINGS
+template <class containerT>
+template <typename tupleT>
+constexpr pyre::grid::Rep<containerT>::Rep(tupleT && tuple) :
+    container_type(
+        // apply
+        std::apply(
+            // the functor
+            [](auto &&... args) -> container_type { return { static_cast<value_type>(args)... }; },
+            // to the tuple in the constructor argument
+            std::forward<container_type>(tuple)))
+{}
+#endif
 
 
 // interface
@@ -383,7 +411,5 @@ pyre::grid::operator/(const Rep<containerT> & i, float s) -> floats_t<Rep<contai
     return scaled;
 }
 
-
-#endif
 
 // end of file

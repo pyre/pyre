@@ -4,8 +4,7 @@
 // (c) 1998-2025 all rights reserved
 
 // code guard
-#if !defined(pyre_grid_Rep_h)
-#define pyre_grid_Rep_h
+#pragma once
 
 
 // thin adaptor over a compile time container that we use to store index ranks, grid shapes,
@@ -35,9 +34,33 @@ public:
 
     // metamethods
 public:
+    // default constructor
+    constexpr Rep();
+
     // aggregate initialization
+#if defined(PYRE_GRID_SFINAE)
+    template <
+        // with some number of arguments
+        typename... argT,
+        // SFINAE: enable this constructor only
+        typename = std::enable_if_t<
+            // when the number of arguments in the parameter pack
+            sizeof...(argT)
+            // is less than or equal to
+            ==
+            // the size of my target {container_type}
+            std::tuple_size_v<std::decay_t<container_type>>>>
+    constexpr explicit Rep(argT...);
+#else
     template <typename... argT>
     constexpr explicit Rep(argT...);
+#endif
+
+#if NYI_MOVE_TO_THE_BINDINGS
+    // initialization
+    template <typename tupleT>
+    constexpr Rep(tupleT && tuple);
+#endif
 
     // interface
 public:
@@ -69,11 +92,7 @@ public:
 
 
 // get the inline definitions
-#define pyre_grid_Rep_icc
 #include "Rep.icc"
-#undef pyre_grid_Rep_icc
 
-
-#endif
 
 // end of file
