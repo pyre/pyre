@@ -32,27 +32,24 @@ class Cell(Schema):
             return value
         # strings
         if isinstance(value, str):
+            # get the translation table
+            xlat = self.xlat
             # if i don't have a translation table yet
-            if self.xlat is None:
-                # build it as a class resource
-                Cell.xlat = self.makeTranslationTable()
+            if xlat is None:
+                # build it
+                xlat = self.makeTranslationTable()
+                # and attach it as a class resource
+                Cell.xlat = xlat
             # carefully
             try:
                 # attempt the conversion
-                return Cell.xlat[value.lower()]
+                return xlat[value.lower()]
             # lookup failures
             except Exception as error:
                 # get reported as casting errors
                 raise self.CastingError(description=self.complaint, value=value)
         # all other types are incompatible, for now
         raise self.CastingError(description=self.complaint, value=value)
-
-    # meta-methods
-    def __init__(self, default=True, **kwds):
-        # chain up with my default
-        super().__init__(default=default, **kwds)
-        # all done
-        return
 
     # implementation details
     # the name lookup table
