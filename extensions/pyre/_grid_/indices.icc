@@ -1,0 +1,45 @@
+// -*- c++ -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2025 all rights reserved
+
+// code guard
+#pragma once
+
+
+// declarations
+#include "indices.h"
+
+
+// the type registrar
+template <class... indexT>
+inline auto
+pyre::py::_grid_::indices::expand(py::module & indices, pyre::typelists::types_t<indexT...> &&)
+    -> void
+{
+    // register the index types
+    (index<indexT>(indices), ...);
+    // all done
+    return;
+}
+
+
+// the index class record builder
+template <class indexT>
+auto
+pyre::py::_grid_::indices::index(py::module & indices) -> void
+{
+    // alias the index type
+    using index_t = indexT;
+
+    // build the name of the class
+    auto clsName = index_t::className();
+    // the docstring
+    auto clsDocstring = docstring<index_t>();
+
+    // all done
+    return;
+}
+
+
+// end of file
