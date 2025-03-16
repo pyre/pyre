@@ -1,0 +1,24 @@
+// -*- c++ -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2025 all rights reserved
+
+// code guard
+#pragma once
+
+
+// declarations
+#include "xxx.h"
+
+
+// the type registrar
+template <class... xxxT>
+inline auto
+pyre::py::_grid_::xxx::expand(py::module, pyre::typelists::types_t<xxxT...> &&) -> void
+{
+    // all done
+    return;
+}
+
+
+// end of file
