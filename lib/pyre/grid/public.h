@@ -4,8 +4,7 @@
 // (c) 1998-2025 all rights reserved
 
 // code guard
-#if !defined(pyre_grid_public_h)
-#define pyre_grid_public_h
+#pragma once
 
 
 // external packages
@@ -36,7 +35,8 @@
 #include "Grid.h"
 #include "GridIterator.h"
 
+// the expansions
+#include "expansions.h"
 
-#endif
 
 // end of file
