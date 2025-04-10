@@ -88,7 +88,7 @@ pyre::tensor::operator<<(
 // print a quaternion's (r, i, j, k) components
 template <typename T>
 std::ostream &
-operator<<(std::ostream & os, const pyre::tensor::UnitQuaternion<T> & quaternion)
+pyre::tensor::operator<<(std::ostream & os, const pyre::tensor::UnitQuaternion<T> & quaternion)
 {
     os << "[ ";
     os << quaternion.r() << ", " << quaternion.i() << ", " << quaternion.j() << ", "
