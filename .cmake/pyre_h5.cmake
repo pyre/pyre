@@ -15,11 +15,7 @@ function(pyre_h5Module)
     # specify the directory for the module compilation products
     pyre_library_directory(h5module extensions)
     # set the libraries to link against
-    if(HDF5_IS_PARALLEL)
-      target_link_libraries(h5module PRIVATE journal pybind11::module HDF5::HDF5 MPI::MPI_CXX)
-    else(HDF5_IS_PARALLEL)
-      target_link_libraries(h5module PRIVATE journal pybind11::module HDF5::HDF5)
-    endif(HDF5_IS_PARALLEL)
+    target_link_libraries(h5module PRIVATE journal pybind11::module HDF5::HDF5)
     # add the sources
     target_sources(h5module PRIVATE
       extensions/h5/__init__.cc
