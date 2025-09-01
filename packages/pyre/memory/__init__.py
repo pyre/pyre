@@ -7,6 +7,7 @@
 
 # support
 import pyre
+import journal
 
 # publish
 from . import cells
@@ -18,6 +19,17 @@ def heap(type: cells.cell, cells: int):
     """
     Allocate a buffer of the given number of {cells} of the given {type}
     """
+    # if the {type} is const
+    if not type.mutable:
+        # these are of very limited value
+        channel = journal.warning("pyre.memory.heap")
+        # report
+        channel.line(f"read-only buffers on the heap are of limited value")
+        channel.line("while allocating a memory block on the heap")
+        channel.line(f"with {cells} cells of type 'const {type.declValue}'")
+        # flush
+        channel.log()
+
     # get the module with the heap factories
     module = pyre.libpyre.memory.heaps
     # look up the factory
@@ -45,10 +57,8 @@ def map(uri: pyre.primitives.path, type: cells.cell, cells: int = 0):
     if not type.mutable:
         # allocate and return
         return mapFactory(uri=str(uri))
-    # anything else is an error
-    import journal
 
-    # make a channel
+    # anything else is an error; make a channel
     channel = journal.error("pyre.memory.map")
     # complain
     channel.line("unsupported request for a memory mapped buffer")
