@@ -12,7 +12,9 @@
 #include "forward.h"
 
 
-// a block of cells on the heap
+// the base class for heaps, maps, and views
+// not useful on its own; it's here to support th python bindings by providing a common base class
+// that can be used for type identification
 template <class T, bool isConst>
 class pyre::memory::Buffer {
     // types
