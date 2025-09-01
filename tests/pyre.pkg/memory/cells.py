@@ -28,19 +28,17 @@ def intCells() -> None:
         # assemble the python name of the cell
         name = f"{sign}int{size}{perm}"
         # assemble the name the cell reports
-        cellName = f"{perm}{sign.upper()}Int{size}"
+        cellName = f"{sign.upper()}Int{size}{perm}"
         # verify that the bindings exist
         cell = getattr(cells, name)
         # check the name
-        assert cellName == cell.name
+        assert cellName == cell.__name__
         # check the size, in bits
-        assert size == cell.bits()
+        assert size == cell.bits
         # check the size, in bytes
-        assert size == 8 * cell.bytes()
+        assert size == 8 * cell.bytes
         # check the access rights
-        assert perm == ("Const" if cell.readonly else "")
-        # both ways
-        assert perm == ("" if cell.writable else "Const")
+        assert perm == ("" if cell.mutable else "Const")
 
     # all done
     return
@@ -63,19 +61,17 @@ def floatCells() -> None:
         # assemble the name in the module
         name = f"{marker}{perm}"
         # assemble the name the cell reports
-        cellName = f"{perm}{marker.capitalize()}"
+        cellName = f"{marker.capitalize()}{perm}"
         # verify that the bindings exist
         cell = getattr(cells, name)
         # check the name
-        assert cellName == cell.name
+        assert cellName == cell.__name__
         # check the size, in bits
-        assert size == cell.bits()
+        assert size == cell.bits
         # check the size, in bytes
-        assert size == 8 * cell.bytes()
+        assert size == 8 * cell.bytes
         # check the access rights
-        assert perm == ("Const" if cell.readonly else "")
-        # both ways
-        assert perm == ("" if cell.writable else "Const")
+        assert perm == ("" if cell.mutable else "Const")
 
     # all done
     return
@@ -101,19 +97,17 @@ def complexCells() -> None:
         # assemble the name in the module
         name = f"{marker}{perm}"
         # assemble the name the cell reports
-        cellName = f"{perm}{tag}"
+        cellName = f"{tag}{perm}"
         # verify that the bindings exist
         cell = getattr(cells, name)
         # check the name
-        assert cellName == cell.name
+        assert cellName == cell.__name__
         # check the size, in bits
-        assert size == cell.bits()
+        assert size == cell.bits
         # check the size, in bytes
-        assert size == 8 * cell.bytes()
+        assert size == 8 * cell.bytes
         # check the access rights
-        assert perm == ("Const" if cell.readonly else "")
-        # both ways
-        assert perm == ("" if cell.writable else "Const")
+        assert perm == ("" if cell.mutable else "Const")
 
     # all done
     return
