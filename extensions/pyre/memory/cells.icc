@@ -132,26 +132,26 @@ pyre::py::memory::cells::accessors(pycell_t<cellT> & pycell) -> void
     // a simulation of the c++ declaration of the template parameter
     pycell.def_property_readonly_static(
         // the name
-        "_declSelf",
+        "declSelf",
         // the implementation
         [](py::object *) -> string_t {
             // easy enough
             return cellT::declSelf();
         },
         // the docstring
-        "the name of the cell type");
+        "a simulation of the C++ declaration of the cell type");
 
     // a simulation of the c++ declaration to which this cell corresponds
     pycell.def_property_readonly_static(
         // the name
-        "_declValue",
+        "declValue",
         // the implementation
         [](py::object *) -> string_t {
             // easy enough
             return cellT::declValue();
         },
         // the docstring
-        "the name of the cell type");
+        "a simulation of the declaration of the underlying C++ type");
 
     // all done
     return;
