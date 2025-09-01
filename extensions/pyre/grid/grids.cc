@@ -480,8 +480,4 @@ pyre::py::grid::grids(py::module & m)
 }
 
 
-#if 0
-
-#endif
-
 // end of file
