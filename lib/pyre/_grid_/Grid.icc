@@ -1,0 +1,48 @@
+// -*- c++ -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2025 all rights reserved
+
+// code guard
+#pragma once
+
+// support
+#include "Grid.h"
+
+
+// metamethods - constructors
+// construct from fully-formed policies
+template <pyre::grid::concepts::PackingStrategy P, pyre::grid::concepts::StorageStrategy S>
+constexpr pyre::grid::Grid<P, S>::Grid(packing_type packing, storage_type storage) :
+    _packing(std::move(packing)),
+    _storage(std::move(storage))
+{}
+
+// in-place construction of the policies
+template <pyre::grid::concepts::PackingStrategy P, pyre::grid::concepts::StorageStrategy S>
+template <class... PArgs, class... SArgs>
+    requires(pyre::grid::concepts::PackingConstructible<P, PArgs...>
+             && pyre::grid::concepts::StorageConstructible<S, SArgs...>)
+constexpr pyre::grid::Grid<P, S>::Grid(
+    std::piecewise_construct_t, std::tuple<PArgs...> pArgs, std::tuple<SArgs...> sArgs) :
+    _packing(std::make_from_tuple<packing_type>(std::move(pArgs))),
+    _storage(std::make_from_tuple<storage_type>(std::move(sArgs)))
+{}
+
+// accessors
+template <pyre::grid::concepts::PackingStrategy P, pyre::grid::concepts::StorageStrategy S>
+[[nodiscard]] constexpr auto
+pyre::grid::Grid<P, S>::packing() const noexcept -> const packing_type &
+{
+    return _packing;
+}
+
+template <pyre::grid::concepts::PackingStrategy P, pyre::grid::concepts::StorageStrategy S>
+[[nodiscard]] constexpr auto
+pyre::grid::Grid<P, S>::storage() const noexcept -> const storage_type &
+{
+    return _storage;
+}
+
+
+// end of file

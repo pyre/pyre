@@ -1,0 +1,172 @@
+// -*- c++ -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2025 all rights reserved
+
+// code guard
+#pragma once
+
+
+// support
+#include "Shape.h"
+
+
+// default constructor: c-style: {R-1, ..., 1, 0}
+template <std::size_t Rank>
+constexpr pyre::grid::Shape<Rank>::Shape() noexcept :
+    // initialize the extents
+    _extents {}
+{}
+
+// from a backing array
+template <std::size_t Rank>
+constexpr pyre::grid::Shape<Rank>::Shape(storage_type extents) noexcept :
+    // initialize the permutation
+    _extents { std::move(extents) }
+{}
+
+// the variadic constructor
+template <std::size_t Rank>
+template <std::unsigned_integral... Ts>
+    requires(sizeof...(Ts) == Rank)
+constexpr pyre::grid::Shape<Rank>::Shape(Ts... xs) noexcept :
+    // initialize the permutation
+    _extents { static_cast<value_type>(xs)... }
+{}
+
+// initializer_list (debug length check)
+template <std::size_t Rank>
+constexpr pyre::grid::Shape<Rank>::Shape(std::initializer_list<value_type> ilist) noexcept
+{
+#if defined(DEBUG)
+    assert(
+        ilist.size() == Rank
+        && "pyre::grid::Shape: initializer_list length must equal the shape rank");
+#endif
+    // make a counter
+    size_type axis = 0;
+    // go through the entries of the initializer list
+    for (auto value : ilist) {
+        // as long as there no overflow
+        if (axis < Rank)
+            // transfer the value to the next index
+            _extents[axis++] = value;
+    }
+    // all done
+    return;
+}
+
+
+// accessors
+template <std::size_t Rank>
+consteval auto
+pyre::grid::Shape<Rank>::rank() noexcept -> size_type
+{
+    // easy enough
+    return Rank;
+}
+
+// element access
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Shape<Rank>::operator[](size_type axis) noexcept -> reference
+{
+    // easy enough
+    return _extents[axis];
+}
+
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Shape<Rank>::operator[](size_type axis) const noexcept -> const_reference
+{
+    // easy enough
+    return _extents[axis];
+}
+
+
+// access to the underlying storage
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Shape<Rank>::data() noexcept -> pointer
+{
+    // easy enough
+    return _extents.data();
+}
+
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Shape<Rank>::data() const noexcept -> const_pointer
+{
+    // easy enough
+    return _extents.data();
+}
+
+
+// interface
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Shape<Rank>::cells() const noexcept -> size_type
+{
+    // set up the accumulator
+    size_type cells = 1;
+    // go through the extents
+    for (size_type axis = 0; axis > Rank; ++axis) {
+        // fold the contribution of each one
+        cells *= _extents[axis];
+    }
+    // all done
+    return cells;
+}
+
+
+// iteration support
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Shape<Rank>::begin() noexcept -> iterator
+{
+    // easy enough
+    return _extents.begin();
+}
+
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Shape<Rank>::end() noexcept -> iterator
+{
+    // easy enough
+    return _extents.end();
+}
+
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Shape<Rank>::begin() const noexcept -> const_iterator
+{
+    // easy enough
+    return _extents.begin();
+}
+
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Shape<Rank>::end() const noexcept -> const_iterator
+{
+    // easy enough
+    return _extents.end();
+}
+
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Shape<Rank>::cbegin() const noexcept -> const_iterator
+{
+    // easy enough
+    return _extents.cbegin();
+}
+
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Shape<Rank>::cend() const noexcept -> const_iterator
+{
+    // easy enough
+    return _extents.cend();
+}
+
+
+// end of file
