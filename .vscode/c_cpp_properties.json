@@ -16,7 +16,7 @@
             ],
             "compilerPath": "/usr/bin/${env:vs_compiler}",
             "cStandard": "c17",
-            "cppStandard": "c++20",
+            "cppStandard": "c++23",
             "intelliSenseMode": "linux-gcc-x64"
         },
         {
@@ -26,10 +26,10 @@
                 "${env:vs_prefix_prj}/include/**",
                 "${env:vs_prefix_usr}/include/**",
                 "${env:vs_prefix_sys}/include/**",
-                "${env:vs_prefix_sys}/include/python3.12/**",
                 "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/System/Library/Frameworks/**"
             ],
             "defines": [
+                "DEBUG",
                 "PYRE_CORE",
                 "WITH_JOURNAL"
             ],
@@ -38,7 +38,7 @@
             ],
             "compilerPath": "${env:vs_prefix_sys}/bin/${env:vs_compiler}",
             "cStandard": "c17",
-            "cppStandard": "c++20",
+            "cppStandard": "c++23",
             "intelliSenseMode": "macos-clang-arm64"
         }
     ],
