@@ -123,7 +123,7 @@ pyre::h5::py::group(py::module & m)
             // make a pile
             auto members = names_t();
             // look up how many members i have and go through them
-            for (auto index = 0; index < self.getNumObjs(); ++index) {
+            for (hsize_t index = 0; index < self.getNumObjs(); ++index) {
                 // to get the name of the member at {index}
                 auto name = self.getObjnameByIdx(index);
                 // and add it to the pile
