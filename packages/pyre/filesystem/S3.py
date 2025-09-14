@@ -58,7 +58,7 @@ class S3(Filesystem):
             channel = journal.error("pyre.filesystem.s3")
             # complain
             channel.line(f"got: {error}")
-            channel.line(f"while exploring '{self.location}'")
+            channel.line(f"while exploring '{self.location()}'")
             # flush
             channel.log()
             # and bail, in case errors aren't fatal
