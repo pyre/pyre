@@ -16,6 +16,7 @@ from .Director import Director
 
 # protocols
 from .Shell import Shell
+from ..journal.Journal import Journal
 
 
 # declaration
@@ -42,7 +43,7 @@ class Application(pyre.component, metaclass=Director):
     shell = Shell()
     shell.doc = "my hosting strategy"
 
-    journal = pyre.journal.journal()
+    journal = Journal()
 
     DEBUG = pyre.properties.bool(default=False)
     DEBUG.doc = "debugging mode"
