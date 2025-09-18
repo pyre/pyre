@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2025 all rights reserved
-#
 
 
 # externals
@@ -43,6 +41,8 @@ class Application(pyre.component, metaclass=Director):
     # public state
     shell = Shell()
     shell.doc = "my hosting strategy"
+
+    journal = pyre.journal.journal()
 
     DEBUG = pyre.properties.bool(default=False)
     DEBUG.doc = "debugging mode"
@@ -156,7 +156,7 @@ class Application(pyre.component, metaclass=Director):
         # get the executive
         executive = self.pyre_executive
         # set up my nickname
-        nickname = self.pyre_namespace or name
+        nickname = str(self.pyre_namespace or name)
 
         # get the dashboard
         dashboard = executive.dashboard
@@ -175,18 +175,17 @@ class Application(pyre.component, metaclass=Director):
 
         # if i have one
         if nickname:
-            # register it with the journal
-            journal.application(name=nickname)
-
             # build my channels
             self.debug = journal.debug(nickname)
             self.firewall = journal.firewall(nickname)
             self.info = journal.info(nickname).activate()
             self.warning = journal.warning(nickname).activate()
             self.error = journal.error(nickname).activate()
+            # register my name with the journal manager
+            self.journal.register(app=self, name=nickname)
             # if i am in debugging mode
             if self.DEBUG:
-                # activate the debug channel
+                # activate the debug channel with my name
                 self.debug.active = True
 
         # sniff around for my environment
@@ -496,6 +495,15 @@ class Application(pyre.component, metaclass=Director):
         # all done
         return dependencies
 
+    # journal configuration
+    def pyre_journalSections(self):
+        """
+        Generate a sequence of (severity, section) pairs to enable user configuration of
+        journal channels
+        """
+        # all done
+        return []
+
     # other behaviors
     def pyre_shutdown(self, **kwds):
         """
@@ -558,6 +566,7 @@ class Application(pyre.component, metaclass=Director):
         # easy
         return []
 
+    # support for web based user interfaces
     def pyre_respond(self, server, request):
         """
         Fulfill a request from an HTTP {server}
@@ -565,7 +574,7 @@ class Application(pyre.component, metaclass=Director):
         # grab my debug channel
         channel = self.debug
         # print the top line
-        channel.line(f"responding to HTTP request:")
+        channel.line(f"responding to an HTTP request:")
         channel.line(f"  app: {self}")
         channel.line(f"  nexus: {self.nexus}")
         channel.line(f"  server: {server}")
