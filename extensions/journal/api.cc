@@ -57,7 +57,42 @@ pyre::journal::py::api(py::module & m)
         // the docstring
         "send all output to a file");
 
-    // set the maximum message decoration level
+    // accessors
+    m.def(
+        "decor",
+        // the implementation
+        [](void) -> chronicler_t::detail_type {
+            // easy enough
+            return chronicler_t::decor();
+        },
+        // the docstring
+        "get the maximum message decoration level");
+
+    // set the maximum message detail level
+    m.def(
+        "detail",
+        // the implementation
+        [](void) -> chronicler_t::detail_type {
+            // easy enough
+            return chronicler_t::detail();
+        },
+        // the docstring
+        "get the maximum message detail level");
+
+    // set the indentation level decoration
+    m.def(
+        "margin",
+        // the implementation
+        [](void) -> chronicler_t::margin_type {
+            // easy enough
+            return chronicler_t::margin();
+        },
+        // the docstring
+        "get the indentation level decoration");
+
+
+    // mutators
+    //  set the maximum message decoration level
     m.def(
         "decor",
         // the implementation
@@ -76,11 +111,31 @@ pyre::journal::py::api(py::module & m)
     m.def(
         "detail",
         // the implementation
-        [](chronicler_t::detail_type level) -> void { chronicler_t::detail(level); },
+        [](chronicler_t::detail_type level) -> void {
+            // se the maximum detail level
+            chronicler_t::detail(level);
+            // all done
+            return;
+        },
         // the signature
         "level"_a,
         // the docstring
         "set the maximum message detail level");
+
+    // set the indentation level decoration
+    m.def(
+        "margin",
+        // the implementation
+        [](chronicler_t::margin_type margin) -> void {
+            // set the margin decorator
+            chronicler_t::margin(margin);
+            // all done
+            return;
+        },
+        // the signature
+        "margin"_a,
+        // the docstring
+        "set the indentation level decoration");
 
     // all done
     return;
