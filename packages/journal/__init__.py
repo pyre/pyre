@@ -125,6 +125,16 @@ if without_libjournal:
         # all done
         return
 
+    # convenience function to set the margin decorator
+    def margin(margin):
+        """
+        Set the margin decoration
+        """
+        # set {level} as the default
+        chronicler.margin = margin
+        # all done
+        return
+
 
 # if we have access to the bindings
 else:
@@ -165,6 +175,7 @@ else:
     logfile = libjournal.logfile
     decor = libjournal.decor
     detail = libjournal.detail
+    margin = libjournal.margin
 
 
 # publish the color generator
