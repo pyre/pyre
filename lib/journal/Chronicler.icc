@@ -104,7 +104,7 @@ pyre::journal::Chronicler::device(Args &&... args)
 
 // string -> nameset converter
 auto
-pyre::journal::Chronicler::nameset(string_t text) -> nameset_type
+pyre::journal::Chronicler::nameset(string_type text) -> nameset_type
 {
     // make a set
     nameset_type channels;
