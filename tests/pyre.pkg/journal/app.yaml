@@ -1,0 +1,29 @@
+# -*- yaml -*-
+#
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2025 all rights reserved
+
+# journal configuration
+journal:
+    decor: 3
+    detail: 5
+    margin: "    "
+
+    # set all channels to a non-default configuration
+    # debug
+    debug.app.test.active: yes
+    debug.app.test.fatal: yes
+    # firewall
+    firewall.app.test.active: no
+    firewall.app.test.fatal: no
+    # error
+    error.app.test.active: no
+    error.app.test.fatal: no
+    # warning
+    warning.app.test.active: no
+    warning.app.test.fatal: yes
+    # informational
+    info.app.test.active: no
+    info.app.test.fatal: yes
+
+# end of file
