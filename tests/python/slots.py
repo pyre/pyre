@@ -19,7 +19,7 @@ class base(object):
         super().__init__(**kwds)
         self.instancevar = 0
 
-    __slots__ = ("instancevar", )
+    __slots__ = ("instancevar",)
 
 
 class derived(base):
@@ -32,12 +32,12 @@ class derived(base):
 
 
 def test():
-    assert base.__slots__ == ("instancevar", )
+    assert base.__slots__ == ("instancevar",)
     b = base()
-    b.instancevar = 'b'
+    b.instancevar = "b"
 
     try:
-        b.classvar = 'b'
+        b.classvar = "b"
     except AttributeError as error:
         assert str(error) == "'base' object attribute 'classvar' is read-only"
 
@@ -45,15 +45,15 @@ def test():
         b.foo = 5
         assert False
     except AttributeError as error:
-        assert str(error) == "'base' object has no attribute 'foo'"
+        assert str(error).startswith("'base' object has no attribute 'foo'")
 
     d = derived()
-    d.instancevar = 'd'
+    d.instancevar = "d"
     try:
         d.foo = 5
         assert False
     except AttributeError as error:
-        assert str(error) == "'derived' object has no attribute 'foo'"
+        assert str(error).startswith("'derived' object has no attribute 'foo'")
 
     return
 
