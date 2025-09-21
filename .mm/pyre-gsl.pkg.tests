@@ -47,6 +47,17 @@ vector_collect.parallel.harness := $(pyre-gsl.pkg.mpi.harness) -np 8
 tests.gsl.pkg.vector_partition.cases := vector_partition.serial vector_partition.parallel
 vector_partition.parallel.harness := $(pyre-gsl.pkg.mpi.harness) -np 8
 
+#if not
+else
+
+# skip the following tests
+pyre-gsl.pkg.tests.drivers.exclude := \
+    matrix_bcast.py \
+    matrix_collect.py \
+    matrix_partition.py \
+    vector_bcast.py \
+    vector_collect.py \
+    vector_partition.py \
 
 endif
 
