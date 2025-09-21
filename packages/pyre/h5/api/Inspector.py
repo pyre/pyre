@@ -364,7 +364,7 @@ class Inspector:
 
         Currently, only complex numbers are supported
         """
-        # check for a complex number
+        # check for std::complex<float>
         if h5type.members == 2 and (
             h5type.type(0).cell == h5type.type(1).cell == libh5.DataSetType.float
         ):
@@ -376,6 +376,20 @@ class Inspector:
             complex = schema.complex(name=name, memtype=memtype, disktype=h5type)
             # and return it
             return complex
+
+        # check for std::complex<int>
+        if h5type.members == 2 and (
+            h5type.type(0).cell == h5type.type(1).cell == libh5.DataSetType.int
+        ):
+            # get the largest bit width of the component types
+            bits = max(h5type.type(n).precision for n in range(2))
+            # get the in-memory type; don't let it go above 64
+            memtype = getattr(memtypes, f"complexInt{min(bits, 64)}")
+            # build the descriptor
+            complex = schema.complex(name=name, memtype=memtype, disktype=h5type)
+            # and return it
+            return complex
+
         # nothing else is supported, for now; build a problem description
         problem = exceptions.UnsupportedCompoundTypeError(dataset=name, h5type=h5type)
         # make a channel
