@@ -34,8 +34,17 @@ from .UInt64 import uint64
 # floating point
 from .Float import float
 from .Double import double
+
+# complex numbers
+# regular
 from .ComplexFloat import complexFloat
 from .ComplexDouble import complexDouble
+
+# built out of integer types
+from .ComplexInt8 import complexInt8
+from .ComplexInt16 import complexInt16
+from .ComplexInt32 import complexInt32
+from .ComplexInt64 import complexInt64
 
 # aliases
 r32 = float
