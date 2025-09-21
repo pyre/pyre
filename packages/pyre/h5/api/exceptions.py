@@ -78,7 +78,7 @@ class UnsupportedCompoundTypeError(APIError):
             # and offset
             offset = h5type.offset(m)
             # show me
-            yield f"  '{name}': a {type} at offset {offset}"
+            yield f"  '{name}': type {type} at offset {offset}"
         # all done
         return
 
