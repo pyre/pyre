@@ -19,7 +19,7 @@ class ComplexInt16(MemoryType):
 
     # constants
     ctype = "std::complex<std::int16_t>"
-    htype = disktypes.complexFloat
+    htype = disktypes.complexInt16
 
 
 # the singleton

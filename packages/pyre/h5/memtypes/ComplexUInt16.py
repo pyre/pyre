@@ -11,19 +11,19 @@ from .. import disktypes
 from .MemoryType import MemoryType
 
 
-# a complex number made out of a pair of int64
-class ComplexInt64(MemoryType):
+# a complex number made out of a pair of uint16
+class ComplexUInt16(MemoryType):
     """
-    The type specification for int64 complex numbers
+    The type specification for uint16 complex numbers
     """
 
     # constants
-    ctype = "std::complex<std::int64_t>"
-    htype = disktypes.complexInt64
+    ctype = "std::complex<std::uint16_t>"
+    htype = disktypes.complexUInt16
 
 
 # the singleton
-complexInt64 = ComplexInt64()
+complexUInt16 = ComplexUInt16()
 
 
 # end of file

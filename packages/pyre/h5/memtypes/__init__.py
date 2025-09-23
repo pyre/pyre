@@ -45,6 +45,10 @@ from .ComplexInt8 import complexInt8
 from .ComplexInt16 import complexInt16
 from .ComplexInt32 import complexInt32
 from .ComplexInt64 import complexInt64
+from .ComplexUInt8 import complexUInt8
+from .ComplexUInt16 import complexUInt16
+from .ComplexUInt32 import complexUInt32
+from .ComplexUInt64 import complexUInt64
 
 # aliases
 r32 = float
