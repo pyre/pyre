@@ -180,6 +180,19 @@ pyre::py::grid::read(py::class_<gridT> & cls)
         // the docstring
         "get the value at the specified {offset}");
 
+    cls.def(
+        // the name
+        "__iter__",
+        // the implementation
+        [](const gridT & self) {
+            // make an iterator and return it
+            return py::make_iterator(self.cbegin(), self.cend());
+        },
+        // make sure it lives long enough
+        py::keep_alive<0, 1>(),
+        // the docstring
+        "iterate over the contents of the grid in its natural order");
+
     // all done
     return;
 }
