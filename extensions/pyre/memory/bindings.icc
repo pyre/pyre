@@ -83,6 +83,19 @@ pyre::py::memory::bindConstStorage(shared_holder_t<memT> & cls)
         // the docstring
         "get the value of the cell at a given index");
 
+    cls.def(
+        // the name
+        "__iter__",
+        // the implementation
+        [](const memT & self) {
+            // make an iterator and return it
+            return py::make_iterator(self.begin(), self.end());
+        },
+        // make sure it lives long enough
+        py::keep_alive<0, 1>(),
+        // the docstring
+        "iterate over the values of the memory buffer");
+
     // all done
     return;
 }
