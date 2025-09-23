@@ -646,6 +646,19 @@ pyre::h5::py::dataset(py::module & m)
     bindReadBuffer<heap_double_t>(cls);
     bindReadBuffer<heap_complexfloat_t>(cls);
     bindReadBuffer<heap_complexdouble_t>(cls);
+    // into 1d grids
+    bindReadGrid<int8_heapgrid_1d_t>(cls);
+    bindReadGrid<int16_heapgrid_1d_t>(cls);
+    bindReadGrid<int32_heapgrid_1d_t>(cls);
+    bindReadGrid<int64_heapgrid_1d_t>(cls);
+    bindReadGrid<uint8_heapgrid_1d_t>(cls);
+    bindReadGrid<uint16_heapgrid_1d_t>(cls);
+    bindReadGrid<uint32_heapgrid_1d_t>(cls);
+    bindReadGrid<uint64_heapgrid_1d_t>(cls);
+    bindReadGrid<float_heapgrid_1d_t>(cls);
+    bindReadGrid<double_heapgrid_1d_t>(cls);
+    bindReadGrid<complexfloat_heapgrid_1d_t>(cls);
+    bindReadGrid<complexdouble_heapgrid_1d_t>(cls);
     // into 2d grids
     bindReadGrid<int8_heapgrid_2d_t>(cls);
     bindReadGrid<int16_heapgrid_2d_t>(cls);
