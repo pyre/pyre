@@ -24,6 +24,7 @@ void
 pyre::py::grid::indices(py::module & m)
 {
     // instantiate indices of a few dimensions
+    index1d(m);
     index2d(m);
     index3d(m);
     index4d(m);
@@ -34,6 +35,54 @@ pyre::py::grid::indices(py::module & m)
 
 
 // index instantiations
+void
+pyre::py::grid::index1d(py::module & m)
+{
+    // type alias
+    using index_t = pyre::grid::index_t<1>;
+
+    // build the class record
+    auto cls = py::class_<index_t>(
+        // in scope
+        m,
+        // class name
+        "Index1D",
+        // docstring
+        "a 1d index specification");
+
+    // constructors
+    cls.def(
+        // the constructor
+        py::init([](int index) {
+            // instantiate
+            return new index_t(index);
+        }),
+        // the docstring
+        "create an index",
+        // the signature: a single integer
+        "index"_a);
+
+    cls.def(
+        // the constructor
+        py::init([](std::tuple<int> index) {
+            // unpack
+            auto [s] = index;
+            // instantiate
+            return new index_t(s);
+        }),
+        // the docstring
+        "create an index",
+        // the signature: a tuple with one integer
+        "index"_a);
+
+    // add the index interface
+    indexInterface(cls);
+
+    // all done
+    return;
+}
+
+
 void
 pyre::py::grid::index2d(py::module & m)
 {

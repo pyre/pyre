@@ -24,6 +24,7 @@ void
 pyre::py::grid::shapes(py::module & m)
 {
     // instantiate shapes of a few dimensions
+    shape1d(m);
     shape2d(m);
     shape3d(m);
     shape4d(m);
@@ -34,6 +35,55 @@ pyre::py::grid::shapes(py::module & m)
 
 
 // shape instantiations
+void
+pyre::py::grid::shape1d(py::module & m)
+{
+    // type alias
+    using shape_t = pyre::grid::shape_t<1>;
+
+    // build the class record
+    auto cls = py::class_<shape_t>(
+        // in scope
+        m,
+        // class name
+        "Shape1D",
+        // docstring
+        "a 1d shape specification");
+
+    // constructors
+    // from a single integer
+    cls.def(
+        // the constructor
+        py::init([](int shape) {
+            // instantiate
+            return new shape_t(shape);
+        }),
+        // the docstring
+        "create a shape",
+        // the signature: an integer
+        "shape"_a);
+
+    // from a tuple with one element
+    cls.def(
+        // the constructor
+        py::init([](std::tuple<int> shape) {
+            // unpack
+            auto [s] = shape;
+            // instantiate
+            return new shape_t(s);
+        }),
+        // the docstring
+        "create a shape",
+        // the signature: a tuple with one integer
+        "shape"_a);
+
+    // add the shape interface
+    shapeInterface(cls);
+
+    // all done
+    return;
+}
+
 void
 pyre::py::grid::shape2d(py::module & m)
 {

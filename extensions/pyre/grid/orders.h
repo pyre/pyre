@@ -11,6 +11,7 @@
 // the {pyre} extension namespace
 namespace pyre::py::grid {
     // the order instantiations
+    void order1d(py::module &);
     void order2d(py::module &);
     void order3d(py::module &);
     void order4d(py::module &);

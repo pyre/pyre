@@ -11,6 +11,7 @@
 // the {pyre} extension namespace
 namespace pyre::py::grid {
     // the shape instantiations
+    void shape1d(py::module &);
     void shape2d(py::module &);
     void shape3d(py::module &);
     void shape4d(py::module &);

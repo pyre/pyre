@@ -19,6 +19,7 @@ void
 pyre::py::grid::packings(py::module & m)
 {
     // instantiate packings of a few dimensions
+    canonical1d(m);
     canonical2d(m);
     canonical3d(m);
     canonical4d(m);
@@ -29,6 +30,29 @@ pyre::py::grid::packings(py::module & m)
 
 
 // packing instantiations
+void
+pyre::py::grid::canonical1d(py::module & m)
+{
+    // type alias
+    using packing_t = pyre::grid::canonical_t<1>;
+
+    // build the class record
+    auto cls = py::class_<packing_t>(
+        // in scope
+        m,
+        // class name
+        "Canonical1D",
+        // docstring
+        "a 1d canonical packing");
+
+    // add the packing interface
+    packingInterface(cls);
+
+    // all done
+    return;
+}
+
+
 void
 pyre::py::grid::canonical2d(py::module & m)
 {

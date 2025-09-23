@@ -11,6 +11,7 @@
 // the {pyre} extension namespace
 namespace pyre::py::grid {
     // the packing instantiations
+    void canonical1d(py::module &);
     void canonical2d(py::module &);
     void canonical3d(py::module &);
     void canonical4d(py::module &);

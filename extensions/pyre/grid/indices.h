@@ -11,6 +11,7 @@
 // the {pyre} extension namespace
 namespace pyre::py::grid {
     // the index instantiations
+    void index1d(py::module &);
     void index2d(py::module &);
     void index3d(py::module &);
     void index4d(py::module &);

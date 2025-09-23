@@ -19,6 +19,7 @@ void
 pyre::py::grid::orders(py::module & m)
 {
     // instantiate orders of a few dimensions
+    order1d(m);
     order2d(m);
     order3d(m);
     order4d(m);
@@ -29,6 +30,54 @@ pyre::py::grid::orders(py::module & m)
 
 
 // order instantiations
+void
+pyre::py::grid::order1d(py::module & m)
+{
+    // type alias
+    using order_t = pyre::grid::order_t<1>;
+
+    // build the class record
+    auto cls = py::class_<order_t>(
+        // in scope
+        m,
+        // class name
+        "Order1D",
+        // docstring
+        "a 1d order specification");
+
+    // add the constructors
+    cls.def(
+        // the constructor
+        py::init([](int order) {
+            // instantiate
+            return new order_t(order);
+        }),
+        // the docstring
+        "create a order",
+        // the signature: a single integer
+        "order"_a);
+
+    cls.def(
+        // the constructor
+        py::init([](std::tuple<int> order) {
+            // unpack
+            auto [s] = order;
+            // instantiate
+            return new order_t(s);
+        }),
+        // the docstring
+        "create a order",
+        // the signature: a tuple with a single integer
+        "order"_a);
+
+    // add the order interface
+    orderInterface(cls);
+
+    // all done
+    return;
+}
+
+
 void
 pyre::py::grid::order2d(py::module & m)
 {
