@@ -4,10 +4,10 @@
 // (c) 1998-2025 all rights reserved
 
 // code guard
-#if !defined(pyre_journal_Locator_icc)
-#error This header contains implementation details of pyre::journal::Locator
-#else
+#pragma once
 
+// the header
+#include "Locator.h"
 
 // metamethods
 #if defined(__cpp_lib_source_location)
@@ -18,7 +18,7 @@ pyre::journal::Locator::Locator(const std::source_location location) :
     _func(location.function_name())
 {}
 #else
-pyre::journal::Locator::Locator() : _file("unknown"), _line(0), _func("unknown") {}
+pyre::journal::Locator::Locator() : _file("unknown"), _line(""), _func("unknown") {}
 #endif
 
 // modern version
@@ -63,7 +63,5 @@ pyre::journal::Locator::func() const -> const value_type &
     return _func;
 }
 
-
-#endif
 
 // end of file

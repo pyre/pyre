@@ -4,8 +4,7 @@
 // (c) 1998-2025 all rights reserved
 
 // code guard
-#if !defined(pyre_journal_Locator_h)
-#define pyre_journal_Locator_h
+#pragma once
 
 
 // information about the location of the channel invocation
@@ -45,11 +44,7 @@ private:
 
 
 // get the inline definitions
-#define pyre_journal_Locator_icc
 #include "Locator.icc"
-#undef pyre_journal_Locator_icc
 
-
-#endif
 
 // end of file
