@@ -5,9 +5,9 @@
 
 
 // code guard
-#if !defined(pyre_grid_Rep_icc)
-#error this file contains implementation details for pyre::grid::Rep
-#else
+#pragma once
+// the declarations
+#include "Rep.h"
 
 
 // metamethods
@@ -188,7 +188,11 @@ pyre::grid::operator-(const Rep<containerT> & i1, const Rep<containerT> & i2) ->
 template <class containerT1, class containerT2, template <typename, std::size_t> class containerY>
 constexpr auto
 pyre::grid::operator*(const Rep<containerT1> & rep1, const Rep<containerT2> & rep2)
-    -> Rep<containerY<int, std::tuple_size_v<containerT1> + std::tuple_size_v<containerT2>>>
+    -> Rep<containerY<
+        // pick the best type for the result
+        std::common_type_t<typename containerT1::value_type, typename containerT2::value_type>,
+        // and add the sizes
+        std::tuple_size_v<containerT1> + std::tuple_size_v<containerT2>>>
 {
     // get the ranks of the inputs
     constexpr auto rank1 = Rep<containerT1>::rank();
@@ -197,7 +201,12 @@ pyre::grid::operator*(const Rep<containerT1> & rep1, const Rep<containerT2> & re
     constexpr auto dim = rank1 + rank2;
 
     // build the result
-    Rep<containerY<int, dim>> result;
+    Rep<containerY<
+        // the best time
+        std::common_type_t<typename containerT1::value_type, typename containerT2::value_type>,
+        // and the correct size
+        dim>>
+        result;
 
     // grab the beginning of the storage
     auto begin = result.begin();
@@ -234,7 +243,8 @@ pyre::grid::operator*(const Rep<containerT> & i, std::size_t s) -> Rep<container
 
 template <class containerT>
 constexpr auto
-pyre::grid::operator*(const Rep<containerT> & i, int s) -> Rep<containerT>
+pyre::grid::operator*(const Rep<containerT> & i, typename Rep<containerT>::value_type s)
+    -> Rep<containerT>
 {
     // get the rank of the rep
     constexpr auto rank = Rep<containerT>::rank();
@@ -263,7 +273,8 @@ pyre::grid::operator*(std::size_t s, const Rep<containerT> & i) -> Rep<container
 
 template <class containerT>
 constexpr auto
-pyre::grid::operator*(int s, const Rep<containerT> & i) -> Rep<containerT>
+pyre::grid::operator*(typename Rep<containerT>::value_type s, const Rep<containerT> & i)
+    -> Rep<containerT>
 {
     // easy
     return i * s;
@@ -272,7 +283,8 @@ pyre::grid::operator*(int s, const Rep<containerT> & i) -> Rep<containerT>
 
 template <class containerT>
 constexpr auto
-pyre::grid::operator/(const Rep<containerT> & i, int s) -> Rep<containerT>
+pyre::grid::operator/(const Rep<containerT> & i, typename Rep<containerT>::value_type s)
+    -> Rep<containerT>
 {
     // get the rank of the rep
     constexpr auto rank = Rep<containerT>::rank();
@@ -383,7 +395,5 @@ pyre::grid::operator/(const Rep<containerT> & i, float s) -> floats_t<Rep<contai
     return scaled;
 }
 
-
-#endif
 
 // end of file

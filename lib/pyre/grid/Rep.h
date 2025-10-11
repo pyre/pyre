@@ -4,8 +4,7 @@
 // (c) 1998-2025 all rights reserved
 
 // code guard
-#if !defined(pyre_grid_Rep_h)
-#define pyre_grid_Rep_h
+#pragma once
 
 
 // thin adaptor over a compile time container that we use to store index ranks, grid shapes,
@@ -69,11 +68,7 @@ public:
 
 
 // get the inline definitions
-#define pyre_grid_Rep_icc
 #include "Rep.icc"
-#undef pyre_grid_Rep_icc
 
-
-#endif
 
 // end of file
