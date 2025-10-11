@@ -33,7 +33,9 @@ pyre::grid::Shape<containerT>::cells() const -> std::size_t
 // support for structured bindings
 template <class containerT>
 class std::tuple_size<pyre::grid::Shape<containerT>> :
-    public std::integral_constant<int, pyre::grid::Shape<containerT>::rank()> {};
+    public std::integral_constant<
+        typename pyre::grid::Shape<containerT>::rank_type, pyre::grid::Shape<containerT>::rank()> {
+};
 
 
 template <std::size_t I, class containerT>

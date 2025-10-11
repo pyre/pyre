@@ -56,7 +56,9 @@ pyre::grid::operator+(const Index<indexContainerT> & i, const Shape<shapeContain
 // support for structured bindings
 template <class containerT>
 class std::tuple_size<pyre::grid::Index<containerT>> :
-    public std::integral_constant<int, pyre::grid::Index<containerT>::rank()> {};
+    public std::integral_constant<
+        typename pyre::grid::Index<containerT>::rank_type, pyre::grid::Index<containerT>::rank()> {
+};
 
 
 template <std::size_t I, class containerT>
