@@ -646,7 +646,7 @@ pyre::h5::py::dataset(py::module & m)
     bindReadBuffer<heap_double_t>(cls);
     bindReadBuffer<heap_complexfloat_t>(cls);
     bindReadBuffer<heap_complexdouble_t>(cls);
-    // into 1d grids
+    // into 1d in-memory grids
     bindReadGrid<int8_heapgrid_1d_t>(cls);
     bindReadGrid<int16_heapgrid_1d_t>(cls);
     bindReadGrid<int32_heapgrid_1d_t>(cls);
@@ -659,7 +659,7 @@ pyre::h5::py::dataset(py::module & m)
     bindReadGrid<double_heapgrid_1d_t>(cls);
     bindReadGrid<complexfloat_heapgrid_1d_t>(cls);
     bindReadGrid<complexdouble_heapgrid_1d_t>(cls);
-    // into 2d grids
+    // into 2d in-memory grids
     bindReadGrid<int8_heapgrid_2d_t>(cls);
     bindReadGrid<int16_heapgrid_2d_t>(cls);
     bindReadGrid<int32_heapgrid_2d_t>(cls);
@@ -672,7 +672,7 @@ pyre::h5::py::dataset(py::module & m)
     bindReadGrid<double_heapgrid_2d_t>(cls);
     bindReadGrid<complexfloat_heapgrid_2d_t>(cls);
     bindReadGrid<complexdouble_heapgrid_2d_t>(cls);
-    // into 3d grids
+    // into 3d in-memory grids
     bindReadGrid<int8_heapgrid_3d_t>(cls);
     bindReadGrid<int16_heapgrid_3d_t>(cls);
     bindReadGrid<int32_heapgrid_3d_t>(cls);
@@ -685,6 +685,46 @@ pyre::h5::py::dataset(py::module & m)
     bindReadGrid<double_heapgrid_3d_t>(cls);
     bindReadGrid<complexfloat_heapgrid_3d_t>(cls);
     bindReadGrid<complexdouble_heapgrid_3d_t>(cls);
+
+    // into 1d on-disk grids
+    bindReadGrid<int8_mapgrid_1d_t>(cls);
+    bindReadGrid<int16_mapgrid_1d_t>(cls);
+    bindReadGrid<int32_mapgrid_1d_t>(cls);
+    bindReadGrid<int64_mapgrid_1d_t>(cls);
+    bindReadGrid<uint8_mapgrid_1d_t>(cls);
+    bindReadGrid<uint16_mapgrid_1d_t>(cls);
+    bindReadGrid<uint32_mapgrid_1d_t>(cls);
+    bindReadGrid<uint64_mapgrid_1d_t>(cls);
+    bindReadGrid<float_mapgrid_1d_t>(cls);
+    bindReadGrid<double_mapgrid_1d_t>(cls);
+    bindReadGrid<complexfloat_mapgrid_1d_t>(cls);
+    bindReadGrid<complexdouble_mapgrid_1d_t>(cls);
+    // into 2d on-disk grids
+    bindReadGrid<int8_mapgrid_2d_t>(cls);
+    bindReadGrid<int16_mapgrid_2d_t>(cls);
+    bindReadGrid<int32_mapgrid_2d_t>(cls);
+    bindReadGrid<int64_mapgrid_2d_t>(cls);
+    bindReadGrid<uint8_mapgrid_2d_t>(cls);
+    bindReadGrid<uint16_mapgrid_2d_t>(cls);
+    bindReadGrid<uint32_mapgrid_2d_t>(cls);
+    bindReadGrid<uint64_mapgrid_2d_t>(cls);
+    bindReadGrid<float_mapgrid_2d_t>(cls);
+    bindReadGrid<double_mapgrid_2d_t>(cls);
+    bindReadGrid<complexfloat_mapgrid_2d_t>(cls);
+    bindReadGrid<complexdouble_mapgrid_2d_t>(cls);
+    // into 3d on-disk grids
+    bindReadGrid<int8_mapgrid_3d_t>(cls);
+    bindReadGrid<int16_mapgrid_3d_t>(cls);
+    bindReadGrid<int32_mapgrid_3d_t>(cls);
+    bindReadGrid<int64_mapgrid_3d_t>(cls);
+    bindReadGrid<uint8_mapgrid_3d_t>(cls);
+    bindReadGrid<uint16_mapgrid_3d_t>(cls);
+    bindReadGrid<uint32_mapgrid_3d_t>(cls);
+    bindReadGrid<uint64_mapgrid_3d_t>(cls);
+    bindReadGrid<float_mapgrid_3d_t>(cls);
+    bindReadGrid<double_mapgrid_3d_t>(cls);
+    bindReadGrid<complexfloat_mapgrid_3d_t>(cls);
+    bindReadGrid<complexdouble_mapgrid_3d_t>(cls);
 
     // writing
     // from memory buffers

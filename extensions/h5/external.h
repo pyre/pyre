@@ -102,6 +102,7 @@ namespace pyre::h5::py {
     using EnumType = H5::EnumType;     // derives from DataType
     using VarLenType = H5::VarLenType; // derives from DataType
 
+    // reading into in-memory buffers
     // aliases for select memory template expansions
     using heap_int8_t = pyre::memory::heap_t<std::int8_t>;
     using heap_int16_t = pyre::memory::heap_t<std::int16_t>;
@@ -190,6 +191,96 @@ namespace pyre::h5::py {
         pyre::grid::grid_t<pyre::grid::canonical_t<3>, pyre::memory::heap_t<std::complex<float>>>;
     using complexdouble_heapgrid_3d_t =
         pyre::grid::grid_t<pyre::grid::canonical_t<3>, pyre::memory::heap_t<std::complex<double>>>;
+
+    // reading into on-disk buffers
+    // aliases for select memory template expansions
+    using map_int8_t = pyre::memory::map_t<std::int8_t>;
+    using map_int16_t = pyre::memory::map_t<std::int16_t>;
+    using map_int32_t = pyre::memory::map_t<std::int32_t>;
+    using map_int64_t = pyre::memory::map_t<std::int64_t>;
+    using map_uint8_t = pyre::memory::map_t<std::uint8_t>;
+    using map_uint16_t = pyre::memory::map_t<std::uint16_t>;
+    using map_uint32_t = pyre::memory::map_t<std::uint32_t>;
+    using map_uint64_t = pyre::memory::map_t<std::uint64_t>;
+    using map_float_t = pyre::memory::map_t<float>;
+    using map_double_t = pyre::memory::map_t<double>;
+    using map_complexfloat_t = pyre::memory::map_t<std::complex<float>>;
+    using map_complexdouble_t = pyre::memory::map_t<std::complex<double>>;
+
+    using int8_mapgrid_1d_t =
+        pyre::grid::grid_t<pyre::grid::canonical_t<1>, pyre::memory::map_t<int8_t>>;
+    using int16_mapgrid_1d_t =
+        pyre::grid::grid_t<pyre::grid::canonical_t<1>, pyre::memory::map_t<int16_t>>;
+    using int32_mapgrid_1d_t =
+        pyre::grid::grid_t<pyre::grid::canonical_t<1>, pyre::memory::map_t<int32_t>>;
+    using int64_mapgrid_1d_t =
+        pyre::grid::grid_t<pyre::grid::canonical_t<1>, pyre::memory::map_t<int64_t>>;
+    using uint8_mapgrid_1d_t =
+        pyre::grid::grid_t<pyre::grid::canonical_t<1>, pyre::memory::map_t<uint8_t>>;
+    using uint16_mapgrid_1d_t =
+        pyre::grid::grid_t<pyre::grid::canonical_t<1>, pyre::memory::map_t<uint16_t>>;
+    using uint32_mapgrid_1d_t =
+        pyre::grid::grid_t<pyre::grid::canonical_t<1>, pyre::memory::map_t<uint32_t>>;
+    using uint64_mapgrid_1d_t =
+        pyre::grid::grid_t<pyre::grid::canonical_t<1>, pyre::memory::map_t<uint64_t>>;
+    using float_mapgrid_1d_t =
+        pyre::grid::grid_t<pyre::grid::canonical_t<1>, pyre::memory::map_t<float>>;
+    using double_mapgrid_1d_t =
+        pyre::grid::grid_t<pyre::grid::canonical_t<1>, pyre::memory::map_t<double>>;
+    using complexfloat_mapgrid_1d_t =
+        pyre::grid::grid_t<pyre::grid::canonical_t<1>, pyre::memory::map_t<std::complex<float>>>;
+    using complexdouble_mapgrid_1d_t =
+        pyre::grid::grid_t<pyre::grid::canonical_t<1>, pyre::memory::map_t<std::complex<double>>>;
+
+    using int8_mapgrid_2d_t =
+        pyre::grid::grid_t<pyre::grid::canonical_t<2>, pyre::memory::map_t<int8_t>>;
+    using int16_mapgrid_2d_t =
+        pyre::grid::grid_t<pyre::grid::canonical_t<2>, pyre::memory::map_t<int16_t>>;
+    using int32_mapgrid_2d_t =
+        pyre::grid::grid_t<pyre::grid::canonical_t<2>, pyre::memory::map_t<int32_t>>;
+    using int64_mapgrid_2d_t =
+        pyre::grid::grid_t<pyre::grid::canonical_t<2>, pyre::memory::map_t<int64_t>>;
+    using uint8_mapgrid_2d_t =
+        pyre::grid::grid_t<pyre::grid::canonical_t<2>, pyre::memory::map_t<uint8_t>>;
+    using uint16_mapgrid_2d_t =
+        pyre::grid::grid_t<pyre::grid::canonical_t<2>, pyre::memory::map_t<uint16_t>>;
+    using uint32_mapgrid_2d_t =
+        pyre::grid::grid_t<pyre::grid::canonical_t<2>, pyre::memory::map_t<uint32_t>>;
+    using uint64_mapgrid_2d_t =
+        pyre::grid::grid_t<pyre::grid::canonical_t<2>, pyre::memory::map_t<uint64_t>>;
+    using float_mapgrid_2d_t =
+        pyre::grid::grid_t<pyre::grid::canonical_t<2>, pyre::memory::map_t<float>>;
+    using double_mapgrid_2d_t =
+        pyre::grid::grid_t<pyre::grid::canonical_t<2>, pyre::memory::map_t<double>>;
+    using complexfloat_mapgrid_2d_t =
+        pyre::grid::grid_t<pyre::grid::canonical_t<2>, pyre::memory::map_t<std::complex<float>>>;
+    using complexdouble_mapgrid_2d_t =
+        pyre::grid::grid_t<pyre::grid::canonical_t<2>, pyre::memory::map_t<std::complex<double>>>;
+
+    using int8_mapgrid_3d_t =
+        pyre::grid::grid_t<pyre::grid::canonical_t<3>, pyre::memory::map_t<int8_t>>;
+    using int16_mapgrid_3d_t =
+        pyre::grid::grid_t<pyre::grid::canonical_t<3>, pyre::memory::map_t<int16_t>>;
+    using int32_mapgrid_3d_t =
+        pyre::grid::grid_t<pyre::grid::canonical_t<3>, pyre::memory::map_t<int32_t>>;
+    using int64_mapgrid_3d_t =
+        pyre::grid::grid_t<pyre::grid::canonical_t<3>, pyre::memory::map_t<int64_t>>;
+    using uint8_mapgrid_3d_t =
+        pyre::grid::grid_t<pyre::grid::canonical_t<3>, pyre::memory::map_t<uint8_t>>;
+    using uint16_mapgrid_3d_t =
+        pyre::grid::grid_t<pyre::grid::canonical_t<3>, pyre::memory::map_t<uint16_t>>;
+    using uint32_mapgrid_3d_t =
+        pyre::grid::grid_t<pyre::grid::canonical_t<3>, pyre::memory::map_t<uint32_t>>;
+    using uint64_mapgrid_3d_t =
+        pyre::grid::grid_t<pyre::grid::canonical_t<3>, pyre::memory::map_t<uint64_t>>;
+    using float_mapgrid_3d_t =
+        pyre::grid::grid_t<pyre::grid::canonical_t<3>, pyre::memory::map_t<float>>;
+    using double_mapgrid_3d_t =
+        pyre::grid::grid_t<pyre::grid::canonical_t<3>, pyre::memory::map_t<double>>;
+    using complexfloat_mapgrid_3d_t =
+        pyre::grid::grid_t<pyre::grid::canonical_t<3>, pyre::memory::map_t<std::complex<float>>>;
+    using complexdouble_mapgrid_3d_t =
+        pyre::grid::grid_t<pyre::grid::canonical_t<3>, pyre::memory::map_t<std::complex<double>>>;
 
 } // namespace pyre::h5::py
 
