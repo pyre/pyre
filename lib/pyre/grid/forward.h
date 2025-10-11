@@ -106,8 +106,11 @@ namespace pyre::grid {
     template <
         class containerT1, class containerT2,
         template <typename, std::size_t> class containerY = std::array>
-    constexpr auto operator*(const Rep<containerT1> &, const Rep<containerT2> &)
-        -> Rep<containerY<int, std::tuple_size_v<containerT1> + std::tuple_size_v<containerT2>>>;
+    constexpr auto operator*(const Rep<containerT1> &, const Rep<containerT2> &) -> Rep<containerY<
+        // pick the best type for the result
+        std::common_type_t<typename containerT1::value_type, typename containerT2::value_type>,
+        // and add the sizes
+        std::tuple_size_v<containerT1> + std::tuple_size_v<containerT2>>>;
 
     // scaling by integers
     template <class containerT>
@@ -117,13 +120,16 @@ namespace pyre::grid {
     constexpr auto operator*(const Rep<containerT> &, std::size_t) -> Rep<containerT>;
 
     template <class containerT>
-    constexpr auto operator*(int, const Rep<containerT> &) -> Rep<containerT>;
+    constexpr auto operator*(typename Rep<containerT>::value_type, const Rep<containerT> &)
+        -> Rep<containerT>;
 
     template <class containerT>
-    constexpr auto operator*(const Rep<containerT> &, int) -> Rep<containerT>;
+    constexpr auto operator*(const Rep<containerT> &, typename Rep<containerT>::value_type)
+        -> Rep<containerT>;
 
     template <class containerT>
-    constexpr auto operator/(const Rep<containerT> &, int) -> Rep<containerT>;
+    constexpr auto operator/(const Rep<containerT> &, typename Rep<containerT>::value_type)
+        -> Rep<containerT>;
 
     // scaling by doubles
     template <class containerT>

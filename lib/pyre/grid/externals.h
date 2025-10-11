@@ -14,6 +14,7 @@
 #include <iterator>
 #include <numeric>
 #include <ostream>
+#include <type_traits>
 
 // support
 #include <pyre/journal.h>
