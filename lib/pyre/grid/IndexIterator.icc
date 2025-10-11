@@ -8,7 +8,6 @@
 #error this file contains implementation details for pyre::grid::IndexIterator
 #else
 
-
 // metamethods
 // shape, order, origin
 template <class packingT>
@@ -18,7 +17,7 @@ constexpr pyre::grid::IndexIterator<packingT>::IndexIterator(
     _shape { shape },
     _order { order },
     _origin { origin },
-    _step { 1 }
+    _step { static_cast<typename index_type::rank_type>(1) }
 {}
 
 
