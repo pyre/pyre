@@ -4,9 +4,12 @@
 // (c) 1998-2025 all rights reserved
 
 // code guard
-#if !defined(pyre_py_grid_algebra_icc)
-#error this file contains implementation details for pyre::py::grid algebra
-#else
+#pragma once
+
+
+// the declarations
+#include "algebra.h"
+
 
 // endow {repT} with an algebra
 template <class repT>
@@ -69,7 +72,7 @@ pyre::py::grid::algebra(py::class_<repT> & cls)
         // the name of the operation
         "__mul__",
         // the implementation
-        [](const repT & self, int scale) -> repT {
+        [](const repT & self, typename repT::value_type scale) -> repT {
             // perform the multiplication and return the result
             return scale * self;
         },
@@ -83,7 +86,7 @@ pyre::py::grid::algebra(py::class_<repT> & cls)
         // the name of the operation
         "__rmul__",
         // the implementation
-        [](const repT & self, int scale) -> repT {
+        [](const repT & self, typename repT::value_type scale) -> repT {
             // perform the multiplication and return the result
             return scale * self;
         },
@@ -97,7 +100,7 @@ pyre::py::grid::algebra(py::class_<repT> & cls)
         // the name of the operation
         "__truediv__",
         // the implementation
-        [](const repT & self, int scale) -> repT {
+        [](const repT & self, typename repT::value_type scale) -> repT {
             // perform the division and return the result
             return self / scale;
         },
@@ -153,6 +156,5 @@ pyre::py::grid::algebra(py::class_<repT> & cls)
     return;
 };
 
-#endif
 
 // end of file
