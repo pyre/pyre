@@ -4,8 +4,7 @@
 // (c) 1998-2025 all rights reserved
 
 // code guard
-#if !defined(pyre_grid_Canonical_h)
-#define pyre_grid_Canonical_h
+#pragma once
 
 
 // encapsulation of the canonical packing strategy
@@ -95,7 +94,7 @@ public:
     constexpr auto end() const -> index_iterator;
 
     // use an existing layout to derive a new one
-    constexpr auto box(index_const_reference, shape_const_reference) const -> canonical_type;
+    constexpr auto box(index_type, shape_type) const -> canonical_type;
 
     // static interface
 public:
@@ -135,11 +134,7 @@ public:
 
 
 // get the inline definitions
-#define pyre_grid_Canonical_icc
 #include "Canonical.icc"
-#undef pyre_grid_Canonical_icc
 
-
-#endif
 
 // end of file

@@ -4,13 +4,13 @@
 // (c) 1998-2025 all rights reserved
 
 // code guard
-#if !defined(pyre_grid_Canonical_icc)
-#error this file contains implementation details for pyre::grid::Canonical
-#else
+#pragma once
+
+// the declarations
+#include "Canonical.h"
 
 
 // metamethods
-
 // constructor that assumes that the physical layout corresponds to the parameters given and
 // infers the strides and the nudge
 template <int N, typename T, template <typename, std::size_t> class containerT>
@@ -334,12 +334,33 @@ pyre::grid::Canonical<N, T, containerT>::end() const -> index_iterator
 
 template <int N, typename T, template <typename, std::size_t> class containerT>
 constexpr auto
-pyre::grid::Canonical<N, T, containerT>::box(
-    index_const_reference base, shape_const_reference shape) const -> canonical_type
+pyre::grid::Canonical<N, T, containerT>::box(index_type base, shape_type tile) const
+    -> canonical_type
 {
-    // make a layout
-    canonical_type box { // using the supplied shape information
-                         shape, base,
+    // unpack my state
+    const auto & shape = this->shape();
+    const auto & origin = this->origin();
+    const auto & order = this->order();
+
+    // go through them, in packing order because the loop looks prettier...
+    for (auto axis : order) {
+        // make sure base is within my bounds
+        base[axis] = std::min(
+            // for the left edge
+            std::max(base[axis], origin[axis]),
+            // for the right edge
+            origin[axis] + shape[axis] - 1);
+        // repeat for the shape
+        tile[axis] = std::min(
+            // for the left edge
+            std::max(tile[axis], static_cast<typename shape_type::rank_type>(1)),
+            // for the right edge
+            origin[axis] + shape[axis] - base[axis]);
+    }
+
+    // make a new layout
+    canonical_type box { // using the supplied layout information
+                         tile, base,
                          // but leaving the packing order and the offset calculation as is
                          _order, _strides, _nudge
     };
@@ -390,7 +411,5 @@ pyre::grid::Canonical<N, T, containerT>::_initShift(
     return std::inner_product(origin.begin(), origin.end(), strides.begin(), init);
 }
 
-
-#endif
 
 // end of file
