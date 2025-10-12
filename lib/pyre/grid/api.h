@@ -17,22 +17,22 @@ namespace pyre::grid {
 
     // support for the multidimensional objects in this package
     template <
-        int N, typename T = int, template <typename, std::size_t> class containerT = std::array>
+        int N, typename T = long, template <typename, std::size_t> class containerT = std::array>
     using product_t = Product<containerT<T, N>>;
 
     // the number of possible values of each axis
     template <
-        int N, typename T = int, template <typename, std::size_t> class containerT = std::array>
+        int N, typename T = long, template <typename, std::size_t> class containerT = std::array>
     using shape_t = Shape<containerT<T, N>>;
 
     // indices
     template <
-        int N, typename T = int, template <typename, std::size_t> class containerT = std::array>
+        int N, typename T = long, template <typename, std::size_t> class containerT = std::array>
     using index_t = Index<containerT<T, N>>;
 
     // the order in which indices are packed in memory
     template <
-        int N, typename T = int, template <typename, std::size_t> class containerT = std::array>
+        int N, typename T = long, template <typename, std::size_t> class containerT = std::array>
     using order_t = Order<containerT<T, N>>;
 
     // in order product rank traversal
@@ -44,7 +44,7 @@ namespace pyre::grid {
     using index_iterator_t = IndexIterator<packingT>;
     // the canonical packing strategy
     template <
-        int N, typename T = int, template <typename, std::size_t> class containerT = std::array>
+        int N, typename T = long, template <typename, std::size_t> class containerT = std::array>
     using canonical_t = Canonical<N, T, containerT>;
     // the symmetric packing strategy
     template <
