@@ -10,7 +10,7 @@ class pyre::viz::products::images::BMP : public pyre::flow::product_t {
     // type aliases
 public:
     // my shape
-    using shape_type = pyre::grid::shape_t<2, int>;
+    using shape_type = pyre::grid::shape_t<2>;
     // my cell type
     using cell_type = byte_t;
     // access to my data buffer
