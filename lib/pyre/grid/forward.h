@@ -120,16 +120,25 @@ namespace pyre::grid {
     constexpr auto operator*(const Rep<containerT> &, std::size_t) -> Rep<containerT>;
 
     template <class containerT>
-    constexpr auto operator*(typename Rep<containerT>::value_type, const Rep<containerT> &)
-        -> Rep<containerT>;
+    constexpr auto operator*(int, const Rep<containerT> &) -> Rep<containerT>;
 
     template <class containerT>
-    constexpr auto operator*(const Rep<containerT> &, typename Rep<containerT>::value_type)
-        -> Rep<containerT>;
+    constexpr auto operator*(const Rep<containerT> &, int) -> Rep<containerT>;
 
     template <class containerT>
-    constexpr auto operator/(const Rep<containerT> &, typename Rep<containerT>::value_type)
-        -> Rep<containerT>;
+    constexpr auto operator*(long, const Rep<containerT> &) -> Rep<containerT>;
+
+    template <class containerT>
+    constexpr auto operator*(const Rep<containerT> &, long) -> Rep<containerT>;
+
+    template <class containerT>
+    constexpr auto operator/(const Rep<containerT> &, std::size_t) -> Rep<containerT>;
+
+    template <class containerT>
+    constexpr auto operator/(const Rep<containerT> &, int) -> Rep<containerT>;
+
+    template <class containerT>
+    constexpr auto operator/(const Rep<containerT> &, long) -> Rep<containerT>;
 
     // scaling by doubles
     template <class containerT>

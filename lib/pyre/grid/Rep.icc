@@ -243,8 +243,27 @@ pyre::grid::operator*(const Rep<containerT> & i, std::size_t s) -> Rep<container
 
 template <class containerT>
 constexpr auto
-pyre::grid::operator*(const Rep<containerT> & i, typename Rep<containerT>::value_type s)
-    -> Rep<containerT>
+pyre::grid::operator*(const Rep<containerT> & i, int s) -> Rep<containerT>
+{
+    // get the rank of the rep
+    constexpr auto rank = Rep<containerT>::rank();
+    // make a default index
+    Rep<containerT> scaled;
+
+    // go through each axis
+    for (int axis = 0; axis < rank; ++axis) {
+        // do the math
+        scaled[axis] = s * i[axis];
+    }
+
+    // all done
+    return scaled;
+}
+
+
+template <class containerT>
+constexpr auto
+pyre::grid::operator*(const Rep<containerT> & i, long s) -> Rep<containerT>
 {
     // get the rank of the rep
     constexpr auto rank = Rep<containerT>::rank();
@@ -273,8 +292,7 @@ pyre::grid::operator*(std::size_t s, const Rep<containerT> & i) -> Rep<container
 
 template <class containerT>
 constexpr auto
-pyre::grid::operator*(typename Rep<containerT>::value_type s, const Rep<containerT> & i)
-    -> Rep<containerT>
+pyre::grid::operator*(int s, const Rep<containerT> & i) -> Rep<containerT>
 {
     // easy
     return i * s;
@@ -283,8 +301,56 @@ pyre::grid::operator*(typename Rep<containerT>::value_type s, const Rep<containe
 
 template <class containerT>
 constexpr auto
-pyre::grid::operator/(const Rep<containerT> & i, typename Rep<containerT>::value_type s)
-    -> Rep<containerT>
+pyre::grid::operator*(long s, const Rep<containerT> & i) -> Rep<containerT>
+{
+    // easy
+    return i * s;
+}
+
+
+template <class containerT>
+constexpr auto
+pyre::grid::operator/(const Rep<containerT> & i, std::size_t s) -> Rep<containerT>
+{
+    // get the rank of the rep
+    constexpr auto rank = Rep<containerT>::rank();
+    // make a default index
+    Rep<containerT> scaled;
+
+    // go through each axis
+    for (int axis = 0; axis < rank; ++axis) {
+        // do the math
+        scaled[axis] = i[axis] / s;
+    }
+
+    // all done
+    return scaled;
+}
+
+
+template <class containerT>
+constexpr auto
+pyre::grid::operator/(const Rep<containerT> & i, int s) -> Rep<containerT>
+{
+    // get the rank of the rep
+    constexpr auto rank = Rep<containerT>::rank();
+    // make a default index
+    Rep<containerT> scaled;
+
+    // go through each axis
+    for (int axis = 0; axis < rank; ++axis) {
+        // do the math
+        scaled[axis] = i[axis] / s;
+    }
+
+    // all done
+    return scaled;
+}
+
+
+template <class containerT>
+constexpr auto
+pyre::grid::operator/(const Rep<containerT> & i, long s) -> Rep<containerT>
 {
     // get the rank of the rep
     constexpr auto rank = Rep<containerT>::rank();
