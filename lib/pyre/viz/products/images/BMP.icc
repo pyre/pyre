@@ -26,7 +26,7 @@ pyre::viz::products::images::BMP::BMP(
     // the bitmap orientation is encoded using signed values for its height
     _topdown { topdown ? -1 : 1 },
     // individual lines are padded out to the nearest DWORD
-    _padBytesPerLine { (4 - (shape[1] * _pixelSz) % 4) % 4 },
+    _padBytesPerLine { static_cast<int>((4 - (shape[1] * _pixelSz) % 4) % 4) },
     // the size of the pixel payload
     _payloadSz { static_cast<int>(shape.cells() * _pixelSz + shape[1] * _padBytesPerLine) },
     // the total bitmap size
