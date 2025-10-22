@@ -37,7 +37,7 @@ class Parser:
                 # look for and use the fast loader
                 doc = yaml.load(stream, Loader=yaml.CLoader)
             # if that fails
-            except ImportError:
+            except AttributeError:
                 # fall back to the pure python implementation
                 doc = yaml.load(stream, Loader=yaml.Loader)
             # process the contents
