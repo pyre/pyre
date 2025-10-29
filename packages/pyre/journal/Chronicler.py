@@ -25,7 +25,7 @@ class Chronicler(pyre.component, family="pyre.journal.chronicler", implements=Jo
     The top level manager of the application journal channels
     """
 
-    # global state
+    # configurable state
     decor = pyre.properties.int()
     decor.default = 1
     decor.doc = "the default state of all application channels"
@@ -38,6 +38,11 @@ class Chronicler(pyre.component, family="pyre.journal.chronicler", implements=Jo
     margin.default = "  "
     margin.doc = "the decoration to add to indented output"
 
+    channels = pyre.properties.list(
+        schema=pyre.properties.tuple(schema=pyre.properties.str())
+    )
+    channels.doc = "a list of channels to place under the control of the user"
+
     # interface obligations
     @pyre.export
     def register(self, app, name):
@@ -46,8 +51,8 @@ class Chronicler(pyre.component, family="pyre.journal.chronicler", implements=Jo
         """
         # register the app name with the journal
         journal.application(name=name)
-        # go through the app journal sections
-        for severity, section in app.pyre_journalSections():
+        # go through the {app} journal channels
+        for severity, section in app.pyre_journalChannels():
             # get the channel factory
             factory = self.map[severity]
             # build the component name
@@ -90,7 +95,6 @@ class Chronicler(pyre.component, family="pyre.journal.chronicler", implements=Jo
         journal.decor(level=self.decor)
         journal.detail(level=self.detail)
         journal.margin(margin=self.margin)
-        # do other things
 
         # all done
         return
