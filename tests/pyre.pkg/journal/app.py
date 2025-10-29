@@ -28,13 +28,13 @@ class App(pyre.application):
         return 0
 
     # framework hooks
-    def pyre_journalSections(self):
+    def pyre_journalChannels(self):
         """
         Generate a sequence of (severity, section) pairs to enable user control over the application
         specific journal channels
         """
         # chain up
-        yield from super().pyre_journalSections()
+        yield from super().pyre_journalChannels()
         # add my channels
         yield "debug", "app.test"
         yield "firewall", "app.test"
