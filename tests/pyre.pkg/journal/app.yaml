@@ -9,6 +9,12 @@ journal:
     detail: 5
     margin: "    "
 
+    channels:
+        - debug, pyre.http.headers
+        - debug, pyre.http.server
+        - debug, pyre.ipc.selector
+        - debug, pyre.filesystem.discover
+
     # set all channels to a non-default configuration
     # debug
     debug.app.test.active: yes
