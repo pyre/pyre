@@ -11,7 +11,7 @@ import pyre
 # the specification for the top level channel manager
 class Journal(pyre.protocol, family="pyre.journal"):
     """
-    The manager of the application journal channels
+    Specification of the manager of the application journal channels
     """
 
     # user configurable tate
@@ -27,6 +27,11 @@ class Journal(pyre.protocol, family="pyre.journal"):
     margin.default = "  "
     margin.doc = "the decoration to add to indented output"
 
+    channels = pyre.properties.list(
+        schema=pyre.properties.tuple(schema=pyre.properties.str())
+    )
+    channels.doc = "the list of channels to place under the control of the user"
+
     # interface obligations
     @pyre.provides
     def register(self, app, name):
@@ -40,7 +45,7 @@ class Journal(pyre.protocol, family="pyre.journal"):
         """
         Provide a default implementation
         """
-        # i have on of those
+        # i have one of those
         from .Chronicler import Chronicler
 
         # so hand it off
