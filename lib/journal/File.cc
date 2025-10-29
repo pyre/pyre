@@ -40,18 +40,17 @@ pyre::journal::File::alert(const entry_type & entry) -> File &
     // get the page and the notes
     auto & page = entry.page();
     auto & notes = entry.notes();
-
     // if there is no payload and no metadata
     if (page.empty() && notes.empty()) {
         // nothing else to do
         return *this;
     }
-
     // otherwise, get the alert renderer to format the message
     auto content = _alert->render(_palette, entry);
     // inject it into my file
     _file << content;
-
+    // and flush
+    _file.flush();
     // all done
     return *this;
 }
@@ -64,6 +63,8 @@ pyre::journal::File::help(const entry_type & entry) -> File &
     auto content = _help->render(_palette, entry);
     // inject it into my file
     _file << content;
+    // and flush
+    _file.flush();
     // all done
     return *this;
 }
@@ -76,6 +77,8 @@ pyre::journal::File::memo(const entry_type & entry) -> File &
     auto content = _memo->render(_palette, entry);
     // inject it into my file
     _file << content;
+    // and flush
+    _file.flush();
     // all done
     return *this;
 }
