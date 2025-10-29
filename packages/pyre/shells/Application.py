@@ -497,13 +497,19 @@ class Application(pyre.component, metaclass=Director):
         return dependencies
 
     # journal configuration
-    def pyre_journalSections(self):
+    def pyre_journalChannels(self):
         """
         Generate a sequence of (severity, section) pairs to enable user configuration of
         journal channels
+
+        N.B.:
+            in order to be able to capture the {journal} component state, this must be called no
+            earlier than {pyre_configured}
         """
+        # ask my {journal} component for the user choices
+        yield from self.journal.channels
         # all done
-        return []
+        return
 
     # other behaviors
     def pyre_shutdown(self, **kwds):
