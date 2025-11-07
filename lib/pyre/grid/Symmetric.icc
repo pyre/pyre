@@ -182,7 +182,7 @@ pyre::grid::Symmetric<N, T, containerT>::index(difference_type offset) const -> 
     index[0] = _getFirstRankIndex<N>(_D, offset_);
 
     // helper function to get the next indices (i = 1, ..., N - 1)
-    auto _getIndices = [&offset_]<int... I>(index_t<N> & idx, int D, integer_sequence<I...>) {
+    auto _getIndices = [&offset_]<int... I>(index_type & idx, T D, integer_sequence<I...>) {
         // get the next index (I + 1) as:
         ((idx[I + 1] =
               // the first index (corresponding to this offset) in a rank (N - (I + 1)) packing of
@@ -212,7 +212,7 @@ pyre::grid::Symmetric<N, T, containerT>::offset(index_const_reference index) con
     std::sort(sorted_index.begin(), sorted_index.end());
 
     // helper function to shift the indices (i, j, k, ...) into (i, j - i, k - j, ...)
-    auto _shiftIndices = []<int... I>(index_t<N> & idx, integer_sequence<I...>) {
+    auto _shiftIndices = []<int... I>(index_type & idx, integer_sequence<I...>) {
         // iterate in reverse order to avoid overwriting entries before using them
         ((idx[(N - 2 - I) + 1] -= idx[N - 2 - I]), ...);
         // all done
@@ -223,7 +223,7 @@ pyre::grid::Symmetric<N, T, containerT>::offset(index_const_reference index) con
     _shiftIndices(sorted_index, make_integer_sequence<N - 1> {});
 
     // helper function needed to expand the array in a parameter pack
-    auto _getOffset = []<int... I>(index_t<N> idx, int D, integer_sequence<I...>) {
+    auto _getOffset = []<int... I>(index_type & idx, T D, integer_sequence<I...>) {
         return _offset<N>(D, idx[I]...);
     };
 
