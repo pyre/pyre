@@ -308,9 +308,7 @@ namespace pyre::tensor {
     // matrix of the eigenvalues and rebuilds the matrix)
     template <square_matrix_c matrixT>
     constexpr auto function(const matrixT & A, auto f) -> auto
-        requires(
-            std::is_same_v<typename matrixT::pack_t, pyre::grid::symmetric_t<2>>
-            || std::is_same_v<typename matrixT::pack_t, pyre::grid::diagonal_t<2>>);
+        requires(matrixT::symmetric || matrixT::diagonal);
 
     // fourth-order tensor contraction with second-order tensor
     template <fourth_order_tensor_c tensorT, matrix_c matrixT>
