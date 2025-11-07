@@ -19,7 +19,7 @@ class pyre::grid::Symmetric {
     // types
 public:
     // alias for me
-    using symmetric_type = Symmetric<N, int, containerT>;
+    using symmetric_type = Symmetric<N, T, containerT>;
     using symmetric_const_reference = const symmetric_type &;
     // my parts
     // rank order
@@ -52,7 +52,7 @@ public:
     constexpr auto origin() const -> index_type;
 
     // the total number of addressable cells
-    constexpr auto cells() const -> std::size_t;
+    constexpr auto cells() const -> T;
 
     // the packing isomorphism
 public:
@@ -81,33 +81,33 @@ public:
 private:
     // the total number of entries in a symmetric packing of rank {M} and dimension {D}
     template <int M>
-    static constexpr int _entries(int D)
+    static constexpr T _entries(T D)
         requires(M == 1);
     template <int M>
-    static constexpr int _entries(int D)
+    static constexpr T _entries(T D)
         requires(M > 1);
 
     // the total number of entries in all ranks lower than {i} in a symmetric packing of rank {M}
     // and dimension {D}
     template <int M>
-    static constexpr int _entriesBeforeRank(int i, int D);
+    static constexpr T _entriesBeforeRank(int i, T D);
 
     // the offset associated with the M-rank index {i, j...} in a symmetric packing of rank {M} and
     // dimension {D}
     template <int M, class... S>
-    static constexpr int _offset(int D, int i, S... j)
+    static constexpr auto _offset(T D, int i, S... j) -> difference_type
         requires(sizeof...(S) == M - 1 && M > 1);
     template <int M>
-    static constexpr int _offset(int D, int i)
+    static constexpr auto _offset(T D, int i) -> difference_type
         requires(M == 1);
 
     // the index of the first rank corresponding to {offset} in a symmetric packing of rank {M} and
     // dimension {D}
     template <int M>
-    static constexpr int _getFirstRankIndex(int D, int & offset)
+    static constexpr int _getFirstRankIndex(T D, difference_type & offset)
         requires(M > 1);
     template <int M>
-    static constexpr int _getFirstRankIndex(int D, int & offset)
+    static constexpr int _getFirstRankIndex(T D, difference_type & offset)
         requires(M == 1);
 
     // implementation details: data
@@ -117,7 +117,7 @@ private:
     const order_type _order;  // the packing order of the axes
     const index_type _origin; // the smallest allowable index value
     // deduced
-    const int _D; // the shape dimension
+    const T _D; // the shape dimension
 
     // metamethods with default implementations
 public:

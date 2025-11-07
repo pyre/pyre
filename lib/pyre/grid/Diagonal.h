@@ -19,7 +19,7 @@ class pyre::grid::Diagonal {
     // types
 public:
     // alias for me
-    using diagonal_type = Diagonal<N, int, containerT>;
+    using diagonal_type = Diagonal<N, T, containerT>;
     using diagonal_const_reference = const diagonal_type &;
     // my parts
     // rank order
@@ -54,7 +54,7 @@ public:
     constexpr auto nudge() const -> difference_type;
 
     // the total number of addressable cells
-    constexpr auto cells() const -> std::size_t;
+    constexpr auto cells() const -> T;
 
     // the packing isomorphism
 public:
@@ -93,7 +93,7 @@ private:
     const order_type _order;  // the packing order of the axes
     const index_type _origin; // the smallest allowable index value
     // deduced
-    const int _D;                 // the shape dimension
+    const T _D;                   // the shape dimension
     const difference_type _nudge; // offset correction when {_origin} is not {zero}
 
     // metamethods with default implementations
