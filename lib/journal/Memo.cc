@@ -45,6 +45,10 @@ pyre::journal::Memo::header(
     // and its name
     auto channel = notes.at("channel");
 
+    // start with the channel name and severity
+    buffer << palette[severity] << channel << palette["reset"] << ": (" << palette[severity]
+           << severity << palette["reset"] << ")" << std::endl;
+
     // attempt to get location information
     // N.B.: we only print line number and function name if we know the filename
     auto loc = notes.find("filename");
@@ -53,7 +57,8 @@ pyre::journal::Memo::header(
         // extract the filename
         auto filename = loc->second;
         // make some room and turn on location formatting
-        buffer << palette[severity];
+        buffer << palette[severity] << _footerMarker << palette["reset"] << "at "
+               << palette[severity];
         // set a maximum length for the rendered filename
         const line_type::size_type maxlen = 80;
         // get the filename size
@@ -68,14 +73,14 @@ pyre::journal::Memo::header(
             buffer << filename;
         }
         // reset the buffer and add a spacer
-        buffer << palette["reset"] << ":";
+        buffer << palette["reset"];
 
         // attempt to get the line number
         auto & line = notes.at("line");
         // if we know it
         if (!line.empty()) {
             // render it
-            buffer << palette[severity] << line << palette["reset"] << ":";
+            buffer << ":" << palette[severity] << line << palette["reset"];
         }
         // save this much
         buffer << std::endl;
@@ -99,11 +104,6 @@ pyre::journal::Memo::header(
     }
     // if we don't have location information
     else {
-        // we show some basic channel information instead
-        buffer
-            // print the severity
-            << palette[severity] << severity << palette["reset"] << ":" << std::endl;
-
         // at the correct {decor} level
         if (chronicler_t::decor() > 1) {
             // print
