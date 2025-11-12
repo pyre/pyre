@@ -8,7 +8,7 @@
 #define pyre_journal_Alert_h
 
 
-// a formatter for messages that are meant for end user; currently, this means {info_t},
+// a formatter for messages that are meant for the end users; currently, this means {info_t},
 // {warning_t}, and {error_t}
 class pyre::journal::Alert : public Renderer {
     // metamethods
