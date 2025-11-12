@@ -46,8 +46,8 @@ pyre::journal::Memo::header(
     auto channel = notes.at("channel");
 
     // start with the channel name and severity
-    buffer << palette[severity] << channel << palette["reset"] << ": (" << palette[severity]
-           << severity << palette["reset"] << ")" << std::endl;
+    buffer << palette[severity] << channel << palette["reset"] << " (" << palette[severity]
+           << severity << palette["reset"] << "):" << std::endl;
 
     // attempt to get location information
     // N.B.: we only print line number and function name if we know the filename
