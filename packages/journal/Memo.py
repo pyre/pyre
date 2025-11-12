@@ -41,11 +41,11 @@ class Memo(Renderer):
             palette[severity],
             channel,
             palette["reset"],
-            ": (",
+            " (",
             palette[severity],
             severity,
             palette["reset"],
-            ")",
+            "):",
         ]
         # assemble and hand off
         yield "".join(buffer)
