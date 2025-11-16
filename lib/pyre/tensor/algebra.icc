@@ -1008,7 +1008,7 @@ pyre::tensor::skew(const matrixT & A) -> auto
     using packing_type = typename matrixT::pack_t;
     using scalar_type = typename matrixT::scalar_type;
 
-    if constexpr (std::is_same_v<packing_type, pyre::grid::symmetric_t<2>>)
+    if constexpr (matrixT::symmetric)
         return zero<symmetric_matrix_t<D, scalar_type>>;
     else
         return 0.5 * (A - transpose(A));
@@ -1215,9 +1215,7 @@ pyre::tensor::col(const matrixT & A) -> vector_t<matrixT::dims[0], typename matr
 template <pyre::tensor::square_matrix_c matrixT>
 constexpr auto
 pyre::tensor::function(const matrixT & A, auto f) -> auto
-    requires(
-        std::is_same_v<typename matrixT::pack_t, pyre::grid::symmetric_t<2>>
-        || std::is_same_v<typename matrixT::pack_t, pyre::grid::diagonal_t<2>>)
+    requires(matrixT::symmetric || matrixT::diagonal)
 {
     constexpr int D = matrixT::dims[0];
 

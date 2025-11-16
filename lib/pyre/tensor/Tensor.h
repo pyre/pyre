@@ -20,7 +20,7 @@ namespace pyre::tensor {
         // number of total entries of the tensor (S = 1 for empty parameter pack, i.e. scalar)
         static constexpr auto S =
             // if it is not a diagonal packing
-            !std::is_same_v<packingT, pyre::grid::diagonal_t<N>> ?
+            !std::is_same_v<packingT, diagonal_packing_t<N>> ?
                 // get the answer from the layout
                 _layout.cells()
                 // otherwise, get the answer from the layout but do not count the trailing zero
@@ -31,11 +31,11 @@ namespace pyre::tensor {
         // export my type
         using tensor_t = Tensor<T, packingT, I...>;
         // export a canonical tensor with my same underlying type {T} and shape {I...}
-        using canonical_tensor_t = Tensor<T, pyre::grid::canonical_t<N>, I...>;
+        using canonical_tensor_t = Tensor<T, canonical_packing_t<N>, I...>;
         // export a symmetric tensor with my same underlying type {T} and shape {I...}
-        using symmetric_tensor_t = Tensor<T, pyre::grid::symmetric_t<N>, I...>;
+        using symmetric_tensor_t = Tensor<T, symmetric_packing_t<N>, I...>;
         // export a diagonal tensor with my same underlying type {T} and shape {I...}
-        using diagonal_tensor_t = Tensor<T, pyre::grid::diagonal_t<N>, I...>;
+        using diagonal_tensor_t = Tensor<T, diagonal_packing_t<N>, I...>;
         // export the packing strategy
         using pack_t = packingT;
         // export the index type
@@ -51,10 +51,10 @@ namespace pyre::tensor {
         // export the container size
         static constexpr int size = S;
         // export whether the tensor is symmetric
-        static constexpr bool symmetric = std::is_same_v<packingT, pyre::grid::symmetric_t<N>>
-                                       || std::is_same_v<packingT, pyre::grid::diagonal_t<N>>;
+        static constexpr bool symmetric = std::is_same_v<packingT, symmetric_packing_t<N>>
+                                       || std::is_same_v<packingT, diagonal_packing_t<N>>;
         // export whether the tensor is diagonal
-        static constexpr bool diagonal = std::is_same_v<packingT, pyre::grid::diagonal_t<N>>;
+        static constexpr bool diagonal = std::is_same_v<packingT, diagonal_packing_t<N>>;
         // dimensions (the maximum index value for each index)
         static constexpr std::array<int, N> dims { I... };
 
