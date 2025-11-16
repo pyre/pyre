@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para0sim.com>
 # (c) 1998-2025 all rights reserved
-#
 
 
 """
@@ -39,7 +37,7 @@ def mean(iterable):
         count += 1
         total += item
     # all done
-    return total * 1/count
+    return total * 1 / count
 
 
 def powerset(iterable):
@@ -52,16 +50,20 @@ def powerset(iterable):
     # convert {iterable} into a list; we need its length
     s = list(iterable)
     # build all possible combinations of all possible lengths
-    return itertools.chain.from_iterable(itertools.combinations(s, r) for r in range(len(s)+1))
+    return itertools.chain.from_iterable(
+        itertools.combinations(s, r) for r in range(len(s) + 1)
+    )
 
 
 def sequify(items):
     """
     Normalize {items} into a tuple
     """
-    # take care of {None} and anything false or empty
-    if not items: return ()
-    # if {items} is any iterable
+    # take care of {None} and other falsy values
+    if not items:
+        # by returning an empty sequence
+        return ()
+    # if {items} is iterable
     if isinstance(items, collections.abc.Iterable):
         # turn it into a tuple
         return tuple(items)
@@ -76,10 +78,12 @@ def vivify(levels=1, atom=dict):
 
     Adapted from (http://en.wikipedia.org/wiki/Autovivification)
     """
-    # the embryonic case is a {defaultdict} of type {atom}
-    if levels < 2: return collections.defaultdict(atom)
+    # the embryonic case
+    if levels < 2:
+        # is a {defaultdict} of type {atom}
+        return collections.defaultdict(atom)
     # otherwise, build a {defaultdict} that is shallower by one level
-    return collections.defaultdict(lambda: vivify(levels=levels-1, atom=atom))
+    return collections.defaultdict(lambda: vivify(levels=levels - 1, atom=atom))
 
 
 # cofunctors
@@ -94,6 +98,7 @@ def coroutine(f):
     """
     Decorator that automatically primes a coroutine
     """
+
     # the wrapper
     def wrapper(*args, **kwds):
         # instantiate the generator
@@ -102,6 +107,7 @@ def coroutine(f):
         next(gen)
         # and return it
         return gen
+
     # return the wrapper to the caller
     return wrapper
 
