@@ -13,7 +13,7 @@ gsl.version := 2.5
 gsl.dir := $(sys.prefix)
 
 # hdf5
-hdf5.version := 1.10.6
+hdf5.version := 1.10.10
 hdf5.dir := ${sys.prefix}
 hdf5.parallel := serial
 hdf5.incpath := $(hdf5.dir)/include/hdf5/$(hdf5.parallel)
@@ -30,11 +30,11 @@ python.version := $(pythonVersion)
 python.dir := $(pythonLocation)
 
 # numpy
-numpy.version := 1.21.1
+numpy.version := 1.26.4
 numpy.dir := $(python.dir)/lib/python$(python.version)/site-packages/numpy/core
 
 # pybind11
-pybind11.version := 2.7.0
+pybind11.version := 2.11.1
 pybind11.dir := $(python.dir)/lib/python$(python.version)/site-packages/pybind11
 
 # control over the build process
