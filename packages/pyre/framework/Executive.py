@@ -665,10 +665,12 @@ class Executive:
             journal.warning("pyre.framework").log(f"{name}: no uri")
             # and go no further
             return
-        # load the configuration
-        self.loadConfiguration(
-            uri=value, locator=locator, priority=self.priority.command
-        )
+        # go through the specified files
+        for source in value.split(","):
+            # load the configuration
+            self.loadConfiguration(
+                uri=source.strip(), locator=locator, priority=self.priority.command
+            )
         # and return
         return
 
