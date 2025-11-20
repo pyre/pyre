@@ -246,7 +246,7 @@ class Local(Filesystem):
                     # in wither case, just ignore this entry
                     continue
                 # stamp the entry meta-data
-                meta.syncTime = timestamp
+                meta.sync = timestamp
                 # get the entry name
                 name = entry.name
                 # remove from the pile of dead entries
