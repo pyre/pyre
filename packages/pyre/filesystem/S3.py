@@ -47,16 +47,17 @@ class S3(Filesystem):
         """
         # establish the starting point
         root = self if root is None else root
-        # if it's not a folder
+        # and if it's not a folder
         if not root.isFolder:
             # complain
             raise self.DirectoryListingError(uri=root.uri, error="not a directory")
-
         # get my bucket
         bucket = self.bucket
+        # and set the search delimiter
+        delimiter = "/"
         # make a paginator
         paginator = self.s3.get_paginator("list_objects_v2")
-        # prime the workload
+        # prime the workload; we'll add subdirectories here as we discover them
         todo = [(root, 0)]
         # start walking the bucket contents
         for folder, level in todo:
@@ -64,13 +65,27 @@ class S3(Filesystem):
             if levels is not None and level >= levels:
                 # move on
                 continue
+            # place the current contents of folder in a pile; we will use this to detect which nodes
+            # have been removed since the last time we synced with the s3 bucket so we can clean
+            # them up
+            dead = set(folder.contents)
             # compute the actual location of this folder
             location = self.vnodes[folder].uri
             # project this location relative to my bucket
             prefix = location.address.relativeTo(bucket.address)
-            # while the paginator is able to retrieve more contents
+            # while the paginator is able to retrieve more content, ask for it; set the {delimiter}
+            # to "/" to ask it to stop fetching entries at the next occurrence of the {delimiter},
+            # effectively limiting the search to what we are going to interpret as the contents of a
+            # directory; it is also very important to terminate the {prefix} with the {delimiter} so
+            # that we find the next one, rather than short circuiting the search to the current
+            # level
             for page in paginator.paginate(
-                Bucket=bucket.address.name, Prefix=str(prefix) + "/", Delimiter="/"
+                # set the bucket
+                Bucket=bucket.address.name,
+                # make sure the {prefix} is {delimiter} terminated
+                Prefix=str(prefix) + delimiter,
+                # and truncate key names to the next occurrence of the {delimiter}
+                Delimiter=delimiter,
             ):
                 # get the items that are stored at this prefix
                 items = [entry["Key"] for entry in page.get("Contents", [])]
@@ -83,20 +98,26 @@ class S3(Filesystem):
                     node = folder.node()
                     # assemble their uri
                     uri = bucket / entry
+                    # form the name of the file
+                    name = uri.address.name
                     # connect them to the folder we are visiting
-                    folder[uri.address.name] = node
+                    folder[name] = node
                     # build their metadata
                     meta = node.metadata(uri=uri)
-                    # and add the metadata to my {vnode} table
+                    # add the metadata to my {vnode} table
                     self.vnodes[node] = meta
+                    # and remove this node from the {dead} pile, if it's there
+                    dead.discard(name)
                 # go through the prefixes
                 for entry in prefixes:
                     # these will be folders
                     node = folder.folder()
                     # assemble their uri
                     uri = bucket / entry
-                    # connect them to the folder we are visiting
-                    folder[uri.address.name] = node
+                    # form the name by which they are known to their container
+                    name = uri.address.name
+                    # and connect them to the folder we are visiting
+                    folder[name] = node
                     # build their metadata
                     meta = node.metadata(uri=uri)
                     # and add the metadata to my {vnode} table
@@ -104,7 +125,17 @@ class S3(Filesystem):
                     # also, add them to the to-do pile along with a level marker so we can
                     # visit them to get their contents
                     todo.append((node, level + 1))
-
+                    # finally, remove them from the {dead} pile
+                    dead.discard(name)
+            # now, go through the nodes that are still in the dead pile
+            for name in dead:
+                # ask {folder} for the node that corresponds to the name
+                node = folder[name]
+                # remove the node from my {vnode} table
+                del self.vnodes[node]
+                # and from the folder
+                del folder.contents[name]
+        # all done
         return self
 
     # metamethods
