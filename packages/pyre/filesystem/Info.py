@@ -11,11 +11,13 @@ class Info:
     """
 
     # meta methods
-    def __init__(self, uri, **kwds):
+    def __init__(self, uri, sync=None, **kwds):
         # chain up
         super().__init__(**kwds)
         # save the node uri
         self.uri = uri
+        # and the sync time
+        self.sync = sync
         # all done
         return
 
