@@ -80,14 +80,15 @@ class S3(Filesystem):
             # directory; it is also very important to terminate the {prefix} with the {delimiter} so
             # that we find the next one, rather than short circuiting the search to the current
             # level
-            for page in paginator.paginate(
+            opts = {
                 # set the bucket
-                Bucket=bucket.address.name,
-                # make sure the {prefix} is {delimiter} terminated
-                Prefix=str(prefix) + delimiter,
+                "Bucket": bucket.address.name,
+                # make sure the {prefix} is {delimiter} terminated and add it to the pile
+                "Prefix": str(prefix) + delimiter if len(prefix) else "",
                 # and truncate key names to the next occurrence of the {delimiter}
-                Delimiter=delimiter,
-            ):
+                "Delimiter": delimiter,
+            }
+            for page in paginator.paginate(**opts):
                 # make a timestamp
                 timestamp = time.gmtime()
                 # get the items that are stored at this prefix
@@ -148,15 +149,9 @@ class S3(Filesystem):
     # metamethods
     def __init__(self, root, **kwds):
         # deconstruct my root and fill out the missing information
-        profile, region, bucket, prefix = self._parse(uri=root)
-        # reassemble my {root} uri
-        root = pyre.primitives.uri(
-            scheme="s3",
-            authority=f"{profile}@{region}",
-            address=bucket.address / prefix,
-        )
+        uri, profile, region, bucket, prefix = self._parse(uri=root)
         # build my metadata
-        metadata = self.metadata(uri=root)
+        metadata = self.metadata(uri=uri)
         # and chain up
         super().__init__(metadata=metadata, **kwds)
 
@@ -204,26 +199,22 @@ class S3(Filesystem):
         uri = pyre.primitives.uri.parse(value=uri, scheme="s3")
         # unpack the server info
         region, _, profile, _ = uri.server
-        # get the profile configuration
-        config = pyre.executive.user.aws.profile(name=profile or "default")
-        # if the {region} is trivial
-        if not region:
-            # ask the profile
-            region = config.get("region", "")
         # get the address
         address = pyre.primitives.path(uri.address)
         # the bucket is the root; convert it into a complete uri
         bucket = pyre.primitives.uri(
             scheme=uri.scheme,
-            authority=f"{profile}@{region}",
+            authority=uri.authority,
             address=pyre.primitives.path(address[:2]),
         )
         # and the rest is the prefix path
         prefix = address[2:]
         # if it's non-trivial, turn it into a path
-        prefix = pyre.primitives.path(prefix) if prefix else pyre.primitives.path.root
+        prefix = pyre.primitives.path(prefix)
+        # form my root uri
+        root = bucket / prefix
         # all done
-        return profile, region, bucket, prefix
+        return root, profile, region, bucket, prefix
 
 
 # end of file
