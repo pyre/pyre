@@ -8,6 +8,12 @@
 import re
 import typing
 
+# my address (can be | is a) Path
+# currently, it's up to the user to use paths for the address field
+# it should really be the default, but uri's get used the {framework} in many places and
+# it won't be easy to track them all down; p2?
+from .Path import Path
+
 
 # implementation details
 class URI:
@@ -164,7 +170,14 @@ class URI:
         # coerce that into a uri and return it
         return self.parse(new)
 
-    def __truediv__(self, other):
+    def __truediv__(self, other: Path):
+        """
+        Clone me and splice {other} to my {address}
+        """
+        # make a new uri by splicing the path {other} to my address
+        return self.clone(address=self.address / other)
+
+    def __itruediv__(self, other: Path):
         """
         Syntactic sugar for assembling paths
         """
@@ -172,13 +185,6 @@ class URI:
         self.address /= other
         # and done
         return self
-
-    def __rtruediv__(self, other):
-        """
-        Syntactic sugar for assembling paths
-        """
-        # delegate to the left
-        return self / other
 
     def __str__(self):
         # easy enough
