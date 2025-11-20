@@ -11,6 +11,7 @@ import journal
 # external
 import boto3
 import botocore.exceptions
+import time
 
 # superclass
 from .Filesystem import Filesystem
@@ -87,6 +88,8 @@ class S3(Filesystem):
                 # and truncate key names to the next occurrence of the {delimiter}
                 Delimiter=delimiter,
             ):
+                # make a timestamp
+                timestamp = time.gmtime()
                 # get the items that are stored at this prefix
                 items = [entry["Key"] for entry in page.get("Contents", [])]
                 # and extract the prefixes to the rest of the bucket contents, given our delimiter
@@ -104,6 +107,8 @@ class S3(Filesystem):
                     folder[name] = node
                     # build their metadata
                     meta = node.metadata(uri=uri)
+                    # mark the time of last sync
+                    meta.sync = timestamp
                     # add the metadata to my {vnode} table
                     self.vnodes[node] = meta
                     # and remove this node from the {dead} pile, if it's there
@@ -120,6 +125,8 @@ class S3(Filesystem):
                     folder[name] = node
                     # build their metadata
                     meta = node.metadata(uri=uri)
+                    # mark the time of last sync
+                    meta.sync = timestamp
                     # and add the metadata to my {vnode} table
                     self.vnodes[node] = meta
                     # also, add them to the to-do pile along with a level marker so we can
