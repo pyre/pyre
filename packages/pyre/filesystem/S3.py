@@ -26,25 +26,10 @@ class S3(Filesystem):
     # exceptions
     from .exceptions import DirectoryListingError
 
-    # interface
-    def location(self):
-        """
-        Assemble my location
-        """
-        # get the parts of my uri
-        scheme = self.scheme
-        profile = self.profile or "default"
-        region = self.region
-        # assemble the authority
-        authority = f"{profile}@{region}"
-        # make sure my {address} is a path; clients will want to do arithmetic with it
-        address = pyre.primitives.path(f"/{self.bucket}")
-        # build the location and return it
-        return pyre.primitives.uri(scheme=scheme, authority=authority, address=address)
-
+    # fill {root} with the content
     def discover(self, root=None, levels=0, **kwds):
         """
-        Fill my structure with contents that match {prefix}
+        Retrieve the contents at {root} from my S3 bucket
         """
         # establish the starting point
         root = self if root is None else root
@@ -52,9 +37,8 @@ class S3(Filesystem):
         if not root.isFolder:
             # complain
             raise self.DirectoryListingError(uri=root.uri, error="not a directory")
-        # get my bucket
-        bucket = self.bucket
-        # and set the search delimiter
+
+        # set the search delimiter
         delimiter = "/"
         # make a paginator
         paginator = self.s3.get_paginator("list_objects_v2")
@@ -70,10 +54,15 @@ class S3(Filesystem):
             # have been removed since the last time we synced with the s3 bucket so we can clean
             # them up
             dead = set(folder.contents)
-            # compute the actual location of this folder
-            location = self.vnodes[folder].uri
-            # project this location relative to my bucket
-            prefix = location.address.relativeTo(bucket.address)
+            # get the location of this folder
+            here = self.info(node=folder).uri
+            # extract its prefix; aws needs a string with no leading '/"
+            prefix = delimiter.join(here.address[1:])
+            # if it's not empty
+            if prefix:
+                # terminate it
+                prefix += delimiter
+
             # while the paginator is able to retrieve more content, ask for it; set the {delimiter}
             # to "/" to ask it to stop fetching entries at the next occurrence of the {delimiter},
             # effectively limiting the search to what we are going to interpret as the contents of a
@@ -81,10 +70,10 @@ class S3(Filesystem):
             # that we find the next one, rather than short circuiting the search to the current
             # level
             opts = {
-                # set the bucket
-                "Bucket": bucket.address.name,
+                # set the bucket; it's in the {authority} field of the current location
+                "Bucket": here.authority,
                 # make sure the {prefix} is {delimiter} terminated and add it to the pile
-                "Prefix": str(prefix) + delimiter if len(prefix) else "",
+                "Prefix": prefix,
                 # and truncate key names to the next occurrence of the {delimiter}
                 "Delimiter": delimiter,
             }
@@ -100,18 +89,16 @@ class S3(Filesystem):
                 for entry in items:
                     # build nodes for them
                     node = folder.node()
-                    # assemble their uri
-                    uri = bucket / entry
+                    # assemble their uri by cloning {here} and adjusting the {address}
+                    uri = here.clone(address=pyre.primitives.path.root / entry)
                     # form the name of the file
                     name = uri.address.name
-                    # connect them to the folder we are visiting
+                    # connect the pair to the folder we are visiting
                     folder[name] = node
-                    # build their metadata
-                    meta = node.metadata(uri=uri)
-                    # mark the time of last sync
+                    # get the metadata of the new {node}
+                    meta = self.info(node)
+                    # so we can mark the time of last sync
                     meta.sync = timestamp
-                    # add the metadata to my {vnode} table
-                    self.vnodes[node] = meta
                     # and remove this node from the {dead} pile, if it's there
                     dead.discard(name)
                 # go through the prefixes
@@ -119,17 +106,15 @@ class S3(Filesystem):
                     # these will be folders
                     node = folder.folder()
                     # assemble their uri
-                    uri = bucket / entry
+                    uri = here.clone(address=pyre.primitives.path.root / entry)
                     # form the name by which they are known to their container
                     name = uri.address.name
                     # and connect them to the folder we are visiting
                     folder[name] = node
-                    # build their metadata
-                    meta = node.metadata(uri=uri)
-                    # mark the time of last sync
+                    # get the metadata of the new {node}
+                    meta = self.info(node)
+                    # so we can mark the time of last sync
                     meta.sync = timestamp
-                    # and add the metadata to my {vnode} table
-                    self.vnodes[node] = meta
                     # also, add them to the to-do pile along with a level marker so we can
                     # visit them to get their contents
                     todo.append((node, level + 1))
@@ -147,74 +132,17 @@ class S3(Filesystem):
         return self
 
     # metamethods
-    def __init__(self, root, **kwds):
-        # deconstruct my root and fill out the missing information
-        uri, profile, region, bucket, prefix = self._parse(uri=root)
+    def __init__(self, s3, root, **kwds):
+        # for the {address} of {root} to be a path, until pyre.primitives.uri does...
+        root = root.clone(address=pyre.primitives.path(root.address))
         # build my metadata
-        metadata = self.metadata(uri=uri)
+        metadata = self.metadata(uri=root)
         # and chain up
         super().__init__(metadata=metadata, **kwds)
-
-        # save my parts
-        # scheme
-        self.scheme = "s3"
-        # authority
-        self.profile = profile
-        self.region = region
-        # the complete uri of my bucket
-        self.bucket = bucket
-        # and the path to my prefix
-        self.prefix = prefix
-
-        # attempt to
-        try:
-            # connect
-            s3 = boto3.Session(
-                profile_name=self.profile, region_name=self.region
-            ).client("s3")
-        # if something goes wrong
-        except botocore.exceptions.BotoCoreError as error:
-            # make a channel
-            channel = journal.error("pyre.filesystem.s3")
-            # complain
-            channel.line(f"got: {error}")
-            channel.line(f"while exploring '{self.location()}'")
-            # flush
-            channel.log()
-            # and bail, in case errors aren't fatal
-            return
-        # if all goes well, save the s3 connection
+        # save the s3 connection
         self.s3 = s3
-
         # all done
         return
-
-    # implementation details
-    @classmethod
-    def _parse(cls, uri):
-        """
-        Deconstruct {uri} into a form suitable for my metadata
-        """
-        # coerce the input into a uri
-        uri = pyre.primitives.uri.parse(value=uri, scheme="s3")
-        # unpack the server info
-        region, _, profile, _ = uri.server
-        # get the address
-        address = pyre.primitives.path(uri.address)
-        # the bucket is the root; convert it into a complete uri
-        bucket = pyre.primitives.uri(
-            scheme=uri.scheme,
-            authority=uri.authority,
-            address=pyre.primitives.path(address[:2]),
-        )
-        # and the rest is the prefix path
-        prefix = address[2:]
-        # if it's non-trivial, turn it into a path
-        prefix = pyre.primitives.path(prefix)
-        # form my root uri
-        root = bucket / prefix
-        # all done
-        return root, profile, region, bucket, prefix
 
 
 # end of file
