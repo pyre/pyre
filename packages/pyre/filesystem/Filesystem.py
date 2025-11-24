@@ -75,7 +75,7 @@ class Filesystem(Folder):
     # implementation details
     def attach(self, node, uri, metadata=None, **kwds):
         """
-        Maintenance for the {vnode} table. Filesystems that maintain more elaborate meta-data
+        Maintenance for the {vnode} table. Filesystems that maintain more elaborate metadata
         about their nodes must override to build their {info} structures.
         """
         # if we were not handed any node metadata
