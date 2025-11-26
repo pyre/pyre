@@ -6,11 +6,8 @@
 
 # support
 import pyre
-import journal
 
 # external
-import boto3
-import botocore.exceptions
 import time
 
 # superclass
@@ -40,8 +37,8 @@ class S3(Filesystem):
 
         # set the search delimiter
         delimiter = "/"
-        # make a paginator
-        paginator = self.s3.get_paginator("list_objects_v2")
+        # make an S3 client and ask it for a  paginator
+        paginator = self.session.client("s3").get_paginator("list_objects_v2")
         # prime the workload; we'll add subdirectories here as we discover them
         todo = [(root, 0)]
         # start walking the bucket contents
@@ -132,7 +129,7 @@ class S3(Filesystem):
         return self
 
     # metamethods
-    def __init__(self, s3, root, **kwds):
+    def __init__(self, session, root, **kwds):
         # for the {address} of {root} to be a path, until pyre.primitives.uri does...
         root = root.clone(address=pyre.primitives.path(root.address))
         # build my metadata
@@ -140,7 +137,7 @@ class S3(Filesystem):
         # and chain up
         super().__init__(metadata=metadata, **kwds)
         # save the s3 connection
-        self.s3 = s3
+        self.session = session
         # all done
         return
 

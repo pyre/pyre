@@ -103,15 +103,16 @@ def zip(root, **kwds):
     return Zip(metadata=info)
 
 
-def s3(s3, root, **kwds):
+def s3(session, root, **kwds):
     """
-    Build a filesystem over the contents of an S3 bucket
+    Build a filesystem over the contents of an S3 bucket given a {boto3} provided session and
+    an AWS compliant S3 uri as {root}
     """
     # get the factory
     from .S3 import S3
 
     # and mount the filesystem
-    return S3(s3=s3, root=root, **kwds)
+    return S3(session=session, root=root, **kwds)
 
 
 # nodes
