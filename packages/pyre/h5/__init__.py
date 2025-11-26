@@ -5,6 +5,7 @@
 
 
 # support
+import typing
 from .. import primitives
 
 # get the bindings
@@ -23,12 +24,20 @@ if libh5 is not None:
     writer = api.writer
 
     # convenience
-    def read(uri: primitives.uri, mode: str = "r", **kwds):
+    def read(
+        uri: primitives.uri,
+        mode: str = "r",
+        credentials=None,
+        fapl: typing.Optional[libh5.FAPL] = None,
+        **kwds,
+    ):
         """
         Read the data product at {uri}
         """
         # easy enough
-        return reader(uri=uri, mode=mode).read(**kwds)
+        return reader(uri=uri, mode=mode, credentials=credentials, fapl=fapl).read(
+            **kwds
+        )
 
     def write(uri: primitives.uri, mode: str = "w", **kwds):
         """

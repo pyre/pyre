@@ -58,7 +58,7 @@ class File(Group):
     def _pyre_local(
         self,
         uri: pyre.primitives.pathlike,
-        mode: str = "r",
+        mode: str,
         **kwds,
     ) -> "File":
         """
@@ -78,33 +78,26 @@ class File(Group):
     # attach to S3 buckets
     def _pyre_ros3(
         self,
-        bucket: str,
-        key: str,
-        region: str = "",
-        profile: str = "default",
-        fapl: typing.Optional[libh5.FAPL] = None,
+        uri,
+        credentials: dict,
+        fapl: typing.Optional[libh5.FAPL],
         **kwds,
     ) -> "File":
         """
         Access the remote dataset {key} in the given S3 {bucket} using the {ROS3} driver
         """
-        # get the user proxy so we can ask for AWS credentials
-        aws = pyre.executive.user.aws
-        # get the profile
-        config = aws.profile(name=profile)
-        # if we don't have an explicit region
-        if not region:
-            # check whether the profile has one
-            region = config.get("region", "")
-        # fold into the {s3} url
-        s3 = f"s3.{region}.amazonaws.com" if region else "s3.amazonaws.com"
-        # assemble the file uri
-        uri = f"https://{bucket}.{s3}/{key}"
-        # ask for the credentials
-        id = config.get("aws_access_key_id", "")
-        secret = config.get("aws_secret_access_key", "")
-        token = config.get("aws_session_token", "")
-        # decide whether we require authentication
+        # unpack the {credentials}
+        region = credentials["region"]
+        id = credentials["access_key"]
+        secret = credentials["secret_key"]
+        token = credentials["token"]
+        # get the bucket; it sits in the {authority} field, per AWS rules
+        bucket = uri.authority
+        # and the key, which is the {address} without the leading '/'
+        key = str(uri.address)
+        # form the {s3} uri
+        s3 = f"https://{bucket}.s3.{region}.amazonaws.com{key}"
+        # decide whether we are required to authenticate
         authenticate = id != "" and secret != ""
         # if the caller didn't supply a {fapl}
         if fapl is None:
@@ -119,7 +112,7 @@ class File(Group):
             authenticate=authenticate,
         )
         # and delegate to the opener
-        return self._pyre_open(uri=uri, mode="r", fapl=fapl, **kwds)
+        return self._pyre_open(uri=s3, mode="r", fapl=fapl, **kwds)
 
     # structural
     def _pyre_root(self) -> schema.group:

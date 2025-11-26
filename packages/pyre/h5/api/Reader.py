@@ -60,13 +60,16 @@ class Reader:
         self,
         uri: pyre.primitives.uri,
         mode: str = "r",
+        credentials: typing.Optional[dict] = None,
         fapl: typing.Optional[libh5.FAPL] = None,
         **kwds,
     ):
         # chain up
         super().__init__(**kwds)
         # build the file object
-        self._file = self._pyre_open(uri=uri, mode=mode, fapl=fapl)
+        self._file = self._pyre_open(
+            uri=uri, mode=mode, credentials=credentials, fapl=fapl
+        )
         # all done
         return
 
@@ -75,6 +78,7 @@ class Reader:
         self,
         uri: typing.Union[pyre.primitives.uri, str],
         mode: str = "r",
+        credentials: typing.Optional[dict] = None,
         fapl: typing.Optional[libh5.FAPL] = None,
         **kwds,
     ) -> typing.Optional[File]:
@@ -102,33 +106,19 @@ class Reader:
                 channel.log()
                 # and bail
                 return None
-            # the supported uris are of the form
-            #
-            #   s3://profile@region/bucket/key
-            #
-            # parse the authority field
-            region, _, profile, _ = uri.server
-            # parse the path to the file
-            _, bucket, *key = pyre.primitives.path(uri.address)
-            # make a channel
-            channel = journal.info("pyre.h5.file")
-            # show me
-            channel.line(f"opening '{uri}'")
-            channel.indent()
-            channel.line(f"profile: {profile}")
-            channel.line(f"region: {region}")
-            channel.line(f"bucket: {bucket}")
-            channel.line(f"key: {key}")
-            channel.outdent()
-            channel.log()
-            # open the remote file and return it
-            return File()._pyre_ros3(
-                fapl=fapl,
-                region=region if region is not None else "",
-                profile=profile,
-                bucket=bucket,
-                key="/".join(key),
-            )
+            # the only supported {mode} is 'r'
+            if mode != "r":
+                # make a channel
+                channel = journal.error("pyre.h5.reader")
+                # complain
+                channel.line(f"while opening '{uri}'")
+                channel.line(f"the 'ros3' driver only supports reading")
+                # flush
+                channel.log()
+                # and bail
+                return None
+            # if all is good, open the remote file and return it
+            return File()._pyre_ros3(uri=uri, credentials=credentials, fapl=fapl)
 
         # if we get this far, the {uri} was malformed; make a channel
         channel = journal.error("pyre.h5.reader")
