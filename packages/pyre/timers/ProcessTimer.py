@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@parasim.com>
 # (c) 1998-2025 all rights reserved
-#
 
 
 # externals
 import time
+
 # base class
 from .Timer import Timer
 
@@ -18,6 +17,8 @@ class ProcessTimer(Timer):
     Use a monotonic wall clock to provide timing info
     """
 
+    # my tag
+    type = "cpu"
 
     # interface
     def sec(self):
@@ -27,7 +28,6 @@ class ProcessTimer(Timer):
         # my clock uses seconds internally
         return self.read()
 
-
     def ms(self):
         """
         Convert the elapsed time into milliseconds
@@ -35,13 +35,11 @@ class ProcessTimer(Timer):
         # my clock uses seconds internally
         return 1000 * self.read()
 
-
     def us(self):
         """
         Convert the elapsed time into microseconds
         """
         return 1000 * 1000 * self.read()
-
 
     # implementation details
     def clock(self):
