@@ -32,6 +32,14 @@ pyre::py::timers::wall_timers(py::module & m)
             // the docstring
             "my name")
 
+        // the type; read-only property
+        .def_property_readonly(
+            "type",
+            // the implementation
+            &wall_timer_t::type,
+            // the docstring
+            "my movement type")
+
         // the registry; read-only static property
         .def_property_readonly_static(
             "registry",
