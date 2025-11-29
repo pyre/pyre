@@ -11,6 +11,12 @@
 
 // interface
 auto
+pyre::timers::ProcessClock::type() -> string_type
+{
+    return "cpu";
+}
+
+auto
 pyre::timers::ProcessClock::now() -> time_point_type
 {
     // if there is support for the cpu timer

@@ -39,6 +39,7 @@ public:
 
     // static interface
 public:
+    inline static auto type() -> typename clock_type::string_type;
     inline static auto registry() -> registry_reference;
 
     // implementation details: data members

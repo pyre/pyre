@@ -32,6 +32,14 @@ pyre::timers::Timer<clockT, proxyT>::name() const
 // static interface
 template <class clockT, template <class, class> class proxyT>
 auto
+pyre::timers::Timer<clockT, proxyT>::type() -> typename clock_type::string_type
+{
+    // ask my movement
+    return clock_type::type();
+}
+
+template <class clockT, template <class, class> class proxyT>
+auto
 pyre::timers::Timer<clockT, proxyT>::registry() -> registry_reference
 {
     // easy enough

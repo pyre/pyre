@@ -13,12 +13,14 @@
 class pyre::timers::WallClock {
     // types
 public:
+    using string_type = std::string;
     using clock_type = std::chrono::steady_clock;
     using duration_type = clock_type::duration;
     using time_point_type = clock_type::time_point;
 
     // interface
 public:
+    inline static auto type() -> string_type;
     inline static auto now() -> time_point_type;
 };
 

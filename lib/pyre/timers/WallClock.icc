@@ -11,6 +11,12 @@
 
 // interface
 auto
+pyre::timers::WallClock::type() -> string_type
+{
+    return "wall";
+}
+
+auto
 pyre::timers::WallClock::now() -> time_point_type
 {
     return clock_type::now();
