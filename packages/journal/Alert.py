@@ -14,7 +14,6 @@ class Alert(Renderer):
     The renderer of user-facing messages
     """
 
-
     # implementation details
     def header(self, palette, entry):
         """
@@ -40,25 +39,24 @@ class Alert(Renderer):
         severityColor = palette[severity]
 
         # tag using either the app name or the channel severity
-        tag  = application or severity
+        tag = application or severity
         # generate
         buffer = [
-            severityColor, tag, resetColor, ":"
-            ]
-        # if this is an one liner
-        if len(page) == 1:
-            # add the page contents to the buffer
-            buffer += [
-                " ",
-                page[0],
-            ]
+            severityColor,
+            tag,
+            resetColor,
+            " (",
+            severityColor,
+            channel,
+            resetColor,
+            "):",
+        ]
 
         # assemble and push
-        yield ''.join(buffer)
+        yield "".join(buffer)
 
         # all done
         return
-
 
     def body(self, palette, entry):
         """
@@ -68,7 +66,7 @@ class Alert(Renderer):
         page = entry.page
 
         # if there's nothing to do
-        if len(page) < 2:
+        if not page:
             # bail
             return
 
@@ -89,7 +87,6 @@ class Alert(Renderer):
 
         # all done
         return
-
 
     def footer(self, palette, entry):
         """
@@ -133,11 +130,11 @@ class Alert(Renderer):
                 # if the filename is too long
                 if len(filename) > maxlen:
                     # compute the leading part
-                    filenameLeader = filename[:maxlen//4-3]
+                    filenameLeader = filename[: maxlen // 4 - 3]
                     # the ellipsis
                     ellipsis = "..."
                     # and the trailing part of the filename
-                    filenameTrailer = filename[-3*maxlen//4:]
+                    filenameTrailer = filename[-3 * maxlen // 4 :]
                 # otherwise
                 else:
                     # the leading part is the whole thing
@@ -150,7 +147,9 @@ class Alert(Renderer):
                 # make a buffer
                 buffer = [
                     # a marker
-                    severityColor, self.footerMarker, resetColor,
+                    severityColor,
+                    self.footerMarker,
+                    resetColor,
                     # introduce the locator
                     "at ",
                     # the filename
@@ -158,32 +157,43 @@ class Alert(Renderer):
                     # the line number
                     f"{line}:" if line else "",
                     # the function name
-                    f"{function}" if function else ""
-                    ]
+                    f"{function}" if function else "",
+                ]
 
                 # assemble the line and make it available
-                yield ''.join(buffer)
+                yield "".join(buffer)
 
         # if the {chronicler} decoration level is sufficiently high
         if chronicler.decor > 2:
             # render the channel info
             buffer = [
-                severityColor, marker, resetColor,
+                severityColor,
+                marker,
+                resetColor,
                 "because the ",
-                severityColor, severity, resetColor,
+                severityColor,
+                severity,
+                resetColor,
                 " channel '",
-                severityColor, channel, resetColor,
-                "' is active"
-                ]
+                severityColor,
+                channel,
+                resetColor,
+                "' is active",
+            ]
             # assemble and push
-            yield ''.join(buffer)
+            yield "".join(buffer)
 
         # now, for the rest of the metadata
         if chronicler.decor > 1:
             # make a pile of the information we have displayed # already
             done = {
-                "severity", "channel", "application",
-                "filename", "line", "function", "source",
+                "severity",
+                "channel",
+                "application",
+                "filename",
+                "line",
+                "function",
+                "source",
             }
             # go through the metadata
             for key, value in notes.items():
@@ -193,17 +203,22 @@ class Alert(Renderer):
                     continue
                 # otherwise, render it
                 buffer = [
-                    palette[severity], marker, palette["reset"],
-                    palette[severity], key, palette["reset"],
+                    palette[severity],
+                    marker,
+                    palette["reset"],
+                    palette[severity],
+                    key,
+                    palette["reset"],
                     ": ",
-                    palette[severity], value, palette["reset"],
-                    ]
+                    palette[severity],
+                    value,
+                    palette["reset"],
+                ]
                 # assemble and push
-                yield ''.join(buffer)
+                yield "".join(buffer)
 
         # all done
         return
-
 
     # implementation details
     maxlen = 60
