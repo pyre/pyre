@@ -53,10 +53,16 @@ pyre::journal::Alert::header(
     auto cursor = notes.find("application");
     // if it's there, use it; otherwise use the {severity}
     auto tag = (cursor != notes.end()) ? cursor->second : severity;
-    // inject the tag, along with a space
-    buffer << severityColor << tag << resetColor << " ";
-    // followed by the channel name
-    buffer << '(' << severityColor << channel << resetColor << "):" << std::endl;
+    // inject
+    buffer
+        // the tag, along with a space
+        << severityColor << tag << resetColor
+        << " "
+        // followed by the channel name
+        << '(' << severityColor << channel << resetColor
+        << "):"
+        // and flush
+        << std::endl;
 
     // all done
     return;
