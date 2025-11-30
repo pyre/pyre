@@ -38,40 +38,25 @@ pyre::journal::Alert::header(
         return;
     }
 
-    // get the notes
+    // otherwise, get the notes
     auto & notes = entry.notes();
     // get the severity
     auto severity = notes.at("severity");
-    // the reset sequence
-    auto resetColor = palette["reset"];
+    // and the channel name
+    auto channel = notes.at("channel");
     // ask the palette for the severity decoration
     auto severityColor = palette[severity];
+    // and get the reset sequence
+    auto resetColor = palette["reset"];
 
-    // start out by setting the color
-    buffer << severityColor;
     // try to lookup the application name
-    auto loc = notes.find("application");
-    // if it's there
-    if (loc != notes.end()) {
-        // inject it
-        buffer << loc->second;
-    }
-    // if not
-    else {
-        // inject the channel severity
-        buffer << severity;
-    }
-    // either way, reset the color and add a separator
-    buffer << resetColor << ":";
-
-    // if the page is an one liner
-    if (page.size() == 1) {
-        // inject it
-        buffer << " " << page[0];
-    }
-
-    // flush
-    buffer << std::endl;
+    auto cursor = notes.find("application");
+    // if it's there, use it; otherwise use the {severity}
+    auto tag = (cursor != notes.end()) ? cursor->second : severity;
+    // inject the tag, along with a space
+    buffer << severityColor << tag << resetColor << " ";
+    // followed by the channel name
+    buffer << '(' << severityColor << channel << resetColor << "):" << std::endl;
 
     // all done
     return;
@@ -84,14 +69,14 @@ pyre::journal::Alert::body(
 {
     // get the page
     auto & page = entry.page();
-    // if the page is empty or an one liner
-    if (page.size() < 2) {
+    // if the page is empty
+    if (page.empty()) {
         // do nothing
         return;
     }
-    // get the notes
-    auto & notes = entry.notes();
 
+    // otherwise, get the notes
+    auto & notes = entry.notes();
     // get the severity
     auto severity = notes.at("severity");
     // the reset sequence
