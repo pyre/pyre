@@ -73,7 +73,7 @@ class URI:
         value,
         scheme: typing.Optional[str] = None,
         authority: typing.Optional[str] = None,
-        address: typing.Optional[str] = None,
+        address: typing.Optional[str | Path] = None,
     ):
         """
         Convert {value} into a {uri}
@@ -94,6 +94,10 @@ class URI:
                 value.address = address
             # all done
             return value
+        # if {value} is a path
+        if isinstance(value, Path):
+            # build a {file} uri and return it
+            return cls(scheme="file", address=value)
         # otherwise, assume it is a string and parse it
         match = cls._uriParser.match(value)
         # if unsuccessful
