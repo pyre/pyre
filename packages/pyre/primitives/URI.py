@@ -8,9 +8,9 @@
 import re
 import typing
 
-# my address (can be | is a) Path
+# my address (can be | is) a Path
 # currently, it's up to the user to use paths for the address field
-# it should really be the default, but uri's get used the {framework} in many places and
+# it should really be the default, but uris get used by the {framework} in many places and
 # it won't be easy to track them all down; p2?
 from .Path import Path
 
@@ -94,11 +94,13 @@ class URI:
                 value.address = address
             # all done
             return value
-        # parse it
+        # otherwise, assume it is a string and parse it
         match = cls._uriParser.match(value)
         # if unsuccessful
         if not match:
+            # set up the error message
             msg = "unrecognizable URI {0.value!r}"
+            # and complain
             raise cls.ParsingError(value=value, description=msg)
 
         # otherwise, extract the parts
@@ -107,7 +109,7 @@ class URI:
         theaddress = match.group("address")
         thequery = match.group("query")
         thefragment = match.group("fragment")
-        # build a URI object and return it
+        # build a uri and return it
         return cls(
             scheme=thescheme if thescheme is not None else scheme,
             authority=theauthority if theauthority is not None else authority,
@@ -125,7 +127,7 @@ class URI:
         fragment: typing.Optional[str] = None,
     ):
         """
-        Make a copy of me with the indicated replacements
+        Make a copy of me with the indicated adjustments
         """
         # that's what my constructor does...
         return type(self)(
