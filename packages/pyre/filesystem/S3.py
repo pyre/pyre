@@ -126,7 +126,7 @@ class S3(Filesystem):
                 # and from the folder
                 del folder.contents[name]
         # all done
-        return self
+        return root
 
     # metamethods
     def __init__(self, session, root, **kwds):
