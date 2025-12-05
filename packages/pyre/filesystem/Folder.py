@@ -123,6 +123,36 @@ class Folder(Node):
         # punt to the implementation in my filesystem
         return self.filesystem().discover(root=self, **kwds)
 
+    def resolve(self, path):
+        """
+        Traverse {path} discovering content one level at the time along the way
+        """
+        # normalize the {path}
+        path = primitives.path(path)
+        # now, starting with me
+        node = self
+        # go through the {path} levels
+        for name in path:
+            # discover one level deep
+            node.discover(levels=1)
+            # attempt to locate {name} in {node}
+            child = node.contents.get(name)
+            # if it doesn't exist
+            if child is None:
+                # bail; return the last valid node and a flag to the caller
+                return node, False
+            # if it exists but it's not a directory
+            if not child.isFolder:
+                # terminate the search with a success indicator; leave it up to the caller
+                # to check whether {path} was exhausted or we terminated early
+                return node, True
+            # otherwise, we have a folder; search it
+            node = child
+        # grab the {node} contents
+        node.discover(levels=1)
+        # all done
+        return node, True
+
     # making entire filesystems available through me
     def mount(self, uri, filesystem):
         """
