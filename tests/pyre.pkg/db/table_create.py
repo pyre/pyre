@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2025 all rights reserved
-#
 
 
 """
@@ -44,7 +42,7 @@ def test():
     server = pyre.db.server(name="test")
     # to build the SQL statement
     stmt = tuple(server.sql.createTable(table=TypeFest))
-    # print('\n'.join(stmt))
+    # print("\n".join(stmt))
     assert stmt == (
         "CREATE TABLE typefest",
         "  --",
@@ -60,7 +58,7 @@ def test():
         "  price DECIMAL(6, 2) DEFAULT 0, -- a decimal",
         "  pi DOUBLE PRECISION DEFAULT 0.0 -- a floating point number",
         ");",
-        )
+    )
 
     return TypeFest
 

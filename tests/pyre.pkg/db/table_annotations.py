@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2025 all rights reserved
-#
 
 
 """
@@ -17,10 +15,11 @@ def test():
     import pyre.db
 
     # declare the customer table
-    class Customer(pyre.db.table, id='customers'):
+    class Customer(pyre.db.table, id="customers"):
         """
         Simple customer table
         """
+
         cid = pyre.db.int(default=None)
         cid.doc = "the customer id"
         name = pyre.db.str().notNull()
@@ -36,10 +35,11 @@ def test():
     Customer.pyre_check(Customer.balance < 10000)
 
     # declare the order table
-    class Order(pyre.db.table, id='orders'):
+    class Order(pyre.db.table, id="orders"):
         """
         Trivial order table
         """
+
         oid = pyre.db.int().primary()
         cid = pyre.db.int(default=None)
 
@@ -51,7 +51,7 @@ def test():
 
     # generate the SQL statement that creates the customer table
     stmt = tuple(server.sql.createTable(table=Customer))
-    #print('\n'.join(stmt))
+    # print('\n'.join(stmt))
     assert stmt == (
         "CREATE TABLE customers",
         "  --",
@@ -68,8 +68,8 @@ def test():
         "  UNIQUE (name),",
         "  CHECK ((balance) >= (0)),",
         "  CHECK ((balance) < (10000))",
-        ");"
-        )
+        ");",
+    )
 
     # and the SQL statement that creates the order table
     stmt = tuple(server.sql.createTable(table=Order))
@@ -85,8 +85,8 @@ def test():
         "  cid INTEGER,",
         "",
         "  FOREIGN KEY (cid) REFERENCES customers (cid)",
-        ");"
-        )
+        ");",
+    )
 
     return
 
