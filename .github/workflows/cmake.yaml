@@ -19,30 +19,27 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-22.04]
+        os: [ubuntu-24.04]
         target: [Debug, Release, RelWithDebInfo]
-        python: ["3.7", "3.8", "3.9", "3.10", "3.11"]
+        python: ["3.12", "3.13", "3.14"]
         compiler: [
-          "gcc-11", "gcc-12", "gcc-13",
-          "clang-13", "clang-14"
+          "gcc-13", "gcc-14",
+          "clang-18", "clang-19"
         ]
         # define the names of the compilers
         include:
-          - compiler: gcc-11
-            cc: gcc-11
-            cxx: g++-11
-          - compiler: gcc-12
-            cc: gcc-12
-            cxx: g++-12
           - compiler: gcc-13
             cc: gcc-13
             cxx: g++-13
-          - compiler: clang-13
-            cc: clang-13
-            cxx: clang++-13
-          - compiler: clang-14
-            cc: clang-14
-            cxx: clang++-14
+          - compiler: gcc-14
+            cc: gcc-14
+            cxx: g++-14
+          - compiler: clang-18
+            cc: clang-18
+            cxx: clang++-18
+          - compiler: clang-19
+            cc: clang-19
+            cxx: clang++-19
 
     steps:
       - name: ${{matrix.os}} refresh
@@ -55,14 +52,6 @@ jobs:
           sudo apt dist-upgrade
           echo " -- install our dependencies"
           sudo apt install -y make cmake openssh-server libgsl-dev libopenmpi-dev libhdf5-dev
-
-      # https://github.com/actions/runner-images/issues/9866#issuecomment-2114583692
-      - name: install GCC 13
-        if: matrix.compiler == 'gcc-13'
-        run: |
-          sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
-          sudo apt-get update -y
-          sudo apt-get install gcc-13 g++-13
 
       - name: python ${{matrix.python}} setup
         uses: actions/setup-python@v5

@@ -21,10 +21,10 @@ jobs:
       matrix:
         os: [ubuntu-24.04]
         target: [debug, opt]
-        python: ["3.11", "3.12", "3.13", "3.14"]
+        python: ["3.12", "3.13", "3.14"]
         compiler: [
           "gcc-13", "gcc-14",
-          "clang-17"
+          "clang-18", "clang-19"
         ]
         # define the names of the compilers
         include:
@@ -38,11 +38,16 @@ jobs:
             suiteVersion: 14
             cc: gcc-14
             cxx: g++-14
-          - compiler: clang-17
+          - compiler: clang-18
             suite: clang
-            suiteVersion: 17
-            cc: clang-17
-            cxx: clang++-17
+            suiteVersion: 18
+            cc: clang-18
+            cxx: clang++-18
+          - compiler: clang-19
+            suite: clang
+            suiteVersion: 19
+            cc: clang-19
+            cxx: clang++-19
 
     steps:
       - name: ${{matrix.os}} refresh
