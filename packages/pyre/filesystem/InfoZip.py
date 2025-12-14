@@ -7,7 +7,7 @@
 # declaration
 class InfoZip:
     """
-    Mixin that knows how to pull information from {stat} structures
+    Mixin with file metadata from {zip} archives
     """
 
     # meta methods
