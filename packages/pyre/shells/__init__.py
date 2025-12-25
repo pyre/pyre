@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2025 all rights reserved
-#
 
 
 """
@@ -39,6 +37,7 @@ from .. import foundry
 # command support
 from .Action import Action as action
 
+
 # command implementations
 @foundry(implements=action)
 def command():
@@ -47,8 +46,10 @@ def command():
     """
     # grab the component class record
     from .Command import Command as command
+
     # and return it
     return command
+
 
 @foundry(implements=action)
 def panel():
@@ -57,12 +58,14 @@ def panel():
     """
     # grab the component class record
     from .Panel import Panel as panel
+
     # and return it
     return panel
 
 
 # application hosting support
 from .Shell import Shell as shell
+
 
 # the hosting strategies
 @foundry(implements=shell)
@@ -72,8 +75,10 @@ def script():
     """
     # grab the component class record
     from .Script import Script as script
+
     # and return it
     return script
+
 
 @foundry(implements=shell)
 def interactive():
@@ -83,8 +88,10 @@ def interactive():
     """
     # grab the component class record
     from .Interactive import Interactive as interactive
+
     # and return it
     return interactive
+
 
 @foundry(implements=shell)
 def ipython():
@@ -94,8 +101,10 @@ def ipython():
     """
     # grab the component class record
     from .IPython import IPython as ipython
+
     # and return it
     return ipython
+
 
 @foundry(implements=shell)
 def fork():
@@ -104,8 +113,10 @@ def fork():
     """
     # grab the component class record
     from .Fork import Fork as fork
+
     # and return it
     return fork
+
 
 @foundry(implements=shell)
 def daemon():
@@ -115,8 +126,10 @@ def daemon():
     """
     # grab the component class record
     from .Daemon import Daemon as daemon
+
     # and return it
     return daemon
+
 
 @foundry(implements=shell)
 def web():
@@ -125,6 +138,7 @@ def web():
     """
     # grab the component class record
     from .Web import Web as web
+
     # and return it
     return web
 
@@ -132,15 +146,18 @@ def web():
 # terminal support
 from .Terminal import Terminal as terminal
 
+
 @foundry(implements=terminal)
 def ansi():
     """
-    A terminal that supports color control using ANSI escpae sequences
+    A terminal that supports color control using ANSI escape sequences
     """
     # grab the component class record
     from .ANSI import ANSI as ansi
+
     # and return it
     return ansi
+
 
 @foundry(implements=terminal)
 def plain():
@@ -149,6 +166,7 @@ def plain():
     """
     # grab the component class record
     from .Plain import Plain as plain
+
     # and return it
     return plain
 
@@ -156,11 +174,22 @@ def plain():
 # the base application components
 from .Application import Application as application
 from .Plexus import Plexus as plexus
+
 # and its support
 from .Layout import Layout as layout
 
 # the user component
 from .User import User as user
+
+
+# progress bar
+@foundry(implements=terminal)
+def progress(**kwds):
+    # get the progress bar factory
+    from .ProgressBar import ProgressBar
+
+    # make a bar and return it
+    return ProgressBar(**kwds)
 
 
 # end of file
