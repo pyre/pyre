@@ -6,9 +6,11 @@
 
 # support
 import pyre
+import journal
 
 # external
 import time
+from botocore.exceptions import BotoCoreError, ClientError
 
 # superclass
 from .Filesystem import Filesystem
@@ -74,57 +76,54 @@ class S3(Filesystem):
                 # and truncate key names to the next occurrence of the {delimiter}
                 "Delimiter": delimiter,
             }
-            for page in paginator.paginate(**opts):
-                # make a timestamp
-                timestamp = time.gmtime()
-                # get the items that are stored at this prefix
-                items = [entry["Key"] for entry in page.get("Contents", [])]
-                # and extract the prefixes to the rest of the bucket contents, given our delimiter
-                # these will become folders in the s3 filesystem
-                prefixes = [entry["Prefix"] for entry in page.get("CommonPrefixes", [])]
-                # go through the items
-                for entry in items:
-                    # build nodes for them
-                    node = folder.node()
-                    # assemble their uri by cloning {here} and adjusting the {address}
-                    uri = here.clone(address=pyre.primitives.path.root / entry)
-                    # form the name of the file
-                    name = uri.address.name
-                    # connect the pair to the folder we are visiting
-                    folder[name] = node
-                    # get the metadata of the new {node}
-                    meta = self.info(node)
-                    # so we can mark the time of last sync
-                    meta.sync = timestamp
-                    # and remove this node from the {dead} pile, if it's there
-                    dead.discard(name)
-                # go through the prefixes
-                for entry in prefixes:
-                    # these will be folders
-                    node = folder.folder()
-                    # assemble their uri
-                    uri = here.clone(address=pyre.primitives.path.root / entry)
-                    # form the name by which they are known to their container
-                    name = uri.address.name
-                    # and connect them to the folder we are visiting
-                    folder[name] = node
-                    # get the metadata of the new {node}
-                    meta = self.info(node)
-                    # so we can mark the time of last sync
-                    meta.sync = timestamp
-                    # also, add them to the to-do pile along with a level marker so we can
-                    # visit them to get their contents
-                    todo.append((node, level + 1))
-                    # finally, remove them from the {dead} pile
-                    dead.discard(name)
-            # now, go through the nodes that are still in the dead pile
-            for name in dead:
-                # ask {folder} for the node that corresponds to the name
-                node = folder[name]
-                # remove the node from my {vnode} table
-                del self.vnodes[node]
-                # and from the folder
-                del folder.contents[name]
+            # carefully, attempt to
+            try:
+                # go through the pages
+                for page in paginator.paginate(**opts):
+                    # process the page contents
+                    self._processPage(
+                        folder=folder,
+                        here=here,
+                        level=level,
+                        dead=dead,
+                        page=page,
+                        todo=todo,
+                    )
+            # if there is some basic error
+            except BotoCoreError as error:
+                # get the error message
+                message = error.fmt
+                # make a channel
+                warning = journal.warning("pyre.filesystem.s3")
+                # complain
+                warning.line(f"unable to get the contents of '{here}'")
+                warning.line(f"got: '{message}'")
+                # flush
+                warning.log("please correct the error and try again")
+            # if there is a problem with the connection
+            except ClientError as error:
+                # get the error response
+                response = error.response
+                # unpack
+                code = response["Error"]["Code"]
+                message = response["Error"]["Message"]
+                # make a channel
+                warning = journal.warning("pyre.filesystem.s3")
+                # complain
+                warning.line(f"unable to get the contents of '{here}'")
+                warning.line(f"got: '{code}: {message}'")
+                # flush
+                warning.log("please correct the error and try again")
+            # if all goes well
+            else:
+                # now, go through the nodes that are still in the dead pile
+                for name in dead:
+                    # ask {folder} for the node that corresponds to the name
+                    node = folder[name]
+                    # remove the node from my {vnode} table
+                    del self.vnodes[node]
+                    # and from the folder
+                    del folder.contents[name]
         # all done
         return root
 
@@ -138,6 +137,58 @@ class S3(Filesystem):
         super().__init__(metadata=metadata, **kwds)
         # save the s3 connection
         self.session = session
+        # all done
+        return
+
+    # implementation details
+    def _processPage(self, folder, here, level, dead, page, todo):
+        """
+        Process one page of bucket contents
+        """
+        # make a timestamp
+        timestamp = time.gmtime()
+        # get the items that are stored at this prefix
+        items = [entry["Key"] for entry in page.get("Contents", [])]
+        # go through the items
+        for entry in items:
+            # build nodes for them
+            node = folder.node()
+            # assemble their uri by cloning {here} and adjusting the {address}
+            uri = here.clone(address=pyre.primitives.path.root / entry)
+            # form the name of the file
+            name = uri.address.name
+            # connect the pair to the folder we are visiting
+            folder[name] = node
+            # get the metadata of the new {node}
+            meta = self.info(node)
+            # so we can mark the time of last sync
+            meta.sync = timestamp
+            # and remove this node from the {dead} pile, if it's there
+            dead.discard(name)
+
+        # now, extract the prefixes to the rest of the bucket contents, given our delimiter
+        # these will become folders in the s3 filesystem
+        prefixes = [entry["Prefix"] for entry in page.get("CommonPrefixes", [])]
+        # go through the prefixes
+        for entry in prefixes:
+            # these will be folders
+            node = folder.folder()
+            # assemble their uri
+            uri = here.clone(address=pyre.primitives.path.root / entry)
+            # form the name by which they are known to their container
+            name = uri.address.name
+            # and connect them to the folder we are visiting
+            folder[name] = node
+            # get the metadata of the new {node}
+            meta = self.info(node)
+            # so we can mark the time of last sync
+            meta.sync = timestamp
+            # also, add them to the to-do pile along with a level marker so we can
+            # visit them to get their contents
+            todo.append((node, level + 1))
+            # finally, remove them from the {dead} pile
+            dead.discard(name)
+
         # all done
         return
 
