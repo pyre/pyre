@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2025 all rights reserved
-#
 
 
 """
@@ -16,40 +14,71 @@ def test():
     import pyre
 
     # declare a component
-    class base(pyre.component):
-        """the base component"""
-        positive = pyre.properties.int(default=0)
-        positive.validators = (pyre.constraints.isGreaterEqual(value=0), )
+    class base(
+        pyre.component, family="tests.components.validation", implements=pyre.protocol
+    ):
+        """
+        The base component
+        """
 
-        interval = pyre.properties.int(default=0)
-        interval.validators = (
-            pyre.constraints.isGreaterEqual(value=-1), pyre.constraints.isLess(value=1))
+        # traits
+        # a positive value
+        positive = pyre.properties.float(default=0)
 
-    return
+        # a value less than 1
+        interval = pyre.properties.float(default=0)
+        interval.validators = [pyre.constraints.isLess(value=1)]
+
+        # attach a validator to multiple traits
+        @staticmethod
+        @pyre.descriptors.validator(traits=[positive, interval])
+        def isPositive(value, **kwds):
+            # build the constraint
+            constraint = pyre.constraints.isPositive()
+            # and enforce it
+            return constraint.validate(value=value, **kwds)
 
     # instantiate
     b = base(name="b")
-    # attempt to
-    try:
-        # make an assignment that violates the constraint
-        b.positive = -1
-        # should be unreachable
-        assert False
-    # if it were detected correctly
-    except b.ConstraintViolationError:
-        # verify the state didn't change
-        assert b.positive == 0
 
+    # make an assignment that violates the constraint
+    b.positive = -1
     # attempt to
     try:
-        # make another assignment that violates the constraint
-        b.interval = 1
-        # should be unreachable
+        # read the value
+        b.positive
+        # this should be unreachable
         assert False
-    # if it were detected correctly
+    # if the violation were detected correctly
     except b.ConstraintViolationError:
-        # verify the state didn't change
-        assert b.positive == 0
+        # move on
+        pass
+
+    # make another assignment that violates the constraint
+    b.interval = -0.5
+    # attempt to
+    try:
+        # read the value
+        b.interval
+        # this should be unreachable
+        assert False
+    # if the violation were detected correctly
+    except b.ConstraintViolationError:
+        # move on
+        pass
+
+    # make another assignment that violates the constraint
+    b.interval = 1
+    # attempt to
+    try:
+        # read the value
+        b.interval
+        # this should be unreachable
+        assert False
+    # if the violation were detected correctly
+    except b.ConstraintViolationError:
+        # move on
+        pass
 
     return
 
