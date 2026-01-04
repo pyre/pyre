@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2025 all rights reserved
-#
 
 
 """
@@ -16,8 +14,10 @@ def test():
     # externals
     import re
     import decimal
+
     # get the descriptor package
     from pyre import descriptors
+
     # get the base metaclass
     from pyre.patterns.AttributeClassifier import AttributeClassifier
 
@@ -42,22 +42,21 @@ def test():
 
     # a new descriptor
     class money(descriptors.decimal):
-        filter = re.compile('[^\d+.-]')
+        filter = re.compile(r"[^\d+.-]")
 
     # the client
     class client(metaclass=harvester):
         # some descriptors
-        sku = descriptors.int(default='4503')
+        sku = descriptors.int(default="4503")
         cost = money(default="$1,302.34")
 
         # register a preprocessor
         @descriptors.converter(traits=[cost])
         def strip(value, **kwds):
-            return ''.join(money.filter.split(value))
-
+            return "".join(money.filter.split(value))
 
     # verify that the descriptors were harvested correctly
-    assert [entry.name for entry in client.pile] == ['sku', 'cost']
+    assert [entry.name for entry in client.pile] == ["sku", "cost"]
 
     # get the defaults
     sku = client.sku.process(client.sku.default)
@@ -65,7 +64,7 @@ def test():
 
     # check the default value
     assert sku == 4503
-    assert cost == decimal.Decimal('1302.34')
+    assert cost == decimal.Decimal("1302.34")
 
     # all done
     return client
