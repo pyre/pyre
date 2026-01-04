@@ -2,7 +2,7 @@
 //
 // michael a.g. aïvázis @ orthologue
 // Lijun Zhu @ Caltech
-// (c) 1998-2025 all rights reserved
+// (c) 1998-2026 all rights reserved
 //
 
 

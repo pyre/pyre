@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
-// (c) 1998-2025 all rights reserved
+// (c) 1998-2026 all rights reserved
 
 // Representation of a logical d-dimensional parallelepiped
 // A brick is a container of 2^d nodes whose actual type is a template parameter

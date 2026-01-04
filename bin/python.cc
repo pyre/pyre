@@ -3,7 +3,7 @@
 //
 // michael a.g. aïvázis
 // orthologue
-// (c) 1998-2025 all rights reserved
+// (c) 1998-2026 all rights reserved
 //
 
 // this a slightly augmented python interpreter

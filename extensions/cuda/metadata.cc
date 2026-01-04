@@ -2,7 +2,7 @@
 //
 // michael a.g. aïvázis
 // orthologue
-// (c) 1998-2025 all rights reserved
+// (c) 1998-2026 all rights reserved
 //
 
 #include <portinfo>
@@ -17,7 +17,7 @@
 PyObject *
 pyre::extensions::cuda::copyright(PyObject *, PyObject *)
 {
-    const char * const copyright_note = "cuda: (c) 1998-2025 orthologue";
+    const char * const copyright_note = "cuda: (c) 1998-2026 orthologue";
     return Py_BuildValue("s", copyright_note);
 }
 
@@ -39,7 +39,7 @@ pyre::extensions::cuda::license(PyObject *, PyObject *)
         "\n"
         "    cuda " CUDA_VERSION
         "\n"
-        "    Copyright (c) 1998-2025 orthologue\n"
+        "    Copyright (c) 1998-2026 orthologue\n"
         "    All Rights Reserved\n"
         "\n"
         "    Redistribution and use in source and binary forms, with or without\n"

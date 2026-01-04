@@ -1,7 +1,7 @@
 # -*- Makefile -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
-# (c) 1998-2025 all rights reserved
+# (c) 1998-2026 all rights reserved
 
 
 # administrivia
@@ -9,7 +9,7 @@ mm.banner:
 	@$(log)
 	@$(log) $(palette.banner)"    mm $(mm.version)"$(palette.normal)
 	@$(log) "    Michael Aïvázis <michael.aivazis@para-sim.com>"
-	@$(log) "    copyright 1998-2025 all rights reserved"
+	@$(log) "    copyright 1998-2026 all rights reserved"
 	@$(log)
 
 help mm.usage: | mm.banner

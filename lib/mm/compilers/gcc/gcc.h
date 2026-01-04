@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
-// (c) 1998-2025 all rights reserved
+// (c) 1998-2026 all rights reserved
 
 #if !defined(mm_compilers_gcc)
 #define mm_compilers_gcc

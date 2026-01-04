@@ -2,7 +2,7 @@
 //
 // michael a.g. aïvázis
 // orthologue
-// (c) 1998-2025 all rights reserved
+// (c) 1998-2026 all rights reserved
 //
 
 #include <portinfo>
@@ -19,7 +19,7 @@ const char * const pyre::extensions::postgres::copyright__doc__ = "the module co
 PyObject *
 pyre::extensions::postgres::copyright(PyObject *, PyObject *)
 {
-    const char * const copyright_note = "postgres: (c) 1998-2025 Michael A.G. Aïvázis";
+    const char * const copyright_note = "postgres: (c) 1998-2026 Michael A.G. Aïvázis";
     return Py_BuildValue("s", copyright_note);
 }
 

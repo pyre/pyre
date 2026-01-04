@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
-# (c) 1998-2025 all rights reserved
+# (c) 1998-2026 all rights reserved
 
 
 # N.B.: function foundries don't work here, unless they are named something other than the names
