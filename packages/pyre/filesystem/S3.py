@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
-# (c) 1998-2025 all rights reserved
+# (c) 1998-2026 all rights reserved
 
 
 # support
@@ -57,9 +57,9 @@ class S3(Filesystem):
             here = self.info(node=folder).uri
             # extract its prefix; aws needs a string with no leading '/"
             prefix = delimiter.join(here.address[1:])
-            # if it's not empty
-            if prefix:
-                # terminate it
+            # if it's not properly terminated
+            if not prefix.endswith(delimiter):
+                # force it
                 prefix += delimiter
 
             # while the paginator is able to retrieve more content, ask for it; set the {delimiter}
@@ -76,54 +76,25 @@ class S3(Filesystem):
                 # and truncate key names to the next occurrence of the {delimiter}
                 "Delimiter": delimiter,
             }
-            # carefully, attempt to
-            try:
-                # go through the pages
-                for page in paginator.paginate(**opts):
-                    # process the page contents
-                    self._processPage(
-                        folder=folder,
-                        here=here,
-                        level=level,
-                        dead=dead,
-                        page=page,
-                        todo=todo,
-                    )
-            # if there is some basic error
-            except BotoCoreError as error:
-                # get the error message
-                message = error.fmt
-                # make a channel
-                warning = journal.warning("pyre.filesystem.s3")
-                # complain
-                warning.line(f"unable to get the contents of '{here}'")
-                warning.line(f"got: '{message}'")
-                # flush
-                warning.log("please correct the error and try again")
-            # if there is a problem with the connection
-            except ClientError as error:
-                # get the error response
-                response = error.response
-                # unpack
-                code = response["Error"]["Code"]
-                message = response["Error"]["Message"]
-                # make a channel
-                warning = journal.warning("pyre.filesystem.s3")
-                # complain
-                warning.line(f"unable to get the contents of '{here}'")
-                warning.line(f"got: '{code}: {message}'")
-                # flush
-                warning.log("please correct the error and try again")
-            # if all goes well
-            else:
-                # now, go through the nodes that are still in the dead pile
-                for name in dead:
-                    # ask {folder} for the node that corresponds to the name
-                    node = folder[name]
-                    # remove the node from my {vnode} table
-                    del self.vnodes[node]
-                    # and from the folder
-                    del folder.contents[name]
+            # go through the pages
+            for page in paginator.paginate(**opts):
+                # process the page contents
+                self._processPage(
+                    folder=folder,
+                    here=here,
+                    level=level,
+                    dead=dead,
+                    page=page,
+                    todo=todo,
+                )
+            # now, go through the nodes that are still in the dead pile
+            for name in dead:
+                # ask {folder} for the node that corresponds to the name
+                node = folder[name]
+                # remove the node from my {vnode} table
+                del self.vnodes[node]
+                # and from the folder
+                del folder.contents[name]
         # all done
         return root
 
@@ -153,10 +124,10 @@ class S3(Filesystem):
         for entry in items:
             # build nodes for them
             node = folder.node()
-            # assemble their uri by cloning {here} and adjusting the {address}
-            uri = here.clone(address=pyre.primitives.path.root / entry)
-            # form the name of the file
-            name = uri.address.name
+            # assemble the path to the entry
+            loc = pyre.primitives.path.root / entry
+            # form the name by which they are known to their container
+            name = loc.name
             # connect the pair to the folder we are visiting
             folder[name] = node
             # get the metadata of the new {node}
@@ -173,10 +144,10 @@ class S3(Filesystem):
         for entry in prefixes:
             # these will be folders
             node = folder.folder()
-            # assemble their uri
-            uri = here.clone(address=pyre.primitives.path.root / entry)
+            # assemble the path to the entry
+            loc = pyre.primitives.path.root / entry
             # form the name by which they are known to their container
-            name = uri.address.name
+            name = loc.name
             # and connect them to the folder we are visiting
             folder[name] = node
             # get the metadata of the new {node}
