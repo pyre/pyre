@@ -20,6 +20,7 @@ def _unaryDispatch(f):
     """
     Wrapper for functions that require the string representation of path objects
     """
+
     # declare and wrap my helper
     @functools.wraps(f)
     def dispatch(self, *args, **kwds):
@@ -654,6 +655,10 @@ class Path(tuple):
         """
         Workhorse for path resolution
         """
+        # normalized {resolved}
+        if resolved is None:
+            # by turning trivial values into an empty dictionary
+            resolved = {}
         # what's left to resolve
         workload = self.parts
         # if i am an absolute path
