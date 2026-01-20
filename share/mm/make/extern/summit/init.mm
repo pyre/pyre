@@ -13,7 +13,7 @@ summit.config := ${dir ${call extern.config,summit}}
 # compiler flags
 summit.flags ?=
 # enable {summit} aware code
-summit.defines ?=
+summit.defines += WITH_SUMMIT
 # the canonical form of the include directory
 summit.incpath ?= $(summit.dir)/include
 

@@ -12,6 +12,7 @@ user.info:
 	@${call log.var,home,$(user.home)}
 	@${call log.var,name,$(user.name)}
 	@${call log.var,email,$(user.email)}
+	@${call log.var,environment,$(user.environment)}
 
 
 # end of file

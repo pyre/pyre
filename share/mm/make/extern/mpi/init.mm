@@ -36,7 +36,13 @@ mpi.libpath ?= $(mpi.dir)/lib
 mpi.rpath = $(mpi.libpath)
 # the names of the libraries are flavor dependent
 mpi.libraries := \
-    ${if ${findstring openmpi,$(mpi.flavor)},mpi_cxx mpi $(mpi.required),}
+    ${if ${findstring openmpi,$(mpi.flavor)},\
+       ${if \
+         ${filter 1 2 3 4,${firstword ${subst ., ,$(mpi.version)}}},\
+         mpi_cxx mpi, \
+         mpi \
+       } \
+    }
 
 
 # end of file

@@ -30,6 +30,12 @@ palette.amber := ${call csi24,38,255,191,0}
 palette.lavender := ${call csi24,38,192,176,224}
 palette.sage := ${call csi24,38,176,208,176}
 palette.steel-blue := ${call csi24,38,70,130,180}
+palette.olive-drab := ${call csi24,38,107,142,35}
+
+# colors from the pyre logo
+palette.pyre.green := ${call csi24,38,142,195,73}
+palette.pyre.blue := ${call csi24,38,44,173,224}
+palette.pyre.orange := ${call csi24,38,245,145,46}
 
 
 # end of file

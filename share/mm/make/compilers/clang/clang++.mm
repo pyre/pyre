@@ -35,7 +35,7 @@ clang++.compile.isysroot := -isysroot
 
 # symbols and optimization
 clang++.debug := -g
-clang++.reldeb := -g -O
+clang++.reldeb := -Og -fno-omit-frame-pointer
 clang++.opt := -O3
 clang++.cov := --coverage
 clang++.prof := -pg

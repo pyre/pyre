@@ -17,6 +17,18 @@ builder.info: mm.banner
 	@${call log.var,"     share",$(builder.dest.share)}
 	@${call log.var,"       pyc",$(builder.dest.pyc)}
 
+builder.info.help: mm.banner
+	@${call log.sec,"rules for extracting the build layout",}
+	@${call log.help,"   tmp",builder.info.tmp}
+	@${call log.help,"prefix",builder.info.prefix}
+	@${call log.help,"   bin",builder.info.bin}
+	@${call log.help,"   inc",builder.info.inc}
+	@${call log.help,"   lib",builder.info.lib}
+	@${call log.help,"   pyc",builder.info.pyc}
+	@${call log.help,"   doc",builder.info.doc}
+	@${call log.help," share",builder.info.share}
+
+
 # targets that just print the value of the corresponding configuration setting
 # useful at shell level
 builder.info.tmp:

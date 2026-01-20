@@ -10,6 +10,8 @@ user.home ?=
 user.uid ?=
 user.name ?=
 user.email ?=
+# the user's environment; typically the name of a conda or python virtual environment
+user.environment ?=
 
 # contribution to the config path
 user.config ?=

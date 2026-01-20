@@ -8,6 +8,9 @@
 palette.banner := $(palette.amber)
 
 # help
+# meta
+palette.meta.name := $(palette.olive-drab)
+palette.meta.value := $(palette.normal)
 # sections
 palette.section.name := $(palette.amber)
 # documentation
@@ -15,9 +18,6 @@ palette.topic := $(palette.lavender)
 # variables
 palette.variable.name := $(palette.sage)
 palette.variable.value := $(palette.normal)
-# locations
-palette.location.name := $(palette.sage)
-palette.location.value := $(palette.normal)
 
 # list of known targets
 palette.targets := $(palette.steel-blue)

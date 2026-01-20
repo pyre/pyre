@@ -12,7 +12,7 @@ platform.compilers = clang gcc/gfortran python cython
 platform.clean = $(1).dSYM
 
 # the location of the system headers
-platform.isysroot := /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk
+platform.isysroot := /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk
 
 # c
 platform.c.flags = -arch arm64 $($(compiler.c).compile.isysroot) $(platform.isysroot)

@@ -73,7 +73,15 @@ ${foreach project,$(projects), ${eval ${call project.boot.workflows,$(project)}}
 .DEFAULT_GOAL := ${if $(projects),projects,help}
 
 # target that builds all known projects
-projects: $(projects)
+projects: projects.boot $(projects) projects.shutdown
+
+projects.boot:
+	@${call log.meta,"start",${shell $(date.stamp)}}
+	@${call log.meta,"pfx",$(builder.dest.prefix)}
+	@${call log.meta,"tmp",$(builder.staging)}
+
+projects.shutdown: $(projects)
+	@${call log.meta,"finish",${shell $(date.stamp)}}
 
 # target that runs all known tests
 tests: projects ${if ${value testsuites},$(testsuites)}

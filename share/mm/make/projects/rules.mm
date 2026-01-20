@@ -24,7 +24,6 @@ endef
 define project.main =
 # the main recipe
 $(1): projects.boot $(1).directories $(1).assets
-	@${call log.asset,"project",$(1) -- ${shell $(date.stamp)}}
 
 # the required directories
 $(1).directories: $($(1).prefix) $($(1).tmpdir)
@@ -56,10 +55,6 @@ $(project.prefix) :
 
 
 # informational targets
-projects.boot:
-	@${call log.location,"pfx",$(builder.dest.prefix)}
-	@${call log.location,"tmp",$(builder.staging)}
-
 # project help banner: list the known projects and tell the user what the next steps are
 projects.info: mm.banner
 	@$(log) "known projects: "$(palette.targets)$(projects)$(palette.normal)

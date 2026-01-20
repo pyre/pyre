@@ -30,7 +30,7 @@ clang.compile.isysroot := -isysroot
 # symbols and optimization
 clang.debug := -g
 clang.opt := -O3
-clang.reldeb := -g -O
+clang.reldeb := -Og -fno-omit-frame-pointer
 clang.cov := --coverage
 clang.prof := -pg
 clang.shared := -fPIC

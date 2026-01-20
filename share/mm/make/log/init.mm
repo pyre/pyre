@@ -71,10 +71,10 @@ log.action.attn = \
     $(palette.attn)"  [$(1)]"$(palette.normal) \
     $(2)
 
-log.location = \
+log.meta = \
     $(log) \
-    $(palette.location.name)"  [$(1)]"$(palette.normal) \
-    $(palette.location.value)$(2)$(palette.normal)
+    $(palette.meta.name)"  [$(1)]"$(palette.normal) \
+    $(palette.meta.value)$(2)$(palette.normal)
 
 # terminals that support the ansi color commands
 terminals.ansi = ansi vt100 vt102 xterm xterm-color xterm-256color

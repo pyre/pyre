@@ -5,12 +5,14 @@
 
 
 # user configuration
-# look for a generic configuration file
--include config.mm
-# developer choices
--include $(user.username).mm
-# and a user/host specific configuration file
--include $(user.username)@$(host.nickname).mm
+config.db := config
+# if we know the username, look for user specific settings
+config.db += ${if $(user.username),$(user.username) $(user.username)@$(host.nickname)}
+# if the user has specified an environment
+config.db += ${if $(user.environment),$(user.environment) $(user.environment)@$(host.nickname)}
+
+# load the configuration file
+-include ${addsuffix .mm, $(config.db)}
 
 # this list used to include the various project content types; these are now initialized
 # dynamically whenever a project that declares assets of that type is encountered; also,
@@ -33,6 +35,11 @@ categories := init rules model
             make/$(class)/$(category).mm \
     } \
 }
+
+# make a target that shows the configuration filename seeds
+config.info:
+	@${call log.sec,"config","mm configuration files"}
+	@${call log.var,"seeds",$(config.db)}
 
 
 # end of file
