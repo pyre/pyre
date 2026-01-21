@@ -1,0 +1,58 @@
+# -*- coding: utf-8 -*-
+#
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2026 all rights reserved
+
+name: pypi-source-manual
+
+# force a pypi upload of the source code of a certain release
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: "the version tag to bundle"
+        required: true
+        default: "main"
+
+jobs:
+  build:
+    name: build source distribution
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.ref }}
+
+      - name: set up python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: build the artifact
+        run: pipx run build --sdist
+
+      - name: archive
+        uses: actions/upload-artifact@v6
+        with:
+          name: pyre-source
+          path: dist/
+
+  upload:
+    name: upload source to pypi
+    needs: [build]
+    runs-on: ubuntu-latest
+    environment: pypi
+    permissions:
+      id-token: write
+    steps:
+      - name: unpack
+        uses: actions/download-artifact@v4.1.7
+        with:
+          # unpacks default artifact into dist/
+          # if `name: artifact` is omitted, the action will create extra parent dir
+          name: pyre-source
+          path: dist
+
+      - name: upload
+        uses: pypa/gh-action-pypi-publish@release/v1
