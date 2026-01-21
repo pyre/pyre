@@ -15,6 +15,8 @@ class pyre::timers::Timer : public proxyT<Timer<clockT, proxyT>, clockT> {
 public:
     // my clock type
     using clock_type = clockT;
+    // let it define the proper string
+    using string_type = typename clock_type::string_type;
     // access to my shared state
     using proxy_type = proxyT<Timer<clockT, proxyT>, clockT>;
     // and its parts
