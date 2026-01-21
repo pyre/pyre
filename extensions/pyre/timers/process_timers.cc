@@ -43,15 +43,19 @@ pyre::py::timers::process_timers(py::module & m)
             // the docstring
             "my movement type")
 
+#if defined(NYI_TIMER_REGISTRY_BINDINGS)
         // the registry; read-only static property
         .def_property_readonly_static(
             "registry",
             // the implementation
             [](py::object) -> timer_t::registry_reference {
+                // grab the registry and return it
                 return timer_t::registry();
             },
             // the docstring
             "the timer registry")
+#endif
+
         // interface
         // start
         .def(
