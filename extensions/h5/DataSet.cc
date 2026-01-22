@@ -14,9 +14,9 @@ namespace pyre::h5::py {
 
     // bindings for reading dataset contents into {pyre::memory} buffers
     template <class memT>
-    auto bindReadBuffer(py::class_<DataSet> & cls) -> void
+    inline auto bindReadBuffer(py::class_<DataSet> & cls) -> void
     {
-        // add a {write} overload for the given grid type
+        // add a {read} overload for a memory buffer
         cls.def(
             // the name
             "read",
@@ -30,9 +30,9 @@ namespace pyre::h5::py {
 
     // bindings for writing out the contents of {pyre::memory} buffers
     template <class memT>
-    auto bindWriteBuffer(py::class_<DataSet> & cls) -> void
+    inline auto bindWriteBuffer(py::class_<DataSet> & cls) -> void
     {
-        // add a {write} overload for the given grid type
+        // add a {write} overload for a memory buffer
         cls.def(
             // the name
             "write",
@@ -46,9 +46,9 @@ namespace pyre::h5::py {
 
     // bindings for reading dataset contents into {pyre::grid} buffers
     template <class gridT>
-    auto bindReadGrid(py::class_<DataSet> & cls) -> void
+    inline auto bindReadGrid(py::class_<DataSet> & cls) -> void
     {
-        // add a {write} overload for the given grid type
+        // add a {read} overload for a compatible grid
         cls.def(
             // the name
             "read",
@@ -62,9 +62,9 @@ namespace pyre::h5::py {
 
     // bindings for writing out the contents of grids
     template <class gridT>
-    auto bindWriteGrid(py::class_<DataSet> & cls) -> void
+    inline auto bindWriteGrid(py::class_<DataSet> & cls) -> void
     {
-        // add a {write} overload for the given grid type
+        // add a {write} overload for a compatible grid
         cls.def(
             // the name
             "write",
@@ -76,7 +76,8 @@ namespace pyre::h5::py {
             "write the contents of {data} to the tile @{origin}+{shape}");
     }
 
-    auto trim(const DataSet & self, string_t & result) -> string_t
+    // trim a string dataset according to the persisted rules
+    inline auto trim(const DataSet & self, string_t & result) -> string_t
     {
         // to trim the possible padding, get my actual datatype descriptor
         auto strtype = self.getStrType();
@@ -137,6 +138,7 @@ namespace pyre::h5::py {
     }
 
 } // namespace pyre::h5::py
+
 
 // datasets
 void
