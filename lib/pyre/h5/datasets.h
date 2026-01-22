@@ -5,8 +5,12 @@
 
 
 // code guard
-#if !defined(pyre_h5_datasets_h)
-#define pyre_h5_datasets_h
+#pragma once
+
+// externals
+#include "external.h"
+// forward declarations
+#include "forward.h"
 
 
 // read from a {dataset} into a {pyre::grid} assuming that the description of the memory
@@ -115,8 +119,16 @@ pyre::h5::read(
 template <class memT>
 auto
 pyre::h5::read(
-    const dataset_t & self, memT & data, const datatype_t & memtype, const shape_t & origin,
-    const shape_t shape) -> void
+    // the dataset we are reading from
+    const dataset_t & self,
+    // the destination
+    memT & data,
+    // the destination datatype
+    const datatype_t & memtype,
+    // the location to read from
+    const shape_t & origin,
+    // the shape of the read region
+    const shape_t & shape) -> void
 {
     // get the size of the buffer
     hsize_t memsize = data.cells();
@@ -141,7 +153,7 @@ template <class memT>
 auto
 pyre::h5::write(
     const dataset_t & self, memT & data, const datatype_t & memtype, const shape_t & origin,
-    const shape_t shape) -> void
+    const shape_t & shape) -> void
 {
     // pretend the memory buffer is the same shape as the incoming tile
     auto memspace = dataspace_t(shape.size(), &shape[0]);
@@ -164,7 +176,7 @@ template <class gridT>
 auto
 pyre::h5::readGrid(
     const dataset_t & self, gridT & data, const datatype_t & memtype, const shape_t & origin,
-    const shape_t shape) -> void
+    const shape_t & shape) -> void
 {
     // get my storage
     auto & storage = *data.data();
@@ -179,7 +191,7 @@ template <class gridT>
 auto
 pyre::h5::writeGrid(
     const dataset_t & self, gridT & data, const datatype_t & memtype, const shape_t & origin,
-    const shape_t shape) -> void
+    const shape_t & shape) -> void
 {
     // get my storage
     auto & storage = *data.data();
@@ -189,7 +201,5 @@ pyre::h5::writeGrid(
     return;
 }
 
-
-#endif
 
 // end of file

@@ -4,8 +4,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_h5_external_h)
-#define pyre_h5_external_h
+#pragma once
 
 
 // externals
@@ -32,7 +31,5 @@ namespace pyre::h5 {
     using offsets_t = std::vector<hssize_t>;
 } // namespace pyre::h5
 
-
-#endif
 
 // end of file

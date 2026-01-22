@@ -4,8 +4,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_h5_public_h)
-#define pyre_h5_public_h
+#pragma once
 
 
 // external packages
@@ -21,7 +20,5 @@
 #include "datatypes.h"
 #include "datasets.h"
 
-
-#endif
 
 // end of file

@@ -4,8 +4,12 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_h5_datatypes_h)
-#define pyre_h5_datatypes_h
+#pragma once
+
+// externals
+#include "external.h"
+// forward declarations
+#include "forward.h"
 
 
 // the {datatype} specializations
@@ -57,7 +61,5 @@ pyre::h5::datatype(const double *) -> const datatype_t &
     return H5::PredType::NATIVE_DOUBLE;
 }
 
-
-#endif
 
 // end of file
