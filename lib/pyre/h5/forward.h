@@ -11,25 +11,52 @@
 namespace pyre::h5 {
     // the generic case
     template <typename cellT>
-    inline auto datatype(const cellT * = nullptr) -> const datatype_t &;
+    inline auto datatype() -> datatype_t;
 
-    // and its specializations
+    // and its specializations for unsigned integral types
     template <>
-    inline auto datatype(const char *) -> const datatype_t &;
+    inline auto datatype<std::uint8_t>() -> datatype_t;
     template <>
-    inline auto datatype(const short *) -> const datatype_t &;
+    inline auto datatype<std::uint16_t>() -> datatype_t;
     template <>
-    inline auto datatype(const int *) -> const datatype_t &;
+    inline auto datatype<std::uint32_t>() -> datatype_t;
     template <>
-    inline auto datatype(const long *) -> const datatype_t &;
+    inline auto datatype<std::uint64_t>() -> datatype_t;
+    // signed integral types
     template <>
-    inline auto datatype(const float *) -> const datatype_t &;
+    inline auto datatype<std::int8_t>() -> datatype_t;
     template <>
-    inline auto datatype(const double *) -> const datatype_t &;
+    inline auto datatype<std::int16_t>() -> datatype_t;
     template <>
-    inline auto datatype(const std::complex<float> *) -> const datatype_t &;
+    inline auto datatype<std::int32_t>() -> datatype_t;
     template <>
-    inline auto datatype(const std::complex<double> *) -> const datatype_t &;
+    inline auto datatype<std::int64_t>() -> datatype_t;
+    // floating point types
+    template <>
+    inline auto datatype<float>() -> datatype_t;
+    template <>
+    inline auto datatype<double>() -> datatype_t;
+    // complex types
+    template <>
+    inline auto datatype<std::complex<float>>() -> datatype_t;
+    template <>
+    inline auto datatype<std::complex<double>>() -> datatype_t;
+    template <>
+    inline auto datatype<std::complex<std::uint8_t>>() -> datatype_t;
+    template <>
+    inline auto datatype<std::complex<std::uint16_t>>() -> datatype_t;
+    template <>
+    inline auto datatype<std::complex<std::uint32_t>>() -> datatype_t;
+    template <>
+    inline auto datatype<std::complex<std::uint64_t>>() -> datatype_t;
+    template <>
+    inline auto datatype<std::complex<std::int8_t>>() -> datatype_t;
+    template <>
+    inline auto datatype<std::complex<std::int16_t>>() -> datatype_t;
+    template <>
+    inline auto datatype<std::complex<std::int32_t>>() -> datatype_t;
+    template <>
+    inline auto datatype<std::complex<std::int64_t>>() -> datatype_t;
 
 } // namespace pyre::h5
 
