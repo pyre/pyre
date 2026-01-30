@@ -26,6 +26,12 @@ from .TrivialCommunicator import TrivialCommunicator as world
 try:
     # try to load the extension
     from . import mpi as libmpi
+except ImportError as error:
+    import journal
+    channel = journal.warning("mpi.init")
+    channel.log(f"Error encountered while importing MPI module. {error.msg}")
+    # indicate that there is no runtime support
+    libmpi = None
 # if it fails for any reason
 except Exception as error:
     # indicate that there is no runtime support
