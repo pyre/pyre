@@ -124,6 +124,28 @@ class Launcher(Script, family="mpi.shells.mpirun"):
         """
         Construct the mpirun command line
         """
+        if self.mpi is None:
+            # if something went wrong, get the journal
+            import journal
+            # make a channel
+            channel = journal.error("mpi.init")
+            # complain
+            lines = (
+                "MPI runtime support is not available.",
+                "Either Pyre could not find MPI runtime support using the default package "
+                "manager or it could not find the local MPI installation.",
+                "You can specify MPI information in $HOME/.config/pyre/pyre.yaml",
+                "mpi.shells.mpirun.mpi: pyre.externals.mpi.MPI_FLAVOR#local_mpi",
+                "local_mpi:",
+                "    launcher: mpiexec",
+                "",
+                "where MPI_FLAVOR is 'openmpi' or 'mpich' and 'local_mpi' is a name given by the user."
+            )
+            channel.report(lines)
+            channel.log()
+            # and bail with an error code
+            raise SystemExit(-1)
+
         # the mpi launcher
         launcher = self.mpi.launcher
         # the python interpreter
