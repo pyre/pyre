@@ -85,14 +85,6 @@ pyre::journal::py::info(py::module & m)
             // the docstring
             "the output device")
 
-        // the dent level
-        .def_property_readonly(
-            "dent",
-            // the getter
-            py::overload_cast<>(&info_t::dent, py::const_),
-            // the docstring
-            "the dent level")
-
         // the contents of the current entry
         .def_property_readonly(
             "page",
