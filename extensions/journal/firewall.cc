@@ -25,9 +25,11 @@ pyre::journal::py::firewall(py::module & m)
         // the constructor
         .def(
             // the implementation
-            py::init<const firewall_t::name_type &>(),
+            py::init<const firewall_t::name_type &, detail_t, dent_t>(),
             // the signature
-            "name"_a)
+            "name"_a,
+            "detail"_a = 1,
+            "dent"_a = 0)
 
         // accessors
         // the name; read-only property
@@ -47,6 +49,16 @@ pyre::journal::py::firewall(py::module & m)
             py::overload_cast<firewall_t::detail_type>(&firewall_t::detail),
             // the docstring
             "the detail level")
+
+        // the dent level
+        .def_property(
+            "dent",
+            // the getter
+            py::overload_cast<>(&firewall_t::dent, py::const_),
+            // the setter
+            py::overload_cast<firewall_t::dent_type>(&firewall_t::dent),
+            // the docstring
+            "the dent level")
 
         // the channel activation state; mutable property
         .def_property(
@@ -77,6 +89,14 @@ pyre::journal::py::firewall(py::module & m)
             (setDevice_mfp) &firewall_t::device,
             // the docstring
             "the output device")
+
+        // the dent level
+        .def_property_readonly(
+            "dent",
+            // the getter
+            py::overload_cast<>(&firewall_t::dent, py::const_),
+            // the docstring
+            "the dent level")
 
         // the contents of the current entry
         .def_property_readonly(
