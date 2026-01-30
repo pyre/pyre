@@ -94,115 +94,17 @@ pyre::h5::py::datatypes::native(py::module & m)
     // and attach it to the module
     native.attr("complexHalf") = ch;
 
-    // build a compound type to represent {std::complex<float>}
-    // grab the native float
-    auto nf = H5::PredType::NATIVE_FLOAT;
-    // allocate the complex type
-    auto cf = H5::CompType(2 * nf.getSize());
-    // insert the real and imaginary parts
-    cf.insertMember("r", 0, nf);
-    cf.insertMember("i", nf.getSize(), nf);
-    // and attach it to the module
-    native.attr("complexFloat") = cf;
-
-    // build a compound type to represent {std::complex<double>}
-    // grab the native double
-    auto nd = H5::PredType::NATIVE_DOUBLE;
-    // allocate the complex type
-    auto cd = H5::CompType(2 * nd.getSize());
-    // insert the real and imaginary parts
-    cd.insertMember("r", 0, nd);
-    cd.insertMember("i", nd.getSize(), nd);
-    // and attach it
-    native.attr("complexDouble") = cd;
-
-    // build a compound type to represent {std::complex<std::int8_t>}
-    // grab the native 8-bit integer
-    auto i8 = H5::PredType::NATIVE_INT8;
-    // allocate the complex type
-    auto ci8 = H5::CompType(2 * i8.getSize());
-    // insert the real and imaginary parts
-    ci8.insertMember("r", 0, i8);
-    ci8.insertMember("i", i8.getSize(), i8);
-    // and attach it to the module
-    native.attr("complexInt8") = ci8;
-
-    // build a compound type to represent {std::complex<std::int16_t>}
-    // grab the native 16-bit integer
-    auto i16 = H5::PredType::NATIVE_INT16;
-    // allocate the complex type
-    auto ci16 = H5::CompType(2 * i16.getSize());
-    // insert the real and imaginary parts
-    ci16.insertMember("r", 0, i16);
-    ci16.insertMember("i", i16.getSize(), i16);
-    // and attach it to the module
-    native.attr("complexInt16") = ci16;
-
-    // build a compound type to represent {std::complex<std::int32_t>}
-    // grab the native 32-bit integer
-    auto i32 = H5::PredType::NATIVE_INT32;
-    // allocate the complex type
-    auto ci32 = H5::CompType(2 * i32.getSize());
-    // insert the real and imaginary parts
-    ci32.insertMember("r", 0, i32);
-    ci32.insertMember("i", i32.getSize(), i32);
-    // and attach it to the module
-    native.attr("complexInt32") = ci32;
-
-    // build a compound type to represent {std::complex<std::int64_t>}
-    // grab the native 64-bit integer
-    auto i64 = H5::PredType::NATIVE_INT64;
-    // allocate the complex type
-    auto ci64 = H5::CompType(2 * i64.getSize());
-    // insert the real and imaginary parts
-    ci64.insertMember("r", 0, i64);
-    ci64.insertMember("i", i64.getSize(), i64);
-    // and attach it to the module
-    native.attr("complexInt64") = ci64;
-
-    // build a compound type to represent {std::complex<std::uint8_t>}
-    // grab the native 8-bit unsigned integer
-    auto ui8 = H5::PredType::NATIVE_UINT8;
-    // allocate the complex type
-    auto cui8 = H5::CompType(2 * ui8.getSize());
-    // insert the real and imaginary parts
-    cui8.insertMember("r", 0, ui8);
-    cui8.insertMember("i", ui8.getSize(), ui8);
-    // and attach it to the module
-    native.attr("complexUInt8") = cui8;
-
-    // build a compound type to represent {std::complex<std::int16_t>}
-    // grab the native 16-bit unsigned integer
-    auto ui16 = H5::PredType::NATIVE_UINT16;
-    // allocate the complex type
-    auto cui16 = H5::CompType(2 * ui16.getSize());
-    // insert the real and imaginary parts
-    cui16.insertMember("r", 0, ui16);
-    cui16.insertMember("i", ui16.getSize(), ui16);
-    // and attach it to the module
-    native.attr("complexUInt16") = cui16;
-
-    // build a compound type to represent {std::complex<std::uint32_t>}
-    // grab the native 32-bit unsigned integer
-    auto ui32 = H5::PredType::NATIVE_UINT32;
-    // allocate the complex type
-    auto cui32 = H5::CompType(2 * ui32.getSize());
-    // insert the real and imaginary parts
-    cui32.insertMember("r", 0, ui32);
-    cui32.insertMember("i", ui32.getSize(), ui32);
-    // and attach it to the module
-    native.attr("complexUInt32") = cui32;
-
-    // build a compound type to represent {std::complex<std::uint64_t>}
-    // grab the native 64-bit unsigned integer
-    auto ui64 = H5::PredType::NATIVE_UINT64;
-    // allocate the complex type
-    auto cui64 = H5::CompType(2 * ui64.getSize());
-    // insert the real and imaginary parts
-    cui64.insertMember("r", 0, ui64);
-    cui64.insertMember("i", ui64.getSize(), ui64);
-    // and attach it to the module
-    native.attr("complexUInt64") = cui64;
+    // build a compound type to represent complex types
+    native.attr("complexFloat") = pyre::h5::datatype<std::complex<float>>();
+    native.attr("complexDouble") = pyre::h5::datatype<std::complex<double>>();
+    native.attr("complexUInt8") = pyre::h5::datatype<std::complex<std::uint8_t>>();
+    native.attr("complexUInt16") = pyre::h5::datatype<std::complex<std::uint16_t>>();
+    native.attr("complexUInt32") = pyre::h5::datatype<std::complex<std::uint32_t>>();
+    native.attr("complexUInt64") = pyre::h5::datatype<std::complex<std::uint64_t>>();
+    native.attr("complexInt8") = pyre::h5::datatype<std::complex<std::int8_t>>();
+    native.attr("complexInt16") = pyre::h5::datatype<std::complex<std::int16_t>>();
+    native.attr("complexInt32") = pyre::h5::datatype<std::complex<std::int32_t>>();
+    native.attr("complexInt64") = pyre::h5::datatype<std::complex<std::int64_t>>();
 
     // all done
     return;
