@@ -88,6 +88,9 @@ class MacPorts(Managed, family="pyre.platforms.packagers.macports"):
         """
         Ask macports for installed package information
         """
+        if not self.client.exists():
+            return
+
         # set up the shell command
         settings = {
             "executable": str(self.client),
@@ -157,6 +160,9 @@ class MacPorts(Managed, family="pyre.platforms.packagers.macports"):
         """
         Retrieve selection information for all known package groups
         """
+        if not self.client.exists():
+            return
+
         # template for the command line args
         settings = {
             "executable": str(self.client),
@@ -280,6 +286,9 @@ class MacPorts(Managed, family="pyre.platforms.packagers.macports"):
         """
         Find the package that owns the given filename
         """
+        if not self.client.exists():
+            return
+
         # set up the shell command
         settings = {
             "executable": str(self.client),
@@ -307,6 +316,9 @@ class MacPorts(Managed, family="pyre.platforms.packagers.macports"):
         """
         Attempt to map the package {installation} to the name of an installed package
         """
+        if not self.client.exists():
+            return
+
         # get the name of the {installation} instance
         name = installation.pyre_name
         # grab the index of installed packages
