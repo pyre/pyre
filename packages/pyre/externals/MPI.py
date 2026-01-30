@@ -132,6 +132,9 @@ class Default(ToolInstallation, LibraryInstallation, implements=MPI):
         """
         # ask macports for help; start by finding out which package supports me
         package = packager.identify(installation=self)
+        if package is None:
+            return
+        
         # get the version info
         self.version, _ = packager.info(package=package)
         # and the package contents
