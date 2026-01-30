@@ -95,6 +95,7 @@ TESTS = \
     info_loop \
     info_nolocator \
     info_quiet \
+    info_sanity \
     info_shared \
     inventory_device \
     inventory_proxy \
@@ -113,6 +114,7 @@ TESTS = \
     warning_loop \
     warning_nolocator \
     warning_quiet \
+    warning_sanity \
     warning_shared \
     debuginfo \
     firewalls \
