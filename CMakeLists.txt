@@ -122,12 +122,12 @@ find_package(Python 3.7
     OPTIONAL_COMPONENTS Development.Embed)
 
 # for building bindings
-# require c++17
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CUDA_STANDARD 14)
+# require c++20
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CUDA_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
-set(PYBIND11_CPP_STANDARD -std=c++17)
+set(PYBIND11_CPP_STANDARD -std=c++20)
 set(PYBIND11_PYTHON_VERSION ${Python_VERSION})
 set(PYBIND11_FINDPYTHON ON) # Use new FindPython if available
 find_package(pybind11)
