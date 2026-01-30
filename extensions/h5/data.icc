@@ -5,9 +5,7 @@
 
 
 // code guard
-#if !defined(h5_py_data_icc)
-#error this file contains implementation details for pyre::h5::py attributes
-#else
+#pragma once
 
 template <class objectT>
 void
@@ -142,6 +140,5 @@ pyre::h5::py::data(py::class_<objectT> & cls)
     return;
 }
 
-#endif
 
 // end of file
