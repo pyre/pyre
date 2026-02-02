@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis, leif strand
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# leif strand
 # (c) 1998-2026 all rights reserved
-#
 
 
 # externals
@@ -17,13 +16,12 @@ class Marshaler(pyre.protocol, family="pyre.ipc.marshalers"):
     other processes
     """
 
-
     # factory for my default implementation
     @classmethod
     def pyre_default(cls, **kwds):
         from .Pickler import Pickler
-        return Pickler
 
+        return Pickler
 
     # interface
     @pyre.provides
@@ -31,7 +29,6 @@ class Marshaler(pyre.protocol, family="pyre.ipc.marshalers"):
         """
         Extract and return one object from {channel}
         """
-
 
     @pyre.provides
     def send(self, item, channel):

@@ -1,21 +1,23 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis, leif strand
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# leif strand
 # (c) 1998-2026 all rights reserved
-#
 
 
 # externals
 import pyre
 import pickle
 import struct
+
 # my protocol
 from . import marshaler
 
 
 # class declaration
-class Pickler(pyre.component, family="pyre.ipc.marshalers.pickler", implements=marshaler):
+class Pickler(
+    pyre.component, family="pyre.ipc.marshalers.pickler", implements=marshaler
+):
     """
     A marshaler that uses the native python services in {pickle} to serialize python objects
     for transmission to other processes.
@@ -27,9 +29,8 @@ class Pickler(pyre.component, family="pyre.ipc.marshalers.pickler", implements=m
     of their contents available at a time.
     """
 
-
     # public data
-    packing = "<L" # the struct format for encoding the payload length
+    packing = "<L"  # the struct format for encoding the payload length
     headerSize = struct.calcsize(packing)
 
     # interface
@@ -45,8 +46,7 @@ class Pickler(pyre.component, family="pyre.ipc.marshalers.pickler", implements=m
         # put it together
         message = header + body
         # send it off
-        return channel.write(bstr=message)
-
+        return channel.write(bytes=message)
 
     @pyre.export
     def recv(self, channel):
@@ -56,7 +56,7 @@ class Pickler(pyre.component, family="pyre.ipc.marshalers.pickler", implements=m
         # get the length
         header = channel.read(maxlen=self.headerSize)
         # unpack it
-        length, = struct.unpack(self.packing, header)
+        (length,) = struct.unpack(self.packing, header)
         # get the body
         body = channel.read(minlen=length)
         # extract the object and return it

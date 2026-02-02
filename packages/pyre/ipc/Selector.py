@@ -1,23 +1,26 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis, leif strand
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# leif strand
 # (c) 1998-2026 all rights reserved
-#
 
 
 # externals
 import pyre
 import select
 import collections
+
 # my interface
 from . import dispatcher
+
 # my base class
 from .Scheduler import Scheduler
 
 
 # declaration
-class Selector(Scheduler, family='pyre.ipc.dispatchers.selector', implements=dispatcher):
+class Selector(
+    Scheduler, family="pyre.ipc.dispatchers.selector", implements=dispatcher
+):
     """
     An event demultiplexer implemented using the {select} system call.
 
@@ -26,7 +29,6 @@ class Selector(Scheduler, family='pyre.ipc.dispatchers.selector', implements=dis
     until either an alarm rings or a channel is ready for IO, at which point {Selector} invokes
     whatever handler is associated with the event.
     """
-
 
     # interface
     @pyre.export
@@ -39,7 +41,6 @@ class Selector(Scheduler, family='pyre.ipc.dispatchers.selector', implements=dis
         # and return
         return
 
-
     @pyre.export
     def whenWriteReady(self, channel, call):
         """
@@ -50,7 +51,6 @@ class Selector(Scheduler, family='pyre.ipc.dispatchers.selector', implements=dis
         # and return
         return
 
-
     @pyre.export
     def whenException(self, channel, call):
         """
@@ -58,11 +58,14 @@ class Selector(Scheduler, family='pyre.ipc.dispatchers.selector', implements=dis
         to {channel}
         """
         # add both endpoints to the pile
-        self._exception[channel.inbound].append(self._event(channel=channel, handler=call))
-        self._exception[channel.outbound].append(self._event(channel=channel, handler=call))
+        self._exception[channel.inbound].append(
+            self._event(channel=channel, handler=call)
+        )
+        self._exception[channel.outbound].append(
+            self._event(channel=channel, handler=call)
+        )
         # and return
         return
-
 
     @pyre.export
     def stop(self):
@@ -73,7 +76,6 @@ class Selector(Scheduler, family='pyre.ipc.dispatchers.selector', implements=dis
         self._watching = False
         # and return
         return
-
 
     @pyre.export
     def watch(self):
@@ -102,18 +104,21 @@ class Selector(Scheduler, family='pyre.ipc.dispatchers.selector', implements=dis
 
             # if my channel is active
             if channel:
-                # show me the descriptors that have data to read
-                if iwtd: channel.line(f"      read:")
+                # show me the input channels
+                if iwtd:
+                    channel.line(f"      read:")
                 for fd in iwtd:
                     for event in self._read[fd]:
                         channel.line(f"        {event.channel}")
-                # show me the channels that are ready to be written
-                if owtd: channel.line("      write:")
+                # show me the output channels
+                if owtd:
+                    channel.line("      write:")
                 for fd in owtd:
                     for event in self._write[fd]:
                         channel.line(f"        {event.channel}")
-                # show me the channels with exceptions
-                if ewtd: channel.line("      exception:")
+                # show me the channels that are watching for exceptions
+                if ewtd:
+                    channel.line("      exception:")
                 for channel in ewtd:
                     for event in self._exception[fd]:
                         channel.line(f"        {event.channel}")
@@ -171,7 +176,6 @@ class Selector(Scheduler, family='pyre.ipc.dispatchers.selector', implements=dis
         # all done
         return
 
-
     def dispatch(self, index, entities):
         """
         Invoke the handlers registered in {index} that are associated with the descriptors in
@@ -181,9 +185,8 @@ class Selector(Scheduler, family='pyre.ipc.dispatchers.selector', implements=dis
         for active in entities:
             # invoke the event handlers and save the events whose handlers return {True}
             events = list(
-                event for event in index[active]
-                if event.handler(channel=event.channel)
-                )
+                event for event in index[active] if event.handler(channel=event.channel)
+            )
             # if no handlers requested to be rescheduled
             if not events:
                 # remove the descriptor from the index
@@ -194,7 +197,6 @@ class Selector(Scheduler, family='pyre.ipc.dispatchers.selector', implements=dis
                 index[active] = events
         # all done
         return
-
 
     # meta methods
     def __init__(self, **kwds):
@@ -208,11 +210,11 @@ class Selector(Scheduler, family='pyre.ipc.dispatchers.selector', implements=dis
 
         # my debug aspect
         import journal
-        self._debug = journal.debug('pyre.ipc.selector')
+
+        self._debug = journal.debug("pyre.ipc.selector")
 
         # all done
         return
-
 
     # implementation details
     # private types
@@ -224,10 +226,10 @@ class Selector(Scheduler, family='pyre.ipc.dispatchers.selector', implements=dis
             self.handler = handler
             return
 
-        __slots__ = ('channel', 'handler')
+        __slots__ = ("channel", "handler")
 
     # private data
-    _watching = True # controls whether to continue monitoring the event sources
+    _watching = True  # controls whether to continue monitoring the event sources
 
 
 # end of file

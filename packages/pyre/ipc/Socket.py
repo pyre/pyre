@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis, leif strand
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# leif strand
 # (c) 1998-2026 all rights reserved
-#
 
 
 # externals
 import socket
+
 # my interface
 from .Channel import Channel
 
@@ -22,10 +22,8 @@ class Socket(socket.socket, Channel):
     subclasses.
     """
 
-
     # types
     from ..schemata import inet
-
 
     # access to the individual channel end points
     @property
@@ -36,7 +34,6 @@ class Socket(socket.socket, Channel):
         # easy enough
         return self
 
-
     @property
     def outbound(self):
         """
@@ -44,7 +41,6 @@ class Socket(socket.socket, Channel):
         """
         # easy enough
         return self
-
 
     # access to the socket properties
     @property
@@ -64,7 +60,6 @@ class Socket(socket.socket, Channel):
         # otherwise, parse the address, decorate it and return it
         return self.inet().recognize(family=self.family, address=address)
 
-
     # interface
     def accept(self):
         """
@@ -78,18 +73,17 @@ class Socket(socket.socket, Channel):
         # build the address
         address = self.inet().recognize(family=self.family, address=address)
         # adjust the socket flags; see {socket.py} in the standard library for more details
-        if socket.getdefaulttimeout() is None and self.gettimeout(): channel.setblocking(True)
+        if socket.getdefaulttimeout() is None and self.gettimeout():
+            channel.setblocking(True)
         # return the channel to and the address of the peer process
         return channel, address
 
-
     # meta-methods
     def __str__(self):
-        return "socket to {.peer}".format(self)
-
+        return f"socket to {self.peer}"
 
     # implementation details
-    __slots__ = () # socket has it, so why not...
+    __slots__ = ()  # socket has it, so why not...
 
 
 # end of file
