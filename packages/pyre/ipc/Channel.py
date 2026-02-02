@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis, leif strand
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# leif strand
 # (c) 1998-2026 all rights reserved
-#
 
 
 # declaration
@@ -14,7 +13,6 @@ class Channel:
     operating system services.
     """
 
-
     # interface
     # channel life cycle management
     @classmethod
@@ -22,16 +20,15 @@ class Channel:
         """
         Channel factory
         """
-        raise NotImplementedError("class {.__name__!r} must implement 'open'".format(cls))
-
+        raise NotImplementedError(f"class '{cls.__name__}' must implement 'open'")
 
     def close(self):
         """
         Shutdown the channel
         """
         raise NotImplementedError(
-            "class {.__name__!r} must implement 'close'".format(type(self)))
-
+            f"class '{type(self).__name__}' must implement 'close'"
+        )
 
     # access to the individual channel end points
     @property
@@ -40,7 +37,8 @@ class Channel:
         Retrieve the channel end point that can be read
         """
         raise NotImplementedError(
-            "class {.__name__!r} must implement 'inbound'".format(type(self)))
+            f"class '{type(self).__name__}' must implement 'inbound'"
+        )
 
     @property
     def outbound(self):
@@ -48,23 +46,25 @@ class Channel:
         Retrieve the channel end point that can be written
         """
         raise NotImplementedError(
-            "class {.__name__!r} must implement 'outbound'".format(type(self)))
+            f"class '{type(self).__name__}' must implement 'outbound'"
+        )
 
     # input/output
     def read(self, minlen, maxlen):
         """
-        Read up to {count} bytes from my input channel
+        Read up to {maxlen} bytes from my input channel
         """
         raise NotImplementedError(
-            "class {.__name__!r} must implement 'read'".format(type(self)))
+            f"class '{type(self).__name__}' must implement 'read'"
+        )
 
-
-    def write(self, bstr):
+    def write(self, bytes):
         """
-        Write the bytes in {bstr} to output channel
+        Write the {bytes} to the output channel
         """
         raise NotImplementedError(
-            "class {.__name__!r} must implement 'write'".format(type(self)))
+            f"class '{type(self).__name__}' must implement 'write'"
+        )
 
 
 # end of file

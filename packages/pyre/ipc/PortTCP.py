@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # externals
 import socket
+
 # my base classes
 from .Port import Port
 from .Channel import Channel
@@ -19,18 +18,12 @@ class PortTCP(Port, Channel):
     An implementation of a process bell using a TCP port
     """
 
-
     # types
     from ..schemata import inet
     from .SocketTCP import SocketTCP as tcp
+
     # constants
     type = socket.SOCK_STREAM
-
-
-    # public data
-    channel = None
-    address = None
-
 
     # factories
     @classmethod
@@ -46,7 +39,6 @@ class PortTCP(Port, Channel):
         channel.connect(address.value)
         # and return it
         return channel
-
 
     @classmethod
     def install(cls, address=None):
@@ -84,7 +76,6 @@ class PortTCP(Port, Channel):
         # and return it
         return port
 
-
     # interface
     @property
     def inbound(self):
@@ -96,14 +87,12 @@ class PortTCP(Port, Channel):
         """
         return self.channel
 
-
     def close(self):
         """
         Close the port
         """
         # delegate
         return self.channel.close()
-
 
     def accept(self):
         """
@@ -112,7 +101,6 @@ class PortTCP(Port, Channel):
         """
         # delegate
         return self.channel.accept()
-
 
     # meta methods
     def __init__(self, channel, address, **kwds):
@@ -124,10 +112,9 @@ class PortTCP(Port, Channel):
         # all done
         return
 
-
     def __str__(self):
         # show me
-        return "port at {.address}".format(self)
+        return f"port at {self.address}"
 
 
 # end of file

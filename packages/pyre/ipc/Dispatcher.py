@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis, leif strand
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# leif strand
 # (c) 1998-2026 all rights reserved
-#
 
 
 # externals
@@ -17,7 +16,6 @@ class Dispatcher(pyre.protocol, family="pyre.ipc.dispatchers"):
     when activity is detected
     """
 
-
     # default implementation
     @classmethod
     def pyre_default(cls, **kwds):
@@ -26,9 +24,9 @@ class Dispatcher(pyre.protocol, family="pyre.ipc.dispatchers"):
         """
         # currently, {Selector} is the only choice
         from .Selector import Selector
+
         # so publish it
         return Selector
-
 
     # interface
     @pyre.provides

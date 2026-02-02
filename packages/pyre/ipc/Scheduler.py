@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis, leif strand
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# leif strand
 # (c) 1998-2026 all rights reserved
-#
 
 
 # externals
@@ -13,7 +12,7 @@ from time import time as now
 
 
 # declaration
-class Scheduler(pyre.component, family='pyre.ipc.dispatchers.scheduler'):
+class Scheduler(pyre.component, family="pyre.ipc.dispatchers.scheduler"):
     """
     Support for invoking event handlers at specified times
 
@@ -27,10 +26,8 @@ class Scheduler(pyre.component, family='pyre.ipc.dispatchers.scheduler'):
     i.e. with the alarm that is due next at the end of the list.
     """
 
-
     # constants
     from pyre.units.SI import second
-
 
     # interface
     @pyre.export
@@ -43,14 +40,13 @@ class Scheduler(pyre.component, family='pyre.ipc.dispatchers.scheduler'):
            {interval}: a dimensional quantity from {pyre.units} with units of time
         """
         # create a new alarm instance
-        alarm = self._alarm(time=now()+interval/self.second, handler=call)
+        alarm = self._alarm(time=now() + interval / self.second, handler=call)
         # add it to my list
         self._alarms.append(alarm)
         # sort
-        self._alarms.sort(key=operator.attrgetter('time'), reverse=True)
+        self._alarms.sort(key=operator.attrgetter("time"), reverse=True)
         # and return
         return
-
 
     def poll(self):
         """
@@ -75,7 +71,6 @@ class Scheduler(pyre.component, family='pyre.ipc.dispatchers.scheduler'):
             due = alarm.time
         # return the number of seconds until it comes due, bound from below
         return max(0, due - now())
-
 
     def awaken(self):
         """
@@ -121,15 +116,14 @@ class Scheduler(pyre.component, family='pyre.ipc.dispatchers.scheduler'):
         # go through the pile
         for interval, call in reschedule:
             # create a new alarm instance
-            alarm = self._alarm(time=time+interval/self.second, handler=call)
+            alarm = self._alarm(time=time + interval / self.second, handler=call)
             # add it to my list
             self._alarms.append(alarm)
         # sort
-        self._alarms.sort(key=operator.attrgetter('time'), reverse=True)
+        self._alarms.sort(key=operator.attrgetter("time"), reverse=True)
 
         # all done
         return
-
 
     # meta methods
     def __init__(self, **kwds):
@@ -141,7 +135,6 @@ class Scheduler(pyre.component, family='pyre.ipc.dispatchers.scheduler'):
         # all done
         return
 
-
     # implementation details
     # private types
     class _alarm:
@@ -152,10 +145,11 @@ class Scheduler(pyre.component, family='pyre.ipc.dispatchers.scheduler'):
             self.handler = handler
             return
 
-        def __str__(self): return "alarm: {.time}".format(self)
+        def __str__(self):
+            # build a human readable representation
+            return f"alarm at {self.time}"
 
-        __slots__ = ('time', 'handler')
-
+        __slots__ = ("time", "handler")
 
     # private data
     _alarms = None

@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis, leif strand
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# leif strand
 # (c) 1998-2026 all rights reserved
-#
 
 
 # declaration
@@ -13,16 +12,13 @@ class Port:
     port
     """
 
-
     # interface
     @classmethod
     def open(cls, address, **kwds):
         """
         Attempt to draw the attention of the peer process at {address}
         """
-        raise NotImplementedError(
-            "class {.__name__!r} must implement 'open'".format(type(self)))
-
+        raise NotImplementedError(f"class '{cls.__name__}' must implement 'open'")
 
     @classmethod
     def install(cls, **kwds):
@@ -30,8 +26,7 @@ class Port:
         Install and activate a port. Called by the owning process when it is ready to start
         accepting guests
         """
-        raise NotImplementedError(
-            "class {.__name__!r} must implement 'install'".format(type(self)))
+        raise NotImplementedError(f"class '{cls.__name__}' must implement 'install'")
 
 
 # end of file
