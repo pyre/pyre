@@ -16,9 +16,9 @@ import os
 
 # setup a couple of journal channels
 serverdbg = journal.debug("selector.server")
-serverdbg.active = True
+# serverdbg.active = True
 clientdbg = journal.debug("selector.client")
-clientdbg.active = True
+# clientdbg.active = True
 
 
 def test():
@@ -78,7 +78,7 @@ def onServer(clientPid, marshaler, pipe):
 
     def alarm(timestamp):
         print(f"alarm: {timestamp}")
-        return 1*pyre.units.SI.second
+        return 1 * pyre.units.SI.second
 
     # let me know when the pipe to the client is ready for writing so i can send my port
     serverdbg.log("server: registering the port notification routine")
@@ -87,7 +87,7 @@ def onServer(clientPid, marshaler, pipe):
     s.whenReadReady(channel=port, call=connectionAttempt)
 
     # set up an alarm
-    s.alarm(interval=2 * pyre.units.SI.second, call=alarm)
+    # s.alarm(interval=2 * pyre.units.SI.second, call=alarm)
 
     # invoke the selector
     serverdbg.log("server: entering watch")

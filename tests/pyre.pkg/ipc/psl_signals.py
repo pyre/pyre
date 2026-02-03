@@ -24,7 +24,7 @@ def test():
     # make a channel
     channel = journal.debug("selector")
     # activate
-    channel.active = True
+    # channel.active = True
     # journal.debug("pyre.ipc.selector").active = True
 
     # get the process id
