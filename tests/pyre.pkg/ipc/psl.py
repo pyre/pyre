@@ -1,0 +1,26 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+#
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2026 all rights reserved
+
+
+"""
+Sanity check: verify that the PSL selector factory is accessible
+"""
+
+
+def test():
+    # access the selector
+    from pyre.ipc import psl
+
+    # and bail
+    return
+
+
+# main
+if __name__ == "__main__":
+    test()
+
+
+# end of file
