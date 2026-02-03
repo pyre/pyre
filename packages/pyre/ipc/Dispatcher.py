@@ -22,11 +22,11 @@ class Dispatcher(pyre.protocol, family="pyre.ipc.dispatchers"):
         """
         The suggested implementation of the {Dispatcher} protocol
         """
-        # currently, {Selector} is the only choice
-        from .Selector import Selector
+        # use the psl wrapper
+        from .SelectorPSL import SelectorPSL as selector
 
         # so publish it
-        return Selector
+        return selector
 
     # interface
     @pyre.provides

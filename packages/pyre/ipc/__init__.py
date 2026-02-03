@@ -109,6 +109,19 @@ def selector():
     return selector
 
 
+@foundry
+def psl():
+    """
+    An implementation of the dispatcher protocol based on the high level interface in the
+    {selectors} module of the python standard library
+    """
+    # grab the class
+    from .SelectorPSL import SelectorPSL as psl
+
+    # and return it
+    return psl
+
+
 # my component factories; use to build an actual instance
 def newPickler(**kwds):
     """
@@ -141,6 +154,17 @@ def newSelector(**kwds):
 
     # and return it
     return selector(**kwds)
+
+
+def newPSL(**kwds):
+    """
+    A selector based on the high level interface in the python standard library
+    """
+    # grab the component class record
+    from .SelectorPSL import SelectorPSL as psl
+
+    # and return it
+    return psl(**kwds)
 
 
 # end of file
