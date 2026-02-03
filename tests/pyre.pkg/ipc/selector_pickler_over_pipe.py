@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -17,6 +15,7 @@ import pyre.ipc
 
 # if necessary
 import journal
+
 parentdbg = journal.debug("selector.parent")
 # parentdbg.active = True
 childdbg = journal.debug("selector.child")

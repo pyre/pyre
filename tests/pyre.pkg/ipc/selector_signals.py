@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -17,6 +15,7 @@ def test():
     import os
     import signal
     import itertools
+
     # support
     import journal
     import pyre.ipc
@@ -44,7 +43,7 @@ def test():
         # show me
         channel.log(f"{pid}: n={n}, time={timestamp}")
         # reschedule
-        return 0.1*second
+        return 0.1 * second
 
     # a stopper
     def kill(timestamp):
@@ -67,9 +66,9 @@ def test():
     # register the signal handler
     signal.signal(signal.SIGHUP, hup)
     # register the clock
-    s.alarm(interval=1*second, call=cuckoo)
+    s.alarm(interval=1 * second, call=cuckoo)
     # and the stopper
-    s.alarm(interval=0.5*second, call=kill)
+    s.alarm(interval=0.5 * second, call=kill)
     # invoke the selector
     s.watch()
 

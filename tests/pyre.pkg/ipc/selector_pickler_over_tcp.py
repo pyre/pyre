@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -17,6 +15,7 @@ import pyre.ipc
 
 # if necessary
 import journal
+
 serverdbg = journal.debug("selector.server")
 # serverdbg.active = True
 clientdbg = journal.debug("selector.client")
