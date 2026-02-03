@@ -1,14 +1,12 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
-Verify the selector can raise alarms
+Verify that the selector can raise alarms
 """
 
 
@@ -18,16 +16,21 @@ def test():
     # journal.debug("pyre.ipc.selector").active = True
     # access the package
     import pyre.ipc
+
     # instantiate a selector
     s = pyre.ipc.newSelector()
 
     # get time
     from time import time as now
+
     # get the units of time
     from pyre.units.SI import second
+
     # build a counter
     import itertools
+
     counter = itertools.count()
+
     # build a handler
     def handler(timestamp):
         n = next(counter)
@@ -35,13 +38,13 @@ def test():
         return
 
     # setup some alarms
-    s.alarm(interval=0*second, call=handler)
-    s.alarm(interval=1*second, call=handler)
-    s.alarm(interval=0.5*second, call=handler)
-    s.alarm(interval=0.25*second, call=handler)
-    s.alarm(interval=0.75*second, call=handler)
-    s.alarm(interval=0.3*second, call=handler)
-    s.alarm(interval=0.5*second, call=handler)
+    s.alarm(interval=0 * second, call=handler)
+    s.alarm(interval=1 * second, call=handler)
+    s.alarm(interval=0.5 * second, call=handler)
+    s.alarm(interval=0.25 * second, call=handler)
+    s.alarm(interval=0.75 * second, call=handler)
+    s.alarm(interval=0.3 * second, call=handler)
+    s.alarm(interval=0.5 * second, call=handler)
     # how many?
     alarms = len(s._alarms)
 
