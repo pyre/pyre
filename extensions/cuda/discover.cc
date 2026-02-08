@@ -187,9 +187,9 @@ static coreTableEntry coreTableMap[] = {
     { 0x90, 128},  // Hopper          (SM  9.0) H100 / H200 / GH200
     { 0x89, 128},  // Ada             (SM  8.9) RTX 40, L4/L40
     { 0x87, 128},  // Ampere          (SM  8.7) Jetson Orin
-    { 0x86, 64 },  // Ampere          (SM  8.6) GA100
+    { 0x86, 128 }, // Ampere          (SM  8.6) GA10x
     { 0x80, 64 },  // Ampere          (SM  8.0) GA100
-    { 0x75, 64 },  // Turing          (SM  7.5) GV100
+    { 0x75, 64 },  // Turing          (SM  7.5) TU10x
     { 0x72, 64 },  // Volta           (SM  7.2) GV100
     { 0x70, 64 },  // Volta           (SM  7.0) GV100
     { 0x62, 128 }, // Pascal          (SM  6.2) GP10x
