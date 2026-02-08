@@ -115,7 +115,7 @@ pyre::extensions::cuda::discover(PyObject *, PyObject * args)
         // attach the compute mode
 #if CUDA_VERSION >= 13000
         int computeMode = cudaComputeModeDefault;
-        auto status = cudaDeviceGetAttribute(&computeMode, cudaDevAttrComputeMode, device);
+        auto status = cudaDeviceGetAttribute(&computeMode, cudaDevAttrComputeMode, index);
         if (status != cudaSuccess) {
             // pick a sentinel; -1 makes it obvious something went wrong
             computeMode = -1;
@@ -190,13 +190,13 @@ struct coreTableEntry {
 
 // the known GPU generations
 static coreTableEntry coreTableMap[] = {
-    { 0xC1, 128},  // GB10l           (SM 12.1) DGX Spark (to verify...)
-    { 0xC0, 128},  // RTX Blackwell   (SM 12.0) RTX
-    { 0xA3, 128},  // Blackwell Ultra (SM 10.3) B300 / GB300
-    { 0xA0, 128},  // Blackwell       (SM 10.0) B200 / GB200
-    { 0x90, 128},  // Hopper          (SM  9.0) H100 / H200 / GH200
-    { 0x89, 128},  // Ada             (SM  8.9) RTX 40, L4/L40
-    { 0x87, 128},  // Ampere          (SM  8.7) Jetson Orin
+    { 0xC1, 128 }, // GB10l           (SM 12.1) DGX Spark (to verify...)
+    { 0xC0, 128 }, // RTX Blackwell   (SM 12.0) RTX
+    { 0xA3, 128 }, // Blackwell Ultra (SM 10.3) B300 / GB300
+    { 0xA0, 128 }, // Blackwell       (SM 10.0) B200 / GB200
+    { 0x90, 128 }, // Hopper          (SM  9.0) H100 / H200 / GH200
+    { 0x89, 128 }, // Ada             (SM  8.9) RTX 40, L4/L40
+    { 0x87, 128 }, // Ampere          (SM  8.7) Jetson Orin
     { 0x86, 128 }, // Ampere          (SM  8.6) GA10x
     { 0x80, 64 },  // Ampere          (SM  8.0) GA100
     { 0x75, 64 },  // Turing          (SM  7.5) TU10x
