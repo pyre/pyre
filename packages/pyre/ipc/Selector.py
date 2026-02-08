@@ -32,37 +32,41 @@ class Selector(
 
     # interface
     @pyre.export
-    def whenReadReady(self, channel, call):
+    def whenReadReady(self, channel, call, **kwds):
         """
         Add {call} to the list of routines to call when {channel} is ready to be read
         """
         # add it to the pile
-        self._read[channel.inbound].append(self._event(channel=channel, handler=call))
+        self._read[channel.inbound].append(
+            self._event(channel=channel, handler=call, **kwds)
+        )
         # and return
         return
 
     @pyre.export
-    def whenWriteReady(self, channel, call):
+    def whenWriteReady(self, channel, call, **kwds):
         """
         Add {call} to the list of routines to call when {channel} is ready to be written
         """
         # add it to the pile
-        self._write[channel.outbound].append(self._event(channel=channel, handler=call))
+        self._write[channel.outbound].append(
+            self._event(channel=channel, handler=call, **kwds)
+        )
         # and return
         return
 
     @pyre.export
-    def whenException(self, channel, call):
+    def whenException(self, channel, call, **kwds):
         """
         Add {call} to the list of routines to call when something exceptional has happened
         to {channel}
         """
         # add both endpoints to the pile
         self._exception[channel.inbound].append(
-            self._event(channel=channel, handler=call)
+            self._event(channel=channel, handler=call, **kwds)
         )
         self._exception[channel.outbound].append(
-            self._event(channel=channel, handler=call)
+            self._event(channel=channel, handler=call, **kwds)
         )
         # and return
         return
@@ -185,7 +189,9 @@ class Selector(
         for active in entities:
             # invoke the event handlers and save the events whose handlers return {True}
             events = list(
-                event for event in index[active] if event.handler(channel=event.channel)
+                event
+                for event in index[active]
+                if event.handler(channel=event.channel, **event.context)
             )
             # if no handlers requested to be rescheduled
             if not events:
@@ -221,12 +227,13 @@ class Selector(
     class _event:
         """Encapsulate a channel and the associated call-back"""
 
-        def __init__(self, channel, handler):
+        def __init__(self, channel, handler, **kwds):
             self.channel = channel
             self.handler = handler
+            self.context = kwds
             return
 
-        __slots__ = ("channel", "handler")
+        __slots__ = ("channel", "handler", "context")
 
     # private data
     _watching = True  # controls whether to continue monitoring the event sources
