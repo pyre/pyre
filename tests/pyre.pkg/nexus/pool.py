@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 # externals
 import random, time
+
 # support
 import pyre
+
 
 # my task
 class Task(pyre.nexus.task):
@@ -25,22 +25,25 @@ class Task(pyre.nexus.task):
         # grab a random number in the range (0,1]
         p = random.random()
         # sometimes
-        if p < .1:
+        if p < 0.1:
             # i experience a temporary failure
             raise self.RecoverableError("a temporary error")
         # sometimes
-        if p < .2:
+        if p < 0.2:
             # i fail
             raise Exception("a nasty error")
         # the rest of the time, go to sleep for a bit
-        time.sleep(3*p)
+        time.sleep(3 * p)
         # and return
         return p
 
 
-# my team manager
+# get the base team manager
 from pyre.nexus.Pool import Pool as pool
-class Pool(pool, family='samples.teams.pool'):
+
+
+# my team manager
+class Pool(pool, family="samples.teams.pool"):
     """
     Subclass to augment the behavior of the stock team manager
     """
@@ -68,7 +71,6 @@ class Application(pyre.application, family="samples.applications.pool"):
     tasks = pyre.properties.int(default=1)
     tasks.doc = "the number of tasks in my workplan"
 
-
     # protocol obligations
     @pyre.export
     def main(self, *args, **kwds):
@@ -77,9 +79,10 @@ class Application(pyre.application, family="samples.applications.pool"):
         """
         # grab the journal
         import journal
+
         # control the channels of my components
-        # journal.debug('samples.teams.pool').activate()
-        # journal.debug('pyre.nexus.peers.member').activate()
+        # journal.debug("samples").activate()
+        # journal.debug("pyre.nexus.peers.crew").activate()
 
         # grab my channel
         channel = self.debug
@@ -95,7 +98,7 @@ class Application(pyre.application, family="samples.applications.pool"):
         # get my team
         team = self.team
         # make a workplan
-        workplan = { Task() for _ in range(self.tasks) }
+        workplan = {Task() for _ in range(self.tasks)}
         # set it up for execution
         team.assemble(workplan=workplan)
         # and enter the event loop
