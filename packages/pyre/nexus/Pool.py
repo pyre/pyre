@@ -1,41 +1,40 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # externals
 import functools
+
 # support
 import pyre
+
 # base class
 from .Peer import Peer
+
 # my protocol
 from .Team import Team
+
 # my user configurable state
 from .Recruiter import Recruiter
 
 
 # declaration
-class Pool(Peer, family='pyre.nexus.teams.pool', implements=Team):
+class Pool(Peer, family="pyre.nexus.teams.pool", implements=Team):
     """
     A process collective that coöperate to carry out a work plan
     """
 
-
     # types
     from .Crew import Crew as crew
 
-
     # user configurable state
     size = pyre.properties.int(default=1)
-    size.doc = 'the number of crew members to recruit'
+    size.doc = "the number of crew members to recruit"
 
     recruiter = Recruiter()
-    recruiter.doc = 'the strategy for recruiting crew members'
-
+    recruiter.doc = "the strategy for recruiting crew members"
 
     # interface
     @pyre.export
@@ -46,25 +45,25 @@ class Pool(Peer, family='pyre.nexus.teams.pool', implements=Team):
         # grab a journal channel
         channel = self.debug
         # show me
-        channel.line('executing the workplan')
-        channel.line('  current outstanding tasks: {}'.format(len(self.workplan)))
-        channel.line('  max team size: {}'.format(self.size))
-        channel.line('  current vacancies: {}'.format(self.vacancies()))
-        channel.line('  registered crew members: {}'.format(len(self.registered)))
-        channel.line('  active crew members: {}'.format(len(self.active)))
+        channel.line("executing the workplan")
+        channel.line("  current outstanding tasks: {}".format(len(self.workplan)))
+        channel.line("  max team size: {}".format(self.size))
+        channel.line("  current vacancies: {}".format(self.vacancies()))
+        channel.line("  registered crew members: {}".format(len(self.registered)))
+        channel.line("  active crew members: {}".format(len(self.active)))
 
         # add the new tasks to the workplan
         self.workplan |= workplan
         # tell me
-        channel.line('extending the workplan')
-        channel.line('  current outstanding tasks: {}'.format(len(self.workplan)))
+        channel.line("extending the workplan")
+        channel.line("  current outstanding tasks: {}".format(len(self.workplan)))
 
         # if necessary, recruit some new crew members
         self.recruit()
         # tell me
-        channel.line('recruited new crew members')
-        channel.line('  registered crew members: {}'.format(len(self.registered)))
-        channel.line('  active crew members: {}'.format(len(self.active)))
+        channel.line("recruited new crew members")
+        channel.line("  registered crew members: {}".format(len(self.registered)))
+        channel.line("  active crew members: {}".format(len(self.active)))
 
         # flush
         channel.log()
@@ -72,11 +71,10 @@ class Pool(Peer, family='pyre.nexus.teams.pool', implements=Team):
         # all done
         return self
 
-
     @pyre.export
     def vacancies(self):
         """
-        Compute how may recruits are needed to take the team to full strength
+        Compute how many recruits are needed to take the team to full strength
         """
         # get the current team size
         current = len(self.registered) + len(self.active)
@@ -87,7 +85,6 @@ class Pool(Peer, family='pyre.nexus.teams.pool', implements=Team):
 
         # compute the number of vacancies
         return min(tasks, pool) - current
-
 
     # meta-methods
     def __init__(self, crew=None, **kwds):
@@ -110,7 +107,6 @@ class Pool(Peer, family='pyre.nexus.teams.pool', implements=Team):
         # all done
         return
 
-
     # implementation details
     def recruit(self, **kwds):
         """
@@ -123,7 +119,6 @@ class Pool(Peer, family='pyre.nexus.teams.pool', implements=Team):
         # all done
         return self
 
-
     def activate(self, crew):
         """
         Add the given {crew} member to the scheduling queue
@@ -135,18 +130,16 @@ class Pool(Peer, family='pyre.nexus.teams.pool', implements=Team):
         # all done
         return self
 
-
     def schedule(self, crew):
         """
         Add the given {crew} member to the execution schedule
         """
         # start sending tasks when the worker is ready to listen
         self.dispatcher.whenWriteReady(
-            channel = crew.channel,
-            call = functools.partial(self.submit, crew=crew))
+            channel=crew.channel, call=functools.partial(self.submit, crew=crew)
+        )
         # all done
         return self
-
 
     def submit(self, channel, crew, **kwds):
         """
@@ -155,7 +148,7 @@ class Pool(Peer, family='pyre.nexus.teams.pool', implements=Team):
         # N.B.: {channel} is ready to write, because that's how we got here; so write away...
 
         # tell me
-        self.debug.log('sending a task to {.pid}'.format(crew))
+        self.debug.log("sending a task to {.pid}".format(crew))
         # get my workplan
         workplan = self.workplan
         # and my marshaler
@@ -177,7 +170,6 @@ class Pool(Peer, family='pyre.nexus.teams.pool', implements=Team):
         # this worker
         return False
 
-
     def dismiss(self, crew):
         """
         Dismiss the {crew} member from the team
@@ -193,9 +185,8 @@ class Pool(Peer, family='pyre.nexus.teams.pool', implements=Team):
         # all done
         return self
 
-
     # private data
-    active = None   # the set of currently deployed crew members
+    active = None  # the set of currently deployed crew members
     retired = None  # the set of retired crew members
 
 
