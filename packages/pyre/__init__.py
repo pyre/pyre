@@ -18,15 +18,15 @@ import sys
 # get the version of python
 major, minor, micro, _, _ = sys.version_info
 # pack it
-current = (major, minor, micro)
+version_current = (major, minor, micro)
 # minimum required
-required = (3, 7, 2)
+version_required = (3, 7, 2)
 # check
-if current < required:
+if version_current < version_required:
     # stringify the required version
-    required = ".".join(map(str, required))
+    version_required = ".".join(map(str, version_required))
     # and complain
-    raise RuntimeError(f"pyre requires python {required} or newer")
+    raise RuntimeError(f"pyre requires python {version_required} or newer")
 
 
 # convenience
@@ -256,10 +256,18 @@ from .components.Tracker import Tracker as tracker
 # traits
 from .traits import properties
 
+# an undifferentiated property
 property = properties.identity
-from .traits.Behavior import Behavior as export
-from .traits.Behavior import Behavior as provides
+# the type descriptor that encapsulates protocols in trait declarations
 from .traits.Facility import Facility as facility
+
+# interface decorators: requirements
+from .traits.Behavior import Behavior as provides
+
+required = provides
+# implementations
+export = provides
+implements = export
 
 # the base class of all pyre exceptions
 from .framework.exceptions import PyreError
