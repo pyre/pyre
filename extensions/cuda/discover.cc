@@ -113,7 +113,17 @@ pyre::extensions::cuda::discover(PyObject *, PyObject * args)
         PyObject_SetAttrString(sheet, "runtimeVersion", vtuple);
 
         // attach the compute mode
+#if CUDA_VERSION >= 13000
+        int computeMode = cudaComputeModeDefault;
+        auto status = cudaDeviceGetAttribute(&computeMode, cudaDevAttrComputeMode, device);
+        if (status != cudaSuccess) {
+            // pick a sentinel; -1 makes it obvious something went wrong
+            computeMode = -1;
+        }
+        PyObject_SetAttrString(sheet, "computeMode", PyLong_FromLong(computeMode));
+#else
         PyObject_SetAttrString(sheet, "computeMode", PyLong_FromLong(prop.computeMode));
+#endif
 
         // attach the managed memory flag
         PyObject_SetAttrString(sheet, "managedMemory", PyBool_FromLong(prop.managedMemory));
