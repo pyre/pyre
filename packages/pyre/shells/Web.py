@@ -50,7 +50,7 @@ class Web(Script, family="pyre.shells.web"):
         # register it with the nexus
         nexus.services["web"] = "http"
         # activate
-        nexus.prepare(application=application)
+        nexus.prepare(app=application)
         # get the web server
         web = nexus.services["web"]
         # get the address of the web server
