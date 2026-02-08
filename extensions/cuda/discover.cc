@@ -180,21 +180,28 @@ struct coreTableEntry {
 
 // the known GPU generations
 static coreTableEntry coreTableMap[] = {
-    { 0x86, 64 },  // Ampere  (SM 8.6) GA100
-    { 0x80, 64 },  // Ampere  (SM 8.0) GA100
-    { 0x75, 64 },  // Turing  (SM 7.5) GV100
-    { 0x72, 64 },  // Volta   (SM 7.2) GV100
-    { 0x70, 64 },  // Volta   (SM 7.0) GV100
-    { 0x62, 128 }, // Pascal  (SM 6.2) GP10x
-    { 0x61, 128 }, // Pascal  (SM 6.1) GP10x
-    { 0x60, 64 },  // Pascal  (SM 6.0) GP100
-    { 0x53, 128 }, // Maxwell (SM 5.3) GM20x
-    { 0x52, 128 }, // Maxwell (SM 5.2) GM20x
-    { 0x50, 128 }, // Maxwell (SM 5.0) GM10x
-    { 0x37, 192 }, // Kepler  (SM 3.7) GK21x
-    { 0x35, 192 }, // Kepler  (SM 3.5) GK11x
-    { 0x32, 192 }, // Kepler  (SM 3.2) GK10x
-    { 0x30, 192 }, // Kepler  (SM 3.0) GK10x
+    { 0xC1, 128},  // GB10l           (SM 12.1) DGX Spark (to verify...)
+    { 0xC0, 128},  // RTX Blackwell   (SM 12.0) RTX
+    { 0xA3, 128},  // Blackwell Ultra (SM 10.3) B300 / GB300
+    { 0xA0, 128},  // Blackwell       (SM 10.0) B200 / GB200
+    { 0x90, 128},  // Hopper          (SM  9.0) H100 / H200 / GH200
+    { 0x89, 128},  // Ada             (SM  8.9) RTX 40, L4/L40
+    { 0x87, 128},  // Ampere          (SM  8.7) Jetson Orin
+    { 0x86, 64 },  // Ampere          (SM  8.6) GA100
+    { 0x80, 64 },  // Ampere          (SM  8.0) GA100
+    { 0x75, 64 },  // Turing          (SM  7.5) GV100
+    { 0x72, 64 },  // Volta           (SM  7.2) GV100
+    { 0x70, 64 },  // Volta           (SM  7.0) GV100
+    { 0x62, 128 }, // Pascal          (SM  6.2) GP10x
+    { 0x61, 128 }, // Pascal          (SM  6.1) GP10x
+    { 0x60, 64 },  // Pascal          (SM  6.0) GP100
+    { 0x53, 128 }, // Maxwell         (SM  5.3) GM20x
+    { 0x52, 128 }, // Maxwell         (SM  5.2) GM20x
+    { 0x50, 128 }, // Maxwell         (SM  5.0) GM10x
+    { 0x37, 192 }, // Kepler          (SM  3.7) GK21x
+    { 0x35, 192 }, // Kepler          (SM  3.5) GK11x
+    { 0x32, 192 }, // Kepler          (SM  3.2) GK10x
+    { 0x30, 192 }, // Kepler          (SM  3.0) GK10x
 };
 
 // the number of known GPU generations
