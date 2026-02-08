@@ -28,7 +28,14 @@ class Pipe(Channel):
         # build two matching pairs of file descriptors
         from_child, to_parent = os.pipe()
         from_parent, to_child = os.pipe()
-        # dress them up as {Pipe} instances
+        # make sure the parent side file descriptors are not inherited by any process created by
+        # the {exec} family of spawners
+        cls.setCLOEXEC(to_child)
+        cls.setCLOEXEC(from_child)
+        # similarly, mark the child endpoints as inheritable
+        cls.clearCLOEXEC(to_parent)
+        cls.clearCLOEXEC(from_parent)
+        # dress up the end points as {Pipe} instances
         parent = cls(infd=from_child, outfd=to_child, **kwds)
         child = cls(infd=from_parent, outfd=to_parent, **kwds)
         # and return them
