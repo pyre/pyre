@@ -1,19 +1,18 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@orthologue.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # support
 import pyre
+
 # my protocol
 from .Asynchronous import Asynchronous
 
 
 # declaration
-class Peer(pyre.component, family='pyre.nexus.peers.peer', implements=Asynchronous):
+class Peer(pyre.component, family="pyre.nexus.peers.peer", implements=Asynchronous):
     """
     A component base class that supplies the two ingredients necessary for building event
     driven applications
@@ -21,40 +20,39 @@ class Peer(pyre.component, family='pyre.nexus.peers.peer', implements=Asynchrono
 
     # user configurable state
     marshaler = pyre.ipc.marshaler()
-    marshaler.doc = "the serializer that enables the transmission of objects among peers"
+    marshaler.doc = (
+        "the serializer that enables the transmission of objects among peers"
+    )
 
     dispatcher = pyre.ipc.dispatcher()
     dispatcher.doc = "the manager of the event loop"
 
-
     # obligations
     @pyre.export
-    def run(self):
+    def run(self, **kwds):
         """
         Start processing requests
         """
 
         # prepare the execution context
-        self.prepare()
+        self.prepare(**kwds)
         # start processing events
-        status = self.watch()
+        status = self.watch(**kwds)
         # when everything is done
-        self.shutdown()
+        self.shutdown(**kwds)
         # and report the status
         return status
 
-
     @pyre.export
-    def prepare(self):
+    def prepare(self, **kwds):
         """
         Carry out any necessary start up steps
         """
         # nothing to do
         return
 
-
     @pyre.export
-    def watch(self):
+    def watch(self, **kwds):
         """
         Activate my event loop
         """
@@ -62,15 +60,13 @@ class Peer(pyre.component, family='pyre.nexus.peers.peer', implements=Asynchrono
         # there is nothing else to do
         return self.dispatcher.watch()
 
-
     @pyre.export
-    def shutdown(self):
+    def shutdown(self, **kwds):
         """
         Shut the peer down and exit gracefully
         """
         # no clean up, by default
         return
-
 
     @pyre.export
     def stop(self):
@@ -79,7 +75,6 @@ class Peer(pyre.component, family='pyre.nexus.peers.peer', implements=Asynchrono
         """
         # let my event dispatcher know
         return self.dispatcher.stop()
-
 
     # meta-methods
     def __init__(self, name=None, timer=None, **kwds):
@@ -100,6 +95,7 @@ class Peer(pyre.component, family='pyre.nexus.peers.peer', implements=Asynchrono
 
         # journal channels
         import journal
+
         self.info = journal.info(name=name)
         self.debug = journal.debug(name=name)
         self.warning = journal.warning(name=name)
@@ -107,7 +103,6 @@ class Peer(pyre.component, family='pyre.nexus.peers.peer', implements=Asynchrono
 
         # all done
         return
-
 
     # private data
     timer = None
