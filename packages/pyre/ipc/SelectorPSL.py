@@ -31,7 +31,7 @@ class SelectorPSL(Scheduler, family="pyre.ipc.dispatchers.psl", implements=Dispa
 
     # interface obligations
     @pyre.export
-    def whenReadReady(self, channel, call):
+    def whenReadReady(self, channel, call, **kwds):
         """
         Add {call} to the handlers that will be invoked when {channel} is ready for reading
         """
@@ -40,7 +40,7 @@ class SelectorPSL(Scheduler, family="pyre.ipc.dispatchers.psl", implements=Dispa
         # get the read side of the channel
         fd = channel.inbound
         # bind the {channel} with the {call} handler
-        event = self._event(channel=channel, handler=call)
+        event = self._event(channel=channel, handler=call, **kwds)
         # get the current event mask
         current = self._masks[fd]
         # turn on the read bit
@@ -63,7 +63,7 @@ class SelectorPSL(Scheduler, family="pyre.ipc.dispatchers.psl", implements=Dispa
         return
 
     @pyre.export
-    def whenWriteReady(self, channel, call):
+    def whenWriteReady(self, channel, call, **kwds):
         """
         Add {call} to the handlers that will be invoked when {channel} is ready for writing
         """
@@ -72,7 +72,7 @@ class SelectorPSL(Scheduler, family="pyre.ipc.dispatchers.psl", implements=Dispa
         # get the read side of the channel
         fd = channel.outbound
         # bind the {channel} with the {call} handler
-        event = self._event(channel=channel, handler=call)
+        event = self._event(channel=channel, handler=call, **kwds)
         # get the current event mask
         current = self._masks[fd]
         # turn on the read bit
@@ -238,7 +238,7 @@ class SelectorPSL(Scheduler, family="pyre.ipc.dispatchers.psl", implements=Dispa
             # very very carefully
             try:
                 # invoke the handler
-                keep = event.handler(channel=event.channel)
+                keep = event.handler(channel=event.channel, **event.context)
             # if a transient error occurs
             except (BlockingIOError, InterruptedError):
                 # let's try this again
@@ -261,15 +261,16 @@ class SelectorPSL(Scheduler, family="pyre.ipc.dispatchers.psl", implements=Dispa
         """
 
         # metamethods
-        def __init__(self, channel, handler):
+        def __init__(self, channel, handler, **kwds):
             # store
             self.channel = channel
             self.handler = handler
+            self.context = kwds
             # all done
             return
 
         # trim
-        __slots__ = "channel", "handler"
+        __slots__ = "channel", "handler", "context"
 
 
 # end of file
