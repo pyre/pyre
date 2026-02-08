@@ -1,14 +1,13 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # externals
 import pyre
 import weakref
+
 # my protocol
 from .Service import Service
 
@@ -19,23 +18,20 @@ class Server(pyre.component, implements=Service):
     The base class for network servers
     """
 
-
     # user configurable state
     address = pyre.properties.inet()
-
 
     # types
     from .exceptions import ConnectionResetError
 
-
     # behaviors
-    @pyre.export(tip='register this service with the nexus')
-    def activate(self, application, dispatcher):
+    @pyre.export(tip="register this service with the nexus")
+    def activate(self, app, dispatcher):
         """
         Grab a port and register it with the event dispatcher
         """
         # save the application context
-        self.application = weakref.proxy(application)
+        self.application = weakref.proxy(app)
         # and the dispatcher
         self.dispatcher = weakref.proxy(dispatcher)
         # build a port
@@ -47,8 +43,7 @@ class Server(pyre.component, implements=Service):
         # all done
         return
 
-
-    @pyre.export(tip='acknowledge a peer that has initiated a connection')
+    @pyre.export(tip="acknowledge a peer that has initiated a connection")
     def acknowledge(self, channel):
         """
         A peer has attempted to establish a connection
@@ -57,7 +52,8 @@ class Server(pyre.component, implements=Service):
         newChannel, peerAddress = channel.accept()
         # log the request
         self.application.debug.log(
-            "{}: received 'connection' request from {}".format(channel, peerAddress))
+            f"{channel}: received 'connection' request from {peerAddress}"
+        )
 
         # if this is not a valid connection
         if not self.validate(channel=newChannel, address=peerAddress):
@@ -70,8 +66,7 @@ class Server(pyre.component, implements=Service):
         # if {newPeer} returns {True}
         return self.connect(channel=newChannel, address=peerAddress)
 
-
-    @pyre.export(tip='determine whether to start a conversation with the peer')
+    @pyre.export(tip="determine whether to start a conversation with the peer")
     def validate(self, channel, address):
         """
         Examine the peer {address} and determine whether to continue the conversation
@@ -79,8 +74,7 @@ class Server(pyre.component, implements=Service):
         # be friendly, by default
         return True
 
-
-    @pyre.export(tip='prepare to accept connections from peers')
+    @pyre.export(tip="prepare to accept connections from peers")
     def connect(self, channel, address):
         """
         Prepare to start accepting requests from peers
@@ -96,8 +90,7 @@ class Server(pyre.component, implements=Service):
         # indicate that i would like to continue receiving connection requests from other peers
         return True
 
-
-    @pyre.export(tip='process and respond to the peer request')
+    @pyre.export(tip="process and respond to the peer request")
     def process(self, channel):
         """
         Say something to the peer
@@ -109,18 +102,17 @@ class Server(pyre.component, implements=Service):
         # closes the connection. subclasses should override this and not chain
         return False
 
-
-    @pyre.export(tip='shutdown')
+    @pyre.export(tip="shutdown")
     def shutdown(self):
         """
         Clean up and shutdown
         """
-        # remove my references to the application and the dispatcher
-        del self.dispatcher
-        del self.application
+        # remove my references to the application
+        self.application = None
+        # and the dispatcher
+        self.dispatcher = None
         # not much to do
         return
-
 
     # implementation details
     # private data
