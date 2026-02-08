@@ -70,14 +70,14 @@ class Server(pyre.nexus.server, family="pyre.nexus.servers.http"):
         # get the application context
         application = self.application
         # show me
-        application.debug.log("reading data from {}".format(channel.peer))
+        application.debug.log(f"reading data from {channel.peer}")
         # get whatever data is available at this point
         chunk = channel.read(maxlen=self.MAX_BYTES)
 
         # if there was nothing to read
         if len(chunk) == 0:
             # show me
-            application.debug.log("connection from {} was closed".format(channel.peer))
+            application.debug.log(f"connection from {channel.peer} was closed")
             # close the connection
             channel.close()
             # check whether we know this peer
