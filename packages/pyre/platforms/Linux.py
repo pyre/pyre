@@ -5,6 +5,7 @@
 
 
 # externals
+import sys
 import collections
 import operator
 import subprocess
@@ -42,40 +43,26 @@ class Linux(POSIX, family="pyre.platforms.linux"):
         """
         Return a suitable default encapsulation of the runtime host
         """
-
-        # after python 3.8, {platform} doesn't have {linux_distribution} any more; the
-        # functionality has been delegated to the {distro} package
-
-        # so let's try
         try:
-            # to get {distro}
-            import distro
-        # if that fails
-        except ImportError:
-            # fallback to the native python package; this is silly in the long term, but it's a
-            # reasonable workaround for current 3.7- users that don't have {distro}
-            import platform
-
-            # if it still has the deprecated function
-            try:
-                # identify the platform characteristics; careful not to set the {distribution}
-                # attribute here; the subclasses set the distribution name to the pyre
-                # canonical nickname
+            if sys.version_info.major == 3 and sys.version_info.minor <= 8:
+                import platform
                 distribution, cls.release, cls.codename = platform.linux_distribution()
                 # just in case
                 distribution = distribution.lower()
-            # if this also fails
-            except AttributeError:
-                # there isn't much else to do; act like a generic linux system
-                return cls
-        # if {distro} is available
-        else:
-            # identify the platform characteristics; again, careful not to set the
-            # {distribution} attribute here; the subclasses set the distribution name to the
-            # pyre canonical nickname
-            distribution = distro.id()
-            cls.release = distro.version()
-            cls.codename = distro.codename()
+            elif sys.version_info.major == 3 and sys.version_info.minor < 10:
+                import distro
+                distribution = distro.id()
+                cls.release = distro.version()
+                cls.codename = distro.codename()
+            else:
+                import platform
+                release_info = platform.freedesktop_os_release()
+                distribution = release_info["ID"].lower()
+                cls.release = release_info["VERSION_ID"]
+                cls.codename = release_info["VERSION_CODENAME"]
+        except (AttributeError, ImportError):
+            # there isn't much else to do; act like a generic linux system
+            return cls
 
         # check for ubuntu
         if distribution.startswith("ubuntu"):
@@ -105,6 +92,20 @@ class Linux(POSIX, family="pyre.platforms.linux"):
 
             # and return it
             return CentOS
+        # check for rocky
+        if distribution.startswith("rocky"):
+            # load the platform file
+            from .Rocky import Rocky
+
+            # and return it
+            return Rocky
+        # check for fedora
+        if distribution.startswith("fedora"):
+            # load the platform file
+            from .Fedora import Fedora
+
+            # and return it
+            return Fedora
 
         # otherwise, act like a generic linux system
         return cls
