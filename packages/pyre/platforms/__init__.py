@@ -89,6 +89,30 @@ def redhat():
 
 
 @foundry(implements=platform)
+def rocky():
+    """
+    Support for RockyLinux
+    """
+    # get the class record
+    from .Rocky import Rocky
+
+    # and return it
+    return Rocky
+
+
+@foundry(implements=platform)
+def fedora():
+    """
+    Support for Fedora
+    """
+    # get the class record
+    from .Fedora import Fedora
+
+    # and return it
+    return Fedora
+
+
+@foundry(implements=platform)
 def ubuntu():
     """
     Support for Ubuntu
@@ -98,6 +122,18 @@ def ubuntu():
 
     # and return it
     return Ubuntu
+
+
+@foundry(implements=platform)
+def debian():
+    """
+    Support for Debian
+    """
+    # get the class record
+    from .Debian import Debian
+
+    # and return it
+    return Debian
 
 
 # host aliases
