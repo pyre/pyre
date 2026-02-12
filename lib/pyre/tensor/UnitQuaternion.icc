@@ -39,6 +39,46 @@ constexpr pyre::tensor::UnitQuaternion<T>::UnitQuaternion(
                      axis[2] * pyre::math::sin(0.5 * theta) })
 {}
 
+// constructor from a rotation matrix representation
+template <typename T>
+constexpr pyre::tensor::UnitQuaternion<T>::UnitQuaternion(const rotation_matrix_type & matrix) :
+    UnitQuaternion(
+        pyre::math::acos(0.5 * (pyre::tensor::trace(matrix) - 1.0)),
+        pyre::tensor::normalize(pyre::tensor::axis(pyre::tensor::skew(matrix))))
+{}
+
+// get the component {r} of this quaternion
+template <typename T>
+constexpr auto
+pyre::tensor::UnitQuaternion<T>::r() const -> real_type
+{
+    return _qr;
+}
+
+// get the component {i} of this quaternion
+template <typename T>
+constexpr auto
+pyre::tensor::UnitQuaternion<T>::i() const -> real_type
+{
+    return _qi;
+}
+
+// get the component {j} of this quaternion
+template <typename T>
+constexpr auto
+pyre::tensor::UnitQuaternion<T>::j() const -> real_type
+{
+    return _qj;
+}
+
+// get the component {k} of this quaternion
+template <typename T>
+constexpr auto
+pyre::tensor::UnitQuaternion<T>::k() const -> real_type
+{
+    return _qk;
+}
+
 template <typename T>
 constexpr auto
 pyre::tensor::UnitQuaternion<T>::rotation() const -> rotation_matrix_type

@@ -34,6 +34,15 @@ namespace pyre::math {
     // {constexpr} cos function
     constexpr auto cos(double x) -> double;
 
+    // {constexpr} tan function
+    constexpr auto tan(double x) -> double;
+
+    // {constexpr} asin function
+    constexpr auto asin(double x) -> double;
+
+    // {constexpr} acos function
+    constexpr auto acos(double x) -> double;
+
     // {constexpr} atan function
     constexpr auto atan(double x) -> double;
 

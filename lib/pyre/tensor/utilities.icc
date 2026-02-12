@@ -85,6 +85,18 @@ pyre::tensor::operator<<(
     return _print_matrix(os, tensor, pyre::grid::make_integer_sequence<D1 - 1> {});
 }
 
+// print a quaternion's (r, i, j, k) components
+template <typename T>
+std::ostream &
+pyre::tensor::operator<<(std::ostream & os, const pyre::tensor::UnitQuaternion<T> & quaternion)
+{
+    os << "[ ";
+    os << quaternion.r() << ", " << quaternion.i() << ", " << quaternion.j() << ", "
+       << quaternion.k();
+    os << " ]";
+    return os;
+}
+
 template <typename T>
 constexpr bool
 pyre::tensor::is_equal(T lhs, T rhs)
