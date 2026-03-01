@@ -21,13 +21,13 @@
 namespace pyre::h5 {
     // from {hdf5}
     using file_t = H5::H5File;
+    using group_t = H5::Group;
     using dataset_t = H5::DataSet;
     using dataspace_t = H5::DataSpace;
     using dapl_t = H5::DSetAccPropList;
     using dcpl_t = H5::DSetCreatPropList;
     using fapl_t = H5::FileAccPropList;
     using fcpl_t = H5::FileCreatPropList;
-    using ros3_t = H5FD_ros3_fapl_t;
     using datatype_t = H5::DataType;
     using comptype_t = H5::CompType;
     using predtype_t = H5::PredType;
