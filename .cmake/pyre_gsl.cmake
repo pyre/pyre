@@ -4,6 +4,30 @@
 # (c) 1998-2026 all rights reserved
 
 
+# initialize BLAS: select the vendor and discover the library
+function(pyre_blasInit)
+  # let the user pick the BLAS vendor; empty string triggers auto-detection
+  set(BLA_VENDOR "" CACHE STRING
+    "BLAS vendor (e.g. OpenBLAS, ATLAS, Apple, MKL, FlexiBLAS, Generic); empty for auto-detect"
+    )
+  # valid choices for cmake-gui drop-down
+  set_property(CACHE BLA_VENDOR PROPERTY STRINGS
+    "" OpenBLAS ATLAS Apple MKL FlexiBLAS FLAME Goto IBMESSL NAS Generic
+    )
+  # discover the library
+  find_package(BLAS)
+  # pick the link target: prefer an external BLAS, fall back to the one bundled with GSL
+  if(${BLAS_FOUND})
+    set(BLAS_LIB_IMPORT BLAS::BLAS PARENT_SCOPE)
+    message(STATUS "Found BLAS: ${BLAS_LIBRARIES} (vendor: '${BLA_VENDOR}')")
+  else()
+    set(BLAS_LIB_IMPORT GSL::gslcblas PARENT_SCOPE)
+    message(STATUS "BLAS not found; will use GSL::gslcblas (vendor: '${BLA_VENDOR}')")
+  endif()
+  # all done
+endfunction(pyre_blasInit)
+
+
 # build the gsl package
 function(pyre_gslPackage)
   # if we have gsl
@@ -21,6 +45,8 @@ endfunction(pyre_gslPackage)
 
 # build the gsl module
 function(pyre_gslModule)
+  # resolve the BLAS link target
+  pyre_blasInit()
   # if we have gsl
   if (${GSL_FOUND})
     Python_add_library(gslmodule MODULE WITH_SOABI)
@@ -33,7 +59,7 @@ function(pyre_gslModule)
     # set the libraries to link against
     target_link_libraries(
       gslmodule PRIVATE
-      ${GSL_LIBRARIES} pyre journal
+      GSL::gsl ${BLAS_LIB_IMPORT} pyre journal
       )
     # add the sources
     target_sources(gslmodule PRIVATE
