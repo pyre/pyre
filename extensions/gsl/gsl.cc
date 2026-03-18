@@ -241,6 +241,7 @@ namespace gsl {
         { vector::median__name__, vector::median, METH_VARARGS, vector::median__doc__ },
         { vector::variance__name__, vector::variance, METH_VARARGS, vector::variance__doc__ },
         { vector::sdev__name__, vector::sdev, METH_VARARGS, vector::sdev__doc__ },
+        { vector::shuffle__name__, vector::shuffle, METH_VARARGS, vector::shuffle__doc__ },
 
 #if defined(WITH_NUMPY)
         // numpy

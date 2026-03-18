@@ -168,6 +168,11 @@ namespace gsl::vector {
     extern const char * const sdev__doc__;
     PyObject * sdev(PyObject *, PyObject *);
 
+    // vector_shuffle
+    extern const char * const shuffle__name__;
+    extern const char * const shuffle__doc__;
+    PyObject * shuffle(PyObject *, PyObject *);
+
 } // namespace gsl::vector
 
 #endif

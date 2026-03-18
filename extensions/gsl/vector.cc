@@ -13,10 +13,12 @@
 
 #include <gsl/gsl_vector.h>
 #include <gsl/gsl_permutation.h>
+#include <gsl/gsl_randist.h>
 #include <gsl/gsl_sort_vector.h>
 #include <gsl/gsl_statistics_double.h>
 
 #include "vector.h"
+#include "rng.h"
 #include "capsules.h"
 
 
@@ -1197,6 +1199,44 @@ gsl::vector::freeview(PyObject * capsule)
     delete v;
     // and return
     return;
+}
+
+
+// vector_shuffle
+const char * const gsl::vector::shuffle__name__ = "vector_shuffle";
+const char * const gsl::vector::shuffle__doc__ = "shuffle a vector to a random order";
+
+PyObject *
+gsl::vector::shuffle(PyObject *, PyObject * args)
+{
+    // the arguments
+    PyObject * rngCapsule, * vecCapsule;
+    // unpack the argument tuple
+    int status = PyArg_ParseTuple(
+        args, "O!O!:vector_shuffle",
+        &PyCapsule_Type, &rngCapsule,
+        &PyCapsule_Type, &vecCapsule);
+    // bail out if something went wrong with the argument unpacking
+    if (!status)
+        return 0;
+    // bail out if the capsule is not valid
+    if (!PyCapsule_IsValid(rngCapsule, gsl::rng::capsule_t)) {
+        PyErr_SetString(PyExc_TypeError, "invalid rng capsule");
+        return 0;
+    }
+    if (!PyCapsule_IsValid(vecCapsule, gsl::vector::capsule_t)) {
+        PyErr_SetString(PyExc_TypeError, "invalid vector capsule");
+        return 0;
+    }
+    // get the rng
+    gsl_rng * r = static_cast<gsl_rng *>(PyCapsule_GetPointer(rngCapsule, gsl::rng::capsule_t));
+    // get the vector
+    gsl_vector * v =
+        static_cast<gsl_vector *>(PyCapsule_GetPointer(vecCapsule, gsl::vector::capsule_t));
+    // shuffle
+    gsl_ran_shuffle(r, v->data, v->size, sizeof(double));
+    // return None
+    Py_RETURN_NONE;
 }
 
 
