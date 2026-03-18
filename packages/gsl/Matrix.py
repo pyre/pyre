@@ -490,7 +490,7 @@ class Matrix:
             # assuming correct dimension, skip error checking
 
         # call gsl function
-        gsl.stats_matrix_mean(self.data, axis, mean.data)
+        gsl.stats_matrix_mean(self.data, axis if axis is not None else -1, mean.data)
 
         # return the result
         return mean
@@ -530,9 +530,9 @@ class Matrix:
 
         # call gsl function
         if sample:
-            gsl.stats_matrix_mean_sd(self.data, axis, mean.data, sd.data)
+            gsl.stats_matrix_mean_sd(self.data, axis if axis is not None else -1, mean.data, sd.data)
         else:
-            gsl.stats_matrix_mean_std(self.data, axis, mean.data, sd.data)
+            gsl.stats_matrix_mean_std(self.data, axis if axis is not None else -1, mean.data, sd.data)
 
         # return (mean, sd)
         return mean, sd

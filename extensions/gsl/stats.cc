@@ -106,7 +106,8 @@ gsl::stats::matrix_mean(PyObject *, PyObject * args)
     int axis;
     // unpack the argument tuple
     int status = PyArg_ParseTuple(
-        args, "O!kO:stats_matrix_mean", &PyCapsule_Type, &matrixCapsule, &axis, &meanCapsule);
+        args, "O!iO!:stats_matrix_mean",
+        &PyCapsule_Type, &matrixCapsule, &axis, &PyCapsule_Type, &meanCapsule);
     // if something went wrong
     if (!status)
         return 0;
@@ -191,8 +192,9 @@ gsl::stats::matrix_mean_sd(PyObject *, PyObject * args)
     int axis;
     // unpack the argument tuple
     int status = PyArg_ParseTuple(
-        args, "O!kOO:stats_matrix_mean_sd", &PyCapsule_Type, &matrixCapsule, &axis, &meanCapsule,
-        &sdCapsule);
+        args, "O!iO!O!:stats_matrix_mean_sd",
+        &PyCapsule_Type, &matrixCapsule, &axis, &PyCapsule_Type, &meanCapsule,
+        &PyCapsule_Type, &sdCapsule);
     // if something went wrong
     if (!status)
         return 0;
@@ -289,8 +291,9 @@ gsl::stats::matrix_mean_std(PyObject *, PyObject * args)
     int axis;
     // unpack the argument tuple
     int status = PyArg_ParseTuple(
-        args, "O!kOO:stats_matrix_mean_std", &PyCapsule_Type, &matrixCapsule, &axis, &meanCapsule,
-        &sdCapsule);
+        args, "O!iO!O!:stats_matrix_mean_std",
+        &PyCapsule_Type, &matrixCapsule, &axis, &PyCapsule_Type, &meanCapsule,
+        &PyCapsule_Type, &sdCapsule);
     // if something went wrong
     if (!status)
         return 0;
