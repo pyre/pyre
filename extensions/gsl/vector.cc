@@ -5,6 +5,8 @@
 
 // externals
 #include "external.h"
+// dlpack
+#include "dlpack.h"
 
 
 namespace pyre::gsl::py {
@@ -12,8 +14,64 @@ namespace pyre::gsl::py {
 void
 vector(::py::module & m)
 {
-    // register the Vector type
-    ::py::class_<pyre::gsl::Vector>(m, "Vector");
+    // register the Vector type with DLPack support
+    ::py::class_<pyre::gsl::Vector>(m, "Vector")
+        .def(
+            "__dlpack_device__",
+            [](const pyre::gsl::Vector &) {
+                return ::py::make_tuple(kCPU.device_type, kCPU.device_id);
+            })
+        .def(
+            "__dlpack__",
+            [](::py::object self, ::py::object /*stream*/) -> ::py::object {
+                pyre::gsl::Vector & v = self.cast<pyre::gsl::Vector &>();
+                // heap-allocate context: shape, stride, and the managed tensor itself
+                struct Ctx {
+                    int64_t shape[1];
+                    int64_t strides[1];
+                    DLManagedTensor managed;
+                    PyObject * owner;   // keeps the Vector Python object alive
+                };
+                auto * ctx = new Ctx;
+                ctx->shape[0]   = static_cast<int64_t>(v.ptr->size);
+                ctx->strides[0] = static_cast<int64_t>(v.ptr->stride);
+                Py_INCREF(self.ptr());
+                ctx->owner = self.ptr();
+                ctx->managed = DLManagedTensor {
+                    DLTensor {
+                        v.ptr->data,        // data
+                        kCPU,               // device
+                        1,                  // ndim
+                        kFloat64,           // dtype
+                        ctx->shape,         // shape
+                        ctx->strides,       // strides
+                        0                   // byte_offset
+                    },
+                    ctx,                    // manager_ctx
+                    [](DLManagedTensor * mt) {
+                        auto * c = static_cast<Ctx *>(mt->manager_ctx);
+                        Py_DECREF(c->owner);
+                        delete c;
+                    }
+                };
+                // capsule destructor fires if the capsule is GC'd without being consumed
+                PyObject * cap = PyCapsule_New(&ctx->managed, "dltensor",
+                    [](PyObject * pycap) {
+                        // only call deleter if not yet consumed (still named "dltensor")
+                        auto * mt = static_cast<DLManagedTensor *>(
+                            PyCapsule_GetPointer(pycap, "dltensor"));
+                        if (mt && mt->deleter) mt->deleter(mt);
+                    });
+                if (!cap) {
+                    Py_DECREF(ctx->owner);
+                    delete ctx;
+                    throw ::py::error_already_set();
+                }
+                return ::py::reinterpret_steal<::py::object>(cap);
+            },
+            ::py::arg("stream") = ::py::none(),
+            "return a DLPack tensor capsule (CPU, float64)");
+
     // register the VectorView type
     ::py::class_<pyre::gsl::VectorView>(m, "VectorView");
 

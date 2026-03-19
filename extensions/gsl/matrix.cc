@@ -5,6 +5,8 @@
 
 // externals
 #include "external.h"
+// dlpack
+#include "dlpack.h"
 
 
 namespace pyre::gsl::py {
@@ -12,8 +14,64 @@ namespace pyre::gsl::py {
 void
 matrix(::py::module & m)
 {
-    // register the Matrix type
-    ::py::class_<pyre::gsl::Matrix>(m, "Matrix");
+    // register the Matrix type with DLPack support
+    ::py::class_<pyre::gsl::Matrix>(m, "Matrix")
+        .def(
+            "__dlpack_device__",
+            [](const pyre::gsl::Matrix &) {
+                return ::py::make_tuple(kCPU.device_type, kCPU.device_id);
+            })
+        .def(
+            "__dlpack__",
+            [](::py::object self, ::py::object /*stream*/) -> ::py::object {
+                pyre::gsl::Matrix & mat = self.cast<pyre::gsl::Matrix &>();
+                struct Ctx {
+                    int64_t shape[2];
+                    int64_t strides[2];
+                    DLManagedTensor managed;
+                    PyObject * owner;
+                };
+                auto * ctx = new Ctx;
+                ctx->shape[0]   = static_cast<int64_t>(mat.ptr->size1);
+                ctx->shape[1]   = static_cast<int64_t>(mat.ptr->size2);
+                // GSL matrices are row-major; tda is the leading dimension (stride of row)
+                ctx->strides[0] = static_cast<int64_t>(mat.ptr->tda);
+                ctx->strides[1] = 1;
+                Py_INCREF(self.ptr());
+                ctx->owner = self.ptr();
+                ctx->managed = DLManagedTensor {
+                    DLTensor {
+                        mat.ptr->data,      // data
+                        kCPU,               // device
+                        2,                  // ndim
+                        kFloat64,           // dtype
+                        ctx->shape,         // shape
+                        ctx->strides,       // strides
+                        0                   // byte_offset
+                    },
+                    ctx,                    // manager_ctx
+                    [](DLManagedTensor * mt) {
+                        auto * c = static_cast<Ctx *>(mt->manager_ctx);
+                        Py_DECREF(c->owner);
+                        delete c;
+                    }
+                };
+                PyObject * cap = PyCapsule_New(&ctx->managed, "dltensor",
+                    [](PyObject * pycap) {
+                        auto * mt = static_cast<DLManagedTensor *>(
+                            PyCapsule_GetPointer(pycap, "dltensor"));
+                        if (mt && mt->deleter) mt->deleter(mt);
+                    });
+                if (!cap) {
+                    Py_DECREF(ctx->owner);
+                    delete ctx;
+                    throw ::py::error_already_set();
+                }
+                return ::py::reinterpret_steal<::py::object>(cap);
+            },
+            ::py::arg("stream") = ::py::none(),
+            "return a DLPack tensor capsule (CPU, float64, row-major)");
+
     // register the MatrixView type
     ::py::class_<pyre::gsl::MatrixView>(m, "MatrixView");
 
