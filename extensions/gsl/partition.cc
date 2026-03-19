@@ -13,8 +13,8 @@
 #include <mpi.h>
 #include <portinfo>
 #include <pyre/mpi.h>
-// the MPI capsule tag (MPI extension still uses the old capsule approach)
-namespace mpi::communicator { extern const char * const capsule_t; }
+// MPI communicator capsule tag — must match the definition in the mpi extension
+static constexpr const char * mpi_communicator_capsule = "mpi.communicator";
 
 
 // helpers
@@ -22,11 +22,11 @@ static pyre::mpi::communicator_t *
 get_communicator(::py::object comm_obj)
 {
     PyObject * cap = comm_obj.ptr();
-    if (!PyCapsule_IsValid(cap, mpi::communicator::capsule_t)) {
+    if (!PyCapsule_IsValid(cap, mpi_communicator_capsule)) {
         throw std::invalid_argument("expected an mpi communicator capsule");
     }
     return static_cast<pyre::mpi::communicator_t *>(
-        PyCapsule_GetPointer(cap, mpi::communicator::capsule_t));
+        PyCapsule_GetPointer(cap, mpi_communicator_capsule));
 }
 
 

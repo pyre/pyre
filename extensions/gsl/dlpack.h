@@ -3,7 +3,7 @@
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
 // (c) 1998-2026 all rights reserved
 //
-// Minimal DLPack v0.8 definitions (https://github.com/dmlc/dlpack).
+// Minimal DLPack v1.0 definitions (https://github.com/dmlc/dlpack).
 // Reproduced here to avoid a compile-time dependency on an external dlpack package;
 // the ABI is stable and versioned via DLPACK_VERSION.
 
@@ -12,7 +12,7 @@
 
 #include <cstdint>
 
-#define DLPACK_VERSION 80
+#define DLPACK_VERSION 100
 #define DLPACK_ABI_VERSION 1
 
 // device types
@@ -56,6 +56,23 @@ typedef struct DLManagedTensor {
     void * manager_ctx;
     void (*deleter)(struct DLManagedTensor *);
 } DLManagedTensor;
+
+// DLPack v1.0: versioned managed tensor (NumPy 2.x uses this for writable arrays)
+typedef struct {
+    uint32_t major;
+    uint32_t minor;
+} DLPackVersion;
+
+// flags bitmask: bit 0 = read-only; 0 = writable
+#define DLPACK_FLAG_BITMASK_READ_ONLY (1ULL << 0)
+
+typedef struct DLManagedTensorVersioned {
+    DLPackVersion version;
+    void * manager_ctx;
+    void (*deleter)(struct DLManagedTensorVersioned *);
+    uint64_t flags;
+    DLTensor dl_tensor;
+} DLManagedTensorVersioned;
 
 // float64 dtype constant
 static constexpr DLDataType kFloat64 = { kDLFloat, 64, 1 };

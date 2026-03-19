@@ -19,7 +19,7 @@ matrix(::py::module & m)
         .def(
             "__dlpack_device__",
             [](const pyre::gsl::Matrix &) {
-                return ::py::make_tuple(kCPU.device_type, kCPU.device_id);
+                return ::py::make_tuple(static_cast<int>(kCPU.device_type), kCPU.device_id);
             })
         .def(
             "__dlpack__",
@@ -28,7 +28,7 @@ matrix(::py::module & m)
                 struct Ctx {
                     int64_t shape[2];
                     int64_t strides[2];
-                    DLManagedTensor managed;
+                    DLManagedTensorVersioned managed;
                     PyObject * owner;
                 };
                 auto * ctx = new Ctx;
@@ -39,7 +39,15 @@ matrix(::py::module & m)
                 ctx->strides[1] = 1;
                 Py_INCREF(self.ptr());
                 ctx->owner = self.ptr();
-                ctx->managed = DLManagedTensor {
+                ctx->managed = DLManagedTensorVersioned {
+                    { 1, 0 },               // version: major=1, minor=0
+                    ctx,                    // manager_ctx
+                    [](DLManagedTensorVersioned * mt) {
+                        auto * c = static_cast<Ctx *>(mt->manager_ctx);
+                        Py_DECREF(c->owner);
+                        delete c;
+                    },
+                    0,                      // flags: 0 = writable
                     DLTensor {
                         mat.ptr->data,      // data
                         kCPU,               // device
@@ -48,18 +56,13 @@ matrix(::py::module & m)
                         ctx->shape,         // shape
                         ctx->strides,       // strides
                         0                   // byte_offset
-                    },
-                    ctx,                    // manager_ctx
-                    [](DLManagedTensor * mt) {
-                        auto * c = static_cast<Ctx *>(mt->manager_ctx);
-                        Py_DECREF(c->owner);
-                        delete c;
                     }
                 };
-                PyObject * cap = PyCapsule_New(&ctx->managed, "dltensor",
+                PyObject * cap = PyCapsule_New(&ctx->managed, "dltensor_versioned",
                     [](PyObject * pycap) {
-                        auto * mt = static_cast<DLManagedTensor *>(
-                            PyCapsule_GetPointer(pycap, "dltensor"));
+                        if (!PyCapsule_IsValid(pycap, "dltensor_versioned")) return;
+                        auto * mt = static_cast<DLManagedTensorVersioned *>(
+                            PyCapsule_GetPointer(pycap, "dltensor_versioned"));
                         if (mt && mt->deleter) mt->deleter(mt);
                     });
                 if (!cap) {
