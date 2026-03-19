@@ -1,1243 +1,369 @@
-// -*- C++ -*-
+// -*- c++ -*-
 //
-// michael a.g. aïvázis
-// orthologue
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
 // (c) 1998-2026 all rights reserved
-//
 
+// externals
+#include "external.h"
 
-#include <portinfo>
-#include <Python.h>
-#include <sstream>
-#include <cstdio>
 
-#include <gsl/gsl_vector.h>
-#include <gsl/gsl_permutation.h>
-#include <gsl/gsl_randist.h>
-#include <gsl/gsl_sort_vector.h>
-#include <gsl/gsl_statistics_double.h>
-
-#include "vector.h"
-#include "rng.h"
-#include "capsules.h"
-
-
-// construction
-const char * const gsl::vector::alloc__name__ = "vector_alloc";
-const char * const gsl::vector::alloc__doc__ = "allocate a vector";
-
-PyObject *
-gsl::vector::alloc(PyObject *, PyObject * args)
-{
-    // place holders for the python arguments
-    size_t shape;
-    // unpack the argument tuple
-    int status = PyArg_ParseTuple(args, "k:vector_alloc", &shape);
-    // if something went wrong
-    if (!status)
-        return 0;
-
-    // allocate a vector
-    gsl_vector * v = gsl_vector_alloc(shape);
-    // std::cout << " gsl.vector_allocate: vector@" << v << ", size=" << shape << std::endl;
-
-    // wrap it in a capsule and return it
-    return PyCapsule_New(v, capsule_t, free);
-}
-
-
-// view construction
-const char * const gsl::vector::view_alloc__name__ = "vector_view_alloc";
-const char * const gsl::vector::view_alloc__doc__ = "allocate a vector view";
-
-PyObject *
-gsl::vector::view_alloc(PyObject *, PyObject * args)
-{
-    // place holders for the python arguments
-    size_t origin;
-    size_t shape;
-    PyObject * capsule;
-    // unpack the argument tuple
-    int status = PyArg_ParseTuple(
-        args, "O!kk:vector_view_alloc", &PyCapsule_Type, &capsule, &origin, &shape);
-    // if something went wrong
-    if (!status)
-        return 0;
-    // bail out if the vector capsule is not valid
-    if (!PyCapsule_IsValid(capsule, capsule_t)) {
-        PyErr_SetString(PyExc_TypeError, "invalid vector capsule");
-        return 0;
-    }
-
-    // get the vector
-    gsl_vector * v = static_cast<gsl_vector *>(PyCapsule_GetPointer(capsule, capsule_t));
-
-    // build the vector view
-    gsl_vector_view * view = new gsl_vector_view(gsl_vector_subvector(v, origin, shape));
-
-    // the caller expects a tuple
-    PyObject * result = PyTuple_New(2);
-    // the zeroth entry is the capsule
-    PyTuple_SET_ITEM(result, 0, PyCapsule_New(view, view_t, freeview));
-    // followed by a pointer to the view data
-    // N.B.: don't attempt to deallocate this one...
-    PyTuple_SET_ITEM(result, 1, PyCapsule_New(&(view->vector), capsule_t, 0));
-
-    // all done
-    return result;
-}
-
-
-// initialization
-const char * const gsl::vector::zero__name__ = "vector_zero";
-const char * const gsl::vector::zero__doc__ = "zero out the elements of a vector";
-
-PyObject *
-gsl::vector::zero(PyObject *, PyObject * args)
-{
-    // the arguments
-    PyObject * capsule;
-    // unpack the argument tuple
-    int status = PyArg_ParseTuple(args, "O!:vector_zero", &PyCapsule_Type, &capsule);
-    // if something went wrong
-    if (!status)
-        return 0;
-    // bail out if the capsule is not valid
-    if (!PyCapsule_IsValid(capsule, capsule_t)) {
-        PyErr_SetString(PyExc_TypeError, "invalid vector capsule");
-        return 0;
-    }
-
-    // get the vector
-    gsl_vector * v = static_cast<gsl_vector *>(PyCapsule_GetPointer(capsule, capsule_t));
-    // std::cout << " gsl.vector_zero: vector@" << v << std::endl;
-    // zero it out
-    gsl_vector_set_zero(v);
-
-    // return None
-    Py_INCREF(Py_None);
-    return Py_None;
-}
-
-
-const char * const gsl::vector::fill__name__ = "vector_fill";
-const char * const gsl::vector::fill__doc__ = "set all elements of a vector to a value";
-
-PyObject *
-gsl::vector::fill(PyObject *, PyObject * args)
-{
-    // the arguments
-    double value;
-    PyObject * capsule;
-    // unpack the argument tuple
-    int status = PyArg_ParseTuple(args, "O!d:vector_fill", &PyCapsule_Type, &capsule, &value);
-    // if something went wrong
-    if (!status)
-        return 0;
-    // bail out if the capsule is not valid
-    if (!PyCapsule_IsValid(capsule, capsule_t)) {
-        PyErr_SetString(PyExc_TypeError, "invalid vector capsule");
-        return 0;
-    }
-
-    // get the vector
-    gsl_vector * v = static_cast<gsl_vector *>(PyCapsule_GetPointer(capsule, capsule_t));
-    // std::cout << " gsl.vector_fill: vector@" << v << ", value=" << value << std::endl;
-    // fill it out
-    gsl_vector_set_all(v, value);
-
-    // return None
-    Py_INCREF(Py_None);
-    return Py_None;
-}
-
-
-// basis
-const char * const gsl::vector::basis__name__ = "vector_basis";
-const char * const gsl::vector::basis__doc__ = "build a basis vector";
-
-PyObject *
-gsl::vector::basis(PyObject *, PyObject * args)
-{
-    // the arguments
-    size_t index;
-    PyObject * capsule;
-    // unpack the argument tuple
-    int status = PyArg_ParseTuple(args, "O!k:vector_basis", &PyCapsule_Type, &capsule, &index);
-    // if something went wrong
-    if (!status)
-        return 0;
-    // bail out if the capsule is not valid
-    if (!PyCapsule_IsValid(capsule, capsule_t)) {
-        PyErr_SetString(PyExc_TypeError, "invalid vector capsule");
-        return 0;
-    }
-
-    // get the vector
-    gsl_vector * v = static_cast<gsl_vector *>(PyCapsule_GetPointer(capsule, capsule_t));
-    // std::cout << " gsl.vector_basis: vector@" << v << ", index=" << index << std::endl;
-    // fill it out
-    gsl_vector_set_basis(v, index);
-
-    // return None
-    Py_INCREF(Py_None);
-    return Py_None;
-}
-
-
-// copy
-const char * const gsl::vector::copy__name__ = "vector_copy";
-const char * const gsl::vector::copy__doc__ = "build a copy of a vector";
-
-PyObject *
-gsl::vector::copy(PyObject *, PyObject * args)
-{
-    // the arguments
-    PyObject * sourceCapsule;
-    PyObject * destinationCapsule;
-    // unpack the argument tuple
-    int status = PyArg_ParseTuple(
-        args, "O!O!:vector_copy", &PyCapsule_Type, &destinationCapsule, &PyCapsule_Type,
-        &sourceCapsule);
-    // if something went wrong
-    if (!status)
-        return 0;
-    // bail out if the source capsule is not valid
-    if (!PyCapsule_IsValid(sourceCapsule, capsule_t)) {
-        PyErr_SetString(PyExc_TypeError, "invalid vector capsule for source");
-        return 0;
-    }
-    // bail out if the destination capsule is not valid
-    if (!PyCapsule_IsValid(destinationCapsule, capsule_t)) {
-        PyErr_SetString(PyExc_TypeError, "invalid vector capsule for destination");
-        return 0;
-    }
-
-    // get the vectors
-    gsl_vector * source = static_cast<gsl_vector *>(PyCapsule_GetPointer(sourceCapsule, capsule_t));
-    gsl_vector * destination =
-        static_cast<gsl_vector *>(PyCapsule_GetPointer(destinationCapsule, capsule_t));
-    // copy the data
-    gsl_vector_memcpy(destination, source);
-
-    // return None
-    Py_INCREF(Py_None);
-    return Py_None;
-}
-
-
-// tuple
-const char * const gsl::vector::tuple__name__ = "vector_tuple";
-const char * const gsl::vector::tuple__doc__ = "build a tuple out of a vector";
-
-PyObject *
-gsl::vector::tuple(PyObject *, PyObject * args)
-{
-    // the arguments
-    PyObject * capsule;
-    // unpack the argument tuple
-    int status = PyArg_ParseTuple(args, "O!:vector_tuple", &PyCapsule_Type, &capsule);
-    // if something went wrong
-    if (!status)
-        return 0;
-    // bail out if the source capsule is not valid
-    if (!PyCapsule_IsValid(capsule, capsule_t)) {
-        PyErr_SetString(PyExc_TypeError, "invalid vector capsule");
-        return 0;
-    }
-
-    // get the vector
-    gsl_vector * v = static_cast<gsl_vector *>(PyCapsule_GetPointer(capsule, capsule_t));
-
-    // get the shape
-    size_t s = v->size;
-
-    // we return a tuple
-    PyObject * result = PyTuple_New(s);
-    // go through the elements
-    for (size_t slot = 0; slot < s; ++slot) {
-        // grab the value, turn it into a float and attach it
-        PyTuple_SET_ITEM(result, slot, PyFloat_FromDouble(gsl_vector_get(v, slot)));
-    }
-
-    // return the result
-    return result;
-}
-
-
-// read
-const char * const gsl::vector::read__name__ = "vector_read";
-const char * const gsl::vector::read__doc__ = "read the values of a vector from a binary file";
-
-PyObject *
-gsl::vector::read(PyObject *, PyObject * args)
-{
-    // the arguments
-    char * filename;
-    PyObject * capsule;
-    // unpack the argument tuple
-    int status = PyArg_ParseTuple(args, "O!s:vector_read", &PyCapsule_Type, &capsule, &filename);
-
-    // if something went wrong
-    if (!status)
-        return 0;
-    // bail out if the source capsule is not valid
-    if (!PyCapsule_IsValid(capsule, capsule_t)) {
-        PyErr_SetString(PyExc_TypeError, "invalid vector capsule for source");
-        return 0;
-    }
-
-    // attempt to open the stream
-    std::FILE * stream = std::fopen(filename, "rb");
-    // bail out if something went wrong
-    if (!stream) {
-        PyErr_SetString(PyExc_IOError, "could not open file for reading");
-        return 0;
-    }
-
-    // get the vector
-    gsl_vector * v = static_cast<gsl_vector *>(PyCapsule_GetPointer(capsule, capsule_t));
-    // read the data
-    gsl_vector_fread(stream, v);
-    // close the file
-    std::fclose(stream);
-
-    // return None
-    Py_INCREF(Py_None);
-    return Py_None;
-}
-
-
-// write
-const char * const gsl::vector::write__name__ = "vector_write";
-const char * const gsl::vector::write__doc__ = "write the values of a vector to a binary file";
-
-PyObject *
-gsl::vector::write(PyObject *, PyObject * args)
-{
-    // the arguments
-    char * filename;
-    PyObject * capsule;
-    // unpack the argument tuple
-    int status = PyArg_ParseTuple(args, "O!s:vector_write", &PyCapsule_Type, &capsule, &filename);
-
-    // if something went wrong
-    if (!status)
-        return 0;
-    // bail out if the source capsule is not valid
-    if (!PyCapsule_IsValid(capsule, capsule_t)) {
-        PyErr_SetString(PyExc_TypeError, "invalid vector capsule for source");
-        return 0;
-    }
-
-    // attempt to open the stream
-    FILE * stream = std::fopen(filename, "wb");
-    // bail out if something went wrong
-    if (!stream) {
-        PyErr_SetString(PyExc_IOError, "could not open file for writing");
-        return 0;
-    }
-
-    // get the vector
-    gsl_vector * v = static_cast<gsl_vector *>(PyCapsule_GetPointer(capsule, capsule_t));
-    // write the data
-    gsl_vector_fwrite(stream, v);
-
-    // close the file
-    std::fclose(stream);
-
-    // return None
-    Py_INCREF(Py_None);
-    return Py_None;
-}
-
-
-// scanf
-const char * const gsl::vector::scanf__name__ = "vector_scanf";
-const char * const gsl::vector::scanf__doc__ = "read the values of a vector from a text file";
-
-PyObject *
-gsl::vector::scanf(PyObject *, PyObject * args)
-{
-    // the arguments
-    char * filename;
-    PyObject * capsule;
-    // unpack the argument tuple
-    int status = PyArg_ParseTuple(args, "O!s:vector_scanf", &PyCapsule_Type, &capsule, &filename);
-
-    // if something went wrong
-    if (!status)
-        return 0;
-    // bail out if the source capsule is not valid
-    if (!PyCapsule_IsValid(capsule, capsule_t)) {
-        PyErr_SetString(PyExc_TypeError, "invalid vector capsule for source");
-        return 0;
-    }
-
-    // attempt to open the stream
-    std::FILE * stream = std::fopen(filename, "r");
-    // bail out if something went wrong
-    if (!stream) {
-        PyErr_SetString(PyExc_IOError, "could not open file for reading");
-        return 0;
-    }
-
-    // get the vector
-    gsl_vector * v = static_cast<gsl_vector *>(PyCapsule_GetPointer(capsule, capsule_t));
-    // read the data
-    gsl_vector_fscanf(stream, v);
-    // close the file
-    std::fclose(stream);
-
-    // return None
-    Py_INCREF(Py_None);
-    return Py_None;
-}
-
-
-// printf
-const char * const gsl::vector::printf__name__ = "vector_printf";
-const char * const gsl::vector::printf__doc__ = "write the values of a vector to a file";
-
-PyObject *
-gsl::vector::printf(PyObject *, PyObject * args)
-{
-    // the arguments
-    char * filename;
-    char * format;
-    PyObject * capsule;
-    // unpack the argument tuple
-    int status =
-        PyArg_ParseTuple(args, "O!ss:vector_printf", &PyCapsule_Type, &capsule, &filename, &format);
-
-    // if something went wrong
-    if (!status)
-        return 0;
-    // bail out if the source capsule is not valid
-    if (!PyCapsule_IsValid(capsule, capsule_t)) {
-        PyErr_SetString(PyExc_TypeError, "invalid vector capsule for source");
-        return 0;
-    }
-
-    // attempt to open the stream
-    FILE * stream = std::fopen(filename, "w");
-    // bail out if something went wrong
-    if (!stream) {
-        PyErr_SetString(PyExc_IOError, "could not open file for writing");
-        return 0;
-    }
-
-    // get the vector
-    gsl_vector * v = static_cast<gsl_vector *>(PyCapsule_GetPointer(capsule, capsule_t));
-    // write the data
-    gsl_vector_fprintf(stream, v, format);
-
-    // close the file
-    std::fclose(stream);
-
-    // return None
-    Py_INCREF(Py_None);
-    return Py_None;
-}
-
-
-// access
-const char * const gsl::vector::get__name__ = "vector_get";
-const char * const gsl::vector::get__doc__ = "get the value of a vector element";
-
-PyObject *
-gsl::vector::get(PyObject *, PyObject * args)
-{
-    // the arguments
-    long index;
-    PyObject * capsule;
-    // unpack the argument tuple
-    int status = PyArg_ParseTuple(args, "O!l:vector_get", &PyCapsule_Type, &capsule, &index);
-    // if something went wrong
-    if (!status)
-        return 0;
-    // bail out if the capsule is not valid
-    if (!PyCapsule_IsValid(capsule, capsule_t)) {
-        PyErr_SetString(PyExc_TypeError, "invalid vector capsule");
-        return 0;
-    }
-
-    // get the vector
-    gsl_vector * v = static_cast<gsl_vector *>(PyCapsule_GetPointer(capsule, capsule_t));
-    // reflect negative indices about the end of the vector
-    if (index < 0)
-        index += v->size;
-    // convert to an unsigned value
-    size_t i = index;
-    // bounds check index 1
-    if (i >= v->size) {
-        // build an error message
-        std::stringstream msg;
-        msg << "vector index " << index << " out of range";
-        // register the error
-        PyErr_SetString(PyExc_IndexError, msg.str().c_str());
-        // and raise the exception
-        return 0;
-    }
-
-    // get the value
-    double value = gsl_vector_get(v, i);
-    // std::cout
-    // << " gsl.vector_get: vector@" << v << ", index=" << index << ", value=" << value
-    // << std::endl;
-
-    // return the value
-    return PyFloat_FromDouble(value);
-}
-
-
-const char * const gsl::vector::set__name__ = "vector_set";
-const char * const gsl::vector::set__doc__ = "set the value of a vector element";
-
-PyObject *
-gsl::vector::set(PyObject *, PyObject * args)
-{
-    // the arguments
-    long index;
-    double value;
-    PyObject * capsule;
-    // unpack the argument tuple
-    int status =
-        PyArg_ParseTuple(args, "O!ld:vector_set", &PyCapsule_Type, &capsule, &index, &value);
-    // bail out if something went wrong with the argument unpacking
-    if (!status)
-        return 0;
-    // bail out if the capsule is not valid
-    if (!PyCapsule_IsValid(capsule, capsule_t)) {
-        PyErr_SetString(PyExc_TypeError, "invalid vector capsule");
-        return 0;
-    }
-
-    // get the vector
-    gsl_vector * v = static_cast<gsl_vector *>(PyCapsule_GetPointer(capsule, capsule_t));
-    // std::cout
-    // << " gsl.vector_set: vector@" << v << ", index=" << index << ", value=" << value
-    // << std::endl;
-
-    // reflect negative indices about the end of the vector
-    if (index < 0)
-        index += v->size;
-    // convert to an unsigned value
-    size_t i = index;
-    // bounds check index 1
-    if (i >= v->size) {
-        // build an error message
-        std::stringstream msg;
-        msg << "vector index " << index << " out of range";
-        // register the error
-        PyErr_SetString(PyExc_IndexError, msg.str().c_str());
-        // and raise the exception
-        return 0;
-    }
-    // set the value
-    gsl_vector_set(v, i, value);
-
-    // return None
-    Py_INCREF(Py_None);
-    return Py_None;
-}
-
-
-const char * const gsl::vector::contains__name__ = "vector_contains";
-const char * const gsl::vector::contains__doc__ = "check whether a given value appears in vector";
-
-PyObject *
-gsl::vector::contains(PyObject *, PyObject * args)
-{
-    // the arguments
-    double value;
-    PyObject * capsule;
-    // unpack the argument tuple
-    int status = PyArg_ParseTuple(args, "O!d:vector_contains", &PyCapsule_Type, &capsule, &value);
-    // if something went wrong
-    if (!status)
-        return 0;
-    // bail out if the capsule is not valid
-    if (!PyCapsule_IsValid(capsule, capsule_t)) {
-        PyErr_SetString(PyExc_TypeError, "invalid vector capsule");
-        return 0;
-    }
-
-    // get the vector
-    gsl_vector * v = static_cast<gsl_vector *>(PyCapsule_GetPointer(capsule, capsule_t));
-    // std::cout
-    // << " gsl.vector_contains: vector@" << v << ", index=" << index << ", value=" << value
-    // << std::endl;
-
-    // the answer
-    PyObject * result = Py_False;
-
-    // loop over the elements
-    for (size_t index = 0; index < v->size; index++) {
-        // if i have a match
-        if (value == gsl_vector_get(v, index)) {
-            // update the answer
-            result = Py_True;
-            // and bail
-            break;
-        }
-    }
-
-    // return the answer
-    Py_INCREF(result);
-    return result;
-}
-
-
-// minima and maxima
-const char * const gsl::vector::max__name__ = "vector_max";
-const char * const gsl::vector::max__doc__ = "find the largest value contained";
-
-PyObject *
-gsl::vector::max(PyObject *, PyObject * args)
-{
-    // the arguments
-    PyObject * capsule;
-    // unpack the argument tuple
-    int status = PyArg_ParseTuple(args, "O!:vector_max", &PyCapsule_Type, &capsule);
-    // if something went wrong
-    if (!status)
-        return 0;
-    // bail out if the capsule is not valid
-    if (!PyCapsule_IsValid(capsule, capsule_t)) {
-        PyErr_SetString(PyExc_TypeError, "invalid vector capsule");
-        return 0;
-    }
-
-    // get the vector
-    gsl_vector * v = static_cast<gsl_vector *>(PyCapsule_GetPointer(capsule, capsule_t));
-    // compute the max
-    double value = gsl_vector_max(v);
-    // std::cout << " gsl.vector_max: vector@" << v << ", value=" << value << std::endl;
-
-    // return the value
-    return PyFloat_FromDouble(value);
-}
-
-
-const char * const gsl::vector::min__name__ = "vector_min";
-const char * const gsl::vector::min__doc__ = "find the smallest value contained";
-
-PyObject *
-gsl::vector::min(PyObject *, PyObject * args)
-{
-    // the arguments
-    PyObject * capsule;
-    // unpack the argument tuple
-    int status = PyArg_ParseTuple(args, "O!:vector_min", &PyCapsule_Type, &capsule);
-    // if something went wrong
-    if (!status)
-        return 0;
-    // bail out if the capsule is not valid
-    if (!PyCapsule_IsValid(capsule, capsule_t)) {
-        PyErr_SetString(PyExc_TypeError, "invalid vector capsule");
-        return 0;
-    }
-
-    // get the vector
-    gsl_vector * v = static_cast<gsl_vector *>(PyCapsule_GetPointer(capsule, capsule_t));
-
-    // compute
-    double value = gsl_vector_min(v);
-    // std::cout << " gsl.vector_max: vector@" << v << ", value=" << value << std::endl;
-
-    // return the value
-    return PyFloat_FromDouble(value);
-}
-
-
-const char * const gsl::vector::minmax__name__ = "vector_minmax";
-const char * const gsl::vector::minmax__doc__ =
-    "find both the smallest and the largest value contained";
-
-PyObject *
-gsl::vector::minmax(PyObject *, PyObject * args)
-{
-    // the arguments
-    PyObject * capsule;
-    // unpack the argument tuple
-    int status = PyArg_ParseTuple(args, "O!:vector_minmax", &PyCapsule_Type, &capsule);
-    // if something went wrong
-    if (!status)
-        return 0;
-    // bail out if the capsule is not valid
-    if (!PyCapsule_IsValid(capsule, capsule_t)) {
-        PyErr_SetString(PyExc_TypeError, "invalid vector capsule");
-        return 0;
-    }
-
-    // get the vector
-    gsl_vector * v = static_cast<gsl_vector *>(PyCapsule_GetPointer(capsule, capsule_t));
-    double small, large;
-    gsl_vector_minmax(v, &small, &large);
-    // std::cout
-    // << " gsl.vector_max: vector@" << v << ", min=" << small << ", max=" << large
-    // << std::endl;
-
-    // build the answer
-    PyObject * answer = PyTuple_New(2);
-    PyTuple_SET_ITEM(answer, 0, PyFloat_FromDouble(small));
-    PyTuple_SET_ITEM(answer, 1, PyFloat_FromDouble(large));
-    // and return
-    return answer;
-}
-
-
-// equality
-const char * const gsl::vector::equal__name__ = "vector_equal";
-const char * const gsl::vector::equal__doc__ = "check two vectors for equality";
-
-PyObject *
-gsl::vector::equal(PyObject *, PyObject * args)
-{
-    // the arguments
-    PyObject * leftCapsule;
-    PyObject * rightCapsule;
-    // unpack the argument tuple
-    int status = PyArg_ParseTuple(
-        args, "O!O!:vector_equal", &PyCapsule_Type, &rightCapsule, &PyCapsule_Type, &leftCapsule);
-    // if something went wrong
-    if (!status)
-        return 0;
-    // bail out if the left capsule is not valid
-    if (!PyCapsule_IsValid(leftCapsule, capsule_t)) {
-        PyErr_SetString(PyExc_TypeError, "invalid vector capsule for the left operand");
-        return 0;
-    }
-    // bail out if the right capsule is not valid
-    if (!PyCapsule_IsValid(rightCapsule, capsule_t)) {
-        PyErr_SetString(PyExc_TypeError, "invalid vector capsule for the right operand");
-        return 0;
-    }
-
-    // get the vectors
-    gsl_vector * left = static_cast<gsl_vector *>(PyCapsule_GetPointer(leftCapsule, capsule_t));
-    gsl_vector * right = static_cast<gsl_vector *>(PyCapsule_GetPointer(rightCapsule, capsule_t));
-
-    // the answer
-    PyObject * answer = gsl_vector_equal(left, right) ? Py_True : Py_False;
-
-    // return
-    Py_INCREF(answer);
-    return answer;
-}
-
-
-// in-place operations
-const char * const gsl::vector::add__name__ = "vector_add";
-const char * const gsl::vector::add__doc__ = "in-place addition of two vectors";
-
-PyObject *
-gsl::vector::add(PyObject *, PyObject * args)
-{
-    // the arguments
-    PyObject * self;
-    PyObject * other;
-    // unpack the argument tuple
-    int status =
-        PyArg_ParseTuple(args, "O!O!:vector_add", &PyCapsule_Type, &self, &PyCapsule_Type, &other);
-    // if something went wrong
-    if (!status)
-        return 0;
-    // bail out if the two capsules are not valid
-    if (!PyCapsule_IsValid(self, capsule_t) || !PyCapsule_IsValid(other, capsule_t)) {
-        PyErr_SetString(PyExc_TypeError, "invalid vector capsule");
-        return 0;
-    }
-
-    // get the two vectors
-    gsl_vector * v1 = static_cast<gsl_vector *>(PyCapsule_GetPointer(self, capsule_t));
-    gsl_vector * v2 = static_cast<gsl_vector *>(PyCapsule_GetPointer(other, capsule_t));
-    // std::cout << " gsl.vector_add: vector@" << v1 << ", vector@" << v2 << std::endl;
-
-    // perform the addition
-    gsl_vector_add(v1, v2);
-
-    // return None
-    Py_INCREF(Py_None);
-    return Py_None;
-}
-
-
-const char * const gsl::vector::sub__name__ = "vector_sub";
-const char * const gsl::vector::sub__doc__ = "in-place subtraction of two vectors";
-
-PyObject *
-gsl::vector::sub(PyObject *, PyObject * args)
-{
-    // the arguments
-    PyObject * self;
-    PyObject * other;
-    // unpack the argument tuple
-    int status =
-        PyArg_ParseTuple(args, "O!O!:vector_sub", &PyCapsule_Type, &self, &PyCapsule_Type, &other);
-    // if something went wrong
-    if (!status)
-        return 0;
-    // bail out if the two capsules are not valid
-    if (!PyCapsule_IsValid(self, capsule_t) || !PyCapsule_IsValid(other, capsule_t)) {
-        PyErr_SetString(PyExc_TypeError, "invalid vector capsule");
-        return 0;
-    }
-
-    // get the two vectors
-    gsl_vector * v1 = static_cast<gsl_vector *>(PyCapsule_GetPointer(self, capsule_t));
-    gsl_vector * v2 = static_cast<gsl_vector *>(PyCapsule_GetPointer(other, capsule_t));
-    // std::cout << " gsl.vector_sub: vector@" << v1 << ", vector@" << v2 << std::endl;
-
-    // perform the subtraction
-    gsl_vector_sub(v1, v2);
-
-    // return None
-    Py_INCREF(Py_None);
-    return Py_None;
-}
-
-
-const char * const gsl::vector::mul__name__ = "vector_mul";
-const char * const gsl::vector::mul__doc__ = "in-place multiplication of two vectors";
-
-PyObject *
-gsl::vector::mul(PyObject *, PyObject * args)
-{
-    // the arguments
-    PyObject * self;
-    PyObject * other;
-    // unpack the argument tuple
-    int status =
-        PyArg_ParseTuple(args, "O!O!:vector_mul", &PyCapsule_Type, &self, &PyCapsule_Type, &other);
-    // if something went wrong
-    if (!status)
-        return 0;
-    // bail out if the two capsules are not valid
-    if (!PyCapsule_IsValid(self, capsule_t) || !PyCapsule_IsValid(other, capsule_t)) {
-        PyErr_SetString(PyExc_TypeError, "invalid vector capsule");
-        return 0;
-    }
-
-    // get the two vectors
-    gsl_vector * v1 = static_cast<gsl_vector *>(PyCapsule_GetPointer(self, capsule_t));
-    gsl_vector * v2 = static_cast<gsl_vector *>(PyCapsule_GetPointer(other, capsule_t));
-    // std::cout << " gsl.vector_mul: vector@" << v1 << ", vector@" << v2 << std::endl;
-
-    // perform the multiplication
-    gsl_vector_mul(v1, v2);
-
-    // return None
-    Py_INCREF(Py_None);
-    return Py_None;
-}
-
-
-const char * const gsl::vector::div__name__ = "vector_div";
-const char * const gsl::vector::div__doc__ = "in-place division of two vectors";
-
-PyObject *
-gsl::vector::div(PyObject *, PyObject * args)
-{
-    // the arguments
-    PyObject * self;
-    PyObject * other;
-    // unpack the argument tuple
-    int status =
-        PyArg_ParseTuple(args, "O!O!:vector_div", &PyCapsule_Type, &self, &PyCapsule_Type, &other);
-    // if something went wrong
-    if (!status)
-        return 0;
-    // bail out if the two capsules are not valid
-    if (!PyCapsule_IsValid(self, capsule_t) || !PyCapsule_IsValid(other, capsule_t)) {
-        PyErr_SetString(PyExc_TypeError, "invalid vector capsule");
-        return 0;
-    }
-
-    // get the two vectors
-    gsl_vector * v1 = static_cast<gsl_vector *>(PyCapsule_GetPointer(self, capsule_t));
-    gsl_vector * v2 = static_cast<gsl_vector *>(PyCapsule_GetPointer(other, capsule_t));
-    // std::cout << " gsl.vector_div: vector@" << v1 << ", vector@" << v2 << std::endl;
-
-    // perform the division
-    gsl_vector_div(v1, v2);
-
-    // return None
-    Py_INCREF(Py_None);
-    return Py_None;
-}
-
-
-const char * const gsl::vector::shift__name__ = "vector_shift";
-const char * const gsl::vector::shift__doc__ = "in-place addition of a constant to a vector";
-
-PyObject *
-gsl::vector::shift(PyObject *, PyObject * args)
-{
-    // the arguments
-    double value;
-    PyObject * self;
-    // unpack the argument tuple
-    int status = PyArg_ParseTuple(args, "O!d:vector_shift", &PyCapsule_Type, &self, &value);
-    // if something went wrong
-    if (!status)
-        return 0;
-    // bail out if the two capsules are not valid
-    if (!PyCapsule_IsValid(self, capsule_t)) {
-        PyErr_SetString(PyExc_TypeError, "invalid vector capsule");
-        return 0;
-    }
-
-    // get the two vectors
-    gsl_vector * v = static_cast<gsl_vector *>(PyCapsule_GetPointer(self, capsule_t));
-    // std::cout << " gsl.vector_shift: vector@" << v << ", value=" << value << std::endl;
-
-    // perform the shift
-    gsl_vector_add_constant(v, value);
-
-    // return None
-    Py_INCREF(Py_None);
-    return Py_None;
-}
-
-
-const char * const gsl::vector::scale__name__ = "vector_scale";
-const char * const gsl::vector::scale__doc__ = "in-place scaling of a vector by a constant";
-
-PyObject *
-gsl::vector::scale(PyObject *, PyObject * args)
-{
-    // the arguments
-    double value;
-    PyObject * self;
-    // unpack the argument tuple
-    int status = PyArg_ParseTuple(args, "O!d:vector_scale", &PyCapsule_Type, &self, &value);
-    // if something went wrong
-    if (!status)
-        return 0;
-    // bail out if the two capsules are not valid
-    if (!PyCapsule_IsValid(self, capsule_t)) {
-        PyErr_SetString(PyExc_TypeError, "invalid vector capsule");
-        return 0;
-    }
-
-    // get the two vectors
-    gsl_vector * v = static_cast<gsl_vector *>(PyCapsule_GetPointer(self, capsule_t));
-    // std::cout << " gsl.vector_scale: vector@" << v << ", value=" << value << std::endl;
-
-    // perform the scale
-    gsl_vector_scale(v, value);
-
-    // return None
-    Py_INCREF(Py_None);
-    return Py_None;
-}
-
-
-// statistics
-// sort
-const char * const gsl::vector::sort__name__ = "vector_sort";
-const char * const gsl::vector::sort__doc__ = "in-place sort the elements of a vector";
-
-PyObject *
-gsl::vector::sort(PyObject *, PyObject * args)
-{
-    // the arguments
-    PyObject * capsule;
-    // unpack the argument tuple
-    int status = PyArg_ParseTuple(args, "O!:vector_sort", &PyCapsule_Type, &capsule);
-    // if something went wrong
-    if (!status)
-        return 0;
-    // bail out if the capsule is not valid
-    if (!PyCapsule_IsValid(capsule, capsule_t)) {
-        PyErr_SetString(PyExc_TypeError, "invalid vector capsule");
-        return 0;
-    }
-
-    // get the vector
-    gsl_vector * v = static_cast<gsl_vector *>(PyCapsule_GetPointer(capsule, capsule_t));
-
-    // sort it
-    gsl_sort_vector(v);
-
-    // return None
-    Py_INCREF(Py_None);
-    return Py_None;
-}
-
-
-// sortIndex
-const char * const gsl::vector::sortIndex__name__ = "vector_sortIndex";
-const char * const gsl::vector::sortIndex__doc__ =
-    "construct the permutation that would sort the elements of a vector";
-
-PyObject *
-gsl::vector::sortIndex(PyObject *, PyObject * args)
-{
-    // the arguments
-    PyObject * capsule;
-    // unpack the argument tuple
-    int status = PyArg_ParseTuple(args, "O!:vector_sortIndex", &PyCapsule_Type, &capsule);
-    // if something went wrong
-    if (!status)
-        return 0;
-    // bail out if the capsule is not valid
-    if (!PyCapsule_IsValid(capsule, capsule_t)) {
-        PyErr_SetString(PyExc_TypeError, "invalid vector capsule");
-        return 0;
-    }
-
-    // get the vector
-    gsl_vector * v = static_cast<gsl_vector *>(PyCapsule_GetPointer(capsule, capsule_t));
-    // allocate the permutation
-    gsl_permutation * p = gsl_permutation_alloc(v->size);
-
-    // sort it
-    gsl_sort_vector_index(p, v);
-
-    // return a permutation capsule
-    return PyCapsule_New(p, gsl::permutation::capsule_t, gsl::permutation::free);
-}
-
-
-// mean
-const char * const gsl::vector::mean__name__ = "vector_mean";
-const char * const gsl::vector::mean__doc__ = "compute the mean of the elements of a vector";
-
-PyObject *
-gsl::vector::mean(PyObject *, PyObject * args)
-{
-    // the arguments
-    PyObject * capsule;
-    PyObject * weights;
-    // unpack the argument tuple
-    int status = PyArg_ParseTuple(args, "O!O:vector_mean", &PyCapsule_Type, &capsule, &weights);
-    // if something went wrong
-    if (!status)
-        return 0;
-    // bail out if the capsule is not valid
-    if (!PyCapsule_IsValid(capsule, capsule_t)) {
-        PyErr_SetString(PyExc_TypeError, "invalid vector capsule");
-        return 0;
-    }
-
-    // get the vector
-    gsl_vector * v = static_cast<gsl_vector *>(PyCapsule_GetPointer(capsule, capsule_t));
-
-    // the answer
-    double mean;
-    // if no weights were given
-    if (weights == Py_None) {
-        // compute the mean
-        mean = gsl_stats_mean(v->data, v->stride, v->size);
-    } else {
-        // otherwise, check that {weights} is a vector capsule
-        if (!PyCapsule_IsValid(weights, capsule_t)) {
-            PyErr_SetString(PyExc_TypeError, "invalid vector capsule for the weights");
-            return 0;
-        }
-        // extract the  vector of weights
-        gsl_vector * w = static_cast<gsl_vector *>(PyCapsule_GetPointer(weights, capsule_t));
-        // compute the weighted mean
-        mean = gsl_stats_wmean(w->data, w->stride, v->data, v->stride, v->size);
-    }
-    // and return it
-    return PyFloat_FromDouble(mean);
-}
-
-
-// median
-const char * const gsl::vector::median__name__ = "vector_median";
-const char * const gsl::vector::median__doc__ =
-    "compute the median of the elements of a pre-sorted vector";
-
-PyObject *
-gsl::vector::median(PyObject *, PyObject * args)
-{
-    // the arguments
-    PyObject * capsule;
-    // unpack the argument tuple
-    int status = PyArg_ParseTuple(args, "O!:vector_median", &PyCapsule_Type, &capsule);
-    // if something went wrong
-    if (!status)
-        return 0;
-    // bail out if the capsule is not valid
-    if (!PyCapsule_IsValid(capsule, capsule_t)) {
-        PyErr_SetString(PyExc_TypeError, "invalid vector capsule");
-        return 0;
-    }
-
-    // get the vector
-    gsl_vector * v = static_cast<gsl_vector *>(PyCapsule_GetPointer(capsule, capsule_t));
-
-    // compute the median
-    double median = gsl_stats_median_from_sorted_data(v->data, v->stride, v->size);
-
-    // and return it
-    return PyFloat_FromDouble(median);
-}
-
-
-// variance
-const char * const gsl::vector::variance__name__ = "vector_variance";
-const char * const gsl::vector::variance__doc__ =
-    "compute the variance of the elements of a vector";
-
-PyObject *
-gsl::vector::variance(PyObject *, PyObject * args)
-{
-    // the arguments
-    PyObject * mean;
-    PyObject * capsule;
-    // unpack the argument tuple
-    int status = PyArg_ParseTuple(args, "O!O:vector_variance", &PyCapsule_Type, &capsule, &mean);
-    // if something went wrong
-    if (!status)
-        return 0;
-    // bail out if the capsule is not valid
-    if (!PyCapsule_IsValid(capsule, capsule_t)) {
-        PyErr_SetString(PyExc_TypeError, "invalid vector capsule");
-        return 0;
-    }
-
-    // get the vector
-    gsl_vector * v = static_cast<gsl_vector *>(PyCapsule_GetPointer(capsule, capsule_t));
-
-    // the answer
-    double variance;
-    // three cases
-    if (mean == Py_None) {
-        // {mean} is {None}: compute the mean on the fly
-        variance = gsl_stats_variance(v->data, v->stride, v->size);
-    } else if (PyFloat_Check(mean)) {
-        // {mean} is a float: use it
-        variance = gsl_stats_variance_m(v->data, v->stride, v->size, PyFloat_AsDouble(mean));
-    } else {
-        // {mean} is anything else: raise an exception
-        PyErr_SetString(PyExc_TypeError, "{mean} must be a float");
-        return 0;
-    }
-    // and return the variance
-    return PyFloat_FromDouble(variance);
-}
-
-
-// sdev
-const char * const gsl::vector::sdev__name__ = "vector_sdev";
-const char * const gsl::vector::sdev__doc__ =
-    "compute the standard deviation of the elements of a vector";
-
-PyObject *
-gsl::vector::sdev(PyObject *, PyObject * args)
-{
-    // the arguments
-    PyObject * mean;
-    PyObject * capsule;
-    // unpack the argument tuple
-    int status = PyArg_ParseTuple(args, "O!O:vector_sdev", &PyCapsule_Type, &capsule, &mean);
-    // if something went wrong
-    if (!status)
-        return 0;
-    // bail out if the capsule is not valid
-    if (!PyCapsule_IsValid(capsule, capsule_t)) {
-        PyErr_SetString(PyExc_TypeError, "invalid vector capsule");
-        return 0;
-    }
-
-    // get the vector
-    gsl_vector * v = static_cast<gsl_vector *>(PyCapsule_GetPointer(capsule, capsule_t));
-
-    // the answer
-    double sdev;
-    // three cases
-    if (mean == Py_None) {
-        // {mean} is {None}: compute the mean on the fly
-        sdev = gsl_stats_sd(v->data, v->stride, v->size);
-    } else if (PyFloat_Check(mean)) {
-        // {mean} is a float: use it
-        sdev = gsl_stats_sd_m(v->data, v->stride, v->size, PyFloat_AsDouble(mean));
-    } else {
-        // {mean} is anything else: raise an exception
-        PyErr_SetString(PyExc_TypeError, "{mean} must be a float");
-        return 0;
-    }
-    // and return the sdev
-    return PyFloat_FromDouble(sdev);
-}
-
-
-// destructors
-void
-gsl::vector::free(PyObject * capsule)
-{
-    // bail out if the capsule is not valid
-    if (!PyCapsule_IsValid(capsule, gsl::vector::capsule_t))
-        return;
-    // get the vector
-    gsl_vector * v =
-        static_cast<gsl_vector *>(PyCapsule_GetPointer(capsule, gsl::vector::capsule_t));
-    // std::cout << " gsl.vector_free: vector@" << v << std::endl;
-    // deallocate
-    gsl_vector_free(v);
-    // and return
-    return;
-}
-
+namespace pyre::gsl::py {
 
 void
-gsl::vector::freeview(PyObject * capsule)
+vector(::py::module & m)
 {
-    // bail out if the capsule is not valid
-    if (!PyCapsule_IsValid(capsule, gsl::vector::view_t))
-        return;
-    // get the vector view
-    gsl_vector_view * v =
-        static_cast<gsl_vector_view *>(PyCapsule_GetPointer(capsule, gsl::vector::view_t));
-    // deallocate
-    delete v;
-    // and return
-    return;
+    // register the Vector type
+    ::py::class_<pyre::gsl::Vector>(m, "Vector");
+    // register the VectorView type
+    ::py::class_<pyre::gsl::VectorView>(m, "VectorView");
+
+    // allocate a vector of size n
+    m.def(
+        "vector_alloc",
+        [](size_t n) {
+            return std::make_unique<pyre::gsl::Vector>(n);
+        },
+        "n"_a,
+        "allocate a vector");
+
+    // allocate a sub-vector view; returns (VectorView, non-owning Vector)
+    m.def(
+        "vector_view_alloc",
+        [](pyre::gsl::Vector & v, size_t origin, size_t shape) {
+            // allocate view on heap; pybind11 manages via unique_ptr
+            auto view = std::make_unique<pyre::gsl::VectorView>(v.ptr, origin, shape);
+            // stable pointer to the embedded gsl_vector inside the view
+            gsl_vector * vec_ptr = &view->view.vector;
+            // package both as Python objects
+            ::py::object view_py = ::py::cast(std::move(view));
+            ::py::object data_py = ::py::cast(std::make_unique<pyre::gsl::Vector>(vec_ptr, false));
+            // Python caller stores view_py in self.view (keeps view alive)
+            return ::py::make_tuple(view_py, data_py);
+        },
+        "v"_a, "origin"_a, "shape"_a,
+        "allocate a vector view");
+
+    // set all elements to zero
+    m.def(
+        "vector_zero",
+        [](pyre::gsl::Vector & v) {
+            gsl_vector_set_zero(v.ptr);
+        },
+        "v"_a,
+        "zero out the elements of a vector");
+
+    // fill with a constant value
+    m.def(
+        "vector_fill",
+        [](pyre::gsl::Vector & v, double value) {
+            gsl_vector_set_all(v.ptr, value);
+        },
+        "v"_a, "value"_a,
+        "set all elements of a vector to a value");
+
+    // build a basis vector (all zeros except at index)
+    m.def(
+        "vector_basis",
+        [](pyre::gsl::Vector & v, size_t index) {
+            gsl_vector_set_basis(v.ptr, index);
+        },
+        "v"_a, "index"_a,
+        "build a basis vector");
+
+    // copy src into dst
+    m.def(
+        "vector_copy",
+        [](pyre::gsl::Vector & dst, pyre::gsl::Vector & src) {
+            gsl_vector_memcpy(dst.ptr, src.ptr);
+        },
+        "dst"_a, "src"_a,
+        "build a copy of a vector");
+
+    // return the vector as a python tuple
+    m.def(
+        "vector_tuple",
+        [](pyre::gsl::Vector & v) {
+            ::py::tuple result(v.ptr->size);
+            for (size_t i = 0; i < v.ptr->size; ++i) {
+                result[i] = gsl_vector_get(v.ptr, i);
+            }
+            return result;
+        },
+        "v"_a,
+        "build a tuple out of a vector");
+
+    // read from a binary file
+    m.def(
+        "vector_read",
+        [](pyre::gsl::Vector & v, std::string filename) {
+            std::FILE * f = std::fopen(filename.c_str(), "rb");
+            if (!f) throw std::runtime_error("could not open file for reading: " + filename);
+            gsl_vector_fread(f, v.ptr);
+            std::fclose(f);
+        },
+        "v"_a, "filename"_a,
+        "read the values of a vector from a binary file");
+
+    // write to a binary file
+    m.def(
+        "vector_write",
+        [](pyre::gsl::Vector & v, std::string filename) {
+            std::FILE * f = std::fopen(filename.c_str(), "wb");
+            if (!f) throw std::runtime_error("could not open file for writing: " + filename);
+            gsl_vector_fwrite(f, v.ptr);
+            std::fclose(f);
+        },
+        "v"_a, "filename"_a,
+        "write the values of a vector to a binary file");
+
+    // read from a text file
+    m.def(
+        "vector_scanf",
+        [](pyre::gsl::Vector & v, std::string filename) {
+            std::FILE * f = std::fopen(filename.c_str(), "r");
+            if (!f) throw std::runtime_error("could not open file for reading: " + filename);
+            gsl_vector_fscanf(f, v.ptr);
+            std::fclose(f);
+        },
+        "v"_a, "filename"_a,
+        "read the values of a vector from a text file");
+
+    // write to a text file with a format string
+    m.def(
+        "vector_printf",
+        [](pyre::gsl::Vector & v, std::string filename, std::string format) {
+            std::FILE * f = std::fopen(filename.c_str(), "w");
+            if (!f) throw std::runtime_error("could not open file for writing: " + filename);
+            gsl_vector_fprintf(f, v.ptr, format.c_str());
+            std::fclose(f);
+        },
+        "v"_a, "filename"_a, "format"_a,
+        "write the values of a vector to a file");
+
+    // get an element; supports negative indices
+    m.def(
+        "vector_get",
+        [](pyre::gsl::Vector & v, long index) {
+            // reflect negative indices about the end of the vector
+            if (index < 0) index += static_cast<long>(v.ptr->size);
+            if (index < 0 || static_cast<size_t>(index) >= v.ptr->size) {
+                throw ::py::index_error("vector index out of range");
+            }
+            return gsl_vector_get(v.ptr, static_cast<size_t>(index));
+        },
+        "v"_a, "index"_a,
+        "get the value of a vector element");
+
+    // set an element; supports negative indices
+    m.def(
+        "vector_set",
+        [](pyre::gsl::Vector & v, long index, double value) {
+            // reflect negative indices about the end of the vector
+            if (index < 0) index += static_cast<long>(v.ptr->size);
+            if (index < 0 || static_cast<size_t>(index) >= v.ptr->size) {
+                throw ::py::index_error("vector index out of range");
+            }
+            gsl_vector_set(v.ptr, static_cast<size_t>(index), value);
+        },
+        "v"_a, "index"_a, "value"_a,
+        "set the value of a vector element");
+
+    // check whether a value appears in the vector
+    m.def(
+        "vector_contains",
+        [](pyre::gsl::Vector & v, double value) {
+            for (size_t i = 0; i < v.ptr->size; ++i) {
+                if (gsl_vector_get(v.ptr, i) == value) return true;
+            }
+            return false;
+        },
+        "v"_a, "value"_a,
+        "check whether a given value appears in a vector");
+
+    // return the maximum element
+    m.def(
+        "vector_max",
+        [](pyre::gsl::Vector & v) {
+            return gsl_vector_max(v.ptr);
+        },
+        "v"_a,
+        "find the largest value contained in a vector");
+
+    // return the minimum element
+    m.def(
+        "vector_min",
+        [](pyre::gsl::Vector & v) {
+            return gsl_vector_min(v.ptr);
+        },
+        "v"_a,
+        "find the smallest value contained in a vector");
+
+    // return (min, max) as a tuple
+    m.def(
+        "vector_minmax",
+        [](pyre::gsl::Vector & v) {
+            double vmin, vmax;
+            gsl_vector_minmax(v.ptr, &vmin, &vmax);
+            return ::py::make_tuple(vmin, vmax);
+        },
+        "v"_a,
+        "find both the smallest and the largest value contained in a vector");
+
+    // element-wise equality check
+    m.def(
+        "vector_equal",
+        [](pyre::gsl::Vector & v1, pyre::gsl::Vector & v2) {
+            return static_cast<bool>(gsl_vector_equal(v1.ptr, v2.ptr));
+        },
+        "v1"_a, "v2"_a,
+        "check two vectors for equality");
+
+    // in-place addition
+    m.def(
+        "vector_add",
+        [](pyre::gsl::Vector & v, pyre::gsl::Vector & u) {
+            gsl_vector_add(v.ptr, u.ptr);
+        },
+        "v"_a, "other"_a,
+        "in-place addition of two vectors");
+
+    // in-place subtraction
+    m.def(
+        "vector_sub",
+        [](pyre::gsl::Vector & v, pyre::gsl::Vector & u) {
+            gsl_vector_sub(v.ptr, u.ptr);
+        },
+        "v"_a, "other"_a,
+        "in-place subtraction of two vectors");
+
+    // in-place element-wise multiplication
+    m.def(
+        "vector_mul",
+        [](pyre::gsl::Vector & v, pyre::gsl::Vector & u) {
+            gsl_vector_mul(v.ptr, u.ptr);
+        },
+        "v"_a, "other"_a,
+        "in-place multiplication of two vectors");
+
+    // in-place element-wise division
+    m.def(
+        "vector_div",
+        [](pyre::gsl::Vector & v, pyre::gsl::Vector & u) {
+            gsl_vector_div(v.ptr, u.ptr);
+        },
+        "v"_a, "other"_a,
+        "in-place division of two vectors");
+
+    // add a constant to all elements
+    m.def(
+        "vector_shift",
+        [](pyre::gsl::Vector & v, double value) {
+            gsl_vector_add_constant(v.ptr, value);
+        },
+        "v"_a, "value"_a,
+        "in-place addition of a constant to a vector");
+
+    // scale all elements by a constant
+    m.def(
+        "vector_scale",
+        [](pyre::gsl::Vector & v, double value) {
+            gsl_vector_scale(v.ptr, value);
+        },
+        "v"_a, "value"_a,
+        "in-place scaling of a vector by a constant");
+
+    // sort in place
+    m.def(
+        "vector_sort",
+        [](pyre::gsl::Vector & v) {
+            gsl_sort_vector(v.ptr);
+        },
+        "v"_a,
+        "in-place sort the elements of a vector");
+
+    // sort and return the permutation index
+    m.def(
+        "vector_sortIndex",
+        [](pyre::gsl::Vector & v) {
+            gsl_permutation * p = gsl_permutation_alloc(v.ptr->size);
+            gsl_sort_vector_index(p, v.ptr);
+            return std::make_unique<pyre::gsl::Permutation>(p, true);
+        },
+        "v"_a,
+        "construct the permutation that would sort the elements of a vector");
+
+    // compute the mean; optionally weighted
+    m.def(
+        "vector_mean",
+        [](pyre::gsl::Vector & v, ::py::object weights) {
+            if (weights.is_none()) {
+                return gsl_stats_mean(v.ptr->data, v.ptr->stride, v.ptr->size);
+            }
+            pyre::gsl::Vector & w = weights.cast<pyre::gsl::Vector &>();
+            return gsl_stats_wmean(w.ptr->data, w.ptr->stride,
+                                   v.ptr->data, v.ptr->stride, v.ptr->size);
+        },
+        "v"_a, "weights"_a = ::py::none(),
+        "compute the mean of the elements of a vector");
+
+    // compute the median from sorted data
+    m.def(
+        "vector_median",
+        [](pyre::gsl::Vector & v) {
+            return gsl_stats_median_from_sorted_data(v.ptr->data, v.ptr->stride, v.ptr->size);
+        },
+        "v"_a,
+        "compute the median of the elements of a pre-sorted vector");
+
+    // compute the variance; optionally with a provided mean
+    m.def(
+        "vector_variance",
+        [](pyre::gsl::Vector & v, ::py::object mean) {
+            if (mean.is_none()) {
+                return gsl_stats_variance(v.ptr->data, v.ptr->stride, v.ptr->size);
+            }
+            return gsl_stats_variance_m(v.ptr->data, v.ptr->stride, v.ptr->size,
+                                        mean.cast<double>());
+        },
+        "v"_a, "mean"_a = ::py::none(),
+        "compute the variance of the elements of a vector");
+
+    // compute the standard deviation; optionally with a provided mean
+    m.def(
+        "vector_sdev",
+        [](pyre::gsl::Vector & v, ::py::object mean) {
+            if (mean.is_none()) {
+                return gsl_stats_sd(v.ptr->data, v.ptr->stride, v.ptr->size);
+            }
+            return gsl_stats_sd_m(v.ptr->data, v.ptr->stride, v.ptr->size, mean.cast<double>());
+        },
+        "v"_a, "mean"_a = ::py::none(),
+        "compute the standard deviation of the elements of a vector");
+
+    // shuffle the vector in place using a random number generator
+    m.def(
+        "vector_shuffle",
+        [](pyre::gsl::RNG & rng, pyre::gsl::Vector & v) {
+            gsl_ran_shuffle(rng.ptr, v.ptr->data, v.ptr->size, sizeof(double));
+        },
+        "rng"_a, "v"_a,
+        "shuffle a vector to a random order");
+
+    // return a numpy array view of the vector data; keep the Vector alive via its Python object
+    m.def(
+        "vector_ndarray",
+        [](::py::object v_obj) {
+            pyre::gsl::Vector & v = v_obj.cast<pyre::gsl::Vector &>();
+            return ::py::array_t<double>(
+                { v.ptr->size },
+                { v.ptr->stride * sizeof(double) },
+                v.ptr->data,
+                v_obj);
+        },
+        "v"_a,
+        "return a numpy array view of a vector");
 }
 
-
-// vector_shuffle
-const char * const gsl::vector::shuffle__name__ = "vector_shuffle";
-const char * const gsl::vector::shuffle__doc__ = "shuffle a vector to a random order";
-
-PyObject *
-gsl::vector::shuffle(PyObject *, PyObject * args)
-{
-    // the arguments
-    PyObject * rngCapsule, * vecCapsule;
-    // unpack the argument tuple
-    int status = PyArg_ParseTuple(
-        args, "O!O!:vector_shuffle",
-        &PyCapsule_Type, &rngCapsule,
-        &PyCapsule_Type, &vecCapsule);
-    // bail out if something went wrong with the argument unpacking
-    if (!status)
-        return 0;
-    // bail out if the capsule is not valid
-    if (!PyCapsule_IsValid(rngCapsule, gsl::rng::capsule_t)) {
-        PyErr_SetString(PyExc_TypeError, "invalid rng capsule");
-        return 0;
-    }
-    if (!PyCapsule_IsValid(vecCapsule, gsl::vector::capsule_t)) {
-        PyErr_SetString(PyExc_TypeError, "invalid vector capsule");
-        return 0;
-    }
-    // get the rng
-    gsl_rng * r = static_cast<gsl_rng *>(PyCapsule_GetPointer(rngCapsule, gsl::rng::capsule_t));
-    // get the vector
-    gsl_vector * v =
-        static_cast<gsl_vector *>(PyCapsule_GetPointer(vecCapsule, gsl::vector::capsule_t));
-    // shuffle
-    gsl_ran_shuffle(r, v->data, v->size, sizeof(double));
-    // return None
-    Py_RETURN_NONE;
-}
-
+} // namespace pyre::gsl::py
 
 // end of file

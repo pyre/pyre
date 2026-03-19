@@ -59,17 +59,15 @@ function(pyre_gslModule)
     # set the libraries to link against
     target_link_libraries(
       gslmodule PRIVATE
-      GSL::gsl ${BLAS_LIB_IMPORT} pyre journal
+      GSL::gsl ${BLAS_LIB_IMPORT} pyre journal pybind11::module
       )
     # add the sources
     target_sources(gslmodule PRIVATE
-      extensions/gsl/gsl.cc
+      extensions/gsl/__init__.cc
       extensions/gsl/blas.cc
-      extensions/gsl/exceptions.cc
       extensions/gsl/histogram.cc
       extensions/gsl/linalg.cc
       extensions/gsl/matrix.cc
-      extensions/gsl/metadata.cc
       extensions/gsl/pdf.cc
       extensions/gsl/permutation.cc
       extensions/gsl/rng.cc
@@ -88,25 +86,11 @@ function(pyre_gslModule)
       target_link_libraries(gslmodule PRIVATE ${MPI_CXX_LIBRARIES})
     endif()
 
-    if (${Python_NumPy_FOUND})
-      # add the numpy aware sources to the pile
-      target_sources(gslmodule PRIVATE extensions/gsl/numpy.cc)
-      # add the MPI presence indicator
-      target_compile_definitions(gslmodule PRIVATE WITH_NUMPY)
-    endif()
-
-    # copy the capsule definitions to the staging area
-    configure_file(extensions/gsl/capsules.h lib/pyre/gsl COPYONLY)
     # install the extension
     install(
       TARGETS gslmodule
       LIBRARY
       DESTINATION ${PYRE_DEST_PACKAGES}/gsl
-      )
-    # and publish the capsules
-    install(
-      FILES ${CMAKE_CURRENT_SOURCE_DIR}/extensions/gsl/capsules.h
-      DESTINATION ${PYRE_DEST_INCLUDE}/pyre/gsl
       )
   endif()
   # all done

@@ -166,7 +166,7 @@ class Matrix:
             # go through the input values
             for idx, elem in zip(itertools.product(*map(range, self.shape)), value):
                 # set each element
-                gsl.matrix_set(data, idx, float(elem))
+                gsl.matrix_set(data, *idx, float(elem))
         # if the conversion to float were successful
         else:
             # fill
@@ -566,7 +566,7 @@ class Matrix:
         # store
         self.shape = shape
         # allocate
-        self.data = gsl.matrix_alloc(shape) if data is None else data
+        self.data = gsl.matrix_alloc(*shape) if data is None else data
         # all done
         return
 
@@ -581,7 +581,7 @@ class Matrix:
         # go over all index pairs
         for index in itertools.product(*map(range, self.shape)):
             # grab the value
-            yield gsl.matrix_get(self.data, index)
+            yield gsl.matrix_get(self.data, *index)
         # all done
         return
 
@@ -593,12 +593,12 @@ class Matrix:
 
     def __getitem__(self, index):
         # get and return the element
-        return gsl.matrix_get(self.data, index)
+        return gsl.matrix_get(self.data, *index)
 
 
     def __setitem__(self, index, value):
         # set the element to the requested value
-        return gsl.matrix_set(self.data, index, value)
+        return gsl.matrix_set(self.data, *index, value)
 
 
     # comparisons
