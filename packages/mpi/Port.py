@@ -23,7 +23,7 @@ class Port(Object):
     # per-instance public data
     peer = None # my peer process
     tag = 0 # the default message tag
-    communicator = Object.mpi.world # the communicator my peer and I belong to
+    communicator = None # the communicator my peer and I belong to; set in __init__
 
 
     # class interface

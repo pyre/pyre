@@ -32,7 +32,7 @@ class Group(Object, metaclass=Extent):
         """
         Check whether i am an empty group
         """
-        return self.mpi.groupIsEmpty(self.capsule)
+        return self.capsule.isEmpty
 
 
     # building groups using explicit ranklists
@@ -41,13 +41,9 @@ class Group(Object, metaclass=Extent):
         Build a group out of the processes in {included}
         """
         # build a new group capsule
-        capsule = self.mpi.groupInclude(self.capsule, tuple(included))
-        # check whether it is a valid group
-        if capsule:
-            # wrap it and return it
-            return Group(capsule=capsule)
-        # otherwise return an invalid group
-        return None
+        capsule = self.capsule.include(list(included))
+        # wrap it and return it
+        return Group(capsule=capsule)
 
 
     def exclude(self, excluded):
@@ -55,13 +51,9 @@ class Group(Object, metaclass=Extent):
         Build a group out of all processes except those in {excluded}
         """
         # build a new group capsule
-        capsule = self.mpi.groupExclude(self.capsule, tuple(excluded))
-        # check whether it is a valid group
-        if capsule:
-            # wrap it and return it
-            return Group(capsule=capsule)
-        # otherwise return an invalid group
-        return None
+        capsule = self.capsule.exclude(list(excluded))
+        # wrap it and return it
+        return Group(capsule=capsule)
 
 
     # the set-like operations
@@ -69,42 +61,21 @@ class Group(Object, metaclass=Extent):
         """
         Build a new group whose processes are the union of mine and {g}'s
         """
-        # build the new group capsule
-        capsule = self.mpi.groupUnion(self.capsule, g.capsule)
-        # check whether it is a valid group
-        if capsule:
-            # wrap it and return it
-            return Group(capsule=capsule)
-        # otherwise
-        return None
+        return Group(capsule=self.capsule + g.capsule)
 
 
     def intersection(self, g):
         """
         Build a new group whose processes are the intersection of mine and {g}'s
         """
-        # build the new group capsule
-        capsule = self.mpi.groupIntersection(self.capsule, g.capsule)
-        # check whether it is a valid group
-        if capsule:
-            # wrap it and return it
-            return Group(capsule=capsule)
-        # otherwise
-        return None
+        return Group(capsule=self.capsule & g.capsule)
 
 
     def difference(self, g):
         """
         Build a new group whose processes are the difference of mine and {g}'s
         """
-        # build the new group capsule
-        capsule = self.mpi.groupDifference(self.capsule, g.capsule)
-        # check whether it is a valid group
-        if capsule:
-            # wrap it and return it
-            return Group(capsule=capsule)
-        # otherwise
-        return None
+        return Group(capsule=self.capsule - g.capsule)
 
 
     # meta methods
@@ -115,8 +86,8 @@ class Group(Object, metaclass=Extent):
         # store my attributes
         self.capsule = capsule
         # and precompute my rank and size
-        self.rank = self.mpi.groupRank(capsule)
-        self.size = self.mpi.groupSize(capsule)
+        self.rank = capsule.rank
+        self.size = capsule.size
 
         # all done
         return

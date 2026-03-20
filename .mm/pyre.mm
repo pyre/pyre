@@ -34,6 +34,9 @@ pyre.c++20 = \
   }
 
 
+# default for linters; mm populates this at build time from successful extern probes
+extern.available ?=
+
 # if we have {hdf5}, build the {h5} extension
 ${if ${findstring hdf5,$(extern.available)},\
     ${eval pyre.extensions += h5.ext} \
