@@ -200,30 +200,28 @@ vector(::py::module & m)
         "v"_a, "filename"_a, "format"_a,
         "write the values of a vector to a file");
 
-    // get an element; supports negative indices
+    // get an element; supports negative (cyclic) indices
     m.def(
         "vector_get",
-        [](pyre::gsl::Vector & v, long index) {
-            // reflect negative indices about the end of the vector
-            if (index < 0) index += static_cast<long>(v.ptr->size);
-            if (index < 0 || static_cast<size_t>(index) >= v.ptr->size) {
+        [](pyre::gsl::Vector & v, ssize_t index) {
+            if (index < 0) index += (ssize_t)v.ptr->size;
+            if (index < 0 || (size_t)index >= v.ptr->size) {
                 throw ::py::index_error("vector index out of range");
             }
-            return gsl_vector_get(v.ptr, static_cast<size_t>(index));
+            return gsl_vector_get(v.ptr, (size_t)index);
         },
         "v"_a, "index"_a,
         "get the value of a vector element");
 
-    // set an element; supports negative indices
+    // set an element; supports negative (cyclic) indices
     m.def(
         "vector_set",
-        [](pyre::gsl::Vector & v, long index, double value) {
-            // reflect negative indices about the end of the vector
-            if (index < 0) index += static_cast<long>(v.ptr->size);
-            if (index < 0 || static_cast<size_t>(index) >= v.ptr->size) {
+        [](pyre::gsl::Vector & v, ssize_t index, double value) {
+            if (index < 0) index += (ssize_t)v.ptr->size;
+            if (index < 0 || (size_t)index >= v.ptr->size) {
                 throw ::py::index_error("vector index out of range");
             }
-            gsl_vector_set(v.ptr, static_cast<size_t>(index), value);
+            gsl_vector_set(v.ptr, (size_t)index, value);
         },
         "v"_a, "index"_a, "value"_a,
         "set the value of a vector element");

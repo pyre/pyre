@@ -217,20 +217,40 @@ matrix(::py::module & m)
         "mat"_a,
         "transpose a matrix in place");
 
-    // get an element
+    // get an element; supports negative (cyclic) indices
     m.def(
         "matrix_get",
-        [](pyre::gsl::Matrix & mat, size_t row, size_t col) {
-            return gsl_matrix_get(mat.ptr, row, col);
+        [](pyre::gsl::Matrix & mat, ssize_t row, ssize_t col) {
+            // reflect negative indices
+            if (row < 0) row += (ssize_t)mat.ptr->size1;
+            if (col < 0) col += (ssize_t)mat.ptr->size2;
+            // bounds check
+            if (row < 0 || (size_t)row >= mat.ptr->size1) {
+                throw std::out_of_range("matrix row index out of range");
+            }
+            if (col < 0 || (size_t)col >= mat.ptr->size2) {
+                throw std::out_of_range("matrix column index out of range");
+            }
+            return gsl_matrix_get(mat.ptr, (size_t)row, (size_t)col);
         },
         "mat"_a, "row"_a, "col"_a,
         "get the value of a matrix element");
 
-    // set an element
+    // set an element; supports negative (cyclic) indices
     m.def(
         "matrix_set",
-        [](pyre::gsl::Matrix & mat, size_t row, size_t col, double value) {
-            gsl_matrix_set(mat.ptr, row, col, value);
+        [](pyre::gsl::Matrix & mat, ssize_t row, ssize_t col, double value) {
+            // reflect negative indices
+            if (row < 0) row += (ssize_t)mat.ptr->size1;
+            if (col < 0) col += (ssize_t)mat.ptr->size2;
+            // bounds check
+            if (row < 0 || (size_t)row >= mat.ptr->size1) {
+                throw std::out_of_range("matrix row index out of range");
+            }
+            if (col < 0 || (size_t)col >= mat.ptr->size2) {
+                throw std::out_of_range("matrix column index out of range");
+            }
+            gsl_matrix_set(mat.ptr, (size_t)row, (size_t)col, value);
         },
         "mat"_a, "row"_a, "col"_a, "value"_a,
         "set the value of a matrix element");
