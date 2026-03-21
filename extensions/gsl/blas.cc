@@ -126,7 +126,7 @@ blas(::py::module & m)
     m.def(
         "blas_dtrmv",
         [](int Uplo, int TransA, int Diag, pyre::gsl::Matrix & A, pyre::gsl::Vector & x) {
-            CBLAS_UPLO_t uplo = (Uplo == 0) ? CblasUpper : CblasLower;
+            CBLAS_UPLO_t uplo = (Uplo == 1) ? CblasUpper : CblasLower;
             CBLAS_TRANSPOSE_t trans = (TransA == 0) ? CblasNoTrans
                                      : (TransA == 1) ? CblasTrans
                                                      : CblasConjTrans;
@@ -140,7 +140,7 @@ blas(::py::module & m)
     m.def(
         "blas_dtrsv",
         [](int Uplo, int TransA, int Diag, pyre::gsl::Matrix & A, pyre::gsl::Vector & x) {
-            CBLAS_UPLO_t uplo = (Uplo == 0) ? CblasUpper : CblasLower;
+            CBLAS_UPLO_t uplo = (Uplo == 1) ? CblasUpper : CblasLower;
             CBLAS_TRANSPOSE_t trans = (TransA == 0) ? CblasNoTrans
                                      : (TransA == 1) ? CblasTrans
                                                      : CblasConjTrans;
@@ -155,7 +155,7 @@ blas(::py::module & m)
         "blas_dsymv",
         [](int Uplo, double alpha, pyre::gsl::Matrix & A, pyre::gsl::Vector & x, double beta,
            pyre::gsl::Vector & y) {
-            CBLAS_UPLO_t uplo = (Uplo == 0) ? CblasUpper : CblasLower;
+            CBLAS_UPLO_t uplo = (Uplo == 1) ? CblasUpper : CblasLower;
             gsl_blas_dsymv(uplo, alpha, A.ptr, x.ptr, beta, y.ptr);
         },
         "Uplo"_a, "alpha"_a, "A"_a, "x"_a, "beta"_a, "y"_a,
@@ -165,7 +165,7 @@ blas(::py::module & m)
     m.def(
         "blas_dsyr",
         [](int Uplo, double alpha, pyre::gsl::Vector & x, pyre::gsl::Matrix & A) {
-            CBLAS_UPLO_t uplo = (Uplo == 0) ? CblasUpper : CblasLower;
+            CBLAS_UPLO_t uplo = (Uplo == 1) ? CblasUpper : CblasLower;
             gsl_blas_dsyr(uplo, alpha, x.ptr, A.ptr);
         },
         "Uplo"_a, "alpha"_a, "x"_a, "A"_a,
@@ -195,7 +195,7 @@ blas(::py::module & m)
         [](int Side, int Uplo, double alpha, pyre::gsl::Matrix & A, pyre::gsl::Matrix & B, double beta,
            pyre::gsl::Matrix & C) {
             CBLAS_SIDE_t side = (Side == 0) ? CblasLeft : CblasRight;
-            CBLAS_UPLO_t uplo = (Uplo == 0) ? CblasUpper : CblasLower;
+            CBLAS_UPLO_t uplo = (Uplo == 1) ? CblasUpper : CblasLower;
             gsl_blas_dsymm(side, uplo, alpha, A.ptr, B.ptr, beta, C.ptr);
         },
         "Side"_a, "Uplo"_a, "alpha"_a, "A"_a, "B"_a, "beta"_a, "C"_a,
@@ -207,7 +207,7 @@ blas(::py::module & m)
         [](int Side, int Uplo, int TransA, int Diag, double alpha, pyre::gsl::Matrix & A,
            pyre::gsl::Matrix & B) {
             CBLAS_SIDE_t side = (Side == 0) ? CblasLeft : CblasRight;
-            CBLAS_UPLO_t uplo = (Uplo == 0) ? CblasUpper : CblasLower;
+            CBLAS_UPLO_t uplo = (Uplo == 1) ? CblasUpper : CblasLower;
             CBLAS_TRANSPOSE_t trans = (TransA == 0) ? CblasNoTrans
                                      : (TransA == 1) ? CblasTrans
                                                      : CblasConjTrans;
