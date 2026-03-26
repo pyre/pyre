@@ -7,7 +7,6 @@
 # check availability
 pyre-gsl.gsl.available := ${findstring gsl,$(extern.available)}
 pyre-gsl.mpi.available := ${findstring mpi,$(extern.available)}
-pyre-gsl.numpy.available := ${findstring numpy,$(extern.available)}
 
 # if {gsl} is available
 ifeq ($(pyre-gsl.gsl.available), gsl)
