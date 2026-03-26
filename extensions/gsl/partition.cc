@@ -13,21 +13,6 @@
 #include <mpi.h>
 #include <portinfo>
 #include <pyre/mpi.h>
-// MPI communicator capsule tag — must match the definition in the mpi extension
-static constexpr const char * mpi_communicator_capsule = "mpi.communicator";
-
-
-// helpers
-static pyre::mpi::communicator_t *
-get_communicator(::py::object comm_obj)
-{
-    PyObject * cap = comm_obj.ptr();
-    if (!PyCapsule_IsValid(cap, mpi_communicator_capsule)) {
-        throw std::invalid_argument("expected an mpi communicator capsule");
-    }
-    return static_cast<pyre::mpi::communicator_t *>(
-        PyCapsule_GetPointer(cap, mpi_communicator_capsule));
-}
 
 
 namespace pyre::gsl::py {
@@ -39,13 +24,12 @@ partition(::py::module & m)
 
     m.def(
         "bcastMatrix",
-        [](::py::object comm_obj, int source, ::py::object mat_obj) -> ::py::object {
-            auto * comm = get_communicator(comm_obj);
+        [](pyre::mpi::Communicator & comm, int source, ::py::object mat_obj) -> ::py::object {
             long dim[2] = {0, 0};
             double * data_ptr = nullptr;
             ::py::object result_obj;
             // source fills dim and data_ptr from its matrix
-            if (comm->rank() == source) {
+            if (comm.rank() == source) {
                 pyre::gsl::Matrix & src = mat_obj.cast<pyre::gsl::Matrix &>();
                 dim[0] = src.ptr->size1;
                 dim[1] = src.ptr->size2;
@@ -53,15 +37,15 @@ partition(::py::module & m)
                 result_obj = mat_obj;
             }
             // broadcast the shape to all ranks
-            MPI_Bcast(dim, 2, MPI_LONG, source, comm->handle());
+            MPI_Bcast(dim, 2, MPI_LONG, source, comm.handle());
             // non-source ranks allocate a receive buffer
-            if (comm->rank() != source) {
+            if (comm.rank() != source) {
                 auto mat = std::make_unique<pyre::gsl::Matrix>((size_t)dim[0], (size_t)dim[1]);
                 data_ptr = mat->ptr->data;
                 result_obj = ::py::cast(std::move(mat));
             }
             // single collective broadcast of the data
-            MPI_Bcast(data_ptr, dim[0] * dim[1], MPI_DOUBLE, source, comm->handle());
+            MPI_Bcast(data_ptr, dim[0] * dim[1], MPI_DOUBLE, source, comm.handle());
             return ::py::make_tuple(result_obj, ::py::make_tuple((size_t)dim[0], (size_t)dim[1]));
         },
         "communicator"_a, "source"_a, "matrix"_a,
@@ -69,13 +53,12 @@ partition(::py::module & m)
 
     m.def(
         "gatherMatrix",
-        [](::py::object comm_obj, int destination, pyre::gsl::Matrix & mat)
+        [](pyre::mpi::Communicator & comm, int destination, pyre::gsl::Matrix & mat)
             -> ::py::object {
-            auto * comm = get_communicator(comm_obj);
             double * data = nullptr;
             gsl_matrix * bertha = nullptr;
-            if (comm->rank() == destination) {
-                size_t rows = mat.ptr->size1 * comm->size();
+            if (comm.rank() == destination) {
+                size_t rows = mat.ptr->size1 * comm.size();
                 size_t cols = mat.ptr->size2;
                 bertha = gsl_matrix_alloc(rows, cols);
                 data = bertha->data;
@@ -84,11 +67,11 @@ partition(::py::module & m)
             int status = MPI_Gather(
                 mat.ptr->data, size, MPI_DOUBLE,
                 data,          size, MPI_DOUBLE,
-                destination, comm->handle());
+                destination, comm.handle());
             if (status != MPI_SUCCESS) {
                 throw std::runtime_error("MPI_Gather failed");
             }
-            if (comm->rank() != destination) {
+            if (comm.rank() != destination) {
                 return ::py::none();
             }
             auto shape = ::py::make_tuple(bertha->size1, bertha->size2);
@@ -100,18 +83,17 @@ partition(::py::module & m)
 
     m.def(
         "scatterMatrix",
-        [](::py::object comm_obj, int source,
+        [](pyre::mpi::Communicator & comm, int source,
            pyre::gsl::Matrix & dst_mat, ::py::object src_obj) {
-            auto * comm = get_communicator(comm_obj);
             double * data = nullptr;
-            if (comm->rank() == source) {
+            if (comm.rank() == source) {
                 data = src_obj.cast<pyre::gsl::Matrix &>().ptr->data;
             }
             int size = dst_mat.ptr->size1 * dst_mat.ptr->size2;
             int status = MPI_Scatter(
                 data,              size, MPI_DOUBLE, // send buffer
                 dst_mat.ptr->data, size, MPI_DOUBLE, // receiver buffer
-                source, comm->handle());             // rank of sender, communicator
+                source, comm.handle());              // rank of sender, communicator
             if (status != MPI_SUCCESS) {
                 throw std::runtime_error("MPI_Scatter failed");
             }
@@ -123,28 +105,27 @@ partition(::py::module & m)
 
     m.def(
         "bcastVector",
-        [](::py::object comm_obj, int source, ::py::object vec_obj) -> ::py::object {
-            auto * comm = get_communicator(comm_obj);
+        [](pyre::mpi::Communicator & comm, int source, ::py::object vec_obj) -> ::py::object {
             long dim = 0;
             double * data_ptr = nullptr;
             ::py::object result_obj;
             // source fills dim and data_ptr from its vector
-            if (comm->rank() == source) {
+            if (comm.rank() == source) {
                 pyre::gsl::Vector & src = vec_obj.cast<pyre::gsl::Vector &>();
                 dim = src.ptr->size;
                 data_ptr = src.ptr->data;
                 result_obj = vec_obj;
             }
             // broadcast the size to all ranks
-            MPI_Bcast(&dim, 1, MPI_LONG, source, comm->handle());
+            MPI_Bcast(&dim, 1, MPI_LONG, source, comm.handle());
             // non-source ranks allocate a receive buffer
-            if (comm->rank() != source) {
+            if (comm.rank() != source) {
                 auto vec = std::make_unique<pyre::gsl::Vector>((size_t)dim);
                 data_ptr = vec->ptr->data;
                 result_obj = ::py::cast(std::move(vec));
             }
             // single collective broadcast of the data
-            MPI_Bcast(data_ptr, dim, MPI_DOUBLE, source, comm->handle());
+            MPI_Bcast(data_ptr, dim, MPI_DOUBLE, source, comm.handle());
             return ::py::make_tuple(result_obj, (size_t)dim);
         },
         "communicator"_a, "source"_a, "vector"_a,
@@ -152,23 +133,22 @@ partition(::py::module & m)
 
     m.def(
         "gatherVector",
-        [](::py::object comm_obj, int destination, pyre::gsl::Vector & vec)
+        [](pyre::mpi::Communicator & comm, int destination, pyre::gsl::Vector & vec)
             -> ::py::object {
-            auto * comm = get_communicator(comm_obj);
             double * data = nullptr;
             gsl_vector * bertha = nullptr;
-            if (comm->rank() == destination) {
-                bertha = gsl_vector_alloc(vec.ptr->size * comm->size());
+            if (comm.rank() == destination) {
+                bertha = gsl_vector_alloc(vec.ptr->size * comm.size());
                 data = bertha->data;
             }
             int status = MPI_Gather(
                 vec.ptr->data, vec.ptr->size, MPI_DOUBLE,
                 data,          vec.ptr->size, MPI_DOUBLE,
-                destination, comm->handle());
+                destination, comm.handle());
             if (status != MPI_SUCCESS) {
                 throw std::runtime_error("MPI_Gather failed");
             }
-            if (comm->rank() != destination) {
+            if (comm.rank() != destination) {
                 return ::py::none();
             }
             size_t sz = bertha->size;
@@ -180,18 +160,17 @@ partition(::py::module & m)
 
     m.def(
         "scatterVector",
-        [](::py::object comm_obj, int source,
+        [](pyre::mpi::Communicator & comm, int source,
            pyre::gsl::Vector & dst_vec, ::py::object src_obj) {
-            auto * comm = get_communicator(comm_obj);
             double * data = nullptr;
-            if (comm->rank() == source) {
+            if (comm.rank() == source) {
                 data = src_obj.cast<pyre::gsl::Vector &>().ptr->data;
             }
             int length = dst_vec.ptr->size;
             int status = MPI_Scatter(
-                data,             length, MPI_DOUBLE,
+                data,              length, MPI_DOUBLE,
                 dst_vec.ptr->data, length, MPI_DOUBLE,
-                source, comm->handle());
+                source, comm.handle());
             if (status != MPI_SUCCESS) {
                 throw std::runtime_error("MPI_Scatter failed");
             }

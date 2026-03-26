@@ -82,6 +82,8 @@ PYBIND11_MODULE(gsl, m)
     pyre::gsl::py::stats(m);
 
 #if defined(WITH_MPI)
+    // import the mpi module so pybind11's type registry knows about Communicator
+    ::py::module_::import("mpi");
     pyre::gsl::py::partition(m);
 #endif
 }
