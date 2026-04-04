@@ -9,7 +9,7 @@ from .Linux import Linux
 
 
 # declaration
-class CentOS(Linux, family="pyre.platforms.rocky"):
+class Rocky(Linux, family="pyre.platforms.rocky"):
     """
     Encapsulation of a host running linux on the rocky distribution
     """
