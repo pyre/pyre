@@ -25,9 +25,11 @@ pyre::journal::py::debug(py::module & m)
         // the constructor
         .def(
             // the implementation
-            py::init<const debug_t::name_type &>(),
+            py::init<const debug_t::name_type &, detail_t, dent_t>(),
             // the signature
-            "name"_a)
+            "name"_a,
+            "detail"_a = 1,
+            "dent"_a = 0)
 
         // accessors
         // the name; read-only property
@@ -42,6 +44,16 @@ pyre::journal::py::debug(py::module & m)
             py::overload_cast<debug_t::detail_type>(&debug_t::detail),
             // the docstring
             "the detail level")
+
+        // the dent level
+        .def_property(
+            "dent",
+            // the getter
+            py::overload_cast<>(&debug_t::dent, py::const_),
+            // the setter
+            py::overload_cast<debug_t::dent_type>(&debug_t::dent),
+            // the docstring
+            "the dent level")
 
         // the channel activation state; mutable property
         .def_property(

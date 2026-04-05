@@ -11,8 +11,8 @@
 
 // metamethods
 template <template <typename> typename proxyT>
-pyre::journal::Firewall<proxyT>::Firewall(const name_type & name, detail_type detail) :
-    channel_type(name, detail)
+pyre::journal::Firewall<proxyT>::Firewall(const name_type & name, detail_type detail, dent_type dent) :
+    channel_type(name, detail, dent)
 {
     // get my entry
     entry_type & e = this->entry();

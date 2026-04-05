@@ -18,12 +18,49 @@ def test():
     assert channel.name == "tests.journal.help"
     # the detail should be at the default level
     assert channel.detail == 1
+    # the dent should be at the default level
+    assert channel.dent == 0
+
     # the page should be empty
     assert list(channel.page) == []
     # verify the metadata
     assert channel.notes["application"] == "journal"
     assert channel.notes["channel"] == channel.name
     assert channel.notes["severity"] == channel.severity
+
+    # make a channel with name and detail
+    channel = help(name="tests.journal.help", detail=2)
+    # verify the channel name
+    assert channel.name == "tests.journal.help"
+    # the detail should be at the default level
+    assert channel.detail == 2
+    # the dent should be 0
+    assert channel.dent == 0
+
+    # make a channel with name and dent
+    channel = help(name="tests.journal.help", dent=1)
+    # verify the channel name
+    assert channel.name == "tests.journal.help"
+    # the detail should be at the default level
+    assert channel.detail == 1
+    # the dent should be 1
+    assert channel.dent == 1
+
+    # make a channel with name, detail, and dent
+    channel = help(name="tests.journal.help", detail=2, dent=1)
+    # verify the channel name
+    assert channel.name == "tests.journal.help"
+    # the detail should be at 2
+    assert channel.detail == 2
+    # the dent should be 1
+    assert channel.dent == 1
+
+    # verify setter for detail
+    channel.detail = 3
+    assert channel.detail == 3
+    # verify setter for dent
+    channel.dent = 3
+    assert channel.dent == 3
 
     # all done
     return

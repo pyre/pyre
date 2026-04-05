@@ -11,42 +11,42 @@
 
 
 // alias
-using firewall_t = pyre::journal::firewall_t;
+using mywarning_t = pyre::journal::warning_t;
 
 
 // verify the basic channel state
 int
 main()
 {
-    // make a firewall
-    firewall_t channel("tests.journal.firewall");
+    // make an warning channel
+    mywarning_t channel("tests.journal.warning");
 
     // check its name
-    assert(channel.name() == "tests.journal.firewall");
+    assert(channel.name() == "tests.journal.warning");
     // by default, detail should be 1
     assert(channel.detail() == 1);
     // by default, dent should be 0
     assert(channel.dent() == 0);
     // by default, it should be active
     assert(channel);
-    // and fatal
-    assert(channel.fatal());
+    // and non-fatal
+    assert(channel.fatal() == false);
 
-    // make a firewall channel with detail and dent
+    // make an warning channel with detail and dent
     const pyre::journal::detail_t detail = 2;
     const pyre::journal::dent_t dent = 1;
-    pyre::journal::firewall_t channel2("tests.journal.firewall2", detail, dent);
+    pyre::journal::warning_t channel2("tests.journal.warning2", detail, dent);
 
     // check its name
-    assert(channel2.name() == "tests.journal.firewall2");
+    assert(channel2.name() == "tests.journal.warning2");
     // detail should match specified value
     assert(channel2.detail() == detail);
     // dent should match specified value
     assert(channel2.dent() == dent);
     // by default, it should be active
     assert(channel2);
-    // and fatal
-    assert(channel2.fatal());
+    // and non-fatal
+    assert(channel2.fatal() == false);
 
     // all done
     return 0;
