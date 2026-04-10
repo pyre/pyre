@@ -26,6 +26,8 @@ jobs:
       matrix:
         target: [debug, opt]
         python: ["3.14"]
+        compiler: [gcc-15, clang-21]
+        stdlib: [libstdc++, libc++]
 
         include:
           # gcc (libstdc++ only)
@@ -72,6 +74,12 @@ jobs:
       - name: install clang
         if: matrix.suite == 'clang'
         run: |
+          apt get update
+          apt-get install -y \
+              wget \
+              lsb-release \
+              software-properties-common \
+              gnupg
           wget https://apt.llvm.org/llvm.sh
           chmod +x llvm.sh
           ./llvm.sh ${{matrix.suiteVersion}}
