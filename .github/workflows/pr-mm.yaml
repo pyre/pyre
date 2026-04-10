@@ -64,7 +64,7 @@ jobs:
         run: |
           apt-get update
           apt-get install -y \
-            make git wget lsb-release \
+            make git wget lsb-release software-properties-common gnupg \
             openssh-server \
             libgsl-dev libopenmpi-dev libhdf5-dev \
             python3 python3-pip python3-dev
@@ -78,12 +78,6 @@ jobs:
       - name: install clang
         if: matrix.suite == 'clang'
         run: |
-          apt-get update
-          apt-get install -y \
-              wget \
-              lsb-release \
-              software-properties-common \
-              gnupg
           wget https://apt.llvm.org/llvm.sh
           chmod +x llvm.sh
           ./llvm.sh ${{matrix.suiteVersion}}
@@ -103,7 +97,7 @@ jobs:
       - name: install python dependencies
         run: |
           python${pythonVersion} -m pip install --upgrade pip
-          pip-${pythonVersion} install graphene numpy pybind11 PyYAML
+          python${pythonVersion} -m pip install graphene numpy pybind11 PyYAML
         env:
           pythonVersion: ${{matrix.python}}
 
