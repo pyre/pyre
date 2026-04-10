@@ -142,10 +142,10 @@ jobs:
           ${mm} extern.numpy.info
           ${mm} extern.pybind11.info
         env:
-          mm: python${pythonVersion} ${{github.workspace}}/mm/mm.py --config=.github/matrix/mm.pfg
           pythonVersion: ${{matrix.python}}
           suite: ${{matrix.suite}}
           suiteVersion: ${{matrix.suiteVersion}}
+          mm: python${pythonVersion} ${{github.workspace}}/mm/mm.py --config=.github/matrix/mm.pfg
 
       # --- build ---
       - name: build pyre
@@ -153,10 +153,10 @@ jobs:
           cd pyre
           ${mm}
         env:
-          mm: python${pythonVersion} ${{github.workspace}}/mm/mm.py --config=.github/matrix/mm.pfg
           pythonVersion: ${{matrix.python}}
           suite: ${{matrix.suite}}
           suiteVersion: ${{matrix.suiteVersion}}
+          mm: python${pythonVersion} ${{github.workspace}}/mm/mm.py --config=.github/matrix/mm.pfg
 
       # --- test ---
       - name: test pyre
@@ -164,10 +164,10 @@ jobs:
           cd pyre
           ${mm} tests
         env:
-          mm: python${pythonVersion} ${{github.workspace}}/mm/mm.py --config=.github/matrix/mm.pfg
           pythonVersion: ${{matrix.python}}
           suite: ${{matrix.suite}}
           suiteVersion: ${{matrix.suiteVersion}}
+          mm: python${pythonVersion} ${{github.workspace}}/mm/mm.py --config=.github/matrix/mm.pfg
 
 #
 # end of file
