@@ -33,8 +33,8 @@ namespace pyre::py::grid {
     template <class gridT>
     void write(py::class_<gridT> &);
 
-    // the typename table
-    static std::unordered_map<std::type_index, std::string> typenames;
+    // the typename table (defined once in grids.cc, shared across all TUs)
+    extern std::unordered_map<std::type_index, std::string> typenames;
 } // namespace pyre::py::grid
 
 

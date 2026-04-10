@@ -11,6 +11,9 @@
 // my instantiations
 #include "grids.h"
 
+// define the shared typename table (declared extern in grids.h)
+std::unordered_map<std::type_index, std::string> pyre::py::grid::typenames;
+
 // forward declarations of the per-dimension binders
 namespace pyre::py::grid {
     void grids_1d(py::module &);
