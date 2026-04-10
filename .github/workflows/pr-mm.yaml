@@ -3,6 +3,7 @@
 # (c) 1998-2026 all rights reserved
 
 name: pr-mm
+
 on:
   pull_request:
 
@@ -11,13 +12,13 @@ jobs:
   build:
     name: >-
       ${{matrix.target}}
-      python-${{matrix.python}}+${{matrix.compiler}}
-      in ${{matrix.container}}
+      python-${{matrix.python}}+
+      ${{matrix.compiler}}+${{matrix.stdlib}}
 
     runs-on: ubuntu-24.04
 
     container:
-      image: ${{ matrix.container }}
+      image: ubuntu:24.04
 
     strategy:
       fail-fast: false
@@ -25,99 +26,96 @@ jobs:
       matrix:
         target: [debug, opt]
         python: ["3.14"]
-        # define the names of the compilers
+
         include:
+          # gcc (libstdc++ only)
           - compiler: gcc-15
             suite: gcc
             suiteVersion: 15
             cc: gcc-15
             cxx: g++-15
-            container: gcc:15
+            stdlib: libstdc++
+
+          # clang + libstdc++
           - compiler: clang-21
             suite: clang
             suiteVersion: 21
             cc: clang-21
             cxx: clang++-21
-            container: llvmorg/llvm:21
+            stdlib: libstdc++
+
+          # clang + libc++
+          - compiler: clang-21
+            suite: clang
+            suiteVersion: 21
+            cc: clang-21
+            cxx: clang++-21
+            stdlib: libc++
 
     steps:
-      - name: install system dependencies
+      # --- base system ---
+      - name: install base dependencies
         run: |
-          echo " -- update the package cache"
-          sudo apt update
-          echo " -- install our dependencies"
-          sudo apt install -y make git openssh-server libgsl-dev libopenmpi-dev libhdf5-dev
+          apt-get update
+          apt-get install -y \
+            make git wget lsb-release \
+            openssh-server \
+            libgsl-dev libopenmpi-dev libhdf5-dev \
+            python3 python3-pip python3-dev
 
+      # --- install compilers ---
+      - name: install gcc
+        if: matrix.suite == 'gcc'
+        run: |
+          apt-get install -y gcc-15 g++-15
+
+      - name: install clang
+        if: matrix.suite == 'clang'
+        run: |
+          wget https://apt.llvm.org/llvm.sh
+          chmod +x llvm.sh
+          ./llvm.sh ${{matrix.suiteVersion}}
+
+      # --- install libc++ when requested ---
+      - name: install libc++
+        if: matrix.stdlib == 'libc++'
+        run: |
+          apt-get install -y libc++-dev libc++abi-dev
+
+      # --- python setup ---
       - name: python ${{matrix.python}} setup
         uses: actions/setup-python@v5
         with:
           python-version: ${{matrix.python}}
 
-      - name: install dependencies
+      - name: install python dependencies
         run: |
           python${pythonVersion} -m pip install --upgrade pip
-          pip-${pythonVersion} install distro graphene numpy pybind11 PyYAML
+          pip-${pythonVersion} install graphene numpy pybind11 PyYAML
         env:
           pythonVersion: ${{matrix.python}}
 
-      - name: list system packages
+      # --- stdlib flags ---
+      - name: configure stdlib flags
         run: |
-          dpkg -l
+          if [ "${{matrix.stdlib}}" = "libc++" ]; then
+            echo "CXXFLAGS=-stdlib=libc++" >> $GITHUB_ENV
+            echo "LDFLAGS=-stdlib=libc++" >> $GITHUB_ENV
+          fi
 
+      # --- diagnostics ---
       - name: versions
         run: |
-          echo " -- platform tag from python"
-          python${pythonVersion} -c "import sys; print(sys.platform)"
-          echo " -- distribution tag from python"
-          python${pythonVersion} -c "import distro; print(distro.linux_distribution(full_distribution_name=False))"
-          echo " -- make"
-          make --version
-          echo " -- python"
           python${pythonVersion} --version
-          echo "    -- prefix"
-          python${pythonVersion}-config --prefix
-          echo "    -- includes"
-          python${pythonVersion}-config --includes
-          echo "    -- libs"
-          python${pythonVersion}-config --libs
-          echo " -- ${{matrix.cc}}"
           ${{matrix.cc}} --version
-          echo " -- ${{matrix.cxx}}"
           ${{matrix.cxx}} --version
+          echo "CXXFLAGS=$CXXFLAGS"
         env:
           pythonVersion: ${{matrix.python}}
 
-      - name: external dependencies
-        run: |
-          echo " -- gsl"
-          sudo dpkg-query -L libgsl-dev
-          echo " -- openmpi"
-          sudo dpkg-query -L libopenmpi-dev
-          echo " -- hdf5"
-          sudo dpkg-query -L libhdf5-dev
-
-      - name: locations of python packages
-        run: |
-          echo " -- distro"
-          pip-${pythonVersion} show distro
-          echo " -- graphene"
-          pip-${pythonVersion} show graphene
-          echo " -- numpy"
-          pip-${pythonVersion} show numpy
-          echo " -- its headers"
-          find ${pythonLocation}/lib/python${pythonVersion}/site-packages/numpy/core/include
-          echo " -- pybind11"
-          pip-${pythonVersion} show pybind11
-          echo " -- its headers"
-          find ${pythonLocation}/lib/python${pythonVersion}/site-packages/pybind11
-          echo " -- yaml"
-          pip-${pythonVersion} show PyYAML
-        env:
-          pythonVersion: ${{matrix.python}}
-
+      # --- sources ---
       - name: clone mm
         run: |
-          echo " -- cloning mm"
           git clone https://github.com/aivazis/mm
 
       - name: checkout pyre
@@ -126,66 +124,47 @@ jobs:
           fetch-depth: 0
           path: 'pyre'
 
+      # --- mm setup ---
       - name: mm diagnostics
         run: |
-          echo " -- runner home"
-          pwd
-          echo " -- switching to the pyre home directory"
           cd pyre
-          echo " -- pyre source directory"
-          pwd
-          echo " -- creating ~/.pyre"
-          mkdir ~/.pyre
-          echo " -- copying the mm configuration file"
+
+          mkdir -p ~/.pyre ~/.mm
           cp .github/matrix/mm.pfg ~/.pyre
-          echo " -- creating ~/.mm"
-          mkdir ~/.mm
-          echo " -- copying the package configuration file there"
           cp .github/matrix/config.mm ~/.mm
-          echo " -- checking whether mm can run from here"
-          echo now at: ${PWD}
-          echo mm: ${mm}
-          ${mm} --help
+
           ${mm} host.info
           ${mm} builder.info
-          ${mm} make.info
-          echo " -- verifying external packages"
-          ${mm} extern.gsl.info
-          ${mm} extern.mpi.info
-          ${mm} extern.hdf5.info
           ${mm} extern.numpy.info
           ${mm} extern.pybind11.info
+
         env:
           mm: python${pythonVersion} ${{github.workspace}}/mm/mm.py --config=.github/matrix/mm.pfg
-          target: ${{matrix.target}}
+          pythonVersion: ${{matrix.python}}
           suite: ${{matrix.suite}}
           suiteVersion: ${{matrix.suiteVersion}}
-          pythonVersion: ${{matrix.python}}
 
+      # --- build ---
       - name: build pyre
         run: |
-          echo " -- switching to the pyre home directory"
           cd pyre
-          echo " -- building pyre"
           ${mm}
         env:
           mm: python${pythonVersion} ${{github.workspace}}/mm/mm.py --config=.github/matrix/mm.pfg
-          target: ${{matrix.target}}
+          pythonVersion: ${{matrix.python}}
           suite: ${{matrix.suite}}
           suiteVersion: ${{matrix.suiteVersion}}
-          pythonVersion: ${{matrix.python}}
 
+      # --- test ---
       - name: test pyre
         run: |
-          echo " -- switching to the pyre home directory"
           cd pyre
-          echo " -- testing pyre"
           ${mm} tests
         env:
           mm: python${pythonVersion} ${{github.workspace}}/mm/mm.py --config=.github/matrix/mm.pfg
-          target: ${{matrix.target}}
+          pythonVersion: ${{matrix.python}}
           suite: ${{matrix.suite}}
           suiteVersion: ${{matrix.suiteVersion}}
-          pythonVersion: ${{matrix.python}}
+
 #
 # end of file
