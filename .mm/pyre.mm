@@ -25,11 +25,7 @@ pyre.boot.main := etc/boot/main.py
 
 # predicates that check the c++ standard in use
 # these are low resolution tests and may not be good enough
-pyre.c++20 = \
-  ${findstring \
-    $($(compiler.c++).std.c++20), \
-    $(pyre.lib.c++.flags) \
-  }
+pyre.c++20 = ${call languages.c++.has_c++20,pyre.lib}
 
 
 # the pyre package meta-data
