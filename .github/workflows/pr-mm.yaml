@@ -54,6 +54,10 @@ jobs:
             cxx: clang++-21
             stdlib: libc++
 
+        exclude:
+          - compiler: gcc-15
+            stdlib: libc++
+
     steps:
       # --- base system ---
       - name: install base dependencies
