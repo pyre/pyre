@@ -134,16 +134,13 @@ jobs:
       - name: mm diagnostics
         run: |
           cd pyre
-
           mkdir -p ~/.pyre ~/.mm
           cp .github/matrix/mm.pfg ~/.pyre
           cp .github/matrix/config.mm ~/.mm
-
           ${mm} host.info
           ${mm} builder.info
           ${mm} extern.numpy.info
           ${mm} extern.pybind11.info
-
         env:
           mm: python${pythonVersion} ${{github.workspace}}/mm/mm.py --config=.github/matrix/mm.pfg
           pythonVersion: ${{matrix.python}}
