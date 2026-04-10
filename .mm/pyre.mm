@@ -56,7 +56,7 @@ pyre.lib.root := lib/pyre/
 pyre.lib.stem := pyre
 pyre.lib.prerequisites += journal.lib
 pyre.lib.c++.defines += PYRE_CORE
-pyre.lib.c++.flags += -Wall $($(compiler.c++).std.c++23)
+pyre.lib.c++.flags += -Wall $($(compiler.c++).std.c++20)
 
 # additional macros that enable features sensitive to the c++ standard version
 pyre.lib.c++.defines += \
