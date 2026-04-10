@@ -5,45 +5,48 @@
 name: pr-mm
 on:
   pull_request:
+
 jobs:
   # build and test the ref that launched this action
   build:
     name: >-
       ${{matrix.target}}
       python-${{matrix.python}}+${{matrix.compiler}}
-      on ${{matrix.os}}
-    runs-on: ${{matrix.os}}
+      in ${{matrix.container}}
+
+    runs-on: ubuntu-24.04
+
+    container:
+      image: ${{ matrix.container }}
+
     strategy:
       fail-fast: false
+
       matrix:
-        os: [ubuntu-24.04]
         target: [debug, opt]
         python: ["3.14"]
-        compiler: ["gcc-13", "clang-18"]
         # define the names of the compilers
         include:
-          - compiler: gcc-13
+          - compiler: gcc-15
             suite: gcc
-            suiteVersion: 13
-            cc: gcc-13
-            cxx: g++-13
-          - compiler: clang-18
+            suiteVersion: 15
+            cc: gcc-15
+            cxx: g++-15
+            container: gcc:15
+          - compiler: clang-21
             suite: clang
-            suiteVersion: 18
-            cc: clang-18
-            cxx: clang++-18
+            suiteVersion: 21
+            cc: clang-21
+            cxx: clang++-21
+            container: llvmorg/llvm:21
 
     steps:
-      - name: ${{matrix.os}} refresh
+      - name: install system dependencies
         run: |
           echo " -- update the package cache"
           sudo apt update
-          echo " -- upgradables"
-          sudo apt list --upgradable
-          echo " -- upgrade"
-          sudo apt dist-upgrade
           echo " -- install our dependencies"
-          sudo apt install -y make openssh-server libgsl-dev libopenmpi-dev libhdf5-dev
+          sudo apt install -y make git openssh-server libgsl-dev libopenmpi-dev libhdf5-dev
 
       - name: python ${{matrix.python}} setup
         uses: actions/setup-python@v5
@@ -53,7 +56,7 @@ jobs:
       - name: install dependencies
         run: |
           python${pythonVersion} -m pip install --upgrade pip
-          pip3 install distro graphene 'numpy<2.0' pybind11 PyYAML
+          pip-${pythonVersion} install distro graphene numpy pybind11 PyYAML
         env:
           pythonVersion: ${{matrix.python}}
 
@@ -96,19 +99,19 @@ jobs:
       - name: locations of python packages
         run: |
           echo " -- distro"
-          pip3 show distro
+          pip-${pythonVersion} show distro
           echo " -- graphene"
-          pip3 show graphene
+          pip-${pythonVersion} show graphene
           echo " -- numpy"
-          pip3 show numpy
+          pip-${pythonVersion} show numpy
           echo " -- its headers"
           find ${pythonLocation}/lib/python${pythonVersion}/site-packages/numpy/core/include
           echo " -- pybind11"
-          pip3 show pybind11
+          pip-${pythonVersion} show pybind11
           echo " -- its headers"
           find ${pythonLocation}/lib/python${pythonVersion}/site-packages/pybind11
           echo " -- yaml"
-          pip3 show PyYAML
+          pip-${pythonVersion} show PyYAML
         env:
           pythonVersion: ${{matrix.python}}
 
@@ -153,7 +156,7 @@ jobs:
           ${mm} extern.numpy.info
           ${mm} extern.pybind11.info
         env:
-          mm: python3 ${{github.workspace}}/mm/mm.py --config=.github/matrix/mm.pfg
+          mm: python${pythonVersion} ${{github.workspace}}/mm/mm.py --config=.github/matrix/mm.pfg
           target: ${{matrix.target}}
           suite: ${{matrix.suite}}
           suiteVersion: ${{matrix.suiteVersion}}
@@ -166,7 +169,7 @@ jobs:
           echo " -- building pyre"
           ${mm}
         env:
-          mm: python3 ${{github.workspace}}/mm/mm.py --config=.github/matrix/mm.pfg
+          mm: python${pythonVersion} ${{github.workspace}}/mm/mm.py --config=.github/matrix/mm.pfg
           target: ${{matrix.target}}
           suite: ${{matrix.suite}}
           suiteVersion: ${{matrix.suiteVersion}}
@@ -179,7 +182,7 @@ jobs:
           echo " -- testing pyre"
           ${mm} tests
         env:
-          mm: python3 ${{github.workspace}}/mm/mm.py --config=.github/matrix/mm.pfg
+          mm: python${pythonVersion} ${{github.workspace}}/mm/mm.py --config=.github/matrix/mm.pfg
           target: ${{matrix.target}}
           suite: ${{matrix.suite}}
           suiteVersion: ${{matrix.suiteVersion}}
