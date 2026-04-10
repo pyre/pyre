@@ -96,8 +96,8 @@ jobs:
 
       - name: install python dependencies
         run: |
-          python${{pythonVersion}} -m pip install --upgrade pip
-          python${{pythonVersion}} -m pip install graphene numpy pybind11 PyYAML
+          python${pythonVersion} -m pip install --upgrade pip
+          python${pythonVersion} -m pip install graphene numpy pybind11 PyYAML
         env:
           pythonVersion: ${{matrix.python}}
 
@@ -112,7 +112,7 @@ jobs:
       # --- diagnostics ---
       - name: versions
         run: |
-          python${{pythonVersion}} --version
+          python${pythonVersion} --version
           ${{matrix.cc}} --version
           ${{matrix.cxx}} --version
           echo "CXXFLAGS=$CXXFLAGS"
@@ -145,7 +145,7 @@ jobs:
           ${mm} extern.pybind11.info
 
         env:
-          mm: python${{pythonVersion}} ${{github.workspace}}/mm/mm.py --config=.github/matrix/mm.pfg
+          mm: python${pythonVersion} ${{github.workspace}}/mm/mm.py --config=.github/matrix/mm.pfg
           pythonVersion: ${{matrix.python}}
           suite: ${{matrix.suite}}
           suiteVersion: ${{matrix.suiteVersion}}
@@ -156,7 +156,7 @@ jobs:
           cd pyre
           ${mm}
         env:
-          mm: python${{pythonVersion}} ${{github.workspace}}/mm/mm.py --config=.github/matrix/mm.pfg
+          mm: python${pythonVersion} ${{github.workspace}}/mm/mm.py --config=.github/matrix/mm.pfg
           pythonVersion: ${{matrix.python}}
           suite: ${{matrix.suite}}
           suiteVersion: ${{matrix.suiteVersion}}
@@ -167,7 +167,7 @@ jobs:
           cd pyre
           ${mm} tests
         env:
-          mm: python${{pythonVersion}} ${{github.workspace}}/mm/mm.py --config=.github/matrix/mm.pfg
+          mm: python${pythonVersion} ${{github.workspace}}/mm/mm.py --config=.github/matrix/mm.pfg
           pythonVersion: ${{matrix.python}}
           suite: ${{matrix.suite}}
           suiteVersion: ${{matrix.suiteVersion}}
