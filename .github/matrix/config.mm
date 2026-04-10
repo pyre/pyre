@@ -30,8 +30,8 @@ python.version := $(pythonVersion)
 python.dir := $(pythonLocation)
 
 # numpy
-numpy.version := 1.26.4
-numpy.dir := $(python.dir)/lib/python$(python.version)/site-packages/numpy/core
+numpy.version := 2.x
+numpy.dir := $(python.dir)/lib/python$(python.version)/site-packages/numpy/_core
 
 # pybind11
 pybind11.version := 2.11.1
