@@ -26,16 +26,16 @@ jobs:
       matrix:
         target: [debug, opt]
         python: ["3.14"]
-        compiler: [gcc-15, clang-21]
+        compiler: [gcc-14, clang-21]
         stdlib: [libstdc++, libc++]
 
         include:
           # gcc (libstdc++ only)
-          - compiler: gcc-15
+          - compiler: gcc-14
             suite: gcc
-            suiteVersion: 15
-            cc: gcc-15
-            cxx: g++-15
+            suiteVersion: 14
+            cc: gcc-14
+            cxx: g++-14
             stdlib: libstdc++
 
           # clang + libstdc++
@@ -55,7 +55,7 @@ jobs:
             stdlib: libc++
 
         exclude:
-          - compiler: gcc-15
+          - compiler: gcc-14
             stdlib: libc++
 
     steps:
@@ -73,7 +73,7 @@ jobs:
       - name: install gcc
         if: matrix.suite == 'gcc'
         run: |
-          apt-get install -y gcc-15 g++-15
+          apt-get install -y gcc-14 g++-14
 
       - name: install clang
         if: matrix.suite == 'clang'
