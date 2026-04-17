@@ -36,7 +36,7 @@ pyre-gsl.ext.pkg := pyre-gsl.pkg
 pyre-gsl.ext.capsule :=
 pyre-gsl.ext.wraps :=
 pyre-gsl.ext.lib.prerequisites := journal.lib pyre.lib
-pyre-gsl.ext.extern := pyre.lib journal.lib gsl
+pyre-gsl.ext.extern := pyre.lib journal.lib gsl pybind11
 pyre-gsl.ext.lib.c++.flags += $(pyre.lib.c++.flags)
 pyre-gsl.ext.lib.c++.defines += $(pyre.lib.c++.defines)
 
