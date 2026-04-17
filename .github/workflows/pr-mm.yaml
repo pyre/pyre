@@ -41,7 +41,7 @@ jobs:
           echo " -- upgradables"
           sudo apt list --upgradable
           echo " -- upgrade"
-          sudo apt dist-upgrade
+          sudo apt dist-upgrade -y
           echo " -- install our dependencies"
           sudo apt install -y make openssh-server libgsl-dev libopenmpi-dev libhdf5-dev
 
@@ -59,7 +59,7 @@ jobs:
 
       - name: list system packages
         run: |
-          dpkg -l
+          dpkg -l | grep -E "^ii\s+(lib(gsl|openmpi|hdf5)|make|gcc|g\+\+|clang|python)" || true
 
       - name: versions
         run: |
@@ -150,7 +150,6 @@ jobs:
           ${mm} extern.gsl.info
           ${mm} extern.mpi.info
           ${mm} extern.hdf5.info
-          ${mm} extern.numpy.info
           ${mm} extern.pybind11.info
         env:
           mm: python3 ${{github.workspace}}/mm/mm.py --config=.github/matrix/mm.pfg
