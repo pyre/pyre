@@ -23,56 +23,90 @@ matrix(::py::module & m)
             })
         .def(
             "__dlpack__",
-            [](::py::object self, ::py::object /*stream*/) -> ::py::object {
+            [](::py::object self, ::py::kwargs kwargs) -> ::py::object {
                 pyre::gsl::Matrix & mat = self.cast<pyre::gsl::Matrix &>();
-                struct Ctx {
-                    int64_t shape[2];
-                    int64_t strides[2];
-                    DLManagedTensorVersioned managed;
-                    PyObject * owner;
-                };
-                auto * ctx = new Ctx;
-                ctx->shape[0]   = static_cast<int64_t>(mat.ptr->size1);
-                ctx->shape[1]   = static_cast<int64_t>(mat.ptr->size2);
-                // GSL matrices are row-major; tda is the leading dimension (stride of row)
-                ctx->strides[0] = static_cast<int64_t>(mat.ptr->tda);
-                ctx->strides[1] = 1;
-                Py_INCREF(self.ptr());
-                ctx->owner = self.ptr();
-                ctx->managed = DLManagedTensorVersioned {
-                    { 1, 0 },               // version: major=1, minor=0
-                    ctx,                    // manager_ctx
-                    [](DLManagedTensorVersioned * mt) {
-                        auto * c = static_cast<Ctx *>(mt->manager_ctx);
-                        Py_DECREF(c->owner);
-                        delete c;
-                    },
-                    0,                      // flags: 0 = writable
-                    DLTensor {
-                        mat.ptr->data,      // data
-                        kCPU,               // device
-                        2,                  // ndim
-                        kFloat64,           // dtype
-                        ctx->shape,         // shape
-                        ctx->strides,       // strides
-                        0                   // byte_offset
+                // determine if the consumer supports DLPack v1.0
+                // max_version is a (major, minor) tuple passed by numpy 2.x;
+                // numpy 2.1+ also passes dl_device and copy, so we accept **kwargs
+                bool versioned = false;
+                if (kwargs.contains("max_version")) {
+                    auto mv = kwargs["max_version"];
+                    if (!mv.is_none()) {
+                        auto tup = mv.cast<::py::tuple>();
+                        if (tup.size() >= 1 && tup[0].cast<int>() >= 1)
+                            versioned = true;
                     }
-                };
-                PyObject * cap = PyCapsule_New(&ctx->managed, "dltensor_versioned",
-                    [](PyObject * pycap) {
-                        if (!PyCapsule_IsValid(pycap, "dltensor_versioned")) return;
-                        auto * mt = static_cast<DLManagedTensorVersioned *>(
-                            PyCapsule_GetPointer(pycap, "dltensor_versioned"));
-                        if (mt && mt->deleter) mt->deleter(mt);
-                    });
-                if (!cap) {
-                    Py_DECREF(ctx->owner);
-                    delete ctx;
-                    throw ::py::error_already_set();
                 }
-                return ::py::reinterpret_steal<::py::object>(cap);
+                if (versioned) {
+                    // DLPack 1.0 path: DLManagedTensorVersioned + "dltensor_versioned"
+                    struct Ctx {
+                        int64_t shape[2];
+                        int64_t strides[2];
+                        DLManagedTensorVersioned managed;
+                        PyObject * owner;
+                    };
+                    auto * ctx = new Ctx;
+                    ctx->shape[0]   = static_cast<int64_t>(mat.ptr->size1);
+                    ctx->shape[1]   = static_cast<int64_t>(mat.ptr->size2);
+                    ctx->strides[0] = static_cast<int64_t>(mat.ptr->tda);
+                    ctx->strides[1] = 1;
+                    Py_INCREF(self.ptr());
+                    ctx->owner = self.ptr();
+                    ctx->managed = DLManagedTensorVersioned {
+                        { 1, 0 },
+                        ctx,
+                        [](DLManagedTensorVersioned * mt) {
+                            auto * c = static_cast<Ctx *>(mt->manager_ctx);
+                            Py_DECREF(c->owner);
+                            delete c;
+                        },
+                        0,
+                        DLTensor { mat.ptr->data, kCPU, 2, kFloat64, ctx->shape, ctx->strides, 0 }
+                    };
+                    PyObject * cap = PyCapsule_New(&ctx->managed, "dltensor_versioned",
+                        [](PyObject * pycap) {
+                            if (!PyCapsule_IsValid(pycap, "dltensor_versioned")) return;
+                            auto * mt = static_cast<DLManagedTensorVersioned *>(
+                                PyCapsule_GetPointer(pycap, "dltensor_versioned"));
+                            if (mt && mt->deleter) mt->deleter(mt);
+                        });
+                    if (!cap) { Py_DECREF(ctx->owner); delete ctx; throw ::py::error_already_set(); }
+                    return ::py::reinterpret_steal<::py::object>(cap);
+                } else {
+                    // legacy DLPack 0.x path: DLManagedTensor + "dltensor" (NumPy < 2.0)
+                    struct Ctx {
+                        int64_t shape[2];
+                        int64_t strides[2];
+                        DLManagedTensor managed;
+                        PyObject * owner;
+                    };
+                    auto * ctx = new Ctx;
+                    ctx->shape[0]   = static_cast<int64_t>(mat.ptr->size1);
+                    ctx->shape[1]   = static_cast<int64_t>(mat.ptr->size2);
+                    ctx->strides[0] = static_cast<int64_t>(mat.ptr->tda);
+                    ctx->strides[1] = 1;
+                    Py_INCREF(self.ptr());
+                    ctx->owner = self.ptr();
+                    ctx->managed = DLManagedTensor {
+                        DLTensor { mat.ptr->data, kCPU, 2, kFloat64, ctx->shape, ctx->strides, 0 },
+                        ctx,
+                        [](DLManagedTensor * mt) {
+                            auto * c = static_cast<Ctx *>(mt->manager_ctx);
+                            Py_DECREF(c->owner);
+                            delete c;
+                        }
+                    };
+                    PyObject * cap = PyCapsule_New(&ctx->managed, "dltensor",
+                        [](PyObject * pycap) {
+                            if (!PyCapsule_IsValid(pycap, "dltensor")) return;
+                            auto * mt = static_cast<DLManagedTensor *>(
+                                PyCapsule_GetPointer(pycap, "dltensor"));
+                            if (mt && mt->deleter) mt->deleter(mt);
+                        });
+                    if (!cap) { Py_DECREF(ctx->owner); delete ctx; throw ::py::error_already_set(); }
+                    return ::py::reinterpret_steal<::py::object>(cap);
+                }
             },
-            ::py::arg("stream") = ::py::none(),
             "return a DLPack tensor capsule (CPU, float64, row-major)");
 
     // register the MatrixView type

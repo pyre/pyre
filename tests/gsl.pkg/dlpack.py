@@ -34,8 +34,10 @@ def test():
         assert arr[i] == float(i), f"value mismatch at {i}: {arr[i]}"
 
     # modifications through the DLPack view are visible in the original (zero-copy)
-    arr[0] = 99.0
-    assert v[0] == 99.0, "DLPack array is not a zero-copy view of the vector"
+    # numpy < 2.0 from_dlpack always returns read-only arrays; writability was fixed in 2.0
+    if np.lib.NumpyVersion(np.__version__) >= '2.0.0':
+        arr[0] = 99.0
+        assert v[0] == 99.0, "DLPack array is not a zero-copy view of the vector"
 
     # --- matrix ---
     m = gsl.matrix(shape=(4, 5))
@@ -54,8 +56,10 @@ def test():
             assert mat[i, j] == float(i * 5 + j), f"value mismatch at ({i},{j})"
 
     # zero-copy check
-    mat[0, 0] = -1.0
-    assert m[0, 0] == -1.0, "DLPack array is not a zero-copy view of the matrix"
+    # numpy < 2.0 from_dlpack always returns read-only arrays; writability was fixed in 2.0
+    if np.lib.NumpyVersion(np.__version__) >= '2.0.0':
+        mat[0, 0] = -1.0
+        assert m[0, 0] == -1.0, "DLPack array is not a zero-copy view of the matrix"
 
     # all done
     return v, m
