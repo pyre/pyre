@@ -14,7 +14,7 @@
 
 // the {datatype} specializations
 template <>
-auto
+inline auto
 pyre::h5::datatype(const char *) -> const datatype_t &
 {
     // build a NATIVE char
@@ -22,7 +22,7 @@ pyre::h5::datatype(const char *) -> const datatype_t &
 }
 
 template <>
-auto
+inline auto
 pyre::h5::datatype(const short *) -> const datatype_t &
 {
     // build a NATIVE short
@@ -30,7 +30,7 @@ pyre::h5::datatype(const short *) -> const datatype_t &
 }
 
 template <>
-auto
+inline auto
 pyre::h5::datatype(const int *) -> const datatype_t &
 {
     // build a NATIVE int
@@ -38,7 +38,7 @@ pyre::h5::datatype(const int *) -> const datatype_t &
 }
 
 template <>
-auto
+inline auto
 pyre::h5::datatype(const long *) -> const datatype_t &
 {
     // build a NATIVE long
@@ -46,7 +46,7 @@ pyre::h5::datatype(const long *) -> const datatype_t &
 }
 
 template <>
-auto
+inline auto
 pyre::h5::datatype(const float *) -> const datatype_t &
 {
     // build a NATIVE float
@@ -54,7 +54,7 @@ pyre::h5::datatype(const float *) -> const datatype_t &
 }
 
 template <>
-auto
+inline auto
 pyre::h5::datatype(const double *) -> const datatype_t &
 {
     // build a NATIVE double
