@@ -43,72 +43,88 @@ class Linux(POSIX, family="pyre.platforms.linux"):
         """
         Return a suitable default encapsulation of the runtime host
         """
-        try:
-            if sys.version_info.major == 3 and sys.version_info.minor <= 8:
-                import platform
-                distribution, cls.release, cls.codename = platform.linux_distribution()
-                # just in case
-                distribution = distribution.lower()
-            elif sys.version_info.major == 3 and sys.version_info.minor < 10:
+        # there has been some instability in the way the python runtime discovers details about
+        # linux distributions, hence the version dependent logic here
+        major, minor, *_ = sys.version_info
+        # for python <= 3.8
+        if major == 3 and minor <= 8:
+            # {platform} has a function that does the job
+            import platform
+
+            # extract what we need
+            distribution, release, codename = platform.linux_distribution()
+            # and normalize
+            distribution = distribution.lower()
+
+        # for 3.8 < python < 3.10
+        elif major == 3 and minor < 10:
+            # we rely on {distro}, an external package, so attempt to
+            try:
+                # grab it
                 import distro
+            # if it's not available
+            except ImportError:
+                # bail and treat the host as a generic linux box
+                return cls
+            # otherwise, carefully
+            try:
+                # unpack what we need
                 distribution = distro.id()
-                cls.release = distro.version()
-                cls.codename = distro.codename()
-            else:
-                import platform
-                release_info = platform.freedesktop_os_release()
-                distribution = release_info["ID"].lower()
-                cls.release = release_info["VERSION_ID"]
-                cls.codename = release_info["VERSION_CODENAME"]
-        except (AttributeError, ImportError):
-            # there isn't much else to do; act like a generic linux system
-            return cls
+                release = distro.version()
+                codename = distro.codename()
+            # if anything goes wrong
+            except AttributeError:
+                # bail and treat the host as a generic linux box
+                return cls
+
+        # for python >= 3.10
+        else:
+            # {platform} once again has support
+            import platform
+
+            # but in a different way
+            info = platform.freedesktop_os_release()
+            # unpack
+            distribution = info.get("ID", "").lower()
+            release = info.get("VERSION_ID", "")
+            codename = info.get("VERSION_CODENAME", "")
 
         # check for ubuntu
         if distribution.startswith("ubuntu"):
             # load the platform file
-            from .Ubuntu import Ubuntu
-
-            # and return it
-            return Ubuntu
-        # check for debian
-        if distribution.startswith("debian"):
-            # load the platform file
-            from .Debian import Debian
-
-            # and return it
-            return Debian
+            from .Ubuntu import Ubuntu as host
         # check for red hat
-        if distribution.startswith("red hat") or distribution.startswith("rhel"):
+        elif distribution.startswith("red hat") or distribution.startswith("rhel"):
             # load the platform file
-            from .RedHat import RedHat
-
-            # and return it
-            return RedHat
+            from .RedHat import RedHat as host
         # check for centos
-        if distribution.startswith("centos"):
+        elif distribution.startswith("centos"):
             # load the platform file
-            from .CentOS import CentOS
-
-            # and return it
-            return CentOS
+            from .CentOS import CentOS as host
         # check for rocky
-        if distribution.startswith("rocky"):
+        elif distribution.startswith("rocky"):
             # load the platform file
-            from .Rocky import Rocky
-
-            # and return it
-            return Rocky
+            from .Rocky import Rocky as host
         # check for fedora
-        if distribution.startswith("fedora"):
+        elif distribution.startswith("fedora"):
             # load the platform file
-            from .Fedora import Fedora
+            from .Fedora import Fedora as host
+        # check for fedora
+        elif distribution.startswith("ol"):
+            # load the platform file
+            from .Oracle import Oracle as host
+        # everybody else
+        else:
+            # is just {linux}
+            host = cls
+            # record the distribution so we leave behind a hint of the discovery process
+            host.distribution = distribution
 
-            # and return it
-            return Fedora
-
-        # otherwise, act like a generic linux system
-        return cls
+        # decorate
+        host.release = release
+        host.codename = codename
+        # and return
+        return host
 
     # implementation details: explorers
     @classmethod
