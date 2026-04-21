@@ -77,6 +77,42 @@ def centos():
 
 
 @foundry(implements=platform)
+def debian():
+    """
+    Support for Debian
+    """
+    # get the class record
+    from .Debian import Debian
+
+    # and return it
+    return Debian
+
+
+@foundry(implements=platform)
+def fedora():
+    """
+    Support for Fedora
+    """
+    # get the class record
+    from .Fedora import Fedora
+
+    # and return it
+    return Fedora
+
+
+@foundry(implements=platform)
+def oracle():
+    """
+    Support for Oracle Linux Server
+    """
+    # get the class record
+    from .Oracle import Oracle
+
+    # and return it
+    return Oracle
+
+
+@foundry(implements=platform)
 def redhat():
     """
     Support for RedHat
@@ -101,18 +137,6 @@ def rocky():
 
 
 @foundry(implements=platform)
-def fedora():
-    """
-    Support for Fedora
-    """
-    # get the class record
-    from .Fedora import Fedora
-
-    # and return it
-    return Fedora
-
-
-@foundry(implements=platform)
 def ubuntu():
     """
     Support for Ubuntu
@@ -122,18 +146,6 @@ def ubuntu():
 
     # and return it
     return Ubuntu
-
-
-@foundry(implements=platform)
-def debian():
-    """
-    Support for Debian
-    """
-    # get the class record
-    from .Debian import Debian
-
-    # and return it
-    return Debian
 
 
 # host aliases
