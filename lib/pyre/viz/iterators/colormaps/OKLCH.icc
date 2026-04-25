@@ -1,0 +1,55 @@
+// -*- c++ -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2026 all rights reserved
+
+// code guard
+#pragma once
+
+
+// the declaration
+#include "OKLCH.h"
+
+
+// metamethods
+template <class lightnessSourceT, class chromaSourceT, class hueSourceT>
+pyre::viz::iterators::colormaps::OKLCH<lightnessSourceT, chromaSourceT, hueSourceT>::OKLCH(
+    lightness_source_const_reference lightness, chroma_source_const_reference chroma,
+    hue_source_const_reference hue) :
+    _lightness { lightness },
+    _chroma { chroma },
+    _hue { hue }
+{}
+
+
+// interface
+template <class lightnessSourceT, class chromaSourceT, class hueSourceT>
+auto
+pyre::viz::iterators::colormaps::OKLCH<lightnessSourceT, chromaSourceT, hueSourceT>::operator*()
+    const -> rgb_type
+{
+    // get values from my data sources
+    auto lightness = *_lightness;
+    auto chroma = *_chroma;
+    auto hue = *_hue;
+
+    // covert to {rgb} and return
+    return colorspaces::oklch(lightness, chroma, hue);
+}
+
+
+template <class lightnessSourceT, class chromaSourceT, class hueSourceT>
+auto
+pyre::viz::iterators::colormaps::OKLCH<lightnessSourceT, chromaSourceT, hueSourceT>::operator++()
+    -> void
+{
+    // make my sources point to the next value
+    ++_lightness;
+    ++_chroma;
+    ++_hue;
+    // all done
+    return;
+}
+
+
+// end of file

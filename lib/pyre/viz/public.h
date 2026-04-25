@@ -22,6 +22,7 @@
 #include "colorspaces/hl.h"
 #include "colorspaces/hsb.h"
 #include "colorspaces/hsl.h"
+#include "colorspaces/oklch.h"
 
 // products
 // images
@@ -77,6 +78,7 @@
 #include "iterators/colormaps/HL.h"
 #include "iterators/colormaps/HSB.h"
 #include "iterators/colormaps/HSL.h"
+#include "iterators/colormaps/OKLCH.h"
 #include "iterators/colormaps/RGB.h"
 // encodings
 #include "iterators/codecs/BMP.h"

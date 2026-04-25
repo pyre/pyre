@@ -46,7 +46,7 @@ namespace pyre::viz {
             // microsoft bitmaps
             class BMP;
         } // namespace images
-    }     // namespace products
+    } // namespace products
 
     // factories
     namespace factories {
@@ -127,7 +127,7 @@ namespace pyre::viz {
             template <class signalT, class realT>
             class Real;
         } // namespace selectors
-    }     // namespace factories
+    } // namespace factories
 
     // iterators
     namespace iterators {
@@ -202,6 +202,9 @@ namespace pyre::viz {
             template <class hueSourceT, class saturationSourceT, class luminositySourceT>
             class HSL;
 
+            template <class lightnessSourceT, class chromaSourceT, class hueSourceT>
+            class OKLCH;
+
             template <class redSourceT, class greenSourceT, class blueSourceT>
             class RGB;
         } // namespace colormaps
@@ -212,7 +215,7 @@ namespace pyre::viz {
             // microsoft bitmap
             class BMP;
         } // namespace codecs
-    }     // namespace iterators
+    } // namespace iterators
 
 
 } // namespace pyre::viz
