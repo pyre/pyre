@@ -137,6 +137,7 @@ namespace pyre::viz::colorspaces {
     inline auto hl(double h, double l, double threshold = 0.4) -> rgb_t;
     inline auto hsb(double h, double s, double b) -> rgb_t;
     inline auto hsl(double h, double s, double l) -> rgb_t;
+    inline auto oklch(float lighness, float chroma, float hue) -> rgb_t;
 } // namespace pyre::viz::colorspaces
 
 
