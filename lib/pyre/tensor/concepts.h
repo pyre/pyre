@@ -44,9 +44,10 @@ namespace pyre::tensor {
     template <class F>
     concept symmetric_matrix_c = square_matrix_c<F> and F::symmetric;
 
-    // concept of two tensors having the same shape
-    template <class F1, class F2>
-    concept tensor_same_shape_c = tensor_c<F1> and tensor_c<F2> and F1::dims == F2::dims;
+    // concept of tensors having the same shape
+    template <class F0, class... Fs>
+    concept tensor_same_shape_c =
+        tensor_c<F0> && (tensor_c<Fs> && ...) && ((F0::dims == Fs::dims) && ...);
 
     // concept of a fourth-order tensor
     template <class F>
