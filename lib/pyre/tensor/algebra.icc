@@ -1250,7 +1250,7 @@ pyre::tensor::eigenvectors(const symmetric_matrix_t<3, T> & A) -> matrix_t<3, 3,
     vector_t<3, T> v2 = cross(v0, v1);
 
     // build and return the matrix of eigenvectors
-    return matrix_column<0>(v0) + matrix_column<1>(v1) + matrix_column<2>(v2);
+    return columns(v0, v1, v2);
 }
 
 template <int D, typename T>
