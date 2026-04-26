@@ -1093,7 +1093,7 @@ pyre::tensor::symmetric(const matrixT & A) -> typename matrixT::symmetric_tensor
             return;
         };
         // fill all (lower diagonal, diagonal included) rows in column K
-        (_fill_row.template operator()<K>(make_integer_sequence<K+1> {}), ...);
+        (_fill_row.template operator()<K>(make_integer_sequence<K + 1> {}), ...);
     };
 
     // fill all columns
