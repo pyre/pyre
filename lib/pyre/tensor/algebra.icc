@@ -500,6 +500,86 @@ pyre::tensor::matrix_column(const vectorT & v)
     return _fill_matrix_column(matrix_result_t(), v, make_integer_sequence<vectorT::size> {});
 }
 
+// builds a matrix with prescribed rows
+template <class packingT, pyre::tensor::vector_c vectorT, pyre::tensor::vector_c... vectorTs>
+    requires(pyre::tensor::tensor_same_shape_c<vectorT, vectorTs...>)
+constexpr auto
+pyre::tensor::rows(const vectorT & v, const vectorTs &... vs)
+{
+    // the number of rows in the result matrix
+    constexpr int n_rows = 1 + sizeof...(vectorTs);
+    // the number of columns in the result matrix
+    constexpr int n_cols = vectorT::size;
+    // the scalar type of the result matrix
+    using scalar_t =
+        std::common_type_t<typename vectorT::scalar_type, typename vectorTs::scalar_type...>;
+    // the type type of the result matrix
+    using matrix_result_t = pyre::tensor::matrix_t<n_rows, n_cols, scalar_t, packingT>;
+
+    // create the result matrix
+    auto result = matrix_result_t {};
+
+    // helper lambda to write one row {row}
+    auto write_row = [&]<int row, int... cols>(
+                         auto & result, const auto & vec, integer_sequence<cols...>) {
+        ((result[{ row, cols }] = vec[{ cols }]), ...);
+    };
+
+    // helper lambda to write all rows
+    auto write_rows = [&]<int... rows>(integer_sequence<rows...>) {
+        ((write_row.template operator()<rows>(
+             result, std::get<rows>(std::forward_as_tuple(v, vs...)),
+             make_integer_sequence<n_cols> {})),
+         ...);
+    };
+
+    // assemble the result matrix
+    write_rows(make_integer_sequence<n_rows> {});
+
+    // return the result matrix
+    return result;
+}
+
+// builds a matrix with prescribed columns
+template <class packingT, pyre::tensor::vector_c vectorT, pyre::tensor::vector_c... vectorTs>
+    requires(pyre::tensor::tensor_same_shape_c<vectorT, vectorTs...>)
+constexpr auto
+pyre::tensor::columns(const vectorT & v, const vectorTs &... vs)
+{
+    // the number of rows in the result matrix
+    constexpr int n_rows = vectorT::size;
+    // the number of columns in the result matrix
+    constexpr int n_cols = 1 + sizeof...(vectorTs);
+    // the scalar type of the result matrix
+    using scalar_t =
+        std::common_type_t<typename vectorT::scalar_type, typename vectorTs::scalar_type...>;
+    // the type type of the result matrix
+    using matrix_result_t = pyre::tensor::matrix_t<n_rows, n_cols, scalar_t, packingT>;
+
+    // create the result matrix
+    auto result = matrix_result_t {};
+
+    // helper lambda to write one column {column}
+    auto write_col = [&]<int col, int... rows>(
+                         auto & result, const auto & vec, integer_sequence<rows...>) {
+        ((result[{ rows, col }] = vec[{ rows }]), ...);
+    };
+
+    // helper lambda to write all columns
+    auto write_cols = [&]<int... cols>(integer_sequence<cols...>) {
+        ((write_col.template operator()<cols>(
+             result, std::get<cols>(std::forward_as_tuple(v, vs...)),
+             make_integer_sequence<n_rows> {})),
+         ...);
+    };
+
+    // assemble the result matrix
+    write_cols(make_integer_sequence<n_cols> {});
+
+    // return the result matrix
+    return result;
+}
+
 // builds a square matrix with all zeros except the diagonal is equal to v
 template <pyre::tensor::vector_c vectorT>
 constexpr auto

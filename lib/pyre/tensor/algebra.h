@@ -180,6 +180,16 @@ namespace pyre::tensor {
     constexpr auto matrix_column(const vectorT & v)
         -> matrix_t<vectorT::size, vectorT::size, typename vectorT::scalar_type, packingT>;
 
+    // builds a matrix with prescribed rows
+    template <class packingT = pyre::grid::canonical_t<2>, vector_c vectorT, vector_c... vectorTs>
+        requires(tensor_same_shape_c<vectorT, vectorTs...>)
+    constexpr auto rows(const vectorT & v, const vectorTs &... vs);
+
+    // builds a matrix with prescribed columns
+    template <class packingT = pyre::grid::canonical_t<2>, vector_c vectorT, vector_c... vectorTs>
+        requires(tensor_same_shape_c<vectorT, vectorTs...>)
+    constexpr auto columns(const vectorT & v, const vectorTs &... vs);
+
     // builds a square matrix with all zeros except the diagonal is equal to v
     template <vector_c vectorT>
     constexpr auto matrix_diagonal(const vectorT & v)
