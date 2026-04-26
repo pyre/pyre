@@ -208,8 +208,7 @@ namespace pyre::tensor {
 
     // the vector representing a skew symmetric matrix
     template <square_matrix_c matrixT>
-    constexpr auto axis(const matrixT & A)
-        -> vector_t<3, typename matrixT::scalar_type>
+    constexpr auto axis(const matrixT & A) -> vector_t<3, typename matrixT::scalar_type>
         requires(matrixT::dims[0] == 3);
 
     // the skew symmetric part of a square matrix
