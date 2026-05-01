@@ -580,6 +580,42 @@ pyre::tensor::columns(const vectorT & v, const vectorTs &... vs)
     return result;
 }
 
+// returns the rows of the input matrix as vectors
+template <class matrixT>
+    requires(pyre::tensor::matrix_c<matrixT>)
+constexpr auto
+pyre::tensor::rows(const matrixT & A)
+{
+    // the number of rows
+    constexpr int n_rows = matrixT::dims[0];
+
+    // fill out the rows
+    constexpr auto _fill_rows = []<int... Is>(const matrixT & J, integer_sequence<Is...>) {
+        return std::array { pyre::tensor::row<Is>(J)... };
+    };
+
+    // return the array of columns
+    return _fill_rows(A, make_integer_sequence<n_rows> {});
+}
+
+// returns the columns of the input matrix as vectors
+template <class matrixT>
+    requires(pyre::tensor::matrix_c<matrixT>)
+constexpr auto
+pyre::tensor::columns(const matrixT & A)
+{
+    // the number of columns
+    constexpr int n_cols = matrixT::dims[1];
+
+    // fill out the columns
+    constexpr auto _fill_columns = []<int... Is>(const matrixT & J, integer_sequence<Is...>) {
+        return std::array { pyre::tensor::column<Is>(J)... };
+    };
+
+    // return the array of columns
+    return _fill_columns(A, make_integer_sequence<n_cols> {});
+}
+
 // builds a square matrix with all zeros except the diagonal is equal to v
 template <pyre::tensor::vector_c vectorT>
 constexpr auto

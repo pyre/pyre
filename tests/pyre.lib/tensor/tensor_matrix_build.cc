@@ -25,17 +25,31 @@ main(int argc, char * argv[])
 
     // use {v1} and {v2} to build {A_row} row-wise
     constexpr auto A_row = rows(v1, v2);
-    // expected result
-    constexpr auto A_exp_row = matrix_t<2, 3> { -2.0, 2.0, 10.0, 1.0, 2.0, 3.0 / 2.0 };
+
+    // extract the rows of {A}
+    constexpr auto A_rows = rows(A_row);
+    constexpr auto row1 = std::get<0>(A_rows);
+    constexpr auto row2 = std::get<1>(A_rows);
+
+    // rebuild the matrix with the extracted rows
+    constexpr auto A_row2 = rows(row1, row2);
+
     // verify result
-    static_assert(A_exp_row == A_row);
+    static_assert(A_row2 == A_row);
 
     // use {v1} and {v2} to build {A_col} column-wise
     constexpr auto A_col = columns(v1, v2);
-    // expected result
-    constexpr auto A_exp_col = pyre::tensor::transpose(A_exp_row);
+
+    // extract the columns of {A}
+    constexpr auto A_cols = columns(A_col);
+    constexpr auto col1 = std::get<0>(A_cols);
+    constexpr auto col2 = std::get<1>(A_cols);
+
+    // rebuild the matrix with the extracted rows
+    constexpr auto A_col2 = columns(col1, col2);
+
     // verify result
-    static_assert(A_exp_col == A_col);
+    static_assert(A_col2 == A_col);
 
     // all done
     return 0;

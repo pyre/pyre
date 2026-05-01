@@ -190,6 +190,16 @@ namespace pyre::tensor {
         requires(tensor_same_shape_c<vectorT, vectorTs...>)
     constexpr auto columns(const vectorT & v, const vectorTs &... vs);
 
+    // returns the rows of the input matrix as vectors
+    template <class matrixT>
+        requires(matrix_c<matrixT>)
+    constexpr auto rows(const matrixT & A);
+
+    // returns the columns of the input matrix as vectors
+    template <class matrixT>
+        requires(matrix_c<matrixT>)
+    constexpr auto columns(const matrixT & A);
+
     // builds a square matrix with all zeros except the diagonal is equal to v
     template <vector_c vectorT>
     constexpr auto matrix_diagonal(const vectorT & v)
