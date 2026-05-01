@@ -20,10 +20,6 @@ namespace pyre::tensor {
         }(c);
     };
 
-    // concept of a scalar
-    template <class F>
-    concept scalar_c = tensor_c<F> and F::size == 1;
-
     // concept of a vector
     template <class F>
     concept vector_c = tensor_c<F> and F::rank == 1;
