@@ -671,7 +671,7 @@ pyre::tensor::operator*(const vectorT & v, const matrixT & A) -> product<vectorT
     constexpr auto _matrix_times_vector = []<int... K>(
                                               const matrixT & A, const vectorT & v,
                                               integer_sequence<K...>) -> vector_output_type {
-        return vector_output_type((col<K>(A) * v)...);
+        return vector_output_type((column<K>(A) * v)...);
     };
     return _matrix_times_vector(A, v, make_integer_sequence<matrixT::dims[1]> {});
 }
@@ -1201,8 +1201,8 @@ pyre::tensor::eigenvectors(const symmetric_matrix_t<3, T> & A) -> matrix_t<3, 3,
 
     // first eigenvector
     vector_t<3, T> v0;
-    auto a = col<0>(A) - lambda[0] * vector_t<3, T> { 1, 0, 0 };
-    auto b = col<1>(A) - lambda[0] * vector_t<3, T> { 0, 1, 0 };
+    auto a = column<0>(A) - lambda[0] * vector_t<3, T> { 1, 0, 0 };
+    auto b = column<1>(A) - lambda[0] * vector_t<3, T> { 0, 1, 0 };
     if (norm(a) <= eps) {
         v0 = vector_t<3, T> { 1, 0, 0 };
     } else if (norm(b) <= eps) {
@@ -1219,9 +1219,9 @@ pyre::tensor::eigenvectors(const symmetric_matrix_t<3, T> & A) -> matrix_t<3, 3,
     vector_t<3, T> v1;
     // second eigenvalue is repeated
     if (lambda[1] == lambda[0]) {
-        auto a = col<0>(A) - lambda[0] * vector_t<3, T> { 1, 0, 0 };
+        auto a = column<0>(A) - lambda[0] * vector_t<3, T> { 1, 0, 0 };
         if (norm(a) <= eps) {
-            auto b = col<1>(A) - lambda[0] * vector_t<3, T> { 0, 1, 0 };
+            auto b = column<1>(A) - lambda[0] * vector_t<3, T> { 0, 1, 0 };
             if (norm(b) <= eps) {
                 v1 = vector_t<3, T> { 0, 1, 0 };
             } else {
@@ -1231,8 +1231,8 @@ pyre::tensor::eigenvectors(const symmetric_matrix_t<3, T> & A) -> matrix_t<3, 3,
             v1 = cross(v0, a);
         }
     } else { // lambda[1] != lambda[0]
-        auto a = col<0>(A) - lambda[1] * vector_t<3, T> { 1, 0, 0 };
-        auto b = col<1>(A) - lambda[1] * vector_t<3, T> { 0, 1, 0 };
+        auto a = column<0>(A) - lambda[1] * vector_t<3, T> { 1, 0, 0 };
+        auto b = column<1>(A) - lambda[1] * vector_t<3, T> { 0, 1, 0 };
         if (norm(a) <= eps) {
             v1 = vector_t<3, T> { 1, 0, 0 };
         } else if (norm(b) <= eps) {
@@ -1292,7 +1292,7 @@ pyre::tensor::row(const matrixT & A) -> vector_t<matrixT::dims[1], typename matr
 // extract column {I} of a matrix
 template <int I, pyre::tensor::matrix_c matrixT>
 constexpr auto
-pyre::tensor::col(const matrixT & A) -> vector_t<matrixT::dims[0], typename matrixT::scalar_type>
+pyre::tensor::column(const matrixT & A) -> vector_t<matrixT::dims[0], typename matrixT::scalar_type>
 {
     constexpr int D1 = matrixT::dims[0];
     using T = typename matrixT::scalar_type;
