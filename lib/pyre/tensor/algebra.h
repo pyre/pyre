@@ -315,7 +315,7 @@ namespace pyre::tensor {
 
     // extract column {I} of a matrix
     template <int I, matrix_c matrixT>
-    constexpr auto col(const matrixT & A)
+    constexpr auto column(const matrixT & A)
         -> vector_t<matrixT::dims[0], typename matrixT::scalar_type>;
 
     // apply a function to a matrix
