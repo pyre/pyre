@@ -47,8 +47,8 @@ main(int argc, char * argv[])
         static_assert(lambda_A[0] + lambda_A[1] == trace(A));
 
         // definition of eigenvalues/vectors pair
-        static_assert(A * col<0>(eigenvectors_A) == lambda_A[0] * col<0>(eigenvectors_A));
-        static_assert(A * col<1>(eigenvectors_A) == lambda_A[1] * col<1>(eigenvectors_A));
+        static_assert(A * column<0>(eigenvectors_A) == lambda_A[0] * column<0>(eigenvectors_A));
+        static_assert(A * column<1>(eigenvectors_A) == lambda_A[1] * column<1>(eigenvectors_A));
 
         // spectral decomposition
         static_assert(A * eigenvectors_A == eigenvectors_A * eigenvalues_A);
