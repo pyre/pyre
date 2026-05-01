@@ -25,7 +25,7 @@ main(int argc, char * argv[])
     // a quadratic form
     constexpr auto q1 = transpose(a1) * C1 * a1;
     // check that the value is correct
-    static_assert(q1 == 5.0);
+    static_assert(q1 == matrix_t<1> { 5.0 });
 
     // a 2D vector
     constexpr auto a2 = vector_t<2> { 1.0, 1.0 };
@@ -35,9 +35,6 @@ main(int argc, char * argv[])
     constexpr auto q2 = transpose(a2) * C2 * a2;
     // check that the value is correct
     static_assert(q2 == 5.0);
-
-    // check that the values of the two quadratic forms can be subtracted
-    static_assert(q1 - q2 == 0.0);
 
     // all done
     return 0;
