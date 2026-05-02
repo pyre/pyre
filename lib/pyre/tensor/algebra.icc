@@ -412,7 +412,8 @@ template <pyre::tensor::tensor_c tensorT>
 constexpr auto
 pyre::tensor::operator/(const tensorT & y, typename tensorT::scalar_type a) -> tensorT
 {
-    return (1.0 / a) * y;
+    using scalar_t = typename tensorT::scalar_type;
+    return (scalar_t { 1 } / a) * y;
 }
 
 // (temporary) tensor divided scalar
@@ -420,7 +421,8 @@ template <pyre::tensor::tensor_c tensorT>
 constexpr auto
 pyre::tensor::operator/(tensorT && y, typename tensorT::scalar_type a) -> tensorT
 {
-    return (1.0 / a) * std::move(y);
+    using scalar_t = typename tensorT::scalar_type;
+    return (scalar_t { 1 } / a) * std::move(y);
 }
 
 // dyadic vector product
