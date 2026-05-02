@@ -20,8 +20,8 @@ int
 main(int argc, char * argv[])
 {
     // 2D matrix: the columns of the identity are the canonical basis
-    static_assert(col<0>(identity<matrix_t<2>>) == unit<vector_t<2>, 0>);
-    static_assert(col<1>(identity<matrix_t<2>>) == unit<vector_t<2>, 1>);
+    static_assert(column<0>(identity<matrix_t<2>>) == unit<vector_t<2>, 0>);
+    static_assert(column<1>(identity<matrix_t<2>>) == unit<vector_t<2>, 1>);
 
     // 2D matrix: the rows of the identity are the canonical basis
     static_assert(row<0>(identity<matrix_t<2>>) == unit<vector_t<2>, 0>);
@@ -31,14 +31,14 @@ main(int argc, char * argv[])
     constexpr auto matrix = matrix_t<2, 3> { 1.0, 2.0, 3.0, 1.0, 2.0, 3.0 };
     static_assert(row<0>(matrix) == vector_t<3> { 1.0, 2.0, 3.0 });
     static_assert(row<1>(matrix) == vector_t<3> { 1.0, 2.0, 3.0 });
-    static_assert(col<0>(matrix) == vector_t<2> { 1.0, 1.0 });
-    static_assert(col<1>(matrix) == vector_t<2> { 2.0, 2.0 });
-    static_assert(col<2>(matrix) == vector_t<2> { 3.0, 3.0 });
+    static_assert(column<0>(matrix) == vector_t<2> { 1.0, 1.0 });
+    static_assert(column<1>(matrix) == vector_t<2> { 2.0, 2.0 });
+    static_assert(column<2>(matrix) == vector_t<2> { 3.0, 3.0 });
 
     // 3D matrix: the columns of the identity are the canonical basis
-    static_assert(col<0>(identity<matrix_t<3>>) == unit<vector_t<3>, 0>);
-    static_assert(col<1>(identity<matrix_t<3>>) == unit<vector_t<3>, 1>);
-    static_assert(col<2>(identity<matrix_t<3>>) == unit<vector_t<3>, 2>);
+    static_assert(column<0>(identity<matrix_t<3>>) == unit<vector_t<3>, 0>);
+    static_assert(column<1>(identity<matrix_t<3>>) == unit<vector_t<3>, 1>);
+    static_assert(column<2>(identity<matrix_t<3>>) == unit<vector_t<3>, 2>);
 
     // 3D matrix: the rows of the identity are the canonical basis
     static_assert(row<0>(identity<matrix_t<3>>) == unit<vector_t<3>, 0>);

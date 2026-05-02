@@ -22,32 +22,27 @@ namespace pyre::tensor {
     // dot product of tensors
     template <tensor_c tensorT1, tensor_c tensorT2>
     constexpr auto dot(const tensorT1 & y1, const tensorT2 & y2)
-        requires(tensor_same_shape_c<tensorT1, tensorT2> and !scalar_c<tensorT1>);
+        requires(tensor_same_shape_c<tensorT1, tensorT2>);
 
     // tensors operator==
     template <tensor_c tensorT1, tensor_c tensorT2>
     constexpr auto operator==(const tensorT1 & lhs, const tensorT2 & rhs) -> bool
-        requires(tensor_same_shape_c<tensorT1, tensorT2> and !scalar_c<tensorT1>);
+        requires(tensor_same_shape_c<tensorT1, tensorT2>);
 
     // scalar times tensor
     template <tensor_c tensorT>
-    constexpr auto operator*(const typename tensorT::scalar_type & a, const tensorT & y) -> tensorT
-        requires(!scalar_c<tensorT>);
+    constexpr auto operator*(const typename tensorT::scalar_type & a, const tensorT & y) -> tensorT;
 
     // tensor times scalar
     template <tensor_c tensorT>
-    constexpr auto operator*(const tensorT & y, const typename tensorT::scalar_type & a) -> tensorT
-        requires(!scalar_c<tensorT>);
+    constexpr auto operator*(const tensorT & y, const typename tensorT::scalar_type & a) -> tensorT;
 
     // scalar times (temporary) tensor
     template <tensor_c tensorT>
-    constexpr auto operator*(const typename tensorT::scalar_type & a, tensorT && y) -> tensorT
-        requires(!scalar_c<tensorT>);
-
+    constexpr auto operator*(const typename tensorT::scalar_type & a, tensorT && y) -> tensorT;
     // (temporary) tensor times scalar
     template <tensor_c tensorT>
-    constexpr auto operator*(tensorT && y, const typename tensorT::scalar_type & a) -> tensorT
-        requires(!scalar_c<tensorT>);
+    constexpr auto operator*(tensorT && y, const typename tensorT::scalar_type & a) -> tensorT;
 
     // row-column vector product
     template <vector_c vectorT1, vector_c vectorT2>
@@ -75,79 +70,75 @@ namespace pyre::tensor {
 
     // tensor divided scalar
     template <tensor_c tensorT>
-    constexpr auto operator/(const tensorT & y, typename tensorT::scalar_type a) -> tensorT
-        requires(!scalar_c<tensorT>);
+    constexpr auto operator/(const tensorT & y, const typename tensorT::scalar_type & a) -> tensorT;
 
     // (temporary) tensor divided scalar
     template <tensor_c tensorT>
-    constexpr auto operator/(tensorT && y, typename tensorT::scalar_type a) -> tensorT
-        requires(!scalar_c<tensorT>);
+    constexpr auto operator/(tensorT && y, const typename tensorT::scalar_type & a) -> tensorT;
 
     // tensor plus tensor
     template <tensor_c tensorT1, tensor_c tensorT2>
     constexpr auto operator+(const tensorT1 & y1, const tensorT2 & y2) ->
         typename sum<tensorT1, tensorT2>::type
-        requires(tensor_same_shape_c<tensorT1, tensorT2> and !scalar_c<tensorT1>);
+        requires(tensor_same_shape_c<tensorT1, tensorT2>);
 
     // tensor plus (temporary) tensor
     template <tensor_c tensorT1, tensor_c tensorT2>
     constexpr auto operator+(const tensorT1 & y1, tensorT2 && y2) -> tensorT2
         requires(
-            tensor_same_shape_c<tensorT1, tensorT2> and !scalar_c<tensorT1>
+            tensor_same_shape_c<tensorT1, tensorT2>
             and std::is_same_v<typename sum<tensorT1, tensorT2>::type, tensorT2>);
 
     // (temporary) tensor plus tensor
     template <tensor_c tensorT1, tensor_c tensorT2>
     constexpr auto operator+(tensorT1 && y1, const tensorT2 & y2) -> tensorT1
         requires(
-            tensor_same_shape_c<tensorT1, tensorT2> and !scalar_c<tensorT1>
+            tensor_same_shape_c<tensorT1, tensorT2>
             and std::is_same_v<typename sum<tensorT1, tensorT2>::type, tensorT1>);
 
     // (temporary) tensor plus (temporary) tensor
     template <tensor_c tensorT1, tensor_c tensorT2>
     constexpr auto operator+(tensorT1 && y1, tensorT2 && y2) -> tensorT1
         requires(
-            tensor_same_shape_c<tensorT1, tensorT2> and !scalar_c<tensorT1>
+            tensor_same_shape_c<tensorT1, tensorT2>
             and std::is_same_v<typename sum<tensorT1, tensorT2>::type, tensorT1>);
 
     // (temporary) tensor plus (temporary) tensor
     template <tensor_c tensorT1, tensor_c tensorT2>
     constexpr auto operator+(tensorT1 && y1, tensorT2 && y2) -> tensorT2
         requires(
-            tensor_same_shape_c<tensorT1, tensorT2> and !scalar_c<tensorT1>
+            tensor_same_shape_c<tensorT1, tensorT2>
             and std::is_same_v<typename sum<tensorT1, tensorT2>::type, tensorT2>
             and !std::is_same_v<typename sum<tensorT1, tensorT2>::type, tensorT1>);
 
     // (unary) minus tensor
     template <tensor_c tensorT>
-    constexpr auto operator-(const tensorT & y) -> tensorT
-        requires(!scalar_c<tensorT>);
+    constexpr auto operator-(const tensorT & y) -> tensorT;
 
     // (unary) minus (temporary) tensor
     template <tensor_c tensorT>
-    constexpr auto operator-(tensorT && y) -> tensorT
-        requires(!scalar_c<tensorT>);
+    constexpr auto operator-(tensorT && y) -> tensorT;
 
     // tensor minus tensor
     template <tensor_c tensorT1, tensor_c tensorT2>
     constexpr auto operator-(const tensorT1 & y1, const tensorT2 & y2) -> auto
-        requires(tensor_same_shape_c<tensorT1, tensorT2> and !scalar_c<tensorT1>);
+        requires(tensor_same_shape_c<tensorT1, tensorT2>);
 
     // (temporary) tensor minus tensor
     template <tensor_c tensorT1, tensor_c tensorT2>
     constexpr auto operator-(tensorT1 && y1, const tensorT2 & y2) -> auto
-        requires(tensor_same_shape_c<tensorT1, tensorT2> and !scalar_c<tensorT1>);
+        requires(tensor_same_shape_c<tensorT1, tensorT2>);
 
     // tensor minus (temporary) tensor
     template <tensor_c tensorT1, tensor_c tensorT2>
     constexpr auto operator-(const tensorT1 & y1, tensorT2 && y2) -> auto
-        requires(tensor_same_shape_c<tensorT1, tensorT2> and !scalar_c<tensorT1>);
+        requires(tensor_same_shape_c<tensorT1, tensorT2>);
 
 
     // (temporary) tensor minus (temporary) tensor
     template <tensor_c tensorT1, tensor_c tensorT2>
     constexpr auto operator-(tensorT1 && y1, tensorT2 && y2) -> auto
-        requires(tensor_same_shape_c<tensorT1, tensorT2> and !scalar_c<tensorT1>);
+        requires(tensor_same_shape_c<tensorT1, tensorT2>);
 
     // Tensor operator*=
     template <tensor_c tensorT, class TENSOR>
@@ -180,6 +171,30 @@ namespace pyre::tensor {
     constexpr auto matrix_column(const vectorT & v)
         -> matrix_t<vectorT::size, vectorT::size, typename vectorT::scalar_type, packingT>;
 
+    // builds a matrix with prescribed rows
+    template <class packingT = pyre::grid::canonical_t<2>, vector_c vectorT, vector_c... vectorTs>
+        requires(tensor_same_shape_c<vectorT, vectorTs...> && sizeof...(vectorTs) > 0)
+    constexpr auto rows(const vectorT & v, const vectorTs &... vs);
+
+    // builds a matrix with prescribed columns
+    template <class packingT = pyre::grid::canonical_t<2>, vector_c vectorT, vector_c... vectorTs>
+        requires(tensor_same_shape_c<vectorT, vectorTs...> && sizeof...(vectorTs) > 0)
+    constexpr auto columns(const vectorT & v, const vectorTs &... vs);
+
+    // returns the rows of the input matrix as vectors
+    template <class matrixT>
+        requires(matrix_c<matrixT>)
+    constexpr auto rows(const matrixT & A);
+
+    // returns the columns of the input matrix as vectors
+    template <class matrixT>
+        requires(matrix_c<matrixT>)
+    constexpr auto columns(const matrixT & A);
+
+    // trivial specialization of the previous function: extract the columns from a (column) vector
+    template <vector_c vectorT>
+    constexpr auto columns(const vectorT & v);
+
     // builds a square matrix with all zeros except the diagonal is equal to v
     template <vector_c vectorT>
     constexpr auto matrix_diagonal(const vectorT & v)
@@ -195,6 +210,11 @@ namespace pyre::tensor {
     constexpr auto skew(const vectorT & a)
         -> square_matrix_t<3, typename vectorT::scalar_type, packingT>
         requires(vectorT::size == 3);
+
+    // the vector representing a skew symmetric matrix
+    template <square_matrix_c matrixT>
+    constexpr auto axis(const matrixT & A) -> vector_t<3, typename matrixT::scalar_type>
+        requires(matrixT::dims[0] == 3);
 
     // the skew symmetric part of a square matrix
     template <square_matrix_c matrixT>
@@ -300,7 +320,7 @@ namespace pyre::tensor {
 
     // extract column {I} of a matrix
     template <int I, matrix_c matrixT>
-    constexpr auto col(const matrixT & A)
+    constexpr auto column(const matrixT & A)
         -> vector_t<matrixT::dims[0], typename matrixT::scalar_type>;
 
     // apply a function to a matrix
