@@ -70,11 +70,11 @@ namespace pyre::tensor {
 
     // tensor divided scalar
     template <tensor_c tensorT>
-    constexpr auto operator/(const tensorT & y, typename tensorT::scalar_type a) -> tensorT;
+    constexpr auto operator/(const tensorT & y, const typename tensorT::scalar_type & a) -> tensorT;
 
     // (temporary) tensor divided scalar
     template <tensor_c tensorT>
-    constexpr auto operator/(tensorT && y, typename tensorT::scalar_type a) -> tensorT;
+    constexpr auto operator/(tensorT && y, const typename tensorT::scalar_type & a) -> tensorT;
 
     // tensor plus tensor
     template <tensor_c tensorT1, tensor_c tensorT2>

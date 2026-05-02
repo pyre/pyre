@@ -410,7 +410,7 @@ pyre::tensor::operator-=(tensorT & lhs, TENSOR && rhs) -> tensorT &
 // tensor divided scalar
 template <pyre::tensor::tensor_c tensorT>
 constexpr auto
-pyre::tensor::operator/(const tensorT & y, typename tensorT::scalar_type a) -> tensorT
+pyre::tensor::operator/(const tensorT & y, const typename tensorT::scalar_type & a) -> tensorT
 {
     using scalar_t = typename tensorT::scalar_type;
     return (scalar_t { 1 } / a) * y;
@@ -419,7 +419,7 @@ pyre::tensor::operator/(const tensorT & y, typename tensorT::scalar_type a) -> t
 // (temporary) tensor divided scalar
 template <pyre::tensor::tensor_c tensorT>
 constexpr auto
-pyre::tensor::operator/(tensorT && y, typename tensorT::scalar_type a) -> tensorT
+pyre::tensor::operator/(tensorT && y, const typename tensorT::scalar_type & a) -> tensorT
 {
     using scalar_t = typename tensorT::scalar_type;
     return (scalar_t { 1 } / a) * std::move(y);
