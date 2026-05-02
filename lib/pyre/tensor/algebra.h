@@ -191,6 +191,10 @@ namespace pyre::tensor {
         requires(matrix_c<matrixT>)
     constexpr auto columns(const matrixT & A);
 
+    // trivial specialization of the previous function: extract the columns from a (column) vector
+    template <vector_c vectorT>
+    constexpr auto columns(const vectorT & v);
+
     // builds a square matrix with all zeros except the diagonal is equal to v
     template <vector_c vectorT>
     constexpr auto matrix_diagonal(const vectorT & v)

@@ -610,6 +610,15 @@ pyre::tensor::columns(const matrixT & A)
     return _fill_columns(A, make_integer_sequence<n_cols> {});
 }
 
+// trivial specialization of the previous function: extract the columns from a (column) vector
+template <pyre::tensor::vector_c vectorT>
+constexpr auto
+pyre::tensor::columns(const vectorT & v)
+{
+    // nothing to be done
+    return v;
+}
+
 // builds a square matrix with all zeros except the diagonal is equal to v
 template <pyre::tensor::vector_c vectorT>
 constexpr auto
