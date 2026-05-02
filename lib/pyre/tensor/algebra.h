@@ -173,12 +173,12 @@ namespace pyre::tensor {
 
     // builds a matrix with prescribed rows
     template <class packingT = pyre::grid::canonical_t<2>, vector_c vectorT, vector_c... vectorTs>
-        requires(tensor_same_shape_c<vectorT, vectorTs...>)
+        requires(tensor_same_shape_c<vectorT, vectorTs...> && sizeof...(vectorTs) > 0)
     constexpr auto rows(const vectorT & v, const vectorTs &... vs);
 
     // builds a matrix with prescribed columns
     template <class packingT = pyre::grid::canonical_t<2>, vector_c vectorT, vector_c... vectorTs>
-        requires(tensor_same_shape_c<vectorT, vectorTs...>)
+        requires(tensor_same_shape_c<vectorT, vectorTs...> && sizeof...(vectorTs) > 0)
     constexpr auto columns(const vectorT & v, const vectorTs &... vs);
 
     // returns the rows of the input matrix as vectors

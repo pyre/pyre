@@ -496,7 +496,7 @@ pyre::tensor::matrix_column(const vectorT & v)
 
 // builds a matrix with prescribed rows
 template <class packingT, pyre::tensor::vector_c vectorT, pyre::tensor::vector_c... vectorTs>
-    requires(pyre::tensor::tensor_same_shape_c<vectorT, vectorTs...>)
+    requires(pyre::tensor::tensor_same_shape_c<vectorT, vectorTs...> && sizeof...(vectorTs) > 0)
 constexpr auto
 pyre::tensor::rows(const vectorT & v, const vectorTs &... vs)
 {
@@ -536,7 +536,7 @@ pyre::tensor::rows(const vectorT & v, const vectorTs &... vs)
 
 // builds a matrix with prescribed columns
 template <class packingT, pyre::tensor::vector_c vectorT, pyre::tensor::vector_c... vectorTs>
-    requires(pyre::tensor::tensor_same_shape_c<vectorT, vectorTs...>)
+    requires(pyre::tensor::tensor_same_shape_c<vectorT, vectorTs...> && sizeof...(vectorTs) > 0)
 constexpr auto
 pyre::tensor::columns(const vectorT & v, const vectorTs &... vs)
 {
