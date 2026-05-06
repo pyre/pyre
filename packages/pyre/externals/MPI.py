@@ -29,6 +29,57 @@ class MPI(Tool, Library, family='pyre.externals.mpi'):
 
     # support for specific package managers
     @classmethod
+    def condaPackages(cls, packager):
+        """
+        Identify MPI installations in the active conda environment
+        """
+        # get the conda prefix
+        prefix = packager.prefix()
+        # check for mpirun
+        if not (prefix / 'bin' / 'mpirun').exists():
+            # no mpi launcher found
+            return
+        # detect openmpi vs mpich by library presence
+        if (prefix / 'lib' / 'libmpi.so').exists() or (prefix / 'lib' / 'libmpi.dylib').exists():
+            # looks like OpenMPI
+            flavor = OpenMPI
+        elif (prefix / 'lib' / 'libmpich.so').exists() or (prefix / 'lib' / 'libmpich.dylib').exists():
+            # looks like MPICH
+            flavor = MPICH
+        else:
+            # unrecognized MPI installation
+            return
+
+        # detect the version by querying mpirun
+        import re, subprocess
+        version = 'unknown'
+        try:
+            out = subprocess.check_output(
+                [str(prefix / 'bin' / 'mpirun'), '--version'],
+                stderr=subprocess.STDOUT, text=True
+            )
+            match = re.search(r'(\d+\.\d+[\.\d]*)', out)
+            if match:
+                version = match.group(1)
+        except Exception:
+            pass
+
+        # yield a pre-configured instance; passing traits as kwargs inserts them into
+        # the nameserver before pyre_configured() runs, so no repair via host packager is needed
+        yield flavor(
+            name='conda',
+            version=version,
+            prefix=str(prefix),
+            bindir=str(prefix / 'bin'),
+            incdir=str(prefix / 'include'),
+            libdir=str(prefix / 'lib'),
+            launcher='mpirun',
+        )
+
+        # all done
+        return
+
+    @classmethod
     def dpkgAlternatives(cls, dpkg):
         """
         Identify the default implementation of MPI on dpkg machines
@@ -126,6 +177,58 @@ class Default(ToolInstallation, LibraryInstallation, implements=MPI):
 
 
     # configuration
+    def bare(self, manager):
+        """
+        Attempt to repair configuration on systems without a package manager.
+        Falls back to conda if CONDA_PREFIX is set.
+        """
+        # check for a conda environment
+        import os
+        conda_prefix = os.getenv('CONDA_PREFIX')
+        # if we are in one
+        if conda_prefix:
+            # get the conda packager
+            from ..platforms.Conda import Conda
+            # make an instance
+            conda = Conda(name='pyre.conda.packager')
+            # and configure using it
+            return self.conda(packager=conda)
+        # nothing else we can do
+        return
+
+    def conda(self, packager):
+        """
+        Attempt to repair my configuration using the active conda environment
+        """
+        # get the conda prefix
+        prefix = packager.prefix()
+        # set the installation prefix
+        self.prefix = prefix
+        # the launcher is always mpirun in conda
+        self.launcher = 'mpirun'
+        # set the directory paths
+        self.bindir = [prefix / 'bin']
+        self.incdir = [prefix / 'include']
+        self.libdir = [prefix / 'lib']
+
+        # detect version by querying mpirun
+        import subprocess
+        try:
+            out = subprocess.check_output(
+                [str(prefix / 'bin' / 'mpirun'), '--version'],
+                stderr=subprocess.STDOUT, text=True
+            )
+            # the first line typically contains the version
+            import re
+            match = re.search(r'(\d+\.\d+[\.\d]*)', out)
+            if match:
+                self.version = match.group(1)
+        except Exception:
+            pass
+
+        # all done
+        return
+
     def macports(self, packager):
         """
         Attempt to repair my configuration

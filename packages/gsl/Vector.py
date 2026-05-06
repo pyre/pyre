@@ -370,6 +370,17 @@ class Vector:
         # easy enough
         return gsl.vector_sdev(self.data, float(mean) if mean is not None else None)
 
+    def shuffle(self, rng):
+        """
+        Shuffle the elements
+        :param rng: gsl.rng handle
+        :return: self
+        """
+        # shuffle
+        gsl.vector_shuffle(rng.rng, self.data)
+        # and return self
+        return self
+
     def ndarray(self, copy=False):
         """
         Return a numpy array reference (w/ shared data) if {copy} is False, or a new copy if {copy} is {True}
