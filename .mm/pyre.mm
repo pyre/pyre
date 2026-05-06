@@ -27,11 +27,7 @@ pyre.verbatim := pyre.templates
 
 # predicates that check the c++ standard in use
 # these are low resolution tests and may not be good enough
-pyre.c++20 = \
-  ${findstring \
-    $($(compiler.c++).std.c++20), \
-    $(pyre.lib.c++.flags) \
-  }
+pyre.c++20 = ${call languages.c++.has_c++20,pyre.lib}
 
 
 # if we have {hdf5}, build the {h5} extension
@@ -60,7 +56,7 @@ pyre.lib.root := lib/pyre/
 pyre.lib.stem := pyre
 pyre.lib.prerequisites += journal.lib
 pyre.lib.c++.defines += PYRE_CORE
-pyre.lib.c++.flags += -Wall $($(compiler.c++).std.c++23)
+pyre.lib.c++.flags += -Wall $($(compiler.c++).std.c++20)
 
 # additional macros that enable features sensitive to the c++ standard version
 pyre.lib.c++.defines += \
