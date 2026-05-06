@@ -171,6 +171,10 @@ function(pyre_pyreModule)
     extensions/pyre/grid/__init__.cc
     extensions/pyre/grid/indices.cc
     extensions/pyre/grid/grids.cc
+    extensions/pyre/grid/grids_1d.cc
+    extensions/pyre/grid/grids_2d.cc
+    extensions/pyre/grid/grids_3d.cc
+    extensions/pyre/grid/grids_4d.cc
     extensions/pyre/grid/orders.cc
     extensions/pyre/grid/packings.cc
     extensions/pyre/grid/shapes.cc
