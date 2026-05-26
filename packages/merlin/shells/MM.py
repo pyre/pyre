@@ -4,8 +4,10 @@
 # (c) 1998-2026 all rights reserved
 
 # externals
+import json
 import os
 import re
+import shutil
 import subprocess
 import sys
 
@@ -37,6 +39,20 @@ class MM(pyre.application, family="pyre.applications.mm", namespace="mm"):
     bldroot.default = None
     bldroot.doc = "the path to the intermediate build products"
 
+    tag = pyre.properties.path()
+    tag.default = None
+    tag.doc = "an optional discriminator appended to bldroot and prefix to separate build contexts"
+
+    # branch mode: compute branch-keyed build paths and print shell export statements
+    branch = pyre.properties.bool()
+    branch.default = False
+    branch.doc = "print shell commands that establish a branch-keyed build context"
+
+    syntax = pyre.properties.str()
+    syntax.default = "sh"
+    syntax.validators = pyre.constraints.isMember("sh", "csh", "fish")
+    syntax.doc = "the shell syntax to use when printing export statements"
+
     target = pyre.properties.strings()
     target.default = ["debug", "shared"]
     target.doc = "the list of target variants to build"
@@ -54,6 +70,10 @@ class MM(pyre.application, family="pyre.applications.mm", namespace="mm"):
     pkgdb.doc = (
         "use one of the supported package managers for resolving external dependencies"
     )
+
+    environment = pyre.properties.str()
+    environment.default = os.environ.get("CONDA_DEFAULT_ENV", "")
+    environment.doc = "the name of the conda environment"
 
     # mm behavior
     setup = pyre.properties.bool()
@@ -168,9 +188,9 @@ class MM(pyre.application, family="pyre.applications.mm", namespace="mm"):
     varPrefix.doc = "installation location for runtime files"
 
     # my internal layout; users should probably stay away from these
-    makefile = pyre.properties.path()
-    makefile.default = "merlin.mm"
-    makefile.doc = "the name of the top level internal makefile; caveat emptor"
+    merlin = pyre.properties.path()
+    merlin.default = "merlin.mm"
+    merlin.doc = "the name of the top level internal makefile; caveat emptor"
 
     engine = pyre.properties.path()
     engine.doc = "the path to the built-in make engine; caveat emptor"
@@ -183,10 +203,14 @@ class MM(pyre.application, family="pyre.applications.mm", namespace="mm"):
 
     # important environment variables
     PATH = pyre.properties.envpath(variable="PATH")
-    LD_LIBRARY_PATH = pyre.properties.envpath(variable="LD_LIBRARY_PATH")
     PYTHONPATH = pyre.properties.envpath(variable="PYTHONPATH")
-    MM_INCLUDES = pyre.properties.envpath(variable="MM_INCLUDES")
-    MM_LIBPATH = pyre.properties.envpath(variable="MM_LIBPATH")
+
+    # compiler search paths
+    incpath = pyre.properties.paths()
+    incpath.doc = "a list of paths to search for headers"
+
+    libpath = pyre.properties.paths()
+    libpath.doc = "a list of paths to search for libraries"
 
     # the main entry point
     @pyre.export
@@ -198,6 +222,10 @@ class MM(pyre.application, family="pyre.applications.mm", namespace="mm"):
         if self.setup:
             # build the package database
             return self.buildPackageDatabase()
+        # if we are printing a branch-keyed build context
+        if self.branch:
+            # generate the {eval} script
+            return self.establishBranchContext()
         # otherwise, launch the build
         return self.launch()
 
@@ -271,10 +299,7 @@ class MM(pyre.application, family="pyre.applications.mm", namespace="mm"):
         # build the environment updates
         env = {
             "PATH": os.pathsep.join(map(str, self.PATH)),
-            "LD_LIBRARY_PATH": os.pathsep.join(map(str, self.LD_LIBRARY_PATH)),
             "PYTHONPATH": os.pathsep.join(map(str, self.PYTHONPATH)),
-            "MM_INCLUDES": os.pathsep.join(map(str, self.MM_INCLUDES)),
-            "MM_LIBPATH": os.pathsep.join(map(str, self.MM_LIBPATH)),
         }
         # apply them
         os.environ.update(env)
@@ -297,15 +322,16 @@ class MM(pyre.application, family="pyre.applications.mm", namespace="mm"):
         """
         Build an external package database for the engine
         """
+        # explore the project layout so {locateBuildRoot} can find the project root
+        self.explore()
         # get the name of the package database manager
         name = self.pkgdb
-        # get the temporary staging area
+        # get the temporary staging area; already incorporates the build variant tag
         stage = self.locateBuildRoot()
-        # construct the build tag
-        _, _, tag = self.assembleBuildTarget()
         # the location of the package database
-        db = stage / tag / f"pkg-{name}.db"
-        # if this the adhoc manager
+        db = stage / f"pkg-{name}.db"
+
+        # dispatch to the appropriate builder
         if name == "adhoc":
             # assume that the user already has setup a custom package database
             # in some configuration file, as is current mm practice; just create the db file
@@ -313,32 +339,48 @@ class MM(pyre.application, family="pyre.applications.mm", namespace="mm"):
             # and move on
             return 0
 
-        #
-        # THIS SECTION IS CURRENTLY UNDER DEVELOPMENT
-        #
+        # for conda
+        if name == "conda":
+            # query the package manager and find what's installed
+            return self._buildCondaPackageDatabase(db)
 
-        # grab a channel
-        channel = journal.info("mm.pkgdb")
-        # show me
-        channel.line(f"setting up the package database")
-        channel.indent()
-        channel.line(f"package manager: {name}")
-        channel.line(f"db: {db}")
-        channel.outdent()
-        # flush
-        channel.log()
+        # all done
+        return 0
 
-        hdf5 = pyre.externals.hdf5().default()
-        # show me
-        channel.line(f"hdf5:")
-        channel.indent()
-        channel.line(f"version: {hdf5.version}")
-        channel.line(f"inc: {', '.join(map(str, hdf5.incdir))}")
-        channel.line(f"lib: {', '.join(map(str, hdf5.libdir))}")
-        channel.outdent()
-        # flush
-        channel.log()
-
+    def establishBranchContext(self):
+        """
+        Compute a branch-keyed tag and print a shell export statement for the user to eval
+        """
+        # explore the project layout to get {_root}, etc.
+        self.explore()
+        # the active conda environment
+        env = self.environment or "default"
+        # the project name is the basename of the directory that contains the {.mm} marker
+        project = self._root.name
+        # the current git branch
+        branch = self.gitCurrentBranch()
+        # the C++ suite is the first suite-level entry (no slash) in the compilers list
+        cxxSuite = next((c for c in self.compilers if "/" not in c), None)
+        compilers = cxxSuite or "default"
+        # the tag is the relative path that discriminates this build context; it is appended
+        # to {bldroot} and {prefix} by {locateBuildRoot} and {locatePrefix} respectively
+        tag = pyre.primitives.path(env) / project / branch / compilers
+        # pick the right export syntax for the user's shell
+        sh = self.syntax
+        # sh and zsh
+        if sh == "sh":
+            # use {export}
+            template = 'export {var}="{value}"'
+        # csh and tcsh
+        elif sh == "csh":
+            # use {setenv}
+            template = 'setenv {var} "{value}"'
+        # fish
+        elif sh == "fish":
+            # does its own thing
+            template = 'set -x {var} "{value}"'
+        # print the export statement for the shell to eval
+        print(template.format(var="mm_tag", value=tag))
         # all done
         return 0
 
@@ -364,10 +406,10 @@ class MM(pyre.application, family="pyre.applications.mm", namespace="mm"):
         self._origin = pyre.primitives.path.cwd()
         # mark the path that will become the {cwd} for make
         self._anchor = self._localMakefile.parent if self._localMakefile else self._root
+        # construct the build tag; must precede {locateBuildRoot} since it needs {_bldTag}
+        self._bldTarget, self._bldVariants, self._bldTag = self.assembleBuildTarget()
         # figure out where to put the intermediate products of the build
         self._bldroot = self.locateBuildRoot()
-        # construct the build tag
-        self._bldTarget, self._bldVariants, self._bldTag = self.assembleBuildTarget()
         # figure out the install directory
         self._prefix = self.locatePrefix()
         # adjust my envpaths with the build configuration
@@ -418,7 +460,7 @@ class MM(pyre.application, family="pyre.applications.mm", namespace="mm"):
             # flush
             channel.log()
         # form the path to the top level makefile
-        merlin = self.engine / self.makefile
+        merlin = self.engine / self.merlin
         # check that the top level makefile exists
         if not merlin.exists():
             # grab a channel
@@ -722,13 +764,11 @@ class MM(pyre.application, family="pyre.applications.mm", namespace="mm"):
         Figure out where to put the intermediate products of the build
         """
         # get the user's opinion
-        bldroot = self.bldroot
-        # if there is one
-        if bldroot is not None:
-            # we are done
-            return bldroot
-        # otherwise, put things in a subdirectory of the project root
-        return self._root / "builds"
+        bldroot = self.bldroot or (self._root / "builds")
+        # if a tag is set, use it to discriminate the build context; the build variant tag
+        # is always appended so bldroot and prefix land at the same depth
+        tag = self.tag
+        return bldroot / tag / self._bldTag if tag else bldroot / self._bldTag
 
     def assembleBuildTarget(self):
         """
@@ -751,13 +791,12 @@ class MM(pyre.application, family="pyre.applications.mm", namespace="mm"):
         Figure out where to put the build products
         """
         # get the user's opinion
-        prefix = self.prefix
-        # if there is one
-        if prefix is not None:
-            # we are done
-            return prefix
-        # otherwise, put things in a subdirectory of the project root
-        return self._root / "products"
+        prefix = self.prefix or (self._root / "products")
+        # if a tag is set, use it to discriminate the build context; prefix also gets the
+        # build variant tag so installs for different targets land in separate directories
+        tag = self.tag
+        # append both when present
+        return prefix / tag / self._bldTag if tag else prefix
 
     def loadProjectConfig(self):
         """
@@ -795,18 +834,14 @@ class MM(pyre.application, family="pyre.applications.mm", namespace="mm"):
         # configure the environment
         # the path
         self.PATH = self.inject(var=self.PATH, path=(prefix / "bin"))
-        # the dynamic linker path
-        self.LD_LIBRARY_PATH = self.inject(
-            var=self.LD_LIBRARY_PATH, path=(prefix / "lib")
-        )
         # the python path
         self.PYTHONPATH = self.inject(var=self.PYTHONPATH, path=(prefix / "packages"))
         # configure mm
         # update the compiler include path
-        self.MM_INCLUDES = self.inject(var=self.MM_INCLUDES, path=(prefix / "include"))
-        self.MM_INCLUDES = self.inject(var=self.MM_INCLUDES, path=self.portinfo)
+        self.incpath = self.inject(var=self.incpath, path=(prefix / "include"))
+        self.incpath = self.inject(var=self.incpath, path=self.portinfo)
         # update the linker library path
-        self.MM_LIBPATH = self.inject(var=self.MM_LIBPATH, path=(prefix / "lib"))
+        self.libpath = self.inject(var=self.libpath, path=(prefix / "lib"))
         # all done
         return
 
@@ -1029,10 +1064,10 @@ class MM(pyre.application, family="pyre.applications.mm", namespace="mm"):
         yield f"mm.pkgdb={self.pkgdb}"
         # the list of compilers
         yield f"mm.compilers={' '.join(self.compilers)}"
-        # form the list of paths with headers to add to the compiler command line
-        yield f"mm.incpath={' '.join(map(str, self.MM_INCLUDES))}"
-        # form the list of paths with headers to add to the compiler command line
-        yield f"mm.libpath={' '.join(map(str, self.MM_LIBPATH))}"
+        # the compiler header search path
+        yield f"mm.incpath={' '.join(map(str, self.incpath))}"
+        # the linker library search path
+        yield f"mm.libpath={' '.join(map(str, self.libpath))}"
         # indicate whether the output should be colorized
         yield f"mm.color={'' if self.color else 'no'}"
         # and the palette to use
@@ -1224,6 +1259,239 @@ class MM(pyre.application, family="pyre.applications.mm", namespace="mm"):
         yield "  merlin mm {}.{}.{} rev {}".format(*merlin.meta.version)
         # all done
         return
+
+    def _buildCondaPackageDatabase(self, db):
+        """
+        Interrogate the active conda/micromamba environment and write a package database
+        """
+        # grab a channel
+        channel = journal.info("mm.pkgdb")
+        # check for an active conda environment
+        prefix = os.environ.get("CONDA_PREFIX")
+        # if there isn't one
+        if not prefix:
+            # grab an error channel
+            error = journal.error("mm.pkgdb")
+            # complain
+            error.line("no active conda environment found")
+            error.line("activate a conda environment and re-run mm")
+            error.log()
+            # and bail
+            return 1
+        # find the conda agent; prefer micromamba
+        agent = (
+            shutil.which("micromamba") or shutil.which("mamba") or shutil.which("conda")
+        )
+        # if none found
+        if not agent:
+            # grab an error channel
+            error = journal.error("mm.pkgdb")
+            # complain
+            error.line("no conda agent found on PATH (tried: micromamba, mamba, conda)")
+            error.log()
+            # and bail
+            return 1
+        # log our starting state
+        channel.line("building conda package database")
+        channel.indent()
+        channel.line(f"agent: {agent}")
+        channel.line(f"environment: {os.environ.get('CONDA_DEFAULT_ENV', '?')}")
+        channel.line(f"prefix: {prefix}")
+        channel.line(f"db: {db}")
+        channel.outdent()
+        channel.log()
+        # query the installed packages
+        result = subprocess.run(
+            [agent, "list", "--json"],
+            capture_output=True,
+            text=True,
+        )
+        # if the query failed
+        if result.returncode != 0:
+            # grab an error channel
+            error = journal.error("mm.pkgdb")
+            # complain
+            error.line(f"failed to query package list: {result.stderr.strip()}")
+            error.log()
+            # and bail
+            return 1
+        # build an index of installed packages keyed by name
+        installed = {record["name"]: record for record in json.loads(result.stdout)}
+        # the mapping from mm extern name to conda package name(s); try names in order
+        packages = {
+            "cantera": ["cantera"],
+            "cgal": ["cgal"],
+            "cspice": ["cspice", "naif-cspice"],
+            "cuda": ["cuda-toolkit", "cudatoolkit", "cuda"],
+            "eigen": ["eigen"],
+            "fftw": ["fftw"],
+            "fmt": ["fmt"],
+            "gdal": ["gdal"],
+            "geotiff": ["libgeotiff", "geotiff"],
+            "gmsh": ["gmsh"],
+            "gsl": ["gsl"],
+            "gtest": ["gtest", "libgtest"],
+            "hdf5": ["hdf5"],
+            "kokkos": ["kokkos"],
+            "libpq": ["libpq", "postgresql"],
+            "metis": ["metis"],
+            "mkl": ["mkl"],
+            "mpi": ["openmpi", "mpich"],
+            "numpy": ["numpy"],
+            "openblas": ["openblas"],
+            "parmetis": ["parmetis"],
+            "petsc": ["petsc"],
+            "proj": ["proj"],
+            "pybind11": ["pybind11"],
+            "python": ["python"],
+            "slepc": ["slepc"],
+            "sundials": ["sundials"],
+            "vtk": ["vtk"],
+            "yaml": ["yaml-cpp", "yaml"],
+        }
+        # collect the packages that are present in this environment
+        found = {}
+        # go through the supported packages
+        for name, candidates in packages.items():
+            # try each conda name in priority order
+            for candidate in candidates:
+                # if this one is installed
+                if candidate in installed:
+                    # record the match and move on to the next mm package
+                    found[name] = (candidate, installed[candidate])
+                    break
+        # report what we found
+        channel.line(f"found {len(found)} of {len(packages)} supported packages")
+        # list each one
+        channel.indent()
+        for name, (candidate, record) in sorted(found.items()):
+            channel.line(f"{name}: {record['version']}  (conda: {candidate})")
+        channel.outdent()
+        # flush
+        channel.log()
+        # get the name of the active environment for the file header
+        environmentName = os.environ.get("CONDA_DEFAULT_ENV", "?")
+        # open the database file
+        with open(db, "w") as f:
+            # the emacs mode line
+            print("# -*- Makefile -*-", file=f)
+            # identification
+            print("# conda package database", file=f)
+            # provenance
+            print("# generated by: mm --pkgdb=conda --setup", file=f)
+            # the agent that was queried
+            print(f"# agent: {agent}", file=f)
+            # the environment name
+            print(f"# environment: {environmentName}", file=f)
+            # and its prefix
+            print(f"# prefix: {prefix}", file=f)
+            # blank line before the {conda.prefix} declaration
+            print(file=f)
+            # the root of the active environment; factored out so all {.dir} entries track it
+            print(f"conda.prefix := {prefix}", file=f)
+            # the environment name; compared against {user.environment} at build time to catch switches
+            print(f"conda.environment := {environmentName}", file=f)
+            # blank line before the package entries
+            print(file=f)
+            # write an entry for each package we found, in alphabetical order
+            for name in sorted(found):
+                # unpack the conda name and the package record
+                candidate, record = found[name]
+                # extract the version string
+                version = record.get("version", "?")
+                # a comment line showing the mm name, full conda version, and origin
+                print(f"# {name} {version}  (conda: {candidate})", file=f)
+                # python.version in mm means major.minor: it's used to form interpreter names
+                # and directory paths like {lib/python3.12/}, so trim the patch level
+                if name == "python":
+                    # keep only the portion that appears in filesystem paths
+                    versionParts = version.split(".")
+                    version = (
+                        f"{versionParts[0]}.{versionParts[1]}"
+                        if len(versionParts) >= 2
+                        else version
+                    )
+                # {?=} throughout so that anything the user set in {config.mm} takes precedence;
+                # the load order is config.mm first, then this db, so {?=} here correctly
+                # yields to user overrides while still providing the conda defaults
+                # the version, for packages whose {init.mm} has version-dependent logic
+                print(f"{name}.version ?= {version}", file=f)
+                # mpi also needs its flavor to select the right library names in {mpi/init.mm}
+                if name == "mpi":
+                    # a conditional lazy reference to {conda.prefix}
+                    print(f"mpi.dir ?= $(conda.prefix)", file=f)
+                    # the flavor (openmpi or mpich) controls which libraries get linked
+                    print(f"mpi.flavor ?= {candidate}", file=f)
+                # numpy headers and libs live under site-packages/numpy/core, not conda.prefix;
+                # point {numpy.dir} at the numpy core directory so the defaults in
+                # {numpy/init.mm} — {$(numpy.dir)/include} and {$(numpy.dir)/lib} — both resolve
+                # correctly without needing explicit {incpath} or {libpath} overrides
+                elif name == "numpy":
+                    # ask numpy where its headers are; their parent is the numpy core directory
+                    includePath = self._queryPythonExpression(
+                        "import numpy; print(numpy.get_include())"
+                    )
+                    # if we got a path
+                    if includePath:
+                        # the numpy core directory is the parent of the include directory
+                        numpyCore = pyre.primitives.path(includePath).parent
+                        # if it's within the conda prefix, anchor it to {conda.prefix}
+                        try:
+                            relativePath = numpyCore.relativeTo(prefix)
+                            print(
+                                f"numpy.dir ?= $(conda.prefix)/{relativePath}", file=f
+                            )
+                        # otherwise fall back to the absolute path
+                        except ValueError:
+                            print(f"numpy.dir ?= {numpyCore}", file=f)
+                    # if we couldn't query numpy, fall back to {conda.prefix}
+                    else:
+                        print(f"numpy.dir ?= $(conda.prefix)", file=f)
+                # pybind11 has the same header placement issue as numpy
+                elif name == "pybind11":
+                    # ask pybind11 where its headers are; their parent is the pybind11 root directory
+                    includePath = self._queryPythonExpression(
+                        "import pybind11; print(pybind11.get_include())"
+                    )
+                    # if we got a path
+                    if includePath:
+                        # the pybind11 root is the parent of the include directory
+                        pybind11Root = pyre.primitives.path(includePath).parent
+                        # if it's within the conda prefix, anchor it to {conda.prefix}
+                        try:
+                            relativePath = pybind11Root.relativeTo(prefix)
+                            print(
+                                f"pybind11.dir ?= $(conda.prefix)/{relativePath}",
+                                file=f,
+                            )
+                        # otherwise fall back to the absolute path
+                        except ValueError:
+                            print(f"pybind11.dir ?= {pybind11Root}", file=f)
+                    # if we couldn't query pybind11, fall back to {conda.prefix}
+                    else:
+                        print(f"pybind11.dir ?= $(conda.prefix)", file=f)
+                # all other packages: {dir} tracks {conda.prefix} and defaults work as-is
+                else:
+                    # a conditional lazy reference to {conda.prefix}
+                    print(f"{name}.dir ?= $(conda.prefix)", file=f)
+                # blank line after each entry
+                print(file=f)
+        # all done
+        return 0
+
+    def _queryPythonExpression(self, expression):
+        """
+        Evaluate a python expression in the current interpreter and return its stdout,
+        or None if the evaluation fails
+        """
+        # run the expression in the current interpreter
+        result = subprocess.run(
+            [sys.executable, "-c", expression],
+            capture_output=True,
+            text=True,
+        )
+        # return the output on success, None on failure
+        return result.stdout.strip() if result.returncode == 0 else None
 
     # private data
     # the XDG compliant fallback for user configuration

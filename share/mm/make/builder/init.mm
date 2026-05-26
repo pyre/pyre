@@ -7,9 +7,6 @@
 # the builder constructor
 #   usage: builder.init {project-prefix} {project-bldroot}
 define builder.init =
-    # the build tag
-    ${eval builder.tid ?= $(target.tag)}
-
     # construct the name of the top level directory
     ${eval builder.dest.prefix ?= $(1)/}
 
@@ -22,8 +19,8 @@ define builder.init =
     ${eval builder.dest.lib ?= $(builder.dest.prefix)lib/}
     ${eval builder.dest.pyc ?= $(builder.dest.prefix)packages/}
 
-    # the layout of the staging area with the build disposables
-    ${eval builder.staging ?= $(2)/$(builder.tid)/}
+    # the layout of the staging area; the build variant tag is already part of project.bldroot
+    ${eval builder.staging ?= $(2)/}
 
     # make a pile out for all the relevant directories; this gets used by the rule maker that makes
     # sure these directories exist, so make sure you add new ones here as well
