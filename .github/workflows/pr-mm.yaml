@@ -153,7 +153,7 @@ jobs:
           ${mm} extern.numpy.info
           ${mm} extern.pybind11.info
         env:
-          mm: python3 ${{github.workspace}}/mm/mm.py --config=.github/matrix/mm.pfg
+          mm: python3 ${{github.workspace}}/mm/mm --config=.github/matrix/mm.pfg
           target: ${{matrix.target}}
           suite: ${{matrix.suite}}
           suiteVersion: ${{matrix.suiteVersion}}
@@ -166,7 +166,7 @@ jobs:
           echo " -- building pyre"
           ${mm}
         env:
-          mm: python3 ${{github.workspace}}/mm/mm.py --config=.github/matrix/mm.pfg
+          mm: python3 ${{github.workspace}}/mm/mm --config=.github/matrix/mm.pfg
           target: ${{matrix.target}}
           suite: ${{matrix.suite}}
           suiteVersion: ${{matrix.suiteVersion}}
@@ -179,7 +179,7 @@ jobs:
           echo " -- testing pyre"
           ${mm} tests
         env:
-          mm: python3 ${{github.workspace}}/mm/mm.py --config=.github/matrix/mm.pfg
+          mm: python3 ${{github.workspace}}/mm/mm --config=.github/matrix/mm.pfg
           target: ${{matrix.target}}
           suite: ${{matrix.suite}}
           suiteVersion: ${{matrix.suiteVersion}}
