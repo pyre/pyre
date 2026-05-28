@@ -39,14 +39,18 @@ class MM(pyre.application, family="pyre.applications.mm", namespace="mm"):
     bldroot.default = None
     bldroot.doc = "the path to the intermediate build products"
 
-    tag = pyre.properties.path()
-    tag.default = None
-    tag.doc = "an optional discriminator appended to bldroot and prefix to separate build contexts"
+    tag = pyre.properties.str()
+    tag.default = os.environ.get("mm_tag")
+    tag.doc = "an optional discriminator appended to {bldroot} and {prefix} to separate build contexts"
 
     # branch mode: compute branch-keyed build paths and print shell export statements
     branch = pyre.properties.bool()
-    branch.default = False
-    branch.doc = "print shell commands that establish a branch-keyed build context"
+    branch.default = None
+    branch.doc = "derive the {tag} from repository state (False clears it; None leaves it unchanged)"
+
+    activate = pyre.properties.bool()
+    activate.default = False
+    activate.doc = "print shell commands that add the build's bin and python packages to the session"
 
     syntax = pyre.properties.str()
     syntax.default = "sh"
@@ -222,10 +226,14 @@ class MM(pyre.application, family="pyre.applications.mm", namespace="mm"):
         if self.setup:
             # build the package database
             return self.buildPackageDatabase()
-        # if we are printing a branch-keyed build context
-        if self.branch:
+        # if we are setting or clearing the branch context
+        if self.branch is not None:
             # generate the {eval} script
             return self.establishBranchContext()
+        # if we are activating the build in the current session
+        if self.activate:
+            # generate the {eval} script
+            return self.activateSession()
         # otherwise, launch the build
         return self.launch()
 
@@ -263,6 +271,66 @@ class MM(pyre.application, family="pyre.applications.mm", namespace="mm"):
         self._bldTag = None
         # and the install directory
         self._prefix = None
+        # the python package installation directory; may be overridden by mode-specific logic
+        self._pycPrefix = None
+        # the syntax dispatch table: maps shell names to (var, value) -> export/unset statement
+        # {value} of None means unset the variable rather than export it
+        self._syntaxDispatch = {
+            "sh": lambda var, value: (
+                f"unset {var}" if value is None else f'export {var}="{value}"'
+            ),
+            "csh": lambda var, value: (
+                f"unsetenv {var}" if value is None else f'setenv {var} "{value}"'
+            ),
+            "fish": lambda var, value: (
+                f"set -e {var}" if value is None else f'set -x {var} "{value}"'
+            ),
+        }
+        # the pkgdb dispatch table
+        self._pkgdbDispatch = {
+            "adhoc": self._buildAdhocPackageDatabase,
+            "conda": self._buildCondaPackageDatabase,
+            "macports": self._buildMacportsPackageDatabase,
+            "dpkg": self._buildDpkgPackageDatabase,
+        }
+        # verify the pkgdb dispatch table is in sync with the pkgdb validator
+        for pkgdbValidator in filter(
+            lambda v: hasattr(v, "choices"), self.pyre_trait("pkgdb").validators
+        ):
+            # if the keys don't match the validator choices, something is wrong
+            if set(self._pkgdbDispatch) != pkgdbValidator.choices:
+                # make a channel
+                channel = journal.firewall("mm.pkgdb")
+                # report
+                channel.line(
+                    "pkgdb dispatch table is out of sync with the pkgdb validator"
+                )
+                channel.indent()
+                channel.line(f"dispatch keys:     {set(self._pkgdbDispatch)}")
+                channel.log(f"validator choices: {pkgdbValidator.choices}")
+                channel.outdent()
+                channel.log()
+            # we only care about the first match
+            break
+        # verify the syntax dispatch table is in sync with the syntax validator
+        for syntaxValidator in filter(
+            lambda v: hasattr(v, "choices"), self.pyre_trait("syntax").validators
+        ):
+            # if the keys don't match the validator choices, something is wrong
+            if set(self._syntaxDispatch) != syntaxValidator.choices:
+                # make a channel
+                channel = journal.firewall("mm.syntax")
+                # report
+                channel.line(
+                    "syntax dispatch table is out of sync with the syntax validator"
+                )
+                channel.indent()
+                channel.line(f"dispatch keys:     {set(self._syntaxDispatch)}")
+                channel.log(f"validator choices: {syntaxValidator.choices}")
+                channel.outdent()
+                channel.log()
+            # we only care about the first match
+            break
         # all done
         return
 
@@ -324,63 +392,67 @@ class MM(pyre.application, family="pyre.applications.mm", namespace="mm"):
         """
         # explore the project layout so {locateBuildRoot} can find the project root
         self.explore()
-        # get the name of the package database manager
-        name = self.pkgdb
         # get the temporary staging area; already incorporates the build variant tag
         stage = self.locateBuildRoot()
         # the location of the package database
-        db = stage / f"pkg-{name}.db"
-
-        # dispatch to the appropriate builder
-        if name == "adhoc":
-            # assume that the user already has setup a custom package database
-            # in some configuration file, as is current mm practice; just create the db file
-            open(db, "w")
-            # and move on
-            return 0
-
-        # for conda
-        if name == "conda":
-            # query the package manager and find what's installed
-            return self._buildCondaPackageDatabase(db)
-
-        # all done
-        return 0
+        db = stage / f"pkg-{self.pkgdb}.db"
+        # dispatch to the mode-specific implementation
+        return self._pkgdbDispatch[self.pkgdb](db)
 
     def establishBranchContext(self):
         """
-        Compute a branch-keyed tag and print a shell export statement for the user to eval
+        Set or clear the branch-keyed tag and activate the corresponding session
         """
-        # explore the project layout to get {_root}, etc.
+        # if branch is True, derive a tag from the repository state
+        if self.branch:
+            # find the project root to get the project name
+            root = self.locateProjectRoot()
+            # the tag is {project}/{branch}, appended to {bldroot} and {prefix}
+            self.tag = f"{root.name}/{self.gitCurrentBranch()}"
+        # if branch is False, clear the tag so the tag-less paths are used
+        else:
+            self.tag = None
+        # let {activateSession} emit the full shell context, including the updated {mm_tag}
+        return self.activateSession()
+
+    def activateSession(self):
+        """
+        Print shell commands that establish the build context in the current session
+        """
+        # resolve all paths
         self.explore()
-        # the active conda environment
-        env = self.environment or "default"
-        # the project name is the basename of the directory that contains the {.mm} marker
-        project = self._root.name
-        # the current git branch
-        branch = self.gitCurrentBranch()
-        # the C++ suite is the first suite-level entry (no slash) in the compilers list
-        cxxSuite = next((c for c in self.compilers if "/" not in c), None)
-        compilers = cxxSuite or "default"
-        # the tag is the relative path that discriminates this build context; it is appended
-        # to {bldroot} and {prefix} by {locateBuildRoot} and {locatePrefix} respectively
-        tag = pyre.primitives.path(env) / project / branch / compilers
-        # pick the right export syntax for the user's shell
-        sh = self.syntax
-        # sh and zsh
-        if sh == "sh":
-            # use {export}
-            template = 'export {var}="{value}"'
-        # csh and tcsh
-        elif sh == "csh":
-            # use {setenv}
-            template = 'setenv {var} "{value}"'
-        # fish
-        elif sh == "fish":
-            # does its own thing
-            template = 'set -x {var} "{value}"'
-        # print the export statement for the shell to eval
-        print(template.format(var="mm_tag", value=tag))
+        # the new installation prefix and python package directory
+        newPrefix = self._prefix
+        newPyc = newPrefix / (self._pycPrefix or self.pycPrefix)
+        # if a previous activation is recorded in the environment, remove its contributions
+        # from the path variables before injecting the new ones
+        oldPrefixStr = os.environ.get("mm_prefix")
+        oldPycStr = os.environ.get("mm_pyc")
+        if oldPrefixStr:
+            self.PATH = self.eject(
+                var=self.PATH, path=(pyre.primitives.path(oldPrefixStr) / "bin")
+            )
+        if oldPycStr:
+            self.PYTHONPATH = self.eject(
+                var=self.PYTHONPATH, path=pyre.primitives.path(oldPycStr)
+            )
+        # build the updated PATH and PYTHONPATH with the new entries at the front
+        path = os.pathsep.join(
+            str(p) for p in self.inject(var=self.PATH, path=(newPrefix / "bin"))
+        )
+        pythonpath = os.pathsep.join(
+            str(p) for p in self.inject(var=self.PYTHONPATH, path=newPyc)
+        )
+        # emit the full shell context
+        emit = self._syntaxDispatch[self.syntax]
+        # the tag: None triggers an unset rather than an export
+        print(emit("mm_tag", self.tag or None))
+        # the prefix and python package path, so the next activation can undo this one
+        print(emit("mm_prefix", str(newPrefix)))
+        print(emit("mm_pyc", str(newPyc)))
+        # the updated path variables
+        print(emit("PATH", path))
+        print(emit("PYTHONPATH", pythonpath))
         # all done
         return 0
 
@@ -792,11 +864,10 @@ class MM(pyre.application, family="pyre.applications.mm", namespace="mm"):
         """
         # get the user's opinion
         prefix = self.prefix or (self._root / "products")
-        # if a tag is set, use it to discriminate the build context; prefix also gets the
-        # build variant tag so installs for different targets land in separate directories
+        # if a tag is set, use it to discriminate the build context; the build variant tag
+        # is always appended so bldroot and prefix land at the same depth
         tag = self.tag
-        # append both when present
-        return prefix / tag / self._bldTag if tag else prefix
+        return prefix / tag / self._bldTag if tag else prefix / self._bldTag
 
     def loadProjectConfig(self):
         """
@@ -1139,18 +1210,35 @@ class MM(pyre.application, family="pyre.applications.mm", namespace="mm"):
 
     def inject(self, var, path):
         """
-        Ensure {path} is in {var}
+        Prepend {path} to {var}, keeping each value's first appearance only
         """
-        # if {path} is already in {var}
-        if path in var:
-            # return it unchanged
-            yield from var
-            # and done
-        # otherwise, add {path} to the pile
+        # track what we have already yielded
+        seen = set()
+        # the new path always comes first
         yield path
-        # followed by the original list
-        yield from var
-        # and done
+        seen.add(path)
+        # go through the rest of the values in {var}
+        for p in var:
+            # if it hasn't been emitted before
+            if p not in seen:
+                # emit
+                yield p
+                # and remember
+                seen.add(p)
+        # all done
+        return
+
+    def eject(self, var, path):
+        """
+        Remove {path} from {var}
+        """
+        # go through the values in {var}
+        for p in var:
+            # skip the one we want to remove
+            if p != path:
+                # pass everything else through
+                yield p
+        # all done
         return
 
     def computeSlots(self):
@@ -1479,14 +1567,392 @@ class MM(pyre.application, family="pyre.applications.mm", namespace="mm"):
         # all done
         return 0
 
-    def _queryPythonExpression(self, expression):
+    def _buildAdhocPackageDatabase(self, db):
         """
-        Evaluate a python expression in the current interpreter and return its stdout,
+        Create an empty package database stub for adhoc (manual) configuration
+        """
+        # create an empty file; the user populates it via {config.mm}
+        open(db, "w")
+        # all done
+        return 0
+
+    def _buildMacportsPackageDatabase(self, db):
+        """
+        Interrogate the active MacPorts installation and write a package database
+        """
+        # grab a channel
+        channel = journal.info("mm.pkgdb")
+        # find the port executable
+        port = shutil.which("port")
+        # if not found
+        if not port:
+            # make a channel
+            error = journal.error("mm.pkgdb")
+            # complain
+            error.line("could not find the 'port' executable")
+            error.line("make sure MacPorts is installed and 'port' is on your PATH")
+            # flush
+            error.log()
+            # bail
+            return 1
+        # derive the MacPorts prefix from the port executable location
+        prefix = pyre.primitives.path(port).parent.parent
+        # get the selected python3 version
+        result = subprocess.run(
+            [port, "select", "--show", "python3"],
+            capture_output=True,
+            text=True,
+        )
+        # if the query failed or no version is selected
+        if result.returncode != 0 or "none" in result.stdout:
+            # make a channel
+            error = journal.error("mm.pkgdb")
+            # complain
+            error.line("no python3 version selected in MacPorts")
+            error.line("select one and retry, e.g.:")
+            error.line("  sudo port select python3 python312")
+            # flush
+            error.log()
+            # bail
+            return 1
+        # parse the selected version name e.g. "python312" -> tag "312", version "3.12"
+        match = re.search(r"python(\d)(\d+)", result.stdout)
+        # if we couldn't parse it
+        if not match:
+            # make a channel
+            error = journal.error("mm.pkgdb")
+            # complain
+            error.line(
+                "could not parse the selected python3 version from 'port select'"
+            )
+            error.line(f"output: {result.stdout.strip()}")
+            # flush
+            error.log()
+            # bail
+            return 1
+        # reconstruct the version tag and the interpreter path
+        pyTag = f"{match.group(1)}{match.group(2)}"
+        pyVersion = f"{match.group(1)}.{match.group(2)}"
+        python = prefix / "bin" / f"python{pyVersion}"
+        # log our starting state
+        channel.line("building macports package database")
+        channel.indent()
+        channel.line(f"port: {port}")
+        channel.line(f"prefix: {prefix}")
+        channel.line(f"python: {python}")
+        channel.line(f"db: {db}")
+        channel.outdent()
+        channel.log()
+        # query the installed ports
+        result = subprocess.run(
+            [port, "installed"],
+            capture_output=True,
+            text=True,
+        )
+        # if the query failed
+        if result.returncode != 0:
+            # make a channel
+            error = journal.error("mm.pkgdb")
+            # complain
+            error.line(f"failed to query installed ports: {result.stderr.strip()}")
+            # flush
+            error.log()
+            # bail
+            return 1
+        # parse active ports; each active line ends with "(active)"
+        installed = set()
+        for line in result.stdout.splitlines():
+            line = line.strip()
+            if line.endswith("(active)"):
+                installed.add(line.split()[0])
+        # the mapping from mm extern name to macports port name(s); try names in order;
+        # python-versioned ports use {pyTag} e.g. "312" for python 3.12
+        packages = {
+            "cantera": ["cantera"],
+            "cgal": ["cgal5", "cgal"],
+            "cspice": ["cspice"],
+            "eigen": ["eigen3"],
+            "fftw": ["fftw-3"],
+            "fmt": ["libfmt"],
+            "gdal": ["gdal"],
+            "geotiff": ["libgeotiff"],
+            "gmsh": ["gmsh"],
+            "gsl": ["gsl"],
+            "gtest": ["googletest"],
+            "hdf5": ["hdf5"],
+            "kokkos": ["kokkos"],
+            "libpq": ["libpq"],
+            "metis": ["metis5", "metis"],
+            "mpi": ["openmpi", "mpich"],
+            "numpy": [f"py{pyTag}-numpy"],
+            "openblas": ["OpenBLAS"],
+            "parmetis": ["parmetis"],
+            "petsc": ["petsc"],
+            "proj": ["proj"],
+            "pybind11": [f"py{pyTag}-pybind11"],
+            "python": [f"python{pyTag}"],
+            "slepc": ["slepc"],
+            "sundials": ["sundials"],
+            "vtk": ["vtk9", "vtk"],
+            "yaml": ["yaml-cpp"],
+        }
+        # collect the packages that are present in this installation
+        found = {}
+        for name, candidates in packages.items():
+            for candidate in candidates:
+                if candidate in installed:
+                    found[name] = candidate
+                    break
+        # report what we found
+        channel.line(f"found {len(found)} of {len(packages)} supported packages")
+        channel.indent()
+        for name, candidate in sorted(found.items()):
+            channel.line(f"{name}  (macports: {candidate})")
+        channel.outdent()
+        channel.log()
+        # open the database file
+        with open(db, "w") as f:
+            print("# -*- Makefile -*-", file=f)
+            print("# macports package database", file=f)
+            print("# generated by: mm --pkgdb=macports --setup", file=f)
+            print(f"# port: {port}", file=f)
+            print(f"# prefix: {prefix}", file=f)
+            print(file=f)
+            print(f"macports.prefix := {prefix}", file=f)
+            print(file=f)
+            for name in sorted(found):
+                candidate = found[name]
+                print(f"# {name}  (macports: {candidate})", file=f)
+                if name == "mpi":
+                    print(f"mpi.dir ?= $(macports.prefix)", file=f)
+                    print(f"mpi.flavor ?= {candidate}", file=f)
+                elif name == "numpy":
+                    includePath = self._queryPythonExpression(
+                        "import numpy; print(numpy.get_include())", python=python
+                    )
+                    if includePath:
+                        numpyCore = pyre.primitives.path(includePath).parent
+                        try:
+                            relativePath = numpyCore.relativeTo(prefix)
+                            print(
+                                f"numpy.dir ?= $(macports.prefix)/{relativePath}", file=f
+                            )
+                        except ValueError:
+                            print(f"numpy.dir ?= {numpyCore}", file=f)
+                    else:
+                        print(f"numpy.dir ?= $(macports.prefix)", file=f)
+                elif name == "pybind11":
+                    includePath = self._queryPythonExpression(
+                        "import pybind11; print(pybind11.get_include())", python=python
+                    )
+                    if includePath:
+                        pybind11Root = pyre.primitives.path(includePath).parent
+                        try:
+                            relativePath = pybind11Root.relativeTo(prefix)
+                            print(
+                                f"pybind11.dir ?= $(macports.prefix)/{relativePath}",
+                                file=f,
+                            )
+                        except ValueError:
+                            print(f"pybind11.dir ?= {pybind11Root}", file=f)
+                    else:
+                        print(f"pybind11.dir ?= $(macports.prefix)", file=f)
+                elif name == "python":
+                    print(f"python.version ?= {pyVersion}", file=f)
+                    print(f"python.dir ?= $(macports.prefix)", file=f)
+                else:
+                    print(f"{name}.dir ?= $(macports.prefix)", file=f)
+                print(file=f)
+        # all done
+        return 0
+
+    def _buildDpkgPackageDatabase(self, db):
+        """
+        Interrogate the dpkg package manager and write a package database
+        """
+        # grab a channel
+        channel = journal.info("mm.pkgdb")
+        # dpkg-query is always present on Debian/Ubuntu
+        dpkg = shutil.which("dpkg-query")
+        # if not found, we're not on a dpkg-based system
+        if not dpkg:
+            # make a channel
+            error = journal.error("mm.pkgdb")
+            # complain
+            error.line("could not find 'dpkg-query'")
+            error.line("make sure you are on a Debian/Ubuntu system")
+            # flush
+            error.log()
+            # bail
+            return 1
+        # the dpkg prefix is always /usr
+        prefix = pyre.primitives.path("/usr")
+        # query the Python interpreter for the correct package installation directory
+        platlib = self._queryPythonExpression(
+            "import sysconfig; print(sysconfig.get_path('platlib'))"
+        )
+        # if the query failed we can't reliably determine where to put python packages
+        if not platlib:
+            # make a channel
+            error = journal.error("mm.pkgdb")
+            # complain
+            error.line("could not determine the python package installation directory")
+            error.line("make sure python3 is installed and on your PATH")
+            # flush
+            error.log()
+            # bail
+            return 1
+        # make the platlib path relative to the prefix
+        try:
+            pycPrefix = pyre.primitives.path(platlib).relativeTo(prefix)
+        # if it's not under /usr, use it as-is
+        except ValueError:
+            pycPrefix = pyre.primitives.path(platlib)
+        # log our starting state
+        channel.line("building dpkg package database")
+        channel.indent()
+        channel.line(f"dpkg-query: {dpkg}")
+        channel.line(f"prefix: {prefix}")
+        channel.line(f"python packages: {pycPrefix}")
+        channel.line(f"db: {db}")
+        channel.outdent()
+        channel.log()
+        # query all installed packages with their versions and status
+        result = subprocess.run(
+            [dpkg, "-W", "-f=${Package}\t${Version}\t${db:Status-Status}\n"],
+            capture_output=True,
+            text=True,
+        )
+        # if the query failed
+        if result.returncode != 0:
+            # make a channel
+            error = journal.error("mm.pkgdb")
+            # complain
+            error.line(f"failed to query installed packages: {result.stderr.strip()}")
+            # flush
+            error.log()
+            # bail
+            return 1
+        # build an index of installed packages keyed by name
+        installed = {}
+        for line in result.stdout.splitlines():
+            parts = line.split("\t")
+            if len(parts) != 3:
+                continue
+            name, version, status = parts
+            if status.strip() == "installed":
+                installed[name] = version
+        # the mapping from mm extern name to dpkg package name(s); try names in order
+        packages = {
+            "cantera": ["libcantera-dev"],
+            "cgal": ["libcgal-dev"],
+            "cspice": ["libcspice-dev"],
+            "eigen": ["libeigen3-dev"],
+            "fftw": ["libfftw3-dev"],
+            "fmt": ["libfmt-dev"],
+            "gdal": ["libgdal-dev"],
+            "geotiff": ["libgeotiff-dev"],
+            "gmsh": ["gmsh"],
+            "gsl": ["libgsl-dev"],
+            "gtest": ["libgtest-dev"],
+            "hdf5": ["libhdf5-dev"],
+            "kokkos": ["libkokkos-dev"],
+            "libpq": ["libpq-dev"],
+            "metis": ["libmetis-dev"],
+            "mpi": ["libopenmpi-dev", "libmpich-dev"],
+            "numpy": ["python3-numpy"],
+            "openblas": ["libopenblas-dev"],
+            "parmetis": ["libparmetis-dev"],
+            "petsc": ["petsc-dev"],
+            "proj": ["libproj-dev"],
+            "pybind11": ["pybind11-dev"],
+            "python": ["python3"],
+            "slepc": ["slepc-dev"],
+            "sundials": ["libsundials-dev"],
+            "vtk": ["libvtk9-dev", "libvtk7-dev"],
+            "yaml": ["libyaml-cpp-dev"],
+        }
+        # collect the packages present on this system
+        found = {}
+        for name, candidates in packages.items():
+            for candidate in candidates:
+                if candidate in installed:
+                    found[name] = (candidate, installed[candidate])
+                    break
+        # report what we found
+        channel.line(f"found {len(found)} of {len(packages)} supported packages")
+        channel.indent()
+        for name, (candidate, version) in sorted(found.items()):
+            channel.line(f"{name}: {version}  (dpkg: {candidate})")
+        channel.outdent()
+        channel.log()
+        # open the database file
+        with open(db, "w") as f:
+            print("# -*- Makefile -*-", file=f)
+            print("# dpkg package database", file=f)
+            print("# generated by: mm --pkgdb=dpkg --setup", file=f)
+            print(f"# dpkg-query: {dpkg}", file=f)
+            print(f"# prefix: {prefix}", file=f)
+            print(file=f)
+            print(f"dpkg.prefix := {prefix}", file=f)
+            print(file=f)
+            for name in sorted(found):
+                candidate, version = found[name]
+                print(f"# {name}: {version}  (dpkg: {candidate})", file=f)
+                if name == "python":
+                    pyVersion = self._queryPythonExpression(
+                        "import sys; print(f'{sys.version_info.major}.{sys.version_info.minor}')"
+                    )
+                    if pyVersion:
+                        print(f"python.version ?= {pyVersion}", file=f)
+                    print(f"python.dir ?= $(dpkg.prefix)", file=f)
+                elif name == "mpi":
+                    print(f"mpi.dir ?= $(dpkg.prefix)", file=f)
+                    flavor = "openmpi" if "openmpi" in candidate else "mpich"
+                    print(f"mpi.flavor ?= {flavor}", file=f)
+                elif name == "numpy":
+                    includePath = self._queryPythonExpression(
+                        "import numpy; print(numpy.get_include())"
+                    )
+                    if includePath:
+                        numpyCore = pyre.primitives.path(includePath).parent
+                        try:
+                            relativePath = numpyCore.relativeTo(prefix)
+                            print(f"numpy.dir ?= $(dpkg.prefix)/{relativePath}", file=f)
+                        except ValueError:
+                            print(f"numpy.dir ?= {numpyCore}", file=f)
+                    else:
+                        print(f"numpy.dir ?= $(dpkg.prefix)", file=f)
+                elif name == "pybind11":
+                    includePath = self._queryPythonExpression(
+                        "import pybind11; print(pybind11.get_include())"
+                    )
+                    if includePath:
+                        pybind11Root = pyre.primitives.path(includePath).parent
+                        try:
+                            relativePath = pybind11Root.relativeTo(prefix)
+                            print(
+                                f"pybind11.dir ?= $(dpkg.prefix)/{relativePath}", file=f
+                            )
+                        except ValueError:
+                            print(f"pybind11.dir ?= {pybind11Root}", file=f)
+                    else:
+                        print(f"pybind11.dir ?= $(dpkg.prefix)", file=f)
+                else:
+                    print(f"{name}.dir ?= $(dpkg.prefix)", file=f)
+                print(f"{name}.version ?= {version}", file=f)
+                print(file=f)
+        # all done
+        return 0
+
+    def _queryPythonExpression(self, expression, *, python=sys.executable):
+        """
+        Evaluate a python expression in the given interpreter and return its stdout,
         or None if the evaluation fails
         """
-        # run the expression in the current interpreter
+        # run the expression in the requested interpreter
         result = subprocess.run(
-            [sys.executable, "-c", expression],
+            [str(python), "-c", expression],
             capture_output=True,
             text=True,
         )
