@@ -26,6 +26,8 @@ public:
     using const_pointer = const value_type *;
     using reference = value_type &;
     using const_reference = const value_type &;
+    using rvalue_reference = value_type &&;
+    using const_rvalue_reference = const value_type &&;
     // storage
     using storage_type = std::array<value_type, Rank>;
     // iterators
@@ -67,6 +69,15 @@ public:
     // access to the underlying storage
     constexpr auto data() noexcept -> pointer;
     constexpr auto data() const noexcept -> const_pointer;
+
+    // factories
+public:
+    // a shape with all extents zeroed out
+    static constexpr auto zero() noexcept -> self_type;
+    // a shape with all extents set to one
+    static constexpr auto one() noexcept -> self_type;
+    // a shape with all extents set to a given value
+    static constexpr auto fill(value_type) noexcept -> self_type;
 
     // interface
 public:
