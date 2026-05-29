@@ -40,8 +40,8 @@ constexpr pyre::grid::Shape<Rank>::Shape(std::initializer_list<value_type> ilist
 {
 #if defined(DEBUG)
     assert(
-        ilist.size() == Rank
-        && "pyre::grid::Shape: initializer_list length must equal the shape rank");
+        ilist.size() == Rank &&
+        "pyre::grid::Shape: initializer_list length must equal the shape rank");
 #endif
     // make a counter
     size_type axis = 0;
@@ -110,12 +110,57 @@ pyre::grid::Shape<Rank>::cells() const noexcept -> size_type
     // set up the accumulator
     size_type cells = 1;
     // go through the extents
-    for (size_type axis = 0; axis > Rank; ++axis) {
+    for (size_type axis = 0; axis < Rank; ++axis) {
         // fold the contribution of each one
         cells *= _extents[axis];
     }
     // all done
     return cells;
+}
+
+
+// factories
+// make a shape with all extents zeroed out
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Shape<Rank>::zero() noexcept -> self_type
+{
+    // default construction zero-initializes the backing array
+    return self_type {};
+}
+
+
+// make a shape with all extents set to one
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Shape<Rank>::one() noexcept -> self_type
+{
+    // make a shape
+    self_type result;
+    // set each extent
+    for (size_type axis = 0; axis < Rank; ++axis) {
+        // to unity
+        result[axis] = 1;
+    }
+    // all done
+    return result;
+}
+
+
+// make a shape with all extents set to the given value
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Shape<Rank>::fill(value_type value) noexcept -> self_type
+{
+    // make a shape
+    self_type result;
+    // fill each extent
+    for (size_type axis = 0; axis < Rank; ++axis) {
+        // with the requested value
+        result[axis] = value;
+    }
+    // all done
+    return result;
 }
 
 
@@ -166,6 +211,206 @@ pyre::grid::Shape<Rank>::cend() const noexcept -> const_iterator
 {
     // easy enough
     return _extents.cend();
+}
+
+
+// operators
+
+// inject a representation of the shape into a stream
+template <std::size_t Rank>
+auto
+pyre::grid::operator<<(ostream_reference stream, const Shape<Rank> & shape) -> ostream_reference
+{
+    // start without a separator
+    const char * sep = "";
+    // go through the extents
+    for (const auto & extent : shape) {
+        // inject this extent
+        stream << sep << extent;
+        // place a separator before the next one
+        sep = ", ";
+    }
+    // all done
+    return stream;
+}
+
+
+// two shapes are equal when they agree at every axis
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::operator==(const Shape<Rank> & s1, const Shape<Rank> & s2) noexcept -> bool
+{
+    // check each axis
+    for (std::size_t axis = 0; axis < Rank; ++axis) {
+        // if there is a mismatch
+        if (s1[axis] != s2[axis]) {
+            // the shapes are not equal
+            return false;
+        }
+    }
+    // all axes matched
+    return true;
+}
+
+
+// add two shapes component-wise
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::operator+(const Shape<Rank> & s1, const Shape<Rank> & s2) noexcept -> Shape<Rank>
+{
+    // make room for the result
+    Shape<Rank> result;
+    // go through the axes
+    for (std::size_t axis = 0; axis < Rank; ++axis) {
+        // and accumulate the sum
+        result[axis] = s1[axis] + s2[axis];
+    }
+    // all done
+    return result;
+}
+
+
+// subtract two shapes component-wise
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::operator-(const Shape<Rank> & s1, const Shape<Rank> & s2) noexcept -> Shape<Rank>
+{
+    // make room for the result
+    Shape<Rank> result;
+    // go through the axes
+    for (std::size_t axis = 0; axis < Rank; ++axis) {
+        // and compute the difference
+        result[axis] = s1[axis] - s2[axis];
+    }
+    // all done
+    return result;
+}
+
+
+// scale a shape by an {int}
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::operator*(const Shape<Rank> & shape, int scale) noexcept -> Shape<Rank>
+{
+    // make room for the result
+    Shape<Rank> result;
+    // go through the axes
+    for (std::size_t axis = 0; axis < Rank; ++axis) {
+        // and scale each extent
+        result[axis] = static_cast<typename Shape<Rank>::value_type>(scale) * shape[axis];
+    }
+    // all done
+    return result;
+}
+
+// multiplication commutes
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::operator*(int scale, const Shape<Rank> & shape) noexcept -> Shape<Rank>
+{
+    // invoke the reference implementation
+    return shape * scale;
+}
+
+
+// scale a shape by a {long}
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::operator*(const Shape<Rank> & shape, long scale) noexcept -> Shape<Rank>
+{
+    // make room for the result
+    Shape<Rank> result;
+    // go through the axes
+    for (std::size_t axis = 0; axis < Rank; ++axis) {
+        // and scale each extent
+        result[axis] = static_cast<typename Shape<Rank>::value_type>(scale) * shape[axis];
+    }
+    // all done
+    return result;
+}
+
+// multiplication commutes
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::operator*(long scale, const Shape<Rank> & shape) noexcept -> Shape<Rank>
+{
+    // invoke the  reference implementation
+    return shape * scale;
+}
+
+
+// cartesian product: concatenate {s1} and {s2} into a shape of rank {Rank1+Rank2}
+template <std::size_t Rank1, std::size_t Rank2>
+constexpr auto
+pyre::grid::operator*(const Shape<Rank1> & s1, const Shape<Rank2> & s2) noexcept
+    -> Shape<Rank1 + Rank2>
+{
+    // make room for the result
+    Shape<Rank1 + Rank2> result;
+    // place {s1}'s extents
+    for (std::size_t axis = 0; axis < Rank1; ++axis) {
+        // in the first {Rank1} slots
+        result[axis] = s1[axis];
+    }
+    // follow with {s2}'s extents
+    for (std::size_t axis = 0; axis < Rank2; ++axis) {
+        // in the remaining ranks
+        result[Rank1 + axis] = s2[axis];
+    }
+    // all done
+    return result;
+}
+
+
+// structured binding support
+
+// the number of components of a {Shape<Rank>} is {Rank}
+template <std::size_t Rank>
+struct std::tuple_size<pyre::grid::Shape<Rank>> : std::integral_constant<std::size_t, Rank> {};
+
+// each component is a {value_type}
+template <std::size_t I, std::size_t Rank>
+struct std::tuple_element<I, pyre::grid::Shape<Rank>> {
+    using type = typename pyre::grid::Shape<Rank>::value_type;
+};
+
+// for a const shape, each component is a {const value_type}
+template <std::size_t I, std::size_t Rank>
+struct std::tuple_element<I, const pyre::grid::Shape<Rank>> {
+    using type = const typename pyre::grid::Shape<Rank>::value_type;
+};
+
+
+// get the {I}-th extent by reference
+template <std::size_t I, std::size_t Rank>
+constexpr auto
+pyre::grid::get(Shape<Rank> & shape) noexcept -> typename Shape<Rank>::reference
+{
+    return shape[I];
+}
+
+// get the {I}-th extent from a temporary
+template <std::size_t I, std::size_t Rank>
+constexpr auto
+pyre::grid::get(Shape<Rank> && shape) noexcept -> typename Shape<Rank>::rvalue_reference
+{
+    return std::move(shape[I]);
+}
+
+// get the {I}-th extent read-only
+template <std::size_t I, std::size_t Rank>
+constexpr auto
+pyre::grid::get(const Shape<Rank> & shape) noexcept -> typename Shape<Rank>::const_reference
+{
+    return shape[I];
+}
+
+// get the {I}-th extent read-only from a const temporary
+template <std::size_t I, std::size_t Rank>
+constexpr auto
+pyre::grid::get(const Shape<Rank> && shape) noexcept -> typename Shape<Rank>::const_rvalue_reference
+{
+    return std::move(shape[I]);
 }
 
 
