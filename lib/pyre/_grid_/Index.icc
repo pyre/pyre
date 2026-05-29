@@ -1,0 +1,359 @@
+// -*- c++ -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2026 all rights reserved
+
+// code guard
+#pragma once
+
+
+// support
+#include "Index.h"
+
+
+// default constructor
+template <std::size_t Rank>
+constexpr pyre::grid::Index<Rank>::Index() noexcept :
+    _coords {}
+{}
+
+// from a backing array
+template <std::size_t Rank>
+constexpr pyre::grid::Index<Rank>::Index(storage_type coords) noexcept :
+    _coords { std::move(coords) }
+{}
+
+// the variadic constructor
+template <std::size_t Rank>
+template <std::signed_integral... Ts>
+    requires(sizeof...(Ts) == Rank)
+constexpr pyre::grid::Index<Rank>::Index(Ts... xs) noexcept :
+    _coords { static_cast<value_type>(xs)... }
+{}
+
+// initializer_list (debug length check)
+template <std::size_t Rank>
+constexpr pyre::grid::Index<Rank>::Index(std::initializer_list<value_type> ilist) noexcept
+{
+#if defined(DEBUG)
+    assert(
+        ilist.size() == Rank
+        && "pyre::grid::Index: initializer_list length must equal the index rank");
+#endif
+    size_type axis = 0;
+    for (auto value : ilist) {
+        if (axis < Rank)
+            _coords[axis++] = value;
+    }
+}
+
+
+// accessors
+template <std::size_t Rank>
+consteval auto
+pyre::grid::Index<Rank>::rank() noexcept -> size_type
+{
+    return Rank;
+}
+
+// element access
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Index<Rank>::operator[](size_type axis) noexcept -> reference
+{
+    return _coords[axis];
+}
+
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Index<Rank>::operator[](size_type axis) const noexcept -> const_reference
+{
+    return _coords[axis];
+}
+
+
+// access to the underlying storage
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Index<Rank>::data() noexcept -> pointer
+{
+    return _coords.data();
+}
+
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Index<Rank>::data() const noexcept -> const_pointer
+{
+    return _coords.data();
+}
+
+
+// factories
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Index<Rank>::zero() noexcept -> self_type
+{
+    return self_type {};
+}
+
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Index<Rank>::one() noexcept -> self_type
+{
+    self_type result;
+    for (size_type axis = 0; axis < Rank; ++axis) {
+        result[axis] = 1;
+    }
+    return result;
+}
+
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Index<Rank>::fill(value_type value) noexcept -> self_type
+{
+    self_type result;
+    for (size_type axis = 0; axis < Rank; ++axis) {
+        result[axis] = value;
+    }
+    return result;
+}
+
+
+// iteration support
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Index<Rank>::begin() noexcept -> iterator
+{
+    return _coords.begin();
+}
+
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Index<Rank>::end() noexcept -> iterator
+{
+    return _coords.end();
+}
+
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Index<Rank>::begin() const noexcept -> const_iterator
+{
+    return _coords.begin();
+}
+
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Index<Rank>::end() const noexcept -> const_iterator
+{
+    return _coords.end();
+}
+
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Index<Rank>::cbegin() const noexcept -> const_iterator
+{
+    return _coords.cbegin();
+}
+
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Index<Rank>::cend() const noexcept -> const_iterator
+{
+    return _coords.cend();
+}
+
+
+// operators
+
+// inject a representation of the index into a stream
+template <std::size_t Rank>
+auto
+pyre::grid::operator<<(ostream_reference stream, const Index<Rank> & index) -> ostream_reference
+{
+    const char * sep = "";
+    for (const auto & coord : index) {
+        stream << sep << coord;
+        sep = ", ";
+    }
+    return stream;
+}
+
+
+// two indices are equal when they agree at every axis
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::operator==(const Index<Rank> & i1, const Index<Rank> & i2) noexcept -> bool
+{
+    for (std::size_t axis = 0; axis < Rank; ++axis) {
+        if (i1[axis] != i2[axis]) {
+            return false;
+        }
+    }
+    return true;
+}
+
+
+// add two indices component-wise
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::operator+(const Index<Rank> & i1, const Index<Rank> & i2) noexcept -> Index<Rank>
+{
+    Index<Rank> result;
+    for (std::size_t axis = 0; axis < Rank; ++axis) {
+        result[axis] = i1[axis] + i2[axis];
+    }
+    return result;
+}
+
+
+// subtract two indices component-wise
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::operator-(const Index<Rank> & i1, const Index<Rank> & i2) noexcept -> Index<Rank>
+{
+    Index<Rank> result;
+    for (std::size_t axis = 0; axis < Rank; ++axis) {
+        result[axis] = i1[axis] - i2[axis];
+    }
+    return result;
+}
+
+
+// scale an index by an {int}
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::operator*(const Index<Rank> & index, int scale) noexcept -> Index<Rank>
+{
+    Index<Rank> result;
+    for (std::size_t axis = 0; axis < Rank; ++axis) {
+        result[axis] = scale * index[axis];
+    }
+    return result;
+}
+
+// multiplication commutes
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::operator*(int scale, const Index<Rank> & index) noexcept -> Index<Rank>
+{
+    return index * scale;
+}
+
+
+// scale an index by a {long}
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::operator*(const Index<Rank> & index, long scale) noexcept -> Index<Rank>
+{
+    Index<Rank> result;
+    for (std::size_t axis = 0; axis < Rank; ++axis) {
+        result[axis] = static_cast<typename Index<Rank>::value_type>(scale) * index[axis];
+    }
+    return result;
+}
+
+// multiplication commutes
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::operator*(long scale, const Index<Rank> & index) noexcept -> Index<Rank>
+{
+    return index * scale;
+}
+
+
+// shift an index forward by a shape
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::operator+(const Index<Rank> & index, const Shape<Rank> & shape) noexcept -> Index<Rank>
+{
+    Index<Rank> result;
+    for (std::size_t axis = 0; axis < Rank; ++axis) {
+        result[axis] = index[axis] + static_cast<typename Index<Rank>::value_type>(shape[axis]);
+    }
+    return result;
+}
+
+
+// shift an index backward by a shape
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::operator-(const Index<Rank> & index, const Shape<Rank> & shape) noexcept -> Index<Rank>
+{
+    Index<Rank> result;
+    for (std::size_t axis = 0; axis < Rank; ++axis) {
+        result[axis] = index[axis] - static_cast<typename Index<Rank>::value_type>(shape[axis]);
+    }
+    return result;
+}
+
+
+// cartesian product: concatenate {i1} and {i2} into an index of rank {Rank1+Rank2}
+template <std::size_t Rank1, std::size_t Rank2>
+constexpr auto
+pyre::grid::operator*(const Index<Rank1> & i1, const Index<Rank2> & i2) noexcept
+    -> Index<Rank1 + Rank2>
+{
+    Index<Rank1 + Rank2> result;
+    for (std::size_t axis = 0; axis < Rank1; ++axis) {
+        result[axis] = i1[axis];
+    }
+    for (std::size_t axis = 0; axis < Rank2; ++axis) {
+        result[Rank1 + axis] = i2[axis];
+    }
+    return result;
+}
+
+
+// structured binding support
+
+// the number of components of an {Index<Rank>} is {Rank}
+template <std::size_t Rank>
+struct std::tuple_size<pyre::grid::Index<Rank>> : std::integral_constant<std::size_t, Rank> {};
+
+// each component is a {value_type}
+template <std::size_t I, std::size_t Rank>
+struct std::tuple_element<I, pyre::grid::Index<Rank>> {
+    using type = typename pyre::grid::Index<Rank>::value_type;
+};
+
+// for a const index, each component is a {const value_type}
+template <std::size_t I, std::size_t Rank>
+struct std::tuple_element<I, const pyre::grid::Index<Rank>> {
+    using type = const typename pyre::grid::Index<Rank>::value_type;
+};
+
+
+// get the {I}-th coordinate by reference
+template <std::size_t I, std::size_t Rank>
+constexpr auto
+pyre::grid::get(Index<Rank> & index) noexcept -> typename Index<Rank>::reference
+{
+    return index[I];
+}
+
+// get the {I}-th coordinate from a temporary
+template <std::size_t I, std::size_t Rank>
+constexpr auto
+pyre::grid::get(Index<Rank> && index) noexcept -> typename Index<Rank>::rvalue_reference
+{
+    return std::move(index[I]);
+}
+
+// get the {I}-th coordinate read-only
+template <std::size_t I, std::size_t Rank>
+constexpr auto
+pyre::grid::get(const Index<Rank> & index) noexcept -> typename Index<Rank>::const_reference
+{
+    return index[I];
+}
+
+// get the {I}-th coordinate read-only from a const temporary
+template <std::size_t I, std::size_t Rank>
+constexpr auto
+pyre::grid::get(const Index<Rank> && index) noexcept -> typename Index<Rank>::const_rvalue_reference
+{
+    return std::move(index[I]);
+}
+
+
+// end of file
