@@ -26,6 +26,8 @@ public:
     using const_pointer = const value_type *;
     using reference = value_type &;
     using const_reference = const value_type &;
+    using rvalue_reference = value_type &&;
+    using const_rvalue_reference = const value_type &&;
     // storage
     using storage_type = std::array<value_type, Rank>;
     // iterators
