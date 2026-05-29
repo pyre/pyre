@@ -12,6 +12,7 @@
 #include <cstddef>
 #include <concepts>
 #include <initializer_list>
+#include <ostream>
 #include <tuple>
 #include <utility>
 
@@ -31,6 +32,9 @@ namespace pyre::grid {
     using name_t = pyre::memory::name_t;
     // filenames
     using uri_t = pyre::memory::uri_t;
+
+    // streams
+    using ostream_reference = std::ostream &;
 
     // arrays of things
     template <typename T, int N>
