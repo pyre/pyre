@@ -11,6 +11,7 @@
 #include <algorithm>
 #include <array>
 #include <complex>
+#include <cstdint>
 // support
 #include <pyre/journal.h>
 // the hdf5 api
