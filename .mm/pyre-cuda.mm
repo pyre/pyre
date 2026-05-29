@@ -36,7 +36,7 @@ pyre-cuda.lib.prerequisites := journal.lib pyre.lib
 pyre-cuda.lib.extern := pyre.lib pyre cuda
 pyre-cuda.lib.c++.flags += $(pyre.lib.c++.flags)
 pyre-cuda.lib.c++.defines += $(pyre.lib.c++.defines)
-pyre-cuda.lib.cuda.flags += $(nvcc.std.c++20)
+pyre-cuda.lib.cuda.flags += $(nvcc.std.c++17)
 pyre-cuda.lib.cuda.defines += $(pyre.lib.c++.defines)
 
 # the extension
