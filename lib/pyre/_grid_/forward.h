@@ -32,6 +32,39 @@ namespace pyre::grid {
 } // namespace pyre::grid
 
 
+// operators on {Order}
+namespace pyre::grid {
+    // stream injection
+    template <size_t Rank>
+    auto operator<<(ostream_reference, const Order<Rank> &) -> ostream_reference;
+
+    // equality
+    template <size_t Rank>
+    constexpr auto operator==(const Order<Rank> &, const Order<Rank> &) noexcept -> bool;
+
+    // structured binding support
+    template <size_t I, size_t Rank>
+    constexpr auto get(Order<Rank> &) noexcept -> typename Order<Rank>::reference;
+    template <size_t I, size_t Rank>
+    constexpr auto get(Order<Rank> &&) noexcept -> typename Order<Rank>::rvalue_reference;
+    template <size_t I, size_t Rank>
+    constexpr auto get(const Order<Rank> &) noexcept -> typename Order<Rank>::const_reference;
+    template <size_t I, size_t Rank>
+    constexpr auto get(const Order<Rank> &&) noexcept -> typename Order<Rank>::const_rvalue_reference;
+} // namespace pyre::grid
+
+
+// structured binding support for {Order}: the number of components and their type
+template <std::size_t Rank>
+struct std::tuple_size<pyre::grid::Order<Rank>>;
+
+template <std::size_t I, std::size_t Rank>
+struct std::tuple_element<I, pyre::grid::Order<Rank>>;
+
+template <std::size_t I, std::size_t Rank>
+struct std::tuple_element<I, const pyre::grid::Order<Rank>>;
+
+
 // operators on {Shape}
 namespace pyre::grid {
     // stream injection
