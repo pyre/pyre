@@ -20,6 +20,8 @@
 #include "Order.h"
 // shape
 #include "Shape.h"
+// index
+#include "Index.h"
 // the grid
 #include "Grid.h"
 

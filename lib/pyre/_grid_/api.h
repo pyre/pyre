@@ -19,6 +19,9 @@ namespace pyre::grid {
     // shape
     template <std::size_t Rank>
     using shape_t = Shape<Rank>;
+    // index
+    template <std::size_t Rank>
+    using index_t = Index<Rank>;
 
     // the grid
     template <class packingT, class storageT>
