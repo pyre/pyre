@@ -235,4 +235,86 @@ pyre::grid::Order<Rank>::_make_column_major(std::index_sequence<Is...>) noexcept
 }
 
 
+// operators
+
+// inject a representation of the order into a stream
+template <std::size_t Rank>
+auto
+pyre::grid::operator<<(ostream_reference stream, const Order<Rank> & order) -> ostream_reference
+{
+    const char * sep = "";
+    for (const auto & slot : order) {
+        stream << sep << slot;
+        sep = ", ";
+    }
+    return stream;
+}
+
+
+// two orders are equal when they agree at every position
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::operator==(const Order<Rank> & o1, const Order<Rank> & o2) noexcept -> bool
+{
+    for (std::size_t i = 0; i < Rank; ++i) {
+        if (o1[i] != o2[i]) {
+            return false;
+        }
+    }
+    return true;
+}
+
+
+// structured binding support
+
+// the number of components of an {Order<Rank>} is {Rank}
+template <std::size_t Rank>
+struct std::tuple_size<pyre::grid::Order<Rank>> : std::integral_constant<std::size_t, Rank> {};
+
+// each component is a {value_type}
+template <std::size_t I, std::size_t Rank>
+struct std::tuple_element<I, pyre::grid::Order<Rank>> {
+    using type = typename pyre::grid::Order<Rank>::value_type;
+};
+
+// for a const order, each component is a {const value_type}
+template <std::size_t I, std::size_t Rank>
+struct std::tuple_element<I, const pyre::grid::Order<Rank>> {
+    using type = const typename pyre::grid::Order<Rank>::value_type;
+};
+
+
+// get the {I}-th slot by reference
+template <std::size_t I, std::size_t Rank>
+constexpr auto
+pyre::grid::get(Order<Rank> & order) noexcept -> typename Order<Rank>::reference
+{
+    return order[I];
+}
+
+// get the {I}-th slot from a temporary
+template <std::size_t I, std::size_t Rank>
+constexpr auto
+pyre::grid::get(Order<Rank> && order) noexcept -> typename Order<Rank>::rvalue_reference
+{
+    return std::move(order[I]);
+}
+
+// get the {I}-th slot read-only
+template <std::size_t I, std::size_t Rank>
+constexpr auto
+pyre::grid::get(const Order<Rank> & order) noexcept -> typename Order<Rank>::const_reference
+{
+    return order[I];
+}
+
+// get the {I}-th slot read-only from a const temporary
+template <std::size_t I, std::size_t Rank>
+constexpr auto
+pyre::grid::get(const Order<Rank> && order) noexcept -> typename Order<Rank>::const_rvalue_reference
+{
+    return std::move(order[I]);
+}
+
+
 // end of file
