@@ -84,6 +84,7 @@ public:
     // iteration: visit every index in the box in packing order
 public:
     [[nodiscard]] constexpr auto begin() const noexcept -> iterator_type;
+    [[nodiscard]] constexpr auto begin(const index_type &) const noexcept -> iterator_type;
     [[nodiscard]] constexpr auto end() const noexcept -> iterator_type;
 
     // sub-layout: constrain to a sub-box, inheriting the physical layout
