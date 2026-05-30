@@ -165,6 +165,13 @@ pyre::grid::Canonical<Rank>::begin() const noexcept -> iterator_type
 
 template <std::size_t Rank>
 constexpr auto
+pyre::grid::Canonical<Rank>::begin(const index_type & step) const noexcept -> iterator_type
+{
+    return iterator_type(_shape, _order, _origin, step);
+}
+
+template <std::size_t Rank>
+constexpr auto
 pyre::grid::Canonical<Rank>::end() const noexcept -> iterator_type
 {
     return iterator_type(_shape, _order, _origin + _shape);
