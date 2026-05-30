@@ -43,6 +43,12 @@ namespace pyre::grid {
     template <typename T, int N>
     using array_t = std::array<T, N>;
 
+    // real-valued tuples, the natural result of scaling an integer tuple by a real
+    template <std::size_t N>
+    using doubles_t = std::array<double, N>;
+    template <std::size_t N>
+    using floats_t = std::array<float, N>;
+
     // sequences of integers
     template <int N>
     using make_integer_sequence = std::make_integer_sequence<int, N>;

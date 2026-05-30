@@ -103,6 +103,12 @@ namespace pyre::grid {
     template <size_t Rank>
     constexpr auto operator-(const Shape<Rank> &, const Shape<Rank> &) noexcept -> Shape<Rank>;
 
+    // unary operators
+    template <size_t Rank>
+    constexpr auto operator+(const Shape<Rank> &) noexcept -> Shape<Rank>;
+    template <size_t Rank>
+    constexpr auto operator-(const Shape<Rank> &) noexcept -> Shape<Rank>;
+
     // scaling by integers
     template <size_t Rank>
     constexpr auto operator*(const Shape<Rank> &, int) noexcept -> Shape<Rank>;
@@ -112,6 +118,26 @@ namespace pyre::grid {
     constexpr auto operator*(const Shape<Rank> &, long) noexcept -> Shape<Rank>;
     template <size_t Rank>
     constexpr auto operator*(long, const Shape<Rank> &) noexcept -> Shape<Rank>;
+
+    // division by integers
+    template <size_t Rank>
+    constexpr auto operator/(const Shape<Rank> &, int) noexcept -> Shape<Rank>;
+    template <size_t Rank>
+    constexpr auto operator/(const Shape<Rank> &, long) noexcept -> Shape<Rank>;
+
+    // scaling by reals, which promotes the result to a real-valued tuple
+    template <size_t Rank>
+    constexpr auto operator*(const Shape<Rank> &, double) noexcept -> doubles_t<Rank>;
+    template <size_t Rank>
+    constexpr auto operator*(double, const Shape<Rank> &) noexcept -> doubles_t<Rank>;
+    template <size_t Rank>
+    constexpr auto operator/(const Shape<Rank> &, double) noexcept -> doubles_t<Rank>;
+    template <size_t Rank>
+    constexpr auto operator*(const Shape<Rank> &, float) noexcept -> floats_t<Rank>;
+    template <size_t Rank>
+    constexpr auto operator*(float, const Shape<Rank> &) noexcept -> floats_t<Rank>;
+    template <size_t Rank>
+    constexpr auto operator/(const Shape<Rank> &, float) noexcept -> floats_t<Rank>;
 
     // cartesian product: concatenate two shapes into one of higher rank
     template <size_t Rank1, size_t Rank2>
@@ -158,6 +184,12 @@ namespace pyre::grid {
     template <size_t Rank>
     constexpr auto operator-(const Index<Rank> &, const Index<Rank> &) noexcept -> Index<Rank>;
 
+    // unary operators
+    template <size_t Rank>
+    constexpr auto operator+(const Index<Rank> &) noexcept -> Index<Rank>;
+    template <size_t Rank>
+    constexpr auto operator-(const Index<Rank> &) noexcept -> Index<Rank>;
+
     // scaling by integers
     template <size_t Rank>
     constexpr auto operator*(const Index<Rank> &, int) noexcept -> Index<Rank>;
@@ -167,6 +199,26 @@ namespace pyre::grid {
     constexpr auto operator*(const Index<Rank> &, long) noexcept -> Index<Rank>;
     template <size_t Rank>
     constexpr auto operator*(long, const Index<Rank> &) noexcept -> Index<Rank>;
+
+    // division by integers
+    template <size_t Rank>
+    constexpr auto operator/(const Index<Rank> &, int) noexcept -> Index<Rank>;
+    template <size_t Rank>
+    constexpr auto operator/(const Index<Rank> &, long) noexcept -> Index<Rank>;
+
+    // scaling by reals, which promotes the result to a real-valued tuple
+    template <size_t Rank>
+    constexpr auto operator*(const Index<Rank> &, double) noexcept -> doubles_t<Rank>;
+    template <size_t Rank>
+    constexpr auto operator*(double, const Index<Rank> &) noexcept -> doubles_t<Rank>;
+    template <size_t Rank>
+    constexpr auto operator/(const Index<Rank> &, double) noexcept -> doubles_t<Rank>;
+    template <size_t Rank>
+    constexpr auto operator*(const Index<Rank> &, float) noexcept -> floats_t<Rank>;
+    template <size_t Rank>
+    constexpr auto operator*(float, const Index<Rank> &) noexcept -> floats_t<Rank>;
+    template <size_t Rank>
+    constexpr auto operator/(const Index<Rank> &, float) noexcept -> floats_t<Rank>;
 
     // shift by a shape
     template <size_t Rank>
