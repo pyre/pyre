@@ -1,0 +1,91 @@
+// -*- c++ -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2026 all rights reserved
+
+// code guard
+#pragma once
+
+
+// support
+#include "DynamicIndexIterator.h"
+
+
+// construct from shape, order, and starting position; unit step
+inline
+pyre::grid::DynamicIndexIterator::DynamicIndexIterator(
+    const shape_type & shape, const order_type & order, const index_type & origin) noexcept :
+    _current { origin },
+    _shape { shape },
+    _order { order },
+    _origin { origin },
+    _step(origin.size(), 1)
+{}
+
+
+// construct with an explicit step
+inline
+pyre::grid::DynamicIndexIterator::DynamicIndexIterator(
+    const shape_type & shape, const order_type & order, const index_type & origin,
+    const index_type & step) noexcept :
+    _current { origin },
+    _shape { shape },
+    _order { order },
+    _origin { origin },
+    _step { step }
+{}
+
+
+// dereference: return the current index
+inline auto
+pyre::grid::DynamicIndexIterator::operator*() const noexcept -> reference
+{
+    return _current;
+}
+
+
+// pre-increment: advance to the next index in traversal order
+inline auto
+pyre::grid::DynamicIndexIterator::operator++() noexcept -> DynamicIndexIterator &
+{
+    const auto N = _order.size();
+    // visit axes from fastest-varying to slowest-varying, as stored in {_order}
+    for (std::size_t pos = 0; pos < N; ++pos) {
+        auto axis = _order[pos];
+        auto limit = _origin[axis] + static_cast<difference_type>(_shape[axis]);
+        // advance this axis by its step; if it stays in bounds, we are done
+        _current[axis] += _step[axis];
+        if (_current[axis] < limit) {
+            return *this;
+        }
+        // overflow: reset this axis and carry to the next
+        _current[axis] = _origin[axis];
+    }
+    // all axes overflowed: advance to the end sentinel
+    for (std::size_t i = 0; i < N; ++i) {
+        _current[i] = _origin[i] + static_cast<difference_type>(_shape[i]);
+    }
+    return *this;
+}
+
+
+// post-increment
+inline auto
+pyre::grid::DynamicIndexIterator::operator++(int) noexcept -> DynamicIndexIterator
+{
+    auto clone = *this;
+    ++(*this);
+    return clone;
+}
+
+
+// two iterators are equal when they point to the same index
+inline auto
+pyre::grid::operator==(
+    const DynamicIndexIterator & i1, const DynamicIndexIterator & i2) noexcept -> bool
+{
+    return *i1 == *i2;
+}
+
+
+// end of file

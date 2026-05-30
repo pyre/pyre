@@ -9,6 +9,8 @@
 
 // support
 #include "externals.h"
+// forward declarations
+#include "forward.h"
 
 
 // low level entities; you should probably stay away from them
@@ -28,6 +30,9 @@ namespace pyre::grid {
     // canonical packing strategy
     template <std::size_t Rank>
     using canonical_t = Canonical<Rank>;
+    // dynamic (runtime-rank) variants
+    using dynamic_index_iterator_t = DynamicIndexIterator;
+    using dynamic_canonical_t = DynamicCanonical;
 
     // the grid
     template <class packingT, class storageT>
