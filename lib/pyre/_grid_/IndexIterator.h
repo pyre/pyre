@@ -19,10 +19,14 @@ class pyre::grid::IndexIterator {
 public:
     // myself
     using self_type = IndexIterator<Rank>;
+    // my parts
+    using index_type = Index<Rank>;
+    using shape_type = Shape<Rank>;
+    using order_type = Order<Rank>;
     // iterator traits for STL compatibility
-    using value_type = Index<Rank>;
-    using reference = const Index<Rank> &;
-    using pointer = const Index<Rank> *;
+    using value_type = index_type;
+    using reference = const index_type &;
+    using pointer = const index_type *;
     using difference_type = std::ptrdiff_t;
     using iterator_category = std::forward_iterator_tag;
 
@@ -32,7 +36,7 @@ public:
     constexpr IndexIterator() noexcept = default;
     // construct from a shape, a traversal order, and a starting index
     constexpr IndexIterator(
-        const Shape<Rank> &, const Order<Rank> &, const Index<Rank> &) noexcept;
+        const shape_type &, const order_type &, const index_type &) noexcept;
 
     // default metamethods
 public:
@@ -50,10 +54,10 @@ public:
 
     // implementation details
 private:
-    Index<Rank> _current {};
-    Shape<Rank> _shape {};
-    Order<Rank> _order {};
-    Index<Rank> _origin {};
+    index_type _current {};
+    shape_type _shape {};
+    order_type _order {};
+    index_type _origin {};
 };
 
 
