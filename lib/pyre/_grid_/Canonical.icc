@@ -200,6 +200,46 @@ pyre::grid::Canonical<Rank>::box(index_type base, shape_type tile) const noexcep
 }
 
 
+// hyperplane extraction
+// fix all axes not in {FreeAxes} at {base}; the result inherits the parent's strides and nudge
+template <std::size_t Rank>
+template <std::size_t... FreeAxes>
+    requires(sizeof...(FreeAxes) <= Rank && ((FreeAxes < Rank) && ...))
+constexpr auto
+pyre::grid::Canonical<Rank>::slice(const index_type & base) const noexcept
+    -> Canonical<sizeof...(FreeAxes)>
+{
+    // the rank of the slice
+    constexpr std::size_t M = sizeof...(FreeAxes);
+    // collect the free axis indices for indexed access
+    constexpr std::array<std::size_t, M> free { FreeAxes... };
+    // aliases for the slice's types
+    using slice_t = Canonical<M>;
+    typename slice_t::shape_type sliceShape;
+    typename slice_t::strides_type sliceStrides;
+    typename slice_t::order_type sliceOrder;
+    // extract the shape and strides at each free axis
+    for (std::size_t i = 0; i < M; ++i) {
+        sliceShape[i] = _shape[free[i]];
+        sliceStrides[i] = _strides[free[i]];
+    }
+    // assign slice packing levels 0..M-1, preserving the relative order of the free axes
+    for (std::size_t i = 0; i < M; ++i) {
+        std::size_t level = 0;
+        for (std::size_t j = 0; j < M; ++j) {
+            if (_order[free[j]] < _order[free[i]]) {
+                ++level;
+            }
+        }
+        sliceOrder[i] = level;
+    }
+    // the nudge bakes in the offset contribution of all the fixed axes;
+    // default-construct the origin so all coordinates are zero
+    return slice_t(
+        sliceShape, typename slice_t::index_type {}, sliceOrder, sliceStrides, offset(base));
+}
+
+
 // static helpers
 
 // compute axis strides: stride[axis] = product of shape[other] for all faster-varying axes
