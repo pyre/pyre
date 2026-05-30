@@ -84,6 +84,24 @@ pyre::grid::Order<Rank>::operator[](size_type axis) const noexcept -> const_refe
 }
 
 
+// bounds-checked element access
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Order<Rank>::at(size_type axis) -> reference
+{
+    // delegate to the backing array
+    return _permutation.at(axis);
+}
+
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Order<Rank>::at(size_type axis) const -> const_reference
+{
+    // delegate to the backing array
+    return _permutation.at(axis);
+}
+
+
 // access to the underlying storage
 template <std::size_t Rank>
 constexpr auto
@@ -212,6 +230,56 @@ pyre::grid::Order<Rank>::cend() const noexcept -> const_iterator
 {
     // easy enough
     return _permutation.cend();
+}
+
+
+// reverse iteration support
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Order<Rank>::rbegin() noexcept -> reverse_iterator
+{
+    // easy enough
+    return _permutation.rbegin();
+}
+
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Order<Rank>::rend() noexcept -> reverse_iterator
+{
+    // easy enough
+    return _permutation.rend();
+}
+
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Order<Rank>::rbegin() const noexcept -> const_reverse_iterator
+{
+    // easy enough
+    return _permutation.rbegin();
+}
+
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Order<Rank>::rend() const noexcept -> const_reverse_iterator
+{
+    // easy enough
+    return _permutation.rend();
+}
+
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Order<Rank>::crbegin() const noexcept -> const_reverse_iterator
+{
+    // easy enough
+    return _permutation.crbegin();
+}
+
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Order<Rank>::crend() const noexcept -> const_reverse_iterator
+{
+    // easy enough
+    return _permutation.crend();
 }
 
 
