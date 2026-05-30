@@ -84,6 +84,24 @@ pyre::grid::Shape<Rank>::operator[](size_type axis) const noexcept -> const_refe
 }
 
 
+// bounds-checked element access
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Shape<Rank>::at(size_type axis) -> reference
+{
+    // delegate to the backing array
+    return _extents.at(axis);
+}
+
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Shape<Rank>::at(size_type axis) const -> const_reference
+{
+    // delegate to the backing array
+    return _extents.at(axis);
+}
+
+
 // access to the underlying storage
 template <std::size_t Rank>
 constexpr auto
@@ -116,6 +134,25 @@ pyre::grid::Shape<Rank>::cells() const noexcept -> size_type
     }
     // all done
     return cells;
+}
+
+
+// the smallest extent
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Shape<Rank>::min() const noexcept -> value_type
+{
+    // scan the extents
+    return *std::min_element(_extents.begin(), _extents.end());
+}
+
+// the largest extent
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Shape<Rank>::max() const noexcept -> value_type
+{
+    // scan the extents
+    return *std::max_element(_extents.begin(), _extents.end());
 }
 
 
@@ -214,6 +251,56 @@ pyre::grid::Shape<Rank>::cend() const noexcept -> const_iterator
 }
 
 
+// reverse iteration support
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Shape<Rank>::rbegin() noexcept -> reverse_iterator
+{
+    // easy enough
+    return _extents.rbegin();
+}
+
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Shape<Rank>::rend() noexcept -> reverse_iterator
+{
+    // easy enough
+    return _extents.rend();
+}
+
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Shape<Rank>::rbegin() const noexcept -> const_reverse_iterator
+{
+    // easy enough
+    return _extents.rbegin();
+}
+
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Shape<Rank>::rend() const noexcept -> const_reverse_iterator
+{
+    // easy enough
+    return _extents.rend();
+}
+
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Shape<Rank>::crbegin() const noexcept -> const_reverse_iterator
+{
+    // easy enough
+    return _extents.crbegin();
+}
+
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Shape<Rank>::crend() const noexcept -> const_reverse_iterator
+{
+    // easy enough
+    return _extents.crend();
+}
+
+
 // operators
 
 // inject a representation of the shape into a stream
@@ -287,6 +374,32 @@ pyre::grid::operator-(const Shape<Rank> & s1, const Shape<Rank> & s2) noexcept -
 }
 
 
+// unary plus: an exact copy
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::operator+(const Shape<Rank> & shape) noexcept -> Shape<Rank>
+{
+    // nothing to do
+    return shape;
+}
+
+// unary minus: negate every extent; note the modular arithmetic of the unsigned {value_type}
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::operator-(const Shape<Rank> & shape) noexcept -> Shape<Rank>
+{
+    // make room for the result
+    Shape<Rank> result;
+    // go through the axes
+    for (std::size_t axis = 0; axis < Rank; ++axis) {
+        // and negate each extent
+        result[axis] = -shape[axis];
+    }
+    // all done
+    return result;
+}
+
+
 // scale a shape by an {int}
 template <std::size_t Rank>
 constexpr auto
@@ -336,6 +449,123 @@ pyre::grid::operator*(long scale, const Shape<Rank> & shape) noexcept -> Shape<R
 {
     // invoke the  reference implementation
     return shape * scale;
+}
+
+
+// divide a shape by an {int}
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::operator/(const Shape<Rank> & shape, int scale) noexcept -> Shape<Rank>
+{
+    // make room for the result
+    Shape<Rank> result;
+    // go through the axes
+    for (std::size_t axis = 0; axis < Rank; ++axis) {
+        // and scale each extent
+        result[axis] = shape[axis] / static_cast<typename Shape<Rank>::value_type>(scale);
+    }
+    // all done
+    return result;
+}
+
+// divide a shape by a {long}
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::operator/(const Shape<Rank> & shape, long scale) noexcept -> Shape<Rank>
+{
+    // make room for the result
+    Shape<Rank> result;
+    // go through the axes
+    for (std::size_t axis = 0; axis < Rank; ++axis) {
+        // and scale each extent
+        result[axis] = shape[axis] / static_cast<typename Shape<Rank>::value_type>(scale);
+    }
+    // all done
+    return result;
+}
+
+
+// scale a shape by a {double}, promoting the result to reals
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::operator*(const Shape<Rank> & shape, double scale) noexcept -> doubles_t<Rank>
+{
+    // make room for the result
+    doubles_t<Rank> result;
+    // go through the axes
+    for (std::size_t axis = 0; axis < Rank; ++axis) {
+        // and scale each extent
+        result[axis] = scale * static_cast<double>(shape[axis]);
+    }
+    // all done
+    return result;
+}
+
+// multiplication commutes
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::operator*(double scale, const Shape<Rank> & shape) noexcept -> doubles_t<Rank>
+{
+    // invoke the reference implementation
+    return shape * scale;
+}
+
+// divide a shape by a {double}, promoting the result to reals
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::operator/(const Shape<Rank> & shape, double scale) noexcept -> doubles_t<Rank>
+{
+    // make room for the result
+    doubles_t<Rank> result;
+    // go through the axes
+    for (std::size_t axis = 0; axis < Rank; ++axis) {
+        // and scale each extent
+        result[axis] = static_cast<double>(shape[axis]) / scale;
+    }
+    // all done
+    return result;
+}
+
+
+// scale a shape by a {float}, promoting the result to reals
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::operator*(const Shape<Rank> & shape, float scale) noexcept -> floats_t<Rank>
+{
+    // make room for the result
+    floats_t<Rank> result;
+    // go through the axes
+    for (std::size_t axis = 0; axis < Rank; ++axis) {
+        // and scale each extent
+        result[axis] = scale * static_cast<float>(shape[axis]);
+    }
+    // all done
+    return result;
+}
+
+// multiplication commutes
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::operator*(float scale, const Shape<Rank> & shape) noexcept -> floats_t<Rank>
+{
+    // invoke the reference implementation
+    return shape * scale;
+}
+
+// divide a shape by a {float}, promoting the result to reals
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::operator/(const Shape<Rank> & shape, float scale) noexcept -> floats_t<Rank>
+{
+    // make room for the result
+    floats_t<Rank> result;
+    // go through the axes
+    for (std::size_t axis = 0; axis < Rank; ++axis) {
+        // and scale each extent
+        result[axis] = static_cast<float>(shape[axis]) / scale;
+    }
+    // all done
+    return result;
 }
 
 
