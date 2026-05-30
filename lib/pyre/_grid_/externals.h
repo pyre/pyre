@@ -17,6 +17,7 @@
 #include <ostream>
 #include <tuple>
 #include <utility>
+#include <vector>
 
 // support
 #include <pyre/journal.h>
