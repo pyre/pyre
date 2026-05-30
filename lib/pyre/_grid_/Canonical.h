@@ -91,6 +91,13 @@ public:
 public:
     [[nodiscard]] constexpr auto box(index_type, shape_type) const noexcept -> self_type;
 
+    // hyperplane extraction: fix all axes not in {FreeAxes} at {base};
+    // the result shares the parent's physical memory layout
+    template <std::size_t... FreeAxes>
+        requires(sizeof...(FreeAxes) <= Rank && ((FreeAxes < Rank) && ...))
+    [[nodiscard]] constexpr auto slice(const index_type &) const noexcept
+        -> Canonical<sizeof...(FreeAxes)>;
+
     // implementation details
 private:
     shape_type _shape {};
