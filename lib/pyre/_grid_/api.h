@@ -22,6 +22,9 @@ namespace pyre::grid {
     // index
     template <std::size_t Rank>
     using index_t = Index<Rank>;
+    // index iterator
+    template <std::size_t Rank>
+    using index_iterator_t = IndexIterator<Rank>;
 
     // the grid
     template <class packingT, class storageT>

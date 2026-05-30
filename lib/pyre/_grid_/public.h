@@ -22,6 +22,8 @@
 #include "Shape.h"
 // index
 #include "Index.h"
+// index iterator
+#include "IndexIterator.h"
 // the grid
 #include "Grid.h"
 
