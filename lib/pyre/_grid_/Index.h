@@ -34,6 +34,8 @@ public:
     // iterators
     using iterator = typename storage_type::iterator;
     using const_iterator = typename storage_type::const_iterator;
+    using reverse_iterator = typename storage_type::reverse_iterator;
+    using const_reverse_iterator = typename storage_type::const_reverse_iterator;
 
     // metamethods
 public:
@@ -67,9 +69,19 @@ public:
     constexpr auto operator[](size_type) noexcept -> reference;
     constexpr auto operator[](size_type) const noexcept -> const_reference;
 
+    // bounds-checked element access; throws {std::out_of_range}
+    constexpr auto at(size_type) -> reference;
+    constexpr auto at(size_type) const -> const_reference;
+
     // access to the underlying storage
     constexpr auto data() noexcept -> pointer;
     constexpr auto data() const noexcept -> const_pointer;
+
+    // interface
+public:
+    // the smallest and largest coordinate
+    [[nodiscard]] constexpr auto min() const noexcept -> value_type;
+    [[nodiscard]] constexpr auto max() const noexcept -> value_type;
 
     // factories
 public:
@@ -88,6 +100,15 @@ public:
     constexpr auto end() const noexcept -> const_iterator;
     constexpr auto cbegin() const noexcept -> const_iterator;
     constexpr auto cend() const noexcept -> const_iterator;
+
+    // reverse iteration support
+public:
+    constexpr auto rbegin() noexcept -> reverse_iterator;
+    constexpr auto rend() noexcept -> reverse_iterator;
+    constexpr auto rbegin() const noexcept -> const_reverse_iterator;
+    constexpr auto rend() const noexcept -> const_reverse_iterator;
+    constexpr auto crbegin() const noexcept -> const_reverse_iterator;
+    constexpr auto crend() const noexcept -> const_reverse_iterator;
 
     // implementation details
 private:
