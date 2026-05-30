@@ -22,7 +22,7 @@ public:
     // basic
     using size_type = size_t;
     // cell type and access
-    using value_type = int;
+    using value_type = std::ptrdiff_t;
     using pointer = value_type *;
     using const_pointer = const value_type *;
     using reference = value_type &;
