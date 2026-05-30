@@ -1,10 +1,10 @@
 {
     "configurations": [
         {
-            "name": "mm: linux",
+            "name": "mm: linux - x64",
             "includePath": [
                 "${workspaceFolder}/**",
-                "${env:vs_prefix_prj}/include/**",
+                "${env:mm_prefix}/include/**",
                 "${env:vs_prefix_usr}/include/**",
                 "/usr/lib/x86_64-linux-gnu/openmpi/include/**",
                 "/usr/include/hdf5/openmpi/**",
@@ -20,10 +20,10 @@
             "intelliSenseMode": "linux-gcc-x64"
         },
         {
-            "name": "mm: mac",
+            "name": "mm: mac - arm64",
             "includePath": [
                 "${workspaceFolder}/**",
-                "${env:vs_prefix_prj}/include/**",
+                "${env:mm_prefix}/include/**",
                 "${env:vs_prefix_usr}/include/**",
                 "${env:vs_prefix_sys}/include/**",
                 "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/System/Library/Frameworks/**"
