@@ -24,6 +24,8 @@
 #include "Index.h"
 // index iterator
 #include "IndexIterator.h"
+// canonical packing strategy
+#include "Canonical.h"
 // the grid
 #include "Grid.h"
 
