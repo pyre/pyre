@@ -72,6 +72,22 @@ pyre::grid::Index<Rank>::operator[](size_type axis) const noexcept -> const_refe
 }
 
 
+// bounds-checked element access
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Index<Rank>::at(size_type axis) -> reference
+{
+    return _coords.at(axis);
+}
+
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Index<Rank>::at(size_type axis) const -> const_reference
+{
+    return _coords.at(axis);
+}
+
+
 // access to the underlying storage
 template <std::size_t Rank>
 constexpr auto
@@ -85,6 +101,22 @@ constexpr auto
 pyre::grid::Index<Rank>::data() const noexcept -> const_pointer
 {
     return _coords.data();
+}
+
+
+// interface
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Index<Rank>::min() const noexcept -> value_type
+{
+    return *std::min_element(_coords.begin(), _coords.end());
+}
+
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Index<Rank>::max() const noexcept -> value_type
+{
+    return *std::max_element(_coords.begin(), _coords.end());
 }
 
 
@@ -163,6 +195,50 @@ pyre::grid::Index<Rank>::cend() const noexcept -> const_iterator
 }
 
 
+// reverse iteration support
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Index<Rank>::rbegin() noexcept -> reverse_iterator
+{
+    return _coords.rbegin();
+}
+
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Index<Rank>::rend() noexcept -> reverse_iterator
+{
+    return _coords.rend();
+}
+
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Index<Rank>::rbegin() const noexcept -> const_reverse_iterator
+{
+    return _coords.rbegin();
+}
+
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Index<Rank>::rend() const noexcept -> const_reverse_iterator
+{
+    return _coords.rend();
+}
+
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Index<Rank>::crbegin() const noexcept -> const_reverse_iterator
+{
+    return _coords.crbegin();
+}
+
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Index<Rank>::crend() const noexcept -> const_reverse_iterator
+{
+    return _coords.crend();
+}
+
+
 // operators
 
 // inject a representation of the index into a stream
@@ -219,6 +295,27 @@ pyre::grid::operator-(const Index<Rank> & i1, const Index<Rank> & i2) noexcept -
 }
 
 
+// unary plus: an exact copy
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::operator+(const Index<Rank> & index) noexcept -> Index<Rank>
+{
+    return index;
+}
+
+// unary minus: negate every coordinate
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::operator-(const Index<Rank> & index) noexcept -> Index<Rank>
+{
+    Index<Rank> result;
+    for (std::size_t axis = 0; axis < Rank; ++axis) {
+        result[axis] = -index[axis];
+    }
+    return result;
+}
+
+
 // scale an index by an {int}
 template <std::size_t Rank>
 constexpr auto
@@ -258,6 +355,97 @@ constexpr auto
 pyre::grid::operator*(long scale, const Index<Rank> & index) noexcept -> Index<Rank>
 {
     return index * scale;
+}
+
+
+// divide an index by an {int}
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::operator/(const Index<Rank> & index, int scale) noexcept -> Index<Rank>
+{
+    Index<Rank> result;
+    for (std::size_t axis = 0; axis < Rank; ++axis) {
+        result[axis] = index[axis] / scale;
+    }
+    return result;
+}
+
+// divide an index by a {long}
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::operator/(const Index<Rank> & index, long scale) noexcept -> Index<Rank>
+{
+    Index<Rank> result;
+    for (std::size_t axis = 0; axis < Rank; ++axis) {
+        result[axis] = index[axis] / static_cast<typename Index<Rank>::value_type>(scale);
+    }
+    return result;
+}
+
+
+// scale an index by a {double}, promoting the result to reals
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::operator*(const Index<Rank> & index, double scale) noexcept -> doubles_t<Rank>
+{
+    doubles_t<Rank> result;
+    for (std::size_t axis = 0; axis < Rank; ++axis) {
+        result[axis] = scale * static_cast<double>(index[axis]);
+    }
+    return result;
+}
+
+// multiplication commutes
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::operator*(double scale, const Index<Rank> & index) noexcept -> doubles_t<Rank>
+{
+    return index * scale;
+}
+
+// divide an index by a {double}, promoting the result to reals
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::operator/(const Index<Rank> & index, double scale) noexcept -> doubles_t<Rank>
+{
+    doubles_t<Rank> result;
+    for (std::size_t axis = 0; axis < Rank; ++axis) {
+        result[axis] = static_cast<double>(index[axis]) / scale;
+    }
+    return result;
+}
+
+
+// scale an index by a {float}, promoting the result to reals
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::operator*(const Index<Rank> & index, float scale) noexcept -> floats_t<Rank>
+{
+    floats_t<Rank> result;
+    for (std::size_t axis = 0; axis < Rank; ++axis) {
+        result[axis] = scale * static_cast<float>(index[axis]);
+    }
+    return result;
+}
+
+// multiplication commutes
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::operator*(float scale, const Index<Rank> & index) noexcept -> floats_t<Rank>
+{
+    return index * scale;
+}
+
+// divide an index by a {float}, promoting the result to reals
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::operator/(const Index<Rank> & index, float scale) noexcept -> floats_t<Rank>
+{
+    floats_t<Rank> result;
+    for (std::size_t axis = 0; axis < Rank; ++axis) {
+        result[axis] = static_cast<float>(index[axis]) / scale;
+    }
+    return result;
 }
 
 
