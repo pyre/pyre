@@ -26,6 +26,9 @@
 #include "IndexIterator.h"
 // canonical packing strategy
 #include "Canonical.h"
+// dynamic (runtime-rank) variants
+#include "DynamicIndexIterator.h"
+#include "DynamicCanonical.h"
 // the grid
 #include "Grid.h"
 

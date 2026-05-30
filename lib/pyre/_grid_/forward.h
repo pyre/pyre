@@ -34,6 +34,10 @@ namespace pyre::grid {
     template <size_t Rank>
     class Canonical;
 
+    // dynamic (runtime-rank) variants for Python interoperability
+    class DynamicIndexIterator;
+    class DynamicCanonical;
+
     // the grid
     template <concepts::PackingStrategy P, concepts::StorageStrategy S>
     class Grid;

@@ -1,0 +1,271 @@
+// -*- c++ -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2026 all rights reserved
+
+// code guard
+#pragma once
+
+
+// support
+#include "DynamicCanonical.h"
+
+
+// constructors
+
+inline
+pyre::grid::DynamicCanonical::DynamicCanonical(const shape_type & shape) :
+    DynamicCanonical(shape, index_type(shape.size(), 0), _defaultOrder(shape.size()))
+{}
+
+inline
+pyre::grid::DynamicCanonical::DynamicCanonical(
+    const shape_type & shape, const index_type & origin) :
+    DynamicCanonical(shape, origin, _defaultOrder(shape.size()))
+{}
+
+inline
+pyre::grid::DynamicCanonical::DynamicCanonical(
+    const shape_type & shape, const index_type & origin, const order_type & order) :
+    _shape { shape },
+    _order { order },
+    _origin { origin },
+    _strides { _initStrides(shape, order) },
+    _nudge { -_initShift(origin, _strides) }
+{}
+
+inline
+pyre::grid::DynamicCanonical::DynamicCanonical(
+    const shape_type & shape, const index_type & origin, const order_type & order,
+    const strides_type & strides, difference_type nudge) :
+    _shape { shape },
+    _order { order },
+    _origin { origin },
+    _strides { strides },
+    _nudge { nudge }
+{}
+
+
+// accessors
+
+inline auto
+pyre::grid::DynamicCanonical::rank() const noexcept -> size_type
+{
+    return _shape.size();
+}
+
+inline auto
+pyre::grid::DynamicCanonical::shape() const noexcept -> const shape_type &
+{
+    return _shape;
+}
+
+inline auto
+pyre::grid::DynamicCanonical::origin() const noexcept -> const index_type &
+{
+    return _origin;
+}
+
+inline auto
+pyre::grid::DynamicCanonical::order() const noexcept -> const order_type &
+{
+    return _order;
+}
+
+inline auto
+pyre::grid::DynamicCanonical::strides() const noexcept -> const strides_type &
+{
+    return _strides;
+}
+
+inline auto
+pyre::grid::DynamicCanonical::nudge() const noexcept -> difference_type
+{
+    return _nudge;
+}
+
+inline auto
+pyre::grid::DynamicCanonical::cells() const noexcept -> size_type
+{
+    size_type n = 1;
+    for (auto s : _shape) {
+        n *= s;
+    }
+    return n;
+}
+
+
+// mutator: reorder
+
+inline auto
+pyre::grid::DynamicCanonical::order(const order_type & o) const -> DynamicCanonical
+{
+    return DynamicCanonical(_shape, _origin, o);
+}
+
+
+// packing isomorphism
+
+inline auto
+pyre::grid::DynamicCanonical::offset(const index_type & idx) const -> difference_type
+{
+    difference_type result = 0;
+    for (size_type axis = 0; axis < rank(); ++axis) {
+        result += idx[axis] * static_cast<difference_type>(_strides[axis]);
+    }
+    return result + _nudge;
+}
+
+inline auto
+pyre::grid::DynamicCanonical::index(difference_type off) const -> index_type
+{
+    const auto N = rank();
+    index_type result(N);
+    // decompose from slowest-varying axis to fastest
+    for (std::ptrdiff_t level = static_cast<std::ptrdiff_t>(N) - 1; level >= 0; --level) {
+        for (size_type axis = 0; axis < N; ++axis) {
+            if (static_cast<std::ptrdiff_t>(_order[axis]) == level) {
+                auto stride = static_cast<difference_type>(_strides[axis]);
+                result[axis] = off / stride;
+                off %= stride;
+                break;
+            }
+        }
+    }
+    // shift by origin
+    for (size_type i = 0; i < N; ++i) {
+        result[i] += _origin[i];
+    }
+    return result;
+}
+
+inline auto
+pyre::grid::DynamicCanonical::operator[](const index_type & idx) const -> difference_type
+{
+    return offset(idx);
+}
+
+inline auto
+pyre::grid::DynamicCanonical::operator[](difference_type off) const -> index_type
+{
+    return index(off);
+}
+
+
+// iteration
+
+inline auto
+pyre::grid::DynamicCanonical::begin() const -> iterator_type
+{
+    return iterator_type(_shape, _order, _origin);
+}
+
+inline auto
+pyre::grid::DynamicCanonical::begin(const index_type & step) const -> iterator_type
+{
+    return iterator_type(_shape, _order, _origin, step);
+}
+
+inline auto
+pyre::grid::DynamicCanonical::end() const -> iterator_type
+{
+    // compute the end sentinel: origin + shape along each axis
+    index_type sentinel(rank());
+    for (size_type i = 0; i < rank(); ++i) {
+        sentinel[i] = _origin[i] + static_cast<difference_type>(_shape[i]);
+    }
+    return iterator_type(_shape, _order, sentinel);
+}
+
+
+// sub-layouts
+
+inline auto
+pyre::grid::DynamicCanonical::box(index_type base, shape_type tile) const -> DynamicCanonical
+{
+    const auto N = rank();
+    for (size_type axis = 0; axis < N; ++axis) {
+        auto lo = _origin[axis];
+        auto hi = _origin[axis] + static_cast<difference_type>(_shape[axis]) - 1;
+        base[axis] = std::max(base[axis], lo);
+        base[axis] = std::min(base[axis], hi);
+        auto avail = static_cast<size_type>(
+            _origin[axis] + static_cast<difference_type>(_shape[axis]) - base[axis]);
+        tile[axis] = std::max(tile[axis], size_type { 1 });
+        tile[axis] = std::min(tile[axis], avail);
+    }
+    return DynamicCanonical(tile, base, _order, _strides, _nudge);
+}
+
+inline auto
+pyre::grid::DynamicCanonical::slice(
+    const index_type & base, const std::vector<size_type> & free) const -> DynamicCanonical
+{
+    const auto M = free.size();
+    shape_type sliceShape(M);
+    strides_type sliceStrides(M);
+    order_type sliceOrder(M);
+    // extract shape and strides at each free axis
+    for (size_type i = 0; i < M; ++i) {
+        sliceShape[i] = _shape[free[i]];
+        sliceStrides[i] = _strides[free[i]];
+    }
+    // preserve relative packing order of the free axes
+    for (size_type i = 0; i < M; ++i) {
+        size_type level = 0;
+        for (size_type j = 0; j < M; ++j) {
+            if (_order[free[j]] < _order[free[i]]) {
+                ++level;
+            }
+        }
+        sliceOrder[i] = level;
+    }
+    // the nudge bakes in the contribution of the fixed axes
+    return DynamicCanonical(sliceShape, index_type(M, 0), sliceOrder, sliceStrides, offset(base));
+}
+
+
+// static helpers
+
+// c-style default order: order[axis] = rank - 1 - axis
+inline auto
+pyre::grid::DynamicCanonical::_defaultOrder(size_type n) -> order_type
+{
+    order_type order(n);
+    for (size_type i = 0; i < n; ++i) {
+        order[i] = n - 1 - i;
+    }
+    return order;
+}
+
+// stride[axis] = product of shape[other] for all other axes that vary faster
+inline auto
+pyre::grid::DynamicCanonical::_initStrides(
+    const shape_type & shape, const order_type & order) -> strides_type
+{
+    const auto N = shape.size();
+    strides_type strides(N, 1);
+    for (size_type axis = 0; axis < N; ++axis) {
+        for (size_type other = 0; other < N; ++other) {
+            if (order[other] < order[axis]) {
+                strides[axis] *= shape[other];
+            }
+        }
+    }
+    return strides;
+}
+
+// the shift whose negation gives the nudge mapping origin to offset zero
+inline auto
+pyre::grid::DynamicCanonical::_initShift(
+    const index_type & origin, const strides_type & strides) -> difference_type
+{
+    difference_type shift = 0;
+    for (size_type i = 0; i < origin.size(); ++i) {
+        shift += origin[i] * static_cast<difference_type>(strides[i]);
+    }
+    return shift;
+}
+
+
+// end of file
