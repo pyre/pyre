@@ -26,9 +26,22 @@ namespace pyre::grid {
     template <size_t Rank>
     class Index;
 
+    // index iterator
+    template <size_t Rank>
+    class IndexIterator;
+
     // the grid
     template <concepts::PackingStrategy P, concepts::StorageStrategy S>
     class Grid;
+} // namespace pyre::grid
+
+
+// operators on {IndexIterator}
+namespace pyre::grid {
+    // equality: two iterators are equal when they point to the same index
+    template <size_t Rank>
+    constexpr auto operator==(const IndexIterator<Rank> &, const IndexIterator<Rank> &) noexcept
+        -> bool;
 } // namespace pyre::grid
 
 

@@ -1,0 +1,79 @@
+// -*- c++ -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2026 all rights reserved
+
+// code guard
+#pragma once
+
+
+// support
+#include "IndexIterator.h"
+
+
+// construct from a shape, a traversal order, and a starting position
+template <std::size_t Rank>
+constexpr pyre::grid::IndexIterator<Rank>::IndexIterator(
+    const Shape<Rank> & shape, const Order<Rank> & order, const Index<Rank> & origin) noexcept :
+    _current { origin },
+    _shape { shape },
+    _order { order },
+    _origin { origin }
+{}
+
+
+// iterator protocol
+
+// dereference: return the current index
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::IndexIterator<Rank>::operator*() const noexcept -> reference
+{
+    return _current;
+}
+
+
+// pre-increment: advance to the next index in traversal order
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::IndexIterator<Rank>::operator++() noexcept -> self_type &
+{
+    // visit axes from fastest-varying to slowest-varying, as stored in {_order}
+    for (auto axis : _order) {
+        // the upper bound for this axis
+        auto limit = _origin[axis] + static_cast<typename Index<Rank>::value_type>(_shape[axis]);
+        // increment this axis; if it stays within bounds, we are done
+        if (++_current[axis] < limit) {
+            return *this;
+        }
+        // overflow: reset this axis to its origin value and carry to the next
+        _current[axis] = _origin[axis];
+    }
+    // all axes overflowed: advance to the end sentinel
+    _current = _origin + _shape;
+    return *this;
+}
+
+
+// post-increment
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::IndexIterator<Rank>::operator++(int) noexcept -> self_type
+{
+    auto clone = *this;
+    ++(*this);
+    return clone;
+}
+
+
+// two iterators are equal when they point to the same index
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::operator==(
+    const IndexIterator<Rank> & i1, const IndexIterator<Rank> & i2) noexcept -> bool
+{
+    return *i1 == *i2;
+}
+
+
+// end of file
