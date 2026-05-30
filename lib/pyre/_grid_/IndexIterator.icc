@@ -18,7 +18,20 @@ constexpr pyre::grid::IndexIterator<Rank>::IndexIterator(
     _current { origin },
     _shape { shape },
     _order { order },
-    _origin { origin }
+    _origin { origin },
+    _step { index_type::fill(1) }
+{}
+
+// construct with an explicit step along each axis
+template <std::size_t Rank>
+constexpr pyre::grid::IndexIterator<Rank>::IndexIterator(
+    const shape_type & shape, const order_type & order, const index_type & origin,
+    const index_type & step) noexcept :
+    _current { origin },
+    _shape { shape },
+    _order { order },
+    _origin { origin },
+    _step { step }
 {}
 
 
@@ -42,8 +55,9 @@ pyre::grid::IndexIterator<Rank>::operator++() noexcept -> self_type &
     for (auto axis : _order) {
         // the upper bound for this axis
         auto limit = _origin[axis] + static_cast<typename index_type::value_type>(_shape[axis]);
-        // increment this axis; if it stays within bounds, we are done
-        if (++_current[axis] < limit) {
+        // advance this axis by the step; if it stays within bounds, we are done
+        _current[axis] += _step[axis];
+        if (_current[axis] < limit) {
             return *this;
         }
         // overflow: reset this axis to its origin value and carry to the next
