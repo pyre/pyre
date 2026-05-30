@@ -1,0 +1,232 @@
+// -*- c++ -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2026 all rights reserved
+
+// code guard
+#pragma once
+
+
+// support
+#include "Canonical.h"
+
+
+// primary constructor: infer strides and nudge
+template <std::size_t Rank>
+constexpr pyre::grid::Canonical<Rank>::Canonical(
+    const shape_type & shape, const index_type & origin, const order_type & order) noexcept :
+    _shape { shape },
+    _order { order },
+    _origin { origin },
+    _strides { _initStrides(shape, order) },
+    _nudge { -_initShift(origin, _strides) }
+{}
+
+
+// full constructor: caller supplies the complete layout description
+template <std::size_t Rank>
+constexpr pyre::grid::Canonical<Rank>::Canonical(
+    const shape_type & shape,
+    const index_type & origin,
+    const order_type & order,
+    const strides_type & strides,
+    difference_type nudge) noexcept :
+    _shape { shape },
+    _order { order },
+    _origin { origin },
+    _strides { strides },
+    _nudge { nudge }
+{}
+
+
+// accessors
+
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Canonical<Rank>::shape() const noexcept -> shape_type
+{
+    return _shape;
+}
+
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Canonical<Rank>::origin() const noexcept -> index_type
+{
+    return _origin;
+}
+
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Canonical<Rank>::order() const noexcept -> order_type
+{
+    return _order;
+}
+
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Canonical<Rank>::strides() const noexcept -> strides_type
+{
+    return _strides;
+}
+
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Canonical<Rank>::nudge() const noexcept -> difference_type
+{
+    return _nudge;
+}
+
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Canonical<Rank>::cells() const noexcept -> size_type
+{
+    return _shape.cells();
+}
+
+template <std::size_t Rank>
+consteval auto
+pyre::grid::Canonical<Rank>::rank() noexcept -> size_type
+{
+    return Rank;
+}
+
+
+// mutator: reorder, returning a new {Canonical} with fresh strides and nudge
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Canonical<Rank>::order(const order_type & o) const noexcept -> self_type
+{
+    return self_type { _shape, _origin, o };
+}
+
+
+// packing isomorphism
+
+// map an index to its flat offset
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Canonical<Rank>::offset(const index_type & index) const noexcept -> difference_type
+{
+    difference_type result = 0;
+    for (std::size_t axis = 0; axis < Rank; ++axis) {
+        result += index[axis] * static_cast<difference_type>(_strides[axis]);
+    }
+    return result + _nudge;
+}
+
+
+// recover the index from a flat offset
+// the offset equals sum_i((idx[i] - origin[i]) * strides[i]); decompose by strides
+// from slowest-varying axis to fastest to recover (idx - origin), then shift by origin
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Canonical<Rank>::index(difference_type off) const noexcept -> index_type
+{
+    index_type result;
+    for (std::ptrdiff_t level = Rank - 1; level >= 0; --level) {
+        for (std::size_t axis = 0; axis < Rank; ++axis) {
+            if (static_cast<std::ptrdiff_t>(_order[axis]) == level) {
+                auto stride = static_cast<difference_type>(_strides[axis]);
+                result[axis] = off / stride;
+                off %= stride;
+                break;
+            }
+        }
+    }
+    return result + _origin;
+}
+
+
+// syntactic sugar
+
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Canonical<Rank>::operator[](const index_type & index) const noexcept -> difference_type
+{
+    return offset(index);
+}
+
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Canonical<Rank>::operator[](difference_type off) const noexcept -> index_type
+{
+    return index(off);
+}
+
+
+// iteration: visit every index in the box in packing order
+
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Canonical<Rank>::begin() const noexcept -> iterator_type
+{
+    return iterator_type(_shape, _order, _origin);
+}
+
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Canonical<Rank>::end() const noexcept -> iterator_type
+{
+    return iterator_type(_shape, _order, _origin + _shape);
+}
+
+
+// sub-layout: clamp {base} and {tile} to the current box, inherit strides and nudge
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Canonical<Rank>::box(index_type base, shape_type tile) const noexcept -> self_type
+{
+    for (std::size_t axis = 0; axis < Rank; ++axis) {
+        // clamp base[axis] to [origin[axis], origin[axis] + shape[axis] - 1]
+        auto lo = _origin[axis];
+        auto hi = _origin[axis] + static_cast<difference_type>(_shape[axis]) - 1;
+        base[axis] = std::max(base[axis], lo);
+        base[axis] = std::min(base[axis], hi);
+        // clamp tile[axis] to [1, remaining extent from base]
+        auto avail = static_cast<typename shape_type::value_type>(
+            _origin[axis] + static_cast<difference_type>(_shape[axis]) - base[axis]);
+        tile[axis] = std::max(tile[axis], typename shape_type::value_type { 1 });
+        tile[axis] = std::min(tile[axis], avail);
+    }
+    // build the sub-layout with inherited physical strides and nudge
+    return self_type { tile, base, _order, _strides, _nudge };
+}
+
+
+// static helpers
+
+// compute axis strides: stride[axis] = product of shape[other] for all faster-varying axes
+// axis {a} is faster than axis {b} when order[a] < order[b]
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Canonical<Rank>::_initStrides(
+    const shape_type & shape, const order_type & order) noexcept -> strides_type
+{
+    strides_type strides;
+    for (std::size_t axis = 0; axis < Rank; ++axis) {
+        strides[axis] = 1;
+        for (std::size_t other = 0; other < Rank; ++other) {
+            if (order[other] < order[axis]) {
+                strides[axis] *= shape[other];
+            }
+        }
+    }
+    return strides;
+}
+
+
+// compute the shift such that nudge = -shift maps origin to flat offset zero
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Canonical<Rank>::_initShift(
+    const index_type & origin, const strides_type & strides) noexcept -> difference_type
+{
+    difference_type shift = 0;
+    for (std::size_t axis = 0; axis < Rank; ++axis) {
+        shift += origin[axis] * static_cast<difference_type>(strides[axis]);
+    }
+    return shift;
+}
+
+
+// end of file
