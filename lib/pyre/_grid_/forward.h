@@ -30,6 +30,10 @@ namespace pyre::grid {
     template <size_t Rank>
     class IndexIterator;
 
+    // canonical packing strategy
+    template <size_t Rank>
+    class Canonical;
+
     // the grid
     template <concepts::PackingStrategy P, concepts::StorageStrategy S>
     class Grid;
