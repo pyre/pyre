@@ -14,7 +14,7 @@
 // construct from a shape, a traversal order, and a starting position
 template <std::size_t Rank>
 constexpr pyre::grid::IndexIterator<Rank>::IndexIterator(
-    const Shape<Rank> & shape, const Order<Rank> & order, const Index<Rank> & origin) noexcept :
+    const shape_type & shape, const order_type & order, const index_type & origin) noexcept :
     _current { origin },
     _shape { shape },
     _order { order },
@@ -41,7 +41,7 @@ pyre::grid::IndexIterator<Rank>::operator++() noexcept -> self_type &
     // visit axes from fastest-varying to slowest-varying, as stored in {_order}
     for (auto axis : _order) {
         // the upper bound for this axis
-        auto limit = _origin[axis] + static_cast<typename Index<Rank>::value_type>(_shape[axis]);
+        auto limit = _origin[axis] + static_cast<typename index_type::value_type>(_shape[axis]);
         // increment this axis; if it stays within bounds, we are done
         if (++_current[axis] < limit) {
             return *this;
