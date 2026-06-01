@@ -8,6 +8,9 @@
 import re
 import urllib.parse
 
+# the case insensitive header mapping
+from .Headers import Headers
+
 
 # class declaration
 class Request:
@@ -66,7 +69,7 @@ class Request:
             self.url = urllib.parse.unquote(url.decode(encoding))
             self.version = (int(major), int(minor))
             # initialize my headers
-            self.headers = {}
+            self.headers = Headers()
             # update the cursor
             offset = match.end()
 
@@ -83,7 +86,7 @@ class Request:
             # decode
             key = key.decode(encoding)
             value = value.decode(encoding)
-            # store
+            # store; {Headers} takes care of the case insensitive lookups
             self.headers[key] = value
             # update the cursor
             offset = match.end()

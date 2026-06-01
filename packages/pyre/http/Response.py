@@ -6,10 +6,11 @@
 
 # externals
 import time  # to generate timestamps
-import collections  # for ordered dict
 
 # my superclass
 from ..nexus.exceptions import NexusError
+# the case insensitive header mapping
+from .Headers import Headers
 
 
 # the base class for all responses
@@ -48,7 +49,7 @@ class Response(NexusError):
         # the encoding
         self.encoding = encoding
         # build the headers
-        headers = collections.OrderedDict()
+        headers = Headers()
         #  decorate
         headers["Server"] = server.name
         headers["Date"] = self.timestamp()
