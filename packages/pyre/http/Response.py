@@ -36,6 +36,7 @@ class Response(NexusError):
 
     alive = True  # keep the connection alive after serving this response
     abort = False  # terminate the process after serving this response
+    streaming = False  # route me down the server's streaming path instead of render-once
     code = 0  # the exit code to pass to the shell upon exiting
 
     # meta-methods

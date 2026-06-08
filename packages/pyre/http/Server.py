@@ -18,6 +18,8 @@ class Server(pyre.nexus.server, family="pyre.nexus.servers.http"):
     # types
     from .Request import Request as request
     from .Response import Response as response
+    from .EventStream import EventStream as eventStream
+    from .Hub import Hub
 
     # exceptions
     from . import exceptions, responses, documents
@@ -44,6 +46,18 @@ class Server(pyre.nexus.server, family="pyre.nexus.servers.http"):
         return pyre.version()
 
     # protocol obligations
+    @pyre.export(tip="register this service with the nexus")
+    def activate(self, app, dispatcher):
+        """
+        Register with the nexus and build the event hub
+        """
+        # chain up to grab a port and register for connection requests
+        super().activate(app=app, dispatcher=dispatcher)
+        # now that the dispatcher is available, build my event hub
+        self.hub = self.Hub(dispatcher=self.dispatcher)
+        # all done
+        return
+
     @pyre.export(tip="respond to the peer request")
     def process(self, channel):
         """
@@ -80,6 +94,10 @@ class Server(pyre.nexus.server, family="pyre.nexus.servers.http"):
             application.debug.log(f"connection from {channel.peer} was closed")
             # close the connection
             channel.close()
+            # if this channel was a streaming subscriber, drop it from the hub
+            if self.hub is not None:
+                # so we stop buffering events for a connection that is gone
+                self.hub.unsubscribe(channel)
             # check whether we know this peer
             try:
                 # in which case, forget him
@@ -164,6 +182,11 @@ class Server(pyre.nexus.server, family="pyre.nexus.servers.http"):
         return self.application.pyre_respond(server=self, request=request)
 
     def respond(self, channel, request, response):
+        # if this is a streaming response
+        if response.streaming:
+            # hand the channel to the hub instead of rendering and writing it once
+            return self.stream(channel=channel, request=request, response=response)
+
         # attempt to
         try:
             # ask the renderer to put together the byte stream
@@ -203,6 +226,25 @@ class Server(pyre.nexus.server, family="pyre.nexus.servers.http"):
         # otherwise, let the response document decide whether we should keep the channel alive
         return response.alive
 
+    def stream(self, channel, request, response):
+        """
+        Begin a server-sent event stream on {channel} by handing it to the hub
+        """
+        # render the preamble: the status line and headers, with no body and no Content-Length,
+        # terminated by the blank line that separates the headers from the event stream
+        preamble = b"\r\n".join(self.renderer.preamble(document=response)) + b"\r\n\r\n"
+        # switch the channel to non-blocking so the hub can perform partial sends
+        channel.setblocking(False)
+        # get my hub
+        hub = self.hub
+        # subscribe this channel to the response's topic
+        hub.subscribe(channel=channel, topic=response.topic)
+        # queue the preamble; the hub arms the channel and delivers it on the same path as
+        # every later event, so a streaming channel is never touched by the blocking writer
+        hub.send(channel=channel, data=preamble)
+        # let the response decide whether the connection stays open
+        return response.alive
+
     # meta-methods
     def __init__(self, **kwds):
         # chain up
@@ -215,6 +257,7 @@ class Server(pyre.nexus.server, family="pyre.nexus.servers.http"):
     # implementation details
     # private data
     requests = None
+    hub = None
     # constants
     MAX_BYTES = 1024 * 1024
 

@@ -101,4 +101,28 @@ class HTTP(pyre.component, implements=Language):
         yield ''
 
 
+    # implementation details
+    def preamble(self, document):
+        """
+        Render the status line and headers of a streaming {document}, with no body and no
+        {Content-Length}
+        """
+        # unpack
+        code = document.code
+        status = document.status
+        version = document.version
+
+        # decide which protocol to use
+        protocol = self.version if self.version < version else version
+        # turn it into a string
+        protocol = "{}.{}".format(*protocol)
+        # start the response
+        yield f"HTTP/{protocol} {code} {status}".encode(self.encoding, 'strict')
+
+        # assemble the headers and send them off
+        yield from self.header(document=document)
+        # all done
+        return
+
+
 # end of file
