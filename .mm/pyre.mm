@@ -73,7 +73,6 @@ pyre.lib.extern := \
     journal.lib \
     ${if ${findstring hdf5,$(extern.available)}, \
         hdf5 \
-        ${if ${findstring mpi,$(hdf5.parallel)},mpi} \
     } \
 
 
@@ -106,7 +105,7 @@ h5.ext.stem := h5
 h5.ext.pkg := pyre.pkg
 h5.ext.wraps := pyre.lib
 h5.ext.capsule :=
-h5.ext.extern = journal.lib hdf5 ${if ${findstring mpi,$(hdf5.parallel)},mpi} pybind11 python
+h5.ext.extern = journal.lib hdf5 pybind11 python
 h5.ext.lib.c++.flags += $(pyre.lib.c++.flags)
 h5.ext.lib.c++.defines += $(pyre.lib.c++.defines)
 h5.ext.lib.prerequisites += journal.lib # pyre.lib is added automatically
