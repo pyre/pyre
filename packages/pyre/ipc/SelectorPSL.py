@@ -153,25 +153,25 @@ class SelectorPSL(Scheduler, family="pyre.ipc.dispatchers.psl", implements=Dispa
             for key, mask in selection:
                 # get the corresponding file descriptor
                 fd = key.fileobj
-                # and the events we are watching
-                event = masks[fd]
+                # the bits whose handler piles drain to empty during this pass
+                cleared = 0
                 # N.B.:
                 #     a decision had to be made regarding the order that handlers are invoked
                 #     this implementation calls the {read} handlers before the {write} handlers
                 # if the {mask} indicates {fd} is ready for read
                 if mask & selectors.EVENT_READ:
-                    # invoke the write handlers
+                    # invoke the read handlers
                     reschedule = self.dispatch(index=read, key=fd)
                     # if there is something to reschedule
                     if reschedule:
-                        # update the {write} map
+                        # update the {read} map
                         read[fd] = reschedule
                     # otherwise
                     else:
                         # remove this file descriptor from the pile
                         read.pop(fd, 0)
-                        # clear the {write} bit from its mask
-                        event &= ~selectors.EVENT_READ
+                        # and mark the read bit for clearing
+                        cleared |= selectors.EVENT_READ
                 # if the {mask} indicates {fd} is ready for write
                 if mask & selectors.EVENT_WRITE:
                     # invoke the write handlers
@@ -184,22 +184,32 @@ class SelectorPSL(Scheduler, family="pyre.ipc.dispatchers.psl", implements=Dispa
                     else:
                         # remove this file descriptor from the pile
                         write.pop(fd, 0)
-                        # clear the {write} bit from its mask
-                        event &= ~selectors.EVENT_WRITE
-                # if the {event} mask of this {fd} is now trivial
-                if event == 0:
-                    # unregister it
-                    selector.unregister(fileobj=fd)
-                    # and remove it from the mask table
-                    masks.pop(fd, 0)
-                # otherwise
-                else:
-                    # if the event has been modified
-                    if masks[fd] != event:
+                        # and mark the write bit for clearing
+                        cleared |= selectors.EVENT_WRITE
+                # recompute the mask from the live table, not a pre-dispatch snapshot: a handler
+                # may have registered fresh interest on this same {fd} while it ran (e.g. a read
+                # handler arming a write), and that addition must survive
+                event = masks[fd] & ~cleared
+                # carefully, because a handler may have closed {fd} during dispatch
+                try:
+                    # if the {event} mask of this {fd} is now trivial
+                    if event == 0:
+                        # unregister it
+                        selector.unregister(fileobj=fd)
+                        # and remove it from the mask table
+                        masks.pop(fd, 0)
+                    # otherwise, if the registration changed
+                    elif masks[fd] != event:
                         # modify the selector registration
                         selector.modify(fileobj=fd, events=event)
                         # and update the table
                         masks[fd] = event
+                # if {fd} was closed out from under us
+                except (KeyError, ValueError, OSError):
+                    # forget it entirely
+                    read.pop(fd, 0)
+                    write.pop(fd, 0)
+                    masks.pop(fd, 0)
 
             # raise any overdue alarms
             self.awaken()
