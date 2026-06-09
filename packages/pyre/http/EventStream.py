@@ -56,6 +56,15 @@ class EventStream(Response):
         # nothing to render
         return b""
 
+    # the keep-alive frame the server's hub broadcasts on a timer to hold idle connections open
+    @classmethod
+    def keepalive(cls):
+        """
+        Frame an SSE comment that keeps the connection warm without dispatching a client event
+        """
+        # a colon-led line is a comment the client ignores; the blank line ends the frame
+        return b": keepalive\n\n"
+
     # meta-methods
     def __init__(self, topic="", **kwds):
         # chain up
