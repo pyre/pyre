@@ -72,6 +72,21 @@ headers and owns the wire framing; it has zero application awareness.
 - `event(data, *, name=None, id=None, retry=None) -> bytes` — formats one SSE
   frame: `id: …\nevent: …\ndata: …\n\n`. Pure transport.
 
+### Protocol version — HTTP/1.1
+
+The `weaver/HTTP.py` renderer negotiates `min(renderer.version, response.version)` for the status
+line, and the renderer was capped at `1.0` — so every response went out as `HTTP/1.0` even though
+`Response` already declares `1.1`. That cap is wrong for the streaming path: an event stream carries
+**no `Content-Length`** and never self-closes, and under HTTP/1.0 `Connection: keep-alive` without a
+length is self-contradictory — the only body delimiter 1.0 offers is connection close. HTTP/1.1
+makes persistent connections the default and cleanly frames an open-ended stream, so the renderer
+now prefers **`1.1`**. The render-once path is unaffected: it always sets `Content-Length`.
+
+`render` and `preamble` share this status-line + negotiation logic, so `render` delegates to
+`preamble` for the status line and headers, then appends the blank-line separator and body — the
+body is assembled *first* so `Content-Length` is set before the headers go out, leaving the wire
+bytes byte-identical to the original render-once output.
+
 ### `Hub` — the subscriber registry and outbound pump
 
 Owned by the server (`self.hub`), constructed with the dispatcher reference (the
@@ -263,7 +278,8 @@ Keeping `Hub` topic-aware now is what makes that a layer rather than a refit.
 - `http/Server.py` — `activate` override builds `self.hub`; streaming branch + `stream()` in
   `respond()`; `hub.unsubscribe` in the disconnect branch; `eventStream`/`Hub` exposed as types.
 - `http/Response.py` — `streaming = False`.
-- `weaver/HTTP.py` — body-less `preamble()` rendering.
+- `weaver/HTTP.py` — body-less `preamble()` rendering; `render()` reuses it for the status line and
+  headers; renderer prefers HTTP/1.1 (the SSE keep-alive stream needs 1.1 semantics).
 - `ipc/SelectorPSL.py` — `watch()` fix: recompute the fd mask from the live table after dispatch
   (so write interest armed by a read handler survives) + tolerate an fd closed mid-dispatch.
 - No `ipc/SocketTCP.py` change — the inherited `socket.send` is already the partial non-blocking
