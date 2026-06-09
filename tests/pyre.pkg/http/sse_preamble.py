@@ -35,7 +35,7 @@ def test():
     wire = b"\r\n".join(renderer.preamble(document=stream)) + b"\r\n\r\n"
 
     # the status line opens the response
-    assert wire.startswith(b"HTTP/1.0 200 OK\r\n")
+    assert wire.startswith(b"HTTP/1.1 200 OK\r\n")
     # the SSE content type rides along
     assert b"Content-Type: text/event-stream\r\n" in wire
     # the stream forbids caching
