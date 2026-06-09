@@ -8,6 +8,9 @@
 import journal
 import pyre
 
+# the unit of time for the keep-alive interval
+from pyre.units.SI import second
+
 
 # my declaration
 class Server(pyre.nexus.server, family="pyre.nexus.servers.http"):
@@ -27,6 +30,14 @@ class Server(pyre.nexus.server, family="pyre.nexus.servers.http"):
     # user configurable state
     renderer = pyre.weaver.language(default="http")
     renderer.doc = "the renderer of the server responses to client requests"
+
+    heartbeat = pyre.properties.dimensional(default=15 * second)
+    heartbeat.doc = "how often to send a keep-alive on held-open streaming connections"
+
+    streamCapacity = pyre.properties.int(default=1024)
+    streamCapacity.doc = (
+        "the most frames a streaming subscriber may queue before it is dropped"
+    )
 
     # public state
     @property
@@ -53,8 +64,14 @@ class Server(pyre.nexus.server, family="pyre.nexus.servers.http"):
         """
         # chain up to grab a port and register for connection requests
         super().activate(app=app, dispatcher=dispatcher)
-        # now that the dispatcher is available, build my event hub
-        self.hub = self.Hub(dispatcher=self.dispatcher)
+        # now that the dispatcher is available, build my event hub, wiring in the keep-alive
+        # broadcast and the per-subscriber buffer bound
+        self.hub = self.Hub(
+            dispatcher=self.dispatcher,
+            capacity=self.streamCapacity,
+            interval=self.heartbeat,
+            keepalive=self.eventStream.keepalive(),
+        )
         # all done
         return
 
