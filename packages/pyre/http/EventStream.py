@@ -70,6 +70,9 @@ class EventStream(Response):
         headers["Cache-Control"] = "no-cache"
         # hold the connection open
         headers["Connection"] = "keep-alive"
+        # tell reverse proxies (nginx and friends) not to buffer the stream, so events reach the
+        # client promptly instead of being held back until the connection closes
+        headers["X-Accel-Buffering"] = "no"
         # all done
         return
 
