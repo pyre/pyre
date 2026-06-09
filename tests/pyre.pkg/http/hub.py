@@ -6,15 +6,16 @@
 
 
 """
-Verify the http {Hub} arms a channel exactly once, drains with partial sends, re-arms once its
-queue empties, and cleans up on unsubscribe
+Verify the http {Hub}: it arms a channel once, drains with partial sends, re-arms once empty,
+cleans up on unsubscribe, coalesces identical frames, drops a subscriber that overflows its queue,
+and broadcasts a recurring keep-alive while it has subscribers
 """
 
 # the registry under test
 from pyre.http.Hub import Hub
 
 
-# a stand-in dispatcher that records every channel armed for write-readiness
+# a stand-in dispatcher that records every channel armed for write-readiness and every alarm set
 class Dispatcher:
     """
     The slice of the dispatcher interface the hub uses
@@ -22,12 +23,14 @@ class Dispatcher:
 
     # meta-methods
     def __init__(self):
-        # start with an empty record of armings
+        # the channels armed for write-readiness
         self.armed = []
+        # the alarms scheduled, as (interval, handler) pairs
+        self.alarms = []
         # all done
         return
 
-    # the only dispatcher method the hub calls
+    # arm a channel for write-readiness
     def whenWriteReady(self, channel, call):
         """
         Record that {channel} was armed with the {call} handler
@@ -37,11 +40,21 @@ class Dispatcher:
         # all done
         return
 
+    # schedule a timer
+    def alarm(self, interval, call):
+        """
+        Record that an alarm was scheduled to fire {call} after {interval}
+        """
+        # remember the alarm so the test can drive it
+        self.alarms.append((interval, call))
+        # all done
+        return
+
 
 # a stand-in channel whose socket accepts at most {limit} bytes per send ({None} accepts all)
 class Channel:
     """
-    A socket-like endpoint with a controllable per-send capacity
+    A socket-like endpoint with a controllable per-send capacity that records when it is closed
     """
 
     # meta-methods
@@ -50,6 +63,8 @@ class Channel:
         self.buffer = b""
         # how many bytes a single send will accept
         self.limit = limit
+        # whether the channel has been closed
+        self.closed = False
         # all done
         return
 
@@ -64,6 +79,16 @@ class Channel:
         self.buffer += data[:n]
         # and report the count, as a real socket does
         return n
+
+    # close the connection
+    def close(self):
+        """
+        Mark the channel as closed
+        """
+        # note the closure
+        self.closed = True
+        # all done
+        return
 
 
 def test():
@@ -127,6 +152,72 @@ def test():
     assert channel not in hub._armed
     # and sending to it now does nothing, rather than raising
     hub.send(channel=channel, data=b"x")
+
+    # coalescing skips an identical frame already pending at the tail
+    # a fresh dispatcher and hub
+    dispatcher = Dispatcher()
+    hub = Hub(dispatcher=dispatcher)
+    # a channel
+    channel = Channel()
+    # subscribe it
+    hub.subscribe(channel=channel)
+    # publish the same frame twice, coalescing
+    hub.publish(b"same", coalesce=True)
+    hub.publish(b"same", coalesce=True)
+    # only one copy is pending
+    assert len(hub._queues[channel]) == 1
+    # a different frame is still queued
+    hub.publish(b"other", coalesce=True)
+    assert len(hub._queues[channel]) == 2
+
+    # a subscriber that overflows its queue is dropped and closed
+    # a hub that holds at most two frames per subscriber
+    dispatcher = Dispatcher()
+    hub = Hub(dispatcher=dispatcher, capacity=2)
+    # a channel that never drains (its socket is not flushed during this block)
+    channel = Channel()
+    # subscribe it
+    hub.subscribe(channel=channel)
+    # fill the queue to capacity
+    hub.send(channel=channel, data=b"a")
+    hub.send(channel=channel, data=b"b")
+    # the queue is full
+    assert len(hub._queues[channel]) == 2
+    # the next send overflows, so the subscriber is dropped and its connection closed
+    hub.send(channel=channel, data=b"c")
+    # it is gone from the hub
+    assert channel not in hub._queues
+    # and its connection was closed
+    assert channel.closed is True
+
+    # the keep-alive heartbeat runs while there are subscribers and lapses when there are none
+    # a hub configured with a keep-alive frame and an interval
+    dispatcher = Dispatcher()
+    hub = Hub(dispatcher=dispatcher, keepalive=b": keepalive\n\n", interval=1)
+    # before anyone subscribes, no timer is scheduled
+    assert len(dispatcher.alarms) == 0
+    # the first subscriber starts the timer
+    first = Channel()
+    hub.subscribe(channel=first)
+    assert len(dispatcher.alarms) == 1
+    # a second subscriber does not start a second timer
+    second = Channel()
+    hub.subscribe(channel=second)
+    assert len(dispatcher.alarms) == 1
+    # firing the timer broadcasts the keep-alive to every subscriber and asks to recur
+    interval, beat = dispatcher.alarms[0]
+    assert beat(timestamp=0) == 1
+    # each subscriber has the keep-alive queued
+    assert hub._queues[first][-1] == b": keepalive\n\n"
+    assert hub._queues[second][-1] == b": keepalive\n\n"
+    # with no subscribers left, the next tick declines to recur
+    hub.unsubscribe(first)
+    hub.unsubscribe(second)
+    assert beat(timestamp=0) is None
+    # and a fresh subscription restarts the timer
+    third = Channel()
+    hub.subscribe(channel=third)
+    assert len(dispatcher.alarms) == 2
 
     # all done
     return
