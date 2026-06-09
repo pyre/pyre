@@ -38,28 +38,13 @@ class HTTP(pyre.component, implements=Language):
         """
         Render the document
         """
-        # unpack
-        code = document.code
-        headers = document.headers
-        status = document.status
-        version = document.version
-
-        # decide which protocol to use
-        protocol = self.version if self.version < version else version
-        # turn it into a string
-        protocol = "{}.{}".format(*protocol)
-        # start the response
-        opening = f"HTTP/{protocol} {code} {status}".encode(self.encoding, 'strict')
-        # and send it off
-        yield opening
-
         # assemble the payload
         page = self.body(document=document, **kwds)
-        # inform the client about the size of the payload
-        headers['Content-Length'] = len(page)
+        # inform the client about the size of the payload, before the headers go out
+        document.headers['Content-Length'] = len(page)
 
-        # assemble the headers and send them off
-        yield from self.header(document=document)
+        # emit the status line and headers
+        yield from self.preamble(document=document)
         # mark the end of the headers
         yield b''
         # send the page
