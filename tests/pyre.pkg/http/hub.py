@@ -219,6 +219,42 @@ def test():
     hub.subscribe(channel=third)
     assert len(dispatcher.alarms) == 2
 
+    # unsubscribe touches only the leaving channel's topics and prunes the ones left empty
+    # a fresh dispatcher and hub
+    dispatcher = Dispatcher()
+    hub = Hub(dispatcher=dispatcher)
+    # one channel on topic "x", another on topic "y"
+    here = Channel()
+    there = Channel()
+    hub.subscribe(channel=here, topic="x")
+    hub.subscribe(channel=there, topic="y")
+    # drop the first
+    hub.unsubscribe(here)
+    # it is gone from the reverse index and its queue
+    assert here not in hub._topics
+    assert here not in hub._queues
+    # its now-empty topic is pruned entirely
+    assert "x" not in hub._subscribers
+    # the other channel and its topic are untouched
+    assert there in hub._subscribers["y"]
+    assert hub._topics[there] == {"y"}
+
+    # a channel on several topics is removed from all of them at once
+    # a fresh dispatcher and hub
+    dispatcher = Dispatcher()
+    hub = Hub(dispatcher=dispatcher)
+    # one channel joining two topics
+    both = Channel()
+    hub.subscribe(channel=both, topic="a")
+    hub.subscribe(channel=both, topic="b")
+    # the reverse index records both
+    assert hub._topics[both] == {"a", "b"}
+    # unsubscribe removes it from both and prunes both now-empty topics
+    hub.unsubscribe(both)
+    assert "a" not in hub._subscribers
+    assert "b" not in hub._subscribers
+    assert both not in hub._topics
+
     # all done
     return
 
