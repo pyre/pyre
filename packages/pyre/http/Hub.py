@@ -27,6 +27,9 @@ class Hub:
         """
         # add the channel to the topic's subscriber set
         self._subscribers[topic].add(channel)
+        # and record the reverse edge, so we can find this channel's topics again in O(1) at
+        # unsubscribe time instead of scanning every topic
+        self._topics.setdefault(channel, set()).add(topic)
         # make sure it has an outbound queue
         self._queues.setdefault(channel, collections.deque())
         # make sure the keep-alive timer is running, now that there is someone to feed
@@ -36,12 +39,20 @@ class Hub:
 
     def unsubscribe(self, channel):
         """
-        Drop {channel} from every topic, discard its queue, and forget it is armed
+        Drop {channel} from every topic it joined, discard its queue, and forget it is armed
         """
-        # remove it from each topic's subscriber set
-        for subscribers in self._subscribers.values():
-            # quietly, whether or not it is present
-            subscribers.discard(channel)
+        # consult the reverse index for exactly the topics this channel joined, and forget them
+        for topic in self._topics.pop(channel, ()):
+            # find that topic's subscriber set
+            subscribers = self._subscribers.get(topic)
+            # if it is still around
+            if subscribers is not None:
+                # remove this channel from it
+                subscribers.discard(channel)
+                # and if that leaves the topic with no subscribers
+                if not subscribers:
+                    # prune it, so short-lived topics do not pile up empty sets forever
+                    del self._subscribers[topic]
         # discard its outbound queue
         self._queues.pop(channel, None)
         # and its armed flag
@@ -158,8 +169,11 @@ class Hub:
         # both must be set for the heartbeat to run
         self._interval = interval
         self._keepalive = keepalive
-        # the topic -> set of subscribed channels map
+        # the topic -> set of subscribed channels map, consulted by publish
         self._subscribers = collections.defaultdict(set)
+        # its reverse, the channel -> set of joined topics map, consulted by unsubscribe so a
+        # disconnect touches only the topics that channel actually joined
+        self._topics = {}
         # the channel -> outbound byte queue map
         self._queues = {}
         # the set of channels currently registered for write-readiness
@@ -245,6 +259,7 @@ class Hub:
     _interval = None
     _keepalive = None
     _subscribers = None
+    _topics = None
     _queues = None
     _armed = None
     _beating = False
