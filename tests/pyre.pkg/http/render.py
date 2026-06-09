@@ -50,7 +50,7 @@ def test():
     wire = b"\r\n".join(renderer.render(document=page))
 
     # the status line opens the response
-    assert wire.startswith(b"HTTP/1.0 200 OK\r\n")
+    assert wire.startswith(b"HTTP/1.1 200 OK\r\n")
     # the renderer sizes the body and advertises it
     assert b"Content-Length: 15\r\n" in wire
     # a blank line separates the headers from the body, which arrives last
