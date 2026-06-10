@@ -67,11 +67,11 @@ class Exit(OK):
     abort = True
 
     # metamethods
-    def __init__(self, code=OK.code, **kwds):
+    def __init__(self, exitCode=0, **kwds):
         # chain up
         super().__init__(**kwds)
         # set my exit code
-        self.code = code
+        self.exitCode = exitCode
         # all done
         return
 

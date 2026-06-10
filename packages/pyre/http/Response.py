@@ -9,6 +9,7 @@ import time  # to generate timestamps
 
 # my superclass
 from ..nexus.exceptions import NexusError
+
 # the case insensitive header mapping
 from .Headers import Headers
 
@@ -27,17 +28,28 @@ class Response(NexusError):
     # the work...
 
     # public data
-    code = None  # a numeric code indicating the type of HTTP response
-    status = ""  # a very short description of the type of HTTP response
-    server = None  # the server that accepted the client request
-    headers = None  # meta data about the response
-    encoding = "utf-8"  # the default encoding for the response payload
-    version = (1, 1)  # the HTTP version spoken here
+    # a numeric code indicating the type of HTTP response
+    code = None
+    # a very short description of the type of HTTP response
+    status = ""
+    # the server that accepted the client request
+    server = None
+    # meta data about the response
+    headers = None
+    # the default encoding for the response payload
+    encoding = "utf-8"
+    # the HTTP version spoken here
+    version = (1, 1)
 
-    alive = True  # keep the connection alive after serving this response
-    abort = False  # terminate the process after serving this response
-    streaming = False  # route me down the server's streaming path instead of render-once
-    code = 0  # the exit code to pass to the shell upon exiting
+    # keep the connection alive after serving this response
+    alive = True
+    # route me down the server's streaming path instead of render-once
+    streaming = False
+
+    # terminate the process after serving this response
+    abort = False
+    # the code to pass to the shell upon exiting
+    exitCode = 0
 
     # meta-methods
     def __init__(self, server, version=version, encoding=encoding, **kwds):

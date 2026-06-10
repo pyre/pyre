@@ -238,7 +238,7 @@ class Server(pyre.nexus.server, family="pyre.nexus.servers.http"):
         # if the application wants to terminate
         if response.abort:
             # do it
-            raise SystemExit(response.code)
+            raise SystemExit(response.exitCode)
 
         # otherwise, let the response document decide whether we should keep the channel alive
         return response.alive
