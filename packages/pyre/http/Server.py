@@ -126,13 +126,14 @@ class Server(pyre.nexus.server, family="pyre.nexus.servers.http"):
             # stop listening
             return False
 
-        # well, there is data to process; if we have a pending request
-        try:
-            # get it
-            request = self.requests[channel]
-        # otherwise
-        except KeyError:
-            # make a new one
+        # well, there is data to process; pick up any request parked from an earlier read on this
+        # channel, unparking it as we take it. this {pop} is also the fix for response-crossing on a
+        # kept-alive connection: a completed request is never left behind for the NEXT request to
+        # inherit -- it is re-parked below, in the {if not complete} branch, only while still partial
+        request = self.requests.pop(channel, None)
+        # if nothing was parked for this channel
+        if request is None:
+            # this is a brand new request, so make one
             request = self.request()
 
         # attempt to
