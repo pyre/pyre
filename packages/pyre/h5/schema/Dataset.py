@@ -45,8 +45,31 @@ class Dataset(Descriptor):
         # record my types
         self.memtype = memtype
         self.disktype = disktype
+        # the constraints my value must satisfy; populated by clients after construction
+        self.constraints = []
         # all done
         return
+
+    # value processing
+    def process(self, value, **kwds):
+        """
+        Coerce {value} to my type and then check it against my constraints
+
+        Constraints live on datasets, leveraging the typed value pipeline; groups carry
+        no value and therefore no constraints.
+        """
+        # leave {None} alone; an unset value has nothing to coerce or constrain
+        if value is None:
+            # all done
+            return None
+        # let my type coerce the {value}
+        value = super().process(value=value, **kwds)
+        # give each constraint a chance to reject the value
+        for constraint in self.constraints:
+            # a violation raises {pyre.constraints.ConstraintViolationError}
+            value = constraint(value=value, **kwds)
+        # hand back the processed value
+        return value
 
     # representation
     def __str__(self):

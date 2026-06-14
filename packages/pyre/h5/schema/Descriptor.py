@@ -15,12 +15,16 @@ class Descriptor:
     """
 
     # metamethods
-    def __init__(self, name: typing.Optional[str] = None, **kwds):
+    def __init__(
+        self, name: typing.Optional[str] = None, optional: bool = False, **kwds
+    ):
         # chain up
         super().__init__(**kwds)
         # set my name; this does not have to be the name by which I am known to my container,
         # since valid h5 group member names may not be valid python identifiers
         self._pyre_name = name
+        # whether my presence is optional rather than contracted by my declaration
+        self._pyre_optional = optional
         # all done
         return
 
@@ -101,6 +105,11 @@ class Descriptor:
 
     # implementation details
     _pyre_name: typing.Optional[str] = None
+    # the absolute mount point of a root descriptor; {None} for interior nodes, whose
+    # location is derived from the attribute name to which they are bound
+    _pyre_location: typing.Optional[str] = None
+    # whether my presence in a realized product is optional rather than contracted
+    _pyre_optional: bool = False
 
 
 # end of file
