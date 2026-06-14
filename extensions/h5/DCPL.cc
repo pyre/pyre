@@ -194,6 +194,37 @@ pyre::h5::py::dcpl(py::module & m)
         &DCPL::setNbit,
         // the docstring
         "use nbit compression");
+    // shuffle
+    cls.def(
+        // the name
+        "setShuffle",
+        // the implementation
+        &DCPL::setShuffle,
+        // the docstring
+        "use the shuffle filter to improve compression");
+    // fletcher32
+    cls.def(
+        // the name
+        "setFletcher32",
+        // the implementation
+        &DCPL::setFletcher32,
+        // the docstring
+        "use the fletcher32 checksum filter for error detection");
+    // scaleoffset
+    cls.def(
+        // the name
+        "setScaleoffset",
+        // the implementation; the C++ wrapper omits scaleoffset, so go through the C API
+        [](const DCPL & self, H5Z_SO_scale_type_t scaleType, int scaleFactor) -> void {
+            // engage the filter on my underlying property list
+            H5Pset_scaleoffset(self.getId(), scaleType, scaleFactor);
+            // all done
+            return;
+        },
+        // the signature
+        "scaleType"_a, "scaleFactor"_a,
+        // the docstring
+        "use the scale-offset filter with the given {scaleType} and {scaleFactor}");
 
 
     // all done

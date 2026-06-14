@@ -48,6 +48,12 @@ pyre::h5::py::enums(py::module & m)
         .value("virtual", H5D_VIRTUAL)
         .value("layouts", H5D_NLAYOUTS);
 
+    // scale-offset filter scaling strategies
+    py::enum_<H5Z_SO_scale_type_t>(m, "ScaleType", "the scale-offset filter scaling strategies")
+        .value("float_dscale", H5Z_SO_FLOAT_DSCALE)
+        .value("float_escale", H5Z_SO_FLOAT_ESCALE)
+        .value("int", H5Z_SO_INT);
+
     // file space handling strategies
     py::enum_<H5F_fspace_strategy_t>(m, "FilespaceStrategy", "the file space strategies")
         .value("fsm_aggr", H5F_FSPACE_STRATEGY_FSM_AGGR)
