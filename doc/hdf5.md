@@ -556,6 +556,73 @@ Open naming/design items flagged during this pass:
   likely mechanism is `pyre.calc.Const` at the value layer; it needs design
   before it can be attached to a schema descriptor.
 
+## Roadmap and sequencing
+
+Two efforts are in flight; they are deliberately ordered.
+
+1. **Close the writer loop (current focus).** Make the write path realize a
+   schema-defined data product to disk. **Goal post:** mock up a realistic
+   RSLC/GSLC pair carrying one or two rasters whose **shape is under programmatic
+   control**, so they can seed `qed` performance measurements. This exercises the
+   schema → assemble → bind-values → persist pipeline end to end, including the
+   reactive shape-schema (Dimension 2).
+
+2. **Decouple pyre from the HDF5 C++ layer (next).** Replace the dependency on
+   the `H5::*` C++ API with a thin, pyre-owned `pyre::h5` layer over the HDF5 C
+   API. Deferred until the writer loop is closed; the binding gaps that motivate
+   it (no `setScaleoffset`, no native complex / float16 predefined types in the
+   C++ wrapper) are not on the critical path for the writer.
+
+## Replacing the HDF5 C++ layer (assessment, 2026-06-14)
+
+A standing question: HDF5's own C++ layer feels unmaintained and visibly lags
+the C API. Should pyre own a thin C++ layer over the C API instead?
+
+**What the HDF5 C++ layer is.** ~20k lines (`c++/src`) covering the full API, but
+mechanically thin — every method is one C call plus throw-on-error, atop a
+per-class exception hierarchy. It lags the C API: the `setScaleoffset`, native
+complex, and float16 gaps hit this session are all present in C, absent in C++.
+(Reference checkouts: `~/forks/hdf5`, `~/github/hdf5`; C++ layer in `c++/src`.)
+
+**pyre's actual dependency surface (the number that matters).** pyre's whole h5
+footprint is ~4.7k lines of pybind (`extensions/h5`) + ~660 lines of grid-pull
+(`lib/pyre/h5`). It touches ~26 `H5::` classes, but 161 of those references are
+`H5::PredType` — i.e. predefined-type *constants* (`H5T_NATIVE_*`), plain C
+macros needing no wrapping, only exposure. The real surface is ~10 core classes
+and **~69 distinct methods**, each a one-line C call.
+
+**Effort to roll our own.** Moderate, not a 20k-line bite — we reimplement
+pyre's subset: an RAII `Identifier` base, then File / Group / DataSet /
+DataSpace / Attribute / the DataType hierarchy / the property lists. ~69 thin
+methods, with errors flowing through `journal` (deleting the `H5::*Exception`
+hierarchy) and predefined types exposed as C constants (deleting the 161-ref
+`PredType` machinery). Estimate ~2–3k lines of modern pyre C++. One genuinely
+careful piece: `hid_t` lifetime/refcounting RAII (~one class). One subtle piece:
+datatype memory↔disk mapping — already partly done in `lib/pyre/h5` and the
+`typed/` mixins.
+
+**Payoff.** New datatypes/filters become one-line additions; errors are
+pyre-native; the object model can fit the schema/api split directly; no more
+waiting on the C++ wrapper.
+
+### Phase-1 plan (a de-risking spike)
+
+Build `pyre::h5` class-by-class *behind* the existing pybind layer, repointing
+bindings one class at a time, with the existing h5 test suite as the safety net —
+never a big-bang rewrite. Phase 1 validates the approach on the trickiest
+foundation plus one thin leaf:
+
+1. **`Identifier` (RAII core).** Wrap `hid_t` with correct open/close and
+   reference counting — the one piece the C++ layer genuinely earns its keep on.
+   Get this right and the rest is mechanical.
+2. **`DataSpace` (a self-contained leaf).** Small, no datatype-conversion
+   subtlety; exercises create / select / extent — a clean first end-to-end proof.
+3. **Repoint the `DataSpace` binding** to `pyre::h5::DataSpace`; keep the h5 test
+   suite green.
+
+If Phase 1 holds up, proceed: File/Group/DataSet → DataType hierarchy →
+property lists → Attribute, each its own staged swap.
+
 ## Glossary
 
 - **schema / descriptor** — handle-free structural metadata describing a group
