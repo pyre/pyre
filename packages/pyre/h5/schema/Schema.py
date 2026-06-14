@@ -22,15 +22,31 @@ class Schema(AttributeClassifier):
     """
 
     # metamethods
-    def __new__(cls, name: str, bases: typing.Sequence[type], attributes: dict, **kwds):
+    def __new__(
+        cls,
+        name: str,
+        bases: typing.Sequence[type],
+        attributes: dict,
+        *,
+        location: typing.Optional[str] = None,
+        **kwds,
+    ):
         """
         Build the class record of a new h5 group
+
+        The optional {location} declares the absolute mount point of a root group, e.g.
+        '/science/LSAR'. It is needed only at the root: the mount point of every other node
+        is determined by the attribute name to which its descriptor is bound.
         """
         # build the record
         record = super().__new__(cls, name, bases, attributes, **kwds)
         # resolve the group static structure
         record._pyre_resolve(attributes=attributes)
-        # all dons
+        # if this group declares an explicit mount point
+        if location is not None:
+            # record it; subclasses inherit it unless they declare their own
+            record._pyre_location = location
+        # all done
         return record
 
     # implementation details
