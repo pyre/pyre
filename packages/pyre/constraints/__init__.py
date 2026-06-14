@@ -165,6 +165,17 @@ def isNot(constraint):
     return Not(constraint)
 
 
+def isNotEmpty():
+    """
+    Check that the given container has at least one element
+    """
+    # get the factory
+    from .NonEmpty import NonEmpty
+
+    # build the constraint and return it
+    return NonEmpty()
+
+
 def isPositive():
     """
     Check that the given value is greater than or equal to zero
