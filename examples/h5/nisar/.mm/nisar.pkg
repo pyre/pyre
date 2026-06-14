@@ -1,0 +1,13 @@
+# -*- makefile -*-
+#
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2026 all rights reserved
+
+
+# metadata for the nisar python package
+# its name matches the name of the project, so it will get set correctly by default
+# its path relative to the project
+nisar.pkg.root := pkg/nisar/
+
+
+# end of file
