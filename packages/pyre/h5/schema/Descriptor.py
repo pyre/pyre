@@ -38,6 +38,31 @@ class Descriptor:
         # all done
         return
 
+    # documentation support, consistent with pyre traits
+    # a short description of my purpose
+    tip = ""
+
+    # wire {doc} to {__doc__} so the builtin {help} can decorate descriptors properly;
+    # groups and bespoke dataset types are classes, so {doc} falls through to their class
+    # docstring for free, while generic datasets get an explicit {doc} from their author
+    @property
+    def doc(self):
+        """
+        Return my documentation string
+        """
+        # the builtin docstring is my documentation
+        return self.__doc__
+
+    @doc.setter
+    def doc(self, text):
+        """
+        Store {text} as my documentation string
+        """
+        # store it where the builtin {help} will find it
+        self.__doc__ = text
+        # all done
+        return
+
     # framework hooks
     # name binding
     def _pyre_bind(self, name: str):
