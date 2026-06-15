@@ -16,10 +16,7 @@ from .Identification import Identification
 # the NISAR Range-Doppler Single Look Complex product
 class RSLC(lsar):
     """
-    The NISAR Range-Doppler Single Look Complex (RSLC) product
-
-    Rooted at /science/LSAR (inherited from {lsar}); carries the band-level
-    {identification} and the RSLC product group, in radar geometry.
+    The RSLC product specification
     """
 
     # specialize the identification with the fixed product type

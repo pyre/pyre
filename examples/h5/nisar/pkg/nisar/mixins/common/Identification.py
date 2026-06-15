@@ -16,7 +16,7 @@ class Identification(h5.schema.group):
 
     Individual products derive their own local subclass to nail down and freeze
     the fields that are fixed for that product type (see e.g. the product-local
-    {Identification} subclasses under {products/rslc} and {products/gslc}). When a
+    {Identification} subclasses under {schema/rslc} and {schema/gslc}). When a
     field is specialized, the descriptor is redeclared locally rather than mutated
     in place, since the inherited descriptor is a shared class attribute.
     """
