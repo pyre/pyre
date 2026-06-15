@@ -24,6 +24,9 @@ def test():
     # it mounts at the L-band root
     assert spec._pyre_location == "/science/LSAR"
 
+    # and, being rooted at {schema.Root}, it carries an index of named shape dimensions
+    assert spec._pyre_shapes is not None
+
     # identification: mission default and the fixed product type
     ident = spec._pyre_find("identification")
     assert ident._pyre_get("missionId").default == "NISAR"
