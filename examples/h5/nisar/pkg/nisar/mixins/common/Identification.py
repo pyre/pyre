@@ -24,15 +24,15 @@ class Identification(h5.schema.group):
     # the mission that produced the data; fixed for the whole program
     missionId = h5.schema.str()
     missionId.default = "NISAR"
-    missionId.__doc__ = "the name of the mission"
+    missionId.doc = "the name of the mission"
 
     # the kind of product; products fix this in their own subclass
     productType = h5.schema.str()
-    productType.__doc__ = "the type of the data product"
+    productType.doc = "the type of the data product"
 
     # the version of the product specification
     productVersion = h5.schema.str()
-    productVersion.__doc__ = "the version of the data product specification"
+    productVersion.doc = "the version of the data product specification"
 
     # the frequency sub-bands carried by this product; a non-empty subset of {"A", "B"}
     listOfFrequencies = h5.schema.strings()
@@ -40,27 +40,27 @@ class Identification(h5.schema.group):
         constraints.isSubset(choices={"A", "B"}),
         constraints.isNotEmpty(),
     ]
-    listOfFrequencies.__doc__ = "the frequency sub-bands present in this product; from {'A', 'B'}"
+    listOfFrequencies.doc = "the frequency sub-bands present in this product; from {'A', 'B'}"
 
     # the orbit
     absoluteOrbitNumber = h5.schema.int()
-    absoluteOrbitNumber.__doc__ = "the absolute orbit number"
+    absoluteOrbitNumber.doc = "the absolute orbit number"
 
     # the track
     trackNumber = h5.schema.int()
-    trackNumber.__doc__ = "the track number"
+    trackNumber.doc = "the track number"
 
     # the frame
     frameNumber = h5.schema.int()
-    frameNumber.__doc__ = "the frame number"
+    frameNumber.doc = "the frame number"
 
     # the antenna pointing
     lookDirection = h5.schema.str()
-    lookDirection.__doc__ = "the look direction: 'left' or 'right'"
+    lookDirection.doc = "the look direction: 'left' or 'right'"
 
     # the direction of travel
     orbitPassDirection = h5.schema.str()
-    orbitPassDirection.__doc__ = "the orbit pass direction: 'ascending' or 'descending'"
+    orbitPassDirection.doc = "the orbit pass direction: 'ascending' or 'descending'"
 
 
 # end of file

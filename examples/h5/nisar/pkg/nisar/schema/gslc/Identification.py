@@ -25,7 +25,7 @@ class Identification(identification):
     # the product type is fixed for GSLC
     productType = h5.schema.str()
     productType.default = "GSLC"
-    productType.__doc__ = "the product type, fixed for GSLC"
+    productType.doc = "the product type, fixed for GSLC"
 
 
 # end of file

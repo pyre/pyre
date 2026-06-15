@@ -21,11 +21,11 @@ class RSLC(lsar):
 
     # specialize the identification with the fixed product type
     identification = Identification()
-    identification.__doc__ = "the identification metadata"
+    identification.doc = "the identification metadata"
 
     # the product group at /science/LSAR/RSLC, in radar coordinates
     RSLC = radarCoordinates()
-    RSLC.__doc__ = "the RSLC product data, in radar geometry"
+    RSLC.doc = "the RSLC product data, in radar geometry"
 
 
 # end of file

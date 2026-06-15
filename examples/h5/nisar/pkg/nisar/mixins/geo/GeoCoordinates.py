@@ -29,7 +29,7 @@ class GeoCoordinates(h5.schema.group):
 
     # the geocoded imagery, by frequency
     grids = Grids()
-    grids.__doc__ = "the geocoded imagery, organized by frequency"
+    grids.doc = "the geocoded imagery, organized by frequency"
 
 
 # end of file

@@ -28,7 +28,7 @@ class RadarCoordinates(h5.schema.group):
 
     # the radar-geometry imagery, by frequency
     swaths = Swaths()
-    swaths.__doc__ = "the radar-geometry imagery, organized by frequency"
+    swaths.doc = "the radar-geometry imagery, organized by frequency"
 
 
 # end of file

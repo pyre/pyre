@@ -21,11 +21,11 @@ class GSLC(lsar):
 
     # specialize the identification with the fixed product type
     identification = Identification()
-    identification.__doc__ = "the identification metadata"
+    identification.doc = "the identification metadata"
 
     # the product group at /science/LSAR/GSLC, in geocoded coordinates
     GSLC = geoCoordinates()
-    GSLC.__doc__ = "the GSLC product data, in geocoded geometry"
+    GSLC.doc = "the GSLC product data, in geocoded geometry"
 
 
 # end of file
