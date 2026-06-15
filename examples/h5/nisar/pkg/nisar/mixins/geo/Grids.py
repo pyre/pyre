@@ -24,17 +24,17 @@ class Grids(h5.schema.group):
 
     # the frequency sub-bands; both optional, presence driven by listOfFrequencies
     frequencyA = frequency(optional=True)
-    frequencyA.__doc__ = "the frequency A sub-band"
+    frequencyA.doc = "the frequency A sub-band"
 
     frequencyB = frequency(optional=True)
-    frequencyB.__doc__ = "the frequency B sub-band"
+    frequencyB.doc = "the frequency B sub-band"
 
     # the map projection coordinate axes; one dimensional, extent free
     xCoordinates = h5.schema.array(schema=h5.schema.float(), shape=[...])
-    xCoordinates.__doc__ = "the projected x (easting) coordinates of the map grid"
+    xCoordinates.doc = "the projected x (easting) coordinates of the map grid"
 
     yCoordinates = h5.schema.array(schema=h5.schema.float(), shape=[...])
-    yCoordinates.__doc__ = "the projected y (northing) coordinates of the map grid"
+    yCoordinates.doc = "the projected y (northing) coordinates of the map grid"
 
 
 # end of file

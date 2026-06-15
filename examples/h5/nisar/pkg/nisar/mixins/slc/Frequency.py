@@ -30,22 +30,22 @@ class Frequency(h5.schema.group):
         constraints.isSubset(choices={"HH", "HV", "VH", "VV"}),
         constraints.isNotEmpty(),
     ]
-    listOfPolarizations.__doc__ = "the polarizations present in this frequency"
+    listOfPolarizations.doc = "the polarizations present in this frequency"
 
     # the channels; all optional, presence driven by listOfPolarizations
     # the co-polarized channels
     HH = SLC(optional=True)
-    HH.__doc__ = "the HH polarization"
+    HH.doc = "the HH polarization"
 
     VV = SLC(optional=True)
-    VV.__doc__ = "the VV polarization"
+    VV.doc = "the VV polarization"
 
     # the cross-polarized channels
     HV = SLC(optional=True)
-    HV.__doc__ = "the HV polarization"
+    HV.doc = "the HV polarization"
 
     VH = SLC(optional=True)
-    VH.__doc__ = "the VH polarization"
+    VH.doc = "the VH polarization"
 
 
 # end of file

@@ -28,7 +28,7 @@ class LSAR(h5.schema.group, location="/science/LSAR"):
 
     # the band-level identification, common to all L-band products
     identification = Identification()
-    identification.__doc__ = "the identification metadata"
+    identification.doc = "the identification metadata"
 
 
 # end of file

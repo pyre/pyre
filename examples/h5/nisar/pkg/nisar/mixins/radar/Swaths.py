@@ -24,17 +24,17 @@ class Swaths(h5.schema.group):
 
     # the frequency sub-bands; both optional, presence driven by listOfFrequencies
     frequencyA = frequency(optional=True)
-    frequencyA.__doc__ = "the frequency A sub-band"
+    frequencyA.doc = "the frequency A sub-band"
 
     frequencyB = frequency(optional=True)
-    frequencyB.__doc__ = "the frequency B sub-band"
+    frequencyB.doc = "the frequency B sub-band"
 
     # the radar coordinate axes; one dimensional, extent free
     slantRange = h5.schema.array(schema=h5.schema.float(), shape=[...])
-    slantRange.__doc__ = "the slant range coordinates of the radar grid"
+    slantRange.doc = "the slant range coordinates of the radar grid"
 
     zeroDopplerTime = h5.schema.array(schema=h5.schema.float(), shape=[...])
-    zeroDopplerTime.__doc__ = "the zero-Doppler azimuth time coordinates"
+    zeroDopplerTime.doc = "the zero-Doppler azimuth time coordinates"
 
 
 # end of file
