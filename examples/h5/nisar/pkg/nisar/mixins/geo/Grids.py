@@ -29,11 +29,11 @@ class Grids(h5.schema.group):
     frequencyB = frequency(optional=True)
     frequencyB.__doc__ = "the frequency B sub-band"
 
-    # the map projection coordinate axes
-    xCoordinates = h5.schema.array(schema=h5.schema.float(), rank=1)
+    # the map projection coordinate axes; one dimensional, extent free
+    xCoordinates = h5.schema.array(schema=h5.schema.float(), shape=[...])
     xCoordinates.__doc__ = "the projected x (easting) coordinates of the map grid"
 
-    yCoordinates = h5.schema.array(schema=h5.schema.float(), rank=1)
+    yCoordinates = h5.schema.array(schema=h5.schema.float(), shape=[...])
     yCoordinates.__doc__ = "the projected y (northing) coordinates of the map grid"
 
 
