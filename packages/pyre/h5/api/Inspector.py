@@ -349,10 +349,10 @@ class Inspector:
         if rank == 1 and isinstance(descriptor, schema.str):
             # are a special type
             return schema.strings(name=name)
-        # everything else is an array; get the shape
+        # everything else is an array; get the shape, which carries the rank as its length
         shape = space.shape
         # build a descriptor
-        array = schema.array(name=name, schema=descriptor, rank=rank, shape=shape)
+        array = schema.array(name=name, schema=descriptor, shape=shape)
         # and return it
         return array
 
