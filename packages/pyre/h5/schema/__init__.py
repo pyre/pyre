@@ -13,6 +13,7 @@ from .Schema import Schema as schema
 # the structural elements
 from .Descriptor import Descriptor as descriptor
 from .Group import Group as group
+from .Root import Root as root
 from .Dataset import Dataset as dataset
 
 # a visitor that displays the structure of a schema
