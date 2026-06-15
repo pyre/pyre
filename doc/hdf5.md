@@ -407,8 +407,11 @@ gives us a completeness yardstick as the exercise deepens.
 ### Product schema organization
 
 Two reduced products — RSLC and GSLC — exercise the reuse granularities. The
-package separates **reusable building blocks** (`mixins/`) from the **concrete
-products** (`products/`), and keeps one class per file:
+package separates **reusable building blocks** (`mixins/`) from the **product
+schemas** (`schema/`), and keeps one class per file. (The `schema/` subpackage —
+built *from* `h5.schema` — is a mock-up of what a third party would write to
+describe their own products; the name `products` is reserved for eventual
+on-disk accessor classes.)
 
 ```
 pkg/nisar/
@@ -425,7 +428,7 @@ pkg/nisar/
 │   └── geo/             # the geocoded coordinate family
 │       ├── GeoCoordinates.py   # the product group shared by GSLC, GUNW, GOFF, GCOV
 │       └── Grids.py            # the grids group: frequencyA/frequencyB (optional) + axes
-└── products/            # the concrete products, assembled from mixins
+└── schema/              # the product schemas, assembled from mixins
     ├── rslc/
     │   ├── RSLC.py             # RSLC(LSAR){ RSLC = RadarCoordinates() }
     │   └── Identification.py    # redeclares productType, default fixed to "RSLC"
@@ -489,7 +492,7 @@ frequency sub-bands.
 
 Each product has its own self-contained test driver (`tests/nisar.pkg/rslc.py`,
 `gslc.py`) that asserts its structure and constraints and emits a `schema.Viewer`
-rendering to a per-product **debug** channel (`nisar.products.<type>`) — silent
+rendering to a per-product **debug** channel (`nisar.schema.<type>`) — silent
 on success, activatable to visualize the tree. Adding a product means adding a
 driver, never editing an existing one.
 
@@ -555,8 +558,8 @@ Two conventions established here:
   a shared class attribute, so mutating it would leak across products.
 - **Product subpackages, lowercase re-exports.** Each product's parts live in a
   subpackage (`rslc/`, `gslc/`) and need no name prefixes (`Swaths`, `Grids`,
-  `Identification`). Re-exports stay lowercase (`from nisar.products.rslc import
-  rslc`); the product class is **not** lifted into `products/__init__` under the
+  `Identification`). Re-exports stay lowercase (`from nisar.schema.rslc import
+  rslc`); the product class is **not** lifted into `schema/__init__` under the
   same name as its subpackage, to avoid import-order-dependent attribute clashes.
 - **The `nisar` namespace re-exports `pyre`.** Product modules import the
   framework as `from nisar import h5`, never `from pyre import h5` — pulling the
