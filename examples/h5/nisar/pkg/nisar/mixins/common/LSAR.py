@@ -13,7 +13,7 @@ from .Identification import Identification
 
 
 # the base of every L-band NISAR product file
-class LSAR(h5.schema.group, location="/science/LSAR"):
+class LSAR(h5.schema.root, location="/science/LSAR"):
     """
     The base of every L-band (LSAR) NISAR product, rooted at /science/LSAR
 
