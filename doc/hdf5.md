@@ -204,6 +204,24 @@ nodes. Setting the product's fundamental dimensions once propagates to every
 dependent dataset shape by dataflow, and gives a single locus for validating
 shape consistency across the whole product.
 
+**`shape` is the single source of dimensionality (in the h5 layer).** An h5
+array descriptor declares only `shape` — a list whose length *is* the rank and
+whose entries are independently:
+
+- an `int` — a fixed extent;
+- `Ellipsis` (`...`) — a free extent, unknown until realization (e.g.
+  `SLC` declares `shape=[..., ...]` for "2-D, both extents free");
+- *(planned)* a `pyre.calc` node — a reactive extent tied to a named product
+  dimension.
+
+This unifies dimensionality, partial knowledge, and reactivity in one attribute,
+with no rank/shape consistency check to enforce (and no writer bail). The general
+`schemata.Array` still carries a vestigial `rank` field; the h5 layer simply
+never uses it — `Inspector` infers from the dataspace `shape`, and descriptors
+declare `shape`. Purging `rank` from `schemata.Array` itself is a separate,
+framework-wide question (it is a public trait attribute with downstream
+consumers) and is intentionally left out of this effort.
+
 ## The visitors / drivers
 
 | Class | Role |
@@ -423,9 +441,9 @@ The sharing is **orthogonal**, which is what makes the factoring clean:
   `identification`; products subclass it. A future `SSAR` base is the S-band
   peer.
 - **Datum** (`mixins/slc`) — the `SLC` datum (a one-class-per-file descriptor,
-  `class SLC(h5.schema.array)` fixing the cell type to complex and rank to two)
-  and the `Frequency` group of polarization channels. Shared by *both* RSLC and
-  GSLC.
+  `class SLC(h5.schema.array)` fixing the cell type to complex and the shape to
+  two dimensions via `shape=[..., ...]`) and the `Frequency` group of
+  polarization channels. Shared by *both* RSLC and GSLC.
 - **Coordinate family** (`mixins/radar`, `mixins/geo`) — `RadarCoordinates` is
   the product group shared by all radar-geometry products (RSLC, RIFG, RUNW,
   ROFF); `GeoCoordinates` by all geocoded products (GSLC, GUNW, GOFF, GCOV). A
