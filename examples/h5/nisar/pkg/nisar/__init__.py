@@ -10,15 +10,14 @@ A sandbox for exploring write-capable {pyre.h5} schemas using a small, growing
 subset of the NISAR data products as the proving ground
 """
 
-
 # import and publish select pyre symbols
-from  pyre import (
+from pyre import (
     # the manager of the pyre runtime
     executive,
     # value constraints
     constraints,
     # hdf5 support
-    h5
+    h5,
 )
 
 # register the package with the framework
@@ -28,6 +27,9 @@ home, prefix, defaults = package.layout()
 
 # the package meta-data
 from . import meta
+
+# the product schemas
+from . import schema
 
 
 # administrivia

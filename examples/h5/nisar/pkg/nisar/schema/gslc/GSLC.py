@@ -16,10 +16,7 @@ from .Identification import Identification
 # the NISAR Geocoded Single Look Complex product
 class GSLC(lsar):
     """
-    The NISAR Geocoded Single Look Complex (GSLC) product
-
-    Rooted at /science/LSAR (inherited from {lsar}); carries the band-level
-    {identification} and the GSLC product group, in geocoded geometry.
+    The GSLC product specification
     """
 
     # specialize the identification with the fixed product type

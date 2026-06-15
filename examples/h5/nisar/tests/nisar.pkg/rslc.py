@@ -15,7 +15,7 @@ optional frequency sub-bands and polarization channels, and the shared SLC datum
 def test():
     # support
     import journal
-    from nisar.products.rslc import rslc
+    from nisar.schema.rslc import rslc
     from pyre.constraints.exceptions import ConstraintViolationError
 
     # build the product specification
@@ -56,7 +56,7 @@ def test():
     assert spec._pyre_find("RSLC/swaths/slantRange")._pyre_marker() == "array[float]"
 
     # offer a structural visualization on a debug channel the user can activate
-    spec._pyre_view(channel=journal.debug("nisar.products.rslc"))
+    spec._pyre_view(channel=journal.debug("nisar.schema.rslc"))
 
     # all done
     return
