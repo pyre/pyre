@@ -21,12 +21,16 @@ class SLC(h5.schema.array):
     """
 
     # construction
-    def __init__(self, **kwds):
+    def __init__(self, shape=None, **kwds):
         """
-        Fix the cell type to complex and the rank to two
+        Fix the cell type to complex and the shape to two dimensions
         """
-        # an SLC is a rank-2 array of complex floats
-        super().__init__(schema=h5.schema.complex(), rank=2, **kwds)
+        # an SLC is a two dimensional array of complex floats; both extents are free
+        # unless a caller supplies them
+        if shape is None:
+            shape = [..., ...]
+        # chain up
+        super().__init__(schema=h5.schema.complex(), shape=shape, **kwds)
         # all done
         return
 
