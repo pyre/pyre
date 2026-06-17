@@ -77,30 +77,21 @@ function(pyre_mpiModule)
     pyre_library_directory(mpimodule extensions)
     # set the libraries to link against
     target_link_libraries(
-      mpimodule PRIVATE pyre::mpi journal
+      mpimodule PRIVATE pyre::mpi journal pybind11::module
       )
     # add the sources
     target_sources(mpimodule PRIVATE
-      extensions/mpi/mpi.cc
+      extensions/mpi/__init__.cc
       extensions/mpi/communicators.cc
-      extensions/mpi/exceptions.cc
       extensions/mpi/groups.cc
-      extensions/mpi/metadata.cc
       extensions/mpi/ports.cc
       extensions/mpi/startup.cc
       )
-    # copy the capsule definitions to the staging area
-    configure_file(extensions/mpi/capsules.h lib/pyre/mpi COPYONLY)
     # install the extension
     install(
       TARGETS mpimodule
       LIBRARY
       DESTINATION ${PYRE_DEST_PACKAGES}/mpi
-      )
-    # and publish the capsules
-    install(
-      FILES ${CMAKE_CURRENT_SOURCE_DIR}/extensions/mpi/capsules.h
-      DESTINATION ${PYRE_DEST_INCLUDE}/pyre/mpi
       )
   endif()
   # all done

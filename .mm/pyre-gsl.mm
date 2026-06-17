@@ -7,7 +7,6 @@
 # check availability
 pyre-gsl.gsl.available := ${findstring gsl,$(extern.available)}
 pyre-gsl.mpi.available := ${findstring mpi,$(extern.available)}
-pyre-gsl.numpy.available := ${findstring numpy,$(extern.available)}
 
 # if {gsl} is available
 ifeq ($(pyre-gsl.gsl.available), gsl)
@@ -33,8 +32,8 @@ pyre-gsl.pkg.ext :=
 pyre-gsl.ext.root := extensions/gsl/
 pyre-gsl.ext.stem := gsl
 pyre-gsl.ext.pkg := pyre-gsl.pkg
+pyre-gsl.ext.capsule :=
 pyre-gsl.ext.wraps :=
-pyre-gsl.ext.capsule.destination := pyre/gsl/
 pyre-gsl.ext.lib.prerequisites := journal.lib pyre.lib
 pyre-gsl.ext.extern := pyre.lib journal.lib gsl
 pyre-gsl.ext.lib.c++.flags += $(pyre.lib.c++.flags)
@@ -59,22 +58,11 @@ endif
 # unconditionally add python to the external libraries
 pyre-gsl.ext.extern += python
 
-# if we have numpy
-ifeq ($(pyre-gsl.numpy.available), numpy)
-# add numpy to the external dependencies
-pyre-gsl.ext.extern += numpy
-# if not
-else
-# remove the numpy dependent sources from the build
-pyre-gsl.ext.lib.sources.exclude += $(pyre-gsl.ext.lib.prefix)numpy.cc
-endif
-
-
 # get the testsuites
 include pyre-gsl.pkg.tests
 
 
-endif
 
+endif
 
 # end of file

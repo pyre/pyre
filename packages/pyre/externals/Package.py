@@ -57,7 +57,24 @@ class Package(pyre.protocol, family='pyre.externals'):
             # moving on
             pass
 
-        # finally, get the package manager
+        # if we are in a conda environment, try the conda packager first
+        if os.getenv("CONDA_PREFIX"):
+            # get the conda packager
+            from ..platforms.Conda import Conda
+            # make an instance
+            conda = Conda(name="pyre.conda.packager")
+            # attempt to
+            try:
+                # go through the conda choices
+                for package in conda.packages(category=cls):
+                    # i only care about the first one
+                    return package
+            # if this package category doesn't support conda
+            except conda.ConfigurationError:
+                # moving on
+                pass
+
+        # finally, get the host package manager
         packager = host.packager
         # go through my host specific choices
         for package in packager.packages(category=cls):

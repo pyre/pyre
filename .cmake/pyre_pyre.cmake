@@ -177,6 +177,7 @@ function(pyre_pyreModule)
     extensions/pyre/memory/__init__.cc
     extensions/pyre/memory/heaps.cc
     extensions/pyre/memory/maps.cc
+    extensions/pyre/memory/views.cc
     extensions/pyre/timers/__init__.cc
     extensions/pyre/timers/process_timers.cc
     extensions/pyre/timers/wall_timers.cc

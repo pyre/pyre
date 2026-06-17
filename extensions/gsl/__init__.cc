@@ -1,40 +1,36 @@
-// -*- C++ -*-
+// -*- c++ -*-
 //
-// michael a.g. aïvázis
-// orthologue
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
 // (c) 1998-2026 all rights reserved
-//
 
-#include <portinfo>
-#include <Python.h>
+// externals
+#include "external.h"
+// subsystem binders
+#include "forward.h"
 
-#include "metadata.h"
 
-
-// the version number
-#define GSL_VERSION "1.0"
-
-// copyright
-const char * const gsl::copyright__name__ = "copyright";
-const char * const gsl::copyright__doc__ = "the module copyright string";
-PyObject *
-gsl::copyright(PyObject *, PyObject *)
+// GSL error handler: route errors through the pyre journal
+static void
+errorHandler(const char * reason, const char *, int, int)
 {
-    const char * const copyright_note = "gsl: (c) 1998-2026 orthologue";
-    return Py_BuildValue("s", copyright_note);
+    // make a channel
+    auto channel = pyre::journal::warning_t("gsl");
+    // report
+    channel << "GSL error: " << reason << pyre::journal::endl(__HERE__);
 }
 
 
-// license
-const char * const gsl::license__name__ = "license";
-const char * const gsl::license__doc__ = "the module license string";
-PyObject *
-gsl::license(PyObject *, PyObject *)
+// the module entry point
+PYBIND11_MODULE(gsl, m)
 {
-    const char * const license_string =
+    // documentation
+    m.doc() = "pyre gsl extension module";
+    // metadata
+    m.attr("version")   = "1.0";
+    m.attr("copyright") = "gsl: (c) 1998-2026 orthologue";
+    m.attr("license")   =
         "\n"
-        "    gsl " GSL_VERSION
-        "\n"
+        "    gsl 1.0\n"
         "    Copyright (c) 1998-2026 orthologue\n"
         "    All Rights Reserved\n"
         "\n"
@@ -67,18 +63,29 @@ gsl::license(PyObject *, PyObject *)
         "    ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE\n"
         "    POSSIBILITY OF SUCH DAMAGE.\n";
 
-    return Py_BuildValue("s", license_string);
-}
+    // install the GSL error handler
+    gsl_set_error_handler(&errorHandler);
+    // initialize the table of known random number generators
+    pyre::gsl::py::rng_initialize();
 
+    // bind types and functions in dependency order:
+    // register each class before it is used as an argument/return type
+    pyre::gsl::py::vector(m);      // registers Vector, VectorView
+    pyre::gsl::py::matrix(m);      // registers Matrix, MatrixView
+    pyre::gsl::py::rng(m);         // registers RNG
+    pyre::gsl::py::permutation(m); // registers Permutation
+    pyre::gsl::py::histogram(m);   // registers Histogram
+    // functions only (types already registered above)
+    pyre::gsl::py::blas(m);
+    pyre::gsl::py::linalg(m);
+    pyre::gsl::py::pdf(m);
+    pyre::gsl::py::stats(m);
 
-// version
-const char * const gsl::version__name__ = "version";
-const char * const gsl::version__doc__ = "the module version string";
-PyObject *
-gsl::version(PyObject *, PyObject *)
-{
-    const char * const version_string = GSL_VERSION;
-    return Py_BuildValue("s", version_string);
+#if defined(WITH_MPI)
+    // import the mpi module so pybind11's type registry knows about Communicator
+    ::py::module_::import("mpi");
+    pyre::gsl::py::partition(m);
+#endif
 }
 
 

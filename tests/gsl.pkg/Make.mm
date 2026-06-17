@@ -24,6 +24,7 @@ sanity:
 	${PYTHON} ./matrix.py
 	${PYTHON} ./blas.py
 	${PYTHON} ./linalg.py
+	${PYTHON} ./dlpack.py
 
 rng:
 	${PYTHON} ./rng_available.py

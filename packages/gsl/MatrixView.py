@@ -27,7 +27,7 @@ class MatrixView(Matrix):
         # store a reference to the underlying matrix so it lives long enough
         self.matrix = matrix
         # build the view
-        self.capsule, data = gsl.matrix_view_alloc(matrix.data, start, shape)
+        self.view, data = gsl.matrix_view_alloc(matrix.data, *start, *shape)
         # chain up
         super().__init__(shape=shape, data=data, **kwds)
         # all done
@@ -36,7 +36,7 @@ class MatrixView(Matrix):
 
     # private data
     matrix = None # a reference to the matrix instance i'm viewing
-    capsule = None # the capsule with the pointer to the view object
+    view = None   # the MatrixView wrapper (keeps the gsl_matrix_view alive)
 
 
 # end of file

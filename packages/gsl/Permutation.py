@@ -52,20 +52,19 @@ class Permutation:
 
     def inverse(self):
         """
-        Reverse me
+        Return the inverse of this permutation as a new Permutation
         """
-        # inverse
-        gsl.permutation_invverse(self.data)
-        # and return
-        return self
+        # compute and return the inverse as a new permutation
+        inv_data = gsl.permutation_inverse(self.data)
+        return type(self)(shape=self.shape, data=inv_data)
 
 
-    def swap(self, other):
+    def swap(self, i, j):
         """
-        Swap me with {other}
+        Swap elements at positions {i} and {j} within this permutation
         """
         # perform the swap
-        gsl.permutation_swap(self.data, other.data)
+        gsl.permutation_swap(self.data, i, j)
         # and return me
         return self
 

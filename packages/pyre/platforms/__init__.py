@@ -39,6 +39,18 @@ def macports():
     return MacPorts
 
 
+@foundry(implements=packager)
+def conda():
+    """
+    Support for conda environments
+    """
+    # get the class record
+    from .Conda import Conda
+
+    # and return it
+    return Conda
+
+
 # host types
 @foundry(implements=platform)
 def darwin():
