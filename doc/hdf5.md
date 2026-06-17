@@ -369,6 +369,12 @@ the implementation:
 - **Mismatch handling severity.** On a type mismatch the query path *warns* and
   proceeds with the actual type; the comment itself wonders whether this should
   be an error.
+- **`Swath`/`Grid` common base (deferred).** The radar `Swath` and geocoded
+  `Grid` per-frequency groups share structure — the polarization list, the SLC
+  channels, and the per-frequency `nsamples` dimension. A common base would DRY
+  this up, but no satisfactory name has surfaced, so for now they stay
+  independent (each composing the shared `SLC` datum directly). Their MRO is left
+  unsettled deliberately; it does not block the current work.
 
 ## The `nisar` sandbox
 
