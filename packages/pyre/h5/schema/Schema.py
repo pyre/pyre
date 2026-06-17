@@ -9,6 +9,7 @@ from pyre.patterns.AttributeClassifier import AttributeClassifier
 
 # parts
 from .Descriptor import Descriptor
+from .Dimension import Dimension
 from .Inventory import Inventory
 
 # typing
@@ -64,20 +65,31 @@ class Schema(AttributeClassifier):
         """
         Scan the {mro} of the class record in {self} and build the group static structure
         """
-        # the set of descriptor names from the declaration of this group
+        # the set of member names from the declaration of this group
         localDescriptors = Inventory()
-        # the set of descriptor names from the entire class hierarchy
+        # the set of member names from the entire class hierarchy
         classDescriptors = Inventory()
+        # the set of dimension names from the declaration of this group
+        localDimensions = Inventory()
+        # the set of dimension names from the entire class hierarchy
+        classDimensions = Inventory()
         # the map from h5 member names to attribute names
         aliases = {}
         # go through the local declarations
         for name, descriptor in self._pyre_identifyDescriptors(attributes=attributes):
+            # dimensions are shape providers, not tree members; keep them apart
+            if isinstance(descriptor, Dimension):
+                # in their own pile
+                localDimensions.add(name)
+                # and out of the member machinery
+                continue
             # add the name to the local pile
             localDescriptors.add(name)
             # and update the aliases
             aliases[descriptor._pyre_name] = name
         # update the static layout
         classDescriptors.update(localDescriptors)
+        classDimensions.update(localDimensions)
 
         # now, go through my ancestors
         for base in self.mro()[1:]:
@@ -85,7 +97,7 @@ class Schema(AttributeClassifier):
             if not isinstance(base, Schema):
                 # skip it
                 continue
-            # go through its locally declared descriptors
+            # go through its locally declared members
             for name in base._pyre_localDescriptors:
                 # look up my understanding of this name
                 descriptor = getattr(self, name)
@@ -101,11 +113,25 @@ class Schema(AttributeClassifier):
                 if alias not in aliases:
                     # add it
                     aliases[alias] = name
+            # and through its locally declared dimensions
+            for name in base._pyre_localDimensions:
+                # look up my understanding of this name
+                dimension = getattr(self, name)
+                # if some mixin did something different with this name
+                if not isinstance(dimension, Dimension):
+                    # move on
+                    continue
+                # otherwise, add it to the dimension layout
+                classDimensions.add(name)
 
-        # attach the local name
+        # attach the local members
         self._pyre_localDescriptors = localDescriptors
-        # attach the class descriptors
+        # attach the class members
         self._pyre_classDescriptors = classDescriptors
+        # attach the local dimensions
+        self._pyre_localDimensions = localDimensions
+        # attach the class dimensions
+        self._pyre_classDimensions = classDimensions
         # and the translation map
         self._pyre_staticAliases = aliases
         # all done

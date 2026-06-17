@@ -15,6 +15,7 @@ from .Descriptor import Descriptor as descriptor
 from .Group import Group as group
 from .Root import Root as root
 from .Dataset import Dataset as dataset
+from .Dimension import Dimension as dimension
 
 # a visitor that displays the structure of a schema
 from .Viewer import Viewer as viewer
