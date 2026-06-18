@@ -17,6 +17,7 @@ from .Schema import Schema
 from .Descriptor import Descriptor
 
 # parts
+from .Dimension import Dimension
 from .Inventory import Inventory
 
 
@@ -80,6 +81,21 @@ class Group(Descriptor, metaclass=Schema):
             # verify that what we retrieved is a descriptor
             if isinstance(attr, Descriptor):
                 # we got one; send it off
+                yield attr
+        # all done
+        return
+
+    def _pyre_dimensions(self):
+        """
+        Generate a sequence of my shape dimensions
+        """
+        # go through the names of the dimensions i provide
+        for name in self._pyre_classDimensions:
+            # retrieve the associated value
+            attr = getattr(self, name)
+            # verify it is still a dimension
+            if isinstance(attr, Dimension):
+                # send it off
                 yield attr
         # all done
         return
