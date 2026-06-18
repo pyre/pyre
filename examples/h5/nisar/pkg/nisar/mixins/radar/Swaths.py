@@ -6,34 +6,33 @@
 
 
 # the framework, through the {nisar} namespace
-from nisar import h5
+import nisar
 
 # the shared SLC pieces
 from ..slc import frequency
 
 
 # the radar-geometry imagery container
-class Swaths(h5.schema.group):
+class Swaths(nisar.h5.schema.group):
     """
     The {swaths} group: imagery in radar (range-Doppler) geometry, by frequency
 
-    Both frequency sub-bands are declared but marked optional; which ones are
-    actually present in a given file is the per-file truth carried by the
-    {listOfFrequencies} dataset in the product's identification group.
+    Both frequency sub-bands are declared but marked optional; the {listOfFrequencies}
+    dataset in the {identification} group indicates which ones are present
     """
 
     # the frequency sub-bands; both optional, presence driven by listOfFrequencies
     frequencyA = frequency(optional=True)
-    frequencyA.doc = "the frequency A sub-band"
+    frequencyA.doc = "the primary instrument band"
 
     frequencyB = frequency(optional=True)
-    frequencyB.doc = "the frequency B sub-band"
+    frequencyB.doc = "the secondary instrument band"
 
     # the radar coordinate axes; one dimensional, extent free
-    slantRange = h5.schema.array(schema=h5.schema.float(), shape=[...])
+    slantRange = nisar.h5.schema.array(schema=nisar.h5.schema.float(), shape=[...])
     slantRange.doc = "the slant range coordinates of the radar grid"
 
-    zeroDopplerTime = h5.schema.array(schema=h5.schema.float(), shape=[...])
+    zeroDopplerTime = nisar.h5.schema.array(schema=nisar.h5.schema.float(), shape=[...])
     zeroDopplerTime.doc = "the zero-Doppler azimuth time coordinates"
 
 

@@ -6,14 +6,14 @@
 
 
 # the framework, through the {nisar} namespace
-from nisar import h5
+import nisar
 
 # my parts
 from .Swaths import Swaths
 
 
 # the radar-geometry product group
-class RadarCoordinates(h5.schema.group):
+class RadarCoordinates(nisar.h5.schema.group):
     """
     The data group shared by all radar-geometry products: RSLC, RIFG, RUNW, ROFF
 

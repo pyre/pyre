@@ -6,11 +6,11 @@
 
 
 # the framework, through the {nisar} namespace
-from nisar import h5
+import nisar
 
 
 # the single-look-complex datum
-class SLC(h5.schema.array):
+class SLC(nisar.h5.schema.array):
     """
     A single-look-complex datum: a two dimensional raster of complex floats at
     full resolution
@@ -30,7 +30,7 @@ class SLC(h5.schema.array):
         if shape is None:
             shape = [..., ...]
         # chain up
-        super().__init__(schema=h5.schema.complex(), shape=shape, **kwds)
+        super().__init__(schema=nisar.h5.schema.complex(), shape=shape, **kwds)
         # all done
         return
 

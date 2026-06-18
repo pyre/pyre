@@ -6,7 +6,7 @@
 
 
 # the framework, through the {nisar} namespace
-from nisar import h5
+import nisar
 
 # the base identification group
 from ...mixins.common import identification
@@ -23,7 +23,7 @@ class Identification(identification):
     """
 
     # the product type is fixed for GSLC
-    productType = h5.schema.str()
+    productType = nisar.h5.schema.str()
     productType.default = "GSLC"
     productType.doc = "the product type, fixed for GSLC"
 

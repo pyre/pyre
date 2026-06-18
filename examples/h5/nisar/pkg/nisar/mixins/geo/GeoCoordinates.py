@@ -6,14 +6,14 @@
 
 
 # the framework, through the {nisar} namespace
-from nisar import h5
+import nisar
 
 # my parts
 from .Grids import Grids
 
 
 # the geocoded product group
-class GeoCoordinates(h5.schema.group):
+class GeoCoordinates(nisar.h5.schema.group):
     """
     The data group shared by all geocoded products: GSLC, GUNW, GOFF, GCOV
 
