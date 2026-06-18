@@ -6,8 +6,8 @@
 
 
 # the L-band product base and the shared radar-geometry group
-from ...mixins.common import lsar
-from ...mixins.radar import radarCoordinates
+from ..mixins.common import lsar
+from ..mixins.radar import radarCoordinates
 
 # my parts
 from .Identification import Identification

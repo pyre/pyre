@@ -5,9 +5,8 @@
 # (c) 1998-2026 all rights reserved
 
 
-# the structure shared by the geocoded product family
-from .Grids import Grids as grids
-from .GeoCoordinates import GeoCoordinates as geoCoordinates
+# the custom dataset descriptors
+from .SLC import SLC as slc
 
 
 # end of file

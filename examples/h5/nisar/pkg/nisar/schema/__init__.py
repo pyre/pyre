@@ -5,6 +5,10 @@
 # (c) 1998-2026 all rights reserved
 
 
+# the reusable building blocks
+from . import descriptors
+from . import mixins
+
 # the concrete NISAR products
 from . import rslc
 from . import gslc

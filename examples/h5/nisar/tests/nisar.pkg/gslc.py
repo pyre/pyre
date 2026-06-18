@@ -47,16 +47,19 @@ def test():
     for f in ("frequencyA", "frequencyB"):
         assert spec._pyre_find(f"GSLC/grids/{f}")._pyre_optional is True
 
-    # a frequency carries a constrained polarization list and optional SLC channels
+    # in geocoded geometry both grid extents are per-frequency
     freqA = spec._pyre_find("GSLC/grids/frequencyA")
+    assert "nlines" in freqA._pyre_classDimensions
+    assert "nsamples" in freqA._pyre_classDimensions
+    # a frequency carries a constrained polarization list and optional SLC channels
     assert freqA._pyre_get("listOfPolarizations").constraints
     for pol in ("HH", "HV", "VH", "VV"):
         channel = freqA._pyre_get(pol)
         assert channel._pyre_optional is True
         assert channel._pyre_marker() == "array[complex]"
 
-    # the map-projection coordinate axis
-    assert spec._pyre_find("GSLC/grids/xCoordinates")._pyre_marker() == "array[float]"
+    # the map-projection coordinate axes, per-frequency
+    assert spec._pyre_find("GSLC/grids/frequencyA/xCoordinates")._pyre_marker() == "array[float]"
 
     # offer a structural visualization on a debug channel the user can activate
     spec._pyre_view(channel=journal.debug("nisar.schema.gslc"))
