@@ -54,9 +54,6 @@ class Dataset(Descriptor):
     def process(self, value, **kwds):
         """
         Coerce {value} to my type and then check it against my constraints
-
-        Constraints live on datasets, leveraging the typed value pipeline; groups carry
-        no value and therefore no constraints.
         """
         # leave {None} alone; an unset value has nothing to coerce or constrain
         if value is None:
