@@ -209,10 +209,9 @@ array descriptor declares only `shape` — a list whose length *is* the rank and
 whose entries are independently:
 
 - an `int` — a fixed extent;
-- `Ellipsis` (`...`) — a free extent, unknown until realization (e.g.
-  `SLC` declares `shape=[..., ...]` for "2-D, both extents free");
-- *(planned)* a `pyre.calc` node — a reactive extent tied to a named product
-  dimension.
+- `Ellipsis` (`...`) — a free extent, unknown until realization;
+- a `str` naming a dimension (e.g. `"nlines"`), resolved to a reactive
+  `pyre.calc` node scoped to where the name is provided.
 
 This unifies dimensionality, partial knowledge, and reactivity in one attribute,
 with no rank/shape consistency check to enforce (and no writer bail). The general
@@ -221,6 +220,42 @@ never uses it — `Inspector` infers from the dataspace `shape`, and descriptors
 declare `shape`. Purging `rank` from `schemata.Array` itself is a separate,
 framework-wide question (it is a public trait attribute with downstream
 consumers) and is intentionally left out of this effort.
+
+#### Declaration and resolution (implemented)
+
+Dimensions are **declared** with the `dimension()` descriptor on the group that
+*scopes* them (harvested into a bucket separate from members); a dataset
+**references** them by name in its `shape`. The two are bound by a **`Resolver`**
+visitor that runs eagerly in `Root.__init__`, walking the tree and populating the
+root's `_pyre_shapes` (a `pyre.calc.Hierarchical`, keyed by **schema-relative**
+dotted paths — deliberately decoupled from the api file path, mirroring how
+NISAR's own shape database scopes independently of file location):
+
+- each group registers its provided dimensions as **unresolved** nodes
+  (`shapes.retrieve(<path>.<dim>)`) — the index is left fully unresolved for the
+  realization to fill;
+- each dataset's named axes are aliased to the nearest enclosing provider, found
+  by **walking up** the scope (tail-stripping), recorded via `Hierarchical.alias`.
+
+A realization then assigns values; aliases reaching a valued node compute, while
+those reaching a still-unresolved node raise `UnresolvedNodeError` at read time —
+the "you must supply every dimension" contract. This is what gives the
+shared-vs-independent behaviour: setting `RSLC.swaths.nlines` once sizes the
+length of *both* frequencies' rasters, while each `…frequencyX.nsamples` is set
+independently.
+
+An unresolved reference fires a `firewall` but then **continues** (skipping that
+one alias) rather than bailing, so a user who has made firewalls non-fatal to
+debug still gets a fully-built structure — a general rule here: never assume a
+firewall aborted.
+
+**Where this is headed (not yet built):**
+- A **navigable get/set interface** for dimensions, mirroring the schema tree and
+  api traversal (`spec.…nlines = 9000`), instead of today's raw
+  `spec._pyre_shapes["RSLC.swaths.nlines"] = 9000`.
+- Dataset shapes as **expressions** over dimensions (a downsampled raster sized
+  `nlines // 2`, …) — the `pyre.calc` substrate already supports this; only the
+  declaration syntax is missing.
 
 ## The visitors / drivers
 
