@@ -9,5 +9,13 @@ nisar.pkg.tests.stem := nisar.pkg
 # depends on
 nisar.pkg.tests.prerequisites := nisar.pkg
 
+# the writer drivers emit h5 products next to themselves; register them so {mm clean}
+# removes them, and make each driver clean its own product before it runs, for a fresh start
+tests.nisar.pkg.writer.rslc.clean := rslc.h5
+tests.nisar.pkg.writer.rslc.pre := tests.nisar.pkg.writer.rslc.clean
+
+tests.nisar.pkg.writer.gslc.clean := gslc.h5
+tests.nisar.pkg.writer.gslc.pre := tests.nisar.pkg.writer.gslc.clean
+
 
 # end of file
