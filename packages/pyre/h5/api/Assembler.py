@@ -42,8 +42,12 @@ class Assembler:
         """
         # if i don't have a parent
         if parent is None:
-            # i'm building the root node
-            location = pyre.primitives.path.root
+            # i'm building the root node; it mounts at its declared location, if any,
+            # otherwise at the file root
+            mount = group._pyre_location
+            location = (
+                pyre.primitives.path(mount) if mount else pyre.primitives.path.root
+            )
         # otherwise
         else:
             # splice the {group} name to my parent's location
