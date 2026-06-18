@@ -10,6 +10,9 @@ import pyre
 # superclass
 from .Group import Group
 
+# the shape resolver
+from .Resolver import Resolver
+
 
 # the root of a product schema tree
 class Root(Group):
@@ -30,6 +33,9 @@ class Root(Group):
         # it is an instance attribute: the nodes are structural, but their values bind per
         # realization, so realizations must not share one index
         self._pyre_shapes = pyre.calc.model()
+        # walk my tree to register the provided dimensions and alias every dataset's shape
+        # references to them; the index is left fully unresolved for the user to fill
+        Resolver().resolve(root=self)
         # all done
         return
 
