@@ -7,7 +7,6 @@
 
 # the reusable building blocks for assembling NISAR product schemas
 from . import common
-from . import slc
 from . import radar
 from . import geo
 

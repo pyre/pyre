@@ -43,20 +43,25 @@ def test():
         except ConstraintViolationError:
             pass
 
+    # the azimuth dimension is shared, declared on the swaths group
+    assert "nlines" in spec._pyre_find("RSLC/swaths")._pyre_classDimensions
+
     # both frequency sub-bands are declared in the swaths group and are optional
     for f in ("frequencyA", "frequencyB"):
         assert spec._pyre_find(f"RSLC/swaths/{f}")._pyre_optional is True
 
-    # a frequency carries a constrained polarization list and optional SLC channels
+    # a frequency provides the per-frequency range dimension
     freqA = spec._pyre_find("RSLC/swaths/frequencyA")
+    assert "nsamples" in freqA._pyre_classDimensions
+    # and carries a constrained polarization list and optional SLC channels
     assert freqA._pyre_get("listOfPolarizations").constraints
     for pol in ("HH", "HV", "VH", "VV"):
         channel = freqA._pyre_get(pol)
         assert channel._pyre_optional is True
         assert channel._pyre_marker() == "array[complex]"
 
-    # the radar-geometry coordinate axis
-    assert spec._pyre_find("RSLC/swaths/slantRange")._pyre_marker() == "array[float]"
+    # the radar-geometry coordinate axis, per-frequency
+    assert spec._pyre_find("RSLC/swaths/frequencyA/slantRange")._pyre_marker() == "array[float]"
 
     # offer a structural visualization on a debug channel the user can activate
     spec._pyre_view(channel=journal.debug("nisar.schema.rslc"))

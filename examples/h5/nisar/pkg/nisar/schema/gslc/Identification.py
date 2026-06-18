@@ -9,7 +9,7 @@
 import nisar
 
 # the base identification group
-from ...mixins.common import identification
+from ..mixins.common import identification
 
 
 # the identification group specialized for the GSLC product

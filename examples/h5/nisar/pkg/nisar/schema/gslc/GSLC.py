@@ -6,8 +6,8 @@
 
 
 # the L-band product base and the shared geocoded group
-from ...mixins.common import lsar
-from ...mixins.geo import geoCoordinates
+from ..mixins.common import lsar
+from ..mixins.geo import geoCoordinates
 
 # my parts
 from .Identification import Identification

@@ -6,6 +6,7 @@
 
 
 # the structure shared by the radar-geometry product family
+from .Swath import Swath as swath
 from .Swaths import Swaths as swaths
 from .RadarCoordinates import RadarCoordinates as radarCoordinates
 
