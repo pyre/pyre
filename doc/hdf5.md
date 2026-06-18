@@ -412,35 +412,31 @@ gives us a completeness yardstick as the exercise deepens.
 
 ### Product schema organization
 
-Two reduced products — RSLC and GSLC — exercise the reuse granularities. The
-package separates **reusable building blocks** (`mixins/`) from the **product
-schemas** (`schema/`), and keeps one class per file. (The `schema/` subpackage —
-built *from* `h5.schema` — is a mock-up of what a third party would write to
-describe their own products; the name `products` is reserved for eventual
-on-disk accessor classes.)
+Two reduced products — RSLC and GSLC — exercise the reuse granularities.
+Everything lives under the `schema/` package (a mock-up of what a third party
+writes, *from* `h5.schema`; the name `products` is reserved for eventual on-disk
+accessor classes), which separates the reusable building blocks from the concrete
+products, one class per file. Code refers to the framework as `import nisar` and
+fully-qualified `nisar.h5.schema…` / `nisar.constraints…` at use sites.
 
 ```
-pkg/nisar/
-├── mixins/              # the reusable schema vocabulary
-│   ├── common/          # required of ALL products
-│   │   ├── Identification.py   # band-level identification (missionId defaults to "NISAR")
-│   │   └── LSAR.py             # the L-band base: mounts at /science/LSAR, carries identification
-│   ├── slc/             # the single-look-complex datum family
-│   │   ├── SLC.py              # the SLC datum: a 2d complex raster at full resolution
-│   │   └── Frequency.py        # a frequency sub-band of SLC imagery (name provisional)
-│   ├── radar/           # the radar-geometry coordinate family
-│   │   ├── RadarCoordinates.py # the product group shared by RSLC, RIFG, RUNW, ROFF
-│   │   └── Swaths.py           # the swaths group: frequencyA/frequencyB (optional) + axes
-│   └── geo/             # the geocoded coordinate family
-│       ├── GeoCoordinates.py   # the product group shared by GSLC, GUNW, GOFF, GCOV
-│       └── Grids.py            # the grids group: frequencyA/frequencyB (optional) + axes
-└── schema/              # the product schemas, assembled from mixins
-    ├── rslc/
-    │   ├── RSLC.py             # RSLC(LSAR){ RSLC = RadarCoordinates() }
-    │   └── Identification.py    # redeclares productType, default fixed to "RSLC"
-    └── gslc/
-        ├── GSLC.py             # GSLC(LSAR){ GSLC = GeoCoordinates() }
-        └── Identification.py    # redeclares productType, default fixed to "GSLC"
+pkg/nisar/schema/
+├── descriptors/        # custom dataset descriptors (more to come)
+│   └── SLC.py                  # the SLC datum: a 2d complex raster, shape=[nlines, nsamples]
+├── mixins/             # reusable group structures
+│   ├── common/                 # required of ALL products
+│   │   ├── Identification.py      # band-level identification (missionId defaults to "NISAR")
+│   │   └── LSAR.py                # the L-band base: mounts /science/LSAR via location=
+│   ├── radar/                  # the radar-geometry family
+│   │   ├── RadarCoordinates.py    # product group shared by RSLC, RIFG, RUNW, ROFF
+│   │   ├── Swaths.py              # provides nlines (shared azimuth); frequencyA/B (Swath); zeroDopplerTime
+│   │   └── Swath.py               # a frequency sub-band: provides nsamples; SLC channels; slantRange
+│   └── geo/                    # the geocoded family
+│       ├── GeoCoordinates.py      # product group shared by GSLC, GUNW, GOFF, GCOV
+│       ├── Grids.py               # the grids group: frequencyA/B (Grid)
+│       └── Grid.py                # a frequency sub-band: provides nlines+nsamples; SLC channels; x/yCoordinates
+├── rslc/               # RSLC(LSAR){ RSLC = RadarCoordinates() } + a fixed-productType Identification
+└── gslc/               # GSLC(LSAR){ GSLC = GeoCoordinates() } + a fixed-productType Identification
 ```
 
 The sharing is **orthogonal**, which is what makes the factoring clean:
@@ -449,26 +445,35 @@ The sharing is **orthogonal**, which is what makes the factoring clean:
   at `/science/LSAR` (via the `location` kwarg) and carries the band-level
   `identification`; products subclass it. A future `SSAR` base is the S-band
   peer.
-- **Datum** (`mixins/slc`) — the `SLC` datum (a one-class-per-file descriptor,
-  `class SLC(h5.schema.array)` fixing the cell type to complex and the shape to
-  two dimensions via `shape=[..., ...]`) and the `Frequency` group of
-  polarization channels. Shared by *both* RSLC and GSLC.
+- **Datum** (`descriptors`) — the `SLC` datum, a one-class-per-file descriptor
+  (`class SLC(h5.schema.array)`) that fixes the cell type to complex and the
+  shape to the two named dimensions `["nlines", "nsamples"]`. Shared by the
+  per-frequency groups of *both* RSLC and GSLC.
 - **Coordinate family** (`mixins/radar`, `mixins/geo`) — `RadarCoordinates` is
   the product group shared by all radar-geometry products (RSLC, RIFG, RUNW,
-  ROFF); `GeoCoordinates` by all geocoded products (GSLC, GUNW, GOFF, GCOV). A
-  product is "radar coordinates + SLC datum" (RSLC) or "geo coordinates + SLC
-  datum" (GSLC).
+  ROFF); `GeoCoordinates` by all geocoded products (GSLC, GUNW, GOFF, GCOV).
+  Within each, the per-frequency group is `Swath` (radar) or `Grid` (geo) —
+  independent for now, their common base deferred (see Open questions).
 
 A product root carries its coordinate-family group as a descriptor **whose
 attribute name is the product type** — `RSLC(LSAR)` declares `RSLC =
 RadarCoordinates()`, mounting the product group at `/science/LSAR/RSLC`.
 
-> **First-pass caveat.** The SLC imagery currently lives *inside*
-> `RadarCoordinates`/`GeoCoordinates` (under their `swaths`/`grids` groups), but
-> those classes are shared with non-SLC products (RIFG carries interferograms,
-> not SLC). When the non-SLC products are added, the imagery moves into
-> product-specific subclasses and the coordinate classes retain only the shared
-> coordinate framing.
+**Dimensions are declared, resolution is pending.** Each group declares the
+shape dimensions it *provides* as `dimension()` descriptors (harvested apart from
+members): `Swaths` provides `nlines` (shared azimuth), `Swath` provides
+`nsamples` (per-frequency range), and `Grid` provides both (geocoded grids vary
+both extents per frequency). Datasets *reference* dimensions by name in `shape`
+(`SLC` → `["nlines", "nsamples"]`, `slantRange` → `["nsamples"]`,
+`xCoordinates`/`yCoordinates` → `["nsamples"]`/`["nlines"]`). The down-walk that
+resolves those names against the root's `_pyre_shapes` index is the next piece;
+see "Dimension 2".
+
+> **First-pass caveat.** `Swath` and `Grid` currently carry the SLC channels
+> directly, so they are really the *SLC* per-frequency groups; the non-SLC
+> radar/geo products (RIFG, GUNW, …) will need their own per-frequency groups (or
+> `Swath`/`Grid` become SLC-specific). `RadarCoordinates`/`GeoCoordinates`
+> likewise still assume SLC imagery for now.
 
 ### Optional members and `listOfFrequencies`
 
@@ -490,11 +495,11 @@ product type; `listOfFrequencies` declares what *is* present in one file. Keepin
 the two consistent (only list what exists, only create what is listed) is a
 reactive concern, related to the shape-schema (Dimension 2) and not yet wired.
 
-The **same pattern recurses** one level down: each `Frequency` group carries a
-`listOfPolarizations` (a non-empty subset of `{"HH","HV","VH","VV"}`) and
-declares all four polarization channels as `optional` `SLC` datums. So
-`listOfPolarizations` is to the channels what `listOfFrequencies` is to the
-frequency sub-bands.
+The **same pattern recurses** one level down: each per-frequency group (`Swath`
+or `Grid`) carries a `listOfPolarizations` (a non-empty subset of
+`{"HH","HV","VH","VV"}`) and declares all four polarization channels as
+`optional` `SLC` datums. So `listOfPolarizations` is to the channels what
+`listOfFrequencies` is to the frequency sub-bands.
 
 Each product has its own self-contained test driver (`tests/nisar.pkg/rslc.py`,
 `gslc.py`) that asserts its structure and constraints and emits a `schema.Viewer`
@@ -567,17 +572,16 @@ Two conventions established here:
   `Identification`). Re-exports stay lowercase (`from nisar.schema.rslc import
   rslc`); the product class is **not** lifted into `schema/__init__` under the
   same name as its subpackage, to avoid import-order-dependent attribute clashes.
-- **The `nisar` namespace re-exports `pyre`.** Product modules import the
-  framework as `from nisar import h5`, never `from pyre import h5` — pulling the
-  pyre symbols into the `nisar` namespace is the whole point of re-exporting them.
+- **The `nisar` namespace re-exports `pyre`.** Modules do `import nisar` and use
+  fully-qualified `nisar.h5…` / `nisar.constraints…` at the point of use, rather
+  than `from nisar import h5` — pulling the pyre symbols into the `nisar`
+  namespace is the whole point of re-exporting them, and qualified names show
+  provenance where the symbol is used.
 
-Open naming/design items flagged during this pass:
+Open naming/design items:
 
-- `Frequency` is a provisional name for the per-frequency SLC imagery group; a
-  better one is wanted.
-- The `SLC` datum and the `slc/` subpackage share a name (the datum is the
-  family's defining building block); whether that overlap is acceptable or wants
-  disambiguation is unresolved.
+- The radar `Swath` / geo `Grid` per-frequency groups want a common base, but no
+  satisfactory name has surfaced, so their MRO is deferred (see Open questions).
 - **Freezing**, not just defaulting, a specialized field (e.g. nailing
   `productType` so it cannot be reassigned) is desired but not yet wired. The
   likely mechanism is `pyre.calc.Const` at the value layer; it needs design
