@@ -295,18 +295,27 @@ inferred/consolidated schema layout, with dataset values pulled lazily.
 
 ### Write path in detail
 
-> **Status (measured 2026-06-13):** more complete than first assumed, but
-> uneven. The scalar/string realization pipeline works end-to-end — the
-> `api/writer.py` test declares a schema product, assembles it, sets `int` /
-> `str` / `strings` values, writes, reads back, and asserts equality, and it
-> passes. Per-type `_pyre_pull` / `_pyre_push` leaves exist for every type
-> (`Bool`, `Float`, `Enum`, `String`, `Strings`, `Integer`, `Complex`, `Array`).
-> What remains thin is the harder, *untested* machinery: realizing numeric
-> **array/raster** payloads from (possibly dynamic) value sources, attributes
-> (`_pyre_createAttribute` is empty), partial/tile writes, file-to-file transfer
-> (see the dated note in `typed/Array.py`), and chunk/filter derivation. The
-> pipeline below documents the *intended* shape; the gaps are called out at the
-> end.
+> **Status (updated 2026-06-18):** the writer loop is closed for the goal-post
+> case. `Writer` now realizes a schema-defined product to disk: it mounts the
+> product at the root's location (creating the prefix groups above it, e.g.
+> `/science/LSAR`), and sizes each array dataset from its **resolved shape
+> dimensions** rather than from a bound value. Presence is governed by
+> resolution — an optional member whose dimensions are unset is treated as
+> absent, so the set of dimensions a realization supplies controls both the
+> extents and the *presence* of its contents. The nisar `writer/rslc.py` and
+> `writer/gslc.py` tests emit real RSLC/GSLC files with programmatically
+> controlled raster shapes (set one frequency's dimensions → that sub-band
+> materializes at the resolved extents; leave another's unset → the whole
+> sub-band is dropped), read them back by inference, and assert the on-disk
+> shapes and the dropped band. The earlier scalar/string round-trip
+> (`api/writer.py`) still passes unchanged. Per-type `_pyre_pull` / `_pyre_push`
+> leaves exist for every type (`Bool`, `Float`, `Enum`, `String`, `Strings`,
+> `Integer`, `Complex`, `Array`). What remains deferred: actually *binding*
+> numeric payloads from (possibly dynamic) value sources (the writer creates
+> fill-valued rasters and flushes a value only when one is bound), `listOf*`-
+> driven presence and auto-derivation, attributes (`_pyre_createAttribute` is
+> empty), partial/tile writes, file-to-file transfer (see the dated note in
+> `typed/Array.py`), and chunk/filter derivation.
 
 Conceptually, realizing a data product is a binding pipeline:
 
@@ -318,23 +327,35 @@ Conceptually, realizing a data product is a binding pipeline:
 4. **Persist** — `Writer` traverses the bound tree, creates the declared
    structure on disk, and flushes each dataset's value through its layout.
 
-As currently sketched, `Writer.write(data=None, query=None)`:
+As implemented, `Writer.write(data=None, query=None)`:
 
 1. If only `query` (structure) is given, materialize an empty `data` object via
    `Assembler`.
-2. If only `data` is given, borrow its `_pyre_layout` as the `query`.
-3. Traverse `data`, visiting groups and datasets. For each, look it up in the
-   destination if it already exists, otherwise create it (groups via
-   `dst.create(path)`, datasets via `dst.create(path, type, space, dcpl, dapl)`
-   using the dataset's `_pyre_describe()` for type/shape/chunking).
-4. Flush each dataset's cached value to its handle via `_pyre_write` →
-   `_pyre_push` → the layout's push.
+2. Read the product's shape index off `data._pyre_layout._pyre_shapes` (a plain
+   group has none → `None`), and compute the mount depth from the root's
+   location. Create the prefix groups above the mount (`/science`, `/science/
+   LSAR`) on the destination handle.
+3. Traverse `data`, visiting groups and datasets, threading the `shapes` index
+   and the mount `depth` so each node's location can be rendered schema-relative
+   (dotted, mount-stripped) to key into the index.
+   - **Groups:** an optional group whose *provided* dimensions are all
+     unresolved is skipped (absent this realization); otherwise reuse-or-create
+     it and recurse.
+   - **Array datasets** (those naming string dimensions, in a tree that has a
+     shape index): resolve each axis — `int` → fixed, `Ellipsis` → free (0 for
+     now), name → the resolved value via the alias the `Resolver` registered at
+     the dataset's path. If a named axis is unset, an optional dataset is
+     skipped and a required one fires a fire-and-continue firewall. Create at
+     the resolved extents with the layout's on-disk type; flush a value only if
+     one is bound, otherwise leave the dataset fill-valued.
+   - **Scalars / dynamic containers / value-shaped arrays:** unchanged — write
+     via `_pyre_describe()` + `_pyre_write`, only when a value is bound.
 
-Open mechanics that this leaves unresolved (and that fleshing out the writer
-must settle): where value sources attach and how step 3 binding actually works;
-how a dataset's on-disk dataspace, chunking, and filters are derived from its
-schema; whether/when an existing file is reconciled against the product schema
-rather than blindly extended; and the per-type `_pyre_push` implementations.
+Open mechanics still deferred (called out in the status block above): where
+value sources attach and how numeric binding actually works; `listOf*`-driven
+presence; attribute creation; how chunking and filters are derived from the
+schema; and whether an existing file is reconciled against the product schema
+rather than blindly extended.
 
 ## Write path: creation vs access property lists
 
@@ -626,12 +647,17 @@ Open naming/design items:
 
 Two efforts are in flight; they are deliberately ordered.
 
-1. **Close the writer loop (current focus).** Make the write path realize a
-   schema-defined data product to disk. **Goal post:** mock up a realistic
-   RSLC/GSLC pair carrying one or two rasters whose **shape is under programmatic
-   control**, so they can seed `qed` performance measurements. This exercises the
-   schema → assemble → bind-values → persist pipeline end to end, including the
-   reactive shape-schema (Dimension 2).
+1. **Close the writer loop (done, 2026-06-18).** The write path realizes a
+   schema-defined data product to disk. **Goal post — met:** the nisar
+   `writer/rslc.py` and `writer/gslc.py` tests emit RSLC/GSLC files carrying
+   per-frequency rasters whose **shape is under programmatic control** (set a
+   frequency's dimensions on `_pyre_shapes`, the rasters materialize at the
+   resolved extents; leave another frequency's unset, the whole sub-band is
+   dropped), ready to seed `qed` performance measurements. This exercises the
+   schema → assemble → persist pipeline end to end, including the reactive
+   shape-schema (Dimension 2). Still open within this effort: numeric value
+   binding, `listOf*`-driven presence, and attributes (see the write-path
+   status block).
 
 2. **Decouple pyre from the HDF5 C++ layer (next).** Replace the dependency on
    the `H5::*` C++ API with a thin, pyre-owned `pyre::h5` layer over the HDF5 C
