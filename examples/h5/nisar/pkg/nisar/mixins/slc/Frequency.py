@@ -5,15 +5,15 @@
 # (c) 1998-2026 all rights reserved
 
 
-# the framework, through the {nisar} namespace
-from nisar import h5, constraints
+# support
+import nisar
 
 # the datum
 from .SLC import SLC
 
 
 # a frequency sub-band of single-look-complex imagery
-class Frequency(h5.schema.group):
+class Frequency(nisar.h5.schema.group):
     """
     A single frequency sub-band of single-look-complex imagery
 
@@ -25,10 +25,10 @@ class Frequency(h5.schema.group):
     """
 
     # the polarizations carried by this sub-band; a non-empty subset of the four channels
-    listOfPolarizations = h5.schema.strings()
+    listOfPolarizations = nisar.h5.schema.strings()
     listOfPolarizations.constraints = [
-        constraints.isSubset(choices={"HH", "HV", "VH", "VV"}),
-        constraints.isNotEmpty(),
+        nisar.constraints.isSubset(choices={"HH", "HV", "VH", "VV"}),
+        nisar.constraints.isNotEmpty(),
     ]
     listOfPolarizations.doc = "the polarizations present in this frequency"
 

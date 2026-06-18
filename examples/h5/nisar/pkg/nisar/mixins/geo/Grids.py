@@ -6,14 +6,14 @@
 
 
 # the framework, through the {nisar} namespace
-from nisar import h5
+import nisar
 
 # the shared SLC pieces
 from ..slc import frequency
 
 
 # the geocoded imagery container
-class Grids(h5.schema.group):
+class Grids(nisar.h5.schema.group):
     """
     The {grids} group: imagery on a map projection grid, by frequency
 
@@ -30,10 +30,10 @@ class Grids(h5.schema.group):
     frequencyB.doc = "the frequency B sub-band"
 
     # the map projection coordinate axes; one dimensional, extent free
-    xCoordinates = h5.schema.array(schema=h5.schema.float(), shape=[...])
+    xCoordinates = nisar.h5.schema.array(schema=nisar.h5.schema.float(), shape=[...])
     xCoordinates.doc = "the projected x (easting) coordinates of the map grid"
 
-    yCoordinates = h5.schema.array(schema=h5.schema.float(), shape=[...])
+    yCoordinates = nisar.h5.schema.array(schema=nisar.h5.schema.float(), shape=[...])
     yCoordinates.doc = "the projected y (northing) coordinates of the map grid"
 
 
