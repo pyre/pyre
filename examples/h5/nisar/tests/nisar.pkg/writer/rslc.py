@@ -18,7 +18,6 @@ other, whose range was never set.
 # the driver
 def test():
     # support
-    import os
     import pyre
     from nisar.schema.rslc import rslc
 
@@ -33,11 +32,9 @@ def test():
     # shape the in-memory product
     data = pyre.h5.api.assembler().visit(descriptor=spec)
 
-    # write it to a scratch file
-    uri = "/tmp/nisar_rslc_write_test.h5"
-    # starting from a clean slate
-    if os.path.exists(uri):
-        os.unlink(uri)
+    # write it to a product next to this driver; the suite cleans it before the run and on
+    # {mm clean}, so the driver itself does no filesystem housekeeping
+    uri = "rslc.h5"
     # persist
     pyre.h5.write(uri=uri, data=data)
 
@@ -64,9 +61,6 @@ def test():
         assert False, "expected the unresolved frequency sub-band to be absent"
     except KeyError:
         pass
-
-    # clean up
-    os.unlink(uri)
 
     # all done
     return
