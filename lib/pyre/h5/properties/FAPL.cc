@@ -11,16 +11,16 @@
 
 
 // make a fresh file access property list
-pyre::h5::FAPL::FAPL() : PropList(H5Pcreate(H5P_FILE_ACCESS)) {}
+pyre::h5::properties::FAPL::FAPL() : List(H5Pcreate(H5P_FILE_ACCESS)) {}
 
 
 // adopt an existing raw handle
-pyre::h5::FAPL::FAPL(id_type id) : PropList(id) {}
+pyre::h5::properties::FAPL::FAPL(id_type id) : List(id) {}
 
 
 // the shared default file access property list
 auto
-pyre::h5::FAPL::theDefault() -> const FAPL &
+pyre::h5::properties::FAPL::theDefault() -> const FAPL &
 {
     // {H5P_DEFAULT} is a sentinel, not a live object, so wrapping it is inert
     static const FAPL theDefault { static_cast<id_type>(H5P_DEFAULT) };
@@ -31,7 +31,7 @@ pyre::h5::FAPL::theDefault() -> const FAPL &
 
 // the metadata block size
 auto
-pyre::h5::FAPL::metaBlockSize() const -> hsize_t
+pyre::h5::properties::FAPL::metaBlockSize() const -> hsize_t
 {
     // make room for the answer
     hsize_t size = 0;
@@ -44,7 +44,7 @@ pyre::h5::FAPL::metaBlockSize() const -> hsize_t
 
 // set the metadata block size
 auto
-pyre::h5::FAPL::setMetaBlockSize(hsize_t size) -> void
+pyre::h5::properties::FAPL::setMetaBlockSize(hsize_t size) -> void
 {
     // hand it to the library
     H5Pset_meta_block_size(id(), size);
@@ -55,7 +55,7 @@ pyre::h5::FAPL::setMetaBlockSize(hsize_t size) -> void
 
 // the page buffer characteristics: (bytes, metadata percent, raw-data percent)
 auto
-pyre::h5::FAPL::pageBufferSize() const -> std::tuple<std::size_t, unsigned int, unsigned int>
+pyre::h5::properties::FAPL::pageBufferSize() const -> std::tuple<std::size_t, unsigned int, unsigned int>
 {
     // make room for the answer
     std::size_t buffer = 0;
@@ -70,7 +70,7 @@ pyre::h5::FAPL::pageBufferSize() const -> std::tuple<std::size_t, unsigned int, 
 
 // set the page buffer characteristics
 auto
-pyre::h5::FAPL::setPageBufferSize(std::size_t buffer, unsigned int meta, unsigned int raw) -> void
+pyre::h5::properties::FAPL::setPageBufferSize(std::size_t buffer, unsigned int meta, unsigned int raw) -> void
 {
     // hand them to the library
     H5Pset_page_buffer_size(id(), buffer, meta, raw);
@@ -82,7 +82,7 @@ pyre::h5::FAPL::setPageBufferSize(std::size_t buffer, unsigned int meta, unsigne
 #if defined(H5_HAVE_ROS3_VFD)
 // configure the read-only S3 virtual file driver
 auto
-pyre::h5::FAPL::ros3(bool authenticate, string_t region, string_t id, string_t key, string_t token)
+pyre::h5::properties::FAPL::ros3(bool authenticate, string_t region, string_t id, string_t key, string_t token)
     -> FAPL &
 {
     // make room for the driver parameters

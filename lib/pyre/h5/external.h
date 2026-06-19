@@ -37,10 +37,6 @@ namespace pyre::h5 {
     using group_t = H5::Group;
     using dataset_t = H5::DataSet;
     using dataspace_t = H5::DataSpace;
-    using dapl_t = H5::DSetAccPropList;
-    using dcpl_t = H5::DSetCreatPropList;
-    using fapl_t = H5::FileAccPropList;
-    using fcpl_t = H5::FileCreatPropList;
     // pyre-owned datatypes over the hdf5 c api
     using datatype_t = pyre::h5::types::Datatype;
     using comptype_t = pyre::h5::types::Compound;

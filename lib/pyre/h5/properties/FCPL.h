@@ -9,11 +9,11 @@
 // set up the namespace
 #include "forward.h"
 // my base class
-#include "PropList.h"
+#include "List.h"
 
 
 // a file creation property list
-class pyre::h5::FCPL : public pyre::h5::PropList {
+class pyre::h5::properties::FCPL : public pyre::h5::properties::List {
     // metamethods
 public:
     // make a fresh file creation property list

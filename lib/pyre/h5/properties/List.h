@@ -9,21 +9,21 @@
 // set up the namespace
 #include "forward.h"
 // my base class
-#include "Identifier.h"
+#include "../Identifier.h"
 
 
 // the generic base of the hdf5 property lists
-class pyre::h5::PropList : public pyre::h5::Identifier {
+class pyre::h5::properties::List : public pyre::h5::Identifier {
     // metamethods
 public:
     // the default property list, a handle to the library-wide defaults
-    PropList();
+    List();
     // the full set of special members
-    PropList(const PropList &) = default;
-    PropList(PropList &&) noexcept = default;
-    PropList & operator=(const PropList &) = default;
-    PropList & operator=(PropList &&) noexcept = default;
-    ~PropList() override = default;
+    List(const List &) = default;
+    List(List &&) noexcept = default;
+    List & operator=(const List &) = default;
+    List & operator=(List &&) noexcept = default;
+    ~List() override = default;
 
     // interface
 public:
@@ -45,7 +45,7 @@ public:
     // implementation details
 protected:
     // adopt an existing raw handle; for derived lists to pass a freshly created one
-    explicit PropList(id_type id);
+    explicit List(id_type id);
 };
 
 

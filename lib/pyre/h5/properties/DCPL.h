@@ -9,11 +9,11 @@
 // set up the namespace
 #include "forward.h"
 // my base class
-#include "PropList.h"
+#include "List.h"
 
 
 // a dataset creation property list
-class pyre::h5::DCPL : public pyre::h5::PropList {
+class pyre::h5::properties::DCPL : public pyre::h5::properties::List {
     // types
 public:
     // a filter as (id, name, flags, configuration)

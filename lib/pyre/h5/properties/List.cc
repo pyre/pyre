@@ -5,20 +5,20 @@
 
 
 // my declarations
-#include "PropList.h"
+#include "List.h"
 
 
 // the default property list, a handle to the library-wide defaults
-pyre::h5::PropList::PropList() : Identifier(H5P_DEFAULT) {}
+pyre::h5::properties::List::List() : Identifier(H5P_DEFAULT) {}
 
 
 // adopt an existing raw handle
-pyre::h5::PropList::PropList(id_type id) : Identifier(id) {}
+pyre::h5::properties::List::List(id_type id) : Identifier(id) {}
 
 
 // the number of properties in the list
 auto
-pyre::h5::PropList::numProps() const -> std::size_t
+pyre::h5::properties::List::numProps() const -> std::size_t
 {
     // make room for the answer
     std::size_t count = 0;
@@ -31,7 +31,7 @@ pyre::h5::PropList::numProps() const -> std::size_t
 
 // whether the list has a property by the given {name}
 auto
-pyre::h5::PropList::exists(const string_t & name) const -> bool
+pyre::h5::properties::List::exists(const string_t & name) const -> bool
 {
     // ask the library; a positive answer means it is present
     return H5Pexist(id(), name.data()) > 0;
@@ -40,7 +40,7 @@ pyre::h5::PropList::exists(const string_t & name) const -> bool
 
 // the size, in bytes, of the property by the given {name}
 auto
-pyre::h5::PropList::propertySize(const string_t & name) const -> std::size_t
+pyre::h5::properties::List::propertySize(const string_t & name) const -> std::size_t
 {
     // make room for the answer
     std::size_t size = 0;
@@ -53,7 +53,7 @@ pyre::h5::PropList::propertySize(const string_t & name) const -> std::size_t
 
 // the value of the property by the given {name}, as raw bytes in a string
 auto
-pyre::h5::PropList::property(const string_t & name) const -> string_t
+pyre::h5::properties::List::property(const string_t & name) const -> string_t
 {
     // find out how big the value is
     auto size = propertySize(name);
@@ -68,7 +68,7 @@ pyre::h5::PropList::property(const string_t & name) const -> string_t
 
 // set the property by the given {name} to {value}
 auto
-pyre::h5::PropList::setProperty(const string_t & name, const string_t & value) -> void
+pyre::h5::properties::List::setProperty(const string_t & name, const string_t & value) -> void
 {
     // hand the raw bytes to the library
     H5Pset(id(), name.data(), value.data());
@@ -79,7 +79,7 @@ pyre::h5::PropList::setProperty(const string_t & name, const string_t & value) -
 
 // remove the property by the given {name}
 auto
-pyre::h5::PropList::removeProperty(const string_t & name) -> void
+pyre::h5::properties::List::removeProperty(const string_t & name) -> void
 {
     // ask the library to drop it
     H5Premove(id(), name.data());
@@ -90,7 +90,7 @@ pyre::h5::PropList::removeProperty(const string_t & name) -> void
 
 // release my handle
 auto
-pyre::h5::PropList::close() -> void
+pyre::h5::properties::List::close() -> void
 {
     // give up my reference; the library closes the list when the last one goes away
     _release();

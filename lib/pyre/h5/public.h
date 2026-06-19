@@ -19,15 +19,8 @@
 // the pyre-owned wrappers over the hdf5 c api
 #include "Identifier.h"
 #include "DataSpace.h"
-// property lists
-#include "PropList.h"
-#include "DAPL.h"
-#include "DCPL.h"
-#include "DXPL.h"
-#include "FAPL.h"
-#include "FCPL.h"
-#include "LAPL.h"
-#include "LCPL.h"
+// property lists, in their own {properties} namespace
+#include "properties/public.h"
 // datatypes, in their own {types} namespace
 #include "types/public.h"
 

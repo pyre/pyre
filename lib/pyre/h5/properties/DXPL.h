@@ -9,11 +9,11 @@
 // set up the namespace
 #include "forward.h"
 // my base class
-#include "PropList.h"
+#include "List.h"
 
 
 // a dataset memory transfer property list
-class pyre::h5::DXPL : public pyre::h5::PropList {
+class pyre::h5::properties::DXPL : public pyre::h5::properties::List {
     // metamethods
 public:
     // make a fresh dataset memory transfer property list

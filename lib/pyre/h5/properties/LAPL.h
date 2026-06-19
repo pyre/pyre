@@ -9,11 +9,11 @@
 // set up the namespace
 #include "forward.h"
 // my base class
-#include "PropList.h"
+#include "List.h"
 
 
 // a link access property list
-class pyre::h5::LAPL : public pyre::h5::PropList {
+class pyre::h5::properties::LAPL : public pyre::h5::properties::List {
     // metamethods
 public:
     // make a fresh link access property list
