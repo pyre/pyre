@@ -9,16 +9,16 @@
 
 
 // make a fresh dataset access property list
-pyre::h5::DAPL::DAPL() : PropList(H5Pcreate(H5P_DATASET_ACCESS)) {}
+pyre::h5::properties::DAPL::DAPL() : List(H5Pcreate(H5P_DATASET_ACCESS)) {}
 
 
 // adopt an existing raw handle
-pyre::h5::DAPL::DAPL(id_type id) : PropList(id) {}
+pyre::h5::properties::DAPL::DAPL(id_type id) : List(id) {}
 
 
 // the shared default dataset access property list
 auto
-pyre::h5::DAPL::theDefault() -> const DAPL &
+pyre::h5::properties::DAPL::theDefault() -> const DAPL &
 {
     // {H5P_DEFAULT} is a sentinel, not a live object, so wrapping it is inert
     static const DAPL theDefault { static_cast<id_type>(H5P_DEFAULT) };
@@ -29,7 +29,7 @@ pyre::h5::DAPL::theDefault() -> const DAPL &
 
 // the chunk cache parameters: (slots, bytes, preemption policy)
 auto
-pyre::h5::DAPL::chunkCache() const -> std::tuple<std::size_t, std::size_t, double>
+pyre::h5::properties::DAPL::chunkCache() const -> std::tuple<std::size_t, std::size_t, double>
 {
     // make room for the answer
     std::size_t slots = 0;
@@ -44,7 +44,7 @@ pyre::h5::DAPL::chunkCache() const -> std::tuple<std::size_t, std::size_t, doubl
 
 // set the chunk cache parameters
 auto
-pyre::h5::DAPL::setChunkCache(std::size_t slots, std::size_t bytes, double w0) -> void
+pyre::h5::properties::DAPL::setChunkCache(std::size_t slots, std::size_t bytes, double w0) -> void
 {
     // hand them to the library
     H5Pset_chunk_cache(id(), slots, bytes, w0);

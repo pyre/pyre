@@ -9,16 +9,16 @@
 
 
 // make a fresh file creation property list
-pyre::h5::FCPL::FCPL() : PropList(H5Pcreate(H5P_FILE_CREATE)) {}
+pyre::h5::properties::FCPL::FCPL() : List(H5Pcreate(H5P_FILE_CREATE)) {}
 
 
 // adopt an existing raw handle
-pyre::h5::FCPL::FCPL(id_type id) : PropList(id) {}
+pyre::h5::properties::FCPL::FCPL(id_type id) : List(id) {}
 
 
 // the shared default file creation property list
 auto
-pyre::h5::FCPL::theDefault() -> const FCPL &
+pyre::h5::properties::FCPL::theDefault() -> const FCPL &
 {
     // {H5P_DEFAULT} is a sentinel, not a live object, so wrapping it is inert
     static const FCPL theDefault { static_cast<id_type>(H5P_DEFAULT) };
@@ -29,7 +29,7 @@ pyre::h5::FCPL::theDefault() -> const FCPL &
 
 // the file space page size
 auto
-pyre::h5::FCPL::pageSize() const -> hsize_t
+pyre::h5::properties::FCPL::pageSize() const -> hsize_t
 {
     // make room for the answer
     hsize_t size = 0;
@@ -42,7 +42,7 @@ pyre::h5::FCPL::pageSize() const -> hsize_t
 
 // set the file space page size
 auto
-pyre::h5::FCPL::setPageSize(hsize_t size) -> void
+pyre::h5::properties::FCPL::setPageSize(hsize_t size) -> void
 {
     // hand it to the library
     H5Pset_file_space_page_size(id(), size);
@@ -53,7 +53,7 @@ pyre::h5::FCPL::setPageSize(hsize_t size) -> void
 
 // the file space strategy: (strategy, persist free space, threshold)
 auto
-pyre::h5::FCPL::filespaceStrategy() const -> std::tuple<H5F_fspace_strategy_t, hbool_t, hsize_t>
+pyre::h5::properties::FCPL::filespaceStrategy() const -> std::tuple<H5F_fspace_strategy_t, hbool_t, hsize_t>
 {
     // make room for the answer
     H5F_fspace_strategy_t strategy = H5F_FSPACE_STRATEGY_FSM_AGGR;
@@ -68,7 +68,7 @@ pyre::h5::FCPL::filespaceStrategy() const -> std::tuple<H5F_fspace_strategy_t, h
 
 // set the file space strategy
 auto
-pyre::h5::FCPL::setFilespaceStrategy(
+pyre::h5::properties::FCPL::setFilespaceStrategy(
     H5F_fspace_strategy_t strategy, hbool_t persist, hsize_t threshold) -> void
 {
     // hand them to the library

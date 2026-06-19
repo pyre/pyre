@@ -9,16 +9,16 @@
 
 
 // make a fresh link access property list
-pyre::h5::LAPL::LAPL() : PropList(H5Pcreate(H5P_LINK_ACCESS)) {}
+pyre::h5::properties::LAPL::LAPL() : List(H5Pcreate(H5P_LINK_ACCESS)) {}
 
 
 // adopt an existing raw handle
-pyre::h5::LAPL::LAPL(id_type id) : PropList(id) {}
+pyre::h5::properties::LAPL::LAPL(id_type id) : List(id) {}
 
 
 // the shared default link access property list
 auto
-pyre::h5::LAPL::theDefault() -> const LAPL &
+pyre::h5::properties::LAPL::theDefault() -> const LAPL &
 {
     // {H5P_DEFAULT} is a sentinel, not a live object, so wrapping it is inert
     static const LAPL theDefault { static_cast<id_type>(H5P_DEFAULT) };
@@ -29,7 +29,7 @@ pyre::h5::LAPL::theDefault() -> const LAPL &
 
 // the number of allowed link traversals
 auto
-pyre::h5::LAPL::numLinks() const -> std::size_t
+pyre::h5::properties::LAPL::numLinks() const -> std::size_t
 {
     // make room for the answer
     std::size_t links = 0;
@@ -42,7 +42,7 @@ pyre::h5::LAPL::numLinks() const -> std::size_t
 
 // set the number of allowed link traversals
 auto
-pyre::h5::LAPL::setNumLinks(std::size_t links) -> void
+pyre::h5::properties::LAPL::setNumLinks(std::size_t links) -> void
 {
     // hand it to the library
     H5Pset_nlinks(id(), links);

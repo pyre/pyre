@@ -12,6 +12,23 @@
 #include "forward.h"
 
 
+// the canonical names for the pyre-owned hdf5 property lists
+namespace pyre::h5::properties {
+    // the generic base
+    using list_t = List;
+    // dataset access, creation, and transfer
+    using dataset_access_t = DAPL;
+    using dataset_creation_t = DCPL;
+    using dataset_transfer_t = DXPL;
+    // file access and creation
+    using file_access_t = FAPL;
+    using file_creation_t = FCPL;
+    // link access and creation
+    using link_access_t = LAPL;
+    using link_creation_t = LCPL;
+} // namespace pyre::h5::properties
+
+
 // the canonical names for the pyre-owned hdf5 datatypes
 namespace pyre::h5::types {
     // the generic base

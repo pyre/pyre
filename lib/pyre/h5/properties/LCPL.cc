@@ -9,16 +9,16 @@
 
 
 // make a fresh link creation property list
-pyre::h5::LCPL::LCPL() : PropList(H5Pcreate(H5P_LINK_CREATE)) {}
+pyre::h5::properties::LCPL::LCPL() : List(H5Pcreate(H5P_LINK_CREATE)) {}
 
 
 // adopt an existing raw handle
-pyre::h5::LCPL::LCPL(id_type id) : PropList(id) {}
+pyre::h5::properties::LCPL::LCPL(id_type id) : List(id) {}
 
 
 // the shared default link creation property list
 auto
-pyre::h5::LCPL::theDefault() -> const LCPL &
+pyre::h5::properties::LCPL::theDefault() -> const LCPL &
 {
     // {H5P_DEFAULT} is a sentinel, not a live object, so wrapping it is inert
     static const LCPL theDefault { static_cast<id_type>(H5P_DEFAULT) };
@@ -30,7 +30,7 @@ pyre::h5::LCPL::theDefault() -> const LCPL &
 #if H5_VERSION_GE(1, 12, 0)
 // whether missing intermediate groups are created on demand
 auto
-pyre::h5::LCPL::createIntermediateGroup() const -> bool
+pyre::h5::properties::LCPL::createIntermediateGroup() const -> bool
 {
     // make room for the answer
     unsigned int create = 0;
@@ -43,7 +43,7 @@ pyre::h5::LCPL::createIntermediateGroup() const -> bool
 
 // set whether missing intermediate groups are created on demand
 auto
-pyre::h5::LCPL::setCreateIntermediateGroup(bool create) -> void
+pyre::h5::properties::LCPL::setCreateIntermediateGroup(bool create) -> void
 {
     // hand it to the library
     H5Pset_create_intermediate_group(id(), create ? 1 : 0);
@@ -55,7 +55,7 @@ pyre::h5::LCPL::setCreateIntermediateGroup(bool create) -> void
 
 // the string character encoding
 auto
-pyre::h5::LCPL::charEncoding() const -> H5T_cset_t
+pyre::h5::properties::LCPL::charEncoding() const -> H5T_cset_t
 {
     // make room for the answer
     H5T_cset_t encoding = H5T_CSET_ASCII;
@@ -68,7 +68,7 @@ pyre::h5::LCPL::charEncoding() const -> H5T_cset_t
 
 // set the string character encoding
 auto
-pyre::h5::LCPL::setCharEncoding(H5T_cset_t encoding) -> void
+pyre::h5::properties::LCPL::setCharEncoding(H5T_cset_t encoding) -> void
 {
     // hand it to the library
     H5Pset_char_encoding(id(), encoding);
