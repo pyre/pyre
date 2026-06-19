@@ -17,6 +17,20 @@ namespace pyre::h5 {
     class Identifier;
     // the description of a dataset's element layout
     class DataSpace;
+
+    // property lists
+    // the generic base
+    class PropList;
+    // dataset access, creation, and transfer
+    class DAPL;
+    class DCPL;
+    class DXPL;
+    // file access and creation
+    class FAPL;
+    class FCPL;
+    // link access and creation
+    class LAPL;
+    class LCPL;
 } // namespace pyre::h5
 
 
