@@ -5,11 +5,11 @@
 
 
 // my declarations
-#include "PredType.h"
+#include "Predefined.h"
 
 
 // wrap a predefined-type constant
-pyre::h5::PredType::PredType(id_type id) : AtomType(id)
+pyre::h5::types::Predefined::Predefined(id_type id) : Atom(id)
 {
     // these are immutable globals the library owns forever; take out a reference of my own so my
     // {Identifier} bookkeeping stays balanced and i never drive the count below the library's

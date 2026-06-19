@@ -9,11 +9,11 @@
 // set up the namespace
 #include "forward.h"
 // my base class
-#include "AtomType.h"
+#include "Atom.h"
 
 
 // an hdf5 integer datatype
-class pyre::h5::IntType : public pyre::h5::AtomType {
+class pyre::h5::types::Int : public pyre::h5::types::Atom {
     // types
 public:
     // whether i am signed or unsigned
@@ -22,15 +22,15 @@ public:
     // metamethods
 public:
     // adopt an existing raw handle, e.g. one returned by the c api
-    explicit IntType(id_type id);
+    explicit Int(id_type id);
     // make an independent copy of a predefined integer type
-    explicit IntType(const PredType & type);
+    explicit Int(const Predefined & type);
     // the full set of special members
-    IntType(const IntType &) = default;
-    IntType(IntType &&) noexcept = default;
-    IntType & operator=(const IntType &) = default;
-    IntType & operator=(IntType &&) noexcept = default;
-    ~IntType() override = default;
+    Int(const Int &) = default;
+    Int(Int &&) noexcept = default;
+    Int & operator=(const Int &) = default;
+    Int & operator=(Int &&) noexcept = default;
+    ~Int() override = default;
 
     // interface
 public:

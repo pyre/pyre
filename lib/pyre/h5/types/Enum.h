@@ -9,23 +9,23 @@
 // set up the namespace
 #include "forward.h"
 // my base class
-#include "DataType.h"
+#include "Datatype.h"
 
 
 // an hdf5 enumeration datatype
-class pyre::h5::EnumType : public pyre::h5::DataType {
+class pyre::h5::types::Enum : public pyre::h5::types::Datatype {
     // metamethods
 public:
     // make an empty enumeration type with no handle yet
-    EnumType();
+    Enum();
     // adopt an existing raw handle, e.g. one returned by the c api
-    explicit EnumType(id_type id);
+    explicit Enum(id_type id);
     // the full set of special members
-    EnumType(const EnumType &) = default;
-    EnumType(EnumType &&) noexcept = default;
-    EnumType & operator=(const EnumType &) = default;
-    EnumType & operator=(EnumType &&) noexcept = default;
-    ~EnumType() override = default;
+    Enum(const Enum &) = default;
+    Enum(Enum &&) noexcept = default;
+    Enum & operator=(const Enum &) = default;
+    Enum & operator=(Enum &&) noexcept = default;
+    ~Enum() override = default;
 
     // interface
 public:

@@ -9,11 +9,11 @@
 // set up the namespace
 #include "forward.h"
 // my base class
-#include "DataType.h"
+#include "Datatype.h"
 
 
 // the base of the hdf5 atomic datatypes: integers, floats, strings, ...
-class pyre::h5::AtomType : public pyre::h5::DataType {
+class pyre::h5::types::Atom : public pyre::h5::types::Datatype {
     // types
 public:
     // the byte order of my representation
@@ -26,13 +26,13 @@ public:
     // metamethods
 public:
     // adopt an existing raw handle, e.g. one returned by the c api
-    explicit AtomType(id_type id);
+    explicit Atom(id_type id);
     // the full set of special members
-    AtomType(const AtomType &) = default;
-    AtomType(AtomType &&) noexcept = default;
-    AtomType & operator=(const AtomType &) = default;
-    AtomType & operator=(AtomType &&) noexcept = default;
-    ~AtomType() override = default;
+    Atom(const Atom &) = default;
+    Atom(Atom &&) noexcept = default;
+    Atom & operator=(const Atom &) = default;
+    Atom & operator=(Atom &&) noexcept = default;
+    ~Atom() override = default;
 
     // interface
 public:

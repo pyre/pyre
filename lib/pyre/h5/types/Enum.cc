@@ -5,20 +5,20 @@
 
 
 // my declarations
-#include "EnumType.h"
+#include "Enum.h"
 
 
 // make an empty enumeration type with no handle yet
-pyre::h5::EnumType::EnumType() : DataType(static_cast<id_type>(H5I_INVALID_HID)) {}
+pyre::h5::types::Enum::Enum() : Datatype(static_cast<id_type>(H5I_INVALID_HID)) {}
 
 
 // adopt an existing raw handle
-pyre::h5::EnumType::EnumType(id_type id) : DataType(id) {}
+pyre::h5::types::Enum::Enum(id_type id) : Datatype(id) {}
 
 
 // the number of members i have
 auto
-pyre::h5::EnumType::members() const -> int
+pyre::h5::types::Enum::members() const -> int
 {
     // ask the library
     return H5Tget_nmembers(id());
@@ -27,7 +27,7 @@ pyre::h5::EnumType::members() const -> int
 
 // the value of the member at {index}
 auto
-pyre::h5::EnumType::memberValue(unsigned int index) const -> long
+pyre::h5::types::Enum::memberValue(unsigned int index) const -> long
 {
     // make room for the answer
     long value = 0;
@@ -40,7 +40,7 @@ pyre::h5::EnumType::memberValue(unsigned int index) const -> long
 
 // the name of the member with the given {value}
 auto
-pyre::h5::EnumType::nameOf(long value) const -> string_t
+pyre::h5::types::Enum::nameOf(long value) const -> string_t
 {
     // the longest name we are prepared to retrieve
     constexpr std::size_t limit = 256;

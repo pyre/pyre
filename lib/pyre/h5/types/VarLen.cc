@@ -5,16 +5,16 @@
 
 
 // my declarations
-#include "VarLenType.h"
+#include "VarLen.h"
 
 
 // adopt an existing raw handle
-pyre::h5::VarLenType::VarLenType(id_type id) : DataType(id) {}
+pyre::h5::types::VarLen::VarLen(id_type id) : Datatype(id) {}
 
 
 // make a variable length type whose elements are of the given {cell} type
-pyre::h5::VarLenType::VarLenType(const DataType & cell) :
-    DataType(static_cast<id_type>(H5Tvlen_create(cell.id())))
+pyre::h5::types::VarLen::VarLen(const Datatype & cell) :
+    Datatype(static_cast<id_type>(H5Tvlen_create(cell.id())))
 {}
 
 

@@ -12,7 +12,7 @@
 // forward declarations
 #include "forward.h"
 // the datatype i bridge to {H5::}
-#include "DataType.h"
+#include "types/Datatype.h"
 
 
 // bridging to the still-{H5::} parts of the api

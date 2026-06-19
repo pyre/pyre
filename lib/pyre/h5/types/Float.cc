@@ -5,24 +5,24 @@
 
 
 // my declarations
-#include "FloatType.h"
+#include "Float.h"
 // the predefined type i can copy
-#include "PredType.h"
+#include "Predefined.h"
 
 
 // adopt an existing raw handle
-pyre::h5::FloatType::FloatType(id_type id) : AtomType(id) {}
+pyre::h5::types::Float::Float(id_type id) : Atom(id) {}
 
 
 // make an independent copy of a predefined float type
-pyre::h5::FloatType::FloatType(const PredType & type) :
-    AtomType(static_cast<id_type>(H5Tcopy(type.id())))
+pyre::h5::types::Float::Float(const Predefined & type) :
+    Atom(static_cast<id_type>(H5Tcopy(type.id())))
 {}
 
 
 // my exponent bias
 auto
-pyre::h5::FloatType::bias() const -> std::size_t
+pyre::h5::types::Float::bias() const -> std::size_t
 {
     // ask the library
     return H5Tget_ebias(id());
@@ -31,7 +31,7 @@ pyre::h5::FloatType::bias() const -> std::size_t
 
 // set my exponent bias
 auto
-pyre::h5::FloatType::setBias(std::size_t bias) -> void
+pyre::h5::types::Float::setBias(std::size_t bias) -> void
 {
     // hand it to the library
     H5Tset_ebias(id(), bias);
@@ -42,7 +42,7 @@ pyre::h5::FloatType::setBias(std::size_t bias) -> void
 
 // my mantissa normalization strategy
 auto
-pyre::h5::FloatType::normalization() const -> norm_type
+pyre::h5::types::Float::normalization() const -> norm_type
 {
     // ask the library
     return H5Tget_norm(id());
@@ -51,7 +51,7 @@ pyre::h5::FloatType::normalization() const -> norm_type
 
 // set my mantissa normalization strategy
 auto
-pyre::h5::FloatType::setNorm(norm_type norm) -> void
+pyre::h5::types::Float::setNorm(norm_type norm) -> void
 {
     // hand it to the library
     H5Tset_norm(id(), norm);
@@ -62,7 +62,7 @@ pyre::h5::FloatType::setNorm(norm_type norm) -> void
 
 // my internal padding strategy
 auto
-pyre::h5::FloatType::inpad() const -> pad_type
+pyre::h5::types::Float::inpad() const -> pad_type
 {
     // ask the library
     return H5Tget_inpad(id());
@@ -71,7 +71,7 @@ pyre::h5::FloatType::inpad() const -> pad_type
 
 // set my internal padding strategy
 auto
-pyre::h5::FloatType::setInpad(pad_type pad) -> void
+pyre::h5::types::Float::setInpad(pad_type pad) -> void
 {
     // hand it to the library
     H5Tset_inpad(id(), pad);
@@ -82,7 +82,7 @@ pyre::h5::FloatType::setInpad(pad_type pad) -> void
 
 // my bit layout
 auto
-pyre::h5::FloatType::fields() const -> fields_type
+pyre::h5::types::Float::fields() const -> fields_type
 {
     // make room for the answer
     std::size_t spos, epos, esize, mpos, msize;
@@ -95,7 +95,7 @@ pyre::h5::FloatType::fields() const -> fields_type
 
 // set my bit layout
 auto
-pyre::h5::FloatType::setFields(
+pyre::h5::types::Float::setFields(
     std::size_t spos, std::size_t epos, std::size_t esize, std::size_t mpos,
     std::size_t msize) -> void
 {

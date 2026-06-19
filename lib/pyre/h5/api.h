@@ -12,5 +12,24 @@
 #include "forward.h"
 
 
+// the canonical names for the pyre-owned hdf5 datatypes
+namespace pyre::h5::types {
+    // the generic base
+    using datatype_t = Datatype;
+    // the base of the atomic types
+    using atom_t = Atom;
+    // predefined library constants, e.g. the {H5T_NATIVE_*} types
+    using predefined_t = Predefined;
+    // atomic types
+    using int_t = Int;
+    using float_t = Float;
+    using str_t = String;
+    // composite types
+    using composite_t = Compound;
+    using enum_t = Enum;
+    using array_t = Array;
+    using varlen_t = VarLen;
+} // namespace pyre::h5::types
+
 
 // end of file

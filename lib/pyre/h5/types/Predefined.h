@@ -9,21 +9,21 @@
 // set up the namespace
 #include "forward.h"
 // my base class
-#include "AtomType.h"
+#include "Atom.h"
 
 
 // a predefined hdf5 datatype, e.g. one of the {H5T_NATIVE_*} or {H5T_STD_*} constants
-class pyre::h5::PredType : public pyre::h5::AtomType {
+class pyre::h5::types::Predefined : public pyre::h5::types::Atom {
     // metamethods
 public:
     // wrap a predefined-type constant, sharing the reference the library owns forever
-    explicit PredType(id_type id);
+    explicit Predefined(id_type id);
     // the full set of special members
-    PredType(const PredType &) = default;
-    PredType(PredType &&) noexcept = default;
-    PredType & operator=(const PredType &) = default;
-    PredType & operator=(PredType &&) noexcept = default;
-    ~PredType() override = default;
+    Predefined(const Predefined &) = default;
+    Predefined(Predefined &&) noexcept = default;
+    Predefined & operator=(const Predefined &) = default;
+    Predefined & operator=(Predefined &&) noexcept = default;
+    ~Predefined() override = default;
 };
 
 
