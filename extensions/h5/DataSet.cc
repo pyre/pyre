@@ -468,8 +468,9 @@ pyre::h5::py::dataset(py::module & m)
             auto strings = strings_t(len);
             // make a slot
             const hsize_t one = 1;
-            // we always write one string at offset zero
-            auto write = DataSpace(1, &one);
+            // we always write one string at offset zero; this is an in-memory scratch space
+            // handed straight to the still-{H5::}-based dataset i/o, so build it as one
+            auto write = H5::DataSpace(1, &one);
             // and read from the dataset space
             auto read = self.getSpace();
             // read as many times as there are strings to pull
@@ -538,8 +539,9 @@ pyre::h5::py::dataset(py::module & m)
             auto len = shape[0];
             // we always write one string at a time from {value}
             const hsize_t one = 1;
-            // so make a data space that reflects that
-            auto src = DataSpace(rank, &one);
+            // so make a data space that reflects that; in-memory scratch handed to the
+            // still-{H5::}-based dataset i/o, so build it as one
+            auto src = H5::DataSpace(rank, &one);
 
             // write as many times as there are strings to pull
             for (hsize_t idx = 0; idx < len; ++idx) {
