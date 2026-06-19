@@ -131,7 +131,12 @@ pyre::h5::py::data(py::class_<objectT> & cls)
         // the name
         "space",
         // the implementation
-        [](const objectT & self) { return self.getSpace(); },
+        [](const objectT & self) -> DataSpace {
+            // {getSpace} hands back an {H5::} dataspace owning a fresh handle; copy its extent
+            // into a pyre wrapper so the python-facing type matches, and let the temporary
+            // release its own handle
+            return DataSpace(static_cast<hid_t>(H5Scopy(self.getSpace().getId())));
+        },
         // the docstring
         "get my dataspace");
 

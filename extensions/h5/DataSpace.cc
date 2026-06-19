@@ -27,7 +27,7 @@ pyre::h5::py::dataspace(py::module & m)
     // of a given class, "scalar" by default
     cls.def(
         // the implementation
-        py::init<H5S_class_t>(),
+        py::init<DataSpace::class_type>(),
         // the signature
         "type"_a = H5S_SCALAR,
         // the something
@@ -36,10 +36,7 @@ pyre::h5::py::dataspace(py::module & m)
     // simple, with the given shape
     cls.def(
         // the implementation
-        py::init([](const shape_t & shape) {
-            // instantiate and return
-            return new DataSpace(shape.size(), &shape[0], nullptr);
-        }),
+        py::init<const shape_t &>(),
         // the signature
         "shape"_a,
         // the something
@@ -50,10 +47,12 @@ pyre::h5::py::dataspace(py::module & m)
         // the name
         "all",
         // the implementation
-        [](const py::object &) {
+        [](const py::object &) -> const DataSpace & {
             // easy enough
-            return &DataSpace::ALL;
+            return DataSpace::all();
         },
+        // we hand back a reference to a shared, library-owned object
+        py::return_value_policy::reference,
         // docstring
         "the default dataspace object");
 
@@ -73,7 +72,7 @@ pyre::h5::py::dataspace(py::module & m)
         // the name
         "hid",
         // the implementation
-        &DataSpace::getId,
+        &DataSpace::id,
         // the docstring
         "get my h5 handle id");
 
@@ -94,7 +93,7 @@ pyre::h5::py::dataspace(py::module & m)
         // the name
         "simple",
         // the implementation
-        &DataSpace::isSimple,
+        &DataSpace::simple,
         // the docstring
         "check whether i'm simple");
 
@@ -103,7 +102,7 @@ pyre::h5::py::dataspace(py::module & m)
         // the name
         "rank",
         // the implementation
-        &DataSpace::getSimpleExtentNdims,
+        &DataSpace::rank,
         // the docstring
         "get my rank");
 
@@ -112,23 +111,9 @@ pyre::h5::py::dataspace(py::module & m)
         // the name
         "shape",
         // the reader
-        [](const DataSpace & self) -> shape_t {
-            // get my rank
-            auto rank = self.getSimpleExtentNdims();
-            // make a correctly sized vector to hold the result
-            shape_t shape(rank);
-            // populate it
-            self.getSimpleExtentDims(&shape[0], nullptr);
-            // and return it
-            return shape;
-        },
+        &DataSpace::shape,
         // the writer
-        [](DataSpace & self, const shape_t & shape) -> void {
-            // resize me
-            self.setExtentSimple(shape.size(), &shape[0], nullptr);
-            // all done
-            return;
-        },
+        &DataSpace::reshape,
         // the docstring
         "get and set my shape");
 
@@ -137,7 +122,7 @@ pyre::h5::py::dataspace(py::module & m)
         // the name
         "cells",
         // the implementation
-        &DataSpace::getSimpleExtentNpoints,
+        &DataSpace::cells,
         // the docstring
         "the number of cells of the dataspace");
 
@@ -146,7 +131,7 @@ pyre::h5::py::dataspace(py::module & m)
         // the name
         "type",
         // the implementation
-        &DataSpace::getSimpleExtentType,
+        &DataSpace::type,
         // the docstring
         "the type of the dataspace");
 
@@ -155,7 +140,7 @@ pyre::h5::py::dataspace(py::module & m)
         // the name
         "validSelection",
         // the implementation
-        &DataSpace::selectValid,
+        &DataSpace::validSelection,
         // the docstring
         "verify the current selection");
 
@@ -164,18 +149,7 @@ pyre::h5::py::dataspace(py::module & m)
         // the name
         "selectionBounds",
         // the implementation
-        [](const DataSpace & self) {
-            // find my rank
-            auto rank = self.getSimpleExtentNdims();
-            // the beginning
-            shape_t begin(rank);
-            // and the end
-            shape_t end(rank);
-            // hand them both to the bbox calculator
-            self.getSelectBounds(&begin[0], &end[0]);
-            // and return them to the caller
-            return py::make_tuple(begin, end);
-        },
+        &DataSpace::selectionBounds,
         // the docstring
         "get the bounding box of the current selection");
 
@@ -184,7 +158,7 @@ pyre::h5::py::dataspace(py::module & m)
         // the name
         "selectedCells",
         // the implementation
-        &DataSpace::getSelectNpoints,
+        &DataSpace::selectedCells,
         // the docstring
         "get the number of cells in the current selection");
 
@@ -193,7 +167,7 @@ pyre::h5::py::dataspace(py::module & m)
         // the name
         "selectedElements",
         // the implementation
-        &DataSpace::getSelectElemNpoints,
+        &DataSpace::selectedElements,
         // the docstring
         "get the number of elements in the current selection");
 
@@ -202,7 +176,7 @@ pyre::h5::py::dataspace(py::module & m)
         // the name
         "selectedSlabs",
         // the implementation
-        &DataSpace::getSelectHyperNblocks,
+        &DataSpace::selectedSlabs,
         // the docstring
         "get the number of hyperslabs in the current selection");
 
@@ -212,7 +186,7 @@ pyre::h5::py::dataspace(py::module & m)
         // the name
         "clear",
         // the implementation
-        &DataSpace::setExtentNone,
+        &DataSpace::clear,
         // the docstring
         "clear the dataspace, i.e. empty its extent");
 
@@ -221,16 +195,9 @@ pyre::h5::py::dataspace(py::module & m)
         // the name
         "clone",
         // the implementation
-        [](const DataSpace & self) {
-            // make a new dataspace of the same type
-            auto clone = new DataSpace(self.getSimpleExtentType());
-            // use me as a template
-            clone->copy(self);
-            // wrap in a handler and return it
-            return std::unique_ptr<DataSpace>(clone);
-        },
+        &DataSpace::clone,
         // the docstring
-        "clear the dataspace, i.e. empty its extent");
+        "make a copy of the dataspace");
 
     // close the dataspace
     cls.def(
@@ -246,12 +213,7 @@ pyre::h5::py::dataspace(py::module & m)
         // the name
         "reshape",
         // the implementation
-        [](DataSpace & self, const shape_t & shape) -> void {
-            // resize me
-            self.setExtentSimple(shape.size(), &shape[0], nullptr);
-            // all done
-            return;
-        },
+        &DataSpace::reshape,
         // the signature
         "shape"_a,
         // the docstring
@@ -279,12 +241,7 @@ pyre::h5::py::dataspace(py::module & m)
         // the name
         "offset",
         // the implementation
-        [](const DataSpace & self, const offsets_t & delta) -> void {
-            // apply the offset
-            self.offsetSimple(&delta[0]);
-            // all done
-            return;
-        },
+        &DataSpace::offset,
         // the signature
         "delta"_a,
         // the docstring
@@ -295,26 +252,7 @@ pyre::h5::py::dataspace(py::module & m)
         // the name
         "selectElements",
         // the implementation
-        [](DataSpace & self, H5S_seloper_t op, points_t elements) {
-            // make a pile
-            auto pile = new hsize_t[elements.size() * elements[0].size()];
-            // starting at 0
-            auto cursor = 0;
-            // go through the points
-            for (const auto & element : elements) {
-                // and their coordinates
-                for (const auto & index : element) {
-                    // transfer the {index} to the {pile}
-                    pile[cursor++] = index;
-                }
-            }
-            // combine the {elements} with the current selection
-            self.selectElements(op, elements.size(), pile);
-            // clean up
-            delete[] pile;
-            // all done
-            return;
-        },
+        &DataSpace::selectElements,
         // the signature
         "op"_a, "elements"_a,
         // the docstring
@@ -325,32 +263,7 @@ pyre::h5::py::dataspace(py::module & m)
         // the name
         "getSelectedElements",
         // the implementation
-        [](const DataSpace & self, int start) {
-            // get my rank
-            auto rank = self.getSimpleExtentNdims();
-            // get the number of selected elements
-            auto len = self.getSelectElemNpoints();
-            // make a pile
-            auto pile = new hsize_t[len * rank];
-            // populate it
-            self.getSelectElemPointlist(0, len, pile);
-            // build the coordinate table
-            points_t points;
-            // go through the points
-            for (auto p = start; p < len; ++p) {
-                // build a vector to hold the coordinates and add it to the pile
-                auto & point = points.emplace_back(rank);
-                // populate the coordinates
-                for (auto index = 0; index < rank; ++index) {
-                    // by copying each index to the right spot
-                    point[index] = pile[p * rank + index];
-                }
-            }
-            // clean up
-            delete[] pile;
-            // and return the points
-            return points;
-        },
+        &DataSpace::selectedElementList,
         // the signature
         "start"_a = 0,
         // the docstring
@@ -361,16 +274,7 @@ pyre::h5::py::dataspace(py::module & m)
         // the name
         "slab",
         // the implementation
-        [](const DataSpace & self, const index_t & origin, const shape_t & shape) {
-            // the block count
-            shape_t count;
-            // we only want one block
-            count.assign(shape.size(), 1);
-            // set the selection to the given slab
-            self.selectHyperslab(H5S_SELECT_SET, &count[0], &origin[0], nullptr, &shape[0]);
-            // all done
-            return;
-        },
+        py::overload_cast<const index_t &, const shape_t &>(&DataSpace::slab),
         // the signature
         "origin"_a, "shape"_a,
         // the docstring
@@ -380,17 +284,8 @@ pyre::h5::py::dataspace(py::module & m)
         // the name
         "slab",
         // the implementation
-        [](const DataSpace & self, H5S_seloper_t op, const index_t & origin,
-           const shape_t & shape) {
-            // the block count
-            shape_t count;
-            // we only want one block
-            count.assign(shape.size(), 1);
-            // set the selection to the given slab
-            self.selectHyperslab(op, &count[0], &origin[0], nullptr, &shape[0]);
-            // all done
-            return;
-        },
+        py::overload_cast<DataSpace::selection_type, const index_t &, const shape_t &>(
+            &DataSpace::slab),
         // the signature
         "op"_a, "origin"_a, "shape"_a,
         // the docstring
@@ -400,13 +295,9 @@ pyre::h5::py::dataspace(py::module & m)
         // the name
         "slab",
         // the implementation
-        [](const DataSpace & self, H5S_seloper_t op, const shape_t & origin, const shape_t & shape,
-           const shape_t & stride, const shape_t & count) {
-            // select the slab
-            self.selectHyperslab(op, &count[0], &origin[0], &stride[0], &shape[0]);
-            // all done
-            return;
-        },
+        py::overload_cast<
+            DataSpace::selection_type, const shape_t &, const shape_t &, const shape_t &,
+            const shape_t &>(&DataSpace::slab),
         // the signature
         "op"_a, "origin"_a, "shape"_a, "stride"_a, "count"_a,
         // the docstring
@@ -417,41 +308,7 @@ pyre::h5::py::dataspace(py::module & m)
         // the name
         "getSelectedSlabs",
         // the implementation
-        [](const DataSpace & self, int start) {
-            // get my rank
-            auto rank = self.getSimpleExtentNdims();
-            // get the selection size
-            auto len = self.getSelectHyperNblocks();
-            // compute the number of blocks we will extract
-            auto blocks = len - start;
-            // make a pile for the slabs, formatted as a (begin,end) pair for each slab
-            auto pile = new hsize_t[2 * rank * blocks];
-            // populate it
-            self.getSelectHyperBlocklist(start, blocks, pile);
-            // build the result
-            std::vector<std::pair<shape_t, shape_t>> slabs;
-            // go through them
-            for (auto block = 0; block < blocks; ++block) {
-                // compute the location of this block
-                auto cursor = pile + 2 * rank * (block + start);
-                // set up the beginning of the block
-                shape_t begin(rank);
-                // populate it
-                std::copy(cursor, cursor + rank, begin.begin());
-                // set up the end of the block
-                shape_t end(rank);
-                // skip to the beginning of the end block
-                cursor += rank;
-                // and populate it
-                std::copy(cursor, cursor + rank, end.begin());
-                // add the pair to the pile
-                slabs.emplace_back(begin, end);
-            }
-            // clean up
-            delete[] pile;
-            // return the harvested slabs
-            return slabs;
-        },
+        &DataSpace::selectedSlabList,
         // the signature
         "start"_a = 0,
         // the docstring

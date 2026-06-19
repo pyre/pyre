@@ -77,8 +77,8 @@ namespace pyre::h5::py {
     using FCPL = H5::FileCreatPropList;
     using LAPL = H5::LinkAccPropList;
     using LCPL = H5::LinkCreatPropList;
-    // dataspaces derive from {Identifier}
-    using DataSpace = H5::DataSpace;
+    // dataspaces: now a pyre-owned wrapper over the hdf5 c api
+    using DataSpace = pyre::h5::DataSpace;
     // locations derive from {Identifier}
     using Location = H5::H5Location; // pure virtual
     // attributes derive from {Location}
