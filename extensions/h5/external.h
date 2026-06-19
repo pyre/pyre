@@ -90,17 +90,17 @@ namespace pyre::h5::py {
     using File = H5::H5File;
     // datasets derive from object
     using DataSet = H5::DataSet;
-    // datatypes derive from {Object}
-    using DataType = H5::DataType;
-    using ArrayType = H5::ArrayType;   // derives DataType
-    using AtomType = H5::AtomType;     // derives from DataType
-    using FloatType = H5::FloatType;   // derives from AtomType
-    using IntType = H5::IntType;       // derives from AtomType
-    using PredType = H5::PredType;     // derives from AtomType
-    using StrType = H5::StrType;       // derives from AtomType
-    using CompType = H5::CompType;     // derives from DataType
-    using EnumType = H5::EnumType;     // derives from DataType
-    using VarLenType = H5::VarLenType; // derives from DataType
+    // datatypes: now pyre-owned wrappers over the hdf5 c api
+    using DataType = pyre::h5::DataType;
+    using AtomType = pyre::h5::AtomType;     // derives DataType
+    using PredType = pyre::h5::PredType;     // derives AtomType
+    using IntType = pyre::h5::IntType;       // derives AtomType
+    using FloatType = pyre::h5::FloatType;   // derives AtomType
+    using StrType = pyre::h5::StrType;       // derives AtomType
+    using CompType = pyre::h5::CompType;     // derives DataType
+    using EnumType = pyre::h5::EnumType;     // derives DataType
+    using ArrayType = pyre::h5::ArrayType;   // derives DataType
+    using VarLenType = pyre::h5::VarLenType; // derives DataType
 
     // reading into in-memory buffers
     // aliases for select memory template expansions

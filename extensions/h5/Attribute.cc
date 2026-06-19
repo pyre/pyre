@@ -80,7 +80,7 @@ pyre::h5::py::attribute(py::module & m)
             // make some room
             long result;
             // read the data
-            self.read(PredType::NATIVE_LONG, &result);
+            self.read(H5::PredType::NATIVE_LONG, &result);
             // all done
             return result;
         },
@@ -109,7 +109,7 @@ pyre::h5::py::attribute(py::module & m)
                 return;
             }
             // write the data
-            self.write(PredType::NATIVE_LONG, &value);
+            self.write(H5::PredType::NATIVE_LONG, &value);
             // all done
             return;
         },
@@ -142,7 +142,7 @@ pyre::h5::py::attribute(py::module & m)
             // make some room
             double result;
             // read the data
-            self.read(PredType::NATIVE_DOUBLE, &result);
+            self.read(H5::PredType::NATIVE_DOUBLE, &result);
             // all done
             return result;
         },
@@ -171,7 +171,7 @@ pyre::h5::py::attribute(py::module & m)
                 return;
             }
             // write the data
-            self.write(PredType::NATIVE_DOUBLE, &value);
+            self.write(H5::PredType::NATIVE_DOUBLE, &value);
             // all done
             return;
         },

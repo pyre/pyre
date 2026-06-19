@@ -32,10 +32,7 @@ pyre::h5::py::datatypes::atom(py::module & m)
         // the name
         "order",
         // the getter
-        [](const AtomType & self) {
-            // get the byte order and return it
-            return self.getOrder();
-        },
+        &AtomType::order,
         // the setter
         &AtomType::setOrder,
         // the docstring
@@ -45,7 +42,7 @@ pyre::h5::py::datatypes::atom(py::module & m)
         // the name
         "offset",
         // the getter
-        &AtomType::getOffset,
+        &AtomType::offset,
         // the setter
         &AtomType::setOffset,
         // the docstring
@@ -55,14 +52,7 @@ pyre::h5::py::datatypes::atom(py::module & m)
         // the name
         "pad",
         // the getter
-        [](AtomType & self) {
-            // make some room
-            H5T_pad_t lsb, msb;
-            // read the padding types
-            self.getPad(lsb, msb);
-            // and return them
-            return std::make_pair(lsb, msb);
-        },
+        &AtomType::pad,
         // the setter
         [](AtomType & self, std::pair<H5T_pad_t, H5T_pad_t> pad) {
             // unpack
@@ -79,7 +69,7 @@ pyre::h5::py::datatypes::atom(py::module & m)
         // the name
         "precision",
         // the getter
-        &AtomType::getPrecision,
+        &AtomType::precision,
         // the setter
         &AtomType::setPrecision,
         // the docstring
@@ -89,9 +79,9 @@ pyre::h5::py::datatypes::atom(py::module & m)
         // the name
         "bytes",
         // the getter
-        &AtomType::getSize,
+        &AtomType::bytes,
         // the setter
-        &AtomType::setSize,
+        &AtomType::setBytes,
         // the docstring
         "get/set the overall size");
 

@@ -31,7 +31,11 @@ pyre::h5::py::datatypes::float_(py::module & m)
     // from an existing type
     cls.def(
         // the implementation
-        py::init<hid_t>(),
+        py::init([](hid_t id) {
+            // {id} belongs to someone else; take out a reference of my own, then adopt it
+            H5Iinc_ref(id);
+            return FloatType(id);
+        }),
         // the signature
         "id"_a,
         // the docstring
@@ -51,9 +55,9 @@ pyre::h5::py::datatypes::float_(py::module & m)
         // the name
         "bias",
         // the getter
-        &FloatType::getEbias,
+        &FloatType::bias,
         // the setter
-        &FloatType::setEbias,
+        &FloatType::setBias,
         // the docstring
         "get/set the exponent bias");
 
@@ -61,10 +65,7 @@ pyre::h5::py::datatypes::float_(py::module & m)
         // the name
         "normalization",
         // the getter
-        [](const FloatType & self) {
-            // bypass the silly C++ interface that generates a textual representation of the enum
-            return H5Tget_norm(self.getId());
-        },
+        &FloatType::normalization,
         // the setter
         &FloatType::setNorm,
         // the docstring
@@ -74,10 +75,7 @@ pyre::h5::py::datatypes::float_(py::module & m)
         // the name
         "inpad",
         // the getter
-        [](const FloatType & self) {
-            // bypass the silly C++ interface that generates a textual representation of the enum
-            return H5Tget_inpad(self.getId());
-        },
+        &FloatType::inpad,
         // the setter
         &FloatType::setInpad,
         // the docstring
@@ -87,14 +85,7 @@ pyre::h5::py::datatypes::float_(py::module & m)
         // the name
         "fields",
         // the getter
-        [](FloatType & self) {
-            // make some room
-            std::size_t spos, epos, esize, mpos, msize;
-            // read the fields
-            self.getFields(spos, epos, esize, mpos, msize);
-            // and return them
-            return std::make_tuple(spos, epos, esize, mpos, msize);
-        },
+        &FloatType::fields,
         // the setter
         [](FloatType & self,
            std::tuple<std::size_t, std::size_t, std::size_t, std::size_t, std::size_t> fields) {
@@ -106,7 +97,7 @@ pyre::h5::py::datatypes::float_(py::module & m)
             return;
         },
         // the docstring
-        "get/set the padding strategy for (lsb, msb)");
+        "get/set the bit layout (sign, exponent, mantissa)");
 
     // all done
     return;

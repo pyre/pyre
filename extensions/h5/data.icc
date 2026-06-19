@@ -39,45 +39,44 @@ pyre::h5::py::data(py::class_<objectT> & cls)
         "type",
         // the implementation
         [](const objectT & self) -> DataType * {
-            // get my type class
-            auto cls = self.getTypeClass();
-            // deduce
-            switch (cls) {
+            // {getXxxType} hands back an {H5::} type owning a fresh handle; copy that handle into
+            // a pyre wrapper of the matching kind so the python-facing type is right, and let the
+            // temporary release its own handle
+            switch (self.getTypeClass()) {
                 // integers
                 case H5T_INTEGER:
                     // return the integer data type descriptor
-                    return new H5::IntType(self.getIntType());
+                    return new IntType(static_cast<hid_t>(H5Tcopy(self.getIntType().getId())));
                 // floats
                 case H5T_FLOAT:
                     // return the float data type descriptor
-                    return new H5::FloatType(self.getFloatType());
+                    return new FloatType(static_cast<hid_t>(H5Tcopy(self.getFloatType().getId())));
                 // strings
                 case H5T_STRING:
                     // return the string data type descriptor
-                    return new H5::StrType(self.getStrType());
+                    return new StrType(static_cast<hid_t>(H5Tcopy(self.getStrType().getId())));
                 // compound types
                 case H5T_COMPOUND:
                     // return the compound data type descriptor
-                    return new H5::CompType(self.getCompType());
+                    return new CompType(static_cast<hid_t>(H5Tcopy(self.getCompType().getId())));
                 // enum types
                 case H5T_ENUM:
                     // return the enum data type descriptor
-                    return new H5::EnumType(self.getEnumType());
+                    return new EnumType(static_cast<hid_t>(H5Tcopy(self.getEnumType().getId())));
                 // variable length types
                 case H5T_VLEN:
                     // return the variable length data type descriptor
-                    return new H5::VarLenType(self.getVarLenType());
+                    return new VarLenType(
+                        static_cast<hid_t>(H5Tcopy(self.getVarLenType().getId())));
                 // array types
                 case H5T_ARRAY:
                     // return the array data type descriptor
-                    return new H5::ArrayType(self.getArrayType());
+                    return new ArrayType(static_cast<hid_t>(H5Tcopy(self.getArrayType().getId())));
                 // by default
                 default:
                     // grab whatever generic information is available
-                    return new H5::DataType(self.getDataType());
+                    return new DataType(static_cast<hid_t>(H5Tcopy(self.getDataType().getId())));
             }
-            // this should be unreachable, but just in case new paths open up
-            return new H5::DataType(self.getDataType());
         },
         // the docstring
         "get detailed information about my type");

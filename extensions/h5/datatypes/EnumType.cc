@@ -33,7 +33,11 @@ pyre::h5::py::datatypes::enum_(py::module & m)
     // from an existing type
     enumType.def(
         // the implementation
-        py::init<hid_t>(),
+        py::init([](hid_t id) {
+            // {id} belongs to someone else; take out a reference of my own, then adopt it
+            H5Iinc_ref(id);
+            return EnumType(id);
+        }),
         // the signature
         "id"_a,
         // the docstring
@@ -44,7 +48,7 @@ pyre::h5::py::datatypes::enum_(py::module & m)
         // the name
         "members",
         // the implementation
-        &EnumType::getNmembers,
+        &EnumType::members,
         // the docstring
         "the number of members in this enum type");
 
@@ -53,13 +57,9 @@ pyre::h5::py::datatypes::enum_(py::module & m)
         // the name
         "name",
         // the implementation
-        [](const EnumType & self, int index) -> string_t {
-            // make some room for the value
-            long value = 0;
-            // retrieve it
-            self.getMemberValue(index, &value);
-            // and use it to get the name
-            return self.nameOf(&value, 256);
+        [](const EnumType & self, unsigned int index) -> string_t {
+            // look up the value at {index}, then map it back to its name
+            return self.nameOf(self.memberValue(index));
         },
         // the signature
         "index"_a,
@@ -70,14 +70,7 @@ pyre::h5::py::datatypes::enum_(py::module & m)
         // the name
         "value",
         // the implementation
-        [](const EnumType & self, int index) -> long {
-            // make some room for the value
-            long value = 0;
-            // retrieve it
-            self.getMemberValue(index, &value);
-            // and return it
-            return value;
-        },
+        &EnumType::memberValue,
         // the signature
         "index"_a,
         // the docstring
@@ -91,14 +84,12 @@ pyre::h5::py::datatypes::enum_(py::module & m)
             // build the table
             auto map = kv_t<long>();
             // go through the members
-            for (int m = 0; m < self.getNmembers(); ++m) {
-                // make some room for the value
-                long value = 0;
-                // retrieve it
-                self.getMemberValue(m, &value);
-                // and use it to get the name
-                auto key = self.nameOf(&value, 256);
-                // add the pair ot the pile
+            for (unsigned int m = 0; m < static_cast<unsigned int>(self.members()); ++m) {
+                // get the value of this member
+                auto value = self.memberValue(m);
+                // map it back to its name
+                auto key = self.nameOf(value);
+                // add the pair to the pile
                 map.emplace(key, value);
             }
             // return the map

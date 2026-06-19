@@ -244,7 +244,7 @@ pyre::h5::py::dataset(py::module & m)
             // make some room
             long result;
             // read the data
-            self.read(&result, PredType::NATIVE_LONG);
+            self.read(&result, H5::PredType::NATIVE_LONG);
             // all done
             return result;
         },
@@ -273,7 +273,7 @@ pyre::h5::py::dataset(py::module & m)
                 return;
             }
             // write the data
-            self.write(&value, PredType::NATIVE_LONG);
+            self.write(&value, H5::PredType::NATIVE_LONG);
             // all done
             return;
         },
@@ -307,7 +307,7 @@ pyre::h5::py::dataset(py::module & m)
             // make some room
             double result;
             // read the data
-            self.read(&result, PredType::NATIVE_DOUBLE);
+            self.read(&result, H5::PredType::NATIVE_DOUBLE);
             // all done
             return result;
         },
@@ -336,7 +336,7 @@ pyre::h5::py::dataset(py::module & m)
                 return;
             }
             // write the data
-            self.write(&value, PredType::NATIVE_DOUBLE);
+            self.write(&value, H5::PredType::NATIVE_DOUBLE);
             // all done
             return;
         },
@@ -590,7 +590,7 @@ pyre::h5::py::dataset(py::module & m)
             // make some room
             long result;
             // read the data
-            self.read(&result, PredType::NATIVE_LONG);
+            self.read(&result, H5::PredType::NATIVE_LONG);
             // all done
             return result;
         },
@@ -619,7 +619,7 @@ pyre::h5::py::dataset(py::module & m)
                 return;
             }
             // write the data
-            self.write(&value, PredType::NATIVE_LONG);
+            self.write(&value, H5::PredType::NATIVE_LONG);
             // all done
             return;
         },

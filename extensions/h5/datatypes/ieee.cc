@@ -26,10 +26,10 @@ pyre::h5::py::datatypes::ieee(py::module & m)
         "the IEEE floating point types");
 
     // IEEE floating point
-    ieee.attr("f32be") = H5::PredType::IEEE_F32BE;
-    ieee.attr("f32le") = H5::PredType::IEEE_F32LE;
-    ieee.attr("f64be") = H5::PredType::IEEE_F64BE;
-    ieee.attr("f64le") = H5::PredType::IEEE_F64LE;
+    ieee.attr("f32be") = PredType(H5T_IEEE_F32BE);
+    ieee.attr("f32le") = PredType(H5T_IEEE_F32LE);
+    ieee.attr("f64be") = PredType(H5T_IEEE_F64BE);
+    ieee.attr("f64le") = PredType(H5T_IEEE_F64LE);
 
     // all done
     return;

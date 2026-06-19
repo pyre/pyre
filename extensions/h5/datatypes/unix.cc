@@ -26,10 +26,10 @@ pyre::h5::py::datatypes::unix(py::module & m)
         "the UNIX floating point types");
 
     // UNIX floating point
-    unix.attr("d32be") = H5::PredType::UNIX_D32BE;
-    unix.attr("d32le") = H5::PredType::UNIX_D32LE;
-    unix.attr("d64be") = H5::PredType::UNIX_D64BE;
-    unix.attr("d64le") = H5::PredType::UNIX_D64LE;
+    unix.attr("d32be") = PredType(H5T_UNIX_D32BE);
+    unix.attr("d32le") = PredType(H5T_UNIX_D32LE);
+    unix.attr("d64be") = PredType(H5T_UNIX_D64BE);
+    unix.attr("d64le") = PredType(H5T_UNIX_D64LE);
 
     // all done
     return;

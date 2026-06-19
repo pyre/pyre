@@ -31,7 +31,11 @@ pyre::h5::py::datatypes::str(py::module & m)
     // from an existing type
     cls.def(
         // the implementation
-        py::init<hid_t>(),
+        py::init([](hid_t id) {
+            // {id} belongs to someone else; take out a reference of my own, then adopt it
+            H5Iinc_ref(id);
+            return StrType(id);
+        }),
         // the signature
         "id"_a,
         // the docstring
@@ -60,7 +64,7 @@ pyre::h5::py::datatypes::str(py::module & m)
         // the name
         "charset",
         // the getter
-        &StrType::getCset,
+        &StrType::charset,
         // the setter
         &StrType::setCset,
         // the docstring
@@ -70,7 +74,7 @@ pyre::h5::py::datatypes::str(py::module & m)
         // the name
         "strpad",
         // the getter
-        &StrType::getStrpad,
+        &StrType::strpad,
         // the setter
         &StrType::setStrpad,
         // the docstring
