@@ -28,6 +28,17 @@
 #include "FCPL.h"
 #include "LAPL.h"
 #include "LCPL.h"
+// datatypes
+#include "DataType.h"
+#include "AtomType.h"
+#include "PredType.h"
+#include "IntType.h"
+#include "FloatType.h"
+#include "StrType.h"
+#include "CompType.h"
+#include "EnumType.h"
+#include "ArrayType.h"
+#include "VarLenType.h"
 
 // implementation
 #include "datatypes.h"
