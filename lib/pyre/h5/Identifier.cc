@@ -17,6 +17,8 @@ pyre::h5::Identifier::Identifier(const Identifier & other) : _id { other._id }
 {
     // record that there is now one more owner of the handle
     _retain();
+    // all done
+    return;
 }
 
 
@@ -69,6 +71,8 @@ pyre::h5::Identifier::~Identifier()
 {
     // give up my reference
     _release();
+    // all done
+    return;
 }
 
 
@@ -87,10 +91,13 @@ pyre::h5::Identifier::_release() -> void
         auto channel = pyre::journal::firewall_t("pyre.h5.identifier");
         // so complain
         channel
+            // mark
+            << pyre::journal::here()
             // what
             << "failed to release the hdf5 handle " << _id
-            // where
-            << pyre::journal::endl(__HERE__);
+            << pyre::journal::newline
+            // flush
+            << pyre::journal::endl;
     }
     // mark me empty so a later access doesn't touch a stale handle
     _id = H5I_INVALID_HID;
