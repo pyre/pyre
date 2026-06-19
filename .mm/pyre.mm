@@ -75,6 +75,11 @@ pyre.lib.extern := \
         hdf5 \
     } \
 
+# the {pyre::h5} c++ wrappers need hdf5; when it's absent, keep their subtree out of the library
+${if ${findstring hdf5,$(extern.available)},,\
+    ${eval pyre.lib.directories.exclude += h5} \
+}
+
 
 # the pyre extensions
 # {libpyre} bindings
