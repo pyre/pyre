@@ -141,6 +141,10 @@ pyre::h5::py::enums(py::module & m)
         .value("enum", H5T_ENUM)
         .value("vlen", H5T_VLEN)
         .value("array", H5T_ARRAY)
+#if H5_VERSION_GE(2, 0, 0)
+        // native complex numbers, added in HDF5 2.0
+        .value("complex", H5T_COMPLEX)
+#endif
         .value("classes", H5T_NCLASSES);
 
     // string character sets
