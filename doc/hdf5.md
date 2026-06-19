@@ -697,20 +697,42 @@ datatype memory↔disk mapping — already partly done in `lib/pyre/h5` and the
 pyre-native; the object model can fit the schema/api split directly; no more
 waiting on the C++ wrapper.
 
-### Phase-1 plan (a de-risking spike)
+### Phase-1 plan (a de-risking spike) — DONE 2026-06-19
 
 Build `pyre::h5` class-by-class *behind* the existing pybind layer, repointing
 bindings one class at a time, with the existing h5 test suite as the safety net —
-never a big-bang rewrite. Phase 1 validates the approach on the trickiest
+never a big-bang rewrite. Phase 1 validated the approach on the trickiest
 foundation plus one thin leaf:
 
-1. **`Identifier` (RAII core).** Wrap `hid_t` with correct open/close and
-   reference counting — the one piece the C++ layer genuinely earns its keep on.
-   Get this right and the rest is mechanical.
-2. **`DataSpace` (a self-contained leaf).** Small, no datatype-conversion
-   subtlety; exercises create / select / extent — a clean first end-to-end proof.
-3. **Repoint the `DataSpace` binding** to `pyre::h5::DataSpace`; keep the h5 test
-   suite green.
+1. **`Identifier` (RAII core).** `lib/pyre/h5/Identifier.{h,icc,cc}` wraps `hid_t`
+   with reference-counted ownership over the C API: adopt-on-construct (a fresh
+   handle carries one reference we own), `H5Iinc_ref` on copy, `H5Idec_ref` on
+   destruction/`close`, steal on move. `valid()`/`refcount()` via
+   `H5Iis_valid`/`H5Iget_ref`; failures go to a `firewall_t`. Sentinels like
+   `H5S_ALL` are inert (`H5Iis_valid` is false), so wrapping them never refcounts.
+2. **`DataSpace` (a self-contained leaf).** `lib/pyre/h5/DataSpace.{h,cc}` derives
+   from `Identifier`; ~24 methods (extent, selection, hyperslabs, point lists),
+   each a thin C call with marshalling done in the class and errors via
+   `error_t`. A faithful reimplementation of the H5:: surface the binding used.
+3. **Repoint the `DataSpace` binding** — `extensions/h5/external.h` now aliases
+   `DataSpace = pyre::h5::DataSpace`; the binding calls the pyre methods, with the
+   Python-facing names/signatures unchanged.
+
+**The bridge pattern (transitional).** While `Group`/`DataSet`/`Attribute` are
+still `H5::`, the few sites where a pyre `DataSpace` meets a not-yet-converted
+`H5::` method bridge through the raw handle: `H5::DataSpace(space.id())`. That
+constructor *increments* the refcount, and the temporary decrements on
+destruction, so the bridge is balanced and ownership is unaffected. Sites:
+`Group::create` (the `space` arg), `attributes.icc::createAttribute` (covers all
+attribute-bearing objects), and `data.icc`'s `.space` property (copies the
+returned `H5::` space into a pyre one via `H5Scopy`). `DataSet`'s internal
+string-I/O dataspaces were pinned to `H5::DataSpace` explicitly. Each bridge is
+deleted when its `H5::` neighbor is converted.
+
+**Build wiring.** `lib/pyre/h5/*.cc` now compile into `pyre.lib`, so the library
+gains an hdf5 dependency *only when hdf5 is available* — `.mm/pyre.mm` adds
+`pyre.lib.directories.exclude += h5` when it is not, mirroring the existing
+conditional `pyre.lib.extern`. The `h5` subtree is relative to the lib root.
 
 If Phase 1 holds up, proceed: File/Group/DataSet → DataType hierarchy →
 property lists → Attribute, each its own staged swap.
