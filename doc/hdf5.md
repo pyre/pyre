@@ -801,6 +801,18 @@ the wrapper's extra reference — used by the create/IO bridges (`Group::create`
 *named* datatypes is intentionally not carried over yet: it belongs to the
 `H5Location` layer and returns with the `Attribute` decoupling.
 
+The cluster lives in its own namespace, `pyre::h5::types` (mirrored by
+`lib/pyre/h5/types/`), and the `Type` suffix is dropped now that the namespace
+carries that meaning: `Datatype` (base), `Atom`, `Predefined`, `Int`, `Float`,
+`String`, `Compound`, `Enum`, `Array`, `VarLen`. `api.h` publishes the canonical
+aliases — `pyre::h5::types::{datatype_t, atom_t, predefined_t, int_t, float_t,
+str_t, composite_t, enum_t, array_t, varlen_t}` (`str_t`, not `string_t`, to avoid
+clashing with the `std::string` alias). The binding layer keeps its `*Type`
+spellings (`using IntType = pyre::h5::types::Int;` in `extensions/h5/external.h`)
+so the registered Python class names — `libh5.datatypes.IntType`, … — are
+unchanged. The property lists (`DAPL`…`LCPL`) stay flat in `pyre::h5` for now; a
+parallel `pyre::h5::lists` move is a candidate later.
+
 ## Glossary
 
 - **schema / descriptor** — handle-free structural metadata describing a group
