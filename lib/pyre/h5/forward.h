@@ -7,6 +7,19 @@
 #pragma once
 
 
+// external packages and the type aliases that shape this namespace
+#include "external.h"
+
+
+// the pyre-owned wrappers over the hdf5 c api
+namespace pyre::h5 {
+    // the owner of an hdf5 object handle
+    class Identifier;
+    // the description of a dataset's element layout
+    class DataSpace;
+} // namespace pyre::h5
+
+
 // datatypes
 namespace pyre::h5 {
     // the generic case

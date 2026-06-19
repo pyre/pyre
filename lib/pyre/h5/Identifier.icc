@@ -1,0 +1,65 @@
+// -*- c++ -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2026 all rights reserved
+
+// code guard
+#pragma once
+
+// my declarations
+#include "Identifier.h"
+
+
+// my raw hdf5 handle
+inline auto
+pyre::h5::Identifier::id() const -> id_type
+{
+    // hand off my handle
+    return _id;
+}
+
+
+// whether my handle refers to a live hdf5 object
+inline auto
+pyre::h5::Identifier::valid() const -> bool
+{
+    // ask the library; a positive answer means the handle is live
+    return H5Iis_valid(_id) > 0;
+}
+
+
+// the number of outstanding references to my handle
+inline auto
+pyre::h5::Identifier::refcount() const -> int
+{
+    // a dead handle has no references
+    return valid() ? H5Iget_ref(_id) : 0;
+}
+
+
+// contextual conversion to {bool}
+inline
+pyre::h5::Identifier::operator bool() const
+{
+    // i am truthy when i refer to a live object
+    return valid();
+}
+
+
+// take out a reference to my handle, if it is live
+inline auto
+pyre::h5::Identifier::_retain() const -> void
+{
+    // a dead handle has nothing to retain
+    if (!valid()) {
+        // so there is nothing to do
+        return;
+    }
+    // otherwise, increment the library's reference count
+    H5Iinc_ref(_id);
+    // all done
+    return;
+}
+
+
+// end of file

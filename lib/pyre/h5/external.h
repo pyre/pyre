@@ -12,6 +12,8 @@
 #include <array>
 #include <complex>
 #include <cstdint>
+#include <utility>
+#include <vector>
 // support
 #include <pyre/journal.h>
 // the hdf5 api
@@ -36,6 +38,11 @@ namespace pyre::h5 {
     using shape_t = std::vector<hsize_t>;
     using index_t = shape_t;
     using offsets_t = std::vector<hssize_t>;
+    // a collection of dataspace coordinates, e.g. a set of selected points
+    using points_t = std::vector<shape_t>;
+    // a hyperslab as a (begin, end) corner pair, and a collection of them
+    using slab_t = std::pair<shape_t, shape_t>;
+    using slabs_t = std::vector<slab_t>;
 } // namespace pyre::h5
 
 
