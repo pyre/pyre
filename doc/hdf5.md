@@ -762,6 +762,45 @@ paths that still call `H5::` methods take pyre lists by `id()` —
 pyre wrapper via `H5Pcopy`. Default arguments use `theDefault()` (derived) or a
 default-constructed base `PropList` (the acpl), both wrapping `H5P_DEFAULT`.
 
+### Phase 3 — datatypes — DONE 2026-06-19
+
+The datatypes are another **atomic** cluster: the bindings encode the C++ base
+relationships (`AtomType : DataType`; `IntType`/`FloatType`/`StrType` : `AtomType`;
+`CompType`/`EnumType`/`ArrayType`/`VarLenType` : `DataType`), so the base and all
+nine derived classes convert together. `lib/pyre/h5/` now owns `DataType` (the
+generic base over the C API: `cell`/`bytes`/`setBytes`/`super`/`isA`/`encode`/
+`decode`/`close` via `H5Tget_class`/`H5Tget_size`/`H5Tget_super`/`H5Tdetect_class`/
+`H5Tencode`/`H5Tdecode`), `AtomType` (`order`/`offset`/`pad`/`precision`),
+`IntType` (`sign`), `FloatType` (`bias`/`normalization`/`inpad`/`fields`),
+`StrType` (`charset`/`strpad` plus the native-c-string size ctor), `CompType`
+(`members`/`memberName`/`memberIndex`/`memberOffset`/`memberClass`/`memberType`/
+`insert`/`pack`), `EnumType` (`members`/`memberValue`/`nameOf`), `ArrayType`, and
+`VarLenType`.
+
+The predefined types (`PredType`) remain raw C constants — `H5T_NATIVE_*`,
+`H5T_STD_*`, `H5T_IEEE_*`, … — wrapped in a thin `PredType : AtomType`. These are
+immutable library globals the program never owns, so `PredType` **retains**
+(`H5Iinc_ref`) on construction rather than adopting, keeping its `Identifier`
+bookkeeping balanced without ever driving the count below the library's. The
+predefined-type modules (`native`/`std`/`big`/`little`/`alpha`/`ieee`/`intel`/
+`mips`/`unix`) now publish `pyre::h5::PredType` instances built from the raw
+constants; `datatype<cellT>()` and the complex compound types are likewise
+rebuilt over the C API (`H5Tcopy` of the native base, `CompType` + `H5Tinsert`).
+
+Two reference subtleties surfaced and are worth recording. (1) HDF5's
+`H5::DataType(hid_t)` constructor **increments** the reference count (it shares an
+existing handle), whereas pyre's `Identifier(id)` adopts. The Python-facing
+`from-id` constructors therefore `H5Iinc_ref` before adopting, so the
+`super → .hid → intType(hid)` pattern in `typed/Enum.py` stays safe. (2) `H5Tclose`
+**refuses immutable predefined types**, so a transitional bridge cannot simply
+wrap an immutable `id()` in a closing `H5::DataType` (it logs
+`H5Tclose: immutable datatype`). The `borrowH5Datatype` helper copies into a fresh
+**mutable** transient via `H5Tcopy`, hands that to the `H5::` wrapper, and balances
+the wrapper's extra reference — used by the create/IO bridges (`Group::create`,
+`createAttribute`, and the dataset `read`/`write` paths). Attribute access on
+*named* datatypes is intentionally not carried over yet: it belongs to the
+`H5Location` layer and returns with the `Attribute` decoupling.
+
 ## Glossary
 
 - **schema / descriptor** — handle-free structural metadata describing a group
