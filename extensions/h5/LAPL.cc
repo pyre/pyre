@@ -28,10 +28,12 @@ pyre::h5::py::lapl(py::module & m)
         // the name
         "default",
         // the implementation
-        [](const py::object &) {
+        [](const py::object &) -> const LAPL & {
             // easy enough
-            return &LAPL::DEFAULT;
+            return LAPL::theDefault();
         },
+        // we hand back a reference to a shared, library-owned object
+        py::return_value_policy::reference,
         // docstring
         "the default link access property list");
 
@@ -43,12 +45,12 @@ pyre::h5::py::lapl(py::module & m)
         "build a link access property list");
 
     // interface
-    // set the number of allowed link traversals
+    // get the number of allowed link traversals
     cls.def(
         // the name
         "getNumLinks",
         // the implementation
-        &LAPL::getNumLinks,
+        &LAPL::numLinks,
         // the docstring
         "get the number of allowed link traversals");
     // set the number of allowed link traversals

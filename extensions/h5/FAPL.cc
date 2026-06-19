@@ -28,10 +28,12 @@ pyre::h5::py::fapl(py::module & m)
         // the name
         "default",
         // the implementation
-        [](const py::object &) {
+        [](const py::object &) -> const FAPL & {
             // easy enough
-            return &FAPL::DEFAULT;
+            return FAPL::theDefault();
         },
+        // we hand back a reference to a shared, library-owned object
+        py::return_value_policy::reference,
         // docstring
         "the default file access property list");
 
@@ -47,11 +49,11 @@ pyre::h5::py::fapl(py::module & m)
         // the name
         "getMetaBlockSize",
         // the implementation
-        &FAPL::getMetaBlockSize,
+        &FAPL::metaBlockSize,
         // the docstring
         "retrieve the metadata block size");
 
-    // get the metadata block size
+    // set the metadata block size
     cls.def(
         // the name
         "setMetaBlockSize",
@@ -67,16 +69,7 @@ pyre::h5::py::fapl(py::module & m)
         // the name
         "getPageBufferSize",
         // the implementation
-        [](const FAPL & self) {
-            // make some room
-            size_t buffer = 4 * 1024;
-            unsigned int meta = 0;
-            unsigned int raw = 0;
-            // get the info
-            H5Pget_page_buffer_size(self.getId(), &buffer, &meta, &raw);
-            // pack and ship
-            return py::make_tuple(buffer, meta, raw);
-        },
+        &FAPL::pageBufferSize,
         // the docstring
         "retrieve the page buffer characteristics");
 
@@ -85,14 +78,11 @@ pyre::h5::py::fapl(py::module & m)
         // the name
         "setPageBufferSize",
         // the implementation
-        [](const FAPL & self, size_t buffer, unsigned int meta, unsigned int raw) {
-            // set the values and return
-            return H5Pset_page_buffer_size(self.getId(), buffer, meta, raw);
-        },
+        &FAPL::setPageBufferSize,
         // the signature
         "page"_a, "meta"_a = 0, "raw"_a = 0,
         // the docstring
-        "retrieve the page buffer characteristics");
+        "set the page buffer characteristics");
 
 
 #if defined(H5_HAVE_ROS3_VFD)
@@ -101,46 +91,11 @@ pyre::h5::py::fapl(py::module & m)
         // the name
         "ros3",
         // the implementation
-        [](FAPL & self, bool authenticate, string_t region, string_t id, string_t key,
-           string_t token) -> FAPL & {
-            // make room for the driver parameters
-            H5FD_ros3_fapl_t p;
-            // populate
-            p.version = H5FD_CURR_ROS3_FAPL_T_VERSION;
-            p.authenticate = authenticate ? 1 : 0;
-            std::strcpy(p.aws_region, region.data());
-            std::strcpy(p.secret_id, id.data());
-            std::strcpy(p.secret_key, key.data());
-#if H5FD_CURR_ROS3_FAPL_T_VERSION > 1
-            // the correct versions of libhdf5 have room for a session token
-            std::strcpy(p.session_token, token.data());
-#endif
-            // send to the {ros3} driver; this process includes runtime validation, so there is
-            // no need for extra checks that the struct we populated is understood by whatever
-            // runtime we have dynamically linked against
-            auto status = H5Pset_fapl_ros3(self.getId(), &p);
-            // if the transfer failed
-            if (status < 0) {
-                // make a channel
-                auto channel = pyre::journal::error_t("pyre.h5.fapl");
-                // complain
-                channel
-                    // complain
-                    << "failed to populate a file access property list with ros3 parameters"
-                    << pyre::journal::newline
-                    // and flush
-                    << pyre::journal::endl(__HERE__);
-            }
-// for the right version
-#if H5_VERSION_GE(1, 14, 2)
-            // attach the security token for temporary credentials
-            H5Pset_fapl_ros3_token(self.getId(), token.data());
-#endif
-            // all done
-            return self;
-        },
+        &FAPL::ros3,
         // the signature
         "authenticate"_a = true, "region"_a = "", "id"_a = "", "key"_a = "", "token"_a = "",
+        // we hand back a reference to the list we just configured
+        py::return_value_policy::reference,
         // the docstring
         "populate the property list with ros3 parameters");
 #endif

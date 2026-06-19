@@ -28,10 +28,12 @@ pyre::h5::py::dxpl(py::module & m)
         // the name
         "default",
         // the implementation
-        [](const py::object &) {
+        [](const py::object &) -> const DXPL & {
             // easy enough
-            return &DXPL::DEFAULT;
+            return DXPL::theDefault();
         },
+        // we hand back a reference to a shared, library-owned object
+        py::return_value_policy::reference,
         // docstring
         "the default dataset memory transfer property list");
 
@@ -44,7 +46,7 @@ pyre::h5::py::dxpl(py::module & m)
 
     cls.def(
         // the implementation
-        py::init<const char *>(),
+        py::init<const string_t &>(),
         // the signature
         "expression"_a,
         // the docstring
