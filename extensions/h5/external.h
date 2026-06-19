@@ -68,15 +68,15 @@ namespace pyre::h5::py {
     // to avoid having to constantly look up which ones are prefixed by H5 and which not
     // structural entities
     using Identifier = H5::IdComponent; // pure virtual
-    // property lists derive from {Identifier}
-    using PropList = H5::PropList;
-    using DAPL = H5::DSetAccPropList;
-    using DCPL = H5::DSetCreatPropList;
-    using DXPL = H5::DSetMemXferPropList;
-    using FAPL = H5::FileAccPropList;
-    using FCPL = H5::FileCreatPropList;
-    using LAPL = H5::LinkAccPropList;
-    using LCPL = H5::LinkCreatPropList;
+    // property lists: now pyre-owned wrappers over the hdf5 c api
+    using PropList = pyre::h5::PropList;
+    using DAPL = pyre::h5::DAPL;
+    using DCPL = pyre::h5::DCPL;
+    using DXPL = pyre::h5::DXPL;
+    using FAPL = pyre::h5::FAPL;
+    using FCPL = pyre::h5::FCPL;
+    using LAPL = pyre::h5::LAPL;
+    using LCPL = pyre::h5::LCPL;
     // dataspaces: now a pyre-owned wrapper over the hdf5 c api
     using DataSpace = pyre::h5::DataSpace;
     // locations derive from {Identifier}

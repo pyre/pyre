@@ -30,19 +30,19 @@ pyre::h5::py::file(py::module & m)
             // decode mode
             if (mode == "r") {
                 // read-only, file must exist
-                return File(uri, H5F_ACC_RDONLY, fcpl, fapl);
+                return File(uri, H5F_ACC_RDONLY, H5::FileCreatPropList(fcpl.id()), H5::FileAccPropList(fapl.id()));
             }
             if (mode == "r+") {
                 // read/write, file must exist
-                return File(uri, H5F_ACC_RDWR, fcpl, fapl);
+                return File(uri, H5F_ACC_RDWR, H5::FileCreatPropList(fcpl.id()), H5::FileAccPropList(fapl.id()));
             }
             if (mode == "w") {
                 // create file, truncate if it exists
-                return File(uri, H5F_ACC_TRUNC, fcpl, fapl);
+                return File(uri, H5F_ACC_TRUNC, H5::FileCreatPropList(fcpl.id()), H5::FileAccPropList(fapl.id()));
             }
             if (mode == "w-" || mode == "x") {
                 // create file, fail if it exists
-                return File(uri, H5F_ACC_EXCL, fcpl, fapl);
+                return File(uri, H5F_ACC_EXCL, H5::FileCreatPropList(fcpl.id()), H5::FileAccPropList(fapl.id()));
             }
 
             // h5py has one more valid {mode}
@@ -70,7 +70,7 @@ pyre::h5::py::file(py::module & m)
             return File();
         }),
         // the signature
-        "uri"_a, "mode"_a = "r", "fcpl"_a = FCPL::DEFAULT, "fapl"_a = FAPL::DEFAULT,
+        "uri"_a, "mode"_a = "r", "fcpl"_a = FCPL::theDefault(), "fapl"_a = FAPL::theDefault(),
         // the docstring
         "open an HDF5 file given its {uri} and a custom access property list");
 
@@ -91,7 +91,10 @@ pyre::h5::py::file(py::module & m)
         // the name
         "fcpl",
         // the implementation
-        &File::getCreatePlist,
+        [](const File & self) -> FCPL {
+            // copy the {H5::} list into a pyre wrapper so the python-facing type matches
+            return FCPL(static_cast<hid_t>(H5Pcopy(self.getCreatePlist().getId())));
+        },
         // the docstring
         "get my creation property list");
 
@@ -100,7 +103,10 @@ pyre::h5::py::file(py::module & m)
         // the name
         "fapl",
         // the implementation
-        &File::getAccessPlist,
+        [](const File & self) -> FAPL {
+            // copy the {H5::} list into a pyre wrapper so the python-facing type matches
+            return FAPL(static_cast<hid_t>(H5Pcopy(self.getAccessPlist().getId())));
+        },
         // the docstring
         "get my access property list");
 

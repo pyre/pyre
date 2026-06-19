@@ -34,7 +34,7 @@ pyre::h5::py::pl(py::module & m)
         // the name
         "hid",
         // the implementation
-        &PropList::getId,
+        &PropList::id,
         // the docstring
         "get my h5 handle id");
 
@@ -43,7 +43,7 @@ pyre::h5::py::pl(py::module & m)
         // the name
         "__len__",
         // the implementation
-        &PropList::getNumProps,
+        &PropList::numProps,
         // the docstring
         "the number of properties in this list");
 
@@ -51,7 +51,7 @@ pyre::h5::py::pl(py::module & m)
         // the name
         "__contains__",
         // the implementation
-        py::overload_cast<const string_t &>(&PropList::propExist, py::const_),
+        &PropList::exists,
         // the signature
         "name"_a,
         // the docstring
@@ -61,7 +61,7 @@ pyre::h5::py::pl(py::module & m)
         // the name
         "__getitem__",
         // the implementation
-        py::overload_cast<const string_t &>(&PropList::getProperty, py::const_),
+        &PropList::property,
         // the signature
         "name"_a,
         // the docstring
@@ -71,7 +71,7 @@ pyre::h5::py::pl(py::module & m)
         // the name
         "__setitem__",
         // the implementation
-        py::overload_cast<const string_t &, const string_t &>(&PropList::setProperty, py::const_),
+        &PropList::setProperty,
         // the signature
         "name"_a, "value"_a,
         // the docstring
@@ -81,7 +81,7 @@ pyre::h5::py::pl(py::module & m)
         // the name
         "__delitem__",
         // the implementation
-        py::overload_cast<const string_t &>(&PropList::removeProp, py::const_),
+        &PropList::removeProperty,
         // the signature
         "name"_a,
         // the docstring
@@ -93,7 +93,7 @@ pyre::h5::py::pl(py::module & m)
         // the name
         "getPropertySize",
         // the implementation
-        py::overload_cast<const string_t &>(&PropList::getPropSize, py::const_),
+        &PropList::propertySize,
         // the signature
         "name"_a,
         // the docstring

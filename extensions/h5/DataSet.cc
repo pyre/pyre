@@ -191,7 +191,11 @@ pyre::h5::py::dataset(py::module & m)
         // the name
         "dapl",
         // the implementation
-        &DataSet::getAccessPlist,
+        [](const DataSet & self) -> DAPL {
+            // {getAccessPlist} hands back an {H5::} list owning a fresh handle; copy it into a
+            // pyre wrapper so the python-facing type matches, and let the temporary release its
+            return DAPL(static_cast<hid_t>(H5Pcopy(self.getAccessPlist().getId())));
+        },
         // the docstring
         "get my access property list");
 
@@ -200,7 +204,10 @@ pyre::h5::py::dataset(py::module & m)
         // the name
         "dcpl",
         // the implementation
-        &DataSet::getCreatePlist,
+        [](const DataSet & self) -> DCPL {
+            // copy the {H5::} list into a pyre wrapper so the python-facing type matches
+            return DCPL(static_cast<hid_t>(H5Pcopy(self.getCreatePlist().getId())));
+        },
         // the docstring
         "get my creation property list");
 

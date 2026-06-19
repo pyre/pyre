@@ -28,10 +28,12 @@ pyre::h5::py::lcpl(py::module & m)
         // the name
         "default",
         // the implementation
-        [](const py::object &) {
+        [](const py::object &) -> const LCPL & {
             // easy enough
-            return &LCPL::DEFAULT;
+            return LCPL::theDefault();
         },
+        // we hand back a reference to a shared, library-owned object
+        py::return_value_policy::reference,
         // docstring
         "the default link creation property list");
 
@@ -45,12 +47,12 @@ pyre::h5::py::lcpl(py::module & m)
     // interface
 #if H5_VERSION_GE(1, 12, 0)
     // MGA: this is my best guess as to how far this was back-ported
-    // set the intermediate group creation strategy
+    // get the intermediate group creation strategy
     cls.def(
         // the name
         "getCreateIntermediateGroup",
         // the implementation
-        &LCPL::getCreateIntermediateGroup,
+        &LCPL::createIntermediateGroup,
         // the docstring
         "get the intermediate group creation strategy");
     // set the intermediate group creation strategy
@@ -65,12 +67,12 @@ pyre::h5::py::lcpl(py::module & m)
         "set the intermediate group creation strategy");
 #endif
 
-    // set the string character encoding
+    // get the string character encoding
     cls.def(
         // the name
         "getCharEncoding",
         // the implementation
-        &LCPL::getCharEncoding,
+        &LCPL::charEncoding,
         // the docstring
         "get the string character encoding");
     // set the string character encoding

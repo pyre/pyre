@@ -28,10 +28,12 @@ pyre::h5::py::fcpl(py::module & m)
         // the name
         "default",
         // the implementation
-        [](const py::object &) {
+        [](const py::object &) -> const FCPL & {
             // easy enough
-            return &FCPL::DEFAULT;
+            return FCPL::theDefault();
         },
+        // we hand back a reference to a shared, library-owned object
+        py::return_value_policy::reference,
         // docstring
         "the default file creation property list");
 
@@ -48,8 +50,7 @@ pyre::h5::py::fcpl(py::module & m)
         // the name
         "getPageSize",
         // the implementation
-        &FCPL::getFileSpacePagesize,
-        // the signature
+        &FCPL::pageSize,
         // the docstring
         "retrieve the file space page size");
 
@@ -58,7 +59,7 @@ pyre::h5::py::fcpl(py::module & m)
         // the name
         "setPageSize",
         // the implementation
-        &FCPL::setFileSpacePagesize,
+        &FCPL::setPageSize,
         // the signature
         "size"_a,
         // the docstring
@@ -69,16 +70,7 @@ pyre::h5::py::fcpl(py::module & m)
         // the name
         "getFilespaceStrategy",
         // the implementation
-        [](FCPL & self) {
-            // make some room
-            H5F_fspace_strategy_t strategy;
-            hbool_t persist;
-            hsize_t threshold;
-            // read the strategy
-            self.getFileSpaceStrategy(strategy, persist, threshold);
-            // pack them and return them
-            return py::make_tuple(strategy, persist, threshold);
-        },
+        &FCPL::filespaceStrategy,
         // the docstring
         "get the current file space strategy");
 
@@ -87,12 +79,7 @@ pyre::h5::py::fcpl(py::module & m)
         // the name
         "setFilespaceStrategy",
         // the implementation
-        [](FCPL & self, H5F_fspace_strategy_t strategy, hbool_t persist, hsize_t threshold) {
-            // set the strategy
-            self.setFileSpaceStrategy(strategy, persist, threshold);
-            // all done
-            return;
-        },
+        &FCPL::setFilespaceStrategy,
         // the signature
         "strategy"_a, "persist"_a, "threshold"_a,
         // the docstring
