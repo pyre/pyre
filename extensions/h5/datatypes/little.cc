@@ -26,14 +26,14 @@ pyre::h5::py::datatypes::little(py::module & m)
         "a collection of little endian types");
 
     // add a selection of datatypes
-    little.attr("int8") = H5::PredType::STD_I8LE;
-    little.attr("uint8") = H5::PredType::STD_U8LE;
-    little.attr("int16") = H5::PredType::STD_I16LE;
-    little.attr("uint16") = H5::PredType::STD_U16LE;
-    little.attr("int32") = H5::PredType::STD_I32LE;
-    little.attr("uint32") = H5::PredType::STD_U32LE;
-    little.attr("int64") = H5::PredType::STD_I64LE;
-    little.attr("uint64") = H5::PredType::STD_U64LE;
+    little.attr("int8") = PredType(H5T_STD_I8LE);
+    little.attr("uint8") = PredType(H5T_STD_U8LE);
+    little.attr("int16") = PredType(H5T_STD_I16LE);
+    little.attr("uint16") = PredType(H5T_STD_U16LE);
+    little.attr("int32") = PredType(H5T_STD_I32LE);
+    little.attr("uint32") = PredType(H5T_STD_U32LE);
+    little.attr("int64") = PredType(H5T_STD_I64LE);
+    little.attr("uint64") = PredType(H5T_STD_U64LE);
 
     // all done
     return;

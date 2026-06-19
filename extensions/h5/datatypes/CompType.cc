@@ -41,7 +41,7 @@ pyre::h5::py::datatypes::compound(py::module & m)
         // the name
         "members",
         // the implementation
-        &CompType::getNmembers,
+        &CompType::members,
         // the docstring
         "the number of members in this compound type");
 
@@ -52,13 +52,13 @@ pyre::h5::py::datatypes::compound(py::module & m)
         // the implementation
         [](const CompType & self) -> names_t {
             // get the number of members
-            auto members = self.getNmembers();
+            auto members = self.members();
             // make a pile
             auto names = names_t(members);
             // go through the known members
             for (int idx = 0; idx < members; ++idx) {
                 // get the name of each one and put it in the pile
-                names[idx] = self.getMemberName(idx);
+                names[idx] = self.memberName(idx);
             }
             // all done
             return names;
@@ -71,9 +71,9 @@ pyre::h5::py::datatypes::compound(py::module & m)
         // the name
         "bytes",
         // the getter
-        &CompType::getSize,
+        &CompType::bytes,
         // the setter
-        &CompType::setSize,
+        &CompType::setBytes,
         // the docstring
         "get/set the overall size");
 
@@ -84,7 +84,7 @@ pyre::h5::py::datatypes::compound(py::module & m)
         // the implementation
         [](const CompType & self, const string_t & name) -> int {
             // easy enough
-            return self.getMemberIndex(name);
+            return self.memberIndex(name);
         },
         // the signature
         "name"_a,
@@ -95,7 +95,7 @@ pyre::h5::py::datatypes::compound(py::module & m)
         // the name
         "name",
         // the implementation
-        &CompType::getMemberName,
+        &CompType::memberName,
         // the signature
         "index"_a,
         // the docstring
@@ -105,7 +105,7 @@ pyre::h5::py::datatypes::compound(py::module & m)
         // the name
         "offset",
         // the implementation
-        &CompType::getMemberOffset,
+        &CompType::memberOffset,
         // the signature
         "index"_a,
         // the docstring
@@ -116,45 +116,43 @@ pyre::h5::py::datatypes::compound(py::module & m)
         "type",
         // the implementation
         [](const CompType & self, unsigned int index) -> DataType * {
-            // get the type class of the member
-            auto cls = self.getMemberClass(index);
-            // deduce
-            switch (cls) {
+            // {memberType} hands back a fresh handle the new wrapper adopts
+            auto id = self.memberType(index);
+            // deduce its class
+            switch (self.memberClass(index)) {
                 // integers
                 case H5T_INTEGER:
                     // return the integer data type descriptor
-                    return new H5::IntType(self.getMemberIntType(index));
+                    return new IntType(id);
                 // floats
                 case H5T_FLOAT:
                     // return the float data type descriptor
-                    return new H5::FloatType(self.getMemberFloatType(index));
+                    return new FloatType(id);
                 // strings
                 case H5T_STRING:
                     // return the string data type descriptor
-                    return new H5::StrType(self.getMemberStrType(index));
+                    return new StrType(id);
                 // compound types
                 case H5T_COMPOUND:
                     // return the compound data type descriptor
-                    return new H5::CompType(self.getMemberCompType(index));
+                    return new CompType(id);
                 // enum types
                 case H5T_ENUM:
                     // return the enum data type descriptor
-                    return new H5::EnumType(self.getMemberEnumType(index));
+                    return new EnumType(id);
                 // variable length types
                 case H5T_VLEN:
                     // return the variable length data type descriptor
-                    return new H5::VarLenType(self.getMemberVarLenType(index));
+                    return new VarLenType(id);
                 // array types
                 case H5T_ARRAY:
                     // return the array data type descriptor
-                    return new H5::ArrayType(self.getMemberArrayType(index));
+                    return new ArrayType(id);
                 // by default
                 default:
                     // grab whatever generic information is available
-                    return new H5::DataType(self.getMemberDataType(index));
+                    return new DataType(id);
             }
-            // this should be unreachable, but just in case new paths open up
-            return new H5::DataType(self.getMemberDataType(index));
         },
         // the signature
         "index"_a,
@@ -166,7 +164,7 @@ pyre::h5::py::datatypes::compound(py::module & m)
         // the name
         "insert",
         // the implementation
-        &CompType::insertMember,
+        &CompType::insert,
         // the signature
         "name"_a, "offset"_a, "type"_a,
         // the docstring

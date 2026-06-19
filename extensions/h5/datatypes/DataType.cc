@@ -31,7 +31,12 @@ pyre::h5::py::datatypes::datatype(py::module & m)
     // from an existing type
     cls.def(
         // the implementation
-        py::init<hid_t>(),
+        py::init([](hid_t id) {
+            // {id} belongs to someone else; take out a reference of my own so my bookkeeping
+            // stays balanced, then adopt it
+            H5Iinc_ref(id);
+            return DataType(id);
+        }),
         // the signature
         "id"_a,
         // the docstring
@@ -51,7 +56,7 @@ pyre::h5::py::datatypes::datatype(py::module & m)
         // the name
         "className",
         // the implementation
-        &DataType::fromClass,
+        &DataType::className,
         // the docstring
         "the name of this datatype");
 
@@ -59,7 +64,7 @@ pyre::h5::py::datatypes::datatype(py::module & m)
         // the name
         "hid",
         // the implementation
-        &DataType::getId,
+        &DataType::id,
         // the docstring
         "the h5 handle of this datatype");
 
@@ -91,7 +96,7 @@ pyre::h5::py::datatypes::datatype(py::module & m)
         // the name
         "cell",
         // the implementation
-        &DataType::getClass,
+        &DataType::cell,
         // the docstring
         "get my class type");
 
@@ -100,7 +105,7 @@ pyre::h5::py::datatypes::datatype(py::module & m)
         // the name
         "bytes",
         // the implementation
-        &DataType::getSize,
+        &DataType::bytes,
         // the docstring
         "retrieve the size of this data type");
 
@@ -109,7 +114,7 @@ pyre::h5::py::datatypes::datatype(py::module & m)
         // the name
         "super",
         // the implementation
-        &DataType::getSuper,
+        &DataType::super,
         // the docstring
         "retrieve the base type from which this one is derived");
 
@@ -118,7 +123,7 @@ pyre::h5::py::datatypes::datatype(py::module & m)
         // the name
         "isA",
         // the implementation
-        py::overload_cast<H5T_class_t>(&DataType::detectClass, py::const_),
+        &DataType::isA,
         // the signature
         "type"_a,
         // the docsting
@@ -129,12 +134,7 @@ pyre::h5::py::datatypes::datatype(py::module & m)
         // the name
         "close",
         // the implementation
-        [](DataType & self) -> void {
-            // invoke the virtual function
-            self.close();
-            // all done
-            return;
-        },
+        &DataType::close,
         // the docstring
         "close the associated h5 handle");
 
@@ -150,15 +150,14 @@ pyre::h5::py::datatypes::datatype(py::module & m)
         // the name
         "decode",
         // the implementation
-        [](const DataType & self) -> DataType * {
-            // invoke the virtual function
-            return self.decode();
-        },
+        &DataType::decode,
+        // the signature
+        "buffer"_a,
         // the docstring
-        "decode the binary object description");
+        "reconstruct a type from its binary object description");
 
-    // access to the datatype attributes
-    attributes(cls);
+    // note: attribute access on named datatypes belongs to the {H5Location} layer, which is not
+    // part of this pyre-owned datatype wrapper yet; it returns with the {Attribute} decoupling
 
     // all done
     return;

@@ -31,7 +31,11 @@ pyre::h5::py::datatypes::int_(py::module & m)
     // from an existing type
     cls.def(
         // the implementation
-        py::init<hid_t>(),
+        py::init([](hid_t id) {
+            // {id} belongs to someone else; take out a reference of my own, then adopt it
+            H5Iinc_ref(id);
+            return IntType(id);
+        }),
         // the signature
         "id"_a,
         // the docstring
@@ -51,7 +55,7 @@ pyre::h5::py::datatypes::int_(py::module & m)
         // the name
         "sign",
         // the getter
-        &IntType::getSign,
+        &IntType::sign,
         // the setter
         &IntType::setSign,
         // the docstring

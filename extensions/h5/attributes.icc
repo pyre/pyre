@@ -43,11 +43,12 @@ pyre::h5::py::attributes(py::class_<objectT> & cls)
         // the implementation
         [](const objectT & self, const string_t & name, const DataType & type,
            const DataSpace & space, const PropList & plist) -> Attribute {
-            // {space} and {plist} are pyre wrappers but {createAttribute} still wants {H5::}
-            // ones; bridging through the raw handles takes out balanced references, so ownership
-            // is unaffected
+            // {type}, {space}, and {plist} are pyre wrappers but {createAttribute} still wants
+            // {H5::} ones; bridging through the raw handles takes out balanced references, so
+            // ownership is unaffected
             return self.createAttribute(
-                name, type, H5::DataSpace(space.id()), H5::PropList(plist.id()));
+                name, borrowH5Datatype(type), H5::DataSpace(space.id()),
+                H5::PropList(plist.id()));
         },
         // the signature
         "name"_a, "type"_a, "space"_a, "props"_a = PropList(),

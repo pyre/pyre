@@ -26,14 +26,14 @@ pyre::h5::py::datatypes::big(py::module & m)
         "a collection of big endian types");
 
     // add a selection of datatypes
-    big.attr("int8") = H5::PredType::STD_I8BE;
-    big.attr("uint8") = H5::PredType::STD_U8BE;
-    big.attr("int16") = H5::PredType::STD_I16BE;
-    big.attr("uint16") = H5::PredType::STD_U16BE;
-    big.attr("int32") = H5::PredType::STD_I32BE;
-    big.attr("uint32") = H5::PredType::STD_U32BE;
-    big.attr("int64") = H5::PredType::STD_I64BE;
-    big.attr("uint64") = H5::PredType::STD_U64BE;
+    big.attr("int8") = PredType(H5T_STD_I8BE);
+    big.attr("uint8") = PredType(H5T_STD_U8BE);
+    big.attr("int16") = PredType(H5T_STD_I16BE);
+    big.attr("uint16") = PredType(H5T_STD_U16BE);
+    big.attr("int32") = PredType(H5T_STD_I32BE);
+    big.attr("uint32") = PredType(H5T_STD_U32BE);
+    big.attr("int64") = PredType(H5T_STD_I64BE);
+    big.attr("uint64") = PredType(H5T_STD_U64BE);
 
     // all done
     return;

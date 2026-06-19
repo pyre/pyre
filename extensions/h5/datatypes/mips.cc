@@ -26,24 +26,24 @@ pyre::h5::py::datatypes::mips(py::module & m)
         "a collection of mips types");
 
     // integral
-    mips.attr("int8") = H5::PredType::MIPS_I8;
-    mips.attr("int16") = H5::PredType::MIPS_I16;
-    mips.attr("int32") = H5::PredType::MIPS_I32;
-    mips.attr("int64") = H5::PredType::MIPS_I64;
+    mips.attr("int8") = PredType(H5T_MIPS_I8);
+    mips.attr("int16") = PredType(H5T_MIPS_I16);
+    mips.attr("int32") = PredType(H5T_MIPS_I32);
+    mips.attr("int64") = PredType(H5T_MIPS_I64);
 
-    mips.attr("uint8") = H5::PredType::MIPS_U8;
-    mips.attr("uint16") = H5::PredType::MIPS_U16;
-    mips.attr("uint32") = H5::PredType::MIPS_U32;
-    mips.attr("uint64") = H5::PredType::MIPS_U64;
+    mips.attr("uint8") = PredType(H5T_MIPS_U8);
+    mips.attr("uint16") = PredType(H5T_MIPS_U16);
+    mips.attr("uint32") = PredType(H5T_MIPS_U32);
+    mips.attr("uint64") = PredType(H5T_MIPS_U64);
 
-    mips.attr("b8") = H5::PredType::MIPS_B8;
-    mips.attr("b16") = H5::PredType::MIPS_B16;
-    mips.attr("b32") = H5::PredType::MIPS_B32;
-    mips.attr("b64") = H5::PredType::MIPS_B64;
+    mips.attr("b8") = PredType(H5T_MIPS_B8);
+    mips.attr("b16") = PredType(H5T_MIPS_B16);
+    mips.attr("b32") = PredType(H5T_MIPS_B32);
+    mips.attr("b64") = PredType(H5T_MIPS_B64);
 
     // floating point
-    mips.attr("f32") = H5::PredType::MIPS_F32;
-    mips.attr("f64") = H5::PredType::MIPS_F64;
+    mips.attr("f32") = PredType(H5T_MIPS_F32);
+    mips.attr("f64") = PredType(H5T_MIPS_F64);
 
     // all done
     return;

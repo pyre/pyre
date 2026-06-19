@@ -203,12 +203,12 @@ pyre::h5::py::group(py::module & m)
         // the implementation
         [](const Group & self, const string_t & path, const DataType & type,
            const DataSpace & space, const DCPL & dcpl, const DAPL & dapl) -> DataSet {
-            // {space}, {dcpl}, and {dapl} are pyre wrappers but {createDataSet} still wants
-            // {H5::} ones; bridging through the raw handles takes out balanced references, so
-            // ownership is unaffected
+            // {type}, {space}, {dcpl}, and {dapl} are pyre wrappers but {createDataSet} still
+            // wants {H5::} ones; bridging through the raw handles takes out balanced references,
+            // so ownership is unaffected
             return self.createDataSet(
-                path, type, H5::DataSpace(space.id()), H5::DSetCreatPropList(dcpl.id()),
-                H5::DSetAccPropList(dapl.id()));
+                path, borrowH5Datatype(type), H5::DataSpace(space.id()),
+                H5::DSetCreatPropList(dcpl.id()), H5::DSetAccPropList(dapl.id()));
         },
         // the signature
         "path"_a, "type"_a, "space"_a, "dcpl"_a = DCPL::theDefault(), "dapl"_a = DAPL::theDefault(),
