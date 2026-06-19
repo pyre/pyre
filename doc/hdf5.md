@@ -734,8 +734,33 @@ gains an hdf5 dependency *only when hdf5 is available* — `.mm/pyre.mm` adds
 `pyre.lib.directories.exclude += h5` when it is not, mirroring the existing
 conditional `pyre.lib.extern`. The `h5` subtree is relative to the lib root.
 
-If Phase 1 holds up, proceed: File/Group/DataSet → DataType hierarchy →
-property lists → Attribute, each its own staged swap.
+If Phase 1 holds up, proceed with the remaining classes, each its own staged
+swap. The order is **leaf-first** rather than the structural classes first: the
+property lists and the DataType hierarchy are arguments to `create`/`open`, so
+converting them before File/Group/DataSet means the structural cluster's calls
+take pyre arguments natively instead of needing bridges.
+
+### Phase 2 — property lists — DONE 2026-06-19
+
+The property lists form an **atomic** cluster: each is bound as
+`py::class_<DAPL, PropList>`, so pybind needs the C++ base relationship — the base
+and all seven derived lists must convert together. `lib/pyre/h5/` now has
+`PropList` (the generic base over the C API: `numProps`/`exists`/`property`/
+`setProperty`/`removeProperty`/`propertySize` via `H5Pget_nprops`/`H5Pexist`/
+`H5Pget`/`H5Pset`/…) plus `DAPL`, `DCPL`, `DXPL`, `FAPL`, `FCPL`, `LAPL`, `LCPL`,
+each a thin set of `H5Pget_*`/`H5Pset_*` calls. The base default-constructs to
+`H5P_DEFAULT`; each derived default-constructs a fresh list via
+`H5Pcreate(H5P_<CLASS>)` and exposes `theDefault()` wrapping `H5P_DEFAULT` (the
+Python `default` static). `setScaleoffset` is now a first-class method (no longer
+a C-API workaround), and the ros3 driver config lives on `FAPL`.
+
+New bridges (transitional, deleted when neighbors convert): the create/open
+paths that still call `H5::` methods take pyre lists by `id()` —
+`Group::create` (dcpl/dapl), `File` construction (fcpl/fapl), and
+`createAttribute` (acpl). The reverse — `DataSet.dcpl`/`.dapl` and
+`File.fcpl`/`.fapl`, which return a list to Python — copy the `H5::` list into a
+pyre wrapper via `H5Pcopy`. Default arguments use `theDefault()` (derived) or a
+default-constructed base `PropList` (the acpl), both wrapping `H5P_DEFAULT`.
 
 ## Glossary
 
