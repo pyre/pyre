@@ -12,6 +12,7 @@
 #include <array>
 #include <complex>
 #include <cstdint>
+#include <tuple>
 #include <utility>
 #include <vector>
 // support
@@ -34,6 +35,8 @@ namespace pyre::h5 {
     using datatype_t = H5::DataType;
     using comptype_t = H5::CompType;
     using predtype_t = H5::PredType;
+    // names and other text
+    using string_t = std::string;
     // for specifying dataspace coordinates and shapes
     using shape_t = std::vector<hsize_t>;
     using index_t = shape_t;
