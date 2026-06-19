@@ -36,6 +36,26 @@ namespace pyre::h5 {
 
 // datatypes
 namespace pyre::h5 {
+    // the generic base
+    class DataType;
+    // the base of the atomic types
+    class AtomType;
+    // predefined library constants, e.g. the {H5T_NATIVE_*} types
+    class PredType;
+    // atomic types
+    class IntType;
+    class FloatType;
+    class StrType;
+    // composite types
+    class CompType;
+    class EnumType;
+    class ArrayType;
+    class VarLenType;
+} // namespace pyre::h5
+
+
+// datatype deduction
+namespace pyre::h5 {
     // the generic case
     template <typename cellT>
     inline auto datatype() -> datatype_t;

@@ -21,6 +21,15 @@
 #include <H5Cpp.h>
 
 
+// forward declarations of the pyre-owned datatypes, so the aliases below can name them before
+// their full definitions are pulled in by {public.h}
+namespace pyre::h5 {
+    class DataType;
+    class CompType;
+    class PredType;
+} // namespace pyre::h5
+
+
 // aliases
 namespace pyre::h5 {
     // from {hdf5}
@@ -32,9 +41,10 @@ namespace pyre::h5 {
     using dcpl_t = H5::DSetCreatPropList;
     using fapl_t = H5::FileAccPropList;
     using fcpl_t = H5::FileCreatPropList;
-    using datatype_t = H5::DataType;
-    using comptype_t = H5::CompType;
-    using predtype_t = H5::PredType;
+    // pyre-owned datatypes over the hdf5 c api
+    using datatype_t = pyre::h5::DataType;
+    using comptype_t = pyre::h5::CompType;
+    using predtype_t = pyre::h5::PredType;
     // names and other text
     using string_t = std::string;
     // for specifying dataspace coordinates and shapes
