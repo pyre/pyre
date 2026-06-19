@@ -762,6 +762,17 @@ paths that still call `H5::` methods take pyre lists by `id()` —
 pyre wrapper via `H5Pcopy`. Default arguments use `theDefault()` (derived) or a
 default-constructed base `PropList` (the acpl), both wrapping `H5P_DEFAULT`.
 
+The cluster was later moved into its own namespace, `pyre::h5::properties`
+(mirrored by `lib/pyre/h5/properties/`), parallel to `types`. The acronyms
+(`DAPL`…`LCPL`) are kept — they are HDF5-canonical and a namespace can't make them
+clearer — but the base `PropList` becomes `properties::List` (no
+`properties::PropList` stutter). `api.h` publishes descriptive aliases —
+`pyre::h5::properties::{list_t, dataset_access_t, dataset_creation_t,
+dataset_transfer_t, file_access_t, file_creation_t, link_access_t,
+link_creation_t}` — and the binding layer keeps its acronym spellings
+(`using DAPL = pyre::h5::properties::DAPL;`) so the registered Python class names
+are unchanged.
+
 ### Phase 3 — datatypes — DONE 2026-06-19
 
 The datatypes are another **atomic** cluster: the bindings encode the C++ base
