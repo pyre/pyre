@@ -9,23 +9,23 @@
 // set up the namespace
 #include "forward.h"
 // my base class
-#include "DataType.h"
+#include "Datatype.h"
 
 
 // an hdf5 compound datatype
-class pyre::h5::CompType : public pyre::h5::DataType {
+class pyre::h5::types::Compound : public pyre::h5::types::Datatype {
     // metamethods
 public:
     // adopt an existing raw handle, e.g. one returned by the c api
-    explicit CompType(id_type id);
+    explicit Compound(id_type id);
     // make a fresh compound type of the given {size}, in bytes
-    explicit CompType(std::size_t size);
+    explicit Compound(std::size_t size);
     // the full set of special members
-    CompType(const CompType &) = default;
-    CompType(CompType &&) noexcept = default;
-    CompType & operator=(const CompType &) = default;
-    CompType & operator=(CompType &&) noexcept = default;
-    ~CompType() override = default;
+    Compound(const Compound &) = default;
+    Compound(Compound &&) noexcept = default;
+    Compound & operator=(const Compound &) = default;
+    Compound & operator=(Compound &&) noexcept = default;
+    ~Compound() override = default;
 
     // interface
 public:
@@ -42,7 +42,7 @@ public:
     // the type of the member at {index}, as a fresh handle the caller adopts
     auto memberType(unsigned int index) const -> id_type;
     // insert {name} of {type} at the given {offset}
-    auto insert(const string_t & name, std::size_t offset, const DataType & type) -> void;
+    auto insert(const string_t & name, std::size_t offset, const Datatype & type) -> void;
     // recursively remove padding from within me
     auto pack() -> void;
 };

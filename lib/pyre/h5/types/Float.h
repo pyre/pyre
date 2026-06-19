@@ -9,11 +9,11 @@
 // set up the namespace
 #include "forward.h"
 // my base class
-#include "AtomType.h"
+#include "Atom.h"
 
 
 // an hdf5 floating point datatype
-class pyre::h5::FloatType : public pyre::h5::AtomType {
+class pyre::h5::types::Float : public pyre::h5::types::Atom {
     // types
 public:
     // the mantissa normalization strategy
@@ -26,15 +26,15 @@ public:
     // metamethods
 public:
     // adopt an existing raw handle, e.g. one returned by the c api
-    explicit FloatType(id_type id);
+    explicit Float(id_type id);
     // make an independent copy of a predefined float type
-    explicit FloatType(const PredType & type);
+    explicit Float(const Predefined & type);
     // the full set of special members
-    FloatType(const FloatType &) = default;
-    FloatType(FloatType &&) noexcept = default;
-    FloatType & operator=(const FloatType &) = default;
-    FloatType & operator=(FloatType &&) noexcept = default;
-    ~FloatType() override = default;
+    Float(const Float &) = default;
+    Float(Float &&) noexcept = default;
+    Float & operator=(const Float &) = default;
+    Float & operator=(Float &&) noexcept = default;
+    ~Float() override = default;
 
     // interface
 public:

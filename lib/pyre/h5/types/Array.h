@@ -9,23 +9,23 @@
 // set up the namespace
 #include "forward.h"
 // my base class
-#include "DataType.h"
+#include "Datatype.h"
 
 
 // an hdf5 array datatype
-class pyre::h5::ArrayType : public pyre::h5::DataType {
+class pyre::h5::types::Array : public pyre::h5::types::Datatype {
     // metamethods
 public:
     // adopt an existing raw handle, e.g. one returned by the c api
-    explicit ArrayType(id_type id);
+    explicit Array(id_type id);
     // make an array of the given {cell} type and {shape}
-    ArrayType(const DataType & cell, const shape_t & shape);
+    Array(const Datatype & cell, const shape_t & shape);
     // the full set of special members
-    ArrayType(const ArrayType &) = default;
-    ArrayType(ArrayType &&) noexcept = default;
-    ArrayType & operator=(const ArrayType &) = default;
-    ArrayType & operator=(ArrayType &&) noexcept = default;
-    ~ArrayType() override = default;
+    Array(const Array &) = default;
+    Array(Array &&) noexcept = default;
+    Array & operator=(const Array &) = default;
+    Array & operator=(Array &&) noexcept = default;
+    ~Array() override = default;
 };
 
 

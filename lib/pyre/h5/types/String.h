@@ -9,11 +9,11 @@
 // set up the namespace
 #include "forward.h"
 // my base class
-#include "AtomType.h"
+#include "Atom.h"
 
 
 // an hdf5 string datatype
-class pyre::h5::StrType : public pyre::h5::AtomType {
+class pyre::h5::types::String : public pyre::h5::types::Atom {
     // types
 public:
     // the character set of my contents
@@ -24,17 +24,17 @@ public:
     // metamethods
 public:
     // adopt an existing raw handle, e.g. one returned by the c api
-    explicit StrType(id_type id);
+    explicit String(id_type id);
     // make an independent copy of a predefined string type
-    explicit StrType(const PredType & type);
+    explicit String(const Predefined & type);
     // make a native c-style string of the given number of {cells}
-    StrType(int, std::size_t cells);
+    String(int, std::size_t cells);
     // the full set of special members
-    StrType(const StrType &) = default;
-    StrType(StrType &&) noexcept = default;
-    StrType & operator=(const StrType &) = default;
-    StrType & operator=(StrType &&) noexcept = default;
-    ~StrType() override = default;
+    String(const String &) = default;
+    String(String &&) noexcept = default;
+    String & operator=(const String &) = default;
+    String & operator=(String &&) noexcept = default;
+    ~String() override = default;
 
     // interface
 public:

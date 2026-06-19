@@ -5,16 +5,16 @@
 
 
 // my declarations
-#include "AtomType.h"
+#include "Atom.h"
 
 
 // adopt an existing raw handle
-pyre::h5::AtomType::AtomType(id_type id) : DataType(id) {}
+pyre::h5::types::Atom::Atom(id_type id) : Datatype(id) {}
 
 
 // my byte order
 auto
-pyre::h5::AtomType::order() const -> order_type
+pyre::h5::types::Atom::order() const -> order_type
 {
     // ask the library
     return H5Tget_order(id());
@@ -23,7 +23,7 @@ pyre::h5::AtomType::order() const -> order_type
 
 // set my byte order
 auto
-pyre::h5::AtomType::setOrder(order_type order) -> void
+pyre::h5::types::Atom::setOrder(order_type order) -> void
 {
     // hand it to the library
     H5Tset_order(id(), order);
@@ -34,7 +34,7 @@ pyre::h5::AtomType::setOrder(order_type order) -> void
 
 // the bit offset of my first significant bit
 auto
-pyre::h5::AtomType::offset() const -> std::size_t
+pyre::h5::types::Atom::offset() const -> std::size_t
 {
     // ask the library
     return H5Tget_offset(id());
@@ -43,7 +43,7 @@ pyre::h5::AtomType::offset() const -> std::size_t
 
 // set the bit offset of my first significant bit
 auto
-pyre::h5::AtomType::setOffset(std::size_t offset) -> void
+pyre::h5::types::Atom::setOffset(std::size_t offset) -> void
 {
     // hand it to the library
     H5Tset_offset(id(), offset);
@@ -54,7 +54,7 @@ pyre::h5::AtomType::setOffset(std::size_t offset) -> void
 
 // my (lsb, msb) padding strategy
 auto
-pyre::h5::AtomType::pad() const -> padding_type
+pyre::h5::types::Atom::pad() const -> padding_type
 {
     // make room for the answer
     pad_type lsb, msb;
@@ -67,7 +67,7 @@ pyre::h5::AtomType::pad() const -> padding_type
 
 // set my (lsb, msb) padding strategy
 auto
-pyre::h5::AtomType::setPad(pad_type lsb, pad_type msb) -> void
+pyre::h5::types::Atom::setPad(pad_type lsb, pad_type msb) -> void
 {
     // hand them to the library
     H5Tset_pad(id(), lsb, msb);
@@ -78,7 +78,7 @@ pyre::h5::AtomType::setPad(pad_type lsb, pad_type msb) -> void
 
 // my precision, in bits
 auto
-pyre::h5::AtomType::precision() const -> std::size_t
+pyre::h5::types::Atom::precision() const -> std::size_t
 {
     // ask the library
     return H5Tget_precision(id());
@@ -87,7 +87,7 @@ pyre::h5::AtomType::precision() const -> std::size_t
 
 // set my precision, in bits
 auto
-pyre::h5::AtomType::setPrecision(std::size_t precision) -> void
+pyre::h5::types::Atom::setPrecision(std::size_t precision) -> void
 {
     // hand it to the library
     H5Tset_precision(id(), precision);

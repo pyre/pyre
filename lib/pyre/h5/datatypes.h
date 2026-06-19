@@ -11,8 +11,8 @@
 // forward declarations
 #include "forward.h"
 // the types i build
-#include "DataType.h"
-#include "CompType.h"
+#include "types/Datatype.h"
+#include "types/Compound.h"
 
 
 // implementation details for deducing the {datatype} of a cell

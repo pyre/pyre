@@ -5,24 +5,24 @@
 
 
 // my declarations
-#include "IntType.h"
+#include "Int.h"
 // the predefined type i can copy
-#include "PredType.h"
+#include "Predefined.h"
 
 
 // adopt an existing raw handle
-pyre::h5::IntType::IntType(id_type id) : AtomType(id) {}
+pyre::h5::types::Int::Int(id_type id) : Atom(id) {}
 
 
 // make an independent copy of a predefined integer type
-pyre::h5::IntType::IntType(const PredType & type) :
-    AtomType(static_cast<id_type>(H5Tcopy(type.id())))
+pyre::h5::types::Int::Int(const Predefined & type) :
+    Atom(static_cast<id_type>(H5Tcopy(type.id())))
 {}
 
 
 // my sign type
 auto
-pyre::h5::IntType::sign() const -> sign_type
+pyre::h5::types::Int::sign() const -> sign_type
 {
     // ask the library
     return H5Tget_sign(id());
@@ -31,7 +31,7 @@ pyre::h5::IntType::sign() const -> sign_type
 
 // set my sign type
 auto
-pyre::h5::IntType::setSign(sign_type sign) -> void
+pyre::h5::types::Int::setSign(sign_type sign) -> void
 {
     // hand it to the library
     H5Tset_sign(id(), sign);
