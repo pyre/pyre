@@ -16,14 +16,14 @@
 
 // file objects
 void
-pyre::h5::py::datatypes::array(py::module & m)
+pyre::h5::py::types::array(py::module & m)
 {
     // add the class
     auto arrayType = py::class_<ArrayType, DataType>(
         // in scope
         m,
         // class name
-        "ArrayType",
+        "array",
         // docstring
         "an HDF5 array datatype");
 

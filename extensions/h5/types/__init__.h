@@ -4,18 +4,18 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(h5_py_datatypes___init___h)
-#define h5_py_datatypes___init___h
+#if !defined(h5_py_types___init___h)
+#define h5_py_types___init___h
 
 // home of all declarations that must be present in every translation unit
 // e.g., the opaque data declarations
 // subpackages that require access must include this file explicitly in their {__init__.h}
 
 
-namespace pyre::h5::py::datatypes {
+namespace pyre::h5::py::types {
     // the module initializer
     void __init__(py::module &);
-} // namespace pyre::h5::py::datatypes
+} // namespace pyre::h5::py::types
 
 #endif
 

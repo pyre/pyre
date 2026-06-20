@@ -16,7 +16,7 @@
 
 // encapsulations of the IEEE floating datatypes
 void
-pyre::h5::py::datatypes::ieee(py::module & m)
+pyre::h5::py::types::ieee(py::module & m)
 {
     // make a new namespace to hold native datatype descriptions
     auto ieee = m.def_submodule(

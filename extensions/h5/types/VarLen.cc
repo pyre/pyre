@@ -16,14 +16,14 @@
 
 // file objects
 void
-pyre::h5::py::datatypes::varlen(py::module & m)
+pyre::h5::py::types::varlen(py::module & m)
 {
     // add the class
     auto varlenType = py::class_<VarLenType, DataType>(
         // in scope
         m,
         // class name
-        "VarLenType",
+        "varlen",
         // docstring
         "an HDF5 variable length datatype");
 

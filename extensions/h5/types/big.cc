@@ -16,7 +16,7 @@
 
 // encapsulations of the big endian datatypes
 void
-pyre::h5::py::datatypes::big(py::module & m)
+pyre::h5::py::types::big(py::module & m)
 {
     // make a new namespace to hold big endian datatype descriptions
     auto big = m.def_submodule(

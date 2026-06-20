@@ -9,7 +9,7 @@ from .. import libh5
 
 
 # enums
-class Enum(libh5.datatypes.EnumType):
+class Enum(libh5.types.enum):
     """
     An h5 EnumType
     """

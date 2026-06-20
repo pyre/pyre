@@ -16,14 +16,14 @@
 
 // file objects
 void
-pyre::h5::py::datatypes::datatype(py::module & m)
+pyre::h5::py::types::datatype(py::module & m)
 {
     // add bindings for the base hdf5 datatype
     auto cls = py::class_<DataType>(
         // in scope
         m,
         // class name
-        "DataType",
+        "datatype",
         // docstring
         "the base HDF5 datatype");
 

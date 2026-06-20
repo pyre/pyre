@@ -16,14 +16,14 @@
 
 // file objects
 void
-pyre::h5::py::datatypes::float_(py::module & m)
+pyre::h5::py::types::float_(py::module & m)
 {
     // add the class
     auto cls = py::class_<FloatType, AtomType>(
         // in scope
         m,
         // class name
-        "FloatType",
+        "float",
         // docstring
         "an HDF5 float datatype");
 

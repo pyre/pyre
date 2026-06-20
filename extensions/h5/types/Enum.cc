@@ -16,14 +16,14 @@
 
 // file objects
 void
-pyre::h5::py::datatypes::enum_(py::module & m)
+pyre::h5::py::types::enum_(py::module & m)
 {
     // add the class
     auto enumType = py::class_<EnumType, DataType>(
         // in scope
         m,
         // class name
-        "EnumType",
+        "enum",
         // docstring
         "an HDF5 enum datatype");
 

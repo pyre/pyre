@@ -16,7 +16,7 @@
 
 // encapsulations of the little endian datatypes
 void
-pyre::h5::py::datatypes::little(py::module & m)
+pyre::h5::py::types::little(py::module & m)
 {
     // make a new namespace to hold little endian datatype descriptions
     auto little = m.def_submodule(

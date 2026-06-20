@@ -16,7 +16,7 @@
 
 // encapsulations of the UNIX floating datatypes
 void
-pyre::h5::py::datatypes::unix(py::module & m)
+pyre::h5::py::types::unix(py::module & m)
 {
     // make a new namespace to hold native datatype descriptions
     auto unix = m.def_submodule(

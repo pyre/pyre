@@ -9,7 +9,7 @@ from .. import libh5
 
 
 # the base type
-type = libh5.datatypes.DataType
+type = libh5.types.datatype
 
 # abstract types; useful as building blocks while defining new types
 from .Array import Array as arrayType
@@ -20,14 +20,14 @@ from .Integer import Integer as intType
 from .String import String as strType
 
 # alias the type categories to provide access to more esoteric types
-native = libh5.datatypes.native
-big = libh5.datatypes.big
-little = libh5.datatypes.little
-std = libh5.datatypes.std
-alpha = libh5.datatypes.alpha
-ieee = libh5.datatypes.ieee
-intel = libh5.datatypes.intel
-mips = libh5.datatypes.mips
+native = libh5.types.native
+big = libh5.types.big
+little = libh5.types.little
+std = libh5.types.std
+alpha = libh5.types.alpha
+ieee = libh5.types.ieee
+intel = libh5.types.intel
+mips = libh5.types.mips
 
 # concrete types - native
 # explicitly sized integral
