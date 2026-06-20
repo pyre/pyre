@@ -11,6 +11,8 @@ pyre_portinfo()
 pyre_journalLib()
 # build libpyre
 pyre_pyreLib()
+# add the pyre::h5 wrappers to libpyre when hdf5 is available
+pyre_h5Lib()
 # and the cuda layers
 pyre_cudaLib()
 # and the mpi layers
