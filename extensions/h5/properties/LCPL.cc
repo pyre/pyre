@@ -12,14 +12,14 @@
 
 // link creation property lists
 void
-pyre::h5::py::lcpl(py::module & m)
+pyre::h5::py::properties::lcpl(py::module & m)
 {
     // add bindings for link creation property lists
     auto cls = py::class_<LCPL, PropList>(
         // in scope
         m,
         // class name
-        "LCPL",
+        "lcpl",
         // docstring
         "a link creation property list");
 

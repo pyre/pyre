@@ -16,15 +16,6 @@ namespace pyre::h5::py {
     // wrappers for the C++ HDF5 api
     // support
     void enums(py::module &);
-    // property lists
-    void pl(py::module &);
-    void dapl(py::module &);
-    void dcpl(py::module &);
-    void dxpl(py::module &);
-    void fapl(py::module &);
-    void fcpl(py::module &);
-    void lapl(py::module &);
-    void lcpl(py::module &);
     // attributes
     void attribute(py::module &);
     // datasets

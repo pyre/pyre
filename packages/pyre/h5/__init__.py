@@ -28,7 +28,7 @@ if libh5 is not None:
         uri: primitives.uri,
         mode: str = "r",
         credentials=None,
-        fapl: typing.Optional[libh5.FAPL] = None,
+        fapl: typing.Optional[libh5.properties.fapl] = None,
         **kwds,
     ):
         """

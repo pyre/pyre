@@ -61,7 +61,7 @@ class Reader:
         uri: pyre.primitives.uri,
         mode: str = "r",
         credentials: typing.Optional[dict] = None,
-        fapl: typing.Optional[libh5.FAPL] = None,
+        fapl: typing.Optional[libh5.properties.fapl] = None,
         **kwds,
     ):
         # chain up
@@ -79,7 +79,7 @@ class Reader:
         uri: typing.Union[pyre.primitives.uri, str],
         mode: str = "r",
         credentials: typing.Optional[dict] = None,
-        fapl: typing.Optional[libh5.FAPL] = None,
+        fapl: typing.Optional[libh5.properties.fapl] = None,
         **kwds,
     ) -> typing.Optional[File]:
         """

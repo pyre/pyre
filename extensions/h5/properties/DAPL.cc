@@ -10,59 +10,60 @@
 #include "forward.h"
 
 
-// link access property lists
+// dataset access property lists
 void
-pyre::h5::py::lapl(py::module & m)
+pyre::h5::py::properties::dapl(py::module & m)
 {
-    // add bindings for link access property lists
-    auto cls = py::class_<LAPL, PropList>(
+    // add bindings for hdf5 dataset access property lists
+    auto cls = py::class_<DAPL, PropList>(
         // in scope
         m,
         // class name
-        "LAPL",
+        "dapl",
         // docstring
-        "a link access property list");
+        "a dataset access property list");
 
     // static properties
     cls.def_property_readonly_static(
         // the name
         "default",
         // the implementation
-        [](const py::object &) -> const LAPL & {
+        [](const py::object &) -> const DAPL & {
             // easy enough
-            return LAPL::theDefault();
+            return DAPL::theDefault();
         },
         // we hand back a reference to a shared, library-owned object
         py::return_value_policy::reference,
         // docstring
-        "the default link access property list");
+        "the default dataset access property list");
 
     // constructor
     cls.def(
         // the implementation
         py::init(),
         // the docstring
-        "build a link access property list");
+        "build a dataset access property list");
 
     // interface
-    // get the number of allowed link traversals
+    // get the chunk cache parameters
     cls.def(
         // the name
-        "getNumLinks",
+        "getChunkCache",
         // the implementation
-        &LAPL::numLinks,
+        &DAPL::chunkCache,
         // the docstring
-        "get the number of allowed link traversals");
-    // set the number of allowed link traversals
+        "get the chunk cache parameters");
+    // set the chunk cache parameters
     cls.def(
         // the name
-        "setNumLinks",
+        "setChunkCache",
         // the implementation
-        &LAPL::setNumLinks,
+        &DAPL::setChunkCache,
         // the signature
-        "links"_a,
+        "slots"_a, "bytes"_a, "w0"_a,
         // the docstring
-        "set the number of allowed link traversals");
+        "set the chunk cache parameters");
+
 
     // all done
     return;

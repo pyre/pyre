@@ -12,14 +12,14 @@
 
 // file creation property lists
 void
-pyre::h5::py::fcpl(py::module & m)
+pyre::h5::py::properties::fcpl(py::module & m)
 {
     // add bindings for hdf5 file creation property lists
     auto cls = py::class_<FCPL, PropList>(
         // in scope
         m,
         // class name
-        "FCPL",
+        "fcpl",
         // docstring
         "a file creation property list");
 

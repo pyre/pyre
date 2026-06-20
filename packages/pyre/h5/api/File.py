@@ -80,7 +80,7 @@ class File(Group):
         self,
         uri,
         credentials: dict,
-        fapl: typing.Optional[libh5.FAPL],
+        fapl: typing.Optional[libh5.properties.fapl],
         **kwds,
     ) -> "File":
         """
@@ -102,7 +102,7 @@ class File(Group):
         # if the caller didn't supply a {fapl}
         if fapl is None:
             # set one up
-            fapl = libh5.FAPL()
+            fapl = libh5.properties.fapl()
         # attach the required {ros3} driver information
         fapl.ros3(
             region=region,
@@ -142,8 +142,8 @@ class File(Group):
     def _pyre_open(
         self,
         uri: pyre.primitives.pathlike,
-        fcpl: typing.Optional[libh5.FCPL] = None,
-        fapl: typing.Optional[libh5.FAPL] = None,
+        fcpl: typing.Optional[libh5.properties.fcpl] = None,
+        fapl: typing.Optional[libh5.properties.fapl] = None,
         **kwds,
     ) -> "File":
         """
@@ -157,11 +157,11 @@ class File(Group):
         # if the supplied {fcpl} is trivial
         if fcpl is None:
             # get the default
-            fcpl = libh5.FCPL.default
+            fcpl = libh5.properties.fcpl.default
         # similarly, if the supplied {fapl} is trivial
         if fapl is None:
             # get the default
-            fapl = libh5.FAPL.default
+            fapl = libh5.properties.fapl.default
         # open the file
         self._pyre_id = libh5.File(uri=str(uri), fcpl=fcpl, fapl=fapl, **kwds)
         # all done
