@@ -53,7 +53,8 @@ pyre::h5::properties::FCPL::setPageSize(hsize_t size) -> void
 
 // the file space strategy: (strategy, persist free space, threshold)
 auto
-pyre::h5::properties::FCPL::filespaceStrategy() const -> std::tuple<H5F_fspace_strategy_t, hbool_t, hsize_t>
+pyre::h5::properties::FCPL::filespaceStrategy() const
+    -> std::tuple<H5F_fspace_strategy_t, hbool_t, hsize_t>
 {
     // make room for the answer
     H5F_fspace_strategy_t strategy = H5F_FSPACE_STRATEGY_FSM_AGGR;

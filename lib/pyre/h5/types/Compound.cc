@@ -80,7 +80,8 @@ pyre::h5::types::Compound::memberType(unsigned int index) const -> id_type
 
 // insert {name} of {type} at the given {offset}
 auto
-pyre::h5::types::Compound::insert(const string_t & name, std::size_t offset, const Datatype & type) -> void
+pyre::h5::types::Compound::insert(const string_t & name, std::size_t offset, const Datatype & type)
+    -> void
 {
     // hand it to the library
     H5Tinsert(id(), name.data(), offset, type.id());

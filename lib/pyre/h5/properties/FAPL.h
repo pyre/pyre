@@ -43,8 +43,8 @@ public:
 
 #if defined(H5_HAVE_ROS3_VFD)
     // configure the read-only S3 virtual file driver
-    auto ros3(
-        bool authenticate, string_t region, string_t id, string_t key, string_t token) -> FAPL &;
+    auto ros3(bool authenticate, string_t region, string_t id, string_t key, string_t token)
+        -> FAPL &;
 #endif
 
     // low-level interface

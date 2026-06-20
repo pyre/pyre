@@ -18,16 +18,14 @@
 // implementation details for deducing the {datatype} of a cell
 namespace pyre::h5 {
     // wrap a fresh, owned copy of a predefined native type
-    inline auto
-    nativeDatatype(hid_t native) -> datatype_t
+    inline auto nativeDatatype(hid_t native) -> datatype_t
     {
         // copy the library constant into a transient i own, and adopt the handle
         return datatype_t(static_cast<hid_t>(H5Tcopy(native)));
     }
 
     // build a compound {(r, i)} type over the given native base type
-    inline auto
-    complexDatatype(hid_t native) -> datatype_t
+    inline auto complexDatatype(hid_t native) -> datatype_t
     {
         // grab a fresh copy of the native base type
         auto base = nativeDatatype(native);

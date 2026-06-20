@@ -15,8 +15,7 @@ pyre::h5::types::Int::Int(id_type id) : Atom(id) {}
 
 
 // make an independent copy of a predefined integer type
-pyre::h5::types::Int::Int(const Predefined & type) :
-    Atom(static_cast<id_type>(H5Tcopy(type.id())))
+pyre::h5::types::Int::Int(const Predefined & type) : Atom(static_cast<id_type>(H5Tcopy(type.id())))
 {}
 
 

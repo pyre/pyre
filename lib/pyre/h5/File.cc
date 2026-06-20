@@ -15,10 +15,11 @@
 pyre::h5::File::File(
     const string_t & uri, unsigned int flags, const properties::FCPL & fcpl,
     const properties::FAPL & fapl) :
-    Group(static_cast<id_type>(
-        (flags == H5F_ACC_RDONLY || flags == H5F_ACC_RDWR)
-            ? H5Fopen(uri.data(), flags, fapl.id())
-            : H5Fcreate(uri.data(), flags, fcpl.id(), fapl.id())))
+    Group(
+        static_cast<id_type>(
+            (flags == H5F_ACC_RDONLY || flags == H5F_ACC_RDWR) ?
+                H5Fopen(uri.data(), flags, fapl.id()) :
+                H5Fcreate(uri.data(), flags, fcpl.id(), fapl.id())))
 {}
 
 

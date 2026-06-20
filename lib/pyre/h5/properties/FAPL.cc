@@ -55,7 +55,8 @@ pyre::h5::properties::FAPL::setMetaBlockSize(hsize_t size) -> void
 
 // the page buffer characteristics: (bytes, metadata percent, raw-data percent)
 auto
-pyre::h5::properties::FAPL::pageBufferSize() const -> std::tuple<std::size_t, unsigned int, unsigned int>
+pyre::h5::properties::FAPL::pageBufferSize() const
+    -> std::tuple<std::size_t, unsigned int, unsigned int>
 {
     // make room for the answer
     std::size_t buffer = 0;
@@ -70,7 +71,8 @@ pyre::h5::properties::FAPL::pageBufferSize() const -> std::tuple<std::size_t, un
 
 // set the page buffer characteristics
 auto
-pyre::h5::properties::FAPL::setPageBufferSize(std::size_t buffer, unsigned int meta, unsigned int raw) -> void
+pyre::h5::properties::FAPL::setPageBufferSize(
+    std::size_t buffer, unsigned int meta, unsigned int raw) -> void
 {
     // hand them to the library
     H5Pset_page_buffer_size(id(), buffer, meta, raw);
@@ -82,8 +84,8 @@ pyre::h5::properties::FAPL::setPageBufferSize(std::size_t buffer, unsigned int m
 #if defined(H5_HAVE_ROS3_VFD)
 // configure the read-only S3 virtual file driver
 auto
-pyre::h5::properties::FAPL::ros3(bool authenticate, string_t region, string_t id, string_t key, string_t token)
-    -> FAPL &
+pyre::h5::properties::FAPL::ros3(
+    bool authenticate, string_t region, string_t id, string_t key, string_t token) -> FAPL &
 {
     // make room for the driver parameters
     H5FD_ros3_fapl_t p;

@@ -36,8 +36,8 @@ auto
 pyre::h5::Group::memberName(unsigned int index) const -> string_t
 {
     // find out how long the name is
-    auto len = H5Lget_name_by_idx(
-        id(), ".", H5_INDEX_NAME, H5_ITER_INC, index, nullptr, 0, H5P_DEFAULT);
+    auto len =
+        H5Lget_name_by_idx(id(), ".", H5_INDEX_NAME, H5_ITER_INC, index, nullptr, 0, H5P_DEFAULT);
     // make room for it, plus the terminating null
     string_t buffer(len + 1, '\0');
     // retrieve it
@@ -103,8 +103,8 @@ auto
 pyre::h5::Group::createGroup(const string_t & path) const -> Group
 {
     // make it with default link, creation, and access property lists; adopt the fresh handle
-    return Group(static_cast<id_type>(
-        H5Gcreate2(id(), path.data(), H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT)));
+    return Group(
+        static_cast<id_type>(H5Gcreate2(id(), path.data(), H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT)));
 }
 
 
@@ -115,8 +115,9 @@ pyre::h5::Group::createDataSet(
     const properties::DCPL & dcpl, const properties::DAPL & dapl) const -> DataSet
 {
     // make it with a default link creation property list; adopt the fresh handle
-    return DataSet(static_cast<id_type>(H5Dcreate2(
-        id(), path.data(), type.id(), space.id(), H5P_DEFAULT, dcpl.id(), dapl.id())));
+    return DataSet(
+        static_cast<id_type>(H5Dcreate2(
+            id(), path.data(), type.id(), space.id(), H5P_DEFAULT, dcpl.id(), dapl.id())));
 }
 
 

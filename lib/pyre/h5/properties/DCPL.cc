@@ -133,8 +133,8 @@ pyre::h5::properties::DCPL::filters() const -> filters_type
         char name[256];
         unsigned int configuration = 0;
         // get the info; we do not retrieve the client data, so its buffer is empty
-        auto filter = H5Pget_filter2(
-            id(), i, &flags, &elements, nullptr, sizeof(name), name, &configuration);
+        auto filter =
+            H5Pget_filter2(id(), i, &flags, &elements, nullptr, sizeof(name), name, &configuration);
         // store it
         pipeline.emplace_back(filter, name, flags, configuration);
     }

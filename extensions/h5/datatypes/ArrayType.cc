@@ -30,9 +30,8 @@ pyre::h5::py::datatypes::array(py::module & m)
     // constructor
     arrayType.def(
         // the implementation
-        py::init([](const DataType & type, const shape_t & shape) {
-            return ArrayType(type, shape);
-        }),
+        py::init(
+            [](const DataType & type, const shape_t & shape) { return ArrayType(type, shape); }),
         // the signature
         "type"_a, "shape"_a,
         // the docstring
