@@ -21,10 +21,15 @@ pyre::h5::Location::Location(id_type id) : Identifier(id) {}
 auto
 pyre::h5::Location::attributeCount() const -> int
 {
-    // make room for the metadata
+    // ask the library for just the attribute count; the info struct and accessor were
+    // renamed in hdf5 1.12, so pick the spelling that matches the library we build against
+#if H5_VERSION_GE(1, 12, 0)
     H5O_info2_t info;
-    // ask the library for just the attribute count
     H5Oget_info3(id(), &info, H5O_INFO_NUM_ATTRS);
+#else
+    H5O_info_t info;
+    H5Oget_info2(id(), &info, H5O_INFO_NUM_ATTRS);
+#endif
     // and report it
     return static_cast<int>(info.num_attrs);
 }

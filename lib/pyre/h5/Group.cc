@@ -62,10 +62,15 @@ pyre::h5::Group::exists(const string_t & name) const -> bool
 auto
 pyre::h5::Group::childType(const string_t & name) const -> object_type
 {
-    // make room for the metadata
+    // ask the library for just the basic info; the info struct and accessor were renamed in
+    // hdf5 1.12, so pick the spelling that matches the library we build against
+#if H5_VERSION_GE(1, 12, 0)
     H5O_info2_t info;
-    // ask the library for just the basic info
     H5Oget_info_by_name3(id(), name.data(), &info, H5O_INFO_BASIC, H5P_DEFAULT);
+#else
+    H5O_info_t info;
+    H5Oget_info_by_name2(id(), name.data(), &info, H5O_INFO_BASIC, H5P_DEFAULT);
+#endif
     // and report the object kind
     return info.type;
 }
