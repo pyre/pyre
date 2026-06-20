@@ -852,13 +852,27 @@ This is where the **bridges collapsed.** `Group::createDataSet`/`createAttribute
 take pyre `type`/`space`/property-list arguments natively; the dataset `read`/
 `write` path calls `H5Dread`/`H5Dwrite` with the raw type id — so `borrowH5Datatype`
 and the create/IO `H5::` bridges are gone, and the immutable-`H5Tclose` hazard with
-them. The **one** transitional `H5::` use left in the whole layer is the hyperslab
-selection machinery in `datasets.h`: `dataspace_t` is still `H5::DataSpace`, and the
-dataset's own space is bridged in via `H5::DataSpace(dataset.dataspace().id())`.
-Threading pyre `DataSpace` through that machinery (its `slab()` already covers the
-strided cases) is the last cleanup; everything else under `lib/pyre/h5` and the
-bindings is pyre-owned. Named-datatype attribute access (dropped in Phase 3) could
-also return now that `Location` exists, if `types::Datatype` is given the interface.
+them.
+
+### Phase 6 — completion — DONE 2026-06-20
+
+The last two threads were tied off:
+
+- **The final bridge.** The hyperslab-selection machinery in `datasets.h` now uses
+  pyre `DataSpace` throughout: the dataset's own space comes straight from
+  `dataset.dataspace()`, the in-memory space is a pyre `DataSpace`, and the
+  selection goes through `DataSpace::slab()` (the strided five-argument form for the
+  zoom read, the two-argument form for the block read/write). `dataspace_t` is now
+  `pyre::h5::DataSpace`; the last `H5::DataSpace` bridge is deleted.
+- **Named-datatype attributes restored.** `types::Datatype` now derives from
+  `pyre::h5::Location` (mirroring `H5::DataType : H5Object : H5Location`), so the
+  whole datatype hierarchy carries the attribute interface again, and the `DataType`
+  binding re-enables `attributes(cls)`. The capability dropped in Phase 3 is back.
+
+With no `H5::` symbol left anywhere under `lib/pyre/h5` or `extensions/h5`, both
+`external.h` files now include the pure C `<hdf5.h>` instead of `<H5Cpp.h>`. **The
+decoupling from the HDF5 C++ layer is complete** — pyre owns its entire HDF5 surface
+over the C API, and the Python-facing API never changed across all six phases.
 
 ## Glossary
 
