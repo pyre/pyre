@@ -92,15 +92,15 @@ namespace pyre::h5::py {
     // datatypes: now pyre-owned wrappers over the hdf5 c api, living in {pyre::h5::types}; the
     // binding-facing names keep their {*Type} spelling so the registered python classes are stable
     using DataType = pyre::h5::types::Datatype;
-    using AtomType = pyre::h5::types::Atom;        // derives DataType
-    using PredType = pyre::h5::types::Predefined;  // derives AtomType
-    using IntType = pyre::h5::types::Int;          // derives AtomType
-    using FloatType = pyre::h5::types::Float;      // derives AtomType
-    using StrType = pyre::h5::types::String;       // derives AtomType
-    using CompType = pyre::h5::types::Compound;    // derives DataType
-    using EnumType = pyre::h5::types::Enum;        // derives DataType
-    using ArrayType = pyre::h5::types::Array;      // derives DataType
-    using VarLenType = pyre::h5::types::VarLen;    // derives DataType
+    using AtomType = pyre::h5::types::Atom;       // derives DataType
+    using PredType = pyre::h5::types::Predefined; // derives AtomType
+    using IntType = pyre::h5::types::Int;         // derives AtomType
+    using FloatType = pyre::h5::types::Float;     // derives AtomType
+    using StrType = pyre::h5::types::String;      // derives AtomType
+    using CompType = pyre::h5::types::Compound;   // derives DataType
+    using EnumType = pyre::h5::types::Enum;       // derives DataType
+    using ArrayType = pyre::h5::types::Array;     // derives DataType
+    using VarLenType = pyre::h5::types::VarLen;   // derives DataType
 
     // reading into in-memory buffers
     // aliases for select memory template expansions

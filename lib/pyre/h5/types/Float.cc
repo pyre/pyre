@@ -96,8 +96,8 @@ pyre::h5::types::Float::fields() const -> fields_type
 // set my bit layout
 auto
 pyre::h5::types::Float::setFields(
-    std::size_t spos, std::size_t epos, std::size_t esize, std::size_t mpos,
-    std::size_t msize) -> void
+    std::size_t spos, std::size_t epos, std::size_t esize, std::size_t mpos, std::size_t msize)
+    -> void
 {
     // hand them to the library
     H5Tset_fields(id(), spos, epos, esize, mpos, msize);

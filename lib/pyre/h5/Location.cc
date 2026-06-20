@@ -35,8 +35,9 @@ auto
 pyre::h5::Location::openAttribute(unsigned int index) const -> Attribute
 {
     // open the attribute by its position; the library hands back a fresh handle the wrapper adopts
-    return Attribute(static_cast<id_type>(H5Aopen_by_idx(
-        id(), ".", H5_INDEX_NAME, H5_ITER_INC, index, H5P_DEFAULT, H5P_DEFAULT)));
+    return Attribute(
+        static_cast<id_type>(H5Aopen_by_idx(
+            id(), ".", H5_INDEX_NAME, H5_ITER_INC, index, H5P_DEFAULT, H5P_DEFAULT)));
 }
 
 
@@ -65,14 +66,16 @@ pyre::h5::Location::createAttribute(
     const properties::List & acpl) const -> Attribute
 {
     // make the attribute; the library hands back a fresh handle the wrapper adopts
-    return Attribute(static_cast<id_type>(
-        H5Acreate2(id(), name.data(), type.id(), space.id(), acpl.id(), H5P_DEFAULT)));
+    return Attribute(
+        static_cast<id_type>(
+            H5Acreate2(id(), name.data(), type.id(), space.id(), acpl.id(), H5P_DEFAULT)));
 }
 
 
 // rename the {oldName} attribute to {newName}
 auto
-pyre::h5::Location::renameAttribute(const string_t & oldName, const string_t & newName) const -> void
+pyre::h5::Location::renameAttribute(const string_t & oldName, const string_t & newName) const
+    -> void
 {
     // hand it to the library
     H5Arename(id(), oldName.data(), newName.data());

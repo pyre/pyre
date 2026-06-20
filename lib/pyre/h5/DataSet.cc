@@ -121,8 +121,8 @@ pyre::h5::DataSet::dcpl() const -> properties::DCPL
 
 // fill {buffer}, interpreted as {memtype}, from the selected region
 auto
-pyre::h5::DataSet::read(
-    id_type memtype, void * buffer, id_type memspace, id_type filespace) const -> void
+pyre::h5::DataSet::read(id_type memtype, void * buffer, id_type memspace, id_type filespace) const
+    -> void
 {
     // hand it to the library
     H5Dread(id(), memtype, memspace, filespace, H5P_DEFAULT, buffer);
@@ -250,7 +250,8 @@ pyre::h5::DataSet::_trim(string_t & value, H5T_str_t pad) const -> void
             auto channel = pyre::journal::firewall_t("pyre.h5.dataset");
             channel
                 // what
-                << "unknown string padding method " << pad
+                << "unknown string padding method "
+                << pad
                 // where
                 << pyre::journal::endl(__HERE__);
             break;

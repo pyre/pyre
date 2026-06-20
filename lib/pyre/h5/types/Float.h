@@ -54,8 +54,8 @@ public:
     auto fields() const -> fields_type;
     // set my bit layout
     auto setFields(
-        std::size_t spos, std::size_t epos, std::size_t esize, std::size_t mpos,
-        std::size_t msize) -> void;
+        std::size_t spos, std::size_t epos, std::size_t esize, std::size_t mpos, std::size_t msize)
+        -> void;
 };
 
 
