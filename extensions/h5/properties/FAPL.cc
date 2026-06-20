@@ -12,14 +12,14 @@
 
 // file access property lists
 void
-pyre::h5::py::fapl(py::module & m)
+pyre::h5::py::properties::fapl(py::module & m)
 {
     // add bindings for hdf5 file access property lists
     auto cls = py::class_<FAPL, PropList>(
         // in scope
         m,
         // class name
-        "FAPL",
+        "fapl",
         // docstring
         "a file access property list");
 

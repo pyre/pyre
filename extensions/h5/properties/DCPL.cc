@@ -12,14 +12,14 @@
 
 // dataset creation property lists
 void
-pyre::h5::py::dcpl(py::module & m)
+pyre::h5::py::properties::dcpl(py::module & m)
 {
     // add bindings for hdf5 dataset creation property lists
     auto cls = py::class_<DCPL, PropList>(
         // in scope
         m,
         // class name
-        "DCPL",
+        "dcpl",
         // docstring
         "a dataset creation property list");
 

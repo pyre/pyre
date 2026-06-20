@@ -11,14 +11,14 @@
 
 // property lists
 void
-pyre::h5::py::pl(py::module & m)
+pyre::h5::py::properties::pl(py::module & m)
 {
     // add bindings for hdf5 property lists
     auto cls = py::class_<PropList>(
         // in scope
         m,
         // class name
-        "PL",
+        "list",
         // docstring
         "a basic property list");
 

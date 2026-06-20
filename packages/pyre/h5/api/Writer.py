@@ -79,7 +79,7 @@ class Writer:
         self,
         uri: pyre.primitives.uri,
         mode: str = "w",
-        fcpl: typing.Optional[libh5.FCPL] = None,
+        fcpl: typing.Optional[libh5.properties.fcpl] = None,
         **kwds,
     ):
         # chain up
@@ -176,8 +176,8 @@ class Writer:
             # the dataspace
             space = libh5.DataSpace(shape=extents)
             # creation and access configuration
-            dcpl = libh5.DCPL()
-            dapl = libh5.DAPL()
+            dcpl = libh5.properties.dcpl()
+            dapl = libh5.properties.dapl()
             # make the dataset
             hid = dst.create(
                 path=name, type=layout.disktype, space=space, dcpl=dcpl, dapl=dapl
@@ -204,8 +204,8 @@ class Writer:
             # ask the dataset for its type and shape
             datatype, dataspace, chunk, *_ = dataset._pyre_describe()
             # creation and access configuration
-            dcpl = libh5.DCPL()
-            dapl = libh5.DAPL()
+            dcpl = libh5.properties.dcpl()
+            dapl = libh5.properties.dapl()
             # honor the chunking strategy, if any
             if chunk:
                 # by configuring the creation property list

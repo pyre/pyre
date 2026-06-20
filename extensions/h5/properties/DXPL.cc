@@ -12,14 +12,14 @@
 
 // dataset memory transfer property lists
 void
-pyre::h5::py::dxpl(py::module & m)
+pyre::h5::py::properties::dxpl(py::module & m)
 {
     // add bindings for hdf5 dataset memory transfer property lists
     auto cls = py::class_<DXPL, PropList>(
         // in scope
         m,
         // class name
-        "DXPL",
+        "dxpl",
         // docstring
         "a dataset memory transfer property list");
 
