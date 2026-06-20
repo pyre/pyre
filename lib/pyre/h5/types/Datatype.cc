@@ -11,12 +11,12 @@
 
 
 // adopt an existing raw handle
-pyre::h5::types::Datatype::Datatype(id_type id) : Identifier(id) {}
+pyre::h5::types::Datatype::Datatype(id_type id) : Location(id) {}
 
 
 // make an independent copy of a predefined type
 pyre::h5::types::Datatype::Datatype(const Predefined & type) :
-    Identifier(static_cast<id_type>(H5Tcopy(type.id())))
+    Location(static_cast<id_type>(H5Tcopy(type.id())))
 {}
 
 

@@ -8,12 +8,12 @@
 
 // set up the namespace
 #include "forward.h"
-// my base class
-#include "../Identifier.h"
+// my base class; datatypes can be named (committed) objects that carry attributes
+#include "../Location.h"
 
 
 // the generic base of the hdf5 datatypes
-class pyre::h5::types::Datatype : public pyre::h5::Identifier {
+class pyre::h5::types::Datatype : public pyre::h5::Location {
     // types
 public:
     // the class of a datatype: integer, float, string, compound, ...
