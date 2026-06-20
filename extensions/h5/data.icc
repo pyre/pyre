@@ -29,7 +29,7 @@ pyre::h5::py::data(py::class_<objectT> & cls)
         // the implementation
         [](const objectT & self) -> H5T_class_t {
             // get my type class
-            return self.getTypeClass();
+            return self.cell();
         },
         // the docstring
         "get my type as an HDF5 enum");
@@ -39,43 +39,36 @@ pyre::h5::py::data(py::class_<objectT> & cls)
         "type",
         // the implementation
         [](const objectT & self) -> DataType * {
-            // {getXxxType} hands back an {H5::} type owning a fresh handle; copy that handle into
-            // a pyre wrapper of the matching kind so the python-facing type is right, and let the
-            // temporary release its own handle
-            switch (self.getTypeClass()) {
+            // grab my datatype as an owned pyre wrapper
+            auto dt = self.datatype();
+            // make a copy of its handle for the typed wrapper to adopt
+            auto id = static_cast<hid_t>(H5Tcopy(dt.id()));
+            // and dress it up as the matching pyre type
+            switch (dt.cell()) {
                 // integers
                 case H5T_INTEGER:
-                    // return the integer data type descriptor
-                    return new IntType(static_cast<hid_t>(H5Tcopy(self.getIntType().getId())));
+                    return new IntType(id);
                 // floats
                 case H5T_FLOAT:
-                    // return the float data type descriptor
-                    return new FloatType(static_cast<hid_t>(H5Tcopy(self.getFloatType().getId())));
+                    return new FloatType(id);
                 // strings
                 case H5T_STRING:
-                    // return the string data type descriptor
-                    return new StrType(static_cast<hid_t>(H5Tcopy(self.getStrType().getId())));
+                    return new StrType(id);
                 // compound types
                 case H5T_COMPOUND:
-                    // return the compound data type descriptor
-                    return new CompType(static_cast<hid_t>(H5Tcopy(self.getCompType().getId())));
+                    return new CompType(id);
                 // enum types
                 case H5T_ENUM:
-                    // return the enum data type descriptor
-                    return new EnumType(static_cast<hid_t>(H5Tcopy(self.getEnumType().getId())));
+                    return new EnumType(id);
                 // variable length types
                 case H5T_VLEN:
-                    // return the variable length data type descriptor
-                    return new VarLenType(
-                        static_cast<hid_t>(H5Tcopy(self.getVarLenType().getId())));
+                    return new VarLenType(id);
                 // array types
                 case H5T_ARRAY:
-                    // return the array data type descriptor
-                    return new ArrayType(static_cast<hid_t>(H5Tcopy(self.getArrayType().getId())));
-                // by default
+                    return new ArrayType(id);
+                // by default, grab whatever generic information is available
                 default:
-                    // grab whatever generic information is available
-                    return new DataType(static_cast<hid_t>(H5Tcopy(self.getDataType().getId())));
+                    return new DataType(id);
             }
         },
         // the docstring
@@ -88,7 +81,7 @@ pyre::h5::py::data(py::class_<objectT> & cls)
         // the implementation
         [](const objectT & self) {
             // easy enough
-            return self.getStorageSize();
+            return self.storageSize();
         },
         // the docstring
         "get my on-disk size");
@@ -100,7 +93,7 @@ pyre::h5::py::data(py::class_<objectT> & cls)
         // the implementation
         [](const objectT & self) {
             // easy enough
-            return self.getInMemDataSize();
+            return self.memorySize();
         },
         // the docstring
         "get my in-memory size");
@@ -111,16 +104,8 @@ pyre::h5::py::data(py::class_<objectT> & cls)
         "shape",
         // the implementation
         [](const objectT & self) -> shape_t {
-            // get my dataspace
-            auto space = self.getSpace();
-            // ask it for its rank
-            auto rank = space.getSimpleExtentNdims();
-            // make a correctly sized vector to hold the result
-            shape_t shape(rank);
-            // populate it
-            space.getSimpleExtentDims(&shape[0], nullptr);
-            // and return it
-            return shape;
+            // my dataspace knows my extent
+            return self.dataspace().shape();
         },
         // the docstring
         "get my shape");
@@ -131,10 +116,8 @@ pyre::h5::py::data(py::class_<objectT> & cls)
         "space",
         // the implementation
         [](const objectT & self) -> DataSpace {
-            // {getSpace} hands back an {H5::} dataspace owning a fresh handle; copy its extent
-            // into a pyre wrapper so the python-facing type matches, and let the temporary
-            // release its own handle
-            return DataSpace(static_cast<hid_t>(H5Scopy(self.getSpace().getId())));
+            // hand back my dataspace as an owned pyre wrapper
+            return self.dataspace();
         },
         // the docstring
         "get my dataspace");

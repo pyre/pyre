@@ -76,67 +76,6 @@ namespace pyre::h5::py {
             "write the contents of {data} to the tile @{origin}+{shape}");
     }
 
-    // trim a string dataset according to the persisted rules
-    inline auto trim(const DataSet & self, string_t & result) -> string_t
-    {
-        // to trim the possible padding, get my actual datatype descriptor
-        auto strtype = self.getStrType();
-        // deduce the termination method
-        auto method = strtype.getStrpad();
-        // use it to figure out what the terminator looks like
-        switch (method) {
-            // null padded or null terminated string
-            case H5T_STR_NULLPAD:
-            case H5T_STR_NULLTERM:
-                // these are handled the same way: find the first null and trim the string
-                for (auto here = result.cbegin(); here != result.cend(); ++here) {
-                    // if this is not the terminator
-                    if (*here != '\0') {
-                        // move on
-                        continue;
-                    }
-                    // otherwise, trim
-                    result.erase(here, result.end());
-                    // and bail
-                    break;
-                }
-                // and done
-                break;
-            // fortran style padded strings
-            case H5T_STR_SPACEPAD:
-                // search from the end for the first non-space
-                for (auto here = result.cend() - 1; here != result.cbegin(); --here) {
-                    // this is still the padding character
-                    if (*here == ' ') {
-                        // move one
-                        continue;
-                    }
-                    // otherwise, trim
-                    result.erase(++here, result.cend());
-                    // and bail
-                    break;
-                }
-                // and done
-                break;
-            // everything else
-            default: {
-                // is a bug: hdf5 has added another method we don't know about
-                auto channel = pyre::journal::firewall_t("pyre.h5");
-                // complain
-                channel
-                    // what
-                    << "unknown string padding method "
-                    << method
-                    // where
-                    << pyre::journal::endl(__HERE__);
-                // send it off anyway, in case firewalls aren't fatal
-                break;
-            }
-        }
-        // all done
-        return result;
-    }
-
 } // namespace pyre::h5::py
 
 
@@ -159,7 +98,7 @@ pyre::h5::py::dataset(py::module & m)
         // the name
         "hid",
         // the implementation
-        &DataSet::getId,
+        &DataSet::id,
         // the docstring
         "get my h5 handle id");
 
@@ -192,9 +131,8 @@ pyre::h5::py::dataset(py::module & m)
         "dapl",
         // the implementation
         [](const DataSet & self) -> DAPL {
-            // {getAccessPlist} hands back an {H5::} list owning a fresh handle; copy it into a
-            // pyre wrapper so the python-facing type matches, and let the temporary release its
-            return DAPL(static_cast<hid_t>(H5Pcopy(self.getAccessPlist().getId())));
+            // hand back my access property list as an owned pyre wrapper
+            return self.dapl();
         },
         // the docstring
         "get my access property list");
@@ -205,8 +143,8 @@ pyre::h5::py::dataset(py::module & m)
         "dcpl",
         // the implementation
         [](const DataSet & self) -> DCPL {
-            // copy the {H5::} list into a pyre wrapper so the python-facing type matches
-            return DCPL(static_cast<hid_t>(H5Pcopy(self.getCreatePlist().getId())));
+            // hand back my creation property list as an owned pyre wrapper
+            return self.dcpl();
         },
         // the docstring
         "get my creation property list");
@@ -216,7 +154,7 @@ pyre::h5::py::dataset(py::module & m)
         // the name
         "offset",
         // the implementation
-        &DataSet::getOffset,
+        &DataSet::offset,
         // the docstring
         "get the on-disk offset of the dataset");
 
@@ -227,7 +165,7 @@ pyre::h5::py::dataset(py::module & m)
         // the implementation
         [](const DataSet & self) -> long {
             // get my type
-            auto type = self.getTypeClass();
+            auto type = self.cell();
             // check whether i am compatible with an integer
             if (type != H5T_INTEGER) {
                 // if not, make a channel
@@ -244,7 +182,7 @@ pyre::h5::py::dataset(py::module & m)
             // make some room
             long result;
             // read the data
-            self.read(&result, H5::PredType::NATIVE_LONG);
+            self.read(H5T_NATIVE_LONG, &result);
             // all done
             return result;
         },
@@ -258,7 +196,7 @@ pyre::h5::py::dataset(py::module & m)
         // the implementation
         [](const DataSet & self, long value) -> void {
             // get my type
-            auto type = self.getTypeClass();
+            auto type = self.cell();
             // check whether i am compatible with an integer
             if (type != H5T_INTEGER) {
                 // if not, make a channel
@@ -273,7 +211,7 @@ pyre::h5::py::dataset(py::module & m)
                 return;
             }
             // write the data
-            self.write(&value, H5::PredType::NATIVE_LONG);
+            self.write(H5T_NATIVE_LONG, &value);
             // all done
             return;
         },
@@ -290,7 +228,7 @@ pyre::h5::py::dataset(py::module & m)
         // the implementation
         [](const DataSet & self) -> double {
             // get my type
-            auto type = self.getTypeClass();
+            auto type = self.cell();
             // check whether i am compatible with a floating point number
             if (type != H5T_FLOAT) {
                 // if not, make a channel
@@ -307,7 +245,7 @@ pyre::h5::py::dataset(py::module & m)
             // make some room
             double result;
             // read the data
-            self.read(&result, H5::PredType::NATIVE_DOUBLE);
+            self.read(H5T_NATIVE_DOUBLE, &result);
             // all done
             return result;
         },
@@ -321,7 +259,7 @@ pyre::h5::py::dataset(py::module & m)
         // the implementation
         [](const DataSet & self, double value) -> void {
             // get my type
-            auto type = self.getTypeClass();
+            auto type = self.cell();
             // check whether i am compatible with a floating point number
             if (type != H5T_FLOAT) {
                 // if not, make a channel
@@ -336,7 +274,7 @@ pyre::h5::py::dataset(py::module & m)
                 return;
             }
             // write the data
-            self.write(&value, H5::PredType::NATIVE_DOUBLE);
+            self.write(H5T_NATIVE_DOUBLE, &value);
             // all done
             return;
         },
@@ -352,7 +290,7 @@ pyre::h5::py::dataset(py::module & m)
         // the implementation
         [](const DataSet & self) -> string_t {
             // get my type
-            auto type = self.getTypeClass();
+            auto type = self.cell();
             // check whether i can be converted to a string
             if (type != H5T_STRING) {
                 // if not, make a channel
@@ -366,12 +304,8 @@ pyre::h5::py::dataset(py::module & m)
                 // and bail
                 return "";
             }
-            // make some room
-            string_t result;
-            // read the data
-            self.read(result, self.getStrType());
-            // all done
-            return trim(self, result);
+            // read my contents as a string, trimmed of the persisted padding
+            return self.readString();
         },
         // the docstring
         "extract my contents as a string");
@@ -383,7 +317,7 @@ pyre::h5::py::dataset(py::module & m)
         // the implementation
         [](const DataSet & self, const string_t & value) -> void {
             // get my type
-            auto type = self.getTypeClass();
+            auto type = self.cell();
             // check whether i can be converted to a string
             if (type != H5T_STRING) {
                 // if not, make a channel
@@ -397,8 +331,8 @@ pyre::h5::py::dataset(py::module & m)
                 // and bail
                 return;
             }
-            // read the data
-            self.write(value, self.getStrType());
+            // write the string
+            self.writeString(value);
             // all done
             return;
         },
@@ -415,7 +349,7 @@ pyre::h5::py::dataset(py::module & m)
         // the implementation
         [](const DataSet & self) -> strings_t {
             // get my type
-            auto type = self.getTypeClass();
+            auto type = self.cell();
             // check whether i can be converted to a list of strings
             if (type != H5T_STRING) {
                 // if not, make a channel
@@ -431,12 +365,10 @@ pyre::h5::py::dataset(py::module & m)
                 // and bail
                 return strings;
             }
-            // we have strings; let's find out how many
-            // get my data space
-            auto space = self.getSpace();
-            // ask it for its rank
-            auto rank = space.getSimpleExtentNdims();
-            // make sure i'm just a list
+            // my dataspace tells me how many strings i hold
+            auto space = self.dataspace();
+            auto rank = space.rank();
+            // make sure i'm a list at most
             if (rank > 1) {
                 // if not, make a channel
                 auto channel = pyre::journal::error_t("pyre.h5");
@@ -446,50 +378,27 @@ pyre::h5::py::dataset(py::module & m)
                     << "not a list "
                     // where
                     << pyre::journal::endl(__HERE__);
-                // build an empty list of strings
-                strings_t strings;
-                // and bail
-                return strings;
+                // and bail with an empty list
+                return strings_t();
             }
-            // if the {rank} is zero, we have a single string; deal with it
+            // a rank of zero means a single string; read it, trimmed, as a one-element list
             if (rank == 0) {
-                // make some room
-                string_t result;
-                // read the data
-                self.read(result, self.getStrType());
-                // build a list of one string
-                auto strings = strings_t(1);
-                // trim and assign
-                strings[0] = trim(self, result);
-                // all done
-                return strings;
+                return strings_t { self.readString() };
             }
-            // if we get this far, we have a list of strings
+            // otherwise i hold a list; find out how long it is
+            auto len = space.shape()[0];
             // make a correctly sized vector to hold the result
-            shape_t shape(rank);
-            // populate it
-            space.getSimpleExtentDims(&shape[0], nullptr);
-            // shape now knows how many strings there are
-            auto len = shape[0];
-            // use it to make a correctly sized vector
             auto strings = strings_t(len);
-            // make a slot
-            const hsize_t one = 1;
-            // we always write one string at offset zero; this is an in-memory scratch space
-            // handed straight to the still-{H5::}-based dataset i/o, so build it as one
-            auto write = H5::DataSpace(1, &one);
-            // and read from the dataset space
-            auto read = self.getSpace();
-            // read as many times as there are strings to pull
+            // a one-element scratch dataspace for the in-memory side
+            auto memspace = DataSpace(shape_t { 1 });
+            // and my own dataspace for selecting one element at a time on disk
+            auto filespace = self.dataspace();
+            // pull one string at a time
             for (hsize_t idx = 0; idx < len; ++idx) {
-                // restrict the read dataspace to one string at offset {idx}
-                read.selectHyperslab(H5S_SELECT_SET, &one, &idx);
-                // make some room
-                string_t result;
-                // unconditional/unrestricted read
-                self.read(result, self.getStrType(), write, read);
-                // trim and assign
-                strings[idx] = trim(self, result);
+                // restrict the read to the string at offset {idx}
+                filespace.slab(index_t { idx }, shape_t { 1 });
+                // read it, trimmed
+                strings[idx] = self.readString(memspace.id(), filespace.id());
             }
             // all done
             return strings;
@@ -504,7 +413,7 @@ pyre::h5::py::dataset(py::module & m)
         // the implementation
         [](const DataSet & self, const strings_t & value) -> void {
             // get my type
-            auto type = self.getTypeClass();
+            auto type = self.cell();
             // check whether i can be converted to a list of strings
             if (type != H5T_STRING) {
                 // if not, make a channel
@@ -518,12 +427,10 @@ pyre::h5::py::dataset(py::module & m)
                 // and bail
                 return;
             }
-            // we have strings; let's find out how many
-            // get my data space
-            auto dst = self.getSpace();
-            // ask it for its rank
-            auto rank = dst.getSimpleExtentNdims();
-            // make sure i'm just a list
+            // my dataspace tells me how many strings i can hold
+            auto dst = self.dataspace();
+            auto rank = dst.rank();
+            // make sure i'm a list
             if (rank != 1) {
                 // if not, make a channel
                 auto channel = pyre::journal::error_t("pyre.h5");
@@ -536,28 +443,17 @@ pyre::h5::py::dataset(py::module & m)
                 // and bail
                 return;
             }
-
-            // make a correctly sized vector to hold the result
-            shape_t shape(rank);
-            // populate it
-            dst.getSimpleExtentDims(&shape[0], nullptr);
-
-            // shape now knows how many strings this dataset can hold
-            auto len = shape[0];
-            // we always write one string at a time from {value}
-            const hsize_t one = 1;
-            // so make a data space that reflects that; in-memory scratch handed to the
-            // still-{H5::}-based dataset i/o, so build it as one
-            auto src = H5::DataSpace(rank, &one);
-
-            // write as many times as there are strings to pull
+            // find out how long it is
+            auto len = dst.shape()[0];
+            // a one-element scratch dataspace for the in-memory side
+            auto src = DataSpace(shape_t { 1 });
+            // push one string at a time
             for (hsize_t idx = 0; idx < len; ++idx) {
-                // pick the slot in the destination data space
-                dst.selectHyperslab(H5S_SELECT_SET, &one, &idx, nullptr, &one);
-                // unconditional/unrestricted write
-                self.write(value[idx], self.getStrType(), src, dst);
+                // pick the slot in the destination dataspace
+                dst.slab(index_t { idx }, shape_t { 1 });
+                // write it
+                self.writeString(value[idx], src.id(), dst.id());
             }
-
             // all done
             return;
         },
@@ -573,7 +469,7 @@ pyre::h5::py::dataset(py::module & m)
         // the implementation
         [](const DataSet & self) -> long {
             // get my type
-            auto type = self.getTypeClass();
+            auto type = self.cell();
             // check whether i am an enumeration
             if (type != H5T_ENUM) {
                 // if not, make a channel
@@ -590,7 +486,7 @@ pyre::h5::py::dataset(py::module & m)
             // make some room
             long result;
             // read the data
-            self.read(&result, H5::PredType::NATIVE_LONG);
+            self.read(H5T_NATIVE_LONG, &result);
             // all done
             return result;
         },
@@ -604,7 +500,7 @@ pyre::h5::py::dataset(py::module & m)
         // the implementation
         [](const DataSet & self, long value) -> void {
             // get my type
-            auto type = self.getTypeClass();
+            auto type = self.cell();
             // check whether i am an enumeration
             if (type != H5T_ENUM) {
                 // if not, make a channel
@@ -619,7 +515,7 @@ pyre::h5::py::dataset(py::module & m)
                 return;
             }
             // write the data
-            self.write(&value, H5::PredType::NATIVE_LONG);
+            self.write(H5T_NATIVE_LONG, &value);
             // all done
             return;
         },

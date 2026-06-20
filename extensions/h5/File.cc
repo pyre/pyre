@@ -27,22 +27,22 @@ pyre::h5::py::file(py::module & m)
     cls.def(
         // the implementation
         py::init([](string_t uri, string_t mode, const FCPL & fcpl, const FAPL & fapl) {
-            // decode mode
+            // decode mode; {fcpl} and {fapl} are pyre wrappers the {File} ctor takes natively
             if (mode == "r") {
                 // read-only, file must exist
-                return File(uri, H5F_ACC_RDONLY, H5::FileCreatPropList(fcpl.id()), H5::FileAccPropList(fapl.id()));
+                return File(uri, H5F_ACC_RDONLY, fcpl, fapl);
             }
             if (mode == "r+") {
                 // read/write, file must exist
-                return File(uri, H5F_ACC_RDWR, H5::FileCreatPropList(fcpl.id()), H5::FileAccPropList(fapl.id()));
+                return File(uri, H5F_ACC_RDWR, fcpl, fapl);
             }
             if (mode == "w") {
                 // create file, truncate if it exists
-                return File(uri, H5F_ACC_TRUNC, H5::FileCreatPropList(fcpl.id()), H5::FileAccPropList(fapl.id()));
+                return File(uri, H5F_ACC_TRUNC, fcpl, fapl);
             }
             if (mode == "w-" || mode == "x") {
                 // create file, fail if it exists
-                return File(uri, H5F_ACC_EXCL, H5::FileCreatPropList(fcpl.id()), H5::FileAccPropList(fapl.id()));
+                return File(uri, H5F_ACC_EXCL, fcpl, fapl);
             }
 
             // h5py has one more valid {mode}
@@ -92,8 +92,8 @@ pyre::h5::py::file(py::module & m)
         "fcpl",
         // the implementation
         [](const File & self) -> FCPL {
-            // copy the {H5::} list into a pyre wrapper so the python-facing type matches
-            return FCPL(static_cast<hid_t>(H5Pcopy(self.getCreatePlist().getId())));
+            // hand back my creation property list as an owned pyre wrapper
+            return self.fcpl();
         },
         // the docstring
         "get my creation property list");
@@ -104,8 +104,8 @@ pyre::h5::py::file(py::module & m)
         "fapl",
         // the implementation
         [](const File & self) -> FAPL {
-            // copy the {H5::} list into a pyre wrapper so the python-facing type matches
-            return FAPL(static_cast<hid_t>(H5Pcopy(self.getAccessPlist().getId())));
+            // hand back my access property list as an owned pyre wrapper
+            return self.fapl();
         },
         // the docstring
         "get my access property list");

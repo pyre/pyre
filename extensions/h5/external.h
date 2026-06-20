@@ -66,8 +66,8 @@ namespace pyre::h5::py {
 
     // aliases of hdf5 entities
     // to avoid having to constantly look up which ones are prefixed by H5 and which not
-    // structural entities
-    using Identifier = H5::IdComponent; // pure virtual
+    // structural entities: now pyre-owned wrappers over the hdf5 c api
+    using Identifier = pyre::h5::Identifier;
     // property lists: now pyre-owned wrappers over the hdf5 c api
     using PropList = pyre::h5::properties::List;
     using DAPL = pyre::h5::properties::DAPL;
@@ -79,17 +79,16 @@ namespace pyre::h5::py {
     using LCPL = pyre::h5::properties::LCPL;
     // dataspaces: now a pyre-owned wrapper over the hdf5 c api
     using DataSpace = pyre::h5::DataSpace;
-    // locations derive from {Identifier}
-    using Location = H5::H5Location; // pure virtual
-    // attributes derive from {Location}
-    using Attribute = H5::Attribute;
-    // objects derive from {Location}
-    using Object = H5::H5Object; // pure virtual
-    // groups derive from {Object}
-    using Group = H5::Group;
-    using File = H5::H5File;
-    // datasets derive from object
-    using DataSet = H5::DataSet;
+    // locations carry attributes
+    using Location = pyre::h5::Location;
+    // attributes derive from {Identifier}
+    using Attribute = pyre::h5::Attribute;
+    // groups derive from {Location}
+    using Group = pyre::h5::Group;
+    // a file's group interface operates on its root group
+    using File = pyre::h5::File;
+    // datasets derive from {Location}
+    using DataSet = pyre::h5::DataSet;
     // datatypes: now pyre-owned wrappers over the hdf5 c api, living in {pyre::h5::types}; the
     // binding-facing names keep their {*Type} spelling so the registered python classes are stable
     using DataType = pyre::h5::types::Datatype;
