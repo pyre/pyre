@@ -23,6 +23,12 @@
 #include "properties/public.h"
 // datatypes, in their own {types} namespace
 #include "types/public.h"
+// structural objects
+#include "Location.h"
+#include "Attribute.h"
+#include "Group.h"
+#include "File.h"
+#include "DataSet.h"
 
 // implementation
 #include "datatypes.h"

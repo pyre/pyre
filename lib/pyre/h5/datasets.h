@@ -11,28 +11,9 @@
 #include "external.h"
 // forward declarations
 #include "forward.h"
-// the datatype i bridge to {H5::}
+// the datatype i deduce and the dataset i drive
 #include "types/Datatype.h"
-
-
-// bridging to the still-{H5::} parts of the api
-namespace pyre::h5 {
-    // borrow a pyre datatype as a closeable {H5::} one; we copy into a fresh transient handle so
-    // {H5Tclose} succeeds even for immutable predefined types (whose own {H5Tclose} is refused),
-    // and balance the reference the {H5::} wrapper takes so nothing leaks
-    inline auto
-    borrowH5Datatype(const datatype_t & type) -> H5::DataType
-    {
-        // copy the type into a fresh, mutable transient handle that we own
-        auto copy = static_cast<hid_t>(H5Tcopy(type.id()));
-        // wrap it; the {H5::} constructor takes out its own reference
-        auto wrapper = H5::DataType(copy);
-        // release the reference {H5Tcopy} handed us, leaving the wrapper as the sole owner
-        H5Idec_ref(copy);
-        // hand it off
-        return wrapper;
-    }
-} // namespace pyre::h5
+#include "DataSet.h"
 
 
 // read from a {dataset} into a {pyre::grid} assuming that the description of the memory
@@ -98,8 +79,8 @@ pyre::h5::read(
     h5info_t skip;
     // populate
     std::transform(stride.begin(), stride.end(), skip.begin(), cast);
-    // ask the dataset for a dataspace
-    auto fileSpace = dataset.getSpace();
+    // ask the dataset for its dataspace, bridged into an {H5::} one for the selection machinery
+    auto fileSpace = H5::DataSpace(dataset.dataspace().id());
     // select the hyperslab that corresponds to our target region
     fileSpace.selectHyperslab(H5S_SELECT_SET, &count[0], &loc[0], &skip[0]);
 
@@ -108,33 +89,11 @@ pyre::h5::read(
     // make my grid
     auto grid = grid_t { packing_t(shape), shape.cells() };
 
-    // attempt to
-    try {
-        // {datatype} is a pyre wrapper but {read} still wants an {H5::} one; bridging through the
-        // raw handle takes out a balanced reference, so ownership is unaffected
-        dataset.read(grid.data()->data(), borrowH5Datatype(datatype), memSpace, fileSpace);
-    }
-    // if something goes wrong
-    catch (const H5::Exception & error) {
-        // make a channel
-        auto channel = pyre::journal::error_t("pyre.h5.read");
-        // and complain
-        channel
-            // the error
-            << "error: " << error.getDetailMsg()
-            << pyre::journal::newline
-            // shape
-            << "while reading a (" << shape << ") tile from (" << origin << ") with strides ("
-            << stride << ")"
-            << pyre::journal::newline
-            // dataset
-            << "from the dataset '" << dataset.getObjName()
-            << "'"
-            // flush
-            << pyre::journal::endl(__HERE__);
-    }
+    // read the data into my {grid}; {datatype} is a pyre wrapper, so hand the dataset its raw
+    // type id and the raw space ids
+    dataset.read(datatype.id(), grid.data()->data(), memSpace.getId(), fileSpace.getId());
 
-    // if all goes well, return the populated grid
+    // return the populated grid
     return grid;
 }
 
@@ -162,13 +121,12 @@ pyre::h5::read(
     // resize it to the same rank as the requested {shape} and fill it with ones
     // since we read only one block of data
     count.assign(shape.size(), 1);
-    // extract the on-disk layout
-    auto filespace = self.getSpace();
+    // extract the on-disk layout, bridged into an {H5::} dataspace for the selection machinery
+    auto filespace = H5::DataSpace(self.dataspace().id());
     // specify the region of interest by selecting the appropriate hyperslab
     filespace.selectHyperslab(H5S_SELECT_SET, &count[0], &origin[0], nullptr, &shape[0]);
-    // {memtype} is a pyre wrapper but {read} still wants an {H5::} one; bridging through the raw
-    // handle takes out a balanced reference, so ownership is unaffected
-    self.read(data.data(), borrowH5Datatype(memtype), memspace, filespace);
+    // populate the buffer; {memtype} is a pyre wrapper, so hand over its raw type and space ids
+    self.read(memtype.id(), data.data(), memspace.getId(), filespace.getId());
     // all done
     return;
 }
@@ -186,13 +144,12 @@ pyre::h5::write(
     // resize it to the same rank as the requested {shape} and fill it with ones
     // since we read only one block of data
     count.assign(shape.size(), 1);
-    // extract the on-disk layout
-    auto filespace = self.getSpace();
+    // extract the on-disk layout, bridged into an {H5::} dataspace for the selection machinery
+    auto filespace = H5::DataSpace(self.dataspace().id());
     // specify the region of interest by selecting the appropriate hyperslab
     filespace.selectHyperslab(H5S_SELECT_SET, &count[0], &origin[0], nullptr, &shape[0]);
-    // {memtype} is a pyre wrapper but {write} still wants an {H5::} one; bridging through the raw
-    // handle takes out a balanced reference, so ownership is unaffected
-    self.write(data.data(), borrowH5Datatype(memtype), memspace, filespace);
+    // populate the buffer; {memtype} is a pyre wrapper, so hand over its raw type and space ids
+    self.write(memtype.id(), data.data(), memspace.getId(), filespace.getId());
     // all done
     return;
 }

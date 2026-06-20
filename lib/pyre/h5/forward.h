@@ -17,6 +17,18 @@ namespace pyre::h5 {
     class Identifier;
     // the description of a dataset's element layout
     class DataSpace;
+
+    // structural objects
+    // anything that can carry attributes
+    class Location;
+    // a small named value attached to a location
+    class Attribute;
+    // a container of named members
+    class Group;
+    // a file, whose group interface operates on the root group
+    class File;
+    // a dataset
+    class DataSet;
 } // namespace pyre::h5
 
 

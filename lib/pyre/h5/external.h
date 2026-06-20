@@ -21,8 +21,12 @@
 #include <H5Cpp.h>
 
 
-// forward declarations of the pyre-owned datatypes, so the aliases below can name them before
+// forward declarations of the pyre-owned wrappers, so the aliases below can name them before
 // their full definitions are pulled in by {public.h}
+namespace pyre::h5 {
+    class DataSet;
+} // namespace pyre::h5
+
 namespace pyre::h5::types {
     class Datatype;
     class Compound;
@@ -35,7 +39,8 @@ namespace pyre::h5 {
     // from {hdf5}
     using file_t = H5::H5File;
     using group_t = H5::Group;
-    using dataset_t = H5::DataSet;
+    // the dataset is now a pyre-owned wrapper; the dataspace machinery below is still {H5::}
+    using dataset_t = pyre::h5::DataSet;
     using dataspace_t = H5::DataSpace;
     // pyre-owned datatypes over the hdf5 c api
     using datatype_t = pyre::h5::types::Datatype;
