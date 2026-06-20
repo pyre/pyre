@@ -99,8 +99,8 @@ if(${MPI_FOUND})
     # leave a marker
     message(STATUS "We have MPI; ask for parallel HDF5: ${HDF5_PREFER_PARALLEL}")
 endif()
-# hunt it down
-find_package(HDF5 COMPONENTS CXX HL)
+# hunt it down; pyre::h5 wraps the hdf5 C api directly, so the C++ component is no longer needed
+find_package(HDF5 COMPONENTS C HL)
 # report
 message(STATUS "Parallel HDF5: ${HDF5_IS_PARALLEL}")
 
