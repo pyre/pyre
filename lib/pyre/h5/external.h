@@ -17,13 +17,14 @@
 #include <vector>
 // support
 #include <pyre/journal.h>
-// the hdf5 api
-#include <H5Cpp.h>
+// the hdf5 c api; pyre::h5 no longer depends on the hdf5 c++ layer
+#include <hdf5.h>
 
 
 // forward declarations of the pyre-owned wrappers, so the aliases below can name them before
 // their full definitions are pulled in by {public.h}
 namespace pyre::h5 {
+    class DataSpace;
     class DataSet;
 } // namespace pyre::h5
 
@@ -36,12 +37,9 @@ namespace pyre::h5::types {
 
 // aliases
 namespace pyre::h5 {
-    // from {hdf5}
-    using file_t = H5::H5File;
-    using group_t = H5::Group;
-    // the dataset is now a pyre-owned wrapper; the dataspace machinery below is still {H5::}
+    // now pyre-owned wrappers over the hdf5 c api
     using dataset_t = pyre::h5::DataSet;
-    using dataspace_t = H5::DataSpace;
+    using dataspace_t = pyre::h5::DataSpace;
     // pyre-owned datatypes over the hdf5 c api
     using datatype_t = pyre::h5::types::Datatype;
     using comptype_t = pyre::h5::types::Compound;

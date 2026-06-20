@@ -11,8 +11,9 @@
 #include "external.h"
 // forward declarations
 #include "forward.h"
-// the datatype i deduce and the dataset i drive
+// the datatype i deduce, the dataspaces i build, and the dataset i drive
 #include "types/Datatype.h"
+#include "DataSpace.h"
 #include "DataSet.h"
 
 
@@ -55,43 +56,32 @@ pyre::h5::read(
 {
     // alias my grid type and its parts
     using grid_t = gridT;
-    using shape_t = typename gridT::shape_type;
     using packing_t = typename gridT::packing_type;
-    // alias the {hdf5} dataspace types
-    using h5info_t = std::array<hsize_t, shape_t::rank()>;
+    // the rank of the request
+    constexpr auto rank = gridT::shape_type::rank();
 
-    // set up the file data space
-    // we need something that converts into {hsize_t} from whatever types {origin},
-    // {shape}, and {strides} use to represent their coordinates
+    // we need to express {origin}, {shape}, and {stride} as {hsize_t} coordinates
     auto cast = [](auto i) -> hsize_t {
         return static_cast<hsize_t>(i);
     };
-    // convert the {origin} into an array of {hsize_t}
-    // make some room
-    h5info_t loc;
-    // populate
+    // the start of the target region, its extent, and its stride, which gives us zoom
+    shape_t loc(rank), count(rank), skip(rank);
     std::transform(origin.begin(), origin.end(), loc.begin(), cast);
-    // repeat for the {shape}
-    h5info_t count;
-    // populate
     std::transform(shape.begin(), shape.end(), count.begin(), cast);
-    // and the strides
-    h5info_t skip;
-    // populate
     std::transform(stride.begin(), stride.end(), skip.begin(), cast);
-    // ask the dataset for its dataspace, bridged into an {H5::} one for the selection machinery
-    auto fileSpace = H5::DataSpace(dataset.dataspace().id());
-    // select the hyperslab that corresponds to our target region
-    fileSpace.selectHyperslab(H5S_SELECT_SET, &count[0], &loc[0], &skip[0]);
+    // each selected coordinate stands for a single element
+    shape_t block(rank, 1);
 
-    // make a dataspace
-    auto memSpace = dataspace_t(shape.rank(), &count[0]);
+    // ask the dataset for its dataspace and restrict it to the strided target region
+    auto fileSpace = dataset.dataspace();
+    fileSpace.slab(H5S_SELECT_SET, loc, block, skip, count);
+    // make an in-memory dataspace matching the tile
+    auto memSpace = dataspace_t(count);
     // make my grid
     auto grid = grid_t { packing_t(shape), shape.cells() };
 
-    // read the data into my {grid}; {datatype} is a pyre wrapper, so hand the dataset its raw
-    // type id and the raw space ids
-    dataset.read(datatype.id(), grid.data()->data(), memSpace.getId(), fileSpace.getId());
+    // read the data into my {grid}; everything is a pyre wrapper, so hand over the raw ids
+    dataset.read(datatype.id(), grid.data()->data(), memSpace.id(), fileSpace.id());
 
     // return the populated grid
     return grid;
@@ -115,18 +105,12 @@ pyre::h5::read(
     // get the size of the buffer
     hsize_t memsize = data.cells();
     // the in-memory layout is one-dimensional
-    auto memspace = dataspace_t(1, &memsize);
-    // make a block count
-    shape_t count;
-    // resize it to the same rank as the requested {shape} and fill it with ones
-    // since we read only one block of data
-    count.assign(shape.size(), 1);
-    // extract the on-disk layout, bridged into an {H5::} dataspace for the selection machinery
-    auto filespace = H5::DataSpace(self.dataspace().id());
-    // specify the region of interest by selecting the appropriate hyperslab
-    filespace.selectHyperslab(H5S_SELECT_SET, &count[0], &origin[0], nullptr, &shape[0]);
+    auto memspace = dataspace_t(shape_t { memsize });
+    // restrict the dataset's dataspace to the region of interest
+    auto filespace = self.dataspace();
+    filespace.slab(origin, shape);
     // populate the buffer; {memtype} is a pyre wrapper, so hand over its raw type and space ids
-    self.read(memtype.id(), data.data(), memspace.getId(), filespace.getId());
+    self.read(memtype.id(), data.data(), memspace.id(), filespace.id());
     // all done
     return;
 }
@@ -138,18 +122,12 @@ pyre::h5::write(
     const shape_t & shape) -> void
 {
     // pretend the memory buffer is the same shape as the incoming tile
-    auto memspace = dataspace_t(shape.size(), &shape[0]);
-    // make a block count
-    shape_t count;
-    // resize it to the same rank as the requested {shape} and fill it with ones
-    // since we read only one block of data
-    count.assign(shape.size(), 1);
-    // extract the on-disk layout, bridged into an {H5::} dataspace for the selection machinery
-    auto filespace = H5::DataSpace(self.dataspace().id());
-    // specify the region of interest by selecting the appropriate hyperslab
-    filespace.selectHyperslab(H5S_SELECT_SET, &count[0], &origin[0], nullptr, &shape[0]);
+    auto memspace = dataspace_t(shape);
+    // restrict the dataset's dataspace to the region of interest
+    auto filespace = self.dataspace();
+    filespace.slab(origin, shape);
     // populate the buffer; {memtype} is a pyre wrapper, so hand over its raw type and space ids
-    self.write(memtype.id(), data.data(), memspace.getId(), filespace.getId());
+    self.write(memtype.id(), data.data(), memspace.id(), filespace.id());
     // all done
     return;
 }
