@@ -16,7 +16,7 @@
 
 // encapsulations of the alpha datatypes
 void
-pyre::h5::py::datatypes::alpha(py::module & m)
+pyre::h5::py::types::alpha(py::module & m)
 {
     // make a new namespace to hold alpha datatype descriptions
     auto alpha = m.def_submodule(

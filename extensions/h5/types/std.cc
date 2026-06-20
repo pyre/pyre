@@ -16,7 +16,7 @@
 
 // encapsulations of the std datatypes
 void
-pyre::h5::py::datatypes::std(py::module & m)
+pyre::h5::py::types::std(py::module & m)
 {
     // make a new namespace to hold native datatype descriptions
     auto std = m.def_submodule(

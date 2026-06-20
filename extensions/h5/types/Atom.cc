@@ -16,14 +16,14 @@
 
 // file objects
 void
-pyre::h5::py::datatypes::atom(py::module & m)
+pyre::h5::py::types::atom(py::module & m)
 {
     // add the class
     auto cls = py::class_<AtomType, DataType>(
         // in scope
         m,
         // class name
-        "AtomType",
+        "atom",
         // docstring
         "an HDF5 atom datatype");
 

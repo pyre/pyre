@@ -12,7 +12,7 @@
 // my package declarations
 #include "__init__.h"
 // my subpackages
-#include "datatypes/__init__.h"
+#include "types/__init__.h"
 
 // the module entry point
 PYBIND11_MODULE(h5, m)
@@ -35,7 +35,7 @@ PYBIND11_MODULE(h5, m)
     pyre::h5::py::lcpl(m);
 
     // subpackages
-    pyre::h5::py::datatypes::__init__(m);
+    pyre::h5::py::types::__init__(m);
 
     // object bindings
     pyre::h5::py::dataspace(m);

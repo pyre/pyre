@@ -4,8 +4,8 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(h5_py_datatypes_external_h)
-#define h5_py_datatypes_external_h
+#if !defined(h5_py_types_external_h)
+#define h5_py_types_external_h
 
 
 // inherit

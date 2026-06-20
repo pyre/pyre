@@ -16,7 +16,7 @@
 
 // encapsulations of the intel datatypes
 void
-pyre::h5::py::datatypes::intel(py::module & m)
+pyre::h5::py::types::intel(py::module & m)
 {
     // make a new namespace to hold intel datatype descriptions
     auto intel = m.def_submodule(

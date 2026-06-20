@@ -9,7 +9,7 @@ from .. import libh5
 
 
 # ints
-class Integer(libh5.datatypes.IntType):
+class Integer(libh5.types.int):
     """
     An h5 ArrayType
     """

@@ -25,7 +25,7 @@ from .Object import Object
 # type aliases
 H5Group = libh5.Group
 H5DataSet = libh5.DataSet
-H5DataType = libh5.datatypes.DataType
+H5DataType = libh5.types.datatype
 H5ObjectType = libh5.ObjectType
 
 

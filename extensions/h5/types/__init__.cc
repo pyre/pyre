@@ -16,45 +16,45 @@
 
 // file objects
 void
-pyre::h5::py::datatypes::__init__(py::module & m)
+pyre::h5::py::types::__init__(py::module & m)
 {
     // make a new namespace to hold datatype descriptions
-    auto datatypes = m.def_submodule(
+    auto types = m.def_submodule(
         // the name of the module
-        "datatypes",
+        "types",
         // its docstring
         "HDF5 datatypes");
 
     // add the class definitions
     // the base data types
-    datatype(datatypes);
+    datatype(types);
     // array datatypes
-    array(datatypes);
+    array(types);
     // atom datatype
-    atom(datatypes);
-    float_(datatypes);
-    int_(datatypes);
-    predefined(datatypes);
-    str(datatypes);
+    atom(types);
+    float_(types);
+    int_(types);
+    predefined(types);
+    str(types);
     // compound datatypes
-    compound(datatypes);
+    compound(types);
     // enum types
-    enum_(datatypes);
+    enum_(types);
     // variable length types
-    varlen(datatypes);
+    varlen(types);
 
     // predefined datatypes
-    native(datatypes);
+    native(types);
 
-    std(datatypes);
-    big(datatypes);
-    little(datatypes);
+    std(types);
+    big(types);
+    little(types);
 
-    alpha(datatypes);
-    ieee(datatypes);
-    intel(datatypes);
-    mips(datatypes);
-    unix(datatypes);
+    alpha(types);
+    ieee(types);
+    intel(types);
+    mips(types);
+    unix(types);
 
     // all done
     return;

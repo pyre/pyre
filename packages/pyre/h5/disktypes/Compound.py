@@ -9,7 +9,7 @@ from .. import libh5
 
 
 # compound types
-class Compound(libh5.datatypes.CompType):
+class Compound(libh5.types.compound):
     """
     An h5 CompType
     """

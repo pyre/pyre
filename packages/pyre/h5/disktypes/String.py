@@ -9,7 +9,7 @@ from .. import libh5
 
 
 # arrays
-class String(libh5.datatypes.StrType):
+class String(libh5.types.str):
     """
     An h5 StrType
     """

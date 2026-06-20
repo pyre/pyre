@@ -9,7 +9,7 @@ from .. import libh5
 
 
 # floats
-class Float(libh5.datatypes.FloatType):
+class Float(libh5.types.float):
     """
     An h5 FloatType
     """

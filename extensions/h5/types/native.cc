@@ -16,7 +16,7 @@
 
 // encapsulations of the native datatypes
 void
-pyre::h5::py::datatypes::native(py::module & m)
+pyre::h5::py::types::native(py::module & m)
 {
     // make a new namespace to hold native datatype descriptions
     auto native = m.def_submodule(

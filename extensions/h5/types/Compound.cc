@@ -16,14 +16,14 @@
 
 // file objects
 void
-pyre::h5::py::datatypes::compound(py::module & m)
+pyre::h5::py::types::compound(py::module & m)
 {
     // add the class
     auto cls = py::class_<CompType, DataType>(
         // in scope
         m,
         // class name
-        "CompType",
+        "compound",
         // docstring
         "an HDF5 compound datatype");
 

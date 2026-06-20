@@ -4,15 +4,15 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(h5_py_datatypes_forward_h)
-#define h5_py_datatypes_forward_h
+#if !defined(h5_py_types_forward_h)
+#define h5_py_types_forward_h
 
 
 // the helpers
 #include "../attributes.h"
 
 // the local binders
-namespace pyre::h5::py::datatypes {
+namespace pyre::h5::py::types {
     // datatype classes
     void datatype(py::module &);
     void array(py::module &);
@@ -38,7 +38,7 @@ namespace pyre::h5::py::datatypes {
     void mips(py::module &);  // intel specific types
     void unix(py::module &);  // unix
 
-} // namespace pyre::h5::py::datatypes
+} // namespace pyre::h5::py::types
 
 
 #endif
