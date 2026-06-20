@@ -20,9 +20,8 @@ pyre::h5::py::api(py::module & m)
         "init",
         // the handler
         []() -> void {
-            // turn off the native diagnostics; we commit to catching all exceptions and
-            // generating our own messages
-            // H5::Exception::dontPrint();
+            // a hook for runtime initialization, e.g. silencing the native diagnostics in favor
+            // of pyre journal messages, via {H5Eset_auto2}
             // all done
             return;
         },
