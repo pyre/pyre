@@ -21,14 +21,11 @@ pyre::h5::py::attributes(py::class_<objectT> & cls)
         [](const objectT & self) -> names_t {
             // make a pile
             auto attributes = names_t();
-            // look up how many members i have and go through them
-            for (auto index = 0; index < self.getNumAttrs(); ++index) {
-                // get the attribute
-                auto attribute = self.openAttribute(index);
-                // to get the name of the member at {index}
-                auto name = attribute.getName();
-                // and add it to the pile
-                attributes.emplace_back(name);
+            // look up how many attributes i have and go through them
+            auto count = self.attributeCount();
+            for (unsigned int index = 0; index < static_cast<unsigned int>(count); ++index) {
+                // get the attribute at {index} and add its name to the pile
+                attributes.emplace_back(self.openAttribute(index).name());
             }
             // all done
             return attributes;
@@ -43,12 +40,8 @@ pyre::h5::py::attributes(py::class_<objectT> & cls)
         // the implementation
         [](const objectT & self, const string_t & name, const DataType & type,
            const DataSpace & space, const PropList & plist) -> Attribute {
-            // {type}, {space}, and {plist} are pyre wrappers but {createAttribute} still wants
-            // {H5::} ones; bridging through the raw handles takes out balanced references, so
-            // ownership is unaffected
-            return self.createAttribute(
-                name, borrowH5Datatype(type), H5::DataSpace(space.id()),
-                H5::PropList(plist.id()));
+            // all the arguments are pyre wrappers now, so hand them straight to the library
+            return self.createAttribute(name, type, space, plist);
         },
         // the signature
         "name"_a, "type"_a, "space"_a, "props"_a = PropList(),
@@ -62,7 +55,7 @@ pyre::h5::py::attributes(py::class_<objectT> & cls)
         // the implementation
         [](const objectT & self, const string_t & name) -> bool {
             // check and return
-            return self.attrExists(name);
+            return self.hasAttribute(name);
         },
         // the signature
         "name"_a,
@@ -104,7 +97,7 @@ pyre::h5::py::attributes(py::class_<objectT> & cls)
         // the implementation
         [](const objectT & self, const string_t & oldName, const string_t & newName) -> void {
             // rename the attribute
-            self.renameAttr(oldName, newName);
+            self.renameAttribute(oldName, newName);
             // all done
             return;
         },
@@ -119,8 +112,8 @@ pyre::h5::py::attributes(py::class_<objectT> & cls)
         "removeAttribute",
         // the implementation
         [](const objectT & self, const string_t & name) -> void {
-            // rename the attribute
-            self.removeAttr(name);
+            // remove the attribute
+            self.removeAttribute(name);
             // all done
             return;
         },

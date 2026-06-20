@@ -16,10 +16,10 @@ pyre::h5::py::group(py::module & m)
 {
     // helpers
     auto getByName = [](const Group & self, const string_t & name) -> py::object {
-        // get the member id
-        auto hid = self.getObjId(name);
+        // open the member, taking ownership of its fresh handle
+        auto hid = self.objectId(name);
         // figure out the type of the named member
-        auto type = self.childObjType(name);
+        auto type = self.childType(name);
         // decode the {type}
         switch (type) {
             // if it's a group
@@ -44,8 +44,8 @@ pyre::h5::py::group(py::module & m)
     };
 
     auto getByIndex = [&getByName](const Group & self, int index) -> py::object {
-        // figure out the index of the named member
-        auto name = self.getObjnameByIdx(index);
+        // figure out the name of the member at {index}
+        auto name = self.memberName(index);
         // and look it up
         return getByName(self, name);
     };
@@ -64,7 +64,7 @@ pyre::h5::py::group(py::module & m)
         // the name
         "hid",
         // the implementation
-        &Group::getId,
+        &Group::id,
         // the docstring
         "get my h5 handle id");
 
@@ -107,7 +107,7 @@ pyre::h5::py::group(py::module & m)
         // the implementation
         [](const Group & self, const string_t & name) -> bool {
             // check and return the result
-            return self.nameExists(name);
+            return self.exists(name);
         },
         // the signature
         "name"_a,
@@ -123,9 +123,9 @@ pyre::h5::py::group(py::module & m)
             // make a pile
             auto members = names_t();
             // look up how many members i have and go through them
-            for (hsize_t index = 0; index < self.getNumObjs(); ++index) {
+            for (hsize_t index = 0; index < self.memberCount(); ++index) {
                 // to get the name of the member at {index}
-                auto name = self.getObjnameByIdx(index);
+                auto name = self.memberName(index);
                 // and add it to the pile
                 members.emplace_back(name);
             }
@@ -203,12 +203,8 @@ pyre::h5::py::group(py::module & m)
         // the implementation
         [](const Group & self, const string_t & path, const DataType & type,
            const DataSpace & space, const DCPL & dcpl, const DAPL & dapl) -> DataSet {
-            // {type}, {space}, {dcpl}, and {dapl} are pyre wrappers but {createDataSet} still
-            // wants {H5::} ones; bridging through the raw handles takes out balanced references,
-            // so ownership is unaffected
-            return self.createDataSet(
-                path, borrowH5Datatype(type), H5::DataSpace(space.id()),
-                H5::DSetCreatPropList(dcpl.id()), H5::DSetAccPropList(dapl.id()));
+            // all the arguments are pyre wrappers now, so hand them straight to the library
+            return self.createDataSet(path, type, space, dcpl, dapl);
         },
         // the signature
         "path"_a, "type"_a, "space"_a, "dcpl"_a = DCPL::theDefault(), "dapl"_a = DAPL::theDefault(),
@@ -222,7 +218,7 @@ pyre::h5::py::group(py::module & m)
         // the implementation
         [](const Group & self) {
             // all done
-            return self.getNumObjs();
+            return self.memberCount();
         },
         // the docstring
         "the number of group members");
@@ -233,7 +229,7 @@ pyre::h5::py::group(py::module & m)
         // the implementation
         [](const Group & self, const string_t & name) -> bool {
             // check and return the result
-            return self.nameExists(name);
+            return self.exists(name);
         },
         // the signature
         "name"_a,

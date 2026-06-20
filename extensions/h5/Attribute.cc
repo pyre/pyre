@@ -30,7 +30,7 @@ pyre::h5::py::attribute(py::module & m)
         // the implementation
         [](const Attribute & self) {
             // retrieve the name and return it
-            return self.getName();
+            return self.name();
         },
         // the docstring
         "get my name");
@@ -40,7 +40,7 @@ pyre::h5::py::attribute(py::module & m)
         // the name
         "hid",
         // the implementation
-        &Attribute::getId,
+        &Attribute::id,
         // the docstring
         "get my h5 handle id");
 
@@ -63,7 +63,7 @@ pyre::h5::py::attribute(py::module & m)
         // the implementation
         [](const Attribute & self) -> long {
             // get my type
-            auto type = self.getTypeClass();
+            auto type = self.cell();
             // check whether i am compatible with an integer
             if (type != H5T_INTEGER) {
                 // if not, make a channel
@@ -80,7 +80,7 @@ pyre::h5::py::attribute(py::module & m)
             // make some room
             long result;
             // read the data
-            self.read(H5::PredType::NATIVE_LONG, &result);
+            self.read(H5T_NATIVE_LONG, &result);
             // all done
             return result;
         },
@@ -94,7 +94,7 @@ pyre::h5::py::attribute(py::module & m)
         // the implementation
         [](const Attribute & self, long value) -> void {
             // get my type
-            auto type = self.getTypeClass();
+            auto type = self.cell();
             // check whether i am compatible with an integer
             if (type != H5T_INTEGER) {
                 // if not, make a channel
@@ -109,7 +109,7 @@ pyre::h5::py::attribute(py::module & m)
                 return;
             }
             // write the data
-            self.write(H5::PredType::NATIVE_LONG, &value);
+            self.write(H5T_NATIVE_LONG, &value);
             // all done
             return;
         },
@@ -125,7 +125,7 @@ pyre::h5::py::attribute(py::module & m)
         // the implementation
         [](const Attribute & self) -> double {
             // get my type
-            auto type = self.getTypeClass();
+            auto type = self.cell();
             // check whether i am compatible with a floating point number
             if (type != H5T_FLOAT) {
                 // if not, make a channel
@@ -142,7 +142,7 @@ pyre::h5::py::attribute(py::module & m)
             // make some room
             double result;
             // read the data
-            self.read(H5::PredType::NATIVE_DOUBLE, &result);
+            self.read(H5T_NATIVE_DOUBLE, &result);
             // all done
             return result;
         },
@@ -156,7 +156,7 @@ pyre::h5::py::attribute(py::module & m)
         // the implementation
         [](const Attribute & self, double value) -> void {
             // get my type
-            auto type = self.getTypeClass();
+            auto type = self.cell();
             // check whether i am compatible with a floating point number
             if (type != H5T_FLOAT) {
                 // if not, make a channel
@@ -171,7 +171,7 @@ pyre::h5::py::attribute(py::module & m)
                 return;
             }
             // write the data
-            self.write(H5::PredType::NATIVE_DOUBLE, &value);
+            self.write(H5T_NATIVE_DOUBLE, &value);
             // all done
             return;
         },
@@ -187,7 +187,7 @@ pyre::h5::py::attribute(py::module & m)
         // the implementation
         [](const Attribute & self) -> string_t {
             // get my type
-            auto type = self.getTypeClass();
+            auto type = self.cell();
             // check whether i can be converted to a string
             if (type != H5T_STRING) {
                 // if not, make a channel
@@ -201,12 +201,8 @@ pyre::h5::py::attribute(py::module & m)
                 // and bail
                 return "";
             }
-            // make some room
-            string_t result;
-            // read the data
-            self.read(self.getStrType(), result);
-            // all done
-            return result;
+            // read my value as a string
+            return self.readString();
         },
         // the docstring
         "extract my contents as a string");
@@ -218,7 +214,7 @@ pyre::h5::py::attribute(py::module & m)
         // the implementation
         [](const Attribute & self, const string_t & value) -> void {
             // get my type
-            auto type = self.getTypeClass();
+            auto type = self.cell();
             // check whether i can be converted to a string
             if (type != H5T_STRING) {
                 // if not, make a channel
@@ -232,8 +228,8 @@ pyre::h5::py::attribute(py::module & m)
                 // and bail
                 return;
             }
-            // read the data
-            self.write(self.getStrType(), value);
+            // write my value as a string
+            self.writeString(value);
             // all done
             return;
         },
