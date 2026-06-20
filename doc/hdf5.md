@@ -824,6 +824,42 @@ so the registered Python class names — `libh5.datatypes.IntType`, … — are
 unchanged. The property lists (`DAPL`…`LCPL`) stay flat in `pyre::h5` for now; a
 parallel `pyre::h5::lists` move is a candidate later.
 
+### Phase 5 — the structural cluster — DONE 2026-06-20
+
+`File`, `Group`, `DataSet`, and `Attribute` — the headline objects — are now
+pyre-owned, flat in `pyre::h5` alongside `Identifier` and `DataSpace`. They are
+**one atomic cluster**: the shared binding templates couple them. `data<objectT>`
+(type/space/storage/scalar IO) serves both `DataSet` and `Attribute`, so the
+memory's "DataSet then Attribute later" ordering wasn't possible — the moment
+`DataSet` converts, `data<>` can't straddle a pyre `DataSet` and an `H5::`
+`Attribute`. `attributes<objectT>` (attribute CRUD) serves `Group`/`DataSet`/`File`.
+
+The C++ hierarchy mirrors the Python `api/` layer (`Location → Object → …`):
+`Location : Identifier` carries the attribute interface (`H5A*`: `attributeCount`,
+`openAttribute`, `createAttribute`, `hasAttribute`, `renameAttribute`,
+`removeAttribute`); `Group : Location` adds the container ops (`H5G*`/`H5O*`/`H5L*`:
+`memberCount`, `memberName`, `exists`, `childType`, `objectId`, `openGroup`/
+`openDataSet`, `createGroup`/`createDataSet`); `File : Group` opens/creates the
+file (`H5Fopen`/`H5Fcreate`) and operates its group interface on the file id;
+`DataSet : Location` adds `H5D*` (type/space/storage, `read`/`write`, `dapl`/`dcpl`,
+fixed- and variable-length string IO with padding-aware trimming); `Attribute :
+Identifier` adds `H5A*` value access plus `name`. The Python-facing class names
+(`libh5.File`, `Group`, `DataSet`, `Attribute`) are unchanged — the binding
+templates were rewritten to call the pyre method names, and
+`extensions/h5/external.h` repoints the aliases.
+
+This is where the **bridges collapsed.** `Group::createDataSet`/`createAttribute`
+take pyre `type`/`space`/property-list arguments natively; the dataset `read`/
+`write` path calls `H5Dread`/`H5Dwrite` with the raw type id — so `borrowH5Datatype`
+and the create/IO `H5::` bridges are gone, and the immutable-`H5Tclose` hazard with
+them. The **one** transitional `H5::` use left in the whole layer is the hyperslab
+selection machinery in `datasets.h`: `dataspace_t` is still `H5::DataSpace`, and the
+dataset's own space is bridged in via `H5::DataSpace(dataset.dataspace().id())`.
+Threading pyre `DataSpace` through that machinery (its `slab()` already covers the
+strided cases) is the last cleanup; everything else under `lib/pyre/h5` and the
+bindings is pyre-owned. Named-datatype attribute access (dropped in Phase 3) could
+also return now that `Location` exists, if `types::Datatype` is given the interface.
+
 ## Glossary
 
 - **schema / descriptor** — handle-free structural metadata describing a group
