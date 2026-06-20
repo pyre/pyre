@@ -24,8 +24,8 @@
 #include <pybind11/complex.h>
 #include <pybind11/stl.h>
 #include <pybind11/stl_bind.h>
-// hdf5
-#include <H5Cpp.h>
+// the hdf5 c api; the bindings no longer depend on the hdf5 c++ layer
+#include <hdf5.h>
 
 
 // type aliases

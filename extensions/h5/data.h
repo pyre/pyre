@@ -8,8 +8,8 @@
 #if !defined(h5_py_data_h)
 #define h5_py_data_h
 
-// this decorator captures part of the H5::Object interface
-// it is necessary because H5::Object is abstract and cannot be bound
+// this decorator adds the shared value interface (type, dataspace, sizes) to each bound object;
+// it lets that interface be reused across datasets and attributes without binding a common base
 
 // extend the pyre::h5::py namespace
 namespace pyre::h5::py {

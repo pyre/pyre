@@ -156,8 +156,9 @@ pyre::h5::py::datatypes::datatype(py::module & m)
         // the docstring
         "reconstruct a type from its binary object description");
 
-    // note: attribute access on named datatypes belongs to the {H5Location} layer, which is not
-    // part of this pyre-owned datatype wrapper yet; it returns with the {Attribute} decoupling
+    // access to the attributes of a named (committed) datatype, now that {Datatype} derives from
+    // {Location}
+    attributes(cls);
 
     // all done
     return;
