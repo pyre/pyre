@@ -874,6 +874,45 @@ With no `H5::` symbol left anywhere under `lib/pyre/h5` or `extensions/h5`, both
 decoupling from the HDF5 C++ layer is complete** — pyre owns its entire HDF5 surface
 over the C API, and the Python-facing API never changed across all six phases.
 
+## Binding-module restructure — DONE 2026-06-20
+
+A follow-on cleanup, separate from the decoupling: make the Python binding module
+mirror the new lib namespaces (`pyre::h5::types`, `pyre::h5::properties`) and fix
+two asymmetries — the datatype bindings lived in a `datatypes` submodule with
+`*Type.cc` files while the property lists were loose files registered flat at the
+top of `libh5`. Unlike the decoupling, this *deliberately* changes the Python API,
+so it was split by blast radius (measured: qed and qef are pure consumers, their
+C++ uses only the stable aliases `datatype_t`/`dataset_t`/`read<>()`, and neither
+touches `libh5.datatypes`; only the flat proplist names reach them).
+
+The names follow pyre's typed-trait convention — lowercase, since the namespace
+disambiguates the clash with Python builtins (`libh5.types.int`, like
+`pyre.properties.int`).
+
+- **Tier 1 — datatypes → `libh5.types` (pyre-only, zero external spill).** Source
+  `extensions/h5/datatypes/` → `extensions/h5/types/`, binding files renamed to
+  mirror the lib (`DataType.cc`→`Datatype.cc`, `IntType.cc`→`Int.cc`, …), C++
+  binding namespace `pyre::h5::py::datatypes` → `pyre::h5::py::types`, and the
+  registered class names lowercased: `libh5.types.{datatype, atom, predefined, int,
+  float, str, compound, enum, array, varlen}` (plus the predefined-type collections
+  `native`/`std`/`big`/`little`/`alpha`/`ieee`/`intel`/`mips`/`unix`). pyre's own
+  `disktypes`/`Inspector` consumers updated; nothing else uses `libh5.datatypes`.
+
+- **Tier 2 — property lists → `libh5.properties` (the cross-repo piece).** Source
+  `extensions/h5/{PropList,DAPL,…,LCPL}.cc` → `extensions/h5/properties/`
+  (`PropList.cc`→`List.cc`), namespace `pyre::h5::py::properties`, registered under a
+  `properties` submodule: `libh5.DAPL` → `libh5.properties.dapl`, etc., base
+  `libh5.properties.list`. pyre consumers (`h5/__init__.py`, `api/{File,Writer,
+  Reader}.py`) updated. The qed/qef consumer updates (`libh5.FAPL` →
+  `libh5.properties.fapl`) are **deferred until this PR merges** — they are pure
+  mechanical find/replace and tracked in those projects' notes.
+
+The structural objects and enums stay flat in `libh5` (`File`, `Group`, `DataSet`,
+`Attribute`, `DataSpace`, the `H5*` enums) — they are the headline API and are flat
+in the lib too. The C++ `extensions/h5/external.h` aliases (`DataType`, `IntType`,
+`DAPL`, …) are kept as internal conveniences, so the binding bodies were untouched
+beyond the namespace/registration moves.
+
 ## Glossary
 
 - **schema / descriptor** — handle-free structural metadata describing a group
