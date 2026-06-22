@@ -20,6 +20,24 @@ pyre::h5::types::Datatype::Datatype(const Predefined & type) :
 {}
 
 
+// whether i describe the same datatype as {other}
+auto
+pyre::h5::types::Datatype::operator==(const Datatype & other) const -> bool
+{
+    // ask the library; a positive answer means the two types are equal
+    return H5Tequal(id(), other.id()) > 0;
+}
+
+
+// whether i describe a different datatype than {other}
+auto
+pyre::h5::types::Datatype::operator!=(const Datatype & other) const -> bool
+{
+    // the negation of equality
+    return !(*this == other);
+}
+
+
 // the name of my class, for diagnostics
 auto
 pyre::h5::types::Datatype::className() const -> string_t
