@@ -32,6 +32,11 @@ main()
     assert((H5Tequal(pyre::h5::datatype<float>().id(), H5T_NATIVE_FLOAT) > 0));
     assert((H5Tequal(pyre::h5::datatype<double>().id(), H5T_NATIVE_DOUBLE) > 0));
 
+    // the {==} operator wraps {H5Tequal}: a type equals itself, and differs from another
+    assert((pyre::h5::datatype<double>() == pyre::h5::datatype<double>()));
+    assert((pyre::h5::datatype<std::int32_t>() != pyre::h5::datatype<std::int64_t>()));
+    assert((pyre::h5::datatype<float>() != pyre::h5::datatype<double>()));
+
     // all done
     return 0;
 }

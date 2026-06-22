@@ -156,6 +156,18 @@ pyre::h5::py::types::datatype(py::module & m)
         // the docstring
         "reconstruct a type from its binary object description");
 
+    // datatype equality and inequality, via {H5Tequal}
+    cls.def(
+        // the implementation
+        py::self == py::self,
+        // the docstring
+        "whether i describe the same datatype as another");
+    cls.def(
+        // the implementation
+        py::self != py::self,
+        // the docstring
+        "whether i describe a different datatype than another");
+
     // access to the attributes of a named (committed) datatype, now that {Datatype} derives from
     // {Location}
     attributes(cls);

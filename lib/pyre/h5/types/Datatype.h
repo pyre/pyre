@@ -32,6 +32,13 @@ public:
     Datatype & operator=(Datatype &&) noexcept = default;
     ~Datatype() override = default;
 
+    // operators
+public:
+    // whether i describe the same datatype as {other}
+    auto operator==(const Datatype & other) const -> bool;
+    // whether i describe a different datatype than {other}
+    auto operator!=(const Datatype & other) const -> bool;
+
     // interface
 public:
     // the name of my class, for diagnostics
