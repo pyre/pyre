@@ -192,6 +192,89 @@ def boot():
     return framework.executive().boot()
 
 
+def reset():
+    import weakref
+    global executive, package, home, prefix, defaults
+
+    if not executive:
+        return executive
+
+    # ------------------------------------------------------------------
+    # 1. Selectively remove user-config and component-instance nodes.
+    #
+    #    Priority categories and what they hold:
+    #      uninitialized (-1): placeholder nodes from retrieve() — remove
+    #      defaults (0):  component class trait default slots — KEEP
+    #      boot (1):      environment variables from Environ — KEEP
+    #      package (2):   framework internals + component instances
+    #                     keep non-instance nodes (pyre.host, pyre.user,
+    #                     pyre.configpath, Package objects, class nodes)
+    #                     remove component instances EXCEPT pyre.* names
+    #      construction (3): constructor kwargs — remove
+    #      persistent (4):   persistent store — remove
+    #      user (5):      YAML-loaded settings — remove
+    #      command (6):   command line — remove
+    #      explicit (7):  programmatic assignments — remove
+    #      framework (8): read-only framework values — KEEP
+    # ------------------------------------------------------------------
+    ns = executive.nameserver
+    from .components.Component import Component as ComponentBase
+
+    keep_cats = {
+        ns.priority.defaults.category,   # 0
+        ns.priority.boot.category,        # 1
+        ns.priority.framework.category,   # 8
+    }
+    pkg_cat = ns.priority.package.category  # 2
+
+    remove = []
+    for key, meta in ns._metadata.items():
+        cat = meta.priority.category
+        # always keep defaults/boot/framework nodes
+        if cat in keep_cats:
+            continue
+        # for package-priority nodes, keep non-instance nodes and pyre.* instances
+        if cat == pkg_cat:
+            node = ns._nodes.get(key)
+            val = node.value if node is not None else None
+            if isinstance(val, ComponentBase) and not (meta.name or '').startswith('pyre.'):
+                remove.append(key)
+            continue
+        # remove everything else
+        remove.append(key)
+
+    for key in remove:
+        ns._nodes.pop(key, None)
+        ns._metadata.pop(key, None)
+
+    # ------------------------------------------------------------------
+    # 2. Clear component instances from the registrar.
+    # ------------------------------------------------------------------
+    for cls in executive.registrar.components:
+        executive.registrar.components[cls] = weakref.WeakSet()
+
+    # ------------------------------------------------------------------
+    # 3. Reset configurator queues in-place.
+    # ------------------------------------------------------------------
+    cfg = executive.configurator
+    cfg.sources = []
+    cfg.commands = []
+    cfg.deferred.clear()
+
+    # ------------------------------------------------------------------
+    # 4. Clear the error pile.
+    # ------------------------------------------------------------------
+    executive.errors = []
+
+    # ------------------------------------------------------------------
+    # 5. Re-register the pyre package.
+    # ------------------------------------------------------------------
+    package = executive.registerPackage(name="pyre", file=__file__)
+    home, prefix, defaults = package.layout()
+
+    return executive
+
+
 def debug():
     """
     Enable debugging of pyre modules.
