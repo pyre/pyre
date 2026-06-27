@@ -19,7 +19,7 @@ build-backend = "setuptools.build_meta"
 # install time
 [project]
 name = "pyre"
-version = "1.12.5"
+dynamic = ["version"]
 description = "A framework for building scientific applications"
 readme = "README.md"
 authors = [
@@ -41,6 +41,9 @@ classifiers = [
     "Programming Language :: Python :: 3.11",
 ]
 dependencies = ["PyYAML"]
+
+# versioning: derive the version from the most recent git tag
+[tool.setuptools_scm]
 
 # package discovery
 [tool.setuptools.packages.find]
