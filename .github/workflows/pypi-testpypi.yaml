@@ -3,9 +3,10 @@
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
 
-name: pypi-source-manual
+name: pypi-testpypi
 
-# force a pypi upload of the source code of a certain release
+# dry run: build a source distribution and publish it to TestPyPI to exercise
+# the trusted-publishing (OIDC) path end to end without touching production
 on:
   workflow_dispatch:
     inputs:
@@ -33,29 +34,28 @@ jobs:
         run: pipx run build --sdist
 
       - name: archive
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v4
         with:
-          name: pyre-source
+          name: pyre-testpypi-source
           path: dist/
 
   upload:
-    name: upload source to pypi
+    name: upload source to TestPyPI
     needs: [build]
     runs-on: ubuntu-latest
-    environment: pypi
+    environment: testpypi
     permissions:
       id-token: write
     steps:
       - name: unpack
-        uses: actions/download-artifact@v4.1.7
+        uses: actions/download-artifact@v4
         with:
-          # unpacks default artifact into dist/
-          # if `name: artifact` is omitted, the action will create extra parent dir
-          name: pyre-source
+          name: pyre-testpypi-source
           path: dist
 
       - name: upload
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
-          # re-running against an already-published version is a no-op, not a 400
+          repository-url: https://test.pypi.org/legacy/
+          # TestPyPI may already hold a same-versioned sdist from a prior run
           skip-existing: true
