@@ -67,8 +67,17 @@ dependencies:
 # end of file
 ```
 
-On `macOS`, you will want to use `clang` instead of `gcc`. Make sure you activate this environment
-before moving on to build `pyre` so that you use the `conda-forge` provided compilers.
+Save this as `pyre.yaml`, then create the environment from it and activate it:
+
+``` text
+~> micromamba create --file pyre.yaml
+~> micromamba activate pyre
+```
+
+On `macOS`, you will want to use `clang` instead of `gcc`. Keeping this environment active as you
+proceed is important: it is what puts the `conda-forge` compilers on your `PATH`, and `mm` reads the
+install prefix and dependency locations from it. If you open a new shell at any point, re-activate it
+with `micromamba activate pyre` before running `mm`.
 
 It is also possible to use other package managers to install these dependencies. `pyre`
 has been tested on both `ubuntu` and `macOS` using their native environments, as well as
@@ -89,7 +98,7 @@ pick `~/dv` as the source directory.
 ```
 
 GitHub allows access through `ssh` or `https`, with slightly different syntax. If you already have
-your `ssh` key installed on your GitHub account, you can clone the three repositories using
+your `ssh` key installed on your GitHub account, you can clone the two repositories using
 
 ``` text
 ~/dv> git clone git@github.com:aivazis/mm
@@ -112,77 +121,52 @@ pull from, as they are thoroughly tested.
 
 ### Setting up the build system
 
-The most involved step of the installation process is the configuration of the build system.
-We will place configuration files in two locations:
+Recent versions of `mm` interrogate the active conda environment and configure the build
+automatically. The two key settings are:
+
+- `mode: conda` tells `mm` to resolve the installation `prefix` and the `python` `site-packages`
+  location directly from the active environment (via `$CONDA_DEFAULT_ENV`), so you don't have to
+  specify these locations by hand.
+- `pkgdb: conda` tells `mm` to discover the external dependencies by reading the environment's
+  `conda-meta` database, so you no longer need to hand-write a package database of versions and
+  install locations.
+
+We will place them in a small `~/.config/pyre/mm.yaml` configuration file that also records your
+preferred compilers and build targets:
 
 ``` text
 ~/dv> cd ~
 ~> mkdir -p .config/pyre
-~> mkdir -p .config/mm
 ```
 
-The configuration for the build system lives in `~/.config/pyre/mm.yaml`:
 ``` yaml
 # -*- yaml -*-
 
 # mm configuration
 mm:
 
-  # targets
-  target: "opt, shared"
+  # resolve locations and externals from the active conda environment
+  pkgdb: conda
+  # install the build assets back into the active conda environment
+  mode: conda
 
   # compilers
   compilers: "gcc, python/python3"
-
-  # the following two settings get replaced with actual values by the notebook
-  # the location of final products
-  prefix: "{pyre.environ.CONDA_PREFIX}"
-  # the installation location of the python packages, relative to {prefix}
-  pycPrefix: "lib/python3.13/site-packages"
-  # the location of the temporary intermediate build products
-  bldroot: "{pyre.environ.HOME}/tmp/builds/mm/{pyre.environ.CONDA_DEFAULT_ENV}"
+  # build target: turn optimizations on, and build shared libraries
+  target: "opt, shared"
 
   # misc
-  # the name of GNU make
+  # the name of GNU make; may be 'gmake' on your machine
   make: make
-  # local makefiles
+  # local makefiles with build hooks; you can ignore this
   local: Make.mmm
 
 # end of file
 ```
 
-You may need to replace `gcc` and the `python` version with whatever is available in your
-environment. Incidentally, the directory `~/.config/pyre` is the home for configuration files for
-all `pyre` applications, including yours, so we will be adding more files here later on.
-
-The build system needs to know where to find headers and libraries for the `pyre` dependencies. The
-package database lives in `~/.config/mm/config.mm`:
-
-``` makefile
-# -*- Makefile -*-
-
-# external dependencies
-# system tools
-sys.prefix := ${CONDA_PREFIX}
-
-# pybind11
-pybind11.version := 2.11.1
-pybind11.dir = $(sys.prefix)
-
-# python: just major.minor
-python.version := 3.13
-python.dir := $(sys.prefix)
-
-# pyre
-pyre.version := 1.12.5
-pyre.dir := $(sys.prefix)
-
-# end of file
-```
-
-Most of the indicated package versions are there for documentation purposes, with the exception
-of the `python` version that is used by `mm` to find the various directories where the interpreter
-and its packages deposit files it needs.
+You may need to replace `gcc` with whatever is available in your environment; on `macOS` use `clang`.
+Incidentally, the directory `~/.config/pyre` is the home for configuration files for all `pyre`
+applications, including yours, so we will be adding more files here later on.
 
 ### Building
 
@@ -196,21 +180,31 @@ it convenient to create an alias for it.
 You might want to make this more permanent by also adding it to your shell startup file, e.g. your
 `~/.bash_profile`.
 
-Let's verify that everything is ok so far. Let's go to the `pyre` source directory and ask `mm` to
-show details about the build. This should generate a few lines of output similar to the
-following:
+First, build the external package database from the active environment. This is a one-time step;
+re-run it whenever you add or update the environment's dependencies:
 
 ``` text
 ~/dv> cd pyre
+~/dv/pyre> mm --setup
+```
+
+The first time you run this, the package database is empty and `make` issues many warnings about
+undefined variables; this is normal and can be safely ignored.
+
+Now let's verify that everything is ok so far by asking `mm` to show details about the build. This
+should generate a few lines of output similar to the following, with the `prefix` pointing at your
+active conda environment:
+
+``` text
 ~/dv/pyre> mm builder.info
 
-    mm 5.0.0
+    mm 5.3.0
     Michael Aïvázis <michael.aivazis@para-sim.com>
     copyright 1998-2026 all rights reserved
 
 builder directory layout:
   staging layout:
-           tmp = /Users/mga/tmp/builds/mm/clang/opt-shared-darwin-arm64/
+           tmp = /Users/mga/dv/pyre/builds/pyre/clang/opt-shared-darwin-arm64/
   install layout:
         prefix = /Users/mga/.local/envs/pyre
            bin = /Users/mga/.local/envs/pyre/bin/
@@ -221,6 +215,12 @@ builder directory layout:
            pyc = /Users/mga/.local/envs/pyre/lib/python3.13/site-packages/
 ~/dv/pyre>
 ```
+
+The `prefix` shown here is the root of your active conda environment. Depending on how `micromamba`
+(or `mamba`/`conda`) was configured when it was installed, the home of its environments may differ
+slightly from what is shown above — common locations include `~/.local/envs`, `~/micromamba/envs`,
+or `~/miniconda3/envs`. Whatever the location, `mm` discovers it from the active environment, so the
+paths in your output will reflect your own setup.
 
 You may see `mm` download a `pyre` archive from `github` to bootstrap the process. This is normal,
 as `mm` is itself a `pyre` application.
