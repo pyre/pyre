@@ -25,13 +25,13 @@ class Language(merlin.foundry):
         # chain up with my new default protocol
         return super().__new__(cls, implements=implements, **kwds)
 
-    def __init__(self, factory, language=None, **kwds):
+    def __init__(self, method, language=None, **kwds):
         # chain up
-        super().__init__(factory=factory, **kwds)
+        super().__init__(method=method, **kwds)
         # check that the language common name was supplied at the foundry call site
         assert language, "please specify the common name for the language"
         # register the foundry with the {language} protocol
-        self.language.aliases[language] = factory.__name__
+        self.language.aliases[language] = method.__name__
         # all done
         return
 
