@@ -6,6 +6,8 @@
 
 # pyre builds a python package
 pyre.packages := pyre.pkg
+# the pure-python packages that make up the bootstrap bundle
+pyre.boot.packages := pyre.pkg journal.pkg merlin.pkg
 # libraries
 pyre.libraries := pyre.lib
 # the mandatory extensions
