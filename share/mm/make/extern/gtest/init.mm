@@ -5,7 +5,7 @@
 
 
 # add me to the pile
-extern += ${if ${findstring gtest,$(extern)},,gtest}
+extern += ${if ${filter gtest,$(extern)},,gtest}
 
 # # find my configuration file
 gtest.config := ${dir ${call extern.config,gtest}}
@@ -16,6 +16,8 @@ gtest.flags ?=
 gtest.defines := WITH_GTEST
 # the canonical form of the include directory
 gtest.incpath ?= $(gtest.dir)/include
+# header marker(s): files that must resolve on {incpath}; absence proves breakage
+gtest.markers.headers ?= gtest/gtest.h
 
 # linker flags
 gtest.ldflags ?=

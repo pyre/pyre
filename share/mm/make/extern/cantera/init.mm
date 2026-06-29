@@ -5,7 +5,7 @@
 
 
 # add me to the pile
-extern += ${if ${findstring cantera,$(extern)},,cantera}
+extern += ${if ${filter cantera,$(extern)},,cantera}
 
 # # find my configuration file
 cantera.config := ${dir ${call extern.config,cantera}}
@@ -16,6 +16,8 @@ cantera.flags ?=
 cantera.defines ?= WITH_CANTERA
 # the canonical form of the include directory
 cantera.incpath ?= $(cantera.dir)/include
+# header marker(s): files that must resolve on {incpath}; absence proves breakage
+cantera.markers.headers ?= cantera/base/ct_defs.h
 
 # linker flags
 cantera.ldflags ?=
@@ -27,7 +29,7 @@ cantera.rpath = $(cantera.libpath)
 cantera.libraries ?= cantera cantera_fortran
 
 # my dependencies
-cantera.dependencies := eigen sundials openblas yaml fmt fortran
+cantera.dependencies := eigen sundials openblas yaml-cpp fmt fortran
 
 
 # end of file

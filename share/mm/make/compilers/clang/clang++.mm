@@ -40,14 +40,17 @@ clang++.opt := -O3
 clang++.cov := --coverage
 clang++.prof := -pg
 clang++.shared := -fPIC
+# openmp support
+clang++.openmp := -fopenmp
 
 # language level
-clang++.std.c++98 := -std=c++98
 clang++.std.c++11 := -std=c++11
 clang++.std.c++14 := -std=c++14
 clang++.std.c++17 := -std=c++17
 clang++.std.c++20 := -std=c++20
 clang++.std.c++23 := -std=c++23
+# function to extract the level from the build flags of a library
+clang++.std = ${patsubst -std=c++%,%,${filter -std=c++%,$($(1).c++.flags)}}
 
 # link time flags
 clang++.link.output := -o

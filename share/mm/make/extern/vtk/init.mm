@@ -5,7 +5,7 @@
 
 
 # add me to the pile
-extern += ${if ${findstring vtk,$(extern)},,vtk}
+extern += ${if ${filter vtk,$(extern)},,vtk}
 
 # # find my configuration file
 vtk.config := ${dir ${call extern.config,vtk}}
@@ -19,6 +19,8 @@ vtk.flags ?=
 vtk.defines := WITH_VTK
 # the canonical form of the include directory
 vtk.incpath ?= $(vtk.dir)/include/vtk-$(vtk.version)
+# header marker(s): files that must resolve on {incpath}; absence proves breakage
+vtk.markers.headers ?= vtkVersion.h
 
 # linker flags
 vtk.ldflags ?=
@@ -33,6 +35,10 @@ vtk.libraries := \
         $(vtk.required), \
         vtk$(requirement)-$(vtk.version) \
     }
+# {libraries} is built from the user's {vtk.required} module list; with none nominated it comes out
+# empty and the link drops every vtk symbol, so declare it required and hint at the fix
+vtk.markers.required ?= libraries
+vtk.markers.required.hint ?= "(set vtk.required to the vtk modules you need, e.g. CommonCore IOXML)"
 
 
 # end of file

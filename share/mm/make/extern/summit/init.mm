@@ -5,7 +5,7 @@
 
 
 # add me to the pile
-extern += ${if ${findstring summit,$(extern)},,summit}
+extern += ${if ${filter summit,$(extern)},,summit}
 
 # # find my configuration file
 summit.config := ${dir ${call extern.config,summit}}

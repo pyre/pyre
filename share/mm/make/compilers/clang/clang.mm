@@ -34,6 +34,8 @@ clang.reldeb := -Og -fno-omit-frame-pointer
 clang.cov := --coverage
 clang.prof := -pg
 clang.shared := -fPIC
+# openmp support
+clang.openmp := -fopenmp
 
 # language level
 clang.std.ansi := -ansi

@@ -21,6 +21,23 @@ define tests.init =
     # the stem for generating test suite specific names
     ${eval $(2).stem ?= $($(1).stem)}
 
+    # the environment-level toolchains this suite uses, if any; opt-in and empty by default, so a
+    # suite that names none is untouched. mm verifies each is installed before the suite runs and
+    # folds its consumer interface (node_modules onto NODE_PATH, plus any tool specific env) into
+    # the runner invocation, scoped to this suite
+    ${eval $(2).toolchain ?=}
+
+    # if set, the suite delegates to a self-discovering test runner (playwright, vitest, ...)
+    # instead of mm enumerating per-file drivers
+    ${eval $(2).runner ?=}
+    # an optional override of the runner's launch command, e.g. to select a playwright project
+    ${eval $(2).runner.launch ?=}
+    # extra environment to prefix to the runner invocation
+    ${eval $(2).env ?=}
+    # suite-level startup and teardown hooks (e.g. fixtures), as make prerequisites
+    ${eval $(2).pre ?=}
+    ${eval $(2).post ?=}
+
     # the list of external dependencies as requested by the user
     ${eval $(2).extern ?=}
     # initialize the list of requested project dependencies
@@ -45,7 +62,10 @@ define tests.init =
 
     # the directory structure
     ${eval $(2).directories ?= ${call test.directories,$(2)}}
-    ${eval $(2).drivers ?= ${call test.drivers,$(2)}}
+    # a runner that self-discovers at runtime needs no source list from mm; a {compiled} runner
+    # does, since mm must compile the suite's sources into the runner binary
+    ${eval $(2).discover ?= ${if $($(2).runner),${filter compiled,$(runner.$($(2).runner).prepare)},yes}}
+    ${eval $(2).drivers ?= ${if $($(2).discover),${call test.drivers,$(2)},}}
 
     # build the language specific option database
     ${eval $(2).languages ?= ${call test.languages,$(2)}}
@@ -63,6 +83,12 @@ define tests.init =
     ${eval $(2).rpath ?=}
     ${eval $(2).libraries ?=}
 
+    # opt-in staged execution: copy interpreted drivers into a staging area that carries a
+    # {node_modules}, so module resolution succeeds without a {node_modules} in the source tree
+    ${eval $(2).staged ?=}
+    ${eval $(2).stage.prefix ?= $($(1).tmpdir)$(2)/}
+    ${eval $(2).stage.modules ?=}
+
     # derived quantities
     ${eval $(2).staging.targets ?= ${call test.staging.targets,$(2)}}
     ${eval $(2).staging.directories ?= ${call test.staging.directories,$(2)}}
@@ -77,15 +103,16 @@ define tests.init =
     $(2).metadoc.artifacts := "information about the test cases"
 
     # category documentation
-    $(2).meta.general := project stem name
+    $(2).meta.general := project stem name toolchain
     $(2).meta.extern := extern.requested extern.supported extern.available
-    $(2).meta.artifacts := root prefix
+    $(2).meta.artifacts := root prefix runner staged stage.prefix stage.modules
 
     # document each one
     # general
     $(2).metadoc.project := "the name of the project to which this test suite belongs"
     $(2).metadoc.name := "the name of the test suite"
     $(2).metadoc.stem := "the stem for generating test suite specific names"
+    $(2).metadoc.toolchain := "the environment-level toolchains this suite uses (opt-in)"
     # dependencies
     $(2).metadoc.extern.requested := "requested dependencies"
     $(2).metadoc.extern.supported := "the dependencies for which there is mm support"
@@ -93,6 +120,10 @@ define tests.init =
     # artifacts
     $(2).metadoc.root := "the path to the test suite directory relative to the project directory"
     $(2).metadoc.prefix := "the absolute path to the test suite"
+    $(2).metadoc.runner := "the self-discovering test runner this suite delegates to, if any"
+    $(2).metadoc.staged := "whether interpreted drivers run from a staging area (opt-in)"
+    $(2).metadoc.stage.prefix := "the staging directory where drivers and node_modules are assembled"
+    $(2).metadoc.stage.modules := "an existing node_modules to link into the staging area"
 
 endef
 
@@ -199,6 +230,9 @@ define test.staging.target =
         ${eval $(_trgt).libpath ?= $($(1).libpath)}
         ${eval $(_trgt).rpath ?= $($(1).rpath)}
         ${eval $(_trgt).libraries ?= $($(1).libraries)}
+        ${eval $(_trgt).staged ?= $($(1).staged)}
+        ${eval $(_trgt).stage.prefix ?= $($(1).stage.prefix)}
+        ${eval $(_trgt).stage.modules ?= $($(1).stage.modules)}
         ${foreach category,$(languages.$($(_trgt).language).categories.compile), \
             ${eval $(_trgt).$($(_trgt).language).$(category) ?=} \
         }

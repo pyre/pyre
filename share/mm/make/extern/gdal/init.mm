@@ -5,7 +5,7 @@
 
 
 # add me to the pile
-extern += ${if ${findstring gdal,$(extern)},,gdal}
+extern += ${if ${filter gdal,$(extern)},,gdal}
 
 # # find my configuration file
 gdal.config := ${dir ${call extern.config,gdal}}
@@ -16,6 +16,8 @@ gdal.flags ?=
 gdal.defines := WITH_GDAL
 # the canonical form of the include directory
 gdal.incpath ?= $(gdal.dir)/include
+# header marker(s): files that must resolve on {incpath}; absence proves breakage
+gdal.markers.headers ?= gdal.h
 
 # linker flags
 gdal.ldflags ?=

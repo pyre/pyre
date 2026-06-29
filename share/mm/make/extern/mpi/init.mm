@@ -5,7 +5,7 @@
 
 
 # add me to the pile
-extern += ${if ${findstring mpi,$(extern)},,mpi}
+extern += ${if ${filter mpi,$(extern)},,mpi}
 
 # # find my configuration file
 mpi.config := ${dir ${call extern.config,mpi}}
@@ -27,6 +27,8 @@ mpi.defines := \
     ${if ${findstring openmpi,$(mpi.flavor)}, WITH_OPENMPI,} \
 # the canonical form of the include directory
 mpi.incpath ?= $(mpi.dir)/include
+# header marker(s): files that must resolve on {incpath}; absence proves breakage
+mpi.markers.headers ?= mpi.h
 
 # linker flags
 mpi.ldflags ?=
@@ -42,7 +44,14 @@ mpi.libraries := \
          mpi_cxx mpi, \
          mpi \
        } \
+    } \
+    ${if ${findstring mpich,$(mpi.flavor)},\
+         mpi pmpi \
     }
+# {libraries} is critical: an unrecognized flavor leaves it empty and the link silently drops the
+# mpi symbols, so declare it required and hint at the most likely cause
+mpi.markers.required ?= libraries
+mpi.markers.required.hint ?= "(mpi.flavor='$(mpi.flavor)' unrecognized; expected openmpi or mpich)"
 
 
 # end of file

@@ -7,7 +7,7 @@
 # ${info -- fmm3d.init}
 
 # add me to the pile
-extern += ${if ${findstring fmm3d,$(extern)},,fmm3d}
+extern += ${if ${filter fmm3d,$(extern)},,fmm3d}
 
 # # find my configuration file
 fmm3d.config := ${dir ${call extern.config,fmm3d}}

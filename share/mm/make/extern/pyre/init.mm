@@ -5,7 +5,7 @@
 
 
 # add me to the pile
-extern += ${if ${findstring pyre,$(extern)},,pyre}
+extern += ${if ${filter pyre,$(extern)},,pyre}
 
 # # find my configuration file
 pyre.config := ${dir ${call extern.config,pyre}}
@@ -16,6 +16,8 @@ pyre.flags ?=
 pyre.defines += WITH_PYRE WITH_JOURNAL
 # the canonical form of the include directory
 pyre.incpath ?= $(pyre.dir)/include
+# header marker(s): files that must resolve on {incpath}; absence proves breakage
+pyre.markers.headers ?= pyre/journal.h
 
 # linker flags
 pyre.ldflags ?=

@@ -117,6 +117,11 @@ tags.file = $(tags.home)/TAGS
 tar = tar
 tar.flags.create = -cvj -f
 
+# zip
+zip = zip
+# recurse into directories, strip extra file attributes, stay quiet
+zip.flags.bundle = -q -r -X
+
 # TeX and associated tools
 tex.tex = tex
 tex.latex = latex

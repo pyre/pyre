@@ -34,6 +34,8 @@ intel.reldeb := -g -O
 intel.cov := --coverage
 intel.prof := -pg
 intel.shared := -fPIC
+# openmp support
+intel.openmp := -qopenmp
 
 # language level
 intel.std.ansi := -ansi

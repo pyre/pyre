@@ -5,7 +5,7 @@
 
 
 # add me to the pile
-extern += ${if ${findstring sundials,$(extern)},,sundials}
+extern += ${if ${filter sundials,$(extern)},,sundials}
 
 # # find my configuration file
 sundials.config := ${dir ${call extern.config,sundials}}
@@ -16,6 +16,8 @@ sundials.flags ?=
 sundials.defines ?= WITH_SUNDIALS
 # the canonical form of the include directory
 sundials.incpath ?= $(sundials.dir)/include
+# header marker(s): files that must resolve on {incpath}; absence proves breakage
+sundials.markers.headers ?= sundials/sundials_config.h
 
 # linker flags
 sundials.ldflags ?=

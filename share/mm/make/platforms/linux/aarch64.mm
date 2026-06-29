@@ -5,7 +5,7 @@
 
 
 # default compilers; specify as many as necessary in the form {family} or {family/language}
-platform.compilers = gcc nvcc python cython
+platform.compilers = gcc nvcc python cython node
 
 # clean up the debug symbols compilers leave behind
 #     platform.clean {stem}

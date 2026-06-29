@@ -65,6 +65,7 @@ define vite.init
     # the various files by category
     ${eval $(_bundle).config.index ?= index.html}
     ${eval $(_bundle).config.npm ?= package.json}
+    ${eval $(_bundle).config.npm_lock ?= package-lock.json}
     ${eval $(_bundle).config.ts ?= tsconfig.node.json tsconfig.json}
     ${eval $(_bundle).config.vite ?= vite.config.ts .eslintrc.cjs}
     ${eval $(_bundle).config.extra ?=}
@@ -87,6 +88,20 @@ define vite.init
     ${eval $(_bundle).staging.src ?= $($(_project).tmpdir)$($(_bundle).stem).ux/$($(_bundle).stem)/}
     # the folder with the node modules
     ${eval $(_bundle).stage.modules ?= $($(_bundle).staging.prefix)node_modules/}
+    # where vite writes its production bundle, relative to the staging root
+    ${eval $(_bundle).staging.dist ?= $($(_bundle).staging.prefix)dist/}
+
+    # the npm configuration file and the committed dependency lock
+    ${eval $(_bundle).source.npm_config ?= $($(_bundle).config.prefix)$($(_bundle).config.npm)}
+    ${eval $(_bundle).source.npm_lock ?= $($(_bundle).config.prefix)$($(_bundle).config.npm_lock)}
+    ${eval $(_bundle).staging.npm_config ?= $($(_bundle).staging.prefix)$($(_bundle).config.npm)}
+    ${eval $(_bundle).staging.npm_lock ?= $($(_bundle).staging.prefix)$($(_bundle).config.npm_lock)}
+
+    # the graphql strategy: none | relay | houdini; selects the codegen step mm runs
+    ${eval $(_bundle).graphql ?= none}
+
+    # the installation location for the built bundle
+    ${eval $(_bundle).install.prefix ?= $(builder.dest.etc)$($(_bundle).name)/ux/}
 
 
     # for the help system
@@ -117,15 +132,17 @@ define vite.init
     $(_bundle).metadoc.source.static.present := "directories with static assets"
 
     # sources: infromation about the sources
-    $(_bundle).meta.source := source.npm_config
+    $(_bundle).meta.source := source.npm_config source.npm_lock
     # document each one
     $(_bundle).metadoc.source.npm_config := "the npm configuration file; typically called 'package.json'"
+    $(_bundle).metadoc.source.npm_lock := "the committed dependency lock; staged in non-dev modes"
 
     # staging: the list of attributes
-    $(_bundle).meta.staging := staging.prefix staging.npm_config
+    $(_bundle).meta.staging := staging.prefix staging.npm_config staging.npm_lock
     # document each one
     $(_bundle).metadoc.staging.prefix := "the root of the staging directory"
     $(_bundle).metadoc.staging.npm_config := "the npm configuration file"
+    $(_bundle).metadoc.staging.npm_lock := "the dependency lock in the staging area"
 
     # install: the list of attributes
     $(_bundle).meta.install := install.prefix

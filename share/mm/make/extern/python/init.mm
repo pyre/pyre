@@ -5,7 +5,7 @@
 
 
 # add me to the pile
-extern += ${if ${findstring python,$(extern)},,python}
+extern += ${if ${filter python,$(extern)},,python}
 
 # find my configuration file
 python.config := ${dir ${call extern.config,python}}
@@ -27,6 +27,8 @@ python.flags ?=
 python.defines := WITH_PYTHON
 # the canonical form of the include directory
 python.incpath ?= $(python.dir)/include/$(python.interpreter)
+# header marker(s): files that must resolve on {incpath}; absence proves breakage
+python.markers.headers ?= Python.h
 
 # linker flags
 python.ldflags ?=

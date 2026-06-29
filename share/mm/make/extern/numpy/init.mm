@@ -5,7 +5,7 @@
 
 
 # add me to the pile
-extern += ${if ${findstring numpy,$(extern)},,numpy}
+extern += ${if ${filter numpy,$(extern)},,numpy}
 
 # # find my configuration file
 numpy.config := ${dir ${call extern.config,numpy}}
@@ -16,6 +16,8 @@ numpy.flags ?=
 numpy.defines := WITH_NUMPY
 # the canonical form of the include directory
 numpy.incpath ?= $(numpy.dir)/include
+# header marker(s): files that must resolve on {incpath}; absence proves breakage
+numpy.markers.headers ?= numpy/arrayobject.h
 
 # linker flags
 numpy.ldflags ?=

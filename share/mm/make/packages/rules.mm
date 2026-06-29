@@ -40,6 +40,12 @@ $(1): $(1).directories $(1).assets $($(1).extras)
 
 # clean up
 $(1).clean::
+	@${call log.action,"rm",$($(1).pycdir)}
+	$(rm.force-recurse) $($(1).pycdir)${if $($(1).staging.drivers),
+	@${foreach driver,$($(1).staging.drivers),${call log.action,"rm",$(driver)};}
+	$(rm.force) $($(1).staging.drivers)}${if $($(1).staging.config),
+	@${foreach config,$($(1).staging.config),${call log.action,"rm",$(config)};}
+	$(rm.force) $($(1).staging.config)}
 
 # second level targets
 # make all relevant directories
@@ -86,6 +92,24 @@ ${foreach config,$($(1).config.sources),
 endef
 
 
+# expand the @VAR@ placeholders of a package meta template into a python source file
+#   usage: package.meta.expand {package} {source} {destination}
+# N.B.: the trailing backslashes keep this a single logical line when the body is
+# spliced into a recipe via ${call}
+define package.meta.expand =
+$(sed) \
+    -e "s:@PROJECT@:$($(1).project):g" \
+    -e "s:@TITLE@:$($(1).project):g" \
+    -e "s:@MAJOR@:$($($(1).project).major):g" \
+    -e "s:@MINOR@:$($($(1).project).minor):g" \
+    -e "s:@MICRO@:$($($(1).project).micro):g" \
+    -e "s:@REVISION@:$($($(1).project).revision):g" \
+    -e "s|@YEAR@|$($($(1).project).now.year)|g" \
+    -e "s|@TODAY@|$($($(1).project).now.date)|g" \
+    $(2) > $(3)
+endef
+
+
 define package.workflows.meta =
 # build the package meta-data file
 $(1).meta: $($(1).staging.meta.pyc)
@@ -101,16 +125,7 @@ $($(1).staging.meta.pyc): $($(1).staging.meta.py) | ${dir $($(1).staging.meta)}
 # make the rule that generates the package meta-data file
 $($(1).staging.meta.py): $($(1).staging.meta) | ${dir $($(1).staging.meta.py)}
 	@${call log.action,sed,$($(1).root)$($(1).meta)}
-	$(sed) \
-          -e "s:@PROJECT@:$($(1).project):g" \
-          -e "s:@TITLE@:$($(1).project):g" \
-          -e "s:@MAJOR@:$($($(1).project).major):g" \
-          -e "s:@MINOR@:$($($(1).project).minor):g" \
-          -e "s:@MICRO@:$($($(1).project).micro):g" \
-          -e "s:@REVISION@:$($($(1).project).revision):g" \
-          -e "s|@YEAR@|$($($(1).project).now.year)|g" \
-          -e "s|@TODAY@|$($($(1).project).now.date)|g" \
-          $($(1).staging.meta) > $($(1).staging.meta.py)
+	${call package.meta.expand,$(1),$($(1).staging.meta),$($(1).staging.meta.py)}
 
 # mark the package meta-data product as phony so it gets made unconditionally
 .PHONY: $($(1).staging.meta.pyc)

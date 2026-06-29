@@ -41,6 +41,16 @@ $(1): $(1).static $(1).generated $(1).chunks
 $(1).clean:
 	@${call log.action,"rm",$($(1).staging.prefix)}
 	$(rm.force-recurse) $($(1).staging.prefix)
+	@${call log.action,"rm",$($(1).install.prefix)}
+	$(rm.force-recurse) $($(1).install.prefix)
+
+# (re)generate the schema on demand
+$(1).schema: $($(1).staging.schema)
+
+# drop the generated schema so the next build refreshes it
+$(1).schema.clean:
+	@${call log.action,"rm",${subst $($(1).staging.prefix),,$($(1).staging.schema)}}
+	$(rm.force) $($(1).staging.schema)
 
 # the webpack bundle
 $(1).generated: $($(1).staging.relay_generated) $($(1).install.generated.assets)
@@ -51,7 +61,8 @@ $(1).chunks: ${foreach chunk,$($(1).chunks),$(1).chunks.$(chunk)}
 # group all the generated assets together (the '&:' in the rule separator)
 $($(1).staging.generated.assets) &: \
     $($(1).staging.babel_config) $($(1).staging.page) \
-    $($(1).staging.app.sources) | $(1).generate.prep
+    $($(1).staging.app.sources) \
+    ${if $($(1).schema.generator),$($(1).staging.schema),} | $(1).generate.prep
 	$(cd) $($(1).staging.prefix); npm run relay && npm run build
 
 $(1).generate.prep: $(1).config $(1).npm_modules $(1).sources
@@ -69,7 +80,7 @@ $(1).config: \
 $(1).sources: $($(1).staging.app.sources)
 
 # install the dependencies
-$(1).npm_modules: $($(1).staging.npm_config)
+$(1).npm_modules: $($(1).staging.modules)
 
 
 # the main page where the bundle gets injected
@@ -77,12 +88,26 @@ $($(1).staging.page): $($(1).source.page) | $($(1).staging.prefix)
 	@${call log.action,"cp", $${subst $($(1).prefix),,$$<}}
 	$(cp) $$< $$@
 
-# the npm configuration file lives at top level in the staging area
+# stage the npm configuration file
 $($(1).staging.npm_config): $($(1).source.npm_config) | $($(1).staging.prefix)
-	@${call log.action,"cp", $${subst $($(1).prefix),,$$<}}
-	$(cp) $$< $$@
-	@${call log.action,"npm", $${subst $($(1).staging.prefix),,$$@}}
-	$(cd) $($(1).staging.prefix); npm i
+	@${call log.action,"cp",${subst $($(1).prefix),,$($(1).source.npm_config)}}
+	$(cp) $($(1).source.npm_config) $($(1).staging.npm_config)
+
+# install the node modules, keyed on the {node_modules} dir so a missing install re-runs
+${eval ${call $(webpack.npm.install),$(1)}}
+
+# seed a clean install from the committed lock; recovers from npm instability in {dev}
+$(1).lock.seed: $($(1).staging.npm_config) | $($(1).staging.prefix)
+	@test -f $($(1).source.npm_lock) || { ${call log.error,no committed lock to install from}; false; }
+	@${call log.action,"cp",${subst $($(1).prefix),,$($(1).source.npm_lock)}}
+	$(cp) $($(1).source.npm_lock) $($(1).staging.npm_lock)
+	@${call log.action,"npm ci",$(1)}
+	$(cd) $($(1).staging.prefix); npm ci
+
+# harvest the freshly-resolved lock back to the source tree for committing
+$(1).lock.harvest:
+	@${call log.action,"cp",${subst $($(1).staging.prefix),,$($(1).staging.npm_lock)}}
+	$(cp) $($(1).staging.npm_lock) $($(1).source.npm_lock)
 
 # so does the babel configuration file
 $($(1).staging.babel_config): $($(1).source.babel_config) | $($(1).staging.prefix)
@@ -106,6 +131,20 @@ $($(1).staging.prefix):
 
 # the relay generated types
 $($(1).staging.relay_generated):
+	$(mkdirp) $$@
+	@${call log.action,"mkdir",$$@}
+
+# generate the schema from the project's source of truth into the staging area; the
+# {schema.sources} are real prerequisites so a change to them forces a rebuild, while
+# the generator and its {schema.requires} are order-only so they are installed first
+# without a newer binary needlessly triggering regeneration
+$($(1).staging.schema): $($(1).schema.sources) \
+    | $($(1).schema.generator) $($(1).schema.requires) $($(1).staging.schema.dir)
+	@${call log.action,"schema",$${subst $($(1).staging.prefix),,$$@}}
+	${if $($(1).schema.generator),$($(1).schema.generator) $($(1).schema.flags)$$@,@true}
+
+# the directory that receives the generated schema
+$($(1).staging.schema.dir):
 	$(mkdirp) $$@
 	@${call log.action,"mkdir",$$@}
 
@@ -146,6 +185,31 @@ endef
 
 
 # helpers
+# install the node modules fresh from {package.json}
+define webpack.npm.install.fresh =
+$($(1).staging.modules): $($(1).staging.npm_config) | $($(1).staging.prefix)
+	@${call log.action,"npm i",$(1)}
+	$(cd) $($(1).staging.prefix); npm i
+# all done
+endef
+
+
+# stage the committed lock, then install the node modules exactly from it
+define webpack.npm.install.locked =
+$($(1).staging.npm_lock): $($(1).source.npm_lock) | $($(1).staging.prefix)
+	@${call log.action,"cp",${subst $($(1).prefix),,$($(1).source.npm_lock)}}
+	$(cp) $($(1).source.npm_lock) $($(1).staging.npm_lock)
+$($(1).staging.modules): $($(1).staging.npm_config) $($(1).staging.npm_lock) | $($(1).staging.prefix)
+	@${call log.action,"npm ci",$(1)}
+	$(cd) $($(1).staging.prefix); npm ci
+# all done
+endef
+
+
+# the install strategy selected by the build mode
+webpack.npm.install := webpack.npm.install.${if $(mode.npm.locked),locked,fresh}
+
+
 define webpack.workflows.static.asset =
 
     # local variables

@@ -5,7 +5,7 @@
 
 
 # initialize the list of known languages
-languages := c c++ fortran python cython cuda javascript graphql
+languages := c c++ fortran python cython cuda javascript graphql mjs
 
 # load the known languages
 include $(languages:%=make/languages/%.mm)

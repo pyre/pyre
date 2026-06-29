@@ -5,7 +5,7 @@
 
 
 # add me to the pile
-extern += ${if ${findstring fortran,$(extern)},,fortran}
+extern += ${if ${filter fortran,$(extern)},,fortran}
 
 # # find my configuration file
 fortran.config := ${dir ${call extern.config,fortran}}

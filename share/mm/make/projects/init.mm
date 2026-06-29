@@ -46,6 +46,19 @@ define project.init =
     # the staging area for the build intermediate products
     ${eval $(1).tmpdir ?= $(builder.staging)$(1)/}
 
+    # bootstrap bundle
+    # the packages whose pure-python sources get assembled into the bootstrap archive;
+    # empty by default, so projects opt in by listing their package assets
+    ${eval $(1).boot.packages ?=}
+    # the version stamp that names the release directory
+    ${eval $(1).boot.version ?= $($(1).major).$($(1).minor).$($(1).micro)}
+    # the cleanable release staging root, kept apart from the normal build products
+    ${eval $(1).boot.root ?= $($(1).tmpdir)release/$($(1).boot.version)/}
+    # the directory where the bundle contents get assembled; this is the zip root
+    ${eval $(1).boot.contents ?= $($(1).boot.root)contents/}
+    # the bundle archive itself
+    ${eval $(1).boot.archive ?= $($(1).boot.root)$($(1).stem)-boot.zip}
+
     # make
     # the directory from where {make} was invoked, i.e. the nearest parent with a local
     # makefile

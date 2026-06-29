@@ -82,6 +82,12 @@ define extensions.init =
     ${eval $(2).lib.sources := ${call extension.sources,$(2),$(2).lib}}
     # suppress the creation of the support dll
     ${eval $(2).lib.dll :=}
+    # build the support archive into the extension's private build tree rather than the published
+    # {lib} directory, and point the module's link search there: the archive exists only to link
+    # the module {.so}; exporting it without public headers (extensions have none) leaves an
+    # unusable library in the prefix -- see issue #18
+    ${eval $(2).lib.libdir := $($(2).lib.tmpdir)}
+    ${eval $(2).lib.libpath := $($(2).lib.tmpdir:%/=%)}
 
 endef
 
@@ -91,10 +97,12 @@ endef
 # identify the extension main file
 #   usage: extension.module.main {extension}
 define extension.module.main
-    ${strip
-        ${foreach suffix,$(languages.sources),
-            ${wildcard $($(1).prefix)$($(1).module)$(suffix)}
-            ${wildcard $($(1).prefix)__init__$(suffix)}
+    ${firstword
+        ${strip
+            ${foreach suffix,$(languages.sources),
+                ${wildcard $($(1).prefix)__init__$(suffix)}
+                ${wildcard $($(1).prefix)$($(1).module)$(suffix)}
+            }
         }
     }
 endef

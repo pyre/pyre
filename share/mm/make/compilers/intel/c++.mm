@@ -40,14 +40,17 @@ intel++.opt := -O3
 intel++.cov := --coverage
 intel++.prof := -pg
 intel++.shared := -fPIC
+# openmp support
+intel++.openmp := -qopenmp
 
 # language level
-intel++.std.c++98 := -std=c++98
 intel++.std.c++11 := -std=c++11
 intel++.std.c++14 := -std=c++14
 intel++.std.c++17 := -std=c++17
 intel++.std.c++20 := -std=c++20
 intel++.std.c++23 := -std=c++23
+# function to extract the level from the build flags of a library
+intel++.std = ${patsubst -std=c++%,%,${filter -std=c++%,$($(1).c++.flags)}}
 
 # link time flags
 intel++.link.output := -o

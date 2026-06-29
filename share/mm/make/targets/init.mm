@@ -8,7 +8,7 @@
 target ?= $(host.os)-$(host.arch)
 # target tag
 target.tag ?=
-# variants are user specified confiugrations, such shared, debug, opt, cov, etc
+# variants are user specified configurations, such shared, debug, opt, cov, etc
 target.variants ?=
 # target-specific compiler choices
 target.compilers ?=

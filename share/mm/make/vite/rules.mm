@@ -38,8 +38,37 @@ define vite.workflows.build
     # alias
     ${eval _bundle := $(1)}
 
-$(_bundle): $(_bundle).stage.config $(_bundle).stage.files $(_bundle).stage.modules
+# the default target builds the production bundle and installs it
+$(_bundle): $(_bundle).install
 	@${call log.asset,"vite",$(_bundle)}
+
+# stage the sources, configuration files, and node modules
+$(_bundle).stage: $(_bundle).stage.config $(_bundle).stage.files $(_bundle).stage.modules
+
+# the graphql codegen pass that needs a separate step; relay does, houdini folds it into vite
+$(_bundle).codegen: $(_bundle).stage
+	${if ${filter relay,$($(_bundle).graphql)},@${call log.action,relay,$(_bundle)}; $(cd) $($(_bundle).staging.prefix) && npm run relay,@true}
+
+# produce the production bundle inside the staging area
+$(_bundle).bundle: $(_bundle).codegen
+	@${call log.action,vite,$(_bundle)}
+	$(cd) $($(_bundle).staging.prefix) && npm run build
+
+# install the built assets to their destination
+$(_bundle).install: $(_bundle).bundle
+	@${call log.action,install,$($(_bundle).install.prefix)}
+	$(mkdirp) $($(_bundle).install.prefix)
+	$(cp.r) $($(_bundle).staging.dist). $($(_bundle).install.prefix)
+
+# run the vite dev server with HMR, serving from the staging area
+$(_bundle).dev: $(_bundle).codegen
+	@${call log.action,dev,$(_bundle)}
+	$(cd) $($(_bundle).staging.prefix) && npm run dev
+
+# clean up the staging and install areas
+$(_bundle).clean:
+	@${call log.action,rm,$(_bundle)}
+	$(rm.force-recurse) $($(_bundle).staging.prefix) $($(_bundle).install.prefix)
 
 # prime the configuration pile, just in case it's empty
 $(_bundle).config::
@@ -51,10 +80,21 @@ $(_bundle).stage.files::
 
 # the rule that installs/updates the node modules
 $(_bundle).stage.modules: $($(_bundle).stage.modules)
-# and its implementation
-$($(_bundle).stage.modules): $($(_bundle).config.prefix)$($(_bundle).config.npm) | $($(_bundle).staging.prefix)
-	@${call log.action,"npm",$($(_bundle).config.npm)}
-	$(cd) $($(_bundle).staging.prefix); npm install
+# and its implementation, selected by the build mode
+${eval ${call $(vite.npm.install),$(_bundle)}}
+
+# seed a clean install from the committed lock; recovers from npm instability in {dev}
+$(_bundle).lock.seed: $(_bundle).stage.config | $($(_bundle).staging.prefix)
+	@test -f $($(_bundle).source.npm_lock) || { ${call log.error,no committed lock to install from}; false; }
+	@${call log.action,"cp",$($(_bundle).config.npm_lock)}
+	$(cp) $($(_bundle).source.npm_lock) $($(_bundle).staging.npm_lock)
+	@${call log.action,"npm ci",$(_bundle)}
+	$(cd) $($(_bundle).staging.prefix); npm ci
+
+# harvest the freshly-resolved lock back to the source tree for committing
+$(_bundle).lock.harvest:
+	@${call log.action,"cp",$($(_bundle).config.npm_lock)}
+	$(cp) $($(_bundle).staging.npm_lock) $($(_bundle).source.npm_lock)
 
 # make the rules that copy the configuration files to the staging area
 ${foreach file,
@@ -100,6 +140,31 @@ $($(_bundle).staging.prefix): | $($($(_bundle).project).tmpdir)
 
 # all done
 endef
+
+
+# stage the npm config (via the config rules), then resolve dependencies fresh
+define vite.npm.install.fresh =
+$($(1).stage.modules): $($(1).source.npm_config) | $($(1).staging.prefix)
+	@${call log.action,"npm i",$(1)}
+	$(cd) $($(1).staging.prefix); npm install
+# all done
+endef
+
+
+# stage the committed lock, then install exactly from it
+define vite.npm.install.locked =
+$($(1).staging.npm_lock): $($(1).source.npm_lock) | $($(1).staging.prefix)
+	@${call log.action,"cp",$($(1).config.npm_lock)}
+	$(cp) $($(1).source.npm_lock) $($(1).staging.npm_lock)
+$($(1).stage.modules): $($(1).source.npm_config) $($(1).staging.npm_lock) | $($(1).staging.prefix)
+	@${call log.action,"npm ci",$(1)}
+	$(cd) $($(1).staging.prefix); npm ci
+# all done
+endef
+
+
+# the install strategy selected by the build mode
+vite.npm.install := vite.npm.install.${if $(mode.npm.locked),locked,fresh}
 
 
 # rule factory for creating individual staging source directories

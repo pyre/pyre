@@ -34,6 +34,8 @@ gcc.opt := -O3
 gcc.cov := --coverage
 gcc.prof := -pg
 gcc.shared := -fPIC
+# openmp support
+gcc.openmp := -fopenmp
 
 # language level
 gcc.std.ansi := -ansi

@@ -43,6 +43,7 @@ define webpack.init
     # the configuration files
     ${eval $(2).source.page ?= $($(2).prefix)$($(2).name).html}
     ${eval $(2).source.npm_config ?= $($(2).prefix)$($(2).config)package.json}
+    ${eval $(2).source.npm_lock ?= $($(2).prefix)$($(2).config)package-lock.json}
     ${eval $(2).source.babel_config ?= $($(2).prefix)$($(2).config)babelrc}
     ${eval $(2).source.webpack_config ?= $($(2).prefix)$($(2).config)webpack.js}
     ${eval $(2).source.ts_config ?= $($(2).prefix)$($(2).config)tsconfig.json}
@@ -55,6 +56,8 @@ define webpack.init
     ${eval $(2).staging.prefix.generated ?= $($(2).staging.prefix)build/}
     ${eval $(2).staging.page ?= $($(2).staging.prefix)$($(2).name).html}
     ${eval $(2).staging.npm_config ?= $($(2).staging.prefix)package.json}
+    ${eval $(2).staging.npm_lock ?= $($(2).staging.prefix)package-lock.json}
+    ${eval $(2).staging.modules ?= $($(2).staging.prefix)node_modules/}
     ${eval $(2).staging.babel_config ?= $($(2).staging.prefix).babelrc}
     ${eval $(2).staging.webpack_config ?= $($(2).staging.prefix)webpack.config.js}
     ${eval $(2).staging.ts_config ?= $($(2).staging.prefix)tsconfig.json}
@@ -64,6 +67,21 @@ define webpack.init
     ${eval $(2).staging.app.sources := ${call webpack.staging.app.sources,$(2)}}
     # the bundle
     ${eval $(2).staging.generated.assets := ${call webpack.staging.generated.assets,$(2)}}
+
+    # schema generation; opt-in by setting {schema.generator} to a command that writes
+    # the SDL to the path appended to it, e.g. an installed exporter that prints the
+    # project's schema; leaving it empty preserves the historical copy-from-source flow
+    ${eval $(2).schema.generator ?=}
+    # flags placed between the generator and the output path
+    ${eval $(2).schema.flags ?=}
+    # the inputs that should force a schema rebuild when they change
+    ${eval $(2).schema.sources ?=}
+    # order-only prerequisites that must exist before the generator runs, e.g. the
+    # package the generator imports
+    ${eval $(2).schema.requires ?=}
+    # where the generated schema lands, where {relay-compiler} expects to find it
+    ${eval $(2).staging.schema ?= $($(2).staging.prefix)schema/$($(2).name).gql}
+    ${eval $(2).staging.schema.dir ?= ${dir $($(2).staging.schema)}}
 
     # install locations
     ${eval $(2).install.prefix ?= $(builder.dest.etc)$($(2).name)/ux/}
@@ -106,15 +124,17 @@ define webpack.init
     $(2).metadoc.source.static.present := "directories with static assets"
 
     # sources: infromation about the sources
-    $(2).meta.source := source.npm_config
+    $(2).meta.source := source.npm_config source.npm_lock
     # document each one
     $(2).metadoc.source.npm_config := "the npm configuration file; typically called 'package.json'"
+    $(2).metadoc.source.npm_lock := "the committed dependency lock; staged in non-dev modes"
 
     # staging: the list of attributes
-    $(2).meta.staging := staging.prefix staging.npm_config
+    $(2).meta.staging := staging.prefix staging.npm_config staging.npm_lock
     # document each one
     $(2).metadoc.staging.prefix := "the root of the staging directory"
     $(2).metadoc.staging.npm_config := "the npm configuration file"
+    $(2).metadoc.staging.npm_lock := "the dependency lock in the staging area"
 
     # install: the list of attributes
     $(2).meta.install := install.prefix

@@ -38,7 +38,7 @@ ${strip
     $($(2).driver)
         $(3)
         $($(2).link.output) $(4)
-        $($(2).compile.base)
+        ${filter-out $($(2).compile.makedep), $($(2).compile.base)}
         ${call compiler.compile.options,$(1),$(2),$(5)}
         ${call compiler.link.options,$(1),$(2),$(5)}
 }
@@ -53,21 +53,21 @@ ${strip
         $($(2).link.dll)
         $(3)
         $($(2).link.output) $(4)
-        $($(2).compile.base)
+        ${filter-out $($(2).compile.makedep), $($(2).compile.base)}
         ${call compiler.compile.options,$(1),$(2),$(5)}
         ${call compiler.link.options,$(1),$(2),$(5)}
 }
 endef
 
 # build a linker command line that creates an extension
-#   usage: compiler.dll {language} {compiler} {source} {dll} {dependencies}
+#   usage: compiler.ext {language} {compiler} {source} {ext} {dependencies}
 define compiler.ext =
 ${strip
     $($(2).driver)
         $($(2).link.ext)
         $(3)
         $($(2).link.output) $(4)
-        $($(2).compile.base)
+        ${filter-out $($(2).compile.makedep), $($(2).compile.base)}
         ${call compiler.compile.options,$(1),$(2),$(5)}
         ${call compiler.link.options,$(1),$(2),$(5)}
 }
@@ -95,8 +95,17 @@ endef
 define compiler.options =
 ${strip
     ${foreach source, ${call compiler.option.sources,$(2),$(4)},
-        ${foreach category, $(languages.$(2).categories.$(1)),
+        ${foreach category, ${filter-out rpath, $(languages.$(2).categories.$(1))},
             $($(source).$(category):%=$($(3).prefix.$(category))%)
+        }
+    }
+    ${if ${filter rpath, $(languages.$(2).categories.$(1))},
+        ${patsubst %,$($(3).prefix.rpath)%,
+            ${sort
+                ${foreach source, ${call compiler.option.sources,$(2),$(4)},
+                    $($(source).rpath)
+                }
+            }
         }
     }
 }

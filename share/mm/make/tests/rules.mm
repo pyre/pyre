@@ -19,8 +19,11 @@ tests.info: mm.banner
 # make the test suite specific targets
 #  usage: test.workflows {test suite}
 define tests.workflows =
-    # build recipes
-    ${call test.workflows.build,$(1)}
+    # build recipes: a single self-discovering runner, or the per-driver workflow
+    ${if $($(1).runner), \
+        ${call test.workflows.runner,$(1)}, \
+        ${call test.workflows.build,$(1)} \
+    }
     # info recipes: show values
     ${call test.workflows.info,$(1)}
     # help recipes: show documentation
@@ -48,7 +51,10 @@ ${foreach target, $($(1).staging.targets), \
     ${eval
         ${if $($(target).compiled),
             ${call test.workflows.target.compiled,$(target),$(1)}, \
-            ${call test.workflows.target.interpreted,$(target),$(1)} \
+            ${if $($(target).staged), \
+                ${call test.workflows.target.staged,$(target),$(1)}, \
+                ${call test.workflows.target.interpreted,$(target),$(1)} \
+            } \
         }
     }
 }
@@ -76,6 +82,135 @@ ${foreach case,$($(1).staging.targets), \
     ${eval ${call test.workflows.aliases,$(1),$(case)} \
     } \
 }
+
+# all done
+endef
+
+
+# compile one source of a {compiled} runner suite into an object under the staging root
+#   usage: test.runner.object {testsuite} {source} {language} {stageroot}
+define test.runner.object =
+    ${eval _obj := $(4)${basename ${subst $($(1).prefix),,$(2)}}$(builder.ext.obj)}
+$(_obj): $(2) | $($(1).prerequisites)
+	@${call log.action,$(3),${subst $($(1).home),,$(2)}}
+	@$(mkdirp) ${dir $(_obj)}
+	${call languages.compile,$(3),$(2),$(_obj),$(1).$(3) $(1) $($(1).extern)}
+	${call languages.makedep,$(3),$(2),$(_obj:$(builder.ext.obj)=$(builder.ext.dep)),$(1).$(3) $($(1).extern)}
+# all done
+endef
+
+
+# link the objects of a {compiled} runner suite into one self-registering test binary
+#   usage: test.runner.binary {testsuite} {language} {binary} {objects}
+define test.runner.binary =
+-include $(4:$(builder.ext.obj)=$(builder.ext.dep))
+$(3): $(4) $($(1).prerequisites)
+	@$(mkdirp) ${dir $(3)}
+	@${call log.action,link,${subst $($(1).home),,$(3)}}
+	${call languages.link,$(2),$(4),$(3),$(1).$(2) $(1) $($(1).extern)}
+# all done
+endef
+
+
+# build targets
+# target factory for a runner suite: rather than enumerating per-file drivers, mm prepares the
+# environment a self-discovering test runner needs and invokes it once, treating the process exit
+# code as the verdict. the runner owns discovery, parallelism, fixtures, and -- for browser
+# runners -- the servers under test. the {prepare} kind decides what mm does first:
+#   staged   -- mirror the suite into a staging area and link {stage.modules} in as node_modules
+#               (playwright, vitest); run the launch command from there
+#   compiled -- compile the suite's sources into one binary and run it (catch2); the binary is
+#               the launch command
+#   plain    -- nothing; run the launch command in the suite directory (pytest)
+#   usage: test.workflows.runner {testsuite}
+define test.workflows.runner =
+
+    # resolve the runner and how it wants the environment prepared
+    ${eval _runner := $($(1).runner)}
+    ${if $(runner.$(_runner).prepare),,${error unknown test runner '$(_runner)' in suite '$(1)'}}
+    ${eval _prepare := $(runner.$(_runner).prepare)}
+    ${eval _lang := $(runner.$(_runner).language)}
+    # a compiled runner contributes its entry-point library (e.g. Catch2Main, gtest_main); fold it
+    # into the suite libraries so the link picks it up ahead of the framework library from {extern}
+    ${eval $(1).libraries += $(runner.$(_runner).libraries)}
+    # the staging area (used by {staged}) and the compiled runner binary and its objects
+    ${eval _stageroot := $($(1).stage.prefix)}
+    ${eval _binary := $(_stageroot)$($(1).name)}
+    ${eval _objects := ${foreach _s,$($(1).drivers),$(_stageroot)${basename ${subst $($(1).prefix),,$(_s)}}$(builder.ext.obj)}}
+    # the launch command: for {compiled} it is the built binary; otherwise a per-suite override
+    # wins over the runner default, then the args
+    ${eval _base := ${if $($(1).runner.launch),$($(1).runner.launch),$(runner.$(_runner).launch)}}
+    ${eval _launch := ${if ${filter compiled,$(_prepare)},$(_binary) $($(1).argv),${strip $(_base) $(runner.$(_runner).argv) $($(1).argv)}}}
+    # the toolchains this suite opted into, if any; fold each one's consumer interface into the
+    # runner environment: {node} tools contribute their {node_modules} to a single {NODE_PATH} -- a
+    # list, so several tools coexist without colliding -- plus whatever extra environment each tool
+    # needs to be found (e.g. a browser path). this is scoped to the suite launch, so a project that
+    # does not opt in is untouched
+    ${eval _tools := $($(1).toolchain)}
+    ${eval _modules := ${strip ${foreach _t,$(_tools),$(toolchain.$(_t).modules)}}}
+    ${eval _nodepath := ${if $(_modules),NODE_PATH=${subst $(space),:,$(_modules)},}}
+    # the tool bin directories, colon-joined, prepended to {PATH} at launch (see {.run}) so the
+    # launch command resolves to the toolchain's executable
+    ${eval _toolbin := ${subst $(space),:,${strip ${foreach _t,$(_tools),$(toolchain.$(_t).bin)}}}}
+    ${eval _toolenv := ${strip ${foreach _t,$(_tools),$(toolchain.$(_t).env)}}}
+    ${eval _env := ${strip $(runner.$(_runner).env) $(_nodepath) $(_toolenv) $($(1).env)}}
+    # the working directory: a {staged} runner runs from the staging area, everything else in place
+    ${eval _workdir := ${if ${filter staged,$(_prepare)},$(_stageroot),$($(1).prefix)}}
+
+# for a {compiled} runner, build one binary from all the suite's sources
+${if ${filter compiled,$(_prepare)}, \
+    ${foreach _s,$($(1).drivers),${eval ${call test.runner.object,$(1),$(_s),$(_lang),$(_stageroot)}}} \
+    ${eval ${call test.runner.binary,$(1),$(_lang),$(_binary),$(_objects)}} \
+,}
+
+# the suite runs its runner once, after preparing the environment and before tearing it down
+$(1): $(1).post
+	@${call log.asset,"test suite",$(1)}
+
+# startup
+$(1).pre: $($(1).pre)
+
+# prepare the environment; for {staged}, mirror the suite into the staging area and link the
+# modules in as node_modules; for {compiled}, depend on the built binary. before anything, verify
+# every toolchain the suite opted into is installed, so a missing tool fails here with an
+# actionable message rather than partway through the runner
+$(1).prepare: $($(1).prerequisites) $(1).pre ${foreach _t,$(_tools),$(_t).verify} ${if ${filter compiled,$(_prepare)},$(_binary),}
+	@${call log.action,prepare,$(1)}
+	${if ${filter staged,$(_prepare)},@$(mkdirp) $(_stageroot) && $(cp.fr) $($(1).prefix). $(_stageroot)${if $($(1).stage.modules), && $(ln) -sfn $($(1).stage.modules) $(_stageroot)node_modules,},@true}
+
+# invoke the runner once, from the prepared working directory; its exit code decides pass/fail.
+# the tool bin directories are prepended to the inherited {PATH} ({$(PATH)} is the environment path
+# make imported at startup), so the launch resolves the toolchain executable while node, git, and
+# the server under test stay reachable
+$(1).run: $(1).prepare
+	@${call log.action,$(_runner),$(1)}
+	@$(cd) $(_workdir) ; ${if $(_toolbin),PATH="$(_toolbin):$(PATH)" ,}$(_env) $(_launch)
+
+# teardown
+$(1).post: $(1).run $($(1).post)
+${if $($(1).post),\
+    ${eval $($(1).post) :: $(1).run} \
+}
+
+# clean up the staging area (objects and the binary live here too)
+$(1).clean::
+	@${call log.action,clean,$(1)}
+	@$(rm.force-recurse) $(_stageroot)
+
+# show info
+$(1).info.runner:
+	@${call log.sec,$(1),"a runner suite in project '$($(1).project)'"}
+	@${call log.var,runner,$(_runner)}
+	@${call log.var,prepare,$(_prepare)}
+	@${call log.var,launch,$(_launch)}
+	@${call log.var,workdir,$(_workdir)}
+	@${call log.var,modules,$($(1).stage.modules)}
+	@${call log.var,toolchain,$(_tools)}
+	@${call log.var,path,$(_toolbin)}
+	@${call log.var,env,$(_env)}
+
+# just in case...
+.PHONY: $(1) $(1).pre $(1).prepare $(1).run $(1).post $(1).clean
 
 # all done
 endef
@@ -143,6 +278,105 @@ $(1).info:
 
 # just in case...
 .PHONY: $(1) $(1).cases $(1).clean
+
+# all done
+endef
+
+
+# build targets
+# target factory for a staged interpreted test case
+#
+# interpreted drivers normally run in place, from their spot in the source tree. that breaks down
+# for ESM (.mjs) drivers that import third-party packages: node resolves bare imports by walking
+# up from the driver's own directory looking for a {node_modules}, and we deliberately keep
+# {node_modules} out of the source tree -- it lives in the build staging area, where the web
+# client is assembled and webpack/vite/relay run. {NODE_PATH} is no help, since it is consulted
+# only by the legacy CommonJS loader, not by ESM.
+#
+# a suite opts in with
+#     <suite>.staged        := yes
+#     <suite>.stage.modules := <path to an existing node_modules>
+# and each driver is copied into a per-suite staging directory under the project tmpdir (outside
+# the source tree), with {stage.modules} symlinked in as {node_modules}; the driver then runs
+# from the staged copy, so the upward search reaches the modules. suites that leave {staged}
+# unset are unaffected.
+#
+#   usage: test.workflows.target.staged {target} {testsuite}
+define test.workflows.target.staged =
+
+    # local variables
+    ${eval _tag := ${subst $($(2).home),,$($(1).source)}}
+    ${eval _srcdir := ${dir $($(1).source)}}
+    ${eval _stageroot := $($(1).stage.prefix)}
+    ${eval _staged := $(_stageroot)${subst $($(2).prefix),,$($(1).source)}}
+    ${eval _stagedir := ${dir $(_staged)}}
+    ${eval _modules := $($(1).stage.modules)}
+    ${eval _launcher := $(compiler.$($(1).language)) $(_staged)}
+    ${eval _harness := ${if $($(1).harness),$($(1).harness) $(_launcher),$(_launcher)}}
+
+# the aggregator
+$(1): $(1).pre $(1).stage $(1).cases $(1).post
+
+# dependencies
+# startup
+$(1).pre: $($(1).pre)
+
+# cleanup
+$(1).post: $(1).pre $(1).cases $($(1).post)
+
+# make sure cleanup happens after startup; because this rule is in addition to its definition,
+# we must use a double colon; this in turn implies that the rule definition must be a
+# double-colon rule
+${if $($(1).post),\
+    ${eval $($(1).post) :: $($(1).pre) $(1).cases} \
+}
+
+# stage the driver alongside its neighbors and link in the modules
+$(1).stage: $(1).pre
+	@${call log.action,stage,$(_tag)}
+	@$(mkdirp) $(_stagedir)
+	@$(cp.fr) $(_srcdir). $(_stagedir)
+	@${if $(_modules),$(ln) -sfn $(_modules) $(_stageroot)node_modules,true}
+
+# invoking the driver for each registered test case, from the staging area
+$(1).cases: $($($(1).suite).prerequisites) $(1).pre $(1).stage
+	@$(cd) $(_stagedir) ; \
+        ${if $($(1).cases), \
+            ${foreach case, $($(1).cases), \
+                ${call log.action,test,$($(case).harness) $(_tag) $($(case).argv)}; \
+                $($(case).harness) $(_launcher) $($(case).argv); \
+                }, \
+	    ${call log.action,test,$(_tag)}; \
+                $($(1).harness) $(_launcher) $($(1).argv) \
+        }
+
+# clean up; double colon, since it may be used as a {post} rule
+$(1).clean::
+	@${if $($(1).clean), \
+            ${call log.action,clean,$(1)}; \
+            $(rm.force-recurse) ${addprefix $($(1).home),$($(1).clean)}, \
+        }
+	@$(rm.force-recurse) $(_stageroot)
+
+# show info
+$(1).info:
+	@${call log.sec,$(1),"a staged test driver in test suite '$(2)' of project '$($(2).project)'"}
+	@${call log.var,source,$($(1).source)}
+	@${call log.var,interpreted,yes}
+	@${call log.var,staged,yes}
+	@${call log.var,language,$($(1).language)}
+	@${call log.var,compiler,$(compiler.$($(1).language))}
+	@${call log.var,staged source,$(_staged)}
+	@${call log.var,modules,$(_modules)}
+	@${call log.sec,$(log.indent)cases,}
+	@${if $($(1).cases), \
+            ${foreach case,$($(1).cases),\
+                ${call log.var,$(log.indent)$(case),${strip \
+                    $($(case).harness) $(_launcher) $($(case).argv)}};}, \
+            $(log) $(log.indent)$(log.indent)$($(1).harness) $(_launcher) $($(1).argv)}
+
+# just in case...
+.PHONY: $(1) $(1).stage $(1).cases $(1).clean
 
 # all done
 endef

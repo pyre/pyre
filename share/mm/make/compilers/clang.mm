@@ -6,6 +6,7 @@
 
 include make/compilers/clang/clang.mm
 include make/compilers/clang/clang++.mm
+include make/compilers/clang/flang.mm
 
 
 # end of file

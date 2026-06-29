@@ -5,7 +5,7 @@
 
 
 # add me to the pile
-extern += ${if ${findstring slepc,$(extern)},,slepc}
+extern += ${if ${filter slepc,$(extern)},,slepc}
 
 # # find my configuration file
 slepc.config := ${dir ${call extern.config,slepc}}
@@ -16,6 +16,8 @@ slepc.flags ?=
 slepc.defines := WITH_SLEPC SLEPC_USE_EXTERN_CXX
 # the canonical form of the include directory
 slepc.incpath ?= $(slepc.dir)/include
+# header marker(s): files that must resolve on {incpath}; absence proves breakage
+slepc.markers.headers ?= slepcversion.h
 
 # linker flags
 slepc.ldflags ?=

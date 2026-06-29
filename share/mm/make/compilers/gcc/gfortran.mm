@@ -33,6 +33,8 @@ gfortran.opt := -O3
 gfortran.cov := -coverage
 gfortran.prof := -pg
 gfortran.shared := -fPIC
+# openmp support
+gfortran.openmp := -fopenmp
 
 # language level
 gfortran.std.f77 :=

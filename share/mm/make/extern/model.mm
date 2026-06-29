@@ -10,6 +10,13 @@ fortran.self := true
 # initialize the pile of external packages
 extern :=
 
+
+# initialize the internal variables of the various support package managers
+# conda
+conda.prefix ?=
+conda.environment ?=
+
+
 # set up the management of the package database
 ${eval ${call extern.workflows.pkgdb}}
 
@@ -37,15 +44,38 @@ extern.available := \
         ${if ${call extern.exists,$(package)},$(package),} \
     }
 
-# load the configuration files for a set of dependencies
+# include one package's configuration exactly once, then descend into its {.dependencies}. the
+# recursion follows {.dependencies} only after the package's own {init.mm} has been read, so an edge
+# computed at load time (e.g. a parallel {hdf5} electing {mpi}) is already defined when we reach it.
+# {markers.required} and its hint are opt-in, so they are defaulted to empty here — otherwise the
+# marker checks reference an undefined variable and trip -warn-undefined. these defaults cannot be
+# written as comments inside the {define} because comment text would leak into the expansion
+#   usage: extern.load.one {package}
+define extern.load.one =
+    ${if ${filter $(1),$(extern.loaded)},,
+        ${eval extern.loaded += $(1)}
+        ${foreach loc, ${extern.all},
+            ${eval include ${realpath $(loc)/$(1)/init.mm $(loc)/$(1)/rules.mm}}
+        }
+        ${eval $(1).markers.required ?=}
+        ${eval $(1).markers.required.hint ?=}
+        ${eval $(1).dependencies ?=}
+        ${foreach dep, $($(1).dependencies),
+            ${call extern.load.one,$(dep)}
+        }
+    }
+endef
+
+
+# load the configuration files for a set of dependencies and their transitive {.dependencies},
+# returning the full set of packages actually loaded
 #   usage extern.load {dependencies}
 define extern.load =
+    ${eval extern.loaded :=}
     ${foreach dep, $(1),
-        ${foreach loc, ${extern.all},
-            ${eval include ${realpath $(loc)/$(dep)/init.mm $(loc)/$(dep)/rules.mm}}
-        }
-	$(dep)
+        ${call extern.load.one,$(dep)}
     }
+    $(extern.loaded)
 endef
 
 

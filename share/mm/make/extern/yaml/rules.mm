@@ -17,8 +17,8 @@ extern.yaml.info:
 	@${call log.var,"libpath",$(yaml.libpath)}
 	@${call log.var,"libraries",$(yaml.libraries)}
 	@${call log.var,"dependencies",$(yaml.dependencies)}
-	@${call log.var,"c++ compile line",${call extern.compile.options,c++,yaml}}
-	@${call log.var,"c++ link line",${call extern.link.options,c++,yaml}}
+	@${call log.var,"c compile line",${call extern.compile.options,c,yaml}}
+	@${call log.var,"c link line",${call extern.link.options,c,yaml}}
 
 
 # end of file

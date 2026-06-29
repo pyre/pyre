@@ -3,10 +3,8 @@
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
 
-# show me
-# ${info -- fmm3d.info}
 
-# display the summit configuration
+# display the fmm3d configuration
 extern.fmm3d.info:
 	@${call log.sec,"fmm3d",}
 	@${call log.var,"version",$(fmm3d.version)}
@@ -22,7 +20,5 @@ extern.fmm3d.info:
 	@${call log.var,"c++ compile line",${call extern.compile.options,c++,fmm3d}}
 	@${call log.var,"c++ link line",${call extern.link.options,c++,fmm3d}}
 
-# show me
-# ${info -- done with fmm3d.info}
 
 # end of file

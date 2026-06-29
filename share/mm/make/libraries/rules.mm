@@ -41,13 +41,25 @@ $(1): $(1).prerequisites $(1).directories $(1).assets $(1).autogen.cleanup
 
 # clean up
 $(1).clean:: $(1).cleangen
+	@${call log.action,"rm",$($(1).tmpdir)}
+	$(rm.force-recurse) $($(1).tmpdir)
+	@${call log.action,"rm",$($(1).incdir)}
+	@${call log.action,"rm",$($(1).staging.headers.gateway)}
+	$(rm.force-recurse) $($(1).incdir) $($(1).staging.headers.gateway)
+	@${call log.action,"rm",$($(1).staging.archive)}
+	@${call log.action,"rm",$($(1).staging.dll)}
+	$(rm.force) $($(1).staging.archive) $($(1).staging.dll)
 
 $(1).prerequisites: $($(1).prerequisites)
 
 $(1).directories: $($(1).libdir) $($(1).staging.incdirs) $($(1).tmpdir)
 
-${if ${findstring $($(1).libdir),$(builder.dest.lib)},,$($(1).libdir)} \
-$($(1).staging.incdirs) $($(1).tmpdir):
+# {sort} so that a library whose {libdir} coincides with its {tmpdir} (e.g. an extension's
+# support archive, kept out of the published tree) does not list the same directory twice
+${sort \
+    ${if ${findstring $($(1).libdir),$(builder.dest.lib)},,$($(1).libdir)} \
+    $($(1).staging.incdirs) $($(1).tmpdir) \
+}:
 	$(mkdirp) $$@
 	@${call log.action,"mkdir",$$@}
 
@@ -60,9 +72,12 @@ $(1).headers: $($(1).staging.headers)
 # clean up the autogen files; nothing to do by default
 $(1).autogen.cleanup:: $(1).assets
 
+# unconditional generation of the autogen files
+$(1).gen: ${addprefix $($(1).prefix),$($(1).files.autogen)}
+
 # unconditional clean up of the autogen files
 $(1).cleangen:
-	@${call log.action,"rm",${addprefix $($(1).prefix),$($(1).files.autogen)}}
+	@${foreach file,${addprefix $($(1).prefix),$($(1).files.autogen)},${call log.action,"rm",$(file)};}
 	$(rm.force) ${addprefix $($(1).prefix),$($(1).files.autogen)}
 
 # make the rules that publish the gateway headers

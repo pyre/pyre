@@ -5,7 +5,7 @@
 
 
 # add me to the pile
-extern += ${if ${findstring petsc,$(extern)},,petsc}
+extern += ${if ${filter petsc,$(extern)},,petsc}
 
 # # find my configuration file
 petsc.config := ${dir ${call extern.config,petsc}}
@@ -16,6 +16,8 @@ petsc.flags ?=
 petsc.defines := WITH_PETSC PETSC_USE_EXTERN_CXX
 # the canonical form of the include directory
 petsc.incpath ?= $(petsc.dir)/include
+# header marker(s): files that must resolve on {incpath}; absence proves breakage
+petsc.markers.headers ?= petscversion.h
 
 # linker flags
 petsc.ldflags ?=

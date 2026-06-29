@@ -5,7 +5,7 @@
 
 
 # add me to the pile
-extern += ${if ${findstring libpq,$(extern)},,libpq}
+extern += ${if ${filter libpq,$(extern)},,libpq}
 
 # # find my configuration file
 libpq.config := ${dir ${call extern.config,libpq}}
@@ -16,6 +16,8 @@ libpq.flags ?=
 libpq.defines := WITH_LIBPQ
 # the canonical form of the include directory
 libpq.incpath ?= $(libpq.dir)/include
+# header marker(s): files that must resolve on {incpath}; absence proves breakage
+libpq.markers.headers ?= libpq-fe.h
 
 # linker flags
 libpq.ldflags ?=

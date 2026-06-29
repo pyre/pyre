@@ -5,7 +5,7 @@
 
 
 # add me to the pile
-extern += ${if ${findstring pybind11,$(extern)},,pybind11}
+extern += ${if ${filter pybind11,$(extern)},,pybind11}
 
 # # find my configuration file
 pybind11.config := ${dir ${call extern.config,pybind11}}
@@ -16,6 +16,8 @@ pybind11.flags ?=
 pybind11.defines := WITH_PYBIND11
 # the canonical form of the include directory
 pybind11.incpath ?= $(pybind11.dir)/include
+# header marker(s): files that must resolve on {incpath}; absence proves breakage
+pybind11.markers.headers ?= pybind11/pybind11.h
 
 # linker flags
 pybind11.ldflags ?=

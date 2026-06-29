@@ -34,14 +34,17 @@ g++.opt := -O3
 g++.cov := --coverage
 g++.prof := -pg
 g++.shared := -fPIC
+# openmp support
+g++.openmp := -fopenmp
 
 # language level
-g++.std.c++98 := -std=c++98
 g++.std.c++11 := -std=c++11
 g++.std.c++14 := -std=c++14
 g++.std.c++17 := -std=c++17
 g++.std.c++20 := -std=c++20
 g++.std.c++23 := -std=c++23
+# function to extract the level from the build flags of a library
+g++.std = ${patsubst -std=c++%,%,${filter -std=c++%,$($(1).c++.flags)}}
 
 # link time flags
 g++.link.output := -o

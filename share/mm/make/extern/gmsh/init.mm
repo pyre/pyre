@@ -5,7 +5,7 @@
 
 
 # add me to the pile
-extern += ${if ${findstring gmsh,$(extern)},,gmsh}
+extern += ${if ${filter gmsh,$(extern)},,gmsh}
 
 # # find my configuration file
 gmsh.config := ${dir ${call extern.config,gmsh}}
@@ -16,6 +16,8 @@ gmsh.flags ?=
 gmsh.defines := WITH_GMSH
 # the canonical form of the include directory
 gmsh.incpath ?= $(gmsh.dir)/include
+# header marker(s): files that must resolve on {incpath}; absence proves breakage
+gmsh.markers.headers ?= gmsh.h
 
 # linker flags
 gmsh.ldflags ?=

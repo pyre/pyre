@@ -5,7 +5,7 @@
 
 
 # add me to the pile
-extern += ${if ${findstring gsl,$(extern)},,gsl}
+extern += ${if ${filter gsl,$(extern)},,gsl}
 
 # # find my configuration file
 gsl.config := ${dir ${call extern.config,gsl}}
@@ -16,6 +16,8 @@ gsl.flags ?=
 gsl.defines := WITH_GSL HAVE_INLINE
 # the canonical form of the include directory
 gsl.incpath ?= $(gsl.dir)/include
+# header marker(s): files that must resolve on {incpath}; absence proves breakage
+gsl.markers.headers ?= gsl/gsl_version.h
 
 # linker flags
 gsl.ldflags ?=

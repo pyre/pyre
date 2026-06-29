@@ -5,7 +5,7 @@
 
 
 # add me to the pile
-extern += ${if ${findstring cuda,$(extern)},,cuda}
+extern += ${if ${filter cuda,$(extern)},,cuda}
 
 # find my configuration file
 cuda.config := ${dir ${call extern.config,cuda}}
@@ -14,8 +14,10 @@ cuda.config := ${dir ${call extern.config,cuda}}
 cuda.flags ?=
 # enable {cuda} aware code
 cuda.defines += WITH_CUDA
-# the canonical form of the include directory
-cuda.incpath ?= $(cuda.dir)/include
+# the canonical form of the include directory; cuda 13+ reorganized headers under cccl/
+cuda.incpath ?= $(cuda.dir)/include ${wildcard $(cuda.dir)/include/cccl}
+# header marker(s): files that must resolve on {incpath}; absence proves breakage
+cuda.markers.headers ?= cuda_runtime.h
 
 # linker flags
 cuda.ldflags ?=

@@ -8,12 +8,13 @@
 # files are included only once
 projects.contentTypes.imported :=
 
+# look for the optional project file
+-include $(project.config)/projects.mm
 # hunt for projects among the contents of $(project.config), assuming that each file there is
 # the configuration file for some project
 projects ?= ${basename ${notdir ${wildcard $(project.config)/*.mm}}}
-
 # load the project files
-include ${wildcard $(project.config)/*.mm}
+include ${addprefix $(project.config)/,${addsuffix .mm,$(projects)}}
 
 
 # bootstrap a project
@@ -47,6 +48,20 @@ define project.boot.workflows =
 endef
 
 
+# resolve the external dependencies of every asset now that the whole graph is loaded; a {define}
+# because this multi-line body would be read line-by-line — and break — at the top level of the
+# makefile
+#   usage: projects.extern.resolve {projects}
+define projects.extern.resolve =
+    ${foreach project, $(1),
+        ${foreach asset, $($(project).contents),
+            ${call extern.resolve,$(asset)}
+        }
+    }
+# all done
+endef
+
+
 # bootstrap
 # ${info --   project constructors}
 ${foreach project,$(projects), ${eval ${call project.boot,$(project)}}}
@@ -65,6 +80,14 @@ projects.extern.requested := ${sort \
 projects.extern.loaded := ${sort \
     ${call extern.load, $(projects.extern.requested)} \
 }
+
+# warn loudly about any loaded external that could not set a critical value, before the build
+# reaches a link that would fail with a far less obvious message
+${call extern.markers.required.warn, $(projects.extern.loaded)}
+
+# now that the whole external graph is loaded, resolve each asset's dependency tiers and complain
+# about anything induced-but-uninstalled (see {projects.extern.resolve})
+${eval ${call projects.extern.resolve, $(projects)}}
 
 # ${info --   project workflows}
 ${foreach project,$(projects), ${eval ${call project.boot.workflows,$(project)}}}

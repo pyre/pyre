@@ -37,6 +37,8 @@ nvcc.opt := -O3
 nvcc.cov := --coverage
 nvcc.prof := -pg
 nvcc.shared := -Xcompiler -fPIC
+# openmp support; hand the switch to the host compiler
+nvcc.openmp := -Xcompiler -fopenmp
 
 # language level
 nvcc.std.c++03 := --std=c++03
@@ -44,6 +46,8 @@ nvcc.std.c++11 := --std=c++11
 nvcc.std.c++14 := --std=c++14
 nvcc.std.c++17 := --std=c++17
 nvcc.std.c++20 := --std=c++20 # cuda 12.x
+# function to extract the level from the build flags of a library
+nvcc.std = ${patsubst --std=c++%,%,${filter --std=c++%,$($(1).c++.flags)}}
 
 # link time flags
 nvcc.link.output := -o

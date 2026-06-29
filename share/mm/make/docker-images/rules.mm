@@ -45,20 +45,21 @@ $(1): $(1).build
 # clean up
 $(1).clean::
 
-# build the image
-$(1).build:
+# build the image; {docker.verify} fails early with an actionable message if the cli is missing,
+# and {toolchain.docker.cli} resolves the executable so an off-{PATH} docker can be configured
+$(1).build: docker.verify
 	$(cd) $($(1).home) ; \
-        docker build -f $($(1).dockerfile) -t $($(1).tag) $(_buildOptions) .
+        $(toolchain.docker.cli) build -f $($(1).dockerfile) -t $($(1).tag) $(_buildOptions) .
 
 # run the image
 $(1).run: $(1).build
 	$(cd) $($(1).home) ; \
-        docker run $(_runOptions) $($(1).tag)
+        $(toolchain.docker.cli) run $(_runOptions) $($(1).tag)
 
 # launch the image interactively
 $(1).launch: $(1).build
 	$(cd) $($(1).home) ; \
-        docker run -it $(_launchOptions) $($(1).tag) /bin/bash
+        $(toolchain.docker.cli) run -it $(_launchOptions) $($(1).tag) /bin/bash
 
 # all done
 endef

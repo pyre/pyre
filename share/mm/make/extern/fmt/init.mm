@@ -5,7 +5,7 @@
 
 
 # add me to the pile
-extern += ${if ${findstring fmt,$(extern)},,fmt}
+extern += ${if ${filter fmt,$(extern)},,fmt}
 
 # # find my configuration file
 fmt.config := ${dir ${call extern.config,fmt}}
@@ -16,6 +16,8 @@ fmt.flags ?=
 fmt.defines ?= WITH_FMT
 # the canonical form of the include directory
 fmt.incpath ?= $(fmt.dir)/include
+# header marker(s): files that must resolve on {incpath}; absence proves breakage
+fmt.markers.headers ?= fmt/format.h
 
 # linker flags
 fmt.ldflags ?=

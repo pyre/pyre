@@ -5,7 +5,7 @@
 
 
 # add me to the pile
-extern += ${if ${findstring kokkos,$(extern)},,kokkos}
+extern += ${if ${filter kokkos,$(extern)},,kokkos}
 
 # find my configuration file
 kokkos.config := ${dir ${call extern.config,kokkos}}
@@ -16,6 +16,8 @@ kokkos.flags ?=
 kokkos.defines := WITH_KOKKOS
 # the canonical form of the include directory
 kokkos.incpath ?= $(kokkos.dir)/include
+# header marker(s): files that must resolve on {incpath}; absence proves breakage
+kokkos.markers.headers ?= Kokkos_Core.hpp
 
 # linker flags
 kokkos.ldflags ?=

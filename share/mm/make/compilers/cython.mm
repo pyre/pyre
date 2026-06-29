@@ -22,6 +22,8 @@ cython.opt :=
 cython.cov :=
 cython.prof :=
 cython.shared :=
+# openmp belongs to the C compiler that builds the generated source, not to {cython}
+cython.openmp :=
 
 
 # end of file

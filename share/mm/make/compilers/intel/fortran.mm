@@ -33,6 +33,8 @@ ifx.opt := -O3 -xHost
 ifx.cov := -profile-functions -profile-loops=all
 ifx.prof := -pg
 ifx.shared := -fPIC
+# openmp support
+ifx.openmp := -qopenmp
 
 # language level
 ifx.std.f77 :=

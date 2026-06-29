@@ -5,7 +5,7 @@
 
 
 # add me to the pile
-extern += ${if ${findstring proj,$(extern)},,proj}
+extern += ${if ${filter proj,$(extern)},,proj}
 
 # # find my configuration file
 proj.config := ${dir ${call extern.config,proj}}
@@ -16,6 +16,8 @@ proj.flags ?=
 proj.defines := WITH_PROJ
 # the canonical form of the include directory
 proj.incpath ?= $(proj.dir)/include
+# header marker(s): files that must resolve on {incpath}; absence proves breakage
+proj.markers.headers ?= proj.h
 
 # linker flags
 proj.ldflags ?=

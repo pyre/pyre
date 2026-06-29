@@ -67,7 +67,7 @@ $($(1).module.so): ${call extension.workflows.dependencies,$(1)}
             $($(1).lib).$($(1).module.language) $($(1).lib) $($(1).wraps) $($(1).extern)}
 
 # clean up
-$(1).clean::
+$(1).clean:: $(1).lib.clean
 	@${call log.action,"rm",$($(1).module.so)}
 	$(rm.force) $($(1).module.so)
 
