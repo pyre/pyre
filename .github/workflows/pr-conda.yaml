@@ -29,9 +29,13 @@ jobs:
           - compiler: gcc
             suite: gcc
             toolchain: gcc gxx
+            cc: gcc
+            cxx: g++
           - compiler: clang
             suite: clang
             toolchain: clang clangxx
+            cc: clang
+            cxx: clang++
 
     env:
       mm: python3 ${{github.workspace}}/mm/mm --config=.github/matrix/mm-conda.yaml
@@ -72,9 +76,9 @@ jobs:
           echo " -- make"
           make --version
           echo " -- C compiler"
-          ${CC} --version
+          ${{matrix.cc}} --version
           echo " -- C++ compiler"
-          ${CXX} --version
+          ${{matrix.cxx}} --version
           echo " -- python"
           python --version
           if [ "${{matrix.cuda}}" = "cuda" ]; then
