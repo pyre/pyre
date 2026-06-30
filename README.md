@@ -20,7 +20,7 @@ already be installed. Please contact the system administrators for instructions 
 it, and skip to the end of this section.
 
 If you are comfortable with `jupyter` notebooks, the current
-[release tarball](https://github.com/aivazis/pyre/archive/refs/tags/v1.12.7.tar.gz)
+[release tarball](https://github.com/pyre/pyre/archive/refs/tags/v1.12.7.tar.gz)
 contains a notebook that can walk you through the installation procedure with minimal tweaking.
 It is located in `etc/mamba/pyre.ipynb`. Please report any difficulties you encounter.
 
