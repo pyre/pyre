@@ -17,8 +17,18 @@ pyre-cuda.packages := pyre-cuda.pkg
 pyre-cuda.libraries := pyre-cuda.lib
 # the mandatory extensions
 pyre-cuda.extensions := pyre-cuda.ext
-# and test suites
+
+# building {pyre-cuda} needs only the cuda toolkit, but running its tests needs an actual
+# device to execute on; gate the test suites on the presence of a cuda runtime, not on the
+# build-time availability of the package; probe the driver with {nvidia-smi} — the canonical
+# check, since the {/dev/nvidia*} nodes can be absent on a capable host until the driver
+# initializes them — but let the user override
+pyre-cuda.cuda.runtime ?= ${if ${shell command -v nvidia-smi > /dev/null 2>&1 && nvidia-smi -L 2>/dev/null | grep -m1 '^GPU'},cuda,}
+ifeq ($(pyre-cuda.cuda.runtime), cuda)
 pyre-cuda.tests := pyre-cuda.pkg.tests pyre-cuda.lib.tests
+else
+pyre-cuda.tests :=
+endif
 
 
 # the package
@@ -54,8 +64,10 @@ pyre-cuda.ext.lib.prerequisites += journal.lib pyre.lib
 cuda.libraries += cudart
 
 
-# get the testsuites
+# get the testsuites, when a cuda runtime gated them in
+ifeq ($(pyre-cuda.cuda.runtime), cuda)
 include $(pyre-cuda.tests)
+endif
 
 
 endif

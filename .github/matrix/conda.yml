@@ -1,0 +1,24 @@
+# -*- yaml -*-
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2026 all rights reserved
+
+# the conda-forge environment with the pyre build dependencies; the per-matrix
+# toolchain (gcc/clang) and the optional cuda toolkit are layered on top of this
+# base by the workflow, so they are deliberately absent here
+name: pyre
+channels:
+  - conda-forge
+dependencies:
+  # the build driver: conda-forge ships GNU make >= 4.4, which mm needs for {.WAIT}
+  - make
+  # the interpreter and its build-time helpers
+  - python
+  - numpy
+  - pybind11
+  - pyyaml
+  # the native external packages
+  - gsl
+  - hdf5
+  - openmpi
+#
+# end of file
