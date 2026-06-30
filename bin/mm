@@ -55,33 +55,31 @@ import merlin
 # bootstrap
 if __name__ == "__main__":
     # find out where i live
-    _mm_prefix = pyre.primitives.path(__file__).resolve().parent
+    _mm_home = pyre.primitives.path(__file__).resolve().parent
     # check whether i'm running from my source directory
-    _mm_insitu = (_mm_prefix / "make").exists()
+    _mm_insitu = (_mm_home / "make" / "merlin.mm").exists()
 
     # if i'm running in-place
     if _mm_insitu:
         # this is the layout i expect to see:
         # the {portinfo} headers
-        _mm_incdir = _mm_prefix / "include" / "mm"
+        _mm_incdir = _mm_home / "include" / "mm"
         # the share area
-        _mm_shrdir = _mm_prefix
+        _mm_shrdir = _mm_home
         # my makefiles
         _mm_mkdir = _mm_shrdir / "make"
     # otherwise
     else:
         # assume i am installed in a u*ixy environment:
         # the {portinfo} headers
-        _mm_incdir = (_mm_prefix / ".." / "include" / "mm").resolve()
+        _mm_incdir = (_mm_home / ".." / "include" / "mm").resolve()
         # my share area
-        _mm_shrdir = (_mm_prefix / ".." / "share" / "mm").resolve()
+        _mm_shrdir = (_mm_home / ".." / "share" / "mm").resolve()
         # my makefiles
         _mm_mkdir = (_mm_shrdir / "make").resolve()
 
     # instantiate the app
-    app = merlin.shells.mm(
-        name="mm", home=_mm_prefix, engine=_mm_mkdir, portinfo=_mm_incdir
-    )
+    app = merlin.shells.mm(name="mm", engine=_mm_mkdir, portinfo=_mm_incdir)
     # invoke
     status = app.run()
     # and share the status with the shell
