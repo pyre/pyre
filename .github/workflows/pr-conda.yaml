@@ -1,0 +1,119 @@
+# -*- yaml -*-
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2026 all rights reserved
+
+name: pr-conda
+on:
+  pull_request:
+jobs:
+  # build and test the ref that launched this action against a conda-forge toolchain
+  build:
+    name: >-
+      ${{matrix.target}}
+      ${{matrix.compiler}}${{matrix.cuda == 'cuda' && '+cuda' || ''}}
+      on ${{matrix.os}}
+    runs-on: ${{matrix.os}}
+    # a login shell so the micromamba environment is active in every step
+    defaults:
+      run:
+        shell: bash -el {0}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest]
+        target: [debug, opt]
+        compiler: [gcc, clang]
+        cuda: [nocuda, cuda]
+        # the conda-forge toolchain packages for each compiler
+        include:
+          - compiler: gcc
+            suite: gcc
+            toolchain: gcc gxx
+            cc: gcc
+            cxx: g++
+          - compiler: clang
+            suite: clang
+            toolchain: clang clangxx
+            cc: clang
+            cxx: clang++
+
+    env:
+      mm: python3 ${{github.workspace}}/mm/mm --config=.github/matrix/mm-conda.yaml
+      target: ${{matrix.target}}
+      suite: ${{matrix.suite}}
+
+    steps:
+      - name: checkout pyre
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          path: pyre
+
+      - name: clone mm
+        run: |
+          echo " -- cloning mm"
+          git clone https://github.com/aivazis/mm
+
+      - name: conda-forge environment
+        uses: mamba-org/setup-micromamba@v2
+        with:
+          micromamba-version: latest
+          environment-file: pyre/.github/matrix/conda.yml
+          # conda-forge only, with strict priority so nothing leaks in from defaults
+          condarc: |
+            channels:
+              - conda-forge
+            channel_priority: strict
+          # layer the per-matrix toolchain and the optional cuda toolkit onto the base env
+          create-args: >-
+            ${{matrix.toolchain}}
+            ${{matrix.cuda == 'cuda' && 'cuda-toolkit' || ''}}
+
+      - name: versions
+        run: |
+          echo " -- conda prefix"
+          echo "${CONDA_PREFIX}"
+          echo " -- make"
+          make --version
+          echo " -- C compiler"
+          ${{matrix.cc}} --version
+          echo " -- C++ compiler"
+          ${{matrix.cxx}} --version
+          echo " -- python"
+          python --version
+          if [ "${{matrix.cuda}}" = "cuda" ]; then
+            echo " -- nvcc"
+            nvcc --version
+          fi
+
+      - name: configure mm
+        run: |
+          echo " -- creating ~/.pyre"
+          mkdir -p ~/.pyre
+          echo " -- copying the mm configuration file"
+          cp pyre/.github/matrix/mm-conda.yaml ~/.pyre/mm.yaml
+
+      - name: package database
+        run: |
+          echo " -- switching to the pyre source directory"
+          cd pyre
+          echo " -- discovering the conda packages"
+          ${mm} --pkgdb=conda --setup
+          echo " -- the resulting package database"
+          ${mm} --pkgdb=conda extern.db.info
+
+      - name: build pyre
+        run: |
+          echo " -- switching to the pyre source directory"
+          cd pyre
+          echo " -- building pyre into the conda prefix"
+          ${mm} --pkgdb=conda --mode=conda --jobs=2
+
+      - name: test pyre
+        run: |
+          echo " -- switching to the pyre source directory"
+          cd pyre
+          echo " -- testing pyre"
+          ${mm} --pkgdb=conda --mode=conda --jobs=2 tests
+#
+# end of file
