@@ -1,0 +1,26 @@
+# -*- yaml -*-
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2026 all rights reserved
+
+
+# configuration for the {mm} build of pyre against a conda-forge toolchain
+mm:
+    # targets
+    target: "{pyre.environ.target},shared"
+
+    # compilers
+    compilers: "{pyre.environ.suite}, python/python3"
+
+    # intermediate build products
+    bldroot: /home/runner/work/build
+
+    # the location of the adhoc configuration files
+    runcfg: .github/matrix
+
+    # the name of the make utility; conda-forge make satisfies the >= 4.4 requirement
+    make: make
+
+# the final products go straight into the active conda environment via {--mode=conda},
+# so {prefix} is deliberately left unset here
+
+# end of file
