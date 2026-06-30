@@ -6,8 +6,6 @@
 
 # pyre builds a python package
 pyre.packages := pyre.pkg
-# the pure-python packages that make up the bootstrap bundle
-pyre.boot.packages := pyre.pkg journal.pkg merlin.pkg
 # libraries
 pyre.libraries := pyre.lib
 # the mandatory extensions
@@ -25,6 +23,11 @@ pyre.tests := pyre.python.tests pyre.pkg.tests pyre.lib.tests pyre.ext.tests sql
 
 # we also some files that get moved verbatim
 pyre.verbatim := pyre.templates
+
+# the bootstrap bundle
+pyre.boot.packages := pyre.pkg journal.pkg merlin.pkg
+# the bootstrap zip file entry point
+pyre.boot.main := etc/boot/main.py
 
 
 # predicates that check the c++ standard in use

@@ -62,8 +62,12 @@ endef
 
 # zip the currently-staged contents into the archive, replacing any previous one
 #   usage: project.boot.zip {project}
+# when the project nominates an entry point, it is dropped in as {__main__.py} at the zip root
+# right before bundling, so the freshest copy always ships and {python bundle.zip} just works
 define project.boot.zip =
 	$(rm.force) $($(1).boot.archive)
+	$(mkdirp) $($(1).boot.contents)
+	${if $($(1).boot.main),${if $(wildcard $($(1).home)/$($(1).boot.main)),$(cp) $($(1).home)/$($(1).boot.main) $($(1).boot.contents)__main__.py}}
 	cd $($(1).boot.contents) && $(zip) $(zip.flags.bundle) $($(1).boot.archive) .
 	@${call log.asset,"boot",$($(1).boot.archive)}
 endef
