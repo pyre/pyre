@@ -45,6 +45,25 @@ jobs:
           echo " -- install our dependencies"
           sudo apt install -y make openssh-server libgsl-dev libopenmpi-dev libhdf5-dev
 
+      - name: GNU make 4.4.1
+        run: |
+          echo " -- the runner ships an older make"
+          make --version
+          echo " -- mm requires GNU make >= 4.4 for the {.WAIT} primitive"
+          echo " -- fetching the GNU make 4.4.1 sources"
+          curl -LO https://ftp.gnu.org/gnu/make/make-4.4.1.tar.gz
+          echo " -- unpacking"
+          tar xzf make-4.4.1.tar.gz
+          echo " -- building and installing into /usr/local"
+          cd make-4.4.1
+          ./configure --prefix=/usr/local
+          make -j2
+          sudo make install
+          echo " -- refreshing the shell command hash"
+          hash -r
+          echo " -- the make now on PATH"
+          make --version
+
       - name: python ${{matrix.python}} setup
         uses: actions/setup-python@v5
         with:
