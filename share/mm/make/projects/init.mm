@@ -58,6 +58,9 @@ define project.init =
     ${eval $(1).boot.contents ?= $($(1).boot.root)contents/}
     # the bundle archive itself
     ${eval $(1).boot.archive ?= $($(1).boot.root)$($(1).stem)-boot.zip}
+    # an optional entry-point script, staged as the archive's {__main__.py} so the bundle is
+    # directly runnable with {python bundle.zip}; empty unless the project provides one
+    ${eval $(1).boot.main ?=}
 
     # make
     # the directory from where {make} was invoked, i.e. the nearest parent with a local
