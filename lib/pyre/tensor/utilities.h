@@ -19,6 +19,10 @@ namespace pyre::tensor {
     template <int D1, int D2, typename T, class packingT>
     std::ostream & operator<<(std::ostream & os, const matrix_t<D1, D2, T, packingT> & tensor);
 
+    // overload operator<< for quaternions
+    template <typename T>
+    std::ostream & operator<<(std::ostream & os, const UnitQuaternion<T> & quaternion);
+
     template <typename T>
     constexpr bool is_equal(T lhs, T rhs);
 

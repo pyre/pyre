@@ -172,6 +172,39 @@ pyre::math::cos(double x) -> double
     }
 }
 
+// {constexpr} tan function
+constexpr auto
+pyre::math::tan(double x) -> double
+{
+    if (std::is_constant_evaluated()) {
+        return pyre::math::sin(x) / pyre::math::cos(x);
+    } else {
+        return std::tan(x);
+    }
+}
+
+// {constexpr} asin function
+constexpr auto
+pyre::math::asin(double x) -> double
+{
+    if (std::is_constant_evaluated()) {
+        return pyre::math::atan(x / pyre::math::sqrt(1.0 - x * x));
+    } else {
+        return std::asin(x);
+    }
+}
+
+// {constexpr} acos function
+constexpr auto
+pyre::math::acos(double x) -> double
+{
+    if (std::is_constant_evaluated()) {
+        return pyre::math::atan(pyre::math::sqrt(1.0 - x * x) / x);
+    } else {
+        return std::acos(x);
+    }
+}
+
 namespace {
     // Taylor series expansion for tangent
     constexpr auto atan_poly(double x, int terms = 15) -> double
