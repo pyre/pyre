@@ -115,8 +115,8 @@ auto
 pyre::h5::types::Datatype::decode(const string_t & buffer) const -> Datatype
 {
     // ask the library to reconstitute the type, which hands back a fresh handle, and adopt it
-#if H5_VERSION_GE(1, 14, 3)
-    // newer releases want the buffer size, so out-of-bounds reads can be caught
+#if H5_VERSION_GE(2, 0, 0)
+    // {H5Tdecode2} first appears in 2.0.0; it wants the buffer size, so out-of-bounds reads can be caught
     return Datatype(static_cast<id_type>(H5Tdecode2(buffer.data(), buffer.size())));
 #else
     // older releases trust the buffer to be well formed
