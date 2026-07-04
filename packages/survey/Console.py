@@ -25,8 +25,9 @@ class Console:
         # the streams to talk to, defaulting to the process standard streams
         self._istream = istream if istream is not None else sys.stdin
         self._ostream = ostream if ostream is not None else sys.stdout
-        # the input file descriptor, which is what {termios} operates on
-        self._fd = self._istream.fileno()
+        # the input file descriptor is resolved lazily, only when we enter raw mode, so a
+        # {Console} can wrap streams without one (a {StringIO}) for the non-interactive paths
+        self._fd = None
         # a place to stash the cooked-mode settings while we are in raw mode
         self._saved = None
 
@@ -87,6 +88,8 @@ class Console:
         return
 
     def __enter__(self) -> "Console":
+        # resolve the input descriptor now that we actually need raw mode
+        self._fd = self._istream.fileno()
         # remember the cooked settings, then switch to cbreak so keys arrive immediately
         # while ctrl-c still raises {KeyboardInterrupt} rather than arriving as a byte
         self._saved = termios.tcgetattr(self._fd)
