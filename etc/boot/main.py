@@ -44,13 +44,17 @@ class Boot(pyre.application, family="pyre.applications.boot", namespace="boot"):
     target.default = None
     target.doc = "the directory to populate with the pyre source"
 
-    source = pyre.properties.str()
-    source.default = None
-    source.doc = "the release tag to pull, or {head} for the tip; defaults to this archive's own tag"
+    channel = pyre.properties.str()
+    channel.default = None
+    channel.doc = "which stream to build: a published {release} or the bleeding {edge}; unset asks"
+
+    tag = pyre.properties.str()
+    tag.default = None
+    tag.doc = "a specific release tag to build, even one not shown on the menu"
 
     branch = pyre.properties.str()
     branch.default = None
-    branch.doc = "the branch to clone when building the bleeding edge; defaults to {main}"
+    branch.doc = "the branch to clone when building the edge; defaults to {main}"
 
     mode = pyre.properties.str(default="dev")
     mode.validators = pyre.constraints.isMember(*modes)
@@ -73,14 +77,14 @@ class Boot(pyre.application, family="pyre.applications.boot", namespace="boot"):
         # and greet the user with that provenance
         self.info.log(f"pyre bootstrapper — release {human} ({tag})")
 
-        # settle what to build: a stable tag, or the tip of a development branch
-        self.source = self.pick(default=tag)
+        # settle the stream and the exact tag or branch to build
+        self.resolve(default_tag=tag)
         # decide where the source should land, defaulting to a sibling named for the choice
         self.target = self.ask(
             question="where should I put the source",
             default=str(
                 self.target
-                or pyre.primitives.path.cwd() / f"pyre-{self.branch or self.source}"
+                or pyre.primitives.path.cwd() / f"pyre-{self.branch or self.tag}"
             ),
         )
         # and settle on the layout strategy {mm} will use
@@ -107,8 +111,13 @@ class Boot(pyre.application, family="pyre.applications.boot", namespace="boot"):
         # and drive the build to completion
         self.build(target=target)
 
-        # leave the user knowing where their freshly built tree lives
-        self.info.log(f"pyre is built; the source lives in '{target}'")
+        # leave the user knowing both where the source lives and where the products landed
+        self.info.log("pyre is built")
+        self.info.log(f"  source:   {target}")
+        # the install prefix comes straight from {mm}, when it is willing to tell us
+        prefix = self.installPrefix(target=target)
+        if prefix:
+            self.info.log(f"  products: {prefix}")
         # and report success
         return 0
 
@@ -122,42 +131,76 @@ class Boot(pyre.application, family="pyre.applications.boot", namespace="boot"):
         # and hand back both the git tag and a reader-friendly rendering of it
         return f"v{major}.{minor}.{micro}", f"{major}.{minor}.{micro} rev {revision}"
 
-    def pick(self, *, default: str) -> str:
+    def resolve(self, *, default_tag: str) -> None:
         """
-        Settle on what to build: a published release, or the tip of a development branch
+        Settle the {channel} and the exact {tag} or {branch} to build, honoring explicit choices
         """
-        # an explicit choice on the command line ends the conversation before it starts
-        if self.source:
-            # so hand it straight back
-            return self.source
-        # with nothing chosen and no one to prompt, this archive's own release is the safe bet
-        if not self.interactive:
-            # so fall back to it
-            return default
-        # the first fork in the road: a stable release, or the bleeding edge?
-        edition = self.ask(
-            question="build a released version or the bleeding edge",
-            default="released",
-        )
-        # anything that leans toward the edge routes us to a live branch checkout
-        if edition.lower() in ("b", "bleeding", "bleeding-edge", "edge", "head", "dev"):
-            # so find out which branch to track, defaulting to the mainline
-            self.branch = self.ask(question="which branch", default=self.branch or "main")
-            # and flag the source as a checkout rather than a tag
-            return "head"
-        # otherwise we are on the release track, so show what GitHub actually publishes
+        # a tag and a branch at once are contradictory; refuse to guess which one wins
+        if self.tag and self.branch:
+            self.error.log("specify a release tag or a branch, not both")
+        # an explicit tag pins the release stream outright
+        if self.tag:
+            self.channel = "release"
+            return
+        # an explicit branch pins the edge stream outright
+        if self.branch:
+            self.channel = "edge"
+            return
+        # with neither pinned, decide the stream: a command-line choice, else a question, else default
+        if self.channel:
+            # normalize whatever arrived on the command line
+            self.channel = self.normalizeChannel(text=self.channel)
+        elif self.interactive:
+            # ask the one question that opens the whole flow
+            self.channel = self.normalizeChannel(
+                text=self.ask(
+                    question="build a released version or the bleeding edge",
+                    default="released",
+                )
+            )
+        else:
+            # batch mode with nothing set builds this archive's own release
+            self.channel = "release"
+        # now fill in the piece the chosen stream still needs
+        if self.channel == "edge":
+            # a branch to clone, defaulting to the mainline
+            self.branch = self.ask(question="which branch", default="main")
+        else:
+            # a release tag, offered from the menu interactively, else our own by default
+            self.tag = (
+                self.pickRelease(default=default_tag) if self.interactive else default_tag
+            )
+        # both {channel} and its reference are now settled
+        return
+
+    def normalizeChannel(self, *, text: str) -> str:
+        """
+        Map free-form text to a stream, leaning toward {release} unless the edge is clearly asked for
+        """
+        # treat any of the edge-flavored answers as a request for the bleeding edge
+        if text.lower() in ("e", "edge", "b", "bleeding", "bleeding-edge", "head", "dev"):
+            return "edge"
+        # everything else means a published release
+        return "release"
+
+    def pickRelease(self, *, default: str) -> str:
+        """
+        Offer the buildable releases newest-first and let the user settle on a tag
+        """
+        # ask GitHub for the releases this archive can actually build
         tags = self.catalog()
-        # and when the catalog came back, put the newest handful in front of the user
+        # and when any came back, put the newest few in front of the user as a hint
         if tags:
-            # a compact preview, trailing an ellipsis when there is more than we show
-            shown = ", ".join(tags[:8])
-            self.info.log(f"available releases: {shown}{' …' if len(tags) > 8 else ''}")
-        # then let them settle on the tag to pull
+            # a short preview, trailing an ellipsis when the list runs longer
+            shown = ", ".join(tags[:3])
+            self.info.log(f"available releases: {shown}{' …' if len(tags) > 3 else ''}")
+        # the prompt still accepts any tag, on the menu or not
         return self.ask(question="which release", default=default)
 
     def catalog(self) -> typing.List[str]:
         """
-        Query GitHub for the published release tags, newest first; empty on any failure
+        Query GitHub for the releases this archive can build — its own version or newer, newest
+        first — since older releases predate this bootstrapper's machinery; empty on any failure
         """
         # turn the repository url into the releases endpoint of the GitHub API
         slug = self.repo.rstrip("/").removeprefix("https://github.com/")
@@ -179,8 +222,33 @@ class Boot(pyre.application, family="pyre.applications.boot", namespace="boot"):
             self.warning.log(f"could not reach GitHub for the release list ({error})")
             # and carry on with an empty catalog; the embedded tag still works
             return []
-        # otherwise surface just the tag names, keeping GitHub's newest-first ordering
-        return [release["tag_name"] for release in payload]
+        # this archive can only vouch for releases at least as new as itself
+        floor = tuple(pyre.meta.version[:3])
+        # keep the published tags that parse and clear that floor, in GitHub's newest-first order
+        buildable = []
+        for release in payload:
+            # parse the tag into a comparable version
+            version = self.parseTag(tag=release["tag_name"])
+            # and keep it only when it is well-formed and not older than us
+            if version is not None and version >= floor:
+                buildable.append(release["tag_name"])
+        # hand back just the buildable subset
+        return buildable
+
+    def parseTag(self, *, tag: str) -> typing.Optional[typing.Tuple[int, ...]]:
+        """
+        Parse a {vX.Y.Z} release tag into a comparable integer triple, or {None} if it doesn't fit
+        """
+        # drop an optional leading {v}
+        body = tag[1:] if tag.startswith("v") else tag
+        # split into its dotted fields
+        fields = body.split(".")
+        # a well-formed release tag is exactly three all-numeric fields
+        if len(fields) != 3 or not all(field.isdigit() for field in fields):
+            # anything else is not a release we can order, so decline it
+            return None
+        # hand back the numeric triple for comparison
+        return tuple(int(field) for field in fields)
 
     def ask(self, *, question: str, default: str) -> str:
         """
@@ -266,7 +334,7 @@ class Boot(pyre.application, family="pyre.applications.boot", namespace="boot"):
             self.error.log(f"'{target}' already exists and is not empty")
 
         # the bleeding edge arrives as a git checkout the user can actually work in
-        if self.source == "head":
+        if self.channel == "edge":
             # and none of that is possible without git on hand
             if shutil.which("git") is None:
                 # so say so plainly and stop
@@ -293,7 +361,7 @@ class Boot(pyre.application, family="pyre.applications.boot", namespace="boot"):
             return
 
         # every other choice is a published tag, delivered as a tarball
-        url = f"{self.repo}/archive/refs/tags/{self.source}.tar.gz"
+        url = f"{self.repo}/archive/refs/tags/{self.tag}.tar.gz"
         # announce the download so a slow network does not read as a hang
         self.info.log(f"downloading {url}")
         # then fetch and unpack it into place
@@ -391,48 +459,65 @@ class Boot(pyre.application, family="pyre.applications.boot", namespace="boot"):
         """
         Drive the freshly staged tree's own {mm} driver in a subprocess
         """
-        # announce the build so its mode and source are on the record
+        # announce the build so its mode and target are on the record
         self.info.log(f"building pyre in '{self.mode}' mode from '{target}'")
-
-        # the staged tree ships its own {mm} driver; running it in a fresh process keeps it
-        # the sole {pyre.application} and sidesteps the one-app-per-process constraint that
-        # would otherwise bite, since this bootstrapper is already the running application
-        driver = target / "bin" / "mm"
-        # {mm} refuses to start unless its portinfo headers exist, and by default it looks
-        # for them under {include/mm} — an install artifact a fresh checkout does not have;
-        # the very same headers ship in-source under {lib/mm}, so point it there to pass
-        portinfo = target / "lib" / "mm"
-
-        # start from a copy of our own environment so we only add to it
-        environment = dict(os.environ)
-        # locate the archive we are running from, which is our copy of the framework
-        archive = os.path.dirname(__file__)
-        # note whatever PYTHONPATH the user already has
-        existing = environment.get("PYTHONPATH")
-        # then prepend our archive so the child's {import pyre} resolves against it
-        # instead of fetching a bootstrap zip of its own
-        environment["PYTHONPATH"] = (
-            os.pathsep.join((archive, existing)) if existing else archive
-        )
-
-        # run the driver from the tree root, where {mm} finds the local {.mm} configuration,
-        # overriding portinfo so the build compiles against the in-source headers
-        outcome = subprocess.run(
-            [
-                sys.executable,
-                str(driver),
-                f"--mode={self.mode}",
-                f"--portinfo={portinfo}",
-            ],
-            cwd=str(target),
-            env=environment,
-        )
-
+        # run the default build target and wait for it to finish
+        outcome = self.runMM(target=target, args=[])
         # a non-zero exit from the build is a real failure the user needs to hear about
         if outcome.returncode != 0:
             self.error.log(f"the build exited with status {outcome.returncode}")
         # otherwise the build stands on its own output; nothing to add
         return
+
+    def installPrefix(self, *, target: "pyre.primitives.path") -> typing.Optional[str]:
+        """
+        Ask the staged {mm} where it delivered the build products, or {None} if it will not say
+        """
+        # a quiet, capturing query for the install prefix
+        outcome = self.runMM(target=target, args=["builder.info.prefix"], capture=True)
+        # if the query failed, we simply do not know where things landed
+        if outcome.returncode != 0:
+            return None
+        # {mm} prints the prefix as a plain path, so take the last non-empty line
+        lines = [line.strip() for line in outcome.stdout.splitlines() if line.strip()]
+        return lines[-1] if lines else None
+
+    def runMM(
+        self, *, target: "pyre.primitives.path", args: typing.List[str], capture: bool = False
+    ) -> "subprocess.CompletedProcess":
+        """
+        Run the staged tree's {mm} driver with our common plumbing and hand back the completed process
+        """
+        # the driver ships with the staged tree; running it in a fresh process keeps it the sole
+        # {pyre.application} and sidesteps the one-app-per-process collision this bootstrapper
+        # would otherwise trigger by instantiating a second application inside itself
+        driver = target / "bin" / "mm"
+        # {mm} refuses to start unless its portinfo headers exist, and by default it looks for them
+        # under {include/mm} — an install artifact a fresh checkout does not have; the very same
+        # headers ship in-source under {lib/mm}, so point it there to clear the startup gate
+        portinfo = target / "lib" / "mm"
+        # lend the child our framework so its {import pyre} resolves against this archive rather
+        # than fetching a bootstrap zip of its own
+        environment = dict(os.environ)
+        # the archive we are running from is our copy of the framework
+        archive = os.path.dirname(__file__)
+        # respect whatever PYTHONPATH the user already has by prepending, not replacing
+        existing = environment.get("PYTHONPATH")
+        environment["PYTHONPATH"] = (
+            os.pathsep.join((archive, existing)) if existing else archive
+        )
+        # the driver, the mode and portinfo overrides, then whatever targets the caller wants
+        command = [
+            sys.executable,
+            str(driver),
+            f"--mode={self.mode}",
+            f"--portinfo={portinfo}",
+            *args,
+        ]
+        # run it from the tree root, where {mm} finds the local {.mm} configuration
+        return subprocess.run(
+            command, cwd=str(target), env=environment, capture_output=capture, text=capture
+        )
 
 
 # bootstrap: this module is staged as the archive's {__main__.py}, so it is the entry point
