@@ -394,10 +394,14 @@ class Boot(pyre.application, family="pyre.applications.boot", namespace="boot"):
         # announce the build so its mode and source are on the record
         self.info.log(f"building pyre in '{self.mode}' mode from '{target}'")
 
-        # the staged tree ships its own {mm}, which finds its engine and portinfo relative
-        # to itself; running it in a fresh process keeps it the sole {pyre.application} and
-        # sidesteps the one-application-per-process constraint that would otherwise bite
+        # the staged tree ships its own {mm} driver; running it in a fresh process keeps it
+        # the sole {pyre.application} and sidesteps the one-app-per-process constraint that
+        # would otherwise bite, since this bootstrapper is already the running application
         driver = target / "bin" / "mm"
+        # {mm} refuses to start unless its portinfo headers exist, and by default it looks
+        # for them under {include/mm} — an install artifact a fresh checkout does not have;
+        # the very same headers ship in-source under {lib/mm}, so point it there to pass
+        portinfo = target / "lib" / "mm"
 
         # start from a copy of our own environment so we only add to it
         environment = dict(os.environ)
@@ -411,9 +415,15 @@ class Boot(pyre.application, family="pyre.applications.boot", namespace="boot"):
             os.pathsep.join((archive, existing)) if existing else archive
         )
 
-        # run the driver from the tree root, where {mm} finds the local {.mm} configuration
+        # run the driver from the tree root, where {mm} finds the local {.mm} configuration,
+        # overriding portinfo so the build compiles against the in-source headers
         outcome = subprocess.run(
-            [sys.executable, str(driver), f"--mode={self.mode}"],
+            [
+                sys.executable,
+                str(driver),
+                f"--mode={self.mode}",
+                f"--portinfo={portinfo}",
+            ],
             cwd=str(target),
             env=environment,
         )
