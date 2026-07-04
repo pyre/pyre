@@ -8,7 +8,6 @@
 Decode a raw terminal byte stream into logical keypresses
 """
 
-
 # the names a decoded key can carry
 UP = "up"
 DOWN = "down"
@@ -119,7 +118,9 @@ def _utf8(lead, pending):
         # a stray continuation byte with no lead; hand it back as-is
         return chr(lead)
     # gather the continuation bytes that are actually waiting
-    trailing = bytes(byte for byte in (pending() for _ in range(count)) if byte is not None)
+    trailing = bytes(
+        byte for byte in (pending() for _ in range(count)) if byte is not None
+    )
     # decode the whole thing, falling back to the raw lead if it does not cohere
     try:
         return (bytes([lead]) + trailing).decode("utf-8")

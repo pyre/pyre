@@ -8,10 +8,8 @@
 Truecolor helpers for styling prompts
 """
 
-
 # externals
 import os
-
 
 # the SGR sequence that closes any active styling
 RESET = "\x1b[0m"
@@ -38,7 +36,7 @@ def paint(text: str, code: str, *, enabled: bool = True) -> str:
     # nothing to do when color is suppressed or there is no code to apply
     if not enabled or not code:
         return text
-    # otherwise open with the code and close with a reset
+    # otherwise wrap it so the styling stops where the text ends
     return f"{code}{text}{RESET}"
 
 
@@ -54,13 +52,14 @@ def _toRGB(h: float, s: float, l: float):
     """
     Convert an hsl color to an (r, g, b) triple of 0-255 integers
     """
-    # the chroma of the color, and where the hue sits in the six 60-degree sectors
+    # how far the color departs from gray at this lightness, and which of the six hue
+    # sectors it lands in
     c = (1 - abs(2 * l - 1)) * s
     hp = (h % 360) / 60
-    # the second-largest component, and the base offset that sets the lightness
+    # the ramp toward the neighboring primary, and the shift that reaches the target lightness
     x = c * (1 - abs(hp % 2 - 1))
     m = l - c / 2
-    # pick the component ordering for the sector the hue falls in
+    # let the primaries that dominate this sector claim the strong and middle components
     if hp < 1:
         r, g, b = c, x, 0
     elif hp < 2:
@@ -73,7 +72,7 @@ def _toRGB(h: float, s: float, l: float):
         r, g, b = x, 0, c
     else:
         r, g, b = c, 0, x
-    # lift each component by the base and scale to a byte
+    # settle each channel at the requested lightness and express it as a byte
     return round((r + m) * 255), round((g + m) * 255), round((b + m) * 255)
 
 
