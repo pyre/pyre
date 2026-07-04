@@ -13,6 +13,14 @@ def main():
     """
     A small project-scaffolding wizard that walks through everything {survey} can do today
     """
+    # style the prompts: a cool blue for the questions, a warm orange for the current choice
+    survey.set_theme(
+        survey.Theme(
+            message=survey.chroma.hsl(210, 0.85, 0.62),
+            selected=survey.chroma.hsl(28, 0.90, 0.55),
+        )
+    )
+
     # set the scene
     print("── pyre project wizard ─────────────────────────────")
     print("a quick tour of survey's prompts; press ctrl-c to bail\n")
