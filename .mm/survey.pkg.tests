@@ -1,0 +1,12 @@
+# -*- Makefile -*-
+#
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2026 all rights reserved
+
+
+# the survey package test suite
+survey.pkg.tests.stem := survey.pkg
+survey.pkg.tests.prerequisites := survey.pkg
+
+
+# end of file
