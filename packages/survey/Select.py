@@ -114,7 +114,9 @@ class Select(Prompt):
         # each visible option, the highlighted one marked and painted with the selection color
         for position in range(start, end):
             if position == index:
-                rows.append(self.paint(f"❯ {self.options[position]}", self.theme.selected))
+                rows.append(
+                    self.paint(f"❯ {self.options[position]}", self.theme.selected)
+                )
             else:
                 rows.append(f"  {self.options[position]}")
         # commit the frame and remember how tall it was

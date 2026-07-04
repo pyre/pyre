@@ -8,7 +8,6 @@
 survey is a small toolkit for interactive terminal prompts
 """
 
-
 # the prompt types
 from .Prompt import Prompt
 from .Input import Input

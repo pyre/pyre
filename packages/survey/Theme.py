@@ -18,7 +18,9 @@ class Theme:
         # the question text; a cool blue by default
         self.message = message if message is not None else chroma.hsl(210, 0.85, 0.62)
         # the highlighted option in a list; a calm cyan by default
-        self.selected = selected if selected is not None else chroma.hsl(190, 0.75, 0.55)
+        self.selected = (
+            selected if selected is not None else chroma.hsl(190, 0.75, 0.55)
+        )
         # the marker beside the highlight, matching the selection unless overridden
         self.pointer = pointer if pointer is not None else self.selected
         # the bracketed default; left unstyled unless a color is supplied
