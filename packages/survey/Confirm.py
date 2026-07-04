@@ -25,7 +25,7 @@ class Confirm(Prompt):
         # spell out which way a bare enter will go by capitalizing the default
         hint = "Y/n" if self.default else "y/N"
         # a cooked read is plenty for a single word
-        reply = input(f"{self.message} [{hint}]: ").strip().lower()
+        reply = input(f"{self.paint(self.message, self.theme.message)} [{hint}]: ").strip().lower()
         # nothing typed means take the default
         if not reply:
             return self.default

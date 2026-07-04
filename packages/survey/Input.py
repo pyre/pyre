@@ -25,7 +25,7 @@ class Input(Prompt):
         # show the default in brackets when there is one to offer
         hint = f" [{self.default}]" if self.default is not None else ""
         # a cooked read gives the user their terminal's own line editing for free
-        reply = input(f"{self.message}{hint}: ").strip()
+        reply = input(f"{self.paint(self.message, self.theme.message)}{hint}: ").strip()
         # a non-empty reply wins; otherwise the default, or the empty string when there is none
         if reply:
             return reply

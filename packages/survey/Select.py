@@ -110,11 +110,13 @@ class Select(Prompt):
         console.rewind(lines=self._drawn)
         # the slice of options to show, and the header above them
         start, end = self._window(index=index)
-        rows = [f"{self.message}:"]
-        # each visible option, marked when it is the highlighted one
+        rows = [f"{self.paint(self.message, self.theme.message)}:"]
+        # each visible option, the highlighted one marked and painted with the selection color
         for position in range(start, end):
-            pointer = "❯" if position == index else " "
-            rows.append(f"{pointer} {self.options[position]}")
+            if position == index:
+                rows.append(self.paint(f"❯ {self.options[position]}", self.theme.selected))
+            else:
+                rows.append(f"  {self.options[position]}")
         # commit the frame and remember how tall it was
         console.write("\n".join(rows) + "\n")
         console.flush()
@@ -125,9 +127,11 @@ class Select(Prompt):
         Replace the whole menu with a single line naming the chosen option
         """
         console = self.console
-        # clear the live frame, then leave the decision on the record
+        # clear the live frame, then leave the decision on the record, the choice in color
         console.rewind(lines=self._drawn)
-        console.write(f"{self.message}: {self.options[index]}\n")
+        label = self.paint(self.message, self.theme.message)
+        value = self.paint(self.options[index], self.theme.selected)
+        console.write(f"{label}: {value}\n")
         console.flush()
         self._drawn = 0
 
