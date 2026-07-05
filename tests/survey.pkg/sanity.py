@@ -12,9 +12,11 @@ def test():
     # access the package
     import survey
 
-    # and confirm it published the prompts we expect
+    # the text prompt is published
     assert survey.Input
+    # the yes/no prompt is published
     assert survey.Confirm
+    # the menu prompt is published
     assert survey.Select
 
     # all done

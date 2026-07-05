@@ -13,16 +13,19 @@ def test():
     import builtins
     import survey
 
-    # an explicit no is false, whatever the default
+    # feed an explicit no
     builtins.input = lambda prompt="": "n"
+    # which is false whatever the default
     assert survey.Confirm(message="ok", default=True).ask() is False
 
-    # an explicit yes is true
+    # feed an explicit yes
     builtins.input = lambda prompt="": "yes"
+    # which is true
     assert survey.Confirm(message="ok", default=False).ask() is True
 
-    # a blank line takes the default
+    # feed a blank line
     builtins.input = lambda prompt="": ""
+    # which takes the default
     assert survey.Confirm(message="ok", default=True).ask() is True
 
     # all done

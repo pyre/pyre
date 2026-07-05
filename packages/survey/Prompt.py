@@ -16,6 +16,7 @@ class Prompt:
     """
 
     def __init__(self, *, message, help=None, console=None, theme=None, **kwds):
+        # chain up
         super().__init__(**kwds)
         # the question put to the user
         self.message = message
@@ -30,6 +31,7 @@ class Prompt:
         """
         Style {text} with {code}, but only when the terminal can actually show it
         """
+        # defer the decision about whether color is allowed to {_colorful}
         return chroma.paint(text, code, enabled=self._colorful())
 
     def ask(self):
@@ -45,6 +47,7 @@ class Prompt:
         """
         Whether this prompt may emit color: allowed globally and talking to a real terminal
         """
+        # color is on unless suppressed, and only when both ends are a terminal
         return chroma.enabled() and self.console.interactive()
 
 

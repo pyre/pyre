@@ -14,6 +14,7 @@ class Confirm(Prompt):
     """
 
     def __init__(self, *, default=True, **kwds):
+        # chain up
         super().__init__(**kwds)
         # the answer to assume on an empty reply
         self.default = default
@@ -32,6 +33,7 @@ class Confirm(Prompt):
         )
         # nothing typed means take the default
         if not reply:
+            # so hand it back
             return self.default
         # otherwise anything affirmative is a yes, everything else a no
         return reply in ("y", "yes")
