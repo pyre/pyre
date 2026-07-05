@@ -96,7 +96,7 @@ class CSI:
         Turn blink on or off
         """
         # build the sequence
-        seq = [f"{ASCII.ESC}[" "5" if state else "25" "m"]
+        seq = [f"{ASCII.ESC}[", "5" if state else "25", "m"]
         # assemble it and return it
         return "".join(seq)
 
