@@ -25,7 +25,7 @@ pyre.tests := pyre.python.tests pyre.pkg.tests pyre.lib.tests pyre.ext.tests sql
 pyre.verbatim := pyre.templates
 
 # the bootstrap bundle
-pyre.boot.packages := pyre.pkg journal.pkg merlin.pkg
+pyre.boot.packages := pyre.pkg journal.pkg merlin.pkg survey.pkg
 # the bootstrap zip file entry point
 pyre.boot.main := etc/boot/main.py
 
