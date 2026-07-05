@@ -19,6 +19,7 @@
 #include "rgb/oklch.h"
 
 // the {ansi} serializers
+#include "ansi/csi3.h"
 #include "ansi/gray.h"
 #include "ansi/reset.h"
 #include "ansi/rgb.h"

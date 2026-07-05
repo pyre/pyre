@@ -61,6 +61,8 @@ namespace pyre::chroma {
         inline auto rgb256(const rgb_t & color, bool foreground = true) -> string_t;
         // from a gray {level} in [0, 1]: the nearest step on the 24-step grayscale ramp
         inline auto gray(color_t level, bool foreground = true) -> string_t;
+        // from a 16-color palette {code} (30-37 or 40-47), optionally rendered {bright}
+        inline auto csi3(int code, bool bright = false) -> string_t;
     } // namespace ansi
 } // namespace pyre::chroma
 

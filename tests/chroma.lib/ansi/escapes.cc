@@ -36,6 +36,10 @@ main(int argc, char * argv[])
     // the lightest gray is the top of the ramp, 255
     assert(pyre::chroma::ansi::gray(1) == "\x1b[38;5;255m");
 
+    // a 16-color code renders with its weight and its code
+    assert(pyre::chroma::ansi::csi3(30) == "\x1b[0;30m");
+    assert(pyre::chroma::ansi::csi3(31, true) == "\x1b[1;31m");
+
     // all done
     return 0;
 }
