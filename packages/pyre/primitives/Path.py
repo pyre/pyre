@@ -281,6 +281,29 @@ class Path(tuple):
         # what's left is the answer
         return super().__new__(type(self), self[len(other) :])
 
+    def commonRoot(self, other):
+        """
+        Build the longest path that is a logical ancestor of both {self} and {other}
+
+        Note that this is purely a lexical operation and is not guaranteed to yield correct
+        results unless both paths have been fully resolved; in particular, comparing a relative
+        path against an absolute one is meaningless
+        """
+        # coerce {other} into a path
+        other = self.coerce(other)
+        # accumulate the shared leading components
+        shared = []
+        # walk the two paths level by level
+        for mine, hers in zip(self, other):
+            # as long as they agree
+            if mine != hers:
+                # stop at the first divergence
+                break
+            # otherwise, this level is part of the common root
+            shared.append(mine)
+        # assemble the shared components into a path
+        return super().__new__(type(self), shared)
+
     def withName(self, name):
         """
         Build a new path with my name replaced by {name}
