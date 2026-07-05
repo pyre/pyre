@@ -27,6 +27,8 @@ journal.lib.stem := journal
 journal.lib.incdir := $(builder.dest.inc)pyre/journal/
 # the main api header file; it is deposited one level above the rest
 journal.lib.gateway := journal.h
+# journal now sources its color from {chroma}, so its headers must be staged first
+journal.lib.prerequisites += chroma.lib
 # compiler control
 journal.lib.c++.flags += $(pyre.lib.c++.flags)
 journal.lib.c++.defines += $(pyre.lib.c++.defines)

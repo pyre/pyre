@@ -9,64 +9,54 @@
 #else
 
 
+// all color-sequence generation is delegated to {pyre::chroma}, the single source of color truth
 // static interface
 auto
 pyre::journal::CSI::reset() -> rep_type
 {
-    // initialize
-    rep_type esc { ASCII::ESC };
-    // assemble and return
-    return esc + "[0m";
+    // hand back chroma's reset sequence
+    return pyre::chroma::ansi::reset();
 }
+
 
 auto
 pyre::journal::CSI::csi3(int code, bool bright) -> rep_type
 {
-    // prime the escape sequence
-    rep_type esc { ASCII::ESC };
-    // assemble and return it
-    return esc + "[" + (bright ? "1" : "0") + ";" + std::to_string(code) + "m";
+    // chroma renders the 16-color code directly
+    return pyre::chroma::ansi::csi3(code, bright);
 }
 
 
 auto
 pyre::journal::CSI::csi8(int red, int green, int blue, bool foreground) -> rep_type
 {
-    // prime the escape sequence
-    rep_type esc { ASCII::ESC };
-    // assemble and return it
-    return esc + "[" + (foreground ? "38" : "48") + ";5;"
-         + std::to_string(16 + blue + green * 6 + red * 6 * 6) + "m";
+    // normalize the [0,5] cube coordinates and let chroma quantize them back
+    return pyre::chroma::ansi::rgb256({ red / 5.f, green / 5.f, blue / 5.f }, foreground);
 }
 
 
 auto
 pyre::journal::CSI::csi8_gray(int gray, bool foreground) -> rep_type
 {
-    // prime the escape sequence
-    rep_type esc { ASCII::ESC };
-    // assemble and return it
-    return esc + "[" + (foreground ? "38" : "48") + ";5;" + std::to_string(232 + gray) + "m";
+    // normalize the [0,23] ramp step and let chroma quantize it back
+    return pyre::chroma::ansi::gray(gray / 23.f, foreground);
 }
 
 
 auto
 pyre::journal::CSI::csi24(int red, int green, int blue, bool foreground) -> rep_type
 {
-    // prime the escape sequence
-    rep_type esc { ASCII::ESC };
-    // assemble and return it
-    return esc + "[" + (foreground ? "38" : "48") + ";2;" + std::to_string(red) + ";"
-         + std::to_string(green) + ";" + std::to_string(blue) + "m";
+    // normalize the [0,255] channels and hand them to chroma as a color
+    return pyre::chroma::ansi::rgb({ red / 255.f, green / 255.f, blue / 255.f }, foreground);
 }
 
 
 auto
 pyre::journal::CSI::blink(bool state) -> rep_type
 {
-    // prime the escape sequence
+    // blink is a text style, not a color, so chroma does not cover it; build it locally
     rep_type esc { ASCII::ESC };
-    // assemble and return it
+    // turn blink on (5) or off (25)
     return esc + "[" + (state ? "5" : "25") + "m";
 }
 
