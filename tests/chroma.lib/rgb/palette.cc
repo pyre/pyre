@@ -27,6 +27,11 @@ main(int argc, char * argv[])
     assert((pyre::chroma::rgb::palette::find("green") == rgb_t { 0, 1, 0 }));
     assert((pyre::chroma::rgb::palette::find("blue") == rgb_t { 0, 0, 1 }));
 
+    // alias spellings and pyre's own colors resolve too — the palette is complete, not deduped
+    assert(pyre::chroma::rgb::palette::find("fuchsia"));
+    assert(pyre::chroma::rgb::palette::find("amber"));
+    assert(pyre::chroma::rgb::palette::find("sage"));
+
     // a name that is not in the table reports a miss
     assert(!pyre::chroma::rgb::palette::find("not-a-color"));
 

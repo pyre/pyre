@@ -9,28 +9,32 @@
 import os
 
 
+# colors that pyre uses but that are not part of the canonical X11 set
+extras = [
+    ("amber", 255, 191, 0),
+    ("sage", 176, 208, 176),
+]
+
+
 def entries():
     """
-    Read the canonical color file and yield one C++ table entry per distinct color
+    Read the canonical color file and yield one C++ table entry per color name
     """
-    # remember the triplets we have already emitted so each color keeps a single canonical name
-    seen = set()
     # the canonical color file sits next to this script
     source = os.path.join(os.path.dirname(__file__), "rgb.txt")
-    # go through its lines
+    # go through its lines, keeping every name so any consumer's spelling resolves
     for line in open(source):
         # pull the three channels and the color name
         red, green, blue, name = line.strip().split(None, 3)
-        # form the triplet that identifies this color
-        triplet = (red, green, blue)
-        # the first name we see for a color is the canonical one; skip any later aliases
-        if triplet in seen:
-            continue
-        # record that this color is now spoken for
-        seen.add(triplet)
         # normalize the channels from bytes to the unit interval
         r, g, b = int(red) / 255, int(green) / 255, int(blue) / 255
         # emit the entry as a name paired with its {rgb_t}
+        yield f'    {{ "{name}", {{ {r:.6f}f, {g:.6f}f, {b:.6f}f }} }},'
+    # then pyre's own colors
+    for name, red, green, blue in extras:
+        # normalized the same way
+        r, g, b = red / 255, green / 255, blue / 255
+        # emitted the same way
         yield f'    {{ "{name}", {{ {r:.6f}f, {g:.6f}f, {b:.6f}f }} }},'
 
 
@@ -61,11 +65,11 @@ def preamble(count):
 #include <optional>
 
 
-// the table of canonical color names to {{rgb}} triplets, one name per distinct color
+// the table of color names to {{rgb}} triplets: every X11 name, plus pyre's custom colors
 namespace pyre::chroma::rgb::palette {{
-    // an entry pairs a canonical color name with the color it denotes
+    // an entry pairs a color name with the color it denotes
     struct entry_t {{
-        // the canonical name
+        // the name
         std::string_view name;
         // the color
         rgb_t color;
@@ -105,7 +109,7 @@ def postamble():
 
 # bootstrap
 if __name__ == "__main__":
-    # collect the deduplicated entries
+    # collect the entries
     rows = list(entries())
     # the destination header lives in the chroma library tree
     here = os.path.dirname(__file__)
