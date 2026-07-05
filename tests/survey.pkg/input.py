@@ -13,12 +13,14 @@ def test():
     import builtins
     import survey
 
-    # a typed reply comes back verbatim
+    # feed a typed reply
     builtins.input = lambda prompt="": "hello"
+    # which should come back verbatim
     assert survey.Input(message="name", default="anon").ask() == "hello"
 
-    # a blank reply falls back to the default
+    # feed a blank reply
     builtins.input = lambda prompt="": ""
+    # which should fall back to the default
     assert survey.Input(message="name", default="anon").ask() == "anon"
 
     # all done

@@ -21,21 +21,23 @@ class Console:
     """
 
     def __init__(self, *, istream=None, ostream=None, **kwds):
+        # chain up
         super().__init__(**kwds)
-        # the streams to talk to, defaulting to the process standard streams
+        # talk to the given input stream, or the process standard input
         self._istream = istream if istream is not None else sys.stdin
+        # and the given output stream, or the process standard output
         self._ostream = ostream if ostream is not None else sys.stdout
-        # the input file descriptor is resolved lazily, only when we enter raw mode, so a
-        # {Console} can wrap streams without one (a {StringIO}) for the non-interactive paths
+        # resolve the input descriptor lazily, only when we enter raw mode, so a {Console}
+        # can wrap streams without one (a {StringIO}) for the non-interactive paths
         self._fd = None
-        # a place to stash the cooked-mode settings while we are in raw mode
+        # nowhere to stash the cooked-mode settings until we actually take raw mode
         self._saved = None
 
     def interactive(self) -> bool:
         """
         Report whether both ends are a real terminal, so a live UI is possible
         """
-        # a redirected or piped stream cannot drive an interactive prompt
+        # a redirected or piped stream on either end rules out an interactive prompt
         return self._istream.isatty() and self._ostream.isatty()
 
     def readkey(self) -> "keys.Key":
@@ -51,29 +53,38 @@ class Console:
         """
         # write straight through; callers decide where lines break
         self._ostream.write(text)
+        # nothing to hand back
         return
 
     def flush(self) -> None:
         """
         Push any buffered output to the terminal now
         """
+        # drain the output buffer
         self._ostream.flush()
+        # nothing to hand back
         return
 
     def hideCursor(self) -> None:
         """
         Hide the text cursor while a frame is being redrawn
         """
+        # emit the hide-cursor control sequence
         self.write("\x1b[?25l")
+        # and make sure it takes effect immediately
         self.flush()
+        # nothing to hand back
         return
 
     def showCursor(self) -> None:
         """
         Restore the text cursor once interaction is done
         """
+        # emit the show-cursor control sequence
         self.write("\x1b[?25h")
+        # and make sure it takes effect immediately
         self.flush()
+        # nothing to hand back
         return
 
     def rewind(self, *, lines: int) -> None:
@@ -82,36 +93,46 @@ class Console:
         """
         # step up over the previous frame, when there was one
         if lines > 0:
+            # move the cursor up that many rows
             self.write(f"\x1b[{lines}A")
         # then wipe everything from the cursor to the end of the screen
         self.write("\r\x1b[J")
+        # nothing to hand back
         return
 
     def __enter__(self) -> "Console":
         # resolve the input descriptor now that we actually need raw mode
         self._fd = self._istream.fileno()
-        # remember the cooked settings, then switch to cbreak so keys arrive immediately
-        # while ctrl-c still raises {KeyboardInterrupt} rather than arriving as a byte
+        # remember the cooked settings so we can restore them on the way out
         self._saved = termios.tcgetattr(self._fd)
+        # switch to cbreak so keys arrive immediately while ctrl-c still raises
+        # {KeyboardInterrupt} rather than arriving as a byte
         tty.setcbreak(self._fd)
+        # hand ourselves to the {with} body
         return self
 
     def __exit__(self, *exc) -> bool:
         # always restore the terminal the user handed us, even on an exception
         termios.tcsetattr(self._fd, termios.TCSADRAIN, self._saved)
+        # do not suppress whatever exception may be propagating
         return False
 
     def _nextbyte(self):
-        # a blocking read of one byte, or {None} when the input is exhausted
+        # a blocking read of one byte
         data = os.read(self._fd, 1)
+        # its value, or {None} when the input is exhausted
         return data[0] if data else None
 
     def _pending(self):
-        # a byte only if one is already waiting, so escape sequences do not stall the reader
+        # ask whether a byte is already waiting, without blocking
         ready, _, _ = select.select([self._fd], [], [], 0.005)
+        # nothing waiting means an escape sequence has ended
         if not ready:
+            # so report the absence
             return None
+        # otherwise take the byte that is ready
         data = os.read(self._fd, 1)
+        # its value, or {None} at the end of input
         return data[0] if data else None
 
 

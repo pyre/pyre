@@ -14,6 +14,7 @@ class Input(Prompt):
     """
 
     def __init__(self, *, default=None, **kwds):
+        # chain up
         super().__init__(**kwds)
         # the value to return when the reply is left blank
         self.default = default
@@ -26,9 +27,11 @@ class Input(Prompt):
         hint = f" [{self.default}]" if self.default is not None else ""
         # a cooked read gives the user their terminal's own line editing for free
         reply = input(f"{self.paint(self.message, self.theme.message)}{hint}: ").strip()
-        # a non-empty reply wins; otherwise the default, or the empty string when there is none
+        # a non-empty reply wins outright
         if reply:
+            # so return exactly what was typed
             return reply
+        # otherwise the default, or the empty string when there is none
         return self.default if self.default is not None else ""
 
 

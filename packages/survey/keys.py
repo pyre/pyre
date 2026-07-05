@@ -31,13 +31,15 @@ class Key:
     """
 
     def __init__(self, name, char=None, **kwds):
+        # chain up
         super().__init__(**kwds)
-        # what kind of key this is; one of the module-level names
+        # remember what kind of key this is; one of the module-level names
         self.name = name
-        # the character it carries, set only when {name} is {CHAR} or {SPACE}
+        # and the character it carries, set only when {name} is {CHAR} or {SPACE}
         self.char = char
 
     def __repr__(self):
+        # render enough to recognize the key while debugging
         return f"Key({self.name!r}, {self.char!r})"
 
 
@@ -46,32 +48,41 @@ def decode(nextbyte, pending):
     Read one logical keypress; {nextbyte} blocks for the next byte (or {None} at end of input),
     {pending} returns an already-available byte without blocking (or {None} when none is waiting)
     """
-    # pull the first byte; its absence means the input has run dry
+    # pull the first byte of the keypress
     lead = nextbyte()
+    # nothing waiting means the input has run dry
     if lead is None:
+        # so report the end
         return Key(EOF)
-    # the ordinary line terminators both mean "accept"
+    # the two line terminators both mean "accept the current answer"
     if lead in (10, 13):
+        # so name it the enter key
         return Key(ENTER)
-    # a tab is its own thing, since lists often use it to advance
+    # a tab often advances the highlight in a list, so it earns its own name
     if lead == 9:
+        # report it as a tab
         return Key(TAB)
-    # both the backspace and the delete byte mean "erase the last character"
+    # backspace and the delete byte both mean "erase the last character"
     if lead in (8, 127):
+        # collapse them into a single backspace
         return Key(BACKSPACE)
-    # ctrl-c arrives as a raw byte in this mode, so surface it as an interrupt
+    # ctrl-c reaches us as a raw byte in this mode
     if lead == 3:
+        # surface it as an interrupt so callers can bail
         return Key(INTERRUPT)
     # an escape either stands alone or opens a control sequence
     if lead == 27:
+        # hand the rest of the sequence to the escape reader
         return _escape(pending)
-    # a space is worth naming so filters can treat it deliberately
+    # a space is named so filters can treat it deliberately
     if lead == 32:
+        # carry the actual character along for filtering
         return Key(SPACE, " ")
     # any other control byte is one we do not act on
     if lead < 32:
+        # report it generically and move on
         return Key(CONTROL)
-    # everything else is printable text, possibly the lead of a utf-8 sequence
+    # everything else is printable text, maybe the lead of a utf-8 sequence
     return Key(CHAR, _utf8(lead, pending))
 
 
@@ -79,22 +90,29 @@ def _escape(pending):
     """
     Interpret the bytes following an {ESC}; a bare escape when nothing sensible follows
     """
-    # a lone escape has no bytes waiting behind it
+    # look for a byte riding behind the escape
     following = pending()
+    # a lone escape has nothing waiting
     if following is None:
+        # so it really was just an escape
         return Key(ESCAPE)
     # arrow and edit keys arrive as {ESC [ ...} or {ESC O ...}
     if following in (91, 79):
         # the final byte selects the actual key
         final = pending()
+        # map the four arrow terminators to their names
         arrows = {65: UP, 66: DOWN, 67: RIGHT, 68: LEFT}
+        # an arrow is the common case
         if final in arrows:
+            # report the arrow it names
             return Key(arrows[final])
-        # the forward-delete key is {ESC [ 3 ~}, so swallow its trailing tilde
+        # the forward-delete key is {ESC [ 3 ~}
         if final == 51:
+            # swallow its trailing tilde
             pending()
+            # and report a delete
             return Key(DELETE)
-        # any other sequence is one we do not model, so treat the escape as bare
+        # any other sequence is one we do not model
         return Key(ESCAPE)
     # an escape followed by anything else is still just an escape to us
     return Key(ESCAPE)
@@ -106,13 +124,17 @@ def _utf8(lead, pending):
     """
     # a lead below the high bit is plain ascii and stands alone
     if lead < 0x80:
+        # so return it directly
         return chr(lead)
     # the top bits of the lead byte announce how many continuation bytes follow
     if lead >= 0xF0:
+        # a four-byte sequence has three continuations
         count = 3
     elif lead >= 0xE0:
+        # a three-byte sequence has two
         count = 2
     elif lead >= 0xC0:
+        # a two-byte sequence has one
         count = 1
     else:
         # a stray continuation byte with no lead; hand it back as-is
@@ -121,10 +143,12 @@ def _utf8(lead, pending):
     trailing = bytes(
         byte for byte in (pending() for _ in range(count)) if byte is not None
     )
-    # decode the whole thing, falling back to the raw lead if it does not cohere
+    # decode the whole thing
     try:
+        # the assembled bytes as a single character
         return (bytes([lead]) + trailing).decode("utf-8")
     except UnicodeDecodeError:
+        # a malformed sequence falls back to the raw lead
         return chr(lead)
 
 

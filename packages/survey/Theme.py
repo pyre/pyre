@@ -14,6 +14,7 @@ class Theme:
     """
 
     def __init__(self, *, message=None, pointer=None, selected=None, hint=None, **kwds):
+        # chain up
         super().__init__(**kwds)
         # the question text; a cool blue by default
         self.message = message if message is not None else chroma.hsl(210, 0.85, 0.62)
@@ -35,10 +36,13 @@ def default() -> "Theme":
     """
     The current fallback theme, built on first use
     """
+    # reach for the shared fallback
     global _default
     # make one lazily so importing the module costs nothing
     if _default is None:
+        # build the default palette on first use
         _default = Theme()
+    # hand it back
     return _default
 
 
@@ -46,8 +50,11 @@ def setDefault(theme: "Theme") -> None:
     """
     Install {theme} as the fallback every prompt uses
     """
+    # replace the shared fallback
     global _default
+    # install the caller's palette
     _default = theme
+    # nothing to hand back
     return
 
 

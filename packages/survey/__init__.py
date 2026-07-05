@@ -28,6 +28,7 @@ def text(*, message, default=None, **kwds) -> str:
     """
     Ask for a line of text and return it
     """
+    # build an input prompt and ask it in one step
     return Input(message=message, default=default, **kwds).ask()
 
 
@@ -35,6 +36,7 @@ def confirm(*, message, default=True, **kwds) -> bool:
     """
     Ask a yes/no question and return a bool
     """
+    # build a confirm prompt and ask it in one step
     return Confirm(message=message, default=default, **kwds).ask()
 
 
@@ -42,6 +44,7 @@ def select(*, message, options, default=None, **kwds) -> str:
     """
     Offer a list of options and return the one the user chooses
     """
+    # build a select prompt and ask it in one step
     return Select(message=message, options=options, default=default, **kwds).ask()
 
 
