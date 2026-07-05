@@ -20,6 +20,9 @@ import urllib.request
 import journal
 import pyre
 
+# the interactive prompt toolkit, likewise carried in this archive
+import survey
+
 # the build strategies understood by {mm}; mirrors the {mode} trait validator in {merlin.shells.MM}
 modes = ("dev", "release", "conda", "macports", "ubuntu")
 
@@ -88,7 +91,9 @@ class Boot(pyre.application, family="pyre.applications.boot", namespace="boot"):
             ),
         )
         # and settle on the layout strategy {mm} will use
-        self.mode = self.ask(question="which build mode", default=self.mode)
+        self.mode = self.choose(
+            question="which build mode", options=modes, default=self.mode
+        )
 
         # nail down the destination now that the user has had their say
         target = pyre.primitives.path(self.target).resolve()
@@ -97,7 +102,7 @@ class Boot(pyre.application, family="pyre.applications.boot", namespace="boot"):
         self.audit()
 
         # and give the user a last chance to walk away
-        if self.ask(question="proceed", default="yes").lower() not in ("y", "yes"):
+        if not self.confirm(question="proceed", default=True):
             # honoring a decline by doing exactly nothing
             self.info.log("nothing done")
             # and reporting a clean, uneventful exit
@@ -151,12 +156,11 @@ class Boot(pyre.application, family="pyre.applications.boot", namespace="boot"):
             # normalize whatever arrived on the command line
             self.channel = self.normalizeChannel(text=self.channel)
         elif self.interactive:
-            # ask the one question that opens the whole flow
-            self.channel = self.normalizeChannel(
-                text=self.ask(
-                    question="build a released version or the bleeding edge",
-                    default="released",
-                )
+            # open the whole flow with a two-way menu, defaulting to the safe choice
+            self.channel = self.choose(
+                question="build a released version or the bleeding edge",
+                options=("release", "edge"),
+                default="release",
             )
         else:
             # batch mode with nothing set builds this archive's own release
@@ -168,7 +172,9 @@ class Boot(pyre.application, family="pyre.applications.boot", namespace="boot"):
         else:
             # a release tag, offered from the menu interactively, else our own by default
             self.tag = (
-                self.pickRelease(default=default_tag) if self.interactive else default_tag
+                self.pickRelease(default=default_tag)
+                if self.interactive
+                else default_tag
             )
         # both {channel} and its reference are now settled
         return
@@ -178,24 +184,33 @@ class Boot(pyre.application, family="pyre.applications.boot", namespace="boot"):
         Map free-form text to a stream, leaning toward {release} unless the edge is clearly asked for
         """
         # treat any of the edge-flavored answers as a request for the bleeding edge
-        if text.lower() in ("e", "edge", "b", "bleeding", "bleeding-edge", "head", "dev"):
+        if text.lower() in (
+            "e",
+            "edge",
+            "b",
+            "bleeding",
+            "bleeding-edge",
+            "head",
+            "dev",
+        ):
             return "edge"
         # everything else means a published release
         return "release"
 
     def pickRelease(self, *, default: str) -> str:
         """
-        Offer the buildable releases newest-first and let the user settle on a tag
+        Offer the buildable releases as a menu and let the user settle on a tag
         """
         # ask GitHub for the releases this archive can actually build
         tags = self.catalog()
-        # and when any came back, put the newest few in front of the user as a hint
-        if tags:
-            # a short preview, trailing an ellipsis when the list runs longer
-            shown = ", ".join(tags[:3])
-            self.info.log(f"available releases: {shown}{' …' if len(tags) > 3 else ''}")
-        # the prompt still accepts any tag, on the menu or not
-        return self.ask(question="which release", default=default)
+        # with nothing to list, fall back to typing a tag by hand
+        if not tags:
+            # so read a tag as free text
+            return self.ask(question="which release", default=default)
+        # start the menu on our own release when it is on offer, else the newest
+        start = default if default in tags else tags[0]
+        # and let survey drive the selection
+        return survey.select(message="which release", options=tags, default=start)
 
     def catalog(self) -> typing.List[str]:
         """
@@ -252,16 +267,36 @@ class Boot(pyre.application, family="pyre.applications.boot", namespace="boot"):
 
     def ask(self, *, question: str, default: str) -> str:
         """
-        Prompt for a value when running interactively; otherwise accept {default} silently
+        Read a line of text when running interactively; otherwise accept {default} silently
         """
         # in batch mode there is no one to answer, so the configured value stands
         if not self.interactive:
-            # returned untouched
+            # hand back the default untouched
             return default
-        # otherwise put the question to the user, offering {default} in brackets
-        reply = input(f"{question} [{default}]: ").strip()
-        # and take what they typed, falling back to {default} on an empty line
-        return reply or default
+        # otherwise let survey read the line, seeded with the default
+        return survey.text(message=question, default=default)
+
+    def choose(self, *, question: str, options, default: str) -> str:
+        """
+        Offer {options} as a menu when interactive; otherwise accept {default} silently
+        """
+        # batch mode takes the default without a word
+        if not self.interactive:
+            # hand back the default untouched
+            return default
+        # otherwise survey draws the menu, seeded with the default
+        return survey.select(message=question, options=list(options), default=default)
+
+    def confirm(self, *, question: str, default: bool) -> bool:
+        """
+        Ask a yes/no question when interactive; otherwise accept {default} silently
+        """
+        # nothing to confirm in batch mode
+        if not self.interactive:
+            # hand back the default untouched
+            return default
+        # otherwise survey handles the yes and the no
+        return survey.confirm(message=question, default=default)
 
     def audit(self) -> None:
         """
@@ -483,7 +518,11 @@ class Boot(pyre.application, family="pyre.applications.boot", namespace="boot"):
         return lines[-1] if lines else None
 
     def runMM(
-        self, *, target: "pyre.primitives.path", args: typing.List[str], capture: bool = False
+        self,
+        *,
+        target: "pyre.primitives.path",
+        args: typing.List[str],
+        capture: bool = False,
     ) -> "subprocess.CompletedProcess":
         """
         Run the staged tree's {mm} driver with our common plumbing and hand back the completed process
@@ -516,7 +555,11 @@ class Boot(pyre.application, family="pyre.applications.boot", namespace="boot"):
         ]
         # run it from the tree root, where {mm} finds the local {.mm} configuration
         return subprocess.run(
-            command, cwd=str(target), env=environment, capture_output=capture, text=capture
+            command,
+            cwd=str(target),
+            env=environment,
+            capture_output=capture,
+            text=capture,
         )
 
 
