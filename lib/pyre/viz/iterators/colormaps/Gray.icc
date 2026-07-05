@@ -10,7 +10,8 @@
 
 // metamethods
 template <class sourceT>
-pyre::viz::iterators::colormaps::Gray<sourceT>::Gray(source_const_reference source) : _source { source }
+pyre::viz::iterators::colormaps::Gray<sourceT>::Gray(source_const_reference source) :
+    _source { source }
 {}
 
 
@@ -19,12 +20,10 @@ template <class sourceT>
 auto
 pyre::viz::iterators::colormaps::Gray<sourceT>::operator*() const -> rgb_type
 {
-    // get the value from the data source
-    auto value = *_source;
-    // clip it
-    value = std::min(1.0, std::max(0.0, value));
+    // get the value from the data source and clip it to the unit interval as a color channel
+    viz::color_t value = std::min(1.0, std::max(0.0, double(*_source)));
 
-    // produce a gray value
+    // produce a gray by using that value for all three channels
     return rgb_type { value, value, value };
 }
 

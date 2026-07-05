@@ -34,7 +34,7 @@ pyre::viz::iterators::colormaps::OKLCH<lightnessSourceT, chromaSourceT, hueSourc
     auto hue = *_hue;
 
     // covert to {rgb} and return
-    return colorspaces::oklch(lightness, chroma, hue);
+    return pyre::chroma::rgb::oklch(lightness, chroma, hue);
 }
 
 

@@ -13,10 +13,9 @@ namespace pyre::viz {
 
     // an interval is a pair of
     using interval_t = std::tuple<double, double>;
-    // individual color values are floats in [0,1]
-    using color_t = float;
-    // {r,g,b} triplets
-    using rgb_t = std::tuple<color_t, color_t, color_t>;
+    // color channels and {r,g,b} triplets come from {chroma}, the single source of color truth
+    using color_t = chroma::color_t;
+    using rgb_t = chroma::rgb_t;
 
     // just to make sure we are all on the same page, wherever it matters
     using byte_t = unsigned char;

@@ -19,6 +19,7 @@
 
 // support
 #include <pyre/journal.h>
+#include <pyre/chroma.h>
 #include <pyre/memory.h>
 #include <pyre/grid.h>
 #include <pyre/flow.h>

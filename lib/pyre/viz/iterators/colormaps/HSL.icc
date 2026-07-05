@@ -22,8 +22,8 @@ pyre::viz::iterators::colormaps::HSL<hueSourceT, saturationSourceT, luminositySo
 // interface
 template <class hueSourceT, class saturationSourceT, class luminositySourceT>
 auto
-pyre::viz::iterators::colormaps::HSL<hueSourceT, saturationSourceT, luminositySourceT>::operator*() const
-    -> rgb_type
+pyre::viz::iterators::colormaps::HSL<hueSourceT, saturationSourceT, luminositySourceT>::operator*()
+    const -> rgb_type
 {
     // get values from my data sources
     auto hue = *_hue;
@@ -31,13 +31,14 @@ pyre::viz::iterators::colormaps::HSL<hueSourceT, saturationSourceT, luminositySo
     auto luminosity = *_luminosity;
 
     // covert to {rgb} and return
-    return colorspaces::hsl(hue, saturation, luminosity);
+    return pyre::chroma::rgb::hsl(hue, saturation, luminosity);
 }
 
 
 template <class hueSourceT, class saturationSourceT, class luminositySourceT>
 auto
-pyre::viz::iterators::colormaps::HSL<hueSourceT, saturationSourceT, luminositySourceT>::operator++() -> void
+pyre::viz::iterators::colormaps::HSL<hueSourceT, saturationSourceT, luminositySourceT>::operator++()
+    -> void
 {
     // make my sources point to the next value
     ++_hue;
