@@ -16,6 +16,7 @@
 #include "grid/__init__.h"
 #include "timers/__init__.h"
 #include "viz/__init__.h"
+#include "chroma/__init__.h"
 
 // the module entry point
 PYBIND11_MODULE(pyre, m)
@@ -34,6 +35,8 @@ PYBIND11_MODULE(pyre, m)
     pyre::py::timers::__init__(m);
     // viz
     pyre::py::viz::__init__(m);
+    // chroma
+    pyre::py::chroma::__init__(m);
 }
 
 
