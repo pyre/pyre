@@ -1,0 +1,18 @@
+# -*- Makefile -*-
+#
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2026 all rights reserved
+
+
+# the libchroma test suite
+chroma.lib.tests.stem := chroma.lib
+# the chroma headers must be staged before these tests can compile
+chroma.lib.tests.prerequisites := chroma.lib
+# and the tests lean on the chroma headers
+chroma.lib.tests.extern := chroma.lib
+
+# c++ compiler arguments
+chroma.lib.tests.c++.flags += -Wall $($(compiler.c++).std.c++17)
+
+
+# end of file
