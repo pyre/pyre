@@ -28,6 +28,9 @@
 #include <source_location>
 #endif
 
+// the single source of color truth
+#include <pyre/chroma.h>
+
 // aliases for fundamental types that define implementation choices
 namespace pyre::journal {
     // sizes of things

@@ -11,111 +11,113 @@
 // and the type aliases
 #include "api.h"
 // get the support we need
-#include "ASCII.h"
-#include "CSI.h"
 #include "ANSI.h"
+// the single source of color truth, and its color-name palette
+#include <pyre/chroma.h>
+#include <pyre/chroma/rgb/palette.h>
+
+
+// render a named color as a 24-bit escape sequence via {chroma}; {normal} means reset
+static auto
+named(const pyre::journal::ANSI::name_type & color) -> pyre::journal::ANSI::csi_type
+{
+    // {normal} restores the terminal defaults rather than naming a color
+    if (color == "normal") {
+        // so hand back the reset sequence
+        return pyre::chroma::ansi::reset();
+    }
+    // otherwise look the name up in chroma's color palette
+    auto found = pyre::chroma::rgb::palette::find(color);
+    // an unknown name produces no color
+    if (!found) {
+        // i.e. an empty sequence
+        return "";
+    }
+    // a known name renders as a 24-bit truecolor escape
+    return pyre::chroma::ansi::rgb(*found);
+}
 
 
 // compatibility check
 auto
 pyre::journal::ANSI::compatible() -> bool
 {
-    // get my instance
-    const ANSI & instance = initialize();
-    // and ask it
-    return instance._compatible;
+    // ask whether the current terminal emulates a compatible type
+    return emulates();
 }
 
 
-// access to the color tables
+// the null colorspace, where every color maps to an empty string
 auto
 pyre::journal::ANSI::null(const name_type & color) -> csi_type
 {
-    // there's nothing ever in this table...
+    // there is never anything in this table
     return "";
 }
 
 
+// the sixteen named terminal colors, rendered through chroma's {csi3}
 auto
 pyre::journal::ANSI::ansi(const name_type & color) -> csi_type
 {
-    // get me my instance
-    const ANSI & instance = initialize();
-    // access the color table
-    const table_type & table = instance._ansi;
-    // try to look up the color name
-    auto spot = table.find(color);
-    // if not there, return an empty string; otherwise return the corresponding escape sequence
-    return spot == table.end() ? "" : spot->second;
+    // {normal} restores the terminal defaults
+    if (color == "normal") {
+        // so hand back the reset sequence
+        return pyre::chroma::ansi::reset();
+    }
+
+    // the names map to terminal palette codes, with the light variants marked {bright}
+    static const std::map<name_type, std::pair<int, bool>> codes {
+        { "black", { 30, false } },      { "red", { 31, false } },
+        { "green", { 32, false } },      { "brown", { 33, false } },
+        { "blue", { 34, false } },       { "purple", { 35, false } },
+        { "cyan", { 36, false } },       { "light-gray", { 37, false } },
+        { "dark-gray", { 30, true } },   { "light-red", { 31, true } },
+        { "light-green", { 32, true } }, { "yellow", { 33, true } },
+        { "light-blue", { 34, true } },  { "light-purple", { 35, true } },
+        { "light-cyan", { 36, true } },  { "white", { 37, true } },
+    };
+
+    // look up the requested name
+    auto spot = codes.find(color);
+    // an unknown name produces no color
+    if (spot == codes.end()) {
+        // i.e. an empty sequence
+        return "";
+    }
+    // render the code through chroma
+    return pyre::chroma::ansi::csi3(spot->second.first, spot->second.second);
 }
 
 
+// the grays are ordinary named colors in the palette
 auto
 pyre::journal::ANSI::gray(const name_type & color) -> csi_type
 {
-    // get me my instance
-    const ANSI & instance = initialize();
-    // access the color table
-    const table_type & table = instance._gray;
-    // try to look up the color name
-    auto spot = table.find(color);
-    // if not there, return an empty string; otherwise return the corresponding escape sequence
-    return spot == table.end() ? "" : spot->second;
+    // so resolve them the same way
+    return named(color);
 }
 
 
+// the X11 named colors live in the palette
 auto
 pyre::journal::ANSI::x11(const name_type & color) -> csi_type
 {
-    // get me my instance
-    const ANSI & instance = initialize();
-    // access the color table
-    const table_type & table = instance._x11;
-    // try to look up the color name
-    auto spot = table.find(color);
-    // if not there, return an empty string; otherwise return the corresponding escape sequence
-    return spot == table.end() ? "" : spot->second;
+    // so resolve them there
+    return named(color);
 }
 
 
+// pyre's custom colors also live in the palette
 auto
 pyre::journal::ANSI::misc(const name_type & color) -> csi_type
 {
-    // get me my instance
-    const ANSI & instance = initialize();
-    // access the color table
-    const table_type & table = instance._misc;
-    // try to look up the color name
-    auto spot = table.find(color);
-    // if not there, return an empty string; otherwise return the corresponding escape sequence
-    return spot == table.end() ? "" : spot->second;
+    // so resolve them there too
+    return named(color);
 }
 
 
-// the singleton factory
-auto
-pyre::journal::ANSI::initialize() -> const ANSI &
-{
-    // make one, once...
-    static ANSI * ptr { new ANSI() };
-    // and return it
-    return *ptr;
-}
-
-
-// metamethods
-pyre::journal::ANSI::ANSI() :
-    // copatibility flag
-    _compatible { emulates() },
-    // color tables
-    _ansi { make_ansi() },
-    _gray { make_gray() },
-    _x11 { make_x11() },
-    _misc { make_misc() }
-{}
-
-
-// implementations
+// the emulation check
 auto
 pyre::journal::ANSI::emulates() -> bool
 {
@@ -139,80 +141,6 @@ pyre::journal::ANSI::emulates() -> bool
 
     // otherwise, all good
     return true;
-}
-
-
-auto
-pyre::journal::ANSI::make_ansi() -> table_type
-{
-    // make a table
-    ansi_t::table_type table;
-
-    // the reset sequence
-    table["normal"] = csi_t::reset();
-
-    // regular colors
-    table["black"] = csi_t::csi3(30);
-    table["red"] = csi_t::csi3(31);
-    table["green"] = csi_t::csi3(32);
-    table["brown"] = csi_t::csi3(33);
-    table["blue"] = csi_t::csi3(34);
-    table["purple"] = csi_t::csi3(35);
-    table["cyan"] = csi_t::csi3(36);
-    table["light-gray"] = csi_t::csi3(37);
-
-    // bright colors
-    table["dark-gray"] = csi_t::csi3(30, true);
-    table["light-red"] = csi_t::csi3(31, true);
-    table["light-green"] = csi_t::csi3(32, true);
-    table["yellow"] = csi_t::csi3(33, true);
-    table["light-blue"] = csi_t::csi3(34, true);
-    table["light-purple"] = csi_t::csi3(35, true);
-    table["light-cyan"] = csi_t::csi3(36, true);
-    table["white"] = csi_t::csi3(37, true);
-
-    // all done
-    return table;
-}
-
-
-auto
-pyre::journal::ANSI::make_gray() -> table_type
-{
-    // make a table
-    ansi_t::table_type table;
-
-    // the reset sequence
-    table["normal"] = csi_t::reset();
-
-    // grays
-    table["gray10"] = csi_t::csi24(0x19, 0x19, 0x19);
-    table["gray30"] = csi_t::csi24(0x4c, 0x4c, 0x4c);
-    table["gray41"] = csi_t::csi24(0x69, 0x69, 0x69);
-    table["gray50"] = csi_t::csi24(0x80, 0x80, 0x80);
-    table["gray66"] = csi_t::csi24(0xa9, 0xa9, 0xa9);
-    table["gray75"] = csi_t::csi24(0xbe, 0xbe, 0xbe);
-
-    // all done
-    return table;
-}
-
-
-auto
-pyre::journal::ANSI::make_misc() -> table_type
-{
-    // make a table
-    ansi_t::table_type table;
-
-    // the reset sequence
-    table["normal"] = csi_t::reset();
-
-    // other custom colors
-    table["amber"] = csi_t::csi24(0xff, 0xbf, 0x00);
-    table["sage"] = csi_t::csi24(176, 208, 176);
-
-    // all done
-    return table;
 }
 
 

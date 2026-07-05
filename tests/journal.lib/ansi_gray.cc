@@ -19,14 +19,15 @@ using ansi_t = pyre::journal::ansi_t;
 int
 main()
 {
-    // verify the contents of the {gray} color table
+    // verify the contents of the {gray} color table; the grays are now the canonical X11 values,
+    // resolved through {chroma}'s palette rather than journal's former hand-picked approximations
     assert((ansi_t::gray("normal") == csi_t::reset()));
-    assert((ansi_t::gray("gray10") == csi_t::csi24(0x19, 0x19, 0x19)));
-    assert((ansi_t::gray("gray30") == csi_t::csi24(0x4c, 0x4c, 0x4c)));
+    assert((ansi_t::gray("gray10") == csi_t::csi24(0x1a, 0x1a, 0x1a)));
+    assert((ansi_t::gray("gray30") == csi_t::csi24(0x4d, 0x4d, 0x4d)));
     assert((ansi_t::gray("gray41") == csi_t::csi24(0x69, 0x69, 0x69)));
-    assert((ansi_t::gray("gray50") == csi_t::csi24(0x80, 0x80, 0x80)));
-    assert((ansi_t::gray("gray66") == csi_t::csi24(0xa9, 0xa9, 0xa9)));
-    assert((ansi_t::gray("gray75") == csi_t::csi24(0xbe, 0xbe, 0xbe)));
+    assert((ansi_t::gray("gray50") == csi_t::csi24(0x7f, 0x7f, 0x7f)));
+    assert((ansi_t::gray("gray66") == csi_t::csi24(0xa8, 0xa8, 0xa8)));
+    assert((ansi_t::gray("gray75") == csi_t::csi24(0xbf, 0xbf, 0xbf)));
 
     // all done
     return 0;
