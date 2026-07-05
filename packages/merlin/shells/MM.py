@@ -1926,108 +1926,85 @@ class MM(pyre.application, family="pyre.applications.mm", namespace="mm"):
 
     def _emitCondaCuda(self, index, prefix):
         """
-        Resolve cuda as a capability: it is usable only if the compiler ({cuda-nvcc}) and the
-        runtime dev package ({cuda-cudart-dev}) are both present. The package set is version-
-        keyed — cuda <= 11 is a single {cudatoolkit}, 12.x+ is a split stack — so a partial
-        install is reported and cuda is left out of the database rather than letting the
-        compiler or linker fail later. Returns a database entry, or None if cuda is absent or
-        unusable
+        Deduce the layout of the conda package
         """
 
-        # a package family is present if any installed package starts with the stem; conda-forge
-        # ships cuda as cross-arch umbrellas ({cuda-nvcc}) that depend on arch-specific splits
-        # ({cuda-nvcc_linux-64}), and the umbrella is what the user installs
-        def installed(stem):
-            # the umbrella itself, or any of its arch splits
-            return any(name == stem or name.startswith(stem + "_") for name in index)
+        # find the first {cuda-*} package whose manifest owns a file matching {predicate} and
+        # return the (prefix-relative directory, owning package version) pair, or (None, None).
+        # the toolkit is spread across several {cuda-*} packages (nvidia channel), their
+        # {cuda-*_linux-64} arch splits (conda-forge), or a single {cudatoolkit}, so any package
+        # whose name starts with {cuda} is a place a part might live
+        def locate(predicate):
+            # scan the cuda packages in turn
+            for name, (version, _, record) in index.items():
+                # anything that is not part of the cuda stack
+                if not name.startswith("cuda"):
+                    # is skipped
+                    continue
+                # look through the package manifest for a match
+                directory = self._condaManifestDir(record, predicate)
+                # the first package that owns it
+                if directory is not None:
+                    # wins
+                    return directory, version
+            # no cuda package owns such a file
+            return None, None
 
-        # modern conda-forge layout: a split stack pinned by {cuda-version}
-        if "cuda-version" in index:
-            # the families we must have to compile and link cuda code
-            required = ["cuda-nvcc", "cuda-cudart-dev"]
-            # any that are missing make the toolkit unusable
-            missing = [stem for stem in required if not installed(stem)]
-            # if the stack is incomplete
-            if missing:
-                # warn about a systemic problem the user should fix before building
-                warning = journal.warning("mm.pkgdb")
-                # what is wrong
-                warning.line(f"cuda is partially installed in '{prefix}'")
-                # which pieces are missing
-                warning.line(f"missing: {', '.join(missing)}")
-                # the consequence
-                warning.line("cuda support disabled")
-                # flush
-                warning.log()
-                # and leave cuda out of the database
-                return None
-            # the toolkit version comes free from the {cuda-version} pin
-            version = index["cuda-version"][0]
-            # the records that may carry the headers; conda-forge keeps them in the arch split
-            headerRecords = [
-                record
-                for name, (_, _, record) in index.items()
-                if name.startswith("cuda-cudart-dev")
-            ]
-            # provenance for the database comment
-            candidate = "cuda-version + " + " + ".join(required)
-        # legacy single-package layout: everything lives in {cudatoolkit}
-        elif "cudatoolkit" in index:
-            # the version and the one record that owns everything, headers included
-            version, _, record = index["cudatoolkit"]
-            # so that is the only place to look for the headers
-            headerRecords = [record]
-            # provenance
-            candidate = "cudatoolkit"
-        # cuda simply isn't installed in this environment
-        else:
-            # nothing to emit
+        # deduce the include path: the directory holding the runtime header the build marks against
+        incdir, incver = locate(lambda path: path.name == "cuda_runtime.h")
+        # deduce the library path: the directory holding the runtime library, shared or static
+        libdir, _ = locate(lambda path: path.name.startswith("libcudart"))
+        # locate the compiler: mm currently invokes {nvcc} off the PATH, so its presence there is
+        # all we need
+        nvcc = shutil.which("nvcc")
+
+        # gather whatever is absent so the user is told exactly what to fix
+        missing = []
+        # add the headers we could not find
+        if incdir is None:
+            # to the pile
+            missing.append("cuda runtime headers (cuda_runtime.h)")
+        # add the runtime library we could not find
+        if libdir is None:
+            # to the pile
+            missing.append("cuda runtime library (libcudart)")
+        # and the compiler
+        if nvcc is None:
+            # which must be on the PATH
+            missing.append("cuda compiler (nvcc) on the PATH")
+
+        # if any part is missing, cuda cannot be configured here
+        if missing:
+            # so leave it out of the database
             return None
-        # locate {cuda.h} to discover the sysroot: conda-forge keeps it under
-        # targets/<arch>/include and does NOT symlink it into {prefix}/include, so the include
-        # directory and its parent (the root that holds both include/ and lib/) must be read
-        # from the manifest rather than assumed to be {prefix}
-        incdir = None
-        # scan the records that might own the headers
-        for record in headerRecords:
-            # probe this manifest for {cuda.h}
-            incdir = self._condaManifestDir(record, lambda path: path.name == "cuda.h")
-            # stop at the first hit
-            if incdir:
-                break
-        # if the headers turned up, the sysroot is the directory that holds include/ and lib/
-        if incdir:
-            # the cuda root is the parent of the include directory
-            sysroot = incdir.parent
-            # a sysroot of '.' means the headers sit directly under {prefix}/include
-            dirLine = (
-                "cuda.dir ?= $(conda.prefix)"
-                if str(sysroot) == "."
-                else f"cuda.dir ?= $(conda.prefix)/{sysroot}"
-            )
-        # otherwise we cannot trust the include path; warn and fall back to the prefix
-        else:
-            # a warning rather than a hard failure: cuda is installed, just not where we expect
-            warning = journal.warning("mm.pkgdb")
-            # what happened
-            warning.line(f"cuda is installed in '{prefix}' but cuda.h was not found")
-            # the consequence
-            warning.line(
-                "falling back to the environment prefix; the include path may be wrong"
-            )
-            # flush
-            warning.log()
-            # the conservative fallback
-            dirLine = "cuda.dir ?= $(conda.prefix)"
-        # {dir} drives the {cuda/init.mm} incpath default ({cuda.dir}/include plus the cuda-13
-        # cccl wildcard); the default libpath is {lib64}, which the conda sysroot does not use,
-        # so override it to the sibling {lib} of the include directory
-        lines = [dirLine, "cuda.libpath ?= $(cuda.dir)/lib"]
+
+        # the version, for display only: the {cuda-version} pin when conda ships it, otherwise the
+        # version of the package that owns the headers (e.g. cuda-cudart-dev 11.8.89 -> 11.8)
+        raw = index["cuda-version"][0] if "cuda-version" in index else incver
+
+        # configure the build from where the parts actually live: the cuda home is the deepest
+        # directory that is an ancestor of both the headers and the libraries, mirroring the
+        # {cuda/init.mm} home + derived model. this is the environment prefix when the parts share
+        # no ancestor below it (nvidia channel: {include} + {lib}), and the shared subtree
+        # otherwise (conda-forge: {targets/<arch>/include} + {targets/<arch>/lib})
+        root = incdir.commonRoot(libdir)
+        # splice the shared root onto the prefix, collapsing the {.} root to the prefix itself
+        home = "$(conda.prefix)" if str(root) == "." else f"$(conda.prefix)/{root}"
+        # express the include and library directories relative to that home
+        inc, lib = incdir.relativeTo(root), libdir.relativeTo(root)
+        # the home, then the include path (keeping the cuda-13 {cccl} reorg) and the library path,
+        # both derived from it
+        lines = [
+            f"cuda.dir ?= {home}",
+            f"cuda.incpath ?= $(cuda.dir)/{inc} ${{wildcard $(cuda.dir)/{inc}/cccl}}",
+            f"cuda.libpath ?= $(cuda.dir)/{lib}",
+        ]
+
         # hand back the entry
         return {
             "name": "cuda",
-            "comment": f"cuda {version}  (conda: {candidate})",
-            "version": self._condaMajorMinor(version),
+            "comment": f"cuda {raw}  (conda: nvcc + cuda_runtime.h + libcudart)",
+            "version": self._condaMajorMinor(raw),
             "lines": lines,
         }
 
