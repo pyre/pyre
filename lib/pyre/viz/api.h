@@ -132,15 +132,6 @@ namespace pyre::viz::factories::selectors {
 } // namespace pyre::viz::factories::selectors
 
 
-// conversions from other color spaces to {rgb}
-namespace pyre::viz::colorspaces {
-    inline auto hl(double h, double l, double threshold = 0.4) -> rgb_t;
-    inline auto hsb(double h, double s, double b) -> rgb_t;
-    inline auto hsl(double h, double s, double l) -> rgb_t;
-    inline auto oklch(float lighness, float chroma, float hue) -> rgb_t;
-} // namespace pyre::viz::colorspaces
-
-
 // iterators
 // codecs
 namespace pyre::viz::iterators::codecs {
@@ -216,7 +207,10 @@ namespace pyre::viz::iterators::colormaps {
     using hl_t = HL<hueSourceT, luminositySourceT>;
 
     template <class hueSourceT, class saturationSourceT, class luminositySourceT>
-    using hsl_t = HSB<hueSourceT, saturationSourceT, luminositySourceT>;
+    using hsl_t = HSL<hueSourceT, saturationSourceT, luminositySourceT>;
+
+    template <class lightnessSourceT, class chromaSourceT, class hueSourceT>
+    using oklch_t = OKLCH<lightnessSourceT, chromaSourceT, hueSourceT>;
 
     template <class redSourceT, class greenSourceT, class blueSourceT>
     using rgb_t = RGB<redSourceT, greenSourceT, blueSourceT>;

@@ -260,7 +260,7 @@ pyre::viz::factories::colormaps::Complex<signalT, redT, greenT, blueT>::make(
             // compute the brightness
             auto brightness = _minBrightness + brightnessBin * _scaleBrightness;
             // convert the {hsl} values to {rgb} and return the triplet
-            color = pyre::viz::colorspaces::hsb(hue, _saturation, brightness);
+            color = pyre::chroma::rgb::hsb(hue, _saturation, brightness);
         }
         // unpack
         auto [rValue, gValue, bValue] = color;

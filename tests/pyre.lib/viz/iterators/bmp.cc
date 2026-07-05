@@ -34,7 +34,7 @@ main(int argc, char * argv[])
         // form the colors
         color_t c = (idx % 256) / 255.;
         // and place color values
-        data.emplace(data.end(), c / 2, 3 * c / 4, c);
+        data.emplace(data.end(), bmp_t::rgb_type { c / 2, 3 * c / 4, c });
     }
 
     // make a bitmap

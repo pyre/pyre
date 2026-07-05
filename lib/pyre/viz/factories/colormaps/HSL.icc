@@ -277,7 +277,7 @@ pyre::viz::factories::colormaps::HSL<hueT, saturationT, luminosityT, redT, green
         auto sValue = sData[pixel];
         auto lValue = lData[pixel];
         // project to rgb
-        auto [rValue, gValue, bValue] = pyre::viz::colorspaces::hsl(hValue, sValue, lValue);
+        auto [rValue, gValue, bValue] = pyre::chroma::rgb::hsl(hValue, sValue, lValue);
         // and write
         rData[pixel] = rValue;
         gData[pixel] = gValue;

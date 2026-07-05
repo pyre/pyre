@@ -63,7 +63,7 @@ pyre.pkg.ext := extensions/
 # the pyre library meta-data
 pyre.lib.root := lib/pyre/
 pyre.lib.stem := pyre
-pyre.lib.prerequisites += journal.lib
+pyre.lib.prerequisites += chroma.lib journal.lib
 pyre.lib.c++.defines += PYRE_CORE
 pyre.lib.c++.flags += -Wall $($(compiler.c++).std.c++17)
 

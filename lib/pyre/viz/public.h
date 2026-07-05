@@ -17,13 +17,6 @@
 // this is the file you are looking for
 #include "api.h"
 
-// local support
-// color spaces
-#include "colorspaces/hl.h"
-#include "colorspaces/hsb.h"
-#include "colorspaces/hsl.h"
-#include "colorspaces/oklch.h"
-
 // products
 // images
 #include "products/images/BMP.h"
