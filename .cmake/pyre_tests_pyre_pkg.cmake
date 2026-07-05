@@ -9,6 +9,7 @@
 #
 pyre_test_python_testcase(tests/pyre.pkg/primitives/sanity.py)
 pyre_test_python_testcase(tests/pyre.pkg/primitives/path_arithmetic.py)
+pyre_test_python_testcase(tests/pyre.pkg/primitives/path_commonroot.py)
 pyre_test_python_testcase(tests/pyre.pkg/primitives/path_parts.py)
 pyre_test_python_testcase(tests/pyre.pkg/primitives/path_resolution.py)
 pyre_test_python_testcase(tests/pyre.pkg/primitives/path_tuple.py)
