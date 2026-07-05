@@ -18,5 +18,11 @@
 #include "rgb/hsl.h"
 #include "rgb/oklch.h"
 
+// the {ansi} serializers
+#include "ansi/gray.h"
+#include "ansi/reset.h"
+#include "ansi/rgb.h"
+#include "ansi/rgb256.h"
+
 
 // end of file

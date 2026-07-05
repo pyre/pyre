@@ -14,6 +14,8 @@
 namespace pyre::chroma {
     // a single color channel is a float living in the unit interval [0, 1]
     using color_t = float;
+    // ANSI escape sequences are assembled as strings
+    using string_t = std::string;
 
     // an {r,g,b} triplet is our canonical device-independent representation of a color
     struct rgb_t {
@@ -44,6 +46,22 @@ namespace pyre::chroma {
         // from {oklch}: perceptual {lightness} and {chromaLevel} with {hue} in degrees
         inline auto oklch(float lightness, float chromaLevel, float hue) -> rgb_t;
     } // namespace rgb
+
+    // the serializers that render a color as an ANSI escape sequence
+    // the enclosing namespace names the destination representation; each function names its source
+    namespace ansi {
+        // the escape character that introduces every control sequence
+        inline constexpr char esc = '\x1b';
+
+        // the reset sequence returns the terminal to its default attributes
+        inline auto reset() -> string_t;
+        // from an {rgb} triplet: a 24-bit truecolor escape sequence
+        inline auto rgb(const rgb_t & color, bool foreground = true) -> string_t;
+        // from an {rgb} triplet: the nearest color in the 216-color cube
+        inline auto rgb256(const rgb_t & color, bool foreground = true) -> string_t;
+        // from a gray {level} in [0, 1]: the nearest step on the 24-step grayscale ramp
+        inline auto gray(color_t level, bool foreground = true) -> string_t;
+    } // namespace ansi
 } // namespace pyre::chroma
 
 
