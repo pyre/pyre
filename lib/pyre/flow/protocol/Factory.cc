@@ -93,7 +93,7 @@ pyre::flow::protocol::Factory::removeInput(const name_type & slot) -> factory_re
     // detach me as a product readers
     product->removeReader(slot, self);
     // remove the binding from my pile
-    _inputs.extract(slot);
+    _inputs.erase(slot);
 
     // make a channel
     auto channel = pyre::journal::debug_t("pyre.flow.factories.input");
@@ -129,7 +129,7 @@ pyre::flow::protocol::Factory::removeOutput(const name_type & slot) -> factory_r
     // detach me as a product writer
     product->removeWriter(slot, self);
     // remove the binding from my pile
-    _outputs.extract(slot);
+    _outputs.erase(slot);
 
     // make a channel
     auto channel = pyre::journal::debug_t("pyre.flow.factories.output");

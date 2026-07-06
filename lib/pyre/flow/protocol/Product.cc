@@ -50,7 +50,7 @@ pyre::flow::protocol::Product::removeReader(name_type slot, factory_ref_type fac
     -> product_ref_type
 {
     // remove the factory from my pile of readers
-    _readers.extract({ slot, factory });
+    _readers.erase({ slot, factory });
     // return a reference to me
     return ref();
 };
@@ -60,7 +60,7 @@ pyre::flow::protocol::Product::removeWriter(name_type slot, factory_ref_type fac
     -> product_ref_type
 {
     // remove the factory from my pile of writers
-    _writers.extract({ slot, factory });
+    _writers.erase({ slot, factory });
     // return a reference to me
     return ref();
 };
