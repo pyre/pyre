@@ -59,6 +59,16 @@ pyre::py::chroma::ansi(py::module & m)
         "level"_a, "foreground"_a = true,
         // the docstring
         "a grayscale-ramp escape sequence for {level}");
+    // a 16-color sequence from a terminal-palette code
+    ansi.def(
+        // the name
+        "csi3",
+        // the serializer
+        &pyre::chroma::ansi::csi3,
+        // the signature
+        "code"_a, "bright"_a = false,
+        // the docstring
+        "a 16-color escape sequence for the terminal-palette {code}");
 
     // all done
     return;
