@@ -18,13 +18,13 @@ def test():
     # the reset sequence
     assert ANSI.gray("normal") == CSI.reset()
 
-    # verify the contents of the {gray} color table
-    assert ANSI.gray("gray10") == CSI.csi24(red=0x19, green=0x19, blue=0x19)
-    assert ANSI.gray("gray30") == CSI.csi24(red=0x4c, green=0x4c, blue=0x4c)
+    # verify the contents of the {gray} color table; these are the canonical X11 gray values
+    assert ANSI.gray("gray10") == CSI.csi24(red=0x1a, green=0x1a, blue=0x1a)
+    assert ANSI.gray("gray30") == CSI.csi24(red=0x4d, green=0x4d, blue=0x4d)
     assert ANSI.gray("gray41") == CSI.csi24(red=0x69, green=0x69, blue=0x69)
-    assert ANSI.gray("gray50") == CSI.csi24(red=0x80, green=0x80, blue=0x80)
-    assert ANSI.gray("gray66") == CSI.csi24(red=0xa9, green=0xa9, blue=0xa9)
-    assert ANSI.gray("gray75") == CSI.csi24(red=0xbe, green=0xbe, blue=0xbe)
+    assert ANSI.gray("gray50") == CSI.csi24(red=0x7f, green=0x7f, blue=0x7f)
+    assert ANSI.gray("gray66") == CSI.csi24(red=0xa8, green=0xa8, blue=0xa8)
+    assert ANSI.gray("gray75") == CSI.csi24(red=0xbf, green=0xbf, blue=0xbf)
 
     # all done
     return

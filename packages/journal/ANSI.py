@@ -7,16 +7,12 @@
 # access to the environment variables
 import os
 
-# pull the control sequence generator
-from .CSI import CSI
 
-
-# maps of color names from a variety of color spaces to the ANSI control sequences required tp
-# render them in compatible terminal emulators
+# maps of color names to the ANSI control sequences that render them; the sequences are produced
+# by {pyre::chroma}, exposed to python as {pyre.libpyre.chroma}
 class ANSI:
     """
-    Encapsulation of mappings from color names to ANSI control sequences for a variety of color
-    spaces
+    Mappings from color names to ANSI control sequences, backed by the {chroma} color bindings
     """
 
     # interface
@@ -25,102 +21,120 @@ class ANSI:
         """
         Attempt to assess whether the current terminal is ANSI compatible
         """
-        # get the compatible terminal types
-        compatible = cls._compatible
-        # try to read the value of the {TERM} environment variable
+        # read the {TERM} environment variable, assuming a dumb terminal when it is unset
         term = os.environ.get("TERM", "dumb").lower()
-        # check whether terminal type is compatible
-        return term in compatible
+        # the terminal is compatible when its type is one we recognize
+        return term in cls._compatible
 
-    # color tables
     @classmethod
     def null(cls, name):
         """
-        The null colorspace where every color maps to an empty string
+        The null colorspace, where every color maps to an empty string
         """
-        # everything is an empty string
+        # nothing is ever colored here
         return ""
 
     @classmethod
     def ansi(cls, name):
         """
-        Return the ANSI control sequence required to render the given color {name}
+        Return the control sequence for the 16-color terminal-palette {name}
         """
-        # look it up and return it
-        return cls._ansi.get(name, "")
+        # reach the color bindings
+        chroma = cls._chroma()
+        # without them there is no color
+        if chroma is None:
+            return ""
+        # {normal} restores the terminal defaults
+        if name == "normal":
+            return chroma.ansi.reset()
+        # look up the terminal-palette code and brightness for this name
+        code = cls._codes.get(name)
+        # an unknown name produces no color
+        if code is None:
+            return ""
+        # render the code through chroma
+        return chroma.ansi.csi3(code[0], code[1])
 
     @classmethod
     def gray(cls, name):
         """
-        Return the ANSI control sequence required to render the given color {name}
+        Return the control sequence for the named gray {name}
         """
-        # look it up and return it
-        return cls._gray.get(name, "")
-
-    @classmethod
-    def misc(cls, name):
-        """
-        Return the ANSI control sequence required to render the given color {name}
-        """
-        # look it up and return it
-        return cls._misc.get(name, "")
+        # the grays are ordinary named colors
+        return cls._named(name)
 
     @classmethod
     def x11(cls, name):
         """
-        Return the ANSI control sequence required to render the given color {name}
+        Return the control sequence for the X11 color {name}
         """
-        # look it up and return it
-        return cls._x11.get(name, "")
+        # the X11 colors live in chroma's palette
+        return cls._named(name)
+
+    @classmethod
+    def misc(cls, name):
+        """
+        Return the control sequence for pyre's custom color {name}
+        """
+        # pyre's colors also live in chroma's palette
+        return cls._named(name)
 
     # implementation details
-    _ansi = {
-        # the reset sequence
-        "normal": CSI.reset(),
+    @classmethod
+    def _named(cls, name):
+        """
+        Render a named color as a 24-bit escape via {chroma}; {normal} means reset
+        """
+        # reach the color bindings
+        chroma = cls._chroma()
+        # without them there is no color
+        if chroma is None:
+            return ""
+        # {normal} restores the terminal defaults rather than naming a color
+        if name == "normal":
+            return chroma.ansi.reset()
+        # look the name up in chroma's palette
+        color = chroma.rgb.palette.find(name)
+        # an unknown name produces no color
+        if color is None:
+            return ""
+        # a known name renders as a 24-bit truecolor escape
+        return chroma.ansi.rgb(color)
+
+    @classmethod
+    def _chroma(cls):
+        """
+        Access the {chroma} color bindings, or {None} when they are unavailable (e.g. bootstrap)
+        """
+        # the framework carries the bindings
+        import pyre
+
+        # they live on {libpyre}, which is absent when the extension was not built
+        return None if pyre.libpyre is None else pyre.libpyre.chroma
+
+    # the 16-color names mapped to their terminal-palette codes and bright flags
+    _codes = {
         # regular colors
-        "black": CSI.csi3(code=30),
-        "red": CSI.csi3(code=31),
-        "green": CSI.csi3(code=32),
-        "brown": CSI.csi3(code=33),
-        "blue": CSI.csi3(code=34),
-        "purple": CSI.csi3(code=35),
-        "cyan": CSI.csi3(code=36),
-        "light-gray": CSI.csi3(code=37),
+        "black": (30, False),
+        "red": (31, False),
+        "green": (32, False),
+        "brown": (33, False),
+        "blue": (34, False),
+        "purple": (35, False),
+        "cyan": (36, False),
+        "light-gray": (37, False),
         # bright colors
-        "dark-gray": CSI.csi3(code=30, bright=True),
-        "light-red": CSI.csi3(code=31, bright=True),
-        "light-green": CSI.csi3(code=32, bright=True),
-        "yellow": CSI.csi3(code=33, bright=True),
-        "light-blue": CSI.csi3(code=34, bright=True),
-        "light-purple": CSI.csi3(code=35, bright=True),
-        "light-cyan": CSI.csi3(code=36, bright=True),
-        "white": CSI.csi3(code=37, bright=True),
+        "dark-gray": (30, True),
+        "light-red": (31, True),
+        "light-green": (32, True),
+        "yellow": (33, True),
+        "light-blue": (34, True),
+        "light-purple": (35, True),
+        "light-cyan": (36, True),
+        "white": (37, True),
     }
 
-    _gray = {
-        # the reset sequence
-        "normal": CSI.reset(),
-        # grays
-        "gray10": CSI.csi24(0x19, 0x19, 0x19),
-        "gray30": CSI.csi24(0x4C, 0x4C, 0x4C),
-        "gray41": CSI.csi24(0x69, 0x69, 0x69),
-        "gray50": CSI.csi24(0x80, 0x80, 0x80),
-        "gray66": CSI.csi24(0xA9, 0xA9, 0xA9),
-        "gray75": CSI.csi24(0xBE, 0xBE, 0xBE),
-    }
-
-    _misc = {
-        # the reset sequence
-        "normal": CSI.reset(),
-        # other custom colors
-        "amber": CSI.csi24(0xFF, 0xBF, 0x00),
-        "sage": CSI.csi24(176, 208, 176),
-    }
-
-    # the {x11} table gets autogenerated from the canonical {rgb.txt} file
-    from .ANSI_x11 import table as _x11
-
-    # the list of compatible terminal types
+    # the set of terminal types that understand ANSI control sequences
     _compatible = {
         "ansi",
         "vt102",
