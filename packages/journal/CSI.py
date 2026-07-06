@@ -4,14 +4,20 @@
 # (c) 1998-2026 all rights reserved
 
 
-# get the symbolic names for the ASCII codes
-from .ASCII import ASCII
+# the framework, for the {chroma} color bindings
+import pyre
 
 
-# declaration
+# reach the {chroma} color bindings, or {None} when they are unavailable (e.g. during bootstrap)
+def _chroma():
+    # the bindings live on {libpyre}, which is absent when the extension was not built
+    return None if pyre.libpyre is None else pyre.libpyre.chroma
+
+
+# a generator of ANSI control strings; all color sequences are delegated to {pyre::chroma}
 class CSI:
     """
-    A generator of ANSI control strings
+    A generator of ANSI control strings, backed by the {chroma} color bindings
     """
 
     # reset
@@ -20,74 +26,64 @@ class CSI:
         """
         Reset all output attributes
         """
-        # build the sequence and return it
-        return f"{ASCII.ESC}[0m"
+        # reach the bindings
+        chroma = _chroma()
+        # delegate, or produce nothing when they are unavailable
+        return chroma.ansi.reset() if chroma is not None else ""
 
     # the color commands
     @staticmethod
-    def csi3(bright=False, code=None):
+    def csi3(code=None, bright=False):
         """
-        Build an ANSI color sequence
+        Build a 16-color ANSI control sequence
         """
-        # build the sequence
-        seq = [
-            f"{ASCII.ESC}[",
-            "1" if bright else "0",
-            f";{code}" if code is not None else "",
-            "m",
-        ]
-        # assemble it and return it
-        return "".join(seq)
+        # reach the bindings
+        chroma = _chroma()
+        # delegate the terminal-palette code
+        return chroma.ansi.csi3(code, bright) if chroma is not None else ""
 
     @staticmethod
     def csi8(red=0, green=0, blue=0, foreground=True):
         """
-        Build an ANSI color sequence from the 256 color set, where each color can take a value in
-        the interval [0, 5]
+        Build a 256-color-cube control sequence from channels in [0, 5]
         """
-        # build the sequence
-        seq = [
-            f"{ASCII.ESC}[",
-            "38" if foreground else "48",
-            ";5;",
-            str(16 + int(f"{red}{green}{blue}", 6)),
-            "m",
-        ]
-        # assemble it and return it
-        return "".join(seq)
+        # reach the bindings
+        chroma = _chroma()
+        # without them there is no color
+        if chroma is None:
+            return ""
+        # normalize the cube coordinates and let chroma quantize them back
+        return chroma.ansi.rgb256(
+            chroma.Color(red / 5, green / 5, blue / 5), foreground
+        )
 
     @staticmethod
     def csi8_gray(gray=0, foreground=True):
         """
-        Build an ANSI color sequence from the 8 bit color set that corresponds to a gray level in
-        the range [0, 23]
+        Build a grayscale-ramp control sequence from a step in [0, 23]
         """
-        # build the sequence
-        seq = [
-            f"{ASCII.ESC}[",
-            "38" if foreground else "48",
-            ";5;",
-            str(232 + gray),
-            "m",
-        ]
-        # assemble it and return it
-        return "".join(seq)
+        # reach the bindings
+        chroma = _chroma()
+        # without them there is no color
+        if chroma is None:
+            return ""
+        # normalize the ramp step and let chroma quantize it back
+        return chroma.ansi.gray(gray / 23, foreground)
 
     @staticmethod
     def csi24(red=0, green=0, blue=0, foreground=True):
         """
-        Build an ANSI color sequence from the 24bit color set, where each color can take a value in
-        the interval [0, 255]
+        Build a 24-bit truecolor control sequence from channels in [0, 255]
         """
-        # build the sequence
-        seq = [
-            f"{ASCII.ESC}[",
-            "38" if foreground else "48",
-            f";2;{red};{green};{blue}",
-            "m",
-        ]
-        # assemble it and return it
-        return "".join(seq)
+        # reach the bindings
+        chroma = _chroma()
+        # without them there is no color
+        if chroma is None:
+            return ""
+        # normalize the channels and hand them to chroma as a color
+        return chroma.ansi.rgb(
+            chroma.Color(red / 255, green / 255, blue / 255), foreground
+        )
 
     # graphics rendition commands
     @staticmethod
@@ -95,10 +91,8 @@ class CSI:
         """
         Turn blink on or off
         """
-        # build the sequence
-        seq = [f"{ASCII.ESC}[" "5" if state else "25" "m"]
-        # assemble it and return it
-        return "".join(seq)
+        # blink is a text style, not a color, so chroma does not cover it; build it locally
+        return f"\x1b[{'5' if state else '25'}m"
 
 
 # end of file
