@@ -8,8 +8,8 @@
 #define pyre_journal_ANSI_h
 
 
-// a map of color names to the ANSI escape sequences that render them; every lookup is now
-// backed by {pyre::chroma}, the single source of color truth
+// a map of color names to the ANSI escape sequences that render them; the sequences are
+// produced by {pyre::chroma}
 class pyre::journal::ANSI {
     // types
 public:

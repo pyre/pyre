@@ -19,8 +19,7 @@ using ansi_t = pyre::journal::ansi_t;
 int
 main()
 {
-    // verify the contents of the {gray} color table; the grays are now the canonical X11 values,
-    // resolved through {chroma}'s palette rather than journal's former hand-picked approximations
+    // verify the contents of the {gray} color table; these are the canonical X11 gray values
     assert((ansi_t::gray("normal") == csi_t::reset()));
     assert((ansi_t::gray("gray10") == csi_t::csi24(0x1a, 0x1a, 0x1a)));
     assert((ansi_t::gray("gray30") == csi_t::csi24(0x4d, 0x4d, 0x4d)));
