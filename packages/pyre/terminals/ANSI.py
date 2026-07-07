@@ -8,18 +8,15 @@
 import pyre
 
 # my base
-from .Plain import Plain
+from .Interactive import Interactive
 
 
 # declaration
-class ANSI(Plain, family="pyre.terminals.ansi"):
+class ANSI(Interactive, family="pyre.terminals.ansi"):
     """
-    A terminal that renders color using ANSI control sequences, delegating the sequence
+    A live terminal that also renders color using ANSI control sequences, delegating the sequence
     construction to {pyre::chroma}
     """
-
-    # an ANSI terminal can render color
-    chromatic = True
 
     # interface
     @pyre.export
@@ -47,32 +44,6 @@ class ANSI(Plain, family="pyre.terminals.ansi"):
             return ""
         # let chroma produce the reset sequence
         return chroma.ansi.reset()
-
-    @pyre.export
-    def hideCursor(self):
-        """
-        The control sequence that hides the text cursor
-        """
-        # the DEC private-mode reset that hides the cursor
-        return "\x1b[?25l"
-
-    @pyre.export
-    def showCursor(self):
-        """
-        The control sequence that restores the text cursor
-        """
-        # the DEC private-mode set that shows the cursor
-        return "\x1b[?25h"
-
-    @pyre.export
-    def rewind(self, lines):
-        """
-        The control sequence that moves to the top of a {lines}-tall frame and clears downward
-        """
-        # step up over the previous frame, when there was one
-        up = f"\x1b[{lines}A" if lines > 0 else ""
-        # then return to the left margin and wipe from the cursor to the end of the screen
-        return f"{up}\r\x1b[J"
 
 
 # end of file

@@ -11,7 +11,8 @@ import pyre
 # declaration
 class Terminal(pyre.protocol, family="pyre.terminals"):
     """
-    The capabilities of a user terminal
+    The capabilities every terminal has: the device queries, a way to write to it, and a color
+    surface that renders nothing when the terminal cannot show color
     """
 
     # configurable state
@@ -23,9 +24,6 @@ class Terminal(pyre.protocol, family="pyre.terminals"):
     ostream = pyre.properties.ostream()
     ostream.default = "stdout"
     ostream.doc = "the terminal output stream"
-
-    # whether this terminal type renders color
-    chromatic = False
 
     # requirements
     @pyre.provides
@@ -50,6 +48,18 @@ class Terminal(pyre.protocol, family="pyre.terminals"):
     def encoding(self):
         """
         The character encoding of the terminal, or {None} when it cannot be determined
+        """
+
+    @pyre.provides
+    def write(self, text):
+        """
+        Emit {text} to the terminal without a trailing newline
+        """
+
+    @pyre.provides
+    def flush(self):
+        """
+        Push any buffered output to the terminal now
         """
 
     @pyre.provides
@@ -80,25 +90,6 @@ class Terminal(pyre.protocol, family="pyre.terminals"):
         terminal with no color
         """
 
-    @pyre.provides
-    def hideCursor(self):
-        """
-        The control sequence that hides the text cursor; empty on a terminal that cannot
-        """
-
-    @pyre.provides
-    def showCursor(self):
-        """
-        The control sequence that restores the text cursor; empty on a terminal that cannot
-        """
-
-    @pyre.provides
-    def rewind(self, lines):
-        """
-        The control sequence that moves to the top of a {lines}-tall frame and clears from there
-        down; empty on a terminal that cannot
-        """
-
     # framework support
     @classmethod
     def pyre_default(cls, **kwds):
@@ -120,22 +111,31 @@ class Terminal(pyre.protocol, family="pyre.terminals"):
             # so treat them as non-interactive
             live = False
 
+        # a terminal that is not live can neither read keys nor show color
+        if not live:
+            # so it is a plain terminal
+            from .Plain import Plain
+
+            # and that is our answer
+            return Plain
+
         # the {NO_COLOR} convention lets the user opt out of color regardless of the terminal
         colorless = os.environ.get("NO_COLOR") is not None
 
         # a live, ANSI-compatible terminal is color capable unless the user opted out
-        if live and compatible() and not colorless:
-            # so pick the color implementation
+        if compatible() and not colorless:
+            # so pick the full color implementation
             from .ANSI import ANSI
 
             # and return it
             return ANSI
 
-        # everything else is a plain terminal
-        from .Plain import Plain
+        # everything else is a live terminal that cannot, or must not, show color; it still
+        # drives a keyboard and a cursor, so it is interactive but colorless
+        from .Interactive import Interactive
 
         # and return it
-        return Plain
+        return Interactive
 
 
 # end of file
