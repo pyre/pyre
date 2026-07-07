@@ -15,8 +15,8 @@ from .Terminal import Terminal
 # declaration
 class Plain(pyre.component, family="pyre.terminals.plain", implements=Terminal):
     """
-    A terminal with no color capabilities; also the base that carries the shared, {os}-backed
-    device queries for every terminal type
+    A terminal with no color and no live input; also the base that carries the shared, {os}-backed
+    device queries and the colorless rendering that every terminal type inherits
     """
 
     # configurable state
@@ -27,9 +27,6 @@ class Plain(pyre.component, family="pyre.terminals.plain", implements=Terminal):
     ostream = pyre.properties.ostream()
     ostream.default = "stdout"
     ostream.doc = "the terminal output stream"
-
-    # a plain terminal cannot render color
-    chromatic = False
 
     # interface
     @pyre.export
@@ -71,6 +68,26 @@ class Plain(pyre.component, family="pyre.terminals.plain", implements=Terminal):
             return None
 
     @pyre.export
+    def write(self, text):
+        """
+        Emit {text} to the terminal without a trailing newline
+        """
+        # write straight through; callers decide where lines break
+        self.ostream.write(text)
+        # nothing to hand back
+        return
+
+    @pyre.export
+    def flush(self):
+        """
+        Push any buffered output to the terminal now
+        """
+        # drain the output buffer
+        self.ostream.flush()
+        # nothing to hand back
+        return
+
+    @pyre.export
     def render(self, color):
         """
         Render {color} as an escape sequence; a plain terminal emits none
@@ -84,10 +101,8 @@ class Plain(pyre.component, family="pyre.terminals.plain", implements=Terminal):
         The escape sequence for the named color {name}; empty on a colorless terminal, or when
         {name} is not a known color
         """
-        # a colorless terminal renders nothing
-        if not self.chromatic:
-            return ""
-        # otherwise resolve the name to a color and render it
+        # resolve the name to a color and let {render} decide what to emit; on a plain terminal
+        # that is nothing, on a color terminal it is the real escape
         return self.render(self._lookup(name))
 
     @pyre.export
@@ -96,10 +111,7 @@ class Plain(pyre.component, family="pyre.terminals.plain", implements=Terminal):
         The escape sequence for a 24-bit color given as a hex string ("c02020" or "#c02020") or
         an integer (0xc02020); empty on a colorless terminal, or when {code} is not valid hex
         """
-        # a colorless terminal renders nothing
-        if not self.chromatic:
-            return ""
-        # otherwise build the color from the hex code and render it
+        # build the color from the hex code and let {render} decide what to emit
         return self.render(self._hex(code))
 
     @pyre.export
@@ -108,31 +120,6 @@ class Plain(pyre.component, family="pyre.terminals.plain", implements=Terminal):
         The escape sequence that restores the terminal to its default attributes
         """
         # a plain terminal has nothing to reset
-        return ""
-
-    @pyre.export
-    def hideCursor(self):
-        """
-        The control sequence that hides the text cursor; a plain terminal emits none
-        """
-        # a plain terminal has no cursor control
-        return ""
-
-    @pyre.export
-    def showCursor(self):
-        """
-        The control sequence that restores the text cursor; a plain terminal emits none
-        """
-        # a plain terminal has no cursor control
-        return ""
-
-    @pyre.export
-    def rewind(self, lines):
-        """
-        The control sequence that rewinds and clears a {lines}-tall frame; a plain terminal
-        emits none
-        """
-        # a plain terminal has no cursor control
         return ""
 
     # implementation details
