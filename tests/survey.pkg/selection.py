@@ -7,8 +7,8 @@
 
 def test():
     """
-    A {Select} honors a reply through its numbered fallback, and the terminal key decoder reads
-    arrows
+    A {Select} honors a reply through its numbered fallback, and takes its default when the input
+    stream is exhausted
     """
     # get the package and a few helpers
     import builtins
@@ -36,14 +36,18 @@ def test():
     # the fallback should have honored the reply
     assert choice == "green", choice
 
-    # the terminal key decoder, now owned by {pyre.terminals}
-    keys = pyre.terminals.keys
-    # a buffer holding the {down arrow} escape sequence
-    keystream = bytearray(b"\x1b[B")
-    # a puller that walks that buffer one byte at a time
-    pull = lambda: keystream.pop(0) if keystream else None
-    # decoding {ESC [ B} should yield the down arrow
-    assert keys.decode(pull, pull).name == keys.DOWN
+    # an exhausted or closed input stream raises {EOFError}
+    def _eof(prompt=""):
+        # stand in for a reader that has hit end-of-input
+        raise EOFError
+
+    builtins.input = _eof
+    # so the numbered fallback settles on its default rather than looping or crashing
+    with contextlib.redirect_stdout(io.StringIO()):
+        # run the selection with no answer available
+        settled = survey.Select(message="pick", options=options, default="blue").ask()
+    # the default should have carried the day
+    assert settled == "blue", settled
 
     # all done
     return
