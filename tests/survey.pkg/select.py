@@ -13,10 +13,16 @@ def test():
     import builtins
     import contextlib
     import io
+    import pyre
     import survey
 
-    # a console over in-memory streams reports as non-interactive, forcing the numbered fallback
-    streams = survey.Console(istream=io.StringIO(), ostream=io.StringIO())
+    # a plain terminal over in-memory streams reports as non-interactive; make it the one
+    # terminal the prompts ride, forcing the numbered fallback
+    from pyre.terminals.Plain import Plain
+
+    pyre.executive.terminal = Plain(
+        name="test.select.plain", istream=io.StringIO(), ostream=io.StringIO()
+    )
     # the choices to offer
     options = ["red", "green", "blue"]
 
@@ -24,8 +30,8 @@ def test():
     builtins.input = lambda prompt="": "2"
     # swallow the menu it prints so a passing test stays silent
     with contextlib.redirect_stdout(io.StringIO()):
-        # run the selection over the non-interactive console
-        choice = survey.Select(message="pick", options=options, console=streams).ask()
+        # run the selection over the non-interactive terminal
+        choice = survey.Select(message="pick", options=options).ask()
     # the fallback should have honored the reply
     assert choice == "green", choice
 
