@@ -22,8 +22,6 @@ def test():
 
     term = ANSI(name="test.ansi")
 
-    # it is a color terminal
-    assert term.chromatic is True
     # a named color renders as a 24-bit truecolor escape
     assert term.color("red") == "\x1b[38;2;255;0;0m"
     # alias spellings resolve too, since the palette is complete

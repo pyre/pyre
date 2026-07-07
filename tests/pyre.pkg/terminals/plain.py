@@ -17,17 +17,14 @@ def test():
 
     term = Plain(name="test.plain")
 
-    # it has no color capability
-    assert term.chromatic is False
-    # so every color request comes back empty
+    # it has no color capability, so every color request comes back empty
     assert term.color("red") == ""
     assert term.rgb("c02020") == ""
     assert term.render(None) == ""
     assert term.reset() == ""
-    # and it has no cursor control either
-    assert term.hideCursor() == ""
-    assert term.showCursor() == ""
-    assert term.rewind(3) == ""
+    # it does not advertise cursor control or raw input at all
+    assert not hasattr(term, "hideCursor")
+    assert not hasattr(term, "rawmode")
 
     # and the device queries return values of the expected kind
     assert isinstance(term.width(), int)

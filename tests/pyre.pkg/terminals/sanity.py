@@ -14,10 +14,15 @@ def test():
 
     # the package is reachable through {import pyre}
     terminals = pyre.terminals
-    # the protocol and the two implementation foundries are published
+    # the two capability protocols are published
     assert terminals.terminal is not None
+    assert terminals.console is not None
+    # as are the three implementation foundries
     assert terminals.ansi is not None
+    assert terminals.interactive is not None
     assert terminals.plain is not None
+    # and the key decoder
+    assert terminals.keys is not None
 
     # the compatibility sniff answers the known cases
     assert terminals.compatible("xterm") is True
