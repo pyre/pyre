@@ -13,8 +13,8 @@ from .Prompt import Prompt
 
 class Select(Prompt):
     """
-    Offer a list of options and let the user settle on exactly one; arrow keys on a real
-    terminal, a numbered fallback when the input is redirected
+    Offer a list of options and return the one the user picks; arrow keys on a live terminal, a
+    numbered fallback otherwise
     """
 
     def __init__(self, *, options, default=None, pagesize=7, **kwds):
@@ -31,7 +31,7 @@ class Select(Prompt):
 
     def ask(self) -> str:
         """
-        Return the option the user settles on
+        Return the option the user picks
         """
         # an empty list has nothing to choose from
         if not self.options:

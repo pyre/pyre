@@ -31,7 +31,7 @@ class Prompt:
 
     def paint(self, text: str, color) -> str:
         """
-        Style {text} with {color}, but only when the terminal can actually show it
+        Style {text} with {color} when the terminal can show it
         """
         # ask the terminal the user is connected to for the color's escape sequence
         code = self.terminal.render(color)
