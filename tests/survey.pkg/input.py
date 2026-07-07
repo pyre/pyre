@@ -23,6 +23,17 @@ def test():
     # which should fall back to the default
     assert survey.Input(message="name", default="anon").ask() == "anon"
 
+    # an exhausted or closed input stream raises {EOFError}
+    def _eof(prompt=""):
+        # stand in for a reader that has hit end-of-input
+        raise EOFError
+
+    builtins.input = _eof
+    # which is treated as a blank reply, so the default stands
+    assert survey.Input(message="name", default="anon").ask() == "anon"
+    # and with no default, it comes back as the empty string rather than crashing
+    assert survey.Input(message="name").ask() == ""
+
     # all done
     return
 

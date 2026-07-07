@@ -28,6 +28,16 @@ def test():
     # which takes the default
     assert survey.Confirm(message="ok", default=True).ask() is True
 
+    # an exhausted or closed input stream raises {EOFError}
+    def _eof(prompt=""):
+        # stand in for a reader that has hit end-of-input
+        raise EOFError
+
+    builtins.input = _eof
+    # which takes the default rather than crashing, whichever way it points
+    assert survey.Confirm(message="ok", default=True).ask() is True
+    assert survey.Confirm(message="ok", default=False).ask() is False
+
     # all done
     return
 

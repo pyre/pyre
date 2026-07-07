@@ -25,8 +25,16 @@ class Input(Prompt):
         """
         # show the default in brackets when there is one to offer
         hint = f" [{self.default}]" if self.default is not None else ""
-        # a cooked read gives the user their terminal's own line editing for free
-        reply = input(f"{self.paint(self.message, self.theme.message)}{hint}: ").strip()
+        # try to
+        try:
+            # a cooked read gives the user their terminal's own line editing for free
+            reply = input(
+                f"{self.paint(self.message, self.theme.message)}{hint}: "
+            ).strip()
+        # a closed or exhausted input stream has no reply
+        except EOFError:
+            # so treat it as blank, which takes the default below
+            reply = ""
         # a non-empty reply wins outright
         if reply:
             # so return exactly what was typed

@@ -112,8 +112,14 @@ class Select(Prompt):
             print(f"  {number}) {option}")
         # keep asking until the reply names a real option
         while True:
-            # read a line naming a choice
-            reply = input(f"{self.message} [{fallback}]: ").strip()
+            # try to
+            try:
+                # read a line naming a choice
+                reply = input(f"{self.message} [{fallback}]: ").strip()
+            # a closed or exhausted input stream cannot answer
+            except EOFError:
+                # so settle for the default rather than looping on repeated EOF
+                return fallback
             # a blank reply takes the default
             if not reply:
                 # so hand back the fallback
