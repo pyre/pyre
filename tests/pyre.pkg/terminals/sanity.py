@@ -24,9 +24,9 @@ def test():
     # and the key decoder
     assert terminals.keys is not None
 
-    # the compatibility sniff answers the known cases
-    assert terminals.compatible("xterm") is True
-    assert terminals.compatible("dumb") is False
+    # the compatibility sniff now lives on the terminal protocol and answers the known cases
+    assert terminals.terminal.compatible("xterm") is True
+    assert terminals.terminal.compatible("dumb") is False
 
     # all done
     return

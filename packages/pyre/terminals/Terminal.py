@@ -5,6 +5,10 @@
 
 
 # support
+import os
+import sys
+
+# the framework
 import pyre
 
 
@@ -90,19 +94,26 @@ class Terminal(pyre.protocol, family="pyre.terminals"):
         terminal with no color
         """
 
+    # capability query
+    @classmethod
+    def compatible(cls, term=None):
+        """
+        Report whether the terminal type {term} understands ANSI control sequences; {term}
+        defaults to the value of the {TERM} environment variable
+        """
+        # fall back to the {TERM} environment variable, assuming a dumb terminal when it is unset
+        if term is None:
+            term = os.environ.get("TERM", "dumb")
+        # the terminal is ANSI-capable when its type is one we recognize
+        return term.lower() in cls._ansi
+
     # framework support
     @classmethod
     def pyre_default(cls, **kwds):
         """
         Sniff out the capabilities of the current terminal and choose the default implementation
         """
-        # the standard streams and the shared compatibility check
-        import os
-        import sys
-
-        from . import compatible
-
-        # try to
+        # attempt to
         try:
             # check whether output is going to a live terminal
             live = sys.stdout.isatty()
@@ -123,7 +134,7 @@ class Terminal(pyre.protocol, family="pyre.terminals"):
         colorless = os.environ.get("NO_COLOR") is not None
 
         # a live, ANSI-compatible terminal is color capable unless the user opted out
-        if compatible() and not colorless:
+        if cls.compatible() and not colorless:
             # so pick the full color implementation
             from .ANSI import ANSI
 
@@ -136,6 +147,19 @@ class Terminal(pyre.protocol, family="pyre.terminals"):
 
         # and return it
         return Interactive
+
+    # the set of {TERM} values whose terminals understand ANSI control sequences
+    _ansi = {
+        "ansi",
+        "vt102",
+        "vt220",
+        "vt320",
+        "vt420",
+        "xterm",
+        "xterm-color",
+        "xterm-16color",
+        "xterm-256color",
+    }
 
 
 # end of file
