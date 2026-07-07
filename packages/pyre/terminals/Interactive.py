@@ -24,8 +24,7 @@ from . import keys
 # declaration
 class Interactive(Plain, family="pyre.terminals.interactive", implements=console):
     """
-    A live terminal: still colorless, but connected to a real keyboard and cursor, so it can read
-    keypresses one at a time and drive an interactive redraw loop
+    A live, colorless terminal with raw keypress input and cursor control
     """
 
     # interface
@@ -33,8 +32,8 @@ class Interactive(Plain, family="pyre.terminals.interactive", implements=console
     @contextlib.contextmanager
     def rawmode(self):
         """
-        Put the terminal in cbreak mode for the duration of the {with} block so keys arrive one
-        at a time, restoring the cooked settings on the way out
+        Put the terminal in cbreak mode for the duration of the {with} block, restoring the
+        cooked settings on exit
         """
         # resolve the input descriptor now that we actually need raw mode
         self._fd = self.istream.fileno()
