@@ -20,8 +20,8 @@ class ANSI:
         """
         Attempt to assess whether the current terminal is ANSI compatible
         """
-        # ask whether the current terminal understands ANSI control sequences
-        return pyre.terminals.compatible()
+        # ask the terminal protocol whether the current terminal understands ANSI sequences
+        return pyre.terminals.terminal.compatible()
 
     @classmethod
     def null(cls, name):
