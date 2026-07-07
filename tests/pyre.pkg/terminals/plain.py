@@ -23,6 +23,10 @@ def test():
     assert term.color("red") == ""
     assert term.render(None) == ""
     assert term.reset() == ""
+    # and it has no cursor control either
+    assert term.hideCursor() == ""
+    assert term.showCursor() == ""
+    assert term.rewind(3) == ""
 
     # and the device queries return values of the expected kind
     assert isinstance(term.width(), int)

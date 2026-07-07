@@ -72,8 +72,8 @@ class Console:
         """
         Hide the text cursor while a frame is being redrawn
         """
-        # emit the hide-cursor control sequence
-        self.write("\x1b[?25l")
+        # emit the terminal's hide-cursor sequence
+        self.write(self._terminal.hideCursor())
         # and make sure it takes effect immediately
         self.flush()
         # nothing to hand back
@@ -83,8 +83,8 @@ class Console:
         """
         Restore the text cursor once interaction is done
         """
-        # emit the show-cursor control sequence
-        self.write("\x1b[?25h")
+        # emit the terminal's show-cursor sequence
+        self.write(self._terminal.showCursor())
         # and make sure it takes effect immediately
         self.flush()
         # nothing to hand back
@@ -94,12 +94,8 @@ class Console:
         """
         Move the cursor to the top of a frame {lines} tall and clear from there down
         """
-        # step up over the previous frame, when there was one
-        if lines > 0:
-            # move the cursor up that many rows
-            self.write(f"\x1b[{lines}A")
-        # then wipe everything from the cursor to the end of the screen
-        self.write("\r\x1b[J")
+        # emit the terminal's rewind sequence for a frame this tall
+        self.write(self._terminal.rewind(lines))
         # nothing to hand back
         return
 
