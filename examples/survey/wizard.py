@@ -16,8 +16,8 @@ def main():
     # style the prompts: a cool blue for the questions, a warm orange for the current choice
     survey.set_theme(
         survey.Theme(
-            message=survey.chroma.hsl(210, 0.85, 0.62),
-            selected=survey.chroma.hsl(28, 0.90, 0.55),
+            message=survey.hsl(210, 0.85, 0.62),
+            selected=survey.hsl(28, 0.90, 0.55),
         )
     )
 

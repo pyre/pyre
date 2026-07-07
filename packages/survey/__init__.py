@@ -18,10 +18,10 @@ from .Select import Select
 from .Console import Console
 from . import keys
 
-# color: the palette type, the helpers, and the package-wide default
+# color: the palette type, the color builder, and the package-wide default
 from .Theme import Theme
+from .Theme import hsl
 from .Theme import setDefault as set_theme
-from . import chroma
 
 
 def text(*, message, default=None, **kwds) -> str:
