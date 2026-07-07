@@ -143,32 +143,8 @@ def web():
     return web
 
 
-# terminal support
-from .Terminal import Terminal as terminal
-
-
-@foundry(implements=terminal)
-def ansi():
-    """
-    A terminal that supports color control using ANSI escape sequences
-    """
-    # grab the component class record
-    from .ANSI import ANSI as ansi
-
-    # and return it
-    return ansi
-
-
-@foundry(implements=terminal)
-def plain():
-    """
-    A plain terminal with no special capabilities
-    """
-    # grab the component class record
-    from .Plain import Plain as plain
-
-    # and return it
-    return plain
+# terminal support: the protocol and its implementations live in {pyre.terminals}
+from ..terminals import terminal, ansi, plain
 
 
 # the base application components
