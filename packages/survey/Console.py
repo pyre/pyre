@@ -7,9 +7,11 @@
 # externals
 import os
 import select
-import sys
 import termios
 import tty
+
+# the framework, for the terminal the user is connected to
+import pyre
 
 # the local key decoder
 from . import keys
@@ -20,15 +22,16 @@ class Console:
     A raw-mode view of the terminal: reads keypresses one at a time and draws prompt frames
     """
 
-    def __init__(self, *, istream=None, ostream=None, **kwds):
+    def __init__(self, **kwds):
         # chain up
         super().__init__(**kwds)
-        # talk to the given input stream, or the process standard input
-        self._istream = istream if istream is not None else sys.stdin
-        # and the given output stream, or the process standard output
-        self._ostream = ostream if ostream is not None else sys.stdout
+        # the terminal the user is connected to
+        self._terminal = pyre.executive.terminal
+        # its input and output streams
+        self._istream = self._terminal.istream
+        self._ostream = self._terminal.ostream
         # resolve the input descriptor lazily, only when we enter raw mode, so a {Console}
-        # can wrap streams without one (a {StringIO}) for the non-interactive paths
+        # over streams without one stays usable on the non-interactive paths
         self._fd = None
         # nowhere to stash the cooked-mode settings until we actually take raw mode
         self._saved = None
@@ -37,8 +40,8 @@ class Console:
         """
         Report whether both ends are a real terminal, so a live UI is possible
         """
-        # a redirected or piped stream on either end rules out an interactive prompt
-        return self._istream.isatty() and self._ostream.isatty()
+        # defer to the terminal's own assessment
+        return self._terminal.interactive()
 
     def readkey(self) -> "keys.Key":
         """

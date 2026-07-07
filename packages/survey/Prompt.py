@@ -4,9 +4,11 @@
 # (c) 1998-2026 all rights reserved
 
 
-# the terminal, the color helpers, and the theme registry
+# the framework, for the terminal the user is connected to
+import pyre
+
+# the terminal driver and the theme registry
 from .Console import Console
-from . import chroma
 from . import Theme as themes
 
 
@@ -22,17 +24,22 @@ class Prompt:
         self.message = message
         # an optional one-line elaboration
         self.help = help
-        # the terminal to talk to, defaulting to a fresh view of the standard streams
+        # the console that drives the terminal, defaulting to a fresh one
         self.console = console if console is not None else Console()
         # the palette to paint with, defaulting to the package-wide fallback
         self.theme = theme if theme is not None else themes.default()
 
-    def paint(self, text: str, code: str) -> str:
+    def paint(self, text: str, color) -> str:
         """
-        Style {text} with {code}, but only when the terminal can actually show it
+        Style {text} with {color}, but only when the terminal can actually show it
         """
-        # defer the decision about whether color is allowed to {_colorful}
-        return chroma.paint(text, code, enabled=self._colorful())
+        # ask the terminal the user is connected to for the color's escape sequence
+        code = pyre.executive.terminal.render(color)
+        # a colorless terminal, or an absent palette, yields no code; hand the text back plain
+        if not code:
+            return text
+        # otherwise wrap the text so the styling stops where it ends
+        return f"{code}{text}{pyre.executive.terminal.reset()}"
 
     def ask(self):
         """
@@ -42,13 +49,6 @@ class Prompt:
         raise NotImplementedError(
             f"prompt '{type(self).__name__}' must implement 'ask'"
         )
-
-    def _colorful(self) -> bool:
-        """
-        Whether this prompt may emit color: allowed globally and talking to a real terminal
-        """
-        # color is on unless suppressed, and only when both ends are a terminal
-        return chroma.enabled() and self.console.interactive()
 
 
 # end of file
