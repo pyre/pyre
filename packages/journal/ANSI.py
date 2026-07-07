@@ -3,9 +3,8 @@
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
 
-
-# access to the environment variables
-import os
+# the framework
+import pyre
 
 
 # maps of color names to the ANSI control sequences that render them; the sequences are produced
@@ -21,10 +20,8 @@ class ANSI:
         """
         Attempt to assess whether the current terminal is ANSI compatible
         """
-        # read the {TERM} environment variable, assuming a dumb terminal when it is unset
-        term = os.environ.get("TERM", "dumb").lower()
-        # the terminal is compatible when its type is one we recognize
-        return term in cls._compatible
+        # ask whether the current terminal understands ANSI control sequences
+        return pyre.terminals.compatible()
 
     @classmethod
     def null(cls, name):
@@ -106,9 +103,6 @@ class ANSI:
         """
         Access the {chroma} color bindings, or {None} when they are unavailable (e.g. bootstrap)
         """
-        # the framework carries the bindings
-        import pyre
-
         # they live on {libpyre}, which is absent when the extension was not built
         return None if pyre.libpyre is None else pyre.libpyre.chroma
 
@@ -132,19 +126,6 @@ class ANSI:
         "light-purple": (35, True),
         "light-cyan": (36, True),
         "white": (37, True),
-    }
-
-    # the set of terminal types that understand ANSI control sequences
-    _compatible = {
-        "ansi",
-        "vt102",
-        "vt220",
-        "vt320",
-        "vt420",
-        "xterm",
-        "xterm-color",
-        "xterm-16color",
-        "xterm-256color",
     }
 
 
