@@ -32,6 +32,13 @@ def test():
     assert term.color("not-a-color") == ""
     # the reset sequence is the canonical one
     assert term.reset() == "\x1b[0m"
+    # cursor control emits the expected DEC private-mode sequences
+    assert term.hideCursor() == "\x1b[?25l"
+    assert term.showCursor() == "\x1b[?25h"
+    # a rewind steps up over the frame, returns to the margin, and clears downward
+    assert term.rewind(3) == "\x1b[3A\r\x1b[J"
+    # a zero-height frame skips the cursor-up step
+    assert term.rewind(0) == "\r\x1b[J"
 
     # all done
     return

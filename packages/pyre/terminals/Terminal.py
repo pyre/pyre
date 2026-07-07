@@ -73,6 +73,25 @@ class Terminal(pyre.protocol, family="pyre.terminals"):
         terminal with no color
         """
 
+    @pyre.provides
+    def hideCursor(self):
+        """
+        The control sequence that hides the text cursor; empty on a terminal that cannot
+        """
+
+    @pyre.provides
+    def showCursor(self):
+        """
+        The control sequence that restores the text cursor; empty on a terminal that cannot
+        """
+
+    @pyre.provides
+    def rewind(self, lines):
+        """
+        The control sequence that moves to the top of a {lines}-tall frame and clears from there
+        down; empty on a terminal that cannot
+        """
+
     # framework support
     @classmethod
     def pyre_default(cls, **kwds):

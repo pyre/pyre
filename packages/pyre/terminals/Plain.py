@@ -98,6 +98,31 @@ class Plain(pyre.component, family="pyre.terminals.plain", implements=Terminal):
         # a plain terminal has nothing to reset
         return ""
 
+    @pyre.export
+    def hideCursor(self):
+        """
+        The control sequence that hides the text cursor; a plain terminal emits none
+        """
+        # a plain terminal has no cursor control
+        return ""
+
+    @pyre.export
+    def showCursor(self):
+        """
+        The control sequence that restores the text cursor; a plain terminal emits none
+        """
+        # a plain terminal has no cursor control
+        return ""
+
+    @pyre.export
+    def rewind(self, lines):
+        """
+        The control sequence that rewinds and clears a {lines}-tall frame; a plain terminal
+        emits none
+        """
+        # a plain terminal has no cursor control
+        return ""
+
     # implementation details
     def _lookup(self, name):
         """
