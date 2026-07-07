@@ -7,7 +7,8 @@
 
 def test():
     """
-    A {Select} honors a reply through its numbered fallback, and its key decoder reads arrows
+    A {Select} honors a reply through its numbered fallback, and the terminal key decoder reads
+    arrows
     """
     # get the package and a few helpers
     import builtins
@@ -35,12 +36,14 @@ def test():
     # the fallback should have honored the reply
     assert choice == "green", choice
 
+    # the terminal key decoder, now owned by {pyre.terminals}
+    keys = pyre.terminals.keys
     # a buffer holding the {down arrow} escape sequence
     keystream = bytearray(b"\x1b[B")
     # a puller that walks that buffer one byte at a time
     pull = lambda: keystream.pop(0) if keystream else None
     # decoding {ESC [ B} should yield the down arrow
-    assert survey.keys.decode(pull, pull).name == survey.keys.DOWN
+    assert keys.decode(pull, pull).name == keys.DOWN
 
     # all done
     return
