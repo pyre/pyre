@@ -282,6 +282,9 @@ if executive:
     # platform managers
     from . import platforms
 
+    # terminal capabilities
+    from . import terminals
+
     # application shells
     from .shells import application, action, plexus, command, panel
 

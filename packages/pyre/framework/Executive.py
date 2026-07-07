@@ -610,7 +610,8 @@ class Executive:
         self.host = host(name="pyre.host")
 
         # now the user and the terminal
-        from ..shells import user, terminal
+        from ..shells import user
+        from ..terminals import terminal
 
         # instantiate them and attach them
         self.user = user(name="pyre.user")

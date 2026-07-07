@@ -22,20 +22,20 @@ class ProgressBar(pyre.component, family="pyre.widgets.progress"):
 
     # and the display width
     width = pyre.properties.int()
-    width.default = (2 * pyre.executive.terminal.width // 3) or 60
+    width.default = (2 * pyre.executive.terminal.width() // 3) or 60
     width.doc = "the bar width, in characters"
 
     # pick some colors
     reset = pyre.properties.str()
-    reset.default = pyre.executive.terminal.ansi["normal"]
+    reset.default = pyre.executive.terminal.reset()
     reset.doc = "the escape sequence that reset color to its normal value"
 
     color = pyre.properties.str()
-    color.default = pyre.executive.terminal.misc["amber"]
+    color.default = pyre.executive.terminal.color("amber")
     color.doc = "the color to use when rendering the completed work"
 
     background = pyre.properties.str()
-    background.default = pyre.executive.terminal.gray["gray50"]
+    background.default = pyre.executive.terminal.color("gray50")
     background.doc = "the color to use when rendering the work that's not yet done"
 
     # rendering control
