@@ -7,25 +7,25 @@
 # the framework, for the terminal the user is connected to
 import pyre
 
-# the terminal driver and the theme registry
-from .Console import Console
+# the theme registry
 from . import Theme as themes
 
 
 class Prompt:
     """
-    The base of every interactive prompt: a message, a console, a theme, and an {ask} contract
+    The base of every interactive prompt: a message, the user's terminal, a theme, and an {ask}
+    contract
     """
 
-    def __init__(self, *, message, help=None, console=None, theme=None, **kwds):
+    def __init__(self, *, message, help=None, theme=None, **kwds):
         # chain up
         super().__init__(**kwds)
         # the question put to the user
         self.message = message
         # an optional one-line elaboration
         self.help = help
-        # the console that drives the terminal, defaulting to a fresh one
-        self.console = console if console is not None else Console()
+        # the one terminal the user is connected to
+        self.terminal = pyre.executive.terminal
         # the palette to paint with, defaulting to the package-wide fallback
         self.theme = theme if theme is not None else themes.default()
 
@@ -34,12 +34,12 @@ class Prompt:
         Style {text} with {color}, but only when the terminal can actually show it
         """
         # ask the terminal the user is connected to for the color's escape sequence
-        code = pyre.executive.terminal.render(color)
+        code = self.terminal.render(color)
         # a colorless terminal, or an absent palette, yields no code; hand the text back plain
         if not code:
             return text
         # otherwise wrap the text so the styling stops where it ends
-        return f"{code}{text}{pyre.executive.terminal.reset()}"
+        return f"{code}{text}{self.terminal.reset()}"
 
     def ask(self):
         """

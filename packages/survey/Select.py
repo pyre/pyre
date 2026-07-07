@@ -6,7 +6,7 @@
 
 # the base prompt and the key names
 from .Prompt import Prompt
-from . import keys
+from pyre.terminals import keys
 
 
 class Select(Prompt):
@@ -36,7 +36,7 @@ class Select(Prompt):
             # so refuse rather than draw an empty menu
             raise ValueError("cannot select from an empty list of options")
         # a real terminal gets the live arrow-key experience
-        if self.console.interactive():
+        if self.terminal.interactive():
             # so drive the interactive loop
             return self._askInteractive()
         # anything else falls back to a numbered prompt
@@ -46,12 +46,16 @@ class Select(Prompt):
         """
         Drive the arrow-key selection loop against a raw terminal
         """
+        # the one terminal the user is connected to
+        terminal = self.terminal
         # start on the default, or the top of the list
         index = self._defaultIndex()
         # take the terminal into raw mode for the duration of the loop
-        with self.console as console:
+        with terminal.rawmode():
             # keep the cursor out of the way while frames are redrawn
-            console.hideCursor()
+            terminal.write(terminal.hideCursor())
+            # and make sure that takes effect at once
+            terminal.flush()
             # make sure the menu is torn down and the cursor restored no matter how we leave
             try:
                 # draw the first frame
@@ -59,7 +63,7 @@ class Select(Prompt):
                 # then react to each keypress until the user commits
                 while True:
                     # read the next keypress
-                    key = console.readkey()
+                    key = terminal.readkey()
                     # enter accepts the highlighted option
                     if key.name == keys.ENTER:
                         # so leave the loop with the current highlight
@@ -85,8 +89,10 @@ class Select(Prompt):
             finally:
                 # collapse the menu to a single summary line
                 self._summarize(index=index)
-                # and give the cursor back
-                console.showCursor()
+                # give the cursor back
+                terminal.write(terminal.showCursor())
+                # and make sure that takes effect at once
+                terminal.flush()
         # hand back the chosen option
         return self.options[index]
 
@@ -124,9 +130,9 @@ class Select(Prompt):
         Draw the message and the visible slice of options, highlighting {index}
         """
         # the terminal we draw on
-        console = self.console
+        terminal = self.terminal
         # rewind over whatever frame is currently on screen
-        console.rewind(lines=self._drawn)
+        terminal.write(terminal.rewind(lines=self._drawn))
         # the slice of options to show around the highlight
         start, end = self._window(index=index)
         # open the frame with the colored message
@@ -144,9 +150,9 @@ class Select(Prompt):
                 # two spaces where the pointer would be
                 rows.append(f"  {self.options[position]}")
         # commit the frame
-        console.write("\n".join(rows) + "\n")
+        terminal.write("\n".join(rows) + "\n")
         # make it visible at once
-        console.flush()
+        terminal.flush()
         # remember how tall it was so the next redraw can rewind it
         self._drawn = len(rows)
 
@@ -155,17 +161,17 @@ class Select(Prompt):
         Replace the whole menu with a single line naming the chosen option
         """
         # the terminal we draw on
-        console = self.console
+        terminal = self.terminal
         # clear the live frame
-        console.rewind(lines=self._drawn)
+        terminal.write(terminal.rewind(lines=self._drawn))
         # the colored message
         label = self.paint(self.message, self.theme.message)
         # and the chosen option, painted like a selection
         value = self.paint(self.options[index], self.theme.selected)
         # leave the decision on the record
-        console.write(f"{label}: {value}\n")
+        terminal.write(f"{label}: {value}\n")
         # make it visible at once
-        console.flush()
+        terminal.flush()
         # there is no live frame left to rewind
         self._drawn = 0
 
