@@ -11,16 +11,14 @@ import pyre
 # declaration
 class Console(pyre.protocol, family="pyre.terminals.console"):
     """
-    The extra capabilities of a live terminal: raw keypress input and cursor control, the pieces
-    an interactive redraw loop needs but a redirected stream cannot offer
+    The extra capabilities of a live terminal: raw keypress input and cursor control
     """
 
     # requirements
     @pyre.provides
     def rawmode(self):
         """
-        A context manager that puts the terminal in raw mode for its duration so keypresses
-        arrive one at a time
+        A context manager that puts the terminal in raw mode for its duration
         """
 
     @pyre.provides

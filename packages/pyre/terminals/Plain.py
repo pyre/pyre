@@ -15,8 +15,8 @@ from .Terminal import Terminal
 # declaration
 class Plain(pyre.component, family="pyre.terminals.plain", implements=Terminal):
     """
-    A terminal with no color and no live input; also the base that carries the shared, {os}-backed
-    device queries and the colorless rendering that every terminal type inherits
+    A terminal with no color and no live input; the base for the shared device queries and
+    colorless rendering
     """
 
     # configurable state

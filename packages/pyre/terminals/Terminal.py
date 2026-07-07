@@ -15,8 +15,7 @@ import pyre
 # declaration
 class Terminal(pyre.protocol, family="pyre.terminals"):
     """
-    The capabilities every terminal has: the device queries, a way to write to it, and a color
-    surface that renders nothing when the terminal cannot show color
+    The capabilities every terminal provides: device queries, output, and color
     """
 
     # configurable state
