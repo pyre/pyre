@@ -14,8 +14,7 @@ from .Interactive import Interactive
 # declaration
 class ANSI(Interactive, family="pyre.terminals.ansi"):
     """
-    A live terminal that also renders color using ANSI control sequences, delegating the sequence
-    construction to {pyre::chroma}
+    A live terminal that renders color using ANSI control sequences
     """
 
     # interface
@@ -26,8 +25,9 @@ class ANSI(Interactive, family="pyre.terminals.ansi"):
         """
         # reach the color bindings
         chroma = self._chroma()
-        # without them, or without a color to render, there is nothing to emit
+        # without them, or without a color to render
         if chroma is None or color is None:
+            # there is nothing to emit
             return ""
         # let chroma serialize the color as a truecolor escape
         return chroma.ansi.rgb(color)
@@ -39,8 +39,9 @@ class ANSI(Interactive, family="pyre.terminals.ansi"):
         """
         # reach the color bindings
         chroma = self._chroma()
-        # without them there is nothing to emit
+        # without them
         if chroma is None:
+            # there is nothing to emit
             return ""
         # let chroma produce the reset sequence
         return chroma.ansi.reset()
