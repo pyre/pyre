@@ -21,6 +21,7 @@ def test():
     assert term.chromatic is False
     # so every color request comes back empty
     assert term.color("red") == ""
+    assert term.rgb("c02020") == ""
     assert term.render(None) == ""
     assert term.reset() == ""
     # and it has no cursor control either

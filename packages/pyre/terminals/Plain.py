@@ -91,6 +91,18 @@ class Plain(pyre.component, family="pyre.terminals.plain", implements=Terminal):
         return self.render(self._lookup(name))
 
     @pyre.export
+    def rgb(self, code):
+        """
+        The escape sequence for a 24-bit color given as a hex string ("c02020" or "#c02020") or
+        an integer (0xc02020); empty on a colorless terminal, or when {code} is not valid hex
+        """
+        # a colorless terminal renders nothing
+        if not self.chromatic:
+            return ""
+        # otherwise build the color from the hex code and render it
+        return self.render(self._hex(code))
+
+    @pyre.export
     def reset(self):
         """
         The escape sequence that restores the terminal to its default attributes
@@ -135,6 +147,33 @@ class Plain(pyre.component, family="pyre.terminals.plain", implements=Terminal):
             return None
         # look the name up in chroma's palette
         return chroma.rgb.palette.find(name)
+
+    def _hex(self, code):
+        """
+        Build a {chroma} color from a hex {code} — a string, optionally "#"-prefixed, or an
+        integer — or {None} when unavailable or not valid hex
+        """
+        # reach the color bindings
+        chroma = self._chroma()
+        # without them there is no color
+        if chroma is None:
+            return None
+        # a string may carry a leading "#", which we drop before parsing
+        if isinstance(code, str):
+            # try to
+            try:
+                # read the remaining digits as a hexadecimal number
+                value = int(code.lstrip("#"), 16)
+            # a non-hex string is not a color
+            except ValueError:
+                return None
+        # otherwise take the integer as given
+        else:
+            value = int(code)
+        # split the value into its red, green, and blue bytes
+        r, g, b = (value >> 16) & 0xFF, (value >> 8) & 0xFF, value & 0xFF
+        # normalize each channel to [0, 1] and assemble the color
+        return chroma.Color(r / 0xFF, g / 0xFF, b / 0xFF)
 
     def _chroma(self):
         """

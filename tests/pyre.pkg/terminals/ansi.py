@@ -30,6 +30,12 @@ def test():
     assert term.color("fuchsia") != ""
     # an unknown name renders nothing
     assert term.color("not-a-color") == ""
+    # a 24-bit color also renders from a hex string or an integer, with an optional "#"
+    assert term.rgb("c02020") == "\x1b[38;2;192;32;32m"
+    assert term.rgb("#c02020") == "\x1b[38;2;192;32;32m"
+    assert term.rgb(0xC02020) == "\x1b[38;2;192;32;32m"
+    # an invalid hex code renders nothing
+    assert term.rgb("nothex") == ""
     # the reset sequence is the canonical one
     assert term.reset() == "\x1b[0m"
     # cursor control emits the expected DEC private-mode sequences

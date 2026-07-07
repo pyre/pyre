@@ -67,6 +67,13 @@ class Terminal(pyre.protocol, family="pyre.terminals"):
         """
 
     @pyre.provides
+    def rgb(self, code):
+        """
+        The escape sequence for a 24-bit color given as a hex string or an integer; empty on a
+        terminal with no color, or when {code} is not valid hex
+        """
+
+    @pyre.provides
     def reset(self):
         """
         The escape sequence that restores the terminal to its default attributes; empty on a
