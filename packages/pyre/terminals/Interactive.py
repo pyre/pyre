@@ -51,7 +51,7 @@ class Interactive(Plain, family="pyre.terminals.interactive", implements=console
         finally:
             # restore the terminal the user handed us
             termios.tcsetattr(self._fd, termios.TCSADRAIN, self._saved)
-            # and forget the raw-mode bookkeeping
+            # and reset the raw-mode bookkeeping
             self._fd = None
             self._saved = None
 

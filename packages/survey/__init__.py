@@ -14,9 +14,6 @@ from .Input import Input
 from .Confirm import Confirm
 from .Select import Select
 
-# the key decoder, for building prompts of your own
-from pyre.terminals import keys
-
 # color: the palette type, the color builder, and the package-wide default
 from .Theme import Theme
 from .Theme import hsl

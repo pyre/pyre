@@ -130,25 +130,29 @@ def _utf8(lead, pending):
     if lead >= 0xF0:
         # a four-byte sequence has three continuations
         count = 3
+    # a three-byte sequence
     elif lead >= 0xE0:
-        # a three-byte sequence has two
+        # has two
         count = 2
+    # a two-byte sequence
     elif lead >= 0xC0:
-        # a two-byte sequence has one
+        # has one
         count = 1
+    # everybody else
     else:
-        # a stray continuation byte with no lead; hand it back as-is
+        # is a stray continuation byte with no lead; hand it back as-is
         return chr(lead)
     # gather the continuation bytes that are actually waiting
     trailing = bytes(
         byte for byte in (pending() for _ in range(count)) if byte is not None
     )
-    # decode the whole thing
+    # attempt to
     try:
-        # the assembled bytes as a single character
+        # decode the assembled bytes as a single character
         return (bytes([lead]) + trailing).decode("utf-8")
+    # if the decoder fails
     except UnicodeDecodeError:
-        # a malformed sequence falls back to the raw lead
+        # fall back to the raw lead
         return chr(lead)
 
 

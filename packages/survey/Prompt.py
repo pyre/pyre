@@ -35,8 +35,9 @@ class Prompt:
         """
         # ask the terminal the user is connected to for the color's escape sequence
         code = self.terminal.render(color)
-        # a colorless terminal, or an absent palette, yields no code; hand the text back plain
+        # a colorless terminal, or an absent palette, yields no code
         if not code:
+            # hand the text back plain
             return text
         # otherwise wrap the text so the styling stops where it ends
         return f"{code}{text}{self.terminal.reset()}"

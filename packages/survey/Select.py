@@ -4,9 +4,11 @@
 # (c) 1998-2026 all rights reserved
 
 
-# the base prompt and the key names
+# the framework
+import pyre
+
+# superclass
 from .Prompt import Prompt
-from pyre.terminals import keys
 
 
 class Select(Prompt):
@@ -46,6 +48,8 @@ class Select(Prompt):
         """
         Drive the arrow-key selection loop against a raw terminal
         """
+        # the key codes
+        keys = pyre.terminals.keys
         # the one terminal the user is connected to
         terminal = self.terminal
         # start on the default, or the top of the list
