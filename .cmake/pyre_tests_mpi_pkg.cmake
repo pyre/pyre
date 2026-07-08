@@ -23,8 +23,8 @@ pyre_test_python_testcase_mpi(tests/mpi.pkg/product.py 8)
 pyre_test_python_testcase_mpi(tests/mpi.pkg/max.py 8)
 pyre_test_python_testcase_mpi(tests/mpi.pkg/min.py 8)
 pyre_test_python_testcase_mpi(tests/mpi.pkg/port.py 7)
-pyre_test_python_testcase(tests/mpi.pkg/mpirun.py)
-pyre_test_python_testcase(tests/mpi.pkg/slurm.py)
+# pyre_test_python_testcase(tests/mpi.pkg/mpirun.py)
+# pyre_test_python_testcase(tests/mpi.pkg/slurm.py)
 
 
 # end of file

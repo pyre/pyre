@@ -14,6 +14,8 @@ pyre_test_python_testcase(tests/pyre.pkg/primitives/path_parts.py)
 pyre_test_python_testcase(tests/pyre.pkg/primitives/path_resolution.py)
 pyre_test_python_testcase(tests/pyre.pkg/primitives/path_tuple.py)
 pyre_test_python_testcase(tests/pyre.pkg/primitives/pathhash.py)
+pyre_test_python_testcase(tests/pyre.pkg/primitives/path.py)
+pyre_test_python_testcase(tests/pyre.pkg/primitives/uri.py)
 
 # the {path_resolution} test requires setup+cleanup
 # the setup involves making a directory with a bunchof symbolic links
@@ -238,6 +240,7 @@ pyre_test_python_testcase(tests/pyre.pkg/constraints/isNot.py)
 pyre_test_python_testcase(tests/pyre.pkg/constraints/isSubset.py)
 pyre_test_python_testcase(tests/pyre.pkg/constraints/and.py)
 pyre_test_python_testcase(tests/pyre.pkg/constraints/or.py)
+pyre_test_python_testcase(tests/pyre.pkg/constraints/isNotEmpty.py)
 
 
 #
@@ -476,6 +479,7 @@ pyre_test_python_testcase(tests/pyre.pkg/config/configurator_load_pfg.py)
 pyre_test_python_testcase(tests/pyre.pkg/config/command.py)
 pyre_test_python_testcase(tests/pyre.pkg/config/command_argv.py)
 pyre_test_python_testcase(tests/pyre.pkg/config/command_config.py)
+pyre_test_python_testcase(tests/pyre.pkg/config/configurator_load_yaml.py)
 
 
 #
@@ -656,6 +660,13 @@ pyre_test_python_testcase(tests/pyre.pkg/ipc/selector_alarms.py)
 pyre_test_python_testcase(tests/pyre.pkg/ipc/selector_signals.py)
 pyre_test_python_testcase(tests/pyre.pkg/ipc/selector_pickler_over_pipe.py)
 pyre_test_python_testcase(tests/pyre.pkg/ipc/selector_pickler_over_tcp.py)
+pyre_test_python_testcase(tests/pyre.pkg/ipc/selector_write_during_read.py)
+pyre_test_python_testcase(tests/pyre.pkg/ipc/psl.py)
+pyre_test_python_testcase(tests/pyre.pkg/ipc/psl_instantiation.py)
+pyre_test_python_testcase(tests/pyre.pkg/ipc/psl_alarms.py)
+pyre_test_python_testcase(tests/pyre.pkg/ipc/psl_signals.py)
+pyre_test_python_testcase(tests/pyre.pkg/ipc/psl_pickler_over_pipe.py)
+pyre_test_python_testcase(tests/pyre.pkg/ipc/psl_pickler_over_tcp.py)
 
 
 #
@@ -693,6 +704,7 @@ pyre_test_python_testcase(tests/pyre.pkg/shells/daemon_instantiation.py)
 pyre_test_python_testcase(tests/pyre.pkg/shells/script_launching.py)
 pyre_test_python_testcase(tests/pyre.pkg/shells/fork_launching.py)
 pyre_test_python_testcase(tests/pyre.pkg/shells/daemon_launching.py)
+pyre_test_python_testcase(tests/pyre.pkg/shells/progress.py)
 
 
 #
@@ -758,6 +770,7 @@ pyre_test_python_testcase(tests/pyre.pkg/pyre/spaces.py)
 pyre_test_python_testcase(tests/pyre.pkg/pyre/defaults.py)
 pyre_test_python_testcase(tests/pyre.pkg/pyre/play.py)
 pyre_test_python_testcase(tests/pyre.pkg/pyre/headers.py)
+pyre_test_python_testcase(tests/pyre.pkg/pyre/inject.py)
 
 
 # terminals
@@ -766,6 +779,25 @@ pyre_test_python_testcase(tests/pyre.pkg/terminals/plain.py)
 pyre_test_python_testcase(tests/pyre.pkg/terminals/interactive.py)
 pyre_test_python_testcase(tests/pyre.pkg/terminals/ansi.py)
 pyre_test_python_testcase(tests/pyre.pkg/terminals/keys.py)
+
+
+#
+# pyre/http
+#
+pyre_test_python_testcase(tests/pyre.pkg/http/sanity.py)
+pyre_test_python_testcase(tests/pyre.pkg/http/exit_code.py)
+pyre_test_python_testcase(tests/pyre.pkg/http/abort_derives_from_exit.py)
+pyre_test_python_testcase(tests/pyre.pkg/http/hub.py)
+pyre_test_python_testcase(tests/pyre.pkg/http/render.py)
+pyre_test_python_testcase(tests/pyre.pkg/http/eventstream.py)
+pyre_test_python_testcase(tests/pyre.pkg/http/sse_preamble.py)
+
+
+#
+# pyre/journal
+#
+pyre_test_python_testcase(tests/pyre.pkg/journal/sanity.py)
+pyre_test_python_testcase(tests/pyre.pkg/journal/app.py)
 
 
 # end of file

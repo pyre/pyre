@@ -13,6 +13,7 @@ pyre_test_python_testcase(tests/postgres.ext/sanity_pyrepg.py)
 # pyrepg
 pyre_test_python_testcase(tests/postgres.ext/pyrepg_exceptions.py)
 pyre_test_python_testcase(tests/postgres.ext/pyrepg_connect.py)
+pyre_test_python_testcase(tests/postgres.ext/pyrepg_execute.py)
 pyre_test_python_testcase(tests/postgres.ext/pyrepg_execute_badCommand.py)
 pyre_test_python_testcase(tests/postgres.ext/pyrepg_submit.py)
 
