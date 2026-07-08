@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 from pyre.units.SI import joule, kelvin, mole
 
@@ -16,12 +15,12 @@ from pyre.units.SI import joule, kelvin, mole
 
 
 avogadro = 6.02214199e23 / mole
-boltzmann = 1.3806503e-23 * joule/kelvin
+boltzmann = 1.3806503e-23 * joule / kelvin
 
-gas_constant = 8.314472 * joule/(mole*kelvin)
-gravitational_constant = 6.67408e-11 * meter**3/kilogram/second**2
+gas_constant = 8.314472 * joule / (mole * kelvin)
+gravitational_constant = 6.67408e-11 * meter**3 / kilogram / second**2
 
-light_speed = 299792458 * meter/second
+light_speed = 299792458 * meter / second
 
 # aliases
 c = light_speed

@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -16,8 +15,8 @@ def test():
     import pyre.calc
 
     # set up the values
-    p = 80.
-    s = 20.
+    p = 80.0
+    s = 20.0
     # make the nodes
     production = pyre.calc.var(value=p)
     shipping = pyre.calc.var(value=s)
@@ -38,8 +37,8 @@ def test():
     assert clone.value == p + s
 
     # update the values
-    p = 160.
-    s = 40.
+    p = 160.0
+    s = 40.0
     production.value = p
     shipping.value = s
 
@@ -55,7 +54,7 @@ def test():
 # main
 if __name__ == "__main__":
     # request debugging support for the pyre.calc package
-    pyre_debug = { "pyre.calc" }
+    pyre_debug = {"pyre.calc"}
     # skip pyre initialization since we don't rely on the executive
     pyre_noboot = True
     # run the test
@@ -63,6 +62,7 @@ if __name__ == "__main__":
     # verify reference counts
     # for nodes
     from pyre.calc.Node import Node
+
     # print(tuple(Node.pyre_extent))
     assert tuple(Node.pyre_extent) == ()
 

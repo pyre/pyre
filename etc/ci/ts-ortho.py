@@ -1,14 +1,15 @@
-#! /usr/bin/env python3
+#!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # externals
 import csv
 import os
+
 # the framework
 import pyre
 
@@ -20,7 +21,6 @@ class TSOrtho(pyre.application):
     identically named test cases
     """
 
-
     # user configurable state
     out = pyre.properties.ostream(default="ts-ortho.csv")
     out.doc = "the name of the output file"
@@ -28,7 +28,6 @@ class TSOrtho(pyre.application):
     targets = pyre.properties.strings()
     targets.default = ["journal.lib", "journal.pkg", "journal.ext", "journal.api"]
     targets.doc = "the set of test suites to check for orthogonality"
-
 
     # obligation
     @pyre.export
@@ -60,14 +59,14 @@ class TSOrtho(pyre.application):
         writer = csv.writer(self.out)
 
         # build the headers
-        writer.writerow([''] + targets)
+        writer.writerow([""] + targets)
 
         # go through the filenames
         for name in sorted(table.keys()):
             # grab the bin
             bin = table[name]
             # build the record
-            record = [ 'x' if folder in bin else '' for folder in targets ]
+            record = ["x" if folder in bin else "" for folder in targets]
             # write it out
             writer.writerow([name] + record)
 

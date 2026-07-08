@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -15,6 +14,7 @@ Verify that node substitution respects the expression graph invariants
 def test():
     # get the package
     import pyre.calc
+
     # build some nodes
     n1 = pyre.calc.var()
     n2 = pyre.calc.var()
@@ -74,13 +74,15 @@ def identical(s1, s2):
     s1 = tuple(s1)
     s2 = tuple(s2)
     # fail if their lengths are not the same
-    if len(s1) != len(s2): return False
+    if len(s1) != len(s2):
+        return False
     # go through one
     for n1 in s1:
         # and the other
         for n2 in s2:
             # if this is a match, we are done
-            if n1 is n2: break
+            if n1 is n2:
+                break
         # if we didn't n1 in s2
         else:
             # fail

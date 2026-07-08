@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -15,8 +14,9 @@ Sanity check: verify that the socket factory is accessible
 def test():
     # get the package
     import pyre.ipc
+
     # make a socket
-    return pyre.ipc.tcp(address='localhost:22')
+    return pyre.ipc.tcp(address="localhost:22")
 
 
 # main

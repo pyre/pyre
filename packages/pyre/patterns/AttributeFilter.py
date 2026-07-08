@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -21,7 +22,6 @@ class AttributeFilter(Type):
     behavior of tags by employing descriptors to capture the layout of an XML document.
     """
 
-
     # interface
     @classmethod
     def pyre_harvest(cls, attributes, descriptor):
@@ -37,7 +37,6 @@ class AttributeFilter(Type):
         # all done
         return
 
-
     @classmethod
     def pyre_isReserved(cls, name):
         """
@@ -45,7 +44,6 @@ class AttributeFilter(Type):
         """
         # by default, look in a set of such names
         return name in cls.pyre_reservedNames
-
 
     # public data
     # names excluded from filtering

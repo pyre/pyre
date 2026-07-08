@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -14,6 +13,7 @@ Exercise "isGreaterEqual"
 
 def test():
     import pyre.constraints
+
     constraint = pyre.constraints.isGreaterEqual(value=1)
 
     constraint.validate(1)

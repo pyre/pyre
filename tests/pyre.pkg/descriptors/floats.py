@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -24,7 +23,7 @@ def test():
     assert 1.2 == descriptor.coerce("1.2")
     # failures
     try:
-        descriptor.coerce('what?')
+        descriptor.coerce("what?")
         assert False
     except descriptor.CastingError as error:
         assert str(error).startswith("could not coerce 'what?' into a float")

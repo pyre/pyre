@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -26,7 +25,7 @@ def test():
 
     # explore
     explorer = pyre.filesystem.treeExplorer()
-    contents = list(explorer.explore(node=fs, label='/'))
+    contents = list(explorer.explore(node=fs, label="/"))
     # for line in contents: print(line)
 
     # check
@@ -47,7 +46,7 @@ def test():
         "            `- lib (d)",
         "               +- libgoodbye.a (f)",
         "               `- libhello.a (f)",
-        ]
+    ]
 
     return fs, explorer
 

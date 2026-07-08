@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -18,9 +17,9 @@ def test():
     # instantiate
     one = gauss.functors.one(name="one")
     # set up some points
-    points = [0, .25, .5, .75, 1.]
+    points = [0, 0.25, 0.5, 0.75, 1.0]
     # exercise the behavior
-    assert list(one.eval(points)) == [1]*len(points)
+    assert list(one.eval(points)) == [1] * len(points)
     # and return it
     return one
 

@@ -1,11 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
-#
 
 
 """
@@ -13,8 +11,8 @@ Verify that a metaclass that understands extra keywords that can be passed durin
 declaration has to override all these to accommodate the change in signature
 """
 
-
 # print("declaring the metaclass")
+
 
 class meta(type):
     # print("  declaring the metaclassclass __prepare__")
@@ -22,8 +20,6 @@ class meta(type):
     def __prepare__(metacls, name, bases, **kwds):
         # print("  meta.__prepare__")
         return super().__prepare__(name, bases)
-
-
 
     # print("  declaring the metaclassclass __new__")
     def __new__(metacls, name, bases, attributes, **kwds):
@@ -33,13 +29,12 @@ class meta(type):
         # print("    bases: {0!r}".format(bases))
         # print("    attributes: {0!r}".format(attributes))
         # print("    kwds: {0!r}".format(kwds))
-        record =  super().__new__(metacls, name, bases, attributes)
+        record = super().__new__(metacls, name, bases, attributes)
         # print("  meta.__new__: record:")
         # print("    record: {0!r}".format(record))
         # print("      record.__dict__: {0!r}".format(record.__dict__.keys()))
 
         return record
-
 
     # print("  declaring the metaclassclass __init__")
     def __init__(self, name, bases, attributes, arg1, arg2):
@@ -60,7 +55,8 @@ class meta(type):
         self.arg1 = arg1
         self.arg2 = arg2
 
-        def foo(arg): print(arg)
+        def foo(arg):
+            print(arg)
 
         self.foo = foo
 
@@ -69,8 +65,8 @@ class meta(type):
 
 # print("declaring the class")
 
-class base(object, metaclass=meta, arg1=True, arg2=False):
 
+class base(object, metaclass=meta, arg1=True, arg2=False):
 
     # print("    declaring the base __init__")
     def __init__(self, **kwds):

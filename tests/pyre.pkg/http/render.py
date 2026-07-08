@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -12,6 +13,7 @@ Verify the {HTTP} renderer's {render} emits a complete response: a status line, 
 
 # the renderer under test
 from pyre.weaver.HTTP import HTTP
+
 # the document it renders
 from pyre.http.documents import OK
 

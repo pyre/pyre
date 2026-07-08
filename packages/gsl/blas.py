@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 """
 Support for the BLAS interface
 """
@@ -165,14 +164,16 @@ def dgemm(tranA, tranB, α, A, B, β, C):
     # and return the result
     return C
 
+
 def dsymm(side, uploA, α, A, B, β, C):
     """
     Compute {C = α A B + β C} or {C = α B A + β C} depending on {side}, A is symmetric
     """
-    #compute
+    # compute
     gsl.blas_dsymm(side, uploA, α, A.data, B.data, β, C.data)
-    #return the result
+    # return the result
     return C
+
 
 def dtrmm(sideA, uplo, transpose, diag, α, A, B):
     """

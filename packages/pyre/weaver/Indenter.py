@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 class Indenter:
@@ -11,10 +10,8 @@ class Indenter:
     A mix-in class that keeps track of the indentation level
     """
 
-
     # public data
-    leader = "" # the current contents to prepend to every line
-
+    leader = ""  # the current contents to prepend to every line
 
     # interface
     def indent(self, increment=1):
@@ -28,7 +25,6 @@ class Indenter:
         # all done
         return self
 
-
     def outdent(self, decrement=1):
         """
         Decrease the indentation level by one
@@ -40,14 +36,12 @@ class Indenter:
         # all done
         return self
 
-
     def place(self, line):
         """
         Indent {line} and return it
         """
         # easy enough
         return self.leader + line
-
 
     # meta methods
     def __init__(self, indenter=None, level=0, **kwds):
@@ -60,10 +54,8 @@ class Indenter:
         # all done
         return
 
-
     # constants
-    INDENTER = " "*4
-
+    INDENTER = " " * 4
 
     # private data
     _level = 0

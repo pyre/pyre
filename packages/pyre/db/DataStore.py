@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # packages
@@ -15,7 +14,6 @@ class DataStore(pyre.protocol, family="pyre.db.server"):
     """
     Protocol declaration for database managers
     """
-
 
     # interface
     @pyre.provides

@@ -1,13 +1,13 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # access to the framework
 import pyre
+
 # my base class
 from .Interactive import Interactive
 
@@ -16,7 +16,6 @@ class IPython(Interactive, family="pyre.shells.ipython"):
     """
     A shell that invokes the main application behavior and then enters IPython mode
     """
-
 
     # implementation details
     def pyre_interactiveSession(self, application, context=None):
@@ -37,7 +36,7 @@ class IPython(Interactive, family="pyre.shells.ipython"):
         # otherwise, prime the local namespace
         context = context or {}
         # adjust it
-        context['app'] = application
+        context["app"] = application
         # give the application an opportunity to add symbols as well
         context = application.pyre_interactiveSessionContext(context=context)
         # enter interactive mode

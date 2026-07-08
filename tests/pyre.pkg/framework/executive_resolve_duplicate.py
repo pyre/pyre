@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -14,7 +13,8 @@ Verify that the binder can retrieve components from odb files
 
 def test():
     import pyre
-    executive =  pyre.executive
+
+    executive = pyre.executive
 
     # retrieve a component descriptor from a file
     one, *_ = executive.resolve(uri="file:sample.odb/one")

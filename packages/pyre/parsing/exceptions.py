@@ -1,15 +1,13 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
 Definitions for the exceptions raised by this package
 """
-
 
 # exceptions
 from ..framework.exceptions import FrameworkError
@@ -36,6 +34,7 @@ class SyntaxError(ParsingError):
     """
     Exception raised when a syntax error is detected
     """
+
     # public data
     description = "syntax error: {0.token.lexeme!r}"
 

@@ -1,14 +1,12 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # access to the pyre package
 import pyre
-
 
 # my interface
 from .Stationery import Stationery
@@ -34,7 +32,7 @@ class Banner(pyre.component, family="pyre.weaver.layouts.banner", implements=Sta
     license = pyre.properties.str()
     license.doc = "the license"
 
-    footer = pyre.properties.str(default='end of file')
+    footer = pyre.properties.str(default="end of file")
     footer.doc = "the marker to drop at the bottom of the document"
 
 

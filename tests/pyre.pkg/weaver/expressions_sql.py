@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -16,6 +15,7 @@ def test():
     # get the packages
     import pyre.weaver
     import pyre.calc
+
     # instantiate a weaver
     weaver = pyre.weaver.weaver(name="sanity")
     weaver.language = "sql"
@@ -28,28 +28,28 @@ def test():
 
     # check expression generation
     # the trivial cases
-    assert mill.expression(zero) == '0'
-    assert mill.expression(one) == '1'
+    assert mill.expression(zero) == "0"
+    assert mill.expression(one) == "1"
 
     # arithmetic
-    assert mill.expression(one + zero) == '(1) + (0)'
-    assert mill.expression(one - zero) == '(1) - (0)'
-    assert mill.expression(one * zero) == '(1) * (0)'
-    assert mill.expression(one / zero) == '(1) / (0)'
-    assert mill.expression(one ** zero) == '(1) ^ (0)'
-    assert mill.expression(one % zero) == '(1) % (0)'
+    assert mill.expression(one + zero) == "(1) + (0)"
+    assert mill.expression(one - zero) == "(1) - (0)"
+    assert mill.expression(one * zero) == "(1) * (0)"
+    assert mill.expression(one / zero) == "(1) / (0)"
+    assert mill.expression(one**zero) == "(1) ^ (0)"
+    assert mill.expression(one % zero) == "(1) % (0)"
 
-    assert mill.expression(abs(one)) == '@(1)'
-    assert mill.expression(-one) == '-(1)'
-    assert mill.expression(one == zero) == '(1) = (0)'
-    assert mill.expression(one != zero) == '(1) <> (0)'
-    assert mill.expression(one <= zero) == '(1) <= (0)'
-    assert mill.expression(one >= zero) == '(1) >= (0)'
-    assert mill.expression(one < zero) == '(1) < (0)'
-    assert mill.expression(one > zero) == '(1) > (0)'
+    assert mill.expression(abs(one)) == "@(1)"
+    assert mill.expression(-one) == "-(1)"
+    assert mill.expression(one == zero) == "(1) = (0)"
+    assert mill.expression(one != zero) == "(1) <> (0)"
+    assert mill.expression(one <= zero) == "(1) <= (0)"
+    assert mill.expression(one >= zero) == "(1) >= (0)"
+    assert mill.expression(one < zero) == "(1) < (0)"
+    assert mill.expression(one > zero) == "(1) > (0)"
 
-    assert mill.expression(one & zero) == '(1) AND (0)'
-    assert mill.expression(one | zero) == '(1) OR (0)'
+    assert mill.expression(one & zero) == "(1) AND (0)"
+    assert mill.expression(one | zero) == "(1) OR (0)"
 
     # return the configured weaver
     return weaver

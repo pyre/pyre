@@ -9,7 +9,7 @@ import pyre
 
 
 # protocol declaration
-class Action(pyre.action, family='{project.name}.cli'):
+class Action(pyre.action, family="{project.name}.cli"):
     """
     Protocol declaration for {project.name} commands
     """

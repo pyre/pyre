@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -20,6 +19,7 @@ def test():
     # build a simple projection
     class titles(bizbook.db.query, book=bizbook.schema.Book):
         """A short query on the book table"""
+
         id = book.id
         title = book.title
         category = book.category
@@ -28,22 +28,28 @@ def test():
     # derive a query from it that specifies a collation order
     class collated(titles):
         """Extend the 'titles' query with a collation order"""
+
         # collation
         order = (titles.category, bizbook.db.descending(titles.price), titles.title)
 
     # build datastore
     db = bizbook.pg()
     # check that we are connected to the right database
-    assert db.database == 'bizbook'
+    assert db.database == "bizbook"
 
     # run the query
     report = list(db.select(collated))
     # here is what we expect
-    correct = list(sorted(
+    correct = list(
         sorted(
-            sorted(db.select(titles), key=operator.attrgetter('title')),
-            key=operator.attrgetter('price'), reverse=True),
-        key=operator.attrgetter('category')))
+            sorted(
+                sorted(db.select(titles), key=operator.attrgetter("title")),
+                key=operator.attrgetter("price"),
+                reverse=True,
+            ),
+            key=operator.attrgetter("category"),
+        )
+    )
     # check
     assert report == correct
 

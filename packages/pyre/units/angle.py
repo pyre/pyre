@@ -1,15 +1,14 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 from math import pi as π
 from .SI import radian
 
-degree = π/180 * radian
+degree = π / 180 * radian
 arcminute = degree / 60
 arcsecond = arcminute / 60
 

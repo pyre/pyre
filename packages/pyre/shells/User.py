@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # externals
@@ -45,9 +44,7 @@ class User(pyre.component):
 
     # choices and defaults
     externals = pyre.externals.dependencies()
-    externals.doc = (
-        "the database of preferred instances for each external package category"
-    )
+    externals.doc = "the database of preferred instances for each external package category"
 
     # on-demand state
     @property

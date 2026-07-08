@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # superclass
@@ -16,17 +15,14 @@ class SlotInfo(NodeInfo):
     Encapsulation of the slot metadata maintained by the nameserver
     """
 
-
     # types
     from .Priority import Priority as priorities
-    from ..traits.Property  import Property as properties
-
+    from ..traits.Property import Property as properties
 
     # public data
-    locator = None # provenance
-    priority = None # the rank of this setting
-    factory = None # the type information
-
+    locator = None  # provenance
+    priority = None  # the rank of this setting
+    factory = None  # the type information
 
     # meta-methods
     def __init__(self, priority=None, locator=None, factory=None, **kwds):

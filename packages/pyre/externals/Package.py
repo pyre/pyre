@@ -1,33 +1,32 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # externals
 import os, glob
+
 # access the pyre framework
 import pyre
 
 
 # protocol declaration
-class Package(pyre.protocol, family='pyre.externals'):
+class Package(pyre.protocol, family="pyre.externals"):
     """
     The protocol that all external package managers must implement
     """
 
     # configurable state
     version = pyre.properties.str(default="unknown")
-    version.doc = 'the package version'
+    version.doc = "the package version"
 
     prefix = pyre.properties.path()
-    prefix.doc = 'the package installation directory'
+    prefix.doc = "the package installation directory"
 
     # constants
-    category = None # the common name for this package category
-
+    category = None  # the common name for this package category
 
     # framework support
     @classmethod

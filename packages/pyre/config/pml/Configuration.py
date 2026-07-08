@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 from .Node import Node
@@ -17,14 +16,12 @@ class Configuration(Node):
     # constants
     elements = ("component", "package", "bind")
 
-
     # interface
     def notify(self, parent, locator):
         """
         Let {parent} now that processing this configuration tag is complete
         """
         return parent.onConfiguration(self)
-
 
     # assignment handler
     def assignment(self, event):
@@ -36,7 +33,6 @@ class Configuration(Node):
         # nothing else, for now
         return
 
-
     def conditionalAssignment(self, event):
         """
         Process a binding of a property to a value
@@ -45,7 +41,6 @@ class Configuration(Node):
         self.configuration.append(event)
         # nothing else, for now
         return
-
 
     # meta methods
     def __init__(self, parent, attributes, locator, **kwds):

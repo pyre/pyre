@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -24,23 +25,17 @@ def test():
     # assemble
     total = root / home / here
     # check
-    assert (
-        str(total) == "/Users/mga/dv/pyre-1.0/tests/pyre/primitives/path_arithmetic.py"
-    )
+    assert str(total) == "/Users/mga/dv/pyre-1.0/tests/pyre/primitives/path_arithmetic.py"
 
     # let's try another
     total = "/" / pyre.primitives.path(home) / str(here)
     # check
-    assert (
-        str(total) == "/Users/mga/dv/pyre-1.0/tests/pyre/primitives/path_arithmetic.py"
-    )
+    assert str(total) == "/Users/mga/dv/pyre-1.0/tests/pyre/primitives/path_arithmetic.py"
 
     # we have one more way to do all this
     total = root.join(home, here)
     # check
-    assert (
-        str(total) == "/Users/mga/dv/pyre-1.0/tests/pyre/primitives/path_arithmetic.py"
-    )
+    assert str(total) == "/Users/mga/dv/pyre-1.0/tests/pyre/primitives/path_arithmetic.py"
 
     # check we compute relative paths correctly
     assert str(total.relativeTo(root / home)) == str(here)

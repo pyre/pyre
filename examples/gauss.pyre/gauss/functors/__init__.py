@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -17,6 +16,5 @@ from .Functor import Functor as functor
 from .Constant import Constant as constant
 from .Gaussian import Gaussian as gaussian
 from .One import One as one
-
 
 # end of file

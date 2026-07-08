@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # support
@@ -16,7 +15,6 @@ class Grid:
     A logically cartesian grid
     """
 
-
     # interface
     def enumerate(self):
         """
@@ -28,7 +26,6 @@ class Grid:
             yield index, value
         # all done
         return
-
 
     # meta-methods
     def __init__(self, shape, layout=None, value=None, data=None, **kwds):
@@ -48,15 +45,14 @@ class Grid:
         # if {value} is callable
         elif callable(value):
             # build my data by invoking it once per cell
-            self.data = [ value() for _ in range(size) ]
+            self.data = [value() for _ in range(size)]
         # otherwise
         else:
             # make a list filled with value
-            self.data = [ value ] * size
+            self.data = [value] * size
 
         # all done
         return
-
 
     def __getitem__(self, index):
         """
@@ -77,8 +73,6 @@ class Grid:
         # all done
         return value
 
-
-
     def __setitem__(self, index, value):
         """
         Return the value stored at {index}
@@ -97,7 +91,6 @@ class Grid:
             self.data[index] = value
         # all done
         return
-
 
     def __len__(self):
         """

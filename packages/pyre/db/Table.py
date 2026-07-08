@@ -1,13 +1,13 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # metaclass
 from .Schemer import Schemer
+
 # superclass
 from .. import records
 
@@ -18,11 +18,9 @@ class Table(records.record, metaclass=Schemer):
     Base class for database table declarations
     """
 
-
     # constants
     from .literals import default, null
     from .expressions import IsNull as isNull, IsNotNull as isNotNull
-
 
     # interface
     # declaration decorators
@@ -36,7 +34,6 @@ class Table(records.record, metaclass=Schemer):
         # and return
         return cls
 
-
     @classmethod
     def pyre_unique(cls, reference):
         """
@@ -47,17 +44,15 @@ class Table(records.record, metaclass=Schemer):
         # and return
         return cls
 
-
     @classmethod
     def pyre_foreignKey(cls, field, foreign):
         """
         Mark {field} as a reference to {foreign}
         """
         # add an entry to the foreign key list
-        cls._pyre_foreignKeys.append( (field, foreign) )
+        cls._pyre_foreignKeys.append((field, foreign))
         # and return
         return cls
-
 
     @classmethod
     def pyre_check(cls, expression):
@@ -68,7 +63,6 @@ class Table(records.record, metaclass=Schemer):
         cls._pyre_constraints.append(expression)
         # and return
         return cls
-
 
     # implementation details
     # table attributes that generate the table wide declaration statements; initialized by my

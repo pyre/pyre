@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -13,6 +14,7 @@ leaves {exitCode} at the default 0
 
 # the server that drives the response path
 from pyre.http.Server import Server
+
 # the document types under test
 from pyre.http import documents
 

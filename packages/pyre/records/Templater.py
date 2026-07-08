@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # superclass
@@ -20,25 +19,27 @@ class Templater(AttributeClassifier):
     * derivations, i.e. fields whose values depend on the values of other fields
     """
 
-
     # types: the descriptor categories
     from . import field as pyre_field
     from . import measure as pyre_measure
     from . import derivation as pyre_derivation
     from . import literal as pyre_literal
+
     # the tuples
     from .Mutable import Mutable as pyre_mutableTupleType
     from .Immutable import Immutable as pyre_immutableTupleType
+
     # my field selector
     from .Selector import Selector as pyre_selector
+
     # my field value accessor
     from .Accessor import Accessor as pyre_accessor
-    # the value extractors
-    from .Extractor import Extractor as pyre_extractor # simple immutable tuples
-    from .Evaluator import Evaluator as pyre_evaluator # complex immutable tuples
-    from .Calculator import Calculator as pyre_calculator # simple mutable tuples
-    from .Compiler import Compiler as pyre_compiler # complex mutable tuples
 
+    # the value extractors
+    from .Extractor import Extractor as pyre_extractor  # simple immutable tuples
+    from .Evaluator import Evaluator as pyre_evaluator  # complex immutable tuples
+    from .Calculator import Calculator as pyre_calculator  # simple mutable tuples
+    from .Compiler import Compiler as pyre_compiler  # complex mutable tuples
 
     # meta-methods
     def __new__(cls, name, bases, attributes, id=None, **kwds):
@@ -63,7 +64,8 @@ class Templater(AttributeClassifier):
         attributes["pyre_localFields"] = tuple(localFields)
 
         # remove the field descriptors; we replace them in {__init__} with selectors
-        for field in localFields: del attributes[field.name]
+        for field in localFields:
+            del attributes[field.name]
 
         # build the class record
         record = super().__new__(cls, name, bases, attributes, **kwds)
@@ -81,7 +83,8 @@ class Templater(AttributeClassifier):
         # for each base class
         for base in reversed(record.__mro__):
             # skip the ones that are not records themselves
-            if not isinstance(base, cls): continue
+            if not isinstance(base, cls):
+                continue
             # get all of the locally declared record fields
             for field in base.pyre_localFields:
                 # add this to the pile
@@ -98,9 +101,11 @@ class Templater(AttributeClassifier):
                 else:
                     # we have a problem; get the journal
                     import journal
+
                     # and complain
-                    raise journal.firewall('pyre.records').log(
-                        'unknown field type: {}'.format(field))
+                    raise journal.firewall("pyre.records").log(
+                        "unknown field type: {}".format(field)
+                    )
 
         # attach them to the class record
         record.pyre_fields = tuple(fields)
@@ -119,11 +124,10 @@ class Templater(AttributeClassifier):
         # print("  derivations: {}".format(tuple(field.name for field in record.pyre_derivations)))
         # print("  index:")
         # for field, index in record.pyre_index.items():
-            # print("    {.name} -> {}".format(field, index))
+        # print("    {.name} -> {}".format(field, index))
 
         # all done
         return record
-
 
     def __init__(self, name, bases, attributes, **kwds):
         """
@@ -155,11 +159,12 @@ class Templater(AttributeClassifier):
             # map the name of the field to an accessor
             (field.name, self.pyre_accessor(field=field, index=index))
             # for each of my fields
-            for index, field in enumerate(self.pyre_fields))
+            for index, field in enumerate(self.pyre_fields)
+        )
 
         # build the helper classes that generate my instances
-        mutable = type('mutable', (self.pyre_mutableTupleType,), attributes)
-        immutable = type('immutable', (self.pyre_immutableTupleType,), attributes)
+        mutable = type("mutable", (self.pyre_mutableTupleType,), attributes)
+        immutable = type("immutable", (self.pyre_immutableTupleType,), attributes)
 
         # if i have derivations
         if self.pyre_derivations:
@@ -182,7 +187,6 @@ class Templater(AttributeClassifier):
         # all done
         return
 
-
     # predicates
     @classmethod
     def pyre_isMeasure(cls, field):
@@ -190,8 +194,7 @@ class Templater(AttributeClassifier):
         Predicate that tests whether {field} is a measure
         """
         # easy...
-        return field.category == 'descriptor'
-
+        return field.category == "descriptor"
 
     @classmethod
     def pyre_isDerivation(cls, field):
@@ -199,7 +202,7 @@ class Templater(AttributeClassifier):
         Predicate that tests whether {field} is a derivation
         """
         # easy...
-        return field.category == 'operator'
+        return field.category == "operator"
 
 
 # end of file

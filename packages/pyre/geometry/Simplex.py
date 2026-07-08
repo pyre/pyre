@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # externals
@@ -16,7 +15,6 @@ class Simplex:
     A representation of a simplex of arbitrary order
     """
 
-
     # public data
     @property
     def order(self):
@@ -25,7 +23,6 @@ class Simplex:
         """
         # easy enough
         return len(self.support) - 1
-
 
     # meta-methods
     def __init__(self, support=None, **kwds):
@@ -50,7 +47,6 @@ class Simplex:
 
         # all done
         return
-
 
     # implementation details
     zero = (None,)

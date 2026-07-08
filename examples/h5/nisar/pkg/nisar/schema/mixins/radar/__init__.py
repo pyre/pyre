@@ -1,4 +1,4 @@
-# -*- python -*-
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -9,6 +9,5 @@
 from .Swath import Swath as swath
 from .Swaths import Swaths as swaths
 from .RadarCoordinates import RadarCoordinates as radarCoordinates
-
 
 # end of file

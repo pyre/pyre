@@ -1,13 +1,13 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # access to the pyre package
 import pyre
+
 # my ancestor
 from .LineMill import LineMill
 
@@ -17,7 +17,6 @@ class PFG(LineMill):
     """
     Support for pyre configuration files
     """
-
 
     # trait traversal hooks
     def componentStart(self, component):
@@ -31,7 +30,6 @@ class PFG(LineMill):
         # all done
         return
 
-
     def componentEnd(self, component):
         """
         Done processing the traits of {component}
@@ -39,10 +37,9 @@ class PFG(LineMill):
         # pop
         self.outdent()
         # leave a blank line
-        yield ''
+        yield ""
         # all done
         return
-
 
     def trait(self, name, value):
         """
@@ -51,7 +48,6 @@ class PFG(LineMill):
         # easy enough
         return self.place(f"{name} = {value}")
 
-
     def value(self, value):
         """
         Render a value for a multiline trait
@@ -59,9 +55,8 @@ class PFG(LineMill):
         # easy
         return self.place(value)
 
-
     # private data
-    comment = ';'
+    comment = ";"
 
 
 # end of file

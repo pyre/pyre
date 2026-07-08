@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -5,9 +6,11 @@
 
 
 # externals
-import sys # for {stdout}
+import sys  # for {stdout}
+
 # superclass
 from .Stream import Stream
+
 # the palette definitions
 from . import palettes
 
@@ -18,10 +21,8 @@ class File(Stream):
     Journal device that writes messages to {stdout}
     """
 
-
     # the default mode for opening the stream
     mode = "w"
-
 
     # metamethods
     def __init__(self, path, mode=mode, **kwds):

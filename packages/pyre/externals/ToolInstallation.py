@@ -1,13 +1,13 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # framework
 import pyre
+
 # superclass
 from .Installation import Installation
 
@@ -22,7 +22,6 @@ class ToolInstallation(Installation):
     bindir = pyre.properties.paths()
     bindir.doc = "the location of my binaries"
 
-
     # protocol obligations
     @pyre.export
     def binaries(self, **kwds):
@@ -32,7 +31,6 @@ class ToolInstallation(Installation):
         # must have one
         return ()
 
-
     # framework hooks
     def pyre_configured(self):
         """
@@ -41,7 +39,7 @@ class ToolInstallation(Installation):
         # chain up
         yield from super().pyre_configured()
         # check that my {bindir} exists
-        yield from self.verify(trait='bindir', folders=self.bindir)
+        yield from self.verify(trait="bindir", folders=self.bindir)
 
         # all done
         return

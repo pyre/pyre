@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -54,9 +55,7 @@ class ProtocolError(Response):
           <p>The standard description for this error is: <em>{0.__doc__}</em></p>
           <p>{0.description}</p>
         </body>
-        """.format(
-            self
-        )
+        """.format(self)
 
 
 # end of file

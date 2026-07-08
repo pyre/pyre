@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # interface
@@ -31,12 +30,14 @@ except ImportError:
     msg = "could not load the 'gsl' extension module"
     # complain
     import journal
-    raise journal.error('gsl').log(msg)
+
+    raise journal.error("gsl").log(msg)
 
 # get the framework
 import pyre
+
 # register the package
-package = pyre.executive.registerPackage(name='gsl', file=__file__)
+package = pyre.executive.registerPackage(name="gsl", file=__file__)
 # record the layout
 home, prefix, defaults = package.layout()
 
@@ -44,7 +45,10 @@ home, prefix, defaults = package.layout()
 # pull in the administrivia
 version = gsl.version
 copyright = gsl.copyright
-def license() : print(gsl.license())
+
+
+def license():
+    print(gsl.license())
 
 
 # wrappers
@@ -56,6 +60,5 @@ from .Vector import Vector as vector
 
 # other interfaces
 from . import blas, pdf, linalg, stats
-
 
 # end of file

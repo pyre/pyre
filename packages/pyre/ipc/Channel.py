@@ -1,7 +1,7 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
-# leif strand
 # (c) 1998-2026 all rights reserved
 
 
@@ -33,43 +33,33 @@ class Channel:
         """
         Retrieve the channel end point that can be read
         """
-        raise NotImplementedError(
-            f"class '{type(self).__name__}' must implement 'inbound'"
-        )
+        raise NotImplementedError(f"class '{type(self).__name__}' must implement 'inbound'")
 
     @property
     def outbound(self):
         """
         Retrieve the channel end point that can be written
         """
-        raise NotImplementedError(
-            f"class '{type(self).__name__}' must implement 'outbound'"
-        )
+        raise NotImplementedError(f"class '{type(self).__name__}' must implement 'outbound'")
 
     # input/output
     def read(self, minlen, maxlen):
         """
         Read up to {maxlen} bytes from my input channel
         """
-        raise NotImplementedError(
-            f"class '{type(self).__name__}' must implement 'read'"
-        )
+        raise NotImplementedError(f"class '{type(self).__name__}' must implement 'read'")
 
     def write(self, bytes):
         """
         Write the {bytes} to the output channel
         """
-        raise NotImplementedError(
-            f"class '{type(self).__name__}' must implement 'write'"
-        )
+        raise NotImplementedError(f"class '{type(self).__name__}' must implement 'write'")
 
     def close(self):
         """
         Shutdown the channel
         """
-        raise NotImplementedError(
-            f"class '{type(self).__name__}' must implement 'close'"
-        )
+        raise NotImplementedError(f"class '{type(self).__name__}' must implement 'close'")
 
     # support
     @staticmethod

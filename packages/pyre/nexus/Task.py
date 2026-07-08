@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 class Task:
@@ -11,14 +10,13 @@ class Task:
     Base class for functors that are part of an application data model
     """
 
-
     # types
     # easy access to the base indicator of a temporary failure during task execution
     from .exceptions import RecoverableError
+
     # access to status enums for this task and its broader execution context
     from .CrewStatus import CrewStatus as crewcodes
     from .TaskStatus import TaskStatus as taskcodes
-
 
     # interface
     def execute(self, **kwds):
@@ -29,7 +27,6 @@ class Task:
         # they can chain up to this empty implementation
         # nothing to do
         return
-
 
     # meta-methods
     def __call__(self, **kwds):

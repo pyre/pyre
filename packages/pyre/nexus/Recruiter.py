@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # support
@@ -11,7 +10,7 @@ import pyre
 
 
 # declaration
-class Recruiter(pyre.protocol, family='pyre.nexus.recruiters'):
+class Recruiter(pyre.protocol, family="pyre.nexus.recruiters"):
     """
     The protocol of resource allocation strategies
     """
@@ -35,7 +34,6 @@ class Recruiter(pyre.protocol, family='pyre.nexus.recruiters'):
         The {team} manager has dismissed the given {member}
         """
 
-
     # default implementation
     @classmethod
     def pyre_default(cls, **kwds):
@@ -44,6 +42,7 @@ class Recruiter(pyre.protocol, family='pyre.nexus.recruiters'):
         """
         # the default strategy is to create child processes on the local machine
         from .Fork import Fork
+
         # return the component factory
         return Fork
 

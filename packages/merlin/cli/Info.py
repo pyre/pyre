@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -183,8 +184,7 @@ class Info(merlin.shells.command, family="merlin.cli.info"):
         language = merlin.protocols.languages.language
         # assemble its implementors
         languages = tuple(
-            name
-            for _, name, _ in language.pyre_locateAllImplementers(namespace="merlin")
+            name for _, name, _ in language.pyre_locateAllImplementers(namespace="merlin")
         )
         # make a channel
         channel = journal.info("merlin.info.host")

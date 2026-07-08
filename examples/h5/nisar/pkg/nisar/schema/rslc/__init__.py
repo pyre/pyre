@@ -1,4 +1,4 @@
-# -*- python -*-
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -8,6 +8,5 @@
 # the RSLC product and its parts
 from .RSLC import RSLC as rslc
 from .Identification import Identification as identification
-
 
 # end of file

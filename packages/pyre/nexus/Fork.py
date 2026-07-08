@@ -1,25 +1,25 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # externals
 import os
+
 # support
 import pyre
+
 # my protocol
 from .Recruiter import Recruiter
 
 
 # declaration
-class Fork(pyre.component, family='pyre.nexus.recruiters.fork', implements=Recruiter):
+class Fork(pyre.component, family="pyre.nexus.recruiters.fork", implements=Recruiter):
     """
     Create worker processes by cloning the current one
     """
-
 
     # protocol obligations
     @pyre.provides
@@ -35,7 +35,6 @@ class Fork(pyre.component, family='pyre.nexus.recruiters.fork', implements=Recru
             yield self.deploy(team=team, **kwds)
         # all done
         return
-
 
     @pyre.provides
     def deploy(self, team, **kwds):
@@ -69,7 +68,6 @@ class Fork(pyre.component, family='pyre.nexus.recruiters.fork', implements=Recru
         crew.marshaler = team.marshaler
         # spin it up and return it
         return crew.join(team=team)
-
 
     @pyre.provides
     def dismiss(self, team, crew, **kwds):

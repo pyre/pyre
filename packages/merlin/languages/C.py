@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -33,9 +34,7 @@ class C(Language, family="merlin.languages.c", implements=merlin.protocols.langu
 
     dialect = merlin.properties.str()
     dialect.default = "c99"
-    dialect.validators = merlin.constraints.isMember(
-        "ansi", "c90", "c99", "c11", "c17", "c18"
-    )
+    dialect.validators = merlin.constraints.isMember("ansi", "c90", "c99", "c11", "c17", "c18")
     dialect.doc = "the C dialect to enforce"
 
     # merlin hooks

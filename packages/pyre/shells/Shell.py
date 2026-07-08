@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # access to my base class
@@ -15,7 +14,6 @@ class Shell(pyre.protocol, family="pyre.shells"):
     """
     The protocol implemented by the pyre application hosting strategies
     """
-
 
     # public data
     home = pyre.properties.str(default=None)
@@ -32,9 +30,8 @@ class Shell(pyre.protocol, family="pyre.shells"):
     gpus.doc = "the number of GPU coprocessors per task"
 
     # a marker that enables applications to deduce the type of shell that is hosting them
-    model = pyre.properties.str(default='unknown')
+    model = pyre.properties.str(default="unknown")
     model.doc = "the programming model"
-
 
     # my default implementation
     @classmethod
@@ -44,8 +41,8 @@ class Shell(pyre.protocol, family="pyre.shells"):
         """
         # use {Script}
         from .Script import Script
-        return Script
 
+        return Script
 
     # interface
     @pyre.provides

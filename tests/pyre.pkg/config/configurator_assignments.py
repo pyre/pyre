@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -16,6 +15,7 @@ processing
 def test():
     # access the framework
     import pyre
+
     # and its managers
     executive = pyre.executive
     ns = pyre.executive.nameserver
@@ -27,18 +27,22 @@ def test():
     # make some events
     events = [
         cfg.events.Assignment(
-            key=("sample", "user", "name"), value="michael aïvázis",
-            locator=pyre.tracking.here()),
+            key=("sample", "user", "name"), value="michael aïvázis", locator=pyre.tracking.here()
+        ),
         cfg.events.Assignment(
-            key=("sample", "user", "affiliation"), value="orthologue",
-            locator=pyre.tracking.here()),
+            key=("sample", "user", "affiliation"), value="orthologue", locator=pyre.tracking.here()
+        ),
         cfg.events.Assignment(
-            key=("sample", "user", "email"), value="michael.aivazis@orthologue.com",
-            locator=pyre.tracking.here()),
+            key=("sample", "user", "email"),
+            value="michael.aivazis@orthologue.com",
+            locator=pyre.tracking.here(),
+        ),
         cfg.events.Assignment(
-            key=("sample", "user", "alias"), value="{sample.user.name}",
-            locator=pyre.tracking.here())
-        ]
+            key=("sample", "user", "alias"),
+            value="{sample.user.name}",
+            locator=pyre.tracking.here(),
+        ),
+    ]
 
     # process them
     cfg.processEvents(events=events, priority=priority)

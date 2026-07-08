@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -34,9 +35,7 @@ class Assembler:
         return descriptor._pyre_identify(authority=self)
 
     # framework hooks
-    def _pyre_onGroup(
-        self, group: schema.group, parent: typing.Optional[Group] = None
-    ) -> Group:
+    def _pyre_onGroup(self, group: schema.group, parent: typing.Optional[Group] = None) -> Group:
         """
         Process a {group}
         """
@@ -45,9 +44,7 @@ class Assembler:
             # i'm building the root node; it mounts at its declared location, if any,
             # otherwise at the file root
             mount = group._pyre_location
-            location = (
-                pyre.primitives.path(mount) if mount else pyre.primitives.path.root
-            )
+            location = pyre.primitives.path(mount) if mount else pyre.primitives.path.root
         # otherwise
         else:
             # splice the {group} name to my parent's location

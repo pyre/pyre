@@ -1,16 +1,15 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # externals
-import os # access to os services
+import os  # access to os services
 import sys
-import pyre # access the framework
-from .Fork import Fork # my superclass
+import pyre  # access the framework
+from .Fork import Fork  # my superclass
 
 
 # declaration
@@ -20,17 +19,15 @@ class Daemon(Fork, family="pyre.shells.daemon"):
     parent and has no access to a terminal
     """
 
-
     # user configurable state
-    capture = pyre.properties.bool(default=False) # to override the default from {Fork}
+    capture = pyre.properties.bool(default=False)  # to override the default from {Fork}
     capture.doc = "control whether to create communication channels to the daemon process"
     # a marker that enables applications to deduce the type of shell that is hosting them
-    model = pyre.properties.str(default='daemon')
+    model = pyre.properties.str(default="daemon")
     model.doc = "the programming model"
 
     daemon = pyre.properties.bool(default=False)
     daemon.doc = "internal marker to indicate that the spawning is complete"
-
 
     # interface
     @pyre.export
@@ -42,12 +39,13 @@ class Daemon(Fork, family="pyre.shells.daemon"):
         itself completely from its parent.
         """
         # if i was told not to spawn, just invoke the behavior
-        if application.DEBUG: return application.main(*args, **kwds)
+        if application.DEBUG:
+            return application.main(*args, **kwds)
 
         # if spawning is done
         if self.daemon:
             # figure out where to park the process
-            home = self.home or '/'
+            home = self.home or "/"
             # go there
             os.chdir(home)
             # set up a net

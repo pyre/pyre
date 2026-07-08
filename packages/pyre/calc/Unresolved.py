@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 class Unresolved:
@@ -11,16 +10,13 @@ class Unresolved:
     A node that raises {UnresolvedNodeError} when its value is read
     """
 
-
     # exceptions
     from .exceptions import UnresolvedNodeError
 
-
     # constants
-    category = 'unresolved'
+    category = "unresolved"
     # public data
-    request = None # the unresolved name
-
+    request = None  # the unresolved name
 
     # classifiers
     @property
@@ -33,7 +29,6 @@ class Unresolved:
         # nothing further
         return
 
-
     # value management
     def getValue(self):
         """
@@ -42,7 +37,6 @@ class Unresolved:
         # asking for my value is an error
         raise self.UnresolvedNodeError(node=self, name=self.request)
 
-
     # support for graph traversals
     def identify(self, authority, **kwds):
         """
@@ -50,7 +44,6 @@ class Unresolved:
         """
         # invoke the callback
         return authority.onUnresolved(unresolved=self, **kwds)
-
 
     # meta methods
     def __init__(self, request, **kwds):
@@ -61,11 +54,9 @@ class Unresolved:
         # all done
         return
 
-
     def __str__(self):
         # i have a name...
         return self.request
-
 
     # debugging support
     def dump(self, name, indent):

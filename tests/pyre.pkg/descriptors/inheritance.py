@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -15,6 +14,7 @@ Verify that derived descriptors get harvested correctly
 def test():
     # get the descriptor package
     from pyre import descriptors
+
     # get the base metaclass
     from pyre.patterns.AttributeClassifier import AttributeClassifier
 
@@ -38,7 +38,8 @@ def test():
             return record
 
     # a new descriptor
-    class money(descriptors.decimal): pass
+    class money(descriptors.decimal):
+        pass
 
     # the client
     class client(metaclass=harvester):
@@ -47,7 +48,7 @@ def test():
         cost = money(default=2.34)
 
     # verify that the descriptors were harvested correctly
-    assert [entry.name for entry in client.pile] == ['sku', 'cost']
+    assert [entry.name for entry in client.pile] == ["sku", "cost"]
 
     # get the defaults
     sku = client.sku.coerce(client.sku.default)

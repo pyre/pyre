@@ -1,4 +1,4 @@
-# -*- python -*-
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -8,6 +8,5 @@
 # the GSLC product and its parts
 from .GSLC import GSLC as gslc
 from .Identification import Identification as identification
-
 
 # end of file

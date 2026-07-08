@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 class Counter:
@@ -11,10 +10,8 @@ class Counter:
     A stream filter that counts the number of objects that pass through it
     """
 
-
     # public data
     count = 0
-
 
     # meta methods
     def __init__(self, start=0, **kwds):
@@ -24,7 +21,6 @@ class Counter:
         super().__init__(**kwds)
         self.count = start
         return
-
 
     def __call__(self, stream):
         """

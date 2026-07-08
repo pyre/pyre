@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -12,9 +11,10 @@ Create and dump a virtual filesystem
 """
 
 
-def test(interactive=False): # change to True to see the dump
+def test(interactive=False):  # change to True to see the dump
     # access the package
     import pyre.filesystem
+
     # create a virtual filesystem
     fs = pyre.filesystem.virtual()
     # create a few nodes and insert them into the filesystem
@@ -25,7 +25,7 @@ def test(interactive=False): # change to True to see the dump
     fs["/home/users/mga/dv/pyre-1.0/packages/pyre/__init__.py"] = fs.node()
     fs["/home/users/mga/dv/pyre-1.0/packages/journal/__init__.py"] = fs.node()
     # dump
-    fs.dump(interactive) # change to True to see the dump
+    fs.dump(interactive)  # change to True to see the dump
 
     return fs
 
@@ -33,7 +33,7 @@ def test(interactive=False): # change to True to see the dump
 # main
 if __name__ == "__main__":
     # request debugging support for the pyre.calc package
-    pyre_debug = { "pyre.filesystem" }
+    pyre_debug = {"pyre.filesystem"}
     # skip pyre initialization since we don't rely on the executive
     pyre_noboot = True
     # do...
@@ -41,6 +41,7 @@ if __name__ == "__main__":
 
     # check that the nodes were all destroyed
     from pyre.filesystem.Node import Node
+
     # print("Node extent:", len(Node.pyre_extent))
     assert len(Node.pyre_extent) == 0
 

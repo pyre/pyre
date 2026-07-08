@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -12,9 +13,7 @@ from .Language import Language
 
 
 # class declaration
-class CUDA(
-    Language, family="merlin.languages.cuda", implements=merlin.protocols.languages.cuda
-):
+class CUDA(Language, family="merlin.languages.cuda", implements=merlin.protocols.languages.cuda):
     """
     A category of source artifacts encoded in the CUDA programming language
     """

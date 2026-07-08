@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 class Processor:
@@ -11,10 +10,8 @@ class Processor:
     The base class for decorators that attach value processors to descriptors
     """
 
-
     # public data
-    traits = () # the sequence of descriptors that i decorate
-
+    traits = ()  # the sequence of descriptors that i decorate
 
     # meta methods
     def __init__(self, traits=traits, **kwds):
@@ -25,10 +22,10 @@ class Processor:
         # all done
         return
 
-
     def __call__(self, method):
         raise NotImplementedError(
-            "class {.__name__!r} must implement '__call__'".format(type(self)))
+            "class {.__name__!r} must implement '__call__'".format(type(self))
+        )
 
 
 # end of file

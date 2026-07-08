@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # externals
@@ -11,9 +10,9 @@ import pickle
 
 # base class
 from .Object import Object
+
 # meta-class
 from pyre.patterns.Extent import Extent
-
 
 
 # declaration
@@ -22,15 +21,12 @@ class Communicator(Object, metaclass=Extent):
     An encapsulation of MPI communicators
     """
 
-
     # types
     from .Port import Port
-
 
     # per-instance public data
     rank = 0
     size = 1
-
 
     # communicator factories
     def restrict(self, group):
@@ -46,7 +42,6 @@ class Communicator(Object, metaclass=Extent):
             return Communicator(capsule=new)
         # otherwise
         return None
-
 
     def include(self, processes):
         """
@@ -65,7 +60,6 @@ class Communicator(Object, metaclass=Extent):
         # otherwise
         return None
 
-
     def exclude(self, processes):
         """
         Build a new communicator with all my processes except those in {processes}
@@ -81,16 +75,15 @@ class Communicator(Object, metaclass=Extent):
         # otherwise
         return None
 
-
     def cartesian(self, axes, periods, reorder=1):
         """
         Build a cartesian communicator; see the MPI documentation for details
         """
         # access the factory
         from .Cartesian import Cartesian
+
         # build one and return it
         return Cartesian(capsule=self.capsule, axes=axes, periods=periods, reorder=reorder)
-
 
     # interface
     def barrier(self):
@@ -101,7 +94,6 @@ class Communicator(Object, metaclass=Extent):
         # invoke the low level routine
         return self.mpi.communicatorBarrier(self.capsule)
 
-
     def group(self):
         """
         Build a group that contains all my processes
@@ -110,8 +102,8 @@ class Communicator(Object, metaclass=Extent):
         capsule = self.mpi.groupCreate(self.capsule)
         # wrap it up and return it
         from .Group import Group
-        return Group(capsule)
 
+        return Group(capsule)
 
     def port(self, peer, tag=Port.tag):
         """
@@ -120,7 +112,6 @@ class Communicator(Object, metaclass=Extent):
         """
         # make a port and return it
         return self.Port(peer=peer, tag=tag, communicator=self)
-
 
     # communications
     def bcast(self, item=None, source=0):
@@ -134,7 +125,6 @@ class Communicator(Object, metaclass=Extent):
         # extract the item and return it
         return pickle.loads(data)
 
-
     def sum(self, item, destination=None):
         """
         Perform a sum reduction of {item} using {exemplar} to deduce the type and deliver the
@@ -143,9 +133,11 @@ class Communicator(Object, metaclass=Extent):
         """
         # pass it on
 
-        return self.mpi.sum(self.capsule, destination, item) if destination is not None \
+        return (
+            self.mpi.sum(self.capsule, destination, item)
+            if destination is not None
             else self.mpi.sum_all(self.capsule, item)
-
+        )
 
     def product(self, item, destination=None):
         """
@@ -153,9 +145,11 @@ class Communicator(Object, metaclass=Extent):
         If {destination} is not provided, deliver the results to all processes
         """
         # pass it on
-        return self.mpi.product(self.capsule, destination, item) if destination is not None \
+        return (
+            self.mpi.product(self.capsule, destination, item)
+            if destination is not None
             else self.mpi.product_all(self.capsule, item)
-
+        )
 
     def max(self, item, destination=None):
         """
@@ -163,9 +157,11 @@ class Communicator(Object, metaclass=Extent):
         If {destination} is not provided, deliver the results to all processes
         """
         # pass it on
-        return self.mpi.max(self.capsule, destination, item) if destination is not None \
+        return (
+            self.mpi.max(self.capsule, destination, item)
+            if destination is not None
             else self.mpi.max_all(self.capsule, item)
-
+        )
 
     def min(self, item, destination=None):
         """
@@ -173,9 +169,11 @@ class Communicator(Object, metaclass=Extent):
         If {destination} is not provided, deliver the results to all processes
         """
         # pass it on
-        return self.mpi.min(self.capsule, destination, item) if destination is not None \
+        return (
+            self.mpi.min(self.capsule, destination, item)
+            if destination is not None
             else self.mpi.min_all(self.capsule, item)
-
+        )
 
     # meta methods
     def __init__(self, capsule, **kwds):
@@ -194,7 +192,6 @@ class Communicator(Object, metaclass=Extent):
 
         # all done
         return
-
 
     # implementation details
     capsule = None

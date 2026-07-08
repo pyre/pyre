@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 class Composite:
@@ -15,10 +14,8 @@ class Composite:
     other nodes
     """
 
-
     # types
     from .exceptions import CircularReferenceError
-
 
     # interface
     @property
@@ -28,7 +25,6 @@ class Composite:
         """
         # the default implementation stores my operands in a private member
         return self._operands
-
 
     @property
     def span(self):
@@ -44,7 +40,6 @@ class Composite:
         # all done
         return
 
-
     # classifiers
     @property
     def literals(self):
@@ -57,7 +52,6 @@ class Composite:
             yield from operand.literals
         # all done
         return
-
 
     @property
     def operators(self):
@@ -73,7 +67,6 @@ class Composite:
         # all done
         return
 
-
     @property
     def variables(self):
         """
@@ -85,7 +78,6 @@ class Composite:
             yield from operand.variables
         # all done
         return
-
 
     # alterations to the dependency graph
     def substitute(self, current, replacement, clean=None):
@@ -126,7 +118,6 @@ class Composite:
         # all done
         return clean
 
-
     # meta-methods
     def __init__(self, operands, **kwds):
         # chain up
@@ -135,7 +126,6 @@ class Composite:
         self._operands = tuple(operands)
         # all done
         return
-
 
     # implementation details
     def _substitute(self, current, replacement):

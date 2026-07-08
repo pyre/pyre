@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -107,15 +108,11 @@ class Writer:
         # now, go through the group contents
         for member in group._pyre_locations():
             # and ask each member to identify itself
-            member._pyre_identify(
-                authority=self, dst=hid, shapes=shapes, depth=depth, **kwds
-            )
+            member._pyre_identify(authority=self, dst=hid, shapes=shapes, depth=depth, **kwds)
         # all done
         return
 
-    def _pyre_onDataset(
-        self, dataset: Dataset, dst: libh5.Group, shapes, depth, **kwds
-    ) -> None:
+    def _pyre_onDataset(self, dataset: Dataset, dst: libh5.Group, shapes, depth, **kwds) -> None:
         """
         Process a dataset
         """
@@ -179,9 +176,7 @@ class Writer:
             dcpl = libh5.properties.dcpl()
             dapl = libh5.properties.dapl()
             # make the dataset
-            hid = dst.create(
-                path=name, type=layout.disktype, space=space, dcpl=dcpl, dapl=dapl
-            )
+            hid = dst.create(path=name, type=layout.disktype, space=space, dcpl=dcpl, dapl=dapl)
         # if the user supplied data, flush it; otherwise leave the dataset fill-valued
         if dataset._value is not None:
             # persist the bound value
@@ -211,9 +206,7 @@ class Writer:
                 # by configuring the creation property list
                 dcpl.setChunk(chunk)
             # make the dataset
-            hid = dst.create(
-                path=name, type=datatype, space=dataspace, dcpl=dcpl, dapl=dapl
-            )
+            hid = dst.create(path=name, type=datatype, space=dataspace, dcpl=dcpl, dapl=dapl)
         # persist the value
         dataset._pyre_write(dst=hid)
         # all done
@@ -269,9 +262,7 @@ class Writer:
         # drop the mount prefix and join with dots
         return ".".join(list(location.names)[depth:])
 
-    def _pyre_open(
-        self, uri: pyre.primitives.urilike, mode: str, **kwds
-    ) -> typing.Optional[File]:
+    def _pyre_open(self, uri: pyre.primitives.urilike, mode: str, **kwds) -> typing.Optional[File]:
         """
         Open an h5 file object
         """

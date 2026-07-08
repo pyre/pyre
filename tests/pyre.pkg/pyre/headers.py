@@ -1,8 +1,8 @@
-#! /usr/bin/env python3
+#!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
 
 
@@ -15,7 +15,6 @@ class Headers(pyre.application, family="pyre.applications.headers"):
 
     # user configurable state
     columns = pyre.properties.dict(schema=pyre.properties.int())
-
 
     # protocol obligations
     @pyre.export

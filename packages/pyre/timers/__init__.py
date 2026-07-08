@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -33,7 +34,6 @@ registry grants access to the same timer when it is asked for a timer of a known
 
 If the {libpyre} bindings are available, the same timers are accessible from low level code
 """
-
 
 # prefer the c++ bindings
 libpyre_without_timers = False

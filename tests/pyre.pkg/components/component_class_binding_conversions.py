@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -16,11 +15,13 @@ def test():
     import pyre
 
     # the job name converter
-    def converter(value, **kwds): return "import:sample.relax"
+    def converter(value, **kwds):
+        return "import:sample.relax"
 
     # declare a protocol
     class task(pyre.protocol):
         """a protocol"""
+
         @pyre.provides
         def do(self):
             """do something"""
@@ -28,8 +29,9 @@ def test():
     # declare a component
     class worker(pyre.component):
         """a component"""
+
         job = task(default="import:sample.whatever")
-        job.converters = [ converter ]
+        job.converters = [converter]
 
     # check that task was bound according to our expectations from sample.py
     assert issubclass(worker.job, pyre.component)

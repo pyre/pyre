@@ -1,18 +1,17 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
 Instantiate the postgres component
 """
 
-
 import pyre.db
+
 
 class Weather(pyre.db.table, id="weather"):
 
@@ -34,6 +33,7 @@ class Weather(pyre.db.table, id="weather"):
 
 def test():
     import journal
+
     # journal.debug("postgres.init").active = True
     # journal.debug("postgres.execute").active = True
     # journal.debug("postgres.connection").active = True
@@ -51,11 +51,11 @@ def test():
         # create the table
         db.createTable(Weather)
         # verify it is there
-        assert db.execute(sql) == (('tablename',), ('weather',))
+        assert db.execute(sql) == (("tablename",), ("weather",))
         # drop the table
         db.dropTable(Weather)
         # verify it is not there
-        assert db.execute(sql) == (('tablename',),)
+        assert db.execute(sql) == (("tablename",),)
 
     # and return the connection and the table
     return db, Weather

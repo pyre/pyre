@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # bootstrapping
@@ -13,9 +12,11 @@
 # pluggins will be able to find them. hopefully, the openmpi people will fix this soon
 # LAST CHECKED: 20120423, revision 1402, openmpi 1.4.3
 import sys
-if sys.platform.startswith('linux'):
+
+if sys.platform.startswith("linux"):
     # that's where the stupid flag value lives...
     import ctypes
+
     # adjust the {dlopen} flags
     sys.setdlopenflags(sys.getdlopenflags() | ctypes.RTLD_GLOBAL)
 
@@ -41,6 +42,7 @@ else:
     def mpirun():
         # get the class
         from .Launcher import Launcher
+
         # and return it
         return Launcher
 
@@ -49,6 +51,7 @@ else:
     def slurm():
         # get the class
         from .Slurm import Slurm
+
         # and return it
         return Slurm
 
@@ -75,12 +78,14 @@ def init():
 
     # register the finalization routine to happen when the interpreter exits
     import atexit
+
     atexit.register(finalize)
 
     # initialize mpi
     libmpi.init()
     # provide access to the extension through the base mpi object
     from .Object import Object
+
     Object.mpi = libmpi
 
     # the factory placeholders
@@ -100,6 +105,7 @@ def init():
     # all done
     return libmpi
 
+
 def finalize():
     """
     Shutdown mpi
@@ -111,6 +117,7 @@ def finalize():
 
     # get the groups
     from .Group import Group
+
     # ask each instance
     for group in Group.pyre_extent:
         # to forget its capsule
@@ -118,6 +125,7 @@ def finalize():
 
     # get the communicators
     from .Communicator import Communicator
+
     # ask each instance
     for communicator in Communicator.pyre_extent:
         # to forget its capsule
@@ -125,6 +133,7 @@ def finalize():
 
     # get {Object}
     from .Object import Object
+
     # and destroy the extension handle it holds
     Object.mpi = None
 
@@ -137,13 +146,15 @@ def finalize():
 
 # in any case, grab the framework
 import pyre
+
 # register the package
-package = pyre.executive.registerPackage(name='mpi', file=__file__)
+package = pyre.executive.registerPackage(name="mpi", file=__file__)
 # record the layout
 home, prefix, defaults = package.layout()
 
 # the package meta-data
 from . import meta
+
 
 # administrative
 def copyright():
@@ -152,6 +163,7 @@ def copyright():
     """
     return print(meta.header)
 
+
 def license():
     """
     Print the pyre license
@@ -159,11 +171,13 @@ def license():
     # print it
     return print(meta.license)
 
+
 def version():
     """
     Return the pyre version
     """
     return meta.version
+
 
 def credits():
     """

@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # externals
@@ -17,15 +16,13 @@ class Scanner(pyre.parsing.scanner):
     simple version of the well-known windows INI format.
     """
 
-
     # my tokens, in addition to the three inherited from {pyre.parsing.scanner}
-    marker = pyre.parsing.token(pattern=r'#')
-    secbeg = pyre.parsing.token(pattern=r'\[')
-    secend = pyre.parsing.token(pattern=r'\]')
-    comment = pyre.parsing.token(head=';', pattern=r'.*', tail='$')
-    key = pyre.parsing.token(pattern=r'\w[-.:\w]*')
-    value = pyre.parsing.token(head='=', pattern=r'[^;]*')
-
+    marker = pyre.parsing.token(pattern=r"#")
+    secbeg = pyre.parsing.token(pattern=r"\[")
+    secend = pyre.parsing.token(pattern=r"\]")
+    comment = pyre.parsing.token(head=";", pattern=r".*", tail="$")
+    key = pyre.parsing.token(pattern=r"\w[-.:\w]*")
+    value = pyre.parsing.token(head="=", pattern=r"[^;]*")
 
     # interface
     def pyre_tokenize(self, uri, stream, client):

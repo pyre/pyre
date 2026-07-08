@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -15,10 +14,12 @@ Create a permutation
 def test():
     # get the package
     import gsl
+
     # make a permutation
     p = gsl.permutation(shape=100).init()
     # verify we can access its elements
-    for i in range(len(p)): assert i == p[i]
+    for i in range(len(p)):
+        assert i == p[i]
     # and return it
     return p
 

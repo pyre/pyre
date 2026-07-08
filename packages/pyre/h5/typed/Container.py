@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -17,9 +18,7 @@ class Container:
     # metamethods
     def __init__(self, schema, shape=None, **kwds):
         # extract my {memtype} and {disktype} from my {schema} and chain up
-        super().__init__(
-            schema=schema, memtype=schema.memtype, disktype=schema.disktype, **kwds
-        )
+        super().__init__(schema=schema, memtype=schema.memtype, disktype=schema.disktype, **kwds)
         # save the shape
         self.shape = shape
         # all done

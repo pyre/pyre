@@ -1,14 +1,14 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # externals
 import weakref
 from .. import tracking
+
 # superclass
 from .Executive import Executive
 
@@ -22,13 +22,11 @@ class Pyre(Executive):
     services.
     """
 
-
     # constants
-    locator = tracking.simple('during pyre startup')
+    locator = tracking.simple("during pyre startup")
 
     # public data
     from . import _verbose as verbose
-
 
     # interface
     def activate(self, **kwds):
@@ -40,6 +38,7 @@ class Pyre(Executive):
 
         # access the command line
         import sys
+
         # make a parser
         parser = self.newCommandLineParser()
         # parse the command line
@@ -50,23 +49,22 @@ class Pyre(Executive):
         # all done
         return self
 
-
     def check(self):
         """
         Report and boot time errors
         """
         # bail out if no errors were detected
-        if not self.errors: return
+        if not self.errors:
+            return
 
         # report the boot time errors
         # MGA: ??can i use journal??
-        print(' ** pyre: the following errors were encountered while booting:')
+        print(" ** pyre: the following errors were encountered while booting:")
         for error in self.errors:
-            print(' ++   {}'.format(error))
+            print(" ++   {}".format(error))
 
         # all done
         return self
-
 
     # meta-methods
     def __init__(self, **kwds):

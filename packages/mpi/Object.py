@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # declaration
@@ -13,7 +12,7 @@ class Object:
     """
 
     # per-class public data
-    mpi = None # access to the extension module; patched by the package bootstrapping code
+    mpi = None  # access to the extension module; patched by the package bootstrapping code
 
 
 # end of file

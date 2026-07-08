@@ -1,13 +1,13 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # externals
 from ..patterns import coroutine
+
 # my superclass
 from .Lexer import Lexer
 
@@ -18,19 +18,20 @@ class Scanner(metaclass=Lexer):
     The input stream tokenizer
     """
 
-
     # types
     # exceptions
     from .exceptions import ParsingError, TokenizationError
+
     # the descriptor factory
     from .Descriptor import Descriptor as pyre_token
+
     # the stream wrapper
     from .InputStream import InputStream as pyre_inputStream
+
     # the default tokens; all scanners have these
     start = pyre_token()
     finish = pyre_token()
-    whitespace = pyre_token(pattern=r'\s+')
-
+    whitespace = pyre_token(pattern=r"\s+")
 
     # interface
     def pyre_tokenize(self, uri, stream, client):
@@ -95,7 +96,7 @@ class Scanner(metaclass=Lexer):
             # get the token class
             factory = getattr(self, name)
             # make a token
-            token = factory(lexeme = match.group(name), locator = self.pyre_stream.locator)
+            token = factory(lexeme=match.group(name), locator=self.pyre_stream.locator)
             # show me
             # print(token)
             # process it
@@ -103,7 +104,6 @@ class Scanner(metaclass=Lexer):
 
         # all done
         return
-
 
     def pyre_start(self):
         """
@@ -115,7 +115,6 @@ class Scanner(metaclass=Lexer):
         self.pyre_client.send(start)
         # all done
         return
-
 
     def pyre_finish(self):
         """
@@ -131,7 +130,6 @@ class Scanner(metaclass=Lexer):
         # all done
         return
 
-
     def pyre_pushback(self, token):
         """
         Push a token back into the token stream
@@ -141,14 +139,12 @@ class Scanner(metaclass=Lexer):
         # all done
         return self
 
-
     def pyre_newline(self, stream):
         """
         Hook invoked when a new line of text is pulled from the input stream
         """
         # nothing to do by default
         return
-
 
     # helpers
     @coroutine
@@ -175,16 +171,15 @@ class Scanner(metaclass=Lexer):
         # all done
         return
 
-
     # implementation details
     # set by my meta-class
-    pyre_tokens = None # a list of my tokens
-    pyre_tokenizer = None # the compiled regex constructed out the patterns of my tokens
+    pyre_tokens = None  # a list of my tokens
+    pyre_tokenizer = None  # the compiled regex constructed out the patterns of my tokens
 
     # tokenizing state
     pyre_stream = None
     pyre_client = None
-    pyre_cache = None # the list of tokens that have been pushed back
+    pyre_cache = None  # the list of tokens that have been pushed back
 
 
 # end of file

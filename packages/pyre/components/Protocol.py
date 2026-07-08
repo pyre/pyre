@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -153,9 +154,7 @@ class Protocol(Configurable, metaclass=Role, internal=True):
         # get my key
         key = cls.pyre_key
         # if i don't have a key, i don't have a family, otherwise, ask the nameserver
-        return (
-            cls.pyre_nameserver.getSplitName(cls.pyre_key) if key is not None else None
-        )
+        return cls.pyre_nameserver.getSplitName(cls.pyre_key) if key is not None else None
 
     @classmethod
     def pyre_package(cls):
@@ -180,9 +179,7 @@ class Protocol(Configurable, metaclass=Role, internal=True):
         Generate the sequence of my public ancestors, i.e. the ones that have a non-trivial family
         """
         # filter public ancestors from my pedigree
-        yield from (
-            ancestor for ancestor in cls.pyre_pedigree if ancestor.pyre_key is not None
-        )
+        yield from (ancestor for ancestor in cls.pyre_pedigree if ancestor.pyre_key is not None)
         # all done
         return
 

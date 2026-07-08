@@ -1,16 +1,14 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 class Composite:
     """
     Mix-in class that augments raph traversal for the new leaves defined in this package
     """
-
 
     # classifiers
     @property
@@ -26,7 +24,6 @@ class Composite:
         # all done
         return
 
-
     @property
     def interpolations(self):
         """
@@ -40,7 +37,6 @@ class Composite:
         # all done
         return
 
-
     @property
     def mappings(self):
         """
@@ -52,7 +48,6 @@ class Composite:
             yield from operand.mappings
         # all done
         return
-
 
     @property
     def references(self):
@@ -66,7 +61,6 @@ class Composite:
         # all done
         return
 
-
     @property
     def sequences(self):
         """
@@ -78,7 +72,6 @@ class Composite:
             yield from operand.sequences
         # all done
         return
-
 
     @property
     def uresolveds(self):

@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # superclass
@@ -16,17 +15,16 @@ class And(Constraint):
     Meta-constraint that is satisfied when all of its constraints are satisfied
     """
 
-
     # interface
     def validate(self, value, **kwds):
         """
         Check whether {value} satisfies this constraint
         """
         # i am happy only if every one of my constraints is happy
-        for constraint in self.constraints: constraint.validate(value=value, **kwds)
+        for constraint in self.constraints:
+            constraint.validate(value=value, **kwds)
         # return success
         return value
-
 
     # meta-methods
     def __init__(self, *constraints, **kwds):
@@ -36,7 +34,6 @@ class And(Constraint):
         self.constraints = constraints
         # all done
         return
-
 
     def __str__(self):
         return " and ".join("({})".format(constraint) for constraint in self.constraints)

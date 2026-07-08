@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -49,9 +50,7 @@ class Folder(Node):
 
     def mkdir(self, name, parents=True, exist_ok=True):
         # delegate to my filesystem
-        return self.filesystem().mkdir(
-            parent=self, name=name, parents=parents, exist_ok=exist_ok
-        )
+        return self.filesystem().mkdir(parent=self, name=name, parents=parents, exist_ok=exist_ok)
 
     def remove(self, node, name=None, **kwds):
         """
@@ -60,9 +59,7 @@ class Folder(Node):
         # if the node is a folder
         if node.isFolder:
             # we don't support that yet
-            raise NotImplementedError(
-                "NYI: removing directories is not implemented yet"
-            )
+            raise NotImplementedError("NYI: removing directories is not implemented yet")
 
         # if we were not told the name by which the node is known
         if name is None:
@@ -94,9 +91,7 @@ class Folder(Node):
         Create a file with the given {name} and {contents}
         """
         # delegate to my filesystem
-        return self.filesystem().write(
-            parent=self, name=name, contents=contents, mode=mode
-        )
+        return self.filesystem().write(parent=self, name=name, contents=contents, mode=mode)
 
     # searching for specific contents
     def find(self, pattern):
@@ -326,9 +321,7 @@ class Folder(Node):
                 uri=uri,
             )
         # inform the filesystem
-        current.filesystem().attach(
-            node=node, uri=(current.uri / name), metadata=metadata
-        )
+        current.filesystem().attach(node=node, uri=(current.uri / name), metadata=metadata)
         # and return the {node}
         return node
 

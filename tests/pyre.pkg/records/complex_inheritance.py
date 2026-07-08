@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -15,19 +14,17 @@ Verify record building in the presence of multiple inheritance
 def test():
     import pyre.records
 
-
     class item(pyre.records.record):
         """
         A sample record
         """
+
         sku = pyre.records.measure()
         description = pyre.records.measure()
         cost = pyre.records.measure()
 
-
     class pricing(item):
         price = 2 * item.cost
-
 
     # explore the item record
     assert isinstance(item.sku, pyre.records.measure)
@@ -48,13 +45,23 @@ def test():
     assert isinstance(pricing.price, pyre.records.derivation)
 
     assert identical(pricing.pyre_localFields, (pricing.price,))
-    assert identical(pricing.pyre_fields, (
-        pricing.sku, pricing.description, pricing.cost,
-        pricing.price,
-        ))
-    assert identical(pricing.pyre_measures, (
-        pricing.sku, pricing.description, pricing.cost,
-        ))
+    assert identical(
+        pricing.pyre_fields,
+        (
+            pricing.sku,
+            pricing.description,
+            pricing.cost,
+            pricing.price,
+        ),
+    )
+    assert identical(
+        pricing.pyre_measures,
+        (
+            pricing.sku,
+            pricing.description,
+            pricing.cost,
+        ),
+    )
     assert identical(pricing.pyre_derivations, (pricing.price,))
 
     assert pricing.pyre_index[pricing.sku] == 0
@@ -80,7 +87,8 @@ def identical(s1, s2):
     we must avoid triggering __eq__
     """
     for n1, n2 in zip(s1, s2):
-        if n1 is not n2: return False
+        if n1 is not n2:
+            return False
     return True
 
 

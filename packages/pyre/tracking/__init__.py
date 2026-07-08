@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # factories
@@ -16,7 +15,6 @@ from .Script import Script as script
 from .Simple import Simple as simple
 from .Tracker import Tracker as tracker
 
-
 # constants
 # the stack depth of the caller relative to {traceback.extract_stack}, taking into account the
 # frame added by {pyre} itself
@@ -25,7 +23,7 @@ callerStackDepth = 2
 
 # in case we just don't know
 def unknown():
-    return simple(source='<unknown>')
+    return simple(source="<unknown>")
 
 
 # dynamic locators
@@ -39,8 +37,9 @@ def here(level=0):
     """
     # externals
     import traceback
+
     # get a stack trace
-    trace = traceback.extract_stack(limit=callerStackDepth+level)
+    trace = traceback.extract_stack(limit=callerStackDepth + level)
     # grab the information from the current frame
     source, line, function, text = trace[0]
     # hand to the script locator

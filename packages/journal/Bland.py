@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -13,7 +14,6 @@ class Bland(Renderer):
     """
     The renderer of user-facing messages
     """
-
 
     # implementation details
     def body(self, palette, entry):

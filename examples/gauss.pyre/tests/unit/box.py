@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -17,17 +16,17 @@ def test():
 
     # instantiate
     box = gauss.shapes.box(name="box")
-    box.intervals = ((0,1), (0,1))
+    box.intervals = ((0, 1), (0, 1))
 
     # check the volume
     assert box.measure() == 1.0
 
     # set up some interior points
-    interior = [(0,0), (1,0), (1,1), (0,1), (.5, .5)]
+    interior = [(0, 0), (1, 0), (1, 1), (0, 1), (0.5, 0.5)]
     assert len(list(box.contains(interior))) == len(interior)
 
     # set up some exterior points
-    exterior = [(2,0), (0,2), (-2,0), (0,-2)]
+    exterior = [(2, 0), (0, 2), (-2, 0), (0, -2)]
     assert len(list(box.contains(exterior))) == 0
 
     return box

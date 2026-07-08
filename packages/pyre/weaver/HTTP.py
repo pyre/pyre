@@ -1,17 +1,19 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # externals
-import time # to generate timestamps
+import time  # to generate timestamps
+
 # framework
 import pyre
+
 # my protocol
 from .Language import Language
+
 # and its default implementation
 from .HTML import HTML
 
@@ -22,15 +24,12 @@ class HTTP(pyre.component, implements=Language):
     An HTTP compliant document renderer
     """
 
-
     # user configurable state
-    encoding = pyre.properties.str(default='iso-8859-1')
-    encoding.doc = 'the encoding for HTTP headers'
-
+    encoding = pyre.properties.str(default="iso-8859-1")
+    encoding.doc = "the encoding for HTTP headers"
 
     # public data
     version = 1, 1  # my preferred protocol version
-
 
     # mill obligations
     @pyre.export
@@ -41,17 +40,16 @@ class HTTP(pyre.component, implements=Language):
         # assemble the payload
         page = self.body(document=document, **kwds)
         # inform the client about the size of the payload, before the headers go out
-        document.headers['Content-Length'] = len(page)
+        document.headers["Content-Length"] = len(page)
 
         # emit the status line and headers
         yield from self.preamble(document=document)
         # mark the end of the headers
-        yield b''
+        yield b""
         # send the page
         yield page
         # all done
         return
-
 
     @pyre.export
     def header(self, document):
@@ -63,11 +61,10 @@ class HTTP(pyre.component, implements=Language):
         # go through the headers
         for key, value in document.headers.items():
             # encode and ship
-            yield f"{key}: {value}".encode(encoding, 'strict')
+            yield f"{key}: {value}".encode(encoding, "strict")
 
         # all done
         return
-
 
     @pyre.export
     def body(self, document, **kwds):
@@ -77,14 +74,12 @@ class HTTP(pyre.component, implements=Language):
         # ask the document to present itself
         return document.render(**kwds)
 
-
     @pyre.export
     def footer(self):
         """
         Render the footer of the document
         """
-        yield ''
-
+        yield ""
 
     # implementation details
     def preamble(self, document):
@@ -102,7 +97,7 @@ class HTTP(pyre.component, implements=Language):
         # turn it into a string
         protocol = "{}.{}".format(*protocol)
         # start the response
-        yield f"HTTP/{protocol} {code} {status}".encode(self.encoding, 'strict')
+        yield f"HTTP/{protocol} {code} {status}".encode(self.encoding, "strict")
 
         # assemble the headers and send them off
         yield from self.header(document=document)

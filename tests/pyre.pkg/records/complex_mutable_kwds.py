@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -19,24 +18,24 @@ def test():
         """
         A sample record
         """
+
         sku = pyre.records.measure()
         cost = pyre.records.measure()
-        price = 1.25 * cost + .25
-
+        price = 1.25 * cost + 0.25
 
     # build a record
     r = record.pyre_mutable(sku="9-4013", cost=1.0)
     # check
     assert r.sku == "9-4013"
     assert r.cost == 1.0
-    assert r.price == 1.25 * r.cost + .25
+    assert r.price == 1.25 * r.cost + 0.25
 
     # make a change
     r.cost = 2.0
     # verify it was saved
     assert r.cost == 2.0
     # verify that the price is evaluated correctly
-    assert r.price == 1.25 * r.cost + .25
+    assert r.price == 1.25 * r.cost + 0.25
 
     return r
 

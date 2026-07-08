@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -47,9 +48,7 @@ class Prompt:
         Put the question to the user and return their answer; overridden by each prompt
         """
         # the base class has no interaction of its own
-        raise NotImplementedError(
-            f"prompt '{type(self).__name__}' must implement 'ask'"
-        )
+        raise NotImplementedError(f"prompt '{type(self).__name__}' must implement 'ask'")
 
 
 # end of file

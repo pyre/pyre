@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -13,7 +14,6 @@ class Type(type):
     {__new__} and {__init__} before chaining up to their implementations in {type}.
     """
 
-
     # metamethods
     def __new__(cls, name, bases, attributes, **kwds):
         """
@@ -21,7 +21,6 @@ class Type(type):
         """
         # swallow the keyword arguments and chain up
         return super().__new__(cls, name, bases, attributes)
-
 
     def __init__(self, name, bases, attributes, **kwds):
         """

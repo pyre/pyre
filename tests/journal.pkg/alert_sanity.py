@@ -1,4 +1,5 @@
-#! /usr/bin/env python3
+#!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -11,8 +12,10 @@ def test():
     """
     # get the renderer
     from journal.Alert import Alert as alert
+
     # the color spaces
     from journal.ANSI import ANSI
+
     # and a channel
     from journal.Informational import Informational as info
 
@@ -41,7 +44,7 @@ def test():
         "channel": ANSI.x11("light slate gray"),
         "info": ANSI.x11("steel blue"),
         "body": "",
-        }
+    }
 
     # instantiate the renderer
     renderer = alert()

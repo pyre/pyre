@@ -1,13 +1,13 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # access to the pyre package
 import pyre
+
 # my ancestor
 from .LineMill import LineMill
 
@@ -18,7 +18,6 @@ class Cfg(LineMill):
     Support for pyre configuration files
     """
 
-
     # interface
     def section(self, name):
         """
@@ -27,7 +26,6 @@ class Cfg(LineMill):
         # easy enough
         return "[ {} ]".format(name)
 
-
     def trait(self, name, value):
         """
         Render a trait configuration
@@ -35,9 +33,8 @@ class Cfg(LineMill):
         # easy enough
         return "{} = {}".format(name, value)
 
-
     # private data
-    comment = ';'
+    comment = ";"
 
 
 # end of file

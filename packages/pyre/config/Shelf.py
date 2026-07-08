@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # externals
@@ -16,15 +15,12 @@ class Shelf(dict):
     Shelves are symbol tables that map component record factories to their names.
     """
 
-
     # exceptions
     from .exceptions import SymbolNotFoundError
-
 
     # public data
     uri = None
     locator = None
-
 
     # interface
     def retrieveSymbol(self, symbol):
@@ -42,8 +38,8 @@ class Shelf(dict):
 
         # unreachable
         import journal
-        raise journal.firewall('pyre.config.native').log("UNREACHABLE")
 
+        raise journal.firewall("pyre.config.native").log("UNREACHABLE")
 
     # meta methods
     def __init__(self, uri, symbols, locator=None, **kwds):

@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 class Variable:
@@ -11,10 +10,8 @@ class Variable:
     Mix-in class to encapsulate nodes
     """
 
-
     # constants
-    category = 'variable'
-
+    category = "variable"
 
     # interface
     @property
@@ -26,7 +23,6 @@ class Variable:
         yield self
         # and nothing further
         return
-
 
     # support for graph traversals
     def identify(self, authority, **kwds):

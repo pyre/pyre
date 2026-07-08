@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -93,9 +94,7 @@ class Builder(merlin.component, implements=merlin.protocols.flow.builder):
             channel = journal.firewall("merlin.builders.identify")
             # complain
             channel.line(f"unable to find builder support")
-            channel.line(
-                f"while looking through the interface of '{visitor.pyre_name}'"
-            )
+            channel.line(f"while looking through the interface of '{visitor.pyre_name}'")
             # flush
             channel.log()
             # and fail, just in case firewalls aren't fatal

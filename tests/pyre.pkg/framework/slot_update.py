@@ -1,21 +1,23 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
 Exercise value updates for slots
 """
 
+
 def test():
     # for the locators
     import pyre.tracking
+
     # get the constructor
     from pyre.framework.Slot import Slot
+
     # build a few slots
     var = Slot.variable(key=None, value=None)
     one = Slot.variable(key=None, value=1)
@@ -73,7 +75,8 @@ def identical(s1, s2):
     # for the pairs
     for n1, n2 in zip(s1, s2):
         # check them for _identity_, not _equality_
-        if n1 is not n2: return False
+        if n1 is not n2:
+            return False
     # all done
     return True
 

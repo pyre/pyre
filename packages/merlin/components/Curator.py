@@ -1,13 +1,13 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # externals
 import pickle
+
 # the framework
 import merlin
 
@@ -18,11 +18,9 @@ class Curator(merlin.component, family="merlin.components.curator"):
     The component that manages the project persistent store
     """
 
-
     # constants
-    projectURI = merlin.properties.str(default='/merlin/project/project.pickle')
-    projectURI.doc = 'the location of the persistent project state'
-
+    projectURI = merlin.properties.str(default="/merlin/project/project.pickle")
+    projectURI.doc = "the location of the persistent project state"
 
     # interface
     def loadProject(self):
@@ -36,7 +34,6 @@ class Curator(merlin.component, family="merlin.components.curator"):
         # retrieve the project instance from the file
         return self.load(node=project)
 
-
     def saveProject(self, project):
         """
         Save the given project configuration to the archive
@@ -46,18 +43,16 @@ class Curator(merlin.component, family="merlin.components.curator"):
         # and return
         return self
 
-
     def saveAsset(self, asset):
         """
         Save the given asset to the archive
         """
         # compute the asset tag
-        tag = self.vfs.join('assets', asset.name)
+        tag = self.vfs.join("assets", asset.name)
         # pickle the project information into the associated file
         self.save(tag=tag, item=asset)
         # and return
         return self
-
 
     # implementation details
     def load(self, node):
@@ -70,7 +65,6 @@ class Curator(merlin.component, family="merlin.components.curator"):
         item = pickle.load(store)
         # and return it
         return item
-
 
     def save(self, tag, item):
         """

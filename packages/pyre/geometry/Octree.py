@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 # externals
 import itertools
@@ -15,7 +14,6 @@ class Octree:
     A dimension independent implementation of the octree family of spatial data structures
     """
 
-
     def contains(self, point):
         """
         Determine whether {point} falls within my box
@@ -23,10 +21,10 @@ class Octree:
         # make sure that each coordinate
         for p, (low, high) in zip(point, self.intervals):
             # is within my bounds
-            if p < low or p > high: return False
+            if p < low or p > high:
+                return False
         # all done
         return True
-
 
     def insert(self, point, level=0):
         """
@@ -53,16 +51,15 @@ class Octree:
             # locate the correct branch for my point
             branch = self.branches[self.hash(self.point)]
             # insert my point
-            mine = branch.insert(self.point, level+1)
+            mine = branch.insert(self.point, level + 1)
             # clear it
             self.point = None
         # locate the correct branch for the new point
         branch = self.branches[self.hash(point)]
         # insert it
-        new = branch.insert(point, level+1)
+        new = branch.insert(point, level + 1)
         # all done
         return max(mine, new)
-
 
     def subdivide(self):
         """
@@ -70,10 +67,9 @@ class Octree:
         regardless of whether they end up containing points
         """
         # my subintervals
-        subs = (((lo, (lo+hi)/2), ((lo+hi)/2, hi)) for lo,hi in self.intervals)
+        subs = (((lo, (lo + hi) / 2), ((lo + hi) / 2, hi)) for lo, hi in self.intervals)
         # use the cartesian product to build my branches
         return tuple(octree(intervals=box) for box in itertools.product(*subs))
-
 
     def hash(self, point):
         """
@@ -82,14 +78,14 @@ class Octree:
         # initialize the index
         index = 0
         # loop over my intervals
-        for p, (lo,hi) in zip(point, self.intervals):
+        for p, (lo, hi) in zip(point, self.intervals):
             # left shift the index
             index *= 2
             # compute the offset
-            if p > (lo+hi)/2: index += 1
+            if p > (lo + hi) / 2:
+                index += 1
         # all done
         return index
-
 
     def __init__(self, intervals, **kwds):
         super().__init__(**kwds)

@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
 Build and test a simple tokenizer
 """
+
 
 def test():
     # get the modules
@@ -28,13 +28,12 @@ def test():
         identifier = pyre.parsing.token(r"[\w]+")
 
     # open the input stream
-    uri = 'sample.inp'
+    uri = "sample.inp"
     stream = open(uri)
     # create a source
     scanner = Simple()
     # and a sink
     sink = pyre.patterns.accumulator()
-
 
     # tokenize
     scanner.pyre_tokenize(uri=uri, stream=stream, client=sink)
@@ -42,21 +41,35 @@ def test():
     # check
     expected = (
         Simple.start,
-        Simple.comment, Simple.whitespace,
-        Simple.comment, Simple.whitespace,
-        Simple.comment, Simple.whitespace,
-        Simple.comment, Simple.whitespace,
-        Simple.comment, Simple.whitespace,
+        Simple.comment,
         Simple.whitespace,
-        Simple.whitespace, Simple.identifier, Simple.separator,
-        Simple.whitespace, Simple.identifier, Simple.delimiter,
-        Simple.whitespace, Simple.identifier, Simple.delimiter,
-        Simple.whitespace, Simple.identifier, Simple.terminator, Simple.whitespace,
+        Simple.comment,
+        Simple.whitespace,
+        Simple.comment,
+        Simple.whitespace,
+        Simple.comment,
+        Simple.whitespace,
+        Simple.comment,
+        Simple.whitespace,
+        Simple.whitespace,
+        Simple.whitespace,
+        Simple.identifier,
+        Simple.separator,
+        Simple.whitespace,
+        Simple.identifier,
+        Simple.delimiter,
+        Simple.whitespace,
+        Simple.identifier,
+        Simple.delimiter,
+        Simple.whitespace,
+        Simple.identifier,
+        Simple.terminator,
+        Simple.whitespace,
         Simple.whitespace,
         Simple.comment,
         Simple.whitespace,
         Simple.finish,
-        )
+    )
 
     for token, klass in zip(sink.cache, expected):
         # print(token)

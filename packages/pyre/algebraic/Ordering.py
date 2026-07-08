@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 import operator
@@ -23,7 +22,6 @@ class Ordering:
     used to construct the operator representations.
     """
 
-
     # overrides for the python standard methods
     # methods are listed in the order they show up in the python documentation
     def __eq__(self, other):
@@ -34,11 +32,9 @@ class Ordering:
         # build a representation of the equality test
         return self.operator(evaluator=operator.eq, operands=(self, other))
 
-
     # and of course, now that we have overridden __eq__, we must specify this so that
     # {Ordering} instances can be keys of dictionaries and members of sets...
     __hash__ = object.__hash__
-
 
     def __ne__(self, other):
         # if {other} is not a node
@@ -48,7 +44,6 @@ class Ordering:
         # build a representation of the inequality test
         return self.operator(evaluator=operator.ne, operands=(self, other))
 
-
     def __le__(self, other):
         # if {other} is not a node
         if not isinstance(other, Ordering):
@@ -56,7 +51,6 @@ class Ordering:
             other = self.literal(value=other)
         # build a representation of {<=}
         return self.operator(evaluator=operator.le, operands=(self, other))
-
 
     def __ge__(self, other):
         # if {other} is not a node
@@ -66,7 +60,6 @@ class Ordering:
         # build a representation of the equality test
         return self.operator(evaluator=operator.ge, operands=(self, other))
 
-
     def __lt__(self, other):
         # if {other} is not a node
         if not isinstance(other, Ordering):
@@ -74,7 +67,6 @@ class Ordering:
             other = self.literal(value=other)
         # build a representation of the equality test
         return self.operator(evaluator=operator.lt, operands=(self, other))
-
 
     def __gt__(self, other):
         # if {other} is not a node

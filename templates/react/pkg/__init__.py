@@ -7,19 +7,28 @@
 # import and publish pyre symbols
 from pyre import (
     # protocols, components, traits, and their infrastructure
-    schemata, constraints, properties, protocol, component, foundry,
+    schemata,
+    constraints,
+    properties,
+    protocol,
+    component,
+    foundry,
     # decorators
-    export, provides,
+    export,
+    provides,
     # the manager of the pyre runtime
     executive,
     # support for concurrency
     nexus,
     # shells
-    application, plexus,
+    application,
+    plexus,
     # miscellaneous
-    primitives, tracking, units, weaver
-    )
-
+    primitives,
+    tracking,
+    units,
+    weaver,
+)
 
 # register the package with the framework
 package = executive.registerPackage(name="{project.name}", file=__file__)
@@ -29,12 +38,13 @@ home, prefix, defaults = package.layout()
 
 # publish the local modules
 # basic functionality
-from . import meta           # package meta-data
-from . import exceptions     # the exception hierarchy
+from . import meta  # package meta-data
+from . import exceptions  # the exception hierarchy
+
 # user interfaces
-from . import shells         # the supported application shells
-from . import cli            # the command line interface
-from . import ux             # support for the web client
+from . import shells  # the supported application shells
+from . import cli  # the command line interface
+from . import ux  # support for the web client
 
 
 # administrivia

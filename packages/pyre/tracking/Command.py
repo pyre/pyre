@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # declaration
@@ -12,23 +11,19 @@ class Command:
     A locator that records the position of a command line argument
     """
 
-
     # constant
-    source = 'from the command line argument {!r}'
-
+    source = "from the command line argument {!r}"
 
     # meta methods
     def __init__(self, arg):
         self.arg = arg
         return
 
-
     def __str__(self):
         return self.source.format(self.arg)
 
-
     # implementation details
-    __slots__ = 'arg',
+    __slots__ = ("arg",)
 
 
 # end of file

@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -22,7 +21,8 @@ def test():
 
             if func.__name__ != self.default.__name__:
                 raise TypeError(
-                    "{0.__name__!r} must be called {1.__name__!r}".format(func, self.func))
+                    "{0.__name__!r} must be called {1.__name__!r}".format(func, self.func)
+                )
 
             flags = func.__code__.co_flags
             if flags & 0x04:
@@ -38,8 +38,8 @@ def test():
             signature = func.__code__.co_varnames
             ndefaults = (func.__defaults__ and len(func.__defaults__)) or 0
 
-            positionals = signature[0:(argcount - ndefaults)]
-            positionals_default = signature[argcount-ndefaults: argcount]
+            positionals = signature[0 : (argcount - ndefaults)]
+            positionals_default = signature[argcount - ndefaults : argcount]
 
             kwds = set(signature[argcount:])
             kwdonly_default = (func.__kwdefaults__ and set(func.__kwdefaults__.keys())) or set()
@@ -53,7 +53,6 @@ def test():
 
             return self
 
-
         def __init__(self, func):
             self.__doc__ = func.__doc__
             self.default = func
@@ -61,17 +60,14 @@ def test():
 
             return
 
-
         def __call__(self, *args, **kwds):
             # print("wrapper.__call__:")
             # print("    args:", args)
             # print("    kwds:", kwds)
             return
 
-
     def overload(func):
         return wrapper(func)
-
 
     @overload
     def sample():
@@ -88,7 +84,7 @@ def test():
         return
 
     @sample.overload
-    def sample(arg0:int):
+    def sample(arg0: int):
         return
 
     @sample.overload
@@ -96,19 +92,19 @@ def test():
         return
 
     @sample.overload
-    def sample(arg0:int=1):
+    def sample(arg0: int = 1):
         return
 
     @sample.overload
-    def sample(arg0, arg1:int=1):
+    def sample(arg0, arg1: int = 1):
         return
 
     @sample.overload
-    def sample(*, ark0, ark1:int=0, ark2:str="", ark3):
+    def sample(*, ark0, ark1: int = 0, ark2: str = "", ark3):
         return
 
     @sample.overload
-    def sample(arg0, arg1:int=1, *, ark0, ark1:int=0, ark2:str="", ark3):
+    def sample(arg0, arg1: int = 1, *, ark0, ark1: int = 0, ark2: str = "", ark3):
         return
 
     return

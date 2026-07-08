@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # declaration
@@ -15,7 +14,6 @@ class Dashboard:
     # grab the base of all pyre exceptions
     from .exceptions import PyreError
 
-
     # public data
     # the executive
     pyre_executive = None
@@ -26,14 +24,13 @@ class Dashboard:
     pyre_configurator = None
 
     # infrastructure managers
-    pyre_registrar = None # the component registrar
-    pyre_schema = None # the database schema
+    pyre_registrar = None  # the component registrar
+    pyre_schema = None  # the database schema
 
     # information about the runtime environment
-    pyre_host = None # the current host
-    pyre_user = None # the current user
-    pyre_application = None # the current application
-
+    pyre_host = None  # the current host
+    pyre_user = None  # the current user
+    pyre_application = None  # the current application
 
     # debugging support
     @classmethod

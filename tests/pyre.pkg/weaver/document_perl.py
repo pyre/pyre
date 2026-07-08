@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -15,22 +14,23 @@ Exercise a perl weaver
 def test():
     # get the package
     import pyre.weaver
+
     # instantiate a weaver
     weaver = pyre.weaver.weaver(name="sanity")
     weaver.language = "perl"
 
     text = list(weaver.weave())
     assert text == [
-        '#!/usr/bin/env perl5',
-        '#',
-        '# Michael A.G. Aïvázis',
-        '# Orthologue',
-        '# (c) 1998-2026 All Rights Reserved',
-        '#',
-        '',
-        '',
-        '# end of file',
-        ]
+        "#!/usr/bin/env perl5",
+        "#",
+        "# Michael A.G. Aïvázis",
+        "# Orthologue",
+        "# (c) 1998-2026 All Rights Reserved",
+        "#",
+        "",
+        "",
+        "# end of file",
+    ]
 
     return
 

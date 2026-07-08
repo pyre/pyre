@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -17,7 +16,8 @@ def test():
     import pyre.algebraic
 
     # declare a node class
-    class node(metaclass=pyre.algebraic.algebra): pass
+    class node(metaclass=pyre.algebraic.algebra):
+        pass
 
     # declare a couple of nodes
     n1 = node.variable()
@@ -47,7 +47,7 @@ def test():
     assert list(map(id, m.variables)) == [id(n1), id(n2), id(n3), id(n2)]
 
     # a more complicated example
-    n = (2*(n1**2 - 2*n1*n2 + n2**2)*n3)
+    n = 2 * (n1**2 - 2 * n1 * n2 + n2**2) * n3
     assert set(map(id, n.variables)) == {id(n1), id(n2), id(n3)}
     # patch {n3} in
     n.substitute(current=n1, replacement=n3)

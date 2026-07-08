@@ -1,13 +1,11 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 from .length import meter, centimeter, foot, inch
-
 
 #
 # definitions of common volume units
@@ -21,7 +19,7 @@ cubic_inch = inch**3
 
 liter = 1000 * cubic_centimeter
 
-us_fluid_ounce = 231./128 * cubic_inch
+us_fluid_ounce = 231.0 / 128 * cubic_inch
 us_pint = 16 * us_fluid_ounce
 us_fluid_quart = 2 * us_pint
 us_fluid_gallon = 4 * us_fluid_quart

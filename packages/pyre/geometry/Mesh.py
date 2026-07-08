@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 class Mesh:
@@ -12,10 +11,8 @@ class Mesh:
     connectivities
     """
 
-
     # types
     from .PointCloud import PointCloud
-
 
     # public data
     @property
@@ -26,7 +23,6 @@ class Mesh:
         # easy enough
         return len(self.points[0])
 
-
     @property
     def numberOfPoints(self):
         """
@@ -34,7 +30,6 @@ class Mesh:
         """
         # easy enough
         return len(self.points)
-
 
     @property
     def numberOfCells(self):
@@ -44,7 +39,6 @@ class Mesh:
         # easy enough
         return len(self.simplices)
 
-
     @property
     def cells(self):
         """
@@ -53,7 +47,6 @@ class Mesh:
         # easy enough
         return self.simplices
 
-
     # interface
     def point(self, coordinates):
         """
@@ -61,7 +54,6 @@ class Mesh:
         """
         # add it to my cloud and return it to the caller
         return self.points.point(coordinates=coordinates)
-
 
     def simplex(self, nodes):
         """
@@ -73,7 +65,6 @@ class Mesh:
         self.simplices.append(simplex)
         # and return it to the caller
         return simplex
-
 
     # meta-methods
     def __init__(self, **kwds):

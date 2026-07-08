@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -19,6 +18,7 @@ def declare():
     # make a component
     class component(pyre.component, family="sample.configuration"):
         """a test component"""
+
         # properties
         p1 = pyre.properties.str(default="p1")
         p2 = pyre.properties.str(default="p2")
@@ -35,14 +35,14 @@ def declare():
 
             # check that configuration settings have been applied after super().__init__ returns
             # for a specially named component...
-            if self.pyre_name == 'c':
+            if self.pyre_name == "c":
                 # has a known configuration applied
-                assert self.p1 == 'p1 - instance'
-                assert self.p2 == 'p2 - instance'
+                assert self.p1 == "p1 - instance"
+                assert self.p2 == "p2 - instance"
             # while others have access to the default values
             else:
-                assert self.p1 == 'sample - p1'
-                assert self.p2 == 'sample - p2'
+                assert self.p1 == "sample - p1"
+                assert self.p2 == "sample - p2"
 
             # all done
             return

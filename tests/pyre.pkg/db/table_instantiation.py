@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -15,6 +14,7 @@ Exercise table declaration
 def test():
     # externals
     import time
+
     # access to the package
     import pyre.db
 
@@ -42,12 +42,12 @@ def test():
 
     # build one
     measurement = Weather.pyre_immutable(
-        city='Los Angeles', date='2011-07-04', low=62, high=71, precipitation=0
-        )
+        city="Los Angeles", date="2011-07-04", low=62, high=71, precipitation=0
+    )
 
     # verify it
-    assert measurement.city == 'Los Angeles'
-    assert str(measurement.date) == '2011-07-04'
+    assert measurement.city == "Los Angeles"
+    assert str(measurement.date) == "2011-07-04"
     assert measurement.low == 62
     assert measurement.high == 71
     assert measurement.precipitation == 0

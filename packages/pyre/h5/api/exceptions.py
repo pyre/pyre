@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -7,7 +8,6 @@
 """
 Definitions for all the exceptions raised by this package
 """
-
 
 # superclass
 from ..exceptions import H5Error
@@ -146,9 +146,7 @@ class CategoryMismatchError(ValidationError):
     """
 
     # the message template
-    description = (
-        "at '{0.location._pyre_location}': expected {0.expected}, got {0.actual} "
-    )
+    description = "at '{0.location._pyre_location}': expected {0.expected}, got {0.actual} "
 
     # metamethods
     def __init__(self, actual, expected, **kwds):

@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -15,6 +14,7 @@ Verify that the script locator returns the correct location tag
 def script():
     # get the package
     import pyre.tracking
+
     # make a locator
     locator = pyre.tracking.script(source=__file__, function="script", line=16)
     # check that the message is formatted correctly

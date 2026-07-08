@@ -1,13 +1,13 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # externals
 import functools
+
 # my base class
 from .Peer import Peer
 
@@ -37,7 +37,6 @@ class Crew(Peer, family="pyre.nexus.peers.crew"):
     from .CrewStatus import CrewStatus as crewcodes
     from .TaskStatus import TaskStatus as taskcodes
 
-
     # interface - team side
     def join(self, team):
         """
@@ -49,11 +48,10 @@ class Crew(Peer, family="pyre.nexus.peers.crew"):
         """
         # schedule the handler of the worker side registration
         self.dispatcher.whenReadReady(
-            channel = self.channel,
-            call = functools.partial(self.activate, team=team))
+            channel=self.channel, call=functools.partial(self.activate, team=team)
+        )
         # all done
         return self
-
 
     def activate(self, channel, team):
         """
@@ -74,7 +72,6 @@ class Crew(Peer, family="pyre.nexus.peers.crew"):
         # do not reschedule this handler
         return False
 
-
     def execute(self, team, task):
         """
         Send my twin the {task} to be executed
@@ -83,11 +80,10 @@ class Crew(Peer, family="pyre.nexus.peers.crew"):
         self.marshaler.send(channel=self.channel, item=task)
         # schedule the harvesting of the result
         self.dispatcher.whenReadReady(
-            channel = self.channel,
-            call = functools.partial(self.assess, team=team, task=task))
+            channel=self.channel, call=functools.partial(self.assess, team=team, task=task)
+        )
         # all done
         return self
-
 
     def assess(self, channel, team, task, **kwds):
         """
@@ -120,7 +116,6 @@ class Crew(Peer, family="pyre.nexus.peers.crew"):
         # all done
         return False
 
-
     def dismissed(self):
         """
         My team manager has dismissed me
@@ -134,7 +129,6 @@ class Crew(Peer, family="pyre.nexus.peers.crew"):
         # all done
         return self
 
-
     def reportRecoverableError(self, team, task, error):
         """
         Report a task failure that can be reasonably expected to be temporary
@@ -143,7 +137,6 @@ class Crew(Peer, family="pyre.nexus.peers.crew"):
         self.debug.log(f"{self.pid}: recoverable error: {error}")
         # all done
         return
-
 
     def reportUnrecoverableError(self, team, task, error):
         """
@@ -154,7 +147,6 @@ class Crew(Peer, family="pyre.nexus.peers.crew"):
         # all done
         return
 
-
     # interface - worker side
     def register(self):
         """
@@ -164,7 +156,6 @@ class Crew(Peer, family="pyre.nexus.peers.crew"):
         self.dispatcher.whenWriteReady(channel=self.channel, call=self.checkin)
         # and chain up to start processing events
         return self
-
 
     def checkin(self, channel):
         """
@@ -178,7 +169,6 @@ class Crew(Peer, family="pyre.nexus.peers.crew"):
         self.dispatcher.whenReadReady(channel=self.channel, call=self.perform)
         # do not reschedule this handler
         return False
-
 
     def perform(self, channel, **kwds):
         """
@@ -224,15 +214,14 @@ class Crew(Peer, family="pyre.nexus.peers.crew"):
 
         # schedule the reporting of the execution of this task
         self.dispatcher.whenWriteReady(
-            channel = channel,
-            call = functools.partial(self.report,
-                                     result = result,
-                                     crewstatus = crewstatus,
-                                     taskstatus = taskstatus))
+            channel=channel,
+            call=functools.partial(
+                self.report, result=result, crewstatus=crewstatus, taskstatus=taskstatus
+            ),
+        )
 
         # and go back to waiting for more
         return True
-
 
     def engage(self, task, **kwds):
         """
@@ -240,7 +229,6 @@ class Crew(Peer, family="pyre.nexus.peers.crew"):
         """
         # just do it
         return task(**kwds)
-
 
     def report(self, channel, crewstatus, taskstatus, result, **kwds):
         """
@@ -255,7 +243,6 @@ class Crew(Peer, family="pyre.nexus.peers.crew"):
         # all done; don't reschedule
         return False
 
-
     def resign(self):
         # record my finish time; don't mess with the timer too much as it might not belong to me
         self.finish = self.timer.read()
@@ -263,7 +250,6 @@ class Crew(Peer, family="pyre.nexus.peers.crew"):
         self.channel.close()
         # all done
         return self
-
 
     # meta-methods
     def __init__(self, pid, channel, **kwds):

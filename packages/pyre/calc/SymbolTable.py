@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # declaration
@@ -12,7 +11,6 @@ class SymbolTable:
     Storage and naming services for algebraic nodes
     """
 
-
     # types
     from .Node import Node as node
 
@@ -20,10 +18,11 @@ class SymbolTable:
     from .exceptions import (
         NodeError,
         CircularReferenceError,
-        EmptyExpressionError, ExpressionSyntaxError, EvaluationError,
-        UnresolvedNodeError
-        )
-
+        EmptyExpressionError,
+        ExpressionSyntaxError,
+        EvaluationError,
+        UnresolvedNodeError,
+    )
 
     # public data
     @property
@@ -35,7 +34,6 @@ class SymbolTable:
         # key and slot stores
         return tuple(self._nodes.keys())
 
-
     @property
     def nodes(self):
         """
@@ -44,7 +42,6 @@ class SymbolTable:
         # delegate to my map and realize into a container since some types of access modify the
         # key and slot stores
         return tuple(self._nodes.values())
-
 
     # convenience: node constructors
     def expression(self, value, **kwds):
@@ -69,8 +66,8 @@ class SymbolTable:
             return self.variable(value=error.expression, **kwds)
         # otherwise, build an expression
         return self.node.expression(
-            model=self, expression=value, program=program, operands=operands, **kwds)
-
+            model=self, expression=value, program=program, operands=operands, **kwds
+        )
 
     def interpolation(self, value, **kwds):
         """
@@ -95,14 +92,12 @@ class SymbolTable:
         # otherwise, build an interpolation
         return self.node.interpolation(model=self, expression=value, operands=operands, **kwds)
 
-
     def sequence(self, nodes, **kwds):
         """
         Build a sequence node
         """
         # easy enough
         return self.node.sequence(operands=tuple(nodes), **kwds)
-
 
     def mapping(self, nodes, **kwds):
         """
@@ -111,7 +106,6 @@ class SymbolTable:
         # easy enough
         return self.node.mapping(operands=nodes, **kwds)
 
-
     def variable(self, **kwds):
         """
         Build a variable
@@ -119,14 +113,12 @@ class SymbolTable:
         # easy enough
         return self.node.variable(**kwds)
 
-
     def literal(self, **kwds):
         """
         Build a literal node
         """
         # easy enough
         return self.node.literal(**kwds)
-
 
     # interface
     def get(self, name, default=None):
@@ -143,7 +135,6 @@ class SymbolTable:
             self[name] = default
         # evaluate and return
         return self[name]
-
 
     def insert(self, name, node):
         """
@@ -169,7 +160,6 @@ class SymbolTable:
         # and return
         return name, new, old
 
-
     def retrieve(self, name):
         """
         Retrieve the node registered under {name}. If no such node exists, an error marker will
@@ -188,7 +178,6 @@ class SymbolTable:
         # and return it
         return node
 
-
     # meta-methods
     def __init__(self, **kwds):
         # chain up
@@ -198,7 +187,6 @@ class SymbolTable:
         # all done
         return
 
-
     def __contains__(self, name):
         """
         Check whether {name} is present in the symbol table
@@ -206,14 +194,12 @@ class SymbolTable:
         # check whether it is present in my node index
         return name in self._nodes
 
-
     def __iter__(self):
         """
         Go through my keys
         """
         # easy enough
         return iter(self._nodes)
-
 
     def __getitem__(self, name):
         """
@@ -224,7 +210,6 @@ class SymbolTable:
         # compute and return its value
         return node.value
 
-
     def __setitem__(self, name, value):
         """
         Add or update the named node with the given {value}
@@ -233,7 +218,6 @@ class SymbolTable:
         new = self.interpolation(value=value)
         # insert it into the model and return
         return self.insert(node=new, name=name)
-
 
     # private data
     _nodes = None

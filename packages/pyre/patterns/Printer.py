@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 # base class
 from .CoFunctor import CoFunctor
@@ -15,7 +14,6 @@ class Printer(CoFunctor):
     A coroutine that sends a textual representation of the values it receives to {stdout}
     """
 
-
     # interface
     def throw(self, errorTp, error=None, traceback=None):
         """
@@ -23,7 +21,6 @@ class Printer(CoFunctor):
         """
         # printers ignore errors
         return
-
 
     # meta-methods
     def __init__(self, format=None, **kwds):
@@ -33,7 +30,6 @@ class Printer(CoFunctor):
         super().__init__(**kwds)
         # all done
         return
-
 
     # my coroutine
     def __call__(self):

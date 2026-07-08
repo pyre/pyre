@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -53,9 +54,7 @@ class CSI:
         if chroma is None:
             return ""
         # normalize the cube coordinates and let chroma quantize them back
-        return chroma.ansi.rgb256(
-            chroma.Color(red / 5, green / 5, blue / 5), foreground
-        )
+        return chroma.ansi.rgb256(chroma.Color(red / 5, green / 5, blue / 5), foreground)
 
     @staticmethod
     def csi8_gray(gray=0, foreground=True):
@@ -81,9 +80,7 @@ class CSI:
         if chroma is None:
             return ""
         # normalize the channels and hand them to chroma as a color
-        return chroma.ansi.rgb(
-            chroma.Color(red / 255, green / 255, blue / 255), foreground
-        )
+        return chroma.ansi.rgb(chroma.Color(red / 255, green / 255, blue / 255), foreground)
 
     # graphics rendition commands
     @staticmethod

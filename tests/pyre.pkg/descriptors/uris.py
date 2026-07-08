@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -20,72 +19,72 @@ def test():
 
     # the canonical case
     parts = uri.coerce("scheme://authority/address?query#fragment")
-    assert parts.scheme == 'scheme'
-    assert parts.authority == 'authority'
-    assert parts.address == '/address'
-    assert parts.query == 'query'
-    assert parts.fragment == 'fragment'
+    assert parts.scheme == "scheme"
+    assert parts.authority == "authority"
+    assert parts.address == "/address"
+    assert parts.query == "query"
+    assert parts.fragment == "fragment"
 
     # drop the fragment
     parts = uri.coerce("scheme://authority/address?query")
-    assert parts.scheme == 'scheme'
-    assert parts.authority == 'authority'
-    assert parts.address == '/address'
-    assert parts.query == 'query'
+    assert parts.scheme == "scheme"
+    assert parts.authority == "authority"
+    assert parts.address == "/address"
+    assert parts.query == "query"
     assert parts.fragment == None
 
     # drop the query
     parts = uri.coerce("scheme://authority/address#fragment")
-    assert parts.scheme == 'scheme'
-    assert parts.authority == 'authority'
-    assert parts.address == '/address'
+    assert parts.scheme == "scheme"
+    assert parts.authority == "authority"
+    assert parts.address == "/address"
     assert parts.query == None
-    assert parts.fragment == 'fragment'
+    assert parts.fragment == "fragment"
 
     # drop both the query and the fragment
     parts = uri.coerce("scheme://authority/address")
-    assert parts.scheme == 'scheme'
-    assert parts.authority == 'authority'
-    assert parts.address == '/address'
+    assert parts.scheme == "scheme"
+    assert parts.authority == "authority"
+    assert parts.address == "/address"
     assert parts.query == None
     assert parts.fragment == None
 
     # drop the fragment, the query and the authority, with an absolute address
     parts = uri.coerce("scheme:/address")
-    assert parts.scheme == 'scheme'
+    assert parts.scheme == "scheme"
     assert parts.authority == None
-    assert parts.address == '/address'
+    assert parts.address == "/address"
     assert parts.query == None
     assert parts.fragment == None
 
     # drop the fragment, the query and the authority, with a relative address
     parts = uri.coerce("scheme:address")
-    assert parts.scheme == 'scheme'
+    assert parts.scheme == "scheme"
     assert parts.authority == None
-    assert parts.address == 'address'
+    assert parts.address == "address"
     assert parts.query == None
     assert parts.fragment == None
 
     # drop the fragment, the query and the authority, with a multi-level absolute address
     parts = uri.coerce("scheme:/addr1/addr2")
-    assert parts.scheme == 'scheme'
+    assert parts.scheme == "scheme"
     assert parts.authority == None
-    assert parts.address == '/addr1/addr2'
+    assert parts.address == "/addr1/addr2"
     assert parts.query == None
     assert parts.fragment == None
 
     # drop the fragment, the query and the authority, with a multi-level relative address
     parts = uri.coerce("scheme:addr1/addr2")
-    assert parts.scheme == 'scheme'
+    assert parts.scheme == "scheme"
     assert parts.authority == None
-    assert parts.address == 'addr1/addr2'
+    assert parts.address == "addr1/addr2"
     assert parts.query == None
     assert parts.fragment == None
 
     # a simple case
     parts = uri.coerce("pyre.pml")
     assert parts.scheme == None
-    assert parts.address == 'pyre.pml'
+    assert parts.address == "pyre.pml"
     assert parts.query == None
     assert parts.fragment == None
 
@@ -93,17 +92,17 @@ def test():
     parts = uri.coerce("/pyre/system/pyre.pml")
     assert parts.scheme == None
     assert parts.authority == None
-    assert parts.address == '/pyre/system/pyre.pml'
+    assert parts.address == "/pyre/system/pyre.pml"
     assert parts.query == None
     assert parts.fragment == None
 
     # the full set
     parts = uri.coerce("file:///pyre.pml#anchor")
-    assert parts.scheme == 'file'
-    assert parts.authority == ''
-    assert parts.address == '/pyre.pml'
+    assert parts.scheme == "file"
+    assert parts.authority == ""
+    assert parts.address == "/pyre.pml"
     assert parts.query == None
-    assert parts.fragment == 'anchor'
+    assert parts.fragment == "anchor"
 
     # a poorly formed one
     try:

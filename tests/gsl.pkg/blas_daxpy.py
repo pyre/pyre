@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -15,6 +14,7 @@ Exercise {ddot}
 def test():
     # get the package
     import gsl
+
     # a couple of values
     a = 2
     x = 3
@@ -27,7 +27,7 @@ def test():
     # verify v1 was left alone
     assert v1 == gsl.vector(shape=10).fill(x)
     # and that v2 has the right value
-    assert v2 == gsl.vector(shape=10).fill(a*x+y)
+    assert v2 == gsl.vector(shape=10).fill(a * x + y)
     # all done
     return
 

@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 class Operator:
@@ -11,13 +10,11 @@ class Operator:
     Mix-in class that forms the basis of the representation of operations among nodes
     """
 
-
     # constants
-    category = 'operator'
+    category = "operator"
 
     # public data
     evaluator = None
-
 
     # meta-methods
     def __init__(self, evaluator, **kwds):
@@ -27,7 +24,6 @@ class Operator:
         self.evaluator = evaluator
         # all done
         return
-
 
     # support for graph traversals
     def identify(self, authority, **kwds):

@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # externals
@@ -15,12 +14,10 @@ from .. import tracking
 
 # declaration
 class Environ(collections.abc.MutableMapping):
-    """
-    """
+    """ """
 
     # constants
-    prefix = 'pyre.environ.'
-
+    prefix = "pyre.environ."
 
     # meta-methods
     def __init__(self, executive, **kwds):
@@ -32,7 +29,7 @@ class Environ(collections.abc.MutableMapping):
         self.nameserver = weakref.proxy(nameserver)
 
         # build a locator
-        locator = tracking.simple('while booting')
+        locator = tracking.simple("while booting")
         # and pick a priority
         priority = nameserver.priority.boot
 
@@ -42,8 +39,11 @@ class Environ(collections.abc.MutableMapping):
             try:
                 # make a node in the configuration store
                 nameserver.configurable(
-                    name=self.prefix+name, configurable=value,
-                    locator=locator, priority=priority())
+                    name=self.prefix + name,
+                    configurable=value,
+                    locator=locator,
+                    priority=priority(),
+                )
             # values with braces trigger expression syntax errors
             except nameserver.ExpressionSyntaxError:
                 # so skip them, for now
@@ -51,7 +51,6 @@ class Environ(collections.abc.MutableMapping):
 
         # all done
         return
-
 
     def __setitem__(self, key, value):
         # place the value in the environment
@@ -65,16 +64,15 @@ class Environ(collections.abc.MutableMapping):
         priority = nameserver.priority.user()
         # and add it to the configuration store
         nameserver.configurable(
-            name=self.prefix+key, value=value, locator=locator, priority=priority)
+            name=self.prefix + key, value=value, locator=locator, priority=priority
+        )
 
         # all done
         return
 
-
     def __getitem__(self, key):
         # don't mess with this; just get it directly from the environment
         return os.environ[key]
-
 
     def __delitem__(self, key):
         # remove the variable from the environment
@@ -82,16 +80,13 @@ class Environ(collections.abc.MutableMapping):
         # currently, there is no way to delete configuration settings, so we are done
         return
 
-
     def __iter__(self):
         # set up an iteration over the environment variables
         return iter(os.environ)
 
-
     def __len__(self):
         # ask the environment
         return len(os.environ)
-
 
     # private data
     nameserver = None

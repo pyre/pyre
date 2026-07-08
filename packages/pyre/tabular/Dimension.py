@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # superclass
@@ -16,10 +15,8 @@ class Dimension:
     The base class for implementing data binning strategies
     """
 
-
     # public data
-    measure = None # the sheet descriptor to bin
-
+    measure = None  # the sheet descriptor to bin
 
     # meta-methods
     def __init__(self, measure, **kwds):
@@ -30,15 +27,16 @@ class Dimension:
         # all done
         return
 
-
     def __get__(self, chart, cls):
         # if i am being accessed through an instance
         if chart:
             # get the journal
             import journal
+
             # complain
-            raise journal.firewall('pyre.tabular').log(
-                "dimensions can't operate on chart instances")
+            raise journal.firewall("pyre.tabular").log(
+                "dimensions can't operate on chart instances"
+            )
         # otherwise
         return self
 

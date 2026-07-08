@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # class declaration
@@ -12,11 +11,9 @@ class Element:
     The base class for all HTML elements
     """
 
-
     # public data
-    tag = None # the element tag, i.e. "div", "p", "table"
-    attributes = None # a dictionary that maps element attributes to their values
-
+    tag = None  # the element tag, i.e. "div", "p", "table"
+    attributes = None  # a dictionary that maps element attributes to their values
 
     # document traversal
     def identify(self, inspector, **kwds):
@@ -25,7 +22,6 @@ class Element:
         """
         # enforce the subclass obligation
         raise NotImplementedError("class {.__name__} must implement 'identify'".format(type(self)))
-
 
     # meta-methods
     def __init__(self, tag, **kwds):

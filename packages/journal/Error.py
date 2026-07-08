@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -17,10 +18,8 @@ class Error(Channel, active=True, fatal=True):
     problematic, and the application is unable to identify a viable workaround.
     """
 
-
     # types
     from .exceptions import ApplicationError
-
 
     # implementation details
     def record(self):
@@ -32,9 +31,8 @@ class Error(Channel, active=True, fatal=True):
         # all done
         return self
 
-
     # constants
-    severity = "error"             # the channel severity
+    severity = "error"  # the channel severity
     fatalError = ApplicationError  # the exception i raise when i'm fatal
 
 

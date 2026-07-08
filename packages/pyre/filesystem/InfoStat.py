@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -83,9 +84,7 @@ class InfoStat:
         channel.line(f"{indent}  permissions: {self.permissions:o}")
         channel.line(f"{indent}  access time: {time.ctime(self.accessTime)}")
         channel.line(f"{indent}  creation time: {time.ctime(self.creationTime)}")
-        channel.line(
-            f"{indent}  modification time: {time.ctime(self.modificationTime)}"
-        )
+        channel.line(f"{indent}  modification time: {time.ctime(self.modificationTime)}")
         # all done
         return
 

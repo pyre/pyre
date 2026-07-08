@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -48,9 +49,7 @@ class FORTRAN(
 
     dialect = merlin.properties.str()
     dialect.default = "f95"
-    dialect.validators = merlin.constraints.isMember(
-        "f77", "f95", "f2003", "f2008", "f2018"
-    )
+    dialect.validators = merlin.constraints.isMember("f77", "f95", "f2003", "f2008", "f2018")
     dialect.doc = "the list of markers that specify supported language dialects"
 
     # merlin hooks

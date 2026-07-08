@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -14,10 +15,8 @@ class Debug(Channel, active=False, fatal=False):
     Debug channels are used for communicating application progress to developers
     """
 
-
     # types
     from .exceptions import DebugError
-
 
     # implementation details
     def record(self):
@@ -29,9 +28,8 @@ class Debug(Channel, active=False, fatal=False):
         # all done
         return self
 
-
     # constants
-    severity = "debug"       # the channel severity
+    severity = "debug"  # the channel severity
     fatalError = DebugError  # the exception i raise when i'm fatal
 
 

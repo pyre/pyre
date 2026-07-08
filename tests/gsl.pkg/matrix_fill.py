@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -20,18 +19,19 @@ def test():
     s1, s2 = 3, 4
 
     # make a matrix
-    m1 = gsl.matrix(shape=(s1,s2))
+    m1 = gsl.matrix(shape=(s1, s2))
     # set it to some value
     m1.fill(value=2)
     # verify it happened
-    for e in m1: assert e == 2
+    for e in m1:
+        assert e == 2
 
     # make and initialize another matrix
-    m2 = gsl.matrix(shape=(s1,s2)).zero()
+    m2 = gsl.matrix(shape=(s1, s2)).zero()
     # fill it
-    m2.fill(range(s1*s2))
+    m2.fill(range(s1 * s2))
     # verify
-    assert m2.tuple() == tuple(tuple(range(n*s2, (n+1)*s2)) for n in range(s1))
+    assert m2.tuple() == tuple(tuple(range(n * s2, (n + 1) * s2)) for n in range(s1))
 
     # all done
     return m1, m2

@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # externals
@@ -17,18 +16,16 @@ class Initializer(merlin.spell):
     Create a new merlin project rooted at the given directory
     """
 
-
     # public state
     project = merlin.properties.str(default=None)
-    project.doc = 'the name of the project'
+    project.doc = "the name of the project"
 
     createPrefix = merlin.properties.bool(default=False)
-    createPrefix.aliases.add('create-prefix')
-    createPrefix.doc = 'create all directories leading up to the specified target'
+    createPrefix.aliases.add("create-prefix")
+    createPrefix.doc = "create all directories leading up to the specified target"
 
     force = merlin.properties.bool(default=False)
-    force.doc = 'initialize the target folder regardless of whether is it already part of a project'
-
+    force.doc = "initialize the target folder regardless of whether is it already part of a project"
 
     # class interface
     @merlin.export
@@ -48,7 +45,8 @@ class Initializer(merlin.spell):
         if len(folders) > 1:
             # issue a warning
             plexus.warning.log(
-                'cannot initialize multiple project folders; ignoring all but the first')
+                "cannot initialize multiple project folders; ignoring all but the first"
+            )
         # extract the folder
         folder = folders[0]
 
@@ -57,12 +55,12 @@ class Initializer(merlin.spell):
         # if it is
         if root and not self.force:
             # complain
-            return plexus.error.log('{!r} is already within an existing project'.format(folder))
+            return plexus.error.log("{!r} is already within an existing project".format(folder))
 
         # if the directory does not exist
         if not os.path.isdir(folder):
             # notify the user
-            plexus.info.log('target folder {!r} does not exist; creating'.format(folder))
+            plexus.info.log("target folder {!r} does not exist; creating".format(folder))
             # were we asked to build all parent directories?
             if self.createPrefix:
                 # yes, do it
@@ -76,7 +74,7 @@ class Initializer(merlin.spell):
                 # if that fails
                 except OSError:
                     # complain
-                    return plexus.error.log('could not create folder {!r}'.format(folder))
+                    return plexus.error.log("could not create folder {!r}".format(folder))
 
         # now that it's there, build a local filesystem around it
         pfs = self.vfs.local(root=folder)
@@ -84,8 +82,8 @@ class Initializer(merlin.spell):
         # build a virtual filesystem so we can record the directory layout
         mfs = self.vfs.virtual()
         # here is the directory structure
-        mfs['spells'] = mfs.folder()
-        mfs['assets'] = mfs.folder()
+        mfs["spells"] = mfs.folder()
+        mfs["assets"] = mfs.folder()
 
         # attempt to
         try:
@@ -97,8 +95,8 @@ class Initializer(merlin.spell):
             return plexus.error.log(str(error))
 
         # mount it
-        self.vfs['/project'] = pfs
-        self.vfs['/merlin/project'] = pfs[merlin.METAFOLDER]
+        self.vfs["/project"] = pfs
+        self.vfs["/merlin/project"] = pfs[merlin.METAFOLDER]
 
         # if a name was not specified
         if self.project is None:

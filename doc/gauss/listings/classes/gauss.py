@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
+
 
 def gauss():
     """
@@ -15,11 +15,11 @@ def gauss():
 
     # inputs
     N = 10**5
-    box = [(0,1), (0,1)]
+    box = [(0, 1), (0, 1)]
     # the point cloud generator
     cloud = Mersenne()
     # the region of integration
-    disk = Disk(center=(0,0), radius=1)
+    disk = Disk(center=(0, 0), radius=1)
 
     # the integration algorithm
     interior = 0
@@ -28,8 +28,9 @@ def gauss():
         if disk.interior(point):
             interior += 1
     # print the estimate of π
-    print("π: {:.8f}".format(4*interior/N))
+    print("π: {:.8f}".format(4 * interior / N))
     return
+
 
 # main
 if __name__ == "__main__":

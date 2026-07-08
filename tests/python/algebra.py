@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
 A comprehensive test of arithmetic operator overloading
 """
+
 
 class Node:
     """A sample object that supports algebraic expressions among its instances and floats"""
@@ -73,9 +73,9 @@ class Node:
 
     def __pow__(self, other):
         if isinstance(other, Node):
-            value = self.value ** other.value
+            value = self.value**other.value
         else:
-            value = self.value ** other
+            value = self.value**other
         return type(self)(value=value)
 
     def __radd__(self, other):
@@ -107,7 +107,7 @@ class Node:
         return type(self)(value=d), type(self)(value=m)
 
     def __rpow__(self, other):
-        value = other ** self.value
+        value = other**self.value
         return type(self)(value=value)
 
     def __iadd__(self, other):
@@ -153,8 +153,8 @@ def test():
     n1 = Node(value=1)
     n2 = Node(value=2)
     # unary operators
-    assert (- n1).value == -1
-    assert (+ n2).value == 2
+    assert (-n1).value == -1
+    assert (+n2).value == 2
     assert (abs(n1)).value == 1
     # basic arithmetic with two operands
     assert (n1 + n2).value == 1 + 2
@@ -165,7 +165,7 @@ def test():
     # basic arithmetic with more than two operands
     assert (n1 + n2 - n1).value == 1 + 2 - 1
     assert (n1 * n2 / n1).value == 1 * 2 / 1
-    assert ((n1 - n2)*n2).value == (1 - 2)*2
+    assert ((n1 - n2) * n2).value == (1 - 2) * 2
     # basic arithmetic with floats
     assert (1 + n2).value == 1 + 2
     assert (n2 + 1).value == 2 + 1
@@ -175,13 +175,13 @@ def test():
     assert (n1 * 2).value == 1 * 2
     assert (3 / n2).value == 3 / 2
     assert (n2 / 3).value == 2 / 3
-    assert (n2 ** 3).value == 2**3
-    assert (3 ** n2).value == 3**2
+    assert (n2**3).value == 2**3
+    assert (3**n2).value == 3**2
 
     # more complicated forms
-    assert ((n1**2 + 2*n1*n2 + n2**2)).value == ((n1+n2)**2).value
-    assert ((n1**2 - 2*n1*n2 + n2**2)).value == ((n1-n2)**2).value
-    assert (2*(.5 - n1*n2 + n2**2)*n1).value == 2*(.5 - 1*2 + 2**2)*1
+    assert ((n1**2 + 2 * n1 * n2 + n2**2)).value == ((n1 + n2) ** 2).value
+    assert ((n1**2 - 2 * n1 * n2 + n2**2)).value == ((n1 - n2) ** 2).value
+    assert (2 * (0.5 - n1 * n2 + n2**2) * n1).value == 2 * (0.5 - 1 * 2 + 2**2) * 1
 
     return
 

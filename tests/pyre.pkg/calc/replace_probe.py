@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -18,6 +17,7 @@ def test():
 
     # a probe is an observer
     from pyre.calc.Probe import Probe
+
     # make a probe that records the values of the monitored nodes
     class probe(Probe):
 
@@ -31,23 +31,23 @@ def test():
             return
 
     # make some nodes
-    u = pyre.calc.var(value='u')
-    v = pyre.calc.var(value='v')
-    w = pyre.calc.var(value='w')
+    u = pyre.calc.var(value="u")
+    v = pyre.calc.var(value="v")
+    w = pyre.calc.var(value="w")
     s = u + v
     r = u.ref()
 
     # as we are, {u} has two observers: {s} and {r}
-    assert identical(u.observers, {r,s})
+    assert identical(u.observers, {r, s})
 
     # make a probe
     p = probe()
     # ask it watch {u} and its dependents
-    p.observe(observables=(u,s,r))
+    p.observe(observables=(u, s, r))
 
     # {u} now has three observers: {s}, {r}, and {p}
     # print(set(u.observers))
-    assert identical(u.observers, {r,s,p})
+    assert identical(u.observers, {r, s, p})
 
     # {w} should have no observers
     assert identical(w.observers, {})
@@ -56,7 +56,7 @@ def test():
     # print(set(w.observers))
     # print(set(u.observers))
     # {w} should have three observers: {s}, {r}, and {p}
-    assert identical(w.observers, {p,s,r})
+    assert identical(w.observers, {p, s, r})
 
     return
 
@@ -70,13 +70,15 @@ def identical(s1, s2):
     s1 = tuple(s1)
     s2 = tuple(s2)
     # fail if their lengths are not the same
-    if len(s1) != len(s2): return False
+    if len(s1) != len(s2):
+        return False
     # go through one
     for n1 in s1:
         # and the other
         for n2 in s2:
             # if this is a match, we are done
-            if n1 is n2: break
+            if n1 is n2:
+                break
         # if we didn't n1 in s2
         else:
             # fail
@@ -88,13 +90,14 @@ def identical(s1, s2):
 # main
 if __name__ == "__main__":
     # request debugging support for the pyre.calc package
-    pyre_debug = { "pyre.calc" }
+    pyre_debug = {"pyre.calc"}
     # skip pyre initialization since we don't rely on the executive
     pyre_noboot = True
     # run the test
     test()
     # verify reference counts
     from pyre.calc.Node import Node
+
     # print(tuple(Node.pyre_extent))
     assert tuple(Node.pyre_extent) == ()
 

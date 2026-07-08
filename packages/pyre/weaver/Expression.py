@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 # access the operator module
 import operator
@@ -17,10 +16,8 @@ class Expression:
     {pyre.calc.Node} if no alternative is provided.
     """
 
-
     # types
     from .. import calc
-
 
     # interface
     def expression(self, root, **kwds):
@@ -30,20 +27,19 @@ class Expression:
         """
         return self._renderers[type(root)](root, **kwds)
 
-
     # meta methods
     def __init__(self, nodeType=None, **kwds):
         # chain up
         super().__init__(**kwds)
         # fall back to {calc} nodes
-        if nodeType is None: from ..calc.Node import Node as nodeType
+        if nodeType is None:
+            from ..calc.Node import Node as nodeType
         # build the symbol table
         self._symbols = self._newSymbolTable()
         # initialize the table of renderers
         self._renderers = self._newRenderingStrategyTable(nodeType=nodeType)
         # all done
         return
-
 
     # implementation details
     def _newSymbolTable(self):
@@ -76,10 +72,9 @@ class Expression:
             operator.ge: ">=",
             operator.lt: "<",
             operator.gt: ">",
-            }
+        }
         # and return it
         return symbols
-
 
     def _newRenderingStrategyTable(self, nodeType):
         """
@@ -116,11 +111,10 @@ class Expression:
             # logical
             operator.and_: self._binaryOperatorRenderer,
             operator.or_: self._binaryOperatorRenderer,
-            }
+        }
 
         # and return it
         return handlers
-
 
     def _literalRenderer(self, node, **kwds):
         """
@@ -128,7 +122,6 @@ class Expression:
         """
         # return the literal representation
         return repr(node._value, **kwds)
-
 
     def _operatorRenderer(self, node, **kwds):
         """
@@ -140,7 +133,6 @@ class Expression:
         handler = self._renderers[op]
         # and invoke it
         return handler(node, **kwds)
-
 
     def _binaryOperatorRenderer(self, node, **kwds):
         """
@@ -157,13 +149,12 @@ class Expression:
         # put it all together
         return "({}) {} ({})".format(op1, symbol, op2)
 
-
     def _unaryOperatorRenderer(self, node, **kwds):
         """
         Render {node} assuming it is an operator whose evaluator has a registered symbol
         """
         # get the operand: unpack as a tuple to catch mistakes
-        operand, = node.operands
+        (operand,) = node.operands
         # render it
         op = self._renderers[type(operand)](node=operand, **kwds)
         # look up the operator symbol
@@ -171,13 +162,12 @@ class Expression:
         # put it all together
         return "{}({})".format(symbol, op)
 
-
     def _oppositeRenderer(self, node, **kwds):
         """
         Render the absolute value of {node}
         """
         # get the operand: unpack as a tuple to catch mistakes
-        operand, = node.operands
+        (operand,) = node.operands
         # render it
         op = self._renderers[type(operand)](node=operand, **kwds)
         # decorate and return

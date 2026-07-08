@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -22,16 +21,16 @@ def test():
     # merlin.nameserver.dump('merlin')
 
     # retrieve project directory
-    project = merlin.vfs['/project']
+    project = merlin.vfs["/project"]
     # check it
     assert str(project.uri) == os.getcwd()
 
     # retrieve the location of the merlin settings
-    cfg = merlin.vfs['/merlin/project']
+    cfg = merlin.vfs["/merlin/project"]
     # check it
-    assert str(cfg.uri) == os.path.join(os.getcwd(), '.merlin')
+    assert str(cfg.uri) == os.path.join(os.getcwd(), ".merlin")
     # verify that it is accessible through the {pfs]
-    assert cfg is merlin.pfs['/project']
+    assert cfg is merlin.pfs["/project"]
 
     # and return
     return

@@ -1,33 +1,33 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # externals
 import re
+
 # access to the framework
 import pyre
+
 # superclass
 from .Tool import Tool
 from .Library import Library
 
 
 # the postgres package manager
-class Postgres(Tool, Library, family='pyre.externals.postgres'):
+class Postgres(Tool, Library, family="pyre.externals.postgres"):
     """
     The package manager for postgres client development
     """
 
     # constants
-    category = 'postgresql'
+    category = "postgresql"
 
     # user configurable state
     psql = pyre.properties.str()
-    psql.doc = 'the full path to the postgres client'
-
+    psql.doc = "the full path to the postgres client"
 
     # support for specific package managers
     @classmethod
@@ -50,13 +50,13 @@ class Postgres(Tool, Library, family='pyre.externals.postgres'):
             # once we have a match
             if match:
                 # and the sequence of packages
-                packages = match.group(), 'libpq-dev'
+                packages = match.group(), "libpq-dev"
                 # find the missing ones
-                missing = [ pkg for pkg in packages if pkg not in installed ]
+                missing = [pkg for pkg in packages if pkg not in installed]
                 # if there are no missing ones
                 if not missing:
                     # extract the version and collapse it
-                    version = ''.join(match.group('version').split('.'))
+                    version = "".join(match.group("version").split("."))
                     # form the pyre happy name
                     name = cls.category + version
                     # hand back the pyre safe name and the pile of packages
@@ -64,7 +64,6 @@ class Postgres(Tool, Library, family='pyre.externals.postgres'):
 
         # all done
         return
-
 
     @classmethod
     def dpkgPackages(cls, packager):
@@ -75,10 +74,10 @@ class Postgres(Tool, Library, family='pyre.externals.postgres'):
         # ask {dpkg} for my options
         alternatives = sorted(packager.alternatives(group=cls), reverse=True)
         # the supported versions
-        versions = Default,
+        versions = (Default,)
         # go through the versions
         for version in versions:
-           # scan through the alternatives
+            # scan through the alternatives
             for name in alternatives:
                 # if it is match
                 if name.startswith(version.flavor):
@@ -88,16 +87,15 @@ class Postgres(Tool, Library, family='pyre.externals.postgres'):
         # out of ideas
         return
 
-
     @classmethod
     def macportsPackages(cls, packager):
         """
         Identify the default implementation of postgres on macports machines
         """
         # on macports, postgres is a package group
-        for package in packager.alternatives(group='postgresql'):
+        for package in packager.alternatives(group="postgresql"):
             # if the package name starts with 'postgresql'
-            if package.startswith('postgresql'):
+            if package.startswith("postgresql"):
                 # use the default implementation
                 yield Default(name=package)
 
@@ -112,8 +110,11 @@ from .LibraryInstallation import LibraryInstallation
 
 # the implementation
 class Default(
-        ToolInstallation, LibraryInstallation,
-        family='pyre.externals.postgres.default', implements=Postgres):
+    ToolInstallation,
+    LibraryInstallation,
+    family="pyre.externals.postgres.default",
+    implements=Postgres,
+):
     """
     A generic postgres installation
     """
@@ -124,14 +125,13 @@ class Default(
 
     # user configurable state
     psql = pyre.properties.str()
-    psql.doc = 'the full path to the postgres client'
+    psql.doc = "the full path to the postgres client"
 
     defines = pyre.properties.strings(default="WITH_PQ")
     defines.doc = "the compile time markers that indicate my presence"
 
     libraries = pyre.properties.strings()
-    libraries.doc = 'the libraries to place on the link line'
-
+    libraries.doc = "the libraries to place on the link line"
 
     # configuration
     def dpkg(self, packager):
@@ -144,38 +144,37 @@ class Default(
         self.version, _ = packager.info(package=dev)
 
         # the name of the client
-        self.psql = 'psql'
+        self.psql = "psql"
         # our search target for the bindir is in a bin directory to avoid spurious matches
         launcher = "bin/{.psql}".format(self)
         # find it in order to identify my {bindir}
         bindir = packager.findfirst(target=launcher, contents=packager.contents(package=bin))
         # and save it
-        self.bindir = [ bindir / 'bin' ] if bindir else []
+        self.bindir = [bindir / "bin"] if bindir else []
 
         # in order to identify my {incdir}, search for the top-level header file
-        header = r'libpq-fe\.h'
+        header = r"libpq-fe\.h"
         # find it
         incdir = packager.findfirst(target=header, contents=packager.contents(package=dev))
         # and save it
-        self.incdir = [ incdir ] if incdir else []
+        self.incdir = [incdir] if incdir else []
 
         # in order to identify my {libdir}, search for one of my libraries
-        stem = 'pq'
+        stem = "pq"
         # convert it into the actual file name
         libpython = self.pyre_host.dynamicLibrary(stem)
         # find it
         libdir = packager.findfirst(target=libpython, contents=packager.contents(package=dev))
         # and save it
-        self.libdir = [ libdir ] if libdir else []
+        self.libdir = [libdir] if libdir else []
         # set my library
         self.libraries = stem
 
         # now that we have everything, compute the prefix
-        self.prefix = self.commonpath(folders=self.bindir+self.incdir+self.libdir)
+        self.prefix = self.commonpath(folders=self.bindir + self.incdir + self.libdir)
 
         # all done
         return
-
 
     def macports(self, packager, **kwds):
         """
@@ -191,40 +190,40 @@ class Default(
         # {postgresql} is a selection group
         group = self.category
         # the package deposits its selection alternative here
-        selection = str(packager.prefix() / 'etc' / 'select' / group / '(?P<alternate>.*)')
+        selection = str(packager.prefix() / "etc" / "select" / group / "(?P<alternate>.*)")
         # so find it
         match = next(packager.find(target=selection, pile=contents))
         # extract the name of the alternative
-        alternative = match.group('alternate')
+        alternative = match.group("alternate")
         # ask for the normalization data
         normalization = packager.getNormalization(group=group, alternative=alternative)
         # build the normalization map
-        nmap = { base: target for base,target in zip(*normalization) }
+        nmap = {base: target for base, target in zip(*normalization)}
         # find the binary that supports {psql} and use it to set my launcher
-        self.psql = nmap[pyre.primitives.path('bin/psql')].name
+        self.psql = nmap[pyre.primitives.path("bin/psql")].name
         # set my {bindir}
         bindir = packager.findfirst(target=self.psql, contents=contents)
         # and save it
-        self.bindir = [ bindir ] if bindir else []
+        self.bindir = [bindir] if bindir else []
 
         # in order to identify my {incdir}, search for the top-level header file
-        header = 'libpq-fe.h'
+        header = "libpq-fe.h"
         # find it
         incdir = packager.findfirst(target=header, contents=contents)
         # and save it
-        self.incdir = [ incdir ] if incdir else []
+        self.incdir = [incdir] if incdir else []
 
         # in order to identify my {libdir}, search for one of my libraries
-        libpq = self.pyre_host.dynamicLibrary('pq')
+        libpq = self.pyre_host.dynamicLibrary("pq")
         # find it
         libdir = packager.findfirst(target=libpq, contents=contents)
         # and save it
-        self.libdir = [ libdir ] if libdir else []
+        self.libdir = [libdir] if libdir else []
         # set my library
-        self.libraries = 'pq'
+        self.libraries = "pq"
 
         # now that we have everything, compute the prefix
-        self.prefix = self.commonpath(folders=self.bindir+self.incdir+self.libdir)
+        self.prefix = self.commonpath(folders=self.bindir + self.incdir + self.libdir)
 
         # all done
         return

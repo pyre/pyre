@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 class Parser:
@@ -11,10 +10,8 @@ class Parser:
     The base class for parsers
     """
 
-
     # types
     from .exceptions import ParsingError, SyntaxError, TokenizationError
-
 
     # meta methods
     def __init__(self, **kwds):
@@ -25,10 +22,9 @@ class Parser:
         # all done
         return
 
-
     # implementation details
-    lexer = None # my scanner factory
-    scanner = None # my scanner instance
+    lexer = None  # my scanner factory
+    scanner = None  # my scanner instance
 
 
 # end of file

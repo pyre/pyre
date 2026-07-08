@@ -1,18 +1,17 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
 Sample file with component declarations for the tests in this directory
 """
 
-
 import pyre
+
 
 # FOR: resolve.py
 # declare a worker

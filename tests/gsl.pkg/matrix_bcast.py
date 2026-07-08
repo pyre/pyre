@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -39,7 +38,7 @@ def test():
         # initialize it
         for sample in range(samples):
             for dof in range(parameters):
-                θ[sample, dof] = sample*parameters + dof
+                θ[sample, dof] = sample * parameters + dof
         # print it out
         # θ.print(format="{}")
     # the other tasks
@@ -53,7 +52,7 @@ def test():
     # verify that i got the correct part
     for sample in range(samples):
         for dof in range(parameters):
-            assert result[sample, dof] == sample*parameters + dof
+            assert result[sample, dof] == sample * parameters + dof
 
     # all done
     return

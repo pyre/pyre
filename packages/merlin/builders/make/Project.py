@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -33,9 +34,7 @@ class Project(
         # make some space
         yield ""
         # chain up
-        yield from super().generate(
-            makefile=makefile, marker=marker, project=project, **kwds
-        )
+        yield from super().generate(makefile=makefile, marker=marker, project=project, **kwds)
         # all done
         return
 

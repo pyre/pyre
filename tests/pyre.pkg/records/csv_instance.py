@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -15,6 +14,7 @@ Sanity test: instantiate a csv reader/writer
 def test():
 
     import pyre.records
+
     return pyre.records.csv()
 
 
@@ -24,9 +24,6 @@ if __name__ == "__main__":
     pyre_noboot = True
     # do...
     test()
-
-
-
 
 
 # end of file

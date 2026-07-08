@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -95,9 +96,7 @@ class Executive:
         """
         # first up, package level configuration based on the raw {namespace}; first in the
         # raw directory
-        self.configureStem(
-            stem=namespace, locator=locator, priority=self.priority.package
-        )
+        self.configureStem(stem=namespace, locator=locator, priority=self.priority.package)
         # and then in the private subdirectory
         stem = f"{namespace}/{namespace}"
         # locate and load
@@ -364,9 +363,7 @@ class Executive:
                         pass
 
         # ask the linker to find descriptors
-        yield from self.linker.resolve(
-            executive=self, protocol=protocol, uri=uri, **kwds
-        )
+        yield from self.linker.resolve(executive=self, protocol=protocol, uri=uri, **kwds)
 
         # all done
         return
@@ -567,9 +564,7 @@ class Executive:
         # about the type of machine we are running on
         host = platform().default()
         # set up an iterator over the map of known hosts, in priority order
-        knownHosts = nameserver.find(
-            pattern=self.hostmapkey, key=operator.attrgetter("priority")
-        )
+        knownHosts = nameserver.find(pattern=self.hostmapkey, key=operator.attrgetter("priority"))
         # go through them
         for info, slot in knownHosts:
             # get the regular expression from the slot value

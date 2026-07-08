@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 class Selector:
@@ -11,11 +10,9 @@ class Selector:
     The base class for objects responsible for providing named access to field descriptors
     """
 
-
     # public data
-    index = None # the index of my value in the data tuple
-    field = None # the associated descriptor with the meta data
-
+    index = None  # the index of my value in the data tuple
+    field = None  # the associated descriptor with the meta data
 
     # meta-methods
     def __init__(self, index, field, **kwds):
@@ -27,7 +24,6 @@ class Selector:
         # all done
         return
 
-
     def __get__(self, record, cls):
         """
         Field retrieval
@@ -35,13 +31,12 @@ class Selector:
         # return my meta-data regardless of the target of this access
         return self.field
 
-
     def __set__(self, record, value):
         """
         Field modification
         """
         # complain
-        raise NotImplementedError('field selectors do not support write access')
+        raise NotImplementedError("field selectors do not support write access")
 
 
 # end of file

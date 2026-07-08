@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -18,12 +17,13 @@ import os
 def test():
     # access the package
     import pyre.calc
+
     # set up the model
     model = pyre.calc.model()
 
     # the nodes
-    production = model.variable(value=80.)
-    shipping = .25*production
+    production = model.variable(value=80.0)
+    shipping = 0.25 * production
     cost = model.expression("{production}+{shipping}")
     price = model.expression("2*{cost}")
     # register the nodes
@@ -49,7 +49,7 @@ def test():
     assert cost.dirty == True
     assert price.dirty == True
     # check the values
-    assert cost.value == production.value + 2*shipping.value
+    assert cost.value == production.value + 2 * shipping.value
     assert price.value == 3 * cost.value
     # they must all be clean now
     assert cost.dirty == False

@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -15,9 +16,7 @@ class Descriptor:
     """
 
     # metamethods
-    def __init__(
-        self, name: typing.Optional[str] = None, optional: bool = False, **kwds
-    ):
+    def __init__(self, name: typing.Optional[str] = None, optional: bool = False, **kwds):
         # chain up
         super().__init__(**kwds)
         # set my name; this does not have to be the name by which I am known to my container,

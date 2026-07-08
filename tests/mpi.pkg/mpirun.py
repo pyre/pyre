@@ -1,31 +1,33 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
 Launch an mpi application
 """
 
+
 # the driver
 def test():
     # access the framework
     import pyre
+
     # and the journal
     import journal
 
     # declare a trivial application
-    class application(pyre.application, family='mpi.application'):
+    class application(pyre.application, family="mpi.application"):
         """a sample application"""
 
         @pyre.export
         def main(self, **kwds):
             # get the mpi support
             import mpi
+
             # get the world communicator
             world = mpi.world
             # check
@@ -41,7 +43,7 @@ def test():
             return 0
 
     # instantiate it
-    app = application(name='mpirun')
+    app = application(name="mpirun")
     # run it
     status = app.run()
     # check

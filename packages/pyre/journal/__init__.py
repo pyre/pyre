@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -21,6 +22,5 @@ from .Error import Error as error
 from .Firewall import Firewall as firewall
 from .Informational import Informational as info
 from .Warning import Warning as warning
-
 
 # end of file

@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 import operator
@@ -23,7 +22,6 @@ class Boolean:
     to construct the operator representations.
     """
 
-
     # logical operations
     def __and__(self, other):
         # if {other} is not a node
@@ -33,7 +31,6 @@ class Boolean:
         # build a representation of the operation
         return self.operator(evaluator=operator.and_, operands=(self, other))
 
-
     def __or__(self, other):
         # if {other} is not a node
         if not isinstance(other, Boolean):
@@ -41,7 +38,6 @@ class Boolean:
             other = self.literal(value=other)
         # build a representation of the operation
         return self.operator(evaluator=operator.or_, operands=(self, other))
-
 
     # the reflections
     def __rand__(self, other):
@@ -51,7 +47,6 @@ class Boolean:
             other = self.literal(value=other)
         # build a representation of the operation
         return self.operator(evaluator=operator.and_, operands=(other, self))
-
 
     def __ror__(self, other):
         # if {other} is not a node

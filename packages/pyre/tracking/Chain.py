@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # declaration
@@ -13,20 +12,18 @@ class Chain:
     caused {this} to be recorded
     """
 
-
     # meta methods
     def __init__(self, this, next):
         self.this = this
         self.next = next
         return
 
-
     def __str__(self):
         # if {next} is non-trivial, show the chain
-        if self.next: return "{0.this}, {0.next}".format(self)
+        if self.next:
+            return "{0.this}, {0.next}".format(self)
         # otherwise don't
         return "{0.this}".format(self)
-
 
     # implementation details
     __slots__ = "this", "next"

@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # superclasses
@@ -24,10 +23,9 @@ class Facility(Slotted, schemata.component):
     # former we are happy with either a compatible component declaration or an instance.
 
     # framework data
-    category = 'component'
+    category = "component"
     # predicate that indicates whether this trait is a facility
     isFacility = True
-
 
     # public data
     @property
@@ -44,7 +42,6 @@ class Facility(Slotted, schemata.component):
         # otherwise, return it
         return default
 
-
     @default.setter
     def default(self, value):
         """
@@ -55,7 +52,6 @@ class Facility(Slotted, schemata.component):
         # all done
         return
 
-
     def macro(self, **kwds):
         """
         Return the default strategy for handling expressions in slot values
@@ -63,14 +59,12 @@ class Facility(Slotted, schemata.component):
         # build expressions
         return self.pyre_nameserver.expression(**kwds)
 
-
     def native(self, **kwds):
         """
         The strategy for building slots from more complex input values
         """
         # facility values are held in variables
         return self.pyre_nameserver.variable(**kwds)
-
 
     # interface
     def instantiate(self, value, node, incognito=False, **kwds):
@@ -112,7 +106,6 @@ class Facility(Slotted, schemata.component):
         # instantiate and return
         return protocol.pyre_instantiate(spec=spec, component=value, name=name, locator=locator)
 
-
     def render(self, value, renderer, workload, incognito=False):
         """
         Render {value} using renderer
@@ -120,11 +113,11 @@ class Facility(Slotted, schemata.component):
         # get the name to use
         name = None if incognito else self.name
         # delegate to my protocol
-        yield from self.protocol.pyre_render(renderer=renderer,
-                                             name=name, component=value, workload=workload)
+        yield from self.protocol.pyre_render(
+            renderer=renderer, name=name, component=value, workload=workload
+        )
         # all done
         return
-
 
     # meta-methods
     def __init__(self, protocol, **kwds):
@@ -142,7 +135,6 @@ class Facility(Slotted, schemata.component):
         self.validators.append(protocol.pyre_validate)
         # all done
         return
-
 
     def __str__(self):
         return "{0.name!r}: a facility with {0.protocol}".format(self)

@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -46,9 +47,7 @@ def test():
     # further, check that
     except cycle.SymbolicLinkLoopError as error:
         # the message we expect
-        msg = "while resolving '{0.path}': symbolic link loop at '{0.loop}'".format(
-            error
-        )
+        msg = "while resolving '{0.path}': symbolic link loop at '{0.loop}'".format(error)
         # is what we get
         assert str(error) == msg
 
@@ -63,9 +62,7 @@ def test():
     # further, check that
     except loop.SymbolicLinkLoopError as error:
         # the message we expect
-        msg = "while resolving '{0.path}': symbolic link loop at '{0.loop}'".format(
-            error
-        )
+        msg = "while resolving '{0.path}': symbolic link loop at '{0.loop}'".format(error)
         # is what we get
         assert str(error) == msg
 
@@ -80,9 +77,7 @@ def test():
     # further, check that
     except ramp.SymbolicLinkLoopError as error:
         # the message we expect
-        msg = "while resolving '{0.path}': symbolic link loop at '{0.loop}'".format(
-            error
-        )
+        msg = "while resolving '{0.path}': symbolic link loop at '{0.loop}'".format(error)
         # is what we get
         assert str(error) == msg
 
@@ -97,9 +92,7 @@ def test():
     # further, check that
     except tic.SymbolicLinkLoopError as error:
         # the message we expect
-        msg = "while resolving '{0.path}': symbolic link loop at '{0.loop}'".format(
-            error
-        )
+        msg = "while resolving '{0.path}': symbolic link loop at '{0.loop}'".format(error)
         # is what we get
         assert str(error) == msg
 

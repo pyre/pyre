@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # externals
@@ -17,7 +16,6 @@ class AssetManager(merlin.spell):
     Attempt to classify a folder as an asset container and add it to the project
     """
 
-
     # class interface
     # interface
     @merlin.export
@@ -28,19 +26,19 @@ class AssetManager(merlin.spell):
         # check
         try:
             # whether this project is initialized
-            project = self.vfs['project']
+            project = self.vfs["project"]
         # if it isn't
         except self.vfs.NotFoundError:
             # complain
             return plexus.error.log("not a merlin project; did you forget to cast 'merlin init'?")
         # get hold of my local filesystem
-        local = self.vfs['pyre/startup']
+        local = self.vfs["pyre/startup"]
         # dump it
         # local.dump()
         # collect the arguments
         argv = tuple(argv)
         # the first argument is supposed to be a subdirectory of the current directory
-        target = argv[0] if argv else '.'
+        target = argv[0] if argv else "."
         # the first argument is supposed to be a subdirectory of the current directory
         names = tuple(filter(None, target.split(local.separator))) if argv else ()
         # starting with the current directory
@@ -57,14 +55,16 @@ class AssetManager(merlin.spell):
             except KeyError:
                 # build an error message
                 error = local.NotFoundError(
-                    filesystem=local, node=folder, uri=target, fragment=name)
+                    filesystem=local, node=folder, uri=target, fragment=name
+                )
                 # notify the user
                 return plexus.error.log(str(error))
             # if not a folder
             except AttributeError:
                 # build an error message
                 error = local.FolderError(
-                    filesystem=local, node=folder, uri=target, fragment=folder.uri)
+                    filesystem=local, node=folder, uri=target, fragment=folder.uri
+                )
                 # notify the user
                 return plexus.error.log(str(error))
         # if it is a folder
@@ -77,8 +77,11 @@ class AssetManager(merlin.spell):
         # run the target through the asset classifiers to extract the contained assets
         assets = filter(
             None,
-            (classifier.classify(root=root, node=folder)
-             for classifier in self.merlin.assetClassifiers))
+            (
+                classifier.classify(root=root, node=folder)
+                for classifier in self.merlin.assetClassifiers
+            ),
+        )
         # iterate over the returned assets and persist them
         for asset in assets:
             self.merlin.curator.saveAsset(asset)

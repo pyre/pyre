@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -30,42 +29,42 @@ def test():
     model["margin"] = model.expression(".25*{cost}")
     model["overhead"] = model.expression(".45*{cost}")
     model["price"] = model.expression("{cost}+{margin}+{overhead}")
-    model["discount"] = .2
+    model["discount"] = 0.2
     model["total"] = model.expression("{price}*(1.0 - {discount})")
 
     # check
     assert model["production"] == 80
     assert model["shipping"] == 20
     assert model["cost"] == model["production"] + model["shipping"]
-    assert model["margin"] == .25*model["cost"]
-    assert model["overhead"] == .45*model["cost"]
-    assert model["price"] == model["margin"]+model["overhead"]+model["cost"]
-    assert model["discount"] == .2
-    assert model["total"] == (1-model["discount"])*model["price"]
+    assert model["margin"] == 0.25 * model["cost"]
+    assert model["overhead"] == 0.45 * model["cost"]
+    assert model["price"] == model["margin"] + model["overhead"] + model["cost"]
+    assert model["discount"] == 0.2
+    assert model["total"] == (1 - model["discount"]) * model["price"]
 
     # change and check
-    newcost = 100.
+    newcost = 100.0
     model["production"] = newcost
     assert model["production"] == newcost
     assert model["shipping"] == 20
     assert model["cost"] == model["production"] + model["shipping"]
-    assert model["margin"] == .25*model["cost"]
-    assert model["overhead"] == .45*model["cost"]
-    assert model["price"] == model["margin"]+model["overhead"]+model["cost"]
-    assert model["discount"] == .2
-    assert model["total"] == (1-model["discount"])*model["price"]
+    assert model["margin"] == 0.25 * model["cost"]
+    assert model["overhead"] == 0.45 * model["cost"]
+    assert model["price"] == model["margin"] + model["overhead"] + model["cost"]
+    assert model["discount"] == 0.2
+    assert model["total"] == (1 - model["discount"]) * model["price"]
 
     # change and check again
-    newdiscount = .45
+    newdiscount = 0.45
     model["discount"] = newdiscount
     assert model["production"] == newcost
     assert model["shipping"] == 20
     assert model["cost"] == model["production"] + model["shipping"]
-    assert model["margin"] == .25*model["cost"]
-    assert model["overhead"] == .45*model["cost"]
-    assert model["price"] == model["margin"]+model["overhead"]+model["cost"]
+    assert model["margin"] == 0.25 * model["cost"]
+    assert model["overhead"] == 0.45 * model["cost"]
+    assert model["price"] == model["margin"] + model["overhead"] + model["cost"]
     assert model["discount"] == newdiscount
-    assert model["total"] == (1-model["discount"])*model["price"]
+    assert model["total"] == (1 - model["discount"]) * model["price"]
 
     return
 
@@ -73,7 +72,7 @@ def test():
 # main
 if __name__ == "__main__":
     # request debugging support for the pyre.calc package
-    pyre_debug = { "pyre.calc" }
+    pyre_debug = {"pyre.calc"}
     # skip pyre initialization since we don't rely on the executive
     pyre_noboot = True
     # run the test
@@ -81,6 +80,7 @@ if __name__ == "__main__":
     # verify reference counts
     # for nodes
     from pyre.calc.Node import Node
+
     # print(tuple(Node.pyre_extent))
     assert tuple(Node.pyre_extent) == ()
 

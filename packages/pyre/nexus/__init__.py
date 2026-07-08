@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 # support
 import pyre
@@ -20,6 +19,7 @@ from .Server import Server as server
 from .Task import Task as task
 from .TaskStatus import TaskStatus as taskcodes
 from .CrewStatus import CrewStatus as crewcodes
+
 # task distribution protocols
 from .Team import Team as team
 from .Recruiter import Recruiter as recruiter
@@ -34,6 +34,7 @@ def fork():
     """
     # get the implementation
     from .Fork import Fork as fork
+
     # and return it
     return fork
 
@@ -45,6 +46,7 @@ def peer():
     """
     # get the implementation
     from .Peer import Peer as peer
+
     # and return it
     return peer
 
@@ -56,6 +58,7 @@ def pool():
     """
     # get the implementation
     from .Pool import Pool as pool
+
     # and return it
     return pool
 

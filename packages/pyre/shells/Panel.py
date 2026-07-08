@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -46,9 +47,7 @@ class Panel(Command):
             # if there was some kind of typo
             except AttributeError:
                 # handle the error
-                return self.pyre_unrecognizedCommand(
-                    plexus=plexus, command=command, argv=argv
-                )
+                return self.pyre_unrecognizedCommand(plexus=plexus, command=command, argv=argv)
 
             # otherwise, all is well; attempt to
             try:

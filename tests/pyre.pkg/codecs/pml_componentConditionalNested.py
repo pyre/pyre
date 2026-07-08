@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -16,6 +15,7 @@ def test():
     # package access
     import pyre.config
     from pyre.config.events import ConditionalAssignment
+
     # get the codec manager
     m = pyre.config.newConfigurator()
     # ask for a pml codec
@@ -34,11 +34,11 @@ def test():
     assert isinstance(event, ConditionalAssignment)
     assert event.component == ["sample", "engine"]
     assert event.conditions == [
-        (['sample', 'engine'], ['test', 'part']),
-        (['sample'], ['test', 'item'])
-        ]
+        (["sample", "engine"], ["test", "part"]),
+        (["sample"], ["test", "item"]),
+    ]
     assert event.key == ["id"]
-    assert event.value == '3Q4XYZ'
+    assert event.value == "3Q4XYZ"
 
     return m, reader, events
 

@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -19,6 +18,7 @@ def test():
         """
         A sample record
         """
+
         # field declarations
         sku = pyre.records.str()
         description = pyre.records.str()
@@ -28,12 +28,13 @@ def test():
 
     # build a record
     r = record.pyre_immutable(
-        sku="9-4013", description="organic kiwi", cost=".85", overhead=".15", price="1")
+        sku="9-4013", description="organic kiwi", cost=".85", overhead=".15", price="1"
+    )
     # check
     assert r.sku == "9-4013"
     assert r.description == "organic kiwi"
-    assert r.cost == .85
-    assert r.overhead == .15
+    assert r.cost == 0.85
+    assert r.overhead == 0.15
     assert r.price == 1.0
 
     return r

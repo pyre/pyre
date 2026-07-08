@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # superclass
@@ -16,11 +15,9 @@ class Surveyor(AttributeClassifier):
     Inspect charts and harvest their dimensions
     """
 
-
     # types
     from .Dimension import Dimension as pyre_dimension
     from .Tabulator import Tabulator as pyre_tabulator
-
 
     # meta-methods
     @classmethod
@@ -34,30 +31,34 @@ class Surveyor(AttributeClassifier):
         # make a pile of sheets
         sheets = dict(
             # mapping names to sheets
-            (name, sheet) for name, sheet in kwds.items()
+            (name, sheet)
+            for name, sheet in kwds.items()
             # for every entry that is a sheet
-            if isinstance(sheet, cls.pyre_tabulator))
+            if isinstance(sheet, cls.pyre_tabulator)
+        )
 
         # my machinery is not smart enough to handle charts over multiple sheets. yet.
         if len(sheets) > 1:
             # get the journal
             import journal
+
             # complain
-            raise journal.firewall('pyre.tabular').log('charts need precisely one sheet')
+            raise journal.firewall("pyre.tabular").log("charts need precisely one sheet")
 
         # remove all the sheets from {kwds}
-        for name in sheets: del kwds[name]
+        for name in sheets:
+            del kwds[name]
 
         # make the attribute container
         attributes = super().__prepare__(name, bases, **kwds)
         # add the sheets as individual variables
         attributes.update(sheets)
         # and as a name index, if present
-        if sheets: attributes['pyre_sheets'] = sheets
+        if sheets:
+            attributes["pyre_sheets"] = sheets
 
         # return the attributes
         return attributes
-
 
     def __new__(cls, name, bases, attributes, **kwds):
         """
@@ -80,7 +81,8 @@ class Surveyor(AttributeClassifier):
         # for each base class
         for base in reversed(chart.__mro__):
             # skip the bases that are not charts
-            if not isinstance(base, cls): continue
+            if not isinstance(base, cls):
+                continue
             # add the dimensions declared locally in this base to the pile
             dimensions.extend(base.pyre_localDimensions)
         # attach them

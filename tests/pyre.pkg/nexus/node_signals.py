@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -13,6 +12,7 @@ Verify that the node base class handles signals properly
 
 # externals
 import os, sys, signal
+
 # framework parts
 import pyre, journal
 
@@ -26,7 +26,7 @@ def test():
     ns = pyre.executive.nameserver
 
     # if this is the fork/exec child
-    if 'child' in ns:
+    if "child" in ns:
         # spit out the command line
         # print("child:", sys.argv)
         # grab the file descriptors
@@ -49,11 +49,11 @@ def test():
         return onParent(childpid=pid, channel=parent)
 
     # in the child process, build the new command line
-    argv = [sys.executable] + sys.argv + [
-        "--child",
-        "--infd={}".format(child.infd),
-        "--outfd={}".format(child.outfd)
-        ]
+    argv = (
+        [sys.executable]
+        + sys.argv
+        + ["--child", "--infd={}".format(child.infd), "--outfd={}".format(child.outfd)]
+    )
     # print("execv:", argv)
 
     # on python 3.4 and later
@@ -91,6 +91,7 @@ def onParent(childpid, channel):
 
     # base class
     from pyre.nexus.Node import Node
+
     # subclass Node
     class node(Node):
 
@@ -103,7 +104,7 @@ def onParent(childpid, channel):
             message = self.marshaler.recv(channel=self.channel)
             # log and check
             pdbg.log("child said {!r}".format(message))
-            assert message == 'ready'
+            assert message == "ready"
             # register the handler for the response to 'reload'
             self.dispatcher.whenReadReady(channel=self.channel, call=self.recvReloaded)
             # issue the 'reload' signal
@@ -156,7 +157,7 @@ def onParent(childpid, channel):
     pdbg.log("checking pid")
     assert pid == childpid
     # check the status
-    code = (status & 0xF0)
+    code = status & 0xF0
     reason = status & 0x0F
     pdbg.log("checking the status: code={}, reason={}".format(code, reason))
     assert code == 0 and reason == 0
@@ -181,6 +182,7 @@ def onChild(channel):
 
     # base class
     from pyre.nexus.Node import Node
+
     # subclass Node
     class node(Node):
 
@@ -190,7 +192,7 @@ def onChild(channel):
             # log
             cdbg.log("sending 'ready'")
             # get it
-            self.marshaler.send(item='ready', channel=self.channel)
+            self.marshaler.send(item="ready", channel=self.channel)
             # don't reschedule this handler
             return False
 
@@ -206,7 +208,7 @@ def onChild(channel):
             # show me
             cdbg.log("timeout on {}".format(timestamp))
             # raise again after 10 seconds
-            return 1*self.dispatcher.second
+            return 1 * self.dispatcher.second
 
         def reload(self):
             # show me
@@ -235,7 +237,7 @@ def onChild(channel):
             # marker that my {stop} was called
             self.cleanExit = False
             # set up an alarm to keep the process alive
-            self.dispatcher.alarm(interval=1*self.dispatcher.second, call=self.alarm)
+            self.dispatcher.alarm(interval=1 * self.dispatcher.second, call=self.alarm)
             # let my parent know I am ready
             self.dispatcher.whenWriteReady(channel=channel, call=self.sendReady)
             # all done

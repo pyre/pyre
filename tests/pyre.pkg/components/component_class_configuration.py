@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -17,6 +16,7 @@ def declare():
 
     class component(pyre.component, family="sample.configuration"):
         """a test component"""
+
         # properties
         p1 = pyre.properties.str(default="p1")
         p2 = pyre.properties.str(default="p2")

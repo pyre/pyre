@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -61,9 +62,7 @@ class URI(Schema):
         return self.string(value)
 
     # meta-methods
-    def __init__(
-        self, default=locator(), scheme=None, authority=None, address=None, **kwds
-    ):
+    def __init__(self, default=locator(), scheme=None, authority=None, address=None, **kwds):
         # chain up with my default
         super().__init__(default=default, **kwds)
         # save my defaults

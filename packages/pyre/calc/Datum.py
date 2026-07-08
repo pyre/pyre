@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # superclass
@@ -16,10 +15,10 @@ class Datum(AbstractNode):
     The base class for nodes that have values
     """
 
-
     # types
     # augmented structural nodes
     from .Composite import Composite as composite
+
     # new leaves
     mapping = None
     sequence = None
@@ -31,10 +30,11 @@ class Datum(AbstractNode):
     # exceptions; included here for client convenience
     from .exceptions import (
         NodeError,
-        EmptyExpressionError, ExpressionSyntaxError, EvaluationError,
-        UnresolvedNodeError
-        )
-
+        EmptyExpressionError,
+        ExpressionSyntaxError,
+        EvaluationError,
+        UnresolvedNodeError,
+    )
 
     # public data
     @property
@@ -51,7 +51,6 @@ class Datum(AbstractNode):
             # complain
             raise self.EvaluationError(node=self, error="node value is not readable")
 
-
     @value.setter
     def value(self, value):
         """
@@ -66,7 +65,6 @@ class Datum(AbstractNode):
             # complain
             raise self.EvaluationError(node=self, error="node value is not writable")
 
-
     # classifiers
     @property
     def expressions(self):
@@ -77,7 +75,6 @@ class Datum(AbstractNode):
         # by default, empty
         return ()
 
-
     @property
     def interpolations(self):
         """
@@ -87,7 +84,6 @@ class Datum(AbstractNode):
         # by default, empty
         return ()
 
-
     @property
     def mappings(self):
         """
@@ -95,7 +91,6 @@ class Datum(AbstractNode):
         """
         # by default, empty
         return ()
-
 
     @property
     def references(self):
@@ -105,7 +100,6 @@ class Datum(AbstractNode):
         # by default, empty
         return ()
 
-
     @property
     def sequences(self):
         """
@@ -113,7 +107,6 @@ class Datum(AbstractNode):
         """
         # by default, empty
         return ()
-
 
     @property
     def unresolveds(self):
@@ -124,7 +117,6 @@ class Datum(AbstractNode):
         # by default, empty
         return ()
 
-
     # interface
     def ref(self, **kwds):
         """
@@ -132,7 +124,6 @@ class Datum(AbstractNode):
         """
         # use the class factory to make one and return it
         return self.reference(operands=(self,), **kwds)
-
 
     # debugging support
     def dump(self, name, indent):

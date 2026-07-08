@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -19,6 +20,5 @@ from .Header import Header as header
 from .Source import Source as source
 from .Template import Template as template
 from .Unrecognizable import Unrecognizable as unrecognizable
-
 
 # end of file

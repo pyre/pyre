@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -13,7 +14,6 @@ class PrefixLayout(merlin.protocol, family="merlin.layouts.prefix"):
     """
     The manager of the all build products, both final and intermediate disposables
     """
-
 
     # required state
     bin = merlin.properties.path()
@@ -42,7 +42,6 @@ class PrefixLayout(merlin.protocol, family="merlin.layouts.prefix"):
 
     var = merlin.properties.path()
     var.doc = "runtime files"
-
 
     # framework hooks
     @classmethod

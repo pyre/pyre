@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -42,7 +41,7 @@ class monitor(pyre.monitor):
 
 
 # a component
-class component(pyre.component, family='pyre.flow.raw'):
+class component(pyre.component, family="pyre.flow.raw"):
     """
     A configurational node: raw meta-data
     """
@@ -59,7 +58,7 @@ def test():
     assert m.counter == 0
 
     # make a component instance
-    c = component(name='raw')
+    c = component(name="raw")
 
     # ask my monitor to wtach it
     m.watch(component=c)

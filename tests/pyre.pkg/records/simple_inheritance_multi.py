@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -19,6 +18,7 @@ def test():
         """
         A sample record
         """
+
         sku = pyre.records.measure()
         description = pyre.records.measure()
 
@@ -61,11 +61,16 @@ def test():
     assert isinstance(pricing.price, pyre.records.measure)
 
     assert identical(pricing.pyre_localFields, (pricing.price,))
-    assert identical(pricing.pyre_fields, (
-        pricing.cost, pricing.overhead,
-        pricing.sku, pricing.description,
-        pricing.price,
-        ))
+    assert identical(
+        pricing.pyre_fields,
+        (
+            pricing.cost,
+            pricing.overhead,
+            pricing.sku,
+            pricing.description,
+            pricing.price,
+        ),
+    )
     assert identical(pricing.pyre_measures, pricing.pyre_fields)
     assert identical(pricing.pyre_derivations, ())
 
@@ -84,7 +89,8 @@ def identical(s1, s2):
     we must avoid triggering __eq__
     """
     for n1, n2 in zip(s1, s2):
-        if n1 is not n2: return False
+        if n1 is not n2:
+            return False
     return True
 
 

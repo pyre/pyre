@@ -1,36 +1,34 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # externals
 import os
+
 # access the pyre framework
 import pyre
 
 
 # class declaration; merlin is a plexus app
-class Merlin(pyre.plexus, family='merlin.components.plexus'):
+class Merlin(pyre.plexus, family="merlin.components.plexus"):
     """
     The merlin executive and application wrapper
     """
 
-
     # constants
-    pyre_namespace = 'merlin'
+    pyre_namespace = "merlin"
     # types
     from .Action import Action as pyre_action
+
     # exceptions
     from .exceptions import MerlinError, SpellNotFoundError
 
-
     # constants
-    METAFOLDER = '.merlin'
-    PATH = ['vfs:/merlin/project', 'vfs:/merlin/user', 'vfs:/merlin/system']
-
+    METAFOLDER = ".merlin"
+    PATH = ["vfs:/merlin/project", "vfs:/merlin/user", "vfs:/merlin/system"]
 
     @property
     def searchpath(self):
@@ -41,18 +39,17 @@ class Merlin(pyre.plexus, family='merlin.components.plexus'):
         # folder in the {pfs}
         path = set()
         # the project library
-        yield 'merlin/project'
+        yield "merlin/project"
         # the user's library
-        yield 'merlin/user'
+        yield "merlin/user"
         # and the builtins
-        yield 'merlin/system'
+        yield "merlin/system"
 
         # plus whatever else pyre applications are supposed to do
         yield from super().searchpath
 
         # all done
         return
-
 
     # plexus obligations
     @pyre.export
@@ -62,10 +59,11 @@ class Merlin(pyre.plexus, family='merlin.components.plexus'):
         """
         # get the package
         import merlin
+
         # grab a channel
         channel = self.info
         # set the indentation
-        indent = ' '*4
+        indent = " " * 4
         # make some space
         channel.line()
         # get the help header and display it
@@ -82,11 +80,11 @@ class Merlin(pyre.plexus, family='merlin.components.plexus'):
             # figure out how much space we need
             width = max(len(name) for name, _ in actions)
             # introduce this section
-            channel.line('commands:')
+            channel.line("commands:")
             # for each documented action
             for name, tip in actions:
                 # show the details
-                channel.line('{}{:>{}}: {}'.format(indent, name, width, tip))
+                channel.line("{}{:>{}}: {}".format(indent, name, width, tip))
             # some space
             channel.line()
 
@@ -95,7 +93,6 @@ class Merlin(pyre.plexus, family='merlin.components.plexus'):
         # and indicate success
         return 0
 
-
     # schema factories
     def newProject(self, name):
         """
@@ -103,11 +100,11 @@ class Merlin(pyre.plexus, family='merlin.components.plexus'):
         """
         # access the class
         from ..schema.Project import Project
+
         # build the object
         project = Project(name=name)
         # and return it
         return project
-
 
     # meta methods
     def __init__(self, name, **kwds):
@@ -119,17 +116,16 @@ class Merlin(pyre.plexus, family='merlin.components.plexus'):
 
         # the curator
         from .Curator import Curator
-        self.curator = Curator(name=name+".curator")
+
+        self.curator = Curator(name=name + ".curator")
 
         # the asset classifiers
         from .PythonClassifier import PythonClassifier
-        self.assetClassifiers = [
-            PythonClassifier(name=name+'.python')
-            ]
+
+        self.assetClassifiers = [PythonClassifier(name=name + ".python")]
 
         # all done
         return
-
 
     # framework requests
     def pyre_mountApplicationFolders(self, pfs, prefix):
@@ -142,7 +138,7 @@ class Merlin(pyre.plexus, family='merlin.components.plexus'):
         # check whether the project folder is already mounted
         try:
             # by looking for it within my private file space
-            pfs['project']
+            pfs["project"]
         # if it's not there
         except pfs.NotFoundError:
             # no worries; we'll go hunting
@@ -150,25 +146,24 @@ class Merlin(pyre.plexus, family='merlin.components.plexus'):
         # otherwise, it is already mounted; bug?
         else:
             # DEBUG: remove this when happy it never gets called
-            raise NotImplementedError('NYI: multiple attempts to initialize the merlin vfs')
+            raise NotImplementedError("NYI: multiple attempts to initialize the merlin vfs")
 
         # check whether we are within a project
         root, metadir = self.locateProjectRoot()
 
         # get the file server
-        vfs  = self.vfs
+        vfs = self.vfs
         # build the project folder
         project = vfs.local(root=root).discover() if root else vfs.folder()
         # build the folder with the merlin metadata
         metadata = vfs.local(root=metadir).discover() if metadir else vfs.folder()
 
         # mount them
-        vfs['project'] = project
-        pfs['project'] = metadata
+        vfs["project"] = project
+        pfs["project"] = metadata
 
         # and return
         return pfs
-
 
     # support
     def pyre_newRepertoire(self):
@@ -177,9 +172,9 @@ class Merlin(pyre.plexus, family='merlin.components.plexus'):
         """
         # access the factory
         from .Spellbook import Spellbook
+
         # make one and return it
         return Spellbook(protocol=self.pyre_action)
-
 
     def locateProjectRoot(self, folder=None):
         """

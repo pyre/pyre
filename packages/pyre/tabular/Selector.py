@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # superclass
@@ -15,11 +14,9 @@ class Selector(records.selector):
     The basic selector that provides named access to sheet columns
     """
 
-
     # types
-    from .Column import Column as column # access to the entries of a given column
-    from .Primary import Primary as primary # access to an indexed column
-
+    from .Column import Column as column  # access to the entries of a given column
+    from .Primary import Primary as primary  # access to an indexed column
 
     # meta-methods
     def __get__(self, sheet, cls):
@@ -27,7 +24,8 @@ class Selector(records.selector):
         Read access to the field slice from the data set
         """
         # if this is access as a class attribute, return the field descriptor
-        if sheet is None: return self.field
+        if sheet is None:
+            return self.field
 
         # otherwise, this is access to a sheet instance
         # if I manage a primary field

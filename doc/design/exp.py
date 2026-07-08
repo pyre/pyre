@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 import pyre
@@ -18,7 +17,6 @@ class exp(pyre.component, family="gauss.functors.exp", implements=gauss.interfac
     a = pyre.properties.float(default=1)
     β = pyre.properties.array(default=[0])
 
-
     @pyre.export
     def eval(self, points):
         """
@@ -26,13 +24,14 @@ class exp(pyre.component, family="gauss.functors.exp", implements=gauss.interfac
         """
         # access the exponential from the math package
         from math import exp
+
         # cache the local values
         a = self.a
         β = self.β
         # loop over the points
         for x in points:
             # compute the exponent
-            exponent = sum(x_i*β_i for x_i, β_i in zip(x, β))
+            exponent = sum(x_i * β_i for x_i, β_i in zip(x, β))
             # yield the value on this point
             yield a * exp(exponent)
         # all done

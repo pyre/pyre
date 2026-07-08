@@ -1,13 +1,13 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # access to the pyre package
 import pyre
+
 # my ancestor
 from .BlockMill import BlockMill
 
@@ -18,11 +18,9 @@ class HTML(BlockMill):
     Support for HTML
     """
 
-
     # traits
-    doctype = pyre.properties.str(default='html5')
+    doctype = pyre.properties.str(default="html5")
     doctype.doc = "the doctype variant to use on the first line"
-
 
     # mill obligations
     @pyre.export
@@ -37,10 +35,9 @@ class HTML(BlockMill):
         # render the rest
         yield from super().header()
         # the outer tag
-        yield '<html>'
+        yield "<html>"
         # all done
         return
-
 
     @pyre.export
     def body(self, document=(), **kwds):
@@ -64,33 +61,29 @@ class HTML(BlockMill):
         # otherwise, chain up
         yield from super().body(document=document, **kwds)
 
-
     @pyre.export
     def footer(self):
         """
         Layout the {document} using my stationery for the footer
         """
         # close the top level tag
-        yield '</html>'
+        yield "</html>"
         # chain up
         yield from super().footer()
         # all done
         return
 
-
     # constants
     doctypes = {
-        'html5': '',
-        'html4-strict':
-            ' public "-//w3c//dtd html 4.01//en" "http://www.w3.org/TR/html4/strict.dtd"',
-        'html4-transitional': ' public "-//w3c//dtd html 4.01 transitional//en"',
-        }
-
+        "html5": "",
+        "html4-strict": ' public "-//w3c//dtd html 4.01//en" "http://www.w3.org/TR/html4/strict.dtd"',
+        "html4-transitional": ' public "-//w3c//dtd html 4.01 transitional//en"',
+    }
 
     # private data
-    startBlock = '<!--'
-    commentMarker = ' !'
-    endBlock = '-->'
+    startBlock = "<!--"
+    commentMarker = " !"
+    endBlock = "-->"
 
 
 # end of file

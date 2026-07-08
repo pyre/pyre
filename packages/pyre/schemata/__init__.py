@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -43,7 +44,6 @@ from .OutputStream import OutputStream as ostream
 from .EnvVar import EnvVar as envvar
 from .EnvPath import EnvPath as envpath
 
-
 # put the schemata in piles
 basic = (identity, bool, complex, decimal, enum, float, fraction, inet, int, str)
 composite = (date, dimensional, path, time, timestamp, uri)
@@ -60,6 +60,5 @@ numbers = {bool, complex, decimal, dimensional, float, int}
 
 # grant access to the type decorator
 from .Typed import Typed as typed
-
 
 # end of file

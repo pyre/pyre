@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # externals
@@ -16,15 +15,13 @@ class Language(pyre.protocol, family="pyre.weaver.languages"):
     The protocol specification for output languages
     """
 
-
     # constants
     # the language normalization table
     languages = {
         "c++": "cxx",
         "fortran": "f77",
         "fortran77": "f77",
-        }
-
+    }
 
     # framework hooks
     @classmethod
@@ -38,7 +35,6 @@ class Language(pyre.protocol, family="pyre.weaver.languages"):
         # otherwise, I have nothing to say
         return value
 
-
     # interface
     @pyre.provides
     def render(self):
@@ -46,20 +42,17 @@ class Language(pyre.protocol, family="pyre.weaver.languages"):
         Render the document
         """
 
-
     @pyre.provides
     def header(self):
         """
         Render the header of the document
         """
 
-
     @pyre.provides
     def body(self):
         """
         Render the body of the document
         """
-
 
     @pyre.provides
     def footer(self):

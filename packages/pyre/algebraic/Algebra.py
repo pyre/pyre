@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # superclass
@@ -16,29 +15,36 @@ class Algebra(Type):
     Metaclass that endows its instances with algebraic structure
     """
 
-
     # types
     # structural
     from .Leaf import Leaf as leaf
     from .Composite import Composite as composite
+
     # algebraic
     from .Arithmetic import Arithmetic as arithmetic
     from .Ordering import Ordering as ordering
     from .Boolean import Boolean as boolean
+
     # the base node
     from .AbstractNode import AbstractNode as base
+
     # nodes
     from .Literal import Literal as literal
     from .Operator import Operator as operator
     from .Variable import Variable as variable
 
-
-
     # meta-methods
-    def __new__(cls, name, bases, attributes,
-                arithmetic=True, ordering=True, boolean=True,
-                ignore=False,
-                **kwds):
+    def __new__(
+        cls,
+        name,
+        bases,
+        attributes,
+        arithmetic=True,
+        ordering=True,
+        boolean=True,
+        ignore=False,
+        **kwds,
+    ):
         """
         Build a new class record
         """
@@ -50,11 +56,14 @@ class Algebra(Type):
         # prime the list of ancestors
         derivation = [cls.base]
         # if we were asked to support arithmetic, add support for it
-        if arithmetic: derivation.append(cls.arithmetic)
+        if arithmetic:
+            derivation.append(cls.arithmetic)
         # if we were asked to support ordering, add support for it
-        if ordering: derivation.append(cls.ordering)
+        if ordering:
+            derivation.append(cls.ordering)
         # if we were asked to support boolean operations, add support for it
-        if boolean: derivation.append(cls.boolean)
+        if boolean:
+            derivation.append(cls.boolean)
         # wrap up by piling on the actual bases of the client
         bases = tuple(derivation) + bases
 
@@ -64,21 +73,21 @@ class Algebra(Type):
         # build the list of base classes for the literal
         derivation = tuple(cls.literalDerivation(record))
         # make one
-        record.literal = cls('literal', derivation, {}, ignore=True)
+        record.literal = cls("literal", derivation, {}, ignore=True)
         # correct its module so it gets the correct attribution in stack traces
         record.literal.__module__ = record.__module__
 
         # build the list of base classes for the variable
         derivation = tuple(cls.variableDerivation(record))
         # make one
-        record.variable = cls('variable', derivation, {}, ignore=True)
+        record.variable = cls("variable", derivation, {}, ignore=True)
         # correct its module so it gets the correct attribution in stack traces
         record.variable.__module__ = record.__module__
 
         # build the list of base classes for operators
         derivation = tuple(cls.operatorDerivation(record))
         # make one
-        record.operator = cls('operator', derivation, {}, ignore=True)
+        record.operator = cls("operator", derivation, {}, ignore=True)
         # correct its module so it gets the correct attribution in stack traces
         record.operator.__module__ = record.__module__
 
@@ -88,7 +97,6 @@ class Algebra(Type):
         # return the record
         return record
 
-
     # implementation details
     @classmethod
     def leafDerivation(cls, record):
@@ -96,7 +104,8 @@ class Algebra(Type):
         Contribute to the list of ancestors of the representation of literals
         """
         # if the {record} specifies a leaf mix-in, add it to the pile
-        if record.leaf: yield record.leaf
+        if record.leaf:
+            yield record.leaf
         # yield the default leaf class
         yield cls.leaf
         # and the buck stops here...
@@ -104,14 +113,14 @@ class Algebra(Type):
         # all done
         return
 
-
     @classmethod
     def compositeDerivation(cls, record):
         """
         Contribute to the list of ancestors of the representation of literals
         """
         # if the {record} specifies a composite mix-in, add it to the pile
-        if record.composite: yield record.composite
+        if record.composite:
+            yield record.composite
         # yield the default composite class
         yield cls.composite
         # and the buck stops here...
@@ -119,14 +128,14 @@ class Algebra(Type):
         # all done
         return
 
-
     @classmethod
     def literalDerivation(cls, record):
         """
         Contribute to the list of ancestors of the representation of literals
         """
         # if the class record specifies a literal mix-in use it
-        if record.literal: yield record.literal
+        if record.literal:
+            yield record.literal
         # must also derive from the default
         yield cls.literal
         # get the classes necessary to make leaves
@@ -134,14 +143,14 @@ class Algebra(Type):
         # all done
         return
 
-
     @classmethod
     def operatorDerivation(cls, record):
         """
         Contribute to the list of ancestors of the representation of operators
         """
         # if the class record specifies a operator mix-in use it
-        if record.operator: yield record.operator
+        if record.operator:
+            yield record.operator
         # must also derive from the default
         yield cls.operator
         # get the classes necessary to make composites
@@ -149,21 +158,20 @@ class Algebra(Type):
         # all done
         return
 
-
     @classmethod
     def variableDerivation(cls, record):
         """
         Contribute to the list of ancestors of the representation of variables
         """
         # if the class record specifies a variable mix-in use it
-        if record.variable: yield record.variable
+        if record.variable:
+            yield record.variable
         # must also derive from the default
         yield cls.variable
         # get the classes necessary to make leaves
         yield from cls.leafDerivation(record)
         # all done
         return
-
 
     @classmethod
     def isIgnorable(cls, bases):

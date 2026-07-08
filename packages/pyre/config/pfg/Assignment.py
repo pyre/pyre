@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # superclass
@@ -16,12 +15,10 @@ class Assignment(Event):
     The resting place for key-value bindings
     """
 
-
     # public data
     name = None
     value = None
     locator = None
-
 
     # handlers
     def bind(self, token):
@@ -29,21 +26,18 @@ class Assignment(Event):
         Extract my value from {token}
         """
         # easy enough
-        self.value = '\n'.join(token.lexeme)
+        self.value = "\n".join(token.lexeme)
         # all done
         return
-
 
     def notify(self, parent):
         """
         Tell my {parent} there is an assignment waiting
         """
         # create a configuration event
-        event = self.events.Assignment(
-            key=self.name, value=self.value, locator=self.locator)
+        event = self.events.Assignment(key=self.name, value=self.value, locator=self.locator)
         # hand it to my {parent} for further processing
         return parent.assignment(event=event)
-
 
     # meta-methods
     def __init__(self, token, **kwds):

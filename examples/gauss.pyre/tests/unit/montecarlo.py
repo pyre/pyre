@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -20,10 +19,10 @@ def test():
     one = gauss.functors.one(name="one")
     # set up the bounding box for the random number generator
     box = gauss.shapes.box(name="box")
-    box.intervals = ((0,1), (0,1))
+    box.intervals = ((0, 1), (0, 1))
     # instantiate the region of integration
     disk = gauss.shapes.ball(name="disk")
-    disk.center = (0,0)
+    disk.center = (0, 0)
     disk.radius = 1.0
     # instantiate the point cloud generator
     mesh = gauss.meshes.mersenne(name="mesh")
@@ -41,7 +40,7 @@ def test():
 
     # check the answer
     # print("π =", 4*integral)
-    error = (π - 4*integral)/π
+    error = (π - 4 * integral) / π
     # print("error =", π - 4*integral)
     assert error < 1.0e-2
 

@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -15,11 +14,11 @@ Verify record building in the presence of multiple inheritance
 def test():
     import pyre.records
 
-
     class item(pyre.records.record):
         """
         A sample record
         """
+
         sku = pyre.records.measure()
         description = pyre.records.measure()
 
@@ -31,8 +30,7 @@ def test():
         margin = pyre.records.measure()
 
     class pricing(item, production, handling):
-        price = production.cost * (1 + handling.overhead/100 + handling.margin/100)
-
+        price = production.cost * (1 + handling.overhead / 100 + handling.margin / 100)
 
     # explore the item record
     assert isinstance(item.sku, pyre.records.measure)
@@ -77,17 +75,27 @@ def test():
     assert isinstance(pricing.price, pyre.records.derivation)
 
     assert identical(pricing.pyre_localFields, (pricing.price,))
-    assert identical(pricing.pyre_fields, (
-        pricing.overhead, pricing.margin,
-        pricing.cost,
-        pricing.sku, pricing.description,
-        pricing.price,
-        ))
-    assert identical(pricing.pyre_measures, (
-        pricing.overhead, pricing.margin,
-        pricing.cost,
-        pricing.sku, pricing.description,
-        ))
+    assert identical(
+        pricing.pyre_fields,
+        (
+            pricing.overhead,
+            pricing.margin,
+            pricing.cost,
+            pricing.sku,
+            pricing.description,
+            pricing.price,
+        ),
+    )
+    assert identical(
+        pricing.pyre_measures,
+        (
+            pricing.overhead,
+            pricing.margin,
+            pricing.cost,
+            pricing.sku,
+            pricing.description,
+        ),
+    )
     assert identical(pricing.pyre_derivations, (pricing.price,))
 
     assert pricing.pyre_index[pricing.overhead] == 0
@@ -102,14 +110,15 @@ def test():
     overhead = 20
     margin = 50
     p = pricing.pyre_mutable(
-        sku="4013", description="kiwi", cost=cost, overhead=overhead, margin=margin)
+        sku="4013", description="kiwi", cost=cost, overhead=overhead, margin=margin
+    )
     # check
     assert p.sku == "4013"
     assert p.description == "kiwi"
     assert p.cost == 1.0
     assert p.overhead == 20
     assert p.margin == 50
-    assert p.price == p.cost*(1.0 + p.overhead/100 + p.margin/100)
+    assert p.price == p.cost * (1.0 + p.overhead / 100 + p.margin / 100)
 
     return p
 
@@ -120,7 +129,8 @@ def identical(s1, s2):
     we must avoid triggering __eq__
     """
     for n1, n2 in zip(s1, s2):
-        if n1 is not n2: return False
+        if n1 is not n2:
+            return False
     return True
 
 

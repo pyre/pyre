@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -29,14 +28,14 @@ def test():
     # explore
     finder = pyre.filesystem.finder()
     # collect the contents of interest
-    contents = list(sorted(
-        str(node.uri)
-        for node, *_ in finder.explore(folder=fs, pattern=r".*\.h")))
+    contents = list(
+        sorted(str(node.uri) for node, *_ in finder.explore(folder=fs, pattern=r".*\.h"))
+    )
 
     # check
     assert contents == [
         "/home/users/mga/dv/tools/src/hello.h",
-        ]
+    ]
 
     return fs, finder
 

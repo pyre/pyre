@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -24,9 +23,7 @@ def test():
     # explore
     finder = pyre.filesystem.finder()
     # get the contents
-    contents = list(sorted(
-        str(node.uri)
-        for node, *_ in finder.explore(fs)))
+    contents = list(sorted(str(node.uri) for node, *_ in finder.explore(fs)))
     # show me
     # for line in contents: print(line)
 
@@ -42,7 +39,7 @@ def test():
         "/home/users/mga/dv/tools/bin/hello",
         "/home/users/mga/dv/tools/lib",
         "/home/users/mga/dv/tools/lib/libhello.a",
-        ]
+    ]
 
     return fs, finder
 

@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -15,6 +14,7 @@ Check catching of decoding errors when the input file has a bad tag
 def test():
     # package access
     import pyre.config
+
     # get the codec manager
     m = pyre.config.newConfigurator()
     # ask for a pml codec
@@ -30,7 +30,7 @@ def test():
     except reader.DecodingError as error:
         assert str(error) == (
             "file='sample-badNode.pml', line=12, column=53: decoding error: mismatched tag"
-            )
+        )
 
     return m, reader
 

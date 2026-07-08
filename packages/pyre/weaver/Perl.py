@@ -1,13 +1,13 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # access to the pyre package
 import pyre
+
 # my ancestor
 from .LineMill import LineMill
 
@@ -18,11 +18,9 @@ class Perl(LineMill):
     Support for perl
     """
 
-
     # traits
-    version = pyre.properties.str(default='5')
+    version = pyre.properties.str(default="5")
     version.doc = "the version of perl to use on the hash-bang line"
-
 
     # interface
     @pyre.export
@@ -43,9 +41,8 @@ class Perl(LineMill):
         # all done
         return
 
-
     # private data
-    comment = '#'
+    comment = "#"
 
 
 # end of file

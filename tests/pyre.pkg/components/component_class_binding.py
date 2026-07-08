@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -18,6 +17,7 @@ def test():
     # declare a protocol
     class task(pyre.protocol):
         """a protocol"""
+
         @pyre.provides
         def do(self):
             """do something"""
@@ -30,6 +30,7 @@ def test():
     # declare a component that implements this protocol
     class relax(pyre.component, implements=task):
         """an implementation"""
+
         @pyre.export
         def do(self):
             """do nothing"""
@@ -37,6 +38,7 @@ def test():
     # declare a component
     class worker(pyre.component):
         """the base component"""
+
         uid = pyre.properties.int(default=1)
         duties = task()
 

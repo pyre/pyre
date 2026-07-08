@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -18,6 +17,7 @@ def test():
     # declare a protocol
     class job(pyre.protocol):
         """a protocol"""
+
         @pyre.provides
         def do(self):
             """do something"""
@@ -25,6 +25,7 @@ def test():
     # declare a component
     class component(pyre.component):
         """a component"""
+
         w1 = job()
         w2 = job()
 
@@ -35,7 +36,7 @@ def test():
     c.w2 = "import:sample.relax#worker"
     # check
     assert c.w1 == c.w2
-    assert c.w1.pyre_name == 'worker'
+    assert c.w1.pyre_name == "worker"
 
     return c, component, job
 

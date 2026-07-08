@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -76,8 +77,7 @@ class MacPorts(Managed, family="pyre.platforms.packagers.macports"):
         if alternatives is None:
             # build the selected package index
             alternatives = {
-                group: candidates
-                for group, candidates in self.retrievePackageAlternatives()
+                group: candidates for group, candidates in self.retrievePackageAlternatives()
             }
             # attach it
             self._alternatives = alternatives
@@ -237,9 +237,7 @@ class MacPorts(Managed, family="pyre.platforms.packagers.macports"):
         # if its not there
         except KeyError:
             # pull in the sequence of files from 'base'
-            base = tuple(
-                self.retrieveNormalizationTable(group=group, alternative="base")
-            )
+            base = tuple(self.retrieveNormalizationTable(group=group, alternative="base"))
             # record it for next time
             table["base"] = base
 
@@ -250,9 +248,7 @@ class MacPorts(Managed, family="pyre.platforms.packagers.macports"):
         # if not there
         except KeyError:
             # pull in the list of files from {alternative}
-            target = tuple(
-                self.retrieveNormalizationTable(group=group, alternative=alternative)
-            )
+            target = tuple(self.retrieveNormalizationTable(group=group, alternative=alternative))
             # record it
             table[alternative] = target
 

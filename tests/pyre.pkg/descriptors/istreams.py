@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -19,8 +18,8 @@ def test():
     istream = pyre.descriptors.istream()
 
     # open a file that exists
-    f = istream.coerce('file:istreams.py')
-    assert f.name == 'istreams.py'
+    f = istream.coerce("file:istreams.py")
+    assert f.name == "istreams.py"
 
     # a poorly formed one
     try:

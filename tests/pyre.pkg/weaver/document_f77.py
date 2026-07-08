@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -15,22 +14,23 @@ Exercise a Fortran77 weaver
 def test():
     # get the package
     import pyre.weaver
+
     # instantiate a weaver
     weaver = pyre.weaver.weaver(name="sanity")
     weaver.language = "f77"
 
     text = list(weaver.weave())
     assert text == [
-        'c -*- Fortran -*-',
-        'c',
-        'c Michael A.G. Aïvázis',
-        'c Orthologue',
-        'c (c) 1998-2026 All Rights Reserved',
-        'c',
-        '',
-        '',
-        'c end of file',
-        ]
+        "c -*- Fortran -*-",
+        "c",
+        "c Michael A.G. Aïvázis",
+        "c Orthologue",
+        "c (c) 1998-2026 All Rights Reserved",
+        "c",
+        "",
+        "",
+        "c end of file",
+    ]
 
     return
 

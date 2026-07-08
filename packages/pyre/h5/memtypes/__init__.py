@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -29,7 +30,6 @@ from .UInt8 import uint8
 from .UInt16 import uint16
 from .UInt32 import uint32
 from .UInt64 import uint64
-
 
 # floating point
 from .Float import float

@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -30,9 +31,7 @@ class Mapping(Container):
         # string processing
         if isinstance(value, str):
             # otherwise, not supported
-            raise NotImplementedError(
-                "class {.__name__} cannot coerce strings".format(type(self))
-            )
+            raise NotImplementedError("class {.__name__} cannot coerce strings".format(type(self)))
 
         # if we have a mapping
         if isinstance(value, collections.abc.Mapping):

@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -12,9 +13,7 @@ from .Language import Language
 
 
 # class declaration
-class CXX(
-    Language, family="merlin.languages.cxx", implements=merlin.protocols.languages.cxx
-):
+class CXX(Language, family="merlin.languages.cxx", implements=merlin.protocols.languages.cxx):
     """
     A category of source artifacts encoded in the C++ programming language
     """

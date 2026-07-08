@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -25,9 +26,7 @@ class Viewer:
         Generate a textual representation of the {descriptor} contents
         """
         # delegate to the correct handler
-        yield from descriptor._pyre_identify(
-            authority=self, margin=margin, graphic=graphic
-        )
+        yield from descriptor._pyre_identify(authority=self, margin=margin, graphic=graphic)
         # all done
         return
 
@@ -81,16 +80,12 @@ class Viewer:
         # go through all but the last child
         for child in children[:-1]:
             # and visit each one
-            yield from self.visit(
-                descriptor=child, margin=bodyMargin, graphic=bodyGraphic
-            )
+            yield from self.visit(descriptor=child, margin=bodyMargin, graphic=bodyGraphic)
         # the last child gets decorated slightly differently
         lastMargin = margin + "   "
         lastGraphic = margin + "`- "
         # repeat for the last child
-        yield from self.visit(
-            descriptor=children[-1], margin=lastMargin, graphic=lastGraphic
-        )
+        yield from self.visit(descriptor=children[-1], margin=lastMargin, graphic=lastGraphic)
         # all done
         return
 

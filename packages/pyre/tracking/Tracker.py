@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # externals
@@ -16,13 +15,11 @@ class Tracker:
     Record the values a key has taken
     """
 
-
     def getHistory(self, key):
         """
         Retrieve the historical record associated with a particular {key}
         """
         return self.log[key]
-
 
     def track(self, key, node):
         """
@@ -30,7 +27,6 @@ class Tracker:
         """
         self.log[key].append(node)
         return
-
 
     def __init__(self, **kwds):
         # chain up

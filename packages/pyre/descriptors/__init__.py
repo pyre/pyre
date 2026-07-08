@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -11,7 +12,6 @@ from .Descriptor import Descriptor as stem
 from .Converter import Converter as converter
 from .Normalizer import Normalizer as normalizer
 from .Validator import Validator as validator
-
 
 # get the schemata
 from .. import schemata

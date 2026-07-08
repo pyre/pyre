@@ -1,4 +1,5 @@
-#! /usr/bin/env python3
+#!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -11,6 +12,7 @@ def test():
     """
     # externals
     import time
+
     # access the timer bindings
     from pyre.extensions.pyre.timers import WallTimer
 
@@ -20,13 +22,14 @@ def test():
     t.start()
 
     # take a nap
-    time.sleep(.5)
+    time.sleep(0.5)
 
     # stop the timer
     t.stop()
 
     # get the journal
     import journal
+
     # make a channel
     channel = journal.debug(name="pyre.timers")
     # activate it

@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -14,8 +13,10 @@ Make a connection to a database using the low level interface from the extension
 
 def test():
     from pyre.extensions import postgres as pyrepg
+
     # initialize the module exceptions
     import pyre.db.exceptions as exceptions
+
     pyrepg.registerExceptions(exceptions)
 
     # make a connection

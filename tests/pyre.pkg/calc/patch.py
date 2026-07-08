@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -16,18 +15,18 @@ def test():
     import pyre.calc
 
     # the nodes
-    production = pyre.calc.var(value = 80.)
-    shipping = pyre.calc.var(value = 20.)
+    production = pyre.calc.var(value=80.0)
+    shipping = pyre.calc.var(value=20.0)
     cost = production + shipping
-    margin = .25*cost
-    overhead = .45*cost
+    margin = 0.25 * cost
+    overhead = 0.45 * cost
     price = cost + margin + overhead
-    discount = .2
-    total = price*(1.0 - discount)
+    discount = 0.2
+    total = price * (1.0 - discount)
     # check we got the answer right
     assert total.value == 136
     # the poser
-    poser = pyre.calc.var(value=180.)
+    poser = pyre.calc.var(value=180.0)
 
     # introduce the cast
     # print("production: node@{:#x}".format(id(production)))
@@ -44,10 +43,10 @@ def test():
     poser.replace(production)
     # check
     assert cost.value == poser.value + shipping.value
-    assert margin.value == .25*cost.value
-    assert overhead.value == .45*cost.value
-    assert price.value  == cost.value + margin.value + overhead.value
-    assert total.value == price.value*(1.0 - discount)
+    assert margin.value == 0.25 * cost.value
+    assert overhead.value == 0.45 * cost.value
+    assert price.value == cost.value + margin.value + overhead.value
+    assert total.value == price.value * (1.0 - discount)
     # check we got the new answer right
     assert total.value == 272
 
@@ -55,10 +54,10 @@ def test():
     poser.value = 80
     # check
     assert cost.value == poser.value + shipping.value
-    assert margin.value == .25*cost.value
-    assert overhead.value == .45*cost.value
-    assert price.value  == cost.value + margin.value + overhead.value
-    assert total.value == price.value*(1.0 - discount)
+    assert margin.value == 0.25 * cost.value
+    assert overhead.value == 0.45 * cost.value
+    assert price.value == cost.value + margin.value + overhead.value
+    assert total.value == price.value * (1.0 - discount)
     # check we got the answer right
     assert total.value == 136
 
@@ -68,7 +67,7 @@ def test():
 # main
 if __name__ == "__main__":
     # request debugging support for the pyre.calc package
-    pyre_debug = { "pyre.calc" }
+    pyre_debug = {"pyre.calc"}
     # skip pyre initialization since we don't rely on the executive
     pyre_noboot = True
     # run the test
@@ -76,6 +75,7 @@ if __name__ == "__main__":
     # verify reference counts
     # for nodes
     from pyre.calc.Node import Node
+
     # print(tuple(Node.pyre_extent))
     assert tuple(Node.pyre_extent) == ()
 

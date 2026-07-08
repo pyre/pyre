@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -9,9 +10,7 @@ import merlin
 
 
 # source encodings
-@merlin.components.language(
-    language="autogen", tip="templates for generating source code"
-)
+@merlin.components.language(language="autogen", tip="templates for generating source code")
 def autogen():
     """
     The category of source artifacts that are expanded into other sources

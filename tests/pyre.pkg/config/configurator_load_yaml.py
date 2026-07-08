@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -55,20 +54,14 @@ def test():
     assert ns["sample.user.email"] == "michael.aivazis@orthologue.com"
     assert ns["sample.user.affiliation"] == "orthologue"
     # and the local one
-    assert (
-        ns["sample.user.byline"]
-        == "michael a.g. aïvázis -- michael.aivazis@orthologue.com"
-    )
+    assert ns["sample.user.byline"] == "michael a.g. aïvázis -- michael.aivazis@orthologue.com"
 
     # make a change
     ns["sample.user.affiliation"] = "orthologue"
     ns["sample.user.email"] = "michael.aivazis@orthologue.com"
     # check
     assert ns["sample.user.affiliation"] == "orthologue"
-    assert (
-        ns["sample.user.byline"]
-        == "michael a.g. aïvázis -- michael.aivazis@orthologue.com"
-    )
+    assert ns["sample.user.byline"] == "michael a.g. aïvázis -- michael.aivazis@orthologue.com"
 
     # all good
     return executive

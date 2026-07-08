@@ -1,7 +1,7 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
-# leif strand
 # (c) 1998-2026 all rights reserved
 
 
@@ -18,9 +18,7 @@ from .Scheduler import Scheduler
 
 
 # declaration
-class Selector(
-    Scheduler, family="pyre.ipc.dispatchers.selector", implements=dispatcher
-):
+class Selector(Scheduler, family="pyre.ipc.dispatchers.selector", implements=dispatcher):
     """
     An event demultiplexer implemented using the {select} system call.
 
@@ -37,9 +35,7 @@ class Selector(
         Add {call} to the list of routines to call when {channel} is ready to be read
         """
         # add it to the pile
-        self._read[channel.inbound].append(
-            self._event(channel=channel, handler=call, **kwds)
-        )
+        self._read[channel.inbound].append(self._event(channel=channel, handler=call, **kwds))
         # and return
         return
 
@@ -49,9 +45,7 @@ class Selector(
         Add {call} to the list of routines to call when {channel} is ready to be written
         """
         # add it to the pile
-        self._write[channel.outbound].append(
-            self._event(channel=channel, handler=call, **kwds)
-        )
+        self._write[channel.outbound].append(self._event(channel=channel, handler=call, **kwds))
         # and return
         return
 
@@ -62,12 +56,8 @@ class Selector(
         to {channel}
         """
         # add both endpoints to the pile
-        self._exception[channel.inbound].append(
-            self._event(channel=channel, handler=call, **kwds)
-        )
-        self._exception[channel.outbound].append(
-            self._event(channel=channel, handler=call, **kwds)
-        )
+        self._exception[channel.inbound].append(self._event(channel=channel, handler=call, **kwds))
+        self._exception[channel.outbound].append(self._event(channel=channel, handler=call, **kwds))
         # and return
         return
 

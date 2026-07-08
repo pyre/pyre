@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -15,8 +14,9 @@ Copy a matrix
 def test():
     # package access
     import gsl
+
     # make a matrix
-    m = gsl.matrix(shape=(100,50))
+    m = gsl.matrix(shape=(100, 50))
     # set it to random values
     m.random(pdf=gsl.pdf.gaussian(mean=0.0, sigma=2, rng=gsl.rng()))
     # clone it

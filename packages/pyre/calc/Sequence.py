@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 class Sequence:
@@ -11,10 +10,8 @@ class Sequence:
     Mix-in class that forms the basis of the representation of sequences
     """
 
-
     # constants
     category = "sequence"
-
 
     # classifiers
     @property
@@ -26,7 +23,6 @@ class Sequence:
         yield self
         # nothing further
         return
-
 
     # value management
     def getValue(self, **kwds):

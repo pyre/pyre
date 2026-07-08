@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -33,7 +32,7 @@ def test():
     θ = gsl.vector(shape=workload)
     # and initialize it
     for index in range(samplesPerTask):
-        θ[index] = rank*samplesPerTask + index
+        θ[index] = rank * samplesPerTask + index
 
     # decide on the destination task
     destination = 0
@@ -45,7 +44,7 @@ def test():
         # verify that i got the correct parts
         for task in range(tasks):
             for index in range(samplesPerTask):
-                offset = task*samplesPerTask+index
+                offset = task * samplesPerTask + index
                 assert result[offset] == offset
         # print it out
         # result.print(format='{}')

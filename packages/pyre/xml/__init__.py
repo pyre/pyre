@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -77,7 +78,6 @@ from .Node import Node as node
 from .Ignorable import Ignorable as ignorable
 from .Document import Document as document
 from .ElementDescriptor import ElementDescriptor as element
-
 
 # package constants
 # attribute types

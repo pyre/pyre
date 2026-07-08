@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -29,9 +30,7 @@ class Confirm(Prompt):
         try:
             # a cooked read is plenty for a single word
             reply = (
-                input(f"{self.paint(self.message, self.theme.message)} [{hint}]: ")
-                .strip()
-                .lower()
+                input(f"{self.paint(self.message, self.theme.message)} [{hint}]: ").strip().lower()
             )
         # a closed or exhausted input stream has no reply
         except EOFError:

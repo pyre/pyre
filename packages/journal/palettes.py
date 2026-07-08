@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -6,7 +7,6 @@
 
 # get the ANSI color spaces
 from .ANSI import ANSI
-
 
 # the null palette provides no decoration
 null = {
@@ -18,7 +18,7 @@ null = {
     "error": "",
     "help": "",
     "body": "",
-    }
+}
 
 
 # the light palette looks reasonable against a light background
@@ -32,7 +32,7 @@ light = {
     "error": ANSI.x11(name="red"),
     "help": ANSI.x11(name="cyan"),
     "body": ANSI.x11(name="normal"),
-    }
+}
 
 
 # the dark palette looks reasonable against a dark background

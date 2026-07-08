@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -15,10 +14,11 @@ Verify that we can hunt down values in matrices
 def test():
     # package access
     import gsl
+
     # make a matrix
-    m = gsl.matrix(shape=(100,100)).fill(1)
+    m = gsl.matrix(shape=(100, 100)).fill(1)
     # set an element to some value
-    m[50,50] = 10
+    m[50, 50] = 10
     # verify it happened
     assert 10 in m
     # all done

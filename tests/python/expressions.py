@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -13,6 +12,7 @@ Exercise a simple expression calculator
 
 import re
 
+
 class Calculator(object):
 
     scanner = re.compile(r"{(?P<identifier>[^}]+)}")
@@ -20,12 +20,12 @@ class Calculator(object):
     def compile(self, expression):
         sanitized = self.scanner.sub(self.replace, expression)
         try:
-            return compile(sanitized, filename='<expression>', mode='eval')
+            return compile(sanitized, filename="<expression>", mode="eval")
         except SyntaxError as error:
             raise error
 
     def eval(self, compiled):
-        context = { self.symbolTable[s]: self.valueTable[s] for s in self.symbolTable }
+        context = {self.symbolTable[s]: self.valueTable[s] for s in self.symbolTable}
         return eval(compiled, context)
 
     def replace(self, match):
@@ -51,7 +51,7 @@ def test():
     e.valueTable = {
         "my value": 4,
         "your value": 2,
-        }
+    }
 
     expression = "{my value} * {your value}"
     expression = e.compile(expression)

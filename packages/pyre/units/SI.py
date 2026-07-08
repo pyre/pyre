@@ -1,13 +1,11 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 from .Dimensional import Dimensional, dimensionless
-
 
 # basic SI units
 kilogram = Dimensional(value=1.0, derivation=(1, 0, 0, 0, 0, 0, 0))
@@ -28,34 +26,34 @@ mol = mole
 cd = candela
 
 # the 22 derived SI units with special names
-radian = dimensionless                 #  plane angle
-steradian = dimensionless              #  solid angle
+radian = dimensionless  #  plane angle
+steradian = dimensionless  #  solid angle
 
-hertz = 1/second                       #  frequency
+hertz = 1 / second  #  frequency
 
-newton = meter*kilogram/second**2      #  force
-pascal = newton/meter**2               #  pressure
-joule = newton*meter                   #  work, heat
-watt = joule/second                    #  power, radiant flux
+newton = meter * kilogram / second**2  #  force
+pascal = newton / meter**2  #  pressure
+joule = newton * meter  #  work, heat
+watt = joule / second  #  power, radiant flux
 
-coulomb = ampere*second                #  electric charge
-volt = watt/ampere                     #  electric potential difference
-farad = coulomb/volt                   #  capacitance
-ohm = volt/ampere                      #  electric resistance
-siemens = ampere/volt                  #  electric conductance
-weber = volt*second                    #  magnetic flux
-tesla = weber/meter**2                 #  magnetic flux density
-henry = weber/ampere                   #  inductance
+coulomb = ampere * second  #  electric charge
+volt = watt / ampere  #  electric potential difference
+farad = coulomb / volt  #  capacitance
+ohm = volt / ampere  #  electric resistance
+siemens = ampere / volt  #  electric conductance
+weber = volt * second  #  magnetic flux
+tesla = weber / meter**2  #  magnetic flux density
+henry = weber / ampere  #  inductance
 
-celcius = kelvin                       #  Celcius temperature
+celcius = kelvin  #  Celcius temperature
 
-lumen = candela*steradian              #  luminus flux
-lux = lumen/meter**2                   #  illuminance
+lumen = candela * steradian  #  luminus flux
+lux = lumen / meter**2  #  illuminance
 
-becquerel = 1/second                   #  radioactivity
-gray = joule/kilogram                  #  absorbed dose
-sievert = joule/kilogram               #  dose equivalent
-katal = mole/second                    #  catalytic activity
+becquerel = 1 / second  #  radioactivity
+gray = joule / kilogram  #  absorbed dose
+sievert = joule / kilogram  #  dose equivalent
+katal = mole / second  #  catalytic activity
 
 # prefixes
 yotta = 1e24

@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -17,7 +16,8 @@ def test():
     class descriptor(object):
 
         def __get__(self, instance, cls=None):
-            if instance: return getattr(instance, "marker")
+            if instance:
+                return getattr(instance, "marker")
             return getattr(cls, "marker")
 
     class base(object):
@@ -28,8 +28,9 @@ def test():
     class derived(base):
 
         marker = "derived"
-        def __init__(self): self.marker = "instance of derived"
 
+        def __init__(self):
+            self.marker = "instance of derived"
 
     # verify
     assert base.dscr == "base"

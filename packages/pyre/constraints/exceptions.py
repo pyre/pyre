@@ -1,15 +1,13 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
 Definitions for all the exceptions raised by this package
 """
-
 
 # violation notification
 # constraints throw exceptions rather than return True|False
@@ -28,7 +26,7 @@ class ConstraintViolationError(FrameworkError):
     """
 
     # public data
-    description  = "{0.value!r} is not {0.constraint}"
+    description = "{0.value!r} is not {0.constraint}"
 
     # meta-methods
     def __init__(self, constraint, value, **kwds):

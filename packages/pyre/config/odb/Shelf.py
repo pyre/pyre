@@ -1,13 +1,13 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # my base class
 from ..Shelf import Shelf as base
+
 
 # declaration
 class Shelf(base):
@@ -32,7 +32,6 @@ class Shelf(base):
     record gets a unique id in the application process space, or that processing instructions
     in configuration files are executed only the first time the configuration file is loaded.
     """
-
 
     # meta methods
     def __init__(self, stream=None, **kwds):

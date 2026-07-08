@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -45,10 +44,10 @@ def test():
     errors = executive.errors
     if errors and executive.verbose:
         count = len(errors)
-        s = '' if count == 1 else 's'
-        print(' ** during configuration: {} error{}:'.format(len(errors), s))
+        s = "" if count == 1 else "s"
+        print(" ** during configuration: {} error{}:".format(len(errors), s))
         for error in errors:
-            print(' -- {}'.format(error))
+            print(" -- {}".format(error))
     # ns.dump()
 
     # try again

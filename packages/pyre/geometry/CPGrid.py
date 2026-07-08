@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # my base class
@@ -17,7 +16,6 @@ class CPGrid(Grid):
     corners of two of its faces
     """
 
-
     # public data
     @property
     def dimension(self):
@@ -27,7 +25,6 @@ class CPGrid(Grid):
         # easy enough: get the length of the first point from the first cell
         return len(self[0][0])
 
-
     @property
     def numberOfPoints(self):
         """
@@ -35,7 +32,6 @@ class CPGrid(Grid):
         """
         # it's the number of cells multiplied by the number of points per cell
         return self.numberOfCells * len(self[0])
-
 
     @property
     def numberOfCells(self):
@@ -51,7 +47,6 @@ class CPGrid(Grid):
         # all done
         return size
 
-
     @property
     def points(self):
         """
@@ -59,7 +54,6 @@ class CPGrid(Grid):
         """
         # easy enough
         yield from (point for cell in self for point in cell)
-
 
     @property
     def cells(self):
@@ -71,12 +65,11 @@ class CPGrid(Grid):
         # go through each cell
         for cell in self:
             # i consist of the next n consecutive nodes
-            yield range(index, index+len(cell))
+            yield range(index, index + len(cell))
             # update
             index += len(cell)
         # all done
         return
-
 
     # interface
     def cell(self, corners):
@@ -90,7 +83,6 @@ class CPGrid(Grid):
         # and return it
         return cell
 
-
     def boundingBox(self):
         """
         Compute the bounding box of the grid
@@ -100,18 +92,13 @@ class CPGrid(Grid):
             # return it
             return self._bbox
         # otherwise, compute the smallest value of the coordinate along each axis
-        small = tuple(
-            min(p[i] for cell in self for p in cell) for i in range(len(self.shape))
-            )
+        small = tuple(min(p[i] for cell in self for p in cell) for i in range(len(self.shape)))
         # and the largest value of the coordinate along each axis
-        large = tuple(
-            max(p[i] for cell in self for p in cell) for i in range(len(self.shape))
-            )
+        large = tuple(max(p[i] for cell in self for p in cell) for i in range(len(self.shape)))
         # cache it
         self._bbox = small, large
         # and return it
         return self._bbox
-
 
     def eigenlen(self):
         """
@@ -120,12 +107,12 @@ class CPGrid(Grid):
         # reset the bad cell list
         self.bad = []
         # compute the largest possible value for my characteristic scale
-        inf = min(t-b for b,t in zip(*self.boundingBox()))
+        inf = min(t - b for b, t in zip(*self.boundingBox()))
         # go through my cells and return the minimum change along any axis
         return min(
-            self.scale(idx=idx, cell=cell, dim=len(self.shape)-1, inf=inf)
-            for idx, cell in enumerate(self))
-
+            self.scale(idx=idx, cell=cell, dim=len(self.shape) - 1, inf=inf)
+            for idx, cell in enumerate(self)
+        )
 
     # meta-methods
     def __init__(self, *args, **kwds):
@@ -138,20 +125,19 @@ class CPGrid(Grid):
         # all done
         return
 
-
     # implementation details
     def scale(self, idx, cell, dim, inf):
         """
         Compute the smallest edge in {cell}
         """
         # compute half the number of points in the cell
-        l = len(cell)//2
+        l = len(cell) // 2
         # split the cell in two
         top = cell[:l]
         bottom = cell[l:]
 
         # compute the minimum of change along the {dim} axis
-        h = min(abs(t[dim] - b[dim]) for t,b in zip(top, bottom))
+        h = min(abs(t[dim] - b[dim]) for t, b in zip(top, bottom))
 
         # guard against slivers
         if h == 0:
@@ -166,8 +152,7 @@ class CPGrid(Grid):
             return h
 
         # otherwise return the minimum of my scale and whatever happens in the other dimensions
-        return min(h, self.scale(idx, top, dim-1, inf), self.scale(idx, bottom, dim-1, inf))
-
+        return min(h, self.scale(idx, top, dim - 1, inf), self.scale(idx, bottom, dim - 1, inf))
 
     # debugging
     def verify(self):
@@ -176,10 +161,12 @@ class CPGrid(Grid):
         """
         # compute the size implied by my shape
         size = 1
-        for axis in self.shape: size *= axis
+        for axis in self.shape:
+            size *= axis
         # check the length
         assert len(self) == size, "wrong size: length: {}, computed size: {}".format(
-            len(self), size)
+            len(self), size
+        )
 
         # my dimension
         dim = len(self.shape)
@@ -198,7 +185,8 @@ class CPGrid(Grid):
                 d = len(point)
                 # points of the correct dimension
                 assert d == dim, "cell {}, point {}: wrong dimension: {}, not {}".format(
-                    i, p, d, dim)
+                    i, p, d, dim
+                )
 
         # all done
         return

@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -21,11 +20,11 @@ def test():
         """
         A table of cities
         """
+
         # the fields
         id = pyre.db.int().primary()
         name = pyre.db.str()
         state = pyre.db.str(maxlen=2)
-
 
     # declare a simple table
     class Weather(pyre.db.table, id="weather"):
@@ -58,8 +57,8 @@ def test():
         "  low INTEGER DEFAULT 0,",
         "  high INTEGER DEFAULT 0,",
         "  precipitation DOUBLE PRECISION DEFAULT 0.0",
-        ");"
-        )
+        ");",
+    )
     # all done
     return Weather, City
 

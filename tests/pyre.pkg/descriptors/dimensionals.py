@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -22,7 +21,7 @@ def test():
     # casts
     # successful
     assert m == descriptor.coerce("meter")
-    assert 9.81*kg*m/s**2 == descriptor.coerce("9.81*kg*m/s**2")
+    assert 9.81 * kg * m / s**2 == descriptor.coerce("9.81*kg*m/s**2")
 
     # failures
     try:

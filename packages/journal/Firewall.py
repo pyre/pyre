@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -25,10 +26,8 @@ class Firewall(Channel, active=True, fatal=True):
     active before conducting them.
     """
 
-
     # types
     from .exceptions import FirewallError
-
 
     # implementation details
     def record(self):
@@ -40,9 +39,8 @@ class Firewall(Channel, active=True, fatal=True):
         # return the exception that would have been raised if i were fatal
         return self.complaint()
 
-
     # constants
-    severity = "firewall"       # the channel severity
+    severity = "firewall"  # the channel severity
     fatalError = FirewallError  # the exception i raise when i'm fatal
 
 

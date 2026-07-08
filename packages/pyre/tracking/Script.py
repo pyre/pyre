@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # declaration
@@ -14,7 +13,6 @@ class Script:
     introspection
     """
 
-
     # meta methods
     def __init__(self, source, line=None, function=None):
         # save my info
@@ -24,18 +22,14 @@ class Script:
         # all done
         return
 
-
     def __str__(self):
-        text = [
-            "file={!r}".format(str(self.source))
-            ]
+        text = ["file={!r}".format(str(self.source))]
         if self.line:
             text.append("line={.line!r}".format(self))
         if self.function:
             text.append("function={.function!r}".format(self))
 
         return ", ".join(text)
-
 
     # implementation details
     __slots__ = "source", "line", "function"

@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # superclass
@@ -17,15 +16,12 @@ class Selector(records.templater):
     the corresponding SELECT expressions
     """
 
-
     # types
     from .Schemer import Schemer as pyre_schemer
     from .FieldReference import FieldReference as fieldReference
 
-
     # data
-    pyre_reserved = {"where", "group", "order"} # SQL keywords that can't be used as field names
-
+    pyre_reserved = {"where", "group", "order"}  # SQL keywords that can't be used as field names
 
     # meta-methods
     @classmethod
@@ -36,7 +32,8 @@ class Selector(records.templater):
         # chain up
         attributes = super().__prepare__(name, bases, **kwds)
         # if this is an internal class, do no more
-        if hidden: return attributes
+        if hidden:
+            return attributes
 
         # storage for the table aliases
         aliases = {}
@@ -57,7 +54,8 @@ class Selector(records.templater):
         # to get access to them
         for base in bases:
             # skip bases that are not queries
-            if not isinstance(base, cls): continue
+            if not isinstance(base, cls):
+                continue
             # queries contribute their aliased tables to my attributes
             attributes.update(base.pyre_tables)
 
@@ -67,12 +65,12 @@ class Selector(records.templater):
         # return the attribute container
         return attributes
 
-
     def __new__(cls, name, bases, attributes, hidden=False, **kwds):
         # chain up
         query = super().__new__(cls, name, bases, attributes, **kwds)
         # if this is an internal class, do no more
-        if hidden: return query
+        if hidden:
+            return query
 
         # pile of tables referenced by this query
         tables = {}
@@ -80,7 +78,8 @@ class Selector(records.templater):
         # go through the superclasses
         for base in reversed(query.__mro__):
             # narrow the search down to queries
-            if not isinstance(base, cls): continue
+            if not isinstance(base, cls):
+                continue
             # collect the table references
             tables.update(base.pyre_tables)
 

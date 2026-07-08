@@ -1,4 +1,5 @@
-#! /usr/bin/env python3
+#!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -17,6 +18,7 @@ def create_instances():
     """
     Verify that extent aware classes track their instances correctly
     """
+
     # make an extent aware class
     class Base(metaclass=Extent):
         """
@@ -52,8 +54,8 @@ def create_instances():
     l2 = Leaf()
 
     # verify the extents
-    assert set(Base.pyre_extent) == { b1, b2, d1, d2 }
-    assert set(Root.pyre_extent) == { r1, r2, l1, l2 }
+    assert set(Base.pyre_extent) == {b1, b2, d1, d2}
+    assert set(Root.pyre_extent) == {r1, r2, l1, l2}
 
     # all done
     return Base, Derived, Root, Leaf
@@ -84,7 +86,7 @@ def test():
 
 
 # main
-if __name__ =="__main__":
+if __name__ == "__main__":
     # run the test
     test()
 

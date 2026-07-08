@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -15,18 +14,19 @@ Verify that the metadata associated with node are maintained properly
 def test():
     # support
     import pyre.primitives
+
     # my package
     import pyre.filesystem
 
     # build a virtual filesystem
     root = pyre.filesystem.virtual()
     # and a couple of nodes
-    root['home/users'] = root.folder()
-    root['home/users/mga'] = root.folder()
+    root["home/users"] = root.folder()
+    root["home/users/mga"] = root.folder()
 
     # check their uris
-    assert str(root['home/users'].uri) == '/home/users'
-    assert str(root['home/users/mga'].uri) == '/home/users/mga'
+    assert str(root["home/users"].uri) == "/home/users"
+    assert str(root["home/users/mga"].uri) == "/home/users/mga"
 
     # all done
     return root

@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -18,6 +19,5 @@ from .Python import Python as python
 
 # language configuration table
 from .Table import Table as table
-
 
 # end of file

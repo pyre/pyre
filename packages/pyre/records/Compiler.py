@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # declaration
@@ -13,10 +12,8 @@ class Compiler:
     measures and derivations
     """
 
-
     # types
     from ..calc.Node import Node as node
-
 
     # meta-methods
     def __call__(self, record, source, **kwds):
@@ -36,7 +33,6 @@ class Compiler:
         # all done
         return
 
-
     # implementation details
     def onDescriptor(self, source, cache, descriptor):
         """
@@ -55,7 +51,6 @@ class Compiler:
         # and make it available
         return node
 
-
     def onOperator(self, source, cache, operator):
         """
         Handler for derivations
@@ -71,13 +66,14 @@ class Compiler:
                 # by processing
                 op.identify(authority=self, cache=cache, source=source)
                 # each operand
-                for op in operator.operands)
+                for op in operator.operands
+            )
             # make an operator node
-            node = self.node.operator(evaluator=operator.evaluator,
-                                      postprocessor=operator.process, operands=operands)
+            node = self.node.operator(
+                evaluator=operator.evaluator, postprocessor=operator.process, operands=operands
+            )
         # and make it available
         return node
-
 
     def onLiteral(self, source, cache, literal):
         """

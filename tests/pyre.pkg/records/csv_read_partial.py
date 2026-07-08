@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -30,7 +29,7 @@ def test():
         ("4003", 75, "kiwis"),
         ("4004", 50, "lemons"),
         ("4005", 50, "oranges"),
-        ]
+    ]
 
     # create the reader
     csv = pyre.records.csv()

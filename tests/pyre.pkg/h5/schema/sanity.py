@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -13,6 +14,7 @@ Sanity check: verify that the package is accessible
 def test():
     # verify access to the package
     import pyre.h5.schema
+
     # all done
     return
 

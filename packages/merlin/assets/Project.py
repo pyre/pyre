@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -12,9 +13,7 @@ from .Asset import Asset
 
 
 # class declaration
-class Project(
-    Asset, family="merlin.assets.project", implements=merlin.protocols.assets.project
-):
+class Project(Asset, family="merlin.assets.project", implements=merlin.protocols.assets.project):
     """
     A high level container of assets
     """

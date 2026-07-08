@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -21,7 +20,8 @@ def test():
     # set it to some value
     v1.fill(value=2)
     # verify it happened
-    for e in v1: assert e == 2
+    for e in v1:
+        assert e == 2
 
     # make and initialize another vector
     v2 = gsl.vector(shape=100).zero()

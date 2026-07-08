@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # metaclass
@@ -26,13 +25,11 @@ class Chart(metaclass=Surveyor):
     subclasses for more details.
     """
 
-
     # public data
     # class attributes, common to all instances of a given chart
-    pyre_sheets = None # map of local aliases to sheets
-    pyre_dimensions = None # the complete list of my dimensions
-    pyre_localDimensions = None # the locally declared ones
-
+    pyre_sheets = None  # map of local aliases to sheets
+    pyre_dimensions = None  # the complete list of my dimensions
+    pyre_localDimensions = None  # the locally declared ones
 
     # interface
     def pyre_filter(self, **kwds):
@@ -45,7 +42,6 @@ class Chart(metaclass=Surveyor):
         bins = (getattr(self, name)[value] for name, value in kwds.items())
         # build and return the restriction
         return set.intersection(*bins)
-
 
     # meta-methods
     def __init__(self, sheet, **kwds):

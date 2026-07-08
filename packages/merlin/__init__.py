@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -7,7 +8,6 @@
 """
 merlin is a configuration management tool
 """
-
 
 # import and publish pyre symbols
 from pyre import (

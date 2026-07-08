@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -25,17 +24,17 @@ def test():
         shipping = pyre.records.float()
         margin = pyre.records.float()
         # a derived quantity
-        price = production*(1 + overhead/100 + margin/100) + shipping
+        price = production * (1 + overhead / 100 + margin / 100) + shipping
 
     # build the target tuple
     target = [
-        ("4000", "tomatoes", 2.95, 5, .2, 50, 2.95*(1+.05+.5)+.2),
-        ("4001", "peppers", 0.35, 15, .1, 25, .35*(1+.15+.25)+.1),
-        ("4002", "grapes", 1.65, 15, .15, 15, 1.65*(1+.15+.15)+.15),
-        ("4003", "kiwis", 0.95, 7, .15, 75, .95*(1+.07+.75)+.15),
-        ("4004", "lemons", 0.50, 4, .25, 50, .5*(1+.04+.5)+.25),
-        ("4005", "oranges", 0.50, 4, .25, 50, .5*(1+.04+.5)+.25),
-        ]
+        ("4000", "tomatoes", 2.95, 5, 0.2, 50, 2.95 * (1 + 0.05 + 0.5) + 0.2),
+        ("4001", "peppers", 0.35, 15, 0.1, 25, 0.35 * (1 + 0.15 + 0.25) + 0.1),
+        ("4002", "grapes", 1.65, 15, 0.15, 15, 1.65 * (1 + 0.15 + 0.15) + 0.15),
+        ("4003", "kiwis", 0.95, 7, 0.15, 75, 0.95 * (1 + 0.07 + 0.75) + 0.15),
+        ("4004", "lemons", 0.50, 4, 0.25, 50, 0.5 * (1 + 0.04 + 0.5) + 0.25),
+        ("4005", "oranges", 0.50, 4, 0.25, 50, 0.5 * (1 + 0.04 + 0.5) + 0.25),
+    ]
 
     # create the reader
     csv = pyre.records.csv()

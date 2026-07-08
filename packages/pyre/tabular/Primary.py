@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # super class
@@ -17,7 +16,6 @@ class Primary(Column):
     distinct and can be used as an index into the sheet
     """
 
-
     # interface
     def refresh(self):
         """
@@ -28,7 +26,6 @@ class Primary(Column):
         # all done
         return self
 
-
     # meta-methods
     def __init__(self, **kwds):
         # chain up
@@ -38,7 +35,6 @@ class Primary(Column):
         # all done
         return
 
-
     def __getitem__(self, value):
         """
         Retrieve the sheet row that contains {value} in my column
@@ -47,7 +43,6 @@ class Primary(Column):
         row = self.rowmap[value]
         # and return the associated record
         return self.sheet.pyre_data[row]
-
 
     # implementation details
     def prime(self):

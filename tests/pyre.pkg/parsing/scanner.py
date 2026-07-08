@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
 Build and test a simple tokenizer
 """
+
 
 def test():
     import pyre.parsing
@@ -19,9 +19,9 @@ def test():
 
     class Simple(pyre.parsing.scanner):
         """a simple scanner"""
+
         comment = pyre.parsing.token(COMMENT)
         separator = pyre.parsing.token(SEPARATOR)
-
 
     # access the token base class
     from pyre.parsing.Token import Token
@@ -30,11 +30,13 @@ def test():
     assert issubclass(Simple.comment, Token)
     assert issubclass(Simple.separator, Token)
     # check that the tokenizer was built correctly
-    assert Simple.pyre_tokenizer.pattern == '|'.join([
-        "(?P<comment>#)",
-        "(?P<separator>:)",
-        "(?P<whitespace>\s+)",
-        ])
+    assert Simple.pyre_tokenizer.pattern == "|".join(
+        [
+            "(?P<comment>#)",
+            "(?P<separator>:)",
+            "(?P<whitespace>\s+)",
+        ]
+    )
 
     # and return the class record
     return Simple

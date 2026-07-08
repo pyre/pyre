@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -58,9 +59,7 @@ class Builder(BaseBuilder, family="merlin.builders.flow"):
             # complain
             channel.line(f"could not anchor '{path}'")
             channel.line(f"crumbs: {', '.join(reversed(pile))}")
-            channel.line(
-                f"note: this workflow is compromised; please file an issue on github"
-            )
+            channel.line(f"note: this workflow is compromised; please file an issue on github")
             # and flush
             channel.log()
             # just in case firewalls aren't fatal, bail
@@ -187,9 +186,7 @@ class Builder(BaseBuilder, family="merlin.builders.flow"):
         # and my index
         index = self.index
         # build the directory asset
-        prefixDir = merlin.assets.folder(
-            name=str(prefixPath), node=prefixFS, path=prefixPath
-        )
+        prefixDir = merlin.assets.folder(name=str(prefixPath), node=prefixFS, path=prefixPath)
         # add it to the flow
         flow.products.add(prefixDir)
         # and index it
@@ -217,16 +214,10 @@ class Builder(BaseBuilder, family="merlin.builders.flow"):
                 channel = journal.error("merlin.builder.mkdir")
                 # complain
                 channel.line(f"could not anchor '{path}'")
-                channel.line(
-                    f"while building a workflow for '{name}' in the prefix layout"
-                )
+                channel.line(f"while building a workflow for '{name}' in the prefix layout")
                 channel.line(f"with value '{relpath}' from {locator}")
-                channel.line(
-                    f"when a directory asset for '/prefix' should have been found"
-                )
-                channel.line(
-                    f"note: this workflow is compromised; please file an issue on github"
-                )
+                channel.line(f"when a directory asset for '/prefix' should have been found")
+                channel.line(f"note: this workflow is compromised; please file an issue on github")
                 # and flush
                 channel.log()
 
@@ -272,9 +263,7 @@ class Builder(BaseBuilder, family="merlin.builders.flow"):
         # and my product index
         index = self.index
         # make a directory flow node that refers to this location
-        stageDir = merlin.assets.folder(
-            name=str(stagePath), node=stageFS, path=stagePath
-        )
+        stageDir = merlin.assets.folder(name=str(stagePath), node=stageFS, path=stagePath)
         # add it to the flow
         flow.products.add(stageDir)
         # and index it

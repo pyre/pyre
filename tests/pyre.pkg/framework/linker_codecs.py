@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -14,11 +13,12 @@ Exercise the linker
 
 def test():
     import pyre
+
     # get the linker
     linker = pyre.executive.linker
 
     # check the registered codecs
-    assert tuple(linker.schemes.keys()) == ('import', 'vfs', 'file')
+    assert tuple(linker.schemes.keys()) == ("import", "vfs", "file")
 
     # all done
     return linker

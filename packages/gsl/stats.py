@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 """
 Support for the gsl_stats interface
 """
@@ -20,11 +19,13 @@ def correlation(x, y):
     # compute and return the result
     return gsl.stats_correlation(x.data, y.data)
 
+
 def covariance(x, y):
     """
     Compute the covariance of two vectors
     """
     # compute and return the result
     return gsl.stats_covariance(x.data, y.data)
+
 
 # end of file

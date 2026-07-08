@@ -1,13 +1,13 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # externals
 from . import gsl
+
 # superclass
 from .Matrix import Matrix
 
@@ -17,7 +17,6 @@ class MatrixView(Matrix):
     """
     A view into the data of another matrix
     """
-
 
     # meta-methods
     def __init__(self, matrix, start, shape, **kwds):
@@ -33,10 +32,9 @@ class MatrixView(Matrix):
         # all done
         return
 
-
     # private data
-    matrix = None # a reference to the matrix instance i'm viewing
-    capsule = None # the capsule with the pointer to the view object
+    matrix = None  # a reference to the matrix instance i'm viewing
+    capsule = None  # the capsule with the pointer to the view object
 
 
 # end of file

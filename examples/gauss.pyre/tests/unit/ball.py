@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -25,11 +24,11 @@ def test():
     assert ball.measure() == π
 
     # set up some interior points
-    interior = [(0,0), (1,0), (0,1), (-1,0), (0,-1)]
+    interior = [(0, 0), (1, 0), (0, 1), (-1, 0), (0, -1)]
     assert len(list(ball.contains(interior))) == len(interior)
 
     # set up some exterior points
-    exterior = [(2,0), (0,2), (-2,0), (0,-2)]
+    exterior = [(2, 0), (0, 2), (-2, 0), (0, -2)]
     assert len(list(ball.contains(exterior))) == 0
 
     return ball

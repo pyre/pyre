@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -21,17 +20,17 @@ def test():
     # casts
     # successful
     assert () == descriptor.coerce([])
-    assert (1.,) == descriptor.coerce([1])
-    assert (1., 2.) == descriptor.coerce([1,2])
+    assert (1.0,) == descriptor.coerce([1])
+    assert (1.0, 2.0) == descriptor.coerce([1, 2])
     assert () == descriptor.coerce("[]")
     assert () == descriptor.coerce("()")
     assert () == descriptor.coerce("{}")
-    assert (1.,) == descriptor.coerce("[1]")
-    assert (1.,) == descriptor.coerce("{1}")
-    assert (1.,) == descriptor.coerce("(1,)")
-    assert (1., 2.) == descriptor.coerce("[1, 2]")
-    assert (1., 2.) == descriptor.coerce("{1, 2}")
-    assert (1., 2.) == descriptor.coerce("(1, 2)")
+    assert (1.0,) == descriptor.coerce("[1]")
+    assert (1.0,) == descriptor.coerce("{1}")
+    assert (1.0,) == descriptor.coerce("(1,)")
+    assert (1.0, 2.0) == descriptor.coerce("[1, 2]")
+    assert (1.0, 2.0) == descriptor.coerce("{1, 2}")
+    assert (1.0, 2.0) == descriptor.coerce("(1, 2)")
     # failures
     try:
         descriptor.coerce(test)

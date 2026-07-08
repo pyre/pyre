@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -42,9 +41,9 @@ def test():
     assert Weather.pyre_name == "weather"
     # make sure we harvested all the descriptors (and in the right order)
     assert Weather.pyre_localFields == tuple(
-        value.field for value in (
-            Weather.city, Weather.date, Weather.low, Weather.high, Weather.precipitation
-            ))
+        value.field
+        for value in (Weather.city, Weather.date, Weather.low, Weather.high, Weather.precipitation)
+    )
 
     # no inheritance here, so these should match
     assert Weather.pyre_localFields == Weather.pyre_fields

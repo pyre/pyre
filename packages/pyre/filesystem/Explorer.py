@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -14,9 +15,7 @@ class Explorer:
         """
         Traverse the tree rooted at {node}
         """
-        raise NotImplementedError(
-            f"class '{type(self).__name__}' must implement 'explore'"
-        )
+        raise NotImplementedError(f"class '{type(self).__name__}' must implement 'explore'")
 
 
 # end of file

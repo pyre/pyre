@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -96,9 +97,7 @@ class Table(
                 # go through the candidates
                 for cat, langs in categories.items():
                     # and show me which languages claim which category
-                    channel.line(
-                        f"  {cat.category}: from  {', '.join(l.name for l in langs)}"
-                    )
+                    channel.line(f"  {cat.category}: from  {', '.join(l.name for l in langs)}")
                 # and flush
                 channel.log()
                 # just in case this firewall is not fatal,

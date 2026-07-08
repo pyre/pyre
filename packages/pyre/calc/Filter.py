@@ -1,10 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
-
 
 
 # class declaration
@@ -12,7 +10,6 @@ class Filter:
     """
     A mix-in class that changes the values of nodes iff they pass its constraints
     """
-
 
     # value management
     def setValue(self, **kwds):
@@ -23,11 +20,11 @@ class Filter:
         # go through all my constraints
         for constraint in self.constraints:
             # if any fail, leave the value unmodified
-            if not constraint(node=self, **kwds): return self
+            if not constraint(node=self, **kwds):
+                return self
 
         # if they all succeed, update the value
         return super().setValue(**kwds)
-
 
     # meta-methods
     def __init__(self, value=None, constraints=None, **kwds):

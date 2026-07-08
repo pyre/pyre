@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # externals
@@ -20,11 +19,9 @@ class Weaver(pyre.component, family="pyre.weaver"):
     # protocols for my traits
     from .Language import Language
 
-
     # public state
     language = Language(default=None)
     language.doc = "the desired output language"
-
 
     # public interface
     @pyre.export

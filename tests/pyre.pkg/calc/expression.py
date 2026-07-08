@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -19,8 +18,8 @@ def test():
     model = pyre.calc.model()
 
     # the nodes
-    p = 80.
-    s = .25*80
+    p = 80.0
+    s = 0.25 * 80
     # register the nodes
     model["production"] = p
     model["shipping"] = s
@@ -35,14 +34,14 @@ def test():
     # print("  price:", model["price"])
     assert model["production"] == p
     assert model["shipping"] == s
-    assert model["cost"] == p+s
-    assert model["price"] == 2*(p+s)
+    assert model["cost"] == p + s
+    assert model["price"] == 2 * (p + s)
 
     # thanks to the indirect references to their operands, expressions get updated values when
     # their dependents change; this is a side effect of the current implementation
 
     # make a change
-    p = 100.
+    p = 100.0
     model["production"] = p
 
     # check again
@@ -53,8 +52,8 @@ def test():
     # print("  price:", model["price"])
     assert model["production"] == p
     assert model["shipping"] == s
-    assert model["cost"] == p+s
-    assert model["price"] == 2*(p+s)
+    assert model["cost"] == p + s
+    assert model["price"] == 2 * (p + s)
 
     return
 

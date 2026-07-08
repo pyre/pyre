@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -36,8 +35,8 @@ def test():
     assert Measurement.pyre_name == "measurement"
     # make sure we harvested all the descriptors (and in the right order)
     assert Measurement.pyre_localFields == tuple(
-        value.field for value in (
-            Measurement.low, Measurement.high, Measurement.precipitation ))
+        value.field for value in (Measurement.low, Measurement.high, Measurement.precipitation)
+    )
     # no inheritance here, so these should match
     assert Measurement.pyre_localFields == Measurement.pyre_fields
 
@@ -63,7 +62,8 @@ def test():
     assert Location.pyre_name == "location"
     # make sure we harvested all the descriptors (and in the right order)
     assert Location.pyre_localFields == tuple(
-        value.field for value in (Location.city, Location.state))
+        value.field for value in (Location.city, Location.state)
+    )
     # no inheritance here, so these should match
     assert Location.pyre_localFields == Location.pyre_fields
 
@@ -86,10 +86,16 @@ def test():
     # print(Weather.pyre_fields)
     # print(tuple(field.name for field in Weather.pyre_fields))
     assert Weather.pyre_fields == tuple(
-        value.field for value in (
+        value.field
+        for value in (
             Weather.date,
-            Weather.city, Weather.state,
-            Weather.low, Weather.high, Weather.precipitation))
+            Weather.city,
+            Weather.state,
+            Weather.low,
+            Weather.high,
+            Weather.precipitation,
+        )
+    )
 
     # all done
     return Measurement, Location, Weather

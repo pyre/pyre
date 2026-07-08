@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # declaration
@@ -12,13 +11,11 @@ class FileRegion:
     A locator that records information about a region of a file
     """
 
-
     # meta methods
     def __init__(self, start, end):
         self.start = start
         self.end = end
         return
-
 
     def __str__(self):
         # start of the region
@@ -40,7 +37,6 @@ class FileRegion:
         text = "file={!r}, from ({}) to ({})".format(str(self.start.source), start, end)
 
         return text
-
 
     # implementation details
     __slots__ = "start", "end"

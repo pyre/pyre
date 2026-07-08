@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -15,22 +14,23 @@ Exercise a C++ weaver
 def test():
     # get the package
     import pyre.weaver
+
     # instantiate a weaver
     weaver = pyre.weaver.weaver(name="sanity")
     weaver.language = "sql"
 
     text = list(weaver.weave())
     assert text == [
-        '-- -*- SQL -*-',
-        '--',
-        '-- Michael A.G. Aïvázis',
-        '-- Orthologue',
-        '-- (c) 1998-2026 All Rights Reserved',
-        '--',
-        '',
-        '',
-        '-- end of file',
-        ]
+        "-- -*- SQL -*-",
+        "--",
+        "-- Michael A.G. Aïvázis",
+        "-- Orthologue",
+        "-- (c) 1998-2026 All Rights Reserved",
+        "--",
+        "",
+        "",
+        "-- end of file",
+    ]
 
     return
 

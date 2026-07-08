@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -18,20 +17,24 @@ def declare():
     # declare a component
     class base(pyre.component, family="sample.base.multi"):
         """a base component"""
+
         common = pyre.properties.str(default="base")
 
     # derive another one from it
     class a1(base, family="sample.a1.multi"):
         """an intermediate component in the hierarchy that doesn't declare a family"""
+
         middle = pyre.properties.str(default="a1")
 
     class a2(base, family="sample.a2.multi"):
         """an intermediate component in the hierarchy that doesn't declare a family"""
+
         common = pyre.properties.str(default="a2")
 
     # and a final one
     class derived(a1, a2, family="sample.derived.multi"):
         """a derived component"""
+
         extra = pyre.properties.str(default="derived")
 
     return base, a1, a2, derived

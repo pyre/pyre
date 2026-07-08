@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -18,6 +17,7 @@ def test():
     # pyre.executive.configurator.dump()
     # get the montecarlo integrator from the gauss package
     import gauss
+
     mc = gauss.integrators.montecarlo(name="mc-π")
 
     # print the state of the integrator
@@ -37,10 +37,11 @@ def test():
     integral = mc.integrate()
     # the correct answer
     from math import pi as π
-    correct = π/4
+
+    correct = π / 4
 
     # check the calculation
-    assert abs(integral - correct)/correct < 1.0e-2
+    assert abs(integral - correct) / correct < 1.0e-2
     # return the integrator
     return mc
 

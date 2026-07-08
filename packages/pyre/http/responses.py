@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -391,9 +392,7 @@ class TooManyRequests(ProtocolError):
     # state
     code = 429
     status = " ".join(filter(None, (line.strip() for line in __doc__.splitlines())))
-    description = (
-        "The user has sent too many requests in a given amount of time (rate limiting)"
-    )
+    description = "The user has sent too many requests in a given amount of time (rate limiting)"
 
 
 class RequestHeaderFieldsTooLarge(ProtocolError):
@@ -405,8 +404,7 @@ class RequestHeaderFieldsTooLarge(ProtocolError):
     code = 431
     status = " ".join(filter(None, (line.strip() for line in __doc__.splitlines())))
     description = (
-        "The server is unwilling to process the request because its header fields "
-        "are too large"
+        "The server is unwilling to process the request because its header fields " "are too large"
     )
 
 

@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -32,9 +33,7 @@ class Library(
         # and a comment to be places above the include of my makefile
         marker = f"the '{library.pyre_name}' rules"
         # chain up
-        yield from super().generate(
-            makefile=makefile, marker=marker, library=library, **kwds
-        )
+        yield from super().generate(makefile=makefile, marker=marker, library=library, **kwds)
         # all done
         return
 
@@ -258,11 +257,7 @@ class Library(
         # form the path to the source
         src = merlin.primitives.path(f"$({name}.ws)") / hpath
         # form the clone location
-        clone = (
-            clone
-            if clone is not None
-            else merlin.primitives.path(f"$({name}.src)") / hpath
-        )
+        clone = clone if clone is not None else merlin.primitives.path(f"$({name}.src)") / hpath
         # if this the gateway header
         if gateway:
             # export it to the root of the scope
@@ -319,9 +314,7 @@ class Library(
         # form the clone location
         clone = clone or (merlin.primitives.path(f"$({name}.src)") / hpath)
         # build the object module path
-        obj = merlin.primitives.path(f"$({name}.build)") / host.object(
-            stem="~".join(hpath)
-        )
+        obj = merlin.primitives.path(f"$({name}.build)") / host.object(stem="~".join(hpath))
         # make a tag
         tag = root / hpath
 
@@ -337,9 +330,7 @@ class Library(
         # clone
         yield from self._clone(src=src, clone=clone, tag=tag, **kwds)
         # compiler
-        yield from self._compile(
-            lib=name, language=language, clone=clone, obj=obj, tag=tag, **kwds
-        )
+        yield from self._compile(lib=name, language=language, clone=clone, obj=obj, tag=tag, **kwds)
 
         # all done
         return
@@ -538,9 +529,7 @@ class Library(
             yield f"{name}.assets:: {name}.headers"
             yield ""
             # export the headers
-            yield renderer.commentLine(
-                f"publish the target that exports the public headers"
-            )
+            yield renderer.commentLine(f"publish the target that exports the public headers")
             yield f"{name}.headers: $({name}.exported)"
             yield ""
 
@@ -555,9 +544,7 @@ class Library(
             yield f"\t@$(mkdirp) $@"
             yield ""
             # entry point for it
-            yield renderer.commentLine(
-                f"publish the target that creates the {name} build stage"
-            )
+            yield renderer.commentLine(f"publish the target that creates the {name} build stage")
             yield f"{name}.build: | $({name}.build)"
             yield ""
 
@@ -566,15 +553,11 @@ class Library(
             yield f"{name}.assets:: {name}.archive"
             yield ""
             # entry point to build it
-            yield renderer.commentLine(
-                f"publish the target that builds the {name} archive"
-            )
+            yield renderer.commentLine(f"publish the target that builds the {name} archive")
             yield f"{name}.archive: $({name}.archive)"
             yield ""
             # entry point to build its objects
-            yield renderer.commentLine(
-                f"publish the target that builds the {name} object modules"
-            )
+            yield renderer.commentLine(f"publish the target that builds the {name} object modules")
             yield f"{name}.objects: $({name}.objects)"
             yield ""
 

@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -15,6 +16,5 @@ from .Merlin import Merlin as merlin
 
 # the legacy builder
 from .MM import MM as mm
-
 
 # end of file

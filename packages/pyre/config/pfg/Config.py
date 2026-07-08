@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # my superclass
@@ -16,10 +15,8 @@ class Config(Codec):
     This package contains the implementation of the {pfg} reader and writer
     """
 
-
     # constants
     encoding = "pfg"
-
 
     # interface
     @classmethod
@@ -29,6 +26,7 @@ class Config(Codec):
         """
         # get the parser factory
         from .Parser import Parser
+
         # make a parser
         parser = Parser()
         # harvest the configuration events
@@ -41,7 +39,6 @@ class Config(Codec):
             return configuration
         # otherwise, throw away the harvested events
         return []
-
 
 
 # end of file

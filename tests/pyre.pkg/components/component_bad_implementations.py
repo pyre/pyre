@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -14,29 +13,37 @@ Verify that the framework detects components that do not implement their obligat
 # acccess to the parts
 import pyre
 
+
 # declare an interface
 class protocol(pyre.protocol):
     """a simple protocol"""
+
     # properties
     name = pyre.properties.str(default="my name")
+
     # behaviors
     @pyre.provides
     def say(self):
         """say my name"""
 
+
 # wrap the component declarations in functions so I can control when the exceptions get raised
+
 
 def badImplementationSpec():
     class badspec(pyre.component, implements=1):
         """bad implementation specification: not a Protocol subclass"""
+
     return badspec
 
 
 def missingProperty():
     class missing(pyre.component, implements=protocol):
         """missing property: doesn't have {name}"""
+
     # properties
     oops = pyre.properties.str(default="my name")
+
     # behaviors
     @pyre.export
     def say(self):
@@ -48,8 +55,10 @@ def missingProperty():
 def missingBehavior():
     class missing(pyre.component, implements=protocol):
         """missing behavior: doesn't have {do}"""
+
     # properties
     name = pyre.properties.str(default="my name")
+
     # behaviors
     @pyre.export
     def do(self):
@@ -61,8 +70,10 @@ def missingBehavior():
 def noExport():
     class missing(pyre.component, implements=protocol):
         """missing behavior decorator"""
+
     # properties
     name = pyre.properties.str(default="my name")
+
     # behaviors
     def say(self):
         """say my name"""

@@ -1,13 +1,13 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # externals
 import pyre
+
 # superclass
 from .Server import Server
 
@@ -20,7 +20,6 @@ class Postgres(Server, family="pyre.db.server.postgres"):
 
     # exceptions
     from pyre.db.exceptions import OperationalError
-
 
     # public state
     database = pyre.properties.str(default="postgres")
@@ -38,7 +37,6 @@ class Postgres(Server, family="pyre.db.server.postgres"):
     quiet = pyre.properties.bool(default=True)
     quiet.doc = "control whether certain postgres informationals are shown"
 
-
     # interface
     @pyre.export
     def attach(self):
@@ -46,19 +44,23 @@ class Postgres(Server, family="pyre.db.server.postgres"):
         Connect to the database
         """
         # if i have an existing connection to the back end, do nothing
-        if self.connection is not None: return
+        if self.connection is not None:
+            return
 
         # otherwise, build the connection specification string
         spec = [
             # the name of the database is required
-            ['dbname', self.database]
-            ]
+            ["dbname", self.database]
+        ]
         # the others are optional, depending on how the database is configured
-        if self.username is not None: spec.append(['user', self.username])
-        if self.password is not None: spec.append(('password', self.password))
-        if self.application is not None: spec.append(('application_name', self.application))
+        if self.username is not None:
+            spec.append(["user", self.username])
+        if self.password is not None:
+            spec.append(("password", self.password))
+        if self.application is not None:
+            spec.append(("application_name", self.application))
         # put it all together
-        spec = ' '.join('='.join(entry) for entry in spec)
+        spec = " ".join("=".join(entry) for entry in spec)
 
         # establish the connection
         self.connection = self.postgres.connect(spec)
@@ -71,7 +73,6 @@ class Postgres(Server, family="pyre.db.server.postgres"):
         # all done
         return self
 
-
     @pyre.export
     def detach(self):
         """
@@ -82,7 +83,8 @@ class Postgres(Server, family="pyre.db.server.postgres"):
         uncommitted changes will be lost
         """
         # if i don't have an existing connection to the back end, do nothing
-        if self.connection is None: return
+        if self.connection is None:
+            return
 
         # otherwise, close the connection
         status = self.postgres.disconnect(self.connection)
@@ -92,7 +94,6 @@ class Postgres(Server, family="pyre.db.server.postgres"):
         # and return the status
         return status
 
-
     @pyre.export
     def execute(self, *sql):
         """
@@ -100,7 +101,6 @@ class Postgres(Server, family="pyre.db.server.postgres"):
         """
         # assemble the command and pass it on to the connection
         return self.postgres.execute(self.connection, "\n".join(sql))
-
 
     # meta methods
     def __new__(cls, **kwds):
@@ -111,7 +111,6 @@ class Postgres(Server, family="pyre.db.server.postgres"):
         # chain up
         return super().__new__(cls, **kwds)
 
-
     # context manager interface
     def __enter__(self):
         """
@@ -121,7 +120,6 @@ class Postgres(Server, family="pyre.db.server.postgres"):
         self.execute(*self.sql.transaction())
         # and hand me back to the caller
         return self
-
 
     def __exit__(self, exc_type, exc_instance, exc_traceback):
         """
@@ -140,11 +138,9 @@ class Postgres(Server, family="pyre.db.server.postgres"):
         # body of the {with} statement
         return False
 
-
     # implementation details
-    postgres = None # the handle to the extension module
-    connection = None # the handle to the session with the back-end
-
+    postgres = None  # the handle to the extension module
+    connection = None  # the handle to the session with the back-end
 
     # helper routine to initialize the extension module
     @classmethod
@@ -154,11 +150,13 @@ class Postgres(Server, family="pyre.db.server.postgres"):
 
         # pull in the {NULL} object rep
         from . import null
+
         # register it with the extension
         postgres.registerNULL(null)
 
         # get hold of the standard compliant exception hierarchy
         from . import exceptions
+
         # register the exception hierarchy with the module so that the exceptions it raises are
         # subclasses of the ones defined in pyre.db
         postgres.registerExceptions(exceptions)

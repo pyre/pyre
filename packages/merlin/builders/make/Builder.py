@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -56,9 +57,7 @@ class Builder(Builder, Generator, family="merlin.builders.make"):
         # build the makefile path
         makefile = stage / self.makefile
         # generate the makefiles
-        self.generate(
-            plexus=plexus, builder=self, stage=stage, makefile=makefile, **kwds
-        )
+        self.generate(plexus=plexus, builder=self, stage=stage, makefile=makefile, **kwds)
 
         # make a channel
         channel = journal.help("merlin.builders.make")

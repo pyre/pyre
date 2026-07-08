@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # superclass
@@ -15,7 +14,6 @@ class Set(Constraint):
     """
     Check whether the candidate is a member of a given set
     """
-
 
     # interface
     def validate(self, value, **kwds):
@@ -29,7 +27,6 @@ class Set(Constraint):
         # otherwise, chain up
         return super().validate(value=value, **kwds)
 
-
     # meta-methods
     def __init__(self, *choices, **kwds):
         # chain up
@@ -38,7 +35,6 @@ class Set(Constraint):
         self.choices = set(choices)
         # all done
         return
-
 
     def __str__(self):
         return "a member of {!r}".format(self.choices)

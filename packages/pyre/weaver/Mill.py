@@ -1,17 +1,16 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # access to the pyre package
 import pyre
 
-
 # my ancestors
 from .Indenter import Indenter
+
 # my protocol
 from .Language import Language
 
@@ -22,11 +21,9 @@ class Mill(pyre.component, Indenter, implements=Language):
     The base class for text renderers
     """
 
-
     # types
     # the protocols of my traits
     from .Stationery import Stationery
-
 
     # traits
     stationery = Stationery()
@@ -34,7 +31,6 @@ class Mill(pyre.component, Indenter, implements=Language):
 
     languageMarker = pyre.properties.str()
     languageMarker.doc = "the string to use as the language marker"
-
 
     # interface
     @pyre.export
@@ -45,18 +41,17 @@ class Mill(pyre.component, Indenter, implements=Language):
         # create the header
         yield from self.header()
         # and a blank line
-        yield ''
+        yield ""
 
         # process it
         yield from self.body(**kwds)
         # another blank line
-        yield ''
+        yield ""
 
         # and the footer
         yield from self.footer()
         # all done
         return
-
 
     # the lower level interface
     @pyre.export
@@ -69,7 +64,6 @@ class Mill(pyre.component, Indenter, implements=Language):
         # all done
         return
 
-
     @pyre.export
     def body(self, document=()):
         """
@@ -81,7 +75,6 @@ class Mill(pyre.component, Indenter, implements=Language):
         yield from document
         # all done
         return
-
 
     @pyre.export
     def footer(self):
@@ -97,7 +90,6 @@ class Mill(pyre.component, Indenter, implements=Language):
         # all done
         return
 
-
     # implementation details
     def _header(self):
         """
@@ -108,9 +100,9 @@ class Mill(pyre.component, Indenter, implements=Language):
         # if we have a language marker
         if self.languageMarker:
             # render it
-            yield "-*- {.languageMarker} -*-" .format(self)
+            yield "-*- {.languageMarker} -*-".format(self)
         # a blank, commented line
-        yield ''
+        yield ""
         # render the authors
         yield from stationery.authors
         # render the affiliation
@@ -120,7 +112,7 @@ class Mill(pyre.component, Indenter, implements=Language):
         if stationery.copyright:
             yield stationery.copyright
         # a blank, commented line
-        yield ''
+        yield ""
         # all done
         return
 

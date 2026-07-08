@@ -1,15 +1,16 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # access to the framework
 import pyre
+
 # get the journal
 import journal
+
 # my base class
 from .Executive import Executive
 
@@ -21,13 +22,12 @@ class Script(Executive, family="pyre.shells.script"):
 
     # user configurable state
     # the help markers
-    helpon = pyre.properties.strings(default=['?', 'h', 'help'])
+    helpon = pyre.properties.strings(default=["?", "h", "help"])
     helpon.doc = "the list of markers that indicate the user has asked for help"
 
     # a marker that enables applications to deduce the type of shell that is hosting them
-    model = pyre.properties.str(default='script')
+    model = pyre.properties.str(default="script")
     model.doc = "the programming model"
-
 
     # interface
     @pyre.export

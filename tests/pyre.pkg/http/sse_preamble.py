@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -12,6 +13,7 @@ and the full set of SSE headers, with no {Content-Length} and no body
 
 # the renderer under test
 from pyre.weaver.HTTP import HTTP
+
 # the streaming response it renders
 from pyre.http.EventStream import EventStream
 

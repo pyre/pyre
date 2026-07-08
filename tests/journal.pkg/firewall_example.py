@@ -1,4 +1,5 @@
-#! /usr/bin/env python3
+#!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -35,8 +36,7 @@ def test():
     except channel.FirewallError as error:
         # verify that the description is correct
         assert str(error) == (
-            f"file='{__file__}', line='31', function='test': "
-            "firewall breached; aborting..."
+            f"file='{__file__}', line='31', function='test': " "firewall breached; aborting..."
         )
 
     # all done

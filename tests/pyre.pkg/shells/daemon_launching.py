@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -14,10 +13,10 @@ Instantiate a script
 
 def test():
     # externals
-    import pyre # access the framework
+    import pyre  # access the framework
 
     # declare a trivial application
-    class application(pyre.application, family='shells.application'):
+    class application(pyre.application, family="shells.application"):
         """a sample application"""
 
         @pyre.export
@@ -36,11 +35,10 @@ def test():
             # all done
             return 0
 
-
     # instantiate it
-    app = application(name='μέδουσα')
+    app = application(name="μέδουσα")
     # check that its shell was configured correctly
-    assert app.shell.pyre_name == 'κητώ'
+    assert app.shell.pyre_name == "κητώ"
     # launch it
     status = app.run()
     # check it

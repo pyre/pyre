@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -10,12 +11,10 @@ class Inventory:
     Settings that are shared by all channels of the same name and severity
     """
 
-
     # public data
     active = None  # the activation state of the channel
-    fatal = None   # fatal channels raise exceptions on output
+    fatal = None  # fatal channels raise exceptions on output
     device = None  # the custom output device
-
 
     # interface
     def copy(self, source):

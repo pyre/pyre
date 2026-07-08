@@ -1,18 +1,17 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
 Definitions for all the exceptions raised by this package
 """
 
-
 # pull the exceptions from {algebraic}
 from ..algebraic.exceptions import NodeError, CircularReferenceError
+
 
 # the local ones
 class EvaluationError(NodeError):
@@ -105,9 +104,7 @@ class AliasingError(NodeError):
     description = "both {0.target!r} and {0.alias!r} have existing nodes"
 
     # meta-methods
-    def __init__(
-        self, key, target, alias, targetNode, targetInfo, aliasNode, aliasInfo, **kwds
-    ):
+    def __init__(self, key, target, alias, targetNode, targetInfo, aliasNode, aliasInfo, **kwds):
         # chain up
         super().__init__(**kwds)
         # save the error info

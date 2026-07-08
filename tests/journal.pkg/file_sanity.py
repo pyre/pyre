@@ -1,4 +1,5 @@
-#! /usr/bin/env python3
+#!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -14,6 +15,7 @@ def test():
 
     # get the device
     from journal.File import File
+
     # instantiate
     device = File(path=filename)
 

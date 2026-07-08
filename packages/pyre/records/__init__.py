@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 # externals
 from .. import descriptors
@@ -36,13 +35,14 @@ validator = descriptors.validator
 
 # the base class for field selectors
 from .Selector import Selector as selector
+
 # the record metaclass
 from .Templater import Templater as templater
+
 # access to the record class
 from .Record import Record as record
 
 # data extraction from formatted streams
 from .CSV import CSV as csv
-
 
 # end of file

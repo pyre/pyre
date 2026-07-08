@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -24,9 +25,7 @@ class Project(pyre.protocol, family="pyre.smith.projects"):
     authors = pyre.properties.str(default="[ replace with the list of authors ]")
     authors.doc = "the list of project authors"
 
-    affiliations = pyre.properties.str(
-        default="[ replace with the author affiliations ]"
-    )
+    affiliations = pyre.properties.str(default="[ replace with the author affiliations ]")
     affiliations.doc = "the author affiliations"
 
     span = pyre.properties.str(default="[ replace with the project duration ]")

@@ -1,13 +1,13 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # externals
 import collections.abc
+
 # my base class is from {pyre.schemata}
 from ..schemata.Schema import Schema
 
@@ -19,7 +19,6 @@ class Typed(Schema):
     conversions from external representations to python internal forms.
     """
 
-
     # public data
     # value preprocessors
     converters = ()
@@ -28,16 +27,17 @@ class Typed(Schema):
     # consistency checks
     validators = ()
 
-
     # interface
     def process(self, value, **kwds):
         """
         Walk {value} through the steps from raw to validated
         """
         # {None} is special; leave it alone
-        if value is None: return None
+        if value is None:
+            return None
         # so are string representations of {None}
-        if isinstance(value, str) and value.strip().lower() == "none": return None
+        if isinstance(value, str) and value.strip().lower() == "none":
+            return None
 
         # otherwise, convert
         for converter in self.converters:
@@ -57,7 +57,6 @@ class Typed(Schema):
         # and return the new value
         return value
 
-
     # framework requests
     def bind(self, **kwds):
         """
@@ -73,7 +72,6 @@ class Typed(Schema):
         # chain up
         return super().bind(**kwds)
 
-
     # meta methods
     def __init__(self, **kwds):
         # chain up
@@ -87,14 +85,14 @@ class Typed(Schema):
         # all done
         return
 
-
     # implementation details
     def listify(self, processors):
         """
         Make sure {processors} is an iterable regardless of what the user left behind
         """
         # handle anything empty
-        if not processors: return []
+        if not processors:
+            return []
         # if i have an iterable
         if isinstance(processors, collections.abc.Iterable):
             # turn it into a list

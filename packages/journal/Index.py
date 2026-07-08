@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -9,7 +10,6 @@ class Index(dict):
     """
     A map from the names of channels to their shared inventory
     """
-
 
     # interface
     def lookup(self, name):
@@ -25,7 +25,7 @@ class Index(dict):
         inventory = self.inventoryType()
 
         # cascade: use '.' as the separator
-        separator = '.'
+        separator = "."
         # take the name apart
         fragments = name.split(separator)
         # while there are still part to process
@@ -46,7 +46,6 @@ class Index(dict):
 
         # all done
         return inventory
-
 
     # metamethods
     def __init__(self, inventoryType):

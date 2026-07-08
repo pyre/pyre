@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # externals
@@ -16,7 +15,6 @@ class InputStream:
     """
     A wrapper over input streams that maintains location information
     """
-
 
     # types
     from .exceptions import TokenizationError
@@ -34,11 +32,9 @@ class InputStream:
         Build and return a locator to my current position in my input stream
         """
         # build a file locator
-        marker = pyre.tracking.file(
-            source=self.uri, line=self.line, column=self.column)
+        marker = pyre.tracking.file(source=self.uri, line=self.line, column=self.column)
         # and return it
         return marker
-
 
     # interface
     def match(self, scanner, tokenizer):
@@ -52,7 +48,7 @@ class InputStream:
         # if there is no match
         if not match:
             # build an error descriptor
-            fault = self.TokenizationError(text=self.text[self.column:], locator=self.locator)
+            fault = self.TokenizationError(text=self.text[self.column :], locator=self.locator)
             # and complain
             raise fault
 
@@ -60,7 +56,6 @@ class InputStream:
         self.column = match.end()
         # and return the match
         return match
-
 
     # meta-methods
     def __init__(self, uri, stream, line=0, column=0, **kwds):
@@ -71,7 +66,7 @@ class InputStream:
         # initialize my position
         self.line = line
         self.column = column
-        self.text = ''
+        self.text = ""
         # if the stream is not open in text mode
         if not isinstance(stream, io.TextIOBase):
             # wrap it
@@ -80,7 +75,6 @@ class InputStream:
         self.stream = stream
         # all done
         return
-
 
     # implementation details
     def update(self, client=None):
@@ -101,7 +95,7 @@ class InputStream:
         # if the stream is exhausted
         except StopIteration:
             # treat as a blank line
-            self.text = ''
+            self.text = ""
             # and let the client know
             raise
 

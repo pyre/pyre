@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -19,7 +18,7 @@ def test():
     # set up the model
     model = pyre.calc.model()
 
-    home = '/opt/local'
+    home = "/opt/local"
     model["tools"] = home
     model["bin"] = model.interpolation("{tools}/bin")
     model["lib"] = model.interpolation("{tools}/lib")
@@ -32,9 +31,9 @@ def test():
     # print("  lib: {!r}".format(model["lib"]))
     # print("  include: {!r}".format(model["include"]))
     assert model["tools"] == home
-    assert model["bin"] == os.path.join(home, 'bin')
-    assert model["lib"] == os.path.join(home, 'lib')
-    assert model["include"] == os.path.join(home, 'include')
+    assert model["bin"] == os.path.join(home, "bin")
+    assert model["lib"] == os.path.join(home, "lib")
+    assert model["include"] == os.path.join(home, "include")
 
     return
 

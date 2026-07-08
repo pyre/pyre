@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # triangulated surfaces
@@ -13,6 +12,7 @@ def surface(**kwds):
     """
     # get the factory
     from .Surface import Surface
+
     # make one and return it
     return Surface(**kwds)
 
@@ -24,6 +24,7 @@ def grid(**kwds):
     """
     # get the factory
     from .Grid import Grid
+
     # make on and return it
     return Grid(**kwds)
 
@@ -35,6 +36,7 @@ def cpg(**kwds):
     """
     # get the factory
     from .CPGrid import CPGrid
+
     # make one and return it
     return CPGrid(**kwds)
 
@@ -46,6 +48,7 @@ def mesh(**kwds):
     """
     # get the factory
     from .Mesh import Mesh
+
     # make one and return it
     return Mesh(**kwds)
 
@@ -57,6 +60,7 @@ def field(**kwds):
     """
     # get the factory
     from .Field import Field
+
     # make one and return it
     return Field(**kwds)
 
@@ -68,6 +72,7 @@ def triangulation(**kwds):
     """
     # get the factory
     from .Triangulation import Triangulation
+
     # make one and return it
     return Triangulation(**kwds)
 
@@ -78,7 +83,7 @@ def transfer(grid, fields, mesh):
     Transfer the {fields} defined over a grid to fields defined over the {mesh}
     """
     # initialize the result
-    xfer = { property: [] for property in fields.keys() }
+    xfer = {property: [] for property in fields.keys()}
 
     # get the dimension of the grid
     dim = len(grid.shape)
@@ -88,16 +93,16 @@ def transfer(grid, fields, mesh):
         # get the coordinates of its nodes
         vertices = tuple(mesh.points[node] for node in tet)
         # compute the barycenter
-        bary = tuple(sum(point[i] for point in vertices)/len(vertices) for i in range(dim))
+        bary = tuple(sum(point[i] for point in vertices) / len(vertices) for i in range(dim))
 
         # initialize the search bounds
         imin = [0] * dim
-        imax = list(n-1 for n in grid.shape)
+        imax = list(n - 1 for n in grid.shape)
 
         # as long as the two end points haven't collapsed
         while imin < imax:
             # find the midpoint
-            index = [(high+low)//2 for low, high in zip(imin, imax)]
+            index = [(high + low) // 2 for low, high in zip(imin, imax)]
             # get that cell
             cell = grid[index]
             # get one corner of its bounding box
@@ -117,7 +122,7 @@ def transfer(grid, fields, mesh):
                     imin[d] = index[d]
                     imax[d] = index[d]
                 else:
-                    assert False, 'could not locate grid cell for tet {}'.format(tetid)
+                    assert False, "could not locate grid cell for tet {}".format(tetid)
 
         # ok. we found the index; transfer the fields
         for property, field in fields.items():

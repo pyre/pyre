@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -24,7 +23,7 @@ def test():
     # build a database component
     db = bizbook.pg()
     # check that we are connected to the right database
-    assert db.database == 'bizbook'
+    assert db.database == "bizbook"
     # tell postgres to shut up
     db.execute("SET client_min_messages = warning;")
 

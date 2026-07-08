@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -18,12 +17,14 @@ def test():
     # declare a component
     class raw(pyre.component):
         """the base component"""
+
         number = pyre.properties.int(default=1)
         number.validators = pyre.constraints.isGreater(value=0)
 
     # and another that assigns the validators in an iterable
     class canonical(pyre.component):
         """the base component"""
+
         number = pyre.properties.int(default=1)
         number.validators = (pyre.constraints.isGreater(value=0),)
 

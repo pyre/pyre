@@ -1,4 +1,4 @@
-# -*- python -*-
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -9,6 +9,5 @@
 from .Grid import Grid as grid
 from .Grids import Grids as grids
 from .GeoCoordinates import GeoCoordinates as geoCoordinates
-
 
 # end of file

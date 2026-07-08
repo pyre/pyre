@@ -1,13 +1,13 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # externals
 import os
+
 # framework
 import pyre
 
@@ -19,15 +19,14 @@ class Installation(pyre.component):
     """
 
     # constants
-    category = 'unknown'
+    category = "unknown"
 
     # public state
     version = pyre.properties.str(default="unknown")
-    version.doc = 'the package version'
+    version.doc = "the package version"
 
     prefix = pyre.properties.path()
-    prefix.doc = 'the package installation directory'
-
+    prefix.doc = "the package installation directory"
 
     # public data
     @property
@@ -40,14 +39,13 @@ class Installation(pyre.component):
         # attempt to
         try:
             # split my version into major, minor and the rest
-            major, *rest = version.split('.')
+            major, *rest = version.split(".")
         # if i don't have enough fields
         except ValueError:
             # can't do much
             return version
         # otherwise, assemble the significant part and return it
         return major
-
 
     @property
     def sigver(self):
@@ -59,14 +57,13 @@ class Installation(pyre.component):
         # attempt to
         try:
             # split my version into major, minor and the rest
-            major, minor, *rest = version.split('.')
+            major, minor, *rest = version.split(".")
         # if i don't have enough fields
         except ValueError:
             # can't do much
             return version
         # otherwise, assemble the significant part and return it
-        return '{}.{}'.format(major, minor)
-
+        return "{}.{}".format(major, minor)
 
     # framework hooks
     def pyre_configured(self):
@@ -76,9 +73,9 @@ class Installation(pyre.component):
         # chain up
         yield from super().pyre_configured()
         # if i don't have a good version
-        if self.version == 'unknown':
+        if self.version == "unknown":
             # complain
-            yield 'unknown version'
+            yield "unknown version"
 
         # get my prefix
         prefix = self.prefix
@@ -95,7 +92,6 @@ class Installation(pyre.component):
 
         # all done
         return
-
 
     def pyre_initialized(self):
         """
@@ -127,7 +123,6 @@ class Installation(pyre.component):
 
         # all done
         return
-
 
     # configuration validation
     def verify(self, trait, patterns=(), folders=()):
@@ -178,7 +173,6 @@ class Installation(pyre.component):
         # all done
         return
 
-
     def commonpath(self, folders):
         """
         Find the longest prefix common to the given {folders}
@@ -188,14 +182,12 @@ class Installation(pyre.component):
         # compute and return the longest common prefix
         return os.path.commonpath(folders)
 
-
-    def join(self, folders, prefix=''):
+    def join(self, folders, prefix=""):
         """
         Render the sequence of {folders} as a flat string with each one prefixed by {prefix}
         """
         # splice it all together and return it
         return " ".join("{}{}".format(prefix, folder) for folder in folders)
-
 
     # private data
     _misconfigured = False

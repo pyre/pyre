@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -27,13 +28,12 @@ class Document(Node, metaclass=DTD):
 
     # public data
     # inherited
-    tag = "document" # mark this as the top-level document object
-    root = None # descendants must provide the name of the root element here
-    elements = () # replace with a container with the tag for the top level document element
+    tag = "document"  # mark this as the top-level document object
+    root = None  # descendants must provide the name of the root element here
+    elements = ()  # replace with a container with the tag for the top level document element
     # new
     dtd = None
-    dom = None # the client data structure i will be decorating
-
+    dom = None  # the client data structure i will be decorating
 
     # interface
     def initialize(self, locator):

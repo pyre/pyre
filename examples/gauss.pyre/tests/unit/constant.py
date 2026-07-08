@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -21,9 +20,9 @@ def test():
     const = gauss.functors.constant(name="const")
     const.value = value
     # set up some points
-    points = [0, .25, .5, .75, 1.]
+    points = [0, 0.25, 0.5, 0.75, 1.0]
     # exercise the behavior
-    assert list(const.eval(points)) == [value]*len(points)
+    assert list(const.eval(points)) == [value] * len(points)
     # and return it
     return const
 

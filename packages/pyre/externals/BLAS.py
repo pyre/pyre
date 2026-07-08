@@ -1,26 +1,25 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # access to the framework
 import pyre
+
 # superclass
 from .Library import Library
 
 
 # the blas package manager
-class BLAS(Library, family='pyre.externals.blas'):
+class BLAS(Library, family="pyre.externals.blas"):
     """
     The package manager for BLAS packages
     """
 
     # constants
-    category = 'blas'
-
+    category = "blas"
 
     # support for specific package managers
     @classmethod
@@ -33,27 +32,27 @@ class BLAS(Library, family='pyre.externals.blas'):
         installed = dpkg.installed()
 
         # the ATLAS development packages
-        atlas = 'libatlas-base-dev', 'libatlas-dev'
+        atlas = "libatlas-base-dev", "libatlas-dev"
         # find the missing ones
-        missing = [ pkg for pkg in atlas if pkg not in installed ]
+        missing = [pkg for pkg in atlas if pkg not in installed]
         # if there are no missing ones
         if not missing:
             # hand back a pyre safe name and the list of packages
             yield Atlas.flavor, atlas
 
         # the OpenBLAS development packages
-        openblas = 'libopenblas-dev', 'libopebblas-base'
+        openblas = "libopenblas-dev", "libopebblas-base"
         # find the missing ones
-        missing = [ pkg for pkg in atlas if pkg not in installed ]
+        missing = [pkg for pkg in atlas if pkg not in installed]
         # if there are no missing ones
         if not missing:
             # hand back a pyre safe name and the list of packages
             yield OpenBLAS.flavor, openblas
 
         # the GSL development packages
-        gsl = 'libgsl0-dev',
+        gsl = ("libgsl0-dev",)
         # find the missing ones
-        missing = [ pkg for pkg in atlas if pkg not in installed ]
+        missing = [pkg for pkg in atlas if pkg not in installed]
         # if there are no missing ones
         if not missing:
             # hand back a pyre safe name and the list of packages
@@ -61,7 +60,6 @@ class BLAS(Library, family='pyre.externals.blas'):
 
         # all done
         return
-
 
     @classmethod
     def dpkgPackages(cls, packager):
@@ -74,7 +72,7 @@ class BLAS(Library, family='pyre.externals.blas'):
         versions = Atlas, OpenBLAS, GSLCBLAS
         # go through each one
         for version in versions:
-           # scan through the alternatives
+            # scan through the alternatives
             for name in alternatives:
                 # if it is match
                 if name.startswith(version.flavor):
@@ -83,7 +81,6 @@ class BLAS(Library, family='pyre.externals.blas'):
 
         # out of ideas
         return
-
 
     @classmethod
     def macportsPackages(cls, packager):
@@ -113,33 +110,32 @@ from .LibraryInstallation import LibraryInstallation
 
 
 # the base class
-class Default(LibraryInstallation, family='pyre.externals.blas.default', implements=BLAS):
+class Default(LibraryInstallation, family="pyre.externals.blas.default", implements=BLAS):
     """
     A generic BLAS installation
     """
 
     # constants
-    flavor = 'unknown'
+    flavor = "unknown"
     category = BLAS.category
 
     # public state
     libraries = pyre.properties.strings()
-    libraries.doc = 'the libraries to place on the link line'
+    libraries.doc = "the libraries to place on the link line"
 
 
 # atlas
-class Atlas(Default, family='pyre.externals.blas.atlas'):
+class Atlas(Default, family="pyre.externals.blas.atlas"):
     """
     Atlas BLAS support
     """
 
     # constants
-    flavor = 'atlas'
+    flavor = "atlas"
 
     # public state
     defines = pyre.properties.strings(default="WITH_ATLAS")
     defines.doc = "the compile time markers that indicate my presence"
-
 
     # configuration
     def dpkg(self, packager):
@@ -152,11 +148,11 @@ class Atlas(Default, family='pyre.externals.blas.atlas'):
         self.version, _ = packager.info(package=lib)
 
         # in order to identify my {incdir}, search for the top-level header file
-        header = 'atlas/atlas_buildinfo.h'
+        header = "atlas/atlas_buildinfo.h"
         # find the header
         incdir = packager.findfirst(target=header, contents=packager.contents(package=headers))
         # save it
-        self.incdir = [ incdir ] if incdir else []
+        self.incdir = [incdir] if incdir else []
 
         # in order to identify my {libdir}, search for one of my libraries
         stem = self.flavor
@@ -165,22 +161,21 @@ class Atlas(Default, family='pyre.externals.blas.atlas'):
         # find it
         libdir = packager.findfirst(target=libatlas, contents=packager.contents(package=lib))
         # and save it
-        self.libdir = [ libdir ] if libdir else []
+        self.libdir = [libdir] if libdir else []
         # set my library
         self.libraries = stem
 
         # now that we have everything, compute the prefix
-        self.prefix = self.commonpath(folders=self.incdir+self.libdir)
+        self.prefix = self.commonpath(folders=self.incdir + self.libdir)
         # all done
         return
-
 
     def macports(self, packager):
         """
         Attempt to repair my configuration
         """
         # the name of the macports package
-        package = 'atlas'
+        package = "atlas"
         # attempt to
         try:
             # get the version info
@@ -188,48 +183,47 @@ class Atlas(Default, family='pyre.externals.blas.atlas'):
         # if this fails
         except KeyError:
             # this package is not installed
-            msg = 'the package {!r} is not installed'.format(package)
+            msg = "the package {!r} is not installed".format(package)
             # complain
             raise self.ConfigurationError(configurable=self, errors=[msg])
         # otherwise, grab the package contents
         contents = tuple(packager.contents(package=package))
 
         # in order to identify my {incdir}, search for the top-level header file
-        header = 'atlas/atlas_buildinfo.h'
+        header = "atlas/atlas_buildinfo.h"
         # look for it
         incdir = packager.findfirst(target=header, contents=contents)
         # save it
-        self.incdir = [ incdir ] if incdir else []
+        self.incdir = [incdir] if incdir else []
 
         # in order to identify my {libdir}, search for one of my libraries
-        libatlas = self.pyre_host.staticLibrary('atlas')
+        libatlas = self.pyre_host.staticLibrary("atlas")
         # look for
         libdir = packager.findfirst(target=libatlas, contents=contents)
         # and save it
-        self.libdir = [ libdir ] if libdir else []
+        self.libdir = [libdir] if libdir else []
         # set my library list
-        self.libraries = 'cblas', 'atlas'
+        self.libraries = "cblas", "atlas"
 
         # now that we have everything, compute the prefix
-        self.prefix = self.commonpath(folders=self.incdir+self.libdir)
+        self.prefix = self.commonpath(folders=self.incdir + self.libdir)
 
         # all done
         return
 
 
 # OpenBLAS
-class OpenBLAS(Default, family='pyre.externals.blas.openblas'):
+class OpenBLAS(Default, family="pyre.externals.blas.openblas"):
     """
     OpenBLAS support
     """
 
     # constants
-    flavor = 'openblas'
+    flavor = "openblas"
 
     # public state
     defines = pyre.properties.strings(default="WITH_OPENBLAS")
     defines.doc = "the compile time markers that indicate my presence"
-
 
     # configuration
     def dpkg(self, packager):
@@ -242,11 +236,11 @@ class OpenBLAS(Default, family='pyre.externals.blas.openblas'):
         self.version, _ = packager.info(package=dev)
 
         # in order to identify my {incdir}, search for the top-level header file
-        header = 'openblas/openblas_config.h'
+        header = "openblas/openblas_config.h"
         # find the header
         incdir = packager.findfirst(target=header, contents=packager.contents(package=dev))
         # save it
-        self.incdir = [ incdir ] if incdir else []
+        self.incdir = [incdir] if incdir else []
 
         # in order to identify my {libdir}, search for one of my libraries
         stem = self.flavor
@@ -255,22 +249,21 @@ class OpenBLAS(Default, family='pyre.externals.blas.openblas'):
         # find it
         libdir = packager.findfirst(target=libatlas, contents=packager.contents(package=dev))
         # and save it
-        self.libdir = [ libdir ] if libdir else []
+        self.libdir = [libdir] if libdir else []
         # set my library
         self.libraries = stem
 
         # now that we have everything, compute the prefix
-        self.prefix = self.commonpath(folders=self.incdir+self.libdir)
+        self.prefix = self.commonpath(folders=self.incdir + self.libdir)
         # all done
         return
-
 
     def macports(self, packager):
         """
         Attempt to repair my configuration
         """
         # the name of the macports package
-        package = 'OpenBLAS'
+        package = "OpenBLAS"
         # attempt to
         try:
             # get the version info
@@ -278,48 +271,47 @@ class OpenBLAS(Default, family='pyre.externals.blas.openblas'):
         # if this fails
         except KeyError:
             # this package is not installed
-            msg = 'the package {!r} is not installed'.format(package)
+            msg = "the package {!r} is not installed".format(package)
             # complain
             raise self.ConfigurationError(configurable=self, errors=[msg])
         # otherwise, grab the package contents
         contents = tuple(packager.contents(package=package))
 
         # in order to identify my {incdir}, search for the top-level header file
-        header = 'cblas_openblas.h'
+        header = "cblas_openblas.h"
         # find it
         incdir = packager.findfirst(target=header, contents=contents)
         # and save it
-        self.incdir = [ incdir ] if incdir else []
+        self.incdir = [incdir] if incdir else []
 
         # in order to identify my {libdir}, search for one of my libraries
-        libopenblas = self.pyre_host.dynamicLibrary('openblas')
+        libopenblas = self.pyre_host.dynamicLibrary("openblas")
         # find it
         libdir = packager.findfirst(target=libopenblas, contents=contents)
         # and save it
-        self.libdir = [ libdir ] if libdir else []
+        self.libdir = [libdir] if libdir else []
         # set my library
-        self.libraries = 'openblas'
+        self.libraries = "openblas"
 
         # now that we have everything, compute the prefix
-        self.prefix = self.commonpath(folders=self.incdir+self.libdir)
+        self.prefix = self.commonpath(folders=self.incdir + self.libdir)
 
         # all done
         return
 
 
 # gslcblas
-class GSLCBLAS(Default, family='pyre.externals.blas.gslcblas'):
+class GSLCBLAS(Default, family="pyre.externals.blas.gslcblas"):
     """
     GSL BLAS support
     """
 
     # constants
-    flavor = 'gslcblas'
+    flavor = "gslcblas"
 
     # public state
     defines = pyre.properties.strings(default="WITH_GSLCBLAS")
     defines.doc = "the compile time markers that indicate my presence"
-
 
     # configuration
     def dpkg(self, packager):
@@ -332,11 +324,11 @@ class GSLCBLAS(Default, family='pyre.externals.blas.gslcblas'):
         self.version, _ = packager.info(package=dev)
 
         # in order to identify my {incdir}, search for the top-level header file
-        header = 'gsl/gsl_cblas.h'
+        header = "gsl/gsl_cblas.h"
         # find the header
         incdir = packager.findfirst(target=header, contents=packager.contents(package=dev))
         # save it
-        self.incdir = [ incdir ] if incdir else []
+        self.incdir = [incdir] if incdir else []
 
         # in order to identify my {libdir}, search for one of my libraries
         stem = self.flavor
@@ -345,23 +337,22 @@ class GSLCBLAS(Default, family='pyre.externals.blas.gslcblas'):
         # find it
         libdir = packager.findfirst(target=libgsl, contents=packager.contents(package=dev))
         # and save it
-        self.libdir = [ libdir ] if libdir else []
+        self.libdir = [libdir] if libdir else []
         # set my library
         self.libraries = stem
 
         # now that we have everything, compute the prefix
-        self.prefix = self.commonpath(folders=self.incdir+self.libdir)
+        self.prefix = self.commonpath(folders=self.incdir + self.libdir)
 
         # all done
         return
-
 
     def macports(self, packager):
         """
         Attempt to repair my configuration
         """
         # the name of the macports package
-        package = 'gsl'
+        package = "gsl"
         # attempt to
         try:
             # get the version info
@@ -369,32 +360,32 @@ class GSLCBLAS(Default, family='pyre.externals.blas.gslcblas'):
         # if this fails
         except KeyError:
             # this package is not installed
-            msg = 'the package {!r} is not installed'.format(package)
+            msg = "the package {!r} is not installed".format(package)
             # complain
             raise self.ConfigurationError(configurable=self, errors=[msg])
         # otherwise, grab the package contents
         contents = tuple(packager.contents(package=package))
 
         # in order to identify my {incdir}, search for the top-level header file
-        header = 'gsl/gsl_cblas.h'
+        header = "gsl/gsl_cblas.h"
         # find it
         incdir = packager.findfirst(target=header, contents=contents)
         # and save it
-        self.incdir = [ incdir ] if incdir else []
+        self.incdir = [incdir] if incdir else []
 
         # in order to identify my {libdir}, search for one of my libraries
         stem = self.flavor
         # convert it into the actual file name
-        libgsl = self.pyre_host.dynamicLibrary('gslcblas')
+        libgsl = self.pyre_host.dynamicLibrary("gslcblas")
         # find it
         libdir = packager.findfirst(target=libgsl, contents=contents)
         # and save it
-        self.libdir = [ libdir ] if libdir else []
+        self.libdir = [libdir] if libdir else []
         # set my library
-        self.libraries = 'gslcblas'
+        self.libraries = "gslcblas"
 
         # now that we have everything, compute the prefix
-        self.prefix = self.commonpath(folders=self.incdir+self.libdir)
+        self.prefix = self.commonpath(folders=self.incdir + self.libdir)
 
         # all done
         return

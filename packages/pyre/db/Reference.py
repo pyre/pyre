@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # superclass
@@ -16,7 +15,6 @@ class Reference(Measure):
     Representation of foreign keys
     """
 
-
     @property
     def decl(self):
         """
@@ -25,7 +23,6 @@ class Reference(Measure):
         # my referent knows
         return self.referent.decl
 
-
     # interface
     def sql(self, value):
         """
@@ -33,7 +30,6 @@ class Reference(Measure):
         """
         # my referent knows
         return self.referent.sql(value=value)
-
 
     # markers
     def onDelete(self, action):
@@ -55,7 +51,6 @@ class Reference(Measure):
         self._foreign.update = action
         # and return
         return
-
 
     # meta-methods
     def __init__(self, **kwds):

@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -116,15 +117,11 @@ class Preamble(Fragment):
         # basic colors
         yield ""
         yield renderer.commentLine("basic colors")
-        yield from renderer.set(
-            name="palette.normal", value=renderer.call(func="csi3", args=["0"])
-        )
+        yield from renderer.set(name="palette.normal", value=renderer.call(func="csi3", args=["0"]))
         yield from renderer.set(
             name="palette.black", value=renderer.call(func="csi3", args=["0;30"])
         )
-        yield from renderer.set(
-            name="palette.red", value=renderer.call(func="csi3", args=["0;31"])
-        )
+        yield from renderer.set(name="palette.red", value=renderer.call(func="csi3", args=["0;31"]))
         yield from renderer.set(
             name="palette.green", value=renderer.call(func="csi3", args=["0;32"])
         )
@@ -217,9 +214,7 @@ class Preamble(Fragment):
         yield from renderer.set(
             name="palette.asset", value=renderer.value(var="palette.steel-blue")
         )
-        yield from renderer.set(
-            name="palette.action", value=renderer.value(var="palette.lavender")
-        )
+        yield from renderer.set(name="palette.action", value=renderer.value(var="palette.lavender"))
         yield from renderer.set(
             name="palette.attention", value=renderer.value(var="palette.purple")
         )

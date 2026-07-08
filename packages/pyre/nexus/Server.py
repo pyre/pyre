@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -51,9 +52,7 @@ class Server(pyre.component, implements=Service):
         # accept the connection
         newChannel, peerAddress = channel.accept()
         # log the request
-        self.application.debug.log(
-            f"{channel}: received 'connection' request from {peerAddress}"
-        )
+        self.application.debug.log(f"{channel}: received 'connection' request from {peerAddress}")
 
         # if this is not a valid connection
         if not self.validate(channel=newChannel, address=peerAddress):

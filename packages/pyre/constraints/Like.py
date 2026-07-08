@@ -1,13 +1,13 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # externals
 import re
+
 # superclass
 from .Constraint import Constraint
 
@@ -18,7 +18,6 @@ class Like(Constraint):
     Given a regular expression, a string satisfies this constraint if it matches the regular
     expression
     """
-
 
     # interface
     def validate(self, value, **kwds):
@@ -32,7 +31,6 @@ class Like(Constraint):
         # otherwise, chain up
         return super().validate(value=value, **kwds)
 
-
     # meta-methods
     def __init__(self, regexp, **kwds):
         # chain up
@@ -41,7 +39,6 @@ class Like(Constraint):
         self.regexp = re.compile(regexp)
         # all done
         return
-
 
     def __str__(self):
         return "like {!r}".format(self.regexp.pattern)

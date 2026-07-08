@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # class declaration
@@ -11,7 +10,6 @@ class Dependent:
     """
     Mix-in class that enables a node to be notified when the value of its dependents change
     """
-
 
     # value management
     def setValue(self, value):
@@ -26,7 +24,6 @@ class Dependent:
         self.observe(self.operands)
         # all done
         return self
-
 
     # meta-methods
     def __init__(self, operands, **kwds):

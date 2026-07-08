@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # superclass
@@ -15,7 +14,6 @@ class Validator(Processor):
     """
     A record method decorator that registers this method as a validator of descriptor values
     """
-
 
     # meta-methods
     def __call__(self, method):

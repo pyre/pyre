@@ -1,4 +1,5 @@
-#! /usr/bin/env python3
+#!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -11,8 +12,10 @@ def test():
     """
     # get the renderer
     from journal.Alert import Alert as alert
+
     # the color spaces
     from journal.ANSI import ANSI
+
     # and a channel
     from journal.Warning import Warning as warning
 
@@ -32,12 +35,12 @@ def test():
         "channel": ANSI.x11("light slate gray"),
         "warning": ANSI.x11("orange"),
         "body": "",
-        }
+    }
 
     # instantiate the renderer
     renderer = alert()
     # ask it to do its thing
-    page = '\n'.join(renderer.render(palette=palette, entry=channel.entry))
+    page = "\n".join(renderer.render(palette=palette, entry=channel.entry))
     # show me
     # print(page)
 

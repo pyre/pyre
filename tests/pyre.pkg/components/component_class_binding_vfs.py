@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -16,8 +15,9 @@ def test():
     import pyre
 
     # declare a protocol
-    class task(pyre.protocol, family='a.very.long.family.name'):
+    class task(pyre.protocol, family="a.very.long.family.name"):
         """a protocol"""
+
         @pyre.provides
         def do(self):
             """do something"""
@@ -25,6 +25,7 @@ def test():
     # declare a component
     class worker(pyre.component):
         """a component"""
+
         # job = task(default="vfs:{}/sample/relax".format(pyre.executive.fileserver.STARTUP_DIR))
         job = task(default="sample/relax")
 

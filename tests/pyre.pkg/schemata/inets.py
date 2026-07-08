@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -14,10 +13,7 @@ Exercise the internet address parser
 
 def test():
     # get the package parts
-    from pyre.schemata.INet import (
-        INet as inet,
-        IPv4 as ipv4,
-        Unix as unix)
+    from pyre.schemata.INet import INet as inet, IPv4 as ipv4, Unix as unix
 
     # make one
     inet = inet()

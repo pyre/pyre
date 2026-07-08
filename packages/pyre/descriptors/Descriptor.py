@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # metaclass
@@ -24,10 +23,8 @@ class Descriptor(metaclass=Decorator):
     representations of data.
     """
 
-
     # easy access to the {constraints} package
     from .. import constraints
-
 
     # types
     # variables
@@ -35,7 +32,7 @@ class Descriptor(metaclass=Decorator):
         """Concrete class for representing descriptors"""
 
         # constant
-        category = 'descriptor'
+        category = "descriptor"
 
         # support for graph traversals
         def identify(self, authority, **kwds):
@@ -43,7 +40,6 @@ class Descriptor(metaclass=Decorator):
             Let {authority} know I am a descriptor
             """
             return authority.onDescriptor(descriptor=self, **kwds)
-
 
     # interface
     def bind(self, **kwds):
@@ -53,19 +49,17 @@ class Descriptor(metaclass=Decorator):
         # end of the line; nothing else to do
         return self
 
-
     # standard meta-data
     # a marker that indicates the semantic complexity of my value; typically used to indicate
     # the level of expertise a user should have before mucking about
     level = 0
 
     # declaration of the user intent
-    input = False # my client considers my value as input
-    output = False # my client may adjust my value during its life cycle
+    input = False  # my client considers my value as input
+    output = False  # my client may adjust my value during its life cycle
 
     # indicate whether {None} is an allowed value after configuration is complete
     optional = True
-
 
     # meta-methods
     def __init__(self, optional=optional, input=input, output=output, level=level, **kwds):

@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -12,9 +13,7 @@ from .Installation import Installation
 
 
 # class declaration
-class Host(
-    pyre.component, family="pyre.smith.installations.host", implements=Installation
-):
+class Host(pyre.component, family="pyre.smith.installations.host", implements=Installation):
     """
     Encapsulation of the attributes of a remote host for the project templates
     """

@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -19,6 +18,7 @@ def test():
     # build a simple projection
     class titles(bizbook.db.query, book=bizbook.schema.Book):
         """A short query on the book table"""
+
         id = book.id
         title = book.title
         category = book.category
@@ -35,7 +35,7 @@ def test():
     assert len(result) == 5
     # make sure that only cookbooks got through
     for record in result:
-        assert record.category == 'cookbook'
+        assert record.category == "cookbook"
 
     return db, titles
 

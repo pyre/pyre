@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -17,7 +16,8 @@ def test():
     from pyre.filesystem.Node import Node as node
 
     # fake a filesystem
-    class filesystem: pass
+    class filesystem:
+        pass
 
     # build a node and return it
     return node(filesystem=filesystem())

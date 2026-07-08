@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -17,13 +16,14 @@ def test():
     import pyre
 
     # declare a trivial application
-    class application(pyre.application, family='mpi.application'):
+    class application(pyre.application, family="mpi.application"):
         """a sample application"""
 
         @pyre.export
         def main(self, **kwds):
             # access the package
             import mpi
+
             # get the world communicator
             world = mpi.world
             # print("Hello from {0.rank} of {0.size}".format(world))
@@ -34,7 +34,7 @@ def test():
             return 0
 
     # instantiate it
-    app = application(name='slurm')
+    app = application(name="slurm")
     # attempt to
     try:
         # run it
@@ -42,7 +42,7 @@ def test():
     # if this fails because we don't have slurm
     except FileNotFoundError as error:
         # the name of the slurm submission script
-        sbatch = 'sbatch'
+        sbatch = "sbatch"
         # make sure that we are just missing {sbatch}
         assert error.errno == 2
         assert error.filename == f"{sbatch}"

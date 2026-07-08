@@ -1,4 +1,5 @@
-#! /usr/bin/env python3
+#!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -11,6 +12,7 @@ def test():
     """
     # access the color map
     from journal.ANSI import ANSI
+
     # and the control sequence generator
     from journal.CSI import CSI
 
@@ -19,7 +21,7 @@ def test():
     assert ANSI.misc("normal") == CSI.reset()
 
     # my picks
-    assert ANSI.misc("amber") == CSI.csi24(0xff, 0xbf, 0x00)
+    assert ANSI.misc("amber") == CSI.csi24(0xFF, 0xBF, 0x00)
     assert ANSI.misc("sage") == CSI.csi24(176, 208, 176)
 
     # all done

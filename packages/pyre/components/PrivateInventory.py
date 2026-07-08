@@ -1,14 +1,14 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # externals
 import itertools
 from .. import tracking
+
 # superclass
 from .Inventory import Inventory
 
@@ -21,8 +21,7 @@ class PrivateInventory(Inventory):
     """
 
     # constants
-    key = None # components with private inventories have no keys
-
+    key = None  # components with private inventories have no keys
 
     # slot access
     def setTraitValue(self, trait, factory, value, **kwds):
@@ -38,7 +37,6 @@ class PrivateInventory(Inventory):
         # all done
         return new, old
 
-
     def getTraitValue(self, trait):
         """
         Get the value associated with this {trait} descriptor
@@ -48,14 +46,12 @@ class PrivateInventory(Inventory):
         # return the value, along with empty meta-data
         return slot.value
 
-
     def getTraitLocator(self, trait):
         """
         Retrieve the location of the last assignment for this {trait}
         """
         # private inventories don't track trait meta-data (yet)
         return tracking.unknown()
-
 
     def getTraitPriority(self, trait):
         """
@@ -64,14 +60,12 @@ class PrivateInventory(Inventory):
         # private inventories don't track trait meta-data (yet)
         return None
 
-
     def getSlots(self):
         """
         Return an iterable over the trait value storage
         """
         # that's what i store in my trait map
         return self.traits.values()
-
 
     # support for building component classes and instances
     @classmethod
@@ -97,7 +91,6 @@ class PrivateInventory(Inventory):
         # return the inventory
         return inventory
 
-
     @classmethod
     def initializeInstance(cls, instance, **kwds):
         """
@@ -115,7 +108,6 @@ class PrivateInventory(Inventory):
         # all done
         return
 
-
     @classmethod
     def configureInstance(cls, instance):
         """
@@ -126,7 +118,6 @@ class PrivateInventory(Inventory):
         # all done
         return
 
-
     @classmethod
     def localSlots(cls, component):
         """
@@ -135,12 +126,12 @@ class PrivateInventory(Inventory):
         # go through the traits declared locally in {component}
         for trait in component.pyre_localTraits:
             # skip the non-configurable ones
-            if not trait.isConfigurable: continue
+            if not trait.isConfigurable:
+                continue
             # yield a (trait, slot) pair
             yield trait, trait.classSlot(value=trait.default)
         # all done
         return
-
 
     @classmethod
     def inheritedSlots(cls, component):
@@ -173,8 +164,9 @@ class PrivateInventory(Inventory):
                     # build a reference to it; no need to switch value processors here, since
                     # the type of an inherited trait is determined by the nearest ancestor that
                     # declared it
-                    ref = slot.ref(preprocessor=trait.classSlot.pre,
-                                   postprocessor=trait.classSlot.post)
+                    ref = slot.ref(
+                        preprocessor=trait.classSlot.pre, postprocessor=trait.classSlot.post
+                    )
                     # and yield the trait, reference slot pair
                     yield trait, ref
                 # otherwise
@@ -188,16 +180,16 @@ class PrivateInventory(Inventory):
         # if we ran out of ancestors before we ran out of traits
         else:
             # complain
-            missing = ', '.join(f"'{trait.name}'" for trait in traits)
+            missing = ", ".join(f"'{trait.name}'" for trait in traits)
             msg = f"{component}: could not locate slots for the following traits: {missing}"
             # by accessing the journal package
             import journal
+
             # and raising a firewall, since this is almost certainly a bug
             raise journal.firewall("pyre.components").log(msg)
 
         # otherwise, we are done
         return
-
 
     @classmethod
     def instanceSlots(cls, instance):
@@ -219,7 +211,6 @@ class PrivateInventory(Inventory):
             yield trait, slot
         # all done
         return
-
 
     def __str__(self):
         return f"private inventory at {id(self):#x}"

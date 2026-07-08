@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -10,9 +11,7 @@ import merlin
 
 # publish
 # the LLVM compiler suite
-@merlin.foundry(
-    implements=merlin.protocols.external.compiler, tip="the LLVM compiler suite"
-)
+@merlin.foundry(implements=merlin.protocols.external.compiler, tip="the LLVM compiler suite")
 def llvm():
     """
     The LLVM compiler suite

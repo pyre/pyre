@@ -1,13 +1,13 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # access to the framework
 import pyre
+
 
 # declaration
 class Integrator(pyre.protocol, family="gauss.integrators"):
@@ -31,6 +31,7 @@ class Integrator(pyre.protocol, family="gauss.integrators"):
     def pyre_default(cls, **kwds):
         # use {MonteCarlo} by default
         from .MonteCarlo import MonteCarlo
+
         return MonteCarlo
 
     # interface

@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -17,7 +18,6 @@ class Timer(pyre.patterns.named, metaclass=pyre.patterns.unique):
     time unit conversions
     """
 
-
     # interface
     def start(self):
         """
@@ -36,7 +36,6 @@ class Timer(pyre.patterns.named, metaclass=pyre.patterns.unique):
         # and return it
         return mark
 
-
     def stop(self):
         """
         Stop the timer
@@ -54,7 +53,6 @@ class Timer(pyre.patterns.named, metaclass=pyre.patterns.unique):
         # and return the new adjustment
         return elapsed
 
-
     def reset(self):
         """
         Reset the timer: mark it as inactive and set the accumulated time back to zero
@@ -67,7 +65,6 @@ class Timer(pyre.patterns.named, metaclass=pyre.patterns.unique):
         self.elapsed = 0
         # all done
         return
-
 
     def read(self):
         """
@@ -82,14 +79,12 @@ class Timer(pyre.patterns.named, metaclass=pyre.patterns.unique):
         # and return the total accumulated time
         return self.elapsed + elapsed
 
-
     def sec(self):
         """
         Convert the accumulated time into seconds
         """
         # subclasses must provide
         raise NotImplementedError(f"class '{type(self).__name__}' must provide 'sec'")
-
 
     def ms(self):
         """
@@ -98,14 +93,12 @@ class Timer(pyre.patterns.named, metaclass=pyre.patterns.unique):
         # subclasses must provide
         raise NotImplementedError(f"class '{type(self).__name__}' must provide 'ms'")
 
-
     def us(self):
         """
         Convert the accumulated time into microseconds
         """
         # subclasses must provide
         raise NotImplementedError(f"class '{type(self).__name__}' must provide 'us'")
-
 
     # metamethods
     def __init__(self, **kwds):
@@ -120,11 +113,9 @@ class Timer(pyre.patterns.named, metaclass=pyre.patterns.unique):
         # all done
         return
 
-
     def __bool__(self):
         # check with my status
         return self.active
-
 
     # implementation details
     def clock(self):

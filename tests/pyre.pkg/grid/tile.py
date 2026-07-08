@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -15,10 +14,12 @@ Sanity check: verify that the package is accessible
 def test():
     # externals
     import itertools
+
     # get the package
     import pyre.grid
+
     # set up the tile shape
-    shape = 2,3,4,5
+    shape = 2, 3, 4, 5
     # for every possible layout order
     for layout in itertools.permutations(range(len(shape))):
         # make a tile

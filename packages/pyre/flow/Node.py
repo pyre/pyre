@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -75,9 +76,7 @@ class Node(pyre.component, metaclass=FlowMaster, internal=True):
         Build a handler for my status changes
         """
         # the handler is differentiated based on the type of flow node
-        raise NotImplementedError(
-            f"class '{type(self).__name__}' must override 'pyre_newStatus'"
-        )
+        raise NotImplementedError(f"class '{type(self).__name__}' must override 'pyre_newStatus'")
 
     # debugging support
     def pyre_dump(self, channel, indent=" " * 2, level=0):

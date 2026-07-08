@@ -1,13 +1,13 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # access the framework
 import pyre
+
 # my protocol
 from .Functor import Functor
 
@@ -19,7 +19,7 @@ class Constant(pyre.component, family="gauss.functors.constant", implements=Func
 
     # public state
     value = pyre.properties.float(default=1)
-    value.doc = "the value of the constant functor"""
+    value.doc = "the value of the constant functor" ""
 
     # interface
     @pyre.export
@@ -30,7 +30,8 @@ class Constant(pyre.component, family="gauss.functors.constant", implements=Func
         # local cache of the constant
         value = self.value
         # loop over the points and return my value regardless
-        for point in points: yield value
+        for point in points:
+            yield value
         # all done
         return
 

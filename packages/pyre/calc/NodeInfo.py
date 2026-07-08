@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # declaration
@@ -12,12 +11,10 @@ class NodeInfo:
     The base class for nodal metadata maintained by symbol tables
     """
 
-
     # public data
-    key = None # the hashed version of the symbol name
-    name = None # the string version of the symbol name
-    split = None # the symbol name split on the table separator
-
+    key = None  # the hashed version of the symbol name
+    name = None  # the string version of the symbol name
+    split = None  # the symbol name split on the table separator
 
     # interface
     @staticmethod
@@ -52,9 +49,9 @@ class NodeInfo:
 
         # otherwise, get the journal
         import journal
-        # and complain; this is a bug
-        raise journal.firewall('pyre.calc').log('insufficient nodal metadata')
 
+        # and complain; this is a bug
+        raise journal.firewall("pyre.calc").log("insufficient nodal metadata")
 
     # meta-methods
     def __init__(self, key=None, name=None, split=None, **kwds):

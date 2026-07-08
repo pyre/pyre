@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -143,9 +144,7 @@ def _utf8(lead, pending):
         # is a stray continuation byte with no lead; hand it back as-is
         return chr(lead)
     # gather the continuation bytes that are actually waiting
-    trailing = bytes(
-        byte for byte in (pending() for _ in range(count)) if byte is not None
-    )
+    trailing = bytes(byte for byte in (pending() for _ in range(count)) if byte is not None)
     # attempt to
     try:
         # decode the assembled bytes as a single character

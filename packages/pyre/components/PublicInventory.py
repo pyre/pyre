@@ -1,13 +1,13 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # externals
 import itertools
+
 # superclass
 from .Inventory import Inventory
 
@@ -18,7 +18,6 @@ class PublicInventory(Inventory):
     Strategy for providing access to the state of component classes and instances that were
     given a publicly visible name and use slots managed the pyre nameserver for storage.
     """
-
 
     # public data
     @property
@@ -31,7 +30,6 @@ class PublicInventory(Inventory):
         # ask it for my full name and return it
         return nameserver.getName(key=self.key)
 
-
     @property
     def fragments(self):
         """
@@ -41,7 +39,6 @@ class PublicInventory(Inventory):
         nameserver = self.pyre_nameserver
         # ask it for my full name and return it
         return nameserver.getSplitName(key=self.key)
-
 
     @property
     def package(self):
@@ -56,7 +53,6 @@ class PublicInventory(Inventory):
         packageName = nameserver.split(name)[0]
         # use the name to look up the package
         return nameserver[packageName]
-
 
     # slot access
     def setTraitValue(self, trait, **kwds):
@@ -80,7 +76,6 @@ class PublicInventory(Inventory):
         # all done
         return new, old
 
-
     def getTraitValue(self, trait):
         """
         Get the value associated with this {trait} descriptor
@@ -93,7 +88,6 @@ class PublicInventory(Inventory):
         slot = nameserver.getNode(key)
         # return the value
         return slot.value
-
 
     def getTraitLocator(self, trait):
         """
@@ -108,7 +102,6 @@ class PublicInventory(Inventory):
         # return the locator
         return info.locator
 
-
     def getTraitPriority(self, trait):
         """
         Retrieve the priority of the last assignment for this {trait}
@@ -122,7 +115,6 @@ class PublicInventory(Inventory):
         # return the priority
         return info.priority
 
-
     def getSlots(self):
         """
         Return an iterable over the trait value storage
@@ -135,8 +127,6 @@ class PublicInventory(Inventory):
             yield nameserver.getNode(key)
         # all done
         return
-
-
 
     # support for constructing component classes and instances
     @classmethod
@@ -172,7 +162,6 @@ class PublicInventory(Inventory):
         # return the inventory
         return inventory
 
-
     @classmethod
     def initializeInstance(cls, instance, name, implicit):
         """
@@ -186,12 +175,12 @@ class PublicInventory(Inventory):
         #
         # check for reentry
         # if implicit:
-            # a key already exists; grab it
-            # key = cls.pyre_nameserver.hash(name=name)
+        # a key already exists; grab it
+        # key = cls.pyre_nameserver.hash(name=name)
         # otherwise
         # else:
-            # have the executive make a key
-            # key = cls.pyre_executive.registerComponentInstance(instance=instance, name=name)
+        # have the executive make a key
+        # key = cls.pyre_executive.registerComponentInstance(instance=instance, name=name)
         #
         # For LATE BIDING, {implicit} is irrelevant because the instantiation happens only once
 
@@ -210,7 +199,6 @@ class PublicInventory(Inventory):
         # all done
         return
 
-
     @classmethod
     def configureInstance(cls, instance):
         """
@@ -223,7 +211,6 @@ class PublicInventory(Inventory):
         # all done
         return
 
-
     @classmethod
     def localSlots(cls, key, component):
         """
@@ -232,12 +219,12 @@ class PublicInventory(Inventory):
         # go through the traits declared locally in {component}
         for trait in component.pyre_localTraits:
             # skip the non-configurable ones
-            if not trait.isConfigurable: continue
+            if not trait.isConfigurable:
+                continue
             # yield the trait, its class slot factory, and the default value of the trait
             yield trait, trait.classSlot, trait.default
         # all done
         return
-
 
     @classmethod
     def inheritedSlots(cls, key, component):
@@ -271,9 +258,11 @@ class PublicInventory(Inventory):
                     # build a reference to it; no need to switch value processors here, since
                     # the type of an inherited trait is determined by the nearest ancestor that
                     # declared it
-                    ref = slot.ref(key=key[trait.name],
-                                   preprocessor=trait.classSlot.pre,
-                                   postprocessor=trait.classSlot.post)
+                    ref = slot.ref(
+                        key=key[trait.name],
+                        preprocessor=trait.classSlot.pre,
+                        postprocessor=trait.classSlot.post,
+                    )
                     # yield the trait, its class slot factory, and a reference to the inherited
                     # slot
                     yield trait, trait.classSlot, ref
@@ -289,15 +278,15 @@ class PublicInventory(Inventory):
         # if we ran out of ancestors before we ran out of traits
         else:
             # complain
-            missing = ', '.join(f"'{trait.name}'" for trait in traits)
+            missing = ", ".join(f"'{trait.name}'" for trait in traits)
             msg = f"{component}: could not locate slots for the following traits: {missing}"
             # by raising a firewall, since this is almost certainly a bug
             import journal
+
             raise journal.firewall("pyre.components").log(msg)
 
         # otherwise, we are done
         return
-
 
     @classmethod
     def instanceSlots(cls, key, instance):
@@ -320,7 +309,6 @@ class PublicInventory(Inventory):
         # all done
         return
 
-
     @classmethod
     def registerSlots(cls, key, slots, locator):
         """
@@ -340,20 +328,20 @@ class PublicInventory(Inventory):
             # build the trait full name
             fullname = nameserver.join(base, name)
             # place the slot with the nameserver
-            traitKey, _, _ = nameserver.insert(name=fullname, value=value,
-                                               factory=factory,
-                                               locator=locator, priority=priority())
+            traitKey, _, _ = nameserver.insert(
+                name=fullname, value=value, factory=factory, locator=locator, priority=priority()
+            )
             # register the trait aliases
             for alias in trait.aliases:
                 # skip the canonical name
-                if alias == name: continue
+                if alias == name:
+                    continue
                 # notify the nameserver
                 nameserver.alias(base=key, alias=alias, target=traitKey)
             # hand this (trait, key) pair to the caller
             yield trait, traitKey
         # all done
         return
-
 
     # meta-methods
     def __init__(self, key, **kwds):
@@ -364,7 +352,6 @@ class PublicInventory(Inventory):
         # all done
         return
 
-
     def __getitem__(self, trait):
         """
         Retrieve the slot associated with {trait}
@@ -373,7 +360,6 @@ class PublicInventory(Inventory):
         key = super().__getitem__(trait)
         # ask the nameserver for the slot and return it
         return self.pyre_nameserver.getNode(key)
-
 
     def __str__(self):
         return f"public inventory at {id(self):#x}"

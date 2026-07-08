@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # externals
 import operator, functools
+
 
 def gauss():
     """
@@ -20,14 +20,16 @@ def gauss():
 
     # inputs
     N = 10**5
-    box = [(-1,1), (-1,1)]
-    B = functools.reduce(operator.mul, ((right-left) for left,right in zip(*box)))#@\label{line:mc:volume}@
+    box = [(-1, 1), (-1, 1)]
+    B = functools.reduce(
+        operator.mul, ((right - left) for left, right in zip(*box))
+    )  # @\label{line:mc:volume}@
     # the point cloud generator
     generator = Mersenne()
     # the region of integration
-    disk = Disk(center=(0,0), radius=1)
+    disk = Disk(center=(0, 0), radius=1)
     # the integrand
-    gaussian = Gaussian(mean=(0,0), spread=1/3)
+    gaussian = Gaussian(mean=(0, 0), spread=1 / 3)
 
     # the integration algorithm
     # build the point sample
@@ -35,7 +37,7 @@ def gauss():
     # select the interior points
     interior = disk.interior(sample)
     # compute the integral
-    integral = B/N * sum(gaussian.eval(interior))#@\label{line:mc:integral}@
+    integral = B / N * sum(gaussian.eval(interior))  # @\label{line:mc:integral}@
 
     # print the estimate of the integral
     print("integral: {:.8f}".format(integral))

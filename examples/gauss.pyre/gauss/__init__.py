@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -15,6 +14,7 @@ See gauss.license() for terms of use
 
 # access to the package contents
 from . import functors, integrators, meshes, shapes, util
+
 
 # misc
 def copyright():
@@ -43,8 +43,7 @@ _gauss_version = "1.0"
 
 _gauss_copyright = "gauss: Copyright (c) 1998-2026 Michael A.G. Aïvázis"
 
-_gauss_license = (
-    """
+_gauss_license = """
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions
     are met:
@@ -74,7 +73,6 @@ _gauss_license = (
     ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
     POSSIBILITY OF SUCH DAMAGE.
     """
-    )
 
 
 # end of file

@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # externals
@@ -16,7 +15,6 @@ class uniform:
     Encapsulation of the uniform probability distribution
     """
 
-
     # interface
     def sample(self):
         """
@@ -25,14 +23,12 @@ class uniform:
         # get the value
         return gsl.uniform_sample(self.support, self.rng.rng)
 
-
     def density(self, x):
         """
         Compute the probability density of the uniform distribution at {x}
         """
         # get the value
         return gsl.uniform_density(self.support, x)
-
 
     # higher level support
     def vector(self, vector):
@@ -44,7 +40,6 @@ class uniform:
         # and return it
         return vector
 
-
     def matrix(self, matrix):
         """
         Fill {matrix} with random values
@@ -54,14 +49,12 @@ class uniform:
         # and return it
         return matrix
 
-
     # meta methods
     def __init__(self, support, rng, **kwds):
         super().__init__(**kwds)
         self.rng = rng
         self.support = support
         return
-
 
     # implementation details
     support = None
@@ -73,7 +66,6 @@ class uniform_pos:
     Encapsulation of the positive uniform probability distribution
     """
 
-
     # interface
     def sample(self):
         """
@@ -82,14 +74,12 @@ class uniform_pos:
         # get the value
         return gsl.uniform_pos_sample(self.rng.rng)
 
-
     def density(self, x):
         """
         Compute the probability density of the uniform distribution at {x}
         """
         # get the value
         return 1.0
-
 
     # higher level support
     def vector(self, vector):
@@ -101,7 +91,6 @@ class uniform_pos:
         # and return it
         return vector
 
-
     def matrix(self, matrix):
         """
         Fill {matrix} with random values
@@ -110,7 +99,6 @@ class uniform_pos:
         gsl.uniform_pos_matrix(self.rng.rng, matrix.data)
         # and return it
         return matrix
-
 
     # meta methods
     def __init__(self, rng, **kwds):
@@ -125,7 +113,6 @@ class gaussian:
     Encapsulation of the gaussian probability distribution
     """
 
-
     # interface
     def sample(self):
         """
@@ -134,14 +121,12 @@ class gaussian:
         # get the value
         return gsl.gaussian_sample(self.mean, self.sigma, self.rng.rng)
 
-
     def density(self, x):
         """
         Compute the probability density of the gaussian distribution at {x}
         """
         # get the value
         return gsl.gaussian_density(self.mean, self.sigma, x)
-
 
     # higher level support
     def vector(self, vector):
@@ -153,7 +138,6 @@ class gaussian:
         # and return it
         return vector
 
-
     def matrix(self, matrix):
         """
         Fill {matrix} with random values
@@ -163,7 +147,6 @@ class gaussian:
         # and return it
         return matrix
 
-
     # meta methods
     def __init__(self, mean, sigma, rng, **kwds):
         super().__init__(**kwds)
@@ -171,7 +154,6 @@ class gaussian:
         self.mean = mean
         self.sigma = sigma
         return
-
 
     # implementation details
     mean = 0.0
@@ -184,7 +166,6 @@ class ugaussian:
     Encapsulation of the unit gaussian probability distribution
     """
 
-
     # interface
     def sample(self):
         """
@@ -193,14 +174,12 @@ class ugaussian:
         # get the value
         return gsl.ugaussian_sample(self.rng.rng)
 
-
     def density(self, x):
         """
         Compute the probability density of the gaussian distribution at {x}
         """
         # get the value
         return gsl.ugaussian_density(x)
-
 
     # higher level support
     def vector(self, vector):
@@ -212,7 +191,6 @@ class ugaussian:
         # and return it
         return vector
 
-
     def matrix(self, matrix):
         """
         Fill {matrix} with random values
@@ -221,7 +199,6 @@ class ugaussian:
         gsl.ugaussian_matrix(self.rng.rng, matrix.data)
         # and return it
         return matrix
-
 
     # meta methods
     def __init__(self, rng, **kwds):
@@ -246,7 +223,6 @@ class dirichlet:
         # and return it
         return vector
 
-
     def matrix(self, matrix):
         """
         Fill {matrix} with random values
@@ -255,7 +231,6 @@ class dirichlet:
         gsl.dirichlet_matrix(self.rng.rng, self.alpha.data, matrix.data)
         # and return it
         return matrix
-
 
     # meta methods
     def __init__(self, alpha, rng, **kwds):

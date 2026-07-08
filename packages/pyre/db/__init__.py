@@ -1,23 +1,24 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
 Machinery for building connections to database back ends
 """
 
-
 # the literals
 from .literals import null, default
+
 # cascade action markers for foreign keys
 from .actions import noAction, restrict, cascade, setNull, setDefault
 
 # orderings
 from .Collation import Collation as collation
+
+
 # for convenience
 def ascending(fieldref):
     """
@@ -27,6 +28,7 @@ def ascending(fieldref):
     # build and return a collation object
     return collation(fieldref=fieldref, collation="ASC")
 
+
 def descending(fieldref):
     """
     Build a clause for the {ORDER} expression that marks {fieldref} as sorted in descending
@@ -35,18 +37,21 @@ def descending(fieldref):
     # build and return a collation object
     return collation(fieldref=fieldref, collation="DESC")
 
+
 # primitive SQL expressions
 from .expressions import (
     IsNull as isNull,
     IsNotNull as isNotNull,
     Cast as cast,
     Like as like,
-    )
+)
 
 # field declarations
 from ..records import field
+
 # the local measure class
 from .Measure import Measure as measure
+
 # the typed measures
 bool = measure.bool
 date = measure.date
@@ -60,13 +65,16 @@ from .Reference import Reference as reference
 
 # tables
 from .Table import Table as table
+
 # queries
 from .Query import Query as query
+
 # persistent object
 from .Object import Object as object
 
 # protocols
 from .DataStore import DataStore as datastore
+
 # components
 from .SQL import SQL as sql
 from .Server import Server as server
@@ -84,7 +92,7 @@ def template(table):
     Build a row of {table} with all its fields set to {None}.
     """
     # build an instance, bypassing the constructor
-    row = table.pyre_mutable(data=(None,)*len(table.pyre_fields))
+    row = table.pyre_mutable(data=(None,) * len(table.pyre_fields))
     # and return it
     return row
 

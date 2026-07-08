@@ -1,26 +1,25 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # access to the framework
 import pyre
+
 # superclass
 from .Library import Library
 
 
 # the gsl package manager
-class GSL(Library, family='pyre.externals.gsl'):
+class GSL(Library, family="pyre.externals.gsl"):
     """
     The package manager for GSL packages
     """
 
     # constants
-    category = 'gsl'
-
+    category = "gsl"
 
     # support for specific package managers
     @classmethod
@@ -33,9 +32,9 @@ class GSL(Library, family='pyre.externals.gsl'):
         installed = dpkg.installed()
 
         # the GSL development packages
-        gsl = ['libgsl-dev']
+        gsl = ["libgsl-dev"]
         # find the missing ones
-        missing = [ pkg for pkg in gsl if pkg not in installed ]
+        missing = [pkg for pkg in gsl if pkg not in installed]
         # if there are no missing ones
         if not missing:
             # hand back a pyre safe name and the list of packages
@@ -44,7 +43,6 @@ class GSL(Library, family='pyre.externals.gsl'):
         # all done
         return
 
-
     @classmethod
     def dpkgPackages(cls, packager):
         """
@@ -52,10 +50,10 @@ class GSL(Library, family='pyre.externals.gsl'):
         """
         alternatives = sorted(packager.alternatives(group=cls), reverse=True)
         # the supported versions
-        versions = Default,
+        versions = (Default,)
         # go through the versions
         for version in versions:
-           # scan through the alternatives
+            # scan through the alternatives
             for name in alternatives:
                 # if it is match
                 if name.startswith(version.flavor):
@@ -64,7 +62,6 @@ class GSL(Library, family='pyre.externals.gsl'):
 
         # out of ideas
         return
-
 
     @classmethod
     def macportsPackages(cls, packager):
@@ -82,7 +79,7 @@ from .LibraryInstallation import LibraryInstallation
 
 
 # the implementation
-class Default(LibraryInstallation, family='pyre.externals.gsl.default', implements=GSL):
+class Default(LibraryInstallation, family="pyre.externals.gsl.default", implements=GSL):
     """
     A generic GSL installation
     """
@@ -96,8 +93,7 @@ class Default(LibraryInstallation, family='pyre.externals.gsl.default', implemen
     defines.doc = "the compile time markers that indicate my presence"
 
     libraries = pyre.properties.strings()
-    libraries.doc = 'the libraries to place on the link line'
-
+    libraries.doc = "the libraries to place on the link line"
 
     # configuration
     def dpkg(self, packager):
@@ -110,11 +106,11 @@ class Default(LibraryInstallation, family='pyre.externals.gsl.default', implemen
         self.version, _ = packager.info(package=dev)
 
         # in order to identify my {incdir}, search for the top-level header file
-        header = 'gsl/gsl_version.h'
+        header = "gsl/gsl_version.h"
         # find the header
         incdir = packager.findfirst(target=header, contents=packager.contents(package=dev))
         # save it
-        self.incdir = [ incdir ] if incdir else []
+        self.incdir = [incdir] if incdir else []
 
         # in order to identify my {libdir}, search for one of my libraries
         stem = self.flavor
@@ -123,22 +119,21 @@ class Default(LibraryInstallation, family='pyre.externals.gsl.default', implemen
         # find it
         libdir = packager.findfirst(target=libgsl, contents=packager.contents(package=dev))
         # and save it
-        self.libdir = [ libdir ] if libdir else []
+        self.libdir = [libdir] if libdir else []
         # set my library
         self.libraries = stem
 
         # now that we have everything, compute the prefix
-        self.prefix = self.commonpath(folders=self.incdir+self.libdir)
+        self.prefix = self.commonpath(folders=self.incdir + self.libdir)
         # all done
         return
-
 
     def macports(self, packager):
         """
         Attempt to repair my configuration
         """
         # the name of the macports package
-        package = 'gsl'
+        package = "gsl"
         # attempt to
         try:
             # get the version info
@@ -146,18 +141,18 @@ class Default(LibraryInstallation, family='pyre.externals.gsl.default', implemen
         # if this fails
         except KeyError:
             # this package is not installed
-            msg = 'the package {!r} is not installed'.format(package)
+            msg = "the package {!r} is not installed".format(package)
             # complain
             raise self.ConfigurationError(configurable=self, errors=[msg])
         # otherwise, grab the package contents
         contents = tuple(packager.contents(package=package))
 
         # in order to identify my {incdir}, search for the top-level header file
-        header = 'gsl/gsl_version.h'
+        header = "gsl/gsl_version.h"
         # find it
         incdir = packager.findfirst(target=header, contents=contents)
         # and save it
-        self.incdir = [ incdir ] if incdir else []
+        self.incdir = [incdir] if incdir else []
 
         # in order to identify my {libdir}, search for one of my libraries
         stem = self.flavor
@@ -166,12 +161,12 @@ class Default(LibraryInstallation, family='pyre.externals.gsl.default', implemen
         # find it
         libdir = packager.findfirst(target=libgsl, contents=contents)
         # and save it
-        self.libdir = [ libdir ] if libdir else []
+        self.libdir = [libdir] if libdir else []
         # set my library
         self.libraries = stem
 
         # now that we have everything, compute the prefix
-        self.prefix = self.commonpath(folders=self.incdir+self.libdir)
+        self.prefix = self.commonpath(folders=self.incdir + self.libdir)
 
         # all done
         return

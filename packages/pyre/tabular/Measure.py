@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # superclass
@@ -18,7 +17,6 @@ class Measure(records.measure):
     Base class for the measures in this package
     """
 
-
     # interface
     def primary(self):
         """
@@ -29,9 +27,8 @@ class Measure(records.measure):
         # and return me so I chain properly
         return self
 
-
     # private data
-    _primary = False # {True} when this measure is a primary key used to create an index
+    _primary = False  # {True} when this measure is a primary key used to create an index
 
 
 # end of file

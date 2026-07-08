@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -17,10 +18,8 @@ class Warning(Channel, active=True, fatal=False):
     potentially problematic, but the application has identified a workaround.
     """
 
-
     # types
     from .exceptions import ApplicationError
-
 
     # implementation details
     def record(self):
@@ -32,9 +31,8 @@ class Warning(Channel, active=True, fatal=False):
         # all done
         return self
 
-
     # constants
-    severity = "warning"           # the channel severity
+    severity = "warning"  # the channel severity
     fatalError = ApplicationError  # the exception i raise when i'm fatal
 
 

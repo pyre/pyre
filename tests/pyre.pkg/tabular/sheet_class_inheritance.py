@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -30,40 +29,52 @@ def test():
     class pricing(raw):
 
         cost = raw.production + raw.shipping
-        msrp = (1 + raw.margin + raw.overhead)*cost
-        price = msrp*(1 - raw.discount)
-
+        msrp = (1 + raw.margin + raw.overhead) * cost
+        price = msrp * (1 - raw.discount)
 
     # check the base
     assert raw.pyre_name == "raw"
-    assert identical(raw.pyre_localFields, (
-        raw.sku, raw.production, raw.shipping, raw.margin, raw.overhead, raw.discount
-        ))
+    assert identical(
+        raw.pyre_localFields,
+        (raw.sku, raw.production, raw.shipping, raw.margin, raw.overhead, raw.discount),
+    )
     assert identical(raw.pyre_fields, raw.pyre_localFields)
-    assert identical(raw.pyre_fields, (
-        raw.sku, raw.production, raw.shipping, raw.margin, raw.overhead, raw.discount
-        ))
+    assert identical(
+        raw.pyre_fields,
+        (raw.sku, raw.production, raw.shipping, raw.margin, raw.overhead, raw.discount),
+    )
     assert raw.pyre_derivations == ()
-
 
     # check the subclass
     assert pricing.pyre_name == "pricing"
 
-    assert identical(pricing.pyre_localFields, (
-        pricing.cost, pricing.msrp, pricing.price
-        ))
-    assert identical(pricing.pyre_fields, (
-        pricing.sku, pricing.production, pricing.shipping, pricing.margin,
-        pricing.overhead, pricing.discount,
-        pricing.cost, pricing.msrp, pricing.price
-        ))
-    assert identical(pricing.pyre_fields, (
-        pricing.sku, pricing.production, pricing.shipping, pricing.margin,
-        pricing.overhead, pricing.discount,
-        ))
-    assert identical(pricing.pyre_derivations, (
-        pricing.cost, pricing.msrp, pricing.price
-        ))
+    assert identical(pricing.pyre_localFields, (pricing.cost, pricing.msrp, pricing.price))
+    assert identical(
+        pricing.pyre_fields,
+        (
+            pricing.sku,
+            pricing.production,
+            pricing.shipping,
+            pricing.margin,
+            pricing.overhead,
+            pricing.discount,
+            pricing.cost,
+            pricing.msrp,
+            pricing.price,
+        ),
+    )
+    assert identical(
+        pricing.pyre_fields,
+        (
+            pricing.sku,
+            pricing.production,
+            pricing.shipping,
+            pricing.margin,
+            pricing.overhead,
+            pricing.discount,
+        ),
+    )
+    assert identical(pricing.pyre_derivations, (pricing.cost, pricing.msrp, pricing.price))
 
     return pricing, raw
 
@@ -74,7 +85,8 @@ def identical(s1, s2):
     we must avoid triggering __eq__
     """
     for n1, n2 in zip(s1, s2):
-        if n1 is not n2: return False
+        if n1 is not n2:
+            return False
     return True
 
 

@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -56,9 +57,7 @@ class Container(Schema):
         for item in value:
             # ask my schema to render each one
             entry = ",".join(
-                schema.render(
-                    renderer=renderer, value=item, workload=workload, incognito=True
-                )
+                schema.render(renderer=renderer, value=item, workload=workload, incognito=True)
             )
             # and put it on a separate line
             yield renderer.value(value=f"{entry},")

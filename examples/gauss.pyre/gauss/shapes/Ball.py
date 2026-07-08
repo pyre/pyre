@@ -1,15 +1,16 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # access the framework
 import pyre
+
 # my protocol
 from .Shape import Shape
+
 
 # declaration
 class Ball(pyre.component, family="gauss.shapes.ball", implements=Shape):
@@ -18,12 +19,11 @@ class Ball(pyre.component, family="gauss.shapes.ball", implements=Shape):
     """
 
     # public state
-    center = pyre.properties.array(default=(0,0))
+    center = pyre.properties.array(default=(0, 0))
     center.doc = "the location of the center of the ball"
 
     radius = pyre.properties.float(default=1)
     radius.doc = "the radius of the ball"
-
 
     # interface
     @pyre.export
@@ -33,21 +33,22 @@ class Ball(pyre.component, family="gauss.shapes.ball", implements=Shape):
         """
         # get functools and operator
         import functools, operator
+
         # get π
-        from math import  pi as π
+        from math import pi as π
+
         # compute the dimension of space
         d = len(self.center)
         # for even {d}
         if d % 2 == 0:
             # for even $d$
-            normalization = functools.reduce(operator.mul, range(1, d//2+1))
+            normalization = functools.reduce(operator.mul, range(1, d // 2 + 1))
             # compute the volume
-            return π**(d//2) * self.radius**d / normalization
+            return π ** (d // 2) * self.radius**d / normalization
 
         # for odd {d}
-        normalization = functools.reduce(operator.mul, range(1, d+1, 2))
-        return 2**((d+1)//2) * π**((d-1)//2) / normalization
-
+        normalization = functools.reduce(operator.mul, range(1, d + 1, 2))
+        return 2 ** ((d + 1) // 2) * π ** ((d - 1) // 2) / normalization
 
     @pyre.export
     def contains(self, points):
@@ -61,7 +62,7 @@ class Ball(pyre.component, family="gauss.shapes.ball", implements=Shape):
         # for each point
         for point in points:
             # compute the distance from the center
-            d2 = sum((p - r)**2 for p,r in zip(point, center))
+            d2 = sum((p - r) ** 2 for p, r in zip(point, center))
             # check whether this point is inside or outside
             if r2 >= d2:
                 yield point

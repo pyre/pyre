@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -9,6 +10,5 @@ from . import assets
 from . import external
 from . import flow
 from . import languages
-
 
 # end of file

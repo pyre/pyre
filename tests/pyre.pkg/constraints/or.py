@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -14,6 +13,7 @@ Exercise combining two constraints using the operator "|"
 
 def test():
     import pyre.constraints
+
     less = pyre.constraints.isLess(value=0)
     greater = pyre.constraints.isGreater(value=1)
     constraint = less | greater
@@ -21,7 +21,7 @@ def test():
     constraint.validate(-2)
     constraint.validate(2)
 
-    stranger = .5
+    stranger = 0.5
     try:
         constraint.validate(stranger)
     except constraint.ConstraintViolationError as error:

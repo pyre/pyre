@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -35,7 +34,7 @@ def test():
     # and initialize it
     for row in range(samplesPerTask):
         for column in range(sampleSize):
-            θ[row, column] = (rank*samplesPerTask+row)*sampleSize + column
+            θ[row, column] = (rank * samplesPerTask + row) * sampleSize + column
 
     # decide on the destination task
     destination = 0
@@ -48,8 +47,8 @@ def test():
         for task in range(tasks):
             for sample in range(samplesPerTask):
                 for dof in range(sampleSize):
-                    offset = task*samplesPerTask+sample
-                    assert result[offset, dof] == offset*sampleSize + dof
+                    offset = task * samplesPerTask + sample
+                    assert result[offset, dof] == offset * sampleSize + dof
         # print it out
         # result.print(format='{}')
 

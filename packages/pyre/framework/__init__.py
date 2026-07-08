@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -26,12 +25,14 @@ def executive(**kwds):
     framework services
     """
     from .Pyre import Pyre
+
     return Pyre(**kwds)
 
 
 # debugging support
 _verbose = False
 _metaclass_Slot = type
+
 
 def debug():
     """
@@ -44,11 +45,13 @@ def debug():
     # attach {Extent} as the metaclass of {Slot} so we can verify that all instances of
     # this class are properly garbage collected
     from ..patterns.Extent import Extent
+
     global _metaclass_Slot
     _metaclass_Slot = Extent
 
     # configure the garbage collector
     import gc
+
     gc.set_debug(gc.DEBUG_LEAK)
     gc.collect()
 
