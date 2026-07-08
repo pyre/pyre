@@ -17,10 +17,8 @@ import urllib.error
 import urllib.request
 
 # the framework, imported straight out of this archive via {zipimport}
-import journal
 import pyre
-
-# the interactive prompt toolkit, likewise carried in this archive
+import journal
 import survey
 
 # the build strategies understood by {mm}; mirrors the {mode} trait validator in {merlin.shells.MM}
@@ -86,14 +84,11 @@ class Boot(pyre.application, family="pyre.applications.boot", namespace="boot"):
         self.target = self.ask(
             question="where should I put the source",
             default=str(
-                self.target
-                or pyre.primitives.path.cwd() / f"pyre-{self.branch or self.tag}"
+                self.target or pyre.primitives.path.cwd() / f"pyre-{self.branch or self.tag}"
             ),
         )
         # and settle on the layout strategy {mm} will use
-        self.mode = self.choose(
-            question="which build mode", options=modes, default=self.mode
-        )
+        self.mode = self.choose(question="which build mode", options=modes, default=self.mode)
 
         # nail down the destination now that the user has had their say
         target = pyre.primitives.path(self.target).resolve()
@@ -116,13 +111,18 @@ class Boot(pyre.application, family="pyre.applications.boot", namespace="boot"):
         # and drive the build to completion
         self.build(target=target)
 
-        # leave the user knowing both where the source lives and where the products landed
-        self.info.log("pyre is built")
-        self.info.log(f"  source:   {target}")
-        # the install prefix comes straight from {mm}, when it is willing to tell us
+        # leave the user knowing both
+        self.info.line("pyre is built")
+        # the location of the sources
+        self.info.line(f"  source:   {target}")
+        # and the install prefix, which comes straight from {mm}
         prefix = self.installPrefix(target=target)
+        # if {mm} responded
         if prefix:
-            self.info.log(f"  products: {prefix}")
+            # add the location to the report
+            self.info.line(f"  products: {prefix}")
+        # flush
+        self.info.log()
         # and report success
         return 0
 
@@ -171,11 +171,7 @@ class Boot(pyre.application, family="pyre.applications.boot", namespace="boot"):
             self.branch = self.ask(question="which branch", default="main")
         else:
             # a release tag, offered from the menu interactively, else our own by default
-            self.tag = (
-                self.pickRelease(default=default_tag)
-                if self.interactive
-                else default_tag
-            )
+            self.tag = self.pickRelease(default=default_tag) if self.interactive else default_tag
         # both {channel} and its reference are now settled
         return
 
@@ -224,9 +220,7 @@ class Boot(pyre.application, family="pyre.applications.boot", namespace="boot"):
         # then reach out, treating the network as something that is allowed to fail
         try:
             # ask for the json rendering of the releases
-            request = urllib.request.Request(
-                url, headers={"Accept": "application/vnd.github+json"}
-            )
+            request = urllib.request.Request(url, headers={"Accept": "application/vnd.github+json"})
             # open the connection and read the response
             with urllib.request.urlopen(request) as istream:
                 # parsing the payload into python data
@@ -311,14 +305,10 @@ class Boot(pyre.application, family="pyre.applications.boot", namespace="boot"):
         cxx = self.compiler()
         # so if none turned up, mark the core as unbuildable and say how to fix it
         if cxx is None:
-            channel.line(
-                "  ✗ core framework — no C++ compiler found (set CXX or install one)"
-            )
+            channel.line("  ✗ core framework — no C++ compiler found (set CXX or install one)")
         # and when one is present, confirm the core is good to go and name the compiler
         else:
-            channel.line(
-                f"  ✓ core framework (pyre, journal, merlin + extensions) via {cxx}"
-            )
+            channel.line(f"  ✓ core framework (pyre, journal, merlin + extensions) via {cxx}")
 
         # walk the optional features, each gated on its own external package
         for name, package, commands in features:
@@ -334,11 +324,11 @@ class Boot(pyre.application, family="pyre.applications.boot", namespace="boot"):
         # close by setting expectations: a bare toolchain already yields a usable framework
         channel.line("")
         # spelling out that the core stands alone
-        channel.line(
-            "  the core builds with no extra packages; optional features light up"
-        )
+        channel.line("  the core builds with no extra packages")
         # and that the rest arrives for free as dependencies appear
-        channel.line("  automatically once their dependency is on your PATH")
+        channel.line(
+            "  optional features are activated automatically if their dependencies are available"
+        )
         # flush the assembled checklist as a single entry
         channel.log()
         # nothing to report back; the audit speaks through its channel
@@ -415,9 +405,7 @@ class Boot(pyre.application, family="pyre.applications.boot", namespace="boot"):
             # grab the bytes, treating a bad tag or a network stumble as recoverable
             try:
                 # stream the response straight to disk to keep memory flat
-                with urllib.request.urlopen(url=url) as istream, open(
-                    archive, "wb"
-                ) as ostream:
+                with urllib.request.urlopen(url=url) as istream, open(archive, "wb") as ostream:
                     # copying the payload across in chunks
                     shutil.copyfileobj(istream, ostream)
             # a download that never arrives is a clean, explainable failure
@@ -451,9 +439,7 @@ class Boot(pyre.application, family="pyre.applications.boot", namespace="boot"):
         # none of this guidance is possible without conda on the PATH
         if shutil.which("conda") is None:
             # so point the user at an installer and bow out
-            self.warning.log(
-                "conda mode selected, but no 'conda' on your PATH; install miniforge"
-            )
+            self.warning.log("conda mode selected, but no 'conda' on your PATH; install miniforge")
             # nothing more we can usefully say
             return
 
@@ -477,16 +463,12 @@ class Boot(pyre.application, family="pyre.applications.boot", namespace="boot"):
             # and on the first one that exists, hand the user the exact command to run
             if spec.exists():
                 # so they can create the environment themselves
-                self.info.log(
-                    f"no environment active; create one with: conda env create -f {spec}"
-                )
+                self.info.log(f"no environment active; create one with: conda env create -f {spec}")
                 # our job here is done
                 return
 
         # no active environment and no shipped spec leaves only generic advice
-        self.warning.log(
-            "no conda environment is active; create and activate one before building"
-        )
+        self.warning.log("no conda environment is active; create and activate one before building")
         # which is the most we can offer without guessing package names
         return
 
@@ -542,9 +524,7 @@ class Boot(pyre.application, family="pyre.applications.boot", namespace="boot"):
         archive = os.path.dirname(__file__)
         # respect whatever PYTHONPATH the user already has by prepending, not replacing
         existing = environment.get("PYTHONPATH")
-        environment["PYTHONPATH"] = (
-            os.pathsep.join((archive, existing)) if existing else archive
-        )
+        environment["PYTHONPATH"] = os.pathsep.join((archive, existing)) if existing else archive
         # the driver, the mode and portinfo overrides, then whatever targets the caller wants
         command = [
             sys.executable,
