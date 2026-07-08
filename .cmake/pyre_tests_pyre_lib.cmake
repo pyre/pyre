@@ -195,8 +195,6 @@ pyre_test_driver(tests/pyre.lib/flow/multiply_variables.cc)
 
 
 # viz
-pyre_test_driver(tests/pyre.lib/viz/colorspaces/hsb.cc)
-pyre_test_driver(tests/pyre.lib/viz/colorspaces/hsl.cc)
 pyre_test_driver(tests/pyre.lib/viz/iterators/amplitude.cc)
 pyre_test_driver(tests/pyre.lib/viz/flow/affine.cc)
 pyre_test_driver(tests/pyre.lib/viz/flow/amplitude.cc)

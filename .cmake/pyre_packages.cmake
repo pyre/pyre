@@ -9,6 +9,8 @@
 pyre_journalPackage()
 # build pyre
 pyre_pyrePackage()
+# build survey
+pyre_surveyPackage()
 # build merlin
 pyre_merlinPackage()
 # build cuda

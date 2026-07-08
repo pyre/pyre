@@ -9,6 +9,8 @@
 pyre_portinfo()
 # build libjournal
 pyre_journalLib()
+# stage the header-only chroma library so libpyre and its extensions can find it
+pyre_chromaLib()
 # build libpyre
 pyre_pyreLib()
 # add the pyre::h5 wrappers to libpyre when hdf5 is available
