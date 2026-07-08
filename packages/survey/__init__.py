@@ -14,6 +14,9 @@ from .Input import Input
 from .Confirm import Confirm
 from .Select import Select
 
+# interactive configuration of a pyre component's properties
+from .configure import configure
+
 # color: the palette type, the color builder, and the package-wide default
 from .Theme import Theme
 from .Theme import hsl
