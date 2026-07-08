@@ -1,4 +1,5 @@
-// -*- c++ -*-
+// -*- C++ -*-
+// -*- coding: utf-8 -*-
 //
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
 // (c) 1998-2026 all rights reserved
@@ -24,7 +25,8 @@ pyre::flow::protocol::Factory::~Factory()
 
 // bindings
 auto
-pyre::flow::protocol::Factory::addInput(const name_type & slot, product_ref_type product) -> factory_ref_type
+pyre::flow::protocol::Factory::addInput(const name_type & slot, product_ref_type product)
+    -> factory_ref_type
 {
     // make a channel
     auto channel = pyre::journal::debug_t("pyre.flow.factories.input");
@@ -54,7 +56,8 @@ pyre::flow::protocol::Factory::addInput(const name_type & slot, product_ref_type
 };
 
 auto
-pyre::flow::protocol::Factory::addOutput(const name_type & slot, product_ref_type product) -> factory_ref_type
+pyre::flow::protocol::Factory::addOutput(const name_type & slot, product_ref_type product)
+    -> factory_ref_type
 {
     // make a channel
     auto channel = pyre::journal::debug_t("pyre.flow.factories.output");
@@ -181,7 +184,8 @@ pyre::flow::protocol::Factory::flush() -> void
 
 // rebuild the product bound to a slot
 auto
-pyre::flow::protocol::Factory::make(const name_type & slot, product_ref_type product) -> factory_ref_type
+pyre::flow::protocol::Factory::make(const name_type & slot, product_ref_type product)
+    -> factory_ref_type
 {
     // make a channel
     auto channel = pyre::journal::debug_t("pyre.flow.factories.make");

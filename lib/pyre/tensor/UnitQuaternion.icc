@@ -1,8 +1,8 @@
 // -*- C++ -*-
+// -*- coding: utf-8 -*-
 //
-// bianca giovanardi
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
 // (c) 1998-2026 all rights reserved
-//
 
 
 // code guard
@@ -17,8 +17,9 @@ constexpr pyre::tensor::UnitQuaternion<T>::UnitQuaternion(real_type (&&args)[4])
     _qi(args[1]),
     _qj(args[2]),
     _qk(args[3]),
-    _matrix({ complex_type(_qr, _qi), complex_type(_qj, _qk), -std::conj(complex_type(_qj, _qk)),
-              std::conj(complex_type(_qr, _qi)) })
+    _matrix(
+        { complex_type(_qr, _qi), complex_type(_qj, _qk), -std::conj(complex_type(_qj, _qk)),
+          std::conj(complex_type(_qr, _qi)) })
 {}
 
 template <typename T>
@@ -34,9 +35,9 @@ constexpr pyre::tensor::UnitQuaternion<T>::UnitQuaternion(
 template <typename T>
 constexpr pyre::tensor::UnitQuaternion<T>::UnitQuaternion(
     const real_type & theta, const rotation_axis_type & axis) :
-    UnitQuaternion({ pyre::math::cos(0.5 * theta), axis[0] * pyre::math::sin(0.5 * theta),
-                     axis[1] * pyre::math::sin(0.5 * theta),
-                     axis[2] * pyre::math::sin(0.5 * theta) })
+    UnitQuaternion(
+        { pyre::math::cos(0.5 * theta), axis[0] * pyre::math::sin(0.5 * theta),
+          axis[1] * pyre::math::sin(0.5 * theta), axis[2] * pyre::math::sin(0.5 * theta) })
 {}
 
 template <typename T>

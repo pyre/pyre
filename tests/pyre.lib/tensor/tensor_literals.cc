@@ -1,8 +1,8 @@
+// -*- C++ -*-
 // -*- coding: utf-8 -*-
 //
-// bianca giovanardi
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
 // (c) 1998-2026 all rights reserved
-//
 
 
 // support
@@ -24,16 +24,16 @@ main(int argc, char * argv[])
     static_assert(zero<vector_t<3>> + ones<vector_t<3>> == ones<vector_t<3>>);
 
     // vector: zero == one - one
-    static_assert(zero<vector_t<2>> == ones<vector_t<2>> - ones<vector_t<2>>);
-    static_assert(zero<vector_t<3>> == ones<vector_t<3>> - ones<vector_t<3>>);
+    static_assert(zero<vector_t<2>> == ones < vector_t < 2 >> -ones<vector_t<2>>);
+    static_assert(zero<vector_t<3>> == ones < vector_t < 3 >> -ones<vector_t<3>>);
 
     // matrix: zero + one == one
     static_assert(zero<matrix_t<2>> + ones<matrix_t<2>> == ones<matrix_t<2>>);
     static_assert(zero<matrix_t<3>> + ones<matrix_t<3>> == ones<matrix_t<3>>);
 
     // matrix: zero == one - one
-    static_assert(zero<matrix_t<2>> == ones<matrix_t<2>> - ones<matrix_t<2>>);
-    static_assert(zero<matrix_t<3>> == ones<matrix_t<3>> - ones<matrix_t<3>>);
+    static_assert(zero<matrix_t<2>> == ones < matrix_t < 2 >> -ones<matrix_t<2>>);
+    static_assert(zero<matrix_t<3>> == ones < matrix_t < 3 >> -ones<matrix_t<3>>);
 
     // all done
     return 0;

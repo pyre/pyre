@@ -1,4 +1,5 @@
-// -*- c++ -*-
+// -*- C++ -*-
+// -*- coding: utf-8 -*-
 //
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
 // (c) 1998-2026 all rights reserved
@@ -49,14 +50,15 @@ main(int argc, char * argv[])
     // extract the region
     auto box = packing.box(spot, sliceShape);
     // show me
-    channel
-        << "box:" << pyre::journal::newline << "    base: " << spot << pyre::journal::newline
-        << "    shape: " << box.shape() << pyre::journal::newline << "    origin: " << box.origin()
-        << pyre::journal::newline << "    order: " << box.order() << pyre::journal::newline
-        << "    strides: " << box.strides() << pyre::journal::newline
-        << "    cells: " << box.cells() << pyre::journal::newline << "    nudge: " << box.nudge()
-        << pyre::journal::newline << "    begin: " << *box.begin() << pyre::journal::newline
-        << "    end: " << *box.end() << pyre::journal::endl(__HERE__);
+    channel << "box:" << pyre::journal::newline << "    base: " << spot << pyre::journal::newline
+            << "    shape: " << box.shape() << pyre::journal::newline
+            << "    origin: " << box.origin() << pyre::journal::newline
+            << "    order: " << box.order() << pyre::journal::newline
+            << "    strides: " << box.strides() << pyre::journal::newline
+            << "    cells: " << box.cells() << pyre::journal::newline
+            << "    nudge: " << box.nudge() << pyre::journal::newline
+            << "    begin: " << *box.begin() << pyre::journal::newline << "    end: " << *box.end()
+            << pyre::journal::endl(__HERE__);
 
     // verify that the iteration limits are as expected
     assert((*box.begin() == spot));

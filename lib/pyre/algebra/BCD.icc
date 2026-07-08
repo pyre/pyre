@@ -44,7 +44,8 @@ operator-(
 
 // conversion to double
 template <size_t scale, typename precision_t>
-pyre::algebra::BCD<scale, precision_t>::operator double() const
+pyre::algebra::BCD<scale, precision_t>::
+operator double() const
 {
     return _msw + static_cast<double>(_lsw) / scale;
 }

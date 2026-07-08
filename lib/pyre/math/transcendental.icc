@@ -1,8 +1,8 @@
+// -*- C++ -*-
 // -*- coding: utf-8 -*-
 //
-// bianca giovanardi
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
 // (c) 1998-2026 all rights reserved
-//
 
 
 // code guard
@@ -77,7 +77,7 @@ namespace {
         return (x < 0.0)  ? std::numeric_limits<double>::quiet_NaN() :
                (x == 0.0) ? -std::numeric_limits<double>::infinity() :
                (x == 1.0) ? 0.0 :
-                          log_newton(x);
+                            log_newton(x);
     }
 } // namespace
 
@@ -103,7 +103,9 @@ namespace {
     // {constexpr} sqrt function
     constexpr auto sqrt_helper(double x) -> double
     {
-        return (x < 0.0) ? std::numeric_limits<double>::quiet_NaN() : (x == 0.0) ? 0.0 : sqrt_newton(x);
+        return (x < 0.0)  ? std::numeric_limits<double>::quiet_NaN() :
+               (x == 0.0) ? 0.0 :
+                            sqrt_newton(x);
     }
 } // namespace
 

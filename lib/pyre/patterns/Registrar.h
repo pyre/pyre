@@ -17,15 +17,15 @@ namespace pyre { namespace patterns {
 
 template <typename Object, typename Name = std::string>
 class pyre::patterns::Registrar : public std::map<Name, Object *> {
-// typedefs
+    // typedefs
 public:
-typedef Name name_t;
-typedef Object object_t;
-typedef std::map<name_t, object_t *> map_t;
-typedef typename map_t::iterator iterator_t;
+    typedef Name name_t;
+    typedef Object object_t;
+    typedef std::map<name_t, object_t *> map_t;
+    typedef typename map_t::iterator iterator_t;
 
-// interface
-inline ~Registrar();
+    // interface
+    inline ~Registrar();
 };
 
 
