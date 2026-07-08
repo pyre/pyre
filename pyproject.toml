@@ -42,6 +42,10 @@ classifiers = [
 ]
 dependencies = ["PyYAML"]
 
+# formatting: wrap at column 100
+[tool.black]
+line-length = 100
+
 # versioning: derive the version from the most recent git tag
 [tool.setuptools_scm]
 
