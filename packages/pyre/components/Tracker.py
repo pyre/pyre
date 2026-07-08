@@ -8,8 +8,8 @@
 
 # externals
 import collections
-# the framework
-import pyre
+# the nameserver, for its node type
+from ..framework.NameServer import NameServer
 # support
 from .Revision import Revision
 # superclass
@@ -70,8 +70,8 @@ class Tracker(Monitor):
         """
         Handle the notification that the value of {observable} has changed
         """
-        # if the observable is another monitor
-        if isinstance(observable, pyre.executive.nameserver.node):
+        # if the observable is a nameserver node
+        if isinstance(observable, NameServer.node):
             # get the slot key
             key = observable.key
             # ask it for its value
