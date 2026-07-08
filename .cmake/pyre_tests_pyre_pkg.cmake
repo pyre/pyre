@@ -479,6 +479,8 @@ pyre_test_python_testcase(tests/pyre.pkg/config/command.py)
 pyre_test_python_testcase(tests/pyre.pkg/config/command_argv.py)
 pyre_test_python_testcase(tests/pyre.pkg/config/command_config.py)
 pyre_test_python_testcase(tests/pyre.pkg/config/configurator_load_yaml.py)
+# reverted pending review; in mm's drivers.exclude
+# pyre_test_python_testcase(tests/pyre.pkg/config/configurator_locators.py)
 
 
 #
@@ -507,6 +509,8 @@ pyre_test_python_testcase(tests/pyre.pkg/framework/executive_resolve.py)
 pyre_test_python_testcase(tests/pyre.pkg/framework/executive_resolve_duplicate.py)
 pyre_test_python_testcase(tests/pyre.pkg/framework/executive_resolve_badImport.py)
 pyre_test_python_testcase(tests/pyre.pkg/framework/executive_resolve_syntaxError.py)
+# reverted pending review; in mm's drivers.exclude
+# pyre_test_python_testcase(tests/pyre.pkg/framework/executive_shelves.py)
 
 
 #

@@ -35,5 +35,12 @@ pyre_test_python_testcase(tests/python/arithmetic.py)
 pyre_test_python_testcase(tests/python/algebra.py)
 pyre_test_python_testcase(tests/python/execv.py)
 
+# reverted pending review (partially-broken / demos)
+# {argv} and {locale_open} are in mm's drivers.exclude (demos) -- keep skipped
+# pyre_test_python_testcase(tests/python/argv.py)
+# pyre_test_python_testcase(tests/python/locale_open.py)
+# {locale_codec} is NOT excluded -- mm runs it green; uncomment once hand-verified
+# pyre_test_python_testcase(tests/python/locale_codec.py)
+
 
 # end of file
