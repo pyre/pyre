@@ -13,22 +13,31 @@ from .Confirm import Confirm
 from .Select import Select
 
 
-def configure(component, *, traits=None):
+def configure(component, *, traits=None, _seen=None):
     """
-    Walk {component}'s properties and prompt the user to set each one, applying the answers to the
-    component as we go; {traits} restricts the walk to a subset of the properties
+    Walk {component}'s properties and facilities, prompting the user to set each one and applying
+    the answers as we go, recursing into the component chosen for each facility; {traits} restricts
+    the walk to a subset of the properties and suppresses the facilities
     """
+    # the component families already on this configuration path, so we can break protocol cycles
+    seen = (_seen or frozenset()) | {component.pyre_family()}
     # the properties to configure: the caller's subset, or all of them
     properties = traits if traits is not None else component.pyre_properties()
-    # visit each one
+    # visit each property
     for trait in properties:
         # prompt for a value and apply it
-        _configureTrait(component=component, trait=trait)
+        _configureProperty(component=component, trait=trait)
+    # a restricted walk stops at the named properties; otherwise carry on to the facilities
+    if traits is None:
+        # visit each facility
+        for facility in component.pyre_facilities():
+            # choose an implementation and recurse into it
+            _configureFacility(component=component, facility=facility, seen=seen)
     # hand the configured component back
     return component
 
 
-def _configureTrait(component, trait):
+def _configureProperty(component, trait):
     """
     Prompt for a single {trait}, coerce and validate the answer, and apply it to {component},
     re-prompting until the value is acceptable
@@ -99,6 +108,41 @@ def _choices(trait):
             return sorted(str(choice) for choice in choices)
     # no membership constraint, so no fixed menu
     return None
+
+
+def _configureFacility(component, facility, seen):
+    """
+    Prompt the user to choose an implementation for {facility}, apply it, and recurse into the
+    chosen component's own traits; {seen} carries the families already on the path, to stop cycles
+    """
+    # discover the visible implementations of the facility's protocol, each a (uri, name, class)
+    implementers = facility.protocol.pyre_locateAllImplementers(
+        namespace=pyre.executive.nameserver
+    )
+    # index them by their short name, which is how the user picks and how pyre resolves them
+    byName = {name: cls for uri, name, cls in implementers}
+    # with nothing to choose from, leave the facility at its default
+    if not byName:
+        # nothing to do
+        return
+    # the question is the facility's documentation, or its name as a fallback
+    message = facility.doc or facility.name
+    # the protocol's preferred implementation names the default choice
+    default = facility.protocol.pyre_default()
+    # its short name, when there is one
+    preferred = default.pyre_familyFragments()[-1] if default is not None else None
+    # offer the choice as a menu over the implementation names
+    choice = Select(message=message, options=sorted(byName), default=preferred).ask()
+    # apply it; pyre coerces the name into an instance attached to the component
+    setattr(component, facility.name, choice)
+    # reach the freshly built child component
+    child = getattr(component, facility.name)
+    # recurse into it, unless a component of its family is already on the path
+    if child.pyre_family() not in seen:
+        # walk the child's own properties and facilities
+        configure(child, _seen=seen)
+    # all done
+    return
 
 
 # end of file
