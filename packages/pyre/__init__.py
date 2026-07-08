@@ -272,10 +272,13 @@ implements = export
 # the base class of all pyre exceptions
 from .framework.exceptions import PyreError
 
+# {pyre.executive} must stay None for the entire boot phase, so build the executive into a
+# private name and only publish it once the framework is fully up
+executive = None
 # build the executive
-executive = boot()
+_executive = boot()
 # if the framework booted properly
-if executive:
+if _executive:
     # package managers
     from . import externals
 
@@ -307,14 +310,29 @@ if executive:
     from . import ipc, nexus, services
 
     # discover information about the runtime environment
-    executive.discover()
+    _executive.discover()
     # and turn on the executive
-    executive.activate()
+    _executive.activate()
 
     # register this package
-    package = executive.registerPackage(name="pyre", file=__file__)
+    package = _executive.registerPackage(name="pyre", file=__file__)
     # and record its geography
     home, prefix, defaults = package.layout()
+
+    # the framework is now fully up
+    import journal
+
+    # when pyre is being booted from inside journal's own import, journal is only partway loaded
+    # and {bootComplete} isn't defined yet; there is nothing to hand off in that case — journal
+    # will build a real console directly once its import finishes, because we attach the executive
+    # just below
+    handoff = getattr(journal, "bootComplete", None)
+    # if journal is far enough along to accept the handoff
+    if handoff is not None:
+        # let it flush whatever it collected while booting
+        handoff()
+    # and attach the executive
+    executive = _executive
 
 
 # clean up the executive instance when the interpreter shuts down

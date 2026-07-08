@@ -178,6 +178,32 @@ else:
     margin = libjournal.margin
 
 
+# pyre calls this once the framework is up, whichever journal implementation is active
+def bootComplete():
+    """
+    Install a real console and flush any entries buffered while pyre was booting
+    """
+    # the c++ journal builds and manages its own device, so there is nothing to hand off
+    if not without_libjournal:
+        # nothing to do
+        return
+    # otherwise this is the pure-python journal; reach the boot device type
+    from .BootDevice import BootDevice
+
+    # the device journal is currently writing to
+    device = chronicler.device
+    # if it is still the bootstrap buffer
+    if isinstance(device, BootDevice):
+        # build the real console now that the terminal is available
+        console = cout()
+        # replay everything it collected into the console
+        device.replay(console)
+        # and make the console the default device from here on
+        chronicler.device = console
+    # all done
+    return
+
+
 # publish the color generator
 from .ANSI import ANSI as ansi
 
