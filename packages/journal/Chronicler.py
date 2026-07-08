@@ -51,11 +51,17 @@ class Chronicler(metaclass=pyre.patterns.singleton):
 
         # if whoever initialized the journal did not express an opinion regarding the device
         if device is None:
-            # grab the console
-            from .Console import Console as cout
+            # the two devices we might install
+            from .Console import Console
+            from .BootDevice import BootDevice
 
-            # and instantiate it
-            device = cout()
+            # once the framework is up, {pyre.executive} is set and a real console is safe to
+            # build; while pyre is still booting it is None, and a console would reach for
+            # framework facilities (the terminal) that don't exist yet, so pick a boot device
+            # that merely collects entries until pyre hands us a real one
+            deviceFactory = Console if pyre.executive else BootDevice
+            # build the chosen device
+            device = deviceFactory()
         # attach it
         self.device = device
 
