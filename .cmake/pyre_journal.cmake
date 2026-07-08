@@ -62,7 +62,6 @@ function(pyre_journalLib)
   target_sources(journal
     PRIVATE
     lib/journal/ANSI.cc
-    lib/journal/ANSI_x11.cc
     lib/journal/Alert.cc
     lib/journal/Bland.cc
     lib/journal/Chronicler.cc

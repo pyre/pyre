@@ -182,6 +182,11 @@ function(pyre_pyreModule)
     extensions/pyre/timers/wall_timers.cc
     extensions/pyre/viz/__init__.cc
     extensions/pyre/viz/bmp.cc
+    # chroma
+    extensions/pyre/chroma/__init__.cc
+    extensions/pyre/chroma/ansi.cc
+    extensions/pyre/chroma/color.cc
+    extensions/pyre/chroma/rgb.cc
   )
 
   # host

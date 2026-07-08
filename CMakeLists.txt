@@ -74,6 +74,8 @@ endif()
 
 include(pyre_journal)
 include(pyre_pyre)
+include(pyre_chroma)
+include(pyre_survey)
 include(pyre_merlin)
 include(pyre_cuda)
 include(pyre_mpi)
@@ -207,6 +209,12 @@ if(PYRE_BUILD_TESTING)
   # pyre
   include(pyre_tests_pyre_lib)
   include(pyre_tests_pyre_pkg)
+
+  # chroma
+  include(pyre_tests_chroma)
+
+  # survey
+  include(pyre_tests_survey_pkg)
 
   # journal
   include(pyre_tests_journal_lib)

@@ -689,8 +689,6 @@ pyre_test_python_testcase(tests/pyre.pkg/shells/fork_sanity.py)
 pyre_test_python_testcase(tests/pyre.pkg/shells/fork_instantiation.py)
 pyre_test_python_testcase(tests/pyre.pkg/shells/daemon_sanity.py)
 pyre_test_python_testcase(tests/pyre.pkg/shells/daemon_instantiation.py)
-pyre_test_python_testcase(tests/pyre.pkg/shells/colors256.py)
-pyre_test_python_testcase(tests/pyre.pkg/shells/colors24bit.py)
 pyre_test_python_testcase(tests/pyre.pkg/shells/script_launching.py)
 pyre_test_python_testcase(tests/pyre.pkg/shells/fork_launching.py)
 pyre_test_python_testcase(tests/pyre.pkg/shells/daemon_launching.py)
@@ -759,6 +757,14 @@ pyre_test_python_testcase(tests/pyre.pkg/pyre/spaces.py)
 pyre_test_python_testcase(tests/pyre.pkg/pyre/defaults.py)
 pyre_test_python_testcase(tests/pyre.pkg/pyre/play.py)
 pyre_test_python_testcase(tests/pyre.pkg/pyre/headers.py)
+
+
+# terminals
+pyre_test_python_testcase(tests/pyre.pkg/terminals/sanity.py)
+pyre_test_python_testcase(tests/pyre.pkg/terminals/plain.py)
+pyre_test_python_testcase(tests/pyre.pkg/terminals/interactive.py)
+pyre_test_python_testcase(tests/pyre.pkg/terminals/ansi.py)
+pyre_test_python_testcase(tests/pyre.pkg/terminals/keys.py)
 
 
 # end of file

@@ -8,6 +8,8 @@
 # journal
 #
 pyre_test_python_testcase(tests/journal.pkg/alert_sanity.py)
+pyre_test_python_testcase(tests/journal.pkg/boot_device.py)
+pyre_test_python_testcase(tests/journal.pkg/boot_handoff.py)
 pyre_test_python_testcase(tests/journal.pkg/ansi_ansi.py)
 pyre_test_python_testcase_env(tests/journal.pkg/ansi_emulates.py "TERM=foo" 0)
 pyre_test_python_testcase_env(tests/journal.pkg/ansi_emulates.py "TERM=xterm" 1)
