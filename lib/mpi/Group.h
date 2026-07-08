@@ -1,9 +1,8 @@
 // -*- C++ -*-
+// -*- coding: utf-8 -*-
 //
-// michael a.g. aïvázis
-// orthologue
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
 // (c) 1998-2026 all rights reserved
-//
 
 // code guard
 #if !defined(pyre_mpi_Group_h)
@@ -22,46 +21,46 @@ namespace pyre { namespace mpi {
 
 // declaration
 class pyre::mpi::Group {
-friend class Communicator;
-friend class Shareable<Group>;
+    friend class Communicator;
+    friend class Shareable<Group>;
 
-friend Group groupUnion(const Group &, const Group &);
-friend Group groupIntersection(const Group &, const Group &);
-friend Group groupDifference(const Group &, const Group &);
+    friend Group groupUnion(const Group &, const Group &);
+    friend Group groupIntersection(const Group &, const Group &);
+    friend Group groupDifference(const Group &, const Group &);
 
-// types
+    // types
 public:
-typedef MPI_Group handle_t;
-typedef Handle<Group> storage_t;
-typedef Shareable<Group> shared_t;
+    typedef MPI_Group handle_t;
+    typedef Handle<Group> storage_t;
+    typedef Shareable<Group> shared_t;
 
-typedef Group group_t;
-typedef std::vector<int> ranklist_t;
+    typedef Group group_t;
+    typedef std::vector<int> ranklist_t;
 
-// interface
+    // interface
 public:
-inline bool isEmpty() const;
-inline int rank() const;
-inline int size() const;
+    inline bool isEmpty() const;
+    inline int rank() const;
+    inline int size() const;
 
-inline group_t include(const ranklist_t &) const;
-inline group_t exclude(const ranklist_t &) const;
+    inline group_t include(const ranklist_t &) const;
+    inline group_t exclude(const ranklist_t &) const;
 
-// meta methods
+    // meta methods
 public:
-inline ~Group();
-inline Group(handle_t handle, bool = false);
-inline Group(const Group &);
-inline const Group & operator=(const Group &);
+    inline ~Group();
+    inline Group(handle_t handle, bool = false);
+    inline Group(const Group &);
+    inline const Group & operator=(const Group &);
 
-// hidden
+    // hidden
 private:
-inline operator handle_t() const;
-static inline void free(MPI_Group *);
+    inline operator handle_t() const;
+    static inline void free(MPI_Group *);
 
-// data members
+    // data members
 private:
-storage_t _handle;
+    storage_t _handle;
 };
 
 

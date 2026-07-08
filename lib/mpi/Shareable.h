@@ -1,9 +1,8 @@
 // -*- C++ -*-
+// -*- coding: utf-8 -*-
 //
-// michael a.g. aïvázis
-// orthologue
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
 // (c) 1998-2026 all rights reserved
-//
 
 // code guard
 #if !defined(pyre_mpi_Shareable_h)
@@ -19,34 +18,34 @@ namespace pyre { namespace mpi {
 // declaration
 template <typename Resource>
 class pyre::mpi::Shareable {
-// types
+    // types
 public:
-typedef Resource resource_t;
-typedef typename Resource::handle_t handle_t;
+    typedef Resource resource_t;
+    typedef typename Resource::handle_t handle_t;
 
-// interface
+    // interface
 public:
-inline int acquire();          // increment the reference count
-inline int release();          // decrement the reference count
-inline int references() const; // return the number of outstanding references
+    inline int acquire();          // increment the reference count
+    inline int release();          // decrement the reference count
+    inline int references() const; // return the number of outstanding references
 
-inline handle_t handle() const; // return the low level MPI handle
+    inline handle_t handle() const; // return the low level MPI handle
 
-// meta methods
+    // meta methods
 public:
-inline ~Shareable();
-inline Shareable(handle_t, bool);
+    inline ~Shareable();
+    inline Shareable(handle_t, bool);
 
-// disallow the copy constructors
+    // disallow the copy constructors
 private:
-inline Shareable(const Shareable &);
-inline const Shareable & operator=(const Shareable &);
+    inline Shareable(const Shareable &);
+    inline const Shareable & operator=(const Shareable &);
 
-// data members
+    // data members
 private:
-int _count;
-bool _immortal;
-handle_t _handle;
+    int _count;
+    bool _immortal;
+    handle_t _handle;
 };
 
 

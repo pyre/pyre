@@ -1,9 +1,8 @@
 // -*- C++ -*-
+// -*- coding: utf-8 -*-
 //
-// michael a.g. aïvázis
-// orthologue
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
 // (c) 1998-2026 all rights reserved
-//
 
 #if !defined(pyre_mpi_Handle_icc)
 #error This header file contains implementation details of class pyre::mpi::Handle
@@ -11,7 +10,8 @@
 
 // interface
 template <typename Resource>
-pyre::mpi::Handle<Resource>::operator pyre::mpi::Handle<Resource>::handle_t() const
+pyre::mpi::Handle<Resource>::
+operator pyre::mpi::Handle<Resource>::handle_t() const
 {
     // get and return the mpi handle
     return _shared->handle();

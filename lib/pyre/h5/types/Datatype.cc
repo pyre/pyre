@@ -1,4 +1,5 @@
-// -*- c++ -*-
+// -*- C++ -*-
+// -*- coding: utf-8 -*-
 //
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
 // (c) 1998-2026 all rights reserved
@@ -116,7 +117,8 @@ pyre::h5::types::Datatype::decode(const string_t & buffer) const -> Datatype
 {
     // ask the library to reconstitute the type, which hands back a fresh handle, and adopt it
 #if H5_VERSION_GE(2, 0, 0)
-    // {H5Tdecode2} first appears in 2.0.0; it wants the buffer size, so out-of-bounds reads can be caught
+    // {H5Tdecode2} first appears in 2.0.0; it wants the buffer size, so out-of-bounds reads can be
+    // caught
     return Datatype(static_cast<id_type>(H5Tdecode2(buffer.data(), buffer.size())));
 #else
     // older releases trust the buffer to be well formed

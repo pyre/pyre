@@ -1,9 +1,8 @@
 // -*- C++ -*-
+// -*- coding: utf-8 -*-
 //
-// michael a.g. aïvázis
-// orthologue
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
 // (c) 1998-2026 all rights reserved
-//
 
 #include <portinfo>
 #include <Python.h>
@@ -71,24 +70,24 @@ namespace pyre { namespace extensions { namespace postgres {
 PyMODINIT_FUNC
 PyInit_postgres()
 {
-// create the module
-PyObject * module = PyModule_Create(&pyre::extensions::postgres::module);
+    // create the module
+    PyObject * module = PyModule_Create(&pyre::extensions::postgres::module);
 
-// create the debug channel
-pyre::journal::debug_t debug("postgres.init");
-debug << pyre::journal::at(__HERE__);
+    // create the debug channel
+    pyre::journal::debug_t debug("postgres.init");
+    debug << pyre::journal::at(__HERE__);
 
-// check whether module creation succeeded and raise an exception if not
-if (!module) {
-debug << "'postgres' module initialization failed";
-} else {
-debug << "'postgres' module initialization succeeded";
-}
+    // check whether module creation succeeded and raise an exception if not
+    if (!module) {
+        debug << "'postgres' module initialization failed";
+    } else {
+        debug << "'postgres' module initialization succeeded";
+    }
 
-debug << pyre::journal::endl;
+    debug << pyre::journal::endl;
 
-// and return the newly created module
-return module;
+    // and return the newly created module
+    return module;
 }
 
 

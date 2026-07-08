@@ -1,9 +1,8 @@
 // -*- C++ -*-
+// -*- coding: utf-8 -*-
 //
-// michael a.g. aïvázis
-// orthologue
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
 // (c) 1998-2026 all rights reserved
-//
 
 // code guard
 #if !defined(pyre_mpi_Handle_h)
@@ -19,26 +18,26 @@ namespace pyre { namespace mpi {
 // declaration
 template <typename Resource>
 class pyre::mpi::Handle {
-// types
+    // types
 public:
-typedef Resource resource_t;
-typedef typename Resource::handle_t handle_t;
-typedef typename Resource::shared_t shared_t;
+    typedef Resource resource_t;
+    typedef typename Resource::handle_t handle_t;
+    typedef typename Resource::shared_t shared_t;
 
-// interface
+    // interface
 public:
-inline operator handle_t() const;
+    inline operator handle_t() const;
 
-// meta methods
+    // meta methods
 public:
-inline ~Handle();
-inline Handle(handle_t, bool);
-inline Handle(const Handle &);
-inline Handle & operator=(const Handle &);
+    inline ~Handle();
+    inline Handle(handle_t, bool);
+    inline Handle(const Handle &);
+    inline Handle & operator=(const Handle &);
 
-// data members
+    // data members
 private:
-shared_t * _shared;
+    shared_t * _shared;
 };
 
 

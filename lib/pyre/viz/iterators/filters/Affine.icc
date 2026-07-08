@@ -1,4 +1,5 @@
-// -*- c++ -*-
+// -*- C++ -*-
+// -*- coding: utf-8 -*-
 //
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
 // (c) 1998-2026 all rights reserved
@@ -12,7 +13,8 @@
 // metamethods
 // constructor
 template <class sourceT>
-pyre::viz::iterators::filters::Affine<sourceT>::Affine(source_const_reference source, interval_type interval) :
+pyre::viz::iterators::filters::Affine<sourceT>::Affine(
+    source_const_reference source, interval_type interval) :
     _source(source),
     _interval(interval)
 {}

@@ -1,6 +1,7 @@
-// -*- c++ -*-
+// -*- C++ -*-
+// -*- coding: utf-8 -*-
 //
-// bianca giovanardi
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
 // (c) 1998-2026 all rights reserved
 
 
@@ -103,9 +104,9 @@ pyre::tensor::is_equal(const Tensor<T, packingT, I...> & lhs, const Tensor<T, pa
 {
     // helper function (component-wise)
     constexpr auto _is_equal = []<int... J>(
-        const Tensor<T, packingT, I...> & lhs, const Tensor<T, packingT, I...> & rhs,
-        pyre::grid::integer_sequence<J...>)
-    {
+                                   const Tensor<T, packingT, I...> & lhs,
+                                   const Tensor<T, packingT, I...> & rhs,
+                                   pyre::grid::integer_sequence<J...>) {
         // if all components are equal
         if ((is_equal(lhs[J], rhs[J]) && ...)) {
             // then the tensors are equal
@@ -127,8 +128,8 @@ pyre::tensor::is_zero(const Tensor<T, packingT, I...> & A, T tolerance)
 {
     // helper function (component-wise)
     constexpr auto _is_zero = []<int... J>(
-        const Tensor<T, packingT, I...> & A, T tolerance, pyre::grid::integer_sequence<J...>)
-    {
+                                  const Tensor<T, packingT, I...> & A, T tolerance,
+                                  pyre::grid::integer_sequence<J...>) {
         // if all components are zero
         if (((A[J] <= tolerance) && ...)) {
             // then the tensor is zero

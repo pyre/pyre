@@ -1,4 +1,5 @@
-// -*- c++ -*-
+// -*- C++ -*-
+// -*- coding: utf-8 -*-
 //
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
 // (c) 1998-2026 all rights reserved
@@ -18,7 +19,8 @@ pyre::h5::DataSpace::DataSpace(class_type type) : Identifier(H5Screate(type))
         // and complain
         channel
             // what
-            << "failed to create a dataspace of type " << type
+            << "failed to create a dataspace of type "
+            << type
             // where
             << pyre::journal::endl(__HERE__);
     }
@@ -36,7 +38,8 @@ pyre::h5::DataSpace::DataSpace(const shape_t & shape) :
         // and complain
         channel
             // what
-            << "failed to create a simple dataspace of rank " << shape.size()
+            << "failed to create a simple dataspace of rank "
+            << shape.size()
             // where
             << pyre::journal::endl(__HERE__);
     }
@@ -108,7 +111,8 @@ pyre::h5::DataSpace::reshape(const shape_t & shape) -> void
         // and complain
         channel
             // what
-            << "failed to reshape a dataspace to rank " << shape.size()
+            << "failed to reshape a dataspace to rank "
+            << shape.size()
             // where
             << pyre::journal::endl(__HERE__);
     }

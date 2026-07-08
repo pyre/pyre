@@ -1,4 +1,5 @@
-// -*- c++ -*-
+// -*- C++ -*-
+// -*- coding: utf-8 -*-
 //
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
 // (c) 1998-2026 all rights reserved
@@ -49,14 +50,15 @@ main(int argc, char * argv[])
     auto image = packing.index(offset);
 
     // show me
-    channel
-        << "shape: " << packing.shape() << pyre::journal::newline << "origin: " << packing.origin()
-        << pyre::journal::newline << "order: " << packing.order() << pyre::journal::newline
-        << "strides: " << packing.strides() << pyre::journal::newline
-        << "nudge: " << packing.nudge() << pyre::journal::newline << "begin: " << *packing.begin()
-        << pyre::journal::newline << "end: " << *packing.end() << pyre::journal::newline
-        << "index: " << index << pyre::journal::newline << "offset: " << offset
-        << pyre::journal::newline << "image: " << image << pyre::journal::endl(__HERE__);
+    channel << "shape: " << packing.shape() << pyre::journal::newline
+            << "origin: " << packing.origin() << pyre::journal::newline
+            << "order: " << packing.order() << pyre::journal::newline
+            << "strides: " << packing.strides() << pyre::journal::newline
+            << "nudge: " << packing.nudge() << pyre::journal::newline
+            << "begin: " << *packing.begin() << pyre::journal::newline << "end: " << *packing.end()
+            << pyre::journal::newline << "index: " << index << pyre::journal::newline
+            << "offset: " << offset << pyre::journal::newline << "image: " << image
+            << pyre::journal::endl(__HERE__);
 
     // verify that the {image} is our original index
     assert((image == index));

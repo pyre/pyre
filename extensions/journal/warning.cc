@@ -1,4 +1,5 @@
-// -*- c++ -*-
+// -*- C++ -*-
+// -*- coding: utf-8 -*-
 //
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
 // (c) 1998-2026 all rights reserved
@@ -27,9 +28,7 @@ pyre::journal::py::warning(py::module & m)
             // the implementation
             py::init<const string_t &, detail_t, dent_t>(),
             // the signature
-            "name"_a,
-            "detail"_a = 1,
-            "dent"_a = 0)
+            "name"_a, "detail"_a = 1, "dent"_a = 0)
 
         // accessors
         // the name

@@ -1,9 +1,8 @@
 // -*- C++ -*-
+// -*- coding: utf-8 -*-
 //
-// michael a.g. aïvázis
-// orthologue
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
 // (c) 1998-2026 all rights reserved
-//
 
 #if !defined(pyre_mpi_Group_icc)
 #error This header file contains implementation details of class Group
@@ -153,7 +152,8 @@ pyre::mpi::Group::exclude(const pyre::mpi::Group::ranklist_t & ranks) const
 }
 
 // cast to MPI_Group
-pyre::mpi::Group::operator pyre::mpi::Group::handle_t() const
+pyre::mpi::Group::
+operator pyre::mpi::Group::handle_t() const
 {
     return _handle;
 }

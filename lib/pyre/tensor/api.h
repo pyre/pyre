@@ -1,6 +1,7 @@
-// -*- c++ -*-
+// -*- C++ -*-
+// -*- coding: utf-8 -*-
 //
-// bianca giovanardi
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
 // (c) 1998-2026 all rights reserved
 
 
@@ -35,8 +36,7 @@ namespace pyre::tensor {
 
     // typedef for fourth order tensors
     template <int D1, int D2 = D1, int D3 = D2, int D4 = D3, typename T = real>
-    using fourth_order_tensor_t =
-        Tensor<T, pyre::grid::canonical_t<4>, D1, D2, D3, D4>;
+    using fourth_order_tensor_t = Tensor<T, pyre::grid::canonical_t<4>, D1, D2, D3, D4>;
 
     // the zero tensor
     template <class tensorT>

@@ -1,18 +1,19 @@
 // -*- C++ -*-
+// -*- coding: utf-8 -*-
 //
-// michael a.g. aïvázis
-// orthologue
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
 // (c) 1998-2026 all rights reserved
-//
 
 // get the headers
 #include <mpi.h>
 
 
 // smallest possible driver
-int main() {
+int
+main()
+{
     // initialize MPI
-    MPI_Init(0,0);
+    MPI_Init(0, 0);
     // finalize MPI
     MPI_Finalize();
 

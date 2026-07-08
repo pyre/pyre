@@ -1,9 +1,8 @@
 // -*- C++ -*-
+// -*- coding: utf-8 -*-
 //
-// michael a.g. aïvázis
-// orthologue
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
 // (c) 1998-2026 all rights reserved
-//
 
 // code guard
 #if !defined(pyre_mpi_Communicator_h)
@@ -18,48 +17,48 @@ namespace pyre { namespace mpi {
 
 // declaration
 class pyre::mpi::Communicator {
-friend class Shareable<Communicator>;
+    friend class Shareable<Communicator>;
 
-// types
+    // types
 public:
-typedef MPI_Comm handle_t;
-typedef Handle<Communicator> storage_t;
-typedef Shareable<Communicator> shared_t;
+    typedef MPI_Comm handle_t;
+    typedef Handle<Communicator> storage_t;
+    typedef Shareable<Communicator> shared_t;
 
-typedef Group group_t;
-typedef Communicator communicator_t;
-typedef std::vector<int> ranklist_t;
+    typedef Group group_t;
+    typedef Communicator communicator_t;
+    typedef std::vector<int> ranklist_t;
 
-// interface
+    // interface
 public:
-inline handle_t handle() const;
-inline bool isNull() const;
+    inline handle_t handle() const;
+    inline bool isNull() const;
 
-inline void barrier() const; // build a synchronization barrier
+    inline void barrier() const; // build a synchronization barrier
 
-inline int rank() const; // compute the rank of this process
-inline int size() const; // compute my size
+    inline int rank() const; // compute the rank of this process
+    inline int size() const; // compute my size
 
-inline group_t group() const; // access to my group of processes
-inline communicator_t communicator(const group_t &) const;
+    inline group_t group() const; // access to my group of processes
+    inline communicator_t communicator(const group_t &) const;
 
-inline communicator_t cartesian(const ranklist_t &, const ranklist_t &, int) const;
-inline ranklist_t coordinates(int) const;
+    inline communicator_t cartesian(const ranklist_t &, const ranklist_t &, int) const;
+    inline ranklist_t coordinates(int) const;
 
-// meta methods
+    // meta methods
 public:
-inline ~Communicator();
-inline Communicator(handle_t, bool = false);
-inline Communicator(const Communicator &);
-inline const Communicator & operator=(const Communicator &);
+    inline ~Communicator();
+    inline Communicator(handle_t, bool = false);
+    inline Communicator(const Communicator &);
+    inline const Communicator & operator=(const Communicator &);
 
-// hidden
+    // hidden
 private:
-static inline void free(MPI_Comm *);
+    static inline void free(MPI_Comm *);
 
-// data members
+    // data members
 private:
-storage_t _handle;
+    storage_t _handle;
 };
 
 
