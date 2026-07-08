@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -30,9 +29,9 @@ def test():
         discount = pyre.tabular.measure()
 
         cost = production + shipping
-        msrp = (1 + margin + overhead)*cost
+        msrp = (1 + margin + overhead) * cost
 
-        price = msrp*(1 - discount)
+        price = msrp * (1 - discount)
 
     # short names for the stuctural parts
     measure = pyre.tabular.measure

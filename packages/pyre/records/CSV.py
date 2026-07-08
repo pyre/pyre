@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 class CSV:
@@ -14,7 +13,6 @@ class CSV:
     library by reading and writing records that have a variety of metadata attached to their
     fields, which enables much smarter processing of the information content.
     """
-
 
     # record factories
     def immutable(self, layout, uri=None, stream=None, **kwds):
@@ -28,7 +26,6 @@ class CSV:
         # all done
         return
 
-
     def mutable(self, layout, uri=None, stream=None, **kwds):
         """
         Build mutable record instances from a csv formatted source
@@ -39,7 +36,6 @@ class CSV:
             yield layout.pyre_mutable(data=data)
         # all done
         return
-
 
     # support
     def read(self, layout, uri=None, stream=None, **kwds):
@@ -56,18 +52,19 @@ class CSV:
         # check whether {uri} was provided
         if uri:
             # build the associated stream
-            stream = open(uri, newline='')
+            stream = open(uri, newline="")
         # look for a valid stream
         if not stream:
             raise self.SourceSpecificationError()
         # access the package
         import csv
+
         # build a reader
         reader = csv.reader(stream, **kwds)
         # get the headers
         headers = next(reader)
         # build the name map
-        index = { name: offset for offset, name in enumerate(headers) }
+        index = {name: offset for offset, name in enumerate(headers)}
         # adjust the column specification
         columns = tuple(layout.pyre_selectColumns(headers=index))
         # start reading lines from the input source
@@ -76,7 +73,6 @@ class CSV:
             yield (row[column] for column in columns)
         # all done
         return
-
 
     def write(self, sheet, uri=None, stream=None, **kwds):
         """
@@ -94,12 +90,13 @@ class CSV:
             # if no {uri} was provided
             if uri is None:
                 # form one from the name of the sheet
-                uri = sheet.pyre_name + '.csv'
+                uri = sheet.pyre_name + ".csv"
             # build the associated stream
-            stream = open(uri, 'w', newline='')
+            stream = open(uri, "w", newline="")
 
         # access the package
         import csv
+
         # build a writer
         writer = csv.writer(stream, **kwds)
         # save the headers
@@ -111,7 +108,6 @@ class CSV:
 
         # all done
         return
-
 
     # exceptions
     from .exceptions import SourceSpecificationError

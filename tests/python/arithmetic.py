@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -12,6 +11,7 @@ A simple expression scanner that understands some whitespace as mutliplication
 """
 
 import re
+
 
 class Simplifier(object):
 
@@ -23,7 +23,7 @@ class Simplifier(object):
         r"(?P<close>\s*(?P<cparen>[)]+)\s*)"
         r"|"
         r"(?P<whitespace>[\s]+)"
-        )
+    )
 
     def simplify(self, expression):
         return "*".join(self.scanner.sub(self.replace, expression).split())

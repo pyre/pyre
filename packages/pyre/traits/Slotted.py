@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # superclass
@@ -16,16 +15,13 @@ class Slotted(Trait):
     Intermediate class that knows that trait values are held by framework slots
     """
 
-
     # types
     from .SlotFactory import SlotFactory as factory
 
-
     # framework data
-    isConfigurable = True # slotted traits have configurable values
-    classSlot = None # the factory for class slots
-    instanceSlot = None # the factory of instance slots
-
+    isConfigurable = True  # slotted traits have configurable values
+    classSlot = None  # the factory for class slots
+    instanceSlot = None  # the factory of instance slots
 
     # meta-methods
     def __get__(self, instance, cls):

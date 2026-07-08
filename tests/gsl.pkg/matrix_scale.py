@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -15,14 +14,17 @@ Exercise multiplying every element of a matrix by a constant
 def test():
     # package access
     import gsl
+
     # make a couple of matrices and initialize them
-    m = gsl.matrix(shape=(100,100)).fill(value=1)
+    m = gsl.matrix(shape=(100, 100)).fill(value=1)
     # check
-    for e in m: assert e == 1
+    for e in m:
+        assert e == 1
     # add them and store the result in m1
     m *= 2
     # check
-    for e in m: assert e == 2
+    for e in m:
+        assert e == 2
     # all done
     return m
 

@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
 Build and test a simple tokenizer
 """
+
 
 def test():
     # get the necessary packages
@@ -27,7 +27,6 @@ def test():
         terminator = pyre.parsing.token(r";")
         identifier = pyre.parsing.token(r"[_\w]+")
 
-
     class Sink(pyre.patterns.accumulator):
         """a sink that catches errors"""
 
@@ -41,15 +40,13 @@ def test():
             # pass everything else on
             super().throw(errorTp, error, traceback)
 
-
         def __init__(self, **kwds):
             # the pile of errors
-            self.errors =  []
+            self.errors = []
             # chain up
             super().__init__(**kwds)
             # all done
             return
-
 
     # the source
     filename = "sample-bad.inp"

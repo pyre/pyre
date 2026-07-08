@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 import weakref
@@ -31,10 +30,8 @@ class Observable:
 
     """
 
-
     # public data
     observers = None
-
 
     # interface
     def notifyObservers(self, **kwds):
@@ -51,7 +48,6 @@ class Observable:
         # all done
         return self
 
-
     # callback management
     def addObserver(self, callback):
         """
@@ -65,7 +61,6 @@ class Observable:
         # and return
         return self
 
-
     def removeObserver(self, callback):
         """
         Remove {callback} from the set of observers
@@ -76,7 +71,6 @@ class Observable:
         del self.observers[instance]
         # and return
         return self
-
 
     # meta methods
     def __init__(self, **kwds):

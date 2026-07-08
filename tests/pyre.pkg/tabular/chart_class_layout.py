@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -19,6 +18,7 @@ def test():
     # make a sheet
     class sales(pyre.tabular.sheet):
         """The transaction data"""
+
         # layout
         date = pyre.tabular.str()
         time = pyre.tabular.str()
@@ -32,10 +32,11 @@ def test():
         """
         Aggregate the information in the {sales} table
         """
+
         sku = pyre.tabular.inferred(sheet.sku)
 
     # check the sheet class
-    assert chart.pyre_sheets == {'sheet': sales}
+    assert chart.pyre_sheets == {"sheet": sales}
     # check the dimensions
     assert chart.pyre_localDimensions == (chart.sku,)
     assert chart.pyre_dimensions == (chart.sku,)

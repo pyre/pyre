@@ -1,14 +1,14 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # externals
 import re
 import collections
+
 # my super class
 from pyre.patterns.AttributeClassifier import AttributeClassifier
 
@@ -18,11 +18,9 @@ class Lexer(AttributeClassifier):
     Metaclass that enables its instances to convert input sources into token streams
     """
 
-
     # types
     from .Token import Token as token
     from .Descriptor import Descriptor as descriptor
-
 
     # meta methods
     def __new__(cls, name, bases, attributes, **kwds):
@@ -43,24 +41,24 @@ class Lexer(AttributeClassifier):
             # if there is a non-trivial pattern
             if pattern is not None:
                 # assemble the regular expression and compile it
-                regex = '{}(?P<{}>{}){}'.format(head, name, pattern, tail)
+                regex = "{}(?P<{}>{}){}".format(head, name, pattern, tail)
                 # compile it
                 scanner = re.compile(regex)
             # otherwise, stub it out
             else:
-                regex = ''
+                regex = ""
                 scanner = None
 
             # initialize the attributes of the token class
             fields = {
-                'name': name,
-                'head': head,
-                'pattern': pattern,
-                'tail': tail,
-                'regex': regex,
-                'scanner': scanner,
-                '__slots__': (),
-                }
+                "name": name,
+                "head": head,
+                "pattern": pattern,
+                "tail": tail,
+                "regex": regex,
+                "scanner": scanner,
+                "__slots__": (),
+            }
             # build it
             token = type(name, (cls.token,), fields)
             # add it to the pile
@@ -88,18 +86,20 @@ class Lexer(AttributeClassifier):
                     # get the token name
                     name = token.name
                     # skip shadowed tokens
-                    if name in names: continue
+                    if name in names:
+                        continue
                     # get the token regex
                     regex = token.regex
                     # skip tokens with trivial expressions
-                    if not regex: continue
+                    if not regex:
+                        continue
                     # add the expression to the pattern pile
                     patterns.append(regex)
             # in any case, add all the local names to the known pile
             names.update(base.__dict__)
 
         # attach the tokenizer
-        scanner.pyre_tokenizer = re.compile('|'.join(patterns))
+        scanner.pyre_tokenizer = re.compile("|".join(patterns))
         # return the scanner record
         # print('  done')
         return scanner

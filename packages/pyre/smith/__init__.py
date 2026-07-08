@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -10,10 +11,8 @@ This package contains the machinery necessary to generate content in a variety o
 The primary target is human readable formats, such source code for programming languages.
 """
 
-
 # the marker of component factories
 from .. import foundry
-
 
 # the protocol that captures the project metadata
 from .Project import Project as project

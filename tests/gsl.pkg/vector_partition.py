@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -34,11 +33,11 @@ def test():
     # at the source task
     if rank == source:
         # allocate a vector
-        θ = gsl.vector(shape=tasks*samplesPerTask)
+        θ = gsl.vector(shape=tasks * samplesPerTask)
         # initialize it
         for task in range(tasks):
             for sample in range(samplesPerTask):
-                offset = task*samplesPerTask + sample
+                offset = task * samplesPerTask + sample
                 θ[offset] = offset
         # print it out
         # θ.print(format="{}")
@@ -53,7 +52,7 @@ def test():
 
     # verify that i got the correct part
     for index in range(samplesPerTask):
-        assert part[index] == rank*samplesPerTask + index
+        assert part[index] == rank * samplesPerTask + index
 
     # all done
     return

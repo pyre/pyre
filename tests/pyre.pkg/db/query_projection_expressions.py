@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -21,6 +20,7 @@ def test():
         """
         The sample table from the postgres tutorial
         """
+
         # the fields
         city = pyre.db.str()
         date = pyre.db.date()
@@ -33,7 +33,7 @@ def test():
         # the fields
         city = weather.city
         date = weather.date
-        average = (weather.high - weather.low)/2
+        average = (weather.high - weather.low) / 2
 
     # get a server
     server = pyre.db.server()
@@ -46,8 +46,8 @@ def test():
         "    weather.date AS date,",
         "    ((weather.high) - (weather.low)) / (2) AS average",
         "  FROM",
-        "    weather;"
-        )
+        "    weather;",
+    )
 
     # all done
     return Weather

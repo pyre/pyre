@@ -1,26 +1,28 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # externals
 import collections
+
 # the nameserver, for its node type
 from ..framework.NameServer import NameServer
+
 # support
 from .Revision import Revision
+
 # superclass
 from .Monitor import Monitor
+
 
 # value tracker
 class Tracker(Monitor):
     """
     A class that monitors the traits of a set of components and maintains a record of their values
     """
-
 
     # interface
     def track(self, component):
@@ -49,11 +51,10 @@ class Tracker(Monitor):
             # save the info
             revision = Revision(value=slot.value, locator=info.locator, priority=info.priority)
             # create a pile and record
-            history[key] = [ revision ]
+            history[key] = [revision]
 
         # all done
         return self
-
 
     def playback(self, key):
         """
@@ -63,7 +64,6 @@ class Tracker(Monitor):
         yield from self.history[key]
         # all done
         return
-
 
     # hooks
     def flush(self, observable=None, **kwds):
@@ -85,7 +85,6 @@ class Tracker(Monitor):
 
         # chain up
         return super().flush(observable=observable, **kwds)
-
 
     # meta-methods
     def __init__(self, **kwds):

@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -22,8 +21,7 @@ def test():
     fs = pyre.executive.fileserver
 
     # load the configuration file
-    pyre.loadConfiguration('vfs:{}/sample.cfg'.format(fs.STARTUP_DIR))
-
+    pyre.loadConfiguration("vfs:{}/sample.cfg".format(fs.STARTUP_DIR))
 
     # verify that the configuration settings were read properly
     assert ns["package.home"] == "home"

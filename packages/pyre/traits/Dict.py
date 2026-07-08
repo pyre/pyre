@@ -1,15 +1,16 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # access to the default trait
 from .Property import Property
+
 # superclass
 from .Slotted import Slotted
+
 # support
 from .. import tracking
 
@@ -21,8 +22,7 @@ class Dict(Slotted):
     """
 
     # constants
-    typename = 'dict' # the name of my type
-
+    typename = "dict"  # the name of my type
 
     # public data
     @property
@@ -33,7 +33,6 @@ class Dict(Slotted):
         """
         # whatever my schema says
         return self.schema.macro
-
 
     def native(self, value, **kwds):
         """
@@ -59,8 +58,7 @@ class Dict(Slotted):
             return self.pyre_nameserver.variable(value=value, **kwds)
 
         # shouldn't get here
-        assert False, 'unreachable'
-
+        assert False, "unreachable"
 
     # my value processors
     def process(self, value, **kwds):
@@ -69,10 +67,10 @@ class Dict(Slotted):
         classes
         """
         # leave {None} alone
-        if value is None: return None
+        if value is None:
+            return None
         # make sure we are building class slots, and delegate
         return self.catalog(factory=self.schema.classSlot, value=value, **kwds)
-
 
     def instantiate(self, value, **kwds):
         """
@@ -80,10 +78,10 @@ class Dict(Slotted):
         instances
         """
         # leave {None} alone
-        if value is None: return None
+        if value is None:
+            return None
         # make sure we are building instance slots, and delegate
         return self.catalog(factory=self.schema.instanceSlot, value=value, **kwds)
-
 
     # framework hooks triggered by client configuration
     def classConfigured(self, component, **kwds):
@@ -93,11 +91,11 @@ class Dict(Slotted):
         # chain up
         super().classConfigured(component=component, **kwds)
         # configure the class record
-        self.configureClient(client=component,
-                             myFactory=self.classSlot, traitFactory=self.schema.classSlot)
+        self.configureClient(
+            client=component, myFactory=self.classSlot, traitFactory=self.schema.classSlot
+        )
         # all done
         return self
-
 
     def instanceConfigured(self, instance, **kwds):
         """
@@ -106,11 +104,11 @@ class Dict(Slotted):
         # chain up
         super().instanceConfigured(instance=instance, **kwds)
         # configure the instance
-        self.configureClient(client=instance,
-                             myFactory=self.instanceSlot, traitFactory=self.schema.instanceSlot)
+        self.configureClient(
+            client=instance, myFactory=self.instanceSlot, traitFactory=self.schema.instanceSlot
+        )
         # all done
         return self
-
 
     # meta-methods
     def __init__(self, schema=Property.identity(), default=object, **kwds):
@@ -126,7 +124,6 @@ class Dict(Slotted):
         self.instanceSlot = self.factory(trait=self, post=self.instantiate)
         # all done
         return
-
 
     # implementation details
     # catalog initialization
@@ -158,7 +155,6 @@ class Dict(Slotted):
         # and return it
         return catalog
 
-
     # client configuration
     def configureClient(self, client, myFactory, traitFactory):
         """
@@ -189,7 +185,7 @@ class Dict(Slotted):
             # and its value
             value = node.value
             # make a locator
-            locator = tracking.simple('while adding entry {!r} to {.name!r}'.format(name, self))
+            locator = tracking.simple("while adding entry {!r} to {.name!r}".format(name, self))
             # and store them
             catalog.insert(name=name, value=value, priority=initPriority(), locator=locator)
 
@@ -197,8 +193,11 @@ class Dict(Slotted):
         for assignment, priority in configurator.retrieveDeferredAssignments(key=key):
             # store them
             catalog.insert(
-                name=assignment.key[0], value=assignment.value,
-                priority=priority, locator=assignment.locator)
+                name=assignment.key[0],
+                value=assignment.value,
+                priority=priority,
+                locator=assignment.locator,
+            )
 
         # get the my current slot value
         current = slot.value
@@ -214,12 +213,12 @@ class Dict(Slotted):
             catalog = None
 
         # make a locator
-        here = tracking.simple('while configuring {.pyre_name!r}'.format(client))
+        here = tracking.simple("while configuring {.pyre_name!r}".format(client))
 
         # attach my new value
         client.pyre_inventory.setTraitValue(
-            trait=self, factory=myFactory,
-            value=catalog, priority=initPriority(), locator=here)
+            trait=self, factory=myFactory, value=catalog, priority=initPriority(), locator=here
+        )
 
         # all done
         return self
@@ -228,6 +227,7 @@ class Dict(Slotted):
 # implementation details
 # externals
 import collections.abc
+
 # superclass
 from ..framework.Dashboard import Dashboard
 
@@ -240,7 +240,7 @@ class Map(collections.abc.MutableMapping, Dashboard):
 
     # public data
     schema = None
-    factory = None # information necessary to make slots
+    factory = None  # information necessary to make slots
 
     # meta-methods
     def __init__(self, schema, factory, *args, **kwds):
@@ -303,7 +303,8 @@ class Map(collections.abc.MutableMapping, Dashboard):
         Build a simple string representation of my contents
         """
         return "{{{}}}".format(
-            ", ".join(["{}: {}".format(key, value) for key,value in self.items()]))
+            ", ".join(["{}: {}".format(key, value) for key, value in self.items()])
+        )
 
     # private data
     map = None
@@ -314,7 +315,6 @@ class KeyMap(Map):
     A storage strategy that is appropriate when a client has public inventory
     """
 
-
     # meta-methods
     def __init__(self, key, *args, **kwds):
         # chain  up
@@ -323,7 +323,6 @@ class KeyMap(Map):
         self.name = self.pyre_nameserver.getName(key)
         # all done
         return
-
 
     # slot access
     def __getitem__(self, name):
@@ -337,7 +336,6 @@ class KeyMap(Map):
         # and return its value
         return nameserver[key]
 
-
     # implementation details
     def insert(self, name, value, priority, locator):
         """
@@ -348,9 +346,9 @@ class KeyMap(Map):
         # build the full name of the map entry
         fullname = nameserver.join(self.name, name)
         # insert into the model
-        key, _, _ = nameserver.insert(name=fullname, value=value,
-                                      factory=self.factory,
-                                      locator=locator, priority=priority)
+        key, _, _ = nameserver.insert(
+            name=fullname, value=value, factory=self.factory, locator=locator, priority=priority
+        )
         # adjust my map
         self.map[name] = key
         # all done
@@ -370,7 +368,6 @@ class NameMap(Map):
         node = self.map[name]
         # and return its value
         return node.value
-
 
     # implementation details
     def insert(self, name, value, **kwds):

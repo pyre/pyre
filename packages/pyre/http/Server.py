@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -35,9 +36,7 @@ class Server(pyre.nexus.server, family="pyre.nexus.servers.http"):
     heartbeat.doc = "how often to send a keep-alive on held-open streaming connections"
 
     streamCapacity = pyre.properties.int(default=1024)
-    streamCapacity.doc = (
-        "the most frames a streaming subscriber may queue before it is dropped"
-    )
+    streamCapacity.doc = "the most frames a streaming subscriber may queue before it is dropped"
 
     # public state
     @property

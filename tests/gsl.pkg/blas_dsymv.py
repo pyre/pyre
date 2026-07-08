@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -21,13 +20,13 @@ def test():
     β = 3
     # the vector x
     x = gsl.vector(shape=3)
-    x[0], x[1], x[2] = 1,2,3
+    x[0], x[1], x[2] = 1, 2, 3
     # the vector y
     y = gsl.vector(shape=3)
-    y[0], y[1], y[2] = 2,4,6
+    y[0], y[1], y[2] = 2, 4, 6
     # the matrix A
-    A = gsl.matrix(shape=(3,3)).identity()
-    A[0,1], A[0,2], A[1,2] = 2,3,2
+    A = gsl.matrix(shape=(3, 3)).identity()
+    A[0, 1], A[0, 2], A[1, 2] = 2, 3, 2
 
     # compute the form
     y = gsl.blas.dsymv(A.upperTriangular, α, A, x, β, y)

@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -56,9 +57,7 @@ class Inspector:
         # if this is a constrained traversal
         if query is not None:
             # visit only the specified file locations
-            return self._pyre_queryObject(
-                h5id=h5id, path=path, query=query, depth=depth
-            )
+            return self._pyre_queryObject(h5id=h5id, path=path, query=query, depth=depth)
         # otherwise, grab everything
         return self._pyre_inferObject(h5id=h5id, path=path, depth=depth)
 
@@ -161,9 +160,7 @@ class Inspector:
         # check the disk types for compatibility
         if expected.disktype.cell != actual.disktype.cell:
             # f they don't match, we have a problem
-            problem = exceptions.TypeMismatchError(
-                path=path, expected=expected, actual=actual
-            )
+            problem = exceptions.TypeMismatchError(path=path, expected=expected, actual=actual)
             # make a channel
             channel = journal.warning("pyre.h5.api.inspector")
             # report
@@ -227,9 +224,7 @@ class Inspector:
             # look up the member
             memberId = h5id.get(path=memberName)
             # build it
-            member = self._pyre_inferObject(
-                h5id=memberId, path=path / memberName, depth=depth
-            )
+            member = self._pyre_inferObject(h5id=memberId, path=path / memberName, depth=depth)
             # add it to the group contents
             setattr(group, memberName, member)
             # and its layout to the group spec
@@ -237,9 +232,7 @@ class Inspector:
         # all done
         return group
 
-    def _pyre_inferDataset(
-        self, h5id: H5DataSet, path: pyre.primitives.path, **kwds
-    ) -> Dataset:
+    def _pyre_inferDataset(self, h5id: H5DataSet, path: pyre.primitives.path, **kwds) -> Dataset:
         """
         Build a dataset at {path}
         """
@@ -250,9 +243,7 @@ class Inspector:
         # and return it
         return dataset
 
-    def _pyre_inferDatatype(
-        self, h5id: H5DataType, path: pyre.primitives.path, **kwds
-    ) -> Datatype:
+    def _pyre_inferDatatype(self, h5id: H5DataType, path: pyre.primitives.path, **kwds) -> Datatype:
         """
         Build a named data type at {path}
         """
@@ -302,18 +293,14 @@ class Inspector:
             # look up
             memberId = h5id.get(path=memberName)
             # identify it
-            member = self._pyre_inferDescriptor(
-                name=memberName, h5id=memberId, depth=depth
-            )
+            member = self._pyre_inferDescriptor(name=memberName, h5id=memberId, depth=depth)
             # and add it to the descriptor
             setattr(descriptor, memberName, member)
         # return the group descriptor
         return descriptor
 
     # dataset structure
-    def _pyre_inferDatasetDescriptor(
-        self, name: str, h5id: H5DataSet, **kwds
-    ) -> schema.dataset:
+    def _pyre_inferDatasetDescriptor(self, name: str, h5id: H5DataSet, **kwds) -> schema.dataset:
         """
         Build a typed dataset descriptor by inspecting {h5id}
         """
@@ -356,9 +343,7 @@ class Inspector:
         # and return it
         return array
 
-    def _pyre_inferCompoundDescriptor(
-        self, name: str, h5type: H5DataType
-    ) -> schema.dataset:
+    def _pyre_inferCompoundDescriptor(self, name: str, h5type: H5DataType) -> schema.dataset:
         """
         Build a descriptor for a compound object
 
@@ -410,9 +395,7 @@ class Inspector:
         # and return it
         return enum
 
-    def _pyre_inferFloatDescriptor(
-        self, name: str, h5type: H5DataType
-    ) -> schema.dataset:
+    def _pyre_inferFloatDescriptor(self, name: str, h5type: H5DataType) -> schema.dataset:
         """
         Build a {float} descriptor
         """

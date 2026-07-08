@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # externals
@@ -16,14 +15,11 @@ class Histogram:
     A wrapper over a gsl histogram
     """
 
-
     # types
     from .Vector import Vector as vector
 
-
     # public data
     bins = 0
-
 
     # interface
     # specifying the binning strategy
@@ -37,7 +33,6 @@ class Histogram:
         # and return
         return self
 
-
     def ranges(self, points):
         """
         Use {points} to define the histogram bins. {points} is expected to be an iterable of
@@ -50,7 +45,6 @@ class Histogram:
         # and return
         return self
 
-
     # adjusting the bin values
     def reset(self):
         """
@@ -61,7 +55,6 @@ class Histogram:
         # and return
         return self
 
-
     def increment(self, x):
         """
         Increment by one the bin whose range contains {x}
@@ -70,7 +63,6 @@ class Histogram:
         gsl.histogram_increment(self.data, x)
         # and return
         return self
-
 
     def accumulate(self, x, weight):
         """
@@ -81,7 +73,6 @@ class Histogram:
         # and return
         return self
 
-
     def fill(self, values):
         """
         Increment my frequency counts using the contents of the vector {values}
@@ -91,10 +82,8 @@ class Histogram:
         # and return
         return self
 
-
     # copying
     def clone(self):
-
         """
         Allocate a new histogram and initialize it using my values
         """
@@ -102,7 +91,6 @@ class Histogram:
         clone = type(self)(bins=self.bins, data=gsl.histogram_clone(self.data))
         # and return it
         return clone
-
 
     def copy(self, other):
         """
@@ -112,7 +100,6 @@ class Histogram:
         gsl.histogram_copy(self.data, other.data)
         # and return it
         return clone
-
 
     def values(self):
         """
@@ -128,7 +115,6 @@ class Histogram:
         # allocate the vector and return it
         return self.vector(shape=self.bins, data=data)
 
-
     # operations
     def find(self, x):
         """
@@ -137,14 +123,12 @@ class Histogram:
         # easy enough
         return gsl.histogram_find(self.data, x)
 
-
     def max(self):
         """
         Return my maximum upper range
         """
         # easy enough
         return gsl.histogram_max(self.data)
-
 
     def min(self):
         """
@@ -153,14 +137,12 @@ class Histogram:
         # easy enough
         return gsl.histogram_min(self.data)
 
-
     def range(self, i):
         """
         Return a tuple [lower, upper) that describes the range of the {i}th bin
         """
         # easy enough
         return gsl.histogram_range(self.data, i)
-
 
     # statistics
     def max_bin(self):
@@ -170,14 +152,12 @@ class Histogram:
         # easy enough
         return gsl.histgram_max_bin(self.data)
 
-
     def max_value(self):
         """
         Return the maximum value contained in the histogram
         """
         # easy enough
         return gsl.histgram_max_value(self.data)
-
 
     def min_bin(self):
         """
@@ -186,14 +166,12 @@ class Histogram:
         # easy enough
         return gsl.histgram_min_bin(self.data)
 
-
     def min_value(self):
         """
         Return the minimum value contained in the histogram
         """
         # easy enough
         return gsl.histgram_min_value(self.data)
-
 
     def mean(self):
         """
@@ -202,14 +180,12 @@ class Histogram:
         # easy enough
         return gsl.histgram_mean(self.data)
 
-
     def sdev(self):
         """
         Return the standard deviation of the histogrammed variable
         """
         # easy enough
         return gsl.histgram_sdev(self.data)
-
 
     def sum(self):
         """
@@ -218,7 +194,6 @@ class Histogram:
         # easy enough
         return gsl.histgram_sum(self.data)
 
-
     # meta methods
     def __init__(self, bins, data=None, **kwds):
         super().__init__(**kwds)
@@ -226,10 +201,9 @@ class Histogram:
         self.data = gsl.histogram_alloc(bins) if data is None else data
         return
 
-
     # container support
-    def __len__(self): return self.bins
-
+    def __len__(self):
+        return self.bins
 
     def __iter__(self):
         # for each valid value of the index
@@ -239,11 +213,9 @@ class Histogram:
         # all done
         return
 
-
     def __getitem__(self, index):
         # get and return the element
         return gsl.histogram_get(self.data, index)
-
 
     # in-place arithmetic
     def __iadd__(self, other):
@@ -265,7 +237,6 @@ class Histogram:
         # otherwise, let the interpreter know
         raise NotImplemented
 
-
     def __isub__(self, other):
         """
         In-place subtraction with the elements of {other}
@@ -284,7 +255,6 @@ class Histogram:
             return self
         # otherwise, let the interpreter know
         raise NotImplemented
-
 
     def __imul__(self, other):
         """
@@ -305,7 +275,6 @@ class Histogram:
         # otherwise, let the interpreter know
         raise NotImplemented
 
-
     def __itruediv__(self, other):
         """
         In-place addition with the elements of {other}
@@ -319,12 +288,11 @@ class Histogram:
         # if other is a number
         if isinstance(other, numbers.Number):
             # do scaling by constant
-            gsl.histogram_scale(self.data, 1/float(other))
+            gsl.histogram_scale(self.data, 1 / float(other))
             # and return
             return self
         # otherwise, let the interpreter know
         raise NotImplemented
-
 
     # implementation details
     # private data

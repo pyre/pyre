@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -23,17 +22,17 @@ def test():
     assert {} == descriptor.coerce(())
     assert {} == descriptor.coerce([])
 
-    assert {"one" : '1'} == descriptor.coerce({"one": "1"})
-    assert {"one" : '1'} == descriptor.coerce([("one", "1")])
-    assert {"one" : '1'} == descriptor.coerce([["one", "1"]])
+    assert {"one": "1"} == descriptor.coerce({"one": "1"})
+    assert {"one": "1"} == descriptor.coerce([("one", "1")])
+    assert {"one": "1"} == descriptor.coerce([["one", "1"]])
 
-    assert {"one" : '1'} == descriptor.coerce({"one": 1})
-    assert {"one" : '1'} == descriptor.coerce([("one", 1)])
-    assert {"one" : '1'} == descriptor.coerce([["one", 1]])
+    assert {"one": "1"} == descriptor.coerce({"one": 1})
+    assert {"one": "1"} == descriptor.coerce([("one", 1)])
+    assert {"one": "1"} == descriptor.coerce([["one", 1]])
 
-    assert {"one" : '1', "two" : '2'} == descriptor.coerce({"one": 1, "two": 2})
-    assert {"one" : '1', "two" : '2'} == descriptor.coerce([("one", 1), ("two", 2)])
-    assert {"one" : '1', "two" : '2'} == descriptor.coerce((("one", 1), ("two", 2)))
+    assert {"one": "1", "two": "2"} == descriptor.coerce({"one": 1, "two": 2})
+    assert {"one": "1", "two": "2"} == descriptor.coerce([("one", 1), ("two", 2)])
+    assert {"one": "1", "two": "2"} == descriptor.coerce((("one", 1), ("two", 2)))
 
     # failures
     try:

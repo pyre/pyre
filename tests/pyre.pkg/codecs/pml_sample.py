@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -16,6 +15,7 @@ def test():
     # package access
     import pyre.config
     from pyre.config.events import Assignment, ConditionalAssignment
+
     # get the codec manager
     m = pyre.config.newConfigurator()
     # ask for a pml codec
@@ -35,7 +35,6 @@ def test():
     assert event.key == ["gauss", "name"]
     assert event.value == "gauss"
 
-
     event = events[1]
     assert isinstance(event, Assignment)
     assert event.key == ["gauss", "mc", "samples"]
@@ -54,18 +53,14 @@ def test():
     event = events[4]
     assert isinstance(event, ConditionalAssignment)
     assert event.component == ["gauss", "mc", "integrand"]
-    assert event.conditions == [
-        (["gauss", "mc", "integrand"], ["gauss", "functors", "gaussian"])
-        ]
+    assert event.conditions == [(["gauss", "mc", "integrand"], ["gauss", "functors", "gaussian"])]
     assert event.key == ["μ"]
     assert event.value == "(0,0)"
 
     event = events[5]
     assert isinstance(event, ConditionalAssignment)
     assert event.component == ["gauss", "mc", "integrand"]
-    assert event.conditions == [
-        (["gauss", "mc", "integrand"], ["gauss", "functors", "gaussian"])
-        ]
+    assert event.conditions == [(["gauss", "mc", "integrand"], ["gauss", "functors", "gaussian"])]
     assert event.key == ["σ"]
     assert event.value == "1/3"
 

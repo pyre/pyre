@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -14,6 +13,7 @@ Verify that additional configuration files can be specified on the command line
 
 def test():
     import pyre
+
     # get the executive instance
     executive = pyre.executive
     # pull the configutor
@@ -24,8 +24,8 @@ def test():
     parser = executive.newCommandLineParser()
     # build an argument list
     commandline = [
-        '--config=sample.pml',
-        ]
+        "--config=sample.pml",
+    ]
     # get the parser to populate the configurator
     events = parser.parse(commandline)
     # and transfer the events to the configurator

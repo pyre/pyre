@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -14,6 +13,7 @@ Verify the linker can understand shelf uris
 
 def test():
     import pyre
+
     # build the executive
     executive = pyre.executive
     # access the linker
@@ -31,7 +31,7 @@ def test():
     # request a file
     shelf = linker.loadShelf(executive=executive, uri="file:sample.py")
     # make sure it got imported correctly
-    assert shelf.retrieveSymbol('factory')
+    assert shelf.retrieveSymbol("factory")
 
     # request a non-existent file
     try:
@@ -50,7 +50,7 @@ def test():
     # request the same file through vfs
     shelf = linker.loadShelf(executive=executive, uri="vfs:{}/sample.py".format(fs.STARTUP_DIR))
     # make sure it got imported correctly
-    assert shelf.retrieveSymbol('factory')
+    assert shelf.retrieveSymbol("factory")
 
     # all done
     return executive

@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -14,14 +13,17 @@ Make a connection to a database using the low level interface from the extension
 
 def test():
     import journal
+
     # journal.debug("postgres.init").active = True
     # journal.debug("postgres.connection").active = True
     # journal.debug("postgres.execution").active = True
     # journal.debug("postgres.conversions").active = True
 
     from pyre.extensions import postgres as pyrepg
+
     # initialize the module exceptions
     import pyre.db.exceptions as exceptions
+
     pyrepg.registerExceptions(exceptions)
 
     # make a connection
@@ -38,7 +40,7 @@ def test():
     # retrieve it
     result = pyrepg.retrieve(connection)
     # check that we got what we expected
-    assert result == (('datname',), ('postgres',))
+    assert result == (("datname",), ("postgres",))
 
     # call retrieve again; this time there should be nothing to get
     result = pyrepg.retrieve(connection)

@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -120,9 +121,7 @@ class Node:
         """
         The handler that is invoked when the parser encounters my closing tag
         """
-        raise NotImplementedError(
-            f"class '{type(self).__name__}' must override 'notify'"
-        )
+        raise NotImplementedError(f"class '{type(self).__name__}' must override 'notify'")
 
     # turn the locator factory into a method of mine
     newLocator = staticmethod(newLocator)

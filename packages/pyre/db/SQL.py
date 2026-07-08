@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -61,9 +62,7 @@ class SQL(Mill, family="pyre.db.sql"):
                 # do we need a comma?
                 comma = "," if index + 1 < fields else ""
                 # render this field
-                yield self.place(
-                    "{} AS {}{}".format(self.expression(entry), entry.name, comma)
-                )
+                yield self.place("{} AS {}{}".format(self.expression(entry), entry.name, comma))
             # push out
             self.outdent()
 
@@ -99,9 +98,7 @@ class SQL(Mill, family="pyre.db.sql"):
                 # otherwise
                 else:
                     # build a local alias for the table name
-                    yield self.place(
-                        "{} AS {}{}".format(table.pyre_name, tableName, terminator)
-                    )
+                    yield self.place("{} AS {}{}".format(table.pyre_name, tableName, terminator))
 
             # render the {WHERE} clause
             if query.where is not None:
@@ -135,9 +132,7 @@ class SQL(Mill, family="pyre.db.sql"):
                 # push in
                 self.indent()
                 # build the collation expression
-                collation = (
-                    self.expression(root=spec, context=query) for spec in order
-                )
+                collation = (self.expression(root=spec, context=query) for spec in order)
                 # and render it
                 yield self.place("{};".format(", ".join(collation)))
 
@@ -235,9 +230,7 @@ class SQL(Mill, family="pyre.db.sql"):
             yield self.place("CREATE TABLE " + table.pyre_name)
             # convert the docstring into a comment block
             self.indent()
-            yield from self.commentBlock(
-                line.strip() for line in table.__doc__.splitlines()
-            )
+            yield from self.commentBlock(line.strip() for line in table.__doc__.splitlines())
             # newish versions trim a newline from the class docstring
             if sys.version_info >= (3, 13):
                 # so put it back, for now so the tests don't fail
@@ -370,9 +363,7 @@ class SQL(Mill, family="pyre.db.sql"):
             # otherwise
             else:
                 # render any dangling values
-                yield self.place(
-                    dangling + ","
-                )  # add a comma since we know there are more...
+                yield self.place(dangling + ",")  # add a comma since we know there are more...
             # collect the values
             values = (
                 (
@@ -565,9 +556,7 @@ class SQL(Mill, family="pyre.db.sql"):
             comment = ""
 
         # build the declaration line
-        yield self.place(
-            "{} {}{}{}{}".format(name, typedecl, default, separator, comment)
-        )
+        yield self.place("{} {}{}{}{}".format(name, typedecl, default, separator, comment))
         # indent
         self.indent()
 
@@ -598,9 +587,7 @@ class SQL(Mill, family="pyre.db.sql"):
         if field is None:
             yield self.place("REFERENCES {.pyre_name}{}".format(table, separator))
         else:
-            yield self.place(
-                "REFERENCES {.pyre_name} ({.name}){}".format(table, field, separator)
-            )
+            yield self.place("REFERENCES {.pyre_name} ({.name}){}".format(table, field, separator))
 
         # if there is nothing further to do
         if foreign.update is None and foreign.delete is None:

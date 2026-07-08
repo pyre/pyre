@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # externals
@@ -21,12 +20,10 @@ class Parser(pyre.parsing.parser):
     documentation for details.
     """
 
-
     # types
     from .exceptions import ParsingError, SyntaxError
     from ..events import Assignment, ConditionalAssignment
-    from .Scanner import Scanner as lexer # my superclass uses this to instantiate my scanner
-
+    from .Scanner import Scanner as lexer  # my superclass uses this to instantiate my scanner
 
     # interface
     def parse(self, uri, stream, locator):
@@ -43,7 +40,6 @@ class Parser(pyre.parsing.parser):
         # all done
         return self.configuration
 
-
     # meta methods
     def __init__(self, **kwds):
         # chain up
@@ -57,17 +53,15 @@ class Parser(pyre.parsing.parser):
             self.scanner.comment: self.ignore,
             self.scanner.whitespace: self.ignore,
             self.scanner.finish: self.ignore,
-
             # context specifier
             self.scanner.secbeg: self.context,
             # assignment
-            self.scanner.key: self.assignment
-            }
+            self.scanner.key: self.assignment,
+        }
         # and the list of errors encountered during parsing
         self.errors = []
         # all done
         return
-
 
     # implementation details
     @pyre.patterns.coroutine
@@ -107,14 +101,12 @@ class Parser(pyre.parsing.parser):
         # all done
         return
 
-
     def ignore(self, **kwds):
         """
         Do nothing
         """
         # there is nothing to do here
         return []
-
 
     def context(self, current):
         """
@@ -131,7 +123,7 @@ class Parser(pyre.parsing.parser):
             # not much more to do
             return
         # set the family to the lexeme
-        self.family = current.lexeme.split('.')
+        self.family = current.lexeme.split(".")
 
         # get the next token
         current = yield
@@ -164,7 +156,7 @@ class Parser(pyre.parsing.parser):
             return
 
         # set the name to the lexeme
-        self.name = current.lexeme.split('.')
+        self.name = current.lexeme.split(".")
 
         # get the next token
         current = yield
@@ -180,13 +172,12 @@ class Parser(pyre.parsing.parser):
         # all done
         return
 
-
     def assignment(self, current):
         """
         Process a key assignment
         """
         # get the key
-        key = current.lexeme.split('.')
+        key = current.lexeme.split(".")
         # save its locator
         locator = current.locator
         # grab the next token
@@ -206,19 +197,20 @@ class Parser(pyre.parsing.parser):
         if self.name:
             # build a conditional assignment
             event = self.ConditionalAssignment(
-                component = self.name + key[:-1],
-                conditions = [(self.name, self.family)],
-                key = key[-1:], value = value,
-                locator = locator)
+                component=self.name + key[:-1],
+                conditions=[(self.name, self.family)],
+                key=key[-1:],
+                value=value,
+                locator=locator,
+            )
         # otherwise
         else:
             # build an unconditional assignment
-            event = self.Assignment(key = self.family + key, value = value, locator = locator)
+            event = self.Assignment(key=self.family + key, value=value, locator=locator)
         # in any case, add it to the pile
         self.configuration.append(event)
         # and return
         return
-
 
     def handleError(self, description, locator):
         """
@@ -231,12 +223,11 @@ class Parser(pyre.parsing.parser):
         # all done
         return
 
-
     # private data
-    name = () # context: the current component name
-    family = () # context: the current component family
-    productions = None # the table of token handlers
-    configuration = None # the list of configuration events harvested from the input source
+    name = ()  # context: the current component name
+    family = ()  # context: the current component family
+    productions = None  # the table of token handlers
+    configuration = None  # the list of configuration events harvested from the input source
 
 
 # end of file

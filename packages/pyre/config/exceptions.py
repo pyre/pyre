@@ -1,15 +1,13 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
 Definitions for all the exceptions raised by this package
 """
-
 
 from ..framework.exceptions import FrameworkError, BadResourceLocatorError
 
@@ -29,7 +27,7 @@ class CodecError(ConfigurationError):
     description = "generic codec error"
 
     # meta-methods
-    def __init__(self, codec, uri="",  **kwds):
+    def __init__(self, codec, uri="", **kwds):
         # chain up
         super().__init__(**kwds)
         # save the error info
@@ -45,7 +43,7 @@ class UnknownEncodingError(CodecError):
     """
 
     # public data
-    description = '{0.uri.uri!r}: unknown encoding {0.encoding!r}'
+    description = "{0.uri.uri!r}: unknown encoding {0.encoding!r}"
 
     # meta-methods
     def __init__(self, encoding, **kwds):

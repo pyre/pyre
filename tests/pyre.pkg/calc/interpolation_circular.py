@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -21,7 +20,7 @@ def test():
     # self reference
 
     try:
-        model['cost'] = model.interpolation('{cost}')
+        model["cost"] = model.interpolation("{cost}")
         assert False
     except model.CircularReferenceError:
         pass
@@ -31,8 +30,8 @@ def test():
     # now validate the graph, expecting the circular reference to raise an exception
     try:
         # a cycle
-        model['cost'] = model.interpolation('{price}')
-        model['price'] = model.interpolation('{cost}')
+        model["cost"] = model.interpolation("{price}")
+        model["price"] = model.interpolation("{cost}")
         assert False
     except model.CircularReferenceError:
         pass

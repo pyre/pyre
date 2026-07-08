@@ -1,4 +1,5 @@
-#! /usr/bin/env python3
+#!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -11,8 +12,10 @@ def test():
     """
     # get the renderer
     from journal.Memo import Memo as memo
+
     # the color spaces
     from journal.ANSI import ANSI
+
     # and a channel
     from journal.Debug import Debug as debug
 
@@ -41,12 +44,12 @@ def test():
         "channel": ANSI.x11("light slate gray"),
         "debug": ANSI.x11("steel blue"),
         "body": "",
-        }
+    }
 
     # instantiate the renderer
     renderer = memo()
     # ask it to do its thing
-    page = '\n'.join(renderer.render(palette=palette, entry=channel.entry))
+    page = "\n".join(renderer.render(palette=palette, entry=channel.entry))
     # and show me
     # print(page)
 

@@ -1,16 +1,14 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 class Count:
     """
     The representation of the length of a collection of nodes
     """
-
 
     # value management
     def getValue(self):

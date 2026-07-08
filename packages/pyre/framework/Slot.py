@@ -1,17 +1,19 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # externals
 import uuid
+
 # access to the algebraic package
 from .. import calc
+
 # access to the locators
 from .. import tracking
+
 # the framework client mix-in
 from .Dashboard import Dashboard
 
@@ -48,9 +50,8 @@ class Slot(Dashboard, metaclass=calc.calculator):
     that was used to set the value of the trait.
     """
 
-
     # public data
-    key = None # the hash by which i am known to the name server
+    key = None  # the hash by which i am known to the name server
 
     @property
     def model(self):
@@ -68,16 +69,15 @@ class Slot(Dashboard, metaclass=calc.calculator):
         # ask the nameserver for the name that corresponds to my key
         return self.pyre_nameserver.getName(self.key) if self.key else None
 
-
     # mix-ins
     class literal:
         """Representation of foreign values"""
+
         def __init__(self, key=None, **kwds):
             # chain up
             super().__init__(key=key, **kwds)
             # and return
             return
-
 
     # meta-methods
     def __init__(self, key=None, **kwds):

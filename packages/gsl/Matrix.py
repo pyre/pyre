@@ -1,15 +1,14 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # externals
 import numbers
 import itertools
-from . import gsl # the extension
+from . import gsl  # the extension
 
 
 # the class declaration
@@ -46,7 +45,6 @@ class Matrix:
     sortMagnitudeAscending = 2
     sortMagnitudeDescending = 3
 
-
     # class methods
     # mpi support
     @classmethod
@@ -58,6 +56,7 @@ class Matrix:
         if communicator is None:
             # get the mpi package
             import mpi
+
             # use the world by default
             communicator = mpi.world
         # get the matrix capsule
@@ -69,7 +68,6 @@ class Matrix:
         # and return it
         return result
 
-
     @classmethod
     def collect(cls, matrix, communicator=None, destination=0):
         """
@@ -80,19 +78,20 @@ class Matrix:
         if communicator is None:
             # get the mpi package
             import mpi
+
             # use the {world} by default
             communicator = mpi.world
         # gather the data
         result = gsl.gatherMatrix(communicator.capsule, destination, matrix.data)
         # if i am not the destination task, nothing further to do
-        if communicator.rank != destination: return
+        if communicator.rank != destination:
+            return
         # otherwise, unpack the result
         data, shape = result
         # dress up the result as a matrix
         result = cls(shape=shape, data=data)
         # and return it
         return result
-
 
     def excerpt(self, communicator=None, source=0, matrix=None):
         """
@@ -104,6 +103,7 @@ class Matrix:
         if communicator is None:
             # get the mpi package
             import mpi
+
             # use the world by default
             communicator = mpi.world
         # get the matrix capsule
@@ -112,7 +112,6 @@ class Matrix:
         gsl.scatterMatrix(communicator.capsule, source, self.data, data)
         # and return me
         return self
-
 
     # public data
     @property
@@ -139,7 +138,6 @@ class Matrix:
         # all done
         return
 
-
     # initialization
     def zero(self):
         """
@@ -149,7 +147,6 @@ class Matrix:
         gsl.matrix_zero(self.data)
         # and return
         return self
-
 
     def fill(self, value):
         """
@@ -175,16 +172,15 @@ class Matrix:
         # all done
         return self
 
-
     def view(self, start, shape):
         """
         Build a view to my data anchored at {start} with the given {shape}
         """
         # access the view object
         from .MatrixView import MatrixView
+
         # build one and return it
         return MatrixView(matrix=self, start=start, shape=shape)
-
 
     def load(self, filename, binary=None):
         """
@@ -213,7 +209,6 @@ class Matrix:
         # otherwise
         return self.scanf(filename)
 
-
     def save(self, filename, binary=None, format=defaultFormat):
         """
         Write my values to {filename}
@@ -241,7 +236,6 @@ class Matrix:
         # otherwise
         return self.printf(filename=filename, format=format)
 
-
     def read(self, filename):
         """
         Read my values from {filename}
@@ -250,7 +244,6 @@ class Matrix:
         gsl.matrix_read(self.data, filename.path)
         # and return
         return self
-
 
     def write(self, filename):
         """
@@ -261,7 +254,6 @@ class Matrix:
         # and return
         return self
 
-
     def scanf(self, filename):
         """
         Read my values from {filename}
@@ -271,18 +263,16 @@ class Matrix:
         # and return
         return self
 
-
     def printf(self, filename, format=defaultFormat):
         """
         Write my values to {filename}
         """
         # write
-        gsl.matrix_printf(self.data, filename.path, '%'+format+'e')
+        gsl.matrix_printf(self.data, filename.path, "%" + format + "e")
         # and return
         return self
 
-
-    def print(self, format='{:+13.4e}', indent='', interactive=True):
+    def print(self, format="{:+13.4e}", indent="", interactive=True):
         """
         Print my values using the given {format}
         """
@@ -293,23 +283,22 @@ class Matrix:
             # initialize the line
             fragments = []
             # print the left margin: a '[[' on the first row, nothing on the others
-            fragments.append('{}{}'.format(indent, '[[' if i==0 else '  '))
+            fragments.append("{}{}".format(indent, "[[" if i == 0 else "  "))
             # the row entries
             for j in range(self.columns):
-                fragments.append(format.format(self[i,j]))
+                fragments.append(format.format(self[i, j]))
             # the right margin
-            fragments.append('{}'.format(']]' if i==self.rows-1 else '  '))
+            fragments.append("{}".format("]]" if i == self.rows - 1 else "  "))
             # add the line to the pile
-            lines.append(' '.join(fragments))
+            lines.append(" ".join(fragments))
 
         # if we are in interactive mode
         if interactive:
             # print all this out
-            print('\n'.join(lines))
+            print("\n".join(lines))
 
         # all done
         return lines
-
 
     def identity(self):
         """
@@ -321,14 +310,12 @@ class Matrix:
         # and return
         return self
 
-
     def random(self, pdf):
         """
         Fill me with random numbers using the probability distribution {pdf}
         """
         # the {pdf} knows how to do this
         return pdf.matrix(matrix=self)
-
 
     def clone(self):
         """
@@ -341,7 +328,6 @@ class Matrix:
         # and return it
         return clone
 
-
     def copy(self, other):
         """
         Fill me with values from {other}, which is assumed to be of compatible shape
@@ -350,7 +336,6 @@ class Matrix:
         gsl.matrix_copy(self.data, other.data)
         # and return it
         return self
-
 
     def tuple(self):
         """
@@ -362,7 +347,6 @@ class Matrix:
         rep = gsl.matrix_tuple(self.data)
         # and return it
         return rep
-
 
     # matrix operations
     def transpose(self, destination=None):
@@ -384,7 +368,6 @@ class Matrix:
         # and return myself
         return self
 
-
     # slicing
     def getRow(self, index):
         """
@@ -395,7 +378,6 @@ class Matrix:
         # build a vector and return it
         return self.vector(shape=self.columns, data=capsule)
 
-
     def getColumn(self, index):
         """
         Return a view to the requested column
@@ -404,7 +386,6 @@ class Matrix:
         capsule = gsl.matrix_get_col(self.data, int(index))
         # build a vector and return it
         return self.vector(shape=self.rows, data=capsule)
-
 
     def setRow(self, index, v):
         """
@@ -415,7 +396,6 @@ class Matrix:
         # and return
         return self
 
-
     def setColumn(self, index, v):
         """
         Set the column at {index} to the contents of the given vector {v}
@@ -425,7 +405,6 @@ class Matrix:
         # and return
         return self
 
-
     # maxima and minima
     def max(self):
         """
@@ -434,7 +413,6 @@ class Matrix:
         # easy enough
         return gsl.matrix_max(self.data)
 
-
     def min(self):
         """
         Compute my maximum value
@@ -442,14 +420,12 @@ class Matrix:
         # easy enough
         return gsl.matrix_min(self.data)
 
-
     def minmax(self):
         """
         Compute my minimum and maximum values
         """
         # easy enough
         return gsl.matrix_minmax(self.data)
-
 
     # eigensystems
     def symmetricEigensystem(self, order=sortValueAscending):
@@ -471,7 +447,7 @@ class Matrix:
         axis = None, 0, or 1, along which the mean are computed
         """
         # check axis
-        if axis is not None and axis !=0 and axis !=1:
+        if axis is not None and axis != 0 and axis != 1:
             raise IndexError("axis is out of range")
         # check whether output vector is already allocated
         if out is None:
@@ -507,7 +483,7 @@ class Matrix:
              when False, the population standard deviation is computed 1/N
         """
         # check axis
-        if axis is not None and axis !=0 and axis !=1:
+        if axis is not None and axis != 0 and axis != 1:
             raise IndexError("axis is out of range")
 
         if out is None:
@@ -544,7 +520,6 @@ class Matrix:
         mean, sd = self.mean_sd(axis=axis, out=None, sample=sample)
         return sd
 
-
     def ndarray(self, copy=False):
         """
         Return a numpy array reference (w/ shared data) if {copy} is False, or a new copy if {copy} is {True}
@@ -555,7 +530,6 @@ class Matrix:
         if copy:
             array = array.copy()
         return array
-
 
     # meta methods
     def __init__(self, shape, data=None, **kwds):
@@ -569,7 +543,6 @@ class Matrix:
         self.data = gsl.matrix_alloc(shape) if data is None else data
         # all done
         return
-
 
     # container support
     def __iter__(self):
@@ -585,33 +558,28 @@ class Matrix:
         # all done
         return
 
-
     def __contains__(self, value):
         # faster than checking every element in python
         return gsl.matrix_contains(self.data, value)
-
 
     def __getitem__(self, index):
         # get and return the element
         return gsl.matrix_get(self.data, index)
 
-
     def __setitem__(self, index, value):
         # set the element to the requested value
         return gsl.matrix_set(self.data, index, value)
 
-
     # comparisons
     def __eq__(self, other):
         # type check
-        if type(self) is not type(other): return NotImplemented
+        if type(self) is not type(other):
+            return NotImplemented
         # hand the request off to the extension module
         return gsl.matrix_equal(self.data, other.data)
 
-
     def __ne__(self, other):
         return not (self == other)
-
 
     # in-place arithmetic
     def __iadd__(self, other):
@@ -633,7 +601,6 @@ class Matrix:
         # otherwise, let the interpreter know
         raise NotImplemented
 
-
     def __isub__(self, other):
         """
         In-place subtraction with the elements of {other}
@@ -652,7 +619,6 @@ class Matrix:
             return self
         # otherwise, let the interpreter know
         raise NotImplemented
-
 
     def __imul__(self, other):
         """
@@ -673,7 +639,6 @@ class Matrix:
         # otherwise, let the interpreter know
         raise NotImplemented
 
-
     def __itruediv__(self, other):
         """
         In-place addition with the elements of {other}
@@ -687,16 +652,15 @@ class Matrix:
         # if other is a number
         if isinstance(other, numbers.Number):
             # do scaling by constant
-            gsl.matrix_scale(self.data, 1/float(other))
+            gsl.matrix_scale(self.data, 1 / float(other))
             # and return
             return self
         # otherwise, let the interpreter know
         raise NotImplemented
 
-
     # private data
     data = None
-    shape = (0,0)
+    shape = (0, 0)
 
 
 # end of file

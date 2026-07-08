@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -17,12 +16,11 @@ def test():
     import zipfile
     import pyre.filesystem
 
-
     # the name of the zipfile
     archive = "/tmp/sample.zip"
     # build the archive
     target = zipfile.ZipFile(file=archive, mode="w")
-    for filename in os.listdir('.'):
+    for filename in os.listdir("."):
         target.write(filename)
     target.close()
 
@@ -49,6 +47,7 @@ if __name__ == "__main__":
     pyre_noboot = True
     # do...
     import pyre.filesystem
+
     test()
 
 

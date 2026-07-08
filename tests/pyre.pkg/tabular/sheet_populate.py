@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -19,6 +18,7 @@ def test():
         """
         The sheet layout
         """
+
         # layout
         sku = pyre.tabular.str()
         description = pyre.tabular.str()
@@ -27,16 +27,15 @@ def test():
         margin = pyre.tabular.float()
         overhead = pyre.tabular.float()
 
-
     # our data set
     data = [
-        ("4000", "tomatoes", 2.95, 5, .2, 50),
-        ("4001", "peppers", 0.35, 15, .1, 25),
-        ("4002", "grapes", 1.65, 15, .15, 15),
-        ("4003", "kiwis", 0.95, 7, .15, 75),
-        ("4004", "lemons", 0.50, 4, .25, 50),
-        ("4005", "oranges", 0.50, 4, .25, 50),
-        ]
+        ("4000", "tomatoes", 2.95, 5, 0.2, 50),
+        ("4001", "peppers", 0.35, 15, 0.1, 25),
+        ("4002", "grapes", 1.65, 15, 0.15, 15),
+        ("4003", "kiwis", 0.95, 7, 0.15, 75),
+        ("4004", "lemons", 0.50, 4, 0.25, 50),
+        ("4005", "oranges", 0.50, 4, 0.25, 50),
+    ]
     # make a sheet
     p = pricing(name="vegetables")
     # and populate it

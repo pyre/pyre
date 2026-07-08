@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -15,6 +14,7 @@ Sanity check: instantiate a weaver and verify its configuration
 def test():
     # get the package
     import pyre.weaver
+
     # instantiate a weaver
     weaver = pyre.weaver.weaver(name="sanity")
     # by default, there is no language setting

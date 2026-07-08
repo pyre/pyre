@@ -1,13 +1,13 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # access to the pyre package
 import pyre
+
 # my ancestor
 from .LineMill import LineMill
 
@@ -18,11 +18,9 @@ class Sh(LineMill):
     Support for the Bourne shell
     """
 
-
     # traits
-    variant = pyre.properties.str(default='/bin/bash')
+    variant = pyre.properties.str(default="/bin/bash")
     variant.doc = "the shell variant to use on the hash-bang line"
-
 
     # interface
     @pyre.export
@@ -39,9 +37,8 @@ class Sh(LineMill):
         # all done
         return
 
-
     # private data
-    comment = '#'
+    comment = "#"
 
 
 # end of file

@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -15,6 +14,7 @@ Verify that we understand the way various locales render numbers
 def test_el_GR():
     # print("el_GR")
     import locale
+
     try:
         locale.setlocale(locale.LC_ALL, "el_GR.UTF-8")
     except locale.Error:
@@ -38,6 +38,7 @@ def test_el_GR():
 def test_en_US():
     # print("en_US")
     import locale
+
     try:
         locale.setlocale(locale.LC_ALL, "en_US.UTF-8")
     except locale.Error:
@@ -61,6 +62,7 @@ def test_en_US():
 def test_en_GB():
     # print("en_GB")
     import locale
+
     try:
         locale.setlocale(locale.LC_ALL, "en_GB.UTF-8")
     except locale.Error:
@@ -84,6 +86,7 @@ def test_en_GB():
 def test_fr_FR():
     # print("fr_FR")
     import locale
+
     try:
         locale.setlocale(locale.LC_ALL, "fr_FR.UTF-8")
     except locale.Error:

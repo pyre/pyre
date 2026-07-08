@@ -1,17 +1,15 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
 Check that the table attributes we use to specify query parameters are treated reserved
 keywords by the back end, which makes it unnecessary to place them in the {pyre_} namespace.
 """
-
 
 import pyre.db
 

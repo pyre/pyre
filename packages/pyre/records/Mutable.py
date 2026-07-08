@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # superclass
@@ -18,7 +17,6 @@ class Mutable(NamedTuple):
     This class assumes that its items are {pyre.calc} nodes.
     """
 
-
     # meta-methods
     def __getitem__(self, index):
         """
@@ -28,7 +26,6 @@ class Mutable(NamedTuple):
         item = super().__getitem__(index)
         # return the value
         return item.value
-
 
     def __setitem__(self, index, value):
         """
@@ -40,7 +37,6 @@ class Mutable(NamedTuple):
         node.value = value
         # all done
         return
-
 
     def __iter__(self):
         """
@@ -54,7 +50,6 @@ class Mutable(NamedTuple):
             yield item.value
         # all done
         return
-
 
     # private data
     __slots__ = ()

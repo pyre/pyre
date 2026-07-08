@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -27,23 +26,20 @@ def test():
     # B.print()
 
     # try one of the supported operations
-    B = gsl.blas.dtrmm(
-        A.sideLeft, A.lowerTriangular, A.opNoTrans, A.unitDiagonal,
-        2, A, B
-        )
+    B = gsl.blas.dtrmm(A.sideLeft, A.lowerTriangular, A.opNoTrans, A.unitDiagonal, 2, A, B)
     # show me
     # B.print()
     # the expected result
-    result = gsl.matrix(shape=(3,3))
-    result[0,0] = 0
-    result[0,1] = 2
-    result[0,2] = 4
-    result[1,0] = 6
-    result[1,1] = 12
-    result[1,2] = 18
-    result[2,0] = 36
-    result[2,1] = 52
-    result[2,2] = 68
+    result = gsl.matrix(shape=(3, 3))
+    result[0, 0] = 0
+    result[0, 1] = 2
+    result[0, 2] = 4
+    result[1, 0] = 6
+    result[1, 1] = 12
+    result[1, 2] = 18
+    result[2, 0] = 36
+    result[2, 1] = 52
+    result[2, 2] = 68
 
     # check
     assert B == result
@@ -59,23 +55,20 @@ def test():
     # B.print()
 
     # try one of the supported operations
-    B = gsl.blas.dtrmm(
-        A.sideLeft, A.upperTriangular, A.opNoTrans, A.unitDiagonal,
-        2, A, B
-        )
+    B = gsl.blas.dtrmm(A.sideLeft, A.upperTriangular, A.opNoTrans, A.unitDiagonal, 2, A, B)
     # show me
     # B.print()
     # the expected result
-    result = gsl.matrix(shape=(3,3))
-    result[0,0] = 48
-    result[0,1] = 60
-    result[0,2] = 72
-    result[1,0] = 54
-    result[1,1] = 64
-    result[1,2] = 74
-    result[2,0] = 12
-    result[2,1] = 14
-    result[2,2] = 16
+    result = gsl.matrix(shape=(3, 3))
+    result[0, 0] = 48
+    result[0, 1] = 60
+    result[0, 2] = 72
+    result[1, 0] = 54
+    result[1, 1] = 64
+    result[1, 2] = 74
+    result[2, 0] = 12
+    result[2, 1] = 14
+    result[2, 2] = 16
 
     # check
     assert B == result
@@ -88,33 +81,33 @@ def full():
     Build a sample matrix
     """
     # make one
-    m = gsl.matrix(shape=(3,3))
+    m = gsl.matrix(shape=(3, 3))
     # fill it
     for i in range(3):
         for j in range(3):
-            m[i,j] = 3*i + j
+            m[i, j] = 3 * i + j
     # all done
     return m
 
 
 def lower():
     # make a triangular matrix
-    m = gsl.matrix(shape=(3,3)).identity()
+    m = gsl.matrix(shape=(3, 3)).identity()
     # that's non-trivial
-    m[1,0] = 2
-    m[2,0] = 3
-    m[2,1] = 4
+    m[1, 0] = 2
+    m[2, 0] = 3
+    m[2, 1] = 4
     # all done
     return m
 
 
 def upper():
     # make a triangular matrix
-    m = gsl.matrix(shape=(3,3)).identity()
+    m = gsl.matrix(shape=(3, 3)).identity()
     # that's non-trivial
-    m[0,1] = 2
-    m[0,2] = 3
-    m[1,2] = 4
+    m[0, 1] = 2
+    m[0, 2] = 3
+    m[1, 2] = 4
     # all done
     return m
 

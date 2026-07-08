@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -18,28 +17,34 @@ def test():
     # declare a couple of components
     class base(pyre.component):
         """the base component"""
+
         common = pyre.properties.int()
 
     class derived(base):
         """a derived one, so automatically compatible"""
+
         extra = pyre.properties.int()
 
     class ok(pyre.component):
         """one that doesn't derive but has the right public component"""
+
         common = pyre.properties.int()
 
     class notok(pyre.component):
         """one that doesn't provide the right public component"""
+
         what = pyre.properties.int()
 
     class badtype(pyre.component):
         """one that has the right trait but of the wrong type"""
+
         @pyre.provides
         def common(self):
             """method, not property"""
 
     class shadow(base):
         """one that derives but shadows the trait in an incompatible way"""
+
         @pyre.provides
         def common(self):
             """method, not property"""

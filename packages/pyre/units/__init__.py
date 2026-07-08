@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 """
 This package provides support for working with dimensional quantities
@@ -15,10 +14,20 @@ support for units from other systems
 # convenient access to the local modules
 from . import (
     SI,
-    angle, area, energy, force, length, mass, power, pressure,
-    speed, substance, temperature, time, volume
+    angle,
+    area,
+    energy,
+    force,
+    length,
+    mass,
+    power,
+    pressure,
+    speed,
+    substance,
+    temperature,
+    time,
+    volume,
 )
-
 
 # factories
 
@@ -28,7 +37,6 @@ from . import (
 # cannot be done any other way and you find yourself resorting to building dimensional
 # quantities directly.
 from .Dimensional import Dimensional as dimensional, fundamental, zero, one
-
 
 # the unit parser converts string representations of dimensional quantities into instances of
 # Dimensional
@@ -43,9 +51,20 @@ def quantities():
     # publish the modules
     return (
         SI,
-        angle, area, energy, force, length, mass, power, pressure,
-        speed, substance, temperature, time, volume
-        )
+        angle,
+        area,
+        energy,
+        force,
+        length,
+        mass,
+        power,
+        pressure,
+        speed,
+        substance,
+        temperature,
+        time,
+        volume,
+    )
 
 
 # end of file

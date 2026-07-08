@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -14,6 +13,7 @@ Fork and exec the same script
 
 def test():
     import sys
+
     # if this is the forked child
     if "--child" in sys.argv:
         # spit out the command line
@@ -23,6 +23,7 @@ def test():
 
     # otherwise, fork
     import os
+
     pid = os.fork()
     # in the parent process
     if pid > 0:

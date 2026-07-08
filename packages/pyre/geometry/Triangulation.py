@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 class Triangulation:
@@ -11,10 +10,8 @@ class Triangulation:
     A wrapper around a two dimensional grid that converts it into a simplicial mesh
     """
 
-
     # public data
     grid = None
-
 
     @property
     def dimension(self):
@@ -24,7 +21,6 @@ class Triangulation:
         # just ask my grid
         return self.grid.dimension
 
-
     @property
     def numberOfPoints(self):
         """
@@ -33,15 +29,13 @@ class Triangulation:
         # just ask my grid
         return self.grid.numberOfPoints
 
-
     @property
     def numberOfCells(self):
         """
         Compute the number of cells in the grid
         """
         # ask my grid and multiply the result by two, since we split each quad into two triangles
-        return 2*self.grid.numberOfCells
-
+        return 2 * self.grid.numberOfCells
 
     @property
     def points(self):
@@ -50,7 +44,6 @@ class Triangulation:
         """
         # pass the request on
         return self.grid.points
-
 
     @property
     def cells(self):
@@ -64,7 +57,6 @@ class Triangulation:
             yield (cell[0], cell[2], cell[3])
         # all done
         return
-
 
     # meta-methods
     def __init__(self, grid, **kwds):

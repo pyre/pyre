@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -15,7 +14,7 @@ Verify that the command locator returns the correct location tag
 def script():
     import pyre.tracking
 
-    locator = pyre.tracking.command(arg='--help')
+    locator = pyre.tracking.command(arg="--help")
 
     assert str(locator) == "from the command line argument '--help'"
 

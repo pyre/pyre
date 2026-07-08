@@ -1,7 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
-# (c) 1998-2024 all rights reserved
+# (c) 1998-2026 all rights reserved
 
 
 # products
@@ -13,7 +14,6 @@ from . import colormaps
 from . import filters
 from . import selectors
 from . import codecs
-
 
 # easy access to the protocols
 # products

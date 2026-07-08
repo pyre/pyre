@@ -1,23 +1,27 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 import pyre
 
+
 class ifac(pyre.protocol, family="sample.ifac"):
     """sample protocol"""
 
+
 class comp(pyre.component, family="sample.ifac.comp", implements=ifac):
     """an implementation"""
+
     tag = pyre.properties.str()
+
 
 class container(pyre.component, family="sample.container"):
     """a component container"""
+
     catalog = pyre.properties.dict(schema=ifac())
 
 

@@ -1,13 +1,13 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # access to the framework
 import pyre
+
 
 # declaration
 class Shape(pyre.protocol, family="gauss.shapes"):
@@ -23,6 +23,7 @@ class Shape(pyre.protocol, family="gauss.shapes"):
         """
         # use {Ball}
         from .Ball import Ball
+
         return Ball
 
     # interface

@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -54,9 +55,7 @@ class Compilers(Fragment):
             # mark
             yield renderer.commentLine(f"{language} compiler support")
             # my driver
-            yield from renderer.set(
-                name=f"{language}.driver", value=f"{compiler.driver}"
-            )
+            yield from renderer.set(name=f"{language}.driver", value=f"{compiler.driver}")
             # its version
             yield from renderer.set(name=f"{language}.version", value=f"{version}")
             # leave some room

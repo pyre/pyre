@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -37,9 +38,7 @@ class Library(
     scope.doc = "place my headers within the scope of a larger project"
 
     gateway = merlin.properties.paths()
-    gateway.doc = (
-        "the name of the top level header that provides access to the other headers"
-    )
+    gateway.doc = "the name of the top level header that provides access to the other headers"
 
     languages = merlin.protocols.languages.table()
     languages.doc = "language specific configuration"
@@ -219,9 +218,7 @@ class Library(
                 # everything else is assumed to be a regular file
                 else:
                     # so they become file based assets
-                    asset = self.file(
-                        name=name, node=node, path=path, classifier=classifier
-                    )
+                    asset = self.file(name=name, node=node, path=path, classifier=classifier)
                 # either way, assets are attached to their container
                 folder.add(asset=asset)
         # publish the top level folder

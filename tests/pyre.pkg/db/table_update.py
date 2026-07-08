@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -17,7 +16,7 @@ def test():
     import pyre.db
 
     # declare the person table
-    class Person(pyre.db.table, id='persons'):
+    class Person(pyre.db.table, id="persons"):
 
         id = pyre.db.int().primary()
         name = pyre.db.str().notNull()
@@ -27,20 +26,20 @@ def test():
     # initialize a person template
     eva = pyre.db.template(Person)
     # record some assignments
-    eva.phone = '1 800 555 7687'
-    eva.birthday = '1930/10/28'
+    eva.phone = "1 800 555 7687"
+    eva.birthday = "1930/10/28"
 
     # get a server
     server = pyre.db.server(name="test")
     # generate the SQL statement that updates the customer table
-    stmt = tuple(server.sql.updateRecords(template=eva, condition=(Person.name == 'Eva Lu Ator')))
+    stmt = tuple(server.sql.updateRecords(template=eva, condition=(Person.name == "Eva Lu Ator")))
     # print('\n'.join(stmt))
     assert stmt == (
         "UPDATE persons",
         "  SET",
         "    (phone, birthday) = ('1 800 555 7687', '1930/10/28')",
-        "  WHERE ((name) = ('Eva Lu Ator'));"
-        )
+        "  WHERE ((name) = ('Eva Lu Ator'));",
+    )
 
     return
 

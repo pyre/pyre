@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -86,9 +87,7 @@ class FileServer(Filesystem):
             # if {uri} is not in my logical namespace
             except self.NotFoundError as error:
                 # complain
-                raise self.SourceNotFoundError(
-                    filesystem=self, node=error.node, uri=uri
-                )
+                raise self.SourceNotFoundError(filesystem=self, node=error.node, uri=uri)
             # if {uri} maps to a non-existent file
             except IOError:
                 # complain
@@ -117,9 +116,7 @@ class FileServer(Filesystem):
             # if {uri} is not in my logical namespace
             except self.NotFoundError as error:
                 # complain
-                raise self.SourceNotFoundError(
-                    filesystem=self, node=error.node, uri=uri
-                )
+                raise self.SourceNotFoundError(filesystem=self, node=error.node, uri=uri)
 
             # if the node is a folder
             if node.isFolder:
@@ -129,9 +126,7 @@ class FileServer(Filesystem):
             return node.open(**kwds)
 
         # if i didn't recognize the {scheme}, complain
-        raise self.URISpecificationError(
-            uri=uri, reason=f"unsupported scheme '{scheme}'"
-        )
+        raise self.URISpecificationError(uri=uri, reason=f"unsupported scheme '{scheme}'")
 
     # convenience: access to the filesystem factories
     def local(self, root, **kwds):
@@ -289,9 +284,7 @@ class FileServer(Filesystem):
         # figure out where the configuration directory is; first, try looking for an XDG compliant
         # layout; perhaps the system sets up the mandated environment variable
         xdgHome = (
-            primitives.path(os.getenv("XDG_CONFIG_HOME", self.XDG_CONFIG))
-            .expanduser()
-            .resolve()
+            primitives.path(os.getenv("XDG_CONFIG_HOME", self.XDG_CONFIG)).expanduser().resolve()
         )
         # point to a {pyre} specific subdirectory
         xdg = xdgHome / "pyre"

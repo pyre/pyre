@@ -1,4 +1,5 @@
-#! /usr/bin/env python3
+#!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -25,6 +26,7 @@ def test():
 
     # get the journal
     import journal
+
     # make a channel
     channel = journal.debug(name="pyre.timers")
     # activate it

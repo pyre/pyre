@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -21,9 +20,11 @@ def test():
         assert False
     except pyre.filesystem.MountPointError as error:
         import os
+
         target = os.path.abspath(dummy)
         assert str(error) == (
-            "error while mounting {0!r}: mount point is not a zipfile".format(target))
+            "error while mounting {0!r}: mount point is not a zipfile".format(target)
+        )
 
     return
 

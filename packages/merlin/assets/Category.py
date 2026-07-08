@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -40,9 +41,7 @@ class Category(
             # complain
             channel.line(f"unable to find a handler for '{self.pyre_name}'")
             channel.line(f"for the asset category '{self.__class__.__name__}'")
-            channel.line(
-                f"while looking through the interface of '{visitor.pyre_name}'"
-            )
+            channel.line(f"while looking through the interface of '{visitor.pyre_name}'")
             # flush
             channel.log()
             # and fail, just in case firewalls aren't fatal

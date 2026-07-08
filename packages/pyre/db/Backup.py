@@ -1,13 +1,13 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # externals
 import pyre
+
 # superclass
 from .Server import Server
 
@@ -25,7 +25,6 @@ class Backup(Server, family="pyre.db.server.backup"):
     stream = pyre.properties.ostream(default="stdout")
     stream.doc = "the stream in which to place SQL statements"
 
-
     # interface
     @pyre.export
     def attach(self):
@@ -35,7 +34,6 @@ class Backup(Server, family="pyre.db.server.backup"):
         # nothing to do
         return
 
-
     @pyre.export
     def detach(self):
         """
@@ -44,19 +42,17 @@ class Backup(Server, family="pyre.db.server.backup"):
         # nothing to do
         return
 
-
     @pyre.export
     def execute(self, *sql):
         """
         Execute the sequence of SQL statements in {sql} as a single command
         """
         # assemble the SQL statements
-        statements = '\n'.join(sql)
+        statements = "\n".join(sql)
         # place them in my stream
         print(statements, file=self.stream)
         # all done
         return
-
 
     # meta methods
     # context manager interface
@@ -66,7 +62,6 @@ class Backup(Server, family="pyre.db.server.backup"):
         """
         # nothing to do
         return self
-
 
     def __exit__(self, exc_type, exc_instance, exc_traceback):
         """

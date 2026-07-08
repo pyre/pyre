@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -14,7 +15,6 @@ class Config(merlin.shells.command, family="merlin.cli.config"):
     Display configuration information about this package
     """
 
-
     # version info
     @merlin.export(tip="the version information")
     def version(self, **kwds):
@@ -25,7 +25,6 @@ class Config(merlin.shells.command, family="merlin.cli.config"):
         print(f"{merlin.meta.version}")
         # all done
         return 0
-
 
     # configuration
     @merlin.export(tip="the top level installation directory")
@@ -38,7 +37,6 @@ class Config(merlin.shells.command, family="merlin.cli.config"):
         # all done
         return 0
 
-
     @merlin.export(tip="the directory with the executable scripts")
     def path(self, **kwds):
         """
@@ -48,7 +46,6 @@ class Config(merlin.shells.command, family="merlin.cli.config"):
         print(f"{merlin.prefix}/bin")
         # all done
         return 0
-
 
     @merlin.export(tip="the directory with the python packages")
     def pythonpath(self, **kwds):
@@ -60,7 +57,6 @@ class Config(merlin.shells.command, family="merlin.cli.config"):
         # all done
         return 0
 
-
     @merlin.export(tip="the location of the {merlin} headers")
     def incpath(self, **kwds):
         """
@@ -70,7 +66,6 @@ class Config(merlin.shells.command, family="merlin.cli.config"):
         print(f"{merlin.prefix}/include")
         # all done
         return 0
-
 
     @merlin.export(tip="the location of the {merlin} libraries")
     def libpath(self, **kwds):

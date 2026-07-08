@@ -1,13 +1,13 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # externals
 import collections
+
 # superclass
 from .Type import Type
 
@@ -30,10 +30,8 @@ class AttributeClassifier(Type):
     storage that records the order in which attributes were encountered in the class record.
     """
 
-
     # data
     pyre_reserved = set()
-
 
     # interface
     @classmethod

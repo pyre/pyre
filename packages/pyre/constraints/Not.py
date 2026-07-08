@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # superclass
@@ -15,7 +14,6 @@ class Not(Constraint):
     """
     Constraint that is satisfied when the candidate fails to satisfy a given constraint
     """
-
 
     # interface
     def validate(self, value, **kwds):
@@ -33,7 +31,6 @@ class Not(Constraint):
         # otherwise, chain up
         return super().validate(value=value, **kwds)
 
-
     # meta-methods
     def __init__(self, constraint, **kwds):
         # chain up
@@ -42,7 +39,6 @@ class Not(Constraint):
         self.constraint = constraint
         # all done
         return
-
 
     def __str__(self):
         return "not {0.constraint}".format(self)

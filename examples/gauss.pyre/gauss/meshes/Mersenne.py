@@ -1,28 +1,27 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # externals
 import pyre
 import random
 import itertools
+
 # my protocol
 from .PointCloud import PointCloud
+
 
 class Mersenne(pyre.component, family="gauss.meshes.mersenne", implements=PointCloud):
     """
     A point generator that uses the python builtin random number generator
     """
 
-
     # public state
     seed = pyre.properties.int(default=None)
     seed.doc = "initialization for the random number generator"
-
 
     # interface
     @pyre.export
@@ -45,7 +44,6 @@ class Mersenne(pyre.component, family="gauss.meshes.mersenne", implements=PointC
             yield tuple(starmap(rng, intervals))
         # all done
         return
-
 
     # meta methods
     def __init__(self, **kwds):

@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # externals
@@ -16,11 +15,9 @@ class Loader:
     Base class for strategies that build component descriptors from persistent stores
     """
 
-
     # types
     from ..primitives import uri
     from .exceptions import LoadingError
-
 
     @classmethod
     def loadShelves(cls, executive, protocol, uri, scheme, context, **kwds):
@@ -34,15 +31,15 @@ class Loader:
         # print("    scheme: {}".format(scheme))
         # print("    context: {}".format(context))
         # for key, value in kwds.items():
-            # print("    {}: {}".format(key, value))
+        # print("    {}: {}".format(key, value))
 
         # access the linker
         linker = executive.linker
         # print(" -- priming the search for shelves")
         # use {protocol} to build a sequence of candidate locations
-        candidates = cls.locateShelves(executive=executive, protocol=protocol,
-                                       scheme=scheme, context=context,
-                                       **kwds)
+        candidates = cls.locateShelves(
+            executive=executive, protocol=protocol, scheme=scheme, context=context, **kwds
+        )
         # print(" -- done priming the search for shelves")
         # go through each of them
         for candidate in candidates:
@@ -85,7 +82,6 @@ class Loader:
         # no more candidates
         return
 
-
     @classmethod
     def locateShelves(cls, executive, protocol, scheme, context, symbol, cfgpath=None, **kwds):
         """
@@ -102,7 +98,8 @@ class Loader:
             # the subsequence
             context[:pos]
             # the indices
-            for pos in reversed(range(1, len(context)+1)))
+            for pos in reversed(range(1, len(context) + 1))
+        )
         # show me
         # print("    contexts: {}".format(contexts))
 
@@ -141,7 +138,8 @@ class Loader:
                     # pairwise check
                     for new, old in zip(flavor, known):
                         # for equality
-                        if new != old: break
+                        if new != old:
+                            break
                     # if we didn't find any discrepancy
                     else:
                         # it means that we exhausted one of them with no mismatch; if the known
@@ -178,7 +176,7 @@ class Loader:
             # print(' -- flavor: {}'.format(flavor))
             # print(' -- user: {}'.format(user))
             # now, slide a splicer through all positions in the flavor past the first slot
-            for pos in reversed(range(len(flavor)+1)):
+            for pos in reversed(range(len(flavor) + 1)):
                 # show me
                 # print(' ++ pos: {}'.format(pos))
                 # keep the front part
@@ -215,7 +213,6 @@ class Loader:
         # all done
         return
 
-
     # initialization
     @classmethod
     def register(cls, index):
@@ -226,7 +223,6 @@ class Loader:
         index.update((scheme, cls) for scheme in cls.schemes)
         # all done
         return
-
 
     @classmethod
     def prime(cls, linker):

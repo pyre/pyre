@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -15,6 +14,7 @@ Check that improperly formed input source raise predicatble exceptions
 def test():
 
     import pyre.records
+
     csv = pyre.records.csv()
 
     # try to read without providing a valid data source

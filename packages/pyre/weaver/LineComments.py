@@ -1,16 +1,14 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 class LineComments:
     """
     The line based commenting strategy
     """
-
 
     # implemented interface
     def commentBlock(self, lines):
@@ -24,7 +22,7 @@ class LineComments:
             # if the line is not empty
             if line:
                 # render it
-                yield leader + ' ' + line
+                yield leader + " " + line
             # otherwise
             else:
                 # render just the comment marker
@@ -32,7 +30,6 @@ class LineComments:
 
         # all done
         return
-
 
     def commentLine(self, line):
         """
@@ -43,10 +40,9 @@ class LineComments:
         # if the line is non-empty
         if line:
             # mark it
-            return leader + ' ' + line
+            return leader + " " + line
         # otherwise, just return the comment characters
         return leader
-
 
     # private data
     comment = None

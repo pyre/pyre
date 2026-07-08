@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -29,9 +30,7 @@ def test():
         # a dimension scoped to this group
         ncols = pyre.h5.schema.dimension()
         # a dataset whose shape references an enclosing dimension and the local one
-        data = pyre.h5.schema.array(
-            schema=pyre.h5.schema.float(), shape=["nrows", "ncols"]
-        )
+        data = pyre.h5.schema.array(schema=pyre.h5.schema.float(), shape=["nrows", "ncols"])
 
     # a product root that provides the shared row dimension and two inner groups
     class Product(pyre.h5.schema.root, location="/science/LSAR"):

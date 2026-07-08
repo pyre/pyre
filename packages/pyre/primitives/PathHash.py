@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 import collections
@@ -23,7 +22,6 @@ class PathHash:
     PathHash to the associated values.
     """
 
-
     def hash(self, items):
         """
         Hash {item}, assumed to be an iterable of address segments, and return its key
@@ -37,7 +35,6 @@ class PathHash:
         # and return it
         return node
 
-
     def alias(self, target, alias):
         """
         Make the node {target} accessible under the name {alias}
@@ -50,14 +47,12 @@ class PathHash:
         # and return the original key
         return original
 
-
     # metamethods
     def __init__(self):
         # initialize the table of nodes
         self.nodes = collections.defaultdict(PathHash)
         # all done
         return
-
 
     def __contains__(self, name):
         """
@@ -66,14 +61,12 @@ class PathHash:
         # easy enough
         return name in self.nodes
 
-
     def __getitem__(self, name):
         """
         Hash {name}
         """
         # easy enough
         return self.nodes[name]
-
 
     def __setitem__(self, name, key):
         """
@@ -84,9 +77,8 @@ class PathHash:
         # all done
         return
 
-
     # debugging support
-    def dump(self, graphic=''):
+    def dump(self, graphic=""):
         """
         Dump out the names of all encountered nodes
         """
@@ -95,10 +87,9 @@ class PathHash:
             # show me the name
             print("{}{!r}".format(graphic, name))
             # show me the contents
-            node.dump(graphic=graphic+'  ')
+            node.dump(graphic=graphic + "  ")
         # all done
         return
-
 
     # implementation details
     # narrow down the footprint

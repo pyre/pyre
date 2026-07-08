@@ -1,19 +1,20 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
 Sanity check: make sure we can instantiate variable slots
 """
 
+
 def test():
     # for the locator
     import pyre.tracking
+
     # get the slot class
     from pyre.framework.Slot import Slot
 

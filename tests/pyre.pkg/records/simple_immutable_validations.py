@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -20,6 +19,7 @@ def test():
         """
         A sample record
         """
+
         # field declarations
         left = pyre.records.float()
         right = pyre.records.float()
@@ -27,7 +27,6 @@ def test():
         # constraints
         left.validators = pyre.constraints.isLess(value=0)
         right.validators = pyre.constraints.isGreater(value=0)
-
 
     # try to
     try:

@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# Lijun Zhu
-# Caltech
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -34,14 +33,16 @@ def test():
     # fill it with random numbers
     uniform.vector(vector=v)
     # assert all the samples are positive
-    for sample in v: assert sample > 0 and sample < 1
+    for sample in v:
+        assert sample > 0 and sample < 1
 
     # make a matrix
     m = gsl.matrix(shape=(100, 100))
     # fill it with random numbers
     uniform.matrix(matrix=m)
     # assert all the samples are positive
-    for sample in m: assert sample > 0 and sample < 1
+    for sample in m:
+        assert sample > 0 and sample < 1
 
     return uniform
 

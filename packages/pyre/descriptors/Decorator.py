@@ -1,14 +1,14 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # my mix-ins
 from .Typed import Typed
 from .Public import Public
+
 # superclass
 from .. import algebraic
 
@@ -19,10 +19,8 @@ class Decorator(algebraic.algebra):
     Metaclass that decorates descriptors with a name and a type
     """
 
-
     # constants
     decorations = (Typed, Public)
-
 
     # framework support
     @classmethod
@@ -36,7 +34,6 @@ class Decorator(algebraic.algebra):
         yield from super().variableDerivation(record)
         # all done
         return
-
 
     @classmethod
     def operatorDerivation(cls, record):

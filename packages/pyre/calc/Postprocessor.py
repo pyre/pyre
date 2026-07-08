@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 class Postprocessor:
@@ -11,9 +10,9 @@ class Postprocessor:
     A mix-in class that performs arbitrary transformations on the value of a node
     """
 
-
     # types
     from ..schemata import identity
+
     # the default postprocessor
     noop = identity().coerce
 
@@ -38,7 +37,6 @@ class Postprocessor:
         # all done
         return
 
-
     # value management
     def getValue(self, **kwds):
         """
@@ -55,12 +53,12 @@ class Postprocessor:
         except AttributeError as error:
             # get the journal
             import journal
+
             # complain
-            raise journal.firewall('pyre.calc').log(str(error))
+            raise journal.firewall("pyre.calc").log(str(error))
 
         # and return it
         return value
-
 
     # meta-methods
     def __init__(self, postprocessor=noop, **kwds):
@@ -70,7 +68,6 @@ class Postprocessor:
         self._postprocessor = postprocessor
         # all done
         return
-
 
     # private data
     _postprocessor = None

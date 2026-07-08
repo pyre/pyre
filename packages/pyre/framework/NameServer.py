@@ -1,14 +1,14 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # externals
-from .. import tracking # for locators
-from ..traits.Property import Property as properties # to get the default trait type
+from .. import tracking  # for locators
+from ..traits.Property import Property as properties  # to get the default trait type
+
 # superclass
 from ..calc.Hierarchical import Hierarchical
 
@@ -20,14 +20,13 @@ class NameServer(Hierarchical):
     everything from configuration settings to components and interfaces
     """
 
-
     # types
     from .Package import Package
+
     # node storage and meta-data
     from .Slot import Slot as node
     from .SlotInfo import SlotInfo as info
     from .Priority import Priority as priority
-
 
     # public data
     @property
@@ -36,8 +35,7 @@ class NameServer(Hierarchical):
         Return an iterable over my configuration path
         """
         # the answer is in my store
-        return self['pyre.configpath']
-
+        return self["pyre.configpath"]
 
     # framework object management
     def configurable(self, name, configurable, locator, priority):
@@ -52,7 +50,6 @@ class NameServer(Hierarchical):
         key, _, _ = self.insert(name=name, value=configurable, priority=priority, locator=locator)
         # and return the key
         return key
-
 
     def package(self, name, executive, locator):
         """
@@ -83,14 +80,14 @@ class NameServer(Hierarchical):
             if not isinstance(package, self.Package):
                 # get the journal
                 import journal
+
                 # build the report
                 complaint = f"name conflict while configuring package '{name}': {package}"
                 # and complain
-                raise journal.error('pyre.configuration').log(complaint)
+                raise journal.error("pyre.configuration").log(complaint)
 
         # return the package
         return package
-
 
     # auxiliary object management
     def createPackage(self, name, locator):
@@ -109,11 +106,11 @@ class NameServer(Hierarchical):
         name, split, key = self.info.fillNodeId(model=self, key=key, name=name)
         # store it in the model
         self._nodes[key] = slot
-        self._metadata[key] = self.info(name=name, key=key, split=split,
-                                        locator=package.locator, priority=priority)
+        self._metadata[key] = self.info(
+            name=name, key=key, split=split, locator=package.locator, priority=priority
+        )
         # and return it
         return package
-
 
     # expansion services
     def evaluate(self, expression):
@@ -129,7 +126,6 @@ class NameServer(Hierarchical):
             # return the expanded text, since the input may have contained escaped braces
             return error.expression
 
-
     def interpolate(self, expression):
         """
         Interpolate the given {expression} in my current context
@@ -144,7 +140,6 @@ class NameServer(Hierarchical):
             node = error.expression
         # all done
         return node
-
 
     # override superclass methods
     def insert(self, value, priority, locator, key=None, name=None, split=None, factory=None):
@@ -167,6 +162,7 @@ class NameServer(Hierarchical):
         if name is None or split is None or key is None:
             # grab the journal
             import journal
+
             # make a bug report
             bug = f"incomplete node info: name={name}, {locator}"
             # and submit it
@@ -183,6 +179,7 @@ class NameServer(Hierarchical):
             if old is not None:
                 # if we do, it's a bug, so get the journal
                 import journal
+
                 # build a bug report
                 bug = f"{name}: found a node with no metadata"
                 # and complain
@@ -195,8 +192,9 @@ class NameServer(Hierarchical):
 
             # speculative: update the metadata
             # build the info node
-            meta = self.info(name=name, split=split, key=key,
-                             priority=priority, locator=locator, factory=factory)
+            meta = self.info(
+                name=name, split=split, key=key, priority=priority, locator=locator, factory=factory
+            )
             # and attach it to the meta-data store
             self._metadata[key] = meta
 
@@ -227,6 +225,7 @@ class NameServer(Hierarchical):
             if factory is None:
                 # if not, it's a bug
                 import journal
+
                 # build a report
                 bug = f"{name}: trait configuration without a factory"
                 # and complain
@@ -248,8 +247,14 @@ class NameServer(Hierarchical):
         # if the new assignment is higher priority than the existing one
         if priority > meta.priority:
             # save the current metadata so we can roll it back if we have to
-            mark = self.info(name=name, split=split, key=key,
-                             priority=meta.priority, locator=meta.locator, factory=meta.factory)
+            mark = self.info(
+                name=name,
+                split=split,
+                key=key,
+                priority=meta.priority,
+                locator=meta.locator,
+                factory=meta.factory,
+            )
             # record the assignment metadata so whoever is watching for this assignment
             # has access to the current information; save the priority
             meta.priority = priority
@@ -276,7 +281,6 @@ class NameServer(Hierarchical):
         # case
         return key, None, old
 
-
     def retrieve(self, name):
         """
         Retrieve the node registered under {name}. If no such node exists, an error marker will
@@ -300,7 +304,6 @@ class NameServer(Hierarchical):
         # return the node
         return node
 
-
     # implementation details
     # adding entries to the model: the highest level interface
     def __setitem__(self, name, value):
@@ -314,7 +317,6 @@ class NameServer(Hierarchical):
 
         # add the value to the model
         return self.insert(name=name, value=value, priority=priority, locator=locator)
-
 
     # handling of content and topological changes to the store
     def store(self, key, name, node, info):
@@ -332,7 +334,6 @@ class NameServer(Hierarchical):
         self._metadata[key] = info
         # all done
         return
-
 
     def replace(self, key, name, oldNode, oldInfo, newNode, newInfo):
         """
@@ -356,7 +357,6 @@ class NameServer(Hierarchical):
         # all done
         return
 
-
     # aliasing
     def pullGlobalSettingsIntoScope(self, scope, symbols):
         """
@@ -374,16 +374,14 @@ class NameServer(Hierarchical):
         # all done
         return
 
-
     # meta-methods
-    def __init__(self, name='pyre::nameserver', **kwds):
+    def __init__(self, name="pyre::nameserver", **kwds):
         # chain up
         super().__init__(**kwds)
         # record my name
         self._modelName = name
         # all done
         return
-
 
     def __str__(self):
         """

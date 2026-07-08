@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # class declaration
@@ -12,10 +11,8 @@ class Schema:
     The singleton that indexes the database schema of a pyre application
     """
 
-
     # public data
-    models = None # a map of tables to objects that model them
-
+    models = None  # a map of tables to objects that model them
 
     # interface
     def dependencies(self):
@@ -33,7 +30,6 @@ class Schema:
         # all done
         return
 
-
     def sort(self):
         """
         Visit tables in topological order
@@ -47,7 +43,6 @@ class Schema:
         # all done
         return
 
-
     # meta-methods
     def __init__(self, executive, **kwds):
         # chain up
@@ -60,7 +55,6 @@ class Schema:
 
         # all done
         return
-
 
     # implementation details
     def _sort(self, table, done):
@@ -76,7 +70,8 @@ class Schema:
         # go through its fields
         for measure in table.pyre_measures:
             # looking only for foreign keys
-            if not measure._foreign: continue
+            if not measure._foreign:
+                continue
             # got one; find the table it refers to
             referent = measure._foreign.table
             # and visit it

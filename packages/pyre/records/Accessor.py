@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # superclass
@@ -20,7 +19,6 @@ class Accessor(Selector):
     {Record} metaclass
     """
 
-
     # meta-methods
     def __get__(self, record, cls):
         """
@@ -33,7 +31,6 @@ class Accessor(Selector):
 
         # otherwise, retrieve my item and return it
         return record[self.index]
-
 
     def __set__(self, record, value):
         """

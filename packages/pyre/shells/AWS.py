@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -68,9 +69,7 @@ class AWS(pyre.component):
         # prime
         profiles = collections.defaultdict(dict)
         # locate the file with the shared credentials
-        path = pyre.primitives.path(
-            os.getenv("AWS_SHARED_CREDENTIALS_FILE", "~/.aws/credentials")
-        )
+        path = pyre.primitives.path(os.getenv("AWS_SHARED_CREDENTIALS_FILE", "~/.aws/credentials"))
         # if it's there
         if path.exists():
             # make an {ini} parser

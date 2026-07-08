@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # unary expressions
@@ -15,7 +14,6 @@ class UnaryPostfix:
     # public data
     operand = None
     operator = None
-
 
     # interface
     def sql(self):
@@ -37,6 +35,7 @@ class IsNull(UnaryPostfix):
     """
     A node factory that takes a field reference {op} and builds the expression {op IS NULL}
     """
+
     # public data
     operator = "IS NULL"
 
@@ -45,11 +44,12 @@ class IsNotNull(UnaryPostfix):
     """
     A node factory that takes a field reference {op} and builds the expression {op IS NOT NULL}
     """
+
     # public data
     operator = "IS NOT NULL"
 
 
- # some built-in functions
+# some built-in functions
 class Cast:
     """
     Implementation of the {CAST} expression

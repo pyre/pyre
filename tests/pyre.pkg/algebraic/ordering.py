@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -15,11 +14,13 @@ Exercise node algebra
 def test():
     # access the various operator
     import operator
+
     # access the package
     import pyre.algebraic
 
     # declare a node class
-    class node(metaclass=pyre.algebraic.algebra): pass
+    class node(metaclass=pyre.algebraic.algebra):
+        pass
 
     # declare a couple of nodes
     n1 = node.variable()
@@ -63,10 +64,11 @@ def check_binary(expression, operator, op1, op2):
     assert expression._operands[1] is op2
     return
 
+
 def check_literal(expression, operator, op, literal):
     assert expression.evaluator is operator
     assert expression._operands[0] is op
-    assert [ l._value for l in expression.literals] == [ literal ]
+    assert [l._value for l in expression.literals] == [literal]
     return
 
 

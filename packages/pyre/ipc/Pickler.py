@@ -1,7 +1,7 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
-# leif strand
 # (c) 1998-2026 all rights reserved
 
 
@@ -15,9 +15,7 @@ from . import marshaler
 
 
 # class declaration
-class Pickler(
-    pyre.component, family="pyre.ipc.marshalers.pickler", implements=marshaler
-):
+class Pickler(pyre.component, family="pyre.ipc.marshalers.pickler", implements=marshaler):
     """
     A marshaler that uses the native python services in {pickle} to serialize python objects
     for transmission to other processes.

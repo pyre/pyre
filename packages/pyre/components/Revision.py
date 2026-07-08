@@ -1,16 +1,14 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 class Revision:
     """
     A helper class that stores a trait value snapshot and some meta-data
     """
-
 
     # meta-methods
     def __init__(self, value, locator, priority, **kwds):
@@ -23,9 +21,8 @@ class Revision:
         # all done
         return
 
-
     # private data
-    __slots__ = 'value', 'locator', 'priority'
+    __slots__ = "value", "locator", "priority"
 
 
 # end of file

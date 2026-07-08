@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -24,7 +23,7 @@ def test():
     assert protocol.__bases__ == (pyre.protocol,)
 
     # did I get a key
-    assert protocol.pyre_key is None # since i didn't specify my family name
+    assert protocol.pyre_key is None  # since i didn't specify my family name
     # check the layout
     assert protocol.pyre_namemap == {}
     assert protocol.pyre_localTraits == ()

@@ -1,16 +1,14 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 class BlockComments:
     """
     The block based commenting strategy
     """
-
 
     # implemented interface
     def commentBlock(self, lines):
@@ -24,13 +22,12 @@ class BlockComments:
         # iterate over the {lines}
         for line in lines:
             # and render each one
-            yield leader + ' ' + line
+            yield leader + " " + line
         # place the end comment block marker
-        yield self.leader + ' ' + self.endBlock
+        yield self.leader + " " + self.endBlock
 
         # all done
         return
-
 
     def commentLine(self, line):
         """
@@ -39,10 +36,9 @@ class BlockComments:
         # if the line is non-empty
         if line:
             # mark it
-            return self.leader + self.startBlock + ' ' + line + ' ' + self.endBlock
+            return self.leader + self.startBlock + " " + line + " " + self.endBlock
         # otherwise, just return the comment characters
         return line
-
 
     # implementation details
     endBlock = None

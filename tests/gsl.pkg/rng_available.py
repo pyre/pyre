@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -14,8 +13,9 @@ Check that we can identify available generators
 
 def test():
     import gsl
+
     # pick an algorithm to use
-    algorithm = 'ranlxs2'
+    algorithm = "ranlxs2"
     # verify it is in the set of known names
     assert algorithm in gsl.rng.available
     # and return it

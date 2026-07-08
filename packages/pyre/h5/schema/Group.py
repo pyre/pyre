@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -70,9 +71,7 @@ class Group(Descriptor, metaclass=Schema):
         Generate a sequence of my descriptors
         """
         # throw all descriptor name into a pile
-        names = set(
-            itertools.chain(self._pyre_instanceDescriptors, self._pyre_classDescriptors)
-        )
+        names = set(itertools.chain(self._pyre_instanceDescriptors, self._pyre_classDescriptors))
         # go through them
         for name in names:
             # retrieve the associated value

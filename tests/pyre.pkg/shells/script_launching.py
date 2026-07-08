@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -17,16 +16,17 @@ def test():
     import pyre
 
     # declare a trivial application
-    class application(pyre.application, family='shells.application'):
+    class application(pyre.application, family="shells.application"):
         """a sample application"""
 
         @pyre.export
-        def main(self): return 0
+        def main(self):
+            return 0
 
     # instantiate it
-    app = application(name='απόλλων')
+    app = application(name="απόλλων")
     # check that its shell was configured correctly
-    assert app.shell.pyre_name == 'λητώ'
+    assert app.shell.pyre_name == "λητώ"
     # launch it with script as the default shell
     status = app.run()
     # check the return value

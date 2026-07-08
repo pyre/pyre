@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -17,7 +16,7 @@ def test():
     import gsl
 
     # create a trivial matrix
-    one = gsl.matrix(shape=(100,100)).identity()
+    one = gsl.matrix(shape=(100, 100)).identity()
 
     # clone it
     one_c = one.clone()
@@ -34,9 +33,9 @@ def test():
     for i in range(inv.rows):
         for j in range(inv.columns):
             if i == j:
-                assert one[i,j] == 1
+                assert one[i, j] == 1
             else:
-                assert one[i,j] == 0
+                assert one[i, j] == 0
 
     # compute the determinant
     det = gsl.linalg.LU_det(*decomp)

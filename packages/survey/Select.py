@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -152,9 +153,7 @@ class Select(Prompt):
             # the highlighted one is marked and painted with the selection color
             if position == index:
                 # a pointer plus the option, in the selection color
-                rows.append(
-                    self.paint(f"❯ {self.options[position]}", self.theme.selected)
-                )
+                rows.append(self.paint(f"❯ {self.options[position]}", self.theme.selected))
             # the rest sit quietly, indented to line up
             else:
                 # two spaces where the pointer would be

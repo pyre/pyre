@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -67,9 +68,7 @@ class Sequence(Container):
                 # we are done
                 return
             # otherwise, split it using comma as the separator
-            value = filter(
-                None, (entry.strip() for entry in value.split(self.delimiter))
-            )
+            value = filter(None, (entry.strip() for entry in value.split(self.delimiter)))
         # if we have an iterable
         if isinstance(value, collections.abc.Iterable):
             # go through each entry

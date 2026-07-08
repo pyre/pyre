@@ -1,13 +1,13 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # locators
 from .. import tracking
+
 # superclass
 from ..patterns.Named import Named
 
@@ -18,18 +18,16 @@ class Package(Named):
     The resting place of information collected while loading packages
     """
 
-
     # public data
     # geography
-    home = None # the path to the package importable (as given by its {__file__})
-    prefix = None # the home of the package installation
-    config = None # the location of the package configuration files
+    home = None  # the path to the package importable (as given by its {__file__})
+    prefix = None  # the home of the package installation
+    config = None  # the location of the package configuration files
     # bookkeeping
-    locator = None # my birthplace
+    locator = None  # my birthplace
     sources = None
-    protocols = None # the collection of encountered protocols
-    components = None # the collection of encountered components
-
+    protocols = None  # the collection of encountered protocols
+    components = None  # the collection of encountered components
 
     # interface
     def register(self, executive, file):
@@ -80,7 +78,6 @@ class Package(Named):
         # all done
         return
 
-
     def layout(self):
         """
         Easy access to the package folders
@@ -88,14 +85,12 @@ class Package(Named):
         # form a triplet and return it
         return self.home, self.prefix, self.config
 
-
     def configure(self, executive):
         """
         Locate and ask the executive to load my configuration files
         """
         # load configurations with my name as the {namespace}
         return executive.configure(namespace=self.name, locator=self.locator)
-
 
     # meta-methods
     def __init__(self, locator, **kwds):
@@ -110,13 +105,11 @@ class Package(Named):
         # all done
         return
 
-
     def __str__(self):
-        return 'package {.name!r}'.format(self)
-
+        return "package {.name!r}".format(self)
 
     # implementation details
-    CONFIG = 'share' # the path to the configuration folder relative to {prefix}
+    CONFIG = "share"  # the path to the configuration folder relative to {prefix}
 
 
 # end of file

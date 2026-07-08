@@ -1,13 +1,13 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # access the framework
 import pyre
+
 # my protocol
 from .Functor import Functor
 
@@ -31,7 +31,6 @@ class Gaussian(pyre.component, family="gauss.functors.gaussian", implements=Func
     spread.doc = "the variance of the gaussian distribution"
     spread.aliases.add("σ")
 
-
     # interface
     @pyre.export
     def eval(self, points):
@@ -40,20 +39,21 @@ class Gaussian(pyre.component, family="gauss.functors.gaussian", implements=Func
         """
         # access the math symbols
         from math import exp, sqrt, pi as π
+
         # cache the inventory items
         μ = self.μ
         σ = self.σ
         # precompute the normalization factor
-        normalization = 1 / sqrt(2*π) / σ
+        normalization = 1 / sqrt(2 * π) / σ
         # and the scaling of the exposnential
         scaling = 2 * σ**2
         # loop over points and yield the computed value
         for x in points:
             # compute |x - μ|^2
             # this works as long as x and μ have the same length
-            r2 = sum((x_i - μ_i)**2 for x_i, μ_i in zip(x, μ))
+            r2 = sum((x_i - μ_i) ** 2 for x_i, μ_i in zip(x, μ))
             # yield the value at the current x
-            yield normalization * exp(- r2 / scaling)
+            yield normalization * exp(-r2 / scaling)
         # all done
         return
 

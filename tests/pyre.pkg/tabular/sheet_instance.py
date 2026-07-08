@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -25,7 +24,6 @@ def test():
         shipping = pyre.tabular.float()
         margin = pyre.tabular.float()
         overhead = pyre.tabular.float()
-
 
     # make a sheet
     p = pricing(name="vegetables")

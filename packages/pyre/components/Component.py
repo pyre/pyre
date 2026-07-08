@@ -1,16 +1,17 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # externals
 import uuid
 from .. import tracking
+
 # superclass
 from .Configurable import Configurable
+
 # metaclass
 from .Actor import Actor
 
@@ -21,16 +22,14 @@ class Component(Configurable, metaclass=Actor, internal=True):
     The base class for all components
     """
 
-
     # types
     from .PublicInventory import PublicInventory
     from .PrivateInventory import PrivateInventory
     from ..constraints.exceptions import ConstraintViolationError
 
-
     # framework data
-    pyre_inventory = None # my inventory management strategy
-    pyre_implements = None # my protocol
+    pyre_inventory = None  # my inventory management strategy
+    pyre_implements = None  # my protocol
     pyre_isComponent = True
     pyre_cooked = False
 
@@ -43,10 +42,9 @@ class Component(Configurable, metaclass=Actor, internal=True):
         # get my inventory
         inventory = self.pyre_inventory
         # and ask it for my key
-        key =  inventory.key if inventory is not None else None
+        key = inventory.key if inventory is not None else None
         # all done
         return key
-
 
     @property
     def pyre_name(self):
@@ -58,7 +56,6 @@ class Component(Configurable, metaclass=Actor, internal=True):
         # and ask it for my name; if i don't have one bail
         return inventory.name if inventory is not None else None
 
-
     @classmethod
     def pyre_family(cls):
         """
@@ -69,7 +66,6 @@ class Component(Configurable, metaclass=Actor, internal=True):
         # ask it for my name; if i don't have one, bail
         return inventory.name if inventory is not None else None
 
-
     @classmethod
     def pyre_familyFragments(cls):
         """
@@ -79,7 +75,6 @@ class Component(Configurable, metaclass=Actor, internal=True):
         inventory = cls.pyre_inventory
         # ask it for my name; if i don't have one, bail
         return inventory.fragments if inventory is not None else ()
-
 
     @property
     def pyre_spec(self):
@@ -93,7 +88,6 @@ class Component(Configurable, metaclass=Actor, internal=True):
         # build the spec and return it
         return f"{family}#{name}"
 
-
     @classmethod
     def pyre_normalizeInstanceName(cls, name):
         """
@@ -105,7 +99,6 @@ class Component(Configurable, metaclass=Actor, internal=True):
         # by default, leave it alone
         return name
 
-
     @classmethod
     def pyre_package(cls):
         """
@@ -113,7 +106,6 @@ class Component(Configurable, metaclass=Actor, internal=True):
         """
         # get my inventory to answer this
         return cls.pyre_inventory.package
-
 
     @classmethod
     def pyre_isPublicClass(cls):
@@ -123,19 +115,15 @@ class Component(Configurable, metaclass=Actor, internal=True):
         # by definition, check the class inventory key
         return cls.pyre_inventory and cls.pyre_inventory.key is not None
 
-
     @classmethod
     def pyre_public(cls):
         """
         Generate the sequence of my public ancestors, i.e. the ones that have a non-trivial family
         """
         # filter public ancestors from my pedigree
-        yield from (
-            ancestor
-            for ancestor in cls.pyre_pedigree if ancestor.pyre_isPublicClass())
+        yield from (ancestor for ancestor in cls.pyre_pedigree if ancestor.pyre_isPublicClass())
         # all done
         return
-
 
     # trait access with optional metadata
     def pyre_setTrait(self, alias, value, priority=None, locator=None):
@@ -149,9 +137,9 @@ class Component(Configurable, metaclass=Actor, internal=True):
         # build a priority
         priority = self.pyre_executive.priority.explicit() if priority is None else priority
         # set the value
-        new, old = self.pyre_inventory.setTraitValue(trait=trait, factory=trait.instanceSlot,
-                                                     value=value,
-                                                     priority=priority, locator=locator)
+        new, old = self.pyre_inventory.setTraitValue(
+            trait=trait, factory=trait.instanceSlot, value=value, priority=priority, locator=locator
+        )
 
         # if an actual assignment took place
         if new is not None and self.pyre_cooked:
@@ -160,7 +148,6 @@ class Component(Configurable, metaclass=Actor, internal=True):
 
         # all done
         return
-
 
     def pyre_getTrait(self, alias):
         """
@@ -176,7 +163,6 @@ class Component(Configurable, metaclass=Actor, internal=True):
         locator = inventory.getTraitLocator(trait)
         # pass them on
         return value, locator
-
 
     # framework notifications
     @classmethod
@@ -199,14 +185,12 @@ class Component(Configurable, metaclass=Actor, internal=True):
         # and nothing further
         return cls
 
-
     def pyre_registered(self):
         """
         Hook that gets invoked by the framework after the component instance has been
         registered but before any configuration events
         """
         return self
-
 
     def pyre_configured(self):
         """
@@ -215,7 +199,6 @@ class Component(Configurable, metaclass=Actor, internal=True):
         """
         # return the list of errors encountered while checking the configuration
         return []
-
 
     def pyre_initialized(self):
         """
@@ -230,7 +213,6 @@ class Component(Configurable, metaclass=Actor, internal=True):
         # resources; by default, there aren't any
         return
 
-
     def pyre_traitModified(self, trait, new, old):
         """
         Hook that gets invoked by the framework right after a trait value has been modified.
@@ -238,14 +220,12 @@ class Component(Configurable, metaclass=Actor, internal=True):
         # nothing to do
         return self
 
-
     def pyre_finalized(self):
         """
         Hook that gets invoked by the framework right before the component is decommissioned.
         The instance should release all acquired resources.
         """
         return self
-
 
     # introspection
     @classmethod
@@ -255,7 +235,6 @@ class Component(Configurable, metaclass=Actor, internal=True):
         """
         # the registrar knows
         return cls.pyre_registrar.components[cls]
-
 
     def pyre_slot(self, attribute=None):
         """
@@ -278,7 +257,6 @@ class Component(Configurable, metaclass=Actor, internal=True):
         # look up the slot associated with this trait and return it
         return self.pyre_inventory[trait]
 
-
     def pyre_how(self, attribute):
         """
         Return the priority associated with {attribute}
@@ -288,19 +266,18 @@ class Component(Configurable, metaclass=Actor, internal=True):
         # and return its meta-data
         return self.pyre_inventory.getTraitPriority(trait)
 
-
     def pyre_where(self, attribute=None):
         """
         Return the locator associated with {attribute}; if no attribute name is given, return
         the locator of the component instance
         """
         # if no name is given, return my locator
-        if attribute is None: return self.pyre_locator
+        if attribute is None:
+            return self.pyre_locator
         # otherwise, find the trait descriptor associated with this {attribute}
         trait = self.pyre_trait(alias=attribute)
         # and return its meta-data
         return self.pyre_inventory.getTraitLocator(trait)
-
 
     @classmethod
     def pyre_classWhere(cls, attribute=None):
@@ -308,12 +285,12 @@ class Component(Configurable, metaclass=Actor, internal=True):
         Return the component class locator
         """
         # if no name is given, return my locator
-        if attribute is None: return cls.pyre_locator
+        if attribute is None:
+            return cls.pyre_locator
         # otherwise, find the trait descriptor associated with this {attribute}
         trait = cls.pyre_trait(alias=attribute)
         # and return its meta-data
         return cls.pyre_inventory.getTraitLocator(trait)
-
 
     # meta methods
     def __new__(cls, name, locator, implicit, **kwds):
@@ -341,7 +318,6 @@ class Component(Configurable, metaclass=Actor, internal=True):
         # all done
         return instance
 
-
     def __init__(self, name, locator, implicit, **kwds):
         # chain up, but first swallow the extra arguments that are used by my metaclass
         super().__init__(**kwds)
@@ -349,7 +325,6 @@ class Component(Configurable, metaclass=Actor, internal=True):
         self.pyre_id = uuid.uuid1()
         # all done
         return
-
 
     def __str__(self):
         # accumulate the name fragments here
@@ -373,8 +348,7 @@ class Component(Configurable, metaclass=Actor, internal=True):
             # and use it
             fragments.append(f"an instance of '{marker}'")
         # assemble
-        return ', '.join(fragments)
-
+        return ", ".join(fragments)
 
     def __getattr__(self, name):
         """
@@ -397,14 +371,14 @@ class Component(Configurable, metaclass=Actor, internal=True):
             error = self.TraitNotFoundError(configurable=self, name=name)
             # get the journal
             import journal
+
             # complain
-            raise journal.firewall('pyre.components').log(str(error))
+            raise journal.firewall("pyre.components").log(str(error))
 
         # if we got this far, restart the attribute lookup using the canonical name
         # N.B.: don't be smart here; let {getattr} do its job, which involves invoking the
         # trait descriptors if necessary
         return getattr(self, normal)
-
 
     def __setattr__(self, name, value):
         """
@@ -429,7 +403,6 @@ class Component(Configurable, metaclass=Actor, internal=True):
 
         # all done
         return
-
 
     # instantiation prep
     # compatibility check
@@ -467,7 +440,8 @@ class Component(Configurable, metaclass=Actor, internal=True):
             # add it to the report
             report.incompatibilities[spec].append(error)
             # bail out if we are in fast mode
-            if fast: return report
+            if fast:
+                return report
 
         # all done
         return report

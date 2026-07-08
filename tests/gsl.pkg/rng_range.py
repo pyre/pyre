@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -17,14 +16,14 @@ def test():
     import gsl
 
     # pick an algorithm
-    algorithm = 'ranlxs2'
+    algorithm = "ranlxs2"
 
     # instantiate the rng
     rng = gsl.rng(algorithm=algorithm)
     # check its name
     assert rng.algorithm == algorithm
     # and its range
-    assert rng.range == (0, 2**24-1) # ranlxs2 provides 24 bits of randomness
+    assert rng.range == (0, 2**24 - 1)  # ranlxs2 provides 24 bits of randomness
 
     # all done
     return gsl.rng

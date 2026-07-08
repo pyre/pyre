@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # externals
 import pyre
 import gauss
+
 
 # the application
 class Quad(pyre.application):
@@ -37,6 +37,7 @@ class Quad(pyre.application):
     def main_mpi(self, *args, **kwds):
         # access the mpi package
         import mpi
+
         # find out how many tasks were launched
         size = mpi.world.size
         # find out my rank
@@ -44,9 +45,10 @@ class Quad(pyre.application):
         # figure out how many samples to do and pass that on to my integrator
         self.integrator.samples = self.samples / size
         # integrate: average the estimates produced by each task
-        integral = mpi.sum(self.integrator.integrate())/size
+        integral = mpi.sum(self.integrator.integrate()) / size
         # node 0: print the answer
-        if rank == 0: print("integral = {}".format(integral))
+        if rank == 0:
+            print("integral = {}".format(integral))
         # all done
         return 0
 
@@ -55,8 +57,9 @@ class Quad(pyre.application):
 if __name__ == "__main__":
     # externals
     import sys
+
     # instantiate the application
-    q = Quad(name='quad')
+    q = Quad(name="quad")
     # run it and return its exit code to the os
     sys.exit(q.run())
 

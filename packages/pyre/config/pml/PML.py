@@ -1,10 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
-
 
 
 from ..Codec import Codec
@@ -15,10 +13,8 @@ class PML(Codec):
     This package contains the implementation of the pml reader and writer
     """
 
-
     # constants
     encoding = "pml"
-
 
     # interface
     @classmethod
@@ -28,8 +24,10 @@ class PML(Codec):
         """
         # get access to the XML package
         import pyre.xml
+
         # and the pml document
         from .Document import Document
+
         # make a reader
         reader = pyre.xml.newReader()
         # parse the contents
@@ -44,8 +42,7 @@ class PML(Codec):
                 loc = error.locator
             msg = "decoding error: {}".format(error.description)
             # convert the parsing error into a decoding error and raise it
-            raise cls.DecodingError(
-                codec=cls, uri=uri, locator=loc, description=msg) from error
+            raise cls.DecodingError(codec=cls, uri=uri, locator=loc, description=msg) from error
         # all done; return the harvested events
         # for event in configuration: print(event)
         return configuration

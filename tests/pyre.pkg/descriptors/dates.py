@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -19,16 +18,16 @@ def test():
     date = pyre.descriptors.date()
 
     # convert a string into a date
-    magic = date.coerce('1992-12-21')
+    magic = date.coerce("1992-12-21")
     # check
     assert magic.year == 1992
     assert magic.month == 12
     assert magic.day == 21
 
     # now one with a different input format
-    date = pyre.descriptors.date(format='%Y/%m/%d')
+    date = pyre.descriptors.date(format="%Y/%m/%d")
     # try again
-    magic = date.coerce(value='1992/12/21')
+    magic = date.coerce(value="1992/12/21")
     # check
     assert magic.year == 1992
     assert magic.month == 12
@@ -37,7 +36,7 @@ def test():
     # how about one
     try:
         # with the wrong format
-        date.coerce(value='1992-12-21')
+        date.coerce(value="1992-12-21")
         assert False
     # it should fail
     except date.CastingError:

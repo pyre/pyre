@@ -1,13 +1,13 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # access to the pyre package
 import pyre
+
 # my ancestors
 from .BlockMill import BlockMill
 from .Expression import Expression
@@ -19,11 +19,9 @@ class C(BlockMill, Expression):
     Support for C
     """
 
-
     # traits
-    languageMarker = pyre.properties.str(default='C')
+    languageMarker = pyre.properties.str(default="C")
     languageMarker.doc = "the variant to use in the language marker"
-
 
     # meta methods
     def __init__(self, **kwds):
@@ -31,6 +29,7 @@ class C(BlockMill, Expression):
         super().__init__(**kwds)
         # access the {operator} module
         import operator
+
         # adjust the symbol table
         self._symbols[operator.floordiv] = "/"
         self._symbols[operator.and_] = "&&"
@@ -39,7 +38,6 @@ class C(BlockMill, Expression):
         self._renderers[operator.pow] = self._powerRenderer
         # all done
         return
-
 
     # implementation details
     def _powerRenderer(self, node):
@@ -54,11 +52,10 @@ class C(BlockMill, Expression):
         # and return my string
         return "pow({},{})".format(op1, op2)
 
-
     # private data
-    startBlock = '/*'
-    commentMarker = ' *'
-    endBlock = '*/'
+    startBlock = "/*"
+    commentMarker = " *"
+    endBlock = "*/"
 
 
 # end of file

@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -15,6 +14,7 @@ Exercise the group manipulation interface.
 def test():
     # access the package
     import mpi
+
     # initialize
     mpi.init()
     # grab the world communicator
@@ -25,7 +25,7 @@ def test():
     evens = whole.exclude(rank for rank in range(world.size) if (rank % 2 != 0))
 
     # check that the size of this group is half the number of processors
-    assert evens.size == (world.size+1) // 2
+    assert evens.size == (world.size + 1) // 2
 
     # and check my rank
     if world.rank % 2 == 0:

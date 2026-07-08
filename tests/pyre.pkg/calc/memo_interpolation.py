@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -18,11 +17,12 @@ import os
 def test():
     # access the package
     import pyre.calc
+
     # set up the model
     model = pyre.calc.model()
 
     # make some nodes
-    home = model.variable(value='/opt/local')
+    home = model.variable(value="/opt/local")
     tools = model.interpolation("{home}")
     bin = model.interpolation("{tools}/bin")
     lib = model.interpolation("{tools}/lib")
@@ -38,10 +38,10 @@ def test():
     assert bin.dirty == True
     assert lib.dirty == True
     # check the values
-    assert home.value == '/opt/local'
+    assert home.value == "/opt/local"
     assert tools.value == home.value
-    assert bin.value == os.path.join(tools.value, 'bin')
-    assert lib.value == os.path.join(tools.value, 'lib')
+    assert bin.value == os.path.join(tools.value, "bin")
+    assert lib.value == os.path.join(tools.value, "lib")
     # check that they are all clean
     assert tools.dirty == False
     assert bin.dirty == False
@@ -54,9 +54,9 @@ def test():
     assert bin.dirty == True
     assert lib.dirty == True
     # check the values
-    assert tools.value == os.path.join(home.value, 'private')
-    assert bin.value == os.path.join(tools.value, 'bin')
-    assert lib.value == os.path.join(tools.value, 'lib')
+    assert tools.value == os.path.join(home.value, "private")
+    assert bin.value == os.path.join(tools.value, "bin")
+    assert lib.value == os.path.join(tools.value, "lib")
     # check that they are all clean
     assert tools.dirty == False
     assert bin.dirty == False

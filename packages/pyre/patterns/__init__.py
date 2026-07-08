@@ -1,6 +1,7 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis <michael.aivazis@para0sim.com>
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
 
 
@@ -8,10 +9,8 @@
 This package contains functions and classes that encapsulate common usage patterns.
 """
 
-
 # external packages
 import itertools, collections
-
 
 # publish local support
 from .Decorator import Decorator as decorator
@@ -50,9 +49,7 @@ def powerset(iterable):
     # convert {iterable} into a list; we need its length
     s = list(iterable)
     # build all possible combinations of all possible lengths
-    return itertools.chain.from_iterable(
-        itertools.combinations(s, r) for r in range(len(s) + 1)
-    )
+    return itertools.chain.from_iterable(itertools.combinations(s, r) for r in range(len(s) + 1))
 
 
 def sequify(items):

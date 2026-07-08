@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -67,9 +68,7 @@ class Reader:
         # chain up
         super().__init__(**kwds)
         # build the file object
-        self._file = self._pyre_open(
-            uri=uri, mode=mode, credentials=credentials, fapl=fapl
-        )
+        self._file = self._pyre_open(uri=uri, mode=mode, credentials=credentials, fapl=fapl)
         # all done
         return
 

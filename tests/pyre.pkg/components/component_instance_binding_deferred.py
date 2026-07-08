@@ -1,29 +1,37 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 import pyre
 
+
 class ifac(pyre.protocol, family="deferred.ifac"):
     """sample protocol"""
+
     @classmethod
-    def pyre_default(cls, **kwds): return comp
+    def pyre_default(cls, **kwds):
+        return comp
+
 
 class comp(pyre.component, family="deferred.ifac.comp", implements=ifac):
     """an implementation"""
+
     tag = pyre.properties.str()
+
 
 class user(pyre.component, family="deferred.user"):
     """a component user"""
+
     comp = ifac()
+
 
 class container(pyre.component, family="deferred.container"):
     """a component container"""
+
     name = pyre.properties.str(default=None)
     comp = ifac()
     catalog = pyre.properties.dict(schema=ifac())

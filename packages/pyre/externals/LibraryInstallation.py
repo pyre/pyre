@@ -1,13 +1,13 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # framework
 import pyre
+
 # superclass
 from .Installation import Installation
 
@@ -28,7 +28,6 @@ class LibraryInstallation(Installation):
     libdir = pyre.properties.paths()
     libdir.doc = "the locations of my libraries; for the linker command path"
 
-
     # framework hooks
     def pyre_configured(self):
         """
@@ -37,9 +36,9 @@ class LibraryInstallation(Installation):
         # chain up
         yield from super().pyre_configured()
         # check that my {incdir} exists
-        yield from self.verify(trait='incdir', folders=self.incdir)
+        yield from self.verify(trait="incdir", folders=self.incdir)
         # check that my {libdir} exists
-        yield from self.verify(trait='libdir', folders=self.libdir)
+        yield from self.verify(trait="libdir", folders=self.libdir)
 
         # all done
         return

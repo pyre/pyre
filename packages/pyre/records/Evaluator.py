@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # declaration
@@ -12,7 +11,6 @@ class Evaluator:
     A strategy for pulling data from a stream, and performing evaluations and coercions as
     indicated by the field descriptors
     """
-
 
     # meta methods
     def __call__(self, record, source, **kwds):
@@ -35,7 +33,6 @@ class Evaluator:
         # all done
         return
 
-
     # implementation details
     def onDescriptor(self, source, cache, descriptor):
         """
@@ -54,7 +51,6 @@ class Evaluator:
         # and make it available
         return value
 
-
     def onOperator(self, source, cache, operator):
         """
         Handler for operators
@@ -70,14 +66,14 @@ class Evaluator:
                 # by converting
                 op.identify(authority=self, cache=cache, source=source)
                 # each operand
-                for op in operator.operands)
+                for op in operator.operands
+            )
             # compute the raw value of this descriptor by applying its evaluator
             value = operator.evaluator(*values)
             # coerce the value
             value = operator.process(value)
         # and make it available
         return value
-
 
     def onLiteral(self, source, cache, literal):
         """

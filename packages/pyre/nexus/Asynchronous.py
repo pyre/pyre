@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -17,9 +18,7 @@ class Asynchronous(pyre.protocol, family="pyre.nexus.peers"):
 
     # user configurable state
     marshaler = pyre.ipc.marshaler()
-    marshaler.doc = (
-        "the serializer that enables the transmission of objects among peers"
-    )
+    marshaler.doc = "the serializer that enables the transmission of objects among peers"
 
     dispatcher = pyre.ipc.dispatcher()
     dispatcher.doc = "the manager of the event loop"

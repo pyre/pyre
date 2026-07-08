@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -19,8 +18,8 @@ def test():
     # a model
     model = pyre.calc.model()
     # the nodes
-    model["production"] = 80.
-    model["shipping"] = 20.
+    model["production"] = 80.0
+    model["shipping"] = 20.0
     model["cost"] = model.expression("{production}&{shipping}")
 
     try:

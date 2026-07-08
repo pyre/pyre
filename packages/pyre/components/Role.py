@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -58,9 +59,7 @@ class Role(Requirement):
         # if the protocol author specified a family name
         if family:
             # register with the executive
-            self.pyre_key = executive.registerProtocolClass(
-                family=family, protocol=self
-            )
+            self.pyre_key = executive.registerProtocolClass(family=family, protocol=self)
         # otherwise
         else:
             # i have no registration key

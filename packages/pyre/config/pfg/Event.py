@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # the base class for all configuration event handlers
@@ -12,14 +11,12 @@ class Event:
     The abstract base class for all configuration event handlers
     """
 
-
     # constants
-    scopeSeparator = '.'
-    fragmentSeparator = '#'
+    scopeSeparator = "."
+    fragmentSeparator = "#"
 
     # pull the configuration event types
     from .. import events
-
 
     # interface
     def notify(self, parent):
@@ -28,8 +25,7 @@ class Event:
         delegate any further processing to the containing node
         """
         # abstract
-        raise NotImplementedError(
-            "class {.__name__!r} must implement 'notify'".format(type(self)))
+        raise NotImplementedError("class {.__name__!r} must implement 'notify'".format(type(self)))
 
 
 # end of file

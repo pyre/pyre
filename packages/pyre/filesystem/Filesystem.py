@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -52,9 +53,7 @@ class Filesystem(Folder):
         Open the file associated with {node}
         """
         # i don't know how to do it
-        raise NotImplementedError(
-            f"class '{type(self).__name__}' does not implement 'open'"
-        )
+        raise NotImplementedError(f"class '{type(self).__name__}' does not implement 'open'")
 
     def discover(self, root=None, **kwds):
         """
@@ -98,9 +97,7 @@ class Filesystem(Folder):
         # my vnode table: a map from nodes to info structures
         self.vnodes = weakref.WeakKeyDictionary()
         # build an info structure for myself
-        metadata = (
-            self.metadata(uri=primitives.path("/")) if metadata is None else metadata
-        )
+        metadata = self.metadata(uri=primitives.path("/")) if metadata is None else metadata
         # add it to my vnode table
         self.vnodes[self] = metadata
         # all done

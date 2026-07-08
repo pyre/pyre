@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -14,9 +15,7 @@ import merlin
 
 
 # the git source control system wrapper
-class Git(
-    merlin.component, family="merlin.scs.git", implements=merlin.protocols.external.scs
-):
+class Git(merlin.component, family="merlin.scs.git", implements=merlin.protocols.external.scs):
     """
     The git source control system
     """
@@ -232,9 +231,7 @@ class Git(
         # and the revision
         yield renderer.commentLine(f"extract the commit SHA")
         # record it
-        yield from renderer.set(
-            name="ws.revision", value=f"$(patsubst g%,%,$(word 3,$(ws.words)))"
-        )
+        yield from renderer.set(name="ws.revision", value=f"$(patsubst g%,%,$(word 3,$(ws.words)))")
         # get the major version
         yield renderer.commentLine(f"extract the major version")
         # record it

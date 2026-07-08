@@ -1,14 +1,12 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # declaration
 class Element:
-
 
     # meta-methods
     def __init__(self, number, symbol, name, weight, **kwds):
@@ -22,13 +20,16 @@ class Element:
         # all done
         return
 
-
     def __str__(self):
         """
         Generate a string representation, mostly for debugging purposes
         """
-        return "%s (%s) - atomic number: %d, atomic weight: %g amu" \
-               % (self.name, self.symbol, self.atomicNumber, self.atomicWeight)
+        return "%s (%s) - atomic number: %d, atomic weight: %g amu" % (
+            self.name,
+            self.symbol,
+            self.atomicNumber,
+            self.atomicWeight,
+        )
 
 
 # end of file

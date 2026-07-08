@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # the marker of component factories
@@ -18,6 +17,7 @@ def catalog(**kwds):
     """
     # get the trait descriptors
     from ..traits import properties
+
     # a catalog is a dictionary mapping package categories to list of packages
     return properties.catalog(schema=package(), **kwds)
 
@@ -29,6 +29,7 @@ def dependencies(**kwds):
     """
     # get the trait descriptors
     from ..traits import properties
+
     # {dependencies} is a dictionary mapping package categories to package instances
     return properties.dict(schema=package(), **kwds)
 
@@ -40,6 +41,7 @@ def requirements(**kwds):
     """
     # get the trait descriptors
     from ..traits import properties
+
     # {requirements} is a list of package category names
     return properties.list(schema=properties.str(), **kwds)
 
@@ -57,8 +59,10 @@ def blas():
     """
     # grab the protocol
     from .BLAS import BLAS as blas
+
     # and generate a facility
     return blas()
+
 
 def cython():
     """
@@ -66,8 +70,10 @@ def cython():
     """
     # grab the protocol
     from .Cython import Cython as cython
+
     # and generate a facility
     return cython()
+
 
 def gcc():
     """
@@ -75,8 +81,10 @@ def gcc():
     """
     # grab the protocol
     from .GCC import GCC as gcc
+
     # and generate a facility
     return gcc()
+
 
 def gsl():
     """
@@ -84,8 +92,10 @@ def gsl():
     """
     # grab the protocol
     from .GSL import GSL as gsl
+
     # and generate a facility
     return gsl()
+
 
 def hdf5():
     """
@@ -93,8 +103,10 @@ def hdf5():
     """
     # grab the protocol
     from .HDF5 import HDF5 as hdf5
+
     # and generate a facility
     return hdf5()
+
 
 def metis():
     """
@@ -102,8 +114,10 @@ def metis():
     """
     # grab the protocol
     from .Metis import Metis as metis
+
     # and generate a facility
     return metis()
+
 
 def mpi():
     """
@@ -111,8 +125,10 @@ def mpi():
     """
     # grab the protocol
     from .MPI import MPI as mpi
+
     # and generate a facility
     return mpi()
+
 
 def parmetis():
     """
@@ -120,8 +136,10 @@ def parmetis():
     """
     # grab the protocol
     from .ParMetis import ParMetis as parmetis
+
     # and generate a facility
     return parmetis()
+
 
 def petsc():
     """
@@ -129,8 +147,10 @@ def petsc():
     """
     # grab the protocol
     from .PETSc import PETSc as petsc
+
     # and generate a facility
     return petsc()
+
 
 def postgres():
     """
@@ -138,8 +158,10 @@ def postgres():
     """
     # grab the protocol
     from .Postgres import Postgres as postgres
+
     # and generate a facility
     return postgres()
+
 
 def python():
     """
@@ -147,8 +169,10 @@ def python():
     """
     # grab the protocol
     from .Python import Python as python
+
     # and generate a facility
     return python()
+
 
 def vtk():
     """
@@ -156,6 +180,7 @@ def vtk():
     """
     # grab the protocol
     from .VTK import VTK as vtk
+
     # and generate a facility
     return vtk()
 

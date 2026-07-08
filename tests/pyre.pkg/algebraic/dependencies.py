@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -18,7 +17,8 @@ def test():
     import pyre.algebraic
 
     # declare a node class
-    class node(metaclass=pyre.algebraic.algebra): pass
+    class node(metaclass=pyre.algebraic.algebra):
+        pass
 
     # declare a couple of nodes
     n1 = node.variable()
@@ -38,7 +38,7 @@ def test():
     assert list(map(id, n.variables)) == [id(n1)]
 
     # an expression involving a literal
-    n = 2*n1
+    n = 2 * n1
     assert list(map(id, n.operators)) == [id(n)]
     assert list(map(id, n.variables)) == [id(n1)]
 
@@ -50,14 +50,14 @@ def test():
     # add another layer
     m = n + n
     assert list(map(id, m.variables)) == [id(n1), id(n2)] * 2
-    assert list(map(id, m.operators)) == [id(m), id(n) ,id(n)]
+    assert list(map(id, m.operators)) == [id(m), id(n), id(n)]
     # and one more
     l = m + m
     assert list(map(id, l.variables)) == [id(n1), id(n2)] * 4
     assert list(map(id, l.operators)) == [id(l), id(m), id(n), id(n), id(m), id(n), id(n)]
 
     # a more complicated example
-    assert set(map(id, (2*(.5 - n1*n2 + n2**2)*n1).variables)) == {id(n1), id(n2)}
+    assert set(map(id, (2 * (0.5 - n1 * n2 + n2**2) * n1).variables)) == {id(n1), id(n2)}
 
     return
 

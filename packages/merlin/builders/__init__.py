@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -14,6 +15,5 @@ from .flow.Builder import Builder as flow
 
 # the makefile generator
 from .make.Builder import Builder as make
-
 
 # end of file

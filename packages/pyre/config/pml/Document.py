@@ -1,13 +1,11 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 from pyre.xml.Document import Document as Base
-
 
 # import the handlers
 from .Bind import Bind
@@ -22,16 +20,16 @@ class Document(Base):
     """
 
     # constants
-    root = "config" # the top level element tag
+    root = "config"  # the top level element tag
 
     # get access to the element descriptor factory
     import pyre.xml
+
     # the element descriptors
     bind = pyre.xml.element(tag="bind", handler=Bind)
     component = pyre.xml.element(tag="component", handler=Component)
     config = pyre.xml.element(tag="config", handler=Configuration)
     package = pyre.xml.element(tag="package", handler=Package)
-
 
     # interface
     def onConfiguration(self, node):

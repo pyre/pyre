@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # externals
@@ -19,12 +18,10 @@ class Port(Object):
     A simple point-to-point communication conduit for a pair of processes
     """
 
-
     # per-instance public data
-    peer = None # my peer process
-    tag = 0 # the default message tag
-    communicator = Object.mpi.world # the communicator my peer and I belong to
-
+    peer = None  # my peer process
+    tag = 0  # the default message tag
+    communicator = Object.mpi.world  # the communicator my peer and I belong to
 
     # class interface
     # sending and receiving python objects
@@ -37,7 +34,6 @@ class Port(Object):
         # extract the object and return it
         return pickle.loads(data)
 
-
     def send(self, item):
         """
         Pack and send {item} to my peer
@@ -47,7 +43,6 @@ class Port(Object):
         # and ship it
         return self.mpi.sendBytes(self.communicator.capsule, self.peer, self.tag, data)
 
-
     # sending and receiving strings
     def recvString(self):
         """
@@ -56,14 +51,12 @@ class Port(Object):
         # pass the buck to the extension module
         return self.mpi.recvString(self.communicator.capsule, self.peer, self.tag)
 
-
     def sendString(self, string):
         """
         Send a string to my peer
         """
         # pass the buck to the extension module
         return self.mpi.sendString(self.communicator.capsule, self.peer, self.tag, string)
-
 
     # meta methods
     def __init__(self, peer, tag=tag, communicator=communicator, **kwds):

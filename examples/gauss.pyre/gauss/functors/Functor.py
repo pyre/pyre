@@ -1,13 +1,13 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # access to the framework
 import pyre
+
 
 # declaration
 class Functor(pyre.protocol, family="gauss.functors"):
@@ -22,6 +22,7 @@ class Functor(pyre.protocol, family="gauss.functors"):
         The default implementation of the {Functor} protocol
         """
         from .Constant import Constant
+
         return Constant
 
     # interface

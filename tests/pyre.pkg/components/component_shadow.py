@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -18,20 +17,22 @@ def test():
     # declare a couple of components
     class base(pyre.component):
         """the base component"""
+
         common = pyre.property()
 
     class derived(base):
         """the derived one"""
+
         common = pyre.property()
 
     # check the basics
     assert base.__name__ == "base"
     assert base.__bases__ == (pyre.component,)
     # check the layout
-    assert base.pyre_namemap == {'common': 'common'}
+    assert base.pyre_namemap == {"common": "common"}
     assert base.pyre_pedigree == (base, pyre.component)
     # traits
-    localNames = ['common']
+    localNames = ["common"]
     localTraits = tuple(map(base.pyre_trait, localNames))
     assert base.pyre_localTraits == localTraits
     assert base.pyre_inheritedTraits == ()
@@ -41,12 +42,12 @@ def test():
 
     # check the basics
     assert derived.__name__ == "derived"
-    assert derived.__bases__ == (base, )
+    assert derived.__bases__ == (base,)
     # check the layout
-    assert derived.pyre_namemap == {'common': 'common'}
+    assert derived.pyre_namemap == {"common": "common"}
     assert derived.pyre_pedigree == (derived, base, pyre.component)
     # traits
-    localNames = ['common']
+    localNames = ["common"]
     localTraits = tuple(map(derived.pyre_trait, localNames))
     assert derived.pyre_localTraits == localTraits
     assert derived.pyre_inheritedTraits == ()
@@ -54,7 +55,7 @@ def test():
     allTraits = list(map(derived.pyre_trait, allNames))
     assert list(derived.pyre_traits()) == allTraits
     # make sure the two descriptors are not related
-    assert base.pyre_trait('common') is not derived.pyre_trait('common')
+    assert base.pyre_trait("common") is not derived.pyre_trait("common")
 
     return base, derived
 

@@ -1,4 +1,5 @@
-#! /usr/bin/env python3
+#!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -14,7 +15,6 @@ def test():
     # get the attribute filter
     from pyre.patterns.AttributeFilter import AttributeFilter
 
-
     # establish a descriptor class
     class Descriptor:
         """
@@ -23,7 +23,6 @@ def test():
 
         # marker
         harvested = False
-
 
     # the metaclass that does the harvesting
     class Metaclass(AttributeFilter):
@@ -49,7 +48,6 @@ def test():
             # all done
             return
 
-
     # here is the client class; its declaration contains extra keywords that should be swallowed by
     # the pyre base metaclass
     class Client(metaclass=Metaclass, extra=True):
@@ -63,7 +61,6 @@ def test():
         descriptor = Descriptor()
         # an attribute with a reserved name
         skip = Descriptor()
-
 
     # check that the non-descriptor attribute survived the process
     assert Client.regular is True

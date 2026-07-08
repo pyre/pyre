@@ -1,13 +1,13 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # access to the pyre package
 import pyre
+
 # my ancestor
 from .BlockMill import BlockMill
 
@@ -17,7 +17,6 @@ class XML(BlockMill):
     """
     Support for XML
     """
-
 
     # mill obligations
     @pyre.export
@@ -32,7 +31,6 @@ class XML(BlockMill):
         # all done
         return
 
-
     # interface
     def push(self, tag, attributes=None):
         """
@@ -41,20 +39,19 @@ class XML(BlockMill):
         # if I have non-trivial attributes
         if attributes is not None:
             # render them
-            attr = ''.join(' {}="{}"'.format(key, value) for key,value in attributes.items())
+            attr = "".join(' {}="{}"'.format(key, value) for key, value in attributes.items())
         # otherwise
         else:
             # boring...
-            attr = ''
+            attr = ""
         # build the tag and send it
-        yield '{.leader}<{}{}>'.format(self, tag, attr)
+        yield "{.leader}<{}{}>".format(self, tag, attr)
         # add the {tag} to the pile
         self.tags.append(tag)
         # indent
         self.indent()
         # all done
         return
-
 
     def pop(self):
         """
@@ -63,10 +60,9 @@ class XML(BlockMill):
         # outdent
         self.outdent()
         # close the tag
-        yield '{.leader}</{}>'.format(self, self.tags.pop())
+        yield "{.leader}</{}>".format(self, self.tags.pop())
         # all done
         return
-
 
     # meta-methods
     def __init__(self, **kwds):
@@ -77,11 +73,10 @@ class XML(BlockMill):
         # all done
         return
 
-
     # private data
-    startBlock = '<!--'
-    commentMarker = ' !'
-    endBlock = '-->'
+    startBlock = "<!--"
+    commentMarker = " !"
+    endBlock = "-->"
 
 
 # end of file

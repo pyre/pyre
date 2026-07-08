@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -9,9 +10,7 @@ import merlin
 
 
 # base class for merlin factories
-class Factory(
-    merlin.flow.factory, implements=merlin.protocols.flow.producer, internal=True
-):
+class Factory(merlin.flow.factory, implements=merlin.protocols.flow.producer, internal=True):
     """
     The base class for {merlin} factories
     """

@@ -1,23 +1,19 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
-#
 
 
 """
 Explore an implementation strategy for making classes aware of their extent
 """
 
-
 import weakref
 
 
 class ExtentManaged(type):
-
 
     def __new__(cls, name, bases, attributes):
         # build the record
@@ -28,6 +24,7 @@ class ExtentManaged(type):
 
         # grab the constructor; it is guaranteed to exist since object has one
         constructor = record.__init__
+
         # declare the replacement
         def _constructor(self, **kwds):
             constructor(self, **kwds)
@@ -61,10 +58,11 @@ def make():
     d1 = Derived()
     d2 = Derived()
 
-    assert set(Base._extent) == { b1, b2, d1, d2 }
-    assert set(Derived._extent) == { d1, d2 }
+    assert set(Base._extent) == {b1, b2, d1, d2}
+    assert set(Derived._extent) == {d1, d2}
 
     return
+
 
 def test():
     make()

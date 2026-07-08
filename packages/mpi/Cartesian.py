@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # superclasses
@@ -16,12 +15,10 @@ class Cartesian(Communicator):
     An encapsulation of Cartesian communicators
     """
 
-
     # per-instance public data
     axes = None
     periods = None
     coordinates = None
-
 
     # meta methods
     def __init__(self, capsule, axes, periods, reorder, **kwds):
@@ -36,7 +33,8 @@ class Cartesian(Communicator):
         self.periods = periods
         # get my coördinates
         self.coordinates = self.mpi.communicatorCartesianCoordinates(
-            self.capsule, self.rank, len(axes))
+            self.capsule, self.rank, len(axes)
+        )
 
         # all done
         return

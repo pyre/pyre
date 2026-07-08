@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # superclass
@@ -15,7 +14,6 @@ class Or(Constraint):
     """
     Given a set of constraints, a candidate satisfies this iff it satisfies any of the constraints
     """
-
 
     # interface
     def validate(self, value, **kwds):
@@ -35,7 +33,6 @@ class Or(Constraint):
         # if they all failed, chain up
         return super().validate(value=value, **kwds)
 
-
     # meta-methods
     def __init__(self, *constraints, **kwds):
         # chain up
@@ -44,7 +41,6 @@ class Or(Constraint):
         self.constraints = constraints
         # all done
         return
-
 
     def __str__(self):
         return " or ".join("({})".format(constraint) for constraint in self.constraints)

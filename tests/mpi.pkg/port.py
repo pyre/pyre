@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -15,6 +14,7 @@ Exercise message ports: place processors on a ring and exchange messages
 def test():
     # access the package
     import mpi
+
     # initialize
     mpi.init()
     # get the world communicator
@@ -25,12 +25,13 @@ def test():
     rank = world.rank
 
     # check that the world has at least two tasks
-    if size < 2: return
+    if size < 2:
+        return
 
     # the source of the message i will receive
-    source = world.port(peer=(rank-1)%size)
+    source = world.port(peer=(rank - 1) % size)
     # the destination of the message I will send
-    destination = world.port(peer=(rank+1)%size)
+    destination = world.port(peer=(rank + 1) % size)
 
     # send my message to the guy to my right
     destination.sendString("Hello {}!".format(destination.peer))

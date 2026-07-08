@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # externals
@@ -15,7 +14,6 @@ class Stationery(pyre.protocol, family="pyre.weaver.layouts"):
     """
     The protocol that layout strategies must implement
     """
-
 
     # traits
     width = pyre.properties.int()
@@ -36,7 +34,6 @@ class Stationery(pyre.protocol, family="pyre.weaver.layouts"):
     footer = pyre.properties.str()
     footer.doc = "the marker to drop at the bottom of the document"
 
-
     # utilities
     @classmethod
     def pyre_default(cls, **kwds):
@@ -45,6 +42,7 @@ class Stationery(pyre.protocol, family="pyre.weaver.layouts"):
         """
         # the current default is {Banner}
         from .Banner import Banner
+
         return Banner
 
 

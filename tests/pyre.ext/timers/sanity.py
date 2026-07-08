@@ -1,4 +1,5 @@
-#! /usr/bin/env python3
+#!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -12,6 +13,7 @@ def test():
     # access the timer bindings
     from pyre.extensions.pyre.timers import WallTimer
     from pyre.extensions.pyre.timers import ProcessTimer
+
     # all done
     return
 

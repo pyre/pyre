@@ -1,28 +1,28 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # externals
 import os, re
+
 # access to the framework
 import pyre
+
 # superclass
 from .Library import Library
 
 
 # the petsc package manager
-class PETSc(Library, family='pyre.externals.petsc'):
+class PETSc(Library, family="pyre.externals.petsc"):
     """
     The package manager for PETSc packages
     """
 
     # constants
-    category = 'petsc'
-
+    category = "petsc"
 
     # support for specific package managers
     @classmethod
@@ -45,17 +45,16 @@ class PETSc(Library, family='pyre.externals.petsc'):
             # once we have a match
             if match:
                 # extract the variant
-                version = ''.join(match.group('version').split('.'))
+                version = "".join(match.group("version").split("."))
                 # fold it into the installation name
                 name = cls.category + version
                 # place the package name into a tuple
-                package = match.group(),
+                package = (match.group(),)
                 # hand them to the caller
                 yield name, package
 
         # all done
         return
-
 
     @classmethod
     def dpkgPackages(cls, packager):
@@ -65,7 +64,7 @@ class PETSc(Library, family='pyre.externals.petsc'):
         # ask {dpkg} for my options
         alternatives = sorted(packager.alternatives(group=cls), reverse=True)
         # the supported versions
-        versions = Default,
+        versions = (Default,)
         # go through the versions
         for version in versions:
             # scan through the alternatives
@@ -77,7 +76,6 @@ class PETSc(Library, family='pyre.externals.petsc'):
 
         # out of ideas
         return
-
 
     @classmethod
     def macportsPackages(cls, packager):
@@ -95,7 +93,7 @@ from .LibraryInstallation import LibraryInstallation
 
 
 # the implementation
-class Default(LibraryInstallation, family='pyre.externals.petsc.default', implements=PETSc):
+class Default(LibraryInstallation, family="pyre.externals.petsc.default", implements=PETSc):
     """
     A generic PETSc installation
     """
@@ -109,8 +107,7 @@ class Default(LibraryInstallation, family='pyre.externals.petsc.default', implem
     defines.doc = "the compile time markers that indicate my presence"
 
     libraries = pyre.properties.strings()
-    libraries.doc = 'the libraries to place on the link line'
-
+    libraries.doc = "the libraries to place on the link line"
 
     # configuration
     def dpkg(self, packager):
@@ -123,18 +120,17 @@ class Default(LibraryInstallation, family='pyre.externals.petsc.default', implem
         self.version, _ = packager.info(package=dev)
 
         # the package leaves includes in
-        self.incdir = [ '/usr/include/petsc' ]
+        self.incdir = ["/usr/include/petsc"]
         # and libraries in
-        self.libdir = [ '/usr/lib/x86_64-linux-gnu' ]
+        self.libdir = ["/usr/lib/x86_64-linux-gnu"]
         # set my library
-        self.libraries = 'petsc'
+        self.libraries = "petsc"
 
         # now that we have everything, compute the prefix
-        self.prefix = self.commonpath(folders=self.incdir+self.libdir)
+        self.prefix = self.commonpath(folders=self.incdir + self.libdir)
 
         # all done
         return
-
 
     def macports(self, packager, **kwds):
         """
@@ -149,18 +145,18 @@ class Default(LibraryInstallation, family='pyre.externals.petsc.default', implem
         # if this fails
         except KeyError:
             # this package is not installed
-            msg = 'the package {!r} is not installed'.format(package)
+            msg = "the package {!r} is not installed".format(package)
             # complain
             raise self.ConfigurationError(configurable=self, errors=[msg])
         # otherwise, grab the package contents
         contents = tuple(packager.contents(package=package))
 
         # in order to identify my {incdir}, search for the top-level header file
-        header = 'petsc.h'
+        header = "petsc.h"
         # find it
         incdir = packager.findfirst(target=header, contents=contents)
         # and save it
-        self.incdir = [ incdir ] if incdir else []
+        self.incdir = [incdir] if incdir else []
 
         # in order to identify my {libdir}, search for one of my libraries
         stem = self.flavor
@@ -169,12 +165,12 @@ class Default(LibraryInstallation, family='pyre.externals.petsc.default', implem
         # find it
         libdir = packager.findfirst(target=libpetsc, contents=contents)
         # and save it
-        self.libdir = [ libdir ] if libdir else []
+        self.libdir = [libdir] if libdir else []
         # set my library
         self.libraries = stem
 
         # now that we have everything, compute the prefix
-        self.prefix = self.commonpath(folders=self.incdir+self.libdir)
+        self.prefix = self.commonpath(folders=self.incdir + self.libdir)
 
         # all done
         return

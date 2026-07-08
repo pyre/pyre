@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -14,6 +15,7 @@ def test():
     # package access
     import pyre.config
     from pyre.config.events import Assignment
+
     # get the codec manager
     m = pyre.config.newConfigurator()
     # ask for a yaml codec

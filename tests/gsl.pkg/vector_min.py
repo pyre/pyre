@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -15,10 +14,12 @@ Find the minimum value in a vector
 def test():
     # package access
     import gsl
+
     # make a vector and initialize it
     v = gsl.vector(shape=100)
     # prime
-    for index in range(v.shape): v[index] = 2*index+1
+    for index in range(v.shape):
+        v[index] = 2 * index + 1
     # find the min
     small = v.min()
     # check it

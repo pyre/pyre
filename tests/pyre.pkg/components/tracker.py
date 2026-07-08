@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -16,7 +15,7 @@ import pyre
 
 
 # a component
-class component(pyre.component, family='pyre.flow.raw'):
+class component(pyre.component, family="pyre.flow.raw"):
     """
     A configurational node: raw meta-data
     """
@@ -33,7 +32,7 @@ def test():
     assert len(t.history) == 0
 
     # make a component instance
-    c = component(name='raw')
+    c = component(name="raw")
 
     # ask my tracker to watch it
     t.track(component=c)
@@ -46,7 +45,7 @@ def test():
     # grab the tracker history
     history = t.history
     # the data i am after is stored under the key for {trait}
-    records = history[c.pyre_slot('trait').key]
+    records = history[c.pyre_slot("trait").key]
 
     # the history should be three long: the default plus our two changes
     assert len(records) == 3
@@ -55,18 +54,18 @@ def test():
     rev = records[0]
     # check
     assert rev.value == 1
-    assert rev.locator.source.endswith('tracker.py')
+    assert rev.locator.source.endswith("tracker.py")
     assert rev.locator.line == 36
-    assert rev.locator.function == 'test'
+    assert rev.locator.function == "test"
     assert rev.priority.category == rev.priority.defaults.category
 
     # grab the first
     rev = records[1]
     # check
     assert rev.value == 4
-    assert rev.locator.source.endswith('tracker.py')
+    assert rev.locator.source.endswith("tracker.py")
     assert rev.locator.line == 42
-    assert rev.locator.function == 'test'
+    assert rev.locator.function == "test"
     assert rev.priority.category == rev.priority.explicit.category
     assert rev.priority.rank == 0
 
@@ -74,9 +73,9 @@ def test():
     rev = records[2]
     # check
     assert rev.value == 16
-    assert rev.locator.source.endswith('tracker.py')
+    assert rev.locator.source.endswith("tracker.py")
     assert rev.locator.line == 44
-    assert rev.locator.function == 'test'
+    assert rev.locator.function == "test"
     assert rev.priority.category == rev.priority.explicit.category
     assert rev.priority.rank == 1
 

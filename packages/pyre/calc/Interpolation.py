@@ -1,16 +1,15 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # externals
-import re # for the formula compiler
-import weakref # to keep a reference to my model
-import operator # for the computation of my value
-import functools # for the computation of my value
+import re  # for the formula compiler
+import weakref  # to keep a reference to my model
+import operator  # for the computation of my value
+import functools  # for the computation of my value
 
 
 # my declaration
@@ -20,19 +19,19 @@ class Interpolation:
     {SymbolTable} instance. {Interpolation} builds its value by splicing together strings.
     """
 
-
     # types
     from .exceptions import (
         CircularReferenceError,
-        EmptyExpressionError, ExpressionSyntaxError, UnresolvedNodeError,
-        EvaluationError )
-
+        EmptyExpressionError,
+        ExpressionSyntaxError,
+        UnresolvedNodeError,
+        EvaluationError,
+    )
 
     # constants
     category = "interpolation"
     # public data
-    expression = None # the expression supplied by the client
-
+    expression = None  # the expression supplied by the client
 
     # classifiers
     @property
@@ -46,7 +45,6 @@ class Interpolation:
         # nothing further
         return
 
-
     # value management
     def getValue(self):
         """
@@ -56,7 +54,6 @@ class Interpolation:
         values = (str(op.value) for op in self.operands)
         # apply my operator
         return functools.reduce(operator.add, values)
-
 
     def setValue(self, value):
         """
@@ -68,7 +65,6 @@ class Interpolation:
         # all done
         return self
 
-
     # support for graph traversals
     def identify(self, authority, **kwds):
         """
@@ -76,7 +72,6 @@ class Interpolation:
         """
         # invoke the callback
         return authority.onInterpolation(interpolation=self, **kwds)
-
 
     # meta-methods
     def __init__(self, model, expression, **kwds):
@@ -87,7 +82,6 @@ class Interpolation:
         self._model = weakref.proxy(model)
         # all done
         return
-
 
     # implementation details
     @classmethod
@@ -106,7 +100,7 @@ class Interpolation:
         # storage for my operands
         operands = []
         # initial portion of the expression
-        fragment = ''
+        fragment = ""
         # iterate over all the matches
         for match in cls._scanner.finditer(expression):
             # get the extent of the match
@@ -114,26 +108,27 @@ class Interpolation:
             # save the current string fragment
             fragment += expression[pos:start]
             # if this is an escaped '{'
-            if match.group('esc_open'):
+            if match.group("esc_open"):
                 # add a single '{' to the fragment
-                fragment += '{'
+                fragment += "{"
             # if this is an escaped '}'
-            elif match.group('esc_close'):
+            elif match.group("esc_close"):
                 # add a single '}' to the fragment
-                fragment += '}'
+                fragment += "}"
             # unmatched braces
             elif match.group("lone_open") or match.group("lone_closed"):
                 raise cls.ExpressionSyntaxError(
-                    formula=expression,
-                    error="unmatched {!r}".format(match.group()))
+                    formula=expression, error="unmatched {!r}".format(match.group())
+                )
             # otherwise
             else:
                 # it must be an identifier
-                identifier = match.group('identifier')
+                identifier = match.group("identifier")
                 # if the current fragment is not empty, turn it into a variable node
-                if fragment: operands.append(model.literal(value=fragment))
+                if fragment:
+                    operands.append(model.literal(value=fragment))
                 # reset the fragment
-                fragment = ''
+                fragment = ""
                 # use the identifier to locate the associated node
                 reference = model.retrieve(identifier)
                 # add it to my operands
@@ -151,7 +146,8 @@ class Interpolation:
             raise cls.EmptyExpressionError(formula=fragment)
 
         # and if it's not empty, turn it into a variable
-        if fragment: operands.append(model.literal(value=fragment))
+        if fragment:
+            operands.append(model.literal(value=fragment))
 
         # summarize
         # print(" ** SymbolTable.interpolation:")
@@ -160,7 +156,6 @@ class Interpolation:
 
         # all done
         return operands
-
 
     @classmethod
     def expand(cls, model, expression):
@@ -174,9 +169,8 @@ class Interpolation:
         # splice them together and return the result
         return functools.reduce(operator.add, values)
 
-
     # private data
-    _scanner = re.compile( # the expression tokenizer
+    _scanner = re.compile(  # the expression tokenizer
         r"(?P<esc_open>{{)"
         r"|"
         r"(?P<esc_close>}})"
@@ -186,6 +180,7 @@ class Interpolation:
         r"(?P<lone_open>{)"
         r"|"
         r"(?P<lone_closed>})"
-        )
+    )
+
 
 # end of file

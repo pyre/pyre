@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -145,7 +146,6 @@ def web():
 
 # terminal support: the protocol and its implementations live in {pyre.terminals}
 from ..terminals import terminal, ansi, plain
-
 
 # the base application components
 from .Application import Application as application

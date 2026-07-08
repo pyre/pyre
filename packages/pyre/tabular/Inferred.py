@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # superclass
@@ -16,7 +15,6 @@ class Inferred(Dimension):
     A chart axis whose tick marks are the unique values found in a given sheet column
     """
 
-
     # meta-methods
     def __get__(self, chart, cls):
         # if I am being accessed through an instance
@@ -25,7 +23,6 @@ class Inferred(Dimension):
             return self.axis(chart=chart, dimension=self)
         # otherwise, just return myself
         return self
-
 
     # implementation details
     class axis(dict):

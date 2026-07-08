@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 class Preprocessor:
@@ -11,16 +10,14 @@ class Preprocessor:
     A mix-in class that performs arbitrary transformations on the value of a node
     """
 
-
     # types
     from ..schemata import identity
+
     # the default preprocessor
     noop = identity().coerce
 
-
     # public data
     preprocessor = noop
-
 
     # value management
     def setValue(self, value, **kwds):
@@ -35,12 +32,12 @@ class Preprocessor:
         except AttributeError as error:
             # get the journal
             import journal
+
             # complain
-            raise journal.firewall('pyre.calc').log(str(error))
+            raise journal.firewall("pyre.calc").log(str(error))
 
         # and return it
         return super().setValue(value=value, **kwds)
-
 
     # meta-methods
     def __init__(self, preprocessor=noop, **kwds):

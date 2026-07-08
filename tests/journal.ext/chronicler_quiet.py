@@ -1,4 +1,5 @@
-#! /usr/bin/env python3
+#!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -11,6 +12,7 @@ def test():
     """
     # get the chronicler
     from journal.ext.journal import Chronicler as chronicler
+
     # get the channel
     from journal.ext.journal import Debug as debug
 

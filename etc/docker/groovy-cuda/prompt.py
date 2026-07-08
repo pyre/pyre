@@ -2,10 +2,8 @@
 # -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # externals
@@ -20,9 +18,9 @@ def prompt():
     Assemble and print the prompt
     """
     # assemble
-    prompt = ''.join(generate())
+    prompt = "".join(generate())
     # and print
-    print(prompt, end='')
+    print(prompt, end="")
     # all done
     return
 
@@ -59,7 +57,7 @@ def gitRepository():
     Show the status of {git} repositories
     """
     # set up the command
-    cmd = [ "git", "status", "--porcelain", "--branch"]
+    cmd = ["git", "status", "--porcelain", "--branch"]
     # settings
     options = {
         "executable": "git",
@@ -67,7 +65,8 @@ def gitRepository():
         "stdout": subprocess.PIPE,
         "stderr": subprocess.PIPE,
         "universal_newlines": True,
-        "shell": False }
+        "shell": False,
+    }
     # invoke
     with subprocess.Popen(**options) as git:
         # collect the output
@@ -177,7 +176,7 @@ def gitDetached(table, match):
     In detached HEAD state
     """
     # let's find out the hash of the current commit
-    cmd = [ "git", "log", "--format=format:%h", "-n", "1"]
+    cmd = ["git", "log", "--format=format:%h", "-n", "1"]
     # settings
     options = {
         "executable": "git",
@@ -185,7 +184,8 @@ def gitDetached(table, match):
         "stdout": subprocess.PIPE,
         "stderr": subprocess.PIPE,
         "universal_newlines": True,
-        "shell": False }
+        "shell": False,
+    }
     # invoke
     with subprocess.Popen(**options) as git:
         # collect the output
@@ -261,12 +261,12 @@ def gitChanged(table, match):
         return table
 
     # if the code has any info on the index side
-    if code[0] != ' ':
+    if code[0] != " ":
         # update the index count
         table["index"] += 1
 
     # if the code has any info on the worktree side
-    if code[1] != ' ':
+    if code[1] != " ":
         table["worktree"] += 1
 
     # all done
@@ -274,34 +274,38 @@ def gitChanged(table, match):
 
 
 # the regex
-gitParser = re.compile("|".join([
-    # brand new repositories without any commits
-    r"(?P<no_commits>## No commits yet on (?P<new>.+))$",
-    # detached HEAD
-    r"(?P<detached>## HEAD \(no branch\))$",
-    # repositories at a known branch that tack a remote
-    r"(?P<tracking>## " +
-        # the local branch name
-        r"(?P<local>.+)" +
-        # the separator
-        r"\.\.\." +
-        # the remote info
-        r"(" +
+gitParser = re.compile(
+    "|".join(
+        [
+            # brand new repositories without any commits
+            r"(?P<no_commits>## No commits yet on (?P<new>.+))$",
+            # detached HEAD
+            r"(?P<detached>## HEAD \(no branch\))$",
+            # repositories at a known branch that tack a remote
+            r"(?P<tracking>## " +
+            # the local branch name
+            r"(?P<local>.+)" +
+            # the separator
+            r"\.\.\." +
+            # the remote info
+            r"(" +
             # the remote branch name
             r"(?P<remote>[^\s]+)" +
             # divergence information
-            r"(" +
-                r" \[(ahead (?P<ahead>\d+))?(, )?(behind (?P<behind>\d+))?\]" +
-            r")?" +
-        r")?" +
-    r")$",
-    # no remote repository
-    r"(?P<non_tracking>## (?P<branch>.+))$",
-    # files that have been copied/renamed
-    r"(?P<moved>(?P<code>..) (?P<source>.+) -> (?P<destination>.+))$",
-    # files with modifications
-    r"(?P<changed>(?P<CODE>..) (?P<filename>.+))$"
-]))
+            r"("
+            + r" \[(ahead (?P<ahead>\d+))?(, )?(behind (?P<behind>\d+))?\]"
+            + r")?"
+            + r")?"
+            + r")$",
+            # no remote repository
+            r"(?P<non_tracking>## (?P<branch>.+))$",
+            # files that have been copied/renamed
+            r"(?P<moved>(?P<code>..) (?P<source>.+) -> (?P<destination>.+))$",
+            # files with modifications
+            r"(?P<changed>(?P<CODE>..) (?P<filename>.+))$",
+        ]
+    )
+)
 
 
 # dispatch table
@@ -316,9 +320,9 @@ gitDispatcher = {
 
 
 # git status code sets
-gitUntracked = { "??" }
-gitIgnored = { "!!" }
-gitConflicts = { "DD", "AU", "UD", "UA", "DU", "AA", "UU" }
+gitUntracked = {"??"}
+gitIgnored = {"!!"}
+gitConflicts = {"DD", "AU", "UD", "UA", "DU", "AA", "UU"}
 
 
 # utilities
@@ -339,7 +343,7 @@ def decorateWindow(cwd):
     # get the terminal type
     term = os.environ["TERM"]
     # if it's not xterm compatible
-    if not term.startswith('xterm'):
+    if not term.startswith("xterm"):
         # bail
         return
     # get the instance name
@@ -363,7 +367,7 @@ def getcwd():
     # if the current working directory is a subdirectory of the user's home
     if cwd.startswith(home):
         # replace the leading part with a '~'
-        cwd = '~' + cwd[len(home):]
+        cwd = "~" + cwd[len(home) :]
     # all done
     return cwd
 
@@ -395,14 +399,14 @@ ascii_eot = "\x04"
 ascii_enq = "\x05"
 ascii_ack = "\x06"
 ascii_bel = "\x07"
-ascii_bs  = "\x08"
+ascii_bs = "\x08"
 ascii_tab = "\x09"
-ascii_lf  = "\x0a"
-ascii_vt  = "\x0b"
-ascii_ff  = "\x0c"
-ascii_cr  = "\x0d"
-ascii_so  = "\x0e"
-ascii_si  = "\x0f"
+ascii_lf = "\x0a"
+ascii_vt = "\x0b"
+ascii_ff = "\x0c"
+ascii_cr = "\x0d"
+ascii_so = "\x0e"
+ascii_si = "\x0f"
 ascii_esc = "\x1b"
 ascii_del = "\x7f"
 
@@ -411,11 +415,7 @@ rl_hide = ascii_soh
 rl_unhide = ascii_stx
 
 # commands
-xtermSetWindowTitle = (
-    rl_hide +
-    ascii_esc + "]0;{title}" + ascii_bel +
-    rl_unhide
-)
+xtermSetWindowTitle = rl_hide + ascii_esc + "]0;{title}" + ascii_bel + rl_unhide
 
 # colors
 # ansi
@@ -423,27 +423,27 @@ normal = csi3(code=0)
 
 # 24bit
 amber = csi24(red=255, green=191, blue=0)
-burlywood = csi24(red=0xde, green=0xb8, blue=0x87)
-dark_goldenrod = csi24(red=0xb8, green=0x86, blue=0x0b)
-dark_khaki = csi24(red=0xbd, green=0xb7, blue=0x6b)
-dark_orange = csi24(red=0xff, green=0x8c, blue=0x00)
-dark_sea_green = csi24(red=0x8f, green=0xbc, blue=0x8f)
-firebrick = csi24(red=0xb2, green=0x22, blue=0x22)
+burlywood = csi24(red=0xDE, green=0xB8, blue=0x87)
+dark_goldenrod = csi24(red=0xB8, green=0x86, blue=0x0B)
+dark_khaki = csi24(red=0xBD, green=0xB7, blue=0x6B)
+dark_orange = csi24(red=0xFF, green=0x8C, blue=0x00)
+dark_sea_green = csi24(red=0x8F, green=0xBC, blue=0x8F)
+firebrick = csi24(red=0xB2, green=0x22, blue=0x22)
 gray10 = csi24(red=0x19, green=0x19, blue=0x19)
-gray30 = csi24(red=0x4c, green=0x4c, blue=0x4c)
+gray30 = csi24(red=0x4C, green=0x4C, blue=0x4C)
 gray41 = csi24(red=0x69, green=0x69, blue=0x69)
 gray50 = csi24(red=0x80, green=0x80, blue=0x80)
 gray66 = csi24(red=169, green=169, blue=169)
-gray75 = csi24(red=0xbe, green=0xbe, blue=0xbe)
-hot_pink = csi24(red=0xff, green=0x69, blue=0xb4)
-indian_red = csi24(red=0xcd, green=0x5c, blue=0x5c)
+gray75 = csi24(red=0xBE, green=0xBE, blue=0xBE)
+hot_pink = csi24(red=0xFF, green=0x69, blue=0xB4)
+indian_red = csi24(red=0xCD, green=0x5C, blue=0x5C)
 lavender = csi24(red=192, green=176, blue=224)
-light_green = csi24(red=0x90, green=0xee, blue=0x90)
-light_steel_blue = csi24(red=0xb0, green=0xc4, blue=0xde)
-lime_green = csi24(red=0x32, green=0xcd, blue=0x32)
-navajo_white = csi24(red=0xff, green=0xde, blue=0xad)
-olive_drab = csi24(red=0x6b, green=0x8e, blue=0x23)
-peach_puff = csi24(red=0xff, green=0xda, blue=0xb9)
+light_green = csi24(red=0x90, green=0xEE, blue=0x90)
+light_steel_blue = csi24(red=0xB0, green=0xC4, blue=0xDE)
+lime_green = csi24(red=0x32, green=0xCD, blue=0x32)
+navajo_white = csi24(red=0xFF, green=0xDE, blue=0xAD)
+olive_drab = csi24(red=0x6B, green=0x8E, blue=0x23)
+peach_puff = csi24(red=0xFF, green=0xDA, blue=0xB9)
 sage = csi24(red=176, green=208, blue=176)
 
 # functional

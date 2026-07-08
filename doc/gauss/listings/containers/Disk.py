@@ -1,12 +1,12 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 from Shape import Shape
+
 
 class Disk(Shape):
     """
@@ -14,8 +14,8 @@ class Disk(Shape):
     """
 
     # public data
-    radius = 1 # by default, a unit circle
-    center = (0,0) # centered at the origin
+    radius = 1  # by default, a unit circle
+    center = (0, 0)  # centered at the origin
 
     # interface
     def interior(self, points):
@@ -26,14 +26,14 @@ class Disk(Shape):
         r2 = self.radius**2
         x0, y0 = self.center
         # initialize the container of interior points
-        keep = [] #@\label{line:disk:keep}@
+        keep = []  # @\label{line:disk:keep}@
         # iterate over the given points, save the interior ones
         for point in points:
             x, y = point
             dx = x - x0
             dy = y - y0
-            if dx*dx + dy*dy <= r2:
-                keep.append(point) #@\label{line:disk:populate}@
+            if dx * dx + dy * dy <= r2:
+                keep.append(point)  # @\label{line:disk:populate}@
         # and return them to the caller
         return keep
 

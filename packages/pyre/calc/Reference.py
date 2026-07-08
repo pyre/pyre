@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 class Reference:
@@ -12,8 +11,7 @@ class Reference:
     """
 
     # constants
-    category = 'reference'
-
+    category = "reference"
 
     # classifiers
     @property
@@ -26,30 +24,26 @@ class Reference:
         # nothing further
         return
 
-
     # value management
     def getValue(self):
         """
         Compute and return my value
         """
         # get my referent
-        referent, = self.operands
+        (referent,) = self.operands
         # and ask him for his value
         return referent.value
-
 
     def setValue(self, value):
         """
         Set the value of the node i refer to
         """
         # get my referent
-        referent, = self.operands
+        (referent,) = self.operands
         # set its value
         referent.value = value
         # all done
         return self
-
-
 
     # support for graph traversals
     def identify(self, authority, **kwds):

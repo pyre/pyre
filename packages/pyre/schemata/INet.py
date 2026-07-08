@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -22,9 +23,7 @@ class Address:
     # public data
     @property
     def value(self):
-        raise NotImplementedError(
-            f"class {type(self).__name__!r} must implement 'value'"
-        )
+        raise NotImplementedError(f"class {type(self).__name__!r} must implement 'value'")
 
 
 class IPv4(Address):
@@ -168,9 +167,7 @@ class INet(Schema):
         # and if so
         if family:
             # invoke the correct constructor
-            return getattr(self, family)(
-                host=match.group("host"), port=match.group("port")
-            )
+            return getattr(self, family)(host=match.group("host"), port=match.group("port"))
 
         # check whether this is a UNIX address
         family = match.group("unix")

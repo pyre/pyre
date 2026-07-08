@@ -1,15 +1,13 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
 Definitions for all the exceptions raised by this package
 """
-
 
 from ..framework.exceptions import FrameworkError
 
@@ -48,7 +46,7 @@ class ImplementationSpecificationError(ComponentError):
     """
 
     # public data
-    description = '{0.name}: poorly formed implementation specification'
+    description = "{0.name}: poorly formed implementation specification"
 
     # meta-methods
     def __init__(self, name, errors, **kwds):
@@ -78,11 +76,13 @@ class ProtocolError(ComponentError):
         # extract the actual protocols, skipping {object}
         protocols = tuple(str(base) for base in protocol.pyre_pedigree)
         # support for singular/plural
-        s = '' if len(protocols) == 1 else 's'
+        s = "" if len(protocols) == 1 else "s"
         # here is the error description
         self.description = (
-            "{{0.component}} does not implement correctly the following protocol{}: {}"
-            .format(s, ", ".join(protocols)))
+            "{{0.component}} does not implement correctly the following protocol{}: {}".format(
+                s, ", ".join(protocols)
+            )
+        )
 
         # all done
         return
@@ -134,7 +134,7 @@ class ProtocolCompatibilityError(ComponentError):
     """
 
     # public data
-    description = '{0.configurable} is incompatible with {0.protocol}'
+    description = "{0.configurable} is incompatible with {0.protocol}"
 
     # meta-methods
     def __init__(self, configurable, protocol, **kwds):
@@ -153,7 +153,7 @@ class ResolutionError(ComponentError):
     """
 
     # public data
-    description = 'could not resolve {0.value!r} into a component that implements {0.protocol}'
+    description = "could not resolve {0.value!r} into a component that implements {0.protocol}"
 
     # meta-methods
     def __init__(self, protocol, value, report=None, **kwds):
@@ -173,7 +173,7 @@ class DefaultError(ComponentError):
     """
 
     # public data
-    description = 'no valid default binding for {0.protocol}'
+    description = "no valid default binding for {0.protocol}"
 
     # meta-methods
     def __init__(self, protocol, **kwds):
@@ -191,7 +191,7 @@ class ConfigurationError(ComponentError):
     """
 
     # public data
-    description = 'while configuring {0.configurable}:\n    {0.report}'
+    description = "while configuring {0.configurable}:\n    {0.report}"
 
     @property
     def report(self):
@@ -217,7 +217,7 @@ class InitializationError(ComponentError):
     """
 
     # public data
-    description = 'while initializing {0.configurable}:\n    {0.report}'
+    description = "while initializing {0.configurable}:\n    {0.report}"
 
     @property
     def report(self):

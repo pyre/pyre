@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -29,6 +28,7 @@ class meta(type):
 
 # print("declaring the class")
 
+
 class base(object, metaclass=meta):
     """a class"""
 
@@ -42,14 +42,14 @@ class base(object, metaclass=meta):
 def test():
 
     # the magic ones
-    assert hasattr(base, '__module__')
-    assert hasattr(base, '__doc__')
-    assert hasattr(base, '__dict__')
-    assert hasattr(base, '__weakref__')
+    assert hasattr(base, "__module__")
+    assert hasattr(base, "__doc__")
+    assert hasattr(base, "__dict__")
+    assert hasattr(base, "__weakref__")
 
     # the ones i declared
-    assert hasattr(base, '__init__')
-    assert hasattr(base, 'clsvar')
+    assert hasattr(base, "__init__")
+    assert hasattr(base, "clsvar")
 
     # check that clsvar is true
     assert base.clsvar == True
@@ -57,15 +57,15 @@ def test():
     # instantiate one
     b = base()
 
-    assert hasattr(b, '__module__')
-    assert hasattr(b, '__doc__')
-    assert hasattr(b, '__dict__')
-    assert hasattr(b, '__weakref__')
+    assert hasattr(b, "__module__")
+    assert hasattr(b, "__doc__")
+    assert hasattr(b, "__dict__")
+    assert hasattr(b, "__weakref__")
 
     # the ones i declared
-    assert hasattr(b, '__init__')
-    assert hasattr(b, 'clsvar')
-    assert hasattr(b, 'instancevar')
+    assert hasattr(b, "__init__")
+    assert hasattr(b, "clsvar")
+    assert hasattr(b, "instancevar")
 
     # check that clsvar is true
     assert b.clsvar == True

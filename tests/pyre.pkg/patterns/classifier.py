@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -17,12 +16,18 @@ def test():
     from pyre.patterns.AttributeClassifier import AttributeClassifier
 
     # here are some descriptors
-    class descriptor: pass
-    class component(descriptor): pass
-    class property(descriptor): pass
+    class descriptor:
+        pass
+
+    class component(descriptor):
+        pass
+
+    class property(descriptor):
+        pass
 
     class behavior(descriptor):
-        def __init__(self, func): return
+        def __init__(self, func):
+            return
 
     # here is the metaclass
     class meta(AttributeClassifier):
@@ -35,7 +40,6 @@ def test():
             attributes["traits"] = traits
             return super().__new__(cls, name, bases, attributes)
 
-
     # declare the containg class
     class base(metaclass=meta):
 
@@ -43,17 +47,19 @@ def test():
         c1 = component()
 
         @behavior
-        def can(self): pass
+        def can(self):
+            pass
 
         c2 = component()
         p2 = property()
 
         @behavior
-        def will(self): pass
+        def will(self):
+            pass
 
     # now verify that it all happened correctly
     assert len(base.traits) == 6
-    assert base.traits == [ base.p1, base.c1, base.can, base.c2, base.p2, base.will ]
+    assert base.traits == [base.p1, base.c1, base.can, base.c2, base.p2, base.will]
 
     return base
 

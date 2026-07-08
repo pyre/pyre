@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -7,7 +8,6 @@
 """
 Support for workflows
 """
-
 
 # the protocols
 from .Producer import Producer as producer
@@ -22,6 +22,5 @@ from .DynamicWorkflow import DynamicWorkflow as dynamic
 
 # the decorators
 from .Binder import Binder as bind
-
 
 # end of file

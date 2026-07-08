@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -12,42 +11,39 @@ When a metaclass understands the extra keywords that can be passed during class 
 it has to override all these to accommodate the change in signature
 """
 
-
 # print("declaring the metaclass")
+
 
 class meta(type):
     # print("declaring the metaclassclass __prepare__")
     @classmethod
     def __prepare__(metacls, name, bases, **kwds):
-        assert metacls.__name__ == 'meta'
-        assert name == 'base'
+        assert metacls.__name__ == "meta"
+        assert name == "base"
         assert bases == (object,)
-        assert kwds == {'arg1': True, 'arg2': False}
+        assert kwds == {"arg1": True, "arg2": False}
 
         # print("{0.__name__!r}.__prepare__".format(metacls))
 
         return super().__prepare__(name, bases)
 
-
-
     # print("declaring the metaclassclass __new__")
     def __new__(metacls, name, bases, attributes, **kwds):
-        assert metacls.__name__ == 'meta'
-        assert name == 'base'
+        assert metacls.__name__ == "meta"
+        assert name == "base"
         assert bases == (object,)
-        assert kwds == {'arg1': True, 'arg2': False}
+        assert kwds == {"arg1": True, "arg2": False}
 
         # print("{0.__name__!r}.__new__".format(metacls))
 
         return super().__new__(metacls, name, bases, attributes)
 
-
     # print("declaring the metaclassclass constructor")
     def __init__(self, name, bases, attributes, **kwds):
-        assert self.__name__ == 'base'
-        assert name == 'base'
+        assert self.__name__ == "base"
+        assert name == "base"
         assert bases == (object,)
-        assert kwds == {'arg1': True, 'arg2': False}
+        assert kwds == {"arg1": True, "arg2": False}
 
         # print(type(self))
         # print("{0.__name__!r}.__init__".format(self))
@@ -59,16 +55,17 @@ class meta(type):
 
 # print("declaring the class")
 
-class base(object, metaclass=meta, arg1=True, arg2=False):
 
+class base(object, metaclass=meta, arg1=True, arg2=False):
 
     # print("declaring the class constructor")
     def __init__(self, **kwds):
         # print("{.__name__!r}.__init__".format(type(self)))
         # print(dir(self))
-        assert type(self).__name__ == 'base'
+        assert type(self).__name__ == "base"
         assert kwds == {}
         return
+
     # print("done declaring the class constructor")
 
 

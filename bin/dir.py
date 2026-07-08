@@ -2,16 +2,15 @@
 # -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # externals
 import os
 import re
 import subprocess
+
 # support
 import pyre
 
@@ -22,11 +21,9 @@ class Dir(pyre.application):
     A generator of colorized directory listings that is repository aware
     """
 
-
     # user configurable state
     across = pyre.properties.bool(default=False)
     across.doc = "sort multi-column output across the window"
-
 
     # protocol obligations
     @pyre.export
@@ -35,7 +32,7 @@ class Dir(pyre.application):
         The main entry point
         """
         # build the list of directories
-        directories = list(self.argv) or ['.']
+        directories = list(self.argv) or ["."]
         # figure out how many there are
         args = len(directories)
 
@@ -49,7 +46,6 @@ class Dir(pyre.application):
         # all done
         return 0
 
-
     # meta-methods
     def __init__(self, **kwds):
         # chain up
@@ -58,7 +54,6 @@ class Dir(pyre.application):
         self.terminal = self.executive.terminal
         # all done
         return
-
 
     # implementation details
     def ls(self, directory, cwd, header):
@@ -98,7 +93,6 @@ class Dir(pyre.application):
         # all done
         return
 
-
     def render(self):
         """
         Generate the directory listing
@@ -111,7 +105,7 @@ class Dir(pyre.application):
         # figure out the width of the terminal
         width = terminal.width
         # deduce the layout
-        layout = (1,0) if self.across else (0,1)
+        layout = (1, 0) if self.across else (0, 1)
         # make a tabulator
         tabulator = Table(width=width, layout=layout, entries=entries)
         # unpack its shape
@@ -133,9 +127,9 @@ class Dir(pyre.application):
                 # render it
                 fragments.append(entry.render(reset=reset))
                 # every column other than the last
-                if col < columns-1:
+                if col < columns - 1:
                     # needs a bit of padding
-                    padding = " "*(columnWidth - (len(entry.name)+len(entry.marker)))
+                    padding = " " * (columnWidth - (len(entry.name) + len(entry.marker)))
                     # add it to the pile
                     fragments.append(padding)
             # put it all together
@@ -143,7 +137,6 @@ class Dir(pyre.application):
 
         # all done
         return
-
 
     def colorize(self):
         """
@@ -158,7 +151,6 @@ class Dir(pyre.application):
         # and return them
         return entries
 
-
     def bzr(self, entries):
         """
         Decorate the directory {entries} with information from the local bzr repository
@@ -169,7 +161,6 @@ class Dir(pyre.application):
         yield from bzr.colorize(entries)
         # all done
         return
-
 
     def git(self, entries):
         """
@@ -182,13 +173,12 @@ class Dir(pyre.application):
         # all done
         return
 
-
     def discover(self):
         """
         Initialize the directory listing
         """
         # mount the filesystem
-        fs = pyre.filesystem.local(root='.')
+        fs = pyre.filesystem.local(root=".")
         # expand the top level only
         fs.discover(levels=1)
 
@@ -210,17 +200,15 @@ class Dir(pyre.application):
         # all done
         return
 
-
     # callbacks for identifying file types
     def onBlockDevice(self, entry, info):
         """
         Decorate block devices
         """
         # mark it
-        entry.marker = '\u2584'
+        entry.marker = "\u2584"
         # all done
         return entry
-
 
     def onCharacterDevice(self, entry, info):
         """
@@ -230,7 +218,6 @@ class Dir(pyre.application):
         entry.marker = "#"
         # all done
         return entry
-
 
     def onFile(self, entry, info):
         """
@@ -243,7 +230,6 @@ class Dir(pyre.application):
         # all done
         return entry
 
-
     def onFolder(self, entry, info):
         """
         Decorate folders
@@ -253,13 +239,12 @@ class Dir(pyre.application):
         # all done
         return entry
 
-
     def onLink(self, entry, info):
         """
         Decorate symbolic links
         """
         # mark it
-        entry.marker = '@' #"\u2192"
+        entry.marker = "@"  # "\u2192"
 
         # if the link is broken
         if info.referent is None:
@@ -267,7 +252,6 @@ class Dir(pyre.application):
             entry.markerColor = self.terminal.rgb(rgb="c02020")
         # all done
         return entry
-
 
     def onNamedPipe(self, entry, info):
         """
@@ -278,7 +262,6 @@ class Dir(pyre.application):
         # all done
         return entry
 
-
     def onSocket(self, entry, info):
         """
         Decorate sockets
@@ -287,7 +270,6 @@ class Dir(pyre.application):
         entry.marker = "="
         # all done
         return entry
-
 
     # the errors we recognize
     knownErrorConditions = (FileNotFoundError, PermissionError)
@@ -299,13 +281,11 @@ class Entry:
     The information necessary for rendering a directory entry
     """
 
-
     # public data
     name = ""
     marker = ""
     nameColor = ""
     markerColor = ""
-
 
     # interface
     def render(self, reset):
@@ -313,10 +293,7 @@ class Entry:
         Render me
         """
         # collect the fragments
-        label = [
-            self.nameColor, self.name, reset,
-            self.markerColor, self.marker, reset
-        ]
+        label = [self.nameColor, self.name, reset, self.markerColor, self.marker, reset]
         # assemble
         return "".join(label)
 
@@ -326,10 +303,8 @@ class Table:
     The builder of the listing layout
     """
 
-
     # public data
     grid = None
-
 
     @property
     def shape(self):
@@ -338,7 +313,6 @@ class Table:
         """
         # easy enough
         return self.grid.tile.shape
-
 
     # meta-methods
     def __init__(self, entries, width, layout=None, **kwds):
@@ -349,11 +323,9 @@ class Table:
         # all done
         return
 
-
     def __getitem__(self, index):
         # delegate
         return self.grid[index]
-
 
     # implementation details
     def makeGrid(self, maxWidth, entries, layout):
@@ -366,11 +338,11 @@ class Table:
         shape = self.shape
         # get the grid factory
         import pyre.grid
+
         # make one
         grid = pyre.grid.grid(shape=shape, layout=layout, data=data)
         # and return it
         return grid
-
 
     def tabulate(self, maxWidth, entries):
         """
@@ -395,7 +367,7 @@ class Table:
         # if there were no entries
         if numEntries == 0:
             # make a trivial shape
-            self.shape = (0,0)
+            self.shape = (0, 0)
             # and bail
             return
 
@@ -412,11 +384,10 @@ class Table:
         self.shape = (lines, columns)
 
         # pad with blank entries
-        yield from [Entry()]*(lines*columns - numEntries)
+        yield from [Entry()] * (lines * columns - numEntries)
 
         # all done
         return
-
 
     # private data
     width = 0
@@ -428,7 +399,6 @@ class SCS:
     """
     Colorize directory entries based on repository information
     """
-
 
     # interface
     def colorize(self, entries):
@@ -454,6 +424,7 @@ class SCS:
         except ValueError as error:
             # this is a perfect case for a firewall
             import journal
+
             # so make one
             journal.firewall("dir").log(str(error))
             # pass the entries through untouched
@@ -469,7 +440,6 @@ class SCS:
         # all done
         return
 
-
     # meta-methods
     def __init__(self, **kwds):
         # chain up
@@ -478,7 +448,6 @@ class SCS:
         self._root = self.root()
         # all done
         return
-
 
     # implementation details
     def decorate(self, entries, info=None, **kwds):
@@ -490,14 +459,12 @@ class SCS:
         # all done
         return
 
-
     def root(self):
         """
         Deduce the root of the repository
         """
         # i don't know enough
         return None
-
 
     def status(self, prefix, **kwds):
         """
@@ -512,7 +479,6 @@ class BZR(SCS):
     """
     Extract the status of the current bzr worktree and colorize matching directory entries
     """
-
 
     # meta-methods
     def __init__(self, terminal, **kwds):
@@ -531,14 +497,13 @@ class BZR(SCS):
         # all done
         return
 
-
     # implementation details
     def root(self):
         """
         Locate the root of the current repository
         """
         # set up the command
-        cmd = [ "bzr", "root" ]
+        cmd = ["bzr", "root"]
         # settings
         options = {
             "executable": "bzr",
@@ -546,7 +511,8 @@ class BZR(SCS):
             "stdout": subprocess.PIPE,
             "stderr": subprocess.PIPE,
             "universal_newlines": True,
-            "shell": False }
+            "shell": False,
+        }
         # invoke
         with subprocess.Popen(**options) as bzr:
             # collect the output
@@ -559,7 +525,6 @@ class BZR(SCS):
                 return pyre.primitives.path(root)
         # all done
         return None
-
 
     def decorate(self, entries, info):
         """
@@ -578,7 +543,6 @@ class BZR(SCS):
         # all done
         return
 
-
     def status(self, prefix):
         """
         Collect the status of the worktree
@@ -587,7 +551,7 @@ class BZR(SCS):
         table = BZRInfo()
 
         # first, let's hunt down ignored files
-        cmd = [ "bzr", "ls", "--recursive", "--ignored" ]
+        cmd = ["bzr", "ls", "--recursive", "--ignored"]
         # settings
         options = {
             "executable": "bzr",
@@ -595,7 +559,8 @@ class BZR(SCS):
             "stdout": subprocess.PIPE,
             "stderr": subprocess.PIPE,
             "universal_newlines": True,
-            "shell": False }
+            "shell": False,
+        }
         # invoke
         with subprocess.Popen(**options) as bzr:
             # collect the output
@@ -612,7 +577,7 @@ class BZR(SCS):
                     table[name] = "ignored"
 
         # next, get status information
-        cmd = [ "bzr", "status", "--short", "--no-classify", "." ]
+        cmd = ["bzr", "status", "--short", "--no-classify", "."]
         # adjust the command options
         options["args"] = cmd
         # invoke
@@ -628,7 +593,6 @@ class BZR(SCS):
 
         # all done
         return table
-
 
     def parse(self, table, prefix, report):
         """
@@ -653,7 +617,6 @@ class BZR(SCS):
             table[name] = self.codes[code]
         # all done
         return table
-
 
     # private data
     # the status parser
@@ -704,14 +667,13 @@ class Git(SCS):
         # all done
         return
 
-
     # implementation details
     def root(self):
         """
         Locate the root of the git worktree
         """
         # set up the command
-        cmd = [ "git", "rev-parse", "--show-toplevel" ]
+        cmd = ["git", "rev-parse", "--show-toplevel"]
         # settings
         options = {
             "executable": "git",
@@ -719,7 +681,8 @@ class Git(SCS):
             "stdout": subprocess.PIPE,
             "stderr": subprocess.PIPE,
             "universal_newlines": True,
-            "shell": False }
+            "shell": False,
+        }
         # invoke
         with subprocess.Popen(**options) as git:
             # collect the output
@@ -732,7 +695,6 @@ class Git(SCS):
                 return pyre.primitives.path(root)
         # all done
         return None
-
 
     def decorate(self, entries, info):
         """
@@ -774,17 +736,20 @@ class Git(SCS):
         # all done
         return
 
-
     def status(self, prefix):
         """
         Collect the status of the worktree
         """
         # set up the command
         cmd = [
-            "git", "status",
+            "git",
+            "status",
             "--porcelain",
-            "--branch", "--untracked", "--ignored=traditional",
-            "."]
+            "--branch",
+            "--untracked",
+            "--ignored=traditional",
+            ".",
+        ]
         # settings
         options = {
             "executable": "git",
@@ -792,7 +757,8 @@ class Git(SCS):
             "stdout": subprocess.PIPE,
             "stderr": subprocess.PIPE,
             "universal_newlines": True,
-            "shell": False }
+            "shell": False,
+        }
         # invoke
         with subprocess.Popen(**options) as git:
             # collect the output
@@ -807,7 +773,6 @@ class Git(SCS):
             return self.parse(prefix=prefix, report=report)
         # if something went wrong, return an empty summary
         return GitInfo()
-
 
     def parse(self, prefix, report):
         """
@@ -830,7 +795,6 @@ class Git(SCS):
         # all done
         return table
 
-
     def noCommits(self, table, match, **kwds):
         """
         Extract the branch name of a newly created repository
@@ -839,7 +803,6 @@ class Git(SCS):
         table.local = match.group("new")
         # all done
         return table
-
 
     def tracking(self, table, match, **kwds):
         """
@@ -855,7 +818,6 @@ class Git(SCS):
         # all done
         return table
 
-
     def moved(self, table, match, prefix):
         """
         Compute the number of moved files
@@ -870,12 +832,12 @@ class Git(SCS):
         entry = filename.relativeTo(prefix)[0]
 
         # if the code has any info on the index side
-        if code[0] != ' ':
+        if code[0] != " ":
             # add it to the staged pile
             table.staged.add(entry)
 
         # if the code has any info on the worktree side
-        if code[1] != ' ':
+        if code[1] != " ":
             # add it to the staged pile
             table.unstaged.add(entry)
 
@@ -883,7 +845,6 @@ class Git(SCS):
         return table
         # all done
         return table
-
 
     def changed(self, table, prefix, match):
         """
@@ -920,47 +881,48 @@ class Git(SCS):
             return table
 
         # if the code has any info on the index side
-        if code[0] != ' ':
+        if code[0] != " ":
             # add it to the staged pile
             table.staged.add(entry)
 
         # if the code has any info on the worktree side
-        if code[1] != ' ':
+        if code[1] != " ":
             # add it to the staged pile
             table.unstaged.add(entry)
 
         # all done
         return table
 
-
     # private data
-    parser = re.compile("|".join([
-        # brand new repositories without any commits
-        r"(?P<no_commits>## No commits yet on (?P<new>.+))$",
-        # repositories at a known branch
-        r"(?P<tracking>## " +
-            # the local branch name
-            r"(?P<local>\w+)" +
-            r"(" +
+    parser = re.compile(
+        "|".join(
+            [
+                # brand new repositories without any commits
+                r"(?P<no_commits>## No commits yet on (?P<new>.+))$",
+                # repositories at a known branch
+                r"(?P<tracking>## " +
+                # the local branch name
+                r"(?P<local>\w+)" + r"(" +
                 # the remote branch name
                 r"\.\.\.(?P<remote>[\w/]+)" +
                 # divergence information
-                r"(" +
-                    r" \[(ahead (?P<ahead>\d+))?(, )?(behind (?P<behind>\d+))?\]" +
-                r")?" +
-            r")?" +
-        r")$",
-        # files that have been copied/renamed
-        r"(?P<moved>(?P<code>..) (?P<source>.+) -> (?P<destination>.+))$",
-        # files with modifications
-        r"(?P<changed>(?P<CODE>..) (?P<filename>.+))$"
-    ]))
-
+                r"("
+                + r" \[(ahead (?P<ahead>\d+))?(, )?(behind (?P<behind>\d+))?\]"
+                + r")?"
+                + r")?"
+                + r")$",
+                # files that have been copied/renamed
+                r"(?P<moved>(?P<code>..) (?P<source>.+) -> (?P<destination>.+))$",
+                # files with modifications
+                r"(?P<changed>(?P<CODE>..) (?P<filename>.+))$",
+            ]
+        )
+    )
 
     # git status code sets
-    untracked = { "??" }
-    ignored = { "!!" }
-    conflicts = { "DD", "AU", "UD", "UA", "DU", "AA", "UU" }
+    untracked = {"??"}
+    ignored = {"!!"}
+    conflicts = {"DD", "AU", "UD", "UA", "DU", "AA", "UU"}
 
 
 class GitInfo:
@@ -986,7 +948,6 @@ class GitInfo:
 
         # all done
         return
-
 
     # debugging support
     def dump(self):

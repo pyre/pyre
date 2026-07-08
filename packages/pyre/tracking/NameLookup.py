@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 class NameLookup:
@@ -11,20 +10,18 @@ class NameLookup:
     A locator that records a simple named source with no further details
     """
 
-
     # meta methods
     def __init__(self, description, key):
         self.key = key
         self.description = description
         return
 
-
     def __str__(self):
         # get access to the framework managers
         from ..framework.Dashboard import Dashboard
+
         # generate my rep
         return "{} {}".format(self.description, Dashboard.pyre_nameserver[self.key])
-
 
     # implementation details
     __slots__ = "key", "description"

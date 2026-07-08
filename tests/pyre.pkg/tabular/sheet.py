@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -19,6 +18,7 @@ def test():
         """
         The sheet layout
         """
+
         # measures
         sku = pyre.tabular.measure()
         production = pyre.tabular.measure()
@@ -28,8 +28,8 @@ def test():
         discount = pyre.tabular.measure()
         # derivations
         cost = production + shipping
-        msrp = (1 + margin + overhead)*cost
-        price = msrp*(1 - discount)
+        msrp = (1 + margin + overhead) * cost
+        price = msrp * (1 - discount)
 
     # all done
     return pricing

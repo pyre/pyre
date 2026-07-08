@@ -1,22 +1,27 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 import pyre
 
+
 @pyre.foundry
-def factory(): pass
+def factory():
+    pass
+
 
 class base(pyre.component):
     """A trivial component"""
 
+
 class d1(base):
     """A trivial component subclass"""
 
+
 class d2(base):
     """A trivial component subclass"""
+
 
 # end of file

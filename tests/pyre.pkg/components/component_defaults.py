@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -18,11 +17,13 @@ def test():
     # declare a couple of components
     class base(pyre.component):
         """the base component"""
+
         common = pyre.property()
         common.default = "base.common"
 
     class derived(base):
         """the derived one"""
+
         extra = pyre.property()
         extra.default = "derived.extra"
 

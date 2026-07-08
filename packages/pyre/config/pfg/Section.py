@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # superclass
@@ -19,7 +18,6 @@ class Section(EventContainer):
     # public data
     name = None
     family = None
-
 
     # interface
     def assignment(self, event):
@@ -40,12 +38,12 @@ class Section(EventContainer):
             namespace = name + event.key[:-1]
             # make a conditional assignment
             assignment = self.events.ConditionalAssignment(
-                key = key,
-                value = event.value,
-                component = namespace,
-                conditions = [(name, family)],
-                locator = event.locator
-                )
+                key=key,
+                value=event.value,
+                component=namespace,
+                conditions=[(name, family)],
+                locator=event.locator,
+            )
             # add it to my conditionals
             self.conditionalAssignments.append(assignment)
             # and return
@@ -58,7 +56,6 @@ class Section(EventContainer):
         # all done
         return
 
-
     def conditionalAssignment(self, event):
         """
         Process a conditional assignment
@@ -69,7 +66,7 @@ class Section(EventContainer):
 
         # adjust the event namespace
         event.component = self.name + event.component
-        event.conditions = [ (name+eName, eFamily) for eName, eFamily in event.conditions ]
+        event.conditions = [(name + eName, eFamily) for eName, eFamily in event.conditions]
 
         # if I have both a name and a family
         if name and family:
@@ -81,27 +78,27 @@ class Section(EventContainer):
         # all done
         return
 
-
     def notify(self, parent):
         """
         Place my assignments in my parent's context
         """
         # first, my regular assignments
-        for event in self.assignments: parent.assignment(event)
+        for event in self.assignments:
+            parent.assignment(event)
         # and then my conditionals
-        for event in self.conditionalAssignments: parent.conditionalAssignment(event)
+        for event in self.conditionalAssignments:
+            parent.conditionalAssignment(event)
         # all done
         return
-
 
     # meta methods
     def __init__(self, token, **kwds):
         # chain up
         super().__init__(**kwds)
         # get my tag and split it on the fragment marker
-        spec = (tag.strip() for tag in token.lexeme.split('#'))
+        spec = (tag.strip() for tag in token.lexeme.split("#"))
         # and extract the scope levels from each one
-        spec = tuple(tag.split('.') for tag in spec)
+        spec = tuple(tag.split(".") for tag in spec)
         # if there is only one part to this specification
         if len(spec) == 1:
             # it's my name
@@ -114,7 +111,6 @@ class Section(EventContainer):
 
         # all done
         return
-
 
 
 # end of file

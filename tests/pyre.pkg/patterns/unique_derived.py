@@ -1,4 +1,5 @@
-#! /usr/bin/env python3
+#!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -34,7 +35,6 @@ def test():
             self.value = value
             # all done
             return
-
 
     # make an instance
     d = Derived(name="d")

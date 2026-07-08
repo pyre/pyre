@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -21,10 +22,8 @@ class Singleton(Type):
     signature since it will not be invoked ever again
     """
 
-
     # constants
-    null = object() # a marker to indicate an uninitialized singleton
-
+    null = object()  # a marker to indicate an uninitialized singleton
 
     # metamethods
     def __init__(self, name, bases, attributes, **kwds):
@@ -37,7 +36,6 @@ class Singleton(Type):
         self.pyre_singletonInstance = self.null
         # all done
         return
-
 
     def __call__(self, **kwds):
         """

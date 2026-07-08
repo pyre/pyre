@@ -1,15 +1,14 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # grids
 from .Grid import Grid as grid
+
 # index objects, just in case they are useful by themselves
 from .Tile import Tile as tile
-
 
 # end of file

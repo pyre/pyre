@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -15,8 +14,10 @@ Check that the refcount is zero after all nodes have gone out of scope
 def test():
     # get the package
     import pyre.calc
+
     # make a node class
-    class node(metaclass=pyre.calc.calculator): pass
+    class node(metaclass=pyre.calc.calculator):
+        pass
 
     # make a couple
     n1 = node.variable()

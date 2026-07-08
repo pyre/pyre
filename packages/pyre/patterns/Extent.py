@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -22,7 +23,6 @@ class Extent(Type):
     keep track of their own extent and prevent their extent from being counted by a superclass
     must be declared with {pyre_extent} set to {True}
     """
-
 
     # metamethods
     def __new__(cls, name, bases, attributes, *, pyre_extent=False, **kwds):
@@ -49,7 +49,6 @@ class Extent(Type):
             record.pyre_extent = weakref.WeakSet()
         # all done
         return record
-
 
     def __call__(self, *args, **kwds):
         """

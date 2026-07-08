@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # get the nodes
@@ -19,13 +18,16 @@ class Literal(node.literal):
         return self.value
 
     # my representations
-    def __str__(self): return self.value
-    def __repr__(self): return self.value
+    def __str__(self):
+        return self.value
+
+    def __repr__(self):
+        return self.value
 
 
 # the constants
-null = Literal(value='NULL')
-default = Literal(value='DEFAULT')
+null = Literal(value="NULL")
+default = Literal(value="DEFAULT")
 
 
 # end of file

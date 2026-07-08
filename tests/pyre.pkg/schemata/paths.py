@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -20,11 +19,11 @@ def test():
     path = pyre.schemata.path()
 
     # the default is the current working directory
-    cwd = path.coerce('')
+    cwd = path.coerce("")
     # which always exists
     assert cwd.exists()
     # and has a standard rep
-    assert str(cwd) == '.'
+    assert str(cwd) == "."
 
     # resolve it
     cwd = cwd.resolve()

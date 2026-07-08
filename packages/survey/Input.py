@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -28,9 +29,7 @@ class Input(Prompt):
         # try to
         try:
             # a cooked read gives the user their terminal's own line editing for free
-            reply = input(
-                f"{self.paint(self.message, self.theme.message)}{hint}: "
-            ).strip()
+            reply = input(f"{self.paint(self.message, self.theme.message)}{hint}: ").strip()
         # a closed or exhausted input stream has no reply
         except EOFError:
             # so treat it as blank, which takes the default below

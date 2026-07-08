@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 class Collation:
@@ -11,15 +10,12 @@ class Collation:
     An encapsulation of the collation sequence
     """
 
-
     # types
     from .FieldReference import FieldReference as fieldReference
-
 
     # public data
     fieldref = None
     collation = "ASC"
-
 
     # interface
     def sql(self, context=None):
@@ -33,7 +29,6 @@ class Collation:
 
         # get the {mill} to render my field reference and append my collation order
         return "{} {}".format(self.fieldref.sql(context=context), self.collation)
-
 
     # meta methods
     def __init__(self, fieldref, collation=collation, **kwds):

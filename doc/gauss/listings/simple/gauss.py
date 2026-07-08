@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 # get access to the random number generator functions
 import random
+
 # sample size
 N = 10**6
 # initialize the interior point counter
@@ -18,11 +18,11 @@ for i in range(N):
     x = random.random()
     y = random.random()
     # check whether it is inside the unit quarter circle
-    if (x*x + y*y) <= 1.0: # no need to waste time computing the sqrt
+    if (x * x + y * y) <= 1.0:  # no need to waste time computing the sqrt
         # update the interior point counter
         interior += 1
 # print the result:
-print("π: {:.8f}".format(4*interior/N))
+print("π: {:.8f}".format(4 * interior / N))
 
 
 # end of file

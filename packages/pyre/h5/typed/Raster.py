@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -67,9 +68,7 @@ class Raster:
         # if it is non-trivial
         if hid is not None:
             # disallow setting the shape
-            raise RuntimeError(
-                "can't set the shape of a raster when attached to a dataset"
-            )
+            raise RuntimeError("can't set the shape of a raster when attached to a dataset")
         # otherwise, record the new value
         self._shape = shape
         # all done

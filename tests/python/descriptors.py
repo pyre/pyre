@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -15,7 +14,8 @@ Verify that properties are accessible from derived classes
 class Base1(object):
 
     @property
-    def name(self): return "base1"
+    def name(self):
+        return "base1"
 
 
 class Derived(Base1):

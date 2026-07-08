@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # superclass
@@ -16,11 +15,9 @@ class EventContainer(Event):
     The abstract base class of all containers of configuration events
     """
 
-
     # public data
-    assignments = None # the container of unconditional assignments
-    conditionalAssignments = None # conditional assignments
-
+    assignments = None  # the container of unconditional assignments
+    conditionalAssignments = None  # conditional assignments
 
     # handlers
     def assignment(self, event):
@@ -32,7 +29,6 @@ class EventContainer(Event):
         # all done
         return
 
-
     def conditionalAssignment(self, event):
         """
         Process a conditional assignment
@@ -41,7 +37,6 @@ class EventContainer(Event):
         self.conditionalAssignments.append(event)
         # all done
         return
-
 
     # meta-methods
     def __init__(self, **kwds):

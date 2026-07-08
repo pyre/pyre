@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 import collections
@@ -18,7 +17,6 @@ class Bind(Node):
     # constants
     elements = ()
 
-
     # interface
     def content(self, text, locator):
         """
@@ -28,7 +26,6 @@ class Bind(Node):
         if text:
             self.text.append(text)
         return
-
 
     def notify(self, parent, locator):
         """
@@ -42,17 +39,15 @@ class Bind(Node):
         else:
             value = self.text
         # make an assignment event
-        event = self.Assignment(
-            key=self.key, value=value, locator=self.newLocator(locator))
+        event = self.Assignment(key=self.key, value=value, locator=self.newLocator(locator))
         # and pass it on to my parent
         parent.assignment(event)
         # all done
         return
 
-
     # meta methods
     def __init__(self, parent, attributes, locator):
-        self.key = attributes['property'].split(self.separator)
+        self.key = attributes["property"].split(self.separator)
         self.text = []
         return
 

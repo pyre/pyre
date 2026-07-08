@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # externals
@@ -11,16 +10,14 @@ import merlin
 
 
 # declaration
-class About(merlin.spell, family='merlin.spells.about'):
+class About(merlin.spell, family="merlin.spells.about"):
     """
     Display information about this application
     """
 
-
     # user configurable state
     prefix = merlin.properties.str()
     prefix.tip = "specify the portion of the namespace to display"
-
 
     # class interface
     @merlin.export(tip="print the copyright note")
@@ -35,7 +32,6 @@ class About(merlin.spell, family='merlin.spells.about'):
         # all done
         return
 
-
     @merlin.export(tip="print out the acknowledgments")
     def credits(self, plexus, **kwds):
         """
@@ -47,7 +43,6 @@ class About(merlin.spell, family='merlin.spells.about'):
         plexus.info.log(merlin.meta.acknowledgments)
         # all done
         return
-
 
     @merlin.export(tip="print out the license and terms of use")
     def license(self, plexus, **kwds):
@@ -61,19 +56,17 @@ class About(merlin.spell, family='merlin.spells.about'):
         # all done
         return
 
-
-    @merlin.export(tip='dump the application configuration namespace')
+    @merlin.export(tip="dump the application configuration namespace")
     def nfs(self, plexus, **kwds):
         """
         Dump the application configuration namespace
         """
         # get the prefix
-        prefix = self.prefix or 'merlin'
+        prefix = self.prefix or "merlin"
         # show me
         plexus.pyre_nameserver.dump(prefix)
         # all done
         return
-
 
     @merlin.export(tip="print the version number")
     def version(self, plexus, **kwds):
@@ -85,18 +78,17 @@ class About(merlin.spell, family='merlin.spells.about'):
         # all done
         return
 
-
-    @merlin.export(tip='dump the application virtual filesystem')
+    @merlin.export(tip="dump the application virtual filesystem")
     def vfs(self, plexus, **kwds):
         """
         Dump the application virtual filesystem
         """
         # get the prefix
-        prefix = self.prefix or '/merlin'
+        prefix = self.prefix or "/merlin"
         # build the report
-        report = '\n'.join(plexus.vfs[prefix].dump())
+        report = "\n".join(plexus.vfs[prefix].dump())
         # sign in
-        plexus.info.line('vfs: prefix={!r}'.format(prefix))
+        plexus.info.line("vfs: prefix={!r}".format(prefix))
         # dump
         plexus.info.log(report)
         # all done

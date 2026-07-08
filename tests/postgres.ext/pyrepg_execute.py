@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -19,8 +18,10 @@ def test():
     # journal.debug("postgres.execution").active = True
 
     from pyre.extensions import postgres as pyrepg
+
     # initialize the module exceptions
     import pyre.db.exceptions as exceptions
+
     pyrepg.registerExceptions(exceptions)
 
     # make a connection
@@ -29,7 +30,7 @@ def test():
     command = "SELECT datname FROM pg_database WHERE datname='postgres'"
     result = pyrepg.execute(connection, command)
     # check that we got what we expected
-    assert result == (('datname',), ('postgres',))
+    assert result == (("datname",), ("postgres",))
 
     # and return the connection and the resulting tuple
     return connection, result

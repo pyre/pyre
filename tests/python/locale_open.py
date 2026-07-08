@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -21,13 +20,13 @@ def test():
     # find out what the default preferred encoding is
     print("preferred encoding:", locale.getpreferredencoding())
 
-    locale.setlocale(locale.LC_ALL, '')
+    locale.setlocale(locale.LC_ALL, "")
     language, encoding = locale.getlocale()
     print("locale: language={0}, encoding={1}".format(language, encoding))
 
     count = 10
     for line in open("locale_open.py", encoding=encoding):
-        print(line, end='')
+        print(line, end="")
         count -= 1
         if not count:
             break

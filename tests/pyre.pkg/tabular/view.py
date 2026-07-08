@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -19,6 +18,7 @@ def test():
     # lay out a sheet
     class cost(pyre.tabular.sheet):
         """The prices of things"""
+
         # layout
         sku = pyre.tabular.str()
         sku.index = True
@@ -32,6 +32,7 @@ def test():
     # and another
     class sales(pyre.tabular.sheet):
         """The transaction data"""
+
         # layout
         date = pyre.tabular.str()
         time = pyre.tabular.str()
@@ -39,7 +40,6 @@ def test():
         quantity = pyre.tabular.float()
         discount = pyre.tabular.float()
         sale = pyre.tabular.float()
-
 
     # make a csv reader
     csv = pyre.tabular.csv()

@@ -1,13 +1,13 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # externals
 import re
+
 # superclass
 from .Scanner import Scanner
 
@@ -19,15 +19,14 @@ class SWScanner(Scanner):
     of the content
     """
 
-
     # exceptions
     from .exceptions import IndentationError
+
     # tokens
     pop = Scanner.pyre_token()
     push = Scanner.pyre_token()
     cdata = Scanner.pyre_token()
-    comment = Scanner.pyre_token(head=r'(?<!\\)#', pattern='.*', tail='$')
-
+    comment = Scanner.pyre_token(head=r"(?<!\\)#", pattern=".*", tail="$")
 
     # scanning event handlers
     def pyre_start(self):
@@ -41,7 +40,6 @@ class SWScanner(Scanner):
         # and chain up
         return super().pyre_start()
 
-
     def pyre_finish(self):
         """
         Scanning has ended
@@ -53,14 +51,14 @@ class SWScanner(Scanner):
         # make an end-of-block token
         token = self.pop(locator=self.pyre_stream.locator)
         # send a token for each open block
-        for _ in blocks: client.send(token)
+        for _ in blocks:
+            client.send(token)
         # reset my indentation level
         self.pyre_dent = 0
         # clear the block stack
         blocks.clear()
         # all done here; chain up for the rest of the clean up
         return super().pyre_finish()
-
 
     # implementation details
     def pyre_newline(self, stream):
@@ -102,7 +100,6 @@ class SWScanner(Scanner):
         # all done
         return
 
-
     def pyre_indent(self, locator, column):
         """
         Indent to the given {column}
@@ -117,7 +114,6 @@ class SWScanner(Scanner):
         yield token
         # all done
         return
-
 
     def pyre_dedent(self, locator, column):
         """
@@ -140,7 +136,7 @@ class SWScanner(Scanner):
         # check that this brought us back to a consistent indentation level
         if dent != column:
             # and if not, build a description of the problem
-            fault = self.IndentationError(text='', locator=locator)
+            fault = self.IndentationError(text="", locator=locator)
             # and invoke the downstream error handler
             self.pyre_client.throw(self.TokenizationError, fault)
 
@@ -148,7 +144,6 @@ class SWScanner(Scanner):
         self.pyre_dent = column
         # all done
         return
-
 
     def pyre_cdata(self):
         """
@@ -163,7 +158,7 @@ class SWScanner(Scanner):
         # make the token
         cdata = self.cdata(lexeme=data, locator=stream.locator)
         # get the rest of the current line
-        rest = self.pyre_trim(stream.text[stream.column:])
+        rest = self.pyre_trim(stream.text[stream.column :])
         # update the cursor
         stream.column = len(stream.text)
 
@@ -204,7 +199,8 @@ class SWScanner(Scanner):
             # otherwise, figure out its indentation level
             new = self.margin.match(text).end()
             # if it is not deep enough, we are done looking for the cdata block
-            if new <= dent: break
+            if new <= dent:
+                break
             # otherwise, put the trimmed data on the payload
             data.append(trimmed)
             # mark this line as completely processed, and go on
@@ -219,20 +215,18 @@ class SWScanner(Scanner):
         # all done
         return cdata
 
-
     def pyre_trim(self, text):
         """
         Determine whether {text} contains any structurally relevant information
         """
         # eliminate comments and whitespace and return what's left
-        return self.comment.scanner.sub('', text).strip()
+        return self.comment.scanner.sub("", text).strip()
 
-
-    pyre_dent = 0 # the current indentation level
-    pyre_blocks = None # the stack of open blocks
+    pyre_dent = 0  # the current indentation level
+    pyre_blocks = None  # the stack of open blocks
 
     # my indentation scanner
-    margin = re.compile(r' *') # only spaces; tabs are an error
+    margin = re.compile(r" *")  # only spaces; tabs are an error
 
 
 # end of file

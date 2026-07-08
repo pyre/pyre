@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -18,20 +17,22 @@ def test():
     # declare a couple of protocols
     class base(pyre.protocol):
         """the base protocol"""
+
         common = pyre.property()
 
     class derived(base):
         """the derived one"""
+
         extra = pyre.property()
 
     # check the basics
     assert base.__name__ == "base"
     assert base.__bases__ == (pyre.protocol,)
     # check the layout
-    assert base.pyre_namemap == {'common': 'common'}
+    assert base.pyre_namemap == {"common": "common"}
     assert base.pyre_pedigree == (base, pyre.protocol)
     # traits
-    localNames = ['common']
+    localNames = ["common"]
     localTraits = tuple(map(base.pyre_trait, localNames))
     assert base.pyre_localTraits == localTraits
     assert base.pyre_inheritedTraits == ()
@@ -41,20 +42,18 @@ def test():
 
     # check the basics
     assert derived.__name__ == "derived"
-    assert derived.__bases__ == (base, )
+    assert derived.__bases__ == (base,)
     # check the layout
-    assert derived.pyre_namemap == {
-        'common': 'common', 'extra': 'extra'
-        }
+    assert derived.pyre_namemap == {"common": "common", "extra": "extra"}
     assert derived.pyre_pedigree == (derived, base, pyre.protocol)
     # traits
-    localNames = ['extra']
+    localNames = ["extra"]
     localTraits = tuple(map(derived.pyre_trait, localNames))
     assert derived.pyre_localTraits == localTraits
-    inheritedNames = ['common']
+    inheritedNames = ["common"]
     inheritedTraits = tuple(map(derived.pyre_trait, inheritedNames))
     assert derived.pyre_inheritedTraits == inheritedTraits
-    allNames = localNames + ['common']
+    allNames = localNames + ["common"]
     allTraits = list(map(derived.pyre_trait, allNames))
     assert list(derived.pyre_traits()) == allTraits
 

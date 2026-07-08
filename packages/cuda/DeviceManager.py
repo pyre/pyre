@@ -1,13 +1,13 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # meta-class
 from pyre.patterns.Singleton import Singleton
+
 # the extension with CUDA support
 from . import cuda as libcuda
 
@@ -18,11 +18,9 @@ class DeviceManager(metaclass=Singleton):
     The singleton that provides access to what is known about CUDA capable hardware
     """
 
-
     # public data
     count = 0
     devices = []
-
 
     # interface
     def device(self, did=0):
@@ -32,14 +30,12 @@ class DeviceManager(metaclass=Singleton):
         # delegate to the extension module
         return libcuda.setDevice(did)
 
-
     def reset(self):
         """
         Reset the current device
         """
         # easy enough
         return libcuda.resetDevice()
-
 
     # meta-methods
     def __init__(self, **kwds):
@@ -48,6 +44,7 @@ class DeviceManager(metaclass=Singleton):
 
         # grab the device class
         from .Device import Device
+
         # build the device list and attach it
         self.devices = libcuda.discover(Device)
         # set the count

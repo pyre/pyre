@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -19,6 +18,7 @@ def newCommandLineParser(**kwds):
     """
     # access the factory
     from .CommandLineParser import CommandLineParser
+
     # build one and return it
     return CommandLineParser(**kwds)
 
@@ -29,6 +29,7 @@ def newConfigurator(**kwds):
     """
     # access the factory
     from .Configurator import Configurator
+
     # build one and return it
     return Configurator(**kwds)
 

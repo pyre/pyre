@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -38,9 +39,7 @@ class Chronicler(pyre.component, family="pyre.journal.chronicler", implements=Jo
     margin.default = "  "
     margin.doc = "the decoration to add to indented output"
 
-    channels = pyre.properties.list(
-        schema=pyre.properties.tuple(schema=pyre.properties.str())
-    )
+    channels = pyre.properties.list(schema=pyre.properties.tuple(schema=pyre.properties.str()))
     channels.doc = "a list of channels to place under the control of the user"
 
     # interface obligations

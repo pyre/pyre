@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 from .Node import Node
@@ -16,7 +15,6 @@ class Component(Node):
 
     # constants
     elements = ("component", "bind")
-
 
     # interface
     def notify(self, parent, locator):
@@ -33,7 +31,6 @@ class Component(Node):
 
         return
 
-
     def assignment(self, event):
         """
         Process a binding of a property to a value
@@ -49,9 +46,12 @@ class Component(Node):
             namespace = self.name + event.key[:-1]
             # build a conditional assignment
             event = self.ConditionalAssignment(
-                component=namespace, conditions=[(self.name, self.family)],
-                key=key, value=event.value,
-                locator=event.locator)
+                component=namespace,
+                conditions=[(self.name, self.family)],
+                key=key,
+                value=event.value,
+                locator=event.locator,
+            )
             # add it to my conditionals
             self.conditionals.append(event)
             # and return
@@ -67,7 +67,6 @@ class Component(Node):
         # and return
         return
 
-
     def conditionalAssignment(self, event):
         """
         Process a conditional assignment
@@ -79,7 +78,7 @@ class Component(Node):
 
         # update the event with my name space
         event.component = self.name + event.component
-        event.conditions = [ (self.name+name, family) for name, family in event.conditions ]
+        event.conditions = [(self.name + name, family) for name, family in event.conditions]
 
         # if I have both a name and a key
         if self.name and self.family:
@@ -91,7 +90,6 @@ class Component(Node):
         # and return
         return
 
-
     # meta methods
     def __init__(self, parent, attributes, locator, **kwds):
         super().__init__(**kwds)
@@ -100,8 +98,8 @@ class Component(Node):
         self.conditionals = []
 
         # extract the attributes
-        name = attributes.get('name')
-        family = attributes.get('family')
+        name = attributes.get("name")
+        family = attributes.get("family")
         # split into fields and store
         self.name = name.split(self.separator) if name else []
         self.family = family.split(self.separator) if family else []
@@ -109,9 +107,8 @@ class Component(Node):
         # make sure that at least one of these attributes were given
         if not self.name and not self.family:
             raise self.DTDError(
-                description="neither 'name' nor 'family' were specified",
-                locator=locator
-                )
+                description="neither 'name' nor 'family' were specified", locator=locator
+            )
 
         return
 

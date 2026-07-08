@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -19,16 +18,16 @@ def test():
     time = pyre.descriptors.timestamp()
 
     # casts are not implemented yet
-    magic = time.coerce('1992-12-21 13:30:00')
+    magic = time.coerce("1992-12-21 13:30:00")
     # check
     assert magic.hour == 13
     assert magic.minute == 30
     assert magic.second == 0
 
     # now one with a different input format
-    time = pyre.descriptors.time(format='%Y/%m/%d %H|%M|%S')
+    time = pyre.descriptors.time(format="%Y/%m/%d %H|%M|%S")
     # try again
-    magic = time.coerce(value='1992/12/21 13|30|00')
+    magic = time.coerce(value="1992/12/21 13|30|00")
     # check
     assert magic.hour == 13
     assert magic.minute == 30
@@ -37,7 +36,7 @@ def test():
     # how about one
     try:
         # with the wrong format
-        time.coerce(value='13-30-00')
+        time.coerce(value="13-30-00")
         assert False
     # it should fail
     except time.CastingError:

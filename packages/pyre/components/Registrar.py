@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # externals
@@ -26,12 +25,10 @@ class Registrar:
     attribute {internal} set to {True} and they are not registered.
     """
 
-
     # public data
-    protocols = None # the set of known protocols
-    components = None # the map of component classes to their instances
-    implementers = None # a map of protocols to component classes that implement them
-
+    protocols = None  # the set of known protocols
+    components = None  # the map of component classes to their instances
+    implementers = None  # a map of protocols to component classes that implement them
 
     # interface
     def registerNamingServer(self, server):
@@ -42,7 +39,6 @@ class Registrar:
         self.nameGenerators.add(server)
         # all done
         return self
-
 
     def registerProtocolClass(self, protocol):
         """
@@ -56,7 +52,6 @@ class Registrar:
             observer.pyre_newProtocolRegistration(protocol=protocol)
         # and hand the protocol back to the caller
         return protocol
-
 
     def registerComponentClass(self, component):
         """
@@ -75,7 +70,6 @@ class Registrar:
         # and hand the component back to the caller
         return component
 
-
     def registerComponentInstance(self, instance):
         """
         Register this component instance
@@ -88,7 +82,6 @@ class Registrar:
             observer.pyre_newInstanceRegistration(instance=instance)
         # and return it
         return instance
-
 
     def nameInstance(self, componentClass):
         """
@@ -105,7 +98,6 @@ class Registrar:
         # out of ideas
         return None
 
-
     def observeProtocols(self, observer):
         """
         Add {observer} to the set of entities interested in the registration of new protocols
@@ -114,7 +106,6 @@ class Registrar:
         self.protocolObservers.add(observer)
         # all done
         return self
-
 
     def observeComponents(self, observer):
         """
@@ -125,7 +116,6 @@ class Registrar:
         # all done
         return self
 
-
     def observeInstances(self, observer):
         """
         Add {observer} to the set of entities interested in the registration of new instances
@@ -134,7 +124,6 @@ class Registrar:
         self.instanceObservers.add(observer)
         # all done
         return self
-
 
     def publicProtocols(self):
         """
@@ -149,7 +138,6 @@ class Registrar:
         # all done
         return
 
-
     def publicImplementers(self, protocol):
         """
         Generate a sequence of public components that implement the given {protocol}
@@ -162,10 +150,9 @@ class Registrar:
             for component in self.implementers[protocol]
             # the ones with a public key only
             if component.pyre_isPublicClass()
-            )
+        )
         # all done
         return
-
 
     # implementation details
     def findRegisteredProtocols(self, component):
@@ -175,7 +162,8 @@ class Registrar:
         # get the interface implementation specification
         implements = component.pyre_implements
         # if there aren't any, bail out
-        if implements is None: return
+        if implements is None:
+            return
         # otherwise, loop over the protocol mro
         for protocol in implements.__mro__:
             # ignore the trivial ones by checking with the registry
@@ -185,7 +173,6 @@ class Registrar:
         # all done
         return
 
-
     def retrieveComponentByName(self, componentClass, name):
         """
         Look through the registered instances of {componentClass} for one with the given {name}
@@ -193,10 +180,10 @@ class Registrar:
         # go through the pile
         for instance in self.components[componentClass]:
             # return the instance whose the name matches the given one
-            if instance.pyre_name == name:  return instance
+            if instance.pyre_name == name:
+                return instance
         # otherwise, no match
         return None
-
 
     # meta-methods
     def __init__(self, **kwds):
@@ -220,7 +207,6 @@ class Registrar:
         # all done
         return
 
-
     # implementation details
     def depthFirst(self, configurable, visited):
         """
@@ -233,7 +219,8 @@ class Registrar:
         # otherwise, grab the public ancestors
         for base in configurable.pyre_public():
             # skip the one we are working with
-            if base is configurable: continue
+            if base is configurable:
+                continue
             # visit the rest
             yield from self.depthFirst(configurable=base, visited=visited)
         # add this one to the pile

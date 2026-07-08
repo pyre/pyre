@@ -1,13 +1,13 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # access the framework
 import pyre
+
 # my protocol
 from .Shape import Shape
 
@@ -19,9 +19,8 @@ class Box(pyre.component, family="gauss.shapes.box", implements=Shape):
     """
 
     # public state
-    intervals = pyre.properties.array(default=((0,1),(0,1)))
+    intervals = pyre.properties.array(default=((0, 1), (0, 1)))
     intervals.doc = "the extent of the box along each axis"
-
 
     # interface
     @pyre.export
@@ -31,11 +30,9 @@ class Box(pyre.component, family="gauss.shapes.box", implements=Shape):
         """
         # get functools and operator
         import functools, operator
-        # compute and return the volume
-        return functools.reduce(
-            operator.mul,
-            ((right-left) for left,right in self.intervals))
 
+        # compute and return the volume
+        return functools.reduce(operator.mul, ((right - left) for left, right in self.intervals))
 
     @pyre.export
     def contains(self, points):
@@ -47,7 +44,7 @@ class Box(pyre.component, family="gauss.shapes.box", implements=Shape):
         # now, for each point
         for point in points:
             # for each cöordinate
-            for p, (left,right) in zip(point, intervals):
+            for p, (left, right) in zip(point, intervals):
                 # if this point is outside the box
                 if p < left or p > right:
                     # move on to the next point

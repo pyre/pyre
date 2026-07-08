@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # externals
@@ -16,11 +15,9 @@ class Grid(list):
     A logically Cartesian grid implemented as a list with a custom indexing function
     """
 
-
     # constants
     ROW_MAJOR = "row-major"
     COLUMN_MAJOR = "column-major"
-
 
     # public data
     @property
@@ -30,7 +27,6 @@ class Grid(list):
         """
         # easy enough: compute the length of the zeroth item
         return len(self[0])
-
 
     @property
     def numberOfPoints(self):
@@ -46,7 +42,6 @@ class Grid(list):
         # all done
         return size
 
-
     @property
     def numberOfCells(self):
         """
@@ -61,7 +56,6 @@ class Grid(list):
         # all done
         return size
 
-
     @property
     def points(self):
         """
@@ -69,7 +63,6 @@ class Grid(list):
         """
         # easy enough
         yield from self
-
 
     @property
     def cells(self):
@@ -83,7 +76,6 @@ class Grid(list):
         # all done
         return
 
-
     # interface
     def boundingBox(self):
         """
@@ -95,7 +87,6 @@ class Grid(list):
         bmax = tuple(map(max, zip(*self)))
         # return them
         return (bmin, bmax)
-
 
     # meta-methods
     def __init__(self, shape=(), packing=ROW_MAJOR, *args, **kwds):
@@ -118,11 +109,10 @@ class Grid(list):
         # otherwise
         else:
             # complain
-            raise ValueError('unknown grid packing strategy')
+            raise ValueError("unknown grid packing strategy")
 
         # all done
         return
-
 
     def __getitem__(self, index):
         """
@@ -140,7 +130,6 @@ class Grid(list):
         # chain up
         return super().__getitem__(index)
 
-
     # implementation details
     def columnMajor(self, index):
         """
@@ -152,12 +141,11 @@ class Grid(list):
         # loop over the indices
         for i, s in zip(index, self.shape):
             # yield the current addend
-            offset += i*product
+            offset += i * product
             # adjust the coefficient
             product *= s
         # all done
         return offset
-
 
     def rowMajor(self, index):
         """
@@ -169,12 +157,11 @@ class Grid(list):
         # loop over the indices
         for i, s in zip(reversed(index), reversed(self.shape)):
             # yield the current addend
-            offset += i*product
+            offset += i * product
             # adjust the coefficient
             product *= s
         # all done
         return offset
-
 
     def verify(self):
         """
@@ -182,10 +169,12 @@ class Grid(list):
         """
         # compute the size implied by my shape
         size = 1
-        for axis in self.shape: size *= axis
+        for axis in self.shape:
+            size *= axis
         # check the length
         assert len(self) == size, "wrong size: length: {}, computed size: {}".format(
-            len(self), size)
+            len(self), size
+        )
 
         # my dimension
         dim = len(self.shape)
@@ -199,14 +188,12 @@ class Grid(list):
         # all done
         return
 
-
     def anchors(self):
         """
         Compute the grid index of the corner of each cell
         """
         # form all possible tuples of grid indices, not including the upper grid boundary
-        yield from itertools.product(*map(range, (axis-1 for axis in self.shape)))
-
+        yield from itertools.product(*map(range, (axis - 1 for axis in self.shape)))
 
     def describeCellAt(self, anchor):
         """
@@ -218,7 +205,6 @@ class Grid(list):
         # project them into the grid  to get the flat index and return them
         return tuple(map(self.project, corners))
 
-
     def cornersOfCellAt(self, anchor):
         """
         Visit the corners of the cell at {anchor} in a counter clockwise fashion
@@ -226,7 +212,7 @@ class Grid(list):
         # for 3d grids
         try:
             # unpack the indices
-            i,j,k = anchor
+            i, j, k = anchor
         # if this fails
         except ValueError:
             # moving on
@@ -236,13 +222,20 @@ class Grid(list):
             # build the indices of the corners of the bottom and top faces in counterclockwise
             # fashion
             return (
-                (i,j,k), (i+1,j,k), (i+1,j+1,k), (i,j+1,k),
-                (i,j,k+1), (i+1,j,k+1), (i+1,j+1,k+1), (i,j+1,k+1))
+                (i, j, k),
+                (i + 1, j, k),
+                (i + 1, j + 1, k),
+                (i, j + 1, k),
+                (i, j, k + 1),
+                (i + 1, j, k + 1),
+                (i + 1, j + 1, k + 1),
+                (i, j + 1, k + 1),
+            )
 
         # for 2d grids
         try:
             # unpack the indices
-            i,j = anchor
+            i, j = anchor
         # if this fails
         except ValueError:
             # moving on
@@ -251,7 +244,7 @@ class Grid(list):
         else:
             # build the indices of the corners of the bottom and top faces in counterclockwise
             # fashion
-            return ((i,j), (i+1,j), (i+1,j+1), (i,j+1))
+            return ((i, j), (i + 1, j), (i + 1, j + 1), (i, j + 1))
 
         # for the rest
         return anchor

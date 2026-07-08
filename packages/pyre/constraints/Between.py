@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # superclass
@@ -17,7 +16,6 @@ class Between(Constraint):
     the candidate is in {(a,b)}
     """
 
-
     # interface
     def validate(self, value, **kwds):
         """
@@ -30,7 +28,6 @@ class Between(Constraint):
         # otherwise, chain up
         return super().validate(value=value, **kwds)
 
-
     # meta-methods
     def __init__(self, low, high, **kwds):
         # chain up
@@ -40,7 +37,6 @@ class Between(Constraint):
         self.high = high
         # all done
         return
-
 
     def __str__(self):
         return "between {0.low} and {0.high}".format(self)

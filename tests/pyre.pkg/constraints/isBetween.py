@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -14,11 +13,12 @@ Exercise "isBetween"
 
 def test():
     import pyre.constraints
+
     constraint = pyre.constraints.isBetween(low=0, high=1)
 
-    constraint.validate(.1)
-    constraint.validate(.1)
-    constraint.validate(.9)
+    constraint.validate(0.1)
+    constraint.validate(0.1)
+    constraint.validate(0.9)
 
     stranger = 0
     try:

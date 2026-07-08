@@ -1,4 +1,5 @@
-#! /usr/bin/env python3
+#!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -39,7 +40,6 @@ def test():
         def pyre_hashInstance(self, name, value):
             # hash another constructor argument into the instance key
             return f"{name}.{value}"
-
 
     # get the twp registries
     baseReg = Base.pyre_unique

@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -116,9 +117,7 @@ def _configureFacility(component, facility, seen):
     chosen component's own traits; {seen} carries the families already on the path, to stop cycles
     """
     # discover the visible implementations of the facility's protocol, each a (uri, name, class)
-    implementers = facility.protocol.pyre_locateAllImplementers(
-        namespace=pyre.executive.nameserver
-    )
+    implementers = facility.protocol.pyre_locateAllImplementers(namespace=pyre.executive.nameserver)
     # index them by their short name, which is how the user picks and how pyre resolves them
     byName = {name: cls for uri, name, cls in implementers}
     # with nothing to choose from, leave the facility at its default

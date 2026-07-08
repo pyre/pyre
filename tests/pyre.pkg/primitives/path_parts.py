@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -15,9 +16,7 @@ def test():
     import pyre.primitives
 
     # the location of this test
-    here = pyre.primitives.path(
-        "/Users/mga/dv/pyre-1.0/tests/pyre/primitives/path_parts.py"
-    )
+    here = pyre.primitives.path("/Users/mga/dv/pyre-1.0/tests/pyre/primitives/path_parts.py")
 
     # check that we extract the parts correctly
     assert list(here.parts) == ["/"] + str(here).split("/")[1:]
@@ -58,10 +57,7 @@ def test():
     assert cwd.isAbsolute() is False
 
     # the former can be expressed as a URI
-    assert (
-        here.as_uri()
-        == "file:///Users/mga/dv/pyre-1.0/tests/pyre/primitives/path_parts.py"
-    )
+    assert here.as_uri() == "file:///Users/mga/dv/pyre-1.0/tests/pyre/primitives/path_parts.py"
     # but the latter
     try:
         # can't

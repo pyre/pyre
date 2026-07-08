@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -91,9 +92,7 @@ class Mkdir(Factory, family="merlin.factories.mkdir"):
         channel = journal.error("merlin.factories.mkdir")
         # complain
         channel.line(f"a file named '{name}' already exists")
-        channel.line(
-            f"while attempting to create a subdirectory in '{parent.pyre_name}'"
-        )
+        channel.line(f"while attempting to create a subdirectory in '{parent.pyre_name}'")
         # flush
         channel.log()
 

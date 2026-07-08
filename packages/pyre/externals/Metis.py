@@ -1,28 +1,28 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # externals
 import re
+
 # access to the framework
 import pyre
+
 # superclass
 from .Library import Library
 
 
 # the metis package manager
-class Metis(Library, family='pyre.externals.metis'):
+class Metis(Library, family="pyre.externals.metis"):
     """
     The package manager for Metis packages
     """
 
     # constants
-    category = 'metis'
-
+    category = "metis"
 
     # support for specific package managers
     @classmethod
@@ -45,17 +45,16 @@ class Metis(Library, family='pyre.externals.metis'):
             # once we have a match
             if match:
                 # extract the variant
-                variant = match.group('variant')
+                variant = match.group("variant")
                 # fold it into the installation name
-                name = cls.category + (variant if variant else '')
+                name = cls.category + (variant if variant else "")
                 # place the package name into a tuple
-                packages = match.group(),
+                packages = (match.group(),)
                 # hand them to the caller
                 yield name, packages
 
         # all done
         return
-
 
     @classmethod
     def dpkgPackages(cls, packager):
@@ -65,10 +64,10 @@ class Metis(Library, family='pyre.externals.metis'):
         # ask {dpkg} for my options
         alternatives = sorted(packager.alternatives(group=cls), reverse=True)
         # the supported versions
-        versions = Default,
+        versions = (Default,)
         # go through the versions
         for version in versions:
-           # scan through the alternatives
+            # scan through the alternatives
             for name in alternatives:
                 # if it is match
                 if name.startswith(version.flavor):
@@ -77,7 +76,6 @@ class Metis(Library, family='pyre.externals.metis'):
 
         # out of ideas
         return
-
 
     @classmethod
     def macportsPackages(cls, packager):
@@ -95,7 +93,7 @@ from .LibraryInstallation import LibraryInstallation
 
 
 # the implementation
-class Default(LibraryInstallation, family='pyre.externals.metis.default', implements=Metis):
+class Default(LibraryInstallation, family="pyre.externals.metis.default", implements=Metis):
     """
     A generic Metis installation
     """
@@ -109,8 +107,7 @@ class Default(LibraryInstallation, family='pyre.externals.metis.default', implem
     defines.doc = "the compile time markers that indicate my presence"
 
     libraries = pyre.properties.strings()
-    libraries.doc = 'the libraries to place on the link line'
-
+    libraries.doc = "the libraries to place on the link line"
 
     # configuration
     def dpkg(self, packager):
@@ -123,11 +120,11 @@ class Default(LibraryInstallation, family='pyre.externals.metis.default', implem
         self.version, _ = packager.info(package=dev)
 
         # in order to identify my {incdir}, search for the top-level header file
-        header = 'metis.h'
+        header = "metis.h"
         # find the header
         incdir = packager.findfirst(target=header, contents=packager.contents(package=dev))
         # which is inside the atlas directory; save the parent
-        self.incdir = [ incdir ] if incdir else []
+        self.incdir = [incdir] if incdir else []
 
         # in order to identify my {libdir}, search for one of my libraries
         stem = self.flavor
@@ -136,16 +133,15 @@ class Default(LibraryInstallation, family='pyre.externals.metis.default', implem
         # find it
         libdir = packager.findfirst(target=libmetis, contents=packager.contents(package=dev))
         # and save it
-        self.libdir = [ libdir ] if libdir else []
+        self.libdir = [libdir] if libdir else []
         # set my library
         self.libraries = stem
 
         # now that we have everything, compute the prefix
-        self.prefix = self.commonpath(folders=self.incdir+self.libdir)
+        self.prefix = self.commonpath(folders=self.incdir + self.libdir)
 
         # all done
         return
-
 
     def macports(self, packager, **kwds):
         """
@@ -160,18 +156,18 @@ class Default(LibraryInstallation, family='pyre.externals.metis.default', implem
         # if this fails
         except KeyError:
             # this package is not installed
-            msg = 'the package {!r} is not installed'.format(package)
+            msg = "the package {!r} is not installed".format(package)
             # complain
             raise self.ConfigurationError(configurable=self, errors=[msg])
         # otherwise, grab the package contents
         contents = tuple(packager.contents(package=package))
 
         # in order to identify my {incdir}, search for the top-level header file
-        header = 'metis.h'
+        header = "metis.h"
         # find it
         incdir = packager.findfirst(target=header, contents=contents)
         # and save it
-        self.incdir = [ incdir ] if incdir else []
+        self.incdir = [incdir] if incdir else []
 
         # in order to identify my {libdir}, search for one of my libraries
         stem = self.flavor
@@ -180,12 +176,12 @@ class Default(LibraryInstallation, family='pyre.externals.metis.default', implem
         # find it
         libdir = packager.findfirst(target=libmetis, contents=contents)
         # and save it
-        self.libdir = [ libdir ] if libdir else []
+        self.libdir = [libdir] if libdir else []
         # set my library
         self.libraries = stem
 
         # now that we have everything, compute the prefix
-        self.prefix = self.commonpath(folders=self.incdir+self.libdir)
+        self.prefix = self.commonpath(folders=self.incdir + self.libdir)
 
         # all done
         return

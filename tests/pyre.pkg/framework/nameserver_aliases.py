@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -15,12 +14,13 @@ Verify direct access to the namespace
 def test():
     # access the package
     import pyre
+
     # and the nameserver
     nameserver = pyre.executive.nameserver
 
     # first batch of names
-    alias = 'first'
-    canonical = nameserver.join('package.application', alias)
+    alias = "first"
+    canonical = nameserver.join("package.application", alias)
     # alias them
     nameserver.alias(target=canonical, alias=alias)
     # hash them
@@ -36,8 +36,8 @@ def test():
     assert nameserver._metadata.get(canonicalKey) == None
 
     # next batch
-    alias = 'second'
-    canonical = nameserver.join('package.application', alias)
+    alias = "second"
+    canonical = nameserver.join("package.application", alias)
     # add a value under the canonical name
     nameserver[canonical] = canonical
     # alias them
@@ -53,8 +53,8 @@ def test():
     assert nameserver._metadata[canonicalKey].name == canonical
 
     # invert the relationship: existing alias, new canonical
-    alias = 'third'
-    canonical = nameserver.join('package.application', alias)
+    alias = "third"
+    canonical = nameserver.join("package.application", alias)
     # add a value under the alias
     nameserver[alias] = alias
     # alias them
@@ -70,8 +70,8 @@ def test():
     assert nameserver._metadata[canonicalKey].name == canonical
 
     # both pre-existing, with canonical having higher priority
-    alias = 'fourth'
-    canonical = nameserver.join('package.application', alias)
+    alias = "fourth"
+    canonical = nameserver.join("package.application", alias)
     # add a value under the alias
     nameserver[alias] = alias
     # and a value under the canonical name
@@ -89,8 +89,8 @@ def test():
     assert nameserver._metadata[canonicalKey].name == canonical
 
     # both pre-existing, with the alias having higher priority
-    alias = 'fifth'
-    canonical = nameserver.join('package.application', alias)
+    alias = "fifth"
+    canonical = nameserver.join("package.application", alias)
     # add a value under the canonical name
     nameserver[canonical] = canonical
     # and add a value under the alias

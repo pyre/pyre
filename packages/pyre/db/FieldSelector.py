@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # superclass
@@ -16,10 +15,8 @@ class FieldSelector(records.selector):
     Access to the field descriptors
     """
 
-
     # types
     from .FieldReference import FieldReference as fieldReference
-
 
     # meta-methods
     def __get__(self, record, cls):

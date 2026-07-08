@@ -1,28 +1,28 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # externals
 import re
+
 # access to the framework
 import pyre
+
 # superclass
 from .Library import Library
 
 
 # the hdf5 package manager
-class HDF5(Library, family='pyre.externals.hdf5'):
+class HDF5(Library, family="pyre.externals.hdf5"):
     """
     The package manager for HDF5 packages
     """
 
     # constants
-    category = 'hdf5'
-
+    category = "hdf5"
 
     # support for specific package managers
     @classmethod
@@ -45,17 +45,16 @@ class HDF5(Library, family='pyre.externals.hdf5'):
             # once we have a match
             if match:
                 # extract the variant
-                variant = match.group('variant')
+                variant = match.group("variant")
                 # fold it into the installation name
-                name = 'hdf5' + (variant if variant else '')
+                name = "hdf5" + (variant if variant else "")
                 # place the package name into a tuple
-                packages = match.group(),
+                packages = (match.group(),)
                 # hand them to the caller
                 yield name, packages
 
         # all done
         return
-
 
     @classmethod
     def dpkgPackages(cls, packager):
@@ -65,10 +64,10 @@ class HDF5(Library, family='pyre.externals.hdf5'):
         # ask {dpkg} for my options
         alternatives = sorted(packager.alternatives(group=cls), reverse=True)
         # the supported versions
-        versions = Default,
+        versions = (Default,)
         # go through the versions
         for version in versions:
-           # scan through the alternatives
+            # scan through the alternatives
             for name in alternatives:
                 # if it is match
                 if name.startswith(version.flavor):
@@ -77,7 +76,6 @@ class HDF5(Library, family='pyre.externals.hdf5'):
 
         # out of ideas
         return
-
 
     @classmethod
     def macportsPackages(cls, packager):
@@ -95,7 +93,7 @@ from .LibraryInstallation import LibraryInstallation
 
 
 # the implementation
-class Default(LibraryInstallation, family='pyre.externals.hdf5.default', implements=HDF5):
+class Default(LibraryInstallation, family="pyre.externals.hdf5.default", implements=HDF5):
     """
     A generic HDF5 installation
     """
@@ -109,8 +107,7 @@ class Default(LibraryInstallation, family='pyre.externals.hdf5.default', impleme
     defines.doc = "the compile time markers that indicate my presence"
 
     libraries = pyre.properties.strings()
-    libraries.doc = 'the libraries to place on the link line'
-
+    libraries.doc = "the libraries to place on the link line"
 
     # configuration
     def dpkg(self, packager):
@@ -123,11 +120,11 @@ class Default(LibraryInstallation, family='pyre.externals.hdf5.default', impleme
         self.version, _ = packager.info(package=dev)
 
         # in order to identify my {incdir}, search for the top-level header file
-        header = 'hdf5.h'
+        header = "hdf5.h"
         # find the header
         incdir = packager.findfirst(target=header, contents=packager.contents(package=dev))
         # save it
-        self.incdir = [ incdir ] if incdir else []
+        self.incdir = [incdir] if incdir else []
 
         # in order to identify my {libdir}, search for one of my libraries
         stem = self.flavor
@@ -136,23 +133,22 @@ class Default(LibraryInstallation, family='pyre.externals.hdf5.default', impleme
         # find it
         libdir = packager.findfirst(target=libhdf5, contents=packager.contents(package=dev))
         # and save it
-        self.libdir = [ libdir ] if libdir else []
+        self.libdir = [libdir] if libdir else []
         # set my library
-        self.libraries = stem, stem+'_cpp'
+        self.libraries = stem, stem + "_cpp"
 
         # now that we have everything, compute the prefix
-        self.prefix = self.commonpath(folders=self.incdir+self.libdir)
+        self.prefix = self.commonpath(folders=self.incdir + self.libdir)
 
         # all done
         return
-
 
     def macports(self, packager, **kwds):
         """
         Attempt to repair my configuration
         """
         # the name of the macports package
-        package = 'hdf5'
+        package = "hdf5"
         # attempt to
         try:
             # get the version info
@@ -160,18 +156,18 @@ class Default(LibraryInstallation, family='pyre.externals.hdf5.default', impleme
         # if this fails
         except KeyError:
             # this package is not installed
-            msg = 'the package {!r} is not installed'.format(package)
+            msg = "the package {!r} is not installed".format(package)
             # complain
             raise self.ConfigurationError(configurable=self, errors=[msg])
         # otherwise, grab the package contents
         contents = tuple(packager.contents(package=package))
 
         # in order to identify my {incdir}, search for the top-level header file
-        header = 'hdf5.h'
+        header = "hdf5.h"
         # find it
         incdir = packager.findfirst(target=header, contents=contents)
         # and save it
-        self.incdir = [ incdir ] if incdir else []
+        self.incdir = [incdir] if incdir else []
 
         # in order to identify my {libdir}, search for one of my libraries
         stem = self.flavor
@@ -180,12 +176,12 @@ class Default(LibraryInstallation, family='pyre.externals.hdf5.default', impleme
         # find it
         libdir = packager.findfirst(target=libhdf5, contents=contents)
         # and save it
-        self.libdir = [ libdir ] if libdir else []
+        self.libdir = [libdir] if libdir else []
         # set my library
-        self.libraries = stem, stem+'_cpp'
+        self.libraries = stem, stem + "_cpp"
 
         # now that we have everything, compute the prefix
-        self.prefix = self.commonpath(folders=self.incdir+self.libdir)
+        self.prefix = self.commonpath(folders=self.incdir + self.libdir)
 
         # all done
         return

@@ -1,16 +1,17 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # the framework
 import pyre
+
 # externals
 import sys
 import subprocess
+
 # my superclass
 from pyre.shells.Script import Script
 
@@ -20,7 +21,6 @@ class Launcher(Script, family="mpi.shells.mpirun"):
     """
     Encapsulation of launching an MPI job using {mpirun}
     """
-
 
     # user configurable state
     hosts = pyre.properties.int(default=1)
@@ -46,7 +46,6 @@ class Launcher(Script, family="mpi.shells.mpirun"):
     model = pyre.properties.str(default="mpi")
     model.doc = "the programming model"
 
-
     # interface
     @pyre.export
     def launch(self, application, *args, **kwds):
@@ -69,7 +68,6 @@ class Launcher(Script, family="mpi.shells.mpirun"):
         # otherwise, just launch the application
         return self.parallel(application=application, *args, **kwds)
 
-
     # launching hooks; subclasses may override this to get finer control over the two launching
     # branches
     def parallel(self, *args, **kwds):
@@ -79,6 +77,7 @@ class Launcher(Script, family="mpi.shells.mpirun"):
         """
         # pull the runtime support
         import mpi
+
         # and try to initialize it
         if mpi.init():
             # if all goes well, grant access to the global communicator
@@ -88,13 +87,13 @@ class Launcher(Script, family="mpi.shells.mpirun"):
 
         # if something went wrong, get the journal
         import journal
+
         # make a channel
         channel = journal.error("mpi.init")
         # complain
         channel.log("failed to initialize the mpi runtime support")
         # and bail with an error code
         return 1
-
 
     def spawn(self, application, *args, **kwds):
         """
@@ -103,11 +102,7 @@ class Launcher(Script, family="mpi.shells.mpirun"):
         # get the command line
         argv = self.buildCommandLine()
         # prep the subprocess options
-        options = {
-            "args": argv,
-            "universal_newlines": True,
-            "shell": False
-        }
+        options = {"args": argv, "universal_newlines": True, "shell": False}
 
         # if launching fails, indicate an error
         status = 42
@@ -118,7 +113,6 @@ class Launcher(Script, family="mpi.shells.mpirun"):
 
         # all done
         return status
-
 
     def buildCommandLine(self):
         """
@@ -138,29 +132,28 @@ class Launcher(Script, family="mpi.shells.mpirun"):
         extra = self.extra
 
         # start building the command line for the subprocess
-        argv = [ launcher ]
+        argv = [launcher]
         # build the corresponding arguments
-        argv += [ "-n", str(hosts * tasks) ]
+        argv += ["-n", str(hosts * tasks)]
         # if the user supplied a host file
         if hostfile:
             # add it to the pile
-            argv += [ "--hostfile", str(hostfile) ]
+            argv += ["--hostfile", str(hostfile)]
         # if the user has anything else to say to mpi
         if extra:
             # add them as well
             argv += extra.split()
         # add the executable
-        argv += [ interpreter ]
+        argv += [interpreter]
         # and the entire original command line
         argv += sys.argv
         # be explicit about the machine layout, in case the application made changes
-        argv += [ f"--shell.hosts={hosts}", f"--shell.tasks={tasks}" ]
+        argv += [f"--shell.hosts={hosts}", f"--shell.tasks={tasks}"]
         # prevent auto-spawning next time around
-        argv += [ f"--shell.auto=no" ]
+        argv += [f"--shell.auto=no"]
 
         # all done
         return argv
-
 
     # easy access to the global communicator; not available until after the launcher has
     # spawned the parallel program

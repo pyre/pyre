@@ -1,13 +1,13 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # externals
 from .. import tracking
+
 # superclass
 from ..patterns.AttributeClassifier import AttributeClassifier
 
@@ -24,6 +24,7 @@ class Requirement(AttributeClassifier):
       * identifies the specially marked attributes
       * creates the namemap that handles trait name aliasing
     """
+
     # the presence of a family/component name determines the slot storage strategy: if a
     # configurable is to be registered with the nameserver, it delegates storage of its slot to
     # it, which allows me to maintain only one slot for each component trait. if a configurable
@@ -38,7 +39,6 @@ class Requirement(AttributeClassifier):
     # types
     from ..traits.Trait import Trait
     from .Configurable import Configurable
-
 
     # meta-methods
     def __new__(cls, name, bases, attributes, *, internal=False, **kwds):
@@ -56,24 +56,24 @@ class Requirement(AttributeClassifier):
         traitmap = {}
 
         # initialize the class attributes explicitly
-        attributes['pyre_pedigree'] = ()
+        attributes["pyre_pedigree"] = ()
         attributes["pyre_localTraits"] = ()
-        attributes['pyre_inheritedTraits'] = ()
-        attributes['pyre_namemap'] = namemap
-        attributes['pyre_traitmap'] = traitmap
-        attributes['pyre_internal'] = internal
+        attributes["pyre_inheritedTraits"] = ()
+        attributes["pyre_namemap"] = namemap
+        attributes["pyre_traitmap"] = traitmap
+        attributes["pyre_internal"] = internal
 
         # build the record
         configurable = super().__new__(cls, name, bases, attributes, **kwds)
 
         # harvest the local traits
-        configurable.pyre_localTraits = tuple(
-            configurable.pyre_getLocalTraits(attributes))
+        configurable.pyre_localTraits = tuple(configurable.pyre_getLocalTraits(attributes))
 
         # harvest the inherited traits: this must be done from scratch for every new
         # configurable class, since multiple inheritance messes with the __mro__;
         configurable.pyre_inheritedTraits = tuple(
-            configurable.pyre_getInheritedTraits(shadowed=set(attributes)))
+            configurable.pyre_getInheritedTraits(shadowed=set(attributes))
+        )
 
         # extract the ancestors listed in the mro of the configurable that are themselves
         # configurable; N.B.: since {Requirement} is not the direct metaclass of any class, the
@@ -93,7 +93,6 @@ class Requirement(AttributeClassifier):
         # return the class record to the caller
         return configurable
 
-
     # support for decorating components and protocols
     def pyre_getLocalTraits(self, attributes):
         """
@@ -107,7 +106,6 @@ class Requirement(AttributeClassifier):
             yield trait
         # all done
         return
-
 
     def pyre_getInheritedTraits(self, shadowed):
         """
@@ -134,12 +132,14 @@ class Requirement(AttributeClassifier):
             # if it succeeds
             else:
                 # bail out if we have reached the end of the configurable chain
-                if base is self.Configurable: return
+                if base is self.Configurable:
+                    return
                 # go through the traits local to this base
                 for trait in traits:
                     # print("        found {!r}".format(trait.name))
                     # skip it if something else by the same name is already known
-                    if trait.name in shadowed: continue
+                    if trait.name in shadowed:
+                        continue
                     # otherwise, save it
                     yield trait
             # in any case, add all the local attribute names onto the known pile
@@ -148,7 +148,6 @@ class Requirement(AttributeClassifier):
 
         # all done
         return
-
 
     def pyre_getPedigree(self):
         """
@@ -175,13 +174,13 @@ class Requirement(AttributeClassifier):
             # otherwise
             else:
                 # one of ours; if it is the end of the chain, stop looking
-                if base is self.Configurable: return
+                if base is self.Configurable:
+                    return
                 # otherwise, hand it to our caller
                 yield base
 
         # all done
         return
-
 
     def pyre_getEigenPedigree(self):
         """
@@ -193,14 +192,14 @@ class Requirement(AttributeClassifier):
         # loop over my pedigree
         for base in self.pyre_pedigree:
             # ignore the trivial and the known
-            if base.pyre_internal or base in known: continue
+            if base.pyre_internal or base in known:
+                continue
             # got one
             yield base
             # put its pedigree in the known pile
             known.update(base.pyre_pedigree)
         # all done
         return
-
 
     # type checks
     @classmethod
@@ -218,7 +217,6 @@ class Requirement(AttributeClassifier):
             flag = False
         # all done
         return flag
-
 
     @classmethod
     def pyre_isProtocol(self, configurable):

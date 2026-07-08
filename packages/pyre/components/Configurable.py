@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -6,7 +7,6 @@
 
 # externals
 import itertools, textwrap
-
 
 # superclass
 from ..framework.Dashboard import Dashboard
@@ -67,9 +67,7 @@ class Configurable(Dashboard):
         # while there is still something to do
         for configurable in workload:
             # invoke the worker
-            yield from configurable._pyre_renderTraitValues(
-                renderer=renderer, workload=workload
-            )
+            yield from configurable._pyre_renderTraitValues(renderer=renderer, workload=workload)
         # all done
         return
 
@@ -140,9 +138,7 @@ class Configurable(Dashboard):
         scope = list(self.pyre_nameserver.getInfo(key).split)
 
         # determine how deep to go
-        configurables = (
-            self.pyre_configurables() if deep else self.pyre_localConfigurables()
-        )
+        configurables = self.pyre_configurables() if deep else self.pyre_localConfigurables()
 
         # go through my traits
         for trait in configurables:
@@ -487,9 +483,7 @@ class Configurable(Dashboard):
                 continue
 
             # if we get this far, we have an incompatibility; build an error description
-            error = cls.CategoryMismatchError(
-                configurable=cls, target=spec, name=hers.name
-            )
+            error = cls.CategoryMismatchError(configurable=cls, target=spec, name=hers.name)
             # add it to the report
             report.incompatibilities[hers].append(error)
             # if we are in fast mode

@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -50,7 +51,6 @@ from .Facility import Facility as facility
 # meta-properties: trait descriptors for homogeneous containers; these require other trait
 # descriptors to specify the type of the contents
 from .Dict import Dict as dict
-
 
 # the decorators
 from ..descriptors import converter, normalizer, validator

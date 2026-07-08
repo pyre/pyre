@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -17,10 +16,10 @@ def test():
     import pyre
 
     # declare a component
-    class component(pyre.component, family='sample.component'):
+    class component(pyre.component, family="sample.component"):
         """A simple component"""
-        trait = pyre.properties.str(default="trait")
 
+        trait = pyre.properties.str(default="trait")
 
     # declare a trivial application that inherits from this component
     class application(pyre.application, component, family="sample.application"):
@@ -37,16 +36,16 @@ def test():
     # inv = application.pyre_inventory
     # print("  inventory:")
     # for trait, slot in inv.items():
-        # print("    {}: {!r}".format(trait.name, inv[trait].value))
+    # print("    {}: {!r}".format(trait.name, inv[trait].value))
     # print("  done")
 
     # check that {trait} is an {application} trait
-    assert application.pyre_trait('trait')
+    assert application.pyre_trait("trait")
 
     # now make an instance
-    app = application('simple:app')
+    app = application("simple:app")
     # check that {trait} is an one of its traits
-    assert app.pyre_trait('trait')
+    assert app.pyre_trait("trait")
 
     # return the application class
     return application

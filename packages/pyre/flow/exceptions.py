@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -7,7 +8,6 @@
 """
 Definitions for all exceptions raised by this package
 """
-
 
 # grab the base framework exception
 from ..framework.exceptions import FrameworkError

@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -41,9 +42,7 @@ class Resolver:
         # descend into the members
         for member in group._pyre_descriptors():
             # extending the path with the member's on-disk name
-            member._pyre_identify(
-                authority=self, path=path + (member._pyre_name,), shapes=shapes
-            )
+            member._pyre_identify(authority=self, path=path + (member._pyre_name,), shapes=shapes)
         # all done
         return
 

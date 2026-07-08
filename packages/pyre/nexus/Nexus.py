@@ -1,13 +1,13 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # externals
 import pyre
+
 # base class
 from .Asynchronous import Asynchronous
 
@@ -18,7 +18,6 @@ class Nexus(Asynchronous, family="pyre.nexus.servers"):
     Protocol definition for components that enable applications to interact over the network
     """
 
-
     # default implementation
     @classmethod
     def pyre_default(cls, **kwds):
@@ -27,6 +26,7 @@ class Nexus(Asynchronous, family="pyre.nexus.servers"):
         """
         # get my favorite
         from .Node import Node
+
         # return it
         return Node
 

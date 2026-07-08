@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -15,6 +14,7 @@ Verify the tuple representation
 def test():
     # package access
     import gsl
+
     # make a matrix
     v = gsl.vector(shape=3)
     # set some values
@@ -23,7 +23,7 @@ def test():
     v[2] = 2
 
     # verify the tuple rep
-    assert v.tuple() == (0,1,2)
+    assert v.tuple() == (0, 1, 2)
 
     # all done
     return v

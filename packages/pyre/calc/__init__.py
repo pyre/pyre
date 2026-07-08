@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -31,10 +30,8 @@ somewhat more advanced example, take a look at {pyre.config.Configurator}, which
 that trait settings can refer to the values of other traits in the configuration files.
 """
 
-
 # the node generator
 from .Calculator import Calculator as calculator
-
 
 # implementation note: these factories are functions (rather than a raw import of the
 # corresponding constructor) in order to prevent the secondary {import} from happening when the
@@ -50,6 +47,7 @@ def model(**kwds):
     such as file paths or namespaces
     """
     from .Hierarchical import Hierarchical
+
     return Hierarchical(**kwds)
 
 
@@ -60,6 +58,7 @@ def var(value=None, **kwds):
     """
     # get the base node
     from .Node import Node
+
     # build a variable and return it
     return Node.variable(value=value, **kwds)
 
@@ -79,6 +78,7 @@ def sequence(*operands):
     """
     # access the constructor
     from .Node import Node
+
     # build the node and return it
     return Node.sequence(operands=operands)
 
@@ -89,6 +89,7 @@ def mapping(**operands):
     """
     # access the constructor
     from .Node import Node
+
     # build the node and return it
     return Node.mapping(operands=operands)
 
@@ -99,6 +100,7 @@ def average(*operands):
     """
     # access the constructor
     from .Node import Node
+
     # build the node and return it
     return Node.average(operands=operands)
 
@@ -109,6 +111,7 @@ def count(*operands):
     """
     # access the constructor
     from .Node import Node
+
     # build the node and return it
     return Node.count(operands=operands)
 
@@ -119,6 +122,7 @@ def max(*operands):
     """
     # access the constructor
     from .Node import Node
+
     # build the node and return it
     return Node.max(operands=operands)
 
@@ -129,6 +133,7 @@ def min(*operands):
     """
     # access the constructor
     from .Node import Node
+
     # build the node and return it
     return Node.min(operands=operands)
 
@@ -139,6 +144,7 @@ def product(*operands):
     """
     # access the constructor
     from .Node import Node
+
     # build the node and return it
     return Node.product(operands=operands)
 
@@ -149,6 +155,7 @@ def sum(*operands):
     """
     # access the constructor
     from .Node import Node
+
     # build the node and return it
     return Node.sum(operands=list(operands))
 
@@ -161,10 +168,14 @@ def debug():
     # attach {Extent} as the metaclass of {Node} so we can verify that all instances of
     # this class are properly garbage collected
     from ..patterns.Extent import Extent
+
     # get the normal metaclass
     global calculator
+
     # derive a new one
-    class counted(calculator, Extent): pass
+    class counted(calculator, Extent):
+        pass
+
     # and set it as the default
     calculator = counted
     # all done

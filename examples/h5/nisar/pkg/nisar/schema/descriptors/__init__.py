@@ -1,4 +1,4 @@
-# -*- python -*-
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -7,6 +7,5 @@
 
 # the custom dataset descriptors
 from .SLC import SLC as slc
-
 
 # end of file

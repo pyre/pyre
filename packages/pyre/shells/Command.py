@@ -1,14 +1,14 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # access to the framework
 import pyre
 import journal
+
 # my protocol
 from .Action import Action
 
@@ -19,11 +19,9 @@ class Command(pyre.component, implements=Action):
     A component that implements {Action}
     """
 
-
     # public state
     dry = pyre.properties.bool(default=False)
     dry.doc = "show what would get done without actually doing anything"
-
 
     # expected interface
     @pyre.export
@@ -32,12 +30,11 @@ class Command(pyre.component, implements=Action):
         This is the implementation of the action
         """
         # just print a message
-        plexus.info.log('main: missing implementation')
+        plexus.info.log("main: missing implementation")
         # and indicate success
         return 0
 
-
-    @pyre.export(tip='show this help screen')
+    @pyre.export(tip="show this help screen")
     def help(self, plexus, **kwds):
         """
         Show a help screen
@@ -51,7 +48,6 @@ class Command(pyre.component, implements=Action):
         # all done
         return 0
 
-
     # meta-methods
     def __init__(self, name, spec, plexus, **kwds):
         # chain up
@@ -61,7 +57,6 @@ class Command(pyre.component, implements=Action):
         # all done
         return
 
-
     # implementation details
     def __call__(self, plexus, argv):
         """
@@ -70,8 +65,7 @@ class Command(pyre.component, implements=Action):
         # delegate to {main}
         return self.main(plexus=plexus, argv=argv)
 
-
-    def pyre_help(self, plexus, indent=' '*2, **kwds):
+    def pyre_help(self, plexus, indent=" " * 2, **kwds):
         """
         Hook for the application help system
         """
@@ -88,7 +82,6 @@ class Command(pyre.component, implements=Action):
         yield from self.pyre_showConfigurables(indent=indent, **kwds)
         # all done
         return
-
 
     # private data
     pyre_spec = None

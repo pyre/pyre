@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -179,7 +180,6 @@ def walker():
 
 # exceptions thrown by the factories
 from .exceptions import MountPointError
-
 
 # debugging support:
 #     import the package and set to something else, e.g. pyre.patterns.Extent

@@ -2,10 +2,8 @@
 # -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # support
@@ -17,7 +15,6 @@ class Colors(pyre.application):
     """
     A generator of colorized directory listings that is repository aware
     """
-
 
     # user configurable state
     palette = pyre.properties.str(default="x11")
@@ -42,7 +39,6 @@ class Colors(pyre.application):
         #
         # all done
         return 0
-
 
 
 # bootstrap

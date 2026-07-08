@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # externals
@@ -18,13 +17,11 @@ class PythonClassifier(merlin.component):
     An asset classifier that recognizes modules, packages and extensions
     """
 
-
     # types: the python asset factories
     from ..assets import pythonmodule, pythonpackage
 
     # constants
-    INIT = re.compile(r'__init__.*py')
-
+    INIT = re.compile(r"__init__.*py")
 
     # interface
     def classify(self, root, node):
@@ -41,7 +38,8 @@ class PythonClassifier(merlin.component):
             # extract its name and extension
             name, ext = os.path.splitext(filename)
             # if it's not a python source file, return empty handed
-            if not ext == '.py': return None
+            if not ext == ".py":
+                return None
             # otherwise
             return self.pythonmodule(name=name, uri=uri)
 
@@ -50,7 +48,8 @@ class PythonClassifier(merlin.component):
             # go through the contents looking for a filename that matches my init recognizer
             for name in node.contents:
                 # bail out if my module recognizer matches
-                if self.INIT.match(name): break
+                if self.INIT.match(name):
+                    break
             # if there was no match
             else:
                 # this folder is not a python package
@@ -62,7 +61,8 @@ class PythonClassifier(merlin.component):
                 # classify it
                 asset = self.classify(root=root, node=child)
                 # if it couldn't be identified, skip it
-                if asset is None: continue
+                if asset is None:
+                    continue
                 # otherwise, add it to my contents
                 package.contents[asset.name] = asset
             # and hand it to the caller

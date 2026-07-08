@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -18,7 +17,7 @@ def test():
     # make some nodes
     nodes = []
     for n in range(10):
-        node = pyre.calc.var(value=n+1)
+        node = pyre.calc.var(value=n + 1)
         nodes.append(node)
 
     # make a sequence
@@ -27,9 +26,9 @@ def test():
     assert tuple(s.value) == tuple(range(1, 11))
 
     # make a mapping
-    m = pyre.calc.mapping(**{ 'n{}'.format(i): n for i,n in enumerate(nodes)})
+    m = pyre.calc.mapping(**{"n{}".format(i): n for i, n in enumerate(nodes)})
     # check
-    assert m.value == dict({ 'n{}'.format(i): i+1 for i in range(10)})
+    assert m.value == dict({"n{}".format(i): i + 1 for i in range(10)})
 
     # all done
     return
@@ -38,7 +37,7 @@ def test():
 # main
 if __name__ == "__main__":
     # request debugging support for the pyre.calc package
-    pyre_debug = { "pyre.calc" }
+    pyre_debug = {"pyre.calc"}
     # skip pyre initialization since we don't rely on the executive
     pyre_noboot = True
     # run the test
@@ -46,6 +45,7 @@ if __name__ == "__main__":
     # verify reference counts
     # for nodes
     from pyre.calc.Node import Node
+
     # print(tuple(Node.pyre_extent))
     assert tuple(Node.pyre_extent) == ()
 

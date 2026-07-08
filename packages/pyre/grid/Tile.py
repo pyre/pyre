@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # externals
@@ -26,7 +25,6 @@ class Tile:
     shape = ()
     layout = ()
     size = 0
-
 
     # interface
     def offset(self, index):
@@ -67,7 +65,6 @@ class Tile:
         # all done
         return offset
 
-
     def index(self, offset):
         """
         Compute the index that corresponds to the given {offset}
@@ -96,7 +93,6 @@ class Tile:
 
         # freeze and return
         return tuple(index)
-
 
     def visit(self, begin, end, layout):
         """
@@ -134,7 +130,6 @@ class Tile:
         # all done
         return
 
-
     # meta-methods
     def __init__(self, shape, layout=None, **kwds):
         # chain up
@@ -159,15 +154,13 @@ class Tile:
         # all done
         return
 
-
     def __getitem__(self, index):
         # return the offset that corresponds to the given index
         return self.offset(index)
 
-
     def __iter__(self):
         # visit the entire tile in layout order
-        yield from self.visit(begin=(0,)*len(self.shape), end=self.shape, layout=self.layout)
+        yield from self.visit(begin=(0,) * len(self.shape), end=self.shape, layout=self.layout)
         # all done
         return
 

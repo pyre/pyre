@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -15,6 +14,7 @@ Exercise an XML weaver
 def test():
     # get the package
     import pyre.weaver
+
     # instantiate a weaver
     weaver = pyre.weaver.weaver(name="sanity")
     weaver.language = "xml"
@@ -22,17 +22,17 @@ def test():
     text = list(weaver.weave())
     assert text == [
         '<?xml version="1.0"?>',
-        '<!--',
-        ' ! ',
-        ' ! Michael A.G. Aïvázis',
-        ' ! Orthologue',
-        ' ! (c) 1998-2026 All Rights Reserved',
-        ' ! ',
-        ' -->',
-        '',
-        '',
-        '<!-- end of file -->'
-        ]
+        "<!--",
+        " ! ",
+        " ! Michael A.G. Aïvázis",
+        " ! Orthologue",
+        " ! (c) 1998-2026 All Rights Reserved",
+        " ! ",
+        " -->",
+        "",
+        "",
+        "<!-- end of file -->",
+    ]
 
     return
 

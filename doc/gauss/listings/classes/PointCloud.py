@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 class PointCloud:
@@ -19,8 +18,7 @@ class PointCloud:
         parameters:
             {box}: pairs of points that specify the computational domain
         """
-        raise NotImplementedError(
-            "class {.__name__!r} should implement 'point'".format(type(self)))
+        raise NotImplementedError("class {.__name__!r} should implement 'point'".format(type(self)))
 
 
 # end of file

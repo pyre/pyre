@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -12,9 +13,7 @@ import merlin
 
 
 # base class for all supported languages
-class Language(
-    merlin.component, implements=merlin.protocols.languages.language, internal=True
-):
+class Language(merlin.component, implements=merlin.protocols.languages.language, internal=True):
     """
     A category of source artifacts, usually associated with a family of processing workflows
     """
@@ -59,9 +58,7 @@ class Language(
             channel = journal.firewall("merlin.languages.identify")
             # complain
             channel.line(f"unable to find a handler for {self.name} sources")
-            channel.line(
-                f"while looking through the interface of '{visitor.pyre_name}'"
-            )
+            channel.line(f"while looking through the interface of '{visitor.pyre_name}'")
             # flush
             channel.log()
             # and fail, just in case firewalls aren't fatal

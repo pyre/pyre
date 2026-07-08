@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -15,6 +14,7 @@ Exercise max reductions
 def test():
     # access the package
     import mpi
+
     # initialize
     mpi.init()
     # get the world communicator
@@ -30,13 +30,13 @@ def test():
     largest = world.max(item=number, destination=destination)
     # check it
     if rank == destination:
-        assert largest == (size-1)**2
+        assert largest == (size - 1) ** 2
     else:
         assert largest is None
     # perform the all process reduction
     largest = world.max(item=number)
     # check it
-    assert largest == (size-1)**2
+    assert largest == (size - 1) ** 2
     # all done
     return
 

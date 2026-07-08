@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -21,6 +20,7 @@ def test():
         """
         The sample table from the postgres tutorial
         """
+
         # the fields
         city = pyre.db.str()
         date = pyre.db.date()
@@ -44,8 +44,8 @@ def test():
         "    weather.city AS city,",
         "    weather.date AS date",
         "  FROM",
-        "    weather;"
-        )
+        "    weather;",
+    )
 
     # all done
     return Weather

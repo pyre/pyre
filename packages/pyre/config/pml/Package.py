@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 from .Node import Node
@@ -16,7 +15,6 @@ class Package(Node):
 
     # constants
     elements = ("component", "package", "bind")
-
 
     # interface
     def notify(self, parent, locator):
@@ -34,7 +32,6 @@ class Package(Node):
         # all done
         return
 
-
     # assignment handler
     def assignment(self, event):
         """
@@ -47,26 +44,24 @@ class Package(Node):
         # and return
         return
 
-
     def conditionalAssignment(self, event):
         """
         Process a conditional assignment
         """
         # update the event with my name space
         event.component = self.name + event.component
-        event.conditions = [ (self.name+name, family) for name, family in event.conditions ]
+        event.conditions = [(self.name + name, family) for name, family in event.conditions]
 
         # store it with my other conditional bindings
         self.conditionals.append(event)
         # and return
         return
 
-
     # meta methods
     def __init__(self, parent, attributes, locator, **kwds):
         super().__init__(**kwds)
 
-        self.name = attributes['name'].split(self.separator)
+        self.name = attributes["name"].split(self.separator)
         # storage for my assignments
         self.assignments = []
         self.conditionals = []

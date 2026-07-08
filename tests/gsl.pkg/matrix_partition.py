@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -35,13 +34,13 @@ def test():
     # at the source task
     if rank == source:
         # allocate a matrix
-        θ = gsl.matrix(shape=(tasks*samplesPerTask, sampleSize))
+        θ = gsl.matrix(shape=(tasks * samplesPerTask, sampleSize))
         # initialize it
         for task in range(tasks):
             for sample in range(samplesPerTask):
                 for dof in range(sampleSize):
-                    offset = task*samplesPerTask + sample
-                    θ[offset, dof] = offset*sampleSize + dof
+                    offset = task * samplesPerTask + sample
+                    θ[offset, dof] = offset * sampleSize + dof
         # print it out
         # θ.print(format="{}")
     # the other tasks
@@ -57,7 +56,7 @@ def test():
     # verify that i got the correct part
     for row in range(samplesPerTask):
         for column in range(sampleSize):
-            assert part[row, column] == (rank*samplesPerTask+row)*sampleSize + column
+            assert part[row, column] == (rank * samplesPerTask + row) * sampleSize + column
 
     # all done
     return

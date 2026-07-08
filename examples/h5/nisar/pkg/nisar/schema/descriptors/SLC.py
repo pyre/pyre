@@ -1,4 +1,4 @@
-# -*- python -*-
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -27,9 +27,7 @@ class SLC(nisar.h5.schema.array):
         Fix the cell type to complex and the shape to the two named SLC dimensions
         """
         # an SLC is a 2d raster of complex floats over the (nlines, nsamples) grid
-        super().__init__(
-            schema=nisar.h5.schema.complex(), shape=["nlines", "nsamples"], **kwds
-        )
+        super().__init__(schema=nisar.h5.schema.complex(), shape=["nlines", "nsamples"], **kwds)
         # all done
         return
 

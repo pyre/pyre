@@ -1,13 +1,13 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # access to the pyre package
 import pyre
+
 # my ancestor
 from .LineMill import LineMill
 
@@ -18,14 +18,12 @@ class F77(LineMill):
     Support for Fortran 77
     """
 
-
     # traits
-    languageMarker = pyre.properties.str(default='Fortran')
+    languageMarker = pyre.properties.str(default="Fortran")
     languageMarker.doc = "the variant to use in the language marker"
 
-
     # private data
-    comment = 'c'
+    comment = "c"
 
 
 # end of file

@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -6,6 +7,7 @@
 
 # superclass
 from .Device import Device
+
 # the palette definitions
 from . import palettes
 
@@ -16,12 +18,10 @@ class Stream(Device):
     Journal device that writes messages to a stream
     """
 
-
     # types
     from .Alert import Alert
     from .Bland import Bland
     from .Memo import Memo
-
 
     # interface
     def alert(self, entry):
@@ -37,7 +37,6 @@ class Stream(Device):
         # all done
         return self
 
-
     def help(self, entry):
         """
         Generate a help screen
@@ -48,7 +47,6 @@ class Stream(Device):
         self.record(page=content)
         # all done
         return self
-
 
     def memo(self, entry):
         """
@@ -63,7 +61,6 @@ class Stream(Device):
         # all done
         return self
 
-
     def close(self):
         """
         Close the associated stream
@@ -73,10 +70,17 @@ class Stream(Device):
         # all done
         return self
 
-
     # metamethods
-    def __init__(self, stream, name="stream",
-                 palette=palettes.null, alerts=None, help=None, memos=None, **kwds):
+    def __init__(
+        self,
+        stream,
+        name="stream",
+        palette=palettes.null,
+        alerts=None,
+        help=None,
+        memos=None,
+        **kwds,
+    ):
         # chain up
         super().__init__(name=name, **kwds)
         # save the stream
@@ -93,7 +97,6 @@ class Stream(Device):
 
         # all done
         return
-
 
     # implementation details
     def record(self, page):

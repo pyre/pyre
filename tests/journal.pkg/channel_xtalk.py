@@ -1,4 +1,5 @@
-#! /usr/bin/env python3
+#!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -29,7 +30,6 @@ def test():
         """
         error channel
         """
-
 
     # make a couple of info channels
     info_1 = info("info.channel_1")

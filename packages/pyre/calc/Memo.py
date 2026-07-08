@@ -1,10 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
-
 
 
 # class declaration
@@ -13,10 +11,8 @@ class Memo:
     A mix-in class that implements value memoization
     """
 
-
     # public data
-    dirty = True # initially dirty since the constructor doesn't front-load the {_cache}
-
+    dirty = True  # initially dirty since the constructor doesn't front-load the {_cache}
 
     # interface
     def getValue(self, **kwds):
@@ -33,7 +29,6 @@ class Memo:
         # return the cache contents
         return self._cache
 
-
     def setValue(self, value, **kwds):
         """
         Override the value setter to refresh my cache and notify my observers
@@ -45,19 +40,18 @@ class Memo:
         # all done
         return self
 
-
     # cache management
     def flush(self, **kwds):
         """
         Invalidate my cache and notify my observers
         """
         # do nothing if my cache is already invalid
-        if self.dirty: return self
+        if self.dirty:
+            return self
         # otherwise, invalidate the cache
         self.dirty = True
         # and notify my observers
         return super().flush(**kwds)
-
 
     # private data
     _cache = None

@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # superclass
@@ -16,12 +15,10 @@ class Inventory(Dashboard):
     Base class for the state storage strategies for component classes and instances
     """
 
-
     # public data
-    name = None # by default, components have no name
-    fragments = () # by default, components have no family name
-    package = None # by default, components don't belong to a package
-
+    name = None  # by default, components have no name
+    fragments = ()  # by default, components have no family name
+    package = None  # by default, components don't belong to a package
 
     # factories
     @classmethod
@@ -31,8 +28,8 @@ class Inventory(Dashboard):
         """
         # implementation dependent -- override in subclasses
         raise NotImplementedError(
-            "class {.__name__!r} must implement 'initializeClass'".format(cls))
-
+            "class {.__name__!r} must implement 'initializeClass'".format(cls)
+        )
 
     @classmethod
     def configureClass(cls):
@@ -40,9 +37,7 @@ class Inventory(Dashboard):
         Configure a newly minted class record
         """
         # implementation dependent -- override in subclasses
-        raise NotImplementedError(
-            "class {.__name__!r} must implement 'configureClass'".format(cls))
-
+        raise NotImplementedError("class {.__name__!r} must implement 'configureClass'".format(cls))
 
     @classmethod
     def initializeInstance(cls):
@@ -51,8 +46,8 @@ class Inventory(Dashboard):
         """
         # implementation dependent -- override in subclasses
         raise NotImplementedError(
-            "class {.__name__!r} must implement 'initializeInstance'".format(cls))
-
+            "class {.__name__!r} must implement 'initializeInstance'".format(cls)
+        )
 
     @classmethod
     def configureInstance(cls):
@@ -61,8 +56,8 @@ class Inventory(Dashboard):
         """
         # implementation dependent -- override in subclasses
         raise NotImplementedError(
-            "class {.__name__!r} must implement 'configureInstance'".format(cls))
-
+            "class {.__name__!r} must implement 'configureInstance'".format(cls)
+        )
 
     # trait and slot access
     def getTraits(self):
@@ -72,15 +67,12 @@ class Inventory(Dashboard):
         # easy: i already support the iteration protocol
         return iter(self)
 
-
     def getSlots(self):
         """
         Return an iterable over the trait value storage
         """
         # i don't know how to do it, but my children had better
-        raise NotImplementedError(
-            "class {.__name__!r} must implement 'getSlots'".format(cls))
-
+        raise NotImplementedError("class {.__name__!r} must implement 'getSlots'".format(cls))
 
     # meta-methods
     def __init__(self, **kwds):
@@ -91,11 +83,9 @@ class Inventory(Dashboard):
         # all done
         return
 
-
     def __getitem__(self, trait):
         # ask my table
         return self.traits[trait]
-
 
     def __setitem__(self, trait, item):
         # punt
@@ -103,11 +93,9 @@ class Inventory(Dashboard):
         # all done
         return
 
-
     def __iter__(self):
         # iterate over my keys
         return iter(self.traits)
-
 
     # implementation details
     def populate(self, slots):

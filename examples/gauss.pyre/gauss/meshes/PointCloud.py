@@ -1,13 +1,13 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # access to the framework
 import pyre
+
 
 # declaration
 class PointCloud(pyre.protocol, family="gauss.meshes"):
@@ -23,6 +23,7 @@ class PointCloud(pyre.protocol, family="gauss.meshes"):
         """
         # use the built in random number generator
         from .Mersenne import Mersenne
+
         return Mersenne
 
     # interface

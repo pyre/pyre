@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 from .SI import pascal, kilo, mega, giga
@@ -22,9 +21,9 @@ from .SI import pascal, kilo, mega, giga
 # aliases
 
 Pa = pascal
-kPa = kilo*pascal
-MPa = mega*pascal
-GPa = giga*pascal
+kPa = kilo * pascal
+MPa = mega * pascal
+GPa = giga * pascal
 
 
 # others

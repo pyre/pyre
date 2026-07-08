@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -35,9 +36,7 @@ if libh5 is not None:
         Read the data product at {uri}
         """
         # easy enough
-        return reader(uri=uri, mode=mode, credentials=credentials, fapl=fapl).read(
-            **kwds
-        )
+        return reader(uri=uri, mode=mode, credentials=credentials, fapl=fapl).read(**kwds)
 
     def write(uri: primitives.uri, mode: str = "w", **kwds):
         """

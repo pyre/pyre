@@ -1,18 +1,18 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # access the framework
 import pyre
 
 
-class role(pyre.protocol, family='play.roles'):
+class role(pyre.protocol, family="play.roles"):
     """A role"""
+
     @classmethod
     def pyre_default(cls):
         return actor
@@ -21,10 +21,11 @@ class role(pyre.protocol, family='play.roles'):
 class actor(pyre.component, implements=role):
     """An actor"""
 
+
 # protect this class declaration because the configuration file has an intentional error
 def musical(**kwds):
     # build the embedded class record
-    class musical(pyre.component, family='play.musicals'):
+    class musical(pyre.component, family="play.musicals"):
         """A play"""
 
         cast = pyre.properties.dict(schema=role())
@@ -39,7 +40,7 @@ def test():
     # attempt to
     try:
         # make a play
-        musical(name='spamalot')
+        musical(name="spamalot")
     # if this fails
     except role.ResolutionError:
         # all good

@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -18,40 +17,59 @@ def test():
 
     # the algebra
     algebra = pyre.algebraic.algebra
-    # declare a node class
-    class node(metaclass=algebra): pass
 
+    # declare a node class
+    class node(metaclass=algebra):
+        pass
 
     # verify that the {mro} is what we expect
     assert node.__mro__ == (
         node,
         algebra.base,
-        algebra.arithmetic, algebra.ordering, algebra.boolean,
-        object)
+        algebra.arithmetic,
+        algebra.ordering,
+        algebra.boolean,
+        object,
+    )
 
     # check literals
     assert node.literal.__mro__ == (
-        node.literal, algebra.literal, algebra.leaf,
+        node.literal,
+        algebra.literal,
+        algebra.leaf,
         node,
         algebra.base,
-        algebra.arithmetic, algebra.ordering, algebra.boolean,
-        object)
+        algebra.arithmetic,
+        algebra.ordering,
+        algebra.boolean,
+        object,
+    )
 
     # check variables
     assert node.variable.__mro__ == (
-        node.variable, algebra.variable, algebra.leaf,
+        node.variable,
+        algebra.variable,
+        algebra.leaf,
         node,
         algebra.base,
-        algebra.arithmetic, algebra.ordering, algebra.boolean,
-        object)
+        algebra.arithmetic,
+        algebra.ordering,
+        algebra.boolean,
+        object,
+    )
 
     # check operator
     assert node.operator.__mro__ == (
-        node.operator, algebra.operator, algebra.composite,
+        node.operator,
+        algebra.operator,
+        algebra.composite,
         node,
         algebra.base,
-        algebra.arithmetic, algebra.ordering, algebra.boolean,
-        object)
+        algebra.arithmetic,
+        algebra.ordering,
+        algebra.boolean,
+        object,
+    )
 
     # all done
     return

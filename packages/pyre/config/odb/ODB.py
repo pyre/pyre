@@ -1,13 +1,13 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # access to the locator factories
 from ... import primitives, tracking
+
 # and my ancestors
 from ..Loader import Loader
 
@@ -24,15 +24,12 @@ class ODB(Loader):
     recovered using {name}
     """
 
-
     # type
     from .Shelf import Shelf as shelf
 
-
     # constants
-    suffix = '.py'
-    schemes = ('vfs', 'file')
-
+    suffix = ".py"
+    schemes = ("vfs", "file")
 
     # interface
     @classmethod
@@ -59,7 +56,6 @@ class ODB(Loader):
         # and return it
         return shelf
 
-
     @classmethod
     def locateShelves(cls, executive, protocol, scheme, context, **kwds):
         """
@@ -71,7 +67,7 @@ class ODB(Loader):
         # if there is no scheme
         if not scheme:
             # set it to the defaults
-            scheme = 'vfs'
+            scheme = "vfs"
         # first, let's try what the user supplied
         # uri = cls.uri(scheme=scheme, address=cls.assemble(context))
         # show me
@@ -84,8 +80,13 @@ class ODB(Loader):
 
         # chain up for the rest
         for candidate in super().locateShelves(
-                executive=executive, cfgpath=cfgpath,
-                protocol=protocol, scheme=scheme, context=context, **kwds):
+            executive=executive,
+            cfgpath=cfgpath,
+            protocol=protocol,
+            scheme=scheme,
+            context=context,
+            **kwds,
+        ):
             # make a uri
             uri = cls.uri(scheme=scheme, address=candidate)
             # show me
@@ -95,7 +96,6 @@ class ODB(Loader):
 
         # all done
         return
-
 
     # context handling
     @classmethod
@@ -112,7 +112,6 @@ class ODB(Loader):
         symbol = path.stem
         # return the pair; perhaps i can skip the realization and hand back the generator...
         return context, symbol
-
 
     @classmethod
     def assemble(cls, context):

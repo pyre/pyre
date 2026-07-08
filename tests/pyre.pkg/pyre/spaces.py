@@ -2,12 +2,12 @@
 # -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 # support
 import pyre
+
 
 # build an app
 class Spaces(pyre.application):
@@ -18,7 +18,6 @@ class Spaces(pyre.application):
     # user configurable state
     flag = pyre.properties.bool(default=True)
     flag.aliases = {"a name with many words"}
-
 
     # interface
     def main(self, *args, **kwds):
@@ -34,7 +33,7 @@ class Spaces(pyre.application):
 # bootstrap
 if __name__ == "__main__":
     # instantiate
-    app = Spaces(name='spaces')
+    app = Spaces(name="spaces")
     # invoke
     status = app.run()
     # share

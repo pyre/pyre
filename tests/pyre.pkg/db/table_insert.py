@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -17,7 +16,7 @@ def test():
     import pyre.db
 
     # declare the person table
-    class Person(pyre.db.table, id='persons'):
+    class Person(pyre.db.table, id="persons"):
 
         id = pyre.db.int().primary()
         name = pyre.db.str().notNull()
@@ -25,15 +24,15 @@ def test():
         weight = pyre.db.float().notNull()
 
     # declare the customer table
-    class Customer(pyre.db.table, id='customers'):
+    class Customer(pyre.db.table, id="customers"):
         """
         Simple customer table
         """
+
         # the data fields
         cid = pyre.db.int().primary()
         pid = pyre.db.reference(key=Person.id)
         balance = pyre.db.decimal(precision=7, scale=2).setDefault(0)
-
 
     # create some customers
     customers = [
@@ -45,7 +44,7 @@ def test():
         Customer.pyre_immutable(cid=1024, pid=108, balance=50),
         Customer.pyre_immutable(cid=1025, pid=109, balance=Customer.default),
         Customer.pyre_immutable(cid=1026, pid=110, balance=Customer.null),
-        ]
+    ]
 
     # get a server
     server = pyre.db.server(name="test")
@@ -68,7 +67,7 @@ def test():
         "    (1024, 108, 50),",
         "    (1025, 109, DEFAULT),",
         "    (1026, 110, NULL);",
-        )
+    )
 
     return
 

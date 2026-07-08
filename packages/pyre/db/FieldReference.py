@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # superclass
@@ -20,11 +19,9 @@ class FieldReference(descriptors.stem.variable):
     or to specify fields in views
     """
 
-
     # public data
-    table = None # the table class
-    field = None # the field descriptor
-
+    table = None  # the table class
+    field = None  # the field descriptor
 
     # interface
     def coerce(self, **kwds):
@@ -34,14 +31,12 @@ class FieldReference(descriptors.stem.variable):
         # get my field to do this
         return self.field.coerce(**kwds)
 
-
     def project(self, table):
         """
         Build a reference to the given {table} that points to the same field as i do
         """
         # easy enough
         return type(self)(table=table, field=self.field)
-
 
     # rendering
     def sql(self, context=None):
@@ -59,7 +54,6 @@ class FieldReference(descriptors.stem.variable):
         # otherwise, build a fully qualified reference expression
         return "{0.table.pyre_name}.{0.field.name}".format(self)
 
-
     # meta-methods
     def __init__(self, table, field, **kwds):
         # chain up
@@ -69,7 +63,6 @@ class FieldReference(descriptors.stem.variable):
         self.field = field
         # all done
         return
-
 
 
 # end of file

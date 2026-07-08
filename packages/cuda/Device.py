@@ -1,16 +1,14 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 class Device:
     """
     The property sheet of a CUDA capable device
     """
-
 
     # attributes
     id = None
@@ -38,9 +36,8 @@ class Device:
     maxGrid = ()
     maxThreadBlock = ()
 
-
     # debugging
-    def dump(self, indent=''):
+    def dump(self, indent=""):
         """
         Print information about this device
         """

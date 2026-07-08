@@ -1,18 +1,15 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
 This package contains the implementation of the native importer
 """
 
-
 # pull in the codec
 from .Importer import Importer as native
-
 
 # end of file

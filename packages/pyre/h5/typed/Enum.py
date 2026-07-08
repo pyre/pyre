@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -46,9 +47,7 @@ class Enum:
         # get the enum members
         members = sorted(disktype.map().items(), key=lambda item: item[1])
         # build the enumeration class
-        cls = enum.Enum(
-            name, names=[member[0] for member in members], start=members[0][1]
-        )
+        cls = enum.Enum(name, names=[member[0] for member in members], start=members[0][1])
         # chain up
         super().__init__(enum=cls, memtype=memtype, disktype=disktype, **kwds)
 

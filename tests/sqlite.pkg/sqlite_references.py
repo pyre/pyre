@@ -1,18 +1,17 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
 Instantiate the postgres component
 """
 
-
 import pyre.db
+
 
 class Location(pyre.db.table, id="location"):
 
@@ -29,7 +28,8 @@ class Location(pyre.db.table, id="location"):
 class Weather(pyre.db.table, id="weather"):
 
     location = pyre.db.reference(
-        key=Location.id, onDelete=pyre.db.setNull, onUpdate=pyre.db.setDefault)
+        key=Location.id, onDelete=pyre.db.setNull, onUpdate=pyre.db.setDefault
+    )
     location.doc = "the location of the measurements"
 
     date = pyre.db.date()

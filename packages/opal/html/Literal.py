@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # class declaration
@@ -12,10 +11,8 @@ class Literal:
     Representation of all non-HTML content, such as literal text
     """
 
-
     # public data
-    value = None # the encapsulated content
-
+    value = None  # the encapsulated content
 
     # document traversal
     def identify(self, inspector, **kwds):
@@ -24,7 +21,6 @@ class Literal:
         """
         # dispatch
         return inspector.onLiteral(element=self, **kwds)
-
 
     # meta-methods
     def __init__(self):

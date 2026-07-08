@@ -1,25 +1,31 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
 Tests for all the exceptions raised by this package
 """
 
+
 def test():
     import pyre
     from pyre.components.exceptions import (
         ComponentError,
-        CategoryMismatchError, ImplementationSpecificationError, ProtocolError,
-        TraitNotFoundError)
+        CategoryMismatchError,
+        ImplementationSpecificationError,
+        ProtocolError,
+        TraitNotFoundError,
+    )
 
-    class component(pyre.component): pass
-    class protocol(pyre.protocol): pass
+    class component(pyre.component):
+        pass
+
+    class protocol(pyre.protocol):
+        pass
 
     c1 = component(name="c1")
     c2 = component(name="c2")

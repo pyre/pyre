@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 import pyre
@@ -15,7 +14,6 @@ class One(pyre.component, family="gauss.functors.one", implements=Functor):
     The unit function
     """
 
-
     # interface
     @pyre.export
     def eval(self, points):
@@ -23,7 +21,8 @@ class One(pyre.component, family="gauss.functors.one", implements=Functor):
         Compute the value of the function on the supplied points
         """
         # loop over the points and return 1 regardless
-        for point in points: yield 1
+        for point in points:
+            yield 1
         # all done
         return
 

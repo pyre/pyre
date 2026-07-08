@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -14,11 +13,12 @@ Verify that bad component descriptors raise the correct exceptions
 
 def test():
     import pyre
-    executive =  pyre.executive
+
+    executive = pyre.executive
 
     # retrieve a component descriptor from the python path
     try:
-        a, = executive.resolve(uri="file:sample_syntaxerror.py/factory")
+        (a,) = executive.resolve(uri="file:sample_syntaxerror.py/factory")
         assert False
     except SyntaxError as error:
         pass

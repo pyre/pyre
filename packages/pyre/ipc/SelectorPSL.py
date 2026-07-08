@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -7,7 +8,6 @@
 A Dispatcher implementation that uses the default selector from the {selectors} module
 in the python standard library
 """
-
 
 # external
 import pyre
@@ -101,9 +101,7 @@ class SelectorPSL(Scheduler, family="pyre.ipc.dispatchers.psl", implements=Dispa
         {channel}
         """
         # mark as unsupported, for now
-        raise NotImplementedError(
-            f"class '{type(self).__name__}' does not support 'whenException'"
-        )
+        raise NotImplementedError(f"class '{type(self).__name__}' does not support 'whenException'")
 
     @pyre.export
     def stop(self):

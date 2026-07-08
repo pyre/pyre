@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 class Evaluator:
@@ -11,7 +10,6 @@ class Evaluator:
     Mix-in class that computes the value of operator nodes by invoking their evaluator on their
     operands
     """
-
 
     # value management
     def getValue(self, **kwds):

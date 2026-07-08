@@ -1,13 +1,13 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # externals
 from . import gsl
+
 # superclass
 from .Vector import Vector
 
@@ -17,7 +17,6 @@ class VectorView(Vector):
     """
     A view into the data of another vector
     """
-
 
     # meta-methods
     def __init__(self, vector, start, shape, **kwds):

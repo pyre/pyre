@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -156,9 +157,7 @@ class Hub:
         return False
 
     # meta-methods
-    def __init__(
-        self, dispatcher, capacity=1024, interval=None, keepalive=None, **kwds
-    ):
+    def __init__(self, dispatcher, capacity=1024, interval=None, keepalive=None, **kwds):
         # chain up
         super().__init__(**kwds)
         # save the dispatcher, my source of write-readiness notifications and timers

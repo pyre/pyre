@@ -1,30 +1,36 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
 Verify that the __slots__ mechanism works as expected
 """
 
+
 class here(Exception):
     """signal that a particular line of code was reached"""
+
     def __init__(self, loc):
         self.loc = loc
+
     def __str__(self):
         return self.loc
 
+
 class meta(type):
-    """""the metaclass that traps class attribute assignment"""
+    """ ""the metaclass that traps class attribute assignment"""
+
     def __setattr__(self, name, value):
-        raise here(loc=value+"."+name)
+        raise here(loc=value + "." + name)
+
 
 class base(object, metaclass=meta):
     """a base class"""
+
 
 class derived(base):
     """a derived class"""

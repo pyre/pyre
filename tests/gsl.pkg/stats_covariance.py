@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# Lijun Zhu
-# Caltech
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -15,14 +14,15 @@ Test stats_covariance
 def test():
     # package access
     import gsl
+
     # make two vectors
     length = 100
     v1 = gsl.vector(shape=length)
     v2 = gsl.vector(shape=length)
     # set them to random values
     rng = gsl.rng()
-    v1.random(pdf=gsl.pdf.uniform(support=(-1,1), rng=rng))
-    v2.random(pdf=gsl.pdf.uniform(support=(-1,1), rng=rng))
+    v1.random(pdf=gsl.pdf.uniform(support=(-1, 1), rng=rng))
+    v2.random(pdf=gsl.pdf.uniform(support=(-1, 1), rng=rng))
 
     # call correlation
     covariance = gsl.stats.covariance(v1, v2)

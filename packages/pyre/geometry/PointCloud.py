@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 class PointCloud(list):
@@ -11,10 +10,8 @@ class PointCloud(list):
     A container of points
     """
 
-
     # types
     from .Point import Point
-
 
     # interface
     def point(self, coordinates):

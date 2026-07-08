@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -13,6 +14,5 @@ from .File import File as file
 from .Folder import Folder as folder
 from .Library import Library as library
 from .Project import Project as project
-
 
 # end of file

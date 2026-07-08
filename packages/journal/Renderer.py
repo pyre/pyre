@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -9,7 +10,6 @@ class Renderer:
     """
     The base renderer
     """
-
 
     # interface
     def render(self, palette, entry):
@@ -24,7 +24,6 @@ class Renderer:
         # all done
         return
 
-
     # implementation details
     def header(self, **kwds):
         """
@@ -33,14 +32,12 @@ class Renderer:
         # nothing to do
         return ()
 
-
     def body(self, **kwds):
         """
         Generate the message body
         """
         # nothing to do
         return ()
-
 
     def footer(self, **kwds):
         """

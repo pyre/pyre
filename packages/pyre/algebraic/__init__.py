@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # the metaclass
@@ -11,6 +10,5 @@ from .Algebra import Algebra as algebra
 
 # the abstract node
 from .AbstractNode import AbstractNode as node
-
 
 # end of file

@@ -1,4 +1,5 @@
-#! /usr/bin/env python3
+#!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -12,6 +13,7 @@ def test():
     """
     # get the console
     from journal.Console import Console as cout
+
     # and the chronicler
     from journal.Chronicler import Chronicler as chronicler
 

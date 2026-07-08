@@ -1,24 +1,23 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # externals
-import pyre # the framework
+import pyre  # the framework
 import weakref
+
 # my protocol
 from .Shell import Shell as shell
 
 
 # declaration
-class Executive(pyre.component, family='pyre.shells.executive', implements=shell):
+class Executive(pyre.component, family="pyre.shells.executive", implements=shell):
     """
     The base class for hosting strategies
     """
-
 
     # user configurable state
     home = pyre.properties.str(default=None)
@@ -35,9 +34,8 @@ class Executive(pyre.component, family='pyre.shells.executive', implements=shell
     gpus.doc = "the number of GPU coprocessors per task"
 
     # a marker that enables applications to deduce the type of shell that is hosting them
-    model = pyre.properties.str(default='unknown')
+    model = pyre.properties.str(default="unknown")
     model.doc = "the programming model"
-
 
     # access to what the framework knows about the runtime environment
     @property
@@ -47,7 +45,6 @@ class Executive(pyre.component, family='pyre.shells.executive', implements=shell
         """
         # ask the executive
         return self.pyre_executive.host
-
 
     # interface
     @pyre.export

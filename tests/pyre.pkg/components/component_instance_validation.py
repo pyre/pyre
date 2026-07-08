@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -14,9 +15,7 @@ def test():
     import pyre
 
     # declare a component
-    class base(
-        pyre.component, family="tests.components.validation", implements=pyre.protocol
-    ):
+    class base(pyre.component, family="tests.components.validation", implements=pyre.protocol):
         """
         The base component
         """

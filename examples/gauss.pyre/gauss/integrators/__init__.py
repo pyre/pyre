@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -15,6 +14,5 @@ from .Integrator import Integrator as integrator
 
 # the component
 from .MonteCarlo import MonteCarlo as montecarlo
-
 
 # end of file

@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -18,13 +17,16 @@ def declare(baseFamily=None, baseDefault=0, derivedFamily=None, derivedDefault="
     """
     Declare a pair of components
     """
+
     # the declaration
     class base(pyre.component, family=baseFamily):
         """a component"""
+
         b = pyre.properties.int(default=baseDefault)
 
     class derived(base, family=derivedFamily):
         """a derived component"""
+
         d = pyre.properties.str(default=derivedDefault)
 
     # return the pair to the caller
@@ -45,12 +47,12 @@ def test():
     # check again
     assert base.b == 1
     assert derived.b == 1
-    assert derived.d == "" # no cross-talk
+    assert derived.d == ""  # no cross-talk
 
     # build a pair with family names that match the sample configuration file
     base, derived = declare(
-        baseFamily="sample.inventory.base",
-        derivedFamily="sample.inventory.derived")
+        baseFamily="sample.inventory.base", derivedFamily="sample.inventory.derived"
+    )
     # check
     assert base.b == 1
     assert derived.b == 2

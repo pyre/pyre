@@ -1,13 +1,11 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 from .SI import joule, kilo, mega, giga, milli
-
 
 #
 # definitions of common energy units
@@ -36,8 +34,8 @@ electron_volt = 1.60218e-19 * joule
 # aliases
 
 J = joule
-kJ = kilo*joule
-MJ = mega*joule
+kJ = kilo * joule
+MJ = mega * joule
 
 eV = electron_volt
 meV = milli * eV
@@ -45,7 +43,7 @@ MeV = mega * eV
 GeV = giga * eV
 
 cal = calorie
-kcal = kilo*calorie
+kcal = kilo * calorie
 
 
 # end of file

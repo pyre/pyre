@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -31,8 +30,8 @@ def test():
 
     # here are the canonical names
     names = {
-        "pyre.user." + tag
-        for tag in ("name", "email", "affiliation", "signature", "telephone") }
+        "pyre.user." + tag for tag in ("name", "email", "affiliation", "signature", "telephone")
+    }
 
     # get all the subnodes of "user"
     target = "pyre.user"

@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -254,9 +255,7 @@ class Reader(xml.sax.ContentHandler):
         # convert everything else to a ProcessingError
         except Exception as error:
             # the reason
-            msg = "error while calling the method 'notify' of {}".format(
-                self._currentNode
-            )
+            msg = "error while calling the method 'notify' of {}".format(self._currentNode)
             # the error
             raise self.ProcessingError(
                 parser=self,

@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 from pyre.xml.Node import Node as Base
@@ -14,13 +13,11 @@ class Node(Base):
     Base class for the handlers of the pml reader
     """
 
-
     # types
     from ..events import Assignment, ConditionalAssignment, Source
 
-
     # constants
-    separator = '.'
+    separator = "."
     namespace = "http://pyre.orthologue.com/releases/1.0/schema/fs.html"
 
 

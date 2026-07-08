@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -34,11 +33,7 @@ def test():
     # generate the SQL statement
     stmt = tuple(server.sql.select(Weather))
     # print('\n'.join(stmt))
-    assert stmt == (
-        "SELECT",
-        "    *",
-        "  FROM weather;"
-        )
+    assert stmt == ("SELECT", "    *", "  FROM weather;")
 
     # all done
     return Weather

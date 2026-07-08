@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # superclass
@@ -16,10 +15,8 @@ class Column(records.selector):
     A selector that grants access to sheet columns
     """
 
-
     # public data
-    sheet = None # the worksheet I am bound to
-
+    sheet = None  # the worksheet I am bound to
 
     # meta-methods
     def __init__(self, sheet, **kwds):
@@ -29,7 +26,6 @@ class Column(records.selector):
         self.sheet = sheet
         # all done
         return
-
 
     def __iter__(self):
         """

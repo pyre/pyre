@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # externals
@@ -287,9 +286,7 @@ class Vector:
         Print my values using the given {format}
         """
         # build the line
-        line = " ".join(
-            ["{}[".format(indent)] + [format.format(value) for value in self] + ["]"]
-        )
+        line = " ".join(["{}[".format(indent)] + [format.format(value) for value in self] + ["]"])
 
         # if we are in interactive mode
         if interactive:
@@ -421,9 +418,7 @@ class Vector:
             if type(index) is not slice:
                 # if not, we are out of ideas
                 raise TypeError(
-                    "vector indices must be integers, not {.__name__}".format(
-                        type(index)
-                    )
+                    "vector indices must be integers, not {.__name__}".format(type(index))
                 )
         # we have a slice, so return an appropriate value generator
         return self._slice(index)
@@ -439,9 +434,7 @@ class Vector:
             if type(index) is not slice:
                 # if not, we are out of ideas
                 raise TypeError(
-                    "vector indices must be integers, not {.__name__}".format(
-                        type(index)
-                    )
+                    "vector indices must be integers, not {.__name__}".format(type(index))
                 )
         # we have a slice; assume {value} is a compatible iterable
         try:

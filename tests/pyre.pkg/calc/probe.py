@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -18,6 +17,7 @@ def test():
 
     # get the base class
     from pyre.calc.Probe import Probe
+
     # make a probe that records the values of the monitored nodes
     class probe(Probe):
 
@@ -34,7 +34,7 @@ def test():
     probe = probe()
 
     # make a node
-    v = 80.
+    v = 80.0
     production = pyre.calc.var(value=v)
     assert production.value == v
 
@@ -47,7 +47,7 @@ def test():
     assert probe.nodes[production] == v
 
     # once more
-    v = 100.
+    v = 100.0
     production.value = v
     assert production.value == v
     assert probe.nodes[production] == v
@@ -58,13 +58,14 @@ def test():
 # main
 if __name__ == "__main__":
     # request debugging support for the pyre.calc package
-    pyre_debug = { "pyre.calc" }
+    pyre_debug = {"pyre.calc"}
     # skip pyre initialization since we don't rely on the executive
     pyre_noboot = True
     # run the test
     test()
     # verify reference counts
     from pyre.calc.Node import Node
+
     # print(tuple(Node.pyre_extent))
     assert tuple(Node.pyre_extent) == ()
 

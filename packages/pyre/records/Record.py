@@ -1,13 +1,13 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # my metaclass
 from .Templater import Templater
+
 # superclass
 from ..framework.Dashboard import Dashboard
 
@@ -46,22 +46,20 @@ class Record(Dashboard, metaclass=Templater):
       corresponding underlying tuple.
     """
 
-
     # types
     # exceptions
     from ..constraints.exceptions import ConstraintViolationError
 
     # public data; patched by the metaclass
-    pyre_name = None # the name of the record
+    pyre_name = None  # the name of the record
     # structure
-    pyre_localFields = None # the tuple of locally declared record fields
+    pyre_localFields = None  # the tuple of locally declared record fields
     # the full piles that include inherited entries
-    pyre_fields = None # the tuple of all accessible fields, both local and inherited
-    pyre_measures = None # the tuple of all primary fields
-    pyre_derivations = None # the tuple of fields whose values are computed on the fly
+    pyre_fields = None  # the tuple of all accessible fields, both local and inherited
+    pyre_measures = None  # the tuple of all primary fields
+    pyre_derivations = None  # the tuple of fields whose values are computed on the fly
     # a map from field descriptors to their column index
     pyre_columns = None
-
 
     # interface; patched by the metaclass
     @classmethod
@@ -72,7 +70,6 @@ class Record(Dashboard, metaclass=Templater):
         # easy enough
         return cls.pyre_immutableTuple(record=cls, data=data, **kwds)
 
-
     @classmethod
     def pyre_mutable(cls, data=None, **kwds):
         """
@@ -80,7 +77,6 @@ class Record(Dashboard, metaclass=Templater):
         """
         # easy enough
         return cls.pyre_mutableTuple(record=cls, data=data, **kwds)
-
 
     # support for readers that want to match their headers to my fields
     @classmethod
@@ -113,6 +109,7 @@ class Record(Dashboard, metaclass=Templater):
                     # complain
                     msg = "unable to find a source for field {!r}".format(measure.name)
                     import journal
+
                     raise journal.error("pyre.records").log(msg)
         # all done
         return

@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 class Surface:
@@ -11,11 +10,9 @@ class Surface:
     A representation of a surface
     """
 
-
     # types
     from .Point import Point
     from .PointCloud import PointCloud
-
 
     # interface
     def point(self, coordinates):
@@ -25,7 +22,6 @@ class Surface:
         # pass the info along to my point cloud
         return self.points.point(coordinates)
 
-
     def triangle(self, nodes):
         """
         Add a triangle to the topology database
@@ -34,7 +30,6 @@ class Surface:
         self.triangles.append(tuple(nodes))
         # all done
         return
-
 
     # meta-methods
     def __init__(self, **kwds):

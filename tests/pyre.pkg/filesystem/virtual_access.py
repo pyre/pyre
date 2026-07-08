@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -12,9 +11,10 @@ Sanity check: verify that we can create virtual filesystem instances
 """
 
 
-def test(interactive=False): # switch to True to see the dumps
+def test(interactive=False):  # switch to True to see the dumps
     # support
     import pyre.primitives
+
     # my package
     import pyre.filesystem
 
@@ -29,7 +29,7 @@ def test(interactive=False): # switch to True to see the dumps
     assert mga == fs[mpath]
 
     # add a subfolder
-    tpath = pyre.primitives.path('dv/tools')
+    tpath = pyre.primitives.path("dv/tools")
     tools = fs.folder()
     fs[mpath / tpath] = tools
 
@@ -49,8 +49,9 @@ def test(interactive=False): # switch to True to see the dumps
 # main
 if __name__ == "__main__":
     import gc
+
     # request debugging support for the pyre.calc package
-    pyre_debug = { "pyre.filesystem" }
+    pyre_debug = {"pyre.filesystem"}
     # skip pyre initialization since we don't rely on the executive
     pyre_noboot = True
     # do...
@@ -58,6 +59,7 @@ if __name__ == "__main__":
 
     # check that the nodes were all destroyed
     from pyre.filesystem.Node import Node
+
     # print("Node extent:", len(Node.pyre_extent))
     assert len(Node.pyre_extent) == 0
 

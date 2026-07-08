@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -15,8 +14,10 @@ Verify that we understand how multiple inheritance shadows duplicate attribute n
 class Base1(object):
     name = "base1"
 
+
 class Base2(object):
     name = "base2"
+
 
 class Derived(Base1, Base2):
     pass

@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -31,19 +30,19 @@ def test():
         assert error.name == "production"
 
     # resolve the node
-    p = 80.
+    p = 80.0
     model["production"] = p
 
     # ask for the price again
     assert model["production"] == p
-    assert model["price"] == 2*p
+    assert model["price"] == 2 * p
 
     # make a change
-    p = 100.
+    p = 100.0
     model["production"] = p
     # chek again
     assert model["production"] == p
-    assert model["price"] == 2*p
+    assert model["price"] == 2 * p
 
     # force a node substitution
     m = 60
@@ -51,8 +50,8 @@ def test():
     model["production"] = model.expression(value="2*{materials}")
     # chek again
     assert model["materials"] == m
-    assert model["production"] == 2*m
-    assert model["price"] == 4*m
+    assert model["production"] == 2 * m
+    assert model["price"] == 4 * m
 
     return
 

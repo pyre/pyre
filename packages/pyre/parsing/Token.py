@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 class Token:
@@ -11,18 +10,16 @@ class Token:
     Base class for tokens, the atomic units of recognizable text in a stream
     """
 
-
     # constants; set at compile time
-    name = '' # the name of the token
-    head = '' # a pattern for text required for a match but not part of the lexeme
-    tail = '' # a pattern for text required for a match but not part of the lexeme
-    pattern = None # the regular expression that extracts the lexeme
-    regex = '' # the assembled regular expression
-    scanner = None # the compiled form of the regular expression of this token
-
+    name = ""  # the name of the token
+    head = ""  # a pattern for text required for a match but not part of the lexeme
+    tail = ""  # a pattern for text required for a match but not part of the lexeme
+    pattern = None  # the regular expression that extracts the lexeme
+    regex = ""  # the assembled regular expression
+    scanner = None  # the compiled form of the regular expression of this token
 
     # meta methods
-    def __init__(self, lexeme='', locator=None, **kwds):
+    def __init__(self, lexeme="", locator=None, **kwds):
         # chain up
         super().__init__(**kwds)
         # save my presence in the input stream
@@ -30,7 +27,6 @@ class Token:
         self.locator = locator
         # all done
         return
-
 
     def __len__(self):
         """
@@ -41,7 +37,6 @@ class Token:
         """
         # easy enough
         return len(self.lexeme)
-
 
     def __str__(self):
         """
@@ -54,12 +49,11 @@ class Token:
         # otherwise, just show me the name of the token
         return "{{{0.name}}}".format(self)
 
-
     # implementation details
     __slots__ = (
-        'lexeme', # the body of the token
-        'locator', # marks the location of the lexeme in the input stream
-        )
+        "lexeme",  # the body of the token
+        "locator",  # marks the location of the lexeme in the input stream
+    )
 
 
 # end of file

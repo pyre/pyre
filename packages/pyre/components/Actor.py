@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # externals
@@ -98,9 +97,7 @@ class Actor(Requirement):
         # all done
         return
 
-    def __call__(
-        self, name=None, locator=None, implicit=False, globalAliases=False, **kwds
-    ):
+    def __call__(self, name=None, locator=None, implicit=False, globalAliases=False, **kwds):
         """
         Build an instance of one of my classes
         """
@@ -156,9 +153,7 @@ class Actor(Requirement):
                     # assign a priority
                     priority = executive.priority.construction()
                     # make a configuration entry
-                    nameserver.insert(
-                        name=full, value=value, locator=locator, priority=priority
-                    )
+                    nameserver.insert(name=full, value=value, locator=locator, priority=priority)
                     # and add it to the discard pile
                     discard.add(key)
 
@@ -170,9 +165,7 @@ class Actor(Requirement):
         # invoke the pre-instantiation hooks
         self.pyre_staged(name=name, locator=locator, implicit=implicit)
         # build the instance
-        instance = super().__call__(
-            name=name, locator=locator, implicit=implicit, **kwds
-        )
+        instance = super().__call__(name=name, locator=locator, implicit=implicit, **kwds)
 
         # invoke the instantiation hook and harvest any errors
         initializationErrors = list(instance.pyre_initialized())
@@ -182,9 +175,7 @@ class Actor(Requirement):
         # if there were any
         if initializationErrors:
             # complain
-            raise instance.ConfigurationError(
-                configurable=instance, errors=initializationErrors
-            )
+            raise instance.ConfigurationError(configurable=instance, errors=initializationErrors)
 
         # register with the component registrar
         registrar.registerComponentInstance(instance=instance)
@@ -271,9 +262,7 @@ class Actor(Requirement):
             # in any other case
             else:
                 # the entire specification is unrecognizable, so complain
-                raise cls.ImplementationSpecificationError(
-                    name=name, errors=[implements]
-                )
+                raise cls.ImplementationSpecificationError(name=name, errors=[implements])
         # otherwise
         else:
             # i don't have an implementation specification

@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # built-in spells
@@ -17,6 +16,7 @@ def init():
     Create a new merlin project
     """
     from .Initializer import Initializer
+
     return Initializer
 
 
@@ -26,6 +26,7 @@ def add():
     Add the contents of the current directory to the project
     """
     from .AssetManager import AssetManager
+
     return AssetManager
 
 
@@ -36,6 +37,7 @@ def about():
     Display information about the current machine, user and project
     """
     from .About import About
+
     return About
 
 

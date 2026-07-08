@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -16,8 +15,12 @@ def test():
 
     import pyre.calc
     from pyre.calc.exceptions import (
-        EvaluationError, ExpressionError, EmptyExpressionError,
-        ExpressionSyntaxError, UnresolvedNodeError )
+        EvaluationError,
+        ExpressionError,
+        EmptyExpressionError,
+        ExpressionSyntaxError,
+        UnresolvedNodeError,
+    )
 
     try:
         raise EvaluationError(node=None, error=None)

@@ -1,13 +1,13 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 import random
 from PointCloud import PointCloud
+
 
 class Mersenne(PointCloud):
     """
@@ -21,7 +21,7 @@ class Mersenne(PointCloud):
         Generate a random point in the interior of {box}
         """
         # build the point p by caling random the right number of times
-        p = [ random.uniform(left, right) for left, right in box ] #@\label{line:mt:list}@
+        p = [random.uniform(left, right) for left, right in box]  # @\label{line:mt:list}@
         # and return it
         return p
 

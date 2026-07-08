@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # superclass
@@ -16,10 +15,8 @@ class Tabulator(records.templater):
     Metaclass that builds sheets
     """
 
-
     # types
-    from .Selector import Selector as pyre_selector # override the one in {records}
-
+    from .Selector import Selector as pyre_selector  # override the one in {records}
 
     # meta-methods
     def __new__(cls, name, bases, attributes, **kwds):

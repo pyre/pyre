@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -15,6 +14,7 @@ Verify that the default values get registered correctly
 def test():
     # get the descriptor package
     from pyre import descriptors
+
     # get the base metaclass
     from pyre.patterns.AttributeClassifier import AttributeClassifier
 
@@ -34,11 +34,11 @@ def test():
         # some descriptors
         sku = descriptors.int(default=4503)
         cost = descriptors.decimal(default=2.34)
-        weight = descriptors.dimensional(default='.5 * lb')
-
+        weight = descriptors.dimensional(default=".5 * lb")
 
     # externals
     import decimal
+
     # get the units
     import pyre.units
     from pyre.units.mass import lb
@@ -56,7 +56,7 @@ def test():
     # check the default values
     assert sku == 4503
     assert cost == 2.34
-    assert weight == .5*lb
+    assert weight == 0.5 * lb
 
     # all done
     return client

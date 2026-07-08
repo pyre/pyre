@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 class Literal:
@@ -12,10 +11,8 @@ class Literal:
     of the {Node} class hierarchy.
     """
 
-
     # constants
-    category = 'literal'
-
+    category = "literal"
 
     # interface
     @property
@@ -28,7 +25,6 @@ class Literal:
         # and nothing further
         return
 
-
     # meta-methods
     def __init__(self, value, **kwds):
         # chain up
@@ -37,7 +33,6 @@ class Literal:
         self._value = value
         # all done
         return
-
 
     # support for graph traversals
     def identify(self, authority, **kwds):

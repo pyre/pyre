@@ -1,24 +1,22 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 from .SI import second
 from .SI import pico, nano, micro, milli
-
 
 #
 # definitions of common time units
 # data taken from Appendix F of Halliday, Resnick, Walker, "Fundamentals of Physics",
 #     fourth edition, John Willey and Sons, 1993
 
-picosecond = pico*second
-nanosecond = nano*second
-microsecond = micro*second
-millisecond = milli*second
+picosecond = pico * second
+nanosecond = nano * second
+microsecond = micro * second
+millisecond = milli * second
 
 # aliases
 

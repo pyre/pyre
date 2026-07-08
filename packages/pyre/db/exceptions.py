@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -12,9 +11,9 @@ Definitions for all the exceptions raised by this package
 
 from ..framework.exceptions import FrameworkError
 
-
 # db api 2.0 compliant exception hierarchy
 # not my first choice for a classification strategy, but there you go...
+
 
 class Warning(FrameworkError):
     """

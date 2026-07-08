@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # packages
@@ -22,20 +21,16 @@ class Server(pyre.component, implements=datastore):
     interface.
     """
 
-
     # types
     # exceptions
     from . import exceptions
 
-
     # constants
     providesHeaders = True
-
 
     # traits
     sql = pyre.weaver.language(default=sql)
     sql.doc = "the generator of the SQL statements"
-
 
     # required interface
     @pyre.export
@@ -43,26 +38,21 @@ class Server(pyre.component, implements=datastore):
         """
         Connect to the database back end
         """
-        raise NotImplementedError(
-            "class {.__name__!r} must override 'attach'".format(type(self)))
+        raise NotImplementedError("class {.__name__!r} must override 'attach'".format(type(self)))
 
     @pyre.export
     def detach(self):
         """
         Connect to the database back end
         """
-        raise NotImplementedError(
-            "class {.__name__!r} must override 'attach'".format(type(self)))
-
+        raise NotImplementedError("class {.__name__!r} must override 'attach'".format(type(self)))
 
     @pyre.export
     def execute(self, *sql):
         """
         Execute the sequence of SQL statements in {sql} as a single command
         """
-        raise NotImplementedError(
-            "class {.__name__!r} must override 'execute'".format(type(self)))
-
+        raise NotImplementedError("class {.__name__!r} must override 'execute'".format(type(self)))
 
     # convenience
     def createDatabase(self, name):
@@ -74,7 +64,6 @@ class Server(pyre.component, implements=datastore):
         # and execute it
         return self.execute(*sql)
 
-
     def dropDatabase(self, name):
         """
         Build and execute the SQL statement to drop the database {name}
@@ -83,7 +72,6 @@ class Server(pyre.component, implements=datastore):
         sql = self.sql.dropDatabase(name=name)
         # and execute it
         return self.execute(*sql)
-
 
     def createTable(self, table):
         """
@@ -94,7 +82,6 @@ class Server(pyre.component, implements=datastore):
         # and execute it
         return self.execute(*sql)
 
-
     def dropTable(self, table):
         """
         Build and execute the SQL statement necessary to delete {table} from the datastore
@@ -104,18 +91,17 @@ class Server(pyre.component, implements=datastore):
         # and execute it
         return self.execute(*sql)
 
-
     def insert(self, *records):
         """
         Insert {records} into the database
         """
         # if there are no records to insert, bail
-        if not records: return
+        if not records:
+            return
         # build the sql statements
         sql = self.sql.insertRecords(*records)
         # and execute
         return self.execute(*sql)
-
 
     def update(self, *specifications):
         """
@@ -135,7 +121,6 @@ class Server(pyre.component, implements=datastore):
         # all done
         return
 
-
     def delete(self, table, condition):
         """
         Delete all {table} records that match {condition}
@@ -144,7 +129,6 @@ class Server(pyre.component, implements=datastore):
         sql = self.sql.deleteRecords(table=table, condition=condition)
         # and execute
         return self.execute(*sql)
-
 
     def select(self, query):
         """
@@ -157,7 +141,8 @@ class Server(pyre.component, implements=datastore):
 
         # get the headers, if the server provides them; ignore them, for now, since the order
         # of the results matches exactly the field order, by construction
-        if self.providesHeaders: headers = next(results)
+        if self.providesHeaders:
+            headers = next(results)
 
         # for each row with actual data
         for row in results:
@@ -166,7 +151,6 @@ class Server(pyre.component, implements=datastore):
         # all done
         return
 
-
     # meta methods
     # context manager support
     def __enter__(self):
@@ -174,7 +158,6 @@ class Server(pyre.component, implements=datastore):
         Hook invoked when the context manager is entered
         """
         return self
-
 
     def __exit__(self, exc_type, exc_instance, exc_traceback):
         """

@@ -1,4 +1,5 @@
-#! /usr/bin/env python3
+#!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -53,7 +54,7 @@ skbuild.setup(
         f"-DPYRE_VERSION={cmakeVersion}",
         # put packages in {site-packages}
         f"-DPYRE_DEST_PACKAGES={packageDir}",
-    ]
+    ],
 )
 
 # end of file

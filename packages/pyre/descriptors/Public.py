@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 class Public:
@@ -12,13 +11,12 @@ class Public:
     documentation
     """
 
-
     # public data
-    name = None # my name
-    aliases = None # a set (eventually) of alternate names by which I can be accessed
+    name = None  # my name
+    aliases = None  # a set (eventually) of alternate names by which I can be accessed
 
     # documentation support
-    tip = '' # short description of my purpose
+    tip = ""  # short description of my purpose
 
     # wire doc to __doc__ so the bultin help can decorate the attributes properly
     @property
@@ -36,7 +34,6 @@ class Public:
         self.__doc__ = text
         return
 
-
     # framework requests
     def bind(self, name, **kwds):
         """
@@ -48,7 +45,6 @@ class Public:
         self.aliases.add(name)
         # chain up
         return super().bind(**kwds)
-
 
     # meta methods
     def __init__(self, name=None, **kwds):

@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # externals
@@ -21,12 +20,10 @@ class Parser(pyre.parsing.parser):
     structure of the input
     """
 
-
     # the configuration object model
     from .Assignment import Assignment
     from .Configuration import Configuration
     from .Section import Section
-
 
     # interface
     def parse(self, uri, stream, locator):
@@ -34,7 +31,7 @@ class Parser(pyre.parsing.parser):
         Harvest the configuration events in {stream}
         """
         # reset the stack of open containers
-        self.context = [ self.Configuration() ]
+        self.context = [self.Configuration()]
         # and the list of errors
         self.errors = []
 
@@ -53,7 +50,6 @@ class Parser(pyre.parsing.parser):
         # all done
         return
 
-
     # meta methods
     def __init__(self, **kwds):
         # chain up
@@ -68,21 +64,18 @@ class Parser(pyre.parsing.parser):
             scanner.comment: self.ignore,
             scanner.whitespace: self.ignore,
             scanner.finish: self.ignore,
-
             # hierarchy
             scanner.push: self.ignore,
             scanner.pop: self.pop,
-
             # context specifier
             scanner.section: self.section,
             # assignments
             scanner.assignment: self.assignment,
-            scanner.cdata: self.value
-            }
+            scanner.cdata: self.value,
+        }
 
         # all done
         return
-
 
     # implementation details
     @pyre.patterns.coroutine
@@ -122,14 +115,12 @@ class Parser(pyre.parsing.parser):
         # all done
         return
 
-
     def ignore(self, **kwds):
         """
         Do nothing
         """
         # there is nothing to do here
         return
-
 
     def section(self, token):
         """
@@ -141,7 +132,6 @@ class Parser(pyre.parsing.parser):
         self.context.append(section)
         # all done
         return
-
 
     def assignment(self, token):
         """
@@ -155,7 +145,6 @@ class Parser(pyre.parsing.parser):
         self.scanner.pyre_cdata()
         # all done
         return
-
 
     def value(self, token):
         """
@@ -172,7 +161,6 @@ class Parser(pyre.parsing.parser):
         # all done
         return
 
-
     def pop(self, token):
         """
         Process the closing of a block
@@ -186,7 +174,6 @@ class Parser(pyre.parsing.parser):
         # all done
         return
 
-
     def handleError(self, description, locator):
         """
         Process the {error}
@@ -198,14 +185,13 @@ class Parser(pyre.parsing.parser):
         # all done
         return
 
-
     # private types
-    from .Scanner import Scanner as lexer # my superclass uses this to instantiate my scanner
+    from .Scanner import Scanner as lexer  # my superclass uses this to instantiate my scanner
 
     # private data
-    errors = None # the list of parsing and lexing errors
-    productions = None # the table of token handlers
-    configuration = None # the list of configuration events harvested from the input source
+    errors = None  # the list of parsing and lexing errors
+    productions = None  # the table of token handlers
+    configuration = None  # the list of configuration events harvested from the input source
 
 
 # end of file

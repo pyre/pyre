@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -15,8 +14,10 @@ Verify that the common initialization pattern short-circuits correctly
 def foo(arg=None):
     return arg or throw()
 
+
 def throw():
     raise NotImplementedError("on purpose")
+
 
 def test():
     # first with an argument -> no exception
@@ -29,6 +30,7 @@ def test():
         pass
 
     return
+
 
 # main
 if __name__ == "__main__":

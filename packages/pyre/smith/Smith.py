@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -113,9 +114,7 @@ class Smith(pyre.application, family="pyre.applications.smith", namespace="smith
                     # open the file in binary mode and read its contents
                     body = child.open(mode="rb").read()
                     # and copy it
-                    destination = cwd.write(
-                        parent=folder, name=entry, contents=body, mode="wb"
-                    )
+                    destination = cwd.write(parent=folder, name=entry, contents=body, mode="wb")
                 # otherwise
                 else:
                     # the {child} is a regular file; open it and read its contents

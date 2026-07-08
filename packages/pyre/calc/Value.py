@@ -1,16 +1,14 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 class Value:
     """
     Mix-in class to encapsulate nodes that can hold a value.
     """
-
 
     # value management
     def getValue(self, **kwds):
@@ -19,7 +17,6 @@ class Value:
         """
         # easy enough
         return self._value
-
 
     def setValue(self, value, **kwds):
         """
@@ -30,7 +27,6 @@ class Value:
         # all done
         return self
 
-
     # meta methods
     def __init__(self, value=None, **kwds):
         # chain up
@@ -39,7 +35,6 @@ class Value:
         self.setValue(value=value)
         # all done
         return
-
 
     # private data
     _value = None

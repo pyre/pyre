@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 class Simple:
@@ -11,19 +10,16 @@ class Simple:
     A locator that records a simple named source with no further details
     """
 
-
     # meta methods
     def __init__(self, source):
         self.source = source
         return
 
-
     def __str__(self):
         return str(self.source)
 
-
     # implementation details
-    __slots__ = "source",
+    __slots__ = ("source",)
 
 
 # end of file

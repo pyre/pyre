@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -131,9 +132,7 @@ class Configurator:
         # get the model
         nameserver = self.executive.nameserver
         # insert the value in the model
-        key, _, _ = nameserver.insert(
-            split=split, value=value, locator=locator, priority=priority
-        )
+        key, _, _ = nameserver.insert(split=split, value=value, locator=locator, priority=priority)
         # and return the associated key
         return key
 
@@ -209,9 +208,7 @@ class Configurator:
             # and the locator
             locator = assignment.locator
             # ask the instance to set the value
-            instance.pyre_setTrait(
-                alias=alias, value=value, priority=priority, locator=locator
-            )
+            instance.pyre_setTrait(alias=alias, value=value, priority=priority, locator=locator)
 
         # notify each trait
         for trait in instance.pyre_traits():

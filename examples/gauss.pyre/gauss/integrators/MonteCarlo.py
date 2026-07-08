@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # access to the framework
@@ -38,7 +37,6 @@ class MonteCarlo(pyre.component, family="gauss.integrators.montecarlo", implemen
     integrand = functor()
     integrand.doc = "the functor to integrate"
 
-
     # interface
     @pyre.export
     def integrate(self):
@@ -46,7 +44,7 @@ class MonteCarlo(pyre.component, family="gauss.integrators.montecarlo", implemen
         Compute the integral as specified by my public state
         """
         # compute the normalization
-        normalization = self.box.measure()/self.samples
+        normalization = self.box.measure() / self.samples
         # get the set of points
         points = self.mesh.points(count=self.samples, box=self.box)
         # narrow the set down to the ones interior to the region of integration

@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -14,10 +15,8 @@ class Help(Channel, active=True, fatal=False):
     Help channels are used for communicating usage instructions to end users
     """
 
-
     # types
     from .exceptions import ApplicationError
-
 
     # implementation details
     def record(self):
@@ -29,9 +28,8 @@ class Help(Channel, active=True, fatal=False):
         # all done
         return self
 
-
     # constants
-    severity = "help"              # the channel severity
+    severity = "help"  # the channel severity
     fatalError = ApplicationError  # the exception i raise when i'm fatal
 
 

@@ -1,4 +1,5 @@
-#! /usr/bin/env python3
+#!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -11,6 +12,7 @@ def test():
     """
     # get the channel
     from journal.Warning import Warning
+
     # and the trash can
     from journal.Trash import Trash
 

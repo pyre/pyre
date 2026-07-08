@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -15,6 +14,7 @@ Exercise the gaussian pdf
 def test():
     # math
     from math import pi, sqrt, exp
+
     # access the package
     import gsl
 
@@ -31,7 +31,7 @@ def test():
     # compute the density
     x = 0
     density = gaussian.density(x)
-    assert density == 1/sqrt(2*pi*σ**2) * exp(-x**2/ (2*σ**2))
+    assert density == 1 / sqrt(2 * pi * σ**2) * exp(-(x**2) / (2 * σ**2))
 
     # make a vector
     v = gsl.vector(1000)

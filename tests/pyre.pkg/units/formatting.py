@@ -1,27 +1,28 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
 Verify that the formatting of dimensionals works as expected
 """
 
+
 def test():
     from pyre.units.SI import meter, second
 
-    g = 9.81*meter/second**2
-    accel = 100*g
+    g = 9.81 * meter / second**2
+    accel = 100 * g
 
-    assert type(accel/g) == float
-    assert accel/g == 100
+    assert type(accel / g) == float
+    assert accel / g == 100
     assert "{0:value=.2f,base={base},label=g}".format(accel, base=g) == "100.00 g"
 
     return
+
 
 # main
 if __name__ == "__main__":

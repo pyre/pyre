@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -18,6 +17,7 @@ def test():
     # declare a protocol
     class protocol(pyre.protocol):
         """a simple protocol"""
+
         # properties
         name = pyre.property()
         name.default = "my name"
@@ -29,6 +29,7 @@ def test():
     # declare a component that claims to implement this protocol explicitly
     class explicit(pyre.component, family="tests.explicit", implements=protocol):
         """a simple component"""
+
         # properties
         name = pyre.property()
         name.default = "whatever"
@@ -41,6 +42,7 @@ def test():
     # declare a component that implements this protocol implicitly
     class implicit(pyre.component, family="tests.implicit"):
         """a simple component"""
+
         # properties
         name = pyre.property()
         name.default = "whatever"

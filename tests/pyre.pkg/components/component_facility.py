@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -17,12 +16,14 @@ def test():
 
     class role(pyre.protocol):
         """a trivial protocol"""
+
         @pyre.provides
         def do(self):
             """do something"""
 
     class component(pyre.component):
         """a trivial component"""
+
         p = role()
 
     # check the basics
@@ -30,11 +31,11 @@ def test():
     assert component.__bases__ == (pyre.component,)
     # check the layout
     assert component.pyre_family() is None
-    assert component.pyre_namemap == {'p': 'p'}
+    assert component.pyre_namemap == {"p": "p"}
     assert component.pyre_pedigree == (component, pyre.component)
     assert component.pyre_implements == None
     # traits
-    localNames = ['p']
+    localNames = ["p"]
     localTraits = tuple(map(component.pyre_trait, localNames))
     assert component.pyre_localTraits == localTraits
     assert component.pyre_inheritedTraits == ()

@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -20,12 +19,12 @@ def test():
         """
         A sample record
         """
+
         sku = pyre.records.str()
         cost = pyre.records.float()
 
         price = -1.25 * cost
         price.validators = pyre.constraints.isPositive()
-
 
     # build a record
     r = record.pyre_mutable(data=("9-4013", "1.0"))

@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -167,9 +168,7 @@ class Application(pyre.component, metaclass=Director):
             channel = journal.warning(f"{nickname}")
             # complain
             channel.line(f"while registering {self}:")
-            channel.line(
-                f"another app, {dashboard.pyre_application}, is already registered"
-            )
+            channel.line(f"another app, {dashboard.pyre_application}, is already registered")
             channel.log()
         # in any case, attach me to the dashboard
         dashboard.pyre_application = self

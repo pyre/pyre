@@ -1,13 +1,13 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # access to the pyre package
 import pyre
+
 # my ancestor
 from .LineMill import LineMill
 
@@ -18,11 +18,9 @@ class CSh(LineMill):
     Support for the c shell
     """
 
-
     # traits
-    variant = pyre.properties.str(default='/bin/csh')
+    variant = pyre.properties.str(default="/bin/csh")
     variant.doc = "the shell variant to use on the hash-bang line"
-
 
     # interface
     @pyre.export
@@ -31,15 +29,15 @@ class CSh(LineMill):
         Render a hash-bang line if i know the shell variant
         """
         # render the hash-bang line
-        if self.variant: yield "#!" + self.variant
+        if self.variant:
+            yield "#!" + self.variant
         # and the rest
         yield from super().header()
         # all done
         return
 
-
     # private data
-    comment = '#'
+    comment = "#"
 
 
 # end of file

@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -16,10 +15,10 @@ def test():
     # access the packages
     import bizbook
 
-
     # build a simple projection
     class titles(bizbook.db.query, book=bizbook.schema.Book):
         """A short query on the book table"""
+
         id = book.id
         title = book.title
         category = book.category
@@ -33,14 +32,14 @@ def test():
         # check the length
         assert len(record) == 4
         # check the fields
-        assert hasattr(record, 'id')
-        assert hasattr(record, 'title')
-        assert hasattr(record, 'category')
-        assert not hasattr(record, 'publisher')
-        assert not hasattr(record, 'date')
-        assert not hasattr(record, 'advance')
-        assert hasattr(record, 'price')
-        assert not hasattr(record, 'description')
+        assert hasattr(record, "id")
+        assert hasattr(record, "title")
+        assert hasattr(record, "category")
+        assert not hasattr(record, "publisher")
+        assert not hasattr(record, "date")
+        assert not hasattr(record, "advance")
+        assert hasattr(record, "price")
+        assert not hasattr(record, "description")
 
     return db, titles
 

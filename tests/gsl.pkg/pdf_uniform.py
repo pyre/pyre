@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -17,7 +16,7 @@ def test():
     import gsl
 
     # the support of the distribution
-    support = (-1,1)
+    support = (-1, 1)
     # build a random number generator
     rng = gsl.rng()
     # build a uniform distribution
@@ -28,7 +27,7 @@ def test():
     assert sample >= support[0] and sample < support[1]
 
     density = uniform.density(0)
-    assert density == 1/(support[1]-support[0])
+    assert density == 1 / (support[1] - support[0])
 
     # make a vector
     v = gsl.vector(1000)

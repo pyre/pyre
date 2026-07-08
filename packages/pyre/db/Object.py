@@ -1,13 +1,13 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orhologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # my superclass
 from ..framework.Dashboard import Dashboard
+
 # my metaclass
 from .Persistent import Persistent
 
@@ -24,10 +24,9 @@ class Object(Dashboard, metaclass=Persistent):
     the grunt work of storing and retrieving object state as possible.
     """
 
-
     # implementation details
-    pyre_extent = None # a map from primary keys to model instances
-    pyre_primaryTable = None # the table I model
+    pyre_extent = None  # a map from primary keys to model instances
+    pyre_primaryTable = None  # the table I model
 
 
 # end of file

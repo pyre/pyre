@@ -1,13 +1,13 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # access to the framework
 import pyre
+
 # my base class
 from .Script import Script
 
@@ -16,7 +16,6 @@ class Interactive(Script, family="pyre.shells.interactive"):
     """
     A shell that invokes the main application behavior and then enters interactive mode
     """
-
 
     # interface
     @pyre.export
@@ -31,29 +30,29 @@ class Interactive(Script, family="pyre.shells.interactive"):
         # all done
         return status
 
-
     # implementation details
     def pyre_interactiveSession(self, application=None, banner=None, context=None):
         """
         Convert this session to an interactive one
         """
         # we need an application specific tag
-        tag = (application.pyre_namespace or application.pyre_name) if application else 'pyre'
+        tag = (application.pyre_namespace or application.pyre_name) if application else "pyre"
 
         # go live
         import code, sys
+
         # configure {readline}
         self.pyre_enrich(tag)
         # adjust the prompts
-        sys.ps1 = f'{tag}: '
-        sys.ps2 = '  ... '
+        sys.ps1 = f"{tag}: "
+        sys.ps2 = "  ... "
 
         # prime the local namespace
         symbols = {}
         # if we have an application instance
         if application:
             # provide access to the application object itself
-            symbols['app'] = application
+            symbols["app"] = application
             # and ask it to decorate further
             symbols = application.pyre_interactiveSessionContext(context=symbols)
         # if the caller gave us {context}
@@ -67,8 +66,7 @@ class Interactive(Script, family="pyre.shells.interactive"):
             banner = application.pyre_interactiveBanner()
 
         # enter interactive mode
-        return code.interact(banner=banner, local=symbols, exitmsg=f'{tag}: exiting...')
-
+        return code.interact(banner=banner, local=symbols, exitmsg=f"{tag}: exiting...")
 
     def pyre_enrich(self, tag):
         """
@@ -84,15 +82,15 @@ class Interactive(Script, family="pyre.shells.interactive"):
             return
 
         # get the package docstring, gingerly
-        doc = getattr(readline, '__doc__', None)
+        doc = getattr(readline, "__doc__", None)
         # on OSX, {readline} may be implemented using {libedit}
-        if 'libedit' in doc:
+        if "libedit" in doc:
             # bind the <tab> character to the correct behavior
-            readline.parse_and_bind('bind ^I rl_complete')
+            readline.parse_and_bind("bind ^I rl_complete")
         # otherwise
         else:
             # assume gnu {readline}
-            readline.parse_and_bind('tab: complete')
+            readline.parse_and_bind("tab: complete")
 
         # again carefully, try to
         try:
@@ -106,7 +104,7 @@ class Interactive(Script, family="pyre.shells.interactive"):
             pass
 
         # build the uri to the history file
-        history = pyre.primitives.path('~', f'.{tag}-history').expanduser().resolve()
+        history = pyre.primitives.path("~", f".{tag}-history").expanduser().resolve()
         # stringify
         history = str(history)
         # attempt to
@@ -119,6 +117,7 @@ class Interactive(Script, family="pyre.shells.interactive"):
             pass
         # make sure it gets saved
         import atexit
+
         # by registering a handler for when the session terminates
         atexit.register(readline.write_history_file, history)
 

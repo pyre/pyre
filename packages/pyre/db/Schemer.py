@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # superclass
@@ -17,10 +16,8 @@ class Schemer(records.templater):
     its attributes to the fields of the underlying table in the database back end
     """
 
-
     # types
     from .FieldSelector import FieldSelector as pyre_selector
-
 
     # meta methods
     def __new__(cls, name, bases, attributes, id=None, **kwds):
@@ -40,7 +37,8 @@ class Schemer(records.templater):
         # traverse the mro
         for base in reversed(table.__mro__):
             # restrict the search to {Table} subclasses
-            if not isinstance(base, cls): continue
+            if not isinstance(base, cls):
+                continue
             # iterate over the fields declared locally in this ancestor
             for field in base.pyre_localFields:
                 # if this field is a primary key for its table

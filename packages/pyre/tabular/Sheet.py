@@ -1,13 +1,13 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # superclass
 from .. import records
+
 # metaclass
 from .Tabulator import Tabulator
 
@@ -18,11 +18,9 @@ class Sheet(records.record, metaclass=Tabulator):
     The base class for pyre worksheets, collections of record instances
     """
 
-
     # public data
     pyre_name = None
-    pyre_data = None # the list of records
-
+    pyre_data = None  # the list of records
 
     # interface
     def pyre_immutable(self, data):
@@ -39,7 +37,6 @@ class Sheet(records.record, metaclass=Tabulator):
         # all done
         return self
 
-
     def pyre_mutable(self, data):
         """
         Iterate over {data} extracting records that are compatible with my layout and use them to
@@ -54,7 +51,6 @@ class Sheet(records.record, metaclass=Tabulator):
         # all done
         return self
 
-
     def pyre_append(self, row):
         """
         Add the given {row} to my data set
@@ -65,7 +61,6 @@ class Sheet(records.record, metaclass=Tabulator):
         dataset.append(row)
         # all done
         return self
-
 
     def pyre_new(self):
         """
@@ -78,7 +73,6 @@ class Sheet(records.record, metaclass=Tabulator):
         # and hand it to the caller
         return record
 
-
     @classmethod
     def pyre_offset(cls, measure):
         """
@@ -86,7 +80,6 @@ class Sheet(records.record, metaclass=Tabulator):
         """
         # easy enough
         getattr(cls, measure).index
-
 
     # meta-methods
     def __init__(self, name, **kwds):
@@ -99,7 +92,6 @@ class Sheet(records.record, metaclass=Tabulator):
         # all done
         return
 
-
     def __len__(self):
         """
         Compute the number of records in my dataset
@@ -107,14 +99,12 @@ class Sheet(records.record, metaclass=Tabulator):
         # delegate to the dataset
         return len(self.pyre_data)
 
-
     def __iter__(self):
         """
         Build an iterator over my data set
         """
         # delegate to the dataset
         return iter(self.pyre_data)
-
 
     def __getitem__(self, address):
         """
@@ -131,7 +121,7 @@ class Sheet(records.record, metaclass=Tabulator):
             return self.pyre_data[address]
 
         # eventually I will support really smart slicing
-        raise NotImplementedError('NYI: smart sheet indexing is not yet implemented')
+        raise NotImplementedError("NYI: smart sheet indexing is not yet implemented")
 
 
 # end of file

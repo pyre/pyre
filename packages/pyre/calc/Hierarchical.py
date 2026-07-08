@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # externals
@@ -11,6 +10,7 @@ import re
 import operator
 import collections.abc
 from .. import primitives
+
 # my base class
 from .SymbolTable import SymbolTable
 
@@ -28,15 +28,12 @@ class Hierarchical(SymbolTable):
     folders.
     """
 
-
     # types
     from .exceptions import AliasingError
     from .NodeInfo import NodeInfo as info
 
-
     # public data
-    separator = '.'
-
+    separator = "."
 
     # interface
     # model traversal
@@ -70,8 +67,7 @@ class Hierarchical(SymbolTable):
         # all done
         return
 
-
-    def find(self, pattern='', key=None):
+    def find(self, pattern="", key=None):
         """
         Generate a sequence of (name, node) pairs for all nodes in the model whose name
         matches the supplied {pattern}. Careful to properly escape periods and other characters
@@ -79,11 +75,12 @@ class Hierarchical(SymbolTable):
         package. The order in which the nodes are returned is controlled by {key}.
         """
         # check whether i have any nodes
-        if not self._nodes: return
+        if not self._nodes:
+            return
         # build the name recognizer
         regex = re.compile(pattern)
         # we need a sort key, since slots do not have a natural ordering
-        key = operator.attrgetter('name') if key is None else key
+        key = operator.attrgetter("name") if key is None else key
         # iterate over my nodes
         for info in sorted(self._metadata.values(), key=key):
             # if the name matches
@@ -92,7 +89,6 @@ class Hierarchical(SymbolTable):
                 yield info, self._nodes[info.key]
         # all done
         return
-
 
     # storing and retrieving nodes
     def alias(self, target, alias, base=None):
@@ -127,7 +123,6 @@ class Hierarchical(SymbolTable):
         # conflict: only one of these is accessible by name any more
         return self.merge(source=aliasKey, canonical=target, destination=targetKey, name=alias)
 
-
     def hash(self, name, context=None):
         """
         Split a multilevel {name} into its parts and return its hash
@@ -148,7 +143,6 @@ class Hierarchical(SymbolTable):
             return context.hash(items=name)
         # otherwise
         raise ValueError("can't hash {!r}".format(name))
-
 
     def insert(self, key, value, name=None):
         """
@@ -179,14 +173,12 @@ class Hierarchical(SymbolTable):
         # all done
         return key, new, old
 
-
     def getInfo(self, key):
         """
         Retrieve the metadata of the node registered under {key}
         """
         # look it up in my info map
         return self._metadata[key]
-
 
     def getNode(self, key):
         """
@@ -195,7 +187,6 @@ class Hierarchical(SymbolTable):
         # look it up in my node map
         return self._nodes[key]
 
-
     def getName(self, key):
         """
         Retrieve the name of the node registered under {key}
@@ -203,14 +194,12 @@ class Hierarchical(SymbolTable):
         # look it up in my info map
         return self._metadata[key].name
 
-
     def getSplitName(self, key):
         """
         Retrieve the sequence of fragments in the name of the node registered under {key}
         """
         # look it up in my info map
         return self._metadata[key].split
-
 
     def retrieve(self, name):
         """
@@ -235,7 +224,6 @@ class Hierarchical(SymbolTable):
         # return the node
         return node
 
-
     def split(self, name):
         """
         Take {name} apart using my separator
@@ -243,14 +231,12 @@ class Hierarchical(SymbolTable):
         # easy enough
         return name.split(self.separator)
 
-
     def join(self, *levels):
         """
         Form the canonical name of a key by joining {levels} using my separator
         """
         # easy enough
         return self.separator.join(filter(None, levels))
-
 
     # meta-methods
     def __init__(self, separator=separator, **kwds):
@@ -265,14 +251,12 @@ class Hierarchical(SymbolTable):
         # all done
         return
 
-
     def __contains__(self, name):
         """
         Check whether {item} is present in the table
         """
         # check whether the hashed name is present in my node index
         return self.hash(name) in self._nodes
-
 
     def __setitem__(self, name, value):
         """
@@ -283,12 +267,10 @@ class Hierarchical(SymbolTable):
         # delegate
         return self.insert(name=name, key=key, value=value)
 
-
     # implementation details
     # private data
     _hash = None
     _info = None
-
 
     # aliasing
     def merge(self, source, canonical, destination, name):
@@ -328,9 +310,13 @@ class Hierarchical(SymbolTable):
                 destinationInfo = self._metadata[destination]
                 # and figure out what to do
                 self.replace(
-                    key=destination, name=canonical,
-                    newNode=sourceNode, newInfo=sourceInfo,
-                    oldNode=destinationNode, oldInfo=destinationInfo)
+                    key=destination,
+                    name=canonical,
+                    newNode=sourceNode,
+                    newInfo=sourceInfo,
+                    oldNode=destinationNode,
+                    oldInfo=destinationInfo,
+                )
 
         # now, take care of the children in {source}
         for name, child in source.nodes.items():
@@ -339,11 +325,11 @@ class Hierarchical(SymbolTable):
                 source=child,
                 destination=destination[name],
                 canonical=self.join(canonical, name),
-                name=name)
+                name=name,
+            )
 
         # all done
         return
-
 
     def store(self, key, name, node, info):
         """
@@ -359,19 +345,23 @@ class Hierarchical(SymbolTable):
         # all done
         return
 
-
     def replace(self, key, name, oldNode, oldInfo, newNode, newInfo):
         """
         Choose which settings to retain
         """
         # i don't know what to do
         raise self.AliasingError(
-            key=key, target=name, alias=name,
-            targetNode=oldNode, targetInfo=oldInfo, aliasNode=newNode, aliasInfo=newInfo)
-
+            key=key,
+            target=name,
+            alias=name,
+            targetNode=oldNode,
+            targetInfo=oldInfo,
+            aliasNode=newNode,
+            aliasInfo=newInfo,
+        )
 
     # debug support
-    def dump(self, pattern=''):
+    def dump(self, pattern=""):
         """
         List my contents
         """

@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -5,7 +6,7 @@
 
 
 # framework
-import pyre             # for my superclass
+import pyre  # for my superclass
 
 
 # the base class of journal devices
@@ -13,7 +14,6 @@ class Device(pyre.patterns.named):
     """
     Base class for journal devices
     """
-
 
     # interface
     def alert(self, entry):
@@ -25,14 +25,12 @@ class Device(pyre.patterns.named):
         # this device doesn't know how to do that
         raise NotImplementedError(f"class '{type(self).__name__}' must implement 'alert'")
 
-
     def help(self, entry):
         """
         Generate a help screen
         """
         # this device doesn't know how to do that
         raise NotImplementedError(f"class '{type(self).__name__}' must implement 'help'")
-
 
     def memo(self, entry):
         """

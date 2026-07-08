@@ -1,31 +1,29 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # support
 import pyre
+
 # my user configurable state
 from .Recruiter import Recruiter
 
 
 # declaration
-class Team(pyre.protocol, family='pyre.nexus.teams'):
+class Team(pyre.protocol, family="pyre.nexus.teams"):
     """
     The specification for a process collective that coöperate to carry out a work plan
     """
 
-
     # user configurable state
     size = pyre.properties.int()
-    size.doc = 'the number of team members to recruit'
+    size.doc = "the number of team members to recruit"
 
     recruiter = Recruiter()
-    recruiter.doc = 'the strategy for recruiting team members'
-
+    recruiter.doc = "the strategy for recruiting team members"
 
     # interface
     @pyre.provides
@@ -40,7 +38,6 @@ class Team(pyre.protocol, family='pyre.nexus.teams'):
         Compute how may recruits are needed to take the team to full strength
         """
 
-
     # my default
     @classmethod
     def pyre_default(cls, **kwds):
@@ -49,6 +46,7 @@ class Team(pyre.protocol, family='pyre.nexus.teams'):
         """
         # use a distributed pool of processes
         from .Pool import Pool
+
         # so make its component factory available
         return Pool
 

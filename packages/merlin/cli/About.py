@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -9,11 +10,10 @@ import merlin
 
 
 # declaration
-class About(merlin.shells.command, family='merlin.cli.about'):
+class About(merlin.shells.command, family="merlin.cli.about"):
     """
     Display information about this application
     """
-
 
     @merlin.export(tip="print the copyright note")
     def copyright(self, plexus, **kwds):
@@ -25,7 +25,6 @@ class About(merlin.shells.command, family='merlin.cli.about'):
         # all done
         return
 
-
     @merlin.export(tip="print out the acknowledgments")
     def credits(self, plexus, **kwds):
         """
@@ -36,7 +35,6 @@ class About(merlin.shells.command, family='merlin.cli.about'):
         # all done
         return
 
-
     @merlin.export(tip="print out the license and terms of use")
     def license(self, plexus, **kwds):
         """
@@ -46,7 +44,6 @@ class About(merlin.shells.command, family='merlin.cli.about'):
         plexus.info.log(merlin.meta.license)
         # all done
         return
-
 
     @merlin.export(tip="print the version number")
     def version(self, plexus, **kwds):

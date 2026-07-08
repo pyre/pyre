@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # superclass
@@ -17,7 +16,6 @@ class Interval(Dimension):
     given sheet column.
     """
 
-
     # meta-methods
     def __get__(self, chart, cls):
         # if I am being accessed through an instance
@@ -26,7 +24,6 @@ class Interval(Dimension):
             return self.axis(chart=chart, dimension=self)
         # otherwise, just return myself
         return self
-
 
     # meta-methods
     def __init__(self, interval, subdivisions, **kwds):
@@ -37,7 +34,6 @@ class Interval(Dimension):
         self.subdivisions = subdivisions
         # all done
         return
-
 
     # implementation details
     class axis:
@@ -69,7 +65,7 @@ class Interval(Dimension):
                 # get the value of my measure
                 value = record[column]
                 # bin it
-                rank = int((value - start)/width)
+                rank = int((value - start) / width)
                 # check whether it falls within my bounds
                 if 0 <= rank < subdivisions:
                     # place it in its bin

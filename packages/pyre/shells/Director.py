@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # framework access
@@ -60,9 +59,7 @@ class Director(pyre.actor):
             locator = pyre.tracking.here(1) if locator is None else locator
 
         # and chain up
-        return super().__call__(
-            name=name, globalAliases=globalAliases, locator=locator, **kwds
-        )
+        return super().__call__(name=name, globalAliases=globalAliases, locator=locator, **kwds)
 
 
 # end of file

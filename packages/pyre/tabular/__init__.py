@@ -1,15 +1,16 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # type conversion from {schemata}
 from .. import schemata
+
 # infrastructure from {records}
 from .. import records
+
 # structural
 field = records.field
 derivation = records.derivation
@@ -19,6 +20,7 @@ literal = records.literal
 # support for sheets
 # i have my own measures
 from .Measure import Measure as measure
+
 # build the typed descriptors; first the simple ones
 bool = measure.bool
 decimal = measure.decimal
@@ -43,6 +45,7 @@ from .Sheet import Sheet as sheet
 # dimensions
 from .Inferred import Inferred as inferred
 from .Interval import Interval as interval
+
 # support for charts
 from .Chart import Chart as chart
 
@@ -56,6 +59,5 @@ csv = records.csv
 # the metaclasses
 from .Tabulator import Tabulator as tabulator
 from .Surveyor import Surveyor as surveyor
-
 
 # end of file

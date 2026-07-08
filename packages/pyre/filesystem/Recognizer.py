@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -16,9 +17,7 @@ class Recognizer:
         Given a filesystem {entry}, build a filesystem specific structure and decorate it with
         the available metadata
         """
-        raise NotImplementedError(
-            f"class '{type(self).__name__}' must implement 'recognize'"
-        )
+        raise NotImplementedError(f"class '{type(self).__name__}' must implement 'recognize'")
 
 
 # end of file

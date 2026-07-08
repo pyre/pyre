@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -358,9 +359,7 @@ class Channel(pyre.patterns.named):
         line = notes["line"]
         function = notes["function"]
         # build a locator
-        self.locator = pyre.tracking.script(
-            source=filename, line=line, function=function
-        )
+        self.locator = pyre.tracking.script(source=filename, line=line, function=function)
         # instantiate the exception
         complaint = self.fatalError(channel=self)
         # and return it
@@ -371,9 +370,7 @@ class Channel(pyre.patterns.named):
         Write the accumulated message to the device
         """
         # subclasses must override
-        raise NotImplementedError(
-            f"class '{type(self).__name__}' must implement 'record'"
-        )
+        raise NotImplementedError(f"class '{type(self).__name__}' must implement 'record'")
 
     def newEntry(self):
         """

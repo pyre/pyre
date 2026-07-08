@@ -1,10 +1,9 @@
 #!/usr/bin/env python.pyre
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 # the framework
 import pyre
@@ -18,7 +17,6 @@ class configure(pyre.application):
 
     postgres = pyre.externals.postgres()
     postgres.doc = "the postgres client installation"
-
 
     @pyre.export
     def main(self, *args, **kwds):
@@ -61,7 +59,7 @@ class configure(pyre.application):
             info.line("    psql: {.psql}".format(postgres))
             # compile line
             info.line("  compile:")
-            info.line("    defines: {}".format(', '.join(postgres.defines)))
+            info.line("    defines: {}".format(", ".join(postgres.defines)))
             info.line("    headers: {}".format(postgres.join(postgres.incdir)))
             # link line
             info.line("  link:")
@@ -76,7 +74,7 @@ class configure(pyre.application):
                 info.line("  configuration errors that were auto-corrected:")
                 # and show me
                 for index, error in enumerate(errors):
-                    info.line("      {}: {}".format(index+1, error))
+                    info.line("      {}: {}".format(index + 1, error))
         # flush
         info.log()
 
@@ -88,10 +86,11 @@ class configure(pyre.application):
 if __name__ == "__main__":
     # get the journal
     import journal
+
     # activate the debug channel
     # journal.debug("app").activate()
     # make one
-    app = configure(name='configure')
+    app = configure(name="configure")
     # drive
     status = app.run()
     # all done

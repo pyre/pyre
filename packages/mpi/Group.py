@@ -1,13 +1,13 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # base class
 from .Object import Object
+
 # meta-class
 from pyre.patterns.Extent import Extent
 
@@ -21,11 +21,9 @@ class Group(Object, metaclass=Extent):
     # class level public data
     undefined = Object.mpi.undefined
 
-
     # per-instance public data
-    rank = 0 # my rank in this group
-    size = 0 # the size of this group
-
+    rank = 0  # my rank in this group
+    size = 0  # the size of this group
 
     # check whether a group is empty
     def isEmpty(self):
@@ -33,7 +31,6 @@ class Group(Object, metaclass=Extent):
         Check whether i am an empty group
         """
         return self.mpi.groupIsEmpty(self.capsule)
-
 
     # building groups using explicit ranklists
     def include(self, included):
@@ -49,7 +46,6 @@ class Group(Object, metaclass=Extent):
         # otherwise return an invalid group
         return None
 
-
     def exclude(self, excluded):
         """
         Build a group out of all processes except those in {excluded}
@@ -62,7 +58,6 @@ class Group(Object, metaclass=Extent):
             return Group(capsule=capsule)
         # otherwise return an invalid group
         return None
-
 
     # the set-like operations
     def union(self, g):
@@ -78,7 +73,6 @@ class Group(Object, metaclass=Extent):
         # otherwise
         return None
 
-
     def intersection(self, g):
         """
         Build a new group whose processes are the intersection of mine and {g}'s
@@ -91,7 +85,6 @@ class Group(Object, metaclass=Extent):
             return Group(capsule=capsule)
         # otherwise
         return None
-
 
     def difference(self, g):
         """
@@ -106,7 +99,6 @@ class Group(Object, metaclass=Extent):
         # otherwise
         return None
 
-
     # meta methods
     def __init__(self, capsule, **kwds):
         # chain to my ancestors
@@ -120,7 +112,6 @@ class Group(Object, metaclass=Extent):
 
         # all done
         return
-
 
     # implementation details
     capsule = None

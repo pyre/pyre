@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -15,6 +14,7 @@ Exercise sum reductions
 def test():
     # access the package
     import mpi
+
     # initialize
     mpi.init()
     # get the world communicator
@@ -30,7 +30,7 @@ def test():
     total = world.sum(item=number, destination=destination)
     # check it
     if rank == destination:
-        assert total == (size-1)*size*(2*size-1)/6
+        assert total == (size - 1) * size * (2 * size - 1) / 6
     else:
         assert total is None
     # all done

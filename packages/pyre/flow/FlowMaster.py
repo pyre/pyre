@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -35,9 +36,7 @@ class FlowMaster(pyre.actor):
         locator = pyre.tracking.here(1) if locator is None else locator
 
         # create the instance
-        instance = super().__call__(
-            name=name, locator=locator, implicit=implicit, **kwds
-        )
+        instance = super().__call__(name=name, locator=locator, implicit=implicit, **kwds)
         # and return it
         return instance
 

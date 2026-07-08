@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -17,6 +16,7 @@ def test():
 
     # get the executive instance
     import pyre
+
     executive = pyre.executive
     # pull the configurator
     configurator = executive.configurator
@@ -27,16 +27,16 @@ def test():
 
     # build an argument list
     commandline = [
-        '--help',
-        '--vtf.nodes=1024',
-        '--vtf.(solid,fluid)=solvers',
-        '--vtf.(solid,fluid,other).nodes={vtf.nodes}',
+        "--help",
+        "--vtf.nodes=1024",
+        "--vtf.(solid,fluid)=solvers",
+        "--vtf.(solid,fluid,other).nodes={vtf.nodes}",
         # '--journal.device=file',
-        '--journal.debug.main=on',
-        '--',
-        '--funky-filename',
-        'and-a-normal-one'
-        ]
+        "--journal.debug.main=on",
+        "--",
+        "--funky-filename",
+        "and-a-normal-one",
+    ]
 
     # get the parser to populate the configurator
     events = parser.parse(commandline)
@@ -57,6 +57,7 @@ def test():
 
     # and return the managers
     return executive, parser
+
 
 # main
 if __name__ == "__main__":

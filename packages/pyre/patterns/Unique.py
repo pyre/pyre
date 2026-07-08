@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -26,7 +27,6 @@ class Unique(Type):
     the class method {pyre_createRegistry}.
     """
 
-
     # metamethods
     def __init__(self, name, bases, attributes, *, pyre_unique=False, **kwds):
         """
@@ -45,7 +45,6 @@ class Unique(Type):
 
         # all done
         return
-
 
     def __call__(self, **kwds):
         """
@@ -68,7 +67,6 @@ class Unique(Type):
         # and return it
         return instance
 
-
     # implementation details
     def pyre_createRegistry(self):
         """
@@ -76,7 +74,6 @@ class Unique(Type):
         """
         # use a simple dictionary, by default
         return {}
-
 
     def pyre_hashInstance(self, name, **kwds):
         """

@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -17,7 +16,7 @@ def test():
     import pyre
 
     # declare a trivial application
-    class application(pyre.application, namespace='sample'):
+    class application(pyre.application, namespace="sample"):
         """A trivial pyre application"""
 
     # instantiate
@@ -25,13 +24,13 @@ def test():
     # app.vfs.dump()
 
     # verify that the filesystem attribute was set
-    assert(app.pfs)
+    assert app.pfs
     # and that it is correctly mounted
-    assert(app.pfs == app.vfs["/sample"])
+    assert app.pfs == app.vfs["/sample"]
 
     # check the namespace
-    assert(app.vfs["/sample/system"])
-    assert(app.vfs["/sample/user"])
+    assert app.vfs["/sample/system"]
+    assert app.vfs["/sample/user"]
 
     return app
 

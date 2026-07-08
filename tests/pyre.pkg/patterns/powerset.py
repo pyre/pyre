@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -15,7 +14,7 @@ Verify that powerset works
 def test():
     import pyre.patterns
 
-    l = [1,2,3]
+    l = [1, 2, 3]
 
     p = list(pyre.patterns.powerset(l))
     answer = [(), (1,), (2,), (3,), (1, 2), (1, 3), (2, 3), (1, 2, 3)]

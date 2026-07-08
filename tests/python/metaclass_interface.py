@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -14,13 +13,18 @@ How do you endow classes and their instances with the same interface?
 
 # print("declaring the metaclass")
 class meta(type):
-    def metafoo(cls): return "meta"
+    def metafoo(cls):
+        return "meta"
+
 
 # print("declaring the class")
 class base(metaclass=meta):
     @classmethod
-    def classfoo(cls): return "class"
-    def foo(self): return "instance"
+    def classfoo(cls):
+        return "class"
+
+    def foo(self):
+        return "instance"
 
 
 def test():

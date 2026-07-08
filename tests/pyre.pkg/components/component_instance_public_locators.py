@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -14,9 +13,11 @@ Verify access to component traits and their meta-data
 # support
 import pyre
 
+
 # declare a public component
 class public(pyre.component, family="sample.publiclocator"):
     """a public component"""
+
     # traits
     p = pyre.properties.str(default="p")
 
@@ -27,29 +28,29 @@ def test():
     # ask for the instance locator
     loc = c.pyre_where()
     # check that it is correct
-    assert loc.source.endswith('component_instance_public_locators.py')
+    assert loc.source.endswith("component_instance_public_locators.py")
     assert loc.line == 26
-    assert loc.function == 'test'
+    assert loc.function == "test"
 
     # ask for the trait value and verify it is the default
     assert c.p == "p"
     # ask for its locator
-    loc = c.pyre_where('p')
+    loc = c.pyre_where("p")
     # check it is correct
-    assert loc.source.endswith('component_instance_public_locators.py')
+    assert loc.source.endswith("component_instance_public_locators.py")
     assert loc.line == 26
-    assert loc.function == 'test'
+    assert loc.function == "test"
 
     # set it
     c.p = "q"
     # verify the setting worked
     assert c.p == "q"
     # ask for its locator
-    loc = c.pyre_where('p')
+    loc = c.pyre_where("p")
     # check it is correct
-    assert loc.source.endswith('component_instance_public_locators.py')
+    assert loc.source.endswith("component_instance_public_locators.py")
     assert loc.line == 44
-    assert loc.function == 'test'
+    assert loc.function == "test"
 
     # all done
     return

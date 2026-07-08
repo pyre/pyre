@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -17,7 +18,6 @@ class Trash(Device):
     # constants
     name = "trash"
 
-
     # interface
     def alert(self, entry):
         """
@@ -26,14 +26,12 @@ class Trash(Device):
         # do nothing
         return self
 
-
     def help(self, entry):
         """
         Generate a help screen
         """
         # do nothing
         return self
-
 
     def memo(self, entry):
         """
@@ -42,9 +40,8 @@ class Trash(Device):
         # do nothing
         return self
 
-
     # metamethods
-    def __init__(self, name=name,  **kwds):
+    def __init__(self, name=name, **kwds):
         # chain up
         super().__init__(name=name, **kwds)
         # all done

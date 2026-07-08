@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -19,17 +18,17 @@ def test():
     model = pyre.calc.model()
 
     # escaped macro delimiters
-    node = model.interpolation('{{production}}')
+    node = model.interpolation("{{production}}")
     # verify it made a variable
     assert type(node) is model.node.variable
 
     # and another
-    node = model.interpolation('{{{{cost per unit}}}}')
+    node = model.interpolation("{{{{cost per unit}}}}")
     # verify it made a variable
     assert type(node) is model.node.variable
 
     # finally
-    tricky = model.interpolation('{{{number of items}}}')
+    tricky = model.interpolation("{{{number of items}}}")
     # verify it made a variable
     assert type(tricky) is model.node.interpolation
     # with an unresolved node

@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # my base class
@@ -20,10 +19,8 @@ class Shelf(base):
     # unfortunately, this attribute is not set for all modules on all platforms, so it is not
     # reliable. this version just records the caller's locator
 
-
     # exceptions
     from ..exceptions import SymbolNotFoundError
-
 
     # meta methods
     def __init__(self, module=None, **kwds):

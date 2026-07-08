@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -14,6 +13,7 @@ Exercise "isAll"
 
 def test():
     import pyre.constraints
+
     less = pyre.constraints.isLess(value=1)
     greater = pyre.constraints.isGreater(value=0)
     constraint = pyre.constraints.isAll(less, greater)

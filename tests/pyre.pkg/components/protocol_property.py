@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -18,6 +17,7 @@ def test():
     # declare
     class protocol(pyre.protocol):
         """a trivial protocol"""
+
         p = pyre.property()
 
     # check the basics
@@ -25,10 +25,10 @@ def test():
     assert protocol.__bases__ == (pyre.protocol,)
     # check the layout
     assert protocol.pyre_key is None
-    assert protocol.pyre_namemap == {'p': 'p'}
+    assert protocol.pyre_namemap == {"p": "p"}
     assert protocol.pyre_pedigree == (protocol, pyre.protocol)
     # traits
-    localNames = ['p']
+    localNames = ["p"]
     localTraits = tuple(map(protocol.pyre_trait, localNames))
     assert protocol.pyre_localTraits == localTraits
     assert protocol.pyre_inheritedTraits == ()

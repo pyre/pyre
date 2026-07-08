@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -12,14 +11,15 @@ This package contains the machinery necessary to generate content in a variety o
 The primary target is human readable formats, such source code for programming languages.
 """
 
-
 # the marker of component factories
 from .. import foundry
 
 # access to the main components in this package
 from .Weaver import Weaver as weaver
+
 # the language interface
 from .Language import Language as language
+
 
 # the mill base classes
 @foundry(implements=language)
@@ -29,8 +29,10 @@ def mill():
     """
     # grab the component class
     from .Mill import Mill as mill
+
     # and return it
     return mill
+
 
 @foundry(implements=language)
 def line():
@@ -39,8 +41,10 @@ def line():
     """
     # grab the component class
     from .LineMill import LineMill as line
+
     # and return it
     return line
+
 
 @foundry(implements=language)
 def block():
@@ -49,6 +53,7 @@ def block():
     """
     # grab the component class
     from .BlockMill import BlockMill as block
+
     # and return it
     return block
 
@@ -61,8 +66,10 @@ def c():
     """
     # grab the component class
     from .C import C as c
+
     # and return it
     return c
+
 
 @foundry(implements=language)
 def csh():
@@ -71,8 +78,10 @@ def csh():
     """
     # grab the component class
     from .CSh import CSh as csh
+
     # and return it
     return csh
+
 
 @foundry(implements=language)
 def cfg():
@@ -81,8 +90,10 @@ def cfg():
     """
     # grab the component class
     from .Cfg import Cfg as cfg
+
     # and return it
     return cfg
+
 
 @foundry(implements=language)
 def cxx():
@@ -91,8 +102,10 @@ def cxx():
     """
     # grab the component class
     from .Cxx import Cxx as cxx
+
     # and return it
     return cxx
+
 
 @foundry(implements=language)
 def f77():
@@ -101,8 +114,10 @@ def f77():
     """
     # grab the component class
     from .F77 import F77 as f77
+
     # and return it
     return f77
+
 
 @foundry(implements=language)
 def f90():
@@ -111,8 +126,10 @@ def f90():
     """
     # grab the component class
     from .F90 import F90 as f90
+
     # and return it
     return f90
+
 
 @foundry(implements=language)
 def html():
@@ -121,7 +138,9 @@ def html():
     """
     # grab the component class
     from .HTML import HTML as html
+
     return html
+
 
 @foundry(implements=language)
 def http():
@@ -130,8 +149,10 @@ def http():
     """
     # grab the component class
     from .HTTP import HTTP as http
+
     # and return it
     return http
+
 
 @foundry(implements=language)
 def make():
@@ -140,8 +161,10 @@ def make():
     """
     # grab the component class
     from .Make import Make as make
+
     # and return it
     return make
+
 
 @foundry(implements=language)
 def pfg():
@@ -150,8 +173,10 @@ def pfg():
     """
     # grab the component class
     from .PFG import PFG as pfg
+
     # and return it
     return pfg
+
 
 @foundry(implements=language)
 def perl():
@@ -160,8 +185,10 @@ def perl():
     """
     # grab the component class
     from .Perl import Perl as perl
+
     # and return it
     return perl
+
 
 @foundry(implements=language)
 def python():
@@ -170,8 +197,10 @@ def python():
     """
     # grab the component class
     from .Python import Python as python
+
     # and return it
     return python
+
 
 @foundry(implements=language)
 def sql():
@@ -180,8 +209,10 @@ def sql():
     """
     # grab the component class
     from .SQL import SQL as sql
+
     # and return it
     return sql
+
 
 @foundry(implements=language)
 def svg():
@@ -190,8 +221,10 @@ def svg():
     """
     # grab the component class
     from .SVG import SVG as svg
+
     # and return it
     return svg
+
 
 @foundry(implements=language)
 def sh():
@@ -200,8 +233,10 @@ def sh():
     """
     # grab the component class
     from .Sh import Sh as sh
+
     # and return it
     return sh
+
 
 @foundry(implements=language)
 def tex():
@@ -210,8 +245,10 @@ def tex():
     """
     # grab the component class
     from .TeX import TeX as tex
+
     # and return it
     return tex
+
 
 @foundry(implements=language)
 def xml():
@@ -220,6 +257,7 @@ def xml():
     """
     # grab the component class
     from .XML import XML as xml
+
     # and return it
     return xml
 

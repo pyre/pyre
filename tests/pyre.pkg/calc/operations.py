@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -16,8 +15,8 @@ def test():
     import pyre.calc
 
     # free variables
-    c = 100.
-    s = 20.
+    c = 100.0
+    s = 20.0
 
     # make some nodes
     cost = pyre.calc.var(value=c)
@@ -27,19 +26,19 @@ def test():
     profit = price - margin
 
     # gather them up
-    nodes = [ cost, shipping, margin, price, profit ]
+    nodes = [cost, shipping, margin, price, profit]
 
     # verify their values
     # print(cost.value, shipping.value, margin.value, price.value, profit.value)
     assert cost.value == c
     assert shipping.value == s
-    assert margin.value == .5*c
-    assert price.value == c + s + .5*c
+    assert margin.value == 0.5 * c
+    assert price.value == c + s + 0.5 * c
     assert profit.value == c + s
 
     # make some changes
-    c = 200.
-    s = 40.
+    c = 200.0
+    s = 40.0
     cost.value = c
     shipping.value = s
 
@@ -47,8 +46,8 @@ def test():
     # print(cost.value, shipping.value, margin.value, price.value, profit.value)
     assert cost.value == c
     assert shipping.value == s
-    assert margin.value == .5*c
-    assert price.value == c + s + .5*c
+    assert margin.value == 0.5 * c
+    assert price.value == c + s + 0.5 * c
     assert profit.value == c + s
 
     return
@@ -57,7 +56,7 @@ def test():
 # main
 if __name__ == "__main__":
     # request debugging support for the pyre.calc package
-    pyre_debug = { "pyre.calc" }
+    pyre_debug = {"pyre.calc"}
     # skip pyre initialization since we don't rely on the executive
     pyre_noboot = True
     # run the test
@@ -65,6 +64,7 @@ if __name__ == "__main__":
     # verify reference counts
     # for nodes
     from pyre.calc.Node import Node
+
     # print(tuple(Node.pyre_extent))
     assert tuple(Node.pyre_extent) == ()
 

@@ -1,12 +1,12 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 from Shape import Shape
+
 
 class Disk(Shape):
     """
@@ -22,15 +22,14 @@ class Disk(Shape):
         r2 = self.radius**2
         x0, y0 = self.center
         # iterate over the given points and return the interior ones
-        for point in points: #@\label{line:disk:generators:loop}@
+        for point in points:  # @\label{line:disk:generators:loop}@
             x, y = point
             dx = x - x0
             dy = y - y0
-            if dx*dx + dy*dy <= r2:
-                yield point #@\label{line:disk:generators:yield}@
+            if dx * dx + dy * dy <= r2:
+                yield point  # @\label{line:disk:generators:yield}@
         # all done
-        return #@\label{line:disk:generators:return}@
-
+        return  # @\label{line:disk:generators:return}@
 
     # meta methods
     def __init__(self, radius=1.0, center=(0.0, 0.0)):

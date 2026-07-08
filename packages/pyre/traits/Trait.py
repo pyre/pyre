@@ -1,14 +1,13 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # superclasses
-from ..descriptors import stem # for types and algebra
-from ..framework.Dashboard import Dashboard # access to the framework managers
+from ..descriptors import stem  # for types and algebra
+from ..framework.Dashboard import Dashboard  # access to the framework managers
 
 
 # declaration
@@ -34,7 +33,7 @@ class Trait(stem.variable, Dashboard):
 
     # framework data
     # my category
-    category = 'trait' # the stem cell of traits...
+    category = "trait"  # the stem cell of traits...
     # predicate that indicates whether this trait is a behavior
     isBehavior = False
     # predicate that indicates whether this trait is a property
@@ -44,7 +43,6 @@ class Trait(stem.variable, Dashboard):
     # predicate that indicates whether this trait is subject to runtime configuration
     isConfigurable = False
 
-
     # framework support
     def classConfigured(self, **kwds):
         """
@@ -52,7 +50,6 @@ class Trait(stem.variable, Dashboard):
         """
         # nothing to do, by default
         return self
-
 
     def instanceConfigured(self, **kwds):
         """

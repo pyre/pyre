@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -18,6 +17,7 @@ def test():
     # declare a protocol
     class task(pyre.protocol):
         """a protocol"""
+
         @pyre.provides
         def do(self):
             """do something"""
@@ -25,6 +25,7 @@ def test():
     # declare a component
     class worker(pyre.component):
         """a component"""
+
         job = task(default="import:sample.relax")
 
     # check that task was bound according to our expectations from sample.py

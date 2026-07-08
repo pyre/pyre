@@ -1,9 +1,8 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 # class declaration
@@ -13,7 +12,6 @@ class Mapping:
 
     Mappings are dictionaries with arbitrary keys whose values are nodes
     """
-
 
     # types
     from .exceptions import CircularReferenceError
@@ -32,7 +30,6 @@ class Mapping:
         # all done
         return
 
-
     # classifiers
     @property
     def mappings(self):
@@ -44,7 +41,6 @@ class Mapping:
         # nothing further
         return
 
-
     # value management
     def getValue(self, **kwds):
         """
@@ -52,7 +48,6 @@ class Mapping:
         """
         # return the value of each operand
         return {name: op.value for name, op in self.data.items()}
-
 
     def setValue(self, value):
         """
@@ -65,7 +60,6 @@ class Mapping:
         # all done
         return self
 
-
     # meta-methods
     def __init__(self, operands, **kwds):
         # chain up with an empty pile of dependencies
@@ -75,18 +69,15 @@ class Mapping:
         # all done
         return
 
-
     def __getitem__(self, key):
         # return the value of the node stored under {key}
         return self.data[key].value
-
 
     def __setitem__(self, key, node):
         # store {node} under {key}
         self.data[key] = node
         # all done
         return
-
 
     # implementation details
     def _substitute(self, current, replacement):

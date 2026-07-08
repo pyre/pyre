@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -12,15 +11,21 @@ Verify that we can specify the metaclass dynamically and the classes still get b
 """
 
 
-class aspectOne(type): pass
-class aspectTwo(type): pass
+class aspectOne(type):
+    pass
+
+
+class aspectTwo(type):
+    pass
 
 
 def classFactory(metaclass=type):
     """
     build a class with the given metaclass
     """
-    class base(object, metaclass=metaclass): pass
+
+    class base(object, metaclass=metaclass):
+        pass
 
     return base
 

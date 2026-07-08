@@ -1,10 +1,9 @@
-#! /usr/bin/env python3
+#!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -21,13 +20,14 @@ def test():
     # make one
     v = gsl.vector(shape=n)
     # fill it
-    for i in range(n): v[i] = i
+    for i in range(n):
+        v[i] = i
     # show me
     # print('v:')
     # v.print(format='{:6.2f}', indent=' '*4)
 
     # pick some parameters
-    start = int(n/4)
+    start = int(n / 4)
     shape = n - start
     # make a subvector
     s = v.view(start=start, shape=shape)
@@ -45,15 +45,14 @@ def test():
     s.fill(0)
     # and check
     for i in range(shape):
-        assert v[start+i] == 0
-
+        assert v[start + i] == 0
 
     # all done
     return
 
 
 # main
-if __name__ == '__main__':
+if __name__ == "__main__":
     test()
 
 # end of file

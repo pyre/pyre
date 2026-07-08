@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -8,6 +9,7 @@
 Exercise the important special case of building a path with a tuple as a single
 argument. For example, this happens when paths are unpickled.
 """
+
 
 def test():
     # the home of the path factory

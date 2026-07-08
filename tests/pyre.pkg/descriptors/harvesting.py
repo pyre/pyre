@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
 
 
 """
@@ -15,6 +14,7 @@ Verify that descriptors can be harvested
 def test():
     # get the descriptor package
     from pyre import descriptors
+
     # get the base metaclass
     from pyre.patterns.AttributeClassifier import AttributeClassifier
 
@@ -31,7 +31,8 @@ def test():
                 # and add them to the pile
                 pile.append(entry)
             # remove them from the attributes
-            for entry in pile: del attributes[entry.name]
+            for entry in pile:
+                del attributes[entry.name]
             # build the class record
             record = super().__new__(cls, name, bases, attributes)
             # attach the pile
@@ -44,11 +45,11 @@ def test():
         # some descriptors
         sku = descriptors.int(default=4503)
         cost = descriptors.float(default=2.34)
-        weight = descriptors.dimensional(default='.5 * lb')
-        price = 2*cost + .5
+        weight = descriptors.dimensional(default=".5 * lb")
+        price = 2 * cost + 0.5
 
     # verify that the descriptors were harvested correctly
-    assert [entry.name for entry in client.pile] == ['sku', 'cost', 'weight', 'price']
+    assert [entry.name for entry in client.pile] == ["sku", "cost", "weight", "price"]
 
     # check that the descriptors have been removed
     try:
