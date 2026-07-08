@@ -25,6 +25,9 @@ pyre_test_python_testcase_mpi(tests/mpi.pkg/min.py 8)
 pyre_test_python_testcase_mpi(tests/mpi.pkg/port.py 7)
 # pyre_test_python_testcase(tests/mpi.pkg/mpirun.py)
 # pyre_test_python_testcase(tests/mpi.pkg/slurm.py)
+# reverted pending review; {ip} is in mm's drivers.exclude (demo)
+# pyre_test_python_testcase(tests/mpi.pkg/ip.py)
+# pyre_test_python_testcase_mpi(tests/mpi.pkg/ip.py 8)
 
 
 # end of file
