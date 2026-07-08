@@ -209,6 +209,7 @@ if(PYRE_BUILD_TESTING)
   # pyre
   include(pyre_tests_pyre_lib)
   include(pyre_tests_pyre_pkg)
+  include(pyre_tests_pyre_ext)
 
   # chroma
   include(pyre_tests_chroma)
