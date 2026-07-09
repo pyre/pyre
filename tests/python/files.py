@@ -12,20 +12,25 @@ Check whether file iterators are synchronized with independent accesses to the f
 
 
 def test():
+    # one line at a time
     single = 0
     with open("files.py") as f:
         for line in f:
             single += 1
 
+    # two lines at a time
     double = 0
     with open("files.py") as f:
         for line in f:
             double += 1
+            # the extra read that shouldn't de-sync the iterator
             extra = f.readline()
             double += 1
 
+    # check
     assert single == double
 
+    # all done
     return
 
 
