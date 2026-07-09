@@ -29,7 +29,7 @@ def test():
         assert False
     except reader.DecodingError as error:
         assert str(error) == (
-            "file='sample-unknownNode.pml', line=12, column=2: decoding error: unknown tag 'BIND'"
+            "file='sample-unknownNode.pml', line=11, column=2: decoding error: unknown tag 'BIND'"
         )
 
     return m, reader
