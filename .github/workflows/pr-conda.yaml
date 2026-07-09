@@ -112,8 +112,19 @@ jobs:
           cd pyre
           echo " -- discovering the conda packages"
           ${mm} --setup
+          echo " -- where the build products will be deposited"
+          ${mm} builder.info
           echo " -- the resulting package database"
           ${mm} extern.db.info
+          echo " -- the externals, as the make engine reads them back"
+          ${mm} extern.info
+          # and each external that {pyre} actually builds against
+          echo " -- the individual packages"
+          ${mm} extern.python.info
+          ${mm} extern.pybind11.info
+          ${mm} extern.gsl.info
+          ${mm} extern.hdf5.info
+          ${mm} extern.mpi.info
 
       - name: build pyre
         run: |
