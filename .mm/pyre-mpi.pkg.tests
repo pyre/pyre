@@ -15,8 +15,11 @@ pyre-mpi.pkg.tests.drivers.exclude := ip.py
 
 # set up a macro for the hostfile
 pyre-mpi.pkg.hostfile := --hostfile localhost
+# see the note in {pyre-mpi.lib.tests}: turn {openmpi} binding off so it will place more ranks
+# than the host has cores
+pyre-mpi.pkg.binding = ${if ${findstring openmpi,$(mpi.flavor)},--bind-to none,}
 # assemble the haness
-pyre-mpi.pkg.harness = $(mpi.executive) $(pyre-mpi.pkg.hostfile)
+pyre-mpi.pkg.harness = $(mpi.executive) $(pyre-mpi.pkg.binding) $(pyre-mpi.pkg.hostfile)
 
 
 # on some machines, running multiple mpi tests at the same time causes trouble
