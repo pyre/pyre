@@ -19,8 +19,11 @@ ifeq ($(pyre-gsl.mpi.available), mpi)
 
 # set up a macro for the hostfile
 pyre-gsl.pkg.mpi.hostfile := --hostfile localhost
+# see the note in {pyre-mpi.lib.tests}: turn {openmpi} binding off so it will place more ranks
+# than the host has cores
+pyre-gsl.pkg.mpi.binding = ${if ${findstring openmpi,$(mpi.flavor)},--bind-to none,}
 # assemble the haness
-pyre-gsl.pkg.mpi.harness = $(mpi.executive) $(pyre-gsl.pkg.mpi.hostfile)
+pyre-gsl.pkg.mpi.harness = $(mpi.executive) $(pyre-gsl.pkg.mpi.binding) $(pyre-gsl.pkg.mpi.hostfile)
 
 # run the following tests both in serial and in parallel
 # matrix bcast

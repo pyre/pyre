@@ -14,8 +14,13 @@ pyre-mpi.lib.tests.c++.defines += $(pyre.lib.c++.defines)
 
 # set up a macro for the hostfile
 pyre-mpi.lib.hostfile := --hostfile localhost
+# these suites ask for more ranks than a CI runner has cores; the hostfile grants the slots, but
+# {openmpi} still refuses to bind that many processes. the {overload-allowed} spelling it
+# recommends is rejected outright by builds without cpu binding support, e.g. on macos, so switch
+# binding off instead; no other flavor understands this option, so they get nothing
+pyre-mpi.lib.binding = ${if ${findstring openmpi,$(mpi.flavor)},--bind-to none,}
 # assemble the haness
-pyre-mpi.lib.harness = $(mpi.executive) $(pyre-mpi.lib.hostfile)
+pyre-mpi.lib.harness = $(mpi.executive) $(pyre-mpi.lib.binding) $(pyre-mpi.lib.hostfile)
 
 # these tests need harnesses
 tests.mpi.lib.sanity.harness = $(pyre-mpi.lib.harness) -np 4
