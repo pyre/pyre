@@ -1,0 +1,133 @@
+# -*- yaml -*-
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2026 all rights reserved
+
+name: conda
+# invoke
+on:
+  # once a week: this workflow guards against drift in {conda-forge}, which moves without any
+  # commit to {pyre}, so a merge is the wrong thing to key on; mondays at 07:00 UTC
+  schedule:
+    - cron: "0 7 * * 1"
+  # and manually
+  workflow_dispatch:
+jobs:
+  # build and test the tip of the default branch against a conda-forge toolchain
+  build:
+    name: >-
+      ${{matrix.target}}
+      ${{matrix.compiler}}
+      on ${{matrix.os}}
+    runs-on: ${{matrix.os}}
+    # a login shell so the micromamba environment is active in every step
+    defaults:
+      run:
+        shell: bash -el {0}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest]
+        # the point is to catch a moving toolchain, not to re-test every build variant, so the
+        # scheduled run carries {opt} only; {pr-conda} covers {debug}
+        target: [opt]
+        compiler: [gcc, clang]
+        # the conda-forge toolchain packages for each compiler
+        include:
+          - compiler: gcc
+            suite: gcc
+            toolchain: gcc gxx
+            cc: gcc
+            cxx: g++
+          - compiler: clang
+            suite: clang
+            toolchain: clang clangxx
+            cc: clang
+            cxx: clang++
+
+    env:
+      # mm discovers its settings from the {mm.yaml} we install into ~/.pyre below
+      mm: python3 ${{github.workspace}}/mm/mm
+      target: ${{matrix.target}}
+      suite: ${{matrix.suite}}
+
+    steps:
+      - name: checkout pyre
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          path: pyre
+
+      - name: clone mm
+        run: |
+          echo " -- cloning mm"
+          git clone https://github.com/aivazis/mm
+
+      - name: conda-forge environment
+        uses: mamba-org/setup-micromamba@v3
+        with:
+          micromamba-version: latest
+          environment-file: pyre/.github/matrix/conda.yml
+          # conda-forge only, with strict priority so nothing leaks in from defaults
+          condarc: |
+            channels:
+              - conda-forge
+            channel_priority: strict
+          # layer the per-matrix toolchain onto the base env
+          create-args: >-
+            ${{matrix.toolchain}}
+
+      - name: versions
+        run: |
+          echo " -- conda prefix"
+          echo "${CONDA_PREFIX}"
+          echo " -- make"
+          make --version
+          echo " -- C compiler"
+          ${{matrix.cc}} --version
+          echo " -- C++ compiler"
+          ${{matrix.cxx}} --version
+          echo " -- python"
+          python --version
+
+      - name: configure mm
+        run: |
+          echo " -- creating the mm configuration directory"
+          mkdir -p ~/.pyre
+          echo " -- installing the mm configuration as ~/.pyre/mm.yaml so mm auto-discovers it"
+          cp pyre/.github/matrix/mm-conda.yaml ~/.pyre/mm.yaml
+
+      - name: package database
+        run: |
+          echo " -- switching to the pyre source directory"
+          cd pyre
+          echo " -- discovering the conda packages"
+          ${mm} --setup
+          echo " -- where the build products will be deposited"
+          ${mm} builder.info
+          echo " -- the resulting package database"
+          ${mm} extern.db.info
+          echo " -- the externals, as the make engine reads them back"
+          ${mm} extern.info
+          # and each external that {pyre} actually builds against; a package that is not available
+          # is never loaded, so its {info} target does not exist and asking for it is a hard error
+          echo " -- the individual packages"
+          ${mm} extern.python.info
+          ${mm} extern.pybind11.info
+          ${mm} extern.gsl.info
+          ${mm} extern.hdf5.info
+
+      - name: build pyre
+        run: |
+          echo " -- switching to the pyre source directory"
+          cd pyre
+          echo " -- building pyre into the conda prefix"
+          ${mm} --jobs=2
+
+      - name: test pyre
+        run: |
+          echo " -- switching to the pyre source directory"
+          cd pyre
+          echo " -- testing pyre"
+          ${mm} --jobs=2 tests
+#
+# end of file
