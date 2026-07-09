@@ -4,35 +4,34 @@
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
 // (c) 1998-2026 all rights reserved
 
-#include <portinfo>
-#include <Python.h>
-#include <string>
 
-#include "exceptions.h"
+// external dependencies
+#include "external.h"
+// namespace setup
+#include "forward.h"
 
 
-// the definition of the exception class
-PyObject * mpi::Error = 0;
-const char * const mpi::Error__name__ = "Error";
-
-// exception registration
-PyObject *
-mpi::registerExceptionHierarchy(PyObject * module)
+// register the exception hierarchy with python
+//
+// every entry point below can throw, and nothing that {pyre::mpi} raises may cross into python
+// unhandled, so each of its three exception types gets a counterpart to arrive as
+void
+pyre::mpi::py::exceptions(py::module & m)
 {
-    std::string stem = "mpi.";
+    // the base of everything the package raises; it derives from python's {Exception}
+    auto error = py::register_exception<Error>(m, "Error");
+    // a failed mpi call
+    py::register_exception<MPIError>(m, "MPIError", error);
+    // an argument whose shape does not match what the call requires
+    py::register_exception<ShapeError>(m, "ShapeError", error);
 
-    // the base class
-    // build its name
-    std::string errorName = stem + Error__name__;
-    // and the exception object
-    Error = PyErr_NewException(errorName.c_str(), 0, 0);
-    // increment its reference count so we can pass ownership to the module
-    Py_INCREF(Error);
-    // register it with the module
-    PyModule_AddObject(module, Error__name__, Error);
+    // the order matters: pybind tries its translators in reverse, so the two derived types
+    // must be registered after their base if a {ShapeError} is to reach python under its own
+    // name rather than its parent's
 
-    // and return the module
-    return module;
+    // all done
+    return;
 }
+
 
 // end of file

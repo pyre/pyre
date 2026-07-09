@@ -18,15 +18,26 @@ def test():
     # initialize it
     ext = mpi.init()
     # get the world communicator
-    world = ext.world
+    world = ext.world()
     # extract the size of the communicator and my rank within it
-    size = ext.communicatorSize(world)
-    rank = ext.communicatorRank(world)
+    size = world.size
+    rank = world.rank
     # verify that my rank is within range
     assert rank in range(size)
 
-    # for debugging purposes:
-    # print("Hello from {}/{}!".format(rank, size))
+    # the communicator that holds me alone
+    alone = ext.self()
+    # has exactly one process
+    assert alone.size == 1
+
+    # asking again for the level of thread support reports what mpi settled on, as one of the
+    # four levels it names
+    assert isinstance(ext.initialize(), ext.Thread)
+
+    # a reduction over whole numbers hands back a whole number
+    assert isinstance(world.sum(item=rank), int)
+    # and one over real numbers hands back a real number
+    assert isinstance(world.sum(item=float(rank)), float)
 
     # all done
     return

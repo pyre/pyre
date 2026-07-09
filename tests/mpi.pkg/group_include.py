@@ -31,7 +31,7 @@ def test():
     if world.rank % 2 == 0:
         assert evens.rank == world.rank / 2
     else:
-        assert evens.rank == evens.mpi.undefined
+        assert evens.rank == mpi.undefined
 
     return
 

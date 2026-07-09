@@ -20,17 +20,26 @@ if sys.platform.startswith("linux"):
     # adjust the {dlopen} flags
     sys.setdlopenflags(sys.getdlopenflags() | ctypes.RTLD_GLOBAL)
 
-# we start out with {world} being a trivial communicator
+# we start out with {world} being a trivial communicator, so that code written against this
+# package runs unchanged on a machine with no mpi at all
 from .TrivialCommunicator import TrivialCommunicator as world
 
 # attempt to load the mpi extension
 try:
-    # try to load the extension
-    from . import mpi as libmpi
-# if it fails for any reason
-except Exception as error:
+    # try to load the bindings
+    from . import libmpi
+# if they were never built, this machine has no mpi; note that the exception must be this
+# narrow: bindings that exist but refuse to load are a bug, and a bug that presents itself as
+# the tranquil absence of mpi is one that nobody ever finds
+except ModuleNotFoundError:
     # indicate that there is no runtime support
     libmpi = None
+
+    # and that none of the entities the bindings publish are available
+    communicator = None
+    cartesian = None
+    group = None
+    port = None
 # otherwise, we have bindings and hence MPI support
 else:
     # grab the shell protocol from pyre
@@ -55,58 +64,76 @@ else:
         # and return it
         return Slurm
 
-    # the factories
-    communicator = None
-    group = None
-    port = None
+    # the entities the bindings publish
+    communicator = libmpi.Communicator
+    cartesian = libmpi.Cartesian
+    group = libmpi.Group
+    port = libmpi.Port
+
+    # the exception hierarchy; a failed mpi call raises one of these, rather than taking the
+    # whole job down
+    Error = libmpi.Error
+    MPIError = libmpi.MPIError
+    ShapeError = libmpi.ShapeError
+
+    # the reduction operators, the outcome of a comparison, and the levels of thread support
+    Op = libmpi.Op
+    Comparison = libmpi.Comparison
+    Thread = libmpi.Thread
+
+    # the constants
+    undefined = libmpi.undefined
+    anySource = libmpi.anySource
+    anyTag = libmpi.anyTag
+    procNull = libmpi.procNull
 
 
-# initialization
-def init():
+# a flag that keeps us from asking the interpreter to shut mpi down more than once
+_registered = False
+
+
+def init(threads=None):
     """
     Initialize the runtime
 
-    We used to do this automatically, but that's not possible any more. The reason is that
-    processes cannot fork/exec {mpirun} after they have called {MPI_Init}. Apparently, this has
-    been discouraged always by {openmpi}, and it is explicitly prohibited with {openmpi-3.0}. So
-    here we are...
+    This cannot happen as a side effect of importing the package: a process may not fork and
+    exec {mpirun} once it has called {MPI_Init}, and {openmpi} forbids it outright. So the
+    launcher builds the parallel machine first, and the application calls this afterwards.
+
+    {threads} names the level of thread support to ask for, as one of the {mpi.Thread} values.
     """
     # if we don't have runtime support
     if not libmpi:
         # bail
         return None
 
-    # register the finalization routine to happen when the interpreter exits
-    import atexit
+    # arrange for the runtime to be shut down when the interpreter exits, but only once, no
+    # matter how many times we are called
+    global _registered
+    # if nobody has done it yet
+    if not _registered:
+        # get the exit hook
+        import atexit
 
-    atexit.register(finalize)
+        # and plant our shutdown
+        atexit.register(finalize)
+        # so that we do not plant it twice
+        _registered = True
 
-    # initialize mpi
-    libmpi.init()
-    # provide access to the extension through the base mpi object
-    from .Object import Object
+    # bring mpi up, asking for whatever level of thread support the caller wants; asking twice
+    # is harmless, since the runtime declines politely when mpi is already up
+    libmpi.initialize() if threads is None else libmpi.initialize(required=threads)
 
-    Object.mpi = libmpi
-
-    # the factory placeholders
-    global communicator
-    global group
-    global port
-    # the factories
-    from .Communicator import Communicator as communicator
-    from .Group import Group as group
-    from .Port import Port as port
-
-    # fix the world communicator
+    # replace the trivial communicator with the real one
     global world
-    # by building a real one
-    world = communicator(capsule=libmpi.world)
+    # now that there is a real one to be had
+    world = libmpi.world()
 
-    # all done
+    # hand back the bindings, so that callers can tell support apart from its absence
     return libmpi
 
 
-def finalize():
+def finalize() -> None:
     """
     Shutdown mpi
     """
@@ -115,29 +142,8 @@ def finalize():
         # bail
         return
 
-    # get the groups
-    from .Group import Group
-
-    # ask each instance
-    for group in Group.pyre_extent:
-        # to forget its capsule
-        group.capsule = None
-
-    # get the communicators
-    from .Communicator import Communicator
-
-    # ask each instance
-    for communicator in Communicator.pyre_extent:
-        # to forget its capsule
-        communicator.capsule = None
-
-    # get {Object}
-    from .Object import Object
-
-    # and destroy the extension handle it holds
-    Object.mpi = None
-
-    # finalize
+    # take mpi down; whatever communicators and groups are still alive may outlive this call
+    # and be collected in any order, since a handle whose runtime is gone releases nothing
     libmpi.finalize()
 
     # all done

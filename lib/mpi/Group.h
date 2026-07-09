@@ -25,8 +25,6 @@ public:
     using storage_type = Handle<GroupHandle>;
     // a collection of ranks, e.g. the members i am asked to keep or drop
     using ranks_type = ranks_t;
-    // the name the original interface gave the same thing; kept so old clients still compile
-    using ranklist_t = ranks_t;
 
     // metamethods
 public:

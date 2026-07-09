@@ -38,12 +38,15 @@ pyre-mpi.lib.c++.defines += $(pyre.lib.c++.defines)
 
 # the mpi extension meta-data
 pyre-mpi.ext.root := extensions/mpi/
-pyre-mpi.ext.stem := mpi
+# the module is {libmpi}, so that it does not shadow the {mpi} package that hosts it, and so
+# that it reads like its siblings {libpyre} and {libh5}
+pyre-mpi.ext.stem := libmpi
 pyre-mpi.ext.pkg := pyre-mpi.pkg
 pyre-mpi.ext.wraps := pyre-mpi.lib
-pyre-mpi.ext.capsule.destination := pyre/mpi/
+# the bindings hand back real classes now, so there are no capsule headers to publish
+pyre-mpi.ext.capsule :=
 pyre-mpi.ext.lib.prerequisites := pyre-mpi.lib pyre.lib
-pyre-mpi.ext.extern := pyre.lib journal.lib mpi python
+pyre-mpi.ext.extern := pyre.lib journal.lib mpi pybind11 python
 pyre-mpi.ext.lib.c++.flags += $(pyre-mpi.lib.c++.flags)
 pyre-mpi.ext.lib.c++.defines += $(pyre-mpi.lib.c++.defines)
 
