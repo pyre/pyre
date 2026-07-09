@@ -162,6 +162,73 @@ pyre::mpi::py::port(py::module & m)
         // the docstring
         "block until a raw payload arrives from my peer, and hand back exactly what came");
 
+    // looking before leaping
+    cls.def(
+        // the name
+        "probe",
+        // the implementation
+        &Port::probe,
+        // block without holding the interpreter, so that other threads may run
+        py::call_guard<py::gil_scoped_release>(),
+        // the docstring
+        "block until my peer sends me something, without receiving it, and report on it");
+
+    cls.def(
+        // the name
+        "iprobe",
+        // the implementation
+        &Port::iprobe,
+        // the docstring
+        "report on a message from my peer if one has already arrived, and hand back {None} if "
+        "none has; this never blocks");
+
+    // the nonblocking payload transfers; as on the communicator, the buffer must outlive the
+    // receipt, and the {keep_alive} says so
+    cls.def(
+        // the name
+        "isendBytes",
+        // the implementation
+        [](const Port & self, const py::bytes & payload) -> Request {
+            // point at the octets python is holding
+            char * data = nullptr;
+            // and learn how many there are
+            Py_ssize_t extent = 0;
+            // ask python for both
+            PyBytes_AsStringAndSize(payload.ptr(), &data, &extent);
+            // start the transfer without holding the interpreter
+            py::gil_scoped_release nogil;
+            // and hand back the receipt
+            return self.isendBytes(data, static_cast<size_type>(extent));
+        },
+        // the signature
+        "payload"_a,
+        // tie the payload's life to the receipt's
+        py::keep_alive<0, 2>(),
+        // the docstring
+        "start shipping a raw payload to my peer, and hand back the receipt");
+
+    cls.def(
+        // the name
+        "irecvBytes",
+        // the implementation
+        [](const Port & self, py::bytearray buffer) -> Request {
+            // point at the octets python is holding
+            char * data = PyByteArray_AsString(buffer.ptr());
+            // and learn how many there are
+            auto extent = PyByteArray_Size(buffer.ptr());
+            // start the transfer without holding the interpreter
+            py::gil_scoped_release nogil;
+            // and hand back the receipt
+            return self.irecvBytes(data, static_cast<size_type>(extent));
+        },
+        // the signature
+        "buffer"_a,
+        // tie the buffer's life to the receipt's
+        py::keep_alive<0, 2>(),
+        // the docstring
+        "start receiving a raw payload from my peer into {buffer}, and hand back the receipt; "
+        "{buffer} must not be resized while the transfer is in flight");
+
     // for the benefit of anybody staring at a prompt
     cls.def(
         // the name

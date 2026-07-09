@@ -67,6 +67,171 @@ namespace pyre::mpi::py {
             // the docstring
             doc);
     }
+
+
+    // bind the collectives that carry a cell of type {cellT} and name their operator explicitly
+    template <typename cellT>
+    inline auto bindCollectives(py::class_<Communicator> & cls) -> void
+    {
+        // combine the contributions of every process, delivering the answer to {root}
+        cls.def(
+            // the name
+            "reduce",
+            // the implementation
+            [](const Communicator & self, cellT item, Op op, rank_t root) -> py::object {
+                // room for the answer, and for my place in the communicator
+                cellT answer;
+                rank_t rank = 0;
+                // combine, without holding the interpreter
+                {
+                    py::gil_scoped_release nogil;
+                    answer = self.reduce(item, op, root);
+                    rank = self.rank();
+                }
+                // everybody but {root} was handed a value that means nothing
+                if (rank != root) {
+                    return py::none();
+                }
+                // so only {root} reports one
+                return py::cast(answer);
+            },
+            // the signature
+            "item"_a, "op"_a, "root"_a = 0,
+            // the docstring
+            "combine the {item} of every process with {op}, delivering the answer to {root}");
+
+        // the same, delivering the answer to everybody
+        cls.def(
+            // the name
+            "allreduce",
+            // the implementation
+            [](const Communicator & self, cellT item, Op op) -> cellT {
+                // combine, without holding the interpreter
+                py::gil_scoped_release nogil;
+                // and hand the answer to every process
+                return self.allreduce(item, op);
+            },
+            // the signature
+            "item"_a, "op"_a,
+            // the docstring
+            "combine the {item} of every process with {op}, delivering the answer to all");
+
+        // the running combination over the processes that precede me
+        cls.def(
+            // the name
+            "scan",
+            // the implementation
+            [](const Communicator & self, cellT item, Op op) -> cellT {
+                // combine, without holding the interpreter
+                py::gil_scoped_release nogil;
+                // myself included
+                return self.scan(item, op);
+            },
+            // the signature
+            "item"_a, "op"_a,
+            // the docstring
+            "combine the {item} of every process that precedes me, myself included");
+
+        cls.def(
+            // the name
+            "exscan",
+            // the implementation
+            [](const Communicator & self, cellT item, Op op) -> py::object {
+                // room for the answer, and for my place in the communicator
+                cellT answer;
+                rank_t rank = 0;
+                // combine, without holding the interpreter
+                {
+                    py::gil_scoped_release nogil;
+                    answer = self.exscan(item, op);
+                    rank = self.rank();
+                }
+                // the standard leaves the answer undefined at rank zero, where nothing precedes
+                if (rank == 0) {
+                    return py::none();
+                }
+                // everybody else has a real one
+                return py::cast(answer);
+            },
+            // the signature
+            "item"_a, "op"_a,
+            // the docstring
+            "combine the {item} of every process that strictly precedes me; {None} at rank zero, "
+            "where the standard leaves the answer undefined");
+
+        // collecting one cell from each process
+        cls.def(
+            // the name
+            "gather",
+            // the implementation
+            [](const Communicator & self, cellT item, rank_t root) -> py::object {
+                // room for the answer, and for my place in the communicator
+                std::vector<cellT> answer;
+                rank_t rank = 0;
+                // collect, without holding the interpreter
+                {
+                    py::gil_scoped_release nogil;
+                    answer = self.gather(item, root);
+                    rank = self.rank();
+                }
+                // only {root} was handed anything
+                if (rank != root) {
+                    return py::none();
+                }
+                // so only {root} reports
+                return py::cast(answer);
+            },
+            // the signature
+            "item"_a, "root"_a = 0,
+            // the docstring
+            "collect the {item} of every process at {root}, in rank order");
+
+        cls.def(
+            // the name
+            "allgather",
+            // the implementation
+            [](const Communicator & self, cellT item) -> std::vector<cellT> {
+                // collect, without holding the interpreter
+                py::gil_scoped_release nogil;
+                // and hand the answer to every process
+                return self.allgather(item);
+            },
+            // the signature
+            "item"_a,
+            // the docstring
+            "collect the {item} of every process, in rank order, and deliver it to all");
+
+        // handing one cell to each process
+        cls.def(
+            // the name
+            "scatter",
+            // the implementation
+            [](const Communicator & self, const std::vector<cellT> & items, rank_t root) -> cellT {
+                // hand them out, without holding the interpreter
+                py::gil_scoped_release nogil;
+                // each process receives the cell addressed to it
+                return self.scatter(items, root);
+            },
+            // the signature
+            "items"_a, "root"_a = 0,
+            // the docstring
+            "hand the nth cell of {items} to the nth process; only {root}'s {items} matters");
+
+        cls.def(
+            // the name
+            "alltoall",
+            // the implementation
+            [](const Communicator & self, const std::vector<cellT> & items) -> std::vector<cellT> {
+                // exchange, without holding the interpreter
+                py::gil_scoped_release nogil;
+                // every process hands one cell to every process
+                return self.alltoall(items);
+            },
+            // the signature
+            "items"_a,
+            // the docstring
+            "hand the nth cell of every process's {items} to the nth process");
+    }
 } // namespace pyre::mpi::py
 
 
@@ -297,6 +462,11 @@ pyre::mpi::py::communicator(py::module & m)
     bindReduction<integer_t>(cls, "min", Op::minimum, "perform a min reduction");
     bindReduction<real_t>(cls, "min", Op::minimum, "perform a min reduction");
 
+    // the rest of the collective family, which names its operator rather than implying it; as
+    // above, the integral overload of each goes first
+    bindCollectives<integer_t>(cls);
+    bindCollectives<real_t>(cls);
+
     // point to point operations, in their raw form; the conduit above is the pleasant face
     cls.def(
         // the name
@@ -336,6 +506,82 @@ pyre::mpi::py::communicator(py::module & m)
         "peer"_a, "tag"_a = anyTag,
         // the docstring
         "block until a raw payload arrives from {peer}, and hand back exactly what came");
+
+    cls.def(
+        // the name
+        "probe",
+        // the implementation
+        &Communicator::probe,
+        // block without holding the interpreter, so that other threads may run
+        py::call_guard<py::gil_scoped_release>(),
+        // the signature
+        "peer"_a = anySource, "tag"_a = anyTag,
+        // the docstring
+        "block until a matching message arrives, without receiving it, and report on it");
+
+    cls.def(
+        // the name
+        "iprobe",
+        // the implementation
+        &Communicator::iprobe,
+        // the signature
+        "peer"_a = anySource, "tag"_a = anyTag,
+        // the docstring
+        "report on a matching message if one has already arrived, and hand back {None} if none "
+        "has; this never blocks");
+
+    // the nonblocking payload transfers. mpi reads and writes the buffer long after the call
+    // that started the transfer has returned, so the buffer must outlive the receipt. the
+    // {keep_alive} below says exactly that: python may not collect the buffer while the receipt
+    // it handed back is still reachable
+    cls.def(
+        // the name
+        "isendBytes",
+        // the implementation
+        [](const Communicator & self, const py::bytes & payload, rank_t peer,
+           tag_t tag) -> Request {
+            // point at the octets python is holding; a {bytes} object never moves them, and
+            // never lets anybody change them
+            char * data = nullptr;
+            // and learn how many there are
+            Py_ssize_t extent = 0;
+            // ask python for both
+            PyBytes_AsStringAndSize(payload.ptr(), &data, &extent);
+            // start the transfer without holding the interpreter
+            py::gil_scoped_release nogil;
+            // and hand back the receipt
+            return self.isendBytes(data, static_cast<size_type>(extent), peer, tag);
+        },
+        // the signature
+        "payload"_a, "peer"_a, "tag"_a = 0,
+        // tie the payload's life to the receipt's
+        py::keep_alive<0, 2>(),
+        // the docstring
+        "start shipping a raw payload to {peer}, and hand back the receipt; the payload is kept "
+        "alive for as long as the receipt is");
+
+    cls.def(
+        // the name
+        "irecvBytes",
+        // the implementation
+        [](const Communicator & self, py::bytearray buffer, rank_t peer, tag_t tag) -> Request {
+            // point at the octets python is holding
+            char * data = PyByteArray_AsString(buffer.ptr());
+            // and learn how many there are; the transfer fills exactly this many
+            auto extent = PyByteArray_Size(buffer.ptr());
+            // start the transfer without holding the interpreter
+            py::gil_scoped_release nogil;
+            // and hand back the receipt
+            return self.irecvBytes(data, static_cast<size_type>(extent), peer, tag);
+        },
+        // the signature
+        "buffer"_a, "peer"_a, "tag"_a = anyTag,
+        // tie the buffer's life to the receipt's
+        py::keep_alive<0, 2>(),
+        // the docstring
+        "start receiving a raw payload from {peer} into {buffer}, and hand back the receipt; the "
+        "buffer is kept alive for as long as the receipt is, and must not be resized while the "
+        "transfer is in flight");
 
     // process control
     cls.def(
