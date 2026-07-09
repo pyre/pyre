@@ -24,8 +24,12 @@ PYBIND11_MODULE(libmpi, m)
 
     // the exception hierarchy, first, so that everything registered below it can raise
     pyre::mpi::py::exceptions(m);
-    // the enumerations
+    // the enumerations, next, since the default arguments below name their values
     pyre::mpi::py::enums(m);
+
+    // what mpi reports about a transfer, finished or not
+    pyre::mpi::py::status(m);
+    pyre::mpi::py::request(m);
 
     // the structural entities; the communicator hands back groups, cartesian communicators and
     // conduits, so they must all be registered before anybody calls one of its methods, though

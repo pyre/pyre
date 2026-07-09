@@ -37,6 +37,8 @@ tests.mpi.pkg.product.pre := tests.mpi.pkg.sum
 tests.mpi.pkg.max.pre := tests.mpi.pkg.product
 tests.mpi.pkg.min.pre := tests.mpi.pkg.max
 tests.mpi.pkg.port.pre := tests.mpi.pkg.min
+tests.mpi.pkg.collectives.pre := tests.mpi.pkg.port
+tests.mpi.pkg.nonblocking.pre := tests.mpi.pkg.collectives
 
 # the sanity tests
 # {extension} has cases
@@ -135,6 +137,20 @@ tests.mpi.pkg.port.cases := \
 # {serial} runs as is
 # {parallel} has a harness
 tests.pyre-mpi.pkg.port.parallel.harness = $(pyre-mpi.pkg.harness) -np 7
+
+# {collectives} has cases
+tests.mpi.pkg.collectives.cases := \
+    tests.pyre-mpi.pkg.collectives.serial tests.pyre-mpi.pkg.collectives.parallel
+# {serial} runs as is
+# {parallel} has a harness
+tests.pyre-mpi.pkg.collectives.parallel.harness = $(pyre-mpi.pkg.harness) -np 8
+
+# {nonblocking} has cases
+tests.mpi.pkg.nonblocking.cases := \
+    tests.pyre-mpi.pkg.nonblocking.serial tests.pyre-mpi.pkg.nonblocking.parallel
+# {serial} runs as is
+# {parallel} has a harness
+tests.pyre-mpi.pkg.nonblocking.parallel.harness = $(pyre-mpi.pkg.harness) -np 7
 
 
 # end of file

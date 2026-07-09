@@ -21,10 +21,9 @@ namespace pyre::mpi::py {
     // the exception hierarchy, translated into python
     void exceptions(py::module & m);
 
-    // note the absence of {Status} and {Request}: they are part of the c++ surface, but nothing
-    // here can build one, because the nonblocking transfers that hand them back need a buffer
-    // that outlives the call, and python cannot promise that without a lot more machinery than
-    // any client of this module has yet asked for
+    // what mpi reports about a transfer, finished or not
+    void status(py::module & m);
+    void request(py::module & m);
 
     // the structural entities
     void group(py::module & m);
