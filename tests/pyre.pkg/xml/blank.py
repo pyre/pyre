@@ -27,7 +27,7 @@ def test():
         reader.read(stream=open("sample-blank.xml"), document=document)
         assert False
     except reader.ParsingError as error:
-        assert str(error) == "file='sample-blank.xml', line=11, column=0: no element found"
+        assert str(error) == "file='sample-blank.xml', line=10, column=0: no element found"
 
     return document
 
