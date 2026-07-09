@@ -3,8 +3,12 @@
 # (c) 1998-2026 all rights reserved
 
 name: pr-conda
+# invoke
 on:
+  # when a commit to a PR is made
   pull_request:
+  # and manually
+  workflow_dispatch:
 jobs:
   # build and test the ref that launched this action against a conda-forge toolchain
   build:
@@ -38,7 +42,8 @@ jobs:
             cxx: clang++
 
     env:
-      mm: python3 ${{github.workspace}}/mm/mm --config=.github/matrix/mm-conda.yaml
+      # mm discovers its settings from the {mm.yaml} we install into ~/.pyre below
+      mm: python3 ${{github.workspace}}/mm/mm
       target: ${{matrix.target}}
       suite: ${{matrix.suite}}
 
@@ -88,9 +93,9 @@ jobs:
 
       - name: configure mm
         run: |
-          echo " -- creating ~/.pyre"
+          echo " -- creating the mm configuration directory"
           mkdir -p ~/.pyre
-          echo " -- copying the mm configuration file"
+          echo " -- installing the mm configuration as ~/.pyre/mm.yaml so mm auto-discovers it"
           cp pyre/.github/matrix/mm-conda.yaml ~/.pyre/mm.yaml
 
       - name: package database
@@ -98,22 +103,22 @@ jobs:
           echo " -- switching to the pyre source directory"
           cd pyre
           echo " -- discovering the conda packages"
-          ${mm} --pkgdb=conda --setup
+          ${mm} --setup
           echo " -- the resulting package database"
-          ${mm} --pkgdb=conda extern.db.info
+          ${mm} extern.db.info
 
       - name: build pyre
         run: |
           echo " -- switching to the pyre source directory"
           cd pyre
           echo " -- building pyre into the conda prefix"
-          ${mm} --pkgdb=conda --mode=conda --jobs=2
+          ${mm} --jobs=2
 
       - name: test pyre
         run: |
           echo " -- switching to the pyre source directory"
           cd pyre
           echo " -- testing pyre"
-          ${mm} --pkgdb=conda --mode=conda --jobs=2 tests
+          ${mm} --jobs=2 tests
 #
 # end of file
