@@ -20,32 +20,32 @@ ifeq ($(pyre-gsl.mpi.available), mpi)
 # set up a macro for the hostfile
 pyre-gsl.pkg.mpi.hostfile := --hostfile localhost
 # assemble the haness
-pyre-gsl.pkg.mpi.harness := $(mpi.executive) $(pyre-gsl.pkg.mpi.hostfile)
+pyre-gsl.pkg.mpi.harness = $(mpi.executive) $(pyre-gsl.pkg.mpi.hostfile)
 
 # run the following tests both in serial and in parallel
 # matrix bcast
 tests.gsl.pkg.matrix_bcast.cases := matrix_bcast.serial matrix_bcast.parallel
-matrix_bcast.parallel.harness := $(pyre-gsl.pkg.mpi.harness) -np 8
+matrix_bcast.parallel.harness = $(pyre-gsl.pkg.mpi.harness) -np 8
 
 # matrix collect
 tests.gsl.pkg.matrix_collect.cases := matrix_collect.serial matrix_collect.parallel
-matrix_collect.parallel.harness := $(pyre-gsl.pkg.mpi.harness) -np 8
+matrix_collect.parallel.harness = $(pyre-gsl.pkg.mpi.harness) -np 8
 
 # matrix partition
 tests.gsl.pkg.matrix_partition.cases := matrix_partition.serial matrix_partition.parallel
-matrix_partition.parallel.harness := $(pyre-gsl.pkg.mpi.harness) -np 8
+matrix_partition.parallel.harness = $(pyre-gsl.pkg.mpi.harness) -np 8
 
 # vector bcast
 tests.gsl.pkg.vector_bcast.cases := vector_bcast.serial vector_bcast.parallel
-vector_bcast.parallel.harness := $(pyre-gsl.pkg.mpi.harness) -np 8
+vector_bcast.parallel.harness = $(pyre-gsl.pkg.mpi.harness) -np 8
 
 # vector collect
 tests.gsl.pkg.vector_collect.cases := vector_collect.serial vector_collect.parallel
-vector_collect.parallel.harness := $(pyre-gsl.pkg.mpi.harness) -np 8
+vector_collect.parallel.harness = $(pyre-gsl.pkg.mpi.harness) -np 8
 
 # vector partition
 tests.gsl.pkg.vector_partition.cases := vector_partition.serial vector_partition.parallel
-vector_partition.parallel.harness := $(pyre-gsl.pkg.mpi.harness) -np 8
+vector_partition.parallel.harness = $(pyre-gsl.pkg.mpi.harness) -np 8
 
 #if not
 else
