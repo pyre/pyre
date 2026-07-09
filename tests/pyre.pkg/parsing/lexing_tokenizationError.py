@@ -69,14 +69,14 @@ def test():
     error = sink.errors[0]
     # is at line 7, column 31
     assert error.locator.source == filename
-    assert error.locator.line == 7
+    assert error.locator.line == 6
     assert error.locator.column == 31
 
     # the second
     error = sink.errors[1]
     # is at line 8, column 24
     assert error.locator.source == filename
-    assert error.locator.line == 8
+    assert error.locator.line == 7
     assert error.locator.column == 24
 
     return

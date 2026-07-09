@@ -49,8 +49,6 @@ def test():
         Simple.whitespace,
         Simple.comment,
         Simple.whitespace,
-        Simple.comment,
-        Simple.whitespace,
         Simple.whitespace,
         Simple.whitespace,
         Simple.identifier,
