@@ -58,7 +58,7 @@ def test():
     except channel.ApplicationError as error:
         # verify that the description is correct
         assert str(error) == (
-            f"file='{__file__}', line='52', function='test': " "application error; aborting..."
+            f"file='{__file__}', line='54', function='test': " "application error; aborting..."
         )
 
     # all done
