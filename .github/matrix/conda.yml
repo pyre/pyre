@@ -6,8 +6,12 @@
 # toolchain (gcc/clang) and the optional cuda toolkit are layered on top of this
 # base by the workflow, so they are deliberately absent here
 name: pyre
+
+# stick to conda-forge only
 channels:
   - conda-forge
+
+# packages
 dependencies:
   # the build driver: conda-forge ships GNU make >= 4.4, which mm needs for {.WAIT}
   - make
@@ -20,5 +24,5 @@ dependencies:
   - gsl
   - hdf5
   - openmpi
-#
+
 # end of file
