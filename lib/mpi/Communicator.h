@@ -34,8 +34,6 @@ public:
     using group_type = Group;
     // a collection of ranks
     using ranks_type = ranks_t;
-    // the name the original interface gave the same thing; kept so old clients still compile
-    using ranklist_t = ranks_t;
 
     // metamethods
 public:
