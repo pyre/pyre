@@ -470,6 +470,26 @@ pyre::mpi::Communicator::probe(rank_t peer, tag_t tag) const -> Status
 }
 
 
+// ask whether a matching message has already arrived
+auto
+pyre::mpi::Communicator::iprobe(rank_t peer, tag_t tag) const -> std::optional<Status>
+{
+    // room for the report
+    Status status;
+    // and for mpi's answer
+    int waiting = 0;
+    // ask, without blocking
+    check(MPI_Iprobe(peer, tag, handle(), &waiting, status.raw()));
+    // when nothing matching has shown up yet
+    if (!waiting) {
+        // say so
+        return std::nullopt;
+    }
+    // otherwise, describe what is waiting
+    return status;
+}
+
+
 // send to one peer and receive from another in a single call
 template <typename cellT>
 auto
@@ -512,6 +532,34 @@ pyre::mpi::Communicator::irecv(cellT & value, rank_t peer, tag_t tag) const -> R
     Request::handle_type request = MPI_REQUEST_NULL;
     // start the transfer; {value} must outlive it, which is the caller's problem
     check(MPI_Irecv(&value, 1, datatype<cellT>(), peer, tag, handle(), &request));
+    // wrap the receipt and hand it off
+    return Request(request);
+}
+
+
+// start shipping the {extent} octets at {data} to {peer}
+auto
+pyre::mpi::Communicator::isendBytes(
+    const void * data, size_type extent, rank_t peer, tag_t tag) const -> Request
+{
+    // room for the receipt
+    Request::handle_type request = MPI_REQUEST_NULL;
+    // start the transfer; the buffer must stay put and stay alive until the receipt completes
+    check(MPI_Isend(data, extent, MPI_BYTE, peer, tag, handle(), &request));
+    // wrap the receipt and hand it off
+    return Request(request);
+}
+
+
+// start receiving {extent} octets into {data}
+auto
+pyre::mpi::Communicator::irecvBytes(void * data, size_type extent, rank_t peer, tag_t tag) const
+    -> Request
+{
+    // room for the receipt
+    Request::handle_type request = MPI_REQUEST_NULL;
+    // start the transfer; as above, the buffer belongs to the caller for the duration
+    check(MPI_Irecv(data, extent, MPI_BYTE, peer, tag, handle(), &request));
     // wrap the receipt and hand it off
     return Request(request);
 }

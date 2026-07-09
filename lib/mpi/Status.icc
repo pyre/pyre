@@ -54,6 +54,19 @@ pyre::mpi::Status::error() const -> int
 }
 
 
+// whether the transfer was cancelled before it could complete
+auto
+pyre::mpi::Status::cancelled() const -> bool
+{
+    // room for the answer
+    int flag = 0;
+    // only mpi knows; cancellation is not a field of the struct
+    check(MPI_Test_cancelled(&_status, &flag));
+    // hand it off
+    return flag != 0;
+}
+
+
 // how many cells of type {cellT} the message held
 template <typename cellT>
 auto

@@ -153,6 +153,8 @@ public:
 
     // wait for a matching message to arrive, without receiving it, and report on it
     inline auto probe(rank_t peer, tag_t tag = anyTag) const -> Status;
+    // ask whether a matching message has already arrived, without waiting for one to
+    inline auto iprobe(rank_t peer, tag_t tag = anyTag) const -> std::optional<Status>;
     // send to one peer and receive from another in a single call, which mpi is free to
     // schedule without deadlocking
     template <typename cellT>
@@ -166,6 +168,14 @@ public:
     // start receiving into {value}, which must outlive the transfer, and hand back the receipt
     template <typename cellT>
     inline auto irecv(cellT & value, rank_t peer, tag_t tag = anyTag) const -> Request;
+
+    // start shipping the {extent} octets at {data} to {peer}; the buffer belongs to the caller,
+    // and must outlive the transfer
+    inline auto isendBytes(const void * data, size_type extent, rank_t peer, tag_t tag = 0) const
+        -> Request;
+    // start receiving {extent} octets into {data}; as above, the buffer belongs to the caller
+    inline auto irecvBytes(void * data, size_type extent, rank_t peer, tag_t tag = anyTag) const
+        -> Request;
 
     // process control
 public:

@@ -172,9 +172,51 @@ main()
         auto speaker = downstream.isend(rank);
         // block until both are done
         speaker.wait();
-        listener.wait();
+        auto arrived = listener.wait();
         // and the value came round once more
         assert(posted == previous);
+        // nothing was cancelled along the way
+        assert(!arrived.cancelled());
+
+        // {waitAny} completes exactly one transfer and leaves the rest in flight
+        int first = -1;
+        // post a receive
+        std::vector<pyre::mpi::Request> inflight;
+        // upstream
+        inflight.push_back(upstream.irecv(first));
+        // and a send downstream
+        inflight.push_back(downstream.isend(rank));
+        // wait for whichever finishes first
+        auto [winner, outcome] = pyre::mpi::waitAny(inflight);
+        // it names one of the two
+        assert(winner == 0 || winner == 1);
+        // and mpi has emptied that receipt, while the other may well still be in flight
+        assert(!inflight[winner].active());
+        // finish whatever is left
+        pyre::mpi::waitAll(inflight);
+        // and the value came round
+        assert(first == previous);
+        // the report belongs to the transfer that won
+        assert(!outcome.cancelled());
+
+        // once a message has landed, {iprobe} sees it without blocking; before it lands, it
+        // says so rather than waiting. drive it with a payload that is already on its way
+        pyre::mpi::bytes_t sent { std::byte(rank) };
+        // ship it
+        downstream.sendBytes(sent);
+        // and spin until the one addressed to me shows up
+        std::optional<pyre::mpi::Status> waiting;
+        // asking as often as it takes
+        while (!(waiting = upstream.iprobe())) {
+        }
+        // what is waiting carries a single octet
+        assert(waiting->count(MPI_BYTE) == 1);
+        // sent by the process before me
+        assert(waiting->source() == previous);
+        // now take it
+        auto octets = upstream.recvBytes();
+        // and it says who sent it
+        assert(octets.size() == 1 && octets[0] == std::byte(previous));
 
         // broadcasting a payload works the same way: only the root knows how long it is, and
         // everybody else learns the extent from the call itself
