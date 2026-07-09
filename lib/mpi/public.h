@@ -34,6 +34,7 @@
 #include "Group.h"
 #include "Communicator.h"
 #include "Cartesian.h"
+#include "Port.h"
 // bringing mpi up and down, and the communicators it predefines
 #include "runtime.h"
 

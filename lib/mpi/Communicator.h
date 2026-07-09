@@ -13,8 +13,9 @@
 // the owner of my handle, and the recipe it uses to release it
 #include "traits.h"
 #include "Handle.h"
-// the entities i hand back by value; {Cartesian} is not among them, since it derives from me
-// and so cannot be complete before i am, and a declaration is all my factory needs
+// the entities i hand back by value. neither {Cartesian} nor {Port} is among them: the first
+// derives from me and so cannot be complete before i am, and the second carries me by value;
+// for both, my factories need nothing more than the declarations in {forward.h}
 #include "Group.h"
 #include "Status.h"
 #include "Request.h"
@@ -80,6 +81,9 @@ public:
     // {periods}, and letting mpi renumber them when {reorder} is set
     inline auto cartesian(const shape_t & shape, const shape_t & periods, int reorder) const
         -> Cartesian;
+    // establish a conduit between this process and {peer}, over me; every message that goes
+    // through it carries {tag}
+    inline auto port(rank_t peer, tag_t tag = 0) const -> Port;
 
     // collective operations
 public:

@@ -129,6 +129,53 @@ main()
         assert(incoming[1] == std::byte(0xab));
         assert(incoming[2] == std::byte(0xcd));
 
+        // a port is the same ring, said once instead of at every call site: it remembers the
+        // peer and the label, so the transfers below name neither
+        auto upstream = world.port(previous, 31);
+        // and one for the neighbor i speak to
+        auto downstream = world.port(next, 31);
+        // which remember what they were built with
+        assert(upstream.peer() == previous);
+        assert(downstream.tag() == 31);
+
+        // pass a value around the ring through the ports; the even ranks speak first, as before
+        int relayed = -1;
+        // so split on parity
+        if (rank % 2 == 0) {
+            downstream.send(rank);
+            upstream.recv(relayed);
+        } else {
+            upstream.recv(relayed);
+            downstream.send(rank);
+        }
+        // and the value came round
+        assert(relayed == previous);
+
+        // the ports move text as readily as they move cells
+        pyre::mpi::string_t greeting;
+        // the even ranks speak first
+        if (rank % 2 == 0) {
+            downstream.sendString("hello " + std::to_string(next));
+            greeting = upstream.recvString();
+        } else {
+            greeting = upstream.recvString();
+            downstream.sendString("hello " + std::to_string(next));
+        }
+        // and the text arrived whole, sized by the message rather than by a terminating null
+        assert(greeting == "hello " + std::to_string(rank));
+
+        // the nonblocking transfers work through a port too, and need no parity split
+        int posted = -1;
+        // start listening upstream
+        auto listener = upstream.irecv(posted);
+        // and speaking downstream
+        auto speaker = downstream.isend(rank);
+        // block until both are done
+        speaker.wait();
+        listener.wait();
+        // and the value came round once more
+        assert(posted == previous);
+
         // broadcasting a payload works the same way: only the root knows how long it is, and
         // everybody else learns the extent from the call itself
         pyre::mpi::bytes_t payload;

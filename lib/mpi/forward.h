@@ -40,6 +40,8 @@ namespace pyre::mpi {
     class Communicator;
     // a communicator whose processes are arranged on a cartesian grid
     class Cartesian;
+    // a conduit between this process and one fixed peer
+    class Port;
 } // namespace pyre::mpi
 
 
