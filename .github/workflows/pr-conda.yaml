@@ -27,7 +27,8 @@ jobs:
         os: [ubuntu-latest]
         target: [debug, opt]
         compiler: [gcc, clang]
-        cuda: [nocuda, cuda]
+        # temporarily disabled while we shake out the workflow; restore by putting {cuda} back
+        cuda: [nocuda]
         # cuda rides the gcc legs only; {cuda-nvcc} always hands the {.cu} sources to the conda
         # {gcc} named by {$CXX}, so a clang+cuda leg would compile the device code identically
         exclude:
