@@ -23,14 +23,18 @@ main()
     assert(!pyre::mpi::finalized());
 
     // bring it up, asking for the weakest thread guarantee, which every implementation grants
-    int granted = pyre::mpi::initialize(MPI_THREAD_SINGLE);
-    // mpi must grant at least what we asked for
-    assert(granted >= MPI_THREAD_SINGLE);
+    auto granted = pyre::mpi::initialize(pyre::mpi::Thread::single);
+    // mpi must grant at least what we asked for; my levels are ordered by increasing freedom,
+    // so this comparison answers the question a caller actually has
+    assert(granted >= pyre::mpi::Thread::single);
     // and now it is up
     assert(pyre::mpi::initialized());
 
     // asking again must be harmless, and must report the same level
-    assert(pyre::mpi::initialize(MPI_THREAD_SINGLE) == granted);
+    assert(pyre::mpi::initialize(pyre::mpi::Thread::single) == granted);
+
+    // whatever level we were granted, it is one of the four the standard names
+    assert(pyre::mpi::threadSupport(pyre::mpi::threadLevel(granted)) == granted);
 
     // push down a scope so our handles die before mpi does
     {

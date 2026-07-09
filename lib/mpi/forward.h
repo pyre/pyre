@@ -148,6 +148,30 @@ namespace pyre::mpi {
 } // namespace pyre::mpi
 
 
+// how much of the mpi interface a threaded process may use
+namespace pyre::mpi {
+    // the four levels, in the order of increasing freedom that the standard guarantees, so that
+    // comparing two of them answers the question a caller actually has: is this enough?
+    enum class Thread {
+        // only one thread will execute
+        single,
+        // only the thread that brought mpi up will call it
+        funneled,
+        // any thread may call mpi, but never two at once
+        serialized,
+        // any thread may call mpi at any time
+        multiple,
+    };
+
+    // translate one of my levels into the constant mpi expects. mpi fixes the names of these
+    // four and their order, but not the type: openmpi makes them an anonymous enum, while
+    // mpich makes them an {int}. so neither spelling may escape this package
+    inline auto threadLevel(Thread thread) -> int;
+    // and translate mpi's answer back into one of my labels
+    inline auto threadSupport(int level) -> Thread;
+} // namespace pyre::mpi
+
+
 // the group set operations, which are free functions because none of their arguments is
 // privileged
 namespace pyre::mpi {
@@ -163,7 +187,7 @@ namespace pyre::mpi {
 // the runtime
 namespace pyre::mpi {
     // bring mpi up, asking for the given level of thread support, and report the level granted
-    inline auto initialize(int required = MPI_THREAD_SINGLE) -> int;
+    inline auto initialize(Thread required = Thread::single) -> Thread;
     // take mpi down
     inline auto finalize() -> void;
     // whether {initialize} has been called
