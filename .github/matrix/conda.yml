@@ -31,6 +31,10 @@ dependencies:
   # the native external packages
   - gsl
   - hdf5
-  - openmpi
+  # openmpi is withheld: {pyre.platforms} has no conda package manager, so {pyre.externals}
+  # cannot register the conda-provided openmpi and the {mpi} test suites fail at runtime. its
+  # absence gates the whole {pyre-mpi} project out of the build; restore it once the packager
+  # lands. nothing else in this environment wants it -- hdf5 resolves to its {nompi} variant
+  # - openmpi
 
 # end of file
