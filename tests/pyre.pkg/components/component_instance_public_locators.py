@@ -29,7 +29,7 @@ def test():
     loc = c.pyre_where()
     # check that it is correct
     assert loc.source.endswith("component_instance_public_locators.py")
-    assert loc.line == 26
+    assert loc.line == 27
     assert loc.function == "test"
 
     # ask for the trait value and verify it is the default
@@ -38,7 +38,7 @@ def test():
     loc = c.pyre_where("p")
     # check it is correct
     assert loc.source.endswith("component_instance_public_locators.py")
-    assert loc.line == 26
+    assert loc.line == 27
     assert loc.function == "test"
 
     # set it
@@ -49,7 +49,7 @@ def test():
     loc = c.pyre_where("p")
     # check it is correct
     assert loc.source.endswith("component_instance_public_locators.py")
-    assert loc.line == 44
+    assert loc.line == 45
     assert loc.function == "test"
 
     # all done
