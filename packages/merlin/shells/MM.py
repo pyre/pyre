@@ -1692,7 +1692,7 @@ class MM(pyre.application, family="pyre.applications.mm", namespace="mm"):
                 "module": "pybind11",
             },
             "pyre": {"candidates": ["pyre"]},
-            "python": {"candidates": ["python"], "trim": True},
+            "python": {"candidates": ["python"], "handler": "_emitCondaPython", "trim": True},
             "slepc": {"candidates": ["slepc"]},
             "sundials": {"candidates": ["sundials"]},
             "vtk": {"candidates": ["vtk"]},
@@ -1892,6 +1892,34 @@ class MM(pyre.application, family="pyre.applications.mm", namespace="mm"):
         except ValueError:
             # record where it actually is
             entry["lines"].append(f"{target}.dir ?= {root}")
+
+    def _emitCondaPython(self, entry, recipe, candidate, record, prefix):
+        """
+        Emit the configuration for the python interpreter; conda ships free-threading builds
+        whose headers sit in {include/python3.14t}, so read the ABI suffix off the directory
+        that owns {Python.h} instead of rebuilding the name from the version alone
+        """
+        # the interpreter is installed at the root of the environment
+        entry["lines"].append("python.dir ?= $(conda.prefix)")
+        # find the directory that owns the main header
+        incdir = self._condaManifestDir(record, lambda path: path.name == "Python.h")
+        # if the manifest doesn't mention it, leave {model} at its {init.mm} default and let the
+        # {markers.headers} check downstream complain about the missing header
+        if incdir is None:
+            # nothing more we can say
+            return
+        # the stem that {init.mm} builds the interpreter name from, e.g. {python3.14}
+        stem = f"python{entry['version']}"
+        # whatever the directory appends to that stem is the ABI model: {t} for free-threading,
+        # {d} for a debug build, empty for the standard one
+        model = incdir.name[len(stem) :] if incdir.name.startswith(stem) else ""
+        # the standard build needs nothing; {init.mm} already defaults {model} to empty
+        if not model:
+            # so leave it alone
+            return
+        # otherwise hand the suffix to the build, so that the interpreter name, the configurator,
+        # the include path and the library name all pick it up together
+        entry["lines"].append(f"python.model ?= {model}")
 
     def _emitCondaCuda(self, index, prefix):
         """
