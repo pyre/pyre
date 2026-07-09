@@ -14,8 +14,8 @@
 #include <pyre/mpi.h>
 
 
-// exercise the collective family, none of which the original wrapper exposed, and all of
-// which now deduce their datatype from the cells they are handed
+// exercise the collective family, each of which deduces its datatype from the cells it is
+// handed
 int
 main()
 {
@@ -33,8 +33,7 @@ main()
         // the sum of every rank, which several of the checks below lean on
         auto total = size * (size - 1) / 2;
 
-        // reductions no longer force everything through {double}: this one stays integral all
-        // the way, which the original bindings could not express
+        // a reduction over whole numbers stays whole all the way through
         auto sum = world.reduce(rank, pyre::mpi::Op::sum, 0);
         // only the root receives the answer
         if (rank == 0) {

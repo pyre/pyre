@@ -65,8 +65,7 @@ main()
         // check that it threw
         assert(raised);
 
-        // and as a plain {std::exception}, which is what lets the bindings above us translate
-        // every failure into a python exception rather than calling {std::terminate}
+        // and as a plain {std::exception}, which is the face the bindings above us catch by
         raised = false;
         // so throw it once more
         try {
