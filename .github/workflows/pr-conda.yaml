@@ -119,13 +119,15 @@ jobs:
           ${mm} extern.db.info
           echo " -- the externals, as the make engine reads them back"
           ${mm} extern.info
-          # and each external that {pyre} actually builds against
+          # and each external that {pyre} actually builds against; a package that is not available
+          # is never loaded, so its {info} target does not exist and asking for it is a hard error
           echo " -- the individual packages"
           ${mm} extern.python.info
           ${mm} extern.pybind11.info
           ${mm} extern.gsl.info
           ${mm} extern.hdf5.info
-          ${mm} extern.mpi.info
+          # restore alongside {openmpi} in {conda.yml}
+          # ${mm} extern.mpi.info
 
       - name: build pyre
         run: |
