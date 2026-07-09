@@ -8,6 +8,15 @@
 #pragma once
 
 
+// my declarations
+#include "Status.h"
+
+// the {check} that turns a failed mpi status into an exception
+#include "Error.h"
+// the deduction of the layout of the cells i counted
+#include "datatypes.h"
+
+
 // metamethods
 // build an empty status, ready to be handed to a receive
 pyre::mpi::Status::Status() : _status {} {}

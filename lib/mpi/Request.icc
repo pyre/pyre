@@ -8,6 +8,15 @@
 #pragma once
 
 
+// my declarations
+#include "Request.h"
+
+// the {check} that turns a failed mpi status into an exception
+#include "Error.h"
+// i must know whether mpi is still up before i try to hand a token back to it
+#include "state.h"
+
+
 // metamethods
 // build a request that names no transfer
 pyre::mpi::Request::Request() : _request(MPI_REQUEST_NULL) {}

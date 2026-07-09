@@ -11,6 +11,12 @@
 // my declarations
 #include "Communicator.h"
 
+// the exceptions i raise, which must be complete before i can throw them
+#include "Error.h"
+// the vocabulary my messages are phrased in
+#include "datatypes.h"
+#include "ops.h"
+
 
 // metamethods
 // adopt an existing handle

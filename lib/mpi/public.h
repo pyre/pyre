@@ -17,6 +17,8 @@
 // this is the file you are looking for
 #include "api.h"
 
+// whether the mpi runtime is up; the handles and the errors both need to know
+#include "state.h"
 // the exception hierarchy, and the {check} that raises it
 #include "Error.h"
 // the shared ownership of an mpi handle

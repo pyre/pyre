@@ -11,6 +11,9 @@
 // my declarations
 #include "Cartesian.h"
 
+// the exceptions i raise
+#include "Error.h"
+
 
 // metamethods
 // adopt an existing handle
