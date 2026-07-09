@@ -8,6 +8,13 @@
 #pragma once
 
 
+// my declarations
+#include "Handle.h"
+
+// i must know whether mpi is still up before i try to hand a token back to it
+#include "state.h"
+
+
 // metamethods
 // adopt {handle}, choosing the deleter that matches its mortality
 template <class traitsT>

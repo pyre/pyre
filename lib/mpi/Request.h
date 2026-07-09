@@ -10,6 +10,9 @@
 // set up the namespace
 #include "forward.h"
 
+// what i report when my transfer completes
+#include "Status.h"
+
 
 // the receipt of a message transfer that is still in flight
 //

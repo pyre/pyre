@@ -8,6 +8,15 @@
 #pragma once
 
 
+// my declarations
+#include "Group.h"
+
+// the {check} that turns a failed mpi status into an exception
+#include "Error.h"
+// the translation of an mpi comparison into one of my labels
+#include "ops.h"
+
+
 // metamethods
 // adopt an existing handle
 pyre::mpi::Group::Group(handle_type handle, bool immortal) : _handle(handle, immortal) {}

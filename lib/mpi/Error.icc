@@ -8,6 +8,13 @@
 #pragma once
 
 
+// my declarations
+#include "Error.h"
+
+// i must know whether mpi is up before i may ask it to describe one of its own error codes
+#include "state.h"
+
+
 // the base error
 // constructor
 pyre::mpi::Error::Error(string_type description) :

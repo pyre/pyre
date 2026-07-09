@@ -8,6 +8,10 @@
 #pragma once
 
 
+// my declarations
+#include "traits.h"
+
+
 // hand a communicator back to mpi
 auto
 pyre::mpi::CommunicatorHandle::free(handle_type & communicator) noexcept -> void

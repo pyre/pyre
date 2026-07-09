@@ -10,6 +10,13 @@
 // set up the namespace
 #include "forward.h"
 
+// the {check} that turns a failed mpi status into an exception
+#include "Error.h"
+// the two state queries, which live apart because everything below me needs them
+#include "state.h"
+// the communicators i hand back by value
+#include "Communicator.h"
+
 
 // bring mpi up, asking for the given level of thread support
 auto
@@ -49,36 +56,6 @@ pyre::mpi::finalize() -> void
     check(MPI_Finalize());
     // all done
     return;
-}
-
-
-// whether {initialize} has been called
-auto
-pyre::mpi::initialized() -> bool
-{
-    // room for the answer
-    int flag = 0;
-    // this is one of the few calls that is legal before mpi comes up. deliberately do not run
-    // the status through {check}: it would raise an {MPIError}, whose constructor asks this
-    // very question in order to decide whether it may ask mpi to describe the failure, and the
-    // two would recurse. a process whose runtime cannot answer this is not up, and saying so is
-    // the only useful thing we can do
-    MPI_Initialized(&flag);
-    // hand it off
-    return flag != 0;
-}
-
-
-// whether {finalize} has been called
-auto
-pyre::mpi::finalized() -> bool
-{
-    // room for the answer
-    int flag = 0;
-    // as above: legal at any point in the life of the process, and deliberately unchecked
-    MPI_Finalized(&flag);
-    // hand it off
-    return flag != 0;
 }
 
 

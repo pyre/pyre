@@ -10,6 +10,10 @@
 // set up the namespace
 #include "forward.h"
 
+// the owner of my handle, and the recipe it uses to release it
+#include "traits.h"
+#include "Handle.h"
+
 
 // a set of processes, ordered so that each one has a rank within the set
 class pyre::mpi::Group {

@@ -10,6 +10,15 @@
 // set up the namespace
 #include "forward.h"
 
+// the owner of my handle, and the recipe it uses to release it
+#include "traits.h"
+#include "Handle.h"
+// the entities i hand back by value; {Cartesian} is not among them, since it derives from me
+// and so cannot be complete before i am, and a declaration is all my factory needs
+#include "Group.h"
+#include "Status.h"
+#include "Request.h"
+
 
 // a group of processes, together with the context that keeps their messages from colliding
 // with anybody else's
