@@ -27,6 +27,7 @@
 // the vocabulary the message calls are phrased in
 #include "datatypes.h"
 #include "ops.h"
+#include "threads.h"
 // what mpi reports about a transfer, finished or not
 #include "Status.h"
 #include "Request.h"
