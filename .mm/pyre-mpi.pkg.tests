@@ -16,7 +16,7 @@ pyre-mpi.pkg.tests.drivers.exclude := ip.py
 # set up a macro for the hostfile
 pyre-mpi.pkg.hostfile := --hostfile localhost
 # assemble the haness
-pyre-mpi.pkg.harness := $(mpi.executive) $(pyre-mpi.pkg.hostfile)
+pyre-mpi.pkg.harness = $(mpi.executive) $(pyre-mpi.pkg.hostfile)
 
 
 # on some machines, running multiple mpi tests at the same time causes trouble
@@ -41,7 +41,7 @@ tests.mpi.pkg.extension.cases := \
     tests.pyre-mpi.pkg.extension.serial tests.pyre-mpi.pkg.extension.parallel
 # {serial} runs as is
 # {parallel} has a harness
-tests.pyre-mpi.pkg.extension.parallel.harness := $(pyre-mpi.pkg.harness) -np 8
+tests.pyre-mpi.pkg.extension.parallel.harness = $(pyre-mpi.pkg.harness) -np 8
 
 
 # {world} has cases
@@ -49,24 +49,24 @@ tests.mpi.pkg.world.cases := \
     tests.pyre-mpi.pkg.world.serial tests.pyre-mpi.pkg.world.parallel
 # {serial} runs as is
 # {parallel} has a harness
-tests.pyre-mpi.pkg.world.parallel.harness := $(pyre-mpi.pkg.harness) -np 8
+tests.pyre-mpi.pkg.world.parallel.harness = $(pyre-mpi.pkg.harness) -np 8
 
 
 # groups
-tests.pyre-mpi.pkg.group.harness := $(pyre-mpi.pkg.harness) -np 8
-tests.pyre-mpi.pkg.group_include.harness := $(pyre-mpi.pkg.harness) -np 7
-tests.pyre-mpi.pkg.group_exclude.harness := $(pyre-mpi.pkg.harness) -np 7
-tests.pyre-mpi.pkg.group_setops.harness := $(pyre-mpi.pkg.harness) -np 7
-tests.pyre-mpi.pkg.restric.harness := $(pyre-mpi.pkg.harness) -np 7
+tests.pyre-mpi.pkg.group.harness = $(pyre-mpi.pkg.harness) -np 8
+tests.pyre-mpi.pkg.group_include.harness = $(pyre-mpi.pkg.harness) -np 7
+tests.pyre-mpi.pkg.group_exclude.harness = $(pyre-mpi.pkg.harness) -np 7
+tests.pyre-mpi.pkg.group_setops.harness = $(pyre-mpi.pkg.harness) -np 7
+tests.pyre-mpi.pkg.restric.harness = $(pyre-mpi.pkg.harness) -np 7
 
 
 # communications
-tests.pyre-mpi.pkg.bcast.harness := $(pyre-mpi.pkg.harness) -np 8
-tests.pyre-mpi.pkg.sum.harness := $(pyre-mpi.pkg.harness) -np 8
-tests.pyre-mpi.pkg.product.harness := $(pyre-mpi.pkg.harness) -np 8
-tests.pyre-mpi.pkg.max.harness := $(pyre-mpi.pkg.harness) -np 8
-tests.pyre-mpi.pkg.min.harness := $(pyre-mpi.pkg.harness) -np 8
-tests.pyre-mpi.pkg.port.harness := $(pyre-mpi.pkg.harness) -np 7
+tests.pyre-mpi.pkg.bcast.harness = $(pyre-mpi.pkg.harness) -np 8
+tests.pyre-mpi.pkg.sum.harness = $(pyre-mpi.pkg.harness) -np 8
+tests.pyre-mpi.pkg.product.harness = $(pyre-mpi.pkg.harness) -np 8
+tests.pyre-mpi.pkg.max.harness = $(pyre-mpi.pkg.harness) -np 8
+tests.pyre-mpi.pkg.min.harness = $(pyre-mpi.pkg.harness) -np 8
+tests.pyre-mpi.pkg.port.harness = $(pyre-mpi.pkg.harness) -np 7
 
 
 # end of file

@@ -15,16 +15,16 @@ pyre-mpi.lib.tests.c++.defines += $(pyre.lib.c++.defines)
 # set up a macro for the hostfile
 pyre-mpi.lib.hostfile := --hostfile localhost
 # assemble the haness
-pyre-mpi.lib.harness := $(mpi.executive) $(pyre-mpi.lib.hostfile)
+pyre-mpi.lib.harness = $(mpi.executive) $(pyre-mpi.lib.hostfile)
 
 # these tests need harnesses
-tests.mpi.lib.sanity.harness := $(pyre-mpi.lib.harness) -np 4
-tests.mpi.lib.world.harness := $(pyre-mpi.lib.harness) -np 4
-tests.mpi.lib.group.harness := $(pyre-mpi.lib.harness) -np 4
-tests.mpi.lib.group-include.harness := $(pyre-mpi.lib.harness) -np 7
-tests.mpi.lib.group-exclude.harness := $(pyre-mpi.lib.harness) -np 7
-tests.mpi.lib.group-setops.harness := $(pyre-mpi.lib.harness) -np 7
-tests.mpi.lib.communicator.harness := $(pyre-mpi.lib.harness) -np 8
+tests.mpi.lib.sanity.harness = $(pyre-mpi.lib.harness) -np 4
+tests.mpi.lib.world.harness = $(pyre-mpi.lib.harness) -np 4
+tests.mpi.lib.group.harness = $(pyre-mpi.lib.harness) -np 4
+tests.mpi.lib.group-include.harness = $(pyre-mpi.lib.harness) -np 7
+tests.mpi.lib.group-exclude.harness = $(pyre-mpi.lib.harness) -np 7
+tests.mpi.lib.group-setops.harness = $(pyre-mpi.lib.harness) -np 7
+tests.mpi.lib.communicator.harness = $(pyre-mpi.lib.harness) -np 8
 
 # on some machines, running multiple mpi tests at the same time causes trouble
 # serialize the test suite
