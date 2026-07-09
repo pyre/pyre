@@ -120,9 +120,8 @@ pyre::mpi::Port::sendString(const string_t & message) const -> void
 {
     // point at the first octet of the text
     auto first = reinterpret_cast<const std::byte *>(message.data());
-    // and copy exactly as many as the string holds; the original bindings shipped the
-    // terminating null as well, which the receiver then had to trust, where this one sizes
-    // itself from the message
+    // and copy exactly as many as the string holds; the terminating null stays behind, since
+    // the receiver sizes itself from the message rather than hunting for it
     bytes_t payload(first, first + message.size());
     // hand the octets over
     sendBytes(payload);

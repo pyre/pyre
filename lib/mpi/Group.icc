@@ -96,8 +96,8 @@ pyre::mpi::Group::include(const ranks_type & ranks) const -> Group
 {
     // room for the new token
     handle_type group = MPI_GROUP_NULL;
-    // build it; {data} is well defined on an empty vector, where the original {&ranks[0]} was
-    // not, and mpi does not touch the array when the count is zero
+    // build it; {data} is well defined even when {ranks} is empty, and mpi does not touch the
+    // array when the count is zero
     check(MPI_Group_incl(handle(), ranks.size(), ranks.data(), &group));
     // wrap the new token and hand it off
     return Group(group);
@@ -110,7 +110,7 @@ pyre::mpi::Group::exclude(const ranks_type & ranks) const -> Group
 {
     // room for the new token
     handle_type group = MPI_GROUP_NULL;
-    // build it; as above, {data} is safe on an empty vector
+    // build it; as above, an empty {ranks} is harmless
     check(MPI_Group_excl(handle(), ranks.size(), ranks.data(), &group));
     // wrap the new token and hand it off
     return Group(group);

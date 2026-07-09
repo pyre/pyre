@@ -13,8 +13,7 @@
 #include <pyre/mpi.h>
 
 
-// exercise the communicator factories that the original wrapper never exposed: {split},
-// {duplicate}, and {compare}
+// exercise the communicator factories: {split}, {duplicate}, and {compare}
 int
 main()
 {

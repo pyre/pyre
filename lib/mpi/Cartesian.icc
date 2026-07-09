@@ -142,8 +142,7 @@ pyre::mpi::Communicator::cartesian(
     }
     // and every axis needs to say whether it wraps
     if (shape.size() != periods.size()) {
-        // so refuse; the original code threw an error carrying the code zero, which is the one
-        // mpi reserves for success
+        // so refuse
         throw ShapeError("pyre::mpi::cartesian: the shape and the periods must agree in length");
     }
 
