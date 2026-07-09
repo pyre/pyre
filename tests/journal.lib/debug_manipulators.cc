@@ -33,7 +33,7 @@ main()
     auto metadata = channel.entry().notes();
     // verify
     assert(metadata["filename"] == __FILE__);
-    assert(metadata["line"] == "21");
+    assert(metadata["line"] == "22");
     assert(metadata["time"] == "now");
 
     // all done

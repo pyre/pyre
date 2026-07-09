@@ -51,7 +51,7 @@ main()
     auto meta = channel.entry().notes();
     // verify that our decorations are present
     assert(meta["filename"] == __FILE__);
-    assert(meta["line"] == "32");
+    assert(meta["line"] == "33");
     assert(meta["function"] == __func__);
     assert(meta["time"] == "now");
 
