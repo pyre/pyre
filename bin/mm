@@ -54,29 +54,24 @@ import merlin
 
 # bootstrap
 if __name__ == "__main__":
-    # find out where i live
-    _mm_home = pyre.primitives.path(__file__).resolve().parent
-    # check whether i'm running from my source directory
-    _mm_insitu = (_mm_home / "make" / "merlin.mm").exists()
+    # find out where i live; the driver sits in {bin}, so my home is one level up
+    _mm_home = pyre.primitives.path(__file__).resolve().parent.parent
+    # check whether i'm running from my source directory; only the source tree keeps the
+    # {portinfo} headers under {lib/mm} -- the install stages them into {include/mm}, so
+    # their location is what tells the two layouts apart
+    _mm_insitu = (_mm_home / "lib" / "mm" / "portinfo.h").exists()
 
-    # if i'm running in-place
+    # if i'm running in place, the headers are where the sources left them
     if _mm_insitu:
-        # this is the layout i expect to see:
-        # the {portinfo} headers
-        _mm_incdir = _mm_home / "include" / "mm"
-        # the share area
-        _mm_shrdir = _mm_home
-        # my makefiles
-        _mm_mkdir = _mm_shrdir / "make"
+        # so mark against the source directory
+        _mm_incdir = _mm_home / "lib" / "mm"
     # otherwise
     else:
-        # assume i am installed in a u*ixy environment:
-        # the {portinfo} headers
-        _mm_incdir = (_mm_home / ".." / "include" / "mm").resolve()
-        # my share area
-        _mm_shrdir = (_mm_home / ".." / "share" / "mm").resolve()
-        # my makefiles
-        _mm_mkdir = (_mm_shrdir / "make").resolve()
+        # they were staged into the include area of the install prefix
+        _mm_incdir = _mm_home / "include" / "mm"
+
+    # either way, the make engine sits in the share area
+    _mm_mkdir = _mm_home / "share" / "mm" / "make"
 
     # instantiate the app
     app = merlin.shells.mm(name="mm", engine=_mm_mkdir, portinfo=_mm_incdir)
