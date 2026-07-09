@@ -47,7 +47,7 @@ def test():
     loc = public.pyre_classWhere("p")
     # check it is correct
     assert loc.source.endswith("component_class_public_locators.py")
-    assert loc.line == 42
+    assert loc.line == 43
     assert loc.function == "test"
 
     # all done
