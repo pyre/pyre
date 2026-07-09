@@ -17,6 +17,9 @@ dependencies:
   - make
   # the interpreter and its build-time helpers
   - python
+  # pin the standard ABI; left to itself the solver prefers the free-threaded {cp314t} build,
+  # whose headers live in {include/python3.14t} rather than {include/python3.14}
+  - python-gil
   - numpy
   - pybind11
   - pyyaml
