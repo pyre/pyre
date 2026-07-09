@@ -39,7 +39,9 @@ namespace pyre::mpi {
     using tag_t = int;
     // the shape of a cartesian process grid, and the periodicity of each of its axes
     using shape_t = std::vector<int>;
-    // a raw payload, as handed to us by the pickling layer
+    // an uninterpreted payload; {std::byte} is not a spelling of {char}, and the difference
+    // matters: it deduces to {MPI_BYTE}, which mpi moves octet for octet, where {MPI_CHAR} is
+    // text that mpi may translate between ranks of unlike architecture
     using bytes_t = std::vector<std::byte>;
     // the mpi description of the layout of a message element
     using datatype_t = MPI_Datatype;

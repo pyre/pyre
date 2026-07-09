@@ -1,0 +1,186 @@
+// -*- C++ -*-
+// -*- coding: utf-8 -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2026 all rights reserved
+
+// code guard
+#pragma once
+
+
+// my declarations
+#include "Port.h"
+
+
+// metamethods
+// build a conduit to {peer}
+pyre::mpi::Port::Port(communicator_type communicator, rank_t peer, tag_t tag) :
+    _communicator(std::move(communicator)),
+    _peer(peer),
+    _tag(tag)
+{}
+
+
+// structure
+// the communicator my peer and i belong to
+auto
+pyre::mpi::Port::communicator() const -> const communicator_type &
+{
+    // easy enough
+    return _communicator;
+}
+
+
+// the process at the other end
+auto
+pyre::mpi::Port::peer() const -> rank_t
+{
+    // easy enough
+    return _peer;
+}
+
+
+// the label my messages carry
+auto
+pyre::mpi::Port::tag() const -> tag_t
+{
+    // easy enough
+    return _tag;
+}
+
+
+// blocking transfers
+// ship one cell to my peer
+template <typename cellT>
+auto
+pyre::mpi::Port::send(const cellT & value) const -> void
+{
+    // my peer and my label are the whole point of my existence
+    _communicator.send(value, _peer, _tag);
+    // all done
+    return;
+}
+
+
+// block until my peer sends me one
+template <typename cellT>
+auto
+pyre::mpi::Port::recv(cellT & value) const -> Status
+{
+    // take exactly the message my peer addressed to me
+    return _communicator.recv(value, _peer, _tag);
+}
+
+
+// ship a block of cells to my peer
+template <typename cellT>
+auto
+pyre::mpi::Port::send(const std::vector<cellT> & values) const -> void
+{
+    // the receiver discovers the extent by probing
+    _communicator.send(values, _peer, _tag);
+    // all done
+    return;
+}
+
+
+// block until a block arrives
+template <typename cellT>
+auto
+pyre::mpi::Port::recv(std::vector<cellT> & values) const -> Status
+{
+    // size the buffer from the message itself
+    return _communicator.recv(values, _peer, _tag);
+}
+
+
+// ship a raw payload to my peer
+auto
+pyre::mpi::Port::sendBytes(const bytes_t & payload) const -> void
+{
+    // hand the octets over without interpreting them
+    _communicator.sendBytes(payload, _peer, _tag);
+    // all done
+    return;
+}
+
+
+// block until a raw payload arrives
+auto
+pyre::mpi::Port::recvBytes() const -> bytes_t
+{
+    // the extent comes from the message, not from prior agreement
+    return _communicator.recvBytes(_peer, _tag);
+}
+
+
+// ship text to my peer
+auto
+pyre::mpi::Port::sendString(const string_t & message) const -> void
+{
+    // point at the first octet of the text
+    auto first = reinterpret_cast<const std::byte *>(message.data());
+    // and copy exactly as many as the string holds; the original bindings shipped the
+    // terminating null as well, which the receiver then had to trust, where this one sizes
+    // itself from the message
+    bytes_t payload(first, first + message.size());
+    // hand the octets over
+    sendBytes(payload);
+    // all done
+    return;
+}
+
+
+// block until text arrives
+auto
+pyre::mpi::Port::recvString() const -> string_t
+{
+    // take the octets
+    auto payload = recvBytes();
+    // point at the first
+    auto first = reinterpret_cast<const char *>(payload.data());
+    // and rebuild the text from exactly as many as arrived
+    return string_t(first, payload.size());
+}
+
+
+// wait for a message from my peer to arrive, without receiving it
+auto
+pyre::mpi::Port::probe() const -> Status
+{
+    // ask about the message my peer addressed to me
+    return _communicator.probe(_peer, _tag);
+}
+
+
+// nonblocking transfers
+// start shipping {value} to my peer
+template <typename cellT>
+auto
+pyre::mpi::Port::isend(const cellT & value) const -> Request
+{
+    // {value} must outlive the transfer, which is the caller's problem
+    return _communicator.isend(value, _peer, _tag);
+}
+
+
+// start receiving into {value}
+template <typename cellT>
+auto
+pyre::mpi::Port::irecv(cellT & value) const -> Request
+{
+    // {value} must outlive the transfer, which is the caller's problem
+    return _communicator.irecv(value, _peer, _tag);
+}
+
+
+// the factory on {Communicator}, which lives here because it needs {Port} to be complete
+auto
+pyre::mpi::Communicator::port(rank_t peer, tag_t tag) const -> Port
+{
+    // make a conduit to {peer} over me
+    return Port(*this, peer, tag);
+}
+
+
+// end of file

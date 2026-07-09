@@ -28,6 +28,7 @@ namespace pyre::mpi {
     using group_t = Group;
     using communicator_t = Communicator;
     using cartesian_t = Cartesian;
+    using port_t = Port;
 
     // the reduction operators
     using op_t = Op;
