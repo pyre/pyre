@@ -5,6 +5,7 @@
 [![conda version](https://img.shields.io/conda/vn/conda-forge/pyre)](https://github.com/conda-forge/pyre-feedstock)
 [![mm](https://github.com/pyre/pyre/actions/workflows/mm.yaml/badge.svg)](https://github.com/pyre/pyre/actions/workflows/mm.yaml)
 [![cmake](https://github.com/pyre/pyre/actions/workflows/cmake.yaml/badge.svg)](https://github.com/pyre/pyre/actions/workflows/cmake.yaml)
+[![conda](https://github.com/pyre/pyre/actions/workflows/conda.yaml/badge.svg)](https://github.com/pyre/pyre/actions/workflows/conda.yaml)
 [![pypi source](https://github.com/pyre/pyre/actions/workflows/pypi-source.yaml/badge.svg)](https://github.com/pyre/pyre/actions/workflows/pypi-source.yaml)
 [![wheels](https://github.com/pyre/pyre/actions/workflows/pypi-wheels.yaml/badge.svg)](https://github.com/pyre/pyre/actions/workflows/pypi-wheels.yaml)
 
