@@ -18,7 +18,7 @@ pyre-mpi.pkg.hostfile := --hostfile localhost
 # see the note in {pyre-mpi.lib.tests}: turn {openmpi} binding off so it will place more ranks
 # than the host has cores
 pyre-mpi.pkg.binding = ${if ${findstring openmpi,$(mpi.flavor)},--bind-to none,}
-# assemble the haness
+# assemble the harness
 pyre-mpi.pkg.harness = $(mpi.executive) $(pyre-mpi.pkg.binding) $(pyre-mpi.pkg.hostfile)
 
 
@@ -56,20 +56,85 @@ tests.pyre-mpi.pkg.world.parallel.harness = $(pyre-mpi.pkg.harness) -np 8
 
 
 # groups
-tests.pyre-mpi.pkg.group.harness = $(pyre-mpi.pkg.harness) -np 8
-tests.pyre-mpi.pkg.group_include.harness = $(pyre-mpi.pkg.harness) -np 7
-tests.pyre-mpi.pkg.group_exclude.harness = $(pyre-mpi.pkg.harness) -np 7
-tests.pyre-mpi.pkg.group_setops.harness = $(pyre-mpi.pkg.harness) -np 7
-tests.pyre-mpi.pkg.restric.harness = $(pyre-mpi.pkg.harness) -np 7
+# {group} has cases
+tests.mpi.pkg.group.cases := \
+    tests.pyre-mpi.pkg.group.serial tests.pyre-mpi.pkg.group.parallel
+# {serial} runs as is
+# {parallel} has a harness
+tests.pyre-mpi.pkg.group.parallel.harness = $(pyre-mpi.pkg.harness) -np 8
+
+# {group_include} has cases
+tests.mpi.pkg.group_include.cases := \
+    tests.pyre-mpi.pkg.group_include.serial tests.pyre-mpi.pkg.group_include.parallel
+# {serial} runs as is
+# {parallel} has a harness
+tests.pyre-mpi.pkg.group_include.parallel.harness = $(pyre-mpi.pkg.harness) -np 7
+
+# {group_exclude} has cases
+tests.mpi.pkg.group_exclude.cases := \
+    tests.pyre-mpi.pkg.group_exclude.serial tests.pyre-mpi.pkg.group_exclude.parallel
+# {serial} runs as is
+# {parallel} has a harness
+tests.pyre-mpi.pkg.group_exclude.parallel.harness = $(pyre-mpi.pkg.harness) -np 7
+
+# {group_setops} has cases
+tests.mpi.pkg.group_setops.cases := \
+    tests.pyre-mpi.pkg.group_setops.serial tests.pyre-mpi.pkg.group_setops.parallel
+# {serial} runs as is
+# {parallel} has a harness
+tests.pyre-mpi.pkg.group_setops.parallel.harness = $(pyre-mpi.pkg.harness) -np 7
+
+# {restrict} has cases; note that the driver is {restrict.py}, so this is the name the engine
+# derives for the target, and the one the {.pre} chain above already uses
+tests.mpi.pkg.restrict.cases := \
+    tests.pyre-mpi.pkg.restrict.serial tests.pyre-mpi.pkg.restrict.parallel
+# {serial} runs as is
+# {parallel} has a harness
+tests.pyre-mpi.pkg.restrict.parallel.harness = $(pyre-mpi.pkg.harness) -np 7
 
 
 # communications
-tests.pyre-mpi.pkg.bcast.harness = $(pyre-mpi.pkg.harness) -np 8
-tests.pyre-mpi.pkg.sum.harness = $(pyre-mpi.pkg.harness) -np 8
-tests.pyre-mpi.pkg.product.harness = $(pyre-mpi.pkg.harness) -np 8
-tests.pyre-mpi.pkg.max.harness = $(pyre-mpi.pkg.harness) -np 8
-tests.pyre-mpi.pkg.min.harness = $(pyre-mpi.pkg.harness) -np 8
-tests.pyre-mpi.pkg.port.harness = $(pyre-mpi.pkg.harness) -np 7
+# {bcast} has cases
+tests.mpi.pkg.bcast.cases := \
+    tests.pyre-mpi.pkg.bcast.serial tests.pyre-mpi.pkg.bcast.parallel
+# {serial} runs as is
+# {parallel} has a harness
+tests.pyre-mpi.pkg.bcast.parallel.harness = $(pyre-mpi.pkg.harness) -np 8
+
+# {sum} has cases
+tests.mpi.pkg.sum.cases := \
+    tests.pyre-mpi.pkg.sum.serial tests.pyre-mpi.pkg.sum.parallel
+# {serial} runs as is
+# {parallel} has a harness
+tests.pyre-mpi.pkg.sum.parallel.harness = $(pyre-mpi.pkg.harness) -np 8
+
+# {product} has cases
+tests.mpi.pkg.product.cases := \
+    tests.pyre-mpi.pkg.product.serial tests.pyre-mpi.pkg.product.parallel
+# {serial} runs as is
+# {parallel} has a harness
+tests.pyre-mpi.pkg.product.parallel.harness = $(pyre-mpi.pkg.harness) -np 8
+
+# {max} has cases
+tests.mpi.pkg.max.cases := \
+    tests.pyre-mpi.pkg.max.serial tests.pyre-mpi.pkg.max.parallel
+# {serial} runs as is
+# {parallel} has a harness
+tests.pyre-mpi.pkg.max.parallel.harness = $(pyre-mpi.pkg.harness) -np 8
+
+# {min} has cases
+tests.mpi.pkg.min.cases := \
+    tests.pyre-mpi.pkg.min.serial tests.pyre-mpi.pkg.min.parallel
+# {serial} runs as is
+# {parallel} has a harness
+tests.pyre-mpi.pkg.min.parallel.harness = $(pyre-mpi.pkg.harness) -np 8
+
+# {port} has cases
+tests.mpi.pkg.port.cases := \
+    tests.pyre-mpi.pkg.port.serial tests.pyre-mpi.pkg.port.parallel
+# {serial} runs as is
+# {parallel} has a harness
+tests.pyre-mpi.pkg.port.parallel.harness = $(pyre-mpi.pkg.harness) -np 7
 
 
 # end of file
