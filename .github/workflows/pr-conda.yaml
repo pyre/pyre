@@ -28,6 +28,11 @@ jobs:
         target: [debug, opt]
         compiler: [gcc, clang]
         cuda: [nocuda, cuda]
+        # cuda rides the gcc legs only; {cuda-nvcc} always hands the {.cu} sources to the conda
+        # {gcc} named by {$CXX}, so a clang+cuda leg would compile the device code identically
+        exclude:
+          - compiler: clang
+            cuda: cuda
         # the conda-forge toolchain packages for each compiler
         include:
           - compiler: gcc
@@ -60,7 +65,7 @@ jobs:
           git clone https://github.com/aivazis/mm
 
       - name: conda-forge environment
-        uses: mamba-org/setup-micromamba@v2
+        uses: mamba-org/setup-micromamba@v3
         with:
           micromamba-version: latest
           environment-file: pyre/.github/matrix/conda.yml
@@ -69,10 +74,13 @@ jobs:
             channels:
               - conda-forge
             channel_priority: strict
-          # layer the per-matrix toolchain and the optional cuda toolkit onto the base env
+          # layer the per-matrix toolchain and the optional cuda compiler onto the base env; the
+          # full {cuda-toolkit} metapackage would drag in cublas, cufft, cusolver and friends, but
+          # {pyre-cuda} needs only {nvcc}, {cuda_runtime.h} and {libcudart} — exactly what these
+          # two provide, and exactly what {mm} probes for when it configures {extern.cuda}
           create-args: >-
             ${{matrix.toolchain}}
-            ${{matrix.cuda == 'cuda' && 'cuda-toolkit' || ''}}
+            ${{matrix.cuda == 'cuda' && 'cuda-nvcc cuda-cudart-dev' || ''}}
 
       - name: versions
         run: |
