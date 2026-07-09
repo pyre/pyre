@@ -1,0 +1,89 @@
+// -*- C++ -*-
+// -*- coding: utf-8 -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2026 all rights reserved
+
+// code guard
+#pragma once
+
+
+// metamethods
+// build an empty status, ready to be handed to a receive
+pyre::mpi::Status::Status() : _status {} {}
+
+
+// adopt a status that mpi has already filled in
+pyre::mpi::Status::Status(const raw_type & status) : _status(status) {}
+
+
+// interface
+// the rank of the process that sent the message
+auto
+pyre::mpi::Status::source() const -> rank_t
+{
+    // mpi exposes this one as a plain field
+    return _status.MPI_SOURCE;
+}
+
+
+// the label the message carried
+auto
+pyre::mpi::Status::tag() const -> tag_t
+{
+    // another plain field
+    return _status.MPI_TAG;
+}
+
+
+// whether the transfer itself failed
+auto
+pyre::mpi::Status::error() const -> int
+{
+    // and a third
+    return _status.MPI_ERROR;
+}
+
+
+// how many cells of type {cellT} the message held
+template <typename cellT>
+auto
+pyre::mpi::Status::count() const -> size_type
+{
+    // deduce the layout and ask
+    return count(datatype<cellT>());
+}
+
+
+// how many cells of the given layout the message held
+auto
+pyre::mpi::Status::count(datatype_t type) const -> size_type
+{
+    // room for the answer
+    size_type cells = 0;
+    // only mpi knows how many cells arrived; the count is not a field of the struct
+    check(MPI_Get_count(&_status, type, &cells));
+    // hand it off
+    return cells;
+}
+
+
+// the underlying struct, for handing to the mpi c api
+auto
+pyre::mpi::Status::raw() -> raw_type *
+{
+    // point at my struct so mpi can fill it in
+    return &_status;
+}
+
+
+// the same, for callers that only read
+auto
+pyre::mpi::Status::raw() const -> const raw_type *
+{
+    // point at my struct
+    return &_status;
+}
+
+
+// end of file

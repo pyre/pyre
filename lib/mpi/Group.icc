@@ -4,182 +4,175 @@
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
 // (c) 1998-2026 all rights reserved
 
-#if !defined(pyre_mpi_Group_icc)
-#error This header file contains implementation details of class Group
-#else
+// code guard
+#pragma once
 
-// operators
-// union
-pyre::mpi::Group
-pyre::mpi::groupUnion(const Group & g1, const Group & g2)
-{
-    // storage for the new group
-    MPI_Group group;
-    // build it
-    int status = MPI_Group_union(g1, g2, &group);
-    // check the return status
-    if (status != MPI_SUCCESS) {
-        // throw an exception if something went wrong
-        throw Error(status);
-    }
-    // wrap it and return it
-    return Group(group);
-}
 
-// intersection
-pyre::mpi::Group
-pyre::mpi::groupIntersection(const Group & g1, const Group & g2)
-{
-    // storage for the new group
-    MPI_Group group;
-    // build it
-    int status = MPI_Group_intersection(g1, g2, &group);
-    // check the return status
-    if (status != MPI_SUCCESS) {
-        // throw an exception if something went wrong
-        throw Error(status);
-    }
-    // wrap it and return it
-    return Group(group);
-}
+// metamethods
+// adopt an existing handle
+pyre::mpi::Group::Group(handle_type handle, bool immortal) : _handle(handle, immortal) {}
 
-// difference
-pyre::mpi::Group
-pyre::mpi::groupDifference(const Group & g1, const Group & g2)
-{
-    // storage for the new group
-    MPI_Group group;
-    // build it
-    int status = MPI_Group_difference(g1, g2, &group);
-    // check the return status
-    if (status != MPI_SUCCESS) {
-        // throw an exception if something went wrong
-        throw Error(status);
-    }
-    // wrap it and return it
-    return Group(group);
-}
 
 // interface
-// check whether this group is empty
-bool
-pyre::mpi::Group::isEmpty() const
+// the raw token, for handing to the mpi c api
+auto
+pyre::mpi::Group::handle() const -> handle_type
 {
-    // check the handle against the predefined null communicator
-    return _handle == MPI_GROUP_EMPTY;
+    // ask my owner
+    return _handle.handle();
 }
 
-// free a group handle
-void
-pyre::mpi::Group::free(MPI_Group * handle)
+
+// whether i name no group at all
+auto
+pyre::mpi::Group::isNull() const -> bool
 {
-    int status = MPI_Group_free(handle);
-    // check the return status
-    if (status != MPI_SUCCESS) {
-        // throw an exception if something went wrong
-        throw Error(status);
-    }
-    // and return
-    return;
+    // compare against the token mpi reserves for exactly this
+    return handle() == MPI_GROUP_NULL;
 }
 
-// compute the rank of this process
-int
-pyre::mpi::Group::rank() const
+
+// whether i have no members
+auto
+pyre::mpi::Group::isEmpty() const -> bool
 {
-    int rank;
-    int status = MPI_Group_rank(_handle, &rank);
-    // check the return status
-    if (status != MPI_SUCCESS) {
-        // throw an exception if something went wrong
-        throw Error(status);
+    // a group that does not exist has no members either, and asking mpi for the size of the
+    // null handle is an error, so answer before we get there
+    if (isNull()) {
+        return true;
     }
-    // and return
+    // otherwise, emptiness is a statement about membership, not about handle identity: mpi is
+    // free to hand back a fresh empty group rather than the predefined {MPI_GROUP_EMPTY}
+    return size() == 0;
+}
+
+
+// contextual conversion to {bool}
+pyre::mpi::Group::operator bool() const
+{
+    // i am usable exactly when i name a group
+    return !isNull();
+}
+
+
+// the rank of the calling process within me
+auto
+pyre::mpi::Group::rank() const -> rank_t
+{
+    // room for the answer
+    rank_t rank = 0;
+    // ask mpi; a process that is not a member gets {undefined} back, which is not an error
+    check(MPI_Group_rank(handle(), &rank));
+    // hand it off
     return rank;
 }
 
-// compute the size of this communicator
-int
-pyre::mpi::Group::size() const
+
+// how many processes i hold
+auto
+pyre::mpi::Group::size() const -> size_type
 {
-    int size;
-    int status = MPI_Group_size(_handle, &size);
-    // check the return status
-    if (status != MPI_SUCCESS) {
-        // throw an exception if something went wrong
-        throw Error(status);
-    }
-    // and return
+    // room for the answer
+    size_type size = 0;
+    // ask mpi
+    check(MPI_Group_size(handle(), &size));
+    // hand it off
     return size;
 }
 
-// build a new group out of the provided ranks
-pyre::mpi::Group
-pyre::mpi::Group::include(const pyre::mpi::Group::ranklist_t & ranks) const
+
+// build the group that holds exactly the members named in {ranks}
+auto
+pyre::mpi::Group::include(const ranks_type & ranks) const -> Group
 {
-    // the size of the ranklist
-    int size = ranks.size();
-    // storage for the new group handle
-    MPI_Group group;
+    // room for the new token
+    handle_type group = MPI_GROUP_NULL;
+    // build it; {data} is well defined on an empty vector, where the original {&ranks[0]} was
+    // not, and mpi does not touch the array when the count is zero
+    check(MPI_Group_incl(handle(), ranks.size(), ranks.data(), &group));
+    // wrap the new token and hand it off
+    return Group(group);
+}
+
+
+// build the group that holds all my members except those named in {ranks}
+auto
+pyre::mpi::Group::exclude(const ranks_type & ranks) const -> Group
+{
+    // room for the new token
+    handle_type group = MPI_GROUP_NULL;
+    // build it; as above, {data} is safe on an empty vector
+    check(MPI_Group_excl(handle(), ranks.size(), ranks.data(), &group));
+    // wrap the new token and hand it off
+    return Group(group);
+}
+
+
+// how my membership relates to {other}'s
+auto
+pyre::mpi::Group::compare(const Group & other) const -> Comparison
+{
+    // room for the answer
+    int result = MPI_UNEQUAL;
+    // ask mpi
+    check(MPI_Group_compare(handle(), other.handle(), &result));
+    // translate its answer into one of my labels
+    return comparison(result);
+}
+
+
+// the ranks that my members {ranks} carry in {other}
+auto
+pyre::mpi::Group::translateRanks(const ranks_type & ranks, const Group & other) const -> ranks_type
+{
+    // room for the answers, one per rank we were handed
+    ranks_type translated(ranks.size(), undefined);
+    // ask mpi; members of mine that {other} does not hold come back as {undefined}
+    check(MPI_Group_translate_ranks(
+        handle(), ranks.size(), ranks.data(), other.handle(), translated.data()));
+    // hand them off
+    return translated;
+}
+
+
+// the set operations; free functions, because neither argument is privileged
+// the processes that belong to either group
+auto
+pyre::mpi::groupUnion(const Group & g1, const Group & g2) -> Group
+{
+    // room for the new token
+    Group::handle_type group = MPI_GROUP_NULL;
     // build it
-    int status = MPI_Group_incl(_handle, size, const_cast<int *>(&ranks[0]), &group);
-    // check the return status
-    if (status != MPI_SUCCESS) {
-        // throw an exception if something went wrong
-        throw Error(status);
-    }
-    // otherwise build the new group and return it
-    return group_t(group);
+    check(MPI_Group_union(g1.handle(), g2.handle(), &group));
+    // wrap the new token and hand it off
+    return Group(group);
 }
 
-// build a new group by excluding the specified ranks
-pyre::mpi::Group
-pyre::mpi::Group::exclude(const pyre::mpi::Group::ranklist_t & ranks) const
+
+// the processes that belong to both groups
+auto
+pyre::mpi::groupIntersection(const Group & g1, const Group & g2) -> Group
 {
-    // the size of the ranklist
-    int size = ranks.size();
-    // storage for the new group handle
-    MPI_Group group;
+    // room for the new token
+    Group::handle_type group = MPI_GROUP_NULL;
     // build it
-    int status = MPI_Group_excl(_handle, size, const_cast<int *>(&ranks[0]), &group);
-    // check the return status
-    if (status != MPI_SUCCESS) {
-        // throw an exception if something went wrong
-        throw Error(status);
-    }
-    // otherwise build the new group and return it
-    return group_t(group);
+    check(MPI_Group_intersection(g1.handle(), g2.handle(), &group));
+    // wrap the new token and hand it off
+    return Group(group);
 }
 
-// cast to MPI_Group
-pyre::mpi::Group::
-operator pyre::mpi::Group::handle_t() const
+
+// the processes of the first group that do not belong to the second
+auto
+pyre::mpi::groupDifference(const Group & g1, const Group & g2) -> Group
 {
-    return _handle;
+    // room for the new token
+    Group::handle_type group = MPI_GROUP_NULL;
+    // build it
+    check(MPI_Group_difference(g1.handle(), g2.handle(), &group));
+    // wrap the new token and hand it off
+    return Group(group);
 }
 
-// the destructor
-pyre::mpi::Group::~Group() {}
 
-// the default constructor
-pyre::mpi::Group::Group(Group::handle_t value, bool immortal) : _handle(value, immortal) {}
-
-// the copy constructor
-pyre::mpi::Group::Group(const pyre::mpi::Group & other) : _handle(other._handle) {}
-
-// operator =
-const pyre::mpi::Group &
-pyre::mpi::Group::operator=(const pyre::mpi::Group & other)
-{
-    // skip assignment to self
-    if (&other == this) {
-        return *this;
-    }
-    // otherwise, move the data
-    _handle = other._handle;
-    // and return me
-    return *this;
-}
-
-#endif
 // end of file

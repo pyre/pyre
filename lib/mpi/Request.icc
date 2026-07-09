@@ -1,0 +1,210 @@
+// -*- C++ -*-
+// -*- coding: utf-8 -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2026 all rights reserved
+
+// code guard
+#pragma once
+
+
+// metamethods
+// build a request that names no transfer
+pyre::mpi::Request::Request() : _request(MPI_REQUEST_NULL) {}
+
+
+// adopt a transfer that mpi has already started
+pyre::mpi::Request::Request(handle_type handle) : _request(handle) {}
+
+
+// steal {other}'s transfer, leaving it naming nothing
+pyre::mpi::Request::Request(Request && other) noexcept : _request(other._request)
+{
+    // so that exactly one of us tries to complete it
+    other._request = MPI_REQUEST_NULL;
+}
+
+
+// abandon my transfer and steal {other}'s
+pyre::mpi::Request &
+pyre::mpi::Request::operator=(Request && other) noexcept
+{
+    // guard against self assignment, which would leave me naming nothing
+    if (this == &other) {
+        return *this;
+    }
+    // give up whatever i am still holding
+    _abandon();
+    // steal {other}'s token
+    _request = other._request;
+    // and leave it naming nothing, so exactly one of us completes the transfer
+    other._request = MPI_REQUEST_NULL;
+    // all done
+    return *this;
+}
+
+
+// abandon whatever is still in flight
+pyre::mpi::Request::~Request()
+{
+    // hand the token back, if there is one
+    _abandon();
+}
+
+
+// interface
+// the raw token, for handing to the mpi c api
+auto
+pyre::mpi::Request::handle() const -> handle_type
+{
+    // easy enough
+    return _request;
+}
+
+
+// whether i still name a transfer that has not completed
+auto
+pyre::mpi::Request::active() const -> bool
+{
+    // compare against the token mpi reserves for exactly this
+    return _request != MPI_REQUEST_NULL;
+}
+
+
+// contextual conversion to {bool}
+pyre::mpi::Request::operator bool() const
+{
+    // i am usable exactly when i name a transfer
+    return active();
+}
+
+
+// block until my transfer completes
+auto
+pyre::mpi::Request::wait() -> Status
+{
+    // room for the report
+    Status status;
+    // block; on return mpi has set my token to null, so my destructor has nothing left to do
+    check(MPI_Wait(&_request, status.raw()));
+    // hand off the report
+    return status;
+}
+
+
+// check whether my transfer has completed, without blocking
+auto
+pyre::mpi::Request::test() -> std::optional<Status>
+{
+    // room for the report
+    Status status;
+    // and for mpi's answer
+    int complete = 0;
+    // ask; on completion mpi sets my token to null
+    check(MPI_Test(&_request, &complete, status.raw()));
+    // if the transfer is still in flight
+    if (!complete) {
+        // say so
+        return std::nullopt;
+    }
+    // otherwise, hand off the report
+    return status;
+}
+
+
+// ask mpi to abandon my transfer
+auto
+pyre::mpi::Request::cancel() -> void
+{
+    // mark the transfer for cancellation; it is still the caller's job to complete it, since
+    // mpi only promises that a cancelled transfer will finish one way or the other
+    check(MPI_Cancel(&_request));
+    // all done
+    return;
+}
+
+
+// surrender my token to the caller
+auto
+pyre::mpi::Request::release() -> handle_type
+{
+    // remember what i hold
+    auto handle = _request;
+    // forget it, so my destructor leaves it alone
+    _request = MPI_REQUEST_NULL;
+    // and hand it to the caller, who now owes mpi the completion
+    return handle;
+}
+
+
+// implementation details
+// hand my token back to mpi, if i still hold one
+auto
+pyre::mpi::Request::_abandon() noexcept -> void
+{
+    // nothing to do if i name no transfer
+    if (!active()) {
+        return;
+    }
+    // and nothing we can do if the runtime that owns the transfer is already gone
+    if (!initialized() || finalized()) {
+        return;
+    }
+
+    // give the token back; the transfer itself carries on to completion unattended
+    int status = MPI_Request_free(&_request);
+    // a request that mpi refuses to free is a bug in the way we acquired it
+    if (status != MPI_SUCCESS) {
+        // make a channel
+        auto channel = pyre::journal::firewall_t("pyre.mpi.request.free");
+        // and complain
+        channel
+            // what
+            << "mpi refused to free a request"
+            << pyre::journal::newline
+            // details
+            << "status: " << status
+            // where, and flush
+            << pyre::journal::endl(__HERE__);
+    }
+
+    // all done
+    return;
+}
+
+
+// block until every one of {requests} completes
+auto
+pyre::mpi::waitAll(std::vector<Request> & requests) -> std::vector<Status>
+{
+    // how many transfers we are waiting on
+    auto count = requests.size();
+    // room for the reports
+    std::vector<Status> reports(count);
+
+    // gather the raw tokens, taking sole ownership of each; the requests are left naming
+    // nothing, so none of their destructors will interfere with what follows
+    std::vector<Request::handle_type> tokens;
+    // make room
+    tokens.reserve(count);
+    // and take them
+    for (auto & request : requests) {
+        tokens.push_back(request.release());
+    }
+
+    // mpi wants an array of its own status structs, not of my wrappers
+    std::vector<MPI_Status> statuses(count);
+    // block until they are all done; on return every token is null, so nothing leaks
+    check(MPI_Waitall(static_cast<int>(count), tokens.data(), statuses.data()));
+
+    // wrap each report
+    for (decltype(count) slot = 0; slot < count; ++slot) {
+        reports[slot] = Status(statuses[slot]);
+    }
+
+    // hand them off
+    return reports;
+}
+
+
+// end of file

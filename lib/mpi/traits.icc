@@ -1,0 +1,78 @@
+// -*- C++ -*-
+// -*- coding: utf-8 -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2026 all rights reserved
+
+// code guard
+#pragma once
+
+
+// hand a communicator back to mpi
+auto
+pyre::mpi::CommunicatorHandle::free(handle_type & communicator) noexcept -> void
+{
+    // the communicators mpi predefines are not ours to release; asking it to free one is an
+    // error, and the null communicator in particular is what a failed {MPI_Comm_create} hands
+    // back to the ranks that were left out
+    if (communicator == MPI_COMM_NULL || communicator == MPI_COMM_WORLD
+        || communicator == MPI_COMM_SELF) {
+        // so leave it alone
+        return;
+    }
+
+    // give the handle back
+    int status = MPI_Comm_free(&communicator);
+    // a communicator that mpi refuses to free is a bug in the way we acquired it
+    if (status != MPI_SUCCESS) {
+        // make a channel
+        auto channel = pyre::journal::firewall_t("pyre.mpi.communicator.free");
+        // and complain
+        channel
+            // what
+            << "mpi refused to free a communicator"
+            << pyre::journal::newline
+            // details
+            << "status: " << status
+            // where, and flush
+            << pyre::journal::endl(__HERE__);
+    }
+
+    // all done
+    return;
+}
+
+
+// hand a process group back to mpi
+auto
+pyre::mpi::GroupHandle::free(handle_type & group) noexcept -> void
+{
+    // as with communicators, the groups mpi predefines are not ours to release
+    if (group == MPI_GROUP_NULL || group == MPI_GROUP_EMPTY) {
+        // so leave them alone
+        return;
+    }
+
+    // give the handle back
+    int status = MPI_Group_free(&group);
+    // a group that mpi refuses to free is a bug in the way we acquired it
+    if (status != MPI_SUCCESS) {
+        // make a channel
+        auto channel = pyre::journal::firewall_t("pyre.mpi.group.free");
+        // and complain
+        channel
+            // what
+            << "mpi refused to free a process group"
+            << pyre::journal::newline
+            // details
+            << "status: " << status
+            // where, and flush
+            << pyre::journal::endl(__HERE__);
+    }
+
+    // all done
+    return;
+}
+
+
+// end of file

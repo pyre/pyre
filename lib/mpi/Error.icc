@@ -4,29 +4,136 @@
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
 // (c) 1998-2026 all rights reserved
 
-
-#if !defined(pyre_mpi_Error_icc)
-#error This header file contains implementation details of the typename Error
-#else
+// code guard
+#pragma once
 
 
-// destructor
-pyre::mpi::Error::~Error() {}
-
-
+// the base error
 // constructor
-pyre::mpi::Error::Error(int code) : std::exception(), _code(code) {}
+pyre::mpi::Error::Error(string_type description) :
+    std::exception(),
+    _description(std::move(description))
+{}
 
 
 // interface
+// what went wrong, as a sentence
 auto
-pyre::mpi::Error::code() const -> int
+pyre::mpi::Error::description() const -> const string_type &
+{
+    // hand off my explanation
+    return _description;
+}
+
+
+// the same explanation, through the {std::exception} face
+auto
+pyre::mpi::Error::what() const noexcept -> const char *
+{
+    // point into my explanation, which outlives this call
+    return _description.c_str();
+}
+
+
+// failed mpi calls
+// constructor
+pyre::mpi::MPIError::MPIError(code_type code) :
+    Error(_describe(code)),
+    _code(code),
+    _category(_classify(code))
+{}
+
+
+// interface
+// the raw status code
+auto
+pyre::mpi::MPIError::code() const -> code_type
 {
     // easy enough
     return _code;
 }
 
 
-#endif
+// the portable error class it belongs to
+auto
+pyre::mpi::MPIError::category() const -> code_type
+{
+    // easy enough
+    return _category;
+}
+
+
+// implementation details
+// render {code} as text
+auto
+pyre::mpi::MPIError::_describe(code_type code) -> string_type
+{
+    // mpi cannot interpret a status code unless its runtime is up, so when it is down all we
+    // can honestly report is the raw number
+    if (!initialized() || finalized()) {
+        // say so, rather than calling into a runtime that is not there
+        return "mpi error " + std::to_string(code) + "; the mpi runtime is not available";
+    }
+
+    // make room for the longest message mpi is allowed to produce
+    char buffer[MPI_MAX_ERROR_STRING];
+    // and for its actual length
+    int length = 0;
+    // ask mpi to explain itself
+    int status = MPI_Error_string(code, buffer, &length);
+    // if it could not
+    if (status != MPI_SUCCESS) {
+        // fall back to the raw number; throwing here would replace one error with another
+        return "mpi error " + std::to_string(code) + "; no description available";
+    }
+
+    // hand back exactly the characters mpi wrote
+    return string_type(buffer, length);
+}
+
+
+// classify {code}
+auto
+pyre::mpi::MPIError::_classify(code_type code) -> code_type
+{
+    // as above, the runtime must be up before we can ask it anything
+    if (!initialized() || finalized()) {
+        // the code is all we know
+        return code;
+    }
+
+    // room for the answer
+    int category = 0;
+    // ask mpi which class this code belongs to
+    int status = MPI_Error_class(code, &category);
+    // if it could not tell us
+    if (status != MPI_SUCCESS) {
+        // the code is all we know
+        return code;
+    }
+
+    // hand off the class
+    return category;
+}
+
+
+// shape violations
+// constructor
+pyre::mpi::ShapeError::ShapeError(string_type description) : Error(std::move(description)) {}
+
+
+// turn a failed mpi status code into an exception
+auto
+pyre::mpi::check(int status) -> void
+{
+    // the overwhelmingly common case is success
+    if (status == MPI_SUCCESS) {
+        // so get out of the way
+        return;
+    }
+    // otherwise, complain in a way the caller can catch
+    throw MPIError(status);
+}
+
 
 // end of file
