@@ -1,0 +1,158 @@
+// -*- C++ -*-
+// -*- coding: utf-8 -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2026 all rights reserved
+
+// code guard
+#pragma once
+
+
+// my declarations
+#include "Cartesian.h"
+
+
+// metamethods
+// adopt an existing handle
+pyre::mpi::Cartesian::Cartesian(handle_type handle, bool immortal) : Communicator(handle, immortal)
+{}
+
+
+// interface
+// how many axes my grid has
+auto
+pyre::mpi::Cartesian::dimensions() const -> size_type
+{
+    // room for the answer
+    size_type dimensions = 0;
+    // ask mpi
+    check(MPI_Cartdim_get(handle(), &dimensions));
+    // hand it off
+    return dimensions;
+}
+
+
+// the extent of my grid along each axis
+auto
+pyre::mpi::Cartesian::shape() const -> shape_type
+{
+    // find out how many axes there are
+    auto rank = dimensions();
+    // make room for the three answers mpi insists on filling in together
+    shape_type shape(rank), periods(rank), coordinates(rank);
+    // ask
+    check(MPI_Cart_get(handle(), rank, shape.data(), periods.data(), coordinates.data()));
+    // hand off the one we were asked for
+    return shape;
+}
+
+
+// which of my axes wrap around
+auto
+pyre::mpi::Cartesian::periods() const -> shape_type
+{
+    // find out how many axes there are
+    auto rank = dimensions();
+    // make room for the three answers mpi insists on filling in together
+    shape_type shape(rank), periods(rank), coordinates(rank);
+    // ask
+    check(MPI_Cart_get(handle(), rank, shape.data(), periods.data(), coordinates.data()));
+    // hand off the one we were asked for
+    return periods;
+}
+
+
+// where the process of the given {rank} sits on my grid
+auto
+pyre::mpi::Cartesian::coordinates(rank_t rank) const -> shape_type
+{
+    // make room for one coordinate per axis
+    shape_type coordinates(dimensions());
+    // ask mpi to fill them in
+    check(
+        MPI_Cart_coords(handle(), rank, static_cast<int>(coordinates.size()), coordinates.data()));
+    // hand them off
+    return coordinates;
+}
+
+
+// the rank of the process that sits at {coordinates}
+auto
+pyre::mpi::Cartesian::rank(const shape_type & coordinates) const -> rank_t
+{
+    // a coordinate per axis, no more and no less
+    if (coordinates.size() != static_cast<std::size_t>(dimensions())) {
+        // so refuse, rather than let mpi read past the end of the buffer
+        throw ShapeError("pyre::mpi::Cartesian::rank: one coordinate per axis is required");
+    }
+    // room for the answer
+    rank_t rank = 0;
+    // ask mpi
+    check(MPI_Cart_rank(handle(), coordinates.data(), &rank));
+    // hand it off
+    return rank;
+}
+
+
+// the ranks of the two processes {displacement} steps away along {direction}
+auto
+pyre::mpi::Cartesian::shift(int direction, int displacement) const -> std::pair<rank_t, rank_t>
+{
+    // room for the neighbor that would send to me
+    rank_t source = procNull;
+    // and for the one i would send to
+    rank_t destination = procNull;
+    // ask mpi; an axis that does not wrap leaves {procNull} in whichever end falls off the grid
+    check(MPI_Cart_shift(handle(), direction, displacement, &source, &destination));
+    // hand them off in the order mpi names them
+    return { source, destination };
+}
+
+
+// the sub-grid spanned by the axes flagged in {keep}
+auto
+pyre::mpi::Cartesian::sub(const shape_type & keep) const -> Cartesian
+{
+    // a flag per axis, no more and no less
+    if (keep.size() != static_cast<std::size_t>(dimensions())) {
+        // so refuse, rather than let mpi read past the end of the buffer
+        throw ShapeError("pyre::mpi::Cartesian::sub: one flag per axis is required");
+    }
+    // room for the new token
+    handle_type communicator = MPI_COMM_NULL;
+    // ask mpi to carve out the sub-grid; this is collective over me
+    check(MPI_Cart_sub(handle(), keep.data(), &communicator));
+    // wrap it and hand it off
+    return Cartesian(communicator);
+}
+
+
+// the factory on {Communicator}, which lives here because it needs {Cartesian} to be complete
+auto
+pyre::mpi::Communicator::cartesian(
+    const shape_t & shape, const shape_t & periods, int reorder) const -> Cartesian
+{
+    // an empty grid names no processes at all
+    if (shape.empty()) {
+        // so refuse
+        throw ShapeError("pyre::mpi::cartesian: the grid must have at least one axis");
+    }
+    // and every axis needs to say whether it wraps
+    if (shape.size() != periods.size()) {
+        // so refuse; the original code threw an error carrying the code zero, which is the one
+        // mpi reserves for success
+        throw ShapeError("pyre::mpi::cartesian: the shape and the periods must agree in length");
+    }
+
+    // room for the new token
+    handle_type communicator = MPI_COMM_NULL;
+    // ask mpi to lay my processes out on the grid; this is collective over me
+    check(MPI_Cart_create(
+        handle(), static_cast<int>(shape.size()), shape.data(), periods.data(), reorder,
+        &communicator));
+    // wrap it and hand it off
+    return Cartesian(communicator);
+}
+
+
+// end of file

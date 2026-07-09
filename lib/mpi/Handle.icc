@@ -4,72 +4,72 @@
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
 // (c) 1998-2026 all rights reserved
 
-#if !defined(pyre_mpi_Handle_icc)
-#error This header file contains implementation details of class pyre::mpi::Handle
-#else
+// code guard
+#pragma once
+
+
+// metamethods
+// adopt {handle}, choosing the deleter that matches its mortality
+template <class traitsT>
+pyre::mpi::Handle<traitsT>::Handle(handle_type handle, bool immortal) :
+    _handle(new handle_type(handle), immortal ? &Handle::_abandon : &Handle::_reclaim)
+{}
+
 
 // interface
-template <typename Resource>
-pyre::mpi::Handle<Resource>::
-operator pyre::mpi::Handle<Resource>::handle_t() const
+// the raw token, for handing to the mpi c api
+template <class traitsT>
+auto
+pyre::mpi::Handle<traitsT>::handle() const -> handle_type
 {
-    // get and return the mpi handle
-    return _shared->handle();
+    // reach into the box
+    return *_handle;
 }
 
 
-// destructor
-template <typename Resource>
-pyre::mpi::Handle<Resource>::~Handle()
+// the number of owners that currently share my token
+template <class traitsT>
+auto
+pyre::mpi::Handle<traitsT>::references() const -> long
 {
-    // notify the shareable that I am done with it
-    if (_shared->release() == 0) {
-        // if its reference count has reached zero, deallocate it
-        delete _shared;
+    // ask the shared pointer
+    return _handle.use_count();
+}
+
+
+// implementation details
+// give the token back to mpi and destroy its box
+template <class traitsT>
+auto
+pyre::mpi::Handle<traitsT>::_reclaim(handle_type * box) noexcept -> void
+{
+    // mpi can only take a handle back while its runtime is up; once it is down, everything it
+    // ever handed out went down with it, so there is nothing left to release. this is what
+    // lets an interpreter tear down its objects in any order it likes after {finalize}
+    if (initialized() && !finalized()) {
+        // hand the token back
+        traits_type::free(*box);
     }
-    // and return
+
+    // in either case, the box is ours
+    delete box;
+
+    // all done
     return;
 }
 
-// the default constructor
-template <typename Resource>
-pyre::mpi::Handle<Resource>::Handle(handle_t handle, bool immortal) :
-    _shared(new shared_t(handle, immortal))
-{
-    // grab a reference to the shared handle
-    _shared->acquire();
-}
 
-// the copy constructor
-template <typename Resource>
-pyre::mpi::Handle<Resource>::Handle(const pyre::mpi::Handle<Resource> & other) :
-    _shared(other._shared)
+// destroy the box but leave the token alone
+template <class traitsT>
+auto
+pyre::mpi::Handle<traitsT>::_abandon(handle_type * box) noexcept -> void
 {
-    // grab a reference to the shared handle
-    _shared->acquire();
-}
-
-// operator =
-template <typename Resource>
-pyre::mpi::Handle<Resource> &
-pyre::mpi::Handle<Resource>::operator=(const pyre::mpi::Handle<Resource> & other)
-{
-    // if {other} and I point to different shared handles
-    if (other._shared != _shared) {
-        // notify my shareable that I am done with it
-        if (_shared->release() == 0) {
-            // and deallocate it if its reference count reached zero
-            delete _shared;
-        }
-        // adopt the new shareable
-        _shared = other._shared;
-        // and grab a reference to it
-        _shared->acquire();
-    }
+    // the token belongs to mpi, and outlives us; only the box is ours
+    delete box;
 
     // all done
-    return *this;
+    return;
 }
 
-#endif
+
 // end of file

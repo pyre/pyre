@@ -30,6 +30,16 @@ tests.mpi.lib.group-include.harness = $(pyre-mpi.lib.harness) -np 7
 tests.mpi.lib.group-exclude.harness = $(pyre-mpi.lib.harness) -np 7
 tests.mpi.lib.group-setops.harness = $(pyre-mpi.lib.harness) -np 7
 tests.mpi.lib.communicator.harness = $(pyre-mpi.lib.harness) -np 8
+# {runtime} and {errors} say nothing about any particular rank
+tests.mpi.lib.runtime.harness = $(pyre-mpi.lib.harness) -np 4
+tests.mpi.lib.errors.harness = $(pyre-mpi.lib.harness) -np 4
+# {comm-split} splits by parity, so give it an odd count to make the two halves differ in size
+tests.mpi.lib.comm-split.harness = $(pyre-mpi.lib.harness) -np 7
+# {cartesian} lays its processes out on a two by four grid, so it needs exactly eight of them
+tests.mpi.lib.cartesian.harness = $(pyre-mpi.lib.harness) -np 8
+# {pt2pt} puts its processes on a ring, so it needs at least two
+tests.mpi.lib.pt2pt.harness = $(pyre-mpi.lib.harness) -np 4
+tests.mpi.lib.collectives.harness = $(pyre-mpi.lib.harness) -np 8
 
 # on some machines, running multiple mpi tests at the same time causes trouble
 # serialize the test suite
@@ -39,5 +49,11 @@ tests.mpi.lib.group-include.pre := tests.mpi.lib.group
 tests.mpi.lib.group-exclude.pre := tests.mpi.lib.group-include
 tests.mpi.lib.group-setops.pre := tests.mpi.lib.group-exclude
 tests.mpi.lib.communicator.pre := tests.mpi.lib.group-setops
+tests.mpi.lib.runtime.pre := tests.mpi.lib.communicator
+tests.mpi.lib.errors.pre := tests.mpi.lib.runtime
+tests.mpi.lib.comm-split.pre := tests.mpi.lib.errors
+tests.mpi.lib.cartesian.pre := tests.mpi.lib.comm-split
+tests.mpi.lib.pt2pt.pre := tests.mpi.lib.cartesian
+tests.mpi.lib.collectives.pre := tests.mpi.lib.pt2pt
 
 # end of file

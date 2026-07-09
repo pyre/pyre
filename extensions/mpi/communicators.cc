@@ -292,7 +292,10 @@ mpi::cartesian::coordinates(PyObject *, PyObject * args)
              << "-dim cartesian communicator, rank=" << rank << pyre::journal::newline;
     }
 
-    coordinates = cartesian->coordinates(rank);
+    // the cartesian interface now lives on its own class, and the capsule holds a communicator
+    // that was sliced from one; rewrap its handle so we can ask where this process sits. the
+    // wrapper is immortal because the capsule still owns the handle
+    coordinates = pyre::mpi::cartesian_t(cartesian->handle(), true).coordinates(rank);
     info << "coordinates:";
     for (int i = 0; i < dim; ++i) {
         info << " " << coordinates[i];

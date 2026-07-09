@@ -4,220 +4,523 @@
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
 // (c) 1998-2026 all rights reserved
 
-#if !defined(pyre_mpi_Communicator_icc)
-#error This header file contains implementation details of class Communicator
-#else
+// code guard
+#pragma once
 
-// interface
-// return the raw MPI handle
-pyre::mpi::Communicator::handle_t
-pyre::mpi::Communicator::handle() const
+
+// my declarations
+#include "Communicator.h"
+
+
+// metamethods
+// adopt an existing handle
+pyre::mpi::Communicator::Communicator(handle_type handle, bool immortal) : _handle(handle, immortal)
+{}
+
+
+// structure
+// the raw token, for handing to the mpi c api
+auto
+pyre::mpi::Communicator::handle() const -> handle_type
 {
-    return _handle;
+    // ask my owner
+    return _handle.handle();
 }
 
-// check whether this communicator is null
-bool
-pyre::mpi::Communicator::isNull() const
+
+// whether i name no communicator at all
+auto
+pyre::mpi::Communicator::isNull() const -> bool
 {
-    // check the handle against the predefined null communicator
-    return _handle == MPI_COMM_NULL;
+    // compare against the token mpi reserves for exactly this
+    return handle() == MPI_COMM_NULL;
 }
 
-// establish a barrier
-void
-pyre::mpi::Communicator::barrier() const
+
+// contextual conversion to {bool}
+pyre::mpi::Communicator::
+operator bool() const
 {
-    int status = MPI_Barrier(_handle);
-    // check the return status
-    if (status != MPI_SUCCESS) {
-        // throw an exception if something went wrong
-        throw Error(status);
-    }
-    // and return
-    return;
+    // i am usable exactly when i name a communicator
+    return !isNull();
 }
 
-// compute the rank of this process
-int
-pyre::mpi::Communicator::rank() const
+
+// the rank of the calling process within me
+auto
+pyre::mpi::Communicator::rank() const -> rank_t
 {
-    int rank;
-    int status = MPI_Comm_rank(_handle, &rank);
-    // check the return status
-    if (status != MPI_SUCCESS) {
-        // throw an exception if something went wrong
-        throw Error(status);
-    }
-    // and return
+    // room for the answer
+    rank_t rank = 0;
+    // ask mpi
+    check(MPI_Comm_rank(handle(), &rank));
+    // hand it off
     return rank;
 }
 
-// compute the size of this communicator
-int
-pyre::mpi::Communicator::size() const
+
+// how many processes i hold
+auto
+pyre::mpi::Communicator::size() const -> size_type
 {
-    int size;
-    int status = MPI_Comm_size(_handle, &size);
-    // check the return status
-    if (status != MPI_SUCCESS) {
-        // throw an exception if something went wrong
-        throw Error(status);
-    }
-    // and return
+    // room for the answer
+    size_type size = 0;
+    // ask mpi
+    check(MPI_Comm_size(handle(), &size));
+    // hand it off
     return size;
 }
 
-// access to my process group
-pyre::mpi::Group
-pyre::mpi::Communicator::group() const
+
+// the set of processes i hold
+auto
+pyre::mpi::Communicator::group() const -> group_type
 {
-    // storage for the new group handle
-    MPI_Group group;
-    // construct it
-    int status = MPI_Comm_group(_handle, &group);
-    // check the return status
-    if (status != MPI_SUCCESS) {
-        // throw an exception if something went wrong
-        throw Error(status);
-    }
-    // all ok
-    return group_t(group);
+    // room for the new token
+    group_type::handle_type group = MPI_GROUP_NULL;
+    // ask mpi to build it
+    check(MPI_Comm_group(handle(), &group));
+    // wrap it and hand it off
+    return group_type(group);
 }
 
-// build a communicator out the given group
-pyre::mpi::Communicator
-pyre::mpi::Communicator::communicator(const group_t & group) const
+
+// how my membership and context relate to {other}'s
+auto
+pyre::mpi::Communicator::compare(const Communicator & other) const -> Comparison
 {
-    // storage for the new group handle
-    MPI_Comm communicator;
-    // construct it
-    int status = MPI_Comm_create(_handle, group, &communicator);
-    // check the return status
-    if (status != MPI_SUCCESS) {
-        // throw an exception if something went wrong
-        throw Error(status);
-    }
-    // if this process does not participate in the new communicator
+    // room for the answer
+    int result = MPI_UNEQUAL;
+    // ask mpi
+    check(MPI_Comm_compare(handle(), other.handle(), &result));
+    // translate its answer into one of my labels
+    return comparison(result);
+}
+
+
+// communicator factories
+// build the communicator that holds exactly the processes of {group}
+auto
+pyre::mpi::Communicator::communicator(const group_type & group) const -> Communicator
+{
+    // room for the new token
+    handle_type communicator = MPI_COMM_NULL;
+    // ask mpi to build it; this is collective over me, so every one of my processes must call
+    check(MPI_Comm_create(handle(), group.handle(), &communicator));
+    // the processes that {group} left out get the null communicator back, which mpi predefines
+    // and which is therefore not ours to release
     if (communicator == MPI_COMM_NULL) {
-        // return the null communicator
-        return Communicator(communicator, true); // the null communicator lives forever
+        return Communicator(communicator, true);
     }
-    // otherwise, wrap the new handle and return it
+    // everybody else owns a fresh communicator
     return Communicator(communicator);
 }
 
 
-// build a cartesian communicator
-pyre::mpi::Communicator
-pyre::mpi::Communicator::cartesian(
-    const ranklist_t & ranks, const ranklist_t & periods, int reorder) const
+// split me into one communicator per distinct {color}
+auto
+pyre::mpi::Communicator::split(int color, int key) const -> Communicator
 {
-    // check that neither ranklist is empty
-    if (ranks.empty() || periods.empty()) {
-        throw Error(0);
+    // room for the new token
+    handle_type communicator = MPI_COMM_NULL;
+    // ask mpi to build it; this is collective over me
+    check(MPI_Comm_split(handle(), color, key, &communicator));
+    // a process that passes {undefined} as its color asks to be left out, and gets the null
+    // communicator back; mpi predefines that one, so it is not ours to release
+    if (communicator == MPI_COMM_NULL) {
+        return Communicator(communicator, true);
     }
-    // check that the two ranklists are the same size
-    if (ranks.size() != periods.size()) {
-        throw Error(0);
-    }
-    // the size of the two ranklists
-    int size = ranks.size();
-    // storage for the new group handle
-    MPI_Comm cartesian;
-    // construct it
-    int status = MPI_Cart_create(
-        _handle, size, const_cast<int *>(&ranks[0]), const_cast<int *>(&periods[0]), reorder,
-        &cartesian);
-    // check the return status
-    if (status != MPI_SUCCESS) {
-        // throw an exception if something went wrong
-        throw Error(status);
-    }
-    // wrap the new handle and return it
-    return Communicator(cartesian);
-}
-
-// compute the cartesian coordinates of the given rank
-pyre::mpi::Communicator::ranklist_t
-pyre::mpi::Communicator::coordinates(int rank) const
-{
-    // storage for the length of the coordinate arrays
-    int dim;
-    // ask the cartesian communicator for this information
-    int status = MPI_Cartdim_get(_handle, &dim);
-    // check the return status
-    if (status != MPI_SUCCESS) {
-        // throw an exception if something went wrong
-        throw Error(status);
-    }
-    // allocate an array to accept the coordinates
-    int * raw = new int[dim];
-    // extract them
-    status = MPI_Cart_coords(_handle, rank, dim, raw);
-    // check the return status
-    if (status != MPI_SUCCESS) {
-        // deallocate
-        delete[] raw;
-        // throw an exception if something went wrong
-        throw Error(status);
-    }
-    // start building the return value
-    ranklist_t coordinates;
-    // move the information from the array to the ranklist
-    for (int i = 0; i < dim; ++i) {
-        coordinates.push_back(raw[i]);
-    }
-    // deallocate
-    delete[] raw;
-    // and return
-    return coordinates;
+    // everybody else owns a fresh communicator
+    return Communicator(communicator);
 }
 
 
-// free a communicator handle
-void
-pyre::mpi::Communicator::free(MPI_Comm * handle)
+// build a communicator with my membership but a fresh context
+auto
+pyre::mpi::Communicator::duplicate() const -> Communicator
 {
-    int status = MPI_Comm_free(handle);
-    //
-    // check the return status
-    if (status != MPI_SUCCESS) {
-        // throw an exception if something went wrong
-        throw Error(status);
-    }
-    // and return
+    // room for the new token
+    handle_type communicator = MPI_COMM_NULL;
+    // ask mpi to build it; this is collective over me
+    check(MPI_Comm_dup(handle(), &communicator));
+    // wrap it and hand it off
+    return Communicator(communicator);
+}
+
+
+// collective operations
+// block until every one of my processes arrives here
+auto
+pyre::mpi::Communicator::barrier() const -> void
+{
+    // hand off to mpi
+    check(MPI_Barrier(handle()));
+    // all done
     return;
 }
 
 
-// the destructor
-pyre::mpi::Communicator::~Communicator() {}
-
-// the default constructor
-pyre::mpi::Communicator::Communicator(Communicator::handle_t value, bool immortal) :
-    _handle(value, immortal)
-{}
-
-// the copy constructor
-pyre::mpi::Communicator::Communicator(const pyre::mpi::Communicator & other) :
-    _handle(other._handle)
-{}
-
-// operator =
-const pyre::mpi::Communicator &
-pyre::mpi::Communicator::operator=(const pyre::mpi::Communicator & other)
+// send {value} from {root} to every one of my processes
+template <typename cellT>
+auto
+pyre::mpi::Communicator::bcast(cellT & value, rank_t root) const -> void
 {
-    // skip assignment to self
-    if (&other == this) {
-        return *this;
-    }
-    // otherwise, move the data
-    _handle = other._handle;
-    // and return me
-    return *this;
+    // one cell, whose layout we deduce
+    check(MPI_Bcast(&value, 1, datatype<cellT>(), root, handle()));
+    // all done
+    return;
 }
 
-#endif
+
+// the same, for a block of cells whose extent every process already agrees on
+template <typename cellT>
+auto
+pyre::mpi::Communicator::bcast(std::vector<cellT> & values, rank_t root) const -> void
+{
+    // every process must already have sized its buffer to match {root}'s; if that is not so,
+    // use the {bytes_t} overload, which carries the extent along with the payload
+    check(MPI_Bcast(
+        values.data(), static_cast<int>(values.size()), datatype<cellT>(), root, handle()));
+    // all done
+    return;
+}
+
+
+// the same, for a payload whose extent only {root} knows
+auto
+pyre::mpi::Communicator::bcast(bytes_t & payload, rank_t root) const -> void
+{
+    // {root} alone knows how many bytes there are, so tell everybody else first
+    long long extent = (rank() == root) ? static_cast<long long>(payload.size()) : 0;
+    // by broadcasting the extent
+    check(MPI_Bcast(&extent, 1, MPI_LONG_LONG_INT, root, handle()));
+    // now that everybody agrees, make room for what is coming; at {root} this is a no-op
+    payload.resize(extent);
+    // and move the payload itself
+    check(MPI_Bcast(payload.data(), static_cast<int>(extent), MPI_BYTE, root, handle()));
+    // all done
+    return;
+}
+
+
+// combine the {value} of every process with {op}, delivering the answer to {root} alone
+template <typename cellT>
+auto
+pyre::mpi::Communicator::reduce(const cellT & value, Op op, rank_t root) const -> cellT
+{
+    // room for the answer; mpi writes it at {root} only, so start from something well defined
+    cellT answer {};
+    // combine
+    check(MPI_Reduce(&value, &answer, 1, datatype<cellT>(), opcode(op), root, handle()));
+    // hand it off; everybody but {root} gets the value we started from
+    return answer;
+}
+
+
+// the same, delivering the answer to every process
+template <typename cellT>
+auto
+pyre::mpi::Communicator::allreduce(const cellT & value, Op op) const -> cellT
+{
+    // room for the answer
+    cellT answer {};
+    // combine, and hand the result to everybody
+    check(MPI_Allreduce(&value, &answer, 1, datatype<cellT>(), opcode(op), handle()));
+    // hand it off
+    return answer;
+}
+
+
+// the same, combining the cells of {values} elementwise
+template <typename cellT>
+auto
+pyre::mpi::Communicator::allreduce(const std::vector<cellT> & values, Op op) const
+    -> std::vector<cellT>
+{
+    // room for the answer, one cell per cell we were handed
+    std::vector<cellT> answer(values.size());
+    // combine, and hand the result to everybody
+    check(MPI_Allreduce(
+        values.data(), answer.data(), static_cast<int>(values.size()), datatype<cellT>(),
+        opcode(op), handle()));
+    // hand it off
+    return answer;
+}
+
+
+// deliver to each process the combination over all the processes that precede it, itself included
+template <typename cellT>
+auto
+pyre::mpi::Communicator::scan(const cellT & value, Op op) const -> cellT
+{
+    // room for the answer
+    cellT answer {};
+    // combine
+    check(MPI_Scan(&value, &answer, 1, datatype<cellT>(), opcode(op), handle()));
+    // hand it off
+    return answer;
+}
+
+
+// the same, itself excluded
+template <typename cellT>
+auto
+pyre::mpi::Communicator::exscan(const cellT & value, Op op) const -> cellT
+{
+    // room for the answer; mpi leaves it untouched at rank zero, where there is nothing to
+    // combine, so start from something well defined
+    cellT answer {};
+    // combine
+    check(MPI_Exscan(&value, &answer, 1, datatype<cellT>(), opcode(op), handle()));
+    // hand it off
+    return answer;
+}
+
+
+// collect the {value} of every process at {root}, in rank order
+template <typename cellT>
+auto
+pyre::mpi::Communicator::gather(const cellT & value, rank_t root) const -> std::vector<cellT>
+{
+    // whether this process is the one that collects
+    bool collecting = (rank() == root);
+    // only {root} needs room for the answer; everybody else hands mpi nothing
+    std::vector<cellT> answer(collecting ? size() : 0);
+    // collect
+    check(MPI_Gather(
+        &value, 1, datatype<cellT>(), collecting ? answer.data() : nullptr, 1, datatype<cellT>(),
+        root, handle()));
+    // hand it off; it is empty everywhere but {root}
+    return answer;
+}
+
+
+// the same, delivering the answer to every process
+template <typename cellT>
+auto
+pyre::mpi::Communicator::allgather(const cellT & value) const -> std::vector<cellT>
+{
+    // everybody needs room for one cell per process
+    std::vector<cellT> answer(size());
+    // collect, and hand the result to everybody
+    check(
+        MPI_Allgather(&value, 1, datatype<cellT>(), answer.data(), 1, datatype<cellT>(), handle()));
+    // hand it off
+    return answer;
+}
+
+
+// hand the nth cell of {values} to the nth process
+template <typename cellT>
+auto
+pyre::mpi::Communicator::scatter(const std::vector<cellT> & values, rank_t root) const -> cellT
+{
+    // whether this process is the one that hands the cells out
+    bool distributing = (rank() == root);
+    // {root} must have brought exactly one cell per process; nobody else's {values} matters
+    if (distributing && values.size() != static_cast<std::size_t>(size())) {
+        // so refuse, rather than let mpi read past the end of the buffer
+        throw ShapeError("pyre::mpi::scatter: the root must supply one cell per process");
+    }
+    // room for my share
+    cellT answer {};
+    // hand them out
+    check(MPI_Scatter(
+        distributing ? values.data() : nullptr, 1, datatype<cellT>(), &answer, 1, datatype<cellT>(),
+        root, handle()));
+    // hand it off
+    return answer;
+}
+
+
+// hand the nth cell of every process's {values} to the nth process
+template <typename cellT>
+auto
+pyre::mpi::Communicator::alltoall(const std::vector<cellT> & values) const -> std::vector<cellT>
+{
+    // every process must have brought exactly one cell per process
+    if (values.size() != static_cast<std::size_t>(size())) {
+        // so refuse, rather than let mpi read past the end of the buffer
+        throw ShapeError("pyre::mpi::alltoall: every process must supply one cell per process");
+    }
+    // room for the answer, one cell per process
+    std::vector<cellT> answer(size());
+    // exchange
+    check(MPI_Alltoall(
+        values.data(), 1, datatype<cellT>(), answer.data(), 1, datatype<cellT>(), handle()));
+    // hand it off
+    return answer;
+}
+
+
+// point to point operations
+// send {value} to {peer}, labelled with {tag}
+template <typename cellT>
+auto
+pyre::mpi::Communicator::send(const cellT & value, rank_t peer, tag_t tag) const -> void
+{
+    // one cell, whose layout we deduce
+    check(MPI_Send(&value, 1, datatype<cellT>(), peer, tag, handle()));
+    // all done
+    return;
+}
+
+
+// block until a matching message arrives from {peer}, and fill {value} with it
+template <typename cellT>
+auto
+pyre::mpi::Communicator::recv(cellT & value, rank_t peer, tag_t tag) const -> Status
+{
+    // room for the report
+    Status status;
+    // receive exactly one cell
+    check(MPI_Recv(&value, 1, datatype<cellT>(), peer, tag, handle(), status.raw()));
+    // hand off the report
+    return status;
+}
+
+
+// send a block of cells to {peer}
+template <typename cellT>
+auto
+pyre::mpi::Communicator::send(const std::vector<cellT> & values, rank_t peer, tag_t tag) const
+    -> void
+{
+    // ship the whole block; the receiver discovers its extent by probing
+    check(MPI_Send(
+        values.data(), static_cast<int>(values.size()), datatype<cellT>(), peer, tag, handle()));
+    // all done
+    return;
+}
+
+
+// block until a matching message arrives, sizing {values} to hold exactly what came
+template <typename cellT>
+auto
+pyre::mpi::Communicator::recv(std::vector<cellT> & values, rank_t peer, tag_t tag) const -> Status
+{
+    // find out what is waiting for us, without taking it
+    auto waiting = probe(peer, tag);
+    // learn how many cells it holds
+    auto cells = waiting.count<cellT>();
+    // make room for exactly that many
+    values.resize(cells);
+
+    // room for the report
+    Status status;
+    // now take the message; name its sender and label explicitly rather than reusing the
+    // wildcards, so that we receive the very message we just probed and not a later one
+    check(MPI_Recv(
+        values.data(), cells, datatype<cellT>(), waiting.source(), waiting.tag(), handle(),
+        status.raw()));
+    // hand off the report
+    return status;
+}
+
+
+// send a raw payload to {peer}
+auto
+pyre::mpi::Communicator::sendBytes(const bytes_t & payload, rank_t peer, tag_t tag) const -> void
+{
+    // ship the bytes without interpreting them
+    check(
+        MPI_Send(payload.data(), static_cast<int>(payload.size()), MPI_BYTE, peer, tag, handle()));
+    // all done
+    return;
+}
+
+
+// block until a raw payload arrives, sizing the answer to hold exactly what came
+auto
+pyre::mpi::Communicator::recvBytes(rank_t peer, tag_t tag) const -> bytes_t
+{
+    // find out what is waiting for us, without taking it
+    auto waiting = probe(peer, tag);
+    // learn how many bytes it holds
+    auto extent = waiting.count(MPI_BYTE);
+    // make room for exactly that many
+    bytes_t payload(extent);
+
+    // room for the report, which nobody outside wants
+    Status status;
+    // take the message; as above, name the sender and label the probe found
+    check(MPI_Recv(
+        payload.data(), extent, MPI_BYTE, waiting.source(), waiting.tag(), handle(), status.raw()));
+    // hand off the payload
+    return payload;
+}
+
+
+// wait for a matching message to arrive, without receiving it
+auto
+pyre::mpi::Communicator::probe(rank_t peer, tag_t tag) const -> Status
+{
+    // room for the report
+    Status status;
+    // block until something matching shows up
+    check(MPI_Probe(peer, tag, handle(), status.raw()));
+    // hand off the report
+    return status;
+}
+
+
+// send to one peer and receive from another in a single call
+template <typename cellT>
+auto
+pyre::mpi::Communicator::sendrecv(
+    const cellT & outgoing, rank_t destination, cellT & incoming, rank_t source, tag_t tag) const
+    -> Status
+{
+    // room for the report
+    Status status;
+    // let mpi schedule both halves; a ring of these cannot deadlock, where a ring of matched
+    // {send}/{recv} pairs can
+    check(MPI_Sendrecv(
+        &outgoing, 1, datatype<cellT>(), destination, tag, &incoming, 1, datatype<cellT>(), source,
+        tag, handle(), status.raw()));
+    // hand off the report
+    return status;
+}
+
+
+// start sending {value} to {peer}
+template <typename cellT>
+auto
+pyre::mpi::Communicator::isend(const cellT & value, rank_t peer, tag_t tag) const -> Request
+{
+    // room for the receipt
+    Request::handle_type request = MPI_REQUEST_NULL;
+    // start the transfer; {value} must outlive it, which is the caller's problem
+    check(MPI_Isend(&value, 1, datatype<cellT>(), peer, tag, handle(), &request));
+    // wrap the receipt and hand it off
+    return Request(request);
+}
+
+
+// start receiving into {value}
+template <typename cellT>
+auto
+pyre::mpi::Communicator::irecv(cellT & value, rank_t peer, tag_t tag) const -> Request
+{
+    // room for the receipt
+    Request::handle_type request = MPI_REQUEST_NULL;
+    // start the transfer; {value} must outlive it, which is the caller's problem
+    check(MPI_Irecv(&value, 1, datatype<cellT>(), peer, tag, handle(), &request));
+    // wrap the receipt and hand it off
+    return Request(request);
+}
+
+
+// process control
+// bring down every process i hold
+auto
+pyre::mpi::Communicator::abort(int code) const -> void
+{
+    // ask mpi to take the job down; this call is not expected to return
+    check(MPI_Abort(handle(), code));
+    // all done, in the unlikely event we get here
+    return;
+}
+
 
 // end of file

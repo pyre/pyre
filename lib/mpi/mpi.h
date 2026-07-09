@@ -4,34 +4,12 @@
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
 // (c) 1998-2026 all rights reserved
 
-
-#if !defined(pyre_mpi_h)
-#define pyre_mpi_h
-
-
-// external packages
-#include <mpi.h>
-#include <vector>
-#include <exception>
-
-// local types
-#include "mpi/Error.h"
-
-#include "mpi/Shareable.h"
-#include "mpi/Handle.h"
-
-#include "mpi/Group.h"
-#include "mpi/Communicator.h"
+// code guard
+#pragma once
 
 
-// type declarations
-namespace pyre { namespace mpi {
-    typedef Error error_t;
-    typedef Communicator communicator_t;
-    typedef Group group_t;
-}} // namespace pyre::mpi
-
-#endif
+// the convenience header: clients who want the whole package include just this one
+#include "mpi/public.h"
 
 
 // end of file
