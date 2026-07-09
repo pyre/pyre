@@ -5,7 +5,12 @@
 # the conda-forge environment with the pyre build dependencies; the per-matrix
 # toolchain (gcc/clang) and the optional cuda toolkit are layered on top of this
 # base by the workflow, so they are deliberately absent here
-name: pyre
+
+# the environment name must not collide with the name of any project in {.mm}: {mm} seeds its
+# configuration search with {$(user.environment).mm}, and the project config directory is on
+# make's include path, so an environment named {pyre} makes the engine read {.mm/pyre.mm} as a
+# user config file, long before {extern.available} exists
+name: conda-pr
 
 # stick to conda-forge only
 channels:
