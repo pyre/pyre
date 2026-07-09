@@ -75,6 +75,8 @@ public:
 
     // wait for a message from my peer to arrive, without receiving it
     inline auto probe() const -> Status;
+    // ask whether a message from my peer has already arrived, without waiting for one to
+    inline auto iprobe() const -> std::optional<Status>;
 
     // nonblocking transfers
 public:
@@ -84,6 +86,12 @@ public:
     // start receiving into {value}, which must outlive the transfer, and hand back the receipt
     template <typename cellT>
     inline auto irecv(cellT & value) const -> Request;
+
+    // start shipping the {extent} octets at {data}; the buffer belongs to the caller, and must
+    // outlive the transfer
+    inline auto isendBytes(const void * data, size_type extent) const -> Request;
+    // start receiving {extent} octets into {data}; as above, the buffer belongs to the caller
+    inline auto irecvBytes(void * data, size_type extent) const -> Request;
 
     // data
 private:

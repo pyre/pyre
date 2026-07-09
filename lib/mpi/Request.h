@@ -76,6 +76,9 @@ private:
 namespace pyre::mpi {
     // block until every one of {requests} completes, and report on each
     inline auto waitAll(std::vector<Request> & requests) -> std::vector<Status>;
+    // block until one of {requests} completes, and report which, along with its outcome; the
+    // others are left in flight. the index is {undefined} when none of them names a transfer
+    inline auto waitAny(std::vector<Request> & requests) -> std::pair<int, Status>;
 } // namespace pyre::mpi
 
 

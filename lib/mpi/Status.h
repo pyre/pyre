@@ -42,6 +42,8 @@ public:
     inline auto tag() const -> tag_t;
     // whether the transfer itself failed
     inline auto error() const -> int;
+    // whether the transfer was cancelled before it could complete
+    inline auto cancelled() const -> bool;
 
     // how many cells of type {cellT} the message held
     template <typename cellT>

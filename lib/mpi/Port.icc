@@ -152,6 +152,15 @@ pyre::mpi::Port::probe() const -> Status
 }
 
 
+// ask whether a message from my peer has already arrived
+auto
+pyre::mpi::Port::iprobe() const -> std::optional<Status>
+{
+    // ask about the message my peer addressed to me
+    return _communicator.iprobe(_peer, _tag);
+}
+
+
 // nonblocking transfers
 // start shipping {value} to my peer
 template <typename cellT>
@@ -170,6 +179,24 @@ pyre::mpi::Port::irecv(cellT & value) const -> Request
 {
     // {value} must outlive the transfer, which is the caller's problem
     return _communicator.irecv(value, _peer, _tag);
+}
+
+
+// start shipping the {extent} octets at {data}
+auto
+pyre::mpi::Port::isendBytes(const void * data, size_type extent) const -> Request
+{
+    // the buffer must stay put and stay alive until the receipt completes
+    return _communicator.isendBytes(data, extent, _peer, _tag);
+}
+
+
+// start receiving {extent} octets into {data}
+auto
+pyre::mpi::Port::irecvBytes(void * data, size_type extent) const -> Request
+{
+    // as above, the buffer belongs to the caller for the duration
+    return _communicator.irecvBytes(data, extent, _peer, _tag);
 }
 
 

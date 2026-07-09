@@ -216,4 +216,39 @@ pyre::mpi::waitAll(std::vector<Request> & requests) -> std::vector<Status>
 }
 
 
+// block until one of {requests} completes
+auto
+pyre::mpi::waitAny(std::vector<Request> & requests) -> std::pair<int, Status>
+{
+    // how many transfers we are waiting on
+    auto count = requests.size();
+
+    // gather the raw tokens, taking sole ownership of each so that nothing tries to complete
+    // them behind our back
+    std::vector<Request::handle_type> tokens;
+    // make room
+    tokens.reserve(count);
+    // and take them
+    for (auto & request : requests) {
+        tokens.push_back(request.release());
+    }
+
+    // room for the report
+    Status report;
+    // and for the index of whichever transfer finishes first
+    int index = undefined;
+    // block until one of them does; mpi nulls the token of the winner and leaves the rest alone
+    check(MPI_Waitany(static_cast<int>(count), tokens.data(), &index, report.raw()));
+
+    // hand every token back to its owner, so that the transfers still in flight remain the
+    // responsibility of the requests the caller holds
+    for (decltype(count) slot = 0; slot < count; ++slot) {
+        requests[slot] = Request(tokens[slot]);
+    }
+
+    // report which one finished, and how; the index is {undefined} when none was in flight
+    return { index, report };
+}
+
+
 // end of file
