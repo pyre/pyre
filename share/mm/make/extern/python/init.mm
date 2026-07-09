@@ -18,8 +18,9 @@ python.model ?= $(empty)
 python.interpreter ?= python$(python.version)$(python.model)
 # the configurator
 python.configurator ?= $(python.interpreter)-config
-# the interpreter tag, used to form pathnames
-python.tag ?= $(python.interpreter)$(python.model)
+# the interpreter tag, used to form pathnames; {interpreter} already carries the {model},
+# so appending it again would double the ABI suffix for free-threading and debug builds
+python.tag ?= $(python.interpreter)
 
 # compiler flags
 python.flags ?=
