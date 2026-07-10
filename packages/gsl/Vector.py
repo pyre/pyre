@@ -408,14 +408,14 @@ class Vector(gsl.Vector):
 
     def ndarray(self, copy=False):
         """
-        Return a numpy array reference (w/ shared data) if {copy} is False, or a new copy if {copy} is {True}
+        Return a numpy array over my data: a view that shares my storage when {copy} is False,
+        or an independent copy when {copy} is True
         """
-        # call c-api extension to create a numpy array reference
-        array = gsl.vector_ndarray(self.data)
-        # whether the data copy is required
-        if copy:
-            array = array.copy()
-        return array
+        # numpy reads me through the buffer protocol the extension exposes
+        import numpy
+
+        # a copy when asked, a zero-copy view otherwise
+        return numpy.array(self) if copy else numpy.asarray(self)
 
     # meta methods
     def __init__(self, shape, data=None, **kwds):

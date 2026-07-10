@@ -12,9 +12,13 @@ from . import libgsl as gsl  # the extension
 
 
 # the class declaration
-class Matrix:
+class Matrix(gsl.Matrix):
     """
-    A wrapper over a gsl matrix
+    A matrix of doubles
+
+    The storage, the buffer protocol, and the views are the extension's; everything that reads
+    more naturally in python -- the file i/o, the arithmetic operators, the statistics -- lives
+    here
     """
 
     # types
@@ -73,11 +77,15 @@ class Matrix:
             return matrix
         # get the matrix capsule
         data = None if matrix is None else matrix.data
-        # scatter the data
+        # broadcast the data
         capsule, shape = gsl.bcastMatrix(communicator, source, data)
-        # dress up my local portion as a matrix
+        # the source already owns the matrix it broadcast, so it hands that back untouched;
+        # rewrapping the capsule it borrows would hand its storage to a second owner
+        if communicator.rank == source:
+            return matrix
+        # everybody else dresses up the fresh storage they received as a matrix
         result = cls(shape=shape, data=capsule)
-        # and return it
+        # and returns it
         return result
 
     @classmethod
@@ -554,25 +562,20 @@ class Matrix:
 
     def ndarray(self, copy=False):
         """
-        Return a numpy array reference (w/ shared data) if {copy} is False, or a new copy if {copy} is {True}
+        Return a numpy array over my data: a view that shares my storage when {copy} is False,
+        or an independent copy when {copy} is True
         """
-        # call c-api extension to create a numpy array reference
-        array = gsl.matrix_ndarray(self.data)
-        # whether the data copy is required
-        if copy:
-            array = array.copy()
-        return array
+        # numpy reads me through the buffer protocol the extension exposes
+        import numpy
+
+        # a copy when asked, a zero-copy view otherwise
+        return numpy.array(self) if copy else numpy.asarray(self)
 
     # meta methods
     def __init__(self, shape, data=None, **kwds):
-        # chain up
-        super().__init__(**kwds)
-        # adjust the shape
-        shape = tuple(map(int, shape))
-        # store
-        self.shape = shape
-        # allocate
-        self.data = gsl.matrix_alloc(shape) if data is None else data
+        # let the extension allocate my storage, or adopt the capsule {data} carries; {shape}
+        # and {data} are its to consume, so the superclass gets them along with everything else
+        super().__init__(shape=tuple(map(int, shape)), data=data, **kwds)
         # all done
         return
 
@@ -689,10 +692,6 @@ class Matrix:
             return self
         # otherwise, let the interpreter know
         raise NotImplemented
-
-    # private data
-    data = None
-    shape = (0, 0)
 
 
 # end of file

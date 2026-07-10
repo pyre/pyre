@@ -7,7 +7,6 @@
 # check availability
 pyre-gsl.gsl.available := ${findstring gsl,$(extern.available)}
 pyre-gsl.mpi.available := ${findstring mpi,$(extern.available)}
-pyre-gsl.numpy.available := ${findstring numpy,$(extern.available)}
 
 # if {gsl} is available
 ifeq ($(pyre-gsl.gsl.available), gsl)
@@ -62,16 +61,6 @@ endif
 
 # unconditionally add python and pybind11 to the external libraries
 pyre-gsl.ext.extern += python pybind11
-
-# if we have numpy
-ifeq ($(pyre-gsl.numpy.available), numpy)
-# add numpy to the external dependencies
-pyre-gsl.ext.extern += numpy
-# if not
-else
-# remove the numpy dependent sources from the build
-pyre-gsl.ext.lib.sources.exclude += $(pyre-gsl.ext.lib.prefix)numpy.cc
-endif
 
 
 # get the testsuites

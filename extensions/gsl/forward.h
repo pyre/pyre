@@ -19,6 +19,7 @@ namespace gsl::py {
 
     // the data types gsl allocates and releases
     void vector(py::module & m);
+    void matrix(py::module & m);
 } // namespace gsl::py
 
 
