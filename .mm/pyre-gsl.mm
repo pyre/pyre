@@ -31,7 +31,9 @@ pyre-gsl.pkg.ext :=
 
 # the gsl extension meta-data
 pyre-gsl.ext.root := extensions/gsl/
-pyre-gsl.ext.stem := gsl
+# the module is {libgsl}, so that it does not shadow the {gsl} package that hosts it, and so
+# that it reads like its siblings {libpyre} and {libmpi}
+pyre-gsl.ext.stem := libgsl
 pyre-gsl.ext.pkg := pyre-gsl.pkg
 pyre-gsl.ext.wraps :=
 pyre-gsl.ext.capsule.destination := pyre/gsl/

@@ -8,7 +8,7 @@ Support for the gsl_stats interface
 """
 
 # externals
-from . import gsl
+from . import libgsl as gsl
 
 
 # the interface for doubles

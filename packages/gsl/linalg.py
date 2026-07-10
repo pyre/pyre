@@ -8,7 +8,7 @@ Support for the linear algebra interface
 """
 
 # externals
-from . import gsl
+from . import libgsl as gsl
 from .Matrix import Matrix
 from .Permutation import Permutation
 

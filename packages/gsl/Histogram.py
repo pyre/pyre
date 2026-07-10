@@ -6,7 +6,7 @@
 
 
 # externals
-from . import gsl
+from . import libgsl as gsl
 
 
 # the class declaration
