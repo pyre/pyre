@@ -19,9 +19,6 @@ class SQLite(Server, family="pyre.db.server.sqlite"):
     Component that manages the connection to a sqlite database
     """
 
-    # constants
-    providesHeaders = False  # sqlite queries do not return column headers
-
     # public state
     database = pyre.properties.str(default=":memory:")
     database.doc = "the path to the sqlite database"
