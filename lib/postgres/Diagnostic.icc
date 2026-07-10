@@ -1,0 +1,296 @@
+// -*- C++ -*-
+// -*- coding: utf-8 -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2026 all rights reserved
+
+// code guard
+#pragma once
+
+
+// my declarations
+#include "Diagnostic.h"
+
+
+// metamethods
+// harvest everything {result} knows about the failure of {command}
+pyre::postgres::Diagnostic::Diagnostic(const PGresult * result, string_type command) :
+    _command(std::move(command)),
+    // the severity, in english; a server that speaks another language localizes {PG_DIAG_SEVERITY},
+    // so the nonlocalized spelling is the only one a program may compare against. it arrived in
+    // postgres 9.6, and the localized one is the fallback for anything older
+#if defined(PG_DIAG_SEVERITY_NONLOCALIZED)
+    _severity(_field(result, PG_DIAG_SEVERITY_NONLOCALIZED)),
+#else
+    _severity(_field(result, PG_DIAG_SEVERITY)),
+#endif
+    // the five character code that names the condition
+    _sqlstate(_field(result, PG_DIAG_SQLSTATE)),
+    // the one line explanation
+    _message(_field(result, PG_DIAG_MESSAGE_PRIMARY)),
+    // the elaborations
+    _detail(_field(result, PG_DIAG_MESSAGE_DETAIL)),
+    _hint(_field(result, PG_DIAG_MESSAGE_HINT)),
+    _internalQuery(_field(result, PG_DIAG_INTERNAL_QUERY)),
+    _context(_field(result, PG_DIAG_CONTEXT)),
+    _position(_index(result, PG_DIAG_STATEMENT_POSITION)),
+    _internalPosition(_index(result, PG_DIAG_INTERNAL_POSITION)),
+    // and the object at fault
+    _schema(_field(result, PG_DIAG_SCHEMA_NAME)),
+    _table(_field(result, PG_DIAG_TABLE_NAME)),
+    _column(_field(result, PG_DIAG_COLUMN_NAME)),
+    _datatype(_field(result, PG_DIAG_DATATYPE_NAME)),
+    _constraint(_field(result, PG_DIAG_CONSTRAINT_NAME))
+{
+    // a few failures reach us with no primary message: a result that libpq itself manufactured
+    // after the socket died has an error message but no fields at all
+    if (_message.empty() && result != nullptr) {
+        // so fall back on the rendering libpq assembled
+        _message = PQresultErrorMessage(result);
+        // which, unlike every field above, ends in a newline
+        while (!_message.empty() && _message.back() == '\n') {
+            // that has no business inside a one line explanation
+            _message.pop_back();
+        }
+    }
+}
+
+
+// build a report out of a bare {message}
+pyre::postgres::Diagnostic::Diagnostic(string_type message, string_type command) :
+    _command(std::move(command)),
+    // nobody told us how bad this is
+    _severity(),
+    // and there is no code to branch on; whoever throws this must decide for themselves
+    _sqlstate(),
+    _message(std::move(message)),
+    _detail(),
+    _hint(),
+    _internalQuery(),
+    _context(),
+    _position(0),
+    _internalPosition(0),
+    _schema(),
+    _table(),
+    _column(),
+    _datatype(),
+    _constraint()
+{
+    // libpq ends its connection level messages with a newline, just as it does its result ones
+    while (!_message.empty() && _message.back() == '\n') {
+        // and it is no more welcome here
+        _message.pop_back();
+    }
+}
+
+
+// the statement, and the server's verdict on it
+// the sql we sent
+auto
+pyre::postgres::Diagnostic::command() const -> const string_type &
+{
+    return _command;
+}
+
+
+// how bad the server thinks this is
+auto
+pyre::postgres::Diagnostic::severity() const -> const string_type &
+{
+    return _severity;
+}
+
+
+// the five character code that names the condition
+auto
+pyre::postgres::Diagnostic::sqlstate() const -> const string_type &
+{
+    return _sqlstate;
+}
+
+
+// the family the condition belongs to
+auto
+pyre::postgres::Diagnostic::category() const -> view_t
+{
+    // a SQLSTATE is always five characters, but a diagnostic built from a bare message has
+    // none at all, and a server that sends a malformed one must not make us read past its end
+    if (_sqlstate.size() < 2) {
+        // so admit we do not know
+        return view_t();
+    }
+
+    // the family is the first two characters
+    return view_t(_sqlstate).substr(0, 2);
+}
+
+
+// the one line explanation
+auto
+pyre::postgres::Diagnostic::message() const -> const string_type &
+{
+    return _message;
+}
+
+
+// the optional elaborations
+// a second paragraph, with the particulars
+auto
+pyre::postgres::Diagnostic::detail() const -> const string_type &
+{
+    return _detail;
+}
+
+
+// a suggestion
+auto
+pyre::postgres::Diagnostic::hint() const -> const string_type &
+{
+    return _hint;
+}
+
+
+// where in the sql the server gave up
+auto
+pyre::postgres::Diagnostic::position() const -> int
+{
+    return _position;
+}
+
+
+// the same, but into a statement the server generated for itself
+auto
+pyre::postgres::Diagnostic::internalPosition() const -> int
+{
+    return _internalPosition;
+}
+
+
+// the statement the server generated for itself
+auto
+pyre::postgres::Diagnostic::internalQuery() const -> const string_type &
+{
+    return _internalQuery;
+}
+
+
+// the call stack, in the server's terms
+auto
+pyre::postgres::Diagnostic::context() const -> const string_type &
+{
+    return _context;
+}
+
+
+// the object the complaint is about
+auto
+pyre::postgres::Diagnostic::schema() const -> const string_type &
+{
+    return _schema;
+}
+
+
+auto
+pyre::postgres::Diagnostic::table() const -> const string_type &
+{
+    return _table;
+}
+
+
+auto
+pyre::postgres::Diagnostic::column() const -> const string_type &
+{
+    return _column;
+}
+
+
+auto
+pyre::postgres::Diagnostic::datatype() const -> const string_type &
+{
+    return _datatype;
+}
+
+
+auto
+pyre::postgres::Diagnostic::constraint() const -> const string_type &
+{
+    return _constraint;
+}
+
+
+// interface
+// a one line rendering, suitable as the {what} of an exception
+auto
+pyre::postgres::Diagnostic::describe() const -> string_type
+{
+    // lead with the severity, falling back on the only thing we know for sure: that whoever is
+    // asking is holding an exception
+    string_type rendering = _severity.empty() ? "ERROR" : _severity;
+    // separate it from what follows
+    rendering += ": ";
+    // and add the explanation, or a confession that there is none
+    rendering += _message.empty() ? "the server gave no explanation" : _message;
+
+    // when the server named the condition, the name is worth more than the sentence
+    if (!_sqlstate.empty()) {
+        // so carry it along
+        rendering += " [SQLSTATE " + _sqlstate + "]";
+    }
+
+    // hand it off
+    return rendering;
+}
+
+
+// implementation details
+// copy the field named by {code} out of {result}
+auto
+pyre::postgres::Diagnostic::_field(const PGresult * result, int code) -> string_type
+{
+    // a result we never got is a result with nothing to say
+    if (result == nullptr) {
+        return string_type();
+    }
+
+    // ask libpq for the field
+    const char * value = PQresultErrorField(result, code);
+    // the ones the server chose not to send come back as null pointers
+    if (value == nullptr) {
+        // and the empty string is how we spell that
+        return string_type();
+    }
+
+    // otherwise, take a copy before the result that owns it goes away
+    return string_type(value);
+}
+
+
+// parse the field named by {code} as a decimal index
+auto
+pyre::postgres::Diagnostic::_index(const PGresult * result, int code) -> int
+{
+    // fetch the text
+    const string_type value = _field(result, code);
+    // a field the server did not send is an index that does not exist, and postgres numbers
+    // its positions from one, so zero is free to mean exactly that
+    if (value.empty()) {
+        return 0;
+    }
+
+    // room for the answer
+    int index = 0;
+    // read it off the front of the text
+    const auto outcome = std::from_chars(value.data(), value.data() + value.size(), index);
+    // a position that will not parse is a server that has broken its own protocol; there is no
+    // useful way to complain about it from inside the construction of an error report, so take
+    // the same answer as for a field that never arrived
+    if (outcome.ec != std::errc()) {
+        return 0;
+    }
+
+    // hand it off
+    return index;
+}
+
+
+// end of file

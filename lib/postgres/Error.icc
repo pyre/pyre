@@ -1,0 +1,214 @@
+// -*- C++ -*-
+// -*- coding: utf-8 -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2026 all rights reserved
+
+// code guard
+#pragma once
+
+
+// my declarations
+#include "Error.h"
+
+
+// the base of everything
+// adopt the server's report
+pyre::postgres::Exception::Exception(diagnostic_type diagnostic) :
+    std::exception(),
+    _diagnostic(std::move(diagnostic)),
+    // render the summary now, while there is still a stack to unwind it onto; {what} is
+    // {noexcept}, so it may not build a string of its own
+    _description(_diagnostic.describe())
+{}
+
+
+// everything the server had to say, in full
+auto
+pyre::postgres::Exception::diagnostic() const -> const diagnostic_type &
+{
+    // hand off my report
+    return _diagnostic;
+}
+
+
+// the one line summary of it
+auto
+pyre::postgres::Exception::description() const -> const string_type &
+{
+    // hand off my rendering
+    return _description;
+}
+
+
+// the same summary, through the {std::exception} face
+auto
+pyre::postgres::Exception::what() const noexcept -> const char *
+{
+    // point into my rendering, which outlives this call
+    return _description.c_str();
+}
+
+
+// the two things that sit directly under the base
+pyre::postgres::Warning::Warning(diagnostic_type diagnostic) : Exception(std::move(diagnostic)) {}
+
+
+pyre::postgres::Error::Error(diagnostic_type diagnostic) : Exception(std::move(diagnostic)) {}
+
+
+// our own mistakes
+// explain, in our own words, what the caller did wrong
+pyre::postgres::InterfaceError::InterfaceError(string_type message) :
+    // a failure the server never saw has no SQLSTATE, and the bare message constructor of
+    // {Diagnostic} is what says so
+    Error(diagnostic_type(std::move(message)))
+{}
+
+
+// or adopt a report somebody else assembled
+pyre::postgres::InterfaceError::InterfaceError(diagnostic_type diagnostic) :
+    Error(std::move(diagnostic))
+{}
+
+
+// the server's complaints
+pyre::postgres::DatabaseError::DatabaseError(diagnostic_type diagnostic) :
+    Error(std::move(diagnostic))
+{}
+
+
+pyre::postgres::DataError::DataError(diagnostic_type diagnostic) :
+    DatabaseError(std::move(diagnostic))
+{}
+
+
+pyre::postgres::OperationalError::OperationalError(diagnostic_type diagnostic) :
+    DatabaseError(std::move(diagnostic))
+{}
+
+
+pyre::postgres::IntegrityError::IntegrityError(diagnostic_type diagnostic) :
+    DatabaseError(std::move(diagnostic))
+{}
+
+
+pyre::postgres::InternalError::InternalError(diagnostic_type diagnostic) :
+    DatabaseError(std::move(diagnostic))
+{}
+
+
+pyre::postgres::ProgrammingError::ProgrammingError(diagnostic_type diagnostic) :
+    DatabaseError(std::move(diagnostic))
+{}
+
+
+pyre::postgres::NotSupportedError::NotSupportedError(diagnostic_type diagnostic) :
+    DatabaseError(std::move(diagnostic))
+{}
+
+
+// work out which of my exceptions {diagnostic} describes, and throw it
+//
+// the branching is on the SQLSTATE class, the first two of its five characters. this is the
+// whole point of the exercise: the old bindings looked only at the message the server wrote for
+// a human, and so reported a unique index violation, a dropped connection and a typo in a table
+// name as the same kind of failure. postgres names each of them, and has since the beginning
+auto
+pyre::postgres::raise(Diagnostic diagnostic) -> void
+{
+    // the family the condition belongs to
+    const auto family = diagnostic.category();
+
+    // a complaint with no code did not come from the server's parser; libpq manufactured it
+    // after the socket died, or after a connection failed to come up at all. those are always
+    // environmental, and never anybody's syntax
+    if (family.empty()) {
+        throw OperationalError(std::move(diagnostic));
+    }
+
+    // class 01: the statement ran, and the server has something to add
+    if (family == "01") {
+        throw Warning(std::move(diagnostic));
+    }
+
+    // class 22: a value was not what its type requires; a number that will not parse, a date
+    // that does not exist, a substring past the end of its string
+    if (family == "22") {
+        throw DataError(std::move(diagnostic));
+    }
+
+    // class 23: the statement would have broken a constraint. this is the one that matters
+    // most to a caller, because it is the one that is routinely expected: an insert that
+    // collides with a unique index is how a great deal of correct code discovers that a row is
+    // already there
+    if (family == "23") {
+        throw IntegrityError(std::move(diagnostic));
+    }
+
+    // class 0A: the server understood the statement and declined to implement it
+    if (family == "0A") {
+        throw NotSupportedError(std::move(diagnostic));
+    }
+
+    // the classes that mean the environment failed us
+    if (family == "03"     // the statement is not yet complete
+        || family == "08"  // the connection is gone
+        || family == "09"  // a triggered action failed
+        || family == "0B"  // a transaction could not be started
+        || family == "0F"  // a locator is not valid
+        || family == "0L"  // the grantor is not valid
+        || family == "0P"  // the role is not valid
+        || family == "0Z"  // a diagnostics area is not valid
+        || family == "26"  // no prepared statement by that name
+        || family == "27"  // a trigger changed data it should not have
+        || family == "28"  // authentication or authorization failed
+        || family == "34"  // no cursor by that name
+        || family == "40"  // the transaction rolled back; a deadlock, or a serialization failure
+        || family == "53"  // the server is out of memory, disk, or connections
+        || family == "54"  // a program limit was exceeded
+        || family == "55"  // an object is not in a state the statement requires
+        || family == "57"  // an operator cancelled the query, or shut the server down
+        || family == "58"  // the operating system failed the server
+        || family == "72"  // a snapshot could not be honored
+        || family == "HV") // a foreign data wrapper failed
+    {
+        throw OperationalError(std::move(diagnostic));
+    }
+
+    // the classes that mean the statement was malformed, or named something that is not there
+    if (family == "20"     // a case statement found no branch to take
+        || family == "21"  // a subquery returned more rows than its context allows
+        || family == "3D"  // no database by that name
+        || family == "3F"  // no schema by that name
+        || family == "42"  // a syntax error, an unknown column, a privilege that was not granted
+        || family == "44") // a row would have escaped the view that inserted it
+    {
+        throw ProgrammingError(std::move(diagnostic));
+    }
+
+    // the classes that mean the server no longer recognizes its own state
+    if (family == "24"     // the cursor is not where it was left
+        || family == "25"  // the transaction is not where it was left
+        || family == "2B"  // a privilege descriptor still depends on something being dropped
+        || family == "2D"  // the transaction ended in a way it may not
+        || family == "2F"  // a sql routine did something forbidden
+        || family == "38"  // an external routine did something forbidden
+        || family == "39"  // an external routine was invoked wrongly
+        || family == "3B"  // a savepoint is not where it was left
+        || family == "F0"  // the configuration file is wrong
+        || family == "P0"  // a pl/pgsql block raised
+        || family == "XX") // the server caught itself violating one of its own invariants
+    {
+        throw InternalError(std::move(diagnostic));
+    }
+
+    // class 02 is the one remaining family postgres actually uses: a query that returned no
+    // data where the caller required some. it is a failure of the database, and nothing more
+    // specific than that. every class postgres has not defined lands here too, which is the
+    // right answer for a server that is newer than this file
+    throw DatabaseError(std::move(diagnostic));
+}
+
+
+// end of file

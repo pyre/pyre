@@ -1,0 +1,186 @@
+// -*- C++ -*-
+// -*- coding: utf-8 -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2026 all rights reserved
+
+// code guard
+#pragma once
+
+
+// my declarations
+#include "Transaction.h"
+
+
+// metamethods
+// open a transaction on {connection}
+pyre::postgres::Transaction::Transaction(connection_type connection) :
+    _connection(std::move(connection)),
+    // not yet; the statement below has to succeed first
+    _live(false)
+{
+    // tell the server. a failure here throws, and leaves me unbuilt: my destructor will not run,
+    // and there is nothing to roll back, since nothing was ever opened
+    _connection.exec("BEGIN");
+    // now there is something to close
+    _live = true;
+}
+
+
+// the duty to close it may be passed along
+pyre::postgres::Transaction::Transaction(Transaction && other) noexcept :
+    _connection(std::move(other._connection)),
+    _live(other._live)
+{
+    // whoever we took it from no longer owes anybody a commit or a rollback
+    other._live = false;
+}
+
+
+pyre::postgres::Transaction & pyre::postgres::Transaction::operator=(Transaction && other) noexcept
+{
+    // guard against a self assignment, which would close the transaction and then adopt the
+    // corpse of it
+    if (this == &other) {
+        return *this;
+    }
+
+    // whatever i am holding has to be closed before i let go of it
+    _close();
+    // take the session
+    _connection = std::move(other._connection);
+    // and the duty
+    _live = other._live;
+    // which the other one no longer has
+    other._live = false;
+
+    // all done
+    return *this;
+}
+
+
+// and whoever ends up holding it closes it
+pyre::postgres::Transaction::~Transaction()
+{
+    // an open transaction at the end of my scope is one that nobody committed, which means
+    // either the caller forgot or a statement inside me threw. in both cases the right answer
+    // is to undo it
+    _close();
+}
+
+
+// interface
+// make everything done inside me permanent
+auto
+pyre::postgres::Transaction::commit() -> void
+{
+    // a transaction that has already been closed cannot be closed again
+    if (!_live) {
+        throw InterfaceError("this transaction has already been closed");
+    }
+
+    // clear the flag first: whether or not the server accepts the commit, this transaction is
+    // over, and my destructor must not go on to try a rollback that would fail just as loudly
+    _live = false;
+    // tell the server
+    _connection.exec("COMMIT");
+
+    // all done
+    return;
+}
+
+
+// and undo it instead
+auto
+pyre::postgres::Transaction::rollback() -> void
+{
+    // a transaction that has already been closed cannot be closed again
+    if (!_live) {
+        throw InterfaceError("this transaction has already been closed");
+    }
+
+    // as above, the transaction is over the moment we decide to end it
+    _live = false;
+    // tell the server
+    _connection.exec("ROLLBACK");
+
+    // all done
+    return;
+}
+
+
+// whether i am still open
+auto
+pyre::postgres::Transaction::live() const -> bool
+{
+    // easy enough
+    return _live;
+}
+
+
+// the session i run on
+auto
+pyre::postgres::Transaction::connection() const -> const connection_type &
+{
+    // hand off my share
+    return _connection;
+}
+
+
+// implementation details
+// close me, one way or the other, and swallow whatever goes wrong
+auto
+pyre::postgres::Transaction::_close() noexcept -> void
+{
+    // somebody has already closed me
+    if (!_live) {
+        // so there is nothing to do
+        return;
+    }
+
+    // whatever happens below, this transaction is over
+    _live = false;
+
+    // a rollback on a session that has been closed, or that has died, will throw, and we are
+    // very likely already unwinding; a second exception here would end the process
+    try {
+        // undo everything
+        _connection.exec("ROLLBACK");
+    }
+    // a rollback that fails is worth knowing about, even though there is nothing to be done.
+    // the channel is a warning and not an error on purpose: an error channel throws when it
+    // flushes, and a throw from here, inside a {noexcept} destructor, ends the process
+    catch (const Exception & error) {
+        // make a channel
+        auto channel = pyre::journal::warning_t("pyre.postgres.transaction");
+        // and complain
+        channel
+            // what
+            << "failed to roll back a transaction that was never committed"
+            << pyre::journal::newline
+            // details
+            << error.what()
+            // where, and flush
+            << pyre::journal::endl(__HERE__);
+    }
+    // and nothing else may escape a destructor
+    catch (...) {
+        // make a channel; a warning, for the reason given above
+        auto channel = pyre::journal::warning_t("pyre.postgres.transaction");
+        // and complain
+        channel
+            // what
+            << "failed to roll back a transaction that was never committed"
+            << pyre::journal::newline
+            // details
+            << "the reason is not one this package recognizes"
+            // where, and flush
+            << pyre::journal::endl(__HERE__);
+    }
+
+    // all done
+    return;
+}
+
+
+// end of file

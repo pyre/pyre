@@ -1,0 +1,58 @@
+// -*- C++ -*-
+// -*- coding: utf-8 -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2026 all rights reserved
+
+// code guard
+#pragma once
+
+
+// my declarations
+#include "traits.h"
+
+
+// hand a session back to libpq
+auto
+pyre::postgres::ConnectionHandle::free(handle_type & connection) noexcept -> void
+{
+    // a session that has already been given back, or one that was never established, is not
+    // ours to release; {PQfinish} would dereference the null pointer we handed it
+    if (connection == nullptr) {
+        // so leave it alone
+        return;
+    }
+
+    // close the socket and release everything libpq allocated for this session
+    PQfinish(connection);
+    // and say so, in the one place every owner of this handle can see. this is what makes a
+    // closed session observably closed: the pointer lives in a box that all the copies share,
+    // so nulling it here means the next call through any of them finds nothing to dereference
+    connection = nullptr;
+
+    // all done
+    return;
+}
+
+
+// hand a result set back to libpq
+auto
+pyre::postgres::ResultHandle::free(handle_type & result) noexcept -> void
+{
+    // {PQclear} tolerates a null pointer, but there is no reason to make it prove it
+    if (result == nullptr) {
+        // so leave it alone
+        return;
+    }
+
+    // release the rows, their text, and the diagnostic that came with them
+    PQclear(result);
+    // and mark the box empty, for the same reason as above
+    result = nullptr;
+
+    // all done
+    return;
+}
+
+
+// end of file

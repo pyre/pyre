@@ -1,0 +1,199 @@
+// -*- C++ -*-
+// -*- coding: utf-8 -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2026 all rights reserved
+
+// code guard
+#pragma once
+
+
+// my declarations
+#include "Field.h"
+
+
+// metamethods
+// point at the value in the given {row} and {column} of {result}
+pyre::postgres::Field::Field(storage_type result, size_type row, size_type column) :
+    _set(std::move(result)),
+    _row(row),
+    _column(column)
+{}
+
+
+// where i am
+// the row i came from
+auto
+pyre::postgres::Field::row() const -> size_type
+{
+    return _row;
+}
+
+
+// the column i came from
+auto
+pyre::postgres::Field::column() const -> size_type
+{
+    return _column;
+}
+
+
+// the name of that column
+auto
+pyre::postgres::Field::name() const -> view_t
+{
+    // ask libpq
+    const char * label = PQfname(_result(), _column);
+    // a column out of range has no name; my constructor is only ever reached through a bounds
+    // checked subscript, so this is a belt to go with those braces
+    if (label == nullptr) {
+        return view_t();
+    }
+    // hand back a borrowed look at it
+    return view_t(label);
+}
+
+
+// the identifier of its type
+auto
+pyre::postgres::Field::type() const -> oid_t
+{
+    // ask libpq; a column out of range answers with the type that is no type
+    return PQftype(_result(), _column);
+}
+
+
+// whether its bytes are text or the internal representation of that type
+auto
+pyre::postgres::Field::format() const -> Format
+{
+    // ask libpq, and give its answer a name
+    return postgres::format(PQfformat(_result(), _column));
+}
+
+
+// what i hold
+// whether the server sent nothing at all
+auto
+pyre::postgres::Field::isNull() const -> bool
+{
+    // ask libpq
+    return PQgetisnull(_result(), _row, _column) == 1;
+}
+
+
+// the number of octets in my value
+auto
+pyre::postgres::Field::size() const -> size_type
+{
+    // ask libpq
+    return PQgetlength(_result(), _row, _column);
+}
+
+
+// my value, exactly as it arrived
+auto
+pyre::postgres::Field::bytes() const -> view_t
+{
+    // the pointer, which libpq owns
+    const char * value = PQgetvalue(_result(), _row, _column);
+    // and the length, which it reports separately because a binary value may hold a zero octet
+    // in the middle of itself, and a text one may not
+    const size_type length = PQgetlength(_result(), _row, _column);
+    // a value out of range comes back as a null pointer, and a {NULL} as an empty string; in
+    // both cases there is nothing to look at
+    if (value == nullptr) {
+        return view_t();
+    }
+    // hand back a borrowed look at exactly the octets the server sent
+    return view_t(value, static_cast<std::size_t>(length));
+}
+
+
+// interface
+// my value as a {valueT}
+template <typename valueT>
+auto
+pyre::postgres::Field::as() const -> valueT
+{
+    // a value that is not there cannot be turned into anything
+    if (isNull()) {
+        // so say which one, and give up; a caller that expected this asks with {optional}
+        string_t message = "the value in column '";
+        message += name();
+        message += "' of row ";
+        message += std::to_string(_row);
+        message += " is NULL";
+        throw DataError(Diagnostic(std::move(message)));
+    }
+
+    // the codecs read the text representation, which is the only one postgres documents
+    if (format() == Format::binary) {
+        // a binary column is not something they can be asked to interpret; {bytes} is how a
+        // caller reaches one, and it is on them to know what its type lays out where
+        string_t message = "the value in column '";
+        message += name();
+        message += "' arrived in binary format, which the codecs do not read";
+        throw NotSupportedError(Diagnostic(std::move(message)));
+    }
+
+    // hand the text to the recipe for this type
+    return postgres::decode<valueT>(bytes());
+}
+
+
+// my value as a {valueT}, or {fallback} when the server sent nothing
+template <typename valueT>
+auto
+pyre::postgres::Field::as(valueT fallback) const -> valueT
+{
+    // an absent value is what the caller is guarding against
+    if (isNull()) {
+        // so hand back what they told us to use in its place
+        return fallback;
+    }
+    // otherwise, decode as usual
+    return as<valueT>();
+}
+
+
+// my value as a {valueT}, or nothing at all
+template <typename valueT>
+auto
+pyre::postgres::Field::optional() const -> std::optional<valueT>
+{
+    // an absent value becomes an absent optional, which is the one place in c++ where the
+    // distinction postgres draws between {NULL} and the empty string survives intact
+    if (isNull()) {
+        return std::optional<valueT>();
+    }
+    // otherwise, decode as usual
+    return std::optional<valueT>(as<valueT>());
+}
+
+
+// contextual conversion to {bool}, true when i hold a value
+pyre::postgres::Field::operator bool() const
+{
+    // note that this asks whether there is a value, not what it is; a field holding the
+    // boolean {false} is still a field that holds something
+    return !isNull();
+}
+
+
+// implementation details
+// the raw pointer to the result set, checked
+auto
+pyre::postgres::Field::_result() const -> ResultHandle::handle_type
+{
+    // a result set nobody released is a result set we may read
+    if (!_set.valid()) {
+        // and one that somebody did is a bug in the caller, not in the server
+        throw InterfaceError("the result set this field points into has been released");
+    }
+    // hand off the pointer
+    return _set.handle();
+}
+
+
+// end of file

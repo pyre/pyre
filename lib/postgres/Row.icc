@@ -1,0 +1,196 @@
+// -*- C++ -*-
+// -*- coding: utf-8 -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2026 all rights reserved
+
+// code guard
+#pragma once
+
+
+// my declarations
+#include "Row.h"
+
+
+// metamethods
+// point at the given {row} of {result}
+pyre::postgres::Row::Row(storage_type result, size_type row) : _set(std::move(result)), _row(row)
+{}
+
+
+// where i am
+// my position in the result set
+auto
+pyre::postgres::Row::index() const -> size_type
+{
+    return _row;
+}
+
+
+// how many values i hold
+auto
+pyre::postgres::Row::size() const -> size_type
+{
+    // every row of a result set has as many values as the set has columns
+    return PQnfields(_result());
+}
+
+
+// what i hold
+// the value in the given {column}
+auto
+pyre::postgres::Row::operator[](size_type column) const -> value_type
+{
+    // libpq answers a subscript out of range with a null pointer and a message on stderr, and
+    // then lets the caller carry on; this is where that stops
+    if (column < 0 || column >= size()) {
+        // say what was asked for, and what there was
+        string_t message = "no column " + std::to_string(column) + " in a row of ";
+        message += std::to_string(size());
+        message += " columns";
+        throw InterfaceError(std::move(message));
+    }
+
+    // build the view
+    return value_type(_set, _row, column);
+}
+
+
+// the value in the column the server labeled {name}
+auto
+pyre::postgres::Row::operator[](view_t name) const -> value_type
+{
+    // {PQfnumber} wants a terminated string, and a {view_t} promises no such thing
+    const string_t label(name);
+    // ask libpq which column carries this label
+    const size_type column = PQfnumber(_result(), label.c_str());
+    // a name the result set does not carry is a mistake on this side of the wire
+    if (column == unknownColumn) {
+        // so say which name it was
+        string_t message = "no column named '";
+        message += name;
+        message += "' in this result set";
+        throw InterfaceError(std::move(message));
+    }
+
+    // build the view
+    return value_type(_set, _row, column);
+}
+
+
+// the same two, spelled out
+auto
+pyre::postgres::Row::field(size_type column) const -> value_type
+{
+    // delegate
+    return (*this)[column];
+}
+
+
+auto
+pyre::postgres::Row::field(view_t name) const -> value_type
+{
+    // delegate
+    return (*this)[name];
+}
+
+
+// iteration
+// my leftmost field
+auto
+pyre::postgres::Row::begin() const -> const_iterator
+{
+    // stand at the first column
+    return const_iterator(_set, _row, 0);
+}
+
+
+// one past my rightmost
+auto
+pyre::postgres::Row::end() const -> const_iterator
+{
+    // stand just past the last one
+    return const_iterator(_set, _row, size());
+}
+
+
+// implementation details
+// the raw pointer to the result set, checked
+auto
+pyre::postgres::Row::_result() const -> ResultHandle::handle_type
+{
+    // a result set nobody released is a result set we may read
+    if (!_set.valid()) {
+        // and one that somebody did is a bug in the caller
+        throw InterfaceError("the result set this row points into has been released");
+    }
+    // hand off the pointer
+    return _set.handle();
+}
+
+
+// the walk across the fields of a row
+// metamethods
+// stand at the given {column} of the given {row} of {result}
+pyre::postgres::Row::const_iterator::const_iterator(
+    storage_type result, size_type row, size_type column) :
+    _set(std::move(result)),
+    _row(row),
+    _column(column)
+{}
+
+
+// interface
+// the field i stand at
+auto
+pyre::postgres::Row::const_iterator::operator*() const -> reference
+{
+    // manufacture it; a field is nothing but the three things i am already holding
+    return Field(_set, _row, _column);
+}
+
+
+// move one column to the right
+auto
+pyre::postgres::Row::const_iterator::operator++() -> const_iterator &
+{
+    // step
+    ++_column;
+    // and hand myself back
+    return *this;
+}
+
+
+// the same, for a caller who wants where i was
+auto
+pyre::postgres::Row::const_iterator::operator++(int) -> const_iterator
+{
+    // remember where i stand
+    const_iterator here = *this;
+    // step
+    ++_column;
+    // and hand back the memory
+    return here;
+}
+
+
+// whether two of us stand in the same place
+auto
+pyre::postgres::Row::const_iterator::operator==(const const_iterator & other) const -> bool
+{
+    // two iterators are the same place when they name the same value of the same result set;
+    // comparing the handles rather than the boxes is what makes a copy of a result compare
+    // equal to the original, which is what a caller who copied one would expect
+    return _set.handle() == other._set.handle() && _row == other._row && _column == other._column;
+}
+
+
+auto
+pyre::postgres::Row::const_iterator::operator!=(const const_iterator & other) const -> bool
+{
+    // delegate, so the two can never disagree
+    return !(*this == other);
+}
+
+
+// end of file
