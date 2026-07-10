@@ -1,0 +1,663 @@
+// -*- C++ -*-
+// -*- coding: utf-8 -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2026 all rights reserved
+
+// code guard
+#pragma once
+
+
+// my declarations
+#include "Connection.h"
+
+
+// metamethods
+// open a session described by {parameters}
+pyre::postgres::Connection::Connection(const parameters_type & parameters) :
+    _connection(_connect(parameters))
+{}
+
+
+// open a session described by a conninfo string or a postgres uri
+pyre::postgres::Connection::Connection(view_t conninfo) : _connection(_connect(conninfo)) {}
+
+
+// structure
+// the raw pointer, for handing to the libpq c api
+auto
+pyre::postgres::Connection::handle() const -> handle_type
+{
+    // reach into the box; this one is unchecked, for a caller that means to talk to libpq
+    // directly and knows to look before it does
+    return _connection.handle();
+}
+
+
+// whether the session is up
+auto
+pyre::postgres::Connection::status() const -> ConnectionStatus
+{
+    // a session that has been closed is not up, and there is nothing left to ask
+    if (!_connection.valid()) {
+        return ConnectionStatus::bad;
+    }
+    // otherwise, ask libpq and give its answer a name
+    return connectionStatus(PQstatus(_connection.handle()));
+}
+
+
+// the same question, as a predicate
+auto
+pyre::postgres::Connection::ok() const -> bool
+{
+    // a session is usable when it is there and libpq is willing to talk to it
+    return _connection.valid() && status() == ConnectionStatus::ok;
+}
+
+
+// contextual conversion to {bool}
+pyre::postgres::Connection::operator bool() const
+{
+    // delegate
+    return ok();
+}
+
+
+// whatever libpq has to say about the last thing that went wrong
+auto
+pyre::postgres::Connection::message() const -> view_t
+{
+    // a session that has been closed has libpq's memory of it freed along with it
+    if (!_connection.valid()) {
+        // and this is the only thing that could have gone wrong with it
+        return view_t("the connection is closed");
+    }
+    // otherwise, borrow libpq's buffer; it holds an empty string, never a null pointer
+    return view_t(PQerrorMessage(_connection.handle()));
+}
+
+
+// what the session is
+// the database it is talking to
+auto
+pyre::postgres::Connection::database() const -> view_t
+{
+    // ask libpq
+    return view_t(PQdb(_handle()));
+}
+
+
+// the role it is talking as
+auto
+pyre::postgres::Connection::user() const -> view_t
+{
+    // ask libpq
+    return view_t(PQuser(_handle()));
+}
+
+
+// where the server is
+auto
+pyre::postgres::Connection::host() const -> view_t
+{
+    // ask libpq
+    const char * where = PQhost(_handle());
+    // a session over a unix socket answers with the directory the socket lives in, and one
+    // that libpq has forgotten answers with nothing at all
+    return where == nullptr ? view_t() : view_t(where);
+}
+
+
+auto
+pyre::postgres::Connection::port() const -> view_t
+{
+    // ask libpq
+    const char * which = PQport(_handle());
+    // as above
+    return which == nullptr ? view_t() : view_t(which);
+}
+
+
+// the process id of the back end that is serving it
+auto
+pyre::postgres::Connection::backend() const -> int
+{
+    // ask libpq
+    return PQbackendPID(_handle());
+}
+
+
+// the descriptor underneath it
+auto
+pyre::postgres::Connection::socket() const -> int
+{
+    // ask libpq; a session with no socket answers with {-1}
+    return PQsocket(_handle());
+}
+
+
+// the version of the wire protocol in use
+auto
+pyre::postgres::Connection::protocol() const -> int
+{
+    // ask libpq
+    return PQprotocolVersion(_handle());
+}
+
+
+// the version of the server
+auto
+pyre::postgres::Connection::server() const -> int
+{
+    // ask libpq; a session that never came up answers with zero
+    return PQserverVersion(_handle());
+}
+
+
+// where the session stands with respect to its transaction
+auto
+pyre::postgres::Connection::transaction() const -> TransactionStatus
+{
+    // ask libpq, and give its answer a name
+    return transactionStatus(PQtransactionStatus(_handle()));
+}
+
+
+// the current value of a server setting
+auto
+pyre::postgres::Connection::setting(view_t name) const -> view_t
+{
+    // {PQparameterStatus} wants a terminated string
+    const string_t label(name);
+    // ask libpq
+    const char * value = PQparameterStatus(_handle(), label.c_str());
+    // a setting the server has not reported to us is one we cannot answer for
+    return value == nullptr ? view_t() : view_t(value);
+}
+
+
+// synchronous execution
+// run {statement} and hand back what the server said
+auto
+pyre::postgres::Connection::exec(view_t statement) const -> Result
+{
+    // {PQexec} wants a terminated string
+    const string_t text(statement);
+    // send it, and wait for the whole answer. note that this is the simple protocol: the
+    // statement may hold several commands, and no value in it may be parameterized
+    PGresult * result = PQexec(_handle(), text.c_str());
+    // adopt what came back, and raise unless the server ran it
+    return _harvest(result, statement);
+}
+
+
+// run {statement}, with its placeholders filled in from {arguments}
+auto
+pyre::postgres::Connection::execParams(view_t statement, const arguments_type & arguments) const
+    -> Result
+{
+    // hand the pieces to libpq
+    PGresult * result = _exec(statement, arguments, false);
+    // adopt what came back, and raise unless the server ran it
+    return _harvest(result, statement);
+}
+
+
+// the same, with the arguments given as themselves rather than as text
+template <typename... argsT>
+auto
+pyre::postgres::Connection::execute(view_t statement, const argsT &... arguments) const -> Result
+{
+    // render each argument through the recipe for its type; a type with no recipe is caught
+    // here, at the call, rather than by the server after the value has been mangled into text
+    // by whatever {operator<<} happened to be in scope
+    const arguments_type rendered = { postgres::encode(arguments)... };
+    // and delegate
+    return execParams(statement, rendered);
+}
+
+
+// teach the server {statement} under the given {name}
+auto
+pyre::postgres::Connection::prepare(view_t name, view_t statement) const -> void
+{
+    // both want terminated strings
+    const string_t label(name);
+    const string_t text(statement);
+    // hand the statement over, letting the server infer the types of its placeholders
+    PGresult * result = PQprepare(_handle(), label.c_str(), text.c_str(), 0, nullptr);
+    // the result of a successful {PQprepare} carries nothing but its status, so adopt it only
+    // long enough to learn whether the server accepted the statement, and to raise if it did not
+    _harvest(result, statement);
+
+    // all done
+    return;
+}
+
+
+// and run what it was taught
+auto
+pyre::postgres::Connection::execPrepared(view_t name, const arguments_type & arguments) const
+    -> Result
+{
+    // hand the pieces to libpq
+    PGresult * result = _exec(name, arguments, true);
+    // adopt what came back, and raise unless the server ran it; the statement we can name here
+    // is the one the caller prepared, which is the one they will recognize
+    return _harvest(result, name);
+}
+
+
+// asynchronous execution
+// send {statement} off, and do not wait for it
+auto
+pyre::postgres::Connection::send(view_t statement) const -> void
+{
+    // {PQsendQuery} wants a terminated string
+    const string_t text(statement);
+    // push it at the server; a zero here means it never went
+    if (PQsendQuery(_handle(), text.c_str()) == 0) {
+        // and the session is the only one that knows why
+        _fail(statement);
+    }
+
+    // all done
+    return;
+}
+
+
+// the same, with placeholders
+auto
+pyre::postgres::Connection::sendParams(view_t statement, const arguments_type & arguments) const
+    -> void
+{
+    // both libpq calls want a terminated string
+    const string_t text(statement);
+    // and the values as an array of pointers, with a null standing for each {NULL}
+    std::vector<const char *> values;
+    values.reserve(arguments.size());
+    // fill it in
+    for (const auto & argument : arguments) {
+        values.push_back(argument.has_value() ? argument->c_str() : nullptr);
+    }
+
+    // push it all at the server; every value goes as text, and every answer comes back as text
+    const int status = PQsendQueryParams(
+        _handle(), text.c_str(), static_cast<int>(arguments.size()), nullptr, values.data(),
+        nullptr, nullptr, 0);
+    // a zero means it never went
+    if (status == 0) {
+        // and the session is the only one that knows why
+        _fail(statement);
+    }
+
+    // all done
+    return;
+}
+
+
+// read whatever the server has sent us so far
+auto
+pyre::postgres::Connection::consume() const -> void
+{
+    // pull whatever has arrived on the socket into libpq's buffer. the bindings this package
+    // replaces threw this answer away, and so could not tell a socket that had gone quiet from
+    // one that had gone away; a loop over {busy} would then spin forever
+    if (PQconsumeInput(_handle()) == 0) {
+        // a zero means the socket is broken
+        _fail("");
+    }
+
+    // all done
+    return;
+}
+
+
+// whether the answer to the statement in flight is still incomplete
+auto
+pyre::postgres::Connection::busy() const -> bool
+{
+    // ask libpq. note that this reports on what libpq has already buffered, and never touches
+    // the socket; a caller that does not call {consume} first is asking the same question over
+    // and over about the same buffer
+    return PQisBusy(_handle()) != 0;
+}
+
+
+// the next result the server produced, or nothing when it has produced them all
+auto
+pyre::postgres::Connection::result() const -> std::optional<Result>
+{
+    // ask libpq for the next one
+    PGresult * result = PQgetResult(_handle());
+    // a null pointer means the server is done answering the statement in flight, and that the
+    // session is free to send another. it is not an error, and it is the only way to learn this
+    if (result == nullptr) {
+        return std::optional<Result>();
+    }
+
+    // hand back what arrived, whatever it says. deliberately, and unlike {exec}, this does not
+    // raise on a failed result: the session is mid-answer, and a caller that is thrown out of
+    // its collection loop leaves it that way. it is on them to ask the result whether it is
+    // {ok}, and to call {raise} on it once the loop has run dry
+    return std::optional<Result>(std::in_place, result);
+}
+
+
+// ask the server to give up on the statement in flight
+auto
+pyre::postgres::Connection::cancel() const -> void
+{
+    // a cancellation travels over a connection of its own, which libpq builds out of this one
+    PGcancel * request = PQgetCancel(_handle());
+    // a session that never came up has nothing to cancel
+    if (request == nullptr) {
+        throw InterfaceError("cannot cancel a statement on a session that is not established");
+    }
+
+    // room for libpq to explain a failure; its documentation asks for at least 256 octets
+    char buffer[256];
+    // ask the server to stop
+    const int status = PQcancel(request, buffer, sizeof(buffer));
+    // give the side channel back, whatever the answer, and before we look at it
+    PQfreeCancel(request);
+    // a zero means the request never reached the server
+    if (status == 0) {
+        // and {buffer} is where libpq wrote why
+        throw OperationalError(Diagnostic(string_t(buffer)));
+    }
+
+    // all done; note that a successful request only means the server heard it. the statement
+    // may well have finished before it arrived, and the caller learns that from its result
+    return;
+}
+
+
+// whether the calls that send do so without waiting for the socket to drain
+auto
+pyre::postgres::Connection::nonblocking(bool state) const -> void
+{
+    // tell libpq
+    if (PQsetnonblocking(_handle(), state ? 1 : 0) != 0) {
+        // a nonzero answer means it could not
+        _fail("");
+    }
+
+    // all done
+    return;
+}
+
+
+// push whatever is queued out to the server
+auto
+pyre::postgres::Connection::flush() const -> int
+{
+    // ask libpq to write
+    const int status = PQflush(_handle());
+    // a negative answer means the socket is broken
+    if (status < 0) {
+        _fail("");
+    }
+    // zero when everything went, one when the socket would have blocked and some of it is
+    // still waiting; a caller in nonblocking mode waits for the socket and asks again
+    return status;
+}
+
+
+// messages from other sessions
+// the next message this session has collected, or nothing
+auto
+pyre::postgres::Connection::notification() const -> std::optional<Notification>
+{
+    // ask libpq for the next one; this reads from its buffer and never from the socket, so a
+    // session that is only listening must call {consume} before it asks
+    PGnotify * note = PQnotifies(_handle());
+    // nothing has arrived
+    if (note == nullptr) {
+        return std::optional<Notification>();
+    }
+
+    // copy out everything it says, before we hand it back
+    string_t channel(note->relname);
+    string_t payload(note->extra == nullptr ? "" : note->extra);
+    const int backend = note->be_pid;
+    // libpq allocated this, so libpq frees it
+    PQfreemem(note);
+
+    // assemble the message
+    return std::optional<Notification>(
+        std::in_place, std::move(channel), backend, std::move(payload));
+}
+
+
+// quoting
+// wrap {text} in quotes, and escape whatever inside it needs escaping
+auto
+pyre::postgres::Connection::escapeLiteral(view_t text) const -> string_t
+{
+    // ask libpq, which knows the encoding this session negotiated and whether this server reads
+    // a backslash as an escape. it takes the length, so the text need not be terminated
+    char * escaped = PQescapeLiteral(_handle(), text.data(), text.size());
+    // a null answer means it could not
+    if (escaped == nullptr) {
+        _fail("");
+    }
+
+    // take a copy
+    string_t quoted(escaped);
+    // give libpq its buffer back
+    PQfreemem(escaped);
+    // and hand off the copy
+    return quoted;
+}
+
+
+// the same, for a name that must stand where an identifier may stand
+auto
+pyre::postgres::Connection::escapeIdentifier(view_t name) const -> string_t
+{
+    // as above
+    char * escaped = PQescapeIdentifier(_handle(), name.data(), name.size());
+    // a null answer means it could not
+    if (escaped == nullptr) {
+        _fail("");
+    }
+
+    // take a copy
+    string_t quoted(escaped);
+    // give libpq its buffer back
+    PQfreemem(escaped);
+    // and hand off the copy
+    return quoted;
+}
+
+
+// lifecycle
+// close the session and open a new one with the same parameters
+auto
+pyre::postgres::Connection::reset() const -> void
+{
+    // ask libpq to start over. every result set taken off this session before the reset stays
+    // valid: they are copies of what the server sent, and owe it nothing
+    PQreset(_handle());
+    // a session that will not come back up is one the caller must hear about
+    if (PQstatus(_connection.handle()) != CONNECTION_OK) {
+        _fail("");
+    }
+
+    // all done
+    return;
+}
+
+
+// hand the session back now
+auto
+pyre::postgres::Connection::close() -> void
+{
+    // let go of it. the box that holds the pointer is shared with every copy of me, and this
+    // nulls it, so a statement sent through any of them from here on raises an {InterfaceError}
+    // rather than handing libpq an address it has already freed
+    _connection.release();
+
+    // all done
+    return;
+}
+
+
+// implementation details
+// the raw pointer, checked
+auto
+pyre::postgres::Connection::_handle() const -> handle_type
+{
+    // a session that nobody closed is a session we may use
+    if (!_connection.valid()) {
+        // and one that somebody did is a bug in the caller
+        throw InterfaceError("the connection is closed");
+    }
+    // hand off the pointer
+    return _connection.handle();
+}
+
+
+// adopt the result libpq produced for {statement}, and raise unless the server ran it
+auto
+pyre::postgres::Connection::_harvest(PGresult * result, view_t statement) const -> Result
+{
+    // libpq hands back nothing when it ran out of memory, or when the socket died before the
+    // server answered; either way the session, and not the result, is what knows why
+    if (result == nullptr) {
+        _fail(statement);
+    }
+
+    // take ownership, so that whatever happens next the result gets freed
+    const Result harvest(result);
+    // and if the server would not run the statement
+    if (!harvest.ok()) {
+        // hand its own account of why to the classifier, which throws the exception that names
+        // the condition the server named
+        harvest.raise(string_t(statement));
+    }
+
+    // hand it off
+    return harvest;
+}
+
+
+// build the arrays libpq wants and hand them to whichever of its calls the caller meant
+auto
+pyre::postgres::Connection::_exec(
+    view_t statement, const arguments_type & arguments, bool prepared) const -> PGresult *
+{
+    // both libpq calls want a terminated string; for a prepared statement this is its name
+    const string_t text(statement);
+    // and the values as an array of pointers, with a null standing for each {NULL}. this is
+    // the whole trick: a value that travels beside the statement rather than inside it cannot
+    // change what the statement does, however it is spelled
+    std::vector<const char *> values;
+    values.reserve(arguments.size());
+    // fill it in
+    for (const auto & argument : arguments) {
+        values.push_back(argument.has_value() ? argument->c_str() : nullptr);
+    }
+    // how many there are
+    const int count = static_cast<int>(arguments.size());
+
+    // a statement the server already knows
+    if (prepared) {
+        // the lengths and the formats are both null, which says that every value is text
+        return PQexecPrepared(_handle(), text.c_str(), count, values.data(), nullptr, nullptr, 0);
+    }
+
+    // and one it is seeing for the first time; the types are null too, which asks the server to
+    // infer each of them from where its placeholder stands
+    return PQexecParams(
+        _handle(), text.c_str(), count, nullptr, values.data(), nullptr, nullptr, 0);
+}
+
+
+// complain that libpq gave up before the server ever heard of {statement}
+auto
+pyre::postgres::Connection::_fail(view_t statement) const -> void
+{
+    // whatever libpq has to say
+    string_t explanation(message());
+    // which, on the rare paths where it says nothing, is nothing at all
+    if (explanation.empty()) {
+        explanation = "libpq failed, and gave no reason";
+    }
+    // a failure with no SQLSTATE never came from the server's parser, and everything that can
+    // stop libpq on this side of the wire is environmental
+    throw OperationalError(Diagnostic(std::move(explanation), string_t(statement)));
+}
+
+
+// open a session described by {parameters}
+auto
+pyre::postgres::Connection::_connect(const parameters_type & parameters) -> handle_type
+{
+    // libpq wants two null terminated arrays, one of names and one of values, laid out side by
+    // side. keeping them apart all the way down is the entire point of this constructor
+    std::vector<const char *> keys;
+    std::vector<const char *> values;
+    // room for each parameter, and for the null that ends each array
+    keys.reserve(parameters.size() + 1);
+    values.reserve(parameters.size() + 1);
+    // fill them in
+    for (const auto & [name, value] : parameters) {
+        keys.push_back(name.c_str());
+        values.push_back(value.c_str());
+    }
+    // and terminate them
+    keys.push_back(nullptr);
+    values.push_back(nullptr);
+
+    // ask libpq for the session; the final zero forbids it from reading the value of {dbname}
+    // as though it were a whole connection specification, which is a courtesy nobody asked for
+    // and a way for a database name to smuggle in a host
+    PGconn * connection = PQconnectdbParams(keys.data(), values.data(), 0);
+    // and check what came back
+    return _established(connection);
+}
+
+
+// open a session described by a conninfo string or a postgres uri
+auto
+pyre::postgres::Connection::_connect(view_t conninfo) -> handle_type
+{
+    // {PQconnectdb} wants a terminated string
+    const string_t specification(conninfo);
+    // ask libpq for the session
+    PGconn * connection = PQconnectdb(specification.c_str());
+    // and check what came back
+    return _established(connection);
+}
+
+
+// the check the two of them share
+auto
+pyre::postgres::Connection::_established(handle_type connection) -> handle_type
+{
+    // libpq hands back nothing only when it could not allocate the session at all
+    if (connection == nullptr) {
+        throw OperationalError(Diagnostic("libpq could not allocate a session"));
+    }
+
+    // a session that did not come up still has to be cleaned up: libpq allocated it, filled it
+    // with the reason it failed, and is waiting to be told to let go. the bindings this package
+    // replaces raised at this point and walked away, leaking one session per failed connection
+    if (PQstatus(connection) != CONNECTION_OK) {
+        // take libpq's account of the failure before it goes away with the session
+        string_t explanation(PQerrorMessage(connection));
+        // hand the session back
+        PQfinish(connection);
+        // and complain; a connection that will not come up is environmental, always
+        throw OperationalError(Diagnostic(std::move(explanation)));
+    }
+
+    // hand off the session
+    return connection;
+}
+
+
+// end of file

@@ -1,0 +1,29 @@
+# -*- Makefile -*-
+#
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2026 all rights reserved
+
+
+# the postgres library testsuite
+postgres.lib.tests.stem := postgres.lib
+postgres.lib.tests.prerequisites := postgres.lib journal.lib
+postgres.lib.tests.extern := postgres.lib journal.lib libpq
+
+# c++ compiler arguments
+postgres.lib.tests.c++.defines += $(pyre.lib.c++.defines)
+postgres.lib.tests.c++.flags += -Wall $(pyre.lib.c++.flags)
+
+
+# every driver below {sanity} needs a live server, and they all talk to the same one; the ones
+# that create objects do so in the temporary schema of their own session, so they do not collide
+# with each other and they leave nothing behind. run them in order anyway, so that a server that
+# is not there is reported once, by the first of them, rather than seven times
+tests.postgres.lib.connect.pre := tests.postgres.lib.sanity
+tests.postgres.lib.exec.pre := tests.postgres.lib.connect
+tests.postgres.lib.codecs.pre := tests.postgres.lib.exec
+tests.postgres.lib.errors.pre := tests.postgres.lib.codecs
+tests.postgres.lib.transaction.pre := tests.postgres.lib.errors
+tests.postgres.lib.async.pre := tests.postgres.lib.transaction
+
+
+# end of file

@@ -1,0 +1,345 @@
+// -*- C++ -*-
+// -*- coding: utf-8 -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2026 all rights reserved
+
+// code guard
+#pragma once
+
+
+// my declarations
+#include "Result.h"
+
+
+// metamethods
+// adopt the result set libpq just handed us
+pyre::postgres::Result::Result(handle_type result) : _set(result)
+{
+    // libpq hands back a null pointer when it could not build a result at all, which means it
+    // ran out of memory, or the connection died before the server answered. whoever called it
+    // is the one holding the connection, and hence the one that can say what went wrong; by the
+    // time we are here that context is gone, so nobody may build a result out of nothing
+    if (result == nullptr) {
+        throw InterfaceError("cannot build a result out of a null pointer");
+    }
+}
+
+
+// structure
+// the raw pointer, for handing to the libpq c api
+auto
+pyre::postgres::Result::handle() const -> handle_type
+{
+    // reach into the box
+    return _set.handle();
+}
+
+
+// the state the server left the statement in
+auto
+pyre::postgres::Result::status() const -> ExecStatus
+{
+    // ask libpq, and give its answer a name
+    return execStatus(PQresultStatus(handle()));
+}
+
+
+// whether the statement ran
+auto
+pyre::postgres::Result::ok() const -> bool
+{
+    // delegate to the predicate that knows which states mean what
+    return succeeded(status());
+}
+
+
+// contextual conversion to {bool}, true when the statement ran
+pyre::postgres::Result::operator bool() const
+{
+    // delegate
+    return ok();
+}
+
+
+// shape
+// how many rows the server sent
+auto
+pyre::postgres::Result::rows() const -> size_type
+{
+    // ask libpq
+    return PQntuples(handle());
+}
+
+
+// how many values each of them holds
+auto
+pyre::postgres::Result::columns() const -> size_type
+{
+    // ask libpq
+    return PQnfields(handle());
+}
+
+
+// the columns
+// the label the server gave the given {column}
+auto
+pyre::postgres::Result::name(size_type column) const -> view_t
+{
+    // ask libpq
+    const char * label = PQfname(handle(), column);
+    // a column out of range has no name
+    if (label == nullptr) {
+        // and asking for one is a mistake on this side of the wire
+        string_t message = "no column " + std::to_string(column) + " in a result set of ";
+        message += std::to_string(columns());
+        message += " columns";
+        throw InterfaceError(std::move(message));
+    }
+    // hand back a borrowed look at it
+    return view_t(label);
+}
+
+
+// the position of the column the server labeled {name}
+auto
+pyre::postgres::Result::column(view_t name) const -> size_type
+{
+    // {PQfnumber} wants a terminated string
+    const string_t label(name);
+    // ask libpq; it answers with {-1} when it has no such column, which is exactly what this
+    // call promises to hand back, so there is nothing to check
+    return PQfnumber(handle(), label.c_str());
+}
+
+
+// the identifier of the type of the given {column}
+auto
+pyre::postgres::Result::type(size_type column) const -> oid_t
+{
+    // ask libpq; a column out of range answers with the type that is no type
+    return PQftype(handle(), column);
+}
+
+
+// whether the values in it are text or the internal representation of that type
+auto
+pyre::postgres::Result::format(size_type column) const -> Format
+{
+    // ask libpq, and give its answer a name
+    return postgres::format(PQfformat(handle(), column));
+}
+
+
+// the values, reached directly
+// whether the server sent nothing for the given {row} and {column}
+auto
+pyre::postgres::Result::isNull(size_type row, size_type column) const -> bool
+{
+    // ask libpq
+    return PQgetisnull(handle(), row, column) == 1;
+}
+
+
+// the value there, borrowed
+auto
+pyre::postgres::Result::value(size_type row, size_type column) const -> view_t
+{
+    // the pointer, which libpq owns
+    const char * text = PQgetvalue(handle(), row, column);
+    // a subscript out of range comes back as a null pointer
+    if (text == nullptr) {
+        return view_t();
+    }
+    // hand back a borrowed look at exactly the octets the server sent
+    return view_t(text, static_cast<std::size_t>(PQgetlength(handle(), row, column)));
+}
+
+
+// the rows
+// the given {row}
+auto
+pyre::postgres::Result::operator[](size_type row) const -> value_type
+{
+    // a subscript out of range is a mistake on this side of the wire
+    if (row < 0 || row >= rows()) {
+        // so say what was asked for, and what there was
+        string_t message = "no row " + std::to_string(row) + " in a result set of ";
+        message += std::to_string(rows());
+        message += " rows";
+        throw InterfaceError(std::move(message));
+    }
+
+    // build the view
+    return value_type(_set, row);
+}
+
+
+// the same, spelled out
+auto
+pyre::postgres::Result::row(size_type index) const -> value_type
+{
+    // delegate
+    return (*this)[index];
+}
+
+
+// iteration
+// my topmost row
+auto
+pyre::postgres::Result::begin() const -> const_iterator
+{
+    // stand at the first row
+    return const_iterator(_set, 0);
+}
+
+
+// one past my bottommost
+auto
+pyre::postgres::Result::end() const -> const_iterator
+{
+    // stand just past the last one
+    return const_iterator(_set, rows());
+}
+
+
+// what the server said about the statement itself
+// the tag the server put on it
+auto
+pyre::postgres::Result::command() const -> view_t
+{
+    // ask libpq; it hands back an empty string, never a null pointer
+    return view_t(PQcmdStatus(handle()));
+}
+
+
+// how many rows it touched
+auto
+pyre::postgres::Result::affected() const -> long
+{
+    // ask libpq, which reports this as the decimal text at the end of the command tag
+    const char * text = PQcmdTuples(handle());
+    // a statement that touched no rows, and one whose tag carries no count, both answer with
+    // the empty string
+    if (text == nullptr || *text == '\0') {
+        return 0;
+    }
+
+    // room for the answer
+    long count = 0;
+    // read it
+    const auto outcome = std::from_chars(text, text + std::char_traits<char>::length(text), count);
+    // a count that will not parse is a server that has broken its own protocol
+    if (outcome.ec != std::errc()) {
+        // which is worth saying out loud, since a caller is about to believe the answer
+        auto channel = pyre::journal::firewall_t("pyre.postgres.result");
+        channel
+            // what
+            << "cannot read the row count out of the command tag"
+            << pyre::journal::newline
+            // details
+            << "tag: '" << PQcmdStatus(handle()) << "'"
+            << pyre::journal::newline
+            << "count: '" << text << "'"
+            // where, and flush
+            << pyre::journal::endl(__HERE__);
+        // and in a build with firewalls disabled, the honest answer is that we do not know
+        return 0;
+    }
+
+    // hand it off
+    return count;
+}
+
+
+// the full report of what went wrong
+auto
+pyre::postgres::Result::diagnostic(string_t statement) const -> Diagnostic
+{
+    // harvest everything the result has to say, and blame it on the statement we were given
+    return Diagnostic(handle(), std::move(statement));
+}
+
+
+// the one line rendering libpq assembled
+auto
+pyre::postgres::Result::message() const -> view_t
+{
+    // ask libpq; it hands back an empty string, never a null pointer
+    return view_t(PQresultErrorMessage(handle()));
+}
+
+
+// interface
+// classify this result and throw the matching exception
+auto
+pyre::postgres::Result::raise(string_t statement) const -> void
+{
+    // hand the report to the classifier; the qualification is not optional, since my own name
+    // for this call would otherwise find itself
+    postgres::raise(diagnostic(std::move(statement)));
+}
+
+
+// the walk down the rows of a result set
+// metamethods
+// stand at the given {row} of {result}
+pyre::postgres::Result::const_iterator::const_iterator(storage_type result, size_type row) :
+    _set(std::move(result)),
+    _row(row)
+{}
+
+
+// interface
+// the row i stand at
+auto
+pyre::postgres::Result::const_iterator::operator*() const -> reference
+{
+    // manufacture it; a row is nothing but the two things i am already holding
+    return Row(_set, _row);
+}
+
+
+// move down one row
+auto
+pyre::postgres::Result::const_iterator::operator++() -> const_iterator &
+{
+    // step
+    ++_row;
+    // and hand myself back
+    return *this;
+}
+
+
+// the same, for a caller who wants where i was
+auto
+pyre::postgres::Result::const_iterator::operator++(int) -> const_iterator
+{
+    // remember where i stand
+    const_iterator here = *this;
+    // step
+    ++_row;
+    // and hand back the memory
+    return here;
+}
+
+
+// whether two of us stand in the same place
+auto
+pyre::postgres::Result::const_iterator::operator==(const const_iterator & other) const -> bool
+{
+    // as with the fields, compare the result sets by the pointer they hold rather than by the
+    // box that holds it, so that a copy of a result iterates alongside the original
+    return _set.handle() == other._set.handle() && _row == other._row;
+}
+
+
+auto
+pyre::postgres::Result::const_iterator::operator!=(const const_iterator & other) const -> bool
+{
+    // delegate, so the two can never disagree
+    return !(*this == other);
+}
+
+
+// end of file

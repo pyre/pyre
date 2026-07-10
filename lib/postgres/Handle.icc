@@ -1,0 +1,89 @@
+// -*- C++ -*-
+// -*- coding: utf-8 -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2026 all rights reserved
+
+// code guard
+#pragma once
+
+
+// my declarations
+#include "Handle.h"
+
+
+// metamethods
+// adopt {handle}, boxing it so that every copy of me can watch it go away
+template <class traitsT>
+pyre::postgres::Handle<traitsT>::Handle(handle_type handle) :
+    _handle(new handle_type(handle), &Handle::_reclaim)
+{}
+
+
+// interface
+// the raw pointer, for handing to the libpq c api
+template <class traitsT>
+auto
+pyre::postgres::Handle<traitsT>::handle() const -> handle_type
+{
+    // reach into the box; whoever gets a null out of here must not pass it to libpq
+    return *_handle;
+}
+
+
+// whether i still name a live libpq object
+template <class traitsT>
+auto
+pyre::postgres::Handle<traitsT>::valid() const -> bool
+{
+    // the box is emptied by {release}, and by nothing else
+    return *_handle != nullptr;
+}
+
+
+// the number of owners that currently share my box
+template <class traitsT>
+auto
+pyre::postgres::Handle<traitsT>::references() const -> long
+{
+    // ask the shared pointer
+    return _handle.use_count();
+}
+
+
+// give the object back to libpq now
+template <class traitsT>
+auto
+pyre::postgres::Handle<traitsT>::release() -> void
+{
+    // hand the object back and null the box; the recipe tolerates a box that is already empty,
+    // so releasing twice is harmless, and so is releasing a handle a copy of me has released
+    traits_type::free(*_handle);
+
+    // note what is deliberately not happening here: the box itself stays, and so does the
+    // shared pointer that owns it. my copies keep their reference to a box that now holds a
+    // null, and so they learn that the object is gone. dropping the pointer instead would
+    // leave each of them looking at a live box holding an address libpq has already freed
+
+    // all done
+    return;
+}
+
+
+// implementation details
+// release the object, if it is still there, and destroy its box
+template <class traitsT>
+auto
+pyre::postgres::Handle<traitsT>::_reclaim(handle_type * box) noexcept -> void
+{
+    // the last owner is going away; if nobody called {release} first, the object is still ours
+    traits_type::free(*box);
+    // and in either case, the box is
+    delete box;
+
+    // all done
+    return;
+}
+
+
+// end of file
