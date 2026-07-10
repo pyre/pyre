@@ -156,6 +156,8 @@ jobs:
           echo " -- switching to the build directory"
           cd ${{runner.temp}}/build
           echo " -- testing pyre"
-          ctest --output-on-failure -E postgres.ext
+          # the postgres suites, both the c++ library and the extension, need a running server,
+          # which this runner does not have
+          ctest --output-on-failure -E postgres
 
 # end of file
