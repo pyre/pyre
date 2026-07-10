@@ -39,6 +39,7 @@ function(pyre_gslModule)
     target_sources(gslmodule PRIVATE
       extensions/gsl/__init__.cc
       extensions/gsl/legacy.cc
+      extensions/gsl/Vector.cc
       extensions/gsl/blas.cc
       extensions/gsl/histogram.cc
       extensions/gsl/linalg.cc
@@ -48,7 +49,7 @@ function(pyre_gslModule)
       extensions/gsl/permutation.cc
       extensions/gsl/rng.cc
       extensions/gsl/stats.cc
-      extensions/gsl/vector.cc
+      extensions/gsl/vectorapi.cc
       )
 
     if (${MPI_FOUND})

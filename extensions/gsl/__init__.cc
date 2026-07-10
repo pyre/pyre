@@ -48,6 +48,9 @@ PYBIND11_MODULE(libgsl, m)
     // what the package says about itself
     gsl::py::metadata(m);
 
+    // the data types gsl allocates and releases
+    gsl::py::vector(m);
+
     // graft on the entities that are still spelled as free functions over capsules; the table
     // shrinks with every class that moves to pybind11, and this call goes away with the last one
     if (PyModule_AddFunctions(m.ptr(), gsl::legacy::methods) < 0) {

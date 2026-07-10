@@ -11,9 +11,12 @@ from . import libgsl as gsl  # the extension
 
 
 # the class declaration
-class Vector:
+class Vector(gsl.Vector):
     """
-    A wrapper over a gsl vector
+    A vector of doubles
+
+    The storage, the buffer protocol, and the views are the extension's; everything that reads
+    more naturally in python -- the file i/o, the slicing, the arithmetic operators -- lives here
     """
 
     # types
@@ -50,11 +53,15 @@ class Vector:
             return vector
         # get the vector capsule
         data = None if vector is None else vector.data
-        # scatter the data
+        # broadcast the data
         capsule, shape = gsl.bcastVector(communicator, source, data)
-        # dress up my local portion as a vector
+        # the source already owns the vector it broadcast, so it hands that back untouched;
+        # rewrapping the capsule it borrows would hand its storage to a second owner
+        if communicator.rank == source:
+            return vector
+        # everybody else dresses up the fresh storage they received as a vector
         result = cls(shape=shape, data=capsule)
-        # and return it
+        # and returns it
         return result
 
     @classmethod
@@ -412,13 +419,9 @@ class Vector:
 
     # meta methods
     def __init__(self, shape, data=None, **kwds):
-        # chain up
-        super().__init__(**kwds)
-        # adjust the shape, just in case
-        shape = int(shape)
-        # store
-        self.shape = shape
-        self.data = gsl.vector_alloc(shape) if data is None else data
+        # let the extension allocate my storage, or adopt the capsule {data} carries; {shape}
+        # and {data} are its to consume, so the superclass gets them along with everything else
+        super().__init__(shape=int(shape), data=data, **kwds)
         # all done
         return
 
@@ -579,9 +582,6 @@ class Vector:
             yield gsl.vector_get(self.data, i)
         # all done
         return
-
-    # private data
-    data = None
 
 
 # end of file
