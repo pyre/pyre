@@ -25,9 +25,6 @@ class Server(pyre.component, implements=datastore):
     # exceptions
     from . import exceptions
 
-    # constants
-    providesHeaders = True
-
     # traits
     sql = pyre.weaver.language(default=sql)
     sql.doc = "the generator of the SQL statements"
@@ -136,18 +133,14 @@ class Server(pyre.component, implements=datastore):
         """
         # build the sql statements
         sql = self.sql.select(query=query)
-        # execute them
-        results = iter(self.execute(*sql))
 
-        # get the headers, if the server provides them; ignore them, for now, since the order
-        # of the results matches exactly the field order, by construction
-        if self.providesHeaders:
-            headers = next(results)
-
-        # for each row with actual data
-        for row in results:
-            # build a named tuple
+        # walk the rows the back end sent; every back end yields data rows and nothing else.
+        # the postgres one used to put the column names in the first of them, so that every
+        # caller had to know to skip it; its names now live on the result, where they belong
+        for row in self.execute(*sql):
+            # build a named tuple, whose field order matches the column order by construction
             yield query.pyre_immutable(data=row)
+
         # all done
         return
 

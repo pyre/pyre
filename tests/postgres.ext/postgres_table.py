@@ -50,12 +50,15 @@ def test():
     with db:
         # create the table
         db.createTable(Weather)
-        # verify it is there
-        assert db.execute(sql) == (("tablename",), ("weather",))
+        # verify it is there; the result reads as a sequence of its rows, and the column names
+        # live on the result rather than pretending to be its first row
+        found = db.execute(sql)
+        assert found.headers == ("tablename",)
+        assert tuple(tuple(row) for row in found) == (("weather",),)
         # drop the table
         db.dropTable(Weather)
         # verify it is not there
-        assert db.execute(sql) == (("tablename",),)
+        assert tuple(db.execute(sql)) == ()
 
     # and return the connection and the table
     return db, Weather
