@@ -44,12 +44,12 @@ class Weather(pyre.db.table, id="weather"):
 
 def queryForTable(db, table):
     """
-    Interrogate the table of tables looking for {table}
+    Interrogate the table of tables looking for {table}, and return the names it found
     """
     # build the statement
     sql = "SELECT tablename FROM pg_tables WHERE tablename='{}'".format(table.pyre_name)
-    # execute it and return the result
-    return db.execute(sql)
+    # execute it, and hand back its rows as plain tuples
+    return tuple(tuple(row) for row in db.execute(sql))
 
 
 def test():
@@ -71,24 +71,24 @@ def test():
         # create the location table
         db.createTable(Location)
         # verify it is there
-        assert queryForTable(db, Location) == (("tablename",), (Location.pyre_name,))
+        assert queryForTable(db, Location) == ((Location.pyre_name,),)
 
         # create the weather table
         # print('\n'.join(db.sql.createTable(Weather)))
         db.createTable(Weather)
         # verify it is there
-        assert queryForTable(db, Weather) == (("tablename",), (Weather.pyre_name,))
+        assert queryForTable(db, Weather) == ((Weather.pyre_name,),)
 
         # drop the weather table
         db.dropTable(Weather)
         # and check it's gone
-        assert queryForTable(db, Weather) == (("tablename",),)
+        assert queryForTable(db, Weather) == ()
 
         # drop the location table
         # print('\n'.join(db.sql.createTable(Location)))
         db.dropTable(Location)
         # and check it's gone too
-        assert queryForTable(db, Location) == (("tablename",),)
+        assert queryForTable(db, Location) == ()
 
     # and return the connection and the tables
     return db, Weather, Location

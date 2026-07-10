@@ -247,6 +247,7 @@ if(PYRE_BUILD_TESTING)
 
   # if we have postgres support
   if(PostgreSQL_FOUND)
+    include(pyre_tests_postgres_lib)
     include(pyre_tests_postgres_ext)
   endif()
 endif()

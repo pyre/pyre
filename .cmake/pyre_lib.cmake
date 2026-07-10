@@ -18,5 +18,7 @@ pyre_h5Lib()
 pyre_cudaLib()
 # and the mpi layers
 pyre_mpiLib()
+# and the postgres layer
+pyre_postgresLib()
 
 # end of file

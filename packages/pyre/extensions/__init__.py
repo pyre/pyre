@@ -33,4 +33,16 @@ else:
     libh5.init()
 
 
+# attempt to
+try:
+    # load the {postgres} bindings
+    from . import postgres as libpq
+# if they were never built, this build has no postgres support; note that the exception must be
+# this narrow: bindings that exist but refuse to load are a bug, and a bug that presents itself
+# as the tranquil absence of a library is one that nobody ever finds
+except ModuleNotFoundError:
+    # just mark it as unavailable
+    libpq = None
+
+
 # end of file

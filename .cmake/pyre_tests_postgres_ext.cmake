@@ -9,13 +9,12 @@
 #
 # sanity
 pyre_test_python_testcase(tests/postgres.ext/sanity.py)
-pyre_test_python_testcase(tests/postgres.ext/sanity_pyrepg.py)
-# pyrepg
-pyre_test_python_testcase(tests/postgres.ext/pyrepg_exceptions.py)
-pyre_test_python_testcase(tests/postgres.ext/pyrepg_connect.py)
-pyre_test_python_testcase(tests/postgres.ext/pyrepg_execute.py)
-pyre_test_python_testcase(tests/postgres.ext/pyrepg_execute_badCommand.py)
-pyre_test_python_testcase(tests/postgres.ext/pyrepg_submit.py)
+pyre_test_python_testcase(tests/postgres.ext/libpq_sanity.py)
+# the low level interface, over the pybind11 bindings
+pyre_test_python_testcase(tests/postgres.ext/libpq_connect.py)
+pyre_test_python_testcase(tests/postgres.ext/libpq_execute.py)
+pyre_test_python_testcase(tests/postgres.ext/libpq_exceptions.py)
+pyre_test_python_testcase(tests/postgres.ext/libpq_async.py)
 
 # components
 pyre_test_python_testcase(tests/postgres.ext/postgres_database.py)
@@ -26,7 +25,8 @@ pyre_test_python_testcase(tests/postgres.ext/postgres_reserved.py)
 pyre_test_python_testcase(tests/postgres.ext/postgres_references.py)
 pyre_test_python_testcase(tests/postgres.ext/postgres_database_drop.py)
 
-# make the fixture
+# the component tests pound on a database they create and drop; the create is a setup fixture,
+# the drop a cleanup one, and everything in between requires it
 set_property(TEST tests.postgres.ext.postgres_database_create.py PROPERTY
   FIXTURES_SETUP POSTGRES)
 set_property(TEST tests.postgres.ext.postgres_database_drop.py PROPERTY
