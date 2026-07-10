@@ -105,6 +105,30 @@ def test():
     # each process receives the one addressed to it
     assert world.scatterObject(bundles, 0) == ("rank", rank) * (rank + 1)
 
+    # every process hands one object to every process, and says who packed it. the payload
+    # leans on the sender twice as heavily as on the receiver, so that what i address to {peer}
+    # is a different size from what {peer} addresses to me
+    deliveries = [{"from": rank, "pad": "y" * (2 * rank + peer)} for peer in range(size)]
+    # exchange
+    received = world.alltoallObject(deliveries)
+    # so i receive one object from each process, in rank order, sized as its sender decided
+    assert received == [{"from": peer, "pad": "y" * (2 * peer + rank)} for peer in range(size)]
+
+    # an exchange in which somebody brought the wrong number of objects is refused; every
+    # process refuses, so nobody is left waiting
+    if size > 1:
+        # plant a flag
+        refused = False
+        # ask for the impossible
+        try:
+            # one object too few
+            world.alltoallObject([None] * (size - 1))
+        # the package refuses with a shape error
+        except mpi.ShapeError:
+            refused = True
+        # check that it did
+        assert refused
+
     # a scatter whose root brought the wrong number of objects is refused, exactly as the cell
     # version is
     if rank == 0 and size > 1:

@@ -519,6 +519,78 @@ pyre::mpi::Communicator::scatterBytes(const std::vector<bytes_t> & payloads, ran
 }
 
 
+// hand the nth payload of every process's {payloads} to the nth process
+auto
+pyre::mpi::Communicator::alltoallBytes(const std::vector<bytes_t> & payloads) const
+    -> std::vector<bytes_t>
+{
+    // how many processes i hold
+    auto processes = payloads.size();
+    // every process must have brought exactly one payload per process
+    if (processes != static_cast<std::size_t>(size())) {
+        // so refuse, rather than let mpi read past the end of the buffer
+        throw ShapeError("pyre::mpi::alltoallBytes: every process must supply one payload per "
+                         "process");
+    }
+
+    // how many octets i am sending to each process, and where its share begins
+    std::vector<int> sendCounts(processes), sendDisplacements(processes);
+    // laid end to end
+    int outgoingTotal = 0;
+    // in rank order
+    for (decltype(processes) slot = 0; slot < processes; ++slot) {
+        sendCounts[slot] = static_cast<int>(payloads[slot].size());
+        sendDisplacements[slot] = outgoingTotal;
+        outgoingTotal += sendCounts[slot];
+    }
+
+    // pack them into one buffer, back to back
+    bytes_t outgoing(outgoingTotal);
+    // one at a time
+    for (decltype(processes) slot = 0; slot < processes; ++slot) {
+        std::copy(
+            payloads[slot].begin(), payloads[slot].end(),
+            outgoing.begin() + sendDisplacements[slot]);
+    }
+
+    // nobody can make room for what is coming without first learning how much it is, and each
+    // process learns that from the process that is sending to it
+    auto recvCounts = alltoall(sendCounts);
+
+    // where each process's octets will land
+    std::vector<int> recvDisplacements(processes);
+    // laid end to end
+    int incomingTotal = 0;
+    // in rank order
+    for (decltype(processes) slot = 0; slot < processes; ++slot) {
+        recvDisplacements[slot] = incomingTotal;
+        incomingTotal += recvCounts[slot];
+    }
+
+    // room for everything addressed to me
+    bytes_t incoming(incomingTotal);
+    // exchange
+    check(MPI_Alltoallv(
+        outgoing.data(), sendCounts.data(), sendDisplacements.data(), MPI_BYTE, incoming.data(),
+        recvCounts.data(), recvDisplacements.data(), MPI_BYTE, handle()));
+
+    // cut the buffer back up into the payloads it was made of
+    std::vector<bytes_t> collected;
+    // one per process
+    collected.reserve(processes);
+    // sliced at the displacements we computed
+    for (decltype(processes) slot = 0; slot < processes; ++slot) {
+        // the first octet of what this process sent me
+        auto first = incoming.begin() + recvDisplacements[slot];
+        // and the one past its last
+        collected.emplace_back(first, first + recvCounts[slot]);
+    }
+
+    // hand them off
+    return collected;
+}
+
+
 // point to point operations
 // send {value} to {peer}, labelled with {tag}
 template <typename cellT>

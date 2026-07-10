@@ -141,6 +141,8 @@ public:
     inline auto allgatherBytes(const bytes_t & payload) const -> std::vector<bytes_t>;
     // hand the nth payload of {payloads} to the nth process; {payloads} matters only at {root}
     inline auto scatterBytes(const std::vector<bytes_t> & payloads, rank_t root) const -> bytes_t;
+    // hand the nth payload of every process's {payloads} to the nth process
+    inline auto alltoallBytes(const std::vector<bytes_t> & payloads) const -> std::vector<bytes_t>;
 
     // point to point operations
 public:
