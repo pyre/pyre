@@ -23,7 +23,7 @@ def fill(entity, value):
 # attempt to
 try:
     # load the extension module
-    from . import gsl
+    from . import libgsl as gsl
 # if this fails
 except ImportError:
     # not much to do...

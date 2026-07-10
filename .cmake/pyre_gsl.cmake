@@ -25,7 +25,7 @@ function(pyre_gslModule)
   if (${GSL_FOUND})
     Python_add_library(gslmodule MODULE WITH_SOABI)
     # adjust the name to match what python expects
-    set_target_properties(gslmodule PROPERTIES LIBRARY_OUTPUT_NAME gsl)
+    set_target_properties(gslmodule PROPERTIES LIBRARY_OUTPUT_NAME libgsl)
     # specify the directory for the module compilation products
     pyre_library_directory(gslmodule extensions)
     # set the include directories
@@ -33,13 +33,13 @@ function(pyre_gslModule)
     # set the libraries to link against
     target_link_libraries(
       gslmodule PRIVATE
-      ${GSL_LIBRARIES} pyre journal
+      ${GSL_LIBRARIES} pyre journal pybind11::module
       )
     # add the sources
     target_sources(gslmodule PRIVATE
-      extensions/gsl/gsl.cc
+      extensions/gsl/__init__.cc
+      extensions/gsl/legacy.cc
       extensions/gsl/blas.cc
-      extensions/gsl/exceptions.cc
       extensions/gsl/histogram.cc
       extensions/gsl/linalg.cc
       extensions/gsl/matrix.cc

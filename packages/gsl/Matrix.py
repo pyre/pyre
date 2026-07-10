@@ -8,7 +8,7 @@
 # externals
 import numbers
 import itertools
-from . import gsl  # the extension
+from . import libgsl as gsl  # the extension
 
 
 # the class declaration

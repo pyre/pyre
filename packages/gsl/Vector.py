@@ -7,7 +7,7 @@
 
 # externals
 import numbers
-from . import gsl  # the extension
+from . import libgsl as gsl  # the extension
 
 
 # the class declaration
