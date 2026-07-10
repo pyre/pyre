@@ -553,6 +553,41 @@ pyre::mpi::py::communicator(py::module & m)
         "hand the nth object of {items} to the nth process; only {root}'s {items} matters, and "
         "unlike {scatter}, the objects may be of any type and of any size");
 
+    cls.def(
+        // the name
+        "alltoallObject",
+        // the implementation
+        [](const Communicator & self, const py::sequence & items) -> py::list {
+            // flatten what this process is handing out, one payload per process
+            std::vector<bytes_t> payloads;
+            // in rank order
+            for (auto item : items) {
+                payloads.push_back(pickle(py::reinterpret_borrow<py::object>(item)));
+            }
+
+            // room for what comes back
+            std::vector<bytes_t> collected;
+            // exchange, without holding the interpreter
+            {
+                py::gil_scoped_release nogil;
+                collected = self.alltoallBytes(payloads);
+            }
+
+            // rebuild what each process addressed to me
+            py::list answer;
+            // in rank order
+            for (const auto & delivery : collected) {
+                answer.append(unpickle(delivery));
+            }
+            // and report it
+            return answer;
+        },
+        // the signature
+        "items"_a,
+        // the docstring
+        "hand the nth object of every process's {items} to the nth process; unlike {alltoall}, "
+        "the objects may be of any type and of any size");
+
     // the reductions; the integral overload of each is registered first, so that a reduction
     // of whole numbers hands back a whole number
     bindReduction<integer_t>(cls, "sum", Op::sum, "perform a sum reduction");

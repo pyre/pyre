@@ -160,6 +160,45 @@ main()
         // carrying its own rank
         assert(share[0] == std::byte(rank));
 
+        // every process hands one payload to every process, and says which of us packed it. the
+        // extent leans on the sender twice as heavily as on the receiver, so that what i send
+        // to {peer} is a different length from what {peer} sends to me; were the two the same,
+        // an implementation that confused the send counts with the receive counts would pass
+        std::vector<pyre::mpi::bytes_t> deliveries;
+        // one per process
+        for (int peer = 0; peer < size; ++peer) {
+            deliveries.emplace_back(2 * rank + peer + 1, std::byte(rank));
+        }
+        // exchange
+        auto received = world.alltoallBytes(deliveries);
+        // so i receive one payload from each process
+        assert(received.size() == static_cast<std::size_t>(size));
+        // each as long as its sender decided
+        for (int peer = 0; peer < size; ++peer) {
+            assert(received[peer].size() == static_cast<std::size_t>(2 * peer + rank + 1));
+            // and carrying the rank that packed it
+            assert(received[peer][0] == std::byte(peer));
+        }
+
+        // an exchange in which somebody brought the wrong number of payloads is refused
+        {
+            // plant a flag
+            bool refused = false;
+            // ask for the impossible
+            try {
+                // one payload too few
+                std::vector<pyre::mpi::bytes_t> wrong(size - 1);
+                // so this must fail
+                world.alltoallBytes(wrong);
+            }
+            // with a shape error
+            catch (const pyre::mpi::ShapeError &) {
+                refused = true;
+            }
+            // check that it did; every process refuses, so nobody is left waiting
+            assert(refused);
+        }
+
         // a scatter whose root brought the wrong number of payloads is refused, exactly as the
         // cell version is
         if (rank == 0 && size > 1) {
