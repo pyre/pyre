@@ -10,59 +10,24 @@ from . import libgsl as gsl  # the extension
 
 
 # the class declaration
-class RNG:
+class RNG(gsl.RNG):
     """
-    Encapsulation of the pseudo-random number generators in GSL
+    A pseudo-random number generator
+
+    The generator itself -- its allocation, its algorithms, drawing from it -- is the
+    extension's; this subclass supplies the default algorithm and the catalogue of the ones gsl
+    was built with
     """
 
-    # constants
+    # the names of the generators gsl knows about
     available = gsl.rng_avail()
-
-    # public data
-    @property
-    def algorithm(self):
-        return gsl.rng_name(self.rng)
-
-    @property
-    def range(self):
-        return gsl.rng_range(self.rng)
-
-    # interface
-    # basic access
-    def float(self):
-        """
-        Return a random float in the range [0, 1)
-        """
-        # get one and return it
-        return gsl.rng_uniform(self.rng)
-
-    def int(self):
-        """
-        Return a random integer within the range of the generator
-        """
-        # get one and return it
-        return gsl.rng_get(self.rng)
-
-    # initialization
-    def seed(self, seed=0):
-        """
-        Initialize the RNG with the given seed
-        """
-        # easy enough
-        gsl.rng_set(self.rng, int(seed))
-        # all done
-        return self
 
     # meta methods
     def __init__(self, algorithm="ranlxs2", **kwds):
-        super().__init__(**kwds)
-        # build the RNG
-        self.rng = gsl.rng_alloc(algorithm)
+        # let the extension build the generator; the algorithm is its to consume
+        super().__init__(algorithm=algorithm, **kwds)
         # all done
         return
-
-    # private data
-    rng = None
 
 
 # end of file

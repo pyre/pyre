@@ -47,8 +47,8 @@ function(pyre_gslModule)
       extensions/gsl/matrixapi.cc
       extensions/gsl/metadata.cc
       extensions/gsl/pdf.cc
-      extensions/gsl/permutation.cc
-      extensions/gsl/rng.cc
+      extensions/gsl/permutationapi.cc
+      extensions/gsl/rngapi.cc
       extensions/gsl/stats.cc
       extensions/gsl/vectorapi.cc
       )

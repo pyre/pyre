@@ -11,9 +11,12 @@ from . import libgsl as gsl  # the extension
 
 
 # the class declaration
-class Permutation:
+class Permutation(gsl.Permutation):
     """
-    A wrapper over a gsl permutation
+    A permutation of the integers [0, n)
+
+    The storage and the shape are the extension's; the operations that read more naturally in
+    python -- the iteration, the indexing, the validity check -- live here
     """
 
     # initialization
@@ -87,9 +90,9 @@ class Permutation:
 
     # meta methods
     def __init__(self, shape, data=None, **kwds):
-        super().__init__(**kwds)
-        self.shape = shape
-        self.data = gsl.permutation_alloc(shape) if data is None else data
+        # let the extension allocate my storage, or adopt the capsule {data} carries; {shape}
+        # and {data} are its to consume, so the superclass gets them along with everything else
+        super().__init__(shape=int(shape), data=data, **kwds)
         return
 
     # validity checks
@@ -118,11 +121,6 @@ class Permutation:
             raise IndexError("permutation index {} out of range".format(index))
         # get and return the element
         return gsl.permutation_get(self.data, index)
-
-    # implementation details
-    # private data
-    data = None
-    shape = None
 
 
 # end of file
