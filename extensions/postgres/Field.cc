@@ -119,7 +119,7 @@ pyre::postgres::py::field(py::module & m)
         // the docstring
         "whether i hold a value; a field holding {False} still holds something");
 
-    // for the benefit of anybody staring at a prompt
+    // the interactive representation
     cls.def(
         // the name
         "__repr__",

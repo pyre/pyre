@@ -51,7 +51,7 @@ pyre::postgres::py::notification(py::module & m)
         // the docstring
         "whatever that session had to say; the empty string when it said nothing");
 
-    // for the benefit of anybody staring at a prompt
+    // the interactive representation
     cls.def(
         // the name
         "__repr__",

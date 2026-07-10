@@ -44,7 +44,7 @@ main()
 
     // open a session
     const auto session = Connection(specification());
-    // and a table to scribble in, which goes away with the session
+    // and a scratch table, which goes away with the session
     session.exec("CREATE TEMP TABLE scratch (id int PRIMARY KEY)");
 
     // a transaction that is committed keeps what was done inside it
@@ -109,8 +109,8 @@ main()
         return 1;
     }
 
-    // and so does one whose scope is left by an exception, which is the case a caller cannot
-    // write by hand without a great deal of care
+    // and so does one whose scope is left by an exception, which is the case that is awkward to
+    // handle by hand
     try {
         // open it
         auto work = Transaction(session);

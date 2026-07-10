@@ -27,10 +27,9 @@ namespace pyre::postgres::py {
             if (item.second.is_none()) {
                 continue;
             }
-            // everything else goes as a name and a value, kept apart. this is the whole point:
-            // a password with a space in it, spliced into a conninfo string, silently becomes a
-            // password and a garbage keyword, and that is exactly what the bindings this package
-            // replaces used to do
+            // everything else goes as a name and a value, kept apart. a password with a space
+            // in it, spliced into a conninfo string, silently becomes a password and a garbage
+            // keyword; the bindings this package replaces built the string that way
             parameters.emplace_back(
                 item.first.cast<string_t>(), py::str(item.second).cast<string_t>());
         }
@@ -405,7 +404,7 @@ pyre::postgres::py::connection(py::module & m)
         // the docstring
         "whether the session is up and has not been closed");
 
-    // for the benefit of anybody staring at a prompt
+    // the interactive representation
     cls.def(
         // the name
         "__repr__",

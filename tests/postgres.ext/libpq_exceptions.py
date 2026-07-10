@@ -85,8 +85,8 @@ def test():
         # this must not raise a second exception from inside the first
         assert "tbl{0}" in str(error)
 
-    # a warning is not an error; the database api puts the two side by side, so that a {catch}
-    # hunting for a failure does not sweep up a remark
+    # a warning is not an error; the database api puts the two side by side, so a {catch} that
+    # looks for a failure does not also catch a warning
     assert not issubclass(exceptions.Warning, exceptions.Error)
 
     # all done

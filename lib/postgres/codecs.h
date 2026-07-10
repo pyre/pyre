@@ -97,8 +97,8 @@ namespace pyre::postgres::codecs {
         }
 
         // {max_digits10} is the number of significant digits that guarantees a round trip; any
-        // fewer and the value that comes back out of the database is not the one that went in,
-        // which is exactly the trap that {std::to_string} and its six digits lay for callers
+        // fewer and the value that comes back out of the database is not the one that went in.
+        // {std::to_string} writes six digits, which is not enough
         constexpr int digits = std::numeric_limits<valueT>::max_digits10;
         // room for the longest rendering: sign, digits, point, exponent, terminator
         char buffer[64];

@@ -50,7 +50,7 @@ namespace pyre::postgres {
     using bytes_t = std::vector<std::byte>;
 
     // the name and value of one entry in a connection specification; keeping the two apart is
-    // the whole point, since it is what lets a password contain a space
+    // what lets a value, such as a password, contain a space
     using parameter_t = std::pair<string_t, string_t>;
     // a full connection specification
     using parameters_t = std::vector<parameter_t>;

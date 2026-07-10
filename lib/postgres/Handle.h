@@ -54,9 +54,9 @@ public:
     // the number of owners that currently share my box
     inline auto references() const -> long;
 
-    // give the object back to libpq now, rather than when the last owner goes away. every
-    // owner of this box observes the release, which is the whole point: a session that has been
-    // closed must not be usable through a copy of the handle that closed it
+    // give the object back to libpq now, rather than when the last owner goes away. every owner
+    // of this box observes the release, so a session that has been closed cannot be used through
+    // a copy of the handle that closed it
     inline auto release() -> void;
 
     // implementation details

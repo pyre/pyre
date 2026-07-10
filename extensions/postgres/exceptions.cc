@@ -21,7 +21,7 @@ namespace pyre::postgres::py {
     //
     // the reference is deliberately leaked. a {py::object} with static storage would be
     // destroyed after the interpreter has finalized, and dropping a reference at that point is
-    // a crash with a long and well documented history
+    // undefined behavior
     static auto errors() -> const py::object &
     {
         // import it, once
@@ -80,9 +80,9 @@ namespace pyre::postgres::py {
 // teach pybind11 how to carry what {pyre::postgres} throws across into python
 //
 // note that this is a translator, and not a set of {py::register_exception} calls. those would
-// mint new python classes, and the whole point is that they must not: {pyre.db.exceptions}
-// already publishes this hierarchy, client code already catches it, and the classes there derive
-// from {FrameworkError}, which nothing minted here ever could
+// mint new python classes, which must not happen: {pyre.db.exceptions} already publishes this
+// hierarchy, client code already catches it, and the classes there derive from {FrameworkError},
+// which a freshly minted class would not
 void
 pyre::postgres::py::exceptions(py::module &)
 {
@@ -95,8 +95,8 @@ pyre::postgres::py::exceptions(py::module &)
                 std::rethrow_exception(raised);
             }
         }
-        // the order below is the whole of the logic: each leaf must be caught before the base it
-        // derives from, or a {DataError} would arrive in python wearing its parent's name
+        // the order below matters: each leaf must be caught before the base it derives from, or
+        // a {DataError} would arrive in python under its parent's name
         catch (const DataError & error) {
             raise("DataError", error);
         }

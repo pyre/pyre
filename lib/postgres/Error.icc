@@ -110,10 +110,9 @@ pyre::postgres::NotSupportedError::NotSupportedError(diagnostic_type diagnostic)
 
 // work out which of my exceptions {diagnostic} describes, and throw it
 //
-// the branching is on the SQLSTATE class, the first two of its five characters. this is the
-// whole point of the exercise: the old bindings looked only at the message the server wrote for
-// a human, and so reported a unique index violation, a dropped connection and a typo in a table
-// name as the same kind of failure. postgres names each of them, and has since the beginning
+// the branching is on the SQLSTATE class, the first two of its five characters. the server
+// assigns a distinct code to a unique index violation, a dropped connection and a reference to
+// a table that is not there, so each maps to a distinct exception
 auto
 pyre::postgres::raise(Diagnostic diagnostic) -> void
 {
@@ -138,10 +137,9 @@ pyre::postgres::raise(Diagnostic diagnostic) -> void
         throw DataError(std::move(diagnostic));
     }
 
-    // class 23: the statement would have broken a constraint. this is the one that matters
-    // most to a caller, because it is the one that is routinely expected: an insert that
-    // collides with a unique index is how a great deal of correct code discovers that a row is
-    // already there
+    // class 23: the statement would have broken a constraint. this is a condition callers
+    // routinely expect: an insert that collides with a unique index is a common way for correct
+    // code to discover that a row is already there
     if (family == "23") {
         throw IntegrityError(std::move(diagnostic));
     }

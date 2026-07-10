@@ -39,8 +39,8 @@ pyre::postgres::Transaction::Transaction(Transaction && other) noexcept :
 
 pyre::postgres::Transaction & pyre::postgres::Transaction::operator=(Transaction && other) noexcept
 {
-    // guard against a self assignment, which would close the transaction and then adopt the
-    // corpse of it
+    // guard against a self assignment, which would close the transaction and then adopt what is
+    // left of it
     if (this == &other) {
         return *this;
     }

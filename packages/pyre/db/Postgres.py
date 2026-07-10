@@ -61,7 +61,7 @@ class Postgres(Server, family="pyre.db.server.postgres"):
 
         # a build with no bindings cannot talk to a postgres server
         if libpq is None:
-            # and saying so here is kinder than an attribute error three lines down
+            # report it here, rather than let it surface as an attribute error below
             raise exceptions.NotSupportedError(
                 diagnostic="this build of pyre has no postgres support"
             )

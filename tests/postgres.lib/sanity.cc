@@ -22,8 +22,8 @@ main()
     // the exception hierarchy
     static_assert(std::is_base_of_v<std::exception, pyre::postgres::exception_t>);
     static_assert(std::is_base_of_v<pyre::postgres::exception_t, pyre::postgres::error_t>);
-    // a warning is not an error; the database api puts the two side by side, and a {catch} that
-    // hunts for a failure must not sweep up a remark
+    // a warning is not an error; the database api puts the two side by side, so a {catch} that
+    // looks for a failure does not also catch a warning
     static_assert(!std::is_base_of_v<pyre::postgres::error_t, pyre::postgres::warning_t>);
     static_assert(std::is_base_of_v<pyre::postgres::exception_t, pyre::postgres::warning_t>);
     // and the five that a caller branches on
