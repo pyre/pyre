@@ -29,7 +29,7 @@ function(pyre_gslModule)
     # specify the directory for the module compilation products
     pyre_library_directory(gslmodule extensions)
     # set the include directories
-    target_include_directories(gslmodule PRIVATE ${GSL_INCLUDE_DIRS} ${Python_NumPy_INCLUDE_DIRS})
+    target_include_directories(gslmodule PRIVATE ${GSL_INCLUDE_DIRS})
     # set the libraries to link against
     target_link_libraries(
       gslmodule PRIVATE
@@ -40,10 +40,11 @@ function(pyre_gslModule)
       extensions/gsl/__init__.cc
       extensions/gsl/legacy.cc
       extensions/gsl/Vector.cc
+      extensions/gsl/Matrix.cc
       extensions/gsl/blas.cc
       extensions/gsl/histogram.cc
       extensions/gsl/linalg.cc
-      extensions/gsl/matrix.cc
+      extensions/gsl/matrixapi.cc
       extensions/gsl/metadata.cc
       extensions/gsl/pdf.cc
       extensions/gsl/permutation.cc
@@ -64,13 +65,6 @@ function(pyre_gslModule)
       # the partitioning code takes communicators straight out of the {libmpi} bindings, so it
       # needs the {pyre::mpi} declarations and the pybind11 headers that resolve them
       target_link_libraries(gslmodule PRIVATE pyre::mpi pybind11::module)
-    endif()
-
-    if (${Python_NumPy_FOUND})
-      # add the numpy aware sources to the pile
-      target_sources(gslmodule PRIVATE extensions/gsl/numpy.cc)
-      # add the MPI presence indicator
-      target_compile_definitions(gslmodule PRIVATE WITH_NUMPY)
     endif()
 
     # copy the capsule definitions to the staging area

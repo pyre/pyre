@@ -16,25 +16,21 @@ from .Matrix import Matrix
 class MatrixView(Matrix):
     """
     A view into the data of another matrix
+
+    A view borrows its parent's storage rather than owning any of its own, so it must not
+    outlive the parent; the extension ties the two together for exactly as long as the view is
+    around, so there is nothing to remember here
     """
 
     # meta-methods
     def __init__(self, matrix, start, shape, **kwds):
-        # adjust the parameters, just in case
-        start = tuple(map(int, start))
-        shape = tuple(map(int, shape))
-        # store a reference to the underlying matrix so it lives long enough
-        self.matrix = matrix
-        # build the view
-        self.capsule, data = gsl.matrix_view_alloc(matrix.data, start, shape)
-        # chain up
-        super().__init__(shape=shape, data=data, **kwds)
+        # build the view through the extension's view constructor, bypassing the allocation my
+        # superclass would otherwise do; the parent is kept alive for me automatically
+        gsl.Matrix.__init__(
+            self, matrix=matrix, start=tuple(map(int, start)), shape=tuple(map(int, shape)), **kwds
+        )
         # all done
         return
-
-    # private data
-    matrix = None  # a reference to the matrix instance i'm viewing
-    capsule = None  # the capsule with the pointer to the view object
 
 
 # end of file
