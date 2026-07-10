@@ -79,6 +79,50 @@ def test():
     # every process hands one cell to every process, each carrying its own rank
     assert world.alltoall([rank] * size) == list(range(size))
 
+    # the object collectives carry whatever pickle can flatten, so the contribution of each
+    # process is a different type and a different size
+    mine = {"rank": rank, "payload": "x" * (rank + 1)}
+
+    # collect them all at the root
+    collected = world.gatherObject(mine, 0)
+    # only the root collects
+    if rank == 0:
+        # one object per process, in rank order
+        assert collected == [{"rank": slot, "payload": "x" * (slot + 1)} for slot in range(size)]
+    # and everybody else is told so
+    else:
+        assert collected is None
+
+    # the same, delivered to everybody
+    everyone = world.allgatherObject(mine)
+    # one object per process
+    assert len(everyone) == size
+    # the last of which carries the longest payload
+    assert everyone[size - 1] == {"rank": size - 1, "payload": "x" * size}
+
+    # hand an object of a different type and size to each process; only the root's matter
+    bundles = [("rank", slot) * (slot + 1) for slot in range(size)] if rank == 0 else None
+    # each process receives the one addressed to it
+    assert world.scatterObject(bundles, 0) == ("rank", rank) * (rank + 1)
+
+    # a scatter whose root brought the wrong number of objects is refused, exactly as the cell
+    # version is
+    if rank == 0 and size > 1:
+        # plant a flag
+        refused = False
+        # ask for the impossible
+        try:
+            # one object too few
+            world.scatterObject([None] * (size - 1), 0)
+        # the package refuses with a shape error
+        except mpi.ShapeError:
+            refused = True
+        # check that it did
+        assert refused
+
+    # the ranks that did not raise must not wait for the one that did
+    world.barrier()
+
     # a scatter whose root brought the wrong number of cells is refused
     if rank == 0 and size > 1:
         # plant a flag

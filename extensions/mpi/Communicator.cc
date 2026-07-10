@@ -451,6 +451,108 @@ pyre::mpi::py::communicator(py::module & m)
         "broadcast {item} from {source} to every one of my processes; only {source} has to "
         "supply an {item}");
 
+    // the collectives that move arbitrary objects rather than numbers
+    //
+    // these cannot be spelled {gather} and {scatter}, however much one might wish them to be.
+    // a collective must be entered with the same datatype on every process, yet the overload
+    // is resolved on each process independently, from whatever argument that process happens
+    // to hold. a root scattering a list of dictionaries while its peers offer an empty list
+    // would move octets to processes waiting on integers, and the job would hang rather than
+    // complain
+    cls.def(
+        // the name
+        "gatherObject",
+        // the implementation
+        [](const Communicator & self, const py::object & item, rank_t root) -> py::object {
+            // flatten what this process brings
+            auto payload = pickle(item);
+            // room for what comes back, and for my place in the communicator
+            std::vector<bytes_t> collected;
+            rank_t rank = 0;
+            // collect, without holding the interpreter
+            {
+                py::gil_scoped_release nogil;
+                collected = self.gatherBytes(payload, root);
+                rank = self.rank();
+            }
+            // only {root} was handed anything
+            if (rank != root) {
+                return py::none();
+            }
+            // so only {root} rebuilds what everybody flattened
+            py::list answer;
+            // in rank order
+            for (const auto & contribution : collected) {
+                answer.append(unpickle(contribution));
+            }
+            // and reports it
+            return answer;
+        },
+        // the signature
+        "item"_a, "root"_a = 0,
+        // the docstring
+        "collect the {item} of every process at {root}, in rank order; unlike {gather}, the "
+        "items may be arbitrary objects, and need not be of the same size");
+
+    cls.def(
+        // the name
+        "allgatherObject",
+        // the implementation
+        [](const Communicator & self, const py::object & item) -> py::list {
+            // flatten what this process brings
+            auto payload = pickle(item);
+            // room for what comes back
+            std::vector<bytes_t> collected;
+            // collect, without holding the interpreter
+            {
+                py::gil_scoped_release nogil;
+                collected = self.allgatherBytes(payload);
+            }
+            // everybody rebuilds what everybody flattened
+            py::list answer;
+            // in rank order
+            for (const auto & contribution : collected) {
+                answer.append(unpickle(contribution));
+            }
+            // and reports it
+            return answer;
+        },
+        // the signature
+        "item"_a,
+        // the docstring
+        "collect the {item} of every process, in rank order, and deliver it to all; unlike "
+        "{allgather}, the items may be arbitrary objects, and need not be of the same size");
+
+    cls.def(
+        // the name
+        "scatterObject",
+        // the implementation
+        [](const Communicator & self, const py::object & items, rank_t root) -> py::object {
+            // room for what the root hands out
+            std::vector<bytes_t> payloads;
+            // which only the root packs; nobody else's {items} is even looked at
+            if (self.rank() == root) {
+                // one payload per process, in rank order
+                for (auto item : py::cast<py::sequence>(items)) {
+                    payloads.push_back(pickle(py::reinterpret_borrow<py::object>(item)));
+                }
+            }
+            // room for my share
+            bytes_t share;
+            // hand them out, without holding the interpreter
+            {
+                py::gil_scoped_release nogil;
+                share = self.scatterBytes(payloads, root);
+            }
+            // and rebuild the one addressed to me
+            return unpickle(share);
+        },
+        // the signature
+        "items"_a = py::none(), "root"_a = 0,
+        // the docstring
+        "hand the nth object of {items} to the nth process; only {root}'s {items} matters, and "
+        "unlike {scatter}, the objects may be of any type and of any size");
+
     // the reductions; the integral overload of each is registered first, so that a reduction
     // of whole numbers hands back a whole number
     bindReduction<integer_t>(cls, "sum", Op::sum, "perform a sum reduction");

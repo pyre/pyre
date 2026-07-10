@@ -115,6 +115,74 @@ main()
             assert(incoming[slot] == slot);
         }
 
+        // the payload collectives carry a different number of octets from each process, so
+        // bring one whose extent gives away who packed it
+        pyre::mpi::bytes_t octets(rank + 1, std::byte(rank));
+
+        // collect them all at the root
+        auto collected = world.gatherBytes(octets, 0);
+        // only the root receives anything
+        if (rank == 0) {
+            // one payload per process
+            assert(collected.size() == static_cast<std::size_t>(size));
+            // each as long as the rank that packed it, and filled with that rank
+            for (int slot = 0; slot < size; ++slot) {
+                assert(collected[slot].size() == static_cast<std::size_t>(slot + 1));
+                assert(collected[slot][0] == std::byte(slot));
+            }
+        } else {
+            // everybody else gets nothing at all
+            assert(collected.empty());
+        }
+
+        // the same, delivered to everybody
+        auto everyone = world.allgatherBytes(octets);
+        // one payload per process
+        assert(everyone.size() == static_cast<std::size_t>(size));
+        // the last of which is the longest
+        assert(everyone[size - 1].size() == static_cast<std::size_t>(size));
+        // and carries the rank that packed it
+        assert(everyone[size - 1][0] == std::byte(size - 1));
+
+        // hand a payload of a different length to each process; only the root's matter
+        std::vector<pyre::mpi::bytes_t> bundles;
+        // which the root packs
+        if (rank == 0) {
+            // one per process, the nth being n octets long
+            for (int slot = 0; slot < size; ++slot) {
+                bundles.emplace_back(slot + 1, std::byte(slot));
+            }
+        }
+        // hand them out
+        auto share = world.scatterBytes(bundles, 0);
+        // and each process receives the one addressed to it
+        assert(share.size() == static_cast<std::size_t>(rank + 1));
+        // carrying its own rank
+        assert(share[0] == std::byte(rank));
+
+        // a scatter whose root brought the wrong number of payloads is refused, exactly as the
+        // cell version is
+        if (rank == 0 && size > 1) {
+            // plant a flag
+            bool refused = false;
+            // ask for the impossible
+            try {
+                // one payload too few
+                std::vector<pyre::mpi::bytes_t> wrong(size - 1);
+                // so this must fail
+                world.scatterBytes(wrong, 0);
+            }
+            // with a shape error
+            catch (const pyre::mpi::ShapeError &) {
+                refused = true;
+            }
+            // check that it did
+            assert(refused);
+        }
+
+        // the ranks that did not raise must not wait for the one that did
+        world.barrier();
+
         // a scatter whose root brought the wrong number of cells is refused before mpi ever
         // sees it, rather than reading past the end of the buffer
         if (rank == 0) {

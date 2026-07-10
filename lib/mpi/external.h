@@ -9,6 +9,7 @@
 
 
 // externals
+#include <algorithm>
 #include <complex>
 #include <cstddef>
 #include <cstdint>

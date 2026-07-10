@@ -130,6 +130,18 @@ public:
     template <typename cellT>
     inline auto alltoall(const std::vector<cellT> & values) const -> std::vector<cellT>;
 
+    // the same three, for payloads whose extents differ from process to process. the cell
+    // count is no longer enough to describe who holds what, so each of these first exchanges
+    // the extents and only then moves the octets
+    //
+    // collect the payload of every process at {root}, in rank order; the answer is empty
+    // everywhere but {root}
+    inline auto gatherBytes(const bytes_t & payload, rank_t root) const -> std::vector<bytes_t>;
+    // the same, delivering the answer to every process
+    inline auto allgatherBytes(const bytes_t & payload) const -> std::vector<bytes_t>;
+    // hand the nth payload of {payloads} to the nth process; {payloads} matters only at {root}
+    inline auto scatterBytes(const std::vector<bytes_t> & payloads, rank_t root) const -> bytes_t;
+
     // point to point operations
 public:
     // send {value} to {peer}, labelled with {tag}

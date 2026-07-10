@@ -359,6 +359,166 @@ pyre::mpi::Communicator::alltoall(const std::vector<cellT> & values) const -> st
 }
 
 
+// collect the payload of every process at {root}, in rank order
+auto
+pyre::mpi::Communicator::gatherBytes(const bytes_t & payload, rank_t root) const
+    -> std::vector<bytes_t>
+{
+    // whether this process is the one that collects
+    bool collecting = (rank() == root);
+    // how many octets i bring
+    int extent = static_cast<int>(payload.size());
+    // tell {root} how many each of us brings; it cannot lay out its buffer without knowing
+    auto counts = gather(extent, root);
+
+    // where each process's octets will land in the buffer
+    std::vector<int> displacements;
+    // and the buffer itself; both matter only at {root}
+    bytes_t buffer;
+    // which is the only process that has to make room
+    if (collecting) {
+        // one displacement per process
+        displacements.resize(counts.size());
+        // laid end to end
+        int total = 0;
+        // in rank order
+        for (decltype(counts.size()) slot = 0; slot < counts.size(); ++slot) {
+            displacements[slot] = total;
+            total += counts[slot];
+        }
+        // so the buffer holds every payload, back to back
+        buffer.resize(total);
+    }
+
+    // move the octets
+    check(MPI_Gatherv(
+        payload.data(), extent, MPI_BYTE, collecting ? buffer.data() : nullptr,
+        collecting ? counts.data() : nullptr, collecting ? displacements.data() : nullptr,
+        MPI_BYTE, root, handle()));
+
+    // cut the buffer back up into the payloads it was made of
+    std::vector<bytes_t> collected;
+    // again, only at {root}
+    if (collecting) {
+        // one payload per process
+        collected.reserve(counts.size());
+        // sliced at the displacements we computed
+        for (decltype(counts.size()) slot = 0; slot < counts.size(); ++slot) {
+            // the first octet of this process's contribution
+            auto first = buffer.begin() + displacements[slot];
+            // and the one past its last
+            collected.emplace_back(first, first + counts[slot]);
+        }
+    }
+
+    // hand them off; they are empty everywhere but {root}
+    return collected;
+}
+
+
+// collect the payload of every process, and deliver the answer to every process
+auto
+pyre::mpi::Communicator::allgatherBytes(const bytes_t & payload) const -> std::vector<bytes_t>
+{
+    // how many octets i bring
+    int extent = static_cast<int>(payload.size());
+    // tell everybody how many each of us brings
+    auto counts = allgather(extent);
+
+    // where each process's octets will land in the buffer
+    std::vector<int> displacements(counts.size());
+    // laid end to end
+    int total = 0;
+    // in rank order
+    for (decltype(counts.size()) slot = 0; slot < counts.size(); ++slot) {
+        displacements[slot] = total;
+        total += counts[slot];
+    }
+
+    // room for every payload, back to back
+    bytes_t buffer(total);
+    // move the octets
+    check(MPI_Allgatherv(
+        payload.data(), extent, MPI_BYTE, buffer.data(), counts.data(), displacements.data(),
+        MPI_BYTE, handle()));
+
+    // cut the buffer back up into the payloads it was made of
+    std::vector<bytes_t> collected;
+    // one per process
+    collected.reserve(counts.size());
+    // sliced at the displacements we computed
+    for (decltype(counts.size()) slot = 0; slot < counts.size(); ++slot) {
+        // the first octet of this process's contribution
+        auto first = buffer.begin() + displacements[slot];
+        // and the one past its last
+        collected.emplace_back(first, first + counts[slot]);
+    }
+
+    // hand them off
+    return collected;
+}
+
+
+// hand the nth payload of {payloads} to the nth process
+auto
+pyre::mpi::Communicator::scatterBytes(const std::vector<bytes_t> & payloads, rank_t root) const
+    -> bytes_t
+{
+    // whether this process is the one that hands the payloads out
+    bool distributing = (rank() == root);
+    // {root} must have brought exactly one payload per process; nobody else's matters
+    if (distributing && payloads.size() != static_cast<std::size_t>(size())) {
+        // so refuse, rather than let mpi read past the end of the buffer
+        throw ShapeError("pyre::mpi::scatterBytes: the root must supply one payload per process");
+    }
+
+    // how many octets each process is owed, and where its share begins
+    std::vector<int> counts, displacements;
+    // and the buffer they are packed into; all three matter only at {root}
+    bytes_t outgoing;
+    // which is the only process that has to pack anything
+    if (distributing) {
+        // one entry per process
+        counts.resize(payloads.size());
+        displacements.resize(payloads.size());
+        // laid end to end
+        int total = 0;
+        // in rank order
+        for (decltype(payloads.size()) slot = 0; slot < payloads.size(); ++slot) {
+            counts[slot] = static_cast<int>(payloads[slot].size());
+            displacements[slot] = total;
+            total += counts[slot];
+        }
+        // so the buffer holds every payload, back to back
+        outgoing.resize(total);
+        // copied in, one at a time
+        for (decltype(payloads.size()) slot = 0; slot < payloads.size(); ++slot) {
+            std::copy(
+                payloads[slot].begin(), payloads[slot].end(),
+                outgoing.begin() + displacements[slot]);
+        }
+    }
+
+    // tell each process how many octets are coming its way, since it must make room before the
+    // octets themselves can move
+    int extent = 0;
+    // by scattering the counts
+    check(MPI_Scatter(
+        distributing ? counts.data() : nullptr, 1, MPI_INT, &extent, 1, MPI_INT, root, handle()));
+
+    // make exactly that much room
+    bytes_t incoming(extent);
+    // and move the octets
+    check(MPI_Scatterv(
+        distributing ? outgoing.data() : nullptr, distributing ? counts.data() : nullptr,
+        distributing ? displacements.data() : nullptr, MPI_BYTE, incoming.data(), extent, MPI_BYTE,
+        root, handle()));
+
+    // hand off my share
+    return incoming;
+}
+
+
 // point to point operations
 // send {value} to {peer}, labelled with {tag}
 template <typename cellT>
