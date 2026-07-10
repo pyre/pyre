@@ -21,8 +21,10 @@ if sys.platform.startswith("linux"):
     sys.setdlopenflags(sys.getdlopenflags() | ctypes.RTLD_GLOBAL)
 
 # we start out with {world} being a trivial communicator, so that code written against this
-# package runs unchanged on a machine with no mpi at all
-from .TrivialCommunicator import TrivialCommunicator as world
+# package runs unchanged on a machine with no mpi at all; {init} replaces it with the real one
+from .TrivialCommunicator import TrivialCommunicator
+
+world = TrivialCommunicator()
 
 # attempt to load the mpi extension
 try:
