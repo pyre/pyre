@@ -36,10 +36,22 @@ class Vector:
 
             # use the world by default
             communicator = mpi.world
+        # with a single process there is nobody to send to, and the source already holds the
+        # answer; this is also the only path there is on a machine with no mpi, where the
+        # extension was built without {bcastVector}
+        if communicator.size == 1:
+            # the lone process is the only one that can be the source
+            if source != communicator.rank:
+                raise ValueError(f"rank {source} cannot be the source: there is no such task")
+            # and, just as in the parallel case, it must have brought a vector
+            if vector is None:
+                raise TypeError("the source task must supply a vector to broadcast")
+            # which is already the answer
+            return vector
         # get the vector capsule
         data = None if vector is None else vector.data
         # scatter the data
-        capsule, shape = gsl.bcastVector(communicator.capsule, source, data)
+        capsule, shape = gsl.bcastVector(communicator, source, data)
         # dress up my local portion as a vector
         result = cls(shape=shape, data=capsule)
         # and return it
@@ -58,8 +70,18 @@ class Vector:
 
             # use the world by default
             communicator = mpi.world
+        # with a single process there is nobody to collect from; the one contribution is the
+        # whole answer, and the parallel path hands back fresh storage, so we clone
+        if communicator.size == 1:
+            # the lone process is the only one that can be the destination
+            if destination != communicator.rank:
+                raise ValueError(
+                    f"rank {destination} cannot be the destination: there is no such task"
+                )
+            # its contribution is the entire collection
+            return vector.clone()
         # gather the data
-        result = gsl.gatherVector(communicator.capsule, destination, vector.data)
+        result = gsl.gatherVector(communicator, destination, vector.data)
         # if i am not the destination task, nothing further to do
         if communicator.rank != destination:
             return
@@ -83,10 +105,20 @@ class Vector:
 
             # use the world by default
             communicator = mpi.world
+        # with a single process there is nobody to scatter to; my partition is all of {vector}
+        if communicator.size == 1:
+            # the lone process is the only one that can be the source
+            if source != communicator.rank:
+                raise ValueError(f"rank {source} cannot be the source: there is no such task")
+            # and, just as in the parallel case, it must have brought a vector
+            if vector is None:
+                raise TypeError("the source task must supply a vector to scatter")
+            # fill me with the whole of it
+            return self.copy(vector)
         # get the vector capsule
         data = None if vector is None else vector.data
         # scatter the data
-        gsl.scatterVector(communicator.capsule, source, self.data, data)
+        gsl.scatterVector(communicator, source, self.data, data)
         # and return me
         return self
 
