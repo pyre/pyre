@@ -27,9 +27,9 @@ specification() -> pyre::postgres::parameters_t
 
 // verify that the server's own name for what went wrong decides which exception is thrown
 //
-// this is the whole point of the exercise. the bindings this package replaces looked only at the
-// message the server wrote for a human, and reported a unique index violation, a dropped
-// connection and a typo in a table name as one and the same kind of failure
+// the bindings this package replaces looked only at the message the server wrote for a human, and
+// reported a unique index violation, a dropped connection and a reference to a table that is not
+// there as the same kind of failure
 int
 main()
 {

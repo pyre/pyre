@@ -88,7 +88,7 @@ pyre::postgres::py::diagnostic(py::module & m)
         // the implementation
         &Diagnostic::hint,
         // the docstring
-        "a suggestion, which is frequently wrong and occasionally inspired");
+        "the server's suggestion for how to resolve the problem, when it offered one");
 
     cls.def_property_readonly(
         // the name
@@ -147,7 +147,7 @@ pyre::postgres::py::diagnostic(py::module & m)
         // the docstring
         "the constraint that was violated; this is how two unique indices are told apart");
 
-    // for the benefit of anybody staring at a prompt
+    // the interactive representation
     cls.def(
         // the name
         "__str__",

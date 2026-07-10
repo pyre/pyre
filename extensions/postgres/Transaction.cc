@@ -112,7 +112,7 @@ pyre::postgres::py::transaction(py::module & m)
         // the docstring
         "hook invoked when the context manager's block exits");
 
-    // for the benefit of anybody staring at a prompt
+    // the interactive representation
     cls.def(
         // the name
         "__repr__",

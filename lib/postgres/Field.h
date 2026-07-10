@@ -24,8 +24,8 @@
 //
 // a field is a view, not a value: the characters it hands out belong to the result set it came
 // from. it keeps that set alive by holding a share of it, so a field may safely outlive the row
-// and the result that produced it, and the idiom {connection.exec(sql)[0][0].as<int>()} is
-// exactly as safe as it looks
+// and the result that produced it; the idiom {connection.exec(sql)[0][0].as<int>()} holds the
+// result set alive through the field for the duration of the call
 class pyre::postgres::Field {
     // types
 public:

@@ -85,8 +85,8 @@ main()
         std::cerr << "a closed session still reports itself as up" << std::endl;
         return 1;
     }
-    // and so does the copy, which is the whole point of boxing the pointer: the bindings this
-    // package replaces would have handed libpq an address it had already freed
+    // and so does the copy; boxing the pointer is what lets a copy observe the close, where the
+    // bindings this package replaces would have handed libpq an address it had already freed
     if (alias.ok()) {
         std::cerr << "a copy of a closed session still reports itself as up" << std::endl;
         return 1;
@@ -112,7 +112,7 @@ main()
 
     // a session that cannot be established raises, rather than handing back something unusable
     try {
-        // there is no database by this name, and there had better not be
+        // a database name that no server is expected to have
         auto missing = Connection(parameters_t { { "dbname", "pyre-no-such-database" } });
         // so getting here means the server let us in
         std::cerr << "connected to a database that does not exist" << std::endl;

@@ -209,7 +209,7 @@ pyre::postgres::py::result(py::module & m)
         // the docstring
         "raise the exception that names what went wrong, if anything did");
 
-    // for the benefit of anybody staring at a prompt
+    // the interactive representation
     cls.def(
         // the name
         "__repr__",

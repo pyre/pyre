@@ -147,7 +147,7 @@ pyre::postgres::py::row(py::module & m)
         // the docstring
         "the field in the column the server labeled {name}");
 
-    // for the benefit of anybody staring at a prompt
+    // the interactive representation
     cls.def(
         // the name
         "__repr__",

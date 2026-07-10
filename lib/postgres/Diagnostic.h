@@ -55,7 +55,7 @@ public:
 public:
     // a second paragraph, with the particulars
     inline auto detail() const -> const string_type &;
-    // a suggestion, which is frequently wrong and occasionally inspired
+    // the server's suggestion for how to resolve the problem, when it offered one
     inline auto hint() const -> const string_type &;
     // where in the sql the server was when it gave up; a one based character index into
     // {command}, or zero when it did not say

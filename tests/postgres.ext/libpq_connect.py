@@ -38,8 +38,8 @@ def test():
     connection.close()
     # the one that closed it knows
     assert not connection.ok
-    # and so does the copy; this is the whole point of the rewrite, since the bindings this
-    # package replaces would have handed libpq an address it had already freed
+    # and so does the copy; the bindings this package replaces would have handed libpq an
+    # address it had already freed
     assert not alias.ok
 
     # a statement sent through the copy is a mistake on this side of the wire

@@ -59,9 +59,8 @@ private:
 
 // something the back end wants us to know about, but that did not stop it
 //
-// note that this does not derive from {Error}: the database api puts the two side by side, on
-// the grounds that a warning is not a failure and must not be swept up by a {catch} that is
-// hunting for one
+// note that this does not derive from {Error}: the database api puts the two side by side, so
+// that a warning, which is not a failure, is not caught by a {catch} that is looking for one
 class pyre::postgres::Warning : public pyre::postgres::Exception {
     // metamethods
 public:

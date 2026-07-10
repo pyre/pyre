@@ -551,9 +551,9 @@ pyre::postgres::Connection::_exec(
 {
     // both libpq calls want a terminated string; for a prepared statement this is its name
     const string_t text(statement);
-    // and the values as an array of pointers, with a null standing for each {NULL}. this is
-    // the whole trick: a value that travels beside the statement rather than inside it cannot
-    // change what the statement does, however it is spelled
+    // and the values as an array of pointers, with a null standing for each {NULL}. a value
+    // that travels beside the statement rather than inside it cannot change what the statement
+    // does, however it is spelled
     std::vector<const char *> values;
     values.reserve(arguments.size());
     // fill it in
@@ -612,9 +612,9 @@ pyre::postgres::Connection::_connect(const parameters_type & parameters) -> hand
     keys.push_back(nullptr);
     values.push_back(nullptr);
 
-    // ask libpq for the session; the final zero forbids it from reading the value of {dbname}
-    // as though it were a whole connection specification, which is a courtesy nobody asked for
-    // and a way for a database name to smuggle in a host
+    // ask libpq for the session; the final zero forbids it from expanding the value of {dbname}
+    // as though it were itself a connection specification, so that a database name cannot carry
+    // a host or any other parameter along with it
     PGconn * connection = PQconnectdbParams(keys.data(), values.data(), 0);
     // and check what came back
     return _established(connection);
