@@ -59,10 +59,22 @@ class Matrix:
 
             # use the world by default
             communicator = mpi.world
+        # with a single process there is nobody to send to, and the source already holds the
+        # answer; this is also the only path there is on a machine with no mpi, where the
+        # extension was built without {bcastMatrix}
+        if communicator.size == 1:
+            # the lone process is the only one that can be the source
+            if source != communicator.rank:
+                raise ValueError(f"rank {source} cannot be the source: there is no such task")
+            # and, just as in the parallel case, it must have brought a matrix
+            if matrix is None:
+                raise TypeError("the source task must supply a matrix to broadcast")
+            # which is already the answer
+            return matrix
         # get the matrix capsule
         data = None if matrix is None else matrix.data
         # scatter the data
-        capsule, shape = gsl.bcastMatrix(communicator.capsule, source, data)
+        capsule, shape = gsl.bcastMatrix(communicator, source, data)
         # dress up my local portion as a matrix
         result = cls(shape=shape, data=capsule)
         # and return it
@@ -81,8 +93,18 @@ class Matrix:
 
             # use the {world} by default
             communicator = mpi.world
+        # with a single process there is nobody to collect from; the one contribution is the
+        # whole answer, and the parallel path hands back fresh storage, so we clone
+        if communicator.size == 1:
+            # the lone process is the only one that can be the destination
+            if destination != communicator.rank:
+                raise ValueError(
+                    f"rank {destination} cannot be the destination: there is no such task"
+                )
+            # its contribution is the entire collection
+            return matrix.clone()
         # gather the data
-        result = gsl.gatherMatrix(communicator.capsule, destination, matrix.data)
+        result = gsl.gatherMatrix(communicator, destination, matrix.data)
         # if i am not the destination task, nothing further to do
         if communicator.rank != destination:
             return
@@ -106,10 +128,20 @@ class Matrix:
 
             # use the world by default
             communicator = mpi.world
+        # with a single process there is nobody to scatter to; my partition is all of {matrix}
+        if communicator.size == 1:
+            # the lone process is the only one that can be the source
+            if source != communicator.rank:
+                raise ValueError(f"rank {source} cannot be the source: there is no such task")
+            # and, just as in the parallel case, it must have brought a matrix
+            if matrix is None:
+                raise TypeError("the source task must supply a matrix to scatter")
+            # fill me with the whole of it
+            return self.copy(matrix)
         # get the matrix capsule
         data = None if matrix is None else matrix.data
         # scatter the data
-        gsl.scatterMatrix(communicator.capsule, source, self.data, data)
+        gsl.scatterMatrix(communicator, source, self.data, data)
         # and return me
         return self
 

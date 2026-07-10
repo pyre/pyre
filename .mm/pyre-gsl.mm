@@ -48,16 +48,18 @@ pyre-gsl.ext.lib.c++.defines += $(pyre.lib.c++.defines)
 ifeq ($(pyre-gsl.mpi.available), mpi)
 # add mpi to the external dependencies
 pyre-gsl.ext.extern += mpi
-# make sure the {mpi} module has had a chance to export its caspules
-pyre-gsl.ext.prerequisites += pyre-mpi.ext
+# the partitioning code takes communicators straight out of the {libmpi} bindings, so it needs
+# the declarations in {pyre::mpi}; the module itself is no longer a build time dependency, now
+# that there are no capsules for it to export
+pyre-gsl.ext.lib.prerequisites += pyre-mpi.lib
 # if not
 else
 # remove the mpi dependent sources from the build
 pyre-gsl.ext.lib.sources.exclude += $(pyre-gsl.ext.lib.prefix)partition.cc
 endif
 
-# unconditionally add python to the external libraries
-pyre-gsl.ext.extern += python
+# unconditionally add python and pybind11 to the external libraries
+pyre-gsl.ext.extern += python pybind11
 
 # if we have numpy
 ifeq ($(pyre-gsl.numpy.available), numpy)

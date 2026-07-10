@@ -15,9 +15,41 @@
 #include <gsl/gsl_matrix.h>
 // the pyre mpi library
 #include <pyre/mpi.h>
+// pybind11, so we can recover the communicator that {libmpi} handed to python
+#include <pybind11/pybind11.h>
 // the extension info
 #include "capsules.h"
-#include <pyre/mpi/capsules.h>
+
+
+// the helpers that stand between the python arguments and the entities they name
+namespace {
+    // import pybind11
+    namespace py = pybind11;
+
+    // recover the communicator that {candidate} wraps
+    //
+    // the {libmpi} bindings register {pyre::mpi::Communicator} with pybind11, whose type registry
+    // is shared by every extension module in the process; so we can ask for the c++ object behind
+    // the python one directly, rather than through the capsule handshake the two modules used to
+    // agree on. if {candidate} is something else, or {libmpi} was never imported and hence never
+    // registered the type, the cast fails and python gets a {TypeError}
+    auto
+    communicator(PyObject * candidate) -> const pyre::mpi::Communicator *
+    {
+        // attempt to
+        try {
+            // pull the communicator out of the python object
+            return &py::cast<const pyre::mpi::Communicator &>(py::handle(candidate));
+        }
+        // if it isn't one
+        catch (const py::cast_error &) {
+            // complain
+            PyErr_SetString(PyExc_TypeError, "the first argument must be an mpi communicator");
+            // and bail
+            return nullptr;
+        }
+    }
+} // namespace
 
 
 // matrix operations
@@ -32,23 +64,20 @@ gsl::mpi::bcastMatrix(PyObject *, PyObject * args)
 {
     // place holders
     int source;
-    PyObject *communicatorCapsule, *matrixCapsule;
+    PyObject *communicatorObj, *matrixCapsule;
 
     // parse the argument list
     if (!PyArg_ParseTuple(
-            args, "O!iO:bcastMatrix", &PyCapsule_Type, &communicatorCapsule, &source,
+            args, "OiO:bcastMatrix", &communicatorObj, &source,
             &matrixCapsule // don't force the capsule type check; it may be {None}
             )) {
         return 0;
     }
-    // check the communicator capsule
-    if (!PyCapsule_IsValid(communicatorCapsule, ::mpi::communicator::capsule_t)) {
-        PyErr_SetString(PyExc_TypeError, "the first argument must be a valid communicator");
+    // get the communicator, and bail if it isn't one
+    const pyre::mpi::Communicator * comm = ::communicator(communicatorObj);
+    if (!comm) {
         return 0;
     }
-    // get the communicator
-    pyre::mpi::communicator_t * comm = static_cast<pyre::mpi::communicator_t *>(
-        PyCapsule_GetPointer(communicatorCapsule, ::mpi::communicator::capsule_t));
 
     // the matrix
     gsl_matrix * matrix;
@@ -92,7 +121,7 @@ gsl::mpi::bcastMatrix(PyObject *, PyObject * args)
     // check the return code
     if (status != MPI_SUCCESS) {
         // and throw an exception if anything went wrong
-        PyErr_SetString(PyExc_RuntimeError, "MPI_Scatter failed");
+        PyErr_SetString(PyExc_RuntimeError, "MPI_Bcast failed");
         return 0;
     }
 
@@ -135,22 +164,19 @@ gsl::mpi::gatherMatrix(PyObject *, PyObject * args)
 {
     // place holders
     int destination;
-    PyObject *communicatorCapsule, *matrixCapsule;
+    PyObject *communicatorObj, *matrixCapsule;
 
     // parse the argument list
     if (!PyArg_ParseTuple(
-            args, "O!iO!:gatherMatrix", &PyCapsule_Type, &communicatorCapsule, &destination,
-            &PyCapsule_Type, &matrixCapsule)) {
+            args, "OiO!:gatherMatrix", &communicatorObj, &destination, &PyCapsule_Type,
+            &matrixCapsule)) {
         return 0;
     }
-    // check the communicator capsule
-    if (!PyCapsule_IsValid(communicatorCapsule, ::mpi::communicator::capsule_t)) {
-        PyErr_SetString(PyExc_TypeError, "the first argument must be a valid communicator");
+    // get the communicator, and bail if it isn't one
+    const pyre::mpi::Communicator * comm = ::communicator(communicatorObj);
+    if (!comm) {
         return 0;
     }
-    // get the communicator
-    pyre::mpi::communicator_t * comm = static_cast<pyre::mpi::communicator_t *>(
-        PyCapsule_GetPointer(communicatorCapsule, ::mpi::communicator::capsule_t));
 
     // check the matrix capsule
     if (!PyCapsule_IsValid(matrixCapsule, gsl::matrix::capsule_t)) {
@@ -229,19 +255,19 @@ gsl::mpi::scatterMatrix(PyObject *, PyObject * args)
 {
     // place holders
     int source;
-    PyObject *communicatorCapsule, *matrixCapsule, *destinationCapsule;
+    PyObject *communicatorObj, *matrixCapsule, *destinationCapsule;
 
     // parse the argument list
     if (!PyArg_ParseTuple(
-            args, "O!iO!O:scatterMatrix", &PyCapsule_Type, &communicatorCapsule, &source,
-            &PyCapsule_Type, &destinationCapsule,
+            args, "OiO!O:scatterMatrix", &communicatorObj, &source, &PyCapsule_Type,
+            &destinationCapsule,
             &matrixCapsule // don't force the capsule type check; it may be {None}
             )) {
         return 0;
     }
-    // check the communicator capsule
-    if (!PyCapsule_IsValid(communicatorCapsule, ::mpi::communicator::capsule_t)) {
-        PyErr_SetString(PyExc_TypeError, "the first argument must be a valid communicator");
+    // get the communicator, and bail if it isn't one
+    const pyre::mpi::Communicator * comm = ::communicator(communicatorObj);
+    if (!comm) {
         return 0;
     }
     // check the destination capsule
@@ -249,9 +275,6 @@ gsl::mpi::scatterMatrix(PyObject *, PyObject * args)
         PyErr_SetString(PyExc_TypeError, "the third argument must be a valid matrix");
         return 0;
     }
-    // get the communicator
-    pyre::mpi::communicator_t * comm = static_cast<pyre::mpi::communicator_t *>(
-        PyCapsule_GetPointer(communicatorCapsule, ::mpi::communicator::capsule_t));
     // get the destination matrix
     gsl_matrix * destination =
         static_cast<gsl_matrix *>(PyCapsule_GetPointer(destinationCapsule, gsl::matrix::capsule_t));
@@ -307,23 +330,20 @@ gsl::mpi::bcastVector(PyObject *, PyObject * args)
 {
     // place holders
     int source;
-    PyObject *communicatorCapsule, *vectorCapsule;
+    PyObject *communicatorObj, *vectorCapsule;
 
     // parse the argument list
     if (!PyArg_ParseTuple(
-            args, "O!iO:bcastVector", &PyCapsule_Type, &communicatorCapsule, &source,
+            args, "OiO:bcastVector", &communicatorObj, &source,
             &vectorCapsule // don't force the capsule type check; it may be {None}
             )) {
         return 0;
     }
-    // check the communicator capsule
-    if (!PyCapsule_IsValid(communicatorCapsule, ::mpi::communicator::capsule_t)) {
-        PyErr_SetString(PyExc_TypeError, "the first argument must be a valid communicator");
+    // get the communicator, and bail if it isn't one
+    const pyre::mpi::Communicator * comm = ::communicator(communicatorObj);
+    if (!comm) {
         return 0;
     }
-    // get the communicator
-    pyre::mpi::communicator_t * comm = static_cast<pyre::mpi::communicator_t *>(
-        PyCapsule_GetPointer(communicatorCapsule, ::mpi::communicator::capsule_t));
 
     // the vector
     gsl_vector * vector;
@@ -362,7 +382,7 @@ gsl::mpi::bcastVector(PyObject *, PyObject * args)
     // check the return code
     if (status != MPI_SUCCESS) {
         // and throw an exception if anything went wrong
-        PyErr_SetString(PyExc_RuntimeError, "MPI_Scatter failed");
+        PyErr_SetString(PyExc_RuntimeError, "MPI_Bcast failed");
         return 0;
     }
 
@@ -400,22 +420,19 @@ gsl::mpi::gatherVector(PyObject *, PyObject * args)
 {
     // place holders
     int destination;
-    PyObject *communicatorCapsule, *vectorCapsule;
+    PyObject *communicatorObj, *vectorCapsule;
 
     // parse the argument list
     if (!PyArg_ParseTuple(
-            args, "O!iO!:gatherVector", &PyCapsule_Type, &communicatorCapsule, &destination,
-            &PyCapsule_Type, &vectorCapsule)) {
+            args, "OiO!:gatherVector", &communicatorObj, &destination, &PyCapsule_Type,
+            &vectorCapsule)) {
         return 0;
     }
-    // check the communicator capsule
-    if (!PyCapsule_IsValid(communicatorCapsule, ::mpi::communicator::capsule_t)) {
-        PyErr_SetString(PyExc_TypeError, "the first argument must be a valid communicator");
+    // get the communicator, and bail if it isn't one
+    const pyre::mpi::Communicator * comm = ::communicator(communicatorObj);
+    if (!comm) {
         return 0;
     }
-    // get the communicator
-    pyre::mpi::communicator_t * comm = static_cast<pyre::mpi::communicator_t *>(
-        PyCapsule_GetPointer(communicatorCapsule, ::mpi::communicator::capsule_t));
 
     // check the vector capsule
     if (!PyCapsule_IsValid(vectorCapsule, gsl::vector::capsule_t)) {
@@ -486,19 +503,19 @@ gsl::mpi::scatterVector(PyObject *, PyObject * args)
 {
     // place holders
     int source;
-    PyObject *communicatorCapsule, *vectorCapsule, *destinationCapsule;
+    PyObject *communicatorObj, *vectorCapsule, *destinationCapsule;
 
     // parse the argument list
     if (!PyArg_ParseTuple(
-            args, "O!iO!O:scatterVector", &PyCapsule_Type, &communicatorCapsule, &source,
-            &PyCapsule_Type, &destinationCapsule,
+            args, "OiO!O:scatterVector", &communicatorObj, &source, &PyCapsule_Type,
+            &destinationCapsule,
             &vectorCapsule // don't force the capsule type check; it may be {None}
             )) {
         return 0;
     }
-    // check the communicator capsule
-    if (!PyCapsule_IsValid(communicatorCapsule, ::mpi::communicator::capsule_t)) {
-        PyErr_SetString(PyExc_TypeError, "the first argument must be a valid communicator");
+    // get the communicator, and bail if it isn't one
+    const pyre::mpi::Communicator * comm = ::communicator(communicatorObj);
+    if (!comm) {
         return 0;
     }
     // check the destination capsule
@@ -506,9 +523,6 @@ gsl::mpi::scatterVector(PyObject *, PyObject * args)
         PyErr_SetString(PyExc_TypeError, "the third argument must be a valid vector");
         return 0;
     }
-    // get the communicator
-    pyre::mpi::communicator_t * comm = static_cast<pyre::mpi::communicator_t *>(
-        PyCapsule_GetPointer(communicatorCapsule, ::mpi::communicator::capsule_t));
     // get the destination vector
     gsl_vector * destination =
         static_cast<gsl_vector *>(PyCapsule_GetPointer(destinationCapsule, gsl::vector::capsule_t));

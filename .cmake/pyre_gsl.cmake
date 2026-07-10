@@ -60,6 +60,9 @@ function(pyre_gslModule)
       target_compile_definitions(gslmodule PRIVATE WITH_MPI)
       # and the mpi libraries
       target_link_libraries(gslmodule PRIVATE ${MPI_CXX_LIBRARIES})
+      # the partitioning code takes communicators straight out of the {libmpi} bindings, so it
+      # needs the {pyre::mpi} declarations and the pybind11 headers that resolve them
+      target_link_libraries(gslmodule PRIVATE pyre::mpi pybind11::module)
     endif()
 
     if (${Python_NumPy_FOUND})
