@@ -1,0 +1,17 @@
+# -*- Makefile -*-
+#
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2026 all rights reserved
+
+
+# the h5 library testsuite
+pyre-h5.lib.tests.stem := h5.lib
+pyre-h5.lib.tests.prerequisites := pyre-h5.lib journal.lib
+pyre-h5.lib.tests.extern := pyre-h5.lib journal.lib hdf5
+
+# c++ compiler arguments
+pyre-h5.lib.tests.c++.defines += $(pyre.lib.c++.defines)
+pyre-h5.lib.tests.c++.flags += -Wall $(pyre.lib.c++.flags)
+
+
+# end of file
