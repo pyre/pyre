@@ -27,6 +27,7 @@ namespace gsl::py {
     // the free-function modules
     void stats(py::module & m);
     void linalg(py::module & m);
+    void blas(py::module & m);
 } // namespace gsl::py
 
 

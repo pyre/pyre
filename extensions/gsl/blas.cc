@@ -5,853 +5,319 @@
 // (c) 1998-2026 all rights reserved
 
 
-#include <portinfo>
-#include <Python.h>
+// external dependencies
+#include "external.h"
+// namespace setup
+#include "forward.h"
+// the blas
 #include <gsl/gsl_blas.h>
-#include <gsl/gsl_vector.h>
-#include <gsl/gsl_matrix.h>
-
-// local includes
-#include "blas.h"
-#include "capsules.h"
 
 
-// level 1
-// blas::ddot
-const char * const gsl::blas::ddot__name__ = "blas_ddot";
-const char * const gsl::blas::ddot__doc__ = "compute the scalar product of two vectors";
+// the local helpers
+namespace gsl::py {
+    // translate the python operation flag into the cblas transpose enum
+    //
+    // the {gsl.matrix} constants number the operations 0, 1, 2 rather than using the cblas
+    // values, so we map them here, and reject anything else
+    inline auto
+    transpose(int op) -> CBLAS_TRANSPOSE_t
+    {
+        // the plain matrix
+        if (op == 0) {
+            return CblasNoTrans;
+        }
+        // its transpose
+        if (op == 1) {
+            return CblasTrans;
+        }
+        // its conjugate transpose
+        if (op == 2) {
+            return CblasConjTrans;
+        }
+        // anything else is a bug at the call site
+        throw py::value_error("bad blas operation flag; expected 0, 1, or 2");
+    }
 
-PyObject *
-gsl::blas::ddot(PyObject *, PyObject * args)
+    // translate the python triangle flag: a true value names the upper triangle
+    inline auto
+    uplo(int flag) -> CBLAS_UPLO_t
+    {
+        return flag ? CblasUpper : CblasLower;
+    }
+
+    // translate the python diagonal flag: a true value names a unit diagonal
+    inline auto
+    diag(int flag) -> CBLAS_DIAG_t
+    {
+        return flag ? CblasUnit : CblasNonUnit;
+    }
+
+    // translate the python side flag: a true value multiplies from the right
+    inline auto
+    side(int flag) -> CBLAS_SIDE_t
+    {
+        return flag ? CblasRight : CblasLeft;
+    }
+} // namespace gsl::py
+
+
+// add the bindings for the gsl blas
+void
+gsl::py::blas(py::module & m)
 {
-    // the arguments
-    PyObject * v1c;
-    PyObject * v2c;
-    // unpack the argument tuple
-    int status =
-        PyArg_ParseTuple(args, "O!O!:blas_ddot", &PyCapsule_Type, &v1c, &PyCapsule_Type, &v2c);
-    // if something went wrong
-    if (!status)
-        return 0;
-    // bail out if the two capsules are not valid
-    if (!PyCapsule_IsValid(v1c, gsl::vector::capsule_t)) {
-        PyErr_SetString(PyExc_TypeError, "the first argument must be a vector");
-        return 0;
-    }
-    if (!PyCapsule_IsValid(v2c, gsl::vector::capsule_t)) {
-        PyErr_SetString(PyExc_TypeError, "the second argument must be a vector");
-        return 0;
-    }
-
-    // get the two vectors
-    gsl_vector * v1 = static_cast<gsl_vector *>(PyCapsule_GetPointer(v1c, gsl::vector::capsule_t));
-    gsl_vector * v2 = static_cast<gsl_vector *>(PyCapsule_GetPointer(v2c, gsl::vector::capsule_t));
-    // the result
-    double result;
-    // compute the dot product
-    gsl_blas_ddot(v1, v2, &result);
-    // and return the result
-    return PyFloat_FromDouble(result);
-}
-
-
-// blas::dnrm2
-const char * const gsl::blas::dnrm2__name__ = "blas_dnrm2";
-const char * const gsl::blas::dnrm2__doc__ = "compute the Euclidean norm of a vector";
-
-PyObject *
-gsl::blas::dnrm2(PyObject *, PyObject * args)
-{
-    // the arguments
-    PyObject * vc;
-    // unpack the argument tuple
-    int status = PyArg_ParseTuple(args, "O!:blas_dnrm2", &PyCapsule_Type, &vc);
-    // if something went wrong
-    if (!status)
-        return 0;
-    // bail out if the two capsules are not valid
-    if (!PyCapsule_IsValid(vc, gsl::vector::capsule_t)) {
-        PyErr_SetString(PyExc_TypeError, "invalid vector capsule");
-        return 0;
-    }
-
-    // get the vector
-    gsl_vector * v = static_cast<gsl_vector *>(PyCapsule_GetPointer(vc, gsl::vector::capsule_t));
-
-    double norm;
-    // compute the norm
-    norm = gsl_blas_dnrm2(v);
-
-    // and return the result
-    return PyFloat_FromDouble(norm);
-}
-
-
-// blas::dasum
-const char * const gsl::blas::dasum__name__ = "blas_dasum";
-const char * const gsl::blas::dasum__doc__ =
-    "compute the sum of the absolute values of the vector entries";
-
-PyObject *
-gsl::blas::dasum(PyObject *, PyObject * args)
-{
-    // the arguments
-    PyObject * vc;
-    // unpack the argument tuple
-    int status = PyArg_ParseTuple(args, "O!:blas_dasum", &PyCapsule_Type, &vc);
-    // if something went wrong
-    if (!status)
-        return 0;
-    // bail out if the capsule is not valid
-    if (!PyCapsule_IsValid(vc, gsl::vector::capsule_t)) {
-        PyErr_SetString(PyExc_TypeError, "invalid vector capsule");
-        return 0;
-    }
-
-    // get the vector
-    gsl_vector * v = static_cast<gsl_vector *>(PyCapsule_GetPointer(vc, gsl::vector::capsule_t));
-
-    double norm;
-
-    // compute the norm
-    norm = gsl_blas_dasum(v);
-
-    // and return the result
-    return PyFloat_FromDouble(norm);
-}
-
-
-// blas::idamax
-const char * const gsl::blas::idamax__name__ = "blas_idamax";
-const char * const gsl::blas::idamax__doc__ = "find the index of the largest element in a vector";
-
-PyObject *
-gsl::blas::idamax(PyObject *, PyObject * args)
-{
-    // the arguments
-    PyObject * vc;
-    // unpack the argument tuple
-    int status = PyArg_ParseTuple(args, "O!:blas_idamax", &PyCapsule_Type, &vc);
-    // if something went wrong
-    if (!status)
-        return 0;
-    // bail out if the capsule is not valid
-    if (!PyCapsule_IsValid(vc, gsl::vector::capsule_t)) {
-        PyErr_SetString(PyExc_TypeError, "invalid vector capsule");
-        return 0;
-    }
-
-    // get the vector
-    gsl_vector * v = static_cast<gsl_vector *>(PyCapsule_GetPointer(vc, gsl::vector::capsule_t));
-
-    CBLAS_INDEX_t index;
-    // compute the index
-    index = gsl_blas_idamax(v);
-
-    // and return the result
-    return PyLong_FromLong(index);
-}
-
-
-// blas::dswap
-const char * const gsl::blas::dswap__name__ = "blas_dswap";
-const char * const gsl::blas::dswap__doc__ = "swap the contents of two vectors";
-
-PyObject *
-gsl::blas::dswap(PyObject *, PyObject * args)
-{
-    // the arguments
-    PyObject * xc;
-    PyObject * yc;
-    // unpack the argument tuple
-    int status =
-        PyArg_ParseTuple(args, "O!:blas_dswap", &PyCapsule_Type, &xc, &PyCapsule_Type, &yc);
-    // if something went wrong
-    if (!status)
-        return 0;
-    // bail out if the two capsules are not valid
-    if (!PyCapsule_IsValid(xc, gsl::vector::capsule_t)) {
-        PyErr_SetString(PyExc_TypeError, "the first argument must be a vector");
-        return 0;
-    }
-    if (!PyCapsule_IsValid(yc, gsl::vector::capsule_t)) {
-        PyErr_SetString(PyExc_TypeError, "the second argument must be a vector");
-        return 0;
-    }
-
-    // get the vectors
-    gsl_vector * x = static_cast<gsl_vector *>(PyCapsule_GetPointer(xc, gsl::vector::capsule_t));
-    gsl_vector * y = static_cast<gsl_vector *>(PyCapsule_GetPointer(yc, gsl::vector::capsule_t));
-
-    // swap the contents
-    gsl_blas_dswap(x, y);
-
-    // and return
-    Py_INCREF(Py_None);
-    return Py_None;
-}
-
-
-// blas::dcopy
-const char * const gsl::blas::dcopy__name__ = "blas_dcopy";
-const char * const gsl::blas::dcopy__doc__ = "copy the contents of one vector into another";
-
-PyObject *
-gsl::blas::dcopy(PyObject *, PyObject * args)
-{
-    // the arguments
-    PyObject * xc;
-    PyObject * yc;
-    // unpack the argument tuple
-    int status =
-        PyArg_ParseTuple(args, "O!:blas_dcopy", &PyCapsule_Type, &xc, &PyCapsule_Type, &yc);
-    // if something went wrong
-    if (!status)
-        return 0;
-    // bail out if the two capsules are not valid
-    if (!PyCapsule_IsValid(xc, gsl::vector::capsule_t)) {
-        PyErr_SetString(PyExc_TypeError, "the first argument must be a vector");
-        return 0;
-    }
-    if (!PyCapsule_IsValid(yc, gsl::vector::capsule_t)) {
-        PyErr_SetString(PyExc_TypeError, "the second argument must be a vector");
-        return 0;
-    }
-
-    // get the vectors
-    gsl_vector * x = static_cast<gsl_vector *>(PyCapsule_GetPointer(xc, gsl::vector::capsule_t));
-    gsl_vector * y = static_cast<gsl_vector *>(PyCapsule_GetPointer(yc, gsl::vector::capsule_t));
-
-    // copy
-    gsl_blas_dcopy(x, y);
-
-    // and return
-    Py_INCREF(Py_None);
-    return Py_None;
-}
-
-
-// blas::daxpy
-const char * const gsl::blas::daxpy__name__ = "blas_daxpy";
-const char * const gsl::blas::daxpy__doc__ = "compute the scalar product of two vectors";
-
-PyObject *
-gsl::blas::daxpy(PyObject *, PyObject * args)
-{
-    // the arguments
-    double a;
-    PyObject * v1c;
-    PyObject * v2c;
-    // unpack the argument tuple
-    int status = PyArg_ParseTuple(
-        args, "dO!O!:blas_daxpy", &a, &PyCapsule_Type, &v1c, &PyCapsule_Type, &v2c);
-    // if something went wrong
-    if (!status)
-        return 0;
-    // bail out if the two capsules are not valid
-    if (!PyCapsule_IsValid(v1c, gsl::vector::capsule_t)) {
-        PyErr_SetString(PyExc_TypeError, "the second argument must be a vector");
-        return 0;
-    }
-    if (!PyCapsule_IsValid(v2c, gsl::vector::capsule_t)) {
-        PyErr_SetString(PyExc_TypeError, "the third argument must be a vector");
-        return 0;
-    }
-
-    // get the two vectors
-    gsl_vector * v1 = static_cast<gsl_vector *>(PyCapsule_GetPointer(v1c, gsl::vector::capsule_t));
-    gsl_vector * v2 = static_cast<gsl_vector *>(PyCapsule_GetPointer(v2c, gsl::vector::capsule_t));
-
-    // compute the form
-    gsl_blas_daxpy(a, v1, v2);
-
-    // and return
-    Py_INCREF(Py_None);
-    return Py_None;
-}
-
-
-// blas::dscal
-const char * const gsl::blas::dscal__name__ = "blas_dscal";
-const char * const gsl::blas::dscal__doc__ = "scale a vector by a number";
-
-PyObject *
-gsl::blas::dscal(PyObject *, PyObject * args)
-{
-    // the arguments
-    double a;
-    PyObject * vc;
-    // unpack the argument tuple
-    int status = PyArg_ParseTuple(args, "dO!:blas_dscal", &a, &PyCapsule_Type, &vc);
-    // if something went wrong
-    if (!status)
-        return 0;
-    // check that the capsule is valid
-    if (!PyCapsule_IsValid(vc, gsl::vector::capsule_t)) {
-        PyErr_SetString(PyExc_TypeError, "the second argument must be a vector");
-        return 0;
-    }
-
-    // get the two vectors
-    gsl_vector * v = static_cast<gsl_vector *>(PyCapsule_GetPointer(vc, gsl::vector::capsule_t));
-
-    // compute the form
-    gsl_blas_dscal(a, v);
-
-    // and return
-    Py_INCREF(Py_None);
-    return Py_None;
-}
-
-
-// blas::drotg
-const char * const gsl::blas::drotg__name__ = "blas_drotg";
-const char * const gsl::blas::drotg__doc__ = "compute the Givens rotation for two vectors";
-
-PyObject *
-gsl::blas::drotg(PyObject *, PyObject * args)
-{
-    // the arguments
-    double x, y;
-    // unpack the argument tuple
-    int status = PyArg_ParseTuple(args, "dd:blas_drotg", &x, &y);
-
-    // if something went wrong
-    if (!status)
-        return 0;
-
-    double c, s;
-    // compute the rotation
-    gsl_blas_drotg(&x, &y, &c, &s);
-
-    // build a tuple to hold the results
-    PyObject * result = PyTuple_New(4);
-    PyTuple_SET_ITEM(result, 0, PyFloat_FromDouble(x));
-    PyTuple_SET_ITEM(result, 1, PyFloat_FromDouble(y));
-    PyTuple_SET_ITEM(result, 2, PyFloat_FromDouble(c));
-    PyTuple_SET_ITEM(result, 3, PyFloat_FromDouble(c));
-
-    // and return
-    return result;
-}
-
-
-// blas::drot
-const char * const gsl::blas::drot__name__ = "blas_drot";
-const char * const gsl::blas::drot__doc__ = "apply a Givens rotation to two vectors";
-
-PyObject *
-gsl::blas::drot(PyObject *, PyObject * args)
-{
-    // the arguments
-    double c, s;
-    PyObject * v1c;
-    PyObject * v2c;
-    // unpack the argument tuple
-    int status = PyArg_ParseTuple(
-        args, "O!O!dd:blas_drot", &PyCapsule_Type, &v1c, &PyCapsule_Type, &v2c, &c, &s);
-    // if something went wrong
-    if (!status)
-        return 0;
-    // bail out if the two capsules are not valid
-    if (!PyCapsule_IsValid(v1c, gsl::vector::capsule_t)) {
-        PyErr_SetString(PyExc_TypeError, "the first argument must be a vector");
-        return 0;
-    }
-    if (!PyCapsule_IsValid(v2c, gsl::vector::capsule_t)) {
-        PyErr_SetString(PyExc_TypeError, "the second argument must be a vector");
-        return 0;
-    }
-
-    // get the two vectors
-    gsl_vector * v1 = static_cast<gsl_vector *>(PyCapsule_GetPointer(v1c, gsl::vector::capsule_t));
-    gsl_vector * v2 = static_cast<gsl_vector *>(PyCapsule_GetPointer(v2c, gsl::vector::capsule_t));
-
-    // compute the form
-    gsl_blas_drot(v1, v2, c, s);
-
-    // and return
-    Py_INCREF(Py_None);
-    return Py_None;
-}
-
-
-// level 2
-// blas::dgemv
-const char * const gsl::blas::dgemv__name__ = "blas_dgemv";
-const char * const gsl::blas::dgemv__doc__ = "compute y = a op(A) x + b y";
-
-PyObject *
-gsl::blas::dgemv(PyObject *, PyObject * args)
-{
-    // the arguments
-    int op;
-    double a, b;
-    PyObject * xc;
-    PyObject * yc;
-    PyObject * Ac;
-    // unpack the argument tuple
-    int status = PyArg_ParseTuple(
-        args, "idO!O!dO!:blas_dgemv", &op, &a, &PyCapsule_Type, &Ac, &PyCapsule_Type, &xc, &b,
-        &PyCapsule_Type, &yc);
-    // if something went wrong
-    if (!status)
-        return 0;
-    // bail out if the two capsules are not valid
-    if (!PyCapsule_IsValid(Ac, gsl::matrix::capsule_t)) {
-        PyErr_SetString(PyExc_TypeError, "the third argument must be a matrix");
-        return 0;
-    }
-    if (!PyCapsule_IsValid(xc, gsl::vector::capsule_t)) {
-        PyErr_SetString(PyExc_TypeError, "the fourth argument must be a vector");
-        return 0;
-    }
-    if (!PyCapsule_IsValid(yc, gsl::vector::capsule_t)) {
-        PyErr_SetString(PyExc_TypeError, "the sixth argument must be a vector");
-        return 0;
-    }
-
-    // decode the enum
-    CBLAS_TRANSPOSE_t ctran;
-    switch (op) {
-        case 0:
-            ctran = CblasNoTrans;
-            break;
-        case 1:
-            ctran = CblasTrans;
-            break;
-        case 2:
-            ctran = CblasConjTrans;
-            break;
-        default:
-            PyErr_SetString(PyExc_TypeError, "bad operation flag");
-            return 0;
-    }
-    // get the two vectors
-    gsl_vector * x = static_cast<gsl_vector *>(PyCapsule_GetPointer(xc, gsl::vector::capsule_t));
-    gsl_vector * y = static_cast<gsl_vector *>(PyCapsule_GetPointer(yc, gsl::vector::capsule_t));
-    // get the matrix
-    gsl_matrix * A = static_cast<gsl_matrix *>(PyCapsule_GetPointer(Ac, gsl::matrix::capsule_t));
-
-    // compute the form
-    gsl_blas_dgemv(ctran, a, A, x, b, y);
-
-    // and return
-    Py_INCREF(Py_None);
-    return Py_None;
-}
-
-
-// blas::dtrmv
-const char * const gsl::blas::dtrmv__name__ = "blas_dtrmv";
-const char * const gsl::blas::dtrmv__doc__ = "compute x = op(A) x";
-
-PyObject *
-gsl::blas::dtrmv(PyObject *, PyObject * args)
-{
-    // the arguments
-    int uplo, op, unitDiag;
-    PyObject * xc;
-    PyObject * Ac;
-    // unpack the argument tuple
-    int status = PyArg_ParseTuple(
-        args, "iiiO!O!:blas_dtrmv", &uplo, &op, &unitDiag, &PyCapsule_Type, &Ac, &PyCapsule_Type,
-        &xc);
-    // if something went wrong
-    if (!status)
-        return 0;
-    // bail out if the two capsules are not valid
-    if (!PyCapsule_IsValid(Ac, gsl::matrix::capsule_t)) {
-        PyErr_SetString(PyExc_TypeError, "the fourth argument must be a matrix");
-        return 0;
-    }
-    if (!PyCapsule_IsValid(xc, gsl::vector::capsule_t)) {
-        PyErr_SetString(PyExc_TypeError, "the fifth argument must be a vector");
-        return 0;
-    }
-
-    // decode the enums
-    CBLAS_UPLO_t cuplo = uplo ? CblasUpper : CblasLower;
-    CBLAS_DIAG_t cdiag = unitDiag ? CblasUnit : CblasNonUnit;
-    CBLAS_TRANSPOSE_t ctran;
-    switch (op) {
-        case 0:
-            ctran = CblasNoTrans;
-            break;
-        case 1:
-            ctran = CblasTrans;
-            break;
-        case 2:
-            ctran = CblasConjTrans;
-            break;
-        default:
-            PyErr_SetString(PyExc_TypeError, "bad operation flag");
-            return 0;
-    }
-
-    // get the two vectors
-    gsl_vector * x = static_cast<gsl_vector *>(PyCapsule_GetPointer(xc, gsl::vector::capsule_t));
-    // get the matrix
-    gsl_matrix * A = static_cast<gsl_matrix *>(PyCapsule_GetPointer(Ac, gsl::matrix::capsule_t));
-
-    // compute the form
-    gsl_blas_dtrmv(cuplo, ctran, cdiag, A, x);
-
-    // and return
-    Py_INCREF(Py_None);
-    return Py_None;
-}
-
-
-// blas::dtrsv
-const char * const gsl::blas::dtrsv__name__ = "blas_dtrsv";
-const char * const gsl::blas::dtrsv__doc__ = "compute x = inv(op(A)) x";
-
-PyObject *
-gsl::blas::dtrsv(PyObject *, PyObject * args)
-{
-    // the arguments
-    int uplo, op, unitDiag;
-    PyObject * xc;
-    PyObject * Ac;
-    // unpack the argument tuple
-    int status = PyArg_ParseTuple(
-        args, "iiiO!O!:blas_dtrsv", &uplo, &op, &unitDiag, &PyCapsule_Type, &Ac, &PyCapsule_Type,
-        &xc);
-    // if something went wrong
-    if (!status)
-        return 0;
-    // bail out if the two capsules are not valid
-    if (!PyCapsule_IsValid(Ac, gsl::matrix::capsule_t)) {
-        PyErr_SetString(PyExc_TypeError, "the fourth argument must be a matrix");
-        return 0;
-    }
-    if (!PyCapsule_IsValid(xc, gsl::vector::capsule_t)) {
-        PyErr_SetString(PyExc_TypeError, "the fifth argument must be a vector");
-        return 0;
-    }
-
-    // decode the enums
-    CBLAS_UPLO_t cuplo = uplo ? CblasUpper : CblasLower;
-    CBLAS_DIAG_t cdiag = unitDiag ? CblasUnit : CblasNonUnit;
-    CBLAS_TRANSPOSE_t ctran;
-    switch (op) {
-        case 0:
-            ctran = CblasNoTrans;
-            break;
-        case 1:
-            ctran = CblasTrans;
-            break;
-        case 2:
-            ctran = CblasConjTrans;
-            break;
-        default:
-            PyErr_SetString(PyExc_TypeError, "bad operation flag");
-            return 0;
-    }
-
-    // get the two vectors
-    gsl_vector * x = static_cast<gsl_vector *>(PyCapsule_GetPointer(xc, gsl::vector::capsule_t));
-    // get the matrix
-    gsl_matrix * A = static_cast<gsl_matrix *>(PyCapsule_GetPointer(Ac, gsl::matrix::capsule_t));
-
-    // compute the form
-    gsl_blas_dtrsv(cuplo, ctran, cdiag, A, x);
-
-    // and return
-    Py_INCREF(Py_None);
-    return Py_None;
-}
-
-
-// blas::dsymv
-const char * const gsl::blas::dsymv__name__ = "blas_dsymv";
-const char * const gsl::blas::dsymv__doc__ = "compute y = a A x + b y";
-
-PyObject *
-gsl::blas::dsymv(PyObject *, PyObject * args)
-{
-    // the arguments
-    int uplo;
-    double a, b;
-    PyObject * xc;
-    PyObject * yc;
-    PyObject * Ac;
-    // unpack the argument tuple
-    int status = PyArg_ParseTuple(
-        args, "idO!O!dO!:blas_dsymv", &uplo, &a, &PyCapsule_Type, &Ac, &PyCapsule_Type, &xc, &b,
-        &PyCapsule_Type, &yc);
-    // if something went wrong
-    if (!status)
-        return 0;
-    // bail out if the two capsules are not valid
-    if (!PyCapsule_IsValid(Ac, gsl::matrix::capsule_t)) {
-        PyErr_SetString(PyExc_TypeError, "the third argument must be a matrix");
-        return 0;
-    }
-    if (!PyCapsule_IsValid(xc, gsl::vector::capsule_t)) {
-        PyErr_SetString(PyExc_TypeError, "the fourth argument must be a vector");
-        return 0;
-    }
-    if (!PyCapsule_IsValid(yc, gsl::vector::capsule_t)) {
-        PyErr_SetString(PyExc_TypeError, "the sixth argument must be a vector");
-        return 0;
-    }
-
-    // decode the enum
-    CBLAS_UPLO_t cuplo = uplo ? CblasUpper : CblasLower;
-    // get the two vectors
-    gsl_vector * x = static_cast<gsl_vector *>(PyCapsule_GetPointer(xc, gsl::vector::capsule_t));
-    gsl_vector * y = static_cast<gsl_vector *>(PyCapsule_GetPointer(yc, gsl::vector::capsule_t));
-    // get the matrix
-    gsl_matrix * A = static_cast<gsl_matrix *>(PyCapsule_GetPointer(Ac, gsl::matrix::capsule_t));
-
-    // compute the form
-    gsl_blas_dsymv(cuplo, a, A, x, b, y);
-
-    // and return
-    Py_INCREF(Py_None);
-    return Py_None;
-}
-
-
-// blas::dsyr
-const char * const gsl::blas::dsyr__name__ = "blas_dsyr";
-const char * const gsl::blas::dsyr__doc__ = "compute A = a x x^T + A";
-
-PyObject *
-gsl::blas::dsyr(PyObject *, PyObject * args)
-{
-    // the arguments
-    int uplo;
-    double a;
-    PyObject * xc;
-    PyObject * Ac;
-    // unpack the argument tuple
-    int status = PyArg_ParseTuple(
-        args, "idO!O!:blas_dsyr", &uplo, &a, &PyCapsule_Type, &xc, &PyCapsule_Type, &Ac);
-    // if something went wrong
-    if (!status)
-        return 0;
-    // bail out if the two capsules are not valid
-    if (!PyCapsule_IsValid(Ac, gsl::matrix::capsule_t)) {
-        PyErr_SetString(PyExc_TypeError, "the fourth argument must be a matrix");
-        return 0;
-    }
-    if (!PyCapsule_IsValid(xc, gsl::vector::capsule_t)) {
-        PyErr_SetString(PyExc_TypeError, "the third argument must be a vector");
-        return 0;
-    }
-
-    // decode the enum
-    CBLAS_UPLO_t cuplo = uplo ? CblasUpper : CblasLower;
-    // get the two vectors
-    gsl_vector * x = static_cast<gsl_vector *>(PyCapsule_GetPointer(xc, gsl::vector::capsule_t));
-    // get the matrix
-    gsl_matrix * A = static_cast<gsl_matrix *>(PyCapsule_GetPointer(Ac, gsl::matrix::capsule_t));
-
-    // compute the form
-    gsl_blas_dsyr(cuplo, a, x, A);
-
-    // and return
-    Py_INCREF(Py_None);
-    return Py_None;
-}
-
-
-// blas::dgemm
-const char * const gsl::blas::dgemm__name__ = "blas_dgemm";
-const char * const gsl::blas::dgemm__doc__ = "compute y = a op(A) x + b y";
-
-PyObject *
-gsl::blas::dgemm(PyObject *, PyObject * args)
-{
-    // the arguments
-    int opA, opB;
-    double a, b;
-    PyObject * Ac;
-    PyObject * Bc;
-    PyObject * Cc;
-    // unpack the argument tuple
-    int status = PyArg_ParseTuple(
-        args, "iidO!O!dO!:blas_dgemm", &opA, &opB, &a, &PyCapsule_Type, &Ac, &PyCapsule_Type, &Bc,
-        &b, &PyCapsule_Type, &Cc);
-    // if something went wrong
-    if (!status)
-        return 0;
-    // bail out if the two capsules are not valid
-    if (!PyCapsule_IsValid(Ac, gsl::matrix::capsule_t)) {
-        PyErr_SetString(PyExc_TypeError, "the fourth argument must be a matrix");
-        return 0;
-    }
-    if (!PyCapsule_IsValid(Bc, gsl::matrix::capsule_t)) {
-        PyErr_SetString(PyExc_TypeError, "the fifth argument must be a matrix");
-        return 0;
-    }
-    if (!PyCapsule_IsValid(Cc, gsl::matrix::capsule_t)) {
-        PyErr_SetString(PyExc_TypeError, "the seventh argument must be a matrix");
-        return 0;
-    }
-
-    // decode the enum
-    CBLAS_TRANSPOSE_t ctranA;
-    switch (opA) {
-        case 0:
-            ctranA = CblasNoTrans;
-            break;
-        case 1:
-            ctranA = CblasTrans;
-            break;
-        case 2:
-            ctranA = CblasConjTrans;
-            break;
-        default:
-            PyErr_SetString(PyExc_TypeError, "bad operation flag");
-            return 0;
-    }
-    // decode the other enum
-    CBLAS_TRANSPOSE_t ctranB;
-    switch (opB) {
-        case 0:
-            ctranB = CblasNoTrans;
-            break;
-        case 1:
-            ctranB = CblasTrans;
-            break;
-        case 2:
-            ctranB = CblasConjTrans;
-            break;
-        default:
-            PyErr_SetString(PyExc_TypeError, "bad operation flag");
-            return 0;
-    }
-
-    // get the matrices
-    gsl_matrix * A = static_cast<gsl_matrix *>(PyCapsule_GetPointer(Ac, gsl::matrix::capsule_t));
-    gsl_matrix * B = static_cast<gsl_matrix *>(PyCapsule_GetPointer(Bc, gsl::matrix::capsule_t));
-    gsl_matrix * C = static_cast<gsl_matrix *>(PyCapsule_GetPointer(Cc, gsl::matrix::capsule_t));
-
-    // compute the form
-    gsl_blas_dgemm(ctranA, ctranB, a, A, B, b, C);
-
-    // and return
-    Py_INCREF(Py_None);
-    return Py_None;
-}
-
-
-// blas::dsymm
-const char * const gsl::blas::dsymm__name__ = "blas_dsymm";
-const char * const gsl::blas::dsymm__doc__ = "compute C = a A B  + b C where A is symmetric";
-
-PyObject *
-gsl::blas::dsymm(PyObject *, PyObject * args)
-{
-    // the arguments
-    int side, UploA;
-    double a, b;
-    PyObject * Ac;
-    PyObject * Bc;
-    PyObject * Cc;
-    // unpack the argument tuple
-    int status = PyArg_ParseTuple(
-        args, "iidO!O!dO!:blas_dsymm", &side, &UploA, &a, &PyCapsule_Type, &Ac, &PyCapsule_Type,
-        &Bc, &b, &PyCapsule_Type, &Cc);
-    // if something went wrong
-    if (!status)
-        return 0;
-    // bail out if the two capsules are not valid
-    if (!PyCapsule_IsValid(Ac, gsl::matrix::capsule_t)) {
-        PyErr_SetString(PyExc_TypeError, "the fourth argument must be a matrix");
-        return 0;
-    }
-    if (!PyCapsule_IsValid(Bc, gsl::matrix::capsule_t)) {
-        PyErr_SetString(PyExc_TypeError, "the fifth argument must be a matrix");
-        return 0;
-    }
-    if (!PyCapsule_IsValid(Cc, gsl::matrix::capsule_t)) {
-        PyErr_SetString(PyExc_TypeError, "the seventh argument must be a matrix");
-        return 0;
-    }
-
-    // decode the enum
-    CBLAS_SIDE_t cside = side ? CblasRight : CblasLeft;
-    CBLAS_UPLO_t cuplo = UploA ? CblasUpper : CblasLower;
-
-
-    // get the matrices
-    gsl_matrix * A = static_cast<gsl_matrix *>(PyCapsule_GetPointer(Ac, gsl::matrix::capsule_t));
-    gsl_matrix * B = static_cast<gsl_matrix *>(PyCapsule_GetPointer(Bc, gsl::matrix::capsule_t));
-    gsl_matrix * C = static_cast<gsl_matrix *>(PyCapsule_GetPointer(Cc, gsl::matrix::capsule_t));
-
-    // compute the form
-    gsl_blas_dsymm(cside, cuplo, a, A, B, b, C);
-
-    // and return
-    Py_INCREF(Py_None);
-    return Py_None;
-}
-
-
-// blas::dtrmm
-const char * const gsl::blas::dtrmm__name__ = "blas_dtrmm";
-const char * const gsl::blas::dtrmm__doc__ = "compute B = a op(A) B";
-
-PyObject *
-gsl::blas::dtrmm(PyObject *, PyObject * args)
-{
-    // the arguments
-    double a;
-    int side, uplo, op, unitDiag;
-    PyObject * Ac;
-    PyObject * Bc;
-    // unpack the argument tuple
-    int status = PyArg_ParseTuple(
-        args, "iiiidO!O!:blas_dtrmm", &side, &uplo, &op, &unitDiag, &a, &PyCapsule_Type, &Ac,
-        &PyCapsule_Type, &Bc);
-    // if something went wrong
-    if (!status)
-        return 0;
-    // bail out if the two capsules are not valid
-    if (!PyCapsule_IsValid(Ac, gsl::matrix::capsule_t)) {
-        PyErr_SetString(PyExc_TypeError, "the sixth argument must be a matrix");
-        return 0;
-    }
-    if (!PyCapsule_IsValid(Bc, gsl::matrix::capsule_t)) {
-        PyErr_SetString(PyExc_TypeError, "the seventh argument must be a vector");
-        return 0;
-    }
-
-    // decode the enums
-    CBLAS_SIDE_t cside = side ? CblasRight : CblasLeft;
-    CBLAS_UPLO_t cuplo = uplo ? CblasUpper : CblasLower;
-    CBLAS_DIAG_t cdiag = unitDiag ? CblasUnit : CblasNonUnit;
-    CBLAS_TRANSPOSE_t ctran;
-    switch (op) {
-        case 0:
-            ctran = CblasNoTrans;
-            break;
-        case 1:
-            ctran = CblasTrans;
-            break;
-        case 2:
-            ctran = CblasConjTrans;
-            break;
-        default:
-            PyErr_SetString(PyExc_TypeError, "bad operation flag");
-            return 0;
-    }
-
-    // get the two matrices
-    gsl_matrix * A = static_cast<gsl_matrix *>(PyCapsule_GetPointer(Ac, gsl::matrix::capsule_t));
-    gsl_matrix * B = static_cast<gsl_matrix *>(PyCapsule_GetPointer(Bc, gsl::matrix::capsule_t));
-
-    // compute the form
-    gsl_blas_dtrmm(cside, cuplo, ctran, cdiag, a, A, B);
-
-    // and return
-    Py_INCREF(Py_None);
-    return Py_None;
+    // level 1: vector-vector operations
+    // the scalar product {x^T y}
+    m.def(
+        // the name
+        "blas_ddot",
+        // the implementation
+        [](const gsl_vector & x, const gsl_vector & y) -> double {
+            // room for the answer
+            double result = 0;
+            // compute it
+            gsl_blas_ddot(&x, &y, &result);
+            // and hand it back
+            return result;
+        },
+        // the signature
+        "x"_a, "y"_a,
+        // the docstring
+        "the scalar product of {x} and {y}");
+
+    // the euclidean norm of {x}
+    m.def(
+        // the name
+        "blas_dnrm2",
+        // the implementation
+        [](const gsl_vector & x) -> double { return gsl_blas_dnrm2(&x); },
+        // the signature
+        "x"_a,
+        // the docstring
+        "the euclidean norm of {x}");
+
+    // the sum of the absolute values of the entries of {x}
+    m.def(
+        // the name
+        "blas_dasum",
+        // the implementation
+        [](const gsl_vector & x) -> double { return gsl_blas_dasum(&x); },
+        // the signature
+        "x"_a,
+        // the docstring
+        "the sum of the absolute values of the entries of {x}");
+
+    // the index of the entry of {x} with the largest absolute value
+    m.def(
+        // the name
+        "blas_idamax",
+        // the implementation
+        [](const gsl_vector & x) -> std::size_t { return gsl_blas_idamax(&x); },
+        // the signature
+        "x"_a,
+        // the docstring
+        "the index of the entry of {x} with the largest absolute value");
+
+    // exchange the contents of {x} and {y}
+    m.def(
+        // the name
+        "blas_dswap",
+        // the implementation
+        [](gsl_vector & x, gsl_vector & y) -> void { gsl_blas_dswap(&x, &y); },
+        // the signature
+        "x"_a, "y"_a,
+        // the docstring
+        "exchange the contents of {x} and {y}");
+
+    // copy the elements of {x} into {y}
+    m.def(
+        // the name
+        "blas_dcopy",
+        // the implementation
+        [](const gsl_vector & x, gsl_vector & y) -> void { gsl_blas_dcopy(&x, &y); },
+        // the signature
+        "x"_a, "y"_a,
+        // the docstring
+        "copy the elements of {x} into {y}");
+
+    // compute {alpha x + y}, storing the result in {y}
+    m.def(
+        // the name
+        "blas_daxpy",
+        // the implementation
+        [](double alpha, const gsl_vector & x, gsl_vector & y) -> void {
+            // fold {alpha x} into {y}
+            gsl_blas_daxpy(alpha, &x, &y);
+        },
+        // the signature
+        "alpha"_a, "x"_a, "y"_a,
+        // the docstring
+        "compute {alpha x + y}, storing the result in {y}");
+
+    // scale {x} by {alpha}, in place
+    m.def(
+        // the name
+        "blas_dscal",
+        // the implementation
+        [](double alpha, gsl_vector & x) -> void { gsl_blas_dscal(alpha, &x); },
+        // the signature
+        "alpha"_a, "x"_a,
+        // the docstring
+        "scale {x} by {alpha}, in place");
+
+    // the Givens rotation that zeroes the second of the scalars {x} and {y}
+    m.def(
+        // the name
+        "blas_drotg",
+        // the implementation
+        [](double x, double y) -> std::tuple<double, double, double, double> {
+            // room for the cosine and sine of the rotation
+            double c = 0, s = 0;
+            // compute the rotation, which also overwrites {x} and {y}
+            gsl_blas_drotg(&x, &y, &c, &s);
+            // and hand back all four
+            return { x, y, c, s };
+        },
+        // the signature
+        "x"_a, "y"_a,
+        // the docstring
+        "the Givens rotation zeroing the second scalar, as the tuple (r, z, c, s)");
+
+    // apply the Givens rotation {(c, s)} to {x} and {y}
+    m.def(
+        // the name
+        "blas_drot",
+        // the implementation
+        [](gsl_vector & x, gsl_vector & y, double c, double s) -> void {
+            // rotate the two vectors together
+            gsl_blas_drot(&x, &y, c, s);
+        },
+        // the signature
+        "x"_a, "y"_a, "c"_a, "s"_a,
+        // the docstring
+        "apply the Givens rotation {(c, s)} to {x} and {y}");
+
+    // level 2: matrix-vector operations
+    // compute {y = alpha op(A) x + beta y}
+    m.def(
+        // the name
+        "blas_dgemv",
+        // the implementation
+        [](int op, double alpha, const gsl_matrix & A, const gsl_vector & x, double beta,
+           gsl_vector & y) -> void {
+            // the general matrix-vector product
+            gsl_blas_dgemv(transpose(op), alpha, &A, &x, beta, &y);
+        },
+        // the signature
+        "transpose"_a, "alpha"_a, "A"_a, "x"_a, "beta"_a, "y"_a,
+        // the docstring
+        "compute {y = alpha op(A) x + beta y}");
+
+    // compute {x = op(A) x} for a triangular {A}
+    m.def(
+        // the name
+        "blas_dtrmv",
+        // the implementation
+        [](int triangle, int op, int unit, const gsl_matrix & A, gsl_vector & x) -> void {
+            // the triangular matrix-vector product
+            gsl_blas_dtrmv(uplo(triangle), transpose(op), diag(unit), &A, &x);
+        },
+        // the signature
+        "uplo"_a, "transpose"_a, "diag"_a, "A"_a, "x"_a,
+        // the docstring
+        "compute {x = op(A) x} for the triangular {A}");
+
+    // solve {op(A) x = b} for a triangular {A}, with {b} arriving in {x}
+    m.def(
+        // the name
+        "blas_dtrsv",
+        // the implementation
+        [](int triangle, int op, int unit, const gsl_matrix & A, gsl_vector & x) -> void {
+            // the triangular solve
+            gsl_blas_dtrsv(uplo(triangle), transpose(op), diag(unit), &A, &x);
+        },
+        // the signature
+        "uplo"_a, "transpose"_a, "diag"_a, "A"_a, "x"_a,
+        // the docstring
+        "compute {x = inv(op(A)) x} for the triangular {A}");
+
+    // compute {y = alpha A x + beta y} for a symmetric {A}
+    m.def(
+        // the name
+        "blas_dsymv",
+        // the implementation
+        [](int triangle, double alpha, const gsl_matrix & A, const gsl_vector & x, double beta,
+           gsl_vector & y) -> void {
+            // the symmetric matrix-vector product
+            gsl_blas_dsymv(uplo(triangle), alpha, &A, &x, beta, &y);
+        },
+        // the signature
+        "uplo"_a, "alpha"_a, "A"_a, "x"_a, "beta"_a, "y"_a,
+        // the docstring
+        "compute {y = alpha A x + beta y} for the symmetric {A}");
+
+    // compute the symmetric rank-1 update {A = alpha x x^T + A}
+    m.def(
+        // the name
+        "blas_dsyr",
+        // the implementation
+        [](int triangle, double alpha, const gsl_vector & x, gsl_matrix & A) -> void {
+            // the rank-1 update
+            gsl_blas_dsyr(uplo(triangle), alpha, &x, &A);
+        },
+        // the signature
+        "uplo"_a, "alpha"_a, "x"_a, "A"_a,
+        // the docstring
+        "compute the symmetric rank-1 update {A = alpha x x^T + A}");
+
+    // level 3: matrix-matrix operations
+    // compute {C = alpha op(A) op(B) + beta C}
+    m.def(
+        // the name
+        "blas_dgemm",
+        // the implementation
+        [](int opA, int opB, double alpha, const gsl_matrix & A, const gsl_matrix & B, double beta,
+           gsl_matrix & C) -> void {
+            // the general matrix-matrix product
+            gsl_blas_dgemm(transpose(opA), transpose(opB), alpha, &A, &B, beta, &C);
+        },
+        // the signature
+        "tranA"_a, "tranB"_a, "alpha"_a, "A"_a, "B"_a, "beta"_a, "C"_a,
+        // the docstring
+        "compute {C = alpha op(A) op(B) + beta C}");
+
+    // compute {C = alpha A B + beta C} or {C = alpha B A + beta C} for a symmetric {A}
+    m.def(
+        // the name
+        "blas_dsymm",
+        // the implementation
+        [](int whichSide, int triangle, double alpha, const gsl_matrix & A, const gsl_matrix & B,
+           double beta, gsl_matrix & C) -> void {
+            // the symmetric matrix-matrix product
+            gsl_blas_dsymm(side(whichSide), uplo(triangle), alpha, &A, &B, beta, &C);
+        },
+        // the signature
+        "side"_a, "uplo"_a, "alpha"_a, "A"_a, "B"_a, "beta"_a, "C"_a,
+        // the docstring
+        "compute {C = alpha A B + beta C} or {C = alpha B A + beta C} for the symmetric {A}");
+
+    // compute {B = alpha op(A) B} or {B = alpha B op(A)} for a triangular {A}
+    m.def(
+        // the name
+        "blas_dtrmm",
+        // the implementation
+        [](int whichSide, int triangle, int op, int unit, double alpha, const gsl_matrix & A,
+           gsl_matrix & B) -> void {
+            // the triangular matrix-matrix product
+            gsl_blas_dtrmm(
+                side(whichSide), uplo(triangle), transpose(op), diag(unit), alpha, &A, &B);
+        },
+        // the signature
+        "sideA"_a, "uplo"_a, "transpose"_a, "diag"_a, "alpha"_a, "A"_a, "B"_a,
+        // the docstring
+        "compute {B = alpha op(A) B} or {B = alpha B op(A)} for the triangular {A}");
+
+    // all done
+    return;
 }
 
 
