@@ -36,6 +36,8 @@ public:
     using storage_type = Handle<ResultHandle>;
     // what i hold
     using value_type = Row;
+    // row/column numbering
+    using index_type = index_t;
 
     // the walk down my rows, top to bottom
     class const_iterator;
@@ -67,37 +69,37 @@ public:
     // shape
 public:
     // how many rows the server sent
-    inline auto rows() const -> size_type;
+    inline auto rows() const -> index_type;
     // how many values each of them holds
-    inline auto columns() const -> size_type;
+    inline auto columns() const -> index_type;
 
     // the columns
 public:
     // the label the server gave the given {column}
-    inline auto name(size_type column) const -> view_t;
+    inline auto name(index_type column) const -> view_t;
     // the position of the column the server labeled {name}, or {unknownColumn} when there is
     // no such column; this is the one query in the package that answers a question rather than
     // raising when it cannot
-    inline auto column(view_t name) const -> size_type;
+    inline auto column(view_t name) const -> index_type;
     // the identifier of the type of the given {column}, as postgres catalogs it
-    inline auto type(size_type column) const -> oid_t;
+    inline auto type(index_type column) const -> oid_t;
     // whether the values in it are text or the internal representation of that type
-    inline auto format(size_type column) const -> Format;
+    inline auto format(index_type column) const -> Format;
 
     // the values, reached directly; the rows and fields below are the pleasant way to do this,
     // and these are the way that allocates nothing at all
 public:
     // whether the server sent nothing for the given {row} and {column}
-    inline auto isNull(size_type row, size_type column) const -> bool;
+    inline auto isNull(index_type row, index_type column) const -> bool;
     // the value there, borrowed
-    inline auto value(size_type row, size_type column) const -> view_t;
+    inline auto value(index_type row, index_type column) const -> view_t;
 
     // the rows
 public:
     // the given {row}
-    inline auto operator[](size_type row) const -> value_type;
+    inline auto operator[](index_type row) const -> value_type;
     // the same, spelled out
-    inline auto row(size_type index) const -> value_type;
+    inline auto row(index_type index) const -> value_type;
 
     // iteration
 public:
@@ -148,7 +150,7 @@ public:
     // metamethods
 public:
     // stand at the given {row} of {result}
-    inline const_iterator(storage_type result, size_type row);
+    inline const_iterator(storage_type result, index_type row);
     // the full set
     inline const_iterator(const const_iterator &) = default;
     inline const_iterator(const_iterator &&) noexcept = default;
@@ -173,7 +175,7 @@ private:
     // the result set, and my share of it
     storage_type _set;
     // where i stand
-    size_type _row;
+    index_type _row;
 };
 
 

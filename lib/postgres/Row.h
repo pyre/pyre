@@ -27,6 +27,8 @@
 class pyre::postgres::Row {
     // types
 public:
+    // row numbering
+    using index_type = index_t;
     // the shared owner of the result set i point into
     using storage_type = Handle<ResultHandle>;
     // what i hold
@@ -40,7 +42,7 @@ public:
     // metamethods
 public:
     // point at the given {row} of {result}
-    inline Row(storage_type result, size_type row);
+    inline Row(storage_type result, index_type row);
     // the full set; copies share the result set, moves steal the share
     inline Row(const Row &) = default;
     inline Row(Row &&) noexcept = default;
@@ -51,20 +53,20 @@ public:
     // where i am
 public:
     // my position in the result set
-    inline auto index() const -> size_type;
+    inline auto index() const -> index_type;
     // how many values i hold, which is how many columns the result set has
-    inline auto size() const -> size_type;
+    inline auto size() const -> index_type;
 
     // what i hold
 public:
     // the value in the given {column}
-    inline auto operator[](size_type column) const -> value_type;
+    inline auto operator[](index_type column) const -> value_type;
     // the value in the column the server labeled {name}; postgres matches these the way it
     // matches an unquoted identifier, which is to say case insensitively
     inline auto operator[](view_t name) const -> value_type;
 
     // the same two, spelled out, for a caller who prefers the words
-    inline auto field(size_type column) const -> value_type;
+    inline auto field(index_type column) const -> value_type;
     inline auto field(view_t name) const -> value_type;
 
     // iteration
@@ -84,7 +86,7 @@ private:
     // the result set i point into, and my share of it
     storage_type _set;
     // where in it i am
-    size_type _row;
+    index_type _row;
 };
 
 
@@ -104,7 +106,7 @@ public:
     // metamethods
 public:
     // stand at the given {column} of the given {row} of {result}
-    inline const_iterator(storage_type result, size_type row, size_type column);
+    inline const_iterator(storage_type result, index_type row, index_type column);
     // the full set
     inline const_iterator(const const_iterator &) = default;
     inline const_iterator(const_iterator &&) noexcept = default;
@@ -129,8 +131,8 @@ private:
     // the result set, and my share of it
     storage_type _set;
     // where i stand
-    size_type _row;
-    size_type _column;
+    index_type _row;
+    index_type _column;
 };
 
 

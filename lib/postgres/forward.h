@@ -53,7 +53,7 @@ namespace pyre::postgres {
     class Field;
     // one row of a result set
     class Row;
-    // everything the server sent back in answer to one statement
+    // everything the server sent back as a response to a single statement
     class Result;
 
     // a session with the back end
@@ -72,8 +72,8 @@ namespace pyre::postgres {
         ok,
         // the session is broken beyond repair; only {reset} can help
         bad,
-        // libpq is partway through establishing an asynchronous connection, which is a mode
-        // this package does not offer; the label exists so that no answer goes unnamed
+        // libpq is partway through establishing an asynchronous connection
+        // N.B.: this mode is not supported; here for completeness
         unknown,
     };
 
@@ -103,15 +103,15 @@ namespace pyre::postgres {
         nonfatalError,
         // the statement did not run
         fatalError,
-        // one row of a result set being delivered a row at a time
+        // the result set is being delivered a row at a time
         singleTuple,
-        // one batch of a result set being delivered in chunks; libpq 17 and later
+        // the result set is being delivered in chunks; libpq 17 and later
         chunk,
         // the boundary between two pipelined batches; libpq 14 and later
         pipelineSync,
         // the statement was skipped because an earlier one in its pipeline failed
         pipelineAborted,
-        // a status this build of libpq knows and this package does not
+        // a status libpq knows and we don't
         unknown,
     };
 
