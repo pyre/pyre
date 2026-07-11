@@ -9,9 +9,8 @@
 #include "external.h"
 // namespace setup
 #include "forward.h"
-// the permutation, and the capsule name the free functions that have not moved yet agree on
+// the permutation
 #include <gsl/gsl_permutation.h>
-#include "capsules.h"
 
 
 // the local helpers
@@ -44,38 +43,17 @@ gsl::py::permutation(py::module & m)
         // the docstring
         "a permutation of the integers [0, n), from gsl");
 
-    // allocate a permutation of {shape} elements, or adopt the one that {data} carries
-    //
-    // the {data} path is what the free functions that have not moved to pybind11 yet still hand
-    // back: a capsule holding a {gsl_permutation} they allocated. we take it over, and disarm the
-    // capsule so that it does not release what is now ours. it goes away with the last of them
+    // allocate a permutation of {shape} elements, initialized to the identity
     cls.def(
         // the implementation
-        py::init([](std::size_t shape, py::object data) -> permutation_ptr {
-            // when nobody handed us storage
-            if (data.is_none()) {
-                // ask gsl for some, already initialized to the identity
-                return permutation_ptr(gsl_permutation_calloc(shape));
-            }
-            // otherwise, {data} must be a permutation capsule
-            PyObject * capsule = data.ptr();
-            // and if it isn't
-            if (!PyCapsule_IsValid(capsule, gsl::permutation::capsule_t)) {
-                // say so
-                throw py::type_error("expected a gsl permutation capsule");
-            }
-            // pull the permutation out
-            auto * p = static_cast<gsl_permutation *>(
-                PyCapsule_GetPointer(capsule, gsl::permutation::capsule_t));
-            // and take ownership away from the capsule, so it releases nothing
-            PyCapsule_SetDestructor(capsule, nullptr);
-            // the permutation is ours now
-            return permutation_ptr(p);
+        py::init([](std::size_t shape) -> permutation_ptr {
+            // gsl hands back the identity permutation, already initialized
+            return permutation_ptr(gsl_permutation_calloc(shape));
         }),
         // the signature
-        "shape"_a, "data"_a = py::none(),
+        "shape"_a,
         // the docstring
-        "allocate a permutation of {shape} elements, or adopt the one {data} carries");
+        "allocate a permutation of {shape} elements, initialized to the identity");
 
     // how many elements i permute
     cls.def_property_readonly(
@@ -86,20 +64,156 @@ gsl::py::permutation(py::module & m)
         // the docstring
         "the number of elements i permute");
 
-    // the transitional bridge to the free functions that have not moved to pybind11 yet
-    //
-    // they speak in capsules, so we hand them one that points at my {gsl_permutation} and
-    // releases nothing, since the bound object owns it. it goes away with the last of them
-    cls.def_property_readonly(
+    // reset me to the identity
+    cls.def(
         // the name
-        "data",
+        "init",
         // the implementation
-        [](gsl_permutation & self) -> py::capsule {
-            // a capsule that borrows, rather than owns
-            return py::capsule(&self, gsl::permutation::capsule_t);
+        [](py::object self) -> py::object {
+            // gsl writes the identity
+            gsl_permutation_init(&self.cast<gsl_permutation &>());
+            // hand myself back, so callers can chain
+            return self;
         },
         // the docstring
-        "the underlying gsl permutation, for the free functions that have not moved yet");
+        "reset me to the identity permutation, and return me");
+
+    // allocate an independent copy of me
+    cls.def(
+        // the name
+        "clone",
+        // the implementation
+        [](const gsl_permutation & self) -> permutation_ptr {
+            // fresh storage of my size
+            auto * copy = gsl_permutation_alloc(gsl_permutation_size(&self));
+            // filled with my values
+            gsl_permutation_memcpy(copy, &self);
+            // and handed over
+            return permutation_ptr(copy);
+        },
+        // the docstring
+        "allocate an independent permutation carrying my values");
+
+    // overwrite me with the values of {other}, which must have my size
+    cls.def(
+        // the name
+        "copy",
+        // the implementation
+        [](py::object self, const gsl_permutation & other) -> py::object {
+            // gsl overwrites my values with the other's
+            gsl_permutation_memcpy(&self.cast<gsl_permutation &>(), &other);
+            // hand myself back, so callers can chain
+            return self;
+        },
+        // the signature
+        "other"_a,
+        // the docstring
+        "overwrite me with the values of {other}, and return me");
+
+    // the value at index {i}
+    cls.def(
+        // the name
+        "get",
+        // the implementation
+        [](const gsl_permutation & self, std::size_t i) -> std::size_t {
+            // straight from gsl
+            return gsl_permutation_get(&self, i);
+        },
+        // the signature
+        "i"_a,
+        // the docstring
+        "the value at index {i}");
+
+    // exchange the values at indices {i} and {j}
+    cls.def(
+        // the name
+        "swap",
+        // the implementation
+        [](py::object self, std::size_t i, std::size_t j) -> py::object {
+            // gsl exchanges the two values
+            gsl_permutation_swap(&self.cast<gsl_permutation &>(), i, j);
+            // hand myself back, so callers can chain
+            return self;
+        },
+        // the signature
+        "i"_a, "j"_a,
+        // the docstring
+        "exchange the values at indices {i} and {j}, and return me");
+
+    // reverse me, in place
+    cls.def(
+        // the name
+        "reverse",
+        // the implementation
+        [](py::object self) -> py::object {
+            // gsl reverses my order
+            gsl_permutation_reverse(&self.cast<gsl_permutation &>());
+            // hand myself back, so callers can chain
+            return self;
+        },
+        // the docstring
+        "reverse my order, in place, and return me");
+
+    // allocate my inverse
+    cls.def(
+        // the name
+        "inverse",
+        // the implementation
+        [](const gsl_permutation & self) -> permutation_ptr {
+            // fresh storage of my size
+            auto * inv = gsl_permutation_alloc(gsl_permutation_size(&self));
+            // filled with my inverse
+            gsl_permutation_inverse(inv, &self);
+            // and handed over
+            return permutation_ptr(inv);
+        },
+        // the docstring
+        "allocate the permutation that inverts me");
+
+    // advance me to the next permutation in lexicographic order
+    cls.def(
+        // the name
+        "next",
+        // the implementation
+        [](gsl_permutation & self) -> bool {
+            // gsl reports GSL_SUCCESS while there is a next one, and steps me to it
+            return gsl_permutation_next(&self) == GSL_SUCCESS;
+        },
+        // the docstring
+        "step me to the next permutation, returning whether there was one");
+
+    // step me back to the previous permutation in lexicographic order
+    cls.def(
+        // the name
+        "prev",
+        // the implementation
+        [](gsl_permutation & self) -> bool {
+            // gsl reports GSL_SUCCESS while there is a previous one, and steps me to it
+            return gsl_permutation_prev(&self) == GSL_SUCCESS;
+        },
+        // the docstring
+        "step me to the previous permutation, returning whether there was one");
+
+    // whether i am a valid permutation
+    cls.def(
+        // the name
+        "__bool__",
+        // the implementation
+        [](const gsl_permutation & self) -> bool {
+            // gsl checks that every index appears exactly once
+            return gsl_permutation_valid(&self) == GSL_SUCCESS;
+        },
+        // the docstring
+        "whether i am a valid permutation, with every index appearing exactly once");
+
+    // the number of elements i permute, so that {len} works
+    cls.def(
+        // the name
+        "__len__",
+        // the implementation
+        [](const gsl_permutation & self) -> std::size_t { return gsl_permutation_size(&self); },
+        // the docstring
+        "the number of elements i permute");
 
     // all done
     return;

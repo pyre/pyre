@@ -11,6 +11,9 @@
 #include "forward.h"
 // the capsule names the free functions that have not moved yet agree on
 #include "capsules.h"
+// the permutation that an indirect sort fills, and the sort itself
+#include <gsl/gsl_permutation.h>
+#include <gsl/gsl_sort_vector.h>
 
 
 // the local helpers
@@ -138,6 +141,21 @@ gsl::py::vector(py::module & m)
             // the distance in octets between neighbours along the one axis
             { sizeof(double) * self.stride });
     });
+
+    // fill {permutation} with the ordering that would sort me into ascending order, leaving me
+    // untouched; the caller allocates {permutation} to my shape
+    cls.def(
+        // the name
+        "sortIndex",
+        // the implementation
+        [](const gsl_vector & self, gsl_permutation & permutation) -> void {
+            // gsl computes the sorting permutation without moving my elements
+            gsl_sort_vector_index(&permutation, &self);
+        },
+        // the signature
+        "permutation"_a,
+        // the docstring
+        "fill {permutation} with the ordering that would sort me into ascending order");
 
     // the transitional bridge to the free functions that have not moved to pybind11 yet
     //
