@@ -9,8 +9,6 @@
 #include "external.h"
 // namespace setup
 #include "forward.h"
-// the entities that have not moved to pybind11 yet
-#include "legacy.h"
 
 
 // the local helpers
@@ -59,12 +57,10 @@ PYBIND11_MODULE(libgsl, m)
     gsl::py::blas(m);
     gsl::py::pdf(m);
 
-    // graft on the entities that are still spelled as free functions over capsules; the table
-    // shrinks with every class that moves to pybind11, and this call goes away with the last one
-    if (PyModule_AddFunctions(m.ptr(), gsl::legacy::methods) < 0) {
-        // if the graft failed, the module is not usable, and python already knows why
-        throw pybind11::error_already_set();
-    }
+    // the mpi partitioning, when the extension was built against mpi
+#if defined(WITH_MPI)
+    gsl::py::partition(m);
+#endif
 
     // route gsl's complaints into a journal channel, rather than letting the library take the
     // whole process down with it

@@ -9,8 +9,6 @@
 #include "external.h"
 // namespace setup
 #include "forward.h"
-// the capsule names the free functions that have not moved yet agree on
-#include "capsules.h"
 // the permutation that an indirect sort fills, and the sort itself
 #include <gsl/gsl_permutation.h>
 #include <gsl/gsl_sort_vector.h>
@@ -69,38 +67,17 @@ gsl::py::vector(py::module & m)
         // the docstring
         "a vector of doubles, allocated and released by gsl");
 
-    // allocate a vector of the given {shape}, or adopt the one that {data} carries
-    //
-    // the {data} path is what the free functions that have not moved to pybind11 yet still hand
-    // back: a capsule holding a {gsl_vector} they allocated. we take it over, and disarm the
-    // capsule so that it does not release what is now ours. it goes away with the last of them
+    // allocate a vector of the given {shape}
     cls.def(
         // the implementation
-        py::init([](std::size_t shape, py::object data) -> vector_ptr {
-            // when nobody handed us storage
-            if (data.is_none()) {
-                // ask gsl for some
-                return vector_ptr(gsl_vector_alloc(shape));
-            }
-            // otherwise, {data} must be a vector capsule
-            PyObject * capsule = data.ptr();
-            // and if it isn't
-            if (!PyCapsule_IsValid(capsule, gsl::vector::capsule_t)) {
-                // say so
-                throw py::type_error("expected a gsl vector capsule");
-            }
-            // pull the vector out
-            auto * v =
-                static_cast<gsl_vector *>(PyCapsule_GetPointer(capsule, gsl::vector::capsule_t));
-            // and take ownership away from the capsule, so it releases nothing
-            PyCapsule_SetDestructor(capsule, nullptr);
-            // the vector is ours now
-            return vector_ptr(v);
+        py::init([](std::size_t shape) -> vector_ptr {
+            // ask gsl for storage
+            return vector_ptr(gsl_vector_alloc(shape));
         }),
         // the signature
-        "shape"_a, "data"_a = py::none(),
+        "shape"_a,
         // the docstring
-        "allocate a vector with {shape} cells, or adopt the one {data} carries");
+        "allocate a vector with {shape} cells");
 
     // build a view into the data of another vector
     //
@@ -618,22 +595,6 @@ gsl::py::vector(py::module & m)
         "permutation"_a,
         // the docstring
         "fill {permutation} with the ordering that would sort me into ascending order");
-
-    // the transitional bridge to the free functions that have not moved to pybind11 yet
-    //
-    // they speak in capsules, so we hand them one that points at my {gsl_vector} and releases
-    // nothing: the bound object is what owns the storage. it is safe for the {f(v.data)} call
-    // pattern they are used through, and it goes away with the last of them
-    cls.def_property_readonly(
-        // the name
-        "data",
-        // the implementation
-        [](gsl_vector & self) -> py::capsule {
-            // a capsule that borrows, rather than owns
-            return py::capsule(&self, gsl::vector::capsule_t);
-        },
-        // the docstring
-        "the underlying gsl vector, for the free functions that have not moved yet");
 
     // all done
     return;

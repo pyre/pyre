@@ -52,18 +52,13 @@ class Vector(gsl.Vector):
                 raise TypeError("the source task must supply a vector to broadcast")
             # which is already the answer
             return vector
-        # get the vector capsule
-        data = None if vector is None else vector.data
-        # broadcast the data
-        capsule, shape = gsl.bcastVector(communicator, source, data)
-        # the source already owns the vector it broadcast, so it hands that back untouched;
-        # rewrapping the capsule it borrows would hand its storage to a second owner
+        # broadcast; the source passes its own vector, everybody else passes nothing
+        result = gsl.bcastVector(communicator, source, vector)
+        # the source already holds the answer, in the right subclass
         if communicator.rank == source:
             return vector
-        # everybody else dresses up the fresh storage they received as a vector
-        result = cls(shape=shape, data=capsule)
-        # and returns it
-        return result
+        # everybody else received a plain bound vector, so we copy it into our subclass
+        return cls(shape=result.shape).copy(result)
 
     @classmethod
     def collect(cls, vector, communicator=None, destination=0):
@@ -88,17 +83,13 @@ class Vector(gsl.Vector):
                 )
             # its contribution is the entire collection
             return vector.clone()
-        # gather the data
-        result = gsl.gatherVector(communicator, destination, vector.data)
+        # gather the contributions; the destination gets a plain bound vector, everybody else None
+        result = gsl.gatherVector(communicator, destination, vector)
         # if i am not the destination task, nothing further to do
         if communicator.rank != destination:
             return
-        # otherwise, unpack the result
-        data, shape = result
-        # dress up the result as a vector
-        result = cls(shape=shape, data=data)
-        # and return it
-        return result
+        # otherwise, copy the plain bound vector into our subclass
+        return cls(shape=result.shape).copy(result)
 
     def excerpt(self, communicator=None, source=0, vector=None):
         """
@@ -123,10 +114,9 @@ class Vector(gsl.Vector):
                 raise TypeError("the source task must supply a vector to scatter")
             # fill me with the whole of it
             return self.copy(vector)
-        # get the vector capsule
-        data = None if vector is None else vector.data
-        # scatter the data
-        gsl.scatterVector(communicator, source, self.data, data)
+        # scatter; the source passes its own vector, everybody else passes nothing, and the
+        # extension fills me with my slice
+        gsl.scatterVector(communicator, source, self, vector)
         # and return me
         return self
 
@@ -292,10 +282,10 @@ class Vector(gsl.Vector):
         return numpy.array(self) if copy else numpy.asarray(self)
 
     # meta methods
-    def __init__(self, shape, data=None, **kwds):
-        # let the extension allocate my storage, or adopt the capsule {data} carries; {shape}
-        # and {data} are its to consume, so the superclass gets them along with everything else
-        super().__init__(shape=int(shape), data=data, **kwds)
+    def __init__(self, shape, **kwds):
+        # let the extension allocate my storage; {shape} is its to consume, so the superclass
+        # gets it along with everything else
+        super().__init__(shape=int(shape), **kwds)
         # all done
         return
 

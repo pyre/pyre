@@ -35,7 +35,8 @@ pyre-gsl.ext.root := extensions/gsl/
 pyre-gsl.ext.stem := libgsl
 pyre-gsl.ext.pkg := pyre-gsl.pkg
 pyre-gsl.ext.wraps :=
-pyre-gsl.ext.capsule.destination := pyre/gsl/
+# the bindings hand back real classes now, so there are no capsule headers to publish
+pyre-gsl.ext.capsule :=
 pyre-gsl.ext.lib.prerequisites := journal.lib pyre.lib
 pyre-gsl.ext.extern := pyre.lib journal.lib gsl
 pyre-gsl.ext.lib.c++.flags += $(pyre.lib.c++.flags)

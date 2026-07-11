@@ -75,18 +75,13 @@ class Matrix(gsl.Matrix):
                 raise TypeError("the source task must supply a matrix to broadcast")
             # which is already the answer
             return matrix
-        # get the matrix capsule
-        data = None if matrix is None else matrix.data
-        # broadcast the data
-        capsule, shape = gsl.bcastMatrix(communicator, source, data)
-        # the source already owns the matrix it broadcast, so it hands that back untouched;
-        # rewrapping the capsule it borrows would hand its storage to a second owner
+        # broadcast; the source passes its own matrix, everybody else passes nothing
+        result = gsl.bcastMatrix(communicator, source, matrix)
+        # the source already holds the answer, in the right subclass
         if communicator.rank == source:
             return matrix
-        # everybody else dresses up the fresh storage they received as a matrix
-        result = cls(shape=shape, data=capsule)
-        # and returns it
-        return result
+        # everybody else received a plain bound matrix, so we copy it into our subclass
+        return cls(shape=result.shape).copy(result)
 
     @classmethod
     def collect(cls, matrix, communicator=None, destination=0):
@@ -111,17 +106,13 @@ class Matrix(gsl.Matrix):
                 )
             # its contribution is the entire collection
             return matrix.clone()
-        # gather the data
-        result = gsl.gatherMatrix(communicator, destination, matrix.data)
+        # gather the contributions; the destination gets a plain bound matrix, everybody else None
+        result = gsl.gatherMatrix(communicator, destination, matrix)
         # if i am not the destination task, nothing further to do
         if communicator.rank != destination:
             return
-        # otherwise, unpack the result
-        data, shape = result
-        # dress up the result as a matrix
-        result = cls(shape=shape, data=data)
-        # and return it
-        return result
+        # otherwise, copy the plain bound matrix into our subclass
+        return cls(shape=result.shape).copy(result)
 
     def excerpt(self, communicator=None, source=0, matrix=None):
         """
@@ -146,10 +137,9 @@ class Matrix(gsl.Matrix):
                 raise TypeError("the source task must supply a matrix to scatter")
             # fill me with the whole of it
             return self.copy(matrix)
-        # get the matrix capsule
-        data = None if matrix is None else matrix.data
-        # scatter the data
-        gsl.scatterMatrix(communicator, source, self.data, data)
+        # scatter; the source passes its own matrix, everybody else passes nothing, and the
+        # extension fills me with my block of rows
+        gsl.scatterMatrix(communicator, source, self, matrix)
         # and return me
         return self
 
@@ -464,10 +454,10 @@ class Matrix(gsl.Matrix):
         return numpy.array(self) if copy else numpy.asarray(self)
 
     # meta methods
-    def __init__(self, shape, data=None, **kwds):
-        # let the extension allocate my storage, or adopt the capsule {data} carries; {shape}
-        # and {data} are its to consume, so the superclass gets them along with everything else
-        super().__init__(shape=tuple(map(int, shape)), data=data, **kwds)
+    def __init__(self, shape, **kwds):
+        # let the extension allocate my storage; {shape} is its to consume, so the superclass
+        # gets it along with everything else
+        super().__init__(shape=tuple(map(int, shape)), **kwds)
         # all done
         return
 
