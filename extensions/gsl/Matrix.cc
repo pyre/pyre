@@ -330,6 +330,38 @@ gsl::py::matrix(py::module & m)
         // the docstring
         "my smallest and largest cells, as a pair");
 
+    // the {row, column} of my largest cell
+    cls.def(
+        // the name
+        "maxIndex",
+        // the implementation
+        [](const gsl_matrix & self) -> std::pair<std::size_t, std::size_t> {
+            // room for the answer
+            std::size_t row = 0, column = 0;
+            // gsl locates the largest cell
+            gsl_matrix_max_index(&self, &row, &column);
+            // and we hand its coordinates back
+            return { row, column };
+        },
+        // the docstring
+        "the {row, column} of my largest cell");
+
+    // the {row, column} of my smallest cell
+    cls.def(
+        // the name
+        "minIndex",
+        // the implementation
+        [](const gsl_matrix & self) -> std::pair<std::size_t, std::size_t> {
+            // room for the answer
+            std::size_t row = 0, column = 0;
+            // gsl locates the smallest cell
+            gsl_matrix_min_index(&self, &row, &column);
+            // and we hand its coordinates back
+            return { row, column };
+        },
+        // the docstring
+        "the {row, column} of my smallest cell");
+
     // elementwise arithmetic, in place
     // add the cells of {other} to mine
     cls.def(
@@ -514,6 +546,42 @@ gsl::py::matrix(py::module & m)
         "index"_a, "vector"_a,
         // the docstring
         "set my {index}th column from the cells of {vector}, and return me");
+
+    // swap my {i}th and {j}th rows
+    cls.def(
+        // the name
+        "swapRows",
+        // the implementation
+        [](py::object self, long i, long j) -> py::object {
+            // the matrix behind {self}
+            auto & m = self.cast<gsl_matrix &>();
+            // gsl swaps the two rows the checked indices name
+            gsl_matrix_swap_rows(&m, along(m.size1, i), along(m.size1, j));
+            // hand myself back, so callers can chain
+            return self;
+        },
+        // the signature
+        "i"_a, "j"_a,
+        // the docstring
+        "swap my {i}th and {j}th rows, and return me");
+
+    // swap my {i}th and {j}th columns
+    cls.def(
+        // the name
+        "swapColumns",
+        // the implementation
+        [](py::object self, long i, long j) -> py::object {
+            // the matrix behind {self}
+            auto & m = self.cast<gsl_matrix &>();
+            // gsl swaps the two columns the checked indices name
+            gsl_matrix_swap_columns(&m, along(m.size2, i), along(m.size2, j));
+            // hand myself back, so callers can chain
+            return self;
+        },
+        // the signature
+        "i"_a, "j"_a,
+        // the docstring
+        "swap my {i}th and {j}th columns, and return me");
 
     // the symmetric eigenproblem; the caller allocates {eigenvalues} to my order and
     // {eigenvectors} to my shape, and we fill both, ordering them by {order}
