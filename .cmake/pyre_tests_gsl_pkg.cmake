@@ -30,6 +30,7 @@ pyre_test_python_testcase(tests/gsl.pkg/rng_float.py)
 pyre_test_python_testcase(tests/gsl.pkg/pdf_uniform.py)
 pyre_test_python_testcase(tests/gsl.pkg/pdf_uniform_pos.py)
 pyre_test_python_testcase(tests/gsl.pkg/pdf_gaussian.py)
+pyre_test_python_testcase(tests/gsl.pkg/pdf_tgaussian.py)
 pyre_test_python_testcase(tests/gsl.pkg/pdf_dirichlet.py)
 # permutations
 pyre_test_python_testcase(tests/gsl.pkg/permutation_allocate.py)
