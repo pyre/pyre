@@ -11,6 +11,8 @@
 #include "forward.h"
 // the distributions
 #include <gsl/gsl_randist.h>
+// the cumulative distributions and their inverses
+#include <gsl/gsl_cdf.h>
 
 
 // the local helpers
@@ -40,6 +42,29 @@ namespace gsl::py {
                 gsl_matrix_set(&m, i, j, draw());
             }
         }
+    }
+
+    // the cdf values that bracket a gaussian of {mean},{sigma} on {support}; these normalize the
+    // truncated distribution and drive its inverse-cdf sampling
+    inline auto truncation(double mean, double sigma, support_t support) -> support_t
+    {
+        // unpack the interval
+        auto [a, b] = support;
+        // a nonpositive width or an empty interval has no distribution
+        if (sigma <= 0 || b <= a) {
+            throw py::value_error(
+                "the truncated gaussian needs sigma > 0 and a support (a, b) with a < b");
+        }
+        // the cdf at each endpoint, measured from the mean
+        auto pa = gsl_cdf_gaussian_P(a - mean, sigma);
+        auto pb = gsl_cdf_gaussian_P(b - mean, sigma);
+        // guard the far-tail case where both endpoints round to the same probability
+        if (pb <= pa) {
+            throw py::value_error(
+                "the truncated gaussian support lies too far in the tail to represent");
+        }
+        // hand back the bracketing probabilities
+        return { pa, pb };
     }
 } // namespace gsl::py
 
@@ -252,6 +277,85 @@ gsl::py::pdf(py::module & m)
         "rng"_a, "matrix"_a,
         // the docstring
         "fill {matrix} with samples from the unit gaussian");
+
+    // the gaussian of a given mean and width, truncated to the interval {support}
+    // a single sample, drawn by inverting the cdf between the bracketing probabilities
+    m.def(
+        // the name
+        "tgaussian_sample",
+        // the implementation
+        [](double mean, double sigma, support_t support, gsl_rng & rng) -> double {
+            // the probabilities that bracket the support
+            auto [pa, pb] = truncation(mean, sigma, support);
+            // draw uniformly between them
+            auto u = pa + gsl_rng_uniform(&rng) * (pb - pa);
+            // invert the cdf, shifting back to the mean
+            return mean + gsl_cdf_gaussian_Pinv(u, sigma);
+        },
+        // the signature
+        "mean"_a, "sigma"_a, "support"_a, "rng"_a,
+        // the docstring
+        "draw a sample from the gaussian of {mean} and {sigma}, truncated to {support}");
+
+    // the density at a point
+    m.def(
+        // the name
+        "tgaussian_density",
+        // the implementation
+        [](double mean, double sigma, support_t support, double x) -> double {
+            // the probabilities that bracket the support; also validates the parameters
+            auto [pa, pb] = truncation(mean, sigma, support);
+            // no mass outside the support
+            if (x < support.first || x > support.second) {
+                return 0.0;
+            }
+            // the gaussian density renormalized by the mass the truncation retains
+            return gsl_ran_gaussian_pdf(x - mean, sigma) / (pb - pa);
+        },
+        // the signature
+        "mean"_a, "sigma"_a, "support"_a, "x"_a,
+        // the docstring
+        "the density at {x} of the gaussian of {mean} and {sigma}, truncated to {support}");
+
+    // fill a vector with samples
+    m.def(
+        // the name
+        "tgaussian_vector",
+        // the implementation
+        [](double mean, double sigma, support_t support, gsl_rng & rng, gsl_vector & v) -> void {
+            // the probabilities that bracket the support, as plain locals the fill lambda captures
+            auto brackets = truncation(mean, sigma, support);
+            auto pa = brackets.first, pb = brackets.second;
+            // one truncated draw per cell, by inverting the cdf between the brackets
+            fillVector(v, [&] {
+                auto u = pa + gsl_rng_uniform(&rng) * (pb - pa);
+                return mean + gsl_cdf_gaussian_Pinv(u, sigma);
+            });
+        },
+        // the signature
+        "mean"_a, "sigma"_a, "support"_a, "rng"_a, "vector"_a,
+        // the docstring
+        "fill {vector} with samples from the gaussian of {mean} and {sigma}, truncated to {support}");
+
+    // fill a matrix with samples
+    m.def(
+        // the name
+        "tgaussian_matrix",
+        // the implementation
+        [](double mean, double sigma, support_t support, gsl_rng & rng, gsl_matrix & mat) -> void {
+            // the probabilities that bracket the support, as plain locals the fill lambda captures
+            auto brackets = truncation(mean, sigma, support);
+            auto pa = brackets.first, pb = brackets.second;
+            // one truncated draw per cell, by inverting the cdf between the brackets
+            fillMatrix(mat, [&] {
+                auto u = pa + gsl_rng_uniform(&rng) * (pb - pa);
+                return mean + gsl_cdf_gaussian_Pinv(u, sigma);
+            });
+        },
+        // the signature
+        "mean"_a, "sigma"_a, "support"_a, "rng"_a, "matrix"_a,
+        // the docstring
+        "fill {matrix} with samples from the gaussian of {mean} and {sigma}, truncated to {support}");
 
     // the dirichlet distribution, parameterized by the concentration vector {alpha}
     // fill a vector with a single draw

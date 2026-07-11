@@ -207,6 +207,61 @@ class ugaussian:
         return
 
 
+# the truncated gaussian probability distribution
+class tgaussian:
+    """
+    Encapsulation of the gaussian probability distribution truncated to a finite interval
+    """
+
+    # interface
+    def sample(self):
+        """
+        Sample the truncated gaussian using a random value from {rng}
+        """
+        # get the value
+        return gsl.tgaussian_sample(self.mean, self.sigma, self.support, self.rng)
+
+    def density(self, x):
+        """
+        Compute the probability density of the truncated gaussian at {x}
+        """
+        # get the value
+        return gsl.tgaussian_density(self.mean, self.sigma, self.support, x)
+
+    # higher level support
+    def vector(self, vector):
+        """
+        Fill {vector} with random values
+        """
+        # fill the vector
+        gsl.tgaussian_vector(self.mean, self.sigma, self.support, self.rng, vector)
+        # and return it
+        return vector
+
+    def matrix(self, matrix):
+        """
+        Fill {matrix} with random values
+        """
+        # fill the matrix
+        gsl.tgaussian_matrix(self.mean, self.sigma, self.support, self.rng, matrix)
+        # and return it
+        return matrix
+
+    # meta methods
+    def __init__(self, mean, sigma, support, rng, **kwds):
+        super().__init__(**kwds)
+        self.rng = rng
+        self.mean = mean
+        self.sigma = sigma
+        self.support = support
+        return
+
+    # implementation details
+    mean = 0.0
+    sigma = None
+    support = None
+
+
 # the dirichlet probability distribution
 class dirichlet:
     """
