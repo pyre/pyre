@@ -41,8 +41,9 @@ def test():
     m.set((1, 2), 7.0)
     assert m.get((1, 2)) == 7.0
 
-    # a negative coordinate reflects; out of range and too-negative raise
-    assert m.get((-1, -1)) == m.get((2, 3))
+    # a negative coordinate reflects to the mirrored cell, each axis using its own extent, so a
+    # transposed reflection lands elsewhere; out of range and too-negative raise
+    assert m.get((-2, -2)) == 7.0
     assert raises(lambda: m.get((3, 0)), IndexError)
     assert raises(lambda: m.get((0, 4)), IndexError)
     assert raises(lambda: m.set((3, 0), 1.0), IndexError)
@@ -101,24 +102,29 @@ def test():
             src.set((i, j), float(i * 3 + j))
     dst = libgsl.Matrix(shape=(3, 2))
     src.transpose(dst)
-    assert dst.get((2, 1)) == src.get((1, 2))
+    # every cell, so a row/column swap in the transpose is caught
+    assert all(dst.get((j, i)) == src.get((i, j)) for i in range(2) for j in range(3))
 
-    # the symmetric eigenproblem, filling caller-supplied storage in the requested order
+    # the symmetric eigenproblem, filling caller-supplied storage in the requested order; a non
+    # diagonal matrix is used so the off diagonal actually feeds the solver
     s = libgsl.Matrix(shape=(2, 2))
     s.set((0, 0), 2.0)
-    s.set((0, 1), 0.0)
-    s.set((1, 0), 0.0)
-    s.set((1, 1), 5.0)
+    s.set((0, 1), 1.0)
+    s.set((1, 0), 1.0)
+    s.set((1, 1), 2.0)
     values = libgsl.Vector(shape=2)
     vectors = libgsl.Matrix(shape=(2, 2))
     s.eigenSymmetric(libgsl.EigenOrder.valueAscending, values, vectors)
-    assert abs(values.get(0) - 2.0) < 1e-12 and abs(values.get(1) - 5.0) < 1e-12
+    # the eigenvalues of [[2,1],[1,2]] are 1 and 3
+    assert abs(values.get(0) - 1.0) < 1e-12 and abs(values.get(1) - 3.0) < 1e-12
 
     # the buffer protocol hands numpy a zero-copy, correctly-strided view
     import numpy
 
     grid = numpy.asarray(m)
     assert grid.shape == (3, 4)
+    # the layout is row major and untransposed; the asymmetric pattern catches a swapped stride
+    assert all(grid[row, column] == m.get((row, column)) for row in range(3) for column in range(4))
 
     # a view is built through the view constructor and shares its parent's storage; the raw
     # binding has no python-level {view} method, that lives in the shim

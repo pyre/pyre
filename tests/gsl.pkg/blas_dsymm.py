@@ -25,10 +25,11 @@ def test():
     # the terms
     α = 2
     β = 3
-    # the matrix A
+    # the matrix A; the lower triangle holds a poison value {dsymm} with {Triangle.upper} must
+    # ignore, so a swapped uplo flag is caught
     A = gsl.matrix(shape=(2, 2))
     A[0, 0], A[0, 1] = 2, 3
-    A[1, 0], A[1, 1] = 3, 2
+    A[1, 0], A[1, 1] = 7, 2
     # the matrix B
     B = gsl.matrix(shape=(2, 3))
     B[0, 0], B[0, 1], B[0, 2] = 2, 3, 2
