@@ -11,7 +11,6 @@
 #include "legacy.h"
 
 // the declarations of the entities that have not moved to pybind11 yet
-#include "blas.h"        // blas
 #include "matrix.h"      // matrices
 #include "pdf.h"         // probability distribution functions
 #include "permutation.h" // permutations
@@ -26,29 +25,6 @@
 // the table of the entities the module still publishes as free functions over capsules
 namespace gsl::legacy {
 PyMethodDef methods[] = {
-    // blas - level 1
-    { blas::ddot__name__, blas::ddot, METH_VARARGS, blas::ddot__doc__ },
-    { blas::dnrm2__name__, blas::dnrm2, METH_VARARGS, blas::dnrm2__doc__ },
-    { blas::dasum__name__, blas::dasum, METH_VARARGS, blas::dasum__doc__ },
-    { blas::idamax__name__, blas::idamax, METH_VARARGS, blas::idamax__doc__ },
-    { blas::dswap__name__, blas::dswap, METH_VARARGS, blas::dswap__doc__ },
-    { blas::dcopy__name__, blas::dcopy, METH_VARARGS, blas::dcopy__doc__ },
-    { blas::daxpy__name__, blas::daxpy, METH_VARARGS, blas::daxpy__doc__ },
-    { blas::dscal__name__, blas::dscal, METH_VARARGS, blas::dscal__doc__ },
-    { blas::drotg__name__, blas::drotg, METH_VARARGS, blas::drotg__doc__ },
-    { blas::drot__name__, blas::drot, METH_VARARGS, blas::drot__doc__ },
-    // blas - level 2
-    { blas::dgemv__name__, blas::dgemv, METH_VARARGS, blas::dgemv__doc__ },
-    { blas::dtrmv__name__, blas::dtrmv, METH_VARARGS, blas::dtrmv__doc__ },
-    { blas::dtrsv__name__, blas::dtrsv, METH_VARARGS, blas::dtrsv__doc__ },
-    { blas::dsymv__name__, blas::dsymv, METH_VARARGS, blas::dsymv__doc__ },
-    { blas::dsyr__name__, blas::dsyr, METH_VARARGS, blas::dsyr__doc__ },
-    // blas - level 3
-    { blas::dgemm__name__, blas::dgemm, METH_VARARGS, blas::dgemm__doc__ },
-    { blas::dsymm__name__, blas::dsymm, METH_VARARGS, blas::dsymm__doc__ },
-    { blas::dtrmm__name__, blas::dtrmm, METH_VARARGS, blas::dtrmm__doc__ },
-
-    // linalg
     // matrices
     { matrix::alloc__name__, matrix::alloc, METH_VARARGS, matrix::alloc__doc__ },
     { matrix::view_alloc__name__, matrix::view_alloc, METH_VARARGS, matrix::view_alloc__doc__ },
