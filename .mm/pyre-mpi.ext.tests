@@ -1,0 +1,103 @@
+# -*- Makefile -*-
+#
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2026 all rights reserved
+
+
+# the mpi extension testsuite
+pyre-mpi.ext.tests.stem := mpi.ext
+pyre-mpi.ext.tests.prerequisites := pyre-mpi.pkg pyre-mpi.ext pyre.pkg
+
+
+# set up a macro for the hostfile
+pyre-mpi.ext.hostfile := --hostfile localhost
+# see the note in {pyre-mpi.lib.tests}: turn {openmpi} binding off so it will place more ranks
+# than the host has cores
+pyre-mpi.ext.binding = ${if ${findstring openmpi,$(mpi.flavor)},--bind-to none,}
+# assemble the harness
+pyre-mpi.ext.harness = $(mpi.executive) $(pyre-mpi.ext.binding) $(pyre-mpi.ext.hostfile)
+
+
+# on some machines, running multiple mpi tests at the same time causes trouble
+# serialize the test suite; the introspection tests come first, since they touch no runtime
+tests.mpi.ext.libmpi_sanity.pre := tests.mpi.ext.sanity
+tests.mpi.ext.libmpi_enums.pre := tests.mpi.ext.libmpi_sanity
+tests.mpi.ext.libmpi_exceptions.pre := tests.mpi.ext.libmpi_enums
+tests.mpi.ext.libmpi_runtime.pre := tests.mpi.ext.libmpi_exceptions
+tests.mpi.ext.libmpi_communicator.pre := tests.mpi.ext.libmpi_runtime
+tests.mpi.ext.libmpi_group.pre := tests.mpi.ext.libmpi_communicator
+tests.mpi.ext.libmpi_reductions.pre := tests.mpi.ext.libmpi_group
+tests.mpi.ext.libmpi_collectives.pre := tests.mpi.ext.libmpi_reductions
+tests.mpi.ext.libmpi_port.pre := tests.mpi.ext.libmpi_collectives
+tests.mpi.ext.libmpi_nonblocking.pre := tests.mpi.ext.libmpi_port
+tests.mpi.ext.libmpi_cartesian.pre := tests.mpi.ext.libmpi_nonblocking
+
+
+# the behavioral tests each run twice: once serially against a lone process, so the bindings are
+# known to work with no mpi machine at all, and once under the launcher against a real one
+
+# {libmpi_exceptions} has cases
+tests.mpi.ext.libmpi_exceptions.cases := \
+    tests.pyre-mpi.ext.libmpi_exceptions.serial tests.pyre-mpi.ext.libmpi_exceptions.parallel
+# {serial} runs as is
+# {parallel} has a harness
+tests.pyre-mpi.ext.libmpi_exceptions.parallel.harness = $(pyre-mpi.ext.harness) -np 8
+
+# {libmpi_runtime} has cases
+tests.mpi.ext.libmpi_runtime.cases := \
+    tests.pyre-mpi.ext.libmpi_runtime.serial tests.pyre-mpi.ext.libmpi_runtime.parallel
+# {serial} runs as is
+# {parallel} has a harness
+tests.pyre-mpi.ext.libmpi_runtime.parallel.harness = $(pyre-mpi.ext.harness) -np 8
+
+# {libmpi_communicator} has cases
+tests.mpi.ext.libmpi_communicator.cases := \
+    tests.pyre-mpi.ext.libmpi_communicator.serial tests.pyre-mpi.ext.libmpi_communicator.parallel
+# {serial} runs as is
+# {parallel} has a harness
+tests.pyre-mpi.ext.libmpi_communicator.parallel.harness = $(pyre-mpi.ext.harness) -np 8
+
+# {libmpi_group} has cases
+tests.mpi.ext.libmpi_group.cases := \
+    tests.pyre-mpi.ext.libmpi_group.serial tests.pyre-mpi.ext.libmpi_group.parallel
+# {serial} runs as is
+# {parallel} has a harness
+tests.pyre-mpi.ext.libmpi_group.parallel.harness = $(pyre-mpi.ext.harness) -np 7
+
+# {libmpi_reductions} has cases
+tests.mpi.ext.libmpi_reductions.cases := \
+    tests.pyre-mpi.ext.libmpi_reductions.serial tests.pyre-mpi.ext.libmpi_reductions.parallel
+# {serial} runs as is
+# {parallel} has a harness
+tests.pyre-mpi.ext.libmpi_reductions.parallel.harness = $(pyre-mpi.ext.harness) -np 8
+
+# {libmpi_collectives} has cases
+tests.mpi.ext.libmpi_collectives.cases := \
+    tests.pyre-mpi.ext.libmpi_collectives.serial tests.pyre-mpi.ext.libmpi_collectives.parallel
+# {serial} runs as is
+# {parallel} has a harness
+tests.pyre-mpi.ext.libmpi_collectives.parallel.harness = $(pyre-mpi.ext.harness) -np 8
+
+# {libmpi_port} has cases
+tests.mpi.ext.libmpi_port.cases := \
+    tests.pyre-mpi.ext.libmpi_port.serial tests.pyre-mpi.ext.libmpi_port.parallel
+# {serial} runs as is
+# {parallel} has a harness
+tests.pyre-mpi.ext.libmpi_port.parallel.harness = $(pyre-mpi.ext.harness) -np 4
+
+# {libmpi_nonblocking} has cases
+tests.mpi.ext.libmpi_nonblocking.cases := \
+    tests.pyre-mpi.ext.libmpi_nonblocking.serial tests.pyre-mpi.ext.libmpi_nonblocking.parallel
+# {serial} runs as is
+# {parallel} has a harness
+tests.pyre-mpi.ext.libmpi_nonblocking.parallel.harness = $(pyre-mpi.ext.harness) -np 4
+
+# {libmpi_cartesian} has cases
+tests.mpi.ext.libmpi_cartesian.cases := \
+    tests.pyre-mpi.ext.libmpi_cartesian.serial tests.pyre-mpi.ext.libmpi_cartesian.parallel
+# {serial} runs as is
+# {parallel} has a harness
+tests.pyre-mpi.ext.libmpi_cartesian.parallel.harness = $(pyre-mpi.ext.harness) -np 8
+
+
+# end of file
