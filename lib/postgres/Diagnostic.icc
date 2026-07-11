@@ -16,9 +16,9 @@
 // harvest everything {result} knows about the failure of {command}
 pyre::postgres::Diagnostic::Diagnostic(const PGresult * result, string_type command) :
     _command(std::move(command)),
-    // the severity, in english; a server that speaks another language localizes {PG_DIAG_SEVERITY},
-    // so the nonlocalized spelling is the only one a program may compare against. it arrived in
-    // postgres 9.6, and the localized one is the fallback for anything older
+// the severity, in english; a server that speaks another language localizes {PG_DIAG_SEVERITY},
+// so the nonlocalized spelling is the only one a program may compare against. it arrived in
+// postgres 9.6, and the localized one is the fallback for anything older
 #if defined(PG_DIAG_SEVERITY_NONLOCALIZED)
     _severity(_field(result, PG_DIAG_SEVERITY_NONLOCALIZED)),
 #else
@@ -78,7 +78,7 @@ pyre::postgres::Diagnostic::Diagnostic(string_type message, string_type command)
 {
     // libpq ends its connection level messages with a newline, just as it does its result ones
     while (!_message.empty() && _message.back() == '\n') {
-        // and it is no more welcome here
+        // trim
         _message.pop_back();
     }
 }

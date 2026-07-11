@@ -14,7 +14,7 @@
 
 // metamethods
 // point at the value in the given {row} and {column} of {result}
-pyre::postgres::Field::Field(storage_type result, size_type row, size_type column) :
+pyre::postgres::Field::Field(storage_type result, index_type row, index_type column) :
     _set(std::move(result)),
     _row(row),
     _column(column)
@@ -24,7 +24,7 @@ pyre::postgres::Field::Field(storage_type result, size_type row, size_type colum
 // where i am
 // the row i came from
 auto
-pyre::postgres::Field::row() const -> size_type
+pyre::postgres::Field::row() const -> index_type
 {
     return _row;
 }
@@ -32,7 +32,7 @@ pyre::postgres::Field::row() const -> size_type
 
 // the column i came from
 auto
-pyre::postgres::Field::column() const -> size_type
+pyre::postgres::Field::column() const -> index_type
 {
     return _column;
 }
@@ -84,7 +84,7 @@ pyre::postgres::Field::isNull() const -> bool
 
 // the number of octets in my value
 auto
-pyre::postgres::Field::size() const -> size_type
+pyre::postgres::Field::size() const -> index_type
 {
     // ask libpq
     return PQgetlength(_result(), _row, _column);
@@ -99,13 +99,13 @@ pyre::postgres::Field::bytes() const -> view_t
     const char * value = PQgetvalue(_result(), _row, _column);
     // and the length, which it reports separately because a binary value may hold a zero octet
     // in the middle of itself, and a text one may not
-    const size_type length = PQgetlength(_result(), _row, _column);
-    // a value out of range comes back as a null pointer, and a {NULL} as an empty string; in
-    // both cases there is nothing to look at
+    const index_type length = PQgetlength(_result(), _row, _column);
+    // a value out of range comes back as a null pointer, and a {NULL} as an empty string
     if (value == nullptr) {
+        // in both cases there is nothing to look at
         return view_t();
     }
-    // hand back a borrowed look at exactly the octets the server sent
+    // otherwise, hand back a borrowed look at exactly the octets the server sent
     return view_t(value, static_cast<std::size_t>(length));
 }
 
@@ -173,7 +173,8 @@ pyre::postgres::Field::optional() const -> std::optional<valueT>
 
 
 // contextual conversion to {bool}, true when i hold a value
-pyre::postgres::Field::operator bool() const
+pyre::postgres::Field::
+operator bool() const
 {
     // note that this asks whether there is a value, not what it is; a field holding the
     // boolean {false} is still a field that holds something

@@ -9,6 +9,7 @@
 
 
 // externals
+// STL
 #include <charconv>
 #include <cmath>
 #include <cstddef>
@@ -25,12 +26,10 @@
 #include <type_traits>
 #include <utility>
 #include <vector>
+// the postgres client library
+#include <libpq-fe.h>
 // support
 #include <pyre/journal.h>
-// the postgres client library; {pyre::postgres} is a wrapper over it, and depends on nothing
-// else. in particular, nothing python ever reaches this far: the library stands on its own,
-// and the bindings are just one of its clients
-#include <libpq-fe.h>
 
 
 // the type aliases that shape this namespace
@@ -45,7 +44,7 @@ namespace pyre::postgres {
     // the way libpq counts rows and columns; deliberately not {size_t}, which would shadow the
     // global for every unqualified use inside this namespace, and which would also lose the
     // {-1} that libpq returns when it cannot find a column
-    using size_type = int;
+    using index_t = int;
     // an uninterpreted payload, as it arrives from a {bytea} column
     using bytes_t = std::vector<std::byte>;
 
@@ -68,7 +67,7 @@ namespace pyre::postgres {
     // the type identifier that names no type at all
     inline constexpr oid_t invalidOid = InvalidOid;
     // the answer when a result cannot find a column under the name it was given
-    inline constexpr size_type unknownColumn = -1;
+    inline constexpr index_t unknownColumn = -1;
 } // namespace pyre::postgres
 
 

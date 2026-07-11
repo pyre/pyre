@@ -31,11 +31,13 @@ class pyre::postgres::Field {
 public:
     // the shared owner of the result set i point into
     using storage_type = Handle<ResultHandle>;
+    // row/column numbering
+    using index_type = index_t;
 
     // metamethods
 public:
     // point at the value in the given {row} and {column} of {result}
-    inline Field(storage_type result, size_type row, size_type column);
+    inline Field(storage_type result, index_type row, index_type column);
     // the full set; copies share the result set, moves steal the share
     inline Field(const Field &) = default;
     inline Field(Field &&) noexcept = default;
@@ -46,9 +48,9 @@ public:
     // where i am
 public:
     // the row i came from
-    inline auto row() const -> size_type;
+    inline auto row() const -> index_type;
     // the column i came from
-    inline auto column() const -> size_type;
+    inline auto column() const -> index_type;
     // the name of that column, as the server labeled it
     inline auto name() const -> view_t;
     // the identifier of its type, as postgres catalogs it
@@ -62,7 +64,7 @@ public:
     // must never be confused: postgres draws a distinction here that c++ has no way to spell
     inline auto isNull() const -> bool;
     // the number of octets in my value; zero for a {NULL}, and zero for an empty string
-    inline auto size() const -> size_type;
+    inline auto size() const -> index_type;
     // my value, exactly as it arrived, borrowed from the result set
     inline auto bytes() const -> view_t;
 
@@ -93,8 +95,8 @@ private:
     // the result set i point into, and my share of it
     storage_type _set;
     // where in it i am
-    size_type _row;
-    size_type _column;
+    index_type _row;
+    index_type _column;
 };
 
 

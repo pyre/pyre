@@ -14,14 +14,14 @@
 
 // metamethods
 // point at the given {row} of {result}
-pyre::postgres::Row::Row(storage_type result, size_type row) : _set(std::move(result)), _row(row)
+pyre::postgres::Row::Row(storage_type result, index_type row) : _set(std::move(result)), _row(row)
 {}
 
 
 // where i am
 // my position in the result set
 auto
-pyre::postgres::Row::index() const -> size_type
+pyre::postgres::Row::index() const -> index_type
 {
     return _row;
 }
@@ -29,7 +29,7 @@ pyre::postgres::Row::index() const -> size_type
 
 // how many values i hold
 auto
-pyre::postgres::Row::size() const -> size_type
+pyre::postgres::Row::size() const -> index_type
 {
     // every row of a result set has as many values as the set has columns
     return PQnfields(_result());
@@ -39,7 +39,7 @@ pyre::postgres::Row::size() const -> size_type
 // what i hold
 // the value in the given {column}
 auto
-pyre::postgres::Row::operator[](size_type column) const -> value_type
+pyre::postgres::Row::operator[](index_type column) const -> value_type
 {
     // libpq answers a subscript out of range with a null pointer and a message on stderr, and
     // then lets the caller carry on; this is where that stops
@@ -63,7 +63,7 @@ pyre::postgres::Row::operator[](view_t name) const -> value_type
     // {PQfnumber} wants a terminated string, and a {view_t} promises no such thing
     const string_t label(name);
     // ask libpq which column carries this label
-    const size_type column = PQfnumber(_result(), label.c_str());
+    const index_type column = PQfnumber(_result(), label.c_str());
     // a name the result set does not carry is a mistake on this side of the wire
     if (column == unknownColumn) {
         // so say which name it was
@@ -80,7 +80,7 @@ pyre::postgres::Row::operator[](view_t name) const -> value_type
 
 // the same two, spelled out
 auto
-pyre::postgres::Row::field(size_type column) const -> value_type
+pyre::postgres::Row::field(index_type column) const -> value_type
 {
     // delegate
     return (*this)[column];
@@ -133,7 +133,7 @@ pyre::postgres::Row::_result() const -> ResultHandle::handle_type
 // metamethods
 // stand at the given {column} of the given {row} of {result}
 pyre::postgres::Row::const_iterator::const_iterator(
-    storage_type result, size_type row, size_type column) :
+    storage_type result, index_type row, index_type column) :
     _set(std::move(result)),
     _row(row),
     _column(column)

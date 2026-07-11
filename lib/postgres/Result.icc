@@ -55,7 +55,8 @@ pyre::postgres::Result::ok() const -> bool
 
 
 // contextual conversion to {bool}, true when the statement ran
-pyre::postgres::Result::operator bool() const
+pyre::postgres::Result::
+operator bool() const
 {
     // delegate
     return ok();
@@ -65,7 +66,7 @@ pyre::postgres::Result::operator bool() const
 // shape
 // how many rows the server sent
 auto
-pyre::postgres::Result::rows() const -> size_type
+pyre::postgres::Result::rows() const -> index_type
 {
     // ask libpq
     return PQntuples(handle());
@@ -74,7 +75,7 @@ pyre::postgres::Result::rows() const -> size_type
 
 // how many values each of them holds
 auto
-pyre::postgres::Result::columns() const -> size_type
+pyre::postgres::Result::columns() const -> index_type
 {
     // ask libpq
     return PQnfields(handle());
@@ -84,7 +85,7 @@ pyre::postgres::Result::columns() const -> size_type
 // the columns
 // the label the server gave the given {column}
 auto
-pyre::postgres::Result::name(size_type column) const -> view_t
+pyre::postgres::Result::name(index_type column) const -> view_t
 {
     // ask libpq
     const char * label = PQfname(handle(), column);
@@ -103,7 +104,7 @@ pyre::postgres::Result::name(size_type column) const -> view_t
 
 // the position of the column the server labeled {name}
 auto
-pyre::postgres::Result::column(view_t name) const -> size_type
+pyre::postgres::Result::column(view_t name) const -> index_type
 {
     // {PQfnumber} wants a terminated string
     const string_t label(name);
@@ -115,7 +116,7 @@ pyre::postgres::Result::column(view_t name) const -> size_type
 
 // the identifier of the type of the given {column}
 auto
-pyre::postgres::Result::type(size_type column) const -> oid_t
+pyre::postgres::Result::type(index_type column) const -> oid_t
 {
     // ask libpq; a column out of range answers with the type that is no type
     return PQftype(handle(), column);
@@ -124,7 +125,7 @@ pyre::postgres::Result::type(size_type column) const -> oid_t
 
 // whether the values in it are text or the internal representation of that type
 auto
-pyre::postgres::Result::format(size_type column) const -> Format
+pyre::postgres::Result::format(index_type column) const -> Format
 {
     // ask libpq, and give its answer a name
     return postgres::format(PQfformat(handle(), column));
@@ -134,7 +135,7 @@ pyre::postgres::Result::format(size_type column) const -> Format
 // the values, reached directly
 // whether the server sent nothing for the given {row} and {column}
 auto
-pyre::postgres::Result::isNull(size_type row, size_type column) const -> bool
+pyre::postgres::Result::isNull(index_type row, index_type column) const -> bool
 {
     // ask libpq
     return PQgetisnull(handle(), row, column) == 1;
@@ -143,7 +144,7 @@ pyre::postgres::Result::isNull(size_type row, size_type column) const -> bool
 
 // the value there, borrowed
 auto
-pyre::postgres::Result::value(size_type row, size_type column) const -> view_t
+pyre::postgres::Result::value(index_type row, index_type column) const -> view_t
 {
     // the pointer, which libpq owns
     const char * text = PQgetvalue(handle(), row, column);
@@ -159,7 +160,7 @@ pyre::postgres::Result::value(size_type row, size_type column) const -> view_t
 // the rows
 // the given {row}
 auto
-pyre::postgres::Result::operator[](size_type row) const -> value_type
+pyre::postgres::Result::operator[](index_type row) const -> value_type
 {
     // a subscript out of range is a mistake on this side of the wire
     if (row < 0 || row >= rows()) {
@@ -177,7 +178,7 @@ pyre::postgres::Result::operator[](size_type row) const -> value_type
 
 // the same, spelled out
 auto
-pyre::postgres::Result::row(size_type index) const -> value_type
+pyre::postgres::Result::row(index_type index) const -> value_type
 {
     // delegate
     return (*this)[index];
@@ -238,9 +239,9 @@ pyre::postgres::Result::affected() const -> long
             << "cannot read the row count out of the command tag"
             << pyre::journal::newline
             // details
-            << "tag: '" << PQcmdStatus(handle()) << "'"
-            << pyre::journal::newline
-            << "count: '" << text << "'"
+            << "tag: '" << PQcmdStatus(handle()) << "'" << pyre::journal::newline << "count: '"
+            << text
+            << "'"
             // where, and flush
             << pyre::journal::endl(__HERE__);
         // and in a build with firewalls disabled, the honest answer is that we do not know
@@ -284,7 +285,7 @@ pyre::postgres::Result::raise(string_t statement) const -> void
 // the walk down the rows of a result set
 // metamethods
 // stand at the given {row} of {result}
-pyre::postgres::Result::const_iterator::const_iterator(storage_type result, size_type row) :
+pyre::postgres::Result::const_iterator::const_iterator(storage_type result, index_type row) :
     _set(std::move(result)),
     _row(row)
 {}
