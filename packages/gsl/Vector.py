@@ -371,10 +371,12 @@ class Vector(gsl.Vector):
         """
         Construct the permutation that would sort me in ascending order
         """
-        # get the permutation capsule
-        pdata = gsl.vector_sortIndex(self.data)
-        # build a permutation object and return it
-        return self.permutation(shape=self.shape, data=pdata)
+        # allocate the permutation the sort will fill
+        p = self.permutation(shape=self.shape)
+        # have the extension fill it, leaving me untouched
+        self.sortIndex(p)
+        # and return it
+        return p
 
     def mean(self, weights=None):
         """

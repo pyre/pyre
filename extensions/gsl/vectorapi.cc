@@ -965,40 +965,6 @@ gsl::vector::sort(PyObject *, PyObject * args)
 }
 
 
-// sortIndex
-const char * const gsl::vector::sortIndex__name__ = "vector_sortIndex";
-const char * const gsl::vector::sortIndex__doc__ =
-    "construct the permutation that would sort the elements of a vector";
-
-PyObject *
-gsl::vector::sortIndex(PyObject *, PyObject * args)
-{
-    // the arguments
-    PyObject * capsule;
-    // unpack the argument tuple
-    int status = PyArg_ParseTuple(args, "O!:vector_sortIndex", &PyCapsule_Type, &capsule);
-    // if something went wrong
-    if (!status)
-        return 0;
-    // bail out if the capsule is not valid
-    if (!PyCapsule_IsValid(capsule, capsule_t)) {
-        PyErr_SetString(PyExc_TypeError, "invalid vector capsule");
-        return 0;
-    }
-
-    // get the vector
-    gsl_vector * v = static_cast<gsl_vector *>(PyCapsule_GetPointer(capsule, capsule_t));
-    // allocate the permutation
-    gsl_permutation * p = gsl_permutation_alloc(v->size);
-
-    // sort it
-    gsl_sort_vector_index(p, v);
-
-    // return a permutation capsule
-    return PyCapsule_New(p, gsl::permutation::capsule_t, gsl::permutation::free);
-}
-
-
 // mean
 const char * const gsl::vector::mean__name__ = "vector_mean";
 const char * const gsl::vector::mean__doc__ = "compute the mean of the elements of a vector";

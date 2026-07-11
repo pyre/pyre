@@ -39,16 +39,18 @@ function(pyre_gslModule)
     target_sources(gslmodule PRIVATE
       extensions/gsl/__init__.cc
       extensions/gsl/legacy.cc
+      extensions/gsl/metadata.cc
       extensions/gsl/Vector.cc
       extensions/gsl/Matrix.cc
+      extensions/gsl/RNG.cc
+      extensions/gsl/Permutation.cc
+      extensions/gsl/Histogram.cc
       extensions/gsl/blas.cc
       extensions/gsl/linalg.cc
-      extensions/gsl/matrixapi.cc
-      extensions/gsl/metadata.cc
       extensions/gsl/pdf.cc
-      extensions/gsl/permutationapi.cc
-      extensions/gsl/rngapi.cc
       extensions/gsl/stats.cc
+      extensions/gsl/matrixapi.cc
+      extensions/gsl/rngapi.cc
       extensions/gsl/vectorapi.cc
       )
 

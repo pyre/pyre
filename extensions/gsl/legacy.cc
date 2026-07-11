@@ -12,7 +12,6 @@
 
 // the declarations of the entities that have not moved to pybind11 yet
 #include "matrix.h"      // matrices
-#include "permutation.h" // permutations
 #include "rng.h"         // random numbers
 #include "vector.h"      // vectors
 
@@ -57,21 +56,6 @@ PyMethodDef methods[] = {
     { matrix::eigen_symmetric__name__, matrix::eigen_symmetric, METH_VARARGS,
       matrix::eigen_symmetric__doc__ },
 
-    // permutations
-    { permutation::alloc__name__, permutation::alloc, METH_VARARGS, permutation::alloc__doc__ },
-    { permutation::init__name__, permutation::init, METH_VARARGS, permutation::init__doc__ },
-    { permutation::copy__name__, permutation::copy, METH_VARARGS, permutation::copy__doc__ },
-    { permutation::get__name__, permutation::get, METH_VARARGS, permutation::get__doc__ },
-    { permutation::swap__name__, permutation::swap, METH_VARARGS, permutation::swap__doc__ },
-    { permutation::size__name__, permutation::size, METH_VARARGS, permutation::size__doc__ },
-    { permutation::valid__name__, permutation::valid, METH_VARARGS, permutation::valid__doc__ },
-    { permutation::reverse__name__, permutation::reverse, METH_VARARGS,
-      permutation::reverse__doc__ },
-    { permutation::inverse__name__, permutation::inverse, METH_VARARGS,
-      permutation::inverse__doc__ },
-    { permutation::next__name__, permutation::next, METH_VARARGS, permutation::next__doc__ },
-    { permutation::prev__name__, permutation::prev, METH_VARARGS, permutation::prev__doc__ },
-
     // random numbers
     { rng::avail__name__, rng::avail, METH_VARARGS, rng::avail__doc__ },
     { rng::alloc__name__, rng::alloc, METH_VARARGS, rng::alloc__doc__ },
@@ -108,7 +92,6 @@ PyMethodDef methods[] = {
     { vector::scale__name__, vector::scale, METH_VARARGS, vector::scale__doc__ },
     // statistics
     { vector::sort__name__, vector::sort, METH_VARARGS, vector::sort__doc__ },
-    { vector::sortIndex__name__, vector::sortIndex, METH_VARARGS, vector::sortIndex__doc__ },
     { vector::mean__name__, vector::mean, METH_VARARGS, vector::mean__doc__ },
     { vector::median__name__, vector::median, METH_VARARGS, vector::median__doc__ },
     { vector::variance__name__, vector::variance, METH_VARARGS, vector::variance__doc__ },
