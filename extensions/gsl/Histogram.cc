@@ -138,8 +138,7 @@ gsl::py::histogram(py::module & m)
         // the implementation
         [](py::object self, const std::vector<double> & edges) -> py::object {
             // hand gsl the boundaries
-            gsl_histogram_set_ranges(
-                &self.cast<gsl_histogram &>(), edges.data(), edges.size());
+            gsl_histogram_set_ranges(&self.cast<gsl_histogram &>(), edges.data(), edges.size());
             // and hand myself back, so callers can chain
             return self;
         },

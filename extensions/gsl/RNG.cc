@@ -34,8 +34,7 @@ namespace gsl::py {
     //
     // gsl keeps no lookup of its own; it hands out a null terminated array of the types it knows,
     // and leaves the matching to us
-    inline auto
-    generator(const std::string & name) -> const gsl_rng_type *
+    inline auto generator(const std::string & name) -> const gsl_rng_type *
     {
         // walk the types gsl knows
         for (const gsl_rng_type ** t = gsl_rng_types_setup(); *t != nullptr; ++t) {

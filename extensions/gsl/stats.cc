@@ -32,10 +32,8 @@ namespace gsl::py {
     // {axis} 0 walks down each column, {axis} 1 across each row, and anything else folds the
     // whole matrix into a single number. the answers are written into {mean} and, when a spread
     // is asked for, {sd}, which the caller has sized to match
-    inline auto
-    matrixStats(
-        const gsl_matrix & m, int axis, gsl_vector & mean, gsl_vector * sd, spread_t spread)
-        -> void
+    inline auto matrixStats(
+        const gsl_matrix & m, int axis, gsl_vector & mean, gsl_vector * sd, spread_t spread) -> void
     {
         // the shape of the matrix, and the stride between its rows
         const std::size_t rows = m.size1, cols = m.size2, tda = m.tda;
@@ -43,8 +41,8 @@ namespace gsl::py {
         const double * datap = m.data;
 
         // pick the recipe for the spread of a run of {n} cells, {stride} apart, about {mu}
-        auto spreadOf = [spread](const double * p, std::size_t stride, std::size_t n,
-                                 double mu) -> double {
+        auto spreadOf =
+            [spread](const double * p, std::size_t stride, std::size_t n, double mu) -> double {
             // the sample standard deviation divides by N-1
             if (spread == spread_t::sample) {
                 return gsl_stats_sd_m(p, stride, n, mu);

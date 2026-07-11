@@ -20,8 +20,7 @@ namespace gsl::py {
 
     // fill {v} by drawing from {draw}, a nullary callable that returns a double
     template <typename drawT>
-    inline auto
-    fillVector(gsl_vector & v, drawT draw) -> void
+    inline auto fillVector(gsl_vector & v, drawT draw) -> void
     {
         // one draw per cell
         for (std::size_t i = 0; i < v.size; ++i) {
@@ -32,8 +31,7 @@ namespace gsl::py {
 
     // fill {m} by drawing from {draw}, a nullary callable that returns a double
     template <typename drawT>
-    inline auto
-    fillMatrix(gsl_matrix & m, drawT draw) -> void
+    inline auto fillMatrix(gsl_matrix & m, drawT draw) -> void
     {
         // one draw per cell
         for (std::size_t i = 0; i < m.size1; ++i) {

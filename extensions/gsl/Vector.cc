@@ -554,7 +554,8 @@ gsl::py::vector(py::module & m)
         // the name
         "fprintf",
         // the implementation
-        [](py::object self, const std::string & filename, const std::string & format) -> py::object {
+        [](py::object self, const std::string & filename,
+           const std::string & format) -> py::object {
             // open the file for writing
             std::FILE * stream = std::fopen(filename.data(), "w");
             // complain if it would not open

@@ -135,8 +135,8 @@ gsl::py::partition(py::module & m)
             }
             MPI_Bcast(dim, 2, MPI_LONG, source, comm.handle());
             // the source broadcasts from its own storage; everybody else into fresh storage
-            gsl_matrix * mat = (comm.rank() == source) ? &matrix.cast<gsl_matrix &>()
-                                                       : gsl_matrix_alloc(dim[0], dim[1]);
+            gsl_matrix * mat = (comm.rank() == source) ? &matrix.cast<gsl_matrix &>() :
+                                                         gsl_matrix_alloc(dim[0], dim[1]);
             // move the payload
             int status = MPI_Bcast(mat->data, dim[0] * dim[1], MPI_DOUBLE, source, comm.handle());
             // complain if it failed
