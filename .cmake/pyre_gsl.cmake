@@ -39,6 +39,7 @@ function(pyre_gslModule)
     target_sources(gslmodule PRIVATE
       extensions/gsl/__init__.cc
       extensions/gsl/metadata.cc
+      extensions/gsl/enums.cc
       extensions/gsl/Vector.cc
       extensions/gsl/Matrix.cc
       extensions/gsl/RNG.cc

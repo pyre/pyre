@@ -16,6 +16,8 @@
 namespace gsl::py {
     // what the package says about itself
     void metadata(py::module & m);
+    // the blas and eigen flag enumerations
+    void enums(py::module & m);
 
     // the data types gsl allocates and releases
     void vector(py::module & m);

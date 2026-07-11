@@ -13,52 +13,9 @@
 #include <gsl/gsl_blas.h>
 
 
-// the local helpers
-namespace gsl::py {
-    // translate the python operation flag into the cblas transpose enum
-    //
-    // the {gsl.matrix} constants number the operations 0, 1, 2 rather than using the cblas
-    // values, so we map them here, and reject anything else
-    inline auto
-    transpose(int op) -> CBLAS_TRANSPOSE_t
-    {
-        // the plain matrix
-        if (op == 0) {
-            return CblasNoTrans;
-        }
-        // its transpose
-        if (op == 1) {
-            return CblasTrans;
-        }
-        // its conjugate transpose
-        if (op == 2) {
-            return CblasConjTrans;
-        }
-        // anything else is a bug at the call site
-        throw py::value_error("bad blas operation flag; expected 0, 1, or 2");
-    }
-
-    // translate the python triangle flag: a true value names the upper triangle
-    inline auto
-    uplo(int flag) -> CBLAS_UPLO_t
-    {
-        return flag ? CblasUpper : CblasLower;
-    }
-
-    // translate the python diagonal flag: a true value names a unit diagonal
-    inline auto
-    diag(int flag) -> CBLAS_DIAG_t
-    {
-        return flag ? CblasUnit : CblasNonUnit;
-    }
-
-    // translate the python side flag: a true value multiplies from the right
-    inline auto
-    side(int flag) -> CBLAS_SIDE_t
-    {
-        return flag ? CblasRight : CblasLeft;
-    }
-} // namespace gsl::py
+// the blas operands' orientation is spelled by the {Transpose}, {Triangle}, {Diagonal}, and
+// {Side} enumerations, whose values are gsl's own; so the flags pass straight into the library,
+// and a bad flag is unspellable rather than a runtime complaint
 
 
 // add the bindings for the gsl blas
@@ -202,10 +159,10 @@ gsl::py::blas(py::module & m)
         // the name
         "blas_dgemv",
         // the implementation
-        [](int op, double alpha, const gsl_matrix & A, const gsl_vector & x, double beta,
-           gsl_vector & y) -> void {
+        [](CBLAS_TRANSPOSE_t op, double alpha, const gsl_matrix & A, const gsl_vector & x,
+           double beta, gsl_vector & y) -> void {
             // the general matrix-vector product
-            gsl_blas_dgemv(transpose(op), alpha, &A, &x, beta, &y);
+            gsl_blas_dgemv(op, alpha, &A, &x, beta, &y);
         },
         // the signature
         "transpose"_a, "alpha"_a, "A"_a, "x"_a, "beta"_a, "y"_a,
@@ -217,9 +174,10 @@ gsl::py::blas(py::module & m)
         // the name
         "blas_dtrmv",
         // the implementation
-        [](int triangle, int op, int unit, const gsl_matrix & A, gsl_vector & x) -> void {
+        [](CBLAS_UPLO_t triangle, CBLAS_TRANSPOSE_t op, CBLAS_DIAG_t unit, const gsl_matrix & A,
+           gsl_vector & x) -> void {
             // the triangular matrix-vector product
-            gsl_blas_dtrmv(uplo(triangle), transpose(op), diag(unit), &A, &x);
+            gsl_blas_dtrmv(triangle, op, unit, &A, &x);
         },
         // the signature
         "uplo"_a, "transpose"_a, "diag"_a, "A"_a, "x"_a,
@@ -231,9 +189,10 @@ gsl::py::blas(py::module & m)
         // the name
         "blas_dtrsv",
         // the implementation
-        [](int triangle, int op, int unit, const gsl_matrix & A, gsl_vector & x) -> void {
+        [](CBLAS_UPLO_t triangle, CBLAS_TRANSPOSE_t op, CBLAS_DIAG_t unit, const gsl_matrix & A,
+           gsl_vector & x) -> void {
             // the triangular solve
-            gsl_blas_dtrsv(uplo(triangle), transpose(op), diag(unit), &A, &x);
+            gsl_blas_dtrsv(triangle, op, unit, &A, &x);
         },
         // the signature
         "uplo"_a, "transpose"_a, "diag"_a, "A"_a, "x"_a,
@@ -245,10 +204,10 @@ gsl::py::blas(py::module & m)
         // the name
         "blas_dsymv",
         // the implementation
-        [](int triangle, double alpha, const gsl_matrix & A, const gsl_vector & x, double beta,
-           gsl_vector & y) -> void {
+        [](CBLAS_UPLO_t triangle, double alpha, const gsl_matrix & A, const gsl_vector & x,
+           double beta, gsl_vector & y) -> void {
             // the symmetric matrix-vector product
-            gsl_blas_dsymv(uplo(triangle), alpha, &A, &x, beta, &y);
+            gsl_blas_dsymv(triangle, alpha, &A, &x, beta, &y);
         },
         // the signature
         "uplo"_a, "alpha"_a, "A"_a, "x"_a, "beta"_a, "y"_a,
@@ -260,9 +219,9 @@ gsl::py::blas(py::module & m)
         // the name
         "blas_dsyr",
         // the implementation
-        [](int triangle, double alpha, const gsl_vector & x, gsl_matrix & A) -> void {
+        [](CBLAS_UPLO_t triangle, double alpha, const gsl_vector & x, gsl_matrix & A) -> void {
             // the rank-1 update
-            gsl_blas_dsyr(uplo(triangle), alpha, &x, &A);
+            gsl_blas_dsyr(triangle, alpha, &x, &A);
         },
         // the signature
         "uplo"_a, "alpha"_a, "x"_a, "A"_a,
@@ -275,10 +234,10 @@ gsl::py::blas(py::module & m)
         // the name
         "blas_dgemm",
         // the implementation
-        [](int opA, int opB, double alpha, const gsl_matrix & A, const gsl_matrix & B, double beta,
-           gsl_matrix & C) -> void {
+        [](CBLAS_TRANSPOSE_t opA, CBLAS_TRANSPOSE_t opB, double alpha, const gsl_matrix & A,
+           const gsl_matrix & B, double beta, gsl_matrix & C) -> void {
             // the general matrix-matrix product
-            gsl_blas_dgemm(transpose(opA), transpose(opB), alpha, &A, &B, beta, &C);
+            gsl_blas_dgemm(opA, opB, alpha, &A, &B, beta, &C);
         },
         // the signature
         "tranA"_a, "tranB"_a, "alpha"_a, "A"_a, "B"_a, "beta"_a, "C"_a,
@@ -290,10 +249,10 @@ gsl::py::blas(py::module & m)
         // the name
         "blas_dsymm",
         // the implementation
-        [](int whichSide, int triangle, double alpha, const gsl_matrix & A, const gsl_matrix & B,
-           double beta, gsl_matrix & C) -> void {
+        [](CBLAS_SIDE_t whichSide, CBLAS_UPLO_t triangle, double alpha, const gsl_matrix & A,
+           const gsl_matrix & B, double beta, gsl_matrix & C) -> void {
             // the symmetric matrix-matrix product
-            gsl_blas_dsymm(side(whichSide), uplo(triangle), alpha, &A, &B, beta, &C);
+            gsl_blas_dsymm(whichSide, triangle, alpha, &A, &B, beta, &C);
         },
         // the signature
         "side"_a, "uplo"_a, "alpha"_a, "A"_a, "B"_a, "beta"_a, "C"_a,
@@ -305,11 +264,10 @@ gsl::py::blas(py::module & m)
         // the name
         "blas_dtrmm",
         // the implementation
-        [](int whichSide, int triangle, int op, int unit, double alpha, const gsl_matrix & A,
-           gsl_matrix & B) -> void {
+        [](CBLAS_SIDE_t whichSide, CBLAS_UPLO_t triangle, CBLAS_TRANSPOSE_t op, CBLAS_DIAG_t unit,
+           double alpha, const gsl_matrix & A, gsl_matrix & B) -> void {
             // the triangular matrix-matrix product
-            gsl_blas_dtrmm(
-                side(whichSide), uplo(triangle), transpose(op), diag(unit), alpha, &A, &B);
+            gsl_blas_dtrmm(whichSide, triangle, op, unit, alpha, &A, &B);
         },
         // the signature
         "sideA"_a, "uplo"_a, "transpose"_a, "diag"_a, "alpha"_a, "A"_a, "B"_a,

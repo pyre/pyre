@@ -87,8 +87,8 @@ gsl::py::matrix(py::module & m)
         // the implementation
         py::init([](gsl_matrix & parent, shape_type start, shape_type shape) -> matrix_ptr {
             // ask gsl to describe the submatrix
-            auto view = gsl_matrix_submatrix(
-                &parent, start.first, start.second, shape.first, shape.second);
+            auto view =
+                gsl_matrix_submatrix(&parent, start.first, start.second, shape.first, shape.second);
             // and take a copy of the descriptor it built; its {owner} is clear, so my deleter
             // releases the struct alone and leaves the parent's block untouched
             return matrix_ptr(new gsl_matrix(view.matrix));
@@ -512,27 +512,8 @@ gsl::py::matrix(py::module & m)
         // the name
         "eigenSymmetric",
         // the implementation
-        [](const gsl_matrix & self, int order, gsl_vector & eigenvalues,
+        [](const gsl_matrix & self, gsl_eigen_sort_t order, gsl_vector & eigenvalues,
            gsl_matrix & eigenvectors) -> void {
-            // the {gsl.matrix} constants number the orderings 0..3 rather than using the gsl
-            // values, so we map them here, and reject anything else
-            gsl_eigen_sort_t ordering;
-            switch (order) {
-                case 0:
-                    ordering = GSL_EIGEN_SORT_VAL_ASC;
-                    break;
-                case 1:
-                    ordering = GSL_EIGEN_SORT_VAL_DESC;
-                    break;
-                case 2:
-                    ordering = GSL_EIGEN_SORT_ABS_ASC;
-                    break;
-                case 3:
-                    ordering = GSL_EIGEN_SORT_ABS_DESC;
-                    break;
-                default:
-                    throw py::value_error("bad eigenvalue ordering; expected 0, 1, 2, or 3");
-            }
             // gsl destroys the matrix it works on, so it gets a private copy of me
             gsl_matrix * work = gsl_matrix_alloc(self.size1, self.size2);
             gsl_matrix_memcpy(work, &self);
@@ -541,7 +522,7 @@ gsl::py::matrix(py::module & m)
             // solve, filling the caller's storage
             gsl_eigen_symmv(work, &eigenvalues, &eigenvectors, space);
             // put the answer in the requested order
-            gsl_eigen_symmv_sort(&eigenvalues, &eigenvectors, ordering);
+            gsl_eigen_symmv_sort(&eigenvalues, &eigenvectors, order);
             // and release the scratch space and the working copy
             gsl_eigen_symmv_free(space);
             gsl_matrix_free(work);
@@ -627,7 +608,8 @@ gsl::py::matrix(py::module & m)
         // the name
         "fprintf",
         // the implementation
-        [](py::object self, const std::string & filename, const std::string & format) -> py::object {
+        [](py::object self, const std::string & filename,
+           const std::string & format) -> py::object {
             // open the file for writing
             std::FILE * stream = std::fopen(filename.data(), "w");
             // complain if it would not open

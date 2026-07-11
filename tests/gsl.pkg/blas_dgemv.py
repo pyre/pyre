@@ -30,7 +30,7 @@ def test():
     A[1, 0], A[2, 0], A[2, 1] = 2, 3, 2
 
     # compute the form
-    y = gsl.blas.dgemv(A.opNoTrans, α, A, x, β, y)
+    y = gsl.blas.dgemv(gsl.Transpose.noTranspose, α, A, x, β, y)
 
     # check
     # print(tuple(y))

@@ -29,7 +29,7 @@ def test():
     A[0, 1], A[0, 2], A[1, 2] = 2, 3, 2
 
     # compute the form
-    y = gsl.blas.dsymv(A.upperTriangular, α, A, x, β, y)
+    y = gsl.blas.dsymv(gsl.Triangle.upper, α, A, x, β, y)
 
     # check
     # print(tuple(y))

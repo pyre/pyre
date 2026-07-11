@@ -26,7 +26,9 @@ def test():
     # B.print()
 
     # try one of the supported operations
-    B = gsl.blas.dtrmm(A.sideLeft, A.lowerTriangular, A.opNoTrans, A.unitDiagonal, 2, A, B)
+    B = gsl.blas.dtrmm(
+        gsl.Side.left, gsl.Triangle.lower, gsl.Transpose.noTranspose, gsl.Diagonal.unit, 2, A, B
+    )
     # show me
     # B.print()
     # the expected result
@@ -55,7 +57,9 @@ def test():
     # B.print()
 
     # try one of the supported operations
-    B = gsl.blas.dtrmm(A.sideLeft, A.upperTriangular, A.opNoTrans, A.unitDiagonal, 2, A, B)
+    B = gsl.blas.dtrmm(
+        gsl.Side.left, gsl.Triangle.upper, gsl.Transpose.noTranspose, gsl.Diagonal.unit, 2, A, B
+    )
     # show me
     # B.print()
     # the expected result
