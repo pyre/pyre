@@ -59,6 +59,7 @@ PYBIND11_MODULE(libgsl, m)
     gsl::py::stats(m);
     gsl::py::linalg(m);
     gsl::py::blas(m);
+    gsl::py::pdf(m);
 
     // graft on the entities that are still spelled as free functions over capsules; the table
     // shrinks with every class that moves to pybind11, and this call goes away with the last one

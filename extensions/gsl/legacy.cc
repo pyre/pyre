@@ -12,7 +12,6 @@
 
 // the declarations of the entities that have not moved to pybind11 yet
 #include "matrix.h"      // matrices
-#include "pdf.h"         // probability distribution functions
 #include "permutation.h" // permutations
 #include "rng.h"         // random numbers
 #include "vector.h"      // vectors
@@ -72,46 +71,6 @@ PyMethodDef methods[] = {
       permutation::inverse__doc__ },
     { permutation::next__name__, permutation::next, METH_VARARGS, permutation::next__doc__ },
     { permutation::prev__name__, permutation::prev, METH_VARARGS, permutation::prev__doc__ },
-
-    // probability distribution functions
-    { pdf::uniform::sample__name__, pdf::uniform::sample, METH_VARARGS,
-      pdf::uniform::sample__doc__ },
-    { pdf::uniform::density__name__, pdf::uniform::density, METH_VARARGS,
-      pdf::uniform::density__doc__ },
-    { pdf::uniform::vector__name__, pdf::uniform::vector, METH_VARARGS,
-      pdf::uniform::vector__doc__ },
-    { pdf::uniform::matrix__name__, pdf::uniform::matrix, METH_VARARGS,
-      pdf::uniform::matrix__doc__ },
-    { pdf::uniform_pos::sample__name__, pdf::uniform_pos::sample, METH_VARARGS,
-      pdf::uniform_pos::sample__doc__ },
-    { pdf::uniform_pos::vector__name__, pdf::uniform_pos::vector, METH_VARARGS,
-      pdf::uniform_pos::vector__doc__ },
-    { pdf::uniform_pos::matrix__name__, pdf::uniform_pos::matrix, METH_VARARGS,
-      pdf::uniform_pos::matrix__doc__ },
-    { pdf::gaussian::sample__name__, pdf::gaussian::sample, METH_VARARGS,
-      pdf::gaussian::sample__doc__ },
-    { pdf::gaussian::density__name__, pdf::gaussian::density, METH_VARARGS,
-      pdf::gaussian::density__doc__ },
-    { pdf::gaussian::vector__name__, pdf::gaussian::vector, METH_VARARGS,
-      pdf::gaussian::vector__doc__ },
-    { pdf::gaussian::matrix__name__, pdf::gaussian::matrix, METH_VARARGS,
-      pdf::gaussian::matrix__doc__ },
-    { pdf::ugaussian::sample__name__, pdf::ugaussian::sample, METH_VARARGS,
-      pdf::ugaussian::sample__doc__ },
-    { pdf::ugaussian::density__name__, pdf::ugaussian::density, METH_VARARGS,
-      pdf::ugaussian::density__doc__ },
-    { pdf::ugaussian::vector__name__, pdf::ugaussian::vector, METH_VARARGS,
-      pdf::ugaussian::vector__doc__ },
-    { pdf::ugaussian::matrix__name__, pdf::ugaussian::matrix, METH_VARARGS,
-      pdf::ugaussian::matrix__doc__ },
-    { pdf::dirichlet::sample__name__, pdf::dirichlet::sample, METH_VARARGS,
-      pdf::dirichlet::sample__doc__ },
-    { pdf::dirichlet::density__name__, pdf::dirichlet::density, METH_VARARGS,
-      pdf::dirichlet::density__doc__ },
-    { pdf::dirichlet::vector__name__, pdf::dirichlet::vector, METH_VARARGS,
-      pdf::dirichlet::vector__doc__ },
-    { pdf::dirichlet::matrix__name__, pdf::dirichlet::matrix, METH_VARARGS,
-      pdf::dirichlet::matrix__doc__ },
 
     // random numbers
     { rng::avail__name__, rng::avail, METH_VARARGS, rng::avail__doc__ },
