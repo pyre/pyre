@@ -10,11 +10,6 @@
 // capsules
 namespace gsl {
 
-    // histogram
-    namespace histogram {
-        const char * const capsule_t = "gsl.histogram";
-        void free(PyObject *);
-    } // namespace histogram
     // matrix
     namespace matrix {
         const char * const capsule_t = "gsl.matrix";

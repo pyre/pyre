@@ -12,7 +12,6 @@
 
 // the declarations of the entities that have not moved to pybind11 yet
 #include "blas.h"        // blas
-#include "histogram.h"   // histograms
 #include "linalg.h"      // linear algebra
 #include "matrix.h"      // matrices
 #include "pdf.h"         // probability distribution functions
@@ -50,38 +49,6 @@ PyMethodDef methods[] = {
     { blas::dgemm__name__, blas::dgemm, METH_VARARGS, blas::dgemm__doc__ },
     { blas::dsymm__name__, blas::dsymm, METH_VARARGS, blas::dsymm__doc__ },
     { blas::dtrmm__name__, blas::dtrmm, METH_VARARGS, blas::dtrmm__doc__ },
-
-    // histograms
-    { histogram::alloc__name__, histogram::alloc, METH_VARARGS, histogram::alloc__doc__ },
-    { histogram::uniform__name__, histogram::uniform, METH_VARARGS, histogram::uniform__doc__ },
-    { histogram::ranges__name__, histogram::ranges, METH_VARARGS, histogram::ranges__doc__ },
-    { histogram::reset__name__, histogram::reset, METH_VARARGS, histogram::reset__doc__ },
-    { histogram::increment__name__, histogram::increment, METH_VARARGS,
-      histogram::increment__doc__ },
-    { histogram::accumulate__name__, histogram::accumulate, METH_VARARGS,
-      histogram::accumulate__doc__ },
-    { histogram::fill__name__, histogram::fill, METH_VARARGS, histogram::fill__doc__ },
-    { histogram::clone__name__, histogram::clone, METH_VARARGS, histogram::clone__doc__ },
-    { histogram::copy__name__, histogram::copy, METH_VARARGS, histogram::copy__doc__ },
-    { histogram::vector__name__, histogram::vector, METH_VARARGS, histogram::vector__doc__ },
-    { histogram::find__name__, histogram::find, METH_VARARGS, histogram::find__doc__ },
-    { histogram::max__name__, histogram::max, METH_VARARGS, histogram::max__doc__ },
-    { histogram::min__name__, histogram::min, METH_VARARGS, histogram::min__doc__ },
-    { histogram::range__name__, histogram::range, METH_VARARGS, histogram::range__doc__ },
-    { histogram::max_bin__name__, histogram::max_bin, METH_VARARGS, histogram::max_bin__doc__ },
-    { histogram::min_bin__name__, histogram::min_bin, METH_VARARGS, histogram::min_bin__doc__ },
-    { histogram::max_val__name__, histogram::max_val, METH_VARARGS, histogram::max_val__doc__ },
-    { histogram::min_val__name__, histogram::min_val, METH_VARARGS, histogram::min_val__doc__ },
-    { histogram::mean__name__, histogram::mean, METH_VARARGS, histogram::mean__doc__ },
-    { histogram::sdev__name__, histogram::sdev, METH_VARARGS, histogram::sdev__doc__ },
-    { histogram::sum__name__, histogram::sum, METH_VARARGS, histogram::sum__doc__ },
-    { histogram::get__name__, histogram::get, METH_VARARGS, histogram::get__doc__ },
-    { histogram::add__name__, histogram::add, METH_VARARGS, histogram::add__doc__ },
-    { histogram::sub__name__, histogram::sub, METH_VARARGS, histogram::sub__doc__ },
-    { histogram::mul__name__, histogram::mul, METH_VARARGS, histogram::mul__doc__ },
-    { histogram::div__name__, histogram::div, METH_VARARGS, histogram::div__doc__ },
-    { histogram::shift__name__, histogram::shift, METH_VARARGS, histogram::shift__doc__ },
-    { histogram::scale__name__, histogram::scale, METH_VARARGS, histogram::scale__doc__ },
 
     // linalg
     { linalg::LU_decomp__name__, linalg::LU_decomp, METH_VARARGS, linalg::LU_decomp__doc__ },

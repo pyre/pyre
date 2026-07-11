@@ -22,6 +22,7 @@ namespace gsl::py {
     void matrix(py::module & m);
     void rng(py::module & m);
     void permutation(py::module & m);
+    void histogram(py::module & m);
 } // namespace gsl::py
 
 
