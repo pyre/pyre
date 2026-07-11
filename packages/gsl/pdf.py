@@ -21,7 +21,7 @@ class uniform:
         Sample the uniform distribution using a random value from {rng}
         """
         # get the value
-        return gsl.uniform_sample(self.support, self.rng.rng)
+        return gsl.uniform_sample(self.support, self.rng)
 
     def density(self, x):
         """
@@ -36,7 +36,7 @@ class uniform:
         Fill {vector} with random values
         """
         # fill the vector
-        gsl.uniform_vector(self.support, self.rng.rng, vector.data)
+        gsl.uniform_vector(self.support, self.rng, vector)
         # and return it
         return vector
 
@@ -45,7 +45,7 @@ class uniform:
         Fill {matrix} with random values
         """
         # fill the matrix
-        gsl.uniform_matrix(self.support, self.rng.rng, matrix.data)
+        gsl.uniform_matrix(self.support, self.rng, matrix)
         # and return it
         return matrix
 
@@ -72,7 +72,7 @@ class uniform_pos:
         Sample the uniform distribution using a random value from {rng}
         """
         # get the value
-        return gsl.uniform_pos_sample(self.rng.rng)
+        return gsl.uniform_pos_sample(self.rng)
 
     def density(self, x):
         """
@@ -87,7 +87,7 @@ class uniform_pos:
         Fill {vector} with random values
         """
         # fill the vector
-        gsl.uniform_pos_vector(self.rng.rng, vector.data)
+        gsl.uniform_pos_vector(self.rng, vector)
         # and return it
         return vector
 
@@ -96,7 +96,7 @@ class uniform_pos:
         Fill {matrix} with random values
         """
         # fill the matrix
-        gsl.uniform_pos_matrix(self.rng.rng, matrix.data)
+        gsl.uniform_pos_matrix(self.rng, matrix)
         # and return it
         return matrix
 
@@ -119,7 +119,7 @@ class gaussian:
         Sample the gaussian distribution using a random value from {rng}
         """
         # get the value
-        return gsl.gaussian_sample(self.mean, self.sigma, self.rng.rng)
+        return gsl.gaussian_sample(self.mean, self.sigma, self.rng)
 
     def density(self, x):
         """
@@ -134,7 +134,7 @@ class gaussian:
         Fill {vector} with random values
         """
         # fill the vector
-        gsl.gaussian_vector(self.mean, self.sigma, self.rng.rng, vector.data)
+        gsl.gaussian_vector(self.mean, self.sigma, self.rng, vector)
         # and return it
         return vector
 
@@ -143,7 +143,7 @@ class gaussian:
         Fill {matrix} with random values
         """
         # fill the matrix
-        gsl.gaussian_matrix(self.mean, self.sigma, self.rng.rng, matrix.data)
+        gsl.gaussian_matrix(self.mean, self.sigma, self.rng, matrix)
         # and return it
         return matrix
 
@@ -172,7 +172,7 @@ class ugaussian:
         Sample the gaussian distribution using a random value from {rng}
         """
         # get the value
-        return gsl.ugaussian_sample(self.rng.rng)
+        return gsl.ugaussian_sample(self.rng)
 
     def density(self, x):
         """
@@ -187,7 +187,7 @@ class ugaussian:
         Fill {vector} with random values
         """
         # fill the vector
-        gsl.ugaussian_vector(self.rng.rng, vector.data)
+        gsl.ugaussian_vector(self.rng, vector)
         # and return it
         return vector
 
@@ -196,7 +196,7 @@ class ugaussian:
         Fill {matrix} with random values
         """
         # fill the matrix
-        gsl.ugaussian_matrix(self.rng.rng, matrix.data)
+        gsl.ugaussian_matrix(self.rng, matrix)
         # and return it
         return matrix
 
@@ -219,7 +219,7 @@ class dirichlet:
         Fill {vector} with random values
         """
         # fill the vector
-        gsl.dirichlet_vector(self.rng.rng, self.alpha.data, vector.data)
+        gsl.dirichlet_vector(self.rng, self.alpha, vector)
         # and return it
         return vector
 
@@ -228,7 +228,7 @@ class dirichlet:
         Fill {matrix} with random values
         """
         # fill the matrix
-        gsl.dirichlet_matrix(self.rng.rng, self.alpha.data, matrix.data)
+        gsl.dirichlet_matrix(self.rng, self.alpha, matrix)
         # and return it
         return matrix
 

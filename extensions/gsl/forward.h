@@ -28,6 +28,7 @@ namespace gsl::py {
     void stats(py::module & m);
     void linalg(py::module & m);
     void blas(py::module & m);
+    void pdf(py::module & m);
 } // namespace gsl::py
 
 
