@@ -21,7 +21,7 @@ namespace pyre::postgres::py {
         // room for them
         py::tuple rendering(columns);
         // fill it in
-        for (size_type column = 0; column < columns; ++column) {
+        for (Row::index_type column = 0; column < columns; ++column) {
             // each value becomes a string, or {None} when the server sent nothing
             rendering[column] = pythonize(row[column]);
         }
@@ -30,16 +30,16 @@ namespace pyre::postgres::py {
     }
 
     // resolve a subscript into a column, the way python resolves one into a sequence
-    static auto resolve(const Row & row, size_type column) -> size_type
+    static auto resolve(const Row & row, Row::index_type column) -> Row::index_type
     {
         // how many values there are
         const auto columns = row.size();
         // a negative subscript counts back from the end, which is what a python caller expects
         // and what the c++ class deliberately does not offer
-        const size_type index = column < 0 ? column + columns : column;
-        // and one that lands outside the row is an {IndexError}, and not one of ours; this is
-        // the exception the iteration protocol and the slicing machinery both look for
+        const Row::index_type index = column < 0 ? column + columns : column;
+        // and one that lands outside the row is an {IndexError}, and not one of ours
         if (index < 0 || index >= columns) {
+            // this is the exception the iteration protocol and the slicing machinery both look for
             throw py::index_error("row index out of range");
         }
         // hand it off
@@ -88,7 +88,7 @@ pyre::postgres::py::row(py::module & m)
         // the name
         "__getitem__",
         // the implementation
-        [](const Row & self, size_type column) -> py::object {
+        [](const Row & self, Row::index_type column) -> py::object {
             return pythonize(self[resolve(self, column)]);
         },
         // the signature
@@ -130,7 +130,9 @@ pyre::postgres::py::row(py::module & m)
         // the name
         "field",
         // the implementation
-        [](const Row & self, size_type column) -> Field { return self[resolve(self, column)]; },
+        [](const Row & self, Row::index_type column) -> Field {
+            return self[resolve(self, column)];
+        },
         // the signature
         "column"_a,
         // the docstring
