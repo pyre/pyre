@@ -5,26 +5,25 @@
 
 
 function(pyre_mpiPackage)
-  # if we have mpi
-  if(${MPI_FOUND})
-    # install the sources straight from the source directory
-    install(
-      DIRECTORY packages/mpi
-      DESTINATION ${PYRE_DEST_PACKAGES}
-      FILES_MATCHING PATTERN *.py
-      )
-    # build the package meta-data
-    configure_file(
-      packages/mpi/meta.py.in packages/mpi/meta.py
-      @ONLY
-      )
-    # install the generated package meta-data file
-    install(
-      DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/packages/mpi
-      DESTINATION ${PYRE_DEST_PACKAGES}
-      FILES_MATCHING PATTERN *.py
-      )
-  endif()
+  # the pure-python {mpi} package ships unconditionally: it degrades to a trivial single-process
+  # communicator when the {libmpi} bindings are absent, so code written against it runs anywhere
+  # install the sources straight from the source directory
+  install(
+    DIRECTORY packages/mpi
+    DESTINATION ${PYRE_DEST_PACKAGES}
+    FILES_MATCHING PATTERN *.py
+    )
+  # build the package meta-data
+  configure_file(
+    packages/mpi/meta.py.in packages/mpi/meta.py
+    @ONLY
+    )
+  # install the generated package meta-data file
+  install(
+    DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/packages/mpi
+    DESTINATION ${PYRE_DEST_PACKAGES}
+    FILES_MATCHING PATTERN *.py
+    )
   # all done
 endfunction(pyre_mpiPackage)
 

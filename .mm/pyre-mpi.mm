@@ -7,12 +7,21 @@
 # check availability
 mpi.available := ${findstring mpi,$(extern.available)}
 
-# if {mpi} is available
+
+# the pure-python {mpi} package ships unconditionally: it degrades to a trivial single-process
+# communicator when the {libmpi} bindings are absent, so code written against it runs anywhere
+pyre-mpi.packages := pyre-mpi.pkg
+
+# the mpi package meta-data
+pyre-mpi.pkg.root := packages/mpi/
+pyre-mpi.pkg.stem := mpi
+pyre-mpi.pkg.ext :=
+
+
+# the library and the extension that wraps it need the actual mpi runtime
 ifeq ($(mpi.available), mpi)
 
 
-# mpi builds a python package
-pyre-mpi.packages := pyre-mpi.pkg
 # a library
 pyre-mpi.libraries := pyre-mpi.lib
 # a python extension
@@ -20,11 +29,6 @@ pyre-mpi.extensions := pyre-mpi.ext
 # and test suites
 pyre-mpi.tests := pyre-mpi.pkg.tests pyre-mpi.ext.tests pyre-mpi.lib.tests
 
-
-# the mpi package meta-data
-pyre-mpi.pkg.root := packages/mpi/
-pyre-mpi.pkg.stem := mpi
-pyre-mpi.pkg.ext :=
 
 # the mpi library meta-data
 pyre-mpi.lib.root := lib/mpi/
