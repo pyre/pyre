@@ -14,12 +14,12 @@
 // the machinery this file needs, and nobody else does
 namespace pyre::postgres::py {
     // resolve a subscript into a row, the way python resolves one into a sequence
-    static auto resolve(const Result & result, size_type row) -> size_type
+    static auto resolve(const Result & result, Result::index_type row) -> Result::index_type
     {
         // how many rows there are
         const auto rows = result.rows();
         // a negative subscript counts back from the end
-        const size_type index = row < 0 ? row + rows : row;
+        const Result::index_type index = row < 0 ? row + rows : row;
         // and one that lands outside the result is an {IndexError}, and not one of ours
         if (index < 0 || index >= rows) {
             throw py::index_error("row index out of range");
@@ -101,7 +101,7 @@ pyre::postgres::py::result(py::module & m)
             // room for them
             py::tuple names(columns);
             // fill it in
-            for (size_type column = 0; column < columns; ++column) {
+            for (Result::index_type column = 0; column < columns; ++column) {
                 names[column] = string_t(self.name(column));
             }
             // hand it off
@@ -115,7 +115,7 @@ pyre::postgres::py::result(py::module & m)
         // the name
         "column",
         // the implementation
-        [](const Result & self, view_t name) -> size_type { return self.column(name); },
+        [](const Result & self, view_t name) -> Result::index_type { return self.column(name); },
         // the signature
         "name"_a,
         // the docstring
@@ -126,7 +126,7 @@ pyre::postgres::py::result(py::module & m)
         // the name
         "__getitem__",
         // the implementation
-        [](const Result & self, size_type row) -> Row { return self[resolve(self, row)]; },
+        [](const Result & self, Result::index_type row) -> Row { return self[resolve(self, row)]; },
         // the signature
         "row"_a,
         // the docstring
@@ -149,7 +149,7 @@ pyre::postgres::py::result(py::module & m)
         // the name
         "field",
         // the implementation
-        [](const Result & self, size_type row, size_type column) -> Field {
+        [](const Result & self, Result::index_type row, Result::index_type column) -> Field {
             return self[resolve(self, row)].field(column);
         },
         // the signature
