@@ -55,6 +55,11 @@ def test():
     assert raises(lambda: v.basis(5))
     assert raises(lambda: v.basis(-6))
 
+    # swap checks both of its indices, reflecting a negative one and raising past either edge
+    assert raises(lambda: v.swap(0, 5))
+    assert raises(lambda: v.swap(5, 0))
+    assert raises(lambda: v.swap(0, -6))
+
     # and a valid basis index still works, including a reflected one
     assert v.clone().basis(-1)[4] == 1.0
 
