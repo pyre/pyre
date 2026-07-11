@@ -30,13 +30,11 @@ dependencies:
   # the native external packages
   - gsl
   - hdf5
-  # numpy is not a build dependency -- the gsl bindings hand their buffers to python through the
-  # buffer protocol, not numpy's c api -- but the gsl test suite imports it at runtime
+  # libpq lets the postgres bindings load
+  - libpq
+  # numpy, for the gsl test suite
   - numpy
-  # openmpi is withheld: {pyre.platforms} has no conda package manager, so {pyre.externals}
-  # cannot register the conda-provided openmpi and the {mpi} test suites fail at runtime. its
-  # absence gates the whole {pyre-mpi} project out of the build; restore it once the packager
-  # lands. nothing else in this environment wants it -- hdf5 resolves to its {nompi} variant
+  # skip openmpi until {pyre.platforms} has a conda package manager
   # - openmpi
 
 # end of file
