@@ -23,6 +23,10 @@ namespace gsl::py {
     void rng(py::module & m);
     void permutation(py::module & m);
     void histogram(py::module & m);
+
+    // the free-function modules
+    void stats(py::module & m);
+    void linalg(py::module & m);
 } // namespace gsl::py
 
 

@@ -12,12 +12,10 @@
 
 // the declarations of the entities that have not moved to pybind11 yet
 #include "blas.h"        // blas
-#include "linalg.h"      // linear algebra
 #include "matrix.h"      // matrices
 #include "pdf.h"         // probability distribution functions
 #include "permutation.h" // permutations
 #include "rng.h"         // random numbers
-#include "stats.h"       // stats
 #include "vector.h"      // vectors
 
 // mpi support
@@ -51,13 +49,6 @@ PyMethodDef methods[] = {
     { blas::dtrmm__name__, blas::dtrmm, METH_VARARGS, blas::dtrmm__doc__ },
 
     // linalg
-    { linalg::LU_decomp__name__, linalg::LU_decomp, METH_VARARGS, linalg::LU_decomp__doc__ },
-    { linalg::LU_invert__name__, linalg::LU_invert, METH_VARARGS, linalg::LU_invert__doc__ },
-    { linalg::LU_det__name__, linalg::LU_det, METH_VARARGS, linalg::LU_det__doc__ },
-    { linalg::LU_lndet__name__, linalg::LU_lndet, METH_VARARGS, linalg::LU_lndet__doc__ },
-    { linalg::cholesky_decomp__name__, linalg::cholesky_decomp, METH_VARARGS,
-      linalg::cholesky_decomp__doc__ },
-
     // matrices
     { matrix::alloc__name__, matrix::alloc, METH_VARARGS, matrix::alloc__doc__ },
     { matrix::view_alloc__name__, matrix::view_alloc, METH_VARARGS, matrix::view_alloc__doc__ },
@@ -187,15 +178,6 @@ PyMethodDef methods[] = {
     { vector::median__name__, vector::median, METH_VARARGS, vector::median__doc__ },
     { vector::variance__name__, vector::variance, METH_VARARGS, vector::variance__doc__ },
     { vector::sdev__name__, vector::sdev, METH_VARARGS, vector::sdev__doc__ },
-
-    // more statistics
-    { stats::correlation__name__, stats::correlation, METH_VARARGS, stats::correlation__doc__ },
-    { stats::covariance__name__, stats::covariance, METH_VARARGS, stats::covariance__doc__ },
-    { stats::matrix_mean__name__, stats::matrix_mean, METH_VARARGS, stats::matrix_mean__doc__ },
-    { stats::matrix_mean_sd__name__, stats::matrix_mean_sd, METH_VARARGS,
-      stats::matrix_mean_sd__doc__ },
-    { stats::matrix_mean_std__name__, stats::matrix_mean_std, METH_VARARGS,
-      stats::matrix_mean_std__doc__ },
 
 // mpi support
 #if defined(WITH_MPI)

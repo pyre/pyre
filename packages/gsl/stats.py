@@ -17,7 +17,7 @@ def correlation(x, y):
     Compute the Pearson correlation coefficient between two vectors
     """
     # compute and return the result
-    return gsl.stats_correlation(x.data, y.data)
+    return gsl.stats_correlation(x, y)
 
 
 def covariance(x, y):
@@ -25,7 +25,7 @@ def covariance(x, y):
     Compute the covariance of two vectors
     """
     # compute and return the result
-    return gsl.stats_covariance(x.data, y.data)
+    return gsl.stats_covariance(x, y)
 
 
 # end of file
