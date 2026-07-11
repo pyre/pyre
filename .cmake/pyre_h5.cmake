@@ -7,35 +7,53 @@
 # add the pyre::h5 c++ wrappers to libpyre; they wrap the hdf5 C api and need hdf5
 function(pyre_h5Lib)
   if(HDF5_FOUND)
+    # the wrappers live in a top-level {lib/h5}; copy their headers, staging them under the
+    # {pyre} namespace so they never collide in a shared prefix
+    file(GLOB_RECURSE files
+         RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}/lib/h5
+         CONFIGURE_DEPENDS
+         lib/h5/*.h lib/h5/*.icc
+         )
+    foreach(file ${files})
+      # skip the gateway header, which is deposited one level up
+      if("${file}" STREQUAL "h5.h")
+        continue()
+      endif()
+      configure_file(lib/h5/${file} lib/pyre/h5/${file} COPYONLY)
+    endforeach()
+
+    # and the gateway header, as {pyre/h5.h}
+    configure_file(lib/h5/h5.h lib/pyre/h5.h COPYONLY)
+
     # the pyre-owned wrappers over the hdf5 c api
     target_sources(pyre PRIVATE
-      lib/pyre/h5/Identifier.cc
-      lib/pyre/h5/DataSpace.cc
-      lib/pyre/h5/Location.cc
-      lib/pyre/h5/Attribute.cc
-      lib/pyre/h5/Group.cc
-      lib/pyre/h5/File.cc
-      lib/pyre/h5/DataSet.cc
+      lib/h5/Identifier.cc
+      lib/h5/DataSpace.cc
+      lib/h5/Location.cc
+      lib/h5/Attribute.cc
+      lib/h5/Group.cc
+      lib/h5/File.cc
+      lib/h5/DataSet.cc
       # property lists
-      lib/pyre/h5/properties/List.cc
-      lib/pyre/h5/properties/DAPL.cc
-      lib/pyre/h5/properties/DCPL.cc
-      lib/pyre/h5/properties/DXPL.cc
-      lib/pyre/h5/properties/FAPL.cc
-      lib/pyre/h5/properties/FCPL.cc
-      lib/pyre/h5/properties/LAPL.cc
-      lib/pyre/h5/properties/LCPL.cc
+      lib/h5/properties/List.cc
+      lib/h5/properties/DAPL.cc
+      lib/h5/properties/DCPL.cc
+      lib/h5/properties/DXPL.cc
+      lib/h5/properties/FAPL.cc
+      lib/h5/properties/FCPL.cc
+      lib/h5/properties/LAPL.cc
+      lib/h5/properties/LCPL.cc
       # datatypes
-      lib/pyre/h5/types/Datatype.cc
-      lib/pyre/h5/types/Atom.cc
-      lib/pyre/h5/types/Predefined.cc
-      lib/pyre/h5/types/Int.cc
-      lib/pyre/h5/types/Float.cc
-      lib/pyre/h5/types/String.cc
-      lib/pyre/h5/types/Compound.cc
-      lib/pyre/h5/types/Enum.cc
-      lib/pyre/h5/types/Array.cc
-      lib/pyre/h5/types/VarLen.cc
+      lib/h5/types/Datatype.cc
+      lib/h5/types/Atom.cc
+      lib/h5/types/Predefined.cc
+      lib/h5/types/Int.cc
+      lib/h5/types/Float.cc
+      lib/h5/types/String.cc
+      lib/h5/types/Compound.cc
+      lib/h5/types/Enum.cc
+      lib/h5/types/Array.cc
+      lib/h5/types/VarLen.cc
       )
     # libpyre now needs the hdf5 c library; the plain signature (matching {pyre_pyreLib}) links
     # it transitively, so consumers whose header templates call the hdf5 c api get it too
