@@ -30,8 +30,6 @@ dependencies:
   # the native external packages
   - gsl
   - hdf5
-  # libpq lets the postgres bindings load
-  - libpq
   # numpy, for the gsl test suite
   - numpy
   # skip openmpi until {pyre.platforms} has a conda package manager
