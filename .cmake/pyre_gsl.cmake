@@ -38,7 +38,6 @@ function(pyre_gslModule)
     # add the sources
     target_sources(gslmodule PRIVATE
       extensions/gsl/__init__.cc
-      extensions/gsl/legacy.cc
       extensions/gsl/metadata.cc
       extensions/gsl/Vector.cc
       extensions/gsl/Matrix.cc
@@ -49,8 +48,6 @@ function(pyre_gslModule)
       extensions/gsl/linalg.cc
       extensions/gsl/pdf.cc
       extensions/gsl/stats.cc
-      extensions/gsl/matrixapi.cc
-      extensions/gsl/vectorapi.cc
       )
 
     if (${MPI_FOUND})
@@ -67,18 +64,11 @@ function(pyre_gslModule)
       target_link_libraries(gslmodule PRIVATE pyre::mpi pybind11::module)
     endif()
 
-    # copy the capsule definitions to the staging area
-    configure_file(extensions/gsl/capsules.h lib/pyre/gsl COPYONLY)
     # install the extension
     install(
       TARGETS gslmodule
       LIBRARY
       DESTINATION ${PYRE_DEST_PACKAGES}/gsl
-      )
-    # and publish the capsules
-    install(
-      FILES ${CMAKE_CURRENT_SOURCE_DIR}/extensions/gsl/capsules.h
-      DESTINATION ${PYRE_DEST_INCLUDE}/pyre/gsl
       )
   endif()
   # all done

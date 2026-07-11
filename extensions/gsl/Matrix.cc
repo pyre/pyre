@@ -9,8 +9,6 @@
 #include "external.h"
 // namespace setup
 #include "forward.h"
-// the capsule names the free functions that have not moved yet agree on
-#include "capsules.h"
 // the vectors my rows and columns cross into, and the symmetric eigenproblem
 #include <gsl/gsl_vector.h>
 #include <gsl/gsl_eigen.h>
@@ -69,38 +67,17 @@ gsl::py::matrix(py::module & m)
         // the docstring
         "a matrix of doubles, allocated and released by gsl");
 
-    // allocate a matrix of the given {shape}, or adopt the one that {data} carries
-    //
-    // the {data} path is what the free functions that have not moved to pybind11 yet still hand
-    // back: a capsule holding a {gsl_matrix} they allocated. we take it over, and disarm the
-    // capsule so that it does not release what is now ours. it goes away with the last of them
+    // allocate a matrix of the given {shape}
     cls.def(
         // the implementation
-        py::init([](shape_type shape, py::object data) -> matrix_ptr {
-            // when nobody handed us storage
-            if (data.is_none()) {
-                // ask gsl for some
-                return matrix_ptr(gsl_matrix_alloc(shape.first, shape.second));
-            }
-            // otherwise, {data} must be a matrix capsule
-            PyObject * capsule = data.ptr();
-            // and if it isn't
-            if (!PyCapsule_IsValid(capsule, gsl::matrix::capsule_t)) {
-                // say so
-                throw py::type_error("expected a gsl matrix capsule");
-            }
-            // pull the matrix out
-            auto * mat =
-                static_cast<gsl_matrix *>(PyCapsule_GetPointer(capsule, gsl::matrix::capsule_t));
-            // and take ownership away from the capsule, so it releases nothing
-            PyCapsule_SetDestructor(capsule, nullptr);
-            // the matrix is ours now
-            return matrix_ptr(mat);
+        py::init([](shape_type shape) -> matrix_ptr {
+            // ask gsl for storage
+            return matrix_ptr(gsl_matrix_alloc(shape.first, shape.second));
         }),
         // the signature
-        "shape"_a, "data"_a = py::none(),
+        "shape"_a,
         // the docstring
-        "allocate a matrix of the given {shape}, or adopt the one {data} carries");
+        "allocate a matrix of the given {shape}");
 
     // build a view into the data of another matrix
     //
@@ -667,22 +644,6 @@ gsl::py::matrix(py::module & m)
         "filename"_a, "format"_a,
         // the docstring
         "write my cells to the text file {filename} in the given {format}, and return me");
-
-    // the transitional bridge to the free functions that have not moved to pybind11 yet
-    //
-    // they speak in capsules, so we hand them one that points at my {gsl_matrix} and releases
-    // nothing: the bound object is what owns the storage. it is safe for the {f(m.data)} call
-    // pattern they are used through, and it goes away with the last of them
-    cls.def_property_readonly(
-        // the name
-        "data",
-        // the implementation
-        [](gsl_matrix & self) -> py::capsule {
-            // a capsule that borrows, rather than owns
-            return py::capsule(&self, gsl::matrix::capsule_t);
-        },
-        // the docstring
-        "the underlying gsl matrix, for the free functions that have not moved yet");
 
     // all done
     return;

@@ -29,6 +29,11 @@ namespace gsl::py {
     void linalg(py::module & m);
     void blas(py::module & m);
     void pdf(py::module & m);
+
+    // the mpi partitioning, present only when the extension is built against mpi
+#if defined(WITH_MPI)
+    void partition(py::module & m);
+#endif
 } // namespace gsl::py
 
 
