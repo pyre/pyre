@@ -39,15 +39,6 @@ pyre.c++20 = \
   }
 
 
-# if we have {hdf5}, build the {pyre::h5} library, the extension that wraps it, and its own
-# c++ test suite; like {pyre::postgres} the library stands on its own, apart from {libpyre}
-${if ${findstring hdf5,$(extern.available)},\
-    ${eval pyre.libraries += h5.lib} \
-    ${eval pyre.extensions += h5.ext} \
-    ${eval pyre.tests += h5.lib.tests} \
-}
-
-
 # if we have {libpq}, build the {pyre::postgres} library, the extension that wraps it, and test
 # both; the library stands on its own, so it gets a suite of its own that never loads python
 ${if ${findstring libpq,$(extern.available)},\
@@ -103,31 +94,6 @@ host.ext.extern := journal.lib python
 host.ext.lib.c++.flags += $(pyre.lib.c++.flags)
 host.ext.lib.c++.defines += $(pyre.lib.c++.defines)
 host.ext.lib.prerequisites += journal.lib # pyre.lib is added automatically
-
-
-# hdf5
-# the {pyre::h5} library meta-data; it wraps the hdf5 c api and knows nothing about python
-h5.lib.root := lib/h5/
-h5.lib.stem := h5
-# deposit the headers under the {pyre} namespace so they never collide in a shared prefix
-h5.lib.incdir := $(builder.dest.inc)pyre/h5/
-# the gateway header is deposited one level above the rest, as {pyre/h5.h}
-h5.lib.gateway := h5.h
-h5.lib.prerequisites := journal.lib
-h5.lib.extern := journal.lib hdf5
-h5.lib.c++.flags += $(pyre.lib.c++.flags)
-h5.lib.c++.defines += $(pyre.lib.c++.defines)
-
-# the {h5} extension meta-data; it wraps the library above
-h5.ext.root := extensions/h5/
-h5.ext.stem := h5
-h5.ext.pkg := pyre.pkg
-h5.ext.wraps := h5.lib
-h5.ext.capsule :=
-h5.ext.extern := pyre.lib journal.lib hdf5 pybind11 python
-h5.ext.lib.c++.flags += $(pyre.lib.c++.flags)
-h5.ext.lib.c++.defines += $(pyre.lib.c++.defines)
-h5.ext.lib.prerequisites += h5.lib journal.lib # pyre.lib is added automatically
 
 
 # postgres
