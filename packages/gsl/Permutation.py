@@ -34,14 +34,7 @@ class Permutation(gsl.Permutation):
         """
         Return the value at {index}, honouring negative indices
         """
-        # reflect a negative index about the end
-        if index < 0:
-            index += self.shape
-        # bounds check
-        if index < 0 or index >= self.shape:
-            # and complain
-            raise IndexError(f"permutation index {index} out of range")
-        # hand off to the extension
+        # the extension reflects negative indices and bounds-checks
         return self.get(index)
 
 

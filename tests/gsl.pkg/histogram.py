@@ -65,6 +65,18 @@ def test():
         # the guard is gone
         assert False, "an out of range bin should not be readable"
 
+    # asking for the range of a bin that does not exist raises too
+    try:
+        # ask for the range of a bin past the end
+        h.range(10)
+    # which is what should happen
+    except IndexError:
+        pass
+    # and if it doesn't
+    else:
+        # the guard is gone
+        assert False, "an out of range bin should not have a range"
+
     # a clone carries the same counts, in independent storage
     c = h.clone()
     assert c is not h

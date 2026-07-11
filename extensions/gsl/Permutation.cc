@@ -27,6 +27,22 @@ namespace gsl::py {
         }
     };
     using permutation_ptr = std::unique_ptr<gsl_permutation, permutationDeleter>;
+
+    // turn a user index into a valid slot of a permutation of {size} elements, or raise
+    //
+    // a negative index counts from the end, python style; anything still outside [0, size) is
+    // out of range. we check here rather than lean on gsl's own range check
+    inline auto slot(std::size_t size, long i) -> std::size_t
+    {
+        // reflect a negative index about the end
+        long index = i < 0 ? i + (long) size : i;
+        // and complain if it still lands outside the permutation
+        if (index < 0 || (std::size_t) index >= size) {
+            throw py::index_error("permutation index out of range");
+        }
+        // the index is good
+        return index;
+    }
 } // namespace gsl::py
 
 
@@ -115,9 +131,9 @@ gsl::py::permutation(py::module & m)
         // the name
         "get",
         // the implementation
-        [](const gsl_permutation & self, std::size_t i) -> std::size_t {
-            // straight from gsl
-            return gsl_permutation_get(&self, i);
+        [](const gsl_permutation & self, long i) -> std::size_t {
+            // read the slot the checked index names
+            return gsl_permutation_get(&self, slot(gsl_permutation_size(&self), i));
         },
         // the signature
         "i"_a,
@@ -129,9 +145,12 @@ gsl::py::permutation(py::module & m)
         // the name
         "swap",
         // the implementation
-        [](py::object self, std::size_t i, std::size_t j) -> py::object {
-            // gsl exchanges the two values
-            gsl_permutation_swap(&self.cast<gsl_permutation &>(), i, j);
+        [](py::object self, long i, long j) -> py::object {
+            // the permutation behind {self}, and its size
+            auto & p = self.cast<gsl_permutation &>();
+            std::size_t size = gsl_permutation_size(&p);
+            // gsl exchanges the two values the checked indices name
+            gsl_permutation_swap(&p, slot(size, i), slot(size, j));
             // hand myself back, so callers can chain
             return self;
         },
