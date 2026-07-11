@@ -11,8 +11,6 @@
 #include "legacy.h"
 
 // the declarations of the entities that have not moved to pybind11 yet
-#include "rng.h" // random numbers
-
 // mpi support
 #if defined(WITH_MPI)
 #include "partition.h"
@@ -22,15 +20,6 @@
 // the table of the entities the module still publishes as free functions over capsules
 namespace gsl::legacy {
 PyMethodDef methods[] = {
-    // random numbers
-    { rng::avail__name__, rng::avail, METH_VARARGS, rng::avail__doc__ },
-    { rng::alloc__name__, rng::alloc, METH_VARARGS, rng::alloc__doc__ },
-    { rng::get__name__, rng::get, METH_VARARGS, rng::get__doc__ },
-    { rng::name__name__, rng::name, METH_VARARGS, rng::name__doc__ },
-    { rng::range__name__, rng::range, METH_VARARGS, rng::range__doc__ },
-    { rng::set__name__, rng::set, METH_VARARGS, rng::set__doc__ },
-    { rng::uniform__name__, rng::uniform, METH_VARARGS, rng::uniform__doc__ },
-
 // mpi support
 #if defined(WITH_MPI)
     // matrix partitioning

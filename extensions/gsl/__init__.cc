@@ -11,8 +11,6 @@
 #include "forward.h"
 // the entities that have not moved to pybind11 yet
 #include "legacy.h"
-// the random number generators, whose table has to be built before anybody asks for one
-#include "rng.h"
 
 
 // the local helpers
@@ -71,8 +69,6 @@ PYBIND11_MODULE(libgsl, m)
     // route gsl's complaints into a journal channel, rather than letting the library take the
     // whole process down with it
     gsl_set_error_handler(&errorHandler);
-    // build the table of known random number generators
-    gsl::rng::initialize();
 
     // all done
     return;

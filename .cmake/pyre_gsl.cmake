@@ -50,7 +50,6 @@ function(pyre_gslModule)
       extensions/gsl/pdf.cc
       extensions/gsl/stats.cc
       extensions/gsl/matrixapi.cc
-      extensions/gsl/rngapi.cc
       extensions/gsl/vectorapi.cc
       )
 
