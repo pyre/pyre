@@ -43,28 +43,28 @@ namespace pyre::h5 {
 
 // the {datatype} specializations for unsigned integral types
 template <>
-auto
+inline auto
 pyre::h5::datatype<std::uint8_t>() -> datatype_t
 {
     return nativeDatatype(H5T_NATIVE_UINT8);
 }
 
 template <>
-auto
+inline auto
 pyre::h5::datatype<std::uint16_t>() -> datatype_t
 {
     return nativeDatatype(H5T_NATIVE_UINT16);
 }
 
 template <>
-auto
+inline auto
 pyre::h5::datatype<std::uint32_t>() -> datatype_t
 {
     return nativeDatatype(H5T_NATIVE_UINT32);
 }
 
 template <>
-auto
+inline auto
 pyre::h5::datatype<std::uint64_t>() -> datatype_t
 {
     return nativeDatatype(H5T_NATIVE_UINT64);
@@ -72,28 +72,28 @@ pyre::h5::datatype<std::uint64_t>() -> datatype_t
 
 // the {datatype} specializations for signed integral types
 template <>
-auto
+inline auto
 pyre::h5::datatype<std::int8_t>() -> datatype_t
 {
     return nativeDatatype(H5T_NATIVE_INT8);
 }
 
 template <>
-auto
+inline auto
 pyre::h5::datatype<std::int16_t>() -> datatype_t
 {
     return nativeDatatype(H5T_NATIVE_INT16);
 }
 
 template <>
-auto
+inline auto
 pyre::h5::datatype<std::int32_t>() -> datatype_t
 {
     return nativeDatatype(H5T_NATIVE_INT32);
 }
 
 template <>
-auto
+inline auto
 pyre::h5::datatype<std::int64_t>() -> datatype_t
 {
     return nativeDatatype(H5T_NATIVE_INT64);
@@ -101,14 +101,14 @@ pyre::h5::datatype<std::int64_t>() -> datatype_t
 
 // floating point types
 template <>
-auto
+inline auto
 pyre::h5::datatype<float>() -> datatype_t
 {
     return nativeDatatype(H5T_NATIVE_FLOAT);
 }
 
 template <>
-auto
+inline auto
 pyre::h5::datatype<double>() -> datatype_t
 {
     return nativeDatatype(H5T_NATIVE_DOUBLE);
@@ -116,70 +116,70 @@ pyre::h5::datatype<double>() -> datatype_t
 
 // complex types
 template <>
-auto
+inline auto
 pyre::h5::datatype<std::complex<float>>() -> datatype_t
 {
     return complexDatatype(H5T_NATIVE_FLOAT);
 }
 
 template <>
-auto
+inline auto
 pyre::h5::datatype<std::complex<double>>() -> datatype_t
 {
     return complexDatatype(H5T_NATIVE_DOUBLE);
 }
 
 template <>
-auto
+inline auto
 pyre::h5::datatype<std::complex<std::uint8_t>>() -> datatype_t
 {
     return complexDatatype(H5T_NATIVE_UINT8);
 }
 
 template <>
-auto
+inline auto
 pyre::h5::datatype<std::complex<std::uint16_t>>() -> datatype_t
 {
     return complexDatatype(H5T_NATIVE_UINT16);
 }
 
 template <>
-auto
+inline auto
 pyre::h5::datatype<std::complex<std::uint32_t>>() -> datatype_t
 {
     return complexDatatype(H5T_NATIVE_UINT32);
 }
 
 template <>
-auto
+inline auto
 pyre::h5::datatype<std::complex<std::uint64_t>>() -> datatype_t
 {
     return complexDatatype(H5T_NATIVE_UINT64);
 }
 
 template <>
-auto
+inline auto
 pyre::h5::datatype<std::complex<std::int8_t>>() -> datatype_t
 {
     return complexDatatype(H5T_NATIVE_INT8);
 }
 
 template <>
-auto
+inline auto
 pyre::h5::datatype<std::complex<std::int16_t>>() -> datatype_t
 {
     return complexDatatype(H5T_NATIVE_INT16);
 }
 
 template <>
-auto
+inline auto
 pyre::h5::datatype<std::complex<std::int32_t>>() -> datatype_t
 {
     return complexDatatype(H5T_NATIVE_INT32);
 }
 
 template <>
-auto
+inline auto
 pyre::h5::datatype<std::complex<std::int64_t>>() -> datatype_t
 {
     return complexDatatype(H5T_NATIVE_INT64);
