@@ -5,370 +5,188 @@
 // (c) 1998-2026 all rights reserved
 
 
-#include <portinfo>
-#include <Python.h>
-#include <gsl/gsl_vector.h>
-#include <gsl/gsl_matrix.h>
+// external dependencies
+#include "external.h"
+// namespace setup
+#include "forward.h"
+// the statistics
 #include <gsl/gsl_statistics.h>
-#include <cstdio>
-
-// local includes
-#include "stats.h"
-#include "capsules.h"
+// an absent axis means "the whole matrix"
+#include <optional>
 
 
-// stats::correlation
-const char * const gsl::stats::correlation__name__ = "stats_correlation";
-const char * const gsl::stats::correlation__doc__ =
-    "Pearson correlation coefficient between the datasets";
+// the local helpers
+namespace gsl::py {
+    // which spread, if any, to compute alongside the mean
+    enum class spread_t {
+        // just the mean
+        none,
+        // the sample standard deviation, dividing by N-1
+        sample,
+        // the population standard deviation, dividing by N about the fixed mean
+        population
+    };
 
-PyObject *
-gsl::stats::correlation(PyObject *, PyObject * args)
-{
-    // the arguments
-    PyObject * v1c;
-    PyObject * v2c;
-    // unpack the argument tuple
-    int status = PyArg_ParseTuple(
-        args, "O!O!:stats_correlation", &PyCapsule_Type, &v1c, &PyCapsule_Type, &v2c);
-    // if something went wrong
-    if (!status)
-        return 0;
-    // bail out if the two capsules are not valid
-    if (!PyCapsule_IsValid(v1c, gsl::vector::capsule_t)) {
-        PyErr_SetString(PyExc_TypeError, "the first argument must be a vector");
-        return 0;
-    }
-    if (!PyCapsule_IsValid(v2c, gsl::vector::capsule_t)) {
-        PyErr_SetString(PyExc_TypeError, "the second argument must be a vector");
-        return 0;
-    }
+    // compute the mean of a matrix, optionally with its spread, along {axis}
+    //
+    // {axis} 0 walks down each column, {axis} 1 across each row, and anything else folds the
+    // whole matrix into a single number. the answers are written into {mean} and, when a spread
+    // is asked for, {sd}, which the caller has sized to match
+    inline auto
+    matrixStats(
+        const gsl_matrix & m, int axis, gsl_vector & mean, gsl_vector * sd, spread_t spread)
+        -> void
+    {
+        // the shape of the matrix, and the stride between its rows
+        const std::size_t rows = m.size1, cols = m.size2, tda = m.tda;
+        // a running pointer into the payload
+        const double * datap = m.data;
 
-    // get the two vectors
-    gsl_vector * v1 = static_cast<gsl_vector *>(PyCapsule_GetPointer(v1c, gsl::vector::capsule_t));
-    gsl_vector * v2 = static_cast<gsl_vector *>(PyCapsule_GetPointer(v2c, gsl::vector::capsule_t));
-    // the result
-    double result;
-    // compute the dot product
-    result = gsl_stats_correlation(v1->data, 1, v2->data, 1, v1->size);
-    // and return the result
-    return PyFloat_FromDouble(result);
-}
-
-// stats::covariance
-const char * const gsl::stats::covariance__name__ = "stats_covariance";
-const char * const gsl::stats::covariance__doc__ = "the covariance of two datasets";
-
-PyObject *
-gsl::stats::covariance(PyObject *, PyObject * args)
-{
-    // the arguments
-    PyObject * v1c;
-    PyObject * v2c;
-    // unpack the argument tuple
-    int status = PyArg_ParseTuple(
-        args, "O!O!:stats_correlation", &PyCapsule_Type, &v1c, &PyCapsule_Type, &v2c);
-    // if something went wrong
-    if (!status)
-        return 0;
-    // bail out if the two capsules are not valid
-    if (!PyCapsule_IsValid(v1c, gsl::vector::capsule_t)) {
-        PyErr_SetString(PyExc_TypeError, "the first argument must be a vector");
-        return 0;
-    }
-    if (!PyCapsule_IsValid(v2c, gsl::vector::capsule_t)) {
-        PyErr_SetString(PyExc_TypeError, "the second argument must be a vector");
-        return 0;
-    }
-
-    // get the two vectors
-    gsl_vector * v1 = static_cast<gsl_vector *>(PyCapsule_GetPointer(v1c, gsl::vector::capsule_t));
-    gsl_vector * v2 = static_cast<gsl_vector *>(PyCapsule_GetPointer(v2c, gsl::vector::capsule_t));
-    // the result
-    double result;
-    // compute the dot product
-    result = gsl_stats_covariance(v1->data, 1, v2->data, 1, v1->size);
-    // and return the result
-    return PyFloat_FromDouble(result);
-}
-
-// stats::mean
-const char * const gsl::stats::matrix_mean__name__ = "stats_matrix_mean";
-const char * const gsl::stats::matrix_mean__doc__ = "the mean value(s) of a matrix";
-
-PyObject *
-gsl::stats::matrix_mean(PyObject *, PyObject * args)
-{
-    // the arguments
-    PyObject * matrixCapsule; // input matrix
-    PyObject * meanCapsule;   // output mean vectors
-    int axis;
-    // unpack the argument tuple
-    int status = PyArg_ParseTuple(
-        args, "O!kO:stats_matrix_mean", &PyCapsule_Type, &matrixCapsule, &axis, &meanCapsule);
-    // if something went wrong
-    if (!status)
-        return 0;
-
-    // bail out if the capsule is not valid
-    // input matrix capsule
-    if (!PyCapsule_IsValid(matrixCapsule, gsl::matrix::capsule_t)) {
-        PyErr_SetString(PyExc_TypeError, " invalid matrix capsule");
-        return 0;
-    }
-    // output mean capsules
-    if (!PyCapsule_IsValid(meanCapsule, gsl::vector::capsule_t)) {
-        PyErr_SetString(PyExc_TypeError, " invalid vector capsule for mean");
-        return 0;
-    }
-
-    // get the matrix/vector from capsules
-    gsl_matrix * m =
-        static_cast<gsl_matrix *>(PyCapsule_GetPointer(matrixCapsule, gsl::matrix::capsule_t));
-    gsl_vector * meanVec =
-        static_cast<gsl_vector *>(PyCapsule_GetPointer(meanCapsule, gsl::vector::capsule_t));
-
-    // temporary results
-    double mean;
-    // pointer to data
-    double * datap = (double *) m->data;
-
-    size_t rows = m->size1;
-    size_t cols = m->size2;
-    size_t tda = m->tda;
-
-    // for different axis
-    switch (axis) {
-        case (0): // along row
-            for (size_t i = 0; i < cols; ++i) {
-                // compute mean for each column
-                mean = gsl_stats_mean(datap, tda, rows); // (data[], stride, total elements)
-                // set the values to output vectors
-                gsl_vector_set(meanVec, i, mean);
-                // move pointer to next column
-                datap++;
+        // pick the recipe for the spread of a run of {n} cells, {stride} apart, about {mu}
+        auto spreadOf = [spread](const double * p, std::size_t stride, std::size_t n,
+                                 double mu) -> double {
+            // the sample standard deviation divides by N-1
+            if (spread == spread_t::sample) {
+                return gsl_stats_sd_m(p, stride, n, mu);
             }
-            break;
-        case (1): // along column
-            for (size_t i = 0; i < rows; ++i) {
-                // compute (mean, sd) for each row
-                mean = gsl_stats_mean(datap, 1, cols);
-                // set the val
-                gsl_vector_set(meanVec, i, mean);
-                // move pointer to next row
-                datap += tda;
+            // the population standard deviation divides by N about the fixed mean
+            return gsl_stats_sd_with_fixed_mean(p, stride, n, mu);
+        };
+
+        // along the columns
+        if (axis == 0) {
+            // one answer per column
+            for (std::size_t i = 0; i < cols; ++i, ++datap) {
+                // the column is {rows} cells, one row-stride apart
+                double mu = gsl_stats_mean(datap, tda, rows);
+                // record it
+                gsl_vector_set(&mean, i, mu);
+                // and its spread, if asked for
+                if (sd) {
+                    gsl_vector_set(sd, i, spreadOf(datap, tda, rows, mu));
+                }
             }
-            break;
-        default: // all elements
-            if (tda != cols) {
-                PyErr_SetString(PyExc_TypeError, "Not working for non-contiguous matrix!");
-                return (PyObject *) NULL;
+            // all done
+            return;
+        }
+
+        // along the rows
+        if (axis == 1) {
+            // one answer per row
+            for (std::size_t i = 0; i < rows; ++i, datap += tda) {
+                // the row is {cols} contiguous cells
+                double mu = gsl_stats_mean(datap, 1, cols);
+                // record it
+                gsl_vector_set(&mean, i, mu);
+                // and its spread, if asked for
+                if (sd) {
+                    gsl_vector_set(sd, i, spreadOf(datap, 1, cols, mu));
+                }
             }
-            mean = gsl_stats_mean(datap, 1, cols * rows);
-            gsl_vector_set(meanVec, 0, mean);
+            // all done
+            return;
+        }
+
+        // otherwise, the whole matrix folds into one number, which reads its cells as a single
+        // contiguous run and so needs the rows to be tightly packed
+        if (tda != cols) {
+            throw py::value_error("the whole-matrix mean requires a contiguous matrix");
+        }
+        // the lone mean over every cell
+        double mu = gsl_stats_mean(datap, 1, rows * cols);
+        // recorded in the first slot
+        gsl_vector_set(&mean, 0, mu);
+        // with its spread, if asked for
+        if (sd) {
+            gsl_vector_set(sd, 0, spreadOf(datap, 1, rows * cols, mu));
+        }
+        // all done
+        return;
     }
+} // namespace gsl::py
+
+
+// add the bindings for the gsl statistics
+void
+gsl::py::stats(py::module & m)
+{
+    // the Pearson correlation coefficient of two datasets
+    m.def(
+        // the name
+        "stats_correlation",
+        // the implementation
+        [](const gsl_vector & x, const gsl_vector & y) -> double {
+            // gsl walks each dataset with unit stride
+            return gsl_stats_correlation(x.data, 1, y.data, 1, x.size);
+        },
+        // the signature
+        "x"_a, "y"_a,
+        // the docstring
+        "the Pearson correlation coefficient of {x} and {y}");
+
+    // the covariance of two datasets
+    m.def(
+        // the name
+        "stats_covariance",
+        // the implementation
+        [](const gsl_vector & x, const gsl_vector & y) -> double {
+            // gsl walks each dataset with unit stride
+            return gsl_stats_covariance(x.data, 1, y.data, 1, x.size);
+        },
+        // the signature
+        "x"_a, "y"_a,
+        // the docstring
+        "the covariance of {x} and {y}");
+
+    // the mean of a matrix along an axis
+    m.def(
+        // the name
+        "stats_matrix_mean",
+        // the implementation
+        [](const gsl_matrix & source, std::optional<int> axis, gsl_vector & mean) -> void {
+            // no spread, just the mean; an absent axis folds the whole matrix
+            matrixStats(source, axis.value_or(-1), mean, nullptr, spread_t::none);
+        },
+        // the signature
+        "matrix"_a, "axis"_a, "mean"_a,
+        // the docstring
+        "fill {mean} with the mean of {matrix} along {axis}");
+
+    // the mean and sample standard deviation of a matrix along an axis
+    m.def(
+        // the name
+        "stats_matrix_mean_sd",
+        // the implementation
+        [](const gsl_matrix & source, std::optional<int> axis, gsl_vector & mean,
+           gsl_vector & sd) -> void {
+            // the sample spread divides by N-1; an absent axis folds the whole matrix
+            matrixStats(source, axis.value_or(-1), mean, &sd, spread_t::sample);
+        },
+        // the signature
+        "matrix"_a, "axis"_a, "mean"_a, "sd"_a,
+        // the docstring
+        "fill {mean} and {sd} with the mean and sample standard deviation of {matrix} along "
+        "{axis}");
+
+    // the mean and population standard deviation of a matrix along an axis
+    m.def(
+        // the name
+        "stats_matrix_mean_std",
+        // the implementation
+        [](const gsl_matrix & source, std::optional<int> axis, gsl_vector & mean,
+           gsl_vector & sd) -> void {
+            // the population spread divides by N; an absent axis folds the whole matrix
+            matrixStats(source, axis.value_or(-1), mean, &sd, spread_t::population);
+        },
+        // the signature
+        "matrix"_a, "axis"_a, "mean"_a, "sd"_a,
+        // the docstring
+        "fill {mean} and {sd} with the mean and population standard deviation of {matrix} along "
+        "{axis}");
 
     // all done
-    // return None
-    Py_INCREF(Py_None);
-    return Py_None;
+    return;
 }
 
-
-// stats::matrix_mean_sd
-// (sample) standard deviation sd = sqrt{ \sum (x_i- mean)^2 /(N-1)}
-const char * const gsl::stats::matrix_mean_sd__name__ = "stats_matrix_mean_sd";
-const char * const gsl::stats::matrix_mean_sd__doc__ =
-    "the mean and (sample) standard deviation of a matrix";
-
-PyObject *
-gsl::stats::matrix_mean_sd(PyObject *, PyObject * args)
-{
-    // the arguments
-    PyObject * matrixCapsule;          // input matrix
-    PyObject *meanCapsule, *sdCapsule; // output (mean, sd) vectors
-    int axis;
-    // unpack the argument tuple
-    int status = PyArg_ParseTuple(
-        args, "O!kOO:stats_matrix_mean_sd", &PyCapsule_Type, &matrixCapsule, &axis, &meanCapsule,
-        &sdCapsule);
-    // if something went wrong
-    if (!status)
-        return 0;
-
-    // bail out if the capsule is not valid
-    // input matrix capsule
-    if (!PyCapsule_IsValid(matrixCapsule, gsl::matrix::capsule_t)) {
-        PyErr_SetString(PyExc_TypeError, " invalid matrix capsule");
-        return 0;
-    }
-    // output mean, sd capsules
-    if (!PyCapsule_IsValid(meanCapsule, gsl::vector::capsule_t)) {
-        PyErr_SetString(PyExc_TypeError, " invalid vector capsule for mean");
-        return 0;
-    }
-    if (!PyCapsule_IsValid(sdCapsule, gsl::vector::capsule_t)) {
-        PyErr_SetString(PyExc_TypeError, "invalid vector capsule for standard deviation");
-        return 0;
-    }
-
-    // get the matrix/vector from capsules
-    gsl_matrix * m =
-        static_cast<gsl_matrix *>(PyCapsule_GetPointer(matrixCapsule, gsl::matrix::capsule_t));
-    gsl_vector * meanVec =
-        static_cast<gsl_vector *>(PyCapsule_GetPointer(meanCapsule, gsl::vector::capsule_t));
-    gsl_vector * sdVec =
-        static_cast<gsl_vector *>(PyCapsule_GetPointer(sdCapsule, gsl::vector::capsule_t));
-
-    // temporary results
-    double mean, sd;
-    // pointer to data
-    double * datap = (double *) m->data;
-
-    size_t rows = m->size1;
-    size_t cols = m->size2;
-    size_t tda = m->tda;
-
-    // for different axis
-    switch (axis) {
-        case (0): // along row
-            for (size_t i = 0; i < cols; ++i) {
-                // compute mean for each column
-                mean = gsl_stats_mean(datap, tda, rows); // (data[], stride, total elements)
-                // compute sd for each column
-                sd = gsl_stats_sd_m(datap, tda, rows, mean);
-                // set the values to output vectors
-                gsl_vector_set(meanVec, i, mean);
-                gsl_vector_set(sdVec, i, sd);
-                // move pointer to next column
-                datap++;
-            }
-            break;
-        case (1): // along column
-            for (size_t i = 0; i < rows; ++i) {
-                // compute (mean, sd) for each row
-                mean = gsl_stats_mean(datap, 1, cols);
-                sd = gsl_stats_sd_m(datap, 1, cols, mean);
-                // set the val
-                gsl_vector_set(meanVec, i, mean);
-                gsl_vector_set(sdVec, i, sd);
-                // move pointer to next row
-                datap += tda;
-            }
-            break;
-        default: // all elements
-            if (tda != cols) {
-                PyErr_SetString(PyExc_TypeError, "Not working for non-contiguous matrix!");
-                return (PyObject *) NULL;
-            }
-            mean = gsl_stats_mean(datap, 1, cols * rows);
-            sd = gsl_stats_sd_m(datap, 1, cols * rows, mean);
-            gsl_vector_set(meanVec, 0, mean);
-            gsl_vector_set(sdVec, 0, sd);
-    }
-
-    // all done
-    // return None
-    Py_INCREF(Py_None);
-    return Py_None;
-}
-
-// stats::matrix_mean_std
-// (population) standard deviation sd = sqrt{ \sum (x_i- mean)^2 /N}
-const char * const gsl::stats::matrix_mean_std__name__ = "stats_matrix_mean_std";
-const char * const gsl::stats::matrix_mean_std__doc__ =
-    "the mean and (population) standard deviation of a matrix";
-
-PyObject *
-gsl::stats::matrix_mean_std(PyObject *, PyObject * args)
-{
-    // the arguments
-    PyObject * matrixCapsule;          // input matrix
-    PyObject *meanCapsule, *sdCapsule; // output (mean, sd) vectors
-    int axis;
-    // unpack the argument tuple
-    int status = PyArg_ParseTuple(
-        args, "O!kOO:stats_matrix_mean_std", &PyCapsule_Type, &matrixCapsule, &axis, &meanCapsule,
-        &sdCapsule);
-    // if something went wrong
-    if (!status)
-        return 0;
-
-    // bail out if the capsule is not valid
-    // input matrix capsule
-    if (!PyCapsule_IsValid(matrixCapsule, gsl::matrix::capsule_t)) {
-        PyErr_SetString(PyExc_TypeError, " invalid matrix capsule");
-        return 0;
-    }
-    // output mean, sd capsules
-    if (!PyCapsule_IsValid(meanCapsule, gsl::vector::capsule_t)) {
-        PyErr_SetString(PyExc_TypeError, " invalid vector capsule for mean");
-        return 0;
-    }
-    if (!PyCapsule_IsValid(sdCapsule, gsl::vector::capsule_t)) {
-        PyErr_SetString(PyExc_TypeError, "invalid vector capsule for standard deviation");
-        return 0;
-    }
-
-    // get the matrix/vector from capsules
-    gsl_matrix * m =
-        static_cast<gsl_matrix *>(PyCapsule_GetPointer(matrixCapsule, gsl::matrix::capsule_t));
-    gsl_vector * meanVec =
-        static_cast<gsl_vector *>(PyCapsule_GetPointer(meanCapsule, gsl::vector::capsule_t));
-    gsl_vector * sdVec =
-        static_cast<gsl_vector *>(PyCapsule_GetPointer(sdCapsule, gsl::vector::capsule_t));
-
-    // temporary results
-    double mean, sd;
-    // pointer to data
-    double * datap = (double *) m->data;
-
-    size_t rows = m->size1;
-    size_t cols = m->size2;
-    size_t tda = m->tda;
-
-    // for different axis
-    switch (axis) {
-        case (0): // along row
-            for (size_t i = 0; i < cols; ++i) {
-                // compute mean for each column
-                mean = gsl_stats_mean(datap, tda, rows); // (data[], stride, total elements)
-                // compute sd for each column
-                sd = gsl_stats_sd_with_fixed_mean(datap, tda, rows, mean);
-                // set the values to output vectors
-                gsl_vector_set(meanVec, i, mean);
-                gsl_vector_set(sdVec, i, sd);
-                // move pointer to next column
-                datap++;
-            }
-            break;
-        case (1): // along column
-            for (size_t i = 0; i < rows; ++i) {
-                // compute (mean, sd) for each row
-                mean = gsl_stats_mean(datap, 1, cols);
-                sd = gsl_stats_sd_with_fixed_mean(datap, 1, cols, mean);
-                // set the val
-                gsl_vector_set(meanVec, i, mean);
-                gsl_vector_set(sdVec, i, sd);
-                // move pointer to next row
-                datap += tda;
-            }
-            break;
-        default: // all elements
-            if (tda != cols) {
-                PyErr_SetString(PyExc_TypeError, "Not working for non-contiguous matrix!");
-                return (PyObject *) NULL;
-            }
-            mean = gsl_stats_mean(datap, 1, cols * rows);
-            sd = gsl_stats_sd_with_fixed_mean(datap, 1, cols * rows, mean);
-            gsl_vector_set(meanVec, 0, mean);
-            gsl_vector_set(sdVec, 0, sd);
-    }
-
-    // all done
-    // return None
-    Py_INCREF(Py_None);
-    return Py_None;
-}
 
 // end of file

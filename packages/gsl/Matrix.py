@@ -506,7 +506,7 @@ class Matrix(gsl.Matrix):
             # assuming correct dimension, skip error checking
 
         # call gsl function
-        gsl.stats_matrix_mean(self.data, axis, mean.data)
+        gsl.stats_matrix_mean(self, axis, mean)
 
         # return the result
         return mean
@@ -546,9 +546,9 @@ class Matrix(gsl.Matrix):
 
         # call gsl function
         if sample:
-            gsl.stats_matrix_mean_sd(self.data, axis, mean.data, sd.data)
+            gsl.stats_matrix_mean_sd(self, axis, mean, sd)
         else:
-            gsl.stats_matrix_mean_std(self.data, axis, mean.data, sd.data)
+            gsl.stats_matrix_mean_std(self, axis, mean, sd)
 
         # return (mean, sd)
         return mean, sd
