@@ -14,6 +14,8 @@
 #include <gsl/gsl_sort_vector.h>
 // the statistics over my elements
 #include <gsl/gsl_statistics.h>
+// the generator that drives an in-place shuffle
+#include <gsl/gsl_rng.h>
 // the file i/o
 #include <cstdio>
 
@@ -323,6 +325,24 @@ gsl::py::vector(py::module & m)
         // the docstring
         "my smallest and largest cells, as a pair");
 
+    // the index of my largest cell
+    cls.def(
+        // the name
+        "maxIndex",
+        // the implementation
+        [](const gsl_vector & self) -> std::size_t { return gsl_vector_max_index(&self); },
+        // the docstring
+        "the index of my largest cell");
+
+    // the index of my smallest cell
+    cls.def(
+        // the name
+        "minIndex",
+        // the implementation
+        [](const gsl_vector & self) -> std::size_t { return gsl_vector_min_index(&self); },
+        // the docstring
+        "the index of my smallest cell");
+
     // elementwise arithmetic, in place
     // add the cells of {other} to mine
     cls.def(
@@ -434,6 +454,60 @@ gsl::py::vector(py::module & m)
         },
         // the docstring
         "sort my cells into ascending order, and return me");
+
+    // reordering, in place
+    // reverse the order of my cells
+    cls.def(
+        // the name
+        "reverse",
+        // the implementation
+        [](py::object self) -> py::object {
+            // gsl walks the block from both ends
+            gsl_vector_reverse(&self.cast<gsl_vector &>());
+            // hand myself back, so callers can chain
+            return self;
+        },
+        // the docstring
+        "reverse the order of my cells, and return me");
+
+    // swap my {i}th and {j}th cells
+    cls.def(
+        // the name
+        "swap",
+        // the implementation
+        [](py::object self, long i, long j) -> py::object {
+            // the vector behind {self}
+            auto & v = self.cast<gsl_vector &>();
+            // gsl swaps the two cells the checked indices name
+            gsl_vector_swap_elements(&v, cell(v.size, i), cell(v.size, j));
+            // hand myself back, so callers can chain
+            return self;
+        },
+        // the signature
+        "i"_a, "j"_a,
+        // the docstring
+        "swap my {i}th and {j}th cells, and return me");
+
+    // shuffle my cells into a random order drawn from {rng}
+    cls.def(
+        // the name
+        "shuffle",
+        // the implementation
+        [](py::object self, gsl_rng & rng) -> py::object {
+            // the vector behind {self}
+            auto & v = self.cast<gsl_vector &>();
+            // fisher-yates over the logical cells, so a nontrivial stride is honored
+            for (std::size_t i = v.size; i > 1; --i) {
+                // swap the last unshuffled cell with one drawn from those still in play
+                gsl_vector_swap_elements(&v, i - 1, gsl_rng_uniform_int(&rng, i));
+            }
+            // hand myself back, so callers can chain
+            return self;
+        },
+        // the signature
+        "rng"_a,
+        // the docstring
+        "shuffle my cells into a random order drawn from {rng}, and return me");
 
     // the mean of my cells, optionally weighted by the cells of {weights}
     cls.def(
