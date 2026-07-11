@@ -58,6 +58,13 @@ from .Permutation import Permutation as permutation
 from .RNG import RNG as rng
 from .Vector import Vector as vector
 
+# the blas and eigen flag enumerations, straight from the extension
+Transpose = gsl.Transpose
+Triangle = gsl.Triangle
+Diagonal = gsl.Diagonal
+Side = gsl.Side
+EigenOrder = gsl.EigenOrder
+
 # other interfaces
 from . import blas, pdf, linalg, stats
 

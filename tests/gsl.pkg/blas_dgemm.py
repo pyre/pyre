@@ -32,7 +32,7 @@ def test():
     C[1, 0], C[1, 1], C[1, 2] = 0, 0, 0
 
     # compute the form
-    gsl.blas.dgemm(A.opNoTrans, B.opNoTrans, α, A, B, β, C)
+    gsl.blas.dgemm(gsl.Transpose.noTranspose, gsl.Transpose.noTranspose, α, A, B, β, C)
 
     # check
     # print(tuple(y))

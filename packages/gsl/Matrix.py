@@ -27,28 +27,6 @@ class Matrix(gsl.Matrix):
     # constants
     defaultFormat = "+16.7"
 
-    upperTriangular = 1
-    lowerTriangular = 0
-
-    # flag that controls whether the diagonal entries are assumed to be unity
-    unitDiagonal = 1
-    nonUnitDiagonal = 0
-
-    # operation flags for some of the blas primitives
-    opNoTrans = 0
-    opTrans = 1
-    opConjTrans = 2
-
-    # flag to control the order of operands in some matrix multiplication routines
-    sideRight = 1
-    sideLeft = 0
-
-    # sort type for eigensystems
-    sortValueAscending = 0
-    sortValueDescending = 1
-    sortMagnitudeAscending = 2
-    sortMagnitudeDescending = 3
-
     # class methods
     # mpi support
     @classmethod
@@ -349,7 +327,7 @@ class Matrix(gsl.Matrix):
         return gsl.Matrix.setColumn(self, int(index), v)
 
     # eigensystems
-    def symmetricEigensystem(self, order=sortValueAscending):
+    def symmetricEigensystem(self, order=gsl.EigenOrder.valueAscending):
         """
         Compute my eigenvalues and eigenvectors, assuming i am a real symmetric matrix
         """

@@ -22,7 +22,7 @@ def test():
     A = gsl.matrix(shape=(3, 3)).identity()
 
     # compute the form
-    y = gsl.blas.dtrsv(A.upperTriangular, A.opTrans, A.unitDiagonal, A, x.clone())
+    y = gsl.blas.dtrsv(gsl.Triangle.upper, gsl.Transpose.transpose, gsl.Diagonal.unit, A, x.clone())
 
     # check
     # print(tuple(y))

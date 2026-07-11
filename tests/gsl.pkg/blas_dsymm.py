@@ -39,7 +39,7 @@ def test():
     C[1, 0], C[1, 1], C[1, 2] = 0, 0, 1
 
     # compute the form
-    gsl.blas.dsymm(A.sideLeft, A.upperTriangular, α, A, B, β, C)
+    gsl.blas.dsymm(gsl.Side.left, gsl.Triangle.upper, α, A, B, β, C)
 
     # check
     assert tuple(C) == (14, 24, 14, 16, 26, 19)

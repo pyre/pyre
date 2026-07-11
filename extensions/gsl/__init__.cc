@@ -18,15 +18,15 @@ namespace {
     // the library aborts the process by default, which is no way to treat an interpreter; so we
     // take the report and hand it to a journal channel instead, and let the routine return its
     // error code to whoever called it
-    void
-    errorHandler(const char * reason, const char *, int, int)
+    void errorHandler(const char * reason, const char *, int, int)
     {
         // make a channel
         auto channel = pyre::journal::warning_t("gsl");
         // and complain
         channel
             // the reason
-            << "gsl error: " << reason
+            << "gsl error: "
+            << reason
             // flush
             << pyre::journal::endl(__HERE__);
         // all done
@@ -43,6 +43,8 @@ PYBIND11_MODULE(libgsl, m)
 
     // what the package says about itself
     gsl::py::metadata(m);
+    // the blas and eigen flag enumerations, before anybody that takes them by default
+    gsl::py::enums(m);
 
     // the data types gsl allocates and releases
     gsl::py::vector(m);
