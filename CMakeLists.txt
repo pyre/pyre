@@ -243,6 +243,7 @@ if(PYRE_BUILD_TESTING)
   # if we have GSL support
   if(GSL_FOUND)
     include(pyre_tests_gsl_pkg)
+    include(pyre_tests_gsl_ext)
   endif()
 
   # if we have postgres support
