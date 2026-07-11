@@ -1,0 +1,15 @@
+# -*- Makefile -*-
+#
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2026 all rights reserved
+
+
+# the pyre-gsl extension testsuite
+#
+# these drivers import the {libgsl} bindings directly, bypassing the {gsl} package shim, so that
+# a failure isolates the c++ layer rather than the python one
+pyre-gsl.ext.tests.stem := gsl.ext
+pyre-gsl.ext.tests.prerequisites := pyre-gsl.ext pyre-gsl.pkg pyre.pkg
+
+
+# end of file

@@ -19,7 +19,7 @@ pyre-gsl.libraries :=
 # a python extension
 pyre-gsl.extensions := pyre-gsl.ext
 # and test suites
-pyre-gsl.tests := pyre-gsl.pkg.tests
+pyre-gsl.tests := pyre-gsl.pkg.tests pyre-gsl.ext.tests
 
 
 # the gsl package meta-data
@@ -65,7 +65,7 @@ pyre-gsl.ext.extern += python pybind11
 
 
 # get the testsuites
-include pyre-gsl.pkg.tests
+include pyre-gsl.pkg.tests pyre-gsl.ext.tests
 
 
 endif
