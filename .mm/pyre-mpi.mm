@@ -18,7 +18,7 @@ pyre-mpi.libraries := pyre-mpi.lib
 # a python extension
 pyre-mpi.extensions := pyre-mpi.ext
 # and test suites
-pyre-mpi.tests := pyre-mpi.pkg.tests pyre-mpi.lib.tests
+pyre-mpi.tests := pyre-mpi.pkg.tests pyre-mpi.ext.tests pyre-mpi.lib.tests
 
 
 # the mpi package meta-data
@@ -52,7 +52,7 @@ pyre-mpi.ext.lib.c++.defines += $(pyre-mpi.lib.c++.defines)
 
 
 # get the testsuites
-include pyre-mpi.pkg.tests pyre-mpi.lib.tests
+include pyre-mpi.pkg.tests pyre-mpi.ext.tests pyre-mpi.lib.tests
 
 
 endif
