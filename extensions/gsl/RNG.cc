@@ -9,9 +9,10 @@
 #include "external.h"
 // namespace setup
 #include "forward.h"
-// the generators, and the capsule name the free functions that have not moved yet agree on
+// the generators
 #include <gsl/gsl_rng.h>
-#include "capsules.h"
+// the catalogue of generator names crosses as a set
+#include <set>
 
 
 // the local helpers
@@ -141,21 +142,24 @@ gsl::py::rng(py::module & m)
         // the docstring
         "draw an integer uniformly from my range");
 
-    // the transitional bridge to the free functions that have not moved to pybind11 yet
-    //
-    // the {pdf} distributions still reach for a generator as a capsule; we hand them one that
-    // points at my {gsl_rng} and releases nothing, since the bound object owns it. it goes away
-    // with the last of them
-    cls.def_property_readonly(
+    // the catalogue of the generators gsl was built with
+    m.def(
         // the name
-        "rng",
+        "rng_avail",
         // the implementation
-        [](gsl_rng & self) -> py::capsule {
-            // a capsule that borrows, rather than owns
-            return py::capsule(&self, gsl::rng::capsule_t);
+        []() -> std::set<std::string> {
+            // room for the names
+            std::set<std::string> names;
+            // walk the types gsl knows
+            for (const gsl_rng_type ** t = gsl_rng_types_setup(); *t != nullptr; ++t) {
+                // and record each name
+                names.insert((*t)->name);
+            }
+            // hand the set back
+            return names;
         },
         // the docstring
-        "the underlying gsl generator, for the free functions that have not moved yet");
+        "the names of the random number generators gsl was built with");
 
     // all done
     return;
