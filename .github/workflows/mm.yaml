@@ -183,7 +183,6 @@ jobs:
           ${mm} extern.gsl.info
           ${mm} extern.mpi.info
           ${mm} extern.hdf5.info
-          ${mm} extern.numpy.info
           ${mm} extern.pybind11.info
           echo " -- verifying the pyre extension"
           ${mm} pyre.ext.info

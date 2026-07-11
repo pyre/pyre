@@ -25,12 +25,14 @@ dependencies:
   # pin the standard ABI; left to itself the solver prefers the free-threaded {cp314t} build,
   # whose headers live in {include/python3.14t} rather than {include/python3.14}
   - python-gil
-  - numpy
   - pybind11
   - pyyaml
   # the native external packages
   - gsl
   - hdf5
+  # numpy is not a build dependency -- the gsl bindings hand their buffers to python through the
+  # buffer protocol, not numpy's c api -- but the gsl test suite imports it at runtime
+  - numpy
   # openmpi is withheld: {pyre.platforms} has no conda package manager, so {pyre.externals}
   # cannot register the conda-provided openmpi and the {mpi} test suites fail at runtime. its
   # absence gates the whole {pyre-mpi} project out of the build; restore it once the packager
