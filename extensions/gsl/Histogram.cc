@@ -229,6 +229,10 @@ gsl::py::histogram(py::module & m)
         "range",
         // the implementation
         [](const gsl_histogram & self, std::size_t i) -> std::pair<double, double> {
+            // bounds check, so an out of range bin raises rather than reading past the block
+            if (i >= gsl_histogram_bins(&self)) {
+                throw py::index_error("histogram bin index out of range");
+            }
             // room for the answer
             double lower = 0, upper = 0;
             // ask gsl

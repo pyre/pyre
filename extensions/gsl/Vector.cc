@@ -49,6 +49,24 @@ namespace gsl::py {
 
     // the owning handle python holds
     using vector_ptr = std::unique_ptr<gsl_vector, vectorDeleter>;
+
+    // turn a user index into a valid cell, or raise
+    //
+    // a negative index counts from the end, python style; anything that still falls outside
+    // [0, size) is out of range. we check here rather than lean on gsl's own range check, which
+    // is a compile-time option and, even when on, quietly returns zero and logs rather than
+    // raising
+    inline auto cell(std::size_t size, long i) -> std::size_t
+    {
+        // reflect a negative index about the end
+        long index = i < 0 ? i + (long) size : i;
+        // and complain if it still lands outside the vector
+        if (index < 0 || (std::size_t) index >= size) {
+            throw py::index_error("vector index out of range");
+        }
+        // the index is good
+        return index;
+    }
 } // namespace gsl::py
 
 
@@ -159,9 +177,11 @@ gsl::py::vector(py::module & m)
         // the name
         "basis",
         // the implementation
-        [](py::object self, std::size_t i) -> py::object {
-            // gsl zeroes me and sets the one cell
-            gsl_vector_set_basis(&self.cast<gsl_vector &>(), i);
+        [](py::object self, long i) -> py::object {
+            // the vector behind {self}
+            auto & v = self.cast<gsl_vector &>();
+            // gsl zeroes me and sets the one cell the checked index names
+            gsl_vector_set_basis(&v, cell(v.size, i));
             // hand myself back, so callers can chain
             return self;
         },
@@ -192,7 +212,10 @@ gsl::py::vector(py::module & m)
         // the name
         "get",
         // the implementation
-        [](const gsl_vector & self, std::size_t i) -> double { return gsl_vector_get(&self, i); },
+        [](const gsl_vector & self, long i) -> double {
+            // read the cell the checked index names
+            return gsl_vector_get(&self, cell(self.size, i));
+        },
         // the signature
         "i"_a,
         // the docstring
@@ -203,9 +226,9 @@ gsl::py::vector(py::module & m)
         // the name
         "set",
         // the implementation
-        [](gsl_vector & self, std::size_t i, double value) -> void {
-            // gsl writes the one cell
-            gsl_vector_set(&self, i, value);
+        [](gsl_vector & self, long i, double value) -> void {
+            // write the cell the checked index names
+            gsl_vector_set(&self, cell(self.size, i), value);
         },
         // the signature
         "i"_a, "value"_a,

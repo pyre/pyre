@@ -315,10 +315,7 @@ class Vector(gsl.Vector):
         except TypeError:
             # we are out of ideas
             raise TypeError(f"vector indices must be integers, not {type(index).__name__}")
-        # reflect a negative index about the end
-        if index < 0:
-            index += len(self)
-        # and hand off to the extension
+        # the extension reflects negative indices and bounds-checks
         return self.get(index)
 
     def __setitem__(self, index, value):
@@ -344,10 +341,7 @@ class Vector(gsl.Vector):
         except TypeError:
             # we are out of ideas
             raise TypeError(f"vector indices must be integers, not {type(index).__name__}")
-        # reflect a negative index about the end
-        if index < 0:
-            index += len(self)
-        # and set the cell
+        # the extension reflects negative indices and bounds-checks
         self.set(index, value)
         # all done
         return

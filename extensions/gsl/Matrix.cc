@@ -49,6 +49,23 @@ namespace gsl::py {
 
     // the shape of a matrix, and the anchor of a view, as they cross from python
     using shape_type = std::pair<std::size_t, std::size_t>;
+
+    // turn a user index into a valid position along an axis of {extent}, or raise
+    //
+    // a negative index counts from the end, python style; anything still outside [0, extent) is
+    // out of range. we check here rather than lean on gsl's own range check, which is a
+    // compile-time option and, even when on, quietly returns zero and logs rather than raising
+    inline auto along(std::size_t extent, long i) -> std::size_t
+    {
+        // reflect a negative index about the end
+        long index = i < 0 ? i + (long) extent : i;
+        // and complain if it still lands outside the axis
+        if (index < 0 || (std::size_t) index >= extent) {
+            throw py::index_error("matrix index out of range");
+        }
+        // the index is good
+        return index;
+    }
 } // namespace gsl::py
 
 
@@ -194,15 +211,9 @@ gsl::py::matrix(py::module & m)
         "get",
         // the implementation
         [](const gsl_matrix & self, std::pair<long, long> index) -> double {
-            // reflect negative coordinates about the ends
-            long i = index.first < 0 ? index.first + (long) self.size1 : index.first;
-            long j = index.second < 0 ? index.second + (long) self.size2 : index.second;
-            // bounds check, so out of range reads raise rather than read past the block
-            if (i < 0 || (std::size_t) i >= self.size1 || j < 0 || (std::size_t) j >= self.size2) {
-                throw py::index_error("matrix index out of range");
-            }
-            // hand back the cell
-            return gsl_matrix_get(&self, i, j);
+            // read the cell the checked coordinates name
+            return gsl_matrix_get(
+                &self, along(self.size1, index.first), along(self.size2, index.second));
         },
         // the signature
         "index"_a,
@@ -215,15 +226,9 @@ gsl::py::matrix(py::module & m)
         "set",
         // the implementation
         [](gsl_matrix & self, std::pair<long, long> index, double value) -> void {
-            // reflect negative coordinates about the ends
-            long i = index.first < 0 ? index.first + (long) self.size1 : index.first;
-            long j = index.second < 0 ? index.second + (long) self.size2 : index.second;
-            // bounds check
-            if (i < 0 || (std::size_t) i >= self.size1 || j < 0 || (std::size_t) j >= self.size2) {
-                throw py::index_error("matrix index out of range");
-            }
-            // write the cell
-            gsl_matrix_set(&self, i, j, value);
+            // write the cell the checked coordinates name
+            gsl_matrix_set(
+                &self, along(self.size1, index.first), along(self.size2, index.second), value);
         },
         // the signature
         "index"_a, "value"_a,
@@ -451,9 +456,9 @@ gsl::py::matrix(py::module & m)
         // the name
         "getRow",
         // the implementation
-        [](const gsl_matrix & self, std::size_t index, gsl_vector & vector) -> void {
-            // gsl copies the row out
-            gsl_matrix_get_row(&vector, &self, index);
+        [](const gsl_matrix & self, long index, gsl_vector & vector) -> void {
+            // gsl copies the row the checked index names out
+            gsl_matrix_get_row(&vector, &self, along(self.size1, index));
         },
         // the signature
         "index"_a, "vector"_a,
@@ -465,9 +470,9 @@ gsl::py::matrix(py::module & m)
         // the name
         "getColumn",
         // the implementation
-        [](const gsl_matrix & self, std::size_t index, gsl_vector & vector) -> void {
-            // gsl copies the column out
-            gsl_matrix_get_col(&vector, &self, index);
+        [](const gsl_matrix & self, long index, gsl_vector & vector) -> void {
+            // gsl copies the column the checked index names out
+            gsl_matrix_get_col(&vector, &self, along(self.size2, index));
         },
         // the signature
         "index"_a, "vector"_a,
@@ -479,9 +484,11 @@ gsl::py::matrix(py::module & m)
         // the name
         "setRow",
         // the implementation
-        [](py::object self, std::size_t index, const gsl_vector & vector) -> py::object {
-            // gsl writes the row
-            gsl_matrix_set_row(&self.cast<gsl_matrix &>(), index, &vector);
+        [](py::object self, long index, const gsl_vector & vector) -> py::object {
+            // the matrix behind {self}
+            auto & m = self.cast<gsl_matrix &>();
+            // gsl writes the row the checked index names
+            gsl_matrix_set_row(&m, along(m.size1, index), &vector);
             // hand myself back, so callers can chain
             return self;
         },
@@ -495,9 +502,11 @@ gsl::py::matrix(py::module & m)
         // the name
         "setColumn",
         // the implementation
-        [](py::object self, std::size_t index, const gsl_vector & vector) -> py::object {
-            // gsl writes the column
-            gsl_matrix_set_col(&self.cast<gsl_matrix &>(), index, &vector);
+        [](py::object self, long index, const gsl_vector & vector) -> py::object {
+            // the matrix behind {self}
+            auto & m = self.cast<gsl_matrix &>();
+            // gsl writes the column the checked index names
+            gsl_matrix_set_col(&m, along(m.size2, index), &vector);
             // hand myself back, so callers can chain
             return self;
         },
