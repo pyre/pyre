@@ -179,36 +179,20 @@ class Matrix(gsl.Matrix):
         return
 
     # initialization
-    def zero(self):
-        """
-        Set all my elements to zero
-        """
-        # zero me out
-        gsl.matrix_zero(self.data)
-        # and return
-        return self
-
     def fill(self, value):
         """
-        Set all my elements to {value}
+        Set all my elements to {value}, which may be a scalar or an iterable in row-major order
         """
-        # grab my capsule
-        data = self.data
-        # first, attempt to
+        # attempt to read {value} as a single number
         try:
-            # convert value into a float
-            value = float(value)
-        # if this fails
+            # which the extension spreads across all my cells
+            return gsl.Matrix.fill(self, float(value))
+        # if it is not a number
         except TypeError:
-            # go through the input values
-            for idx, elem in zip(itertools.product(*map(range, self.shape)), value):
-                # set each element
-                gsl.matrix_set(data, idx, float(elem))
-        # if the conversion to float were successful
-        else:
-            # fill
-            gsl.matrix_fill(data, value)
-
+            # take it as an iterable, one entry per cell, in row-major order
+            for index, entry in zip(itertools.product(*map(range, self.shape)), value):
+                # deposited in turn
+                self.set(index, float(entry))
         # all done
         return self
 
@@ -222,31 +206,27 @@ class Matrix(gsl.Matrix):
         # build one and return it
         return MatrixView(matrix=self, start=start, shape=shape)
 
+    # file i/o over {pyre} paths
     def load(self, filename, binary=None):
         """
         Read my values from {filename}
 
         This method attempts to distinguish between text and binary representations of the
-        data, based on the parameter {mode}, or the {filename} extension if {mode} is absent
+        data, based on the parameter {binary}, or the {filename} extension if it is absent
         """
         # if the caller asked for binary mode
         if binary is True:
             # pick the binary representation
             return self.read(filename)
-
         # if the caller asked for ascii mode
         if binary is False:
             # pick ascii
             return self.scanf(filename)
-
-        # otherwise, look at the file extension
-        suffix = filename.suffix
-        # if it's {bin}
-        if suffix == ".bin":
+        # otherwise, a {.bin} extension means binary
+        if filename.suffix == ".bin":
             # go binary
             return self.read(filename)
-
-        # otherwise
+        # anything else is ascii
         return self.scanf(filename)
 
     def save(self, filename, binary=None, format=defaultFormat):
@@ -254,63 +234,50 @@ class Matrix(gsl.Matrix):
         Write my values to {filename}
 
         This method attempts to distinguish between text and binary representations of the
-        data, based on the parameter {mode}, or the {filename} extension if {mode} is absent
+        data, based on the parameter {binary}, or the {filename} extension if it is absent
         """
         # if the caller asked for binary mode
         if binary is True:
             # pick the binary representation
             return self.write(filename)
-
         # if the caller asked for ascii mode
         if binary is False:
             # pick ascii
             return self.printf(filename=filename, format=format)
-
-        # otherwise, look at the file extension
-        suffix = filename.suffix
-        # if it's {bin}
-        if suffix == ".bin":
+        # otherwise, a {.bin} extension means binary
+        if filename.suffix == ".bin":
             # go binary
             return self.write(filename)
-
-        # otherwise
+        # anything else is ascii
         return self.printf(filename=filename, format=format)
 
     def read(self, filename):
         """
-        Read my values from {filename}
+        Read my values from the binary file {filename}
         """
-        # read
-        gsl.matrix_read(self.data, filename.path)
-        # and return
-        return self
+        # hand the path to the extension as a string
+        return self.fread(str(filename.path))
 
     def write(self, filename):
         """
-        Write my values to {filename}
+        Write my values to the binary file {filename}
         """
-        # write
-        gsl.matrix_write(self.data, filename.path)
-        # and return
-        return self
+        # hand the path to the extension as a string
+        return self.fwrite(str(filename.path))
 
     def scanf(self, filename):
         """
-        Read my values from {filename}
+        Read my values from the text file {filename}
         """
-        # read
-        gsl.matrix_scanf(self.data, filename.path)
-        # and return
-        return self
+        # hand the path to the extension as a string
+        return self.fscanf(str(filename.path))
 
     def printf(self, filename, format=defaultFormat):
         """
-        Write my values to {filename}
+        Write my values to the text file {filename}, using the given {format}
         """
-        # write
-        gsl.matrix_printf(self.data, filename.path, "%" + format + "e")
-        # and return
-        return self
+        # build the c format specifier, and hand the path over as a string
+        return self.fprintf(str(filename.path), "%" + format + "e")
 
     def print(self, format="{:+13.4e}", indent="", interactive=True):
         """
@@ -340,16 +307,6 @@ class Matrix(gsl.Matrix):
         # all done
         return lines
 
-    def identity(self):
-        """
-        Initialize me as an identity matrix: all elements are set to zero except along the
-        diagonal, which are set to one
-        """
-        # initialize
-        gsl.matrix_identity(self.data)
-        # and return
-        return self
-
     def random(self, pdf):
         """
         Fill me with random numbers using the probability distribution {pdf}
@@ -359,125 +316,60 @@ class Matrix(gsl.Matrix):
 
     def clone(self):
         """
-        Allocate a new matrix and initialize it using my values
+        Allocate a new matrix and initialize it with my values
         """
-        # build the clone
-        clone = type(self)(shape=self.shape)
-        # have the extension initialize the clone
-        gsl.matrix_copy(clone.data, self.data)
-        # and return it
-        return clone
-
-    def copy(self, other):
-        """
-        Fill me with values from {other}, which is assumed to be of compatible shape
-        """
-        # fill me with values from {other}
-        gsl.matrix_copy(self.data, other.data)
-        # and return it
-        return self
-
-    def tuple(self):
-        """
-        Build a representation of my contents as a tuple of tuples
-
-        This is suitable for converting to other matrix representations, such as numpy
-        """
-        # ask the extension to build the rep
-        rep = gsl.matrix_tuple(self.data)
-        # and return it
-        return rep
-
-    # matrix operations
-    def transpose(self, destination=None):
-        """
-        Compute the transpose of a matrix.
-
-        If {destination} is {None} and the matrix is square, the operation happens
-        in-place. Otherwise, the transpose is stored in {destination}, which is assumed to be
-        shaped correctly.
-        """
-        # if we have a {destination}
-        if destination is not None:
-            # do the transpose
-            gsl.matrix_transpose(self.data, destination.data)
-            # and return the destination matrix
-            return destination
-        # otherwise
-        gsl.matrix_transpose(self.data, None)
-        # and return myself
-        return self
+        # a fresh matrix of my shape, filled with my values
+        return type(self)(shape=self.shape).copy(self)
 
     # slicing
     def getRow(self, index):
         """
-        Return a view to the requested row
+        Return the {index}th row as a new vector
         """
-        # let the extension do its thing
-        capsule = gsl.matrix_get_row(self.data, int(index))
-        # build a vector and return it
-        return self.vector(shape=self.columns, data=capsule)
+        # allocate a vector of my width
+        v = self.vector(shape=self.columns)
+        # have the extension copy the row into it
+        gsl.Matrix.getRow(self, int(index), v)
+        # and return it
+        return v
 
     def getColumn(self, index):
         """
-        Return a view to the requested column
+        Return the {index}th column as a new vector
         """
-        # let the extension do its thing
-        capsule = gsl.matrix_get_col(self.data, int(index))
-        # build a vector and return it
-        return self.vector(shape=self.rows, data=capsule)
+        # allocate a vector of my height
+        v = self.vector(shape=self.rows)
+        # have the extension copy the column into it
+        gsl.Matrix.getColumn(self, int(index), v)
+        # and return it
+        return v
 
     def setRow(self, index, v):
         """
-        Set the row at {index} to the contents of the given vector {v}
+        Set the {index}th row to the contents of the vector {v}
         """
-        # let the extension do its thing
-        gsl.matrix_set_row(self.data, int(index), v.data)
-        # and return
-        return self
+        # coerce the index and hand off to the extension
+        return gsl.Matrix.setRow(self, int(index), v)
 
     def setColumn(self, index, v):
         """
-        Set the column at {index} to the contents of the given vector {v}
+        Set the {index}th column to the contents of the vector {v}
         """
-        # let the extension do its thing
-        gsl.matrix_set_col(self.data, int(index), v.data)
-        # and return
-        return self
-
-    # maxima and minima
-    def max(self):
-        """
-        Compute my maximum value
-        """
-        # easy enough
-        return gsl.matrix_max(self.data)
-
-    def min(self):
-        """
-        Compute my maximum value
-        """
-        # easy enough
-        return gsl.matrix_min(self.data)
-
-    def minmax(self):
-        """
-        Compute my minimum and maximum values
-        """
-        # easy enough
-        return gsl.matrix_minmax(self.data)
+        # coerce the index and hand off to the extension
+        return gsl.Matrix.setColumn(self, int(index), v)
 
     # eigensystems
     def symmetricEigensystem(self, order=sortValueAscending):
         """
-        Computed my eigenvalues and eigenvectors assuming i am a real symmetric matrix
+        Compute my eigenvalues and eigenvectors, assuming i am a real symmetric matrix
         """
-        # compute the eigenvalues and eigenvectors
-        values, vectors = gsl.matrix_eigen_symmetric(self.data, order)
-        # dress up the results
-        λ = self.vector(shape=self.rows, data=values)
-        x = type(self)(shape=self.shape, data=vectors)
-        # and return
+        # allocate the vector the eigenvalues will fill
+        λ = self.vector(shape=self.rows)
+        # and the matrix the eigenvectors will fill
+        x = type(self)(shape=self.shape)
+        # have the extension solve the eigenproblem into them
+        self.eigenSymmetric(order, λ, x)
+        # and return the pair
         return λ, x
 
     # statistics
@@ -582,36 +474,34 @@ class Matrix(gsl.Matrix):
     # container support
     def __iter__(self):
         """
-        Iterate over all my elements in shape order
+        Iterate over all my elements in row-major order
         """
-        # unpack the shape
-        index0, index1 = self.shape
         # go over all index pairs
         for index in itertools.product(*map(range, self.shape)):
             # grab the value
-            yield gsl.matrix_get(self.data, index)
+            yield self.get(index)
         # all done
         return
 
     def __contains__(self, value):
-        # faster than checking every element in python
-        return gsl.matrix_contains(self.data, value)
+        # the extension scans faster than a python loop
+        return self.contains(value)
 
     def __getitem__(self, index):
-        # get and return the element
-        return gsl.matrix_get(self.data, index)
+        # get and return the element at the {row, column} {index}
+        return self.get(index)
 
     def __setitem__(self, index, value):
-        # set the element to the requested value
-        return gsl.matrix_set(self.data, index, value)
+        # set the element at the {row, column} {index}
+        return self.set(index, value)
 
     # comparisons
     def __eq__(self, other):
         # type check
         if type(self) is not type(other):
             return NotImplemented
-        # hand the request off to the extension module
-        return gsl.matrix_equal(self.data, other.data)
+        # hand the request off to the extension
+        return self.equal(other)
 
     def __ne__(self, other):
         return not (self == other)
@@ -624,13 +514,13 @@ class Matrix(gsl.Matrix):
         # if other is a matrix
         if isinstance(other, Matrix):
             # do matrix-matrix addition
-            gsl.matrix_add(self.data, other.data)
+            self.add(other)
             # and return
             return self
         # if other is a number
         if isinstance(other, numbers.Number):
             # do constant addition
-            gsl.matrix_shift(self.data, float(other))
+            self.shift(float(other))
             # and return
             return self
         # otherwise, let the interpreter know
@@ -643,13 +533,13 @@ class Matrix(gsl.Matrix):
         # if other is a matrix
         if isinstance(other, Matrix):
             # do matrix-matrix subtraction
-            gsl.matrix_sub(self.data, other.data)
+            self.sub(other)
             # and return
             return self
         # if other is a number
         if isinstance(other, numbers.Number):
             # do constant subtraction
-            gsl.matrix_shift(self.data, -float(other))
+            self.shift(-float(other))
             # and return
             return self
         # otherwise, let the interpreter know
@@ -662,13 +552,13 @@ class Matrix(gsl.Matrix):
         # if other is a matrix
         if isinstance(other, Matrix):
             # do matrix-matrix multiplication
-            gsl.matrix_mul(self.data, other.data)
+            self.mul(other)
             # and return
             return self
         # if other is a number
         if isinstance(other, numbers.Number):
             # do scaling by constant
-            gsl.matrix_scale(self.data, float(other))
+            self.scale(float(other))
             # and return
             return self
         # otherwise, let the interpreter know
@@ -681,13 +571,13 @@ class Matrix(gsl.Matrix):
         # if other is a matrix
         if isinstance(other, Matrix):
             # do matrix-matrix division
-            gsl.matrix_div(self.data, other.data)
+            self.div(other)
             # and return
             return self
         # if other is a number
         if isinstance(other, numbers.Number):
             # do scaling by constant
-            gsl.matrix_scale(self.data, 1 / float(other))
+            self.scale(1 / float(other))
             # and return
             return self
         # otherwise, let the interpreter know
