@@ -63,6 +63,15 @@ def test():
     assert raises(lambda: m.getRow(-4))
     assert raises(lambda: m.getColumn(-5))
 
+    # the row and column swaps check both of their indices, on the axis they act along
+    assert raises(lambda: m.swapRows(0, 3))
+    assert raises(lambda: m.swapRows(3, 0))
+    assert raises(lambda: m.swapColumns(0, 4))
+    assert raises(lambda: m.swapColumns(4, 0))
+    # and a too-negative index raises rather than reflecting to a still-negative slot
+    assert raises(lambda: m.swapRows(0, -4))
+    assert raises(lambda: m.swapColumns(0, -5))
+
     # a reflected row index reaches the last row
     assert m.getRow(-1)[0] == m[2, 0]
     # and a reflected column index reaches the last column
