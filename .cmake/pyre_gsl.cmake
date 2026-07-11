@@ -42,7 +42,6 @@ function(pyre_gslModule)
       extensions/gsl/Vector.cc
       extensions/gsl/Matrix.cc
       extensions/gsl/blas.cc
-      extensions/gsl/histogram.cc
       extensions/gsl/linalg.cc
       extensions/gsl/matrixapi.cc
       extensions/gsl/metadata.cc
