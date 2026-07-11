@@ -30,10 +30,11 @@ world = TrivialCommunicator()
 try:
     # try to load the bindings
     from . import libmpi
-# if they were never built, this machine has no mpi; note that the exception must be this
-# narrow: bindings that exist but refuse to load are a bug, and a bug that presents itself as
-# the tranquil absence of mpi is one that nobody ever finds
-except ModuleNotFoundError:
+# treat any import failure as the absence of mpi: a relative {from . import libmpi} reports a
+# missing binding as a plain {ImportError} rather than {ModuleNotFoundError}, and on some
+# platforms a binding that is present can still fail to load for benign reasons; until we
+# understand that platform behaviour, the safe reading of any failure here is "no mpi runtime"
+except ImportError:
     # indicate that there is no runtime support
     libmpi = None
 
