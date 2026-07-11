@@ -8,9 +8,6 @@
 # externals
 import pyre
 
-# the bindings over {libpq}; {None} when this build has no postgres support
-from ..extensions import libpq
-
 # superclass
 from .Server import Server
 
@@ -59,6 +56,8 @@ class Postgres(Server, family="pyre.db.server.postgres"):
         if self.connection is not None:
             return self
 
+        # get the bindings
+        libpq = pyre.extensions.libpq
         # a build with no bindings cannot talk to a postgres server
         if libpq is None:
             # report it here, rather than let it surface as an attribute error below
@@ -151,12 +150,12 @@ class Postgres(Server, family="pyre.db.server.postgres"):
         The transaction commits when its block exits normally, and rolls back when the block
         raises
         """
-        # a transaction on a session that was never opened is worth naming
+        # transaction on a session that was never opened
         if self.connection is None:
+            # are a problem
             raise exceptions.InterfaceError(diagnostic="this server is not attached")
-
         # build one on my session
-        return libpq.Transaction(self.connection)
+        return pyre.extensions.libpq.Transaction(self.connection)
 
     # meta methods
     def __init__(self, **kwds):
