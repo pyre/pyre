@@ -119,7 +119,7 @@ find_package(PostgreSQL)
 
 # python
 find_package(Python 3.7
-    COMPONENTS Interpreter Development.Module NumPy
+    COMPONENTS Interpreter Development.Module
     OPTIONAL_COMPONENTS Development.Embed)
 
 # for building bindings
