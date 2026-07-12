@@ -187,7 +187,7 @@ jobs:
           echo " -- verifying the pyre extension"
           ${mm} pyre.ext.info
           echo " -- verifying the pyre host extension"
-          ${mm} host.ext.info
+          ${mm} pyre-host.ext.info
           echo " -- verifying the journal extension"
           ${mm} journal.ext.info
           echo " -- verifying the h5 extension"
