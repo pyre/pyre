@@ -9,7 +9,7 @@ pyre.packages := pyre.pkg
 # libraries
 pyre.libraries := pyre.lib
 # the mandatory extensions
-pyre.extensions := pyre.ext host.ext
+pyre.extensions := pyre.ext
 # docker image
 pyre.docker-images := \
     pyre.focal-gcc pyre.focal-clang \
@@ -75,16 +75,6 @@ pyre.ext.extern := journal.lib pybind11 python
 pyre.ext.lib.c++.flags += $(pyre.lib.c++.flags)
 pyre.ext.lib.c++.defines += $(pyre.lib.c++.defines)
 pyre.ext.lib.prerequisites += chroma.lib journal.lib # pyre.lib is added automatically
-# host info
-host.ext.root := extensions/host/
-host.ext.stem := host
-host.ext.pkg := pyre.pkg
-host.ext.wraps := pyre.lib
-host.ext.capsule :=
-host.ext.extern := journal.lib python
-host.ext.lib.c++.flags += $(pyre.lib.c++.flags)
-host.ext.lib.c++.defines += $(pyre.lib.c++.defines)
-host.ext.lib.prerequisites += journal.lib # pyre.lib is added automatically
 
 
 # the docker images

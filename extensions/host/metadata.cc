@@ -4,27 +4,41 @@
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
 // (c) 1998-2026 all rights reserved
 
-#include <portinfo>
-#include <Python.h>
 
-#include "metadata.h"
+// external dependencies
+#include "external.h"
+// namespace setup
+#include "forward.h"
 
 
-// copyright
-PyObject *
-pyre::extensions::host::copyright(PyObject *, PyObject *)
+// the version number
+#define HOST_VERSION "1.0"
+
+
+// what the module says about itself
+void
+pyre::extensions::host::metadata(py::module & m)
 {
-    const char * const copyright_note = "host: (c) 1998-2026 Michael A.G. Aïvázis";
-    return Py_BuildValue("s", copyright_note);
-}
+    // the copyright note
+    m.def(
+        // the name
+        "copyright",
+        // the implementation
+        []() -> std::string { return "host: (c) 1998-2026 Michael A.G. Aïvázis"; },
+        // the docstring
+        "the module copyright string");
 
+    // the version
+    m.def(
+        // the name
+        "version",
+        // the implementation
+        []() -> std::string { return HOST_VERSION; },
+        // the docstring
+        "the module version string");
 
-// version
-PyObject *
-pyre::extensions::host::version(PyObject *, PyObject *)
-{
-    const char * const version_string = "1.0";
-    return Py_BuildValue("s", version_string);
+    // all done
+    return;
 }
 
 
