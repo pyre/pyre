@@ -5,8 +5,8 @@
 
 
 # the postgres extension testsuite
-postgres.ext.tests.stem := postgres.ext
-postgres.ext.tests.prerequisites := journal.lib postgres.lib journal.pkg pyre.pkg
+pyre-postgres.ext.tests.stem := postgres.ext
+pyre-postgres.ext.tests.prerequisites := pyre-postgres.ext journal.pkg pyre.pkg
 
 
 # the following tests pound on the test database; execute them in order

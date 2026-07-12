@@ -39,15 +39,6 @@ pyre.c++20 = \
   }
 
 
-# if we have {libpq}, build the {pyre::postgres} library, the extension that wraps it, and test
-# both; the library stands on its own, so it gets a suite of its own that never loads python
-${if ${findstring libpq,$(extern.available)},\
-    ${eval pyre.libraries += postgres.lib} \
-    ${eval pyre.extensions += postgres.ext} \
-    ${eval pyre.tests += postgres.lib.tests postgres.ext.tests} \
-}
-
-
 # the pyre package meta-data
 pyre.pkg.root := packages/pyre/
 pyre.pkg.stem := pyre
@@ -94,31 +85,6 @@ host.ext.extern := journal.lib python
 host.ext.lib.c++.flags += $(pyre.lib.c++.flags)
 host.ext.lib.c++.defines += $(pyre.lib.c++.defines)
 host.ext.lib.prerequisites += journal.lib # pyre.lib is added automatically
-
-
-# postgres
-# the {pyre::postgres} library meta-data; it is header only, and it knows nothing about python
-postgres.lib.root := lib/postgres/
-postgres.lib.stem := postgres
-# deposit the headers under the {pyre} namespace so they never collide in a shared prefix
-postgres.lib.incdir := $(builder.dest.inc)pyre/postgres/
-# the gateway header is deposited one level above the rest, as {pyre/postgres.h}
-postgres.lib.gateway := postgres.h
-postgres.lib.prerequisites := journal.lib
-postgres.lib.extern := journal.lib libpq
-postgres.lib.c++.flags += $(pyre.lib.c++.flags)
-postgres.lib.c++.defines += $(pyre.lib.c++.defines)
-
-# the {postgres} extension meta-data; it wraps the library above
-postgres.ext.root := extensions/postgres/
-postgres.ext.stem := postgres
-postgres.ext.pkg := pyre.pkg
-postgres.ext.wraps := postgres.lib
-postgres.ext.capsule :=
-postgres.ext.extern := pyre.lib journal.lib libpq pybind11 python
-postgres.ext.lib.c++.flags += $(pyre.lib.c++.flags)
-postgres.ext.lib.c++.defines += $(pyre.lib.c++.defines)
-postgres.ext.lib.prerequisites += postgres.lib journal.lib # pyre.lib is added automatically
 
 
 # the docker images
