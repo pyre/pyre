@@ -191,7 +191,7 @@ jobs:
           echo " -- verifying the journal extension"
           ${mm} journal.ext.info
           echo " -- verifying the h5 extension"
-          ${mm} h5.ext.info
+          ${mm} pyre-h5.ext.info
         env:
           mm: python3 ${{github.workspace}}/mm/mm --config=.github/matrix/mm.pfg
           target: ${{matrix.target}}
