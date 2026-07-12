@@ -197,7 +197,7 @@ function(pyre_pyreModule)
   # specify the directory for the module compilation products
   pyre_library_directory(hostmodule extensions)
   # set the libraries to link against
-  target_link_libraries(hostmodule PRIVATE pyre journal)
+  target_link_libraries(hostmodule PRIVATE pyre journal pybind11::module)
   # add the sources
   target_sources(hostmodule PRIVATE
     extensions/host/host.cc
