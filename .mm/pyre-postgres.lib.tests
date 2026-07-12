@@ -5,13 +5,13 @@
 
 
 # the postgres library testsuite
-postgres.lib.tests.stem := postgres.lib
-postgres.lib.tests.prerequisites := postgres.lib journal.lib
-postgres.lib.tests.extern := postgres.lib journal.lib libpq
+pyre-postgres.lib.tests.stem := postgres.lib
+pyre-postgres.lib.tests.prerequisites := pyre-postgres.lib
+pyre-postgres.lib.tests.extern := pyre-postgres.lib journal.lib libpq
 
 # c++ compiler arguments
-postgres.lib.tests.c++.defines += $(pyre.lib.c++.defines)
-postgres.lib.tests.c++.flags += -Wall $(pyre.lib.c++.flags)
+pyre-postgres.lib.tests.c++.defines += $(pyre.lib.c++.defines)
+pyre-postgres.lib.tests.c++.flags += -Wall $(pyre.lib.c++.flags)
 
 
 # every driver below {sanity} needs a live server, and they all talk to the same one; the ones
