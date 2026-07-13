@@ -2470,6 +2470,29 @@ class MM(pyre.application, family="pyre.applications.mm", namespace="mm"):
                     print(f"hdf5.parallel ?= {variant}", file=f)
                     # anchor the package root like everything else
                     print(f"hdf5.dir ?= $(dpkg.prefix)", file=f)
+                # libpq: debian/ubuntu put the client headers in a {postgresql} subdirectory of
+                # {/usr/include} that the bare {dir}/include default misses, and the library in the
+                # multiarch lib dir; read both real locations from {dpkg -L}
+                elif name == "libpq":
+                    # the files the dev package installed
+                    files = self._dpkgFiles(dpkg, candidate)
+                    # locate the client header and the dev-symlink library
+                    header = next((p for p in files if p.name == "libpq-fe.h"), None)
+                    library = next((p for p in files if p.name == "libpq.so"), None)
+                    # point the include path at wherever {libpq-fe.h} really lives
+                    if header:
+                        print(
+                            f"libpq.incpath ?= {self._dpkgAnchor(header.parent, prefix)}",
+                            file=f,
+                        )
+                    # and the library path at wherever the dev symlink really lives
+                    if library:
+                        print(
+                            f"libpq.libpath ?= {self._dpkgAnchor(library.parent, prefix)}",
+                            file=f,
+                        )
+                    # anchor the package root like everything else
+                    print(f"libpq.dir ?= $(dpkg.prefix)", file=f)
                 # all other packages anchor to the dpkg prefix
                 else:
                     print(f"{name}.dir ?= $(dpkg.prefix)", file=f)
