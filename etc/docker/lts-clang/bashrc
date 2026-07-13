@@ -1,0 +1,55 @@
+#!/bin/bash
+#
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2026 all rights reserved
+#
+
+# the system profile
+if [ -r /etc/profile ]; then
+    source /etc/profile
+fi
+
+# umask
+umask u+rwx,g+rwx,o+rx
+# the language/encoding
+export LANG=en_US.UTF-8
+
+# prompt
+export PROMPT_COMMAND=prompter
+
+prompter() {
+  history -a
+  export PS1="$(python3 ${HOME}/prompt.py)"
+}
+
+# aliases
+alias d='ls -ahGF'
+alias dl='ls -ahGFl'
+# git
+alias git.hash='git log --format=format:"%h" -n 1'
+alias git.branch='git rev-parse --abbrev-ref HEAD'
+alias git.status='git status --porcelain --branch --ignored'
+alias git.tag='git describe --tags --long --always'
+
+# the location of the sources
+export SRCDIR=@SRCDIR@
+
+# mm 5.x
+alias mm='python3 ${SRCDIR}/mm/mm'
+alias mm.setup='python3 ${SRCDIR}/mm/mm --setup'
+
+mm.activate() {
+    # get mm to adjust the environment to activate the current installation
+    eval "$(python3 ${SRCDIR}/mm/mm --quiet --activate "@")"
+}
+
+mm.branch() {
+    # get mm to adjust the environment to activate the current installation
+    eval "$(python3 ${SRCDIR}/mm/mm --quiet --branch=on)"
+}
+mm.clear() {
+    # get mm to adjust the environment to activate the current installation
+    eval "$(python3 ${SRCDIR}/mm/mm --quiet --branch=off)"
+}
+
+# end of file
