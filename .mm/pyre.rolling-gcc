@@ -1,0 +1,18 @@
+# -*- Makefile -*-
+#
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2026 all rights reserved
+
+
+# the {rolling-gcc} image: the latest ubuntu release, apt-provided gcc toolchain, native packages
+pyre.rolling-gcc.name := rolling-gcc
+pyre.rolling-gcc.root := etc/docker/
+
+# {mm} and {pyre} both live one level above the pyre home; bind-mount that parent so the image
+# builds and tests the live working tree; defer expansion so {pyre.home} is read at mount time
+pyre.rolling-gcc.mounts.source = ${realpath $(pyre.home)/..}/
+# mount both the build tool and the sources for {.run} and {.launch}
+pyre.rolling-gcc.mounts := mm pyre
+
+
+# end of file
