@@ -8,8 +8,10 @@ mm:
 
   # resolve external dependencies straight from the active conda environment
   pkgdb: conda
-  # let conda place the build products; no need for {prefix} or {bldroot}
+  # conda installs the products into the active environment
   mode: conda
+  # the staging area for the temporary build products
+  bldroot: /tmp/builds
   # targets; {opt} keeps the built libraries fast enough for real work
   target: opt,shared
   # compilers; {clang} supplies clang/clang++ for C/C++

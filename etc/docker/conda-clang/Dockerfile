@@ -3,15 +3,13 @@
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
 
-# a plain ubuntu base; with a conda-forge toolchain the host distro is irrelevant, so the LTS is
-# fine and the {ubuntu:24.04} tag is multi-arch, resolving to the host architecture with no emulation
+# a plain ubuntu base; the conda-forge toolchain is distro-independent
 FROM ubuntu:24.04
 
 # set up some build variables
 # the image instance; drives every {COPY} path below so a sibling image is a pure copy-and-edit
 ARG instance=conda-clang
-# the conda environment name; must NOT collide with a {.mm} project name (e.g. {pyre}); kept in sync
-# with the {name:} in {pyre-env.yaml} and the {micromamba activate} in the CMD below
+# the conda environment name; must not be a {.mm} project name like {pyre}
 ARG env=pyre-dev
 # locations
 ARG prefix=/usr/local
@@ -52,6 +50,17 @@ COPY etc/docker/${instance}/pyre-env.yaml pyre-env.yaml
 RUN /root/.local/bin/micromamba env create --quiet --yes --file pyre-env.yaml --prefix=/root/.local/envs/${env}
 
 
+# allow passwordless {ssh localhost} as root
+RUN mkdir -p -m 700 /root/.ssh && \
+        ssh-keygen -q -t ed25519 -N "" -f /root/.ssh/id_ed25519 && \
+        cp /root/.ssh/id_ed25519.pub /root/.ssh/authorized_keys && \
+        chmod 600 /root/.ssh/authorized_keys && \
+        printf 'Host localhost\n    StrictHostKeyChecking no\n    UserKnownHostsFile /dev/null\n    LogLevel ERROR\n' \
+            > /root/.ssh/config && \
+        chmod 600 /root/.ssh/config && \
+        echo 'PermitRootLogin prohibit-password' > /etc/ssh/sshd_config.d/00-root-login.conf
+
+
 # setup the interactive environment
 # go home
 WORKDIR /root
@@ -83,9 +92,15 @@ COPY etc/docker/${instance}/config.mm config.mm
 
 # go to the source directory; {mm} and {pyre} are bind-mounted here at run time
 WORKDIR ${srcdir}/pyre
-# activate the conda environment, discover the conda packages, build, and test the mounted working
-# tree; {--jobs=2} caps the parallelism so the memory-heavy {pyre::grid} binding template expansions
-# do not exhaust RAM, matching the CI containers
+
+# where mm's conda pkgdb finds the conda agent
+ENV MAMBA_EXE=/root/.local/bin/micromamba
+ENV MAMBA_ROOT_PREFIX=/root/.local
+
+# run the CMD under bash for the micromamba shell hook
+SHELL ["/bin/bash", "-c"]
+
+# activate the environment, discover packages, build, and test the mounted working tree
 CMD service ssh start && \
     eval "$(/root/.local/bin/micromamba shell hook --shell bash /root/.local)" && \
     micromamba activate pyre-dev && \
