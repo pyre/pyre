@@ -3,9 +3,7 @@
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
 
-# the conda-forge environment with pyre's build dependencies plus the clang toolchain; the name
-# must NOT collide with a {.mm} project name (e.g. {pyre}), or mm seeds its configuration search
-# with {pyre.mm} and reads the project's own {.mm/pyre.mm} as a user config file
+# the conda-forge build environment; {name} must not be a {.mm} project name like {pyre}
 name: pyre-dev
 
 # stick to conda-forge only
@@ -24,17 +22,17 @@ dependencies:
   - clangxx
   # the interpreter and its build-time helpers
   - python
-  # pin the standard ABI; left to itself the solver prefers the free-threaded {cp3xxt} build, whose
-  # headers live in {include/python3.xxt} rather than {include/python3.xx}
+  # pin the standard ABI, not the free-threaded build
   - python-gil
   - pybind11
   - pyyaml
   # the native external packages
   - gsl
   - hdf5
+  # the postgres client library; the bindings build against it (the tests self-skip with no server)
+  - libpq
   # numpy, for the gsl test suite
   - numpy
-  # openmpi is skipped until {pyre.platforms} has a conda package manager; without a runtime the
-  # mpi package degrades to the TrivialCommunicator, matching the conda CI workflow
+  # openmpi is skipped until {pyre.platforms} has a conda package manager
 
 # end of file
