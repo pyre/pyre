@@ -10,10 +10,11 @@ extern += ${if ${filter hdf5,$(extern)},,hdf5}
 # find my configuration file
 hdf5.config := ${dir ${call extern.config,hdf5}}
 
-hdf5.parallel ?= off
-# {parallel} selects serial vs mpi-aware hdf5, so it must always carry a value; declare it required
+hdf5.parallel ?= serial
+# {parallel} names the build flavor: {serial} is a plain build, {openmpi}/{mpich} are mpi-aware and
+# induce the mpi dependency below; it must always carry a value, so declare it required
 hdf5.markers.required ?= parallel
-hdf5.markers.required.hint ?= "(hdf5.parallel must be 'on' or 'off')"
+hdf5.markers.required.hint ?= "(hdf5.parallel must be 'serial', 'openmpi', or 'mpich')"
 
 # compiler flags
 hdf5.flags ?=

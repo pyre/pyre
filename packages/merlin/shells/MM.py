@@ -2378,11 +2378,38 @@ class MM(pyre.application, family="pyre.applications.mm", namespace="mm"):
                     if pyVersion:
                         print(f"python.version ?= {pyVersion}", file=f)
                     print(f"python.dir ?= $(dpkg.prefix)", file=f)
-                # mpi needs its flavor to select the right library names
+                # mpi: debian/ubuntu tuck the flavor's headers and libraries under a
+                # {<multiarch>/<flavor>} subtree ({openmpi/include}, {openmpi/lib}) rather than the
+                # bare {dir}/include and {dir}/lib, so read the real locations from {dpkg -L}
                 elif name == "mpi":
-                    print(f"mpi.dir ?= $(dpkg.prefix)", file=f)
+                    # the flavor selects the library names downstream
                     flavor = "openmpi" if "openmpi" in candidate else "mpich"
                     print(f"mpi.flavor ?= {flavor}", file=f)
+                    # the files the dev package installed
+                    files = self._dpkgFiles(dpkg, candidate)
+                    # locate the C header — the one on an {include} path, not the fortran module —
+                    # and the runtime library's dev symlink
+                    header = next(
+                        (p for p in files if p.name == "mpi.h" and "/include/" in str(p)),
+                        None,
+                    )
+                    library = next(
+                        (p for p in files if p.name == "libmpi.so"), None
+                    )
+                    # point the include path at wherever {mpi.h} really lives
+                    if header:
+                        print(
+                            f"mpi.incpath ?= {self._dpkgAnchor(header.parent, prefix)}",
+                            file=f,
+                        )
+                    # and the library path at wherever the dev symlink really lives
+                    if library:
+                        print(
+                            f"mpi.libpath ?= {self._dpkgAnchor(library.parent, prefix)}",
+                            file=f,
+                        )
+                    # anchor the package root like everything else
+                    print(f"mpi.dir ?= $(dpkg.prefix)", file=f)
                 # numpy headers live under the python package directory
                 elif name == "numpy":
                     includePath = self._queryPythonExpression(
@@ -2411,6 +2438,38 @@ class MM(pyre.application, family="pyre.applications.mm", namespace="mm"):
                             print(f"pybind11.dir ?= {pybind11Root}", file=f)
                     else:
                         print(f"pybind11.dir ?= $(dpkg.prefix)", file=f)
+                # hdf5: debian/ubuntu split the flavors into variant subdirectories — headers under
+                # {include/hdf5/<variant>} and libraries under {lib/<multiarch>/hdf5/<variant>} — so
+                # the bare {dir}/include and {dir}/lib defaults miss them; read the real locations
+                # from {dpkg -L}, which also reveals the variant and hence {hdf5.parallel}
+                elif name == "hdf5":
+                    # the files the dev package installed
+                    files = self._dpkgFiles(dpkg, candidate)
+                    # locate the umbrella header and the dev-symlink library
+                    header = next((path for path in files if path.name == "hdf5.h"), None)
+                    library = next(
+                        (path for path in files if path.name == "libhdf5.so"), None
+                    )
+                    # point the include path at wherever {hdf5.h} really lives
+                    if header:
+                        print(
+                            f"hdf5.incpath ?= {self._dpkgAnchor(header.parent, prefix)}",
+                            file=f,
+                        )
+                    # and the library path at wherever the dev symlink really lives
+                    if library:
+                        print(
+                            f"hdf5.libpath ?= {self._dpkgAnchor(library.parent, prefix)}",
+                            file=f,
+                        )
+                    # the enclosing directory name is the flavor and doubles as {hdf5.parallel}:
+                    # {serial} is a plain build; {openmpi}/{mpich} name mpi, so the {findstring mpi}
+                    # gate in hdf5/init.mm folds mpi into {hdf5.dependencies} for parallel builds
+                    variant = header.parent.name if header else "serial"
+                    # {hdf5.parallel} carries the flavor name so parallel builds induce the mpi edge
+                    print(f"hdf5.parallel ?= {variant}", file=f)
+                    # anchor the package root like everything else
+                    print(f"hdf5.dir ?= $(dpkg.prefix)", file=f)
                 # all other packages anchor to the dpkg prefix
                 else:
                     print(f"{name}.dir ?= $(dpkg.prefix)", file=f)
