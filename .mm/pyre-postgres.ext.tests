@@ -9,6 +9,11 @@ pyre-postgres.ext.tests.stem := postgres.ext
 pyre-postgres.ext.tests.prerequisites := pyre-postgres.ext journal.pkg pyre.pkg
 
 
+# skip the whole suite when no server is reachable
+pyre-postgres.ext.tests.drivers.exclude := \
+    ${if $(postgres.live),,${notdir ${wildcard tests/postgres.ext/*.py}}}
+
+
 # the following tests pound on the test database; execute them in order
 tests.postgres.ext.postgres_attach.pre := tests.postgres.ext.postgres_database
 tests.postgres.ext.postgres_database_create.pre := tests.postgres.ext.postgres_attach

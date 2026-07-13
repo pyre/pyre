@@ -18,6 +18,11 @@ pyre-postgres.lib.tests.c++.flags += -Wall $(pyre.lib.c++.flags)
 # that create objects do so in the temporary schema of their own session, so they do not collide
 # with each other and they leave nothing behind. run them in order anyway, so that a server that
 # is not there is reported once, by the first of them, rather than seven times
+# skip the whole suite when no server is reachable
+pyre-postgres.lib.tests.drivers.exclude := \
+    ${if $(postgres.live),,${notdir ${wildcard tests/postgres.lib/*.cc}}}
+
+
 tests.postgres.lib.connect.pre := tests.postgres.lib.sanity
 tests.postgres.lib.exec.pre := tests.postgres.lib.connect
 tests.postgres.lib.codecs.pre := tests.postgres.lib.exec
