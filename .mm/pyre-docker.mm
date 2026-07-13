@@ -6,7 +6,8 @@
 
 # the docker images; each one is configured in its own {.mm/pyre.<instance>} file
 pyre.docker-images := \
-    pyre.lts-clang
+    pyre.lts-clang \
+    pyre.lts-gcc
 
 
 # pull in the per-instance configuration

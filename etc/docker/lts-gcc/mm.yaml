@@ -1,0 +1,25 @@
+# -*- yaml -*-
+#
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2026 all rights reserved
+
+# mm configuration
+mm:
+
+  # resolve external dependencies straight from the installed ubuntu packages
+  pkgdb: dpkg
+  # build products land under {prefix}
+  mode: ubuntu
+  # targets; {opt} keeps the built libraries fast enough for real work
+  target: opt,shared
+  # compilers; {gcc} supplies gcc/g++ for C/C++, the system {gfortran} for Fortran
+  compilers: gcc, python/python3
+
+  # final products
+  prefix: /usr/local
+  # intermediate build products
+  bldroot: /tmp/builds
+  # the name of GNU make
+  make: make
+
+# end of file
