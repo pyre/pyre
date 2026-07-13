@@ -1,0 +1,18 @@
+# -*- Makefile -*-
+#
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2026 all rights reserved
+
+
+# the {lts-clang} image: the current ubuntu LTS, apt-provided clang toolchain, native packages
+pyre.lts-clang.name := lts-clang
+pyre.lts-clang.root := etc/docker/
+
+# {mm} and {pyre} both live one level above the pyre home; bind-mount that parent so the image
+# builds and tests the live working tree; defer expansion so {pyre.home} is read at mount time
+pyre.lts-clang.mounts.source = ${realpath $(pyre.home)/..}/
+# mount both the build tool and the sources for {.run} and {.launch}
+pyre.lts-clang.mounts := mm pyre
+
+
+# end of file
