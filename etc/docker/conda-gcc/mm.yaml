@@ -1,0 +1,20 @@
+# -*- yaml -*-
+#
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2026 all rights reserved
+
+# mm configuration
+mm:
+
+  # resolve external dependencies straight from the active conda environment
+  pkgdb: conda
+  # let conda place the build products; no need for {prefix} or {bldroot}
+  mode: conda
+  # targets; {opt} keeps the built libraries fast enough for real work
+  target: opt,shared
+  # compilers; {gcc} supplies gcc/g++ for C/C++
+  compilers: gcc, python/python3
+  # the name of GNU make; conda-forge make satisfies the >= 4.4 requirement
+  make: make
+
+# end of file

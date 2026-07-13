@@ -1,0 +1,18 @@
+# -*- Makefile -*-
+#
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2026 all rights reserved
+
+
+# the {conda-gcc} image: a conda-forge gcc toolchain and dependencies, distro-independent
+pyre.conda-gcc.name := conda-gcc
+pyre.conda-gcc.root := etc/docker/
+
+# {mm} and {pyre} both live one level above the pyre home; bind-mount that parent so the image
+# builds and tests the live working tree; defer expansion so {pyre.home} is read at mount time
+pyre.conda-gcc.mounts.source = ${realpath $(pyre.home)/..}/
+# mount both the build tool and the sources for {.run} and {.launch}
+pyre.conda-gcc.mounts := mm pyre
+
+
+# end of file
