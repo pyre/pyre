@@ -10,13 +10,6 @@ pyre.packages := pyre.pkg
 pyre.libraries := pyre.lib
 # the mandatory extensions
 pyre.extensions := pyre.ext
-# docker image
-pyre.docker-images := \
-    pyre.focal-gcc pyre.focal-clang \
-    pyre.groovy-gcc pyre.groovy-clang pyre.groovy-cuda \
-    pyre.hirsute-gcc pyre.hirsute-clang pyre.hirsute-gcc-cmake \
-    pyre.impish-gcc pyre.impish-clang \
-    pyre.jammy-gcc pyre.jammy-clang
 
 # and test suites
 pyre.tests := pyre.python.tests pyre.pkg.tests pyre.lib.tests pyre.ext.tests sqlite.pkg.tests
@@ -77,29 +70,12 @@ pyre.ext.lib.c++.defines += $(pyre.lib.c++.defines)
 pyre.ext.lib.prerequisites += chroma.lib journal.lib # pyre.lib is added automatically
 
 
-# the docker images
-# focal
-pyre.focal-gcc.name := focal-gcc
-pyre.focal-clang.name := focal-clang
-# groovy
-pyre.groovy-gcc.name := groovy-gcc
-pyre.groovy-clang.name := groovy-clang
-pyre.groovy-cuda.name := groovy-cuda
-pyre.groovy-cuda.launch.mounts := mm pyre
-# hirsute
-pyre.hirsute-gcc.name := hirsute-gcc
-pyre.hirsute-clang.name := hirsute-clang
-pyre.hirsute-gcc-cmake.name := hirsute-gcc-cmake
-# impish
-pyre.impish-gcc.name := impish-gcc
-pyre.impish-clang.name := impish-clang
-# jammy
-pyre.jammy-gcc.name := jammy-gcc
-pyre.jammy-clang.name := jammy-clang
-
 # the templates
 pyre.templates.root := templates/
 
+
+# get the docker image definitions
+include pyre-docker.mm
 
 # get the test suites
 include $(pyre.tests)
