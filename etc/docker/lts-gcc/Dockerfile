@@ -33,8 +33,7 @@ RUN apt dist-upgrade -y
 # install the base software stack
 #  - {vim} is for interactive use
 #  - {openssh}, {zip}, {unzip} are needed for some of the tests
-#  - {gcc}/{g++}/{gfortran} are the toolchain; {libhdf5-dev} is the serial hdf5 the dpkg packager
-#    registers under the canonical {hdf5} name (the {-openmpi} variant registers as {hdf5-openmpi})
+#  - {gcc}/{g++}/{gfortran} are the toolchain; {libhdf5-dev} is the serial hdf5
 RUN DEBIAN_FRONTEND=noninteractive \
         apt install -y \
         curl git vim zip unzip \
@@ -45,8 +44,7 @@ RUN DEBIAN_FRONTEND=noninteractive \
         libopenmpi-dev libhdf5-dev libgsl-dev
 
 
-# ubuntu 24.04 ships GNU make 4.3, but {mm} needs >= 4.4 for the {.WAIT} primitive; the system
-# make 4.3 and {gcc} bootstrap a 4.4.1 into {/usr/local}, which precedes {/usr/bin} on PATH
+# {mm} needs GNU make >= 4.4; ubuntu 24.04 ships 4.3, so build it into {/usr/local}
 WORKDIR /tmp/make
 # fetch the sources
 RUN curl -LO https://ftp.gnu.org/gnu/make/make-4.4.1.tar.gz
@@ -57,6 +55,17 @@ RUN cd make-4.4.1 && CC=gcc ./configure --prefix=/usr/local && make -j && make i
 # clean up
 WORKDIR /
 RUN rm -rf /tmp/make
+
+
+# allow passwordless {ssh localhost} as root
+RUN mkdir -p -m 700 /root/.ssh && \
+        ssh-keygen -q -t ed25519 -N "" -f /root/.ssh/id_ed25519 && \
+        cp /root/.ssh/id_ed25519.pub /root/.ssh/authorized_keys && \
+        chmod 600 /root/.ssh/authorized_keys && \
+        printf 'Host localhost\n    StrictHostKeyChecking no\n    UserKnownHostsFile /dev/null\n    LogLevel ERROR\n' \
+            > /root/.ssh/config && \
+        chmod 600 /root/.ssh/config && \
+        echo 'PermitRootLogin prohibit-password' > /etc/ssh/sshd_config.d/00-root-login.conf
 
 
 # setup the interactive environment
@@ -88,18 +97,13 @@ WORKDIR /root/.mm
 # the package location overrides, if any
 COPY etc/docker/${instance}/config.mm config.mm
 
-# openmpi refuses to launch as root by default; this container runs as root, so sanction it for
-# every launcher — the make-level {mpi.executive} and pyre's mpi shell alike — with openmpi's own
-# environment override, which any {mpiexec} it spawns will honor. placed late so it does not bust
-# the cache of the expensive apt and make-from-source layers above
+# let openmpi launch as root
 ENV OMPI_ALLOW_RUN_AS_ROOT=1
 ENV OMPI_ALLOW_RUN_AS_ROOT_CONFIRM=1
 
 # go to the source directory; {mm} and {pyre} are bind-mounted here at run time
 WORKDIR ${srcdir}/pyre
-# discover the system packages, build, and test the mounted working tree; {--jobs=2} caps the
-# parallelism so the memory-heavy {pyre::grid} binding template expansions do not exhaust RAM,
-# matching the CI containers
+# discover packages, build, and test the mounted working tree
 CMD service ssh start && ${MM} --setup && ${MM} --jobs=2 && ${MM} --jobs=2 tests
 
 
