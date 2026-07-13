@@ -50,6 +50,10 @@ pyre-postgres.ext.lib.prerequisites += pyre-postgres.lib journal.lib # pyre.lib 
 
 
 # get the testsuites
+# is a live postgres server reachable? probe only if {pg_isready} exists, so no server (or no tool)
+# is quiet; the suites below exclude all their drivers when this is empty
+postgres.live := ${shell command -v pg_isready > /dev/null 2>&1 && pg_isready -q && echo live}
+
 include pyre-postgres.lib.tests pyre-postgres.ext.tests
 
 
