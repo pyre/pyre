@@ -1,0 +1,40 @@
+# -*- yaml -*-
+#
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2026 all rights reserved
+
+# the conda-forge environment with pyre's build dependencies plus the clang toolchain; the name
+# must NOT collide with a {.mm} project name (e.g. {pyre}), or mm seeds its configuration search
+# with {pyre.mm} and reads the project's own {.mm/pyre.mm} as a user config file
+name: pyre-dev
+
+# stick to conda-forge only
+channels:
+  - conda-forge
+
+# packages
+dependencies:
+  # the build driver: conda-forge ships GNU make >= 4.4, which mm needs for {.WAIT}
+  - make
+  # interactive niceties for {.launch}
+  - git
+  - vim
+  # the clang toolchain: clang and clang++ for C/C++
+  - clang
+  - clangxx
+  # the interpreter and its build-time helpers
+  - python
+  # pin the standard ABI; left to itself the solver prefers the free-threaded {cp3xxt} build, whose
+  # headers live in {include/python3.xxt} rather than {include/python3.xx}
+  - python-gil
+  - pybind11
+  - pyyaml
+  # the native external packages
+  - gsl
+  - hdf5
+  # numpy, for the gsl test suite
+  - numpy
+  # openmpi is skipped until {pyre.platforms} has a conda package manager; without a runtime the
+  # mpi package degrades to the TrivialCommunicator, matching the conda CI workflow
+
+# end of file
