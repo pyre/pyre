@@ -11,6 +11,26 @@
 #include "forward.h"
 
 
+// helpers local to this translation unit
+namespace pyre::mpi::py {
+    // materialize any python iterable of ranks into a rank vector; accepting an iterable rather
+    // than insisting on a {list} lets callers pass a comprehension or a lazy generator expression
+    inline auto
+    asRanks(const py::iterable & ranks) -> Group::ranks_type
+    {
+        // start with an empty rank vector
+        auto members = Group::ranks_type{};
+        // drain the iterable, casting each item to a rank
+        for (const auto & rank : ranks) {
+            // fold it in
+            members.push_back(rank.cast<Group::ranks_type::value_type>());
+        }
+        // hand back the materialized ranks
+        return members;
+    }
+}
+
+
 // add the bindings for the process group
 void
 pyre::mpi::py::group(py::module & m)
@@ -73,8 +93,10 @@ pyre::mpi::py::group(py::module & m)
     cls.def(
         // the name
         "include",
-        // the implementation
-        &Group::include,
+        // the implementation: materialize any iterable of ranks, then delegate to the c++ layer
+        [](const Group & self, const py::iterable & ranks) -> Group {
+            return self.include(asRanks(ranks));
+        },
         // the signature
         "ranks"_a,
         // the docstring
@@ -83,8 +105,10 @@ pyre::mpi::py::group(py::module & m)
     cls.def(
         // the name
         "exclude",
-        // the implementation
-        &Group::exclude,
+        // the implementation: materialize any iterable of ranks, then delegate to the c++ layer
+        [](const Group & self, const py::iterable & ranks) -> Group {
+            return self.exclude(asRanks(ranks));
+        },
         // the signature
         "ranks"_a,
         // the docstring
