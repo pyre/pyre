@@ -52,4 +52,9 @@ mm.clear() {
     eval "$(python3 ${SRCDIR}/mm/mm --quiet --branch=off)"
 }
 
+# mm bash completion, loaded straight from the mounted mm sources
+if [ -r "${SRCDIR}/mm/etc/bash_completion/mm" ]; then
+    source "${SRCDIR}/mm/etc/bash_completion/mm"
+fi
+
 # end of file
