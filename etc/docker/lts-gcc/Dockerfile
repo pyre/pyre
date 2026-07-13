@@ -5,7 +5,7 @@
 
 # the current ubuntu LTS; the official tag is multi-arch, so it resolves to the host
 # architecture with no emulation
-FROM ubuntu:24.04
+FROM ubuntu:latest
 
 # set up some build variables
 # the image instance; drives every {COPY} path below so a sibling image is a pure copy-and-edit
@@ -42,19 +42,6 @@ RUN DEBIAN_FRONTEND=noninteractive \
         python3 python3-dev \
         python3-pybind11 python3-yaml python3-numpy \
         libopenmpi-dev libhdf5-dev libgsl-dev
-
-
-# {mm} needs GNU make >= 4.4; ubuntu 24.04 ships 4.3, so build it into {/usr/local}
-WORKDIR /tmp/make
-# fetch the sources
-RUN curl -LO https://ftp.gnu.org/gnu/make/make-4.4.1.tar.gz
-# unpack
-RUN tar xzf make-4.4.1.tar.gz
-# configure, build, and install
-RUN cd make-4.4.1 && CC=gcc ./configure --prefix=/usr/local && make -j && make install
-# clean up
-WORKDIR /
-RUN rm -rf /tmp/make
 
 
 # allow passwordless {ssh localhost} as root
