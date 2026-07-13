@@ -49,6 +49,11 @@ COPY etc/docker/${instance}/pyre-env.yaml pyre-env.yaml
 # create the pyre build environment from conda-forge
 RUN /root/.local/bin/micromamba env create --quiet --yes --file pyre-env.yaml --prefix=/root/.local/envs/${env}
 
+# conda-forge ships the gcc binutils ({ar}, {ranlib}, {ld}, ...) only triplet-prefixed; link the bare
+# names mm's build drivers call, leaving any that already exist ({gcc}, {g++}) alone
+RUN cd /root/.local/envs/${env}/bin && \
+        for f in *-conda-linux-gnu-*; do b=${f##*-conda-linux-gnu-}; [ -e "$b" ] || ln -s "$f" "$b"; done
+
 
 # allow passwordless {ssh localhost} as root
 RUN mkdir -p -m 700 /root/.ssh && \
