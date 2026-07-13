@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -10,6 +9,12 @@
 import os
 import re
 import subprocess
+import sys
+
+
+# shell detection
+isBASH = True if sys.argv[-1] == "bash" else False
+isZSH = True if sys.argv[-1] == "zsh" else False
 
 
 # assemble the prompt
@@ -35,6 +40,31 @@ def generate():
     # decorate the title of the window
     yield from decorateWindow(cwd=cwd)
 
+    # look for an active python virtual environment
+    venv = os.environ.get("VIRTUAL_ENV")
+    # if there s one
+    if venv:
+        # extract the name of the environment
+        name = venv.split("/")[-1]
+        # show its name
+        yield from pythonEnvironment(name)
+
+    # look for an active conda environment
+    conda = os.environ.get("CONDA_DEFAULT_ENV")
+    # if there s one
+    if conda:
+        # show its name
+        yield from condaEnvironment(conda)
+
+    # if bzr is installed
+    try:
+        # and we are within a bzr repository, show its status
+        yield from bzrRepository()
+    # otherwise
+    except:
+        # ignore
+        pass
+
     # if git is installed
     try:
         # and we are within a git repository, show its status
@@ -49,6 +79,172 @@ def generate():
 
     # all done
     return
+
+
+# support for python virtual environments
+def pythonEnvironment(name):
+    """
+    Show the name of the active python virtual environment
+    """
+    # decorate
+    yield f"{prompt_normal}("
+    # repository info
+    yield f"{venv_python}{name}"
+    # reset
+    yield f"{prompt_normal})"
+
+
+# support for conda environments
+def condaEnvironment(name):
+    """
+    Show the name of the active conda environment
+    """
+    # decorate
+    yield f"{prompt_normal}("
+    # repository info
+    yield f"{venv_conda}{name}"
+    # reset
+    yield f"{prompt_normal})"
+
+
+# support for bzr
+def bzrRepository():
+    """
+    Show the status of {bzr} repositories
+    """
+    # find out the revision number, which lets us detect whether this is a {bzr} worktree
+    cmd = ["bzr", "revno"]
+    # settings
+    options = {
+        "executable": "bzr",
+        "args": cmd,
+        "stdout": subprocess.PIPE,
+        "stderr": subprocess.PIPE,
+        "universal_newlines": True,
+        "shell": False,
+    }
+    # invoke
+    with subprocess.Popen(**options) as bzr:
+        # collect the output
+        stdout, stderr = bzr.communicate()
+        # if there was an error
+        if bzr.returncode != 0:
+            # this is not a bzr repository, so we are done
+            return
+        # otherwise, extract the revno
+        revno = stdout.strip()
+        # decorate
+        yield f"{prompt_normal}["
+        # colorize
+        yield from bzrStatus()
+        # repository info
+        yield revno
+        # reset
+        yield f"{prompt_normal}]:"
+
+    # all done
+    return
+
+
+def bzrStatus():
+    """
+    Colorize based on the state of a bzr repository
+    """
+    # get status information
+    cmd = ["bzr", "status", "--short", "--no-classify"]
+    # settings
+    options = {
+        "executable": "bzr",
+        "args": cmd,
+        "stdout": subprocess.PIPE,
+        "stderr": subprocess.PIPE,
+        "universal_newlines": True,
+        "shell": False,
+    }
+    # invoke
+    with subprocess.Popen(**options) as bzr:
+        # collect the output
+        stdout, stderr = bzr.communicate()
+        # if there was an error
+        if bzr.returncode != 0:
+            # bail
+            return
+        # otherwise, grab the report
+        report = bzrParseStatus(status=stdout.splitlines())
+        # if there are changed files
+        if report["changed"] > 0:
+            # colorize
+            yield branch_modified_worktree
+        elif report["new"] > 0:
+            # colorize
+            yield branch_modified_index
+        # otherwise
+        else:
+            # colorize
+            yield branch_clean
+
+    # all done
+    return
+
+
+def bzrParseStatus(status):
+    """
+    Parse the bzr status output and collect the statistics we need to colorize the prompt
+    """
+    # the summary table
+    table = {
+        "new": 0,
+        "changed": 0,
+        "ignored": 0,
+        "unknown": 0,
+    }
+    # go through the report
+    for line in status:
+        # attempt to match it
+        match = bzrParser.match(line)
+        # if we couldn't
+        if match is None:
+            # ignore and move on
+            continue
+        # get the enclosing group name
+        case = match.lastgroup
+
+        # new files
+        if case in bzrAdded:
+            # updated the counter
+            table["new"] += 1
+        # changed files
+        elif case in bzrChanged:
+            # update the counter
+            table["changed"] += 1
+        elif case in bzrIgnored:
+            # update the counter
+            table["ignore"] += 1
+        elif case in bzrUnknown:
+            # update the counter
+            table["unknown"] += 1
+
+    # all done
+    return table
+
+
+bzrCodes = "|".join(
+    [
+        r"(?P<added>\+N\s)",
+        r"(?P<removed>\-D\s)",
+        r"(?P<renamed>R \s)",
+        r"(?P<modified> M\s)",
+        r"(?P<kind> K\s)",
+        r"(?P<unknown>\?\s)",
+    ]
+)
+
+bzrParser = re.compile(rf"{bzrCodes}.+$")
+
+bzrAdded = {"added"}
+bzrChanged = {"removed", "renamed", "modified", "kind"}
+bzrIgnored = {"ignored"}
+bzrUnknown = {"unknown"}
 
 
 # support for git
@@ -341,17 +537,21 @@ def decorateWindow(cwd):
     Decorate an xterm window
     """
     # get the terminal type
-    term = os.environ["TERM"]
+    term = os.getenv("TERM", "")
     # if it's not xterm compatible
     if not term.startswith("xterm"):
         # bail
         return
-    # get the instance name
-    hostname = "@INSTANCE@"
+    # otherwise, get the user name
+    username = os.getenv("USER", "")
+    # get the hostname; the login process discovers and sets this
+    hostname = os.getenv("hostname", "localhost")
     # assemble the title
-    title = f"pyre@{hostname}:{cwd}"
-    # and decorate the window
-    yield xtermSetWindowTitle.format(title=title)
+    title = f"{username}@{hostname}:{cwd}"
+
+    # decorate the window
+    yield rl_hide + ascii_esc + f"]0;{title}" + ascii_bel + rl_unhide
+
     # all done
     return
 
@@ -411,11 +611,8 @@ ascii_esc = "\x1b"
 ascii_del = "\x7f"
 
 # readline hidden characters escapes
-rl_hide = ascii_soh
-rl_unhide = ascii_stx
-
-# commands
-xtermSetWindowTitle = rl_hide + ascii_esc + "]0;{title}" + ascii_bel + rl_unhide
+rl_hide = "%{" if isZSH else ascii_soh
+rl_unhide = "%}" if isZSH else ascii_stx
 
 # colors
 # ansi
@@ -445,6 +642,7 @@ navajo_white = csi24(red=0xFF, green=0xDE, blue=0xAD)
 olive_drab = csi24(red=0x6B, green=0x8E, blue=0x23)
 peach_puff = csi24(red=0xFF, green=0xDA, blue=0xB9)
 sage = csi24(red=176, green=208, blue=176)
+steel_blue = csi24(red=70, green=130, blue=180)
 
 # functional
 # prompt
@@ -457,6 +655,9 @@ branch_modified = indian_red
 branch_modified_worktree = amber
 branch_modified_index = dark_sea_green
 branch_conflicts = firebrick
+# virtual environment
+venv_python = dark_sea_green
+venv_conda = steel_blue
 
 
 # bootstrap
