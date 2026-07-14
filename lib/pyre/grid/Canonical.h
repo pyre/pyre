@@ -8,6 +8,10 @@
 #pragma once
 
 
+// my dependencies
+#include "forward.h"
+
+
 // encapsulation of the canonical packing strategy
 // a packing strategy provides the isomorphism
 //

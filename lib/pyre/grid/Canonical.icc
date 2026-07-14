@@ -183,7 +183,7 @@ pyre::grid::Canonical<N, T, containerT>::cslice(index_const_reference base) cons
     constexpr T M = (0 + ... + (args == 0 ? 0 : 1));
 
     // we now know enough to make an alias for the slice packing
-    using slice_t = canonical_t<M, T, containerT>;
+    using slice_t = Canonical<M, T, containerT>;
     // and instantiate blank slice info
     typename slice_t::shape_type sliceShape {};
     typename slice_t::index_type sliceOrigin {};
@@ -248,7 +248,7 @@ pyre::grid::Canonical<N, T, containerT>::slice(
     index_const_reference base, shape_const_reference rawShape) const
 {
     // make an alias for the slice packing
-    using slice_t = canonical_t<sliceRank, T, containerT>;
+    using slice_t = Canonical<sliceRank, T, containerT>;
     // and instantiate blank slice info
     typename slice_t::shape_type sliceShape {};
     typename slice_t::index_type sliceOrigin {};

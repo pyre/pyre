@@ -8,6 +8,10 @@
 #pragma once
 
 
+// my dependencies
+#include "forward.h"
+
+
 // storage for a multidimensional index
 // resist the temptation to use unsigned types as the fundamental representation type; they
 // complicate index arithmetic unnecessarily

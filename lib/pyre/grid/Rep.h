@@ -8,6 +8,10 @@
 #pragma once
 
 
+// my dependencies
+#include "forward.h"
+
+
 // thin adaptor over a compile time container that we use to store index ranks, grid shapes,
 // packing order and the like; it provides an abstraction layer that is necessary for
 // supporting the implementation in environments that don't have {std::array}

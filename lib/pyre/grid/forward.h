@@ -8,6 +8,10 @@
 #pragma once
 
 
+// my dependencies
+#include "externals.h"
+
+
 // useful instantiations of STL entities
 namespace pyre::grid {
     // polymorphic base class for building iterators

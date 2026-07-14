@@ -8,6 +8,10 @@
 #pragma once
 
 
+// my dependencies
+#include "forward.h"
+
+
 // generalization to multiple dimensions of the familiar row-major and column-major order
 // strategies. this is captured as a permutation in {S_N} that denotes the storage order of the
 // indices.

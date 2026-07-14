@@ -8,6 +8,10 @@
 #pragma once
 
 
+// my dependencies
+#include "forward.h"
+
+
 // thin wrapper over {rep_t} that serves as the base for all classes that encapsulate cartesian
 // products, hence the name
 //

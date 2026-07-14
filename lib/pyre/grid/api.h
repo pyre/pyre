@@ -8,6 +8,10 @@
 #pragma once
 
 
+// my dependencies
+#include "forward.h"
+
+
 // low level entities; you should probably stay away from them
 namespace pyre::grid {
     // this wrapper over a {std::array}-like container

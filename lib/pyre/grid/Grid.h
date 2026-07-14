@@ -8,6 +8,11 @@
 #pragma once
 
 
+// my dependencies
+#include "forward.h"
+#include "Canonical.h"
+
+
 template <class packingT, class storageT>
 class pyre::grid::Grid {
     // types

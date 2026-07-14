@@ -8,6 +8,10 @@
 #pragma once
 
 
+// my dependencies
+#include "forward.h"
+
+
 // in iterator that visit the cells of a grid in a specific order
 template <class gridT, class indexIteratorT, bool isConst>
 class pyre::grid::GridIterator : public iterator_base<gridT, isConst> {
