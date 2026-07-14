@@ -14,7 +14,7 @@
 
 // factory
 auto
-pyre::flow::protocol::Factory::create(const name_type & name) -> factory_ref_type
+pyre::flow::protocols::Factory::create(const name_type & name) -> factory_ref_type
 {
     // build an instance and wrap it in a shared pointer
     auto ref = std::make_shared<Factory>(sentinel_type(), name);
@@ -32,7 +32,7 @@ pyre::flow::protocol::Factory::create(const name_type & name) -> factory_ref_typ
 }
 
 // constructors
-pyre::flow::protocol::Factory::Factory(sentinel_type sentinel, const name_type & name) :
+pyre::flow::protocols::Factory::Factory(sentinel_type sentinel, const name_type & name) :
     // superclass
     Node(sentinel, name),
     // data members
@@ -42,7 +42,7 @@ pyre::flow::protocol::Factory::Factory(sentinel_type sentinel, const name_type &
 
 // accessors
 auto
-pyre::flow::protocol::Factory::input(const name_type & name) const -> product_ref_type
+pyre::flow::protocols::Factory::input(const name_type & name) const -> product_ref_type
 {
     // look up the name
     auto spot = _inputs.find(name);
@@ -56,7 +56,7 @@ pyre::flow::protocol::Factory::input(const name_type & name) const -> product_re
 }
 
 auto
-pyre::flow::protocol::Factory::output(const name_type & name) const -> product_ref_type
+pyre::flow::protocols::Factory::output(const name_type & name) const -> product_ref_type
 {
     // look up the name
     auto spot = _outputs.find(name);
@@ -70,14 +70,14 @@ pyre::flow::protocol::Factory::output(const name_type & name) const -> product_r
 }
 
 auto
-pyre::flow::protocol::Factory::inputs() const -> const connectors_type &
+pyre::flow::protocols::Factory::inputs() const -> const connectors_type &
 {
     // easy enough
     return _inputs;
 }
 
 auto
-pyre::flow::protocol::Factory::outputs() const -> const connectors_type &
+pyre::flow::protocols::Factory::outputs() const -> const connectors_type &
 {
     // easy enough
     return _outputs;
@@ -86,7 +86,7 @@ pyre::flow::protocol::Factory::outputs() const -> const connectors_type &
 // interface
 // build a reference
 auto
-pyre::flow::protocol::Factory::ref() -> factory_ref_type
+pyre::flow::protocols::Factory::ref() -> factory_ref_type
 {
     // build an instance and wrap it in a shared pointer
     return std::dynamic_pointer_cast<Factory>(shared_from_this());

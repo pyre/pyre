@@ -11,9 +11,9 @@
 namespace pyre::flow {
 
     // base classes
-    using node_t = protocol::Node;
-    using factory_t = protocol::Factory;
-    using product_t = protocol::Product;
+    using node_t = protocols::Node;
+    using factory_t = protocols::Factory;
+    using product_t = protocols::Product;
 
     // shared pointers
     using node_ref_t = std::shared_ptr<node_t>;

@@ -8,7 +8,7 @@
 #include "../public.h"
 
 // destructor
-pyre::flow::protocol::Node::~Node()
+pyre::flow::protocols::Node::~Node()
 {
     // nothing to do
     return;
@@ -16,7 +16,7 @@ pyre::flow::protocol::Node::~Node()
 
 // internals
 auto
-pyre::flow::protocol::Node::flush() -> void
+pyre::flow::protocols::Node::flush() -> void
 {
     // nothing to do here, for now
     return;

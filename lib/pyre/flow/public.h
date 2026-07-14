@@ -17,9 +17,9 @@
 #include "api.h"
 
 // base classes
-#include "protocol/Node.h"
-#include "protocol/Factory.h"
-#include "protocol/Product.h"
+#include "protocols/Node.h"
+#include "protocols/Factory.h"
+#include "protocols/Product.h"
 
 // products
 #include "products/Tile.h"

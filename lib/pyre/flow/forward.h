@@ -8,14 +8,14 @@
 #pragma once
 
 // base classes
-namespace pyre::flow::protocol {
+namespace pyre::flow::protocols {
 
     // base classes
     class Node;
     class Product;
     class Factory;
 
-} // namespace pyre::flow::protocol
+} // namespace pyre::flow::protocols
 
 // products
 namespace pyre::flow::products {

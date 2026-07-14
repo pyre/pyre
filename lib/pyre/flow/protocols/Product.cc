@@ -8,7 +8,7 @@
 #include "../public.h"
 
 // destructor
-pyre::flow::protocol::Product::~Product()
+pyre::flow::protocols::Product::~Product()
 {
     // make a channel
     auto channel = pyre::journal::debug_t("pyre.flow.products.destroy");
@@ -25,7 +25,7 @@ pyre::flow::protocol::Product::~Product()
 
 // bindings
 auto
-pyre::flow::protocol::Product::addReader(name_type slot, factory_ref_type factory)
+pyre::flow::protocols::Product::addReader(name_type slot, factory_ref_type factory)
     -> product_ref_type
 {
     // add the factory to my pile of readers
@@ -35,7 +35,7 @@ pyre::flow::protocol::Product::addReader(name_type slot, factory_ref_type factor
 };
 
 auto
-pyre::flow::protocol::Product::addWriter(name_type slot, factory_ref_type factory)
+pyre::flow::protocols::Product::addWriter(name_type slot, factory_ref_type factory)
     -> product_ref_type
 {
     // add the factory to my pile of writers
@@ -47,7 +47,7 @@ pyre::flow::protocol::Product::addWriter(name_type slot, factory_ref_type factor
 };
 
 auto
-pyre::flow::protocol::Product::removeReader(name_type slot, factory_ref_type factory)
+pyre::flow::protocols::Product::removeReader(name_type slot, factory_ref_type factory)
     -> product_ref_type
 {
     // remove the factory from my pile of readers
@@ -57,7 +57,7 @@ pyre::flow::protocol::Product::removeReader(name_type slot, factory_ref_type fac
 };
 
 auto
-pyre::flow::protocol::Product::removeWriter(name_type slot, factory_ref_type factory)
+pyre::flow::protocols::Product::removeWriter(name_type slot, factory_ref_type factory)
     -> product_ref_type
 {
     // remove the factory from my pile of writers
@@ -68,7 +68,7 @@ pyre::flow::protocol::Product::removeWriter(name_type slot, factory_ref_type fac
 
 // internals
 auto
-pyre::flow::protocol::Product::flush() -> void
+pyre::flow::protocols::Product::flush() -> void
 {
     // make a channel
     auto channel = pyre::journal::debug_t("pyre.flow.products.flush");
@@ -93,7 +93,7 @@ pyre::flow::protocol::Product::flush() -> void
 }
 
 auto
-pyre::flow::protocol::Product::make() -> product_ref_type
+pyre::flow::protocols::Product::make() -> product_ref_type
 {
     // make a channel
     auto channel = pyre::journal::debug_t("pyre.flow.products.make");

@@ -14,7 +14,7 @@
 
 // factory
 auto
-pyre::flow::protocol::Product::create(const name_type & name, bool stale) -> product_ref_type
+pyre::flow::protocols::Product::create(const name_type & name, bool stale) -> product_ref_type
 {
     // build an instance and wrap it in a shared pointer
     auto ref = std::make_shared<Product>(sentinel_type(), name, stale);
@@ -32,7 +32,7 @@ pyre::flow::protocol::Product::create(const name_type & name, bool stale) -> pro
 }
 
 // constructors
-pyre::flow::protocol::Product::Product(sentinel_type sentinel, const name_type & name, bool stale) :
+pyre::flow::protocols::Product::Product(sentinel_type sentinel, const name_type & name, bool stale) :
     // superclass
     Node(sentinel, name),
     // data members
@@ -43,7 +43,7 @@ pyre::flow::protocol::Product::Product(sentinel_type sentinel, const name_type &
 
 // build a reference
 auto
-pyre::flow::protocol::Product::ref() -> product_ref_type
+pyre::flow::protocols::Product::ref() -> product_ref_type
 {
     // build an instance and wrap it in a shared pointer
     return std::dynamic_pointer_cast<Product>(shared_from_this());
@@ -51,21 +51,21 @@ pyre::flow::protocol::Product::ref() -> product_ref_type
 
 // accessors
 auto
-pyre::flow::protocol::Product::stale() const -> bool
+pyre::flow::protocols::Product::stale() const -> bool
 {
     // easy enough
     return _stale;
 }
 
 auto
-pyre::flow::protocol::Product::readers() const -> const connections_type &
+pyre::flow::protocols::Product::readers() const -> const connections_type &
 {
     // easy enough
     return _readers;
 }
 
 auto
-pyre::flow::protocol::Product::writers() const -> const connections_type &
+pyre::flow::protocols::Product::writers() const -> const connections_type &
 {
     // easy enough
     return _writers;
@@ -73,7 +73,7 @@ pyre::flow::protocol::Product::writers() const -> const connections_type &
 
 // mutators
 auto
-pyre::flow::protocol::Product::clean() -> void
+pyre::flow::protocols::Product::clean() -> void
 {
     // clear the flag
     _stale = false;
@@ -82,7 +82,7 @@ pyre::flow::protocol::Product::clean() -> void
 }
 
 auto
-pyre::flow::protocol::Product::dirty() -> void
+pyre::flow::protocols::Product::dirty() -> void
 {
     // clear the flag
     _stale = true;
