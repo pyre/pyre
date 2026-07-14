@@ -8,6 +8,10 @@
 #pragma once
 
 
+// my dependencies
+#include "forward.h"
+
+
 // Representation of a logical d-dimensional parallelepiped
 // A brick is a container of 2^d nodes whose actual type is a template parameter
 
@@ -16,6 +20,8 @@ template <std::size_t dim, typename nodeT>
 class pyre::geometry::Brick {
     // types
 public:
+    // me
+    using self_type = Brick<dim, nodeT>;
     // export my template parameters
     typedef nodeT node_type;
     // my parts
