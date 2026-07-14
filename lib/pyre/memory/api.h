@@ -8,6 +8,11 @@
 #pragma once
 
 
+// my dependencies
+#include "forward.h"
+#include "expansions.h"
+
+
 // user facing types
 namespace pyre::memory {
     // normalized type access

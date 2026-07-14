@@ -8,6 +8,10 @@
 #pragma once
 
 
+// my dependencies
+#include "forward.h"
+
+
 // a file-backed memory map
 class pyre::memory::FileMap {
     // types

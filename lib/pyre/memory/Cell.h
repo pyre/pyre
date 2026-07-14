@@ -8,6 +8,10 @@
 #pragma once
 
 
+// my dependencies
+#include "forward.h"
+
+
 // normalize access to a type
 template <class T, bool isConst>
 class pyre::memory::Cell {

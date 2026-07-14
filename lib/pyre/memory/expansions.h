@@ -8,6 +8,10 @@
 #pragma once
 
 
+// my dependencies
+#include "forward.h"
+
+
 // template expansion machinery
 namespace pyre::memory {
     // a compile-time container with type choices
