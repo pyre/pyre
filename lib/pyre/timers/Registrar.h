@@ -17,6 +17,8 @@ template <class movementT>
 class pyre::timers::Registrar {
     // types
 public:
+    // me
+    using self_type = Registrar<movementT>;
     // timer names
     using name_type = name_t;
     // shared movement

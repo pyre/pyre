@@ -17,6 +17,8 @@ template <class clockT>
 class pyre::timers::Movement {
     // types
 public:
+    // me
+    using self_type = Movement<clockT>;
     // me types
     using movement_type = Movement;
     using movement_reference = movement_type &;

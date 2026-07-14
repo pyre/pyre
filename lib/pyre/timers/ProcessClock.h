@@ -17,6 +17,8 @@
 class pyre::timers::ProcessClock {
     // types
 public:
+    // me
+    using self_type = ProcessClock;
     using string_type = std::string;
     using duration_type = std::chrono::duration<long long int, std::nano>;
     using time_point_type = std::chrono::time_point<ProcessClock, duration_type>;
