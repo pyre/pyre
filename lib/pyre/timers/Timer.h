@@ -8,6 +8,10 @@
 #pragma once
 
 
+// my dependencies
+#include "forward.h"
+
+
 // user facing encapsulation of a timer
 template <class clockT, template <class, class> class proxyT>
 class pyre::timers::Timer : public proxyT<Timer<clockT, proxyT>, clockT> {

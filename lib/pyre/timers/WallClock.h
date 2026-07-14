@@ -8,6 +8,10 @@
 #pragma once
 
 
+// my dependencies
+#include "forward.h"
+
+
 // clock that measures the passage of real time
 // the current implementation is a trivial wrapper over {std::chrono::steady_clock}
 class pyre::timers::WallClock {
