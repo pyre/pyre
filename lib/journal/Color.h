@@ -8,10 +8,17 @@
 #pragma once
 
 
+// my dependencies
+#include "forward.h"
+
+
 // information about the location of the channel invocation
 class pyre::journal::Color {
     // types
 public:
+    // me
+    using self_type = Color;
+
     // {Color} remembers a {color_t} level
     using color_type = colorrep_t;
 

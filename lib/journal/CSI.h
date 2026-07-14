@@ -8,10 +8,19 @@
 #pragma once
 
 
+// my dependencies
+#include "forward.h"
+// my parts
+#include "ASCII.h"
+
+
 // the generator of ANSI color control sequences given color info
 class pyre::journal::CSI {
     // types
 public:
+    // me
+    using self_type = CSI;
+    // my control sequences
     using rep_type = string_t;
 
     // static interface

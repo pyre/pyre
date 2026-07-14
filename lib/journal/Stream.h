@@ -8,6 +8,17 @@
 #pragma once
 
 
+// my dependencies
+#include "forward.h"
+// my superclass
+#include "Device.h"
+// my parts
+#include "Alert.h"
+#include "Bland.h"
+#include "Memo.h"
+#include "Renderer.h"
+
+
 // a device that writes to output streams
 
 // N.B.: the constructor of this class keeps a reference to the stream you pass in; it's your
@@ -19,13 +30,17 @@
 class pyre::journal::Stream : public Device {
     // types
 public:
+    // me
+    using self_type = Stream;
     // pointers to me
     using pointer_type = std::shared_ptr<Stream>;
+    // my superclass
+    using super_type = Device;
 
     using palette_type = palette_t;
     using stream_type = outputstream_t;
-    using renderer_type = renderer_t;
-    using renderer_pointer = renderer_ptr;
+    using renderer_type = Renderer;
+    using renderer_pointer = renderer_type::pointer_type;
 
     // metamethods
 public:

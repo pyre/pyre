@@ -8,10 +8,18 @@
 #pragma once
 
 
+// my dependencies
+#include "forward.h"
+
+
 // flush a channel after injecting a decorator
 template <typename decoratorT>
 class pyre::journal::Flush {
+    // types
 public:
+    // me
+    using self_type = Flush<decoratorT>;
+    // my decorator
     using decorator_type = decoratorT;
 
     // metamethods

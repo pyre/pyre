@@ -8,10 +8,17 @@
 #pragma once
 
 
+// my dependencies
+#include "forward.h"
+
+
 // information about the location of the channel invocation
 class pyre::journal::Dent {
     // types
 public:
+    // me
+    using self_type = Dent;
+
     // {Dent} remembers a {dent_t} level
     using dent_type = dent_t;
 

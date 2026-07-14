@@ -8,6 +8,10 @@
 #pragma once
 
 
+// my dependencies
+#include "forward.h"
+
+
 // end user facing api
 namespace pyre::journal {
     // the initializer of the global settings

@@ -19,7 +19,7 @@ pyre::journal::Entry::Entry() :
     // blank page
     _page {},
     // initialize the message notes with the global settings
-    _notes { chronicler_t::notes() }
+    _notes { Chronicler::notes() }
 {}
 
 
@@ -84,7 +84,7 @@ pyre::journal::Entry::push(dent_type level) -> entry_reference
     // inject the {chronicler} margin
     for (auto count = 0; count < level; ++count) {
         // as many times as necessary
-        line += chronicler_t::margin();
+        line += Chronicler::margin();
     }
     // add to it whatever is in the buffer
     line += _buffer.str();

@@ -8,6 +8,20 @@
 #pragma once
 
 
+// my dependencies
+#include "forward.h"
+// my parts
+#include "ANSI.h"
+#include "CSI.h"
+#include "Code.h"
+#include "Color.h"
+#include "Dent.h"
+#include "Detail.h"
+#include "Flush.h"
+#include "Locator.h"
+#include "Note.h"
+
+
 // manipulators
 // end of transaction
 template <typename severityT, template <class> typename proxyT>
@@ -51,7 +65,7 @@ auto
 pyre::journal::ansi(colorname_t name) -> Color
 {
     // look up the name in the ANSI table
-    auto color = ansi_t::ansi(name);
+    auto color = ANSI::ansi(name);
     // make a color manipulator and return it
     return Color(color);
 }
@@ -61,7 +75,7 @@ auto
 pyre::journal::x11(colorname_t name) -> Color
 {
     // look up the name in the X11 color table
-    auto color = ansi_t::x11(name);
+    auto color = ANSI::x11(name);
     // make a color manipulator and return it
     return Color(color);
 }
@@ -71,7 +85,7 @@ auto
 pyre::journal::csi3(int code, bool bright) -> Color
 {
     // build the sequence
-    auto color = csi_t::csi3(code, bright);
+    auto color = CSI::csi3(code, bright);
     // make a color manipulator and return it
     return Color(color);
 }
@@ -81,7 +95,7 @@ auto
 pyre::journal::csi8(int red, int green, int blue, bool foreground) -> Color
 {
     // build the sequence
-    auto color = csi_t::csi8(red, green, blue, foreground);
+    auto color = CSI::csi8(red, green, blue, foreground);
     // make a color manipulator and return it
     return Color(color);
 }
@@ -91,7 +105,7 @@ auto
 pyre::journal::csi8_gray(int gray, bool foreground) -> Color
 {
     // build the sequence
-    auto color = csi_t::csi8_gray(gray);
+    auto color = CSI::csi8_gray(gray);
     // make a color manipulator and return it
     return Color(color);
 }
@@ -101,7 +115,7 @@ auto
 pyre::journal::csi24(int red, int green, int blue, bool foreground) -> Color
 {
     // build the sequence
-    auto color = csi_t::csi24(red, green, blue, foreground);
+    auto color = CSI::csi24(red, green, blue, foreground);
     // make a color manipulator and return it
     return Color(color);
 }

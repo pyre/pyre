@@ -8,16 +8,22 @@
 #pragma once
 
 
+// my dependencies
+#include "forward.h"
+
+
 // the base class of all journal devices
 class pyre::journal::Device {
     // types
 public:
+    // me
+    using self_type = Device;
     // pointers to me
-    using pointer_type = device_ptr;
+    using pointer_type = std::shared_ptr<self_type>;
     // for naming device instances
     using name_type = name_t;
     // message entry
-    using entry_type = entry_t;
+    using entry_type = Entry;
 
     // metamethods
 public:

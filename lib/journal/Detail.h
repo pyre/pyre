@@ -8,6 +8,10 @@
 #pragma once
 
 
+// my dependencies
+#include "forward.h"
+
+
 // control over the level of detail
 class pyre::journal::Detail {
     // types

@@ -8,6 +8,10 @@
 #pragma once
 
 
+// my dependencies
+#include "forward.h"
+
+
 // symbolic names for the ASCII control sequences
 class pyre::journal::ASCII {
     // static data members

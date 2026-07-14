@@ -14,7 +14,7 @@
 
 // metamethods
 pyre::journal::File::File(const path_type & path, filemode_t mode) :
-    device_t("file"),
+    super_type("file"),
     _palette(),
     _path(path),
     _file(path, mode | std::ios_base::out),

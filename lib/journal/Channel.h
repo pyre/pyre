@@ -8,11 +8,25 @@
 #pragma once
 
 
+// my dependencies
+#include "forward.h"
+// my parts
+#include "Entry.h"
+#include "Index.h"
+#include "File.h"
+#include "Trash.h"
+
+
 // the base journal channel
 template <typename severityT, template <class> typename proxyT>
 class pyre::journal::Channel : public proxyT<severityT> {
     // types
 public:
+    // me
+    using self_type = Channel<severityT, proxyT>;
+    // my superclass
+    using super_type = proxyT<severityT>;
+
     // my severity
     using severity_type = severityT;
     using severity_reference = severity_type &;
@@ -23,7 +37,7 @@ public:
     using dent_type = dent_t;
 
     // access to my shared state
-    using proxy_type = proxyT<severityT>;
+    using proxy_type = super_type;
     using inventory_type = typename proxy_type::inventory_type;
     using inventory_reference = typename proxy_type::inventory_reference;
     using device_type = typename inventory_type::device_type;
@@ -34,9 +48,14 @@ public:
     using index_type = Index;
     using index_reference = index_type &;
     // the current message
-    using entry_type = entry_t;
+    using entry_type = Entry;
     using entry_reference = entry_type &;
     using entry_const_reference = const entry_type &;
+
+    // quiet mode
+    using trash_type = Trash;
+    // logfile
+    using file_type = File;
 
     // pathnames
     using path_type = path_t;

@@ -14,7 +14,7 @@
 
 // metamethods
 pyre::journal::Stream::Stream(const name_type & name, stream_type & stream) :
-    device_t(name),
+    super_type(name),
     _palette(),
     _stream(stream),
     _alert { std::make_shared<Alert>() },

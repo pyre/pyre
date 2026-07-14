@@ -8,9 +8,22 @@
 #pragma once
 
 
+// my dependencies
+#include "forward.h"
+// my superclass
+#include "Renderer.h"
+
+
 // a formatter for messages that are meant for the end users; currently, this means {info_t},
 // {warning_t}, and {error_t}
 class pyre::journal::Alert : public Renderer {
+    // type aliases
+public:
+    // me
+    using self_type = Alert;
+    // my superclass
+    using super_type = Renderer;
+
     // metamethods
 public:
     virtual ~Alert();

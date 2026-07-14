@@ -8,10 +8,17 @@
 #pragma once
 
 
+// my dependencies
+#include "forward.h"
+
+
 // the null channel conforms to the API but has no effect
 class pyre::journal::Null {
     // types
 public:
+    // me
+    using self_type = Null;
+
     // channel names
     using name_type = name_t;
     using nameset_type = nameset_t;

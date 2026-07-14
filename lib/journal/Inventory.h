@@ -8,17 +8,26 @@
 #pragma once
 
 
+// my dependencies
+#include "forward.h"
+// my parts
+#include "Device.h"
+
+
 // the state shared by all channels of a given name+severity
 class pyre::journal::Inventory {
     // types
 public:
-    // me types
-    using inventory_type = Inventory;
+    // me
+    using self_type = Inventory;
+
+    // inventory
+    using inventory_type = self_type;
     using inventory_reference = inventory_type &;
     // my parts
     using active_type = bool;
     using fatal_type = bool;
-    using device_type = device_ptr;
+    using device_type = std::shared_ptr<Device>;
 
     // metamethods
 public:

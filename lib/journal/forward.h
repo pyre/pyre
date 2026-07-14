@@ -8,6 +8,10 @@
 #pragma once
 
 
+// my dependencies
+#include "externals.h"
+
+
 // grab the locator macros
 #include "macros.h"
 

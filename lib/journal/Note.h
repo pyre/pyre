@@ -8,10 +8,17 @@
 #pragma once
 
 
+// my dependencies
+#include "forward.h"
+
+
 // notes are channel manipulators that decorate channels with metadata
 class pyre::journal::Note {
     // types
 public:
+    // me
+    using self_type = Note;
+    // my parts
     using key_type = key_t;
     using value_type = value_t;
 
