@@ -10,7 +10,9 @@ pyre-mpi.pkg.tests.prerequisites := pyre-mpi.pkg pyre.pkg
 
 
 # exclusions
-pyre-mpi.pkg.tests.drivers.exclude := ip.py
+# {mpirun} and {slurm} drive the {mpi.mpirun}/{mpi.slurm} launcher shells through {pyre.externals},
+# which is not fully functional yet; exclude them until it is
+pyre-mpi.pkg.tests.drivers.exclude := ip.py mpirun.py slurm.py
 
 
 # set up a macro for the hostfile
