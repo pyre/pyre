@@ -349,6 +349,8 @@ set_property(TEST tests.pyre.lib.viz.iterators.polarsaw.cleanup PROPERTY
   )
 
 
+# math
+pyre_test_driver(tests/pyre.lib/math/transcendental.cc)
 
 
 # tensor
