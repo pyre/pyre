@@ -28,6 +28,10 @@ authors = [
 maintainers = [
     { name = "Michael A.G. Aïvázis", email = "michael.aivazis@para-sim.com" },
 ]
+# NOTE: this declared floor and the classifiers below are stale. CI exercises only
+# python 3.12, 3.13, and 3.14 (see .github/workflows/mm.yaml); nothing older than 3.12
+# is tested, so support for it is unverified and likely broken. tighten the floor and
+# refresh the classifiers once the python support policy is settled.
 requires-python = ">3.7.2"
 keywords = ["science", "framework"]
 classifiers = [
