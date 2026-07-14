@@ -5,11 +5,13 @@
 
 
 # openmpi refuses to bind more ranks than the node has cores, even when the hostfile grants the
-# slots; turning cpu binding off with {--bind-to none} lets a CI runner place the -np 7/8 cases.
-# this spelling is openmpi-specific — {mpich} and other flavors do not understand it — so gate it
-# on the vendor; mirrors the {--bind-to none} handling in .mm/pyre-mpi.{lib,pkg}.tests
+# slots; {--bind-to none} turns cpu binding off so a core-starved runner (e.g. CI) can place the
+# -np 7/8 cases. it is openmpi-specific — {mpich} and other flavors reject it — so it is opt-in: a
+# build that knows it runs openmpi turns it on with {-DPYRE_MPI_OVERSUBSCRIBE=ON}. this mirrors the
+# flavor-gated flag in .mm/pyre-mpi.{lib,pkg}.tests, which keys off the declared {mpi.flavor}
+option(PYRE_MPI_OVERSUBSCRIBE "add --bind-to none so openmpi can place more ranks than cores" OFF)
 set(PYRE_MPIEXEC_BIND "")
-if(MPI_CXX_LIBRARY_VERSION_STRING MATCHES "Open MPI")
+if(PYRE_MPI_OVERSUBSCRIBE)
   set(PYRE_MPIEXEC_BIND --bind-to none)
 endif()
 
