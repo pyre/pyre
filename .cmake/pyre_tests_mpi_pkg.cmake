@@ -27,9 +27,11 @@ pyre_test_python_testcase(tests/mpi.pkg/collectives.py)
 pyre_test_python_testcase_mpi(tests/mpi.pkg/collectives.py 8)
 pyre_test_python_testcase(tests/mpi.pkg/nonblocking.py)
 pyre_test_python_testcase_mpi(tests/mpi.pkg/nonblocking.py 7)
+# {mpirun} and {slurm} drive the {mpi.mpirun}/{mpi.slurm} launcher shells through
+# {pyre.externals}, which is not fully functional yet; exclude them until it is
 # pyre_test_python_testcase(tests/mpi.pkg/mpirun.py)
 # pyre_test_python_testcase(tests/mpi.pkg/slurm.py)
-# reverted pending review; {ip} is in mm's drivers.exclude (demo)
+# {ip} is excluded to match mm's drivers.exclude
 # pyre_test_python_testcase(tests/mpi.pkg/ip.py)
 # pyre_test_python_testcase_mpi(tests/mpi.pkg/ip.py 8)
 
