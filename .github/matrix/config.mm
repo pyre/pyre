@@ -29,12 +29,8 @@ mpi.executive := mpiexec
 python.version := $(pythonVersion)
 python.dir := $(pythonLocation)
 
-# numpy
-numpy.version := 1.26.4
-numpy.dir := $(python.dir)/lib/python$(python.version)/site-packages/numpy/core
-
 # pybind11
-pybind11.version := 2.11.1
+pybind11.version := 3.0.1
 pybind11.dir := $(python.dir)/lib/python$(python.version)/site-packages/pybind11
 
 # control over the build process
