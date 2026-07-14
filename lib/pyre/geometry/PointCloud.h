@@ -8,11 +8,17 @@
 #pragma once
 
 
+// my dependencies
+#include "forward.h"
+
+
 // declaration of points
 template <typename pointT>
 class pyre::geometry::PointCloud {
     // types
 public:
+    // me
+    using self_type = PointCloud<pointT>;
     typedef pointT point_type;
     typedef std::size_t size_type;
     typedef std::vector<point_type> rep_type;

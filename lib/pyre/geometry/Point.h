@@ -8,11 +8,17 @@
 #pragma once
 
 
+// my dependencies
+#include "forward.h"
+
+
 // declaration of points
 template <std::size_t dim, typename dataT>
 class pyre::geometry::Point {
     // types
 public:
+    // me
+    using self_type = Point<dim, dataT>;
     typedef dataT data_type;
     typedef std::size_t size_type;
     typedef std::array<data_type, dim> rep_type;
