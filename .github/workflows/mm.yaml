@@ -59,7 +59,7 @@ jobs:
       - name: install dependencies
         run: |
           python${pythonVersion} -m pip install --upgrade pip
-          pip3 install distro graphene 'numpy<2.0' pybind11 PyYAML
+          pip3 install pybind11 PyYAML numpy
         env:
           pythonVersion: ${{matrix.python}}
 
@@ -72,7 +72,7 @@ jobs:
           echo " -- platform tag from python"
           python${pythonVersion} -c "import sys; print(sys.platform)"
           echo " -- distribution tag from python"
-          python${pythonVersion} -c "import distro; print(distro.linux_distribution(full_distribution_name=False))"
+          python${pythonVersion} -c "import platform; print(platform.freedesktop_os_release().get('PRETTY_NAME'))"
           echo " -- make"
           make --version
           echo " -- python"
@@ -101,14 +101,8 @@ jobs:
 
       - name: locations of python packages
         run: |
-          echo " -- distro"
-          pip3 show distro
-          echo " -- graphene"
-          pip3 show graphene
           echo " -- numpy"
           pip3 show numpy
-          echo " -- its headers"
-          find ${pythonLocation}/lib/python${pythonVersion}/site-packages/numpy/core/include
           echo " -- pybind11"
           pip3 show pybind11
           echo " -- its headers"
