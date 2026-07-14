@@ -60,7 +60,7 @@ pyre::geometry::Point<dim, dataT>::end() const
 // global operators
 template <std::size_t dim, typename dataT>
 auto
-pyre::geometry::operator==(const point_t<dim, dataT> & p1, const point_t<dim, dataT> & p2)
+pyre::geometry::operator==(const Point<dim, dataT> & p1, const Point<dim, dataT> & p2)
 {
     // delegate
     return std::equal(p1.begin(), p1.end(), p2.begin());
@@ -68,7 +68,7 @@ pyre::geometry::operator==(const point_t<dim, dataT> & p1, const point_t<dim, da
 
 template <std::size_t dim, typename dataT>
 auto
-pyre::geometry::operator!=(const point_t<dim, dataT> & p1, const point_t<dim, dataT> & p2)
+pyre::geometry::operator!=(const Point<dim, dataT> & p1, const Point<dim, dataT> & p2)
 {
     // delegate
     return !(p1 == p2);
@@ -76,7 +76,7 @@ pyre::geometry::operator!=(const point_t<dim, dataT> & p1, const point_t<dim, da
 
 template <std::size_t dim, typename dataT>
 auto &
-pyre::geometry::operator<<(std::ostream & stream, const pyre::geometry::point_t<dim, dataT> & point)
+pyre::geometry::operator<<(std::ostream & stream, const Point<dim, dataT> & point)
 {
     // initialize an iterator
     auto p = point.begin();

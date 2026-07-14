@@ -153,7 +153,7 @@ pyre::geometry::Brick<dim, nodeT>::end() const
 // global operators
 template <std::size_t dim, typename nodeT>
 auto
-pyre::geometry::operator==(const brick_t<dim, nodeT> & b1, const brick_t<dim, nodeT> & b2)
+pyre::geometry::operator==(const Brick<dim, nodeT> & b1, const Brick<dim, nodeT> & b2)
 {
     // delegate
     return std::equal(b1.begin(), b1.end(), b2.begin());
@@ -161,7 +161,7 @@ pyre::geometry::operator==(const brick_t<dim, nodeT> & b1, const brick_t<dim, no
 
 template <std::size_t dim, typename nodeT>
 auto
-pyre::geometry::operator!=(const brick_t<dim, nodeT> & b1, const brick_t<dim, nodeT> & b2)
+pyre::geometry::operator!=(const Brick<dim, nodeT> & b1, const Brick<dim, nodeT> & b2)
 {
     // delegate
     return !(b1 == b2);
@@ -169,7 +169,7 @@ pyre::geometry::operator!=(const brick_t<dim, nodeT> & b1, const brick_t<dim, no
 
 template <std::size_t dim, typename nodeT>
 auto &
-pyre::geometry::operator<<(std::ostream & stream, const pyre::geometry::Brick<dim, nodeT> & brick)
+pyre::geometry::operator<<(std::ostream & stream, const Brick<dim, nodeT> & brick)
 {
     // initialize; do it in this scope scope so we can use the iterator after the loop
     auto b = brick.begin();
