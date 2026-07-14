@@ -192,6 +192,14 @@ constexpr auto
 pyre::math::asin(double x) -> double
 {
     if (std::is_constant_evaluated()) {
+        // pin the endpoints: the {atan} argument would divide by zero at |x| == 1
+        if (x == 1.0) {
+            return M_PI / 2.0;
+        }
+        if (x == -1.0) {
+            return -M_PI / 2.0;
+        }
+        // elsewhere on the domain use the identity {asin(x) = atan(x / sqrt(1 - x^2))}
         return pyre::math::atan(x / pyre::math::sqrt(1.0 - x * x));
     } else {
         return std::asin(x);
@@ -203,7 +211,9 @@ constexpr auto
 pyre::math::acos(double x) -> double
 {
     if (std::is_constant_evaluated()) {
-        return pyre::math::atan(pyre::math::sqrt(1.0 - x * x) / x);
+        // use the identity {acos(x) = pi/2 - asin(x)}; valid across the whole domain and
+        // correctly landing in [0, pi] for negative {x} where {atan(sqrt(1 - x^2) / x)} would not
+        return M_PI / 2.0 - pyre::math::asin(x);
     } else {
         return std::acos(x);
     }
