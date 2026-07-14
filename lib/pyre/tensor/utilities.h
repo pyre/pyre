@@ -6,8 +6,7 @@
 
 
 // code guard
-#if !defined(pyre_tensor_utilities_h)
-#define pyre_tensor_utilities_h
+#pragma once
 
 
 namespace pyre::tensor {
@@ -42,11 +41,7 @@ namespace pyre::tensor {
 
 
 // get the inline definitions
-#define pyre_tensor_utilities_icc
 #include "utilities.icc"
-#undef pyre_tensor_utilities_icc
 
-
-#endif
 
 // end of file

@@ -5,8 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_timers_api_h)
-#define pyre_timers_api_h
+#pragma once
 
 
 // package api
@@ -17,7 +16,5 @@ namespace pyre::timers {
     using process_timer_t = Timer<ProcessClock, Proxy>;
 } // namespace pyre::timers
 
-
-#endif
 
 // end of file

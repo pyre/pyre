@@ -5,8 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_journal_Alert_h)
-#define pyre_journal_Alert_h
+#pragma once
 
 
 // a formatter for messages that are meant for the end users; currently, this means {info_t},
@@ -37,7 +36,5 @@ private:
     const Alert & operator=(const Alert &&) = delete;
 };
 
-
-#endif
 
 // end of file

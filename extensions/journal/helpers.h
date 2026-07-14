@@ -5,8 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_journal_py_helpers_h)
-#define pyre_journal_py_helpers_h
+#pragma once
 
 
 // utilities
@@ -17,11 +16,7 @@ namespace pyre::journal::py {
 
 
 // get the inline definitions
-#define pyre_journal_py_helpers_icc
 #include "helpers.icc"
-#undef pyre_journal_py_helpers_icc
 
-
-#endif
 
 // end of file

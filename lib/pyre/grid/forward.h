@@ -5,8 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_grid_forward_h)
-#define pyre_grid_forward_h
+#pragma once
 
 
 // useful instantiations of STL entities
@@ -231,7 +230,5 @@ class std::tuple_size<pyre::grid::Shape<containerT>>;
 template <std::size_t I, class containerT>
 struct std::tuple_element<I, pyre::grid::Shape<containerT>>;
 
-
-#endif
 
 // end of file

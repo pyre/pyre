@@ -5,9 +5,11 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_journal_Note_icc)
-#error This header contains implementation details of pyre::journal::Note
-#else
+#pragma once
+
+
+// my declarations
+#include "Note.h"
 
 
 // metamethods
@@ -31,7 +33,5 @@ pyre::journal::Note::value() const -> const value_type &
     return _value;
 }
 
-
-#endif
 
 // end of file

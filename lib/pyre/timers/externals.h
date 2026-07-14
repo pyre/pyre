@@ -5,8 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_timers_externals_h)
-#define pyre_timers_externals_h
+#pragma once
 
 
 // externals
@@ -36,7 +35,5 @@ namespace pyre::timers {
     using microseconds_t = std::chrono::duration<double, std::micro>;
 } // namespace pyre::timers
 
-
-#endif
 
 // end of file

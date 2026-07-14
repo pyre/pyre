@@ -5,8 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_viz_filters_Real_h)
-#define pyre_viz_filters_Real_h
+#pragma once
 
 
 // a filter that extracts the amplitude of its complex data source
@@ -50,11 +49,7 @@ public:
 
 
 // get the inline definitions
-#define pyre_viz_filters_Real_icc
 #include "Real.icc"
-#undef pyre_viz_filters_Real_icc
 
-
-#endif
 
 // end of file

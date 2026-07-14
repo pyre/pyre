@@ -8,6 +8,10 @@
 #pragma once
 
 
+// my declarations
+#include "Real.h"
+
+
 // factory
 template <class signalT, class realT>
 auto
@@ -159,5 +163,6 @@ pyre::viz::factories::selectors::Real<signalT, realT>::make(
     // all done
     return self;
 }
+
 
 // end of file

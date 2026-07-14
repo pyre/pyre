@@ -5,9 +5,11 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_cuda_memory_Pinned_icc)
-#error this file contains implementation details for pyre::cuda::memory::Pinned
-#else
+#pragma once
+
+
+// my declarations
+#include "Pinned.h"
 
 // metamethods
 // constructor
@@ -384,6 +386,5 @@ pyre::cuda::memory::Pinned<T, isConst>::operator[](size_type pos) const -> refer
     return data()[pos];
 }
 
-#endif
 
 // end of file

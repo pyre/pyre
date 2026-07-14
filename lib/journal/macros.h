@@ -5,8 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_journal_macros_h)
-#define pyre_journal_macros_h
+#pragma once
 
 
 // define __HERE__, which has to be a preprocessor macro
@@ -18,7 +17,5 @@
 #define __HERE_ARGS__ filename, lineno, funcname
 #define __HERE_DECL__ const char *filename, long lineno, const char *funcname
 
-
-#endif
 
 // end of file

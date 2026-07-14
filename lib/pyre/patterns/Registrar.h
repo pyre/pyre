@@ -4,8 +4,8 @@
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
 // (c) 1998-2026 all rights reserved
 
-#if !defined(pyre_patterns_Registrar_h)
-#define pyre_patterns_Registrar_h
+// code guard
+#pragma once
 
 #include <map>
 #include <string>
@@ -30,10 +30,7 @@ public:
 
 
 // get the inline definitions
-#define pyre_patterns_Registrar_icc
 #include "Registrar.icc"
-#undef pyre_patterns_Registrar_icc
 
-#endif
 
 // end of file

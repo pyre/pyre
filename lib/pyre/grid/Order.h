@@ -5,8 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_grid_Order_h)
-#define pyre_grid_Order_h
+#pragma once
 
 
 // generalization to multiple dimensions of the familiar row-major and column-major order
@@ -64,11 +63,7 @@ private:
 
 
 // get the inline definitions
-#define pyre_grid_Order_icc
 #include "Order.icc"
-#undef pyre_grid_Order_icc
 
-
-#endif
 
 // end of file

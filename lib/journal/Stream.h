@@ -5,8 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_journal_Stream_h)
-#define pyre_journal_Stream_h
+#pragma once
 
 
 // a device that writes to output streams
@@ -71,11 +70,7 @@ private:
 
 
 // get the inline definitions
-#define pyre_journal_Stream_icc
 #include "Stream.icc"
-#undef pyre_journal_Stream_icc
 
-
-#endif
 
 // end of file

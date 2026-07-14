@@ -5,14 +5,11 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(h5_py___init___h)
-#define h5_py___init___h
+#pragma once
 
 // home of all declarations that must be present in every translation unit
 // e.g., the opaque data declarations
 // subpackages that require access must include this file explicitly in their {__init__.h}
 
-
-#endif
 
 // end of file

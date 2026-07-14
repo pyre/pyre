@@ -8,6 +8,11 @@
 // code guard
 #pragma once
 
+
+// my declarations
+#include "data.h"
+
+
 template <class objectT>
 void
 pyre::h5::py::data(py::class_<objectT> & cls)

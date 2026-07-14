@@ -4,9 +4,8 @@
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
 // (c) 1998-2026 all rights reserved
 
-
-#if !defined(pyre_tensor_UnitQuaternion_h)
-#define pyre_tensor_UnitQuaternion_h
+// code guard
+#pragma once
 
 
 namespace pyre::tensor {
@@ -86,11 +85,7 @@ namespace pyre::tensor {
 
 
 // get the inline definitions
-#define pyre_tensor_UnitQuaternion_icc
 #include "UnitQuaternion.icc"
-#undef pyre_tensor_UnitQuaternion_icc
 
-
-#endif
 
 // end of file

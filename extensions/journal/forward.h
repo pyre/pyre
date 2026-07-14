@@ -5,8 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_journal_py_forward_h)
-#define pyre_journal_py_forward_h
+#pragma once
 
 
 // get the helpers
@@ -38,7 +37,5 @@ namespace pyre::journal::py {
     void help(py::module &);
 } // namespace pyre::journal::py
 
-
-#endif
 
 // end of file

@@ -4,8 +4,8 @@
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
 // (c) 1998-2026 all rights reserved
 
-#if !defined(pyre_algebra_BCD_h)
-#define pyre_algebra_BCD_h
+// code guard
+#pragma once
 
 // to get std::abs
 #include <cstdlib>
@@ -64,11 +64,7 @@ public:
 
 
 // get the inline definitions
-#define pyre_algebra_BCD_icc
 #include "BCD.icc"
-#undef pyre_algebra_BCD_icc
 
-
-#endif
 
 // end of file

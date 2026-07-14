@@ -5,8 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_grid_Grid_h)
-#define pyre_grid_Grid_h
+#pragma once
 
 
 template <class packingT, class storageT>
@@ -111,11 +110,7 @@ public:
 
 
 // get the inline definitions
-#define pyre_grid_Grid_icc
 #include "Grid.icc"
-#undef pyre_grid_Grid_icc
 
-
-#endif
 
 // end of file

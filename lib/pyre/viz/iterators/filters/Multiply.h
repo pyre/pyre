@@ -5,8 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_viz_filters_Multiply_h)
-#define pyre_viz_filters_Multiply_h
+#pragma once
 
 
 // a filter that multiplies the values of two others
@@ -53,11 +52,7 @@ public:
 
 
 // get the inline definitions
-#define pyre_viz_filters_Multiply_icc
 #include "Multiply.icc"
-#undef pyre_viz_filters_Multiply_icc
 
-
-#endif
 
 // end of file

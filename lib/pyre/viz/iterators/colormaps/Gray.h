@@ -5,8 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_viz_colormaps_Gray_h)
-#define pyre_viz_colormaps_Gray_h
+#pragma once
 
 
 // map a single value to a shade of gray
@@ -52,11 +51,7 @@ public:
 
 
 // get the inline definitions
-#define pyre_viz_colormaps_Gray_icc
 #include "Gray.icc"
-#undef pyre_viz_colormaps_Gray_icc
 
-
-#endif
 
 // end of file

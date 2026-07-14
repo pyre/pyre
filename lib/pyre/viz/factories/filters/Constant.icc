@@ -7,6 +7,11 @@
 // code guard
 #pragma once
 
+
+// my declarations
+#include "Constant.h"
+
+
 // factory
 template <class constantT>
 auto
@@ -117,5 +122,6 @@ pyre::viz::factories::filters::Constant<constantT>::make(
     // all done
     return self;
 }
+
 
 // end of file

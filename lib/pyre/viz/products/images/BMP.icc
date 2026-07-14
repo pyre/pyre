@@ -7,6 +7,11 @@
 // code guard
 #pragma once
 
+
+// my declarations
+#include "BMP.h"
+
+
 // factory
 auto
 pyre::viz::products::images::BMP::create(const name_type & name, shape_type shape, bool topdown)
@@ -167,5 +172,6 @@ pyre::viz::products::images::BMP::write() -> view_type
     // build a view to my color payload and return it
     return view_type(_data + _payloadOffset, _payloadSz);
 }
+
 
 // end of file

@@ -5,8 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_py_memory_views_h)
-#define pyre_py_memory_views_h
+#pragma once
 
 
 // the {pyre} extension namespace
@@ -17,11 +16,8 @@ namespace pyre::py::memory {
 } // namespace pyre::py::memory
 
 
-// get the implementation
-#define pyre_py_memory_views_icc
+// get the inline definitions
 #include "views.icc"
-#undef pyre_py_memory_views_icc
 
-#endif
 
 // end of file

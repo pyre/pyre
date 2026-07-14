@@ -5,8 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_viz_forward_h)
-#define pyre_viz_forward_h
+#pragma once
 
 
 // set up the namespace
@@ -220,7 +219,5 @@ namespace pyre::viz {
 
 } // namespace pyre::viz
 
-
-#endif
 
 // end of file

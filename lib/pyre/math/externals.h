@@ -6,14 +6,11 @@
 
 
 // code guard
-#if !defined(pyre_math_externals_h)
-#define pyre_math_externals_h
+#pragma once
 
 
 // externals
 #include <cmath>
 
-
-#endif
 
 // end of file

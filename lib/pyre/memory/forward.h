@@ -5,8 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_memory_forward_h)
-#define pyre_memory_forward_h
+#pragma once
 
 
 // set up the namespace
@@ -38,7 +37,5 @@ namespace pyre::memory {
     class View;
 }; // namespace pyre::memory
 
-
-#endif
 
 // end of file

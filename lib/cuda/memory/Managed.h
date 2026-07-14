@@ -5,8 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_cuda_memory_Managed_h)
-#define pyre_cuda_memory_Managed_h
+#pragma once
 
 
 // a block of cells on managed memory with universal access
@@ -79,11 +78,7 @@ public:
 
 
 // get the inline definitions
-#define pyre_cuda_memory_Managed_icc
 #include "Managed.icc"
-#undef pyre_cuda_memory_Managed_icc
 
-
-#endif
 
 // end of file

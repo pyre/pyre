@@ -6,8 +6,7 @@
 
 
 // code guard
-#if !defined(pyre_journal_ErrorConsole_h)
-#define pyre_journal_ErrorConsole_h
+#pragma once
 
 // a device that prints to {cerr}
 class pyre::journal::ErrorConsole : public Stream {
@@ -41,11 +40,7 @@ private:
 
 
 // get the inline definitions
-#define pyre_journal_ErrorConsole_icc
 #include "ErrorConsole.icc"
-#undef pyre_journal_ErrorConsole_icc
 
-
-#endif
 
 // end of file

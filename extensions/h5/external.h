@@ -5,8 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(h5_py_external_h)
-#define h5_py_external_h
+#pragma once
 
 
 // STL
@@ -286,7 +285,5 @@ namespace pyre::h5::py {
 
 } // namespace pyre::h5::py
 
-
-#endif
 
 // end of file

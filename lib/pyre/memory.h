@@ -5,8 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_memory_h)
-#define pyre_memory_h
+#pragma once
 
 
 // Encapsulation of allocation, ownership, and access policies for memory blocks
@@ -32,7 +31,5 @@
 // the api is in "memory/api.h"
 #include "memory/public.h"
 
-
-#endif
 
 // end of file

@@ -5,8 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_journal_Dent_h)
-#define pyre_journal_Dent_h
+#pragma once
 
 
 // information about the location of the channel invocation
@@ -33,11 +32,7 @@ private:
 
 
 // get the inline definitions
-#define pyre_journal_Dent_icc
 #include "Dent.icc"
-#undef pyre_journal_Dent_icc
 
-
-#endif
 
 // end of file

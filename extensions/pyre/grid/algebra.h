@@ -17,7 +17,7 @@ namespace pyre::py::grid {
 } // namespace pyre::py::grid
 
 
-// get the implementation
+// get the inline definitions
 #include "algebra.icc"
 
 

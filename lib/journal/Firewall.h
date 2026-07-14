@@ -5,8 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_journal_Firewall_h)
-#define pyre_journal_Firewall_h
+#pragma once
 
 
 // developer facing channel; usually gets turned off in release mode
@@ -51,11 +50,7 @@ private:
 
 
 // get the inline definitions
-#define pyre_journal_Firewall_icc
 #include "Firewall.icc"
-#undef pyre_journal_Firewall_icc
 
-
-#endif
 
 // end of file

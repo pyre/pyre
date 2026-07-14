@@ -5,15 +5,12 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_py_forward_h)
-#define pyre_py_forward_h
+#pragma once
 
 
 // the {pyre} extension namespace
 namespace pyre::py {
 } // namespace pyre::py
 
-
-#endif
 
 // end of file

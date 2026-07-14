@@ -5,8 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_timers_forward_h)
-#define pyre_timers_forward_h
+#pragma once
 
 
 // forward declarations of all user facing entities
@@ -56,7 +55,5 @@ namespace pyre::timers {
 } // namespace pyre::timers
 #endif
 
-
-#endif
 
 // end of file

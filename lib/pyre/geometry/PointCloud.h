@@ -4,6 +4,9 @@
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
 // (c) 1998-2026 all rights reserved
 
+// code guard
+#pragma once
+
 
 // declaration of points
 template <typename pointT>
@@ -32,6 +35,10 @@ public:
 private:
     rep_type _points;
 };
+
+
+// get the inline definitions
+#include "PointCloud.icc"
 
 
 // end of file

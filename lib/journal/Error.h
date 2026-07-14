@@ -5,8 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_journal_Error_h)
-#define pyre_journal_Error_h
+#pragma once
 
 
 // user facing channel; meant for error messages, i.e. conditions from which the application
@@ -52,11 +51,7 @@ private:
 
 
 // get the inline definitions
-#define pyre_journal_Error_icc
 #include "Error.icc"
-#undef pyre_journal_Error_icc
 
-
-#endif
 
 // end of file

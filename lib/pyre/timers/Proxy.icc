@@ -5,9 +5,11 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_timers_Proxy_icc)
-#error this file contains implementation details for pyre::timers::Proxy
-#else
+#pragma once
+
+
+// my declarations
+#include "Proxy.h"
 
 
 // metamethods
@@ -115,7 +117,5 @@ operator active_type() const
     return active_type(_movement);
 }
 
-
-#endif
 
 // end of file

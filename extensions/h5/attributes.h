@@ -6,8 +6,7 @@
 
 
 // code guard
-#if !defined(h5_py_attributes_h)
-#define h5_py_attributes_h
+#pragma once
 
 // this decorator adds the shared attribute interface to each bound object; it lets the
 // {pyre::h5::Location} interface be reused across groups, datasets, files, and named datatypes
@@ -21,12 +20,8 @@ namespace pyre::h5::py {
 
 } // namespace pyre::h5::py
 
-// get the implementation
-#define h5_py_attributes_icc
+// get the inline definitions
 #include "attributes.icc"
-#undef h5_py_attributes_icc
 
-
-#endif
 
 // end of file

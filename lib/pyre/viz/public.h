@@ -5,8 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_viz_public_h)
-#define pyre_viz_public_h
+#pragma once
 
 
 // external packages
@@ -77,7 +76,5 @@
 // encodings
 #include "iterators/codecs/BMP.h"
 
-
-#endif
 
 // end of file

@@ -7,6 +7,11 @@
 // code guard
 #pragma once
 
+
+// my declarations
+#include "AddTiles.h"
+
+
 // factory
 template <class op1T, class op2T, class resultT>
 auto
@@ -126,5 +131,6 @@ pyre::flow::factories::Add<pyre::flow::products::tile_t, op1T, op2T, resultT>::m
     // all done
     return self;
 }
+
 
 // end of file

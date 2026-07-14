@@ -7,6 +7,11 @@
 // code guard
 #pragma once
 
+
+// my declarations
+#include "Affine.h"
+
+
 // factory
 template <class signalT, class affineT>
 auto
@@ -196,5 +201,6 @@ pyre::viz::factories::filters::Affine<signalT, affineT>::make(
     // all done
     return self;
 }
+
 
 // end of file

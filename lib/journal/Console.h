@@ -6,8 +6,7 @@
 
 
 // code guard
-#if !defined(pyre_journal_Console_h)
-#define pyre_journal_Console_h
+#pragma once
 
 // a device that prints to {cout}
 class pyre::journal::Console : public Stream {
@@ -41,11 +40,7 @@ private:
 
 
 // get the inline definitions
-#define pyre_journal_Console_icc
 #include "Console.icc"
-#undef pyre_journal_Console_icc
 
-
-#endif
 
 // end of file

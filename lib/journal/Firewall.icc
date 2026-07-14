@@ -5,9 +5,11 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_journal_Firewall_icc)
-#error this file contains implementation details for pyre::journal::Firewall
-#else
+#pragma once
+
+
+// my declarations
+#include "Firewall.h"
 
 
 // metamethods
@@ -59,7 +61,5 @@ pyre::journal::Firewall<proxyT>::initializeIndex() -> index_type
     return index_type(true, true);
 }
 
-
-#endif
 
 // end of file

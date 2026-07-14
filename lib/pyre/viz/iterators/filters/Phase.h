@@ -5,8 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_viz_filters_Phase_h)
-#define pyre_viz_filters_Phase_h
+#pragma once
 
 
 // a filter that extracts the phase of its complex source
@@ -50,11 +49,7 @@ public:
 
 
 // get the inline definitions
-#define pyre_viz_filters_Phase_icc
 #include "Phase.icc"
-#undef pyre_viz_filters_Phase_icc
 
-
-#endif
 
 // end of file

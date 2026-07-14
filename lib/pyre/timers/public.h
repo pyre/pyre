@@ -5,8 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_timers_public_h)
-#define pyre_timers_public_h
+#pragma once
 
 
 // external packages
@@ -31,7 +30,5 @@
 // timers
 #include "Timer.h"
 
-
-#endif
 
 // end of file

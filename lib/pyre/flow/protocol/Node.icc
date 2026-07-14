@@ -7,6 +7,11 @@
 // code guard
 #pragma once
 
+
+// my declarations
+#include "Node.h"
+
+
 // constructors
 pyre::flow::protocol::Node::Node(sentinel_type, const name_type & name) :
     // members
@@ -39,5 +44,6 @@ pyre::flow::protocol::Node::ref() -> node_ref_type
     // build an instance and wrap it in a shared pointer
     return shared_from_this();
 }
+
 
 // end of file

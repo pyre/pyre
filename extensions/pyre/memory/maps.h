@@ -5,8 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_py_memory_maps_h)
-#define pyre_py_memory_maps_h
+#pragma once
 
 
 // the {pyre} extension namespace
@@ -21,11 +20,8 @@ namespace pyre::py::memory {
 } // namespace pyre::py::memory
 
 
-// get the implementation
-#define pyre_py_memory_maps_icc
+// get the inline definitions
 #include "maps.icc"
-#undef pyre_py_memory_maps_icc
 
-#endif
 
 // end of file

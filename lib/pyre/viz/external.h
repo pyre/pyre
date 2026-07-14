@@ -5,8 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_viz_external_h)
-#define pyre_viz_external_h
+#pragma once
 
 
 // externals
@@ -25,7 +24,5 @@
 #include <pyre/grid.h>
 #include <pyre/flow.h>
 
-
-#endif
 
 // end of file

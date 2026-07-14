@@ -5,9 +5,11 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_viz_filters_LogSaw_icc)
-#error this file contains implementation details for pyre::viz::LogSaw
-#else
+#pragma once
+
+
+// my declarations
+#include "LogSaw.h"
 
 
 // metamethods
@@ -44,7 +46,5 @@ pyre::viz::iterators::filters::LogSaw<sourceT>::operator++() -> void
     return;
 }
 
-
-#endif
 
 // end of file

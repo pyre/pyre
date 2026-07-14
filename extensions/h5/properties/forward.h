@@ -5,8 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(h5_py_properties_forward_h)
-#define h5_py_properties_forward_h
+#pragma once
 
 
 // externals
@@ -29,7 +28,5 @@ namespace pyre::h5::py::properties {
     void lcpl(py::module &);
 } // namespace pyre::h5::py::properties
 
-
-#endif
 
 // end of file

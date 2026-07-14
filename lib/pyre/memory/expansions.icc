@@ -6,9 +6,11 @@
 
 
 // code guard
-#if !defined(pyre_memory_expansions_icc)
-#error this file contains implementation details for pyre::memory::expansions
-#else
+#pragma once
+
+
+// my declarations
+#include "expansions.h"
 
 // compile-time type lists
 template <typename... typeT>
@@ -50,7 +52,5 @@ struct pyre::memory::ExpandStorageStrategies<pyre::memory::StorageStrategies<str
     using type = typename Concat<typename ComposeStorageStrategy<strategyT, cellT>::type...>::type;
 };
 
-
-#endif
 
 // end of file

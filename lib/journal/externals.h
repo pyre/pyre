@@ -5,8 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_journal_externals_h)
-#define pyre_journal_externals_h
+#pragma once
 
 
 // externals
@@ -84,7 +83,5 @@ namespace pyre::journal {
     using palette_t = std::map<key_t, colorrep_t>;
 } // namespace pyre::journal
 
-
-#endif
 
 // end of file

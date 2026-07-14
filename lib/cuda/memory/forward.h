@@ -5,8 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_cuda_memory_forward_h)
-#define pyre_cuda_memory_forward_h
+#pragma once
 
 
 // set up the namespace
@@ -22,7 +21,5 @@ namespace pyre::cuda::memory {
     class Mapped;
 }; // namespace pyre::cuda::memory
 
-
-#endif
 
 // end of file

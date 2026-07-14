@@ -6,9 +6,11 @@
 
 
 // code guard
-#if !defined(pyre_tensor_transcendental_icc)
-#error this file contains implementation details for math transcendental functions
-#else
+#pragma once
+
+
+// my declarations
+#include "transcendental.h"
 
 
 // function to compute factorial of an integer
@@ -271,7 +273,5 @@ pyre::math::atan2(double y, double x) -> double
     }
 }
 
-
-#endif
 
 // end of file

@@ -5,9 +5,11 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_journal_CSI_icc)
-#error this file contains implementation details for pyre::journal::CSI
-#else
+#pragma once
+
+
+// my declarations
+#include "CSI.h"
 
 
 // all color-sequence generation is delegated to {pyre::chroma}, the single source of color truth
@@ -61,7 +63,5 @@ pyre::journal::CSI::blink(bool state) -> rep_type
     return esc + "[" + (state ? "5" : "25") + "m";
 }
 
-
-#endif
 
 // end of file

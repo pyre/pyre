@@ -5,9 +5,11 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_timers_Registrar_icc)
-#error this file contains implementation details for pyre::timers::Registrar
-#else
+#pragma once
+
+
+// my declarations
+#include "Registrar.h"
 
 
 // metamethods
@@ -82,7 +84,5 @@ pyre::timers::Registrar<movementT>::lookup(const name_type & timer) -> movement_
     return _registry[timer];
 }
 
-
-#endif
 
 // end of file

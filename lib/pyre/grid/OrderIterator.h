@@ -5,8 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_grid_OrderIterator_h)
-#define pyre_grid_OrderIterator_h
+#pragma once
 
 
 // an iterator that enables visiting product ranks in a specific order
@@ -65,11 +64,7 @@ public:
 
 
 // get the inline definitions
-#define pyre_grid_OrderIterator_icc
 #include "OrderIterator.icc"
-#undef pyre_grid_OrderIterator_icc
 
-
-#endif
 
 // end of file

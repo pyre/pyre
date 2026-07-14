@@ -5,9 +5,11 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_journal_Help_icc)
-#error this file contains implementation details for pyre::journal::Help
-#else
+#pragma once
+
+
+// my declarations
+#include "Help.h"
 
 
 // metamethods
@@ -59,7 +61,5 @@ pyre::journal::Help<proxyT>::initializeIndex() -> index_type
     return index;
 }
 
-
-#endif
 
 // end of file

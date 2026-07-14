@@ -5,8 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_py_memory_forward_h)
-#define pyre_py_memory_forward_h
+#pragma once
 
 
 // the {pyre} extension namespace
@@ -19,7 +18,5 @@ namespace pyre::py::memory {
     void views(py::module &);
 } // namespace pyre::py::memory
 
-
-#endif
 
 // end of file

@@ -7,6 +7,11 @@
 // code guard
 #pragma once
 
+
+// my declarations
+#include "Product.h"
+
+
 // factory
 auto
 pyre::flow::protocol::Product::create(const name_type & name, bool stale) -> product_ref_type
@@ -84,5 +89,6 @@ pyre::flow::protocol::Product::dirty() -> void
     // all done
     return;
 }
+
 
 // end of file

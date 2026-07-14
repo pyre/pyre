@@ -5,9 +5,11 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_py_grid_reps_icc)
-#error this file contains implementation details for pyre::py::grid reps
-#else
+#pragma once
+
+
+// my declarations
+#include "reps.h"
 
 // endow {repT} with an reps
 template <class repT>
@@ -128,6 +130,5 @@ pyre::py::grid::reps(py::class_<repT> & cls)
     return;
 };
 
-#endif
 
 // end of file

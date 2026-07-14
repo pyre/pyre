@@ -5,8 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(h5_py_types_forward_h)
-#define h5_py_types_forward_h
+#pragma once
 
 
 // the helpers
@@ -41,7 +40,5 @@ namespace pyre::h5::py::types {
 
 } // namespace pyre::h5::py::types
 
-
-#endif
 
 // end of file

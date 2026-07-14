@@ -5,8 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_py_external_h)
-#define pyre_py_external_h
+#pragma once
 
 
 // STL
@@ -41,7 +40,5 @@ namespace pyre::py {
 
 } // namespace pyre::py
 
-
-#endif
 
 // end of file

@@ -5,8 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_journal_Index_h)
-#define pyre_journal_Index_h
+#pragma once
 
 
 // owner of the map (channel name -> shared channel state), as well as the severity wide defaults
@@ -55,11 +54,7 @@ private:
 
 
 // get the inline definitions
-#define pyre_journal_Index_icc
 #include "Index.icc"
-#undef pyre_journal_Index_icc
 
-
-#endif
 
 // end of file

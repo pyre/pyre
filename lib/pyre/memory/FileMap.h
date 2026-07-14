@@ -5,8 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_memory_FileMap_h)
-#define pyre_memory_FileMap_h
+#pragma once
 
 
 // a file-backed memory map
@@ -75,11 +74,7 @@ private:
 
 
 // get the inline definitions
-#define pyre_memory_FileMap_icc
 #include "FileMap.icc"
-#undef pyre_memory_FileMap_icc
 
-
-#endif
 
 // end of file

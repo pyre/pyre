@@ -5,9 +5,11 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_journal_Console_icc)
-#error This header contains implementation details of pyre::journal::Console
-#else
+#pragma once
+
+
+// my declarations
+#include "Console.h"
 
 
 // metamethods
@@ -18,7 +20,5 @@ pyre::journal::Console::tty() const
     return _tty;
 }
 
-
-#endif
 
 // end of file

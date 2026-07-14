@@ -5,8 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_memory_api_h)
-#define pyre_memory_api_h
+#pragma once
 
 
 // user facing types
@@ -94,7 +93,5 @@ namespace pyre::memory {
     using concat_t = Concat<listT...>;
 } // namespace pyre::memory
 
-
-#endif
 
 // end of file

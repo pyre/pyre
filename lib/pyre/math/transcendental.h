@@ -7,8 +7,7 @@
 // Constexpr implementation of transcendental functions until C++26 implements them
 
 // code guard
-#if !defined(pyre_math_transcendental_h)
-#define pyre_math_transcendental_h
+#pragma once
 
 
 namespace pyre::math {
@@ -53,11 +52,7 @@ namespace pyre::math {
 
 
 // get the inline definitions
-#define pyre_tensor_transcendental_icc
 #include "transcendental.icc"
-#undef pyre_tensor_transcendental_icc
 
-
-#endif
 
 // end of file

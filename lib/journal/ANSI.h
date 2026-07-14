@@ -5,8 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_journal_ANSI_h)
-#define pyre_journal_ANSI_h
+#pragma once
 
 
 // a map of color names to the ANSI escape sequences that render them; the sequences are
@@ -36,7 +35,5 @@ private:
     static auto emulates() -> bool;
 };
 
-
-#endif
 
 // end of file

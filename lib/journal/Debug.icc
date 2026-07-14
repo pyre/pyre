@@ -5,9 +5,11 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_journal_Debug_icc)
-#error this file contains implementation details for pyre::journal::Debug
-#else
+#pragma once
+
+
+// my declarations
+#include "Debug.h"
 
 
 // metamethods
@@ -76,7 +78,5 @@ pyre::journal::Debug<proxyT>::initializeIndex() -> index_type
     return index;
 }
 
-
-#endif
 
 // end of file

@@ -5,8 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_viz_filters_Uniform_h)
-#define pyre_viz_filters_Uniform_h
+#pragma once
 
 
 // a filter that maps values in [0,1] onto a the cell index of a uniformly spaced grid
@@ -54,11 +53,7 @@ public:
 
 
 // get the inline definitions
-#define pyre_viz_filters_Uniform_icc
 #include "Uniform.icc"
-#undef pyre_viz_filters_Uniform_icc
 
-
-#endif
 
 // end of file

@@ -6,8 +6,7 @@
 
 
 // code guard
-#if !defined(pyre_tensor_externals_h)
-#define pyre_tensor_externals_h
+#pragma once
 
 
 // externals
@@ -33,7 +32,5 @@ namespace pyre::tensor {
 
 } // namespace pyre::tensor
 
-
-#endif
 
 // end of file

@@ -5,9 +5,11 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_timers_ProcessClock_icc)
-#error this file contains implementation details for pyre::timers::ProcessClock
-#else
+#pragma once
+
+
+// my declarations
+#include "ProcessClock.h"
 
 
 // interface
@@ -37,7 +39,5 @@ pyre::timers::ProcessClock::now() -> time_point_type
 #endif
 }
 
-
-#endif
 
 // end of file

@@ -6,8 +6,7 @@
 
 
 // code guard
-#if !defined(pyre_tensor_api_h)
-#define pyre_tensor_api_h
+#pragma once
 
 
 namespace pyre::tensor {
@@ -74,7 +73,5 @@ namespace pyre::tensor {
 
 } // namespace pyre::tensor
 
-
-#endif
 
 // end of file

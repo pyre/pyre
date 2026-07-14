@@ -5,8 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_viz_colormaps_Complex_h)
-#define pyre_viz_colormaps_Complex_h
+#pragma once
 
 
 // map complex values to (hue, brightness)
@@ -80,11 +79,7 @@ public:
 
 
 // get the inline definitions
-#define pyre_viz_colormaps_Complex_icc
 #include "Complex.icc"
-#undef pyre_viz_colormaps_Complex_icc
 
-
-#endif
 
 // end of file

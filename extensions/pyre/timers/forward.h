@@ -5,8 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_py_timers_forward_h)
-#define pyre_py_timers_forward_h
+#pragma once
 
 
 // the {pyre} extension namespace
@@ -16,7 +15,5 @@ namespace pyre::py::timers {
     void process_timers(py::module &);
 } // namespace pyre::py::timers
 
-
-#endif
 
 // end of file

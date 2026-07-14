@@ -5,9 +5,11 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_timers_Movement_icc)
-#error this file contains implementation details for pyre::timers::Movement
-#else
+#pragma once
+
+
+// my declarations
+#include "Movement.h"
 
 
 // metamethods
@@ -164,7 +166,5 @@ operator active_type() const
     return _active;
 }
 
-
-#endif
 
 // end of file

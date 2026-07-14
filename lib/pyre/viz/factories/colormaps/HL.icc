@@ -8,6 +8,10 @@
 #pragma once
 
 
+// my declarations
+#include "HL.h"
+
+
 // factory
 template <class hueT, class luminosityT, class redT, class greenT, class blueT>
 auto
@@ -260,5 +264,6 @@ pyre::viz::factories::colormaps::HL<hueT, luminosityT, redT, greenT, blueT>::mak
     // all done
     return self;
 }
+
 
 // end of file

@@ -4,10 +4,12 @@
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
 // (c) 1998-2026 all rights reserved
 
+// code guard
+#pragma once
 
-#if !defined(pyre_algebra_operators_h)
-#error This header file contains implementation details for the algebraic operators
-#else
+
+// my declarations
+#include "operators.h"
 
 
 // binary operators
@@ -50,7 +52,5 @@ pyre::algebra::operator/(const numeric_t & a, const numeric_t & b)
     return result;
 }
 
-
-#endif
 
 // end of file

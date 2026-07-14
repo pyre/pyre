@@ -5,8 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_journal_Detail_h)
-#define pyre_journal_Detail_h
+#pragma once
 
 
 // control over the level of detail
@@ -33,11 +32,7 @@ private:
 
 
 // get the inline definitions
-#define pyre_journal_Detail_icc
 #include "Detail.icc"
-#undef pyre_journal_Detail_icc
 
-
-#endif
 
 // end of file

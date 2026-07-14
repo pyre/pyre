@@ -5,8 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_py_grid_orders_h)
-#define pyre_py_grid_orders_h
+#pragma once
 
 
 // the {pyre} extension namespace
@@ -23,7 +22,5 @@ namespace pyre::py::grid {
 
 } // namespace pyre::py::grid
 
-
-#endif
 
 // end of file

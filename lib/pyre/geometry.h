@@ -5,12 +5,10 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_geometry_h)
-#define pyre_geometry_h
+#pragma once
 
 // support
 #include "geometry/public.h"
 
-#endif
 
 // end of file

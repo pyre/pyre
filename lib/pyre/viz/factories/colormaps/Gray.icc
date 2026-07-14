@@ -8,6 +8,10 @@
 #pragma once
 
 
+// my declarations
+#include "Gray.h"
+
+
 // factory
 template <class signalT, class redT, class greenT, class blueT>
 auto
@@ -225,5 +229,6 @@ pyre::viz::factories::colormaps::Gray<signalT, redT, greenT, blueT>::make(
     // all done
     return self;
 }
+
 
 // end of file

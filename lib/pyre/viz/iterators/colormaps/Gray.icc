@@ -5,9 +5,11 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_viz_colormaps_Gray_icc)
-#error this file contains implementation details for pyre::viz::iterators::colormaps::Gray
-#else
+#pragma once
+
+
+// my declarations
+#include "Gray.h"
 
 // metamethods
 template <class sourceT>
@@ -39,7 +41,5 @@ pyre::viz::iterators::colormaps::Gray<sourceT>::operator++() -> void
     return;
 }
 
-
-#endif
 
 // end of file

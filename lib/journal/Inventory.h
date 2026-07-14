@@ -5,8 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_journal_Inventory_h)
-#define pyre_journal_Inventory_h
+#pragma once
 
 
 // the state shared by all channels of a given name+severity
@@ -53,11 +52,7 @@ private:
 
 
 // get the inline definitions
-#define pyre_journal_Inventory_icc
 #include "Inventory.icc"
-#undef pyre_journal_Inventory_icc
 
-
-#endif
 
 // end of file

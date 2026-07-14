@@ -5,14 +5,11 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(h5_py_types_external_h)
-#define h5_py_types_external_h
+#pragma once
 
 
 // inherit
 #include "../external.h"
 
-
-#endif
 
 // end of file

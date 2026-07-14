@@ -5,8 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_py_timers_external_h)
-#define pyre_py_timers_external_h
+#pragma once
 
 
 // get the common ones
@@ -16,7 +15,5 @@
 // get the pyre parts
 #include <pyre/timers.h>
 
-
-#endif
 
 // end of file

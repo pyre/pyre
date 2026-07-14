@@ -5,8 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_timers_Movement_h)
-#define pyre_timers_Movement_h
+#pragma once
 
 
 // the state shared by all timers of a given type+name
@@ -87,11 +86,7 @@ private:
 
 
 // get the inline definitions
-#define pyre_timers_Movement_icc
 #include "Movement.icc"
-#undef pyre_timers_Movement_icc
 
-
-#endif
 
 // end of file

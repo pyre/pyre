@@ -6,9 +6,11 @@
 
 
 // code guard
-#if !defined(pyre_memory_Heap_icc)
-#error this file contains implementation details for pyre::memory::Heap
-#else
+#pragma once
+
+
+// my declarations
+#include "Heap.h"
 
 
 // metamethods
@@ -191,7 +193,5 @@ pyre::memory::Heap<T, isConst>::operator[](size_type pos) const -> reference
     return _data[pos];
 }
 
-
-#endif
 
 // end of file

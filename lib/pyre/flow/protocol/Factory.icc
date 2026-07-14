@@ -7,6 +7,11 @@
 // code guard
 #pragma once
 
+
+// my declarations
+#include "Factory.h"
+
+
 // factory
 auto
 pyre::flow::protocol::Factory::create(const name_type & name) -> factory_ref_type
@@ -86,5 +91,6 @@ pyre::flow::protocol::Factory::ref() -> factory_ref_type
     // build an instance and wrap it in a shared pointer
     return std::dynamic_pointer_cast<Factory>(shared_from_this());
 }
+
 
 // end of file

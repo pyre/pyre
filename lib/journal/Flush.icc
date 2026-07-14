@@ -5,9 +5,11 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_journal_Flush_icc)
-#error This header contains implementation details of pyre::journal::Flush
-#else
+#pragma once
+
+
+// my declarations
+#include "Flush.h"
 
 
 // metamethods
@@ -26,7 +28,5 @@ pyre::journal::Flush<decoratorT>::decorator() const -> const decorator_type &
     return _decorator;
 }
 
-
-#endif
 
 // end of file

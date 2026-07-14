@@ -5,9 +5,11 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_py_memory_maps_icc)
-#error this file contains implementation details for pyre::py::memory maps
-#else
+#pragma once
+
+
+// my declarations
+#include "maps.h"
 
 
 // const maps
@@ -104,7 +106,5 @@ pyre::py::memory::map(py::module & m, classname_t name, docstring_t docstring)
     return;
 }
 
-
-#endif
 
 // end of file

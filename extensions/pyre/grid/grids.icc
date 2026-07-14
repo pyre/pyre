@@ -5,9 +5,11 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_py_grid_grids_icc)
-#error this file contains implementation details for pyre::py::grid::grids
-#else
+#pragma once
+
+
+// my declarations
+#include "grids.h"
 
 
 // the read/write class record factory
@@ -264,6 +266,5 @@ pyre::py::grid::write(py::class_<gridT> & cls)
     return;
 }
 
-#endif
 
 // end of file

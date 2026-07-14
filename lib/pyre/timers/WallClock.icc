@@ -5,9 +5,11 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_timers_WallClock_icc)
-#error this file contains implementation details for pyre::timers::WallClock
-#else
+#pragma once
+
+
+// my declarations
+#include "WallClock.h"
 
 
 // interface
@@ -23,7 +25,5 @@ pyre::timers::WallClock::now() -> time_point_type
     return clock_type::now();
 }
 
-
-#endif
 
 // end of file

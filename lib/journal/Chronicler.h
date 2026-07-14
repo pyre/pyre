@@ -5,8 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_journal_Chronicler_h)
-#define pyre_journal_Chronicler_h
+#pragma once
 
 
 // singleton that owns the journal default configuration
@@ -86,11 +85,7 @@ private:
 
 
 // get the inline definitions
-#define pyre_journal_Chronicler_icc
 #include "Chronicler.icc"
-#undef pyre_journal_Chronicler_icc
 
-
-#endif
 
 // end of file

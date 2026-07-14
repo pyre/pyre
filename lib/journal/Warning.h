@@ -5,8 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_journal_Warning_h)
-#define pyre_journal_Warning_h
+#pragma once
 
 
 // user facing channel ; meant for warning messages, i.e. when the applications detects
@@ -53,11 +52,7 @@ private:
 
 
 // get the inline definitions
-#define pyre_journal_Warning_icc
 #include "Warning.icc"
-#undef pyre_journal_Warning_icc
 
-
-#endif
 
 // end of file

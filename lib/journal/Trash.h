@@ -5,8 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_journal_Trash_h)
-#define pyre_journal_Trash_h
+#pragma once
 
 
 // a device that ignores all requests for output
@@ -55,11 +54,7 @@ private:
 
 
 // get the inline definitions
-#define pyre_journal_Trash_icc
 #include "Trash.icc"
-#undef pyre_journal_Trash_icc
 
-
-#endif
 
 // end of file

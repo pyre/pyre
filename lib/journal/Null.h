@@ -5,8 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_journal_Null_h)
-#define pyre_journal_Null_h
+#pragma once
 
 
 // the null channel conforms to the API but has no effect
@@ -61,11 +60,7 @@ private:
 
 
 // get the inline definitions
-#define pyre_journal_Null_icc
 #include "Null.icc"
-#undef pyre_journal_Null_icc
 
-
-#endif
 
 // end of file

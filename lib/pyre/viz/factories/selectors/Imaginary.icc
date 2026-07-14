@@ -8,6 +8,10 @@
 #pragma once
 
 
+// my declarations
+#include "Imaginary.h"
+
+
 // factory
 template <class signalT, class imaginaryT>
 auto
@@ -160,5 +164,6 @@ pyre::viz::factories::selectors::Imaginary<signalT, imaginaryT>::make(
     // all done
     return self;
 }
+
 
 // end of file

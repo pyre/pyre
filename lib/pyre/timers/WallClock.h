@@ -5,8 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_timers_WallClock_h)
-#define pyre_timers_WallClock_h
+#pragma once
 
 
 // clock that measures the passage of real time
@@ -27,11 +26,7 @@ public:
 
 
 // get the inline definitions
-#define pyre_timers_WallClock_icc
 #include "WallClock.icc"
-#undef pyre_timers_WallClock_icc
 
-
-#endif
 
 // end of file

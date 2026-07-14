@@ -5,8 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_journal_ASCII_h)
-#define pyre_journal_ASCII_h
+#pragma once
 
 
 // symbolic names for the ASCII control sequences
@@ -33,7 +32,5 @@ public:
     static const char DEL = '\x7f';
 };
 
-
-#endif
 
 // end of file

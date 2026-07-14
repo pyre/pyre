@@ -5,9 +5,11 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_journal_InventoryProxy_icc)
-#error this file contains implementation details for pyre::journal::InventoryProxy
-#else
+#pragma once
+
+
+// my declarations
+#include "InventoryProxy.h"
 
 
 // metamethods
@@ -149,7 +151,5 @@ operator active_type() const
     return active();
 }
 
-
-#endif
 
 // end of file

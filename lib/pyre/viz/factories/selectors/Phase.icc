@@ -8,6 +8,10 @@
 #pragma once
 
 
+// my declarations
+#include "Phase.h"
+
+
 // factory
 template <class signalT, class phaseT>
 auto
@@ -160,5 +164,6 @@ pyre::viz::factories::selectors::Phase<signalT, phaseT>::make(
     // all done
     return self;
 }
+
 
 // end of file

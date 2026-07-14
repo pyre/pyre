@@ -5,9 +5,11 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_viz_filters_Amplitude_icc)
-#error this file contains implementation details for pyre::viz::Amplitude
-#else
+#pragma once
+
+
+// my declarations
+#include "Amplitude.h"
 
 
 // metamethods
@@ -38,7 +40,5 @@ pyre::viz::iterators::filters::Amplitude<sourceT>::operator++() -> void
     return;
 }
 
-
-#endif
 
 // end of file

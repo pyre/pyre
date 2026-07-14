@@ -5,8 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_cuda_memory_Mapped_h)
-#define pyre_cuda_memory_Mapped_h
+#pragma once
 
 // a block of cells on mapped memory
 template <class T, bool isConst>
@@ -80,10 +79,7 @@ public:
 };
 
 // get the inline definitions
-#define pyre_cuda_memory_Mapped_icc
 #include "Mapped.icc"
-#undef pyre_cuda_memory_Mapped_icc
 
-#endif
 
 // end of file
