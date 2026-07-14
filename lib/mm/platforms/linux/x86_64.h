@@ -5,7 +5,9 @@
 // (c) 1998-2026 all rights reserved
 
 #pragma once
-// user code can use the code guard to know the specific architecture
+
+
+// mark
 #define mm_platforms_linux_x86_64
 // also, more generally
 #define mm_platforms_linux

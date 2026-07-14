@@ -5,6 +5,9 @@
 // (c) 1998-2026 all rights reserved
 
 #pragma once
+
+
+// mark
 #define mm_portinfo_h
 
 // platform redirects
