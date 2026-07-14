@@ -9,6 +9,10 @@
 #pragma once
 
 
+// my dependencies
+#include "forward.h"
+
+
 // encapsulation of the diagonal packing strategy
 // a packing strategy provides the isomorphism
 //

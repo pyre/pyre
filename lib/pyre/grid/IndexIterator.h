@@ -8,6 +8,10 @@
 #pragma once
 
 
+// my dependencies
+#include "forward.h"
+
+
 // iterators generate sequences of indices from a packing strategy according to a specific
 // order
 template <class packingT>

@@ -8,6 +8,10 @@
 #pragma once
 
 
+// my dependencies
+#include "forward.h"
+
+
 // the specification of the number of possible index values along each dimension
 // this class stores the {s_i} in
 //
