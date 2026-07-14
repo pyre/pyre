@@ -8,16 +8,31 @@
 #pragma once
 
 
+// my dependencies
+#include "forward.h"
+// my superclass
+#include "Device.h"
+// my parts
+#include "Renderer.h"
+#include "Alert.h"
+#include "Bland.h"
+#include "Memo.h"
+
+
 // a device that ignores all requests for output
 class pyre::journal::Trash : public Device {
     // types
 public:
+    // me
+    using self_type = Trash;
     // pointers to me
     using pointer_type = std::shared_ptr<Trash>;
+    // my superclass
+    using super_type = Device;
 
     using palette_type = palette_t;
-    using renderer_type = renderer_t;
-    using renderer_pointer = renderer_ptr;
+    using renderer_type = Renderer;
+    using renderer_pointer = renderer_type::pointer_type;
 
     // metamethods
 public:

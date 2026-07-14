@@ -8,14 +8,28 @@
 #pragma once
 
 
+// my dependencies
+#include "forward.h"
+// my superclass
+#include "Channel.h"
+// my parts
+#include "exceptions.h"
+#include "Chronicler.h"
+
+
 // user facing channel; meant for error messages, i.e. conditions from which the application
 // cannot recover
 template <template <typename> typename proxyT>
 class pyre::journal::Error : public Channel<Error<proxyT>, proxyT> {
     // types
 public:
-    // my base
-    using channel_type = Channel<Error, InventoryProxy>;
+    // me
+    using self_type = Error<proxyT>;
+    // my superclass
+    using super_type = Channel<self_type, InventoryProxy>;
+
+    // my channel
+    using channel_type = super_type;
     // my parts
     using name_type = typename channel_type::name_type;
     using detail_type = typename channel_type::detail_type;

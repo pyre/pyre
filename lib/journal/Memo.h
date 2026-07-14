@@ -8,8 +8,21 @@
 #pragma once
 
 
+// my dependencies
+#include "forward.h"
+// my superclass
+#include "Renderer.h"
+
+
 // a formatter for messages that are meant for developers, i.e. {debug_t} and {firewall_t}
 class pyre::journal::Memo : public Renderer {
+    // types
+public:
+    // me
+    using self_type = Memo;
+    // superclass
+    using super_type = Renderer;
+
     // metamethods
 public:
     virtual ~Memo();

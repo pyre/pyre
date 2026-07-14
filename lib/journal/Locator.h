@@ -8,10 +8,16 @@
 #pragma once
 
 
+// my dependencies
+#include "forward.h"
+
+
 // information about the location of the channel invocation
 class pyre::journal::Locator {
     // types
 public:
+    // me
+    using self_type = Locator;
     // the data held by {Locator} are used to create message notes
     using value_type = value_t;
 

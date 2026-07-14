@@ -179,7 +179,7 @@ pyre::journal::Channel<severityT, proxyT>::commit() -> severity_reference
     }
 
     // if my detail exceeds the maximum
-    if (detail() > chronicler_t::detail()) {
+    if (detail() > Chronicler::detail()) {
         // nothing to do
         return self;
     }
@@ -240,7 +240,7 @@ void
 pyre::journal::Channel<severityT, proxyT>::quiet()
 {
     // make a trash can
-    auto trashcan = std::make_shared<trash_t>();
+    auto trashcan = std::make_shared<trash_type>();
     // make it the default
     index().device(trashcan);
     // all done
@@ -254,7 +254,7 @@ void
 pyre::journal::Channel<severityT, proxyT>::logfile(const path_t & name, filemode_t mode)
 {
     // make a file
-    auto logfile = std::make_shared<file_t>(name, mode);
+    auto logfile = std::make_shared<file_type>(name, mode);
     // register it as the default device
     index().device(logfile);
     // all done

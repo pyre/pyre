@@ -8,11 +8,22 @@
 #pragma once
 
 
+// my dependencies
+#include "forward.h"
+// my parts
+#include "Chronicler.h"
+#include "Inventory.h"
+#include "Trash.h"
+
+
 // proxy for accessing inventory values on behalf of a client
 template <typename clientT>
 class pyre::journal::InventoryProxy {
     // types
 public:
+    // me
+    using self_type = InventoryProxy<clientT>;
+
     // my client
     using client_type = clientT;
     using client_reference = clientT &;

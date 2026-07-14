@@ -8,10 +8,17 @@
 #pragma once
 
 
+// my dependencies
+#include "forward.h"
+
+
 // attach a code to a message
 class pyre::journal::Code {
     // types
 public:
+    // me
+    using self_type = Code;
+
     // codes are strings
     using code_type = string_t;
 

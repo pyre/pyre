@@ -8,15 +8,26 @@
 #pragma once
 
 
+// my dependencies
+#include "forward.h"
+// my superclass
+#include "Inventory.h"
+
+
 // owner of the map (channel name -> shared channel state), as well as the severity wide defaults
 // each concrete {channel} maintains its own index as class data, shared among its instances
 class pyre::journal::Index : public Inventory {
     // types
 public:
+    // me
+    using self_type = Index;
+    // my superclass
+    using super_type = Inventory;
+
     // channel names
     using name_type = name_t;
     // shared state
-    using inventory_type = Inventory;
+    using inventory_type = super_type;
 
     // the map from channel names to inventory instances
     using index_type = std::map<name_type, inventory_type>;

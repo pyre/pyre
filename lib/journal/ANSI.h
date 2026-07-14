@@ -8,6 +8,10 @@
 #pragma once
 
 
+// my dependencies
+#include "forward.h"
+
+
 // a map of color names to the ANSI escape sequences that render them; the sequences are
 // produced by {pyre::chroma}
 class pyre::journal::ANSI {

@@ -8,12 +8,23 @@
 // code guard
 #pragma once
 
+
+// my dependencies
+#include "forward.h"
+// my superclass
+#include "Stream.h"
+
+
 // a device that prints to {cout}
 class pyre::journal::Console : public Stream {
     // types
 public:
+    // me
+    using self_type = Console;
     // pointers to me
     using pointer_type = std::shared_ptr<Console>;
+    // my superclass
+    using super_type = Stream;
 
     // metamethods
 public:

@@ -67,7 +67,7 @@ pyre::journal::Debug<proxyT>::initializeIndex() -> index_type
     }
 
     // otherwise, convert the value into a set of names
-    auto channels = chronicler_t::nameset(debugopt);
+    auto channels = Chronicler::nameset(debugopt);
     // go through them
     for (auto & name : channels) {
         // make an inventory corresponding to an (active,non-fatal) channel and add it to the index

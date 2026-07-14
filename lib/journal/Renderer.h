@@ -8,6 +8,12 @@
 #pragma once
 
 
+// my dependencies
+#include "forward.h"
+// my parts
+#include "Entry.h"
+
+
 // the interface for formatting messages
 class pyre::journal::Renderer {
     // types
@@ -16,7 +22,7 @@ public:
     using pointer_type = std::shared_ptr<Renderer>;
 
     // message content
-    using entry_type = entry_t;
+    using entry_type = Entry;
     using line_type = entry_type::line_type;
     using linebuf_type = entry_type::linebuf_type;
     // color table

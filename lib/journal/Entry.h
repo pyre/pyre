@@ -8,13 +8,19 @@
 #pragma once
 
 
+// my dependencies
+#include "forward.h"
+#include "Chronicler.h"
+
+
 // encapsulation of a journal message entry
 class pyre::journal::Entry {
     // types
 public:
-    // aliases for myself
-    using entry_type = Entry;
-    using entry_reference = entry_type &;
+    // me
+    using self_type = Entry;
+    // references to me
+    using entry_reference = self_type &;
     // the dent type
     using dent_type = dent_t;
     // message payload

@@ -27,5 +27,4 @@ firewall_check(const char * channel, int condition, __HERE_DECL__, const char * 
 #endif
 
 
-
 /* end of file */

@@ -8,6 +8,10 @@
 #pragma once
 
 
+// my dependencies
+#include "forward.h"
+
+
 // exception raised by errors
 class pyre::journal::application_error : public std::runtime_error {
     // types

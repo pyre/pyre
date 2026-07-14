@@ -8,10 +8,17 @@
 #pragma once
 
 
+// my dependencies
+#include "forward.h"
+
+
 // singleton that owns the journal default configuration
 class pyre::journal::Chronicler {
     // types
 public:
+    // me
+    using self_type = Chronicler;
+
     // strings;
     using string_type = string_t;
     // detail level
@@ -24,7 +31,7 @@ public:
     using notes_type = notes_t;
 
     // device support
-    using device_type = device_ptr;
+    using device_type = std::shared_ptr<Device>;
 
     // channel names
     using name_type = name_t;
