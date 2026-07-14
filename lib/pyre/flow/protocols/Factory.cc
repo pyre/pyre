@@ -8,7 +8,7 @@
 #include "../public.h"
 
 // destructor
-pyre::flow::protocol::Factory::~Factory()
+pyre::flow::protocols::Factory::~Factory()
 {
     // make a channel
     auto channel = pyre::journal::debug_t("pyre.flow.factories.destroy");
@@ -25,7 +25,7 @@ pyre::flow::protocol::Factory::~Factory()
 
 // bindings
 auto
-pyre::flow::protocol::Factory::addInput(const name_type & slot, product_ref_type product)
+pyre::flow::protocols::Factory::addInput(const name_type & slot, product_ref_type product)
     -> factory_ref_type
 {
     // make a channel
@@ -56,7 +56,7 @@ pyre::flow::protocol::Factory::addInput(const name_type & slot, product_ref_type
 };
 
 auto
-pyre::flow::protocol::Factory::addOutput(const name_type & slot, product_ref_type product)
+pyre::flow::protocols::Factory::addOutput(const name_type & slot, product_ref_type product)
     -> factory_ref_type
 {
     // make a channel
@@ -87,7 +87,7 @@ pyre::flow::protocol::Factory::addOutput(const name_type & slot, product_ref_typ
 };
 
 auto
-pyre::flow::protocol::Factory::removeInput(const name_type & slot) -> factory_ref_type
+pyre::flow::protocols::Factory::removeInput(const name_type & slot) -> factory_ref_type
 {
     // make a handle to me
     auto self = ref();
@@ -123,7 +123,7 @@ pyre::flow::protocol::Factory::removeInput(const name_type & slot) -> factory_re
 };
 
 auto
-pyre::flow::protocol::Factory::removeOutput(const name_type & slot) -> factory_ref_type
+pyre::flow::protocols::Factory::removeOutput(const name_type & slot) -> factory_ref_type
 {
     // make a handle to me
     auto self = ref();
@@ -160,7 +160,7 @@ pyre::flow::protocol::Factory::removeOutput(const name_type & slot) -> factory_r
 
 // invalidate my downstream graph
 auto
-pyre::flow::protocol::Factory::flush() -> void
+pyre::flow::protocols::Factory::flush() -> void
 {
     // make a channel
     auto channel = pyre::journal::debug_t("pyre.flow.factories.flush");
@@ -184,7 +184,7 @@ pyre::flow::protocol::Factory::flush() -> void
 
 // rebuild the product bound to a slot
 auto
-pyre::flow::protocol::Factory::make(const name_type & slot, product_ref_type product)
+pyre::flow::protocols::Factory::make(const name_type & slot, product_ref_type product)
     -> factory_ref_type
 {
     // make a channel

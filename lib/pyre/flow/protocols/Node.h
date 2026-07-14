@@ -7,7 +7,7 @@
 // code guard
 #pragma once
 
-class pyre::flow::protocol::Node : public std::enable_shared_from_this<Node> {
+class pyre::flow::protocols::Node : public std::enable_shared_from_this<Node> {
     // type aliases
 public:
     // names
