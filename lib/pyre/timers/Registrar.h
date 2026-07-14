@@ -8,6 +8,10 @@
 #pragma once
 
 
+// my dependencies
+#include "forward.h"
+
+
 // owner of the map (timer name -> shared movement)
 template <class movementT>
 class pyre::timers::Registrar {

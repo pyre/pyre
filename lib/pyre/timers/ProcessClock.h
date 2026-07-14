@@ -8,6 +8,10 @@
 #pragma once
 
 
+// my dependencies
+#include "forward.h"
+
+
 // clock that measures the amount of CPU time charged to this process
 // the current implementation is a trivial wrapper over the POSIX {clock} support
 class pyre::timers::ProcessClock {

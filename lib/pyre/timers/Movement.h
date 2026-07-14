@@ -8,6 +8,10 @@
 #pragma once
 
 
+// my dependencies
+#include "forward.h"
+
+
 // the state shared by all timers of a given type+name
 template <class clockT>
 class pyre::timers::Movement {

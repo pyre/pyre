@@ -8,6 +8,10 @@
 #pragma once
 
 
+// my dependencies
+#include "externals.h"
+
+
 // forward declarations of all user facing entities
 namespace pyre::timers {
     // clocks

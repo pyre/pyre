@@ -8,6 +8,10 @@
 #pragma once
 
 
+// my dependencies
+#include "forward.h"
+
+
 // proxy for accessing a timer movement on behalf of a client
 template <class timerT, class clockT>
 class pyre::timers::Proxy {
