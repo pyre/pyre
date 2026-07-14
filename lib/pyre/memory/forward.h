@@ -8,6 +8,10 @@
 #pragma once
 
 
+// my dependencies
+#include "externals.h"
+
+
 // set up the namespace
 namespace pyre::memory {
     // utility that normalizes type access

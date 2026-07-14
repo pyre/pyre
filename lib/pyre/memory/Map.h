@@ -8,13 +8,19 @@
 #pragma once
 
 
+// my dependencies
+#include "forward.h"
+#include "Cell.h"
+#include "FileMap.h"
+
+
 // a file-backed block of cells
 template <class T, bool isConst>
 class pyre::memory::Map {
     // types
 public:
     // my cell
-    using cell_type = cell_t<T, isConst>;
+    using cell_type = Cell<T, isConst>;
     // pull the type aliases
     using value_type = typename cell_type::value_type;
     // derived types

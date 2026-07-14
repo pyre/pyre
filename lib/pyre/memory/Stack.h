@@ -8,13 +8,18 @@
 #pragma once
 
 
+// my dependencies
+#include "forward.h"
+#include "Cell.h"
+
+
 // a file-backed block of cells
 template <int D, class T, bool isConst>
 class pyre::memory::Stack {
     // types
 public:
     // my cell
-    using cell_type = cell_t<T, isConst>;
+    using cell_type = Cell<T, isConst>;
     // pull the type aliases
     using value_type = typename cell_type::value_type;
     // derived types
