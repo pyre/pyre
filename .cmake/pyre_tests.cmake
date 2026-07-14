@@ -4,6 +4,16 @@
 # (c) 1998-2026 all rights reserved
 
 
+# openmpi refuses to bind more ranks than the node has cores, even when the hostfile grants the
+# slots; turning cpu binding off with {--bind-to none} lets a CI runner place the -np 7/8 cases.
+# this spelling is openmpi-specific — {mpich} and other flavors do not understand it — so gate it
+# on the vendor; mirrors the {--bind-to none} handling in .mm/pyre-mpi.{lib,pkg}.tests
+set(PYRE_MPIEXEC_BIND "")
+if(MPI_CXX_LIBRARY_VERSION_STRING MATCHES "Open MPI")
+  set(PYRE_MPIEXEC_BIND --bind-to none)
+endif()
+
+
 # generate a unique test case name that incorporate the command line arguments
 # adapted from code by @rtburns-jpl
 function(pyre_test_testcase testcase testfile)
@@ -109,7 +119,7 @@ function(pyre_test_python_testcase_mpi testfile slots)
   # set up the harness
   add_test(NAME ${testname}
     COMMAND
-    ${MPIEXEC} ${MPIEXEC_NUMPROC_FLAG} ${slots} --hostfile localhost
+    ${MPIEXEC} ${MPIEXEC_NUMPROC_FLAG} ${slots} ${PYRE_MPIEXEC_BIND} --hostfile localhost
     ${MPIEXEC_PREFLAGS}
     ${Python_EXECUTABLE} ./${base}
     ${MPIEXEC_POSTFLAGS}
@@ -296,7 +306,7 @@ function(pyre_test_driver_mpi testfile slots)
 
   # make it a test case
   add_test(NAME ${testname} COMMAND
-    ${MPIEXEC} ${MPIEXEC_NUMPROC_FLAG} ${slots} --hostfile localhost
+    ${MPIEXEC} ${MPIEXEC_NUMPROC_FLAG} ${slots} ${PYRE_MPIEXEC_BIND} --hostfile localhost
     ${MPIEXEC_PREFLAGS}
     tests/${target}
     ${MPIEXEC_POSTFLAGS}
