@@ -17,6 +17,8 @@ template <class timerT, class clockT>
 class pyre::timers::Proxy {
     // types
 public:
+    // me
+    using self_type = Proxy<timerT, clockT>;
     // my client
     using timer_type = timerT;
     using timer_reference = timer_type &;

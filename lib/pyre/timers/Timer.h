@@ -17,6 +17,10 @@ template <class clockT, template <class, class> class proxyT>
 class pyre::timers::Timer : public proxyT<Timer<clockT, proxyT>, clockT> {
     // types
 public:
+    // me
+    using self_type = Timer<clockT, proxyT>;
+    // my superclass
+    using super_type = proxyT<self_type, clockT>;
     // my clock type
     using clock_type = clockT;
     // let it define the proper string

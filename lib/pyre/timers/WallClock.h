@@ -17,6 +17,8 @@
 class pyre::timers::WallClock {
     // types
 public:
+    // me
+    using self_type = WallClock;
     using string_type = std::string;
     using clock_type = std::chrono::steady_clock;
     using duration_type = clock_type::duration;
