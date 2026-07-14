@@ -9,18 +9,18 @@ sys.prefix := /usr
 sys.lib := ${sys.prefix}/lib/x86_64-linux-gnu
 
 # gsl
-gsl.version := 2.5
+gsl.version := 2.8
 gsl.dir := $(sys.prefix)
 
 # hdf5
-hdf5.version := 1.10.10
+hdf5.version := 1.14.6
 hdf5.dir := ${sys.prefix}
 hdf5.parallel := serial
 hdf5.incpath := $(hdf5.dir)/include/hdf5/$(hdf5.parallel)
 hdf5.libpath := $(sys.lib)/hdf5/${hdf5.parallel}
 
 # mpi
-mpi.version := 4.0.3
+mpi.version := 5.0.10
 mpi.flavor := openmpi
 mpi.dir := ${sys.lib}/$(mpi.flavor)
 mpi.executive := mpiexec

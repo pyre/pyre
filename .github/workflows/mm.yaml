@@ -19,35 +19,25 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-24.04]
+        os: [ubuntu-26.04]
         target: [debug, opt]
         python: ["3.12", "3.13", "3.14"]
         compiler: [
-          "gcc-13", "gcc-14",
-           "clang-17", "clang-18"
+          "gcc-15",
+          "clang-21"
         ]
         # define the names of the compilers
         include:
-          - compiler: gcc-13
+          - compiler: gcc-15
             suite: gcc
-            suiteVersion: 13
-            cc: gcc-13
-            cxx: g++-13
-          - compiler: gcc-14
-            suite: gcc
-            suiteVersion: 14
-            cc: gcc-14
-            cxx: g++-14
-          - compiler: clang-17
+            suiteVersion: 15
+            cc: gcc-15
+            cxx: g++-15
+          - compiler: clang-21
             suite: clang
-            suiteVersion: 17
-            cc: clang-17
-            cxx: clang++-17
-          - compiler: clang-18
-            suite: clang
-            suiteVersion: 18
-            cc: clang-18
-            cxx: clang++-18
+            suiteVersion: 21
+            cc: clang-21
+            cxx: clang++-21
 
     steps:
       - name: ${{matrix.os}} refresh
@@ -59,26 +49,7 @@ jobs:
           echo " -- upgrade"
           sudo apt dist-upgrade
           echo " -- install our dependencies"
-          sudo apt install -y make openssh-server libgsl-dev libopenmpi-dev libhdf5-dev
-
-      - name: GNU make 4.4.1
-        run: |
-          echo " -- the runner ships an older make"
-          make --version
-          echo " -- mm requires GNU make >= 4.4 for the {.WAIT} primitive"
-          echo " -- fetching the GNU make 4.4.1 sources"
-          curl -LO https://ftp.gnu.org/gnu/make/make-4.4.1.tar.gz
-          echo " -- unpacking"
-          tar xzf make-4.4.1.tar.gz
-          echo " -- building and installing into /usr/local"
-          cd make-4.4.1
-          ./configure --prefix=/usr/local
-          make -j2
-          sudo make install
-          echo " -- refreshing the shell command hash"
-          hash -r
-          echo " -- the make now on PATH"
-          make --version
+          sudo apt install -y openssh-server libgsl-dev libopenmpi-dev libhdf5-dev
 
       - name: python ${{matrix.python}} setup
         uses: actions/setup-python@v5
