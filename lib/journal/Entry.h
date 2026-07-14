@@ -5,8 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_journal_Entry_h)
-#define pyre_journal_Entry_h
+#pragma once
 
 
 // encapsulation of a journal message entry
@@ -79,11 +78,7 @@ private:
 
 
 // get the inline definitions
-#define pyre_journal_Entry_icc
 #include "Entry.icc"
-#undef pyre_journal_Entry_icc
 
-
-#endif
 
 // end of file

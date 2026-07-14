@@ -5,9 +5,11 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_journal_Dent_icc)
-#error This header contains implementation details of pyre::journal::Dent
-#else
+#pragma once
+
+
+// my declarations
+#include "Dent.h"
 
 
 // metamethods
@@ -24,7 +26,5 @@ pyre::journal::Dent::dent() const -> dent_type
     return _dent;
 }
 
-
-#endif
 
 // end of file

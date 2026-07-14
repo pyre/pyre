@@ -5,9 +5,11 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_journal_Entry_icc)
-#error This header contains implementation details of pyre::journal::Entry
-#else
+#pragma once
+
+
+// my declarations
+#include "Entry.h"
 
 
 // metamethods
@@ -117,7 +119,5 @@ pyre::journal::Entry::inject(const itemT & item)
     return;
 }
 
-
-#endif
 
 // end of file

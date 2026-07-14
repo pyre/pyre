@@ -8,6 +8,10 @@
 #pragma once
 
 
+// my declarations
+#include "BMP.h"
+
+
 // factory
 template <class redT, class greenT, class blueT>
 auto
@@ -223,5 +227,6 @@ pyre::viz::factories::codecs::BMP<redT, greenT, blueT>::make(
     // all done
     return self;
 }
+
 
 // end of file

@@ -4,7 +4,7 @@
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
 // (c) 1998-2026 all rights reserved
 
-#if !defined(mm_portinfo_h)
+#pragma once
 #define mm_portinfo_h
 
 // platform redirects
@@ -35,6 +35,6 @@
 #endif
 
 // all done
-#endif
+
 
 // end of file

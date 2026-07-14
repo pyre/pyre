@@ -5,8 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_journal_debuginfo_h)
-#define pyre_journal_debuginfo_h
+#pragma once
 
 
 // the macros
@@ -31,6 +30,5 @@ debuginfo_out(const char * name, __HERE_DECL__, const char * fmt, ...);
 }
 #endif
 
-#endif
 
 // end of file

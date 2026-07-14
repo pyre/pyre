@@ -4,6 +4,9 @@
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
 // (c) 1998-2026 all rights reserved
 
+// code guard
+#pragma once
+
 
 // declaration of points
 template <std::size_t dim, typename dataT>
@@ -37,6 +40,10 @@ public:
 private:
     rep_type _coordinates;
 };
+
+
+// get the inline definitions
+#include "Point.icc"
 
 
 // end of file

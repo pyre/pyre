@@ -5,8 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_viz_filters_Cycle_h)
-#define pyre_viz_filters_Cycle_h
+#pragma once
 
 
 // a filter that extracts the phase of its complex source as cycle in [0,1]
@@ -52,11 +51,7 @@ public:
 
 
 // get the inline definitions
-#define pyre_viz_filters_Cycle_icc
 #include "Cycle.icc"
-#undef pyre_viz_filters_Cycle_icc
 
-
-#endif
 
 // end of file

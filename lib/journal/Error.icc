@@ -5,9 +5,11 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_journal_Error_icc)
-#error this file contains implementation details for pyre::journal::Error
-#else
+#pragma once
+
+
+// my declarations
+#include "Error.h"
 
 
 // metamethods
@@ -59,7 +61,5 @@ pyre::journal::Error<proxyT>::initializeIndex() -> index_type
     return index;
 }
 
-
-#endif
 
 // end of file

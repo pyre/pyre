@@ -5,15 +5,12 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_flow_h)
-#define pyre_flow_h
+#pragma once
 
 
 // publish the interface
 // the api is in "flow/api.h"
 #include "flow/public.h"
 
-
-#endif
 
 // end of file

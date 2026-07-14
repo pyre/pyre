@@ -5,8 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_viz_filters_Geometric_h)
-#define pyre_viz_filters_Geometric_h
+#pragma once
 
 
 // a filter that maps values in [0,1] onto a the cell index of a geometric grid
@@ -54,11 +53,7 @@ public:
 
 
 // get the inline definitions
-#define pyre_viz_filters_Geometric_icc
 #include "Geometric.icc"
-#undef pyre_viz_filters_Geometric_icc
 
-
-#endif
 
 // end of file

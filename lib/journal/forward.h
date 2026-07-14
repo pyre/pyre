@@ -5,8 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_journal_forward_h)
-#define pyre_journal_forward_h
+#pragma once
 
 
 // grab the locator macros
@@ -225,7 +224,5 @@ namespace pyre::journal {
     class ANSI;
 } // namespace pyre::journal
 
-
-#endif
 
 // end of file

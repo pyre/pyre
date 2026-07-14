@@ -5,8 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_cuda_memory_Pinned_h)
-#define pyre_cuda_memory_Pinned_h
+#pragma once
 
 // a block of cells on pinned memory
 template <class T, bool isConst>
@@ -91,10 +90,7 @@ public:
 };
 
 // get the inline definitions
-#define pyre_cuda_memory_Pinned_icc
 #include "Pinned.icc"
-#undef pyre_cuda_memory_Pinned_icc
 
-#endif
 
 // end of file

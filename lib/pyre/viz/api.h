@@ -5,8 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_viz_api_h)
-#define pyre_viz_api_h
+#pragma once
 
 
 // publicly visible types
@@ -217,7 +216,5 @@ namespace pyre::viz::iterators::colormaps {
     using rgb_t = RGB<redSourceT, greenSourceT, blueSourceT>;
 } // namespace pyre::viz::iterators::colormaps
 
-
-#endif
 
 // end of file

@@ -5,9 +5,11 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_journal_exceptions_icc)
-#error This header contains implementation details of pyre::journal::exceptions
-#else
+#pragma once
+
+
+// my declarations
+#include "exceptions.h"
 
 
 // application_error
@@ -84,7 +86,5 @@ pyre::journal::debug_error::notes() const -> notes_const_reference
     return _notes;
 }
 
-
-#endif
 
 // end of file

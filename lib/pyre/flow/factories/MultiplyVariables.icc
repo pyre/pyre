@@ -7,6 +7,11 @@
 // code guard
 #pragma once
 
+
+// my declarations
+#include "MultiplyVariables.h"
+
+
 // factory
 template <class op1T, class op2T, class resultT>
 auto
@@ -73,5 +78,6 @@ pyre::flow::factories::Multiply<pyre::flow::products::var_t, op1T, op2T, resultT
     // all done
     return self;
 }
+
 
 // end of file

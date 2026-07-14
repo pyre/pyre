@@ -5,8 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_memory_Heap_h)
-#define pyre_memory_Heap_h
+#pragma once
 
 
 // a block of cells on the heap
@@ -96,11 +95,7 @@ public:
 
 
 // get the inline definitions
-#define pyre_memory_Heap_icc
 #include "Heap.icc"
-#undef pyre_memory_Heap_icc
 
-
-#endif
 
 // end of file

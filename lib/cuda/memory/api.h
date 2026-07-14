@@ -5,8 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_cuda_memory_api_h)
-#define pyre_cuda_memory_api_h
+#pragma once
 
 
 // user facing types
@@ -36,7 +35,5 @@ namespace pyre::cuda::memory {
     using constmapped_t = Mapped<T, true>;
 } // namespace pyre::cuda::memory
 
-
-#endif
 
 // end of file

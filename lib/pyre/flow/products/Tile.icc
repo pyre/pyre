@@ -7,6 +7,11 @@
 // code guard
 #pragma once
 
+
+// my declarations
+#include "Tile.h"
+
+
 // factory
 template <class gridT>
 auto
@@ -129,5 +134,6 @@ pyre::flow::products::Tile<gridT>::write() -> grid_type &
     // grant access to my data
     return _data;
 }
+
 
 // end of file

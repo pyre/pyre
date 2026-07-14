@@ -4,8 +4,8 @@
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
 // (c) 1998-2026 all rights reserved
 
-#if !defined(pyre_extensions_cuda_metadata_h)
-#define pyre_extensions_cuda_metadata_h
+// code guard
+#pragma once
 
 
 // place everything in my private namespace
@@ -28,6 +28,5 @@ namespace pyre::extensions::cuda {
 
 } // namespace pyre::extensions::cuda
 
-#endif
 
 // end of file

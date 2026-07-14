@@ -6,8 +6,7 @@
 
 
 // code guard
-#if !defined(pyre_math_public_h)
-#define pyre_math_public_h
+#pragma once
 
 
 // external packages
@@ -16,6 +15,5 @@
 // the {constexpr} implementation of transcendental functions (until c++26)
 #include "transcendental.h"
 
-#endif
 
 // end of file

@@ -5,9 +5,11 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_journal_Index_icc)
-#error this file contains implementation details for pyre::journal::Index
-#else
+#pragma once
+
+
+// my declarations
+#include "Index.h"
 
 
 // metamethods
@@ -132,7 +134,5 @@ pyre::journal::Index::lookup(const name_type & channel) -> inventory_type &
     return shared;
 }
 
-
-#endif
 
 // end of file

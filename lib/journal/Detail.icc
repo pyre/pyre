@@ -5,9 +5,11 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_journal_Detail_icc)
-#error This header contains implementation details of pyre::journal::Detail
-#else
+#pragma once
+
+
+// my declarations
+#include "Detail.h"
 
 
 // metamethods
@@ -23,7 +25,5 @@ pyre::journal::Detail::detail() const -> detail_type
     return _detail;
 }
 
-
-#endif
 
 // end of file

@@ -5,8 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_journal_Informational_h)
-#define pyre_journal_Informational_h
+#pragma once
 
 
 // user facing channel; meant for informational messages, such as progress reports
@@ -51,11 +50,7 @@ private:
 
 
 // get the inline definitions
-#define pyre_journal_Informational_icc
 #include "Informational.icc"
-#undef pyre_journal_Informational_icc
 
-
-#endif
 
 // end of file

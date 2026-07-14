@@ -5,8 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_geometry_public_h)
-#define pyre_geometry_public_h
+#pragma once
 
 // externals
 #include <stdexcept>
@@ -78,22 +77,5 @@ namespace pyre::geometry {
 #include "PointCloud.h"
 #include "Brick.h"
 
-// the implementations
-// point
-#define pyre_geometry_Point_icc
-#include "Point.icc"
-#undef pyre_geometry_Point_icc
-
-// point cloud
-#define pyre_geometry_PointCloud_icc
-#include "PointCloud.icc"
-#undef pyre_geometry_PointCloud_icc
-
-// brick
-#define pyre_geometry_Brick_icc
-#include "Brick.icc"
-#undef pyre_geometry_Brick_icc
-
-#endif
 
 // end of file

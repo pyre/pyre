@@ -7,6 +7,11 @@
 // code guard
 #pragma once
 
+
+// my declarations
+#include "Binary.h"
+
+
 // constructor
 template <template <class> class categoryT, class op1T, class op2T, class resultT>
 pyre::flow::factories::Binary<categoryT, op1T, op2T, resultT>::Binary(
@@ -79,5 +84,6 @@ pyre::flow::factories::Binary<categoryT, op1T, op2T, resultT>::result(result_ref
     // and return it
     return self;
 }
+
 
 // end of file

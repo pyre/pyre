@@ -5,8 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_viz_h)
-#define pyre_viz_h
+#pragma once
 
 
 // viz leans on flow
@@ -16,7 +15,5 @@
 // the api is in "viz/api.h"
 #include "viz/public.h"
 
-
-#endif
 
 // end of file

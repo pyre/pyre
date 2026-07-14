@@ -5,8 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_viz_filters_Affine_h)
-#define pyre_viz_filters_Affine_h
+#pragma once
 
 
 // map [0,1] to a portion of an interval
@@ -56,11 +55,7 @@ public:
 
 
 // get the inline definitions
-#define pyre_viz_filters_Affine_icc
 #include "Affine.icc"
-#undef pyre_viz_filters_Affine_icc
 
-
-#endif
 
 // end of file

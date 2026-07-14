@@ -5,8 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_memory_Map_h)
-#define pyre_memory_Map_h
+#pragma once
 
 
 // a file-backed block of cells
@@ -95,11 +94,7 @@ public:
 
 
 // get the inline definitions
-#define pyre_memory_Map_icc
 #include "Map.icc"
-#undef pyre_memory_Map_icc
 
-
-#endif
 
 // end of file

@@ -5,8 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_py_memory_buffer_protocol_h)
-#define pyre_py_memory_buffer_protocol_h
+#pragma once
 
 
 // the {pyre} extension namespace
@@ -18,11 +17,8 @@ namespace pyre::py::memory {
 } // namespace pyre::py::memory
 
 
-// get the implementation
-#define pyre_py_memory_buffer_protocol_icc
+// get the inline definitions
 #include "buffer_protocol.icc"
-#undef pyre_py_memory_buffer_protocol_icc
 
-#endif
 
 // end of file

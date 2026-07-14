@@ -5,8 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_math_h)
-#define pyre_math_h
+#pragma once
 
 // DESIGN NOTES
 // A patch for {constexpr} transcendental functions until the llvm implementation of the standard
@@ -16,7 +15,5 @@
 // publish the interface
 #include "math/public.h"
 
-
-#endif
 
 // end of file

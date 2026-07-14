@@ -6,8 +6,7 @@
 
 
 // code guard
-#if !defined(h5_py_data_h)
-#define h5_py_data_h
+#pragma once
 
 // this decorator adds the shared value interface (type, dataspace, sizes) to each bound object;
 // it lets that interface be reused across datasets and attributes without binding a common base
@@ -20,12 +19,8 @@ namespace pyre::h5::py {
 
 } // namespace pyre::h5::py
 
-// get the implementation
-#define h5_py_data_icc
+// get the inline definitions
 #include "data.icc"
-#undef h5_py_data_icc
 
-
-#endif
 
 // end of file

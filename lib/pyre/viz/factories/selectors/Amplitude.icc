@@ -8,6 +8,10 @@
 #pragma once
 
 
+// my declarations
+#include "Amplitude.h"
+
+
 // factory
 template <class signalT, class amplitudeT>
 auto
@@ -160,5 +164,6 @@ pyre::viz::factories::selectors::Amplitude<signalT, amplitudeT>::make(
     // all done
     return self;
 }
+
 
 // end of file

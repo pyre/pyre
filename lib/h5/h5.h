@@ -5,15 +5,12 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_h5_h)
-#define pyre_h5_h
+#pragma once
 
 
 // publish the interface
 // the api is in "h5/api.h"
 #include "h5/public.h"
 
-
-#endif
 
 // end of file

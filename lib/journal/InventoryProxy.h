@@ -5,8 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_journal_InventoryProxy_h)
-#define pyre_journal_InventoryProxy_h
+#pragma once
 
 
 // proxy for accessing inventory values on behalf of a client
@@ -60,11 +59,7 @@ private:
 
 
 // get the inline definitions
-#define pyre_journal_InventoryProxy_icc
 #include "InventoryProxy.icc"
-#undef pyre_journal_InventoryProxy_icc
 
-
-#endif
 
 // end of file

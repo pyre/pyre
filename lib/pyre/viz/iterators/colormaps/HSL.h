@@ -5,8 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_viz_colormaps_HSL_h)
-#define pyre_viz_colormaps_HSL_h
+#pragma once
 
 
 // interpret three input sources as {hue, saturation, luminosity} and generate {rgb_t} color
@@ -60,11 +59,7 @@ public:
 
 
 // get the inline definitions
-#define pyre_viz_colormaps_HSL_icc
 #include "HSL.icc"
-#undef pyre_viz_colormaps_HSL_icc
 
-
-#endif
 
 // end of file

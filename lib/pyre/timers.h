@@ -5,8 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_timers_h)
-#define pyre_timers_h
+#pragma once
 
 
 // DESIGN NOTES
@@ -37,7 +36,5 @@
 // the api is in "timers/api.h"
 #include "timers/public.h"
 
-
-#endif
 
 // end of file

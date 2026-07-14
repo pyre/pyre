@@ -5,8 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_grid_Index_h)
-#define pyre_grid_Index_h
+#pragma once
 
 
 // storage for a multidimensional index
@@ -49,11 +48,7 @@ public:
 
 
 // get the inline definitions
-#define pyre_grid_Index_icc
 #include "Index.icc"
-#undef pyre_grid_Index_icc
 
-
-#endif
 
 // end of file

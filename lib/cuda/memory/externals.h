@@ -5,8 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_cuda_memory_externals_h)
-#define pyre_cuda_memory_externals_h
+#pragma once
 
 
 // cuda
@@ -25,7 +24,5 @@ namespace pyre::memory {
     using ptrdiff_t = std::ptrdiff_t;
 } // namespace pyre::memory
 
-
-#endif
 
 // end of file

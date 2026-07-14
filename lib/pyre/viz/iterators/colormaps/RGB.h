@@ -5,8 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_viz_colormaps_RGB_h)
-#define pyre_viz_colormaps_RGB_h
+#pragma once
 
 
 // map three color sources to {rgb_t}
@@ -62,11 +61,7 @@ public:
 
 
 // get the inline definitions
-#define pyre_viz_colormaps_RGB_icc
 #include "RGB.icc"
-#undef pyre_viz_colormaps_RGB_icc
 
-
-#endif
 
 // end of file

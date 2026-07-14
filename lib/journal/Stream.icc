@@ -5,9 +5,11 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_journal_Stream_icc)
-#error This header contains implementation details of pyre::journal::Stream
-#else
+#pragma once
+
+
+// my declarations
+#include "Stream.h"
 
 
 // metamethods
@@ -20,7 +22,5 @@ pyre::journal::Stream::Stream(const name_type & name, stream_type & stream) :
     _memo { std::make_shared<Memo>() }
 {}
 
-
-#endif
 
 // end of file

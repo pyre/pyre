@@ -5,8 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_journal_Renderer_h)
-#define pyre_journal_Renderer_h
+#pragma once
 
 
 // the interface for formatting messages
@@ -47,7 +46,5 @@ private:
     const Renderer & operator=(const Renderer &&) = delete;
 };
 
-
-#endif
 
 // end of file

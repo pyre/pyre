@@ -5,8 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_viz_filters_Decimate_h)
-#define pyre_viz_filters_Decimate_h
+#pragma once
 
 
 // a filter that samples its input source at some zoom level by dropping pixels
@@ -66,11 +65,7 @@ public:
 
 
 // get the inline definitions
-#define pyre_viz_filters_Decimate_icc
 #include "Decimate.icc"
-#undef pyre_viz_filters_Decimate_icc
 
-
-#endif
 
 // end of file

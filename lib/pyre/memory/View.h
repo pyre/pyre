@@ -5,8 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_memory_View_h)
-#define pyre_memory_View_h
+#pragma once
 
 
 // a block of cells whose memory belongs to someone else
@@ -90,11 +89,7 @@ public:
 
 
 // get the inline definitions
-#define pyre_memory_View_icc
 #include "View.icc"
-#undef pyre_memory_View_icc
 
-
-#endif
 
 // end of file

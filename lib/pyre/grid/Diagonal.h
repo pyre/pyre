@@ -6,8 +6,7 @@
 
 
 // code guard
-#if !defined(pyre_grid_Diagonal_h)
-#define pyre_grid_Diagonal_h
+#pragma once
 
 
 // encapsulation of the diagonal packing strategy
@@ -110,11 +109,7 @@ public:
 
 
 // get the inline definitions
-#define pyre_grid_Diagonal_icc
 #include "Diagonal.icc"
-#undef pyre_grid_Diagonal_icc
 
-
-#endif
 
 // end of file

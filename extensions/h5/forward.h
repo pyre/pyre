@@ -5,8 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(h5_py_forward_h)
-#define h5_py_forward_h
+#pragma once
 
 
 // the {h5} extension namespace
@@ -32,7 +31,5 @@ namespace pyre::h5::py {
 #include "attributes.h"
 #include "data.h"
 
-
-#endif
 
 // end of file

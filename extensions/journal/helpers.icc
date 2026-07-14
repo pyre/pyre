@@ -5,9 +5,11 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_journal_py_helpers_icc)
-#error This header contains implementation details of pyre::journal::py helpers
-#else
+#pragma once
+
+
+// my declarations
+#include "helpers.h"
 
 
 // build a locator that points to the nearest caller from python
@@ -36,7 +38,5 @@ pyre::journal::py::locator() -> locator_t
     return loc;
 }
 
-
-#endif
 
 // end of file

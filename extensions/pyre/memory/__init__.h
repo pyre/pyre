@@ -5,8 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_py_memory___init___h)
-#define pyre_py_memory___init___h
+#pragma once
 
 
 // the {memory} subpackage
@@ -15,7 +14,5 @@ namespace pyre::py::memory {
     void __init__(py::module &);
 } // namespace pyre::py::memory
 
-
-#endif
 
 // end of file

@@ -7,7 +7,7 @@
 // code guard
 #pragma once
 
-// the declarations
+// my declarations
 #include "Canonical.h"
 
 

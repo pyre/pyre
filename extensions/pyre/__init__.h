@@ -5,8 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_py___init___h)
-#define pyre_py___init___h
+#pragma once
 
 
 // the {pyre} extension namespace
@@ -16,7 +15,5 @@ namespace pyre::py {
 
 } // namespace pyre::py
 
-
-#endif
 
 // end of file

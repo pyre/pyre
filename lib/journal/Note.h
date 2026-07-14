@@ -5,8 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_journal_Note_h)
-#define pyre_journal_Note_h
+#pragma once
 
 
 // notes are channel manipulators that decorate channels with metadata
@@ -34,11 +33,7 @@ private:
 
 
 // get the inline definitions
-#define pyre_journal_Note_icc
 #include "Note.icc"
-#undef pyre_journal_Note_icc
 
-
-#endif
 
 // end of file

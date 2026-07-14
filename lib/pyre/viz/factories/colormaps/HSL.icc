@@ -8,6 +8,10 @@
 #pragma once
 
 
+// my declarations
+#include "HSL.h"
+
+
 // factory
 template <class hueT, class saturationT, class luminosityT, class redT, class greenT, class blueT>
 auto
@@ -293,5 +297,6 @@ pyre::viz::factories::colormaps::HSL<hueT, saturationT, luminosityT, redT, green
     // all done
     return self;
 }
+
 
 // end of file

@@ -5,9 +5,11 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_journal_Code_icc)
-#error This header contains implementation details of pyre::journal::Code
-#else
+#pragma once
+
+
+// my declarations
+#include "Code.h"
 
 
 // metamethods
@@ -24,7 +26,5 @@ pyre::journal::Code::code() const -> code_type
     return _code;
 }
 
-
-#endif
 
 // end of file

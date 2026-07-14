@@ -6,9 +6,11 @@
 
 
 // code guard
-#if !defined(pyre_tensor_Tensor_icc)
-#error this file contains implementation details for pyre::tensor::Tensor
-#else
+#pragma once
+
+
+// my declarations
+#include "Tensor.h"
 
 
 template <typename T, class packingT, int... I>
@@ -272,7 +274,5 @@ pyre::tensor::Tensor<T, packingT, I...>::_reset(integer_sequence<J...>)
     return;
 }
 
-
-#endif
 
 // end of file

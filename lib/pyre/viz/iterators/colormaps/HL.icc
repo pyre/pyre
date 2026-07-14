@@ -5,9 +5,11 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_viz_colormaps_HL_icc)
-#error this file contains implementation details for pyre::viz::iterators::colormaps::HL
-#else
+#pragma once
+
+
+// my declarations
+#include "HL.h"
 
 // metamethods
 template <class hueSourceT, class luminositySourceT>
@@ -47,7 +49,5 @@ pyre::viz::iterators::colormaps::HL<hueSourceT, luminositySourceT>::operator++()
     return;
 }
 
-
-#endif
 
 // end of file

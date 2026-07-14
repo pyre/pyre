@@ -5,8 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_py_timers___init___h)
-#define pyre_py_timers___init___h
+#pragma once
 
 
 // the {timers} subpackage
@@ -15,7 +14,5 @@ namespace pyre::py::timers {
     void __init__(py::module &);
 } // namespace pyre::py::timers
 
-
-#endif
 
 // end of file

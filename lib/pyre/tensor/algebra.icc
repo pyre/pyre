@@ -6,9 +6,11 @@
 
 
 // code guard
-#if !defined(pyre_tensor_algebra_icc)
-#error this file contains implementation details for tensor algebra
-#else
+#pragma once
+
+
+// my declarations
+#include "algebra.h"
 
 
 // compute 2-norm of tensor
@@ -1411,6 +1413,5 @@ pyre::tensor::operator*(const matrixT & A, const tensorT & C) ->
     return result;
 }
 
-#endif
 
 // end of file

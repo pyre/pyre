@@ -5,8 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_journal_Memo_h)
-#define pyre_journal_Memo_h
+#pragma once
 
 
 // a formatter for messages that are meant for developers, i.e. {debug_t} and {firewall_t}
@@ -37,7 +36,5 @@ private:
     const Memo & operator=(const Memo &&) = delete;
 };
 
-
-#endif
 
 // end of file

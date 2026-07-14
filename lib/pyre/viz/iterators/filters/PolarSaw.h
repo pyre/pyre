@@ -5,8 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_viz_filters_PolarSaw_h)
-#define pyre_viz_filters_PolarSaw_h
+#pragma once
 
 
 // a filter computes the fractional part of the logarithm of its source
@@ -49,11 +48,7 @@ public:
 
 
 // get the inline definitions
-#define pyre_viz_filters_PolarSaw_icc
 #include "PolarSaw.icc"
-#undef pyre_viz_filters_PolarSaw_icc
 
-
-#endif
 
 // end of file

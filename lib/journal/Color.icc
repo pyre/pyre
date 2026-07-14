@@ -5,9 +5,11 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_journal_Color_icc)
-#error This header contains implementation details of pyre::journal::Color
-#else
+#pragma once
+
+
+// my declarations
+#include "Color.h"
 
 
 // metamethods
@@ -24,7 +26,5 @@ pyre::journal::Color::color() const -> color_type
     return _color;
 }
 
-
-#endif
 
 // end of file

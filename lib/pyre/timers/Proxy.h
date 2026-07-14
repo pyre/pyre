@@ -5,8 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_timers_Proxy_h)
-#define pyre_timers_Proxy_h
+#pragma once
 
 
 // proxy for accessing a timer movement on behalf of a client
@@ -81,11 +80,7 @@ private:
 
 
 // get the inline definitions
-#define pyre_timers_Proxy_icc
 #include "Proxy.icc"
-#undef pyre_timers_Proxy_icc
 
-
-#endif
 
 // end of file

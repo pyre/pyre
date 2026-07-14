@@ -5,8 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_journal_exceptions_h)
-#define pyre_journal_exceptions_h
+#pragma once
 
 
 // exception raised by errors
@@ -88,11 +87,7 @@ private:
 
 
 // get the inline definitions
-#define pyre_journal_exceptions_icc
 #include "exceptions.icc"
-#undef pyre_journal_exceptions_icc
 
-
-#endif
 
 // end of file

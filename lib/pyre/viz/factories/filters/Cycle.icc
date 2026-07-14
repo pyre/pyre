@@ -7,6 +7,11 @@
 // code guard
 #pragma once
 
+
+// my declarations
+#include "Cycle.h"
+
+
 // factory
 template <class signalT, class cycleT>
 auto
@@ -199,5 +204,6 @@ pyre::viz::factories::filters::Cycle<signalT, cycleT>::make(
     // all done
     return self;
 }
+
 
 // end of file

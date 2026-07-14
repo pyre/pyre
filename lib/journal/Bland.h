@@ -5,8 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_journal_Bland_h)
-#define pyre_journal_Bland_h
+#pragma once
 
 
 // a formatter for messages that are meant for end user; currently, this means {info_t},
@@ -31,7 +30,5 @@ private:
     const Bland & operator=(const Bland &&) = delete;
 };
 
-
-#endif
 
 // end of file

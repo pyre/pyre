@@ -7,6 +7,11 @@
 // code guard
 #pragma once
 
+
+// my declarations
+#include "Variable.h"
+
+
 // factory
 template <typename valueT>
 auto
@@ -89,5 +94,6 @@ pyre::flow::products::Variable<valueT>::write(cell_type value) -> ref_type
     // and return it
     return self;
 }
+
 
 // end of file

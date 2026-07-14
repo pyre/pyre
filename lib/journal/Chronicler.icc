@@ -5,9 +5,11 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_journal_Chronicler_icc)
-#error this file contains implementation details for pyre::journal::Chronicler
-#else
+#pragma once
+
+
+// my declarations
+#include "Chronicler.h"
 
 
 // accessors
@@ -142,7 +144,5 @@ pyre::journal::Chronicler::nameset(string_type text) -> nameset_type
     return channels;
 }
 
-
-#endif
 
 // end of file

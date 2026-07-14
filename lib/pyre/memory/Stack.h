@@ -5,8 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_memory_Stack_h)
-#define pyre_memory_Stack_h
+#pragma once
 
 
 // a file-backed block of cells
@@ -98,11 +97,7 @@ public:
 
 
 // get the inline definitions
-#define pyre_memory_Stack_icc
 #include "Stack.icc"
-#undef pyre_memory_Stack_icc
 
-
-#endif
 
 // end of file

@@ -5,8 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_journal_Channel_h)
-#define pyre_journal_Channel_h
+#pragma once
 
 
 // the base journal channel
@@ -111,11 +110,7 @@ private:
 
 
 // get the inline definitions
-#define pyre_journal_Channel_icc
 #include "Channel.icc"
-#undef pyre_journal_Channel_icc
 
-
-#endif
 
 // end of file

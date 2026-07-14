@@ -8,6 +8,10 @@
 #pragma once
 
 
+// my declarations
+#include "Complex.h"
+
+
 // factory
 template <class signalT, class redT, class greenT, class blueT>
 auto
@@ -279,5 +283,6 @@ pyre::viz::factories::colormaps::Complex<signalT, redT, greenT, blueT>::make(
     // all done
     return self;
 }
+
 
 // end of file

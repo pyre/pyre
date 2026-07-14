@@ -5,8 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_journal_Code_h)
-#define pyre_journal_Code_h
+#pragma once
 
 
 // attach a code to a message
@@ -33,11 +32,7 @@ private:
 
 
 // get the inline definitions
-#define pyre_journal_Code_icc
 #include "Code.icc"
-#undef pyre_journal_Code_icc
 
-
-#endif
 
 // end of file

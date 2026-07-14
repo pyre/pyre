@@ -5,8 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_journal_CSI_h)
-#define pyre_journal_CSI_h
+#pragma once
 
 
 // the generator of ANSI color control sequences given color info
@@ -36,11 +35,7 @@ public:
 
 
 // get the inline definitions
-#define pyre_journal_CSI_icc
 #include "CSI.icc"
-#undef pyre_journal_CSI_icc
 
-
-#endif
 
 // end of file

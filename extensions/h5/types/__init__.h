@@ -5,8 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(h5_py_types___init___h)
-#define h5_py_types___init___h
+#pragma once
 
 // home of all declarations that must be present in every translation unit
 // e.g., the opaque data declarations
@@ -18,6 +17,5 @@ namespace pyre::h5::py::types {
     void __init__(py::module &);
 } // namespace pyre::h5::py::types
 
-#endif
 
 // end of file

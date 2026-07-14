@@ -7,6 +7,11 @@
 // code guard
 #pragma once
 
+
+// my declarations
+#include "Power.h"
+
+
 // factory
 template <class signalT, class powerT>
 auto
@@ -231,5 +236,6 @@ pyre::viz::factories::filters::Power<signalT, powerT>::make(
     // all done
     return self;
 }
+
 
 // end of file

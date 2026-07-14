@@ -5,9 +5,11 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_journal_Channel_icc)
-#error this file contains implementation details for pyre::journal::Channel
-#else
+#pragma once
+
+
+// my declarations
+#include "Channel.h"
 
 
 // metamethods
@@ -276,6 +278,5 @@ typename pyre::journal::Channel<severityT, proxyT>::index_type
     pyre::journal::Channel<severityT, proxyT>::_index =
         pyre::journal::Channel<severityT, proxyT>::_initializeIndex();
 
-#endif
 
 // end of file

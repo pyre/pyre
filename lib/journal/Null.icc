@@ -5,9 +5,11 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_journal_Null_icc)
-#error This header contains implementation details of pyre::journal::Null
-#else
+#pragma once
+
+
+// my declarations
+#include "Null.h"
 
 
 // metamethods
@@ -194,7 +196,5 @@ pyre::journal::operator<<(const Null & null, const itemT &) -> const Null &
     return null;
 }
 
-
-#endif
 
 // end of file

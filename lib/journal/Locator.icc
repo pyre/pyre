@@ -7,7 +7,7 @@
 // code guard
 #pragma once
 
-// the header
+// my declarations
 #include "Locator.h"
 
 // metamethods

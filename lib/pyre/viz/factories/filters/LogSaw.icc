@@ -7,6 +7,11 @@
 // code guard
 #pragma once
 
+
+// my declarations
+#include "LogSaw.h"
+
+
 // factory
 template <class signalT, class logsawT>
 auto
@@ -167,5 +172,6 @@ pyre::viz::factories::filters::LogSaw<signalT, logsawT>::make(
     // all done
     return self;
 }
+
 
 // end of file

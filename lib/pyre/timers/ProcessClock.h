@@ -5,8 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_timers_ProcessClock_h)
-#define pyre_timers_ProcessClock_h
+#pragma once
 
 
 // clock that measures the amount of CPU time charged to this process
@@ -26,11 +25,7 @@ public:
 
 
 // get the inline definitions
-#define pyre_timers_ProcessClock_icc
 #include "ProcessClock.icc"
-#undef pyre_timers_ProcessClock_icc
 
-
-#endif
 
 // end of file

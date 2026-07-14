@@ -6,9 +6,11 @@
 
 
 // code guard
-#if !defined(pyre_tensor_utilities_icc)
-#error this file contains implementation details for tensor utilities
-#else
+#pragma once
+
+
+// my declarations
+#include "utilities.h"
 
 
 namespace {
@@ -203,7 +205,5 @@ pyre::tensor::operator<(
     return is_less<0>(lhs, rhs);
 }
 
-
-#endif
 
 // end of file

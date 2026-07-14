@@ -5,8 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_journal_public_h)
-#define pyre_journal_public_h
+#pragma once
 
 
 // external packages
@@ -135,7 +134,5 @@ pyre::journal::logfile(const path_t & name, filemode_t mode)
     return;
 }
 
-
-#endif
 
 // end of file

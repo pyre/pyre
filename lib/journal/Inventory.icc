@@ -5,9 +5,11 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_journal_Inventory_icc)
-#error this file contains implementation details for pyre::journal::Inventory
-#else
+#pragma once
+
+
+// my declarations
+#include "Inventory.h"
 
 
 // metamethods
@@ -93,7 +95,5 @@ operator active_type() const
     return active();
 }
 
-
-#endif
 
 // end of file

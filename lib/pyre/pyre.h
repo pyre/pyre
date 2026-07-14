@@ -5,14 +5,12 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_h)
-#define pyre_h
+#pragma once
 
 // support
 #include "timers.h"
 #include "memory.h"
 #include "grid.h"
 
-#endif
 
 // end of file

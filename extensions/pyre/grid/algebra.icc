@@ -8,7 +8,7 @@
 #pragma once
 
 
-// the declarations
+// my declarations
 #include "algebra.h"
 
 

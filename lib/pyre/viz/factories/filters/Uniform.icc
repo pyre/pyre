@@ -7,6 +7,11 @@
 // code guard
 #pragma once
 
+
+// my declarations
+#include "Uniform.h"
+
+
 // factory
 template <class signalT, class binT>
 auto
@@ -184,5 +189,6 @@ pyre::viz::factories::filters::Uniform<signalT, binT>::make(
     // all done
     return self;
 }
+
 
 // end of file

@@ -5,8 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_journal_manipulators_h)
-#define pyre_journal_manipulators_h
+#pragma once
 
 
 // manipulators
@@ -280,7 +279,5 @@ pyre::journal::endl(__HERE_DECL__) -> Flush<Locator>
     return Flush(Locator(__HERE_ARGS__));
 }
 
-
-#endif
 
 // end of file

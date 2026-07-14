@@ -6,8 +6,7 @@
 
 
 // code guard
-#if !defined(pyre_tensor_public_h)
-#define pyre_tensor_public_h
+#pragma once
 
 
 // external packages
@@ -39,7 +38,5 @@
 // useful functions for {Tensor} and {UnitQuaternion}
 #include "utilities.h"
 
-
-#endif
 
 // end of file

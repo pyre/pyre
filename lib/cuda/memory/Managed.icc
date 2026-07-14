@@ -6,9 +6,11 @@
 
 
 // code guard
-#if !defined(pyre_cuda_memory_Managed_icc)
-#error this file contains implementation details for pyre::cuda::memory::Managed
-#else
+#pragma once
+
+
+// my declarations
+#include "Managed.h"
 
 
 // metamethods
@@ -186,7 +188,5 @@ pyre::cuda::memory::Managed<T, isConst>::operator[](size_type pos) const -> refe
     return data()[pos];
 }
 
-
-#endif
 
 // end of file

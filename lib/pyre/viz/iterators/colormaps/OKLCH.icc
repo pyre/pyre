@@ -8,7 +8,7 @@
 #pragma once
 
 
-// the declaration
+// my declarations
 #include "OKLCH.h"
 
 

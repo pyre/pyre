@@ -5,8 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_journal_Flush_h)
-#define pyre_journal_Flush_h
+#pragma once
 
 
 // flush a channel after injecting a decorator
@@ -31,11 +30,7 @@ private:
 
 
 // get the inline definitions
-#define pyre_journal_Flush_icc
 #include "Flush.icc"
-#undef pyre_journal_Flush_icc
 
-
-#endif
 
 // end of file

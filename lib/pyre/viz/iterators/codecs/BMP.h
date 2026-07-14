@@ -5,8 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_viz_codecs_BMP_h)
-#define pyre_viz_codecs_BMP_h
+#pragma once
 
 
 class pyre::viz::iterators::codecs::BMP {
@@ -68,11 +67,7 @@ public:
 };
 
 // get the inline definitions
-#define pyre_viz_codecs_BMP_icc
 #include "BMP.icc"
-#undef pyre_viz_codecs_BMP_icc
 
-
-#endif
 
 // end of file

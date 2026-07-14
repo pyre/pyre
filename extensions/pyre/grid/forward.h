@@ -5,8 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_py_grid_forward_h)
-#define pyre_py_grid_forward_h
+#pragma once
 
 
 // the {pyre} extension namespace
@@ -23,7 +22,5 @@ namespace pyre::py::grid {
     void grids(py::module &);
 } // namespace pyre::py::grid
 
-
-#endif
 
 // end of file

@@ -4,9 +4,8 @@
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
 // (c) 1998-2026 all rights reserved
 
-
-#if !defined(pyre_tensor_Tensor_h)
-#define pyre_tensor_Tensor_h
+// code guard
+#pragma once
 
 
 namespace pyre::tensor {
@@ -163,11 +162,7 @@ namespace pyre::tensor {
 
 
 // get the inline definitions
-#define pyre_tensor_Tensor_icc
 #include "Tensor.icc"
-#undef pyre_tensor_Tensor_icc
 
-
-#endif
 
 // end of file

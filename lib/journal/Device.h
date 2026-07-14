@@ -5,8 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_journal_Device_h)
-#define pyre_journal_Device_h
+#pragma once
 
 
 // the base class of all journal devices
@@ -51,11 +50,7 @@ private:
 
 
 // get the inline definitions
-#define pyre_journal_Device_icc
 #include "Device.icc"
-#undef pyre_journal_Device_icc
 
-
-#endif
 
 // end of file

@@ -5,8 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_journal_File_h)
-#define pyre_journal_File_h
+#pragma once
 
 
 // a device that writes to output files
@@ -71,11 +70,7 @@ private:
 
 
 // get the inline definitions
-#define pyre_journal_File_icc
 #include "File.icc"
-#undef pyre_journal_File_icc
 
-
-#endif
 
 // end of file

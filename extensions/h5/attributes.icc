@@ -6,9 +6,11 @@
 
 
 // code guard
-#if !defined(h5_py_attributes_icc)
-#error this file contains implementation details for pyre::h5::py attributes
-#else
+#pragma once
+
+
+// my declarations
+#include "attributes.h"
 
 template <class objectT>
 void
@@ -127,6 +129,5 @@ pyre::h5::py::attributes(py::class_<objectT> & cls)
     return;
 }
 
-#endif
 
 // end of file

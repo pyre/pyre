@@ -5,8 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_grid_h)
-#define pyre_grid_h
+#pragma once
 
 // DESIGN NOTES
 
@@ -83,7 +82,5 @@
 // the api is in "grid/api.h"
 #include "grid/public.h"
 
-
-#endif
 
 // end of file

@@ -5,8 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_py_grid_reps_h)
-#define pyre_py_grid_reps_h
+#pragma once
 
 
 // the {pyre} extension namespace
@@ -18,11 +17,8 @@ namespace pyre::py::grid {
 } // namespace pyre::py::grid
 
 
-// get the implementation
-#define pyre_py_grid_reps_icc
+// get the inline definitions
 #include "reps.icc"
-#undef pyre_py_grid_reps_icc
 
-#endif
 
 // end of file

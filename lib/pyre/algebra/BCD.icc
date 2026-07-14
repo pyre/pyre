@@ -4,9 +4,12 @@
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
 // (c) 1998-2026 all rights reserved
 
-#if !defined(pyre_algebra_BCD_icc)
-#error This header file contains implementation details of the class BCD
-#else
+// code guard
+#pragma once
+
+
+// my declarations
+#include "BCD.h"
 
 
 // global arithmetic operators
@@ -137,8 +140,6 @@ pyre::algebra::BCD<scale, precision_t>::operator=(
 template <size_t scale, typename precision_t>
 pyre::algebra::BCD<scale, precision_t>::~BCD()
 {}
-
-#endif
 
 
 // end of file

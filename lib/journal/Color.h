@@ -5,8 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_journal_Color_h)
-#define pyre_journal_Color_h
+#pragma once
 
 
 // information about the location of the channel invocation
@@ -33,11 +32,7 @@ private:
 
 
 // get the inline definitions
-#define pyre_journal_Color_icc
 #include "Color.icc"
-#undef pyre_journal_Color_icc
 
-
-#endif
 
 // end of file

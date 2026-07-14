@@ -5,8 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_memory_Cell_h)
-#define pyre_memory_Cell_h
+#pragma once
 
 
 // normalize access to a type
@@ -45,11 +44,7 @@ public:
 
 
 // get the inline definitions
-#define pyre_memory_Cell_icc
 #include "Cell.icc"
-#undef pyre_memory_Cell_icc
 
-
-#endif
 
 // end of file

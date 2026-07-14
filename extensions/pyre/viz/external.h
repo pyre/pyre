@@ -5,8 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_py_viz_external_h)
-#define pyre_py_viz_external_h
+#pragma once
 
 
 // get the common ones
@@ -22,7 +21,5 @@ namespace pyre::py::viz {
 
 } // namespace pyre::py::viz
 
-
-#endif
 
 // end of file

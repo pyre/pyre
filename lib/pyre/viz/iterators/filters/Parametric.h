@@ -5,8 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_viz_filters_Parametric_h)
-#define pyre_viz_filters_Parametric_h
+#pragma once
 
 
 // a filter that shifts and scales its input values based on a given interval
@@ -56,11 +55,7 @@ public:
 
 
 // get the inline definitions
-#define pyre_viz_filters_Parametric_icc
 #include "Parametric.icc"
-#undef pyre_viz_filters_Parametric_icc
 
-
-#endif
 
 // end of file

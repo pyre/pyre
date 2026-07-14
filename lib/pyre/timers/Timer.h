@@ -5,8 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_timers_Timer_h)
-#define pyre_timers_Timer_h
+#pragma once
 
 
 // user facing encapsulation of a timer
@@ -64,11 +63,7 @@ private:
 
 
 // get the inline definitions
-#define pyre_timers_Timer_icc
 #include "Timer.icc"
-#undef pyre_timers_Timer_icc
 
-
-#endif
 
 // end of file

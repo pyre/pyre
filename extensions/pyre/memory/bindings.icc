@@ -5,9 +5,11 @@
 // (c) 1998-2026 all rights reserved
 
 // code guard
-#if !defined(pyre_py_memory_bindings_icc)
-#error this file contains implementation details for pyre::py::memory bindings
-#else
+#pragma once
+
+
+// my declarations
+#include "bindings.h"
 
 
 // bindings that do not require write access to {memT}
@@ -124,7 +126,5 @@ pyre::py::memory::bindStorage(shared_holder_t<memT> & cls)
     return;
 }
 
-
-#endif
 
 // end of file
