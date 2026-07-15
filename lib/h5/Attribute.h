@@ -17,6 +17,10 @@
 class pyre::h5::Attribute : public pyre::h5::Identifier {
     // types
 public:
+    // me
+    using self_type = Attribute;
+    // my superclass
+    using super_type = pyre::h5::Identifier;
     // the class of my datatype: integer, float, string, ...
     using class_type = H5T_class_t;
 

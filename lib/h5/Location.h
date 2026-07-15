@@ -17,6 +17,10 @@
 class pyre::h5::Location : public pyre::h5::Identifier {
     // metamethods
 public:
+    // me
+    using self_type = Location;
+    // my superclass
+    using super_type = pyre::h5::Identifier;
     // adopt an existing raw handle, e.g. one returned by the c api
     explicit Location(id_type id);
     // the full set of special members

@@ -17,6 +17,10 @@
 class pyre::h5::properties::DXPL : public pyre::h5::properties::List {
     // metamethods
 public:
+    // me
+    using self_type = DXPL;
+    // my superclass
+    using super_type = pyre::h5::properties::List;
     // make a fresh dataset memory transfer property list
     DXPL();
     // make one that applies the given data transform {expression}

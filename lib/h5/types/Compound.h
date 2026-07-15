@@ -17,6 +17,10 @@
 class pyre::h5::types::Compound : public pyre::h5::types::Datatype {
     // metamethods
 public:
+    // me
+    using self_type = Compound;
+    // my superclass
+    using super_type = pyre::h5::types::Datatype;
     // adopt an existing raw handle, e.g. one returned by the c api
     explicit Compound(id_type id);
     // make a fresh compound type of the given {size}, in bytes

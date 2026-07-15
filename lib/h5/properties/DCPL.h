@@ -17,6 +17,10 @@
 class pyre::h5::properties::DCPL : public pyre::h5::properties::List {
     // types
 public:
+    // me
+    using self_type = DCPL;
+    // my superclass
+    using super_type = pyre::h5::properties::List;
     // a filter as (id, name, flags, configuration)
     using filter_type = std::tuple<H5Z_filter_t, string_t, unsigned int, unsigned int>;
     // the dataset filter pipeline

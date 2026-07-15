@@ -17,6 +17,10 @@
 class pyre::h5::DataSet : public pyre::h5::Location {
     // types
 public:
+    // me
+    using self_type = DataSet;
+    // my superclass
+    using super_type = pyre::h5::Location;
     // the class of my datatype: integer, float, string, ...
     using class_type = H5T_class_t;
 

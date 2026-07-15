@@ -17,6 +17,10 @@
 class pyre::h5::types::Int : public pyre::h5::types::Atom {
     // types
 public:
+    // me
+    using self_type = Int;
+    // my superclass
+    using super_type = pyre::h5::types::Atom;
     // whether i am signed or unsigned
     using sign_type = H5T_sign_t;
 

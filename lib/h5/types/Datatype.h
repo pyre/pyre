@@ -17,6 +17,10 @@
 class pyre::h5::types::Datatype : public pyre::h5::Location {
     // types
 public:
+    // me
+    using self_type = Datatype;
+    // my superclass
+    using super_type = pyre::h5::Location;
     // the class of a datatype: integer, float, string, compound, ...
     using class_type = H5T_class_t;
 

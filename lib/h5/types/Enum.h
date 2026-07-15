@@ -17,6 +17,10 @@
 class pyre::h5::types::Enum : public pyre::h5::types::Datatype {
     // metamethods
 public:
+    // me
+    using self_type = Enum;
+    // my superclass
+    using super_type = pyre::h5::types::Datatype;
     // make an empty enumeration type with no handle yet
     Enum();
     // adopt an existing raw handle, e.g. one returned by the c api

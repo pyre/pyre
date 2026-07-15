@@ -17,6 +17,10 @@
 class pyre::h5::properties::FAPL : public pyre::h5::properties::List {
     // metamethods
 public:
+    // me
+    using self_type = FAPL;
+    // my superclass
+    using super_type = pyre::h5::properties::List;
     // make a fresh file access property list
     FAPL();
     // the full set of special members

@@ -17,6 +17,10 @@
 class pyre::h5::properties::LAPL : public pyre::h5::properties::List {
     // metamethods
 public:
+    // me
+    using self_type = LAPL;
+    // my superclass
+    using super_type = pyre::h5::properties::List;
     // make a fresh link access property list
     LAPL();
     // the full set of special members

@@ -17,6 +17,10 @@
 class pyre::h5::properties::LCPL : public pyre::h5::properties::List {
     // metamethods
 public:
+    // me
+    using self_type = LCPL;
+    // my superclass
+    using super_type = pyre::h5::properties::List;
     // make a fresh link creation property list
     LCPL();
     // the full set of special members

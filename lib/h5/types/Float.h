@@ -17,6 +17,10 @@
 class pyre::h5::types::Float : public pyre::h5::types::Atom {
     // types
 public:
+    // me
+    using self_type = Float;
+    // my superclass
+    using super_type = pyre::h5::types::Atom;
     // the mantissa normalization strategy
     using norm_type = H5T_norm_t;
     // the strategy for filling internal unused bits

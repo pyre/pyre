@@ -17,6 +17,10 @@
 class pyre::h5::types::VarLen : public pyre::h5::types::Datatype {
     // metamethods
 public:
+    // me
+    using self_type = VarLen;
+    // my superclass
+    using super_type = pyre::h5::types::Datatype;
     // adopt an existing raw handle, e.g. one returned by the c api
     explicit VarLen(id_type id);
     // make a variable length type whose elements are of the given {cell} type

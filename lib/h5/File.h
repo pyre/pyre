@@ -17,6 +17,10 @@
 class pyre::h5::File : public pyre::h5::Group {
     // metamethods
 public:
+    // me
+    using self_type = File;
+    // my superclass
+    using super_type = pyre::h5::Group;
     // open or create the file at {uri}; {flags} chooses the access mode and whether to create
     File(
         const string_t & uri, unsigned int flags, const properties::FCPL & fcpl,

@@ -17,6 +17,10 @@
 class pyre::h5::types::Array : public pyre::h5::types::Datatype {
     // metamethods
 public:
+    // me
+    using self_type = Array;
+    // my superclass
+    using super_type = pyre::h5::types::Datatype;
     // adopt an existing raw handle, e.g. one returned by the c api
     explicit Array(id_type id);
     // make an array of the given {cell} type and {shape}

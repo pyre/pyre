@@ -17,6 +17,10 @@
 class pyre::h5::types::String : public pyre::h5::types::Atom {
     // types
 public:
+    // me
+    using self_type = String;
+    // my superclass
+    using super_type = pyre::h5::types::Atom;
     // the character set of my contents
     using cset_type = H5T_cset_t;
     // the padding strategy for my contents

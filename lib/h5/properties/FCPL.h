@@ -17,6 +17,10 @@
 class pyre::h5::properties::FCPL : public pyre::h5::properties::List {
     // metamethods
 public:
+    // me
+    using self_type = FCPL;
+    // my superclass
+    using super_type = pyre::h5::properties::List;
     // make a fresh file creation property list
     FCPL();
     // the full set of special members
