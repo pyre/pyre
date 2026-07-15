@@ -10,6 +10,8 @@
 
 #include <cfloat>
 #include <cmath>
+#include <algorithm>
+#include <limits>
 
 
 namespace pyre::algebra {
