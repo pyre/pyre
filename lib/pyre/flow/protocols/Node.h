@@ -7,19 +7,27 @@
 // code guard
 #pragma once
 
+
+// my dependencies
+#include "forward.h"
+
 class pyre::flow::protocols::Node : public std::enable_shared_from_this<Node> {
     // type aliases
 public:
+    // me
+    using self_type = Node;
+    // my superclass
+    using super_type = std::enable_shared_from_this<Node>;
     // names
     using name_type = string_t;
     // shared pointers to nodes
-    using node_ref_type = node_ref_t;
-    using factory_ref_type = factory_ref_t;
-    using product_ref_type = product_ref_t;
+    using node_ref_type = std::shared_ptr<protocols::Node>;
+    using factory_ref_type = std::shared_ptr<protocols::Factory>;
+    using product_ref_type = std::shared_ptr<protocols::Product>;
     // weak pointers to nodes
-    using node_weakref_type = node_weakref_t;
-    using factory_weakref_type = factory_weakref_t;
-    using product_weakref_type = product_weakref_t;
+    using node_weakref_type = std::weak_ptr<protocols::Node>;
+    using factory_weakref_type = std::weak_ptr<protocols::Factory>;
+    using product_weakref_type = std::weak_ptr<protocols::Product>;
 
 protected:
     // internal type that is used to prohibit external access to the constructors

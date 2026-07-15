@@ -52,7 +52,7 @@ pyre::flow::factories::Binary<categoryT, op1T, op2T, resultT>::op1(op1_ref_type 
     -> factory_ref_type
 {
     // bind {op1} to its slots
-    addInput("op1", std::static_pointer_cast<pyre::flow::product_t>(op1));
+    addInput("op1", std::static_pointer_cast<pyre::flow::protocols::Product>(op1));
     // make a self reference
     auto self = std::dynamic_pointer_cast<Binary>(ref());
     // and return it
@@ -65,7 +65,7 @@ pyre::flow::factories::Binary<categoryT, op1T, op2T, resultT>::op2(op2_ref_type 
     -> factory_ref_type
 {
     // bind {op2} to its slots
-    addInput("op2", std::static_pointer_cast<pyre::flow::product_t>(op2));
+    addInput("op2", std::static_pointer_cast<pyre::flow::protocols::Product>(op2));
     // make a self reference
     auto self = std::dynamic_pointer_cast<Binary>(ref());
     // and return it
@@ -78,7 +78,7 @@ pyre::flow::factories::Binary<categoryT, op1T, op2T, resultT>::result(result_ref
     -> factory_ref_type
 {
     // bind {result} to its slots
-    addOutput("result", std::static_pointer_cast<pyre::flow::product_t>(result));
+    addOutput("result", std::static_pointer_cast<pyre::flow::protocols::Product>(result));
     // make a self reference
     auto self = std::dynamic_pointer_cast<Binary>(ref());
     // and return it

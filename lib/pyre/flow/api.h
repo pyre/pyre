@@ -7,6 +7,11 @@
 // code guard
 #pragma once
 
+
+// my dependencies
+#include "forward.h"
+
+
 // publicly visible types
 namespace pyre::flow {
 
@@ -42,18 +47,18 @@ namespace pyre::flow::factories {
     // addition
     // atoms
     template <class op1T, class op2T = op1T, class resultT = op1T>
-    using add_variables_t = Add<products::var_t, op1T, op2T, resultT>;
+    using add_variables_t = Add<products::Variable, op1T, op2T, resultT>;
     // tiles
     template <class op1T, class op2T = op1T, class resultT = op1T>
-    using add_tiles_t = Add<products::tile_t, op1T, op2T, resultT>;
+    using add_tiles_t = Add<products::Tile, op1T, op2T, resultT>;
 
     // multiplication
     // atoms
     template <class op1T, class op2T = op1T, class resultT = op1T>
-    using multiply_variables_t = Multiply<products::var_t, op1T, op2T, resultT>;
+    using multiply_variables_t = Multiply<products::Variable, op1T, op2T, resultT>;
     // tiles
     template <class op1T, class op2T = op1T, class resultT = op1T>
-    using multiply_tiles_t = Multiply<products::tile_t, op1T, op2T, resultT>;
+    using multiply_tiles_t = Multiply<products::Tile, op1T, op2T, resultT>;
 } // namespace pyre::flow::factories
 
 // end of file

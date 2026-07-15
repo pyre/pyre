@@ -7,10 +7,19 @@
 // code guard
 #pragma once
 
+
+// my dependencies
+#include "forward.h"
+#include "../protocols/Product.h"
+
 template <class gridT>
-class pyre::flow::products::Tile : public pyre::flow::product_t {
+class pyre::flow::products::Tile : public pyre::flow::protocols::Product {
     // type aliases
 public:
+    // me
+    using self_type = Tile<gridT>;
+    // my superclass
+    using super_type = pyre::flow::protocols::Product;
     // my template parameter
     using grid_type = gridT;
     // the packing strategy

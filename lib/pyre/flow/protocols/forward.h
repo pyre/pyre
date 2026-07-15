@@ -9,11 +9,16 @@
 
 
 // my dependencies
-#include "external.h"
-// the per-namespace forward declarations
-#include "protocols/forward.h"
-#include "products/forward.h"
-#include "factories/forward.h"
+#include "../external.h"
+
+
+// forward declarations
+namespace pyre::flow::protocols {
+    // base classes
+    class Node;
+    class Product;
+    class Factory;
+} // namespace pyre::flow::protocols
 
 
 // end of file

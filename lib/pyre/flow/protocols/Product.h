@@ -7,9 +7,18 @@
 // code guard
 #pragma once
 
+
+// my dependencies
+#include "forward.h"
+#include "Node.h"
+
 class pyre::flow::protocols::Product : public Node {
     // type aliases
 public:
+    // me
+    using self_type = Product;
+    // my superclass
+    using super_type = Node;
     // pair the factory slot name with a reference to the factory
     // ideally, these should be weak pointers but the STL doesn't seem to support
     // placing weak pointers in sets; so tearing down the workflow is the user's responsibility,
