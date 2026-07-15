@@ -15,14 +15,18 @@ namespace pyre { namespace patterns {
     class Registrar;
 }} // namespace pyre::patterns
 
-template <typename Object, typename Name = std::string>
+template <typename objectT, typename nameT = std::string>
 class pyre::patterns::Registrar : public std::map<Name, Object *> {
-    // typedefs
+    // type aliases
 public:
-    typedef Name name_t;
-    typedef Object object_t;
-    typedef std::map<name_t, object_t *> map_t;
-    typedef typename map_t::iterator iterator_t;
+    // me
+    using self_type = Registrar<objectT, nameT>;
+    // my superclass
+    using super_type = std::map<Name, Object *>;
+    using name_type = nameT;
+    using object_type = objectT;
+    using map_type = std::map<name_t, object_t *>;
+    using iterator_type = map_type::iterator;
 
     // interface
     inline ~Registrar();
