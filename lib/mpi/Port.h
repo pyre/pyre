@@ -24,6 +24,8 @@
 class pyre::mpi::Port {
     // types
 public:
+    // me
+    using self_type = Port;
     // the context my peer and i share
     using communicator_type = Communicator;
 

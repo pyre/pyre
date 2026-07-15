@@ -19,6 +19,10 @@
 class pyre::mpi::Cartesian : public pyre::mpi::Communicator {
     // types
 public:
+    // me
+    using self_type = Cartesian;
+    // my superclass
+    using super_type = pyre::mpi::Communicator;
     // the coordinates of a process on the grid, and the extent of the grid itself
     using shape_type = shape_t;
 

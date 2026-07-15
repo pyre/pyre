@@ -22,6 +22,8 @@
 class pyre::mpi::Request {
     // types
 public:
+    // me
+    using self_type = Request;
     // the opaque token mpi uses to name a pending transfer
     using handle_type = MPI_Request;
 

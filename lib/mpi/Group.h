@@ -19,6 +19,8 @@
 class pyre::mpi::Group {
     // types
 public:
+    // me
+    using self_type = Group;
     // the opaque token mpi uses to name a group
     using handle_type = MPI_Group;
     // the shared owner of that token
