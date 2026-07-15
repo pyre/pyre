@@ -21,6 +21,10 @@ template <class containerT>
 class pyre::grid::Index : public Product<containerT> {
     // types
 public:
+    // me
+    using self_type = Index<containerT>;
+    // my superclass
+    using super_type = Product<containerT>;
     // alias for me
     using index_type = Index<containerT>;
     // alias for my base

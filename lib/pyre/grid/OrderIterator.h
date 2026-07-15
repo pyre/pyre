@@ -17,6 +17,10 @@ template <class productT, class orderIteratorT, bool isConst>
 class pyre::grid::OrderIterator : public iterator_base<productT, isConst> {
     // types
 public:
+    // me
+    using self_type = OrderIterator<productT, orderIteratorT, isConst>;
+    // my superclass
+    using super_type = iterator_base<productT, isConst>;
     // aliases for my template parameters
     using product_type = productT;
     using order_const_iterator = orderIteratorT;

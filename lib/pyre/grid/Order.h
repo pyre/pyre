@@ -19,6 +19,10 @@ template <class containerT>
 class pyre::grid::Order : public Rep<containerT> {
     // types
 public:
+    // me
+    using self_type = Order<containerT>;
+    // my superclass
+    using super_type = Rep<containerT>;
     // alias for me
     using order_type = Order<containerT>;
     // my template parameter

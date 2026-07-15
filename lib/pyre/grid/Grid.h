@@ -17,6 +17,8 @@ template <class packingT, class storageT>
 class pyre::grid::Grid {
     // types
 public:
+    // me
+    using self_type = Grid<packingT, storageT>;
     // aliases for my template parameters
     using packing_type = packingT;
     using storage_type = storageT;

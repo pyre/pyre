@@ -19,6 +19,10 @@ template <class containerT>
 class pyre::grid::Rep : public containerT {
     // types
 public:
+    // me
+    using self_type = Rep<containerT>;
+    // my superclass
+    using super_type = containerT;
     // alias for me
     using rep_type = Rep<containerT>;
     // and my container
