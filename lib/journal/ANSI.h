@@ -17,6 +17,8 @@
 class pyre::journal::ANSI {
     // types
 public:
+    // me
+    using self_type = ANSI;
     // for the color tables
     using name_type = colorname_t;
     using csi_type = colorrep_t;

@@ -16,6 +16,8 @@
 class pyre::journal::ASCII {
     // static data members
 public:
+    // me
+    using self_type = ASCII;
     static const char NUL = '\x00';
     static const char SOH = '\x01';
     static const char STX = '\x02';
