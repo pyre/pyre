@@ -9,6 +9,11 @@
 #pragma once
 
 
+// my dependencies
+#include "forward.h"
+#include "repacking.h"
+
+
 // set up the namespace
 namespace pyre::tensor {
 

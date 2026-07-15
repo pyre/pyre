@@ -8,6 +8,13 @@
 #pragma once
 
 
+// my dependencies
+#include "forward.h"
+#include "constexpr_for.h"
+#include "traits.h"
+#include "concepts.h"
+
+
 namespace pyre::tensor {
 
     // compute 2-norm of tensor
@@ -161,22 +168,22 @@ namespace pyre::tensor {
         -> dyadic_product<vectorT1, vectorT2>::type;
 
     // builds a square matrix with all zeros except the K-th row is equal to v
-    template <int K, class packingT = canonical_packing_t<2>, vector_c vectorT>
+    template <int K, class packingT = pyre::grid::canonical_t<2, int>, vector_c vectorT>
     constexpr auto matrix_row(const vectorT & v)
         -> matrix_t<vectorT::size, vectorT::size, typename vectorT::scalar_type, packingT>;
 
     // builds a square matrix with all zeros except the K-th column is equal to v
-    template <int K, class packingT = canonical_packing_t<2>, vector_c vectorT>
+    template <int K, class packingT = pyre::grid::canonical_t<2, int>, vector_c vectorT>
     constexpr auto matrix_column(const vectorT & v)
         -> matrix_t<vectorT::size, vectorT::size, typename vectorT::scalar_type, packingT>;
 
     // builds a matrix with prescribed rows
-    template <class packingT = canonical_packing_t<2>, vector_c vectorT, vector_c... vectorTs>
+    template <class packingT = pyre::grid::canonical_t<2, int>, vector_c vectorT, vector_c... vectorTs>
         requires(tensor_same_shape_c<vectorT, vectorTs...> && sizeof...(vectorTs) > 0)
     constexpr auto rows(const vectorT & v, const vectorTs &... vs);
 
     // builds a matrix with prescribed columns
-    template <class packingT = canonical_packing_t<2>, vector_c vectorT, vector_c... vectorTs>
+    template <class packingT = pyre::grid::canonical_t<2, int>, vector_c vectorT, vector_c... vectorTs>
         requires(tensor_same_shape_c<vectorT, vectorTs...> && sizeof...(vectorTs) > 0)
     constexpr auto columns(const vectorT & v, const vectorTs &... vs);
 
@@ -205,7 +212,7 @@ namespace pyre::tensor {
         -> vector_t<matrixT::dims[0], typename matrixT::scalar_type>;
 
     // the skew symmetric matrix representing vector {a}
-    template <vector_c vectorT, class packingT = canonical_packing_t<2>>
+    template <vector_c vectorT, class packingT = pyre::grid::canonical_t<2, int>>
     constexpr auto skew(const vectorT & a)
         -> square_matrix_t<3, typename vectorT::scalar_type, packingT>
         requires(vectorT::size == 3);

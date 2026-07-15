@@ -473,7 +473,7 @@ pyre::tensor::matrix_row(const vectorT & v)
         return A;
     };
     // fill row K of a zero matrix with vector v
-    return _fill_matrix_row(zero<matrix_result_t>, v, make_integer_sequence<vectorT::size> {});
+    return _fill_matrix_row(make_zeros<matrix_result_t>(), v, make_integer_sequence<vectorT::size> {});
 }
 
 // builds a square matrix with all zeros except the K-th column is equal to v
@@ -1149,7 +1149,7 @@ constexpr auto
 pyre::tensor::skew(const matrixT & A) -> auto
 {
     if constexpr (symmetric_matrix_c<matrixT>)
-        return zero<matrixT>;
+        return make_zeros<matrixT>();
     else
         return 0.5 * (A - transpose(A));
 }
@@ -1307,7 +1307,7 @@ constexpr auto
 pyre::tensor::eigenvectors(const diagonal_matrix_t<D, T> & A) -> auto
 {
     // the canonical basis is the set of eigenvectors
-    return identity<diagonal_matrix_t<D, T>>;
+    return make_identity<diagonal_matrix_t<D, T>>();
 }
 
 // extract row {I} of a matrix

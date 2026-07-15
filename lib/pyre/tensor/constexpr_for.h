@@ -9,6 +9,10 @@
 #pragma once
 
 
+// my dependencies
+#include "forward.h"
+
+
 namespace pyre::tensor {
 
     // constexpr for loop calling function f(i) for each i in (Start, End)

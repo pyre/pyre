@@ -9,46 +9,11 @@
 #pragma once
 
 
+// my dependencies
+#include "forward.h"
+
+
 namespace pyre::tensor {
-    // typedef for real values
-    using real = double;
-
-    // type alias for canonical packing
-    template <int D>
-    using canonical_packing_t = pyre::grid::canonical_t<D, int>;
-
-    // type alias for diagonal packing
-    template <int D>
-    using diagonal_packing_t = pyre::grid::diagonal_t<D, int>;
-
-    // type alias for symmetric packing
-    template <int D>
-    using symmetric_packing_t = pyre::grid::symmetric_t<D, int>;
-
-    // typedef for vectors
-    template <int D, typename T = real, class packingT = canonical_packing_t<1>>
-    using vector_t = Tensor<T, packingT, D>;
-
-    // typedef for matrices
-    template <int D1, int D2 = D1, typename T = real, class packingT = canonical_packing_t<2>>
-    using matrix_t = Tensor<T, packingT, D1, D2>;
-
-    // typedef for square matrices
-    template <int D, typename T = real, class packingT = canonical_packing_t<2>>
-    using square_matrix_t = matrix_t<D, D, T, packingT>;
-
-    // typedef for symmetric matrices
-    template <int D, typename T = real>
-    using symmetric_matrix_t = matrix_t<D, D, T, symmetric_packing_t<2>>;
-
-    // typedef for diagonal matrices
-    template <int D, typename T = real>
-    using diagonal_matrix_t = matrix_t<D, D, T, diagonal_packing_t<2>>;
-
-    // typedef for fourth order tensors
-    template <int D1, int D2 = D1, int D3 = D2, int D4 = D3, typename T = real>
-    using fourth_order_tensor_t = Tensor<T, canonical_packing_t<4>, D1, D2, D3, D4>;
-
     // the zero tensor
     template <class tensorT>
     constexpr auto zero = make_zeros<tensorT>();
