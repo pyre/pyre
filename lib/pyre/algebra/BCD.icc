@@ -14,14 +14,14 @@
 
 // global arithmetic operators
 // operator +
-template <size_t scale, typename precision_t>
-pyre::algebra::BCD<scale, precision_t>
+template <size_t scale, typename precisionT>
+pyre::algebra::BCD<scale, precisionT>
 operator+(
-    const pyre::algebra::BCD<scale, precision_t> & a,
-    const pyre::algebra::BCD<scale, precision_t> & b)
+    const pyre::algebra::BCD<scale, precisionT> & a,
+    const pyre::algebra::BCD<scale, precisionT> & b)
 {
     // build out of one operand
-    pyre::algebra::BCD<scale, precision_t> result = a;
+    pyre::algebra::BCD<scale, precisionT> result = a;
     // add the other
     result += b;
     // and return
@@ -30,14 +30,14 @@ operator+(
 
 
 // operator -
-template <size_t scale, typename precision_t>
-pyre::algebra::BCD<scale, precision_t>
+template <size_t scale, typename precisionT>
+pyre::algebra::BCD<scale, precisionT>
 operator-(
-    const pyre::algebra::BCD<scale, precision_t> & a,
-    const pyre::algebra::BCD<scale, precision_t> & b)
+    const pyre::algebra::BCD<scale, precisionT> & a,
+    const pyre::algebra::BCD<scale, precisionT> & b)
 {
     // build out of one operand
-    pyre::algebra::BCD<scale, precision_t> result = a;
+    pyre::algebra::BCD<scale, precisionT> result = a;
     // add the other
     result -= b;
     // and return
@@ -46,8 +46,8 @@ operator-(
 
 
 // conversion to double
-template <size_t scale, typename precision_t>
-pyre::algebra::BCD<scale, precision_t>::
+template <size_t scale, typename precisionT>
+pyre::algebra::BCD<scale, precisionT>::
 operator double() const
 {
     return _msw + static_cast<double>(_lsw) / scale;
@@ -56,28 +56,28 @@ operator double() const
 
 // arithmetic
 // unary operator+
-template <size_t scale, typename precision_t>
-pyre::algebra::BCD<scale, precision_t>
-pyre::algebra::BCD<scale, precision_t>::operator+() const
+template <size_t scale, typename precisionT>
+pyre::algebra::BCD<scale, precisionT>
+pyre::algebra::BCD<scale, precisionT>::operator+() const
 {
     return *this;
 }
 
 
 // unary operator-
-template <size_t scale, typename precision_t>
-pyre::algebra::BCD<scale, precision_t>
-pyre::algebra::BCD<scale, precision_t>::operator-() const
+template <size_t scale, typename precisionT>
+pyre::algebra::BCD<scale, precisionT>
+pyre::algebra::BCD<scale, precisionT>::operator-() const
 {
-    return BCD<scale, precision_t>(-_msw, -_lsw);
+    return BCD<scale, precisionT>(-_msw, -_lsw);
 }
 
 
 // operator +=
-template <size_t scale, typename precision_t>
-pyre::algebra::BCD<scale, precision_t> &
-pyre::algebra::BCD<scale, precision_t>::operator+=(
-    const pyre::algebra::BCD<scale, precision_t> & other)
+template <size_t scale, typename precisionT>
+pyre::algebra::BCD<scale, precisionT> &
+pyre::algebra::BCD<scale, precisionT>::operator+=(
+    const pyre::algebra::BCD<scale, precisionT> & other)
 {
     // adjust the bits
     _lsw += other._lsw;
@@ -95,10 +95,10 @@ pyre::algebra::BCD<scale, precision_t>::operator+=(
 
 
 // operator -=
-template <size_t scale, typename precision_t>
-pyre::algebra::BCD<scale, precision_t> &
-pyre::algebra::BCD<scale, precision_t>::operator-=(
-    const pyre::algebra::BCD<scale, precision_t> & other)
+template <size_t scale, typename precisionT>
+pyre::algebra::BCD<scale, precisionT> &
+pyre::algebra::BCD<scale, precisionT>::operator-=(
+    const pyre::algebra::BCD<scale, precisionT> & other)
 {
     // this is one is easy:
     return *this += -other;
@@ -106,39 +106,10 @@ pyre::algebra::BCD<scale, precision_t>::operator-=(
 
 
 // constructor
-template <size_t scale, typename precision_t>
-pyre::algebra::BCD<scale, precision_t>::BCD(precision_t msw, precision_t lsw) : _msw(msw), _lsw(lsw)
-{}
-
-
-// copy constructor
-template <size_t scale, typename precision_t>
-pyre::algebra::BCD<scale, precision_t>::BCD(const BCD<scale, precision_t> & other)
-{
-    (*this) = other;
-}
-
-
-// operator=
-template <size_t scale, typename precision_t>
-const pyre::algebra::BCD<scale, precision_t> &
-pyre::algebra::BCD<scale, precision_t>::operator=(
-    const pyre::algebra::BCD<scale, precision_t> & other)
-{
-    // skip assignment to self
-    if (this != &other) {
-        // otherwise, move the data
-        _msw = other._msw;
-        _lsw = other._lsw;
-    }
-
-    return *this;
-}
-
-
-// destructor
-template <size_t scale, typename precision_t>
-pyre::algebra::BCD<scale, precision_t>::~BCD()
+template <size_t scale, typename precisionT>
+pyre::algebra::BCD<scale, precisionT>::BCD(precision_type msw, precision_type lsw) :
+    _msw(msw),
+    _lsw(lsw)
 {}
 
 
