@@ -18,6 +18,8 @@
 class pyre::journal::Renderer {
     // types
 public:
+    // me
+    using self_type = Renderer;
     // pointers to me
     using pointer_type = std::shared_ptr<Renderer>;
 

@@ -16,6 +16,10 @@
 class pyre::journal::application_error : public std::runtime_error {
     // types
 public:
+    // me
+    using self_type = application_error;
+    // my superclass
+    using super_type = std::runtime_error;
     using headline_type = string_t;
     using page_type = page_t;
     using notes_type = notes_t;

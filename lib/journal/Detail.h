@@ -16,6 +16,8 @@
 class pyre::journal::Detail {
     // types
 public:
+    // me
+    using self_type = Detail;
     // the detail level
     using detail_type = detail_t;
 
