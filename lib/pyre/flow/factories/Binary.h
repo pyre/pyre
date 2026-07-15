@@ -22,11 +22,9 @@ public:
     using self_type = Binary<categoryT, op1T, op2T, resultT>;
     // my superclass
     using super_type = pyre::flow::protocols::Factory;
-    // my base class
-    using base_type = pyre::flow::protocols::Factory;
     // types from my superclass
-    using name_type = typename base_type::name_type;
-    using sentinel_type = typename base_type::sentinel_type;
+    using name_type = typename super_type::name_type;
+    using sentinel_type = typename super_type::sentinel_type;
     // my category
     template <class productT>
     using category_type = categoryT<productT>;
@@ -36,7 +34,7 @@ public:
     using result_type = category_type<resultT>;
 
     // ref to me
-    using factory_ref_type = std::shared_ptr<base_type>;
+    using factory_ref_type = std::shared_ptr<super_type>;
     // and to my products
     using op1_ref_type = std::shared_ptr<op1_type>;
     using op2_ref_type = std::shared_ptr<op2_type>;
