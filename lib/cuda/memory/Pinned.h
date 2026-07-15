@@ -12,6 +12,8 @@ template <class T, bool isConst>
 class pyre::cuda::memory::Pinned {
     // types
 public:
+    // me
+    using self_type = Pinned<T, isConst>;
     // my cell
     using cell_type = pyre::memory::cell_t<T, isConst>;
     // pull the type aliases
