@@ -10,22 +10,23 @@
 #include <map>
 #include <string>
 
-namespace pyre { namespace patterns {
-    template <typename Object, typename Name>
+namespace pyre::patterns {
+    template <typename objectT, typename nameT>
     class Registrar;
-}} // namespace pyre::patterns
+} // namespace pyre::patterns
 
 template <typename objectT, typename nameT = std::string>
-class pyre::patterns::Registrar : public std::map<Name, Object *> {
+class pyre::patterns::Registrar : public std::map<nameT, objectT *> {
     // type aliases
 public:
     // me
     using self_type = Registrar<objectT, nameT>;
     // my superclass
-    using super_type = std::map<Name, Object *>;
+    using super_type = std::map<nameT, objectT *>;
+    // my parts
     using name_type = nameT;
     using object_type = objectT;
-    using map_type = std::map<name_t, object_t *>;
+    using map_type = super_type;
     using iterator_type = map_type::iterator;
 
     // interface
