@@ -15,6 +15,10 @@
 class pyre::mpi::Error : public std::exception {
     // types
 public:
+    // me
+    using self_type = Error;
+    // my superclass
+    using super_type = std::exception;
     using string_type = string_t;
 
     // metamethods

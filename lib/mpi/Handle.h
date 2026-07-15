@@ -21,6 +21,8 @@ template <class traitsT>
 class pyre::mpi::Handle {
     // types
 public:
+    // me
+    using self_type = Handle<traitsT>;
     // the recipe for releasing my handle
     using traits_type = traitsT;
     // the opaque token mpi gave us

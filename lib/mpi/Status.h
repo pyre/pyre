@@ -18,6 +18,8 @@
 class pyre::mpi::Status {
     // types
 public:
+    // me
+    using self_type = Status;
     // the struct the mpi c api fills in
     using raw_type = MPI_Status;
 

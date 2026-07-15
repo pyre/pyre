@@ -26,6 +26,8 @@
 class pyre::mpi::Communicator {
     // types
 public:
+    // me
+    using self_type = Communicator;
     // the opaque token mpi uses to name a communicator
     using handle_type = MPI_Comm;
     // the shared owner of that token
