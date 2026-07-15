@@ -13,8 +13,8 @@
 
 
 // destructor
-template <typename Object, typename Name>
-pyre::patterns::Registrar<Object, Name>::~Registrar()
+template <typename objectT, typename nameT>
+pyre::patterns::Registrar<objectT, nameT>::~Registrar()
 {
     // delete the indexed items
     // assumes that all registered entities were dynamically allocated
