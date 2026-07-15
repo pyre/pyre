@@ -11,6 +11,8 @@
 
 // externals
 #include <cmath>
+#include <limits>
+#include <type_traits>
 
 
 // end of file

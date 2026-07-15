@@ -10,6 +10,10 @@
 #pragma once
 
 
+// my dependencies
+#include "externals.h"
+
+
 namespace pyre::math {
 
     // function to compute factorial of an integer
