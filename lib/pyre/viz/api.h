@@ -8,6 +8,10 @@
 #pragma once
 
 
+// my dependencies
+#include "forward.h"
+
+
 // publicly visible types
 namespace pyre::viz {
     // correctly typed file streams for reading and writing to avoid having to cast

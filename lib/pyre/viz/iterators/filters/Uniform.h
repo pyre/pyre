@@ -8,11 +8,17 @@
 #pragma once
 
 
+// my dependencies
+#include "forward.h"
+
+
 // a filter that maps values in [0,1] onto a the cell index of a uniformly spaced grid
 template <class sourceT>
 class pyre::viz::iterators::filters::Uniform {
     // types
 public:
+    // me
+    using self_type = Uniform<sourceT>;
     // my template parameter
     using source_type = sourceT;
     // and its reference type

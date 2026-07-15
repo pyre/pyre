@@ -8,11 +8,17 @@
 #pragma once
 
 
+// my dependencies
+#include "forward.h"
+
+
 // a filter that extracts the amplitude of its complex data source
 template <class sourceT>
 class pyre::viz::iterators::filters::Imaginary {
     // types
 public:
+    // me
+    using self_type = Imaginary<sourceT>;
     // my template parameter
     using source_type = sourceT;
     // and its reference type

@@ -57,7 +57,7 @@ template <class signalT, class parametricT>
 pyre::viz::factories::filters::Parametric<signalT, parametricT>::Parametric(
     sentinel_type sentinel, const name_type & name, interval_type interval) :
     // superclass
-    base_type(sentinel, name),
+    super_type(sentinel, name),
     // members
     _interval(interval)
 {}
@@ -133,10 +133,10 @@ pyre::viz::factories::filters::Parametric<signalT, parametricT>::parametric(
 template <class signalT, class parametricT>
 auto
 pyre::viz::factories::filters::Parametric<signalT, parametricT>::make(
-    const name_type & slot, base_type::product_ref_type product) -> base_type::factory_ref_type
+    const name_type & slot, super_type::product_ref_type product) -> super_type::factory_ref_type
 {
     // chain up
-    auto self = base_type::make(slot, product);
+    auto self = super_type::make(slot, product);
     // get read access to the signal
     auto & signal = this->signal()->read();
     // get write access to the parametric data

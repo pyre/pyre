@@ -8,11 +8,17 @@
 #pragma once
 
 
+// my dependencies
+#include "forward.h"
+
+
 // a filter that samples its input source at some zoom level by dropping pixels
 template <class sourceT>
 class pyre::viz::iterators::filters::Decimate {
     // types
 public:
+    // me
+    using self_type = Decimate<sourceT>;
     // my template parameter
     using source_type = sourceT;
     // and its reference type

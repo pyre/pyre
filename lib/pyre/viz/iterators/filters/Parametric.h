@@ -8,11 +8,17 @@
 #pragma once
 
 
+// my dependencies
+#include "forward.h"
+
+
 // a filter that shifts and scales its input values based on a given interval
 template <class sourceT>
 class pyre::viz::iterators::filters::Parametric {
     // types
 public:
+    // me
+    using self_type = Parametric<sourceT>;
     // my template parameter
     using source_type = sourceT;
     // and its reference type

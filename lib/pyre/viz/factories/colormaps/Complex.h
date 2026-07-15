@@ -7,16 +7,22 @@
 // code guard
 #pragma once
 
+
+// my dependencies
+#include "forward.h"
+
 // encode three color channels into a microsoft bitmap
 template <class signalT, class redT, class greenT, class blueT>
 class pyre::viz::factories::colormaps::Complex : public pyre::flow::factory_t {
     // type aliases
 public:
+    // me
+    using self_type = Complex<signalT, redT, greenT, blueT>;
+    // my superclass
+    using super_type = pyre::flow::factory_t;
     // the {rgb} triplet
     using rgb_type = pyre::viz::rgb_t;
 
-    // my base class
-    using base_type = pyre::flow::factory_t;
     // my slots
     using signal_type = signalT;
     // my output slots
@@ -81,8 +87,8 @@ public:
 
     // flow protocol
 public:
-    virtual auto make(const name_type & slot, base_type::product_ref_type product)
-        -> base_type::factory_ref_type override;
+    virtual auto make(const name_type & slot, super_type::product_ref_type product)
+        -> super_type::factory_ref_type override;
 
     // implementation details
 private:

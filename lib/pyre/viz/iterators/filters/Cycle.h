@@ -8,11 +8,17 @@
 #pragma once
 
 
+// my dependencies
+#include "forward.h"
+
+
 // a filter that extracts the phase of its complex source as cycle in [0,1]
 template <class sourceT>
 class pyre::viz::iterators::filters::Cycle {
     // types
 public:
+    // me
+    using self_type = Cycle<sourceT>;
     // my template parameter
     using source_type = sourceT;
     // and its reference type

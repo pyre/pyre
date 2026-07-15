@@ -8,11 +8,17 @@
 #pragma once
 
 
+// my dependencies
+#include "forward.h"
+
+
 // interpret three input sources as {hue, saturation, luminosity} and generate {rgb_t} color
 template <class lightnessSourceT, class chromaSourceT, class hueSourceT>
 class pyre::viz::iterators::colormaps::OKLCH {
     // types
 public:
+    // me
+    using self_type = OKLCH<lightnessSourceT, chromaSourceT, hueSourceT>;
     // my template parameters
     using lightness_source_type = lightnessSourceT;
     using chroma_source_type = chromaSourceT;

@@ -8,11 +8,17 @@
 #pragma once
 
 
+// my dependencies
+#include "forward.h"
+
+
 // a filter that maps values in [0,1] onto a the cell index of a geometric grid
 template <class sourceT>
 class pyre::viz::iterators::filters::Geometric {
     // types
 public:
+    // me
+    using self_type = Geometric<sourceT>;
     // my template parameter
     using source_type = sourceT;
     // and its reference type

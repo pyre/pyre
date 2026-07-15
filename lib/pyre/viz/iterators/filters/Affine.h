@@ -8,11 +8,17 @@
 #pragma once
 
 
+// my dependencies
+#include "forward.h"
+
+
 // map [0,1] to a portion of an interval
 template <class sourceT>
 class pyre::viz::iterators::filters::Affine {
     // types
 public:
+    // me
+    using self_type = Affine<sourceT>;
     // my template parameter
     using source_type = sourceT;
     // and its reference type

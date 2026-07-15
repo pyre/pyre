@@ -8,11 +8,17 @@
 #pragma once
 
 
+// my dependencies
+#include "forward.h"
+
+
 // map three color sources to {rgb_t}
 template <class redSourceT, class greenSourceT, class blueSourceT>
 class pyre::viz::iterators::colormaps::RGB {
     // types
 public:
+    // me
+    using self_type = RGB<redSourceT, greenSourceT, blueSourceT>;
     // my template parameters
     using red_source_type = redSourceT;
     using green_source_type = greenSourceT;

@@ -8,11 +8,17 @@
 #pragma once
 
 
+// my dependencies
+#include "forward.h"
+
+
 // a filter computes the fractional part of the logarithm of its source
 template <class sourceT>
 class pyre::viz::iterators::filters::LogSaw {
     // types
 public:
+    // me
+    using self_type = LogSaw<sourceT>;
     // my template parameter
     using source_type = sourceT;
     // and its reference type

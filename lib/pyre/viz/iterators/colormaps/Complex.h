@@ -8,11 +8,17 @@
 #pragma once
 
 
+// my dependencies
+#include "forward.h"
+
+
 // map complex values to (hue, brightness)
 template <class sourceT>
 class pyre::viz::iterators::colormaps::Complex {
     // types
 public:
+    // me
+    using self_type = Complex<sourceT>;
     // my template parameter
     using source_type = sourceT;
     // and its reference type

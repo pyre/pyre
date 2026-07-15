@@ -38,7 +38,7 @@ template <class signalT, class amplitudeT>
 pyre::viz::factories::selectors::Amplitude<signalT, amplitudeT>::Amplitude(
     sentinel_type sentinel, const name_type & name) :
     // superclass
-    base_type(sentinel, name)
+    super_type(sentinel, name)
 {}
 
 // destructor
@@ -93,10 +93,10 @@ pyre::viz::factories::selectors::Amplitude<signalT, amplitudeT>::amplitude(
 template <class signalT, class amplitudeT>
 auto
 pyre::viz::factories::selectors::Amplitude<signalT, amplitudeT>::make(
-    const name_type & slot, base_type::product_ref_type product) -> base_type::factory_ref_type
+    const name_type & slot, super_type::product_ref_type product) -> super_type::factory_ref_type
 {
     // chain up
-    auto self = base_type::make(slot, product);
+    auto self = super_type::make(slot, product);
 
     // get my input
     auto s = signal();
