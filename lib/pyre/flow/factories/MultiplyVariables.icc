@@ -57,17 +57,17 @@ template <class op1T, class op2T, class resultT>
 pyre::flow::factories::Multiply<pyre::flow::products::Variable, op1T, op2T, resultT>::Multiply(
     sentinel_type sentinel, const name_type & name) :
     // base class
-    base_type(sentinel, name)
+    super_type(sentinel, name)
 {}
 
 template <class op1T, class op2T, class resultT>
 auto
 pyre::flow::factories::Multiply<pyre::flow::products::Variable, op1T, op2T, resultT>::make(
-    const name_type & slot, typename base_type::product_ref_type product) ->
-    typename base_type::factory_ref_type
+    const name_type & slot, typename super_type::product_ref_type product) ->
+    typename super_type::factory_ref_type
 {
     // chain up
-    auto self = base_type::make(slot, product);
+    auto self = super_type::make(slot, product);
     // get read access to the input data
     auto op1 = this->op1()->read();
     auto op2 = this->op2()->read();

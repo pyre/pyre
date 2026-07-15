@@ -17,7 +17,7 @@ template <template <class> class categoryT, class op1T, class op2T, class result
 pyre::flow::factories::Binary<categoryT, op1T, op2T, resultT>::Binary(
     sentinel_type sentinel, const name_type & name) :
     // base class
-    base_type(sentinel, name)
+    super_type(sentinel, name)
 {}
 
 // accessors
