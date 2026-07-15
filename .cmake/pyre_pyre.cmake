@@ -115,9 +115,9 @@ function(pyre_pyreLib)
     # memory
     lib/pyre/memory/FileMap.cc
     # flow
-    lib/pyre/flow/protocol/Factory.cc
-    lib/pyre/flow/protocol/Node.cc
-    lib/pyre/flow/protocol/Product.cc
+    lib/pyre/flow/protocols/Factory.cc
+    lib/pyre/flow/protocols/Node.cc
+    lib/pyre/flow/protocols/Product.cc
     # viz
     lib/pyre/viz/products/images/BMP.cc
     # version
