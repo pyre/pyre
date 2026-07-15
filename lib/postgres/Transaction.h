@@ -26,6 +26,8 @@
 class pyre::postgres::Transaction {
     // types
 public:
+    // me
+    using self_type = Transaction;
     using connection_type = Connection;
 
     // metamethods

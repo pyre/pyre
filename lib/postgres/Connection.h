@@ -35,6 +35,8 @@
 class pyre::postgres::Connection {
     // types
 public:
+    // me
+    using self_type = Connection;
     // the opaque pointer libpq uses to name a session
     using handle_type = PGconn *;
     // the shared owner of that pointer

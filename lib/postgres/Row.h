@@ -27,6 +27,8 @@
 class pyre::postgres::Row {
     // types
 public:
+    // me
+    using self_type = Row;
     // row numbering
     using index_type = index_t;
     // the shared owner of the result set i point into
