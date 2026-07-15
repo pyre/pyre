@@ -19,6 +19,8 @@ namespace pyre::tensor {
     template <typename T>
     class UnitQuaternion {
     public:
+        // me
+        using self_type = UnitQuaternion<T>;
         // my type
         using unit_quaternion_type = UnitQuaternion<T>;
         // my complex type
