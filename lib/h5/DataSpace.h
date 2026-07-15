@@ -17,6 +17,10 @@
 class pyre::h5::DataSpace : public pyre::h5::Identifier {
     // types
 public:
+    // me
+    using self_type = DataSpace;
+    // my superclass
+    using super_type = pyre::h5::Identifier;
     // the kind of a dataspace: scalar, simple, or null
     using class_type = H5S_class_t;
     // the way a selection combines with the existing one

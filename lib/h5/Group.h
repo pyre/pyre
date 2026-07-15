@@ -17,6 +17,10 @@
 class pyre::h5::Group : public pyre::h5::Location {
     // types
 public:
+    // me
+    using self_type = Group;
+    // my superclass
+    using super_type = pyre::h5::Location;
     // the kind of an object: group, dataset, or named datatype
     using object_type = H5O_type_t;
 

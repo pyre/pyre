@@ -17,6 +17,10 @@
 class pyre::h5::properties::List : public pyre::h5::Identifier {
     // metamethods
 public:
+    // me
+    using self_type = List;
+    // my superclass
+    using super_type = pyre::h5::Identifier;
     // the default property list, a handle to the library-wide defaults
     List();
     // the full set of special members

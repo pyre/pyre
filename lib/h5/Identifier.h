@@ -15,6 +15,8 @@
 class pyre::h5::Identifier {
     // types
 public:
+    // me
+    using self_type = Identifier;
     // hdf5 refers to its objects through opaque integer handles
     using id_type = hid_t;
 

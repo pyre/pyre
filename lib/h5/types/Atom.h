@@ -17,6 +17,10 @@
 class pyre::h5::types::Atom : public pyre::h5::types::Datatype {
     // types
 public:
+    // me
+    using self_type = Atom;
+    // my superclass
+    using super_type = pyre::h5::types::Datatype;
     // the byte order of my representation
     using order_type = H5T_order_t;
     // the bit padding strategy at my boundaries

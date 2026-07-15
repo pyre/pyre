@@ -17,6 +17,10 @@
 class pyre::h5::types::Predefined : public pyre::h5::types::Atom {
     // metamethods
 public:
+    // me
+    using self_type = Predefined;
+    // my superclass
+    using super_type = pyre::h5::types::Atom;
     // wrap a predefined-type constant, sharing the reference the library owns forever
     explicit Predefined(id_type id);
     // the full set of special members

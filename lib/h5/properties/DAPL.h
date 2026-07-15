@@ -17,6 +17,10 @@
 class pyre::h5::properties::DAPL : public pyre::h5::properties::List {
     // metamethods
 public:
+    // me
+    using self_type = DAPL;
+    // my superclass
+    using super_type = pyre::h5::properties::List;
     // make a fresh dataset access property list
     DAPL();
     // the full set of special members
