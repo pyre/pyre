@@ -21,6 +21,8 @@ template <int N, typename T, template <typename, std::size_t> class containerT>
 class pyre::grid::Canonical {
     // types
 public:
+    // me
+    using self_type = Canonical<N, T, containerT>;
     // alias for me
     using canonical_type = Canonical<N, T, containerT>;
     using canonical_const_reference = const canonical_type &;

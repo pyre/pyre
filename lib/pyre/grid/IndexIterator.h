@@ -18,6 +18,10 @@ template <class packingT>
 class pyre::grid::IndexIterator : public base_index_iterator<packingT> {
     // types
 public:
+    // me
+    using self_type = IndexIterator<packingT>;
+    // my superclass
+    using super_type = base_index_iterator<packingT>;
     // my template parameter
     using packing_type = packingT;
     // alias for me
@@ -25,7 +29,6 @@ public:
     // references to me
     using iterator_reference = iterator &;
     // and my base
-    using base_type = base_index_iterator<packing_type>;
     // my parts
     using index_type = typename packing_type::index_type;
     using shape_type = typename packing_type::shape_type;

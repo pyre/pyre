@@ -22,6 +22,8 @@ template <int N, typename T, template <typename, std::size_t> class containerT>
 class pyre::grid::Symmetric {
     // types
 public:
+    // me
+    using self_type = Symmetric<N, T, containerT>;
     // alias for me
     using symmetric_type = Symmetric<N, T, containerT>;
     using symmetric_const_reference = const symmetric_type &;

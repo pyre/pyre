@@ -17,6 +17,10 @@ template <class gridT, class indexIteratorT, bool isConst>
 class pyre::grid::GridIterator : public iterator_base<gridT, isConst> {
     // types
 public:
+    // me
+    using self_type = GridIterator<gridT, indexIteratorT, isConst>;
+    // my superclass
+    using super_type = iterator_base<gridT, isConst>;
     // my template parameters
     using grid_type = gridT;
     using index_iterator = indexIteratorT;

@@ -21,6 +21,10 @@ template <class containerT>
 class pyre::grid::Shape : public Product<containerT> {
     // types
 public:
+    // me
+    using self_type = Shape<containerT>;
+    // my superclass
+    using super_type = Product<containerT>;
     // alias for me
     using shape_type = Shape<containerT>;
     // alias for my base

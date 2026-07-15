@@ -22,6 +22,8 @@ template <int N, typename T, template <typename, std::size_t> class containerT>
 class pyre::grid::Diagonal {
     // types
 public:
+    // me
+    using self_type = Diagonal<N, T, containerT>;
     // alias for me
     using diagonal_type = Diagonal<N, T, containerT>;
     using diagonal_const_reference = const diagonal_type &;
