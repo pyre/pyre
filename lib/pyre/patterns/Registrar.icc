@@ -18,7 +18,7 @@ pyre::patterns::Registrar<objectT, nameT>::~Registrar()
 {
     // delete the indexed items
     // assumes that all registered entities were dynamically allocated
-    for (iterator_t i = this->begin(); i != this->end(); ++i) {
+    for (iterator_type i = this->begin(); i != this->end(); ++i) {
         delete i->second;
     }
 }
