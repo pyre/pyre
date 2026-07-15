@@ -32,7 +32,7 @@ pyre-mpi.tests := pyre-mpi.pkg.tests pyre-mpi.ext.tests pyre-mpi.lib.tests
 
 # the mpi library meta-data
 pyre-mpi.lib.root := lib/mpi/
-pyre-mpi.lib.stem := mpi
+pyre-mpi.lib.stem := pyre-mpi
 pyre-mpi.lib.incdir := $(builder.dest.inc)pyre/mpi/
 pyre-mpi.lib.gateway := mpi.h
 pyre-mpi.lib.prerequisites := journal.lib
