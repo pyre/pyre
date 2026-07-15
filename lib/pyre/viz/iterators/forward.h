@@ -11,7 +11,9 @@
 // my dependencies
 #include "../forward.h"
 // the per-namespace forward declarations
-#include "images/forward.h"
+#include "filters/forward.h"
+#include "colormaps/forward.h"
+#include "codecs/forward.h"
 
 
 // end of file

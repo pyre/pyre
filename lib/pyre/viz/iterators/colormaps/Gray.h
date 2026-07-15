@@ -8,11 +8,17 @@
 #pragma once
 
 
+// my dependencies
+#include "forward.h"
+
+
 // map a single value to a shade of gray
 template <class sourceT>
 class pyre::viz::iterators::colormaps::Gray {
     // types
 public:
+    // me
+    using self_type = Gray<sourceT>;
     // my template parameter
     using source_type = sourceT;
     // and its reference type

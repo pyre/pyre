@@ -8,11 +8,17 @@
 #pragma once
 
 
+// my dependencies
+#include "forward.h"
+
+
 // interpret three input sources as {hue, saturation, brightness} and generate {rgb_t} color
 template <class hueSourceT, class saturationSourceT, class brightnessSourceT>
 class pyre::viz::iterators::colormaps::HSB {
     // types
 public:
+    // me
+    using self_type = HSB<hueSourceT, saturationSourceT, brightnessSourceT>;
     // my template parameters
     using hue_source_type = hueSourceT;
     using saturation_source_type = saturationSourceT;

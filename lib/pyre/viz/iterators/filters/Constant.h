@@ -8,11 +8,17 @@
 #pragma once
 
 
+// my dependencies
+#include "forward.h"
+
+
 // a filter that always presents a constant value
 template <typename valueT>
 class pyre::viz::iterators::filters::Constant {
     // types
 public:
+    // me
+    using self_type = Constant<valueT>;
     // my value type
     using value_type = valueT;
 

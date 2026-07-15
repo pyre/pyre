@@ -9,9 +9,14 @@
 
 
 // my dependencies
-#include "../forward.h"
-// the per-namespace forward declarations
-#include "images/forward.h"
+#include "../../forward.h"
+
+
+// forward declarations
+namespace pyre::viz::iterators::codecs {
+    // microsoft bitmap
+    class BMP;
+} // namespace pyre::viz::iterators::codecs
 
 
 // end of file

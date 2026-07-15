@@ -8,11 +8,17 @@
 #pragma once
 
 
+// my dependencies
+#include "forward.h"
+
+
 // a filter that add the values of two others
 template <class op1T, class op2T>
 class pyre::viz::iterators::filters::Add {
     // types
 public:
+    // me
+    using self_type = Add<op1T, op2T>;
     // my template parameters
     using op1_type = op1T;
     using op2_type = op2T;

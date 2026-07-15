@@ -7,13 +7,19 @@
 // code guard
 #pragma once
 
+
+// my dependencies
+#include "forward.h"
+
 // generate a tile filled with a value
 template <class constantT>
 class pyre::viz::factories::filters::Constant : public pyre::flow::factory_t {
     // type aliases
 public:
-    // my base class
-    using base_type = pyre::flow::factory_t;
+    // me
+    using self_type = Constant<constantT>;
+    // my superclass
+    using super_type = pyre::flow::factory_t;
     // my product
     using product_type = constantT;
     // my value type
@@ -51,8 +57,8 @@ public:
 
     // flow protocol
 public:
-    virtual auto make(const name_type & slot, base_type::product_ref_type product)
-        -> base_type::factory_ref_type override;
+    virtual auto make(const name_type & slot, super_type::product_ref_type product)
+        -> super_type::factory_ref_type override;
 
     // implementation details
 private:

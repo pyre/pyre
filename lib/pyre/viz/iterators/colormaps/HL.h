@@ -8,11 +8,17 @@
 #pragma once
 
 
+// my dependencies
+#include "forward.h"
+
+
 // interpret three input sources as {hue, saturation, luminosity} and generate {rgb_t} color
 template <class hueSourceT, class luminositySourceT>
 class pyre::viz::iterators::colormaps::HL {
     // types
 public:
+    // me
+    using self_type = HL<hueSourceT, luminositySourceT>;
     // my template parameters
     using hue_source_type = hueSourceT;
     using luminosity_source_type = luminositySourceT;

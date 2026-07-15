@@ -7,19 +7,26 @@
 // code guard
 #pragma once
 
+
+// my dependencies
+#include "forward.h"
+#include "../../products/images/BMP.h"
+
 // encode three color channels into a microsoft bitmap
 template <class redT, class greenT, class blueT>
 class pyre::viz::factories::codecs::BMP : public pyre::flow::factory_t {
     // type aliases
 public:
-    // my base class
-    using base_type = pyre::flow::factory_t;
+    // me
+    using self_type = BMP<redT, greenT, blueT>;
+    // my superclass
+    using super_type = pyre::flow::factory_t;
     // my input slots
     using red_type = redT;
     using green_type = greenT;
     using blue_type = blueT;
     // my output slot
-    using image_type = pyre::viz::products::images::bmp_t;
+    using image_type = pyre::viz::products::images::BMP;
 
     /// the pixel type
     using pixel_type = image_type::cell_type;
@@ -60,8 +67,8 @@ public:
 
     // flow protocol
 public:
-    inline virtual auto make(const name_type & slot, base_type::product_ref_type product)
-        -> base_type::factory_ref_type override;
+    inline virtual auto make(const name_type & slot, super_type::product_ref_type product)
+        -> super_type::factory_ref_type override;
 
     // suppressed metamethods
 private:

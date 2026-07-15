@@ -57,7 +57,7 @@ template <class signalT, class polarsawT>
 pyre::viz::factories::filters::PolarSaw<signalT, polarsawT>::PolarSaw(
     sentinel_type sentinel, const name_type & name) :
     // superclass
-    base_type(sentinel, name)
+    super_type(sentinel, name)
 {}
 
 // accessors
@@ -108,10 +108,10 @@ pyre::viz::factories::filters::PolarSaw<signalT, polarsawT>::polarsaw(polarsaw_r
 template <class signalT, class polarsawT>
 auto
 pyre::viz::factories::filters::PolarSaw<signalT, polarsawT>::make(
-    const name_type & slot, base_type::product_ref_type product) -> base_type::factory_ref_type
+    const name_type & slot, super_type::product_ref_type product) -> super_type::factory_ref_type
 {
     // chain up
-    auto self = base_type::make(slot, product);
+    auto self = super_type::make(slot, product);
     // get read access to the signal
     auto & signal = this->signal()->read();
     // get write access to the polarsaw data

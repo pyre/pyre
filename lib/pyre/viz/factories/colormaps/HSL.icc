@@ -38,7 +38,7 @@ template <class hueT, class saturationT, class luminosityT, class redT, class gr
 pyre::viz::factories::colormaps::HSL<hueT, saturationT, luminosityT, redT, greenT, blueT>::HSL(
     sentinel_type sentinel, const name_type & name) :
     // superclass
-    base_type(sentinel, name)
+    super_type(sentinel, name)
 {}
 
 // destructor
@@ -185,10 +185,10 @@ pyre::viz::factories::colormaps::HSL<hueT, saturationT, luminosityT, redT, green
 template <class hueT, class saturationT, class luminosityT, class redT, class greenT, class blueT>
 auto
 pyre::viz::factories::colormaps::HSL<hueT, saturationT, luminosityT, redT, greenT, blueT>::make(
-    const name_type & slot, base_type::product_ref_type product) -> base_type::factory_ref_type
+    const name_type & slot, super_type::product_ref_type product) -> super_type::factory_ref_type
 {
     // chain up
-    auto self = base_type::make(slot, product);
+    auto self = super_type::make(slot, product);
 
     // get my data
     auto h = hue();

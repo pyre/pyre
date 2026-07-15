@@ -7,13 +7,19 @@
 // code guard
 #pragma once
 
+
+// my dependencies
+#include "forward.h"
+
 // map values in [a,b] onto [0,1]
 template <class signalT, class parametricT>
 class pyre::viz::factories::filters::Parametric : public pyre::flow::factory_t {
     // type aliases
 public:
-    // my base class
-    using base_type = pyre::flow::factory_t;
+    // me
+    using self_type = Parametric<signalT, parametricT>;
+    // my superclass
+    using super_type = pyre::flow::factory_t;
     // my interval
     using interval_type = interval_t;
     // my input slot
@@ -59,8 +65,8 @@ public:
 
     // flow protocol
 public:
-    virtual auto make(const name_type & slot, base_type::product_ref_type product)
-        -> base_type::factory_ref_type override;
+    virtual auto make(const name_type & slot, super_type::product_ref_type product)
+        -> super_type::factory_ref_type override;
 
     // implementation details
 private:

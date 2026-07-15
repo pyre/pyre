@@ -7,13 +7,19 @@
 // code guard
 #pragma once
 
+
+// my dependencies
+#include "forward.h"
+
 // map values in [0,1] onto [a,b]
 template <class signalT, class polarsawT>
 class pyre::viz::factories::filters::PolarSaw : public pyre::flow::factory_t {
     // type aliases
 public:
-    // my base class
-    using base_type = pyre::flow::factory_t;
+    // me
+    using self_type = PolarSaw<signalT, polarsawT>;
+    // my superclass
+    using super_type = pyre::flow::factory_t;
     // my input slot
     using signal_type = signalT;
     // my output slot
@@ -52,8 +58,8 @@ public:
 
     // flow protocol
 public:
-    virtual auto make(const name_type & slot, base_type::product_ref_type product)
-        -> base_type::factory_ref_type override;
+    virtual auto make(const name_type & slot, super_type::product_ref_type product)
+        -> super_type::factory_ref_type override;
 
     // suppressed metamethods
 private:

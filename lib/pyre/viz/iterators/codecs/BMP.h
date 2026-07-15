@@ -8,9 +8,15 @@
 #pragma once
 
 
+// my dependencies
+#include "forward.h"
+
+
 class pyre::viz::iterators::codecs::BMP {
     // type aliases
 public:
+    // me
+    using self_type = BMP;
     // aliases from package level
     using byte_type = byte_t;
     using color_type = color_t;

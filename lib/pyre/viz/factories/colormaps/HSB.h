@@ -7,13 +7,19 @@
 // code guard
 #pragma once
 
+
+// my dependencies
+#include "forward.h"
+
 // encode three color channels into a microsoft bitmap
 template <class hueT, class saturationT, class brightnessT, class redT, class greenT, class blueT>
 class pyre::viz::factories::colormaps::HSB : public pyre::flow::factory_t {
     // type aliases
 public:
-    // my base class
-    using base_type = pyre::flow::factory_t;
+    // me
+    using self_type = HSB<hueT, saturationT, brightnessT, redT, greenT, blueT>;
+    // my superclass
+    using super_type = pyre::flow::factory_t;
     // my input slots
     using hue_type = hueT;
     using saturation_type = saturationT;
@@ -68,8 +74,8 @@ public:
 
     // flow protocol
 public:
-    virtual auto make(const name_type & slot, base_type::product_ref_type product)
-        -> base_type::factory_ref_type override;
+    virtual auto make(const name_type & slot, super_type::product_ref_type product)
+        -> super_type::factory_ref_type override;
 
     // suppressed metamethods
 private:

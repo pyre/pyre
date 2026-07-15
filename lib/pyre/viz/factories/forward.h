@@ -7,7 +7,14 @@
 // code guard
 #pragma once
 
-// get the canonical header
+
+// my dependencies
 #include "../forward.h"
+// the per-namespace forward declarations
+#include "codecs/forward.h"
+#include "colormaps/forward.h"
+#include "filters/forward.h"
+#include "selectors/forward.h"
+
 
 // end of file

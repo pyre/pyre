@@ -57,7 +57,7 @@ template <class constantT>
 pyre::viz::factories::filters::Constant<constantT>::Constant(
     sentinel_type sentinel, const name_type & name, cell_type value) :
     // superclass
-    base_type(sentinel, name),
+    super_type(sentinel, name),
     // members
     _value(value)
 {}
@@ -111,10 +111,10 @@ pyre::viz::factories::filters::Constant<constantT>::tile(product_ref_type tile) 
 template <class constantT>
 auto
 pyre::viz::factories::filters::Constant<constantT>::make(
-    const name_type & slot, base_type::product_ref_type product) -> base_type::factory_ref_type
+    const name_type & slot, super_type::product_ref_type product) -> super_type::factory_ref_type
 {
     // chain up
-    auto self = base_type::make(slot, product);
+    auto self = super_type::make(slot, product);
     // get write access to the tile data
     auto & data = tile()->write();
     // fill it with my value

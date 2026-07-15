@@ -7,9 +7,17 @@
 // code guard
 #pragma once
 
+
+// my dependencies
+#include "forward.h"
+
 class pyre::viz::products::images::BMP : public pyre::flow::product_t {
     // type aliases
 public:
+    // me
+    using self_type = BMP;
+    // my superclass
+    using super_type = pyre::flow::product_t;
     // my shape
     using shape_type = pyre::grid::shape_t<2>;
     // my cell type
