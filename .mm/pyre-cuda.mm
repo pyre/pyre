@@ -39,7 +39,7 @@ pyre-cuda.pkg.ext :=
 
 # the library
 pyre-cuda.lib.root := lib/cuda/
-pyre-cuda.lib.stem := pyre_cuda
+pyre-cuda.lib.stem := pyre-cuda
 pyre-cuda.lib.incdir := $(builder.dest.inc)pyre/cuda/
 pyre-cuda.lib.languages := c++ cuda
 pyre-cuda.lib.prerequisites := journal.lib pyre.lib

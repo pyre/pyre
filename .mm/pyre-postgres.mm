@@ -25,7 +25,7 @@ pyre-postgres.tests := pyre-postgres.lib.tests pyre-postgres.ext.tests
 
 # the postgres library meta-data; it is header only, and it knows nothing about python
 pyre-postgres.lib.root := lib/postgres/
-pyre-postgres.lib.stem := postgres
+pyre-postgres.lib.stem := pyre-postgres
 # deposit the headers under the {pyre} namespace so they never collide in a shared prefix
 pyre-postgres.lib.incdir := $(builder.dest.inc)pyre/postgres/
 # the gateway header is deposited one level above the rest, as {pyre/postgres.h}

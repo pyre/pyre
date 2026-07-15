@@ -23,7 +23,7 @@ pyre-h5.tests := pyre-h5.lib.tests
 
 # the h5 library meta-data
 pyre-h5.lib.root := lib/h5/
-pyre-h5.lib.stem := h5
+pyre-h5.lib.stem := pyre-h5
 # deposit the headers under the {pyre} namespace so they never collide in a shared prefix
 pyre-h5.lib.incdir := $(builder.dest.inc)pyre/h5/
 # the gateway header is deposited one level above the rest, as {pyre/h5.h}

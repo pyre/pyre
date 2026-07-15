@@ -15,7 +15,7 @@ chroma.tests := chroma.lib.tests
 
 
 # the chroma library meta-data
-chroma.lib.stem := chroma
+chroma.lib.stem := pyre-chroma
 # the source lives in a top-level directory so the library sits below {journal} and {pyre}
 chroma.lib.root := lib/chroma/
 # deposit the headers under the {pyre} namespace so they never collide in a shared prefix
