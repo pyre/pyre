@@ -17,6 +17,8 @@ template <class T, bool isConst>
 class pyre::memory::Cell {
     // types
 public:
+    // me
+    using self_type = Cell<T, isConst>;
     // my cell
     using value_type = T;
     // derived types

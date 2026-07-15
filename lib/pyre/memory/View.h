@@ -18,6 +18,8 @@ template <class T, bool isConst>
 class pyre::memory::View {
     // types
 public:
+    // me
+    using self_type = View<T, isConst>;
     // my cell
     using cell_type = Cell<T, isConst>;
     // pull the type aliases
