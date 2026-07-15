@@ -9,6 +9,11 @@
 #pragma once
 
 
+// my dependencies
+#include "forward.h"
+#include "concepts.h"
+
+
 namespace pyre::tensor {
 
     // TOFIX: these functions should probably not be parked here...

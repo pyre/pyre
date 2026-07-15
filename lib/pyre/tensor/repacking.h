@@ -9,6 +9,10 @@
 #pragma once
 
 
+// my dependencies
+#include "forward.h"
+
+
 namespace pyre::tensor {
 
     // function to map the offset of a tensor {tensor1} with a given packing to the offset of

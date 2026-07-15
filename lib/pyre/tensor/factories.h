@@ -9,6 +9,11 @@
 #pragma once
 
 
+// my dependencies
+#include "forward.h"
+#include "concepts.h"
+
+
 namespace pyre::tensor {
 
     // returns whether the entries in a parameter pack {I...} are all equal

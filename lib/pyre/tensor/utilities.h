@@ -9,6 +9,10 @@
 #pragma once
 
 
+// my dependencies
+#include "forward.h"
+
+
 namespace pyre::tensor {
 
     // overload operator<< for vectors
