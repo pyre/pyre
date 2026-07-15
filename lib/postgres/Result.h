@@ -30,6 +30,8 @@
 class pyre::postgres::Result {
     // types
 public:
+    // me
+    using self_type = Result;
     // the opaque pointer libpq uses to name a result set
     using handle_type = PGresult *;
     // the shared owner of that pointer

@@ -29,6 +29,8 @@
 class pyre::postgres::Field {
     // types
 public:
+    // me
+    using self_type = Field;
     // the shared owner of the result set i point into
     using storage_type = Handle<ResultHandle>;
     // row/column numbering

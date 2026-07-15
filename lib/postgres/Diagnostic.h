@@ -20,6 +20,8 @@
 class pyre::postgres::Diagnostic {
     // types
 public:
+    // me
+    using self_type = Diagnostic;
     using string_type = string_t;
 
     // metamethods

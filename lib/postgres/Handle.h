@@ -27,6 +27,8 @@ template <class traitsT>
 class pyre::postgres::Handle {
     // types
 public:
+    // me
+    using self_type = Handle<traitsT>;
     // the recipe for releasing my object
     using traits_type = traitsT;
     // the opaque pointer libpq gave us

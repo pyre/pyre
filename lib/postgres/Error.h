@@ -24,6 +24,10 @@
 class pyre::postgres::Exception : public std::exception {
     // types
 public:
+    // me
+    using self_type = Exception;
+    // my superclass
+    using super_type = std::exception;
     using string_type = string_t;
     using diagnostic_type = Diagnostic;
 
