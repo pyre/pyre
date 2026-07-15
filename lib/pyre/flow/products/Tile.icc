@@ -75,7 +75,7 @@ template <class gridT>
 pyre::flow::products::Tile<gridT>::Tile(
     sentinel_type sentinel, const name_type & name, shape_type shape) :
     // base class: start out clean
-    pyre::flow::product_t(sentinel, name, false),
+    pyre::flow::protocols::Product(sentinel, name, false),
     // members
     _data { packing_type(shape), shape.cells() }
 {}
@@ -84,7 +84,7 @@ template <class gridT>
 pyre::flow::products::Tile<gridT>::Tile(
     sentinel_type sentinel, const name_type & name, shape_type shape, cell_type value) :
     // base class: start out clean
-    pyre::flow::product_t(sentinel, name, false),
+    pyre::flow::protocols::Product(sentinel, name, false),
     // members
     _data { packing_type(shape), shape.cells() }
 {

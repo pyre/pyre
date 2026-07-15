@@ -7,9 +7,18 @@
 // code guard
 #pragma once
 
+
+// my dependencies
+#include "forward.h"
+#include "Node.h"
+
 class pyre::flow::protocols::Factory : public Node {
     // type aliases
 public:
+    // me
+    using self_type = Factory;
+    // my superclass
+    using super_type = Node;
     // connectors
     using connectors_type = std::map<name_type, product_ref_type>;
 

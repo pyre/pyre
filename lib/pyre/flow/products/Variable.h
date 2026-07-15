@@ -7,10 +7,19 @@
 // code guard
 #pragma once
 
+
+// my dependencies
+#include "forward.h"
+#include "../protocols/Product.h"
+
 template <typename valueT>
-class pyre::flow::products::Variable : public pyre::flow::product_t {
+class pyre::flow::products::Variable : public pyre::flow::protocols::Product {
     // type aliases
 public:
+    // me
+    using self_type = Variable<valueT>;
+    // my superclass
+    using super_type = pyre::flow::protocols::Product;
     // my cell type
     using cell_type = valueT;
     // shared pointers to my  instances

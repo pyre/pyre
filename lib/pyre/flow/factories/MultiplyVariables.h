@@ -7,14 +7,24 @@
 // code guard
 #pragma once
 
+
+// my dependencies
+#include "forward.h"
+// my superclass
+#include "Binary.h"
+
 // multiply two variables to make a third
 template <class op1T, class op2T, class resultT>
-class pyre::flow::factories::Multiply<pyre::flow::products::var_t, op1T, op2T, resultT> :
-    public Binary<pyre::flow::products::var_t, op1T, op2T, resultT> {
+class pyre::flow::factories::Multiply<pyre::flow::products::Variable, op1T, op2T, resultT> :
+    public Binary<pyre::flow::products::Variable, op1T, op2T, resultT> {
     // type aliases
 public:
+    // me
+    using self_type = Multiply<products::Variable, op1T, op2T, resultT>;
+    // my superclass
+    using super_type = Binary<products::Variable, op1T, op2T, resultT>;
     // my base class
-    using base_type = Binary<pyre::flow::products::var_t, op1T, op2T, resultT>;
+    using base_type = Binary<pyre::flow::products::Variable, op1T, op2T, resultT>;
     // types from my superclass
     using name_type = typename base_type::name_type;
     using sentinel_type = typename base_type::sentinel_type;

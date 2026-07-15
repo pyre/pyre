@@ -7,13 +7,23 @@
 // code guard
 #pragma once
 
+
+// my dependencies
+#include "forward.h"
+// my superclass
+#include "../protocols/Factory.h"
+
 // combine two operands to make a third
 template <template <class> class categoryT, class op1T, class op2T, class resultT>
-class pyre::flow::factories::Binary : public pyre::flow::factory_t {
+class pyre::flow::factories::Binary : public pyre::flow::protocols::Factory {
     // type aliases
 public:
+    // me
+    using self_type = Binary<categoryT, op1T, op2T, resultT>;
+    // my superclass
+    using super_type = pyre::flow::protocols::Factory;
     // my base class
-    using base_type = pyre::flow::factory_t;
+    using base_type = pyre::flow::protocols::Factory;
     // types from my superclass
     using name_type = typename base_type::name_type;
     using sentinel_type = typename base_type::sentinel_type;

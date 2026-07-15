@@ -44,7 +44,7 @@ template <typename valueT>
 pyre::flow::products::Variable<valueT>::Variable(
     sentinel_type sentinel, const name_type & name, cell_type value) :
     // base class; start out clean and initialized
-    pyre::flow::product_t(sentinel, name, false),
+    pyre::flow::protocols::Product(sentinel, name, false),
     // member
     _value { value }
 {}

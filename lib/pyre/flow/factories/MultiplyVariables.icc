@@ -15,7 +15,7 @@
 // factory
 template <class op1T, class op2T, class resultT>
 auto
-pyre::flow::factories::Multiply<pyre::flow::products::var_t, op1T, op2T, resultT>::create(
+pyre::flow::factories::Multiply<pyre::flow::products::Variable, op1T, op2T, resultT>::create(
     const name_type & name) -> factory_ref_type
 {
     // make an instance and wrap it in a shared pointer
@@ -36,7 +36,7 @@ pyre::flow::factories::Multiply<pyre::flow::products::var_t, op1T, op2T, resultT
 
 // destructor
 template <class op1T, class op2T, class resultT>
-pyre::flow::factories::Multiply<pyre::flow::products::var_t, op1T, op2T, resultT>::~Multiply()
+pyre::flow::factories::Multiply<pyre::flow::products::Variable, op1T, op2T, resultT>::~Multiply()
 {
     // make a channel
     auto channel = pyre::journal::debug_t("pyre.flow.factories.multiply");
@@ -54,7 +54,7 @@ pyre::flow::factories::Multiply<pyre::flow::products::var_t, op1T, op2T, resultT
 
 // constructor
 template <class op1T, class op2T, class resultT>
-pyre::flow::factories::Multiply<pyre::flow::products::var_t, op1T, op2T, resultT>::Multiply(
+pyre::flow::factories::Multiply<pyre::flow::products::Variable, op1T, op2T, resultT>::Multiply(
     sentinel_type sentinel, const name_type & name) :
     // base class
     base_type(sentinel, name)
@@ -62,7 +62,7 @@ pyre::flow::factories::Multiply<pyre::flow::products::var_t, op1T, op2T, resultT
 
 template <class op1T, class op2T, class resultT>
 auto
-pyre::flow::factories::Multiply<pyre::flow::products::var_t, op1T, op2T, resultT>::make(
+pyre::flow::factories::Multiply<pyre::flow::products::Variable, op1T, op2T, resultT>::make(
     const name_type & slot, typename base_type::product_ref_type product) ->
     typename base_type::factory_ref_type
 {
