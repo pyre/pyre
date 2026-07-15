@@ -32,6 +32,8 @@ namespace pyre::tensor {
                 _layout.cells() - 1;
 
     public:
+        // me
+        using self_type = Tensor<T, packingT, I...>;
         // export my type
         using tensor_t = Tensor<T, packingT, I...>;
         // export a canonical tensor with my same underlying type {T} and shape {I...}
