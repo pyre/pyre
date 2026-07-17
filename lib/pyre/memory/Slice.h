@@ -48,8 +48,9 @@ public:
 
     // implementation details - data
 private:
-    // the buffer we are iterating over
-    const storage_type & _storage;
+    // a copy of the storage, not a reference: the strategies are lightweight handles, so owning
+    // one by value is cheap and keeps the iterator valid even when it was handed a temporary
+    storage_type _storage;
     // the current value
     index_type _index;
 
