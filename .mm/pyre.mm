@@ -24,7 +24,6 @@ pyre.boot.main := etc/boot/main.py
 
 
 # predicates that check the c++ standard in use
-# these are low resolution tests and may not be good enough
 pyre.c++20 = ${call languages.c++.has_c++20,pyre.lib}
 pyre.c++23 = ${call languages.c++.has_c++23,pyre.lib}
 
@@ -73,8 +72,7 @@ pyre.templates.root := templates/
 
 # get the docker image definitions
 include pyre-docker.mm
-
-# get the test suites
+# and the test suites
 include $(pyre.tests)
 
 
