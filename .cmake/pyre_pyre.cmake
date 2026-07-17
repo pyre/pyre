@@ -175,6 +175,8 @@ function(pyre_pyreModule)
     extensions/pyre/grid/packings.cc
     extensions/pyre/grid/shapes.cc
     extensions/pyre/memory/__init__.cc
+    extensions/pyre/memory/cells.cc
+    extensions/pyre/memory/buffers.cc
     extensions/pyre/memory/heaps.cc
     extensions/pyre/memory/maps.cc
     extensions/pyre/memory/views.cc
