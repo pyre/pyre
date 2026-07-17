@@ -8,11 +8,17 @@
 # support
 import pyre
 
-# if the bindings are available
-if pyre.libpyre:
-    # get the bindings for the cell types
-    cells = pyre.libpyre.memory.cells
+# check whether the bindings exist and support the basic cell types
+try:
+    # build the predicate
+    cells = pyre.libpyre.memory.cells if pyre.libpyre else None
+# if the bindings exist but don't have cell support
+except AttributeError:
+    # mark
+    cells = None
 
+# if there support
+if cells:
     # publish
     # the sentinel
     cell = cells.Cell
