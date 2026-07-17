@@ -3,7 +3,6 @@
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-# (c) 1998-2026 all rights reserved
 
 
 """
@@ -16,6 +15,7 @@ from .Property import Property as property
 # for convenience, expose the typed ones
 # the simple ones
 bool = property.bool
+cell = property.cell
 complex = property.complex
 decimal = property.decimal
 enum = property.enum
