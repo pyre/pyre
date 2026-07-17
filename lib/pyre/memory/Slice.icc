@@ -76,8 +76,9 @@ template <class memT>
 constexpr auto
 pyre::memory::operator==(const Slice<memT> & it1, const Slice<memT> & it2) -> bool
 {
-    //  iterators are equal if they point to the same storage
-    return (&it1.storage() == &it2.storage()) && (it1.index() == it2.index());
+    // equal if they range over the same buffer at the same position; comparing storage by its
+    // {data} pointer lets independently-owned copies of one buffer's handle compare equal
+    return (it1.storage().data() == it2.storage().data()) && (it1.index() == it2.index());
 }
 
 
