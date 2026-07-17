@@ -193,4 +193,130 @@
     channels after launch?
 
 
+- workstreams harvested from project memory (2026-07-16):
+
+  these are concrete in-flight and planned efforts, distinct from the perennial
+  design notes above; each names its memory slug under
+  ~/.claude/projects/-Users-mga-dv-pyre/memory/ for the full note
+
+  - not yet started:
+
+    - cuda pybind11 migration: extensions/cuda is the last raw-CPython/capsule
+      extension; bindings-only convert, but needs a Linux CUDA container to
+      build and test (no CUDA on macOS). sequence: clean up etc/docker, build a
+      cuda dev container, then migrate. [project_cuda_pybind11_migration,
+      project_h5_own_subproject]
+
+    - GraphQL in pyre.db: after libpq PR #191 merges, (1) a parameterized SELECT
+      compiler as its own PR, then (2) a graphql-core schema/resolver generator
+      to replace graphene, built against a resolver protocol. [project_pyre_db_graphql]
+
+    - conda PackageManager for pyre.platforms: pyre.externals can't register
+      conda-provided packages, blocking the mpi tests in conda CI; reuse mm's
+      --pkgdb=conda design. no branch yet. [wip_platforms_conda_packager]
+
+    - iq_t cell type: replace the std::complex<uint16> lie for NISAR IQ ADC pairs
+      with a pyre iq_t POD + datatype/memtype; cross-repo, pyre moves first.
+      not started. [project_iq_cell_type]
+
+    - h5 dataspace/grid interop: make DataSpace/DataSet interoperate with
+      pyre::grid concepts; folds in the deferred DataSpace sameExtent().
+      deferred to a fresh session. [project_h5_dataspace_grid_interop]
+
+    - format branch: after survey PR #187 merges, one sweep of clang-format on
+      all C++ + black on all Python to kill formatting noise; skip meta.py.in.
+      [project_format_branch_plan]
+
+    - enable h5 tests in cmake: the cmake build never runs the h5 tests (mm
+      does); add the HDF5-gated lib/pkg test entries so cmake CI covers h5.
+      [project_cmake_enable_h5_tests]
+
+    - enable cxx20 tensor tests for mm: tensor + grid symmetric/diagonal visit
+      tests are cmake-active but mm-excluded; retry enabling after C++23 CI and
+      conda CI land. [project_enable_tensor_tests_mm]
+
+    - clang-format 22 new options: demo what concepts/RemoveParentheses/
+      QualifierAlignment/... do on pyre C++ before adopting. [project_clang_format_new_options]
+
+    - dpkg sniffer audit: mm's dpkg discovery was never tested end to end; 3 bugs
+      already found (hdf5/mpi/libpq); audit all 29 supported externals in a
+      container. [project_dpkg_sniffer_audit]
+
+  - active branches (in flight):
+
+    - chroma: header-only pyre::chroma color+ANSI library; phases 1-5 done and
+      verified. NEXT phase 6 (consolidate terminal detection across shells,
+      journal, survey), then 7 (shells+survey) and 8 (cleanup). [project_chroma_color_truth]
+
+    - survey (PR #187): stdlib prompt package; next, refactor into pyre
+      components toward interactive component configuration. pivoted to build
+      chroma first as the foundation. [wip_branch_survey]
+
+    - boot: runnable pyre-boot.zip app that fetches matching source and drives an
+      embedded mm; verified working. open: head-build drift, build target/verify.
+      [wip_branch_boot]
+
+    - libpq: modern header-only pyre::postgres over libpq + pybind11 bindings +
+      reworked pyre.db; 3 commits verified against a live pg18. NEXT: open the
+      PR; CI needs a live server (ties into the conda packager above). [wip_branch_libpq]
+
+    - p2: python modernization (f-strings, __slots__, new algebraic/ package,
+      NameLookup tracker). [wip_branch_p2]
+
+    - typelists: C++ TMP typelist library, concept-based _grid_ replacement,
+      memory overhaul. [wip_branch_typelists]
+
+    - tensor: quaternions, rows()/columns() matrix builders, generalized
+      tensor_same_shape_c (Bianca Giovanardi's code). [wip_branch_tensor]
+
+  - deferred / revisit:
+
+    - timers PR: Movement::lap is unimplemented, suspicious type aliases, unclear
+      Movement::reset return type; fix in a dedicated timers PR. [project_timers_revisit]
+
+    - self_type/super_type retro pass: still owed for grid, memory, timers.
+      [feedback_self_super_type_aliases]
+
+    - header self-containment: done for grid/memory/timers/journal; LEFT are
+      tensor, flow, viz, geometry. [project_header_self_containment]
+
+    - component trait vs package name: a trait named like an imported package
+      resolves to the Package; wants a separate namespace for component
+      instances. [project_component_trait_global_scope]
+
+    - python version floor: pyproject floor is stale vs CI (3.12-3.14); policy
+      decision deferred by user. [project_python_version_floor]
+
+    - journal<->pyre boot coupling: design A (relocate root to a boot-free
+      foundation) vs design B (lazy pyre boot) still undecided; do not raise
+      unprompted. [project_journal_pyre_boot_solutions]
+
+    - binding import guard: re-examine remaining from-import guard sites with the
+      ModuleNotFoundError-vs-ImportError lesson in mind before sweeping.
+      [project_narrow_binding_import_guard]
+
+  - open follow-ups from merged work:
+
+    - grid-bindings cleanup / split grids.cc (PR #172): until it lands, main's
+      push cmake.yaml is red on 3 gcc-15 RelWithDebInfo legs (OOM, not
+      correctness). [wip_branch_c++23]
+
+    - docker matrix open items: libpq in CI, dpkg-sniffer audit (above), a cuda
+      cell. [wip_branch_docker]
+
+    - pyre docker containers: roll the reusable mm-driven container design out to
+      qed/qef/speak/pet. [project_pyre_docker_containers]
+
+  - cross-repo (lives in ~/dv/mm, tracked in mm's own TODO.md):
+
+    - external facilities: let a supported external expose a family of
+      conditionally-built libraries so clients request a subset; driving case is
+      pyre shipping libpyre-h5/mpi/postgres/... design agreed, not implemented.
+      see ~/dv/mm/docs/externals-facilities-design.md
+
+    - mpi launcher vocabulary: move the launcher vocabulary into mm's extern/mpi
+      (mpi.launch); pyre is only the consumer, and share/mm/make must mirror it.
+      [wip_branch_mpi, project_mpi_cpp_layer]
+
+
 # end of file
