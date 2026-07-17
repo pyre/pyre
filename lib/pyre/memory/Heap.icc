@@ -9,7 +9,7 @@
 #pragma once
 
 
-// my declarations
+// declarations
 #include "Heap.h"
 
 
@@ -17,6 +17,7 @@
 // constructor
 template <class T, bool isConst>
 pyre::memory::Heap<T, isConst>::Heap(cell_count_type cells) :
+    super_type(),
     _data { new value_type[cells] },
     _cells { cells }
 {}
@@ -24,6 +25,7 @@ pyre::memory::Heap<T, isConst>::Heap(cell_count_type cells) :
 
 template <class T, bool isConst>
 pyre::memory::Heap<T, isConst>::Heap(handle_type handle, cell_count_type cells) :
+    super_type(),
     _data { handle },
     _cells { cells }
 {}
@@ -83,6 +85,16 @@ pyre::memory::Heap<T, isConst>::where() const -> const void *
 }
 
 
+// get the shared pointer
+template <class T, bool isConst>
+auto
+pyre::memory::Heap<T, isConst>::handle() const -> handle_type
+{
+    // easy
+    return _data;
+}
+
+
 // access privileges
 template <typename T, bool isConst>
 constexpr auto
@@ -102,43 +114,41 @@ pyre::memory::Heap<T, isConst>::writable() -> bool
 }
 
 
-// human readable form of my expansion
+// simulate my c++ declaration
 template <typename T, bool isConst>
 auto
-pyre::memory::Heap<T, isConst>::name() -> string_type
+pyre::memory::Heap<T, isConst>::declSelf() -> string_type
+{
+    // assemble and return
+    return
+        // namespace
+        string_type("pyre::memory::") +
+        // the type alias
+        (isConst ? "const" : "") + "heap_t<" +
+        // the template parameter
+        cell_type::declValue() +
+        // and done
+        ">";
+}
+
+
+// simulate the c++ declaration of my value
+template <typename T, bool isConst>
+auto
+pyre::memory::Heap<T, isConst>::declValue() -> string_type
+{
+    // ask my cell
+    return cell_type::declValue();
+}
+
+
+// human readable form of my type
+template <typename T, bool isConst>
+auto
+pyre::memory::Heap<T, isConst>::className() -> string_type
 {
     // resolve the name and return it
-    return strategyName() + cellName();
-}
-
-
-// human readable form of my {cell_type}
-template <typename T, bool isConst>
-auto
-pyre::memory::Heap<T, isConst>::cellName() -> string_type
-{
-    // resolve the name and return it
-    return CellName<value_type>::name();
-}
-
-
-// human readable form of my storage strategy
-template <typename T, bool isConst>
-auto
-pyre::memory::Heap<T, isConst>::strategyName() -> string_type
-{
-    // build the name and return it
-    return (isConst ? "Const" : "") + string_type("Heap");
-}
-
-
-// get the shared pointer
-template <class T, bool isConst>
-auto
-pyre::memory::Heap<T, isConst>::handle() const -> handle_type
-{
-    // easy
-    return _data;
+    return string_type("Heap") + cell_type::className();
 }
 
 
@@ -191,6 +201,18 @@ pyre::memory::Heap<T, isConst>::operator[](size_type pos) const -> reference
 {
     // return a reference to the cell at {pos}
     return _data[pos];
+}
+
+
+// interface
+template <class T, bool isConst>
+auto
+pyre::memory::Heap<T, isConst>::fill(value_type value) const -> const self_type &
+{
+    // fill the buffer with {value}
+    std::fill(this->begin(), this->end(), value);
+    // return a reference to me
+    return *this;
 }
 
 

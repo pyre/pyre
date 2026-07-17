@@ -9,7 +9,7 @@
 #pragma once
 
 
-// my declarations
+// declarations
 #include "Stack.h"
 
 
@@ -80,33 +80,41 @@ pyre::memory::Stack<D, T, isConst>::writable() -> bool
 }
 
 
-// human readable form of my expansion
+// simulate my c++ declaration
 template <int D, class T, bool isConst>
 auto
-pyre::memory::Stack<D, T, isConst>::name() -> string_t
+pyre::memory::Stack<D, T, isConst>::declSelf() -> string_type
 {
-    // resolve the name and return it
-    return strategyName() + cellName();
+    // assemble and return
+    return
+        // namespace
+        string_type("pyre::memory::") +
+        // the type alias
+        (isConst ? "const" : "") + "stack_t<" +
+        // the template parameters
+        std::to_string(D) + ", " + cell_type::declValue() +
+        // and done
+        ">";
 }
 
 
-// human readable form of my {cell_type}
+// simulate the c++ declaration of my value
 template <int D, class T, bool isConst>
 auto
-pyre::memory::Stack<D, T, isConst>::cellName() -> string_t
+pyre::memory::Stack<D, T, isConst>::declValue() -> string_type
 {
-    // resolve the name and return it
-    return CellName<value_type>::name();
+    // ask my cell
+    return cell_type::declValue();
 }
 
 
-// human readable form of my storage strategy
+// human readable form of my type
 template <int D, class T, bool isConst>
 auto
-pyre::memory::Stack<D, T, isConst>::strategyName() -> string_t
+pyre::memory::Stack<D, T, isConst>::className() -> string_type
 {
-    // build the name and return it
-    return (isConst ? "Const" : "") + string_t("Stack");
+    // resolve the name and return it
+    return string_type("Stack") + std::to_string(D) + cell_type::className();
 }
 
 

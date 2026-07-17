@@ -8,40 +8,51 @@
 #pragma once
 
 
-// my dependencies
+// externals
+#include "externals.h"
+// forward declarations
 #include "forward.h"
-#include "Cell.h"
+
+// base class
+#include "Buffer.h"
+// non-trivial iterator
+#include "Slice.h"
 
 
 // a block of cells whose memory belongs to someone else
 template <class T, bool isConst>
-class pyre::memory::View {
+class pyre::memory::View : public Buffer<T, isConst> {
     // types
 public:
     // me
     using self_type = View<T, isConst>;
+    // my base class
+    using super_type = Buffer<T, isConst>;
+    // my iterator
+    using slice_type = Slice<self_type>;
+
     // my cell
-    using cell_type = Cell<T, isConst>;
+    using typename super_type::cell_type;
     // pull the type aliases
-    using value_type = typename cell_type::value_type;
+    using typename super_type::value_type;
     // derived types
-    using pointer = typename cell_type::pointer;
-    using const_pointer = typename cell_type::const_pointer;
-    using reference = typename cell_type::reference;
-    using const_reference = typename cell_type::const_reference;
+    using typename super_type::pointer;
+    using typename super_type::const_pointer;
+    using typename super_type::reference;
+    using typename super_type::const_reference;
     // distances
-    using difference_type = typename cell_type::difference_type;
+    using typename super_type::difference_type;
     // sizes of things
-    using size_type = typename cell_type::size_type;
-    using cell_count_type = typename cell_type::cell_count_type;
+    using typename super_type::size_type;
+    using typename super_type::cell_count_type;
     // strings
-    using uri_type = string_t;
-    using string_type = string_t;
+    using typename super_type::uri_type;
+    using typename super_type::string_type;
 
     // metamethods
 public:
     // map an existing data product
-    inline View(pointer, cell_count_type);
+    inline View(pointer data, cell_count_type cells, cell_count_type stride = 1);
 
     // interface
 public:
@@ -59,17 +70,18 @@ public:
     // expose my constness
     static constexpr auto readonly() -> bool;
     static constexpr auto writable() -> bool;
-    // human readable rendering of my expansion
-    static inline auto name() -> string_type;
-    // human readable rendering of my storage strategy
-    static inline auto strategyName() -> string_type;
-    // human readable rendering of my {cell_type}
-    static inline auto cellName() -> string_type;
+
+    // simulate my c++ declaration
+    static inline auto declSelf() -> string_type;
+    // simulate the c++ declaration of my template parameter
+    static inline auto declValue() -> string_type;
+    // human readable name for my type
+    static inline auto className() -> string_type;
 
     // iterator support
 public:
-    inline auto begin() const -> pointer;
-    inline auto end() const -> pointer;
+    inline auto begin() const -> slice_type;
+    inline auto end() const -> slice_type;
 
     // data access
 public:
@@ -78,10 +90,15 @@ public:
     // without bounds checking
     inline auto operator[](size_type) const -> reference;
 
+    // interface
+public:
+    inline auto fill(const value_type value) const -> const self_type &;
+
     // implementation details: data
 private:
     const pointer _data;
     const cell_count_type _cells;
+    const cell_count_type _stride;
 
     // default metamethods
 public:
@@ -95,7 +112,7 @@ public:
 };
 
 
-// get the inline definitions
+// inline definitions
 #include "View.icc"
 
 

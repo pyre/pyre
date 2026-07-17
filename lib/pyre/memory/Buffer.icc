@@ -1,0 +1,72 @@
+// -*- C++ -*-
+// -*- coding: utf-8 -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2026 all rights reserved
+
+
+// code guard
+#pragma once
+
+// declarations
+#include "Buffer.h"
+
+
+// access privileges
+template <typename T, bool isConst>
+constexpr auto
+pyre::memory::Buffer<T, isConst>::readonly() -> bool
+{
+    // easy
+    return isConst;
+}
+
+
+template <typename T, bool isConst>
+constexpr auto
+pyre::memory::Buffer<T, isConst>::writable() -> bool
+{
+    // easy
+    return !readonly();
+}
+
+
+// simulate my c++ declaration
+template <typename T, bool isConst>
+auto
+pyre::memory::Buffer<T, isConst>::declSelf() -> string_type
+{
+    // assemble and return
+    return
+        // namespace
+        string_type("pyre::memory::") +
+        // the type alias
+        (isConst ? "const" : "") + "buffer_t<" +
+        // the template parameter
+        cell_type::declValue() +
+        // and done
+        ">";
+}
+
+
+// simulate the c++ declaration of my value
+template <typename T, bool isConst>
+auto
+pyre::memory::Buffer<T, isConst>::declValue() -> string_type
+{
+    // ask my cell
+    return cell_type::declValue();
+}
+
+
+// human readable form of my expansion
+template <typename T, bool isConst>
+auto
+pyre::memory::Buffer<T, isConst>::className() -> string_type
+{
+    // resolve the name and return it
+    return string_type("Buffer") + cell_type::className();
+}
+
+
+// end of file

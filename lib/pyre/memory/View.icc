@@ -9,15 +9,17 @@
 #pragma once
 
 
-// my declarations
+// declarations
 #include "View.h"
 
 
 // metamethods
 template <class T, bool isConst>
-pyre::memory::View<T, isConst>::View(pointer data, cell_count_type cells) :
+pyre::memory::View<T, isConst>::View(pointer data, cell_count_type cells, cell_count_type stride) :
+    super_type(),
     _data { data },
-    _cells { cells }
+    _cells { cells },
+    _stride { stride }
 {}
 
 
@@ -95,52 +97,60 @@ pyre::memory::View<T, isConst>::writable() -> bool
 }
 
 
-// human readable form of my expansion
+// simulate my c++ declaration
 template <typename T, bool isConst>
 auto
-pyre::memory::View<T, isConst>::name() -> string_type
+pyre::memory::View<T, isConst>::declSelf() -> string_type
 {
-    // resolve the name and return it
-    return strategyName() + cellName();
+    // assemble and return
+    return
+        // namespace
+        string_type("pyre::memory::") +
+        // the type alias
+        (isConst ? "const" : "") + "view_t<" +
+        // the template parameter
+        cell_type::declValue() +
+        // and done
+        ">";
 }
 
 
-// human readable form of my {cell_type}
+// simulate the c++ declaration of my value
 template <typename T, bool isConst>
 auto
-pyre::memory::View<T, isConst>::cellName() -> string_type
+pyre::memory::View<T, isConst>::declValue() -> string_type
 {
-    // resolve the name and return it
-    return CellName<value_type>::name();
+    // ask my cell
+    return cell_type::declValue();
 }
 
 
-// human readable form of my storage strategy
+// human readable form of my type
 template <typename T, bool isConst>
 auto
-pyre::memory::View<T, isConst>::strategyName() -> string_type
+pyre::memory::View<T, isConst>::className() -> string_type
 {
-    // build the name and return it
-    return (isConst ? "Const" : "") + string_type("View");
+    // resolve the name and return it
+    return string_type("View") + cell_type::className();
 }
 
 
 // iterator support
 template <class T, bool isConst>
 auto
-pyre::memory::View<T, isConst>::begin() const -> pointer
+pyre::memory::View<T, isConst>::begin() const -> slice_type
 {
     // the beginning of the block
-    return data();
+    return slice_type(*this, 0);
 }
 
 
 template <class T, bool isConst>
 auto
-pyre::memory::View<T, isConst>::end() const -> pointer
+pyre::memory::View<T, isConst>::end() const -> slice_type
 {
     // one past the last cell in the block
-    return data() + cells();
+    return slice_type(*this, cells());
 }
 
 
@@ -164,7 +174,7 @@ pyre::memory::View<T, isConst>::at(size_type pos) const -> reference
     }
 
     // return a reference to the cell at {pos}
-    return _data[pos];
+    return _data[_stride * pos];
 }
 
 
@@ -173,7 +183,19 @@ auto
 pyre::memory::View<T, isConst>::operator[](size_type pos) const -> reference
 {
     // return a reference to the cell at {pos}
-    return _data[pos];
+    return _data[_stride * pos];
+}
+
+
+// interface
+template <class T, bool isConst>
+auto
+pyre::memory::View<T, isConst>::fill(value_type value) const -> const self_type &
+{
+    // fill the buffer with {value}
+    std::fill(this->begin(), this->end(), value);
+    // return a reference to me
+    return *this;
 }
 
 

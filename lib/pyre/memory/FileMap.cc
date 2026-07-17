@@ -5,16 +5,7 @@
 // (c) 1998-2026 all rights reserved
 
 
-// externals
-#include "externals.h"
-// forward declarations
-#include "forward.h"
-// expansions
-#include "expansions.h"
-// type aliases
-#include "api.h"
-
-// my class declaration
+// declarations
 #include "FileMap.h"
 
 
