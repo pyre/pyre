@@ -17,6 +17,10 @@ namespace pyre::typelists {
     template <template <typename...> class...>
     struct templates_t;
 
+    // a value container, for iterating over non-type lists like (true, false) or (1, 2, 3, 4)
+    template <auto...>
+    struct values_t;
+
     // prepend a type to the beginning of a type list
     template <typename...>
     struct prepend_t;
@@ -40,6 +44,14 @@ namespace pyre::typelists {
     // apply a list of templates to a list of types
     template <typename...>
     struct apply_t;
+
+    // lift a value list into a type list of compile-time constants
+    template <typename...>
+    struct lift_t;
+
+    // lower a type list of compile-time constants back into a value list
+    template <typename...>
+    struct lower_t;
 
 } // namespace pyre::typelists
 

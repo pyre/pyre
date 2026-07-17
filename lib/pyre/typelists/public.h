@@ -11,8 +11,9 @@
 // get the forward declarations
 #include "forward.h"
 
-// the basic data structure
+// the basic data structures
 #include "types.h"
+#include "values.h"
 
 // operations
 #include "append.h"
@@ -21,6 +22,10 @@
 #include "merge.h"
 #include "cartesian.h"
 #include "apply.h"
+
+// the value/type bridge
+#include "lift.h"
+#include "lower.h"
 
 
 // end of file
