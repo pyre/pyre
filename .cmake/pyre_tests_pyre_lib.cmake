@@ -119,6 +119,12 @@ pyre_test_driver(tests/pyre.lib/memory/memory_sanity.cc)
 pyre_test_driver(tests/pyre.lib/memory/view_access.cc)
 pyre_test_driver(tests/pyre.lib/memory/view_oob.cc)
 pyre_test_driver(tests/pyre.lib/memory/stack_access.cc)
+pyre_test_driver(tests/pyre.lib/memory/heap_slice.cc)
+pyre_test_driver(tests/pyre.lib/memory/constheap_slice.cc)
+pyre_test_driver(tests/pyre.lib/memory/view_slice.cc)
+pyre_test_driver(tests/pyre.lib/memory/constview_slice.cc)
+pyre_test_driver(tests/pyre.lib/memory/map_slice.cc)
+pyre_test_driver(tests/pyre.lib/memory/constmap_slice.cc)
 
 # some tests require cleanup
 add_test(NAME tests.pyre.lib.memory.filemap.cleanup
@@ -126,6 +132,12 @@ add_test(NAME tests.pyre.lib.memory.filemap.cleanup
   )
 add_test(NAME tests.pyre.lib.memory.map.cleanup
   COMMAND ${BASH_PROGRAM} -c "rm map.dat"
+  )
+add_test(NAME tests.pyre.lib.memory.map_slice.cleanup
+  COMMAND ${BASH_PROGRAM} -c "rm map_slice.dat"
+  )
+add_test(NAME tests.pyre.lib.memory.constmap_slice.cleanup
+  COMMAND ${BASH_PROGRAM} -c "rm constmap_slice.dat"
   )
 
 # some tests must happen in a specific order
@@ -159,6 +171,26 @@ set_property(TEST tests.pyre.lib.memory.map.cleanup PROPERTY
       tests.pyre.lib.memory.map_read.cc tests.pyre.lib.memory.map_oob.cc
       tests.pyre.lib.memory.constmap_read.cc tests.pyre.lib.memory.constmap_oob.cc
   )
+
+# the slice tests each own their file, so they only need to be cleaned up after they run
+set_property(TEST tests.pyre.lib.memory.map_slice.cleanup PROPERTY
+  DEPENDS tests.pyre.lib.memory.map_slice.cc
+  )
+set_property(TEST tests.pyre.lib.memory.constmap_slice.cleanup PROPERTY
+  DEPENDS tests.pyre.lib.memory.constmap_slice.cc
+  )
+
+
+# typelists
+pyre_test_driver(tests/pyre.lib/typelists/append.cc)
+pyre_test_driver(tests/pyre.lib/typelists/apply.cc)
+pyre_test_driver(tests/pyre.lib/typelists/cartesian.cc)
+pyre_test_driver(tests/pyre.lib/typelists/concat.cc)
+pyre_test_driver(tests/pyre.lib/typelists/grid.cc)
+pyre_test_driver(tests/pyre.lib/typelists/lift.cc)
+pyre_test_driver(tests/pyre.lib/typelists/merge.cc)
+pyre_test_driver(tests/pyre.lib/typelists/prepend.cc)
+pyre_test_driver(tests/pyre.lib/typelists/typelist.cc)
 
 
 # timers
