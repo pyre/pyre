@@ -13,16 +13,16 @@
 // local declarations
 #include "__init__.h"
 
-// the {pyre} extension namespace
+
+// decorator that adds properties common to all storage strategies
 namespace pyre::py::memory {
-    // add support for the python buffer protocol
     template <class T>
-    void bufferProtocol(pymem_t<T> &);
-} // namespace pyre::py::memory
+    auto properties(pymem_t<T> &) -> void;
+}
 
 
-// get the implementation
-#include "buffer_protocol.icc"
+// implementations
+#include "properties.icc"
 
 
 // end of file

@@ -1,0 +1,112 @@
+// -*- c++ -*-
+// -*- coding: utf-8 -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2026 all rights reserved
+
+// code guard
+#pragma once
+
+
+// declarations
+#include "properties.h"
+
+
+// decorator that adds properties common to all storage strategies
+template <class T>
+auto
+pyre::py::memory::properties(pymem_t<T> & cls) -> void
+{
+    // alias the storage strategy
+    using mem_t = T;
+
+    // human readable form of my location
+    cls.def_property_readonly(
+        // the name
+        "uri",
+        // the implementation
+        &mem_t::uri,
+        // the docstring
+        "human readable form of my location");
+
+    // memory footprint, in cells
+    cls.def_property_readonly(
+        // the name
+        "cells",
+        // the implementation
+        &mem_t::cells,
+        // the docstring
+        "my memory footprint, in cells");
+
+    // memory footprint, in bytes
+    cls.def_property_readonly(
+        // the name
+        "bytes",
+        // the implementation
+        &mem_t::bytes,
+        // the docstring
+        "my memory footprint, in bytes");
+
+    // where
+    cls.def_property_readonly(
+        // the name of the property
+        "where",
+        // the implementation
+        [](const mem_t & self) { return reinterpret_cast<intptr_t>(self.where()); },
+        // the docstring
+        "the location of my data in memory");
+
+
+    // static properties
+    cls.def_property_readonly_static(
+        // the name
+        "mutable",
+        // the implementation
+        [](py::object &) -> bool {
+            // ask
+            return mem_t::writable();
+        },
+        // the docstring
+        "predicate that indicates whether the buffer is mutable");
+
+    cls.def_property_readonly_static(
+        // the name
+        "_cell",
+        // the implementation
+        [](py::object &) -> typename mem_t::cell_type {
+            // ask
+            return typename mem_t::cell_type();
+        },
+        // the docstring
+        "human readable form of my cell type");
+
+    cls.def_property_readonly_static(
+        // the name
+        "_declSelf",
+        // the implementation
+        [](py::object &) -> string_t {
+            // ask the memory strategy
+            return mem_t::declSelf();
+        },
+        // the docstring
+        "a simulation of the c++ declaration of my underlying object");
+
+
+    cls.def_property_readonly_static(
+        // the name
+        "_declValue",
+        // the implementation
+        [](py::object &) -> string_t {
+            // ask the memory strategy
+            return mem_t::declValue();
+        },
+        // the docstring
+        "a simulation of the c++ declaration of my underlying object");
+
+
+    // all done
+    return;
+}
+
+
+// end of file
