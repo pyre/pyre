@@ -8,20 +8,19 @@
 #pragma once
 
 
-// my dependencies
+// externals
+#include "externals.h"
+// forward declarations
 #include "forward.h"
-#include "Cell.h"
 
 
-// a file-backed block of cells
+// a block of cells on the stack
 template <int D, class T, bool isConst>
 class pyre::memory::Stack {
     // types
 public:
-    // me
-    using self_type = Stack<D, T, isConst>;
     // my cell
-    using cell_type = Cell<T, isConst>;
+    using cell_type = cell_t<T, isConst>;
     // pull the type aliases
     using value_type = typename cell_type::value_type;
     // derived types
@@ -40,6 +39,9 @@ public:
     using iterator = std::conditional_t<
         isConst, typename array_type::const_iterator, typename array_type::iterator>;
     using const_iterator = typename array_type::const_iterator;
+
+    // strings
+    using string_type = string_t;
 
     // metamethods
 public:
@@ -60,12 +62,13 @@ public:
     // expose my constness
     static constexpr auto readonly() -> bool;
     static constexpr auto writable() -> bool;
-    // human readable rendering of my expansion
-    static inline auto name() -> string_t;
-    // human readable rendering of my storage strategy
-    static inline auto strategyName() -> string_t;
-    // human readable rendering of my {cell_type}
-    static inline auto cellName() -> string_t;
+
+    // simulate my c++ declaration
+    static inline auto declSelf() -> string_type;
+    // simulate the c++ declaration of my template parameter
+    static inline auto declValue() -> string_type;
+    // human readable name for my type
+    static inline auto className() -> string_type;
 
     // iterator support
 public:
@@ -103,7 +106,7 @@ public:
 };
 
 
-// get the inline definitions
+// inline definitions
 #include "Stack.icc"
 
 

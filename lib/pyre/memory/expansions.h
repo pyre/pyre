@@ -7,37 +7,85 @@
 // code guard
 #pragma once
 
-
-// my dependencies
+// external
+#include "externals.h"
+// forward declaration
 #include "forward.h"
+// the api
+#include "api.h"
 
 
-// template expansion machinery
+// expansion helpers
 namespace pyre::memory {
-    // a compile-time container with type choices
-    template <typename... typeT>
-    struct Types;
+    // the cell expander
+    template <typename...>
+    struct celltypes_t;
+    // build a typelist with both const and mutable cells from a pile of basic types
+    template <typename... T>
+    struct celltypes_t<pyre::typelists::types_t<T...>> {
+        using type = typename pyre::typelists::concat_t<
+            pyre::typelists::types_t<cell_t<T, false>...>,
+            pyre::typelists::types_t<cell_t<T, true>...>>::type;
+    };
 
-    // the container with the strategy choices
-    template <template <typename typeT> class... strategyT>
-    struct StorageStrategies;
-
-    // type list concatenation
-    template <typename... listsT>
-    struct Concat;
-
-    // compose a storage strategy with a set of types
-    template <template <typename> class strategyT, typename... cellsT>
-    struct ComposeStorageStrategy;
-
-    // a helper that expands a set of strategies and a set of cells
-    template <typename strategiesT, typename cellsT>
-    struct ExpandStorageStrategies;
+    // the storage strategy expander
+    template <typename...>
+    struct storageCells_t;
+    // build a typelist of storage template expansion arguments suitable for handing off
+    // to {pyre::typelists::apply_t}
+    template <typename... T>
+    struct storageCells_t<pyre::typelists::types_t<T...>> {
+        using type = pyre::typelists::types_t<pyre::typelists::types_t<T>...>;
+    };
 } // namespace pyre::memory
 
 
-// get the inline definitions
-#include "expansions.icc"
+// low level entities; you should probably stay away from them
+namespace pyre::memory {
+    // access rights
+    using const_t = std::integer_sequence<bool, true, false>;
+    // cell types
+    using basetypes_t = pyre::typelists::types_t<
+        // signed integers
+        int8_t, int16_t, int32_t, int64_t,
+        // unsigned integers
+        uint8_t, uint16_t, uint32_t, uint64_t,
+        // floating point
+        float32_t, float64_t,
+        // complex
+        complex64_t, complex128_t>;
+
+    // the pile of cell types
+    using cells_t = typename celltypes_t<basetypes_t>::type;
+
+    // base buffers
+    using buffers_t = typename pyre::typelists::apply_t<
+        // the heaps
+        pyre::typelists::templates_t<buffer_t, constbuffer_t>,
+        // the cells
+        typename storageCells_t<basetypes_t>::type>::type;
+
+    // heaps over all base types
+    using heaps_t = typename pyre::typelists::apply_t<
+        // the heaps
+        pyre::typelists::templates_t<heap_t, constheap_t>,
+        // the cells
+        typename storageCells_t<basetypes_t>::type>::type;
+
+    // maps over all base types
+    using maps_t = typename pyre::typelists::apply_t<
+        // the heaps
+        pyre::typelists::templates_t<map_t, constmap_t>,
+        // the cells
+        typename storageCells_t<basetypes_t>::type>::type;
+
+    // views over all base types
+    using views_t = typename pyre::typelists::apply_t<
+        // the heaps
+        pyre::typelists::templates_t<view_t, constview_t>,
+        // the cells
+        typename storageCells_t<basetypes_t>::type>::type;
+} // namespace pyre::memory
 
 
 // end of file

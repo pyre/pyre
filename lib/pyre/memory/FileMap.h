@@ -8,7 +8,9 @@
 #pragma once
 
 
-// my dependencies
+// externals
+#include "externals.h"
+// forward declarations
 #include "forward.h"
 
 
@@ -16,8 +18,6 @@
 class pyre::memory::FileMap {
     // types
 public:
-    // me
-    using self_type = FileMap;
     // the address of the mapping
     using pointer = void *;
     // file paths
@@ -79,7 +79,7 @@ private:
 };
 
 
-// get the inline definitions
+// definitions
 #include "FileMap.icc"
 
 

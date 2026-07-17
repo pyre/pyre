@@ -9,13 +9,14 @@
 #pragma once
 
 
-// my declarations
+// declarations
 #include "Map.h"
 
 
 // map over an existing data product
 template <typename T, bool isConst>
 pyre::memory::Map<T, isConst>::Map(uri_type uri, writable_type writable) :
+    super_type(),
     _map { std::make_shared<FileMap>(uri, writable) }
 {}
 
@@ -23,6 +24,7 @@ pyre::memory::Map<T, isConst>::Map(uri_type uri, writable_type writable) :
 // create a new one
 template <typename T, bool isConst>
 pyre::memory::Map<T, isConst>::Map(uri_type uri, size_type cells) :
+    super_type(),
     // scale up the number of cells to the number of bytes
     _map { std::make_shared<FileMap>(uri, cell_type::bytes(cells)) }
 {}
@@ -99,33 +101,41 @@ pyre::memory::Map<T, isConst>::writable() -> bool
 }
 
 
-// human readable form of my expansion
+// simulate my c++ declaration
 template <typename T, bool isConst>
 auto
-pyre::memory::Map<T, isConst>::name() -> string_t
+pyre::memory::Map<T, isConst>::declSelf() -> string_type
 {
-    // resolve the name and return it
-    return strategyName() + cellName();
+    // assemble and return
+    return
+        // namespace
+        string_type("pyre::memory::") +
+        // the type alias
+        (isConst ? "const" : "") + "map_t<" +
+        // the template parameter
+        cell_type::declValue() +
+        // and done
+        ">";
 }
 
 
-// human readable form of my {cell_type}
+// simulate the c++ declaration of my value
 template <typename T, bool isConst>
 auto
-pyre::memory::Map<T, isConst>::cellName() -> string_t
+pyre::memory::Map<T, isConst>::declValue() -> string_type
 {
-    // resolve the name and return it
-    return CellName<value_type>::name();
+    // ask my cell
+    return cell_type::declValue();
 }
 
 
-// human readable form of my storage strategy
+// human readable form of my type
 template <typename T, bool isConst>
 auto
-pyre::memory::Map<T, isConst>::strategyName() -> string_t
+pyre::memory::Map<T, isConst>::className() -> string_type
 {
-    // build the name and return it
-    return (isConst ? "Const" : "") + string_t("Map");
+    // resolve the name and return it
+    return string_type("Map") + cell_type::className();
 }
 
 
@@ -179,6 +189,18 @@ pyre::memory::Map<T, isConst>::operator[](size_type pos) const -> reference
 {
     // get the cell and return it
     return data()[pos];
+}
+
+
+// interface
+template <class T, bool isConst>
+auto
+pyre::memory::Map<T, isConst>::fill(value_type value) const -> const self_type &
+{
+    // fill the buffer with {value}
+    std::fill(this->begin(), this->end(), value);
+    // return a reference to me
+    return *this;
 }
 
 
