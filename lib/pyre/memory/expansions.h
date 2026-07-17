@@ -17,15 +17,30 @@
 
 // expansion helpers
 namespace pyre::memory {
+    // the const/mutable axis, expressed as a value list so it rides through the type algebra
+    using constness_t = pyre::typelists::values_t<false, true>;
+
+    // adapter that turns a (constness, base type) pair into the matching cell type; it exists so
+    // the {cell_t} bool parameter can travel through the type-only {apply_t}/{cartesian_t}
+    // machinery
+    template <typename isConstT, typename T>
+    using cellexp_t = cell_t<T, isConstT::value>;
+
     // the cell expander
     template <typename...>
     struct celltypes_t;
-    // build a typelist with both const and mutable cells from a pile of basic types
+    // build a typelist with both mutable and const cells from a pile of basic types
     template <typename... T>
     struct celltypes_t<pyre::typelists::types_t<T...>> {
-        using type = typename pyre::typelists::concat_t<
-            pyre::typelists::types_t<cell_t<T, false>...>,
-            pyre::typelists::types_t<cell_t<T, true>...>>::type;
+        // multiply the constness axis against the base types and stamp out a cell for each pair;
+        // {cartesian_t} visits {false} across all bases before {true}, so mutable cells come first
+        using type = typename pyre::typelists::apply_t<
+            // the adapter as the sole template
+            pyre::typelists::templates_t<cellexp_t>,
+            // over the cartesian product of the lifted constness axis and the base types
+            typename pyre::typelists::cartesian_t<
+                typename pyre::typelists::lift_t<constness_t>::type,
+                pyre::typelists::types_t<T...>>::type>::type;
     };
 
     // the storage strategy expander
@@ -42,8 +57,6 @@ namespace pyre::memory {
 
 // low level entities; you should probably stay away from them
 namespace pyre::memory {
-    // access rights
-    using const_t = std::integer_sequence<bool, true, false>;
     // cell types
     using basetypes_t = pyre::typelists::types_t<
         // signed integers
