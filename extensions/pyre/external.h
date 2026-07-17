@@ -28,6 +28,10 @@ namespace pyre::py {
     // get the special {pybind11} literals
     using namespace py::literals;
 
+    // basic types
+    using size_t = std::size_t;
+    using string_t = std::string;
+
     // for decorating pybind11 classes
     // class names
     using classname_t = const char *;

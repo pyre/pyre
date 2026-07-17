@@ -1,4 +1,4 @@
-// -*- C++ -*-
+// -*- c++ -*-
 // -*- coding: utf-8 -*-
 //
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -7,20 +7,36 @@
 // code guard
 #pragma once
 
+// external
+#include "external.h"
+
 
 // the {pyre} extension namespace
-namespace pyre::py::memory {
-    // class record factories
-    template <class cellT>
-    void map(py::module &, classname_t, docstring_t);
+namespace pyre::py::memory::maps {
+    // the pybind11 class record
+    template <typename mapT>
+    using pymap_t = pymem_t<mapT>;
 
-    template <class cellT>
-    void constmap(py::module &, classname_t, docstring_t);
+    // the type registrar
+    template <class... mapT>
+    inline auto expand(py::module &, pyre::typelists::types_t<mapT...> &&) -> void;
 
-} // namespace pyre::py::memory
+    // the map record builder
+    template <class mapT>
+    inline auto map(py::module &) -> void;
+
+    // the class docstring
+    template <class mapT>
+    inline auto docstring() -> string_t;
+
+    // constructors
+    template <class mapT>
+    inline auto constructors(pymap_t<mapT> &) -> void;
+
+} // namespace pyre::py::memory::maps
 
 
-// get the inline definitions
+// implementations
 #include "maps.icc"
 
 
