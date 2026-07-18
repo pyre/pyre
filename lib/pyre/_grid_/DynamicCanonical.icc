@@ -14,213 +14,309 @@
 
 // constructors
 
+// build a layout from just the extents: anchor the grid at the origin of the index space
+// and pack it the c way
 inline
 pyre::grid::DynamicCanonical::DynamicCanonical(const shape_type & shape) :
+    // let the rank of {shape} size a zero origin and the default permutation, and hand the
+    // job over to the constructor that knows how to deduce a layout
     DynamicCanonical(shape, index_type(shape.size(), 0), _defaultOrder(shape.size()))
 {}
 
+// build a layout for a grid whose lowest addressable index is not necessarily zero,
+// packed the c way
 inline
 pyre::grid::DynamicCanonical::DynamicCanonical(
     const shape_type & shape, const index_type & origin) :
+    // supply the default permutation and delegate
     DynamicCanonical(shape, origin, _defaultOrder(shape.size()))
 {}
 
+// the deducing constructor: given the index box and the axis priority, work out the
+// physical layout that packs the cells tightly
 inline
 pyre::grid::DynamicCanonical::DynamicCanonical(
     const shape_type & shape, const index_type & origin, const order_type & order) :
+    // record the extent along each axis; this is what fixes my rank
     _shape { shape },
+    // record which axis varies fastest in memory
     _order { order },
+    // record the lowest addressable index
     _origin { origin },
+    // deduce the memory distance between consecutive cells along each axis
     _strides { _initStrides(shape, order) },
+    // deduce the correction that pulls {origin} back to offset zero
     _nudge { -_initShift(origin, _strides) }
 {}
 
+// the full constructor: the caller knows the physical layout already, so take it verbatim;
+// this is how derived layouts such as boxes and slices inherit their parent's memory map
 inline
 pyre::grid::DynamicCanonical::DynamicCanonical(
     const shape_type & shape, const index_type & origin, const order_type & order,
     const strides_type & strides, difference_type nudge) :
+    // the extent along each axis
     _shape { shape },
+    // the axis priority
     _order { order },
+    // the lowest addressable index
     _origin { origin },
+    // the inherited strides, which need not describe a tight packing of {shape}
     _strides { strides },
+    // the inherited offset correction
     _nudge { nudge }
 {}
 
 
 // accessors
 
+// the number of axes, discovered at runtime from the size of my extents
 inline auto
 pyre::grid::DynamicCanonical::rank() const noexcept -> size_type
 {
+    // the length of the shape vector is the rank
     return _shape.size();
 }
 
+// the extent along each axis
 inline auto
 pyre::grid::DynamicCanonical::shape() const noexcept -> const shape_type &
 {
+    // hand out my extents
     return _shape;
 }
 
+// the smallest addressable index
 inline auto
 pyre::grid::DynamicCanonical::origin() const noexcept -> const index_type &
 {
+    // hand out my anchor
     return _origin;
 }
 
+// the permutation that ranks the axes by how fast they vary in memory
 inline auto
 pyre::grid::DynamicCanonical::order() const noexcept -> const order_type &
 {
+    // hand out my axis priority
     return _order;
 }
 
+// the memory distance between consecutive cells along each axis
 inline auto
 pyre::grid::DynamicCanonical::strides() const noexcept -> const strides_type &
 {
+    // hand out my deduced strides
     return _strides;
 }
 
+// the offset correction that places {_origin} at offset zero
 inline auto
 pyre::grid::DynamicCanonical::nudge() const noexcept -> difference_type
 {
+    // hand out my deduced shift
     return _nudge;
 }
 
+// the number of addressable cells, i.e. the volume of my index box
 inline auto
 pyre::grid::DynamicCanonical::cells() const noexcept -> size_type
 {
+    // a rank zero grid has exactly one cell, so start the accumulation at one
     size_type n = 1;
+    // go through the axes
     for (auto s : _shape) {
+        // and fold in the contribution of each one
         n *= s;
     }
+    // hand off the volume
     return n;
 }
 
 
 // mutator: reorder
 
+// repack the same index box with a different axis priority; the strides and nudge get
+// deduced afresh, so the result describes a different arrangement of the same cells
 inline auto
 pyre::grid::DynamicCanonical::order(const order_type & o) const -> DynamicCanonical
 {
+    // keep the index box and let the deducing constructor rebuild the physical layout
     return DynamicCanonical(_shape, _origin, o);
 }
 
 
 // packing isomorphism
 
+// map an index to the offset of its cell
 inline auto
 pyre::grid::DynamicCanonical::offset(const index_type & idx) const -> difference_type
 {
+    // start the accumulation at the beginning of the expanse
     difference_type result = 0;
+    // go through the axes
     for (size_type axis = 0; axis < rank(); ++axis) {
+        // and fold in the contribution of this one
         result += idx[axis] * static_cast<difference_type>(_strides[axis]);
     }
+    // apply the correction that brings the origin back to zero and hand off the offset
     return result + _nudge;
 }
 
+// the inverse map: recover the index of the cell that lives at a given offset
 inline auto
 pyre::grid::DynamicCanonical::index(difference_type off) const -> index_type
 {
+    // get my rank
     const auto N = rank();
+    // make room for the answer
     index_type result(N);
     // decompose from slowest-varying axis to fastest
     for (std::ptrdiff_t level = static_cast<std::ptrdiff_t>(N) - 1; level >= 0; --level) {
+        // look for the axis that occupies this packing level
         for (size_type axis = 0; axis < N; ++axis) {
+            // when we find it
             if (static_cast<std::ptrdiff_t>(_order[axis]) == level) {
+                // get its stride
                 auto stride = static_cast<difference_type>(_strides[axis]);
+                // its coordinate is however many whole strides fit in what is left
                 result[axis] = off / stride;
+                // and the remainder is what the faster axes have to explain
                 off %= stride;
+                // no other axis lives at this level, so move on
                 break;
             }
         }
     }
+    // the decomposition yields the index relative to the origin, so
     // shift by origin
     for (size_type i = 0; i < N; ++i) {
+        // to place the answer back in the caller's index space
         result[i] += _origin[i];
     }
+    // hand off the index
     return result;
 }
 
+// syntactic sugar: index into the layout to get an offset
 inline auto
 pyre::grid::DynamicCanonical::operator[](const index_type & idx) const -> difference_type
 {
+    // delegate
     return offset(idx);
 }
 
+// syntactic sugar: index into the layout with an offset to get an index
 inline auto
 pyre::grid::DynamicCanonical::operator[](difference_type off) const -> index_type
 {
+    // delegate
     return index(off);
 }
 
 
 // iteration
 
+// the first index of a traversal of my box in packing order
 inline auto
 pyre::grid::DynamicCanonical::begin() const -> iterator_type
 {
+    // an iterator over my box that starts at the origin and takes unit steps
     return iterator_type(_shape, _order, _origin);
 }
 
+// the same traversal, but visiting only every {step} cells along each axis
 inline auto
 pyre::grid::DynamicCanonical::begin(const index_type & step) const -> iterator_type
 {
+    // an iterator over my box that starts at the origin and takes the given steps
     return iterator_type(_shape, _order, _origin, step);
 }
 
+// the sentinel that marks the end of a traversal of my box
 inline auto
 pyre::grid::DynamicCanonical::end() const -> iterator_type
 {
     // compute the end sentinel: origin + shape along each axis
     index_type sentinel(rank());
+    // by pushing each coordinate one full extent past the origin
     for (size_type i = 0; i < rank(); ++i) {
+        // which is the value the iterator lands on once every axis has overflowed
         sentinel[i] = _origin[i] + static_cast<difference_type>(_shape[i]);
     }
+    // an iterator parked at that unreachable index
     return iterator_type(_shape, _order, sentinel);
 }
 
 
 // sub-layouts
 
+// carve a sub-box out of my index box; the result keeps my physical strides and nudge, so
+// its cells stay where they are in memory and its offsets remain valid for my expanse
 inline auto
 pyre::grid::DynamicCanonical::box(index_type base, shape_type tile) const -> DynamicCanonical
 {
+    // get my rank
     const auto N = rank();
+    // go through the axes
     for (size_type axis = 0; axis < N; ++axis) {
+        // the lowest coordinate this axis admits
         auto lo = _origin[axis];
+        // and the highest one
         auto hi = _origin[axis] + static_cast<difference_type>(_shape[axis]) - 1;
+        // pull the anchor up if the caller asked for something below my box
         base[axis] = std::max(base[axis], lo);
+        // and down if it asked for something past the far corner
         base[axis] = std::min(base[axis], hi);
+        // measure how much room is left along this axis once the anchor is placed
         auto avail = static_cast<size_type>(
             _origin[axis] + static_cast<difference_type>(_shape[axis]) - base[axis]);
+        // a sub-box is never degenerate, so ask for at least one cell
         tile[axis] = std::max(tile[axis], size_type { 1 });
+        // and never more than what is actually there
         tile[axis] = std::min(tile[axis], avail);
     }
+    // assemble the sub-layout out of the clamped box and my inherited memory map
     return DynamicCanonical(tile, base, _order, _strides, _nudge);
 }
 
+// extract a hyperplane: keep the axes named in {free} and pin all the others at {base};
+// the result is a lower rank layout that still addresses my memory
 inline auto
 pyre::grid::DynamicCanonical::slice(
     const index_type & base, const std::vector<size_type> & free) const -> DynamicCanonical
 {
+    // the number of surviving axes is the rank of the slice
     const auto M = free.size();
+    // make room for the slice extents
     shape_type sliceShape(M);
+    // its strides
     strides_type sliceStrides(M);
+    // and its axis priority
     order_type sliceOrder(M);
     // extract shape and strides at each free axis
     for (size_type i = 0; i < M; ++i) {
+        // the extent comes over unchanged
         sliceShape[i] = _shape[free[i]];
+        // and so does the stride, which is what keeps the slice pointing at my cells
         sliceStrides[i] = _strides[free[i]];
     }
     // preserve relative packing order of the free axes
     for (size_type i = 0; i < M; ++i) {
+        // the new level of this axis is how many free axes vary faster than it does
         size_type level = 0;
+        // so count them
         for (size_type j = 0; j < M; ++j) {
+            // by comparing against my own priorities
             if (_order[free[j]] < _order[free[i]]) {
+                // and tallying each axis that comes first
                 ++level;
             }
         }
+        // which compresses my priorities down to a permutation of 0..M-1
         sliceOrder[i] = level;
     }
+    // the slice is anchored at zero because
     // the nudge bakes in the contribution of the fixed axes
     return DynamicCanonical(sliceShape, index_type(M, 0), sliceOrder, sliceStrides, offset(base));
 }
@@ -229,30 +325,43 @@ pyre::grid::DynamicCanonical::slice(
 // static helpers
 
 // c-style default order: order[axis] = rank - 1 - axis
+// i.e. the last axis varies fastest and the first one slowest
 inline auto
 pyre::grid::DynamicCanonical::_defaultOrder(size_type n) -> order_type
 {
+    // make room for one priority per axis
     order_type order(n);
+    // go through the axes
     for (size_type i = 0; i < n; ++i) {
+        // and rank them in reverse, so the trailing axis gets level zero
         order[i] = n - 1 - i;
     }
+    // hand off the permutation
     return order;
 }
 
 // stride[axis] = product of shape[other] for all other axes that vary faster
+// which is exactly the number of cells one has to skip to take a single step along {axis}
 inline auto
 pyre::grid::DynamicCanonical::_initStrides(
     const shape_type & shape, const order_type & order) -> strides_type
 {
+    // get the rank implied by the extents
     const auto N = shape.size();
+    // make room for the strides, with each one primed for accumulation
     strides_type strides(N, 1);
+    // go through the axes
     for (size_type axis = 0; axis < N; ++axis) {
+        // and compare each one against all the others
         for (size_type other = 0; other < N; ++other) {
+            // a lower level means the other axis varies faster
             if (order[other] < order[axis]) {
+                // so a whole span of it lies between consecutive cells along {axis}
                 strides[axis] *= shape[other];
             }
         }
     }
+    // hand off the strides
     return strides;
 }
 
@@ -261,10 +370,14 @@ inline auto
 pyre::grid::DynamicCanonical::_initShift(
     const index_type & origin, const strides_type & strides) -> difference_type
 {
+    // start the accumulation at the beginning of the expanse
     difference_type shift = 0;
+    // go through the axes
     for (size_type i = 0; i < origin.size(); ++i) {
+        // and fold in what the origin costs along each one
         shift += origin[i] * static_cast<difference_type>(strides[i]);
     }
+    // hand off the raw offset of the origin
     return shift;
 }
 

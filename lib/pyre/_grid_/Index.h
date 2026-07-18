@@ -13,7 +13,11 @@
 
 
 // storage for a multidimensional index
+// a fixed rank bag of signed coordinates that names one cell of a grid, the way a numpy index
+// does; the companion of {Shape}, which carries the extents, and {Order}, which fixes the
+// packing order; together they let {Canonical} turn an index into a memory offset
 // resist the temptation to use unsigned types; they complicate index arithmetic unnecessarily
+// coordinates are signed because an index is free to sit below the origin of its grid
 template <std::size_t Rank>
 class pyre::grid::Index {
     // types
@@ -56,6 +60,7 @@ public:
     // destructor
     ~Index() = default;
     // copy/move
+    // an index owns nothing but its coordinates, so the compiler generated versions are correct
     Index(const Index &) noexcept = default;
     Index(Index &&) noexcept = default;
     auto operator=(const Index &) noexcept -> Index & = default;
@@ -67,6 +72,7 @@ public:
     static consteval auto rank() noexcept -> size_type;
 
     // element access
+    // the fast path: the caller guarantees that {axis} is in range
     constexpr auto operator[](size_type) noexcept -> reference;
     constexpr auto operator[](size_type) const noexcept -> const_reference;
 
@@ -75,6 +81,7 @@ public:
     constexpr auto at(size_type) const -> const_reference;
 
     // access to the underlying storage
+    // hands out the raw coordinates so they can be shipped to code that speaks arrays
     constexpr auto data() noexcept -> pointer;
     constexpr auto data() const noexcept -> const_pointer;
 
@@ -95,6 +102,7 @@ public:
 
     // iteration support
 public:
+    // visit the coordinates from the first axis to the last
     constexpr auto begin() noexcept -> iterator;
     constexpr auto end() noexcept -> iterator;
     constexpr auto begin() const noexcept -> const_iterator;
@@ -104,6 +112,7 @@ public:
 
     // reverse iteration support
 public:
+    // visit the coordinates from the last axis to the first
     constexpr auto rbegin() noexcept -> reverse_iterator;
     constexpr auto rend() noexcept -> reverse_iterator;
     constexpr auto rbegin() const noexcept -> const_reverse_iterator;
@@ -113,6 +122,7 @@ public:
 
     // implementation details
 private:
+    // my coordinates, one per axis, zeroed out unless someone says otherwise
     storage_type _coords {};
 };
 

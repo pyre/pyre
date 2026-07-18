@@ -13,32 +13,37 @@
 
 // add to the pyre::grid namespace
 namespace pyre::grid::concepts {
-    // members of Z0
+    // the non-negative integers: the values that measure extents and label axes
     template <class T>
     concept InZ0 = std::unsigned_integral<T>;
 
-    // requirements for storage strategies
+    // a storage strategy is anything that knows how to name and reach its cells
     template <class S>
     concept StorageStrategy = requires {
-        // for the storage cell
+        // it must publish the type of the cell it holds
         typename S::value_type;
+        // along with the ways to point at a cell, mutably and not
         typename S::pointer;
         typename S::const_pointer;
+        // and the ways to refer to a cell, mutably and not
         typename S::reference;
         typename S::const_reference;
     };
 
-    // requirements for packing strategies
+    // a packing strategy is anything that knows how to address a grid
+    // for now we ask only that it name the type of its index; the rest of the
+    // isomorphism from index space to memory offsets is not yet part of the contract
     template <class P>
     concept PackingStrategy = requires {
-        // an index
+        // it must publish the type of the index it understands
         typename P::index_type;
     };
 
-    // piecewise construction
+    // the guards that let a grid build its packing in place, from a tuple of arguments
     template <class P, class... PArgs>
     concept PackingConstructible = std::constructible_from<P, PArgs...>;
 
+    // and the matching guard for building its storage in place
     template <class S, class... SArgs>
     concept StorageConstructible = std::constructible_from<S, SArgs...>;
 

@@ -16,6 +16,7 @@
 template <std::size_t Rank>
 constexpr pyre::grid::IndexIterator<Rank>::IndexIterator(
     const shape_type & shape, const order_type & order, const index_type & origin) noexcept :
+    // park at the anchor, remember the box and its traversal order, and visit every point
     _current { origin },
     _shape { shape },
     _order { order },
@@ -28,6 +29,7 @@ template <std::size_t Rank>
 constexpr pyre::grid::IndexIterator<Rank>::IndexIterator(
     const shape_type & shape, const order_type & order, const index_type & origin,
     const index_type & step) noexcept :
+    // same, except the caller decides how coarsely each axis gets sampled
     _current { origin },
     _shape { shape },
     _order { order },
@@ -43,6 +45,7 @@ template <std::size_t Rank>
 constexpr auto
 pyre::grid::IndexIterator<Rank>::operator*() const noexcept -> reference
 {
+    // hand out where i am parked, without giving up ownership
     return _current;
 }
 
@@ -70,13 +73,16 @@ pyre::grid::IndexIterator<Rank>::operator++() noexcept -> self_type &
 }
 
 
-// post-increment
+// post-increment: advance, but report the position i was parked on before the move
 template <std::size_t Rank>
 constexpr auto
 pyre::grid::IndexIterator<Rank>::operator++(int) noexcept -> self_type
 {
+    // take a snapshot of my current state
     auto clone = *this;
+    // move on
     ++(*this);
+    // and give the caller the state i left behind
     return clone;
 }
 
@@ -87,6 +93,7 @@ constexpr auto
 pyre::grid::operator==(
     const IndexIterator<Rank> & i1, const IndexIterator<Rank> & i2) noexcept -> bool
 {
+    // only the position matters; the box and the traversal order are assumed to agree
     return *i1 == *i2;
 }
 

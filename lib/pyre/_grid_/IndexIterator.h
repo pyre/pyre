@@ -25,10 +25,13 @@ public:
     using shape_type = Shape<Rank>;
     using order_type = Order<Rank>;
     // iterator traits for STL compatibility
+    // what a dereference yields: a point in index space
     using value_type = index_type;
+    // the current index is owned by me, so clients only ever get to look at it
     using reference = const index_type &;
     using pointer = const index_type *;
     using difference_type = std::ptrdiff_t;
+    // i can only move forward, and only one index at a time
     using iterator_category = std::forward_iterator_tag;
 
     // metamethods
@@ -53,16 +56,24 @@ public:
 
     // iterator protocol
 public:
+    // hand out the index i am parked on
     [[nodiscard]] constexpr auto operator*() const noexcept -> reference;
+    // move on to the next index in the traversal
     constexpr auto operator++() noexcept -> self_type &;
+    // same, but report the index i was parked on before i moved
     constexpr auto operator++(int) noexcept -> self_type;
 
     // implementation details
 private:
+    // where i am parked right now
     index_type _current {};
+    // the extent of the box i am sweeping
     shape_type _shape {};
+    // the axis ranking that decides which axis i advance first
     order_type _order {};
+    // the corner of the box that anchors the sweep
     index_type _origin {};
+    // how far to move along each axis on every advance
     index_type _step {};
 };
 

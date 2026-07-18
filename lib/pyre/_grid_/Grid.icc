@@ -15,6 +15,7 @@
 // construct from fully-formed policies
 template <pyre::grid::concepts::PackingStrategy P, pyre::grid::concepts::StorageStrategy S>
 constexpr pyre::grid::Grid<P, S>::Grid(packing_type packing, storage_type storage) :
+    // adopt the two strategies the caller handed over, without copying them again
     _packing(std::move(packing)),
     _storage(std::move(storage))
 {}
@@ -26,6 +27,7 @@ template <class... PArgs, class... SArgs>
              && pyre::grid::concepts::StorageConstructible<S, SArgs...>)
 constexpr pyre::grid::Grid<P, S>::Grid(
     std::piecewise_construct_t, std::tuple<PArgs...> pArgs, std::tuple<SArgs...> sArgs) :
+    // spread each argument pack over the matching strategy constructor, building both in place
     _packing(std::make_from_tuple<packing_type>(std::move(pArgs))),
     _storage(std::make_from_tuple<storage_type>(std::move(sArgs)))
 {}
@@ -35,6 +37,7 @@ template <pyre::grid::concepts::PackingStrategy P, pyre::grid::concepts::Storage
 [[nodiscard]] constexpr auto
 pyre::grid::Grid<P, S>::packing() const noexcept -> const packing_type &
 {
+    // let clients inspect my addressing scheme, but not disturb it
     return _packing;
 }
 
@@ -42,6 +45,7 @@ template <pyre::grid::concepts::PackingStrategy P, pyre::grid::concepts::Storage
 [[nodiscard]] constexpr auto
 pyre::grid::Grid<P, S>::storage() const noexcept -> const storage_type &
 {
+    // let clients inspect where my cells live, but not disturb it
     return _storage;
 }
 

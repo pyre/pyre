@@ -16,10 +16,15 @@
 inline
 pyre::grid::DynamicIndexIterator::DynamicIndexIterator(
     const shape_type & shape, const order_type & order, const index_type & origin) noexcept :
+    // park me at the requested starting point
     _current { origin },
+    // remember how far the box extends along each axis
     _shape { shape },
+    // and which axis is supposed to vary fastest
     _order { order },
+    // remember the corner each axis rewinds to when it overflows
     _origin { origin },
+    // let the starting point size a stride of one cell along every axis
     _step(origin.size(), 1)
 {}
 
@@ -29,10 +34,15 @@ inline
 pyre::grid::DynamicIndexIterator::DynamicIndexIterator(
     const shape_type & shape, const order_type & order, const index_type & origin,
     const index_type & step) noexcept :
+    // park me at the requested starting point
     _current { origin },
+    // remember how far the box extends along each axis
     _shape { shape },
+    // and which axis is supposed to vary fastest
     _order { order },
+    // remember the corner each axis rewinds to when it overflows
     _origin { origin },
+    // and take the caller's word for how far to move on each visit
     _step { step }
 {}
 
@@ -41,6 +51,7 @@ pyre::grid::DynamicIndexIterator::DynamicIndexIterator(
 inline auto
 pyre::grid::DynamicIndexIterator::operator*() const noexcept -> reference
 {
+    // hand out where I am
     return _current;
 }
 
@@ -49,14 +60,19 @@ pyre::grid::DynamicIndexIterator::operator*() const noexcept -> reference
 inline auto
 pyre::grid::DynamicIndexIterator::operator++() noexcept -> DynamicIndexIterator &
 {
+    // get the rank of the box I am visiting
     const auto N = _order.size();
     // visit axes from fastest-varying to slowest-varying, as stored in {_order}
     for (std::size_t pos = 0; pos < N; ++pos) {
+        // the axis that is up for consideration at this level
         auto axis = _order[pos];
+        // the first coordinate past the far edge of the box along this axis
         auto limit = _origin[axis] + static_cast<difference_type>(_shape[axis]);
         // advance this axis by its step; if it stays in bounds, we are done
         _current[axis] += _step[axis];
+        // so there is nothing left to carry
         if (_current[axis] < limit) {
+            // and the new index is the answer
             return *this;
         }
         // overflow: reset this axis and carry to the next
@@ -64,18 +80,23 @@ pyre::grid::DynamicIndexIterator::operator++() noexcept -> DynamicIndexIterator 
     }
     // all axes overflowed: advance to the end sentinel
     for (std::size_t i = 0; i < N; ++i) {
+        // which is the far corner of the box, one full extent past the origin
         _current[i] = _origin[i] + static_cast<difference_type>(_shape[i]);
     }
+    // and that is where the traversal stops
     return *this;
 }
 
 
-// post-increment
+// post-increment: step forward but report the index I was parked on
 inline auto
 pyre::grid::DynamicIndexIterator::operator++(int) noexcept -> DynamicIndexIterator
 {
+    // remember where I am
     auto clone = *this;
+    // take the step
     ++(*this);
+    // and hand back the index from before the step
     return clone;
 }
 
@@ -85,6 +106,7 @@ inline auto
 pyre::grid::operator==(
     const DynamicIndexIterator & i1, const DynamicIndexIterator & i2) noexcept -> bool
 {
+    // compare the indices they are parked on; the box they came from is not part of the test
     return *i1 == *i2;
 }
 
