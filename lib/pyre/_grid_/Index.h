@@ -49,7 +49,7 @@ public:
         requires(sizeof...(Ts) == Rank)
     explicit constexpr Index(Ts...) noexcept;
     // construct from an initializer list
-    explicit constexpr Index(std::initializer_list<value_type>) noexcept;
+    constexpr Index(std::initializer_list<value_type>) noexcept;
 
     // default metamethods
 public:

@@ -48,7 +48,7 @@ public:
         requires(sizeof...(Ts) == Rank)
     explicit constexpr Shape(Ts...) noexcept;
     // construct from an initializer list
-    explicit constexpr Shape(std::initializer_list<value_type> ilist) noexcept;
+    constexpr Shape(std::initializer_list<value_type> ilist) noexcept;
 
     // default metamethods
 public:
