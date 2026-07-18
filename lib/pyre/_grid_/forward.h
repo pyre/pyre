@@ -15,23 +15,23 @@
 
 // set up the namespace
 namespace pyre::grid {
-    // packing order
+    // a permutation of the axis labels that says which axis varies fastest in memory
     template <size_t Rank>
     class Order;
 
-    // shape
+    // the extent of a grid along each one of its axes
     template <size_t Rank>
     class Shape;
 
-    // index
+    // a signed coordinate into a grid; signed because it may sit below the origin
     template <size_t Rank>
     class Index;
 
-    // index iterator
+    // a generator of the sequence of indices that visits every point in a box
     template <size_t Rank>
     class IndexIterator;
 
-    // canonical packing strategy
+    // the packing strategy that maps index space to memory offsets using strides
     template <size_t Rank>
     class Canonical;
 
@@ -39,7 +39,7 @@ namespace pyre::grid {
     class DynamicIndexIterator;
     class DynamicCanonical;
 
-    // the grid
+    // a packing strategy composed with a storage strategy
     template <concepts::PackingStrategy P, concepts::StorageStrategy S>
     class Grid;
 } // namespace pyre::grid
@@ -56,15 +56,15 @@ namespace pyre::grid {
 
 // operators on {Order}
 namespace pyre::grid {
-    // stream injection
+    // render the permutation in human readable form
     template <size_t Rank>
     auto operator<<(ostream_reference, const Order<Rank> &) -> ostream_reference;
 
-    // equality
+    // two orders match when they rank the axes the same way
     template <size_t Rank>
     constexpr auto operator==(const Order<Rank> &, const Order<Rank> &) noexcept -> bool;
 
-    // structured binding support
+    // let clients unpack an order into its axis labels
     template <size_t I, size_t Rank>
     constexpr auto get(Order<Rank> &) noexcept -> typename Order<Rank>::reference;
     template <size_t I, size_t Rank>
@@ -89,28 +89,28 @@ struct std::tuple_element<I, const pyre::grid::Order<Rank>>;
 
 // operators on {Shape}
 namespace pyre::grid {
-    // stream injection
+    // render the extents in human readable form
     template <size_t Rank>
     auto operator<<(ostream_reference, const Shape<Rank> &) -> ostream_reference;
 
-    // equality
+    // two shapes match when they have the same extent along every axis
     template <size_t Rank>
     constexpr auto operator==(const Shape<Rank> &, const Shape<Rank> &) noexcept -> bool;
 
-    // component-wise arithmetic
+    // grow and shrink a shape one axis at a time
     template <size_t Rank>
     constexpr auto operator+(const Shape<Rank> &, const Shape<Rank> &) noexcept -> Shape<Rank>;
 
     template <size_t Rank>
     constexpr auto operator-(const Shape<Rank> &, const Shape<Rank> &) noexcept -> Shape<Rank>;
 
-    // unary operators
+    // pass a shape through unchanged, or reflect it through the origin
     template <size_t Rank>
     constexpr auto operator+(const Shape<Rank> &) noexcept -> Shape<Rank>;
     template <size_t Rank>
     constexpr auto operator-(const Shape<Rank> &) noexcept -> Shape<Rank>;
 
-    // scaling by integers
+    // magnify a shape uniformly while keeping it a whole number of cells
     template <size_t Rank>
     constexpr auto operator*(const Shape<Rank> &, int) noexcept -> Shape<Rank>;
     template <size_t Rank>
@@ -120,7 +120,7 @@ namespace pyre::grid {
     template <size_t Rank>
     constexpr auto operator*(long, const Shape<Rank> &) noexcept -> Shape<Rank>;
 
-    // division by integers
+    // subdivide a shape uniformly, truncating towards zero
     template <size_t Rank>
     constexpr auto operator/(const Shape<Rank> &, int) noexcept -> Shape<Rank>;
     template <size_t Rank>
@@ -145,7 +145,7 @@ namespace pyre::grid {
     constexpr auto operator*(const Shape<Rank1> &, const Shape<Rank2> &) noexcept
         -> Shape<Rank1 + Rank2>;
 
-    // structured binding support
+    // let clients unpack a shape into its per-axis extents
     template <size_t I, size_t Rank>
     constexpr auto get(Shape<Rank> &) noexcept -> typename Shape<Rank>::reference;
     template <size_t I, size_t Rank>
@@ -170,28 +170,28 @@ struct std::tuple_element<I, const pyre::grid::Shape<Rank>>;
 
 // operators on {Index}
 namespace pyre::grid {
-    // stream injection
+    // render the coordinates in human readable form
     template <size_t Rank>
     auto operator<<(ostream_reference, const Index<Rank> &) -> ostream_reference;
 
-    // equality
+    // two indices match when they name the same point
     template <size_t Rank>
     constexpr auto operator==(const Index<Rank> &, const Index<Rank> &) noexcept -> bool;
 
-    // component-wise arithmetic
+    // displace one index by another, one axis at a time
     template <size_t Rank>
     constexpr auto operator+(const Index<Rank> &, const Index<Rank> &) noexcept -> Index<Rank>;
 
     template <size_t Rank>
     constexpr auto operator-(const Index<Rank> &, const Index<Rank> &) noexcept -> Index<Rank>;
 
-    // unary operators
+    // pass an index through unchanged, or reflect it through the origin
     template <size_t Rank>
     constexpr auto operator+(const Index<Rank> &) noexcept -> Index<Rank>;
     template <size_t Rank>
     constexpr auto operator-(const Index<Rank> &) noexcept -> Index<Rank>;
 
-    // scaling by integers
+    // stretch an index away from the origin while it remains a lattice point
     template <size_t Rank>
     constexpr auto operator*(const Index<Rank> &, int) noexcept -> Index<Rank>;
     template <size_t Rank>
@@ -201,7 +201,7 @@ namespace pyre::grid {
     template <size_t Rank>
     constexpr auto operator*(long, const Index<Rank> &) noexcept -> Index<Rank>;
 
-    // division by integers
+    // pull an index towards the origin, truncating towards zero
     template <size_t Rank>
     constexpr auto operator/(const Index<Rank> &, int) noexcept -> Index<Rank>;
     template <size_t Rank>
@@ -221,7 +221,7 @@ namespace pyre::grid {
     template <size_t Rank>
     constexpr auto operator/(const Index<Rank> &, float) noexcept -> floats_t<Rank>;
 
-    // shift by a shape
+    // step an index across a whole box, which is how the end of a traversal is named
     template <size_t Rank>
     constexpr auto operator+(const Index<Rank> &, const Shape<Rank> &) noexcept -> Index<Rank>;
     template <size_t Rank>
@@ -232,7 +232,7 @@ namespace pyre::grid {
     constexpr auto operator*(const Index<Rank1> &, const Index<Rank2> &) noexcept
         -> Index<Rank1 + Rank2>;
 
-    // structured binding support
+    // let clients unpack an index into its per-axis coordinates
     template <size_t I, size_t Rank>
     constexpr auto get(Index<Rank> &) noexcept -> typename Index<Rank>::reference;
     template <size_t I, size_t Rank>

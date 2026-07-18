@@ -14,6 +14,11 @@
 
 // runtime-rank forward iterator that generates sequences of index vectors
 // visiting every point in a box in a prescribed traversal order
+//
+// this is the counterpart of {IndexIterator<Rank>} for grids whose rank is not known until
+// construction time: the parts are {std::vector}s sized by the box being visited rather
+// than fixed size {std::array}s, which is what lets the Python bindings iterate over grids
+// whose rank is a runtime property
 class pyre::grid::DynamicIndexIterator {
     // types
 public:
@@ -51,16 +56,25 @@ public:
 
     // iterator protocol
 public:
+    // the index I am currently parked on
     [[nodiscard]] auto operator*() const noexcept -> reference;
+    // step to the next index in traversal order
     auto operator++() noexcept -> DynamicIndexIterator &;
+    // step forward, but report the index I was on before the step
     auto operator++(int) noexcept -> DynamicIndexIterator;
 
     // implementation details
 private:
+    // where I am in the index box
     index_type _current {};
+    // the extent of the box along each axis
     shape_type _shape {};
+    // the axis priority that dictates the traversal order
     order_type _order {};
+    // the corner of the box, which is both my starting point and the value each axis
+    // resets to when it overflows
     index_type _origin {};
+    // how far to move along each axis on every visit
     index_type _step {};
 };
 

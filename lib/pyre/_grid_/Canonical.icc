@@ -13,18 +13,25 @@
 
 
 // primary constructor: infer strides and nudge
+// the caller describes the index box; i work out how it lands in memory, assuming tight packing
 template <std::size_t Rank>
 constexpr pyre::grid::Canonical<Rank>::Canonical(
     const shape_type & shape, const index_type & origin, const order_type & order) noexcept :
+    // remember the extent of the box
     _shape { shape },
+    // and which axis varies fastest
     _order { order },
+    // and the smallest addressable index
     _origin { origin },
+    // deduce the memory distance between consecutive cells along each axis
     _strides { _initStrides(shape, order) },
+    // and the correction that pulls {origin} back to the beginning of the block
     _nudge { -_initShift(origin, _strides) }
 {}
 
 
 // full constructor: caller supplies the complete layout description
+// nothing is deduced here; this is how derived layouts inherit their parent's physical packing
 template <std::size_t Rank>
 constexpr pyre::grid::Canonical<Rank>::Canonical(
     const shape_type & shape,
@@ -32,62 +39,81 @@ constexpr pyre::grid::Canonical<Rank>::Canonical(
     const order_type & order,
     const strides_type & strides,
     difference_type nudge) noexcept :
+    // the extent of the box
     _shape { shape },
+    // the packing order of the axes
     _order { order },
+    // the smallest addressable index
     _origin { origin },
+    // the strides, as dictated by the caller rather than by my own shape
     _strides { strides },
+    // and likewise the offset correction
     _nudge { nudge }
 {}
 
 
 // accessors
 
+// the extent of my index box along each axis
 template <std::size_t Rank>
 constexpr auto
 pyre::grid::Canonical<Rank>::shape() const noexcept -> shape_type
 {
+    // hand off my shape
     return _shape;
 }
 
+// the smallest addressable index
 template <std::size_t Rank>
 constexpr auto
 pyre::grid::Canonical<Rank>::origin() const noexcept -> index_type
 {
+    // hand off my origin
     return _origin;
 }
 
+// the permutation that says which axis varies fastest in memory
 template <std::size_t Rank>
 constexpr auto
 pyre::grid::Canonical<Rank>::order() const noexcept -> order_type
 {
+    // hand off my packing order
     return _order;
 }
 
+// the memory distance between consecutive cells along each axis
 template <std::size_t Rank>
 constexpr auto
 pyre::grid::Canonical<Rank>::strides() const noexcept -> strides_type
 {
+    // hand off my strides
     return _strides;
 }
 
+// the offset correction that maps my origin to offset zero
 template <std::size_t Rank>
 constexpr auto
 pyre::grid::Canonical<Rank>::nudge() const noexcept -> difference_type
 {
+    // hand off my nudge
     return _nudge;
 }
 
+// the number of addressable cells
 template <std::size_t Rank>
 constexpr auto
 pyre::grid::Canonical<Rank>::cells() const noexcept -> size_type
 {
+    // the box knows how many indices it contains
     return _shape.cells();
 }
 
+// my rank, as a compile time constant
 template <std::size_t Rank>
 consteval auto
 pyre::grid::Canonical<Rank>::rank() noexcept -> size_type
 {
+    // it is my template parameter
     return Rank;
 }
 
@@ -97,6 +123,7 @@ template <std::size_t Rank>
 constexpr auto
 pyre::grid::Canonical<Rank>::order(const order_type & o) const noexcept -> self_type
 {
+    // keep my index box but let the primary constructor repack it in the new order
     return self_type { _shape, _origin, o };
 }
 
@@ -108,10 +135,14 @@ template <std::size_t Rank>
 constexpr auto
 pyre::grid::Canonical<Rank>::offset(const index_type & index) const noexcept -> difference_type
 {
+    // start the accumulation at the beginning of the block
     difference_type result = 0;
+    // go through the axes
     for (std::size_t axis = 0; axis < Rank; ++axis) {
+        // and fold in the contribution of this axis
         result += index[axis] * static_cast<difference_type>(_strides[axis]);
     }
+    // shift so that the lowest addressable index lands at the beginning of the block
     return result + _nudge;
 }
 
@@ -123,58 +154,77 @@ template <std::size_t Rank>
 constexpr auto
 pyre::grid::Canonical<Rank>::index(difference_type off) const noexcept -> index_type
 {
+    // room for the answer
     index_type result;
+    // peel off one packing level at a time, starting with the slowest-varying axis
     for (std::ptrdiff_t level = Rank - 1; level >= 0; --level) {
+        // look for the axis that sits at this level
         for (std::size_t axis = 0; axis < Rank; ++axis) {
+            // when it is found
             if (static_cast<std::ptrdiff_t>(_order[axis]) == level) {
+                // get the distance between consecutive cells along it
                 auto stride = static_cast<difference_type>(_strides[axis]);
+                // its coordinate is however many whole strides fit in what is left
                 result[axis] = off / stride;
+                // and the remainder is what the faster axes must account for
                 off %= stride;
+                // no other axis lives at this level
                 break;
             }
         }
     }
+    // what we have is the index relative to the origin, so put it back in absolute terms
     return result + _origin;
 }
 
 
 // syntactic sugar
 
+// index into the layout to get the offset of a cell
 template <std::size_t Rank>
 constexpr auto
 pyre::grid::Canonical<Rank>::operator[](const index_type & index) const noexcept -> difference_type
 {
+    // delegate to the forward map
     return offset(index);
 }
 
+// index into the layout with an offset to get the index of a cell
 template <std::size_t Rank>
 constexpr auto
 pyre::grid::Canonical<Rank>::operator[](difference_type off) const noexcept -> index_type
 {
+    // delegate to the inverse map
     return index(off);
 }
 
 
 // iteration: visit every index in the box in packing order
 
+// a cursor at my origin that visits every index in the box, one cell at a time
 template <std::size_t Rank>
 constexpr auto
 pyre::grid::Canonical<Rank>::begin() const noexcept -> iterator_type
 {
+    // hand out a cursor that knows the box and the order in which to walk it
     return iterator_type(_shape, _order, _origin);
 }
 
+// a cursor at my origin that skips ahead by {step} along each axis
 template <std::size_t Rank>
 constexpr auto
 pyre::grid::Canonical<Rank>::begin(const index_type & step) const noexcept -> iterator_type
 {
+    // same walk, but with the caller's stride through the index space
     return iterator_type(_shape, _order, _origin, step);
 }
 
+// the cursor that marks the end of the traversal
 template <std::size_t Rank>
 constexpr auto
 pyre::grid::Canonical<Rank>::end() const noexcept -> iterator_type
 {
+    // the far corner of the box is one past the last visitable index
     return iterator_type(_shape, _order, _origin + _shape);
 }
 
@@ -184,16 +234,21 @@ template <std::size_t Rank>
 constexpr auto
 pyre::grid::Canonical<Rank>::box(index_type base, shape_type tile) const noexcept -> self_type
 {
+    // trim the request against my box, one axis at a time
     for (std::size_t axis = 0; axis < Rank; ++axis) {
         // clamp base[axis] to [origin[axis], origin[axis] + shape[axis] - 1]
         auto lo = _origin[axis];
         auto hi = _origin[axis] + static_cast<difference_type>(_shape[axis]) - 1;
+        // no anchor may sit below the first addressable index
         base[axis] = std::max(base[axis], lo);
+        // nor beyond the last one
         base[axis] = std::min(base[axis], hi);
         // clamp tile[axis] to [1, remaining extent from base]
         auto avail = static_cast<typename shape_type::value_type>(
             _origin[axis] + static_cast<difference_type>(_shape[axis]) - base[axis]);
+        // a tile is never empty
         tile[axis] = std::max(tile[axis], typename shape_type::value_type { 1 });
+        // and it never runs past my far edge
         tile[axis] = std::min(tile[axis], avail);
     }
     // build the sub-layout with inherited physical strides and nudge
@@ -216,22 +271,32 @@ pyre::grid::Canonical<Rank>::slice(const index_type & base) const noexcept
     constexpr std::array<std::size_t, M> free { FreeAxes... };
     // aliases for the slice's types
     using slice_t = Canonical<M>;
+    // room for the extent of the surviving axes
     typename slice_t::shape_type sliceShape;
+    // and for the memory distances they inherit from me
     typename slice_t::strides_type sliceStrides;
+    // and for their packing order
     typename slice_t::order_type sliceOrder;
     // extract the shape and strides at each free axis
     for (std::size_t i = 0; i < M; ++i) {
+        // the surviving axis keeps its extent
         sliceShape[i] = _shape[free[i]];
+        // and, crucially, my physical stride, so the slice addresses my memory unchanged
         sliceStrides[i] = _strides[free[i]];
     }
     // assign slice packing levels 0..M-1, preserving the relative order of the free axes
     for (std::size_t i = 0; i < M; ++i) {
+        // count how many of the survivors vary faster than this one
         std::size_t level = 0;
+        // by comparing against every other survivor
         for (std::size_t j = 0; j < M; ++j) {
+            // one that is faster in my packing is faster in the slice's
             if (_order[free[j]] < _order[free[i]]) {
+                // so it pushes this axis one level up
                 ++level;
             }
         }
+        // that count is this axis' level in the slice
         sliceOrder[i] = level;
     }
     // the nudge bakes in the offset contribution of all the fixed axes;
@@ -250,15 +315,22 @@ constexpr auto
 pyre::grid::Canonical<Rank>::_initStrides(
     const shape_type & shape, const order_type & order) noexcept -> strides_type
 {
+    // room for the answer
     strides_type strides;
+    // work out the stride of each axis in turn
     for (std::size_t axis = 0; axis < Rank; ++axis) {
+        // the fastest-varying axis steps one cell at a time, so start there
         strides[axis] = 1;
+        // and look at all the other axes
         for (std::size_t other = 0; other < Rank; ++other) {
+            // an axis that varies faster than mine
             if (order[other] < order[axis]) {
+                // contributes a full sweep of its extent to my step
                 strides[axis] *= shape[other];
             }
         }
     }
+    // hand off the deduced strides
     return strides;
 }
 
@@ -269,10 +341,14 @@ constexpr auto
 pyre::grid::Canonical<Rank>::_initShift(
     const index_type & origin, const strides_type & strides) noexcept -> difference_type
 {
+    // start the accumulation at the beginning of the block
     difference_type shift = 0;
+    // go through the axes
     for (std::size_t axis = 0; axis < Rank; ++axis) {
+        // and fold in what this axis' origin coordinate costs in memory
         shift += origin[axis] * static_cast<difference_type>(strides[axis]);
     }
+    // the raw offset that the origin would otherwise occupy
     return shift;
 }
 

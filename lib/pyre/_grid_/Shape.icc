@@ -12,39 +12,40 @@
 #include "Shape.h"
 
 
-// default constructor: c-style: {R-1, ..., 1, 0}
+// default constructor: a degenerate shape whose every axis has zero extent
 template <std::size_t Rank>
 constexpr pyre::grid::Shape<Rank>::Shape() noexcept :
-    // initialize the extents
+    // start out with nothing addressable along any axis
     _extents {}
 {}
 
 // from a backing array
 template <std::size_t Rank>
 constexpr pyre::grid::Shape<Rank>::Shape(storage_type extents) noexcept :
-    // initialize the permutation
+    // take ownership of the caller's table of extents
     _extents { std::move(extents) }
 {}
 
-// the variadic constructor
+// the variadic constructor: one extent per axis, spelled out
 template <std::size_t Rank>
 template <std::unsigned_integral... Ts>
     requires(sizeof...(Ts) == Rank)
 constexpr pyre::grid::Shape<Rank>::Shape(Ts... xs) noexcept :
-    // initialize the permutation
+    // normalize the arguments to my cell type and lay them out in axis order
     _extents { static_cast<value_type>(xs)... }
 {}
 
-// initializer_list (debug length check)
+// initializer_list: the brace enclosed spelling, with a debug time length check
 template <std::size_t Rank>
 constexpr pyre::grid::Shape<Rank>::Shape(std::initializer_list<value_type> ilist) noexcept
 {
 #if defined(DEBUG)
+    // while developing, insist that the caller supply exactly one extent per axis
     assert(
         ilist.size() == Rank &&
         "pyre::grid::Shape: initializer_list length must equal the shape rank");
 #endif
-    // make a counter
+    // start filling at the leading axis
     size_type axis = 0;
     // go through the entries of the initializer list
     for (auto value : ilist) {
@@ -59,6 +60,7 @@ constexpr pyre::grid::Shape<Rank>::Shape(std::initializer_list<value_type> ilist
 
 
 // accessors
+// my rank is a property of my type, so it is known to the compiler
 template <std::size_t Rank>
 consteval auto
 pyre::grid::Shape<Rank>::rank() noexcept -> size_type
@@ -67,7 +69,7 @@ pyre::grid::Shape<Rank>::rank() noexcept -> size_type
     return Rank;
 }
 
-// element access
+// element access: hand out the extent of a given axis, without checking that it exists
 template <std::size_t Rank>
 constexpr auto
 pyre::grid::Shape<Rank>::operator[](size_type axis) noexcept -> reference
@@ -76,6 +78,7 @@ pyre::grid::Shape<Rank>::operator[](size_type axis) noexcept -> reference
     return _extents[axis];
 }
 
+// the read-only flavor
 template <std::size_t Rank>
 constexpr auto
 pyre::grid::Shape<Rank>::operator[](size_type axis) const noexcept -> const_reference
@@ -85,7 +88,7 @@ pyre::grid::Shape<Rank>::operator[](size_type axis) const noexcept -> const_refe
 }
 
 
-// bounds-checked element access
+// bounds-checked element access; complains about axes that don't exist
 template <std::size_t Rank>
 constexpr auto
 pyre::grid::Shape<Rank>::at(size_type axis) -> reference
@@ -94,6 +97,7 @@ pyre::grid::Shape<Rank>::at(size_type axis) -> reference
     return _extents.at(axis);
 }
 
+// the read-only flavor
 template <std::size_t Rank>
 constexpr auto
 pyre::grid::Shape<Rank>::at(size_type axis) const -> const_reference
@@ -103,7 +107,7 @@ pyre::grid::Shape<Rank>::at(size_type axis) const -> const_reference
 }
 
 
-// access to the underlying storage
+// access to the underlying storage, for clients that must talk to raw memory
 template <std::size_t Rank>
 constexpr auto
 pyre::grid::Shape<Rank>::data() noexcept -> pointer
@@ -112,6 +116,7 @@ pyre::grid::Shape<Rank>::data() noexcept -> pointer
     return _extents.data();
 }
 
+// the read-only flavor
 template <std::size_t Rank>
 constexpr auto
 pyre::grid::Shape<Rank>::data() const noexcept -> const_pointer
@@ -122,11 +127,12 @@ pyre::grid::Shape<Rank>::data() const noexcept -> const_pointer
 
 
 // interface
+// the number of cells i address is the product of my extents
 template <std::size_t Rank>
 constexpr auto
 pyre::grid::Shape<Rank>::cells() const noexcept -> size_type
 {
-    // set up the accumulator
+    // the empty product is unity, so a rank zero shape addresses a single cell
     size_type cells = 1;
     // go through the extents
     for (size_type axis = 0; axis < Rank; ++axis) {
@@ -138,7 +144,7 @@ pyre::grid::Shape<Rank>::cells() const noexcept -> size_type
 }
 
 
-// the smallest extent
+// the smallest extent, i.e. the length of my shortest axis
 template <std::size_t Rank>
 constexpr auto
 pyre::grid::Shape<Rank>::min() const noexcept -> value_type
@@ -147,7 +153,7 @@ pyre::grid::Shape<Rank>::min() const noexcept -> value_type
     return *std::min_element(_extents.begin(), _extents.end());
 }
 
-// the largest extent
+// the largest extent, i.e. the length of my longest axis
 template <std::size_t Rank>
 constexpr auto
 pyre::grid::Shape<Rank>::max() const noexcept -> value_type
@@ -158,7 +164,7 @@ pyre::grid::Shape<Rank>::max() const noexcept -> value_type
 
 
 // factories
-// make a shape with all extents zeroed out
+// make a shape with all extents zeroed out; it addresses nothing at all
 template <std::size_t Rank>
 constexpr auto
 pyre::grid::Shape<Rank>::zero() noexcept -> self_type
@@ -168,7 +174,7 @@ pyre::grid::Shape<Rank>::zero() noexcept -> self_type
 }
 
 
-// make a shape with all extents set to one
+// make a shape with all extents set to one; it addresses exactly one cell
 template <std::size_t Rank>
 constexpr auto
 pyre::grid::Shape<Rank>::one() noexcept -> self_type
@@ -185,7 +191,7 @@ pyre::grid::Shape<Rank>::one() noexcept -> self_type
 }
 
 
-// make a shape with all extents set to the given value
+// make a cube: every axis gets the same extent
 template <std::size_t Rank>
 constexpr auto
 pyre::grid::Shape<Rank>::fill(value_type value) noexcept -> self_type
@@ -203,6 +209,7 @@ pyre::grid::Shape<Rank>::fill(value_type value) noexcept -> self_type
 
 
 // iteration support
+// point at the extent of the leading axis
 template <std::size_t Rank>
 constexpr auto
 pyre::grid::Shape<Rank>::begin() noexcept -> iterator
@@ -211,6 +218,7 @@ pyre::grid::Shape<Rank>::begin() noexcept -> iterator
     return _extents.begin();
 }
 
+// point just past the extent of the trailing axis
 template <std::size_t Rank>
 constexpr auto
 pyre::grid::Shape<Rank>::end() noexcept -> iterator
@@ -219,6 +227,7 @@ pyre::grid::Shape<Rank>::end() noexcept -> iterator
     return _extents.end();
 }
 
+// the read-only flavor of the beginning
 template <std::size_t Rank>
 constexpr auto
 pyre::grid::Shape<Rank>::begin() const noexcept -> const_iterator
@@ -227,6 +236,7 @@ pyre::grid::Shape<Rank>::begin() const noexcept -> const_iterator
     return _extents.begin();
 }
 
+// the read-only flavor of the end
 template <std::size_t Rank>
 constexpr auto
 pyre::grid::Shape<Rank>::end() const noexcept -> const_iterator
@@ -235,6 +245,7 @@ pyre::grid::Shape<Rank>::end() const noexcept -> const_iterator
     return _extents.end();
 }
 
+// the explicitly read-only beginning, for clients that want to say so
 template <std::size_t Rank>
 constexpr auto
 pyre::grid::Shape<Rank>::cbegin() const noexcept -> const_iterator
@@ -243,6 +254,7 @@ pyre::grid::Shape<Rank>::cbegin() const noexcept -> const_iterator
     return _extents.cbegin();
 }
 
+// and its matching end
 template <std::size_t Rank>
 constexpr auto
 pyre::grid::Shape<Rank>::cend() const noexcept -> const_iterator
@@ -253,6 +265,7 @@ pyre::grid::Shape<Rank>::cend() const noexcept -> const_iterator
 
 
 // reverse iteration support
+// point at the extent of the trailing axis
 template <std::size_t Rank>
 constexpr auto
 pyre::grid::Shape<Rank>::rbegin() noexcept -> reverse_iterator
@@ -261,6 +274,7 @@ pyre::grid::Shape<Rank>::rbegin() noexcept -> reverse_iterator
     return _extents.rbegin();
 }
 
+// point just before the extent of the leading axis
 template <std::size_t Rank>
 constexpr auto
 pyre::grid::Shape<Rank>::rend() noexcept -> reverse_iterator
@@ -269,6 +283,7 @@ pyre::grid::Shape<Rank>::rend() noexcept -> reverse_iterator
     return _extents.rend();
 }
 
+// the read-only flavor of the reverse beginning
 template <std::size_t Rank>
 constexpr auto
 pyre::grid::Shape<Rank>::rbegin() const noexcept -> const_reverse_iterator
@@ -277,6 +292,7 @@ pyre::grid::Shape<Rank>::rbegin() const noexcept -> const_reverse_iterator
     return _extents.rbegin();
 }
 
+// the read-only flavor of the reverse end
 template <std::size_t Rank>
 constexpr auto
 pyre::grid::Shape<Rank>::rend() const noexcept -> const_reverse_iterator
@@ -285,6 +301,7 @@ pyre::grid::Shape<Rank>::rend() const noexcept -> const_reverse_iterator
     return _extents.rend();
 }
 
+// the explicitly read-only reverse beginning
 template <std::size_t Rank>
 constexpr auto
 pyre::grid::Shape<Rank>::crbegin() const noexcept -> const_reverse_iterator
@@ -293,6 +310,7 @@ pyre::grid::Shape<Rank>::crbegin() const noexcept -> const_reverse_iterator
     return _extents.crbegin();
 }
 
+// and its matching reverse end
 template <std::size_t Rank>
 constexpr auto
 pyre::grid::Shape<Rank>::crend() const noexcept -> const_reverse_iterator
@@ -341,7 +359,7 @@ pyre::grid::operator==(const Shape<Rank> & s1, const Shape<Rank> & s2) noexcept 
 }
 
 
-// add two shapes component-wise
+// add two shapes component-wise, growing each axis by the matching extent of {s2}
 template <std::size_t Rank>
 constexpr auto
 pyre::grid::operator+(const Shape<Rank> & s1, const Shape<Rank> & s2) noexcept -> Shape<Rank>
@@ -358,7 +376,8 @@ pyre::grid::operator+(const Shape<Rank> & s1, const Shape<Rank> & s2) noexcept -
 }
 
 
-// subtract two shapes component-wise
+// subtract two shapes component-wise, shrinking each axis by the matching extent of {s2}
+// note that differences that would go below zero wrap around, since {value_type} is unsigned
 template <std::size_t Rank>
 constexpr auto
 pyre::grid::operator-(const Shape<Rank> & s1, const Shape<Rank> & s2) noexcept -> Shape<Rank>
@@ -401,7 +420,7 @@ pyre::grid::operator-(const Shape<Rank> & shape) noexcept -> Shape<Rank>
 }
 
 
-// scale a shape by an {int}
+// scale a shape by an {int}: stretch every axis by the same integral factor
 template <std::size_t Rank>
 constexpr auto
 pyre::grid::operator*(const Shape<Rank> & shape, int scale) noexcept -> Shape<Rank>
@@ -427,7 +446,7 @@ pyre::grid::operator*(int scale, const Shape<Rank> & shape) noexcept -> Shape<Ra
 }
 
 
-// scale a shape by a {long}
+// scale a shape by a {long}: same stretch, with room for larger factors
 template <std::size_t Rank>
 constexpr auto
 pyre::grid::operator*(const Shape<Rank> & shape, long scale) noexcept -> Shape<Rank>
@@ -453,7 +472,7 @@ pyre::grid::operator*(long scale, const Shape<Rank> & shape) noexcept -> Shape<R
 }
 
 
-// divide a shape by an {int}
+// divide a shape by an {int}: shrink every axis, truncating towards zero
 template <std::size_t Rank>
 constexpr auto
 pyre::grid::operator/(const Shape<Rank> & shape, int scale) noexcept -> Shape<Rank>
@@ -469,7 +488,7 @@ pyre::grid::operator/(const Shape<Rank> & shape, int scale) noexcept -> Shape<Ra
     return result;
 }
 
-// divide a shape by a {long}
+// divide a shape by a {long}: same shrink, with room for larger divisors
 template <std::size_t Rank>
 constexpr auto
 pyre::grid::operator/(const Shape<Rank> & shape, long scale) noexcept -> Shape<Rank>
@@ -487,6 +506,7 @@ pyre::grid::operator/(const Shape<Rank> & shape, long scale) noexcept -> Shape<R
 
 
 // scale a shape by a {double}, promoting the result to reals
+// the answer is no longer a cell count, so it comes back as a tuple of reals
 template <std::size_t Rank>
 constexpr auto
 pyre::grid::operator*(const Shape<Rank> & shape, double scale) noexcept -> doubles_t<Rank>
@@ -529,6 +549,7 @@ pyre::grid::operator/(const Shape<Rank> & shape, double scale) noexcept -> doubl
 
 
 // scale a shape by a {float}, promoting the result to reals
+// same idea as the {double} case, at single precision
 template <std::size_t Rank>
 constexpr auto
 pyre::grid::operator*(const Shape<Rank> & shape, float scale) noexcept -> floats_t<Rank>
@@ -571,6 +592,7 @@ pyre::grid::operator/(const Shape<Rank> & shape, float scale) noexcept -> floats
 
 
 // cartesian product: concatenate {s1} and {s2} into a shape of rank {Rank1+Rank2}
+// the resulting grid addresses the product of the two cell counts
 template <std::size_t Rank1, std::size_t Rank2>
 constexpr auto
 pyre::grid::operator*(const Shape<Rank1> & s1, const Shape<Rank2> & s2) noexcept
@@ -594,6 +616,7 @@ pyre::grid::operator*(const Shape<Rank1> & s1, const Shape<Rank2> & s2) noexcept
 
 
 // structured binding support
+// these three specializations let clients say {auto [rows, cols] = shape}
 
 // the number of components of a {Shape<Rank>} is {Rank}
 template <std::size_t Rank>
@@ -602,29 +625,33 @@ struct std::tuple_size<pyre::grid::Shape<Rank>> : std::integral_constant<std::si
 // each component is a {value_type}
 template <std::size_t I, std::size_t Rank>
 struct std::tuple_element<I, pyre::grid::Shape<Rank>> {
+    // every slot holds an extent
     using type = typename pyre::grid::Shape<Rank>::value_type;
 };
 
 // for a const shape, each component is a {const value_type}
 template <std::size_t I, std::size_t Rank>
 struct std::tuple_element<I, const pyre::grid::Shape<Rank>> {
+    // constness of the shape propagates to the bound names
     using type = const typename pyre::grid::Shape<Rank>::value_type;
 };
 
 
-// get the {I}-th extent by reference
+// get the {I}-th extent by reference, so the binding can be written through
 template <std::size_t I, std::size_t Rank>
 constexpr auto
 pyre::grid::get(Shape<Rank> & shape) noexcept -> typename Shape<Rank>::reference
 {
+    // the axis is a compile time constant, so no check is necessary
     return shape[I];
 }
 
-// get the {I}-th extent from a temporary
+// get the {I}-th extent from a temporary, preserving its ability to be moved from
 template <std::size_t I, std::size_t Rank>
 constexpr auto
 pyre::grid::get(Shape<Rank> && shape) noexcept -> typename Shape<Rank>::rvalue_reference
 {
+    // hand back the extent with the value category of its owner
     return std::move(shape[I]);
 }
 
@@ -633,6 +660,7 @@ template <std::size_t I, std::size_t Rank>
 constexpr auto
 pyre::grid::get(const Shape<Rank> & shape) noexcept -> typename Shape<Rank>::const_reference
 {
+    // the axis is a compile time constant, so no check is necessary
     return shape[I];
 }
 
@@ -641,6 +669,7 @@ template <std::size_t I, std::size_t Rank>
 constexpr auto
 pyre::grid::get(const Shape<Rank> && shape) noexcept -> typename Shape<Rank>::const_rvalue_reference
 {
+    // hand back the extent with the value category of its owner
     return std::move(shape[I]);
 }
 

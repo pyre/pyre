@@ -12,26 +12,31 @@
 #include "forward.h"
 
 
-// storage for the index packing shape
+// the extent of a grid along each one of its axes
+// this is the user facing description of how big a grid is, in the spirit of a numpy shape; it is
+// a fixed rank container, so the number of axes is known at compile time
+// together with {Index} and {Order} it supports {Canonical}, the packing strategy that maps an
+// index to an offset in memory
 template <std::size_t Rank>
 class pyre::grid::Shape {
     // types
 public:
     // myself
     using self_type = Shape<Rank>;
-    // basic
+    // the type of the axis labels and of anything that counts
     using size_type = size_t;
-    // cell type and access
+    // extents are non-negative counts of cells
     using value_type = size_t;
+    // and the usual family of ways to refer to one
     using pointer = value_type *;
     using const_pointer = const value_type *;
     using reference = value_type &;
     using const_reference = const value_type &;
     using rvalue_reference = value_type &&;
     using const_rvalue_reference = const value_type &&;
-    // storage
+    // the extents live in a fixed size array, one slot per axis
     using storage_type = std::array<value_type, Rank>;
-    // iterators
+    // and i hand out the iterators of my backing array
     using iterator = typename storage_type::iterator;
     using const_iterator = typename storage_type::const_iterator;
     using reverse_iterator = typename storage_type::reverse_iterator;
@@ -96,6 +101,7 @@ public:
     [[nodiscard]] constexpr auto max() const noexcept -> value_type;
 
     // iteration support
+    // visit the extents from the leading axis to the trailing one
 public:
     constexpr auto begin() noexcept -> iterator;
     constexpr auto end() noexcept -> iterator;
@@ -105,6 +111,7 @@ public:
     constexpr auto cend() const noexcept -> const_iterator;
 
     // reverse iteration support
+    // visit the extents from the trailing axis back to the leading one
 public:
     constexpr auto rbegin() noexcept -> reverse_iterator;
     constexpr auto rend() noexcept -> reverse_iterator;
@@ -115,6 +122,7 @@ public:
 
     // implementation details - data
 private:
+    // one extent per axis, zeroed out unless someone says otherwise
     storage_type _extents {};
 };
 
