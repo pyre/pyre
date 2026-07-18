@@ -48,7 +48,7 @@ public:
         requires(sizeof...(Ts) == Rank)
     explicit constexpr Order(Ts...) noexcept;
     // construct from an initializer list
-    explicit constexpr Order(std::initializer_list<value_type> ilist) noexcept;
+    constexpr Order(std::initializer_list<value_type> ilist) noexcept;
 
     // default metamethods
 public:
