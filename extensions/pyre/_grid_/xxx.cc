@@ -1,14 +1,15 @@
-// -*- c++ -*-
+// -*- C++ -*-
+// -*- coding: utf-8 -*-
 //
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
-// (c) 1998-2025 all rights reserved
+// (c) 1998-2026 all rights reserved
 
 
 // declarations
 #include "xxx.h"
 
 
-// wrappers over the {pyre::gird::index_t} expansions
+// wrappers over the {pyre::grid::index_t} expansions
 auto
 pyre::py::_grid_::xxx::__init__(py::module & grid) -> void
 {
