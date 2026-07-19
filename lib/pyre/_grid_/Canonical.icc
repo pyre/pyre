@@ -156,22 +156,17 @@ pyre::grid::Canonical<Rank>::index(difference_type off) const noexcept -> index_
 {
     // room for the answer
     index_type result;
-    // peel off one packing level at a time, starting with the slowest-varying axis
-    for (std::ptrdiff_t level = Rank - 1; level >= 0; --level) {
-        // look for the axis that sits at this level
-        for (std::size_t axis = 0; axis < Rank; ++axis) {
-            // when it is found
-            if (static_cast<std::ptrdiff_t>(_order[axis]) == level) {
-                // get the distance between consecutive cells along it
-                auto stride = static_cast<difference_type>(_strides[axis]);
-                // its coordinate is however many whole strides fit in what is left
-                result[axis] = off / stride;
-                // and the remainder is what the faster axes must account for
-                off %= stride;
-                // no other axis lives at this level
-                break;
-            }
-        }
+    // traverse in reverse packing order: {_order} lists the axes fastest first, so walking it
+    // backwards peels off one packing level at a time starting with the slowest-varying axis
+    for (std::size_t level = Rank; level-- > 0;) {
+        // find out which axis packs at this level
+        auto axis = _order[level];
+        // get the distance between consecutive cells along it
+        auto stride = static_cast<difference_type>(_strides[axis]);
+        // its coordinate is however many whole strides fit in what is left
+        result[axis] = off / stride;
+        // and the remainder is what the faster axes must account for
+        off %= stride;
     }
     // what we have is the index relative to the origin, so put it back in absolute terms
     return result + _origin;
@@ -284,20 +279,25 @@ pyre::grid::Canonical<Rank>::slice(const index_type & base) const noexcept
         // and, crucially, my physical stride, so the slice addresses my memory unchanged
         sliceStrides[i] = _strides[free[i]];
     }
-    // assign slice packing levels 0..M-1, preserving the relative order of the free axes
-    for (std::size_t i = 0; i < M; ++i) {
-        // count how many of the survivors vary faster than this one
-        std::size_t level = 0;
-        // by comparing against every other survivor
-        for (std::size_t j = 0; j < M; ++j) {
-            // one that is faster in my packing is faster in the slice's
-            if (_order[free[j]] < _order[free[i]]) {
-                // so it pushes this axis one level up
+    // fill the slice's packing order, which lists its axes fastest first
+    std::size_t level = 0;
+    // walk my own axes from the fastest varying to the slowest
+    for (std::size_t k = 0; k < Rank; ++k) {
+        // the axis that packs at this level of mine
+        auto axis = _order[k];
+        // look for it among the survivors
+        for (std::size_t i = 0; i < M; ++i) {
+            // when the axis is one the slice keeps
+            if (free[i] == axis) {
+                // it claims the next slot in the slice's packing order, so that the survivors
+                // stay in the same relative sequence they had in my layout
+                sliceOrder[level] = i;
+                // that slot is now spoken for
                 ++level;
+                // and no other survivor is this axis
+                break;
             }
         }
-        // that count is this axis' level in the slice
-        sliceOrder[i] = level;
     }
     // the nudge bakes in the offset contribution of all the fixed axes;
     // default-construct the origin so all coordinates are zero
@@ -317,18 +317,17 @@ pyre::grid::Canonical<Rank>::_initStrides(
 {
     // room for the answer
     strides_type strides;
-    // work out the stride of each axis in turn
-    for (std::size_t axis = 0; axis < Rank; ++axis) {
-        // the fastest-varying axis steps one cell at a time, so start there
-        strides[axis] = 1;
-        // and look at all the other axes
-        for (std::size_t other = 0; other < Rank; ++other) {
-            // an axis that varies faster than mine
-            if (order[other] < order[axis]) {
-                // contributes a full sweep of its extent to my step
-                strides[axis] *= shape[other];
-            }
-        }
+    // the fastest-varying axis steps one cell at a time
+    typename strides_type::value_type step = 1;
+    // {order} lists the axes fastest first, so visiting it in sequence walks the packing levels
+    // from the tightest to the loosest
+    for (std::size_t level = 0; level < Rank; ++level) {
+        // find out which axis packs at this level
+        auto axis = order[level];
+        // it steps over everything the faster axes have already laid down
+        strides[axis] = step;
+        // and a full sweep of its extent is what the next axis out must step over
+        step *= shape[axis];
     }
     // hand off the deduced strides
     return strides;
