@@ -127,6 +127,10 @@ private:
     strides_type _strides {};
     // deduced: the offset correction that sends {_origin} to offset zero
     difference_type _nudge {};
+    // deduced: the offset at which my own first cell sits
+    // a layout that anchors itself is at zero here, but a derived one addresses the memory of
+    // the parent it came from, so its cells begin further in; {index} measures from this mark
+    difference_type _anchor {};
 
     // static helpers
 private:

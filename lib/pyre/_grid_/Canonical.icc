@@ -26,7 +26,10 @@ constexpr pyre::grid::Canonical<Rank>::Canonical(
     // deduce the memory distance between consecutive cells along each axis
     _strides { _initStrides(shape, order) },
     // and the correction that pulls {origin} back to the beginning of the block
-    _nudge { -_initShift(origin, _strides) }
+    _nudge { -_initShift(origin, _strides) },
+    // work out where my first cell lands; deducing my own packing puts it at the head of the
+    // block, but derive it rather than assume it, so that it keeps agreeing with {_nudge}
+    _anchor { _initShift(origin, _strides) + _nudge }
 {}
 
 
@@ -48,7 +51,10 @@ constexpr pyre::grid::Canonical<Rank>::Canonical(
     // the strides, as dictated by the caller rather than by my own shape
     _strides { strides },
     // and likewise the offset correction
-    _nudge { nudge }
+    _nudge { nudge },
+    // the caller's layout need not place my first cell at the head of the block, so work out
+    // where it does land and remember it for the trip back from an offset to an index
+    _anchor { _initShift(origin, strides) + nudge }
 {}
 
 
@@ -156,6 +162,11 @@ pyre::grid::Canonical<Rank>::index(difference_type off) const noexcept -> index_
 {
     // room for the answer
     index_type result;
+    // measure the offset from my own first cell rather than from the beginning of the block;
+    // for a layout that anchors itself at offset zero this changes nothing, but a derived layout
+    // carries the offset correction of the parent whose memory it addresses, and the
+    // decomposition below only makes sense on distances measured from my {_origin}
+    off -= _anchor;
     // traverse in reverse packing order: {_order} lists the axes fastest first, so walking it
     // backwards peels off one packing level at a time starting with the slowest-varying axis
     for (std::size_t level = Rank; level-- > 0;) {
@@ -168,7 +179,8 @@ pyre::grid::Canonical<Rank>::index(difference_type off) const noexcept -> index_
         // and the remainder is what the faster axes must account for
         off %= stride;
     }
-    // what we have is the index relative to the origin, so put it back in absolute terms
+    // the decomposition yields coordinates relative to my first cell, so put them back in
+    // absolute terms
     return result + _origin;
 }
 

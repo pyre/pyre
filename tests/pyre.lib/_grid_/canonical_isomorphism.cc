@@ -62,7 +62,7 @@ main(int argc, char * argv[])
     // initialize the journal
     pyre::journal::init(argc, argv);
     // attribute whatever gets logged to this test
-    pyre::journal::application("canonical_map");
+    pyre::journal::application("canonical_isomorphism");
     // make a channel
     pyre::journal::debug_t channel("pyre.grid.canonical");
 
