@@ -13,8 +13,12 @@
 
 
 // the packing order of the axes of a grid: a permutation of the axis labels {0 .. Rank-1} in
-// which every label occurs exactly once; slot {axis} holds the packing level of that axis, and
-// smaller levels mark the faster varying axes
+// which every label occurs exactly once, listing the axes from the fastest varying to the
+// slowest; it is indexed by packing level, so slot {0} names the axis that runs fastest and slot
+// {Rank-1} the one that runs slowest
+// note that it does not record, for each axis, how fast that axis runs; that is the inverse
+// permutation, and the two agree only for orders that are their own inverse, which includes both
+// of the conventional ones
 template <std::size_t Rank>
 class pyre::grid::Order {
     // types
@@ -23,7 +27,7 @@ public:
     using self_type = Order<Rank>;
     // basic
     using size_type = size_t;
-    // packing levels are non-negative, hence the unsigned cell type
+    // axis labels are non-negative, hence the unsigned cell type
     using value_type = size_t;
     using pointer = value_type *;
     using const_pointer = const value_type *;
@@ -31,7 +35,7 @@ public:
     using const_reference = const value_type &;
     using rvalue_reference = value_type &&;
     using const_rvalue_reference = const value_type &&;
-    // the permutation lives in a fixed size array, one slot per axis
+    // the permutation lives in a fixed size array, one slot per packing level
     using storage_type = std::array<value_type, Rank>;
     // iterators
     using iterator = typename storage_type::iterator;
@@ -45,11 +49,11 @@ public:
     constexpr Order() noexcept;
     // adopt a permutation that has already been assembled
     explicit constexpr Order(storage_type) noexcept;
-    // spell out the packing level of each axis, exactly {Rank} of them
+    // name the axes from the fastest varying to the slowest, exactly {Rank} of them
     template <std::unsigned_integral... Ts>
         requires(sizeof...(Ts) == Rank)
     explicit constexpr Order(Ts...) noexcept;
-    // spell out the packing levels in braces, e.g. {2, 0, 1}
+    // name them in braces, e.g. {2, 0, 1} to run axis 2 fastest, then axis 0, then axis 1
     constexpr Order(std::initializer_list<value_type> ilist) noexcept;
 
     // default metamethods
@@ -67,12 +71,12 @@ public:
     // the number of axes i order, known at compile time
     static consteval auto rank() noexcept -> size_type;
 
-    // the packing level of a given axis, unchecked
+    // the axis that runs at a given packing level, unchecked
     constexpr auto operator[](size_type idx) noexcept -> reference;
     constexpr auto operator[](size_type idx) const noexcept -> const_reference;
 
-    // the packing level of a given axis, with a guard against bad axis labels;
-    // throws {std::out_of_range}
+    // the axis that runs at a given packing level, with a guard against levels that are out of
+    // range; throws {std::out_of_range}
     constexpr auto at(size_type idx) -> reference;
     constexpr auto at(size_type idx) const -> const_reference;
 
@@ -91,7 +95,7 @@ public:
     // verify my class invariant: that i am a genuine permutation in S_{Rank}
     [[nodiscard]] constexpr auto isPermutation() const noexcept -> bool;
 
-    // visit the axes in their natural sequence, from the first to the last
+    // visit the axes from the fastest varying to the slowest
 public:
     constexpr auto begin() noexcept -> iterator;
     constexpr auto end() noexcept -> iterator;
@@ -100,7 +104,7 @@ public:
     constexpr auto cbegin() const noexcept -> const_iterator;
     constexpr auto cend() const noexcept -> const_iterator;
 
-    // visit the axes back to front, from the last to the first
+    // visit the axes from the slowest varying to the fastest
 public:
     constexpr auto rbegin() noexcept -> reverse_iterator;
     constexpr auto rend() noexcept -> reverse_iterator;
@@ -111,7 +115,7 @@ public:
 
     // implementation details - data
 private:
-    // the packing level of each axis
+    // the axis labels, listed from the fastest varying to the slowest
     storage_type _permutation {};
 
     // implementation details - compile-time factories

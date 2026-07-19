@@ -26,7 +26,7 @@ constexpr pyre::grid::Order<Rank>::Order(storage_type p) noexcept :
     _permutation { std::move(p) }
 {}
 
-// build an order out of the packing level of each axis, spelled out one by one
+// build an order by naming the axes one by one, from the fastest varying to the slowest
 template <std::size_t Rank>
 template <std::unsigned_integral... Ts>
     requires(sizeof...(Ts) == Rank)
@@ -35,7 +35,7 @@ constexpr pyre::grid::Order<Rank>::Order(Ts... xs) noexcept :
     _permutation { static_cast<value_type>(xs)... }
 {}
 
-// build an order out of a braced list of packing levels
+// build an order from a braced list of axis labels, fastest varying first
 template <std::size_t Rank>
 constexpr pyre::grid::Order<Rank>::Order(std::initializer_list<value_type> ilist) noexcept
 {
@@ -68,7 +68,7 @@ pyre::grid::Order<Rank>::rank() noexcept -> size_type
     return Rank;
 }
 
-// the packing level of {axis}, in a form the caller may modify
+// the axis that runs at a given packing level, in a form the caller may modify
 template <std::size_t Rank>
 constexpr auto
 pyre::grid::Order<Rank>::operator[](size_type axis) noexcept -> reference
@@ -77,7 +77,7 @@ pyre::grid::Order<Rank>::operator[](size_type axis) noexcept -> reference
     return _permutation[axis];
 }
 
-// the packing level of {axis}, read-only
+// the axis that runs at a given packing level, read-only
 template <std::size_t Rank>
 constexpr auto
 pyre::grid::Order<Rank>::operator[](size_type axis) const noexcept -> const_reference
@@ -87,7 +87,7 @@ pyre::grid::Order<Rank>::operator[](size_type axis) const noexcept -> const_refe
 }
 
 
-// the packing level of {axis}, with a guard against axis labels that are out of range
+// the axis that runs at a given packing level, with a guard against levels out of range
 template <std::size_t Rank>
 constexpr auto
 pyre::grid::Order<Rank>::at(size_type axis) -> reference
@@ -96,7 +96,7 @@ pyre::grid::Order<Rank>::at(size_type axis) -> reference
     return _permutation.at(axis);
 }
 
-// the packing level of {axis}, checked and read-only
+// the axis that runs at a given packing level, checked and read-only
 template <std::size_t Rank>
 constexpr auto
 pyre::grid::Order<Rank>::at(size_type axis) const -> const_reference
@@ -162,7 +162,7 @@ pyre::grid::Order<Rank>::columnMajor() noexcept -> self_type
     return self_type { _make_column_major(std::make_index_sequence<Rank> {}) };
 };
 
-// my invariant: every axis label in {0 .. Rank-1} shows up as a packing level exactly once
+// my invariant: every axis label in {0 .. Rank-1} occupies exactly one packing level
 template <std::size_t Rank>
 [[nodiscard]] constexpr auto
 pyre::grid::Order<Rank>::isPermutation() const noexcept -> bool
@@ -176,7 +176,7 @@ pyre::grid::Order<Rank>::isPermutation() const noexcept -> bool
     std::array<bool, Rank> seen {};
     // visit the axes in their natural sequence
     for (size_type i = 0; i < Rank; ++i) {
-        // pull out the packing level assigned to this axis
+        // pull out the axis that runs at this level
         auto value = _permutation[i];
         // a level outside the legal range, or one we have already handed to another axis
         if (value >= Rank || seen[value]) {
@@ -304,7 +304,7 @@ pyre::grid::Order<Rank>::crend() const noexcept -> const_reverse_iterator
 
 
 // compile time storage factories
-// the row major permutation {Rank-1, ..., 1, 0}: the last axis gets level zero, hence varies
+// the row major permutation {Rank-1, ..., 1, 0}: the last axis is named first, hence varies
 // fastest
 template <std::size_t Rank>
 template <std::size_t... Is>
@@ -315,14 +315,14 @@ pyre::grid::Order<Rank>::_make_row_major(std::index_sequence<Is...>) noexcept ->
     return storage_type { (Rank - 1 - Is)... };
 }
 
-// the column major permutation {0, 1, ..., Rank-1}: the first axis gets level zero, hence varies
+// the column major permutation {0, 1, ..., Rank-1}: the first axis is named first, hence varies
 // fastest
 template <std::size_t Rank>
 template <std::size_t... Is>
 consteval auto
 pyre::grid::Order<Rank>::_make_column_major(std::index_sequence<Is...>) noexcept -> storage_type
 {
-    // the axis labels are already the levels we want
+    // the axis labels already run in the sequence we want
     return storage_type { Is... };
 }
 
@@ -338,9 +338,9 @@ pyre::grid::operator<<(ostream_reference stream, const Order<Rank> & order) -> o
     const char * sep = "";
     // visit the axes in their natural sequence
     for (const auto & slot : order) {
-        // render the packing level of this axis behind its separator
+        // render the axis that runs at this level, behind its separator
         stream << sep << slot;
-        // from here on, levels are comma separated
+        // from here on, axis labels are comma separated
         sep = ", ";
     }
     // hand the stream back so injections can be chained
@@ -355,7 +355,7 @@ pyre::grid::operator==(const Order<Rank> & o1, const Order<Rank> & o2) noexcept 
 {
     // compare the two orders axis by axis
     for (std::size_t i = 0; i < Rank; ++i) {
-        // the first axis whose packing level disagrees
+        // the first level whose axis disagrees
         if (o1[i] != o2[i]) {
             // settles it: the two pack differently
             return false;

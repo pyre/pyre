@@ -171,22 +171,17 @@ pyre::grid::DynamicCanonical::index(difference_type off) const -> index_type
     const auto N = rank();
     // make room for the answer
     index_type result(N);
-    // decompose from slowest-varying axis to fastest
-    for (std::ptrdiff_t level = static_cast<std::ptrdiff_t>(N) - 1; level >= 0; --level) {
-        // look for the axis that occupies this packing level
-        for (size_type axis = 0; axis < N; ++axis) {
-            // when we find it
-            if (static_cast<std::ptrdiff_t>(_order[axis]) == level) {
-                // get its stride
-                auto stride = static_cast<difference_type>(_strides[axis]);
-                // its coordinate is however many whole strides fit in what is left
-                result[axis] = off / stride;
-                // and the remainder is what the faster axes have to explain
-                off %= stride;
-                // no other axis lives at this level, so move on
-                break;
-            }
-        }
+    // decompose from slowest-varying axis to fastest; {_order} lists the axes fastest first, so
+    // the loosest packing level sits at its far end
+    for (size_type level = N; level-- > 0;) {
+        // find out which axis packs at this level
+        auto axis = _order[level];
+        // get its stride
+        auto stride = static_cast<difference_type>(_strides[axis]);
+        // its coordinate is however many whole strides fit in what is left
+        result[axis] = off / stride;
+        // and the remainder is what the faster axes have to explain
+        off %= stride;
     }
     // the decomposition yields the index relative to the origin, so
     // shift by origin
@@ -301,20 +296,25 @@ pyre::grid::DynamicCanonical::slice(
         // and so does the stride, which is what keeps the slice pointing at my cells
         sliceStrides[i] = _strides[free[i]];
     }
-    // preserve relative packing order of the free axes
-    for (size_type i = 0; i < M; ++i) {
-        // the new level of this axis is how many free axes vary faster than it does
-        size_type level = 0;
-        // so count them
-        for (size_type j = 0; j < M; ++j) {
-            // by comparing against my own priorities
-            if (_order[free[j]] < _order[free[i]]) {
-                // and tallying each axis that comes first
+    // fill the slice's packing order, which lists its axes fastest first
+    size_type level = 0;
+    // walk my own axes from the fastest varying to the slowest
+    for (size_type k = 0; k < rank(); ++k) {
+        // the axis that packs at this level of mine
+        auto axis = _order[k];
+        // look for it among the survivors
+        for (size_type i = 0; i < M; ++i) {
+            // when the axis is one the slice keeps
+            if (free[i] == axis) {
+                // it claims the next slot in the slice's packing order, so that the survivors
+                // stay in the same relative sequence they had in my layout
+                sliceOrder[level] = i;
+                // that slot is now spoken for
                 ++level;
+                // and no other survivor is this axis
+                break;
             }
         }
-        // which compresses my priorities down to a permutation of 0..M-1
-        sliceOrder[i] = level;
     }
     // the slice is anchored at zero because
     // the nudge bakes in the contribution of the fixed axes
@@ -333,7 +333,7 @@ pyre::grid::DynamicCanonical::_defaultOrder(size_type n) -> order_type
     order_type order(n);
     // go through the axes
     for (size_type i = 0; i < n; ++i) {
-        // and rank them in reverse, so the trailing axis gets level zero
+        // and name them in reverse, so the trailing axis runs fastest
         order[i] = n - 1 - i;
     }
     // hand off the permutation
@@ -348,18 +348,19 @@ pyre::grid::DynamicCanonical::_initStrides(
 {
     // get the rank implied by the extents
     const auto N = shape.size();
-    // make room for the strides, with each one primed for accumulation
-    strides_type strides(N, 1);
-    // go through the axes
-    for (size_type axis = 0; axis < N; ++axis) {
-        // and compare each one against all the others
-        for (size_type other = 0; other < N; ++other) {
-            // a lower level means the other axis varies faster
-            if (order[other] < order[axis]) {
-                // so a whole span of it lies between consecutive cells along {axis}
-                strides[axis] *= shape[other];
-            }
-        }
+    // make room for the strides
+    strides_type strides(N);
+    // the fastest-varying axis steps one cell at a time
+    size_type step = 1;
+    // {order} lists the axes fastest first, so visiting it in sequence walks the packing levels
+    // from the tightest to the loosest
+    for (size_type level = 0; level < N; ++level) {
+        // find out which axis packs at this level
+        auto axis = order[level];
+        // it steps over everything the faster axes have already laid down
+        strides[axis] = step;
+        // and a full sweep of its extent is what the next axis out must step over
+        step *= shape[axis];
     }
     // hand off the strides
     return strides;
