@@ -46,7 +46,10 @@ pyre::grid::DynamicCanonical::DynamicCanonical(
     // deduce the memory distance between consecutive cells along each axis
     _strides { _initStrides(shape, order) },
     // deduce the correction that pulls {origin} back to offset zero
-    _nudge { -_initShift(origin, _strides) }
+    _nudge { -_initShift(origin, _strides) },
+    // work out where my first cell lands; deducing my own packing puts it at the head of the
+    // block, but derive it rather than assume it, so that it keeps agreeing with {_nudge}
+    _anchor { _initShift(origin, _strides) + _nudge }
 {}
 
 // the full constructor: the caller knows the physical layout already, so take it verbatim;
@@ -64,7 +67,10 @@ pyre::grid::DynamicCanonical::DynamicCanonical(
     // the inherited strides, which need not describe a tight packing of {shape}
     _strides { strides },
     // the inherited offset correction
-    _nudge { nudge }
+    _nudge { nudge },
+    // the caller's layout need not place my first cell at the head of the block, so work out
+    // where it does land and remember it for the trip back from an offset to an index
+    _anchor { _initShift(origin, strides) + nudge }
 {}
 
 
@@ -171,6 +177,11 @@ pyre::grid::DynamicCanonical::index(difference_type off) const -> index_type
     const auto N = rank();
     // make room for the answer
     index_type result(N);
+    // measure the offset from my own first cell rather than from the beginning of the block;
+    // for a layout that anchors itself at offset zero this changes nothing, but a derived layout
+    // carries the offset correction of the parent whose memory it addresses, and the
+    // decomposition below only makes sense on distances measured from my {_origin}
+    off -= _anchor;
     // decompose from slowest-varying axis to fastest; {_order} lists the axes fastest first, so
     // the loosest packing level sits at its far end
     for (size_type level = N; level-- > 0;) {
@@ -183,10 +194,10 @@ pyre::grid::DynamicCanonical::index(difference_type off) const -> index_type
         // and the remainder is what the faster axes have to explain
         off %= stride;
     }
-    // the decomposition yields the index relative to the origin, so
-    // shift by origin
+    // the decomposition yields coordinates relative to my first cell, so put them back in
+    // absolute terms
     for (size_type i = 0; i < N; ++i) {
-        // to place the answer back in the caller's index space
+        // by shifting each one by the corresponding coordinate of my anchor
         result[i] += _origin[i];
     }
     // hand off the index
