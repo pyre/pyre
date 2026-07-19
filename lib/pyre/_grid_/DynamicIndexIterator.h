@@ -69,7 +69,7 @@ private:
     index_type _current {};
     // the extent of the box along each axis
     shape_type _shape {};
-    // the axis priority that dictates the traversal order
+    // the packing order that dictates the traversal sequence
     order_type _order {};
     // the corner of the box, which is both my starting point and the value each axis
     // resets to when it overflows

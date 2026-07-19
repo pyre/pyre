@@ -321,7 +321,8 @@ pyre::grid::Canonical<Rank>::slice(const index_type & base) const noexcept
 // static helpers
 
 // compute axis strides: stride[axis] = product of shape[other] for all faster-varying axes
-// axis {a} is faster than axis {b} when order[a] < order[b]
+// {order} lists the axes from the fastest varying to the slowest, so those extents are exactly
+// the ones already visited when the walk below reaches a given axis
 template <std::size_t Rank>
 constexpr auto
 pyre::grid::Canonical<Rank>::_initStrides(
