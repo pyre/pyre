@@ -32,7 +32,7 @@ pyre::grid::DynamicCanonical::DynamicCanonical(
     DynamicCanonical(shape, origin, _defaultOrder(shape.size()))
 {}
 
-// the deducing constructor: given the index box and the axis priority, work out the
+// the deducing constructor: given the index box and the packing order, work out the
 // physical layout that packs the cells tightly
 inline
 pyre::grid::DynamicCanonical::DynamicCanonical(
@@ -60,7 +60,7 @@ pyre::grid::DynamicCanonical::DynamicCanonical(
     const strides_type & strides, difference_type nudge) :
     // the extent along each axis
     _shape { shape },
-    // the axis priority
+    // the packing order
     _order { order },
     // the lowest addressable index
     _origin { origin },
@@ -104,7 +104,7 @@ pyre::grid::DynamicCanonical::origin() const noexcept -> const index_type &
 inline auto
 pyre::grid::DynamicCanonical::order() const noexcept -> const order_type &
 {
-    // hand out my axis priority
+    // hand out my packing order
     return _order;
 }
 
@@ -142,7 +142,7 @@ pyre::grid::DynamicCanonical::cells() const noexcept -> size_type
 
 // mutator: reorder
 
-// repack the same index box with a different axis priority; the strides and nudge get
+// repack the same index box with a different packing order; the strides and nudge get
 // deduced afresh, so the result describes a different arrangement of the same cells
 inline auto
 pyre::grid::DynamicCanonical::order(const order_type & o) const -> DynamicCanonical
@@ -298,7 +298,7 @@ pyre::grid::DynamicCanonical::slice(
     shape_type sliceShape(M);
     // its strides
     strides_type sliceStrides(M);
-    // and its axis priority
+    // and its packing order
     order_type sliceOrder(M);
     // extract shape and strides at each free axis
     for (size_type i = 0; i < M; ++i) {
@@ -340,7 +340,7 @@ pyre::grid::DynamicCanonical::slice(
 inline auto
 pyre::grid::DynamicCanonical::_defaultOrder(size_type n) -> order_type
 {
-    // make room for one priority per axis
+    // make room for one slot per packing level
     order_type order(n);
     // go through the axes
     for (size_type i = 0; i < n; ++i) {

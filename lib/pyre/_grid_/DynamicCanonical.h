@@ -8,7 +8,7 @@
 #pragma once
 
 
-// DynamicCanonical includes its dependencies directly so the class body sees complete types
+// dependencies
 #include "DynamicIndexIterator.h"
 
 
@@ -76,7 +76,7 @@ public:
 
     // mutators: return a new instance with a different traversal order
 public:
-    // repack the same index box with a different axis priority
+    // repack the same index box with a different packing order
     [[nodiscard]] auto order(const order_type &) const -> DynamicCanonical;
 
     // packing isomorphism
@@ -111,7 +111,7 @@ public:
 private:
     // the extent along each axis; its size is what establishes my rank
     shape_type _shape {};
-    // the axis priority: which axis varies fastest as we walk memory
+    // the packing order: the axes listed from the fastest varying to the slowest
     order_type _order {};
     // the smallest addressable index; signed, so it may be negative
     index_type _origin {};
