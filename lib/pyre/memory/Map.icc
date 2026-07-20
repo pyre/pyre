@@ -163,10 +163,11 @@ pyre::memory::Map<T, isConst>::end() const -> pointer
 // array-like access
 template <typename T, bool isConst>
 auto
-pyre::memory::Map<T, isConst>::at(size_type pos) const -> reference
+pyre::memory::Map<T, isConst>::at(difference_type pos) const -> reference
 {
-    // if the request is out of bounds
-    if (pos >= cells()) {
+    // if the request reaches outside the block, in either direction
+    // a negative position is now visible as such, rather than wrapping to an enormous one
+    if (pos < 0 || pos >= cells()) {
         // make a channel
         pyre::journal::firewall_t channel("pyre.memory.bounds");
         // complain
@@ -185,7 +186,7 @@ pyre::memory::Map<T, isConst>::at(size_type pos) const -> reference
 
 template <typename T, bool isConst>
 auto
-pyre::memory::Map<T, isConst>::operator[](size_type pos) const -> reference
+pyre::memory::Map<T, isConst>::operator[](difference_type pos) const -> reference
 {
     // get the cell and return it
     return data()[pos];

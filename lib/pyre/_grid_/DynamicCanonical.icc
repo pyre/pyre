@@ -126,7 +126,7 @@ pyre::grid::DynamicCanonical::nudge() const noexcept -> difference_type
 
 // the number of addressable cells, i.e. the volume of my index box
 inline auto
-pyre::grid::DynamicCanonical::cells() const noexcept -> size_type
+pyre::grid::DynamicCanonical::cells() const noexcept -> difference_type
 {
     // a rank zero grid has exactly one cell, so start the accumulation at one
     size_type n = 1;

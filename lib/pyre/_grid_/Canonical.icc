@@ -108,7 +108,7 @@ pyre::grid::Canonical<Rank>::nudge() const noexcept -> difference_type
 // the number of addressable cells
 template <std::size_t Rank>
 constexpr auto
-pyre::grid::Canonical<Rank>::cells() const noexcept -> size_type
+pyre::grid::Canonical<Rank>::cells() const noexcept -> difference_type
 {
     // the box knows how many indices it contains
     return _shape.cells();
