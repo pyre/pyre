@@ -1,29 +1,31 @@
 {
     "configurations": [
         {
-            "name": "mm: linux",
+            "name": "mm: linux - x64",
             "includePath": [
                 "${workspaceFolder}/**",
-                "${env:vs_prefix_prj}/include/**",
+                "${env:mm_prefix}/include/**",
                 "${env:vs_prefix_usr}/include/**",
+                "${env:vs_prefix_sys}/include/**",
                 "/usr/lib/x86_64-linux-gnu/openmpi/include/**",
                 "/usr/include/hdf5/openmpi/**",
-                "/usr/include/python3.9/**"
+                "/usr/include/python${env:mm_python}/**"
             ],
             "defines": [
+                "DEBUG",
                 "PYRE_CORE",
                 "WITH_JOURNAL"
             ],
-            "compilerPath": "/usr/bin/${env:vs_compiler}",
+            "compilerPath": "/usr/bin/${env:mm_compiler}",
             "cStandard": "c17",
-            "cppStandard": "c++20",
+            "cppStandard": "c++23",
             "intelliSenseMode": "linux-clang-x64"
         },
         {
-            "name": "mm: mac-arm64",
+            "name": "mm: mac - arm64",
             "includePath": [
                 "${workspaceFolder}/**",
-                "${env:vs_prefix_prj}/include/**",
+                "${env:mm_prefix}/include/**",
                 "${env:vs_prefix_usr}/include/**",
                 "${env:vs_prefix_sys}/include/**",
                 "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/System/Library/Frameworks/**"
