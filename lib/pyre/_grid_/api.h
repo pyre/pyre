@@ -38,6 +38,9 @@ namespace pyre::grid {
     // the grid
     template <class packingT, class storageT>
     using grid_t = Grid<packingT, storageT>;
+    // and the cursor that walks its cells
+    template <class gridT>
+    using grid_iterator_t = GridIterator<gridT>;
 } // namespace pyre::grid
 
 
