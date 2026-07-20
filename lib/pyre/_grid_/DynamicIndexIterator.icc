@@ -67,7 +67,7 @@ pyre::grid::DynamicIndexIterator::operator++() noexcept -> DynamicIndexIterator 
         // the axis that is up for consideration at this level
         auto axis = _order[pos];
         // the first coordinate past the far edge of the box along this axis
-        auto limit = _origin[axis] + static_cast<difference_type>(_shape[axis]);
+        auto limit = _origin[axis] + _shape[axis];
         // advance this axis by its step; if it stays in bounds, we are done
         _current[axis] += _step[axis];
         // so there is nothing left to carry
@@ -81,7 +81,7 @@ pyre::grid::DynamicIndexIterator::operator++() noexcept -> DynamicIndexIterator 
     // all axes overflowed: advance to the end sentinel
     for (std::size_t i = 0; i < N; ++i) {
         // which is the far corner of the box, one full extent past the origin
-        _current[i] = _origin[i] + static_cast<difference_type>(_shape[i]);
+        _current[i] = _origin[i] + _shape[i];
     }
     // and that is where the traversal stops
     return *this;

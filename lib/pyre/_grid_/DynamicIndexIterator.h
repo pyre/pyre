@@ -27,7 +27,7 @@ public:
     using difference_type = std::ptrdiff_t;
     // parts
     using index_type = std::vector<difference_type>;
-    using shape_type = std::vector<size_type>;
+    using shape_type = std::vector<difference_type>;
     using order_type = std::vector<size_type>;
     // iterator traits for STL compatibility
     using value_type = index_type;

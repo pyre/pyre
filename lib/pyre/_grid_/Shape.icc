@@ -28,7 +28,7 @@ constexpr pyre::grid::Shape<Rank>::Shape(storage_type extents) noexcept :
 
 // the variadic constructor: one extent per axis, spelled out
 template <std::size_t Rank>
-template <std::unsigned_integral... Ts>
+template <std::integral... Ts>
     requires(sizeof...(Ts) == Rank)
 constexpr pyre::grid::Shape<Rank>::Shape(Ts... xs) noexcept :
     // normalize the arguments to my cell type and lay them out in axis order
@@ -377,7 +377,7 @@ pyre::grid::operator+(const Shape<Rank> & s1, const Shape<Rank> & s2) noexcept -
 
 
 // subtract two shapes component-wise, shrinking each axis by the matching extent of {s2}
-// note that differences that would go below zero wrap around, since {value_type} is unsigned
+// extents are signed, so a difference that goes below zero says so rather than wrapping
 template <std::size_t Rank>
 constexpr auto
 pyre::grid::operator-(const Shape<Rank> & s1, const Shape<Rank> & s2) noexcept -> Shape<Rank>
