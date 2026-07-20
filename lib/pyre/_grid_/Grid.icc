@@ -50,4 +50,46 @@ pyre::grid::Grid<P, S>::storage() const noexcept -> const storage_type &
 }
 
 
+// interface - reaching a cell
+
+// the cell named by an index, trusting the caller
+template <pyre::grid::concepts::PackingStrategy P, pyre::grid::concepts::StorageStrategy S>
+[[nodiscard]] constexpr auto
+pyre::grid::Grid<P, S>::operator[](const index_type & idx) const -> reference
+{
+    // ask my packing where this index lives, and hand back whatever cell is there
+    return (*this)[_packing.offset(idx)];
+}
+
+// the cell at a given offset, trusting the caller
+template <pyre::grid::concepts::PackingStrategy P, pyre::grid::concepts::StorageStrategy S>
+[[nodiscard]] constexpr auto
+pyre::grid::Grid<P, S>::operator[](difference_type off) const -> reference
+{
+    // my storage counts its cells with an unsigned type, so make the conversion explicit; an
+    // offset that came out negative wraps to something enormous and runs off the end, which is
+    // the caller's business on the unguarded path
+    return _storage[static_cast<typename storage_type::size_type>(off)];
+}
+
+// the cell named by an index, guarded
+template <pyre::grid::concepts::PackingStrategy P, pyre::grid::concepts::StorageStrategy S>
+[[nodiscard]] constexpr auto
+pyre::grid::Grid<P, S>::at(const index_type & idx) const -> reference
+{
+    // ask my packing where this index lives, and reach for that cell with the guard on
+    return at(_packing.offset(idx));
+}
+
+// the cell at a given offset, guarded
+template <pyre::grid::concepts::PackingStrategy P, pyre::grid::concepts::StorageStrategy S>
+[[nodiscard]] constexpr auto
+pyre::grid::Grid<P, S>::at(difference_type off) const -> reference
+{
+    // let the storage do the checking and the complaining; an offset that came out negative
+    // wraps to something enormous here, which is exactly what its bounds check is watching for
+    return _storage.at(static_cast<typename storage_type::size_type>(off));
+}
+
+
 // end of file
