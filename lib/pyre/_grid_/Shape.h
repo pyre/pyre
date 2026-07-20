@@ -23,10 +23,14 @@ class pyre::grid::Shape {
 public:
     // myself
     using self_type = Shape<Rank>;
-    // the type of the axis labels and of anything that counts
+    // the type that labels my axes, and so subscripts me
     using size_type = size_t;
-    // extents are non-negative counts of cells
-    using value_type = size_t;
+    // extents are signed, even though a negative one is meaningless
+    // an extent takes part in the offset arithmetic that addresses cells, and mixing an unsigned
+    // extent into that arithmetic converts the signed side rather than the other way round; a
+    // subtraction that ought to report a negative difference would instead wrap to something
+    // enormous, turning a detectable mistake into an undetectable one
+    using value_type = std::ptrdiff_t;
     // and the usual family of ways to refer to one
     using pointer = value_type *;
     using const_pointer = const value_type *;
@@ -48,8 +52,8 @@ public:
     constexpr Shape() noexcept;
     // construct from a backing array
     explicit constexpr Shape(storage_type) noexcept;
-    // construct from exactly {Rank} non-negative values
-    template <std::unsigned_integral... Ts>
+    // construct from exactly {Rank} extents
+    template <std::integral... Ts>
         requires(sizeof...(Ts) == Rank)
     explicit constexpr Shape(Ts...) noexcept;
     // construct from an initializer list

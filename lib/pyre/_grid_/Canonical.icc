@@ -146,7 +146,7 @@ pyre::grid::Canonical<Rank>::offset(const index_type & index) const noexcept -> 
     // go through the axes
     for (std::size_t axis = 0; axis < Rank; ++axis) {
         // and fold in the contribution of this axis
-        result += index[axis] * static_cast<difference_type>(_strides[axis]);
+        result += index[axis] * _strides[axis];
     }
     // shift so that the lowest addressable index lands at the beginning of the block
     return result + _nudge;
@@ -173,7 +173,7 @@ pyre::grid::Canonical<Rank>::index(difference_type off) const noexcept -> index_
         // find out which axis packs at this level
         auto axis = _order[level];
         // get the distance between consecutive cells along it
-        auto stride = static_cast<difference_type>(_strides[axis]);
+        auto stride = _strides[axis];
         // its coordinate is however many whole strides fit in what is left
         result[axis] = off / stride;
         // and the remainder is what the faster axes must account for
@@ -245,14 +245,13 @@ pyre::grid::Canonical<Rank>::box(index_type base, shape_type tile) const noexcep
     for (std::size_t axis = 0; axis < Rank; ++axis) {
         // clamp base[axis] to [origin[axis], origin[axis] + shape[axis] - 1]
         auto lo = _origin[axis];
-        auto hi = _origin[axis] + static_cast<difference_type>(_shape[axis]) - 1;
+        auto hi = _origin[axis] + _shape[axis] - 1;
         // no anchor may sit below the first addressable index
         base[axis] = std::max(base[axis], lo);
         // nor beyond the last one
         base[axis] = std::min(base[axis], hi);
         // clamp tile[axis] to [1, remaining extent from base]
-        auto avail = static_cast<typename shape_type::value_type>(
-            _origin[axis] + static_cast<difference_type>(_shape[axis]) - base[axis]);
+        auto avail = _origin[axis] + _shape[axis] - base[axis];
         // a tile is never empty
         tile[axis] = std::max(tile[axis], typename shape_type::value_type { 1 });
         // and it never runs past my far edge
@@ -358,7 +357,7 @@ pyre::grid::Canonical<Rank>::_initShift(
     // go through the axes
     for (std::size_t axis = 0; axis < Rank; ++axis) {
         // and fold in what this axis' origin coordinate costs in memory
-        shift += origin[axis] * static_cast<difference_type>(strides[axis]);
+        shift += origin[axis] * strides[axis];
     }
     // the raw offset that the origin would otherwise occupy
     return shift;

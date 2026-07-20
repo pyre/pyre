@@ -8,8 +8,7 @@
 #pragma once
 
 
-// Canonical.h includes its dependencies directly so the type aliases in the class body
-// refer to complete types; public.h includes the others in order before this file
+// dependencies
 #include "Shape.h"
 #include "Index.h"
 #include "Order.h"
@@ -41,15 +40,11 @@ public:
 public:
     // primary constructor: deduce strides and nudge from shape, origin, and order
     constexpr explicit Canonical(
-        const shape_type &,
-        const index_type & = index_type::zero(),
+        const shape_type &, const index_type & = index_type::zero(),
         const order_type & = order_type::c()) noexcept;
     // full constructor: explicit layout specification, for derived layouts such as slices
     constexpr Canonical(
-        const shape_type &,
-        const index_type &,
-        const order_type &,
-        const strides_type &,
+        const shape_type &, const index_type &, const order_type &, const strides_type &,
         difference_type) noexcept;
 
     // default metamethods

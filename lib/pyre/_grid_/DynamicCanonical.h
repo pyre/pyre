@@ -27,11 +27,11 @@ public:
     using size_type = size_t;
     using difference_type = std::ptrdiff_t;
     // runtime containers for each axis attribute
-    using shape_type = std::vector<size_type>;
+    using shape_type = std::vector<difference_type>;
     using index_type = std::vector<difference_type>;
     using order_type = std::vector<size_type>;
     // strides are non-negative, same representation as shape
-    using strides_type = std::vector<size_type>;
+    using strides_type = std::vector<difference_type>;
     // iterator
     using iterator_type = DynamicIndexIterator;
 

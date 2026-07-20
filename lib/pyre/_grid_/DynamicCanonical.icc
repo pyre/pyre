@@ -163,7 +163,7 @@ pyre::grid::DynamicCanonical::offset(const index_type & idx) const -> difference
     // go through the axes
     for (size_type axis = 0; axis < rank(); ++axis) {
         // and fold in the contribution of this one
-        result += idx[axis] * static_cast<difference_type>(_strides[axis]);
+        result += idx[axis] * _strides[axis];
     }
     // apply the correction that brings the origin back to zero and hand off the offset
     return result + _nudge;
@@ -188,7 +188,7 @@ pyre::grid::DynamicCanonical::index(difference_type off) const -> index_type
         // find out which axis packs at this level
         auto axis = _order[level];
         // get its stride
-        auto stride = static_cast<difference_type>(_strides[axis]);
+        auto stride = _strides[axis];
         // its coordinate is however many whole strides fit in what is left
         result[axis] = off / stride;
         // and the remainder is what the faster axes have to explain
@@ -248,7 +248,7 @@ pyre::grid::DynamicCanonical::end() const -> iterator_type
     // by pushing each coordinate one full extent past the origin
     for (size_type i = 0; i < rank(); ++i) {
         // which is the value the iterator lands on once every axis has overflowed
-        sentinel[i] = _origin[i] + static_cast<difference_type>(_shape[i]);
+        sentinel[i] = _origin[i] + _shape[i];
     }
     // an iterator parked at that unreachable index
     return iterator_type(_shape, _order, sentinel);
@@ -269,16 +269,15 @@ pyre::grid::DynamicCanonical::box(index_type base, shape_type tile) const -> Dyn
         // the lowest coordinate this axis admits
         auto lo = _origin[axis];
         // and the highest one
-        auto hi = _origin[axis] + static_cast<difference_type>(_shape[axis]) - 1;
+        auto hi = _origin[axis] + _shape[axis] - 1;
         // pull the anchor up if the caller asked for something below my box
         base[axis] = std::max(base[axis], lo);
         // and down if it asked for something past the far corner
         base[axis] = std::min(base[axis], hi);
         // measure how much room is left along this axis once the anchor is placed
-        auto avail = static_cast<size_type>(
-            _origin[axis] + static_cast<difference_type>(_shape[axis]) - base[axis]);
+        auto avail = _origin[axis] + _shape[axis] - base[axis];
         // a sub-box is never degenerate, so ask for at least one cell
-        tile[axis] = std::max(tile[axis], size_type { 1 });
+        tile[axis] = std::max(tile[axis], difference_type { 1 });
         // and never more than what is actually there
         tile[axis] = std::min(tile[axis], avail);
     }
@@ -387,7 +386,7 @@ pyre::grid::DynamicCanonical::_initShift(
     // go through the axes
     for (size_type i = 0; i < origin.size(); ++i) {
         // and fold in what the origin costs along each one
-        shift += origin[i] * static_cast<difference_type>(strides[i]);
+        shift += origin[i] * strides[i];
     }
     // hand off the raw offset of the origin
     return shift;
