@@ -94,11 +94,14 @@ public:
 public:
     inline auto fill(const value_type value) const -> const self_type &;
 
-    // implementation details: data
+    // implementation details: data; nothing is {const} so containers and iterators are happy
 private:
-    const pointer _data;
-    const cell_count_type _cells;
-    const cell_count_type _stride;
+    // the block i borrow cells from
+    pointer _data;
+    // how many cells i reach
+    cell_count_type _cells;
+    // and how far apart consecutive ones sit
+    cell_count_type _stride;
 
     // default metamethods
 public:

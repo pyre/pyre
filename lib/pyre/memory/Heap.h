@@ -98,8 +98,10 @@ public:
 
     // implementation details: data
 private:
+    // the block i hand out cells from
     handle_type _data;
-    const cell_count_type _cells;
+    // and how many of them there are; not {const} so containers and iterators are happy
+    cell_count_type _cells;
 
     // default metamethods
 public:
