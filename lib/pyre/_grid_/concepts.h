@@ -21,7 +21,7 @@ namespace pyre::grid::concepts {
     // it says nothing about where those cells live, so a strategy that scatters them over
     // several blocks qualifies just as well as one that owns a single expanse
     template <class S>
-    concept StorageStrategy = requires {
+    concept StorageStrategy = requires(const S s, typename S::size_type pos) {
         // it must publish the type of the cell it holds
         typename S::value_type;
         // along with the ways to point at a cell, mutably and not
@@ -30,6 +30,16 @@ namespace pyre::grid::concepts {
         // and the ways to refer to a cell, mutably and not
         typename S::reference;
         typename S::const_reference;
+        // and the type it counts cells with
+        typename S::size_type;
+
+        // how many cells it holds
+        { s.cells() } -> std::integral;
+
+        // reaching a cell, trusting the caller
+        { s[pos] } -> std::same_as<typename S::reference>;
+        // and reaching one with a guard against reading past the end
+        { s.at(pos) } -> std::same_as<typename S::reference>;
     };
 
     // a storage strategy that keeps all of its cells in one expanse, and so can hand out the

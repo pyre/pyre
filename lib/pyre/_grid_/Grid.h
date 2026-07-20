@@ -20,9 +20,17 @@ template <pyre::grid::concepts::PackingStrategy P, pyre::grid::concepts::Storage
 class pyre::grid::Grid {
     // types
 public:
+    // myself
+    using self_type = Grid<P, S>;
     // my parts
     using packing_type = P;
     using storage_type = S;
+
+    // i address my cells the way my packing does
+    using index_type = typename P::index_type;
+    using shape_type = typename P::shape_type;
+    using size_type = typename P::size_type;
+    using difference_type = typename P::difference_type;
 
     // the cell vocabulary is whatever my storage says it is
     using value_type = typename S::value_type;
@@ -68,6 +76,21 @@ public:
     [[nodiscard]] constexpr auto packing() const noexcept -> const packing_type &;
     // where my cells live
     [[nodiscard]] constexpr auto storage() const noexcept -> const storage_type &;
+
+    // interface: reaching a cell
+    // a grid is a handle to its two strategies, so reading and writing cells leaves the grid
+    // itself untouched; whether the caller may write through the reference is settled by the
+    // storage, whose cell type carries its own constness
+public:
+    // the cell named by an index, trusting the caller to stay in bounds
+    [[nodiscard]] constexpr auto operator[](const index_type & idx) const -> reference;
+    // the cell at a given offset, same trust
+    [[nodiscard]] constexpr auto operator[](difference_type off) const -> reference;
+
+    // the cell named by an index, with a guard against reaching past my cells
+    [[nodiscard]] constexpr auto at(const index_type & idx) const -> reference;
+    // the cell at a given offset, likewise guarded
+    [[nodiscard]] constexpr auto at(difference_type off) const -> reference;
 
     // implementation details - data
 private:
