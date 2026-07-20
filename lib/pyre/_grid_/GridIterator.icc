@@ -1,0 +1,99 @@
+// -*- C++ -*-
+// -*- coding: utf-8 -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2026 all rights reserved
+
+// code guard
+#pragma once
+
+
+// support
+#include "GridIterator.h"
+
+
+// metamethods
+
+// park on the cell named by the given index cursor
+template <class gridT>
+constexpr pyre::grid::GridIterator<gridT>::GridIterator(
+    grid_type grid, index_iterator cursor) noexcept :
+    // hold on to the grid whose cells i am handing out
+    _grid { std::move(grid) },
+    // and to the place in index space i am currently at
+    _cursor { std::move(cursor) }
+{}
+
+
+// iterator protocol
+
+// hand out the cell i am parked on
+template <class gridT>
+[[nodiscard]] constexpr auto
+pyre::grid::GridIterator<gridT>::operator*() const -> reference
+{
+    // ask my cursor which index we are at, and let the grid turn it into a cell
+    return (*_grid)[*_cursor];
+}
+
+// move on to the next cell
+template <class gridT>
+constexpr auto
+pyre::grid::GridIterator<gridT>::operator++() -> self_type &
+{
+    // the packing decides what comes next, so let the index cursor do the walking
+    ++_cursor;
+    // and hand myself back
+    return *this;
+}
+
+// move on, but report where i was
+template <class gridT>
+constexpr auto
+pyre::grid::GridIterator<gridT>::operator++(int) -> self_type
+{
+    // take a snapshot of where i am
+    auto snapshot = *this;
+    // advance
+    ++(*this);
+    // and hand back the snapshot
+    return snapshot;
+}
+
+
+// accessors
+
+// the index cursor i am riding
+template <class gridT>
+[[nodiscard]] constexpr auto
+pyre::grid::GridIterator<gridT>::cursor() const noexcept -> const index_iterator &
+{
+    // hand it out so that equality can be settled from outside
+    return _cursor;
+}
+
+
+// equality: two grid iterators agree when their index cursors do
+// the grid is not part of the comparison, exactly as with the index iterators underneath: what
+// makes an iterator equal to {end} is where it has got to, not what it is walking
+template <class gridT>
+constexpr auto
+pyre::grid::operator==(const GridIterator<gridT> & i1, const GridIterator<gridT> & i2) noexcept
+    -> bool
+{
+    // defer to the cursors
+    return i1.cursor() == i2.cursor();
+}
+
+// and the negation
+template <class gridT>
+constexpr auto
+pyre::grid::operator!=(const GridIterator<gridT> & i1, const GridIterator<gridT> & i2) noexcept
+    -> bool
+{
+    // whatever equality says, but the other way round
+    return !(i1 == i2);
+}
+
+
+// end of file

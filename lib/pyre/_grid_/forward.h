@@ -42,6 +42,24 @@ namespace pyre::grid {
     // a packing strategy composed with a storage strategy
     template <concepts::PackingStrategy P, concepts::StorageStrategy S>
     class Grid;
+
+    // a cursor that visits the cells of a grid, rather than the indices that name them
+    template <class gridT>
+    class GridIterator;
+} // namespace pyre::grid
+
+
+// operators on {GridIterator}
+namespace pyre::grid {
+    // equality: two cursors are equal when they have reached the same index
+    template <class gridT>
+    constexpr auto operator==(const GridIterator<gridT> &, const GridIterator<gridT> &) noexcept
+        -> bool;
+
+    // and the negation, so that the usual {begin} to {end} loop reads naturally
+    template <class gridT>
+    constexpr auto operator!=(const GridIterator<gridT> &, const GridIterator<gridT> &) noexcept
+        -> bool;
 } // namespace pyre::grid
 
 

@@ -92,11 +92,40 @@ public:
     // the cell at a given offset, likewise guarded
     [[nodiscard]] constexpr auto at(difference_type off) const -> reference;
 
+    // interface: sub-grids
+    // both of these hand back a grid over my own cells: the derived packing inherits my physical
+    // layout, so the new grid addresses my memory rather than a copy of it
+    // they exist only when my packing knows how to derive a sub-layout, which is why each one
+    // carries its own requirement rather than leaning on the packing contract
+public:
+    // the sub-grid anchored at the given index with the given extent
+    [[nodiscard]] constexpr auto box(index_type base, shape_type tile) const -> self_type
+        requires requires(const packing_type p, index_type i, shape_type s) { p.box(i, s); };
+
+    // the lower rank grid that survives pinning every axis not named in {FreeAxes} at {base}
+    template <std::size_t... FreeAxes>
+    [[nodiscard]] constexpr auto slice(const index_type & base) const;
+
+    // interface: iteration
+    // visiting my cells in the order my packing prescribes
+    // there is only one cursor type: whether a caller may write through it was settled by my
+    // storage, so a const flavor would differ from this one in name only
+public:
+    // the cursor that walks my cells
+    using iterator = GridIterator<self_type>;
+
+    // a cursor parked on my first cell
+    [[nodiscard]] constexpr auto begin() const -> iterator;
+    // one that advances by the given step along each axis
+    [[nodiscard]] constexpr auto begin(const index_type & step) const -> iterator;
+    // and the cursor that marks the end of the sweep
+    [[nodiscard]] constexpr auto end() const -> iterator;
+
     // implementation details - data
 private:
     // my addressing scheme
     packing_type _packing;
-    // and my cells
+    // and my storage strategy
     storage_type _storage;
 };
 

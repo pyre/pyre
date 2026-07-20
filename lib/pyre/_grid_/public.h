@@ -32,6 +32,8 @@
 #include "DynamicCanonical.h"
 // the grid
 #include "Grid.h"
+// and the cursor that walks its cells
+#include "GridIterator.h"
 
 
 // end of file
