@@ -80,11 +80,11 @@ public:
     // data access
 public:
     // with bounds checking
-    constexpr auto at(size_type) -> reference;
-    constexpr auto at(size_type) const -> const_reference;
+    constexpr auto at(difference_type) -> reference;
+    constexpr auto at(difference_type) const -> const_reference;
     // without bounds checking
-    constexpr auto operator[](size_type) -> reference;
-    constexpr auto operator[](size_type) const -> const_reference;
+    constexpr auto operator[](difference_type) -> reference;
+    constexpr auto operator[](difference_type) const -> const_reference;
 
     // implementation details: data
 private:

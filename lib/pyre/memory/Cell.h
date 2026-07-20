@@ -42,7 +42,7 @@ public:
     // sizes of things
     using size_type = size_t;
     // number of cells
-    using cell_count_type = size_type;
+    using cell_count_type = difference_type;
     // names
     using string_type = string_t;
 

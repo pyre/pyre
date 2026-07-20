@@ -157,7 +157,7 @@ pyre::memory::Stack<D, T, isConst>::cend() const -> const_iterator
 // data access
 template <int D, class T, bool isConst>
 constexpr auto
-pyre::memory::Stack<D, T, isConst>::at(size_type pos) -> reference
+pyre::memory::Stack<D, T, isConst>::at(difference_type pos) -> reference
 {
     // return a reference to the cell at {pos}
     return _data.at(pos);
@@ -166,7 +166,7 @@ pyre::memory::Stack<D, T, isConst>::at(size_type pos) -> reference
 
 template <int D, class T, bool isConst>
 constexpr auto
-pyre::memory::Stack<D, T, isConst>::at(size_type pos) const -> const_reference
+pyre::memory::Stack<D, T, isConst>::at(difference_type pos) const -> const_reference
 {
     // return a reference to the cell at {pos}
     return _data.at(pos);
@@ -175,7 +175,7 @@ pyre::memory::Stack<D, T, isConst>::at(size_type pos) const -> const_reference
 
 template <int D, class T, bool isConst>
 constexpr auto
-pyre::memory::Stack<D, T, isConst>::operator[](size_type pos) -> reference
+pyre::memory::Stack<D, T, isConst>::operator[](difference_type pos) -> reference
 {
     // return a reference to the cell at {pos}
     return _data[pos];
@@ -184,7 +184,7 @@ pyre::memory::Stack<D, T, isConst>::operator[](size_type pos) -> reference
 
 template <int D, class T, bool isConst>
 constexpr auto
-pyre::memory::Stack<D, T, isConst>::operator[](size_type pos) const -> const_reference
+pyre::memory::Stack<D, T, isConst>::operator[](difference_type pos) const -> const_reference
 {
     // return a reference to the cell at {pos}
     return _data[pos];

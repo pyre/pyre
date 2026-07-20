@@ -70,7 +70,7 @@ public:
     // the correction that places {origin} at the beginning of the memory block
     [[nodiscard]] constexpr auto nudge() const noexcept -> difference_type;
     // the number of addressable cells
-    [[nodiscard]] constexpr auto cells() const noexcept -> size_type;
+    [[nodiscard]] constexpr auto cells() const noexcept -> difference_type;
     // my rank, as a compile time constant
     static consteval auto rank() noexcept -> size_type;
 

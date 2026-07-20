@@ -177,7 +177,7 @@ pyre::cuda::memory::Mapped<T, isConst>::end() const -> pointer
 // data access
 template <class T, bool isConst>
 auto
-pyre::cuda::memory::Mapped<T, isConst>::at(size_type pos) const -> reference
+pyre::cuda::memory::Mapped<T, isConst>::at(difference_type pos) const -> reference
 {
     // if the request is out of bounds
     if (pos >= cells()) {
@@ -199,7 +199,7 @@ pyre::cuda::memory::Mapped<T, isConst>::at(size_type pos) const -> reference
 
 template <class T, bool isConst>
 auto
-pyre::cuda::memory::Mapped<T, isConst>::operator[](size_type pos) const -> reference
+pyre::cuda::memory::Mapped<T, isConst>::operator[](difference_type pos) const -> reference
 {
     // return a reference to the cell at {pos}
     return data()[pos];

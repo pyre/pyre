@@ -130,7 +130,7 @@ pyre::grid::Shape<Rank>::data() const noexcept -> const_pointer
 // the number of cells i address is the product of my extents
 template <std::size_t Rank>
 constexpr auto
-pyre::grid::Shape<Rank>::cells() const noexcept -> size_type
+pyre::grid::Shape<Rank>::cells() const noexcept -> value_type
 {
     // the empty product is unity, so a rank zero shape addresses a single cell
     size_type cells = 1;

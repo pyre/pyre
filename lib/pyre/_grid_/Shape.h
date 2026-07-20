@@ -98,7 +98,7 @@ public:
     // interface
 public:
     // the total number of addressable values
-    constexpr auto cells() const noexcept -> size_type;
+    constexpr auto cells() const noexcept -> value_type;
 
     // the smallest and largest extent
     [[nodiscard]] constexpr auto min() const noexcept -> value_type;

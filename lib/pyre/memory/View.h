@@ -86,9 +86,9 @@ public:
     // data access
 public:
     // with bounds checking
-    inline auto at(size_type) const -> reference;
+    inline auto at(difference_type) const -> reference;
     // without bounds checking
-    inline auto operator[](size_type) const -> reference;
+    inline auto operator[](difference_type) const -> reference;
 
     // interface
 public:

@@ -66,10 +66,10 @@ template <pyre::grid::concepts::PackingStrategy P, pyre::grid::concepts::Storage
 [[nodiscard]] constexpr auto
 pyre::grid::Grid<P, S>::operator[](difference_type off) const -> reference
 {
-    // my storage counts its cells with an unsigned type, so make the conversion explicit; an
-    // offset that came out negative wraps to something enormous and runs off the end, which is
-    // the caller's business on the unguarded path
-    return _storage[static_cast<typename storage_type::size_type>(off)];
+    // my storage measures displacements the same way my packing does, so the offset travels
+    // across unchanged; an offset that came out negative stays negative, and on this path it is
+    // the caller who promised it would not
+    return _storage[off];
 }
 
 // the cell named by an index, guarded
@@ -86,9 +86,9 @@ template <pyre::grid::concepts::PackingStrategy P, pyre::grid::concepts::Storage
 [[nodiscard]] constexpr auto
 pyre::grid::Grid<P, S>::at(difference_type off) const -> reference
 {
-    // let the storage do the checking and the complaining; an offset that came out negative
-    // wraps to something enormous here, which is exactly what its bounds check is watching for
-    return _storage.at(static_cast<typename storage_type::size_type>(off));
+    // let the storage do the checking and the complaining; it measures displacements the way my
+    // packing does, so a negative offset arrives as a negative number and can be reported as one
+    return _storage.at(off);
 }
 
 

@@ -72,7 +72,7 @@ public:
     // the offset correction that places {_origin} at offset zero
     [[nodiscard]] auto nudge() const noexcept -> difference_type;
     // the number of addressable cells
-    [[nodiscard]] auto cells() const noexcept -> size_type;
+    [[nodiscard]] auto cells() const noexcept -> difference_type;
 
     // mutators: return a new instance with a different traversal order
 public:

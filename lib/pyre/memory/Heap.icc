@@ -174,10 +174,11 @@ pyre::memory::Heap<T, isConst>::end() const -> pointer
 // data access
 template <class T, bool isConst>
 auto
-pyre::memory::Heap<T, isConst>::at(size_type pos) const -> reference
+pyre::memory::Heap<T, isConst>::at(difference_type pos) const -> reference
 {
-    // if the request is out of bounds
-    if (pos >= cells()) {
+    // if the request reaches outside the block, in either direction
+    // a negative position is now visible as such, rather than wrapping to an enormous one
+    if (pos < 0 || pos >= cells()) {
         // make a channel
         pyre::journal::firewall_t channel("pyre.memory.bounds");
         // and complain
@@ -197,7 +198,7 @@ pyre::memory::Heap<T, isConst>::at(size_type pos) const -> reference
 
 template <class T, bool isConst>
 auto
-pyre::memory::Heap<T, isConst>::operator[](size_type pos) const -> reference
+pyre::memory::Heap<T, isConst>::operator[](difference_type pos) const -> reference
 {
     // return a reference to the cell at {pos}
     return _data[pos];
