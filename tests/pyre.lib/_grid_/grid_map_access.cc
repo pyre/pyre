@@ -41,9 +41,9 @@ main(int argc, char * argv[])
     constexpr shape_t shape { 2, 3, 4 };
     // lay it out canonically
     const canonical_t packing { shape };
-    // back it with a file sized to hold exactly its cells; the count crosses into the storage's
-    // own size type, so say so and sidestep the overload that reads a second argument as a flag
-    const map_t store(uri, static_cast<map_t::size_type>(packing.cells()));
+    // back it with a file sized to hold exactly its cells; an integer count sizes a new file
+    // unambiguously, so no cast or disambiguation is needed at the call site
+    const map_t store(uri, packing.cells());
     // and make a grid over the two
     const grid_t grid { packing, store };
 
