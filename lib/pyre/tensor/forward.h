@@ -34,23 +34,23 @@ namespace pyre::tensor {
     using complex_t = std::complex<double>;
 
     // typedef for vectors
-    template <int D, typename T = real, class packingT = pyre::grid::canonical_t<1, int>>
+    template <int D, typename T = real, class packingT = pyre::grid::canonical_t<1>>
     using vector_t = Tensor<T, packingT, D>;
     // typedef for matrices
-    template <int D1, int D2 = D1, typename T = real, class packingT = pyre::grid::canonical_t<2, int>>
+    template <int D1, int D2 = D1, typename T = real, class packingT = pyre::grid::canonical_t<2>>
     using matrix_t = Tensor<T, packingT, D1, D2>;
     // typedef for square matrices
-    template <int D, typename T = real, class packingT = pyre::grid::canonical_t<2, int>>
+    template <int D, typename T = real, class packingT = pyre::grid::canonical_t<2>>
     using square_matrix_t = matrix_t<D, D, T, packingT>;
     // typedef for symmetric matrices
     template <int D, typename T = real>
-    using symmetric_matrix_t = matrix_t<D, D, T, pyre::grid::symmetric_t<2, int>>;
+    using symmetric_matrix_t = matrix_t<D, D, T, pyre::grid::symmetric_t<2>>;
     // typedef for diagonal matrices
     template <int D, typename T = real>
-    using diagonal_matrix_t = matrix_t<D, D, T, pyre::grid::diagonal_t<2, int>>;
+    using diagonal_matrix_t = matrix_t<D, D, T, pyre::grid::diagonal_t<2>>;
     // typedef for fourth order tensors
     template <int D1, int D2 = D1, int D3 = D2, int D4 = D3, typename T = real>
-    using fourth_order_tensor_t = Tensor<T, pyre::grid::canonical_t<4, int>, D1, D2, D3, D4>;
+    using fourth_order_tensor_t = Tensor<T, pyre::grid::canonical_t<4>, D1, D2, D3, D4>;
     // typedef for quaternions
     using quaternion_t = UnitQuaternion<complex_t>;
 
