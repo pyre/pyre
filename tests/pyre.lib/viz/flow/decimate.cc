@@ -57,9 +57,9 @@ main(int argc, char * argv[])
     auto & grid = signal->write();
     // we are discretizing the unit square centered at the origin
     // for a given number of bins; the spacing is
-    const double delta = 1.0 / (grid.layout().shape()[0] - 1);
+    const double delta = 1.0 / (grid.packing().shape()[0] - 1);
     // loop over the shape
-    for (const auto & idx : grid.layout()) {
+    for (const auto & idx : grid.packing()) {
         // unpack
         auto [i, j] = idx;
         // convert the indices into a complex number in our space

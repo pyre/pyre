@@ -54,8 +54,8 @@ public:
 private:
     // my source
     source_const_reference _source;
-    // my cursor
-    typename source_type::index_iterator _cursor;
+    // my cursor: an index generator over the source's packing, not a cell iterator
+    typename packing_type::iterator_type _cursor;
 
     // default metamethods
 public:

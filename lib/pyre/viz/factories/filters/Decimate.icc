@@ -142,7 +142,7 @@ pyre::viz::factories::filters::Decimate<signalT>::make(
     // compute the zoom factor
     auto factor = 1 << _level;
     // check compatibility
-    bool ok = (factor * decimated.layout().shape()) == signal.layout().shape();
+    bool ok = (factor * decimated.packing().shape()) == signal.packing().shape();
     // if the input and output are not compatible
     if (!ok) {
         // make a channel
@@ -161,7 +161,7 @@ pyre::viz::factories::filters::Decimate<signalT>::make(
             // indent
             << pyre::journal::indent
             // signal
-            << "signal: " << signal.layout().cells()
+            << "signal: " << signal.packing().cells()
             << pyre::journal::newline
             // outdent
             << pyre::journal::outdent
@@ -171,7 +171,7 @@ pyre::viz::factories::filters::Decimate<signalT>::make(
             // indent
             << pyre::journal::indent
             // decimated
-            << "decimated: " << decimated.layout().cells()
+            << "decimated: " << decimated.packing().cells()
             << pyre::journal::newline
             // outdent
             << pyre::journal::outdent
@@ -182,7 +182,7 @@ pyre::viz::factories::filters::Decimate<signalT>::make(
     }
 
     // go through the output cells
-    for (auto idx : decimated.layout()) {
+    for (auto idx : decimated.packing()) {
         // and copy the corresponding pixel
         decimated[idx] = signal[factor * idx];
     }
