@@ -142,9 +142,9 @@ pyre::viz::factories::filters::Affine<signalT, affineT>::make(
     // get write access to the affine data
     auto & affine = this->affine()->write();
     // get the number cells in the output tile
-    auto cells = affine.layout().cells();
+    auto cells = affine.packing().cells();
     // make sure the input is compatible
-    bool ok = cells == signal.layout().cells();
+    bool ok = cells == signal.packing().cells();
     // if not
     if (!ok) {
         // make a channel
@@ -163,7 +163,7 @@ pyre::viz::factories::filters::Affine<signalT, affineT>::make(
             // indent
             << pyre::journal::indent
             // signal
-            << "signal: " << signal.layout().cells()
+            << "signal: " << signal.packing().cells()
             << pyre::journal::newline
             // outdent
             << pyre::journal::outdent
@@ -173,7 +173,7 @@ pyre::viz::factories::filters::Affine<signalT, affineT>::make(
             // indent
             << pyre::journal::indent
             // affine
-            << "affine: " << affine.layout().cells()
+            << "affine: " << affine.packing().cells()
             << pyre::journal::newline
             // outdent
             << pyre::journal::outdent

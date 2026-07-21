@@ -36,14 +36,16 @@ main(int argc, char * argv[])
     // turn it on
     // channel.activate();
 
-    // make the operands
-    auto op1 = product_t::create("op1", 1);
-    auto op2 = product_t::create("op2", 2);
-    auto op3 = product_t::create("op3", 3);
+    // the shape every tile shares, so that the sums are cell compatible
+    auto shape = product_t::shape_type { 2, 2 };
+    // make the operands, each filled with a distinct value
+    auto op1 = product_t::create("op1", shape, 1);
+    auto op2 = product_t::create("op2", shape, 2);
+    auto op3 = product_t::create("op3", shape, 3);
     // the intermediate
-    auto tmp = product_t::create("tmp", 0);
+    auto tmp = product_t::create("tmp", shape, 0);
     // and the result
-    auto result = product_t::create("result", 0);
+    auto result = product_t::create("result", shape, 0);
 
     // make the first operator
     auto add1 = factory_t::create("add1");

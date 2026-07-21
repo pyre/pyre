@@ -98,7 +98,7 @@ auto
 pyre::flow::products::Tile<gridT>::shape() const -> shape_type
 {
     // easy enough
-    return _data.layout().shape();
+    return _data.packing().shape();
 }
 
 // mutators

@@ -49,6 +49,16 @@ pyre::grid::Grid<P, S>::storage() const noexcept -> const storage_type &
     return _storage;
 }
 
+// the address of my first cell
+template <pyre::grid::concepts::PackingStrategy P, pyre::grid::concepts::StorageStrategy S>
+[[nodiscard]] constexpr auto
+pyre::grid::Grid<P, S>::data() const noexcept
+    requires concepts::ContiguousStorage<storage_type>
+{
+    // ask my storage for the start of its block
+    return _storage.data();
+}
+
 
 // interface - reaching a cell
 

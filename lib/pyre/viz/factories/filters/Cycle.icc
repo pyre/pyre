@@ -142,9 +142,9 @@ pyre::viz::factories::filters::Cycle<signalT, cycleT>::make(
     // get write access to the cycle data
     auto & cycle = this->cycle()->write();
     // get the number cells in the output tile
-    auto cells = cycle.layout().cells();
+    auto cells = cycle.packing().cells();
     // make sure the input is compatible
-    bool ok = cells == signal.layout().cells();
+    bool ok = cells == signal.packing().cells();
     // if not
     if (!ok) {
         // make a channel
@@ -163,7 +163,7 @@ pyre::viz::factories::filters::Cycle<signalT, cycleT>::make(
             // indent
             << pyre::journal::indent
             // signal
-            << "signal: " << signal.layout().cells()
+            << "signal: " << signal.packing().cells()
             << pyre::journal::newline
             // outdent
             << pyre::journal::outdent
@@ -173,7 +173,7 @@ pyre::viz::factories::filters::Cycle<signalT, cycleT>::make(
             // indent
             << pyre::journal::indent
             // cycle
-            << "cycle: " << cycle.layout().cells()
+            << "cycle: " << cycle.packing().cells()
             << pyre::journal::newline
             // outdent
             << pyre::journal::outdent

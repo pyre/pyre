@@ -60,7 +60,7 @@ main(int argc, char * argv[])
     // instantiate the dataset
     dataset_t data { layout, layout.cells() };
     // traverse in layout order
-    for (auto idx : data.layout()) {
+    for (auto idx : data.packing()) {
         // unpack
         auto [i, j] = idx;
         // convert the indices into a complex number in our space

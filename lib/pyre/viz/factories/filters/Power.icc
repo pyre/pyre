@@ -187,9 +187,9 @@ pyre::viz::factories::filters::Power<signalT, powerT>::make(
     // get write access to the power data
     auto & power = this->power()->write();
     // get the number cells in the output tile
-    auto cells = power.layout().cells();
+    auto cells = power.packing().cells();
     // make sure the input is compatible
-    bool ok = cells == signal.layout().cells();
+    bool ok = cells == signal.packing().cells();
     // if not
     if (!ok) {
         // make a channel
@@ -208,7 +208,7 @@ pyre::viz::factories::filters::Power<signalT, powerT>::make(
             // indent
             << pyre::journal::indent
             // signal
-            << "signal: " << signal.layout().cells()
+            << "signal: " << signal.packing().cells()
             << pyre::journal::newline
             // outdent
             << pyre::journal::outdent
@@ -218,7 +218,7 @@ pyre::viz::factories::filters::Power<signalT, powerT>::make(
             // indent
             << pyre::journal::indent
             // power
-            << "power: " << power.layout().cells()
+            << "power: " << power.packing().cells()
             << pyre::journal::newline
             // outdent
             << pyre::journal::outdent

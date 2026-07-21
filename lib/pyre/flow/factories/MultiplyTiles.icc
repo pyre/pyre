@@ -76,13 +76,13 @@ pyre::flow::factories::Multiply<pyre::flow::products::Tile, op1T, op2T, resultT>
 
     // the bound products must be shape compatible; the current implementation only requires
     // that products have the same number of cells
-    auto cells = result.layout().shape().cells();
+    auto cells = result.packing().shape().cells();
     // verify consistency
     bool ok =
         // check op1
-        cells == op1.layout().shape().cells() &&
+        cells == op1.packing().shape().cells() &&
         // check op2
-        cells == op2.layout().shape().cells();
+        cells == op2.packing().shape().cells();
     // if something is off
     if (!ok) {
         // make a channel
@@ -101,10 +101,10 @@ pyre::flow::factories::Multiply<pyre::flow::products::Tile, op1T, op2T, resultT>
             // indent
             << pyre::journal::indent
             // op1
-            << "op1: " << op1.layout().shape()
+            << "op1: " << op1.packing().shape()
             << pyre::journal::newline
             // op2
-            << "op2: " << op2.layout().shape()
+            << "op2: " << op2.packing().shape()
             << pyre::journal::newline
             // outdent
             << pyre::journal::outdent
@@ -114,7 +114,7 @@ pyre::flow::factories::Multiply<pyre::flow::products::Tile, op1T, op2T, resultT>
             // indent
             << pyre::journal::indent
             // result
-            << "result: " << result.layout().shape()
+            << "result: " << result.packing().shape()
             << pyre::journal::newline
             // outdent
             << pyre::journal::outdent

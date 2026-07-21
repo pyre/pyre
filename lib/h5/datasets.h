@@ -58,6 +58,7 @@ pyre::h5::read(
     // alias my grid type and its parts
     using grid_t = gridT;
     using packing_t = typename gridT::packing_type;
+    using storage_t = typename gridT::storage_type;
     // the rank of the request
     constexpr auto rank = gridT::shape_type::rank();
 
@@ -78,11 +79,11 @@ pyre::h5::read(
     fileSpace.slab(H5S_SELECT_SET, loc, block, skip, count);
     // make an in-memory dataspace matching the tile
     auto memSpace = dataspace_t(count);
-    // make my grid
-    auto grid = grid_t { packing_t(shape), shape.cells() };
+    // make my grid over a fresh block sized to hold the requested tile
+    auto grid = grid_t { packing_t(shape), storage_t { shape.cells() } };
 
     // read the data into my {grid}; everything is a pyre wrapper, so hand over the raw ids
-    dataset.read(datatype.id(), grid.data()->data(), memSpace.id(), fileSpace.id());
+    dataset.read(datatype.id(), grid.data(), memSpace.id(), fileSpace.id());
 
     // return the populated grid
     return grid;
@@ -139,8 +140,8 @@ pyre::h5::readGrid(
     const dataset_t & self, gridT & data, const datatype_t & memtype, const shape_t & origin,
     const shape_t & shape) -> void
 {
-    // get my storage
-    auto & storage = *data.data();
+    // get a mutable copy of my storage handle
+    auto storage = data.storage();
     // access the underlying store and delegate
     read(self, storage, memtype, origin, shape);
     // all done
@@ -154,8 +155,8 @@ pyre::h5::writeGrid(
     const dataset_t & self, gridT & data, const datatype_t & memtype, const shape_t & origin,
     const shape_t & shape) -> void
 {
-    // get my storage
-    auto & storage = *data.data();
+    // get a mutable copy of my storage handle
+    auto storage = data.storage();
     // access the underlying store and delegate
     write(self, storage, memtype, origin, shape);
     // all done

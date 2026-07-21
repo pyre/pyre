@@ -77,6 +77,11 @@ public:
     // where my cells live
     [[nodiscard]] constexpr auto storage() const noexcept -> const storage_type &;
 
+    // the address of my first cell, for handing off to code that speaks raw memory; available
+    // only when my storage keeps its cells in one expanse
+    [[nodiscard]] constexpr auto data() const noexcept
+        requires concepts::ContiguousStorage<storage_type>;
+
     // interface: reaching a cell
     // a grid is a handle to its two strategies, so reading and writing cells leaves the grid
     // itself untouched; whether the caller may write through the reference is settled by the

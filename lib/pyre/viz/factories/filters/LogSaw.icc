@@ -117,9 +117,9 @@ pyre::viz::factories::filters::LogSaw<signalT, logsawT>::make(
     // get write access to the logsaw data
     auto & logsaw = this->logsaw()->write();
     // get the number cells in the output tile
-    auto cells = logsaw.layout().cells();
+    auto cells = logsaw.packing().cells();
     // make sure the input is compatible
-    bool ok = cells == signal.layout().cells();
+    bool ok = cells == signal.packing().cells();
     // if not
     if (!ok) {
         // make a channel
@@ -138,7 +138,7 @@ pyre::viz::factories::filters::LogSaw<signalT, logsawT>::make(
             // indent
             << pyre::journal::indent
             // signal
-            << "signal: " << signal.layout().cells()
+            << "signal: " << signal.packing().cells()
             << pyre::journal::newline
             // outdent
             << pyre::journal::outdent
@@ -148,7 +148,7 @@ pyre::viz::factories::filters::LogSaw<signalT, logsawT>::make(
             // indent
             << pyre::journal::indent
             // logsaw
-            << "logsaw: " << logsaw.layout().cells()
+            << "logsaw: " << logsaw.packing().cells()
             << pyre::journal::newline
             // outdent
             << pyre::journal::outdent
