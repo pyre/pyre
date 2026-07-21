@@ -13,6 +13,7 @@
 
 // the layouts under test
 using canonical_t = pyre::grid::canonical_t<3>;
+using diagonal_t = pyre::grid::diagonal_t<3>;
 using dynamic_t = pyre::grid::dynamic_canonical_t;
 // and a representative storage strategy
 using heap_t = pyre::memory::heap_t<pyre::memory::float64_t>;
@@ -33,6 +34,13 @@ main()
     static_assert(concepts::StridedPacking<canonical_t>);
     // it packs no tiles, so it makes no promises about them
     static_assert(!concepts::TiledPacking<canonical_t>);
+
+    // a diagonal layout is a packing strategy too, but a sparse one
+    static_assert(concepts::PackingStrategy<diagonal_t>);
+    // it stores no per-axis stride vector, so it does not address memory by strides
+    static_assert(!concepts::StridedPacking<diagonal_t>);
+    // and it packs no tiles
+    static_assert(!concepts::TiledPacking<diagonal_t>);
 
     // a runtime rank layout addresses a grid the same way
     static_assert(concepts::PackingStrategy<dynamic_t>);

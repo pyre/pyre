@@ -35,6 +35,10 @@ namespace pyre::grid {
     template <size_t Rank>
     class Canonical;
 
+    // the packing strategy that stores only the main diagonal
+    template <size_t Rank>
+    class Diagonal;
+
     // dynamic (runtime-rank) variants for Python interoperability
     class DynamicIndexIterator;
     class DynamicCanonical;

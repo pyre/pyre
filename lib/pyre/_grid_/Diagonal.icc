@@ -1,0 +1,189 @@
+// -*- C++ -*-
+// -*- coding: utf-8 -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2026 all rights reserved
+
+// code guard
+#pragma once
+
+
+// support
+#include "Diagonal.h"
+
+
+// metamethods
+
+// deduce the diagonal length and the offset correction from the box
+template <std::size_t Rank>
+constexpr pyre::grid::Diagonal<Rank>::Diagonal(
+    const shape_type & shape, const index_type & origin) noexcept :
+    // remember the box
+    _shape { shape },
+    // and the smallest addressable index
+    _origin { origin },
+    // the diagonal is as long as one axis is wide
+    _D { shape[0] },
+    // and the correction pulls the origin back to the start of the stored run
+    _nudge { -_initShift(origin) }
+{}
+
+
+// accessors
+
+// the extent of my index box along each axis
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Diagonal<Rank>::shape() const noexcept -> shape_type
+{
+    // hand off my shape
+    return _shape;
+}
+
+// the smallest addressable index
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Diagonal<Rank>::origin() const noexcept -> index_type
+{
+    // hand off my origin
+    return _origin;
+}
+
+// the offset correction that places my origin at the start of the stored run
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Diagonal<Rank>::nudge() const noexcept -> difference_type
+{
+    // hand off my nudge
+    return _nudge;
+}
+
+// the memory footprint: the diagonal cells plus the one shared sink cell
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Diagonal<Rank>::cells() const noexcept -> difference_type
+{
+    // one cell per diagonal entry, and one more for everything off the diagonal
+    return _D + 1;
+}
+
+// my rank, as a compile time constant
+template <std::size_t Rank>
+consteval auto
+pyre::grid::Diagonal<Rank>::rank() noexcept -> size_type
+{
+    // it is my template parameter
+    return Rank;
+}
+
+
+// packing isomorphism
+
+// the cell an index lands on
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Diagonal<Rank>::offset(const index_type & index) const noexcept -> difference_type
+{
+    // an index on the diagonal has a cell of its own, at its position along the diagonal shifted
+    // to put the origin at the start of the run
+    if (_isDiagonal(index)) {
+        // its coordinate along any axis will do, since they all agree
+        return index[0] + _nudge;
+    }
+    // everything else shares the single sink cell that sits just past the diagonal
+    return _D;
+}
+
+// the diagonal index that a stored offset came from
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Diagonal<Rank>::index(difference_type off) const noexcept -> index_type
+{
+    // a stored offset names a point on the diagonal, whose coordinates all equal that offset,
+    // measured from the origin
+    return index_type::fill(off) + _origin;
+}
+
+// index into the layout to get the offset of a cell
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Diagonal<Rank>::operator[](const index_type & index) const noexcept -> difference_type
+{
+    // delegate to the forward map
+    return offset(index);
+}
+
+// index into the layout with an offset to get a diagonal index
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Diagonal<Rank>::operator[](difference_type off) const noexcept -> index_type
+{
+    // delegate to the inverse map
+    return index(off);
+}
+
+
+// iteration
+
+// a cursor at my origin that visits every index in the box
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Diagonal<Rank>::begin() const noexcept -> iterator_type
+{
+    // hand out a cursor that knows the box and the order in which to walk it
+    return iterator_type(_shape, order_type::c(), _origin);
+}
+
+// a cursor at my origin that skips ahead by {step} along each axis
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Diagonal<Rank>::begin(const index_type & step) const noexcept -> iterator_type
+{
+    // hand out a cursor that takes the given step on each advance
+    return iterator_type(_shape, order_type::c(), _origin, step);
+}
+
+// the cursor that marks the end of the sweep
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Diagonal<Rank>::end() const noexcept -> iterator_type
+{
+    // the sweep ends one step past the far corner of the box
+    return iterator_type(_shape, order_type::c(), _origin + _shape);
+}
+
+
+// static helpers
+
+// the offset of the origin, which must sit on the diagonal
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Diagonal<Rank>::_initShift(const index_type & origin) noexcept -> difference_type
+{
+#if defined(DEBUG)
+    // a diagonal layout can only be anchored on the diagonal
+    assert(_isDiagonal(origin));
+#endif
+    // the origin's position along the diagonal is its coordinate on any axis
+    return origin[0];
+}
+
+// whether an index sits on the diagonal
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Diagonal<Rank>::_isDiagonal(const index_type & index) noexcept -> bool
+{
+    // walk the axes, comparing each coordinate with the one before it
+    for (size_type axis = 1; axis < Rank; ++axis) {
+        // the moment two disagree, the index is off the diagonal
+        if (index[axis] != index[axis - 1]) {
+            // so say so
+            return false;
+        }
+    }
+    // all coordinates agree, so the index is on the diagonal
+    return true;
+}
+
+
+// end of file
