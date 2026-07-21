@@ -8,115 +8,129 @@
 #pragma once
 
 
-// my dependencies
+// support
 #include "forward.h"
-#include "Canonical.h"
 
 
-template <class packingT, class storageT>
+// a multi-dimensional array: a packing strategy {P} that says how index space maps to
+// memory offsets, married to a storage strategy {S} that owns the cells
+// currently this is just the pairing and the two accessors; data access and iteration
+// are not implemented yet
+template <pyre::grid::concepts::PackingStrategy P, pyre::grid::concepts::StorageStrategy S>
 class pyre::grid::Grid {
     // types
 public:
-    // me
-    using self_type = Grid<packingT, storageT>;
-    // aliases for my template parameters
-    using packing_type = packingT;
-    using storage_type = storageT;
-
-    // me
-    using grid_type = Grid<packing_type, storage_type>;
-
-    // my value
-    using value_type = typename storage_type::value_type;
-    using pointer = typename storage_type::pointer;
-    using const_pointer = typename storage_type::const_pointer;
-    using reference = typename storage_type::reference;
-    using const_reference = typename storage_type::const_reference;
-    // distances
-    using difference_type = typename storage_type::difference_type;
-
+    // myself
+    using self_type = Grid<P, S>;
     // my parts
-    using storage_pointer = std::shared_ptr<storage_type>;
-    using packing_const_reference = const packing_type &;
-    // my cell
-    using cell_type = typename storage_type::cell_type;
-    // my shape
-    using shape_type = typename packing_type::shape_type;
-    using shape_const_reference = const shape_type &;
-    // my index
-    using index_type = typename packing_type::index_type;
-    using index_const_reference = const index_type &;
-    // iterators
-    using index_iterator = typename packing_type::index_iterator;
-    using iterator = GridIterator<grid_type, index_iterator, false>;
-    using const_iterator = GridIterator<grid_type, index_iterator, true>;
+    using packing_type = P;
+    using storage_type = S;
+
+    // i address my cells the way my packing does
+    using index_type = typename P::index_type;
+    using shape_type = typename P::shape_type;
+    using size_type = typename P::size_type;
+    using difference_type = typename P::difference_type;
+
+    // the cell vocabulary is whatever my storage says it is
+    using value_type = typename S::value_type;
+    using pointer = typename S::pointer;
+    using const_pointer = typename S::const_pointer;
+    using reference = typename S::reference;
+    using const_reference = typename S::const_reference;
 
     // metamethods
 public:
-    // constructor that makes a grid using the supplied packing and storage strategies
-    constexpr Grid(packing_const_reference, storage_pointer);
+    // constructors
+    // take ownership of two strategies the caller has already built
+    constexpr Grid(packing_type packing, storage_type storage);
 
-    // constructor that forwards its extra arguments to the storage strategy
-    template <typename... Args>
-    constexpr Grid(packing_const_reference, Args &&...);
-
-    // accessors
-public:
-    constexpr auto data() const -> storage_pointer;
-    constexpr auto layout() const -> packing_const_reference;
-
-    // interface: data access
-public:
-    // with bounds check
-    constexpr auto at(difference_type) const -> reference;
-    constexpr auto at(index_const_reference) const -> reference;
-    // without bounds check
-    constexpr auto operator[](difference_type) const -> reference;
-    constexpr auto operator[](index_const_reference) const -> reference;
-
-    // interface: iteration support
-public:
-    // whole grid iteration: visit every value in my native packing order
-    constexpr auto begin() -> iterator;
-    constexpr auto begin(index_type) -> iterator;
-    constexpr auto end() -> iterator;
-    // const
-    constexpr auto begin() const -> const_iterator;
-    constexpr auto begin(index_type) const -> const_iterator;
-    constexpr auto end() const -> const_iterator;
-    // and again, for non-const grids
-    constexpr auto cbegin() const -> const_iterator;
-    constexpr auto cbegin(index_type) const -> const_iterator;
-    constexpr auto cend() const -> const_iterator;
-
-    // iterate over a portion of the grid
-    constexpr auto box(packing_const_reference) const -> grid_type;
-    constexpr auto box(index_const_reference, shape_const_reference) const -> grid_type;
-
-    // slicing: create subgrids of a given shape anchored at the given index; rank reduction is
-    // achieved by zeroing out the ranks to be skipped in the shape specification
-public:
-    template <int sliceRank = packing_type::rank()>
-    constexpr auto slice(index_const_reference, shape_const_reference) const;
-
-    // implementation details: data
-private:
-    const packing_type _layout;
-    const storage_pointer _data;
+    // build both strategies here, from the argument tuples the caller supplies, so that
+    // neither one has to be movable or copyable
+    template <class... PArgs, class... SArgs>
+        requires(
+            pyre::grid::concepts::PackingConstructible<P, PArgs...>
+            && pyre::grid::concepts::StorageConstructible<S, SArgs...>)
+    constexpr Grid(
+        std::piecewise_construct_t, std::tuple<PArgs...> pArgs, std::tuple<SArgs...> sArgs);
 
     // default metamethods
 public:
     // destructor
     ~Grid() = default;
-    // constructors
+    // copy/move; whether these are viable is decided by my two strategies
     Grid(const Grid &) = default;
-    Grid(Grid &&) = default;
-    Grid & operator=(const Grid &) = default;
-    Grid & operator=(Grid &&) = default;
+    Grid(Grid &&) noexcept = default;
+    auto operator=(const Grid &) -> Grid & = default;
+    auto operator=(Grid &&) noexcept -> Grid & = default;
+
+    // disabled metamethods
+private:
+    // constructors
+    // there is no sensible default packing or storage, so a grid must always be told both
+    Grid() = delete;
+
+    // accessors
+public:
+    // how my index space maps onto memory
+    [[nodiscard]] constexpr auto packing() const noexcept -> const packing_type &;
+    // where my cells live
+    [[nodiscard]] constexpr auto storage() const noexcept -> const storage_type &;
+
+    // interface: reaching a cell
+    // a grid is a handle to its two strategies, so reading and writing cells leaves the grid
+    // itself untouched; whether the caller may write through the reference is settled by the
+    // storage, whose cell type carries its own constness
+public:
+    // the cell named by an index, trusting the caller to stay in bounds
+    [[nodiscard]] constexpr auto operator[](const index_type & idx) const -> reference;
+    // the cell at a given offset, same trust
+    [[nodiscard]] constexpr auto operator[](difference_type off) const -> reference;
+
+    // the cell named by an index, with a guard against reaching past my cells
+    [[nodiscard]] constexpr auto at(const index_type & idx) const -> reference;
+    // the cell at a given offset, likewise guarded
+    [[nodiscard]] constexpr auto at(difference_type off) const -> reference;
+
+    // interface: sub-grids
+    // both of these hand back a grid over my own cells: the derived packing inherits my physical
+    // layout, so the new grid addresses my memory rather than a copy of it
+    // they exist only when my packing knows how to derive a sub-layout, which is why each one
+    // carries its own requirement rather than leaning on the packing contract
+public:
+    // the sub-grid anchored at the given index with the given extent
+    [[nodiscard]] constexpr auto box(index_type base, shape_type tile) const -> self_type
+        requires requires(const packing_type p, index_type i, shape_type s) { p.box(i, s); };
+
+    // the lower rank grid that survives pinning every axis not named in {FreeAxes} at {base}
+    template <std::size_t... FreeAxes>
+    [[nodiscard]] constexpr auto slice(const index_type & base) const;
+
+    // interface: iteration
+    // visiting my cells in the order my packing prescribes
+    // there is only one cursor type: whether a caller may write through it was settled by my
+    // storage, so a const flavor would differ from this one in name only
+public:
+    // the cursor that walks my cells
+    using iterator = GridIterator<self_type>;
+
+    // a cursor parked on my first cell
+    [[nodiscard]] constexpr auto begin() const -> iterator;
+    // one that advances by the given step along each axis
+    [[nodiscard]] constexpr auto begin(const index_type & step) const -> iterator;
+    // and the cursor that marks the end of the sweep
+    [[nodiscard]] constexpr auto end() const -> iterator;
+
+    // implementation details - data
+private:
+    // my addressing scheme
+    packing_type _packing;
+    // and my storage strategy
+    storage_type _storage;
 };
 
 
-// get the inline definitions
+// the inline implementations
 #include "Grid.icc"
 
 

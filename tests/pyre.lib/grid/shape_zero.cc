@@ -11,25 +11,26 @@
 #include <pyre/grid.h>
 
 
-// type alias
+// the shape under test
 using shape_t = pyre::grid::shape_t<4>;
 
 
 // exercise the {zero} factory
 int
-main(int argc, char * argv[])
+main()
 {
-    // make an shape filled with zeroes
+    // ask for a shape with no extent on any axis
     constexpr shape_t shape = shape_t::zero();
 
-    // verify the contents
+    // the first axis is degenerate
     static_assert(shape[0] == 0);
+    // and so is every other one
     static_assert(shape[1] == 0);
     static_assert(shape[2] == 0);
     static_assert(shape[3] == 0);
 
-    // and that the interface is still accessible
-    assert(shape.cells() == 0);
+    // a shape that is degenerate anywhere addresses nothing at all
+    static_assert(shape.cells() == 0);
 
     // all done
     return 0;

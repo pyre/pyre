@@ -15,7 +15,7 @@ pyre.lib.tests.c++.flags += -Wall $(pyre.lib.c++.flags)
 
 
 # cleanup
-tests.pyre.lib.grid.clean += grid_mmap.data
+tests.pyre.lib.grid.clean += grid_map_access.data
 tests.pyre.lib.memory.clean += filemap.dat map.dat map_slice.dat constmap_slice.dat
 tests.pyre.lib.viz.iterators.clean += \
     pyre_viz_iterators_amplitude.bmp pyre_viz_iterators_bmp.bmp pyre_viz_iterators_complex.bmp \
@@ -37,10 +37,6 @@ tests.pyre.lib.memory.map_read.pre := tests.pyre.lib.memory.map_write
 tests.pyre.lib.memory.map_oob.pre := tests.pyre.lib.memory.map_write
 tests.pyre.lib.memory.constmap_read.pre := tests.pyre.lib.memory.map_write
 tests.pyre.lib.memory.constmap_oob.pre := tests.pyre.lib.memory.map_write
-
-# grid tests with special needs
-tests.pyre.lib.grid.grid_mmap_set.pre := tests.pyre.lib.grid.grid_mmap_sanity
-tests.pyre.lib.grid.grid_mmap_get.pre := tests.pyre.lib.grid.grid_mmap_set
 
 # conditionally exclude tensor tests that require c++20 or greater
 # NOTE:
@@ -77,18 +73,6 @@ ${if $(pyre.c++20),,\
     tensor/tensor_symmetry.cc \
     tensor/tensor_transpose.cc \
     tensor/tensor_utilities.cc \
-}
-
-
-# conditionally exclude compact packing tests that require c++20 or greater
-# NOTE:
-#  - remove the check when c++20 becomes the minimum required
-#  - in the meantime, add more versions as they are supported
-pyre.lib.tests.drivers.exclude += \
-${if $(pyre.c++20),,\
-    grid/symmetric_sanity.cc \
-    grid/symmetric_visit.cc \
-    grid/diagonal_visit.cc \
 }
 
 

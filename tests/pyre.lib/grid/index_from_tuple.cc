@@ -12,38 +12,42 @@
 #include <pyre/grid.h>
 
 
-// type alias
-using idx_t = pyre::grid::index_t<4>;
+// the index under test
+using index_t = pyre::grid::index_t<4>;
 
-// converter
+
+// spread a tuple of coordinates across the index constructor
 auto convert = [](auto && tuple) {
-    // the converter
-    constexpr auto array = [](auto &&... x) {
-        return idx_t { std::forward<decltype(x)>(x)... };
+    // a helper that forwards its arguments into an index
+    constexpr auto build = [](auto &&... x) {
+        // one coordinate per tuple element
+        return index_t { std::forward<decltype(x)>(x)... };
     };
-    // invoked
-    return std::apply(array, tuple);
+    // apply it to the tuple
+    return std::apply(build, tuple);
 };
 
 
-// exercise the filling constructor
+// verify that an index can be assembled from a tuple of coordinates
 int
 main(int argc, char * argv[])
 {
     // initialize the journal
     pyre::journal::init(argc, argv);
+    // attribute whatever gets logged to this test
     pyre::journal::application("index_from_tuple");
     // make a channel
     pyre::journal::debug_t channel("pyre.grid.index");
 
-    // make a tuple
+    // a tuple carrying the coordinates in order
     auto src = std::make_tuple(0, 1, 2, 3);
-
-    // convert to an index
+    // spread across the index constructor
     auto idx = convert(src);
-
     // show me
     channel << "idx: " << idx << pyre::journal::endl(__HERE__);
+
+    // the coordinates arrive in the order the tuple held them
+    assert((idx == index_t { 0, 1, 2, 3 }));
 
     // all done
     return 0;

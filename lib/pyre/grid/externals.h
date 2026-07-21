@@ -9,12 +9,16 @@
 
 
 // externals
-#include <array>
 #include <algorithm>
+#include <array>
+#include <cstddef>
+#include <concepts>
+#include <initializer_list>
 #include <iterator>
-#include <numeric>
 #include <ostream>
-#include <type_traits>
+#include <tuple>
+#include <utility>
+#include <vector>
 
 // support
 #include <pyre/journal.h>
@@ -23,6 +27,8 @@
 
 // aliases that define implementation choices
 namespace pyre::grid {
+    // basic types
+    using size_t = std::size_t;
     // make sure we are on the same page as {memory} on these fundamental types
     // strings
     using string_t = pyre::memory::string_t;
@@ -31,21 +37,18 @@ namespace pyre::grid {
     // filenames
     using uri_t = pyre::memory::uri_t;
 
+    // streams
+    using ostream_reference = std::ostream &;
+
     // arrays of things
     template <typename T, int N>
     using array_t = std::array<T, N>;
 
-    // for the result of scaling reps by doubles
-    template <int N>
+    // real-valued tuples, the natural result of scaling an integer tuple by a real
+    template <std::size_t N>
     using doubles_t = std::array<double, N>;
-
-    // for the result of scaling reps by floats
-    template <int N>
+    template <std::size_t N>
     using floats_t = std::array<float, N>;
-
-    // output streams
-    using ostream_t = std::ostream;
-    using ostream_reference = std::ostream &;
 
     // sequences of integers
     template <int N>

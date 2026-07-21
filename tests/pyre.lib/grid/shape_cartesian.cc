@@ -7,50 +7,51 @@
 
 // support
 #include <cassert>
-#include <typeinfo>
 // get the grid
 #include <pyre/grid.h>
 
 
-// type alias
-using shp1_t = pyre::grid::shape_t<1>;
-using shp3_t = pyre::grid::shape_t<3>;
-using shp4_t = pyre::grid::shape_t<4>;
+// the shapes under test, of several ranks
+using shape1_t = pyre::grid::shape_t<1>;
+using shape3_t = pyre::grid::shape_t<3>;
+using shape4_t = pyre::grid::shape_t<4>;
 
 
-// exercise the cartesian product of two indices
+// exercise the cartesian product, which joins two shapes into one of the combined rank
 int
 main(int argc, char * argv[])
 {
     // initialize the journal
     pyre::journal::init(argc, argv);
+    // attribute whatever gets logged to this test
     pyre::journal::application("shape_cartesian");
     // make a channel
     pyre::journal::debug_t channel("pyre.grid.shape");
 
-    // make a 1d shape
-    constexpr shp1_t shp_1 { 1 };
-    // make a 3d shape
-    constexpr shp3_t shp_3 { 1, 1, 1 };
-    // combine
-    auto shift = shp_1 * shp_3;
+    // a one dimensional shape
+    constexpr shape1_t one { 1 };
+    // and a three dimensional one
+    constexpr shape3_t three { 1, 1, 1 };
 
-    // make an explicit one
-    shp4_t sample { 1, 2, 3, 4 };
-    // derive one
-    auto actual = sample + shift;
-    // the expected result
-    shp4_t expected { 2, 3, 4, 5 };
-
+    // their product lays the first shape's axes ahead of the second's
+    constexpr auto joined = one * three;
     // show me
-    channel << "   shp_1: { " << shp_1 << " }" << pyre::journal::newline << "   shp_3: { " << shp_3
-            << " }" << pyre::journal::newline << "   shift: { " << shift << " }"
-            << pyre::journal::newline << "  sample: { " << sample << " }" << pyre::journal::newline
-            << "  actual: { " << actual << " }" << pyre::journal::newline << "expected: { "
-            << actual << " }" << pyre::journal::newline << pyre::journal::endl(__HERE__);
+    channel << "one: " << one << pyre::journal::newline << "three: " << three
+            << pyre::journal::newline << "joined: " << joined << pyre::journal::endl(__HERE__);
 
-    // check
-    assert((actual == expected));
+    // the rank of the product is the sum of the ranks
+    static_assert(decltype(joined)::rank() == 4);
+    // and the type is a genuine shape of that rank
+    static_assert(std::is_same_v<decltype(joined), const shape4_t>);
+    // its cell count is the product of the two cell counts
+    static_assert(joined.cells() == one.cells() * three.cells());
+
+    // so a product makes a natural unit shift for widening a shape of matching rank
+    constexpr shape4_t sample { 1, 2, 3, 4 };
+    // grown by the joined unit shift
+    constexpr shape4_t grown = sample + joined;
+    // every extent advanced by one
+    static_assert(grown == shape4_t { 2, 3, 4, 5 });
 
     // all done
     return 0;

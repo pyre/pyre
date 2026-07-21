@@ -8,27 +8,28 @@
 #pragma once
 
 
-// my declarations
+// support
 #include "IndexIterator.h"
 
-// metamethods
-// shape, order, origin
-template <class packingT>
-constexpr pyre::grid::IndexIterator<packingT>::IndexIterator(
-    shape_const_reference shape, order_const_reference order, index_const_reference origin) :
+
+// construct from a shape, a traversal order, and a starting position
+template <std::size_t Rank>
+constexpr pyre::grid::IndexIterator<Rank>::IndexIterator(
+    const shape_type & shape, const order_type & order, const index_type & origin) noexcept :
+    // park at the anchor, remember the box and its traversal order, and visit every point
     _current { origin },
     _shape { shape },
     _order { order },
     _origin { origin },
-    _step { static_cast<typename index_type::rank_type>(1) }
+    _step { index_type::fill(1) }
 {}
 
-
-// shape, order, origin, step
-template <class packingT>
-constexpr pyre::grid::IndexIterator<packingT>::IndexIterator(
-    shape_const_reference shape, order_const_reference order, index_const_reference origin,
-    index_const_reference step) :
+// construct with an explicit step along each axis
+template <std::size_t Rank>
+constexpr pyre::grid::IndexIterator<Rank>::IndexIterator(
+    const shape_type & shape, const order_type & order, const index_type & origin,
+    const index_type & step) noexcept :
+    // same, except the caller decides how coarsely each axis gets sampled
     _current { origin },
     _shape { shape },
     _order { order },
@@ -37,79 +38,63 @@ constexpr pyre::grid::IndexIterator<packingT>::IndexIterator(
 {}
 
 
-// the iterator protocol
-// dereference
-template <class packingT>
+// iterator protocol
+
+// dereference: return the current index
+template <std::size_t Rank>
 constexpr auto
-pyre::grid::IndexIterator<packingT>::operator*() const -> index_const_reference
+pyre::grid::IndexIterator<Rank>::operator*() const noexcept -> reference
 {
-    // where i point
+    // hand out where i am parked, without giving up ownership
     return _current;
 }
 
 
-// arithmetic: prefix
-template <class packingT>
+// pre-increment: advance to the next index in traversal order
+template <std::size_t Rank>
 constexpr auto
-pyre::grid::IndexIterator<packingT>::operator++() -> iterator_reference
+pyre::grid::IndexIterator<Rank>::operator++() noexcept -> self_type &
 {
-    // go through each rank in the given {order}
-    for (auto rank : _order) {
-        // get the limiting value for this rank
-        rank_type limit = _origin[rank] + _shape[rank];
-        // get my current value for this rank and increment it
-        auto value = _current[rank] + _step[rank];
-        // if the value didn't overflow
-        if (value < limit) {
-            // store it
-            _current[rank] = value;
-            // all done
+    // visit axes from fastest-varying to slowest-varying, as stored in {_order}
+    for (auto axis : _order) {
+        // the upper bound for this axis
+        auto limit = _origin[axis] + _shape[axis];
+        // advance this axis by the step; if it stays within bounds, we are done
+        _current[axis] += _step[axis];
+        if (_current[axis] < limit) {
             return *this;
         }
-        // if the value overflowed, set it to its starting value and grab the next one
-        _current[rank] = _origin[rank];
+        // overflow: reset this axis to its origin value and carry to the next
+        _current[axis] = _origin[axis];
     }
-    // if we get this far, every rank has overflowed; point to the end
+    // all axes overflowed: advance to the end sentinel
     _current = _origin + _shape;
-    // all done
     return *this;
 }
 
 
-// arithmetic: postfix
-template <class packingT>
+// post-increment: advance, but report the position i was parked on before the move
+template <std::size_t Rank>
 constexpr auto
-pyre::grid::IndexIterator<packingT>::operator++(int) -> iterator
+pyre::grid::IndexIterator<Rank>::operator++(int) noexcept -> self_type
 {
-    // make a copy of me
+    // take a snapshot of my current state
     auto clone = *this;
-    // increment me
+    // move on
     ++(*this);
-    // and return the clone
+    // and give the caller the state i left behind
     return clone;
 }
 
 
-// the global operators
-// equality
-template <class packingT>
+// two iterators are equal when they point to the same index
+template <std::size_t Rank>
 constexpr auto
-pyre::grid::operator==(const IndexIterator<packingT> & it1, const IndexIterator<packingT> & it2)
-    -> bool
+pyre::grid::operator==(
+    const IndexIterator<Rank> & i1, const IndexIterator<Rank> & i2) noexcept -> bool
 {
-    // iterators are equal if they point to the same index
-    return *it1 == *it2;
-}
-
-
-// and not
-template <class packingT>
-constexpr auto
-pyre::grid::operator!=(const IndexIterator<packingT> & it1, const IndexIterator<packingT> & it2)
-    -> bool
-{
-    // iterators are unequal iff they are not equal
-    return !(it1 == it2);
+    // only the position matters; the box and the traversal order are assumed to agree
+    return *i1 == *i2;
 }
 
 

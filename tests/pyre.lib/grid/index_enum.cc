@@ -5,52 +5,54 @@
 // (c) 1998-2026 all rights reserved
 
 
+// support
+#include <cassert>
 // get the grid
 #include <pyre/grid.h>
 
-// the idea here is check whether we can raise the abstraction level closer to the user;
-// {enum}s don't cut it, for a variety of reasons; so here is the foundation for a better
-// solution...
+
+// the index under test, one axis for polarization and one for color
+using index_t = pyre::grid::index_t<2>;
 
 
-// type alias
-using idx_t = pyre::grid::index_t<2>;
-
-// polarizations
+// named coordinates along the polarization axis; a class of named constants stands in for an
+// {enum}, which does not convert cleanly to the index cell type
 class pol {
-    // the values
 public:
-    static const int hh = 0;
-    static const int hv = 1;
-    static const int vh = 2;
-    static const int vv = 3;
+    // the four polarization channels
+    static constexpr index_t::value_type hh = 0;
+    static constexpr index_t::value_type hv = 1;
+    static constexpr index_t::value_type vh = 2;
+    static constexpr index_t::value_type vv = 3;
 };
 
-// colors
+// named coordinates along the color axis
 class color {
-    // the values
 public:
-    static const int red = 0;
-    static const int green = 1;
-    static const int blue = 2;
+    // the three color channels
+    static constexpr index_t::value_type red = 0;
+    static constexpr index_t::value_type green = 1;
+    static constexpr index_t::value_type blue = 2;
 };
 
 
-// check the enums can be used as indices
+// verify that named constants can be used to build and read an index
 int
 main(int argc, char * argv[])
 {
     // initialize the journal
     pyre::journal::init(argc, argv);
+    // attribute whatever gets logged to this test
     pyre::journal::application("index_enum");
     // make a channel
     pyre::journal::debug_t channel("pyre.grid.index");
 
-    // make an index
-    constexpr idx_t idx { pol::hv, color::blue };
+    // an index built from the named channels rather than bare numbers
+    constexpr index_t idx { pol::hv, color::blue };
     // show me
     channel << "index: " << idx << pyre::journal::endl(__HERE__);
-    // verify it gets represented correctly
+
+    // the coordinates read back as the named values
     static_assert(idx[0] == pol::hv);
     static_assert(idx[1] == color::blue);
 

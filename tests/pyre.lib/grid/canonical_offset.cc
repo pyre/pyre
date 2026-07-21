@@ -6,81 +6,53 @@
 
 
 // support
-#include <array>
 #include <cassert>
 #include <numeric>
 // get the grid
 #include <pyre/grid.h>
 
 
-// type alias
-using canonical_t = pyre::grid::canonical_t<3, long>;
+// the packing strategy under test
+using canonical_t = pyre::grid::canonical_t<3>;
 
 
-// verify that the layout is recorded as requested
+// verify that {offset} is the inner product of the index with the strides
 int
 main(int argc, char * argv[])
 {
     // initialize the journal
     pyre::journal::init(argc, argv);
+    // attribute whatever gets logged to this test
     pyre::journal::application("canonical_offset");
     // make a channel
-    auto channel = pyre::journal::debug_t("pyre.grid.canonical");
+    pyre::journal::debug_t channel("pyre.grid.canonical");
 
-    // pick a shape
-    canonical_t::shape_type shape { 1 << 12, 1 << 12, 1 << 12 };
-    // make a canonical packing strategy
-    canonical_t packing { shape };
-
+    // pick extents large enough that their products overrun a 32 bit integer; a signed cell
+    // type is exactly what lets these offsets stay correct
+    constexpr canonical_t::shape_type shape { 1 << 12, 1 << 12, 1 << 12 };
+    // lay it out canonically at the origin
+    constexpr canonical_t packing { shape };
     // show me
-    channel
-        // shape
-        << "shape: " << packing.shape()
-        << pyre::journal::newline
-        // origin
-        << "origin: " << packing.origin()
-        << pyre::journal::newline
-        // order
-        << "order: " << packing.order()
-        << pyre::journal::newline
-        // strides
-        << "strides: " << packing.strides()
-        << pyre::journal::newline
-        // nudge
-        << "nudge: " << packing.nudge()
-        << pyre::journal::newline
-        // total number of cells
-        << "cells: " << packing.cells()
-        << pyre::journal::newline
-        // flush
-        << pyre::journal::endl;
+    channel << "shape: " << packing.shape() << pyre::journal::newline
+            << "strides: " << packing.strides() << pyre::journal::newline
+            << "cells: " << packing.cells() << pyre::journal::endl(__HERE__);
 
-    // verify we understand the default constructor
-    assert((packing.shape() == shape));
-    assert((packing.order() == canonical_t::order_type::c()));
-    assert((packing.origin() == canonical_t::index_type::zero()));
-    assert((packing.nudge() == packing[{ 0, 0, 0 }]));
+    // with the origin at zero, the first cell sits at offset zero
+    static_assert(packing.nudge() == 0);
+    static_assert(packing.offset({ 0, 0, 0 }) == 0);
 
-    // make an index
-    auto index = canonical_t::index_type().fill((1 << 12) - 1);
+    // the far corner of the box
+    constexpr auto corner = canonical_t::index_type::fill((1 << 12) - 1);
+    // its offset is the inner product of its coordinates with the strides
+    auto expected = std::inner_product(
+        corner.begin(), corner.end(), packing.strides().begin(), canonical_t::difference_type { 0 });
     // show me
-    channel
-        // the index
-        << "index: " << index
-        << pyre::journal::newline
-        // the offset
-        << "offset: " << packing.offset(index)
-        << pyre::journal::newline
-        // inner product
-        << "inner product: "
-        << std::inner_product(index.begin(), index.end(), packing.strides().begin(), 0UL)
-        << pyre::journal::newline
-        // flush
-        << pyre::journal::endl;
-    // check
-    assert(
-        std::inner_product(index.begin(), index.end(), packing.strides().begin(), 0UL)
-        == packing.offset(index));
+    channel << "corner: " << corner << pyre::journal::newline << "offset: " << packing.offset(corner)
+            << pyre::journal::newline << "inner product: " << expected << pyre::journal::endl(__HERE__);
+    // the two must agree, and neither may have wrapped
+    assert((packing.offset(corner) == expected));
+    // the corner is the last addressable cell, so its offset is one short of the cell count
+    assert((packing.offset(corner) == packing.cells() - 1));
 
     // all done
     return 0;

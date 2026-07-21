@@ -17,23 +17,26 @@
 #include "api.h"
 
 // implementation
-// thin wrapper over whatever a lightweight container
-#include "Rep.h"
 // packing order
 #include "Order.h"
-#include "OrderIterator.h"
-// indices, shapes, and the canonical packing map
-#include "Product.h"
+// shape
 #include "Shape.h"
+// index
 #include "Index.h"
+// index iterator
 #include "IndexIterator.h"
+// canonical packing strategy
 #include "Canonical.h"
-#ifdef HAVE_COMPACT_PACKINGS
-#include "Symmetric.h"
+// diagonal packing strategy
 #include "Diagonal.h"
-#endif
+// symmetric packing strategy
+#include "Symmetric.h"
+// dynamic (runtime-rank) variants
+#include "DynamicIndexIterator.h"
+#include "DynamicCanonical.h"
 // the grid
 #include "Grid.h"
+// and the cursor that walks its cells
 #include "GridIterator.h"
 
 

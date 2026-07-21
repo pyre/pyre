@@ -11,35 +11,43 @@
 #include <pyre/grid.h>
 
 
-// type alias
+// the index under test
 using index_t = pyre::grid::index_t<2>;
 
 
-// index arithmetic
+// exercise component-wise index arithmetic
 int
 main(int argc, char * argv[])
 {
     // initialize the journal
     pyre::journal::init(argc, argv);
+    // attribute whatever gets logged to this test
     pyre::journal::application("index_arithmetic");
     // make a channel
     pyre::journal::debug_t channel("pyre.grid.index");
 
-    // make a couple of indices
+    // a reference corner
     constexpr index_t ref { 128, 128 };
+    // and a second one further out
     constexpr index_t sec { 192, 192 };
 
-    // make an index out a combination of these
-    index_t cor = sec - ref + index_t::one();
-
+    // the span from one to the other, counting both endpoints
+    constexpr index_t span = sec - ref + index_t::one();
     // show me
     channel << "ref: " << ref << pyre::journal::newline << "sec: " << sec << pyre::journal::newline
-            << "cor: " << cor << pyre::journal::endl(__HERE__);
+            << "span: " << span << pyre::journal::endl(__HERE__);
 
-    // verify
-    for (auto axis = 0; axis < index_t::rank(); ++axis) {
-        assert((cor[axis] == sec[axis] - ref[axis] + 1));
+    // each axis reports its own span
+    for (index_t::size_type axis = 0; axis < index_t::rank(); ++axis) {
+        // which is the difference of the endpoints, plus one for the fence post
+        assert((span[axis] == sec[axis] - ref[axis] + 1));
     }
+
+    // the result is type preserving: subtracting and adding indices yields an index
+    static_assert(std::is_same_v<decltype(sec - ref), index_t>);
+
+    // negation reflects every coordinate through the origin
+    static_assert(-ref == index_t { -128, -128 });
 
     // all done
     return 0;

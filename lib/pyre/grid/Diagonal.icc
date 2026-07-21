@@ -4,205 +4,185 @@
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
 // (c) 1998-2026 all rights reserved
 
-
 // code guard
 #pragma once
 
 
-// my declarations
+// support
 #include "Diagonal.h"
 
 
 // metamethods
 
-// constructor that assumes that the physical layout corresponds to the parameters given and
-// infers the nudge
-template <int N, typename T, template <typename, std::size_t> class containerT>
-constexpr pyre::grid::Diagonal<N, T, containerT>::Diagonal(
-    shape_const_reference shape, index_const_reference origin, order_const_reference order) :
+// deduce the diagonal length and the offset correction from the box
+template <std::size_t Rank>
+constexpr pyre::grid::Diagonal<Rank>::Diagonal(
+    const shape_type & shape, const index_type & origin) noexcept :
+    // remember the box
     _shape { shape },
-    _order { order },
+    // and the smallest addressable index
     _origin { origin },
-    _D { _shape[0] },
-    // compute the nudge, defined as the negative offset of the origin
-    _nudge { -_initShift(_origin) }
+    // the diagonal is as long as one axis is wide
+    _D { shape[0] },
+    // and the correction pulls the origin back to the start of the stored run
+    _nudge { -_initShift(origin) }
 {}
 
 
-// interface
-// accessors for the user supplied information
-template <int N, typename T, template <typename, std::size_t> class containerT>
+// accessors
+
+// the extent of my index box along each axis
+template <std::size_t Rank>
 constexpr auto
-pyre::grid::Diagonal<N, T, containerT>::shape() const -> shape_type
+pyre::grid::Diagonal<Rank>::shape() const noexcept -> shape_type
 {
-    // easy enough
+    // hand off my shape
     return _shape;
 }
 
-
-template <int N, typename T, template <typename, std::size_t> class containerT>
+// the smallest addressable index
+template <std::size_t Rank>
 constexpr auto
-pyre::grid::Diagonal<N, T, containerT>::order() const -> order_type
+pyre::grid::Diagonal<Rank>::origin() const noexcept -> index_type
 {
-    // easy enough
-    return _order;
-}
-
-
-template <int N, typename T, template <typename, std::size_t> class containerT>
-constexpr auto
-pyre::grid::Diagonal<N, T, containerT>::origin() const -> index_type
-{
-    // easy enough
+    // hand off my origin
     return _origin;
 }
 
-
-template <int N, typename T, template <typename, std::size_t> class containerT>
+// the offset correction that places my origin at the start of the stored run
+template <std::size_t Rank>
 constexpr auto
-pyre::grid::Diagonal<N, T, containerT>::nudge() const -> difference_type
+pyre::grid::Diagonal<Rank>::nudge() const noexcept -> difference_type
 {
-    // easy enough
+    // hand off my nudge
     return _nudge;
 }
 
-
-template <int N, typename T, template <typename, std::size_t> class containerT>
+// the memory footprint: the diagonal cells plus the one shared sink cell
+template <std::size_t Rank>
 constexpr auto
-pyre::grid::Diagonal<N, T, containerT>::cells() const -> T
+pyre::grid::Diagonal<Rank>::cells() const noexcept -> difference_type
 {
-    // the number of cells in the diagonal plus a cell to store the off-diagonal zero
+    // one cell per diagonal entry, and one more for everything off the diagonal
     return _D + 1;
 }
 
-
-// from {difference_type} to {index_type}
-template <int N, typename T, template <typename, std::size_t> class containerT>
-constexpr auto
-pyre::grid::Diagonal<N, T, containerT>::index(difference_type offset) const -> index_type
+// my rank, as a compile time constant
+template <std::size_t Rank>
+consteval auto
+pyre::grid::Diagonal<Rank>::rank() noexcept -> size_type
 {
-    // helper function to build an {index_type} repeating {offset} N times
-    constexpr auto _getIndex = []<int... I>(
-                                   difference_type offset, integer_sequence<I...>) -> index_type {
-        // helper template function returning {offset}
-        constexpr auto _wrap = []<int>(difference_type offset) -> difference_type {
-            return offset;
-        };
-
-        // build an index of N times {offset}
-        return index_type(_wrap.template operator()<I>(offset)...);
-    };
-
-    // shift it by {_origin} and return it
-    return _getIndex(offset, make_integer_sequence<N> {}) + _origin;
+    // it is my template parameter
+    return Rank;
 }
 
-template <int N, typename T, template <typename, std::size_t> class containerT>
-constexpr auto
-pyre::grid::Diagonal<N, T, containerT>::_isDiagonalIndex(index_const_reference index) -> bool
-{
-    // helper function needed to check if it is a diagonal index
-    auto _checkDiagonalIndex = []<int... I>(
-                                   index_const_reference index, integer_sequence<I...>) -> bool {
-        // if all indices are equal
-        if (((index[I] == index[I + 1]) && ...)) {
-            // then the index is on the diagonal
-            return true;
-        }
-        // otherwise it's off-diagonal
-        return false;
-    };
 
-    // check if index is on the diagonal
-    return _checkDiagonalIndex(index, make_integer_sequence<N - 1> {});
-};
+// packing isomorphism
 
-// from {index_type} to {difference_type}
-template <int N, typename T, template <typename, std::size_t> class containerT>
+// the cell an index lands on
+template <std::size_t Rank>
 constexpr auto
-pyre::grid::Diagonal<N, T, containerT>::offset(index_const_reference index) const -> difference_type
+pyre::grid::Diagonal<Rank>::offset(const index_type & index) const noexcept -> difference_type
 {
-    // if {index} is on the diagonal
-    if (_isDiagonalIndex(index)) {
-        // the offset is the diagonal index, shifted by the _nudge (i.e. the offset of the {origin})
+    // an index on the diagonal has a cell of its own, at its position along the diagonal shifted
+    // to put the origin at the start of the run
+    if (_isDiagonal(index)) {
+        // its coordinate along any axis will do, since they all agree
         return index[0] + _nudge;
     }
-
-    // return the extra memory location that stores the off-diagonal entry
+    // everything else shares the single sink cell that sits just past the diagonal
     return _D;
 }
 
-
-// syntactic sugar for the packing isomorphism
-template <int N, typename T, template <typename, std::size_t> class containerT>
+// the diagonal index that a stored offset came from
+template <std::size_t Rank>
 constexpr auto
-pyre::grid::Diagonal<N, T, containerT>::operator[](difference_type offset) const -> index_type
+pyre::grid::Diagonal<Rank>::index(difference_type off) const noexcept -> index_type
 {
-    // easy enough
-    return index(offset);
+    // a stored offset names a point on the diagonal, whose coordinates all equal that offset,
+    // measured from the origin
+    return index_type::fill(off) + _origin;
 }
 
-
-template <int N, typename T, template <typename, std::size_t> class containerT>
+// index into the layout to get the offset of a cell
+template <std::size_t Rank>
 constexpr auto
-pyre::grid::Diagonal<N, T, containerT>::operator[](index_const_reference index) const
-    -> difference_type
+pyre::grid::Diagonal<Rank>::operator[](const index_type & index) const noexcept -> difference_type
 {
-    // easy enough
+    // delegate to the forward map
     return offset(index);
 }
 
-
-// iteration support
-template <int N, typename T, template <typename, std::size_t> class containerT>
+// index into the layout with an offset to get a diagonal index
+template <std::size_t Rank>
 constexpr auto
-pyre::grid::Diagonal<N, T, containerT>::begin() const -> index_iterator
+pyre::grid::Diagonal<Rank>::operator[](difference_type off) const noexcept -> index_type
 {
-    // make an iterator that generates index in my packing {order}, starting at my {origin}
-    return index_iterator(shape(), order(), origin());
+    // delegate to the inverse map
+    return index(off);
 }
 
 
-template <int N, typename T, template <typename, std::size_t> class containerT>
+// iteration
+
+// a cursor at my origin that visits every index in the box
+template <std::size_t Rank>
 constexpr auto
-pyre::grid::Diagonal<N, T, containerT>::begin(index_const_reference step) const -> index_iterator
+pyre::grid::Diagonal<Rank>::begin() const noexcept -> iterator_type
 {
-    // make an iterator that generates index in my packing {order}, starting at my {origin}
-    return index_iterator(shape(), order(), origin(), step);
+    // hand out a cursor that knows the box and the order in which to walk it
+    return iterator_type(_shape, order_type::c(), _origin);
+}
+
+// a cursor at my origin that skips ahead by {step} along each axis
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Diagonal<Rank>::begin(const index_type & step) const noexcept -> iterator_type
+{
+    // hand out a cursor that takes the given step on each advance
+    return iterator_type(_shape, order_type::c(), _origin, step);
+}
+
+// the cursor that marks the end of the sweep
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Diagonal<Rank>::end() const noexcept -> iterator_type
+{
+    // the sweep ends one step past the far corner of the box
+    return iterator_type(_shape, order_type::c(), _origin + _shape);
 }
 
 
-template <int N, typename T, template <typename, std::size_t> class containerT>
+// static helpers
+
+// the offset of the origin, which must sit on the diagonal
+template <std::size_t Rank>
 constexpr auto
-pyre::grid::Diagonal<N, T, containerT>::end() const -> index_iterator
+pyre::grid::Diagonal<Rank>::_initShift(const index_type & origin) noexcept -> difference_type
 {
-    // form the end of the container
-    auto end = _origin + _shape;
-    // build an iterator that points to it
-    return index_iterator(_shape, _order, end);
-}
-
-
-// static interface
-template <int N, typename T, template <typename, std::size_t> class containerT>
-constexpr auto
-pyre::grid::Diagonal<N, T, containerT>::rank() -> int
-{
-    // easy enough
-    return N;
-}
-
-
-// compute the shift necessary so that {origin}, i.e. the smallest index, maps to offset zero
-template <int N, typename T, template <typename, std::size_t> class containerT>
-constexpr auto
-pyre::grid::Diagonal<N, T, containerT>::_initShift(index_const_reference origin) -> difference_type
-{
-    // assert that the origin is on the diagonal
-    assert(_isDiagonalIndex(origin));
-
-    // return the offset of {_origin}
+#if defined(DEBUG)
+    // a diagonal layout can only be anchored on the diagonal
+    assert(_isDiagonal(origin));
+#endif
+    // the origin's position along the diagonal is its coordinate on any axis
     return origin[0];
+}
+
+// whether an index sits on the diagonal
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Diagonal<Rank>::_isDiagonal(const index_type & index) noexcept -> bool
+{
+    // walk the axes, comparing each coordinate with the one before it
+    for (size_type axis = 1; axis < Rank; ++axis) {
+        // the moment two disagree, the index is off the diagonal
+        if (index[axis] != index[axis - 1]) {
+            // so say so
+            return false;
+        }
+    }
+    // all coordinates agree, so the index is on the diagonal
+    return true;
 }
 
 
