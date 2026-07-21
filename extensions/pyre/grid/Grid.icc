@@ -1,0 +1,66 @@
+// -*- C++ -*-
+// -*- coding: utf-8 -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2026 all rights reserved
+
+// code guard
+#pragma once
+
+
+// support
+#include "Grid.h"
+
+
+// turn a statically typed grid into the erased form
+template <class gridT>
+auto
+pyre::py::grid::erase(const gridT & grid, string_t strategy) -> Grid
+{
+    // name the cell type
+    using value_t = typename gridT::value_type;
+    // and the layout
+    const auto & packing = grid.packing();
+
+    // keep the source grid alive behind a type-erased handle: copying it bumps the storage's
+    // shared reference count, so its cells outlive this call for as long as python holds on
+    auto owner = std::make_shared<gridT>(grid);
+
+    // the extent along each axis
+    std::vector<Grid::size_type> shape;
+    // copied out of the layout
+    for (auto s : packing.shape()) {
+        shape.push_back(s);
+    }
+    // and the stride along each axis, in cells
+    std::vector<Grid::size_type> strides;
+    // likewise
+    for (auto s : packing.strides()) {
+        strides.push_back(s);
+    }
+
+    // whether python may write through depends on the storage's cell type
+    const bool writable = gridT::storage_type::cell_type::writable();
+
+    // assemble the erased grid over the kept-alive storage
+    return Grid(
+        // the block starts where the kept copy's storage does
+        owner->data(),
+        // one cell is this wide
+        sizeof(value_t),
+        // described by this struct code
+        py::format_descriptor<value_t>::format(),
+        // over this shape
+        std::move(shape),
+        // with these strides
+        std::move(strides),
+        // and this mutability
+        writable,
+        // backed by this storage strategy
+        std::move(strategy),
+        // held alive by the copy we just made
+        std::move(owner));
+}
+
+
+// end of file
