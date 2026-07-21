@@ -29,6 +29,8 @@
 #include "Canonical.h"
 // diagonal packing strategy
 #include "Diagonal.h"
+// symmetric packing strategy
+#include "Symmetric.h"
 // dynamic (runtime-rank) variants
 #include "DynamicIndexIterator.h"
 #include "DynamicCanonical.h"

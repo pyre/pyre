@@ -34,6 +34,9 @@ namespace pyre::grid {
     // diagonal packing strategy
     template <std::size_t Rank>
     using diagonal_t = Diagonal<Rank>;
+    // symmetric packing strategy
+    template <std::size_t Rank>
+    using symmetric_t = Symmetric<Rank>;
     // dynamic (runtime-rank) variants
     using dynamic_index_iterator_t = DynamicIndexIterator;
     using dynamic_canonical_t = DynamicCanonical;
