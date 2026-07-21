@@ -53,14 +53,20 @@ public:
 
     // metamethods
 public:
-    // map an existing data product; the second argument is a read/write flag
+    // map an existing data product; the {bool} is the read/write flag
     inline explicit Map(uri_type, writable_type = false);
-    // create a new one, given a path and a number of cells
-    // the count is taken as any integer type and constrained to be one, so that it never
-    // collides with the {writable_type} flag of the mapping constructor above: an integer
-    // argument always sizes a new file, and only a {bool} opens an existing one
+    // create a new one sized to hold the given number of cells; any integer count binds here,
+    // and only a {bool} binds the mapping constructor above
     template <std::integral countT>
     inline Map(uri_type, countT);
+
+    // named factories
+public:
+    // map an existing data product, read-only unless asked otherwise
+    static inline auto open(uri_type, writable_type = false) -> self_type;
+    // create a new data product sized to hold the given number of cells
+    template <std::integral countT>
+    static inline auto create(uri_type, countT) -> self_type;
 
     // interface
 public:

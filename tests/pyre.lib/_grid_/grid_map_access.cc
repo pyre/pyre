@@ -41,9 +41,8 @@ main(int argc, char * argv[])
     constexpr shape_t shape { 2, 3, 4 };
     // lay it out canonically
     const canonical_t packing { shape };
-    // back it with a file sized to hold exactly its cells; an integer count sizes a new file
-    // unambiguously, so no cast or disambiguation is needed at the call site
-    const map_t store(uri, packing.cells());
+    // create a fresh file sized to hold exactly its cells, and back the grid with it
+    const map_t store = map_t::create(uri, packing.cells());
     // and make a grid over the two
     const grid_t grid { packing, store };
 

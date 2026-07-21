@@ -31,6 +31,28 @@ pyre::memory::Map<T, isConst>::Map(uri_type uri, countT cells) :
 {}
 
 
+// named factories
+// map an existing data product
+template <typename T, bool isConst>
+auto
+pyre::memory::Map<T, isConst>::open(uri_type uri, writable_type writable) -> self_type
+{
+    // defer to the mapping constructor
+    return self_type(uri, writable);
+}
+
+
+// create a new data product sized to hold {cells} cells
+template <typename T, bool isConst>
+template <std::integral countT>
+auto
+pyre::memory::Map<T, isConst>::create(uri_type uri, countT cells) -> self_type
+{
+    // defer to the sizing constructor
+    return self_type(uri, cells);
+}
+
+
 // interface
 // get the name of the supporting file
 template <typename T, bool isConst>
