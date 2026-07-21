@@ -23,10 +23,11 @@ pyre::memory::Map<T, isConst>::Map(uri_type uri, writable_type writable) :
 
 // create a new one
 template <typename T, bool isConst>
-pyre::memory::Map<T, isConst>::Map(uri_type uri, size_type cells) :
+template <std::integral countT>
+pyre::memory::Map<T, isConst>::Map(uri_type uri, countT cells) :
     super_type(),
-    // scale up the number of cells to the number of bytes
-    _map { std::make_shared<FileMap>(uri, cell_type::bytes(cells)) }
+    // scale up the number of cells to the number of bytes, in the storage's own size type
+    _map { std::make_shared<FileMap>(uri, cell_type::bytes(static_cast<size_type>(cells))) }
 {}
 
 
