@@ -1,0 +1,285 @@
+// -*- C++ -*-
+// -*- coding: utf-8 -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2026 all rights reserved
+
+// code guard
+#pragma once
+
+
+// support
+#include "Symmetric.h"
+#include <algorithm>
+#include <utility>
+
+
+// metamethods
+
+// record the box; the dimension of the cube is the extent of any axis
+template <std::size_t Rank>
+constexpr pyre::grid::Symmetric<Rank>::Symmetric(
+    const shape_type & shape, const index_type & origin) noexcept :
+    // remember the box
+    _shape { shape },
+    // and the smallest addressable index
+    _origin { origin },
+    // every axis shares the same extent, so any of them is the dimension
+    _D { shape[0] }
+{}
+
+
+// accessors
+
+// the extent of my index box along each axis
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Symmetric<Rank>::shape() const noexcept -> shape_type
+{
+    // hand off my shape
+    return _shape;
+}
+
+// the smallest addressable index
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Symmetric<Rank>::origin() const noexcept -> index_type
+{
+    // hand off my origin
+    return _origin;
+}
+
+// the memory footprint: the number of entries in one triangular half
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Symmetric<Rank>::cells() const noexcept -> difference_type
+{
+    // count the entries of a full rank packing at my dimension
+    return _entries<Rank>(_D);
+}
+
+// my rank, as a compile time constant
+template <std::size_t Rank>
+consteval auto
+pyre::grid::Symmetric<Rank>::rank() noexcept -> size_type
+{
+    // it is my template parameter
+    return Rank;
+}
+
+
+// packing isomorphism
+
+// the cell an index lands on
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Symmetric<Rank>::offset(const index_type & index) const noexcept -> difference_type
+{
+    // work in coordinates measured from the origin
+    index_type sorted = index - _origin;
+    // sort them, so that an index and every permutation of it are brought to one representative;
+    // this is what makes the two triangular halves share their cells
+    std::sort(sorted.begin(), sorted.end());
+    // recast the sorted coordinates as gaps between successive ones, walking from the top down so
+    // that each coordinate is still original when it is read: (i, j, k, ...) -> (i, j-i, k-j, ...)
+    for (size_type axis = Rank; axis-- > 1;) {
+        // the gap from the previous coordinate to this one
+        sorted[axis] -= sorted[axis - 1];
+    }
+    // fold the gaps into a triangular offset; expand the index into the argument pack {_offset}
+    // expects
+    auto expand = [this]<std::size_t... I>(const index_type & idx, std::index_sequence<I...>) {
+        // hand the dimension and every coordinate to the rank {Rank} offset formula
+        return self_type::template _offset<Rank>(_D, idx[I]...);
+    };
+    // and evaluate it over all my axes
+    return expand(sorted, std::make_index_sequence<Rank> {});
+}
+
+// the sorted representative index that a stored offset came from
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Symmetric<Rank>::index(difference_type off) const noexcept -> index_type
+{
+    // room for the answer
+    index_type result;
+    // the leading coordinate accounts for a whole band of the offset and consumes it
+    result[0] = _leadingCoordinate<Rank>(_D, off);
+    // each further coordinate is the leading coordinate of the smaller packing that is left,
+    // measured relative to the coordinate before it, so add that back to return to absolute terms
+    auto rest = [this, &off]<std::size_t... I>(index_type & idx, std::index_sequence<I...>) {
+        // peel one coordinate at a time, the rank dropping by one and the dimension by the last
+        // coordinate at each step
+        ((idx[I + 1] =
+              self_type::template _leadingCoordinate<Rank - (I + 1)>(_D - idx[I], off) + idx[I]),
+         ...);
+    };
+    // fill in the coordinates past the first
+    rest(result, std::make_index_sequence<Rank - 1> {});
+    // put the representative back in the caller's index space
+    return result + _origin;
+}
+
+// index into the layout to get the offset of a cell
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Symmetric<Rank>::operator[](const index_type & index) const noexcept -> difference_type
+{
+    // delegate to the forward map
+    return offset(index);
+}
+
+// index into the layout with an offset to get the representative index
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Symmetric<Rank>::operator[](difference_type off) const noexcept -> index_type
+{
+    // delegate to the inverse map
+    return index(off);
+}
+
+
+// iteration
+
+// a cursor at my origin that visits every index in the box
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Symmetric<Rank>::begin() const noexcept -> iterator_type
+{
+    // hand out a cursor over the whole box in row major order
+    return iterator_type(_shape, order_type::c(), _origin);
+}
+
+// a cursor at my origin that skips ahead by {step} along each axis
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Symmetric<Rank>::begin(const index_type & step) const noexcept -> iterator_type
+{
+    // hand out a cursor that takes the given step on each advance
+    return iterator_type(_shape, order_type::c(), _origin, step);
+}
+
+// the cursor that marks the end of the sweep
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Symmetric<Rank>::end() const noexcept -> iterator_type
+{
+    // the sweep ends one step past the far corner of the box
+    return iterator_type(_shape, order_type::c(), _origin + _shape);
+}
+
+
+// static helpers
+
+// a rank one packing stores one cell per coordinate, so it holds {D} of them
+template <std::size_t Rank>
+template <std::size_t M>
+constexpr auto
+pyre::grid::Symmetric<Rank>::_entries(difference_type D) noexcept -> difference_type
+    requires(M == 1)
+{
+    // the whole axis is stored
+    return D;
+}
+
+// a higher rank packing is the sum, over the leading coordinate, of the smaller packings that
+// follow it; fixing the leading coordinate at {i} leaves a rank {M-1} packing of dimension {D-i}
+template <std::size_t Rank>
+template <std::size_t M>
+constexpr auto
+pyre::grid::Symmetric<Rank>::_entries(difference_type D) noexcept -> difference_type
+    requires(M > 1)
+{
+    // start the tally
+    difference_type total = 0;
+    // let the leading coordinate range over the whole dimension
+    for (difference_type i = 0; i < D; ++i) {
+        // adding the entries of the smaller packing that remains once it is fixed
+        total += _entries<M - 1>(D - i);
+    }
+    // hand off the count
+    return total;
+}
+
+// the number of entries that come before the leading coordinate reaches {i}
+template <std::size_t Rank>
+template <std::size_t M>
+constexpr auto
+pyre::grid::Symmetric<Rank>::_entriesBeforeRank(difference_type i, difference_type D) noexcept
+    -> difference_type
+{
+    // start the tally
+    difference_type total = 0;
+    // for every leading coordinate strictly below {i}
+    for (difference_type a = 0; a < i; ++a) {
+        // add the entries of the smaller packing it heads
+        total += _entries<M - 1>(D - a);
+    }
+    // hand off the count
+    return total;
+}
+
+// the offset of a single coordinate at rank one is the coordinate itself
+template <std::size_t Rank>
+template <std::size_t M>
+constexpr auto
+pyre::grid::Symmetric<Rank>::_offset(difference_type, difference_type i) noexcept -> difference_type
+    requires(M == 1)
+{
+    // nothing precedes it
+    return i;
+}
+
+// the offset at higher rank is the entries the leading coordinate skips past, plus the offset of
+// the coordinates that follow it in the smaller packing that remains
+template <std::size_t Rank>
+template <std::size_t M, class... S>
+constexpr auto
+pyre::grid::Symmetric<Rank>::_offset(difference_type D, difference_type i, S... j) noexcept
+    -> difference_type
+    requires(sizeof...(S) == M - 1 && M > 1)
+{
+    // the whole span before the leading coordinate, plus the recursive offset of the rest
+    return _entriesBeforeRank<M>(i, D) + _offset<M - 1>(D - i, j...);
+}
+
+// the leading coordinate that a rank one offset names is the offset itself, and it is consumed
+template <std::size_t Rank>
+template <std::size_t M>
+constexpr auto
+pyre::grid::Symmetric<Rank>::_leadingCoordinate(difference_type, difference_type & offset) noexcept
+    -> difference_type
+    requires(M == 1)
+{
+    // the last coordinate simply is what remains
+    return offset;
+}
+
+// at higher rank, find the largest leading coordinate whose preceding entries do not overrun the
+// offset, then consume those entries
+template <std::size_t Rank>
+template <std::size_t M>
+constexpr auto
+pyre::grid::Symmetric<Rank>::_leadingCoordinate(difference_type D, difference_type & offset) noexcept
+    -> difference_type
+    requires(M > 1)
+{
+    // guess the top coordinate
+    difference_type k = D - 1;
+    // and count what lies before it
+    difference_type before = _entriesBeforeRank<M>(k, D);
+    // while that count overshoots the offset
+    while (offset < before) {
+        // step the coordinate down
+        --k;
+        // and recount
+        before = _entriesBeforeRank<M>(k, D);
+    }
+    // charge the offset for the band this coordinate sits above
+    offset -= before;
+    // and report the coordinate
+    return k;
+}
+
+
+// end of file

@@ -39,6 +39,10 @@ namespace pyre::grid {
     template <size_t Rank>
     class Diagonal;
 
+    // the packing strategy that stores only one triangular half
+    template <size_t Rank>
+    class Symmetric;
+
     // dynamic (runtime-rank) variants for Python interoperability
     class DynamicIndexIterator;
     class DynamicCanonical;
