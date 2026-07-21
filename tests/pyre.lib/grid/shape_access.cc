@@ -11,47 +11,42 @@
 #include <pyre/grid.h>
 
 
-// type alias
+// the shape under test
 using shape_t = pyre::grid::shape_t<4>;
 
 
-// exercise operator[]
+// exercise indexed read and write
 int
 main(int argc, char * argv[])
 {
     // initialize the journal
     pyre::journal::init(argc, argv);
+    // attribute whatever gets logged to this test
     pyre::journal::application("shape_access");
     // make a channel
     pyre::journal::debug_t channel("pyre.grid.shape");
 
-    // make a const shape
-    constexpr shape_t shape_1 { 0, 1, 2, 3 };
+    // a compile time shape reads back the extents it was built from
+    constexpr shape_t known { 0, 1, 2, 3 };
     // show me
-    channel << "shape_1: " << shape_1 << pyre::journal::endl(__HERE__);
-    // verify the contents
-    static_assert(shape_1[0] == 0);
-    static_assert(shape_1[1] == 1);
-    static_assert(shape_1[2] == 2);
-    static_assert(shape_1[3] == 3);
+    channel << "known: " << known << pyre::journal::endl(__HERE__);
+    // each extent is where it was placed
+    static_assert(known[0] == 0);
+    static_assert(known[1] == 1);
+    static_assert(known[2] == 2);
+    static_assert(known[3] == 3);
 
-    // make a writable one
-    shape_t shape_2 {};
+    // a mutable shape starts out with every extent zeroed
+    shape_t scratch {};
+    // and each extent can be written through the subscript
+    scratch[0] = 0;
+    scratch[1] = 1;
+    scratch[2] = 2;
+    scratch[3] = 3;
     // show me
-    channel << "shape_2 before: " << shape_2 << pyre::journal::endl(__HERE__);
-    // set it
-    shape_2[0] = 0;
-    shape_2[1] = 1;
-    shape_2[2] = 2;
-    shape_2[3] = 3;
-    // show me
-    channel << "shape_2 after: " << shape_2 << pyre::journal::endl(__HERE__);
-
-    // check it
-    assert((shape_2[0] == 0));
-    assert((shape_2[1] == 1));
-    assert((shape_2[2] == 2));
-    assert((shape_2[3] == 3));
+    channel << "scratch: " << scratch << pyre::journal::endl(__HERE__);
+    // the writes must be visible on read back
+    assert((scratch == known));
 
     // all done
     return 0;

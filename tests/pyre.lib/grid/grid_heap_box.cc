@@ -9,79 +9,75 @@
 #include <cassert>
 // get the grid
 #include <pyre/grid.h>
+// and the storage strategies
+#include <pyre/memory.h>
 
 
-// verify the layout of a grid on the heap
+// the parts of the grid under test
+using canonical_t = pyre::grid::canonical_t<3>;
+using heap_t = pyre::memory::heap_t<pyre::memory::float64_t>;
+using grid_t = pyre::grid::grid_t<canonical_t, heap_t>;
+// and the pieces used to address it
+using shape_t = canonical_t::shape_type;
+using index_t = canonical_t::index_type;
+
+
+// verify that a sub-grid addresses the cells of the grid it came from
 int
 main(int argc, char * argv[])
 {
     // initialize the journal
     pyre::journal::init(argc, argv);
+    // attribute whatever gets logged to this test
     pyre::journal::application("grid_heap_box");
     // make a channel
-    pyre::journal::debug_t channel("pyre.grid.heap");
+    pyre::journal::debug_t channel("pyre.grid.grid");
 
-    // we'll work with a 3d conventionally packed grid
-    using pack_t = pyre::grid::canonical_t<3>;
-    // of doubles on the heap
-    using storage_t = pyre::memory::heap_t<double>;
-    // putting it all together
-    using grid_t = pyre::grid::grid_t<pack_t, storage_t>;
+    // pick a shape
+    constexpr shape_t shape { 2, 3, 4 };
+    // lay it out canonically over enough cells to hold it
+    const canonical_t packing { shape };
+    // put the cells on the heap
+    const heap_t store { packing.cells() };
+    // and make a grid
+    const grid_t grid { packing, store };
 
-    // packing
-    pack_t packing { { 3, 3, 3 } };
-    // instantiate the grid
-    grid_t grid { packing, packing.cells() };
-
-    // visit every location on the grid
-    for (auto & cell : grid) {
-        // and set it to zero
-        cell = 0;
-    }
-    // show me
-    channel << "grid before box:" << pyre::journal::newline;
-    for (const auto & idx : grid.layout()) {
-        channel << "  " << idx << " -> " << grid[idx] << pyre::journal::newline;
-    }
-    channel << pyre::journal::endl(__HERE__);
-
-    // make a box that excludes the outer surfaces
-    // top corner
-    pack_t::index_type top = pack_t::index_type::one();
-    // shape
-    pack_t::shape_type interior = grid.layout().shape() - 2 * pack_t::shape_type::one();
-    // put them together to make the box
-    auto box = grid.layout().box(top, interior);
-
-    // set the values in the box
-    for (auto & cell : grid.box(top, interior)) {
-        // to one
-        cell = 1;
+    // start from a known state: stamp every cell with its own offset
+    for (auto it = grid.packing().begin(); it != grid.packing().end(); ++it) {
+        // so that a cell reached by two different routes is recognizable
+        grid[*it] = static_cast<grid_t::value_type>(packing.offset(*it));
     }
 
-    // show me
-    channel << "box:" << pyre::journal::newline;
-    for (const auto & idx : box) {
-        channel << "  " << idx << " -> " << grid[idx] << pyre::journal::newline;
-    }
-    channel << pyre::journal::endl(__HERE__);
+    // carve out a sub-grid in the far corner
+    const auto tile = grid.box(index_t { 1, 1, 1 }, shape_t { 1, 2, 3 });
+    // it reports the extent it was asked for
+    assert((tile.packing().shape() == shape_t { 1, 2, 3 }));
+    // and it is anchored where we said
+    assert((tile.packing().origin() == index_t { 1, 1, 1 }));
 
-    // show me
-    channel << "grid after box:" << pyre::journal::newline;
-    for (const auto & idx : grid.layout()) {
-        channel << "  " << idx << " -> " << grid[idx] << pyre::journal::newline;
+    // every cell of the sub-grid must be a cell of the parent, not a copy
+    for (auto it = tile.packing().begin(); it != tile.packing().end(); ++it) {
+        // name the cell
+        auto idx = *it;
+        // show me
+        channel << pyre::journal::at() << "  " << idx << " -> " << tile[idx]
+                << pyre::journal::newline;
+        // reaching it through the sub-grid and through the parent must agree
+        assert((tile[idx] == grid[idx]));
     }
-    channel << pyre::journal::endl(__HERE__);
 
-    // verify that the value at the center of the grid is one
-    assert((grid[{ 1, 1, 1 }] == 1));
-    // and the rest is all zeroes
-    for (const auto & idx : grid.layout()) {
-        if (idx == pack_t::index_type::one()) {
-            continue;
-        }
-        assert((grid[idx] == 0));
-    }
+    // writing through the sub-grid must be visible in the parent
+    tile[index_t { 1, 1, 1 }] = -7;
+    // so ask the parent
+    assert((grid[index_t { 1, 1, 1 }] == -7));
+
+    // and writing through the parent must be visible in the sub-grid
+    grid[index_t { 1, 2, 3 }] = -9;
+    // so ask the sub-grid
+    assert((tile[index_t { 1, 2, 3 }] == -9));
+
+    // flush the trace
+    channel << pyre::journal::endl;
 
     // all done
     return 0;

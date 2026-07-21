@@ -11,46 +11,42 @@
 #include <pyre/grid.h>
 
 
-// type alias
-using idx_t = pyre::grid::index_t<4>;
+// the index under test
+using index_t = pyre::grid::index_t<4>;
 
 
-// exercise operator[]
+// exercise indexed read and write
 int
 main(int argc, char * argv[])
 {
     // initialize the journal
     pyre::journal::init(argc, argv);
+    // attribute whatever gets logged to this test
     pyre::journal::application("index_access");
     // make a channel
     pyre::journal::debug_t channel("pyre.grid.index");
 
-    // make a compile-time index
-    constexpr idx_t idx_1 { 0, 1, 2, 3 };
+    // a compile time index reads back the coordinates it was built from
+    constexpr index_t known { 0, 1, 2, 3 };
     // show me
-    channel << "idx_1: " << idx_1 << pyre::journal::endl(__HERE__);
-    // verify the contents
-    static_assert(idx_1[0] == 0);
-    static_assert(idx_1[1] == 1);
-    static_assert(idx_1[2] == 2);
-    static_assert(idx_1[3] == 3);
+    channel << "known: " << known << pyre::journal::endl(__HERE__);
+    // each coordinate is where it was placed
+    static_assert(known[0] == 0);
+    static_assert(known[1] == 1);
+    static_assert(known[2] == 2);
+    static_assert(known[3] == 3);
 
-    // make a writable one
-    idx_t idx_2 { 0, 0, 0, 0 };
+    // a mutable index starts out at the origin
+    index_t scratch {};
+    // and each coordinate can be written through the subscript
+    scratch[0] = 0;
+    scratch[1] = 1;
+    scratch[2] = 2;
+    scratch[3] = 3;
     // show me
-    channel << "idx_2 before: " << idx_2 << pyre::journal::endl(__HERE__);
-    // set it
-    idx_2[0] = 0;
-    idx_2[1] = 1;
-    idx_2[2] = 2;
-    idx_2[3] = 3;
-    // show me
-    channel << "idx_2 after: " << idx_2 << pyre::journal::endl(__HERE__);
-    // check it
-    assert((idx_2[0] == 0));
-    assert((idx_2[1] == 1));
-    assert((idx_2[2] == 2));
-    assert((idx_2[3] == 3));
+    channel << "scratch: " << scratch << pyre::journal::endl(__HERE__);
+    // the writes must be visible on read back
+    assert((scratch == known));
 
     // all done
     return 0;

@@ -7,409 +7,360 @@
 // code guard
 #pragma once
 
-// my declarations
+
+// support
 #include "Canonical.h"
 
 
-// metamethods
-// constructor that assumes that the physical layout corresponds to the parameters given and
-// infers the strides and the nudge
-template <int N, typename T, template <typename, std::size_t> class containerT>
-constexpr pyre::grid::Canonical<N, T, containerT>::Canonical(
-    shape_const_reference shape, index_const_reference origin, order_const_reference order) :
+// primary constructor: infer strides and nudge
+// the caller describes the index box; i work out how it lands in memory, assuming tight packing
+template <std::size_t Rank>
+constexpr pyre::grid::Canonical<Rank>::Canonical(
+    const shape_type & shape, const index_type & origin, const order_type & order) noexcept :
+    // remember the extent of the box
     _shape { shape },
+    // and which axis varies fastest
     _order { order },
+    // and the smallest addressable index
     _origin { origin },
-    // invoke the static stride initializer
-    _strides { _initStrides(_shape, _order) },
-    // compute the nudge, defined as the offset of the zero index
-    _nudge { -_initShift(_origin, _strides) }
+    // deduce the memory distance between consecutive cells along each axis
+    _strides { _initStrides(shape, order) },
+    // and the correction that pulls {origin} back to the beginning of the block
+    _nudge { -_initShift(origin, _strides) },
+    // work out where my first cell lands; deducing my own packing puts it at the head of the
+    // block, but derive it rather than assume it, so that it keeps agreeing with {_nudge}
+    _anchor { _initShift(origin, _strides) + _nudge }
 {}
 
 
-// constructor that requires a complete layout specification; useful for deriving layouts
-// different from the physical one that is fixed by the owner of the underlying memory
-// representation
-template <int N, typename T, template <typename, std::size_t> class containerT>
-constexpr pyre::grid::Canonical<N, T, containerT>::Canonical(
-    shape_const_reference shape, index_const_reference origin, order_const_reference order,
-    strides_const_reference strides, difference_type nudge) :
+// full constructor: caller supplies the complete layout description
+// nothing is deduced here; this is how derived layouts inherit their parent's physical packing
+template <std::size_t Rank>
+constexpr pyre::grid::Canonical<Rank>::Canonical(
+    const shape_type & shape,
+    const index_type & origin,
+    const order_type & order,
+    const strides_type & strides,
+    difference_type nudge) noexcept :
+    // the extent of the box
     _shape { shape },
+    // the packing order of the axes
     _order { order },
+    // the smallest addressable index
     _origin { origin },
+    // the strides, as dictated by the caller rather than by my own shape
     _strides { strides },
-    _nudge { nudge }
+    // and likewise the offset correction
+    _nudge { nudge },
+    // the caller's layout need not place my first cell at the head of the block, so work out
+    // where it does land and remember it for the trip back from an offset to an index
+    _anchor { _initShift(origin, strides) + nudge }
 {}
 
 
-// interface
-// accessors for the user supplied information
-template <int N, typename T, template <typename, std::size_t> class containerT>
+// accessors
+
+// the extent of my index box along each axis
+template <std::size_t Rank>
 constexpr auto
-pyre::grid::Canonical<N, T, containerT>::shape() const -> shape_type
+pyre::grid::Canonical<Rank>::shape() const noexcept -> shape_type
 {
-    // easy enough
+    // hand off my shape
     return _shape;
 }
 
-
-template <int N, typename T, template <typename, std::size_t> class containerT>
+// the smallest addressable index
+template <std::size_t Rank>
 constexpr auto
-pyre::grid::Canonical<N, T, containerT>::order() const -> order_type
+pyre::grid::Canonical<Rank>::origin() const noexcept -> index_type
 {
-    // easy enough
-    return _order;
-}
-
-
-template <int N, typename T, template <typename, std::size_t> class containerT>
-constexpr auto
-pyre::grid::Canonical<N, T, containerT>::origin() const -> index_type
-{
-    // easy enough
+    // hand off my origin
     return _origin;
 }
 
-
-// accessors for the deduced information
-template <int N, typename T, template <typename, std::size_t> class containerT>
+// the permutation that says which axis varies fastest in memory
+template <std::size_t Rank>
 constexpr auto
-pyre::grid::Canonical<N, T, containerT>::strides() const -> strides_type
+pyre::grid::Canonical<Rank>::order() const noexcept -> order_type
 {
-    // easy enough
+    // hand off my packing order
+    return _order;
+}
+
+// the memory distance between consecutive cells along each axis
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Canonical<Rank>::strides() const noexcept -> strides_type
+{
+    // hand off my strides
     return _strides;
 }
 
-
-template <int N, typename T, template <typename, std::size_t> class containerT>
+// the offset correction that maps my origin to offset zero
+template <std::size_t Rank>
 constexpr auto
-pyre::grid::Canonical<N, T, containerT>::nudge() const -> difference_type
+pyre::grid::Canonical<Rank>::nudge() const noexcept -> difference_type
 {
-    // easy enough
+    // hand off my nudge
     return _nudge;
 }
 
-
-template <int N, typename T, template <typename, std::size_t> class containerT>
+// the number of addressable cells
+template <std::size_t Rank>
 constexpr auto
-pyre::grid::Canonical<N, T, containerT>::cells() const -> std::size_t
+pyre::grid::Canonical<Rank>::cells() const noexcept -> difference_type
 {
-    // my {shape} knows
+    // the box knows how many indices it contains
     return _shape.cells();
 }
 
-
-// mutators
-template <int N, typename T, template <typename, std::size_t> class containerT>
-constexpr auto
-pyre::grid::Canonical<N, T, containerT>::order(order_const_reference order) const -> canonical_type
+// my rank, as a compile time constant
+template <std::size_t Rank>
+consteval auto
+pyre::grid::Canonical<Rank>::rank() noexcept -> size_type
 {
-    // make a new packing using my info and the supplied {order}
-    canonical_type reordered { _shape, _origin, order };
-    // and return it
-    return reordered;
+    // it is my template parameter
+    return Rank;
 }
 
 
-// from {difference_type} to {index_type}
-template <int N, typename T, template <typename, std::size_t> class containerT>
+// mutator: reorder, returning a new {Canonical} with fresh strides and nudge
+template <std::size_t Rank>
 constexpr auto
-pyre::grid::Canonical<N, T, containerT>::index(difference_type offset) const -> index_type
+pyre::grid::Canonical<Rank>::order(const order_type & o) const noexcept -> self_type
 {
-    // make an empty index
-    index_type index;
-    // pack the initializers
-    auto pack = std::make_tuple(_strides.rbegin(_order), index.rbegin(_order));
-    // traverse in reverse packing order
-    for (auto & [s, i] = pack; s != _strides.rend(_order); ++s, ++i) {
-        // get the current stride
-        auto stride = *s;
-        // the value of the index is the ratio of the current value of the offset with the
-        // current stride
-        *i = offset / stride;
-        // the leftovers are for the next index value
-        offset %= stride;
+    // keep my index box but let the primary constructor repack it in the new order
+    return self_type { _shape, _origin, o };
+}
+
+
+// packing isomorphism
+
+// map an index to its flat offset
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Canonical<Rank>::offset(const index_type & index) const noexcept -> difference_type
+{
+    // start the accumulation at the beginning of the block
+    difference_type result = 0;
+    // go through the axes
+    for (std::size_t axis = 0; axis < Rank; ++axis) {
+        // and fold in the contribution of this axis
+        result += index[axis] * _strides[axis];
     }
-
-    // shift it by {_origin} and return it
-    return index + _origin;
+    // shift so that the lowest addressable index lands at the beginning of the block
+    return result + _nudge;
 }
 
 
-// from {index_type} to {difference_type}
-template <int N, typename T, template <typename, std::size_t> class containerT>
+// recover the index from a flat offset
+// the offset equals sum_i((idx[i] - origin[i]) * strides[i]); decompose by strides
+// from slowest-varying axis to fastest to recover (idx - origin), then shift by origin
+template <std::size_t Rank>
 constexpr auto
-pyre::grid::Canonical<N, T, containerT>::offset(index_const_reference index) const
-    -> difference_type
+pyre::grid::Canonical<Rank>::index(difference_type off) const noexcept -> index_type
 {
-    // the initial value; here so we can be explicit about the return type
-    difference_type zero = 0;
-    // project and return
-    auto offset = std::inner_product(index.begin(), index.end(), _strides.begin(), zero);
-    // shift the result by the fixed offset of the {origin} and return it
-    return offset + _nudge;
+    // room for the answer
+    index_type result;
+    // measure the offset from my own first cell rather than from the beginning of the block;
+    // for a layout that anchors itself at offset zero this changes nothing, but a derived layout
+    // carries the offset correction of the parent whose memory it addresses, and the
+    // decomposition below only makes sense on distances measured from my {_origin}
+    off -= _anchor;
+    // traverse in reverse packing order: {_order} lists the axes fastest first, so walking it
+    // backwards peels off one packing level at a time starting with the slowest-varying axis
+    for (std::size_t level = Rank; level-- > 0;) {
+        // find out which axis packs at this level
+        auto axis = _order[level];
+        // get the distance between consecutive cells along it
+        auto stride = _strides[axis];
+        // its coordinate is however many whole strides fit in what is left
+        result[axis] = off / stride;
+        // and the remainder is what the faster axes must account for
+        off %= stride;
+    }
+    // the decomposition yields coordinates relative to my first cell, so put them back in
+    // absolute terms
+    return result + _origin;
 }
 
 
-// syntactic sugar for the packing isomorphism
-template <int N, typename T, template <typename, std::size_t> class containerT>
-constexpr auto
-pyre::grid::Canonical<N, T, containerT>::operator[](difference_type offset) const -> index_type
-{
-    // easy enough
-    return index(offset);
-}
+// syntactic sugar
 
-
-template <int N, typename T, template <typename, std::size_t> class containerT>
+// index into the layout to get the offset of a cell
+template <std::size_t Rank>
 constexpr auto
-pyre::grid::Canonical<N, T, containerT>::operator[](index_const_reference index) const
-    -> difference_type
+pyre::grid::Canonical<Rank>::operator[](const index_type & index) const noexcept -> difference_type
 {
-    // easy enough
+    // delegate to the forward map
     return offset(index);
 }
 
-
-// slicing
-// when the shape is known at compile time
-template <int N, typename T, template <typename, std::size_t> class containerT>
-template <T... args>
+// index into the layout with an offset to get the index of a cell
+template <std::size_t Rank>
 constexpr auto
-pyre::grid::Canonical<N, T, containerT>::cslice(index_const_reference base) const
+pyre::grid::Canonical<Rank>::operator[](difference_type off) const noexcept -> index_type
 {
-    // count the non-zero entries in the shape specification to figure out the dimensionality
-    // of the slice
-    constexpr T M = (0 + ... + (args == 0 ? 0 : 1));
+    // delegate to the inverse map
+    return index(off);
+}
 
-    // we now know enough to make an alias for the slice packing
-    using slice_t = Canonical<M, T, containerT>;
-    // and instantiate blank slice info
-    typename slice_t::shape_type sliceShape {};
-    typename slice_t::index_type sliceOrigin {};
-    typename slice_t::order_type sliceOrder {};
-    typename slice_t::strides_type sliceStrides {};
 
-    // start building the slice packing info
-    // realize the shape
-    shape_type rawShape { args... };
-    // get my strides
-    const auto & myStrides = strides();
-    // initialize the map from my ranks to the slice tanks
-    shape_type rankMap {};
-    // go through the raw shape spec
-    for (T i = 0, j = 0; i < N; ++i) {
-        // get the {ith} value
-        auto s = rawShape[i];
-        // if it's zero
-        if (s == 0) {
-            // move on
-            continue;
+// iteration: visit every index in the box in packing order
+
+// a cursor at my origin that visits every index in the box, one cell at a time
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Canonical<Rank>::begin() const noexcept -> iterator_type
+{
+    // hand out a cursor that knows the box and the order in which to walk it
+    return iterator_type(_shape, _order, _origin);
+}
+
+// a cursor at my origin that skips ahead by {step} along each axis
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Canonical<Rank>::begin(const index_type & step) const noexcept -> iterator_type
+{
+    // same walk, but with the caller's stride through the index space
+    return iterator_type(_shape, _order, _origin, step);
+}
+
+// the cursor that marks the end of the traversal
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Canonical<Rank>::end() const noexcept -> iterator_type
+{
+    // the far corner of the box is one past the last visitable index
+    return iterator_type(_shape, _order, _origin + _shape);
+}
+
+
+// sub-layout: clamp {base} and {tile} to the current box, inherit strides and nudge
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Canonical<Rank>::box(index_type base, shape_type tile) const noexcept -> self_type
+{
+    // trim the request against my box, one axis at a time
+    for (std::size_t axis = 0; axis < Rank; ++axis) {
+        // clamp base[axis] to [origin[axis], origin[axis] + shape[axis] - 1]
+        auto lo = _origin[axis];
+        auto hi = _origin[axis] + _shape[axis] - 1;
+        // no anchor may sit below the first addressable index
+        base[axis] = std::max(base[axis], lo);
+        // nor beyond the last one
+        base[axis] = std::min(base[axis], hi);
+        // clamp tile[axis] to [1, remaining extent from base]
+        auto avail = _origin[axis] + _shape[axis] - base[axis];
+        // a tile is never empty
+        tile[axis] = std::max(tile[axis], typename shape_type::value_type { 1 });
+        // and it never runs past my far edge
+        tile[axis] = std::min(tile[axis], avail);
+    }
+    // build the sub-layout with inherited physical strides and nudge
+    return self_type { tile, base, _order, _strides, _nudge };
+}
+
+
+// hyperplane extraction
+// fix all axes not in {FreeAxes} at {base}; the result inherits the parent's strides and nudge
+template <std::size_t Rank>
+template <std::size_t... FreeAxes>
+    requires(sizeof...(FreeAxes) <= Rank && ((FreeAxes < Rank) && ...))
+constexpr auto
+pyre::grid::Canonical<Rank>::slice(const index_type & base) const noexcept
+    -> Canonical<sizeof...(FreeAxes)>
+{
+    // the rank of the slice
+    constexpr std::size_t M = sizeof...(FreeAxes);
+    // collect the free axis indices for indexed access
+    constexpr std::array<std::size_t, M> free { FreeAxes... };
+    // aliases for the slice's types
+    using slice_t = Canonical<M>;
+    // room for the extent of the surviving axes
+    typename slice_t::shape_type sliceShape;
+    // and for the memory distances they inherit from me
+    typename slice_t::strides_type sliceStrides;
+    // and for their packing order
+    typename slice_t::order_type sliceOrder;
+    // extract the shape and strides at each free axis
+    for (std::size_t i = 0; i < M; ++i) {
+        // the surviving axis keeps its extent
+        sliceShape[i] = _shape[free[i]];
+        // and, crucially, my physical stride, so the slice addresses my memory unchanged
+        sliceStrides[i] = _strides[free[i]];
+    }
+    // fill the slice's packing order, which lists its axes fastest first
+    std::size_t level = 0;
+    // walk my own axes from the fastest varying to the slowest
+    for (std::size_t k = 0; k < Rank; ++k) {
+        // the axis that packs at this level of mine
+        auto axis = _order[k];
+        // look for it among the survivors
+        for (std::size_t i = 0; i < M; ++i) {
+            // when the axis is one the slice keeps
+            if (free[i] == axis) {
+                // it claims the next slot in the slice's packing order, so that the survivors
+                // stay in the same relative sequence they had in my layout
+                sliceOrder[level] = i;
+                // that slot is now spoken for
+                ++level;
+                // and no other survivor is this axis
+                break;
+            }
         }
-        // if not, transfer the value
-        sliceShape[j] = s;
-        // get the matching stride
-        sliceStrides[j] = myStrides[i];
-        // update the rank map
-        rankMap[i] = j;
-        // point to the next slice rank and move on
-        ++j;
     }
-
-    // now, to set the packing order
-    T i = 0;
-    // get my order
-    const auto & myOrder = order();
-    // visit the ranks in order
-    for (auto axis : myOrder) {
-        // if this rank is not part of the slice
-        if (rawShape[axis] == 0) {
-            // skip it
-            continue;
-        }
-        // otherwise, record the order of the current rank of the slice
-        sliceOrder[rankMap[axis]] = i;
-        // update the slice rank
-        ++i;
-    }
-
-    // compute the nudge
-    difference_type sliceNudge = offset(base);
-    // instantiate the slice packing and return
-    return slice_t(sliceShape, sliceOrigin, sliceOrder, sliceStrides, sliceNudge);
-}
-
-
-// when the shape is not known at compile time
-template <int N, typename T, template <typename, std::size_t> class containerT>
-template <int sliceRank>
-constexpr auto
-pyre::grid::Canonical<N, T, containerT>::slice(
-    index_const_reference base, shape_const_reference rawShape) const
-{
-    // make an alias for the slice packing
-    using slice_t = Canonical<sliceRank, T, containerT>;
-    // and instantiate blank slice info
-    typename slice_t::shape_type sliceShape {};
-    typename slice_t::index_type sliceOrigin {};
-    typename slice_t::order_type sliceOrder {};
-    typename slice_t::strides_type sliceStrides {};
-
-    // start building the slice packing info
-    // get my strides
-    const auto & myStrides = strides();
-    // initialize the map from my ranks to the slice ranks
-    shape_type rankMap {};
-    // go through the raw shape spec
-    for (T i = 0, j = 0; i < N; ++i) {
-        // get the {ith} value
-        auto s = rawShape[i];
-        // if it's zero
-        if (s == 0) {
-            // move on
-            continue;
-        }
-        // if not, transfer the value
-        sliceShape[j] = s;
-        // get the matching stride
-        sliceStrides[j] = myStrides[i];
-        // update the rank map
-        rankMap[i] = j;
-        // point to the next slice rank and move on
-        ++j;
-    }
-
-    // now, to set the packing order
-    T i = 0;
-    // get my order
-    const auto & myOrder = order();
-    // visit the ranks in order
-    for (auto axis : myOrder) {
-        // if this rank is not part of the slice
-        if (rawShape[axis] == 0) {
-            // skip it
-            continue;
-        }
-        // otherwise, record the order of the current rank of the slice
-        sliceOrder[rankMap[axis]] = i;
-        // update the slice rank
-        ++i;
-    }
-
-    // compute the nudge
-    difference_type sliceNudge = offset(base);
-    // instantiate the slice packing and return
-    return slice_t(sliceShape, sliceOrigin, sliceOrder, sliceStrides, sliceNudge);
-}
-
-
-// iteration support
-template <int N, typename T, template <typename, std::size_t> class containerT>
-constexpr auto
-pyre::grid::Canonical<N, T, containerT>::begin() const -> index_iterator
-{
-    // make an iterator that generates index in my packing {order}, starting at my {origin}
-    return index_iterator(shape(), order(), origin());
-}
-
-
-template <int N, typename T, template <typename, std::size_t> class containerT>
-constexpr auto
-pyre::grid::Canonical<N, T, containerT>::begin(index_const_reference step) const -> index_iterator
-{
-    // make an iterator that generates index in my packing {order}, starting at my {origin}
-    return index_iterator(shape(), order(), origin(), step);
-}
-
-
-template <int N, typename T, template <typename, std::size_t> class containerT>
-constexpr auto
-pyre::grid::Canonical<N, T, containerT>::end() const -> index_iterator
-{
-    // form the end of the container
-    auto end = _origin + _shape;
-    // build an iterator that points to it
-    return index_iterator(_shape, _order, end);
-}
-
-
-template <int N, typename T, template <typename, std::size_t> class containerT>
-constexpr auto
-pyre::grid::Canonical<N, T, containerT>::box(index_type base, shape_type tile) const
-    -> canonical_type
-{
-    // unpack my state
-    const auto & shape = this->shape();
-    const auto & origin = this->origin();
-    const auto & order = this->order();
-
-    // go through them, in packing order because the loop looks prettier...
-    for (auto axis : order) {
-        // make sure base is within my bounds
-        base[axis] = std::min(
-            // for the left edge
-            std::max(base[axis], origin[axis]),
-            // for the right edge
-            origin[axis] + shape[axis] - 1);
-        // repeat for the shape
-        tile[axis] = std::min(
-            // for the left edge
-            std::max(tile[axis], static_cast<typename shape_type::rank_type>(1)),
-            // for the right edge
-            origin[axis] + shape[axis] - base[axis]);
-    }
-
-    // make a new layout
-    canonical_type box { // using the supplied layout information
-                         tile, base,
-                         // but leaving the packing order and the offset calculation as is
-                         _order, _strides, _nudge
-    };
-    // and return it
-    return box;
-}
-
-
-// static interface
-template <int N, typename T, template <typename, std::size_t> class containerT>
-constexpr auto
-pyre::grid::Canonical<N, T, containerT>::rank() -> int
-{
-    // easy enough
-    return N;
+    // the nudge bakes in the offset contribution of all the fixed axes;
+    // default-construct the origin so all coordinates are zero
+    return slice_t(
+        sliceShape, typename slice_t::index_type {}, sliceOrder, sliceStrides, offset(base));
 }
 
 
 // static helpers
-// compute the packing strides, i.e. the offsets from a cell to its neighbor along each axis
-template <int N, typename T, template <typename, std::size_t> class containerT>
-constexpr auto
-pyre::grid::Canonical<N, T, containerT>::_initStrides(
-    shape_const_reference shape, order_const_reference order) -> strides_type
-{
-    // make an empty shape to store the answer
-    strides_type strides;
-    // initialize the product
-    typename strides_type::value_type one = 1;
-    // compute the strides
-    std::exclusive_scan(
-        shape.begin(order), shape.end(order), strides.begin(order), one, std::multiplies<> {});
 
-    // all done
+// compute axis strides: stride[axis] = product of shape[other] for all faster-varying axes
+// {order} lists the axes from the fastest varying to the slowest, so those extents are exactly
+// the ones already visited when the walk below reaches a given axis
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Canonical<Rank>::_initStrides(
+    const shape_type & shape, const order_type & order) noexcept -> strides_type
+{
+    // room for the answer
+    strides_type strides;
+    // the fastest-varying axis steps one cell at a time
+    typename strides_type::value_type step = 1;
+    // {order} lists the axes fastest first, so visiting it in sequence walks the packing levels
+    // from the tightest to the loosest
+    for (std::size_t level = 0; level < Rank; ++level) {
+        // find out which axis packs at this level
+        auto axis = order[level];
+        // it steps over everything the faster axes have already laid down
+        strides[axis] = step;
+        // and a full sweep of its extent is what the next axis out must step over
+        step *= shape[axis];
+    }
+    // hand off the deduced strides
     return strides;
 }
 
 
-// compute the shift necessary so that {origin}, i.e. the smallest index, maps to offset zero
-template <int N, typename T, template <typename, std::size_t> class containerT>
+// compute the shift such that nudge = -shift maps origin to flat offset zero
+template <std::size_t Rank>
 constexpr auto
-pyre::grid::Canonical<N, T, containerT>::_initShift(
-    index_const_reference origin, strides_const_reference strides) -> difference_type
+pyre::grid::Canonical<Rank>::_initShift(
+    const index_type & origin, const strides_type & strides) noexcept -> difference_type
 {
-    // the initial value; here so we can be explicit about the return type
-    difference_type init = 0;
-    // project and return
-    return std::inner_product(origin.begin(), origin.end(), strides.begin(), init);
+    // start the accumulation at the beginning of the block
+    difference_type shift = 0;
+    // go through the axes
+    for (std::size_t axis = 0; axis < Rank; ++axis) {
+        // and fold in what this axis' origin coordinate costs in memory
+        shift += origin[axis] * strides[axis];
+    }
+    // the raw offset that the origin would otherwise occupy
+    return shift;
 }
 
 

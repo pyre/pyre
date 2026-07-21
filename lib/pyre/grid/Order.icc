@@ -8,87 +8,417 @@
 #pragma once
 
 
-// my declarations
+// support
 #include "Order.h"
 
 
-// metamethods
-template <class containerT>
-template <typename... argT>
-constexpr pyre::grid::Order<containerT>::Order(argT... args) : rep_type(args...)
+// an order that nobody configured packs the c way: the last axis varies fastest
+template <std::size_t Rank>
+constexpr pyre::grid::Order<Rank>::Order() noexcept :
+    // lay down the row major permutation at compile time
+    _permutation { _make_row_major(std::make_index_sequence<Rank> {}) }
 {}
 
+// adopt a permutation that the caller has already assembled
+template <std::size_t Rank>
+constexpr pyre::grid::Order<Rank>::Order(storage_type p) noexcept :
+    // take ownership of the levels we were handed
+    _permutation { std::move(p) }
+{}
 
-// static interface: factories
-// column major oder
-template <class containerT>
-constexpr auto
-pyre::grid::Order<containerT>::columnMajor() -> order_type
+// build an order by naming the axes one by one, from the fastest varying to the slowest
+template <std::size_t Rank>
+template <std::unsigned_integral... Ts>
+    requires(sizeof...(Ts) == Rank)
+constexpr pyre::grid::Order<Rank>::Order(Ts... xs) noexcept :
+    // normalize the levels to my cell type and lay them down in the order given
+    _permutation { static_cast<value_type>(xs)... }
+{}
+
+// build an order from a braced list of axis labels, fastest varying first
+template <std::size_t Rank>
+constexpr pyre::grid::Order<Rank>::Order(std::initializer_list<value_type> ilist) noexcept
 {
-    // declare the helper argument: an empty object, used only for its type
-    auto arg = std::make_index_sequence<order_type::rank()> {};
-    // invoke the helper
-    return _columnMajor(arg);
+    // while developing, insist that the caller name a level for every axis and no more
+#if defined(DEBUG)
+    assert(
+        ilist.size() == Rank
+        && "pyre::grid::Order: initializer_list length must equal the order rank");
+#endif
+    // start with the first axis
+    size_type axis = 0;
+    // go through the levels the caller supplied
+    for (auto value : ilist) {
+        // as long as we still have an axis to assign them to
+        if (axis < Rank)
+            // record this level and move on to the next axis
+            _permutation[axis++] = value;
+    }
+    // any axes the caller left unnamed keep their default value of zero
+    return;
 }
 
 
-// alias for the above
-template <class containerT>
-constexpr auto
-pyre::grid::Order<containerT>::fortran() -> order_type
+// the number of axes i order
+template <std::size_t Rank>
+consteval auto
+pyre::grid::Order<Rank>::rank() noexcept -> size_type
 {
-    // delegate
-    return columnMajor();
+    // it's part of my type
+    return Rank;
+}
+
+// the axis that runs at a given packing level, in a form the caller may modify
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Order<Rank>::operator[](size_type axis) noexcept -> reference
+{
+    // read it straight out of the permutation, trusting the caller's axis label
+    return _permutation[axis];
+}
+
+// the axis that runs at a given packing level, read-only
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Order<Rank>::operator[](size_type axis) const noexcept -> const_reference
+{
+    // read it straight out of the permutation, trusting the caller's axis label
+    return _permutation[axis];
 }
 
 
-// row major oder
-template <class containerT>
+// the axis that runs at a given packing level, with a guard against levels out of range
+template <std::size_t Rank>
 constexpr auto
-pyre::grid::Order<containerT>::rowMajor() -> order_type
+pyre::grid::Order<Rank>::at(size_type axis) -> reference
 {
-    // declare the helper argument: an empty object, used only for its type
-    auto arg = std::make_index_sequence<order_type::rank()> {};
-    // invoke the helper
-    return _rowMajor(arg);
+    // let the backing array do the checking and the complaining
+    return _permutation.at(axis);
+}
+
+// the axis that runs at a given packing level, checked and read-only
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Order<Rank>::at(size_type axis) const -> const_reference
+{
+    // let the backing array do the checking and the complaining
+    return _permutation.at(axis);
 }
 
 
-// alias for the above
-template <class containerT>
+// hand out the levels as a raw buffer, for clients that speak in pointers
+template <std::size_t Rank>
 constexpr auto
-pyre::grid::Order<containerT>::c() -> order_type
+pyre::grid::Order<Rank>::data() noexcept -> pointer
 {
-    // delegate
-    return rowMajor();
+    // the permutation is contiguous, so its own buffer will do
+    return _permutation.data();
+}
+
+// hand out the levels as a read-only raw buffer
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Order<Rank>::data() const noexcept -> const_pointer
+{
+    // the permutation is contiguous, so its own buffer will do
+    return _permutation.data();
 }
 
 
-// implementation details
-// column major helper
-template <class containerT>
-template <std::size_t... seq>
+// utilities
+// the c packing convention: the last axis varies fastest
+template <std::size_t Rank>
 constexpr auto
-pyre::grid::Order<containerT>::_columnMajor(std::index_sequence<seq...>) -> order_type
+pyre::grid::Order<Rank>::c() noexcept -> self_type
 {
-    // enforce our invariant
-    static_assert(order_type::rank() == sizeof...(seq));
-    // aggregate initialize my return value with the sequence [0, ..., N-1]
-    // don't forget that the constructor is marked {explicit} so we need to say what we mean
-    return order_type { seq... };
+    // hand the row major permutation to my array constructor
+    return self_type { _make_row_major(std::make_index_sequence<Rank> {}) };
+};
+
+// the fortran packing convention: the first axis varies fastest
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Order<Rank>::fortran() noexcept -> self_type
+{
+    // hand the column major permutation to my array constructor
+    return self_type { _make_column_major(std::make_index_sequence<Rank> {}) };
+};
+
+// row major packing, the other name for the c convention
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Order<Rank>::rowMajor() noexcept -> self_type
+{
+    // hand the row major permutation to my array constructor
+    return self_type { _make_row_major(std::make_index_sequence<Rank> {}) };
+};
+
+// column major packing, the other name for the fortran convention
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Order<Rank>::columnMajor() noexcept -> self_type
+{
+    // hand the column major permutation to my array constructor
+    return self_type { _make_column_major(std::make_index_sequence<Rank> {}) };
+};
+
+// my invariant: every axis label in {0 .. Rank-1} occupies exactly one packing level
+template <std::size_t Rank>
+[[nodiscard]] constexpr auto
+pyre::grid::Order<Rank>::isPermutation() const noexcept -> bool
+{
+    // an order with no axes at all
+    if constexpr (Rank == 0) {
+        // is vacuously a permutation
+        return true;
+    }
+    // keep track of the levels we have already run into
+    std::array<bool, Rank> seen {};
+    // visit the axes in their natural sequence
+    for (size_type i = 0; i < Rank; ++i) {
+        // pull out the axis that runs at this level
+        auto value = _permutation[i];
+        // a level outside the legal range, or one we have already handed to another axis
+        if (value >= Rank || seen[value]) {
+            // means the invariant is broken
+            return false;
+        }
+        // otherwise, retire this level so no other axis may claim it
+        seen[value] = true;
+    }
+    // every level was claimed exactly once, so i am a genuine permutation
+    return true;
 }
 
 
-template <class containerT>
-template <std::size_t... seq>
+// iteration support
+// the first axis, in a form the caller may modify
+template <std::size_t Rank>
 constexpr auto
-pyre::grid::Order<containerT>::_rowMajor(std::index_sequence<seq...>) -> order_type
+pyre::grid::Order<Rank>::begin() noexcept -> iterator
 {
-    // enforce our invariant
-    static_assert(order_type::rank() == sizeof...(seq));
-    // aggregate initialize my return value with the sequence [N-1, ..., 0]
-    // don't forget that the constructor is marked {explicit} so we need to say what we mean
-    return order_type { sizeof...(seq) - 1 - seq... };
+    // lean on the backing array
+    return _permutation.begin();
+}
+
+// one past my last axis, marking the end of a sweep
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Order<Rank>::end() noexcept -> iterator
+{
+    // lean on the backing array
+    return _permutation.end();
+}
+
+// the first axis of a read-only order
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Order<Rank>::begin() const noexcept -> const_iterator
+{
+    // lean on the backing array
+    return _permutation.begin();
+}
+
+// one past the last axis of a read-only order
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Order<Rank>::end() const noexcept -> const_iterator
+{
+    // lean on the backing array
+    return _permutation.end();
+}
+
+// the first axis, read-only even when i am mutable
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Order<Rank>::cbegin() const noexcept -> const_iterator
+{
+    // lean on the backing array
+    return _permutation.cbegin();
+}
+
+// one past the last axis, read-only even when i am mutable
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Order<Rank>::cend() const noexcept -> const_iterator
+{
+    // lean on the backing array
+    return _permutation.cend();
+}
+
+
+// reverse iteration support
+// my last axis, the starting point of a back to front sweep
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Order<Rank>::rbegin() noexcept -> reverse_iterator
+{
+    // lean on the backing array
+    return _permutation.rbegin();
+}
+
+// one before my first axis, marking the end of a back to front sweep
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Order<Rank>::rend() noexcept -> reverse_iterator
+{
+    // lean on the backing array
+    return _permutation.rend();
+}
+
+// the last axis of a read-only order
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Order<Rank>::rbegin() const noexcept -> const_reverse_iterator
+{
+    // lean on the backing array
+    return _permutation.rbegin();
+}
+
+// one before the first axis of a read-only order
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Order<Rank>::rend() const noexcept -> const_reverse_iterator
+{
+    // lean on the backing array
+    return _permutation.rend();
+}
+
+// the last axis, read-only even when i am mutable
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Order<Rank>::crbegin() const noexcept -> const_reverse_iterator
+{
+    // lean on the backing array
+    return _permutation.crbegin();
+}
+
+// one before the first axis, read-only even when i am mutable
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::Order<Rank>::crend() const noexcept -> const_reverse_iterator
+{
+    // lean on the backing array
+    return _permutation.crend();
+}
+
+
+// compile time storage factories
+// the row major permutation {Rank-1, ..., 1, 0}: the last axis is named first, hence varies
+// fastest
+template <std::size_t Rank>
+template <std::size_t... Is>
+consteval auto
+pyre::grid::Order<Rank>::_make_row_major(std::index_sequence<Is...>) noexcept -> storage_type
+{
+    // walk the axes counting the levels down from {Rank-1}
+    return storage_type { (Rank - 1 - Is)... };
+}
+
+// the column major permutation {0, 1, ..., Rank-1}: the first axis is named first, hence varies
+// fastest
+template <std::size_t Rank>
+template <std::size_t... Is>
+consteval auto
+pyre::grid::Order<Rank>::_make_column_major(std::index_sequence<Is...>) noexcept -> storage_type
+{
+    // the axis labels already run in the sequence we want
+    return storage_type { Is... };
+}
+
+
+// operators
+
+// inject a representation of the order into a stream
+template <std::size_t Rank>
+auto
+pyre::grid::operator<<(ostream_reference stream, const Order<Rank> & order) -> ostream_reference
+{
+    // nothing precedes the first level
+    const char * sep = "";
+    // visit the axes in their natural sequence
+    for (const auto & slot : order) {
+        // render the axis that runs at this level, behind its separator
+        stream << sep << slot;
+        // from here on, axis labels are comma separated
+        sep = ", ";
+    }
+    // hand the stream back so injections can be chained
+    return stream;
+}
+
+
+// two orders are equal when they agree at every position
+template <std::size_t Rank>
+constexpr auto
+pyre::grid::operator==(const Order<Rank> & o1, const Order<Rank> & o2) noexcept -> bool
+{
+    // compare the two orders axis by axis
+    for (std::size_t i = 0; i < Rank; ++i) {
+        // the first level whose axis disagrees
+        if (o1[i] != o2[i]) {
+            // settles it: the two pack differently
+            return false;
+        }
+    }
+    // no disagreement anywhere, so the two describe the same packing
+    return true;
+}
+
+
+// structured binding support
+
+// the number of components of an {Order<Rank>} is {Rank}
+template <std::size_t Rank>
+struct std::tuple_size<pyre::grid::Order<Rank>> : std::integral_constant<std::size_t, Rank> {};
+
+// each component is a {value_type}
+template <std::size_t I, std::size_t Rank>
+struct std::tuple_element<I, pyre::grid::Order<Rank>> {
+    using type = typename pyre::grid::Order<Rank>::value_type;
+};
+
+// for a const order, each component is a {const value_type}
+template <std::size_t I, std::size_t Rank>
+struct std::tuple_element<I, const pyre::grid::Order<Rank>> {
+    using type = const typename pyre::grid::Order<Rank>::value_type;
+};
+
+
+// get the {I}-th slot by reference
+template <std::size_t I, std::size_t Rank>
+constexpr auto
+pyre::grid::get(Order<Rank> & order) noexcept -> typename Order<Rank>::reference
+{
+    // the slot index is the axis label, so ordinary subscripting does the job
+    return order[I];
+}
+
+// get the {I}-th slot from a temporary
+template <std::size_t I, std::size_t Rank>
+constexpr auto
+pyre::grid::get(Order<Rank> && order) noexcept -> typename Order<Rank>::rvalue_reference
+{
+    // hand out the level with the value category of the expiring {order}
+    return std::move(order[I]);
+}
+
+// get the {I}-th slot read-only
+template <std::size_t I, std::size_t Rank>
+constexpr auto
+pyre::grid::get(const Order<Rank> & order) noexcept -> typename Order<Rank>::const_reference
+{
+    // the slot index is the axis label, so ordinary subscripting does the job
+    return order[I];
+}
+
+// get the {I}-th slot read-only from a const temporary
+template <std::size_t I, std::size_t Rank>
+constexpr auto
+pyre::grid::get(const Order<Rank> && order) noexcept -> typename Order<Rank>::const_rvalue_reference
+{
+    // hand out the level with the value category of the expiring {order}
+    return std::move(order[I]);
 }
 
 

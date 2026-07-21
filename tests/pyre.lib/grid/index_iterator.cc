@@ -11,34 +11,38 @@
 #include <pyre/grid.h>
 
 
-// type alias
-using idx_t = pyre::grid::index_t<4>;
+// the index under test
+using index_t = pyre::grid::index_t<4>;
 
 
-// exercise the filling constructor
+// exercise walking the coordinates of a single index
 int
 main(int argc, char * argv[])
 {
     // initialize the journal
     pyre::journal::init(argc, argv);
+    // attribute whatever gets logged to this test
     pyre::journal::application("index_iterator");
     // make a channel
     pyre::journal::debug_t channel("pyre.grid.index");
 
-    // make a const index
-    constexpr idx_t idx { 0, 1, 2, 3 };
+    // an index whose coordinates run in step with the axis number
+    constexpr index_t idx { 0, 1, 2, 3 };
     // show me
     channel << "idx: " << idx << pyre::journal::endl(__HERE__);
 
-    // make a ounter
-    int i = 0;
-    // go through the index ranks
-    for (auto value : idx) {
-        // verify it is as expected
-        assert((value == i));
-        // get ready for the next one
-        ++i;
+    // the count of coordinates seen so far doubles as the value each one should hold
+    index_t::value_type expected = 0;
+    // an index hands out the iterators of its backing store, so a range based {for} visits its
+    // coordinates from the first axis to the last
+    for (auto coordinate : idx) {
+        // each coordinate is the axis number
+        assert((coordinate == expected));
+        // ready for the next axis
+        ++expected;
     }
+    // the walk must have visited every axis
+    assert((expected == index_t::rank()));
 
     // all done
     return 0;

@@ -11,7 +11,7 @@
 #include <pyre/grid.h>
 
 
-// type alias
+// the packing order under test
 using order_t = pyre::grid::order_t<4>;
 
 
@@ -21,36 +21,48 @@ main(int argc, char * argv[])
 {
     // initialize the journal
     pyre::journal::init(argc, argv);
+    // attribute whatever gets logged to this test
     pyre::journal::application("order_sanity");
     // make a channel
     pyre::journal::debug_t channel("pyre.grid.order");
 
-    // make an index ordering
-    order_t shuffle { 0, 1, 2, 3 };
-
-    // show me
-    channel << "an ordering: " << shuffle << pyre::journal::newline << "  rank: " << order_t::rank()
-            << "  (from the type)" << pyre::journal::newline << "  rank: " << shuffle.rank()
-            << "  (from the instance)" << pyre::journal::endl(__HERE__);
-
-    // verify that the dimensionality is reported correctly through the type
+    // verify that the rank is reported correctly through the type
     static_assert(order_t::rank() == 4);
-    // verify that the dimensionality is reported correctly through an instance
-    static_assert(shuffle.rank() == 4);
+
+    // make an explicitly initialized ordering
+    constexpr order_t shuffle { 0, 1, 2, 3 };
+    // show me
+    channel << "an ordering: " << shuffle << pyre::journal::endl(__HERE__);
+    // it must be a genuine permutation of the axis labels
+    static_assert(shuffle.isPermutation());
 
     // make a column major ordering
-    order_t fortran = order_t::fortran();
+    constexpr order_t fortran = order_t::fortran();
     // show me
     channel << "fortran: " << fortran << pyre::journal::endl(__HERE__);
-    // check that it's equal to {shuffle}
-    assert((shuffle == fortran));
+    // column major visits the axes in their natural sequence, so it matches {shuffle}
+    static_assert(shuffle == fortran);
 
-    // make a column major ordering
-    order_t c = order_t::c();
+    // make a row major ordering
+    constexpr order_t c = order_t::c();
     // show me
     channel << "c: " << c << pyre::journal::endl(__HERE__);
-    // check that it's different from {shuffle}
-    assert((shuffle != c));
+    // row major reverses the axis sequence, so it differs from {shuffle}
+    static_assert(shuffle != c);
+    // and it is a permutation just the same
+    static_assert(c.isPermutation());
+
+    // the default ordering is row major
+    constexpr order_t dflt {};
+    // show me
+    channel << "default: " << dflt << pyre::journal::endl(__HERE__);
+    // verify the claim
+    static_assert(dflt == c);
+
+    // {c} is the language flavored spelling of row major
+    static_assert(order_t::c() == order_t::rowMajor());
+    // and {fortran} of column major
+    static_assert(order_t::fortran() == order_t::columnMajor());
 
     // all done
     return 0;

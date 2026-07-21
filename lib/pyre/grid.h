@@ -51,7 +51,7 @@
 
 // - an n-tuple {index_t} of integers that store the specific values of the index
 // - an n-tuple {shape_t} that fixes the (s_1, m_2, ..., s_n)) in Z_s_1, ..., Z_s_N
-// - a packing strategy, i.e. the actual map from the index space to Z_N
+// - an n-tuple {order_t} with the packing strategy, i.e. the actual map from the index space to Z_N
 
 // The first two are relatively straightforward and describe the domain of the map. {shape_t}
 // describes the domain of the map, and {index_t} is a point in this domain. We use
@@ -70,6 +70,37 @@
 // major is all there is. In n dimensions, one can capture all possible such maps by forming a
 // permutation of the integers [0, n-1] and use it to determine the order in which the indices
 // run.
+
+// That permutation is {order_t}, and its reading is worth stating precisely, because the two
+// familiar conventions cannot distinguish it from its own inverse.
+
+// An {order_t} is a list of AXIS LABELS, arranged from the fastest varying axis to the slowest.
+// It is indexed by packing level, not by axis: {order[0]} names the axis that runs fastest, and
+// {order[n-1]} names the axis that runs slowest. It does NOT record, for each axis, how fast that
+// axis runs.
+
+// The distinction is invisible in the conventional orders. Row major in 3-d is {2, 1, 0} and
+// column major is {0, 1, 2}; each of these permutations is its own inverse, so reading them in
+// either sense yields the same layout. A worked example with a permutation that is not its own
+// inverse settles the question.
+
+// Take a 3-d grid of shape {2, 2, 2} and the packing order {1, 2, 0}. Read as a list of axes,
+// this says: axis 1 runs fastest, axis 2 runs next, and axis 0 runs slowest. The strides follow
+// by accumulating the extents in that same sequence, starting from a single cell:
+
+//     axis 1 runs fastest, so consecutive values of index 1 are adjacent    -> stride 1
+//     axis 2 runs next, so it steps over a full sweep of axis 1             -> stride 2
+//     axis 0 runs slowest, so it steps over a full sweep of axes 1 and 2    -> stride 4
+
+// which is to say {strides} = {4, 1, 2}, listed by axis. The cell at index (i, j, k) therefore
+// lives at offset 4*i + 1*j + 2*k, and a traversal in packing order visits the eight cells in
+// the sequence (0,0,0), (0,1,0), (0,0,1), (0,1,1), (1,0,0), (1,1,0), (1,0,1), (1,1,1), which is
+// offsets 0 through 7 in turn.
+
+// Had the same permutation been read as "axis 0 is at level 1, axis 1 is at level 2, axis 2 is
+// at level 0", the strides would have come out {2, 4, 1} instead, and the traversal would visit
+// the cells in a different sequence. Both readings are self-consistent; only one of them is what
+// {order_t} means.
 
 // Other packing strategies are possible, many of which have very interesting properties. Space
 // filling curves, such as the Morton Z curve or the Peano family of curves, are good examples

@@ -4,215 +4,147 @@
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
 // (c) 1998-2026 all rights reserved
 
-
 // code guard
 #pragma once
 
-
-// my declarations
+// support
 #include "Grid.h"
 
 
-// metamethods
-// constructor that make a grid out of the given packing and storage strategies
-template <class packingT, class storageT>
-constexpr pyre::grid::Grid<packingT, storageT>::Grid(
-    packing_const_reference layout, storage_pointer data) :
-    _layout { layout },
-    _data { data }
+// metamethods - constructors
+// construct from fully-formed policies
+template <pyre::grid::concepts::PackingStrategy P, pyre::grid::concepts::StorageStrategy S>
+constexpr pyre::grid::Grid<P, S>::Grid(packing_type packing, storage_type storage) :
+    // adopt the two strategies the caller handed over, without copying them again
+    _packing(std::move(packing)),
+    _storage(std::move(storage))
 {}
 
-
-// variadic constructor that forwards its extra arguments to the packing strategy
-template <class packingT, class storageT>
-template <typename... Args>
-constexpr pyre::grid::Grid<packingT, storageT>::Grid(
-    packing_const_reference layout, Args &&... args) :
-    _layout { layout },
-    _data { std::make_shared<storageT>(std::forward<Args>(args)...) }
+// in-place construction of the policies
+template <pyre::grid::concepts::PackingStrategy P, pyre::grid::concepts::StorageStrategy S>
+template <class... PArgs, class... SArgs>
+    requires(pyre::grid::concepts::PackingConstructible<P, PArgs...>
+             && pyre::grid::concepts::StorageConstructible<S, SArgs...>)
+constexpr pyre::grid::Grid<P, S>::Grid(
+    std::piecewise_construct_t, std::tuple<PArgs...> pArgs, std::tuple<SArgs...> sArgs) :
+    // spread each argument pack over the matching strategy constructor, building both in place
+    _packing(std::make_from_tuple<packing_type>(std::move(pArgs))),
+    _storage(std::make_from_tuple<storage_type>(std::move(sArgs)))
 {}
-
 
 // accessors
-template <class packingT, class storageT>
-constexpr auto
-pyre::grid::Grid<packingT, storageT>::data() const -> storage_pointer
+template <pyre::grid::concepts::PackingStrategy P, pyre::grid::concepts::StorageStrategy S>
+[[nodiscard]] constexpr auto
+pyre::grid::Grid<P, S>::packing() const noexcept -> const packing_type &
 {
-    // easy enough
-    return _data;
+    // let clients inspect my addressing scheme, but not disturb it
+    return _packing;
+}
+
+template <pyre::grid::concepts::PackingStrategy P, pyre::grid::concepts::StorageStrategy S>
+[[nodiscard]] constexpr auto
+pyre::grid::Grid<P, S>::storage() const noexcept -> const storage_type &
+{
+    // let clients inspect where my cells live, but not disturb it
+    return _storage;
 }
 
 
-template <class packingT, class storageT>
-constexpr auto
-pyre::grid::Grid<packingT, storageT>::layout() const -> packing_const_reference
+// interface - reaching a cell
+
+// the cell named by an index, trusting the caller
+template <pyre::grid::concepts::PackingStrategy P, pyre::grid::concepts::StorageStrategy S>
+[[nodiscard]] constexpr auto
+pyre::grid::Grid<P, S>::operator[](const index_type & idx) const -> reference
 {
-    // easy enough
-    return _layout;
+    // ask my packing where this index lives, and hand back whatever cell is there
+    return (*this)[_packing.offset(idx)];
+}
+
+// the cell at a given offset, trusting the caller
+template <pyre::grid::concepts::PackingStrategy P, pyre::grid::concepts::StorageStrategy S>
+[[nodiscard]] constexpr auto
+pyre::grid::Grid<P, S>::operator[](difference_type off) const -> reference
+{
+    // my storage measures displacements the same way my packing does, so the offset travels
+    // across unchanged; an offset that came out negative stays negative, and on this path it is
+    // the caller who promised it would not
+    return _storage[off];
+}
+
+// the cell named by an index, guarded
+template <pyre::grid::concepts::PackingStrategy P, pyre::grid::concepts::StorageStrategy S>
+[[nodiscard]] constexpr auto
+pyre::grid::Grid<P, S>::at(const index_type & idx) const -> reference
+{
+    // ask my packing where this index lives, and reach for that cell with the guard on
+    return at(_packing.offset(idx));
+}
+
+// the cell at a given offset, guarded
+template <pyre::grid::concepts::PackingStrategy P, pyre::grid::concepts::StorageStrategy S>
+[[nodiscard]] constexpr auto
+pyre::grid::Grid<P, S>::at(difference_type off) const -> reference
+{
+    // let the storage do the checking and the complaining; it measures displacements the way my
+    // packing does, so a negative offset arrives as a negative number and can be reported as one
+    return _storage.at(off);
 }
 
 
-// data access
-// with bounds checking
-template <class packingT, class storageT>
-constexpr auto
-pyre::grid::Grid<packingT, storageT>::at(difference_type offset) const -> reference
+// interface - sub-grids
+
+// the sub-grid anchored at {base} with extent {tile}
+template <pyre::grid::concepts::PackingStrategy P, pyre::grid::concepts::StorageStrategy S>
+[[nodiscard]] constexpr auto
+pyre::grid::Grid<P, S>::box(index_type base, shape_type tile) const -> self_type
+    requires requires(const packing_type p, index_type i, shape_type s) { p.box(i, s); }
 {
-    // get and return the value
-    return _data->at(offset);
+    // let my packing work out the sub-layout, and pair it with my own cells; the derived layout
+    // keeps my strides, so the sub-grid reads and writes the very cells i do
+    return self_type { _packing.box(base, tile), _storage };
+}
+
+// the lower rank grid left behind when the axes outside {FreeAxes} are pinned at {base}
+template <pyre::grid::concepts::PackingStrategy P, pyre::grid::concepts::StorageStrategy S>
+template <std::size_t... FreeAxes>
+[[nodiscard]] constexpr auto
+pyre::grid::Grid<P, S>::slice(const index_type & base) const
+{
+    // ask my packing for the hyperplane
+    auto sliced = _packing.template slice<FreeAxes...>(base);
+    // and pair it with my cells; the slice inherits my strides, so it too addresses my memory
+    return Grid<decltype(sliced), storage_type> { sliced, _storage };
 }
 
 
-template <class packingT, class storageT>
-constexpr auto
-pyre::grid::Grid<packingT, storageT>::at(index_const_reference index) const -> reference
+// interface - iteration
+
+// a cursor parked on my first cell
+template <pyre::grid::concepts::PackingStrategy P, pyre::grid::concepts::StorageStrategy S>
+[[nodiscard]] constexpr auto
+pyre::grid::Grid<P, S>::begin() const -> iterator
 {
-    // get the offset that corresponds to this {index}
-    auto offset = _layout[index];
-    // get and return the value
-    return _data->at(offset);
+    // ride the index cursor my packing hands out, over my own cells
+    return iterator { *this, _packing.begin() };
 }
 
-
-// without bounds checking
-template <class packingT, class storageT>
-constexpr auto
-pyre::grid::Grid<packingT, storageT>::operator[](difference_type offset) const -> reference
+// a cursor that skips ahead by {step} along each axis
+template <pyre::grid::concepts::PackingStrategy P, pyre::grid::concepts::StorageStrategy S>
+[[nodiscard]] constexpr auto
+pyre::grid::Grid<P, S>::begin(const index_type & step) const -> iterator
 {
-    // get and return the value
-    return (*_data)[offset];
+    // same, but let the packing know how far to move on each advance
+    return iterator { *this, _packing.begin(step) };
 }
 
-
-template <class packingT, class storageT>
-constexpr auto
-pyre::grid::Grid<packingT, storageT>::operator[](index_const_reference index) const -> reference
+// the cursor that marks the end of the sweep
+template <pyre::grid::concepts::PackingStrategy P, pyre::grid::concepts::StorageStrategy S>
+[[nodiscard]] constexpr auto
+pyre::grid::Grid<P, S>::end() const -> iterator
 {
-    // get the offset that corresponds to this {index}
-    auto offset = _layout[index];
-    // get and return the value
-    return (*_data)[offset];
-}
-
-
-// iteration support
-template <class packingT, class storageT>
-constexpr auto
-pyre::grid::Grid<packingT, storageT>::begin() -> iterator
-{
-    // make an {iterator} that points to the beginning of my index space
-    return iterator(*this, _layout.begin());
-}
-
-
-template <class packingT, class storageT>
-constexpr auto
-pyre::grid::Grid<packingT, storageT>::begin(index_type step) -> iterator
-{
-    // make an {iterator} that points to the beginning of my index space
-    return iterator(*this, _layout.begin(step));
-}
-
-
-template <class packingT, class storageT>
-constexpr auto
-pyre::grid::Grid<packingT, storageT>::end() -> iterator
-{
-    // make an {iterator} that points to the end of my index space
-    return iterator(*this, _layout.end());
-}
-
-
-// again, but const
-template <class packingT, class storageT>
-constexpr auto
-pyre::grid::Grid<packingT, storageT>::begin() const -> const_iterator
-{
-    // make a {const_iterator} that points to the beginning of my index space
-    return const_iterator(*this, _layout.begin());
-}
-
-
-template <class packingT, class storageT>
-constexpr auto
-pyre::grid::Grid<packingT, storageT>::begin(index_type step) const -> const_iterator
-{
-    // make a {const_iterator} that points to the beginning of my index space
-    return const_iterator(*this, _layout.begin(step));
-}
-
-
-template <class packingT, class storageT>
-constexpr auto
-pyre::grid::Grid<packingT, storageT>::end() const -> const_iterator
-{
-    // make a {const_iterator} that points to the end of my index space
-    return const_iterator(*this, _layout.end());
-}
-
-
-// const iteration over non-const grids
-template <class packingT, class storageT>
-constexpr auto
-pyre::grid::Grid<packingT, storageT>::cbegin() const -> const_iterator
-{
-    // make a {const_iterator} that points to the beginning of my index space
-    return const_iterator(*this, _layout.begin());
-}
-
-
-template <class packingT, class storageT>
-constexpr auto
-pyre::grid::Grid<packingT, storageT>::cbegin(index_type step) const -> const_iterator
-{
-    // make a {const_iterator} that points to the beginning of my index space
-    return const_iterator(*this, _layout.begin(step));
-}
-
-
-template <class packingT, class storageT>
-constexpr auto
-pyre::grid::Grid<packingT, storageT>::cend() const -> const_iterator
-{
-    // make a {const_iterator} that points to the end of my index space
-    return const_iterator(*this, _layout.end());
-}
-
-
-// iteration over a portion of the grid
-template <class packingT, class storageT>
-constexpr auto
-pyre::grid::Grid<packingT, storageT>::box(packing_const_reference box) const -> grid_type
-{
-    // ask my layout to narrow the region and make a new grid over it
-    return grid_type(box, _data);
-}
-
-template <class packingT, class storageT>
-constexpr auto
-pyre::grid::Grid<packingT, storageT>::box(
-    index_const_reference base, shape_const_reference shape) const -> grid_type
-{
-    // ask my layout to narrow the region and make a new grid over it
-    return grid_type(_layout.box(base, shape), _data);
-}
-
-// slicing
-template <class packingT, class storageT>
-template <int sliceRank>
-constexpr auto
-pyre::grid::Grid<packingT, storageT>::slice(
-    index_const_reference base, shape_const_reference shape) const
-{
-    // get the layout of the slice
-    auto sliceLayout = _layout.template slice<sliceRank>(base, shape);
-
-    // TOFIX: not general, we should infer pyre::grid::Canonical from packingT
-    // sliced packing with rank sliceRank, using the canonical defaults
-    using sliced_pack_t = pyre::grid::Canonical<sliceRank, long, std::array>;
-
-    // make a sliced grid and return it
-    return Grid<sliced_pack_t, storageT>(sliceLayout, _data);
+    // the sweep is over when the index cursor says it is
+    return iterator { *this, _packing.end() };
 }
 
 

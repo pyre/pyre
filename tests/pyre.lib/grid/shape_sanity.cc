@@ -11,7 +11,7 @@
 #include <pyre/grid.h>
 
 
-// type alias
+// the shape under test
 using shape_t = pyre::grid::shape_t<4>;
 
 
@@ -21,33 +21,33 @@ main(int argc, char * argv[])
 {
     // initialize the journal
     pyre::journal::init(argc, argv);
+    // attribute whatever gets logged to this test
     pyre::journal::application("shape_sanity");
     // make a channel
     pyre::journal::debug_t channel("pyre.grid.shape");
 
-    // make a shape
-    constexpr shape_t s { 2, 3, 4, 5 };
-    // show me
-    channel << "s: " << s << pyre::journal::newline << "  rank: " << shape_t::rank()
-            << "  (from the type)" << pyre::journal::newline << "  rank: " << s.rank()
-            << "  (from the instance)" << pyre::journal::newline << "  cells: " << s.cells()
-            << pyre::journal::endl(__HERE__);
-
-    // verify that the index dimensionality is reported correctly through the type
+    // the rank is carried by the type, so it is available without an instance
     static_assert(shape_t::rank() == 4);
-    // verify that the index dimensionality is reported correctly through an instance
-    static_assert(s.rank() == 4);
 
-    // verify that its capacity is equal to the product of the possible values along each axis
-    assert((s.cells() == 2 * 3 * 4 * 5));
+    // lay out a shape with a distinct extent on each axis
+    constexpr shape_t shape { 2, 3, 4, 5 };
+    // show me
+    channel << "shape: " << shape << pyre::journal::endl(__HERE__);
 
-    // verify that a shape is equal to itself
-    assert((s == s));
+    // indexed access reaches the first axis
+    static_assert(shape[0] == 2);
+    // and each of the ones that follow, in order
+    static_assert(shape[1] == 3);
+    static_assert(shape[2] == 4);
+    static_assert(shape[3] == 5);
 
-    // make another
-    shape_t z { 2, 3, 4, 5 };
-    // that's equal to {s}
-    assert((s == z));
+    // the number of addressable cells is the product of the extents
+    static_assert(shape.cells() == 2 * 3 * 4 * 5);
+
+    // the shortest axis is reported correctly
+    static_assert(shape.min() == 2);
+    // as is the longest
+    static_assert(shape.max() == 5);
 
     // all done
     return 0;

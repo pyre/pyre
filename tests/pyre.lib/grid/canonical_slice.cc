@@ -11,60 +11,61 @@
 #include <pyre/grid.h>
 
 
-// type alias
-using canonical_t = pyre::grid::canonical_t<6>;
+// the packing strategy under test
+using canonical_t = pyre::grid::canonical_t<3>;
+// and its parts
+using shape_t = canonical_t::shape_type;
+using index_t = canonical_t::index_type;
+// the hyperplane that keeps two axes is a rank two layout
+using plane_t = pyre::grid::canonical_t<2>;
 
 
-// simple check that the map from index space to offsets is correct
+// verify that a hyperplane inherits the physical layout of the strategy it was cut from
 int
 main(int argc, char * argv[])
 {
     // initialize the journal
     pyre::journal::init(argc, argv);
+    // attribute whatever gets logged to this test
     pyre::journal::application("canonical_slice");
     // make a channel
     pyre::journal::debug_t channel("pyre.grid.canonical");
 
     // pick a shape
-    canonical_t::shape_type shape { 3, 5, 7, 11, 13, 17 };
-    // an origin
-    canonical_t::index_type origin {};
-    // and a packing order
-    auto order = canonical_t::order_type::fortran();
-    // make a canonical packing strategy
-    canonical_t packing { shape, origin, order };
-    // show me
-    channel << "packing:" << pyre::journal::newline << "    shape: " << packing.shape()
-            << pyre::journal::newline << "    origin: " << packing.origin()
-            << pyre::journal::newline << "    order: " << packing.order() << pyre::journal::newline
-            << "    strides: " << packing.strides() << pyre::journal::newline
-            << "    cells: " << packing.cells() << pyre::journal::newline
-            << "    nudge: " << packing.nudge() << pyre::journal::endl(__HERE__);
+    constexpr shape_t shape { 2, 3, 4 };
+    // lay it out canonically
+    constexpr canonical_t packing { shape };
 
-    // set a shape
-    canonical_t::shape_type sliceShape { 0, 0, 2, 0, 4, 0 };
-    // find a spot
-    canonical_t::index_type spot { 1, 2, 4, 5, 6, 7 };
-    // extract a slice
-    auto slice = packing.slice<2>(spot, sliceShape);
+    // keep axes 0 and 2, pinning axis 1 at 1
+    constexpr auto plane = packing.slice<0, 2>(index_t { 0, 1, 0 });
     // show me
-    channel << "slice:" << pyre::journal::newline << "    base: " << spot << pyre::journal::newline
-            << "    shape: " << slice.shape() << pyre::journal::newline
-            << "    origin: " << slice.origin() << pyre::journal::newline
-            << "    order: " << slice.order() << pyre::journal::newline
-            << "    strides: " << slice.strides() << pyre::journal::newline
-            << "    cells: " << slice.cells() << pyre::journal::newline
-            << "    nudge: " << slice.nudge() << pyre::journal::endl(__HERE__);
+    channel << "plane shape: " << plane.shape() << pyre::journal::newline
+            << "plane strides: " << plane.strides() << pyre::journal::endl(__HERE__);
 
-    // verify the slice offsets
-    assert((slice[{ 0, 0 }] == packing[{ 1, 2, 4, 5, 6, 7 }]));
-    assert((slice[{ 0, 1 }] == packing[{ 1, 2, 4, 5, 7, 7 }]));
-    assert((slice[{ 0, 2 }] == packing[{ 1, 2, 4, 5, 8, 7 }]));
-    assert((slice[{ 0, 3 }] == packing[{ 1, 2, 4, 5, 9, 7 }]));
-    assert((slice[{ 1, 0 }] == packing[{ 1, 2, 5, 5, 6, 7 }]));
-    assert((slice[{ 1, 1 }] == packing[{ 1, 2, 5, 5, 7, 7 }]));
-    assert((slice[{ 1, 2 }] == packing[{ 1, 2, 5, 5, 8, 7 }]));
-    assert((slice[{ 1, 3 }] == packing[{ 1, 2, 5, 5, 9, 7 }]));
+    // the surviving axes keep their extents, in the order they were named
+    static_assert(plane.shape() == plane_t::shape_type { 2, 4 });
+    // and their physical strides, so the plane addresses the parent's cells
+    static_assert(plane.strides()[0] == packing.strides()[0]);
+    static_assert(plane.strides()[1] == packing.strides()[2]);
+
+    // every cell of the plane resolves to the same offset as the full index that names it in the
+    // parent, with the pinned axis restored
+    for (canonical_t::difference_type i = 0; i < 2; ++i) {
+        // sweep the second surviving axis too
+        for (canonical_t::difference_type k = 0; k < 4; ++k) {
+            // the cell in the plane's own index space
+            auto flat = plane_t::index_type { i, k };
+            // and the same cell in the parent's, with axis 1 put back
+            auto full = index_t { i, 1, k };
+            // show me
+            channel << pyre::journal::at() << "  " << flat << " -> " << plane.offset(flat)
+                    << pyre::journal::newline;
+            // the two routes must arrive at the same offset
+            assert((plane.offset(flat) == packing.offset(full)));
+        }
+    }
+    // flush the trace
+    channel << pyre::journal::endl;
 
     // all done
     return 0;

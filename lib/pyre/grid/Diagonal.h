@@ -4,117 +4,104 @@
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
 // (c) 1998-2026 all rights reserved
 
-
 // code guard
 #pragma once
 
 
-// my dependencies
-#include "forward.h"
+// Diagonal.h includes its dependencies directly so the type aliases in the class body refer to
+// complete types
+#include "Shape.h"
+#include "Index.h"
+#include "Order.h"
+#include "IndexIterator.h"
 
 
-// encapsulation of the diagonal packing strategy
-// a packing strategy provides the isomorphism
-//
-//    Z_s1 x ... x Z_sn -> Z_(s1 * ... * sn)
-//
-template <int N, typename T, template <typename, std::size_t> class containerT>
+// the diagonal packing strategy
+// only the {Rank} cells on the main diagonal are stored, in one contiguous run; every off
+// diagonal index shares a single extra cell, so that a client reading an off diagonal entry
+// finds the value that belongs there, which for a diagonal object is zero
+// storing that sink cell is what lets {offset} stay total: every index in the box has a home,
+// even the ones the diagonal does not distinguish
+template <std::size_t Rank>
 class pyre::grid::Diagonal {
     // types
 public:
-    // me
-    using self_type = Diagonal<N, T, containerT>;
-    // alias for me
-    using diagonal_type = Diagonal<N, T, containerT>;
-    using diagonal_const_reference = const diagonal_type &;
-    // my parts
-    // rank order
-    using order_type = Order<containerT<T, N>>;
-    using order_const_reference = const order_type &;
-    // rank specifications
-    using shape_type = Shape<containerT<T, N>>;
-    using shape_const_reference = const shape_type &;
-    // indices
-    using index_type = Index<containerT<T, N>>;
-    using index_const_reference = const index_type &;
-    // offsets
-    using difference_type = typename index_type::difference_type;
-    // iterators
-    using index_iterator = IndexIterator<diagonal_type>;
+    // myself
+    using self_type = Diagonal<Rank>;
+    // parts
+    using index_type = Index<Rank>;
+    using shape_type = Shape<Rank>;
+    using order_type = Order<Rank>;
+    // scalars
+    using size_type = size_t;
+    using difference_type = std::ptrdiff_t;
+    // iterator
+    using iterator_type = IndexIterator<Rank>;
 
     // metamethods
 public:
-    // constructor that deduces {_nudge}
+    // the origin must lie on the diagonal, so that shifting an index by it keeps the diagonal
+    // structure intact
+    // there is no packing order to choose: only the diagonal is stored, and its single run is
+    // indexed by position along the diagonal, which no permutation of the axes can rearrange
     constexpr explicit Diagonal(
-        shape_const_reference shape, index_const_reference origin = index_type::zero(),
-        order_const_reference order = order_type::c());
+        const shape_type &, const index_type & = index_type::zero()) noexcept;
 
-    // interface
+    // default metamethods
 public:
-    // accessors
-    // user supplied
-    constexpr auto shape() const -> shape_type;
-    constexpr auto order() const -> order_type;
-    constexpr auto origin() const -> index_type;
-    // deduced
-    constexpr auto nudge() const -> difference_type;
-
-    // the total number of addressable cells
-    constexpr auto cells() const -> T;
-
-    // the packing isomorphism
-public:
-    // from a given offset to the matching index
-    constexpr auto index(difference_type) const -> index_type;
-    // from an index to its offset from the beginning of the array
-    constexpr auto offset(index_const_reference) const -> difference_type;
-
-    // syntactic sugar for the above
-    constexpr auto operator[](difference_type) const -> index_type;
-    constexpr auto operator[](index_const_reference) const -> difference_type;
-
-    // iteration support: iterators generate sequences of indices
-public:
-    // whole layout iterators
-    constexpr auto begin() const -> index_iterator;
-    constexpr auto begin(index_const_reference step) const -> index_iterator;
-    constexpr auto end() const -> index_iterator;
-
-    // static interface
-public:
-    // the number of axes
-    static constexpr auto rank() -> int;
-
-    // implementation details: static helpers
-protected:
-    // compute the shift that maps the lowest possible index to zero offset
-    static constexpr auto _initShift(index_const_reference) -> difference_type;
-    // check if {index} is an index on the diagonal
-    static constexpr auto _isDiagonalIndex(index_const_reference index) -> bool;
-
-    // implementation details: data
-private:
-    // supplied by the caller
-    const shape_type _shape;  // my shape
-    const order_type _order;  // the packing order of the axes
-    const index_type _origin; // the smallest allowable index value
-    // deduced
-    const T _D;                   // the shape dimension
-    const difference_type _nudge; // offset correction when {_origin} is not {zero}
-
-    // metamethods with default implementations
-public:
-    // destructor
     ~Diagonal() = default;
-    // constructors
     Diagonal(const Diagonal &) = default;
-    Diagonal & operator=(const Diagonal &) = default;
     Diagonal(Diagonal &&) = default;
-    Diagonal & operator=(Diagonal &&) = default;
+    auto operator=(const Diagonal &) noexcept -> self_type & = default;
+    auto operator=(Diagonal &&) noexcept -> self_type & = default;
+
+    // accessors
+public:
+    [[nodiscard]] constexpr auto shape() const noexcept -> shape_type;
+    [[nodiscard]] constexpr auto origin() const noexcept -> index_type;
+    [[nodiscard]] constexpr auto nudge() const noexcept -> difference_type;
+    // the memory footprint: the diagonal cells plus the shared sink cell
+    [[nodiscard]] constexpr auto cells() const noexcept -> difference_type;
+    static consteval auto rank() noexcept -> size_type;
+
+    // packing isomorphism
+public:
+    // the cell an index lands on: its own diagonal cell, or the shared sink if it is off diagonal
+    [[nodiscard]] constexpr auto offset(const index_type &) const noexcept -> difference_type;
+    // the diagonal index that a stored offset came from; a partial inverse, since off diagonal
+    // indices were never told apart
+    [[nodiscard]] constexpr auto index(difference_type) const noexcept -> index_type;
+    // syntactic sugar
+    [[nodiscard]] constexpr auto operator[](const index_type &) const noexcept -> difference_type;
+    [[nodiscard]] constexpr auto operator[](difference_type) const noexcept -> index_type;
+
+    // iteration: visit every index in the box, the same way {Canonical} would
+    // most of those indices are off diagonal and so land on the sink, which is exactly what a
+    // client walking a diagonal object to read its dense form expects
+public:
+    [[nodiscard]] constexpr auto begin() const noexcept -> iterator_type;
+    [[nodiscard]] constexpr auto begin(const index_type &) const noexcept -> iterator_type;
+    [[nodiscard]] constexpr auto end() const noexcept -> iterator_type;
+
+    // implementation details
+private:
+    shape_type _shape {};
+    index_type _origin {};
+    // deduced: the number of cells on the diagonal, i.e. the extent along one axis
+    difference_type _D {};
+    // deduced: the offset correction that sends {_origin} to offset zero
+    difference_type _nudge {};
+
+    // static helpers
+private:
+    // the offset of the origin, which must sit on the diagonal
+    static constexpr auto _initShift(const index_type &) noexcept -> difference_type;
+    // whether every coordinate of an index agrees, i.e. the index is on the diagonal
+    static constexpr auto _isDiagonal(const index_type &) noexcept -> bool;
 };
 
 
-// get the inline definitions
+// get the inline implementations
 #include "Diagonal.icc"
 
 

@@ -8,231 +8,277 @@
 #pragma once
 
 
-// my dependencies
+// get the external declaration
 #include "externals.h"
-
-
-// useful instantiations of STL entities
-namespace pyre::grid {
-    // polymorphic base class for building iterators
-    template <class containerT, bool isConst>
-    class iterator_base {
-    public:
-        using iterator_category = std::forward_iterator_tag;
-        using value_type = typename containerT::value_type;
-        using difference_type = typename containerT::difference_type;
-        using pointer = std::conditional_t<
-            isConst, typename containerT::const_pointer, typename containerT::pointer>;
-        using reference = std::conditional_t<
-            isConst, typename containerT::const_reference, typename containerT::reference>;
-    };
-
-    // the base class for {IndexIterator}
-    template <class packingT>
-    class base_index_iterator {
-    public:
-        using iterator_category = std::forward_iterator_tag;
-        using value_type = typename packingT::index_type;
-        using difference_type = void;
-        using pointer = const typename packingT::index_type *;
-        using reference = const typename packingT::index_type &;
-    };
-} // namespace pyre::grid
+// grab the concepts
+#include "concepts.h"
 
 // set up the namespace
 namespace pyre::grid {
-    // thin adaptor over a compile time container
-    template <class containerT>
-    class Rep;
-    // basic representation of our multi-dimensional entities
-    template <class containerT>
-    class Product;
-    // shapes: the number of possible values of each index
-    template <class containerT>
-    class Shape;
-    // indices
-    template <class containerT>
-    class Index;
-    // index rank ordering, e.g. the order in which index axes are packed in memory
-    template <class containerT>
+    // a permutation of the axis labels that says which axis varies fastest in memory
+    template <size_t Rank>
     class Order;
-    // support for visiting ranks in a specific order
-    template <class productT, class orderIteratorT, bool isConst>
-    class OrderIterator;
 
-    // support for the canonical packing strategies
-    // an ordered index generator
-    template <class packingT>
+    // the extent of a grid along each one of its axes
+    template <size_t Rank>
+    class Shape;
+
+    // a signed coordinate into a grid; signed because it may sit below the origin
+    template <size_t Rank>
+    class Index;
+
+    // a generator of the sequence of indices that visits every point in a box
+    template <size_t Rank>
     class IndexIterator;
-    // the canonical packing strategy
-    template <int N, typename T, template <typename, std::size_t> class containerT>
+
+    // the packing strategy that maps index space to memory offsets using strides
+    template <size_t Rank>
     class Canonical;
-    // the symmetric packing strategy
-    template <int N, typename T, template <typename, std::size_t> class containerT>
-    class Symmetric;
-    // the diagonal packing strategy
-    template <int N, typename T, template <typename, std::size_t> class containerT>
+
+    // the packing strategy that stores only the main diagonal
+    template <size_t Rank>
     class Diagonal;
 
-    // bringing it all together
-    template <class packingT, class storageT>
+    // the packing strategy that stores only one triangular half
+    template <size_t Rank>
+    class Symmetric;
+
+    // dynamic (runtime-rank) variants for Python interoperability
+    class DynamicIndexIterator;
+    class DynamicCanonical;
+
+    // a packing strategy composed with a storage strategy
+    template <concepts::PackingStrategy P, concepts::StorageStrategy S>
     class Grid;
-    // and its iterator
-    template <class gridT, class indexIteratorT, bool isConst>
+
+    // a cursor that visits the cells of a grid, rather than the indices that name them
+    template <class gridT>
     class GridIterator;
 } // namespace pyre::grid
 
 
-// operators on rep
+// operators on {GridIterator}
 namespace pyre::grid {
-    // stream injection
-    template <class containerT>
-    inline auto operator<<(ostream_reference, const Rep<containerT> &) -> ostream_reference;
-
-    // arithmetic
-    // unary operators
-    template <class containerT>
-    constexpr auto operator+(const Rep<containerT> &) -> Rep<containerT>;
-
-    template <class containerT>
-    constexpr auto operator-(const Rep<containerT> &) -> Rep<containerT>;
-
-
-    // addition
-    template <class containerT>
-    constexpr auto operator+(const Rep<containerT> &, const Rep<containerT> &) -> Rep<containerT>;
-
-    // subtraction
-    template <class containerT>
-    constexpr auto operator-(const Rep<containerT> &, const Rep<containerT> &) -> Rep<containerT>;
-
-    // cartesian products
-    template <
-        class containerT1, class containerT2,
-        template <typename, std::size_t> class containerY = std::array>
-    constexpr auto operator*(const Rep<containerT1> &, const Rep<containerT2> &) -> Rep<containerY<
-        // pick the best type for the result
-        std::common_type_t<typename containerT1::value_type, typename containerT2::value_type>,
-        // and add the sizes
-        std::tuple_size_v<containerT1> + std::tuple_size_v<containerT2>>>;
-
-    // scaling by integers
-    template <class containerT>
-    constexpr auto operator*(std::size_t, const Rep<containerT> &) -> Rep<containerT>;
-
-    template <class containerT>
-    constexpr auto operator*(const Rep<containerT> &, std::size_t) -> Rep<containerT>;
-
-    template <class containerT>
-    constexpr auto operator*(int, const Rep<containerT> &) -> Rep<containerT>;
-
-    template <class containerT>
-    constexpr auto operator*(const Rep<containerT> &, int) -> Rep<containerT>;
-
-    template <class containerT>
-    constexpr auto operator*(long, const Rep<containerT> &) -> Rep<containerT>;
-
-    template <class containerT>
-    constexpr auto operator*(const Rep<containerT> &, long) -> Rep<containerT>;
-
-    template <class containerT>
-    constexpr auto operator/(const Rep<containerT> &, std::size_t) -> Rep<containerT>;
-
-    template <class containerT>
-    constexpr auto operator/(const Rep<containerT> &, int) -> Rep<containerT>;
-
-    template <class containerT>
-    constexpr auto operator/(const Rep<containerT> &, long) -> Rep<containerT>;
-
-    // scaling by doubles
-    template <class containerT>
-    constexpr auto operator*(double, const Rep<containerT> &) -> doubles_t<Rep<containerT>::rank()>;
-
-    template <class containerT>
-    constexpr auto operator*(const Rep<containerT> &, double) -> doubles_t<Rep<containerT>::rank()>;
-
-    template <class containerT>
-    constexpr auto operator/(const Rep<containerT> &, double) -> doubles_t<Rep<containerT>::rank()>;
-
-    // scaling by floats
-    template <class containerT>
-    constexpr auto operator*(float, const Rep<containerT> &) -> floats_t<Rep<containerT>::rank()>;
-
-    template <class containerT>
-    constexpr auto operator*(const Rep<containerT> &, float) -> floats_t<Rep<containerT>::rank()>;
-
-    template <class containerT>
-    constexpr auto operator/(const Rep<containerT> &, float) -> floats_t<Rep<containerT>::rank()>;
-} // namespace pyre::grid
-
-
-// order iterator operators
-namespace pyre::grid {
-    // equality
-    template <class productT, class orderIteratorT, bool isConst>
-    constexpr auto operator==(
-        const OrderIterator<productT, orderIteratorT, isConst> &,
-        const OrderIterator<productT, orderIteratorT, isConst> &) -> bool;
-    // and not
-    template <class productT, class orderIteratorT, bool isConst>
-    constexpr auto operator!=(
-        const OrderIterator<productT, orderIteratorT, isConst> &,
-        const OrderIterator<productT, orderIteratorT, isConst> &) -> bool;
-} // namespace pyre::grid
-
-
-// index iterator operators
-namespace pyre::grid {
-    // equality
-    template <class packingT>
-    constexpr auto operator==(const IndexIterator<packingT> &, const IndexIterator<packingT> &)
+    // equality: two cursors are equal when they have reached the same index
+    template <class gridT>
+    constexpr auto operator==(const GridIterator<gridT> &, const GridIterator<gridT> &) noexcept
         -> bool;
-    // and not
-    template <class packingT>
-    constexpr auto operator!=(const IndexIterator<packingT> &, const IndexIterator<packingT> &)
+
+    // and the negation, so that the usual {begin} to {end} loop reads naturally
+    template <class gridT>
+    constexpr auto operator!=(const GridIterator<gridT> &, const GridIterator<gridT> &) noexcept
         -> bool;
 } // namespace pyre::grid
 
 
-// grid iterator operators
+// operators on {IndexIterator}
 namespace pyre::grid {
-    // equality
-    template <class gridT, class indexIteratorT, bool isConst>
-    constexpr auto operator==(
-        const GridIterator<gridT, indexIteratorT, isConst> &,
-        const GridIterator<gridT, indexIteratorT, isConst> &) -> bool;
-    // and not
-    template <class gridT, class indexIteratorT, bool isConst>
-    constexpr auto operator!=(
-        const GridIterator<gridT, indexIteratorT, isConst> &,
-        const GridIterator<gridT, indexIteratorT, isConst> &) -> bool;
+    // equality: two iterators are equal when they point to the same index
+    template <size_t Rank>
+    constexpr auto operator==(const IndexIterator<Rank> &, const IndexIterator<Rank> &) noexcept
+        -> bool;
 } // namespace pyre::grid
 
 
-// index algebra
+// operators on {Order}
 namespace pyre::grid {
-    // add a {shape} to an {index}
-    template <class indexContainerT, class shapeContainerT>
-    constexpr auto operator+(const Index<indexContainerT> &, const Shape<shapeContainerT> &)
-        -> Index<indexContainerT>;
+    // render the permutation in human readable form
+    template <size_t Rank>
+    auto operator<<(ostream_reference, const Order<Rank> &) -> ostream_reference;
+
+    // two orders match when they rank the axes the same way
+    template <size_t Rank>
+    constexpr auto operator==(const Order<Rank> &, const Order<Rank> &) noexcept -> bool;
+
+    // let clients unpack an order into its axis labels
+    template <size_t I, size_t Rank>
+    constexpr auto get(Order<Rank> &) noexcept -> typename Order<Rank>::reference;
+    template <size_t I, size_t Rank>
+    constexpr auto get(Order<Rank> &&) noexcept -> typename Order<Rank>::rvalue_reference;
+    template <size_t I, size_t Rank>
+    constexpr auto get(const Order<Rank> &) noexcept -> typename Order<Rank>::const_reference;
+    template <size_t I, size_t Rank>
+    constexpr auto get(const Order<Rank> &&) noexcept -> typename Order<Rank>::const_rvalue_reference;
 } // namespace pyre::grid
 
 
-// structured binding support
-// for indices
-template <class containerT>
-class std::tuple_size<pyre::grid::Index<containerT>>;
+// structured binding support for {Order}: the number of components and their type
+template <std::size_t Rank>
+struct std::tuple_size<pyre::grid::Order<Rank>>;
 
-template <std::size_t I, class containerT>
-struct std::tuple_element<I, pyre::grid::Index<containerT>>;
+template <std::size_t I, std::size_t Rank>
+struct std::tuple_element<I, pyre::grid::Order<Rank>>;
+
+template <std::size_t I, std::size_t Rank>
+struct std::tuple_element<I, const pyre::grid::Order<Rank>>;
 
 
-// for shapes
-template <class containerT>
-class std::tuple_size<pyre::grid::Shape<containerT>>;
+// operators on {Shape}
+namespace pyre::grid {
+    // render the extents in human readable form
+    template <size_t Rank>
+    auto operator<<(ostream_reference, const Shape<Rank> &) -> ostream_reference;
 
-template <std::size_t I, class containerT>
-struct std::tuple_element<I, pyre::grid::Shape<containerT>>;
+    // two shapes match when they have the same extent along every axis
+    template <size_t Rank>
+    constexpr auto operator==(const Shape<Rank> &, const Shape<Rank> &) noexcept -> bool;
+
+    // grow and shrink a shape one axis at a time
+    template <size_t Rank>
+    constexpr auto operator+(const Shape<Rank> &, const Shape<Rank> &) noexcept -> Shape<Rank>;
+
+    template <size_t Rank>
+    constexpr auto operator-(const Shape<Rank> &, const Shape<Rank> &) noexcept -> Shape<Rank>;
+
+    // pass a shape through unchanged, or reflect it through the origin
+    template <size_t Rank>
+    constexpr auto operator+(const Shape<Rank> &) noexcept -> Shape<Rank>;
+    template <size_t Rank>
+    constexpr auto operator-(const Shape<Rank> &) noexcept -> Shape<Rank>;
+
+    // magnify a shape uniformly while keeping it a whole number of cells
+    template <size_t Rank>
+    constexpr auto operator*(const Shape<Rank> &, int) noexcept -> Shape<Rank>;
+    template <size_t Rank>
+    constexpr auto operator*(int, const Shape<Rank> &) noexcept -> Shape<Rank>;
+    template <size_t Rank>
+    constexpr auto operator*(const Shape<Rank> &, long) noexcept -> Shape<Rank>;
+    template <size_t Rank>
+    constexpr auto operator*(long, const Shape<Rank> &) noexcept -> Shape<Rank>;
+
+    // subdivide a shape uniformly, truncating towards zero
+    template <size_t Rank>
+    constexpr auto operator/(const Shape<Rank> &, int) noexcept -> Shape<Rank>;
+    template <size_t Rank>
+    constexpr auto operator/(const Shape<Rank> &, long) noexcept -> Shape<Rank>;
+
+    // scaling by reals, which promotes the result to a real-valued tuple
+    template <size_t Rank>
+    constexpr auto operator*(const Shape<Rank> &, double) noexcept -> doubles_t<Rank>;
+    template <size_t Rank>
+    constexpr auto operator*(double, const Shape<Rank> &) noexcept -> doubles_t<Rank>;
+    template <size_t Rank>
+    constexpr auto operator/(const Shape<Rank> &, double) noexcept -> doubles_t<Rank>;
+    template <size_t Rank>
+    constexpr auto operator*(const Shape<Rank> &, float) noexcept -> floats_t<Rank>;
+    template <size_t Rank>
+    constexpr auto operator*(float, const Shape<Rank> &) noexcept -> floats_t<Rank>;
+    template <size_t Rank>
+    constexpr auto operator/(const Shape<Rank> &, float) noexcept -> floats_t<Rank>;
+
+    // cartesian product: concatenate two shapes into one of higher rank
+    template <size_t Rank1, size_t Rank2>
+    constexpr auto operator*(const Shape<Rank1> &, const Shape<Rank2> &) noexcept
+        -> Shape<Rank1 + Rank2>;
+
+    // let clients unpack a shape into its per-axis extents
+    template <size_t I, size_t Rank>
+    constexpr auto get(Shape<Rank> &) noexcept -> typename Shape<Rank>::reference;
+    template <size_t I, size_t Rank>
+    constexpr auto get(Shape<Rank> &&) noexcept -> typename Shape<Rank>::rvalue_reference;
+    template <size_t I, size_t Rank>
+    constexpr auto get(const Shape<Rank> &) noexcept -> typename Shape<Rank>::const_reference;
+    template <size_t I, size_t Rank>
+    constexpr auto get(const Shape<Rank> &&) noexcept -> typename Shape<Rank>::const_rvalue_reference;
+} // namespace pyre::grid
+
+
+// structured binding support for {Shape}: the number of components and their type
+template <std::size_t Rank>
+struct std::tuple_size<pyre::grid::Shape<Rank>>;
+
+template <std::size_t I, std::size_t Rank>
+struct std::tuple_element<I, pyre::grid::Shape<Rank>>;
+
+template <std::size_t I, std::size_t Rank>
+struct std::tuple_element<I, const pyre::grid::Shape<Rank>>;
+
+
+// operators on {Index}
+namespace pyre::grid {
+    // render the coordinates in human readable form
+    template <size_t Rank>
+    auto operator<<(ostream_reference, const Index<Rank> &) -> ostream_reference;
+
+    // two indices match when they name the same point
+    template <size_t Rank>
+    constexpr auto operator==(const Index<Rank> &, const Index<Rank> &) noexcept -> bool;
+
+    // displace one index by another, one axis at a time
+    template <size_t Rank>
+    constexpr auto operator+(const Index<Rank> &, const Index<Rank> &) noexcept -> Index<Rank>;
+
+    template <size_t Rank>
+    constexpr auto operator-(const Index<Rank> &, const Index<Rank> &) noexcept -> Index<Rank>;
+
+    // pass an index through unchanged, or reflect it through the origin
+    template <size_t Rank>
+    constexpr auto operator+(const Index<Rank> &) noexcept -> Index<Rank>;
+    template <size_t Rank>
+    constexpr auto operator-(const Index<Rank> &) noexcept -> Index<Rank>;
+
+    // stretch an index away from the origin while it remains a lattice point
+    template <size_t Rank>
+    constexpr auto operator*(const Index<Rank> &, int) noexcept -> Index<Rank>;
+    template <size_t Rank>
+    constexpr auto operator*(int, const Index<Rank> &) noexcept -> Index<Rank>;
+    template <size_t Rank>
+    constexpr auto operator*(const Index<Rank> &, long) noexcept -> Index<Rank>;
+    template <size_t Rank>
+    constexpr auto operator*(long, const Index<Rank> &) noexcept -> Index<Rank>;
+
+    // pull an index towards the origin, truncating towards zero
+    template <size_t Rank>
+    constexpr auto operator/(const Index<Rank> &, int) noexcept -> Index<Rank>;
+    template <size_t Rank>
+    constexpr auto operator/(const Index<Rank> &, long) noexcept -> Index<Rank>;
+
+    // scaling by reals, which promotes the result to a real-valued tuple
+    template <size_t Rank>
+    constexpr auto operator*(const Index<Rank> &, double) noexcept -> doubles_t<Rank>;
+    template <size_t Rank>
+    constexpr auto operator*(double, const Index<Rank> &) noexcept -> doubles_t<Rank>;
+    template <size_t Rank>
+    constexpr auto operator/(const Index<Rank> &, double) noexcept -> doubles_t<Rank>;
+    template <size_t Rank>
+    constexpr auto operator*(const Index<Rank> &, float) noexcept -> floats_t<Rank>;
+    template <size_t Rank>
+    constexpr auto operator*(float, const Index<Rank> &) noexcept -> floats_t<Rank>;
+    template <size_t Rank>
+    constexpr auto operator/(const Index<Rank> &, float) noexcept -> floats_t<Rank>;
+
+    // step an index across a whole box, which is how the end of a traversal is named
+    template <size_t Rank>
+    constexpr auto operator+(const Index<Rank> &, const Shape<Rank> &) noexcept -> Index<Rank>;
+    template <size_t Rank>
+    constexpr auto operator-(const Index<Rank> &, const Shape<Rank> &) noexcept -> Index<Rank>;
+
+    // cartesian product: concatenate two indices into one of higher rank
+    template <size_t Rank1, size_t Rank2>
+    constexpr auto operator*(const Index<Rank1> &, const Index<Rank2> &) noexcept
+        -> Index<Rank1 + Rank2>;
+
+    // let clients unpack an index into its per-axis coordinates
+    template <size_t I, size_t Rank>
+    constexpr auto get(Index<Rank> &) noexcept -> typename Index<Rank>::reference;
+    template <size_t I, size_t Rank>
+    constexpr auto get(Index<Rank> &&) noexcept -> typename Index<Rank>::rvalue_reference;
+    template <size_t I, size_t Rank>
+    constexpr auto get(const Index<Rank> &) noexcept -> typename Index<Rank>::const_reference;
+    template <size_t I, size_t Rank>
+    constexpr auto get(const Index<Rank> &&) noexcept -> typename Index<Rank>::const_rvalue_reference;
+} // namespace pyre::grid
+
+
+// structured binding support for {Index}: the number of components and their type
+template <std::size_t Rank>
+struct std::tuple_size<pyre::grid::Index<Rank>>;
+
+template <std::size_t I, std::size_t Rank>
+struct std::tuple_element<I, pyre::grid::Index<Rank>>;
+
+template <std::size_t I, std::size_t Rank>
+struct std::tuple_element<I, const pyre::grid::Index<Rank>>;
 
 
 // end of file
