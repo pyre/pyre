@@ -103,7 +103,7 @@ class Dir(pyre.application):
         entries = self.colorize()
 
         # figure out the width of the terminal
-        width = terminal.width
+        width = terminal.width()
         # deduce the layout
         layout = (1, 0) if self.across else (0, 1)
         # make a tabulator
@@ -114,7 +114,7 @@ class Dir(pyre.application):
         columnWidth = tabulator.width
 
         # get the reset code from the terminal
-        reset = terminal.ansi["normal"]
+        reset = terminal.reset()
 
         # go through the rows
         for row in range(rows):
@@ -249,7 +249,7 @@ class Dir(pyre.application):
         # if the link is broken
         if info.referent is None:
             # colorize the marker
-            entry.markerColor = self.terminal.rgb(rgb="c02020")
+            entry.markerColor = self.terminal.rgb("c02020")
         # all done
         return entry
 
@@ -272,7 +272,7 @@ class Dir(pyre.application):
         return entry
 
     # the errors we recognize
-    knownErrorConditions = (FileNotFoundError, PermissionError)
+    knownErrorConditions = (FileNotFoundError, NotADirectoryError, PermissionError)
 
 
 # helpers
@@ -296,6 +296,42 @@ class Entry:
         label = [self.nameColor, self.name, reset, self.markerColor, self.marker, reset]
         # assemble
         return "".join(label)
+
+
+class Grid:
+    """
+    A minimal read-only logical grid over a flat tuple, used to lay the directory listing out in
+    a table; the typed-memory grids of {pyre.grid} address a different problem
+    """
+
+    # meta-methods
+    def __init__(self, shape, layout, data, **kwds):
+        # chain up
+        super().__init__(**kwds)
+        # so that {grid.tile.shape} resolves to my shape
+        self.tile = self
+        # the extent of each axis
+        self.shape = shape
+        # the packing order of the axes, fastest varying first
+        self._layout = layout
+        # the flat container my cells live in
+        self._data = data
+        # all done
+        return
+
+    def __getitem__(self, index):
+        # accumulate the flat offset of {index} in my packing order
+        offset = 0
+        # each axis contributes its coordinate times the span of the faster axes
+        product = 1
+        # visit the axes fastest first
+        for axis in self._layout:
+            # fold in this axis
+            offset += index[axis] * product
+            # and grow the span for the next one
+            product *= self.shape[axis]
+        # hand back the cell that lives there
+        return self._data[offset]
 
 
 class Table:
@@ -336,11 +372,8 @@ class Table:
         data = tuple(self.tabulate(maxWidth=maxWidth, entries=entries))
         # which deduces the table shape as a side effect
         shape = self.shape
-        # get the grid factory
-        import pyre.grid
-
-        # make one
-        grid = pyre.grid.grid(shape=shape, layout=layout, data=data)
+        # lay a logical grid over the flat container
+        grid = Grid(shape=shape, layout=layout, data=data)
         # and return it
         return grid
 
@@ -444,8 +477,28 @@ class SCS:
     def __init__(self, **kwds):
         # chain up
         super().__init__(**kwds)
-        # hunt down the root of the repository
-        self._root = self.root()
+        # gingerly, in case the source control tool is not available, attempt to
+        try:
+            # hunt down the root of the repository
+            root = self.root()
+        # if the tool is not installed
+        except FileNotFoundError:
+            # bail quietly; all downstream processing checks for a discovered root and skips when
+            # there is none
+            root = None
+        # on any other failure
+        except Exception as error:
+            # grab the journal
+            import journal
+
+            # make a channel
+            channel = journal.error("dir")
+            # show me, so I can investigate
+            channel.log(f"while looking for the repository root: {error}")
+            # and indicate failure
+            root = None
+        # install
+        self._root = root
         # all done
         return
 
@@ -486,13 +539,13 @@ class BZR(SCS):
         super().__init__(**kwds)
         # palette
         self.palette = {
-            "added": terminal.x11["dark_sea_green"],
-            "removed": terminal.misc["amber"],
-            "renamed": terminal.misc["amber"],
-            "modified": terminal.misc["amber"],
-            "kind-changed": terminal.misc["amber"],
-            "unknown": terminal.x11["steel_blue"],
-            "ignored": terminal.gray["gray30"],
+            "added": terminal.color("dark sea green"),
+            "removed": terminal.color("amber"),
+            "renamed": terminal.color("amber"),
+            "modified": terminal.color("amber"),
+            "kind-changed": terminal.color("amber"),
+            "unknown": terminal.color("steel blue"),
+            "ignored": terminal.color("gray30"),
         }
         # all done
         return
@@ -627,6 +680,7 @@ class BZR(SCS):
         "-D": "removed",
         "R ": "renamed",
         " M": "modified",
+        "RM": "modified",
         " K": "kind-changed",
         "? ": "unknown",
     }
@@ -651,18 +705,20 @@ class Git(SCS):
         # make the dispatch table
         self.dispatcher = {
             "no_commits": self.noCommits,
+            "detached": self.detached,
+            "non_tracking": self.local,
             "tracking": self.tracking,
             "moved": self.moved,
             "changed": self.changed,
         }
         # colors
         self.palette = {
-            "conflicted": terminal.x11["firebrick"],
-            "ignored": terminal.gray["gray30"],
-            "staged": terminal.x11["dark_sea_green"],
-            "staged-modified": terminal.x11["indian_red"],
-            "unstaged": terminal.misc["amber"],
-            "untracked": terminal.x11["steel_blue"],
+            "conflicted": terminal.color("firebrick"),
+            "ignored": terminal.color("gray30"),
+            "staged": terminal.color("dark sea green"),
+            "staged-modified": terminal.color("indian red"),
+            "unstaged": terminal.color("amber"),
+            "untracked": terminal.color("steel blue"),
         }
         # all done
         return
@@ -804,6 +860,26 @@ class Git(SCS):
         # all done
         return table
 
+    def detached(self, table, match, **kwds):
+        """
+        Mark a repository whose HEAD is detached
+        """
+        # there is no branch, so say so
+        table.local = "detached"
+        # all done
+        return
+
+    def local(self, table, match, **kwds):
+        """
+        Extract the branch name from a repository that tracks no remote
+        """
+        # get the match group dictionary
+        info = match.groupdict()
+        # set the branch name
+        table.local = info["branch"]
+        # all done
+        return table
+
     def tracking(self, table, match, **kwds):
         """
         Extract the branch name from a repository that tracks a remote one
@@ -841,8 +917,6 @@ class Git(SCS):
             # add it to the staged pile
             table.unstaged.add(entry)
 
-        # all done
-        return table
         # all done
         return table
 
@@ -899,6 +973,8 @@ class Git(SCS):
             [
                 # brand new repositories without any commits
                 r"(?P<no_commits>## No commits yet on (?P<new>.+))$",
+                # a detached HEAD, i.e. not on any branch
+                r"(?P<detached>## HEAD \(no branch\))$",
                 # repositories at a known branch
                 r"(?P<tracking>## " +
                 # the local branch name
@@ -911,6 +987,9 @@ class Git(SCS):
                 + r")?"
                 + r")?"
                 + r")$",
+                # a local branch that tracks no remote; a catch-all for any other branch header,
+                # so it must follow the {tracking} pattern above
+                r"(?P<non_tracking>## (?P<branch>.+))$",
                 # files that have been copied/renamed
                 r"(?P<moved>(?P<code>..) (?P<source>.+) -> (?P<destination>.+))$",
                 # files with modifications
