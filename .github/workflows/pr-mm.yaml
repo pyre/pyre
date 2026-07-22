@@ -157,7 +157,7 @@ jobs:
           echo " -- switching to the pyre home directory"
           cd pyre
           echo " -- building pyre"
-          ${mm} --jobs=2
+          ${mm}
         env:
           mm: python3 ${{github.workspace}}/mm/mm --config=.github/matrix/mm.pfg
           target: ${{matrix.target}}
@@ -170,7 +170,7 @@ jobs:
           echo " -- switching to the pyre home directory"
           cd pyre
           echo " -- testing pyre"
-          ${mm} --jobs=2 tests
+          ${mm} tests
         env:
           mm: python3 ${{github.workspace}}/mm/mm --config=.github/matrix/mm.pfg
           target: ${{matrix.target}}
