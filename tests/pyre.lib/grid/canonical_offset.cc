@@ -45,10 +45,12 @@ main(int argc, char * argv[])
     constexpr auto corner = canonical_t::index_type::fill((1 << 12) - 1);
     // its offset is the inner product of its coordinates with the strides
     auto expected = std::inner_product(
-        corner.begin(), corner.end(), packing.strides().begin(), canonical_t::difference_type { 0 });
+        corner.begin(), corner.end(), packing.strides().begin(),
+        canonical_t::difference_type { 0 });
     // show me
-    channel << "corner: " << corner << pyre::journal::newline << "offset: " << packing.offset(corner)
-            << pyre::journal::newline << "inner product: " << expected << pyre::journal::endl(__HERE__);
+    channel << "corner: " << corner << pyre::journal::newline
+            << "offset: " << packing.offset(corner) << pyre::journal::newline
+            << "inner product: " << expected << pyre::journal::endl(__HERE__);
     // the two must agree, and neither may have wrapped
     assert((packing.offset(corner) == expected));
     // the corner is the last addressable cell, so its offset is one short of the cell count

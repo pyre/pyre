@@ -13,8 +13,7 @@
 
 
 // construct from shape, order, and starting position; unit step
-inline
-pyre::grid::DynamicIndexIterator::DynamicIndexIterator(
+inline pyre::grid::DynamicIndexIterator::DynamicIndexIterator(
     const shape_type & shape, const order_type & order, const index_type & origin) noexcept :
     // park me at the requested starting point
     _current { origin },
@@ -30,8 +29,7 @@ pyre::grid::DynamicIndexIterator::DynamicIndexIterator(
 
 
 // construct with an explicit step
-inline
-pyre::grid::DynamicIndexIterator::DynamicIndexIterator(
+inline pyre::grid::DynamicIndexIterator::DynamicIndexIterator(
     const shape_type & shape, const order_type & order, const index_type & origin,
     const index_type & step) noexcept :
     // park me at the requested starting point
@@ -103,8 +101,8 @@ pyre::grid::DynamicIndexIterator::operator++(int) noexcept -> DynamicIndexIterat
 
 // two iterators are equal when they point to the same index
 inline auto
-pyre::grid::operator==(
-    const DynamicIndexIterator & i1, const DynamicIndexIterator & i2) noexcept -> bool
+pyre::grid::operator==(const DynamicIndexIterator & i1, const DynamicIndexIterator & i2) noexcept
+    -> bool
 {
     // compare the indices they are parked on; the box they came from is not part of the test
     return *i1 == *i2;

@@ -42,8 +42,8 @@ constexpr pyre::grid::Shape<Rank>::Shape(std::initializer_list<value_type> ilist
 #if defined(DEBUG)
     // while developing, insist that the caller supply exactly one extent per axis
     assert(
-        ilist.size() == Rank &&
-        "pyre::grid::Shape: initializer_list length must equal the shape rank");
+        ilist.size() == Rank
+        && "pyre::grid::Shape: initializer_list length must equal the shape rank");
 #endif
     // start filling at the leading axis
     size_type axis = 0;

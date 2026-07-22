@@ -98,7 +98,8 @@ namespace pyre::grid {
     template <size_t I, size_t Rank>
     constexpr auto get(const Order<Rank> &) noexcept -> typename Order<Rank>::const_reference;
     template <size_t I, size_t Rank>
-    constexpr auto get(const Order<Rank> &&) noexcept -> typename Order<Rank>::const_rvalue_reference;
+    constexpr auto get(const Order<Rank> &&) noexcept ->
+        typename Order<Rank>::const_rvalue_reference;
 } // namespace pyre::grid
 
 
@@ -179,7 +180,8 @@ namespace pyre::grid {
     template <size_t I, size_t Rank>
     constexpr auto get(const Shape<Rank> &) noexcept -> typename Shape<Rank>::const_reference;
     template <size_t I, size_t Rank>
-    constexpr auto get(const Shape<Rank> &&) noexcept -> typename Shape<Rank>::const_rvalue_reference;
+    constexpr auto get(const Shape<Rank> &&) noexcept ->
+        typename Shape<Rank>::const_rvalue_reference;
 } // namespace pyre::grid
 
 
@@ -266,7 +268,8 @@ namespace pyre::grid {
     template <size_t I, size_t Rank>
     constexpr auto get(const Index<Rank> &) noexcept -> typename Index<Rank>::const_reference;
     template <size_t I, size_t Rank>
-    constexpr auto get(const Index<Rank> &&) noexcept -> typename Index<Rank>::const_rvalue_reference;
+    constexpr auto get(const Index<Rank> &&) noexcept ->
+        typename Index<Rank>::const_rvalue_reference;
 } // namespace pyre::grid
 
 

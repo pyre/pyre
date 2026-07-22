@@ -41,9 +41,9 @@ main(int argc, char * argv[])
     // extract it
     constexpr auto box = packing.box(base, tile);
     // show me
-    channel << "box shape: " << box.shape() << pyre::journal::newline << "box origin: "
-            << box.origin() << pyre::journal::newline << "box strides: " << box.strides()
-            << pyre::journal::endl(__HERE__);
+    channel << "box shape: " << box.shape() << pyre::journal::newline
+            << "box origin: " << box.origin() << pyre::journal::newline
+            << "box strides: " << box.strides() << pyre::journal::endl(__HERE__);
 
     // the box reports the extent it was asked for
     static_assert(box.shape() == tile);

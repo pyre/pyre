@@ -40,8 +40,8 @@ mapsBothWays(const canonical_t & packing, pyre::journal::debug_t & channel) -> b
         // the trip out and back must be the identity
         if (!(recovered == idx)) {
             // say which cell was lost and what came back instead
-            channel << pyre::journal::at() << "  " << idx << " -> " << offset << " -> "
-                    << recovered << "  <-- lost" << pyre::journal::newline;
+            channel << pyre::journal::at() << "  " << idx << " -> " << offset << " -> " << recovered
+                    << "  <-- lost" << pyre::journal::newline;
             // and remember that this layout is broken
             sound = false;
         }

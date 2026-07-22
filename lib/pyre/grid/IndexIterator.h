@@ -39,12 +39,10 @@ public:
     // singular iterator; satisfies the std::regular requirement on forward iterators
     constexpr IndexIterator() noexcept = default;
     // construct from a shape, a traversal order, and a starting index; unit step
-    constexpr IndexIterator(
-        const shape_type &, const order_type &, const index_type &) noexcept;
+    constexpr IndexIterator(const shape_type &, const order_type &, const index_type &) noexcept;
     // construct with an explicit step along each axis
     constexpr IndexIterator(
-        const shape_type &, const order_type &, const index_type &,
-        const index_type &) noexcept;
+        const shape_type &, const order_type &, const index_type &, const index_type &) noexcept;
 
     // default metamethods
 public:

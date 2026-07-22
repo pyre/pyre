@@ -90,8 +90,8 @@ pyre::grid::IndexIterator<Rank>::operator++(int) noexcept -> self_type
 // two iterators are equal when they point to the same index
 template <std::size_t Rank>
 constexpr auto
-pyre::grid::operator==(
-    const IndexIterator<Rank> & i1, const IndexIterator<Rank> & i2) noexcept -> bool
+pyre::grid::operator==(const IndexIterator<Rank> & i1, const IndexIterator<Rank> & i2) noexcept
+    -> bool
 {
     // only the position matters; the box and the traversal order are assumed to agree
     return *i1 == *i2;

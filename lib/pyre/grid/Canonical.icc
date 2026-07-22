@@ -37,11 +37,8 @@ constexpr pyre::grid::Canonical<Rank>::Canonical(
 // nothing is deduced here; this is how derived layouts inherit their parent's physical packing
 template <std::size_t Rank>
 constexpr pyre::grid::Canonical<Rank>::Canonical(
-    const shape_type & shape,
-    const index_type & origin,
-    const order_type & order,
-    const strides_type & strides,
-    difference_type nudge) noexcept :
+    const shape_type & shape, const index_type & origin, const order_type & order,
+    const strides_type & strides, difference_type nudge) noexcept :
     // the extent of the box
     _shape { shape },
     // the packing order of the axes
