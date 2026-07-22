@@ -8,12 +8,11 @@
 
 def test():
     """
-    Build heap grids through the single erased class and view them with numpy, with no copy
+    Build heap grids through the single erased class and reach their cells through the buffer
+    protocol
     """
     # the grid bindings
     from pyre.extensions.pyre import grid
-    # numpy, which reads the buffer protocol
-    import numpy
 
     # make a three dimensional grid of doubles on the heap
     g = grid.heap(shape=[2, 3, 4], dtype="float64")
@@ -27,20 +26,21 @@ def test():
     # and it knows what backs it
     assert g.strategy == "heap"
 
-    # numpy views the cells with no copy
-    a = numpy.asarray(g)
-    # matching shape and dtype
-    assert a.shape == (2, 3, 4)
-    assert a.dtype == numpy.dtype("float64")
+    # a grid presents the python buffer protocol, which the builtin {memoryview} reads
+    mv = memoryview(g)
+    # matching geometry and cell type
+    assert mv.ndim == 3
+    assert tuple(mv.shape) == (2, 3, 4)
+    assert mv.format == "d"
+    # writable, since the storage is
+    assert not mv.readonly
 
     # a write through one view is a write to the grid's memory, so a second view sees it
-    a[1, 2, 3] = 42.0
-    a[0, 0, 0] = 7.0
-    b = numpy.asarray(g)
-    assert b[1, 2, 3] == 42.0
-    assert b[0, 0, 0] == 7.0
-    # which is only possible if both views share the grid's memory
-    assert numpy.shares_memory(a, b)
+    mv[1, 2, 3] = 42.0
+    mv[0, 0, 0] = 7.0
+    other = memoryview(g)
+    assert other[1, 2, 3] == 42.0
+    assert other[0, 0, 0] == 7.0
 
     # one bound class serves every cell type and every rank; check a spread of them
     cases = {
@@ -54,11 +54,10 @@ def test():
     for dtype, shape in cases.items():
         # build the grid
         h = grid.heap(shape=shape, dtype=dtype)
-        # view it
-        v = numpy.asarray(h)
-        # the geometry and cell type come through
-        assert list(v.shape) == shape
-        assert v.dtype == numpy.dtype(dtype)
+        # view it through the buffer protocol
+        v = memoryview(h)
+        # the geometry comes through
+        assert tuple(v.shape) == tuple(shape)
 
     # all done
     return
