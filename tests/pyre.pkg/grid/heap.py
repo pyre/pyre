@@ -7,15 +7,13 @@
 
 
 """
-Make a heap grid through the package and bridge it to numpy
+Make a heap grid through the package and reach its cells through the buffer protocol
 """
 
 
 def test():
     # the grid package
     import pyre.grid
-    # numpy reads the buffer protocol a grid presents
-    import numpy
 
     # make a grid over a fresh block of heap memory
     g = pyre.grid.heap(shape=(2, 3, 4), dtype="float64")
@@ -25,15 +23,15 @@ def test():
     assert g.rank == 3
     assert g.shape == [2, 3, 4]
 
-    # view it with numpy directly, through the buffer protocol
-    a = numpy.asarray(g)
+    # view it through the builtin buffer protocol
+    mv = memoryview(g)
     # the view has the grid's shape and cell type
-    assert a.shape == (2, 3, 4)
-    assert str(a.dtype) == "float64"
+    assert tuple(mv.shape) == (2, 3, 4)
+    assert mv.format == "d"
 
     # a write through the view lands in the grid's memory, so a fresh view sees it
-    a[1, 2, 3] = 17.0
-    assert numpy.asarray(g)[1, 2, 3] == 17.0
+    mv[1, 2, 3] = 17.0
+    assert memoryview(g)[1, 2, 3] == 17.0
 
     # all done
     return
