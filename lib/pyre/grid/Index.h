@@ -13,9 +13,9 @@
 
 
 // storage for a multidimensional index
-// a fixed rank bag of signed coordinates that names one cell of a grid, the way a numpy index
-// does; the companion of {Shape}, which carries the extents, and {Order}, which fixes the
-// packing order; together they let {Canonical} turn an index into a memory offset
+// a fixed rank bag of signed coordinates that names one cell of a grid; the companion of {Shape},
+// which carries the extents, and {Order}, which fixes the packing order; together they let
+// {Canonical} turn an index into a memory offset
 // resist the temptation to use unsigned types; they complicate index arithmetic unnecessarily
 // coordinates are signed because an index is free to sit below the origin of its grid
 template <std::size_t Rank>
