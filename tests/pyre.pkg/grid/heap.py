@@ -16,7 +16,7 @@ def test():
     import pyre.grid
 
     # make a grid over a fresh block of heap memory
-    g = pyre.grid.heap(shape=(2, 3, 4), dtype="float64")
+    g = pyre.grid.heap(shape=(2, 3, 4), cell="float64")
     # it is an instance of the published grid class
     assert isinstance(g, pyre.grid.grid)
     # with the geometry we asked for

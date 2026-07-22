@@ -12,6 +12,7 @@ def test():
     """
     # the grid bindings
     from pyre.extensions.pyre import grid
+
     # the standard array module gives us a block of typed memory with no third party support
     import array
 
@@ -19,7 +20,7 @@ def test():
     source = array.array("d", [0.0] * 24)
 
     # lay a grid over it, without copying
-    g = grid.view(source=source, shape=[2, 3, 4], dtype="float64")
+    g = grid.view(source=source, shape=[2, 3, 4], cell="float64")
     # it reports the geometry we asked for
     assert g.shape == [2, 3, 4]
     # and knows it does not own its cells

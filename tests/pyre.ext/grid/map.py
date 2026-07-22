@@ -12,6 +12,7 @@ def test():
     """
     # the grid bindings
     from pyre.extensions.pyre import grid
+
     # for a scratch path and its cleanup
     import os
 
@@ -24,7 +25,7 @@ def test():
     # try, so the file is cleaned up no matter what
     try:
         # create a file-backed grid
-        g = grid.map(uri=uri, shape=[2, 3, 4], dtype="float64")
+        g = grid.map(uri=uri, shape=[2, 3, 4], cell="float64")
         # it reports the geometry we asked for
         assert g.shape == [2, 3, 4]
         # and knows it is file backed
@@ -36,7 +37,7 @@ def test():
         del g
 
         # map the same file again over the same shape, opening the existing product
-        h = grid.map(uri=uri, shape=[2, 3, 4], dtype="float64", create=False)
+        h = grid.map(uri=uri, shape=[2, 3, 4], cell="float64", create=False)
         # the value must have persisted to disk
         assert memoryview(h)[1, 2, 3] == 3.5
         # let go of the second mapping

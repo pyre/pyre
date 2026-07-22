@@ -15,7 +15,7 @@ def test():
     from pyre.extensions.pyre import grid
 
     # make a three dimensional grid of doubles on the heap
-    g = grid.heap(shape=[2, 3, 4], dtype="float64")
+    g = grid.heap(shape=[2, 3, 4], cell="float64")
     # it reports its own geometry
     assert g.rank == 3
     assert g.shape == [2, 3, 4]
@@ -51,9 +51,9 @@ def test():
         "complex128": [2, 2, 2, 2],
     }
     # go through them
-    for dtype, shape in cases.items():
+    for cell, shape in cases.items():
         # build the grid
-        h = grid.heap(shape=shape, dtype=dtype)
+        h = grid.heap(shape=shape, cell=cell)
         # view it through the buffer protocol
         v = memoryview(h)
         # the geometry comes through
