@@ -14,6 +14,13 @@ pyre_test_python_testcase(tests/pyre.ext/timers/wall_timer_example.py)
 pyre_test_python_testcase(tests/pyre.ext/timers/process_timer_instance.py)
 pyre_test_python_testcase(tests/pyre.ext/timers/process_timer_example.py)
 
+# the grid bindings test suite
+pyre_test_python_testcase(tests/pyre.ext/grid/sanity.py)
+pyre_test_python_testcase(tests/pyre.ext/grid/heap.py)
+pyre_test_python_testcase(tests/pyre.ext/grid/map.py)
+pyre_test_python_testcase(tests/pyre.ext/grid/view.py)
+pyre_test_python_testcase(tests/pyre.ext/grid/lifetime.py)
+
 # N.B. the chroma bindings under tests/pyre.ext/chroma are registered in
 # pyre_tests_chroma.cmake, alongside the rest of the chroma suite
 
