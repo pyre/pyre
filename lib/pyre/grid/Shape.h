@@ -13,8 +13,8 @@
 
 
 // the extent of a grid along each one of its axes
-// this is the user facing description of how big a grid is, in the spirit of a numpy shape; it is
-// a fixed rank container, so the number of axes is known at compile time
+// this is the user facing description of how big a grid is; it is a fixed rank container, so the
+// number of axes is known at compile time
 // together with {Index} and {Order} it supports {Canonical}, the packing strategy that maps an
 // index to an offset in memory
 template <std::size_t Rank>

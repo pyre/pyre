@@ -127,7 +127,7 @@ pyre::py::grid::Grid::resolve(const py::object & key) const -> resolved
     const auto rank = _shape.size();
     // more indexers than axes is a mistake
     if (items.size() > rank) {
-        // complain in numpy's own words
+        // reject the excess
         throw py::index_error("too many indices for grid");
     }
 

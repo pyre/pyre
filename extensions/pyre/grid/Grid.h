@@ -41,7 +41,7 @@ public:
 
     // accessors
 public:
-    // the buffer protocol description numpy and friends consume
+    // the buffer protocol description a consumer reads to reach my cells
     auto view() -> py::buffer_info;
     // the extent along each axis
     auto shape() const -> const std::vector<size_type> &;
