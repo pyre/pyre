@@ -17,7 +17,7 @@ The sequence
 
     import pyre
     import numpy
-    g = pyre.grid.heap(shape=(2, 3, 4), dtype="float64")
+    g = pyre.grid.heap(shape=(2, 3, 4), cell="float64")
     a = numpy.asarray(g)
 
 makes a grid over a fresh block of heap memory and views its cells with numpy, without copying:

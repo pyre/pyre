@@ -12,13 +12,14 @@ def test():
     """
     # the grid bindings
     from pyre.extensions.pyre import grid
+
     # the collector, so we can force the issue
     import gc
 
     # build a grid, fill it, and return only a view of it, dropping the grid object
     def viewOnly():
         # a grid that exists only inside this scope
-        g = grid.heap(shape=[4, 4], dtype="int32")
+        g = grid.heap(shape=[4, 4], cell="int32")
         # a view onto its cells, through the buffer protocol
         mv = memoryview(g)
         # stamp every cell

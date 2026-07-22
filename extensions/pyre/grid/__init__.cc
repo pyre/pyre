@@ -27,46 +27,46 @@ namespace pyre::py::grid {
     // its shape carries one signed extent per axis
     using shape_t = packing_t::shape_type;
 
-    // choose a cell type from a numpy style dtype string and hand it to a callable that is
+    // choose a cell type from its pyre memory cell name and hand it to a callable that is
     // templated on that type; this keeps the twelve-way dispatch in one place
     template <class F>
-    auto dispatchCell(const string_t & dtype, F && f) -> Grid
+    auto dispatchCell(const string_t & cell, F && f) -> Grid
     {
         // signed integers
-        if (dtype == "int8")
+        if (cell == "int8")
             return f.template operator()<pyre::memory::int8_t>();
-        if (dtype == "int16")
+        if (cell == "int16")
             return f.template operator()<pyre::memory::int16_t>();
-        if (dtype == "int32")
+        if (cell == "int32")
             return f.template operator()<pyre::memory::int32_t>();
-        if (dtype == "int64")
+        if (cell == "int64")
             return f.template operator()<pyre::memory::int64_t>();
         // unsigned integers
-        if (dtype == "uint8")
+        if (cell == "uint8")
             return f.template operator()<pyre::memory::uint8_t>();
-        if (dtype == "uint16")
+        if (cell == "uint16")
             return f.template operator()<pyre::memory::uint16_t>();
-        if (dtype == "uint32")
+        if (cell == "uint32")
             return f.template operator()<pyre::memory::uint32_t>();
-        if (dtype == "uint64")
+        if (cell == "uint64")
             return f.template operator()<pyre::memory::uint64_t>();
         // floating point
-        if (dtype == "float32")
+        if (cell == "float32")
             return f.template operator()<pyre::memory::float32_t>();
-        if (dtype == "float64")
+        if (cell == "float64")
             return f.template operator()<pyre::memory::float64_t>();
         // complex
-        if (dtype == "complex64")
+        if (cell == "complex64")
             return f.template operator()<pyre::memory::complex64_t>();
-        if (dtype == "complex128")
+        if (cell == "complex128")
             return f.template operator()<pyre::memory::complex128_t>();
 
         // anything else is a caller mistake
         auto channel = pyre::journal::error_t("pyre.grid.bindings");
         // complain
-        channel << "unsupported grid cell type '" << dtype << "'" << pyre::journal::endl(__HERE__);
+        channel << "unsupported grid cell type '" << cell << "'" << pyre::journal::endl(__HERE__);
         // and refuse
-        throw py::value_error("unsupported grid cell type '" + dtype + "'");
+        throw py::value_error("unsupported grid cell type '" + cell + "'");
     }
 
 
@@ -86,12 +86,12 @@ namespace pyre::py::grid {
     }
 
     // the heap factory python calls
-    auto heap(const std::vector<size_type> & extents, const string_t & dtype) -> Grid
+    auto heap(const std::vector<size_type> & extents, const string_t & cell) -> Grid
     {
         // adopt the extents as a shape
         auto shape = shape_t(extents.begin(), extents.end());
         // dispatch on the cell type
-        return dispatchCell(dtype, [&]<class T>() { return makeHeap<T>(shape); });
+        return dispatchCell(cell, [&]<class T>() { return makeHeap<T>(shape); });
     }
 
 
@@ -107,19 +107,21 @@ namespace pyre::py::grid {
         // lay out the shape
         auto packing = packing_t(shape);
         // either make a file large enough to hold the grid, or map an existing one for writing
-        auto storage = create ? storage_t::create(uri, packing.cells()) : storage_t::open(uri, true);
+        auto storage =
+            create ? storage_t::create(uri, packing.cells()) : storage_t::open(uri, true);
         // make the grid and erase it; map storage owns its cells through a shared handle
         return erase(grid_t { packing, storage }, "map");
     }
 
     // the map factory python calls
-    auto map(const string_t & uri, const std::vector<size_type> & extents, const string_t & dtype,
-             bool create) -> Grid
+    auto map(
+        const string_t & uri, const std::vector<size_type> & extents, const string_t & cell,
+        bool create) -> Grid
     {
         // adopt the extents as a shape
         auto shape = shape_t(extents.begin(), extents.end());
         // dispatch on the cell type
-        return dispatchCell(dtype, [&]<class T>() { return makeMap<T>(uri, shape, create); });
+        return dispatchCell(cell, [&]<class T>() { return makeMap<T>(uri, shape, create); });
     }
 
 
@@ -145,8 +147,8 @@ namespace pyre::py::grid {
         }
         // and its cells must be the width we were told to expect
         if (info->itemsize != static_cast<py::ssize_t>(sizeof(cellT))) {
-            // otherwise the dtype and the buffer disagree
-            throw py::value_error("source buffer cell size does not match the requested dtype");
+            // otherwise the cell and the buffer disagree
+            throw py::value_error("source buffer cell size does not match the requested cell");
         }
 
         // a view over the source's memory
@@ -159,13 +161,14 @@ namespace pyre::py::grid {
     }
 
     // the view factory python calls
-    auto view(const py::buffer & source, const std::vector<size_type> & extents,
-              const string_t & dtype) -> Grid
+    auto view(
+        const py::buffer & source, const std::vector<size_type> & extents, const string_t & cell)
+        -> Grid
     {
         // adopt the extents as a shape
         auto shape = shape_t(extents.begin(), extents.end());
         // dispatch on the cell type
-        return dispatchCell(dtype, [&]<class T>() { return makeView<T>(source, shape); });
+        return dispatchCell(cell, [&]<class T>() { return makeView<T>(source, shape); });
     }
 } // namespace pyre::py::grid
 
@@ -248,9 +251,9 @@ pyre::py::grid::__init__(py::module & m) -> void
         // the implementation
         &heap,
         // the signature
-        "shape"_a, "dtype"_a,
+        "shape"_a, "cell"_a,
         // the docstring
-        "make a grid over a fresh block of heap memory of the given {shape} and {dtype}");
+        "make a grid over a fresh block of heap memory of the given {shape} and {cell}");
 
     // the factory that maps a file-backed grid
     grid.def(
@@ -260,9 +263,9 @@ pyre::py::grid::__init__(py::module & m) -> void
         &map,
         // the signature; {create} makes a fresh product, else an existing one is mapped for
         // writing, which is how a data product on disk is read back
-        "uri"_a, "shape"_a, "dtype"_a, "create"_a = true,
+        "uri"_a, "shape"_a, "cell"_a, "create"_a = true,
         // the docstring
-        "lay a grid of the given {shape} and {dtype} over the memory-mapped file at {uri}");
+        "lay a grid of the given {shape} and {cell} over the memory-mapped file at {uri}");
 
     // the factory that wraps memory python already holds
     grid.def(
@@ -271,9 +274,9 @@ pyre::py::grid::__init__(py::module & m) -> void
         // the implementation
         &view,
         // the signature
-        "source"_a, "shape"_a, "dtype"_a,
+        "source"_a, "shape"_a, "cell"_a,
         // the docstring
-        "lay a grid of the given {shape} and {dtype} over the memory of the {source} buffer, "
+        "lay a grid of the given {shape} and {cell} over the memory of the {source} buffer, "
         "without copying");
 
     // all done
