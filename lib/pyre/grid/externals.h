@@ -11,6 +11,7 @@
 // externals
 #include <algorithm>
 #include <array>
+#include <cassert>
 #include <cstddef>
 #include <concepts>
 #include <initializer_list>
