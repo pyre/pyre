@@ -7,18 +7,25 @@
 
 
 """
-Sanity check: verify that the package is accessible
+Sanity check: verify that the grid package is accessible
 """
 
 
 def test():
-    import pyre.geometry
+    # access the package
+    import pyre.grid
 
+    # the factory and the grid class are published when the bindings are present
+    assert hasattr(pyre.grid, "heap")
+    assert hasattr(pyre.grid, "grid")
+
+    # all done
     return
 
 
 # main
 if __name__ == "__main__":
+    # run the test
     test()
 
 
