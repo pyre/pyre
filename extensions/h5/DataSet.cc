@@ -13,68 +13,41 @@
 // helpers
 namespace pyre::h5::py {
 
-    // bindings for reading dataset contents into {pyre::memory} buffers
-    template <class memT>
-    inline auto bindReadBuffer(py::class_<DataSet> & cls) -> void
+    // read a tile from {self} into any writable python buffer
+    // a pyre grid, a pyre memory buffer, and a numpy array all present the python buffer
+    // protocol, so a single entry point serves them all; the grid family no longer needs its
+    // cross product of instantiations bound here
+    inline auto readInto(
+        const DataSet & self, const py::buffer & data, const datatype_t & memtype,
+        const shape_t & origin, const shape_t & shape) -> void
     {
-        // add a {read} overload for a memory buffer
-        cls.def(
-            // the name
-            "read",
-            // the implementation
-            &read<memT>,
-            // the signature
-            "data"_a, "memtype"_a, "origin"_a, "shape"_a,
-            // the docstring
-            "fill {data} with the tile @{origin}+{shape}");
+        // ask the buffer for writable access to its block
+        auto info = data.request(true);
+        // address it as a flat run of cells
+        hsize_t memsize = info.size;
+        // an in-memory dataspace matching it, one dimensional
+        auto memspace = dataspace_t(shape_t { memsize });
+        // the source, restricted to the requested tile
+        auto filespace = self.dataspace();
+        filespace.slab(origin, shape);
+        // fill the block; {memtype} is a pyre wrapper, so hand over its raw ids
+        self.read(memtype.id(), info.ptr, memspace.id(), filespace.id());
     }
 
-    // bindings for writing out the contents of {pyre::memory} buffers
-    template <class memT>
-    inline auto bindWriteBuffer(py::class_<DataSet> & cls) -> void
+    // write the contents of any python buffer out to a tile of {self}
+    inline auto writeFrom(
+        const DataSet & self, const py::buffer & data, const datatype_t & memtype,
+        const shape_t & origin, const shape_t & shape) -> void
     {
-        // add a {write} overload for a memory buffer
-        cls.def(
-            // the name
-            "write",
-            // the implementation
-            &write<memT>,
-            // the signature
-            "data"_a, "memtype"_a, "origin"_a, "shape"_a,
-            // the docstring
-            "write the contents of {data} to the tile @{origin}+{shape}");
-    }
-
-    // bindings for reading dataset contents into {pyre::grid} buffers
-    template <class gridT>
-    inline auto bindReadGrid(py::class_<DataSet> & cls) -> void
-    {
-        // add a {read} overload for a compatible grid
-        cls.def(
-            // the name
-            "read",
-            // the implementation
-            &readGrid<gridT>,
-            // the signature
-            "data"_a, "memtype"_a, "origin"_a, "shape"_a,
-            // the docstring
-            "fill {data} with the tile @{origin}+{shape}");
-    }
-
-    // bindings for writing out the contents of grids
-    template <class gridT>
-    inline auto bindWriteGrid(py::class_<DataSet> & cls) -> void
-    {
-        // add a {write} overload for a compatible grid
-        cls.def(
-            // the name
-            "write",
-            // the implementation
-            &writeGrid<gridT>,
-            // the signature
-            "data"_a, "memtype"_a, "origin"_a, "shape"_a,
-            // the docstring
-            "write the contents of {data} to the tile @{origin}+{shape}");
+        // ask the buffer for read access to its block
+        auto info = data.request(false);
+        // the in-memory dataspace matches the tile
+        auto memspace = dataspace_t(shape);
+        // the destination, restricted to the requested tile
+        auto filespace = self.dataspace();
+        filespace.slab(origin, shape);
+        // hand the block to the write
+        self.write(memtype.id(), info.ptr, memspace.id(), filespace.id());
     }
 
 } // namespace pyre::h5::py
@@ -540,140 +513,25 @@ pyre::h5::py::dataset(py::module & m)
     // access to the dataset attributes
     attributes(cls);
 
-    // reading
-    // into memory buffers
-    bindReadBuffer<heap_int8_t>(cls);
-    bindReadBuffer<heap_int16_t>(cls);
-    bindReadBuffer<heap_int32_t>(cls);
-    bindReadBuffer<heap_int64_t>(cls);
-    bindReadBuffer<heap_uint8_t>(cls);
-    bindReadBuffer<heap_uint16_t>(cls);
-    bindReadBuffer<heap_uint32_t>(cls);
-    bindReadBuffer<heap_uint64_t>(cls);
-    bindReadBuffer<heap_float_t>(cls);
-    bindReadBuffer<heap_double_t>(cls);
-    bindReadBuffer<heap_complexfloat_t>(cls);
-    bindReadBuffer<heap_complexdouble_t>(cls);
-    // into 1d in-memory grids
-    bindReadGrid<int8_heapgrid_1d_t>(cls);
-    bindReadGrid<int16_heapgrid_1d_t>(cls);
-    bindReadGrid<int32_heapgrid_1d_t>(cls);
-    bindReadGrid<int64_heapgrid_1d_t>(cls);
-    bindReadGrid<uint8_heapgrid_1d_t>(cls);
-    bindReadGrid<uint16_heapgrid_1d_t>(cls);
-    bindReadGrid<uint32_heapgrid_1d_t>(cls);
-    bindReadGrid<uint64_heapgrid_1d_t>(cls);
-    bindReadGrid<float_heapgrid_1d_t>(cls);
-    bindReadGrid<double_heapgrid_1d_t>(cls);
-    bindReadGrid<complexfloat_heapgrid_1d_t>(cls);
-    bindReadGrid<complexdouble_heapgrid_1d_t>(cls);
-    // into 2d in-memory grids
-    bindReadGrid<int8_heapgrid_2d_t>(cls);
-    bindReadGrid<int16_heapgrid_2d_t>(cls);
-    bindReadGrid<int32_heapgrid_2d_t>(cls);
-    bindReadGrid<int64_heapgrid_2d_t>(cls);
-    bindReadGrid<uint8_heapgrid_2d_t>(cls);
-    bindReadGrid<uint16_heapgrid_2d_t>(cls);
-    bindReadGrid<uint32_heapgrid_2d_t>(cls);
-    bindReadGrid<uint64_heapgrid_2d_t>(cls);
-    bindReadGrid<float_heapgrid_2d_t>(cls);
-    bindReadGrid<double_heapgrid_2d_t>(cls);
-    bindReadGrid<complexfloat_heapgrid_2d_t>(cls);
-    bindReadGrid<complexdouble_heapgrid_2d_t>(cls);
-    // into 3d in-memory grids
-    bindReadGrid<int8_heapgrid_3d_t>(cls);
-    bindReadGrid<int16_heapgrid_3d_t>(cls);
-    bindReadGrid<int32_heapgrid_3d_t>(cls);
-    bindReadGrid<int64_heapgrid_3d_t>(cls);
-    bindReadGrid<uint8_heapgrid_3d_t>(cls);
-    bindReadGrid<uint16_heapgrid_3d_t>(cls);
-    bindReadGrid<uint32_heapgrid_3d_t>(cls);
-    bindReadGrid<uint64_heapgrid_3d_t>(cls);
-    bindReadGrid<float_heapgrid_3d_t>(cls);
-    bindReadGrid<double_heapgrid_3d_t>(cls);
-    bindReadGrid<complexfloat_heapgrid_3d_t>(cls);
-    bindReadGrid<complexdouble_heapgrid_3d_t>(cls);
-
-    // into 1d on-disk grids
-    bindReadGrid<int8_mapgrid_1d_t>(cls);
-    bindReadGrid<int16_mapgrid_1d_t>(cls);
-    bindReadGrid<int32_mapgrid_1d_t>(cls);
-    bindReadGrid<int64_mapgrid_1d_t>(cls);
-    bindReadGrid<uint8_mapgrid_1d_t>(cls);
-    bindReadGrid<uint16_mapgrid_1d_t>(cls);
-    bindReadGrid<uint32_mapgrid_1d_t>(cls);
-    bindReadGrid<uint64_mapgrid_1d_t>(cls);
-    bindReadGrid<float_mapgrid_1d_t>(cls);
-    bindReadGrid<double_mapgrid_1d_t>(cls);
-    bindReadGrid<complexfloat_mapgrid_1d_t>(cls);
-    bindReadGrid<complexdouble_mapgrid_1d_t>(cls);
-    // into 2d on-disk grids
-    bindReadGrid<int8_mapgrid_2d_t>(cls);
-    bindReadGrid<int16_mapgrid_2d_t>(cls);
-    bindReadGrid<int32_mapgrid_2d_t>(cls);
-    bindReadGrid<int64_mapgrid_2d_t>(cls);
-    bindReadGrid<uint8_mapgrid_2d_t>(cls);
-    bindReadGrid<uint16_mapgrid_2d_t>(cls);
-    bindReadGrid<uint32_mapgrid_2d_t>(cls);
-    bindReadGrid<uint64_mapgrid_2d_t>(cls);
-    bindReadGrid<float_mapgrid_2d_t>(cls);
-    bindReadGrid<double_mapgrid_2d_t>(cls);
-    bindReadGrid<complexfloat_mapgrid_2d_t>(cls);
-    bindReadGrid<complexdouble_mapgrid_2d_t>(cls);
-    // into 3d on-disk grids
-    bindReadGrid<int8_mapgrid_3d_t>(cls);
-    bindReadGrid<int16_mapgrid_3d_t>(cls);
-    bindReadGrid<int32_mapgrid_3d_t>(cls);
-    bindReadGrid<int64_mapgrid_3d_t>(cls);
-    bindReadGrid<uint8_mapgrid_3d_t>(cls);
-    bindReadGrid<uint16_mapgrid_3d_t>(cls);
-    bindReadGrid<uint32_mapgrid_3d_t>(cls);
-    bindReadGrid<uint64_mapgrid_3d_t>(cls);
-    bindReadGrid<float_mapgrid_3d_t>(cls);
-    bindReadGrid<double_mapgrid_3d_t>(cls);
-    bindReadGrid<complexfloat_mapgrid_3d_t>(cls);
-    bindReadGrid<complexdouble_mapgrid_3d_t>(cls);
-
-    // writing
-    // from memory buffers
-    bindWriteBuffer<heap_int8_t>(cls);
-    bindWriteBuffer<heap_int16_t>(cls);
-    bindWriteBuffer<heap_int32_t>(cls);
-    bindWriteBuffer<heap_int64_t>(cls);
-    bindWriteBuffer<heap_uint8_t>(cls);
-    bindWriteBuffer<heap_uint16_t>(cls);
-    bindWriteBuffer<heap_uint32_t>(cls);
-    bindWriteBuffer<heap_uint64_t>(cls);
-    bindWriteBuffer<heap_float_t>(cls);
-    bindWriteBuffer<heap_double_t>(cls);
-    bindWriteBuffer<heap_complexfloat_t>(cls);
-    bindWriteBuffer<heap_complexdouble_t>(cls);
-    // from 2d grids
-    bindWriteGrid<int8_heapgrid_2d_t>(cls);
-    bindWriteGrid<int16_heapgrid_2d_t>(cls);
-    bindWriteGrid<int32_heapgrid_2d_t>(cls);
-    bindWriteGrid<int64_heapgrid_2d_t>(cls);
-    bindWriteGrid<uint8_heapgrid_2d_t>(cls);
-    bindWriteGrid<uint16_heapgrid_2d_t>(cls);
-    bindWriteGrid<uint32_heapgrid_2d_t>(cls);
-    bindWriteGrid<uint64_heapgrid_2d_t>(cls);
-    bindWriteGrid<float_heapgrid_2d_t>(cls);
-    bindWriteGrid<double_heapgrid_2d_t>(cls);
-    bindWriteGrid<complexfloat_heapgrid_2d_t>(cls);
-    bindWriteGrid<complexdouble_heapgrid_2d_t>(cls);
-    // from 3d grids
-    bindWriteGrid<int8_heapgrid_3d_t>(cls);
-    bindWriteGrid<int16_heapgrid_3d_t>(cls);
-    bindWriteGrid<int32_heapgrid_3d_t>(cls);
-    bindWriteGrid<int64_heapgrid_3d_t>(cls);
-    bindWriteGrid<uint8_heapgrid_3d_t>(cls);
-    bindWriteGrid<uint16_heapgrid_3d_t>(cls);
-    bindWriteGrid<uint32_heapgrid_3d_t>(cls);
-    bindWriteGrid<uint64_heapgrid_3d_t>(cls);
-    bindWriteGrid<float_heapgrid_3d_t>(cls);
-    bindWriteGrid<double_heapgrid_3d_t>(cls);
-    bindWriteGrid<complexfloat_heapgrid_3d_t>(cls);
-    bindWriteGrid<complexdouble_heapgrid_3d_t>(cls);
+    // reading and writing, over the universal python buffer protocol
+    cls.def(
+        // the name
+        "read",
+        // the implementation
+        &readInto,
+        // the signature
+        "data"_a, "memtype"_a, "origin"_a, "shape"_a,
+        // the docstring
+        "fill {data} with the tile @{origin}+{shape}");
+    cls.def(
+        // the name
+        "write",
+        // the implementation
+        &writeFrom,
+        // the signature
+        "data"_a, "memtype"_a, "origin"_a, "shape"_a,
+        // the docstring
+        "write {data} to the tile @{origin}+{shape}");
 
     // all done
     return;
