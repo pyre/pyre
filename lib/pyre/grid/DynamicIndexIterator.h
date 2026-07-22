@@ -43,8 +43,7 @@ public:
     DynamicIndexIterator(const shape_type &, const order_type &, const index_type &) noexcept;
     // construct with an explicit step along each axis
     DynamicIndexIterator(
-        const shape_type &, const order_type &, const index_type &,
-        const index_type &) noexcept;
+        const shape_type &, const order_type &, const index_type &, const index_type &) noexcept;
 
     // default special members
 public:
@@ -81,8 +80,8 @@ private:
 
 // equality: two iterators are equal when they point to the same index
 namespace pyre::grid {
-    inline auto operator==(
-        const DynamicIndexIterator &, const DynamicIndexIterator &) noexcept -> bool;
+    inline auto operator==(const DynamicIndexIterator &, const DynamicIndexIterator &) noexcept
+        -> bool;
 }
 
 

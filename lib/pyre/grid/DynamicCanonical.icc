@@ -16,8 +16,7 @@
 
 // build a layout from just the extents: anchor the grid at the origin of the index space
 // and pack it the c way
-inline
-pyre::grid::DynamicCanonical::DynamicCanonical(const shape_type & shape) :
+inline pyre::grid::DynamicCanonical::DynamicCanonical(const shape_type & shape) :
     // let the rank of {shape} size a zero origin and the default permutation, and hand the
     // job over to the constructor that knows how to deduce a layout
     DynamicCanonical(shape, index_type(shape.size(), 0), _defaultOrder(shape.size()))
@@ -25,8 +24,7 @@ pyre::grid::DynamicCanonical::DynamicCanonical(const shape_type & shape) :
 
 // build a layout for a grid whose lowest addressable index is not necessarily zero,
 // packed the c way
-inline
-pyre::grid::DynamicCanonical::DynamicCanonical(
+inline pyre::grid::DynamicCanonical::DynamicCanonical(
     const shape_type & shape, const index_type & origin) :
     // supply the default permutation and delegate
     DynamicCanonical(shape, origin, _defaultOrder(shape.size()))
@@ -34,8 +32,7 @@ pyre::grid::DynamicCanonical::DynamicCanonical(
 
 // the deducing constructor: given the index box and the packing order, work out the
 // physical layout that packs the cells tightly
-inline
-pyre::grid::DynamicCanonical::DynamicCanonical(
+inline pyre::grid::DynamicCanonical::DynamicCanonical(
     const shape_type & shape, const index_type & origin, const order_type & order) :
     // record the extent along each axis; this is what fixes my rank
     _shape { shape },
@@ -54,8 +51,7 @@ pyre::grid::DynamicCanonical::DynamicCanonical(
 
 // the full constructor: the caller knows the physical layout already, so take it verbatim;
 // this is how derived layouts such as boxes and slices inherit their parent's memory map
-inline
-pyre::grid::DynamicCanonical::DynamicCanonical(
+inline pyre::grid::DynamicCanonical::DynamicCanonical(
     const shape_type & shape, const index_type & origin, const order_type & order,
     const strides_type & strides, difference_type nudge) :
     // the extent along each axis
@@ -353,8 +349,8 @@ pyre::grid::DynamicCanonical::_defaultOrder(size_type n) -> order_type
 // stride[axis] = product of shape[other] for all other axes that vary faster
 // which is exactly the number of cells one has to skip to take a single step along {axis}
 inline auto
-pyre::grid::DynamicCanonical::_initStrides(
-    const shape_type & shape, const order_type & order) -> strides_type
+pyre::grid::DynamicCanonical::_initStrides(const shape_type & shape, const order_type & order)
+    -> strides_type
 {
     // get the rank implied by the extents
     const auto N = shape.size();
@@ -378,8 +374,8 @@ pyre::grid::DynamicCanonical::_initStrides(
 
 // the shift whose negation gives the nudge mapping origin to offset zero
 inline auto
-pyre::grid::DynamicCanonical::_initShift(
-    const index_type & origin, const strides_type & strides) -> difference_type
+pyre::grid::DynamicCanonical::_initShift(const index_type & origin, const strides_type & strides)
+    -> difference_type
 {
     // start the accumulation at the beginning of the expanse
     difference_type shift = 0;

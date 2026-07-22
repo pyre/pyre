@@ -260,8 +260,8 @@ pyre::grid::Symmetric<Rank>::_leadingCoordinate(difference_type, difference_type
 template <std::size_t Rank>
 template <std::size_t M>
 constexpr auto
-pyre::grid::Symmetric<Rank>::_leadingCoordinate(difference_type D, difference_type & offset) noexcept
-    -> difference_type
+pyre::grid::Symmetric<Rank>::_leadingCoordinate(
+    difference_type D, difference_type & offset) noexcept -> difference_type
     requires(M > 1)
 {
     // guess the top coordinate

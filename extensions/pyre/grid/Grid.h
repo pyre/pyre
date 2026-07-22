@@ -84,7 +84,7 @@ namespace pyre::py::grid {
     // that its storage's shared handle holds the block for as long as python holds on
     template <class gridT>
     auto erase(const gridT & grid, string_t strategy) -> Grid;
-}
+} // namespace pyre::py::grid
 
 
 // the inline implementations
