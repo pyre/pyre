@@ -15,9 +15,11 @@ def test():
     # access the package
     import pyre.grid
 
-    # the factory and the grid class are published when the bindings are present
-    assert hasattr(pyre.grid, "heap")
+    # the grid class and the storage factories are published when the bindings are present
     assert hasattr(pyre.grid, "grid")
+    assert hasattr(pyre.grid, "heap")
+    assert hasattr(pyre.grid, "map")
+    assert hasattr(pyre.grid, "view")
 
     # all done
     return
