@@ -17,7 +17,13 @@ def test():
     # make a two dimensional grid of doubles on the heap
     g = grid.heap(shape=[2, 3], cell="float64")
 
-    # a fresh grid reads back as zeros
+    # heap storage comes uninitialized, so stamp every cell with a known value before reading it
+    for i in range(2):
+        # over the second axis too
+        for j in range(3):
+            # lay down a definite zero
+            g[i, j] = 0.0
+    # now the grid reads back as the zeros we wrote
     assert g[0, 0] == 0.0
     assert g[1, 2] == 0.0
 
@@ -73,7 +79,7 @@ def test():
     # one axis, two cells
     assert tail.rank == 1
     assert tail.shape == [2]
-    # reading the tail of row 1: column 1 was never written, column 2 holds the 9.0
+    # reading the tail of row 1: column 1 still holds its stamped zero, column 2 holds the 9.0
     assert tail[0] == 0.0
     assert tail[1] == 9.0
 
