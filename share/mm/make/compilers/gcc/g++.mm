@@ -32,6 +32,9 @@ g++.debug := -g
 g++.reldeb := -g -O
 g++.opt := -O3
 g++.cov := --coverage
+# the flag that rewrites a source path prefix in the coverage notes; the coverage machinery uses it to
+# map installed header paths back to their source tree so the report attributes to editable files
+g++.cov.prefixmap := -fprofile-prefix-map
 g++.prof := -pg
 g++.shared := -fPIC
 # openmp support
@@ -57,9 +60,10 @@ g++.link.ext = $(platform.c++.ext)
 # command line options
 g++.defines = MM_COMPILER_gcc
 
-# clean up temporaries left behind while compiling
+# clean up temporaries left behind while compiling: the dependency file, plus the gcov coverage
+# notes and data ({.gcno}/{.gcda}) a {cov} build drops beside the object
 #  usage: g++.clean {base-name}
-g++.clean = $(1).d
+g++.clean = $(1).d $(1).gcno $(1).gcda
 
 # dependency generation
 # g++ does this in one pass: the dependency file gets generated during the compilation phase so
