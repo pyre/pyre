@@ -157,5 +157,23 @@ pyre::grid::Grid<P, S>::end() const -> iterator
     return iterator { *this, _packing.end() };
 }
 
+// the read cursor parked on my first cell
+template <pyre::grid::concepts::PackingStrategy P, pyre::grid::concepts::StorageStrategy S>
+[[nodiscard]] constexpr auto
+pyre::grid::Grid<P, S>::cbegin() const -> const_iterator
+{
+    // the same sweep {begin} hands out
+    return begin();
+}
+
+// the read cursor one past my last cell
+template <pyre::grid::concepts::PackingStrategy P, pyre::grid::concepts::StorageStrategy S>
+[[nodiscard]] constexpr auto
+pyre::grid::Grid<P, S>::cend() const -> const_iterator
+{
+    // the same terminus {end} hands out
+    return end();
+}
+
 
 // end of file

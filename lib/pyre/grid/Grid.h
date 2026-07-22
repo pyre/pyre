@@ -118,6 +118,9 @@ public:
 public:
     // the cursor that walks my cells
     using iterator = GridIterator<self_type>;
+    // whether a cell may be written through is settled by my storage, not by the choice of
+    // cursor, so the const spelling names the very same type
+    using const_iterator = iterator;
 
     // a cursor parked on my first cell
     [[nodiscard]] constexpr auto begin() const -> iterator;
@@ -125,6 +128,11 @@ public:
     [[nodiscard]] constexpr auto begin(const index_type & step) const -> iterator;
     // and the cursor that marks the end of the sweep
     [[nodiscard]] constexpr auto end() const -> iterator;
+
+    // the standard container spellings, for consumers that ask for a read cursor by name
+    [[nodiscard]] constexpr auto cbegin() const -> const_iterator;
+    // one past my last cell
+    [[nodiscard]] constexpr auto cend() const -> const_iterator;
 
     // implementation details - data
 private:
