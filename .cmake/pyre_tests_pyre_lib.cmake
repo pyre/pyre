@@ -20,33 +20,20 @@ pyre_test_driver(tests/pyre.lib/geometry/brick.cc)
 
 # grid
 pyre_test_driver(tests/pyre.lib/grid/canonical_box.cc)
-pyre_test_driver(tests/pyre.lib/grid/canonical_box_skip.cc)
-pyre_test_driver(tests/pyre.lib/grid/canonical_cslice.cc)
-pyre_test_driver(tests/pyre.lib/grid/canonical_long.cc)
-pyre_test_driver(tests/pyre.lib/grid/canonical_map.cc)
-pyre_test_driver(tests/pyre.lib/grid/canonical_map_origin.cc)
-pyre_test_driver(tests/pyre.lib/grid/canonical_map_positive.cc)
+pyre_test_driver(tests/pyre.lib/grid/canonical_isomorphism.cc)
+pyre_test_driver(tests/pyre.lib/grid/canonical_isomorphism_origin.cc)
 pyre_test_driver(tests/pyre.lib/grid/canonical_nudge.cc)
 pyre_test_driver(tests/pyre.lib/grid/canonical_offset.cc)
 pyre_test_driver(tests/pyre.lib/grid/canonical_sanity.cc)
 pyre_test_driver(tests/pyre.lib/grid/canonical_slice.cc)
-pyre_test_driver(tests/pyre.lib/grid/canonical_visit.cc)
 pyre_test_driver(tests/pyre.lib/grid/canonical_visit_order.cc)
+pyre_test_driver(tests/pyre.lib/grid/concepts.cc)
+pyre_test_driver(tests/pyre.lib/grid/diagonal_sink.cc)
+pyre_test_driver(tests/pyre.lib/grid/grid_heap_access.cc)
 pyre_test_driver(tests/pyre.lib/grid/grid_heap_box.cc)
-pyre_test_driver(tests/pyre.lib/grid/grid_heap_box_skip.cc)
-pyre_test_driver(tests/pyre.lib/grid/grid_heap_expand.cc)
 pyre_test_driver(tests/pyre.lib/grid/grid_heap_iteration.cc)
-pyre_test_driver(tests/pyre.lib/grid/grid_heap_sanity.cc)
-pyre_test_driver(tests/pyre.lib/grid/grid_mmap_get.cc)
-pyre_test_driver(tests/pyre.lib/grid/grid_mmap_sanity.cc)
-pyre_test_driver(tests/pyre.lib/grid/grid_mmap_set.cc)
-pyre_test_driver(tests/pyre.lib/grid/grid_sat.cc)
-pyre_test_driver(tests/pyre.lib/grid/grid_sat_box.cc)
-pyre_test_driver(tests/pyre.lib/grid/grid_stack_sanity.cc)
-pyre_test_driver(tests/pyre.lib/grid/grid_stack_box.cc)
-pyre_test_driver(tests/pyre.lib/grid/grid_stack_box_skip.cc)
-pyre_test_driver(tests/pyre.lib/grid/grid_stack_expand.cc)
-pyre_test_driver(tests/pyre.lib/grid/grid_stack_iteration.cc)
+pyre_test_driver(tests/pyre.lib/grid/grid_heap_slice.cc)
+pyre_test_driver(tests/pyre.lib/grid/grid_map_access.cc)
 pyre_test_driver(tests/pyre.lib/grid/index_access.cc)
 pyre_test_driver(tests/pyre.lib/grid/index_arithmetic.cc)
 pyre_test_driver(tests/pyre.lib/grid/index_cartesian.cc)
@@ -62,42 +49,17 @@ pyre_test_driver(tests/pyre.lib/grid/order_access.cc)
 pyre_test_driver(tests/pyre.lib/grid/order_c.cc)
 pyre_test_driver(tests/pyre.lib/grid/order_fortran.cc)
 pyre_test_driver(tests/pyre.lib/grid/order_sanity.cc)
-pyre_test_driver(tests/pyre.lib/grid/product_access.cc)
-pyre_test_driver(tests/pyre.lib/grid/product_iteration.cc)
-pyre_test_driver(tests/pyre.lib/grid/product_ordered_iteration.cc)
-pyre_test_driver(tests/pyre.lib/grid/product_sanity.cc)
-pyre_test_driver(tests/pyre.lib/grid/rep_at.cc)
-pyre_test_driver(tests/pyre.lib/grid/rep_eq.cc)
-pyre_test_driver(tests/pyre.lib/grid/rep_fill.cc)
-pyre_test_driver(tests/pyre.lib/grid/rep_iteration.cc)
-pyre_test_driver(tests/pyre.lib/grid/rep_op.cc)
-pyre_test_driver(tests/pyre.lib/grid/rep_reverse_iteration.cc)
-pyre_test_driver(tests/pyre.lib/grid/rep_sanity.cc)
-pyre_test_driver(tests/pyre.lib/grid/rep_zero.cc)
 pyre_test_driver(tests/pyre.lib/grid/sanity.cc)
 pyre_test_driver(tests/pyre.lib/grid/shape_access.cc)
 pyre_test_driver(tests/pyre.lib/grid/shape_arithmetic.cc)
 pyre_test_driver(tests/pyre.lib/grid/shape_cartesian.cc)
+pyre_test_driver(tests/pyre.lib/grid/shape_fill.cc)
 pyre_test_driver(tests/pyre.lib/grid/shape_sanity.cc)
 pyre_test_driver(tests/pyre.lib/grid/shape_scaling.cc)
 pyre_test_driver(tests/pyre.lib/grid/shape_structured_binding.cc)
 pyre_test_driver(tests/pyre.lib/grid/shape_zero.cc)
+pyre_test_driver(tests/pyre.lib/grid/symmetric_sharing.cc)
 
-# the {grid_get} tests need cleanup
-add_test(NAME tests.pyre.lib.grid.grid_mmap.cleanup
-  COMMAND ${BASH_PROGRAM} -c "rm grid_mmap.data"
-  )
-
-# and they need to happen in a specific order
-set_property(TEST tests.pyre.lib.grid.grid_mmap_set.cc PROPERTY
-  DEPENDS tests.pyre.lib.grid.grid_mmap_sanity.cc
-  )
-set_property(TEST tests.pyre.lib.grid.grid_mmap_get.cc PROPERTY
-  DEPENDS tests.pyre.lib.grid.grid_mmap_set.cc
-  )
-set_property(TEST tests.pyre.lib.grid.grid_mmap.cleanup PROPERTY
-  DEPENDS tests.pyre.lib.grid.grid_mmap_get.cc
-  )
 
 
 # memory
@@ -375,16 +337,6 @@ set_property(TEST tests.pyre.lib.viz.iterators.polarsaw.cleanup PROPERTY
   )
 
 
-# compact packings
-if (HAVE_COMPACT_PACKINGS)
-set(definitions "HAVE_COMPACT_PACKINGS")
-pyre_test_driver_cxx20(tests/pyre.lib/grid/diagonal_visit.cc)
-pyre_add_definitions(tests/pyre.lib/grid/diagonal_visit.cc ${definitions})
-pyre_test_driver_cxx20(tests/pyre.lib/grid/symmetric_visit.cc)
-pyre_add_definitions(tests/pyre.lib/grid/symmetric_visit.cc ${definitions})
-pyre_test_driver_cxx20(tests/pyre.lib/grid/symmetric_sanity.cc)
-pyre_add_definitions(tests/pyre.lib/grid/symmetric_sanity.cc ${definitions})
-endif()
 
 
 # tensor

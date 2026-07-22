@@ -62,8 +62,7 @@ pyre_test_python_testcase(tests/pyre.pkg/patterns/unique_split.py)
 # pyre/grid
 #
 pyre_test_python_testcase(tests/pyre.pkg/grid/sanity.py)
-pyre_test_python_testcase(tests/pyre.pkg/grid/tile.py)
-pyre_test_python_testcase(tests/pyre.pkg/grid/grid.py)
+pyre_test_python_testcase(tests/pyre.pkg/grid/heap.py)
 
 
 #
