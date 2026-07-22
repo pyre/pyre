@@ -121,13 +121,13 @@ jobs:
           echo " -- switching to the pyre source directory"
           cd pyre
           echo " -- building pyre into the conda prefix"
-          ${mm}
+          ${mm} --jobs=$(nproc)
 
       - name: test pyre
         run: |
           echo " -- switching to the pyre source directory"
           cd pyre
           echo " -- testing pyre"
-          ${mm} tests
+          ${mm} --jobs=$(nproc) tests
 #
 # end of file
