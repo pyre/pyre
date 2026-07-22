@@ -74,8 +74,14 @@ private:
 // this is the demand-driven half of the design: it instantiates once per grid type that a bound
 // signature actually mentions, not once per point of a precomputed cross product
 namespace pyre::py::grid {
-    // {strategy} names the storage kind, e.g. "heap"; {gridT} must compose a strided packing with
-    // contiguous storage, which is what lets the buffer protocol describe it
+    // the low-level builder: describe {grid} in the buffer protocol's terms, over the block at
+    // {data}, which {owner} is responsible for keeping alive; {strategy} names the storage kind
+    template <class gridT>
+    auto describe(const gridT & grid, string_t strategy, void * data, std::shared_ptr<void> owner)
+        -> Grid;
+
+    // erase a grid whose storage OWNS its cells (heap, map): keep a copy of the grid alive, so
+    // that its storage's shared handle holds the block for as long as python holds on
     template <class gridT>
     auto erase(const gridT & grid, string_t strategy) -> Grid;
 }

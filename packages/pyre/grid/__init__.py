@@ -27,10 +27,8 @@ its cells alive for as long as the view holds on, so {g} may go out of scope whi
 in use.
 """
 
-
 # pull in pyre so we can reach the bindings
 import pyre
-
 
 # the grid bindings are the engine; a grid is a block of typed memory, so there is no sensible
 # pure python stand-in for it
@@ -38,13 +36,18 @@ if pyre.libpyre is None:
     # without the bindings there is nothing to publish
     grid = None
     heap = None
+    map = None
+    view = None
 # otherwise reach into the bindings by attribute, the way the rest of pyre does
 else:
     # the erased grid class, for type checks
     grid = pyre.libpyre.grid.Grid
-
     # the factory that allocates a grid over a fresh block of heap memory
     heap = pyre.libpyre.grid.heap
+    # the factory that creates a grid over a fresh memory-mapped file
+    map = pyre.libpyre.grid.map
+    # the factory that lays a grid over memory python already holds, without copying
+    view = pyre.libpyre.grid.view
 
 
 # end of file

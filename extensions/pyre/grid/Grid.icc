@@ -12,19 +12,16 @@
 #include "Grid.h"
 
 
-// turn a statically typed grid into the erased form
+// describe a grid in the buffer protocol's terms, over a block someone else keeps alive
 template <class gridT>
 auto
-pyre::py::grid::erase(const gridT & grid, string_t strategy) -> Grid
+pyre::py::grid::describe(
+    const gridT & grid, string_t strategy, void * data, std::shared_ptr<void> owner) -> Grid
 {
     // name the cell type
     using value_t = typename gridT::value_type;
     // and the layout
     const auto & packing = grid.packing();
-
-    // keep the source grid alive behind a type-erased handle: copying it bumps the storage's
-    // shared reference count, so its cells outlive this call for as long as python holds on
-    auto owner = std::make_shared<gridT>(grid);
 
     // the extent along each axis
     std::vector<Grid::size_type> shape;
@@ -42,10 +39,10 @@ pyre::py::grid::erase(const gridT & grid, string_t strategy) -> Grid
     // whether python may write through depends on the storage's cell type
     const bool writable = gridT::storage_type::cell_type::writable();
 
-    // assemble the erased grid over the kept-alive storage
+    // assemble the erased grid over the block {owner} keeps alive
     return Grid(
-        // the block starts where the kept copy's storage does
-        owner->data(),
+        // the block starts here
+        data,
         // one cell is this wide
         sizeof(value_t),
         // described by this struct code
@@ -58,8 +55,21 @@ pyre::py::grid::erase(const gridT & grid, string_t strategy) -> Grid
         writable,
         // backed by this storage strategy
         std::move(strategy),
-        // held alive by the copy we just made
+        // held alive by whatever the caller supplied
         std::move(owner));
+}
+
+
+// erase a grid whose storage owns its cells
+template <class gridT>
+auto
+pyre::py::grid::erase(const gridT & grid, string_t strategy) -> Grid
+{
+    // keep the source grid alive behind a type-erased handle: copying it bumps the storage's
+    // shared reference count, so its cells outlive this call for as long as python holds on
+    auto owner = std::make_shared<gridT>(grid);
+    // the kept copy's storage is where the block lives; describe over it, held alive by the copy
+    return describe(*owner, std::move(strategy), owner->data(), owner);
 }
 
 
