@@ -9,6 +9,12 @@ pyre-h5.lib.tests.stem := h5.lib
 pyre-h5.lib.tests.prerequisites := pyre-h5.lib journal.lib
 pyre-h5.lib.tests.extern := pyre-h5.lib journal.lib hdf5
 
+# a parallel {hdf5} pulls in {mpi.h} through its public headers; when {mpi} is available, add it
+# as an extern so the include path lands on the compile line without any manual flags
+ifeq ($(mpi.available), mpi)
+pyre-h5.lib.tests.extern += mpi
+endif
+
 # c++ compiler arguments
 pyre-h5.lib.tests.c++.defines += $(pyre.lib.c++.defines)
 pyre-h5.lib.tests.c++.flags += -Wall $(pyre.lib.c++.flags)

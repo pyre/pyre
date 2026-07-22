@@ -6,6 +6,7 @@
 
 # check availability
 hdf5.available := ${findstring hdf5,$(extern.available)}
+mpi.available := ${findstring mpi,$(extern.available)}
 
 # if {hdf5} is available
 ifeq ($(hdf5.available), hdf5)
@@ -33,6 +34,13 @@ pyre-h5.lib.extern := journal.lib hdf5
 pyre-h5.lib.c++.flags += $(pyre.lib.c++.flags)
 pyre-h5.lib.c++.defines += $(pyre.lib.c++.defines)
 
+# a parallel build of {hdf5} exposes {mpi.h} through its public headers, so anything that
+# includes them needs the mpi include directories; when {mpi} is available, add it as an extern
+# so the include path lands on the compile line without any manual flags
+ifeq ($(mpi.available), mpi)
+pyre-h5.lib.extern += mpi
+endif
+
 # the h5 extension meta-data; it wraps the library above
 pyre-h5.ext.root := extensions/h5/
 # the module stays {h5}; {packages/pyre/extensions} re-exports it as {libh5}
@@ -46,6 +54,11 @@ pyre-h5.ext.lib.prerequisites := pyre-h5.lib pyre.lib
 pyre-h5.ext.extern := pyre.lib journal.lib hdf5 pybind11 python
 pyre-h5.ext.lib.c++.flags += $(pyre-h5.lib.c++.flags)
 pyre-h5.ext.lib.c++.defines += $(pyre-h5.lib.c++.defines)
+
+# as with the library, a parallel {hdf5} pulls in {mpi.h}; add {mpi} to the extension externs too
+ifeq ($(mpi.available), mpi)
+pyre-h5.ext.extern += mpi
+endif
 
 
 # get the testsuites

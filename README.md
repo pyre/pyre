@@ -256,4 +256,81 @@ installation. Let's verify:
 
 Both statements should succeed, and the latter should print out the `pyre` installation location.
 
+## Building with CMake
+
+In addition to `mm`, `pyre` ships a full `CMake` build. This is a good option if you already have
+`CMake` in your toolchain, want to embed `pyre` in another `CMake` project via `find_package(pyre)`,
+or prefer a standard out-of-source build.
+
+### Dependencies
+
+You need a C++ compiler with C++23 support (e.g. `gcc` 13+ or `clang` 16+), `CMake` 3.19 or newer,
+and `make`. The `python` bindings additionally require `python` 3.7+, `pybind11`, and `PyYAML`.
+The following external libraries are optional; when present, `CMake` detects them and builds the
+corresponding support:
+
+- `MPI` (e.g. OpenMPI)
+- `GSL`
+- `HDF5` (the parallel build is preferred when `MPI` is available)
+- `PostgreSQL` (`libpq`)
+
+On a Debian/Ubuntu system you can install the system dependencies with:
+
+``` text
+~> sudo apt install -y cmake make libgsl-dev libopenmpi-dev libhdf5-dev libpq-dev
+~> pip3 install pybind11 PyYAML numpy
+```
+
+### Configuring, building, and installing
+
+`CMake` builds are done out of source. Create a build directory, point `CMake` at the `pyre` source
+tree, and choose an install prefix; here we use `~/tools/pyre`:
+
+``` text
+~/dv/pyre> mkdir -p ~/tools/pyre build
+~/dv/pyre> cd build
+~/dv/pyre/build> cmake \
+    -DCMAKE_INSTALL_PREFIX=${HOME}/tools/pyre \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_C_COMPILER=gcc \
+    -DCMAKE_CXX_COMPILER=g++ \
+    -Dpybind11_DIR=$(python3 -c "import pybind11; print(pybind11.get_cmake_dir())") \
+    -DPYRE_MPI_OVERSUBSCRIBE=ON \
+    ..
+~/dv/pyre/build> cmake --build . -j 4 --target install
+```
+
+A few notes:
+
+- `-Dpybind11_DIR=...` points `CMake` at the `pybind11` installed in your `python` environment; the
+  command substitution above resolves it automatically.
+- Build types are the usual `CMake` values: `Release`, `Debug`, or `RelWithDebInfo`.
+- Useful options include `-DPYRE_BUILD_TESTING=ON` (default when `pyre` is the top-level project),
+  `-DWITH_CUDA=ON`, and `-DHAVE_TENSOR=ON`.
+- The optional external libraries (`MPI`, `GSL`, `HDF5`, `PostgreSQL`) are auto-detected: when
+  `find_package` locates them, the corresponding support is built automatically — there is no
+  option to toggle by hand. If a parallel `HDF5` is found, `pyre` links `MPI::MPI_CXX` into
+  `libpyre` for you, so the `mpi.h` its headers pull in is resolved without any extra compile flags.
+- A small number of heavily-templated translation units (for example
+  `extensions/pyre/grid/grids.cc`) are memory-hungry to compile — a single `g++` process can use
+  roughly 10 GB of RAM. Keep the parallel job count (`-j`) modest on machines with limited memory to
+  avoid exhausting RAM.
+
+### Verifying
+
+The `python` package is installed under `${prefix}/packages`. Add it to your `PYTHONPATH` and import
+`pyre`:
+
+``` text
+~/dv/pyre/build> export PYTHONPATH=${HOME}/tools/pyre/packages:${PYTHONPATH}
+~/dv/pyre/build> python3 -c "import pyre; print(pyre.__file__); print(pyre.version())"
+```
+
+You can also run the test suite from the build directory with `ctest` (the `postgres` suites need a
+running database server, so exclude them if you don't have one):
+
+``` text
+~/dv/pyre/build> ctest --output-on-failure -E postgres
+```
+
 [comment]: <> (end of file)

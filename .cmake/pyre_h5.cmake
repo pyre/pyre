@@ -58,6 +58,12 @@ function(pyre_h5Lib)
     # libpyre now needs the hdf5 c library; the plain signature (matching {pyre_pyreLib}) links
     # it transitively, so consumers whose header templates call the hdf5 c api get it too
     target_link_libraries(pyre HDF5::HDF5)
+    # a parallel build of hdf5 exposes {mpi.h} through its public headers, so anything that
+    # includes them needs the mpi include directories; pull them in via {MPI::MPI_CXX} so users
+    # don't have to add the mpi include path to the compile flags by hand
+    if(HDF5_IS_PARALLEL AND MPI_FOUND)
+      target_link_libraries(pyre MPI::MPI_CXX)
+    endif()
   endif(HDF5_FOUND)
 endfunction(pyre_h5Lib)
 
