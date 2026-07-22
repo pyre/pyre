@@ -20,6 +20,8 @@ pyre::py::grid::describe(
 {
     // name the cell type
     using value_t = typename gridT::value_type;
+    // the writable spelling of it, so a read-only source still yields a compilable writer
+    using cell_t = std::remove_const_t<value_t>;
     // and the layout
     const auto & packing = grid.packing();
 
@@ -39,6 +41,17 @@ pyre::py::grid::describe(
     // whether python may write through depends on the storage's cell type
     const bool writable = gridT::storage_type::cell_type::writable();
 
+    // lift one cell from memory into python, knowing its type here where it is still concrete
+    Grid::reader_type read = [](const void * p) -> py::object {
+        // interpret the address as a cell and cast it across
+        return py::cast(*static_cast<const cell_t *>(p));
+    };
+    // deposit one cell from python into memory, its companion
+    Grid::writer_type write = [](void * p, const py::object & v) -> void {
+        // interpret the address as a cell and assign the converted value
+        *static_cast<cell_t *>(p) = v.cast<cell_t>();
+    };
+
     // assemble the erased grid over the block {owner} keeps alive
     return Grid(
         // the block starts here
@@ -56,7 +69,9 @@ pyre::py::grid::describe(
         // backed by this storage strategy
         std::move(strategy),
         // held alive by whatever the caller supplied
-        std::move(owner));
+        std::move(owner),
+        // moving cells to and from python by these
+        std::move(read), std::move(write));
 }
 
 

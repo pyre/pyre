@@ -17,6 +17,7 @@ pyre_test_python_testcase(tests/pyre.ext/timers/process_timer_example.py)
 # the grid bindings test suite
 pyre_test_python_testcase(tests/pyre.ext/grid/sanity.py)
 pyre_test_python_testcase(tests/pyre.ext/grid/heap.py)
+pyre_test_python_testcase(tests/pyre.ext/grid/access.py)
 pyre_test_python_testcase(tests/pyre.ext/grid/map.py)
 pyre_test_python_testcase(tests/pyre.ext/grid/view.py)
 pyre_test_python_testcase(tests/pyre.ext/grid/lifetime.py)

@@ -10,6 +10,8 @@
 
 // get the extension support
 #include "../external.h"
+// the type-erased cell readers and writers are held as closures
+#include <functional>
 // the grid library and the storage strategies it composes with
 #include <pyre/grid.h>
 #include <pyre/memory.h>

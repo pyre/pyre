@@ -244,6 +244,28 @@ pyre::py::grid::__init__(py::module & m) -> void
         // the docstring
         "the storage strategy that holds my cells");
 
+    // read access: {g[i, j, ...]}
+    cls.def(
+        // the name
+        "__getitem__",
+        // the implementation
+        &Grid::getitem,
+        // the signature
+        "index"_a,
+        // the docstring
+        "the cell at a full index, or a sub-grid for a partial or sliced {index}");
+
+    // write access: {g[i, j, ...] = v}
+    cls.def(
+        // the name
+        "__setitem__",
+        // the implementation
+        &Grid::setitem,
+        // the signature
+        "index"_a, "value"_a,
+        // the docstring
+        "write {value} into the cell at a full integer {index}");
+
     // the factory that allocates a fresh heap grid
     grid.def(
         // the name
