@@ -11,6 +11,9 @@ mode.info:
 	@${call log.var,available,$(modes.available)}
 	@${call log.sec,"  npm",}
 	@${call log.var,locked,$(mode.npm.locked)}
+	@${call log.sec,"  compiler",}
+	@${call log.var,assertions,${if $(mode.compiler.assertions),yes,no}}
+	@${call log.var,defines,$(mode.compiler.defines)}
 
 # what the build mode controls and the values it can take
 mode.help: | mm.banner
@@ -27,6 +30,7 @@ mode.help: | mm.banner
 	@$(log)
 	@${call log.sec,"settings",}
 	@${call log.help,"mode.npm.locked","install npm deps from the committed lock when set (otherwise resolve fresh)"}
+	@${call log.help,"mode.compiler.assertions","compile in the developer-time checks (asserts, DEBUG blocks, journal debug/firewall) when set"}
 	@$(log)
 
 
