@@ -12,10 +12,6 @@ ${eval ${call target.init,reldeb}}
 
 # adjust
 ${call target.adjust,reldeb,$(languages.compiled),flags ldflags}
-# define the DEBUG macro
-${foreach language,c c++ cuda cython fortran, \
-    ${eval targets.reldeb.$(language).defines += DEBUG} \
-}
 
 # build my info target
 ${eval ${call target.info.flags,reldeb}}

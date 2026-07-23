@@ -9,5 +9,11 @@
 # npm: empty installs fresh ({npm i}); non-empty installs from the committed lock ({npm ci})
 mode.npm.locked := yes
 
+# compiler: whether the developer-time checks are compiled in -- the {assert}s, the code under
+# {#if defined(DEBUG)}, and journal's {debug}/{firewall} channels. this is a mode disposition,
+# orthogonal to the opt/debug optimization target; {make/modes/init.mm} turns it into the
+# coherent {DEBUG}/{NDEBUG} macro pair. the baseline is a deployment build, so the checks are off
+mode.compiler.assertions :=
+
 
 # end of file

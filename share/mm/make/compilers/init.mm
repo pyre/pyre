@@ -118,6 +118,7 @@ define compiler.option.sources =
 ${strip
     $(2)
     mm
+    mode.compiler
     platform.$(1)
     $(compiler.$(1))
     $(target.variants:%=targets.%.$(1))
