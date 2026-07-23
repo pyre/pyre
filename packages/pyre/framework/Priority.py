@@ -38,6 +38,7 @@ class Priority:
     defaults = None
     boot = None
     package = None
+    discovery = None
     persistent = None
     user = None
     command = None
@@ -117,6 +118,20 @@ class Package(Priority):
 
     # public data
     name = "package"
+    category = next(categories)
+    # narrow the footprint
+    __slots__ = ()
+
+
+class Discovery(Priority):
+    """
+    Category for the priorities of values deposited by probes of the machine, such as package
+    manager interrogation; they override the trait defaults but lose to all forms of explicit
+    configuration
+    """
+
+    # public data
+    name = "discovery"
     category = next(categories)
     # narrow the footprint
     __slots__ = ()
@@ -202,6 +217,7 @@ Priority.uninitialized = Uninitialized
 Priority.defaults = Defaults
 Priority.boot = Boot
 Priority.package = Package
+Priority.discovery = Discovery
 Priority.command = Command
 Priority.construction = Construction
 Priority.persistent = Persistent
