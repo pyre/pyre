@@ -39,12 +39,10 @@ constexpr pyre::grid::Shape<Rank>::Shape(Ts... xs) noexcept :
 template <std::size_t Rank>
 constexpr pyre::grid::Shape<Rank>::Shape(std::initializer_list<value_type> ilist) noexcept
 {
-#if defined(DEBUG)
-    // while developing, insist that the caller supply exactly one extent per axis
+    // insist that the caller supply exactly one extent per axis
     assert(
         ilist.size() == Rank
         && "pyre::grid::Shape: initializer_list length must equal the shape rank");
-#endif
     // start filling at the leading axis
     size_type axis = 0;
     // go through the entries of the initializer list
