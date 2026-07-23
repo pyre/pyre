@@ -39,12 +39,10 @@ constexpr pyre::grid::Order<Rank>::Order(Ts... xs) noexcept :
 template <std::size_t Rank>
 constexpr pyre::grid::Order<Rank>::Order(std::initializer_list<value_type> ilist) noexcept
 {
-    // while developing, insist that the caller name a level for every axis and no more
-#if defined(DEBUG)
+    // insist that the caller name a level for every axis and no more
     assert(
         ilist.size() == Rank
         && "pyre::grid::Order: initializer_list length must equal the order rank");
-#endif
     // start with the first axis
     size_type axis = 0;
     // go through the levels the caller supplied

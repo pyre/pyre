@@ -160,10 +160,8 @@ template <std::size_t Rank>
 constexpr auto
 pyre::grid::Diagonal<Rank>::_initShift(const index_type & origin) noexcept -> difference_type
 {
-#if defined(DEBUG)
     // a diagonal layout can only be anchored on the diagonal
     assert(_isDiagonal(origin));
-#endif
     // the origin's position along the diagonal is its coordinate on any axis
     return origin[0];
 }

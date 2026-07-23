@@ -39,12 +39,10 @@ constexpr pyre::grid::Index<Rank>::Index(Ts... xs) noexcept :
 template <std::size_t Rank>
 constexpr pyre::grid::Index<Rank>::Index(std::initializer_list<value_type> ilist) noexcept
 {
-#if defined(DEBUG)
-    // while developing, insist that the caller supply exactly one coordinate per axis
+    // insist that the caller supply exactly one coordinate per axis
     assert(
         ilist.size() == Rank
         && "pyre::grid::Index: initializer_list length must equal the index rank");
-#endif
     // make a counter
     size_type axis = 0;
     // go through the entries of the initializer list
