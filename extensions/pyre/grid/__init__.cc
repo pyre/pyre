@@ -11,12 +11,12 @@
 #include "forward.h"
 // my declarations
 #include "__init__.h"
-// the erased grid and its converters
-#include "Grid.h"
+// the type-erased grid and its converters
+#include "AnyGrid.h"
 
 
-// the erased grid measures with a signed integer, matching the c++ library
-using size_type = pyre::py::grid::Grid::size_type;
+// the type-erased grid measures with a signed integer, matching the c++ library
+using size_type = pyre::py::grid::AnyGrid::size_type;
 
 
 // the factories all build over a runtime-rank packing, so that they dispatch on the cell type
@@ -30,7 +30,7 @@ namespace pyre::py::grid {
     // choose a cell type from its pyre memory cell name and hand it to a callable that is
     // templated on that type; this keeps the twelve-way dispatch in one place
     template <class F>
-    auto dispatchCell(const string_t & cell, F && f) -> Grid
+    auto dispatchCell(const string_t & cell, F && f) -> AnyGrid
     {
         // signed integers
         if (cell == "int8")
@@ -72,7 +72,7 @@ namespace pyre::py::grid {
 
     // a heap grid: allocate a fresh block of {shape} cells of type {cellT}
     template <class cellT>
-    auto makeHeap(const shape_t & shape) -> Grid
+    auto makeHeap(const shape_t & shape) -> AnyGrid
     {
         // the storage and the grid over it
         using storage_t = pyre::memory::heap_t<cellT>;
@@ -81,12 +81,12 @@ namespace pyre::py::grid {
         auto packing = packing_t(shape);
         // put enough cells on the heap
         auto storage = storage_t { packing.cells() };
-        // make the grid and erase it; heap storage owns its cells
-        return erase(grid_t { packing, storage }, "heap");
+        // make the grid and type-erase it; heap storage owns its cells
+        return anyGrid(grid_t { packing, storage }, "heap");
     }
 
     // the heap factory python calls
-    auto heap(const std::vector<size_type> & extents, const string_t & cell) -> Grid
+    auto heap(const std::vector<size_type> & extents, const string_t & cell) -> AnyGrid
     {
         // adopt the extents as a shape
         auto shape = shape_t(extents.begin(), extents.end());
@@ -99,7 +99,7 @@ namespace pyre::py::grid {
     // {create} chooses between making a fresh product sized to the shape, and mapping an
     // existing one, which is how a data product on disk is read back
     template <class cellT>
-    auto makeMap(const string_t & uri, const shape_t & shape, bool create) -> Grid
+    auto makeMap(const string_t & uri, const shape_t & shape, bool create) -> AnyGrid
     {
         // the storage and the grid over it
         using storage_t = pyre::memory::map_t<cellT>;
@@ -109,14 +109,14 @@ namespace pyre::py::grid {
         // either make a file large enough to hold the grid, or map an existing one for writing
         auto storage =
             create ? storage_t::create(uri, packing.cells()) : storage_t::open(uri, true);
-        // make the grid and erase it; map storage owns its cells through a shared handle
-        return erase(grid_t { packing, storage }, "map");
+        // make the grid and type-erase it; map storage owns its cells through a shared handle
+        return anyGrid(grid_t { packing, storage }, "map");
     }
 
     // the map factory python calls
     auto map(
         const string_t & uri, const std::vector<size_type> & extents, const string_t & cell,
-        bool create) -> Grid
+        bool create) -> AnyGrid
     {
         // adopt the extents as a shape
         auto shape = shape_t(extents.begin(), extents.end());
@@ -128,7 +128,7 @@ namespace pyre::py::grid {
     // a non-owning grid over memory python already holds: lay a {shape} of {cellT} cells over the
     // block the {source} buffer exports, without copying
     template <class cellT>
-    auto makeView(const py::buffer & source, const shape_t & shape) -> Grid
+    auto makeView(const py::buffer & source, const shape_t & shape) -> AnyGrid
     {
         // the storage and the grid over it
         using storage_t = pyre::memory::view_t<cellT>;
@@ -156,14 +156,14 @@ namespace pyre::py::grid {
         // paired with the layout
         auto grid = grid_t { packing, storage };
         // the view owns nothing, so keep the source's buffer view open for as long as python
-        // holds the erased grid; that pins both the exporter and its block
+        // holds the type-erased grid; that pins both the exporter and its block
         return describe(grid, "view", info->ptr, info);
     }
 
     // the view factory python calls
     auto view(
         const py::buffer & source, const std::vector<size_type> & extents, const string_t & cell)
-        -> Grid
+        -> AnyGrid
     {
         // adopt the extents as a shape
         auto shape = shape_t(extents.begin(), extents.end());
@@ -184,9 +184,9 @@ pyre::py::grid::__init__(py::module & m) -> void
         // the docstring
         "multi-dimensional arrays over pluggable memory");
 
-    // the single erased grid class, presenting the python buffer protocol so any consumer of that
+    // the single type-erased grid class, presenting the python buffer protocol so any consumer of that
     // protocol can view its cells with no copy
-    auto cls = py::class_<Grid>(
+    auto cls = py::class_<AnyGrid>(
         // in the submodule
         grid,
         // named
@@ -196,15 +196,15 @@ pyre::py::grid::__init__(py::module & m) -> void
         // the docstring
         "a multi-dimensional array whose cells live behind a storage strategy");
 
-    // wire the buffer protocol to the erased grid's own description
-    cls.def_buffer([](Grid & self) -> py::buffer_info { return self.view(); });
+    // wire the buffer protocol to the type-erased grid's own description
+    cls.def_buffer([](AnyGrid & self) -> py::buffer_info { return self.view(); });
 
     // the extent along each axis
     cls.def_property_readonly(
         // the name
         "shape",
         // the getter
-        &Grid::shape,
+        &AnyGrid::shape,
         // the docstring
         "my extent along each axis");
 
@@ -213,7 +213,7 @@ pyre::py::grid::__init__(py::module & m) -> void
         // the name
         "strides",
         // the getter
-        &Grid::strides,
+        &AnyGrid::strides,
         // the docstring
         "the distance between consecutive cells along each axis, in cells");
 
@@ -222,7 +222,7 @@ pyre::py::grid::__init__(py::module & m) -> void
         // the name
         "rank",
         // the getter
-        &Grid::rank,
+        &AnyGrid::rank,
         // the docstring
         "my number of axes");
 
@@ -231,7 +231,7 @@ pyre::py::grid::__init__(py::module & m) -> void
         // the name
         "writable",
         // the getter
-        &Grid::writable,
+        &AnyGrid::writable,
         // the docstring
         "whether python may write through to my cells");
 
@@ -240,7 +240,7 @@ pyre::py::grid::__init__(py::module & m) -> void
         // the name
         "strategy",
         // the getter
-        &Grid::strategy,
+        &AnyGrid::strategy,
         // the docstring
         "the storage strategy that holds my cells");
 
@@ -249,7 +249,7 @@ pyre::py::grid::__init__(py::module & m) -> void
         // the name
         "__getitem__",
         // the implementation
-        &Grid::getitem,
+        &AnyGrid::getitem,
         // the signature
         "index"_a,
         // the docstring
@@ -260,7 +260,7 @@ pyre::py::grid::__init__(py::module & m) -> void
         // the name
         "__setitem__",
         // the implementation
-        &Grid::setitem,
+        &AnyGrid::setitem,
         // the signature
         "index"_a, "value"_a,
         // the docstring

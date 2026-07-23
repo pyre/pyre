@@ -10,9 +10,9 @@
 
 // the pyre extension namespace for the grid bindings
 namespace pyre::py::grid {
-    // the single erased grid the bindings hand to python, whatever the rank, cell type, or
+    // the single type-erased grid the bindings hand to python, whatever the rank, cell type, or
     // storage strategy of the c++ grid it came from
-    class Grid;
+    class AnyGrid;
 } // namespace pyre::py::grid
 
 
