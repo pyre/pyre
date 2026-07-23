@@ -137,26 +137,11 @@ class Managed(pyre.component, implements=PackageManager):
         """
         Map {recipe} onto the name of an installed package that provides it, if any
         """
-        # grab the index of installed packages
-        installed = self.getInstalledPackages()
-        # collect the candidate native names
-        candidates = tuple(recipe.candidates(manager=self.name))
-        # first, look for exact matches
-        for candidate in candidates:
-            # if this candidate is installed
-            if candidate in installed:
-                # it's our answer
-                return candidate
-        # otherwise, look for packages whose names start with a candidate, e.g. versioned
-        # names like {postgresql16}; scan in reverse order so higher versions win
-        for candidate in candidates:
-            # go through the installed packages
-            for package in sorted(installed, reverse=True):
-                # if this one matches
-                if package.startswith(candidate):
-                    # it's our answer
-                    return package
-        # if we got this far, the recipe is not satisfiable here
+        # go through the ranked candidates
+        for package in self.resolveAll(recipe=recipe):
+            # the first one is our best answer
+            return package
+        # if there weren't any, the recipe is not satisfiable here
         return None
 
     @pyre.export
@@ -165,12 +150,57 @@ class Managed(pyre.component, implements=PackageManager):
         Interpret {recipe} against my package database and return a map of installation trait
         values, or {None} if the package is not installed here
         """
-        # find the native package that provides the recipe
-        package = self.resolve(recipe=recipe)
-        # if there isn't one
-        if package is None:
-            # i can't configure this recipe
-            return None
+        # go through the ranked candidates; some, e.g. debian metapackages, carry none of
+        # the actual files, so keep going until one passes the recipe markers
+        for package in self.resolveAll(recipe=recipe):
+            # interpret the recipe against this candidate
+            values = self.interpret(recipe=recipe, package=package)
+            # if the markers panned out
+            if values is not None:
+                # we have our configuration
+                return values
+        # if no candidate passed, the recipe is not satisfiable here
+        return None
+
+    # implementation details
+    def resolveAll(self, recipe):
+        """
+        Generate the ranked sequence of installed packages that may provide {recipe}
+        """
+        # grab the index of installed packages
+        installed = self.getInstalledPackages()
+        # collect the candidate native names
+        candidates = tuple(recipe.candidates(manager=self.name))
+        # keep track of what has been offered
+        offered = set()
+        # first, look for exact matches
+        for candidate in candidates:
+            # if this candidate is installed and hasn't been offered
+            if candidate in installed and candidate not in offered:
+                # remember it
+                offered.add(candidate)
+                # and offer it
+                yield candidate
+        # next, look for packages whose names start with a candidate, e.g. versioned names
+        # like {postgresql16} or {libpython3.13-dev}; scan in reverse order so higher
+        # versions win
+        for candidate in candidates:
+            # go through the installed packages
+            for package in sorted(installed, reverse=True):
+                # if this one matches and hasn't been offered
+                if package not in offered and package.startswith(candidate):
+                    # remember it
+                    offered.add(package)
+                    # and offer it
+                    yield package
+        # all done
+        return
+
+    def interpret(self, recipe, package):
+        """
+        Interpret {recipe} against the contents of {package} and return a map of installation
+        trait values, or {None} if the package fails the recipe markers
+        """
         # grab the package contents
         contents = tuple(self.contents(package=package))
         # start collecting trait values
@@ -224,6 +254,22 @@ class Managed(pyre.component, implements=PackageManager):
             if folder and folder not in bindir:
                 # add it to the pile
                 bindir.append(folder)
+
+        # acceptance: a recipe that expects headers must find them; otherwise this candidate,
+        # e.g. a debian metapackage, doesn't actually carry the goods
+        if recipe.headers and not incdir:
+            # reject it
+            return None
+        # similarly, a recipe that expects libraries must resolve at least one stem
+        if recipe.libraries and not stems:
+            # reject it
+            return None
+        # and a recipe that expects nothing but executables must find at least one; recipes
+        # that also carry header or library markers treat their executables as optional,
+        # since package managers often split them off, e.g. debian's {openmpi-bin}
+        if recipe.binaries and not recipe.headers and not recipe.libraries and not bindir:
+            # reject it
+            return None
 
         # if the recipe expects headers
         if recipe.headers:
