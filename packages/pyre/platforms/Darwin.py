@@ -11,9 +11,6 @@ import pyre
 # superclass
 from .POSIX import POSIX
 
-# the default package manager
-from .MacPorts import MacPorts
-
 # the CPU info object
 from .CPUInfo import CPUInfo
 
@@ -38,8 +35,9 @@ class Darwin(POSIX, family="pyre.platforms.darwin"):
     template_dynamicLibrary = "{0.prefix_library}{1}{0.extension_dynamicLibrary}"
 
     # user configurable state
-    packager = pyre.platforms.packager(default=MacPorts)
-    packager.doc = "the manager of external packages installed on this host"
+    packagers = pyre.properties.strings()
+    packagers.default = ["conda", "macports", "bare"]
+    packagers.doc = "the ordered stack of package databases to interrogate, most specific first"
 
     # implementation details: explorers
     @classmethod
