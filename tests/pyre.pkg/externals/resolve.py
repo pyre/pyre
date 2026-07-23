@@ -31,10 +31,15 @@ def test():
     """
     # instantiate the application; this loads {resolve.yaml}
     app = resolve(name="resolve")
-    # resolve a request with dependencies and an unknown category
-    report = pyre.externals.resolve(requested=["parmetis", "nosuchpackage"])
+    # resolve a request with dependencies, an unknown category, and a known category that the
+    # fixture does not provide
+    report = pyre.externals.resolve(requested=["parmetis", "nosuchpackage", "petsc"])
     # the unknown category must be flagged
     assert report.unsupported == ["nosuchpackage"]
+    # petsc is supported but not installed in the fixture, so it must be flagged as such
+    assert report.unavailable == ["petsc"]
+    # and must not appear among the selections
+    assert "petsc" not in report.selections
     # the closure must have been realized in full
     order = list(report.selections)
     assert set(order) == {"parmetis", "metis", "mpi"}
