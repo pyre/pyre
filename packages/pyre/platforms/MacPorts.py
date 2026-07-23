@@ -28,11 +28,10 @@ class MacPorts(Managed, family="pyre.platforms.packagers.macports"):
     # user configurable state
     client = pyre.primitives.path("/opt/local/bin/port")
 
-    # protocol obligations
-    @pyre.export
-    def resolve(self, recipe):
+    # implementation details
+    def resolveAll(self, recipe):
         """
-        Map {recipe} onto the name of an installed package that provides it, if any
+        Generate the ranked sequence of installed packages that may provide {recipe}
         """
         # some package categories are selection groups whose active member is chosen with
         # {port select}; if the recipe names its group
@@ -51,12 +50,13 @@ class MacPorts(Managed, family="pyre.platforms.packagers.macports"):
                         package = self.getSelectionInfo(group=group, alternative=tag)
                         # if we got an answer
                         if package:
-                            # we are done
-                            return package
-        # otherwise, fall back to the generic name matching
-        return super().resolve(recipe=recipe)
+                            # offer it first
+                            yield package
+        # in any case, fall back to the generic name matching
+        yield from super().resolveAll(recipe=recipe)
+        # all done
+        return
 
-    # implementation details
     def getInstalledPackages(self):
         """
         Grant access to the installed package index

@@ -55,10 +55,12 @@ class Python(Tool, Library, family="pyre.externals.python"):
             binaries={"interpreter": r"python3(\.\d+)?[tdm]*"},
             # the marker for the compile line
             defines=("WITH_PYTHON", "WITH_PYTHON3"),
-            # with database specific names where the flavor name isn't enough
+            # with database specific names where the flavor name isn't enough; on dpkg, the
+            # {-dev} names are metapackages, so the versioned {libpython3.x-dev} carries the
+            # actual files and is reachable by prefix matching
             natives={
                 "conda": ("python",),
-                "dpkg": ("python3-dev", "libpython3-dev"),
+                "dpkg": ("libpython3", "python3-dev"),
             },
         )
         # all done
