@@ -5,9 +5,6 @@
 # (c) 1998-2026 all rights reserved
 
 
-# externals
-import os, glob
-
 # access the pyre framework
 import pyre
 
@@ -15,7 +12,11 @@ import pyre
 # protocol declaration
 class Package(pyre.protocol, family="pyre.externals"):
     """
-    The protocol that all external package managers must implement
+    The protocol satisfied by all external package categories
+
+    Subclasses declare a package category and publish its known flavors as a sequence of
+    recipes; the index realizes recipes by handing them to the package database engines of
+    the host and depositing the discoveries into the configuration store
     """
 
     # configurable state
@@ -28,11 +29,20 @@ class Package(pyre.protocol, family="pyre.externals"):
     # constants
     category = None  # the common name for this package category
 
+    # interface
+    @classmethod
+    def recipes(cls):
+        """
+        Generate the sequence of recipes for my known flavors, in order of preference
+        """
+        # the base class knows no flavors; subclasses must override
+        return ()
+
     # framework support
     @classmethod
-    def pyre_default(cls, channel=None, **kwds):
+    def pyre_default(cls, **kwds):
         """
-        Identify the default implementation of a package
+        Identify the default installation for this package category
         """
         # get the user
         user = cls.pyre_user
@@ -56,15 +66,17 @@ class Package(pyre.protocol, family="pyre.externals"):
             # moving on
             pass
 
-        # finally, get the package manager
-        packager = host.packager
-        # go through my host specific choices
-        for package in packager.packages(category=cls):
-            # i only care about the first one
-            return package
+        # finally, get the index of external packages
+        from .Index import Index
 
-        # if i get this far, no one knows what to do
-        return
+        # and ask it to realize one of my recipes
+        installation = Index.index().select(protocol=cls)
+        # if it succeeded
+        if installation is not None:
+            # we have our answer
+            return installation
+
+        # if we get this far, no one knows what to do
         raise cls.DefaultError(protocol=cls)
 
 

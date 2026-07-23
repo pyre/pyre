@@ -12,24 +12,15 @@ import pyre
 from .Installation import Installation
 
 
-# the base installation manager for tools
+# the base manager of installed tools
 class ToolInstallation(Installation):
     """
-    The package manager for generic tools
+    Base class for installations that provide executables
     """
 
     # public state
     bindir = pyre.properties.paths()
-    bindir.doc = "the location of my binaries"
-
-    # protocol obligations
-    @pyre.export
-    def binaries(self, **kwds):
-        """
-        A sequence of names of binaries to look for
-        """
-        # must have one
-        return ()
+    bindir.doc = "the locations of my binaries"
 
     # framework hooks
     def pyre_configured(self):

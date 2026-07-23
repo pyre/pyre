@@ -5,10 +5,6 @@
 # (c) 1998-2026 all rights reserved
 
 
-# the marker of component factories
-from .. import foundry
-
-
 # a trait descriptor suitable for collecting package categories and instance specifications
 def catalog(**kwds):
     """
@@ -46,16 +42,38 @@ def requirements(**kwds):
     return properties.list(schema=properties.str(), **kwds)
 
 
+# access to the index of external packages
+def index():
+    """
+    Grant access to the index that manages package discovery on this host
+    """
+    # get the class
+    from .Index import Index
+
+    # and delegate to the singleton accessor
+    return Index.index()
+
+
+def resolve(requested):
+    """
+    Resolve the {requested} package categories, including their transitive dependencies, and
+    return a report with the configured installations in link order
+    """
+    # delegate to the index
+    return index().resolve(requested=requested)
+
+
 # convenience
 from .Package import Package as package
 from .Tool import Tool as tool
 from .Library import Library as library
+from .Recipe import Recipe as recipe
 
 
 # the package abstractions
 def blas():
     """
-    The BLAS package manager
+    The BLAS package category
     """
     # grab the protocol
     from .BLAS import BLAS as blas
@@ -66,7 +84,7 @@ def blas():
 
 def cython():
     """
-    The Cython package manager
+    The Cython package category
     """
     # grab the protocol
     from .Cython import Cython as cython
@@ -75,9 +93,31 @@ def cython():
     return cython()
 
 
+def eigen():
+    """
+    The Eigen package category
+    """
+    # grab the protocol
+    from .Eigen import Eigen as eigen
+
+    # and generate a facility
+    return eigen()
+
+
+def fftw():
+    """
+    The FFTW package category
+    """
+    # grab the protocol
+    from .FFTW import FFTW as fftw
+
+    # and generate a facility
+    return fftw()
+
+
 def gcc():
     """
-    The GCC package manager
+    The GCC package category
     """
     # grab the protocol
     from .GCC import GCC as gcc
@@ -88,7 +128,7 @@ def gcc():
 
 def gsl():
     """
-    The GSL package manager
+    The GSL package category
     """
     # grab the protocol
     from .GSL import GSL as gsl
@@ -99,7 +139,7 @@ def gsl():
 
 def hdf5():
     """
-    The HDF5 package manager
+    The HDF5 package category
     """
     # grab the protocol
     from .HDF5 import HDF5 as hdf5
@@ -110,7 +150,7 @@ def hdf5():
 
 def metis():
     """
-    The metis package manager
+    The METIS package category
     """
     # grab the protocol
     from .Metis import Metis as metis
@@ -121,7 +161,7 @@ def metis():
 
 def mpi():
     """
-    The MPI package manager
+    The MPI package category
     """
     # grab the protocol
     from .MPI import MPI as mpi
@@ -130,9 +170,20 @@ def mpi():
     return mpi()
 
 
+def numpy():
+    """
+    The numpy package category
+    """
+    # grab the protocol
+    from .NumPy import NumPy as numpy
+
+    # and generate a facility
+    return numpy()
+
+
 def parmetis():
     """
-    The parmetis package manager
+    The ParMETIS package category
     """
     # grab the protocol
     from .ParMetis import ParMetis as parmetis
@@ -143,7 +194,7 @@ def parmetis():
 
 def petsc():
     """
-    The PETSc package manager
+    The PETSc package category
     """
     # grab the protocol
     from .PETSc import PETSc as petsc
@@ -154,7 +205,7 @@ def petsc():
 
 def postgres():
     """
-    The Postgres package manager
+    The Postgres package category
     """
     # grab the protocol
     from .Postgres import Postgres as postgres
@@ -163,9 +214,20 @@ def postgres():
     return postgres()
 
 
+def pybind11():
+    """
+    The pybind11 package category
+    """
+    # grab the protocol
+    from .Pybind11 import Pybind11 as pybind11
+
+    # and generate a facility
+    return pybind11()
+
+
 def python():
     """
-    The Python package manager
+    The Python package category
     """
     # grab the protocol
     from .Python import Python as python
@@ -176,7 +238,7 @@ def python():
 
 def vtk():
     """
-    The VTK package manager
+    The VTK package category
     """
     # grab the protocol
     from .VTK import VTK as vtk
