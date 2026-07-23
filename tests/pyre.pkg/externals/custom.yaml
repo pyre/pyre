@@ -1,0 +1,19 @@
+#
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2026 all rights reserved
+
+# bind the mpi requirement to a fully user specified installation
+custom:
+  mpi: pyre.externals.mpi.default#vampich
+
+# the description of the fictional installation, laid out in the fixture tree
+"pyre.externals.mpi.default#vampich":
+  version: 4.0.4
+  prefix: prefix
+  launcher: mpirun.vampich
+  bindir: [prefix/bin]
+  incdir: [prefix/include/vampich]
+  libdir: [prefix/lib/vampich]
+  libraries: [mpi]
+
+# end of file
