@@ -10,11 +10,11 @@
 // forward declarations
 #include "forward.h"
 // my declarations
-#include "Grid.h"
+#include "AnyGrid.h"
 
 
-// assemble an erased grid from its parts
-pyre::py::grid::Grid::Grid(
+// assemble a type-erased grid from its parts
+pyre::py::grid::AnyGrid::AnyGrid(
     void * data, std::size_t itemsize, string_t format, std::vector<size_type> shape,
     std::vector<size_type> strides, bool writable, string_t strategy, std::shared_ptr<void> owner,
     reader_type read, writer_type write) :
@@ -42,7 +42,7 @@ pyre::py::grid::Grid::Grid(
 
 // describe myself in the terms the python buffer protocol speaks
 auto
-pyre::py::grid::Grid::view() -> py::buffer_info
+pyre::py::grid::AnyGrid::view() -> py::buffer_info
 {
     // the protocol wants strides in bytes, so scale my cell strides by the cell width
     std::vector<py::ssize_t> byteStrides;
@@ -62,7 +62,7 @@ pyre::py::grid::Grid::view() -> py::buffer_info
 
 // the extent along each axis
 auto
-pyre::py::grid::Grid::shape() const -> const std::vector<size_type> &
+pyre::py::grid::AnyGrid::shape() const -> const std::vector<size_type> &
 {
     // hand out my extents
     return _shape;
@@ -71,7 +71,7 @@ pyre::py::grid::Grid::shape() const -> const std::vector<size_type> &
 
 // the distance between consecutive cells along each axis, in cells
 auto
-pyre::py::grid::Grid::strides() const -> const std::vector<size_type> &
+pyre::py::grid::AnyGrid::strides() const -> const std::vector<size_type> &
 {
     // hand out my strides
     return _strides;
@@ -80,7 +80,7 @@ pyre::py::grid::Grid::strides() const -> const std::vector<size_type> &
 
 // the number of axes
 auto
-pyre::py::grid::Grid::rank() const -> std::size_t
+pyre::py::grid::AnyGrid::rank() const -> std::size_t
 {
     // the length of my shape is my rank
     return _shape.size();
@@ -89,7 +89,7 @@ pyre::py::grid::Grid::rank() const -> std::size_t
 
 // whether python may write through to my cells
 auto
-pyre::py::grid::Grid::writable() const -> bool
+pyre::py::grid::AnyGrid::writable() const -> bool
 {
     // hand out my mutability
     return _writable;
@@ -98,7 +98,7 @@ pyre::py::grid::Grid::writable() const -> bool
 
 // the storage strategy that holds my cells
 auto
-pyre::py::grid::Grid::strategy() const -> const string_t &
+pyre::py::grid::AnyGrid::strategy() const -> const string_t &
 {
     // hand out my storage kind
     return _strategy;
@@ -107,7 +107,7 @@ pyre::py::grid::Grid::strategy() const -> const string_t &
 
 // turn a python index into the offset and residual layout it selects
 auto
-pyre::py::grid::Grid::resolve(const py::object & key) const -> resolved
+pyre::py::grid::AnyGrid::resolve(const py::object & key) const -> resolved
 {
     // collect the per-axis indexers, however the key was spelled
     std::vector<py::object> items;
@@ -197,7 +197,7 @@ pyre::py::grid::Grid::resolve(const py::object & key) const -> resolved
 
 // {g[i, j, ...]}: a cell for a full index, a sub-grid for a partial or sliced one
 auto
-pyre::py::grid::Grid::getitem(const py::object & key) const -> py::object
+pyre::py::grid::AnyGrid::getitem(const py::object & key) const -> py::object
 {
     // resolve the index against my layout
     const auto r = resolve(key);
@@ -209,7 +209,7 @@ pyre::py::grid::Grid::getitem(const py::object & key) const -> py::object
         return _read(cell);
     }
     // otherwise hand back a sub-grid that shares my cells and my keep-alive handle
-    return py::cast(Grid(
+    return py::cast(AnyGrid(
         // over the block the offset selected
         cell,
         // the same cell width
@@ -233,7 +233,7 @@ pyre::py::grid::Grid::getitem(const py::object & key) const -> py::object
 
 // {g[i, j, ...] = v}: write {v} into the cell at a full integer index
 auto
-pyre::py::grid::Grid::setitem(const py::object & key, const py::object & value) -> void
+pyre::py::grid::AnyGrid::setitem(const py::object & key, const py::object & value) -> void
 {
     // resolve the index against my layout
     const auto r = resolve(key);

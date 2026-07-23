@@ -91,7 +91,7 @@ class MemoryType:
             channel.log()
             # and bail, just in case errors aren't fatal
             return None
-        # the grid bindings expose a single erased grid class that presents the buffer protocol,
+        # the grid bindings expose a single type-erased grid class that presents the buffer protocol,
         # built here over a fresh block of heap memory of the right shape and cell type
         return pyre.libpyre.grid.heap(shape=list(shape), cell=cell)
 

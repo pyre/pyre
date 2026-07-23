@@ -40,7 +40,7 @@ if pyre.libpyre is None:
     view = None
 # otherwise reach into the bindings by attribute, the way the rest of pyre does
 else:
-    # the erased grid class, for type checks
+    # the type-erased grid class, for type checks
     grid = pyre.libpyre.grid.Grid
     # the factory that allocates a grid over a fresh block of heap memory
     heap = pyre.libpyre.grid.heap

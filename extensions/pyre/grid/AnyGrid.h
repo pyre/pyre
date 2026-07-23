@@ -14,18 +14,18 @@
 #include "forward.h"
 
 
-// the erased grid that the bindings expose to python
+// the type-erased grid that the bindings expose to python
 // every c++ grid, whatever its rank, cell type, or storage strategy, collapses to one of these,
 // so python sees a single class rather than a cross product of template instantiations
 // it carries exactly what the python buffer protocol needs, plus a handle that keeps the cells
 // alive for as long as python holds on
-class pyre::py::grid::Grid {
+class pyre::py::grid::AnyGrid {
     // types
 public:
     // the signed integer type the grid measures extents and offsets with
     using size_type = std::ptrdiff_t;
     // reads the cell at an address and lifts it to a python object; built where the cell type is
-    // still known, so the erased grid never has to parse its own format string
+    // still known, so the type-erased grid never has to parse its own format string
     using reader_type = std::function<py::object(const void *)>;
     // writes a python object into the cell at an address; the companion of {reader_type}
     using writer_type = std::function<void(void *, const py::object &)>;
@@ -34,7 +34,7 @@ public:
 public:
     // assemble one directly; the {owner} is whatever must stay alive to keep {data} valid, and
     // {read}/{write} know how to move one cell between memory and python
-    Grid(
+    AnyGrid(
         void * data, std::size_t itemsize, string_t format, std::vector<size_type> shape,
         std::vector<size_type> strides, bool writable, string_t strategy,
         std::shared_ptr<void> owner, reader_type read, writer_type write);
@@ -102,7 +102,7 @@ private:
 };
 
 
-// turn any statically typed grid into the erased form
+// type-erase any statically typed grid into an AnyGrid
 // this is the demand-driven half of the design: it instantiates once per grid type that a bound
 // signature actually mentions, not once per point of a precomputed cross product
 namespace pyre::py::grid {
@@ -110,17 +110,17 @@ namespace pyre::py::grid {
     // {data}, which {owner} is responsible for keeping alive; {strategy} names the storage kind
     template <class gridT>
     auto describe(const gridT & grid, string_t strategy, void * data, std::shared_ptr<void> owner)
-        -> Grid;
+        -> AnyGrid;
 
-    // erase a grid whose storage OWNS its cells (heap, map): keep a copy of the grid alive, so
+    // type-erase a grid whose storage OWNS its cells (heap, map): keep a copy alive, so
     // that its storage's shared handle holds the block for as long as python holds on
     template <class gridT>
-    auto erase(const gridT & grid, string_t strategy) -> Grid;
+    auto anyGrid(const gridT & grid, string_t strategy) -> AnyGrid;
 } // namespace pyre::py::grid
 
 
 // the inline implementations
-#include "Grid.icc"
+#include "AnyGrid.icc"
 
 
 // end of file
