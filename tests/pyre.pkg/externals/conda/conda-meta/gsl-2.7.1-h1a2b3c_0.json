@@ -1,0 +1,9 @@
+{
+  "name": "gsl",
+  "version": "2.7.1",
+  "files": [
+    "include/gsl/gsl_version.h",
+    "lib/libgsl.dylib",
+    "lib/libgslcblas.dylib"
+  ]
+}

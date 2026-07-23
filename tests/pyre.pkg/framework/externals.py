@@ -7,18 +7,23 @@
 
 
 """
-Sanity check: verify that the package manager is accessible
+Sanity check: verify that the host carries a package database stack
 """
 
 
 def test():
+    """
+    Verify the host description of the package database engines
+    """
     import pyre
 
     # build the executive
     executive = pyre.executive
 
-    # access the external package manager
-    assert executive.host.packager is not None
+    # the host must describe its package database stack
+    assert executive.host.packagers
+    # and the fallback prober must always be part of it
+    assert "bare" in executive.host.packagers
 
     # all done
     return executive
