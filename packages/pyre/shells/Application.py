@@ -482,18 +482,13 @@ class Application(pyre.component, metaclass=Director):
         requirement. This map includes dependencies induced while trying to satisfy my
         requirements
         """
-        # initialize the map
-        dependencies = {}
+        # get the external package support
+        from .. import externals
 
-        # do the easy thing, for now
-        for category in self.requirements:
-            # ask the external manager for a matching package
-            package = self.pyre_host.packager.locate(category=category)
-            # store the instance
-            dependencies[category] = package
-
-        # all done
-        return dependencies
+        # resolve my requirements, including their transitive closure
+        report = externals.resolve(requested=self.requirements)
+        # and hand back the selections
+        return dict(report.selections)
 
     # journal configuration
     def pyre_journalChannels(self):
