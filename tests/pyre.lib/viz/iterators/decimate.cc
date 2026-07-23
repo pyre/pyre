@@ -73,8 +73,8 @@ main(int argc, char * argv[])
 
     // set up a scale
     int scale = 4;
-    // turn it into a shift
-    index_t stride { scale };
+    // turn it into a shift that decimates every axis by the same step
+    index_t stride { scale, scale };
     // make the decimator
     decimate_t decimator { data, layout.origin(), shape, stride };
 
