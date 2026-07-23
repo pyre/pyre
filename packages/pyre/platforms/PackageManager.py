@@ -12,14 +12,26 @@ import pyre
 # declaration
 class PackageManager(pyre.protocol, family="pyre.platforms.packagers"):
     """
-    Encapsulation of host specific information
+    The obligations of package database engines
+
+    Engines encapsulate a source of information about installed software: a real package
+    manager such as macports or dpkg, a conda environment, or plain filesystem probing of
+    well known locations. They interpret package {recipes}, i.e. declarative descriptions of
+    what a package category looks like on disk, and convert them into configured trait values
+    for package installations
     """
 
     # requirements
     @pyre.provides
     def prefix(self):
         """
-        The package manager install location
+        The root of the package database installations
+        """
+
+    @pyre.provides
+    def available(self):
+        """
+        Check whether this engine is functional on this host
         """
 
     @pyre.provides
@@ -29,49 +41,40 @@ class PackageManager(pyre.protocol, family="pyre.platforms.packagers"):
         """
 
     @pyre.provides
-    def packages(self, category):
-        """
-        Provide a sequence of package names that provide compatible installations for the given
-        package {category}. If the package manager provides a way for the user to select a
-        specific installation as the default, care should be taken to rank the sequence
-        appropriately.
-        """
-
-    @pyre.provides
     def info(self, package):
         """
-        Return information about the given {package}
+        Return the available information about {package}
 
-        The type of information returned is determined by the package manager. This method
-        should return success if and only if {package} is actually fully installed.
+        This method should succeed if and only if {package} is actually fully installed
         """
 
     @pyre.provides
     def contents(self, package):
         """
-        Generate a sequence of the contents of {package}
-
-        The type of information returned is determined by the package manager. Typically, it
-        contains the list of files that are installed by this package, but it may contain other
-        filesystem entities as well. This method should return a non-empty sequence if and only
-        if {package} is actually fully installed
+        Generate a sequence of the files installed by {package}
         """
 
     @pyre.provides
-    def configure(self, packageInstance):
+    def resolve(self, recipe):
         """
-        Dispatch to the {packageInstance} configuration procedure that is specific to the
-        particular implementation of this protocol
+        Map {recipe} onto the name of an installed package that provides it, if any
+        """
+
+    @pyre.provides
+    def configure(self, recipe):
+        """
+        Interpret {recipe} against my package database and return a map of installation trait
+        values, or {None} if the package is not installed here
         """
 
     # framework obligations
     @classmethod
     def pyre_default(cls, **kwds):
         """
-        Build the preferred host implementation
+        Build the preferred engine implementation
         """
         # the host should specify a sensible default; if there is nothing there, this is an
-        # unmanaged system that relies on environment variables and standard locations
+        # unmanaged system that relies on filesystem probing of standard locations
         from .Bare import Bare
 
         # return the support for unmanaged systems

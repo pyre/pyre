@@ -7,7 +7,6 @@
 
 # externals
 import re
-import collections
 import subprocess
 
 # framework
@@ -29,14 +28,33 @@ class MacPorts(Managed, family="pyre.platforms.packagers.macports"):
     # user configurable state
     client = pyre.primitives.path("/opt/local/bin/port")
 
-    # meta-methods
-    def __init__(self, **kwds):
-        # chain up
-        super().__init__(**kwds)
-        # initialize my normalization map
-        self._normalizations = collections.defaultdict(dict)
-        # all done
-        return
+    # protocol obligations
+    @pyre.export
+    def resolve(self, recipe):
+        """
+        Map {recipe} onto the name of an installed package that provides it, if any
+        """
+        # some package categories are selection groups whose active member is chosen with
+        # {port select}; if the recipe names its group
+        group = recipe.group
+        # and the group is known here
+        if group:
+            # get the alternatives, with the current selection first
+            alternatives = self.alternatives(group=group)
+            # go through the recipe's candidate names
+            for candidate in recipe.candidates(manager=self.name):
+                # and the ranked alternatives
+                for tag in alternatives:
+                    # looking for an alternative that the candidate abbreviates
+                    if tag.startswith(candidate):
+                        # find out which package provides it
+                        package = self.getSelectionInfo(group=group, alternative=tag)
+                        # if we got an answer
+                        if package:
+                            # we are done
+                            return package
+        # otherwise, fall back to the generic name matching
+        return super().resolve(recipe=recipe)
 
     # implementation details
     def getInstalledPackages(self):
@@ -223,55 +241,6 @@ class MacPorts(Managed, family="pyre.platforms.packagers.macports"):
         # return the package and the selection map
         return package
 
-    def getNormalization(self, group, alternative):
-        """
-        Retrieve the normalization map for {alternative} from {group}
-        """
-        # get the table for {group}
-        table = self._normalizations[group]
-
-        # attempt to
-        try:
-            # get the canonical filenames from 'base'
-            base = table["base"]
-        # if its not there
-        except KeyError:
-            # pull in the sequence of files from 'base'
-            base = tuple(self.retrieveNormalizationTable(group=group, alternative="base"))
-            # record it for next time
-            table["base"] = base
-
-        # next, attempt to
-        try:
-            # get the sequence of files from alternative
-            target = table[alternative]
-        # if not there
-        except KeyError:
-            # pull in the list of files from {alternative}
-            target = tuple(self.retrieveNormalizationTable(group=group, alternative=alternative))
-            # record it
-            table[alternative] = target
-
-        # return the pair
-        return base, target
-
-    def retrieveNormalizationTable(self, group, alternative):
-        """
-        Populate the {group} normalization table with the selections for {alternative}
-        """
-        # form the filename
-        name = self.prefix() / "etc" / "select" / group / alternative
-        # open it
-        with name.open() as stream:
-            # pull the contents
-            for line in stream.readlines():
-                # strip
-                line = line.strip()
-                # interpret it and pass it on
-                yield pyre.primitives.path(line) if line != "-" else None
-        # all done
-        return
-
     def getFileProvider(self, filename):
         """
         Find the package that owns the given filename
@@ -297,91 +266,13 @@ class MacPorts(Managed, family="pyre.platforms.packagers.macports"):
                 return match.group("package")
 
         # if we got this far, the filename does not belong to a package
-        return
-
-    def identify(self, installation):
-        """
-        Attempt to map the package {installation} to the name of an installed package
-        """
-        # get the name of the {installation} instance
-        name = installation.pyre_name
-        # grab the index of installed packages
-        installed = self.getInstalledPackages()
-
-        # if {name} is the actual name of an installed package
-        if name in installed:
-            # we are done
-            return name
-
-        # another possibility is that {name} is one of the selection alternatives for a package
-        # group; interpret the {installation} category as the group name
-        group = installation.category
-        # get the alternatives
-        alternatives = self.alternatives(group=group)
-        # and if we have a match
-        if name in alternatives:
-            # find which package provides it
-            return self.getSelectionInfo(group=group, alternative=name)
-
-        # another approach is to attempt to find a selection that is related to the package
-        # flavor; let's check
-        try:
-            # whether the installation has a flavor
-            flavor = installation.flavor
-        # if it doesn't
-        except AttributeError:
-            # describe what went wrong
-            msg = f"could not find a package installation for '{name}'"
-            # and report it
-            raise installation.ConfigurationError(configurable=self, errors=[msg])
-
-        # perhaps the flavor is the package name
-        if flavor in installed:
-            # in which case we are done
-            return flavor
-
-        # beyond this point, nothing works unless this package belongs to a selection group
-        if not alternatives:
-            # it isn't
-            msg = f"no '{installation.category}' package for '{name}'"
-            # complain
-            raise installation.ConfigurationError(configurable=self, errors=[msg])
-
-        # collect all alternatives whose names start with the flavor
-        candidates = [tag for tag in alternatives if tag.startswith(flavor)]
-
-        # if there is exactly one candidate
-        if len(candidates) == 1:
-            # it's our best bet
-            candidate = candidates[0]
-            # find out which package implements it and return it
-            return self.getSelectionInfo(group=group, alternative=candidate)
-
-        # if there were no viable candidates
-        if not candidates:
-            # describe what went wrong
-            msg = (
-                f"no viable candidates for '{installation.category}'; "
-                f"please select one of {alternatives}"
-            )
-            # and report it
-            raise installation.ConfigurationError(configurable=self, errors=[msg])
-
-        # otherwise, there were more than one candidate; describe what went wrong
-        msg = f"multiple candidates for '{flavor}': {candidates}; please select one"
-        # and report it
-        raise installation.ConfigurationError(configurable=self, errors=[msg])
+        return None
 
     # private data
     # the index of installed packages: (package name -> package info)
     _installed = None
     # the index of package groups: (package group -> tuple of alternatives)
     _alternatives = None
-
-    # the table of package normalizations; this is a map from a selection group to a another
-    # map, one that takes alternatives to the list of files they replace; the canonical package
-    # interface is provided by the special key 'base'
-    _normalizations = None
 
     # the parser of the macports response to provider queries
     _provides = re.compile(r".* is provided by: (?P<package>.*)")

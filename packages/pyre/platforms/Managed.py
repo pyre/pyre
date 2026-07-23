@@ -6,6 +6,7 @@
 
 
 # externals
+import os
 import re
 import shutil
 
@@ -19,7 +20,11 @@ from .PackageManager import PackageManager
 # declaration
 class Managed(pyre.component, implements=PackageManager):
     """
-    Support for un*x systems that don't have package management facilities
+    The base engine for hosts with real package managers
+
+    Subclasses supply the primitives: an index of installed packages and the contents of each;
+    this class supplies the generic algorithm that interprets a package {recipe} against those
+    primitives to produce configured installation trait values
     """
 
     # public data
@@ -28,8 +33,8 @@ class Managed(pyre.component, implements=PackageManager):
         """
         Get the name of this package manager
         """
-        # the base class doesn't have one; subclasses must provide a unique name that enables
-        # package categories to identify with which package manager they are collaborating
+        # the base class doesn't have one; subclasses must provide the tag that identifies
+        # their section of a package recipe
         raise NotImplementedError(f"class '{type(self).__name__}' must supply a 'name'")
 
     @property
@@ -37,15 +42,12 @@ class Managed(pyre.component, implements=PackageManager):
         """
         Get the name of the front end to the package manager database
         """
-        # the base class doesn't have one; subclasses must provide the name or path to the
-        # front end for their package manager
-
         # the error message template
         msg = (
             f"class '{type(self).__name__}' must supply 'client', "
             "the path to the package manager front end"
         )
-        # instantiate and complain
+        # the base class doesn't have one; subclasses must point to their front end
         raise NotImplementedError(msg)
 
     # protocol obligations
@@ -61,7 +63,7 @@ class Managed(pyre.component, implements=PackageManager):
             # in which case I'm done
             return prefix
         # otherwise, locate the full path to the package manager client
-        client = shutil.which(self.client)
+        client = shutil.which(str(self.client))
         # if we found it
         if client:
             # pathify
@@ -73,7 +75,7 @@ class Managed(pyre.component, implements=PackageManager):
             # if it's not there
             if not client.exists():
                 # build the message
-                msg = f"could not locate '{self.manager}'"
+                msg = f"could not locate '{self.client}'"
                 # complain
                 raise self.ConfigurationError(configurable=self, errors=[msg])
 
@@ -87,6 +89,22 @@ class Managed(pyre.component, implements=PackageManager):
         self._prefix = prefix
         # and return it
         return prefix
+
+    @pyre.export
+    def available(self):
+        """
+        Check whether this engine is functional on this host
+        """
+        # attempt to
+        try:
+            # locate my front end
+            self.prefix()
+        # if this fails
+        except self.ConfigurationError:
+            # i can't help anybody
+            return False
+        # otherwise, i'm open for business
+        return True
 
     @pyre.export
     def installed(self):
@@ -105,59 +123,152 @@ class Managed(pyre.component, implements=PackageManager):
         return self.getInstalledPackages()[package]
 
     @pyre.export
-    def packages(self, category):
-        """
-        Provide a sequence of package names that provide compatible installations for the given
-        package {category}.
-        """
-        # check whether this package category can interact with me
-        try:
-            # by looking for my handler
-            choices = getattr(category, f"{self.name}Packages")
-        # if it can't
-        except AttributeError:
-            # the error message template
-            msg = f"the package category '{category.category}' does not support '{self.name}'"
-            # complain
-            raise self.ConfigurationError(configurable=category, errors=[msg])
-
-        # otherwise, ask the package category to do dpkg specific hunting
-        yield from choices(packager=self)
-
-        # all done
-        return
-
-    @pyre.export
     def contents(self, package):
         """
         Retrieve the contents of the {package}
         """
-        # ask port for the package contents
+        # ask the package manager for the package contents
         yield from self.retrievePackageContents(package=package)
         # all done
         return
 
     @pyre.export
-    def configure(self, installation):
+    def resolve(self, recipe):
         """
-        Dispatch to the {installation} configuration procedure that is specific to this package
-        manager
+        Map {recipe} onto the name of an installed package that provides it, if any
         """
-        # check whether this installation can interact with me
-        try:
-            # by looking for my handler
-            configure = getattr(installation, self.name)
-        # if it can't
-        except AttributeError:
-            # the error message template
-            msg = f"the package flavor '{installation.flavor}' does not support '{self.name}'"
-            # complain
-            raise self.ConfigurationError(configurable=installation, errors=[msg])
+        # grab the index of installed packages
+        installed = self.getInstalledPackages()
+        # collect the candidate native names
+        candidates = tuple(recipe.candidates(manager=self.name))
+        # first, look for exact matches
+        for candidate in candidates:
+            # if this candidate is installed
+            if candidate in installed:
+                # it's our answer
+                return candidate
+        # otherwise, look for packages whose names start with a candidate, e.g. versioned
+        # names like {postgresql16}; scan in reverse order so higher versions win
+        for candidate in candidates:
+            # go through the installed packages
+            for package in sorted(installed, reverse=True):
+                # if this one matches
+                if package.startswith(candidate):
+                    # it's our answer
+                    return package
+        # if we got this far, the recipe is not satisfiable here
+        return None
 
-        # otherwise, ask the installation to configure itself with my help
-        return configure(packager=self)
+    @pyre.export
+    def configure(self, recipe):
+        """
+        Interpret {recipe} against my package database and return a map of installation trait
+        values, or {None} if the package is not installed here
+        """
+        # find the native package that provides the recipe
+        package = self.resolve(recipe=recipe)
+        # if there isn't one
+        if package is None:
+            # i can't configure this recipe
+            return None
+        # grab the package contents
+        contents = tuple(self.contents(package=package))
+        # start collecting trait values
+        values = {}
+        # get the package version
+        version = self.version(package=package)
+        # if the database knows it
+        if version:
+            # record it
+            values["version"] = version
+
+        # locate the folders that hold the header markers
+        incdir = []
+        # go through the markers
+        for header in recipe.headers:
+            # find the folder that contains this header
+            folder = self.findfirst(target=header, contents=contents)
+            # if it's there and we haven't seen it before
+            if folder and folder not in incdir:
+                # add it to the pile
+                incdir.append(folder)
+
+        # locate the folders that hold the libraries, and resolve the actual library stems
+        libdir = []
+        # the resolved stems
+        stems = []
+        # go through the library stem patterns
+        for pattern in recipe.libraries:
+            # find the folder and the actual stem
+            folder, stem = self.findlib(pattern=pattern, contents=contents)
+            # if we found the library
+            if stem and stem not in stems:
+                # remember the resolved stem
+                stems.append(stem)
+            # if the folder is new
+            if folder and folder not in libdir:
+                # add it to the pile
+                libdir.append(folder)
+
+        # locate the executables the recipe cares about
+        bindir = []
+        # go through the (trait, pattern) markers
+        for trait, pattern in recipe.binaries.items():
+            # find the folder and the actual filename
+            folder, filename = self.findbin(pattern=pattern, contents=contents)
+            # if we found the executable
+            if filename:
+                # record the resolved name under its trait
+                values[trait] = filename
+            # if the folder is new
+            if folder and folder not in bindir:
+                # add it to the pile
+                bindir.append(folder)
+
+        # if the recipe expects headers
+        if recipe.headers:
+            # record what we found
+            values["incdir"] = incdir
+        # if the recipe expects libraries
+        if recipe.libraries:
+            # record the folders
+            values["libdir"] = libdir
+            # and the resolved stems
+            values["libraries"] = stems
+        # if the recipe expects executables
+        if recipe.binaries:
+            # record the folders
+            values["bindir"] = bindir
+
+        # the recipe knows the compile time markers
+        values["defines"] = list(recipe.defines)
+        # and the package categories this one depends on
+        values["dependencies"] = list(recipe.dependencies)
+
+        # collect all the folders we discovered
+        folders = incdir + libdir + bindir
+        # if there are any
+        if folders:
+            # the installation prefix is their longest common prefix
+            values["prefix"] = pyre.primitives.path(self.commonpath(folders=folders))
+        # otherwise
+        else:
+            # fall back to the package database prefix
+            values["prefix"] = self.prefix()
+
+        # hand back the configuration
+        return values
 
     # implementation details
+    def version(self, package):
+        """
+        Extract the version of {package} from the installed package index
+        """
+        # my index stores (version, extra) pairs; unpack and return the version
+        version, _ = self.info(package=package)
+        # send it off
+        return version
+
     def find(self, target, pile):
         """
         Interpret {target} as a regular expression and return a sequence of the contents of {pile}
@@ -183,7 +294,7 @@ class Managed(pyre.component, implements=PackageManager):
 
     def findfirst(self, target, contents):
         """
-        Locate the path to {target} in the {contents} of some package
+        Locate the folder that contains {target} in the {contents} of some package
         """
         # form the regex
         regex = rf"(?P<path>.*)/{target}$"
@@ -192,7 +303,36 @@ class Managed(pyre.component, implements=PackageManager):
             # extract the folder
             return pyre.primitives.path(match.group("path"))
         # otherwise, leave it blank
-        return
+        return None
+
+    def findlib(self, pattern, contents):
+        """
+        Locate a library whose stem matches {pattern} in the {contents} of some package, and
+        return the folder that contains it along with the actual stem
+        """
+        # form the regex: accept dynamic libraries on either platform, plus static archives,
+        # with optional trailing version fields
+        regex = rf"(?P<path>.*)/lib(?P<stem>{pattern})\.(so|dylib|a)(\.\d+)*$"
+        # search for it in contents
+        for match in self.find(target=regex, pile=contents):
+            # extract the folder and the stem
+            return pyre.primitives.path(match.group("path")), match.group("stem")
+        # otherwise, report failure
+        return None, None
+
+    def findbin(self, pattern, contents):
+        """
+        Locate an executable that matches {pattern} in the {contents} of some package, and
+        return the folder that contains it along with the actual filename
+        """
+        # form the regex: executables live in a {bin} directory
+        regex = rf"(?P<path>.*/bin)/(?P<file>{pattern})$"
+        # search for it in contents
+        for match in self.find(target=regex, pile=contents):
+            # extract the folder and the filename
+            return pyre.primitives.path(match.group("path")), match.group("file")
+        # otherwise, report failure
+        return None, None
 
     def locate(self, targets, paths):
         """
@@ -213,9 +353,20 @@ class Managed(pyre.component, implements=PackageManager):
         # all done
         return
 
+    def commonpath(self, folders):
+        """
+        Find the longest prefix common to the given {folders}
+        """
+        # convert the paths into a sequence of strings
+        folders = tuple(map(str, folders))
+        # compute and return the longest common prefix
+        return os.path.commonpath(folders)
+
     # private data
     # the installation location of the package manager
     _prefix = None
+    # the fallback location of the front end, for hosts where it is not on the path
+    defaultLocation = pyre.primitives.path("/usr/bin")
 
 
 # end of file

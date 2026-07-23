@@ -70,8 +70,9 @@ class Host(pyre.component, family="pyre.platforms.generic", implements=Platform)
     externals = pyre.properties.dict(schema=pyre.properties.str())
     externals.doc = "a map of package categories to installation instances"
 
-    packager = pyre.platforms.packager()
-    packager.doc = "the manager of external packages installed on this host"
+    packagers = pyre.properties.strings()
+    packagers.default = ["conda", "bare"]
+    packagers.doc = "the ordered stack of package databases to interrogate, most specific first"
 
     # meta methods
     def __init__(self, **kwds):

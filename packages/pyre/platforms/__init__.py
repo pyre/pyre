@@ -17,6 +17,30 @@ from .Tools import Tools as tools
 # the various implementations
 # package managers
 @foundry(implements=packager)
+def bare():
+    """
+    Support for hosts without package management facilities
+    """
+    # get the class record
+    from .Bare import Bare
+
+    # and return it
+    return Bare
+
+
+@foundry(implements=packager)
+def conda():
+    """
+    Support for conda environments
+    """
+    # get the class record
+    from .Conda import Conda
+
+    # and return it
+    return Conda
+
+
+@foundry(implements=packager)
 def dpkg():
     """
     Support for the Debian packager
@@ -152,6 +176,14 @@ def ubuntu():
 # host aliases
 osx = darwin
 macos = darwin
+
+# the registry of package database engines, in the vocabulary of the host {packagers} trait
+engines = {
+    "bare": bare,
+    "conda": conda,
+    "dpkg": dpkg,
+    "macports": macports,
+}
 
 
 # end of file

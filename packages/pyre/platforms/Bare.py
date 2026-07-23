@@ -5,6 +5,9 @@
 # (c) 1998-2026 all rights reserved
 
 
+# externals
+import re
+
 # the framework
 import pyre
 
@@ -13,64 +16,232 @@ from .PackageManager import PackageManager
 
 
 # declaration
-class Bare(pyre.component, family="pyre.packagers.bare", implements=PackageManager):
+class Bare(pyre.component, family="pyre.platforms.packagers.bare", implements=PackageManager):
     """
-    Support for un*x systems that don't have package management facilities
+    Support for hosts without package management facilities
+
+    This engine probes a user configurable list of installation prefixes for the disk
+    artifacts a recipe describes; it is the fallback that makes ad hoc installations in
+    standard locations visible to the framework
     """
 
     # constants
     name = "bare"
 
+    # user configurable state
+    searchpath = pyre.properties.paths()
+    searchpath.default = ["/usr/local", "/usr"]
+    searchpath.doc = "the installation prefixes to probe for packages"
+
     # protocol obligations
     @pyre.export
     def prefix(self):
         """
-        The package manager install location
+        The root of the package database installations
         """
-        # don't have one
+        # i don't have a single one; my {searchpath} plays this role
         return ""
+
+    @pyre.export
+    def available(self):
+        """
+        Check whether this engine is functional on this host
+        """
+        # probing the filesystem always works
+        return True
 
     @pyre.export
     def installed(self):
         """
         Retrieve available information for all installed packages
         """
-        # don't have any
-        return ()
-
-    @pyre.export
-    def packages(self, category):
-        """
-        Generate a sequence of package names with compatible installations for the given
-        package {category}.
-        """
-        # don't have any
-        return ()
+        # i don't maintain a package index
+        return {}
 
     @pyre.export
     def info(self, package):
         """
-        Return information about the given {package}
+        Return the available information about {package}
         """
-        # don't know anything
+        # i don't know anything
         raise KeyError(package)
 
     @pyre.export
     def contents(self, package):
         """
-        Generate a sequence of the contents of the {package}
+        Generate a sequence of the files installed by {package}
         """
-        # don't know anything
+        # i don't know anything
         raise KeyError(package)
 
     @pyre.export
-    def configure(self, installation):
+    def resolve(self, recipe):
         """
-        Dispatch to the {packageInstance} configuration procedure that is specific to a host
-        without a specific package manager
+        Map {recipe} onto the installation prefix that provides it, if any
         """
-        # what she said...
-        return installation.bare(manager=self)
+        # go through my search path
+        for prefix in self.searchpath:
+            # if this prefix passes the recipe's markers
+            if self.probe(prefix=prefix, recipe=recipe):
+                # it's our answer
+                return prefix
+        # if we got this far, the recipe is not satisfiable here
+        return None
+
+    @pyre.export
+    def configure(self, recipe):
+        """
+        Interpret {recipe} against my search path and return a map of installation trait
+        values, or {None} if the package cannot be found
+        """
+        # find the prefix that provides the recipe
+        prefix = self.resolve(recipe=recipe)
+        # if there isn't one
+        if prefix is None:
+            # i can't configure this recipe
+            return None
+        # start collecting trait values
+        values = {"prefix": prefix}
+
+        # if the recipe expects headers
+        if recipe.headers:
+            # they all live under the canonical include directory
+            values["incdir"] = [prefix / "include"]
+
+        # if the recipe expects libraries
+        if recipe.libraries:
+            # collect the folders
+            libdir = []
+            # and the resolved stems
+            stems = []
+            # go through the stem patterns
+            for pattern in recipe.libraries:
+                # scan the canonical library folders for a match
+                folder, stem = self.scanForLibrary(prefix=prefix, pattern=pattern)
+                # if we found the library
+                if stem and stem not in stems:
+                    # remember the resolved stem
+                    stems.append(stem)
+                # if the folder is new
+                if folder and folder not in libdir:
+                    # add it to the pile
+                    libdir.append(folder)
+            # record the folders
+            values["libdir"] = libdir
+            # and the stems
+            values["libraries"] = stems
+
+        # if the recipe expects executables
+        if recipe.binaries:
+            # they live in the canonical binary directory
+            bindir = prefix / "bin"
+            # collect the folders that pan out
+            folders = []
+            # go through the (trait, pattern) markers
+            for trait, pattern in recipe.binaries.items():
+                # scan for a match
+                filename = self.scanForEntry(folder=bindir, pattern=pattern)
+                # if we found the executable
+                if filename:
+                    # record the resolved name under its trait
+                    values[trait] = filename
+                    # and remember the folder
+                    if bindir not in folders:
+                        # just once
+                        folders.append(bindir)
+            # record the folders
+            values["bindir"] = folders
+
+        # the recipe knows the compile time markers
+        values["defines"] = list(recipe.defines)
+        # and the package categories this one depends on
+        values["dependencies"] = list(recipe.dependencies)
+
+        # hand back the configuration
+        return values
+
+    # implementation details
+    def probe(self, prefix, recipe):
+        """
+        Check whether the installation at {prefix} provides the artifacts that {recipe} expects
+        """
+        # if the prefix is not a directory
+        if not prefix.isDirectory():
+            # nothing lives here
+            return False
+        # every header marker must be present under the canonical include directory
+        for header in recipe.headers:
+            # form the full path and check
+            if not (prefix / "include" / header).exists():
+                # a missing marker disqualifies the prefix
+                return False
+        # if the recipe expects libraries, at least one stem must be locatable
+        for pattern in recipe.libraries:
+            # scan for it
+            _, stem = self.scanForLibrary(prefix=prefix, pattern=pattern)
+            # if we found one
+            if stem:
+                # that's enough evidence
+                break
+        # if the scan came up empty
+        else:
+            # a recipe with library expectations is not satisfied here
+            if recipe.libraries:
+                # so this prefix is disqualified
+                return False
+        # every executable marker must be present in the canonical binary directory
+        for _, pattern in recipe.binaries.items():
+            # scan for it
+            if not self.scanForEntry(folder=prefix / "bin", pattern=pattern):
+                # a missing executable disqualifies the prefix
+                return False
+        # all markers passed
+        return True
+
+    def scanForLibrary(self, prefix, pattern):
+        """
+        Scan the canonical library folders under {prefix} for a library whose stem matches
+        {pattern}, and return the folder along with the actual stem
+        """
+        # form the regex: dynamic libraries on either platform, plus static archives
+        regex = re.compile(rf"lib(?P<stem>{pattern})\.(so|dylib|a)(\.\d+)*$")
+        # go through the canonical library folders
+        for folder in (prefix / "lib", prefix / "lib64"):
+            # if this one doesn't exist
+            if not folder.isDirectory():
+                # move on
+                continue
+            # go through its contents
+            for entry in folder.contents:
+                # check the filename
+                match = regex.match(str(entry.name))
+                # if it matches
+                if match:
+                    # extract the folder and the stem
+                    return folder, match.group("stem")
+        # otherwise, report failure
+        return None, None
+
+    def scanForEntry(self, folder, pattern):
+        """
+        Scan {folder} for an entry that matches {pattern} and return its name
+        """
+        # form the regex
+        regex = re.compile(rf"{pattern}$")
+        # if the folder doesn't exist
+        if not folder.isDirectory():
+            # report failure
+            return None
+        # go through its contents
+        for entry in folder.contents:
+            # check the filename
+            match = regex.match(str(entry.name))
+            # if it matches
+            if match:
+                # hand back the name
+                return str(entry.name)
+        # otherwise, report failure
+        return None
 
 
 # end of file

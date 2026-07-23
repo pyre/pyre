@@ -11,9 +11,6 @@ import pyre
 # superclass
 from .Linux import Linux
 
-# the default package manager
-from .DPkg import DPkg
-
 
 # declaration
 class Debian(Linux, family="pyre.platforms.debian"):
@@ -25,8 +22,9 @@ class Debian(Linux, family="pyre.platforms.debian"):
     distribution = "debian"
 
     # user configurable state
-    packager = pyre.platforms.packager(default=DPkg)
-    packager.doc = "the manager of external packages installed on this host"
+    packagers = pyre.properties.strings()
+    packagers.default = ["conda", "dpkg", "bare"]
+    packagers.doc = "the ordered stack of package databases to interrogate, most specific first"
 
 
 # end of file
