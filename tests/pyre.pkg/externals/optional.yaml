@@ -1,0 +1,13 @@
+#
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2026 all rights reserved
+
+# restrict the host to filesystem probing
+pyre.host:
+  packagers: [bare]
+
+# and point the prober at the fixture installation, which provides gsl but not petsc
+pyre.platforms.packagers.bare:
+  searchpath: [prefix]
+
+# end of file
