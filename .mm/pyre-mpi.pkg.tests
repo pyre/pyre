@@ -10,9 +10,9 @@ pyre-mpi.pkg.tests.prerequisites := pyre-mpi.pkg pyre.pkg
 
 
 # exclusions
-# {mpirun} and {slurm} drive the {mpi.mpirun}/{mpi.slurm} launcher shells through {pyre.externals},
-# which is not fully functional yet; exclude them until it is
-pyre-mpi.pkg.tests.drivers.exclude := ip.py mpirun.py slurm.py
+# {ip} is a diagnostic that prints the hostname of every rank, so it violates the
+# silence-is-pass convention; run it by hand when the machine layout is in question
+pyre-mpi.pkg.tests.drivers.exclude := ip.py
 
 
 # set up a macro for the hostfile
@@ -41,6 +41,10 @@ tests.mpi.pkg.min.pre := tests.mpi.pkg.max
 tests.mpi.pkg.port.pre := tests.mpi.pkg.min
 tests.mpi.pkg.collectives.pre := tests.mpi.pkg.port
 tests.mpi.pkg.nonblocking.pre := tests.mpi.pkg.collectives
+# {mpirun} spawns its own parallel machine, so keep it out of the way of the harnessed tests;
+# {slurm} builds a submission script and tolerates the absence of {sbatch}
+tests.mpi.pkg.mpirun.pre := tests.mpi.pkg.nonblocking
+tests.mpi.pkg.slurm.pre := tests.mpi.pkg.mpirun
 
 # the sanity tests
 # {extension} has cases
