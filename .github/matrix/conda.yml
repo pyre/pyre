@@ -32,7 +32,7 @@ dependencies:
   - hdf5
   # numpy, for the gsl test suite
   - numpy
-  # skip openmpi until {pyre.platforms} has a conda package manager
-  # - openmpi
+  # {pyre.platforms} discovers mpi in the environment through its conda engine
+  - openmpi
 
 # end of file

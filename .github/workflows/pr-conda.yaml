@@ -126,8 +126,7 @@ jobs:
           ${mm} extern.pybind11.info
           ${mm} extern.gsl.info
           ${mm} extern.hdf5.info
-          # restore alongside {openmpi} in {conda.yml}
-          # ${mm} extern.mpi.info
+          ${mm} extern.mpi.info
 
       - name: build pyre
         run: |

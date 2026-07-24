@@ -28,10 +28,11 @@ pyre_test_python_testcase_mpi(tests/mpi.pkg/collectives.py 8)
 pyre_test_python_testcase(tests/mpi.pkg/nonblocking.py)
 pyre_test_python_testcase_mpi(tests/mpi.pkg/nonblocking.py 7)
 # {mpirun} and {slurm} drive the {mpi.mpirun}/{mpi.slurm} launcher shells through
-# {pyre.externals}, which is not fully functional yet; exclude them until it is
-# pyre_test_python_testcase(tests/mpi.pkg/mpirun.py)
-# pyre_test_python_testcase(tests/mpi.pkg/slurm.py)
-# {ip} is excluded to match mm's drivers.exclude
+# {pyre.externals}; the launcher resolves through the package database engines
+pyre_test_python_testcase(tests/mpi.pkg/mpirun.py)
+pyre_test_python_testcase(tests/mpi.pkg/slurm.py)
+# {ip} is a diagnostic that prints the hostname of every rank, so it violates the
+# silence-is-pass convention; run it by hand when the machine layout is in question
 # pyre_test_python_testcase(tests/mpi.pkg/ip.py)
 # pyre_test_python_testcase_mpi(tests/mpi.pkg/ip.py 8)
 
