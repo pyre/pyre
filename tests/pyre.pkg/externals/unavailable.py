@@ -10,8 +10,9 @@
 Verify the failure mode when a required package cannot be located
 
 The configuration file {unavailable.yaml} restricts the host to the bare engine over the
-fixture installation, which does not provide petsc; binding the facility must fail loudly
-with a {DefaultError} that names the protocol
+fixture installation, which does not provide petsc; the application must construct anyway,
+and the first access of the facility must fail loudly with a {DefaultError} that names the
+protocol
 """
 
 # support
@@ -34,19 +35,22 @@ class unavailable(pyre.application):
 
 def test():
     """
-    Verify that binding an unsatisfiable facility raises {DefaultError}
+    Verify that an unsatisfiable facility complains on first access, not at construction
     """
+    # instantiating the application must succeed: the missing package must not prevent the
+    # application from coming to life
+    app = unavailable(name="unavailable")
     # attempt to
     try:
-        # instantiate the application, which binds the facility
-        unavailable(name="unavailable")
-    # the binding must fail with the protocol in the complaint
+        # touch the facility
+        app.petsc
+    # the access must fail with the protocol in the complaint
     except DefaultError as error:
         # check that the complaint names the category
         assert "petsc" in str(error)
     # anything else is a bug
     else:
-        # the binding must not succeed
+        # the access must not succeed
         assert False, "unresolvable facility bound silently"
     # all done
     return
