@@ -62,21 +62,37 @@ class Recipe:
     # interface
     def candidates(self, manager):
         """
-        Generate the ranked sequence of native package names to look for in the database of the
-        given package {manager}
+        Generate the ranked sequence of native package groups to look for in the database of
+        the given package {manager}
+
+        Each candidate is a (lead, companions) pair: the {lead} names the package that
+        carries the identity and the hard markers of the recipe; the {companions} name
+        sibling packages whose contents are folded in, for databases that split a logical
+        package into pieces, e.g. debian's {openmpi-bin} carrying the launcher that
+        {libopenmpi-dev} does not
         """
         # keep track of what has been offered
         seen = set()
-        # the engine specific names go first, then the flavor, then the category
-        for name in self.natives.get(manager, ()) + (self.flavor, self.category):
-            # skip duplicates
-            if name in seen:
+        # the engine specific specs go first, then the flavor, then the category
+        for spec in self.natives.get(manager, ()) + (self.flavor, self.category):
+            # a bare name is a group with no companions
+            if isinstance(spec, str):
+                # unpack it trivially
+                lead, companions = spec, ()
+            # anything else is a (lead, *companions) group
+            else:
+                # unpack it
+                lead, *companions = spec
+                # and freeze the companions
+                companions = tuple(companions)
+            # skip duplicate leads
+            if lead in seen:
                 # and move on
                 continue
             # remember this one
-            seen.add(name)
-            # and offer it
-            yield name
+            seen.add(lead)
+            # and offer the group
+            yield lead, companions
         # all done
         return
 

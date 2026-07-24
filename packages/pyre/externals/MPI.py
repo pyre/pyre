@@ -55,8 +55,9 @@ class MPI(Tool, Library, family="pyre.externals.mpi"):
             binaries={"launcher": r"mpirun(\.openmpi)?"},
             # the markers for the compile line
             defines=("WITH_MPI", "WITH_OPENMPI"),
-            # with database specific names where the flavor name isn't enough
-            natives={"dpkg": ("libopenmpi-dev",)},
+            # with database specific names where the flavor name isn't enough; debian splits
+            # the launcher into {openmpi-bin}, so it rides along as a companion
+            natives={"dpkg": (("libopenmpi-dev", "openmpi-bin"),)},
         )
         # mpich
         yield Recipe(
@@ -76,8 +77,9 @@ class MPI(Tool, Library, family="pyre.externals.mpi"):
             binaries={"launcher": r"mpirun(\.mpich)?"},
             # the markers for the compile line
             defines=("WITH_MPI", "WITH_MPICH"),
-            # with database specific names where the flavor name isn't enough
-            natives={"dpkg": ("libmpich-dev",)},
+            # with database specific names where the flavor name isn't enough; debian splits
+            # the launcher into the {mpich} runtime package, so it rides along as a companion
+            natives={"dpkg": (("libmpich-dev", "mpich"),)},
         )
         # all done
         return
