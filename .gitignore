@@ -40,4 +40,11 @@
 # python cache
 **__pycache__
 
+# test run artifacts
+/tests/pyre.pkg/descriptors/output.cfg
+/tests/pyre.pkg/schemata/output.cfg
+/tests/pyre.pkg/filesystem/sample.zip
+/tests/pyre.pkg/h5/api/writer.h5
+/tests/pyre.pkg/primitives/scratch/
+
 # end of file
