@@ -9,6 +9,9 @@ mpi.application # mpirun:
   shell = mpi.mpirun
   shell.tasks = 4
   shell.hostfile = localhost
+  ; skip process binding so the launch fits machines with fewer cores than tasks, the same
+  ; accommodation the harnessed parallel tests make
+  shell.extra = --bind-to none
   ; shell.extra = -mca mpi_show_mca_params enviro
 
 
