@@ -71,7 +71,7 @@ from .Recipe import Recipe as recipe
 
 
 # the package abstractions
-def blas():
+def blas(**kwds):
     """
     The BLAS package category
     """
@@ -79,10 +79,10 @@ def blas():
     from .BLAS import BLAS as blas
 
     # and generate a facility
-    return blas()
+    return blas(**kwds)
 
 
-def cython():
+def cython(**kwds):
     """
     The Cython package category
     """
@@ -90,10 +90,10 @@ def cython():
     from .Cython import Cython as cython
 
     # and generate a facility
-    return cython()
+    return cython(**kwds)
 
 
-def eigen():
+def eigen(**kwds):
     """
     The Eigen package category
     """
@@ -101,10 +101,10 @@ def eigen():
     from .Eigen import Eigen as eigen
 
     # and generate a facility
-    return eigen()
+    return eigen(**kwds)
 
 
-def fftw():
+def fftw(**kwds):
     """
     The FFTW package category
     """
@@ -112,10 +112,10 @@ def fftw():
     from .FFTW import FFTW as fftw
 
     # and generate a facility
-    return fftw()
+    return fftw(**kwds)
 
 
-def gcc():
+def gcc(**kwds):
     """
     The GCC package category
     """
@@ -123,10 +123,10 @@ def gcc():
     from .GCC import GCC as gcc
 
     # and generate a facility
-    return gcc()
+    return gcc(**kwds)
 
 
-def gsl():
+def gsl(**kwds):
     """
     The GSL package category
     """
@@ -134,10 +134,10 @@ def gsl():
     from .GSL import GSL as gsl
 
     # and generate a facility
-    return gsl()
+    return gsl(**kwds)
 
 
-def hdf5():
+def hdf5(**kwds):
     """
     The HDF5 package category
     """
@@ -145,10 +145,10 @@ def hdf5():
     from .HDF5 import HDF5 as hdf5
 
     # and generate a facility
-    return hdf5()
+    return hdf5(**kwds)
 
 
-def metis():
+def metis(**kwds):
     """
     The METIS package category
     """
@@ -156,10 +156,10 @@ def metis():
     from .Metis import Metis as metis
 
     # and generate a facility
-    return metis()
+    return metis(**kwds)
 
 
-def mpi():
+def mpi(**kwds):
     """
     The MPI package category
     """
@@ -167,10 +167,10 @@ def mpi():
     from .MPI import MPI as mpi
 
     # and generate a facility
-    return mpi()
+    return mpi(**kwds)
 
 
-def numpy():
+def numpy(**kwds):
     """
     The numpy package category
     """
@@ -178,10 +178,10 @@ def numpy():
     from .NumPy import NumPy as numpy
 
     # and generate a facility
-    return numpy()
+    return numpy(**kwds)
 
 
-def parmetis():
+def parmetis(**kwds):
     """
     The ParMETIS package category
     """
@@ -189,10 +189,10 @@ def parmetis():
     from .ParMetis import ParMetis as parmetis
 
     # and generate a facility
-    return parmetis()
+    return parmetis(**kwds)
 
 
-def petsc():
+def petsc(**kwds):
     """
     The PETSc package category
     """
@@ -200,10 +200,10 @@ def petsc():
     from .PETSc import PETSc as petsc
 
     # and generate a facility
-    return petsc()
+    return petsc(**kwds)
 
 
-def postgres():
+def postgres(**kwds):
     """
     The Postgres package category
     """
@@ -211,10 +211,10 @@ def postgres():
     from .Postgres import Postgres as postgres
 
     # and generate a facility
-    return postgres()
+    return postgres(**kwds)
 
 
-def pybind11():
+def pybind11(**kwds):
     """
     The pybind11 package category
     """
@@ -222,10 +222,10 @@ def pybind11():
     from .Pybind11 import Pybind11 as pybind11
 
     # and generate a facility
-    return pybind11()
+    return pybind11(**kwds)
 
 
-def python():
+def python(**kwds):
     """
     The Python package category
     """
@@ -233,10 +233,10 @@ def python():
     from .Python import Python as python
 
     # and generate a facility
-    return python()
+    return python(**kwds)
 
 
-def vtk():
+def vtk(**kwds):
     """
     The VTK package category
     """
@@ -244,7 +244,7 @@ def vtk():
     from .VTK import VTK as vtk
 
     # and generate a facility
-    return vtk()
+    return vtk(**kwds)
 
 
 # end of file

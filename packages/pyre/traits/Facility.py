@@ -67,6 +67,26 @@ class Facility(Slotted, schemata.component):
         return self.pyre_nameserver.variable(**kwds)
 
     # interface
+    def coerce(self, value, **kwds):
+        """
+        Convert {value} into a component class or instance, honoring my {optional} marker
+        """
+        # get the marker of unsatisfiable protocol defaults
+        from ..components.exceptions import DefaultError
+
+        # attempt to
+        try:
+            # convert {value} normally
+            return super().coerce(value=value, **kwds)
+        # if my protocol could not compute a default
+        except DefaultError:
+            # facilities marked {optional} bind {None} when nobody has anything better to offer
+            if self.optional:
+                # and their clients are expected to cope
+                return None
+            # everybody else fails loudly
+            raise
+
     def instantiate(self, value, node, incognito=False, **kwds):
         """
         Coerce {value} into an instance of a component compatible with my protocol
@@ -120,9 +140,11 @@ class Facility(Slotted, schemata.component):
         return
 
     # meta-methods
-    def __init__(self, protocol, **kwds):
-        # chain up
-        super().__init__(protocol=protocol, **kwds)
+    def __init__(self, protocol, optional=False, **kwds):
+        # chain up; facilities are required by default, overriding the dormant descriptor
+        # setting: a facility that can't be satisfied complains when it is first accessed,
+        # unless the client marks it {optional}, in which case it binds {None}
+        super().__init__(protocol=protocol, optional=optional, **kwds)
         # build my slot factories
         self.classSlot = self.factory(trait=self, post=self.process)
         # self.instanceSlot = self.factory(trait=self, pre=self.instantiate, post=self.instantiate)
