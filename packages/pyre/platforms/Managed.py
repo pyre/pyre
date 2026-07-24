@@ -137,9 +137,9 @@ class Managed(pyre.component, implements=PackageManager):
         """
         Map {recipe} onto the name of an installed package that provides it, if any
         """
-        # go through the ranked candidates
-        for package in self.resolveAll(recipe=recipe):
-            # the first one is our best answer
+        # go through the ranked candidate groups
+        for package, _ in self.resolveAll(recipe=recipe):
+            # the lead of the first one is our best answer
             return package
         # if there weren't any, the recipe is not satisfiable here
         return None
@@ -150,11 +150,11 @@ class Managed(pyre.component, implements=PackageManager):
         Interpret {recipe} against my package database and return a map of installation trait
         values, or {None} if the package is not installed here
         """
-        # go through the ranked candidates; some, e.g. debian metapackages, carry none of
-        # the actual files, so keep going until one passes the recipe markers
-        for package in self.resolveAll(recipe=recipe):
-            # interpret the recipe against this candidate
-            values = self.interpret(recipe=recipe, package=package)
+        # go through the ranked candidate groups; some leads, e.g. debian metapackages,
+        # carry none of the actual files, so keep going until one passes the recipe markers
+        for package, companions in self.resolveAll(recipe=recipe):
+            # interpret the recipe against this group
+            values = self.interpret(recipe=recipe, package=package, companions=companions)
             # if the markers panned out
             if values is not None:
                 # we have our configuration
@@ -165,44 +165,71 @@ class Managed(pyre.component, implements=PackageManager):
     # implementation details
     def resolveAll(self, recipe):
         """
-        Generate the ranked sequence of installed packages that may provide {recipe}
+        Generate the ranked sequence of (lead, companions) groups of installed packages that
+        may provide {recipe}
         """
         # grab the index of installed packages
         installed = self.getInstalledPackages()
-        # collect the candidate native names
+        # collect the candidate groups
         candidates = tuple(recipe.candidates(manager=self.name))
         # keep track of what has been offered
         offered = set()
-        # first, look for exact matches
-        for candidate in candidates:
-            # if this candidate is installed and hasn't been offered
-            if candidate in installed and candidate not in offered:
+        # first, look for exact lead matches
+        for lead, companions in candidates:
+            # if this lead is installed and hasn't been offered
+            if lead in installed and lead not in offered:
                 # remember it
-                offered.add(candidate)
-                # and offer it
-                yield candidate
-        # next, look for packages whose names start with a candidate, e.g. versioned names
+                offered.add(lead)
+                # and offer the group
+                yield lead, companions
+        # next, look for packages whose names start with a lead, e.g. versioned names
         # like {postgresql16} or {libpython3.13-dev}; scan in reverse order so higher
         # versions win
-        for candidate in candidates:
+        for lead, companions in candidates:
             # go through the installed packages
             for package in sorted(installed, reverse=True):
                 # if this one matches and hasn't been offered
-                if package not in offered and package.startswith(candidate):
+                if package not in offered and package.startswith(lead):
                     # remember it
                     offered.add(package)
-                    # and offer it
-                    yield package
+                    # and offer the group
+                    yield package, companions
         # all done
         return
 
-    def interpret(self, recipe, package):
+    def expand(self, spec):
         """
-        Interpret {recipe} against the contents of {package} and return a map of installation
-        trait values, or {None} if the package fails the recipe markers
+        Generate the installed packages that match the companion {spec}, exactly or by prefix
         """
-        # grab the package contents
+        # grab the index of installed packages
+        installed = self.getInstalledPackages()
+        # an exact match goes first
+        if spec in installed:
+            # offer it
+            yield spec
+        # then everything the spec abbreviates, higher versions first
+        for package in sorted(installed, reverse=True):
+            # skip the exact match and non-matches
+            if package != spec and package.startswith(spec):
+                # offer the rest
+                yield package
+        # all done
+        return
+
+    def interpret(self, recipe, package, companions=()):
+        """
+        Interpret {recipe} against the combined contents of {package} and its {companions},
+        and return a map of installation trait values, or {None} if the group fails the
+        recipe markers
+        """
+        # grab the lead package contents
         contents = tuple(self.contents(package=package))
+        # go through the companion specs
+        for spec in companions:
+            # and every installed package each one matches
+            for member in self.expand(spec=spec):
+                # folding in their contents
+                contents += tuple(self.contents(package=member))
         # start collecting trait values
         values = {}
         # get the package version

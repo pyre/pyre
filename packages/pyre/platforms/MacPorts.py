@@ -40,18 +40,18 @@ class MacPorts(Managed, family="pyre.platforms.packagers.macports"):
         if group:
             # get the alternatives, with the current selection first
             alternatives = self.alternatives(group=group)
-            # go through the recipe's candidate names
-            for candidate in recipe.candidates(manager=self.name):
+            # go through the leads of the recipe's candidate groups
+            for lead, companions in recipe.candidates(manager=self.name):
                 # and the ranked alternatives
                 for tag in alternatives:
-                    # looking for an alternative that the candidate abbreviates
-                    if tag.startswith(candidate):
+                    # looking for an alternative that the lead abbreviates
+                    if tag.startswith(lead):
                         # find out which package provides it
                         package = self.getSelectionInfo(group=group, alternative=tag)
                         # if we got an answer
                         if package:
-                            # offer it first
-                            yield package
+                            # offer it first, with the group's companions
+                            yield package, companions
         # in any case, fall back to the generic name matching
         yield from super().resolveAll(recipe=recipe)
         # all done

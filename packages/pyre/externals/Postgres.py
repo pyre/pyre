@@ -53,10 +53,12 @@ class Postgres(Tool, Library, family="pyre.externals.postgres"):
             binaries={"psql": "psql"},
             # the marker for the compile line
             defines=("WITH_PQ",),
-            # with database specific names where the category name isn't enough
+            # with database specific names where the category name isn't enough; debian
+            # splits the client into versioned {postgresql-client} packages, so they ride
+            # along as companions
             natives={
                 "conda": ("libpq", "postgresql"),
-                "dpkg": ("libpq-dev",),
+                "dpkg": (("libpq-dev", "postgresql-client"),),
             },
         )
         # all done

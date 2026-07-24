@@ -54,12 +54,20 @@ def test():
             for pattern in recipe.binaries.values():
                 # compile
                 re.compile(pattern)
-            # the native names must be tuples of strings
+            # the native names must be tuples of strings or of (lead, *companions) groups
             for names in recipe.natives.values():
                 # check the container
                 assert isinstance(names, tuple), f"non-tuple natives in '{category}'"
-            # the candidate generator must end with the category name
-            assert tuple(recipe.candidates(manager="no-such-manager"))[-1] == category
+            # the candidates are (lead, companions) groups
+            candidates = tuple(recipe.candidates(manager="no-such-manager"))
+            # whose leads and companions are all strings
+            for lead, companions in candidates:
+                # check the lead
+                assert isinstance(lead, str), f"non-string lead in '{category}'"
+                # and each companion
+                assert all(isinstance(c, str) for c in companions)
+            # and the fallback lead is always the category name
+            assert candidates[-1][0] == category
 
     # all done
     return
