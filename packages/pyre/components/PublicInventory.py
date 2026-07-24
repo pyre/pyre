@@ -294,14 +294,26 @@ class PublicInventory(Inventory):
         Build slots for the initial inventory of an instance by building references to all the
         slots in the inventory of its class
         """
+        # get the marker of unsatisfiable protocol defaults
+        from .exceptions import DefaultError
+
         # get the component class of this {instance}
         component = type(instance)
         # go through all the configurable traits in {component}
         for trait in component.pyre_configurables():
             # ask the class inventory for the slot that corresponds to this trait
             slot = component.pyre_inventory[trait]
-            # get its value
-            value = slot.value
+            # attempt to
+            try:
+                # get its value
+                value = slot.value
+            # facilities compute their default by interrogating the host, which may have
+            # nothing to offer; this must not abort the construction of the instance: any
+            # explicit assignment in the configuration store outranks this seed, and a
+            # genuinely unbound facility should complain when it is first accessed
+            except DefaultError:
+                # seed with the unevaluated trait default instead
+                value = trait.default
             # grab the trait slot factory
             factory = trait.instanceSlot
             # hand the trait, the factory and the default value from the class record
