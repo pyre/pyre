@@ -9,6 +9,47 @@
   - calc nodes cannot inherit from {Ordering} because {Observable} stores the callbacks in a
     weak key dictionary, which is incompatible with an overloaded __eq__
 
+- externals:
+
+  - versions: there is no vocabulary for version requirements; a consumer cannot say
+    "hdf5 >= 1.12"; recipes need a version extractor and the resolver a constraint check,
+    built on the algebra of {pyre.constraints}
+
+  - producer manifests: a package built by pyre should publish a description of itself, its
+    facilities, and their dependency edges into its own prefix at install time, e.g.
+    {share/pyre/external.yaml}, loaded into the configuration store as one more priority
+    tier between discovery and user; this is the mechanism the mm externals-facilities
+    design calls for, and the path to conditional facility libraries
+
+  - engines: there is no rpm/dnf engine, so the redhat family of hosts falls back to
+    filesystem probing despite the elaborate host taxonomy
+
+  - the index caches its engine stack and selections for the lifetime of the process, with
+    no invalidation when the configuration store changes; fine for applications, wrong for
+    long-running build engines
+
+  - the deposit step silently drops discovered values for traits the installation factory
+    does not declare, e.g. the {defines} of tool-only categories; surprising, even if
+    currently harmless
+
+  - recipes: knowledge still unported from mm: the hdf5 parallel variants and their induced
+    mpi dependence, and the nonstandard layouts of cuda and mkl
+
+  - conda: there is no warning when the active environment at use time differs from the one
+    interrogated at discovery time; mm warns about this
+
+  - the bare engine probes only the canonical {include}, {lib}, {lib64}, and {bin} folders
+    under each prefix, so versioned include directories, e.g. {include/eigen3}, are
+    invisible to it, unlike the contents driven engines
+
+  - macports: the selection normalization machinery was dropped in the rewrite; revisit if
+    resolving launchers or interpreters through the select file indirection ever becomes
+    necessary
+
+  - {pyre.memory} imports its bindings unconditionally, so a package-only install cannot
+    even import {pyre}; a prefix with the package but not the extensions is a poison pill
+    that breaks every pyre application in that context, including mm
+
 - framework:
 
   - take advantage of the new class creation protocol in 3.6+
