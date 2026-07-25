@@ -43,8 +43,12 @@ class NumPy(Library, family="pyre.externals.numpy"):
             libraries=(),
             # the marker for the compile line
             defines=("WITH_NUMPY",),
-            # with database specific names where the category name isn't enough
-            natives={"dpkg": ("python3-numpy",)},
+            # with database specific names where the category name isn't enough; macports
+            # buries the version tag in the middle of the name, hence the pattern
+            natives={
+                "dpkg": ("python3-numpy",),
+                "macports": (r"py3\d+-numpy",),
+            },
             # and a dependency on python
             dependencies=("python",),
         )
