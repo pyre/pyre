@@ -45,6 +45,18 @@ def test():
     # bare engines can't know versions, so there should be no claim
     assert "version" not in values
 
+    # get the eigen recipe
+    from pyre.externals.Eigen import Eigen
+
+    # its headers nest one level below the canonical include directory
+    eigen, *_ = Eigen.recipes()
+    # interpret it
+    values = engine.configure(recipe=eigen)
+    # the discovery must succeed
+    assert values is not None
+    # with the nested include directory
+    assert [str(folder) for folder in values["incdir"]] == ["prefix/include/eigen3"]
+
     # get the openmpi recipe
     openmpi, *_ = MPI.recipes()
     # interpret it
