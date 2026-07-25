@@ -52,6 +52,14 @@ class Managed(pyre.component, implements=PackageManager):
 
     # protocol obligations
     @pyre.export
+    def about(self):
+        """
+        A phrase identifying this database, for provenance records
+        """
+        # name myself
+        return f"the '{self.name}' package database"
+
+    @pyre.export
     def prefix(self):
         """
         Retrieve the package manager install location
@@ -332,10 +340,14 @@ class Managed(pyre.component, implements=PackageManager):
             # record the folders
             values["bindir"] = bindir
 
-        # the recipe knows the compile time markers
-        values["defines"] = list(recipe.defines)
-        # and the package categories this one depends on
-        values["dependencies"] = list(recipe.dependencies)
+        # if the recipe carries compile time markers
+        if recipe.defines:
+            # record them
+            values["defines"] = list(recipe.defines)
+        # if the recipe induces other package categories
+        if recipe.dependencies:
+            # record them
+            values["dependencies"] = list(recipe.dependencies)
 
         # collect all the folders we discovered
         folders = incdir + libdir + bindir

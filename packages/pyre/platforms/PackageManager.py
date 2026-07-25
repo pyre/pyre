@@ -23,6 +23,12 @@ class PackageManager(pyre.protocol, family="pyre.platforms.packagers"):
 
     # requirements
     @pyre.provides
+    def about(self):
+        """
+        A phrase identifying this database, for provenance records
+        """
+
+    @pyre.provides
     def prefix(self):
         """
         The root of the package database installations
