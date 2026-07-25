@@ -113,8 +113,18 @@ class Bare(pyre.component, family="pyre.platforms.packagers.bare", implements=Pa
 
         # if the recipe expects headers
         if recipe.headers:
-            # they all live under the canonical include directory
-            values["incdir"] = [prefix / "include"]
+            # collect the folders that hold them
+            incdir = []
+            # go through the markers
+            for header in recipe.headers:
+                # locate the include directory that holds this one
+                folder = self.scanForHeader(prefix=prefix, header=header)
+                # if it's there and we haven't seen it before
+                if folder and folder not in incdir:
+                    # add it to the pile
+                    incdir.append(folder)
+            # record what we found
+            values["incdir"] = incdir
 
         # if the recipe expects libraries
         if recipe.libraries:
@@ -181,10 +191,10 @@ class Bare(pyre.component, family="pyre.platforms.packagers.bare", implements=Pa
         if not prefix.isDirectory():
             # nothing lives here
             return False
-        # every header marker must be present under the canonical include directory
+        # every header marker must be locatable under the include directory
         for header in recipe.headers:
-            # form the full path and check
-            if not (prefix / "include" / header).exists():
+            # look for it
+            if self.scanForHeader(prefix=prefix, header=header) is None:
                 # a missing marker disqualifies the prefix
                 return False
         # if the recipe expects libraries, at least one stem must be locatable
@@ -209,6 +219,31 @@ class Bare(pyre.component, family="pyre.platforms.packagers.bare", implements=Pa
                 return False
         # all markers passed
         return True
+
+    def scanForHeader(self, prefix, header):
+        """
+        Locate the include directory under {prefix} that contains {header}, looking one
+        level below the canonical {include} as well, for packages that nest their headers,
+        e.g. {include/eigen3}
+        """
+        # the canonical location
+        include = prefix / "include"
+        # if the header is right there
+        if (include / header).exists():
+            # done
+            return include
+        # if the canonical location isn't a directory, there is nothing to scan
+        if not include.isDirectory():
+            # report failure
+            return None
+        # otherwise, look one level down
+        for entry in include.contents:
+            # for a folder that holds the header
+            if entry.isDirectory() and (entry / header).exists():
+                # got one
+                return entry
+        # otherwise, report failure
+        return None
 
     def scanForLibrary(self, prefix, pattern):
         """
