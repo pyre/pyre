@@ -35,6 +35,15 @@ class Conda(Managed, family="pyre.platforms.packagers.conda"):
 
     # protocol obligations
     @pyre.export
+    def about(self):
+        """
+        A phrase identifying this database, for provenance records
+        """
+        # name myself and the environment i interrogate, so provenance answers the question
+        # of which environment a discovery came from
+        return f"the '{self.name}' package database in '{self.environment}'"
+
+    @pyre.export
     def prefix(self):
         """
         Retrieve the location of the active conda environment

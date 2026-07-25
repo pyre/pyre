@@ -35,6 +35,14 @@ class Bare(pyre.component, family="pyre.platforms.packagers.bare", implements=Pa
 
     # protocol obligations
     @pyre.export
+    def about(self):
+        """
+        A phrase identifying this database, for provenance records
+        """
+        # name myself
+        return f"the '{self.name}' package database"
+
+    @pyre.export
     def prefix(self):
         """
         The root of the package database installations
@@ -152,10 +160,14 @@ class Bare(pyre.component, family="pyre.platforms.packagers.bare", implements=Pa
             # record the folders
             values["bindir"] = folders
 
-        # the recipe knows the compile time markers
-        values["defines"] = list(recipe.defines)
-        # and the package categories this one depends on
-        values["dependencies"] = list(recipe.dependencies)
+        # if the recipe carries compile time markers
+        if recipe.defines:
+            # record them
+            values["defines"] = list(recipe.defines)
+        # if the recipe induces other package categories
+        if recipe.dependencies:
+            # record them
+            values["dependencies"] = list(recipe.dependencies)
 
         # hand back the configuration
         return values
