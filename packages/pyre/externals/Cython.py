@@ -45,8 +45,12 @@ class Cython(Tool, family="pyre.externals.cython"):
             group="cython",
             # the compiler executable
             binaries={"compiler": "cython"},
-            # with database specific names where the category name isn't enough
-            natives={"dpkg": ("cython3", "cython")},
+            # with database specific names where the category name isn't enough; macports
+            # buries the version tag in the middle of the name, hence the pattern
+            natives={
+                "dpkg": ("cython3", "cython"),
+                "macports": (r"py3\d+-cython",),
+            },
         )
         # all done
         return

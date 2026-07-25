@@ -194,6 +194,25 @@ class Managed(pyre.component, implements=PackageManager):
                     offered.add(package)
                     # and offer the group
                     yield package, companions
+        # finally, interpret leads as regular expressions, for names whose version tag is in
+        # the middle, e.g. macports' {py312-numpy}; again, higher versions win
+        for lead, companions in candidates:
+            # attempt to
+            try:
+                # compile the lead
+                regex = re.compile(lead)
+            # if it isn't a valid pattern
+            except re.error:
+                # move on
+                continue
+            # go through the installed packages
+            for package in sorted(installed, reverse=True):
+                # if this one matches in full and hasn't been offered
+                if package not in offered and regex.fullmatch(package):
+                    # remember it
+                    offered.add(package)
+                    # and offer the group
+                    yield package, companions
         # all done
         return
 

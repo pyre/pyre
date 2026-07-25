@@ -38,6 +38,8 @@ class MacPorts(Managed, family="pyre.platforms.packagers.macports"):
         group = recipe.group
         # and the group is known here
         if group:
+            # grab the index of installed packages
+            installed = self.getInstalledPackages()
             # get the alternatives, with the current selection first
             alternatives = self.alternatives(group=group)
             # go through the leads of the recipe's candidate groups
@@ -46,11 +48,17 @@ class MacPorts(Managed, family="pyre.platforms.packagers.macports"):
                 for tag in alternatives:
                     # looking for an alternative that the lead abbreviates
                     if tag.startswith(lead):
-                        # find out which package provides it
-                        package = self.getSelectionInfo(group=group, alternative=tag)
-                        # if we got an answer
-                        if package:
+                        # alternative tags usually name the payload port directly; if so
+                        if tag in installed:
                             # offer it first, with the group's companions
+                            yield tag, companions
+                        # otherwise, ask who provides the selection file; on modern macports
+                        # this may be a {_select} metadata port, which the recipe markers
+                        # will reject, so it goes after the payload guess
+                        package = self.getSelectionInfo(group=group, alternative=tag)
+                        # if we got an answer that isn't what we already offered
+                        if package and package != tag:
+                            # offer it as well
                             yield package, companions
         # in any case, fall back to the generic name matching
         yield from super().resolveAll(recipe=recipe)
