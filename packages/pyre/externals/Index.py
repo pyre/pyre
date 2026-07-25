@@ -53,6 +53,21 @@ class Index:
         # all done
         return
 
+    # cache management
+    def reset(self):
+        """
+        Discard the cached engine stack and selections
+
+        Long running processes that adjust the configuration store or the host description
+        after selections have been made can call this to force fresh discovery
+        """
+        # discard the engine stack
+        self._engines = None
+        # and the selections
+        self._selections = {}
+        # all done
+        return
+
     # interface
     def engines(self):
         """
@@ -146,16 +161,23 @@ class Index:
         # and the configuration store
         nameserver = executive.nameserver
         # record the provenance of these values
-        locator = pyre.tracking.simple(f"while interrogating the '{engine.name}' package database")
+        locator = pyre.tracking.simple(f"while interrogating {engine.about()}")
         # collect the traits the installation factory understands
         traits = {trait.name for trait in recipe.factory.pyre_configurables()}
+        # discovered values with no resting place on the factory
+        orphans = {}
         # go through the discovered values
         for trait, value in values.items():
-            # skip anything the factory can't bind
+            # if the factory has no resting place for this value
             if trait not in traits:
-                # and move on
+                # discarding an empty one loses nothing, but a non-empty one is a
+                # recipe/factory mismatch worth reporting; set it aside
+                if value:
+                    # in the orphan pile
+                    orphans[trait] = value
+                # either way, there is nowhere to deposit it
                 continue
-            # deposit the rest under the instance name of the installation, at {discovery}
+            # deposit the value under the instance name of the installation, at {discovery}
             # priority so that any user configuration wins the arbitration
             nameserver.insert(
                 name=f"{recipe.flavor}.{trait}",
@@ -163,6 +185,28 @@ class Index:
                 priority=executive.priority.discovery(),
                 locator=locator,
             )
+        # if there were any orphans, the recipe promises information its installation cannot
+        # hold; this is an authorship error, so report the whole pile at once
+        if orphans:
+            # get the journal
+            import journal
+
+            # make a channel
+            channel = journal.firewall("pyre.externals.discovery")
+            # describe the problem
+            channel.line(
+                f"{recipe}: discovered information with no resting place "
+                f"on '{recipe.factory.pyre_family()}':"
+            )
+            # itemize the orphans
+            for trait, value in orphans.items():
+                # one per line
+                channel.line(f"    {trait}: {value!r}")
+            # and complain
+            channel.log()
+            # in case firewalls aren't fatal: the orphans are simply not deposited; the
+            # installation is missing information and downstream validation may complain
+
         # all done
         return
 
