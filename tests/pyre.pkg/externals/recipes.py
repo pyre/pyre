@@ -26,6 +26,8 @@ def test():
 
     # make an index; no engines are consulted here, so this is safe on any host
     index = Index()
+    # the pile of geometry problems, collected across all categories and reported together
+    problems = []
     # go through the registered categories
     for category in index._categories:
         # resolve the protocol
@@ -68,6 +70,32 @@ def test():
                 assert all(isinstance(c, str) for c in companions)
             # and the fallback lead is always the category name
             assert candidates[-1][0] == category
+            # every piece of information the recipe promises must have a resting place on
+            # the factory; collect the factory traits
+            traits = {trait.name for trait in recipe.factory.pyre_configurables()}
+            # the geometry each recipe section deposits into
+            geometry = [
+                (recipe.headers, ("incdir",)),
+                (recipe.libraries, ("libdir", "libraries")),
+                (recipe.binaries, ("bindir",) + tuple(recipe.binaries)),
+                (recipe.defines, ("defines",)),
+                (recipe.dependencies, ("dependencies",)),
+            ]
+            # go through the sections
+            for section, homes in geometry:
+                # skip the empty ones
+                if not section:
+                    # nothing to deposit, nothing to check
+                    continue
+                # collect the missing resting places
+                for home in homes:
+                    # anything the factory doesn't declare
+                    if home not in traits:
+                        # is a problem
+                        problems.append(f"'{recipe}': no home for '{home}'")
+
+    # report everything at once, so a mistake doesn't set up a hunting loop
+    assert not problems, "\n".join(problems)
 
     # all done
     return

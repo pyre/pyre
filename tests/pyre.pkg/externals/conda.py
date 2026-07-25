@@ -31,6 +31,8 @@ def test():
     engine = Conda(name="conda.fixture", environment="conda")
     # it must be functional: the fixture has install records
     assert engine.available()
+    # and its provenance phrase must name the environment it interrogates
+    assert "in 'conda'" in engine.about()
 
     # the index must know about gsl
     installed = engine.installed()
