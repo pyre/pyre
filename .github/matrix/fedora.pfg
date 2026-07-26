@@ -18,8 +18,8 @@ mm:
     bldroot = /tmp/builds
 
     ; other settings
-    ; the location of the configuration file
-    runcfg = .github/matrix
+    ; N.B.: no {runcfg} here: it would put {.github/matrix} on the configuration path, and
+    ; the ubuntu {config.mm} that lives there would override the rpm discoveries
     ; the name of the make utility
     make = make
 
