@@ -1,0 +1,135 @@
+# -*- yaml -*-
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2026 all rights reserved
+
+name: pr-fedora
+on:
+  pull_request:
+jobs:
+  # build and test the ref that launched this action on the current fedora release, with
+  # every external dependency discovered through the rpm package database; unlike the
+  # ubuntu legs, there is no hand written package configuration anywhere in this workflow
+  build:
+    name: >-
+      ${{matrix.target}} gcc on fedora:latest
+    runs-on: ${{matrix.os}}
+    container: fedora:latest
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-26.04]
+        target: [opt]
+
+    # the container runs as root, so let openmpi launch
+    env:
+      OMPI_ALLOW_RUN_AS_ROOT: 1
+      OMPI_ALLOW_RUN_AS_ROOT_CONFIRM: 1
+
+    steps:
+      - name: fedora refresh
+        run: |
+          echo " -- upgrade"
+          dnf -y upgrade
+          echo " -- install our dependencies"
+          dnf -y install \
+              git make findutils which procps-ng hostname diffutils zip unzip \
+              openssh-server passwd \
+              gcc gcc-c++ gcc-gfortran \
+              python3-devel python3-pyyaml python3-numpy pybind11-devel \
+              gsl-devel hdf5-devel openmpi-devel
+
+      - name: passwordless ssh to localhost
+        run: |
+          echo " -- generating the host keys"
+          ssh-keygen -A
+          echo " -- generating the root key"
+          mkdir -p -m 700 /root/.ssh
+          ssh-keygen -q -t ed25519 -N "" -f /root/.ssh/id_ed25519
+          cp /root/.ssh/id_ed25519.pub /root/.ssh/authorized_keys
+          chmod 600 /root/.ssh/authorized_keys
+          printf 'Host localhost\n    StrictHostKeyChecking no\n    UserKnownHostsFile /dev/null\n    LogLevel ERROR\n' > /root/.ssh/config
+          chmod 600 /root/.ssh/config
+          echo 'PermitRootLogin prohibit-password' > /etc/ssh/sshd_config.d/00-root-login.conf
+          echo " -- starting the server"
+          /usr/sbin/sshd
+
+      - name: openmpi on the path
+        run: |
+          echo " -- fedora activates mpi through environment modules; bypass them"
+          echo "/usr/lib64/openmpi/bin" >> ${GITHUB_PATH}
+
+      - name: versions
+        run: |
+          echo " -- distribution"
+          cat /etc/os-release | head -2
+          echo " -- make"
+          make --version
+          echo " -- python"
+          python3 --version
+          echo " -- gcc"
+          gcc --version
+          echo " -- g++"
+          g++ --version
+
+      - name: external dependencies
+        run: |
+          echo " -- gsl"
+          rpm -ql gsl-devel | head -5
+          echo " -- openmpi"
+          rpm -ql openmpi-devel | head -5
+          echo " -- hdf5"
+          rpm -ql hdf5-devel | head -5
+
+      - name: clone mm
+        run: |
+          echo " -- cloning mm"
+          git clone https://github.com/aivazis/mm
+
+      - name: checkout pyre
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          path: 'pyre'
+
+      - name: mm diagnostics
+        run: |
+          echo " -- switching to the pyre home directory"
+          cd pyre
+          echo " -- interrogating the package database"
+          ${mm} --setup
+          echo " -- checking whether mm can run from here"
+          ${mm} host.info
+          ${mm} builder.info
+          echo " -- the externals, as discovered"
+          ${mm} extern.info
+          echo " -- the individual packages"
+          ${mm} extern.gsl.info
+          ${mm} extern.mpi.info
+          ${mm} extern.hdf5.info
+          ${mm} extern.pybind11.info
+          ${mm} extern.python.info
+        env:
+          mm: python3 ${{github.workspace}}/mm/mm --config=.github/matrix/fedora.pfg
+          target: ${{matrix.target}}
+
+      - name: build pyre
+        run: |
+          echo " -- switching to the pyre home directory"
+          cd pyre
+          echo " -- building pyre"
+          ${mm} --jobs=2
+        env:
+          mm: python3 ${{github.workspace}}/mm/mm --config=.github/matrix/fedora.pfg
+          target: ${{matrix.target}}
+
+      - name: test pyre
+        run: |
+          echo " -- switching to the pyre home directory"
+          cd pyre
+          echo " -- testing pyre"
+          ${mm} --jobs=2 tests
+        env:
+          mm: python3 ${{github.workspace}}/mm/mm --config=.github/matrix/fedora.pfg
+          target: ${{matrix.target}}
+#
+# end of file
