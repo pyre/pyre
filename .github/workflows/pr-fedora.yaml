@@ -109,7 +109,7 @@ jobs:
           ${mm} extern.pybind11.info
           ${mm} extern.python.info
         env:
-          mm: python3 ${{github.workspace}}/mm/mm --config=.github/matrix/fedora.pfg
+          mm: python3 ../mm/mm --config=.github/matrix/fedora.pfg
           target: ${{matrix.target}}
 
       - name: build pyre
@@ -119,7 +119,7 @@ jobs:
           echo " -- building pyre"
           ${mm} --jobs=2
         env:
-          mm: python3 ${{github.workspace}}/mm/mm --config=.github/matrix/fedora.pfg
+          mm: python3 ../mm/mm --config=.github/matrix/fedora.pfg
           target: ${{matrix.target}}
 
       - name: test pyre
@@ -129,7 +129,7 @@ jobs:
           echo " -- testing pyre"
           ${mm} --jobs=2 tests
         env:
-          mm: python3 ${{github.workspace}}/mm/mm --config=.github/matrix/fedora.pfg
+          mm: python3 ../mm/mm --config=.github/matrix/fedora.pfg
           target: ${{matrix.target}}
 #
 # end of file
