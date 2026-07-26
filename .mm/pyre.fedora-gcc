@@ -1,0 +1,19 @@
+# -*- Makefile -*-
+#
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2026 all rights reserved
+
+
+# the {fedora-gcc} image: the current fedora release, dnf-provided gcc toolchain, native
+# packages declared through the adhoc package database; the proving ground for rpm support
+pyre.fedora-gcc.name := fedora-gcc
+pyre.fedora-gcc.root := etc/docker/
+
+# {mm} and {pyre} both live one level above the pyre home; bind-mount that parent so the image
+# builds and tests the live working tree; defer expansion so {pyre.home} is read at mount time
+pyre.fedora-gcc.mounts.source = ${realpath $(pyre.home)/..}/
+# mount both the build tool and the sources for {.run} and {.launch}
+pyre.fedora-gcc.mounts := mm pyre
+
+
+# end of file
