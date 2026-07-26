@@ -204,6 +204,9 @@ endef
 
 # analyze individual test suite targets
 #   usage: test.staging.target {testsuite} {driver}
+#   note: the {extern} assignment is deliberately deferred, so the driver reads the suite's
+#   post-resolve list, induced dependencies included; and keep comments out of the body: this
+#   is a value-returning define, so literal text leaks into the staging list
 define test.staging.target =
     ${strip
         ${eval _trgt := ${subst /,.,$($(1).root)${basename $(2:$($(1).prefix)%=%)}}}
@@ -213,7 +216,7 @@ define test.staging.target =
         ${eval $(_trgt).base := ${basename $($(_trgt).source)}}
         ${eval $(_trgt).suite := $(1)}
         ${eval $(_trgt).language := $(ext${suffix $(2)})}
-        ${eval $(_trgt).extern := $($(1).extern)}
+        ${eval $(_trgt).extern = $$($(1).extern)}
         ${eval $(_trgt).compiled := $(languages.$($(_trgt).language).compiled)}
         ${eval $(_trgt).interpreted := $(languages.$($(_trgt).language).interpreted)}
         ${eval $(_trgt).doc ?=}
