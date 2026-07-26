@@ -11,7 +11,8 @@ pyre.docker-images := \
     pyre.rolling-clang \
     pyre.rolling-gcc \
     pyre.conda-clang \
-    pyre.conda-gcc
+    pyre.conda-gcc \
+    pyre.fedora-gcc
 
 
 # pull in the per-instance configuration
