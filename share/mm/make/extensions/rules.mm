@@ -20,6 +20,10 @@ extensions.info: mm.banner
 # bootstrap
 # make the extension specific targets
 define extensions.workflows =
+    # the child library copied its extern list at construction time, before the global
+    # resolve pass ran, so its dependency tiers miss anything induced, e.g. the mpi edge of
+    # a parallel hdf5; resolve it here, where the package database is fully loaded
+    ${call extern.resolve,$(1).lib}
     # build the recipes for the supporting library
     ${if $($(1).lib.sources),${call libraries.workflows,$(1).lib},}
     # build recipes
