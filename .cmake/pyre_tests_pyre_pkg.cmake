@@ -712,6 +712,33 @@ pyre_test_python_testcase(tests/pyre.pkg/shells/progress.py)
 
 
 #
+# pyre/h5
+#
+# the h5 bindings exist only when hdf5 was found
+if(HDF5_FOUND)
+pyre_test_python_testcase(tests/pyre.pkg/h5/api/datatypes.py)
+pyre_test_python_testcase(tests/pyre.pkg/h5/api/file.py)
+pyre_test_python_testcase(tests/pyre.pkg/h5/api/file_create_empty.py)
+pyre_test_python_testcase(tests/pyre.pkg/h5/api/group.py)
+pyre_test_python_testcase(tests/pyre.pkg/h5/api/group_subgroup.py)
+pyre_test_python_testcase(tests/pyre.pkg/h5/api/sanity.py)
+pyre_test_python_testcase(tests/pyre.pkg/h5/api/writer.py)
+pyre_test_python_testcase(tests/pyre.pkg/h5/sanity.py)
+pyre_test_python_testcase(tests/pyre.pkg/h5/schema/dataset_constraints.py)
+pyre_test_python_testcase(tests/pyre.pkg/h5/schema/descriptor_location.py)
+pyre_test_python_testcase(tests/pyre.pkg/h5/schema/descriptor_optional.py)
+pyre_test_python_testcase(tests/pyre.pkg/h5/schema/dimension.py)
+pyre_test_python_testcase(tests/pyre.pkg/h5/schema/group.py)
+pyre_test_python_testcase(tests/pyre.pkg/h5/schema/group_class.py)
+pyre_test_python_testcase(tests/pyre.pkg/h5/schema/group_class_getattr.py)
+pyre_test_python_testcase(tests/pyre.pkg/h5/schema/group_instance.py)
+pyre_test_python_testcase(tests/pyre.pkg/h5/schema/group_instance_getattr.py)
+pyre_test_python_testcase(tests/pyre.pkg/h5/schema/root.py)
+pyre_test_python_testcase(tests/pyre.pkg/h5/schema/sanity.py)
+pyre_test_python_testcase(tests/pyre.pkg/h5/schema/shape_resolution.py)
+endif(HDF5_FOUND)
+
+#
 # pyre/externals
 #
 pyre_test_python_testcase(tests/pyre.pkg/externals/sanity.py)
