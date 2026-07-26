@@ -33,7 +33,9 @@ RUN apt dist-upgrade -y
 # install the base software stack
 #  - {vim} is for interactive use
 #  - {openssh}, {zip}, {unzip} are needed for some of the tests
-#  - {gcc}/{g++}/{gfortran} are the toolchain; {libhdf5-dev} is the serial hdf5
+#  - {gcc}/{g++}/{gfortran} are the toolchain
+#  - {libhdf5-openmpi-dev} makes this cell the place where the PARALLEL hdf5 is the one
+#    on offer; the serial {libhdf5-dev} is deliberately absent
 RUN DEBIAN_FRONTEND=noninteractive \
         apt install -y \
         git vim zip unzip \
@@ -41,7 +43,7 @@ RUN DEBIAN_FRONTEND=noninteractive \
         gcc g++ gfortran make \
         python3 python3-dev \
         python3-pybind11 python3-yaml python3-numpy \
-        libopenmpi-dev libhdf5-dev libgsl-dev
+        libopenmpi-dev libhdf5-openmpi-dev libgsl-dev
 
 
 # allow passwordless {ssh localhost} as root
