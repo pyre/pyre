@@ -21,9 +21,6 @@
     tier between discovery and user; this is the mechanism the mm externals-facilities
     design calls for, and the path to conditional facility libraries
 
-  - engines: there is no rpm/dnf engine, so the redhat family of hosts falls back to
-    filesystem probing despite the elaborate host taxonomy
-
   - recipes: knowledge still not ported from mm: the hdf5 parallel variants and their induced
     mpi dependence, and the nonstandard layouts of cuda and mkl
 
