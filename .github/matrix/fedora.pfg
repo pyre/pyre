@@ -1,0 +1,26 @@
+;
+; michael a.g. aïvázis <michael.aivazis@para-sim.com>
+; (c) 1998-2026 all rights reserved
+
+mm:
+    ; resolve external dependencies straight from the installed fedora packages
+    pkgdb = rpm
+
+    ; targets
+    target = {pyre.environ.target},shared
+
+    ; compilers; fedora ships unversioned driver names
+    compilers = gcc, python/python3
+
+    ; final products
+    prefix = /tmp/products
+    ; intermediate build products
+    bldroot = /tmp/builds
+
+    ; other settings
+    ; the location of the configuration file
+    runcfg = .github/matrix
+    ; the name of the make utility
+    make = make
+
+; end of file
