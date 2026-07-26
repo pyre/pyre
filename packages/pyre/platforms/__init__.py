@@ -64,6 +64,18 @@ def macports():
     return MacPorts
 
 
+@foundry(implements=packager)
+def rpm():
+    """
+    Support for the rpm package manager
+    """
+    # get the class record
+    from .Rpm import Rpm
+
+    # and return it
+    return Rpm
+
+
 # host types
 @foundry(implements=platform)
 def darwin():
@@ -183,6 +195,7 @@ engines = {
     "conda": conda,
     "dpkg": dpkg,
     "macports": macports,
+    "rpm": rpm,
 }
 
 
