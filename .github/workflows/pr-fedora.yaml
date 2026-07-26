@@ -13,7 +13,10 @@ jobs:
     name: >-
       ${{matrix.target}} gcc on fedora:latest
     runs-on: ${{matrix.os}}
-    container: fedora:latest
+    container:
+      image: fedora:latest
+      # openmpi's shared memory transport needs more than docker's default 64M {/dev/shm}
+      options: --shm-size=1g
     strategy:
       fail-fast: false
       matrix:
