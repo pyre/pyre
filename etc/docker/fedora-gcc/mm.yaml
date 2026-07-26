@@ -6,8 +6,8 @@
 # mm configuration
 mm:
 
-  # mm has no rpm backend yet, so external dependencies are declared in {config.mm}
-  pkgdb: adhoc
+  # resolve external dependencies straight from the installed fedora packages
+  pkgdb: rpm
   # targets; {opt} keeps the built libraries fast enough for real work
   target: opt,shared
   # compilers; {gcc} supplies gcc/g++ for C/C++, the system {gfortran} for Fortran
