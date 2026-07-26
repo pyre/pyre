@@ -43,7 +43,10 @@ class PETSc(Library, family="pyre.externals.petsc"):
             # inducing the message passing layer
             dependencies=("mpi",),
             # with database specific names where the category name isn't enough
-            natives={"dpkg": ("petsc-dev", "libpetsc-real-dev")},
+            natives={
+                "dpkg": ("petsc-dev", "libpetsc-real-dev"),
+                "rpm": ("petsc-devel",),
+            },
         )
         # all done
         return

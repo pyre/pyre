@@ -59,6 +59,7 @@ class Postgres(Tool, Library, family="pyre.externals.postgres"):
             natives={
                 "conda": ("libpq", "postgresql"),
                 "dpkg": (("libpq-dev", "postgresql-client"),),
+                "rpm": (("libpq-devel", "postgresql"),),
             },
         )
         # all done

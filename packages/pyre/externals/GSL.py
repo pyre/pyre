@@ -41,7 +41,10 @@ class GSL(Library, family="pyre.externals.gsl"):
             # and these markers to the compile line
             defines=("WITH_GSL", "HAVE_INLINE"),
             # with database specific names where the category name isn't enough
-            natives={"dpkg": ("libgsl-dev", "libgsl0-dev")},
+            natives={
+                "dpkg": ("libgsl-dev", "libgsl0-dev"),
+                "rpm": ("gsl-devel",),
+            },
         )
         # all done
         return

@@ -41,7 +41,10 @@ class Pybind11(Library, family="pyre.externals.pybind11"):
             # the marker for the compile line
             defines=("WITH_PYBIND11",),
             # with database specific names where the category name isn't enough
-            natives={"dpkg": ("pybind11-dev",)},
+            natives={
+                "dpkg": ("pybind11-dev",),
+                "rpm": ("pybind11-devel",),
+            },
             # and a dependency on python
             dependencies=("python",),
         )

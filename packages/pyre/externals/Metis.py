@@ -41,7 +41,10 @@ class Metis(Library, family="pyre.externals.metis"):
             # and this marker to the compile line
             defines=("WITH_METIS",),
             # with database specific names where the category name isn't enough
-            natives={"dpkg": ("libmetis-dev",)},
+            natives={
+                "dpkg": ("libmetis-dev",),
+                "rpm": ("metis-devel",),
+            },
         )
         # all done
         return

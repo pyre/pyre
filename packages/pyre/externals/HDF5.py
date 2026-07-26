@@ -41,7 +41,10 @@ class HDF5(Library, family="pyre.externals.hdf5"):
             # and this marker to the compile line
             defines=("WITH_HDF5",),
             # with database specific names where the category name isn't enough
-            natives={"dpkg": ("libhdf5-dev",)},
+            natives={
+                "dpkg": ("libhdf5-dev",),
+                "rpm": ("hdf5-devel", "hdf5-openmpi-devel", "hdf5-mpich-devel"),
+            },
         )
         # all done
         return
