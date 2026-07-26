@@ -17,9 +17,6 @@ from .Recipe import Recipe
 class Eigen(Library, family="pyre.externals.eigen"):
     """
     The Eigen template library for linear algebra
-
-    Eigen is header only; the recipe expects no libraries, which makes it a good example of
-    how far the declarative description reaches
     """
 
     # constants
@@ -48,6 +45,7 @@ class Eigen(Library, family="pyre.externals.eigen"):
             natives={
                 "dpkg": ("libeigen3-dev",),
                 "macports": ("eigen3",),
+                "rpm": ("eigen3-devel",),
             },
         )
         # all done

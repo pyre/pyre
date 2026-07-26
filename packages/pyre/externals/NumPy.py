@@ -48,6 +48,7 @@ class NumPy(Library, family="pyre.externals.numpy"):
             natives={
                 "dpkg": ("python3-numpy",),
                 "macports": (r"py3\d+-numpy",),
+                "rpm": ("python3-numpy",),
             },
             # and a dependency on python
             dependencies=("python",),

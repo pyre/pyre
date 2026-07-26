@@ -44,6 +44,7 @@ class FFTW(Library, family="pyre.externals.fftw"):
             natives={
                 "dpkg": ("libfftw3-dev",),
                 "macports": ("fftw-3",),
+                "rpm": ("fftw-devel",),
             },
         )
         # all done

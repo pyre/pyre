@@ -47,6 +47,7 @@ class BLAS(Library, family="pyre.externals.blas"):
                 "conda": ("openblas", "libopenblas"),
                 "dpkg": ("libopenblas-dev",),
                 "macports": ("OpenBLAS", "openblas"),
+                "rpm": ("openblas-devel",),
             },
         )
         # atlas

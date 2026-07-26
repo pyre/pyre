@@ -62,6 +62,7 @@ class Python(Tool, Library, family="pyre.externals.python"):
             natives={
                 "conda": ("python",),
                 "dpkg": (("libpython3", "python3."), ("python3-dev", "python3.")),
+                "rpm": (("python3-devel", "python3"),),
             },
         )
         # all done
