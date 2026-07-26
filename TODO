@@ -24,23 +24,8 @@
   - engines: there is no rpm/dnf engine, so the redhat family of hosts falls back to
     filesystem probing despite the elaborate host taxonomy
 
-  - the index caches its engine stack and selections for the lifetime of the process, with
-    no invalidation when the configuration store changes; fine for applications, wrong for
-    long-running build engines
-
-  - the deposit step silently drops discovered values for traits the installation factory
-    does not declare, e.g. the {defines} of tool-only categories; surprising, even if
-    currently harmless
-
-  - recipes: knowledge still unported from mm: the hdf5 parallel variants and their induced
+  - recipes: knowledge still not ported from mm: the hdf5 parallel variants and their induced
     mpi dependence, and the nonstandard layouts of cuda and mkl
-
-  - conda: there is no warning when the active environment at use time differs from the one
-    interrogated at discovery time; mm warns about this
-
-  - the bare engine probes only the canonical {include}, {lib}, {lib64}, and {bin} folders
-    under each prefix, so versioned include directories, e.g. {include/eigen3}, are
-    invisible to it, unlike the contents driven engines
 
   - macports: the selection normalization machinery was dropped in the rewrite; revisit if
     resolving launchers or interpreters through the select file indirection ever becomes
@@ -50,15 +35,38 @@
     even import {pyre}; a prefix with the package but not the extensions is a poison pill
     that breaks every pyre application in that context, including mm
 
+- gsl:
+
+  - the bindings emit "parameter passing for argument of type {std::pair<double, double>}
+    when C++17 is enabled changed to match C++14 in GCC 10.1" at {Histogram.cc:231},
+    {Matrix.cc:322}, and {Vector.cc:317}, on aarch64 under gcc; this is the psABI note about
+    gcc's own C++17 calling convention repair for pairs, not a defect in the code, and it
+    matters only when linking against objects built by gcc older than 10.1 in C++17 mode;
+    decide whether to restructure the signatures to avoid passing pairs by value, or to
+    silence the note with {-Wno-psabi} for the bindings
+
+- docker:
+
+  - stand up a postgres server in the rolling cell, maybe others, maybe all of them, so the
+    {pyre.db} and {pyre-postgres} test suites can run against a live database; needs a chat
+    about scope: which cells, socket vs tcp, and whether the server rides the image or a
+    sibling container
+
+- merlin:
+
+  - the docker cells mount the standalone {mm} checkout next to the pyre clone; the merlin
+    {mm} layer bundled under {share/mm} should be capable of building pyre on its own, so
+    the cells (and their mount contract) should not need {~/dv/mm}
+
 - framework:
 
   - take advantage of the new class creation protocol in 3.6+
 
-  - have component+trait+schema paritcipate in value resolution, not just schema
+  - have component+trait+schema participate in value resolution, not just schema
 
   - pyre.patterns.Named has to become a little more sophisticated with its name handling:
 
-    - passing name=<foo> to the constructor must have an indentical net effect as leaving it
+    - passing name=<foo> to the constructor must have an identical net effect as leaving it
       blank at construction time and setting it later
 
   - look for a better way to install escape handlers for the command line parser; does the
@@ -94,7 +102,7 @@
     initialization phases; the latter grabs the system resource and should be done after it's
     reasonably certain that the user has made up her mind about the name of the file. the goal
     is to not leave behind zero length output files that were created when some assignment was
-    made that was later overriden by something else
+    made that was later overridden by something else
 
   - same considerations apply to components themselves; formalize the sequence of
     startup/shutdown steps
@@ -106,7 +114,7 @@
   - sync should not be done by default, especially now that it supports the number of levels to
     expand; this should speed up {import pyre} in directories with deep structures. this means
     that i need to hunt down all uses of filesystems and make sure the clients sync before they
-    look things up. also, folders need to know how to cause their filesystems to fillout their
+    look things up. also, folders need to know how to cause their filesystems to fill out their
     contents, which means adding a {sync} method that dispatches to the filesystem with
     root=self
 
