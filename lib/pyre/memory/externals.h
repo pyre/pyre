@@ -14,7 +14,10 @@
 #include <array>
 #include <complex>
 #include <fstream>
+#include <memory>
+#include <sstream>
 #include <utility>
+#include <vector>
 
 // low level stuff
 #include <cstdint>    // for type aliases for the basic types

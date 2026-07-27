@@ -52,6 +52,13 @@ namespace pyre::memory {
     // const view to someone else's data
     template <typename T>
     using constview_t = View<T, true>;
+
+    // block of cells assembled out of fixed-size pages
+    template <typename T>
+    using paged_t = Paged<T, false>;
+    // read-only version
+    template <typename T>
+    using constpaged_t = Paged<T, true>;
 } // namespace pyre::memory
 
 

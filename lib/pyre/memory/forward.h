@@ -36,6 +36,10 @@ namespace pyre::memory {
     template <typename T, bool isConst>
     class View;
 
+    // block of cells assembled out of fixed-size pages, each a separate allocation
+    template <typename T, bool isConst>
+    class Paged;
+
     // iterator
     template <class memT>
     class Slice;
