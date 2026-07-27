@@ -35,7 +35,7 @@ class MM(pyre.application, family="pyre.applications.mm", namespace="mm"):
     # compute branch-keyed build paths and print shell export statements
     mode = pyre.properties.str()
     mode.default = "dev"
-    mode.validators = pyre.constraints.isMember("dev", "release", "conda", "macports", "ubuntu")
+    mode.validators = pyre.constraints.isMember("dev", "release", "conda", "macports", "ubuntu", "fedora")
     mode.doc = "the strategy for generating locations for the build products"
 
     branch = pyre.properties.bool()
@@ -87,7 +87,7 @@ class MM(pyre.application, family="pyre.applications.mm", namespace="mm"):
 
     pkgdb = pyre.properties.str()
     pkgdb.default = "adhoc"
-    pkgdb.validators = pyre.constraints.isMember("adhoc", "conda", "macports", "dpkg")
+    pkgdb.validators = pyre.constraints.isMember("adhoc", "conda", "macports", "dpkg", "rpm")
     pkgdb.doc = "use one of the supported package managers for resolving external dependencies"
 
     # mm behavior
@@ -314,6 +314,7 @@ class MM(pyre.application, family="pyre.applications.mm", namespace="mm"):
             "conda": self._condaBldroot,
             "macports": self._macportsBldroot,
             "ubuntu": self._ubuntuBldroot,
+            "fedora": self._fedoraBldroot,
         }
         self._prefixDispatch = {
             "dev": self._devPrefix,
@@ -321,6 +322,7 @@ class MM(pyre.application, family="pyre.applications.mm", namespace="mm"):
             "conda": self._condaPrefix,
             "macports": self._macportsPrefix,
             "ubuntu": self._ubuntuPrefix,
+            "fedora": self._fedoraPrefix,
         }
         # the pkgdb dispatch table
         self._pkgdbDispatch = {
@@ -328,6 +330,7 @@ class MM(pyre.application, family="pyre.applications.mm", namespace="mm"):
             "conda": self._buildCondaPackageDatabase,
             "macports": self._buildMacportsPackageDatabase,
             "dpkg": self._buildDpkgPackageDatabase,
+            "rpm": self._buildRpmPackageDatabase,
         }
         # verify both mode dispatch tables are in sync with the mode validator; scan for the
         # first validator that carries a {choices} attribute (see pyre/pyre#176 for a better API)
@@ -2311,7 +2314,10 @@ class MM(pyre.application, family="pyre.applications.mm", namespace="mm"):
             "gmsh": ["gmsh"],
             "gsl": ["libgsl-dev"],
             "gtest": ["libgtest-dev"],
-            "hdf5": ["libhdf5-dev"],
+            # hdf5: serial first, so it stays preferred when several flavors are installed;
+            # the parallel flavors win when they are the only ones on offer, and the handler
+            # derives {hdf5.parallel} from wherever the headers actually live
+            "hdf5": ["libhdf5-dev", "libhdf5-openmpi-dev", "libhdf5-mpich-dev"],
             "kokkos": ["libkokkos-dev"],
             "libpq": ["libpq-dev"],
             "metis": ["libmetis-dev"],
@@ -2538,6 +2544,351 @@ class MM(pyre.application, family="pyre.applications.mm", namespace="mm"):
             return f"$(dpkg.prefix)/{path.relativeTo(prefix)}"
         # if it isn't under the prefix (e.g. /usr/local/cuda lives under /usr, but a custom
         # toolkit might not), keep it absolute
+        except ValueError:
+            return str(path)
+
+    def _buildRpmPackageDatabase(self, db):
+        """
+        Interrogate the rpm package manager and write a package database
+
+        The primitives are {rpm} itself, the stable substrate beneath yum, dnf, and dnf5, so
+        the backend works unchanged across the fedora/rhel family
+        """
+        # grab a channel
+        channel = journal.info("mm.pkgdb")
+        # locate the client
+        rpm = shutil.which("rpm")
+        # if not found, we're not on an rpm-based system
+        if not rpm:
+            # make a channel
+            error = journal.error("mm.pkgdb")
+            # complain
+            error.line("could not find 'rpm'")
+            error.line("make sure you are on a fedora/rhel style system")
+            # flush
+            error.log()
+            # bail
+            return 1
+        # the rpm prefix is always /usr
+        prefix = pyre.primitives.path("/usr")
+        # log our starting state
+        channel.line("building rpm package database")
+        channel.indent()
+        channel.line(f"rpm: {rpm}")
+        channel.line(f"prefix: {prefix}")
+        channel.line(f"db: {db}")
+        channel.outdent()
+        channel.log()
+        # query all installed packages with their versions
+        result = subprocess.run(
+            [rpm, "-qa", "--queryformat", "%{NAME}\t%{VERSION}\n"],
+            capture_output=True,
+            text=True,
+        )
+        # if the query failed
+        if result.returncode != 0:
+            # make a channel
+            error = journal.error("mm.pkgdb")
+            # complain
+            error.line(f"failed to query installed packages: {result.stderr.strip()}")
+            # flush
+            error.log()
+            # bail
+            return 1
+        # build an index of installed packages keyed by name
+        installed = {}
+        for line in result.stdout.splitlines():
+            # split into package and version
+            parts = line.split("\t")
+            # skip malformed lines
+            if len(parts) != 2:
+                continue
+            name, version = parts
+            # rpm only reports installed packages, so no status filtering is needed
+            installed[name] = version
+        # the mapping from mm extern name to rpm package name(s); try names in order;
+        # {cantera}, {cspice}, {fmm3d}, {parmetis}, {p2}, and {summit} have no fedora
+        # packaging and are omitted
+        packages = {
+            "catch2": ["catch2-devel"],
+            "cgal": ["CGAL-devel"],
+            "eigen": ["eigen3-devel"],
+            "fftw": ["fftw-devel", "fftw3-devel"],
+            "fmt": ["fmt-devel"],
+            "gdal": ["gdal-devel"],
+            "geotiff": ["libgeotiff-devel"],
+            "gmsh": ["gmsh-devel", "gmsh"],
+            "gsl": ["gsl-devel"],
+            "gtest": ["gtest-devel"],
+            # hdf5: serial first, so it stays preferred when several flavors are installed;
+            # the parallel flavors win when they are the only ones on offer, and the handler
+            # derives {hdf5.parallel} from wherever the headers actually live
+            "hdf5": ["hdf5-devel", "hdf5-openmpi-devel", "hdf5-mpich-devel"],
+            "kokkos": ["kokkos-devel"],
+            "libpq": ["libpq-devel"],
+            "metis": ["metis-devel"],
+            "mpi": ["openmpi-devel", "mpich-devel"],
+            "numpy": ["python3-numpy"],
+            "openblas": ["openblas-devel"],
+            "petsc": ["petsc-devel"],
+            "proj": ["proj-devel"],
+            "pybind11": ["pybind11-devel"],
+            "python": ["python3-devel"],
+            "slepc": ["slepc-devel"],
+            "sundials": ["sundials-devel"],
+            "vtk": ["vtk-devel"],
+            "yaml": ["libyaml-devel"],
+            "yaml-cpp": ["yaml-cpp-devel"],
+        }
+        # collect the packages present on this system
+        found = {}
+        for name, candidates in packages.items():
+            for candidate in candidates:
+                if candidate in installed:
+                    found[name] = (candidate, installed[candidate])
+                    break
+        # report what we found
+        channel.line(f"found {len(found)} of {len(packages)} supported packages")
+        channel.indent()
+        for name, (candidate, version) in sorted(found.items()):
+            channel.line(f"{name}: {version}  (rpm: {candidate})")
+        channel.outdent()
+        channel.log()
+        # open the database file
+        with open(db, "w") as f:
+            # the emacs mode line
+            print("# -*- Makefile -*-", file=f)
+            # identification
+            print("# rpm package database", file=f)
+            # provenance
+            print("# generated by: mm --pkgdb=rpm --setup", file=f)
+            print(f"# rpm: {rpm}", file=f)
+            print(f"# prefix: {prefix}", file=f)
+            # blank line before the prefix declaration
+            print(file=f)
+            # the system prefix; factored out so all {.dir} entries track it
+            print(f"rpm.prefix := {prefix}", file=f)
+            # blank line before package entries
+            print(file=f)
+            # write an entry for each found package in alphabetical order
+            for name in sorted(found):
+                candidate, version = found[name]
+                # a comment line showing the mm name, version, and rpm package name
+                print(f"# {name}: {version}  (rpm: {candidate})", file=f)
+                # python: fedora keys both the headers and the link library on the full
+                # version, and puts the library under {lib64}; read both real locations
+                # from the package contents
+                if name == "python":
+                    # the version, major.minor only, as used in filesystem paths
+                    pyVersion = self._queryPythonExpression(
+                        "import sys; print(f'{sys.version_info.major}.{sys.version_info.minor}')"
+                    )
+                    if pyVersion:
+                        print(f"python.version ?= {pyVersion}", file=f)
+                    # the files the devel package installed
+                    files = self._rpmFiles(rpm, candidate)
+                    # locate the api header and the dev-symlink library
+                    header = next((p for p in files if p.name == "Python.h"), None)
+                    library = next(
+                        (
+                            p
+                            for p in files
+                            if p.name.startswith("libpython") and p.name.endswith(".so")
+                        ),
+                        None,
+                    )
+                    # point the include path at wherever {Python.h} really lives
+                    if header:
+                        print(
+                            f"python.incpath ?= {self._rpmAnchor(header.parent, prefix)}",
+                            file=f,
+                        )
+                    # and the library path at wherever the dev symlink really lives
+                    if library:
+                        print(
+                            f"python.libpath ?= {self._rpmAnchor(library.parent, prefix)}",
+                            file=f,
+                        )
+                    # anchor the package root like everything else
+                    print(f"python.dir ?= $(rpm.prefix)", file=f)
+                # mpi: fedora tucks each flavor into its own home under {lib64}, activated
+                # by environment modules; anchor {dir} at that home so the launcher in its
+                # {bin} is reachable without the module machinery
+                elif name == "mpi":
+                    # the flavor selects the library names downstream
+                    flavor = "openmpi" if "openmpi" in candidate else "mpich"
+                    print(f"mpi.flavor ?= {flavor}", file=f)
+                    # the files the devel package installed
+                    files = self._rpmFiles(rpm, candidate)
+                    # locate the C header — the one on an {include} path, not the fortran
+                    # module — and the runtime library's dev symlink
+                    header = next(
+                        (p for p in files if p.name == "mpi.h" and "/include" in str(p)),
+                        None,
+                    )
+                    library = next((p for p in files if p.name == "libmpi.so"), None)
+                    # point the include path at wherever {mpi.h} really lives
+                    if header:
+                        print(
+                            f"mpi.incpath ?= {self._rpmAnchor(header.parent, prefix)}",
+                            file=f,
+                        )
+                    # and the library path at wherever the dev symlink really lives
+                    if library:
+                        print(
+                            f"mpi.libpath ?= {self._rpmAnchor(library.parent, prefix)}",
+                            file=f,
+                        )
+                    # the flavor home is the parent of its {lib}; anchoring {dir} there
+                    # makes {$(mpi.dir)/bin} resolve the launcher
+                    if library:
+                        home = library.parent.parent
+                        print(f"mpi.dir ?= {self._rpmAnchor(home, prefix)}", file=f)
+                    else:
+                        print(f"mpi.dir ?= $(rpm.prefix)", file=f)
+                # numpy headers live under the python package directory
+                elif name == "numpy":
+                    includePath = self._queryPythonExpression(
+                        "import numpy; print(numpy.get_include())"
+                    )
+                    if includePath:
+                        numpyCore = pyre.primitives.path(includePath).parent
+                        try:
+                            relativePath = numpyCore.relativeTo(prefix)
+                            print(f"numpy.dir ?= $(rpm.prefix)/{relativePath}", file=f)
+                        except ValueError:
+                            print(f"numpy.dir ?= {numpyCore}", file=f)
+                    else:
+                        print(f"numpy.dir ?= $(rpm.prefix)", file=f)
+                # pybind11 headers also live under the python package directory
+                elif name == "pybind11":
+                    includePath = self._queryPythonExpression(
+                        "import pybind11; print(pybind11.get_include())"
+                    )
+                    if includePath:
+                        pybind11Root = pyre.primitives.path(includePath).parent
+                        try:
+                            relativePath = pybind11Root.relativeTo(prefix)
+                            print(
+                                f"pybind11.dir ?= $(rpm.prefix)/{relativePath}", file=f
+                            )
+                        except ValueError:
+                            print(f"pybind11.dir ?= {pybind11Root}", file=f)
+                    else:
+                        print(f"pybind11.dir ?= $(rpm.prefix)", file=f)
+                # hdf5: fedora places the parallel flavors under mpi specific include and
+                # library trees; read the real locations from the package contents, which
+                # also reveal the flavor and hence {hdf5.parallel}
+                elif name == "hdf5":
+                    # the files the devel package installed
+                    files = self._rpmFiles(rpm, candidate)
+                    # locate the umbrella header and the dev-symlink library
+                    header = next((p for p in files if p.name == "hdf5.h"), None)
+                    library = next((p for p in files if p.name == "libhdf5.so"), None)
+                    # point the include path at wherever {hdf5.h} really lives
+                    if header:
+                        print(
+                            f"hdf5.incpath ?= {self._rpmAnchor(header.parent, prefix)}",
+                            file=f,
+                        )
+                    # and the library path at wherever the dev symlink really lives
+                    if library:
+                        print(
+                            f"hdf5.libpath ?= {self._rpmAnchor(library.parent, prefix)}",
+                            file=f,
+                        )
+                    # the flavor shows in the header's path on fedora; {serial} is a plain
+                    # build; {openmpi}/{mpich} name mpi, so the {findstring mpi} gate in
+                    # hdf5/init.mm folds mpi into {hdf5.dependencies} for parallel builds
+                    location = str(header) if header else ""
+                    if "openmpi" in location:
+                        variant = "openmpi"
+                    elif "mpich" in location:
+                        variant = "mpich"
+                    else:
+                        variant = "serial"
+                    # {hdf5.parallel} carries the flavor so parallel builds induce mpi
+                    print(f"hdf5.parallel ?= {variant}", file=f)
+                    # anchor the package root like everything else
+                    print(f"hdf5.dir ?= $(rpm.prefix)", file=f)
+                # libpq: read the real locations from the package contents
+                elif name == "libpq":
+                    # the files the devel package installed
+                    files = self._rpmFiles(rpm, candidate)
+                    # locate the client header and the dev-symlink library
+                    header = next((p for p in files if p.name == "libpq-fe.h"), None)
+                    library = next((p for p in files if p.name == "libpq.so"), None)
+                    # point the include path at wherever {libpq-fe.h} really lives
+                    if header:
+                        print(
+                            f"libpq.incpath ?= {self._rpmAnchor(header.parent, prefix)}",
+                            file=f,
+                        )
+                    # and the library path at wherever the dev symlink really lives
+                    if library:
+                        print(
+                            f"libpq.libpath ?= {self._rpmAnchor(library.parent, prefix)}",
+                            file=f,
+                        )
+                    # anchor the package root like everything else
+                    print(f"libpq.dir ?= $(rpm.prefix)", file=f)
+                # all other packages: fedora splits libraries into {lib64}, so read the
+                # library location from the package contents instead of assuming {lib}
+                else:
+                    # the files the devel package installed
+                    files = self._rpmFiles(rpm, candidate)
+                    # locate a shared library dev symlink, if the package carries one
+                    library = next(
+                        (
+                            p
+                            for p in files
+                            if p.name.startswith("lib") and p.name.endswith(".so")
+                        ),
+                        None,
+                    )
+                    # if there is one and it is not in the canonical {lib}
+                    if library and library.parent.name != "lib":
+                        # spell out the library path
+                        print(
+                            f"{name}.libpath ?= {self._rpmAnchor(library.parent, prefix)}",
+                            file=f,
+                        )
+                    # anchor the package root
+                    print(f"{name}.dir ?= $(rpm.prefix)", file=f)
+                # version for packages whose init.mm has version-dependent logic
+                print(f"{name}.version ?= {version}", file=f)
+                # blank line after each entry
+                print(file=f)
+        # all done
+        return 0
+
+    def _rpmFiles(self, rpm, package):
+        """
+        Return the absolute paths of the files installed by an rpm {package}, via {rpm -ql};
+        an empty list if the package is unknown to rpm
+        """
+        # ask for the package contents
+        result = subprocess.run([rpm, "-ql", package], capture_output=True, text=True)
+        # if the query failed, treat the package as having no files
+        if result.returncode != 0:
+            return []
+        # each non-empty line is an absolute path owned by the package
+        return [
+            pyre.primitives.path(line) for line in result.stdout.splitlines() if line
+        ]
+
+    def _rpmAnchor(self, path, prefix):
+        """
+        Render {path} relative to {rpm.prefix} when it lives under it, otherwise as an
+        absolute path; keeps the database tidy without assuming a layout
+        """
+        # the prefix itself collapses to the bare reference
+        if str(path) == str(prefix):
+            return "$(rpm.prefix)"
+        # express it under the prefix when possible
+        try:
+            return f"$(rpm.prefix)/{path.relativeTo(prefix)}"
+        # if it isn't under the prefix, keep it absolute
         except ValueError:
             return str(path)
 
@@ -2858,6 +3209,42 @@ class MM(pyre.application, family="pyre.applications.mm", namespace="mm"):
         # if the query succeeded, set the python package prefix to the site-packages location
         if version:
             self._pycPrefix = pyre.primitives.path(f"lib/python{version}/site-packages")
+        # all done
+        return prefix
+
+    def _fedoraBldroot(self):
+        """
+        Assemble the staging area path for a {fedora} build; a fixed {fedora} segment
+        discriminates these builds from dev builds in the same bldroot tree
+        """
+        # start with the user's opinion, falling back to the project tree
+        bldroot = self.bldroot or (self._root / "builds")
+        # fold in a fixed discriminator and the build variant tag
+        return bldroot / "fedora" / self._bldTag
+
+    def _fedoraPrefix(self):
+        """
+        Resolve the installation prefix for a {fedora} build; defaults to {/usr/local}, the
+        canonical home for locally built software, with the python packages deposited in
+        the site directory that fedora's interpreter places on its native path
+        """
+        # default to the canonical prefix for local software; the user can override
+        prefix = self.prefix or pyre.primitives.path("/usr/local")
+        # ask the system python where third party packages under this prefix belong; on
+        # fedora this lands in {lib64/python3.X/site-packages}, which the interpreter
+        # searches natively, so installed packages are importable with no environment
+        platlib = self._queryPythonExpression(
+            "import sysconfig; "
+            f"print(sysconfig.get_path('platlib', 'posix_prefix', vars={{'platbase': '{prefix}'}}))"
+        )
+        # if the query succeeded, make {platlib} relative to the prefix
+        if platlib:
+            try:
+                # strip the prefix to get the relative path
+                self._pycPrefix = pyre.primitives.path(platlib).relativeTo(prefix)
+            # if {platlib} isn't under the prefix, something is unusual; use it as-is
+            except ValueError:
+                self._pycPrefix = pyre.primitives.path(platlib)
         # all done
         return prefix
 
