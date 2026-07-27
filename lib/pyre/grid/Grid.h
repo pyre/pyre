@@ -111,6 +111,16 @@ public:
     template <std::size_t... FreeAxes>
     [[nodiscard]] constexpr auto slice(const index_type & base) const;
 
+    // the self-contained contiguous grid over the cells of one tile
+    // it exists only when my packing deals in tiles and my storage can hand out a borrowed
+    // view of the page that holds one; the pane addresses my cells, so writing through it
+    // writes me, and the tile travels to anything that wants a dense grid without a copy
+    [[nodiscard]] constexpr auto pane(const index_type & tile) const
+        requires requires(const packing_type p, const storage_type s, const index_type & t) {
+            { p.tile(t) };
+            { s.view(p.tileOrdinal(t)) };
+        };
+
     // interface: iteration
     // visiting my cells in the order my packing prescribes
     // there is only one cursor type: whether a caller may write through it was settled by my

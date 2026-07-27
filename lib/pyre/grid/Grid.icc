@@ -128,6 +128,24 @@ pyre::grid::Grid<P, S>::slice(const index_type & base) const
 }
 
 
+// the self-contained contiguous grid over the cells of one tile
+template <pyre::grid::concepts::PackingStrategy P, pyre::grid::concepts::StorageStrategy S>
+[[nodiscard]] constexpr auto
+pyre::grid::Grid<P, S>::pane(const index_type & tile) const
+    requires requires(const packing_type p, const storage_type s, const index_type & t) {
+        { p.tile(t) };
+        { s.view(p.tileOrdinal(t)) };
+    }
+{
+    // ask my packing for the tile's own layout, anchored where the tile lives in my index space
+    auto packing = _packing.tile(tile);
+    // and my storage for a borrowed view of the page that holds it
+    auto view = _storage.view(_packing.tileOrdinal(tile));
+    // pair them: a dense grid over the tile's cells, which are my cells
+    return Grid<decltype(packing), decltype(view)> { packing, view };
+}
+
+
 // interface - iteration
 
 // a cursor parked on my first cell
