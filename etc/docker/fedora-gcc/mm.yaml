@@ -8,6 +8,8 @@ mm:
 
   # resolve external dependencies straight from the installed fedora packages
   pkgdb: rpm
+  # build products land in the canonical locations for locally built software
+  mode: fedora
   # targets; {opt} keeps the built libraries fast enough for real work
   target: opt,shared
   # compilers; {gcc} supplies gcc/g++ for C/C++, the system {gfortran} for Fortran
