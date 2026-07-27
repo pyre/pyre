@@ -1,0 +1,365 @@
+// -*- C++ -*-
+// -*- coding: utf-8 -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2026 all rights reserved
+
+
+// code guard
+#pragma once
+
+
+// declarations
+#include "Paged.h"
+
+
+// metamethods
+// constructor: set up the page table with nothing resident
+template <class T, bool isConst>
+pyre::memory::Paged<T, isConst>::Paged(cell_count_type pageCells, cell_count_type pages) :
+    super_type(),
+    _pageCells { pageCells },
+    _table { std::make_shared<table_type>(pages) }
+{}
+
+
+// accessors
+// human readable form of my location
+template <class T, bool isConst>
+auto
+pyre::memory::Paged<T, isConst>::uri() const -> uri_type
+{
+    // make a buffer
+    auto buffer = std::stringstream();
+    // describe the store
+    buffer << "paged:<" << pages() << " pages of " << pageCells() << " cells, " << residents()
+           << " resident>";
+    // and return it
+    return buffer.str();
+}
+
+
+// the number of cells i can hold
+template <class T, bool isConst>
+auto
+pyre::memory::Paged<T, isConst>::cells() const -> cell_count_type
+{
+    // the full expanse: every page at full size, whether resident or not
+    return pageCells() * pages();
+}
+
+
+// the memory footprint
+template <class T, bool isConst>
+auto
+pyre::memory::Paged<T, isConst>::bytes() const -> size_type
+{
+    // only the resident pages take up memory
+    return residents() * pageCells() * sizeof(value_type);
+}
+
+
+// the number of cells in one page
+template <class T, bool isConst>
+auto
+pyre::memory::Paged<T, isConst>::pageCells() const -> cell_count_type
+{
+    // easy
+    return _pageCells;
+}
+
+
+// the number of pages
+template <class T, bool isConst>
+auto
+pyre::memory::Paged<T, isConst>::pages() const -> cell_count_type
+{
+    // the table knows
+    return static_cast<cell_count_type>(_table->size());
+}
+
+
+// the number of resident pages
+template <class T, bool isConst>
+auto
+pyre::memory::Paged<T, isConst>::residents() const -> cell_count_type
+{
+    // count the pages that hold an allocation
+    return std::count_if(_table->begin(), _table->end(), [](const page_type & page) {
+        // by checking each one for a block
+        return page.block != nullptr;
+    });
+}
+
+
+// access privileges
+template <class T, bool isConst>
+constexpr auto
+pyre::memory::Paged<T, isConst>::readonly() -> bool
+{
+    // easy
+    return isConst;
+}
+
+
+template <class T, bool isConst>
+constexpr auto
+pyre::memory::Paged<T, isConst>::writable() -> bool
+{
+    // easy
+    return !readonly();
+}
+
+
+// simulate my c++ declaration
+template <class T, bool isConst>
+auto
+pyre::memory::Paged<T, isConst>::declSelf() -> string_type
+{
+    // assemble and return
+    return
+        // namespace
+        string_type("pyre::memory::") +
+        // the type alias
+        (isConst ? "const" : "") + "paged_t<" +
+        // the template parameter
+        cell_type::declValue() +
+        // and done
+        ">";
+}
+
+
+// simulate the c++ declaration of my value
+template <class T, bool isConst>
+auto
+pyre::memory::Paged<T, isConst>::declValue() -> string_type
+{
+    // ask my cell
+    return cell_type::declValue();
+}
+
+
+// human readable form of my type
+template <class T, bool isConst>
+auto
+pyre::memory::Paged<T, isConst>::className() -> string_type
+{
+    // resolve the name and return it
+    return string_type("Paged") + cell_type::className();
+}
+
+
+// page state
+// whether a page has been allocated
+template <class T, bool isConst>
+auto
+pyre::memory::Paged<T, isConst>::resident(cell_count_type page) const -> bool
+{
+    // a page is resident when its record holds an allocation
+    return (*_table)[_verify(page)].block != nullptr;
+}
+
+
+// whether the client has deposited meaningful content in a page
+template <class T, bool isConst>
+auto
+pyre::memory::Paged<T, isConst>::valid(cell_count_type page) const -> bool
+{
+    // look it up
+    return (*_table)[_verify(page)].valid;
+}
+
+
+// whether a page matches the client's backing store
+template <class T, bool isConst>
+auto
+pyre::memory::Paged<T, isConst>::clean(cell_count_type page) const -> bool
+{
+    // clean is the absence of taint
+    return !(*_table)[_verify(page)].dirty;
+}
+
+
+// page management
+// make a page resident and hand out its address
+template <class T, bool isConst>
+auto
+pyre::memory::Paged<T, isConst>::reside(cell_count_type page) const -> pointer
+{
+    // find the record
+    auto & record = (*_table)[_verify(page)];
+    // if this is the first time the page is asked for
+    if (!record.block) {
+        // allocate it; residency is monotonic, so this block lives as long as i do
+        record.block = handle_type(new value_type[pageCells()]);
+    }
+    // hand out its address
+    return record.block.get();
+}
+
+
+// record that the client has deposited meaningful content in a page
+template <class T, bool isConst>
+auto
+pyre::memory::Paged<T, isConst>::validate(cell_count_type page) const -> void
+{
+    // find the record
+    auto & record = (*_table)[_verify(page)];
+    // content can only have landed in a page that exists
+    if (!record.block) {
+        // so this is a bug in the caller
+        auto channel = pyre::journal::firewall_t("pyre.memory.paged");
+        // complain
+        channel << "validating a page that is not resident:" << pyre::journal::newline << "  page "
+                << page << " of " << uri() << pyre::journal::endl(__HERE__);
+        // unreachable, unless the user has marked this error as non-fatal;
+        // bring the page into existence so the state stays coherent
+        reside(page);
+    }
+    // validity is monotonic: once meaningful, always meaningful
+    record.valid = true;
+}
+
+
+// record that the client has written to a page
+template <class T, bool isConst>
+auto
+pyre::memory::Paged<T, isConst>::taint(cell_count_type page) const -> void
+{
+    // find the record
+    auto & record = (*_table)[_verify(page)];
+    // only a page that exists can have been written to
+    if (!record.block) {
+        // so this is a bug in the caller
+        auto channel = pyre::journal::firewall_t("pyre.memory.paged");
+        // complain
+        channel << "tainting a page that is not resident:" << pyre::journal::newline << "  page "
+                << page << " of " << uri() << pyre::journal::endl(__HERE__);
+        // unreachable, unless the user has marked this error as non-fatal;
+        // bring the page into existence so the state stays coherent
+        reside(page);
+    }
+    // the page now diverges from the backing store
+    record.dirty = true;
+}
+
+
+// record that the client has saved a page
+template <class T, bool isConst>
+auto
+pyre::memory::Paged<T, isConst>::flush(cell_count_type page) const -> void
+{
+    // find the record
+    auto & record = (*_table)[_verify(page)];
+    // only a page that exists can have been saved
+    if (!record.block) {
+        // so this is a bug in the caller
+        auto channel = pyre::journal::firewall_t("pyre.memory.paged");
+        // complain
+        channel << "flushing a page that is not resident:" << pyre::journal::newline << "  page "
+                << page << " of " << uri() << pyre::journal::endl(__HERE__);
+        // unreachable, unless the user has marked this error as non-fatal;
+        // bring the page into existence so the state stays coherent
+        reside(page);
+    }
+    // the page matches the backing store again
+    record.dirty = false;
+}
+
+
+// the address of a resident page
+template <class T, bool isConst>
+auto
+pyre::memory::Paged<T, isConst>::page(cell_count_type page) const -> pointer
+{
+    // find the record
+    auto & record = (*_table)[_verify(page)];
+    // the address of a page that doesn't exist is meaningless
+    if (!record.block) {
+        // so this is a bug in the caller
+        auto channel = pyre::journal::firewall_t("pyre.memory.paged");
+        // complain
+        channel << "asking for the address of a page that is not resident:"
+                << pyre::journal::newline << "  page " << page << " of " << uri()
+                << pyre::journal::endl(__HERE__);
+        // unreachable, unless the user has marked this error as non-fatal;
+        // hand out a fresh page rather than a null pointer
+        return reside(page);
+    }
+    // hand out its address
+    return record.block.get();
+}
+
+
+// a borrowed view of a resident page
+template <class T, bool isConst>
+auto
+pyre::memory::Paged<T, isConst>::view(cell_count_type page) const -> view_type
+{
+    // wrap the page's cells in a view; {this->page} guards against absent pages, so the view
+    // always covers an actual allocation
+    return view_type(this->page(page), pageCells());
+}
+
+
+// data access
+// with bounds and residency checking
+template <class T, bool isConst>
+auto
+pyre::memory::Paged<T, isConst>::at(difference_type pos) const -> reference
+{
+    // if the request reaches outside the store, in either direction
+    if (pos < 0 || pos >= cells()) {
+        // make a channel
+        auto channel = pyre::journal::firewall_t("pyre.memory.bounds");
+        // and complain
+        channel << "out of bounds access:" << pyre::journal::newline << "  index " << pos
+                << " must be less than " << cells() << pyre::journal::newline
+                << "  in pyre::memory::paged_t::at" << pyre::journal::endl(__HERE__);
+        // unreachable, unless the user has marked this error as non-fatal
+        // clamp {pos} to the last cell in the store
+        pos = cells() - 1;
+    }
+    // split the position into a page and a cell within it
+    auto page = pos / pageCells();
+    // the remainder locates the cell
+    auto cell = pos % pageCells();
+    // reaching into an absent page is a bug in the caller, which {this->page} reports; its
+    // recovery hands back a fresh allocation, so there is always a cell to refer to
+    return this->page(page)[cell];
+}
+
+
+// without checks, trusting the caller
+template <class T, bool isConst>
+auto
+pyre::memory::Paged<T, isConst>::operator[](difference_type pos) const -> reference
+{
+    // split the position into a page and a cell within it, and trust that the page is there
+    return (*_table)[pos / pageCells()].block.get()[pos % pageCells()];
+}
+
+
+// implementation details
+// guard a page ordinal
+template <class T, bool isConst>
+auto
+pyre::memory::Paged<T, isConst>::_verify(cell_count_type page) const -> cell_count_type
+{
+    // if the ordinal reaches outside the table, in either direction
+    if (page < 0 || page >= pages()) {
+        // make a channel
+        auto channel = pyre::journal::firewall_t("pyre.memory.paged");
+        // and complain
+        channel << "no such page:" << pyre::journal::newline << "  page " << page
+                << " must be less than " << pages() << pyre::journal::endl(__HERE__);
+        // unreachable, unless the user has marked this error as non-fatal
+        // clamp to the last page in the table
+        page = pages() - 1;
+    }
+    // hand back a usable ordinal
+    return page;
+}
+
+
+// end of file

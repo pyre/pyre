@@ -30,6 +30,8 @@
 #include "Map.h"
 // views on foreign data
 #include "View.h"
+// paged storage
+#include "Paged.h"
 // non-trivial iterator
 #include "Slice.h"
 
