@@ -15,9 +15,12 @@
 using canonical_t = pyre::grid::canonical_t<3>;
 using diagonal_t = pyre::grid::diagonal_t<3>;
 using symmetric_t = pyre::grid::symmetric_t<3>;
+using chunked_t = pyre::grid::chunked_t<3>;
 using dynamic_t = pyre::grid::dynamic_canonical_t;
 // and a representative storage strategy
 using heap_t = pyre::memory::heap_t<pyre::memory::float64_t>;
+// along with the one that scatters its cells over separate pages
+using paged_t = pyre::memory::paged_t<pyre::memory::float64_t>;
 
 // pull in the vocabulary
 namespace concepts = pyre::grid::concepts;
@@ -49,6 +52,16 @@ main()
     static_assert(!concepts::StridedPacking<symmetric_t>);
     static_assert(!concepts::TiledPacking<symmetric_t>);
 
+    // a chunked layout addresses a grid tile by tile
+    static_assert(concepts::PackingStrategy<chunked_t>);
+    // the padding of its edge tiles claims offsets that name no index, so the map cannot be
+    // run backwards
+    static_assert(!concepts::InvertiblePacking<chunked_t>);
+    // and there is no global stride vector, so it does not address memory by strides
+    static_assert(!concepts::StridedPacking<chunked_t>);
+    // but it is the archetypal tiled packing
+    static_assert(concepts::TiledPacking<chunked_t>);
+
     // a runtime rank layout addresses a grid the same way
     static_assert(concepts::PackingStrategy<dynamic_t>);
     // and offers the same guarantees, since it is the same isomorphism
@@ -60,6 +73,11 @@ main()
     static_assert(concepts::StorageStrategy<heap_t>);
     // and keeps them in one expanse, so it can hand out their address
     static_assert(concepts::ContiguousStorage<heap_t>);
+
+    // a paged store names and reaches its cells just as well
+    static_assert(concepts::StorageStrategy<paged_t>);
+    // but its pages are separate allocations, so there is no single address to hand out
+    static_assert(!concepts::ContiguousStorage<paged_t>);
 
     // the packing contract is the only one a grid insists on, so that layouts which store
     // neither strides nor an inverse can still be composed into one
