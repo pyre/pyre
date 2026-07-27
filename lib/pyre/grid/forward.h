@@ -43,6 +43,10 @@ namespace pyre::grid {
     template <size_t Rank>
     class Symmetric;
 
+    // the packing strategy that dices the box into tiles, each stored contiguously as a unit
+    template <size_t Rank>
+    class Chunked;
+
     // dynamic (runtime-rank) variants for Python interoperability
     class DynamicIndexIterator;
     class DynamicCanonical;
@@ -54,6 +58,18 @@ namespace pyre::grid {
     // a cursor that visits the cells of a grid, rather than the indices that name them
     template <class gridT>
     class GridIterator;
+} // namespace pyre::grid
+
+
+// free functions on tiled packings
+namespace pyre::grid {
+    // the tiles that a box with the given anchor and extent touches, as a canonical layout
+    // over tile coordinates; iterating it visits the working set of an algorithm whose window
+    // is the box, which is how out-of-core clients decide what to bring in
+    template <concepts::TiledPacking P>
+    constexpr auto tilesOverlapping(
+        const P &, const typename P::index_type &, const typename P::shape_type &) noexcept
+        -> Canonical<P::rank()>;
 } // namespace pyre::grid
 
 

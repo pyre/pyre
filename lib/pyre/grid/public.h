@@ -31,6 +31,8 @@
 #include "Diagonal.h"
 // symmetric packing strategy
 #include "Symmetric.h"
+// chunked packing strategy
+#include "Chunked.h"
 // dynamic (runtime-rank) variants
 #include "DynamicIndexIterator.h"
 #include "DynamicCanonical.h"
