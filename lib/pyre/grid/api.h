@@ -50,6 +50,14 @@ namespace pyre::grid {
     // and the cursor that walks its cells
     template <class gridT>
     using grid_iterator_t = GridIterator<gridT>;
+
+    // the mosaic: a chunked packing married to paged storage, the out-of-core grid whose tiles
+    // materialize on demand and travel as zero-copy panes
+    template <std::size_t Rank, typename T>
+    using mosaic_t = Grid<Chunked<Rank>, pyre::memory::paged_t<T>>;
+    // read-only version
+    template <std::size_t Rank, typename T>
+    using constmosaic_t = Grid<Chunked<Rank>, pyre::memory::constpaged_t<T>>;
 } // namespace pyre::grid
 
 
