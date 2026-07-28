@@ -42,6 +42,14 @@
     decide whether to restructure the signatures to avoid passing pairs by value, or to
     silence the note with {-Wno-psabi} for the bindings
 
+- ci:
+
+  - switch all the workflows to pure package discovery: the {pr-fedora} leg proved the
+    pattern, but the ubuntu legs still hand-write every package location in
+    {.github/matrix/config.mm}; with {pkgdb: dpkg} and the discovery machinery now
+    exercised on three database families, the crib sheet should retire, and with it a
+    whole class of silent staleness
+
 - docker:
 
   - stand up a postgres server in the rolling cell, maybe others, maybe all of them, so the
