@@ -19,6 +19,8 @@ pyre_test_python_testcase(tests/pyre.ext/grid/sanity.py)
 pyre_test_python_testcase(tests/pyre.ext/grid/heap.py)
 pyre_test_python_testcase(tests/pyre.ext/grid/access.py)
 pyre_test_python_testcase(tests/pyre.ext/grid/map.py)
+pyre_test_python_testcase(tests/pyre.ext/grid/mosaic.py)
+pyre_test_python_testcase(tests/pyre.ext/grid/readonly.py)
 pyre_test_python_testcase(tests/pyre.ext/grid/view.py)
 pyre_test_python_testcase(tests/pyre.ext/grid/lifetime.py)
 
