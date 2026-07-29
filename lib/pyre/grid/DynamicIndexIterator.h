@@ -22,6 +22,8 @@
 class pyre::grid::DynamicIndexIterator {
     // types
 public:
+    // me
+    using self_type = DynamicIndexIterator;
     // basic
     using size_type = size_t;
     using difference_type = std::ptrdiff_t;
@@ -50,17 +52,17 @@ public:
     ~DynamicIndexIterator() = default;
     DynamicIndexIterator(const DynamicIndexIterator &) = default;
     DynamicIndexIterator(DynamicIndexIterator &&) = default;
-    auto operator=(const DynamicIndexIterator &) -> DynamicIndexIterator & = default;
-    auto operator=(DynamicIndexIterator &&) -> DynamicIndexIterator & = default;
+    auto operator=(const DynamicIndexIterator &) -> self_type & = default;
+    auto operator=(DynamicIndexIterator &&) -> self_type & = default;
 
     // iterator protocol
 public:
     // the index I am currently parked on
     [[nodiscard]] auto operator*() const noexcept -> reference;
     // step to the next index in traversal order
-    auto operator++() noexcept -> DynamicIndexIterator &;
+    auto operator++() noexcept -> self_type &;
     // step forward, but report the index I was on before the step
-    auto operator++(int) noexcept -> DynamicIndexIterator;
+    auto operator++(int) noexcept -> self_type;
 
     // implementation details
 private:

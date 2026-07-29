@@ -24,6 +24,9 @@
 class pyre::grid::DynamicCanonical {
     // types
 public:
+    // me
+    using self_type = DynamicCanonical;
+    // scalars
     using size_type = size_t;
     using difference_type = std::ptrdiff_t;
     // runtime containers for each axis attribute
@@ -53,8 +56,8 @@ public:
     ~DynamicCanonical() = default;
     DynamicCanonical(const DynamicCanonical &) = default;
     DynamicCanonical(DynamicCanonical &&) = default;
-    auto operator=(const DynamicCanonical &) -> DynamicCanonical & = default;
-    auto operator=(DynamicCanonical &&) -> DynamicCanonical & = default;
+    auto operator=(const DynamicCanonical &) -> self_type & = default;
+    auto operator=(DynamicCanonical &&) -> self_type & = default;
 
     // accessors
 public:
@@ -77,7 +80,7 @@ public:
     // mutators: return a new instance with a different traversal order
 public:
     // repack the same index box with a different packing order
-    [[nodiscard]] auto order(const order_type &) const -> DynamicCanonical;
+    [[nodiscard]] auto order(const order_type &) const -> self_type;
 
     // packing isomorphism
 public:
@@ -102,10 +105,9 @@ public:
     // sub-layouts
 public:
     // constrain to a sub-box, inheriting the physical layout
-    [[nodiscard]] auto box(index_type, shape_type) const -> DynamicCanonical;
+    [[nodiscard]] auto box(index_type, shape_type) const -> self_type;
     // hyperplane extraction: fix all axes not in {free_axes} at {base}
-    [[nodiscard]] auto slice(const index_type &, const std::vector<size_type> &) const
-        -> DynamicCanonical;
+    [[nodiscard]] auto slice(const index_type &, const std::vector<size_type> &) const -> self_type;
 
     // implementation details
 private:

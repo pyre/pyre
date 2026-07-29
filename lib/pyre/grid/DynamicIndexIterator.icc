@@ -56,7 +56,7 @@ pyre::grid::DynamicIndexIterator::operator*() const noexcept -> reference
 
 // pre-increment: advance to the next index in traversal order
 inline auto
-pyre::grid::DynamicIndexIterator::operator++() noexcept -> DynamicIndexIterator &
+pyre::grid::DynamicIndexIterator::operator++() noexcept -> self_type &
 {
     // get the rank of the box I am visiting
     const auto N = _order.size();
@@ -88,7 +88,7 @@ pyre::grid::DynamicIndexIterator::operator++() noexcept -> DynamicIndexIterator 
 
 // post-increment: step forward but report the index I was parked on
 inline auto
-pyre::grid::DynamicIndexIterator::operator++(int) noexcept -> DynamicIndexIterator
+pyre::grid::DynamicIndexIterator::operator++(int) noexcept -> self_type
 {
     // remember where I am
     auto clone = *this;

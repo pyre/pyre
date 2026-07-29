@@ -141,10 +141,10 @@ pyre::grid::DynamicCanonical::cells() const noexcept -> difference_type
 // repack the same index box with a different packing order; the strides and nudge get
 // deduced afresh, so the result describes a different arrangement of the same cells
 inline auto
-pyre::grid::DynamicCanonical::order(const order_type & o) const -> DynamicCanonical
+pyre::grid::DynamicCanonical::order(const order_type & o) const -> self_type
 {
     // keep the index box and let the deducing constructor rebuild the physical layout
-    return DynamicCanonical(_shape, _origin, o);
+    return self_type(_shape, _origin, o);
 }
 
 
@@ -256,7 +256,7 @@ pyre::grid::DynamicCanonical::end() const -> iterator_type
 // carve a sub-box out of my index box; the result keeps my physical strides and nudge, so
 // its cells stay where they are in memory and its offsets remain valid for my expanse
 inline auto
-pyre::grid::DynamicCanonical::box(index_type base, shape_type tile) const -> DynamicCanonical
+pyre::grid::DynamicCanonical::box(index_type base, shape_type tile) const -> self_type
 {
     // get my rank
     const auto N = rank();
@@ -278,14 +278,14 @@ pyre::grid::DynamicCanonical::box(index_type base, shape_type tile) const -> Dyn
         tile[axis] = std::min(tile[axis], avail);
     }
     // assemble the sub-layout out of the clamped box and my inherited memory map
-    return DynamicCanonical(tile, base, _order, _strides, _nudge);
+    return self_type(tile, base, _order, _strides, _nudge);
 }
 
 // extract a hyperplane: keep the axes named in {free} and pin all the others at {base};
 // the result is a lower rank layout that still addresses my memory
 inline auto
 pyre::grid::DynamicCanonical::slice(
-    const index_type & base, const std::vector<size_type> & free) const -> DynamicCanonical
+    const index_type & base, const std::vector<size_type> & free) const -> self_type
 {
     // the number of surviving axes is the rank of the slice
     const auto M = free.size();
@@ -324,7 +324,7 @@ pyre::grid::DynamicCanonical::slice(
     }
     // the slice is anchored at zero because
     // the nudge bakes in the contribution of the fixed axes
-    return DynamicCanonical(sliceShape, index_type(M, 0), sliceOrder, sliceStrides, offset(base));
+    return self_type(sliceShape, index_type(M, 0), sliceOrder, sliceStrides, offset(base));
 }
 
 
