@@ -175,6 +175,7 @@ function(pyre_pyreModule)
     extensions/pyre/api.cc
     extensions/pyre/grid/__init__.cc
     extensions/pyre/grid/AnyGrid.cc
+    extensions/pyre/grid/AnyMosaic.cc
     extensions/pyre/memory/__init__.cc
     extensions/pyre/memory/cells.cc
     extensions/pyre/memory/buffers.cc
