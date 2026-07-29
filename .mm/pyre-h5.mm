@@ -28,8 +28,8 @@ pyre-h5.lib.stem := pyre-h5
 pyre-h5.lib.incdir := $(builder.dest.inc)pyre/h5/
 # the gateway header is deposited one level above the rest, as {pyre/h5.h}
 pyre-h5.lib.gateway := h5.h
-pyre-h5.lib.prerequisites := journal.lib
-pyre-h5.lib.extern := journal.lib hdf5
+pyre-h5.lib.prerequisites := pyre.lib journal.lib
+pyre-h5.lib.extern := pyre.lib journal.lib hdf5
 pyre-h5.lib.c++.flags += $(pyre.lib.c++.flags)
 pyre-h5.lib.c++.defines += $(pyre.lib.c++.defines)
 
