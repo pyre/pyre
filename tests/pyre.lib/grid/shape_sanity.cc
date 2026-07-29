@@ -32,7 +32,7 @@ main(int argc, char * argv[])
     // lay out a shape with a distinct extent on each axis
     constexpr shape_t shape { 2, 3, 4, 5 };
     // show me
-    channel << "shape: " << shape << pyre::journal::endl(__HERE__);
+    channel << pyre::journal::at() << "shape: " << shape << pyre::journal::endl;
 
     // indexed access reaches the first axis
     static_assert(shape[0] == 2);

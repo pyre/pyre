@@ -31,7 +31,7 @@ main(int argc, char * argv[])
     // stamp it on every axis
     constexpr shape_t shape_1 = shape_t::fill(u);
     // show me
-    channel << "shape_1: " << shape_1 << pyre::journal::endl(__HERE__);
+    channel << pyre::journal::at() << "shape_1: " << shape_1 << pyre::journal::endl;
     // the first axis got the requested extent
     static_assert(shape_1[0] == u);
     // and so did every other one
@@ -44,7 +44,7 @@ main(int argc, char * argv[])
     // stamp it on every axis
     const shape_t shape_2 = shape_t::fill(v);
     // show me
-    channel << "shape_2: " << shape_2 << pyre::journal::endl(__HERE__);
+    channel << pyre::journal::at() << "shape_2: " << shape_2 << pyre::journal::endl;
     // the first axis got the requested extent
     assert((shape_2[0] == v));
     // and so did every other one

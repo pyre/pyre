@@ -32,21 +32,21 @@ main(int argc, char * argv[])
     // make an explicitly initialized ordering
     constexpr order_t shuffle { 0, 1, 2, 3 };
     // show me
-    channel << "an ordering: " << shuffle << pyre::journal::endl(__HERE__);
+    channel << pyre::journal::at() << "an ordering: " << shuffle << pyre::journal::endl;
     // it must be a genuine permutation of the axis labels
     static_assert(shuffle.isPermutation());
 
     // make a column major ordering
     constexpr order_t fortran = order_t::fortran();
     // show me
-    channel << "fortran: " << fortran << pyre::journal::endl(__HERE__);
+    channel << pyre::journal::at() << "fortran: " << fortran << pyre::journal::endl;
     // column major visits the axes in their natural sequence, so it matches {shuffle}
     static_assert(shuffle == fortran);
 
     // make a row major ordering
     constexpr order_t c = order_t::c();
     // show me
-    channel << "c: " << c << pyre::journal::endl(__HERE__);
+    channel << pyre::journal::at() << "c: " << c << pyre::journal::endl;
     // row major reverses the axis sequence, so it differs from {shuffle}
     static_assert(shuffle != c);
     // and it is a permutation just the same
@@ -55,7 +55,7 @@ main(int argc, char * argv[])
     // the default ordering is row major
     constexpr order_t dflt {};
     // show me
-    channel << "default: " << dflt << pyre::journal::endl(__HERE__);
+    channel << pyre::journal::at() << "default: " << dflt << pyre::journal::endl;
     // verify the claim
     static_assert(dflt == c);
 

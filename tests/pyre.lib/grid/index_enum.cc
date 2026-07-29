@@ -50,7 +50,7 @@ main(int argc, char * argv[])
     // an index built from the named channels rather than bare numbers
     constexpr index_t idx { pol::hv, color::blue };
     // show me
-    channel << "index: " << idx << pyre::journal::endl(__HERE__);
+    channel << pyre::journal::at() << "index: " << idx << pyre::journal::endl;
 
     // the coordinates read back as the named values
     static_assert(idx[0] == pol::hv);

@@ -29,7 +29,7 @@ main(int argc, char * argv[])
     // the fortran convention packs the leading axis fastest
     constexpr order_t columnMajor = order_t::fortran();
     // show me
-    channel << "column major: " << columnMajor << pyre::journal::endl(__HERE__);
+    channel << pyre::journal::at() << "column major: " << columnMajor << pyre::journal::endl;
 
     // so it names the axes in their natural sequence
     static_assert(columnMajor[0] == 0);

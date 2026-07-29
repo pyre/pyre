@@ -44,7 +44,7 @@ main(int argc, char * argv[])
     // spread across the index constructor
     auto idx = convert(src);
     // show me
-    channel << "idx: " << idx << pyre::journal::endl(__HERE__);
+    channel << pyre::journal::at() << "idx: " << idx << pyre::journal::endl;
 
     // the coordinates arrive in the order the tuple held them
     assert((idx == index_t { 0, 1, 2, 3 }));

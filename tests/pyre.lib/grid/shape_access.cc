@@ -29,7 +29,7 @@ main(int argc, char * argv[])
     // a compile time shape reads back the extents it was built from
     constexpr shape_t known { 0, 1, 2, 3 };
     // show me
-    channel << "known: " << known << pyre::journal::endl(__HERE__);
+    channel << pyre::journal::at() << "known: " << known << pyre::journal::endl;
     // each extent is where it was placed
     static_assert(known[0] == 0);
     static_assert(known[1] == 1);
@@ -44,7 +44,7 @@ main(int argc, char * argv[])
     scratch[2] = 2;
     scratch[3] = 3;
     // show me
-    channel << "scratch: " << scratch << pyre::journal::endl(__HERE__);
+    channel << pyre::journal::at() << "scratch: " << scratch << pyre::journal::endl;
     // the writes must be visible on read back
     assert((scratch == known));
 

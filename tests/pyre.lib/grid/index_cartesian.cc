@@ -36,8 +36,8 @@ main(int argc, char * argv[])
     // their product lays the first index's axes ahead of the second's
     constexpr auto joined = one * three;
     // show me
-    channel << "one: " << one << pyre::journal::newline << "three: " << three
-            << pyre::journal::newline << "joined: " << joined << pyre::journal::endl(__HERE__);
+    channel << pyre::journal::at() << "one: " << one << pyre::journal::newline << "three: " << three
+            << pyre::journal::newline << "joined: " << joined << pyre::journal::endl;
 
     // the rank of the product is the sum of the ranks
     static_assert(decltype(joined)::rank() == 4);
