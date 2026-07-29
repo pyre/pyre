@@ -85,8 +85,12 @@ pyre::py::grid::anyGrid(const gridT & grid, string_t strategy) -> AnyGrid
     // keep the source grid alive behind a type-erased handle: copying it bumps the storage's
     // shared reference count, so its cells outlive this call for as long as python holds on
     auto owner = std::make_shared<gridT>(grid);
+    // the block address; the buffer protocol wants a mutable pointer even for read-only
+    // cells, so shed the constness here: {writable} in the description is what actually
+    // guards writes, and {setitem} refuses before any writer is reached
+    auto data = const_cast<void *>(static_cast<const void *>(owner->data()));
     // the kept copy's storage is where the block lives; describe over it, held alive by the copy
-    return describe(*owner, std::move(strategy), owner->data(), owner);
+    return describe(*owner, std::move(strategy), data, owner);
 }
 
 

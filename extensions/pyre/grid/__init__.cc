@@ -117,14 +117,42 @@ namespace pyre::py::grid {
         return anyGrid(grid_t { packing, storage }, "map");
     }
 
+    // a read-only file-backed grid: map the product at {uri} without write access, which is
+    // how a client examines a data product it does not own
+    template <class cellT>
+    auto makeConstMap(const string_t & uri, const shape_t & shape) -> AnyGrid
+    {
+        // the storage and the grid over it
+        using storage_t = pyre::memory::constmap_t<cellT>;
+        using grid_t = pyre::grid::grid_t<packing_t, storage_t>;
+        // lay out the shape
+        auto packing = packing_t(shape);
+        // map the existing product for reading only
+        auto storage = storage_t::open(uri);
+        // make the grid and type-erase it; the const cells mark the description read-only
+        return anyGrid(grid_t { packing, storage }, "map");
+    }
+
     // the map factory python calls
     auto map(
         const string_t & uri, const std::vector<size_type> & extents, const string_t & cell,
-        bool create) -> AnyGrid
+        bool create, bool writable) -> AnyGrid
     {
+        // a fresh product exists to be filled, so refusing write access to it is a mistake
+        if (create && !writable) {
+            // complain
+            throw py::value_error(
+                "a fresh product must be writable; open an existing one "
+                "with {create=False} for read-only access");
+        }
         // adopt the extents as a shape
         auto shape = shape_t(extents.begin(), extents.end());
-        // dispatch on the cell type
+        // for read-only access
+        if (!writable) {
+            // dispatch to the const flavor
+            return dispatchCell(cell, [&]<class T>() { return makeConstMap<T>(uri, shape); });
+        }
+        // otherwise, dispatch to the writable one
         return dispatchCell(cell, [&]<class T>() { return makeMap<T>(uri, shape, create); });
     }
 
@@ -164,14 +192,54 @@ namespace pyre::py::grid {
         return describe(grid, "view", info->ptr, info);
     }
 
+    // a read-only view over memory python already holds: the counterpart of {makeView} for
+    // sources that refuse write access, such as {bytes}
+    template <class cellT>
+    auto makeConstView(const py::buffer & source, const shape_t & shape) -> AnyGrid
+    {
+        // the storage and the grid over it
+        using storage_t = pyre::memory::constview_t<cellT>;
+        using grid_t = pyre::grid::grid_t<packing_t, storage_t>;
+        // lay out the shape
+        auto packing = packing_t(shape);
+        // the number of cells the grid needs
+        auto cells = packing.cells();
+
+        // ask the source for read access to its block
+        auto info = std::make_shared<py::buffer_info>(source.request(false));
+        // the block must be at least as large as the grid
+        if (info->size < cells) {
+            // otherwise the caller has made a mistake
+            throw py::value_error("source buffer is too small for the requested grid shape");
+        }
+        // and its cells must be the width we were told to expect
+        if (info->itemsize != static_cast<py::ssize_t>(sizeof(cellT))) {
+            // otherwise the cell and the buffer disagree
+            throw py::value_error("source buffer cell size does not match the requested cell");
+        }
+
+        // a read-only view over the source's memory
+        auto storage = storage_t(static_cast<const cellT *>(info->ptr), cells);
+        // paired with the layout
+        auto grid = grid_t { packing, storage };
+        // the view owns nothing, so keep the source's buffer view open for as long as python
+        // holds the type-erased grid; that pins both the exporter and its block
+        return describe(grid, "view", info->ptr, info);
+    }
+
     // the view factory python calls
     auto view(
-        const py::buffer & source, const std::vector<size_type> & extents, const string_t & cell)
-        -> AnyGrid
+        const py::buffer & source, const std::vector<size_type> & extents, const string_t & cell,
+        bool writable) -> AnyGrid
     {
         // adopt the extents as a shape
         auto shape = shape_t(extents.begin(), extents.end());
-        // dispatch on the cell type
+        // for read-only access
+        if (!writable) {
+            // dispatch to the const flavor, which asks the source for read access only
+            return dispatchCell(cell, [&]<class T>() { return makeConstView<T>(source, shape); });
+        }
+        // otherwise, dispatch to the writable one
         return dispatchCell(cell, [&]<class T>() { return makeView<T>(source, shape); });
     }
 
@@ -544,9 +612,9 @@ pyre::py::grid::__init__(py::module & m) -> void
         "map",
         // the implementation
         &map,
-        // the signature; {create} makes a fresh product, else an existing one is mapped for
-        // writing, which is how a data product on disk is read back
-        "uri"_a, "shape"_a, "cell"_a, "create"_a = true,
+        // the signature; {create} makes a fresh product, else an existing one is mapped;
+        // {writable} chooses between mapping it for writing and read-only access
+        "uri"_a, "shape"_a, "cell"_a, "create"_a = true, "writable"_a = true,
         // the docstring
         "lay a grid of the given {shape} and {cell} over the memory-mapped file at {uri}");
 
@@ -556,8 +624,9 @@ pyre::py::grid::__init__(py::module & m) -> void
         "view",
         // the implementation
         &view,
-        // the signature
-        "source"_a, "shape"_a, "cell"_a,
+        // the signature; {writable} decides how much access to ask the source for, so
+        // read-only exporters such as {bytes} are viewable with {writable=False}
+        "source"_a, "shape"_a, "cell"_a, "writable"_a = true,
         // the docstring
         "lay a grid of the given {shape} and {cell} over the memory of the {source} buffer, "
         "without copying");
