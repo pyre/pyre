@@ -49,7 +49,7 @@ main(int argc, char * argv[])
     store.flush(2);
     // back in sync
     assert((store.valid(2) && store.clean(2)));
-    // and validity was monotonic throughout: flushing never takes the content away
+    // and validity survived the whole cycle: flushing never takes the content away
     assert((store.valid(2)));
 
     // now the writer's workflow: touch a few pages
