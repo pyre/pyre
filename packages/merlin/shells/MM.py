@@ -1674,7 +1674,7 @@ class MM(pyre.application, family="pyre.applications.mm", namespace="mm"):
             "gmsh": {"candidates": ["gmsh"]},
             "gsl": {"candidates": ["gsl"]},
             "gtest": {"candidates": ["gtest", "libgtest"]},
-            "hdf5": {"candidates": ["hdf5"]},
+            "hdf5": {"candidates": ["hdf5"], "handler": "_emitCondaHdf5"},
             "kokkos": {"candidates": ["kokkos"]},
             "libpq": {"candidates": ["libpq", "postgresql"]},
             "metis": {"candidates": ["metis"]},
@@ -1804,8 +1804,9 @@ class MM(pyre.application, family="pyre.applications.mm", namespace="mm"):
             handler = recipe.get("handler")
             # if there is one
             if handler:
-                # let it populate the configuration lines
-                getattr(self, handler)(entry, recipe, candidate, record, prefix)
+                # let it populate the configuration lines; the {index} rides along so a
+                # handler can consult the other installed packages
+                getattr(self, handler)(entry, recipe, candidate, record, index, prefix)
             # otherwise the boring default: {dir} tracks {conda.prefix} and the
             # {name}/init.mm defaults ({dir}/include, {dir}/lib) do the rest
             else:
@@ -1826,7 +1827,7 @@ class MM(pyre.application, family="pyre.applications.mm", namespace="mm"):
         # keep the first two if we have them, otherwise return it unchanged
         return f"{parts[0]}.{parts[1]}" if len(parts) >= 2 else version
 
-    def _emitCondaMpi(self, entry, recipe, candidate, record, prefix):
+    def _emitCondaMpi(self, entry, recipe, candidate, record, index, prefix):
         """
         Emit the configuration for mpi; besides {dir}, the flavor (openmpi or mpich) selects
         the library names in {mpi/init.mm}
@@ -1836,7 +1837,49 @@ class MM(pyre.application, family="pyre.applications.mm", namespace="mm"):
         # the flavor is the conda package that satisfied the dependency
         entry["lines"].append(f"mpi.flavor ?= {candidate}")
 
-    def _emitCondaCspice(self, entry, recipe, candidate, record, prefix):
+    def _emitCondaHdf5(self, entry, recipe, candidate, record, index, prefix):
+        """
+        Emit the configuration for hdf5; conda-forge encodes the flavor in the build string
+        ({nompi_...}, {mpi_openmpi_...}, {mpi_mpich_...}), and {hdf5.parallel} carries it so
+        parallel builds fold {mpi} into the dependencies in {hdf5/init.mm}
+        """
+        # {dir} tracks the environment root; the layout is uniform, so the defaults do the rest
+        entry["lines"].append("hdf5.dir ?= $(conda.prefix)")
+        # get the build string of the installed package
+        _, build, _ = index[candidate]
+        # mpi aware builds name their flavor as the second tag of the build string
+        flavor = build.split("_")[1] if build.startswith("mpi_") else "serial"
+        # builds that violate the naming convention are not something we can classify
+        if flavor not in ("openmpi", "mpich", "serial"):
+            # so flag them
+            warning = journal.warning("mm.pkgdb")
+            # what happened
+            warning.line(f"could not deduce the hdf5 flavor from the build '{build}'")
+            # the consequence
+            warning.line("assuming a serial build; parallel code may fail to link")
+            # flush
+            warning.log()
+            # and fall back to the serial interpretation
+            flavor = "serial"
+        # record the flavor so parallel builds induce the mpi edge
+        entry["lines"].append(f"hdf5.parallel ?= {flavor}")
+        # a parallel build must link against the same mpi that mm selects; find the mpi
+        # implementation the mpi recipe will pick, in its candidate priority order
+        mpi = next((c for c in ("openmpi", "mpich") if c in index), None)
+        # if hdf5 is mpi aware but bound to the other implementation
+        if flavor != "serial" and mpi is not None and mpi != flavor:
+            # the link line would mix mpi flavors; warn
+            warning = journal.warning("mm.pkgdb")
+            # what happened
+            warning.line(f"hdf5 is built against {flavor} but mpi resolves to {mpi}")
+            # the consequence
+            warning.line("parallel builds will mix mpi implementations")
+            # what to do about it
+            warning.line(f"consider removing {mpi} from the environment")
+            # flush
+            warning.log()
+
+    def _emitCondaCspice(self, entry, recipe, candidate, record, index, prefix):
         """
         Emit the configuration for cspice; CSPICE code includes its umbrella header flat, as
         {<SpiceUsr.h>}, but conda relocates the canonically flat headers into an
@@ -1864,7 +1907,7 @@ class MM(pyre.application, family="pyre.applications.mm", namespace="mm"):
             # flush
             warning.log()
 
-    def _emitCondaSitePackage(self, entry, recipe, candidate, record, prefix):
+    def _emitCondaSitePackage(self, entry, recipe, candidate, record, index, prefix):
         """
         Emit the configuration for a python package whose headers live in site-packages rather
         than {prefix}/include (numpy, pybind11); ask the package where its headers are and
@@ -1896,7 +1939,7 @@ class MM(pyre.application, family="pyre.applications.mm", namespace="mm"):
             # record where it actually is
             entry["lines"].append(f"{target}.dir ?= {root}")
 
-    def _emitCondaPython(self, entry, recipe, candidate, record, prefix):
+    def _emitCondaPython(self, entry, recipe, candidate, record, index, prefix):
         """
         Emit the configuration for the python interpreter; conda ships free-threading builds
         whose headers sit in {include/python3.14t}, so read the ABI suffix off the directory
@@ -2089,15 +2132,20 @@ class MM(pyre.application, family="pyre.applications.mm", namespace="mm"):
             error.log()
             # bail
             return 1
-        # parse active ports; each active line ends with "(active)"
-        installed = set()
+        # parse active ports; each active line ends with "(active)"; the index maps each
+        # port name to its variant set, harvested from the version spec so flavor aware
+        # handlers (hdf5) can consult it
+        installed = {}
         for line in result.stdout.splitlines():
-            # strip leading whitespace
-            line = line.strip()
+            # strip leading whitespace and split into tokens
+            tokens = line.strip().split()
             # only active ports
-            if line.endswith("(active)"):
-                # the port name is the first token
-                installed.add(line.split()[0])
+            if tokens and tokens[-1] == "(active)":
+                # the version spec, e.g. {@1.14.6_0+cxx+hl}, carries the variants after
+                # its leading version tag
+                spec = tokens[1] if len(tokens) > 1 else ""
+                # index the port under its name, the first token
+                installed[tokens[0]] = set(spec.split("+")[1:])
         # the mapping from mm extern name to macports port name(s); try names in order;
         # python-versioned ports use {pyTag} e.g. "312" for python 3.12
         packages = {
@@ -2172,6 +2220,37 @@ class MM(pyre.application, family="pyre.applications.mm", namespace="mm"):
                 if name == "mpi":
                     print(f"mpi.dir ?= $(macports.prefix)", file=f)
                     print(f"mpi.flavor ?= {candidate}", file=f)
+                # hdf5 encodes its flavor in the port variants: {+openmpi}/{+mpich} builds
+                # are mpi aware, and {hdf5.parallel} induces the mpi edge in {hdf5/init.mm}
+                elif name == "hdf5":
+                    # the port anchors to the macports prefix; the layout is uniform
+                    print(f"hdf5.dir ?= $(macports.prefix)", file=f)
+                    # the flavor is the mpi variant when one is present, otherwise serial
+                    flavor = next(
+                        (v for v in ("openmpi", "mpich") if v in installed[candidate]),
+                        "serial",
+                    )
+                    # record it so parallel builds fold {mpi} into the dependencies
+                    print(f"hdf5.parallel ?= {flavor}", file=f)
+                    # a parallel build must link against the same mpi that mm selects;
+                    # find the port the mpi entry resolves to, in candidate priority order
+                    mpi = next(
+                        (c for c in ("openmpi", "mpich") if c in installed), None
+                    )
+                    # if hdf5 is mpi aware but bound to the other implementation
+                    if flavor != "serial" and mpi is not None and mpi != flavor:
+                        # the link line would mix mpi flavors; warn
+                        warning = journal.warning("mm.pkgdb")
+                        # what happened
+                        warning.line(
+                            f"hdf5 is built against {flavor} but mpi resolves to {mpi}"
+                        )
+                        # the consequence
+                        warning.line("parallel builds will mix mpi implementations")
+                        # what to do about it
+                        warning.line(f"consider deactivating the {mpi} port")
+                        # flush
+                        warning.log()
                 # numpy headers live under site-packages/numpy/core, not the macports prefix
                 elif name == "numpy":
                     includePath = self._queryPythonExpression(
