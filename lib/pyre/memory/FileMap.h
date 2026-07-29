@@ -18,6 +18,8 @@
 class pyre::memory::FileMap {
     // types
 public:
+    // me
+    using self_type = FileMap;
     // the address of the mapping
     using pointer = void *;
     // file paths
