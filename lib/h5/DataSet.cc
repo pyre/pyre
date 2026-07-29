@@ -76,6 +76,47 @@ pyre::h5::DataSet::dataspace() const -> DataSpace
 }
 
 
+// my extent as a runtime-rank canonical layout, in the {pyre::grid} vocabulary
+auto
+pyre::h5::DataSet::packing() const -> packing_t
+{
+    // my dataspace carries my extent, and knows how to speak grid
+    return dataspace().packing();
+}
+
+
+// my extent diced into my chunks: the tiled layout a mosaic is assembled over
+auto
+pyre::h5::DataSet::tiling() const -> tiling_t
+{
+    // my extent, already in grid vocabulary
+    auto box = packing().shape();
+    // only chunked datasets are tiled
+    if (dcpl().layout() != H5D_CHUNKED) {
+        // so asking anything else for its tiling is a bug in the caller
+        auto channel = pyre::journal::firewall_t("pyre.h5.dataset");
+        // complain
+        channel << pyre::journal::at() << "asking for the tiling of '" << name()
+                << "', which is not chunked" << pyre::journal::endl;
+        // unreachable, unless the user has marked this error as non-fatal;
+        // recover coherently by treating my whole extent as a single tile
+        return tiling_t(box, box);
+    }
+    // get my chunk shape
+    auto chunk = dcpl().chunk(static_cast<int>(box.size()));
+    // the grid vocabulary measures with signed integers; make room for the translation
+    tiling_t::shape_type tile(chunk.size());
+    // go through the axes
+    for (std::size_t axis = 0; axis < chunk.size(); ++axis) {
+        // and carry each extent across the signedness boundary
+        tile[axis] = static_cast<tiling_t::difference_type>(chunk[axis]);
+    }
+    // dice my extent into my chunks; edge chunks overhang the box and their overhang is
+    // padding, exactly the way hdf5 stores them
+    return tiling_t(box, tile);
+}
+
+
 // my on-disk size, in bytes
 auto
 pyre::h5::DataSet::storageSize() const -> hsize_t

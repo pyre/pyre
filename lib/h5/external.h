@@ -18,6 +18,8 @@
 #include <vector>
 // support
 #include <pyre/journal.h>
+// the grid vocabulary that carries dataset geometry
+#include <pyre/grid.h>
 // the hdf5 c api; pyre::h5 no longer depends on the hdf5 c++ layer
 #include <hdf5.h>
 
@@ -56,6 +58,13 @@ namespace pyre::h5 {
     // a hyperslab as a (begin, end) corner pair, and a collection of them
     using slab_t = std::pair<shape_t, shape_t>;
     using slabs_t = std::vector<slab_t>;
+
+    // the grid descriptions handed out by dataspaces and datasets: dataset and chunk shapes
+    // are facts discovered at runtime, so they travel as the runtime-rank flavors of the
+    // {pyre::grid} vocabulary; cell types, by contrast, stay compile time, since whoever
+    // receives the data must name the type in source in order to allocate for it
+    using packing_t = pyre::grid::dynamic_canonical_t;
+    using tiling_t = pyre::grid::dynamic_chunked_t;
 } // namespace pyre::h5
 
 

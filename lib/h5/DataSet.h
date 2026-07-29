@@ -47,6 +47,11 @@ public:
     auto datatype() const -> types::Datatype;
     // my dataspace, as a fresh owned wrapper
     auto dataspace() const -> DataSpace;
+    // my extent as a runtime-rank canonical layout, in the {pyre::grid} vocabulary
+    auto packing() const -> packing_t;
+    // my extent diced into my chunks: the tiled layout a mosaic is assembled over; only
+    // chunked datasets have one
+    auto tiling() const -> tiling_t;
     // my on-disk size, in bytes
     auto storageSize() const -> hsize_t;
     // my in-memory size, in bytes
