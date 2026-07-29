@@ -23,11 +23,6 @@ pyre.boot.packages := pyre.pkg journal.pkg merlin.pkg survey.pkg
 pyre.boot.main := etc/boot/main.py
 
 
-# predicates that check the c++ standard in use
-pyre.c++20 = ${call languages.c++.has_c++20,pyre.lib}
-pyre.c++23 = ${call languages.c++.has_c++23,pyre.lib}
-
-
 # the pyre package meta-data
 pyre.pkg.root := packages/pyre/
 pyre.pkg.stem := pyre
@@ -42,12 +37,6 @@ pyre.lib.stem := pyre
 pyre.lib.prerequisites += chroma.lib journal.lib
 pyre.lib.c++.defines += PYRE_CORE
 pyre.lib.c++.flags += -Wall $($(compiler.c++).std.c++23)
-
-# additional macros that enable features sensitive to the c++ standard version
-pyre.lib.c++.defines += \
-  ${if $(pyre.c++20),\
-    HAVE_COMPACT_PACKINGS WITH_CXX20 \
-  }
 
 # external dependencies
 pyre.lib.extern := journal.lib
