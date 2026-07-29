@@ -50,6 +50,7 @@ namespace pyre::grid {
     // dynamic (runtime-rank) variants for Python interoperability
     class DynamicIndexIterator;
     class DynamicCanonical;
+    class DynamicChunked;
 
     // a packing strategy composed with a storage strategy
     template <concepts::PackingStrategy P, concepts::StorageStrategy S>
@@ -70,6 +71,12 @@ namespace pyre::grid {
     constexpr auto tilesOverlapping(
         const P &, const typename P::index_type &, const typename P::shape_type &) noexcept
         -> Canonical<P::rank()>;
+
+    // the runtime-rank counterpart: the template above cannot serve a packing whose rank is
+    // not a compile time constant, so the dynamic flavor gets its own overload
+    auto tilesOverlapping(
+        const DynamicChunked &, const std::vector<std::ptrdiff_t> &,
+        const std::vector<std::ptrdiff_t> &) -> DynamicCanonical;
 } // namespace pyre::grid
 
 

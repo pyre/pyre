@@ -36,6 +36,7 @@
 // dynamic (runtime-rank) variants
 #include "DynamicIndexIterator.h"
 #include "DynamicCanonical.h"
+#include "DynamicChunked.h"
 // the grid
 #include "Grid.h"
 // and the cursor that walks its cells
