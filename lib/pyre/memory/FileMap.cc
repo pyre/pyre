@@ -24,8 +24,9 @@ pyre::memory::FileMap::stat()
         // make a channel
         pyre::journal::error_t channel("pyre.memory.map");
         // complain
-        channel << "while looking for '" << _uri << "':" << pyre::journal::newline << "stat: error "
-                << errno << ": " << std::strerror(errno) << pyre::journal::endl(__HERE__);
+        channel << pyre::journal::at() << "while looking for '" << _uri
+                << "':" << pyre::journal::newline << "stat: error " << errno << ": "
+                << std::strerror(errno) << pyre::journal::endl;
     }
 
     // get the file size
@@ -70,8 +71,9 @@ pyre::memory::FileMap::map()
         // make a channel
         pyre::journal::error_t channel("pyre.memory.map");
         // complain
-        channel << "while mapping '" << _uri << "':" << pyre::journal::newline << "open: error "
-                << errno << ": " << std::strerror(errno) << pyre::journal::endl(__HERE__);
+        channel << pyre::journal::at() << "while mapping '" << _uri
+                << "':" << pyre::journal::newline << "open: error " << errno << ": "
+                << std::strerror(errno) << pyre::journal::endl;
         // unreachable, unless the user has marked this error as non-fatal
         return;
     }
@@ -85,8 +87,9 @@ pyre::memory::FileMap::map()
         // make a channel
         pyre::journal::error_t channel("pyre.memory.map");
         // complain
-        channel << "while mapping '" << _uri << "':" << pyre::journal::newline << "mmap: error "
-                << errno << ": " << std::strerror(errno) << pyre::journal::endl(__HERE__);
+        channel << pyre::journal::at() << "while mapping '" << _uri
+                << "':" << pyre::journal::newline << "mmap: error " << errno << ": "
+                << std::strerror(errno) << pyre::journal::endl;
         // unreachable, unless the user has marked this error as non-fatal
         return;
     }
@@ -94,9 +97,9 @@ pyre::memory::FileMap::map()
     // make a channel
     pyre::journal::debug_t channel("pyre.memory.map");
     // and report success
-    channel << "with '" << _uri << "':" << pyre::journal::newline << "mapped " << _bytes
-            << " bytes of " << (_writable ? "read/write" : "read only") << " memory at " << _data
-            << pyre::journal::endl(__HERE__);
+    channel << pyre::journal::at() << "with '" << _uri << "':" << pyre::journal::newline
+            << "mapped " << _bytes << " bytes of " << (_writable ? "read/write" : "read only")
+            << " memory at " << _data << pyre::journal::endl;
 
     // close the file descriptor; we don't need it any more
     ::close(fd);
@@ -123,16 +126,17 @@ pyre::memory::FileMap::unmap()
         // make a channel
         pyre::journal::warning_t channel("pyre.memory.map");
         // complain
-        channel << "while unmapping '" << _uri << "':" << pyre::journal::newline << "munmap: error "
-                << errno << ": " << std::strerror(errno) << pyre::journal::endl(__HERE__);
+        channel << pyre::journal::at() << "while unmapping '" << _uri
+                << "':" << pyre::journal::newline << "munmap: error " << errno << ": "
+                << std::strerror(errno) << pyre::journal::endl;
     }
 
     // make a channel
     pyre::journal::debug_t channel("pyre.memory.map");
     // and report success
-    channel << "with '" << _uri << "':" << pyre::journal::newline << "unmapped " << _bytes
-            << " bytes of " << (_writable ? "read/write" : "read only") << " memory at " << _data
-            << pyre::journal::endl(__HERE__);
+    channel << pyre::journal::at() << "with '" << _uri << "':" << pyre::journal::newline
+            << "unmapped " << _bytes << " bytes of " << (_writable ? "read/write" : "read only")
+            << " memory at " << _data << pyre::journal::endl;
 
     // invalidate the pointer
     _data = MAP_FAILED;

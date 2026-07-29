@@ -31,7 +31,7 @@ main(int argc, char * argv[])
     // make a store
     paged_t store(pageCells, pages);
     // show me
-    channel << store.uri() << pyre::journal::endl(__HERE__);
+    channel << pyre::journal::at() << store.uri() << pyre::journal::endl;
 
     // the geometry is what i asked for
     assert((store.pageCells() == pageCells));

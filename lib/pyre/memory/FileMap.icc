@@ -37,9 +37,9 @@ pyre::memory::FileMap::FileMap(uri_type uri, writable_type writable) :
     // make a channel
     pyre::journal::debug_t channel("pyre.memory.map");
     // sign on
-    channel << "mapped existing data product:" << pyre::journal::newline << "  name: " << _uri
-            << pyre::journal::newline << "  size: " << _bytes << " bytes" << pyre::journal::newline
-            << "  addr: " << _data << pyre::journal::endl(__HERE__);
+    channel << pyre::journal::at() << "mapped existing data product:" << pyre::journal::newline
+            << "  name: " << _uri << pyre::journal::newline << "  size: " << _bytes << " bytes"
+            << pyre::journal::newline << "  addr: " << _data << pyre::journal::endl;
 
     // all done
     return;
@@ -64,9 +64,10 @@ pyre::memory::FileMap::FileMap(uri_type uri, size_type bytes) :
     // make a channel
     journal::debug_t channel("pyre.memory.map");
     // sign on
-    channel << "created and mapped a new data product:" << pyre::journal::newline
+    channel << pyre::journal::at()
+            << "created and mapped a new data product:" << pyre::journal::newline
             << "  name: " << _uri << pyre::journal::newline << "  size: " << _bytes << " bytes"
-            << pyre::journal::newline << "  addr: " << _data << pyre::journal::endl(__HERE__);
+            << pyre::journal::newline << "  addr: " << _data << pyre::journal::endl;
 
     // all done
     return;
