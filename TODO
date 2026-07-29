@@ -28,10 +28,6 @@
     resolving launchers or interpreters through the select file indirection ever becomes
     necessary
 
-  - {pyre.memory} imports its bindings unconditionally, so a package-only install cannot
-    even import {pyre}; a prefix with the package but not the extensions is a poison pill
-    that breaks every pyre application in that context, including mm
-
 - gsl:
 
   - the bindings emit "parameter passing for argument of type {std::pair<double, double>}
@@ -299,10 +295,6 @@
     - enable h5 tests in cmake: the cmake build never runs the h5 tests (mm
       does); add the HDF5-gated lib/pkg test entries so cmake CI covers h5.
       [project_cmake_enable_h5_tests]
-
-    - enable cxx20 tensor tests for mm: tensor + grid symmetric/diagonal visit
-      tests are cmake-active but mm-excluded; retry enabling after C++23 CI and
-      conda CI land. [project_enable_tensor_tests_mm]
 
     - clang-format 22 new options: demo what concepts/RemoveParentheses/
       QualifierAlignment/... do on pyre C++ before adopting. [project_clang_format_new_options]
