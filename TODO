@@ -332,9 +332,6 @@
     - p2: python modernization (f-strings, __slots__, new algebraic/ package,
       NameLookup tracker). [wip_branch_p2]
 
-    - typelists: C++ TMP typelist library, concept-based _grid_ replacement,
-      memory overhaul. [wip_branch_typelists]
-
     - tensor: quaternions, rows()/columns() matrix builders, generalized
       tensor_same_shape_c (Bianca Giovanardi's code). [wip_branch_tensor]
 
@@ -365,10 +362,6 @@
       [project_narrow_binding_import_guard]
 
   - open follow-ups from merged work:
-
-    - grid-bindings cleanup / split grids.cc (PR #172): until it lands, main's
-      push cmake.yaml is red on 3 gcc-15 RelWithDebInfo legs (OOM, not
-      correctness). [wip_branch_c++23]
 
     - docker matrix open items: libpq in CI, dpkg-sniffer audit (above), a cuda
       cell. [wip_branch_docker]
