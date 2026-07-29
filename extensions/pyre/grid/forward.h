@@ -13,6 +13,9 @@ namespace pyre::py::grid {
     // the single type-erased grid the bindings hand to python, whatever the rank, cell type, or
     // storage strategy of the c++ grid it came from
     class AnyGrid;
+    // its out-of-core sibling: the type-erased mosaic, whose cells python reaches tile by tile
+    // through zero-copy panes
+    class AnyMosaic;
 } // namespace pyre::py::grid
 
 
