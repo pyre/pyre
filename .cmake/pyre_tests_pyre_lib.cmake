@@ -359,97 +359,64 @@ pyre_test_driver(tests/pyre.lib/math/transcendental.cc)
 
 
 # tensor
-if (HAVE_TENSOR)
-set(definitions "HAVE_COMPACT_PACKINGS")
 
-pyre_test_driver_cxx20(tests/pyre.lib/tensor/tensor_concepts.cc)
-pyre_add_definitions(tests/pyre.lib/tensor/tensor_concepts.cc ${definitions})
+pyre_test_driver(tests/pyre.lib/tensor/tensor_concepts.cc)
 
-pyre_test_driver_cxx20(tests/pyre.lib/tensor/tensor_contractions.cc)
-pyre_add_definitions(tests/pyre.lib/tensor/tensor_contractions.cc ${definitions})
+pyre_test_driver(tests/pyre.lib/tensor/tensor_contractions.cc)
 
-pyre_test_driver_cxx20(tests/pyre.lib/tensor/tensor_canonical_arithmetics.cc)
-pyre_add_definitions(tests/pyre.lib/tensor/tensor_canonical_arithmetics.cc ${definitions})
+pyre_test_driver(tests/pyre.lib/tensor/tensor_canonical_arithmetics.cc)
 
-pyre_test_driver_cxx20(tests/pyre.lib/tensor/tensor_canonical_basis.cc)
-pyre_add_definitions(tests/pyre.lib/tensor/tensor_canonical_basis.cc ${definitions})
+pyre_test_driver(tests/pyre.lib/tensor/tensor_canonical_basis.cc)
 
-pyre_test_driver_cxx20(tests/pyre.lib/tensor/tensor_cayley_hamilton_theorem.cc)
-pyre_add_definitions(tests/pyre.lib/tensor/tensor_cayley_hamilton_theorem.cc ${definitions})
+pyre_test_driver(tests/pyre.lib/tensor/tensor_cayley_hamilton_theorem.cc)
 
-pyre_test_driver_cxx20(tests/pyre.lib/tensor/tensor_compact_arithmetics.cc)
-pyre_add_definitions(tests/pyre.lib/tensor/tensor_compact_arithmetics.cc ${definitions})
+pyre_test_driver(tests/pyre.lib/tensor/tensor_compact_arithmetics.cc)
 
-pyre_test_driver_cxx20(tests/pyre.lib/tensor/tensor_dot.cc)
-pyre_add_definitions(tests/pyre.lib/tensor/tensor_dot.cc ${definitions})
+pyre_test_driver(tests/pyre.lib/tensor/tensor_dot.cc)
 
-pyre_test_driver_cxx20(tests/pyre.lib/tensor/tensor_dyadic.cc)
-pyre_add_definitions(tests/pyre.lib/tensor/tensor_dyadic.cc ${definitions})
+pyre_test_driver(tests/pyre.lib/tensor/tensor_dyadic.cc)
 
-pyre_test_driver_cxx20(tests/pyre.lib/tensor/tensor_eigenvalues.cc)
-pyre_add_definitions(tests/pyre.lib/tensor/tensor_eigenvalues.cc ${definitions})
+pyre_test_driver(tests/pyre.lib/tensor/tensor_eigenvalues.cc)
 
-pyre_test_driver_cxx20(tests/pyre.lib/tensor/tensor_eigenvalues_transformation.cc)
-pyre_add_definitions(tests/pyre.lib/tensor/tensor_eigenvalues_transformation.cc ${definitions})
+pyre_test_driver(tests/pyre.lib/tensor/tensor_eigenvalues_transformation.cc)
 
-pyre_test_driver_cxx20(tests/pyre.lib/tensor/tensor_identities.cc)
-pyre_add_definitions(tests/pyre.lib/tensor/tensor_identities.cc ${definitions})
+pyre_test_driver(tests/pyre.lib/tensor/tensor_identities.cc)
 
-pyre_test_driver_cxx20(tests/pyre.lib/tensor/tensor_diagonal_inverse.cc)
-pyre_add_definitions(tests/pyre.lib/tensor/tensor_diagonal_inverse.cc ${definitions})
+pyre_test_driver(tests/pyre.lib/tensor/tensor_diagonal_inverse.cc)
 
-pyre_test_driver_cxx20(tests/pyre.lib/tensor/tensor_linear_system.cc)
-pyre_add_definitions(tests/pyre.lib/tensor/tensor_linear_system.cc ${definitions})
+pyre_test_driver(tests/pyre.lib/tensor/tensor_linear_system.cc)
 
-pyre_test_driver_cxx20(tests/pyre.lib/tensor/tensor_iterators.cc)
-pyre_add_definitions(tests/pyre.lib/tensor/tensor_iterators.cc ${definitions})
+pyre_test_driver(tests/pyre.lib/tensor/tensor_iterators.cc)
 
-pyre_test_driver_cxx20(tests/pyre.lib/tensor/tensor_literals.cc)
-pyre_add_definitions(tests/pyre.lib/tensor/tensor_literals.cc ${definitions})
+pyre_test_driver(tests/pyre.lib/tensor/tensor_literals.cc)
 
-pyre_test_driver_cxx20(tests/pyre.lib/tensor/tensor_matrix_build.cc)
-pyre_add_definitions(tests/pyre.lib/tensor/tensor_matrix_build.cc ${definitions})
+pyre_test_driver(tests/pyre.lib/tensor/tensor_matrix_build.cc)
 
-pyre_test_driver_cxx20(tests/pyre.lib/tensor/tensor_matrix_assignment.cc)
-pyre_add_definitions(tests/pyre.lib/tensor/tensor_matrix_assignment.cc ${definitions})
+pyre_test_driver(tests/pyre.lib/tensor/tensor_matrix_assignment.cc)
 
-pyre_test_driver_cxx20(tests/pyre.lib/tensor/tensor_matrix_equal.cc)
-pyre_add_definitions(tests/pyre.lib/tensor/tensor_matrix_equal.cc ${definitions})
+pyre_test_driver(tests/pyre.lib/tensor/tensor_matrix_equal.cc)
 
-pyre_test_driver_cxx20(tests/pyre.lib/tensor/tensor_matrix_norm.cc)
-pyre_add_definitions(tests/pyre.lib/tensor/tensor_matrix_norm.cc ${definitions})
+pyre_test_driver(tests/pyre.lib/tensor/tensor_matrix_norm.cc)
 
-pyre_test_driver_cxx20(tests/pyre.lib/tensor/tensor_matrix_product.cc)
-pyre_add_definitions(tests/pyre.lib/tensor/tensor_matrix_product.cc ${definitions})
+pyre_test_driver(tests/pyre.lib/tensor/tensor_matrix_product.cc)
 
-pyre_test_driver_cxx20(tests/pyre.lib/tensor/tensor_matrix_vector_product.cc)
-pyre_add_definitions(tests/pyre.lib/tensor/tensor_matrix_vector_product.cc ${definitions})
+pyre_test_driver(tests/pyre.lib/tensor/tensor_matrix_vector_product.cc)
 
-pyre_test_driver_cxx20(tests/pyre.lib/tensor/tensor_fourth_order_contraction.cc)
-pyre_add_definitions(tests/pyre.lib/tensor/tensor_fourth_order_contraction.cc ${definitions})
+pyre_test_driver(tests/pyre.lib/tensor/tensor_fourth_order_contraction.cc)
 
-pyre_test_driver_cxx20(tests/pyre.lib/tensor/tensor_print.cc)
-pyre_add_definitions(tests/pyre.lib/tensor/tensor_print.cc ${definitions})
+pyre_test_driver(tests/pyre.lib/tensor/tensor_print.cc)
 
-pyre_test_driver_cxx20(tests/pyre.lib/tensor/tensor_symmetry.cc)
-pyre_add_definitions(tests/pyre.lib/tensor/tensor_symmetry.cc ${definitions})
+pyre_test_driver(tests/pyre.lib/tensor/tensor_symmetry.cc)
 
-pyre_test_driver_cxx20(tests/pyre.lib/tensor/tensor_transpose.cc)
-pyre_add_definitions(tests/pyre.lib/tensor/tensor_transpose.cc ${definitions})
+pyre_test_driver(tests/pyre.lib/tensor/tensor_transpose.cc)
 
-pyre_test_driver_cxx20(tests/pyre.lib/tensor/tensor_utilities.cc)
-pyre_add_definitions(tests/pyre.lib/tensor/tensor_utilities.cc ${definitions})
+pyre_test_driver(tests/pyre.lib/tensor/tensor_utilities.cc)
 
-pyre_test_driver_cxx20(tests/pyre.lib/tensor/quaternion_composition.cc)
-pyre_add_definitions(tests/pyre.lib/tensor/quaternion_composition.cc ${definitions})
+pyre_test_driver(tests/pyre.lib/tensor/quaternion_composition.cc)
 
-pyre_test_driver_cxx20(tests/pyre.lib/tensor/quaternion_from_rotation_matrix.cc)
-pyre_add_definitions(tests/pyre.lib/tensor/quaternion_from_rotation_matrix.cc ${definitions})
+pyre_test_driver(tests/pyre.lib/tensor/quaternion_from_rotation_matrix.cc)
 
-pyre_test_driver_cxx20(tests/pyre.lib/tensor/quaternion_inverse.cc)
-pyre_add_definitions(tests/pyre.lib/tensor/quaternion_inverse.cc ${definitions})
-
-endif()
+pyre_test_driver(tests/pyre.lib/tensor/quaternion_inverse.cc)
 
 
 # end of file

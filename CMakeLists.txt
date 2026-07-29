@@ -11,8 +11,6 @@ cmake_minimum_required(VERSION 3.20...3.25)
 
 # options
 option(WITH_CUDA "enable support for CUDA" OFF)
-option(HAVE_TENSOR "enable support for tensor algebra (requires C++20)" OFF)
-option(HAVE_COMPACT_PACKINGS "enable support for symmetric and diagonal packings (requires C++20)" OFF)
 
 # adjust the include path
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/.cmake)
