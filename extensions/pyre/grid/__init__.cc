@@ -67,7 +67,8 @@ namespace pyre::py::grid {
         // anything else is a caller mistake
         auto channel = pyre::journal::error_t("pyre.grid.bindings");
         // complain
-        channel << "unsupported grid cell type '" << cell << "'" << pyre::journal::endl(__HERE__);
+        channel << pyre::journal::at() << "unsupported grid cell type '" << cell << "'"
+                << pyre::journal::endl;
         // and refuse
         throw py::value_error("unsupported grid cell type '" + cell + "'");
     }
@@ -514,6 +515,17 @@ pyre::py::grid::__init__(py::module & m) -> void
         "tile"_a,
         // the docstring
         "record that {tile} has been saved, so it matches my backing store again");
+
+    mos.def(
+        // the name
+        "release",
+        // the implementation
+        &AnyMosaic::release,
+        // the signature
+        "tile"_a,
+        // the docstring
+        "let go of the page that backs {tile}, returning it to the never-touched state; "
+        "outstanding panes keep their memory but no longer alias my cells");
 
     // the factory that allocates a fresh heap grid
     grid.def(

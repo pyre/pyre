@@ -146,6 +146,36 @@ def test():
         # as expected
         pass
 
+    # a client can hand pages back one at a time; save the tile written above first
+    m.flush(tile=[1, 1])
+    # keep a pane and a view of its cells alive across the release
+    p = m.pane(tile=[1, 1])
+    mv = memoryview(p)
+    # the cell written earlier, at its tile-local coordinates
+    assert mv[1, 1] == 13
+    # let the page go
+    m.release(tile=[1, 1])
+    # the store forgot it: the tile is back in the never-touched state
+    assert m.residents == 0
+    assert m.resident(tile=[1, 1]) is False
+    # so reading the cell through the mosaic is refused again
+    try:
+        # its page is gone
+        m[3, 4]
+        # so we should not get here
+        assert False
+    except ValueError:
+        # as expected
+        pass
+    # but the pane keeps its memory: the orphaned block reads back intact
+    assert mv[1, 1] == 13
+    # touching the tile again materializes a fresh page
+    m[3, 4] = 99
+    # which the mosaic sees
+    assert m[3, 4] == 99
+    # while the orphaned pane no longer aliases the mosaic's cells
+    assert mv[1, 1] == 13
+
     # out of range tiles are rejected
     try:
         # this tile does not exist

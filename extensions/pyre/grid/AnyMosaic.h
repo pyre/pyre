@@ -55,7 +55,7 @@ public:
     AnyMosaic(
         packing_type packing, string_t cell, census_type residents, pane_maker_type pane,
         probe_type resident, probe_type valid, probe_type clean, mark_type validate,
-        mark_type taint, mark_type flush, reader_type read, writer_type write);
+        mark_type taint, mark_type flush, mark_type release, reader_type read, writer_type write);
 
     // accessors
 public:
@@ -110,6 +110,9 @@ public:
     auto taint(const index_type & tile) const -> void;
     // record that the client has saved a tile's page
     auto flush(const index_type & tile) const -> void;
+    // let go of a tile's page, returning it to the never-touched state; outstanding panes
+    // keep their block, but no longer alias the mosaic's cells
+    auto release(const index_type & tile) const -> void;
 
     // implementation details
 private:
@@ -135,6 +138,7 @@ private:
     mark_type _validate;
     mark_type _taint;
     mark_type _flush;
+    mark_type _release;
     reader_type _read;
     writer_type _write;
 };

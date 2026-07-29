@@ -33,15 +33,20 @@ pyre::py::grid::anyMosaic(const gridT & mosaic, string_t cell) -> AnyMosaic
 
     // carve the pane over one tile
     AnyMosaic::pane_maker_type pane = [owner](const AnyMosaic::index_type & t) -> AnyGrid {
-        // materialize the tile's page, allocating it on first touch; this is the demand-driven
-        // half of the out-of-core workflow
-        owner->storage().reside(owner->packing().tileOrdinal(t));
+        // the page that backs the tile
+        auto ordinal = owner->packing().tileOrdinal(t);
+        // materialize it, allocating it on first touch; this is the demand-driven half of the
+        // out-of-core workflow
+        owner->storage().reside(ordinal);
+        // share ownership of its block: the pane stays alive through a {release} of the page
+        // and even the death of the mosaic, for as long as python holds on; a release severs
+        // the pane from the store, so a pane made after the tile is touched again addresses
+        // whatever fresh page takes its place
+        auto block = owner->storage().handle(ordinal);
         // carve the pane: a dense grid over the page, addressed in the mosaic's index space
         auto pane = owner->pane(t);
-        // describe it to python over the page's block; the owner handle pins the whole store,
-        // which is safe precisely because residency is monotonic: a pinned store never moves
-        // or reclaims a page
-        return describe(pane, "pane", pane.data(), owner);
+        // describe it to python over the page's block, pinned by the shared handle
+        return describe(pane, "pane", pane.data(), std::shared_ptr<void>(block, block.get()));
     };
 
     // read the page state bits
@@ -74,6 +79,12 @@ pyre::py::grid::anyMosaic(const gridT & mosaic, string_t cell) -> AnyMosaic
     AnyMosaic::mark_type flush = [storage](AnyMosaic::size_type ordinal) -> void {
         // the page matches the backing store again
         storage.flush(ordinal);
+        // all done
+        return;
+    };
+    AnyMosaic::mark_type release = [storage](AnyMosaic::size_type ordinal) -> void {
+        // the page returns to the never-touched state; outstanding panes keep their block
+        storage.release(ordinal);
         // all done
         return;
     };
@@ -114,7 +125,7 @@ pyre::py::grid::anyMosaic(const gridT & mosaic, string_t cell) -> AnyMosaic
         // the page state probes
         std::move(resident), std::move(valid), std::move(clean),
         // the page state marks
-        std::move(validate), std::move(taint), std::move(flush),
+        std::move(validate), std::move(taint), std::move(flush), std::move(release),
         // and the pair that moves a cell to and from python
         std::move(read), std::move(write));
 }

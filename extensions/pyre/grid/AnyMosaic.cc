@@ -17,7 +17,7 @@
 pyre::py::grid::AnyMosaic::AnyMosaic(
     packing_type packing, string_t cell, census_type residents, pane_maker_type pane,
     probe_type resident, probe_type valid, probe_type clean, mark_type validate, mark_type taint,
-    mark_type flush, reader_type read, writer_type write) :
+    mark_type flush, mark_type release, reader_type read, writer_type write) :
     // adopt the layout
     _packing { std::move(packing) },
     // the name of the cell type
@@ -34,6 +34,7 @@ pyre::py::grid::AnyMosaic::AnyMosaic(
     _validate { std::move(validate) },
     _taint { std::move(taint) },
     _flush { std::move(flush) },
+    _release { std::move(release) },
     // and the pair that moves a cell to and from python
     _read { std::move(read) },
     _write { std::move(write) }
@@ -258,6 +259,14 @@ pyre::py::grid::AnyMosaic::flush(const index_type & tile) const -> void
 {
     // fold the tile onto its page and mark it
     return _flush(_ordinal(tile));
+}
+
+// let go of a tile's page
+auto
+pyre::py::grid::AnyMosaic::release(const index_type & tile) const -> void
+{
+    // fold the tile onto its page and let it go
+    return _release(_ordinal(tile));
 }
 
 
