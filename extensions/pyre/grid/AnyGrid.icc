@@ -50,6 +50,8 @@ pyre::py::grid::describe(
     AnyGrid::writer_type write = [](void * p, const py::object & v) -> void {
         // interpret the address as a cell and assign the converted value
         *static_cast<cell_t *>(p) = v.cast<cell_t>();
+        // all done
+        return;
     };
 
     // assemble the type-erased grid over the block {owner} keeps alive

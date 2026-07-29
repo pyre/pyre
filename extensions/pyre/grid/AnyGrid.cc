@@ -252,6 +252,8 @@ pyre::py::grid::AnyGrid::setitem(const py::object & key, const py::object & valu
     auto * cell = static_cast<char *>(_data) + r.offset * static_cast<size_type>(_itemsize);
     // deposit the value
     _write(cell, value);
+    // all done
+    return;
 }
 
 

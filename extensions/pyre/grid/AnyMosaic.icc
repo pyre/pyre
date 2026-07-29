@@ -62,14 +62,20 @@ pyre::py::grid::anyMosaic(const gridT & mosaic, string_t cell) -> AnyMosaic
     AnyMosaic::mark_type validate = [storage](AnyMosaic::size_type ordinal) -> void {
         // the page now holds meaningful content
         storage.validate(ordinal);
+        // all done
+        return;
     };
     AnyMosaic::mark_type taint = [storage](AnyMosaic::size_type ordinal) -> void {
         // the page has diverged from the backing store
         storage.taint(ordinal);
+        // all done
+        return;
     };
     AnyMosaic::mark_type flush = [storage](AnyMosaic::size_type ordinal) -> void {
         // the page matches the backing store again
         storage.flush(ordinal);
+        // all done
+        return;
     };
 
     // name the cell type while it is still concrete, in its writable spelling
@@ -91,6 +97,8 @@ pyre::py::grid::anyMosaic(const gridT & mosaic, string_t cell) -> AnyMosaic
         (*owner)[index] = value.cast<cell_t>();
         // the write is a divergence this closure can see, so record it
         owner->storage().taint(ordinal);
+        // all done
+        return;
     };
 
     // assemble the type-erased mosaic
