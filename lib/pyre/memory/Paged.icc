@@ -218,6 +218,8 @@ pyre::memory::Paged<T, isConst>::validate(cell_count_type page) const -> void
     }
     // validity is monotonic: once meaningful, always meaningful
     record.valid = true;
+    // all done
+    return;
 }
 
 
@@ -241,6 +243,8 @@ pyre::memory::Paged<T, isConst>::taint(cell_count_type page) const -> void
     }
     // the page now diverges from the backing store
     record.dirty = true;
+    // all done
+    return;
 }
 
 
@@ -264,6 +268,8 @@ pyre::memory::Paged<T, isConst>::flush(cell_count_type page) const -> void
     }
     // the page matches the backing store again
     record.dirty = false;
+    // all done
+    return;
 }
 
 
