@@ -17,6 +17,7 @@ using diagonal_t = pyre::grid::diagonal_t<3>;
 using symmetric_t = pyre::grid::symmetric_t<3>;
 using chunked_t = pyre::grid::chunked_t<3>;
 using dynamic_t = pyre::grid::dynamic_canonical_t;
+using dynamic_chunked_t = pyre::grid::dynamic_chunked_t;
 // and a representative storage strategy
 using heap_t = pyre::memory::heap_t<pyre::memory::float64_t>;
 // along with the one that scatters its cells over separate pages
@@ -68,6 +69,15 @@ main()
     static_assert(concepts::InvertiblePacking<dynamic_t>);
     static_assert(concepts::StridedPacking<dynamic_t>);
     static_assert(!concepts::TiledPacking<dynamic_t>);
+
+    // the runtime rank tiled layout mirrors the compile time chunked one
+    static_assert(concepts::PackingStrategy<dynamic_chunked_t>);
+    // the padding of its edge tiles blocks the trip back from an offset to an index
+    static_assert(!concepts::InvertiblePacking<dynamic_chunked_t>);
+    // and there is no global stride vector
+    static_assert(!concepts::StridedPacking<dynamic_chunked_t>);
+    // but it deals in tiles, just like its static sibling
+    static_assert(concepts::TiledPacking<dynamic_chunked_t>);
 
     // a heap names and reaches its cells
     static_assert(concepts::StorageStrategy<heap_t>);
