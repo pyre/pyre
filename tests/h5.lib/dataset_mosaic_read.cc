@@ -70,13 +70,12 @@ main(int argc, char * argv[])
             "product", pyre::h5::datatype<cell_t>(), space, dcpl, pyre::h5::properties::DAPL());
         // room for the content
         std::vector<cell_t> content(100 * 100);
+        // the product's layout: it generates every index and places every cell
+        pyre::h5::packing_t layout { { 100, 100 } };
         // fill every cell with a value that encodes its own coordinates
-        for (std::ptrdiff_t row = 0; row < 100; ++row) {
-            // sweeping the columns
-            for (std::ptrdiff_t col = 0; col < 100; ++col) {
-                // in c order, matching the dataset layout
-                content[100 * row + col] = stamp(row, col);
-            }
+        for (const auto & idx : layout) {
+            // in c order, matching the dataset layout
+            content[layout.offset(idx)] = stamp(idx[0], idx[1]);
         }
         // deposit the whole product
         dataset.write(pyre::h5::datatype<cell_t>().id(), content.data());
@@ -116,12 +115,11 @@ main(int argc, char * argv[])
 
     // step 4: the algorithm reads the window through the mosaic, in the product's own
     // index space, with no idea that only four of the twelve chunks exist in memory
-    for (auto row = base[0]; row < base[0] + extent[0]; ++row) {
-        // sweeping the columns of the window
-        for (auto col = base[1]; col < base[1] + extent[1]; ++col) {
-            // every cell holds the stamp the producer wrote
-            assert((mosaic[{ row, col }] == stamp(row, col)));
-        }
+    // the window is itself a layout: a canonical box of the given {extent} anchored at
+    // {base}, and iterating a layout generates every index in its box
+    for (const auto & idx : pyre::h5::packing_t { extent, base }) {
+        // every cell holds the stamp the producer wrote
+        assert((mosaic[idx] == stamp(idx[0], idx[1])));
     }
     // in particular the far corner, which lives in a chunk that is clipped along both axes
     assert((mosaic[{ 94, 94 }] == stamp(94, 94)));
