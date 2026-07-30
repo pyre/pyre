@@ -32,14 +32,14 @@ def dependencies(**kwds):
 
 def requirements(**kwds):
     """
-    Build a trait descriptor suitable for describing the list of package categories on which
-    applications depend
+    Build a trait descriptor suitable for describing the list of package requirements on
+    which applications depend
     """
-    # get the trait descriptors
-    from ..traits import properties
+    # get the descriptor
+    from .Requirements import Requirements
 
-    # {requirements} is a list of package category names
-    return properties.list(schema=properties.str(), **kwds)
+    # {requirements} is a list of structured requirements, coerced from text specifications
+    return Requirements(**kwds)
 
 
 # access to the index of external packages
