@@ -140,6 +140,10 @@ public:
     // let go of a page, resetting its state; its storage is returned to the system once every
     // shared handle lets go
     inline auto release(cell_count_type) const -> void;
+    // materialize a page and scribble a recognizable pattern over it, so that cells the
+    // client never writes are easy to spot; scaffolding only: the state bits are untouched
+    inline auto poison(cell_count_type) const -> pointer
+        requires(!isConst);
     // the address of a resident page
     inline auto page(cell_count_type) const -> pointer;
     // a borrowed view of a resident page, for wrapping in tile-shaped grids

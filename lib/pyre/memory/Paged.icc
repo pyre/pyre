@@ -319,6 +319,23 @@ pyre::memory::Paged<T, isConst>::release(cell_count_type page) const -> void
 }
 
 
+// materialize a page and scribble a recognizable pattern over it
+template <class T, bool isConst>
+auto
+pyre::memory::Paged<T, isConst>::poison(cell_count_type page) const -> pointer
+    requires(!isConst)
+{
+    // materialize the page, in case this is its first use
+    auto data = reside(page);
+    // scribble the pattern over every byte, so unwritten cells stand out in any cell type;
+    // the byte is a nod to the venerable {0xdeadbeef}
+    std::memset(data, 0xdb, pageCells() * sizeof(value_type));
+    // the content is scaffolding, not a deposit, so the state bits stay untouched;
+    // hand out the address
+    return data;
+}
+
+
 // the address of a resident page
 template <class T, bool isConst>
 auto
