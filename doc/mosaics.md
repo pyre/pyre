@@ -8,9 +8,9 @@
 
 > **Status:** working document. Seeded 2026-07-30, tracking the `mosaic` branch as the
 > interface takes shape. Organized around use cases rather than classes: start from what
-> you are trying to do, and the document leads you to the pieces you need. The read path
-> is implemented and exercised; the write path is under design and covered here only to
-> the extent that it exists.
+> you are trying to do, and the document leads you to the pieces you need. The C++ read
+> and write paths are implemented and exercised; the python bindings for the h5-backed
+> mosaic are pending.
 
 ## Choosing your grid
 
@@ -26,7 +26,7 @@ pieces individually; you start from your situation:
 | a window of a large chunked HDF5 product | a mosaic | [use case 4](#uc4) |
 | shrinking the memory footprint of a long workflow | page release | [use case 5](#uc5) |
 | handing cells to numpy without copying | the python bindings | [use case 6](#uc6) |
-| writing a chunked product | under design | [the write side](#writing) |
+| writing or updating a chunked HDF5 product | a mosaic and `flush` | [use case 7](#uc7) |
 
 Two decisions cut across all of them:
 
@@ -235,6 +235,7 @@ The rules:
 | `taint` | declare that a page diverges from its backing store |
 | `flush` | declare that a page matches its backing store again |
 | `release` | forget a page entirely; it becomes indistinguishable from one never touched |
+| `poison` | materialize a page and scribble a recognizable pattern, so unwritten cells stand out |
 
 Releasing a page with unsaved content (`dirty`) draws a firewall: flush first. A
 released tile can be filled again — it comes back as a fresh page. Anyone holding a
@@ -279,17 +280,80 @@ The python mosaic is currently backed by anonymous memory; the h5-backed mosaic 
 `dataset.mosaic()` from python — arrives with the binding pass that follows the write
 side. Exhibit: `tests/pyre.ext/grid/mosaic.py`.
 
-<a name="writing"></a>
-## The write side
+<a name="uc7"></a>
+## 7. Writing a chunked product
 
-Under design. What exists today: whole-extent writes through
-`DataSet::write(memtype, buffer)` and the `writeGrid` helpers, which is how the
-exhibits produce their scratch products. The planned shape is the mirror of the read:
-a producer assembles a mosaic, deposits content through its panes — tainting as it
-goes — and a `flush` counterpart of `fill` pushes dirty pages back through the same
-clamped, two-space selections. The page-state machinery (`taint`/`clean`/`flush`) was
-built for exactly this and is already in place; what remains is the `DataSet` interface
-and the policy question of who triggers the flush.
+The mirror of use case 4. A producer assembles a mosaic over the dataset it is filling,
+deposits content through panes — declaring as it goes — and pushes the divergence back
+into the file:
+
+```c++
+// create the product: schema first
+auto dataset = file.createDataSet("product", type, space, dcpl, dapl);
+// the producer's mosaic, over the dataset's own chunking
+auto product = dataset.mosaic<double>();
+const auto & tiles = product.packing();
+// deposit, chunk by chunk
+for (const auto & t : product.tilesOverlapping(tiles.origin(), tiles.shape())) {
+    // materialize the page and deposit through its pane
+    auto ordinal = tiles.tileOrdinal(t);
+    product.storage().reside(ordinal);
+    auto pane = product.pane(t);
+    // ... write cells through {pane}, in product coordinates ...
+    // declare the deposit and its divergence from the file
+    product.storage().validate(ordinal);
+    product.storage().taint(ordinal);
+}
+// make the file agree
+dataset.flush(product);
+```
+
+### What `flush` promises
+
+- `flush(mosaic)` means "make the file agree with me": it pushes pages that are
+  resident *and* have diverged, and skips everything else — so it is cheap to call
+  liberally, and calling it twice moves nothing the second time.
+- `flush(mosaic, tile)` is the per-tile command: unconditional, like its mirror `fill`,
+  except that a tile whose page was never materialized is refused — there is nothing
+  to push.
+- Both mark the pushed pages clean, and both clamp edge chunks against the product's
+  extent: page padding never reaches the file.
+- Declaring divergence is the producer's job. The library cannot see writes through a
+  pane or a C++ reference, so `taint` is explicit; a producer that forgets gets a
+  silent no-op from the wholesale flush. (From python, `m[i, j] = v` declares for you;
+  bulk writes through a pane's buffer do not.)
+- Nothing flushes implicitly. There is no flush-on-destruction: destructors cannot
+  report i/o errors, and implicit persistence is how files get silently corrupted.
+
+### Updating in place: read-modify-write
+
+Partial updates compose from pieces you already have — `fill` the chunk, modify,
+`taint`, `flush` — and only the touched chunk moves in either direction:
+
+```c++
+auto mosaic = dataset.mosaic<double>();
+// the chunk that holds the cell
+auto t = mosaic.packing().tileOf(probe);
+// pull it, change it, declare, push
+dataset.fill(mosaic, t);
+mosaic[probe] = value;
+mosaic.storage().taint(mosaic.packing().tileOrdinal(t));
+dataset.flush(mosaic);
+```
+
+### Uninitialized cells: caveat emptor
+
+Pages are born uninitialized, like any fresh allocation. Flushing a partially written
+page pushes whatever the unwritten cells happen to hold. The correct idioms: cover the
+whole tile, or `fill` first and modify. When hunting a suspected partial write,
+`poison` materializes the page with a recognizable pattern — every byte `0xdb`, a nod
+to the venerable `0xdeadbeef` — so unwritten cells stand out in the product instead of
+masquerading as data:
+
+```c++
+// materialize and scribble; anything you forget to write is easy to spot
+mosaic.storage().poison(ordinal);
+```
 
 ## The exhibits
 
@@ -298,6 +362,7 @@ The test drivers double as runnable, narrated documentation:
 | exhibit | demonstrates |
 |---|---|
 | `tests/h5.lib/dataset_mosaic_read.cc` | the out-of-core read, end to end |
+| `tests/h5.lib/dataset_mosaic_write.cc` | the write side: produce, verify, update in place, poison |
 | `tests/h5.lib/dataset_tiling.cc` | a dataset describing itself in grid vocabulary |
 | `tests/pyre.lib/grid/mosaic_window.cc` | window mosaics at the grid level |
 | `tests/pyre.lib/grid/mosaic_pane.cc` | zero-copy panes |
