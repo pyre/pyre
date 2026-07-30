@@ -23,8 +23,10 @@
 //   1. ask the dataset for a mosaic assembled over its own chunking; this is free: the
 //      description is pure arithmetic, and nothing is resident
 //   2. ask the mosaic which chunks the algorithm's window touches
-//   3. for each touched chunk: materialize its page and read the chunk into it
+//   3. {fill} each touched chunk, interleaving work with i/o at the per-tile seam
 //   4. the algorithm reads the window through the mosaic, unaware it is out-of-core
+// and a coda for algorithms that cannot work on partial results: declare the smallest
+// mosaic that covers the window, and {fill} all of it in one call
 
 // the cell type of the product; this is the one thing the recipe fixes at compile time,
 // since the code that receives the data must name the type in order to allocate for it
@@ -84,15 +86,11 @@ main(int argc, char * argv[])
     pyre::h5::File file { uri, H5F_ACC_RDONLY, {}, {} };
     // get the dataset
     auto dataset = file.openDataSet("product");
-    // the memory datatype of the cells we are about to receive
-    auto memtype = pyre::h5::datatype<cell_t>();
 
     // step 1: ask the dataset for a mosaic assembled over its own chunking
     // no matter how large the product, this costs a page table and nothing more: the
     // layout is pure arithmetic, and no page is resident until a chunk is touched
     const auto mosaic = dataset.mosaic<cell_t>();
-    // the mosaic's packing is the product diced into its chunks; it narrates the loop below
-    const auto & tiling = mosaic.packing();
 
     // step 2: find the working set
     // the algorithm's window, in the product's own index space; it straddles chunk
@@ -103,54 +101,12 @@ main(int argc, char * argv[])
     auto touched = mosaic.tilesOverlapping(base, extent);
 
     // step 3: bring in the working set, chunk by chunk
+    // the per-tile call is the seam for algorithms that can process partial results: work
+    // interleaves with i/o, one chunk at a time
     for (const auto & t : touched) {
-        // the page that backs this chunk
-        auto ordinal = tiling.tileOrdinal(t);
-        // materialize it; this is the only allocation the read performs, and the mosaic's
-        // own storage accessor is all it takes, since page management is a const operation
-        auto page = mosaic.storage().reside(ordinal);
-
-        // the chunk's own layout, anchored where the chunk lives in the product; an edge
-        // chunk keeps its full extent here, overhang included, matching its page exactly
-        auto pane = tiling.tile(t);
-        // but the file holds cells only inside the product, so clamp the chunk's box
-        // against the extent, axis by axis; interior chunks pass through unclipped
-        // room for the clamped corner and extent, and for the landing spot within the page
-        pyre::h5::index_t fileOrigin(tiling.rank());
-        pyre::h5::shape_t fileShape(tiling.rank());
-        pyre::h5::index_t pageOrigin(tiling.rank());
-        // go through the axes
-        for (std::size_t axis = 0; axis < tiling.rank(); ++axis) {
-            // the chunk begins at its anchor
-            auto begin = pane.origin()[axis];
-            // and would end a full chunk later, but never past the edge of the product
-            auto end = std::min(begin + pane.shape()[axis], tiling.shape()[axis]);
-            // the file block starts at the anchor
-            // NOTE: ergonomics: the {pyre::grid} vocabulary is signed while the hdf5 one
-            // is unsigned, so every crossing is a cast; the library should own this
-            fileOrigin[axis] = static_cast<hsize_t>(begin);
-            // and spans the clamped extent
-            fileShape[axis] = static_cast<hsize_t>(end - begin);
-            // the block lands at the head corner of the page
-            pageOrigin[axis] = 0;
-        }
-
-        // describe the source: the clamped block of the product
-        auto filespace = dataset.dataspace();
-        // as a hyperslab selection
-        filespace.slab(fileOrigin, fileShape);
-        // describe the destination: the same block within a page-shaped extent, so that a
-        // clipped chunk lands at the right offsets and the page padding is skipped
-        // NOTE: ergonomics: this two-space dance is the heart of the read and wants to be
-        // a single call: fill the pane of tile {t} from the dataset
-        auto memspace =
-            pyre::h5::DataSpace { pyre::h5::shape_t(pane.shape().begin(), pane.shape().end()) };
-        // select the landing spot
-        memspace.slab(pageOrigin, fileShape);
-        // move the cells: the chunk flows from the file straight into its page
-        dataset.read(memtype.id(), page, memspace.id(), filespace.id());
-        // and record that the page now holds meaningful content
-        mosaic.storage().validate(ordinal);
+        // pull the chunk into its page: {fill} materializes the page, clamps the chunk
+        // against the edge of the product, lands the cells, and records the deposit
+        dataset.fill(mosaic, t);
     }
     // the resident footprint is the working set, nothing more
     assert((mosaic.storage().residents() == touched.cells()));
@@ -169,6 +125,18 @@ main(int argc, char * argv[])
     }
     // in particular the far corner, which lives in a chunk that is clipped along both axes
     assert((mosaic[{ 94, 94 }] == stamp(94, 94)));
+
+    // the coda: an algorithm that cannot work on partial results declares the smallest
+    // mosaic that covers its window and asks for all of it; no loop, no ceremony
+    auto window = dataset.mosaic<cell_t>(base, extent);
+    // make the whole window resident
+    dataset.fill(window);
+    // the window mosaic holds exactly the touched chunks
+    assert((window.storage().residents() == touched.cells()));
+    // and addresses the product in its own index space: the near corner of the window
+    assert((window[{ 70, 70 }] == stamp(70, 70)));
+    // and the far one, out in the doubly clipped chunk
+    assert((window[{ 94, 94 }] == stamp(94, 94)));
 
     // clean up the scratch product
     std::remove(uri);
