@@ -85,6 +85,70 @@ pyre::h5::DataSet::packing() const -> packing_t
 }
 
 
+// the paired selections that move the chunk at {tile} of a {layout} between my cells and
+// its page
+auto
+pyre::h5::DataSet::_tileSpaces(
+    const tiling_t & layout, const tiling_t::index_type & tile, DataSpace & filespace) const
+    -> std::optional<DataSpace>
+{
+    // my extent, in grid vocabulary
+    auto extent = filespace.packing().shape();
+    // the mosaic addresses a region of me in my own index space, so the ranks must agree
+    if (layout.rank() != extent.size()) {
+        // anything else is an application error; make a channel
+        auto channel = pyre::journal::error_t("pyre.h5.dataset");
+        // complain
+        channel << pyre::journal::at() << "moving a mosaic of rank " << layout.rank()
+                << " through '" << name() << "', a dataset of rank " << extent.size()
+                << pyre::journal::endl;
+        // and bail
+        return std::nullopt;
+    }
+
+    // the chunk's own layout, anchored where the chunk lives in the mosaic's index space;
+    // an edge chunk keeps its full size, and whatever overhangs my extent is page padding
+    auto chunk = layout.tile(tile);
+    // room for the clamped file block and for its landing spot within the page
+    index_t fileOrigin(layout.rank());
+    shape_t fileShape(layout.rank());
+    index_t pageOrigin(layout.rank());
+    // clamp the chunk against my extent, axis by axis; interior chunks pass through whole
+    for (std::size_t axis = 0; axis < layout.rank(); ++axis) {
+        // the block begins at the chunk's anchor, but never before my origin
+        auto begin = std::max(chunk.origin()[axis], static_cast<tiling_t::difference_type>(0));
+        // and ends a full chunk later, but never past my edge
+        auto end = std::min(chunk.origin()[axis] + chunk.shape()[axis], extent[axis]);
+        // a chunk with nothing inside me holds no cells to move
+        if (begin >= end) {
+            // so this is an application error; make a channel
+            auto channel = pyre::journal::error_t("pyre.h5.dataset");
+            // complain
+            channel << pyre::journal::at() << "moving a tile that lies outside the extent of '"
+                    << name() << "'" << pyre::journal::endl;
+            // and bail
+            return std::nullopt;
+        }
+        // the file block starts at the clamped corner, now on the unsigned side
+        fileOrigin[axis] = static_cast<hsize_t>(begin);
+        // and spans the clamped extent
+        fileShape[axis] = static_cast<hsize_t>(end - begin);
+        // the block lands at the matching offset within the page
+        pageOrigin[axis] = static_cast<hsize_t>(begin - chunk.origin()[axis]);
+    }
+
+    // select the file side: the clamped block of my cells
+    filespace.slab(fileOrigin, fileShape);
+    // describe the memory side: the same block within a page-shaped extent, so that a
+    // clipped chunk sits at the right offsets and the page padding is skipped
+    auto memspace = DataSpace { shape_t(chunk.shape().begin(), chunk.shape().end()) };
+    // by selecting the landing spot
+    memspace.slab(pageOrigin, fileShape);
+    // hand off the memory space, its selection paired with the one on {filespace}
+    return memspace;
+}
+
+
 // my extent diced into my chunks: the tiled layout a mosaic is assembled over
 auto
 pyre::h5::DataSet::tiling() const -> tiling_t

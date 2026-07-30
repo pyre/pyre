@@ -13,6 +13,7 @@
 #include <array>
 #include <complex>
 #include <cstdint>
+#include <optional>
 #include <tuple>
 #include <utility>
 #include <vector>

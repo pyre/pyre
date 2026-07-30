@@ -76,6 +76,15 @@ public:
     // algorithm that can process partial results interleaves its work with the i/o
     template <class cellT>
     auto fill(const mosaic_t<cellT> & mosaic, const tiling_t::index_type & tile) const -> void;
+
+    // make me agree with a {mosaic}: push every page that is resident and has diverged back
+    // into the file; pages the producer never touched, or that already match, are skipped
+    template <class cellT>
+    auto flush(const mosaic_t<cellT> & mosaic) const -> void;
+    // push the chunk at {tile} of a {mosaic} back into the file, clamped against my extent,
+    // and record that the page matches me again; the tile's page must be resident
+    template <class cellT>
+    auto flush(const mosaic_t<cellT> & mosaic, const tiling_t::index_type & tile) const -> void;
     // my on-disk size, in bytes
     auto storageSize() const -> hsize_t;
     // my in-memory size, in bytes
@@ -111,6 +120,13 @@ private:
     // assemble a mosaic over a tiled {layout}: one demand-materialized page per tile
     template <class cellT>
     auto _assemble(const tiling_t & layout) const -> mosaic_t<cellT>;
+    // the paired selections that move the chunk at {tile} of a {layout} between my cells
+    // and its page: select the clamped block on {filespace} and hand back the matching
+    // page-shaped memory space; an empty answer means the geometry is unusable, and the
+    // complaint has already been lodged
+    auto _tileSpaces(
+        const tiling_t & layout, const tiling_t::index_type & tile, DataSpace & filespace) const
+        -> std::optional<DataSpace>;
 };
 
 
