@@ -93,8 +93,9 @@ pyre::h5::DataSet::tiling() const -> tiling_t
     auto box = packing().shape();
     // only chunked datasets are tiled
     if (dcpl().layout() != H5D_CHUNKED) {
-        // so asking anything else for its tiling is a bug in the caller
-        auto channel = pyre::journal::firewall_t("pyre.h5.dataset");
+        // chunkiness is a property of the data, which the caller may not control, so this
+        // is an application error, not a bug; make a channel
+        auto channel = pyre::journal::error_t("pyre.h5.dataset");
         // complain
         channel << pyre::journal::at() << "asking for the tiling of '" << name()
                 << "', which is not chunked" << pyre::journal::endl;
