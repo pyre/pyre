@@ -170,6 +170,22 @@ The window mosaic holds one page per touched chunk — its footprint is your dec
 working set, nothing more — and it addresses the product's own index coordinates, so
 the algorithm is written as if the whole product were in memory.
 
+Sweeping the window is a single range-based loop: the window is itself a layout — a
+canonical box of `extent` anchored at `base` — and iterating a layout generates every
+index in its box, in c order:
+
+```c++
+// visit every cell of the window
+for (const auto & idx : pyre::h5::packing_t { extent, base }) {
+    // in the product's own index space
+    auto value = window[idx];
+}
+```
+
+Iterate the *window's* box, not the mosaic: iterating a grid visits every cell of its
+whole extent, resident or not, which is exactly what an out-of-core algorithm must
+avoid.
+
 ### 4c. The whole product
 
 For a product that fits in memory, the same two calls with the no-argument factory
