@@ -121,6 +121,15 @@ public:
             { s.view(p.tileOrdinal(t)) };
         };
 
+    // the tiles my packing dices the box into that a window with the given anchor and
+    // extent touches: the working set of an algorithm whose window that is; it exists only
+    // when my packing deals in tiles
+    [[nodiscard]] constexpr auto tilesOverlapping(
+        const index_type & base, const shape_type & extent) const
+        requires requires(const packing_type p, const index_type & b, const shape_type & s) {
+            { pyre::grid::tilesOverlapping(p, b, s) };
+        };
+
     // interface: iteration
     // visiting my cells in the order my packing prescribes
     // there is only one cursor type: whether a caller may write through it was settled by my

@@ -146,6 +146,19 @@ pyre::grid::Grid<P, S>::pane(const index_type & tile) const
 }
 
 
+// the tiles a window touches
+template <pyre::grid::concepts::PackingStrategy P, pyre::grid::concepts::StorageStrategy S>
+[[nodiscard]] constexpr auto
+pyre::grid::Grid<P, S>::tilesOverlapping(const index_type & base, const shape_type & extent) const
+    requires requires(const packing_type p, const index_type & b, const shape_type & s) {
+        { pyre::grid::tilesOverlapping(p, b, s) };
+    }
+{
+    // my packing knows how it dices the box, so it computes the working set
+    return pyre::grid::tilesOverlapping(_packing, base, extent);
+}
+
+
 // interface - iteration
 
 // a cursor parked on my first cell

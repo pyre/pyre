@@ -63,8 +63,9 @@ main(int argc, char * argv[])
     // and assemble the window
     const mosaic_t window { packing, store };
 
-    // bring in the working set, the way a reader pulling chunks from a file would
-    for (auto t : pyre::grid::tilesOverlapping(packing, packing.origin(), packing.shape())) {
+    // bring in the working set, the way a reader pulling chunks from a file would; the
+    // window mosaic computes it, since its own packing is what dices the box
+    for (auto t : window.tilesOverlapping(packing.origin(), packing.shape())) {
         // page by page
         auto data = store.reside(packing.tileOrdinal(t));
         // fill each one with something recognizable
