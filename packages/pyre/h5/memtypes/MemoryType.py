@@ -75,12 +75,21 @@ class MemoryType:
         # allocate the buffer and return it
         return allocator(cells=cells)
 
+    @property
+    def cell(self) -> str:
+        """
+        The name of my cell type in the grid vocabulary, or {None} if there is no grid
+        support for it
+        """
+        # look it up
+        return self._cells.get(self.tag)
+
     def grid(self, shape):
         """
         Allocate a grid on the heap of the given {shape}, over a fresh block of my cell type
         """
         # look up the cell type the grid factory understands
-        cell = self._cells.get(self.tag)
+        cell = self.cell
         # if there is no grid support for my cell type
         if cell is None:
             # make a channel
