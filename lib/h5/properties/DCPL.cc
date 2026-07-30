@@ -7,6 +7,8 @@
 
 // my declarations
 #include "DCPL.h"
+// the fill value methods hand datatypes to the library by id
+#include "../types/Datatype.h"
 
 
 // make a fresh dataset creation property list
@@ -115,6 +117,43 @@ pyre::h5::properties::DCPL::setChunk(const shape_t & shape) -> void
 {
     // hand the rank and extents to the library
     H5Pset_chunk(id(), shape.size(), shape.data());
+    // all done
+    return;
+}
+
+
+// whether a fill value is defined, and how
+auto
+pyre::h5::properties::DCPL::fillValueStatus() const -> H5D_fill_value_t
+{
+    // make room for the answer
+    H5D_fill_value_t status;
+    // ask the library
+    H5Pfill_value_defined(id(), &status);
+    // and hand it off
+    return status;
+}
+
+
+// the fill value, read into {value} as the given {type}
+auto
+pyre::h5::properties::DCPL::fillValue(const pyre::h5::types::Datatype & type, void * value) const
+    -> void
+{
+    // ask the library, which converts to the requested {type}
+    H5Pget_fill_value(id(), type.id(), value);
+    // all done
+    return;
+}
+
+
+// set the fill value, read from {value} as the given {type}
+auto
+pyre::h5::properties::DCPL::setFillValue(const pyre::h5::types::Datatype & type, const void * value)
+    -> void
+{
+    // hand the value to the library
+    H5Pset_fill_value(id(), type.id(), value);
     // all done
     return;
 }

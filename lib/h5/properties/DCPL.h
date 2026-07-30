@@ -53,6 +53,14 @@ public:
     // set the fill value writing time
     auto setFillTime(H5D_fill_time_t timing) -> void;
     // the data layout strategy
+    // whether a fill value is defined, and how
+    auto fillValueStatus() const -> H5D_fill_value_t;
+    // the fill value, read into {value} as the given {type}
+    auto fillValue(const pyre::h5::types::Datatype & type, void * value) const -> void;
+    // set the fill value, read from {value} as the given {type}; hdf5 converts it to the
+    // dataset's on-disk type at creation
+    auto setFillValue(const pyre::h5::types::Datatype & type, const void * value) -> void;
+
     auto layout() const -> H5D_layout_t;
     // set the data layout strategy
     auto setLayout(H5D_layout_t layout) -> void;

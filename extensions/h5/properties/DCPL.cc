@@ -86,6 +86,83 @@ pyre::h5::py::properties::dcpl(py::module & m)
         // the docstring
         "set the chunk {shape}");
 
+    // set the fill value
+    cls.def(
+        // the name
+        "setFillValue",
+        // the implementation
+        [](DCPL & self, const py::object & value) -> void {
+            // integers travel as 64-bit
+            if (py::isinstance<py::int_>(value)) {
+                // convert
+                auto v = value.cast<std::int64_t>();
+                // and deposit; hdf5 converts to the dataset's on-disk type at creation
+                self.setFillValue(pyre::h5::datatype<std::int64_t>(), &v);
+                // all done
+                return;
+            }
+            // floats as doubles
+            if (py::isinstance<py::float_>(value)) {
+                // convert
+                auto v = value.cast<double>();
+                // and deposit
+                self.setFillValue(pyre::h5::datatype<double>(), &v);
+                // all done
+                return;
+            }
+            // anything else must be a complex number; the cast raises if it isn't
+            auto v = value.cast<std::complex<double>>();
+            // deposit
+            self.setFillValue(pyre::h5::datatype<std::complex<double>>(), &v);
+            // all done
+            return;
+        },
+        // the signature
+        "value"_a,
+        // the docstring
+        "set the fill value; hdf5 converts it to the dataset's on-disk type at creation");
+
+    // get the fill value
+    cls.def(
+        // the name
+        "fillValue",
+        // the implementation
+        [](const DCPL & self, const string_t & cell) -> py::object {
+            // as a 64-bit integer
+            if (cell == "int64") {
+                // make room
+                std::int64_t v = 0;
+                // read it
+                self.fillValue(pyre::h5::datatype<std::int64_t>(), &v);
+                // and lift it into python
+                return py::cast(v);
+            }
+            // as a double
+            if (cell == "float64") {
+                // make room
+                double v = 0;
+                // read it
+                self.fillValue(pyre::h5::datatype<double>(), &v);
+                // and lift it into python
+                return py::cast(v);
+            }
+            // as a complex double
+            if (cell == "complex128") {
+                // make room
+                std::complex<double> v = 0;
+                // read it
+                self.fillValue(pyre::h5::datatype<std::complex<double>>(), &v);
+                // and lift it into python
+                return py::cast(v);
+            }
+            // anything else is a caller mistake
+            throw py::value_error("unsupported fill value cell type '" + cell + "'");
+        },
+        // the signature
+        "cell"_a = "float64",
+        // the docstring
+        "get the fill value, interpreted as the given {cell} type");
+
     // get the fill value writing time
     cls.def(
         // the name
