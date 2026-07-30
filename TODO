@@ -266,6 +266,12 @@
 
   - not yet started:
 
+    - re-evaluate the {RTLD_GLOBAL} tweak in packages/mpi/__init__.py: it works around
+      openmpi plugins unresolved against libmpi, last checked in 2012 against openmpi
+      1.4.3; it is linux-only, flips the dlopen flags for every subsequent extension
+      import in the process, and interacts with the cross-module type isolation the
+      pybind extensions now assume; check whether modern openmpi still needs it
+
     - cuda pybind11 migration: extensions/cuda is the last raw-CPython/capsule
       extension; bindings-only convert, but needs a Linux CUDA container to
       build and test (no CUDA on macOS). sequence: clean up etc/docker, build a
