@@ -51,8 +51,9 @@ public:
     auto dataspace() const -> DataSpace;
     // my extent as a runtime-rank canonical layout, in the {pyre::grid} vocabulary
     auto packing() const -> packing_t;
-    // my extent diced into my chunks: the tiled layout a mosaic is assembled over; only
-    // chunked datasets have one
+    // my extent diced into my chunks: the tiled layout a mosaic is assembled over; a
+    // dataset that is not chunked is a single slab, described as one tile covering its
+    // whole extent
     auto tiling() const -> tiling_t;
     // an out-of-core mosaic assembled over my own chunking: my tiled layout married to a
     // store with one demand-materialized page per chunk; describing me costs a page table

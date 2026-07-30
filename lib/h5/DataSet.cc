@@ -155,16 +155,11 @@ pyre::h5::DataSet::tiling() const -> tiling_t
 {
     // my extent, already in grid vocabulary
     auto box = packing().shape();
-    // only chunked datasets are tiled
+    // a dataset that is not chunked — contiguous, compact — is stored as a single slab, so
+    // its tiling is one tile that covers the whole box; this keeps {tiling} total, and lets
+    // readers assemble mosaics over any dataset they encounter
     if (dcpl().layout() != H5D_CHUNKED) {
-        // chunkiness is a property of the data, which the caller may not control, so this
-        // is an application error, not a bug; make a channel
-        auto channel = pyre::journal::error_t("pyre.h5.dataset");
-        // complain
-        channel << pyre::journal::at() << "asking for the tiling of '" << name()
-                << "', which is not chunked" << pyre::journal::endl;
-        // unreachable, unless the user has marked this error as non-fatal;
-        // recover coherently by treating my whole extent as a single tile
+        // one tile, the box itself
         return tiling_t(box, box);
     }
     // get my chunk shape
