@@ -9,6 +9,8 @@
 #include "external.h"
 // namespace setup
 #include "forward.h"
+// the out-of-core mosaic machinery
+#include "mosaics.h"
 
 // helpers
 namespace pyre::h5::py {
@@ -532,6 +534,9 @@ pyre::h5::py::dataset(py::module & m)
         "data"_a, "memtype"_a, "origin"_a, "shape"_a,
         // the docstring
         "write {data} to the tile @{origin}+{shape}");
+
+    // the out-of-core mosaic factories
+    bindMosaics(cls);
 
     // all done
     return;

@@ -37,6 +37,8 @@ PYBIND11_MODULE(h5, m)
     pyre::h5::py::dataset(m);
     pyre::h5::py::group(m);
     pyre::h5::py::file(m);
+    // the module-local flavors of the type-erased grid and mosaic
+    pyre::h5::py::mosaics(m);
 
     // all done
     return;

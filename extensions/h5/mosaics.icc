@@ -1,0 +1,154 @@
+// -*- C++ -*-
+// -*- coding: utf-8 -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2026 all rights reserved
+
+// code guard
+#pragma once
+
+
+// choose a cell type from its pyre memory cell name
+template <class F>
+inline auto
+pyre::h5::py::dispatchCell(const string_t & cell, F && f)
+{
+    // signed integers
+    if (cell == "int8")
+        return f.template operator()<pyre::memory::int8_t>();
+    if (cell == "int16")
+        return f.template operator()<pyre::memory::int16_t>();
+    if (cell == "int32")
+        return f.template operator()<pyre::memory::int32_t>();
+    if (cell == "int64")
+        return f.template operator()<pyre::memory::int64_t>();
+    // unsigned integers
+    if (cell == "uint8")
+        return f.template operator()<pyre::memory::uint8_t>();
+    if (cell == "uint16")
+        return f.template operator()<pyre::memory::uint16_t>();
+    if (cell == "uint32")
+        return f.template operator()<pyre::memory::uint32_t>();
+    if (cell == "uint64")
+        return f.template operator()<pyre::memory::uint64_t>();
+    // floating point
+    if (cell == "float32")
+        return f.template operator()<pyre::memory::float32_t>();
+    if (cell == "float64")
+        return f.template operator()<pyre::memory::float64_t>();
+    // complex
+    if (cell == "complex64")
+        return f.template operator()<pyre::memory::complex64_t>();
+    if (cell == "complex128")
+        return f.template operator()<pyre::memory::complex128_t>();
+
+    // anything else is a caller mistake
+    throw ::pybind11::value_error("unsupported mosaic cell type '" + cell + "'");
+}
+
+
+// build an out-of-core mosaic over a dataset's own chunking
+template <class cellT>
+inline auto
+pyre::h5::py::makeMosaic(const DataSet & dataset, string_t cell) -> anymosaic_t
+{
+    // ask the dataset for the concrete mosaic
+    auto mosaic = dataset.mosaic<cellT>();
+    // erase it; the copy inside shares pages with the ones the closures below capture
+    auto any = pyre::py::grid::anyMosaic(mosaic, std::move(cell));
+    // wire the backing store; the dataset handle is reference counted, so the closures keep
+    // the file open for as long as python holds the mosaic
+    any.connect(
+        // pull a chunk from the file into its page
+        [dataset, mosaic](const anymosaic_t::index_type & tile) -> void {
+            // delegate to the dataset
+            dataset.fill(mosaic, tile);
+            // all done
+            return;
+        },
+        // push a chunk back into the file
+        [dataset, mosaic](const anymosaic_t::index_type & tile) -> void {
+            // delegate to the dataset
+            dataset.flush(mosaic, tile);
+            // all done
+            return;
+        });
+    // hand it off
+    return any;
+}
+
+
+// the window flavor
+template <class cellT>
+inline auto
+pyre::h5::py::makeMosaic(
+    const DataSet & dataset, string_t cell, const anymosaic_t::index_type & base,
+    const anymosaic_t::shape_type & extent) -> anymosaic_t
+{
+    // ask the dataset for the smallest mosaic that covers the window
+    auto mosaic = dataset.mosaic<cellT>(base, extent);
+    // erase it
+    auto any = pyre::py::grid::anyMosaic(mosaic, std::move(cell));
+    // and wire the backing store, exactly as in the full flavor
+    any.connect(
+        // pull a chunk from the file into its page
+        [dataset, mosaic](const anymosaic_t::index_type & tile) -> void {
+            // delegate to the dataset
+            dataset.fill(mosaic, tile);
+            // all done
+            return;
+        },
+        // push a chunk back into the file
+        [dataset, mosaic](const anymosaic_t::index_type & tile) -> void {
+            // delegate to the dataset
+            dataset.flush(mosaic, tile);
+            // all done
+            return;
+        });
+    // hand it off
+    return any;
+}
+
+
+// register the {mosaic} factories with the dataset class
+inline auto
+pyre::h5::py::bindMosaics(py::class_<DataSet> & cls) -> void
+{
+    // the full flavor: the whole extent over the dataset's own chunking
+    cls.def(
+        // the name
+        "mosaic",
+        // the implementation
+        [](const DataSet & self, const string_t & cell) -> anymosaic_t {
+            // dispatch on the cell type
+            return dispatchCell(cell, [&]<class T>() { return makeMosaic<T>(self, cell); });
+        },
+        // the signature
+        "cell"_a,
+        // the docstring
+        "an out-of-core mosaic over my own chunking, of the given {cell} type; nothing is "
+        "resident until a chunk is filled");
+
+    // the window flavor: the smallest mosaic that covers the window
+    cls.def(
+        // the name
+        "mosaic",
+        // the implementation
+        [](const DataSet & self, const string_t & cell, const anymosaic_t::index_type & base,
+           const anymosaic_t::shape_type & shape) -> anymosaic_t {
+            // dispatch on the cell type
+            return dispatchCell(
+                cell, [&]<class T>() { return makeMosaic<T>(self, cell, base, shape); });
+        },
+        // the signature
+        "cell"_a, "base"_a, "shape"_a,
+        // the docstring
+        "the smallest mosaic of the given {cell} type that covers the window at {base} with "
+        "the given {shape}");
+
+    // all done
+    return;
+}
+
+
+// end of file
