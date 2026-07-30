@@ -68,17 +68,30 @@ main(int argc, char * argv[])
         // make the dataset
         auto dataset = file.createDataSet(
             "product", pyre::h5::datatype<cell_t>(), space, dcpl, pyre::h5::properties::DAPL());
-        // room for the content
-        std::vector<cell_t> content(100 * 100);
-        // the product's layout: it generates every index and places every cell
-        pyre::h5::packing_t layout { { 100, 100 } };
-        // fill every cell with a value that encodes its own coordinates
-        for (const auto & idx : layout) {
-            // in c order, matching the dataset layout
-            content[layout.offset(idx)] = stamp(idx[0], idx[1]);
+        // the producer writes through a mosaic of its own: the mirror of the recipe below
+        auto product = dataset.mosaic<cell_t>();
+        // its tiled layout
+        const auto & tiles = product.packing();
+        // deposit chunk by chunk
+        for (const auto & t : product.tilesOverlapping(tiles.origin(), tiles.shape())) {
+            // the page that backs this chunk
+            auto ordinal = tiles.tileOrdinal(t);
+            // materialize it
+            product.storage().reside(ordinal);
+            // and deposit through the pane, whose indices are product coordinates
+            auto pane = product.pane(t);
+            // fill every cell, padding included; only cells inside the product persist
+            for (const auto & idx : pane.packing()) {
+                // with a value that encodes its own coordinates
+                pane[idx] = stamp(idx[0], idx[1]);
+            }
+            // declare the deposit
+            product.storage().validate(ordinal);
+            // and its divergence from the file
+            product.storage().taint(ordinal);
         }
-        // deposit the whole product
-        dataset.write(pyre::h5::datatype<cell_t>().id(), content.data());
+        // make the file agree
+        dataset.flush(product);
     }
 
     // the read side: open the product back up, for reading only
