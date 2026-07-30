@@ -9,8 +9,8 @@
 > **Status:** working document. Seeded 2026-07-30, tracking the `mosaic` branch as the
 > interface takes shape. Organized around use cases rather than classes: start from what
 > you are trying to do, and the document leads you to the pieces you need. The C++ read
-> and write paths are implemented and exercised; the python bindings for the h5-backed
-> mosaic are pending.
+> and write paths and the python bindings — including the h5-backed mosaic — are
+> implemented and exercised.
 
 ## Choosing your grid
 
@@ -276,9 +276,32 @@ Two things to keep in mind:
   the store, so declare it: `m.validate(tile=t)` after depositing content,
   `m.taint(tile=t)` after modifying it. (Writes through `m[i, j]` do this for you.)
 
-The python mosaic is currently backed by anonymous memory; the h5-backed mosaic —
-`dataset.mosaic()` from python — arrives with the binding pass that follows the write
-side. Exhibit: `tests/pyre.ext/grid/mosaic.py`.
+The mosaic above is backed by anonymous memory. The h5-backed flavor comes from the
+dataset itself, wired to pull and push chunks through the file:
+
+```python
+from pyre.extensions import libh5
+# open the product and get the dataset
+dataset = libh5.File(uri=uri, mode="r+").get(path="product")
+# the mosaic, over the dataset's own chunking; nothing is resident
+m = dataset.mosaic(cell="float64")
+# or the smallest mosaic covering a window
+w = dataset.mosaic(cell="float64", base=[70, 70], shape=[25, 25])
+# pull chunks: one at a time, or wholesale
+m.fill(tile=[1, 1])
+w.fill()
+# deposit through indexing (which declares for you) or through panes (declare yourself)
+m[35, 45] = 42.0
+# and make the file agree
+m.flush()
+```
+
+A mosaic knows whether it has a backing store (`m.connected`); the in-memory flavor
+raises on `fill`/wholesale `flush`, since there is nowhere to move cells to or from.
+One boundary rule, invisible in ordinary use: the `Grid`/`Mosaic` classes are
+registered per extension module, and cells cross between modules only through the
+buffer protocol — hand numpy the pane, not the mosaic. Exhibits:
+`tests/pyre.ext/grid/mosaic.py`, `tests/h5.ext/mosaic.py`, `tests/h5.ext/dcpl_fill.py`.
 
 <a name="uc7"></a>
 ## 7. Writing a chunked product
