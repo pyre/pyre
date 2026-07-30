@@ -1,0 +1,12 @@
+# -*- Makefile -*-
+#
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2026 all rights reserved
+
+
+# the h5 extension testsuite
+pyre-h5.ext.tests.stem := h5.ext
+pyre-h5.ext.tests.prerequisites := pyre-h5.ext pyre.pkg pyre.ext
+
+
+# end of file

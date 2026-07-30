@@ -17,8 +17,9 @@ pyre-h5.packages :=
 pyre-h5.libraries := pyre-h5.lib
 # a python extension, deposited into the {pyre} package that hosts it
 pyre-h5.extensions := pyre-h5.ext
-# and a c++ test suite; like {pyre::postgres} the library stands on its own, apart from {libpyre}
-pyre-h5.tests := pyre-h5.lib.tests
+# a c++ test suite (like {pyre::postgres} the library stands on its own, apart from {libpyre})
+# and a python test suite for the bindings
+pyre-h5.tests := pyre-h5.lib.tests pyre-h5.ext.tests
 
 
 # the h5 library meta-data
@@ -49,7 +50,7 @@ pyre-h5.ext.lib.c++.defines += $(pyre-h5.lib.c++.defines)
 
 
 # get the testsuites
-include pyre-h5.lib.tests
+include pyre-h5.lib.tests pyre-h5.ext.tests
 
 
 endif
