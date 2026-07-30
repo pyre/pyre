@@ -742,6 +742,7 @@ endif(HDF5_FOUND)
 #
 pyre_test_python_testcase(tests/pyre.pkg/externals/sanity.py)
 pyre_test_python_testcase(tests/pyre.pkg/externals/recipes.py)
+pyre_test_python_testcase(tests/pyre.pkg/externals/requirement.py)
 pyre_test_python_testcase(tests/pyre.pkg/externals/conda.py)
 pyre_test_python_testcase(tests/pyre.pkg/externals/bare.py)
 pyre_test_python_testcase(tests/pyre.pkg/externals/unions.py)
