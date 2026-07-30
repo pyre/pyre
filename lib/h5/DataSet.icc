@@ -13,18 +13,141 @@ template <class cellT>
 auto
 pyre::h5::DataSet::mosaic() const -> mosaic_t<cellT>
 {
+    // my full extent, diced the way i am stored
+    return _assemble<cellT>(tiling());
+}
+
+
+// the smallest mosaic that covers a window
+template <class cellT>
+auto
+pyre::h5::DataSet::mosaic(
+    const tiling_t::index_type & base, const tiling_t::shape_type & extent) const -> mosaic_t<cellT>
+{
+    // my full tiling
+    auto full = tiling();
+    // the chunks the window touches
+    auto touched = pyre::grid::tilesOverlapping(full, base, extent);
+    // the cover is anchored at the corner of the first touched chunk
+    auto anchor = full.tile(touched.origin()).origin();
+    // room for its extent
+    tiling_t::shape_type cover(full.rank());
+    // go through the axes
+    for (std::size_t axis = 0; axis < full.rank(); ++axis) {
+        // the cover spans a whole number of chunks
+        cover[axis] = touched.shape()[axis] * full.tileShape()[axis];
+    }
+    // dice the cover the way i am diced, parked where it lives in my index space
+    return _assemble<cellT>(tiling_t(cover, full.tileShape(), anchor));
+}
+
+
+// make an entire {mosaic} resident
+template <class cellT>
+auto
+pyre::h5::DataSet::fill(const mosaic_t<cellT> & mosaic) const -> void
+{
+    // the layout of the mosaic
+    const auto & layout = mosaic.packing();
+    // go through every chunk in its box
+    for (const auto & tile : mosaic.tilesOverlapping(layout.origin(), layout.shape())) {
+        // and pull each one into its page
+        fill(mosaic, tile);
+    }
+    // all done
+    return;
+}
+
+
+// pull the chunk at {tile} of a {mosaic} into its page
+template <class cellT>
+auto
+pyre::h5::DataSet::fill(const mosaic_t<cellT> & mosaic, const tiling_t::index_type & tile) const
+    -> void
+{
+    // the layout of the mosaic
+    const auto & layout = mosaic.packing();
+    // my geometry
+    auto filespace = dataspace();
+    // my extent, in grid vocabulary
+    auto extent = filespace.packing().shape();
+    // the mosaic addresses a region of me in my own index space, so the ranks must agree
+    if (layout.rank() != extent.size()) {
+        // anything else is an application error; make a channel
+        auto channel = pyre::journal::error_t("pyre.h5.dataset");
+        // complain
+        channel << pyre::journal::at() << "filling a mosaic of rank " << layout.rank() << " from '"
+                << name() << "', a dataset of rank " << extent.size() << pyre::journal::endl;
+        // and bail
+        return;
+    }
+
+    // the chunk's own layout, anchored where the chunk lives in the mosaic's index space;
+    // an edge chunk keeps its full size, and whatever overhangs my extent is page padding
+    auto chunk = layout.tile(tile);
+    // room for the clamped file block and for its landing spot within the page
+    index_t fileOrigin(layout.rank());
+    shape_t fileShape(layout.rank());
+    index_t pageOrigin(layout.rank());
+    // clamp the chunk against my extent, axis by axis; interior chunks pass through whole
+    for (std::size_t axis = 0; axis < layout.rank(); ++axis) {
+        // the block begins at the chunk's anchor, but never before my origin
+        auto begin = std::max(chunk.origin()[axis], static_cast<tiling_t::difference_type>(0));
+        // and ends a full chunk later, but never past my edge
+        auto end = std::min(chunk.origin()[axis] + chunk.shape()[axis], extent[axis]);
+        // a chunk with nothing inside me holds no data to pull
+        if (begin >= end) {
+            // so this is an application error; make a channel
+            auto channel = pyre::journal::error_t("pyre.h5.dataset");
+            // complain
+            channel << pyre::journal::at() << "filling a tile that lies outside the extent of '"
+                    << name() << "'" << pyre::journal::endl;
+            // and bail
+            return;
+        }
+        // the file block starts at the clamped corner, now on the unsigned side
+        fileOrigin[axis] = static_cast<hsize_t>(begin);
+        // and spans the clamped extent
+        fileShape[axis] = static_cast<hsize_t>(end - begin);
+        // the block lands at the matching offset within the page
+        pageOrigin[axis] = static_cast<hsize_t>(begin - chunk.origin()[axis]);
+    }
+
+    // the page that backs the tile
+    auto ordinal = layout.tileOrdinal(tile);
+    // materialize it; this is the only allocation the fill performs
+    auto page = mosaic.storage().reside(ordinal);
+    // select the source: the clamped block of my cells
+    filespace.slab(fileOrigin, fileShape);
+    // and the destination: the same block within a page-shaped extent, so that a clipped
+    // chunk lands at the right offsets and the page padding is skipped
+    auto memspace = dataspace_t(shape_t(chunk.shape().begin(), chunk.shape().end()));
+    // by selecting the landing spot
+    memspace.slab(pageOrigin, fileShape);
+    // move the cells: the chunk flows from the file straight into its page
+    read(pyre::h5::datatype<cellT>().id(), page, memspace.id(), filespace.id());
+    // and record that the page now holds meaningful content
+    mosaic.storage().validate(ordinal);
+    // all done
+    return;
+}
+
+
+// assemble a mosaic over a tiled {layout}
+template <class cellT>
+auto
+pyre::h5::DataSet::_assemble(const tiling_t & layout) const -> mosaic_t<cellT>
+{
     // the storage flavor of the mosaic
     using paged_t = pyre::memory::paged_t<cellT>;
-    // get my tiled layout
-    auto layout = tiling();
-    // a page holds a full chunk's worth of cells; measure one
+    // a page holds a full tile's worth of cells; measure one
     typename paged_t::cell_count_type pageCells = 1;
     // as the volume of one tile
     for (auto extent : layout.tileShape()) {
         // axis by axis
         pageCells *= extent;
     }
-    // and there is one page per chunk
+    // and there is one page per tile
     typename paged_t::cell_count_type pages = 1;
     // as the volume of the tile grid
     for (auto extent : layout.tiles()) {
@@ -32,9 +155,9 @@ pyre::h5::DataSet::mosaic() const -> mosaic_t<cellT>
         pages *= extent;
     }
     // make a store with nothing resident: pages materialize only as tiles are touched, so
-    // the assembly is free no matter my extent
+    // the assembly is free no matter the extent
     auto store = paged_t { pageCells, pages };
-    // marry my layout to the store and hand off the mosaic
+    // marry the layout to the store and hand off the mosaic
     return mosaic_t<cellT> { layout, store };
 }
 

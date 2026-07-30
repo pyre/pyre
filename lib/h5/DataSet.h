@@ -11,6 +11,8 @@
 #include "forward.h"
 // my base class
 #include "Location.h"
+// the dataspaces my mosaic machinery builds and selects over
+#include "DataSpace.h"
 
 
 // an hdf5 dataset
@@ -58,6 +60,22 @@ public:
     // receiving code must allocate for it
     template <class cellT>
     auto mosaic() const -> mosaic_t<cellT>;
+    // the smallest mosaic that covers a window: its box is the chunk-aligned cover of the
+    // window with the given anchor and extent, so it holds one page per touched chunk and
+    // addresses my own index space
+    template <class cellT>
+    auto mosaic(const tiling_t::index_type & base, const tiling_t::shape_type & extent) const
+        -> mosaic_t<cellT>;
+
+    // make an entire {mosaic} resident: pull every chunk of its box into its page; this is
+    // the no-ceremony path for algorithms that cannot work on partial results
+    template <class cellT>
+    auto fill(const mosaic_t<cellT> & mosaic) const -> void;
+    // pull the chunk at {tile} of a {mosaic} into its page: materialize the page, land the
+    // cells clamped against my extent, and record the deposit; this is the seam where an
+    // algorithm that can process partial results interleaves its work with the i/o
+    template <class cellT>
+    auto fill(const mosaic_t<cellT> & mosaic, const tiling_t::index_type & tile) const -> void;
     // my on-disk size, in bytes
     auto storageSize() const -> hsize_t;
     // my in-memory size, in bytes
@@ -90,6 +108,9 @@ public:
 private:
     // trim the persisted padding from {value} according to the string padding strategy {pad}
     auto _trim(string_t & value, H5T_str_t pad) const -> void;
+    // assemble a mosaic over a tiled {layout}: one demand-materialized page per tile
+    template <class cellT>
+    auto _assemble(const tiling_t & layout) const -> mosaic_t<cellT>;
 };
 
 
