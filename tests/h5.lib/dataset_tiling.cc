@@ -70,6 +70,20 @@ main(int argc, char * argv[])
         assert((touched.origin() == pyre::h5::tiling_t::index_type { 0, 0 }));
         // and spills over into a 2x2 block of them
         assert((touched.shape() == pyre::h5::tiling_t::shape_type { 2, 2 }));
+
+        // a dataset that is not chunked is a single slab
+        auto flat = file.createDataSet(
+            "flat", pyre::h5::datatype<double>(),
+            pyre::h5::DataSpace { pyre::h5::shape_t { 8, 5 } }, pyre::h5::properties::DCPL(),
+            pyre::h5::properties::DAPL());
+        // its tiling is total: one tile that covers the whole box
+        auto slab = flat.tiling();
+        // the box is the extent
+        assert((slab.shape() == pyre::h5::tiling_t::shape_type { 8, 5 }));
+        // the tile is the box
+        assert((slab.tileShape() == pyre::h5::tiling_t::shape_type { 8, 5 }));
+        // and there is exactly one of them
+        assert((slab.tiles() == pyre::h5::tiling_t::shape_type { 1, 1 }));
     }
     // clean up the scratch product
     std::remove(uri);
