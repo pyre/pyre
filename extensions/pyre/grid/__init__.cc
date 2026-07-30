@@ -11,10 +11,10 @@
 #include "forward.h"
 // my declarations
 #include "__init__.h"
-// the type-erased grid and its converters
-#include "AnyGrid.h"
+// the type-erased grid and its converters, from the library's python-support tier
+#include <pyre/py/grid/AnyGrid.h>
 // and the type-erased mosaic, its out-of-core sibling
-#include "AnyMosaic.h"
+#include <pyre/py/grid/AnyMosaic.h>
 
 
 // the type-erased grid measures with a signed integer, matching the c++ library
@@ -577,8 +577,9 @@ pyre::py::grid::__init__(py::module & m) -> void
     mos.def(
         // the name
         "flush",
-        // the implementation
-        &AnyMosaic::flush,
+        // the implementation; the per-tile flavor, since an in-memory mosaic has no backing
+        // store for the wholesale one to talk to
+        py::overload_cast<const AnyMosaic::index_type &>(&AnyMosaic::flush, py::const_),
         // the signature
         "tile"_a,
         // the docstring

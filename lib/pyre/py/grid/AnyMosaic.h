@@ -9,7 +9,7 @@
 
 
 // externals
-#include "external.h"
+#include "externals.h"
 // forward declarations
 #include "forward.h"
 // panes travel to python as type-erased grids
@@ -48,6 +48,11 @@ public:
     // deposits a python value into the cell at an index, materializing and tainting the page
     // that holds it; the companion of {reader_type}
     using writer_type = std::function<void(const index_type &, const py::object &)>;
+    // the hooks to a backing store, when i have one: bound after construction by whoever
+    // builds me over a source of tiles, e.g. an hdf5 dataset; a mosaic without them holds
+    // cells that live only in memory
+    using source_type = std::function<void(const index_type &)>;
+    using sink_type = std::function<void(const index_type &)>;
 
     // metamethods
 public:
@@ -108,11 +113,25 @@ public:
     auto validate(const index_type & tile) const -> void;
     // record that the client has written to a tile's page
     auto taint(const index_type & tile) const -> void;
-    // record that the client has saved a tile's page
+    // make my backing store agree about a tile: when i am connected, push its page and mark
+    // it; when i am not, the client did the i/o themselves, so just record the agreement
     auto flush(const index_type & tile) const -> void;
     // let go of a tile's page, returning it to the never-touched state; outstanding panes
     // keep their block, but no longer alias the mosaic's cells
     auto release(const index_type & tile) const -> void;
+
+    // the backing store
+public:
+    // bind the hooks that move tiles between me and my backing store
+    auto connect(source_type fill, sink_type flush) -> void;
+    // whether i have one
+    auto connected() const -> bool;
+    // pull the chunk at {tile} from my backing store into its page
+    auto fill(const index_type & tile) const -> void;
+    // pull every chunk of my box
+    auto fill() const -> void;
+    // make my backing store agree with me: push every page that is resident and has diverged
+    auto flush() const -> void;
 
     // implementation details
 private:
@@ -141,6 +160,9 @@ private:
     mark_type _release;
     reader_type _read;
     writer_type _write;
+    // the backing store hooks; empty until {connect} binds them
+    source_type _source {};
+    sink_type _sink {};
 };
 
 
