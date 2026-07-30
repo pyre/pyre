@@ -52,6 +52,12 @@ public:
     // my extent diced into my chunks: the tiled layout a mosaic is assembled over; only
     // chunked datasets have one
     auto tiling() const -> tiling_t;
+    // an out-of-core mosaic assembled over my own chunking: my tiled layout married to a
+    // store with one demand-materialized page per chunk; describing me costs a page table
+    // and nothing more, no matter my extent, and the caller names the cell type since the
+    // receiving code must allocate for it
+    template <class cellT>
+    auto mosaic() const -> mosaic_t<cellT>;
     // my on-disk size, in bytes
     auto storageSize() const -> hsize_t;
     // my in-memory size, in bytes
@@ -85,6 +91,10 @@ private:
     // trim the persisted padding from {value} according to the string padding strategy {pad}
     auto _trim(string_t & value, H5T_str_t pad) const -> void;
 };
+
+
+// the inline implementations
+#include "DataSet.icc"
 
 
 // end of file

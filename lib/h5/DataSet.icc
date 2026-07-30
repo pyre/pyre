@@ -1,0 +1,42 @@
+// -*- C++ -*-
+// -*- coding: utf-8 -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2026 all rights reserved
+
+// code guard
+#pragma once
+
+
+// an out-of-core mosaic assembled over my own chunking
+template <class cellT>
+auto
+pyre::h5::DataSet::mosaic() const -> mosaic_t<cellT>
+{
+    // the storage flavor of the mosaic
+    using paged_t = pyre::memory::paged_t<cellT>;
+    // get my tiled layout
+    auto layout = tiling();
+    // a page holds a full chunk's worth of cells; measure one
+    typename paged_t::cell_count_type pageCells = 1;
+    // as the volume of one tile
+    for (auto extent : layout.tileShape()) {
+        // axis by axis
+        pageCells *= extent;
+    }
+    // and there is one page per chunk
+    typename paged_t::cell_count_type pages = 1;
+    // as the volume of the tile grid
+    for (auto extent : layout.tiles()) {
+        // axis by axis
+        pages *= extent;
+    }
+    // make a store with nothing resident: pages materialize only as tiles are touched, so
+    // the assembly is free no matter my extent
+    auto store = paged_t { pageCells, pages };
+    // marry my layout to the store and hand off the mosaic
+    return mosaic_t<cellT> { layout, store };
+}
+
+
+// end of file
