@@ -15,12 +15,13 @@ from .HDF5 import HDF5
 # the implementation
 class Default(LibraryInstallation, family="pyre.externals.hdf5.default", implements=HDF5):
     """
-    A generic HDF5 installation
+    A generic serial HDF5 installation
     """
 
     # constants
     category = HDF5.category
     flavor = category
+    tags = ("serial",)
 
 
 # end of file
