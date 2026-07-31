@@ -84,6 +84,17 @@ def blas(**kwds):
     return protocol(**kwds)
 
 
+def cuda(**kwds):
+    """
+    The CUDA package category
+    """
+    # grab the protocol
+    from .supported.cuda import protocol
+
+    # and generate a facility
+    return protocol(**kwds)
+
+
 def cython(**kwds):
     """
     The Cython package category
