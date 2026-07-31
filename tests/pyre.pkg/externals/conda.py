@@ -25,7 +25,7 @@ def test():
     from pyre.platforms.Conda import Conda
 
     # the category
-    from pyre.externals.GSL import GSL
+    from pyre.externals.supported.gsl.GSL import GSL
 
     # make an engine pointing at the fixture environment
     engine = Conda(name="conda.fixture", environment="conda")

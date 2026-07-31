@@ -58,8 +58,8 @@ def test():
     from pyre.platforms.Rpm import Rpm
 
     # the categories
-    from pyre.externals.GSL import GSL
-    from pyre.externals.MPI import MPI
+    from pyre.externals.supported.gsl.GSL import GSL
+    from pyre.externals.supported.mpi.MPI import MPI
 
     # an engine wired to the canned database instead of an rpm client
     class engine(Rpm):

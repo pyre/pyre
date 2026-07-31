@@ -60,8 +60,8 @@ def test():
     from pyre.platforms.MacPorts import MacPorts
 
     # the categories
-    from pyre.externals.Python import Python
-    from pyre.externals.NumPy import NumPy
+    from pyre.externals.supported.python.Python import Python
+    from pyre.externals.supported.numpy.NumPy import NumPy
 
     # an engine wired to the canned database instead of a port client
     class engine(MacPorts):

@@ -22,8 +22,8 @@ def test():
     from pyre.platforms.Bare import Bare
 
     # the categories
-    from pyre.externals.GSL import GSL
-    from pyre.externals.MPI import MPI
+    from pyre.externals.supported.gsl.GSL import GSL
+    from pyre.externals.supported.mpi.MPI import MPI
 
     # make an engine that probes only the fixture
     engine = Bare(name="bare.fixture", searchpath=["prefix"])
@@ -46,7 +46,7 @@ def test():
     assert "version" not in values
 
     # get the eigen recipe
-    from pyre.externals.Eigen import Eigen
+    from pyre.externals.supported.eigen.Eigen import Eigen
 
     # its headers nest one level below the canonical include directory
     eigen, *_ = Eigen.recipes()
