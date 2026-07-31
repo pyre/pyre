@@ -112,11 +112,12 @@ message(STATUS "Parallel HDF5: ${HDF5_IS_PARALLEL}")
 
 # find cuda if it is required
 if(WITH_CUDA)
-    # add the cuda package
-    find_package(CUDA REQUIRED)
-  if(CUDA_FOUND)
-    enable_language(CUDA)
-  endif()
+    # add the cuda package; {FindCUDA} has been deprecated since cmake 3.10, and {CUDAToolkit}
+    # is what replaces it: it hands back imported targets instead of the variable soup
+    find_package(CUDAToolkit REQUIRED)
+    if(CUDAToolkit_FOUND)
+        enable_language(CUDA)
+    endif()
 endif()
 
 # postgres

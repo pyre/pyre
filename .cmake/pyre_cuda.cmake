@@ -44,11 +44,12 @@ function(pyre_cudaLib)
     # specify the directory for the library compilation products
     pyre_library_directory(cuda lib)
     # its headers reach {pyre/memory.h} and {pyre/journal.h}, so it stands on {pyre}, which is
-    # also what puts our own headers on the consumer's include path
-    target_link_libraries(cuda INTERFACE pyre ${CUDA_LIBRARIES})
-    # set the include directories
+    # also what puts our own headers on the consumer's include path; the cuda runtime arrives
+    # as an imported target, which carries its own include path along with the library
+    target_link_libraries(cuda INTERFACE pyre CUDA::cudart)
+    # set the include directories; the toolkit headers ride in on {CUDA::cudart}, so all that
+    # is left is finding our own, in the build tree and in the prefix
     target_include_directories(cuda INTERFACE
-      ${CUDA_INCLUDE_DIRS}
       $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/lib>
       $<INSTALL_INTERFACE:${PYRE_DEST_INCLUDE}>
       )
@@ -61,10 +62,9 @@ function(pyre_cudaLib)
       EXPORT pyre-targets
       )
     pyre_exportTarget(cuda cuda)
-    # {CUDA_LIBRARIES}, as the deprecated {FindCUDA} assembles it, names the threads imported
-    # target rather than a bare library, so a consumer that asks for this component has to be
-    # able to resolve that one as well
-    pyre_exportOptionalRequirement(cuda Threads Threads::Threads)
+    # this target names {CUDA::cudart}, so a consumer that asks for the add-on has to be able
+    # to resolve it; teach the generated configuration where it comes from
+    pyre_exportOptionalRequirement(cuda CUDAToolkit CUDA::cudart)
   endif()
   # all done
 endfunction(pyre_cudaLib)
@@ -80,10 +80,9 @@ function(pyre_cudaModule)
     set_target_properties(cudamodule PROPERTIES LIBRARY_OUTPUT_NAME cuda)
     # specify the directory for the module compilation products
     pyre_library_directory(cudamodule extensions)
-    # set the libraries to link against
-    target_link_libraries(cudamodule PRIVATE pyre journal pybind11::module ${CUDA_LIBRARIES})
-    # set the include directories
-    target_include_directories(cudamodule PRIVATE ${CUDA_INCLUDE_DIRS})
+    # set the libraries to link against; {CUDA::cudart} brings the toolkit headers with it,
+    # so the module needs no include directories of its own
+    target_link_libraries(cudamodule PRIVATE pyre journal pybind11::module CUDA::cudart)
     # add the sources
     target_sources(cudamodule PRIVATE
       extensions/cuda/cuda.cc

@@ -145,10 +145,9 @@ endif()
 if(PYRE_CONSUMER_EXPECT_CUDA)
   # asking for the component is what sends the configuration looking for what it needs
   find_package(pyre REQUIRED COMPONENTS cuda)
-  # the deprecated {FindCUDA} builds its library list out of the threads imported target, so
-  # that is the one the add-on leans on
-  if(NOT TARGET Threads::Threads)
-    message(FATAL_ERROR "asking for the 'cuda' component did not locate threads")
+  # the add-on names the cuda runtime, so that is the imported target the search must produce
+  if(NOT TARGET CUDA::cudart)
+    message(FATAL_ERROR "asking for the 'cuda' component did not locate the cuda runtime")
   endif()
   # compiling this proves the cuda headers and our own arrive through {pyre::cuda}
   add_executable(cuda cuda.cc)
