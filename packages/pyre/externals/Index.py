@@ -7,6 +7,7 @@
 
 # externals
 import importlib
+import pkgutil
 
 # framework
 import pyre
@@ -437,41 +438,42 @@ class Index:
         """
         Map a {category} tag onto its protocol class, if the framework supports it
         """
-        # look up the module and class name
-        name = self._categories.get(category)
-        # if the category is unknown
-        if name is None:
-            # report failure
-            return None
-        # otherwise, import the module
-        module = importlib.import_module(f".{name}", package=__package__)
+        # the folder name under {supported} is the category tag
+        name = f"{__package__}.supported.{category}"
+        # attempt to
+        try:
+            # import the category package
+            module = importlib.import_module(name)
+        # if there is no such folder
+        except ModuleNotFoundError as error:
+            # and it is the folder itself that is missing, rather than one of its pieces
+            if error.name == name:
+                # the category is unsupported
+                return None
+            # anything else is a genuine authoring error in the category package
+            raise
         # extract the protocol and return it
-        return getattr(module, name)
+        return module.protocol
+
+    def categories(self):
+        """
+        Generate the sequence of supported category tags, in alphabetical order
+
+        The catalog is the {supported} package itself: each subdirectory is one category
+        """
+        # get the catalog package
+        from . import supported
+
+        # its subpackages are the categories
+        yield from sorted(entry.name for entry in pkgutil.iter_modules(supported.__path__))
+        # all done
+        return
 
     # private data
     # the singleton
     _index = None
     # the bound on resolution passes; requirements only accumulate, so hitting it is a bug
     _restarts = 32
-    # the registry of supported categories: category tag -> module and protocol name
-    _categories = {
-        "blas": "BLAS",
-        "cython": "Cython",
-        "eigen": "Eigen",
-        "fftw": "FFTW",
-        "gcc": "GCC",
-        "gsl": "GSL",
-        "hdf5": "HDF5",
-        "metis": "Metis",
-        "mpi": "MPI",
-        "numpy": "NumPy",
-        "parmetis": "ParMetis",
-        "petsc": "PETSc",
-        "postgresql": "Postgres",
-        "pybind11": "Pybind11",
-        "python": "Python",
-        "vtk": "VTK",
-    }
 
 
 # end of file

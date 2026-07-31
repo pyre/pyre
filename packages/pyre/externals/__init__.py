@@ -77,10 +77,10 @@ def blas(**kwds):
     The BLAS package category
     """
     # grab the protocol
-    from .BLAS import BLAS as blas
+    from .supported.blas import protocol
 
     # and generate a facility
-    return blas(**kwds)
+    return protocol(**kwds)
 
 
 def cython(**kwds):
@@ -88,10 +88,10 @@ def cython(**kwds):
     The Cython package category
     """
     # grab the protocol
-    from .Cython import Cython as cython
+    from .supported.cython import protocol
 
     # and generate a facility
-    return cython(**kwds)
+    return protocol(**kwds)
 
 
 def eigen(**kwds):
@@ -99,10 +99,10 @@ def eigen(**kwds):
     The Eigen package category
     """
     # grab the protocol
-    from .Eigen import Eigen as eigen
+    from .supported.eigen import protocol
 
     # and generate a facility
-    return eigen(**kwds)
+    return protocol(**kwds)
 
 
 def fftw(**kwds):
@@ -110,10 +110,10 @@ def fftw(**kwds):
     The FFTW package category
     """
     # grab the protocol
-    from .FFTW import FFTW as fftw
+    from .supported.fftw import protocol
 
     # and generate a facility
-    return fftw(**kwds)
+    return protocol(**kwds)
 
 
 def gcc(**kwds):
@@ -121,10 +121,10 @@ def gcc(**kwds):
     The GCC package category
     """
     # grab the protocol
-    from .GCC import GCC as gcc
+    from .supported.gcc import protocol
 
     # and generate a facility
-    return gcc(**kwds)
+    return protocol(**kwds)
 
 
 def gsl(**kwds):
@@ -132,10 +132,10 @@ def gsl(**kwds):
     The GSL package category
     """
     # grab the protocol
-    from .GSL import GSL as gsl
+    from .supported.gsl import protocol
 
     # and generate a facility
-    return gsl(**kwds)
+    return protocol(**kwds)
 
 
 def hdf5(**kwds):
@@ -143,10 +143,10 @@ def hdf5(**kwds):
     The HDF5 package category
     """
     # grab the protocol
-    from .HDF5 import HDF5 as hdf5
+    from .supported.hdf5 import protocol
 
     # and generate a facility
-    return hdf5(**kwds)
+    return protocol(**kwds)
 
 
 def metis(**kwds):
@@ -154,10 +154,10 @@ def metis(**kwds):
     The METIS package category
     """
     # grab the protocol
-    from .Metis import Metis as metis
+    from .supported.metis import protocol
 
     # and generate a facility
-    return metis(**kwds)
+    return protocol(**kwds)
 
 
 def mpi(**kwds):
@@ -165,10 +165,10 @@ def mpi(**kwds):
     The MPI package category
     """
     # grab the protocol
-    from .MPI import MPI as mpi
+    from .supported.mpi import protocol
 
     # and generate a facility
-    return mpi(**kwds)
+    return protocol(**kwds)
 
 
 def numpy(**kwds):
@@ -176,10 +176,10 @@ def numpy(**kwds):
     The numpy package category
     """
     # grab the protocol
-    from .NumPy import NumPy as numpy
+    from .supported.numpy import protocol
 
     # and generate a facility
-    return numpy(**kwds)
+    return protocol(**kwds)
 
 
 def parmetis(**kwds):
@@ -187,10 +187,10 @@ def parmetis(**kwds):
     The ParMETIS package category
     """
     # grab the protocol
-    from .ParMetis import ParMetis as parmetis
+    from .supported.parmetis import protocol
 
     # and generate a facility
-    return parmetis(**kwds)
+    return protocol(**kwds)
 
 
 def petsc(**kwds):
@@ -198,10 +198,10 @@ def petsc(**kwds):
     The PETSc package category
     """
     # grab the protocol
-    from .PETSc import PETSc as petsc
+    from .supported.petsc import protocol
 
     # and generate a facility
-    return petsc(**kwds)
+    return protocol(**kwds)
 
 
 def postgres(**kwds):
@@ -209,10 +209,10 @@ def postgres(**kwds):
     The Postgres package category
     """
     # grab the protocol
-    from .Postgres import Postgres as postgres
+    from .supported.postgresql import protocol
 
     # and generate a facility
-    return postgres(**kwds)
+    return protocol(**kwds)
 
 
 def pybind11(**kwds):
@@ -220,10 +220,10 @@ def pybind11(**kwds):
     The pybind11 package category
     """
     # grab the protocol
-    from .Pybind11 import Pybind11 as pybind11
+    from .supported.pybind11 import protocol
 
     # and generate a facility
-    return pybind11(**kwds)
+    return protocol(**kwds)
 
 
 def python(**kwds):
@@ -231,10 +231,10 @@ def python(**kwds):
     The Python package category
     """
     # grab the protocol
-    from .Python import Python as python
+    from .supported.python import protocol
 
     # and generate a facility
-    return python(**kwds)
+    return protocol(**kwds)
 
 
 def vtk(**kwds):
@@ -242,10 +242,10 @@ def vtk(**kwds):
     The VTK package category
     """
     # grab the protocol
-    from .VTK import VTK as vtk
+    from .supported.vtk import protocol
 
     # and generate a facility
-    return vtk(**kwds)
+    return protocol(**kwds)
 
 
 # end of file
