@@ -54,13 +54,13 @@ public:
     // cpu gpu synchronization
 public:
     // synchronize all memory from cpu to gpu
-    inline auto synchronizeHostToDevice();
+    inline auto synchronizeHostToDevice() const;
     // synchronize part off the memory from cpu to gpu
-    inline auto synchronizeHostToDevice(difference_type, cell_count_type);
+    inline auto synchronizeHostToDevice(difference_type, cell_count_type) const;
     // synchronize all memory from gpu to cpu
-    inline auto synchronizeDeviceToHost();
+    inline auto synchronizeDeviceToHost() const;
     // synchronize part off the memory from gpu to cpu
-    inline auto synchronizeDeviceToHost(difference_type, cell_count_type);
+    inline auto synchronizeDeviceToHost(difference_type, cell_count_type) const;
 
     // iterator support
 public:
