@@ -4,6 +4,34 @@
 # (c) 1998-2026 all rights reserved
 #
 
+- gate for 1.13.0 (collected 2026-07-31, so nothing important slips):
+
+  - watch the first CI runs that exercise the tensor suite under cmake: the {HAVE_TENSOR}
+    gate defaulted OFF, so those legs have never run before this branch
+
+  - writer value binding: how producers attach numeric payload sources to schema datasets;
+    the still-open half of the writer, and the proof that the mosaic design carries its
+    weight; producers deposit through mosaics, {Writer} flushes
+
+  - the nisar sandbox (examples/h5/nisar) is its own mm project, so its tests are invisible
+    to pyre's test aggregate and to CI; all five drivers pass against the reworked value
+    model today, but only when run by hand; decide its home (example, fixture, or its own
+    repository) during the value-binding work
+
+  - densify: hand a mosaic window to consumers as a single contiguous block; cheap atop
+    {fill}, and wants its HOWTO use case
+
+  - pull model: auto-{fill} on touching a non-resident page; a policy decision, nearly free
+    now that mosaics carry backing-store hooks
+
+  - qed: adopt {pyre::py::grid} and the h5 mosaics; the NISAR out-of-core viewer is the
+    motivating consumer
+
+  - the h5.lib and h5.ext test suites are still absent from cmake; the pkg suite runs there
+    [project_cmake_enable_h5_tests]
+
+  - symmetric/diagonal packings: decide whether they ever get python exposure
+
 - calc:
 
   - calc nodes cannot inherit from {Ordering} because {Observable} stores the callbacks in a
