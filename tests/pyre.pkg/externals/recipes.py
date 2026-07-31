@@ -73,6 +73,8 @@ def test():
             # every piece of information the recipe promises must have a resting place on
             # the factory; collect the factory traits
             traits = {trait.name for trait in recipe.factory.pyre_configurables()}
+            # the traits the content extractors deposit into
+            harvests = tuple(proof.harvest for proof in recipe.proofs if proof.harvest)
             # the geometry each recipe section deposits into
             geometry = [
                 (recipe.headers, ("incdir",)),
@@ -80,6 +82,7 @@ def test():
                 (recipe.binaries, ("bindir",) + tuple(recipe.binaries)),
                 (recipe.defines, ("defines",)),
                 (recipe.dependencies, ("dependencies",)),
+                (harvests, harvests),
             ]
             # go through the sections
             for section, homes in geometry:
