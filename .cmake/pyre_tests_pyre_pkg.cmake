@@ -732,30 +732,10 @@ pyre_test_python_testcase(tests/pyre.pkg/h5/api/sanity.py)
 pyre_test_python_testcase(tests/pyre.pkg/h5/api/writer.py)
 
 # the drivers leave their scratch products behind so they can be inspected; sweep them
-add_test(NAME tests.pyre.pkg.h5.api.file_create_empty.cleanup
-  COMMAND ${BASH_PROGRAM} -c "rm file_create_empty.h5"
-  )
-add_test(NAME tests.pyre.pkg.h5.api.mosaic_value.cleanup
-  COMMAND ${BASH_PROGRAM} -c "rm mosaic_value.h5"
-  )
-add_test(NAME tests.pyre.pkg.h5.api.raster_roundtrip.cleanup
-  COMMAND ${BASH_PROGRAM} -c "rm raster_roundtrip.h5"
-  )
-add_test(NAME tests.pyre.pkg.h5.api.writer.cleanup
-  COMMAND ${BASH_PROGRAM} -c "rm writer.h5"
-  )
-set_property(TEST tests.pyre.pkg.h5.api.file_create_empty.cleanup PROPERTY
-  DEPENDS tests.pyre.pkg.h5.api.file_create_empty.py
-  )
-set_property(TEST tests.pyre.pkg.h5.api.mosaic_value.cleanup PROPERTY
-  DEPENDS tests.pyre.pkg.h5.api.mosaic_value.py
-  )
-set_property(TEST tests.pyre.pkg.h5.api.raster_roundtrip.cleanup PROPERTY
-  DEPENDS tests.pyre.pkg.h5.api.raster_roundtrip.py
-  )
-set_property(TEST tests.pyre.pkg.h5.api.writer.cleanup PROPERTY
-  DEPENDS tests.pyre.pkg.h5.api.writer.py
-  )
+pyre_test_python_cleanup(file_create_empty.h5 tests/pyre.pkg/h5/api/file_create_empty.py)
+pyre_test_python_cleanup(mosaic_value.h5 tests/pyre.pkg/h5/api/mosaic_value.py)
+pyre_test_python_cleanup(raster_roundtrip.h5 tests/pyre.pkg/h5/api/raster_roundtrip.py)
+pyre_test_python_cleanup(writer.h5 tests/pyre.pkg/h5/api/writer.py)
 pyre_test_python_testcase(tests/pyre.pkg/h5/sanity.py)
 pyre_test_python_testcase(tests/pyre.pkg/h5/schema/dataset_constraints.py)
 pyre_test_python_testcase(tests/pyre.pkg/h5/schema/descriptor_location.py)
