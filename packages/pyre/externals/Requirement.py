@@ -157,10 +157,12 @@ class Requirement:
         return tuple(components)
 
     # meta-methods
-    def __init__(self, *, category, selectors=(), exclusions=(), clauses=()):
+    def __init__(self, *, category, selectors=(), exclusions=(), clauses=(), **kwds):
         """
         Describe a requirement on the {category} selection
         """
+        # chain up
+        super().__init__(**kwds)
         # the category this requirement constrains
         self.category = category
         # the flavor names or flavor classes the selection must answer to
