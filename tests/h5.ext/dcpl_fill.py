@@ -23,36 +23,29 @@ def test():
     if os.path.exists(uri):
         os.remove(uri)
 
-    # try, so the file is cleaned up no matter what
-    try:
-        # make the file
-        f = libh5.File(uri=uri, mode="w")
-        # describe the extent
-        space = libh5.DataSpace(shape=[100, 100])
-        # the creation properties: chunked, with a declared fill value
-        dcpl = libh5.properties.dcpl()
-        dcpl.setChunk(shape=[30, 40])
-        dcpl.setFillValue(value=-1.0)
-        # the declaration reads back
-        assert dcpl.fillValue(cell="float64") == -1.0
-        # make the dataset
-        dataset = f.create(path="product", type=libh5.types.native.double, space=space, dcpl=dcpl)
+    # make the file
+    f = libh5.File(uri=uri, mode="w")
+    # describe the extent
+    space = libh5.DataSpace(shape=[100, 100])
+    # the creation properties: chunked, with a declared fill value
+    dcpl = libh5.properties.dcpl()
+    dcpl.setChunk(shape=[30, 40])
+    dcpl.setFillValue(value=-1.0)
+    # the declaration reads back
+    assert dcpl.fillValue(cell="float64") == -1.0
+    # make the dataset
+    dataset = f.create(path="product", type=libh5.types.native.double, space=space, dcpl=dcpl)
 
-        # a reader pulls a chunk that nothing ever wrote
-        m = dataset.mosaic(cell="float64")
-        # bring it in
-        m.fill(tile=[1, 1])
-        # every cell holds the declared fill value, not garbage
-        assert m[35, 45] == -1.0
-        assert m[59, 79] == -1.0
+    # a reader pulls a chunk that nothing ever wrote
+    m = dataset.mosaic(cell="float64")
+    # bring it in
+    m.fill(tile=[1, 1])
+    # every cell holds the declared fill value, not garbage
+    assert m[35, 45] == -1.0
+    assert m[59, 79] == -1.0
 
-        # the round trip through the dataset's own creation properties agrees
-        assert dataset.dcpl.fillValue(cell="float64") == -1.0
-    # no matter what happened
-    finally:
-        # clean up the scratch product
-        if os.path.exists(uri):
-            os.remove(uri)
+    # the round trip through the dataset's own creation properties agrees
+    assert dataset.dcpl.fillValue(cell="float64") == -1.0
 
     # all done
     return

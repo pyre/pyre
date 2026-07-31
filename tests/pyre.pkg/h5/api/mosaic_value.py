@@ -97,9 +97,6 @@ def test():
     # it is undisturbed
     assert check[94, 94] == stamp(94, 94)
 
-    # drop the file from disk
-    uri.unlink()
-
     # all done
     return
 

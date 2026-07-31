@@ -7,8 +7,6 @@
 
 // support
 #include <cassert>
-// for the cleanup of the scratch product
-#include <cstdio>
 // get the h5 support, which carries everything the recipe needs
 #include <pyre/h5.h>
 
@@ -149,8 +147,6 @@ main(int argc, char * argv[])
     // and the far one, out in the doubly clipped chunk
     assert((window[{ 94, 94 }] == stamp(94, 94)));
 
-    // clean up the scratch product
-    std::remove(uri);
 
     // all done
     return 0;

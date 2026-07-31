@@ -7,8 +7,6 @@
 
 // support
 #include <cassert>
-// for the cleanup of the scratch product
-#include <cstdio>
 // get the h5 support
 #include <pyre/h5.h>
 
@@ -85,8 +83,6 @@ main(int argc, char * argv[])
         // and there is exactly one of them
         assert((slab.tiles() == pyre::h5::tiling_t::shape_type { 1, 1 }));
     }
-    // clean up the scratch product
-    std::remove(uri);
 
     // all done
     return 0;

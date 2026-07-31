@@ -7,8 +7,7 @@
 
 // support
 #include <cassert>
-// for the cleanup of the scratch product and the poison reference pattern
-#include <cstdio>
+// for the poison reference pattern
 #include <cstring>
 // get the h5 support, which carries everything the recipe needs
 #include <pyre/h5.h>
@@ -162,8 +161,6 @@ main(int argc, char * argv[])
         assert((std::memcmp(&cell, &pattern, sizeof(pattern)) == 0));
     }
 
-    // clean up the scratch product
-    std::remove(uri);
 
     // all done
     return 0;
