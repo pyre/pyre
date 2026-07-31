@@ -168,13 +168,15 @@ covers just a declared working set. The full story, organized by use case, is in
 
 Two consequences for this document's concerns:
 
-- **The `Raster`/`Tile`/`_staged` machinery in `typed/` is a hand-rolled
-  proto-mosaic** and is slated to be rebuilt over the real one. The "semaphore"
-  question in the 2023-05-30 note dissolves: the page-state bits are the
-  semaphore, and file-to-file transfer is `fill` from the source, `taint`, and
-  `flush` to the destination.
+- **The `Raster`/`Tile`/`_staged` machinery in `typed/` is retired** (2026-07-31).
+  It was a hand-rolled proto-mosaic; array dataset values are now the real thing:
+  `_pyre_pull` hands back a mosaic wired to its dataset, and `_pyre_push` is
+  `value.flush()`. The "semaphore" question in the old 2023-05-30 note dissolved
+  with it: the page-state bits are the semaphore, and file-to-file transfer is
+  `fill` from the source, `taint`, and `flush` to the destination — the
+  cross-file flavor belongs to value binding, the writer's still-open half.
 - **The writer's deferred "partial/tile writes" are no longer deferred** at the
-  storage level; what remains is rewiring the Python value model to use them.
+  storage level; the Python value model now rides them.
 
 ### How they relate
 
@@ -696,9 +698,9 @@ Two efforts are in flight; they are deliberately ordered.
 
 3. **The mosaic era (current, 2026-07).** The library speaks the `pyre::grid`
    vocabulary and moves payload through mosaics (`doc/mosaics.md`); the bindings
-   hand Python h5-backed mosaics. Next: rebuild the Python value model
-   (`Raster`/`Tile`) over the mosaic, and bind numeric payload sources — the
-   still-open half of the writer.
+   hand Python h5-backed mosaics; array dataset values *are* mosaics, the
+   `Raster`/`Tile` proto-mosaic having retired. Next: bind numeric payload
+   sources — the still-open half of the writer.
 
 ## Replacing the HDF5 C++ layer (assessment, 2026-06-14)
 
