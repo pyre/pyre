@@ -106,29 +106,12 @@ pyre_test_driver(tests/pyre.lib/memory/constview_slice.cc)
 pyre_test_driver(tests/pyre.lib/memory/map_slice.cc)
 pyre_test_driver(tests/pyre.lib/memory/constmap_slice.cc)
 
-# some tests require cleanup
-add_test(NAME tests.pyre.lib.memory.filemap.cleanup
-  COMMAND ${BASH_PROGRAM} -c "rm filemap.dat"
-  )
-add_test(NAME tests.pyre.lib.memory.map.cleanup
-  COMMAND ${BASH_PROGRAM} -c "rm map.dat"
-  )
-add_test(NAME tests.pyre.lib.memory.map_slice.cleanup
-  COMMAND ${BASH_PROGRAM} -c "rm map_slice.dat"
-  )
-add_test(NAME tests.pyre.lib.memory.constmap_slice.cleanup
-  COMMAND ${BASH_PROGRAM} -c "rm constmap_slice.dat"
-  )
-
 # some tests must happen in a specific order
 set_property(TEST tests.pyre.lib.memory.filemap_write.cc PROPERTY
   DEPENDS tests.pyre.lib.memory.filemap_create.cc
   )
 set_property(TEST tests.pyre.lib.memory.filemap_read.cc PROPERTY
   DEPENDS tests.pyre.lib.memory.filemap_write.cc
-  )
-set_property(TEST tests.pyre.lib.memory.filemap.cleanup PROPERTY
-  DEPENDS tests.pyre.lib.memory.filemap_read.cc
   )
 
 set_property(TEST tests.pyre.lib.memory.map_write.cc PROPERTY
@@ -146,19 +129,26 @@ set_property(TEST tests.pyre.lib.memory.constmap_read.cc PROPERTY
 set_property(TEST tests.pyre.lib.memory.constmap_oob.cc PROPERTY
   DEPENDS tests.pyre.lib.memory.map_write.cc
   )
-set_property(TEST tests.pyre.lib.memory.map.cleanup PROPERTY
-  DEPENDS
-      tests.pyre.lib.memory.map_read.cc tests.pyre.lib.memory.map_oob.cc
-      tests.pyre.lib.memory.constmap_read.cc tests.pyre.lib.memory.constmap_oob.cc
-  )
 
-# the slice tests each own their file, so they only need to be cleaned up after they run
-set_property(TEST tests.pyre.lib.memory.map_slice.cleanup PROPERTY
-  DEPENDS tests.pyre.lib.memory.map_slice.cc
+# the drivers leave their scratch products behind so they can be inspected; sweep them
+# {filemap.dat} is built up by a chain of drivers, so the sweep waits for every link
+pyre_test_driver_cleanup(filemap.dat
+  tests/pyre.lib/memory/filemap_create.cc
+  tests/pyre.lib/memory/filemap_write.cc
+  tests/pyre.lib/memory/filemap_read.cc
   )
-set_property(TEST tests.pyre.lib.memory.constmap_slice.cleanup PROPERTY
-  DEPENDS tests.pyre.lib.memory.constmap_slice.cc
+# {map.dat} is shared by a fan of consumers, so the sweep waits for all of them
+pyre_test_driver_cleanup(map.dat
+  tests/pyre.lib/memory/map_create.cc
+  tests/pyre.lib/memory/map_write.cc
+  tests/pyre.lib/memory/map_read.cc
+  tests/pyre.lib/memory/map_oob.cc
+  tests/pyre.lib/memory/constmap_read.cc
+  tests/pyre.lib/memory/constmap_oob.cc
   )
+# the slice tests each own their file
+pyre_test_driver_cleanup(map_slice.dat tests/pyre.lib/memory/map_slice.cc)
+pyre_test_driver_cleanup(constmap_slice.dat tests/pyre.lib/memory/constmap_slice.cc)
 
 
 # typelists
@@ -244,115 +234,26 @@ pyre_test_driver(tests/pyre.lib/viz/iterators/logsaw.cc)
 pyre_test_driver(tests/pyre.lib/viz/iterators/phase.cc)
 pyre_test_driver(tests/pyre.lib/viz/iterators/polarsaw.cc)
 
-# some tests require cleanup
-add_test(NAME tests.pyre.lib.viz.flow.amplitude.cleanup
-  COMMAND ${BASH_PROGRAM} -c "rm pyre_viz_flow_amplitude.bmp"
-  )
-
-add_test(NAME tests.pyre.lib.viz.flow.bmp.cleanup
-  COMMAND ${BASH_PROGRAM} -c "rm pyre_viz_flow_bmp.bmp"
-  )
-
-add_test(NAME tests.pyre.lib.viz.flow.complex.cleanup
-  COMMAND ${BASH_PROGRAM} -c "rm pyre_viz_flow_complex.bmp"
-  )
-
-add_test(NAME tests.pyre.lib.viz.flow.decimate.cleanup
-  COMMAND ${BASH_PROGRAM} -c "rm pyre_viz_flow_decimate.bmp"
-  )
-
-add_test(NAME tests.pyre.lib.viz.flow.gray.cleanup
-  COMMAND ${BASH_PROGRAM} -c "rm pyre_viz_flow_gray.bmp"
-  )
-
-add_test(NAME tests.pyre.lib.viz.flow.hl.cleanup
-  COMMAND ${BASH_PROGRAM} -c "rm pyre_viz_flow_hl.bmp"
-  )
-
-add_test(NAME tests.pyre.lib.viz.flow.hsb.cleanup
-  COMMAND ${BASH_PROGRAM} -c "rm pyre_viz_flow_hsb.bmp"
-  )
-
-add_test(NAME tests.pyre.lib.viz.flow.hsl.cleanup
-  COMMAND ${BASH_PROGRAM} -c "rm pyre_viz_flow_hsl.bmp"
-  )
-
-add_test(NAME tests.pyre.lib.viz.flow.imaginary.cleanup
-  COMMAND ${BASH_PROGRAM} -c "rm pyre_viz_flow_imaginary.bmp"
-  )
-
-add_test(NAME tests.pyre.lib.viz.flow.phase.cleanup
-  COMMAND ${BASH_PROGRAM} -c "rm pyre_viz_flow_phase.bmp"
-  )
-
-add_test(NAME tests.pyre.lib.viz.flow.real.cleanup
-  COMMAND ${BASH_PROGRAM} -c "rm pyre_viz_flow_real.bmp"
-  )
-
-add_test(NAME tests.pyre.lib.viz.iterators.amplitude.cleanup
-  COMMAND ${BASH_PROGRAM} -c "rm pyre_viz_iterators_amplitude.bmp"
-  )
-
-add_test(NAME tests.pyre.lib.viz.iterators.bmp.cleanup
-  COMMAND ${BASH_PROGRAM} -c "rm pyre_viz_iterators_bmp.bmp"
-  )
-
-add_test(NAME tests.pyre.lib.viz.iterators.complex.cleanup
-  COMMAND ${BASH_PROGRAM} -c "rm pyre_viz_iterators_complex.bmp"
-  )
-
-add_test(NAME tests.pyre.lib.viz.iterators.decimate.cleanup
-  COMMAND ${BASH_PROGRAM} -c "rm pyre_viz_iterators_decimate.bmp"
-  )
-
-add_test(NAME tests.pyre.lib.viz.iterators.domain_coloring.cleanup
-  COMMAND ${BASH_PROGRAM} -c "rm pyre_viz_iterators_domain_coloring.bmp"
-  )
-
-add_test(NAME tests.pyre.lib.viz.iterators.logsaw.cleanup
-  COMMAND ${BASH_PROGRAM} -c "rm pyre_viz_iterators_logsaw.bmp"
-  )
-
-add_test(NAME tests.pyre.lib.viz.iterators.phase.cleanup
-  COMMAND ${BASH_PROGRAM} -c "rm pyre_viz_iterators_phase.bmp"
-  )
-
-add_test(NAME tests.pyre.lib.viz.iterators.polarsaw.cleanup
-  COMMAND ${BASH_PROGRAM} -c "rm pyre_viz_iterators_polarsaw.bmp"
-  )
-
-# some tests must happen in a specific order
-set_property(TEST tests.pyre.lib.viz.iterators.amplitude.cleanup PROPERTY
-  DEPENDS tests.pyre.lib.viz.iterators.amplitude.cc
-  )
-
-set_property(TEST tests.pyre.lib.viz.iterators.bmp.cleanup PROPERTY
-  DEPENDS tests.pyre.lib.viz.iterators.bmp.cc
-  )
-
-set_property(TEST tests.pyre.lib.viz.iterators.complex.cleanup PROPERTY
-  DEPENDS tests.pyre.lib.viz.iterators.complex.cc
-  )
-
-set_property(TEST tests.pyre.lib.viz.iterators.decimate.cleanup PROPERTY
-  DEPENDS tests.pyre.lib.viz.iterators.decimate.cc
-  )
-
-set_property(TEST tests.pyre.lib.viz.iterators.domain_coloring.cleanup PROPERTY
-  DEPENDS tests.pyre.lib.viz.iterators.domain_coloring.cc
-  )
-
-set_property(TEST tests.pyre.lib.viz.iterators.logsaw.cleanup PROPERTY
-  DEPENDS tests.pyre.lib.viz.iterators.logsaw.cc
-  )
-
-set_property(TEST tests.pyre.lib.viz.iterators.phase.cleanup PROPERTY
-  DEPENDS tests.pyre.lib.viz.iterators.phase.cc
-  )
-
-set_property(TEST tests.pyre.lib.viz.iterators.polarsaw.cleanup PROPERTY
-  DEPENDS tests.pyre.lib.viz.iterators.polarsaw.cc
-  )
+# the drivers leave their scratch products behind so they can be inspected; sweep them
+pyre_test_driver_cleanup(pyre_viz_flow_amplitude.bmp tests/pyre.lib/viz/flow/amplitude.cc)
+pyre_test_driver_cleanup(pyre_viz_flow_bmp.bmp tests/pyre.lib/viz/flow/bmp.cc)
+pyre_test_driver_cleanup(pyre_viz_flow_complex.bmp tests/pyre.lib/viz/flow/complex.cc)
+pyre_test_driver_cleanup(pyre_viz_flow_decimate.bmp tests/pyre.lib/viz/flow/decimate.cc)
+pyre_test_driver_cleanup(pyre_viz_flow_gray.bmp tests/pyre.lib/viz/flow/gray.cc)
+pyre_test_driver_cleanup(pyre_viz_flow_hl.bmp tests/pyre.lib/viz/flow/hl.cc)
+pyre_test_driver_cleanup(pyre_viz_flow_hsb.bmp tests/pyre.lib/viz/flow/hsb.cc)
+pyre_test_driver_cleanup(pyre_viz_flow_hsl.bmp tests/pyre.lib/viz/flow/hsl.cc)
+pyre_test_driver_cleanup(pyre_viz_flow_imaginary.bmp tests/pyre.lib/viz/flow/imaginary.cc)
+pyre_test_driver_cleanup(pyre_viz_flow_phase.bmp tests/pyre.lib/viz/flow/phase.cc)
+pyre_test_driver_cleanup(pyre_viz_flow_real.bmp tests/pyre.lib/viz/flow/real.cc)
+pyre_test_driver_cleanup(pyre_viz_iterators_amplitude.bmp tests/pyre.lib/viz/iterators/amplitude.cc)
+pyre_test_driver_cleanup(pyre_viz_iterators_bmp.bmp tests/pyre.lib/viz/iterators/bmp.cc)
+pyre_test_driver_cleanup(pyre_viz_iterators_complex.bmp tests/pyre.lib/viz/iterators/complex.cc)
+pyre_test_driver_cleanup(pyre_viz_iterators_decimate.bmp tests/pyre.lib/viz/iterators/decimate.cc)
+pyre_test_driver_cleanup(pyre_viz_iterators_domain_coloring.bmp tests/pyre.lib/viz/iterators/domain_coloring.cc)
+pyre_test_driver_cleanup(pyre_viz_iterators_logsaw.bmp tests/pyre.lib/viz/iterators/logsaw.cc)
+pyre_test_driver_cleanup(pyre_viz_iterators_phase.bmp tests/pyre.lib/viz/iterators/phase.cc)
+pyre_test_driver_cleanup(pyre_viz_iterators_polarsaw.bmp tests/pyre.lib/viz/iterators/polarsaw.cc)
 
 
 # math

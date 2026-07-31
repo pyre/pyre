@@ -177,145 +177,26 @@ pyre_test_driver(tests/journal.lib/warning_quiet.cc)
 pyre_test_driver(tests/journal.lib/warning_sanity.cc)
 pyre_test_driver(tests/journal.lib/warning_shared.cc)
 
-# clean up
-add_test(NAME tests.journal.lib.debug_device.cleanup
-  COMMAND ${BASH_PROGRAM} -c "rm debug_device.log"
-  )
-set_property(TEST tests.journal.lib.debug_device.cleanup PROPERTY
-  DEPENDS tests.journal.lib.debug_device.cc
-  )
-
-add_test(NAME tests.journal.lib.error_device.cleanup
-  COMMAND ${BASH_PROGRAM} -c "rm error_device.log"
-  )
-set_property(TEST tests.journal.lib.error_device.cleanup PROPERTY
-  DEPENDS tests.journal.lib.error_device.cc
-  )
-
-add_test(NAME tests.journal.lib.firewall_device.cleanup
-  COMMAND ${BASH_PROGRAM} -c "rm firewall_device.log"
-  )
-set_property(TEST tests.journal.lib.firewall_device.cleanup PROPERTY
-  DEPENDS tests.journal.lib.firewall_device.cc
-  )
-
-add_test(NAME tests.journal.lib.help_device.cleanup
-  COMMAND ${BASH_PROGRAM} -c "rm help_device.log"
-  )
-set_property(TEST tests.journal.lib.help_device.cleanup PROPERTY
-  DEPENDS tests.journal.lib.help_device.cc
-  )
-
-add_test(NAME tests.journal.lib.info_device.cleanup
-  COMMAND ${BASH_PROGRAM} -c "rm info_device.log"
-  )
-set_property(TEST tests.journal.lib.info_device.cleanup PROPERTY
-  DEPENDS tests.journal.lib.info_device.cc
-  )
-
-add_test(NAME tests.journal.lib.warning_device.cleanup
-  COMMAND ${BASH_PROGRAM} -c "rm warning_device.log"
-  )
-set_property(TEST tests.journal.lib.warning_device.cleanup PROPERTY
-  DEPENDS tests.journal.lib.warning_device.cc
-  )
-
-add_test(NAME tests.journal.lib.api_file.cleanup
-  COMMAND ${BASH_PROGRAM} -c "rm api_file.log"
-  )
-set_property(TEST tests.journal.lib.api_file.cleanup PROPERTY
-  DEPENDS tests.journal.lib.api_file.cc
-  )
-
-add_test(NAME tests.journal.lib.debug_file.cleanup
-  COMMAND ${BASH_PROGRAM} -c "rm debug_file.log"
-  )
-set_property(TEST tests.journal.lib.debug_file.cleanup PROPERTY
-  DEPENDS tests.journal.lib.debug_file.cc
-  )
-
-add_test(NAME tests.journal.lib.error_file.cleanup
-  COMMAND ${BASH_PROGRAM} -c "rm error_file.log"
-  )
-set_property(TEST tests.journal.lib.error_file.cleanup PROPERTY
-  DEPENDS tests.journal.lib.error_file.cc
-  )
-
-add_test(NAME tests.journal.lib.firewall_file.cleanup
-  COMMAND ${BASH_PROGRAM} -c "rm firewall_file.log"
-  )
-set_property(TEST tests.journal.lib.firewall_file.cleanup PROPERTY
-  DEPENDS tests.journal.lib.firewall_file.cc
-  )
-
-add_test(NAME tests.journal.lib.help_file.cleanup
-  COMMAND ${BASH_PROGRAM} -c "rm help_file.log"
-  )
-set_property(TEST tests.journal.lib.help_file.cleanup PROPERTY
-  DEPENDS tests.journal.lib.help_file.cc
-  )
-
-add_test(NAME tests.journal.lib.info_file.cleanup
-  COMMAND ${BASH_PROGRAM} -c "rm info_file.log"
-  )
-set_property(TEST tests.journal.lib.info_file.cleanup PROPERTY
-  DEPENDS tests.journal.lib.info_file.cc
-  )
-
-add_test(NAME tests.journal.lib.warning_file.cleanup
-  COMMAND ${BASH_PROGRAM} -c "rm warning_file.log"
-  )
-set_property(TEST tests.journal.lib.warning_file.cleanup PROPERTY
-  DEPENDS tests.journal.lib.warning_file.cc
-  )
-
-add_test(NAME tests.journal.lib.api_file_mode.cleanup
-  COMMAND ${BASH_PROGRAM} -c "rm api_file_mode.log"
-  )
-set_property(TEST tests.journal.lib.api_file_mode.cleanup PROPERTY
-  DEPENDS tests.journal.lib.api_file_mode.cc
-  )
-
-add_test(NAME tests.journal.lib.debug_file_mode.cleanup
-  COMMAND ${BASH_PROGRAM} -c "rm debug_file_mode.log"
-  )
-set_property(TEST tests.journal.lib.debug_file_mode.cleanup PROPERTY
-  DEPENDS tests.journal.lib.debug_file_mode.cc
-  )
-
-add_test(NAME tests.journal.lib.error_file_mode.cleanup
-  COMMAND ${BASH_PROGRAM} -c "rm error_file_mode.log"
-  )
-set_property(TEST tests.journal.lib.error_file_mode.cleanup PROPERTY
-  DEPENDS tests.journal.lib.error_file_mode.cc
-  )
-
-add_test(NAME tests.journal.lib.firewall_file_mode.cleanup
-  COMMAND ${BASH_PROGRAM} -c "rm firewall_file_mode.log"
-  )
-set_property(TEST tests.journal.lib.firewall_file_mode.cleanup PROPERTY
-  DEPENDS tests.journal.lib.firewall_file_mode.cc
-  )
-
-add_test(NAME tests.journal.lib.help_file_mode.cleanup
-  COMMAND ${BASH_PROGRAM} -c "rm help_file_mode.log"
-  )
-set_property(TEST tests.journal.lib.help_file_mode.cleanup PROPERTY
-  DEPENDS tests.journal.lib.help_file_mode.cc
-  )
-
-add_test(NAME tests.journal.lib.info_file_mode.cleanup
-  COMMAND ${BASH_PROGRAM} -c "rm info_file_mode.log"
-  )
-set_property(TEST tests.journal.lib.info_file_mode.cleanup PROPERTY
-  DEPENDS tests.journal.lib.info_file_mode.cc
-  )
-
-add_test(NAME tests.journal.lib.warning_file_mode.cleanup
-  COMMAND ${BASH_PROGRAM} -c "rm warning_file_mode.log"
-  )
-set_property(TEST tests.journal.lib.warning_file_mode.cleanup PROPERTY
-  DEPENDS tests.journal.lib.warning_file_mode.cc
-  )
+# the drivers leave their scratch products behind so they can be inspected; sweep them
+pyre_test_driver_cleanup(debug_device.log tests/journal.lib/debug_device.cc)
+pyre_test_driver_cleanup(error_device.log tests/journal.lib/error_device.cc)
+pyre_test_driver_cleanup(firewall_device.log tests/journal.lib/firewall_device.cc)
+pyre_test_driver_cleanup(help_device.log tests/journal.lib/help_device.cc)
+pyre_test_driver_cleanup(info_device.log tests/journal.lib/info_device.cc)
+pyre_test_driver_cleanup(warning_device.log tests/journal.lib/warning_device.cc)
+pyre_test_driver_cleanup(api_file.log tests/journal.lib/api_file.cc)
+pyre_test_driver_cleanup(debug_file.log tests/journal.lib/debug_file.cc)
+pyre_test_driver_cleanup(error_file.log tests/journal.lib/error_file.cc)
+pyre_test_driver_cleanup(firewall_file.log tests/journal.lib/firewall_file.cc)
+pyre_test_driver_cleanup(help_file.log tests/journal.lib/help_file.cc)
+pyre_test_driver_cleanup(info_file.log tests/journal.lib/info_file.cc)
+pyre_test_driver_cleanup(warning_file.log tests/journal.lib/warning_file.cc)
+pyre_test_driver_cleanup(api_file_mode.log tests/journal.lib/api_file_mode.cc)
+pyre_test_driver_cleanup(debug_file_mode.log tests/journal.lib/debug_file_mode.cc)
+pyre_test_driver_cleanup(error_file_mode.log tests/journal.lib/error_file_mode.cc)
+pyre_test_driver_cleanup(firewall_file_mode.log tests/journal.lib/firewall_file_mode.cc)
+pyre_test_driver_cleanup(help_file_mode.log tests/journal.lib/help_file_mode.cc)
+pyre_test_driver_cleanup(info_file_mode.log tests/journal.lib/info_file_mode.cc)
+pyre_test_driver_cleanup(warning_file_mode.log tests/journal.lib/warning_file_mode.cc)
 
 # end of file
