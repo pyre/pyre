@@ -110,6 +110,21 @@ class Boot(Priority):
     __slots__ = ()
 
 
+class Discovery(Priority):
+    """
+    Category for the priorities of values deposited by probes of the machine, such as package
+    manager interrogation; they override the trait defaults but lose to all forms of explicit
+    configuration, including the package configuration files where applications record their
+    settings
+    """
+
+    # public data
+    name = "discovery"
+    category = next(categories)
+    # narrow the footprint
+    __slots__ = ()
+
+
 class Package(Priority):
     """
     Category for the priorities of values assigned while package configurations are being
@@ -118,20 +133,6 @@ class Package(Priority):
 
     # public data
     name = "package"
-    category = next(categories)
-    # narrow the footprint
-    __slots__ = ()
-
-
-class Discovery(Priority):
-    """
-    Category for the priorities of values deposited by probes of the machine, such as package
-    manager interrogation; they override the trait defaults but lose to all forms of explicit
-    configuration
-    """
-
-    # public data
-    name = "discovery"
     category = next(categories)
     # narrow the footprint
     __slots__ = ()
