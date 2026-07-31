@@ -1,0 +1,8 @@
+{
+  "name": "cuda-cudart-dev",
+  "version": "12.4.127",
+  "files": [
+    "targets/fake-arch/include/cuda_runtime.h",
+    "targets/fake-arch/lib/libcudart.dylib"
+  ]
+}

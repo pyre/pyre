@@ -1,0 +1,7 @@
+{
+  "name": "cuda-nvcc",
+  "version": "12.4.131",
+  "files": [
+    "bin/nvcc"
+  ]
+}
