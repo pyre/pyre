@@ -349,6 +349,18 @@ class Managed(pyre.component, implements=PackageManager):
             # record them
             values["dependencies"] = list(recipe.dependencies)
 
+        # evaluate the content proofs against the discovered headers
+        harvested = recipe.prove(folders=incdir)
+        # a failed proof means this interpretation is not the flavor it claims to be
+        if harvested is None:
+            # so reject it
+            return None
+        # fold in whatever the extractors gathered; the database reported values are
+        # authoritative, so only fill the gaps
+        for trait, value in harvested.items():
+            # politely
+            values.setdefault(trait, value)
+
         # collect all the folders we discovered
         folders = incdir + libdir + bindir
         # if there are any

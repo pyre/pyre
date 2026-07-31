@@ -11,6 +11,9 @@ from ...Library import Library
 # the flavor description
 from ...Recipe import Recipe
 
+# the content checks
+from ...Proof import Proof
+
 
 # the gsl package category
 class GSL(Library, family="pyre.externals.gsl"):
@@ -42,6 +45,14 @@ class GSL(Library, family="pyre.externals.gsl"):
             libraries=("gsl", "gslcblas"),
             # and these markers to the compile line
             defines=("WITH_GSL", "HAVE_INLINE"),
+            # the version header reveals the version when the database doesn't report one
+            proofs=(
+                Proof(
+                    header="gsl/gsl_version.h",
+                    pattern=r'#\s*define\s+GSL_VERSION\s+"([^"]+)"',
+                    harvest="version",
+                ),
+            ),
             # with database specific names where the category name isn't enough
             natives={
                 "dpkg": ("libgsl-dev", "libgsl0-dev"),

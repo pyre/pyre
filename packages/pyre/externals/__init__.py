@@ -68,6 +68,7 @@ from .Package import Package as package
 from .Tool import Tool as tool
 from .Library import Library as library
 from .Recipe import Recipe as recipe
+from .Proof import Proof as proof
 from .Requirement import Requirement as requirement
 
 
