@@ -33,6 +33,7 @@ class Recipe:
         binaries=None,
         defines=(),
         dependencies=(),
+        proofs=(),
         **kwds,
     ):
         """
@@ -63,10 +64,32 @@ class Recipe:
         self.defines = tuple(defines)
         # the package categories this one depends on
         self.dependencies = tuple(dependencies)
+        # the content checks that settle what the package metadata cannot
+        self.proofs = tuple(proofs)
         # all done
         return
 
     # interface
+    def prove(self, folders):
+        """
+        Evaluate my content proofs against the headers under {folders} and return the
+        harvested values, or {None} when any proof fails
+        """
+        # the values the extractors gather
+        harvested = {}
+        # go through my proofs
+        for proof in self.proofs:
+            # evaluate each one
+            ok, values = proof.evaluate(folders=folders)
+            # a failed proof sinks the whole interpretation
+            if not ok:
+                # so report it
+                return None
+            # fold in whatever was harvested
+            harvested.update(values)
+        # the interpretation survives
+        return harvested
+
     def candidates(self, manager):
         """
         Generate the ranked sequence of native package groups to look for in the database of
@@ -121,6 +144,7 @@ class Recipe:
         "binaries",
         "defines",
         "dependencies",
+        "proofs",
     )
 
 

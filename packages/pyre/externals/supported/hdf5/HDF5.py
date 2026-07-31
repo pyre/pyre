@@ -11,6 +11,9 @@ from ...Library import Library
 # the flavor description
 from ...Recipe import Recipe
 
+# the content checks
+from ...Proof import Proof
+
 
 # the hdf5 package category
 class HDF5(Library, family="pyre.externals.hdf5"):
@@ -50,6 +53,12 @@ class HDF5(Library, family="pyre.externals.hdf5"):
             libraries=("hdf5_cpp", "hdf5"),
             # and this marker to the compile line
             defines=("WITH_HDF5",),
+            # settled by the build configuration header, regardless of who packaged it:
+            # a serial build must not be mpi aware, and it reveals its version
+            proofs=(
+                Proof(header="H5pubconf.h", pattern=r"#\s*define\s+H5_HAVE_PARALLEL\s+1", forbid=True),
+                Proof(header="H5pubconf.h", pattern=r'#\s*define\s+H5_VERSION\s+"([^"]+)"', harvest="version"),
+            ),
             # with database specific names where the category name isn't enough
             natives={
                 "dpkg": ("libhdf5-dev",),
@@ -76,10 +85,14 @@ class HDF5(Library, family="pyre.externals.hdf5"):
             defines=("WITH_HDF5",),
             # requiring the matching mpi implementation
             dependencies=("mpi[openmpi]",),
-            # with database specific names where the flavor name isn't enough; conda and
-            # macports name every flavor {hdf5} and encode the build in metadata the
-            # engines don't read yet, so parallel demands on those databases must wait
-            # for the marker content probes
+            # settled by the build configuration header, regardless of who packaged it:
+            # conda and macports name every flavor {hdf5}, so the proof of mpi awareness
+            # carries the whole classification there
+            proofs=(
+                Proof(header="H5pubconf.h", pattern=r"#\s*define\s+H5_HAVE_PARALLEL\s+1"),
+                Proof(header="H5pubconf.h", pattern=r'#\s*define\s+H5_VERSION\s+"([^"]+)"', harvest="version"),
+            ),
+            # with database specific names where the flavor name isn't enough
             natives={
                 "dpkg": ("libhdf5-openmpi-dev",),
                 "rpm": ("hdf5-openmpi-devel",),
@@ -103,6 +116,11 @@ class HDF5(Library, family="pyre.externals.hdf5"):
             defines=("WITH_HDF5",),
             # requiring the matching mpi implementation
             dependencies=("mpi[mpich]",),
+            # settled by the build configuration header, like its openmpi sibling
+            proofs=(
+                Proof(header="H5pubconf.h", pattern=r"#\s*define\s+H5_HAVE_PARALLEL\s+1"),
+                Proof(header="H5pubconf.h", pattern=r'#\s*define\s+H5_VERSION\s+"([^"]+)"', harvest="version"),
+            ),
             # with database specific names where the flavor name isn't enough
             natives={
                 "dpkg": ("libhdf5-mpich-dev",),
