@@ -172,6 +172,17 @@ def metis(**kwds):
     return protocol(**kwds)
 
 
+def mkl(**kwds):
+    """
+    The MKL package category
+    """
+    # grab the protocol
+    from .supported.mkl import protocol
+
+    # and generate a facility
+    return protocol(**kwds)
+
+
 def mpi(**kwds):
     """
     The MPI package category
