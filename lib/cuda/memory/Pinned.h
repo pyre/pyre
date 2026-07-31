@@ -86,7 +86,7 @@ public:
     ~Pinned();
     // constructors
     Pinned(const Pinned &) = default;
-    Pinned(Pinned &&) = default;
+    Pinned(Pinned &&);
     Pinned & operator=(const Pinned &) = default;
     Pinned & operator=(Pinned &&) = default;
 };
