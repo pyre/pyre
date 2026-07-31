@@ -1,0 +1,7 @@
+{
+  "name": "mkl-include",
+  "version": "2024.1.0",
+  "files": [
+    "include/mkl.h"
+  ]
+}

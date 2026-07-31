@@ -1,0 +1,7 @@
+{
+  "name": "mkl",
+  "version": "2024.1.0",
+  "files": [
+    "lib/libmkl_rt.dylib"
+  ]
+}
