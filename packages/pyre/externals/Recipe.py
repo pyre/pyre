@@ -25,6 +25,7 @@ class Recipe:
         category,
         factory,
         flavor=None,
+        tags=None,
         natives=None,
         group=None,
         headers=(),
@@ -42,6 +43,9 @@ class Recipe:
         self.factory = factory
         # the flavor tag; single flavor categories reuse the category name
         self.flavor = flavor if flavor is not None else category
+        # the flavor classes this flavor answers to, e.g. {parallel}; requirement selectors
+        # match against the flavor name and these tags
+        self.tags = tuple(tags) if tags else ()
         # the map from engine names to candidate native package names
         self.natives = dict(natives) if natives else {}
         # the selection group, for package managers that support alternatives, e.g. macports
@@ -106,6 +110,7 @@ class Recipe:
         "category",
         "factory",
         "flavor",
+        "tags",
         "natives",
         "group",
         "headers",

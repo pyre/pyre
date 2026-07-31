@@ -14,7 +14,8 @@ class Report:
     it: {selections} maps the resolvable categories to their configured installations, in link
     order, i.e. with every package preceding the packages it depends on; {unsupported} lists
     the categories the framework has no recipes for; {unavailable} lists the categories that
-    are supported but could not be located on this host
+    are supported but could not be located on this host; {conflicted} maps the categories
+    whose accumulated requirements cannot be satisfied to the requirements involved
     """
 
     # meta-methods
@@ -30,6 +31,8 @@ class Report:
         self.unsupported = []
         # the categories that could not be located on this host
         self.unavailable = []
+        # the map from over-constrained categories to the requirements involved
+        self.conflicted = {}
         # all done
         return
 
@@ -38,11 +41,12 @@ class Report:
         # summarize the outcome
         return (
             f"resolved {len(self.selections)} of {len(self.requested)} requested categories; "
-            f"{len(self.unsupported)} unsupported, {len(self.unavailable)} unavailable"
+            f"{len(self.unsupported)} unsupported, {len(self.unavailable)} unavailable, "
+            f"{len(self.conflicted)} conflicted"
         )
 
     # narrow the footprint
-    __slots__ = ("requested", "selections", "unsupported", "unavailable")
+    __slots__ = ("requested", "selections", "unsupported", "unavailable", "conflicted")
 
 
 # end of file

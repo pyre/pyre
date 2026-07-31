@@ -20,6 +20,14 @@ class ExternalsError(FrameworkError):
     """
 
 
+# the internal signal that a resolution pass must be abandoned and retried
+class ResolutionRestart(ExternalsError):
+    """
+    Exception raised when a requirement invalidates a selection made earlier in the current
+    resolution pass; the resolver catches it and makes a fresh pass with the richer demands
+    """
+
+
 # requirement parsing failures
 class RequirementSyntaxError(ExternalsError):
     """

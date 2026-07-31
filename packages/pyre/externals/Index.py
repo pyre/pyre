@@ -11,8 +11,14 @@ import importlib
 # framework
 import pyre
 
+# the requirement vocabulary
+from .Requirement import Requirement
+
 # the resolution outcome
 from .Report import Report
+
+# the internal restart signal
+from .exceptions import ResolutionRestart
 
 
 # the manager of external package discovery
@@ -24,8 +30,11 @@ class Index:
     realizes package recipes by asking each engine in turn, and deposits successful
     discoveries into the configuration store at {discovery} priority, so that user
     configuration overrides discovered values through the normal arbitration rules. It also
-    provides the dependency resolver that build engines use to convert a set of category
-    requirements into configured installations in link order
+    provides the dependency resolver that build engines use to convert a set of requirements
+    into configured installations in link order. Requirements accumulate monotonically:
+    each category collects the demands made against it, selections honor the accumulated
+    pool, and a demand that arrives after its category was selected either renegotiates the
+    selection, when it was made during the current resolution, or reports a conflict
     """
 
     # singleton access
@@ -50,6 +59,10 @@ class Index:
         self._engines = None
         # the cache of realized selections, by category
         self._selections = {}
+        # the accumulated requirements: category -> {normalized spec -> requirement}
+        self._demands = {}
+        # the categories whose selection failure implicates their requirements
+        self._blocked = set()
         # all done
         return
 
@@ -63,8 +76,12 @@ class Index:
         """
         # discard the engine stack
         self._engines = None
-        # and the selections
+        # the selections
         self._selections = {}
+        # the accumulated requirements
+        self._demands = {}
+        # and the failure diagnoses
+        self._blocked = set()
         # all done
         return
 
@@ -112,8 +129,9 @@ class Index:
 
     def select(self, protocol):
         """
-        Realize the best recipe of the category described by {protocol} and return the
-        configured installation, or {None} if no engine can locate one
+        Realize the best recipe of the category described by {protocol} that honors the
+        requirements accumulated against it, and return the configured installation, or
+        {None} if no engine can locate a satisfactory one
         """
         # get the category tag
         category = protocol.category
@@ -121,8 +139,18 @@ class Index:
         if category in self._selections:
             # we've answered this before
             return self._selections[category]
+        # gather the requirements accumulated against this category
+        demands = tuple(self._demands.get(category, {}).values())
         # go through the category flavors, in order of preference
         for recipe in protocol.recipes():
+            # if the requirements rule this flavor out
+            if not all(
+                demand.admits(flavor=recipe.flavor, tags=recipe.tags) for demand in demands
+            ):
+                # implicate the requirements in a potential failure
+                self._blocked.add(category)
+                # and move on to the next flavor
+                continue
             # and the engine stack, most specific database first
             for engine in self.engines():
                 # attempt to
@@ -136,6 +164,14 @@ class Index:
                 # if the recipe is not satisfiable here
                 if not values:
                     # try the next engine
+                    continue
+                # get the version this interpretation reports
+                version = values.get("version", Requirement.unknown)
+                # if the requirements rule it out
+                if not all(demand.accepts(version=version) for demand in demands):
+                    # implicate the requirements in a potential failure
+                    self._blocked.add(category)
+                    # and try the next engine
                     continue
                 # otherwise, deposit the discoveries into the configuration store
                 self.deposit(recipe=recipe, values=values, engine=engine)
@@ -212,10 +248,44 @@ class Index:
 
     def resolve(self, requested):
         """
-        Resolve the {requested} package categories, including their transitive dependencies,
-        and return a report with the configured installations in link order
+        Resolve the {requested} package requirements, including their transitive
+        dependencies, and return a report with the configured installations in link order
+
+        Entries in {requested} may be text specifications or structured requirements
         """
-        # prime the report
+        # normalize the request
+        requested = tuple(Requirement.parse(spec=spec) for spec in requested)
+        # the categories selected during this call, hence still open to renegotiation
+        fresh = set()
+        # requirements only accumulate, so repeated passes converge; bound them anyway
+        for _ in range(self._restarts):
+            # attempt to
+            try:
+                # make a pass over the request and its closure
+                return self._pass(requested=requested, fresh=fresh)
+            # if a requirement invalidated a selection made earlier in the pass
+            except ResolutionRestart:
+                # go again, with the richer demand pool
+                continue
+        # exhausting the attempts indicates a bug in the invalidation logic
+        import journal
+
+        # so build a firewall
+        channel = journal.firewall("pyre.externals")
+        # complain
+        channel.line(f"resolution failed to converge after {self._restarts} passes")
+        # with the request as the context
+        channel.line(f"while resolving {', '.join(str(req) for req in requested)}")
+        # flush
+        channel.log()
+        # in case firewalls aren't fatal, hand back an empty report
+        return Report(requested=requested)
+
+    def _pass(self, requested, fresh):
+        """
+        Make one resolution pass over {requested} and its dependency closure, depth first
+        """
+        # prime a fresh report
         report = Report(requested=requested)
         # the categories that have been fully processed
         done = set()
@@ -225,10 +295,21 @@ class Index:
         order = []
 
         # the visitor
-        def visit(category):
+        def visit(requirement):
             """
-            Visit {category} and its dependency closure, depth first
+            Visit the category constrained by {requirement} and its dependency closure
             """
+            # get the category
+            category = requirement.category
+            # fold the requirement into the demand pool; an incompatible selection that is
+            # still negotiable restarts the pass; an incompatible frozen one is a conflict
+            if not self._register(requirement=requirement, fresh=fresh):
+                # record the conflict, with the full demand pool as the evidence
+                report.conflicted[category] = tuple(self._demands[category].values())
+                # mark the category as handled
+                done.add(category)
+                # and move on
+                return
             # if this category has been handled
             if category in done:
                 # nothing further to do
@@ -252,19 +333,31 @@ class Index:
                 done.add(category)
                 # and move on
                 return
+            # note whether the selection predates this call
+            known = category in self._selections
             # realize the category
             installation = self.select(protocol=protocol)
-            # if no engine could locate it
+            # if no engine could locate a satisfactory installation
             if installation is None:
-                # record it
-                report.unavailable.append(category)
+                # failures the requirements are implicated in
+                if category in self._blocked:
+                    # are conflicts, reported with the demand pool as the evidence
+                    report.conflicted[category] = tuple(self._demands[category].values())
+                # everything else
+                else:
+                    # is simply not installed on this host
+                    report.unavailable.append(category)
                 # mark it
                 done.add(category)
                 # and move on
                 return
+            # selections made by this call remain negotiable until it completes
+            if not known:
+                # so remember this one
+                fresh.add(category)
             # mark the category as in progress
             active.add(category)
-            # visit its dependencies
+            # visit the requirements this selection imposes on other categories
             for dependency in installation.dependencies:
                 # recursively
                 visit(dependency)
@@ -277,10 +370,10 @@ class Index:
             # all done
             return
 
-        # visit each requested category
-        for category in report.requested:
+        # visit each requested requirement
+        for requirement in report.requested:
             # and its closure
-            visit(category)
+            visit(requirement)
 
         # dependencies finish before their dependents, so reversing the finish order places
         # every package ahead of the packages it depends on: link order
@@ -290,6 +383,53 @@ class Index:
 
         # hand back the report
         return report
+
+    def _register(self, requirement, fresh):
+        """
+        Fold {requirement} into the demand pool of its category and check it against the
+        current selection
+
+        Returns {True} when the requirement can be honored: nothing has been selected yet,
+        or the existing selection satisfies it. A violated selection that is still in the
+        {fresh} set is discarded and the pass restarted; a violated frozen selection cannot
+        be renegotiated, reported by returning {False}
+        """
+        # get the category
+        category = requirement.category
+        # and its demand pool
+        pool = self._demands.setdefault(category, {})
+        # the normalized text form is the deduplication key
+        spec = str(requirement)
+        # if this exact requirement has been seen
+        if spec in pool:
+            # it has already been checked
+            return True
+        # fold it into the pool
+        pool[spec] = requirement
+        # get the current selection
+        installation = self._selections.get(category)
+        # if there isn't one, or selection failed
+        if installation is None:
+            # there is nothing to check; the requirement is honored at selection time
+            return True
+        # check the selection against the newcomer
+        satisfied = requirement.admits(
+            flavor=installation.flavor, tags=installation.tags
+        ) and requirement.accepts(version=installation.version)
+        # if the selection honors it
+        if satisfied:
+            # all good
+            return True
+        # if the selection is still negotiable
+        if category in fresh:
+            # discard it
+            del self._selections[category]
+            # it is no longer fresh
+            fresh.discard(category)
+            # and restart the pass so the category is reselected under the richer demands
+            raise ResolutionRestart(description=f"reselecting '{category}'")
+        # otherwise, the selection is frozen and the requirement cannot be met
+        return False
 
     def protocol(self, category):
         """
@@ -309,6 +449,8 @@ class Index:
     # private data
     # the singleton
     _index = None
+    # the bound on resolution passes; requirements only accumulate, so hitting it is a bug
+    _restarts = 32
     # the registry of supported categories: category tag -> module and protocol name
     _categories = {
         "blas": "BLAS",
