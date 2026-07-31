@@ -56,8 +56,8 @@ def index():
 
 def resolve(requested):
     """
-    Resolve the {requested} package categories, including their transitive dependencies, and
-    return a report with the configured installations in link order
+    Resolve the {requested} package requirements, including their transitive dependencies,
+    and return a report with the configured installations in link order
     """
     # delegate to the index
     return index().resolve(requested=requested)

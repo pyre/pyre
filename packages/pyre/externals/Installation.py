@@ -11,6 +11,9 @@ import os
 # framework
 import pyre
 
+# the requirement list descriptor
+from .Requirements import Requirements
+
 
 # the base manager of specific package installations
 class Installation(pyre.component):
@@ -25,6 +28,10 @@ class Installation(pyre.component):
 
     # constants
     category = "unknown"
+    flavor = "unknown"
+    # the flavor classes this flavor answers to; requirement selectors match against the
+    # flavor name and these tags
+    tags = ()
 
     # public state
     version = pyre.properties.str(default="unknown")
@@ -33,8 +40,8 @@ class Installation(pyre.component):
     prefix = pyre.properties.path()
     prefix.doc = "the package installation directory"
 
-    dependencies = pyre.properties.strings()
-    dependencies.doc = "the package categories this installation depends on"
+    dependencies = Requirements()
+    dependencies.doc = "the requirements this installation imposes on other package categories"
 
     # public data
     @property
