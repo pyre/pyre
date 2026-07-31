@@ -28,8 +28,8 @@ def test():
     index = Index()
     # the pile of geometry problems, collected across all categories and reported together
     problems = []
-    # go through the registered categories
-    for category in index._categories:
+    # go through the supported categories
+    for category in index.categories():
         # resolve the protocol
         protocol = index.protocol(category=category)
         # it must exist

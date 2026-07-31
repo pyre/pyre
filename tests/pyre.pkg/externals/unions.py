@@ -67,8 +67,8 @@ def test():
     from pyre.platforms.DPkg import DPkg
 
     # the categories
-    from pyre.externals.Python import Python
-    from pyre.externals.MPI import MPI
+    from pyre.externals.supported.python.Python import Python
+    from pyre.externals.supported.mpi.MPI import MPI
 
     # an engine wired to the fake database instead of a dpkg client
     class engine(DPkg):
