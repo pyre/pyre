@@ -42,8 +42,9 @@ def test():
     assert [str(folder) for folder in values["libdir"]] == ["prefix/lib"]
     # both stems resolve
     assert values["libraries"] == ["gsl", "gslcblas"]
-    # bare engines can't know versions, so there should be no claim
-    assert "version" not in values
+    # bare engines can't know versions from a database, but the recipe's content
+    # extractor harvests it from the version header
+    assert values["version"] == "2.8"
 
     # get the eigen recipe
     from pyre.externals.supported.eigen.Eigen import Eigen
