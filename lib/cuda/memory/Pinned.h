@@ -85,10 +85,10 @@ public:
     // destructor
     ~Pinned();
     // constructors
-    Pinned(const Pinned &) = default;
+    Pinned(const Pinned &) = delete;
     Pinned(Pinned &&);
-    Pinned & operator=(const Pinned &) = default;
-    Pinned & operator=(Pinned &&) = default;
+    Pinned & operator=(const Pinned &) = delete;
+    Pinned & operator=(Pinned &&) = delete;
 };
 
 // get the inline definitions
