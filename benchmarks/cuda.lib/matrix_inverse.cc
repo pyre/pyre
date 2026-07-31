@@ -122,8 +122,8 @@ managedInverses(pack_t tensorPack, int nThreadPerBlock, int nTensors)
 
     // execute the kernel wrapper
     computeInvariantsManaged(
-        nTensors, nThreadPerBlock, nBlocks, tensorArray.data()->data(),
-        inverseArray.data()->data());
+        nTensors, nThreadPerBlock, nBlocks, tensorArray.data(),
+        inverseArray.data());
 
     // wait for GPU to finish before stopping the timer
     status = cudaDeviceSynchronize();
@@ -264,12 +264,12 @@ pinnedInverses(pack_t tensorPack, int nThreadPerBlock, int nTensors)
     walltimer.start();
 
     // synchronize the tensors between host and device
-    tensorArray.data()->synchronizeHostToDevice();
+    tensorArray.storage().synchronizeHostToDevice();
 
     // execute the kernel wrapper
     computeInvariantsPinned(
-        nTensors, nThreadPerBlock, nBlocks, tensorArray.data()->device(),
-        inverseArray.data()->device());
+        nTensors, nThreadPerBlock, nBlocks, tensorArray.storage().device(),
+        inverseArray.storage().device());
 
     // wait for GPU to finish before synchronizing the inverse
     status = cudaDeviceSynchronize();
@@ -284,7 +284,7 @@ pinnedInverses(pack_t tensorPack, int nThreadPerBlock, int nTensors)
     }
 
     // and synchronize the inverse between device and host
-    inverseArray.data()->synchronizeDeviceToHost();
+    inverseArray.storage().synchronizeDeviceToHost();
 
     // wait for GPU to finish before stopping the timer
     status = cudaDeviceSynchronize();
@@ -397,8 +397,8 @@ mappedInverses(pack_t tensorPack, int nThreadPerBlock, int nTensors)
 
     // execute the kernel wrapper
     computeInvariantsMapped(
-        nTensors, nThreadPerBlock, nBlocks, tensorArray.data()->device(),
-        inverseArray.data()->device());
+        nTensors, nThreadPerBlock, nBlocks, tensorArray.storage().device(),
+        inverseArray.storage().device());
 
     // wait for GPU to finish before stopping the timer
     status = cudaDeviceSynchronize();

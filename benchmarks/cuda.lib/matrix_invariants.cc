@@ -127,8 +127,8 @@ managedInvariants(pack_t tensorPack, pack_t invariantPack, int nThreadPerBlock, 
 
     // execute the kernel wrapper
     computeInvariantsManaged(
-        nTensors, nThreadPerBlock, nBlocks, tensorArray.data()->data(), I1.data()->data(),
-        I2.data()->data(), I3.data()->data());
+        nTensors, nThreadPerBlock, nBlocks, tensorArray.data(), I1.data(),
+        I2.data(), I3.data());
 
     // wait for GPU to finish before stopping the timer
     status = cudaDeviceSynchronize();
@@ -244,12 +244,12 @@ pinnedInvariants(pack_t tensorPack, pack_t invariantPack, int nThreadPerBlock, i
     walltimer.start();
 
     // synchronize the tensors between host and device
-    tensorArray.data()->synchronizeHostToDevice();
+    tensorArray.storage().synchronizeHostToDevice();
 
     // execute the kernel
     computeInvariantsPinned(
-        nTensors, nThreadPerBlock, nBlocks, tensorArray.data()->device(), I1.data()->device(),
-        I2.data()->device(), I3.data()->device());
+        nTensors, nThreadPerBlock, nBlocks, tensorArray.storage().device(), I1.storage().device(),
+        I2.storage().device(), I3.storage().device());
 
     // wait for GPU to finish before synchronizing the invariants
     status = cudaDeviceSynchronize();
@@ -264,11 +264,11 @@ pinnedInvariants(pack_t tensorPack, pack_t invariantPack, int nThreadPerBlock, i
     }
 
     // and synchronize the invariants between device and host
-    I1.data()->synchronizeDeviceToHost();
+    I1.storage().synchronizeDeviceToHost();
 
-    I2.data()->synchronizeDeviceToHost();
+    I2.storage().synchronizeDeviceToHost();
 
-    I3.data()->synchronizeDeviceToHost();
+    I3.storage().synchronizeDeviceToHost();
 
     // wait for GPU to finish before stopping the timer
     status = cudaDeviceSynchronize();
@@ -384,8 +384,8 @@ mappedInvariants(pack_t tensorPack, pack_t invariantPack, int nThreadPerBlock, i
     walltimer.start();
 
     computeInvariantsMapped(
-        nTensors, nThreadPerBlock, nBlocks, tensorArray.data()->device(), I1.data()->device(),
-        I2.data()->device(), I3.data()->device());
+        nTensors, nThreadPerBlock, nBlocks, tensorArray.storage().device(), I1.storage().device(),
+        I2.storage().device(), I3.storage().device());
 
     // wait for GPU to finish before stopping the timer
     status = cudaDeviceSynchronize();
