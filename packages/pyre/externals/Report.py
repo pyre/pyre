@@ -19,10 +19,12 @@ class Report:
     """
 
     # meta-methods
-    def __init__(self, *, requested):
+    def __init__(self, *, requested, **kwds):
         """
         Prime an empty report for the given {requested} categories
         """
+        # chain up
+        super().__init__(**kwds)
         # the categories the caller asked for
         self.requested = tuple(requested)
         # the map from resolved categories to their installations, in link order

@@ -51,10 +51,12 @@ class Index:
         return cls._index
 
     # meta-methods
-    def __init__(self):
+    def __init__(self, **kwds):
         """
         Prime an empty index
         """
+        # chain up
+        super().__init__(**kwds)
         # the engine stack; built lazily from the host description
         self._engines = None
         # the cache of realized selections, by category

@@ -33,10 +33,13 @@ class Recipe:
         binaries=None,
         defines=(),
         dependencies=(),
+        **kwds,
     ):
         """
         Describe a package flavor
         """
+        # chain up
+        super().__init__(**kwds)
         # the category this recipe belongs to
         self.category = category
         # the component that gets instantiated when this recipe is realized
