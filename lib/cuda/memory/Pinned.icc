@@ -185,7 +185,7 @@ pyre::cuda::memory::Pinned<T, isConst>::device() const -> pointer
 // data synchronization host to device
 template <class T, bool isConst>
 auto
-pyre::cuda::memory::Pinned<T, isConst>::synchronizeHostToDevice()
+pyre::cuda::memory::Pinned<T, isConst>::synchronizeHostToDevice() const
 {
     // set cuda error
     cudaError_t status;
@@ -216,7 +216,7 @@ pyre::cuda::memory::Pinned<T, isConst>::synchronizeHostToDevice()
 template <class T, bool isConst>
 auto
 pyre::cuda::memory::Pinned<T, isConst>::synchronizeHostToDevice(
-    difference_type startOffset, cell_count_type copySize)
+    difference_type startOffset, cell_count_type copySize) const
 { // set cuda error
     cudaError_t status;
 
@@ -263,7 +263,7 @@ pyre::cuda::memory::Pinned<T, isConst>::synchronizeHostToDevice(
 // data synchronization device to host
 template <class T, bool isConst>
 auto
-pyre::cuda::memory::Pinned<T, isConst>::synchronizeDeviceToHost()
+pyre::cuda::memory::Pinned<T, isConst>::synchronizeDeviceToHost() const
 {
     // set cuda error
     cudaError_t status;
@@ -294,7 +294,7 @@ pyre::cuda::memory::Pinned<T, isConst>::synchronizeDeviceToHost()
 template <class T, bool isConst>
 auto
 pyre::cuda::memory::Pinned<T, isConst>::synchronizeDeviceToHost(
-    difference_type startOffset, cell_count_type copySize)
+    difference_type startOffset, cell_count_type copySize) const
 { // set cuda error
     cudaError_t status;
 
