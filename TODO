@@ -55,7 +55,15 @@
   - stand up a postgres server in the rolling cell, maybe others, maybe all of them, so the
     {pyre.db} and {pyre-postgres} test suites can run against a live database; needs a chat
     about scope: which cells, socket vs tcp, and whether the server rides the image or a
-    sibling container
+    sibling container; nothing does this today, so these suites run nowhere in ci: the cmake
+    legs and the {lts-gcc-cmake} cell exclude them with {ctest -E postgres}, and the mm legs
+    never see {libpq}, so {.mm/pyre-postgres.mm} skips the project outright; a github actions
+    {services:} container would cover the workflows on the same errand
+
+  - once a live server exists, exercise the cmake package as well: {pyre::postgres} is now
+    exported and announced as a component, but nothing anywhere links it, which makes it the
+    least verified of the exports; a driver in {etc/cmake/consumer}, alongside the {mpi} and
+    {cuda} ones, would close that gap, and needs a runner carrying both {libpq} and a server
 
 - merlin:
 
