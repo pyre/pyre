@@ -5,6 +5,10 @@
 # (c) 1998-2026 all rights reserved
 
 
+# externals
+import re
+
+
 # the declarative description of a package flavor
 class Recipe:
     """
@@ -93,6 +97,87 @@ class Recipe:
             harvested.update(values)
         # the interpretation survives
         return harvested
+
+    def audit(self, installation):
+        """
+        Re-prove my markers against the effective configuration of {installation} and
+        generate a complaint for each one that no longer resolves
+
+        The markers come from me, the paths and resolved names from the installation, so
+        this honors whatever the user overrode in configuration; a discovery time check
+        can only see what the package database reported
+        """
+        # the include directories, as the installation has them now; tool installations
+        # carry no library traits at all, so every lookup here tolerates their absence
+        incdir = tuple(getattr(installation, "incdir", ()))
+        # every one of them must exist
+        for folder in incdir:
+            # or the compile line points at nothing
+            if not folder.isDirectory():
+                # so complain
+                yield f"incdir: '{folder}' is not a directory"
+        # every header marker must resolve on one of them
+        for header in self.headers:
+            # look for it
+            if not any((folder / header).exists() for folder in incdir):
+                # a marker that doesn't resolve means the package isn't usable
+                yield f"unresolved header: '{header}'"
+
+        # the library directories, as the installation has them now
+        libdir = tuple(getattr(installation, "libdir", ()))
+        # every one of them must exist
+        for folder in libdir:
+            # or the link line points at nothing
+            if not folder.isDirectory():
+                # so complain
+                yield f"libdir: '{folder}' is not a directory"
+        # every library the installation places on the link line must be there; the stems
+        # are the resolved ones, so this checks what the linker will actually look for
+        for stem in getattr(installation, "libraries", ()):
+            # form the pattern the platforms name libraries with
+            pattern = re.compile(rf"lib{re.escape(stem)}\.(so|dylib|a)(\.\d+)*$")
+            # look for a match in any of the library directories
+            if not any(
+                any(pattern.match(str(entry.name)) for entry in folder.contents)
+                for folder in libdir
+                if folder.isDirectory()
+            ):
+                # a stem that resolves to no file will fail at link time
+                yield f"unresolved library: '{stem}'"
+
+        # the executables the recipe cares about live under the binary directories
+        bindir = tuple(getattr(installation, "bindir", ()))
+        # every one of them must exist
+        for folder in bindir:
+            # or the executables are unreachable
+            if not folder.isDirectory():
+                # so complain
+                yield f"bindir: '{folder}' is not a directory"
+        # discovery accepts a package whose executables are missing as long as it carries
+        # headers or libraries, since package managers routinely split the clients off;
+        # verification honors the same rule, or it would condemn installations the engines
+        # deliberately admitted. for a pure tool, the executable is the whole package
+        if self.binaries and not self.headers and not self.libraries:
+            # go through the traits that name executables
+            for trait in self.binaries:
+                # get the name the installation resolved, which the user may have overridden
+                name = getattr(installation, trait, None)
+                # nothing to check if the trait is empty
+                if not name:
+                    # move on
+                    continue
+                # the named executable must be in one of the binary directories
+                if not any((folder / name).exists() for folder in bindir):
+                    # or invoking it will fail
+                    yield f"unresolved {trait}: '{name}'"
+
+        # finally, the content proofs must still hold against the effective include path
+        if self.prove(folders=incdir) is None:
+            # a build that no longer answers to its own recipe is misconfigured
+            yield "content proof failed"
+
+        # all done
+        return
 
     def candidates(self, manager):
         """
