@@ -60,6 +60,19 @@ function(pyre_h5Lib)
     target_link_libraries(pyre HDF5::HDF5)
     # which puts it in our exported link interface, so downstream projects have to be able to
     # resolve it before they load our targets; teach the package configuration to do it for them
+    # {FindHDF5} probes the hdf5 c toolchain with its {h5cc} wrapper and needs a c compiler to
+    # do it; a consumer whose own project is c++ only would otherwise be told, from deep inside
+    # the module, that the wrapper cannot compile a minimal hdf5 program
+    pyre_exportPrologue(
+"if(NOT CMAKE_C_COMPILER_LOADED)
+  enable_language(C)
+endif()")
+    # steer them towards the same flavour of hdf5 we linked; without this a consumer of a
+    # parallel build resolves whichever hdf5 the module prefers, and a serial one against our
+    # parallel headers is a mismatch they have to diagnose themselves
+    if(HDF5_IS_PARALLEL)
+      pyre_exportPrologue("set(HDF5_PREFER_PARALLEL ON)")
+    endif()
     pyre_exportRequirement(HDF5 HDF5::HDF5 "COMPONENTS C HL")
     # a parallel build of hdf5 exposes {mpi.h} through its public headers, so anything that
     # includes them needs the mpi usage requirements; the plain signature propagates them to

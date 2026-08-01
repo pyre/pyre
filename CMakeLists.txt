@@ -102,6 +102,9 @@ if(MPI_FOUND)
     # leave a marker
     message(STATUS "We have MPI; ask for parallel HDF5: ${HDF5_PREFER_PARALLEL}")
 endif()
+# our own sources are c++ only, so nothing has enabled the c language yet; {FindHDF5} probes
+# the hdf5 c toolchain with its {h5cc} wrapper and cannot do it without a c compiler
+enable_language(C)
 # hunt it down; pyre::h5 wraps the hdf5 C api directly, so the C++ component is no longer needed
 find_package(HDF5 COMPONENTS C HL)
 # report

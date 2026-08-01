@@ -12,8 +12,12 @@ include(CMakeFindDependencyMacro)
 # are generated from the places where the build established those links, so this list is exactly
 # what this particular installation needs, no more and no less
 @PYRE_EXPORT_REQUIREMENTS@
-# our headers are c++23, strictly: the exported targets carry the standard as a usage
+# our headers are c++23, strictly: the exported targets carry the standard itself as a usage
 # requirement, and this turns off the compiler extensions that would otherwise ride along
+# N.B.: cmake has no way to make this part of a usage requirement, because {CXX_EXTENSIONS} is
+# a plain target property rather than an interface one; a target only picks the setting up when
+# it is created, so ask for {pyre} before you declare the targets that will link against it, or
+# they will quietly compile as {gnu++23}
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 # load the exported targets
