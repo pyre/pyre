@@ -58,6 +58,8 @@ function(pyre_journalLib)
     $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/lib>
     $<INSTALL_INTERFACE:${PYRE_DEST_INCLUDE}>
     )
+  # journal is consumable on its own, and its headers are c++23 just like the rest
+  target_compile_features(journal PUBLIC cxx_std_23)
   # add the sources
   target_sources(journal
     PRIVATE

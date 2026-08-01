@@ -109,6 +109,9 @@ function(pyre_pyreLib)
     $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/lib>
     $<INSTALL_INTERFACE:${PYRE_DEST_INCLUDE}>
     )
+  # our headers are c++23; say so, so that consumers get the standard raised for them instead
+  # of discovering the requirement when every include explodes
+  target_compile_features(pyre PUBLIC cxx_std_23)
   # add the sources
   target_sources(pyre
     PRIVATE

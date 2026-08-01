@@ -6,7 +6,8 @@
 
 # cmake setup
 # v3.18 is needed to pass Development.Module to FindPython
-cmake_minimum_required(VERSION 3.19...3.25)
+# v3.20 is needed for the {cxx_std_23} compile feature our exported targets carry
+cmake_minimum_required(VERSION 3.20...3.25)
 
 # options
 option(WITH_CUDA "enable support for CUDA" OFF)
