@@ -3,25 +3,20 @@
 
 @PACKAGE_INIT@
 
-# support for locating dependencies
+# support for locating the packages we depend on
 include(CMakeFindDependencyMacro)
 
-# if the build linked against hdf5, consumers need it too; the quoted form protects against
-# an empty substitution collapsing into a syntax error
-if("@HDF5_FOUND@")
-  # locate it
-  find_dependency(HDF5 COMPONENTS C HL)
-endif()
-
-# a parallel hdf5 places mpi in the link interface of libpyre, so consumers need it as well
-if("@HDF5_IS_PARALLEL@" AND "@MPI_FOUND@")
-  # locate it
-  find_dependency(MPI COMPONENTS CXX)
-endif()
+# our exported targets name imported targets that belong to other packages; the searches below
+# are generated from the places where the build established those links, so this list is exactly
+# what this particular installation needs, no more and no less
+@PYRE_EXPORT_REQUIREMENTS@
+# our headers are c++23, strictly: the exported targets carry the standard as a usage
+# requirement, and this turns off the compiler extensions that would otherwise ride along
+set(CMAKE_CXX_EXTENSIONS OFF)
 
 # load the exported targets
-include(${CMAKE_CURRENT_LIST_DIR}/pyre-targets.cmake)
-# and verify that all requested components are present
+include("${CMAKE_CURRENT_LIST_DIR}/pyre-targets.cmake")
+# and verify that all the requested components are present
 check_required_components(pyre)
 
 # end of file

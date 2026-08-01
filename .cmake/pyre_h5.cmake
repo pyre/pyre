@@ -58,12 +58,17 @@ function(pyre_h5Lib)
     # libpyre now needs the hdf5 c library; the plain signature (matching {pyre_pyreLib}) links
     # it transitively, so consumers whose header templates call the hdf5 c api get it too
     target_link_libraries(pyre HDF5::HDF5)
+    # which puts it in our exported link interface, so downstream projects have to be able to
+    # resolve it before they load our targets; teach the package configuration to do it for them
+    pyre_exportRequirement(HDF5 HDF5::HDF5 "COMPONENTS C HL")
     # a parallel build of hdf5 exposes {mpi.h} through its public headers, so anything that
     # includes them needs the mpi usage requirements; the plain signature propagates them to
     # every consumer of {pyre}, including the {h5} bindings; this restores the handling that
     # was lost when the deprecated mpi c++ bindings were retired
     if(HDF5_IS_PARALLEL AND MPI_FOUND)
       target_link_libraries(pyre MPI::MPI_CXX)
+      # and, again, downstream projects inherit the obligation to resolve it
+      pyre_exportRequirement(MPI MPI::MPI_CXX "COMPONENTS CXX")
     endif()
   endif(HDF5_FOUND)
 endfunction(pyre_h5Lib)
