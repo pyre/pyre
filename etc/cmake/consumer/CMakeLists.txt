@@ -14,6 +14,7 @@ project(pyre-consumer LANGUAGES CXX)
 # what the installation under test is expected to carry
 option(PYRE_CONSUMER_EXPECT_HDF5 "the installation was built against hdf5" OFF)
 option(PYRE_CONSUMER_EXPECT_MPI "the installation carries the mpi add-on" OFF)
+option(PYRE_CONSUMER_EXPECT_CUDA "the installation carries the cuda add-on" OFF)
 
 # deliberately, there is no {find_package(HDF5)} or {find_package(MPI)} ahead of this call, and
 # no {CMAKE_CXX_STANDARD} anywhere in this file: resolving the dependencies of the exported
@@ -118,6 +119,23 @@ if(PYRE_CONSUMER_EXPECT_MPI)
   target_link_libraries(mpi PRIVATE pyre::mpi)
   # and it must run cleanly
   add_test(NAME mpi COMMAND mpi)
+endif()
+
+# the cuda add-on, on the same terms as mpi above
+if(PYRE_CONSUMER_EXPECT_CUDA)
+  # asking for the component is what sends the configuration looking for what it needs
+  find_package(pyre REQUIRED COMPONENTS cuda)
+  # the deprecated {FindCUDA} builds its library list out of the threads imported target, so
+  # that is the one the add-on leans on
+  if(NOT TARGET Threads::Threads)
+    message(FATAL_ERROR "asking for the 'cuda' component did not locate threads")
+  endif()
+  # compiling this proves the cuda headers and our own arrive through {pyre::cuda}
+  add_executable(cuda cuda.cc)
+  # the one link a client should need
+  target_link_libraries(cuda PRIVATE pyre::cuda)
+  # and it must run cleanly
+  add_test(NAME cuda COMMAND cuda)
 endif()
 
 # the hdf5 wrappers, when this installation has them
