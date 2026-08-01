@@ -78,6 +78,7 @@ def test():
             # the geometry each recipe section deposits into
             geometry = [
                 (recipe.headers, ("incdir",)),
+                (recipe.extras, ("incdir",)),
                 (recipe.libraries, ("libdir", "libraries")),
                 (recipe.binaries, ("bindir",) + tuple(recipe.binaries)),
                 (recipe.defines, ("defines",)),
