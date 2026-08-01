@@ -148,4 +148,22 @@ jobs:
           # which this runner does not have
           ctest --output-on-failure -E postgres
 
+      - name: consume the installed package
+        run: |
+          echo " -- switching to the consumer build directory"
+          cd ${{runner.temp}}
+          mkdir consumer
+          cd consumer
+          # nothing here locates hdf5 or selects a language standard; the package configuration
+          # in the prefix has to do both, which is what this step is checking
+          echo " -- configuring a downstream project against the installed prefix"
+          cmake -DCMAKE_PREFIX_PATH=${prefix} -DCMAKE_CXX_COMPILER=${cxx} -DPYRE_CONSUMER_EXPECT_HDF5=ON ${{github.workspace}}/pyre/etc/cmake/consumer
+          echo " -- building it"
+          make -j$(nproc)
+          echo " -- running it"
+          ctest --output-on-failure
+        env:
+          prefix: ${{runner.temp}}/install
+          cxx: ${{matrix.cxx}}
+
 # end of file

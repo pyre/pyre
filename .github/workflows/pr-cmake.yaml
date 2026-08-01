@@ -137,4 +137,81 @@ jobs:
           # which this runner does not have
           ctest -E postgres
 
+      - name: consume the installed package
+        run: |
+          echo " -- switching to the consumer build directory"
+          cd ${{runner.temp}}
+          mkdir consumer
+          cd consumer
+          # nothing here locates hdf5 or selects a language standard; the package configuration
+          # in the prefix has to do both, which is what this step is checking
+          echo " -- configuring a downstream project against the installed prefix"
+          cmake -DCMAKE_PREFIX_PATH=${prefix} -DCMAKE_CXX_COMPILER=${cxx} -DPYRE_CONSUMER_EXPECT_HDF5=ON ${{github.workspace}}/pyre/etc/cmake/consumer
+          echo " -- building it"
+          make -j$(nproc)
+          echo " -- running it"
+          ctest --output-on-failure
+        env:
+          prefix: ${{runner.temp}}/install
+          cxx: ${{matrix.cxx}}
+
+  # build without hdf5 and confirm the package configuration does not ask consumers for it; this
+  # is the only way to catch a configuration that demands more than the installation actually uses
+  minimal:
+    name: without hdf5 on ubuntu-26.04
+    runs-on: ubuntu-26.04
+    env:
+      pythonVersion: "3.14"
+      prefix: ${{github.workspace}}/install
+
+    steps:
+      - name: ubuntu-26.04 refresh
+        run: |
+          echo " -- update the package cache"
+          sudo apt update
+          echo " -- install our dependencies"
+          # hdf5 stays installed on purpose: we disable the search rather than remove the
+          # package, so that what drops the dependency is demonstrably the configuration
+          sudo apt install -y cmake openssh-server libgsl-dev libopenmpi-dev libhdf5-dev
+
+      - name: python setup
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+
+      - name: install dependencies
+        run: |
+          python${pythonVersion} -m pip install --upgrade pip
+          pip3 install pybind11 PyYAML numpy
+
+      - name: checkout pyre
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          path: 'pyre'
+
+      - name: build pyre without hdf5
+        run: |
+          echo " -- switching to the build directory"
+          cd ${{runner.temp}}
+          mkdir build
+          cd build
+          echo " -- configuring the build with the hdf5 search disabled"
+          cmake -DCMAKE_INSTALL_PREFIX=${prefix} -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=gcc-15 -DCMAKE_CXX_COMPILER=g++-15 -DPython_ROOT_DIR=${pythonLocation} -Dpybind11_DIR=${pythonLocation}/lib/python${pythonVersion}/site-packages/pybind11/share/cmake/pybind11 -DCMAKE_DISABLE_FIND_PACKAGE_HDF5=ON -DPYRE_BUILD_TESTING=OFF ${{github.workspace}}/pyre
+          echo " -- building pyre"
+          make -j$(nproc) install
+
+      - name: consume the installed package
+        run: |
+          echo " -- switching to the consumer build directory"
+          cd ${{runner.temp}}
+          mkdir consumer
+          cd consumer
+          echo " -- configuring a downstream project against the installed prefix"
+          cmake -DCMAKE_PREFIX_PATH=${prefix} -DCMAKE_CXX_COMPILER=g++-15 -DPYRE_CONSUMER_EXPECT_HDF5=OFF ${{github.workspace}}/pyre/etc/cmake/consumer
+          echo " -- building it"
+          make -j$(nproc)
+          echo " -- running it"
+          ctest --output-on-failure
+
 # end of file
