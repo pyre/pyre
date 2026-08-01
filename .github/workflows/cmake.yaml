@@ -157,7 +157,7 @@ jobs:
           # nothing here locates hdf5 or selects a language standard; the package configuration
           # in the prefix has to do both, which is what this step is checking
           echo " -- configuring a downstream project against the installed prefix"
-          cmake -DCMAKE_PREFIX_PATH=${prefix} -DCMAKE_CXX_COMPILER=${cxx} -DPYRE_CONSUMER_EXPECT_HDF5=ON ${{github.workspace}}/pyre/etc/cmake/consumer
+          cmake -DCMAKE_PREFIX_PATH=${prefix} -DCMAKE_CXX_COMPILER=${cxx} -DPYRE_CONSUMER_EXPECT_MPI=ON -DPYRE_CONSUMER_EXPECT_HDF5=ON ${{github.workspace}}/pyre/etc/cmake/consumer
           echo " -- building it"
           make -j$(nproc)
           echo " -- running it"

@@ -13,6 +13,7 @@ project(pyre-consumer LANGUAGES CXX)
 
 # what the installation under test is expected to carry
 option(PYRE_CONSUMER_EXPECT_HDF5 "the installation was built against hdf5" OFF)
+option(PYRE_CONSUMER_EXPECT_MPI "the installation carries the mpi add-on" OFF)
 
 # deliberately, there is no {find_package(HDF5)} or {find_package(MPI)} ahead of this call, and
 # no {CMAKE_CXX_STANDARD} anywhere in this file: resolving the dependencies of the exported
@@ -26,6 +27,24 @@ foreach(target pyre::pyre pyre::journal)
   if(NOT TARGET ${target})
     # if not, the installation is unusable
     message(FATAL_ERROR "the {pyre} package did not define '${target}'")
+  endif()
+endforeach()
+
+# the core pieces announce themselves as components, so that {find_package(pyre COMPONENTS ...)}
+# can be answered; check the two that are always there
+foreach(component pyre journal)
+  # each must have been published by the configuration
+  if(NOT pyre_${component}_FOUND)
+    message(FATAL_ERROR "the {pyre} package did not publish the '${component}' component")
+  endif()
+endforeach()
+
+# the optional add-ons ship only when the build found what they wrap; whenever one is announced,
+# the target that goes with it has to be there too, or the announcement is a lie
+foreach(component mpi postgres cuda)
+  # an add-on this installation does not carry is not a problem
+  if(pyre_${component}_FOUND AND NOT TARGET pyre::${component})
+    message(FATAL_ERROR "the {pyre} package announced '${component}' but defined no target")
   endif()
 endforeach()
 
@@ -82,6 +101,24 @@ add_executable(pyre pyre.cc)
 target_link_libraries(pyre PRIVATE pyre::pyre)
 # and it must run cleanly
 add_test(NAME pyre COMMAND pyre)
+
+# the mpi add-on, when this installation has it; asking for it by name is what makes the
+# configuration go looking for mpi, which it deliberately does not do for consumers who never
+# mention the component
+if(PYRE_CONSUMER_EXPECT_MPI)
+  # this second call re-runs the configuration, this time with a component list
+  find_package(pyre REQUIRED COMPONENTS mpi)
+  # which must have resolved the imported target the add-on names
+  if(NOT TARGET MPI::MPI_CXX)
+    message(FATAL_ERROR "asking for the 'mpi' component did not locate mpi")
+  endif()
+  # compiling this proves the mpi headers arrive through {pyre::mpi}
+  add_executable(mpi mpi.cc)
+  # the one link a client should need
+  target_link_libraries(mpi PRIVATE pyre::mpi)
+  # and it must run cleanly
+  add_test(NAME mpi COMMAND mpi)
+endif()
 
 # the hdf5 wrappers, when this installation has them
 if(PYRE_CONSUMER_EXPECT_HDF5)

@@ -30,14 +30,26 @@ function(pyre_postgresLib)
     add_library(postgres INTERFACE)
     # specify the directory for the library compilation products
     pyre_library_directory(postgres lib)
-    # it stands on its own over libpq, and leans on journal for its diagnostics
-    target_link_libraries(postgres INTERFACE pyre journal ${PostgreSQL_LIBRARIES})
+    # it stands on its own over libpq, and leans on journal for its diagnostics; naming the
+    # imported target rather than the raw libraries keeps absolute paths out of the export, and
+    # carries the libpq include directories along with it, which the build interface below used
+    # to supply only to ourselves
+    target_link_libraries(postgres INTERFACE pyre journal PostgreSQL::PostgreSQL)
     target_include_directories(postgres INTERFACE
       $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/lib>
-      $<BUILD_INTERFACE:${PostgreSQL_INCLUDE_DIRS}>
       $<INSTALL_INTERFACE:${PYRE_DEST_INCLUDE}>
       )
     add_library(pyre::postgres ALIAS postgres)
+
+    # hand it downstream; the headers ship either way, so without this a consumer finds
+    # {pyre/postgres.h} in the prefix and has nothing to link it against
+    install(
+      TARGETS postgres
+      EXPORT pyre-targets
+      )
+    pyre_exportTarget(postgres postgres)
+    # and a consumer that asks for this component has to be able to resolve libpq
+    pyre_exportOptionalRequirement(postgres PostgreSQL PostgreSQL::PostgreSQL)
 
   endif(PostgreSQL_FOUND)
   # all done

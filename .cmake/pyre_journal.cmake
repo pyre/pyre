@@ -85,6 +85,8 @@ function(pyre_journalLib)
     EXPORT pyre-targets
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     )
+  # and publish it; journal is consumable entirely on its own
+  pyre_exportTarget(journal journal)
 
   # all done
 endfunction(pyre_journalLib)
