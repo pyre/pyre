@@ -18,6 +18,9 @@ from .Requirement import Requirement
 # the resolution outcome
 from .Report import Report
 
+# the verification outcome
+from .Audit import Audit
+
 # the internal restart signal
 from .exceptions import ResolutionRestart
 
@@ -62,6 +65,8 @@ class Index:
         self._engines = None
         # the cache of realized selections, by category
         self._selections = {}
+        # the recipes that realized them, for verification
+        self._recipes = {}
         # the accumulated requirements: category -> {normalized spec -> requirement}
         self._demands = {}
         # the categories whose selection failure implicates their requirements
@@ -81,6 +86,8 @@ class Index:
         self._engines = None
         # the selections
         self._selections = {}
+        # the recipes that realized them
+        self._recipes = {}
         # the accumulated requirements
         self._demands = {}
         # and the failure diagnoses
@@ -183,6 +190,9 @@ class Index:
                 installation = recipe.factory(name=recipe.flavor)
                 # cache the answer
                 self._selections[category] = installation
+                # remember the recipe that realized it, so verification can re-prove its
+                # markers against whatever the installation says later on
+                self._recipes[category] = recipe
                 # and hand it back
                 return installation
         # if no recipe panned out, remember the failure
@@ -433,6 +443,42 @@ class Index:
             raise ResolutionRestart(description=f"reselecting '{category}'")
         # otherwise, the selection is frozen and the requirement cannot be met
         return False
+
+    def verify(self, report):
+        """
+        Re-prove the markers of every installation in {report} and return an audit
+        """
+        # prime an audit of this report
+        audit = Audit(report=report)
+        # go through the selections, in link order
+        for category, installation in report.selections.items():
+            # find the recipe that realized this one
+            recipe = self._recipes.get(category)
+            # a selection with no recipe means someone bypassed {select}
+            if recipe is None:
+                # which is an authoring error rather than a broken installation
+                import journal
+
+                # so build a firewall
+                channel = journal.firewall("pyre.externals.verify")
+                # describe the problem
+                channel.line(f"no recipe on record for the '{category}' selection")
+                # flush
+                channel.log()
+                # in case firewalls aren't fatal, there is nothing to verify here
+                continue
+            # collect the complaints against this installation
+            complaints = tuple(recipe.audit(installation=installation))
+            # if there are any
+            if complaints:
+                # the installation is broken
+                audit.broken[category] = complaints
+            # otherwise
+            else:
+                # it checks out
+                audit.verified.append(category)
+        # hand back the audit
+        return audit
 
     def protocol(self, category):
         """

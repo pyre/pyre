@@ -63,12 +63,26 @@ def resolve(requested):
     return index().resolve(requested=requested)
 
 
+def verify(requested):
+    """
+    Resolve the {requested} package requirements and re-prove the markers of every
+    installation against its effective configuration; return the audit
+    """
+    # get the index
+    catalog = index()
+    # resolve the request
+    report = catalog.resolve(requested=requested)
+    # and audit the outcome
+    return catalog.verify(report=report)
+
+
 # convenience
 from .Package import Package as package
 from .Tool import Tool as tool
 from .Library import Library as library
 from .Recipe import Recipe as recipe
 from .Proof import Proof as proof
+from .Audit import Audit as audit
 from .Requirement import Requirement as requirement
 
 
