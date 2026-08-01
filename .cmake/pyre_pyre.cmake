@@ -152,6 +152,8 @@ function(pyre_pyreLib)
     EXPORT pyre-targets
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     )
+  # and publish it, so consumers can ask for it by name
+  pyre_exportTarget(pyre pyre)
 
   # all done
 endfunction(pyre_pyreLib)

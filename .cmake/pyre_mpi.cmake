@@ -60,6 +60,17 @@ function(pyre_mpiLib)
       )
     add_library(pyre::mpi ALIAS mpi)
 
+    # hand it downstream; the headers ship either way, so without this a consumer finds
+    # {pyre/mpi.h} in the prefix and has nothing to link it against
+    install(
+      TARGETS mpi
+      EXPORT pyre-targets
+      )
+    pyre_exportTarget(mpi mpi)
+    # its link interface names the mpi imported target, so a consumer that asks for this
+    # component has to be able to resolve it
+    pyre_exportOptionalRequirement(mpi MPI MPI::MPI_CXX "COMPONENTS CXX")
+
   endif(MPI_FOUND)
   # all done
 endfunction(pyre_mpiLib)

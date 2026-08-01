@@ -43,10 +43,24 @@ function(pyre_cudaLib)
     add_library(cuda INTERFACE)
     # specify the directory for the library compilation products
     pyre_library_directory(cuda lib)
-    target_link_libraries(cuda INTERFACE ${CUDA_LIBRARIES})
+    # its headers reach {pyre/memory.h} and {pyre/journal.h}, so it stands on {pyre}, which is
+    # also what puts our own headers on the consumer's include path
+    target_link_libraries(cuda INTERFACE pyre ${CUDA_LIBRARIES})
     # set the include directories
-    target_include_directories(cuda INTERFACE ${CUDA_INCLUDE_DIRS})
+    target_include_directories(cuda INTERFACE
+      ${CUDA_INCLUDE_DIRS}
+      $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/lib>
+      $<INSTALL_INTERFACE:${PYRE_DEST_INCLUDE}>
+      )
     add_library(pyre::cuda ALIAS cuda)
+
+    # hand it downstream; the headers ship either way, so without this a consumer finds
+    # {pyre/cuda.h} in the prefix and has nothing to link it against
+    install(
+      TARGETS cuda
+      EXPORT pyre-targets
+      )
+    pyre_exportTarget(cuda cuda)
   endif()
   # all done
 endfunction(pyre_cudaLib)
