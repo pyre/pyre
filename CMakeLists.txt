@@ -94,7 +94,7 @@ find_package(GSL)
 
 # hdf5
 # if mpi is installed
-if(${MPI_FOUND})
+if(MPI_FOUND)
     # prefer the parallel version of hdf5
     set(HDF5_PREFER_PARALLEL ON)
     # leave a marker
@@ -106,10 +106,10 @@ find_package(HDF5 COMPONENTS C HL)
 message(STATUS "Parallel HDF5: ${HDF5_IS_PARALLEL}")
 
 # find cuda if it is required
-if(${WITH_CUDA})
+if(WITH_CUDA)
     # add the cuda package
     find_package(CUDA REQUIRED)
-  if(${CUDA_FOUND})
+  if(CUDA_FOUND)
     enable_language(CUDA)
   endif()
 endif()
