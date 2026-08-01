@@ -81,6 +81,7 @@ include(pyre_mpi)
 include(pyre_gsl)
 include(pyre_h5)
 include(pyre_postgres)
+include(pyre_exports)
 
 # programs
 find_program(BASH_PROGRAM bash)
@@ -176,6 +177,10 @@ write_basic_package_version_file(
     VERSION ${PROJECT_VERSION}
     COMPATIBILITY SameMajorVersion
     )
+
+# audit the exported link interfaces and render the searches that resolve them; every library
+# has been built by now, so the record of what they link is complete
+pyre_exportRequirements(PYRE_EXPORT_REQUIREMENTS)
 
 # install config file for find_package
 configure_package_config_file(
