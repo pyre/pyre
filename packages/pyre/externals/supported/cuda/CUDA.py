@@ -50,9 +50,12 @@ class CUDA(Tool, Library, family="pyre.externals.cuda"):
             category=cls.category,
             # realized by the generic installation
             factory=Default,
-            # provable by the runtime header, wherever the layout puts it; the cuda 13
-            # {cccl} reorganization adds header roots that users can fold into {incdir}
+            # provable by the runtime header, wherever the layout puts it
             headers=("cuda_runtime.h",),
+            # the cuda 13 {cccl} reorganization moved thrust, cub, and libcu++ into their
+            # own subtree; its marker extends the include path when present, and older
+            # toolkits that keep the headers at the top are not penalized
+            extras=("thrust/version.h",),
             # the runtime is the only library every consumer needs; the rest of the
             # toolkit (cublas, cufft, ...) is configuration users add to {libraries}
             libraries=("cudart",),
@@ -67,8 +70,9 @@ class CUDA(Tool, Library, family="pyre.externals.cuda"):
                 # the nvidia rhel repo: versioned names, reachable by prefix
                 "rpm": (("cuda-cudart-devel", "cuda-nvcc"),),
                 # the nvidia and conda-forge channels: the runtime fragment leads, the
-                # compiler rides along; the monolithic {cudatoolkit} is the legacy fallback
-                "conda": (("cuda-cudart-dev", "cuda-nvcc"), "cudatoolkit"),
+                # compiler and the core libraries ride along; the monolithic
+                # {cudatoolkit} is the legacy fallback
+                "conda": (("cuda-cudart-dev", "cuda-nvcc", "cuda-cccl"), "cudatoolkit"),
             },
         )
         # all done
