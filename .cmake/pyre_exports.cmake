@@ -19,6 +19,18 @@ function(pyre_exportTarget target component)
 endfunction(pyre_exportTarget)
 
 
+# record cmake code that the generated configuration must run before any of the searches
+# use it for whatever has to be true for a search to behave, such as a language the find module
+# needs or a hint that steers it towards the right build of a package
+function(pyre_exportPrologue text)
+  # make sure we are still allowed to record
+  pyre_exportGate("prologue")
+  # and stash it; the text is kept whole, newlines and all
+  set_property(GLOBAL APPEND PROPERTY PYRE_EXPORT_PROLOGUE "${text}")
+  # all done
+endfunction(pyre_exportPrologue)
+
+
 # record an external package that one of our core targets names in its link interface
 # {package} is what to look for, {target} is the imported target the search must produce, and
 # the remaining arguments are handed to {find_dependency} verbatim
@@ -99,6 +111,7 @@ endfunction(pyre_exportSearch)
 # recorded requirements as cmake code, and hand the text back through {variable}
 function(pyre_exportRequirements variable)
   # retrieve what the build recorded
+  get_property(prologue GLOBAL PROPERTY PYRE_EXPORT_PROLOGUE)
   get_property(targets GLOBAL PROPERTY PYRE_EXPORT_TARGETS)
   get_property(components GLOBAL PROPERTY PYRE_EXPORT_COMPONENTS)
   get_property(requirements GLOBAL PROPERTY PYRE_EXPORT_REQUIREMENTS)
@@ -109,6 +122,11 @@ function(pyre_exportRequirements variable)
   set(known "")
   set(core "")
   set(text "")
+
+  # whatever has to be in place before we go looking for anything
+  foreach(chunk IN LISTS prologue)
+    string(APPEND text "${chunk}\n")
+  endforeach()
 
   # tell consumers which pieces this installation carries, so that {check_required_components}
   # can answer {find_package(pyre COMPONENTS ...)} correctly

@@ -20,6 +20,9 @@ option(PYRE_CONSUMER_EXPECT_CUDA "the installation carries the cuda add-on" OFF)
 # no {CMAKE_CXX_STANDARD} anywhere in this file: resolving the dependencies of the exported
 # targets and raising the language standard are the package configuration's job, and whether it
 # does them is precisely what this project tests
+# note also that this comes before any {add_executable} below, which is what lets the
+# configuration turn the compiler extensions off for our targets; a project that declares its
+# targets first would quietly get {gnu++23} instead
 find_package(pyre REQUIRED)
 
 # the export set: these are the two targets the package promises
