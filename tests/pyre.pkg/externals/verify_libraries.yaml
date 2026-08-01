@@ -1,0 +1,17 @@
+#
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2026 all rights reserved
+
+# restrict the host to filesystem probing
+pyre.host:
+  packagers: [bare]
+
+# and point the prober at the fixture installation
+pyre.platforms.packagers.bare:
+  searchpath: [prefix]
+
+# add a library the installation does not provide to the link line
+gsl:
+  libraries: [gsl, gslcblas, nosuchlib]
+
+# end of file
