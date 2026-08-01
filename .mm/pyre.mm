@@ -31,7 +31,7 @@ pyre.c++23 = ${call languages.c++.has_c++23,pyre.lib}
 # the pyre package meta-data
 pyre.pkg.root := packages/pyre/
 pyre.pkg.stem := pyre
-pyre.pkg.drivers := pyre pyre-config smith.pyre
+pyre.pkg.drivers := pyre pyre-config pyre-externals smith.pyre
 pyre.pkg.config := pyre
 pyre.pkg.ext := extensions/
 

@@ -1,0 +1,138 @@
+#!/usr/bin/env python3
+# -*- Python -*-
+# -*- coding: utf-8 -*-
+#
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2026 all rights reserved
+#
+
+# support
+import pyre
+
+
+# the app
+class Externals(pyre.application):
+    """
+    Report on the external packages available on this host, and verify that the ones that
+    were discovered are still usable
+    """
+
+    # user configurable state
+    verify = pyre.properties.bool(default=False)
+    verify.doc = "re-prove the markers of each installation against its configuration"
+
+    supported = pyre.properties.bool(default=False)
+    supported.doc = "list the package categories the framework knows how to discover"
+
+    # the main entry point
+    @pyre.export
+    def main(self, *args, **kwds):
+        """
+        Resolve the requested package categories and report on them
+        """
+        # get the index
+        index = pyre.externals.index()
+
+        # if we were asked for the catalog of supported categories
+        if self.supported:
+            # go through them
+            for category in index.categories():
+                # and show each one
+                print(category)
+            # nothing further to do
+            return 0
+
+        # the categories to look into are whatever the user named on the command line,
+        # which the framework hands over as the unprocessed arguments
+        named = tuple(self.argv)
+        # falling back to everything the framework supports
+        requested = named if named else tuple(index.categories())
+        # naming categories explicitly asserts that they ought to be here, so their
+        # absence is a failure; surveying the whole catalog merely reports what is around
+        strict = bool(named)
+        # resolve them
+        report = index.resolve(requested=requested)
+
+        # if we were asked to verify the outcome
+        if self.verify:
+            # audit it
+            audit = index.verify(report=report)
+            # render the audit
+            return self.showAudit(audit=audit, strict=strict)
+
+        # otherwise, render the resolution
+        return self.showReport(report=report, strict=strict)
+
+    # implementation details
+    def showReport(self, report, strict):
+        """
+        Render the outcome of a resolution
+        """
+        # go through the selections, in link order
+        for category, installation in report.selections.items():
+            # show what was found, with the flavor when it differs from the category
+            flavor = "" if installation.flavor == category else f" ({installation.flavor})"
+            # and the version
+            print(f"{category}{flavor}: {installation.version} in {installation.prefix}")
+        # add whatever the resolution could not deliver
+        return self.showFailures(report=report, strict=strict)
+
+    def showAudit(self, audit, strict):
+        """
+        Render the outcome of a verification
+        """
+        # the categories that check out
+        for category in audit.verified:
+            # are reported as such
+            print(f"{category}: ok")
+        # the broken ones
+        for category, complaints in audit.broken.items():
+            # are named
+            print(f"{category}: broken")
+            # along with every complaint against them
+            for complaint in complaints:
+                # one per line
+                print(f"    {complaint}")
+        # the resolution failures are part of the picture too
+        status = self.showFailures(report=audit.report, strict=strict)
+        # a broken installation is always a failure: something claims to be here and is
+        # not usable, which is worse than a package that was never installed
+        return 1 if audit.broken else status
+
+    def showFailures(self, report, strict):
+        """
+        Render whatever a resolution could not deliver, and grade the outcome
+        """
+        # name whatever could not be located
+        for category in report.unavailable:
+            # as missing
+            print(f"{category}: not found")
+        # name whatever the demands over-constrained
+        for category, demands in report.conflicted.items():
+            # with the requirements that clashed
+            print(f"{category}: conflicting requirements: {', '.join(map(str, demands))}")
+        # name whatever the framework doesn't know
+        for category in report.unsupported:
+            # as unsupported
+            print(f"{category}: unsupported")
+        # a conflict is always a failure: the demands cannot be met on this host, no
+        # matter how the request was phrased
+        if report.conflicted:
+            # so say so
+            return 1
+        # the rest counts only against an explicit request; a survey of the catalog is
+        # expected to name packages that simply aren't installed here
+        return 1 if strict and (report.unavailable or report.unsupported) else 0
+
+
+# main
+if __name__ == "__main__":
+    # instantiate
+    app = Externals(name="pyre-externals")
+    # invoke
+    status = app.run()
+    # and share the status code
+    raise SystemExit(status)
+
+
+# end of file
