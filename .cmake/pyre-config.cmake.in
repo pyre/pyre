@@ -3,21 +3,25 @@
 
 @PACKAGE_INIT@
 
-include(${CMAKE_CURRENT_LIST_DIR}/pyre-targets.cmake)
-check_required_components(pyre)
-
-# support for searching dependencies
+# support for locating dependencies
 include(CMakeFindDependencyMacro)
 
-# conditionally propagate the MPI dependency
-if(@MPI_CXX_FOUND@)
-find_dependency(MPI COMPONENTS CXX)
+# if the build linked against hdf5, consumers need it too; the quoted form protects against
+# an empty substitution collapsing into a syntax error
+if("@HDF5_FOUND@")
+  # locate it
+  find_dependency(HDF5 COMPONENTS C HL)
 endif()
 
-# conditionally propagate the HDF5 dependency
-if(@HDF5_FOUND@)
-find_dependency(HDF5 COMPONENTS C HL)
+# a parallel hdf5 places mpi in the link interface of libpyre, so consumers need it as well
+if("@HDF5_IS_PARALLEL@" AND "@MPI_FOUND@")
+  # locate it
+  find_dependency(MPI COMPONENTS CXX)
 endif()
 
+# load the exported targets
+include(${CMAKE_CURRENT_LIST_DIR}/pyre-targets.cmake)
+# and verify that all requested components are present
+check_required_components(pyre)
 
 # end of file
