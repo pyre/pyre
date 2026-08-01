@@ -55,15 +55,22 @@
   - stand up a postgres server in the rolling cell, maybe others, maybe all of them, so the
     {pyre.db} and {pyre-postgres} test suites can run against a live database; needs a chat
     about scope: which cells, socket vs tcp, and whether the server rides the image or a
-    sibling container; nothing does this today, so these suites run nowhere in ci: the cmake
-    legs and the {lts-gcc-cmake} cell exclude them with {ctest -E postgres}, and the mm legs
-    never see {libpq}, so {.mm/pyre-postgres.mm} skips the project outright; a github actions
-    {services:} container would cover the workflows on the same errand
+    sibling container; the suites themselves are in good shape, and were run against a live
+    18.4 server on 2026-08-02: all seven of {postgres.lib} and all thirteen of {postgres.ext}
+    pass under cmake, and both suites pass under mm; what is missing is only a server in ci,
+    where the cmake legs never see one and the mm legs never see {libpq} at all, so
+    {.mm/pyre-postgres.mm} skips the project outright; a github actions {services:} container
+    would cover the workflows on the same errand
 
-  - once a live server exists, exercise the cmake package as well: {pyre::postgres} is now
-    exported and announced as a component, but nothing anywhere links it, which makes it the
-    least verified of the exports; a driver in {etc/cmake/consumer}, alongside the {mpi} and
-    {cuda} ones, would close that gap, and needs a runner carrying both {libpq} and a server
+  - teach the cmake side the trick mm already knows: {.mm/pyre-postgres.mm} sets
+    {postgres.live} from {pg_isready} and excludes the drivers only when no server answers,
+    so a developer with one gets the suites for free; the cmake build has no such detection
+    and every workflow hard-excludes them with {ctest -E postgres}, which will keep skipping
+    them even once a server is standing
+
+  - {pyre::postgres} is exported and announced as a component, and {etc/cmake/consumer} has a
+    driver for it, but the driver only runs where {libpq} is present, so it is still the
+    least exercised of the exports; a ci runner carrying {libpq} would settle it
 
 - merlin:
 
