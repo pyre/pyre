@@ -29,6 +29,7 @@ class Recipe:
         natives=None,
         group=None,
         headers=(),
+        extras=(),
         libraries=(),
         binaries=None,
         defines=(),
@@ -56,6 +57,9 @@ class Recipe:
         self.group = group
         # the header paths, relative to the include directory, that prove the package is usable
         self.headers = tuple(headers)
+        # header paths that extend the include path when present but never veto the
+        # discovery, e.g. the {cccl} subtree of cuda 13
+        self.extras = tuple(extras)
         # the library stem patterns to resolve and place on the link line
         self.libraries = tuple(libraries)
         # the map from installation trait names to executable name patterns
@@ -140,6 +144,7 @@ class Recipe:
         "natives",
         "group",
         "headers",
+        "extras",
         "libraries",
         "binaries",
         "defines",

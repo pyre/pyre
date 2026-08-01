@@ -111,19 +111,28 @@ class Bare(pyre.component, family="pyre.platforms.packagers.bare", implements=Pa
         # start collecting trait values
         values = {"prefix": prefix}
 
-        # if the recipe expects headers
-        if recipe.headers:
-            # collect the folders that hold them
-            incdir = []
-            # go through the markers
-            for header in recipe.headers:
-                # locate the include directory that holds this one
-                folder = self.scanForHeader(prefix=prefix, header=header)
-                # if it's there and we haven't seen it before
-                if folder and folder not in incdir:
-                    # add it to the pile
-                    incdir.append(folder)
-            # record what we found
+        # collect the folders that hold headers
+        incdir = []
+        # go through the markers
+        for header in recipe.headers:
+            # locate the include directory that holds this one
+            folder = self.scanForHeader(prefix=prefix, header=header)
+            # if it's there and we haven't seen it before
+            if folder and folder not in incdir:
+                # add it to the pile
+                incdir.append(folder)
+        # the optional markers extend the include path when present; {probe} knows nothing
+        # about them, so they can neither qualify nor veto an installation
+        for extra in recipe.extras:
+            # locate the include directory that holds this one
+            folder = self.scanForHeader(prefix=prefix, header=extra)
+            # if it's there and we haven't seen it before
+            if folder and folder not in incdir:
+                # add it to the pile
+                incdir.append(folder)
+        # if any include directories were discovered
+        if incdir:
+            # record them
             values["incdir"] = incdir
 
         # if the recipe expects libraries

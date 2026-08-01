@@ -325,9 +325,19 @@ class Managed(pyre.component, implements=PackageManager):
             # reject it
             return None
 
-        # if the recipe expects headers
-        if recipe.headers:
-            # record what we found
+        # the optional markers extend the include path when present; they play no part in
+        # the acceptance above, so they can neither qualify nor veto a candidate
+        for extra in recipe.extras:
+            # find the folder that contains this one
+            folder = self.findfirst(target=extra, contents=contents)
+            # if it's there and we haven't seen it before
+            if folder and folder not in incdir:
+                # add it to the pile
+                incdir.append(folder)
+
+        # if any include directories were discovered
+        if incdir:
+            # record them
             values["incdir"] = incdir
         # if the recipe expects libraries
         if recipe.libraries:
