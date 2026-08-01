@@ -15,6 +15,7 @@ project(pyre-consumer LANGUAGES CXX)
 option(PYRE_CONSUMER_EXPECT_HDF5 "the installation was built against hdf5" OFF)
 option(PYRE_CONSUMER_EXPECT_MPI "the installation carries the mpi add-on" OFF)
 option(PYRE_CONSUMER_EXPECT_CUDA "the installation carries the cuda add-on" OFF)
+option(PYRE_CONSUMER_EXPECT_POSTGRES "the installation carries the postgres add-on" OFF)
 
 # deliberately, there is no {find_package(HDF5)} or {find_package(MPI)} ahead of this call, and
 # no {CMAKE_CXX_STANDARD} anywhere in this file: resolving the dependencies of the exported
@@ -122,6 +123,22 @@ if(PYRE_CONSUMER_EXPECT_MPI)
   target_link_libraries(mpi PRIVATE pyre::mpi)
   # and it must run cleanly
   add_test(NAME mpi COMMAND mpi)
+endif()
+
+# the postgres add-on, on the same terms as mpi above
+if(PYRE_CONSUMER_EXPECT_POSTGRES)
+  # asking for the component is what sends the configuration looking for libpq
+  find_package(pyre REQUIRED COMPONENTS postgres)
+  # which must have resolved the imported target the add-on names
+  if(NOT TARGET PostgreSQL::PostgreSQL)
+    message(FATAL_ERROR "asking for the 'postgres' component did not locate libpq")
+  endif()
+  # compiling this proves the libpq headers arrive through {pyre::postgres}
+  add_executable(postgres postgres.cc)
+  # the one link a client should need
+  target_link_libraries(postgres PRIVATE pyre::postgres)
+  # and it must run cleanly
+  add_test(NAME postgres COMMAND postgres)
 endif()
 
 # the cuda add-on, on the same terms as mpi above
