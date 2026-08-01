@@ -68,8 +68,13 @@ endfunction(pyre_exportGate)
 
 # render the code that locates {package} and confirms it produced {target}, into {variable}
 function(pyre_exportSearch package target arguments variable)
+  # assemble the search, keeping it tidy when the package takes no extra arguments
+  set(call "${package}")
+  if(arguments)
+    string(APPEND call " ${arguments}")
+  endif()
   # start with the search itself
-  set(text "find_dependency(${package} ${arguments})\n")
+  set(text "find_dependency(${call})\n")
   # a successful search is not proof that the imported target exists: a consumer running with
   # {CMAKE_FIND_PACKAGE_PREFER_CONFIG} can resolve the package's own configuration file, which
   # may well publish the target under a different name; catch that here, while we can still
@@ -99,8 +104,10 @@ function(pyre_exportRequirements variable)
   get_property(requirements GLOBAL PROPERTY PYRE_EXPORT_REQUIREMENTS)
   get_property(optional GLOBAL PROPERTY PYRE_EXPORT_OPTIONAL)
 
-  # the imported targets we know how to resolve, and the code that resolves them
+  # the imported targets we know how to resolve, the subset of those that every consumer gets
+  # unconditionally, and the code that resolves them
   set(known "")
+  set(core "")
   set(text "")
 
   # tell consumers which pieces this installation carries, so that {check_required_components}
@@ -117,8 +124,10 @@ function(pyre_exportRequirements variable)
     list(POP_FRONT fields package target)
     # and whatever is left is the argument list for the search
     list(JOIN fields " " arguments)
-    # remember the target so the audit below can account for it
+    # remember the target so the audit below can account for it, and note that every consumer
+    # gets this one whether they ask for it or not
     list(APPEND known ${target})
+    list(APPEND core ${target})
     # render the search and take it as is
     pyre_exportSearch("${package}" "${target}" "${arguments}" search)
     string(APPEND text "${search}")
@@ -132,6 +141,11 @@ function(pyre_exportRequirements variable)
     list(JOIN fields " " arguments)
     # the audit accounts for it just the same
     list(APPEND known ${target})
+    # but if every consumer already resolves it, saying so again buys nothing; note that this
+    # only skips searches the core covers, so two add-ons that share a package each keep theirs
+    if(target IN_LIST core)
+      continue()
+    endif()
     # render the search
     pyre_exportSearch("${package}" "${target}" "${arguments}" search)
     # drop the trailing newline and indent the body to sit inside the test
