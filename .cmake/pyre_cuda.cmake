@@ -61,6 +61,10 @@ function(pyre_cudaLib)
       EXPORT pyre-targets
       )
     pyre_exportTarget(cuda cuda)
+    # {CUDA_LIBRARIES}, as the deprecated {FindCUDA} assembles it, names the threads imported
+    # target rather than a bare library, so a consumer that asks for this component has to be
+    # able to resolve that one as well
+    pyre_exportOptionalRequirement(cuda Threads Threads::Threads)
   endif()
   # all done
 endfunction(pyre_cudaLib)
