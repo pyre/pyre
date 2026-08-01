@@ -47,7 +47,7 @@ endfunction(pyre_postgresLib)
 # build the postgres module
 function(pyre_postgresModule)
   # if we have postgres
-  if (${PostgreSQL_FOUND})
+  if (PostgreSQL_FOUND)
     Python_add_library(postgresmodule MODULE WITH_SOABI)
     # adjust the name to match what python expects; the module is {postgres}, and it lands in
     # {pyre.extensions}, where the package imports it as {libpq}

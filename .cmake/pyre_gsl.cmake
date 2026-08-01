@@ -7,7 +7,7 @@
 # build the gsl package
 function(pyre_gslPackage)
   # if we have gsl
-  if(${GSL_FOUND})
+  if(GSL_FOUND)
     # install the sources straight from the source directory
     install(
       DIRECTORY packages/gsl
@@ -22,7 +22,7 @@ endfunction(pyre_gslPackage)
 # build the gsl module
 function(pyre_gslModule)
   # if we have gsl
-  if (${GSL_FOUND})
+  if (GSL_FOUND)
     Python_add_library(gslmodule MODULE WITH_SOABI)
     # adjust the name to match what python expects
     set_target_properties(gslmodule PROPERTIES LIBRARY_OUTPUT_NAME libgsl)
@@ -51,7 +51,7 @@ function(pyre_gslModule)
       extensions/gsl/stats.cc
       )
 
-    if (${MPI_FOUND})
+    if (MPI_FOUND)
       # add the MPI aware sources to the pile
       target_sources(gslmodule PRIVATE extensions/gsl/partition.cc)
       # the mpi include directories
