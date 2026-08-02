@@ -117,7 +117,7 @@ pyre::cuda::memory::Pinned<T, isConst>::Pinned(handle_type host_handle, cell_cou
 
 // move constructor
 template <class T, bool isConst>
-pyre::cuda::memory::Pinned<T, isConst>::Pinned(Pinned && other) :
+pyre::cuda::memory::Pinned<T, isConst>::Pinned(Pinned && other) noexcept :
     _host_data { std::move(other._host_data) },
     _device_data { std::exchange(other._device_data, nullptr) },
     _cells { other._cells }

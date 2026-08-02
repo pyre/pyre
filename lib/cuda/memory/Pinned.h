@@ -86,7 +86,10 @@ public:
     ~Pinned();
     // constructors
     Pinned(const Pinned &) = delete;
-    Pinned(Pinned &&);
+    // moving me hands over a shared pointer and swaps a raw one, neither of which can throw;
+    // saying so lets me travel through containers and through {grid}, whose own move is
+    // declared {noexcept}
+    Pinned(Pinned &&) noexcept;
     Pinned & operator=(const Pinned &) = delete;
     Pinned & operator=(Pinned &&) = delete;
 };
