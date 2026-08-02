@@ -168,15 +168,45 @@ covers just a declared working set. The full story, organized by use case, is in
 
 Two consequences for this document's concerns:
 
-- **The `Raster`/`Tile`/`_staged` machinery in `typed/` is retired** (2026-07-31).
-  It was a hand-rolled proto-mosaic; array dataset values are now the real thing:
-  `_pyre_pull` hands back a mosaic wired to its dataset, and `_pyre_push` is
-  `value.flush()`. The "semaphore" question in the old 2023-05-30 note dissolved
-  with it: the page-state bits are the semaphore, and file-to-file transfer is
-  `fill` from the source, `taint`, and `flush` to the destination — the
-  cross-file flavor belongs to value binding, the writer's still-open half.
+- **The `Tile`/`_staged` staging machinery in `typed/` is retired** (2026-07-31).
+  It was a hand-rolled proto-mosaic; the real thing lives one level down now.
+  The "semaphore" question in the old 2023-05-30 note dissolved with it: the
+  page-state bits are the semaphore, and file-to-file transfer is `fill` from
+  the source, `taint`, and `flush` to the destination — the cross-file flavor
+  belongs to value binding, the writer's still-open half.
 - **The writer's deferred "partial/tile writes" are no longer deferred** at the
   storage level; the Python value model now rides them.
+
+### The array value model: the raster (added 2026-08-02)
+
+The value of an array dataset is a `Raster` (`typed/Raster.py`) — a cheap handle
+that moves no data when it is built. The principle: nothing the file records
+about a non-trivial dataset — extent, layout, type — determines how a consumer
+intends to touch it, so the value must not commit to an access strategy. It
+anchors the *choice*: it carries the hdf5 metadata that informs the decision,
+and the factories that realize it.
+
+- **Metadata**, delegated to the api node: `shape`/`rank`, `layout`/`chunk`
+  (`None` when the storage is not chunked)/`filters`, the dual types
+  `memtype`/`disktype` (the latter is the actual on-disk datatype proxy), the
+  `dcpl`/`dapl` property lists for everything not promoted to a named property,
+  and the raw `dataset` handle as the escape hatch that keeps the surface small.
+- **`tile(origin=…, shape=…)`** — a dense private grid on the heap over a
+  window, defaulting to the full extent. Writes do not flow back to the file;
+  indices are window-local, and the caller keeps track of the origin.
+- **`mosaic(origin=…, shape=…)`** — the out-of-core flavors of use cases 4/7 in
+  `doc/mosaics.md`: over the dataset's own tiling with no arguments, or the
+  smallest mosaic covering the window. The raster supplies the `cell` name from
+  its `memtype`, so the grid-vocabulary translation is not the consumer's job.
+
+Since the raster is what mere navigation hands out (member access
+auto-dereferences datasets to their values), building one must be free: the
+cell-support check now lives in the factories, so exotic datasets can be
+navigated and interrogated even when their cells have no grid support.
+`_pyre_push` has nothing to move for raster values — content lives in the file,
+and mosaics flush their own updates; binding foreign values to array datasets
+is an open part of the writer design. Exhibit:
+`tests/pyre.pkg/h5/api/raster_value.py`.
 
 ### How they relate
 

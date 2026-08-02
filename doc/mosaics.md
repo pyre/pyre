@@ -24,6 +24,7 @@ pieces individually; you start from your situation:
 | a flat binary product on disk | a file-backed grid | [use case 2](#uc2) |
 | memory owned by someone else (numpy, another library) | a view grid | [use case 3](#uc3) |
 | a window of a large chunked HDF5 product | a mosaic | [use case 4](#uc4) |
+| the value of an array dataset in `pyre.h5` | a raster: interrogate it, then `tile()` or `mosaic()` | `doc/hdf5.md` |
 | shrinking the memory footprint of a long workflow | page release | [use case 5](#uc5) |
 | handing cells to numpy without copying | the python bindings | [use case 6](#uc6) |
 | writing or updating a chunked HDF5 product | a mosaic and `flush` | [use case 7](#uc7) |
