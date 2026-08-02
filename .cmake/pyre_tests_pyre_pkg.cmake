@@ -688,6 +688,10 @@ pyre_test_python_testcase(tests/pyre.pkg/nexus/pool.py --tasks=4 --team.size=2)
 #
 pyre_test_python_testcase(tests/pyre.pkg/platforms/sanity.py)
 pyre_test_python_testcase(tests/pyre.pkg/platforms/host.py)
+pyre_test_python_testcase(tests/pyre.pkg/platforms/binaries/sanity.py)
+pyre_test_python_testcase(tests/pyre.pkg/platforms/binaries/format_dispatch.py)
+pyre_test_python_testcase(tests/pyre.pkg/platforms/binaries/elf_dependencies.py)
+pyre_test_python_testcase(tests/pyre.pkg/platforms/binaries/macho_dependencies.py)
 
 
 #
@@ -788,6 +792,8 @@ pyre_test_python_testcase(tests/pyre.pkg/externals/verify_headers.py)
 pyre_test_python_testcase(tests/pyre.pkg/externals/verify_libraries.py)
 pyre_test_python_testcase(tests/pyre.pkg/externals/verify_tool.py)
 pyre_test_python_testcase(tests/pyre.pkg/externals/verify_optional.py)
+pyre_test_python_testcase(tests/pyre.pkg/externals/linkage_flavor.py)
+pyre_test_python_testcase(tests/pyre.pkg/externals/hdf5_linkage.py)
 pyre_test_python_testcase(tests/pyre.pkg/externals/reset.py)
 pyre_test_python_testcase(tests/pyre.pkg/externals/unavailable.py)
 pyre_test_python_testcase(tests/pyre.pkg/externals/optional.py)
