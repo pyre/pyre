@@ -359,8 +359,9 @@ class Managed(pyre.component, implements=PackageManager):
             # record them
             values["dependencies"] = list(recipe.dependencies)
 
-        # evaluate the content proofs against the discovered headers
-        harvested = recipe.prove(folders=incdir)
+        # evaluate the content proofs against the discovered headers, and the linkages
+        # against the discovered libraries
+        harvested = recipe.prove(incdir=incdir, libdir=libdir)
         # a failed proof means this interpretation is not the flavor it claims to be
         if harvested is None:
             # so reject it
