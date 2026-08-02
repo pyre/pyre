@@ -18,6 +18,9 @@ from .POSIX import POSIX
 from .CPUInfo import CPUInfo
 from .MemoryInfo import MemoryInfo
 
+# the reader for the images this platform loads
+from .binaries.ELF import ELF
+
 
 # declaration
 class Linux(POSIX, family="pyre.platforms.linux"):
@@ -37,6 +40,10 @@ class Linux(POSIX, family="pyre.platforms.linux"):
 
     template_staticLibrary = "{0.prefix_library}{1}{0.extension_staticLibrary}"
     template_dynamicLibrary = "{0.prefix_library}{1}{0.extension_dynamicLibrary}"
+
+    # elf is the image format of this platform, so knowing the host settles the reader;
+    # every distribution below inherits the association
+    image = ELF
 
     # protocol obligations
     @classmethod

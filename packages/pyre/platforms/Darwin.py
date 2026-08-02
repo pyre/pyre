@@ -14,6 +14,9 @@ from .POSIX import POSIX
 # the CPU info object
 from .CPUInfo import CPUInfo
 
+# the reader for the images this platform loads
+from .binaries.MachO import MachO
+
 
 # declaration
 class Darwin(POSIX, family="pyre.platforms.darwin"):
@@ -33,6 +36,9 @@ class Darwin(POSIX, family="pyre.platforms.darwin"):
 
     template_staticLibrary = "{0.prefix_library}{1}{0.extension_staticLibrary}"
     template_dynamicLibrary = "{0.prefix_library}{1}{0.extension_dynamicLibrary}"
+
+    # mach-o is the image format of this platform, so knowing the host settles the reader
+    image = MachO
 
     # user configurable state
     packagers = pyre.properties.strings()

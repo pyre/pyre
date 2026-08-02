@@ -37,6 +37,19 @@ class Host(pyre.component, family="pyre.platforms.generic", implements=Platform)
     codename = None  # the OS version
     # distribution
     distribution = None  # a clue about the package manager on this machine
+    # binaries
+    image = None  # the reader for the binary images this platform loads
+
+    # the suffixes shared libraries and static archives carry on the platforms we
+    # support; recognizing a library is deliberately host independent, so that a sysroot
+    # staged for another platform, or a test fixture written once, is still understood.
+    # the singular {extension_*} attributes of the specific platforms are what a host
+    # uses to build a name, which is a different question from recognizing one
+    extensions_dynamicLibrary = ("so", "dylib")
+    extensions_staticLibrary = ("a",)
+    # every platform we support prefixes its libraries the same way; the specific hosts
+    # restate this alongside their own extensions, where it reads better
+    prefix_library = "lib"
 
     @property
     def cpus(self):
@@ -126,6 +139,33 @@ class Host(pyre.component, family="pyre.platforms.generic", implements=Platform)
         """
         # i have a template for that
         return cls.template_staticLibrary.format(cls, stem)
+
+    @classmethod
+    def libraryPattern(cls, stem, dynamic=True, static=True):
+        """
+        Build a regular expression that recognizes the filename of a library whose stem
+        matches the pattern {stem}, capturing the stem it actually found
+
+        The two platforms version their shared libraries at opposite ends of the name:
+        linux appends, as in {libmpi.so.40}, while darwin interposes, as in
+        {libmpi.40.dylib}. Both forms are accepted, so a caller gets the same answer
+        wherever the library came from
+        """
+        # collect the suffixes the caller is willing to accept
+        suffixes = []
+        # shared libraries, when they are wanted
+        if dynamic:
+            # in every spelling we know
+            suffixes.extend(cls.extensions_dynamicLibrary)
+        # static archives, when they are wanted
+        if static:
+            # likewise
+            suffixes.extend(cls.extensions_staticLibrary)
+        # offer them as alternatives
+        alternatives = "|".join(suffixes)
+        # the name opens with the library prefix and the stem, may carry a version
+        # ahead of its suffix, and may carry another one after it
+        return rf"{cls.prefix_library}(?P<stem>{stem})(\.\d+)*\.({alternatives})(\.\d+)*$"
 
     @classmethod
     def objects(cls, stems):
