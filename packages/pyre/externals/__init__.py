@@ -82,6 +82,7 @@ from .Tool import Tool as tool
 from .Library import Library as library
 from .Recipe import Recipe as recipe
 from .Proof import Proof as proof
+from .Linkage import Linkage as linkage
 from .Audit import Audit as audit
 from .Requirement import Requirement as requirement
 

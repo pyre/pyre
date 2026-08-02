@@ -39,6 +39,7 @@ class Recipe:
         defines=(),
         dependencies=(),
         proofs=(),
+        linkages=(),
         **kwds,
     ):
         """
@@ -74,27 +75,34 @@ class Recipe:
         self.dependencies = tuple(dependencies)
         # the content checks that settle what the package metadata cannot
         self.proofs = tuple(proofs)
+        # the dependency checks that settle what a build actually bound to
+        self.linkages = tuple(linkages)
         # all done
         return
 
     # interface
-    def prove(self, folders):
+    def prove(self, incdir, libdir=()):
         """
-        Evaluate my content proofs against the headers under {folders} and return the
-        harvested values, or {None} when any proof fails
+        Evaluate my content proofs against the headers under {incdir} and my linkages
+        against the libraries under {libdir}, and return the harvested values, or {None}
+        when any of them fails
         """
         # the values the extractors gather
         harvested = {}
-        # go through my proofs
-        for proof in self.proofs:
-            # evaluate each one
-            ok, values = proof.evaluate(folders=folders)
-            # a failed proof sinks the whole interpretation
-            if not ok:
-                # so report it
-                return None
-            # fold in whatever was harvested
-            harvested.update(values)
+        # the checks, each paired with the folders it reads
+        checks = ((self.proofs, incdir), (self.linkages, libdir))
+        # go through them
+        for tests, folders in checks:
+            # and every check of that kind
+            for test in tests:
+                # evaluate it
+                ok, values = test.evaluate(folders=folders)
+                # a failed check sinks the whole interpretation
+                if not ok:
+                    # so report it
+                    return None
+                # fold in whatever was harvested
+                harvested.update(values)
         # the interpretation survives
         return harvested
 
@@ -171,8 +179,8 @@ class Recipe:
                     # or invoking it will fail
                     yield f"unresolved {trait}: '{name}'"
 
-        # finally, the content proofs must still hold against the effective include path
-        if self.prove(folders=incdir) is None:
+        # finally, the checks must still hold against the effective paths
+        if self.prove(incdir=incdir, libdir=libdir) is None:
             # a build that no longer answers to its own recipe is misconfigured
             yield "content proof failed"
 
@@ -235,6 +243,7 @@ class Recipe:
         "defines",
         "dependencies",
         "proofs",
+        "linkages",
     )
 
 

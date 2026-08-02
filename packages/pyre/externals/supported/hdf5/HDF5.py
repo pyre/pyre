@@ -14,6 +14,9 @@ from ...Recipe import Recipe
 # the content checks
 from ...Proof import Proof
 
+# the dependency checks
+from ...Linkage import Linkage
+
 
 # the hdf5 package category
 class HDF5(Library, family="pyre.externals.hdf5"):
@@ -92,6 +95,10 @@ class HDF5(Library, family="pyre.externals.hdf5"):
                 Proof(header="H5pubconf.h", pattern=r"#\s*define\s+H5_HAVE_PARALLEL\s+1"),
                 Proof(header="H5pubconf.h", pattern=r'#\s*define\s+H5_VERSION\s+"([^"]+)"', harvest="version"),
             ),
+            # the header says the build is mpi aware but not which implementation it
+            # bound to; the library itself does, since openmpi and mpich give their
+            # runtimes different names. {libmpi.so.40} and {libmpi.40.dylib} are openmpi
+            linkages=(Linkage(library="hdf5", pattern=r"libmpi\.(so\.4\d|4\d\.dylib)"),),
             # with database specific names where the flavor name isn't enough
             natives={
                 "dpkg": ("libhdf5-openmpi-dev",),
@@ -121,6 +128,9 @@ class HDF5(Library, family="pyre.externals.hdf5"):
                 Proof(header="H5pubconf.h", pattern=r"#\s*define\s+H5_HAVE_PARALLEL\s+1"),
                 Proof(header="H5pubconf.h", pattern=r'#\s*define\s+H5_VERSION\s+"([^"]+)"', harvest="version"),
             ),
+            # and by the runtime it bound to: mpich ships its own {libmpich}, and the
+            # {libmpi} it provides for compatibility carries a different version
+            linkages=(Linkage(library="hdf5", pattern=r"libmpich|libmpi\.(so\.1\d|1\d\.dylib)"),),
             # with database specific names where the flavor name isn't enough
             natives={
                 "dpkg": ("libhdf5-mpich-dev",),

@@ -188,8 +188,11 @@ class Bare(pyre.component, family="pyre.platforms.packagers.bare", implements=Pa
             # record them
             values["dependencies"] = list(recipe.dependencies)
 
-        # evaluate the content proofs against the discovered headers
-        harvested = recipe.prove(folders=values.get("incdir", ()))
+        # evaluate the content proofs against the discovered headers, and the linkages
+        # against the discovered libraries
+        harvested = recipe.prove(
+            incdir=values.get("incdir", ()), libdir=values.get("libdir", ())
+        )
         # a failed proof means this installation is not the flavor it claims to be
         if harvested is None:
             # so reject it
