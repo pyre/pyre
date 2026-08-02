@@ -273,8 +273,9 @@ class Bare(pyre.component, family="pyre.platforms.packagers.bare", implements=Pa
         Scan the canonical library folders under {prefix} for a library whose stem matches
         {pattern}, and return the folder along with the actual stem
         """
-        # form the regex: dynamic libraries on either platform, plus static archives
-        regex = re.compile(rf"lib(?P<stem>{pattern})\.(so|dylib|a)(\.\d+)*$")
+        # the host knows how libraries are named, in every spelling and versioning
+        # convention we support
+        regex = re.compile(pyre.executive.host.libraryPattern(stem=pattern))
         # go through the canonical library folders
         for folder in (prefix / "lib", prefix / "lib64"):
             # if this one doesn't exist

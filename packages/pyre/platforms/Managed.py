@@ -437,9 +437,9 @@ class Managed(pyre.component, implements=PackageManager):
         Locate a library whose stem matches {pattern} in the {contents} of some package, and
         return the folder that contains it along with the actual stem
         """
-        # form the regex: accept dynamic libraries on either platform, plus static archives,
-        # with optional trailing version fields
-        regex = rf"(?P<path>.*)/lib(?P<stem>{pattern})\.(so|dylib|a)(\.\d+)*$"
+        # the host knows how libraries are named; anchor its pattern to a directory,
+        # since package contents are absolute paths
+        regex = rf"(?P<path>.*)/{pyre.executive.host.libraryPattern(stem=pattern)}"
         # search for it in contents
         for match in self.find(target=regex, pile=contents):
             # extract the folder and the stem

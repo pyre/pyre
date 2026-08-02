@@ -8,6 +8,9 @@
 # externals
 import re
 
+# framework
+import pyre
+
 
 # the declarative description of a package flavor
 class Recipe:
@@ -142,8 +145,11 @@ class Recipe:
         # every library the installation places on the link line must be there; the stems
         # are the resolved ones, so this checks what the linker will actually look for
         for stem in getattr(installation, "libraries", ()):
-            # form the pattern the platforms name libraries with
-            pattern = re.compile(rf"lib{re.escape(stem)}\.(so|dylib|a)(\.\d+)*$")
+            # the host knows how libraries are named; the stem is a literal here, so it
+            # goes in escaped
+            pattern = re.compile(
+                pyre.executive.host.libraryPattern(stem=re.escape(stem))
+            )
             # look for a match in any of the library directories
             if not any(
                 any(pattern.match(str(entry.name)) for entry in folder.contents)

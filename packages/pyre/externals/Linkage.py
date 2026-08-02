@@ -8,6 +8,9 @@
 # externals
 import re
 
+# framework
+import pyre
+
 # the binary image readers
 from ..platforms import binaries
 
@@ -73,9 +76,11 @@ class Linkage:
         """
         Find my library under one of the {folders} and return its dependencies
         """
-        # form the pattern the platforms name shared libraries with; static archives
-        # carry no dependency information, so they are not candidates
-        stem = re.compile(rf"lib{re.escape(self.library)}\.(so|dylib)(\.\d+)*$")
+        # the host knows how libraries are named; static archives carry no dependency
+        # information, so they are not candidates
+        stem = re.compile(
+            pyre.executive.host.libraryPattern(stem=re.escape(self.library), static=False)
+        )
         # go through the candidate folders
         for folder in folders:
             # skipping the ones that aren't there
