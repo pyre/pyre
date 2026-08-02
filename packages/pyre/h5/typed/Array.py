@@ -8,6 +8,9 @@
 # support
 import journal
 
+# parts
+from .Raster import Raster
+
 # typing
 from .. import libh5
 
@@ -43,25 +46,11 @@ class Array:
     # value synchronization
     def _pyre_pull(self, dataset):
         """
-        Build my value: an out-of-core mosaic wired to {dataset}
+        Build my value: a raster handle wired to {dataset}
         """
-        # the name of my cell type in the grid vocabulary
-        cell = self.memtype.cell
-        # if my cell type has no grid support
-        if cell is None:
-            # make a channel
-            channel = journal.error("pyre.h5.typed")
-            # complain
-            channel.line(f"no grid support for the '{self.memtype.tag}' cell type")
-            channel.line(f"while pulling the value of '{dataset._pyre_location}'")
-            # flush
-            channel.log()
-            # and bail, just in case errors aren't fatal
-            return None
-        # ask the dataset for a mosaic over its own storage layout: chunked products are
-        # diced into their chunks, contiguous ones are a single tile; nothing is resident
-        # until the consumer fills the tiles it needs
-        return dataset._pyre_id.mosaic(cell=cell)
+        # rasters are cheap: no metadata is copied and no data moves until the consumer
+        # interrogates the handle and chooses an access strategy through its factories
+        return Raster(dataset=dataset)
 
     def _pyre_push(self, src, dst: libh5.DataSet):
         """
@@ -73,10 +62,19 @@ class Array:
         if value is None:
             # there is nothing to push
             return
-        # my values are mosaics wired to their own backing store: push whatever diverged;
-        # this covers updating a product in place; carrying content to a {dst} in another
-        # file is value binding, an open part of the writer design
-        value.flush()
+        # if the value is a raster
+        if isinstance(value, Raster):
+            # its content already lives in a file: data moves through the access objects
+            # its factories build, and mosaics flush their own updates; carrying content
+            # to a {dst} in another file is value binding, an open part of the writer design
+            return
+        # anything else is a foreign value; make a channel
+        channel = journal.error("pyre.h5.typed")
+        # complain
+        channel.line(f"cannot push '{value}' to '{dst}'")
+        channel.line(f"binding foreign values to array datasets is not supported yet")
+        # flush
+        channel.log()
         # all done
         return
 
