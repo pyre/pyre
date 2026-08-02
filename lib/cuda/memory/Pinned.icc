@@ -109,6 +109,9 @@ pyre::cuda::memory::Pinned<T, isConst>::Pinned(cell_count_type cells) :
 template <class T, bool isConst>
 pyre::cuda::memory::Pinned<T, isConst>::Pinned(handle_type host_handle, cell_count_type cells) :
     _host_data { host_handle },
+    // the caller handed us host cells only; there is no device allocation to go with them, and
+    // saying so explicitly is what keeps my destructor from handing garbage to {cudaFree}
+    _device_data { nullptr },
     _cells { cells }
 {}
 
