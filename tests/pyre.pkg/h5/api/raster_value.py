@@ -106,8 +106,9 @@ def test():
     # tile indices are window-local: the caller keeps track of where they placed it;
     # the update above lands at [5, 5]
     assert tile[5, 5] == 999.0
-    # the tile is a private copy: scribbling on it does not touch the file
-    tile[0, 0] = 137.0
+    # the tile is a private copy: scribble over the one cell whose on-disk value is known,
+    # so the fresh read below can prove the write stayed on the heap
+    tile[5, 5] = 137.0
 
     # a fresh read sees the mosaic update
     fresh = pyre.h5.read(uri=uri)
@@ -117,10 +118,8 @@ def test():
     c = check.mosaic()
     # pull the chunk that received the update
     c.fill(tile=c.tileOf(index=[35, 45]))
-    # the update persisted
+    # the mosaic update persisted, and the tile scribble did not overwrite it
     assert c[35, 45] == 999.0
-    # the tile scribble did not: its target cell still holds the fill value
-    assert c[30, 40] == 0.0
     # pull a neighboring chunk as well
     c.fill(tile=c.tileOf(index=[94, 94]))
     # it is undisturbed
