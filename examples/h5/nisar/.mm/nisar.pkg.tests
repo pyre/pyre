@@ -17,5 +17,9 @@ tests.nisar.pkg.writer.rslc.pre := tests.nisar.pkg.writer.rslc.clean
 tests.nisar.pkg.writer.gslc.clean := gslc.h5
 tests.nisar.pkg.writer.gslc.pre := tests.nisar.pkg.writer.gslc.clean
 
+# the value binding playground is a design whiteboard, not a test; keep it out of the
+# suite while the writer design is in flux, but leave it runnable by name
+nisar.pkg.tests.drivers.exclude := writer/workflow.py
+
 
 # end of file
