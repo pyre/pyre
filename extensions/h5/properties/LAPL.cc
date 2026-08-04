@@ -46,24 +46,27 @@ pyre::h5::py::properties::lapl(py::module & m)
         "build a link access property list");
 
     // interface
-    // get the number of allowed link traversals
-    cls.def(
+    // the number of allowed link traversals
+    cls.def_property(
         // the name
-        "getNumLinks",
-        // the implementation
+        "numLinks",
+        // the getter
         &LAPL::numLinks,
-        // the docstring
-        "get the number of allowed link traversals");
-    // set the number of allowed link traversals
-    cls.def(
-        // the name
-        "setNumLinks",
-        // the implementation
+        // the setter
         &LAPL::setNumLinks,
-        // the signature
-        "links"_a,
         // the docstring
-        "set the number of allowed link traversals");
+        "how many links i will follow before declaring a cycle");
+
+    // the prefix prepended to external link filenames
+    cls.def_property(
+        // the name
+        "externalPrefix",
+        // the getter
+        &LAPL::externalPrefix,
+        // the setter
+        &LAPL::setExternalPrefix,
+        // the docstring
+        "the prefix prepended to the filename an external link names");
 
     // all done
     return;

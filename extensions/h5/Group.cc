@@ -204,14 +204,17 @@ pyre::h5::py::group(py::module & m)
         "create",
         // the implementation
         [](const Group & self, const string_t & path, const DataType & type,
-           const DataSpace & space, const DCPL & dcpl, const DAPL & dapl) -> DataSet {
+           const DataSpace & space, const LCPL & lcpl, const DCPL & dcpl,
+           const DAPL & dapl) -> DataSet {
             // all the arguments are pyre wrappers now, so hand them straight to the library
-            return self.createDataSet(path, type, space, dcpl, dapl);
+            return self.createDataSet(path, type, space, lcpl, dcpl, dapl);
         },
         // the signature
-        "path"_a, "type"_a, "space"_a, "dcpl"_a = DCPL::theDefault(), "dapl"_a = DAPL::theDefault(),
+        "path"_a, "type"_a, "space"_a, "lcpl"_a = LCPL::theDefault(),
+        "dcpl"_a = DCPL::theDefault(), "dapl"_a = DAPL::theDefault(),
         // the docstring
-        "create a new dataset at the given {name} given its {type} and data {space}");
+        "create a new dataset at the given {name} given its {type} and data {space}, with "
+        "property lists {lcpl}, {dcpl}, and {dapl}");
 
     // metamethods
     cls.def(

@@ -46,44 +46,27 @@ pyre::h5::py::properties::lcpl(py::module & m)
         "build a link creation property list");
 
     // interface
-    // MGA: this is my best guess as to how far this was back-ported
-    // get the intermediate group creation strategy
-    cls.def(
+    // whether missing intermediate groups are created on demand
+    cls.def_property(
         // the name
-        "getCreateIntermediateGroup",
-        // the implementation
+        "createIntermediateGroup",
+        // the getter
         &LCPL::createIntermediateGroup,
-        // the docstring
-        "get the intermediate group creation strategy");
-    // set the intermediate group creation strategy
-    cls.def(
-        // the name
-        "setCreateIntermediateGroup",
-        // the implementation
+        // the setter
         &LCPL::setCreateIntermediateGroup,
-        // the signature
-        "create"_a,
         // the docstring
-        "set the intermediate group creation strategy");
+        "whether the groups along a path i am given are created when they are missing");
 
-    // get the string character encoding
-    cls.def(
+    // the string character encoding
+    cls.def_property(
         // the name
-        "getCharEncoding",
-        // the implementation
+        "charEncoding",
+        // the getter
         &LCPL::charEncoding,
-        // the docstring
-        "get the string character encoding");
-    // set the string character encoding
-    cls.def(
-        // the name
-        "setCharEncoding",
-        // the implementation
+        // the setter
         &LCPL::setCharEncoding,
-        // the signature
-        "encoding"_a,
         // the docstring
-        "set the string character encoding");
+        "the character set the names i create are recorded in");
 
     // all done
     return;
