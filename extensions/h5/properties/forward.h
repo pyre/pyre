@@ -16,6 +16,8 @@
 namespace pyre::h5::py::properties {
     // the generic base
     void pl(py::module &);
+    // the properties shared by everything one creates
+    void ocpl(py::module &);
     // dataset access, creation, and transfer
     void dapl(py::module &);
     void dcpl(py::module &);
@@ -23,6 +25,8 @@ namespace pyre::h5::py::properties {
     // file access and creation
     void fapl(py::module &);
     void fcpl(py::module &);
+    // group creation
+    void gcpl(py::module &);
     // link access and creation
     void lapl(py::module &);
     void lcpl(py::module &);

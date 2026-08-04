@@ -49,6 +49,13 @@ pyre::h5::py::enums(py::module & m)
         .value("virtual", H5D_VIRTUAL)
         .value("layouts", H5D_NLAYOUTS);
 
+    // whether creation order is remembered; these are flags, so they combine
+    py::enum_<CreationOrder>(
+        m, "CreationOrder", py::arithmetic(), "whether creation order is remembered")
+        .value("none", CreationOrder::none)
+        .value("tracked", CreationOrder::tracked)
+        .value("indexed", CreationOrder::indexed);
+
     // scale-offset filter scaling strategies
     py::enum_<H5Z_SO_scale_type_t>(m, "ScaleType", "the scale-offset filter scaling strategies")
         .value("float_dscale", H5Z_SO_FLOAT_DSCALE)

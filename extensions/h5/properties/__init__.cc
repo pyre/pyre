@@ -29,6 +29,9 @@ pyre::h5::py::properties::__init__(py::module & m)
     // add the class definitions
     // the generic base
     pl(properties);
+    // the properties shared by everything one creates; register it before the concrete
+    // creation lists, so their base class is known by the time they are declared
+    ocpl(properties);
     // dataset access, creation, and transfer
     dapl(properties);
     dcpl(properties);
@@ -36,6 +39,8 @@ pyre::h5::py::properties::__init__(py::module & m)
     // file access and creation
     fapl(properties);
     fcpl(properties);
+    // group creation
+    gcpl(properties);
     // link access and creation
     lapl(properties);
     lcpl(properties);

@@ -71,11 +71,15 @@ namespace pyre::h5::py {
     using Identifier = pyre::h5::Identifier;
     // property lists: now pyre-owned wrappers over the hdf5 c api
     using PropList = pyre::h5::properties::List;
+    using OCPL = pyre::h5::properties::OCPL;
+    // the vocabulary pyre supplies for the creation order flags, which hdf5 spells as macros
+    using CreationOrder = pyre::h5::properties::CreationOrder;
     using DAPL = pyre::h5::properties::DAPL;
     using DCPL = pyre::h5::properties::DCPL;
     using DXPL = pyre::h5::properties::DXPL;
     using FAPL = pyre::h5::properties::FAPL;
     using FCPL = pyre::h5::properties::FCPL;
+    using GCPL = pyre::h5::properties::GCPL;
     using LAPL = pyre::h5::properties::LAPL;
     using LCPL = pyre::h5::properties::LCPL;
     // dataspaces: now a pyre-owned wrapper over the hdf5 c api
