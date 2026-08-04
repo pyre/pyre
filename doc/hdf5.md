@@ -177,6 +177,7 @@ Two consequences for this document's concerns:
 - **The writer's deferred "partial/tile writes" are no longer deferred** at the
   storage level; the Python value model now rides them.
 
+<a id="raster"></a>
 ### The array value model: the raster (added 2026-08-02)
 
 The value of an array dataset is a `Raster` (`typed/Raster.py`) — a cheap handle
