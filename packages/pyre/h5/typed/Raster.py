@@ -81,20 +81,17 @@ class Raster:
         Get the storage layout of my on-disk representation
         """
         # ask my creation property list
-        return self.dcpl.getLayout()
+        return self.dcpl.layout
 
     @property
     def chunk(self) -> typing.Optional[typing.List[int]]:
         """
         Get my chunk shape, or {None} if my on-disk representation is not chunked
         """
-        # if my storage is not chunked
-        if self.layout != libh5.Layout.chunked:
-            # there is no chunk shape to report; asking hdf5 would raise an error that our
-            # binding currently swallows, echoing zeros
-            return None
-        # otherwise, my node knows
-        return self._dataset.chunk
+        # my node knows; storage that is not chunked reports no shape at all
+        chunk = self._dataset.chunk
+        # turn that into something a client can test against
+        return chunk if chunk else None
 
     @property
     def filters(self):

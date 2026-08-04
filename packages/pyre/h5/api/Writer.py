@@ -210,7 +210,7 @@ class Writer:
             # honor the chunking strategy, if any
             if chunk:
                 # by configuring the creation property list
-                dcpl.setChunk(chunk)
+                dcpl.chunk = chunk
             # make the dataset
             hid = dst.create(path=name, type=datatype, space=dataspace, dcpl=dcpl, dapl=dapl)
         # persist the value
