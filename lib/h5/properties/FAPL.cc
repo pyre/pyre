@@ -121,4 +121,131 @@ pyre::h5::properties::FAPL::ros3(
 #endif
 
 
+
+// the alignment of objects in the file
+auto
+pyre::h5::properties::FAPL::alignment() const -> std::tuple<hsize_t, hsize_t>
+{
+    // make room for the answer
+    hsize_t threshold = 0;
+    hsize_t alignment = 0;
+    // ask the library
+    H5Pget_alignment(id(), &threshold, &alignment);
+    // pack and ship
+    return { threshold, alignment };
+}
+
+
+// set the alignment of objects in the file
+auto
+pyre::h5::properties::FAPL::setAlignment(hsize_t threshold, hsize_t alignment) -> void
+{
+    // hand them to the library
+    H5Pset_alignment(id(), threshold, alignment);
+    // all done
+    return;
+}
+
+
+// the size of the sieve buffer
+auto
+pyre::h5::properties::FAPL::sieveBufferSize() const -> std::size_t
+{
+    // make room for the answer
+    std::size_t size = 0;
+    // ask the library
+    H5Pget_sieve_buf_size(id(), &size);
+    // and report
+    return size;
+}
+
+
+// set the size of the sieve buffer
+auto
+pyre::h5::properties::FAPL::setSieveBufferSize(std::size_t size) -> void
+{
+    // hand it to the library
+    H5Pset_sieve_buf_size(id(), size);
+    // all done
+    return;
+}
+
+
+// what happens to a file whose handle is closed while objects in it are still open
+auto
+pyre::h5::properties::FAPL::closeDegree() const -> H5F_close_degree_t
+{
+    // make room for the answer
+    H5F_close_degree_t degree = H5F_CLOSE_DEFAULT;
+    // ask the library
+    H5Pget_fclose_degree(id(), &degree);
+    // and report
+    return degree;
+}
+
+
+// set the file close degree
+auto
+pyre::h5::properties::FAPL::setCloseDegree(H5F_close_degree_t degree) -> void
+{
+    // hand it to the library
+    H5Pset_fclose_degree(id(), degree);
+    // all done
+    return;
+}
+
+
+// the default caches
+auto
+pyre::h5::properties::FAPL::cache() const -> std::tuple<int, std::size_t, std::size_t, double>
+{
+    // make room for the answer
+    int elements = 0;
+    std::size_t slots = 0;
+    std::size_t bytes = 0;
+    double w0 = 0;
+    // ask the library
+    H5Pget_cache(id(), &elements, &slots, &bytes, &w0);
+    // pack and ship
+    return { elements, slots, bytes, w0 };
+}
+
+
+// set the default caches
+auto
+pyre::h5::properties::FAPL::setCache(int elements, std::size_t slots, std::size_t bytes, double w0)
+    -> void
+{
+    // hand them to the library
+    H5Pset_cache(id(), elements, slots, bytes, w0);
+    // all done
+    return;
+}
+
+
+// the bounds on the file format versions hdf5 may use
+auto
+pyre::h5::properties::FAPL::libverBounds() const -> std::tuple<H5F_libver_t, H5F_libver_t>
+{
+    // make room for the answer
+    H5F_libver_t low = H5F_LIBVER_EARLIEST;
+    H5F_libver_t high = H5F_LIBVER_LATEST;
+    // ask the library
+    H5Pget_libver_bounds(id(), &low, &high);
+    // pack and ship
+    return { low, high };
+}
+
+
+// set the bounds on the file format versions
+auto
+pyre::h5::properties::FAPL::setLibverBounds(H5F_libver_t low, H5F_libver_t high) -> void
+{
+    // hand them to the library
+    H5Pset_libver_bounds(id(), low, high);
+    // all done
+    return;
+}
+
+
 // end of file

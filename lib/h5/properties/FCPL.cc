@@ -80,4 +80,54 @@ pyre::h5::properties::FCPL::setFilespaceStrategy(
 }
 
 
+
+// the size of the user block
+auto
+pyre::h5::properties::FCPL::userblock() const -> hsize_t
+{
+    // make room for the answer
+    hsize_t size = 0;
+    // ask the library
+    H5Pget_userblock(id(), &size);
+    // and report
+    return size;
+}
+
+
+// set the size of the user block
+auto
+pyre::h5::properties::FCPL::setUserblock(hsize_t size) -> void
+{
+    // hand it to the library
+    H5Pset_userblock(id(), size);
+    // all done
+    return;
+}
+
+
+// the widths hdf5 uses to record positions and lengths
+auto
+pyre::h5::properties::FCPL::sizes() const -> std::tuple<std::size_t, std::size_t>
+{
+    // make room for the answer
+    std::size_t offsets = 0;
+    std::size_t lengths = 0;
+    // ask the library
+    H5Pget_sizes(id(), &offsets, &lengths);
+    // pack and ship
+    return { offsets, lengths };
+}
+
+
+// set the widths used to record positions and lengths
+auto
+pyre::h5::properties::FCPL::setSizes(std::size_t offsets, std::size_t lengths) -> void
+{
+    // hand them to the library
+    H5Pset_sizes(id(), offsets, lengths);
+    // all done
+    return;
+}
+
+
 // end of file
