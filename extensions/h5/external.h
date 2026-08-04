@@ -72,6 +72,8 @@ namespace pyre::h5::py {
     // property lists: now pyre-owned wrappers over the hdf5 c api
     using PropList = pyre::h5::properties::List;
     using OCPL = pyre::h5::properties::OCPL;
+    using STRCPL = pyre::h5::properties::STRCPL;
+    using ACPL = pyre::h5::properties::ACPL;
     // the vocabulary pyre supplies for the creation order flags, which hdf5 spells as macros
     using CreationOrder = pyre::h5::properties::CreationOrder;
     using DAPL = pyre::h5::properties::DAPL;

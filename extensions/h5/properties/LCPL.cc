@@ -16,7 +16,7 @@ void
 pyre::h5::py::properties::lcpl(py::module & m)
 {
     // add bindings for link creation property lists
-    auto cls = py::class_<LCPL, PropList>(
+    auto cls = py::class_<LCPL, STRCPL>(
         // in scope
         m,
         // class name
@@ -56,17 +56,6 @@ pyre::h5::py::properties::lcpl(py::module & m)
         &LCPL::setCreateIntermediateGroup,
         // the docstring
         "whether the groups along a path i am given are created when they are missing");
-
-    // the string character encoding
-    cls.def_property(
-        // the name
-        "charEncoding",
-        // the getter
-        &LCPL::charEncoding,
-        // the setter
-        &LCPL::setCharEncoding,
-        // the docstring
-        "the character set the names i create are recorded in");
 
     // all done
     return;

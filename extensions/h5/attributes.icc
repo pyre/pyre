@@ -42,14 +42,14 @@ pyre::h5::py::attributes(py::class_<objectT> & cls)
         "createAttribute",
         // the implementation
         [](const objectT & self, const string_t & name, const DataType & type,
-           const DataSpace & space, const PropList & plist) -> Attribute {
+           const DataSpace & space, const ACPL & acpl) -> Attribute {
             // all the arguments are pyre wrappers now, so hand them straight to the library
-            return self.createAttribute(name, type, space, plist);
+            return self.createAttribute(name, type, space, acpl);
         },
         // the signature
-        "name"_a, "type"_a, "space"_a, "props"_a = PropList(),
+        "name"_a, "type"_a, "space"_a, "acpl"_a = ACPL::theDefault(),
         // the docstring
-        "create an attribute given its {name}, {type}, {space}, and property list");
+        "create an attribute given its {name}, {type}, {space}, and property list {acpl}");
 
     // check whether there is an attribute by the given name
     cls.def(
