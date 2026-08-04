@@ -36,11 +36,13 @@ function(pyre_h5Lib)
       lib/h5/DataSet.cc
       # property lists
       lib/h5/properties/List.cc
+      lib/h5/properties/OCPL.cc
       lib/h5/properties/DAPL.cc
       lib/h5/properties/DCPL.cc
       lib/h5/properties/DXPL.cc
       lib/h5/properties/FAPL.cc
       lib/h5/properties/FCPL.cc
+      lib/h5/properties/GCPL.cc
       lib/h5/properties/LAPL.cc
       lib/h5/properties/LCPL.cc
       # datatypes
@@ -112,11 +114,13 @@ function(pyre_h5Module)
       # property lists
       extensions/h5/properties/__init__.cc
       extensions/h5/properties/List.cc
+      extensions/h5/properties/OCPL.cc
       extensions/h5/properties/DAPL.cc
       extensions/h5/properties/DCPL.cc
       extensions/h5/properties/DXPL.cc
       extensions/h5/properties/FAPL.cc
       extensions/h5/properties/FCPL.cc
+      extensions/h5/properties/GCPL.cc
       extensions/h5/properties/LAPL.cc
       extensions/h5/properties/LCPL.cc
       # datatypes
