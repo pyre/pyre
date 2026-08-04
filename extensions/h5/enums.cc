@@ -49,6 +49,33 @@ pyre::h5::py::enums(py::module & m)
         .value("virtual", H5D_VIRTUAL)
         .value("layouts", H5D_NLAYOUTS);
 
+    // what becomes of a file whose handle is closed while objects in it are still open
+    py::enum_<H5F_close_degree_t>(m, "CloseDegree", "file close strategies")
+        .value("default", H5F_CLOSE_DEFAULT)
+        .value("weak", H5F_CLOSE_WEAK)
+        .value("semi", H5F_CLOSE_SEMI)
+        .value("strong", H5F_CLOSE_STRONG);
+
+    // the file format versions; the named ones appeared in the library one at a time, so
+    // each is offered only by a library that knows it. {latest} is deliberately not a fixed
+    // point: it means whatever the library we were built against considers newest, so a
+    // file written with it is readable only by libraries at least that recent
+    py::enum_<H5F_libver_t>(
+        m, "LibVersion", py::arithmetic(), "the file format versions hdf5 can write")
+        .value("earliest", H5F_LIBVER_EARLIEST)
+        .value("v18", H5F_LIBVER_V18)
+        .value("v110", H5F_LIBVER_V110)
+#if H5_VERSION_GE(1, 12, 0)
+        .value("v112", H5F_LIBVER_V112)
+#endif
+#if H5_VERSION_GE(1, 14, 0)
+        .value("v114", H5F_LIBVER_V114)
+#endif
+#if H5_VERSION_GE(2, 0, 0)
+        .value("v200", H5F_LIBVER_V200)
+#endif
+        .value("latest", H5F_LIBVER_LATEST);
+
     // whether creation order is remembered; these are flags, so they combine
     py::enum_<CreationOrder>(
         m, "CreationOrder", py::arithmetic(), "whether creation order is remembered")
