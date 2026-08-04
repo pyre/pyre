@@ -26,6 +26,13 @@
 // the hdf5 c api; pyre::h5 no longer depends on the hdf5 c++ layer
 #include <hdf5.h>
 
+// the oldest hdf5 we build against: 1.14.4 repaired S3 access through the ros3 driver, and
+// everything below it is missing pieces this layer uses unconditionally; say so here rather
+// than let an older library fail somewhere deep in a translation unit
+#if !H5_VERSION_GE(1, 14, 4)
+#error "pyre::h5 requires HDF5 1.14.4 or newer"
+#endif
+
 
 // forward declarations of the pyre-owned wrappers, so the aliases below can name them before
 // their full definitions are pulled in by {public.h}

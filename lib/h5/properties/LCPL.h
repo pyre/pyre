@@ -37,12 +37,10 @@ public:
 
     // interface
 public:
-#if H5_VERSION_GE(1, 12, 0)
     // whether missing intermediate groups are created on demand
     auto createIntermediateGroup() const -> bool;
     // set whether missing intermediate groups are created on demand
     auto setCreateIntermediateGroup(bool create) -> void;
-#endif
     // the string character encoding
     auto charEncoding() const -> H5T_cset_t;
     // set the string character encoding

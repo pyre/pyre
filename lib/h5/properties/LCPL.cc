@@ -28,7 +28,6 @@ pyre::h5::properties::LCPL::theDefault() -> const LCPL &
 }
 
 
-#if H5_VERSION_GE(1, 12, 0)
 // whether missing intermediate groups are created on demand
 auto
 pyre::h5::properties::LCPL::createIntermediateGroup() const -> bool
@@ -51,7 +50,6 @@ pyre::h5::properties::LCPL::setCreateIntermediateGroup(bool create) -> void
     // all done
     return;
 }
-#endif
 
 
 // the string character encoding

@@ -103,8 +103,10 @@ endif()
 # our own sources are c++ only, so nothing has enabled the c language yet; {FindHDF5} probes
 # the hdf5 c toolchain with its {h5cc} wrapper and cannot do it without a c compiler
 enable_language(C)
-# hunt it down; pyre::h5 wraps the hdf5 C api directly, so the C++ component is no longer needed
-find_package(HDF5 COMPONENTS C HL)
+# hunt it down; pyre::h5 wraps the hdf5 C api directly, so the C++ component is no longer
+# needed, and it expects at least 1.14.4, the release that repaired S3 access through the
+# ros3 driver; anything older is treated as absent rather than allowed to fail at compile time
+find_package(HDF5 1.14.4 COMPONENTS C HL)
 # report
 message(STATUS "Parallel HDF5: ${HDF5_IS_PARALLEL}")
 

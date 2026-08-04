@@ -111,10 +111,8 @@ pyre::h5::properties::FAPL::ros3(
             // where
             << pyre::journal::endl(__HERE__);
     }
-#if H5_VERSION_GE(1, 14, 2)
     // attach the security token for temporary credentials
     H5Pset_fapl_ros3_token(this->id(), token.data());
-#endif
     // hand off a reference to me
     return *this;
 }

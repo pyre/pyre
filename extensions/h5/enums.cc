@@ -65,12 +65,8 @@ pyre::h5::py::enums(py::module & m)
         .value("earliest", H5F_LIBVER_EARLIEST)
         .value("v18", H5F_LIBVER_V18)
         .value("v110", H5F_LIBVER_V110)
-#if H5_VERSION_GE(1, 12, 0)
         .value("v112", H5F_LIBVER_V112)
-#endif
-#if H5_VERSION_GE(1, 14, 0)
         .value("v114", H5F_LIBVER_V114)
-#endif
 #if H5_VERSION_GE(2, 0, 0)
         .value("v200", H5F_LIBVER_V200)
 #endif
@@ -107,25 +103,17 @@ pyre::h5::py::enums(py::module & m)
         .value("datatype", H5I_DATATYPE)
         .value("dataspace", H5I_DATASPACE)
         .value("dataset", H5I_DATASET)
-#if H5_VERSION_GE(1, 12, 0)
         .value("map", H5I_MAP)
-#endif
         .value("attr", H5I_ATTR)
         .value("virtual_file_layer", H5I_VFL)
-#if H5_VERSION_GE(1, 12, 0)
         .value("virtual_object_layer", H5I_VOL)
-#endif
         .value("property_class", H5I_GENPROP_CLS)
         .value("property_list", H5I_GENPROP_LST)
         .value("error_class", H5I_ERROR_CLASS)
         .value("error_message", H5I_ERROR_MSG)
         .value("error_stack", H5I_ERROR_STACK)
-#if H5_VERSION_GE(1, 12, 0)
         .value("dataspace_selection_iterator", H5I_SPACE_SEL_ITER)
-#endif
-#if H5_VERSION_GE(1, 13, 0)
         .value("event_set", H5I_EVENTSET)
-#endif
         .value("types", H5I_NTYPES);
 
     // object types
@@ -135,9 +123,7 @@ pyre::h5::py::enums(py::module & m)
         .value("group", H5O_TYPE_GROUP)
         .value("dataset", H5O_TYPE_DATASET)
         .value("datatype", H5O_TYPE_NAMED_DATATYPE)
-#if H5_VERSION_GE(1, 12, 0)
         .value("map", H5O_TYPE_MAP)
-#endif
         .value("types", H5O_TYPE_NTYPES);
 
     // dataspace types
