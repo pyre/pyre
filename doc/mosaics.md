@@ -24,7 +24,7 @@ pieces individually; you start from your situation:
 | a flat binary product on disk | a file-backed grid | [use case 2](#uc2) |
 | memory owned by someone else (numpy, another library) | a view grid | [use case 3](#uc3) |
 | a window of a large chunked HDF5 product | a mosaic | [use case 4](#uc4) |
-| the value of an array dataset in `pyre.h5` | a raster: interrogate it, then `tile()` or `mosaic()` | `doc/hdf5.md` |
+| the value of an array dataset in `pyre.h5` | a raster: interrogate it, then `tile()` or `mosaic()` | [the array value model](hdf5.md#raster) |
 | shrinking the memory footprint of a long workflow | page release | [use case 5](#uc5) |
 | handing cells to numpy without copying | the python bindings | [use case 6](#uc6) |
 | writing or updating a chunked HDF5 product | a mosaic and `flush` | [use case 7](#uc7) |
@@ -41,7 +41,7 @@ Two decisions cut across all of them:
   Ask for read-only access where you open things: `writable=False` in the python
   factories, `H5F_ACC_RDONLY` when opening files.
 
-<a name="uc1"></a>
+<a id="uc1"></a>
 ## 1. A dense array that fits in memory
 
 The baseline. In C++, pair a canonical packing with heap storage:
@@ -72,7 +72,7 @@ mv = memoryview(g)
 Heap storage is uninitialized at birth; write before you read. Exhibits:
 `tests/pyre.lib/grid/grid_heap_access.cc`, `tests/pyre.ext/grid/heap.py`.
 
-<a name="uc2"></a>
+<a id="uc2"></a>
 ## 2. A flat binary product on disk
 
 File-backed grids memory-map their cells, so products larger than memory are readable
@@ -96,7 +96,7 @@ read-only, so numpy sees an immutable array. Asking for a *fresh* product that i
 read-only is refused: a product that could never be filled is a mistake. Exhibits:
 `tests/pyre.ext/grid/map.py`, `tests/pyre.ext/grid/readonly.py`.
 
-<a name="uc3"></a>
+<a id="uc3"></a>
 ## 3. Memory owned by someone else
 
 A view grid lays a layout over cells some other entity exports, without copying. The
@@ -119,7 +119,7 @@ pass `writable=False` to ask only for read access. Exhibits:
 `tests/pyre.ext/grid/view.py`, `tests/pyre.ext/grid/lifetime.py`,
 `tests/pyre.ext/grid/readonly.py`.
 
-<a name="uc4"></a>
+<a id="uc4"></a>
 ## 4. A window of a large chunked HDF5 product
 
 The out-of-core workflow. A chunked dataset knows its own geometry, so it can describe
@@ -212,7 +212,7 @@ not moralize about product sizes; the census (below) tells you what you spent.
 Exhibit: `tests/h5.lib/dataset_mosaic_read.cc` — a narrated end-to-end read, including
 the clipped edge chunks and the no-ceremony coda.
 
-<a name="uc5"></a>
+<a id="uc5"></a>
 ## 5. Managing the memory footprint
 
 The store underneath a mosaic keeps a census: `residents()` counts pages that exist,
@@ -245,7 +245,30 @@ release, but no longer aliases the mosaic's cells: release orphans outstanding p
 rather than invalidating them. Exhibits: `tests/pyre.lib/grid/mosaic_release.cc`,
 `tests/pyre.lib/memory/paged_release.cc`.
 
-<a name="uc6"></a>
+### Extents that are not known at construction
+
+A mosaic is a bounded view: its box is fixed when it is built, and the tiling, the page
+table, and every total it reports — `tiles`, `cells` — derive from that box. A producer
+that does not yet know how far its data will reach has one option today, and it is a
+reasonable one: declare a generous ceiling and let demand materialization do the rest,
+since untouched tiles cost nothing but a slot in the page table. What it pays for the
+ceiling is that slot, and totals that describe the box it declared rather than the
+content that exists.
+
+Dropping the ceiling is a use case we intend to support: a mosaic whose box grows as its
+content is discovered, for accumulators of unknown size, streaming ingest, and
+computations that discover their domain as they run. The shape of that support is already
+constrained. Growth belongs on the slowest-varying axis only: ordinals of existing tiles
+survive it, because the strides of the faster axes do not change, so the page table is
+appended to and outstanding panes stay valid. Growth along a faster axis renumbers
+existing tiles and invalidates everything, and should be refused rather than supported.
+
+The same question arrives from the HDF5 side as a dataset with an unlimited dimension,
+where extension is a property of the store rather than of the view: the windowed flavors
+here work against such a dataset, since a window is bounded even when the product is not,
+while the whole-extent flavor has no answer to give.
+
+<a id="uc6"></a>
 ## 6. Handing cells to numpy: the python bindings
 
 Every python grid speaks the buffer protocol, so `memoryview(g)` and
@@ -304,7 +327,7 @@ registered per extension module, and cells cross between modules only through th
 buffer protocol — hand numpy the pane, not the mosaic. Exhibits:
 `tests/pyre.ext/grid/mosaic.py`, `tests/h5.ext/mosaic.py`, `tests/h5.ext/dcpl_fill.py`.
 
-<a name="uc7"></a>
+<a id="uc7"></a>
 ## 7. Writing a chunked product
 
 The mirror of use case 4. A producer assembles a mosaic over the dataset it is filling,
