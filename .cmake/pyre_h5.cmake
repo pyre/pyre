@@ -37,6 +37,8 @@ function(pyre_h5Lib)
       # property lists
       lib/h5/properties/List.cc
       lib/h5/properties/OCPL.cc
+      lib/h5/properties/STRCPL.cc
+      lib/h5/properties/ACPL.cc
       lib/h5/properties/DAPL.cc
       lib/h5/properties/DCPL.cc
       lib/h5/properties/DXPL.cc
@@ -115,6 +117,8 @@ function(pyre_h5Module)
       extensions/h5/properties/__init__.cc
       extensions/h5/properties/List.cc
       extensions/h5/properties/OCPL.cc
+      extensions/h5/properties/STRCPL.cc
+      extensions/h5/properties/ACPL.cc
       extensions/h5/properties/DAPL.cc
       extensions/h5/properties/DCPL.cc
       extensions/h5/properties/DXPL.cc
