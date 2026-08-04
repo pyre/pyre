@@ -18,6 +18,7 @@ tests.h5.ext.gcpl.clean := h5_ext_gcpl.h5
 tests.h5.ext.fcpl.clean := h5_ext_fcpl.h5
 tests.h5.ext.fapl.clean := h5_ext_fapl.h5
 tests.h5.ext.lcpl.clean := h5_ext_lcpl.h5
+tests.h5.ext.acpl.clean := h5_ext_acpl.h5
 
 
 # end of file
