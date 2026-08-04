@@ -162,8 +162,8 @@ pyre::h5::DataSet::tiling() const -> tiling_t
         // one tile, the box itself
         return tiling_t(box, box);
     }
-    // get my chunk shape
-    auto chunk = dcpl().chunk(static_cast<int>(box.size()));
+    // get my chunk shape; it knows its own rank
+    auto chunk = dcpl().chunk();
     // the grid vocabulary measures with signed integers; make room for the translation
     tiling_t::shape_type tile(chunk.size());
     // go through the axes

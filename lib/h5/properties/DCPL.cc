@@ -12,11 +12,11 @@
 
 
 // make a fresh dataset creation property list
-pyre::h5::properties::DCPL::DCPL() : List(H5Pcreate(H5P_DATASET_CREATE)) {}
+pyre::h5::properties::DCPL::DCPL() : OCPL(H5Pcreate(H5P_DATASET_CREATE)) {}
 
 
 // adopt an existing raw handle
-pyre::h5::properties::DCPL::DCPL(id_type id) : List(id) {}
+pyre::h5::properties::DCPL::DCPL(id_type id) : OCPL(id) {}
 
 
 // the shared default dataset creation property list
@@ -100,11 +100,24 @@ pyre::h5::properties::DCPL::setLayout(H5D_layout_t layout) -> void
 
 // the chunk shape, given the dataset {rank}
 auto
-pyre::h5::properties::DCPL::chunk(int rank) const -> shape_t
+pyre::h5::properties::DCPL::chunk() const -> shape_t
 {
+    // a dataset that is not chunked has no chunk shape; asking the library for one is an
+    // error, so answer from what we know rather than making it complain
+    if (layout() != H5D_CHUNKED) {
+        // nothing to report
+        return {};
+    }
+    // ask the library how many axes the chunk has
+    auto rank = H5Pget_chunk(id(), 0, nullptr);
+    // if it could not say
+    if (rank < 0) {
+        // there is nothing to report
+        return {};
+    }
     // make a container big enough to hold the answer
-    shape_t shape(rank < 0 ? 0 : rank);
-    // ask the library
+    shape_t shape(rank);
+    // and fill it
     H5Pget_chunk(id(), rank, shape.data());
     // and report
     return shape;

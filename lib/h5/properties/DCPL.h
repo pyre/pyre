@@ -10,17 +10,17 @@
 // set up the namespace
 #include "forward.h"
 // my base class
-#include "List.h"
+#include "OCPL.h"
 
 
 // a dataset creation property list
-class pyre::h5::properties::DCPL : public pyre::h5::properties::List {
+class pyre::h5::properties::DCPL : public pyre::h5::properties::OCPL {
     // types
 public:
     // me
     using self_type = DCPL;
     // my superclass
-    using super_type = pyre::h5::properties::List;
+    using super_type = pyre::h5::properties::OCPL;
     // a filter as (id, name, flags, configuration)
     using filter_type = std::tuple<H5Z_filter_t, string_t, unsigned int, unsigned int>;
     // the dataset filter pipeline
@@ -52,7 +52,6 @@ public:
     auto fillTime() const -> H5D_fill_time_t;
     // set the fill value writing time
     auto setFillTime(H5D_fill_time_t timing) -> void;
-    // the data layout strategy
     // whether a fill value is defined, and how
     auto fillValueStatus() const -> H5D_fill_value_t;
     // the fill value, read into {value} as the given {type}
@@ -61,11 +60,12 @@ public:
     // dataset's on-disk type at creation
     auto setFillValue(const pyre::h5::types::Datatype & type, const void * value) -> void;
 
+    // the data layout strategy
     auto layout() const -> H5D_layout_t;
     // set the data layout strategy
     auto setLayout(H5D_layout_t layout) -> void;
-    // the chunk shape, given the dataset {rank}
-    auto chunk(int rank) const -> shape_t;
+    // the chunk shape; empty when my layout is not chunked
+    auto chunk() const -> shape_t;
     // set the chunk {shape}
     auto setChunk(const shape_t & shape) -> void;
 
