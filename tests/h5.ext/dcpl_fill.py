@@ -29,7 +29,7 @@ def test():
     space = libh5.DataSpace(shape=[100, 100])
     # the creation properties: chunked, with a declared fill value
     dcpl = libh5.properties.dcpl()
-    dcpl.setChunk(shape=[30, 40])
+    dcpl.chunk = [30, 40]
     dcpl.setFillValue(value=-1.0)
     # the declaration reads back
     assert dcpl.fillValue(cell="float64") == -1.0

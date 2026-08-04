@@ -34,7 +34,7 @@ def test():
     space = libh5.DataSpace(shape=[100, 100])
     # and the chunking, deliberately not a divisor of the extent along either axis
     dcpl = libh5.properties.dcpl()
-    dcpl.setChunk(shape=[30, 40])
+    dcpl.chunk = [30, 40]
     # make the dataset
     dataset = f.create(path="product", type=libh5.types.native.double, space=space, dcpl=dcpl)
 
