@@ -16,10 +16,14 @@
 // the pyre-owned hdf5 property lists
 // the generic base
 #include "List.h"
+// the properties shared by everything one creates
+#include "OCPL.h"
 // dataset access, creation, and transfer
 #include "DAPL.h"
 #include "DCPL.h"
 #include "DXPL.h"
+// group creation
+#include "GCPL.h"
 // file access and creation
 #include "FAPL.h"
 #include "FCPL.h"
