@@ -13,6 +13,8 @@
 #include "types/Datatype.h"
 #include "properties/DCPL.h"
 #include "properties/DAPL.h"
+#include "properties/GCPL.h"
+#include "properties/LCPL.h"
 
 
 // adopt an existing raw handle
@@ -108,9 +110,21 @@ pyre::h5::Group::openDataSet(const string_t & path) const -> DataSet
 auto
 pyre::h5::Group::createGroup(const string_t & path) const -> Group
 {
-    // make it with default link, creation, and access property lists; adopt the fresh handle
-    return Group(
-        static_cast<id_type>(H5Gcreate2(id(), path.data(), H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT)));
+    // defer to the full flavor, asking for the library defaults
+    return createGroup(path, properties::LCPL::theDefault(), properties::GCPL::theDefault());
+}
+
+
+// create a subgroup at the given {path}, with property lists {lcpl} and {gcpl}
+auto
+pyre::h5::Group::createGroup(
+    const string_t & path, const properties::LCPL & lcpl, const properties::GCPL & gcpl) const
+    -> Group
+{
+    // make it; the group access property list has no properties of its own, so it stays
+    // the library default until hdf5 gives it something to say; adopt the fresh handle
+    return Group(static_cast<id_type>(
+        H5Gcreate2(id(), path.data(), lcpl.id(), gcpl.id(), H5P_DEFAULT)));
 }
 
 
