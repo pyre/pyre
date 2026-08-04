@@ -11,7 +11,7 @@
 #include "Attribute.h"
 #include "DataSpace.h"
 #include "types/Datatype.h"
-#include "properties/List.h"
+#include "properties/ACPL.h"
 
 
 // adopt an existing raw handle
@@ -63,7 +63,7 @@ pyre::h5::Location::hasAttribute(const string_t & name) const -> bool
 auto
 pyre::h5::Location::createAttribute(
     const string_t & name, const types::Datatype & type, const DataSpace & space,
-    const properties::List & acpl) const -> Attribute
+    const properties::ACPL & acpl) const -> Attribute
 {
     // make the attribute; the library hands back a fresh handle the wrapper adopts
     return Attribute(

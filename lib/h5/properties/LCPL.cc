@@ -10,11 +10,11 @@
 
 
 // make a fresh link creation property list
-pyre::h5::properties::LCPL::LCPL() : List(H5Pcreate(H5P_LINK_CREATE)) {}
+pyre::h5::properties::LCPL::LCPL() : STRCPL(H5Pcreate(H5P_LINK_CREATE)) {}
 
 
 // adopt an existing raw handle
-pyre::h5::properties::LCPL::LCPL(id_type id) : List(id) {}
+pyre::h5::properties::LCPL::LCPL(id_type id) : STRCPL(id) {}
 
 
 // the shared default link creation property list
@@ -47,30 +47,6 @@ pyre::h5::properties::LCPL::setCreateIntermediateGroup(bool create) -> void
 {
     // hand it to the library
     H5Pset_create_intermediate_group(id(), create ? 1 : 0);
-    // all done
-    return;
-}
-
-
-// the string character encoding
-auto
-pyre::h5::properties::LCPL::charEncoding() const -> H5T_cset_t
-{
-    // make room for the answer
-    H5T_cset_t encoding = H5T_CSET_ASCII;
-    // ask the library
-    H5Pget_char_encoding(id(), &encoding);
-    // and report
-    return encoding;
-}
-
-
-// set the string character encoding
-auto
-pyre::h5::properties::LCPL::setCharEncoding(H5T_cset_t encoding) -> void
-{
-    // hand it to the library
-    H5Pset_char_encoding(id(), encoding);
     // all done
     return;
 }

@@ -10,17 +10,17 @@
 // set up the namespace
 #include "forward.h"
 // my base class
-#include "List.h"
+#include "STRCPL.h"
 
 
 // a link creation property list
-class pyre::h5::properties::LCPL : public pyre::h5::properties::List {
+class pyre::h5::properties::LCPL : public pyre::h5::properties::STRCPL {
     // metamethods
 public:
     // me
     using self_type = LCPL;
     // my superclass
-    using super_type = pyre::h5::properties::List;
+    using super_type = pyre::h5::properties::STRCPL;
     // make a fresh link creation property list
     LCPL();
     // the full set of special members
@@ -41,10 +41,6 @@ public:
     auto createIntermediateGroup() const -> bool;
     // set whether missing intermediate groups are created on demand
     auto setCreateIntermediateGroup(bool create) -> void;
-    // the string character encoding
-    auto charEncoding() const -> H5T_cset_t;
-    // set the string character encoding
-    auto setCharEncoding(H5T_cset_t encoding) -> void;
 
     // implementation details
 protected:

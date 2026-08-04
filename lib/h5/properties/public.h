@@ -18,6 +18,8 @@
 #include "List.h"
 // the properties shared by everything one creates
 #include "OCPL.h"
+// the properties shared by everything that lays down a name
+#include "STRCPL.h"
 // dataset access, creation, and transfer
 #include "DAPL.h"
 #include "DCPL.h"
@@ -30,6 +32,8 @@
 // link access and creation
 #include "LAPL.h"
 #include "LCPL.h"
+// attribute creation
+#include "ACPL.h"
 
 
 // end of file

@@ -31,6 +31,8 @@ namespace pyre::h5::properties {
     class List;
     // the properties shared by everything one creates
     class OCPL;
+    // the properties shared by everything that lays down a name
+    class STRCPL;
     // dataset access, creation, and transfer
     class DAPL;
     class DCPL;
@@ -43,6 +45,8 @@ namespace pyre::h5::properties {
     // link access and creation
     class LAPL;
     class LCPL;
+    // attribute creation
+    class ACPL;
 } // namespace pyre::h5::properties
 
 
