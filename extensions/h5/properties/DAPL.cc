@@ -46,24 +46,23 @@ pyre::h5::py::properties::dapl(py::module & m)
         "build a dataset access property list");
 
     // interface
-    // get the chunk cache parameters
-    cls.def(
+    // the chunk cache parameters
+    cls.def_property(
         // the name
-        "getChunkCache",
-        // the implementation
+        "chunkCache",
+        // the getter
         &DAPL::chunkCache,
+        // the setter, which unpacks the {(slots, bytes, preemption policy)} triplet
+        [](DAPL & self, const std::tuple<std::size_t, std::size_t, double> & cache) -> void {
+            // spread the triplet
+            auto [slots, bytes, w0] = cache;
+            // and hand it to the property list
+            self.setChunkCache(slots, bytes, w0);
+            // all done
+            return;
+        },
         // the docstring
-        "get the chunk cache parameters");
-    // set the chunk cache parameters
-    cls.def(
-        // the name
-        "setChunkCache",
-        // the implementation
-        &DAPL::setChunkCache,
-        // the signature
-        "slots"_a, "bytes"_a, "w0"_a,
-        // the docstring
-        "set the chunk cache parameters");
+        "my chunk cache, as {(slots, bytes, preemption policy)}");
 
 
     // all done

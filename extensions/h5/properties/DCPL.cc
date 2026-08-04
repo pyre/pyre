@@ -16,7 +16,7 @@ void
 pyre::h5::py::properties::dcpl(py::module & m)
 {
     // add bindings for hdf5 dataset creation property lists
-    auto cls = py::class_<DCPL, PropList>(
+    auto cls = py::class_<DCPL, OCPL>(
         // in scope
         m,
         // class name
@@ -46,45 +46,27 @@ pyre::h5::py::properties::dcpl(py::module & m)
         "build a dataset creation property list");
 
     // interface
-    // get the allocation time
-    cls.def(
+    // the allocation time
+    cls.def_property(
         // the name
-        "getAllocTime",
-        // the implementation
+        "allocTime",
+        // the getter
         &DCPL::allocTime,
-        // the docstring
-        "get the allocation time");
-    // set the allocation time
-    cls.def(
-        // the name
-        "setAllocTime",
-        // the implementation
+        // the setter
         &DCPL::setAllocTime,
-        // the signature
-        "timing"_a,
         // the docstring
-        "set the allocation time");
+        "when storage is allocated for the dataset");
 
-    // get the chunk size
-    cls.def(
+    // the chunk shape
+    cls.def_property(
         // the name
-        "getChunk",
-        // the implementation
+        "chunk",
+        // the getter
         &DCPL::chunk,
-        // the signature
-        "rank"_a,
-        // the docstring
-        "get the chunk size given the dataset {rank}");
-    // set the chunk size
-    cls.def(
-        // the name
-        "setChunk",
-        // the implementation
+        // the setter
         &DCPL::setChunk,
-        // the signature
-        "shape"_a,
         // the docstring
-        "set the chunk {shape}");
+        "the shape of my chunks; empty when my layout is not chunked");
 
     // set the fill value
     cls.def(
@@ -164,51 +146,39 @@ pyre::h5::py::properties::dcpl(py::module & m)
         "get the fill value, interpreted as the given {cell} type");
 
     // get the fill value writing time
-    cls.def(
+    cls.def_property(
         // the name
-        "getFillTime",
-        // the implementation
+        "fillTime",
+        // the getter
         &DCPL::fillTime,
-        // the docstring
-        "get the fill value writing time");
-    // set the fill value writing time
-    cls.def(
-        // the name
-        "setFillTime",
-        // the implementation
+        // the setter
         &DCPL::setFillTime,
-        // the signature
-        "timing"_a,
         // the docstring
-        "set the fill value writing time");
+        "when the fill value is written to storage");
+    // set the fill value writing time
+
 
     // get the data layout strategy
-    cls.def(
+    cls.def_property(
         // the name
-        "getLayout",
-        // the implementation
+        "layout",
+        // the getter
         &DCPL::layout,
-        // the docstring
-        "get the data layout strategy");
-    // set the data layout strategy
-    cls.def(
-        // the name
-        "setLayout",
-        // the implementation
+        // the setter
         &DCPL::setLayout,
-        // the signature
-        "layout"_a,
         // the docstring
-        "set the data layout strategy");
+        "how my cells are laid out in storage");
 
-    // filters
-    cls.def(
+
+    // filters; the pipeline is read-only because filters are engaged one at a time, in
+    // the order they are to be applied
+    cls.def_property_readonly(
         // the name
-        "getFilters",
-        // the implementation
+        "filters",
+        // the getter
         &DCPL::filters,
         // the docstring
-        "get the filters in the dataset pipeline");
+        "the filters in my pipeline, in the order they are applied");
 
     // compression
     // deflate
