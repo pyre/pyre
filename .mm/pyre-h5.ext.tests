@@ -14,6 +14,7 @@ pyre-h5.ext.tests.prerequisites := pyre-h5.ext pyre.pkg pyre.ext
 # sweeps them
 tests.h5.ext.mosaic.clean := h5_ext_mosaic.h5
 tests.h5.ext.dcpl_fill.clean := h5_ext_dcpl_fill.h5
+tests.h5.ext.gcpl.clean := h5_ext_gcpl.h5
 
 
 # end of file
