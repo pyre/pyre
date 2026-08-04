@@ -42,6 +42,12 @@ public:
     // set the number of allowed link traversals
     auto setNumLinks(std::size_t links) -> void;
 
+    // the prefix prepended to the filename an external link names; this is how a product
+    // whose external targets have moved is read without editing the links themselves
+    auto externalPrefix() const -> string_t;
+    // set the prefix prepended to external link filenames
+    auto setExternalPrefix(const string_t & prefix) -> void;
+
     // implementation details
 protected:
     // adopt an existing raw handle
