@@ -62,6 +62,12 @@ public:
     auto createDataSet(
         const string_t & path, const types::Datatype & type, const DataSpace & space,
         const properties::DCPL & dcpl, const properties::DAPL & dapl) const -> DataSet;
+    // create a dataset {path} of {type} over {space}, with property lists {lcpl}, {dcpl},
+    // and {dapl}
+    auto createDataSet(
+        const string_t & path, const types::Datatype & type, const DataSpace & space,
+        const properties::LCPL & lcpl, const properties::DCPL & dcpl,
+        const properties::DAPL & dapl) const -> DataSet;
 
     // release my handle
     auto close() -> void;

@@ -128,10 +128,21 @@ pyre::h5::Group::createDataSet(
     const string_t & path, const types::Datatype & type, const DataSpace & space,
     const properties::DCPL & dcpl, const properties::DAPL & dapl) const -> DataSet
 {
-    // make it with a default link creation property list; adopt the fresh handle
-    return DataSet(
-        static_cast<id_type>(H5Dcreate2(
-            id(), path.data(), type.id(), space.id(), H5P_DEFAULT, dcpl.id(), dapl.id())));
+    // defer to the full flavor, asking for the default link creation properties
+    return createDataSet(path, type, space, properties::LCPL::theDefault(), dcpl, dapl);
+}
+
+
+// create a dataset {path} of {type} over {space}, with property lists {lcpl}, {dcpl}, {dapl}
+auto
+pyre::h5::Group::createDataSet(
+    const string_t & path, const types::Datatype & type, const DataSpace & space,
+    const properties::LCPL & lcpl, const properties::DCPL & dcpl,
+    const properties::DAPL & dapl) const -> DataSet
+{
+    // make it; adopt the fresh handle
+    return DataSet(static_cast<id_type>(H5Dcreate2(
+        id(), path.data(), type.id(), space.id(), lcpl.id(), dcpl.id(), dapl.id())));
 }
 
 
