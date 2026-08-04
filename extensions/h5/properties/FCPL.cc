@@ -46,45 +46,64 @@ pyre::h5::py::properties::fcpl(py::module & m)
         "build a file creation property list");
 
     // interface
-    // get the page size
-    cls.def(
+    // the file space page size
+    cls.def_property(
         // the name
-        "getPageSize",
-        // the implementation
+        "pageSize",
+        // the getter
         &FCPL::pageSize,
-        // the docstring
-        "retrieve the file space page size");
-
-    // set the page size
-    cls.def(
-        // the name
-        "setPageSize",
-        // the implementation
+        // the setter
         &FCPL::setPageSize,
-        // the signature
-        "size"_a,
         // the docstring
-        "set the file space page {size}");
+        "the size of the pages my file space is carved into");
 
-    // get the file space strategy
-    cls.def(
+    // the file space strategy
+    cls.def_property(
         // the name
-        "getFilespaceStrategy",
-        // the implementation
+        "filespaceStrategy",
+        // the getter
         &FCPL::filespaceStrategy,
+        // the setter, which unpacks the {(strategy, persist, threshold)} triplet
+        [](FCPL & self,
+           const std::tuple<H5F_fspace_strategy_t, bool, hsize_t> & strategy) -> void {
+            // spread the triplet
+            auto [approach, persist, threshold] = strategy;
+            // and hand it to the property list
+            self.setFilespaceStrategy(approach, persist, threshold);
+            // all done
+            return;
+        },
         // the docstring
-        "get the current file space strategy");
+        "how free space is managed, as {(strategy, persist, threshold)}");
 
-    // set the file space strategy
-    cls.def(
+    // the user block
+    cls.def_property(
         // the name
-        "setFilespaceStrategy",
-        // the implementation
-        &FCPL::setFilespaceStrategy,
-        // the signature
-        "strategy"_a, "persist"_a, "threshold"_a,
+        "userblock",
+        // the getter
+        &FCPL::userblock,
+        // the setter
+        &FCPL::setUserblock,
         // the docstring
-        "set the file space strategy");
+        "the size of the byte range at the front of my file that hdf5 leaves alone");
+
+    // the widths used to record positions and lengths
+    cls.def_property(
+        // the name
+        "sizes",
+        // the getter
+        &FCPL::sizes,
+        // the setter, which unpacks the {(offset bytes, length bytes)} pair
+        [](FCPL & self, const std::tuple<std::size_t, std::size_t> & sizes) -> void {
+            // spread the pair
+            auto [offsets, lengths] = sizes;
+            // and hand it to the property list
+            self.setSizes(offsets, lengths);
+            // all done
+            return;
+        },
+        // the docstring
+        "the widths used to record positions and lengths, as {(offset, length)} bytes");
 
     // all done
     return;
