@@ -31,6 +31,7 @@ class Grid(nisar.h5.schema.group):
 
     # the polarizations carried by this sub-band; a non-empty subset of the four channels
     listOfPolarizations = nisar.h5.schema.strings()
+    listOfPolarizations.default = None
     listOfPolarizations.constraints = [
         nisar.constraints.isSubset(choices={"HH", "HV", "VH", "VV"}),
         nisar.constraints.isNotEmpty(),
