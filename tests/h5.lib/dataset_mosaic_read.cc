@@ -62,7 +62,7 @@ main(int argc, char * argv[])
         // and the chunking
         pyre::h5::properties::DCPL dcpl;
         // deliberately not a divisor of the extent along either axis
-        dcpl.setChunk(pyre::h5::shape_t { 30, 40 });
+        dcpl.chunk(pyre::h5::shape_t { 30, 40 });
         // make the dataset
         auto dataset = file.createDataSet(
             "product", pyre::h5::datatype<cell_t>(), space, dcpl, pyre::h5::properties::DAPL());

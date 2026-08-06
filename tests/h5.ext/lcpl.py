@@ -33,10 +33,10 @@ def test():
     assert lcpl.charEncoding == libh5.CharacterSet.utf8
 
     # missing groups along a path are not created, by default
-    assert lcpl.createIntermediateGroup is False
+    assert lcpl.intermediateGroupCreation is False
     # ask for them to be
-    lcpl.createIntermediateGroup = True
-    assert lcpl.createIntermediateGroup is True
+    lcpl.intermediateGroupCreation = True
+    assert lcpl.intermediateGroupCreation is True
 
     # make a file
     f = libh5.File(uri=uri, mode="w")
@@ -65,10 +65,10 @@ def test():
     # a fresh link access property list
     lapl = libh5.properties.lapl()
     # it will follow a bounded number of links before calling it a cycle
-    assert lapl.numLinks > 0
+    assert lapl.traversalLimit > 0
     # and that bound is ours to set
-    lapl.numLinks = 8
-    assert lapl.numLinks == 8
+    lapl.traversalLimit = 8
+    assert lapl.traversalLimit == 8
 
     # nothing is prepended to the filenames external links name, by default
     assert lapl.externalPrefix == ""

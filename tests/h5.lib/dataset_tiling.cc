@@ -34,7 +34,7 @@ main(int argc, char * argv[])
         // creation properties that dice it
         pyre::h5::properties::DCPL dcpl;
         // into rectangular chunks
-        dcpl.setChunk(pyre::h5::shape_t { 30, 40 });
+        dcpl.chunk(pyre::h5::shape_t { 30, 40 });
         // make the dataset
         auto dataset = file.createDataSet(
             "product", pyre::h5::datatype<double>(), space, dcpl, pyre::h5::properties::DAPL());

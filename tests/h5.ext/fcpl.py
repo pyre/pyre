@@ -14,6 +14,9 @@ def test():
     # get the bindings
     from pyre.extensions import libh5
 
+    # the property namespace, which is where the records live
+    p = libh5.properties
+
     # for a scratch path and its cleanup
     import os
 
@@ -28,7 +31,7 @@ def test():
 
     # the widths used to record positions and lengths; eight bytes each addresses more
     # than any product we will ever write
-    assert fcpl.sizes == (8, 8)
+    assert (fcpl.sizes.offsets, fcpl.sizes.lengths) == (8, 8)
 
     # nothing is reserved at the front of the file, by default
     assert fcpl.userblock == 0
@@ -38,12 +41,13 @@ def test():
     assert fcpl.userblock == 1024
 
     # the free space strategy, as {(strategy, persist, threshold)}
-    strategy, persist, threshold = fcpl.filespaceStrategy
+    free = fcpl.filespaceStrategy
     # free space is not persisted across sessions, by default
-    assert persist is False
+    assert free.persist is False
     # ask for it to be, so a product that is revised repeatedly can reuse its own holes
-    fcpl.filespaceStrategy = (strategy, True, threshold)
-    assert fcpl.filespaceStrategy == (strategy, True, threshold)
+    free.persist = True
+    fcpl.filespaceStrategy = free
+    assert fcpl.filespaceStrategy.persist is True
 
     # make a file with it
     f = libh5.File(uri=uri, mode="w", fcpl=fcpl)

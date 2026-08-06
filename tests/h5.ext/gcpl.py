@@ -14,6 +14,9 @@ def test():
     # get the bindings
     from pyre.extensions import libh5
 
+    # the property namespace, which is where the records live
+    p = libh5.properties
+
     # for a scratch path and its cleanup
     import os
 
@@ -29,25 +32,25 @@ def test():
     # it inherits the settings that govern anything one creates
     assert isinstance(gcpl, libh5.properties.ocpl)
     # among them, whether modification times are recorded; they are, by default
-    assert gcpl.trackTimes is True
+    assert gcpl.timeTracking is True
     # turning them off is what makes two runs produce identical bytes
-    gcpl.trackTimes = False
-    assert gcpl.trackTimes is False
+    gcpl.timeTracking = False
+    assert gcpl.timeTracking is False
 
     # the attribute storage thresholds are inherited as well
-    assert gcpl.attributePhaseChange == (8, 6)
+    assert (gcpl.attributePhaseChange.maxCompact, gcpl.attributePhaseChange.minDense) == (8, 6)
     # and they are settable as a pair
-    gcpl.attributePhaseChange = (16, 12)
-    assert gcpl.attributePhaseChange == (16, 12)
+    gcpl.attributePhaseChange = p.PhaseChange(maxCompact=16, minDense=12)
+    assert gcpl.attributePhaseChange.maxCompact == 16
 
     # its own settings start at the library defaults
-    assert gcpl.linkPhaseChange == (8, 6)
-    assert gcpl.estimatedLinkInfo == (4, 8)
+    assert (gcpl.linkPhaseChange.maxCompact, gcpl.linkPhaseChange.minDense) == (8, 6)
+    assert (gcpl.estimatedLinkInfo.links, gcpl.estimatedLinkInfo.nameLength) == (4, 8)
     # a group expecting many members says so, so its object header is sized for them
-    gcpl.linkPhaseChange = (32, 24)
-    gcpl.estimatedLinkInfo = (64, 12)
-    assert gcpl.linkPhaseChange == (32, 24)
-    assert gcpl.estimatedLinkInfo == (64, 12)
+    gcpl.linkPhaseChange = p.PhaseChange(maxCompact=32, minDense=24)
+    gcpl.estimatedLinkInfo = p.LinkEstimate(links=64, nameLength=12)
+    assert gcpl.linkPhaseChange.maxCompact == 32
+    assert gcpl.estimatedLinkInfo.links == 64
 
     # the order of my members is not remembered, by default
     assert gcpl.linkCreationOrder == libh5.CreationOrder.none
