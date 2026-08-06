@@ -30,9 +30,9 @@ def test():
     # the creation properties: chunked, with a declared fill value
     dcpl = libh5.properties.dcpl()
     dcpl.chunk = [30, 40]
-    dcpl.setFillValue(value=-1.0)
-    # the declaration reads back
-    assert dcpl.fillValue(cell="float64") == -1.0
+    dcpl.fillValue = -1.0
+    # the property list records that the declaration is mine rather than the library's
+    assert dcpl.fillValueStatus == libh5.FillValue.user_defined
     # make the dataset
     dataset = f.create(path="product", type=libh5.types.native.double, space=space, dcpl=dcpl)
 
@@ -44,8 +44,15 @@ def test():
     assert m[35, 45] == -1.0
     assert m[59, 79] == -1.0
 
-    # the round trip through the dataset's own creation properties agrees
-    assert dataset.dcpl.fillValue(cell="float64") == -1.0
+    # and the dataset answers for its own fill value, with no type to name and nothing to
+    # get wrong: it reads the value in the terms it actually holds
+    assert dataset.fillValue == -1.0
+
+    # a dataset nobody gave one to still has a fill value, because hdf5 supplies zero; the
+    # status is what separates that from a value someone chose
+    plain = f.create(path="plain", type=libh5.types.native.double, space=space)
+    assert plain.dcpl.fillValueStatus == libh5.FillValue.default
+    assert plain.fillValue == 0.0
 
     # all done
     return
