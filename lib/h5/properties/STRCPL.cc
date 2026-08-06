@@ -28,7 +28,7 @@ pyre::h5::properties::STRCPL::charEncoding() const -> H5T_cset_t
 
 // set the character set
 auto
-pyre::h5::properties::STRCPL::setCharEncoding(H5T_cset_t encoding) -> void
+pyre::h5::properties::STRCPL::charEncoding(H5T_cset_t encoding) -> void
 {
     // hand it to the library
     H5Pset_char_encoding(id(), encoding);

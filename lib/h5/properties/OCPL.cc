@@ -15,7 +15,7 @@ pyre::h5::properties::OCPL::OCPL(id_type id) : List(id) {}
 
 // whether the objects i create record their modification times
 auto
-pyre::h5::properties::OCPL::trackTimes() const -> bool
+pyre::h5::properties::OCPL::timeTracking() const -> bool
 {
     // make room for the answer, in the library's own boolean
     hbool_t track = 0;
@@ -28,7 +28,7 @@ pyre::h5::properties::OCPL::trackTimes() const -> bool
 
 // set whether the objects i create record their modification times
 auto
-pyre::h5::properties::OCPL::setTrackTimes(bool track) -> void
+pyre::h5::properties::OCPL::timeTracking(bool track) -> void
 {
     // hand it to the library
     H5Pset_obj_track_times(id(), static_cast<hbool_t>(track));
@@ -39,7 +39,7 @@ pyre::h5::properties::OCPL::setTrackTimes(bool track) -> void
 
 // the thresholds at which attribute storage switches representation
 auto
-pyre::h5::properties::OCPL::attributePhaseChange() const -> std::tuple<unsigned int, unsigned int>
+pyre::h5::properties::OCPL::attributePhaseChange() const -> PhaseChange
 {
     // make room for the answer
     unsigned int maxCompact = 0;
@@ -47,17 +47,16 @@ pyre::h5::properties::OCPL::attributePhaseChange() const -> std::tuple<unsigned 
     // ask the library
     H5Pget_attr_phase_change(id(), &maxCompact, &minDense);
     // pack and ship
-    return { maxCompact, minDense };
+    return PhaseChange(maxCompact, minDense);
 }
 
 
 // set the attribute storage thresholds
 auto
-pyre::h5::properties::OCPL::setAttributePhaseChange(unsigned int maxCompact, unsigned int minDense)
-    -> void
+pyre::h5::properties::OCPL::attributePhaseChange(const PhaseChange & thresholds) -> void
 {
     // hand them to the library
-    H5Pset_attr_phase_change(id(), maxCompact, minDense);
+    H5Pset_attr_phase_change(id(), thresholds.maxCompact, thresholds.minDense);
     // all done
     return;
 }
@@ -78,7 +77,7 @@ pyre::h5::properties::OCPL::attributeCreationOrder() const -> CreationOrder
 
 // set the attribute creation order flags
 auto
-pyre::h5::properties::OCPL::setAttributeCreationOrder(CreationOrder flags) -> void
+pyre::h5::properties::OCPL::attributeCreationOrder(CreationOrder flags) -> void
 {
     // hand them to the library
     H5Pset_attr_creation_order(id(), static_cast<unsigned int>(flags));

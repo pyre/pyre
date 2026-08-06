@@ -37,7 +37,7 @@ public:
     // the character set the names i create are recorded in
     auto charEncoding() const -> H5T_cset_t;
     // set the character set
-    auto setCharEncoding(H5T_cset_t encoding) -> void;
+    auto charEncoding(H5T_cset_t encoding) -> void;
 
     // implementation details
 protected:

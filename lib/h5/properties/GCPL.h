@@ -11,6 +11,9 @@
 #include "forward.h"
 // my base class
 #include "OCPL.h"
+// the values my settings trade in
+#include "PhaseChange.h"
+#include "LinkEstimate.h"
 
 
 // a group creation property list
@@ -39,21 +42,21 @@ public:
 public:
     // the thresholds at which link storage switches representation, as
     // (max compact, min dense)
-    auto linkPhaseChange() const -> std::tuple<unsigned int, unsigned int>;
+    auto linkPhaseChange() const -> PhaseChange;
     // set the link storage thresholds
-    auto setLinkPhaseChange(unsigned int maxCompact, unsigned int minDense) -> void;
+    auto linkPhaseChange(const PhaseChange & thresholds) -> void;
 
     // whether the order in which links were created is tracked and indexed; without this,
     // members come back in the order the library finds convenient rather than the order
     // they were laid down
     auto linkCreationOrder() const -> CreationOrder;
     // set the link creation order flags
-    auto setLinkCreationOrder(CreationOrder flags) -> void;
+    auto linkCreationOrder(CreationOrder flags) -> void;
 
     // the expectations that size my object header, as (number of links, name length)
-    auto estimatedLinkInfo() const -> std::tuple<unsigned int, unsigned int>;
+    auto estimatedLinkInfo() const -> LinkEstimate;
     // set the expected number of links and their average name length
-    auto setEstimatedLinkInfo(unsigned int links, unsigned int nameLength) -> void;
+    auto estimatedLinkInfo(const LinkEstimate & estimate) -> void;
 
     // low-level interface
 public:

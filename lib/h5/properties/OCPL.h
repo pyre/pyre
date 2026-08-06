@@ -11,6 +11,8 @@
 #include "forward.h"
 // my base class
 #include "List.h"
+// the values my settings trade in
+#include "PhaseChange.h"
 
 
 // the properties shared by every object creation property list
@@ -36,20 +38,20 @@ public:
 public:
     // whether the objects i create record their modification times; turning this off is
     // what makes two runs that produce the same content produce the same bytes
-    auto trackTimes() const -> bool;
+    auto timeTracking() const -> bool;
     // set whether the objects i create record their modification times
-    auto setTrackTimes(bool track) -> void;
+    auto timeTracking(bool track) -> void;
 
     // the thresholds at which attribute storage switches representation, as
     // (max compact, min dense)
-    auto attributePhaseChange() const -> std::tuple<unsigned int, unsigned int>;
+    auto attributePhaseChange() const -> PhaseChange;
     // set the attribute storage thresholds
-    auto setAttributePhaseChange(unsigned int maxCompact, unsigned int minDense) -> void;
+    auto attributePhaseChange(const PhaseChange & thresholds) -> void;
 
     // whether the order in which attributes were created is tracked and indexed
     auto attributeCreationOrder() const -> CreationOrder;
     // set the attribute creation order flags
-    auto setAttributeCreationOrder(CreationOrder flags) -> void;
+    auto attributeCreationOrder(CreationOrder flags) -> void;
 
     // implementation details
 protected:

@@ -30,7 +30,7 @@ pyre::h5::properties::GCPL::theDefault() -> const GCPL &
 
 // the thresholds at which link storage switches representation
 auto
-pyre::h5::properties::GCPL::linkPhaseChange() const -> std::tuple<unsigned int, unsigned int>
+pyre::h5::properties::GCPL::linkPhaseChange() const -> PhaseChange
 {
     // make room for the answer
     unsigned int maxCompact = 0;
@@ -38,17 +38,16 @@ pyre::h5::properties::GCPL::linkPhaseChange() const -> std::tuple<unsigned int, 
     // ask the library
     H5Pget_link_phase_change(id(), &maxCompact, &minDense);
     // pack and ship
-    return { maxCompact, minDense };
+    return PhaseChange(maxCompact, minDense);
 }
 
 
 // set the link storage thresholds
 auto
-pyre::h5::properties::GCPL::setLinkPhaseChange(unsigned int maxCompact, unsigned int minDense)
-    -> void
+pyre::h5::properties::GCPL::linkPhaseChange(const PhaseChange & thresholds) -> void
 {
     // hand them to the library
-    H5Pset_link_phase_change(id(), maxCompact, minDense);
+    H5Pset_link_phase_change(id(), thresholds.maxCompact, thresholds.minDense);
     // all done
     return;
 }
@@ -69,7 +68,7 @@ pyre::h5::properties::GCPL::linkCreationOrder() const -> CreationOrder
 
 // set the link creation order flags
 auto
-pyre::h5::properties::GCPL::setLinkCreationOrder(CreationOrder flags) -> void
+pyre::h5::properties::GCPL::linkCreationOrder(CreationOrder flags) -> void
 {
     // hand them to the library
     H5Pset_link_creation_order(id(), static_cast<unsigned int>(flags));
@@ -80,7 +79,7 @@ pyre::h5::properties::GCPL::setLinkCreationOrder(CreationOrder flags) -> void
 
 // the expectations that size my object header
 auto
-pyre::h5::properties::GCPL::estimatedLinkInfo() const -> std::tuple<unsigned int, unsigned int>
+pyre::h5::properties::GCPL::estimatedLinkInfo() const -> LinkEstimate
 {
     // make room for the answer
     unsigned int links = 0;
@@ -88,17 +87,16 @@ pyre::h5::properties::GCPL::estimatedLinkInfo() const -> std::tuple<unsigned int
     // ask the library
     H5Pget_est_link_info(id(), &links, &nameLength);
     // pack and ship
-    return { links, nameLength };
+    return LinkEstimate(links, nameLength);
 }
 
 
 // set the expected number of links and their average name length
 auto
-pyre::h5::properties::GCPL::setEstimatedLinkInfo(unsigned int links, unsigned int nameLength)
-    -> void
+pyre::h5::properties::GCPL::estimatedLinkInfo(const LinkEstimate & estimate) -> void
 {
     // hand them to the library
-    H5Pset_est_link_info(id(), links, nameLength);
+    H5Pset_est_link_info(id(), estimate.links, estimate.nameLength);
     // all done
     return;
 }

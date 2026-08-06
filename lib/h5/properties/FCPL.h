@@ -11,6 +11,9 @@
 #include "forward.h"
 // my base class
 #include "List.h"
+// the values my settings trade in
+#include "FilespaceStrategy.h"
+#include "Sizes.h"
 
 
 // a file creation property list
@@ -40,21 +43,20 @@ public:
     // the file space page size
     auto pageSize() const -> hsize_t;
     // set the file space page size
-    auto setPageSize(hsize_t size) -> void;
+    auto pageSize(hsize_t size) -> void;
     // the size of the user block, a byte range at the front of the file that hdf5 leaves
     // alone, so another format can carry an hdf5 product inside itself
     auto userblock() const -> hsize_t;
     // set the size of the user block
-    auto setUserblock(hsize_t size) -> void;
+    auto userblock(hsize_t size) -> void;
     // the widths hdf5 uses to record positions and lengths, as (offset bytes, length bytes)
-    auto sizes() const -> std::tuple<std::size_t, std::size_t>;
+    auto sizes() const -> Sizes;
     // set the widths used to record positions and lengths
-    auto setSizes(std::size_t offsets, std::size_t lengths) -> void;
+    auto sizes(const Sizes & sizes) -> void;
     // the file space strategy: (strategy, persist free space, threshold)
-    auto filespaceStrategy() const -> std::tuple<H5F_fspace_strategy_t, hbool_t, hsize_t>;
+    auto filespaceStrategy() const -> FilespaceStrategy;
     // set the file space strategy
-    auto setFilespaceStrategy(H5F_fspace_strategy_t strategy, hbool_t persist, hsize_t threshold)
-        -> void;
+    auto filespaceStrategy(const FilespaceStrategy & strategy) -> void;
 
     // low-level interface
 public:

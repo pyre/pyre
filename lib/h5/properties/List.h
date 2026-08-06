@@ -33,7 +33,7 @@ public:
     // interface
 public:
     // the number of properties in the list
-    auto numProps() const -> std::size_t;
+    auto propertyCount() const -> std::size_t;
     // whether the list has a property by the given {name}
     auto exists(const string_t & name) const -> bool;
     // the size, in bytes, of the property by the given {name}
@@ -41,7 +41,7 @@ public:
     // the value of the property by the given {name}, as raw bytes in a string
     auto property(const string_t & name) const -> string_t;
     // set the property by the given {name} to {value}
-    auto setProperty(const string_t & name, const string_t & value) -> void;
+    auto property(const string_t & name, const string_t & value) -> void;
     // remove the property by the given {name}
     auto removeProperty(const string_t & name) -> void;
     // release my handle

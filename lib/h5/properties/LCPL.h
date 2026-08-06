@@ -38,9 +38,9 @@ public:
     // interface
 public:
     // whether missing intermediate groups are created on demand
-    auto createIntermediateGroup() const -> bool;
+    auto intermediateGroupCreation() const -> bool;
     // set whether missing intermediate groups are created on demand
-    auto setCreateIntermediateGroup(bool create) -> void;
+    auto intermediateGroupCreation(bool create) -> void;
 
     // implementation details
 protected:

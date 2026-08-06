@@ -30,7 +30,7 @@ pyre::h5::properties::LCPL::theDefault() -> const LCPL &
 
 // whether missing intermediate groups are created on demand
 auto
-pyre::h5::properties::LCPL::createIntermediateGroup() const -> bool
+pyre::h5::properties::LCPL::intermediateGroupCreation() const -> bool
 {
     // make room for the answer
     unsigned int create = 0;
@@ -43,7 +43,7 @@ pyre::h5::properties::LCPL::createIntermediateGroup() const -> bool
 
 // set whether missing intermediate groups are created on demand
 auto
-pyre::h5::properties::LCPL::setCreateIntermediateGroup(bool create) -> void
+pyre::h5::properties::LCPL::intermediateGroupCreation(bool create) -> void
 {
     // hand it to the library
     H5Pset_create_intermediate_group(id(), create ? 1 : 0);

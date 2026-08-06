@@ -11,6 +11,8 @@
 #include "forward.h"
 // my base class
 #include "List.h"
+// the value my one setting trades in
+#include "ChunkCache.h"
 
 
 // a dataset access property list
@@ -38,9 +40,9 @@ public:
     // interface
 public:
     // the chunk cache parameters: (slots, bytes, preemption policy)
-    auto chunkCache() const -> std::tuple<std::size_t, std::size_t, double>;
+    auto chunkCache() const -> ChunkCache;
     // set the chunk cache parameters
-    auto setChunkCache(std::size_t slots, std::size_t bytes, double w0) -> void;
+    auto chunkCache(const ChunkCache & cache) -> void;
 
     // low-level interface
 public:

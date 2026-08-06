@@ -45,7 +45,7 @@ pyre::h5::properties::DCPL::allocTime() const -> H5D_alloc_time_t
 
 // set the storage allocation time
 auto
-pyre::h5::properties::DCPL::setAllocTime(H5D_alloc_time_t timing) -> void
+pyre::h5::properties::DCPL::allocTime(H5D_alloc_time_t timing) -> void
 {
     // hand it to the library
     H5Pset_alloc_time(id(), timing);
@@ -69,7 +69,7 @@ pyre::h5::properties::DCPL::fillTime() const -> H5D_fill_time_t
 
 // set the fill value writing time
 auto
-pyre::h5::properties::DCPL::setFillTime(H5D_fill_time_t timing) -> void
+pyre::h5::properties::DCPL::fillTime(H5D_fill_time_t timing) -> void
 {
     // hand it to the library
     H5Pset_fill_time(id(), timing);
@@ -89,7 +89,7 @@ pyre::h5::properties::DCPL::layout() const -> H5D_layout_t
 
 // set the data layout strategy
 auto
-pyre::h5::properties::DCPL::setLayout(H5D_layout_t layout) -> void
+pyre::h5::properties::DCPL::layout(H5D_layout_t layout) -> void
 {
     // hand it to the library
     H5Pset_layout(id(), layout);
@@ -126,7 +126,7 @@ pyre::h5::properties::DCPL::chunk() const -> shape_t
 
 // set the chunk {shape}
 auto
-pyre::h5::properties::DCPL::setChunk(const shape_t & shape) -> void
+pyre::h5::properties::DCPL::chunk(const shape_t & shape) -> void
 {
     // hand the rank and extents to the library
     H5Pset_chunk(id(), shape.size(), shape.data());
@@ -150,7 +150,7 @@ pyre::h5::properties::DCPL::fillValueStatus() const -> H5D_fill_value_t
 
 // the fill value, read into {value} as the given {type}
 auto
-pyre::h5::properties::DCPL::fillValue(const pyre::h5::types::Datatype & type, void * value) const
+pyre::h5::properties::DCPL::readFillValue(const pyre::h5::types::Datatype & type, void * value) const
     -> void
 {
     // ask the library, which converts to the requested {type}
@@ -162,7 +162,7 @@ pyre::h5::properties::DCPL::fillValue(const pyre::h5::types::Datatype & type, vo
 
 // set the fill value, read from {value} as the given {type}
 auto
-pyre::h5::properties::DCPL::setFillValue(const pyre::h5::types::Datatype & type, const void * value)
+pyre::h5::properties::DCPL::fillValue(const pyre::h5::types::Datatype & type, const void * value)
     -> void
 {
     // hand the value to the library
@@ -188,7 +188,7 @@ pyre::h5::properties::DCPL::filters() const -> filters_type
         // get the info; we do not retrieve the client data, so its buffer is empty
         auto filter =
             H5Pget_filter2(id(), i, &flags, &elements, nullptr, sizeof(name), name, &configuration);
-        // store it
+        // store it as something that says what each of its parts is
         pipeline.emplace_back(filter, name, flags, configuration);
     }
     // hand off the pipeline
@@ -198,7 +198,7 @@ pyre::h5::properties::DCPL::filters() const -> filters_type
 
 // engage the deflate (gzip) filter at the given compression {level}
 auto
-pyre::h5::properties::DCPL::setDeflate(unsigned int level) -> void
+pyre::h5::properties::DCPL::addDeflate(unsigned int level) -> void
 {
     // hand it to the library
     H5Pset_deflate(id(), level);
@@ -209,7 +209,7 @@ pyre::h5::properties::DCPL::setDeflate(unsigned int level) -> void
 
 // engage the szip filter
 auto
-pyre::h5::properties::DCPL::setSzip(unsigned int options, unsigned int pixelsPerBlock) -> void
+pyre::h5::properties::DCPL::addSzip(unsigned int options, unsigned int pixelsPerBlock) -> void
 {
     // hand them to the library
     H5Pset_szip(id(), options, pixelsPerBlock);
@@ -220,7 +220,7 @@ pyre::h5::properties::DCPL::setSzip(unsigned int options, unsigned int pixelsPer
 
 // engage the n-bit filter
 auto
-pyre::h5::properties::DCPL::setNbit() -> void
+pyre::h5::properties::DCPL::addNbit() -> void
 {
     // ask the library
     H5Pset_nbit(id());
@@ -231,7 +231,7 @@ pyre::h5::properties::DCPL::setNbit() -> void
 
 // engage the shuffle filter
 auto
-pyre::h5::properties::DCPL::setShuffle() -> void
+pyre::h5::properties::DCPL::addShuffle() -> void
 {
     // ask the library
     H5Pset_shuffle(id());
@@ -242,7 +242,7 @@ pyre::h5::properties::DCPL::setShuffle() -> void
 
 // engage the fletcher32 checksum filter
 auto
-pyre::h5::properties::DCPL::setFletcher32() -> void
+pyre::h5::properties::DCPL::addFletcher32() -> void
 {
     // ask the library
     H5Pset_fletcher32(id());
@@ -253,7 +253,7 @@ pyre::h5::properties::DCPL::setFletcher32() -> void
 
 // engage the scale-offset filter
 auto
-pyre::h5::properties::DCPL::setScaleoffset(H5Z_SO_scale_type_t scaleType, int scaleFactor) -> void
+pyre::h5::properties::DCPL::addScaleoffset(H5Z_SO_scale_type_t scaleType, int scaleFactor) -> void
 {
     // hand the parameters to the library
     H5Pset_scaleoffset(id(), scaleType, scaleFactor);

@@ -11,6 +11,8 @@
 #include "forward.h"
 // my base class
 #include "OCPL.h"
+// the value my pipeline is made of
+#include "Filter.h"
 
 
 // a dataset creation property list
@@ -21,8 +23,8 @@ public:
     using self_type = DCPL;
     // my superclass
     using super_type = pyre::h5::properties::OCPL;
-    // a filter as (id, name, flags, configuration)
-    using filter_type = std::tuple<H5Z_filter_t, string_t, unsigned int, unsigned int>;
+    // one stage of my pipeline
+    using filter_type = Filter;
     // the dataset filter pipeline
     using filters_type = std::vector<filter_type>;
 
@@ -47,44 +49,44 @@ public:
     // the storage allocation time
     auto allocTime() const -> H5D_alloc_time_t;
     // set the storage allocation time
-    auto setAllocTime(H5D_alloc_time_t timing) -> void;
+    auto allocTime(H5D_alloc_time_t timing) -> void;
     // the fill value writing time
     auto fillTime() const -> H5D_fill_time_t;
     // set the fill value writing time
-    auto setFillTime(H5D_fill_time_t timing) -> void;
+    auto fillTime(H5D_fill_time_t timing) -> void;
     // whether a fill value is defined, and how
     auto fillValueStatus() const -> H5D_fill_value_t;
     // the fill value, read into {value} as the given {type}
-    auto fillValue(const pyre::h5::types::Datatype & type, void * value) const -> void;
+    auto readFillValue(const pyre::h5::types::Datatype & type, void * value) const -> void;
     // set the fill value, read from {value} as the given {type}; hdf5 converts it to the
     // dataset's on-disk type at creation
-    auto setFillValue(const pyre::h5::types::Datatype & type, const void * value) -> void;
+    auto fillValue(const pyre::h5::types::Datatype & type, const void * value) -> void;
 
     // the data layout strategy
     auto layout() const -> H5D_layout_t;
     // set the data layout strategy
-    auto setLayout(H5D_layout_t layout) -> void;
+    auto layout(H5D_layout_t layout) -> void;
     // the chunk shape; empty when my layout is not chunked
     auto chunk() const -> shape_t;
     // set the chunk {shape}
-    auto setChunk(const shape_t & shape) -> void;
+    auto chunk(const shape_t & shape) -> void;
 
     // interface: filters
 public:
     // the filters in the dataset pipeline
     auto filters() const -> filters_type;
     // engage the deflate (gzip) filter at the given compression {level}
-    auto setDeflate(unsigned int level) -> void;
+    auto addDeflate(unsigned int level) -> void;
     // engage the szip filter
-    auto setSzip(unsigned int options, unsigned int pixelsPerBlock) -> void;
+    auto addSzip(unsigned int options, unsigned int pixelsPerBlock) -> void;
     // engage the n-bit filter
-    auto setNbit() -> void;
+    auto addNbit() -> void;
     // engage the shuffle filter
-    auto setShuffle() -> void;
+    auto addShuffle() -> void;
     // engage the fletcher32 checksum filter
-    auto setFletcher32() -> void;
+    auto addFletcher32() -> void;
     // engage the scale-offset filter
-    auto setScaleoffset(H5Z_SO_scale_type_t scaleType, int scaleFactor) -> void;
+    auto addScaleoffset(H5Z_SO_scale_type_t scaleType, int scaleFactor) -> void;
 
     // low-level interface
 public:

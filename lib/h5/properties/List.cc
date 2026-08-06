@@ -19,7 +19,7 @@ pyre::h5::properties::List::List(id_type id) : Identifier(id) {}
 
 // the number of properties in the list
 auto
-pyre::h5::properties::List::numProps() const -> std::size_t
+pyre::h5::properties::List::propertyCount() const -> std::size_t
 {
     // make room for the answer
     std::size_t count = 0;
@@ -69,7 +69,7 @@ pyre::h5::properties::List::property(const string_t & name) const -> string_t
 
 // set the property by the given {name} to {value}
 auto
-pyre::h5::properties::List::setProperty(const string_t & name, const string_t & value) -> void
+pyre::h5::properties::List::property(const string_t & name, const string_t & value) -> void
 {
     // hand the raw bytes to the library
     H5Pset(id(), name.data(), value.data());

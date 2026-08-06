@@ -28,27 +28,27 @@ pyre::h5::properties::DAPL::theDefault() -> const DAPL &
 }
 
 
-// the chunk cache parameters: (slots, bytes, preemption policy)
+// the chunk cache my datasets are read and written through
 auto
-pyre::h5::properties::DAPL::chunkCache() const -> std::tuple<std::size_t, std::size_t, double>
+pyre::h5::properties::DAPL::chunkCache() const -> ChunkCache
 {
     // make room for the answer
     std::size_t slots = 0;
     std::size_t bytes = 0;
-    double w0 = 0;
+    double preemption = 0;
     // ask the library
-    H5Pget_chunk_cache(id(), &slots, &bytes, &w0);
-    // pack and ship
-    return { slots, bytes, w0 };
+    H5Pget_chunk_cache(id(), &slots, &bytes, &preemption);
+    // and hand it back as something that says what each number is
+    return ChunkCache(slots, bytes, preemption);
 }
 
 
-// set the chunk cache parameters
+// set the chunk cache my datasets are read and written through
 auto
-pyre::h5::properties::DAPL::setChunkCache(std::size_t slots, std::size_t bytes, double w0) -> void
+pyre::h5::properties::DAPL::chunkCache(const ChunkCache & cache) -> void
 {
-    // hand them to the library
-    H5Pset_chunk_cache(id(), slots, bytes, w0);
+    // take the description apart for the library
+    H5Pset_chunk_cache(id(), cache.slots, cache.bytes, cache.preemption);
     // all done
     return;
 }

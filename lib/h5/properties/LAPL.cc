@@ -30,7 +30,7 @@ pyre::h5::properties::LAPL::theDefault() -> const LAPL &
 
 // the number of allowed link traversals
 auto
-pyre::h5::properties::LAPL::numLinks() const -> std::size_t
+pyre::h5::properties::LAPL::traversalLimit() const -> std::size_t
 {
     // make room for the answer
     std::size_t links = 0;
@@ -43,7 +43,7 @@ pyre::h5::properties::LAPL::numLinks() const -> std::size_t
 
 // set the number of allowed link traversals
 auto
-pyre::h5::properties::LAPL::setNumLinks(std::size_t links) -> void
+pyre::h5::properties::LAPL::traversalLimit(std::size_t links) -> void
 {
     // hand it to the library
     H5Pset_nlinks(id(), links);
@@ -76,7 +76,7 @@ pyre::h5::properties::LAPL::externalPrefix() const -> string_t
 
 // set the prefix prepended to external link filenames
 auto
-pyre::h5::properties::LAPL::setExternalPrefix(const string_t & prefix) -> void
+pyre::h5::properties::LAPL::externalPrefix(const string_t & prefix) -> void
 {
     // hand it to the library
     H5Pset_elink_prefix(id(), prefix.data());
