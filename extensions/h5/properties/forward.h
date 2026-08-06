@@ -14,6 +14,17 @@
 
 // the local binders
 namespace pyre::h5::py::properties {
+    // the values a property list trades in
+    void chunkCache(py::module &);
+    void alignment(py::module &);
+    void cache(py::module &);
+    void pageBuffer(py::module &);
+    void versionBounds(py::module &);
+    void filespaceStrategy(py::module &);
+    void sizes(py::module &);
+    void phaseChange(py::module &);
+    void linkEstimate(py::module &);
+    void filter(py::module &);
     // the generic base
     void pl(py::module &);
     // the properties shared by everything one creates

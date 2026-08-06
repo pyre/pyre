@@ -27,6 +27,18 @@ pyre::h5::py::properties::__init__(py::module & m)
         "HDF5 property lists");
 
     // add the class definitions
+    // the values the lists trade in; register them first, so a list that mentions one
+    // in a signature finds it already known
+    chunkCache(properties);
+    alignment(properties);
+    cache(properties);
+    pageBuffer(properties);
+    versionBounds(properties);
+    filespaceStrategy(properties);
+    sizes(properties);
+    phaseChange(properties);
+    linkEstimate(properties);
+    filter(properties);
     // the generic base
     pl(properties);
     // the properties shared by everything one creates; register it before the concrete
