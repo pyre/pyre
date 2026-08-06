@@ -1,0 +1,23 @@
+// -*- C++ -*-
+// -*- coding: utf-8 -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2026 all rights reserved
+
+// code guard
+#pragma once
+
+// my declarations
+#include "Sizes.h"
+
+
+// describe the widths hdf5 records positions and lengths in
+inline pyre::h5::properties::Sizes::Sizes(std::size_t offsets, std::size_t lengths) :
+    // record how many bytes a position in the file takes
+    offsets(offsets),
+    // then how many bytes a length takes
+    lengths(lengths)
+{}
+
+
+// end of file

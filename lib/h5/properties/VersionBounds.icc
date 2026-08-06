@@ -1,0 +1,23 @@
+// -*- C++ -*-
+// -*- coding: utf-8 -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2026 all rights reserved
+
+// code guard
+#pragma once
+
+// my declarations
+#include "VersionBounds.h"
+
+
+// describe the file format versions hdf5 may use
+inline pyre::h5::properties::VersionBounds::VersionBounds(H5F_libver_t low, H5F_libver_t high) :
+    // record the oldest format i may write
+    low(low),
+    // then the newest format i may write
+    high(high)
+{}
+
+
+// end of file

@@ -14,6 +14,17 @@
 #include "forward.h"
 
 // the pyre-owned hdf5 property lists
+// the values a property list trades in
+#include "ChunkCache.h"
+#include "Alignment.h"
+#include "Cache.h"
+#include "PageBuffer.h"
+#include "VersionBounds.h"
+#include "FilespaceStrategy.h"
+#include "Sizes.h"
+#include "PhaseChange.h"
+#include "LinkEstimate.h"
+#include "Filter.h"
 // the generic base
 #include "List.h"
 // the properties shared by everything one creates

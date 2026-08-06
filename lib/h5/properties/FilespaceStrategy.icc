@@ -1,0 +1,25 @@
+// -*- C++ -*-
+// -*- coding: utf-8 -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2026 all rights reserved
+
+// code guard
+#pragma once
+
+// my declarations
+#include "FilespaceStrategy.h"
+
+
+// describe how a file manages the space its deleted objects leave behind
+inline pyre::h5::properties::FilespaceStrategy::FilespaceStrategy(H5F_fspace_strategy_t strategy, bool persist, hsize_t threshold) :
+    // record how free space is tracked
+    strategy(strategy),
+    // then whether the free space survives closing the file
+    persist(persist),
+    // then the smallest block worth tracking
+    threshold(threshold)
+{}
+
+
+// end of file

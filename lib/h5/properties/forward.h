@@ -27,6 +27,19 @@ namespace pyre::h5::properties {
         indexed = H5P_CRT_ORDER_TRACKED | H5P_CRT_ORDER_INDEXED,
     };
 
+    // the values a property list hands back and takes in, when a setting has more
+    // structure than a single number
+    class ChunkCache;
+    class Alignment;
+    class Cache;
+    class PageBuffer;
+    class VersionBounds;
+    class FilespaceStrategy;
+    class Sizes;
+    class PhaseChange;
+    class LinkEstimate;
+    class Filter;
+
     // the generic base
     class List;
     // the properties shared by everything one creates
