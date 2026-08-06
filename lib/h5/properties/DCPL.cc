@@ -148,30 +148,6 @@ pyre::h5::properties::DCPL::fillValueStatus() const -> H5D_fill_value_t
 }
 
 
-// the fill value, read into {value} as the given {type}
-auto
-pyre::h5::properties::DCPL::readFillValue(const pyre::h5::types::Datatype & type, void * value) const
-    -> void
-{
-    // ask the library, which converts to the requested {type}
-    H5Pget_fill_value(id(), type.id(), value);
-    // all done
-    return;
-}
-
-
-// set the fill value, read from {value} as the given {type}
-auto
-pyre::h5::properties::DCPL::fillValue(const pyre::h5::types::Datatype & type, const void * value)
-    -> void
-{
-    // hand the value to the library
-    H5Pset_fill_value(id(), type.id(), value);
-    // all done
-    return;
-}
-
-
 // the filters in the dataset pipeline
 auto
 pyre::h5::properties::DCPL::filters() const -> filters_type

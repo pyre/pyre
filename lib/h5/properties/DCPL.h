@@ -56,11 +56,14 @@ public:
     auto fillTime(H5D_fill_time_t timing) -> void;
     // whether a fill value is defined, and how
     auto fillValueStatus() const -> H5D_fill_value_t;
-    // the fill value, read into {value} as the given {type}
-    auto readFillValue(const pyre::h5::types::Datatype & type, void * value) const -> void;
-    // set the fill value, read from {value} as the given {type}; hdf5 converts it to the
-    // dataset's on-disk type at creation
-    auto fillValue(const pyre::h5::types::Datatype & type, const void * value) -> void;
+    // declare the value that stands in for cells nobody writes; hdf5 converts it to the
+    // dataset's own type when the dataset is created, so the type of {value} here is only
+    // how i am handed the bytes. there is deliberately no reader to pair with this: a
+    // property list cannot be asked what its fill value is, because hdf5 keeps no record
+    // of the type it was declared in, and answering would mean asking the caller to name
+    // one and trusting the guess. ask the dataset instead, which knows its own type
+    template <class valueT>
+    auto fillValue(const valueT & value) -> void;
 
     // the data layout strategy
     auto layout() const -> H5D_layout_t;
@@ -93,6 +96,10 @@ public:
     // adopt an existing raw handle, e.g. one returned by the c api
     explicit DCPL(id_type id);
 };
+
+
+// the inline definitions
+#include "DCPL.icc"
 
 
 // end of file
