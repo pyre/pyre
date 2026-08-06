@@ -95,6 +95,14 @@ public:
     // my creation property list, as a fresh owned wrapper
     auto dcpl() const -> properties::DCPL;
 
+    // the value that stands in for my cells nobody ever wrote, or nothing when i was made
+    // without one. this is the only place the question is well posed: a fill value has no
+    // type of its own, since hdf5 converts it to mine when i am created, so i am the one
+    // who knows how to read it back. naming {valueT} says what the caller expects to get,
+    // and i refuse rather than reinterpret when that disagrees with what i hold
+    template <class valueT>
+    auto fillValue() const -> std::optional<valueT>;
+
     // raw value access; {memspace}/{filespace} default to the whole extent
     // fill {buffer}, interpreted as {memtype}, from the selected region
     auto read(

@@ -7,6 +7,13 @@
 // code guard
 #pragma once
 
+// my declarations
+#include "DataSet.h"
+// the types the fill value reader hands back and compares against
+#include "properties/DCPL.h"
+#include "types/Datatype.h"
+#include "datatypes.h"
+
 
 // an out-of-core mosaic assembled over my own chunking
 template <class cellT>
@@ -180,6 +187,44 @@ pyre::h5::DataSet::_assemble(const tiling_t & layout) const -> mosaic_t<cellT>
     auto store = paged_t { pageCells, pages };
     // marry the layout to the store and hand off the mosaic
     return mosaic_t<cellT> { layout, store };
+}
+
+
+
+// the value that stands in for my cells nobody ever wrote
+template <class valueT>
+auto
+pyre::h5::DataSet::fillValue() const -> std::optional<valueT>
+{
+    // my creation properties are what remember the fill value
+    auto properties = dcpl();
+    // a dataset made without one has nothing to report
+    if (properties.fillValueStatus() == H5D_FILL_VALUE_UNDEFINED) {
+        // say so, rather than hand back whatever the buffer happened to hold
+        return {};
+    }
+    // the description of what the caller expects
+    auto expected = pyre::h5::datatype<valueT>();
+    // hdf5 converts between compatible numbers, so the mismatch worth refusing is one of
+    // kind: asking for a number when i hold a compound, or the other way around
+    if (expected.cell() != cell()) {
+        // make a channel
+        auto channel = pyre::journal::error_t("pyre.h5.dataset.fill");
+        // complain
+        channel
+            // what
+            << "the fill value was asked for as a type this dataset does not hold"
+            // where
+            << pyre::journal::endl(__HERE__);
+        // and refuse, in case errors are not fatal
+        return {};
+    }
+    // make room for the answer
+    valueT value {};
+    // ask the library to convert it into my terms
+    H5Pget_fill_value(properties.id(), expected.id(), &value);
+    // and hand it off
+    return value;
 }
 
 
