@@ -14,4 +14,12 @@ pyre-h5.lib.tests.c++.defines += $(pyre.lib.c++.defines)
 pyre-h5.lib.tests.c++.flags += -Wall $(pyre.lib.c++.flags)
 
 
+# clean up
+# the exhibits leave their scratch products behind so they can be inspected; the harness
+# sweeps them
+tests.h5.lib.dataset_tiling.clean := dataset_tiling.h5
+tests.h5.lib.dataset_mosaic_read.clean := dataset_mosaic_read.h5
+tests.h5.lib.dataset_mosaic_write.clean := dataset_mosaic_write.h5
+
+
 # end of file

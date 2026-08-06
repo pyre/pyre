@@ -182,10 +182,10 @@ pyre::memory::Heap<T, isConst>::at(difference_type pos) const -> reference
         // make a channel
         pyre::journal::firewall_t channel("pyre.memory.bounds");
         // and complain
-        channel << "out of bounds access:" << pyre::journal::newline << "  index " << pos
-                << " must be less than " << cells() << pyre::journal::newline
+        channel << pyre::journal::at() << "out of bounds access:" << pyre::journal::newline
+                << "  index " << pos << " must be less than " << cells() << pyre::journal::newline
                 << "  in pyre::memory::heap_t::operator[]" << pyre::journal::newline
-                << "  with a block on the heap at " << data() << pyre::journal::endl(__HERE__);
+                << "  with a block on the heap at " << data() << pyre::journal::endl;
         // unreachable, unless the user has marked this error as non-fatal
         // clamp {pos} to the last element in the block
         pos = cells() - 1;

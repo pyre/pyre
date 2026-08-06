@@ -1,0 +1,31 @@
+// -*- C++ -*-
+// -*- coding: utf-8 -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2026 all rights reserved
+
+// code guard
+#pragma once
+
+// my declarations
+#include "DCPL.h"
+// the map from a c++ type to the hdf5 type that describes it
+#include "../datatypes.h"
+
+
+// declare the value that stands in for cells nobody writes
+template <class valueT>
+auto
+pyre::h5::properties::DCPL::fillValue(const valueT & value) -> void
+{
+    // the type of the value is what says how to read its bytes, so derive it rather than
+    // asking the caller to name it
+    auto type = pyre::h5::datatype<valueT>();
+    // and hand both to the library
+    H5Pset_fill_value(id(), type.id(), &value);
+    // all done
+    return;
+}
+
+
+// end of file

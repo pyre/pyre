@@ -11,8 +11,10 @@
 #include "forward.h"
 // my declarations
 #include "__init__.h"
-// the type-erased grid and its converters
-#include "AnyGrid.h"
+// the type-erased grid and its converters, from the library's python-support tier
+#include <pyre/py/grid/AnyGrid.h>
+// and the type-erased mosaic, its out-of-core sibling
+#include <pyre/py/grid/AnyMosaic.h>
 
 
 // the type-erased grid measures with a signed integer, matching the c++ library
@@ -28,9 +30,10 @@ namespace pyre::py::grid {
     using shape_t = packing_t::shape_type;
 
     // choose a cell type from its pyre memory cell name and hand it to a callable that is
-    // templated on that type; this keeps the twelve-way dispatch in one place
+    // templated on that type; this keeps the twelve-way dispatch in one place, and the return
+    // type is deduced so both grid and mosaic factories can ride it
     template <class F>
-    auto dispatchCell(const string_t & cell, F && f) -> AnyGrid
+    auto dispatchCell(const string_t & cell, F && f)
     {
         // signed integers
         if (cell == "int8")
@@ -64,7 +67,8 @@ namespace pyre::py::grid {
         // anything else is a caller mistake
         auto channel = pyre::journal::error_t("pyre.grid.bindings");
         // complain
-        channel << "unsupported grid cell type '" << cell << "'" << pyre::journal::endl(__HERE__);
+        channel << pyre::journal::at() << "unsupported grid cell type '" << cell << "'"
+                << pyre::journal::endl;
         // and refuse
         throw py::value_error("unsupported grid cell type '" + cell + "'");
     }
@@ -113,14 +117,42 @@ namespace pyre::py::grid {
         return anyGrid(grid_t { packing, storage }, "map");
     }
 
+    // a read-only file-backed grid: map the product at {uri} without write access, which is
+    // how a client examines a data product it does not own
+    template <class cellT>
+    auto makeConstMap(const string_t & uri, const shape_t & shape) -> AnyGrid
+    {
+        // the storage and the grid over it
+        using storage_t = pyre::memory::constmap_t<cellT>;
+        using grid_t = pyre::grid::grid_t<packing_t, storage_t>;
+        // lay out the shape
+        auto packing = packing_t(shape);
+        // map the existing product for reading only
+        auto storage = storage_t::open(uri);
+        // make the grid and type-erase it; the const cells mark the description read-only
+        return anyGrid(grid_t { packing, storage }, "map");
+    }
+
     // the map factory python calls
     auto map(
         const string_t & uri, const std::vector<size_type> & extents, const string_t & cell,
-        bool create) -> AnyGrid
+        bool create, bool writable) -> AnyGrid
     {
+        // a fresh product exists to be filled, so refusing write access to it is a mistake
+        if (create && !writable) {
+            // complain
+            throw py::value_error(
+                "a fresh product must be writable; open an existing one "
+                "with {create=False} for read-only access");
+        }
         // adopt the extents as a shape
         auto shape = shape_t(extents.begin(), extents.end());
-        // dispatch on the cell type
+        // for read-only access
+        if (!writable) {
+            // dispatch to the const flavor
+            return dispatchCell(cell, [&]<class T>() { return makeConstMap<T>(uri, shape); });
+        }
+        // otherwise, dispatch to the writable one
         return dispatchCell(cell, [&]<class T>() { return makeMap<T>(uri, shape, create); });
     }
 
@@ -160,15 +192,100 @@ namespace pyre::py::grid {
         return describe(grid, "view", info->ptr, info);
     }
 
+    // a read-only view over memory python already holds: the counterpart of {makeView} for
+    // sources that refuse write access, such as {bytes}
+    template <class cellT>
+    auto makeConstView(const py::buffer & source, const shape_t & shape) -> AnyGrid
+    {
+        // the storage and the grid over it
+        using storage_t = pyre::memory::constview_t<cellT>;
+        using grid_t = pyre::grid::grid_t<packing_t, storage_t>;
+        // lay out the shape
+        auto packing = packing_t(shape);
+        // the number of cells the grid needs
+        auto cells = packing.cells();
+
+        // ask the source for read access to its block
+        auto info = std::make_shared<py::buffer_info>(source.request(false));
+        // the block must be at least as large as the grid
+        if (info->size < cells) {
+            // otherwise the caller has made a mistake
+            throw py::value_error("source buffer is too small for the requested grid shape");
+        }
+        // and its cells must be the width we were told to expect
+        if (info->itemsize != static_cast<py::ssize_t>(sizeof(cellT))) {
+            // otherwise the cell and the buffer disagree
+            throw py::value_error("source buffer cell size does not match the requested cell");
+        }
+
+        // a read-only view over the source's memory
+        auto storage = storage_t(static_cast<const cellT *>(info->ptr), cells);
+        // paired with the layout
+        auto grid = grid_t { packing, storage };
+        // the view owns nothing, so keep the source's buffer view open for as long as python
+        // holds the type-erased grid; that pins both the exporter and its block
+        return describe(grid, "view", info->ptr, info);
+    }
+
     // the view factory python calls
     auto view(
-        const py::buffer & source, const std::vector<size_type> & extents, const string_t & cell)
-        -> AnyGrid
+        const py::buffer & source, const std::vector<size_type> & extents, const string_t & cell,
+        bool writable) -> AnyGrid
     {
         // adopt the extents as a shape
         auto shape = shape_t(extents.begin(), extents.end());
-        // dispatch on the cell type
+        // for read-only access
+        if (!writable) {
+            // dispatch to the const flavor, which asks the source for read access only
+            return dispatchCell(cell, [&]<class T>() { return makeConstView<T>(source, shape); });
+        }
+        // otherwise, dispatch to the writable one
         return dispatchCell(cell, [&]<class T>() { return makeView<T>(source, shape); });
+    }
+
+
+    // a mosaic: an out-of-core grid of {shape} cells of {cellT}, diced into tiles of extent
+    // {tile}, over a store with one demand-materialized page per tile
+    template <class cellT>
+    auto makeMosaic(const shape_t & shape, const shape_t & tile, const string_t & cell) -> AnyMosaic
+    {
+        // the tiled layout, the storage, and the grid over them
+        using chunked_t = pyre::grid::dynamic_chunked_t;
+        using storage_t = pyre::memory::paged_t<cellT>;
+        using grid_t = pyre::grid::grid_t<chunked_t, storage_t>;
+        // dice the box
+        auto packing = chunked_t(shape, tile);
+        // a page holds a full tile's worth of cells
+        typename storage_t::cell_count_type pageCells = 1;
+        // measured axis by axis
+        for (auto extent : packing.tileShape()) {
+            // as the volume of one tile
+            pageCells *= extent;
+        }
+        // and there is one page per tile
+        typename storage_t::cell_count_type pages = 1;
+        // likewise
+        for (auto extent : packing.tiles()) {
+            // the volume of the tile grid
+            pages *= extent;
+        }
+        // make a store with nothing resident: describing the product is free, and pages get
+        // allocated only as python touches their tiles
+        auto storage = storage_t { pageCells, pages };
+        // assemble the mosaic and type-erase it
+        return anyMosaic(grid_t { packing, storage }, cell);
+    }
+
+    // the mosaic factory python calls
+    auto mosaic(
+        const std::vector<size_type> & extents, const std::vector<size_type> & tile,
+        const string_t & cell) -> AnyMosaic
+    {
+        // adopt the extents as shapes
+        auto shape = shape_t(extents.begin(), extents.end());
+        auto tileShape = shape_t(tile.begin(), tile.end());
+        // dispatch on the cell type
+        return dispatchCell(cell, [&]<class T>() { return makeMosaic<T>(shape, tileShape, cell); });
     }
 } // namespace pyre::py::grid
 
@@ -184,8 +301,8 @@ pyre::py::grid::__init__(py::module & m) -> void
         // the docstring
         "multi-dimensional arrays over pluggable memory");
 
-    // the single type-erased grid class, presenting the python buffer protocol so any consumer of that
-    // protocol can view its cells with no copy
+    // the single type-erased grid class, presenting the python buffer protocol so any consumer of
+    // that protocol can view its cells with no copy
     auto cls = py::class_<AnyGrid>(
         // in the submodule
         grid,
@@ -266,6 +383,219 @@ pyre::py::grid::__init__(py::module & m) -> void
         // the docstring
         "write {value} into the cell at a full integer {index}");
 
+    // the type-erased mosaic: an out-of-core grid whose cells live on demand-materialized
+    // pages, one per tile, reached tile by tile through zero-copy panes
+    auto mos = py::class_<AnyMosaic>(
+        // in the submodule
+        grid,
+        // named
+        "Mosaic",
+        // the docstring
+        "an out-of-core grid whose tiles materialize on demand and travel as zero-copy panes");
+
+    // the extent along each axis
+    mos.def_property_readonly(
+        // the name
+        "shape",
+        // the getter
+        &AnyMosaic::shape,
+        // the docstring
+        "my extent along each axis");
+
+    // the smallest addressable index
+    mos.def_property_readonly(
+        // the name
+        "origin",
+        // the getter
+        &AnyMosaic::origin,
+        // the docstring
+        "my smallest addressable index");
+
+    // the number of axes
+    mos.def_property_readonly(
+        // the name
+        "rank",
+        // the getter
+        &AnyMosaic::rank,
+        // the docstring
+        "my number of axes");
+
+    // the extent of the grid of tiles
+    mos.def_property_readonly(
+        // the name
+        "tiles",
+        // the getter
+        &AnyMosaic::tiles,
+        // the docstring
+        "the extent of my grid of tiles");
+
+    // the extent of one tile
+    mos.def_property_readonly(
+        // the name
+        "tileShape",
+        // the getter
+        &AnyMosaic::tileShape,
+        // the docstring
+        "the extent of one of my tiles");
+
+    // the storage bill
+    mos.def_property_readonly(
+        // the name
+        "cells",
+        // the getter
+        &AnyMosaic::cells,
+        // the docstring
+        "the number of cells my storage supplies: every tile at full size, padding included");
+
+    // the name of the cell type
+    mos.def_property_readonly(
+        // the name
+        "cell",
+        // the getter
+        &AnyMosaic::cell,
+        // the docstring
+        "the name of my cell type");
+
+    // the resident census
+    mos.def_property_readonly(
+        // the name
+        "residents",
+        // the getter
+        &AnyMosaic::residents,
+        // the docstring
+        "the number of my pages that are actually resident");
+
+    // the tile a given index falls in
+    mos.def(
+        // the name
+        "tileOf",
+        // the implementation
+        &AnyMosaic::tileOf,
+        // the signature
+        "index"_a,
+        // the docstring
+        "the coordinates, in my grid of tiles, of the tile {index} falls in");
+
+    // the working set of a window
+    mos.def(
+        // the name
+        "tilesOverlapping",
+        // the implementation
+        &AnyMosaic::tilesOverlapping,
+        // the signature
+        "base"_a, "shape"_a,
+        // the docstring
+        "the tiles touched by the box anchored at {base} with the given {shape}");
+
+    // the pane over a tile
+    mos.def(
+        // the name
+        "pane",
+        // the implementation
+        &AnyMosaic::pane,
+        // the signature
+        "tile"_a,
+        // the docstring
+        "a dense zero-copy grid over the page that holds {tile}, materializing it on first "
+        "touch");
+
+    // read access: {m[i, j, ...]}
+    mos.def(
+        // the name
+        "__getitem__",
+        // the implementation
+        &AnyMosaic::getitem,
+        // the signature
+        "index"_a,
+        // the docstring
+        "the cell at a full integer {index}; its page must be resident");
+
+    // write access: {m[i, j, ...] = v}
+    mos.def(
+        // the name
+        "__setitem__",
+        // the implementation
+        &AnyMosaic::setitem,
+        // the signature
+        "index"_a, "value"_a,
+        // the docstring
+        "write {value} into the cell at a full integer {index}, materializing its page on "
+        "first touch and tainting it");
+
+    // the page state probes
+    mos.def(
+        // the name
+        "resident",
+        // the implementation
+        &AnyMosaic::resident,
+        // the signature
+        "tile"_a,
+        // the docstring
+        "whether the page that backs {tile} has been allocated");
+
+    mos.def(
+        // the name
+        "valid",
+        // the implementation
+        &AnyMosaic::valid,
+        // the signature
+        "tile"_a,
+        // the docstring
+        "whether meaningful content has been deposited in {tile}");
+
+    mos.def(
+        // the name
+        "clean",
+        // the implementation
+        &AnyMosaic::clean,
+        // the signature
+        "tile"_a,
+        // the docstring
+        "whether the content of {tile} matches my backing store");
+
+    // and the page state marks
+    mos.def(
+        // the name
+        "validate",
+        // the implementation
+        &AnyMosaic::validate,
+        // the signature
+        "tile"_a,
+        // the docstring
+        "record that meaningful content has been deposited in {tile}");
+
+    mos.def(
+        // the name
+        "taint",
+        // the implementation
+        &AnyMosaic::taint,
+        // the signature
+        "tile"_a,
+        // the docstring
+        "record that {tile} has been written to, so it diverges from my backing store");
+
+    mos.def(
+        // the name
+        "flush",
+        // the implementation; the per-tile flavor, since an in-memory mosaic has no backing
+        // store for the wholesale one to talk to
+        py::overload_cast<const AnyMosaic::index_type &>(&AnyMosaic::flush, py::const_),
+        // the signature
+        "tile"_a,
+        // the docstring
+        "record that {tile} has been saved, so it matches my backing store again");
+
+    mos.def(
+        // the name
+        "release",
+        // the implementation
+        &AnyMosaic::release,
+        // the signature
+        "tile"_a,
+        // the docstring
+        "let go of the page that backs {tile}, returning it to the never-touched state; "
+        "outstanding panes keep their memory but no longer alias my cells");
+
     // the factory that allocates a fresh heap grid
     grid.def(
         // the name
@@ -283,9 +613,9 @@ pyre::py::grid::__init__(py::module & m) -> void
         "map",
         // the implementation
         &map,
-        // the signature; {create} makes a fresh product, else an existing one is mapped for
-        // writing, which is how a data product on disk is read back
-        "uri"_a, "shape"_a, "cell"_a, "create"_a = true,
+        // the signature; {create} makes a fresh product, else an existing one is mapped;
+        // {writable} chooses between mapping it for writing and read-only access
+        "uri"_a, "shape"_a, "cell"_a, "create"_a = true, "writable"_a = true,
         // the docstring
         "lay a grid of the given {shape} and {cell} over the memory-mapped file at {uri}");
 
@@ -295,11 +625,24 @@ pyre::py::grid::__init__(py::module & m) -> void
         "view",
         // the implementation
         &view,
-        // the signature
-        "source"_a, "shape"_a, "cell"_a,
+        // the signature; {writable} decides how much access to ask the source for, so
+        // read-only exporters such as {bytes} are viewable with {writable=False}
+        "source"_a, "shape"_a, "cell"_a, "writable"_a = true,
         // the docstring
         "lay a grid of the given {shape} and {cell} over the memory of the {source} buffer, "
         "without copying");
+
+    // the factory that describes an out-of-core mosaic
+    grid.def(
+        // the name
+        "mosaic",
+        // the implementation
+        &mosaic,
+        // the signature
+        "shape"_a, "tile"_a, "cell"_a,
+        // the docstring
+        "describe an out-of-core grid of the given {shape} and {cell}, diced into tiles of "
+        "extent {tile}; nothing is allocated until a tile is touched");
 
     // all done
     return;

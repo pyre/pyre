@@ -33,10 +33,10 @@ main(int argc, char * argv[])
     // dice the box
     constexpr chunked_t packing { shape, tile };
     // show me
-    channel << "shape: " << packing.shape() << pyre::journal::newline
+    channel << pyre::journal::at() << "shape: " << packing.shape() << pyre::journal::newline
             << "tile: " << packing.tileShape() << pyre::journal::newline
             << "tiles: " << packing.tiles() << pyre::journal::newline
-            << "cells: " << packing.cells() << pyre::journal::endl(__HERE__);
+            << "cells: " << packing.cells() << pyre::journal::endl;
 
     // the box is what i asked for
     static_assert(packing.shape() == shape);

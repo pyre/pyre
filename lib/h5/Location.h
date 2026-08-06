@@ -43,7 +43,7 @@ public:
     // create an attribute {name} of {type} over {space}, with creation property list {acpl}
     auto createAttribute(
         const string_t & name, const types::Datatype & type, const DataSpace & space,
-        const properties::List & acpl) const -> Attribute;
+        const properties::ACPL & acpl) const -> Attribute;
     // rename the {oldName} attribute to {newName}
     auto renameAttribute(const string_t & oldName, const string_t & newName) const -> void;
     // remove the attribute by the given {name}

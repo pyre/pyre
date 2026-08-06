@@ -45,46 +45,84 @@ pyre::h5::py::properties::fapl(py::module & m)
         // the docstring
         "create a file access property list");
 
-    // get the metadata block size
-    cls.def(
+    // interface
+    // the metadata block size
+    cls.def_property(
         // the name
-        "getMetaBlockSize",
-        // the implementation
-        &FAPL::metaBlockSize,
+        "metadataBlockSize",
+        // the getter
+        py::overload_cast<>(&FAPL::metadataBlockSize, py::const_),
+        // the setter
+        py::overload_cast<hsize_t>(&FAPL::metadataBlockSize),
         // the docstring
-        "retrieve the metadata block size");
+        "the size of the blocks my metadata is allocated in");
 
-    // set the metadata block size
-    cls.def(
+    // the page buffer characteristics
+    cls.def_property(
         // the name
-        "setMetaBlockSize",
-        // the implementation
-        &FAPL::setMetaBlockSize,
-        // the signature
-        "size"_a,
+        "pageBufferSize",
+        // the getter
+        py::overload_cast<>(&FAPL::pageBufferSize, py::const_),
+        // the setter
+        py::overload_cast<const PageBuffer &>(&FAPL::pageBufferSize),
         // the docstring
-        "set the metadata cache parameters");
+        "my page buffer, as {(bytes, metadata percent, raw data percent)}");
 
-    // get the page buffer characteristics
-    cls.def(
+    // the alignment of objects in the file
+    cls.def_property(
         // the name
-        "getPageBufferSize",
-        // the implementation
-        &FAPL::pageBufferSize,
+        "alignment",
+        // the getter
+        py::overload_cast<>(&FAPL::alignment, py::const_),
+        // the setter
+        py::overload_cast<const Alignment &>(&FAPL::alignment),
         // the docstring
-        "retrieve the page buffer characteristics");
+        "where objects start in my file, as {(threshold, alignment)} bytes");
 
-    // set the page buffer characteristics
-    cls.def(
+    // the sieve buffer
+    cls.def_property(
         // the name
-        "setPageBufferSize",
-        // the implementation
-        &FAPL::setPageBufferSize,
-        // the signature
-        "page"_a, "meta"_a = 0, "raw"_a = 0,
+        "sieveBufferSize",
+        // the getter
+        py::overload_cast<>(&FAPL::sieveBufferSize, py::const_),
+        // the setter
+        py::overload_cast<std::size_t>(&FAPL::sieveBufferSize),
         // the docstring
-        "set the page buffer characteristics");
+        "the size of the buffer that gathers small writes to contiguous datasets");
 
+    // the file close degree
+    cls.def_property(
+        // the name
+        "closeDegree",
+        // the getter
+        py::overload_cast<>(&FAPL::closeDegree, py::const_),
+        // the setter
+        py::overload_cast<H5F_close_degree_t>(&FAPL::closeDegree),
+        // the docstring
+        "what becomes of my file when its handle closes with objects still open");
+
+    // the default caches
+    cls.def_property(
+        // the name
+        "cache",
+        // the getter
+        py::overload_cast<>(&FAPL::cache, py::const_),
+        // the setter
+        py::overload_cast<const Cache &>(&FAPL::cache),
+        // the docstring
+        "my default caches, as {(metadata elements, chunk slots, chunk bytes, preemption)}");
+
+    // the file format version bounds
+    cls.def_property(
+        // the name
+        "libverBounds",
+        // the getter
+        py::overload_cast<>(&FAPL::libverBounds, py::const_),
+        // the setter
+        py::overload_cast<const VersionBounds &>(&FAPL::libverBounds),
+        // the docstring
+        "the file format versions i may use, as {(low, high)}; asking for a recent one "
+        "buys newer features and narrows who can read the result");
 
 #if defined(H5_HAVE_ROS3_VFD)
     // populate the property list with ros3 parameters

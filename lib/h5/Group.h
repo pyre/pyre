@@ -54,10 +54,20 @@ public:
     auto openDataSet(const string_t & path) const -> DataSet;
     // create a subgroup at the given {path}
     auto createGroup(const string_t & path) const -> Group;
+    // create a subgroup at the given {path}, with property lists {lcpl} and {gcpl}
+    auto createGroup(
+        const string_t & path, const properties::LCPL & lcpl,
+        const properties::GCPL & gcpl) const -> Group;
     // create a dataset {path} of {type} over {space}, with property lists {dcpl} and {dapl}
     auto createDataSet(
         const string_t & path, const types::Datatype & type, const DataSpace & space,
         const properties::DCPL & dcpl, const properties::DAPL & dapl) const -> DataSet;
+    // create a dataset {path} of {type} over {space}, with property lists {lcpl}, {dcpl},
+    // and {dapl}
+    auto createDataSet(
+        const string_t & path, const types::Datatype & type, const DataSpace & space,
+        const properties::LCPL & lcpl, const properties::DCPL & dcpl,
+        const properties::DAPL & dapl) const -> DataSet;
 
     // release my handle
     auto close() -> void;

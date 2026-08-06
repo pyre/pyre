@@ -34,8 +34,8 @@ main(int argc, char * argv[])
     // the span from one to the other, counting both endpoints
     constexpr index_t span = sec - ref + index_t::one();
     // show me
-    channel << "ref: " << ref << pyre::journal::newline << "sec: " << sec << pyre::journal::newline
-            << "span: " << span << pyre::journal::endl(__HERE__);
+    channel << pyre::journal::at() << "ref: " << ref << pyre::journal::newline << "sec: " << sec
+            << pyre::journal::newline << "span: " << span << pyre::journal::endl;
 
     // each axis reports its own span
     for (index_t::size_type axis = 0; axis < index_t::rank(); ++axis) {

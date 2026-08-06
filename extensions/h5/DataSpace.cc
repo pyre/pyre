@@ -43,6 +43,17 @@ pyre::h5::py::dataspace(py::module & m)
         // the something
         "make a dataspace of the given shape");
 
+    // extent comparison
+    cls.def(
+        // the name
+        "sameExtent",
+        // the implementation
+        &DataSpace::sameExtent,
+        // the signature
+        "other"_a,
+        // the docstring
+        "check whether {other} and i have identical extents");
+
     // static properties
     cls.def_property_readonly_static(
         // the name

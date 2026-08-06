@@ -23,8 +23,6 @@ def test():
 
     # verify it's there
     assert uri.exists()
-    # and delete it
-    uri.unlink()
 
     # all done
     return

@@ -1,0 +1,294 @@
+// -*- C++ -*-
+// -*- coding: utf-8 -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2026 all rights reserved
+
+// code guard
+#pragma once
+
+
+// support
+#include "DynamicChunked.h"
+
+
+// constructors
+
+// build a layout from the extents of the box and of one tile: anchor the box at the origin of
+// the index space and pack it the c way
+inline pyre::grid::DynamicChunked::DynamicChunked(
+    const shape_type & shape, const shape_type & tile) :
+    // let the rank of {shape} size a zero origin and delegate
+    DynamicChunked(shape, tile, index_type(shape.size(), 0))
+{}
+
+// build a layout for a box whose lowest addressable index is not necessarily zero, packed
+// the c way
+inline pyre::grid::DynamicChunked::DynamicChunked(
+    const shape_type & shape, const shape_type & tile, const index_type & origin) :
+    // supply the default permutation and delegate
+    DynamicChunked(shape, tile, origin, _defaultOrder(shape.size()))
+{}
+
+// the full constructor: dice the box into tiles and lay out the two nested canonical packings
+inline pyre::grid::DynamicChunked::DynamicChunked(
+    const shape_type & shape, const shape_type & tile, const index_type & origin,
+    const order_type & order) :
+    // remember the extent of the box; this is what fixes my rank
+    _shape { shape },
+    // and the smallest addressable index
+    _origin { origin },
+    // lay out the grid of tiles: enough of them to cover my box, packed in the given order
+    _outer { _initTiles(shape, tile), index_type(shape.size(), 0), order },
+    // and the interior of a single tile, packed in the same order
+    _inner { tile, index_type(shape.size(), 0), order }
+{}
+
+
+// accessors
+
+// the number of axes, discovered at runtime from the size of my extents
+inline auto
+pyre::grid::DynamicChunked::rank() const noexcept -> size_type
+{
+    // the length of the shape vector is the rank
+    return _shape.size();
+}
+
+// the extent of my index box along each axis
+inline auto
+pyre::grid::DynamicChunked::shape() const noexcept -> const shape_type &
+{
+    // hand out my extents
+    return _shape;
+}
+
+// the smallest addressable index
+inline auto
+pyre::grid::DynamicChunked::origin() const noexcept -> const index_type &
+{
+    // hand out my anchor
+    return _origin;
+}
+
+// the traversal order shared by the tile grid and the tile interiors
+inline auto
+pyre::grid::DynamicChunked::order() const noexcept -> const order_type &
+{
+    // both nested layouts carry the same order, so either can speak for me
+    return _inner.order();
+}
+
+// the number of cells a storage strategy must supply to hold me
+inline auto
+pyre::grid::DynamicChunked::cells() const noexcept -> difference_type
+{
+    // every tile is stored at full size, so the answer is a full tile's worth of storage for
+    // each tile in the grid, padding of the overhanging edge tiles included
+    return _outer.cells() * _inner.cells();
+}
+
+
+// packing map
+
+// map an index to its flat offset
+inline auto
+pyre::grid::DynamicChunked::offset(const index_type & index) const -> difference_type
+{
+    // the coordinates of the tile the index falls in
+    index_type tile(rank());
+    // and of the cell within that tile
+    index_type cell(rank());
+    // go through the axes
+    for (size_type axis = 0; axis < rank(); ++axis) {
+        // measure the coordinate from my origin, so the split below happens on the non-negative
+        // side of zero regardless of where the box sits
+        auto rel = index[axis] - _origin[axis];
+        // the extent of a tile along this axis
+        auto extent = _inner.shape()[axis];
+        // the coordinate crosses this many whole tiles
+        tile[axis] = rel / extent;
+        // and what is left over places the cell inside its own
+        cell[axis] = rel % extent;
+    }
+    // skip a full tile's worth of storage for every tile packed before mine, then locate the
+    // cell within the tile it landed in
+    return _outer.offset(tile) * _inner.cells() + _inner.offset(cell);
+}
+
+
+// syntactic sugar
+
+// index into the layout to get the offset of a cell
+inline auto
+pyre::grid::DynamicChunked::operator[](const index_type & index) const -> difference_type
+{
+    // delegate to the forward map
+    return offset(index);
+}
+
+
+// iteration: visit every index in the box
+
+// a cursor at my origin that visits every index in the box, one cell at a time
+inline auto
+pyre::grid::DynamicChunked::begin() const -> iterator_type
+{
+    // hand out a cursor that knows the box and the order in which to walk it
+    return iterator_type(_shape, order(), _origin);
+}
+
+// a cursor at my origin that skips ahead by {step} along each axis
+inline auto
+pyre::grid::DynamicChunked::begin(const index_type & step) const -> iterator_type
+{
+    // same walk, but with the caller's stride through the index space
+    return iterator_type(_shape, order(), _origin, step);
+}
+
+// the cursor that marks the end of the traversal
+inline auto
+pyre::grid::DynamicChunked::end() const -> iterator_type
+{
+    // room for the far corner of the box, one past the last visitable index
+    index_type sentinel(rank());
+    // go through the axes
+    for (size_type axis = 0; axis < rank(); ++axis) {
+        // and push each coordinate one full extent past the origin
+        sentinel[axis] = _origin[axis] + _shape[axis];
+    }
+    // an iterator parked at that unreachable index
+    return iterator_type(_shape, order(), sentinel);
+}
+
+
+// tiling interface
+
+// the extent of one tile
+inline auto
+pyre::grid::DynamicChunked::tileShape() const noexcept -> const shape_type &
+{
+    // the inner layout is the interior of a single tile
+    return _inner.shape();
+}
+
+// the extent of the grid of tiles
+inline auto
+pyre::grid::DynamicChunked::tiles() const noexcept -> const shape_type &
+{
+    // the outer layout packs one cell per tile
+    return _outer.shape();
+}
+
+// the coordinates, in the grid of tiles, of the tile a given index falls in
+inline auto
+pyre::grid::DynamicChunked::tileOf(const index_type & index) const -> index_type
+{
+    // room for the answer
+    index_type tile(rank());
+    // go through the axes
+    for (size_type axis = 0; axis < rank(); ++axis) {
+        // measure the coordinate from my origin and count the whole tiles it crosses
+        tile[axis] = (index[axis] - _origin[axis]) / _inner.shape()[axis];
+    }
+    // hand off the tile coordinates
+    return tile;
+}
+
+// the rank a tile occupies in the packing sequence
+inline auto
+pyre::grid::DynamicChunked::tileOrdinal(const index_type & tile) const -> difference_type
+{
+    // the outer layout packs the tiles, so it knows where each one falls in the sequence
+    return _outer.offset(tile);
+}
+
+// the layout of one tile, anchored at the tile's own corner of my index space
+inline auto
+pyre::grid::DynamicChunked::tile(const index_type & tile) const -> canonical_type
+{
+    // room for the tile's anchor
+    index_type anchor(rank());
+    // go through the axes
+    for (size_type axis = 0; axis < rank(); ++axis) {
+        // the tile corner sits a whole number of tiles past my origin
+        anchor[axis] = _origin[axis] + tile[axis] * _inner.shape()[axis];
+    }
+    // the tile is a self-anchored canonical box: the full tile extent, in my traversal order,
+    // parked where the tile lives in index space; an edge tile keeps its full extent, so its
+    // overhang past my box is addressable here, exactly the way its padding exists in storage
+    return canonical_type { _inner.shape(), anchor, _inner.order() };
+}
+
+
+// free functions
+
+// the tiles that a box with the given anchor and extent touches; the runtime-rank counterpart
+// of the template over {TiledPacking}, which cannot serve here because the answer's rank is
+// not a compile time constant
+inline auto
+pyre::grid::tilesOverlapping(
+    const DynamicChunked & packing, const DynamicChunked::index_type & base,
+    const DynamicChunked::shape_type & extent) -> DynamicCanonical
+{
+    // the rank of the packing
+    auto rank = packing.rank();
+    // room for the far corner of the box, one cell in from the boundary
+    DynamicChunked::index_type corner(rank);
+    // go through the axes
+    for (DynamicChunked::size_type axis = 0; axis < rank; ++axis) {
+        // and park the corner on the last cell the box reaches
+        corner[axis] = base[axis] + extent[axis] - 1;
+    }
+    // the tile that holds the near corner of the box
+    auto first = packing.tileOf(base);
+    // and the one that holds the far corner
+    auto last = packing.tileOf(corner);
+    // room for the extent of the answer, measured in tiles
+    DynamicChunked::shape_type span(rank);
+    // go through the axes
+    for (DynamicChunked::size_type axis = 0; axis < rank; ++axis) {
+        // the box reaches from the first tile through the last one, inclusive
+        span[axis] = last[axis] - first[axis] + 1;
+    }
+    // the touched tiles form their own box in tile space, anchored at the first one
+    return DynamicCanonical { span, first };
+}
+
+
+// static helpers
+
+// build the c-style permutation for a grid with the given number of axes
+inline auto
+pyre::grid::DynamicChunked::_defaultOrder(size_type rank) -> order_type
+{
+    // room for the answer
+    order_type order(rank);
+    // the c convention lists the axes from the last to the first, so the rightmost varies
+    // fastest in memory
+    for (size_type axis = 0; axis < rank; ++axis) {
+        // by counting down from the highest axis label
+        order[axis] = rank - 1 - axis;
+    }
+    // hand off the permutation
+    return order;
+}
+
+// the extent of the tile grid: enough tiles along each axis to cover the box
+inline auto
+pyre::grid::DynamicChunked::_initTiles(const shape_type & shape, const shape_type & tile)
+    -> shape_type
+{
+    // room for the answer
+    shape_type tiles(shape.size());
+    // go through the axes
+    for (size_type axis = 0; axis < shape.size(); ++axis) {
+        // cover the extent, rounding up so a partially filled tile at the edge still counts
+        tiles[axis] = (shape[axis] + tile[axis] - 1) / tile[axis];
+    }
+    // hand off the extent of the tile grid
+    return tiles;
+}
+
+
+// end of file

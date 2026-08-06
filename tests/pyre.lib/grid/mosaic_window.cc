@@ -63,8 +63,9 @@ main(int argc, char * argv[])
     // and assemble the window
     const mosaic_t window { packing, store };
 
-    // bring in the working set, the way a reader pulling chunks from a file would
-    for (auto t : pyre::grid::tilesOverlapping(packing, packing.origin(), packing.shape())) {
+    // bring in the working set, the way a reader pulling chunks from a file would; the
+    // window mosaic computes it, since its own packing is what dices the box
+    for (auto t : window.tilesOverlapping(packing.origin(), packing.shape())) {
         // page by page
         auto data = store.reside(packing.tileOrdinal(t));
         // fill each one with something recognizable
@@ -91,10 +92,10 @@ main(int argc, char * argv[])
         (window[probe]
          == static_cast<mosaic_t::value_type>(packing.tileOrdinal(packing.tileOf(probe)))));
     // show me
-    channel << "window: " << store.uri() << pyre::journal::endl(__HERE__);
+    channel << pyre::journal::at() << "window: " << store.uri() << pyre::journal::endl;
 
-    // reclaiming the working set is just letting the window go out of scope: pages are never
-    // evicted one at a time; the next window is a fresh mosaic
+    // reclaiming the working set is letting the window go out of scope, or handing pages back
+    // one at a time with {release}; the next window is a fresh mosaic
     return 0;
 }
 

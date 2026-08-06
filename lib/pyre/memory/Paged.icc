@@ -188,9 +188,10 @@ pyre::memory::Paged<T, isConst>::reside(cell_count_type page) const -> pointer
 {
     // find the record
     auto & record = (*_table)[_verify(page)];
-    // if this is the first time the page is asked for
+    // if the page is absent, whether never touched or released
     if (!record.block) {
-        // allocate it; residency is monotonic, so this block lives as long as i do
+        // allocate it; the block lives until the page is released or the store is destroyed,
+        // and shared handles can extend its life past either
         record.block = handle_type(new value_type[pageCells()]);
     }
     // hand out its address
@@ -210,14 +211,17 @@ pyre::memory::Paged<T, isConst>::validate(cell_count_type page) const -> void
         // so this is a bug in the caller
         auto channel = pyre::journal::firewall_t("pyre.memory.paged");
         // complain
-        channel << "validating a page that is not resident:" << pyre::journal::newline << "  page "
-                << page << " of " << uri() << pyre::journal::endl(__HERE__);
+        channel << pyre::journal::at()
+                << "validating a page that is not resident:" << pyre::journal::newline << "  page "
+                << page << " of " << uri() << pyre::journal::endl;
         // unreachable, unless the user has marked this error as non-fatal;
         // bring the page into existence so the state stays coherent
         reside(page);
     }
-    // validity is monotonic: once meaningful, always meaningful
+    // validity survives everything but a release: once meaningful, meaningful until let go
     record.valid = true;
+    // all done
+    return;
 }
 
 
@@ -233,14 +237,17 @@ pyre::memory::Paged<T, isConst>::taint(cell_count_type page) const -> void
         // so this is a bug in the caller
         auto channel = pyre::journal::firewall_t("pyre.memory.paged");
         // complain
-        channel << "tainting a page that is not resident:" << pyre::journal::newline << "  page "
-                << page << " of " << uri() << pyre::journal::endl(__HERE__);
+        channel << pyre::journal::at()
+                << "tainting a page that is not resident:" << pyre::journal::newline << "  page "
+                << page << " of " << uri() << pyre::journal::endl;
         // unreachable, unless the user has marked this error as non-fatal;
         // bring the page into existence so the state stays coherent
         reside(page);
     }
     // the page now diverges from the backing store
     record.dirty = true;
+    // all done
+    return;
 }
 
 
@@ -256,14 +263,76 @@ pyre::memory::Paged<T, isConst>::flush(cell_count_type page) const -> void
         // so this is a bug in the caller
         auto channel = pyre::journal::firewall_t("pyre.memory.paged");
         // complain
-        channel << "flushing a page that is not resident:" << pyre::journal::newline << "  page "
-                << page << " of " << uri() << pyre::journal::endl(__HERE__);
+        channel << pyre::journal::at()
+                << "flushing a page that is not resident:" << pyre::journal::newline << "  page "
+                << page << " of " << uri() << pyre::journal::endl;
         // unreachable, unless the user has marked this error as non-fatal;
         // bring the page into existence so the state stays coherent
         reside(page);
     }
     // the page matches the backing store again
     record.dirty = false;
+    // all done
+    return;
+}
+
+
+// let go of a page, returning it to the never-touched state
+template <class T, bool isConst>
+auto
+pyre::memory::Paged<T, isConst>::release(cell_count_type page) const -> void
+{
+    // find the record
+    auto & record = (*_table)[_verify(page)];
+    // only a page that exists can be let go
+    if (!record.block) {
+        // so this is a bug in the caller
+        auto channel = pyre::journal::firewall_t("pyre.memory.paged");
+        // complain
+        channel << pyre::journal::at()
+                << "releasing a page that is not resident:" << pyre::journal::newline << "  page "
+                << page << " of " << uri() << pyre::journal::endl;
+        // unreachable, unless the user has marked this error as non-fatal;
+        // the page is already in the state a release produces, so there is nothing to do
+        return;
+    }
+    // content that diverges from the backing store is lost on release
+    if (record.dirty) {
+        // so letting go without a flush is a bug in the caller
+        auto channel = pyre::journal::firewall_t("pyre.memory.paged");
+        // complain
+        channel << pyre::journal::at()
+                << "releasing a page with unsaved content:" << pyre::journal::newline << "  page "
+                << page << " of " << uri() << pyre::journal::endl;
+        // unreachable, unless the user has marked this error as non-fatal;
+        // fall through and honor the request, discarding the content
+    }
+    // drop the allocation; the storage returns to the system once every shared handle lets go,
+    // so clients holding one keep their block while the store forgets the page
+    record.block.reset();
+    // the page no longer holds meaningful content
+    record.valid = false;
+    // and has nothing left to save
+    record.dirty = false;
+    // all done
+    return;
+}
+
+
+// materialize a page and scribble a recognizable pattern over it
+template <class T, bool isConst>
+auto
+pyre::memory::Paged<T, isConst>::poison(cell_count_type page) const -> pointer
+    requires(!isConst)
+{
+    // materialize the page, in case this is its first use
+    auto data = reside(page);
+    // scribble the pattern over every byte, so unwritten cells stand out in any cell type;
+    // the byte is a nod to the venerable {0xdeadbeef}
+    std::memset(data, 0xdb, pageCells() * sizeof(value_type));
+    // the content is scaffolding, not a deposit, so the state bits stay untouched;
+    // hand out the address
+    return data;
 }
 
 
@@ -279,9 +348,9 @@ pyre::memory::Paged<T, isConst>::page(cell_count_type page) const -> pointer
         // so this is a bug in the caller
         auto channel = pyre::journal::firewall_t("pyre.memory.paged");
         // complain
-        channel << "asking for the address of a page that is not resident:"
+        channel << pyre::journal::at() << "asking for the address of a page that is not resident:"
                 << pyre::journal::newline << "  page " << page << " of " << uri()
-                << pyre::journal::endl(__HERE__);
+                << pyre::journal::endl;
         // unreachable, unless the user has marked this error as non-fatal;
         // hand out a fresh page rather than a null pointer
         return reside(page);
@@ -302,6 +371,31 @@ pyre::memory::Paged<T, isConst>::view(cell_count_type page) const -> view_type
 }
 
 
+// share ownership of a resident page's block
+template <class T, bool isConst>
+auto
+pyre::memory::Paged<T, isConst>::handle(cell_count_type page) const -> handle_type
+{
+    // find the record
+    auto & record = (*_table)[_verify(page)];
+    // only a page that exists has a block to share
+    if (!record.block) {
+        // so this is a bug in the caller
+        auto channel = pyre::journal::firewall_t("pyre.memory.paged");
+        // complain
+        channel << pyre::journal::at()
+                << "asking for the handle of a page that is not resident:" << pyre::journal::newline
+                << "  page " << page << " of " << uri() << pyre::journal::endl;
+        // unreachable, unless the user has marked this error as non-fatal;
+        // bring the page into existence rather than hand out an empty handle
+        reside(page);
+    }
+    // hand out a copy of the handle; the block now survives a {release}, and even the death
+    // of the store, for as long as the caller holds on
+    return record.block;
+}
+
+
 // data access
 // with bounds and residency checking
 template <class T, bool isConst>
@@ -313,9 +407,9 @@ pyre::memory::Paged<T, isConst>::at(difference_type pos) const -> reference
         // make a channel
         auto channel = pyre::journal::firewall_t("pyre.memory.bounds");
         // and complain
-        channel << "out of bounds access:" << pyre::journal::newline << "  index " << pos
-                << " must be less than " << cells() << pyre::journal::newline
-                << "  in pyre::memory::paged_t::at" << pyre::journal::endl(__HERE__);
+        channel << pyre::journal::at() << "out of bounds access:" << pyre::journal::newline
+                << "  index " << pos << " must be less than " << cells() << pyre::journal::newline
+                << "  in pyre::memory::paged_t::at" << pyre::journal::endl;
         // unreachable, unless the user has marked this error as non-fatal
         // clamp {pos} to the last cell in the store
         pos = cells() - 1;
@@ -351,8 +445,8 @@ pyre::memory::Paged<T, isConst>::_verify(cell_count_type page) const -> cell_cou
         // make a channel
         auto channel = pyre::journal::firewall_t("pyre.memory.paged");
         // and complain
-        channel << "no such page:" << pyre::journal::newline << "  page " << page
-                << " must be less than " << pages() << pyre::journal::endl(__HERE__);
+        channel << pyre::journal::at() << "no such page:" << pyre::journal::newline << "  page "
+                << page << " must be less than " << pages() << pyre::journal::endl;
         // unreachable, unless the user has marked this error as non-fatal
         // clamp to the last page in the table
         page = pages() - 1;

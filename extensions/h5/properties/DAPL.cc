@@ -46,24 +46,16 @@ pyre::h5::py::properties::dapl(py::module & m)
         "build a dataset access property list");
 
     // interface
-    // get the chunk cache parameters
-    cls.def(
+    // the chunk cache parameters
+    cls.def_property(
         // the name
-        "getChunkCache",
-        // the implementation
-        &DAPL::chunkCache,
+        "chunkCache",
+        // the getter
+        py::overload_cast<>(&DAPL::chunkCache, py::const_),
+        // the setter
+        py::overload_cast<const ChunkCache &>(&DAPL::chunkCache),
         // the docstring
-        "get the chunk cache parameters");
-    // set the chunk cache parameters
-    cls.def(
-        // the name
-        "setChunkCache",
-        // the implementation
-        &DAPL::setChunkCache,
-        // the signature
-        "slots"_a, "bytes"_a, "w0"_a,
-        // the docstring
-        "set the chunk cache parameters");
+        "the cache my datasets are read and written through");
 
 
     // all done

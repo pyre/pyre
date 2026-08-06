@@ -20,6 +20,8 @@ template <class T, bool isConst>
 class pyre::memory::Buffer {
     // types
 public:
+    // me
+    using self_type = Buffer<T, isConst>;
     // my cell
     using cell_type = Cell<T, isConst>;
     // pull the type aliases

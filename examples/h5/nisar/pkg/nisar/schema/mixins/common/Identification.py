@@ -36,6 +36,7 @@ class Identification(nisar.h5.schema.group):
 
     # the frequency sub-bands carried by this product; a non-empty subset of {"A", "B"}
     listOfFrequencies = nisar.h5.schema.strings()
+    listOfFrequencies.default = None
     listOfFrequencies.constraints = [
         nisar.constraints.isSubset(choices={"A", "B"}),
         nisar.constraints.isNotEmpty(),

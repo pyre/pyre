@@ -22,32 +22,24 @@ def test():
     if os.path.exists(uri):
         os.remove(uri)
 
-    # try, so the file is cleaned up no matter what
-    try:
-        # create a file-backed grid
-        g = grid.map(uri=uri, shape=[2, 3, 4], cell="float64")
-        # it reports the geometry we asked for
-        assert g.shape == [2, 3, 4]
-        # and knows it is file backed
-        assert g.strategy == "map"
+    # create a file-backed grid
+    g = grid.map(uri=uri, shape=[2, 3, 4], cell="float64")
+    # it reports the geometry we asked for
+    assert g.shape == [2, 3, 4]
+    # and knows it is file backed
+    assert g.strategy == "map"
 
-        # write a recognizable value through the buffer protocol
-        memoryview(g)[1, 2, 3] = 3.5
-        # drop the grid, which unmaps and flushes the file
-        del g
+    # write a recognizable value through the buffer protocol
+    memoryview(g)[1, 2, 3] = 3.5
+    # drop the grid, which unmaps and flushes the file
+    del g
 
-        # map the same file again over the same shape, opening the existing product
-        h = grid.map(uri=uri, shape=[2, 3, 4], cell="float64", create=False)
-        # the value must have persisted to disk
-        assert memoryview(h)[1, 2, 3] == 3.5
-        # let go of the second mapping
-        del h
-
-    # in all cases
-    finally:
-        # remove the scratch file
-        if os.path.exists(uri):
-            os.remove(uri)
+    # map the same file again over the same shape, opening the existing product
+    h = grid.map(uri=uri, shape=[2, 3, 4], cell="float64", create=False)
+    # the value must have persisted to disk
+    assert memoryview(h)[1, 2, 3] == 3.5
+    # let go of the second mapping
+    del h
 
     # all done
     return

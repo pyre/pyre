@@ -17,8 +17,9 @@ pyre-h5.packages :=
 pyre-h5.libraries := pyre-h5.lib
 # a python extension, deposited into the {pyre} package that hosts it
 pyre-h5.extensions := pyre-h5.ext
-# and a c++ test suite; like {pyre::postgres} the library stands on its own, apart from {libpyre}
-pyre-h5.tests := pyre-h5.lib.tests
+# a c++ test suite (like {pyre::postgres} the library stands on its own, apart from {libpyre})
+# and a python test suite for the bindings
+pyre-h5.tests := pyre-h5.lib.tests pyre-h5.ext.tests
 
 
 # the h5 library meta-data
@@ -28,8 +29,8 @@ pyre-h5.lib.stem := pyre-h5
 pyre-h5.lib.incdir := $(builder.dest.inc)pyre/h5/
 # the gateway header is deposited one level above the rest, as {pyre/h5.h}
 pyre-h5.lib.gateway := h5.h
-pyre-h5.lib.prerequisites := journal.lib
-pyre-h5.lib.extern := journal.lib hdf5
+pyre-h5.lib.prerequisites := pyre.lib journal.lib
+pyre-h5.lib.extern := pyre.lib journal.lib hdf5
 pyre-h5.lib.c++.flags += $(pyre.lib.c++.flags)
 pyre-h5.lib.c++.defines += $(pyre.lib.c++.defines)
 
@@ -49,7 +50,7 @@ pyre-h5.ext.lib.c++.defines += $(pyre-h5.lib.c++.defines)
 
 
 # get the testsuites
-include pyre-h5.lib.tests
+include pyre-h5.lib.tests pyre-h5.ext.tests
 
 
 endif

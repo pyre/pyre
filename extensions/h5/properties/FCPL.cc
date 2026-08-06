@@ -46,45 +46,49 @@ pyre::h5::py::properties::fcpl(py::module & m)
         "build a file creation property list");
 
     // interface
-    // get the page size
-    cls.def(
+    // the file space page size
+    cls.def_property(
         // the name
-        "getPageSize",
-        // the implementation
-        &FCPL::pageSize,
+        "pageSize",
+        // the getter
+        py::overload_cast<>(&FCPL::pageSize, py::const_),
+        // the setter
+        py::overload_cast<hsize_t>(&FCPL::pageSize),
         // the docstring
-        "retrieve the file space page size");
+        "the size of the pages my file space is carved into");
 
-    // set the page size
-    cls.def(
+    // the file space strategy
+    cls.def_property(
         // the name
-        "setPageSize",
-        // the implementation
-        &FCPL::setPageSize,
-        // the signature
-        "size"_a,
+        "filespaceStrategy",
+        // the getter
+        py::overload_cast<>(&FCPL::filespaceStrategy, py::const_),
+        // the setter
+        py::overload_cast<const FilespaceStrategy &>(&FCPL::filespaceStrategy),
         // the docstring
-        "set the file space page {size}");
+        "how free space is managed, as {(strategy, persist, threshold)}");
 
-    // get the file space strategy
-    cls.def(
+    // the user block
+    cls.def_property(
         // the name
-        "getFilespaceStrategy",
-        // the implementation
-        &FCPL::filespaceStrategy,
+        "userblock",
+        // the getter
+        py::overload_cast<>(&FCPL::userblock, py::const_),
+        // the setter
+        py::overload_cast<hsize_t>(&FCPL::userblock),
         // the docstring
-        "get the current file space strategy");
+        "the size of the byte range at the front of my file that hdf5 leaves alone");
 
-    // set the file space strategy
-    cls.def(
+    // the widths used to record positions and lengths
+    cls.def_property(
         // the name
-        "setFilespaceStrategy",
-        // the implementation
-        &FCPL::setFilespaceStrategy,
-        // the signature
-        "strategy"_a, "persist"_a, "threshold"_a,
+        "sizes",
+        // the getter
+        py::overload_cast<>(&FCPL::sizes, py::const_),
+        // the setter
+        py::overload_cast<const Sizes &>(&FCPL::sizes),
         // the docstring
-        "set the file space strategy");
+        "the widths used to record positions and lengths, as {(offset, length)} bytes");
 
     // all done
     return;

@@ -36,11 +36,15 @@ function(pyre_h5Lib)
       lib/h5/DataSet.cc
       # property lists
       lib/h5/properties/List.cc
+      lib/h5/properties/OCPL.cc
+      lib/h5/properties/STRCPL.cc
+      lib/h5/properties/ACPL.cc
       lib/h5/properties/DAPL.cc
       lib/h5/properties/DCPL.cc
       lib/h5/properties/DXPL.cc
       lib/h5/properties/FAPL.cc
       lib/h5/properties/FCPL.cc
+      lib/h5/properties/GCPL.cc
       lib/h5/properties/LAPL.cc
       lib/h5/properties/LCPL.cc
       # datatypes
@@ -108,14 +112,29 @@ function(pyre_h5Module)
       extensions/h5/enums.cc
       extensions/h5/File.cc
       extensions/h5/Group.cc
+      extensions/h5/mosaics.cc
       # property lists
       extensions/h5/properties/__init__.cc
+      extensions/h5/properties/ChunkCache.cc
+      extensions/h5/properties/Alignment.cc
+      extensions/h5/properties/Cache.cc
+      extensions/h5/properties/PageBuffer.cc
+      extensions/h5/properties/VersionBounds.cc
+      extensions/h5/properties/FilespaceStrategy.cc
+      extensions/h5/properties/Sizes.cc
+      extensions/h5/properties/PhaseChange.cc
+      extensions/h5/properties/LinkEstimate.cc
+      extensions/h5/properties/Filter.cc
       extensions/h5/properties/List.cc
+      extensions/h5/properties/OCPL.cc
+      extensions/h5/properties/STRCPL.cc
+      extensions/h5/properties/ACPL.cc
       extensions/h5/properties/DAPL.cc
       extensions/h5/properties/DCPL.cc
       extensions/h5/properties/DXPL.cc
       extensions/h5/properties/FAPL.cc
       extensions/h5/properties/FCPL.cc
+      extensions/h5/properties/GCPL.cc
       extensions/h5/properties/LAPL.cc
       extensions/h5/properties/LCPL.cc
       # datatypes

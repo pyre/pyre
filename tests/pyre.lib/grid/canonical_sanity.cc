@@ -35,11 +35,11 @@ main(int argc, char * argv[])
     constexpr canonical_t packing { shape };
 
     // show me
-    channel << "shape: " << packing.shape() << pyre::journal::newline
+    channel << pyre::journal::at() << "shape: " << packing.shape() << pyre::journal::newline
             << "origin: " << packing.origin() << pyre::journal::newline
             << "order: " << packing.order() << pyre::journal::newline
             << "strides: " << packing.strides() << pyre::journal::newline
-            << "nudge: " << packing.nudge() << pyre::journal::endl(__HERE__);
+            << "nudge: " << packing.nudge() << pyre::journal::endl;
 
     // the shape is recorded verbatim
     static_assert(packing.shape() == shape);

@@ -1,0 +1,27 @@
+// -*- C++ -*-
+// -*- coding: utf-8 -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2026 all rights reserved
+
+// code guard
+#pragma once
+
+// my declarations
+#include "Cache.h"
+
+
+// describe the caches a file reaches its data through
+inline pyre::h5::properties::Cache::Cache(int metadataElements, std::size_t slots, std::size_t bytes, double preemption) :
+    // record how many entries the metadata cache holds
+    metadataElements(metadataElements),
+    // then the number of slots in the hash table that indexes cached chunks
+    slots(slots),
+    // then how much memory the chunk cache may hold
+    bytes(bytes),
+    // then how strongly to favor evicting a chunk that has been fully read or written
+    preemption(preemption)
+{}
+
+
+// end of file

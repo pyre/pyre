@@ -49,7 +49,7 @@ mapsBothWays(const pyre::grid::canonical_t<N> & packing, pyre::journal::debug_t 
         channel << pyre::journal::newline;
     }
     // flush the trace
-    channel << pyre::journal::endl(__HERE__);
+    channel << pyre::journal::at() << pyre::journal::endl;
     // report
     return sound;
 }

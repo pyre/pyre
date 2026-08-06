@@ -5,6 +5,9 @@
 # (c) 1998-2026 all rights reserved
 
 
+# support
+import journal
+
 # parts
 from .Raster import Raster
 
@@ -23,28 +26,12 @@ class Array:
         """
         Convert {value} into an array
         """
-        # this is sufficiently high up in the conversion process to suffice; the only thing higher
-        # is {process}, and its implementation in {schema} just delegates to {coerce} immediately;
-        # if value is trivial
+        # an unbound array has no value: content arrives either from a producer or from a
+        # file, as an out-of-core mosaic built by {_pyre_pull}
         if value is self._default:
-            # get my shape
-            shape = self.shape
-            # if it is trivial
-            if shape is None:
-                # replace it with an empty list
-                shape = []
-            # otherwise
-            else:
-                # expand it, replacing unknown extents with zeros
-                shape = [0 if s is Ellipsis else s for s in shape]
-            # and use it to build a default raster with my memory and on-disk reps
-            value = Raster(
-                dataset=dataset,
-                shape=shape,
-                memtype=self.memtype,
-                disktype=self.disktype,
-            )
-        # all done
+            # so there is nothing to build
+            return None
+        # bound content passes through untouched
         return value
 
     # metamethods
@@ -59,47 +46,35 @@ class Array:
     # value synchronization
     def _pyre_pull(self, dataset):
         """
-        Build a proxy to help with the file interactions
+        Build my value: a raster handle wired to {dataset}
         """
-        # build my value
-        value = Raster(
-            dataset=dataset,
-            shape=dataset._pyre_id.space.shape,
-            memtype=self.memtype,
-            disktype=self.disktype,
-        )
-        # and return it
-        return value
+        # rasters are cheap: no metadata is copied and no data moves until the consumer
+        # interrogates the handle and chooses an access strategy through its factories
+        return Raster(dataset=dataset)
 
     def _pyre_push(self, src, dst: libh5.DataSet):
         """
-        Push my cache value to disk
+        Push my cached value to disk
         """
-        # get the src raster
-        raster = src.value
-        # prime the work pile
-        tiles = raster._staged
-
-        # MGA: 20230530
-        #   there was logic here to prime {dst} with the contents of {src} before
-        #   any staged tile get written out. this is important for transferring data from
-        #   one file to another as derived products are constructed
-        #
-        #   this requires another look to ensure that it only happens once, but it's not
-        #   clear what condition the semaphore should be tied to
-
-        # go through the tiles
-        for tile in tiles:
-            # get the data
-            data = tile.data
-            # its in-memory data type
-            type = tile.type.htype
-            # its origin
-            origin = tile.origin
-            # and shape
-            shape = tile.shape
-            # and write it out
-            dst.write(data=data, memtype=type, origin=origin, shape=shape)
+        # get the value
+        value = src.value
+        # if nothing is bound
+        if value is None:
+            # there is nothing to push
+            return
+        # if the value is a raster
+        if isinstance(value, Raster):
+            # its content already lives in a file: data moves through the access objects
+            # its factories build, and mosaics flush their own updates; carrying content
+            # to a {dst} in another file is value binding, an open part of the writer design
+            return
+        # anything else is a foreign value; make a channel
+        channel = journal.error("pyre.h5.typed")
+        # complain
+        channel.line(f"cannot push '{value}' to '{dst}'")
+        channel.line(f"binding foreign values to array datasets is not supported yet")
+        # flush
+        channel.log()
         # all done
         return
 

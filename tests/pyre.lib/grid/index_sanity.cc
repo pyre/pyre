@@ -32,14 +32,14 @@ main(int argc, char * argv[])
     // make a default index
     constexpr index_t dflt {};
     // show me
-    channel << "default: " << dflt << pyre::journal::endl(__HERE__);
+    channel << pyre::journal::at() << "default: " << dflt << pyre::journal::endl;
     // the default index sits at the origin
     static_assert(dflt == index_t::zero());
 
     // place an index at a distinct coordinate on each axis
     constexpr index_t idx { 0, 1, 2, 3 };
     // show me
-    channel << "idx: " << idx << pyre::journal::endl(__HERE__);
+    channel << pyre::journal::at() << "idx: " << idx << pyre::journal::endl;
 
     // indexed access reaches the first coordinate
     static_assert(idx[0] == 0);
@@ -56,7 +56,7 @@ main(int argc, char * argv[])
     // coordinates are signed, so an index may sit below the origin
     constexpr index_t negative { -1, -2, -3, -4 };
     // show me
-    channel << "negative: " << negative << pyre::journal::endl(__HERE__);
+    channel << pyre::journal::at() << "negative: " << negative << pyre::journal::endl;
     // the sign survives the trip through the container
     static_assert(negative[0] == -1);
     // and the extremal coordinate is the most negative one

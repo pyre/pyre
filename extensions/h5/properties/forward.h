@@ -14,8 +14,23 @@
 
 // the local binders
 namespace pyre::h5::py::properties {
+    // the values a property list trades in
+    void chunkCache(py::module &);
+    void alignment(py::module &);
+    void cache(py::module &);
+    void pageBuffer(py::module &);
+    void versionBounds(py::module &);
+    void filespaceStrategy(py::module &);
+    void sizes(py::module &);
+    void phaseChange(py::module &);
+    void linkEstimate(py::module &);
+    void filter(py::module &);
     // the generic base
     void pl(py::module &);
+    // the properties shared by everything one creates
+    void ocpl(py::module &);
+    // the properties shared by everything that lays down a name
+    void strcpl(py::module &);
     // dataset access, creation, and transfer
     void dapl(py::module &);
     void dcpl(py::module &);
@@ -23,9 +38,13 @@ namespace pyre::h5::py::properties {
     // file access and creation
     void fapl(py::module &);
     void fcpl(py::module &);
+    // group creation
+    void gcpl(py::module &);
     // link access and creation
     void lapl(py::module &);
     void lcpl(py::module &);
+    // attribute creation
+    void acpl(py::module &);
 } // namespace pyre::h5::py::properties
 
 

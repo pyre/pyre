@@ -33,9 +33,9 @@ main(int argc, char * argv[])
     // lay it out canonically at the origin
     constexpr canonical_t packing { shape };
     // show me
-    channel << "shape: " << packing.shape() << pyre::journal::newline
+    channel << pyre::journal::at() << "shape: " << packing.shape() << pyre::journal::newline
             << "strides: " << packing.strides() << pyre::journal::newline
-            << "cells: " << packing.cells() << pyre::journal::endl(__HERE__);
+            << "cells: " << packing.cells() << pyre::journal::endl;
 
     // with the origin at zero, the first cell sits at offset zero
     static_assert(packing.nudge() == 0);
@@ -48,9 +48,9 @@ main(int argc, char * argv[])
         corner.begin(), corner.end(), packing.strides().begin(),
         canonical_t::difference_type { 0 });
     // show me
-    channel << "corner: " << corner << pyre::journal::newline
+    channel << pyre::journal::at() << "corner: " << corner << pyre::journal::newline
             << "offset: " << packing.offset(corner) << pyre::journal::newline
-            << "inner product: " << expected << pyre::journal::endl(__HERE__);
+            << "inner product: " << expected << pyre::journal::endl;
     // the two must agree, and neither may have wrapped
     assert((packing.offset(corner) == expected));
     // the corner is the last addressable cell, so its offset is one short of the cell count

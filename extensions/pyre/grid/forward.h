@@ -8,12 +8,9 @@
 #pragma once
 
 
-// the pyre extension namespace for the grid bindings
-namespace pyre::py::grid {
-    // the single type-erased grid the bindings hand to python, whatever the rank, cell type, or
-    // storage strategy of the c++ grid it came from
-    class AnyGrid;
-} // namespace pyre::py::grid
+// the type-erased classes these bindings register live in the library's python-support
+// tier; get their forward declarations from there
+#include <pyre/py/grid/forward.h>
 
 
 // end of file

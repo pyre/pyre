@@ -34,8 +34,9 @@ main(int argc, char * argv[])
     // scaling and addition combine to enlarge the shape by two margins
     constexpr shape_t grown = base + 2 * margin;
     // show me
-    channel << "base: " << base << pyre::journal::newline << "margin: " << margin
-            << pyre::journal::newline << "grown: " << grown << pyre::journal::endl(__HERE__);
+    channel << pyre::journal::at() << "base: " << base << pyre::journal::newline
+            << "margin: " << margin << pyre::journal::newline << "grown: " << grown
+            << pyre::journal::endl;
 
     // each axis grew by twice the margin
     for (shape_t::size_type axis = 0; axis < shape_t::rank(); ++axis) {

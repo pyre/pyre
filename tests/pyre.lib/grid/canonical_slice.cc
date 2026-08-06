@@ -39,8 +39,8 @@ main(int argc, char * argv[])
     // keep axes 0 and 2, pinning axis 1 at 1
     constexpr auto plane = packing.slice<0, 2>(index_t { 0, 1, 0 });
     // show me
-    channel << "plane shape: " << plane.shape() << pyre::journal::newline
-            << "plane strides: " << plane.strides() << pyre::journal::endl(__HERE__);
+    channel << pyre::journal::at() << "plane shape: " << plane.shape() << pyre::journal::newline
+            << "plane strides: " << plane.strides() << pyre::journal::endl;
 
     // the surviving axes keep their extents, in the order they were named
     static_assert(plane.shape() == plane_t::shape_type { 2, 4 });

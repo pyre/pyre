@@ -13,9 +13,12 @@
 > revisiting that implementation; expect sections to be revised, contradicted, or
 > marked as open questions as our understanding sharpens.
 >
-> **The read path is substantially implemented; the write path is largely
-> design stubs.** Fleshing out the writer — so that a schema-defined data product
-> can actually be realized to disk — is an active goal.
+> **Update, 2026-07-30.** Since this document was seeded, the C++ layer was
+> extracted into its own sub-project — the library now lives at `lib/h5`, its
+> bindings at `extensions/h5` — and it acquired the grid vocabulary and the
+> mosaic machinery (see **Payload materialization** below and `doc/mosaics.md`).
+> Older sections of this document use the pre-extraction paths (`lib/pyre/h5`);
+> they are left as written, since they record history.
 
 ## Purpose
 
@@ -40,6 +43,10 @@ The value-added ideas, relative to working with raw `h5py`/`libhdf5`:
   reconstruct the entire file in memory. A *query* — a lightweight subtree of
   structural nodes — selects which paths through the group hierarchy get
   realized under the in-memory `root`, leaving the rest untouched on disk.
+- **Partial payload materialization.** The counterpart of the query, one level
+  down: within a single dataset, a *mosaic* materializes only the chunks an
+  algorithm touches. Query : hierarchy :: mosaic : cells. See **Payload
+  materialization** below.
 - **A typed value model.** Datasets carry a dual type description (in-memory vs
   on-disk) so that reading and writing perform the right conversions, and so
   that Python code sees natural values rather than raw buffers.
@@ -143,6 +150,64 @@ handle-free description of a subtree to realize.
 - `File(Group)` — "a group at `/`". Opens local files (`_pyre_local`) or remote
   S3 objects via the ROS3 driver (`_pyre_ros3`); holds the `_pyre_uri`.
 - `Datatype` — a named (committed) datatype.
+
+## Payload materialization: the mosaic (added 2026-07-30)
+
+The piece this document's earlier sections could only defer — "partial/tile
+writes", the dated note in `typed/Array.py` about file-to-file transfer — now
+exists one level down, in C++ and in the bindings. A chunked dataset describes
+itself in the `pyre::grid` vocabulary (`packing()`, `tiling()`) and assembles
+*mosaics*: out-of-core grids with one demand-materialized page per chunk.
+`DataSet::fill` pulls chunks from the file into pages; `DataSet::flush` pushes
+back exactly the pages that diverged, tracked by the page-state bits
+(`valid`/`dirty`). From Python, `dataset.mosaic(cell="complex64")` hands back a
+mosaic wired to its dataset — `m.fill(tile=t)`, `m.flush()`, zero-copy panes for
+numpy — with a window flavor (`dataset.mosaic(cell=…, base=…, shape=…)`) that
+covers just a declared working set. The full story, organized by use case, is in
+`doc/mosaics.md`.
+
+Two consequences for this document's concerns:
+
+- **The `Tile`/`_staged` staging machinery in `typed/` is retired** (2026-07-31).
+  It was a hand-rolled proto-mosaic; the real thing lives one level down now.
+  The "semaphore" question in the old 2023-05-30 note dissolved with it: the
+  page-state bits are the semaphore, and file-to-file transfer is `fill` from
+  the source, `taint`, and `flush` to the destination — the cross-file flavor
+  belongs to value binding, the writer's still-open half.
+- **The writer's deferred "partial/tile writes" are no longer deferred** at the
+  storage level; the Python value model now rides them.
+
+<a id="raster"></a>
+### The array value model: the raster (added 2026-08-02)
+
+The value of an array dataset is a `Raster` (`typed/Raster.py`) — a cheap handle
+that moves no data when it is built. The principle: nothing the file records
+about a non-trivial dataset — extent, layout, type — determines how a consumer
+intends to touch it, so the value must not commit to an access strategy. It
+anchors the *choice*: it carries the hdf5 metadata that informs the decision,
+and the factories that realize it.
+
+- **Metadata**, delegated to the api node: `shape`/`rank`, `layout`/`chunk`
+  (`None` when the storage is not chunked)/`filters`, the dual types
+  `memtype`/`disktype` (the latter is the actual on-disk datatype proxy), the
+  `dcpl`/`dapl` property lists for everything not promoted to a named property,
+  and the raw `dataset` handle as the escape hatch that keeps the surface small.
+- **`tile(origin=…, shape=…)`** — a dense private grid on the heap over a
+  window, defaulting to the full extent. Writes do not flow back to the file;
+  indices are window-local, and the caller keeps track of the origin.
+- **`mosaic(origin=…, shape=…)`** — the out-of-core flavors of use cases 4/7 in
+  `doc/mosaics.md`: over the dataset's own tiling with no arguments, or the
+  smallest mosaic covering the window. The raster supplies the `cell` name from
+  its `memtype`, so the grid-vocabulary translation is not the consumer's job.
+
+Since the raster is what mere navigation hands out (member access
+auto-dereferences datasets to their values), building one must be free: the
+cell-support check now lives in the factories, so exotic datasets can be
+navigated and interrogated even when their cells have no grid support.
+`_pyre_push` has nothing to move for raster values — content lives in the file,
+and mosaics flush their own updates; binding foreign values to array datasets
+is an open part of the writer design. Exhibit:
+`tests/pyre.pkg/h5/api/raster_value.py`.
 
 ### How they relate
 
@@ -384,13 +449,11 @@ anything they expose but the bindings omit is a pure pybind gap.
 - **DAPL** — `getChunkCache`/`setChunkCache` are bound; effectively complete for
   common use.
 - **DCPL** — bound: alloc time, chunk, fill *time*, layout, `getFilters`,
-  `setDeflate`/`setSzip`/`setNbit`. **Missing, and worth adding before the write
-  path leans on creation metadata:**
-  - `setFillValue` / `getFillValue` — the important gap; only fill *time* is
-    bound, so there is no typed way to set a fill *value* today. (The generic
-    `PropList.__setitem__` is string-typed and not a substitute.)
-  - `setShuffle`, `setFletcher32`, `setScaleoffset` — filters absent from the
-    pipeline bindings.
+  `setDeflate`/`setSzip`/`setNbit`. *(Audit resolved, 2026-07-30: the decoupling
+  brought `setShuffle`/`setFletcher32`/`setScaleoffset`, and the fill value is
+  now first-class — `setFillValue(value=…)` / `fillValue(cell=…)` in Python over
+  the typed C++ pair, with `fillValueStatus()` on the C++ side. A chunk nothing
+  ever wrote reads back as the declared fill; see `tests/h5.ext/dcpl_fill.py`.)*
 
 ## Type system: `memtypes`, `disktypes`, `typed`
 
@@ -659,11 +722,16 @@ Two efforts are in flight; they are deliberately ordered.
    binding, `listOf*`-driven presence, and attributes (see the write-path
    status block).
 
-2. **Decouple pyre from the HDF5 C++ layer (next).** Replace the dependency on
-   the `H5::*` C++ API with a thin, pyre-owned `pyre::h5` layer over the HDF5 C
-   API. Deferred until the writer loop is closed; the binding gaps that motivate
-   it (no `setScaleoffset`, no native complex / float16 predefined types in the
-   C++ wrapper) are not on the critical path for the writer.
+2. **Decouple pyre from the HDF5 C++ layer (done, 2026-06-20).** Replaced the
+   dependency on the `H5::*` C++ API with a thin, pyre-owned `pyre::h5` layer
+   over the HDF5 C API; see the phase history below. The library was
+   subsequently extracted into its own sub-project (`lib/h5`).
+
+3. **The mosaic era (current, 2026-07).** The library speaks the `pyre::grid`
+   vocabulary and moves payload through mosaics (`doc/mosaics.md`); the bindings
+   hand Python h5-backed mosaics; array dataset values *are* mosaics, the
+   `Raster`/`Tile` proto-mosaic having retired. Next: bind numeric payload
+   sources — the still-open half of the writer.
 
 ## Replacing the HDF5 C++ layer (assessment, 2026-06-14)
 

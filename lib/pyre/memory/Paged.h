@@ -24,14 +24,22 @@
 // existence one at a time, fill them, and declare what state they are in; this is the storage
 // side of out-of-core workflows, where only the working set of a much larger product is ever
 // in memory
+// the working set shrinks the same way it grows: {release} returns a page to the never-touched
+// state, indistinguishable from one that was never brought in, so a client may manage the
+// memory footprint of a live store at any time without disturbing the rest of it; management
+// is a const operation, mutating through the shared table, so a borrowed reference to the
+// store is all a client needs
 // each page carries three state bits:
-//   {resident}: the page has been allocated; residency is monotonic: pages are never evicted,
-//               and a store is reclaimed by destroying it as a whole
-//   {valid}: the client has deposited meaningful content; also monotonic, which is what makes
-//            it safe to hand out zero-copy views of a page
+//   {resident}: the page has been allocated; a client that is done with one may {release} it,
+//               returning its storage to the system once every shared handle lets go, and a
+//               whole store is reclaimed by destroying it
+//   {valid}: the client has deposited meaningful content; it survives everything but a
+//            {release}, so zero-copy views of a page are trustworthy only while it stays
+//            resident; clients that must outlive a release share the page's {handle} instead
 //   {clean}: the content matches whatever backing store the client mirrors; writers taint the
 //            pages they touch, and a flush marks them clean again, so scanning for dirty pages
-//            is how a client finds out what needs saving
+//            is how a client finds out what needs saving; releasing a dirty page discards
+//            unsaved content, so it draws a firewall
 // there is no single expanse of memory here, so this strategy has no {data()}: it satisfies
 // {StorageStrategy} but deliberately not {ContiguousStorage}
 template <class T, bool isConst>
@@ -129,10 +137,19 @@ public:
     inline auto taint(cell_count_type) const -> void;
     // record that the client has saved a page, so it matches the backing store again
     inline auto flush(cell_count_type) const -> void;
+    // let go of a page, resetting its state; its storage is returned to the system once every
+    // shared handle lets go
+    inline auto release(cell_count_type) const -> void;
+    // materialize a page and scribble a recognizable pattern over it, so that cells the
+    // client never writes are easy to spot; scaffolding only: the state bits are untouched
+    inline auto poison(cell_count_type) const -> pointer
+        requires(!isConst);
     // the address of a resident page
     inline auto page(cell_count_type) const -> pointer;
     // a borrowed view of a resident page, for wrapping in tile-shaped grids
     inline auto view(cell_count_type) const -> view_type;
+    // share ownership of a resident page's block, extending its life past a {release}
+    inline auto handle(cell_count_type) const -> handle_type;
 
     // data access
 public:

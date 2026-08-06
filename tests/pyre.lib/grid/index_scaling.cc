@@ -34,8 +34,9 @@ main(int argc, char * argv[])
     // scaling and addition combine to place a second corner two margins out
     constexpr index_t sec = ref + 2 * margin;
     // show me
-    channel << "ref: " << ref << pyre::journal::newline << "margin: " << margin
-            << pyre::journal::newline << "sec: " << sec << pyre::journal::endl(__HERE__);
+    channel << pyre::journal::at() << "ref: " << ref << pyre::journal::newline
+            << "margin: " << margin << pyre::journal::newline << "sec: " << sec
+            << pyre::journal::endl;
 
     // each axis grew by twice the margin
     for (index_t::size_type axis = 0; axis < index_t::rank(); ++axis) {

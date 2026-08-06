@@ -1,0 +1,23 @@
+// -*- C++ -*-
+// -*- coding: utf-8 -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2026 all rights reserved
+
+// code guard
+#pragma once
+
+// my declarations
+#include "Alignment.h"
+
+
+// describe where the objects in a file start
+inline pyre::h5::properties::Alignment::Alignment(hsize_t threshold, hsize_t boundary) :
+    // record the size an object must reach before it is placed deliberately
+    threshold(threshold),
+    // then the multiple such an object starts on
+    boundary(boundary)
+{}
+
+
+// end of file

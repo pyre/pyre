@@ -10,19 +10,21 @@
 // set up the namespace
 #include "forward.h"
 // my base class
-#include "List.h"
+#include "OCPL.h"
+// the value my pipeline is made of
+#include "Filter.h"
 
 
 // a dataset creation property list
-class pyre::h5::properties::DCPL : public pyre::h5::properties::List {
+class pyre::h5::properties::DCPL : public pyre::h5::properties::OCPL {
     // types
 public:
     // me
     using self_type = DCPL;
     // my superclass
-    using super_type = pyre::h5::properties::List;
-    // a filter as (id, name, flags, configuration)
-    using filter_type = std::tuple<H5Z_filter_t, string_t, unsigned int, unsigned int>;
+    using super_type = pyre::h5::properties::OCPL;
+    // one stage of my pipeline
+    using filter_type = Filter;
     // the dataset filter pipeline
     using filters_type = std::vector<filter_type>;
 
@@ -47,42 +49,57 @@ public:
     // the storage allocation time
     auto allocTime() const -> H5D_alloc_time_t;
     // set the storage allocation time
-    auto setAllocTime(H5D_alloc_time_t timing) -> void;
+    auto allocTime(H5D_alloc_time_t timing) -> void;
     // the fill value writing time
     auto fillTime() const -> H5D_fill_time_t;
     // set the fill value writing time
-    auto setFillTime(H5D_fill_time_t timing) -> void;
+    auto fillTime(H5D_fill_time_t timing) -> void;
+    // whether a fill value is defined, and how
+    auto fillValueStatus() const -> H5D_fill_value_t;
+    // declare the value that stands in for cells nobody writes; hdf5 converts it to the
+    // dataset's own type when the dataset is created, so the type of {value} here is only
+    // how i am handed the bytes. there is deliberately no reader to pair with this: a
+    // property list cannot be asked what its fill value is, because hdf5 keeps no record
+    // of the type it was declared in, and answering would mean asking the caller to name
+    // one and trusting the guess. ask the dataset instead, which knows its own type
+    template <class valueT>
+    auto fillValue(const valueT & value) -> void;
+
     // the data layout strategy
     auto layout() const -> H5D_layout_t;
     // set the data layout strategy
-    auto setLayout(H5D_layout_t layout) -> void;
-    // the chunk shape, given the dataset {rank}
-    auto chunk(int rank) const -> shape_t;
+    auto layout(H5D_layout_t layout) -> void;
+    // the chunk shape; empty when my layout is not chunked
+    auto chunk() const -> shape_t;
     // set the chunk {shape}
-    auto setChunk(const shape_t & shape) -> void;
+    auto chunk(const shape_t & shape) -> void;
 
     // interface: filters
 public:
     // the filters in the dataset pipeline
     auto filters() const -> filters_type;
     // engage the deflate (gzip) filter at the given compression {level}
-    auto setDeflate(unsigned int level) -> void;
+    auto addDeflate(unsigned int level) -> void;
     // engage the szip filter
-    auto setSzip(unsigned int options, unsigned int pixelsPerBlock) -> void;
+    auto addSzip(unsigned int options, unsigned int pixelsPerBlock) -> void;
     // engage the n-bit filter
-    auto setNbit() -> void;
+    auto addNbit() -> void;
     // engage the shuffle filter
-    auto setShuffle() -> void;
+    auto addShuffle() -> void;
     // engage the fletcher32 checksum filter
-    auto setFletcher32() -> void;
+    auto addFletcher32() -> void;
     // engage the scale-offset filter
-    auto setScaleoffset(H5Z_SO_scale_type_t scaleType, int scaleFactor) -> void;
+    auto addScaleoffset(H5Z_SO_scale_type_t scaleType, int scaleFactor) -> void;
 
     // low-level interface
 public:
     // adopt an existing raw handle, e.g. one returned by the c api
     explicit DCPL(id_type id);
 };
+
+
+// the inline definitions
+#include "DCPL.icc"
 
 
 // end of file

@@ -31,7 +31,7 @@ main(int argc, char * argv[])
     // stamped on every coordinate
     constexpr index_t idx_1 = index_t::fill(u);
     // show me
-    channel << "idx_1: " << idx_1 << pyre::journal::endl(__HERE__);
+    channel << pyre::journal::at() << "idx_1: " << idx_1 << pyre::journal::endl;
     // the first coordinate got the value
     static_assert(idx_1[0] == u);
     // and so did the rest
@@ -44,7 +44,7 @@ main(int argc, char * argv[])
     // stamped on every coordinate
     const index_t idx_2 = index_t::fill(v);
     // show me
-    channel << "idx_2: " << idx_2 << pyre::journal::endl(__HERE__);
+    channel << pyre::journal::at() << "idx_2: " << idx_2 << pyre::journal::endl;
     // the first coordinate got the value
     assert((idx_2[0] == v));
     // and so did the rest

@@ -54,6 +54,10 @@ public:
     auto rank() const -> int;
     // my extent, one entry per dimension
     auto shape() const -> shape_t;
+    // my extent as a runtime-rank canonical layout, in the {pyre::grid} vocabulary
+    auto packing() const -> packing_t;
+    // whether {other} and i have identical extents
+    auto sameExtent(const DataSpace & other) const -> bool;
     // give me a new simple extent
     auto reshape(const shape_t & shape) -> void;
     // the number of cells in my extent

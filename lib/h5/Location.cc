@@ -11,7 +11,7 @@
 #include "Attribute.h"
 #include "DataSpace.h"
 #include "types/Datatype.h"
-#include "properties/List.h"
+#include "properties/ACPL.h"
 
 
 // adopt an existing raw handle
@@ -22,15 +22,9 @@ pyre::h5::Location::Location(id_type id) : Identifier(id) {}
 auto
 pyre::h5::Location::attributeCount() const -> int
 {
-    // ask the library for just the attribute count; the info struct and accessor were
-    // renamed in hdf5 1.12, so pick the spelling that matches the library we build against
-#if H5_VERSION_GE(1, 12, 0)
+    // ask the library for just the attribute count
     H5O_info2_t info;
     H5Oget_info3(id(), &info, H5O_INFO_NUM_ATTRS);
-#else
-    H5O_info_t info;
-    H5Oget_info2(id(), &info, H5O_INFO_NUM_ATTRS);
-#endif
     // and report it
     return static_cast<int>(info.num_attrs);
 }
@@ -69,7 +63,7 @@ pyre::h5::Location::hasAttribute(const string_t & name) const -> bool
 auto
 pyre::h5::Location::createAttribute(
     const string_t & name, const types::Datatype & type, const DataSpace & space,
-    const properties::List & acpl) const -> Attribute
+    const properties::ACPL & acpl) const -> Attribute
 {
     // make the attribute; the library hands back a fresh handle the wrapper adopts
     return Attribute(

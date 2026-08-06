@@ -13,6 +13,8 @@
 #include "types/Datatype.h"
 #include "properties/DCPL.h"
 #include "properties/DAPL.h"
+#include "properties/GCPL.h"
+#include "properties/LCPL.h"
 
 
 // adopt an existing raw handle
@@ -63,15 +65,9 @@ pyre::h5::Group::exists(const string_t & name) const -> bool
 auto
 pyre::h5::Group::childType(const string_t & name) const -> object_type
 {
-    // ask the library for just the basic info; the info struct and accessor were renamed in
-    // hdf5 1.12, so pick the spelling that matches the library we build against
-#if H5_VERSION_GE(1, 12, 0)
+    // ask the library for just the basic info
     H5O_info2_t info;
     H5Oget_info_by_name3(id(), name.data(), &info, H5O_INFO_BASIC, H5P_DEFAULT);
-#else
-    H5O_info_t info;
-    H5Oget_info_by_name2(id(), name.data(), &info, H5O_INFO_BASIC, H5P_DEFAULT);
-#endif
     // and report the object kind
     return info.type;
 }
@@ -108,9 +104,21 @@ pyre::h5::Group::openDataSet(const string_t & path) const -> DataSet
 auto
 pyre::h5::Group::createGroup(const string_t & path) const -> Group
 {
-    // make it with default link, creation, and access property lists; adopt the fresh handle
-    return Group(
-        static_cast<id_type>(H5Gcreate2(id(), path.data(), H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT)));
+    // defer to the full flavor, asking for the library defaults
+    return createGroup(path, properties::LCPL::theDefault(), properties::GCPL::theDefault());
+}
+
+
+// create a subgroup at the given {path}, with property lists {lcpl} and {gcpl}
+auto
+pyre::h5::Group::createGroup(
+    const string_t & path, const properties::LCPL & lcpl, const properties::GCPL & gcpl) const
+    -> Group
+{
+    // make it; the group access property list has no properties of its own, so it stays
+    // the library default until hdf5 gives it something to say; adopt the fresh handle
+    return Group(static_cast<id_type>(
+        H5Gcreate2(id(), path.data(), lcpl.id(), gcpl.id(), H5P_DEFAULT)));
 }
 
 
@@ -120,10 +128,21 @@ pyre::h5::Group::createDataSet(
     const string_t & path, const types::Datatype & type, const DataSpace & space,
     const properties::DCPL & dcpl, const properties::DAPL & dapl) const -> DataSet
 {
-    // make it with a default link creation property list; adopt the fresh handle
-    return DataSet(
-        static_cast<id_type>(H5Dcreate2(
-            id(), path.data(), type.id(), space.id(), H5P_DEFAULT, dcpl.id(), dapl.id())));
+    // defer to the full flavor, asking for the default link creation properties
+    return createDataSet(path, type, space, properties::LCPL::theDefault(), dcpl, dapl);
+}
+
+
+// create a dataset {path} of {type} over {space}, with property lists {lcpl}, {dcpl}, {dapl}
+auto
+pyre::h5::Group::createDataSet(
+    const string_t & path, const types::Datatype & type, const DataSpace & space,
+    const properties::LCPL & lcpl, const properties::DCPL & dcpl,
+    const properties::DAPL & dapl) const -> DataSet
+{
+    // make it; adopt the fresh handle
+    return DataSet(static_cast<id_type>(H5Dcreate2(
+        id(), path.data(), type.id(), space.id(), lcpl.id(), dcpl.id(), dapl.id())));
 }
 
 

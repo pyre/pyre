@@ -82,6 +82,62 @@ function(pyre_test_testcase_shell_fixture setup cleanup testfile)
 endfunction()
 
 
+# sweep the scratch {products} a python testcase leaves behind; the {products} come first,
+# for the same reason as above: the testcase command line arguments are in ${ARGN}
+function(pyre_test_python_cleanup products testfile)
+  # generate the name of the testcase that makes the products
+  pyre_test_testcase(testname ${testfile} ${ARGN})
+  # python testcases run in their source directory, so that's where the products land
+  get_filename_component(dir ${testfile} DIRECTORY)
+
+  # register the sweep, running where the testcase ran
+  add_test(NAME ${testname}.cleanup
+    COMMAND ${BASH_PROGRAM} -c "rm ${products}"
+    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/${dir}
+    )
+  # the sweep tears down the testcase's fixture
+  set_property(TEST ${testname}.cleanup PROPERTY
+    FIXTURES_CLEANUP ${testname}.fixture
+    )
+  # which the testcase advertises, so the sweep runs after it does
+  set_property(TEST ${testname} APPEND PROPERTY
+    FIXTURES_REQUIRED ${testname}.fixture
+    )
+
+  # all done
+endfunction()
+
+
+# sweep the scratch {products} a compiled test driver leaves behind; the arguments past
+# {testfile} name the other drivers that share the products, so the sweep can wait for
+# the whole pile
+function(pyre_test_driver_cleanup products testfile)
+  # the sweep and its fixture are named after the first driver in the pile
+  pyre_test_testcase(testname ${testfile})
+
+  # register the sweep; drivers run in the build directory, so the sweep does too
+  add_test(NAME ${testname}.cleanup
+    COMMAND ${BASH_PROGRAM} -c "rm ${products}"
+    )
+  # the sweep tears down the fixture
+  set_property(TEST ${testname}.cleanup PROPERTY
+    FIXTURES_CLEANUP ${testname}.fixture
+    )
+  # every driver that touches the products advertises the fixture, so the sweep runs only
+  # after all of them are done
+  foreach(driver ${testfile} ${ARGN})
+    # generate the name of this consumer
+    pyre_test_testcase(drivername ${driver})
+    # and attach the fixture
+    set_property(TEST ${drivername} APPEND PROPERTY
+      FIXTURES_REQUIRED ${testname}.fixture
+      )
+  endforeach()
+
+  # all done
+endfunction()
+
+
 # register a python script as a test case; use a path relative to {PROJECT_SOURCE_DIR}
 function(pyre_test_python_testcase testfile)
   # generate the name of the testcase
@@ -205,33 +261,6 @@ function(pyre_test_driver testfile)
   add_test(NAME ${testname} COMMAND ${target} ${ARGN})
   # specify the directory for the target compilation products
   pyre_target_directory(${target} tests)
-
-  # all done
-endfunction()
-
-
-# register a test case based on a compiled driver
-function(pyre_test_driver_cxx20 testfile)
-
-  # generate the name of the testcase
-  pyre_test_testcase(testname ${testfile} ${ARGN})
-  # generate the name of the target
-  pyre_target(target ${testfile})
-
-  # schedule it to be compiled
-  add_executable(${target} ${testfile})
-  # with some macros
-  target_compile_definitions(${target} PRIVATE PYRE_CORE)
-  # link against my libraries
-  target_link_libraries(${target} PUBLIC pyre journal)
-  # specify the directory for the target compilation products
-  pyre_target_directory(${target} tests)
-  # request c++20 to build the target
-  target_compile_features(${target} PUBLIC cxx_std_20)
-  target_compile_definitions(${target} PRIVATE WITH_CXX20)
-
-  # make it a test case
-  add_test(NAME ${testname} COMMAND ${target} ${ARGN})
 
   # all done
 endfunction()

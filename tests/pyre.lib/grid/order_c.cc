@@ -29,7 +29,7 @@ main(int argc, char * argv[])
     // the c convention packs the trailing axis fastest
     constexpr order_t rowMajor = order_t::c();
     // show me
-    channel << "row major: " << rowMajor << pyre::journal::endl(__HERE__);
+    channel << pyre::journal::at() << "row major: " << rowMajor << pyre::journal::endl;
 
     // so it names the last axis first and the first axis last
     static_assert(rowMajor[0] == 3);

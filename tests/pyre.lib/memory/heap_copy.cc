@@ -22,7 +22,8 @@ initialize(heap_t block)
     // make a channel
     pyre::journal::debug_t channel("pyre.memory.heap");
     // show me
-    channel << "initialize: got a block at " << block.data() << pyre::journal::endl(__HERE__);
+    channel << pyre::journal::at() << "initialize: got a block at " << block.data()
+            << pyre::journal::endl;
 
     // pick a value
     double value = 42;
@@ -51,7 +52,8 @@ main(int argc, char * argv[])
     // make a block on the heap
     heap_t block(cells);
     // show me
-    channel << "main: made a block at " << block.data() << pyre::journal::endl(__HERE__);
+    channel << pyre::journal::at() << "main: made a block at " << block.data()
+            << pyre::journal::endl;
 
     // send it to the initializer
     auto value = initialize(block);

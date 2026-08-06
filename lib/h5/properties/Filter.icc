@@ -1,0 +1,27 @@
+// -*- C++ -*-
+// -*- coding: utf-8 -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2026 all rights reserved
+
+// code guard
+#pragma once
+
+// my declarations
+#include "Filter.h"
+
+
+// describe one stage of the pipeline a dataset's cells pass through
+inline pyre::h5::properties::Filter::Filter(H5Z_filter_t id, string_t name, unsigned int flags, unsigned int configuration) :
+    // record which filter this is
+    id(id),
+    // then what the library calls it
+    name(name),
+    // then how the library treats a failure of this stage
+    flags(flags),
+    // then whether the filter can encode
+    configuration(configuration)
+{}
+
+
+// end of file

@@ -43,6 +43,7 @@ namespace pyre::grid {
     // dynamic (runtime-rank) variants
     using dynamic_index_iterator_t = DynamicIndexIterator;
     using dynamic_canonical_t = DynamicCanonical;
+    using dynamic_chunked_t = DynamicChunked;
 
     // the grid
     template <class packingT, class storageT>

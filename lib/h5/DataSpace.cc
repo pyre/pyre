@@ -100,6 +100,46 @@ pyre::h5::DataSpace::shape() const -> shape_t
 }
 
 
+// my extent as a runtime-rank canonical layout, in the {pyre::grid} vocabulary
+auto
+pyre::h5::DataSpace::packing() const -> packing_t
+{
+    // get my extent
+    auto extent = shape();
+    // the grid vocabulary measures with signed integers; make room for the translation
+    packing_t::shape_type box(extent.size());
+    // go through the axes
+    for (std::size_t axis = 0; axis < extent.size(); ++axis) {
+        // and carry each extent across the signedness boundary
+        box[axis] = static_cast<packing_t::difference_type>(extent[axis]);
+    }
+    // hdf5 stores the last index varying fastest, which is the c convention the deducing
+    // constructor assumes; anchor the box at zero and let it lay out the strides
+    return packing_t(box);
+}
+
+
+// whether {other} and i have identical extents
+auto
+pyre::h5::DataSpace::sameExtent(const DataSpace & other) const -> bool
+{
+    // ask the library to compare the two extents
+    auto status = H5Sextent_equal(id(), other.id());
+    // if the comparison itself failed
+    if (status < 0) {
+        // make a channel
+        auto channel = pyre::journal::error_t("pyre.h5.dataspace");
+        // and complain
+        channel << pyre::journal::at() << "failed to compare dataspace extents"
+                << pyre::journal::endl;
+        // failure to compare is not agreement
+        return false;
+    }
+    // interpret the verdict
+    return status > 0;
+}
+
+
 // give me a new simple extent
 auto
 pyre::h5::DataSpace::reshape(const shape_t & shape) -> void

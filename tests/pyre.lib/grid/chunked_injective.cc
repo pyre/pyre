@@ -59,9 +59,9 @@ main(int argc, char * argv[])
     // four cells each, minus the twenty five cells the box addresses
     assert((packing.cells() - used == 9 * 4 - 25));
     // show me
-    channel << "cells: " << packing.cells() << pyre::journal::newline << "used: " << used
-            << pyre::journal::newline << "padding: " << packing.cells() - used
-            << pyre::journal::endl(__HERE__);
+    channel << pyre::journal::at() << "cells: " << packing.cells() << pyre::journal::newline
+            << "used: " << used << pyre::journal::newline << "padding: " << packing.cells() - used
+            << pyre::journal::endl;
 
     // all done
     return 0;

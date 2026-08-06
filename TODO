@@ -4,6 +4,34 @@
 # (c) 1998-2026 all rights reserved
 #
 
+- gate for 1.13.0 (collected 2026-07-31, so nothing important slips):
+
+  - watch the first CI runs that exercise the tensor suite under cmake: the {HAVE_TENSOR}
+    gate defaulted OFF, so those legs have never run before this branch
+
+  - writer value binding: how producers attach numeric payload sources to schema datasets;
+    the still-open half of the writer, and the proof that the mosaic design carries its
+    weight; producers deposit through mosaics, {Writer} flushes
+
+  - the nisar sandbox (examples/h5/nisar) is its own mm project, so its tests are invisible
+    to pyre's test aggregate and to CI; all five drivers pass against the reworked value
+    model today, but only when run by hand; decide its home (example, fixture, or its own
+    repository) during the value-binding work
+
+  - densify: hand a mosaic window to consumers as a single contiguous block; cheap atop
+    {fill}, and wants its HOWTO use case
+
+  - pull model: auto-{fill} on touching a non-resident page; a policy decision, nearly free
+    now that mosaics carry backing-store hooks
+
+  - qed: adopt {pyre::py::grid} and the h5 mosaics; the NISAR out-of-core viewer is the
+    motivating consumer
+
+  - the h5.lib and h5.ext test suites are still absent from cmake; the pkg suite runs there
+    [project_cmake_enable_h5_tests]
+
+  - symmetric/diagonal packings: decide whether they ever get python exposure
+
 - calc:
 
   - calc nodes cannot inherit from {Ordering} because {Observable} stores the callbacks in a
@@ -27,10 +55,6 @@
   - macports: the selection normalization machinery was dropped in the rewrite; revisit if
     resolving launchers or interpreters through the select file indirection ever becomes
     necessary
-
-  - {pyre.memory} imports its bindings unconditionally, so a package-only install cannot
-    even import {pyre}; a prefix with the package but not the extensions is a poison pill
-    that breaks every pyre application in that context, including mm
 
 - gsl:
 
@@ -270,6 +294,12 @@
 
   - not yet started:
 
+    - re-evaluate the {RTLD_GLOBAL} tweak in packages/mpi/__init__.py: it works around
+      openmpi plugins unresolved against libmpi, last checked in 2012 against openmpi
+      1.4.3; it is linux-only, flips the dlopen flags for every subsequent extension
+      import in the process, and interacts with the cross-module type isolation the
+      pybind extensions now assume; check whether modern openmpi still needs it
+
     - cuda pybind11 migration: extensions/cuda is the last raw-CPython/capsule
       extension; bindings-only convert, but needs a Linux CUDA container to
       build and test (no CUDA on macOS). sequence: clean up etc/docker, build a
@@ -300,10 +330,6 @@
       does); add the HDF5-gated lib/pkg test entries so cmake CI covers h5.
       [project_cmake_enable_h5_tests]
 
-    - enable cxx20 tensor tests for mm: tensor + grid symmetric/diagonal visit
-      tests are cmake-active but mm-excluded; retry enabling after C++23 CI and
-      conda CI land. [project_enable_tensor_tests_mm]
-
     - clang-format 22 new options: demo what concepts/RemoveParentheses/
       QualifierAlignment/... do on pyre C++ before adopting. [project_clang_format_new_options]
 
@@ -331,9 +357,6 @@
 
     - p2: python modernization (f-strings, __slots__, new algebraic/ package,
       NameLookup tracker). [wip_branch_p2]
-
-    - typelists: C++ TMP typelist library, concept-based _grid_ replacement,
-      memory overhaul. [wip_branch_typelists]
 
     - tensor: quaternions, rows()/columns() matrix builders, generalized
       tensor_same_shape_c (Bianca Giovanardi's code). [wip_branch_tensor]
@@ -365,10 +388,6 @@
       [project_narrow_binding_import_guard]
 
   - open follow-ups from merged work:
-
-    - grid-bindings cleanup / split grids.cc (PR #172): until it lands, main's
-      push cmake.yaml is red on 3 gcc-15 RelWithDebInfo legs (OOM, not
-      correctness). [wip_branch_c++23]
 
     - docker matrix open items: libpq in CI, dpkg-sniffer audit (above), a cuda
       cell. [wip_branch_docker]

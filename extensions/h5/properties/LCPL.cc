@@ -16,7 +16,7 @@ void
 pyre::h5::py::properties::lcpl(py::module & m)
 {
     // add bindings for link creation property lists
-    auto cls = py::class_<LCPL, PropList>(
+    auto cls = py::class_<LCPL, STRCPL>(
         // in scope
         m,
         // class name
@@ -46,46 +46,16 @@ pyre::h5::py::properties::lcpl(py::module & m)
         "build a link creation property list");
 
     // interface
-#if H5_VERSION_GE(1, 12, 0)
-    // MGA: this is my best guess as to how far this was back-ported
-    // get the intermediate group creation strategy
-    cls.def(
+    // whether missing intermediate groups are created on demand
+    cls.def_property(
         // the name
-        "getCreateIntermediateGroup",
-        // the implementation
-        &LCPL::createIntermediateGroup,
+        "intermediateGroupCreation",
+        // the getter
+        py::overload_cast<>(&LCPL::intermediateGroupCreation, py::const_),
+        // the setter
+        py::overload_cast<bool>(&LCPL::intermediateGroupCreation),
         // the docstring
-        "get the intermediate group creation strategy");
-    // set the intermediate group creation strategy
-    cls.def(
-        // the name
-        "setCreateIntermediateGroup",
-        // the implementation
-        &LCPL::setCreateIntermediateGroup,
-        // the signature
-        "create"_a,
-        // the docstring
-        "set the intermediate group creation strategy");
-#endif
-
-    // get the string character encoding
-    cls.def(
-        // the name
-        "getCharEncoding",
-        // the implementation
-        &LCPL::charEncoding,
-        // the docstring
-        "get the string character encoding");
-    // set the string character encoding
-    cls.def(
-        // the name
-        "setCharEncoding",
-        // the implementation
-        &LCPL::setCharEncoding,
-        // the signature
-        "encoding"_a,
-        // the docstring
-        "set the string character encoding");
+        "whether the groups along a path i am given are created when they are missing");
 
     // all done
     return;

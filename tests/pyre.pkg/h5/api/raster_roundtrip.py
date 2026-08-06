@@ -71,8 +71,6 @@ def test():
 
     # release the views before the buffers
     del srcview, dstview
-    # drop the file from disk
-    uri.unlink()
 
     # all done
     return

@@ -49,6 +49,36 @@ pyre::h5::py::enums(py::module & m)
         .value("virtual", H5D_VIRTUAL)
         .value("layouts", H5D_NLAYOUTS);
 
+    // what becomes of a file whose handle is closed while objects in it are still open
+    py::enum_<H5F_close_degree_t>(m, "CloseDegree", "file close strategies")
+        .value("default", H5F_CLOSE_DEFAULT)
+        .value("weak", H5F_CLOSE_WEAK)
+        .value("semi", H5F_CLOSE_SEMI)
+        .value("strong", H5F_CLOSE_STRONG);
+
+    // the file format versions; the named ones appeared in the library one at a time, so
+    // each is offered only by a library that knows it. {latest} is deliberately not a fixed
+    // point: it means whatever the library we were built against considers newest, so a
+    // file written with it is readable only by libraries at least that recent
+    py::enum_<H5F_libver_t>(
+        m, "LibVersion", py::arithmetic(), "the file format versions hdf5 can write")
+        .value("earliest", H5F_LIBVER_EARLIEST)
+        .value("v18", H5F_LIBVER_V18)
+        .value("v110", H5F_LIBVER_V110)
+        .value("v112", H5F_LIBVER_V112)
+        .value("v114", H5F_LIBVER_V114)
+#if H5_VERSION_GE(2, 0, 0)
+        .value("v200", H5F_LIBVER_V200)
+#endif
+        .value("latest", H5F_LIBVER_LATEST);
+
+    // whether creation order is remembered; these are flags, so they combine
+    py::enum_<CreationOrder>(
+        m, "CreationOrder", py::arithmetic(), "whether creation order is remembered")
+        .value("none", CreationOrder::none)
+        .value("tracked", CreationOrder::tracked)
+        .value("indexed", CreationOrder::indexed);
+
     // scale-offset filter scaling strategies
     py::enum_<H5Z_SO_scale_type_t>(m, "ScaleType", "the scale-offset filter scaling strategies")
         .value("float_dscale", H5Z_SO_FLOAT_DSCALE)
@@ -73,25 +103,17 @@ pyre::h5::py::enums(py::module & m)
         .value("datatype", H5I_DATATYPE)
         .value("dataspace", H5I_DATASPACE)
         .value("dataset", H5I_DATASET)
-#if H5_VERSION_GE(1, 12, 0)
         .value("map", H5I_MAP)
-#endif
         .value("attr", H5I_ATTR)
         .value("virtual_file_layer", H5I_VFL)
-#if H5_VERSION_GE(1, 12, 0)
         .value("virtual_object_layer", H5I_VOL)
-#endif
         .value("property_class", H5I_GENPROP_CLS)
         .value("property_list", H5I_GENPROP_LST)
         .value("error_class", H5I_ERROR_CLASS)
         .value("error_message", H5I_ERROR_MSG)
         .value("error_stack", H5I_ERROR_STACK)
-#if H5_VERSION_GE(1, 12, 0)
         .value("dataspace_selection_iterator", H5I_SPACE_SEL_ITER)
-#endif
-#if H5_VERSION_GE(1, 13, 0)
         .value("event_set", H5I_EVENTSET)
-#endif
         .value("types", H5I_NTYPES);
 
     // object types
@@ -101,9 +123,7 @@ pyre::h5::py::enums(py::module & m)
         .value("group", H5O_TYPE_GROUP)
         .value("dataset", H5O_TYPE_DATASET)
         .value("datatype", H5O_TYPE_NAMED_DATATYPE)
-#if H5_VERSION_GE(1, 12, 0)
         .value("map", H5O_TYPE_MAP)
-#endif
         .value("types", H5O_TYPE_NTYPES);
 
     // dataspace types

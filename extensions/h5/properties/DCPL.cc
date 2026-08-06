@@ -16,7 +16,7 @@ void
 pyre::h5::py::properties::dcpl(py::module & m)
 {
     // add bindings for hdf5 dataset creation property lists
-    auto cls = py::class_<DCPL, PropList>(
+    auto cls = py::class_<DCPL, OCPL>(
         // in scope
         m,
         // class name
@@ -46,100 +46,118 @@ pyre::h5::py::properties::dcpl(py::module & m)
         "build a dataset creation property list");
 
     // interface
-    // get the allocation time
-    cls.def(
+    // the allocation time
+    cls.def_property(
         // the name
-        "getAllocTime",
-        // the implementation
-        &DCPL::allocTime,
+        "allocTime",
+        // the getter
+        py::overload_cast<>(&DCPL::allocTime, py::const_),
+        // the setter
+        py::overload_cast<H5D_alloc_time_t>(&DCPL::allocTime),
         // the docstring
-        "get the allocation time");
-    // set the allocation time
-    cls.def(
-        // the name
-        "setAllocTime",
-        // the implementation
-        &DCPL::setAllocTime,
-        // the signature
-        "timing"_a,
-        // the docstring
-        "set the allocation time");
+        "when storage is allocated for the dataset");
 
-    // get the chunk size
-    cls.def(
+    // the chunk shape
+    cls.def_property(
         // the name
-        "getChunk",
-        // the implementation
-        &DCPL::chunk,
-        // the signature
-        "rank"_a,
+        "chunk",
+        // the getter
+        py::overload_cast<>(&DCPL::chunk, py::const_),
+        // the setter
+        py::overload_cast<const shape_t &>(&DCPL::chunk),
         // the docstring
-        "get the chunk size given the dataset {rank}");
-    // set the chunk size
-    cls.def(
+        "the shape of my chunks; empty when my layout is not chunked");
+
+    // whether a fill value was ever declared, and by whom
+    cls.def_property_readonly(
         // the name
-        "setChunk",
+        "fillValueStatus",
         // the implementation
-        &DCPL::setChunk,
-        // the signature
-        "shape"_a,
+        &DCPL::fillValueStatus,
         // the docstring
-        "set the chunk {shape}");
+        "whether a fill value is defined, and whether it is mine or the library's default");
+
+    // the value that stands in for cells nobody writes; a property, so the value carries
+    // its own type instead of the caller naming one. there is no getter to pair with it:
+    // hdf5 keeps no record of the type a fill value was declared in, so only the dataset
+    // can be asked what its fill value is
+    cls.def_property(
+        // the name
+        "fillValue",
+        // there is nothing here to read
+        nullptr,
+        // the setter, which reads the type off the value it is handed
+        [](DCPL & self, const py::object & value) -> void {
+            // integers travel as 64-bit
+            if (py::isinstance<py::int_>(value)) {
+                // deposit it
+                self.fillValue(value.cast<std::int64_t>());
+                // all done
+                return;
+            }
+            // reals as doubles
+            if (py::isinstance<py::float_>(value)) {
+                // deposit it
+                self.fillValue(value.cast<double>());
+                // all done
+                return;
+            }
+            // and complex values as pairs of doubles
+            if (PyComplex_Check(value.ptr())) {
+                // deposit it
+                self.fillValue(value.cast<std::complex<double>>());
+                // all done
+                return;
+            }
+            // anything else is a caller mistake
+            throw py::type_error("unsupported fill value type");
+        },
+        // the docstring
+        "the value that stands in for cells nobody writes; hdf5 converts it to the "
+        "dataset's own type when the dataset is created");
 
     // get the fill value writing time
-    cls.def(
+    cls.def_property(
         // the name
-        "getFillTime",
-        // the implementation
-        &DCPL::fillTime,
+        "fillTime",
+        // the getter
+        py::overload_cast<>(&DCPL::fillTime, py::const_),
+        // the setter
+        py::overload_cast<H5D_fill_time_t>(&DCPL::fillTime),
         // the docstring
-        "get the fill value writing time");
+        "when the fill value is written to storage");
     // set the fill value writing time
-    cls.def(
-        // the name
-        "setFillTime",
-        // the implementation
-        &DCPL::setFillTime,
-        // the signature
-        "timing"_a,
-        // the docstring
-        "set the fill value writing time");
+
 
     // get the data layout strategy
-    cls.def(
+    cls.def_property(
         // the name
-        "getLayout",
-        // the implementation
-        &DCPL::layout,
+        "layout",
+        // the getter
+        py::overload_cast<>(&DCPL::layout, py::const_),
+        // the setter
+        py::overload_cast<H5D_layout_t>(&DCPL::layout),
         // the docstring
-        "get the data layout strategy");
-    // set the data layout strategy
-    cls.def(
-        // the name
-        "setLayout",
-        // the implementation
-        &DCPL::setLayout,
-        // the signature
-        "layout"_a,
-        // the docstring
-        "set the data layout strategy");
+        "how my cells are laid out in storage");
 
-    // filters
-    cls.def(
+
+    // filters; the pipeline is read-only because filters are engaged one at a time, in
+    // the order they are to be applied
+    cls.def_property_readonly(
         // the name
-        "getFilters",
-        // the implementation
+        "filters",
+        // the getter
         &DCPL::filters,
         // the docstring
-        "get the filters in the dataset pipeline");
+        "the filters in my pipeline, in the order they are applied");
 
     // compression
     // deflate
     cls.def(
         // the name
-        "setDeflate",
+        "addDeflate",
         // the implementation
-        &DCPL::setDeflate,
+        &DCPL::addDeflate,
         // the signature
         "level"_a,
         // the docstring
@@ -147,9 +165,9 @@ pyre::h5::py::properties::dcpl(py::module & m)
     // szip
     cls.def(
         // the name
-        "setSzip",
+        "addSzip",
         // the implementation
-        &DCPL::setSzip,
+        &DCPL::addSzip,
         // the signature
         "options"_a, "pixelsPerBlock"_a,
         // the docstring
@@ -157,33 +175,33 @@ pyre::h5::py::properties::dcpl(py::module & m)
     // nbit
     cls.def(
         // the name
-        "setNbit",
+        "addNbit",
         // the implementation
-        &DCPL::setNbit,
+        &DCPL::addNbit,
         // the docstring
         "use nbit compression");
     // shuffle
     cls.def(
         // the name
-        "setShuffle",
+        "addShuffle",
         // the implementation
-        &DCPL::setShuffle,
+        &DCPL::addShuffle,
         // the docstring
         "use the shuffle filter to improve compression");
     // fletcher32
     cls.def(
         // the name
-        "setFletcher32",
+        "addFletcher32",
         // the implementation
-        &DCPL::setFletcher32,
+        &DCPL::addFletcher32,
         // the docstring
         "use the fletcher32 checksum filter for error detection");
     // scaleoffset
     cls.def(
         // the name
-        "setScaleoffset",
+        "addScaleoffset",
         // the implementation
-        &DCPL::setScaleoffset,
+        &DCPL::addScaleoffset,
         // the signature
         "scaleType"_a, "scaleFactor"_a,
         // the docstring

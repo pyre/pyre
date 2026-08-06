@@ -59,19 +59,16 @@ class Writer:
             assembler = Assembler()
             # using the structure we are traversing
             data = assembler.visit(descriptor=query)
-        # the shape index, if my layout is a product root; {None} for a plain group
-        shapes = getattr(data._pyre_layout, "_pyre_shapes", None)
         # the destination handle; assume i am attached to a valid {file}
         dst = self._file._pyre_id
-        # the product mounts at the root's location; create the prefix groups above it
+        # the presented node may mount deep in the hierarchy; create the groups above it
         location = data._pyre_location
         for part in location.parent.names:
             # reusing an existing group or creating a new one
             dst = dst.get(path=part) if part in dst else dst.create(path=part)
-        # the depth of the mount, so dataset locations can be made schema-relative
-        depth = len(list(location.names))
-        # traverse the structure and persist the content
-        data._pyre_identify(authority=self, dst=dst, shapes=shapes, depth=depth, **kwds)
+        # traverse the structure and persist the content; the shape index and the origin of
+        # the schema relative paths are established by the product root as it is reached
+        data._pyre_identify(authority=self, dst=dst, shapes=None, depth=0, **kwds)
         # all done
         return
 
@@ -95,6 +92,15 @@ class Writer:
         """
         Process a {group}
         """
+        # a group whose layout is a product root establishes the naming context for its
+        # entire subtree; look for its index of named dimensions
+        index = getattr(group._pyre_layout, "_pyre_shapes", None)
+        # if this is one
+        if index is not None:
+            # its index resolves the dimensions from here on down
+            shapes = index
+            # and its mount is where the schema relative paths begin
+            depth = len(list(group._pyre_location.names))
         # an optional group whose provided dimensions are unresolved is absent
         if group._pyre_layout._pyre_optional and not self._pyre_present(
             group=group, shapes=shapes, depth=depth
@@ -204,7 +210,7 @@ class Writer:
             # honor the chunking strategy, if any
             if chunk:
                 # by configuring the creation property list
-                dcpl.setChunk(chunk)
+                dcpl.chunk = chunk
             # make the dataset
             hid = dst.create(path=name, type=datatype, space=dataspace, dcpl=dcpl, dapl=dapl)
         # persist the value

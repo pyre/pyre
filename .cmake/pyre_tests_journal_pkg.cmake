@@ -127,135 +127,23 @@ pyre_test_python_testcase(tests/journal.pkg/warning_quiet.py)
 pyre_test_python_testcase(tests/journal.pkg/warning_report.py)
 pyre_test_python_testcase(tests/journal.pkg/warning_sanity.py)
 
-# clean up
-add_test(NAME tests.journal.pkg.api_file.cleanup
-  COMMAND ${BASH_PROGRAM} -c "echo $(pwd); rm api_file.log"
-  WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/tests/journal.pkg
-  )
-set_property(TEST tests.journal.pkg.api_file.cleanup PROPERTY
-  DEPENDS tests.journal.pkg.api_file.py
-  )
-
-add_test(NAME tests.journal.pkg.debug_file.cleanup
-  COMMAND ${BASH_PROGRAM} -c "rm debug_file.log"
-  WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/tests/journal.pkg
-  )
-set_property(TEST tests.journal.pkg.debug_file.cleanup PROPERTY
-  DEPENDS tests.journal.pkg.debug_file.py
-  )
-
-add_test(NAME tests.journal.pkg.error_file.cleanup
-  COMMAND ${BASH_PROGRAM} -c "rm error_file.log"
-  WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/tests/journal.pkg
-  )
-set_property(TEST tests.journal.pkg.error_file.cleanup PROPERTY
-  DEPENDS tests.journal.pkg.error_file.py
-  )
-
-add_test(NAME tests.journal.pkg.firewall_file.cleanup
-  COMMAND ${BASH_PROGRAM} -c "rm firewall_file.log"
-  WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/tests/journal.pkg
-  )
-set_property(TEST tests.journal.pkg.firewall_file.cleanup PROPERTY
-  DEPENDS tests.journal.pkg.firewall_file.py
-  )
-
-add_test(NAME tests.journal.pkg.help_file.cleanup
-  COMMAND ${BASH_PROGRAM} -c "rm help_file.log"
-  WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/tests/journal.pkg
-  )
-set_property(TEST tests.journal.pkg.help_file.cleanup PROPERTY
-  DEPENDS tests.journal.pkg.help_file.py
-  )
-
-add_test(NAME tests.journal.pkg.info_file.cleanup
-  COMMAND ${BASH_PROGRAM} -c "rm info_file.log"
-  WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/tests/journal.pkg
-  )
-set_property(TEST tests.journal.pkg.info_file.cleanup PROPERTY
-  DEPENDS tests.journal.pkg.info_file.py
-  )
-
-add_test(NAME tests.journal.pkg.warning_file.cleanup
-  COMMAND ${BASH_PROGRAM} -c "rm warning_file.log"
-  WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/tests/journal.pkg
-  )
-set_property(TEST tests.journal.pkg.warning_file.cleanup PROPERTY
-  DEPENDS tests.journal.pkg.warning_file.py
-  )
-
-add_test(NAME tests.journal.pkg.file_sanity.cleanup
-  COMMAND ${BASH_PROGRAM} -c "echo $(pwd); rm file_sanity.log"
-  WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/tests/journal.pkg
-  )
-set_property(TEST tests.journal.pkg.file_sanity.cleanup PROPERTY
-  DEPENDS tests.journal.pkg.file_sanity.py
-  )
-
-add_test(NAME tests.journal.pkg.file_example.cleanup
-  COMMAND ${BASH_PROGRAM} -c "echo $(pwd); rm file_example.log"
-  WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/tests/journal.pkg
-  )
-set_property(TEST tests.journal.pkg.file_example.cleanup PROPERTY
-  DEPENDS tests.journal.pkg.file_example.py
-  )
-
-# clean up
-add_test(NAME tests.journal.pkg.api_file_mode.cleanup
-  COMMAND ${BASH_PROGRAM} -c "echo $(pwd); rm api_file_mode.log"
-  WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/tests/journal.pkg
-  )
-set_property(TEST tests.journal.pkg.api_file_mode.cleanup PROPERTY
-  DEPENDS tests.journal.pkg.api_file_mode.py
-  )
-
-add_test(NAME tests.journal.pkg.debug_file_mode.cleanup
-  COMMAND ${BASH_PROGRAM} -c "rm debug_file_mode.log"
-  WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/tests/journal.pkg
-  )
-set_property(TEST tests.journal.pkg.debug_file_mode.cleanup PROPERTY
-  DEPENDS tests.journal.pkg.debug_file_mode.py
-  )
-
-add_test(NAME tests.journal.pkg.error_file_mode.cleanup
-  COMMAND ${BASH_PROGRAM} -c "rm error_file_mode.log"
-  WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/tests/journal.pkg
-  )
-set_property(TEST tests.journal.pkg.error_file_mode.cleanup PROPERTY
-  DEPENDS tests.journal.pkg.error_file_mode.py
-  )
-
-add_test(NAME tests.journal.pkg.firewall_file_mode.cleanup
-  COMMAND ${BASH_PROGRAM} -c "rm firewall_file_mode.log"
-  WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/tests/journal.pkg
-  )
-set_property(TEST tests.journal.pkg.firewall_file_mode.cleanup PROPERTY
-  DEPENDS tests.journal.pkg.firewall_file_mode.py
-  )
-
-add_test(NAME tests.journal.pkg.help_file_mode.cleanup
-  COMMAND ${BASH_PROGRAM} -c "rm help_file_mode.log"
-  WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/tests/journal.pkg
-  )
-set_property(TEST tests.journal.pkg.help_file_mode.cleanup PROPERTY
-  DEPENDS tests.journal.pkg.help_file_mode.py
-  )
-
-add_test(NAME tests.journal.pkg.info_file_mode.cleanup
-  COMMAND ${BASH_PROGRAM} -c "rm info_file_mode.log"
-  WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/tests/journal.pkg
-  )
-set_property(TEST tests.journal.pkg.info_file_mode.cleanup PROPERTY
-  DEPENDS tests.journal.pkg.info_file_mode.py
-  )
-
-add_test(NAME tests.journal.pkg.warning_file_mode.cleanup
-  COMMAND ${BASH_PROGRAM} -c "rm warning_file_mode.log"
-  WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/tests/journal.pkg
-  )
-set_property(TEST tests.journal.pkg.warning_file_mode.cleanup PROPERTY
-  DEPENDS tests.journal.pkg.warning_file_mode.py
-  )
+# the drivers leave their scratch products behind so they can be inspected; sweep them
+pyre_test_python_cleanup(api_file.log tests/journal.pkg/api_file.py)
+pyre_test_python_cleanup(debug_file.log tests/journal.pkg/debug_file.py)
+pyre_test_python_cleanup(error_file.log tests/journal.pkg/error_file.py)
+pyre_test_python_cleanup(firewall_file.log tests/journal.pkg/firewall_file.py)
+pyre_test_python_cleanup(help_file.log tests/journal.pkg/help_file.py)
+pyre_test_python_cleanup(info_file.log tests/journal.pkg/info_file.py)
+pyre_test_python_cleanup(warning_file.log tests/journal.pkg/warning_file.py)
+pyre_test_python_cleanup(file_sanity.log tests/journal.pkg/file_sanity.py)
+pyre_test_python_cleanup(file_example.log tests/journal.pkg/file_example.py)
+pyre_test_python_cleanup(api_file_mode.log tests/journal.pkg/api_file_mode.py)
+pyre_test_python_cleanup(debug_file_mode.log tests/journal.pkg/debug_file_mode.py)
+pyre_test_python_cleanup(error_file_mode.log tests/journal.pkg/error_file_mode.py)
+pyre_test_python_cleanup(firewall_file_mode.log tests/journal.pkg/firewall_file_mode.py)
+pyre_test_python_cleanup(help_file_mode.log tests/journal.pkg/help_file_mode.py)
+pyre_test_python_cleanup(info_file_mode.log tests/journal.pkg/info_file_mode.py)
+pyre_test_python_cleanup(warning_file_mode.log tests/journal.pkg/warning_file_mode.py)
 
 
 # end of file

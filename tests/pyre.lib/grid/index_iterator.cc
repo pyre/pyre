@@ -29,7 +29,7 @@ main(int argc, char * argv[])
     // an index whose coordinates run in step with the axis number
     constexpr index_t idx { 0, 1, 2, 3 };
     // show me
-    channel << "idx: " << idx << pyre::journal::endl(__HERE__);
+    channel << pyre::journal::at() << "idx: " << idx << pyre::journal::endl;
 
     // the count of coordinates seen so far doubles as the value each one should hold
     index_t::value_type expected = 0;

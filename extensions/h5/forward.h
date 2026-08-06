@@ -24,6 +24,8 @@ namespace pyre::h5::py {
     // structural
     void group(py::module &);
     void file(py::module &);
+    // the module-local flavors of the type-erased grid and mosaic
+    void mosaics(py::module &);
 } // namespace pyre::h5::py
 
 

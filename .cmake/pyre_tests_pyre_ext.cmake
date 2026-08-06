@@ -19,8 +19,14 @@ pyre_test_python_testcase(tests/pyre.ext/grid/sanity.py)
 pyre_test_python_testcase(tests/pyre.ext/grid/heap.py)
 pyre_test_python_testcase(tests/pyre.ext/grid/access.py)
 pyre_test_python_testcase(tests/pyre.ext/grid/map.py)
+pyre_test_python_testcase(tests/pyre.ext/grid/mosaic.py)
+pyre_test_python_testcase(tests/pyre.ext/grid/readonly.py)
 pyre_test_python_testcase(tests/pyre.ext/grid/view.py)
 pyre_test_python_testcase(tests/pyre.ext/grid/lifetime.py)
+
+# the drivers leave their scratch products behind so they can be inspected; sweep them
+pyre_test_python_cleanup(grid_map_test.dat tests/pyre.ext/grid/map.py)
+pyre_test_python_cleanup(grid_readonly_test.dat tests/pyre.ext/grid/readonly.py)
 
 # N.B. the chroma bindings under tests/pyre.ext/chroma are registered in
 # pyre_tests_chroma.cmake, alongside the rest of the chroma suite

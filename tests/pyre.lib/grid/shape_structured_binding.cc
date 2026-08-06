@@ -31,8 +31,8 @@ main(int argc, char * argv[])
     // which structured binding pulls apart into one name per axis
     auto [nx, ny, nz] = shape;
     // show me
-    channel << "shape: " << shape << pyre::journal::newline << "unpacked: " << nx << ", " << ny
-            << ", " << nz << pyre::journal::endl(__HERE__);
+    channel << pyre::journal::at() << "shape: " << shape << pyre::journal::newline
+            << "unpacked: " << nx << ", " << ny << ", " << nz << pyre::journal::endl;
 
     // each name is the extent of its axis
     assert((nx == shape[0]));

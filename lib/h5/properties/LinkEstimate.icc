@@ -1,0 +1,23 @@
+// -*- C++ -*-
+// -*- coding: utf-8 -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2026 all rights reserved
+
+// code guard
+#pragma once
+
+// my declarations
+#include "LinkEstimate.h"
+
+
+// describe what a group expects to hold, so its object header is sized for it
+inline pyre::h5::properties::LinkEstimate::LinkEstimate(unsigned int links, unsigned int nameLength) :
+    // record how many members the group expects
+    links(links),
+    // then how long their names run
+    nameLength(nameLength)
+{}
+
+
+// end of file

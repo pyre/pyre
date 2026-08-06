@@ -31,8 +31,8 @@ main(int argc, char * argv[])
     // which structured binding pulls apart into one name per axis
     auto [x, y, z] = idx;
     // show me
-    channel << "idx: " << idx << pyre::journal::newline << "unpacked: " << x << ", " << y << ", "
-            << z << pyre::journal::endl(__HERE__);
+    channel << pyre::journal::at() << "idx: " << idx << pyre::journal::newline << "unpacked: " << x
+            << ", " << y << ", " << z << pyre::journal::endl;
 
     // each name is the coordinate of its axis
     assert((x == idx[0]));

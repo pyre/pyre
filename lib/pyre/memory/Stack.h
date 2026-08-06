@@ -19,6 +19,8 @@ template <int D, class T, bool isConst>
 class pyre::memory::Stack {
     // types
 public:
+    // me
+    using self_type = Stack<D, T, isConst>;
     // my cell
     using cell_type = cell_t<T, isConst>;
     // pull the type aliases
@@ -93,11 +95,7 @@ private:
     // default metamethods
 public:
     // destructor
-#ifdef WITH_CXX20
-    constexpr ~Stack() = default;
-#else
     ~Stack() = default;
-#endif
     // constructors
     Stack(const Stack &) = default;
     Stack(Stack &&) = default;
