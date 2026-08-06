@@ -49,11 +49,11 @@ pyre::h5::py::properties::lapl(py::module & m)
     // the number of allowed link traversals
     cls.def_property(
         // the name
-        "numLinks",
+        "traversalLimit",
         // the getter
-        &LAPL::numLinks,
+        py::overload_cast<>(py::overload_cast<>(&LAPL::traversalLimit, py::const_), py::const_),
         // the setter
-        &LAPL::setNumLinks,
+        py::overload_cast<std::size_t>(&LAPL::traversalLimit),
         // the docstring
         "how many links i will follow before declaring a cycle");
 
@@ -62,9 +62,9 @@ pyre::h5::py::properties::lapl(py::module & m)
         // the name
         "externalPrefix",
         // the getter
-        &LAPL::externalPrefix,
+        py::overload_cast<>(&LAPL::externalPrefix, py::const_),
         // the setter
-        &LAPL::setExternalPrefix,
+        py::overload_cast<const string_t &>(&LAPL::externalPrefix),
         // the docstring
         "the prefix prepended to the filename an external link names");
 

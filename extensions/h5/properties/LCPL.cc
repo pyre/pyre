@@ -49,11 +49,11 @@ pyre::h5::py::properties::lcpl(py::module & m)
     // whether missing intermediate groups are created on demand
     cls.def_property(
         // the name
-        "createIntermediateGroup",
+        "intermediateGroupCreation",
         // the getter
-        &LCPL::createIntermediateGroup,
+        py::overload_cast<>(&LCPL::intermediateGroupCreation, py::const_),
         // the setter
-        &LCPL::setCreateIntermediateGroup,
+        py::overload_cast<bool>(&LCPL::intermediateGroupCreation),
         // the docstring
         "whether the groups along a path i am given are created when they are missing");
 

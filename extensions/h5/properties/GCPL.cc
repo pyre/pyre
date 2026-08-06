@@ -52,16 +52,9 @@ pyre::h5::py::properties::gcpl(py::module & m)
         // the name
         "linkPhaseChange",
         // the getter
-        &GCPL::linkPhaseChange,
-        // the setter, which unpacks the {(max compact, min dense)} pair
-        [](GCPL & self, const std::tuple<unsigned int, unsigned int> & thresholds) -> void {
-            // spread the pair
-            auto [maxCompact, minDense] = thresholds;
-            // and hand it to the property list
-            self.setLinkPhaseChange(maxCompact, minDense);
-            // all done
-            return;
-        },
+        py::overload_cast<>(&GCPL::linkPhaseChange, py::const_),
+        // the setter
+        py::overload_cast<const PhaseChange &>(&GCPL::linkPhaseChange),
         // the docstring
         "the thresholds at which link storage switches representation, as "
         "{(max compact, min dense)}");
@@ -71,9 +64,9 @@ pyre::h5::py::properties::gcpl(py::module & m)
         // the name
         "linkCreationOrder",
         // the getter
-        &GCPL::linkCreationOrder,
+        py::overload_cast<>(&GCPL::linkCreationOrder, py::const_),
         // the setter
-        &GCPL::setLinkCreationOrder,
+        py::overload_cast<CreationOrder>(&GCPL::linkCreationOrder),
         // the docstring
         "whether the order in which links were created is tracked and indexed");
 
@@ -82,16 +75,9 @@ pyre::h5::py::properties::gcpl(py::module & m)
         // the name
         "estimatedLinkInfo",
         // the getter
-        &GCPL::estimatedLinkInfo,
-        // the setter, which unpacks the {(links, name length)} pair
-        [](GCPL & self, const std::tuple<unsigned int, unsigned int> & estimate) -> void {
-            // spread the pair
-            auto [links, nameLength] = estimate;
-            // and hand it to the property list
-            self.setEstimatedLinkInfo(links, nameLength);
-            // all done
-            return;
-        },
+        py::overload_cast<>(&GCPL::estimatedLinkInfo, py::const_),
+        // the setter
+        py::overload_cast<const LinkEstimate &>(&GCPL::estimatedLinkInfo),
         // the docstring
         "the expected number of links and their average name length, as "
         "{(links, name length)}");

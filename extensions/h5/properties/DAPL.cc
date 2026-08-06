@@ -51,18 +51,11 @@ pyre::h5::py::properties::dapl(py::module & m)
         // the name
         "chunkCache",
         // the getter
-        &DAPL::chunkCache,
-        // the setter, which unpacks the {(slots, bytes, preemption policy)} triplet
-        [](DAPL & self, const std::tuple<std::size_t, std::size_t, double> & cache) -> void {
-            // spread the triplet
-            auto [slots, bytes, w0] = cache;
-            // and hand it to the property list
-            self.setChunkCache(slots, bytes, w0);
-            // all done
-            return;
-        },
+        py::overload_cast<>(&DAPL::chunkCache, py::const_),
+        // the setter
+        py::overload_cast<const ChunkCache &>(&DAPL::chunkCache),
         // the docstring
-        "my chunk cache, as {(slots, bytes, preemption policy)}");
+        "the cache my datasets are read and written through");
 
 
     // all done

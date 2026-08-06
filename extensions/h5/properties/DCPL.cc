@@ -51,9 +51,9 @@ pyre::h5::py::properties::dcpl(py::module & m)
         // the name
         "allocTime",
         // the getter
-        &DCPL::allocTime,
+        py::overload_cast<>(&DCPL::allocTime, py::const_),
         // the setter
-        &DCPL::setAllocTime,
+        py::overload_cast<H5D_alloc_time_t>(&DCPL::allocTime),
         // the docstring
         "when storage is allocated for the dataset");
 
@@ -62,9 +62,9 @@ pyre::h5::py::properties::dcpl(py::module & m)
         // the name
         "chunk",
         // the getter
-        &DCPL::chunk,
+        py::overload_cast<>(&DCPL::chunk, py::const_),
         // the setter
-        &DCPL::setChunk,
+        py::overload_cast<const shape_t &>(&DCPL::chunk),
         // the docstring
         "the shape of my chunks; empty when my layout is not chunked");
 
@@ -79,7 +79,7 @@ pyre::h5::py::properties::dcpl(py::module & m)
                 // convert
                 auto v = value.cast<std::int64_t>();
                 // and deposit; hdf5 converts to the dataset's on-disk type at creation
-                self.setFillValue(pyre::h5::datatype<std::int64_t>(), &v);
+                self.fillValue(pyre::h5::datatype<std::int64_t>(), &v);
                 // all done
                 return;
             }
@@ -88,14 +88,14 @@ pyre::h5::py::properties::dcpl(py::module & m)
                 // convert
                 auto v = value.cast<double>();
                 // and deposit
-                self.setFillValue(pyre::h5::datatype<double>(), &v);
+                self.fillValue(pyre::h5::datatype<double>(), &v);
                 // all done
                 return;
             }
             // anything else must be a complex number; the cast raises if it isn't
             auto v = value.cast<std::complex<double>>();
             // deposit
-            self.setFillValue(pyre::h5::datatype<std::complex<double>>(), &v);
+            self.fillValue(pyre::h5::datatype<std::complex<double>>(), &v);
             // all done
             return;
         },
@@ -115,7 +115,7 @@ pyre::h5::py::properties::dcpl(py::module & m)
                 // make room
                 std::int64_t v = 0;
                 // read it
-                self.fillValue(pyre::h5::datatype<std::int64_t>(), &v);
+                self.readFillValue(pyre::h5::datatype<std::int64_t>(), &v);
                 // and lift it into python
                 return py::cast(v);
             }
@@ -124,7 +124,7 @@ pyre::h5::py::properties::dcpl(py::module & m)
                 // make room
                 double v = 0;
                 // read it
-                self.fillValue(pyre::h5::datatype<double>(), &v);
+                self.readFillValue(pyre::h5::datatype<double>(), &v);
                 // and lift it into python
                 return py::cast(v);
             }
@@ -133,7 +133,7 @@ pyre::h5::py::properties::dcpl(py::module & m)
                 // make room
                 std::complex<double> v = 0;
                 // read it
-                self.fillValue(pyre::h5::datatype<std::complex<double>>(), &v);
+                self.readFillValue(pyre::h5::datatype<std::complex<double>>(), &v);
                 // and lift it into python
                 return py::cast(v);
             }
@@ -150,9 +150,9 @@ pyre::h5::py::properties::dcpl(py::module & m)
         // the name
         "fillTime",
         // the getter
-        &DCPL::fillTime,
+        py::overload_cast<>(&DCPL::fillTime, py::const_),
         // the setter
-        &DCPL::setFillTime,
+        py::overload_cast<H5D_fill_time_t>(&DCPL::fillTime),
         // the docstring
         "when the fill value is written to storage");
     // set the fill value writing time
@@ -163,9 +163,9 @@ pyre::h5::py::properties::dcpl(py::module & m)
         // the name
         "layout",
         // the getter
-        &DCPL::layout,
+        py::overload_cast<>(&DCPL::layout, py::const_),
         // the setter
-        &DCPL::setLayout,
+        py::overload_cast<H5D_layout_t>(&DCPL::layout),
         // the docstring
         "how my cells are laid out in storage");
 
@@ -184,9 +184,9 @@ pyre::h5::py::properties::dcpl(py::module & m)
     // deflate
     cls.def(
         // the name
-        "setDeflate",
+        "addDeflate",
         // the implementation
-        &DCPL::setDeflate,
+        &DCPL::addDeflate,
         // the signature
         "level"_a,
         // the docstring
@@ -194,9 +194,9 @@ pyre::h5::py::properties::dcpl(py::module & m)
     // szip
     cls.def(
         // the name
-        "setSzip",
+        "addSzip",
         // the implementation
-        &DCPL::setSzip,
+        &DCPL::addSzip,
         // the signature
         "options"_a, "pixelsPerBlock"_a,
         // the docstring
@@ -204,33 +204,33 @@ pyre::h5::py::properties::dcpl(py::module & m)
     // nbit
     cls.def(
         // the name
-        "setNbit",
+        "addNbit",
         // the implementation
-        &DCPL::setNbit,
+        &DCPL::addNbit,
         // the docstring
         "use nbit compression");
     // shuffle
     cls.def(
         // the name
-        "setShuffle",
+        "addShuffle",
         // the implementation
-        &DCPL::setShuffle,
+        &DCPL::addShuffle,
         // the docstring
         "use the shuffle filter to improve compression");
     // fletcher32
     cls.def(
         // the name
-        "setFletcher32",
+        "addFletcher32",
         // the implementation
-        &DCPL::setFletcher32,
+        &DCPL::addFletcher32,
         // the docstring
         "use the fletcher32 checksum filter for error detection");
     // scaleoffset
     cls.def(
         // the name
-        "setScaleoffset",
+        "addScaleoffset",
         // the implementation
-        &DCPL::setScaleoffset,
+        &DCPL::addScaleoffset,
         // the signature
         "scaleType"_a, "scaleFactor"_a,
         // the docstring

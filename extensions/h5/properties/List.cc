@@ -44,7 +44,7 @@ pyre::h5::py::properties::pl(py::module & m)
         // the name
         "__len__",
         // the implementation
-        &PropList::numProps,
+        &PropList::propertyCount,
         // the docstring
         "the number of properties in this list");
 
@@ -62,7 +62,7 @@ pyre::h5::py::properties::pl(py::module & m)
         // the name
         "__getitem__",
         // the implementation
-        &PropList::property,
+        py::overload_cast<const string_t &>(&PropList::property, py::const_),
         // the signature
         "name"_a,
         // the docstring
@@ -72,7 +72,7 @@ pyre::h5::py::properties::pl(py::module & m)
         // the name
         "__setitem__",
         // the implementation
-        &PropList::setProperty,
+        py::overload_cast<const string_t &, const string_t &>(&PropList::property),
         // the signature
         "name"_a, "value"_a,
         // the docstring

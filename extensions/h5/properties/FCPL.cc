@@ -51,9 +51,9 @@ pyre::h5::py::properties::fcpl(py::module & m)
         // the name
         "pageSize",
         // the getter
-        &FCPL::pageSize,
+        py::overload_cast<>(&FCPL::pageSize, py::const_),
         // the setter
-        &FCPL::setPageSize,
+        py::overload_cast<hsize_t>(&FCPL::pageSize),
         // the docstring
         "the size of the pages my file space is carved into");
 
@@ -62,17 +62,9 @@ pyre::h5::py::properties::fcpl(py::module & m)
         // the name
         "filespaceStrategy",
         // the getter
-        &FCPL::filespaceStrategy,
-        // the setter, which unpacks the {(strategy, persist, threshold)} triplet
-        [](FCPL & self,
-           const std::tuple<H5F_fspace_strategy_t, bool, hsize_t> & strategy) -> void {
-            // spread the triplet
-            auto [approach, persist, threshold] = strategy;
-            // and hand it to the property list
-            self.setFilespaceStrategy(approach, persist, threshold);
-            // all done
-            return;
-        },
+        py::overload_cast<>(&FCPL::filespaceStrategy, py::const_),
+        // the setter
+        py::overload_cast<const FilespaceStrategy &>(&FCPL::filespaceStrategy),
         // the docstring
         "how free space is managed, as {(strategy, persist, threshold)}");
 
@@ -81,9 +73,9 @@ pyre::h5::py::properties::fcpl(py::module & m)
         // the name
         "userblock",
         // the getter
-        &FCPL::userblock,
+        py::overload_cast<>(&FCPL::userblock, py::const_),
         // the setter
-        &FCPL::setUserblock,
+        py::overload_cast<hsize_t>(&FCPL::userblock),
         // the docstring
         "the size of the byte range at the front of my file that hdf5 leaves alone");
 
@@ -92,16 +84,9 @@ pyre::h5::py::properties::fcpl(py::module & m)
         // the name
         "sizes",
         // the getter
-        &FCPL::sizes,
-        // the setter, which unpacks the {(offset bytes, length bytes)} pair
-        [](FCPL & self, const std::tuple<std::size_t, std::size_t> & sizes) -> void {
-            // spread the pair
-            auto [offsets, lengths] = sizes;
-            // and hand it to the property list
-            self.setSizes(offsets, lengths);
-            // all done
-            return;
-        },
+        py::overload_cast<>(&FCPL::sizes, py::const_),
+        // the setter
+        py::overload_cast<const Sizes &>(&FCPL::sizes),
         // the docstring
         "the widths used to record positions and lengths, as {(offset, length)} bytes");
 

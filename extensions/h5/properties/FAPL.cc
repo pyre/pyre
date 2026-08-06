@@ -49,11 +49,11 @@ pyre::h5::py::properties::fapl(py::module & m)
     // the metadata block size
     cls.def_property(
         // the name
-        "metaBlockSize",
+        "metadataBlockSize",
         // the getter
-        &FAPL::metaBlockSize,
+        py::overload_cast<>(&FAPL::metadataBlockSize, py::const_),
         // the setter
-        &FAPL::setMetaBlockSize,
+        py::overload_cast<hsize_t>(&FAPL::metadataBlockSize),
         // the docstring
         "the size of the blocks my metadata is allocated in");
 
@@ -62,17 +62,9 @@ pyre::h5::py::properties::fapl(py::module & m)
         // the name
         "pageBufferSize",
         // the getter
-        &FAPL::pageBufferSize,
-        // the setter, which unpacks the {(bytes, metadata percent, raw percent)} triplet
-        [](FAPL & self,
-           const std::tuple<std::size_t, unsigned int, unsigned int> & buffer) -> void {
-            // spread the triplet
-            auto [bytes, meta, raw] = buffer;
-            // and hand it to the property list
-            self.setPageBufferSize(bytes, meta, raw);
-            // all done
-            return;
-        },
+        py::overload_cast<>(&FAPL::pageBufferSize, py::const_),
+        // the setter
+        py::overload_cast<const PageBuffer &>(&FAPL::pageBufferSize),
         // the docstring
         "my page buffer, as {(bytes, metadata percent, raw data percent)}");
 
@@ -81,16 +73,9 @@ pyre::h5::py::properties::fapl(py::module & m)
         // the name
         "alignment",
         // the getter
-        &FAPL::alignment,
-        // the setter, which unpacks the {(threshold, alignment)} pair
-        [](FAPL & self, const std::tuple<hsize_t, hsize_t> & alignment) -> void {
-            // spread the pair
-            auto [threshold, boundary] = alignment;
-            // and hand it to the property list
-            self.setAlignment(threshold, boundary);
-            // all done
-            return;
-        },
+        py::overload_cast<>(&FAPL::alignment, py::const_),
+        // the setter
+        py::overload_cast<const Alignment &>(&FAPL::alignment),
         // the docstring
         "where objects start in my file, as {(threshold, alignment)} bytes");
 
@@ -99,9 +84,9 @@ pyre::h5::py::properties::fapl(py::module & m)
         // the name
         "sieveBufferSize",
         // the getter
-        &FAPL::sieveBufferSize,
+        py::overload_cast<>(&FAPL::sieveBufferSize, py::const_),
         // the setter
-        &FAPL::setSieveBufferSize,
+        py::overload_cast<std::size_t>(&FAPL::sieveBufferSize),
         // the docstring
         "the size of the buffer that gathers small writes to contiguous datasets");
 
@@ -110,9 +95,9 @@ pyre::h5::py::properties::fapl(py::module & m)
         // the name
         "closeDegree",
         // the getter
-        &FAPL::closeDegree,
+        py::overload_cast<>(&FAPL::closeDegree, py::const_),
         // the setter
-        &FAPL::setCloseDegree,
+        py::overload_cast<H5F_close_degree_t>(&FAPL::closeDegree),
         // the docstring
         "what becomes of my file when its handle closes with objects still open");
 
@@ -121,18 +106,9 @@ pyre::h5::py::properties::fapl(py::module & m)
         // the name
         "cache",
         // the getter
-        &FAPL::cache,
-        // the setter, which unpacks the
-        // {(metadata elements, chunk slots, chunk bytes, preemption)} quadruple
-        [](FAPL & self,
-           const std::tuple<int, std::size_t, std::size_t, double> & cache) -> void {
-            // spread the quadruple
-            auto [elements, slots, bytes, w0] = cache;
-            // and hand it to the property list
-            self.setCache(elements, slots, bytes, w0);
-            // all done
-            return;
-        },
+        py::overload_cast<>(&FAPL::cache, py::const_),
+        // the setter
+        py::overload_cast<const Cache &>(&FAPL::cache),
         // the docstring
         "my default caches, as {(metadata elements, chunk slots, chunk bytes, preemption)}");
 
@@ -141,16 +117,9 @@ pyre::h5::py::properties::fapl(py::module & m)
         // the name
         "libverBounds",
         // the getter
-        &FAPL::libverBounds,
-        // the setter, which unpacks the {(low, high)} pair
-        [](FAPL & self, const std::tuple<H5F_libver_t, H5F_libver_t> & bounds) -> void {
-            // spread the pair
-            auto [low, high] = bounds;
-            // and hand it to the property list
-            self.setLibverBounds(low, high);
-            // all done
-            return;
-        },
+        py::overload_cast<>(&FAPL::libverBounds, py::const_),
+        // the setter
+        py::overload_cast<const VersionBounds &>(&FAPL::libverBounds),
         // the docstring
         "the file format versions i may use, as {(low, high)}; asking for a recent one "
         "buys newer features and narrows who can read the result");
