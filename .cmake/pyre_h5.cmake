@@ -115,6 +115,16 @@ function(pyre_h5Module)
       extensions/h5/mosaics.cc
       # property lists
       extensions/h5/properties/__init__.cc
+      extensions/h5/properties/ChunkCache.cc
+      extensions/h5/properties/Alignment.cc
+      extensions/h5/properties/Cache.cc
+      extensions/h5/properties/PageBuffer.cc
+      extensions/h5/properties/VersionBounds.cc
+      extensions/h5/properties/FilespaceStrategy.cc
+      extensions/h5/properties/Sizes.cc
+      extensions/h5/properties/PhaseChange.cc
+      extensions/h5/properties/LinkEstimate.cc
+      extensions/h5/properties/Filter.cc
       extensions/h5/properties/List.cc
       extensions/h5/properties/OCPL.cc
       extensions/h5/properties/STRCPL.cc
