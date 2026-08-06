@@ -68,82 +68,53 @@ pyre::h5::py::properties::dcpl(py::module & m)
         // the docstring
         "the shape of my chunks; empty when my layout is not chunked");
 
-    // set the fill value
-    cls.def(
+    // whether a fill value was ever declared, and by whom
+    cls.def_property_readonly(
         // the name
-        "setFillValue",
+        "fillValueStatus",
         // the implementation
+        &DCPL::fillValueStatus,
+        // the docstring
+        "whether a fill value is defined, and whether it is mine or the library's default");
+
+    // the value that stands in for cells nobody writes; a property, so the value carries
+    // its own type instead of the caller naming one. there is no getter to pair with it:
+    // hdf5 keeps no record of the type a fill value was declared in, so only the dataset
+    // can be asked what its fill value is
+    cls.def_property(
+        // the name
+        "fillValue",
+        // there is nothing here to read
+        nullptr,
+        // the setter, which reads the type off the value it is handed
         [](DCPL & self, const py::object & value) -> void {
             // integers travel as 64-bit
             if (py::isinstance<py::int_>(value)) {
-                // convert
-                auto v = value.cast<std::int64_t>();
-                // and deposit; hdf5 converts to the dataset's on-disk type at creation
-                self.fillValue(pyre::h5::datatype<std::int64_t>(), &v);
+                // deposit it
+                self.fillValue(value.cast<std::int64_t>());
                 // all done
                 return;
             }
-            // floats as doubles
+            // reals as doubles
             if (py::isinstance<py::float_>(value)) {
-                // convert
-                auto v = value.cast<double>();
-                // and deposit
-                self.fillValue(pyre::h5::datatype<double>(), &v);
+                // deposit it
+                self.fillValue(value.cast<double>());
                 // all done
                 return;
             }
-            // anything else must be a complex number; the cast raises if it isn't
-            auto v = value.cast<std::complex<double>>();
-            // deposit
-            self.fillValue(pyre::h5::datatype<std::complex<double>>(), &v);
-            // all done
-            return;
-        },
-        // the signature
-        "value"_a,
-        // the docstring
-        "set the fill value; hdf5 converts it to the dataset's on-disk type at creation");
-
-    // get the fill value
-    cls.def(
-        // the name
-        "fillValue",
-        // the implementation
-        [](const DCPL & self, const string_t & cell) -> py::object {
-            // as a 64-bit integer
-            if (cell == "int64") {
-                // make room
-                std::int64_t v = 0;
-                // read it
-                self.readFillValue(pyre::h5::datatype<std::int64_t>(), &v);
-                // and lift it into python
-                return py::cast(v);
-            }
-            // as a double
-            if (cell == "float64") {
-                // make room
-                double v = 0;
-                // read it
-                self.readFillValue(pyre::h5::datatype<double>(), &v);
-                // and lift it into python
-                return py::cast(v);
-            }
-            // as a complex double
-            if (cell == "complex128") {
-                // make room
-                std::complex<double> v = 0;
-                // read it
-                self.readFillValue(pyre::h5::datatype<std::complex<double>>(), &v);
-                // and lift it into python
-                return py::cast(v);
+            // and complex values as pairs of doubles
+            if (PyComplex_Check(value.ptr())) {
+                // deposit it
+                self.fillValue(value.cast<std::complex<double>>());
+                // all done
+                return;
             }
             // anything else is a caller mistake
-            throw py::value_error("unsupported fill value cell type '" + cell + "'");
+            throw py::type_error("unsupported fill value type");
         },
-        // the signature
-        "cell"_a = "float64",
         // the docstring
-        "get the fill value, interpreted as the given {cell} type");
+        "the value that stands in for cells nobody writes; hdf5 converts it to the "
+        "dataset's own type when the dataset is created");
 
     // get the fill value writing time
     cls.def_property(

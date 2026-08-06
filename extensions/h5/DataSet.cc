@@ -126,6 +126,43 @@ pyre::h5::py::dataset(py::module & m)
         "get my creation property list");
 
     // the on-disk offset
+    // the value that stands in for cells nobody wrote
+    cls.def_property_readonly(
+        // the name
+        "fillValue",
+        // the implementation, which reads my own type rather than being told one, so the
+        // question cannot be asked the wrong way
+        [](const DataSet & self) -> py::object {
+            // find out what i hold
+            auto type = self.cell();
+            // integers come back as integers
+            if (type == H5T_INTEGER) {
+                // ask for it in those terms
+                auto value = self.fillValue<std::int64_t>();
+                // and lift it into python, or nothing if i was made without one
+                return value ? py::cast(*value) : py::none();
+            }
+            // reals as reals
+            if (type == H5T_FLOAT) {
+                // ask for it in those terms
+                auto value = self.fillValue<double>();
+                // and lift it
+                return value ? py::cast(*value) : py::none();
+            }
+            // a compound of two reals is how a complex number reaches the file
+            if (type == H5T_COMPOUND) {
+                // ask for it in those terms
+                auto value = self.fillValue<std::complex<double>>();
+                // and lift it
+                return value ? py::cast(*value) : py::none();
+            }
+            // anything else has no python spelling yet
+            return py::none();
+        },
+        // the docstring
+        "the value that stands in for my cells nobody wrote, or {None} when i was made "
+        "without one");
+
     cls.def_property_readonly(
         // the name
         "offset",
