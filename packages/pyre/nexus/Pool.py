@@ -109,6 +109,17 @@ class Pool(Peer, family="pyre.nexus.teams.pool", implements=Team):
         return
 
     # implementation details
+    def crews(self):
+        """
+        Generate the current team members, whatever their state
+        """
+        # the ones still checking in
+        yield from self.registered
+        # and the ones that are deployable
+        yield from self.active
+        # all done
+        return
+
     def recruit(self, **kwds):
         """
         Assemble the team
