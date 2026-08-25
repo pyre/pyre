@@ -16,7 +16,7 @@ def test():
     import pyre.ipc
 
     # make a pair of connected channels
-    parent, child = pyre.ipc.socketpair()
+    parent, child = pyre.ipc.newSocket().open()
     # the parent end must not survive an {exec}
     assert parent.get_inheritable() is False
     # while the child end must, so it can be handed to a freshly spawned process

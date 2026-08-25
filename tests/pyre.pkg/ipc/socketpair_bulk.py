@@ -27,7 +27,7 @@ def test():
     # make a pickler
     m = pyre.ipc.newPickler()
     # and a pair of connected channels
-    parent, child = pyre.ipc.socketpair()
+    parent, child = pyre.ipc.newSocket().open()
 
     # fork
     pid = os.fork()

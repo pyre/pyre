@@ -7,7 +7,7 @@
 
 
 """
-Sanity check: verify that the socketpair factory is accessible
+Sanity check: verify that the socket transport builds channel pairs
 """
 
 
@@ -16,7 +16,7 @@ def test():
     import pyre.ipc
 
     # make a pair of connected channels
-    ends = pyre.ipc.socketpair()
+    ends = pyre.ipc.newSocket().open()
     # the pair unpacks in a fixed order
     parent, child = ends
     # that matches its named endpoints
