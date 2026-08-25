@@ -38,8 +38,8 @@ class Pipe(Channel):
         # dress up the end points as {Pipe} instances
         parent = cls(infd=from_child, outfd=to_child, **kwds)
         child = cls(infd=from_parent, outfd=to_parent, **kwds)
-        # and return them
-        return parent, child
+        # and return them as a labeled pair, so the order is part of the contract
+        return cls.ends(parent=parent, child=child)
 
     def close(self):
         """

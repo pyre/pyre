@@ -41,7 +41,8 @@ class Fork(pyre.component, family="pyre.nexus.recruiters.fork", implements=Recru
         """
         Create a new {team} member using the {fork} system call
         """
-        # team members communicate with the manager using pipes
+        # team members communicate with the manager using pipes; the {child} end is destined
+        # for the worker, the {parent} end stays with the team
         parent, child = pyre.ipc.pipe()
         # clone the current process
         pid = os.fork()
@@ -52,7 +53,7 @@ class Fork(pyre.component, family="pyre.nexus.recruiters.fork", implements=Recru
         # in the worker process
         if pid == 0:
             # make a team member
-            crew = team.crew(pid=os.getpid(), channel=parent, **kwds)
+            crew = team.crew(pid=os.getpid(), channel=child, **kwds)
             # ask it to register with the team
             crew.register()
             # spin up and carry out tasks until there is nothing more to do
@@ -61,7 +62,7 @@ class Fork(pyre.component, family="pyre.nexus.recruiters.fork", implements=Recru
             raise SystemExit(status)
 
         # make a member proxy for the team manager and return it
-        crew = team.crew(pid=pid, channel=child, timer=team.timer)
+        crew = team.crew(pid=pid, channel=parent, timer=team.timer)
         # adjust its support for asynchrony
         crew.dispatcher = team.dispatcher
         # and its message serializer
