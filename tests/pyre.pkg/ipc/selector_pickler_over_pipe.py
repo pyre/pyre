@@ -34,10 +34,10 @@ def test():
     # in the parent process
     if pid > 0:
         # invoke the parent behavior
-        return onParent(child_pid=pid, marshaler=m, channel=child)
+        return onParent(child_pid=pid, marshaler=m, channel=parent)
 
     # in the child process
-    return onChild(marshaler=m, channel=parent)
+    return onChild(marshaler=m, channel=child)
 
 
 def onParent(child_pid, marshaler, channel):

@@ -27,23 +27,23 @@ def test():
     assert list(s.channels()) == []
 
     # make a pipe pair, whose endpoints are raw descriptors
-    pin, pout = pyre.ipc.pipe()
+    pipe = pyre.ipc.pipe()
     # and a socket pair, whose endpoints are socket objects
-    sin, sout = pyre.ipc.socketpair()
+    sock = pyre.ipc.socketpair()
 
-    # register read interest on one end of the pipe
-    s.whenReadReady(channel=pin, call=idle)
+    # register read interest on the parent end of the pipe
+    s.whenReadReady(channel=pipe.parent, call=idle)
     # and write interest on the same channel, to exercise deduplication
-    s.whenWriteReady(channel=pin, call=idle)
-    # register read interest on one end of the socket pair
-    s.whenReadReady(channel=sout, call=idle)
+    s.whenWriteReady(channel=pipe.parent, call=idle)
+    # register read interest on the child end of the socket pair
+    s.whenReadReady(channel=sock.child, call=idle)
 
     # collect the watch list
     watched = list(s.channels())
     # each channel shows up exactly once, regardless of how many interests it holds
     assert len(watched) == 2
     # and the list contains precisely the registered channels
-    assert set(watched) == {pin, sout}
+    assert set(watched) == {pipe.parent, sock.child}
 
     # all done
     return s
