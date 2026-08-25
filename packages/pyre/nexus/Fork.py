@@ -21,6 +21,10 @@ class Fork(pyre.component, family="pyre.nexus.recruiters.fork", implements=Recru
     Create worker processes by cloning the current one
     """
 
+    # user configurable state
+    channels = pyre.ipc.transport()
+    channels.doc = "the ipc mechanism that connects the team to its crew members"
+
     # protocol obligations
     @pyre.provides
     def recruit(self, team, **kwds):
@@ -41,9 +45,9 @@ class Fork(pyre.component, family="pyre.nexus.recruiters.fork", implements=Recru
         """
         Create a new {team} member using the {fork} system call
         """
-        # team members communicate with the manager using pipes; the {child} end is destined
-        # for the worker, the {parent} end stays with the team
-        parent, child = pyre.ipc.pipe()
+        # team members communicate with the manager over my transport; the {child} end is
+        # destined for the worker, the {parent} end stays with the team
+        parent, child = self.channels.open()
         # clone the current process
         pid = os.fork()
 
