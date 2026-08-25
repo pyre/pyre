@@ -30,6 +30,26 @@ def pipe(descriptors=None, **kwds):
     return Pipe.open(**kwds)
 
 
+def socketpair(descriptor=None, **kwds):
+    """
+    If {descriptor} is not {None}, it is expected to be the already open file descriptor of
+    one end of a connected pair, e.g. one inherited across an {exec} or received from a peer;
+    just wrap a channel around it. Otherwise, build a connected pair of unix domain sockets
+    suitable for bidirectional communication between two processes on the same host. Unlike
+    pipes, these channels can also carry open file descriptors between the two processes
+    """
+    # access the channel
+    from .SocketPair import SocketPair
+
+    # if we were handed an already open descriptor
+    if descriptor is not None:
+        # just wrap a channel around it
+        return SocketPair(SocketPair.family, SocketPair.type, 0, fileno=descriptor)
+
+    # build the pair and return it
+    return SocketPair.open(**kwds)
+
+
 def tcp(address):
     """
     Builds a channel over a TCP connection to a server
