@@ -6,6 +6,7 @@
 
 
 # externals
+import collections
 import os
 import fcntl
 
@@ -17,6 +18,12 @@ class Channel:
     of messages. See {Pipe} and {Socket} for concrete examples of encapsulation of the
     operating system services.
     """
+
+    # types
+    # the pair of connected endpoints handed out by channel factories; the {parent} end stays
+    # with the process that built the pair and does not survive an {exec}, while the {child}
+    # end is inheritable, destined for the other party of the conversation
+    ends = collections.namedtuple("ends", ["parent", "child"])
 
     # interface
     # channel life cycle management

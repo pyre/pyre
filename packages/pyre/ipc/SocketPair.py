@@ -43,8 +43,8 @@ class SocketPair(Socket):
         # spawners, while the child side is inheritable so it can be handed to a new process
         parent.set_inheritable(False)
         child.set_inheritable(True)
-        # hand off the pair
-        return parent, child
+        # hand off the pair as labeled endpoints, so the order is part of the contract
+        return cls.ends(parent=parent, child=child)
 
     # interface
     def sendDescriptors(self, descriptors, payload=b"\x00"):
