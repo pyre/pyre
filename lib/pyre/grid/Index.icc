@@ -10,6 +10,8 @@
 
 // support
 #include "Index.h"
+// the constructor from a shape reads its extents
+#include "Shape.h"
 
 
 // default constructor: park the index at the origin
@@ -34,6 +36,17 @@ constexpr pyre::grid::Index<Rank>::Index(Ts... xs) noexcept :
     // bring each argument into my coordinate type and lay them out in axis order
     _coords { static_cast<value_type>(xs)... }
 {}
+
+// from a shape: read the extents as coordinates
+template <std::size_t Rank>
+constexpr pyre::grid::Index<Rank>::Index(const Shape<Rank> & shape) noexcept
+{
+    // go through the axes
+    for (size_type axis = 0; axis < Rank; ++axis) {
+        // and transfer the extent along each one
+        _coords[axis] = shape[axis];
+    }
+}
 
 // initializer_list (debug length check)
 template <std::size_t Rank>

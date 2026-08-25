@@ -54,6 +54,9 @@ public:
     explicit constexpr Index(Ts...) noexcept;
     // construct from an initializer list
     constexpr Index(std::initializer_list<value_type>) noexcept;
+    // construct from a shape, reading its extents as coordinates; this is what lets shape
+    // arithmetic land on an index, e.g. when centering a grid by anchoring it at -shape/2
+    explicit constexpr Index(const Shape<Rank> &) noexcept;
 
     // default metamethods
 public:
