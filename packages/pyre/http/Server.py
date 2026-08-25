@@ -6,6 +6,7 @@
 
 
 # externals
+import functools
 import journal
 import pyre
 
@@ -22,6 +23,7 @@ class Server(pyre.nexus.server, family="pyre.nexus.servers.http"):
     # types
     from .Request import Request as request
     from .Response import Response as response
+    from .Deferred import Deferred as deferred
     from .EventStream import EventStream as eventStream
     from .Hub import Hub
 
@@ -176,8 +178,8 @@ class Server(pyre.nexus.server, family="pyre.nexus.servers.http"):
             # send an error report to the client
             return self.respond(channel=channel, request=request, response=error)
 
-        # if the user wants to see the headers
-        if headerReport.active:
+        # if the user wants to see the headers; a deferred response has none to show yet
+        if headerReport.active and not isinstance(response, self.deferred):
             # sign on
             headerReport.line(f"sending a {response.code} response with headers")
             # go through the headers
@@ -199,6 +201,13 @@ class Server(pyre.nexus.server, family="pyre.nexus.servers.http"):
         return self.application.pyre_respond(server=self, request=request)
 
     def respond(self, channel, request, response):
+        # a deferred response parks the connection until its document shows up
+        if isinstance(response, self.deferred):
+            # install the delivery hook
+            response.deliver = functools.partial(self.complete, channel=channel, request=request)
+            # and keep watching the channel so we can tell when the peer hangs up
+            return True
+
         # if this is a streaming response
         if response.streaming:
             # hand the channel to the hub instead of rendering and writing it once
@@ -242,6 +251,13 @@ class Server(pyre.nexus.server, family="pyre.nexus.servers.http"):
 
         # otherwise, let the response document decide whether we should keep the channel alive
         return response.alive
+
+    def complete(self, channel, request, response):
+        """
+        The document of a parked connection is ready; send it to the peer
+        """
+        # the document is no longer deferred, so it follows the standard path
+        return self.respond(channel=channel, request=request, response=response)
 
     def stream(self, channel, request, response):
         """
