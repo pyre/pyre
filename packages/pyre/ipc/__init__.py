@@ -9,47 +9,6 @@ from .. import foundry
 
 
 # channel access
-def pipe(descriptors=None, **kwds):
-    """
-    If {descriptors} is not {None}, it is expected to be a pair ({infd}, {outfd}) of already
-    open file descriptors; just wrap a channel around them. Otherwise, build a pair of pipes
-    suitable for bidirectional communication between two processes on the same host
-
-    """
-    # access the channel
-    from .Pipe import Pipe
-
-    # if we were handed already open descriptors
-    if descriptors:
-        # unpack
-        infd, outfd = descriptors
-        # and go straight to the constructor
-        return Pipe(infd=infd, outfd=outfd, **kwds)
-
-    # build the pair and return it
-    return Pipe.open(**kwds)
-
-
-def socketpair(descriptor=None, **kwds):
-    """
-    If {descriptor} is not {None}, it is expected to be the already open file descriptor of
-    one end of a connected pair, e.g. one inherited across an {exec} or received from a peer;
-    just wrap a channel around it. Otherwise, build a connected pair of unix domain sockets
-    suitable for bidirectional communication between two processes on the same host. Unlike
-    pipes, these channels can also carry open file descriptors between the two processes
-    """
-    # access the channel
-    from .SocketPair import SocketPair
-
-    # if we were handed an already open descriptor
-    if descriptor is not None:
-        # just wrap a channel around it
-        return SocketPair(SocketPair.family, SocketPair.type, 0, fileno=descriptor)
-
-    # build the pair and return it
-    return SocketPair.open(**kwds)
-
-
 def tcp(address):
     """
     Builds a channel over a TCP connection to a server
@@ -90,9 +49,35 @@ def inet(spec=""):
 # my protocols
 from .Dispatcher import Dispatcher as dispatcher
 from .Marshaler import Marshaler as marshaler
+from .Transport import Transport as transport
 
 
 # my component foundries
+@foundry(implements=transport)
+def pipe():
+    """
+    The transport that connects processes with pipes
+    """
+    # grab the component class record
+    from .Pipes import Pipes as pipes
+
+    # and return it
+    return pipes
+
+
+@foundry(implements=transport)
+def socket():
+    """
+    The transport that connects processes with unix domain socket pairs, which can also carry
+    open file descriptors between the two processes
+    """
+    # grab the component class record
+    from .Sockets import Sockets as sockets
+
+    # and return it
+    return sockets
+
+
 @foundry(implements=marshaler)
 def pickler():
     """
@@ -143,6 +128,28 @@ def psl():
 
 
 # my component factories; use to build an actual instance
+def newPipe(**kwds):
+    """
+    The transport that connects processes with pipes
+    """
+    # grab the component class record
+    from .Pipes import Pipes as pipes
+
+    # and instantiate it
+    return pipes(**kwds)
+
+
+def newSocket(**kwds):
+    """
+    The transport that connects processes with unix domain socket pairs
+    """
+    # grab the component class record
+    from .Sockets import Sockets as sockets
+
+    # and instantiate it
+    return sockets(**kwds)
+
+
 def newPickler(**kwds):
     """
     A marshaler that uses native python services to serialize objects
