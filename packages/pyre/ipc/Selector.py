@@ -62,6 +62,32 @@ class Selector(Scheduler, family="pyre.ipc.dispatchers.selector", implements=dis
         return
 
     @pyre.export
+    def channels(self):
+        """
+        Generate the set of channels currently being watched, each exactly once
+        """
+        # keep track of what has been reported
+        seen = set()
+        # go through my event tables
+        for index in (self._read, self._write, self._exception):
+            # and the pile of events registered against each endpoint
+            for events in index.values():
+                # go through the events
+                for event in events:
+                    # get the channel
+                    channel = event.channel
+                    # if it has been reported already
+                    if channel in seen:
+                        # skip it
+                        continue
+                    # otherwise, mark it
+                    seen.add(channel)
+                    # and report it
+                    yield channel
+        # all done
+        return
+
+    @pyre.export
     def stop(self):
         """
         Request the selector to stop watching for further events

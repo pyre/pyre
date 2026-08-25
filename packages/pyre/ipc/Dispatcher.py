@@ -69,5 +69,12 @@ class Dispatcher(pyre.protocol, family="pyre.ipc.dispatchers"):
         to {channel}
         """
 
+    # introspection
+    @pyre.provides
+    def channels(self):
+        """
+        Generate the set of channels currently being watched, each exactly once
+        """
+
 
 # end of file

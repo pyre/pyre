@@ -104,6 +104,32 @@ class SelectorPSL(Scheduler, family="pyre.ipc.dispatchers.psl", implements=Dispa
         raise NotImplementedError(f"class '{type(self).__name__}' does not support 'whenException'")
 
     @pyre.export
+    def channels(self):
+        """
+        Generate the set of channels currently being watched, each exactly once
+        """
+        # keep track of what has been reported
+        seen = set()
+        # go through my event tables
+        for index in (self._read, self._write):
+            # and the pile of events registered against each descriptor
+            for events in index.values():
+                # go through the events
+                for event in events:
+                    # get the channel
+                    channel = event.channel
+                    # if it has been reported already
+                    if channel in seen:
+                        # skip it
+                        continue
+                    # otherwise, mark it
+                    seen.add(channel)
+                    # and report it
+                    yield channel
+        # all done
+        return
+
+    @pyre.export
     def stop(self):
         """
         Ask the selector to stop waiting for further events
