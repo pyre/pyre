@@ -16,7 +16,15 @@ def test():
     import pyre.ipc
 
     # make a pair of pipes
-    return pyre.ipc.pipe()
+    ends = pyre.ipc.pipe()
+    # the pair unpacks in a fixed order
+    parent, child = ends
+    # that matches its named endpoints
+    assert ends.parent is parent
+    assert ends.child is child
+
+    # and hand it back
+    return ends
 
 
 # main

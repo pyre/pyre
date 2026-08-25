@@ -26,20 +26,20 @@ def test():
     # build the marshaler
     m = pyre.ipc.newPickler()
     # and the communication channels
-    server, client = pyre.ipc.pipe()
+    parent, child = pyre.ipc.pipe()
 
     # fork
     pid = os.fork()
     # in the server process
     if pid > 0:
         # invoke the server behavior
-        return onServer(clientPid=pid, marshaler=m, pipe=client)
+        return onServer(clientPid=pid, marshaler=m, pipe=parent)
 
     # in the client process
     # get my pid
     clientPid = os.getpid()
     # invoke the behavior
-    return onClient(clientPid=clientPid, marshaler=m, pipe=server)
+    return onClient(clientPid=clientPid, marshaler=m, pipe=child)
 
 
 def onServer(clientPid, marshaler, pipe):

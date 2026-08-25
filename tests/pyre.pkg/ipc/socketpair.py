@@ -16,7 +16,12 @@ def test():
     import pyre.ipc
 
     # make a pair of connected channels
-    parent, child = pyre.ipc.socketpair()
+    ends = pyre.ipc.socketpair()
+    # the pair unpacks in a fixed order
+    parent, child = ends
+    # that matches its named endpoints
+    assert ends.parent is parent
+    assert ends.child is child
     # both ends are live
     assert parent.fileno() >= 0
     assert child.fileno() >= 0
@@ -25,7 +30,7 @@ def test():
     assert parent.outbound is parent
 
     # and hand them back
-    return parent, child
+    return ends
 
 
 # main
