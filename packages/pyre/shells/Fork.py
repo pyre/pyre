@@ -90,15 +90,17 @@ class Fork(Executive, family="pyre.shells.fork"):
         if not self.capture:
             return (None, None)
 
-        # otherwise, access the pipe factory
+        # otherwise, access the pipe transport
         import pyre.ipc
 
+        # instantiate it
+        transport = pyre.ipc.newPipe()
         # unpack
         stdin, stdout, stderr = pipes
         # turn {stdout} and {stderr} into channels
         # careful to identify the read/write ends correctly
-        stdout = pyre.ipc.pipe(descriptors=(stdout[0], stdin[1]))
-        stderr = pyre.ipc.pipe(descriptors=(stderr[0], stdin[1]))
+        stdout = transport.wrap(infd=stdout[0], outfd=stdin[1])
+        stderr = transport.wrap(infd=stderr[0], outfd=stdin[1])
         # return them
         return stdout, stderr
 
@@ -110,15 +112,17 @@ class Fork(Executive, family="pyre.shells.fork"):
         if not self.capture:
             return (None, None)
 
-        # otherwise, access the pipe factory
+        # otherwise, access the pipe transport
         import pyre.ipc
 
+        # instantiate it
+        transport = pyre.ipc.newPipe()
         # unpack
         stdin, stdout, stderr = pipes
         # convert {stdout} and {stderr} into channels
         # careful to identify the read/write ends correctly
-        stdout = pyre.ipc.pipe(descriptors=(stdin[0], stdout[1]))
-        stderr = pyre.ipc.pipe(descriptors=(stdin[0], stderr[1]))
+        stdout = transport.wrap(infd=stdin[0], outfd=stdout[1])
+        stderr = transport.wrap(infd=stdin[0], outfd=stderr[1])
         # and return them
         return stdout, stderr
 
