@@ -27,9 +27,9 @@ def test():
     assert list(s.channels()) == []
 
     # make a pipe pair, whose endpoints are raw descriptors
-    pipe = pyre.ipc.pipe()
+    pipe = pyre.ipc.newPipe().open()
     # and a socket pair, whose endpoints are socket objects
-    sock = pyre.ipc.socketpair()
+    sock = pyre.ipc.newSocket().open()
 
     # register read interest on the parent end of the pipe
     s.whenReadReady(channel=pipe.parent, call=idle)

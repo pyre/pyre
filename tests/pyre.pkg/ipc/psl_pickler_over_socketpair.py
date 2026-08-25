@@ -27,7 +27,7 @@ def test():
     # build the marshaler
     m = pyre.ipc.newPickler()
     # and the communication channels
-    parent, child = pyre.ipc.socketpair()
+    parent, child = pyre.ipc.newSocket().open()
 
     # fork
     pid = os.fork()

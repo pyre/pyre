@@ -7,7 +7,7 @@
 
 
 """
-Sanity check: verify that the pipe factory is accessible
+Sanity check: verify that the pipe transport builds channel pairs
 """
 
 
@@ -16,7 +16,7 @@ def test():
     import pyre.ipc
 
     # make a pair of pipes
-    ends = pyre.ipc.pipe()
+    ends = pyre.ipc.newPipe().open()
     # the pair unpacks in a fixed order
     parent, child = ends
     # that matches its named endpoints

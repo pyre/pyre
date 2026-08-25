@@ -26,7 +26,7 @@ def test():
     import pyre.ipc
 
     # make a pair of connected channels
-    parent, child = pyre.ipc.socketpair()
+    parent, child = pyre.ipc.newSocket().open()
 
     # fork
     pid = os.fork()

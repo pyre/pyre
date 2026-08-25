@@ -27,9 +27,9 @@ def test():
     import pyre.ipc
 
     # the command channel between the server and the worker
-    parent, child = pyre.ipc.socketpair()
+    parent, child = pyre.ipc.newSocket().open()
     # and a second pair that stands in for a client connection to the server
-    client, connection = pyre.ipc.socketpair()
+    client, connection = pyre.ipc.newSocket().open()
 
     # fork
     pid = os.fork()
@@ -76,7 +76,7 @@ def onWorker(channel, client, connection):
     # exactly one made the trip
     assert len(descriptors) == 1
     # wrap it in a channel
-    delegated = pyre.ipc.socketpair(descriptor=descriptors[0])
+    delegated = pyre.ipc.newSocket().wrap(descriptor=descriptors[0])
     # respond to the client directly
     delegated.write(bytes=response)
     # and close the conversation
