@@ -19,6 +19,12 @@ from .Recruiter import Recruiter
 class Fork(pyre.component, family="pyre.nexus.recruiters.fork", implements=Recruiter):
     """
     Create worker processes by cloning the current one
+
+    New team members inherit only what they need: each side of the crew channel closes the end
+    it does not own, so a worker sees end-of-file when the team dies instead of lingering on a
+    channel its own inherited copies hold open; and workers shed everything else the fork
+    handed them that is none of their business, i.e. whatever the shared event loop watches
+    and the channels of the crews deployed before them
     """
 
     # user configurable state
@@ -56,6 +62,11 @@ class Fork(pyre.component, family="pyre.nexus.recruiters.fork", implements=Recru
 
         # in the worker process
         if pid == 0:
+            # the team's end is not mine to hold; release my inherited copy so the channel
+            # closes for real when the team side lets go
+            parent.close()
+            # shed the rest of the connections the fork handed me
+            self.shed(team=team)
             # make a team member
             crew = team.crew(pid=os.getpid(), channel=child, **kwds)
             # ask it to register with the team
@@ -65,6 +76,8 @@ class Fork(pyre.component, family="pyre.nexus.recruiters.fork", implements=Recru
             # at which point, this process must terminate
             raise SystemExit(status)
 
+        # on the team side, release the worker's end for the same reason
+        child.close()
         # make a member proxy for the team manager and return it
         crew = team.crew(pid=pid, channel=parent, timer=team.timer)
         # adjust its support for asynchrony
@@ -81,6 +94,34 @@ class Fork(pyre.component, family="pyre.nexus.recruiters.fork", implements=Recru
         """
         # harvest the status
         status = os.waitpid(crew.pid, 0)
+        # all done
+        return
+
+    # implementation details
+    def shed(self, team):
+        """
+        Close the inherited connections that belong to the {team} side, not to a new crew
+        member
+
+        The parent's open data files are left alone deliberately: closing their descriptors
+        out from under the inherited objects that will finalize them invites descriptor reuse
+        bugs, and holding them is harmless
+        """
+        # collect the channels the shared event loop is watching
+        pile = set(team.dispatcher.channels())
+        # add the channels of every deployed crew; members between tasks may have no armed
+        # handler, so the event loop does not know about them
+        pile |= set(crew.channel for crew in team.crews())
+        # go through the pile
+        for channel in pile:
+            # carefully, since a descriptor may already be gone
+            try:
+                # release my inherited copy
+                channel.close()
+            # dead ones
+            except OSError:
+                # need nothing further
+                continue
         # all done
         return
 
