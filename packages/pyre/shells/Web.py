@@ -23,6 +23,9 @@ class Web(Script, family="pyre.shells.web"):
     auto = pyre.properties.bool(default=True)
     auto.doc = "controls whether to automatically launch the browser"
 
+    service = pyre.properties.str(default="http")
+    service.doc = "the specification of the component that fields web requests"
+
     # a marker that enables applications to deduce the type of shell that is hosting them
     model = pyre.properties.str(default="web")
     model.doc = "the programming model"
@@ -48,8 +51,9 @@ class Web(Script, family="pyre.shells.web"):
         nexus = pyre.nexus.node(name=f"{application.pyre_name}.nexus")
         # attach it to the application
         application.nexus = nexus
-        # register it with the nexus
-        nexus.services["web"] = "http"
+        # register my web service; the slot resolves the spec into a component instance whose
+        # configuration lives under '{application}.nexus.services.web'
+        nexus.services["web"] = self.service
         # activate
         nexus.prepare(app=application)
         # get the web server
