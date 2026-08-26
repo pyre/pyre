@@ -46,6 +46,9 @@ def inet(spec=""):
     return schemata.inet.coerce(value=spec)
 
 
+# my exceptions
+from . import exceptions
+
 # my protocols
 from .Dispatcher import Dispatcher as dispatcher
 from .Marshaler import Marshaler as marshaler

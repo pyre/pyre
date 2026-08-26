@@ -28,6 +28,9 @@ class Marshaler(pyre.protocol, family="pyre.ipc.marshalers"):
     def recv(self, channel):
         """
         Extract and return one object from {channel}
+
+        Implementations raise {exceptions.EndOfStream} when the channel closes before a
+        complete message arrives, so clients can tell a dead peer from a bad payload
         """
 
     @pyre.provides
