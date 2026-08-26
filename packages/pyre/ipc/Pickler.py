@@ -13,6 +13,9 @@ import struct
 # my protocol
 from . import marshaler
 
+# the marker for conversations cut short
+from .exceptions import EndOfStream
+
 
 # class declaration
 class Pickler(pyre.component, family="pyre.ipc.marshalers.pickler", implements=marshaler):
@@ -50,13 +53,26 @@ class Pickler(pyre.component, family="pyre.ipc.marshalers.pickler", implements=m
     def recv(self, channel):
         """
         Extract and return a single item from {channel}
+
+        Raises {EndOfStream} when the channel closes before a complete message arrives,
+        whether cleanly between messages or mid-transmission
         """
-        # get the length
-        header = channel.read(maxlen=self.headerSize)
+        # get the length; insist on a complete header, since it may arrive in pieces even
+        # from a healthy peer, and read exactly the header, since overreading would swallow
+        # the beginning of whatever follows in the stream
+        header = channel.read(minlen=self.headerSize, maxlen=self.headerSize)
+        # if the channel ran dry before the header completed
+        if len(header) < self.headerSize:
+            # the conversation is over
+            raise EndOfStream(channel=channel, received=len(header), expected=self.headerSize)
         # unpack it
         (length,) = struct.unpack(self.packing, header)
-        # get the body
-        body = channel.read(minlen=length)
+        # get the body, again reading exactly what the header promised
+        body = channel.read(minlen=length, maxlen=length)
+        # if the channel ran dry mid-message
+        if len(body) < length:
+            # the peer died while transmitting
+            raise EndOfStream(channel=channel, received=len(body), expected=length)
         # extract the object and return it
         return pickle.loads(body)
 
