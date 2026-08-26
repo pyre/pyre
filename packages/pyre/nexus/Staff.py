@@ -41,7 +41,9 @@ class Staff(Pool, family="pyre.nexus.teams.staff"):
         Queue {task} for execution and arrange for {callback} to receive the outcome
 
         The callback is invoked with {result} and {error} keyword arguments, exactly one of
-        which is non-trivial
+        which is non-trivial. Tasks that compare equal are executed once: later requests
+        join the standing one, and every callback receives the shared outcome. A repeated
+        request also renews the task's priority, since work is served newest first
         """
         # a disbanded staff serves nobody
         if self._disbanded:
@@ -49,10 +51,50 @@ class Staff(Pool, family="pyre.nexus.teams.staff"):
             callback(result=None, error=self.RecoverableError(description="staff disbanded"))
             # all done
             return self
-        # register the callback under the task
-        self.pending[task] = callback
-        # and add the task to the workplan
-        self.assemble(workplan={task})
+        # look for a standing request for the same work
+        callbacks = self.pending.get(task)
+        # if there is one
+        if callbacks is not None:
+            # join it
+            callbacks.append(callback)
+            # if the task is still waiting for a crew member
+            if task in self.workplan:
+                # renew its priority: work is served newest first
+                del self.workplan[task]
+                self.workplan[task] = None
+            # either way, the standing request covers this one
+            return self
+        # otherwise, open the callback ledger for this task
+        self.pending[task] = [callback]
+        # add the task to the workplan
+        self.workplan[task] = None
+        # and mobilize: recruit up to strength and wake the bench
+        self.assemble(workplan=())
+        # all done
+        return self
+
+    def revoke(self, task, callback):
+        """
+        Withdraw {callback} from the outcome of {task}, e.g. because its requester went away
+
+        When the last interested party withdraws from a task that has not yet been picked up,
+        the task itself is dropped; work already in a crew member's hands runs to completion,
+        and its outcome is quietly discarded
+        """
+        # look up the callback ledger
+        callbacks = self.pending.get(task)
+        # if there is no standing request, or this callback is not part of it
+        if callbacks is None or callback not in callbacks:
+            # there is nothing to withdraw
+            return self
+        # take the callback out
+        callbacks.remove(callback)
+        # if nobody is left waiting and the task is still queued
+        if not callbacks and task in self.workplan:
+            # drop the task
+            del self.workplan[task]
+            # and close its ledger
+            del self.pending[task]
         # all done
         return self
 
@@ -127,9 +169,14 @@ class Staff(Pool, family="pyre.nexus.teams.staff"):
                 continue
         # tasks still awaiting outcomes will never get one; deliver the bad news so nobody
         # is left waiting on a promise
-        for task, callback in list(self.pending.items()):
-            # let each one down gently
-            callback(result=None, error=self.RecoverableError(description="staff disbanded"))
+        for task, callbacks in list(self.pending.items()):
+            # go through the subscribers
+            for callback in callbacks:
+                # and let each one down gently
+                callback(
+                    result=None,
+                    error=self.RecoverableError(description="staff disbanded"),
+                )
         # and clear the ledger
         self.pending.clear()
         # all done
@@ -141,8 +188,10 @@ class Staff(Pool, family="pyre.nexus.teams.staff"):
         """
         Add the tasks in {workplan} to my schedule
         """
-        # extend the workplan
-        self.workplan |= workplan
+        # go through the incoming tasks
+        for task in workplan:
+            # and extend the workplan; reinsertion renews a queued task's priority
+            self.workplan[task] = None
         # recruit up to full strength
         self.recruit()
         # if there is work to do
@@ -172,10 +221,10 @@ class Staff(Pool, family="pyre.nexus.teams.staff"):
         """
         A crew member has delivered the {result} of {task}
         """
-        # look up the callback
-        callback = self.pending.pop(task, None)
-        # a missing entry means the task outcome was already delivered; it's a bug
-        if callback is None:
+        # look up the callback ledger
+        callbacks = self.pending.pop(task, None)
+        # a missing ledger means the task outcome was already delivered; it's a bug
+        if callbacks is None:
             # build a channel
             firewall = journal.firewall("pyre.nexus.staff")
             # complain
@@ -185,8 +234,11 @@ class Staff(Pool, family="pyre.nexus.teams.staff"):
             firewall.log()
             # and bail, in case firewalls aren't fatal
             return self
-        # hand the callback the result
-        callback(result=result, error=None)
+        # go through the subscribers; an empty ledger means every interested party withdrew,
+        # and the result is quietly discarded
+        for callback in callbacks:
+            # hand each one the result
+            callback(result=result, error=None)
         # all done
         return self
 
@@ -202,10 +254,10 @@ class Staff(Pool, family="pyre.nexus.teams.staff"):
         """
         A crew member reports that {task} is lost to {error}
         """
-        # look up the callback
-        callback = self.pending.pop(task, None)
-        # a missing entry means the task outcome was already delivered; it's a bug
-        if callback is None:
+        # look up the callback ledger
+        callbacks = self.pending.pop(task, None)
+        # a missing ledger means the task outcome was already delivered; it's a bug
+        if callbacks is None:
             # build a channel
             firewall = journal.firewall("pyre.nexus.staff")
             # complain
@@ -215,8 +267,10 @@ class Staff(Pool, family="pyre.nexus.teams.staff"):
             firewall.log()
             # and bail, in case firewalls aren't fatal
             return self
-        # hand the callback the bad news
-        callback(result=None, error=error)
+        # go through the subscribers, if any are left
+        for callback in callbacks:
+            # and hand each one the bad news
+            callback(result=None, error=error)
         # all done
         return self
 
@@ -270,8 +324,9 @@ class Staff(Pool, family="pyre.nexus.teams.staff"):
                 )
             # and don't reschedule this handler
             return False
-        # otherwise, grab a task
-        task = self.workplan.pop()
+        # otherwise, grab the newest task: under load, the most recent requests are the
+        # ones their requesters are still looking at
+        task, _ = self.workplan.popitem()
         # carefully, since the member may have died while waiting for work
         try:
             # send it off
@@ -279,7 +334,7 @@ class Staff(Pool, family="pyre.nexus.teams.staff"):
         # if its channel is broken
         except OSError:
             # the task was never attempted, so put it back for somebody else
-            self.workplan.add(task)
+            self.workplan[task] = None
             # and clean up after the member; the replacement will pick the task up
             self.bury(crew=crew)
         # the harvesting of the result decides the fate of this crew member
@@ -308,6 +363,9 @@ class Staff(Pool, family="pyre.nexus.teams.staff"):
     def __init__(self, **kwds):
         # chain up
         super().__init__(**kwds)
+        # my workplan is an insertion-ordered map that stands in for an ordered set: the
+        # keys are the queued tasks, served newest first, and reinsertion renews priority
+        self.workplan = {}
         # the bench of parked crew members
         self.idle = set()
         # the members with an armed death watch

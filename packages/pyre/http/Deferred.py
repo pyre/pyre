@@ -24,12 +24,28 @@ class Deferred:
         # push the document through the hook the server installed when it parked the connection
         return self.deliver(response=response)
 
+    def cancel(self):
+        """
+        The parked connection is gone; nobody is waiting for the document any more
+
+        The server invokes this when the peer hangs up; whoever is producing the document
+        installs {abandoned} to hear about it, e.g. to withdraw the request from a work queue
+        """
+        # if anybody asked to know
+        if self.abandoned is not None:
+            # break the news
+            self.abandoned()
+        # all done
+        return
+
     # metamethods
     def __init__(self, **kwds):
         # chain up
         super().__init__(**kwds)
         # the delivery hook; the server installs it when it parks the connection
         self.deliver = None
+        # the cancellation hook; the document producer installs it to hear about hangups
+        self.abandoned = None
         # all done
         return
 
