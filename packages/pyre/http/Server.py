@@ -116,6 +116,12 @@ class Server(pyre.nexus.server, family="pyre.nexus.servers.http"):
             if self.hub is not None:
                 # so we stop buffering events for a connection that is gone
                 self.hub.unsubscribe(channel)
+            # if a deferred response was parked on this connection
+            parked = self.parked.pop(channel, None)
+            # let it know
+            if parked is not None:
+                # that nobody is waiting for its document any more
+                parked.cancel()
             # check whether we know this peer
             try:
                 # in which case, forget him
@@ -205,6 +211,8 @@ class Server(pyre.nexus.server, family="pyre.nexus.servers.http"):
         if isinstance(response, self.deferred):
             # install the delivery hook
             response.deliver = functools.partial(self.complete, channel=channel, request=request)
+            # remember it, so a peer hangup can cancel it
+            self.parked[channel] = response
             # and keep watching the channel so we can tell when the peer hangs up
             return True
 
@@ -256,7 +264,9 @@ class Server(pyre.nexus.server, family="pyre.nexus.servers.http"):
         """
         The document of a parked connection is ready; send it to the peer
         """
-        # the document is no longer deferred, so it follows the standard path
+        # the connection is no longer parked
+        self.parked.pop(channel, None)
+        # and the document is no longer deferred, so it follows the standard path
         return self.respond(channel=channel, request=request, response=response)
 
     def stream(self, channel, request, response):
@@ -284,12 +294,15 @@ class Server(pyre.nexus.server, family="pyre.nexus.servers.http"):
         super().__init__(**kwds)
         # initialize my connection index
         self.requests = {}
+        # and the registry of responses parked on their connections
+        self.parked = {}
         # all done
         return
 
     # implementation details
     # private data
     requests = None
+    parked = None
     hub = None
     # constants
     MAX_BYTES = 1024 * 1024
