@@ -12,7 +12,6 @@ in the python standard library
 # external
 import pyre
 import journal
-import collections
 import selectors
 
 # interface
@@ -27,6 +26,11 @@ class SelectorPSL(Scheduler, family="pyre.ipc.dispatchers.psl", implements=Dispa
     """
     An event demultiplexer implemented using the high level interface in the {selectors} module of
     the python standard library
+
+    The event piles are the single source of truth: the kernel side registration is derived
+    from them whenever they change shape. This matters because descriptor numbers are recycled
+    aggressively: a handler may close its channel and a fresh channel may reincarnate the same
+    number within a single dispatch cycle, so no cached view of the kernel state can be trusted
     """
 
     # interface obligations
@@ -35,30 +39,17 @@ class SelectorPSL(Scheduler, family="pyre.ipc.dispatchers.psl", implements=Dispa
         """
         Add {call} to the handlers that will be invoked when {channel} is ready for reading
         """
-        # get my selector
-        selector = self._selector
         # get the read side of the channel
         fd = channel.inbound
-        # bind the {channel} with the {call} handler
-        event = self._event(channel=channel, handler=call, **kwds)
-        # get the current event mask
-        current = self._masks[fd]
-        # turn on the read bit
-        updated = current | selectors.EVENT_READ
-        # if the mask is modified
-        if current != updated:
-            # store the updated mask
-            self._masks[fd] = updated
-            # if the file descriptor is not already registered
-            try:
-                # add it to the watch list
-                selector.register(fd, events=updated)
-            # if it's already registered
-            except KeyError:
-                # modify the registration
-                selector.modify(fileobj=fd, events=updated)
-        # in any case, add the {event} to the read pile
-        self._read.setdefault(fd, []).append(event)
+        # a key with no registered interest is a fresh conversation, possibly on a recycled
+        # descriptor number; its kernel registration must be rebuilt from scratch
+        fresh = not self._read.get(fd) and not self._write.get(fd)
+        # the interest that must be armed: whatever is already registered, plus reading
+        mask = self._interest(key=fd) | selectors.EVENT_READ
+        # arm the kernel side
+        self._arm(key=fd, mask=mask, force=fresh)
+        # and add the {event} to the read pile
+        self._read.setdefault(fd, []).append(self._event(channel=channel, handler=call, **kwds))
         # all done
         return
 
@@ -67,30 +58,17 @@ class SelectorPSL(Scheduler, family="pyre.ipc.dispatchers.psl", implements=Dispa
         """
         Add {call} to the handlers that will be invoked when {channel} is ready for writing
         """
-        # get my selector
-        selector = self._selector
-        # get the read side of the channel
+        # get the write side of the channel
         fd = channel.outbound
-        # bind the {channel} with the {call} handler
-        event = self._event(channel=channel, handler=call, **kwds)
-        # get the current event mask
-        current = self._masks[fd]
-        # turn on the read bit
-        updated = current | selectors.EVENT_WRITE
-        # if the mask is modified
-        if current != updated:
-            # store the updated mask
-            self._masks[fd] = updated
-            # if the file descriptor is not already registered
-            try:
-                # add it to the watch list
-                selector.register(fd, events=updated)
-            # if it's already registered
-            except KeyError:
-                # modify the registration
-                selector.modify(fileobj=fd, events=updated)
-        # in any case, add the {event} to the read pile
-        self._write.setdefault(fd, []).append(event)
+        # a key with no registered interest is a fresh conversation, possibly on a recycled
+        # descriptor number; its kernel registration must be rebuilt from scratch
+        fresh = not self._read.get(fd) and not self._write.get(fd)
+        # the interest that must be armed: whatever is already registered, plus writing
+        mask = self._interest(key=fd) | selectors.EVENT_WRITE
+        # arm the kernel side
+        self._arm(key=fd, mask=mask, force=fresh)
+        # and add the {event} to the write pile
+        self._write.setdefault(fd, []).append(self._event(channel=channel, handler=call, **kwds))
         # all done
         return
 
@@ -149,8 +127,6 @@ class SelectorPSL(Scheduler, family="pyre.ipc.dispatchers.psl", implements=Dispa
         # my registration tables
         read = self._read
         write = self._write
-        # and the table of event masks
-        masks = self._masks
         # reset my state
         self._watching = True
 
@@ -177,63 +153,20 @@ class SelectorPSL(Scheduler, family="pyre.ipc.dispatchers.psl", implements=Dispa
             for key, mask in selection:
                 # get the corresponding file descriptor
                 fd = key.fileobj
-                # the bits whose handler piles drain to empty during this pass
-                cleared = 0
                 # N.B.:
                 #     a decision had to be made regarding the order that handlers are invoked
                 #     this implementation calls the {read} handlers before the {write} handlers
                 # if the {mask} indicates {fd} is ready for read
                 if mask & selectors.EVENT_READ:
                     # invoke the read handlers
-                    reschedule = self.dispatch(index=read, key=fd)
-                    # if there is something to reschedule
-                    if reschedule:
-                        # update the {read} map
-                        read[fd] = reschedule
-                    # otherwise
-                    else:
-                        # remove this file descriptor from the pile
-                        read.pop(fd, 0)
-                        # and mark the read bit for clearing
-                        cleared |= selectors.EVENT_READ
+                    self.dispatch(index=read, key=fd)
                 # if the {mask} indicates {fd} is ready for write
                 if mask & selectors.EVENT_WRITE:
                     # invoke the write handlers
-                    reschedule = self.dispatch(index=write, key=fd)
-                    # if there is something to reschedule
-                    if reschedule:
-                        # update the {write} map
-                        write[fd] = reschedule
-                    # otherwise
-                    else:
-                        # remove this file descriptor from the pile
-                        write.pop(fd, 0)
-                        # and mark the write bit for clearing
-                        cleared |= selectors.EVENT_WRITE
-                # recompute the mask from the live table, not a pre-dispatch snapshot: a handler
-                # may have registered fresh interest on this same {fd} while it ran (e.g. a read
-                # handler arming a write), and that addition must survive
-                event = masks[fd] & ~cleared
-                # carefully, because a handler may have closed {fd} during dispatch
-                try:
-                    # if the {event} mask of this {fd} is now trivial
-                    if event == 0:
-                        # unregister it
-                        selector.unregister(fileobj=fd)
-                        # and remove it from the mask table
-                        masks.pop(fd, 0)
-                    # otherwise, if the registration changed
-                    elif masks[fd] != event:
-                        # modify the selector registration
-                        selector.modify(fileobj=fd, events=event)
-                        # and update the table
-                        masks[fd] = event
-                # if {fd} was closed out from under us
-                except (KeyError, ValueError, OSError):
-                    # forget it entirely
-                    read.pop(fd, 0)
-                    write.pop(fd, 0)
-                    masks.pop(fd, 0)
+                    self.dispatch(index=write, key=fd)
+                # settle this descriptor's kernel registration against the live piles, which
+                # the handlers may have reshaped arbitrarily while they ran
+                self._reconcile(key=fd)
 
             # raise any overdue alarms
             self.awaken()
@@ -250,8 +183,6 @@ class SelectorPSL(Scheduler, family="pyre.ipc.dispatchers.psl", implements=Dispa
         # set up my termination flag
         self._watching = False
 
-        # set up the event mask map: fd -> mask
-        self._masks = collections.defaultdict(int)
         # set up the read map: fd -> list[_event]
         self._read = {}
         # and the write map: fd -> list[_event]
@@ -265,10 +196,13 @@ class SelectorPSL(Scheduler, family="pyre.ipc.dispatchers.psl", implements=Dispa
         """
         Invoke the handlers for {key} registered in {index}
         """
+        # take possession of the pile, so interest registered by the handlers while they run
+        # accumulates separately instead of being invoked prematurely on this pass
+        pile = index.pop(key, [])
         # make a pile of event handlers to reschedule
         reschedule = []
-        # go through the pile registered under {key}
-        for event in index.get(key, ()):
+        # go through the snapshot
+        for event in pile:
             # very very carefully
             try:
                 # invoke the handler
@@ -278,15 +212,112 @@ class SelectorPSL(Scheduler, family="pyre.ipc.dispatchers.psl", implements=Dispa
                 # let's try this again
                 keep = True
             # if something more serious happens
-            except OSError:
-                # something is wrong with the connection; discard the handler
+            except OSError as error:
+                # the connection is broken; discarding the handler is the only sane move,
+                # but say so, since silent drops make failures undiagnosable
+                channel = journal.debug("pyre.ipc.psl")
+                # describe what happened
+                channel.line(f"discarding a handler of {event.channel}")
+                channel.line(f"after it raised {error}")
+                # flush
+                channel.log()
+                # and drop it
                 keep = False
             # keepers
             if keep:
                 # get rescheduled
                 reschedule.append(event)
-        # hand off the rescheduling pile
-        return reschedule
+        # if any handlers survived
+        if reschedule:
+            # put them back, ahead of whatever interest arrived while they ran
+            index.setdefault(key, [])[:0] = reschedule
+        # all done
+        return
+
+    def _interest(self, key):
+        """
+        Compute the event mask implied by the current piles of {key}
+        """
+        # reading, if there are read handlers; writing, if there are write handlers
+        return (selectors.EVENT_READ if self._read.get(key) else 0) | (
+            selectors.EVENT_WRITE if self._write.get(key) else 0
+        )
+
+    def _arm(self, key, mask, force=False):
+        """
+        Ensure the kernel watches {key} for {mask}
+
+        With {force}, any standing registration under this descriptor number is torn down
+        first: the caller knows the conversation is fresh, so an existing entry is a leftover
+        from a closed channel that recycled the number, and the kernel side filter it claims
+        to hold died with the original descriptor
+        """
+        # get my selector
+        selector = self._selector
+        # carefully
+        try:
+            # look up the standing registration under this descriptor number
+            current = self._selector.get_key(key)
+        # if there is none
+        except KeyError:
+            # so note
+            current = None
+        # a standing registration can be trusted only when nobody demands a rebuild, it
+        # belongs to this very endpoint, and it watches for exactly the right events; the
+        # ownership test is meaningful only for object endpoints, since a raw descriptor
+        # number cannot be told apart from its own reincarnation
+        if (
+            current is not None
+            and not force
+            and (isinstance(key, int) or current.fileobj is key)
+            and current.events == mask
+        ):
+            # nothing to do
+            return
+        # if there is a standing registration
+        if current is not None:
+            # carefully, since its descriptor may be long dead
+            try:
+                # tear it down
+                selector.unregister(key)
+            # tolerating whatever state it is in
+            except (KeyError, ValueError, OSError):
+                # nothing further
+                pass
+        # and register afresh; a dead endpoint raises out of here, for the caller to judge
+        selector.register(key, events=mask)
+        # all done
+        return
+
+    def _reconcile(self, key):
+        """
+        Settle the kernel registration of {key} against the live piles
+        """
+        # compute the interest implied by the piles
+        mask = self._interest(key=key)
+        # if nothing is left
+        if not mask:
+            # carefully, since the descriptor may already be gone
+            try:
+                # tear down the registration
+                self._selector.unregister(key)
+            # tolerating whatever state it is in
+            except (KeyError, ValueError, OSError):
+                # nothing further
+                pass
+            # all done
+            return
+        # otherwise, carefully
+        try:
+            # make sure the kernel watches for exactly this interest
+            self._arm(key=key, mask=mask)
+        # if the endpoint is dead
+        except (ValueError, OSError):
+            # its handlers can never fire again; drop them
+            self._read.pop(key, None)
+            self._write.pop(key, None)
+        # all done
+        return
 
     # implementation details - private types
     class _event:

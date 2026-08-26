@@ -6,6 +6,7 @@
 
 
 # externals
+import os
 import pyre
 import select
 import collections
@@ -139,7 +140,7 @@ class Selector(Scheduler, family="pyre.ipc.dispatchers.selector", implements=dis
                 # show me the channels that are watching for exceptions
                 if ewtd:
                     channel.line("      exception:")
-                for channel in ewtd:
+                for fd in ewtd:
                     for event in self._exception[fd]:
                         channel.line(f"        {event.channel}")
 
@@ -165,6 +166,12 @@ class Selector(Scheduler, family="pyre.ipc.dispatchers.selector", implements=dis
                 channel.line(f"  more watching: {self._watching}")
                 channel.log()
                 # keep going
+                continue
+            # a registration whose descriptor died behind our back poisons the whole call
+            except (OSError, ValueError):
+                # find the corpses and drop them, so everybody else keeps getting served
+                self._cull()
+                # and try again
                 continue
 
             # if my channel is active
@@ -203,20 +210,46 @@ class Selector(Scheduler, family="pyre.ipc.dispatchers.selector", implements=dis
         """
         # iterate over the active entities
         for active in entities:
+            # take possession of the pile, so interest registered by the handlers while
+            # they run accumulates separately instead of being invoked prematurely on
+            # this pass
+            pile = index.pop(active, [])
             # invoke the event handlers and save the events whose handlers return {True}
             events = list(
-                event
-                for event in index[active]
-                if event.handler(channel=event.channel, **event.context)
+                event for event in pile if event.handler(channel=event.channel, **event.context)
             )
-            # if no handlers requested to be rescheduled
-            if not events:
-                # remove the descriptor from the index
-                del index[active]
-            # otherwise
-            else:
-                # reschedule them
-                index[active] = events
+            # if any handlers requested to be rescheduled
+            if events:
+                # put them back, ahead of whatever interest arrived while they ran
+                index[active][:0] = events
+        # all done
+        return
+
+    def _cull(self):
+        """
+        Drop registrations whose descriptors are dead
+
+        {select} refuses to scan a closed descriptor, so a single corpse would starve
+        every healthy channel; this sweep runs when that happens and buries the corpses
+        """
+        # go through my event tables
+        for index in (self._read, self._write, self._exception):
+            # and a snapshot of their keys
+            for key in list(index.keys()):
+                # carefully
+                try:
+                    # resolve the key to a raw descriptor
+                    fileno = key if isinstance(key, int) else key.fileno()
+                    # closed high level objects report an invalid descriptor
+                    if fileno < 0:
+                        # which marks a corpse
+                        raise ValueError(fileno)
+                    # probe the descriptor
+                    os.fstat(fileno)
+                # if the resolution or the probe failed
+                except (ValueError, OSError):
+                    # this registration can never fire again
+                    del index[key]
         # all done
         return
 
