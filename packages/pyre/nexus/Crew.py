@@ -8,6 +8,12 @@
 # externals
 import functools
 
+# the marker the marshaler raises when its peer dies mid-conversation
+from ..ipc.exceptions import EndOfStream
+
+# the marker for tasks that took their crew member down
+from .exceptions import Casualty
+
 # my base class
 from .Peer import Peer
 
@@ -61,14 +67,26 @@ class Crew(Peer, family="pyre.nexus.peers.crew"):
         """
         # check it's me we are talking about
         assert channel is self.channel
-        # get the status of my twin
-        status = self.marshaler.recv(channel=channel)
-        # and if all is good
+        # carefully, since my twin may have died before its registration arrived
+        try:
+            # get the status of my twin
+            status = self.marshaler.recv(channel=channel)
+        # if the channel delivered a truncated message, my twin is gone
+        except EndOfStream:
+            # clean up; the team decides whether a replacement gets recruited
+            team.bury(crew=self)
+            # and stop listening
+            return False
+        # if all is good
         if status is self.crewcodes.healthy:
             # let the team know
             team.activate(crew=self)
             # and add me to the execution schedule
             team.schedule(crew=self)
+        # otherwise
+        else:
+            # my twin is compromised; clean up, rather than leaking it in the roster
+            team.bury(crew=self)
         # do not reschedule this handler
         return False
 
@@ -89,18 +107,35 @@ class Crew(Peer, family="pyre.nexus.peers.crew"):
         """
         Harvest the task completion status
         """
-        # grab the report
-        memberstatus, taskstatus, result = self.marshaler.recv(channel=channel)
+        # carefully, since my twin may have died mid-task instead of reporting
+        try:
+            # grab the report
+            memberstatus, taskstatus, result = self.harvest(channel=channel)
+        # if the channel delivered a truncated message, my twin is gone
+        except EndOfStream:
+            # a death without a report marks the task as a suspect
+            team.abandon(task=task, error=Casualty(description=f"crew {self.pid} died"))
+            # clean up; the team decides whether a replacement gets recruited
+            team.bury(crew=self)
+            # and stop listening
+            return False
         # show me on the debug channel
         self.debug.log(f"{self.pid}: {memberstatus}, {taskstatus}, {result}")
 
-        # first, let's figure out what to do with the task; if it failed due to some temporary
-        # condition
-        if taskstatus is self.taskcodes.failed:
+        # first, let's figure out what to do with the task; if it ran to completion
+        if taskstatus is self.taskcodes.completed:
+            # deliver the result; the team decides what results are for
+            team.collect(task=task, result=result)
+        # if it failed due to some temporary condition
+        elif taskstatus is self.taskcodes.failed:
             # tell me
             self.reportRecoverableError(team=team, task=task, error=result)
-            # put the task back in the workplan
-            team.workplan.add(task)
+            # the team decides whether it gets another chance
+            team.requeue(task=task, error=result)
+        # otherwise, the task aborted
+        else:
+            # deliver the bad news; the team decides how to break it
+            team.abandon(task=task, error=result)
 
         # now, let's figure out what to do with me; if i'm healthy
         if memberstatus is self.crewcodes.healthy:
@@ -115,6 +150,16 @@ class Crew(Peer, family="pyre.nexus.peers.crew"):
 
         # all done
         return False
+
+    def harvest(self, channel):
+        """
+        Extract a completion report from {channel}
+
+        Subclasses whose reports have trailers, e.g. payloads that travel outside the
+        marshaled byte stream, override this to collect them
+        """
+        # pull the report from the channel
+        return self.marshaler.recv(channel=channel)
 
     def dismissed(self):
         """
@@ -174,8 +219,16 @@ class Crew(Peer, family="pyre.nexus.peers.crew"):
         """
         A notification has arrived that indicates there is a task waiting to be executed
         """
-        # extract the task from the channel
-        task = self.marshaler.recv(channel=channel)
+        # carefully, since a broken channel means the team is gone
+        try:
+            # extract the task from the channel
+            task = self.marshaler.recv(channel=channel)
+        # if the channel delivered a truncated message
+        except EndOfStream:
+            # wind down my event loop
+            self.stop()
+            # and stop listening
+            return False
         # leave a note
         self.debug.log(f"{self.pid}: got {task}")
         # if it's a quit marker

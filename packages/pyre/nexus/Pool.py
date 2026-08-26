@@ -7,6 +7,7 @@
 
 # externals
 import functools
+import os
 
 # support
 import pyre
@@ -107,6 +108,62 @@ class Pool(Peer, family="pyre.nexus.teams.pool", implements=Team):
 
         # all done
         return
+
+    # outcome hooks, invoked by crew members as they harvest completion reports
+    def collect(self, task, result):
+        """
+        A crew member has delivered the {result} of {task}
+        """
+        # a batch pool executes for effect; log the result and move on
+        self.debug.log(f"collected {result} from {task}")
+        # all done
+        return self
+
+    def requeue(self, task, error):
+        """
+        A crew member reports that {task} failed with a recoverable {error}
+        """
+        # tell me
+        self.debug.log(f"requeueing {task} after {error}")
+        # put the task back in the workplan so somebody else gets a crack at it
+        self.workplan.add(task)
+        # all done
+        return self
+
+    def abandon(self, task, error):
+        """
+        A crew member reports that {task} is permanently lost to {error}
+        """
+        # log it; the batch completes without this task
+        self.debug.log(f"abandoning {task} after {error}")
+        # all done
+        return self
+
+    def bury(self, crew):
+        """
+        A {crew} member died without a formal dismissal; clean up after it
+        """
+        # remove the member from all rosters
+        self.registered.discard(crew)
+        self.active.discard(crew)
+        # carefully
+        try:
+            # close the team side of its channel
+            crew.channel.close()
+        # tolerating one that is already gone
+        except OSError:
+            # nothing further
+            pass
+        # carefully
+        try:
+            # reap the corpse
+            os.waitpid(crew.pid, 0)
+        # tolerating one that was already collected
+        except (OSError, ChildProcessError):
+            # nothing further
+            pass
+        # all done
+        return self
 
     # implementation details
     def crews(self):
