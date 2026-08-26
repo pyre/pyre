@@ -23,6 +23,17 @@ class RecoverableError(NexusError):
     """
 
 
+# a task that took its crew member down with it
+class Casualty(RecoverableError):
+    """
+    A crew member died while carrying a task
+
+    A death without a report means the task itself may be the killer, e.g. a request that
+    crashes native code; such a task must never be retried in the team's own process, whose
+    survival is the whole point of farming work out to crews
+    """
+
+
 # connection reset by peer
 class ConnectionResetError(NexusError):
     """

@@ -7,6 +7,9 @@
 # support
 import pyre
 
+# the exceptions
+from . import exceptions
+
 # the protocols
 from .Nexus import Nexus as nexus
 from .Service import Service as service
@@ -19,6 +22,9 @@ from .Server import Server as server
 from .Task import Task as task
 from .TaskStatus import TaskStatus as taskcodes
 from .CrewStatus import CrewStatus as crewcodes
+
+# the facilitator of task execution in foreign processes
+from .Crew import Crew as crew
 
 # task distribution protocols
 from .Team import Team as team
@@ -61,6 +67,19 @@ def pool():
 
     # and return it
     return pool
+
+
+@pyre.foundry(implements=team, tip="a standing team of persistent workers")
+def staff():
+    """
+    The manager of a standing team of persistent workers that deliver task outcomes to
+    per-task callbacks
+    """
+    # get the implementation
+    from .Staff import Staff as staff
+
+    # and return it
+    return staff
 
 
 # end of file
