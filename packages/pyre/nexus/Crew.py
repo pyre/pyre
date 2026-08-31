@@ -7,6 +7,11 @@
 
 # externals
 import functools
+import os
+import signal
+
+# the unit the task deadline is expressed in
+from ..units.SI import second
 
 # the marker the marshaler raises when its peer dies mid-conversation
 from ..ipc.exceptions import EndOfStream
@@ -94,14 +99,64 @@ class Crew(Peer, family="pyre.nexus.peers.crew"):
         """
         Send my twin the {task} to be executed
         """
+        # remember what my twin is working on, so a deadline that fires later can tell
+        # whether it is still waiting on this task or on something that came after
+        self.task = task
         # send the task
         self.marshaler.send(channel=self.channel, item=task)
         # schedule the harvesting of the result
         self.dispatcher.whenReadReady(
             channel=self.channel, call=functools.partial(self.assess, team=team, task=task)
         )
+        # a team that puts a limit on how long a task may take
+        patience = getattr(team, "patience", None)
+        # arms a deadline; a limit of zero is a team willing to wait indefinitely, which is
+        # the default, and a quantity of zero is not falsy, so ask rather than assume
+        if patience is not None and patience > 0 * second:
+            # so a twin that never answers cannot hold the queue behind it forever
+            self.dispatcher.alarm(
+                interval=patience,
+                call=functools.partial(self.overdue, team=team, task=task),
+            )
         # all done
         return self
+
+    def overdue(self, timestamp, team, task):
+        """
+        The deadline for {task} has passed with no report
+
+        N.B.: this is an alarm handler; returning {None} keeps it from being rescheduled
+        """
+        # if this is not what my twin is working on any more, the report arrived in time and
+        # the deadline is moot
+        if self.task is not task:
+            # so there is nothing to do
+            return None
+        # otherwise my twin has had long enough. whatever it is doing, nobody is going to
+        # wait on it any longer: hand the requester an answer it can act on, rather than
+        # leaving it holding a promise that may never be kept
+        self.task = None
+        team.abandon(
+            task=task,
+            error=self.RecoverableError(description=f"crew {self.pid} took too long"),
+        )
+        # my twin is still running, and it is exactly the kind of process that may never
+        # stop. a burial waits for a corpse rather than making one, so handing it a live
+        # worker would block the event loop until that worker decided to finish -- which is
+        # the very thing we have just declared it cannot be trusted to do. so end it first
+        try:
+            # with prejudice; a member that has blown its deadline gets no chance to object
+            os.kill(self.pid, signal.SIGKILL)
+        # tolerating one that has already gone on its own
+        except (OSError, ProcessLookupError):
+            # nothing further
+            pass
+        # and now clean up after it: the burial closes the channel, reaps the corpse -- which
+        # returns at once, since there is one -- takes it off the rosters, and lets the team
+        # recruit a replacement
+        team.bury(crew=self)
+        # do not reschedule
+        return None
 
     def assess(self, channel, team, task, **kwds):
         """
@@ -119,6 +174,8 @@ class Crew(Peer, family="pyre.nexus.peers.crew"):
             team.bury(crew=self)
             # and stop listening
             return False
+        # my twin has answered for this task, so any deadline still standing over it is moot
+        self.task = None
         # show me on the debug channel
         self.debug.log(f"{self.pid}: {memberstatus}, {taskstatus}, {result}")
 
@@ -312,6 +369,9 @@ class Crew(Peer, family="pyre.nexus.peers.crew"):
         self.pid = pid
         # save the communication channel to my twin
         self.channel = channel
+        # my twin is working on nothing yet; this names the task a deadline is measured
+        # against, so a report that beats its deadline can retire it
+        self.task = None
         # all done
         return
 

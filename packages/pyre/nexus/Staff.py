@@ -15,6 +15,9 @@ import signal
 import pyre
 import journal
 
+# the unit the task deadline is expressed in
+from ..units.SI import second
+
 # my base class
 from .Pool import Pool
 
@@ -34,6 +37,10 @@ class Staff(Pool, family="pyre.nexus.teams.staff"):
     # types
     # the marker for failures the client can recover from by asking again
     from .exceptions import RecoverableError
+
+    # user configurable state
+    patience = pyre.properties.dimensional(default=0 * second)
+    patience.doc = "how long a task may take before its crew member is presumed lost"
 
     # interface
     def assign(self, task, callback):
