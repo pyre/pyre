@@ -68,6 +68,9 @@ namespace pyre::h5 {
     // a hyperslab as a (begin, end) corner pair, and a collection of them
     using slab_t = std::pair<shape_t, shape_t>;
     using slabs_t = std::vector<slab_t>;
+    // an opaque run of bytes: a chunk in the form it is stored in, still carrying whatever
+    // the filter pipeline did to it, and therefore not cells of anything until it is decoded
+    using bytes_t = std::vector<char>;
 
     // the grid descriptions handed out by dataspaces and datasets: dataset and chunk shapes
     // are facts discovered at runtime, so they travel as the runtime-rank flavors of the

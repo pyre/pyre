@@ -282,18 +282,18 @@ pyre::h5::DataSet::chunk(hsize_t index) const -> std::optional<Chunk>
 }
 
 
-// the chunk that holds the cell at {origin}
+// the corner of the chunk that holds the cell at {origin}
 auto
-pyre::h5::DataSet::chunkAt(const index_t & origin) const -> std::optional<Chunk>
+pyre::h5::DataSet::_corner(const index_t & origin) const -> std::optional<index_t>
 {
-    // there is no chunk to find unless i am stored as chunks
+    // there are no chunks to speak of unless i am stored as chunks
     if (dcpl().layout() != H5D_CHUNKED) {
-        // so say so
+        // so there is no corner to hand back
         return {};
     }
-    // my extent, which the coordinate has to fit inside
+    // my extent, which the cell has to lie inside
     auto box = packing().shape();
-    // a coordinate of the wrong rank cannot be checked, let alone used
+    // a cell of the wrong rank cannot be checked, let alone used
     if (origin.size() != box.size()) {
         // make a channel
         auto channel = pyre::journal::error_t("pyre.h5");
@@ -305,11 +305,15 @@ pyre::h5::DataSet::chunkAt(const index_t & origin) const -> std::optional<Chunk>
         // and decline to answer
         return {};
     }
-    // the library does not bounds check this call: an impossible coordinate comes back
-    // looking exactly like a chunk nobody ever wrote, so check it here or the two answers
-    // become indistinguishable
+    // my chunk shape, which says where the corners fall
+    auto chunk = dcpl().chunk();
+    // make room for the corner
+    auto corner = index_t(origin.size(), 0);
+    // go through the axes
     for (std::size_t axis = 0; axis < origin.size(); ++axis) {
-        // if this coordinate lies outside my extent
+        // the library does not bounds check the calls this feeds: an impossible cell comes
+        // back looking exactly like a chunk nobody ever wrote, so check here or the two
+        // answers become indistinguishable
         if (origin[axis] >= static_cast<hsize_t>(box[axis])) {
             // make a channel
             auto channel = pyre::journal::error_t("pyre.h5");
@@ -321,13 +325,32 @@ pyre::h5::DataSet::chunkAt(const index_t & origin) const -> std::optional<Chunk>
             // and decline to answer
             return {};
         }
+        // otherwise, round the coordinate down to the nearest multiple of the chunk extent
+        corner[axis] = origin[axis] - origin[axis] % chunk[axis];
+    }
+    // hand back the anchor of the chunk that holds the cell
+    return corner;
+}
+
+
+// the chunk that holds the cell at {origin}
+auto
+pyre::h5::DataSet::chunkAt(const index_t & origin) const -> std::optional<Chunk>
+{
+    // work out which chunk the cell belongs to; this screens the layout, the rank, and the
+    // bounds, and has already complained if any of them was wrong
+    auto corner = _corner(origin);
+    // if there is no such chunk
+    if (!corner) {
+        // there is nothing to describe
+        return {};
     }
     // make room for what the library reports
     unsigned int filterMask = 0;
     haddr_t address = 0;
     hsize_t bytes = 0;
-    // ask; any cell of a chunk names it, so the coordinate needs no snapping on our part
-    auto status = H5Dget_chunk_info_by_coord(id(), origin.data(), &filterMask, &address, &bytes);
+    // ask; this call takes any cell of a chunk, so the snapped corner suits it fine
+    auto status = H5Dget_chunk_info_by_coord(id(), corner->data(), &filterMask, &address, &bytes);
     // if the library balked
     if (status < 0) {
         // make a channel
@@ -344,18 +367,91 @@ pyre::h5::DataSet::chunkAt(const index_t & origin) const -> std::optional<Chunk>
         // report the absence
         return {};
     }
-    // otherwise, work out which chunk actually answered by snapping the cell down to its
-    // chunk's corner, so the caller gets the chunk's own origin rather than its own probe
-    auto chunk = dcpl().chunk();
-    // make room for the corner
-    auto corner = index_t(origin.size(), 0);
-    // go through the axes
-    for (std::size_t axis = 0; axis < origin.size(); ++axis) {
-        // and round the coordinate down to the nearest multiple of the chunk extent
-        corner[axis] = origin[axis] - origin[axis] % chunk[axis];
+    // assemble the description, anchored at the chunk's own corner rather than at the cell
+    // the caller happened to probe with
+    return Chunk(*corner, filterMask, address, bytes);
+}
+
+
+// read the chunk that holds the cell at {origin} in its stored form
+auto
+pyre::h5::DataSet::readChunk(const index_t & origin, bytes_t & buffer) const
+    -> std::optional<unsigned int>
+{
+    // find out whether there is a chunk there at all, and how much room its stored form
+    // needs; this screens the layout, the rank and the bounds on our behalf
+    auto chunk = chunkAt(origin);
+    // a chunk that was never written has no bytes to hand over
+    if (!chunk) {
+        // so say so; this is the answer, not a failure
+        return {};
     }
-    // assemble the description
-    return Chunk(corner, filterMask, address, bytes);
+    // size the destination from what the library says the chunk occupies, so that the
+    // caller cannot get it wrong and the read cannot run past the end of the buffer
+    buffer.resize(chunk->bytes);
+    // make room for the mask of filters the chunk was spared
+    uint32_t filterMask = 0;
+    // the direct read insists on the chunk's own corner, unlike the table lookup above,
+    // which is why the corner rather than the caller's cell goes in here
+#if H5_VERSION_GE(2, 0, 0)
+    // hdf5 2.0 takes the room available and reports the bytes it used, so the buffer is
+    // guarded by the library as well as by us
+    auto room = buffer.size();
+    auto status =
+        H5Dread_chunk(id(), H5P_DEFAULT, chunk->origin.data(), &filterMask, buffer.data(), &room);
+#else
+    // older libraries take the caller's word for it, which is safe here only because the
+    // buffer was sized from the chunk's own storage size a moment ago
+    auto status =
+        H5Dread_chunk(id(), H5P_DEFAULT, chunk->origin.data(), &filterMask, buffer.data());
+#endif
+    // if the library balked
+    if (status < 0) {
+        // make a channel
+        auto channel = pyre::journal::error_t("pyre.h5");
+        // complain
+        channel << "while reading a chunk of '" << name() << "' in its stored form"
+                << pyre::journal::newline << "the library refused" << pyre::journal::endl(__HERE__);
+        // leave nothing misleading behind
+        buffer.clear();
+        // and decline to answer
+        return {};
+    }
+    // hand back the filters this chunk was spared, which is what a caller needs in order to
+    // lay these same bytes down somewhere else
+    return filterMask;
+}
+
+
+// lay {buffer} down as the chunk that holds the cell at {origin}
+auto
+pyre::h5::DataSet::writeChunk(
+    const index_t & origin, unsigned int filterMask, const bytes_t & buffer) const -> void
+{
+    // work out which chunk the cell belongs to; the direct write insists on the chunk's own
+    // corner, and this screens the layout, the rank and the bounds besides
+    auto corner = _corner(origin);
+    // if there is no such chunk
+    if (!corner) {
+        // the complaint has already been lodged, so just stop
+        return;
+    }
+    // hand the bytes over exactly as they are; nothing is converted, selected, or filtered
+    // on the way in, so whatever the caller supplies is what ends up in the file
+    auto status =
+        H5Dwrite_chunk(id(), H5P_DEFAULT, filterMask, corner->data(), buffer.size(), buffer.data());
+    // if the library balked
+    if (status < 0) {
+        // make a channel
+        auto channel = pyre::journal::error_t("pyre.h5");
+        // complain
+        channel << "while writing a chunk of '" << name() << "' in its stored form"
+                << pyre::journal::newline << "the library refused" << pyre::journal::endl(__HERE__);
+        // and bail
+        return;
+    }
+    // all done
+    return;
 }
 
 
