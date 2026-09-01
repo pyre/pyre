@@ -103,7 +103,12 @@ def test():
     channel.fatal = False
     # a buffer that would be big enough, so nothing but the stride is wrong here
     scratch = array.array("d", bytes(shape[0] * shape[1] * 8))
-    src.read(scratch, libh5.types.native.double, [0, 0], shape, [2])
+    # the complaint may or may not be fatal, depending on how the build wires the journal
+    # across the language boundary; either way the read must not have happened
+    try:
+        src.read(scratch, libh5.types.native.double, [0, 0], shape, [2])
+    except journal.ApplicationError:
+        pass
     # nothing was read, so the buffer is still as it started
     assert scratch[0] == 0.0
 

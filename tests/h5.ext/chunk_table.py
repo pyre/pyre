@@ -99,16 +99,34 @@ def test():
     channel.device = journal.trash()
     channel.fatal = False
 
+    # the guarded calls below complain on the {pyre.h5} error channel and decline to answer.
+    # whether such a complaint also stops the application is a policy the application sets,
+    # not part of what the guard promises, and the muzzle above does not reach the c++ side
+    # of every build. so treat a refusal and a raised complaint as the same outcome: what is
+    # being tested is that the guard saw the bad input, not what the application does about it
+    def declined(call):
+        """
+        Report whether the guard turned {call} away
+        """
+        # make the call
+        try:
+            # a guard that declined hands back nothing
+            return call() is None
+        # and one whose complaint was fatal never returns at all
+        except journal.ApplicationError:
+            # which is the same news
+            return True
+
     # an index past the end of the table names nothing; the table is as long as the number of
     # chunks written, not as long as the tiling, so this is a moving target and worth saying
-    assert chunked.chunk(index=2) is None
+    assert declined(lambda: chunked.chunk(index=2))
 
     # the library does not bounds check the by-coordinate lookup: it answers a coordinate that
     # cannot exist exactly the way it answers a chunk nobody wrote, which would make "outside
     # the raster" and "pure fill" indistinguishable. so we check for it ourselves
-    assert chunked.chunkAt(origin=[999, 999]) is None
+    assert declined(lambda: chunked.chunkAt(origin=[999, 999]))
     # and a coordinate of the wrong rank cannot even be checked, let alone used
-    assert chunked.chunkAt(origin=[0]) is None
+    assert declined(lambda: chunked.chunkAt(origin=[0]))
 
     # clean up
     f.close()
