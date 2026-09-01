@@ -132,6 +132,14 @@ namespace pyre::h5 {
         const dataset_t & self, memT & data, const datatype_t & memtype, const shape_t & origin,
         const shape_t & shape) -> void;
 
+    // the same, but visiting only every {stride}-th cell along each axis, which is how a
+    // decimated view is assembled without moving the cells it skips: {shape} counts the
+    // samples that come back, so the region swept is {shape} times {stride}
+    template <class memT>
+    inline auto read(
+        const dataset_t & self, memT & data, const datatype_t & memtype, const shape_t & origin,
+        const shape_t & shape, const shape_t & stride) -> void;
+
     // support for reading into existing {pyre::grid} instances
     template <class gridT>
     inline auto readGrid(
@@ -143,6 +151,13 @@ namespace pyre::h5 {
     inline auto write(
         const dataset_t & self, memT & data, const datatype_t & memtype, const shape_t & origin,
         const shape_t & shape) -> void;
+
+    // the same, but laying the cells down every {stride}-th slot along each axis, so that a
+    // decimated block can be scattered back into the extent it was drawn from
+    template <class memT>
+    inline auto write(
+        const dataset_t & self, memT & data, const datatype_t & memtype, const shape_t & origin,
+        const shape_t & shape, const shape_t & stride) -> void;
 
     // support for writing from existing {pyre::grid} instances
     template <class gridT>

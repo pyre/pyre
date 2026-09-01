@@ -19,9 +19,49 @@ namespace pyre::h5::py {
     // a pyre grid, a pyre memory buffer, and a numpy array all present the python buffer
     // protocol, so a single entry point serves them all; the grid family no longer needs its
     // cross product of instantiations bound here
+    // restrict {filespace} to the tile at {origin} of the given {shape}, visiting only every
+    // {stride}-th cell along each axis when a stride is given at all. an empty stride asks
+    // for the solid block, which is the overwhelmingly common case and the cheaper selection
+    inline auto select(
+        dataspace_t & filespace, const shape_t & origin, const shape_t & shape,
+        const shape_t & stride) -> bool
+    {
+        // no stride means every cell of a solid block
+        if (stride.empty()) {
+            // so make the simple selection
+            filespace.slab(origin, shape);
+            // and report that it took
+            return true;
+        }
+        // a stride has to say something about every axis, or there is no telling which ones
+        // it meant
+        if (stride.size() != shape.size()) {
+            // make a channel
+            auto channel = pyre::journal::error_t("pyre.h5");
+            // complain
+            channel
+                // what
+                << "the stride does not match the shape of the tile"
+                << pyre::journal::newline
+                // details
+                << "the stride has " << stride.size() << " entries, and the tile has "
+                << shape.size()
+                // where
+                << pyre::journal::endl(__HERE__);
+            // and decline to select anything
+            return false;
+        }
+        // each selected coordinate stands for a single cell, not a run of them
+        shape_t block(shape.size(), 1);
+        // so the selection is {shape} blocks of one cell, spaced {stride} apart
+        filespace.slab(H5S_SELECT_SET, origin, block, stride, shape);
+        // all done
+        return true;
+    }
+
     inline auto readInto(
         const DataSet & self, const py::buffer & data, const datatype_t & memtype,
-        const shape_t & origin, const shape_t & shape) -> void
+        const shape_t & origin, const shape_t & shape, const shape_t & stride) -> void
     {
         // ask the buffer for writable access to its block
         auto info = data.request(true);
@@ -55,10 +95,16 @@ namespace pyre::h5::py {
         // again on every read, however much of it is already sitting in the chunk cache.
         // measured against a compressed NISAR product, that is the difference between
         // repeating a read in 0.05ms and repeating it in 5ms
+        // the samples arrive packed whether or not any were skipped on the way, so the
+        // destination is shaped like the sample grid, not like the region it was drawn from
         auto memspace = dataspace_t(shape);
-        // the source, restricted to the requested tile
+        // the source, about to be restricted to the requested tile
         auto filespace = self.dataspace();
-        filespace.slab(origin, shape);
+        // narrow it to the cells we actually want; a stride that makes no sense stops us here
+        if (!select(filespace, origin, shape, stride)) {
+            // the complaint has already been lodged, so leave the buffer untouched
+            return;
+        }
         // fill the block; {memtype} is a pyre wrapper, so hand over its raw ids
         self.read(memtype.id(), info.ptr, memspace.id(), filespace.id());
     }
@@ -66,15 +112,20 @@ namespace pyre::h5::py {
     // write the contents of any python buffer out to a tile of {self}
     inline auto writeFrom(
         const DataSet & self, const py::buffer & data, const datatype_t & memtype,
-        const shape_t & origin, const shape_t & shape) -> void
+        const shape_t & origin, const shape_t & shape, const shape_t & stride) -> void
     {
         // ask the buffer for read access to its block
         auto info = data.request(false);
-        // the in-memory dataspace matches the tile
+        // the cells leave packed whether or not they are about to be scattered, so the
+        // source is shaped like the sample grid, not like the region it lands in
         auto memspace = dataspace_t(shape);
-        // the destination, restricted to the requested tile
+        // the destination, about to be restricted to the requested tile
         auto filespace = self.dataspace();
-        filespace.slab(origin, shape);
+        // narrow it to the cells we mean to overwrite; a bad stride stops us here
+        if (!select(filespace, origin, shape, stride)) {
+            // the complaint has already been lodged, so leave the file untouched
+            return;
+        }
         // hand the block to the write
         self.write(memtype.id(), info.ptr, memspace.id(), filespace.id());
     }
@@ -692,19 +743,19 @@ pyre::h5::py::dataset(py::module & m)
         "read",
         // the implementation
         &readInto,
-        // the signature
-        "data"_a, "memtype"_a, "origin"_a, "shape"_a,
+        // the signature; an empty stride asks for every cell of a solid block
+        "data"_a, "memtype"_a, "origin"_a, "shape"_a, "stride"_a = shape_t(),
         // the docstring
-        "fill {data} with the tile @{origin}+{shape}");
+        "fill {data} with the tile @{origin}+{shape}, taking every {stride}-th cell");
     cls.def(
         // the name
         "write",
         // the implementation
         &writeFrom,
-        // the signature
-        "data"_a, "memtype"_a, "origin"_a, "shape"_a,
+        // the signature; an empty stride lays down every cell of a solid block
+        "data"_a, "memtype"_a, "origin"_a, "shape"_a, "stride"_a = shape_t(),
         // the docstring
-        "write {data} to the tile @{origin}+{shape}");
+        "write {data} to the tile @{origin}+{shape}, at every {stride}-th cell");
 
     // the out-of-core mosaic factories
     bindMosaics(cls);
