@@ -130,15 +130,16 @@ public:
     template <class valueT>
     auto fillValue() const -> std::optional<valueT>;
 
-    // raw value access; {memspace}/{filespace} default to the whole extent
+    // raw value access; {memspace}/{filespace} default to the whole extent, and {dxpl} to
+    // the library's own transfer settings
     // fill {buffer}, interpreted as {memtype}, from the selected region
     auto read(
-        id_type memtype, void * buffer, id_type memspace = H5S_ALL,
-        id_type filespace = H5S_ALL) const -> void;
+        id_type memtype, void * buffer, id_type memspace = H5S_ALL, id_type filespace = H5S_ALL,
+        id_type dxpl = H5P_DEFAULT) const -> void;
     // write {buffer}, interpreted as {memtype}, into the selected region
     auto write(
         id_type memtype, const void * buffer, id_type memspace = H5S_ALL,
-        id_type filespace = H5S_ALL) const -> void;
+        id_type filespace = H5S_ALL, id_type dxpl = H5P_DEFAULT) const -> void;
     // read my contents as a string, trimming the persisted padding
     auto readString(id_type memspace = H5S_ALL, id_type filespace = H5S_ALL) const -> string_t;
     // write {value} into me as a string

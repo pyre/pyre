@@ -15,10 +15,6 @@
 // helpers
 namespace pyre::h5::py {
 
-    // read a tile from {self} into any writable python buffer
-    // a pyre grid, a pyre memory buffer, and a numpy array all present the python buffer
-    // protocol, so a single entry point serves them all; the grid family no longer needs its
-    // cross product of instantiations bound here
     // restrict {filespace} to the tile at {origin} of the given {shape}, visiting only every
     // {stride}-th cell along each axis when a stride is given at all. an empty stride asks
     // for the solid block, which is the overwhelmingly common case and the cheaper selection
@@ -59,9 +55,14 @@ namespace pyre::h5::py {
         return true;
     }
 
+    // read a tile from {self} into any writable python buffer
+    // a pyre grid, a pyre memory buffer, and a numpy array all present the python buffer
+    // protocol, so a single entry point serves them all; the grid family no longer needs its
+    // cross product of instantiations bound here
     inline auto readInto(
         const DataSet & self, const py::buffer & data, const datatype_t & memtype,
-        const shape_t & origin, const shape_t & shape, const shape_t & stride) -> void
+        const shape_t & origin, const shape_t & shape, const shape_t & stride, const DXPL & dxpl)
+        -> void
     {
         // ask the buffer for writable access to its block
         auto info = data.request(true);
@@ -94,9 +95,9 @@ namespace pyre::h5::py {
         // whole chunk, so the library falls back to a general scatter and inflates the chunk
         // again on every read, however much of it is already sitting in the chunk cache.
         // measured against a compressed NISAR product, that is the difference between
-        // repeating a read in 0.05ms and repeating it in 5ms
-        // the samples arrive packed whether or not any were skipped on the way, so the
-        // destination is shaped like the sample grid, not like the region it was drawn from
+        // repeating a read in 0.05ms and repeating it in 5ms. note that the samples arrive
+        // packed even when a stride skipped over most of the region, so the shape that
+        // matters here is the sample grid and not the region it was drawn from
         auto memspace = dataspace_t(shape);
         // the source, about to be restricted to the requested tile
         auto filespace = self.dataspace();
@@ -105,14 +106,15 @@ namespace pyre::h5::py {
             // the complaint has already been lodged, so leave the buffer untouched
             return;
         }
-        // fill the block; {memtype} is a pyre wrapper, so hand over its raw ids
-        self.read(memtype.id(), info.ptr, memspace.id(), filespace.id());
+        // fill the block; everything here is a pyre wrapper, so hand over the raw ids
+        self.read(memtype.id(), info.ptr, memspace.id(), filespace.id(), dxpl.id());
     }
 
     // write the contents of any python buffer out to a tile of {self}
     inline auto writeFrom(
         const DataSet & self, const py::buffer & data, const datatype_t & memtype,
-        const shape_t & origin, const shape_t & shape, const shape_t & stride) -> void
+        const shape_t & origin, const shape_t & shape, const shape_t & stride, const DXPL & dxpl)
+        -> void
     {
         // ask the buffer for read access to its block
         auto info = data.request(false);
@@ -126,8 +128,8 @@ namespace pyre::h5::py {
             // the complaint has already been lodged, so leave the file untouched
             return;
         }
-        // hand the block to the write
-        self.write(memtype.id(), info.ptr, memspace.id(), filespace.id());
+        // hand the block to the write; everything here is a pyre wrapper, so pass raw ids
+        self.write(memtype.id(), info.ptr, memspace.id(), filespace.id(), dxpl.id());
     }
 
 } // namespace pyre::h5::py
@@ -743,19 +745,25 @@ pyre::h5::py::dataset(py::module & m)
         "read",
         // the implementation
         &readInto,
-        // the signature; an empty stride asks for every cell of a solid block
+        // the signature; an empty stride asks for every cell of a solid block, and the
+        // default transfer list leaves the cells alone on their way across
         "data"_a, "memtype"_a, "origin"_a, "shape"_a, "stride"_a = shape_t(),
+        "dxpl"_a = DXPL::theDefault(),
         // the docstring
-        "fill {data} with the tile @{origin}+{shape}, taking every {stride}-th cell");
+        "fill {data} with the tile @{origin}+{shape}, taking every {stride}-th cell and "
+        "transferring it under {dxpl}");
     cls.def(
         // the name
         "write",
         // the implementation
         &writeFrom,
-        // the signature; an empty stride lays down every cell of a solid block
+        // the signature; an empty stride lays down every cell of a solid block, and the
+        // default transfer list leaves the cells alone on their way across
         "data"_a, "memtype"_a, "origin"_a, "shape"_a, "stride"_a = shape_t(),
+        "dxpl"_a = DXPL::theDefault(),
         // the docstring
-        "write {data} to the tile @{origin}+{shape}, at every {stride}-th cell");
+        "write {data} to the tile @{origin}+{shape}, at every {stride}-th cell, transferring "
+        "it under {dxpl}");
 
     // the out-of-core mosaic factories
     bindMosaics(cls);

@@ -475,11 +475,12 @@ pyre::h5::DataSet::dcpl() const -> properties::DCPL
 
 // fill {buffer}, interpreted as {memtype}, from the selected region
 auto
-pyre::h5::DataSet::read(id_type memtype, void * buffer, id_type memspace, id_type filespace) const
-    -> void
+pyre::h5::DataSet::read(
+    id_type memtype, void * buffer, id_type memspace, id_type filespace, id_type dxpl) const -> void
 {
-    // hand it to the library
-    H5Dread(id(), memtype, memspace, filespace, H5P_DEFAULT, buffer);
+    // hand it to the library, along with whatever the caller wants done to the cells in
+    // flight; {dxpl} is the only place a data transform or a transfer buffer can be named
+    H5Dread(id(), memtype, memspace, filespace, dxpl, buffer);
     // all done
     return;
 }
@@ -488,10 +489,12 @@ pyre::h5::DataSet::read(id_type memtype, void * buffer, id_type memspace, id_typ
 // write {buffer}, interpreted as {memtype}, into the selected region
 auto
 pyre::h5::DataSet::write(
-    id_type memtype, const void * buffer, id_type memspace, id_type filespace) const -> void
+    id_type memtype, const void * buffer, id_type memspace, id_type filespace, id_type dxpl) const
+    -> void
 {
-    // hand it to the library
-    H5Dwrite(id(), memtype, memspace, filespace, H5P_DEFAULT, buffer);
+    // hand it to the library, along with whatever the caller wants done to the cells in
+    // flight; {dxpl} is the only place a data transform or a transfer buffer can be named
+    H5Dwrite(id(), memtype, memspace, filespace, dxpl, buffer);
     // all done
     return;
 }
