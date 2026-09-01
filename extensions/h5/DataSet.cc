@@ -25,10 +25,36 @@ namespace pyre::h5::py {
     {
         // ask the buffer for writable access to its block
         auto info = data.request(true);
-        // address it as a flat run of cells
-        hsize_t memsize = info.size;
-        // an in-memory dataspace matching it, one dimensional
-        auto memspace = dataspace_t(shape_t { memsize });
+        // work out how many cells the tile holds
+        hsize_t cells = 1;
+        for (auto extent : shape) {
+            cells *= extent;
+        }
+        // the block has to be able to hold them
+        if (static_cast<hsize_t>(info.size) < cells) {
+            // if it cannot, make a channel
+            auto channel = pyre::journal::error_t("pyre.h5");
+            // complain
+            channel
+                // what
+                << "the destination is too small for the tile"
+                << pyre::journal::newline
+                // details
+                << "it holds " << info.size << " cells, and the tile has " << cells
+                // where
+                << pyre::journal::endl(__HERE__);
+            // and bail, rather than let the library write past the end of somebody's array
+            return;
+        }
+        // describe the destination with the SHAPE of the tile, rather than as a flat run of
+        // the same number of cells. the two hold the same elements and the library accepts
+        // either, so this looks like a matter of taste -- it is not. a destination whose
+        // rank does not match the source's cannot be filled by the path that hands over a
+        // whole chunk, so the library falls back to a general scatter and inflates the chunk
+        // again on every read, however much of it is already sitting in the chunk cache.
+        // measured against a compressed NISAR product, that is the difference between
+        // repeating a read in 0.05ms and repeating it in 5ms
+        auto memspace = dataspace_t(shape);
         // the source, restricted to the requested tile
         auto filespace = self.dataspace();
         filespace.slab(origin, shape);
