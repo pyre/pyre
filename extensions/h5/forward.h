@@ -20,6 +20,7 @@ namespace pyre::h5::py {
     void attribute(py::module &);
     // datasets
     void dataspace(py::module &);
+    void chunk(py::module &);
     void dataset(py::module &);
     // structural
     void group(py::module &);

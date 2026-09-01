@@ -40,7 +40,8 @@ namespace pyre::h5::py {
                 << "the destination is too small for the tile"
                 << pyre::journal::newline
                 // details
-                << "it holds " << info.size << " cells, and the tile has " << cells
+                << "it holds " << info.size << " cells, and the tile has "
+                << cells
                 // where
                 << pyre::journal::endl(__HERE__);
             // and bail, rather than let the library write past the end of somebody's array
@@ -138,6 +139,65 @@ pyre::h5::py::dataset(py::module & m)
         },
         // the docstring
         "get my access property list");
+
+    // the chunk table: which of the chunks my tiling describes have actually been written
+    cls.def_property_readonly(
+        // the name
+        "chunks",
+        // the implementation
+        [](const DataSet & self) -> py::object {
+            // ask
+            auto count = self.chunks();
+            // a dataset that is not stored as chunks has no table at all
+            if (!count) {
+                // and says so
+                return py::none();
+            }
+            // otherwise, hand back the tally
+            return py::cast(*count);
+        },
+        // the docstring
+        "the number of chunks i hold, or {None} when i am not stored as chunks");
+
+    cls.def(
+        // the name
+        "chunk",
+        // the implementation
+        [](const DataSet & self, hsize_t index) -> py::object {
+            // ask
+            auto chunk = self.chunk(index);
+            // an index that names nothing
+            if (!chunk) {
+                // comes back empty
+                return py::none();
+            }
+            // otherwise, hand back the description
+            return py::cast(*chunk);
+        },
+        // the signature
+        "index"_a,
+        // the docstring
+        "the chunk at {index} of my table, in the logical order of chunk origins");
+
+    cls.def(
+        // the name
+        "chunkAt",
+        // the implementation
+        [](const DataSet & self, const index_t & origin) -> py::object {
+            // ask
+            auto chunk = self.chunkAt(origin);
+            // a chunk nobody ever wrote
+            if (!chunk) {
+                // comes back empty, which is how a caller learns the region is pure fill
+                return py::none();
+            }
+            // otherwise, hand back the description
+            return py::cast(*chunk);
+        },
+        // the signature
+        "origin"_a,
+        // the docstring
+        "the chunk that holds the cell at {origin}, or {None} if it has never been written");
 
     // creation property list
     cls.def_property_readonly(

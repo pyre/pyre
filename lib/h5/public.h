@@ -29,6 +29,8 @@
 #include "Attribute.h"
 #include "Group.h"
 #include "File.h"
+// the pieces a dataset describes itself in terms of
+#include "Chunk.h"
 #include "DataSet.h"
 
 // implementation
