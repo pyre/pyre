@@ -141,14 +141,14 @@ pyre::h5::py::group(py::module & m)
         // the name
         "dataset",
         // the implementation
-        [](const Group & self, string_t path) -> DataSet {
+        [](const Group & self, string_t path, const DAPL & dapl) -> DataSet {
             // open the dataset and return it
-            return self.openDataSet(path);
+            return self.openDataSet(path, dapl);
         },
         // the signature
-        "path"_a,
+        "path"_a, "dapl"_a = DAPL::theDefault(),
         // the docstring
-        "open a dataset given its {path}");
+        "open a dataset given its {path}, with the access property list {dapl}");
 
     // open one of my subgroups
     cls.def(
@@ -210,8 +210,8 @@ pyre::h5::py::group(py::module & m)
             return self.createDataSet(path, type, space, lcpl, dcpl, dapl);
         },
         // the signature
-        "path"_a, "type"_a, "space"_a, "lcpl"_a = LCPL::theDefault(),
-        "dcpl"_a = DCPL::theDefault(), "dapl"_a = DAPL::theDefault(),
+        "path"_a, "type"_a, "space"_a, "lcpl"_a = LCPL::theDefault(), "dcpl"_a = DCPL::theDefault(),
+        "dapl"_a = DAPL::theDefault(),
         // the docstring
         "create a new dataset at the given {name} given its {type} and data {space}, with "
         "property lists {lcpl}, {dcpl}, and {dapl}");
