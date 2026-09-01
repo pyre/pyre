@@ -30,6 +30,8 @@ namespace pyre::h5 {
     class File;
     // a dataset
     class DataSet;
+    // one chunk of a chunked dataset, as it exists in the file
+    class Chunk;
 } // namespace pyre::h5
 
 

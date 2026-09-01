@@ -1,0 +1,28 @@
+// -*- C++ -*-
+// -*- coding: utf-8 -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2026 all rights reserved
+
+// code guard
+#pragma once
+
+// my declarations
+#include "Chunk.h"
+
+
+// describe a chunk that exists in the file
+inline pyre::h5::Chunk::Chunk(
+    index_t origin, unsigned int filterMask, haddr_t address, hsize_t bytes) :
+    // record where my first cell sits
+    origin(origin),
+    // then which filters were skipped when i was written
+    filterMask(filterMask),
+    // then where i live in the file
+    address(address),
+    // and finally how much room i take up there
+    bytes(bytes)
+{}
+
+
+// end of file

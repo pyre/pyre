@@ -90,6 +90,19 @@ public:
     auto storageSize() const -> hsize_t;
     // my in-memory size, in bytes
     auto memorySize() const -> std::size_t;
+
+    // the chunk table: which of the chunks my tiling describes have actually been written
+    // how many chunks i hold; nothing at all when i am not stored as chunks, which is a
+    // different answer from being chunked with nothing written into me yet
+    auto chunks() const -> std::optional<hsize_t>;
+    // the chunk at {index} of my table; the table lists only the chunks that exist, in the
+    // logical order of their origins, so an index is a cursor and not a durable address:
+    // writing a chunk that sorts earlier renumbers everything behind it
+    auto chunk(hsize_t index) const -> std::optional<Chunk>;
+    // the chunk that holds the cell at {origin}; any cell of a chunk names it, not just its
+    // corner. nothing comes back when that chunk has never been written, which is the cheap
+    // way to know a region is pure fill and not worth reading
+    auto chunkAt(const index_t & origin) const -> std::optional<Chunk>;
     // my access property list, as a fresh owned wrapper
     auto dapl() const -> properties::DAPL;
     // my creation property list, as a fresh owned wrapper
