@@ -261,6 +261,12 @@ if(PYRE_BUILD_TESTING)
     include(pyre_tests_postgres_lib)
     include(pyre_tests_postgres_ext)
   endif()
+
+  # if we have hdf5 support
+  if(HDF5_FOUND)
+    include(pyre_tests_h5_lib)
+    include(pyre_tests_h5_ext)
+  endif()
 endif()
 
 
