@@ -199,6 +199,54 @@ pyre::h5::py::dataset(py::module & m)
         // the docstring
         "the chunk that holds the cell at {origin}, or {None} if it has never been written");
 
+    // direct chunk access: moving a chunk in the form it is stored in, without decoding it
+    cls.def(
+        // the name
+        "readChunk",
+        // the implementation
+        [](const DataSet & self, const index_t & origin) -> py::object {
+            // somewhere to put the stored bytes; the dataset sizes it
+            auto buffer = bytes_t();
+            // pull the chunk
+            auto filterMask = self.readChunk(origin, buffer);
+            // a chunk that was never written has nothing to hand over
+            if (!filterMask) {
+                // and says so
+                return py::none();
+            }
+            // otherwise, hand back the mask alongside the bytes, since a caller that means
+            // to lay these down elsewhere needs both
+            return py::make_tuple(*filterMask, py::bytes(buffer.data(), buffer.size()));
+        },
+        // the signature
+        "origin"_a,
+        // the docstring
+        "the stored bytes of the chunk holding {origin}, as a {(filterMask, bytes)} pair, or "
+        "{None} if it has never been written");
+
+    cls.def(
+        // the name
+        "writeChunk",
+        // the implementation
+        [](const DataSet & self, const index_t & origin, unsigned int filterMask,
+           const py::buffer & data) -> void {
+            // ask the source for read access to its block
+            auto info = data.request(false);
+            // measure it, in bytes rather than in whatever it thinks its cells are
+            auto span = static_cast<std::size_t>(info.size * info.itemsize);
+            // take a copy, since the library wants a contiguous run it can hand to the file
+            auto first = static_cast<const char *>(info.ptr);
+            auto buffer = bytes_t(first, first + span);
+            // and lay it down
+            self.writeChunk(origin, filterMask, buffer);
+            // all done
+            return;
+        },
+        // the signature
+        "origin"_a, "filterMask"_a, "data"_a,
+        // the docstring
+        "lay {data}, already in stored form, down as the chunk that holds {origin}");
+
     // creation property list
     cls.def_property_readonly(
         // the name

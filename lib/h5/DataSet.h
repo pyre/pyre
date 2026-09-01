@@ -103,6 +103,20 @@ public:
     // corner. nothing comes back when that chunk has never been written, which is the cheap
     // way to know a region is pure fill and not worth reading
     auto chunkAt(const index_t & origin) const -> std::optional<Chunk>;
+
+    // direct chunk access: moving a chunk in the form it is stored in, without decoding it
+    // read the chunk that holds the cell at {origin} into {buffer}, which is resized to the
+    // chunk's stored size, so no caller can get the size wrong. the bytes arrive exactly as
+    // they sit in the file, filter pipeline and all, and what comes back is the mask of the
+    // filters that were skipped when the chunk was written; nothing comes back when there is
+    // no such chunk to read
+    auto readChunk(const index_t & origin, bytes_t & buffer) const -> std::optional<unsigned int>;
+    // lay {buffer} down as the chunk that holds the cell at {origin}, taking it to be already
+    // in stored form and recording {filterMask} as the filters it was spared. nothing is
+    // converted, selected, or filtered on the way in, so the bytes had better have come from
+    // a dataset whose pipeline and chunk shape match mine
+    auto writeChunk(const index_t & origin, unsigned int filterMask, const bytes_t & buffer) const
+        -> void;
     // my access property list, as a fresh owned wrapper
     auto dapl() const -> properties::DAPL;
     // my creation property list, as a fresh owned wrapper
@@ -139,6 +153,11 @@ public:
 private:
     // trim the persisted padding from {value} according to the string padding strategy {pad}
     auto _trim(string_t & value, H5T_str_t pad) const -> void;
+    // the corner of the chunk that holds the cell at {origin}: check that the cell is one i
+    // actually have, and round it down to the anchor of its chunk. the chunk table snaps a
+    // cell to its chunk on its own, but the direct read and write refuse anything that is
+    // not already a corner, so the whole family shares one answer and behaves alike
+    auto _corner(const index_t & origin) const -> std::optional<index_t>;
     // assemble a mosaic over a tiled {layout}: one demand-materialized page per tile
     template <class cellT>
     auto _assemble(const tiling_t & layout) const -> mosaic_t<cellT>;
