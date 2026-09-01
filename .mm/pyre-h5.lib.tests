@@ -20,6 +20,7 @@ pyre-h5.lib.tests.c++.flags += -Wall $(pyre.lib.c++.flags)
 tests.h5.lib.dataset_tiling.clean := dataset_tiling.h5
 tests.h5.lib.dataset_mosaic_read.clean := dataset_mosaic_read.h5
 tests.h5.lib.dataset_mosaic_write.clean := dataset_mosaic_write.h5
+tests.h5.lib.dataset_strided.clean := dataset_strided.h5
 
 
 # end of file
