@@ -21,6 +21,7 @@ tests.h5.ext.lcpl.clean := h5_ext_lcpl.h5
 tests.h5.ext.acpl.clean := h5_ext_acpl.h5
 tests.h5.ext.read_chunk_cache.clean := read_chunk_cache.h5
 tests.h5.ext.dapl_chunk_cache.clean := dapl_chunk_cache.h5
+tests.h5.ext.chunk_table.clean := chunk_table.h5
 
 
 # end of file
