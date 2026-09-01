@@ -95,8 +95,20 @@ pyre::h5::Group::openGroup(const string_t & path) const -> Group
 auto
 pyre::h5::Group::openDataSet(const string_t & path) const -> DataSet
 {
-    // open it; the library hands back a fresh handle the wrapper adopts
-    return DataSet(static_cast<id_type>(H5Dopen2(id(), path.data(), H5P_DEFAULT)));
+    // defer to the full flavor, asking for the library defaults
+    return openDataSet(path, properties::DAPL::theDefault());
+}
+
+
+// open the dataset at the given {path}, with the access property list {dapl}
+auto
+pyre::h5::Group::openDataSet(const string_t & path, const properties::DAPL & dapl) const -> DataSet
+{
+    // open it; the access properties are the caller's chance to say how the dataset should
+    // be reached, and the chunk cache is the one that matters: it is a per dataset budget of
+    // decompressed chunks, and a reader that revisits a chunk gets it back for the price of
+    // a copy instead of an inflation. adopt the fresh handle
+    return DataSet(static_cast<id_type>(H5Dopen2(id(), path.data(), dapl.id())));
 }
 
 
@@ -117,8 +129,8 @@ pyre::h5::Group::createGroup(
 {
     // make it; the group access property list has no properties of its own, so it stays
     // the library default until hdf5 gives it something to say; adopt the fresh handle
-    return Group(static_cast<id_type>(
-        H5Gcreate2(id(), path.data(), lcpl.id(), gcpl.id(), H5P_DEFAULT)));
+    return Group(
+        static_cast<id_type>(H5Gcreate2(id(), path.data(), lcpl.id(), gcpl.id(), H5P_DEFAULT)));
 }
 
 
@@ -141,8 +153,9 @@ pyre::h5::Group::createDataSet(
     const properties::DAPL & dapl) const -> DataSet
 {
     // make it; adopt the fresh handle
-    return DataSet(static_cast<id_type>(H5Dcreate2(
-        id(), path.data(), type.id(), space.id(), lcpl.id(), dcpl.id(), dapl.id())));
+    return DataSet(
+        static_cast<id_type>(
+            H5Dcreate2(id(), path.data(), type.id(), space.id(), lcpl.id(), dcpl.id(), dapl.id())));
 }
 
 
