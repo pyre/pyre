@@ -107,6 +107,7 @@ function(pyre_h5Module)
       extensions/h5/__init__.cc
       extensions/h5/api.cc
       extensions/h5/Attribute.cc
+      extensions/h5/Chunk.cc
       extensions/h5/DataSet.cc
       extensions/h5/DataSpace.cc
       extensions/h5/enums.cc
