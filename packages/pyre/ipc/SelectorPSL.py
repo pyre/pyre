@@ -10,9 +10,12 @@ in the python standard library
 """
 
 # external
+import errno
+import selectors
+
+# support
 import pyre
 import journal
-import selectors
 
 # interface
 from .Dispatcher import Dispatcher
@@ -201,36 +204,57 @@ class SelectorPSL(Scheduler, family="pyre.ipc.dispatchers.psl", implements=Dispa
         pile = index.pop(key, [])
         # make a pile of event handlers to reschedule
         reschedule = []
-        # go through the snapshot
-        for event in pile:
-            # very very carefully
-            try:
-                # invoke the handler
-                keep = event.handler(channel=event.channel, **event.context)
-            # if a transient error occurs
-            except (BlockingIOError, InterruptedError):
-                # let's try this again
-                keep = True
-            # if something more serious happens
-            except OSError as error:
-                # the connection is broken; discarding the handler is the only sane move,
-                # but say so, since silent drops make failures undiagnosable
-                channel = journal.debug("pyre.ipc.psl")
-                # describe what happened
-                channel.line(f"discarding a handler of {event.channel}")
-                channel.line(f"after it raised {error}")
-                # flush
-                channel.log()
-                # and drop it
-                keep = False
-            # keepers
-            if keep:
-                # get rescheduled
-                reschedule.append(event)
-        # if any handlers survived
-        if reschedule:
-            # put them back, ahead of whatever interest arrived while they ran
-            index.setdefault(key, [])[:0] = reschedule
+        # how many handlers have had their turn
+        done = 0
+        # carefully, since a handler that raises something other than an {OSError} must not
+        # take the rest of the pile with it: the ones that never got their turn are still
+        # interested, and losing them leaves a channel nobody listens to
+        try:
+            # go through the snapshot
+            for event in pile:
+                # count this one before it runs, so that if it raises it is the one that is
+                # dropped
+                done += 1
+                # very very carefully
+                try:
+                    # invoke the handler
+                    keep = event.handler(channel=event.channel, **event.context)
+                # if a transient error occurs
+                except (BlockingIOError, InterruptedError):
+                    # let's try this again
+                    keep = True
+                # if something more serious happens
+                except OSError as error:
+                    # discarding the handler is the only sane move, but say so, since a
+                    # silent drop is undiagnosable: a broken connection is routine and goes
+                    # on the debug channel, while a process that has run out of resources,
+                    # e.g. file descriptors, is news that must reach somebody
+                    exhausted = error.errno in (errno.EMFILE, errno.ENFILE, errno.ENOMEM)
+                    # pick the channel accordingly
+                    channel = (
+                        journal.warning("pyre.ipc.psl")
+                        if exhausted
+                        else journal.debug("pyre.ipc.psl")
+                    )
+                    # describe what happened
+                    channel.line(f"discarding a handler of {event.channel}")
+                    channel.line(f"after it raised {error}")
+                    # flush
+                    channel.log()
+                    # and drop it
+                    keep = False
+                # keepers
+                if keep:
+                    # get rescheduled
+                    reschedule.append(event)
+        # whatever happened
+        finally:
+            # the handlers that did not get their turn keep their place
+            reschedule += pile[done:]
+            # if any handlers survived
+            if reschedule:
+                # put them back, ahead of whatever interest arrived while they ran
+                index.setdefault(key, [])[:0] = reschedule
         # all done
         return
 
