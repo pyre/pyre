@@ -214,14 +214,31 @@ class Selector(Scheduler, family="pyre.ipc.dispatchers.selector", implements=dis
             # they run accumulates separately instead of being invoked prematurely on
             # this pass
             pile = index.pop(active, [])
-            # invoke the event handlers and save the events whose handlers return {True}
-            events = list(
-                event for event in pile if event.handler(channel=event.channel, **event.context)
-            )
-            # if any handlers requested to be rescheduled
-            if events:
-                # put them back, ahead of whatever interest arrived while they ran
-                index[active][:0] = events
+            # the events whose handlers ask to be rescheduled
+            survivors = []
+            # how many handlers have had their turn
+            done = 0
+            # carefully, since a handler that raises must not take the rest of the pile with
+            # it: the ones that never got their turn are still interested, and losing them
+            # leaves a channel nobody listens to, which is a silent failure
+            try:
+                # go through the handlers
+                for event in pile:
+                    # count this one before it runs, so that if it raises it is the one
+                    # that is dropped
+                    done += 1
+                    # invoke it; a handler that returns {True} asks to be rescheduled
+                    if event.handler(channel=event.channel, **event.context):
+                        # so keep it
+                        survivors.append(event)
+            # whatever happened
+            finally:
+                # the handlers that did not get their turn keep their place
+                survivors += pile[done:]
+                # if anything is going back
+                if survivors:
+                    # put it back, ahead of whatever interest arrived while the handlers ran
+                    index[active][:0] = survivors
         # all done
         return
 
