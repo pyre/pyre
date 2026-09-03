@@ -179,31 +179,37 @@ class Crew(Peer, family="pyre.nexus.peers.crew"):
         # show me on the debug channel
         self.debug.log(f"{self.pid}: {memberstatus}, {taskstatus}, {result}")
 
-        # first, let's figure out what to do with the task; if it ran to completion
-        if taskstatus is self.taskcodes.completed:
-            # deliver the result; the team decides what results are for
-            team.collect(task=task, result=result)
-        # if it failed due to some temporary condition
-        elif taskstatus is self.taskcodes.failed:
-            # tell me
-            self.reportRecoverableError(team=team, task=task, error=result)
-            # the team decides whether it gets another chance
-            team.requeue(task=task, error=result)
-        # otherwise, the task aborted
-        else:
-            # deliver the bad news; the team decides how to break it
-            team.abandon(task=task, error=result)
-
-        # now, let's figure out what to do with me; if i'm healthy
-        if memberstatus is self.crewcodes.healthy:
-            # put me back in the work queue
-            team.schedule(crew=self)
-        # otherwise
-        else:
-            # tell me
-            self.reportUnrecoverableError(team=team, task=task, error=result)
-            # dismiss me
-            team.dismiss(crew=self)
+        # first, let's figure out what to do with the task. the delivery runs code that
+        # belongs to whoever asked for the task, and it may fail; my own fate must be
+        # settled regardless, or a failed subscriber leaves me counted as busy with nobody
+        # listening to me, and the team never hands out work again
+        try:
+            # if it ran to completion
+            if taskstatus is self.taskcodes.completed:
+                # deliver the result; the team decides what results are for
+                team.collect(task=task, result=result)
+            # if it failed due to some temporary condition
+            elif taskstatus is self.taskcodes.failed:
+                # tell me
+                self.reportRecoverableError(team=team, task=task, error=result)
+                # the team decides whether it gets another chance
+                team.requeue(task=task, error=result)
+            # otherwise, the task aborted
+            else:
+                # deliver the bad news; the team decides how to break it
+                team.abandon(task=task, error=result)
+        # whatever the delivery did
+        finally:
+            # now, let's figure out what to do with me; if i'm healthy
+            if memberstatus is self.crewcodes.healthy:
+                # put me back in the work queue
+                team.schedule(crew=self)
+            # otherwise
+            else:
+                # tell me
+                self.reportUnrecoverableError(team=team, task=task, error=result)
+                # dismiss me
+                team.dismiss(crew=self)
 
         # all done
         return False
