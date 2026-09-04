@@ -16,11 +16,11 @@ class Entry:
     notes = None  # a dictionary with the message metadata
 
     # metamethods
-    def __init__(self, notes, **kwds):
+    def __init__(self, notes, page=None, **kwds):
         # chain up
         super().__init__(**kwds)
-        # start with a blank page
-        self.page = []
+        # start with a copy of the supplied page, or a blank one
+        self.page = list(page) if page is not None else []
         # and a copy of the supplied metadata
         self.notes = dict(notes)
         # all done
