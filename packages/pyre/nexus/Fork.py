@@ -31,6 +31,9 @@ class Fork(pyre.component, family="pyre.nexus.recruiters.fork", implements=Recru
     channels = pyre.ipc.transport()
     channels.doc = "the ipc mechanism that connects the team to its crew members"
 
+    journal = pyre.properties.bool(default=True)
+    journal.doc = "whether the journal entries of each crew member are routed back to the team"
+
     # protocol obligations
     @pyre.provides
     def recruit(self, team, **kwds):
@@ -54,6 +57,10 @@ class Fork(pyre.component, family="pyre.nexus.recruiters.fork", implements=Recru
         # team members communicate with the manager over my transport; the {child} end is
         # destined for the worker, the {parent} end stays with the team
         parent, child = self.channels.open()
+        # the worker's journal entries travel back over a channel of their own, when wanted;
+        # the crew channel carries a protocol of its own, and a diagnostic must never have to
+        # wait for a report to be due
+        parentJournal, childJournal = self.channels.open() if self.journal else (None, None)
         # clone the current process
         pid = os.fork()
 
@@ -65,10 +72,18 @@ class Fork(pyre.component, family="pyre.nexus.recruiters.fork", implements=Recru
             # the team's end is not mine to hold; release my inherited copy so the channel
             # closes for real when the team side lets go
             parent.close()
+            # and the same for the team's end of the journal channel, if there is one
+            if parentJournal is not None:
+                # release it
+                parentJournal.close()
             # shed the rest of the connections the fork handed me
             self.shed(team=team)
             # make a team member
-            crew = team.crew(pid=os.getpid(), channel=child, **kwds)
+            crew = team.crew(pid=os.getpid(), channel=child, journal=childJournal, **kwds)
+            # if my journal is routed to the team
+            if childJournal is not None:
+                # install the device that ships it, and keep it alive for as long as i am
+                crew.courier = self.route(channel=childJournal)
             # ask it to register with the team
             crew.register()
             # spin up and carry out tasks until there is nothing more to do
@@ -78,8 +93,12 @@ class Fork(pyre.component, family="pyre.nexus.recruiters.fork", implements=Recru
 
         # on the team side, release the worker's end for the same reason
         child.close()
+        # and the worker's end of the journal channel, if there is one
+        if childJournal is not None:
+            # release it
+            childJournal.close()
         # make a member proxy for the team manager and return it
-        crew = team.crew(pid=pid, channel=parent, timer=team.timer)
+        crew = team.crew(pid=pid, channel=parent, journal=parentJournal, timer=team.timer)
         # adjust its support for asynchrony
         crew.dispatcher = team.dispatcher
         # and its message serializer
@@ -98,6 +117,25 @@ class Fork(pyre.component, family="pyre.nexus.recruiters.fork", implements=Recru
         return
 
     # implementation details
+    def route(self, channel):
+        """
+        Send everything this process says to the journal down {channel}, for the team to hear
+        """
+        # get the journal
+        import journal
+
+        # the writable end of the channel; a socket is its own end, a pipe hands out a descriptor
+        end = channel.outbound
+        # get the descriptor
+        descriptor = end.fileno() if hasattr(end, "fileno") else end
+        # make the device; the terminal is left to the team, which replays every entry it
+        # hears, so there is nothing to mirror
+        courier = journal.courier(descriptor=descriptor)
+        # install it
+        journal.chronicler.device = courier
+        # and hand it to the caller, whose reference keeps it alive
+        return courier
+
     def shed(self, team):
         """
         Close the inherited connections that belong to the {team} side, not to a new crew
@@ -112,6 +150,8 @@ class Fork(pyre.component, family="pyre.nexus.recruiters.fork", implements=Recru
         # add the channels of every deployed crew; members between tasks may have no armed
         # handler, so the event loop does not know about them
         pile |= set(crew.channel for crew in team.crews())
+        # and the team's ends of their journal channels
+        pile |= set(crew.journal for crew in team.crews() if crew.journal is not None)
         # go through the pile
         for channel in pile:
             # carefully, since a descriptor may already be gone

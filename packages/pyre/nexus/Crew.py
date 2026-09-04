@@ -19,6 +19,10 @@ from ..ipc.exceptions import EndOfStream
 # the marker for tasks that took their crew member down
 from .exceptions import Casualty
 
+# the wire form of a journal entry, and the complaint about one that is not
+from journal import record as Record
+from journal.exceptions import RecordError
+
 # my base class
 from .Peer import Peer
 
@@ -61,8 +65,69 @@ class Crew(Peer, family="pyre.nexus.peers.crew"):
         self.dispatcher.whenReadReady(
             channel=self.channel, call=functools.partial(self.activate, team=team)
         )
+        # if my twin's journal is routed to me
+        if self.journal is not None:
+            # listen for it, for as long as my twin lives
+            self.dispatcher.whenReadReady(
+                channel=self.journal, call=functools.partial(self.overhear, team=team)
+            )
         # all done
         return self
+
+    def overhear(self, channel, team):
+        """
+        My twin has something to say; collect the records and hand them to the team
+
+        N.B.: this is an event handler; careful with its return value
+        """
+        # check it's me we are talking about
+        assert channel is self.journal
+        # carefully, since my twin may be gone
+        try:
+            # pull whatever is there
+            data = channel.read(minlen=0, maxlen=64 * 1024)
+        # if the channel is broken
+        except OSError:
+            # my twin is gone
+            data = b""
+        # if there is nothing, my twin has closed its end, which only happens when it exits
+        if not data:
+            # if any of what it said could not be understood
+            if self.garbled:
+                # leave a note
+                self.warning.log(f"{self.pid}: {self.garbled} garbled journal records")
+            # carefully
+            try:
+                # release my end
+                channel.close()
+            # tolerating one that is already gone
+            except OSError:
+                # nothing further
+                pass
+            # and stop listening
+            return False
+        # add what arrived to what was left over from last time
+        self.tail += data
+        # split off the complete lines; the last piece is the start of a line still in transit
+        *lines, self.tail = self.tail.split(b"\n")
+        # go through the complete lines
+        for line in lines:
+            # carefully
+            try:
+                # decode the record
+                record = Record.decode(line)
+            # if it is not one
+            except RecordError as error:
+                # count it
+                self.garbled += 1
+                # leave a note
+                self.debug.log(f"{self.pid}: garbled journal record: {error.reason}")
+                # and move on
+                continue
+            # hand it to the team
+            team.overhear(crew=self, record=record)
+        # keep listening
+        return True
 
     def activate(self, channel, team):
         """
@@ -368,13 +433,21 @@ class Crew(Peer, family="pyre.nexus.peers.crew"):
         return self
 
     # meta-methods
-    def __init__(self, pid, channel, **kwds):
+    def __init__(self, pid, channel, journal=None, **kwds):
         # chain up
         super().__init__(**kwds)
         # save my crew is; this is an opaque type, assigned to me by my recruiter
         self.pid = pid
         # save the communication channel to my twin
         self.channel = channel
+        # and the channel that carries my twin's journal entries, if any
+        self.journal = journal
+        # on the worker side, the device that ships them; held here so it outlives the fork
+        self.courier = None
+        # the start of a record still in transit from my twin
+        self.tail = b""
+        # the number of records from my twin that could not be understood
+        self.garbled = 0
         # my twin is working on nothing yet; this names the task a deadline is measured
         # against, so a report that beats its deadline can retire it
         self.task = None

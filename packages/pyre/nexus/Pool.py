@@ -11,6 +11,7 @@ import os
 
 # support
 import pyre
+import journal
 
 # base class
 from .Peer import Peer
@@ -72,6 +73,19 @@ class Pool(Peer, family="pyre.nexus.teams.pool", implements=Team):
 
         # all done
         return self
+
+    @pyre.export
+    def overhear(self, crew, record):
+        """
+        A journal {record} has arrived from {crew}
+
+        The default is to replay it into my own journal, so the entries of every member reach
+        the same devices as mine, attributed to the process that produced them
+        """
+        # replay it
+        journal.replay(record=record)
+        # all done
+        return
 
     @pyre.export
     def vacancies(self):

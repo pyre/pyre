@@ -38,6 +38,12 @@ class Team(pyre.protocol, family="pyre.nexus.teams"):
         Compute how may recruits are needed to take the team to full strength
         """
 
+    @pyre.provides
+    def overhear(self, crew, record):
+        """
+        Take delivery of a journal {record} produced by the {crew} member
+        """
+
     # my default
     @classmethod
     def pyre_default(cls, **kwds):
