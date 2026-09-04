@@ -22,6 +22,34 @@ pyre::journal::py::entry(py::module & m)
 
     // journal entries
     auto cls = py::class_<entry_t>(m, "Entry");
+    // constructor
+    cls.def(
+        // the implementation: an entry with the given content, for those that rebuild entries
+        // from records; the containers may be native or bound, so convert element by element
+        py::init([](py::iterable page, py::object notes) {
+            // make an entry
+            auto entry = std::make_unique<entry_t>();
+            // fill its page
+            for (auto line : page) {
+                // one line at a time
+                entry->page().push_back(py::cast<string_t>(line));
+            }
+            // the record notes are authoritative; start clean
+            entry->notes().clear();
+            // and fill them in
+            for (auto item : notes.attr("items")()) {
+                // unpack each pair
+                auto pair = py::cast<py::tuple>(item);
+                // and store it
+                entry->notes()[py::cast<string_t>(pair[0])] = py::cast<string_t>(pair[1]);
+            }
+            // hand it off
+            return entry;
+        }),
+        // the signature
+        "page"_a, "notes"_a,
+        // the docstring
+        "build an entry with the given {page} and {notes}");
     // parts
     cls.def_property_readonly(
         // the name

@@ -169,6 +169,8 @@ else:
 
     # lower level entities that users may want to subclass
     device = libjournal.Device
+    # the content of an entry, for those that rebuild entries from records
+    entry = libjournal.Entry
     # renderer = libjournal.Renderer
     # alert = libjournal.Alert
     # memo = libjournal.Memo
@@ -189,6 +191,49 @@ from .Record import Record as record
 # the device that ships entries to another process; it derives from {device}, so it must
 # come after the implementation choice
 from .Courier import Courier as courier
+
+# the channel factories, by severity, for those that rebuild entries from records
+severities = {
+    "debug": debug,
+    "firewall": firewall,
+    "info": info,
+    "warning": warning,
+    "error": error,
+    "help": help,
+}
+
+
+# deliver an entry that another process produced
+def replay(record):
+    """
+    Hand the entry in {record} to the device a channel of its severity and name resolves to
+
+    The channel's own state does not apply: the entry exists because its channel was active
+    where it was flushed, and a fatal severity has already done its work there. The origin of
+    the record is written into the notes, so the device can tell where the entry came from
+    """
+    # find the channel factory for the severity
+    factory = severities.get(record.severity)
+    # if there isn't one
+    if factory is None:
+        # the record is not one of ours
+        raise exceptions.RecordError(reason=f"unknown severity '{record.severity}'")
+    # make the channel, so per-channel and per-severity device installations are honored
+    channel = factory(record.channel or "journal.replay")
+    # and resolve its device
+    device = channel.device
+    # copy the notes
+    notes = dict(record.notes)
+    # and record the origin
+    notes["pid"] = str(record.pid)
+    notes["seq"] = str(record.seq)
+    notes["time"] = repr(record.time)
+    # rebuild the entry
+    body = entry(page=list(record.page), notes=notes)
+    # and deliver it through the sink the record names
+    getattr(device, record.sink)(entry=body)
+    # all done
+    return
 
 
 # pyre calls this once the framework is up, whichever journal implementation is active
