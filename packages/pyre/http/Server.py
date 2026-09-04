@@ -285,6 +285,10 @@ class Server(pyre.nexus.server, family="pyre.nexus.servers.http"):
         # queue the preamble; the hub arms the channel and delivers it on the same path as
         # every later event, so a streaming channel is never touched by the blocking writer
         hub.send(channel=channel, data=preamble)
+        # if the response opens with frames of its own, e.g. what a newcomer missed
+        if response.opening:
+            # they go out next, ahead of anything published from here on
+            hub.send(channel=channel, data=response.opening)
         # let the response decide whether the connection stays open
         return response.alive
 

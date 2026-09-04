@@ -25,6 +25,7 @@ class EventStream(Response):
     streaming = True  # route me down the server's streaming path
     alive = True  # hold the connection open
     topic = ""  # the hub topic that scopes delivery; empty is the global topic
+    opening = None  # frames to deliver right after the preamble, e.g. history for a newcomer
 
     # interface
     def event(self, data, *, name=None, id=None, retry=None):
@@ -67,11 +68,13 @@ class EventStream(Response):
         return b": keepalive\n\n"
 
     # meta-methods
-    def __init__(self, topic="", **kwds):
+    def __init__(self, topic="", opening=None, **kwds):
         # chain up
         super().__init__(**kwds)
         # remember the topic that scopes my delivery
         self.topic = topic
+        # and the frames, already encoded, that open the stream before any later event
+        self.opening = opening
         # decorate the headers for SSE
         headers = self.headers
         # mark the content type
