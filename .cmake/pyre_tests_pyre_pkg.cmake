@@ -849,6 +849,7 @@ pyre_test_python_testcase(tests/pyre.pkg/http/hub.py)
 pyre_test_python_testcase(tests/pyre.pkg/http/render.py)
 pyre_test_python_testcase(tests/pyre.pkg/http/eventstream.py)
 pyre_test_python_testcase(tests/pyre.pkg/http/sse_preamble.py)
+pyre_test_python_testcase(tests/pyre.pkg/http/sse_opening.py)
 
 
 #
