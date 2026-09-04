@@ -15,8 +15,11 @@ consumer is `qed`, whose side of the design is in `qed/doc/console.md`.
 
 Branches: `journal` in both `pyre` and `qed`.
 
-Status: **design, not yet built**. Every fact below about the current code was read out
-of the source on 2026-09-04, with the file cited; open questions are marked as such.
+Status: **the record, the courier, the entry constructor, the replay, the collection in
+the nexus, and the opening payload on the event stream are built and tested** (2026-09-04,
+branch `journal`); the C++ courier, the control records, and the daemon are not. Every fact
+below about the code that preceded this work was read out of the source on 2026-09-04, with
+the file cited; open questions are marked as such.
 
 ## Goal
 
@@ -275,6 +278,8 @@ Following the four journal suites and their naming (`tests/journal.pkg`,
 - `pyre/nexus/Crew.py`: `journal` channel attribute; `overhear`; close in `resign`.
 - `pyre/nexus/Pool.py` and `Staff.py`: `overhear(crew, record)` with the replay default;
   the journal channel closed in `bury` and `dismiss`.
+- `pyre/http/EventStream.py` and `pyre/http/Server.py`: an optional opening payload that
+  the streaming path queues right after the preamble, so a newcomer can be sent history.
 - `lib/journal/Courier.h`, `.icc`, `.cc` *(later)*: the C++ twin, registered in
   `extensions/journal/devices.cc` when it exists.
 - `doc/design/journal.md`: a section on delivery, once built.
