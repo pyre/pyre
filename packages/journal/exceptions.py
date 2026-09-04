@@ -75,4 +75,23 @@ class ApplicationError(JournalError):
         return
 
 
+# raised while decoding a record that is not in its wire form
+class RecordError(JournalError):
+    """
+    Exception raised when a journal record cannot be reconstructed from its wire form
+    """
+
+    # public data
+    description = "malformed journal record: {0.reason}"
+
+    # metamethods
+    def __init__(self, reason, **kwds):
+        # chain up
+        super().__init__(**kwds)
+        # save the reason
+        self.reason = reason
+        # all done
+        return
+
+
 # end of file

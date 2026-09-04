@@ -72,6 +72,9 @@ if without_libjournal:
     from .Alert import Alert as alert
     from .Memo import Memo as memo
 
+    # the content of an entry, for those that rebuild entries from records
+    from .Entry import Entry as entry
+
     # convenience function to set the application name
     def application(name):
         """
@@ -177,6 +180,15 @@ else:
     decor = libjournal.decor
     detail = libjournal.detail
     margin = libjournal.margin
+
+
+# entries in transit, whichever implementation is active
+# the wire form of an entry
+from .Record import Record as record
+
+# the device that ships entries to another process; it derives from {device}, so it must
+# come after the implementation choice
+from .Courier import Courier as courier
 
 
 # pyre calls this once the framework is up, whichever journal implementation is active
