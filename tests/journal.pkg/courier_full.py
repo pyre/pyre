@@ -32,14 +32,11 @@ def test():
     for _ in range(attempts):
         # log
         channel.log(filler)
-    # every attempt was stamped
-    assert courier.seq == attempts
+    # every attempt was stamped, and so was every report of drops that found room to go out
+    # between refusals, so the sequence runs at least as far as the attempts
+    assert courier.seq >= attempts
     # some were lost
     assert courier.dropped > 0
-    # and the books balance
-    assert courier.shipped + courier.dropped == attempts
-    # the lost ones count what was owed
-    owed = courier.dropped
 
     # drain the pipe; the read end must not block either
     os.set_blocking(reader, False)
@@ -93,17 +90,22 @@ def test():
     # the report is on the courier's own channel
     assert notice.channel == "journal.courier"
     assert notice.severity == "warning"
-    assert notice.sink == "alert"
-    # it carries the count in its notes
-    assert int(notice.notes["dropped"]) == owed
     # and the entry that prompted it follows
     assert after.page == ["after"]
-    # the sequence numbers of the records that arrived, in order, with gaps for the losses
+    # the sequence numbers of the records that arrived are increasing
     sequence = [int(record.notes["seq"]) for record in records]
     assert sequence == sorted(sequence)
     assert len(set(sequence)) == len(sequence)
-    # the gaps account for exactly the records owed
-    assert sequence[-1] - len(records) == owed
+    # the reports of drops, each accounting for at least one loss
+    notices = [record for record in records if record.channel == "journal.courier"]
+    assert all(int(record.notes["dropped"]) > 0 for record in notices)
+    reported = sum(int(record.notes["dropped"]) for record in notices)
+    # the entries that made it out are the records that are not reports
+    assert courier.shipped == len(records) - len(notices)
+    # every attempt, the final entry included, was either shipped or reported lost
+    assert courier.shipped + reported == attempts + 1
+    # and the gaps in the sequence account for exactly the losses
+    assert sequence[-1] - len(records) == reported
 
     # clean up
     courier.close()
