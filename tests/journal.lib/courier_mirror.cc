@@ -57,7 +57,11 @@ main()
 {
     // make a pipe
     int pipes[2];
-    assert(::pipe(pipes) == 0);
+    // the call must happen whether or not assertions are compiled in, so check it by hand
+    if (::pipe(pipes) != 0) {
+        // no pipe, no test
+        return 1;
+    }
     // a mirror
     auto mirror = std::make_shared<Counter>();
     // a courier that also delivers to it
