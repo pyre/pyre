@@ -91,6 +91,29 @@ class Pool(Peer, family="pyre.nexus.teams.pool", implements=Team):
         return
 
     @pyre.export
+    def instruct(self, control):
+        """
+        Apply the {control} instruction to my own journal, and send it to every crew member
+
+        A member forked after this inherits the new state, so only the ones already deployed
+        need to be told
+        """
+        # apply it here
+        control.apply()
+        # go through the members
+        for crew in self.crews():
+            # carefully, since a member may have died
+            try:
+                # tell each one
+                crew.instruct(control=control)
+            # a dead member raises while being written to
+            except OSError:
+                # nothing more to do for it
+                continue
+        # all done
+        return
+
+    @pyre.export
     def vacancies(self):
         """
         Compute how many recruits are needed to take the team to full strength

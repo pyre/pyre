@@ -188,6 +188,9 @@ else:
 # the wire form of an entry
 from .Record import Record as record
 
+# an instruction to a channel in another process
+from .Control import Control as control
+
 # the device that ships entries to another process; it derives from {device}, so it must
 # come after the implementation choice
 from .Courier import Courier as courier

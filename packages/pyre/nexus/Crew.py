@@ -280,6 +280,19 @@ class Crew(Peer, family="pyre.nexus.peers.crew"):
         # all done
         return False
 
+    def instruct(self, control):
+        """
+        Send my twin the {control} instruction over its journal channel
+        """
+        # if there is no such channel
+        if self.journal is None:
+            # there is nothing to do
+            return self
+        # send it
+        self.journal.write(control.encode())
+        # all done
+        return self
+
     def harvest(self, channel):
         """
         Extract a completion report from {channel}
@@ -328,8 +341,72 @@ class Crew(Peer, family="pyre.nexus.peers.crew"):
         """
         # send in my registration when the write side of my channel is ready to accept data
         self.dispatcher.whenWriteReady(channel=self.channel, call=self.checkin)
-        # and chain up to start processing events
+        # if my journal is routed to the team
+        if self.journal is not None:
+            # the team may send instructions back over the same channel; the readable end must
+            # not block, since instructions are also collected right before each task
+            os.set_blocking(self._descriptor(end=self.journal.inbound), False)
+            # listen for them
+            self.dispatcher.whenReadReady(channel=self.journal, call=self.obey)
+        # all done
         return self
+
+    def obey(self, channel):
+        """
+        The team has sent instructions over my journal channel; apply them
+
+        N.B.: this is an event handler; careful with its return value
+        """
+        # check it's me we are talking about
+        assert channel is self.journal
+        # collect and apply whatever arrived; an empty read means the team has let go of its
+        # end, which only happens when it is gone
+        return self.heed()
+
+    def heed(self):
+        """
+        Apply the instructions the team has sent so far, if any; report whether the channel is
+        still open
+        """
+        # the wire form of an instruction, and the complaint about one that is not; imported
+        # here because the journal package boots the framework, which imports me
+        from journal import control as Control
+        from journal.exceptions import RecordError
+
+        # carefully
+        try:
+            # pull whatever is there without waiting
+            data = self.journal.read(minlen=0, maxlen=64 * 1024)
+        # if nothing is there right now
+        except BlockingIOError:
+            # the channel is open and quiet
+            return True
+        # if the channel is broken
+        except OSError:
+            # the team is gone
+            data = b""
+        # if the team has let go
+        if not data:
+            # stop listening
+            return False
+        # add what arrived to what was left over from last time
+        self.orders += data
+        # split off the complete lines; the last piece is the start of a line still in transit
+        *lines, self.orders = self.orders.split(b"\n")
+        # go through the complete lines
+        for line in lines:
+            # carefully
+            try:
+                # decode and apply the instruction
+                Control.decode(line).apply()
+            # if it is not one, or names a channel that does not exist
+            except RecordError as error:
+                # leave a note
+                self.debug.log(f"{self.pid}: garbled instruction: {error.reason}")
+                # and move on
+                continue
+        # keep listening
+        return True
 
     def checkin(self, channel):
         """
@@ -366,6 +443,10 @@ class Crew(Peer, family="pyre.nexus.peers.crew"):
             self.stop()
             # don't reschedule this handler
             return False
+        # if the team can send me instructions
+        if self.journal is not None:
+            # apply the ones that arrived before this task, whatever order the loop saw them in
+            self.heed()
 
         # otherwise, try to
         try:
@@ -433,6 +514,15 @@ class Crew(Peer, family="pyre.nexus.peers.crew"):
         # all done
         return self
 
+    # implementation details
+    @staticmethod
+    def _descriptor(end):
+        """
+        Get the descriptor of a channel {end}; a socket is its own end, a pipe hands out a number
+        """
+        # easy enough
+        return end.fileno() if hasattr(end, "fileno") else end
+
     # meta-methods
     def __init__(self, pid, channel, journal=None, **kwds):
         # chain up
@@ -447,6 +537,8 @@ class Crew(Peer, family="pyre.nexus.peers.crew"):
         self.courier = None
         # the start of a record still in transit from my twin
         self.tail = b""
+        # the start of an instruction still in transit from my team
+        self.orders = b""
         # the number of records from my twin that could not be understood
         self.garbled = 0
         # my twin is working on nothing yet; this names the task a deadline is measured
