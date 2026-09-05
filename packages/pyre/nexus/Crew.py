@@ -19,10 +19,6 @@ from ..ipc.exceptions import EndOfStream
 # the marker for tasks that took their crew member down
 from .exceptions import Casualty
 
-# the wire form of a journal entry, and the complaint about one that is not
-from journal import record as Record
-from journal.exceptions import RecordError
-
 # my base class
 from .Peer import Peer
 
@@ -82,6 +78,11 @@ class Crew(Peer, family="pyre.nexus.peers.crew"):
         """
         # check it's me we are talking about
         assert channel is self.journal
+        # the wire form of an entry, and the complaint about one that is not; imported here
+        # because the journal package boots the framework, which imports me
+        from journal import record as Record
+        from journal.exceptions import RecordError
+
         # carefully, since my twin may be gone
         try:
             # pull whatever is there
