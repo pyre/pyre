@@ -37,26 +37,22 @@ def test():
     for _ in range(attempts):
         # log
         channel.log(filler)
-    # every attempt was stamped, and cost exactly one sequence number, whether or not the
-    # report of the drops was attempted along the way
-    assert courier.seq == attempts
+    # every attempt was stamped, and so was every report of drops that found room to go out
+    # between refusals, so the sequence runs at least as far as the attempts
+    assert courier.seq >= attempts
     # some were lost
     assert courier.dropped > 0
-    # and the books balance
-    assert courier.shipped + courier.dropped == attempts
-    # the lost ones count what was owed
-    owed = courier.dropped
 
     # drain the socket; the read end must not block either
     reader.setblocking(False)
     # collect what made it through, one record per datagram
-    received = []
+    received = b""
     # read until there is nothing left
     while True:
         # attempt to
         try:
             # read a datagram
-            received.append(reader.recv(64 * 1024))
+            received += reader.recv(64 * 1024)
         # if the socket is empty
         except BlockingIOError:
             # done
@@ -66,36 +62,43 @@ def test():
     channel.log("after")
     # the drops were reported
     assert courier.dropped == 0
-    # the report and the entry cost one sequence number each
-    assert courier.seq == attempts + 2
     # read the rest
     while True:
         # attempt to
         try:
             # read a datagram
-            received.append(reader.recv(64 * 1024))
+            received += reader.recv(64 * 1024)
         # if the socket is empty
         except BlockingIOError:
             # done
             break
 
+    # split into records; every line is whole, since records are never torn
+    lines = received.splitlines(keepends=True)
+    assert all(line.endswith(b"\n") for line in lines)
     # decode
-    records = [journal.record.decode(line) for line in received]
+    records = [journal.record.decode(line) for line in lines]
     # the last two are the report and the entry that prompted it
     notice, after = records[-2:]
-    # the report is on the courier's own channel, with the count in its notes
+    # the report is on the courier's own channel
     assert notice.channel == "journal.courier"
-    assert int(notice.notes["dropped"]) == owed
+    assert notice.severity == "warning"
     # and the entry that prompted it follows
     assert after.page == ["after"]
     # the sequence numbers of the records that arrived are increasing
     sequence = [int(record.notes["seq"]) for record in records]
     assert sequence == sorted(sequence)
     assert len(set(sequence)) == len(sequence)
-    # the report and the entry took the last two
-    assert sequence[-2:] == [attempts + 1, attempts + 2]
-    # and the gaps account for exactly the records owed
-    assert sequence[-1] - len(records) == owed
+    # the reports of drops, each accounting for at least one loss
+    notices = [record for record in records if record.channel == "journal.courier"]
+    assert all(int(record.notes["dropped"]) > 0 for record in notices)
+    reported = sum(int(record.notes["dropped"]) for record in notices)
+    # the entries that made it out are the records that are not reports
+    assert courier.shipped == len(records) - len(notices)
+    # every attempt, the final entry included, was either shipped or reported lost
+    assert courier.shipped + reported == attempts + 1
+    # and the gaps in the sequence account for exactly the losses
+    assert sequence[-1] - len(records) == reported
 
     # clean up
     courier.close()

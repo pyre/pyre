@@ -106,14 +106,11 @@ main()
         info_t channel("test.courier.full");
         channel << filler << pyre::journal::endl;
     }
-    // every attempt was stamped
-    assert(courier->seq() == attempts);
+    // every attempt was stamped, and so was every report of drops that found room to go out
+    // between refusals, so the sequence runs at least as far as the attempts
+    assert(courier->seq() >= attempts);
     // some were lost
     assert(courier->dropped() > 0);
-    // and the books balance
-    assert(courier->shipped() + courier->dropped() == attempts);
-    // the lost ones count what was owed
-    auto owed = courier->dropped();
 
     // drain the pipe; the read end must not block either
     ::fcntl(pipes[0], F_SETFL, ::fcntl(pipes[0], F_GETFL, 0) | O_NONBLOCK);
@@ -135,20 +132,33 @@ main()
     // the report is on the courier's own channel
     assert(notice.find("\"channel\":\"journal.courier\"") != std::string::npos);
     assert(notice.find("\"severity\":\"warning\"") != std::string::npos);
-    // it carries the count in its notes
-    assert(notice.find("\"dropped\":\"" + std::to_string(owed) + "\"") != std::string::npos);
     // and the entry that prompted it follows
     assert(last.find("\"page\":[\"after\"]") != std::string::npos);
-    // the sequence numbers of the records that arrived are increasing
+    // go through the records
     long previous = 0;
+    long reported = 0;
+    long notices = 0;
     for (const auto & record : records) {
+        // the sequence numbers are increasing
         auto seq = field(record, "\"seq\":\"");
         assert(seq > previous);
         previous = seq;
+        // a report of drops carries its count in its notes
+        if (record.find("\"channel\":\"journal.courier\"") != std::string::npos) {
+            // every report accounts for at least one loss
+            auto dropped = field(record, "\"dropped\":\"");
+            assert(dropped > 0);
+            // tally
+            reported += dropped;
+            ++notices;
+        }
     }
-    // and the gaps account for exactly the records owed
-    assert(
-        field(last, "\"seq\":\"") - static_cast<long>(records.size()) == static_cast<long>(owed));
+    // the entries that made it out are the records that are not reports
+    assert(static_cast<long>(courier->shipped()) == static_cast<long>(records.size()) - notices);
+    // every attempt, the final entry included, was either shipped or reported lost
+    assert(static_cast<long>(courier->shipped()) + reported == static_cast<long>(attempts) + 1);
+    // and the gaps in the sequence account for exactly the losses
+    assert(previous - static_cast<long>(records.size()) == reported);
 
     // clean up
     courier->close();
