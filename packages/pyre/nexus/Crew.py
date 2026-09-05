@@ -385,9 +385,12 @@ class Crew(Peer, family="pyre.nexus.peers.crew"):
         except OSError:
             # the team is gone
             data = b""
-        # if the team has let go
+        # if the team has let go, it is gone; wind down my event loop, so nothing else keeps
+        # me alive
         if not data:
-            # stop listening
+            # stop
+            self.stop()
+            # and stop listening
             return False
         # add what arrived to what was left over from last time
         self.orders += data
@@ -414,8 +417,17 @@ class Crew(Peer, family="pyre.nexus.peers.crew"):
         """
         # check it's me we are talking about
         assert channel is self.channel
-        # send in a healthy status code
-        self.marshaler.send(channel=channel, item=self.crewcodes.healthy)
+        # carefully, since the team may have let go of its end before hearing from me
+        try:
+            # send in a healthy status code
+            self.marshaler.send(channel=channel, item=self.crewcodes.healthy)
+        # if the team is unreachable
+        except OSError:
+            # there is nothing for me here; wind down my event loop, so no other channel keeps
+            # me alive
+            self.stop()
+            # and stop listening
+            return False
         # register the task execution handler
         self.dispatcher.whenReadReady(channel=self.channel, call=self.perform)
         # do not reschedule this handler
@@ -501,8 +513,14 @@ class Crew(Peer, family="pyre.nexus.peers.crew"):
         report = (crewstatus, taskstatus, result)
         # tell me
         self.debug.log(f"{self.pid}: sending report {report}")
-        # serialize and send
-        self.marshaler.send(channel=channel, item=report)
+        # carefully, since the team may be gone
+        try:
+            # serialize and send
+            self.marshaler.send(channel=channel, item=report)
+        # if the team is unreachable
+        except OSError:
+            # nobody will ever hear from me again; wind down my event loop
+            self.stop()
         # all done; don't reschedule
         return False
 
