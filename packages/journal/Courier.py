@@ -7,6 +7,7 @@
 
 # externals
 import os
+import socket
 import time
 
 # the device base class of whichever implementation is live, so the chronicler accepts me
@@ -77,9 +78,9 @@ class Courier(device):
         return self
 
     # the pipeline
-    def ship(self, entry, sink):
+    def ship(self, entry):
         """
-        Convert {entry} into a record bound for {sink} and write it to the descriptor
+        Convert {entry} into a record and write it to the descriptor
         """
         # if the far end has gone away
         if self.dead:
@@ -111,7 +112,7 @@ class Courier(device):
                 # all done
                 return
         # stamp the record
-        record = self.stamp(entry=entry, sink=sink)
+        record = self.stamp(entry=entry)
         # write it
         if self._write(data=record.encode()):
             # it is on its way
@@ -123,14 +124,22 @@ class Courier(device):
         # all done
         return
 
-    def stamp(self, entry, sink):
+    def stamp(self, entry):
         """
-        Build the record for {entry} bound for {sink} and assign it the next sequence number
+        Build the record for {entry}, with the next sequence number and the rest of the origin
+        stamped into its notes
         """
         # advance the sequence
         self.seq += 1
         # stamp the record
-        return Record.stamp(entry=entry, sink=sink, seq=self.seq)
+        return Record.stamp(entry=entry, **self.origin())
+
+    def origin(self):
+        """
+        The notes that say where and when a record was produced
+        """
+        # the process, the sequence number, the time of the flush, and the host
+        return {"pid": self.pid, "seq": self.seq, "time": time.time(), "host": self.host}
 
     def notice(self, entry):
         """
@@ -157,15 +166,10 @@ class Courier(device):
         except (KeyError, TypeError):
             # leave it out
             pass
+        # stamp the origin
+        notes.update((key, str(value)) for key, value in self.origin().items())
         # build the record
-        return Record(
-            sink="alert",
-            page=[f"{dropped} journal entries were dropped"],
-            notes=notes,
-            seq=self.seq,
-            pid=os.getpid(),
-            time=time.time(),
-        )
+        return Record(page=[f"{dropped} journal entries were dropped"], notes=notes)
 
     # metamethods
     def __init__(self, descriptor, name="courier", mirror=None, **kwds):
@@ -177,6 +181,9 @@ class Courier(device):
         self.descriptor = descriptor
         # and the device that also gets every entry, if any
         self.mirror = mirror
+        # the process and the host, looked up once
+        self.pid = os.getpid()
+        self.host = socket.gethostname()
         # the sequence number of the last record stamped
         self.seq = 0
         # the number of records that made it out
@@ -214,7 +221,7 @@ class Courier(device):
             # it gets the entry unchanged, through the same sink
             getattr(self.mirror, sink)(entry=entry)
         # ship it
-        self.ship(entry=entry, sink=sink)
+        self.ship(entry=entry)
         # all done
         return self
 

@@ -82,10 +82,10 @@ public:
 
     // the pipeline
 public:
-    // convert an entry into a record bound for {sink} and write it to the descriptor
-    auto ship(const entry_type &, const sink_type &) -> void;
-    // render the record for an entry bound for {sink}, with the next sequence number
-    auto stamp(const entry_type &, const sink_type &) -> record_type;
+    // convert an entry into a record and write it to the descriptor
+    auto ship(const entry_type &) -> void;
+    // render the record for an entry, with the origin stamped into its notes
+    auto stamp(const entry_type &) -> record_type;
     // render the record that reports the entries dropped since the last successful write
     auto notice(const entry_type &) -> record_type;
 
@@ -99,9 +99,11 @@ private:
     auto drain() -> bool;
     // write without blocking; report whether the descriptor accepted any of the data
     auto write(const record_type &) -> bool;
+    // stamp the origin into a copy of the notes: the process, the sequence number, the time
+    // of the flush, and the host
+    auto origin(const notes_t &) const -> notes_t;
     // render a record from its parts
-    auto render(const sink_type &, count_type seq, const page_t &, const notes_t &) const
-        -> record_type;
+    auto render(const page_t &, const notes_t &) const -> record_type;
     // render a string as a JSON literal
     static auto quote(const string_t &) -> string_t;
 
@@ -111,6 +113,10 @@ private:
     descriptor_type _descriptor;
     // the device that also gets every entry, if any
     mirror_type _mirror;
+    // the process, looked up once
+    string_t _pid;
+    // and the host
+    string_t _host;
     // the sequence number of the last record stamped
     count_type _seq;
     // the number of records that made it out

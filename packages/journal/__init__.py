@@ -212,8 +212,9 @@ def replay(record):
     Hand the entry in {record} to the device a channel of its severity and name resolves to
 
     The channel's own state does not apply: the entry exists because its channel was active
-    where it was flushed, and a fatal severity has already done its work there. The origin of
-    the record is written into the notes, so the device can tell where the entry came from
+    where it was flushed, and a fatal severity has already done its work there. The notes
+    arrive as the courier shipped them, origin included, so the device can tell where the
+    entry came from
     """
     # find the channel factory for the severity
     factory = severities.get(record.severity)
@@ -225,15 +226,9 @@ def replay(record):
     channel = factory(record.channel or "journal.replay")
     # and resolve its device
     device = channel.device
-    # copy the notes
-    notes = dict(record.notes)
-    # and record the origin
-    notes["pid"] = str(record.pid)
-    notes["seq"] = str(record.seq)
-    notes["time"] = repr(record.time)
     # rebuild the entry
-    body = entry(page=list(record.page), notes=notes)
-    # and deliver it through the sink the record names
+    body = entry(page=list(record.page), notes=dict(record.notes))
+    # and deliver it through the sink its severity implies
     getattr(device, record.sink)(entry=body)
     # all done
     return
