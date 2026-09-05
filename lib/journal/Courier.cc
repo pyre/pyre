@@ -153,12 +153,14 @@ pyre::journal::Courier::ship(const entry_type & entry) -> void
         auto report = notice(entry);
         // if the notice could not be written
         if (!write(report)) {
-            // the entry that prompted it is lost as well
+            // its sequence number is not consumed; the entry that prompted it is lost
             lose();
             // all done
             return;
         }
-        // the drops have been reported
+        // the notice is on its way, so its sequence number is spoken for
+        ++_seq;
+        // and the drops have been reported
         _dropped = 0;
         // if the notice went out only in part
         if (!_pending.empty()) {
@@ -189,15 +191,13 @@ pyre::journal::Courier::stamp(const entry_type & entry) -> record_type
     // advance the sequence
     ++_seq;
     // render the record, with the origin stamped into the notes
-    return render(entry.page(), origin(entry.notes()));
+    return render(entry.page(), origin(entry.notes(), _seq));
 }
 
 
 auto
 pyre::journal::Courier::notice(const entry_type & entry) -> record_type
 {
-    // advance the sequence
-    ++_seq;
     // the page: one line with the count
     page_t page { std::to_string(_dropped) + " journal entries were dropped" };
     // the notes: my channel, the severity, and the count, so a consumer can show it without
@@ -214,8 +214,9 @@ pyre::journal::Courier::notice(const entry_type & entry) -> record_type
         // copy it, so the notice stays attributable
         notes["application"] = application->second;
     }
-    // render the record, with the origin stamped into the notes
-    return render(page, origin(notes));
+    // render the record, with the origin stamped into the notes; the notice takes the next
+    // sequence number, which the caller consumes only if the notice makes it out
+    return render(page, origin(notes, _seq + 1));
 }
 
 
@@ -283,8 +284,9 @@ pyre::journal::Courier::write(const record_type & data) -> bool
 {
     // write as much as the descriptor will take
     auto count = ::write(_descriptor, data.data(), data.size());
-    // if it will take nothing right now
-    if (count < 0 && (errno == EAGAIN || errno == EWOULDBLOCK || errno == EINTR)) {
+    // if it will take nothing right now, including a far end that is out of buffer space
+    if (count < 0
+        && (errno == EAGAIN || errno == EWOULDBLOCK || errno == EINTR || errno == ENOBUFS)) {
         // report the refusal
         return false;
     }
@@ -306,7 +308,7 @@ pyre::journal::Courier::write(const record_type & data) -> bool
 
 
 auto
-pyre::journal::Courier::origin(const notes_t & notes) const -> notes_t
+pyre::journal::Courier::origin(const notes_t & notes, count_type seq) const -> notes_t
 {
     // the time of the flush, in seconds since the epoch
     auto now = std::chrono::system_clock::now().time_since_epoch();
@@ -318,7 +320,7 @@ pyre::journal::Courier::origin(const notes_t & notes) const -> notes_t
     notes_t stamped = notes;
     // with the origin on top; a note of the same name from the call site is overwritten
     stamped["pid"] = _pid;
-    stamped["seq"] = std::to_string(_seq);
+    stamped["seq"] = std::to_string(seq);
     stamped["time"] = stamp.str();
     stamped["host"] = _host;
     // all done

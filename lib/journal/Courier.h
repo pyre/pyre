@@ -99,9 +99,9 @@ private:
     auto drain() -> bool;
     // write without blocking; report whether the descriptor accepted any of the data
     auto write(const record_type &) -> bool;
-    // stamp the origin into a copy of the notes: the process, the sequence number, the time
-    // of the flush, and the host
-    auto origin(const notes_t &) const -> notes_t;
+    // stamp the origin into a copy of the notes: the process, the given sequence number, the
+    // time of the flush, and the host
+    auto origin(const notes_t &, count_type) const -> notes_t;
     // render a record from its parts
     auto render(const page_t &, const notes_t &) const -> record_type;
     // render a string as a JSON literal

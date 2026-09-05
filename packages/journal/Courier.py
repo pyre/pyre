@@ -6,6 +6,7 @@
 
 
 # externals
+import errno
 import os
 import socket
 import time
@@ -99,11 +100,13 @@ class Courier(device):
             notice = self.notice(entry=entry)
             # if the notice could not be written
             if not self._write(data=notice.encode()):
-                # the entry that prompted it is lost as well
+                # its sequence number is not consumed; the entry that prompted it is lost
                 self._lose()
                 # all done
                 return
-            # the drops have been reported
+            # the notice is on its way, so its sequence number is spoken for
+            self.seq += 1
+            # and the drops have been reported
             self.dropped = 0
             # if the notice went out only in part
             if self.pending:
@@ -134,21 +137,26 @@ class Courier(device):
         # stamp the record
         return Record.stamp(entry=entry, **self.origin())
 
-    def origin(self):
+    def origin(self, seq=None):
         """
         The notes that say where and when a record was produced
         """
         # the process, the sequence number, the time of the flush, and the host
-        return {"pid": self.pid, "seq": self.seq, "time": time.time(), "host": self.host}
+        return {
+            "pid": self.pid,
+            "seq": self.seq if seq is None else seq,
+            "time": time.time(),
+            "host": self.host,
+        }
 
     def notice(self, entry):
         """
         Build the record that reports the entries dropped since the last successful write
 
-        The count rides in the notes, so a consumer can show it without parsing prose
+        The count rides in the notes, so a consumer can show it without parsing prose. The
+        record takes the next sequence number, which the caller consumes only if the notice
+        makes it out
         """
-        # advance the sequence
-        self.seq += 1
         # the drop count
         dropped = self.dropped
         # the notes: my channel, the severity, the count, and the application of the entry
@@ -166,8 +174,8 @@ class Courier(device):
         except (KeyError, TypeError):
             # leave it out
             pass
-        # stamp the origin
-        notes.update((key, str(value)) for key, value in self.origin().items())
+        # stamp the origin, with the sequence number the notice would take
+        notes.update((key, str(value)) for key, value in self.origin(seq=self.seq + 1).items())
         # build the record
         return Record(page=[f"{dropped} journal entries were dropped"], notes=notes)
 
@@ -260,9 +268,13 @@ class Courier(device):
         except BlockingIOError:
             # report the refusal
             return False
-        # if the descriptor is gone
-        except OSError:
-            # the far end went away; go quiet
+        # if something else went wrong
+        except OSError as error:
+            # a far end that is out of buffer space is refusing, not gone
+            if error.errno == errno.ENOBUFS:
+                # report the refusal
+                return False
+            # anything else means the far end went away; go quiet
             self.dead = True
             # nothing was accepted
             return False
