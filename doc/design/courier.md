@@ -113,25 +113,34 @@ it. The fields:
 | field | type | meaning |
 |---|---|---|
 | `journal` | integer | the record format version, `1` |
-| `seq` | integer | the sequence number of the record within its process, from 1 |
-| `pid` | integer | the process that flushed the entry |
-| `time` | float | seconds since the epoch at the flush |
-| `sink` | string | which device method the entry was delivered to: `alert`, `memo`, or `help` |
 | `page` | list of strings | the lines of the entry |
-| `notes` | object of strings | the notes of the entry, as flushed |
+| `notes` | object of strings | the notes of the entry, as flushed, plus the origin |
 
-Severity and channel are not repeated at the top level; they are in the notes, where
-the journal put them. The envelope adds only what the journal does not know: the sink,
-which the far end needs to route the entry to the same device method, and the three
-origin fields, which the journal has no notion of and which are what make entries from
-several processes orderable and attributable. Cross-process order is approximate and
-`time` is the best available; `seq` is exact within a process and lets a consumer
-detect drops.
+There is no envelope. The notes are the journal's own extensible table, and the journal
+already keeps its metadata there: `channel`, `severity` and `application` on every entry,
+and `filename`, `line` and `function` when the entry was flushed with a location. A
+courier adds what the journal does not know, in the same table:
 
-The codec is a small module, `packages/journal/Record.py`, with `encode(entry, sink)`
-returning bytes and `decode(line)` returning a plain record object, and a C++ twin
-later. It copies `page` and `notes` out of the entry, so it works on both the pure
-Python entry and the bound one.
+| note | meaning |
+|---|---|
+| `pid` | the process that flushed the entry |
+| `seq` | the sequence number of the record within its process, from 1 |
+| `time` | seconds since the epoch at the flush |
+| `host` | the name of the host |
+
+These ten names are reserved: a call site that adds a note of the same name has it
+overwritten at delivery. Cross-process order is approximate and `time` is the best
+available; `seq` is exact within a process and lets a consumer detect drops. Notes are
+strings, so a consumer that wants a number parses one.
+
+Which device method the entry is delivered to, `alert`, `memo` or `help`, is not on the
+wire: it is a function of the severity, published by the record class as `sinks`, and the
+far end derives it.
+
+The codec is a small module, `packages/journal/Record.py`, with `stamp(entry, **origin)`
+copying the page and the notes and writing the origin into them, `encode` returning bytes
+and `decode` returning a record, and a C++ twin. It copies `page` and `notes` out of the
+entry, so it works on both the pure Python entry and the bound one.
 
 ### `Courier`, the device
 
@@ -205,13 +214,13 @@ each side over sockets, two over pipes.
 **Replay.** The default `Team.overhear` replays the record into the parent's own
 journal: it resolves the device through a channel of the record's severity and name,
 so per-channel and per-severity device installations in the parent are honored, and
-calls the record's sink on it with an entry rebuilt from the page and notes. The
+calls the sink the severity implies with an entry rebuilt from the page and notes. The
 parent's `active` and `fatal` flags do not apply: the worker's channel was active, or
 the entry would not exist, and a fatal severity has already done its work in the
-worker. The three origin fields are written into the notes as `pid`, `seq` and `time`
-before replay, so a device downstream can tell a worker's entry from the parent's and
-keep its provenance. With a plain console this gives every application built on the
-nexus a single, in-order, attributed log on the terminal, with no other change.
+worker. The notes arrive as the worker's courier stamped them, origin included, so a
+device downstream can tell a worker's entry from the parent's and keep its provenance.
+With a plain console this gives every application built on the nexus a single,
+in-order, attributed log on the terminal, with no other change.
 
 Replay needs `journal.entry(page, notes)`, a factory that exists in the pure Python
 package but not in the bindings, where `Entry` has no constructor and read-only parts
@@ -335,10 +344,11 @@ Commit `pyre` and `qed` separately; the `qed` work depends on step 3 being insta
    flush firewalls from C++ while Python holds the lock today. If the bindings ever
    release it around rendering, a flush from a thread the interpreter does not know
    will fail inside the trampoline. Worth a test in step 2, and a note in the bindings.
-2. **Should the parent's replay carry the origin in the notes, or as a channel prefix?**
-   The notes keep the channel name intact for filtering, and they are invisible on a
-   console at the default decor. A parent that wants to see the pid on its terminal
-   raises its decor. The design chooses the notes.
+2. **Where does the origin live?** In the notes, stamped by the courier, since the notes
+   are the journal's own extensible table and already carry the journal's metadata. They
+   are invisible on a console at the default decor; a parent that wants to see the pid
+   on its terminal raises its decor. An envelope of top-level fields was tried first and
+   dropped, since the replay had to copy it into the notes anyway.
 3. **How large is the socket buffer a worker gets?** The default is what the platform
    gives a socket pair; a busy debug channel fills it in a burst. Raising `SO_SNDBUF` on
    the child's end is a one-line policy in `Fork.deploy` once there is a measurement.

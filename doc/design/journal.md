@@ -55,6 +55,13 @@ Channel methods — all return the channel, so they **chain**:
 Channel attributes: `active`, `fatal` (booleans); `name`, `severity` (identity);
 `detail` (verbosity level); `notes` (a key/value mapping carried with the entry).
 
+The notes are the one place for metadata, the journal's own included: every entry
+carries `channel`, `severity` and `application`, one flushed with a location carries
+`filename`, `line` and `function`, and one shipped to another process by a courier
+carries `pid`, `seq`, `time` and `host` (see `courier.md`). Those ten names are reserved;
+a note of the same name from a call site is overwritten. Anything else is the call
+site's to use.
+
 Two idioms:
 
 ```python
