@@ -9,6 +9,14 @@ include make/modes/default.mm
 # the selected mode's overrides; a mode with no file here is a fatal error
 include make/modes/$(project.mode).mm
 
+# the driver may pin the assertion disposition, e.g. to keep the developer-time checks in a
+# deployment layout while testing it: {yes} compiles them in, {no} leaves them out, and an empty
+# value defers to the mode
+project.assertions ?=
+ifneq ($(project.assertions),)
+mode.compiler.assertions := ${filter yes,$(project.assertions)}
+endif
+
 # {mode.compiler} joins the compiler option sources as a flat, language-independent contributor,
 # just like {mm}; declare its full category set so no slot is ever an undefined variable
 mode.compiler.flags :=

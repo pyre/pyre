@@ -13,6 +13,7 @@ mode.info:
 	@${call log.var,locked,$(mode.npm.locked)}
 	@${call log.sec,"  compiler",}
 	@${call log.var,assertions,${if $(mode.compiler.assertions),yes,no}}
+	@${call log.var,pinned,${if $(project.assertions),$(project.assertions),no}}
 	@${call log.var,defines,$(mode.compiler.defines)}
 
 # what the build mode controls and the values it can take
@@ -22,6 +23,10 @@ mode.help: | mm.banner
 	@$(log) "select one on the command line, e.g."
 	@$(log)
 	@$(log) "    mm --mode=release"
+	@$(log)
+	@$(log) "pin the developer-time checks on or off whatever the mode says, e.g."
+	@$(log)
+	@$(log) "    mm --mode=conda --assertions=yes"
 	@$(log)
 	@${call log.help,"mode.info","show the current mode and its resolved settings"}
 	@$(log)
