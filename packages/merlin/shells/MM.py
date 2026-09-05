@@ -38,6 +38,10 @@ class MM(pyre.application, family="pyre.applications.mm", namespace="mm"):
     mode.validators = pyre.constraints.isMember("dev", "release", "conda", "macports", "ubuntu", "fedora")
     mode.doc = "the strategy for generating locations for the build products"
 
+    assertions = pyre.properties.bool()
+    assertions.default = None
+    assertions.doc = "compile in the developer-time checks whatever the mode says (False leaves them out; None defers to the mode)"
+
     branch = pyre.properties.bool()
     branch.default = None
     branch.doc = (
@@ -1061,6 +1065,9 @@ class MM(pyre.application, family="pyre.applications.mm", namespace="mm"):
         yield f"project.home={self._root}"
         # the build mode, so the make subsystem can gate behavior on {mode != dev}
         yield f"project.mode={self.mode}"
+        # the assertion disposition; a pinned choice overrides the mode, an unset one defers to it
+        pinned = "" if self.assertions is None else ("yes" if self.assertions else "no")
+        yield f"project.assertions={pinned}"
         # the path to the mm configuration files
         yield f"project.config={self._projectCfg}"
         # the location to place the intermediate build products
