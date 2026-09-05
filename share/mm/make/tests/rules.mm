@@ -192,10 +192,11 @@ ${if $($(1).post),\
     ${eval $($(1).post) :: $(1).run} \
 }
 
-# clean up the staging area (objects and the binary live here too)
+# clean up the staging area (objects and the binary live here too), plus any leftovers the
+# suite declares in its source tree, e.g. reports dropped by a hand-run of the tool
 $(1).clean::
 	@${call log.action,clean,$(1)}
-	@$(rm.force-recurse) $(_stageroot)
+	@$(rm.force-recurse) $(_stageroot) ${addprefix $($(1).prefix),$($(1).clean)}
 
 # show info
 $(1).info.runner:

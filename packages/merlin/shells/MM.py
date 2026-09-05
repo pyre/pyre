@@ -1702,7 +1702,11 @@ class MM(pyre.application, family="pyre.applications.mm", namespace="mm"):
                 "module": "pybind11",
             },
             "pyre": {"candidates": ["pyre"]},
-            "python": {"candidates": ["python"], "handler": "_emitCondaPython", "trim": True},
+            "python": {
+                "candidates": ["python"],
+                "handler": "_emitCondaPython",
+                "trim": True,
+            },
             "slepc": {"candidates": ["slepc"]},
             "sundials": {"candidates": ["sundials"]},
             "vtk": {"candidates": ["vtk"]},
