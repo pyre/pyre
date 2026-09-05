@@ -44,6 +44,12 @@ class Team(pyre.protocol, family="pyre.nexus.teams"):
         Take delivery of a journal {record} produced by the {crew} member
         """
 
+    @pyre.provides
+    def instruct(self, control):
+        """
+        Apply the journal {control} instruction here and in every crew member
+        """
+
     # my default
     @classmethod
     def pyre_default(cls, **kwds):
