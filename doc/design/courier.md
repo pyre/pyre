@@ -15,9 +15,9 @@ consumer is `qed`, whose side of the design is in `qed/doc/console.md`.
 
 Branches: `journal` in both `pyre` and `qed`.
 
-Status: **the record, the courier, the entry constructor, the replay, the collection in
-the nexus, and the opening payload on the event stream are built and tested** (2026-09-04,
-branch `journal`); the C++ courier, the control records, and the daemon are not. Every fact
+Status: **the record, the courier in both languages, the entry constructor, the replay,
+the collection in the nexus, and the opening payload on the event stream are built and
+tested** (2026-09-05, branch `journal`); the control records and the daemon are not. Every fact
 below about the code that preceded this work was read out of the source on 2026-09-04, with
 the file cited; open questions are marked as such.
 
@@ -280,8 +280,10 @@ Following the four journal suites and their naming (`tests/journal.pkg`,
   the journal channel closed in `bury` and `dismiss`.
 - `pyre/http/EventStream.py` and `pyre/http/Server.py`: an optional opening payload that
   the streaming path queues right after the preamble, so a newcomer can be sent history.
-- `lib/journal/Courier.h`, `.icc`, `.cc` *(later)*: the C++ twin, registered in
-  `extensions/journal/devices.cc` when it exists.
+- `lib/journal/Courier.h`, `.icc`, `.cc`: the C++ twin, bound as `libjournal.Courier` in
+  `extensions/journal/devices.cc`. On platforms with a per-descriptor switch it asks the
+  descriptor not to raise the broken pipe signal; elsewhere it ignores the signal only when
+  the application has expressed no opinion about it.
 - `doc/design/journal.md`: a section on delivery, once built.
 
 ## Sequencing
@@ -293,7 +295,7 @@ Following the four journal suites and their naming (`tests/journal.pkg`,
    application has an attributed worker log for free, and `qed`'s server device sees
    worker entries with no `qed` change.
 4. `qed` builds its far end on top of this; see `qed/doc/console.md`.
-5. The C++ courier.
+5. The C++ courier, proven by decoding its records with the Python side.
 6. Control records to workers, driven by the console's needs.
 7. The daemon, when a deployment needs it.
 
