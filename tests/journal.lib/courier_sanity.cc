@@ -24,7 +24,11 @@ main()
 {
     // make a pipe
     int pipes[2];
-    assert(::pipe(pipes) == 0);
+    // the call must happen whether or not assertions are compiled in, so check it by hand
+    if (::pipe(pipes) != 0) {
+        // no pipe, no test
+        return 1;
+    }
     // make a courier on its write end
     auto courier = std::make_shared<courier_t>(pipes[1]);
     // check its name
@@ -77,7 +81,10 @@ main()
     courier->close();
     assert(courier->dead());
     // so the reader sees the end of the stream
-    assert(::read(pipes[0], buffer, sizeof(buffer)) == 0);
+    if (::read(pipes[0], buffer, sizeof(buffer)) != 0) {
+        // the stream did not end
+        return 1;
+    }
     // and closing again is harmless
     courier->close();
     // clean up
