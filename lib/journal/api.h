@@ -40,6 +40,7 @@ namespace pyre::journal {
     using stream_t = Stream;
     using cout_t = Console;
     using cerr_t = ErrorConsole;
+    using courier_t = Courier;
 
     // manipulators
     using at = Locator;

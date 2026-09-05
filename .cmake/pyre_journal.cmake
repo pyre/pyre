@@ -68,6 +68,7 @@ function(pyre_journalLib)
     lib/journal/Bland.cc
     lib/journal/Chronicler.cc
     lib/journal/Console.cc
+    lib/journal/Courier.cc
     lib/journal/Device.cc
     lib/journal/ErrorConsole.cc
     lib/journal/File.cc

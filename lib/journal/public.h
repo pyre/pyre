@@ -53,6 +53,7 @@
 #include "Stream.h"
 #include "Console.h"
 #include "ErrorConsole.h"
+#include "Courier.h"
 
 // support for channel shared state
 #include "Inventory.h"

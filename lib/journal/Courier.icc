@@ -1,0 +1,64 @@
+// -*- C++ -*-
+// -*- coding: utf-8 -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2026 all rights reserved
+
+// code guard
+#pragma once
+
+
+// my declarations
+#include "Courier.h"
+
+
+// accessors
+auto
+pyre::journal::Courier::descriptor() const -> descriptor_type
+{
+    // easy enough
+    return _descriptor;
+}
+
+
+auto
+pyre::journal::Courier::mirror() const -> mirror_type
+{
+    // easy enough
+    return _mirror;
+}
+
+
+auto
+pyre::journal::Courier::seq() const -> count_type
+{
+    // easy enough
+    return _seq;
+}
+
+
+auto
+pyre::journal::Courier::shipped() const -> count_type
+{
+    // easy enough
+    return _shipped;
+}
+
+
+auto
+pyre::journal::Courier::dropped() const -> count_type
+{
+    // easy enough
+    return _dropped;
+}
+
+
+auto
+pyre::journal::Courier::dead() const -> bool
+{
+    // easy enough
+    return _dead;
+}
+
+
+// end of file
