@@ -140,12 +140,14 @@ class Record:
         return cls(sink=raw["sink"], page=page, notes=notes, seq=seq, pid=pid, time=stamp)
 
     # interface
-    def encode(self):
+    def raw(self):
         """
-        Render the record in its wire form: one line of JSON, newline terminated
+        Assemble the object that represents me on the wire, in the order the fields are declared
+
+        Consumers that batch records render a list of these rather than concatenating lines
         """
-        # assemble the object in the order the fields are declared
-        raw = {
+        # easy enough
+        return {
             "journal": self.version,
             "seq": self.seq,
             "pid": self.pid,
@@ -154,8 +156,16 @@ class Record:
             "page": self.page,
             "notes": self.notes,
         }
-        # render it compactly, keeping non-ascii text as is, and terminate the line
-        return json.dumps(raw, ensure_ascii=False, separators=(",", ":")).encode("utf-8") + b"\n"
+
+    def encode(self):
+        """
+        Render the record in its wire form: one line of JSON, newline terminated
+        """
+        # render my object compactly, keeping non-ascii text as is, and terminate the line
+        return (
+            json.dumps(self.raw(), ensure_ascii=False, separators=(",", ":")).encode("utf-8")
+            + b"\n"
+        )
 
     # metamethods
     def __init__(self, sink, page, notes, seq, pid, time, **kwds):
