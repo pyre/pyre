@@ -11,7 +11,6 @@ import os
 
 # support
 import pyre
-import journal
 
 # base class
 from .Peer import Peer
@@ -82,6 +81,10 @@ class Pool(Peer, family="pyre.nexus.teams.pool", implements=Team):
         The default is to replay it into my own journal, so the entries of every member reach
         the same devices as mine, attributed to the process that produced them
         """
+        # get the journal; imported here because the package boots the framework, which
+        # imports me
+        import journal
+
         # replay it
         journal.replay(record=record)
         # all done
