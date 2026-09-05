@@ -34,8 +34,14 @@ jobs:
         exclude:
           - compiler: clang
             cuda: cuda
-        # the conda-forge toolchain packages for each compiler
+        # the debug leg compiles in the developer-time checks, so the test drivers assert what
+        # they claim; the opt leg is a deployment build, and its drivers must still run clean
+        # with the checks compiled out
         include:
+          - target: debug
+            assertions: yes
+          - target: opt
+            assertions: no
           - compiler: gcc
             suite: gcc
             toolchain: gcc gxx
@@ -48,8 +54,9 @@ jobs:
             cxx: clang++
 
     env:
-      # mm discovers its settings from the {mm.yaml} we install into ~/.pyre below
-      mm: python3 ${{github.workspace}}/mm/mm
+      # mm discovers its settings from the {mm.yaml} we install into ~/.pyre below; the assertion
+      # disposition rides on the command line, since the packaging workflow shares that file
+      mm: python3 ${{github.workspace}}/mm/mm --assertions=${{matrix.assertions}}
       target: ${{matrix.target}}
       suite: ${{matrix.suite}}
 
