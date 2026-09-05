@@ -99,6 +99,69 @@ pyre::journal::py::devices(py::module & m)
         // done
         ;
 
+    // couriers
+    py::class_<courier_t, courier_t::pointer_type, device_t>(m, "Courier")
+        // constructor
+        .def(
+            // the implementation
+            py::init<
+                courier_t::descriptor_type, const courier_t::name_type &, device_t::pointer_type>(),
+            // the signature
+            "descriptor"_a, "name"_a = "courier", "mirror"_a = nullptr,
+            // the docstring
+            "a device that ships entries as records down {descriptor}, and to {mirror}")
+
+        // the descriptor
+        .def_property_readonly(
+            "descriptor",
+            // the getter
+            &courier_t::descriptor,
+            // the docstring
+            "the descriptor the records are written to")
+
+        // the sequence number
+        .def_property_readonly(
+            "seq",
+            // the getter
+            &courier_t::seq,
+            // the docstring
+            "the sequence number of the last record stamped")
+
+        // the number of records delivered
+        .def_property_readonly(
+            "shipped",
+            // the getter
+            &courier_t::shipped,
+            // the docstring
+            "the number of records that made it out")
+
+        // the number of records lost
+        .def_property_readonly(
+            "dropped",
+            // the getter
+            &courier_t::dropped,
+            // the docstring
+            "the number of records lost since the last successful write")
+
+        // the state of the far end
+        .def_property_readonly(
+            "dead",
+            // the getter
+            &courier_t::dead,
+            // the docstring
+            "whether the far end has gone away")
+
+        // release the descriptor
+        .def(
+            // the name
+            "close",
+            // the implementation
+            &courier_t::close,
+            // the docstring
+            "release the descriptor; nothing is delivered after this")
+        // done
+        ;
+
     // all done
     return;
 }
