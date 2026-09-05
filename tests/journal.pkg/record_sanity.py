@@ -17,10 +17,15 @@ def test():
     page = ["first line", "  indented, with a\ttab", "and a non-ascii line: αβγ"]
     notes = {"channel": "test.record", "severity": "info", "application": "record_sanity"}
     # build a record by hand
-    record = journal.record(sink="alert", page=page, notes=notes, seq=7, pid=4242, time=1.5)
+    record = journal.record(page=page, notes=notes)
     # the identifying notes are reachable directly
     assert record.severity == "info"
     assert record.channel == "test.record"
+    # and the sink follows from the severity
+    assert record.sink == "alert"
+    assert journal.record(page=[], notes={"severity": "debug"}).sink == "memo"
+    assert journal.record(page=[], notes={"severity": "help"}).sink == "help"
+    assert journal.record(page=[], notes={}).sink is None
     # unpacking yields the page and the notes
     assert tuple(record) == (page, notes)
 
@@ -28,10 +33,8 @@ def test():
     raw = record.raw()
     assert list(raw.keys()) == list(journal.record.fields)
     assert raw["journal"] == journal.record.version
-    assert raw["sink"] == "alert"
     assert raw["page"] == page
     assert raw["notes"] == notes
-    assert (raw["seq"], raw["pid"], raw["time"]) == (7, 4242, 1.5)
 
     # its wire form is a single line
     line = record.encode()
@@ -42,37 +45,27 @@ def test():
     # the round trip
     clone = journal.record.decode(line)
     # preserves every field
-    assert clone.sink == "alert"
     assert clone.page == page
     assert clone.notes == notes
-    assert clone.seq == 7
-    assert clone.pid == 4242
-    assert clone.time == 1.5
     # and so does the round trip through text
     assert journal.record.decode(line.decode("utf-8")).page == page
 
-    # a record stamped from a live entry carries the current process and time
-    import os
-    import time
-
-    # make an entry
+    # a record stamped from a live entry carries the origin the caller supplies
     entry = journal.entry(notes=notes)
     # with some content
     entry.page.extend(page)
     # stamp it
-    before = time.time()
-    stamped = journal.record.stamp(entry=entry, sink="memo", seq=3)
-    after = time.time()
+    stamped = journal.record.stamp(entry=entry, pid=4242, seq=3, time=1.5, host="here")
     # check
-    assert stamped.sink == "memo"
     assert stamped.page == page
-    assert stamped.notes == notes
-    assert stamped.seq == 3
-    assert stamped.pid == os.getpid()
-    assert before <= stamped.time <= after
+    # the notes are the entry's, plus the origin, as strings
+    assert stamped.notes == {**notes, "pid": "4242", "seq": "3", "time": "1.5", "host": "here"}
     # the record holds copies, not the entry's containers
     assert stamped.page is not entry.page
     assert stamped.notes is not entry.notes
+    # a note from the call site that uses an origin name is overwritten
+    entry = journal.entry(notes={**notes, "time": "now"})
+    assert journal.record.stamp(entry=entry, time=2.5).notes["time"] == "2.5"
 
     # all done
     return

@@ -115,17 +115,14 @@ main()
     // one per entry
     assert(records.size() == 6);
 
-    // the sink and severity each one should carry
-    const char * sinks[] = { "alert", "alert", "help", "memo", "alert", "memo" };
+    // the severity each one should carry
     const char * severities[] = { "info", "warning", "help", "debug", "error", "firewall" };
     // go through them
     for (size_t i = 0; i < records.size(); ++i) {
         // the record
         const auto & record = records[i];
         // the sequence numbers are consecutive
-        assert(record.find("\"seq\":" + std::to_string(i + 1) + ",") != std::string::npos);
-        // the sink is right
-        assert(record.find(std::string("\"sink\":\"") + sinks[i] + "\"") != std::string::npos);
+        assert(record.find("\"seq\":\"" + std::to_string(i + 1) + "\"") != std::string::npos);
         // from the right channel
         assert(record.find("\"channel\":\"" + name + "\"") != std::string::npos);
         assert(

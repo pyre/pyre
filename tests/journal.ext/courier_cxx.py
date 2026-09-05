@@ -12,6 +12,7 @@ def test():
     """
     # externals
     import os
+    import socket
 
     # the bindings
     from journal import libjournal
@@ -60,9 +61,10 @@ def test():
 
     # the first
     assert first.sink == "alert"
-    assert first.seq == 1
-    assert first.pid == os.getpid()
-    assert first.time > 0
+    assert first.notes["seq"] == "1"
+    assert first.notes["pid"] == str(os.getpid())
+    assert float(first.notes["time"]) > 0
+    assert first.notes["host"] == socket.gethostname()
     assert first.page == ['quote " backslash \\ tab \t greek αβγ', "second"]
     assert first.channel == "test.courier.cxx"
     assert first.severity == "info"
@@ -71,7 +73,7 @@ def test():
     assert first.notes["filename"].endswith("courier_cxx.py")
     # the second
     assert second.sink == "memo"
-    assert second.seq == 2
+    assert second.notes["seq"] == "2"
     assert second.page == ["whisper"]
     assert second.severity == "debug"
 

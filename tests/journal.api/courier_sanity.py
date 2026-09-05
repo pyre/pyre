@@ -12,6 +12,7 @@ def test():
     """
     # externals
     import os
+    import socket
 
     # access
     import journal
@@ -49,7 +50,7 @@ def test():
     assert line.count(b"\n") == 1
     # decode it
     record = journal.record.decode(line)
-    # the sink matches the severity
+    # the sink follows from the severity
     assert record.sink == "alert"
     # the page is what was logged
     assert record.page == ["hello world"]
@@ -59,10 +60,11 @@ def test():
     assert record.notes["filename"].endswith("courier_sanity.py")
     assert record.notes["function"] == "test"
     assert "line" in record.notes
-    # the envelope says who and when
-    assert record.seq == 1
-    assert record.pid == os.getpid()
-    assert record.time > 0
+    # and the origin: who, when, and where
+    assert record.notes["seq"] == "1"
+    assert record.notes["pid"] == str(os.getpid())
+    assert float(record.notes["time"]) > 0
+    assert record.notes["host"] == socket.gethostname()
 
     # closing releases the descriptor
     courier.close()

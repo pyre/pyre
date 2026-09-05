@@ -69,7 +69,7 @@ def test():
         assert False, f"accepted: {line!r}"
 
     # a record is not a control
-    record = journal.record(sink="alert", page=[], notes={}, seq=1, pid=1, time=0.0)
+    record = journal.record(page=[], notes={"severity": "info"})
     refuse(record.encode())
     # nor is garbage
     refuse(b"garbage\n")
