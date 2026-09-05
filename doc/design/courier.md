@@ -228,8 +228,36 @@ directions, and the worker runs the same selector loop as the parent
 handler the child registers on its end of the journal channel, can activate or
 deactivate a channel in the worker after launch. That is the capability the framework's
 `TODO` asks about, and it is the point at which a server-side control surface stops
-being limited to the server's own channels. It is a later phase; the design only
-requires that nothing in the earlier phases assume the journal channel is one-way.
+being limited to the server's own channels. Nothing in the earlier phases assumes the
+channel is one way, so this slots in without rework. It is expected to be needed before
+the console is finished; the pieces:
+
+- **A control record.** A sibling of the entry record, one JSON line, naming the
+  severity, the channel, and the flags to set, such as `active` and `fatal`. A small
+  codec next to `Record`, with an `apply` that opens the channel of that severity and
+  name and sets the flags.
+- **The worker side.** In the child branch of `Fork.deploy`, after the courier is
+  installed, a read handler on the child's end of the journal channel, registered with
+  the crew's own dispatcher. It reads what is available, splits lines, decodes controls,
+  and applies each to the worker's journal. End of stream means the team is gone, which
+  the crew channel already handles, so the handler just stops listening. The read must
+  tolerate a non-blocking descriptor: the courier switched the socket pair to
+  non-blocking, and both directions of a socket share that flag.
+- **The team side.** `Crew.instruct(control)` writes a control record to the team's end
+  of the journal channel. `Staff.instruct(control)` applies it to the team's own journal
+  first and then sends it to every member on the rosters. Applying it locally is what
+  makes later recruits consistent: a member forked afterwards inherits the parent's
+  channel state, so it needs no message.
+- **Tests.** A worker whose debug channel is off, a control that turns it on, a task
+  that logs on it, and the parent hearing the entry; then the reverse.
+- **In `qed`.** The channel mutation sets the server's channel and asks the fleet to
+  instruct every team; the mutation is designed against that call already.
+
+Two limitations to know before relying on it. The worker's loop is single threaded, so
+a control sent while a member is inside a long task takes effect when the task ends and
+the loop turns again: milliseconds for a tile, seconds for a survey. And it is fire and
+forget; the evidence that it worked is the entries that follow. An acknowledgment would
+be a third message kind and a callback, not worth adding until something needs it.
 
 ### The daemon, later still
 
