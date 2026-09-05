@@ -682,6 +682,7 @@ pyre_test_python_testcase(tests/pyre.pkg/nexus/node_signals.py)
 pyre_test_python_testcase(tests/pyre.pkg/nexus/pool.py)
 pyre_test_python_testcase(tests/pyre.pkg/nexus/pool.py --tasks=4 --team.size=2)
 pyre_test_python_testcase(tests/pyre.pkg/nexus/fork_journal_off.py)
+pyre_test_python_testcase(tests/pyre.pkg/nexus/staff_instruct.py)
 pyre_test_python_testcase(tests/pyre.pkg/nexus/staff_last_words.py)
 pyre_test_python_testcase(tests/pyre.pkg/nexus/staff_overhear.py)
 
