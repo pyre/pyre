@@ -24,6 +24,15 @@ def test():
     # unpacking yields the page and the notes
     assert tuple(record) == (page, notes)
 
+    # its wire object has every field, in the declared order
+    raw = record.raw()
+    assert list(raw.keys()) == list(journal.record.fields)
+    assert raw["journal"] == journal.record.version
+    assert raw["sink"] == "alert"
+    assert raw["page"] == page
+    assert raw["notes"] == notes
+    assert (raw["seq"], raw["pid"], raw["time"]) == (7, 4242, 1.5)
+
     # its wire form is a single line
     line = record.encode()
     assert isinstance(line, bytes)
