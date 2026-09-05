@@ -16,8 +16,9 @@ consumer is `qed`, whose side of the design is in `qed/doc/console.md`.
 Branches: `journal` in both `pyre` and `qed`.
 
 Status: **the record, the courier in both languages, the entry constructor, the replay,
-the collection in the nexus, and the opening payload on the event stream are built and
-tested** (2026-09-05, branch `journal`); the control records and the daemon are not. Every fact
+the collection in the nexus, the opening payload on the event stream, and the control
+records to running workers are built and tested** (2026-09-05, branch `journal`); the
+daemon is not. Every fact
 below about the code that preceded this work was read out of the source on 2026-09-04, with
 the file cited; open questions are marked as such.
 
@@ -220,7 +221,7 @@ small binding addition and the only one this work requires.
 A team that wants the record itself, rather than a replayed entry, overrides
 `overhear`; that is the hook a server uses to forward records to its clients.
 
-### Control, later
+### Control
 
 The journal channel is a socket pair or a pipe pair, so it carries bytes in both
 directions, and the worker runs the same selector loop as the parent
@@ -229,20 +230,19 @@ handler the child registers on its end of the journal channel, can activate or
 deactivate a channel in the worker after launch. That is the capability the framework's
 `TODO` asks about, and it is the point at which a server-side control surface stops
 being limited to the server's own channels. Nothing in the earlier phases assumes the
-channel is one way, so this slots in without rework. It is expected to be needed before
-the console is finished; the pieces:
+channel is one way, so this slots in without rework. The pieces, as built:
 
 - **A control record.** A sibling of the entry record, one JSON line, naming the
   severity, the channel, and the flags to set, such as `active` and `fatal`. A small
   codec next to `Record`, with an `apply` that opens the channel of that severity and
   name and sets the flags.
-- **The worker side.** In the child branch of `Fork.deploy`, after the courier is
-  installed, a read handler on the child's end of the journal channel, registered with
-  the crew's own dispatcher. It reads what is available, splits lines, decodes controls,
-  and applies each to the worker's journal. End of stream means the team is gone, which
-  the crew channel already handles, so the handler just stops listening. The read must
-  tolerate a non-blocking descriptor: the courier switched the socket pair to
-  non-blocking, and both directions of a socket share that flag.
+- **The worker side.** `Crew.register` puts the readable end of the journal channel in
+  non-blocking mode and registers `obey` on it with the crew's own dispatcher. The
+  handler reads what is available, splits lines, decodes controls, and applies each to
+  the worker's journal; end of stream means the team is gone, which the crew channel
+  already handles, so it just stops listening. `perform` also drains the channel right
+  before it runs a task, so a control sent before a task is applied before the task
+  whatever order the loop happened to see the two channels in.
 - **The team side.** `Crew.instruct(control)` writes a control record to the team's end
   of the journal channel. `Staff.instruct(control)` applies it to the team's own journal
   first and then sends it to every member on the rosters. Applying it locally is what
@@ -324,7 +324,7 @@ Following the four journal suites and their naming (`tests/journal.pkg`,
    worker entries with no `qed` change.
 4. `qed` builds its far end on top of this; see `qed/doc/console.md`.
 5. The C++ courier, proven by decoding its records with the Python side.
-6. Control records to workers, driven by the console's needs.
+6. Control records to workers, so a switch in the console reaches every crew member.
 7. The daemon, when a deployment needs it.
 
 Commit `pyre` and `qed` separately; the `qed` work depends on step 3 being installed.
