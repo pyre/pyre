@@ -7,6 +7,7 @@
 
 # externals
 import os
+import signal
 
 # support
 import pyre
@@ -69,6 +70,10 @@ class Fork(pyre.component, family="pyre.nexus.recruiters.fork", implements=Recru
 
         # in the worker process
         if pid == 0:
+            # the interrupt key reaches the whole process group, but a worker is the team's to
+            # manage: it leaves when the team lets go, so the interrupt is not for it, and
+            # neither is the application's report that it was interrupted
+            signal.signal(signal.SIGINT, signal.SIG_IGN)
             # the team's end is not mine to hold; release my inherited copy so the channel
             # closes for real when the team side lets go
             parent.close()
@@ -86,8 +91,14 @@ class Fork(pyre.component, family="pyre.nexus.recruiters.fork", implements=Recru
                 crew.courier = self.route(channel=childJournal)
             # ask it to register with the team
             crew.register()
-            # spin up and carry out tasks until there is nothing more to do
-            status = crew.run()
+            # carefully, since an interrupt may have landed before it was set aside
+            try:
+                # spin up and carry out tasks until there is nothing more to do
+                status = crew.run()
+            # if it did
+            except KeyboardInterrupt:
+                # leave quietly; the team reports the interruption
+                status = 1
             # at which point, this process must terminate
             raise SystemExit(status)
 
