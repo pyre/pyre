@@ -33,12 +33,21 @@ pyre::journal::Courier::Courier(
     super_type(name),
     _descriptor(descriptor),
     _mirror(mirror),
+    _pid(std::to_string(::getpid())),
+    _host(),
     _seq(0),
     _shipped(0),
     _dropped(0),
     _pending(),
     _dead(false)
 {
+    // look up the host once
+    char host[256] = { 0 };
+    // if the lookup succeeds
+    if (::gethostname(host, sizeof(host) - 1) == 0) {
+        // remember it
+        _host = host;
+    }
     // the descriptor is never allowed to block the process that is logging
     auto flags = ::fcntl(_descriptor, F_GETFL, 0);
     // if it could be read
@@ -123,7 +132,7 @@ pyre::journal::Courier::close() -> Courier &
 
 // the pipeline
 auto
-pyre::journal::Courier::ship(const entry_type & entry, const sink_type & sink) -> void
+pyre::journal::Courier::ship(const entry_type & entry) -> void
 {
     // if the far end has gone away
     if (_dead) {
@@ -160,7 +169,7 @@ pyre::journal::Courier::ship(const entry_type & entry, const sink_type & sink) -
         }
     }
     // stamp the record
-    auto record = stamp(entry, sink);
+    auto record = stamp(entry);
     // write it
     if (write(record)) {
         // it is on its way
@@ -175,12 +184,12 @@ pyre::journal::Courier::ship(const entry_type & entry, const sink_type & sink) -
 
 
 auto
-pyre::journal::Courier::stamp(const entry_type & entry, const sink_type & sink) -> record_type
+pyre::journal::Courier::stamp(const entry_type & entry) -> record_type
 {
     // advance the sequence
     ++_seq;
-    // render the record
-    return render(sink, _seq, entry.page(), entry.notes());
+    // render the record, with the origin stamped into the notes
+    return render(entry.page(), origin(entry.notes()));
 }
 
 
@@ -205,8 +214,8 @@ pyre::journal::Courier::notice(const entry_type & entry) -> record_type
         // copy it, so the notice stays attributable
         notes["application"] = application->second;
     }
-    // render the record
-    return render("alert", _seq, page, notes);
+    // render the record, with the origin stamped into the notes
+    return render(page, origin(notes));
 }
 
 
@@ -226,7 +235,7 @@ pyre::journal::Courier::deliver(const entry_type & entry, const sink_type & sink
         }
     }
     // ship it
-    ship(entry, sink);
+    ship(entry);
     // all done
     return;
 }
@@ -297,25 +306,33 @@ pyre::journal::Courier::write(const record_type & data) -> bool
 
 
 auto
-pyre::journal::Courier::render(
-    const sink_type & sink, count_type seq, const page_t & page, const notes_t & notes) const
-    -> record_type
+pyre::journal::Courier::origin(const notes_t & notes) const -> notes_t
 {
     // the time of the flush, in seconds since the epoch
     auto now = std::chrono::system_clock::now().time_since_epoch();
     auto seconds = std::chrono::duration_cast<std::chrono::microseconds>(now).count() / 1e6;
+    // render it
+    std::ostringstream stamp;
+    stamp << std::fixed << std::setprecision(6) << seconds;
+    // a copy of the notes
+    notes_t stamped = notes;
+    // with the origin on top; a note of the same name from the call site is overwritten
+    stamped["pid"] = _pid;
+    stamped["seq"] = std::to_string(_seq);
+    stamped["time"] = stamp.str();
+    stamped["host"] = _host;
+    // all done
+    return stamped;
+}
+
+
+auto
+pyre::journal::Courier::render(const page_t & page, const notes_t & notes) const -> record_type
+{
     // the record
     std::ostringstream record;
-    // the envelope: the format version, the sequence number, the process, and the time
-    record << "{\"journal\":1"
-           << ",\"seq\":" << seq << ",\"pid\":" << ::getpid() << ",\"time\":" << std::fixed
-           << std::setprecision(6)
-           << seconds
-           // the sink
-           << ",\"sink\":"
-           << quote(sink)
-           // the page
-           << ",\"page\":[";
+    // the format version, then the page
+    record << "{\"journal\":1,\"page\":[";
     // a separator that is empty before the first line
     const char * separator = "";
     // go through the lines

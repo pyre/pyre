@@ -7,8 +7,6 @@
 
 # externals
 import json
-import os
-import time
 
 # the local exceptions
 from .exceptions import RecordError
@@ -17,26 +15,34 @@ from .exceptions import RecordError
 # the wire form of a journal entry
 class Record:
     """
-    A journal entry in transit: its page and notes, the sink it was delivered to, and an
-    envelope that says which process produced it and when
+    A journal entry in transit: its page and its notes
 
-    Records travel as one JSON object per line, so a consumer in any language can split,
-    parse, and forward them without understanding them
+    Everything a consumer needs to know about the entry is in the notes, where the journal
+    already keeps the channel, the severity, and the location, and where a courier adds the
+    process, the sequence number, the time, and the host. Records travel as one JSON object
+    per line, so a consumer in any language can split, parse, and forward them without
+    understanding them
     """
 
     # constants
     # the format version; bump when the shape of the wire form changes
     version = 1
-    # the sinks an entry can be delivered to
-    sinks = ("alert", "memo", "help")
     # the names of the fields on the wire, in the order they are written
-    fields = ("journal", "seq", "pid", "time", "sink", "page", "notes")
+    fields = ("journal", "page", "notes")
+    # the device method each severity is delivered to
+    sinks = {
+        "debug": "memo",
+        "firewall": "memo",
+        "info": "alert",
+        "warning": "alert",
+        "error": "alert",
+        "help": "help",
+    }
+    # the notes a courier stamps on every record it ships; a call site that uses these names
+    # for notes of its own gets them overwritten at delivery
+    origin = ("pid", "seq", "time", "host")
 
     # public data
-    seq = 0  # the sequence number of the record within its process
-    pid = 0  # the process that produced the entry
-    time = 0.0  # seconds since the epoch at the flush
-    sink = None  # the device method the entry was delivered to
     page = None  # the lines of the entry
     notes = None  # the metadata of the entry
 
@@ -57,19 +63,31 @@ class Record:
         # it is in the notes, where the channel put it
         return self.notes.get("channel")
 
+    @property
+    def sink(self):
+        """
+        The device method the entry is delivered to, or nothing if the severity is unknown
+        """
+        # a function of the severity
+        return self.sinks.get(self.severity)
+
     # factories
     @classmethod
-    def stamp(cls, entry, sink, seq):
+    def stamp(cls, entry, **origin):
         """
-        Build a record from a live {entry} bound for {sink}, stamped with the current
-        process id and time
+        Build a record from a live {entry}, with the {origin} stamped into its notes
+
+        The origin is whatever the caller knows that the journal does not, e.g. the process
+        and the time; every value is stored as a string, since notes are text
         """
         # copy the page, so the record survives the entry it was drawn from
         page = [str(line) for line in entry.page]
         # and the notes; they may arrive as a native dictionary or as a bound container
         notes = {str(key): str(value) for key, value in dict(entry.notes).items()}
+        # stamp the origin
+        notes.update((key, str(value)) for key, value in origin.items())
         # build the record
-        return cls(sink=sink, page=page, notes=notes, seq=seq, pid=os.getpid(), time=time.time())
+        return cls(page=page, notes=notes)
 
     @classmethod
     def decode(cls, line):
@@ -108,10 +126,6 @@ class Record:
         if raw["journal"] != cls.version:
             # complain
             raise RecordError(reason=f"unsupported version: {raw['journal']}")
-        # the sink must be one of the three
-        if raw["sink"] not in cls.sinks:
-            # complain
-            raise RecordError(reason=f"unknown sink: '{raw['sink']}'")
         # the page is a list of strings
         page = raw["page"]
         # check it
@@ -126,18 +140,8 @@ class Record:
         ):
             # complain
             raise RecordError(reason="the notes are not a map of strings")
-        # the envelope is numeric
-        try:
-            # coerce each field
-            seq = int(raw["seq"])
-            pid = int(raw["pid"])
-            stamp = float(raw["time"])
-        # if any of them isn't
-        except (TypeError, ValueError) as error:
-            # complain
-            raise RecordError(reason=f"malformed envelope: {error}") from error
         # build the record
-        return cls(sink=raw["sink"], page=page, notes=notes, seq=seq, pid=pid, time=stamp)
+        return cls(page=page, notes=notes)
 
     # interface
     def raw(self):
@@ -147,15 +151,7 @@ class Record:
         Consumers that batch records render a list of these rather than concatenating lines
         """
         # easy enough
-        return {
-            "journal": self.version,
-            "seq": self.seq,
-            "pid": self.pid,
-            "time": self.time,
-            "sink": self.sink,
-            "page": self.page,
-            "notes": self.notes,
-        }
+        return {"journal": self.version, "page": self.page, "notes": self.notes}
 
     def encode(self):
         """
@@ -168,18 +164,12 @@ class Record:
         )
 
     # metamethods
-    def __init__(self, sink, page, notes, seq, pid, time, **kwds):
+    def __init__(self, page, notes, **kwds):
         # chain up
         super().__init__(**kwds)
-        # save the sink
-        self.sink = sink
-        # the content
+        # save the content
         self.page = page
         self.notes = notes
-        # and the envelope
-        self.seq = seq
-        self.pid = pid
-        self.time = time
         # all done
         return
 
