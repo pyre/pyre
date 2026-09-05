@@ -49,31 +49,33 @@ def test():
     special = Capture()
     journal.warning("test.replay.special").device = special
 
-    # a record from some other process, on a debug channel that is off here
-    notes = {"channel": "test.replay", "severity": "debug", "application": "elsewhere"}
-    record = journal.record(sink="memo", page=["from afar"], notes=notes, seq=5, pid=99, time=12.5)
+    # a record from some other process, on a debug channel that is off here, with the origin
+    # its courier stamped
+    notes = {
+        "channel": "test.replay",
+        "severity": "debug",
+        "application": "elsewhere",
+        "pid": "99",
+        "seq": "5",
+        "time": "12.5",
+        "host": "afar",
+    }
+    record = journal.record(page=["from afar"], notes=notes)
     # the local channel is inactive
     assert not journal.debug("test.replay").active
     # replay anyway
     journal.replay(record=record)
-    # the entry reached the global device, through the sink the record named
+    # the entry reached the global device, through the sink its severity implies
     assert len(default.calls) == 1
     sink, page, delivered = default.calls[0]
     assert sink == "memo"
     assert page == ["from afar"]
-    # with the notes as sent, plus the origin
-    assert delivered["channel"] == "test.replay"
-    assert delivered["severity"] == "debug"
-    assert delivered["application"] == "elsewhere"
-    assert delivered["pid"] == "99"
-    assert delivered["seq"] == "5"
-    assert float(delivered["time"]) == 12.5
+    # with the notes exactly as sent, origin included
+    assert delivered == notes
 
     # a record for the channel with its own device
     notes = {"channel": "test.replay.special", "severity": "warning"}
-    record = journal.record(
-        sink="alert", page=["for the special device"], notes=notes, seq=6, pid=99, time=13.0
-    )
+    record = journal.record(page=["for the special device"], notes=notes)
     # replay
     journal.replay(record=record)
     # it went to the per-channel device
@@ -85,7 +87,7 @@ def test():
 
     # a record with a severity nobody knows
     notes = {"channel": "test.replay", "severity": "gossip"}
-    record = journal.record(sink="alert", page=["?"], notes=notes, seq=7, pid=99, time=14.0)
+    record = journal.record(page=["?"], notes=notes)
     # attempt to
     try:
         # replay

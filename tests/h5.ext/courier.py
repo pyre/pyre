@@ -74,7 +74,7 @@ def test():
     assert record.notes["filename"].endswith("DataSet.cc")
     assert "line" in record.notes
     # stamped by this process
-    assert record.pid == os.getpid()
+    assert record.notes["pid"] == str(os.getpid())
 
     # clean up
     courier.close()

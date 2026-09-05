@@ -18,10 +18,6 @@ def test():
     # a well formed record to mutate
     good = {
         "journal": 1,
-        "seq": 1,
-        "pid": 1,
-        "time": 0.0,
-        "sink": "alert",
         "page": ["hello"],
         "notes": {"channel": "test", "severity": "info"},
     }
@@ -64,17 +60,12 @@ def test():
     refuse(b'{"journal": 1}\n')
     # the wrong version
     refuse(variant(journal=2))
-    # an unknown sink
-    refuse(variant(sink="print"))
     # a page that is not a list of strings
     refuse(variant(page="hello"))
     refuse(variant(page=[1, 2]))
     # notes that are not a map of strings
     refuse(variant(notes=["channel"]))
     refuse(variant(notes={"channel": 1}))
-    # an envelope that is not numeric
-    refuse(variant(seq="one"))
-    refuse(variant(time=None))
 
     # all done
     return

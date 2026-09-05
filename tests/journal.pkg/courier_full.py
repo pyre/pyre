@@ -99,11 +99,11 @@ def test():
     # and the entry that prompted it follows
     assert after.page == ["after"]
     # the sequence numbers of the records that arrived, in order, with gaps for the losses
-    sequence = [record.seq for record in records]
+    sequence = [int(record.notes["seq"]) for record in records]
     assert sequence == sorted(sequence)
     assert len(set(sequence)) == len(sequence)
     # the gaps account for exactly the records owed
-    assert after.seq - len(records) == owed
+    assert sequence[-1] - len(records) == owed
 
     # clean up
     courier.close()

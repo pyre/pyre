@@ -76,7 +76,7 @@ def test():
     # decode them
     records = [journal.record.decode(line) for line in lines]
     # the sequence numbers are consecutive
-    assert [record.seq for record in records] == list(range(1, expected + 1))
+    assert [int(record.notes["seq"]) for record in records] == list(range(1, expected + 1))
 
     # the quiet ones
     for (factory, sink), record in zip(quiet, records):

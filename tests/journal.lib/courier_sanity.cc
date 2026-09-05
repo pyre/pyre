@@ -58,13 +58,13 @@ main()
     std::string line(buffer, got);
     assert(line.back() == '\n');
     assert(std::count(line.begin(), line.end(), '\n') == 1);
-    // with the envelope
-    assert(line.find("{\"journal\":1,\"seq\":1,\"pid\":" + std::to_string(::getpid())) == 0);
-    assert(line.find("\"time\":") != std::string::npos);
-    // the sink
-    assert(line.find("\"sink\":\"alert\"") != std::string::npos);
-    // the page
-    assert(line.find("\"page\":[\"hello world\"]") != std::string::npos);
+    // with the version and the page first
+    assert(line.find("{\"journal\":1,\"page\":[\"hello world\"]") == 0);
+    // and the origin in the notes
+    assert(line.find("\"pid\":\"" + std::to_string(::getpid()) + "\"") != std::string::npos);
+    assert(line.find("\"seq\":\"1\"") != std::string::npos);
+    assert(line.find("\"time\":\"") != std::string::npos);
+    assert(line.find("\"host\":\"") != std::string::npos);
     // and the notes
     assert(line.find("\"channel\":\"test.courier\"") != std::string::npos);
     assert(line.find("\"severity\":\"info\"") != std::string::npos);

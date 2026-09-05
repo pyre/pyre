@@ -74,11 +74,11 @@ lines(const std::string & data) -> std::vector<std::string>
 }
 
 
-// pull a numeric field out of a record
+// pull a numeric note out of a record
 static auto
 field(const std::string & record, const std::string & key) -> long
 {
-    // find the key
+    // find the key; notes are strings, so the number is quoted
     auto at = record.find(key);
     assert(at != std::string::npos);
     // and read the number that follows it
@@ -135,7 +135,6 @@ main()
     // the report is on the courier's own channel
     assert(notice.find("\"channel\":\"journal.courier\"") != std::string::npos);
     assert(notice.find("\"severity\":\"warning\"") != std::string::npos);
-    assert(notice.find("\"sink\":\"alert\"") != std::string::npos);
     // it carries the count in its notes
     assert(notice.find("\"dropped\":\"" + std::to_string(owed) + "\"") != std::string::npos);
     // and the entry that prompted it follows
@@ -143,12 +142,13 @@ main()
     // the sequence numbers of the records that arrived are increasing
     long previous = 0;
     for (const auto & record : records) {
-        auto seq = field(record, "\"seq\":");
+        auto seq = field(record, "\"seq\":\"");
         assert(seq > previous);
         previous = seq;
     }
     // and the gaps account for exactly the records owed
-    assert(field(last, "\"seq\":") - static_cast<long>(records.size()) == static_cast<long>(owed));
+    assert(
+        field(last, "\"seq\":\"") - static_cast<long>(records.size()) == static_cast<long>(owed));
 
     // clean up
     courier->close();
