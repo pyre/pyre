@@ -26,6 +26,7 @@ pyre_test_python_testcase(tests/h5.ext/chunk_table.py)
 pyre_test_python_testcase(tests/h5.ext/direct_chunk.py)
 # a tile that skips cells, and one that is transformed on its way across
 pyre_test_python_testcase(tests/h5.ext/strided_tile.py)
+pyre_test_python_testcase(tests/h5.ext/courier.py)
 pyre_test_python_testcase(tests/h5.ext/transfer_list.py)
 
 # the drivers leave their scratch products behind so they can be inspected; the harness
@@ -42,6 +43,7 @@ pyre_test_python_cleanup(dapl_chunk_cache.h5 tests/h5.ext/dapl_chunk_cache.py)
 pyre_test_python_cleanup(chunk_table.h5 tests/h5.ext/chunk_table.py)
 pyre_test_python_cleanup(direct_chunk.h5 tests/h5.ext/direct_chunk.py)
 pyre_test_python_cleanup(strided_tile.h5 tests/h5.ext/strided_tile.py)
+pyre_test_python_cleanup(courier.h5 tests/h5.ext/courier.py)
 pyre_test_python_cleanup(transfer_list.h5 tests/h5.ext/transfer_list.py)
 
 
