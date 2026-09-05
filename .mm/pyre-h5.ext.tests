@@ -24,6 +24,7 @@ tests.h5.ext.dapl_chunk_cache.clean := dapl_chunk_cache.h5
 tests.h5.ext.chunk_table.clean := chunk_table.h5
 tests.h5.ext.direct_chunk.clean := direct_chunk.h5
 tests.h5.ext.strided_tile.clean := strided_tile.h5
+tests.h5.ext.courier.clean := courier.h5
 tests.h5.ext.transfer_list.clean := transfer_list.h5
 
 
