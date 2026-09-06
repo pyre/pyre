@@ -69,13 +69,19 @@ function(pyre_journalLib)
     lib/journal/Chronicler.cc
     lib/journal/Console.cc
     lib/journal/Courier.cc
+    lib/journal/Debug.cc
     lib/journal/Device.cc
+    lib/journal/Error.cc
     lib/journal/ErrorConsole.cc
     lib/journal/File.cc
+    lib/journal/Firewall.cc
+    lib/journal/Help.cc
+    lib/journal/Informational.cc
     lib/journal/Memo.cc
     lib/journal/Renderer.cc
     lib/journal/Stream.cc
     lib/journal/Trash.cc
+    lib/journal/Warning.cc
     lib/journal/debuginfo.cc
     lib/journal/firewalls.cc
     )
