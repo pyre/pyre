@@ -65,12 +65,9 @@ namespace pyre::py::grid {
         if (cell == "complex128")
             return f.template operator()<pyre::memory::complex128_t>();
 
-        // anything else is a caller mistake
-        auto channel = pyre::journal::error_t("pyre.grid.bindings");
-        // complain
-        channel << pyre::journal::at() << "unsupported grid cell type '" << requested << "'"
-                << pyre::journal::endl;
-        // and refuse
+        // anything else is a caller mistake; refuse it the way the other factories refuse bad
+        // arguments, with a python exception and no journal entry, since a fatal error channel
+        // would preempt the exception
         throw py::value_error("unsupported grid cell type '" + requested + "'");
     }
 
