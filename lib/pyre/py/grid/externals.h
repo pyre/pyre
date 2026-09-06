@@ -24,6 +24,8 @@
 // the grid vocabulary and the storage strategies the erased classes travel over
 #include <pyre/grid.h>
 #include <pyre/memory.h>
+// the buffer protocol description of a cell type
+#include <pyre/py/memory/format.h>
 
 
 // type aliases
