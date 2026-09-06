@@ -22,6 +22,9 @@ pyre::py::grid::describe(
     using value_t = typename gridT::value_type;
     // the writable spelling of it, so a read-only source still yields a compilable writer
     using cell_t = std::remove_const_t<value_t>;
+    // and the native scalar behind it, which is what python sees; a byte ordered cell swaps on
+    // the way through, so python never meets the wrapper
+    using native_t = pyre::memory::native_t<cell_t>;
     // and the layout
     const auto & packing = grid.packing();
 
@@ -43,13 +46,13 @@ pyre::py::grid::describe(
 
     // lift one cell from memory into python, knowing its type here where it is still concrete
     AnyGrid::reader_type read = [](const void * p) -> py::object {
-        // interpret the address as a cell and cast it across
-        return py::cast(*static_cast<const cell_t *>(p));
+        // interpret the address as a cell, read it as a native value, and cast it across
+        return py::cast(static_cast<native_t>(*static_cast<const cell_t *>(p)));
     };
     // deposit one cell from python into memory, its companion
     AnyGrid::writer_type write = [](void * p, const py::object & v) -> void {
-        // interpret the address as a cell and assign the converted value
-        *static_cast<cell_t *>(p) = v.cast<cell_t>();
+        // interpret the address as a cell and assign the converted native value
+        *static_cast<cell_t *>(p) = v.cast<native_t>();
         // all done
         return;
     };
@@ -60,8 +63,8 @@ pyre::py::grid::describe(
         data,
         // one cell is this wide
         sizeof(value_t),
-        // described by this struct code
-        py::format_descriptor<value_t>::format(),
+        // described by this struct code, byte order marker and all
+        pyre::py::memory::format<value_t>(),
         // over this shape
         std::move(shape),
         // with these strides

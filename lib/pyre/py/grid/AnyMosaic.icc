@@ -91,11 +91,13 @@ pyre::py::grid::anyMosaic(const gridT & mosaic, string_t cell) -> AnyMosaic
 
     // name the cell type while it is still concrete, in its writable spelling
     using cell_t = std::remove_const_t<typename gridT::value_type>;
+    // and the native scalar behind it, which is what python sees
+    using native_t = pyre::memory::native_t<cell_t>;
 
     // lift the cell at an index into python; the caller has verified that its page is resident
     AnyMosaic::reader_type read = [owner](const AnyMosaic::index_type & index) -> py::object {
-        // pull the cell through the mosaic's own map and cast it across
-        return py::cast((*owner)[index]);
+        // pull the cell through the mosaic's own map, read it as a native value, and cast it across
+        return py::cast(static_cast<native_t>((*owner)[index]));
     };
     // deposit a python value into the cell at an index, its companion
     AnyMosaic::writer_type write =
@@ -104,8 +106,8 @@ pyre::py::grid::anyMosaic(const gridT & mosaic, string_t cell) -> AnyMosaic
         auto ordinal = owner->packing().tileOrdinal(owner->packing().tileOf(index));
         // materialize it, in case this is its first touch
         owner->storage().reside(ordinal);
-        // deposit the converted value through the mosaic's own map
-        (*owner)[index] = value.cast<cell_t>();
+        // deposit the converted native value through the mosaic's own map
+        (*owner)[index] = value.cast<native_t>();
         // the write is a divergence this closure can see, so record it
         owner->storage().taint(ordinal);
         // all done
