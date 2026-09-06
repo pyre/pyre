@@ -293,7 +293,7 @@ class Component(Configurable, metaclass=Actor, internal=True):
         return cls.pyre_inventory.getTraitLocator(trait)
 
     # meta methods
-    def __new__(cls, name, locator, implicit, **kwds):
+    def __new__(cls, name, locator, implicit, pyre_values=None, **kwds):
         # build the instance; in order to accommodate components with non-trivial constructors,
         # we have to swallow any extra arguments passed to {__new__}; unfortunately, this
         # places some restrictions on how components participate in class hierarchies: no
@@ -312,13 +312,24 @@ class Component(Configurable, metaclass=Actor, internal=True):
         inventory = cls.PrivateInventory if name is None else cls.PublicInventory
         # ask the inventory to initialize the instance
         inventory.initializeInstance(instance=instance, name=name, implicit=implicit)
+        # deposit the trait values the constructor was handed; only an anonymous instance gets
+        # any, since a named one finds its values in the nameserver, and they must be in place
+        # before the configuration hooks run, the way they are for a named instance
+        for trait, value in (pyre_values or {}).items():
+            # through the inventory, at construction priority, from where the caller stood
+            instance.pyre_setTrait(
+                alias=trait.name,
+                value=value,
+                priority=cls.pyre_executive.priority.construction(),
+                locator=locator,
+            )
         # and collect configuration errors
         instance.pyre_configurationErrors = list(inventory.configureInstance(instance))
 
         # all done
         return instance
 
-    def __init__(self, name, locator, implicit, **kwds):
+    def __init__(self, name, locator, implicit, pyre_values=None, **kwds):
         # chain up, but first swallow the extra arguments that are used by my metaclass
         super().__init__(**kwds)
         # make me an id
