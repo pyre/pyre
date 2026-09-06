@@ -143,11 +143,6 @@ def bad():
     # the grid bindings
     from pyre.extensions.pyre import grid
 
-    # the journal, to silence the complaint
-    import journal
-
-    # quiet the error channel
-    journal.error("pyre.grid.bindings").active = False
     # carefully
     try:
         # ask for a cell that does not exist
