@@ -118,6 +118,12 @@ class Actor(Requirement):
         # and ask the component class for any opinions on the name of this instance
         name = self.pyre_normalizeInstanceName(name)
 
+        # separate the constructor arguments that name my traits from the rest; the table maps
+        # every alias to its descriptor, so the caller may use any spelling of a trait
+        traits = {alias: trait for trait in self.pyre_configurables() for alias in trait.aliases}
+        # the trait values, keyed by descriptor, pulled out of the constructor arguments
+        values = {traits[key]: kwds.pop(key) for key in list(kwds) if key in traits}
+
         # if I know the name after all
         if name:
             # look for this name among my instances
@@ -132,40 +138,28 @@ class Actor(Requirement):
                 # do it
                 self.pyre_pullGlobalSettingsIntoScope(scope=name)
 
-            # if the constructor has any extra arguments
-            if kwds:
-                # make a discard pile
-                discard = set()
-                # build a table that maps my trait aliases to the canonical trait name
-                traits = {
-                    alias: trait.name
-                    for trait in self.pyre_configurables()
-                    for alias in trait.aliases
-                }
-                # go through the extra arguments and their values
-                for key, value in kwds.items():
-                    # if the argument does not correspond to one of my traits
-                    if key not in traits:
-                        # skip it
-                        continue
-                    # otherwise, form its full name
-                    full = nameserver.join(name, traits[key])
-                    # assign a priority
-                    priority = executive.priority.construction()
-                    # make a configuration entry
-                    nameserver.insert(name=full, value=value, locator=locator, priority=priority)
-                    # and add it to the discard pile
-                    discard.add(key)
-
-                # to clean up, go through the discard pile
-                for key in discard:
-                    # and remove each key from the pile of constructor arguments
-                    del kwds[key]
+            # a named instance is configured through the nameserver, so its trait values go
+            # there, at construction priority, where user configuration under its name can
+            # override them; go through them
+            for trait, value in values.items():
+                # form the full name of the setting
+                full = nameserver.join(name, trait.name)
+                # assign a priority
+                priority = executive.priority.construction()
+                # and make a configuration entry
+                nameserver.insert(name=full, value=value, locator=locator, priority=priority)
+            # the instance finds these in the store when its inventory binds, so there is
+            # nothing left to hand over directly
+            values = {}
 
         # invoke the pre-instantiation hooks
         self.pyre_staged(name=name, locator=locator, implicit=implicit)
-        # build the instance
-        instance = super().__call__(name=name, locator=locator, implicit=implicit, **kwds)
+        # build the instance; an anonymous one has no namespace in the store, so it receives
+        # its trait values directly and deposits them in its private inventory before its
+        # configuration hooks run
+        instance = super().__call__(
+            name=name, locator=locator, implicit=implicit, pyre_values=values, **kwds
+        )
 
         # invoke the instantiation hook and harvest any errors
         initializationErrors = list(instance.pyre_initialized())
