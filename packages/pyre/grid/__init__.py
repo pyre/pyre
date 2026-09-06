@@ -25,6 +25,12 @@ reads or writes one cell, while a partial or sliced index returns a sub-grid ove
 memory. A grid also presents the buffer protocol, so a consumer that speaks it reaches the cells
 directly, with no copy. The grid keeps its cells alive for as long as any view or sub-grid holds
 on, so {g} may go out of scope while one of them is still in use.
+
+A cell name may carry a byte order marker, as in {float64be} or {uint16le}. A grid over such
+cells swaps bytes on every access, so a data product written on a machine of the other
+endianness reads correctly in place, and the buffer protocol description carries the marker so
+consumers that understand it, such as numpy, see the right values too. A marker that names the
+host's own order costs nothing. Without a marker, cells are in the host's order.
 """
 
 # pull in pyre so we can reach the bindings

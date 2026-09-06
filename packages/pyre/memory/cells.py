@@ -58,5 +58,69 @@ if cells:
     complexFloatConst = cells.ComplexFloatConst
     complexDoubleConst = cells.ComplexDoubleConst
 
+    # cells in an explicit byte order; the spelling that matches the host's order is the native
+    # cell itself, the other one swaps bytes on every access
+    # big endian
+    # signed integral types
+    int16BE = cells.Int16BE
+    int32BE = cells.Int32BE
+    int64BE = cells.Int64BE
+    # unsigned integral types
+    uint16BE = cells.UInt16BE
+    uint32BE = cells.UInt32BE
+    uint64BE = cells.UInt64BE
+    # floats
+    floatBE = cells.FloatBE
+    doubleBE = cells.DoubleBE
+    # complex
+    complexFloatBE = cells.ComplexFloatBE
+    complexDoubleBE = cells.ComplexDoubleBE
+    # const versions
+    # signed integral types
+    int16BEConst = cells.Int16BEConst
+    int32BEConst = cells.Int32BEConst
+    int64BEConst = cells.Int64BEConst
+    # unsigned integral types
+    uint16BEConst = cells.UInt16BEConst
+    uint32BEConst = cells.UInt32BEConst
+    uint64BEConst = cells.UInt64BEConst
+    # floats
+    floatBEConst = cells.FloatBEConst
+    doubleBEConst = cells.DoubleBEConst
+    # complex
+    complexFloatBEConst = cells.ComplexFloatBEConst
+    complexDoubleBEConst = cells.ComplexDoubleBEConst
+
+    # little endian
+    # signed integral types
+    int16LE = cells.Int16LE
+    int32LE = cells.Int32LE
+    int64LE = cells.Int64LE
+    # unsigned integral types
+    uint16LE = cells.UInt16LE
+    uint32LE = cells.UInt32LE
+    uint64LE = cells.UInt64LE
+    # floats
+    floatLE = cells.FloatLE
+    doubleLE = cells.DoubleLE
+    # complex
+    complexFloatLE = cells.ComplexFloatLE
+    complexDoubleLE = cells.ComplexDoubleLE
+    # const versions
+    # signed integral types
+    int16LEConst = cells.Int16LEConst
+    int32LEConst = cells.Int32LEConst
+    int64LEConst = cells.Int64LEConst
+    # unsigned integral types
+    uint16LEConst = cells.UInt16LEConst
+    uint32LEConst = cells.UInt32LEConst
+    uint64LEConst = cells.UInt64LEConst
+    # floats
+    floatLEConst = cells.FloatLEConst
+    doubleLEConst = cells.DoubleLEConst
+    # complex
+    complexFloatLEConst = cells.ComplexFloatLEConst
+    complexDoubleLEConst = cells.ComplexDoubleLEConst
+
 
 # end of file
