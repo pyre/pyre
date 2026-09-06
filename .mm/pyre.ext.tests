@@ -14,6 +14,8 @@ pyre.ext.tests.prerequisites := pyre.ext
 # sweeps them
 tests.pyre.ext.grid.map.clean := grid_map_test.dat
 tests.pyre.ext.grid.readonly.clean := grid_readonly_test.dat
+tests.pyre.ext.grid.ordered.clean := grid_ordered_test.dat
+tests.pyre.ext.memory.ordered.clean := memory_ordered_test.dat
 
 
 # end of file
