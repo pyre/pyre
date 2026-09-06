@@ -1,0 +1,26 @@
+ENVI
+description = {
+  sample ENVI header; with a comma, and an = sign }
+samples = 43200
+lines   = 21600
+bands   = 3
+header offset = 128
+file type = ENVI Standard
+data type = 12
+interleave = BIL
+byte order = 0
+
+; a comment line
+map info = {Arbitrary, 1, 1, -180.00138889, 90.00138889, 0.00833333, 0.00833333, 0, North}
+band names = {
+Band 1, Band 2,
+Band 3}
+wavelength = {0.45, 0.55, 0.65}
+fwhm = {0.01, 0.02, 0.03}
+x start = 12.5
+y start = 7
+data ignore value = -9999
+acquisition time = 2011-09-18T16:32:57Z
+sensor type = Unknown
+custom scalar = 42
+custom list = {a, b, c}
