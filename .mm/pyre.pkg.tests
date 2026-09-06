@@ -23,6 +23,7 @@ tests.pyre.pkg.h5.api.raster_roundtrip.clean := raster_roundtrip.h5
 tests.pyre.pkg.h5.api.raster_value.clean := raster_value.h5
 tests.pyre.pkg.memory.ordered.clean := memory_ordered_test.dat
 tests.pyre.pkg.envi.write.clean := envi_write_test.hdr
+tests.pyre.pkg.envi.cell.clean := envi_cell_test_0.dat envi_cell_test_0.hdr envi_cell_test_1.dat envi_cell_test_1.hdr
 
 
 # the {filesystem.local-make} test modifies the current directory, which creates race
