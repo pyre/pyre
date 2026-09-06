@@ -54,6 +54,39 @@ pyre::py::memory::cells::cell(py::module & memory) -> void
 }
 
 
+// the native order alias registrar
+template <typename... T>
+auto
+pyre::py::memory::cells::aliases(py::module & memory, pyre::typelists::types_t<T...> &&) -> void
+{
+    // register the aliases
+    (alias<T>(memory), ...);
+    // all done
+    return;
+}
+
+
+// the native order alias builder
+template <class T>
+auto
+pyre::py::memory::cells::alias(py::module & memory) -> void
+{
+    // the byte order marker for the host's own order
+    auto marker = std::endian::native == std::endian::big ? "BE" : "LE";
+    // the mutable and const spellings of the scalar's name
+    for (auto suffix : { "", "Const" }) {
+        // the native cell's name
+        auto native = pyre::memory::cellname_t<T>::name() + suffix;
+        // and the ordered spelling of it
+        auto ordered = pyre::memory::cellname_t<T>::name() + marker + suffix;
+        // the host's own order needs no wrapper, so the ordered name is the native class
+        memory.attr(ordered.data()) = memory.attr(native.data());
+    }
+    // all done
+    return;
+}
+
+
 // the docstring builder
 template <class cellT>
 auto
