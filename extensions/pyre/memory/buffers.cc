@@ -26,6 +26,8 @@ pyre::py::memory::buffers::__init__(py::module & memory)
     using buffers_t = pyre::memory::buffers_t;
     // build the classes
     expand(buffers, buffers_t {});
+    // and the ones over the foreign order scalars
+    expand(buffers, pyre::memory::foreignbuffers_t {});
 
     // all done
     return;

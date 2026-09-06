@@ -26,6 +26,8 @@ pyre::py::memory::heaps::__init__(py::module & memory)
     using heaps_t = pyre::memory::heaps_t;
     // build the classes
     expand(heaps, heaps_t {});
+    // and the ones over the foreign order scalars
+    expand(heaps, pyre::memory::foreignheaps_t {});
 
     // all done
     return;

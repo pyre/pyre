@@ -27,6 +27,8 @@ pyre::py::memory::views::__init__(py::module & memory)
     using views_t = pyre::memory::views_t;
     // build the classes
     expand(views, views_t {});
+    // and the ones over the foreign order scalars
+    expand(views, pyre::memory::foreignviews_t {});
 
     // all done
     return;
