@@ -30,8 +30,8 @@ pyre::py::memory::bufferProtocol(pymem_t<T> & cls)
                 const_cast<typename mem_t::value_type *>(mem.data()),
                 // the size of the cell
                 sizeof(typename mem_t::value_type),
-                // the format descriptor
-                py::format_descriptor<typename mem_t::value_type>::format(),
+                // the format descriptor, byte order marker and all
+                format<typename mem_t::value_type>(),
                 // the number of dimensions: memory buffers are flat
                 1,
                 // the shape

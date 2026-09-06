@@ -21,6 +21,9 @@ pyre::py::memory::accessors(pymem_t<T> & cls) -> void
     using mem_t = T;
     // and views derived from it
     using view_t = pyre::memory::View<typename mem_t::value_type, mem_t::readonly()>;
+    // the native scalar behind the cell, which is what python sees; a byte ordered cell swaps on
+    // the way through, so python never meets the wrapper
+    using native_t = pyre::memory::native_t<typename mem_t::value_type>;
 
     // metamethods
     cls.def(
@@ -36,8 +39,10 @@ pyre::py::memory::accessors(pymem_t<T> & cls) -> void
         "__iter__",
         // the implementation
         [](const mem_t & self) {
-            // make an iterator and return it
-            return py::make_iterator(self.begin(), self.end());
+            // make an iterator that lifts each cell to its native value, and return it
+            return py::make_iterator<
+                py::return_value_policy::reference_internal, decltype(self.begin()),
+                decltype(self.end()), native_t>(self.begin(), self.end());
         },
         // keep the storage around while its iterator is in use
         py::keep_alive<0, 1>());
@@ -48,9 +53,9 @@ pyre::py::memory::accessors(pymem_t<T> & cls) -> void
         "__getitem__",
         // the implementation
         // &mem_t::at,
-        [](const mem_t & self, int idx) -> typename mem_t::value_type {
-            // get the value
-            auto value = self.at(idx);
+        [](const mem_t & self, int idx) -> native_t {
+            // get the value, as a native scalar
+            native_t value = self.at(idx);
             // and return it
             return value;
         },

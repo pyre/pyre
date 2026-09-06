@@ -26,6 +26,8 @@ pyre::py::memory::maps::__init__(py::module & memory)
     using maps_t = pyre::memory::maps_t;
     // build the classes
     expand(maps, maps_t {});
+    // and the ones over the foreign order scalars
+    expand(maps, pyre::memory::foreignmaps_t {});
 
     // all done
     return;

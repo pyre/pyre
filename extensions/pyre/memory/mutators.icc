@@ -19,12 +19,15 @@ pyre::py::memory::mutators(pymem_t<T> & cls) -> void
 {
     // alias the storage strategy
     using mem_t = T;
+    // the native scalar behind the cell, which is what python hands over; a byte ordered cell
+    // swaps on the way in
+    using native_t = pyre::memory::native_t<typename mem_t::value_type>;
 
     cls.def(
         // the name
         "__setitem__",
         // the implementation
-        [](mem_t & self, typename mem_t::size_type index, typename mem_t::value_type value) {
+        [](mem_t & self, typename mem_t::size_type index, native_t value) {
             // set the {value} at {index}
             self.at(index) = value;
             // all done

@@ -19,13 +19,18 @@ pyre::py::memory::interface(pymem_t<T> & cls) -> void
 {
     // alias the storage strategy
     using mem_t = T;
+    // the native scalar behind the cell, which is what python hands over
+    using native_t = pyre::memory::native_t<typename mem_t::value_type>;
 
     // fill the buffer with a value
     cls.def(
         // the name
         "fill",
         // the implementation
-        &mem_t::fill,
+        [](const mem_t & self, native_t value) -> const mem_t & {
+            // fill, converting to the cell on the way in, and return the buffer
+            return self.fill(value);
+        },
         // signature
         "value"_a,
         // the docstring

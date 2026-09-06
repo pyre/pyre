@@ -12,6 +12,8 @@
 #include "../external.h"
 // get the pyre parts
 #include <pyre/memory.h>
+// the buffer protocol description of a cell type, byte order marker and all
+#include <pyre/py/memory/format.h>
 
 
 // end of file
