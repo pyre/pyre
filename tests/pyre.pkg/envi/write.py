@@ -16,9 +16,8 @@ def render():
     # for headers in memory
     import io
 
-    # build a header with a bit of everything; keyword construction needs a name
+    # build a header with a bit of everything
     hdr = pyre.envi.header(
-        name="render",
         description="a product; with punctuation, and an = sign",
         samples=5,
         lines=4,
@@ -79,7 +78,7 @@ def write():
     # the scratch product
     uri = "envi_write_test.hdr"
     # a header
-    hdr = pyre.envi.header(name="write", samples=5, lines=4, dataType=12, interleave="bip")
+    hdr = pyre.envi.header(samples=5, lines=4, dataType=12, interleave="bip")
     # write it
     pyre.envi.writer().write(header=hdr, uri=uri)
     # read it back
