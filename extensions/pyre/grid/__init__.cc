@@ -29,11 +29,12 @@ namespace pyre::py::grid {
     // its shape carries one signed extent per axis
     using shape_t = packing_t::shape_type;
 
-    // choose a cell type from its pyre memory cell name and hand it to a callable that is
-    // templated on that type; this keeps the twelve-way dispatch in one place, and the return
-    // type is deduced so both grid and mosaic factories can ride it
+    // choose a native cell type from its pyre memory cell name and hand it to a callable that
+    // is templated on that type; this keeps the twelve-way dispatch in one place, and the
+    // return type is deduced so both grid and mosaic factories can ride it; {requested} is the
+    // name the caller actually used, for the complaint
     template <class F>
-    auto dispatchCell(const string_t & cell, F && f)
+    auto dispatchBase(const string_t & cell, const string_t & requested, F && f)
     {
         // signed integers
         if (cell == "int8")
@@ -67,10 +68,41 @@ namespace pyre::py::grid {
         // anything else is a caller mistake
         auto channel = pyre::journal::error_t("pyre.grid.bindings");
         // complain
-        channel << pyre::journal::at() << "unsupported grid cell type '" << cell << "'"
+        channel << pyre::journal::at() << "unsupported grid cell type '" << requested << "'"
                 << pyre::journal::endl;
         // and refuse
-        throw py::value_error("unsupported grid cell type '" + cell + "'");
+        throw py::value_error("unsupported grid cell type '" + requested + "'");
+    }
+
+    // choose a cell type from its name, honoring a trailing byte order marker: {float64be} is a
+    // big endian double, {uint16le} a little endian unsigned short; a marker that names the
+    // host's own order collapses to the native cell, so only foreign order data pays for the
+    // wrapper
+    template <class F>
+    auto dispatchCell(const string_t & cell, F && f)
+    {
+        // the marker is the last two characters, if there is room for a base name before them
+        if (cell.size() > 2) {
+            // split the name
+            auto base = cell.substr(0, cell.size() - 2);
+            auto marker = cell.substr(cell.size() - 2);
+            // big endian
+            if (marker == "be") {
+                // wrap the base cell in the big endian spelling
+                return dispatchBase(base, cell, [&]<class T>() {
+                    return f.template operator()<pyre::memory::big_t<T>>();
+                });
+            }
+            // little endian
+            if (marker == "le") {
+                // wrap the base cell in the little endian spelling
+                return dispatchBase(base, cell, [&]<class T>() {
+                    return f.template operator()<pyre::memory::little_t<T>>();
+                });
+            }
+        }
+        // no marker: the name is a native cell
+        return dispatchBase(cell, cell, std::forward<F>(f));
     }
 
 
