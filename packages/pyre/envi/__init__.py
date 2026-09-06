@@ -16,12 +16,12 @@ bare value and a list of strings for a braced one, for the consumer to interpret
 The sequence
 
     import pyre
+    import pyre.grid
     hdr = pyre.envi.reader().read(uri="product.hdr")
-    shape = hdr.shape
-    cell = hdr.datatype
+    data = pyre.grid.map(uri="product", shape=hdr.shape, cell=hdr.cell, create=False)
 
-reads a header and recovers the layout of the product it describes; {writer} renders a header
-back to text.
+reads a header and lays a grid over the product it describes, in place, whatever byte order the
+product was written in; {writer} renders a header back to text.
 """
 
 # the exceptions

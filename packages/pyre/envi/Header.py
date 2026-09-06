@@ -312,6 +312,27 @@ class Header(pyre.component, family="pyre.envi.header"):
             raise exceptions.UnknownDataTypeError(code=code)
 
     @property
+    def cell(self) -> str | None:
+        """
+        The name of the pyre cell type that reads my product in place: my {datatype} with the
+        byte order marker my {byteOrder} calls for, so a product written on a machine of the
+        other endianness comes through the swap
+        """
+        # get the native name
+        name = self.datatype
+        # if there is no data type, or the byte order is not known
+        if name is None or self.byteOrder is None:
+            # there is nothing to add
+            return name
+        # a single byte scalar has no order
+        if name in ("uint8", "int8"):
+            # so it needs no marker
+            return name
+        # ENVI byte order 0 is little endian, 1 is big endian; the grid factories accept either
+        # marker and collapse the one that names the host's own order to the native cell
+        return name + ("be" if self.byteOrder == 1 else "le")
+
+    @property
     def shape(self) -> tuple[int, ...] | None:
         """
         The shape of the product as laid out in the file: (lines, samples) for a single band,
