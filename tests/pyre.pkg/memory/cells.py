@@ -114,12 +114,64 @@ def complexCells() -> None:
     return
 
 
+def orderedCells() -> None:
+    """
+    Sanity test: make sure the byte ordered cells are published under their python names
+    """
+    # access the cell types
+    from pyre.memory import cells
+
+    # the host's byte order
+    import sys
+
+    # the marker that names the host's order
+    native = "LE" if sys.byteorder == "little" else "BE"
+    # access rights
+    const = ["", "Const"]
+    # byte order markers
+    markers = ["BE", "LE"]
+    # the scalars wide enough to have a byte order, with the names they report
+    scalars = [
+        ("int16", "Int16", 16),
+        ("int32", "Int32", 32),
+        ("int64", "Int64", 64),
+        ("uint16", "UInt16", 16),
+        ("uint32", "UInt32", 32),
+        ("uint64", "UInt64", 64),
+        ("float", "Float", 32),
+        ("double", "Double", 64),
+        ("complexFloat", "ComplexFloat", 64),
+        ("complexDouble", "ComplexDouble", 128),
+    ]
+
+    # go through them
+    for perm, marker, (scalar, tag, size) in itertools.product(const, markers, scalars):
+        # assemble the name in the module
+        name = f"{scalar}{marker}{perm}"
+        # the name the cell reports: the host's own order is the native cell
+        cellName = f"{tag}{perm}" if marker == native else f"{tag}{marker}{perm}"
+        # verify that the cell exists
+        cell = getattr(cells, name)
+        # check the name
+        assert cellName == cell.__name__
+        # check the size, in bits
+        assert size == cell.bits
+        # check the size, in bytes
+        assert size == 8 * cell.bytes
+        # check the access rights
+        assert perm == ("" if cell.mutable else "Const")
+
+    # all done
+    return
+
+
 # main
 if __name__ == "__main__":
     # run the tests
     intCells()
     floatCells()
     complexCells()
+    orderedCells()
 
 
 # end of file
