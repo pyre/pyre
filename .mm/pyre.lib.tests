@@ -15,7 +15,7 @@ pyre.lib.tests.c++.flags += -Wall $(pyre.lib.c++.flags)
 
 
 # cleanup
-tests.pyre.lib.grid.clean += grid_map_access.data
+tests.pyre.lib.grid.clean += grid_map_access.data grid_map_foreign.data
 tests.pyre.lib.memory.clean += filemap.dat map.dat map_slice.dat constmap_slice.dat
 tests.pyre.lib.viz.iterators.clean += \
     pyre_viz_iterators_amplitude.bmp pyre_viz_iterators_bmp.bmp pyre_viz_iterators_complex.bmp \
