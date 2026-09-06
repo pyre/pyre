@@ -33,8 +33,16 @@ pyre::py::memory::cells::__init__(py::module & memory) -> void
 
     // get the pile of cell types
     using cells_t = pyre::memory::cells_t;
+    // the foreign order cell types
+    using foreigncells_t = pyre::memory::foreigncells_t;
+    // and the scalars wide enough to have a byte order
+    using widetypes_t = pyre::memory::widetypes_t;
     // build the classes
     expand(cells, cells_t {});
+    // the foreign order cells are distinct classes
+    expand(cells, foreigncells_t {});
+    // while the native order spellings are just other names for the native classes
+    aliases(cells, widetypes_t {});
 
     // all done
     return;

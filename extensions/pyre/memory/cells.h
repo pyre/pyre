@@ -25,6 +25,13 @@ namespace pyre::py::memory::cells {
     template <class cellT>
     inline auto cell(py::module & m) -> void;
 
+    // the native order alias registrar
+    template <class... T>
+    inline auto aliases(py::module &, pyre::typelists::types_t<T...> &&) -> void;
+    // the native order alias builder
+    template <class T>
+    inline auto alias(py::module & m) -> void;
+
     // the class docstring
     template <class cellT>
     inline auto docstring() -> string_t;
