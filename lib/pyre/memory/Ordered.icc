@@ -1,0 +1,210 @@
+// -*- C++ -*-
+// -*- coding: utf-8 -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2026 all rights reserved
+
+// code guard
+#pragma once
+
+// the declarations
+#include "Ordered.h"
+
+
+// metamethods
+// adopt a native value, storing its bytes in my order
+template <typename T, std::endian order>
+constexpr pyre::memory::Ordered<T, order>::Ordered(value_type value) : _bytes { encode(value) }
+{}
+
+
+// operators
+// read as the native value
+template <typename T, std::endian order>
+constexpr pyre::memory::Ordered<T, order>::
+operator value_type() const
+{
+    // decode my bytes
+    return value();
+}
+
+
+// accept a native value
+template <typename T, std::endian order>
+constexpr auto
+pyre::memory::Ordered<T, order>::operator=(value_type value) -> self_type &
+{
+    // store its bytes in my order
+    _bytes = encode(value);
+    // all done
+    return *this;
+}
+
+
+// compound assignment: read as native, combine, and store back in my order
+template <typename T, std::endian order>
+constexpr auto
+pyre::memory::Ordered<T, order>::operator+=(value_type value) -> self_type &
+{
+    // fold in the contribution
+    return *this = this->value() + value;
+}
+
+
+template <typename T, std::endian order>
+constexpr auto
+pyre::memory::Ordered<T, order>::operator-=(value_type value) -> self_type &
+{
+    // take out the contribution
+    return *this = this->value() - value;
+}
+
+
+template <typename T, std::endian order>
+constexpr auto
+pyre::memory::Ordered<T, order>::operator*=(value_type value) -> self_type &
+{
+    // scale
+    return *this = this->value() * value;
+}
+
+
+template <typename T, std::endian order>
+constexpr auto
+pyre::memory::Ordered<T, order>::operator/=(value_type value) -> self_type &
+{
+    // scale down
+    return *this = this->value() / value;
+}
+
+
+// interface
+// the byte order of my storage
+template <typename T, std::endian order>
+constexpr auto
+pyre::memory::Ordered<T, order>::endianness() -> std::endian
+{
+    // easy
+    return order;
+}
+
+
+// whether my bytes happen to be in the host's order
+template <typename T, std::endian order>
+constexpr auto
+pyre::memory::Ordered<T, order>::native() -> bool
+{
+    // compare against the host
+    return order == std::endian::native;
+}
+
+
+// the number of independently ordered scalars i hold
+template <typename T, std::endian order>
+constexpr auto
+pyre::memory::Ordered<T, order>::components() -> size_type
+{
+    // a complex value is a pair of scalars, each in its own byte order
+    if constexpr (complex_c<value_type>) {
+        // so there are two
+        return 2;
+    }
+    // everything else is a single scalar
+    return 1;
+}
+
+
+// my value in the host's order
+template <typename T, std::endian order>
+constexpr auto
+pyre::memory::Ordered<T, order>::value() const -> value_type
+{
+    // decode my bytes
+    return decode(_bytes);
+}
+
+
+// my bytes as they sit in memory
+template <typename T, std::endian order>
+constexpr auto
+pyre::memory::Ordered<T, order>::bytes() const -> bytes_type
+{
+    // easy
+    return _bytes;
+}
+
+
+// implementation details
+// convert a native value to my byte order
+template <typename T, std::endian order>
+constexpr auto
+pyre::memory::Ordered<T, order>::encode(value_type value) -> bytes_type
+{
+    // take the value apart into its native bytes
+    auto bytes = std::bit_cast<bytes_type>(value);
+    // if my order is the host's
+    if constexpr (order == std::endian::native) {
+        // the bytes are already right
+        return bytes;
+    }
+    // otherwise, reverse them
+    return swap(bytes);
+}
+
+
+// convert bytes in my order to a native value
+template <typename T, std::endian order>
+constexpr auto
+pyre::memory::Ordered<T, order>::decode(bytes_type bytes) -> value_type
+{
+    // if my order is the host's
+    if constexpr (order == std::endian::native) {
+        // the bytes assemble directly into the value
+        return std::bit_cast<value_type>(bytes);
+    }
+    // otherwise, reverse them first
+    return std::bit_cast<value_type>(swap(bytes));
+}
+
+
+// reverse the bytes of each component
+template <typename T, std::endian order>
+constexpr auto
+pyre::memory::Ordered<T, order>::swap(bytes_type bytes) -> bytes_type
+{
+    // the width of one component
+    constexpr size_type width = sizeof(value_type) / components();
+    // go through the components
+    for (size_type component = 0; component < components(); ++component) {
+        // the span of this component
+        auto first = bytes.begin() + component * width;
+        auto last = first + width;
+        // reverse it in place; a complex value swaps its two scalars separately, never as a whole
+        std::reverse(first, last);
+    }
+    // hand back the swapped bytes
+    return bytes;
+}
+
+
+// comparisons; needed because the operators for complex scalars are templates, which template
+// argument deduction never reaches through the implicit conversion to the native value
+template <typename T, std::endian order>
+constexpr auto
+pyre::memory::operator==(const Ordered<T, order> & lhs, const Ordered<T, order> & rhs) -> bool
+{
+    // compare the native values
+    return lhs.value() == rhs.value();
+}
+
+
+template <typename T, std::endian order>
+constexpr auto
+pyre::memory::operator==(const Ordered<T, order> & lhs, const T & rhs) -> bool
+{
+    // compare the native values
+    return lhs.value() == rhs;
+}
+
+
+// end of file

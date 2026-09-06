@@ -12,6 +12,10 @@
 #include <stdexcept>
 #include <algorithm>
 #include <array>
+#include <bit>
+#include <concepts>
+#include <cstddef>
+#include <type_traits>
 #include <complex>
 #include <fstream>
 #include <memory>

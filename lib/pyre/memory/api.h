@@ -24,6 +24,26 @@ namespace pyre::memory {
     template <typename T>
     using cellname_t = CellName<T>;
 
+    // a scalar stored in a fixed byte order; it collapses to the plain scalar when that order is
+    // the host's, or when the scalar is a single byte, so only cells that actually need swapping
+    // pay for the wrapper
+    template <typename T, std::endian order>
+    using ordered_t =
+        std::conditional_t<order == std::endian::native || sizeof(T) == 1, T, Ordered<T, order>>;
+    // big endian, the network and IEEE order
+    template <typename T>
+    using big_t = ordered_t<T, std::endian::big>;
+    // little endian, the intel order
+    template <typename T>
+    using little_t = ordered_t<T, std::endian::little>;
+    // whichever order the host does not use; the one that always needs swapping
+    template <typename T>
+    using foreign_t = ordered_t<
+        T, std::endian::native == std::endian::big ? std::endian::little : std::endian::big>;
+    // the native scalar behind a cell value type
+    template <typename T>
+    using native_t = typename Native<T>::type;
+
     // block on the stack
     template <int D, typename T>
     using stack_t = Stack<D, T, false>;
