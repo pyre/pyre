@@ -300,6 +300,9 @@ if _executive:
     # hdf5
     from . import h5
 
+    # ENVI headers
+    from . import envi
+
     # workflows
     from . import flow
 
