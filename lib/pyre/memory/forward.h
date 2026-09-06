@@ -18,6 +18,10 @@ namespace pyre::memory {
     template <typename T, bool isConst>
     class Cell;
 
+    // a scalar stored in a fixed byte order, whatever the host's
+    template <typename T, std::endian order>
+    class Ordered;
+
     // block on the stack
     template <int D, typename T, bool isConst>
     class Stack;
@@ -54,6 +58,13 @@ namespace pyre::memory {
     // inequality
     template <class memT>
     constexpr auto operator!=(const Slice<memT> &, const Slice<memT> &) -> bool;
+
+    // byte ordered cells compare through their native values
+    template <typename T, std::endian order>
+    constexpr auto operator==(const Ordered<T, order> &, const Ordered<T, order> &) -> bool;
+    // also against a native value
+    template <typename T, std::endian order>
+    constexpr auto operator==(const Ordered<T, order> &, const T &) -> bool;
 } // namespace pyre::memory
 
 
@@ -70,6 +81,16 @@ namespace pyre::memory {
     // generator of a human readable name for each supported datatype
     template <typename T>
     struct CellName;
+
+    // the native scalar behind a cell value type: the type itself, unless it is a byte ordered
+    // wrapper, in which case the scalar it wraps
+    template <typename T>
+    struct Native;
+
+    // recognize complex scalars, whose two components swap bytes independently
+    template <typename T>
+    concept complex_c = requires { typename T::value_type; }
+                     && std::same_as<T, std::complex<typename T::value_type>>;
 } // namespace pyre::memory
 
 

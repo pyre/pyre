@@ -190,5 +190,23 @@ struct pyre::memory::CellName<pyre::memory::complex128_t> {
     inline static auto decl() -> string_t { return "std::complex<std::double_t>"; }
 };
 
+// byte ordered cells carry the name of the scalar they wrap, tagged with their order
+template <typename T, std::endian order>
+struct pyre::memory::CellName<pyre::memory::Ordered<T, order>> {
+    // the name
+    inline static auto name() -> string_t
+    {
+        // the scalar's name with the byte order marker
+        return CellName<T>::name() + (order == std::endian::big ? "BE" : "LE");
+    }
+    // c++ decl string
+    inline static auto decl() -> string_t
+    {
+        // spelled through the api alias
+        return string_t("pyre::memory::") + (order == std::endian::big ? "big_t<" : "little_t<")
+             + CellName<T>::decl() + ">";
+    }
+};
+
 
 // end of file

@@ -70,6 +70,53 @@ namespace pyre::memory {
 
     // the pile of cell types
     using cells_t = typename celltypes_t<basetypes_t>::type;
+    // the cell types wide enough to have a byte order
+    using widetypes_t = pyre::typelists::types_t<
+        // signed integers
+        int16_t, int32_t, int64_t,
+        // unsigned integers
+        uint16_t, uint32_t, uint64_t,
+        // floating point
+        float32_t, float64_t,
+        // complex
+        complex64_t, complex128_t>;
+    // the same scalars in the byte order the host does not use; the native order needs no wrapper
+    // so these are the only ordered cells that exist as distinct types
+    using foreigntypes_t = pyre::typelists::types_t<
+        // signed integers
+        foreign_t<int16_t>, foreign_t<int32_t>, foreign_t<int64_t>,
+        // unsigned integers
+        foreign_t<uint16_t>, foreign_t<uint32_t>, foreign_t<uint64_t>,
+        // floating point
+        foreign_t<float32_t>, foreign_t<float64_t>,
+        // complex
+        foreign_t<complex64_t>, foreign_t<complex128_t>>;
+    // the pile of foreign order cell types
+    using foreigncells_t = typename celltypes_t<foreigntypes_t>::type;
+    // base buffers over the foreign order scalars
+    using foreignbuffers_t = typename pyre::typelists::apply_t<
+        // the buffers
+        pyre::typelists::templates_t<buffer_t, constbuffer_t>,
+        // the cells
+        typename storageCells_t<foreigntypes_t>::type>::type;
+    // heaps over the foreign order scalars
+    using foreignheaps_t = typename pyre::typelists::apply_t<
+        // the heaps
+        pyre::typelists::templates_t<heap_t, constheap_t>,
+        // the cells
+        typename storageCells_t<foreigntypes_t>::type>::type;
+    // maps over the foreign order scalars
+    using foreignmaps_t = typename pyre::typelists::apply_t<
+        // the maps
+        pyre::typelists::templates_t<map_t, constmap_t>,
+        // the cells
+        typename storageCells_t<foreigntypes_t>::type>::type;
+    // views over the foreign order scalars
+    using foreignviews_t = typename pyre::typelists::apply_t<
+        // the views
+        pyre::typelists::templates_t<view_t, constview_t>,
+        // the cells
+        typename storageCells_t<foreigntypes_t>::type>::type;
 
     // base buffers
     using buffers_t = typename pyre::typelists::apply_t<

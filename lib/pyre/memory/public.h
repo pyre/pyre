@@ -19,6 +19,8 @@
 
 // implementation
 #include "Cell.h"
+// scalars in a fixed byte order
+#include "Ordered.h"
 // bas class for memory buffers
 #include "Buffer.h"
 // memory block on the stack
