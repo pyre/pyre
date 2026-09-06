@@ -61,6 +61,17 @@ def test():
         # through the header
         assert pyre.envi.header(dataType=code).datatype == name
 
+    # the cell name carries the byte order marker the header calls for
+    assert pyre.envi.header(dataType=12, byteOrder=1).cell == "uint16be"
+    assert pyre.envi.header(dataType=12, byteOrder=0).cell == "uint16le"
+    assert pyre.envi.header(dataType=6, byteOrder=1).cell == "complex64be"
+    # without a byte order it is the native cell
+    assert pyre.envi.header(dataType=12).cell == "uint16"
+    # a single byte scalar has no order
+    assert pyre.envi.header(dataType=1, byteOrder=1).cell == "uint8"
+    # and without a data type there is no cell
+    assert pyre.envi.header(byteOrder=1).cell is None
+
     # the header offset survives
     hdr = pyre.envi.header(headerOffset=128)
     assert hdr.offset == 128
