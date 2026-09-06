@@ -12,6 +12,8 @@
 #include "forward.h"
 // my superclass
 #include "Channel.h"
+// the proxy that binds a channel to its shared state
+#include "InventoryProxy.h"
 // my parts
 #include "exceptions.h"
 
@@ -64,6 +66,17 @@ private:
 
 // get the inline definitions
 #include "Help.icc"
+
+
+// the channel index is a static data member of a class template, so every translation unit
+// that touches the channel would otherwise carry its own definition; a linker that does not
+// unify such definitions across shared objects then splits the channel state between the
+// library and every extension module that uses it, and a channel deactivated in one is still
+// active in the other; so the index is declared here as an explicit specialization, which
+// makes it an ordinary variable with one definition, in the library
+template <>
+pyre::journal::Index pyre::journal::Channel<
+    pyre::journal::Help<pyre::journal::InventoryProxy>, pyre::journal::InventoryProxy>::_index;
 
 
 // end of file
