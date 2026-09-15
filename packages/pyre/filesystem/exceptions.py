@@ -119,7 +119,7 @@ class IsFolderError(FilesystemError):
 
 class FolderInsertionError(FilesystemError):
     """
-    Exception raised when attempting to insert a node in a filsystem and the target node is not
+    Exception raised when attempting to insert a node in a filesystem and the target node is not
     a folder
     """
 
@@ -144,6 +144,24 @@ class NotRootError(FilesystemError):
 
     # public data
     description = "cannot insert absolute path {0.rep!r} in node {0.target!r}"
+
+
+class SearchError(GenericError):
+    """
+    Exception raised when a query of a data catalog cannot be run
+    """
+
+    # public data
+    description = "while searching for {0.uri}: {0.error}"
+
+    # meta-methods
+    def __init__(self, error, **kwds):
+        # chain up
+        super().__init__(**kwds)
+        # save the underlying error
+        self.error = error
+        # all done
+        return
 
 
 class URISpecificationError(GenericError):
