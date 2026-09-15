@@ -116,6 +116,25 @@ def s3(session, root, **kwds):
     return S3(session=session, root=root, **kwds)
 
 
+def earthaccess(query, count=None, layout=None, engine=None, **kwds):
+    """
+    Build a filesystem over the granules that match a {query} of the NASA common metadata
+    repository, as answered by the {earthaccess} package
+
+    parameters:
+        {query}: the query parameters, keyed by the names of the {earthaccess} query builder
+        {count}: the cap on the number of granules fetched; {None} fetches every match
+        {layout}: the strategy that places a granule on the tree; one file per granule at the
+                  root by default
+        {engine}: the strategy that runs the query; the common metadata repository by default
+    """
+    # get the factory
+    from .EarthAccess import EarthAccess
+
+    # mount the filesystem and return it
+    return EarthAccess(query=query, count=count, layout=layout, engine=engine, **kwds)
+
+
 # nodes
 def naked(**kwds):
     """
