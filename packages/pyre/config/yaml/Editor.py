@@ -79,7 +79,7 @@ class Editor:
         # if the key is already there
         if self._holds(node=container, key=key):
             # the trailing comment of its old value, if any, must survive the replacement
-            token = self._take(node=container[key])
+            token = self._take(node=container[key], fallback=(container, key))
             # replace the value
             container[key] = value
             # and give the comment to the new value
@@ -116,14 +116,29 @@ class Editor:
         if not isinstance(container, (self.Map, self.Seq)) or not self._holds(container, key):
             # say so
             return False
+        # find the entry that precedes the one being removed, if any
+        siblings = (
+            list(container.keys())
+            if isinstance(container, self.Map)
+            else list(range(len(container)))
+        )
+        index = siblings.index(key)
+        previous = siblings[index - 1] if index > 0 else None
         # the comment block that trails the entry must survive its removal
-        token = self._take(node=container[key])
-        # the block that precedes the entry as well
+        token = self._take(node=container[key], fallback=(container, key))
+        # except for a comment on the line of the entry itself, which describes what is going
+        token = self._detach(token=token)
+        # the lines that precede the entry as well
         preamble = self._takePreamble(container=container, key=key)
         # remove the entry
         del container[key]
-        # and settle the comments on the new tail of the container
-        self._settle(container=container, token=token, preamble=preamble)
+        # the container's own place in its parent, for when the removal empties it
+        parent = (self.get(*path[:-2]), path[-2]) if len(path) > 1 else None
+        # settle the comments where the entry was: after the entry that preceded it, or at the
+        # head of the container when it was first
+        self._settle(
+            container=container, previous=previous, preamble=preamble, token=token, parent=parent
+        )
         # all done
         return True
 
@@ -274,8 +289,8 @@ class Editor:
         node = self.document
         # go through the keys
         for key in path:
-            # if the key is missing
-            if not self._holds(node=node, key=key):
+            # if the key is missing, or holds a bare key left behind by an emptied section
+            if not self._holds(node=node, key=key) or node[key] is None:
                 # make a mapping for it, placing the trailing comment of the container after it
                 self.set(*path[: path.index(key) + 1], value=self.Map())
             # descend
@@ -343,19 +358,24 @@ class Editor:
         # lists keep it first, mappings third
         return 0 if isinstance(container, self.Seq) else 2
 
-    def _take(self, node, residue=False):
+    def _take(self, node, residue=False, fallback=None):
         """
-        Detach and return the comment block that trails the deepest last entry of {node}
+        Detach and return the comment block that trails the deepest last entry of {node}, or
+        the one at {fallback}, a container and key, when {node} has no entries
 
         With {residue} set, the blank lines that open the block stay behind, to set the old
         tail apart from the new top level section about to follow it
         """
         # find the tail
         container, key = self._tail(node=node)
-        # a node without entries has no trailing comment
+        # a node without entries carries its block at the fallback
         if container is None:
-            # so there is nothing to take
-            return None
+            # if there is none
+            if fallback is None:
+                # there is nothing to take
+                return None
+            # otherwise, unpack it
+            container, key = fallback
         # get the record
         slot = container.ca.items.get(key)
         # if there is none
@@ -425,6 +445,27 @@ class Editor:
         # and hand back the token
         return None if held is None else held[1]
 
+    def _detach(self, token):
+        """
+        Strip {token} of the comment on the line of its entry, keeping the block below it
+        """
+        # nothing to strip
+        if token is None:
+            # is nothing to do
+            return None
+        # get the text
+        text = token.value
+        # a block starts on the line after the entry
+        cut = text.find("\n")
+        # if the token holds nothing but an inline comment
+        if cut < 0 or not text[cut:].strip():
+            # there is no block
+            return None
+        # otherwise, keep the block
+        token.value = text[cut:]
+        # and hand it off
+        return token
+
     def _takePreamble(self, container, key):
         """
         Detach and return the comment lines that precede {key} in {container}
@@ -446,35 +487,70 @@ class Editor:
         # and hand it off
         return preamble
 
-    def _settle(self, container, token, preamble):
+    def _settle(self, container, previous, preamble, token, parent):
         """
-        Place the comments that were attached to a removed entry of {container}
+        Place the comments of an entry removed from {container} where the entry was: after
+        {previous}, the entry that preceded it, or at the head of the container when there is
+        none; a container left empty hands them to its own entry in {parent}. Comments that
+        described the removed entry survive, since the editor cannot tell them apart from
+        comments about its neighbors
         """
-        # the trailing block goes after the new tail of the container
-        if token is not None:
-            # find it
-            tail, key = self._tail(node=container)
-            # if the container still has entries
-            if tail is not None:
-                # the block goes there, after whatever trails the new tail
-                self._append(container=tail, key=key, token=token)
-            # otherwise
-            else:
-                # the block is attached to the container's own trailing comment, at the top
-                self._orphan(token=token)
-        # the preamble goes before the next entry, which is now at the same position; with the
-        # removed entry gone from the end of a mapping, the lines join the trailing block
-        if preamble:
-            # find the tail
-            tail, key = self._tail(node=container)
-            # if the container has entries
-            if tail is not None:
-                # fold the lines into the trailing comment
-                self._append(container=tail, key=key, token=self._join(preamble))
-            # otherwise
-            else:
-                # keep them at the top
-                self._orphan(token=self._join(preamble))
+        # the lines that preceded the entry come first, then the block that trailed it
+        tokens = [item for item in (self._join(preamble), token) if item is not None]
+        # if there is nothing to place
+        if not tokens:
+            # there is nothing to do
+            return
+        # if the removal emptied the container and it has a place in its parent, the comments
+        # cannot stay inside it: the backend has no place for a comment after an empty
+        # collection, and a comment on its key renders between the key and the brackets
+        if not len(container) and parent is not None:
+            # unpack the place
+            grandparent, key = parent
+            # an emptied mapping becomes a bare key, which means the same to the configuration
+            # loader and carries the comments after its line
+            if isinstance(container, self.Map):
+                # replace it
+                grandparent[key] = None
+                # and place the comments after the key
+                for item in tokens:
+                    # one by one
+                    self._append(container=grandparent, key=key, token=item)
+                # all done
+                return
+            # an emptied list keeps its brackets, since a bare key would not mean an empty
+            # list; the comments move above it, after the entry that precedes it
+            siblings = (
+                list(grandparent.keys())
+                if isinstance(grandparent, self.Map)
+                else list(range(len(grandparent)))
+            )
+            index = siblings.index(key)
+            before = siblings[index - 1] if index > 0 else None
+            # and settle there, as if the list itself had been removed
+            self._settle(
+                container=grandparent, previous=before, preamble=tokens, token=None, parent=None
+            )
+            # all done
+            return
+        # if there is no entry ahead of the removed one
+        if previous is None:
+            # the comments lead the container
+            for item in tokens:
+                # one by one
+                self._lead(container=container, token=item)
+            # all done
+            return
+        # otherwise, they trail the deepest last entry of the previous one
+        tail, key = self._tail(node=container[previous])
+        # or the previous entry itself, when it is a scalar
+        if tail is None:
+            # so point there
+            tail, key = container, previous
+        # place them
+        for item in tokens:
+            # after whatever already trails the entry
+            self._append(container=tail, key=key, token=item)
         # all done
         return
 
@@ -491,24 +567,33 @@ class Editor:
             slot[position] = token
             # all done
             return
-        # otherwise, join the texts
-        slot[position].value = slot[position].value + token.value
+        # otherwise, join the texts; the token opens with the newline that ended the line of
+        # its old entry, and the block it joins already ends its line, so that newline goes
+        text = token.value[1:] if token.value.startswith("\n") else token.value
+        slot[position].value = slot[position].value + text
         # all done
         return
 
-    def _orphan(self, token):
+    def _lead(self, container, token):
         """
-        Keep {token}, a comment that lost its entry, at the top of the document
+        Add {token} to the comments that lead {container}, ahead of its first entry
         """
-        # the document's own comment record
-        comment = self.document.ca.comment
+        # the token opens with the newline that ended the line of its old entry; a leading
+        # comment starts a line of its own, so that newline goes
+        token.value = token.value[1:] if token.value.startswith("\n") else token.value
+        # the container's own comment record
+        comment = container.ca.comment
         # if there is none
         if comment is None:
             # make one that carries the token
-            self.document.ca.comment = [None, [token]]
+            container.ca.comment = [None, [token]]
             # all done
             return
-        # otherwise, add the token to the pile
+        # if the record has no pile of leading comments
+        if comment[1] is None:
+            # start one
+            comment[1] = []
+        # add the token to the pile
         comment[1].append(token)
         # all done
         return
@@ -517,10 +602,17 @@ class Editor:
         """
         Fold {preamble}, a list of comment tokens, into one token
         """
+        # nothing folds into nothing
+        if not preamble:
+            # so say so
+            return None
         # the first token carries the rest
         token = preamble[0]
         # fold in the others
         token.value = "".join(item.value for item in preamble)
+        # a preamble is a block of lines that ends with its own newline; the token that trails
+        # an entry opens with the newline that ends the entry's line, so give it one
+        token.value = token.value if token.value.startswith("\n") else "\n" + token.value
         # and hand it off
         return token
 
