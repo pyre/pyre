@@ -1,0 +1,19 @@
+# -*- yaml -*-
+#
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2026 all rights reserved
+
+
+# the owner, configured from this file
+recipe.owner:
+    label: configured
+    weight: 2.5
+    vertices:
+        - (1.0, 2.0)
+        - (3.0, 4.0)
+
+# its part, configured in place
+recipe.owner.part:
+    level: 7
+
+# end of file
