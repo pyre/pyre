@@ -46,6 +46,10 @@ classifiers = [
 ]
 dependencies = ["PyYAML"]
 
+# optional: the round trip editor of yaml documents rides on ruamel.yaml
+[project.optional-dependencies]
+editing = ["ruamel.yaml"]
+
 # formatting: wrap at column 100
 [tool.black]
 line-length = 100
