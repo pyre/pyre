@@ -21,10 +21,23 @@ class EarthAccess(Filesystem):
     A filesystem built out of the granules that match a query of the NASA common metadata
     repository, as answered by the {earthaccess} package
 
-    The filesystem is the query: its contents are the page of granules the query matches,
-    hung on a tree that a {layout} imposes on them. The page is the unit of freshness; a
-    discovery at the root re-runs the query, and a discovery anywhere else is answered from the
-    page in hand.
+    This is an instance of a query backed filesystem: a tree whose contents are the records a
+    query answers, rather than the entries of a directory. Such a filesystem has three parts.
+    An {engine} runs the query and hands back the page of records, along with the number of
+    matches the source knows of in all. A {layout} places each record on the tree by naming
+    the folders that lead to it and the leaf that stands for it, so the hierarchy is imposed
+    on a flat page rather than read from the source. A description turns a record into the
+    metadata of its leaf. The page is the unit of freshness: a discovery at the root re-runs
+    the query and rebuilds the tree, keeping the nodes of the records that are still on the
+    page so that clients holding on to them see the update, while a discovery anywhere below
+    the root is answered from the page in hand, since the query fetches the page as a whole.
+
+    Of the three parts, only the defaults are specific to the common metadata repository: the
+    engine drives the {earthaccess} query builder, and the description reads the UMM record
+    shape. The machinery of the tree is general. When a second source of this kind appears,
+    e.g. a STAC catalog or a database query rendered as a tree, the general machinery should
+    move to a base class and this class should become the flavor that supplies the repository
+    specific defaults, the way the local and s3 flavors sit under {Filesystem}.
     """
 
     # types
