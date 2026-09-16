@@ -297,8 +297,11 @@ class Editor:
         backend = YAML(typ="rt")
         # keep the quoting of the original
         backend.preserve_quotes = True
-        # and lay out new entries the way pyre configuration files are indented
+        # lay out new entries the way pyre configuration files are indented
         backend.indent(mapping=4, sequence=4, offset=4)
+        # and never fold a long scalar onto the next line: a folded uri with a colon in it
+        # reads back as a key, and the document is lost
+        backend.width = 2**16
         # save it
         self.backend = backend
         # normalize the location
