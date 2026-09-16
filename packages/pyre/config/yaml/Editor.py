@@ -230,18 +230,22 @@ class Editor:
                 )
                 # and on to the next one
                 continue
-            # otherwise, find the last entry that can carry the comment
-            anchor = self._anchor(node=self.document)
-            # if there is one
-            if anchor is not None:
-                # unpack it
-                container, key = anchor
-                # and place the token after it
-                self._append(container=container, key=key, token=token)
-            # otherwise
-            else:
-                # the document is empty, so the comment leads it
-                self._lead(container=self.document, token=token)
+            # otherwise, the comment settles near the container, after the entry that
+            # precedes it, as if it trailed an entry removed from that spot
+            container, key = fallback
+            siblings = (
+                list(container.keys())
+                if isinstance(container, self.Map)
+                else list(range(len(container)))
+            )
+            index = siblings.index(key)
+            self._settle(
+                container=container,
+                previous=siblings[index - 1] if index > 0 else None,
+                preamble=None,
+                token=token,
+                parent=None,
+            )
         # nothing is held any more
         self._held.clear()
         # make a buffer
@@ -683,12 +687,9 @@ class Editor:
                 self._lead(container=container, token=item)
             # all done
             return
-        # otherwise, they trail the deepest last entry of the previous one
-        tail, key = self._tail(node=container[previous])
-        # or the previous entry itself, when it is a scalar
-        if tail is None:
-            # so point there
-            tail, key = container, previous
+        # otherwise, they trail the last entry of the previous one that can carry them, or
+        # the previous entry itself when it is a scalar
+        tail, key = self._anchor(node=container[previous]) or (container, previous)
         # place them
         for item in tokens:
             # after whatever already trails the entry
