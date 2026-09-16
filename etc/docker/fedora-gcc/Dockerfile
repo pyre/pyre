@@ -40,7 +40,7 @@ RUN dnf -y install \
         openssh-server passwd \
         gcc gcc-c++ gcc-gfortran make \
         python3 python3-devel \
-        pybind11-devel python3-pyyaml python3-numpy \
+        pybind11-devel python3-pyyaml python3-ruamel-yaml python3-numpy \
         openmpi-devel hdf5-devel gsl-devel
 
 
