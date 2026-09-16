@@ -91,8 +91,8 @@ class SelectorPSL(Scheduler, family="pyre.ipc.dispatchers.psl", implements=Dispa
         """
         # keep track of what has been reported
         seen = set()
-        # go through my event tables
-        for index in (self._read, self._write):
+        # go through my event tables, and the piles whose handlers are running right now
+        for index in (self._read, self._write, dict(enumerate(self._inflight))):
             # and the pile of events registered against each descriptor
             for events in index.values():
                 # go through the events
@@ -190,6 +190,8 @@ class SelectorPSL(Scheduler, family="pyre.ipc.dispatchers.psl", implements=Dispa
         self._read = {}
         # and the write map: fd -> list[_event]
         self._write = {}
+        # the piles of events whose handlers are running
+        self._inflight = []
 
         # all done
         return
@@ -202,6 +204,10 @@ class SelectorPSL(Scheduler, family="pyre.ipc.dispatchers.psl", implements=Dispa
         # take possession of the pile, so interest registered by the handlers while they run
         # accumulates separately instead of being invoked prematurely on this pass
         pile = index.pop(key, [])
+        # the channels of the pile are still being watched while their handlers run, so keep
+        # reporting them: a handler that forks, e.g. to form a team, must be able to find the
+        # connection it is serving among the channels its child has to release
+        self._inflight.append(pile)
         # make a pile of event handlers to reschedule
         reschedule = []
         # how many handlers have had their turn
@@ -249,6 +255,8 @@ class SelectorPSL(Scheduler, family="pyre.ipc.dispatchers.psl", implements=Dispa
                     reschedule.append(event)
         # whatever happened
         finally:
+            # the pile is no longer in flight
+            self._inflight.remove(pile)
             # the handlers that did not get their turn keep their place
             reschedule += pile[done:]
             # if any handlers survived

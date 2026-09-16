@@ -69,8 +69,8 @@ class Selector(Scheduler, family="pyre.ipc.dispatchers.selector", implements=dis
         """
         # keep track of what has been reported
         seen = set()
-        # go through my event tables
-        for index in (self._read, self._write, self._exception):
+        # go through my event tables, and the piles whose handlers are running right now
+        for index in (self._read, self._write, self._exception, dict(enumerate(self._inflight))):
             # and the pile of events registered against each endpoint
             for events in index.values():
                 # go through the events
@@ -214,6 +214,11 @@ class Selector(Scheduler, family="pyre.ipc.dispatchers.selector", implements=dis
             # they run accumulates separately instead of being invoked prematurely on
             # this pass
             pile = index.pop(active, [])
+            # the channels of the pile are still being watched while their handlers run,
+            # so keep reporting them: a handler that forks, e.g. to form a team, must be
+            # able to find the connection it is serving among the channels its child has
+            # to release
+            self._inflight.append(pile)
             # the events whose handlers ask to be rescheduled
             survivors = []
             # how many handlers have had their turn
@@ -233,6 +238,8 @@ class Selector(Scheduler, family="pyre.ipc.dispatchers.selector", implements=dis
                         survivors.append(event)
             # whatever happened
             finally:
+                # the pile is no longer in flight
+                self._inflight.remove(pile)
                 # the handlers that did not get their turn keep their place
                 survivors += pile[done:]
                 # if anything is going back
@@ -279,6 +286,8 @@ class Selector(Scheduler, family="pyre.ipc.dispatchers.selector", implements=dis
         self._read = collections.defaultdict(list)
         self._write = collections.defaultdict(list)
         self._exception = collections.defaultdict(list)
+        # the piles of events whose handlers are running
+        self._inflight = []
 
         # my debug aspect
         import journal
