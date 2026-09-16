@@ -1,0 +1,30 @@
+# -*- yaml -*-
+#
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2026 all rights reserved
+
+
+# a data archive: a query over crete
+crete:
+    uri: "earth:crete" # quoted on purpose
+    collection: NISAR_L2_GCOV_PROVISIONAL_V1
+    # the region of interest
+    polygon:
+        - (23.3547, 34.7211)
+        - (26.4923, 34.7211)
+        - (26.4923, 35.7146)
+        - (23.3547, 35.7146)
+
+# the archives to connect at boot
+archives:
+    - qed.archives.earth#crete
+
+
+# the application
+qed.app:
+    # run as a web app
+    shell: web
+    nexus.services.web:
+        address: ip4:0.0.0.0:8005
+
+# end of file
