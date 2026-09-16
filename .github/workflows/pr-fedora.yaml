@@ -38,7 +38,7 @@ jobs:
               git make findutils which procps-ng hostname diffutils zip unzip \
               openssh-server passwd \
               gcc gcc-c++ gcc-gfortran \
-              python3-devel python3-pyyaml python3-numpy pybind11-devel \
+              python3-devel python3-pyyaml python3-ruamel-yaml python3-numpy pybind11-devel \
               gsl-devel hdf5-devel openmpi-devel
 
       - name: passwordless ssh to localhost

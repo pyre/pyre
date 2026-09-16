@@ -27,6 +27,8 @@ dependencies:
   - python-gil
   - pybind11
   - pyyaml
+  # the round trip editor of yaml documents rides on it; optional, but the tests want it
+  - ruamel.yaml
   # the native external packages
   - gsl
   - hdf5
