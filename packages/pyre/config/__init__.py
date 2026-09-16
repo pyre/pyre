@@ -23,6 +23,18 @@ def newCommandLineParser(**kwds):
     return CommandLineParser(**kwds)
 
 
+def newRecipe(**kwds):
+    """
+    Build a recipe: the configuration of components, and of everything they reference, as
+    sections of plain values
+    """
+    # access the factory
+    from .Recipe import Recipe
+
+    # build one and return it
+    return Recipe(**kwds)
+
+
 def newYamlEditor(**kwds):
     """
     Build an editor of yaml documents that leaves what it does not touch as it found it
