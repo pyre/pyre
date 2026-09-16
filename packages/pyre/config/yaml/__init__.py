@@ -12,4 +12,7 @@ This package contains the reader/writer for {yaml} encoded configurations
 # access to the codec
 from .YAML import YAML as yaml
 
+# the round trip editor
+from .Editor import Editor as editor
+
 # end of file

@@ -23,6 +23,17 @@ def newCommandLineParser(**kwds):
     return CommandLineParser(**kwds)
 
 
+def newYamlEditor(**kwds):
+    """
+    Build an editor of yaml documents that leaves what it does not touch as it found it
+    """
+    # access the factory
+    from .yaml.Editor import Editor
+
+    # build one and return it
+    return Editor(**kwds)
+
+
 def newConfigurator(**kwds):
     """
     Build a new processor of configuration information

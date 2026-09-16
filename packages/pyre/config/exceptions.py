@@ -67,6 +67,42 @@ class EncodingError(CodecError):
     """
 
 
+class MissingBackendError(CodecError):
+    """
+    Exception raised when the package a codec rides on is not importable
+    """
+
+    # public data
+    description = "the package {0.package!r} is not available"
+
+    # meta-methods
+    def __init__(self, package, **kwds):
+        # chain up
+        super().__init__(**kwds)
+        # save the error info
+        self.package = package
+        # all done
+        return
+
+
+class EditingError(CodecError):
+    """
+    Exception raised when a document cannot be edited as requested
+    """
+
+    # public data
+    description = "while editing {0.uri!r}: {0.reason}"
+
+    # meta-methods
+    def __init__(self, reason, **kwds):
+        # chain up
+        super().__init__(**kwds)
+        # save the error info
+        self.reason = reason
+        # all done
+        return
+
+
 class LoadingError(CodecError):
     """
     Exception raised by codecs when they encounter errors in their input streams
