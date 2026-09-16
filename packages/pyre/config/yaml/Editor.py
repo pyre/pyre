@@ -137,7 +137,11 @@ class Editor:
         # settle the comments where the entry was: after the entry that preceded it, or at the
         # head of the container when it was first
         self._settle(
-            container=container, previous=previous, preamble=preamble, token=token, parent=parent
+            container=container,
+            previous=previous,
+            preamble=preamble,
+            token=token,
+            parent=parent,
         )
         # all done
         return True
@@ -189,16 +193,55 @@ class Editor:
         # not there
         return False
 
+    def find(self, name):
+        """
+        Find the key path of the entry that configures {name}, a dotted pyre name, resolving
+        the scoping of configuration files: a key may spell several levels of the name, and
+        may carry a family before a '#'
+        """
+        # the levels of the name
+        levels = name.split(".")
+        # start at the top
+        return self._find(node=self.document, levels=levels, path=())
+
+    def locate(self, line):
+        """
+        Find the key path of the entry whose key sits on {line}, counting from one
+        """
+        # the backend counts from zero
+        return self._locate(node=self.document, line=line - 1, path=())
+
     def render(self):
         """
         Build the text of the document
         """
-        # comments held for containers that never got an entry go where they were headed
+        # comments held for containers that never got an entry cannot go on the key of the
+        # empty container, since the backend renders them between the key and the brackets;
+        # they were headed for the tail of the document, so they go after the last entry
+        # that can carry them
         for fallback, token in self._held.values():
-            # unpack the fallback
-            container, key = fallback
-            # and place the token there
-            self._slot(container=container, key=key)[self._position(container=container)] = token
+            # an empty collection that is the last entry of the document is the one place
+            # the backend renders a comment on its key correctly, after the brackets
+            if fallback == self._tail(node=self.document):
+                # so the comment goes on the key
+                container, key = fallback
+                self._slot(container=container, key=key)[self._position(container=container)] = (
+                    token
+                )
+                # and on to the next one
+                continue
+            # otherwise, find the last entry that can carry the comment
+            anchor = self._anchor(node=self.document)
+            # if there is one
+            if anchor is not None:
+                # unpack it
+                container, key = anchor
+                # and place the token after it
+                self._append(container=container, key=key, token=token)
+            # otherwise
+            else:
+                # the document is empty, so the comment leads it
+                self._lead(container=self.document, token=token)
         # nothing is held any more
         self._held.clear()
         # make a buffer
@@ -270,6 +313,72 @@ class Editor:
         return
 
     # implementation details
+    def _find(self, node, levels, path):
+        """
+        Look for the entry that spells {levels} within {node}, a mapping at {path}
+        """
+        # anything but a mapping holds no entries
+        if not isinstance(node, self.Map):
+            # so the search fails
+            return None
+        # go through the keys
+        for key in node:
+            # the name of the entry is the key, or what follows the family in it
+            spelled = str(key).split("#", 1)[-1].strip().split(".")
+            # if it spells more of the name than there is
+            if len(spelled) > len(levels):
+                # it is not the one
+                continue
+            # if it does not spell the head of the name
+            if levels[: len(spelled)] != spelled:
+                # move on
+                continue
+            # if it spells the whole name
+            if len(spelled) == len(levels):
+                # this is the entry
+                return path + (key,)
+            # otherwise, the rest of the name is spelled below it
+            found = self._find(node=node[key], levels=levels[len(spelled) :], path=path + (key,))
+            # if it was found there
+            if found is not None:
+                # hand it off
+                return found
+        # not here
+        return None
+
+    def _locate(self, node, line, path):
+        """
+        Look for the entry whose key sits on {line}, counting from zero, within {node}
+        """
+        # anything but a mapping has no keys
+        if not isinstance(node, self.Map):
+            # so the search fails
+            return None
+        # go through the keys
+        for key in node:
+            # carefully, since keys the editor added have no line
+            try:
+                # get the position of the key
+                position = node.lc.key(key)
+            # if the backend has no record of it
+            except KeyError:
+                # it is not on any line
+                position = None
+            # a key without a position is not on any line either
+            where = position[0] if position else None
+            # if it is the one
+            if where == line:
+                # this is the entry
+                return path + (key,)
+            # otherwise, look below it
+            found = self._locate(node=node[key], line=line, path=path + (key,))
+            # if it was found there
+            if found is not None:
+                # hand it off
+                return found
+        # not here
+        return None
+
     def _holds(self, node, key):
         """
         Check whether {node} has an entry at {key}
@@ -343,6 +452,35 @@ class Editor:
             container = current
             # and descend
             current = current[key]
+
+    def _anchor(self, node):
+        """
+        Find the container and key of the last entry of {node} that can carry a trailing
+        comment: the deepest last entry whose value is not an empty collection, looking back
+        through earlier entries when the last ones are empty
+        """
+        # anything but a container has no entries
+        if not isinstance(node, (self.Map, self.Seq)):
+            # so there is nothing here
+            return None
+        # the entries
+        keys = list(node.keys()) if isinstance(node, self.Map) else list(range(len(node)))
+        # go through them, last first
+        for key in reversed(keys):
+            # get the value
+            value = node[key]
+            # a scalar can carry the comment
+            if not isinstance(value, (self.Map, self.Seq)):
+                # so this is the anchor
+                return node, key
+            # a collection carries it on its own anchor
+            anchor = self._anchor(node=value)
+            # if it has one
+            if anchor is not None:
+                # that is it
+                return anchor
+        # nothing here can carry it
+        return None
 
     def _slot(self, container, key):
         """
@@ -529,7 +667,11 @@ class Editor:
             before = siblings[index - 1] if index > 0 else None
             # and settle there, as if the list itself had been removed
             self._settle(
-                container=grandparent, previous=before, preamble=tokens, token=None, parent=None
+                container=grandparent,
+                previous=before,
+                preamble=tokens,
+                token=None,
+                parent=None,
             )
             # all done
             return
