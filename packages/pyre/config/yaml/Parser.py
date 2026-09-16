@@ -5,6 +5,10 @@
 # (c) 1998-2026 all rights reserved
 
 
+# support
+import pyre
+
+
 # extract configurations from {yaml} files
 class Parser:
     """
@@ -33,16 +37,21 @@ class Parser:
             pass
         # if it succeeds
         else:
-            # attempt to
+            # look for the fast loader, falling back to the pure python implementation
+            factory = getattr(yaml, "CLoader", yaml.Loader)
+            # build a loader over the stream
+            loader = factory(stream)
+            # carefully, since the loader holds on to the stream
             try:
-                # look for and use the fast loader
-                doc = yaml.load(stream, Loader=yaml.CLoader)
-            # if that fails
-            except AttributeError:
-                # fall back to the pure python implementation
-                doc = yaml.load(stream, Loader=yaml.Loader)
-            # process the contents
-            return self.process(doc=doc, uri=uri, locator=locator)
+                # compose the node tree rather than loading the document, so that every node
+                # keeps the mark that says where in the file it came from
+                doc = loader.get_single_node()
+                # and process the contents
+                return self.process(doc=doc, loader=loader, uri=uri, locator=locator)
+            # release the loader
+            finally:
+                # in every case
+                loader.dispose()
 
         # if we get this far, we couldn't find {yaml} support
         import journal
@@ -67,28 +76,38 @@ class Parser:
         return
 
     # implementation details
-    def process(self, doc, uri, locator):
+    def process(self, doc, loader, uri, locator):
         """
-        Convert the contents of {doc} into a sequence of configuration events
+        Convert the contents of {doc}, a node tree, into a sequence of configuration events
         """
         # initialize the error pile
         self.errors = []
         # assemble the events
-        configuration = tuple(self.harvest(node=doc, locator=locator))
+        configuration = tuple(self.harvest(node=doc, loader=loader, uri=uri, locator=locator))
         # and return them
         return configuration
 
     def harvest(
         self,
         node,
+        loader,
+        uri,
         scope=None,
         constraints=None,
         locator=None,
         typesep=typeSeparator,
         scopesep=scopeSeparator,
     ):
-        # if the current node is trivial
-        if not node:
+        """
+        Generate the configuration events in {node}, a mapping node of the tree {loader}
+        composed out of the document at {uri}; every event records where in the file it
+        came from, on top of {locator}, the reason the file was read
+        """
+        # get the node types
+        import yaml
+
+        # anything but a mapping holds no assignments
+        if not isinstance(node, yaml.MappingNode) or not node.value:
             # nothing to do
             return
 
@@ -102,11 +121,18 @@ class Parser:
             constraints = []
 
         # otherwise, go through its contents
-        for key, value in node.items():
+        for keyNode, valueNode in node.value:
             # make a copy of the constraints
             conditions = constraints[0:]
             # the key is always a string; yaml interprets keys that are valid numbers
-            key = str(key)
+            key = str(loader.construct_object(keyNode))
+            # record where the entry sits in the file; the marks count from zero, people
+            # count from one
+            mark = keyNode.start_mark
+            where = pyre.tracking.chain(
+                this=pyre.tracking.file(source=uri, line=mark.line + 1, column=mark.column + 1),
+                next=locator,
+            )
             # take apart the token by splitting it on the type separator
             spec = (tag.strip() for tag in key.split(typesep))
             # and extract the scope levels from each one
@@ -128,16 +154,20 @@ class Parser:
                 conditions.append((scope + name, family))
 
             # if {value} is a nested scope
-            if type(value) is type(node):
+            if isinstance(valueNode, yaml.MappingNode):
                 # process it
                 yield from self.harvest(
-                    node=value,
+                    node=valueNode,
+                    loader=loader,
+                    uri=uri,
                     scope=scope + name,
                     constraints=conditions,
                     locator=locator,
                 )
                 # and move on
                 continue
+            # otherwise, build the value the way the document loader would have
+            value = loader.construct_object(valueNode, deep=True)
 
             # otherwise, we have an assignment; figure out which kind: if it's conditional
             if conditions:
@@ -149,13 +179,13 @@ class Parser:
                     value=value,
                     component=component,
                     conditions=reversed(conditions),
-                    locator=locator,
+                    locator=where,
                 )
                 # and move on
                 continue
 
             # otherwise, it's a raw assignment
-            yield self.Assignment(key=scope + name, value=value, locator=locator)
+            yield self.Assignment(key=scope + name, value=value, locator=where)
 
         # all done
         return
