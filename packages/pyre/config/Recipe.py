@@ -36,8 +36,10 @@ class Recipe:
                 continue
             # describe it, collecting the components it references on the workload
             self.sections[item.pyre_name] = self._describe(component=item, workload=workload)
-            # and record its family, for whoever lists it by specification
+            # record its family, for whoever lists it by specification
             self.families[item.pyre_name] = item.pyre_family()
+            # and the component itself, for whoever wants to ask it more
+            self.components[item.pyre_name] = item
         # all done
         return self
 
@@ -65,6 +67,8 @@ class Recipe:
         self.sections = {}
         # the families of the described components, keyed by name
         self.families = {}
+        # and the components themselves
+        self.components = {}
         # all done
         return
 
@@ -124,10 +128,23 @@ class Recipe:
         """
         Reduce {value}, the value of {trait}, to plain values a configuration file can hold
         """
-        # let the trait render what it knows how to, e.g. paths and uris as strings
+        # a table travels as a table, entry by entry; the trait would render it whole as one
+        # string, which a configuration file cannot tell from text
+        if self._tabular(value=value):
+            # so flatten it directly
+            return self._flatten(value=value)
+        # let the trait render everything else the way it knows how, e.g. paths and uris as
+        # strings and tuples in the form the loader reads back
         rendered = trait.json(value)
         # and flatten whatever structure is left
         return self._flatten(value=rendered)
+
+    def _tabular(self, value):
+        """
+        Check whether {value} is a table: a dictionary, or one of the framework's key maps
+        """
+        # anything with items to go through
+        return isinstance(value, dict) or callable(getattr(value, "items", None))
 
     def _flatten(self, value):
         """
@@ -138,7 +155,7 @@ class Recipe:
             # untouched
             return value
         # tables, entry by entry
-        if isinstance(value, dict):
+        if self._tabular(value=value):
             # with string keys
             return {str(key): self._flatten(value=item) for key, item in value.items()}
         # sequences of every kind become lists
