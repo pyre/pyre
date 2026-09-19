@@ -17,26 +17,30 @@ pyre::h5::py::group(py::module & m)
 {
     // helpers
     auto getByName = [](const Group & self, const string_t & name) -> py::object {
-        // open the member, taking ownership of its fresh handle
-        auto hid = self.objectId(name);
-        // figure out the type of the named member
+        // figure out the type of the named member before opening it: a fresh handle must end
+        // up with an owner on every path, and the kinds that have no wrapper have no owner
         auto type = self.childType(name);
-        // decode the {type}
+        // decode the {type}; each wrapper adopts the fresh handle and travels to python by
+        // value, which makes the python object its owner, so the handle dies with it. handing
+        // python a pointer to a wrapper on the heap does not: the default policy of {py::cast}
+        // treats a pointer as borrowed, nobody ever deletes the wrapper, and the handle stays
+        // open, along with the file it belongs to, for the life of the process
         switch (type) {
             // if it's a group
             case H5O_TYPE_GROUP:
-                // dress it up and return it
-                return py::cast(new Group(hid));
+                // open it, dress it up, and return it
+                return py::cast(Group(self.objectId(name)));
             // if it's a dataset
             case H5O_TYPE_DATASET:
-                // dress it up and return it
-                return py::cast(new DataSet(hid));
+                // open it, dress it up, and return it
+                return py::cast(DataSet(self.objectId(name)));
             // if it is a named type
             case H5O_TYPE_NAMED_DATATYPE:
-                // dress it up and return it
-                return py::cast(new DataType(hid));
+                // open it, dress it up, and return it
+                return py::cast(DataType(self.objectId(name)));
             // otherwise
             default:
+                // there is nothing to open
                 break;
         }
 
@@ -44,7 +48,9 @@ pyre::h5::py::group(py::module & m)
         return py::none();
     };
 
-    auto getByIndex = [&getByName](const Group & self, int index) -> py::object {
+    // the lookup by index rides on the lookup by name; it gets a copy, since the binding
+    // outlives this function and its locals
+    auto getByIndex = [getByName](const Group & self, int index) -> py::object {
         // figure out the name of the member at {index}
         auto name = self.memberName(index);
         // and look it up
@@ -182,7 +188,7 @@ pyre::h5::py::group(py::module & m)
         // the signature
         "index"_a,
         // the docstring
-        "get the name of the member at the given {index}");
+        "get the member at the given {index}");
 
     // member creation
     cls.def(
@@ -259,7 +265,7 @@ pyre::h5::py::group(py::module & m)
         // the signature
         "index"_a,
         // the docstring
-        "get the name of the member at the given {index}");
+        "get the member at the given {index}");
 
     cls.def(
         // the name
