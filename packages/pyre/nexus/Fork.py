@@ -8,12 +8,54 @@
 # externals
 import os
 import signal
+import sys
 
 # support
 import pyre
 
 # my protocol
 from .Recruiter import Recruiter
+
+
+# keep the parent side of a fork away from the macOS system configuration
+def shield():
+    """
+    Make the standard library look for proxy settings in the environment only, the way it does
+    on every other platform, and never in the macOS system configuration
+
+    That lookup goes through {_scproxy}, which brings CoreFoundation to life in this process.
+    CoreFoundation and the dispatch queues underneath it do not survive a fork that is not
+    followed by an exec, and a crew member is exactly such a fork. The member need not look
+    for proxies itself to get hurt: anything in it that reaches CoreFoundation will do, e.g.
+    the TLS layer of the AWS libraries that hdf5 reads S3 with, which is built on Secure
+    Transport; the member dies of a segmentation fault while setting up its first connection.
+    All it takes on the team side is one http client asking whether there is a proxy, which
+    {boto3} does while it builds a session
+
+    The lookup functions in {urllib.request} resolve {_get_proxies} and {_get_proxy_settings}
+    as globals of that module when they are called, so replacing those two names reaches every
+    caller, including the ones that captured the lookup functions themselves before this ran,
+    as {botocore} does when it is imported. That makes the order of imports irrelevant; what
+    matters is that this happens before the first lookup, and importing the recruiter that
+    forks is as early as it gets for a process that means to fork
+    """
+    # this is a problem of one platform
+    if sys.platform != "darwin":
+        # and everybody else is fine
+        return
+    # get the module with the lookup functions
+    import urllib.request
+
+    # there are no proxies in the system configuration
+    urllib.request._get_proxies = lambda: {}
+    # and nothing there says which hosts bypass them
+    urllib.request._get_proxy_settings = lambda: {"exclude_simple": False, "exceptions": ()}
+    # all done
+    return
+
+
+# this happens once, when the recruiter is imported
+shield()
 
 
 # declaration
