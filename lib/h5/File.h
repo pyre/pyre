@@ -42,6 +42,9 @@ public:
     auto fcpl() const -> properties::FCPL;
     // my access property list, as a fresh owned wrapper
     auto fapl() const -> properties::FAPL;
+    // the number of open handles of the given {kinds} that refer to me or to my contents; the
+    // {kinds} are the {H5F_OBJ_*} flags. a file stays open for as long as any of them is alive
+    auto handles(unsigned int kinds) const -> long;
 };
 
 
