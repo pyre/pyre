@@ -170,10 +170,10 @@ crete:
         - (23.3547, 35.7146)
 
 # the connected archives
+archives: []
 
 
 # a section that stays untouched
-archives: []
 qed.app:
     # the shell
     shell: web
