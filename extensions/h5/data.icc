@@ -77,6 +77,10 @@ pyre::h5::py::data(py::class_<objectT> & cls)
                     return new DataType(id);
             }
         },
+        // the wrapper is fresh off the heap and must travel as a pointer, so that python sees
+        // the type it really is; say that python owns it, since the default for a property
+        // is to treat what its getter returns as borrowed, and then nobody deletes it
+        py::return_value_policy::take_ownership,
         // the docstring
         "get detailed information about my type");
 

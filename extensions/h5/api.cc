@@ -41,6 +41,20 @@ pyre::h5::py::api(py::module & m)
         // the docstring
         "initialize the hdf5 runtime");
 
+    // check whether a handle is alive
+    m.def(
+        // the name
+        "valid",
+        // the handler
+        [](hid_t hid) -> bool {
+            // ask the library
+            return H5Iis_valid(hid) > 0;
+        },
+        // the signature
+        "hid"_a,
+        // the docstring
+        "check whether {hid} refers to a live hdf5 object");
+
     // check whether there is ROS3 support
     m.def(
         // the name
