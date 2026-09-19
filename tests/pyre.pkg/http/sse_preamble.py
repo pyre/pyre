@@ -46,8 +46,11 @@ def test():
     assert b"Connection: keep-alive\r\n" in wire
     # and it opts out of reverse-proxy buffering, so events are not held back
     assert b"X-Accel-Buffering: no\r\n" in wire
-    # a streaming response has no body, so it carries no {Content-Length}
+    # a stream has no end, so it carries no {Content-Length}
     assert b"Content-Length" not in wire
+    # and delimits its deliveries with the chunked coding instead, so that an intermediary
+    # does not have to wait for the connection to close before forwarding them
+    assert b"Transfer-Encoding: chunked\r\n" in wire
     # the preamble is exactly the status line and headers, terminated by a blank line
     assert wire.endswith(b"\r\n\r\n")
 
