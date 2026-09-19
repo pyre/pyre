@@ -51,6 +51,18 @@ class EventStream(Response):
         # encode and hand off
         return frame.encode(self.encoding)
 
+    @classmethod
+    def chunk(cls, data):
+        """
+        Wrap the {data} bytes as one chunk of a body in the chunked transfer coding
+        """
+        # a chunk of no bytes is how the coding marks the end of the body, so empty {data}
+        if not data:
+            # contributes nothing to a stream that must stay open
+            return b""
+        # the size of the chunk, in hex, then the payload, each terminated by a line break
+        return b"%x\r\n%s\r\n" % (len(data), data)
+
     def render(self, **kwds):
         """
         A streaming response carries no rendered body; its payload arrives out of band
@@ -83,6 +95,11 @@ class EventStream(Response):
         headers["Cache-Control"] = "no-cache"
         # hold the connection open
         headers["Connection"] = "keep-alive"
+        # the stream has no end, so it has no length; delimit it with the chunked coding so
+        # that intermediaries can tell where each delivery stops. a body with no delimiter at
+        # all ends when the connection closes, and a proxy is entitled to wait for that
+        # before forwarding a single byte, which starves the client forever
+        headers["Transfer-Encoding"] = "chunked"
         # tell reverse proxies (nginx and friends) not to buffer the stream, so events reach the
         # client promptly instead of being held back until the connection closes
         headers["X-Accel-Buffering"] = "no"

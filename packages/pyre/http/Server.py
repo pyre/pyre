@@ -280,11 +280,13 @@ class Server(pyre.nexus.server, family="pyre.nexus.servers.http"):
         channel.setblocking(False)
         # get my hub
         hub = self.hub
-        # subscribe this channel to the response's topic
-        hub.subscribe(channel=channel, topic=response.topic)
+        # subscribe this channel to the response's topic; the headers promise a body in the
+        # chunked coding, so ask the hub to wrap everything it delivers to this channel
+        hub.subscribe(channel=channel, topic=response.topic, framing=response.chunk)
         # queue the preamble; the hub arms the channel and delivers it on the same path as
-        # every later event, so a streaming channel is never touched by the blocking writer
-        hub.send(channel=channel, data=preamble)
+        # every later event, so a streaming channel is never touched by the blocking writer.
+        # the preamble is not part of the body, so it goes out as it is
+        hub.send(channel=channel, data=preamble, raw=True)
         # if the response opens with frames of its own, e.g. what a newcomer missed
         if response.opening:
             # they go out next, ahead of anything published from here on
