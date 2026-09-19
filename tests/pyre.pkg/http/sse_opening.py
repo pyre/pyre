@@ -31,21 +31,25 @@ class Hub:
     def __init__(self):
         # the subscriptions
         self.subscriptions = []
-        # and the outbound queue
+        # the outbound queue
         self.sent = []
+        # and the transfer coding of the connection
+        self.framing = None
         # all done
         return
 
     # interface
-    def subscribe(self, channel, topic):
+    def subscribe(self, channel, topic, framing=None):
         # record
         self.subscriptions.append((channel, topic))
+        # the transfer coding the streaming path asked for
+        self.framing = framing
         # all done
         return
 
-    def send(self, channel, data, coalesce=False):
+    def send(self, channel, data, coalesce=False, raw=False):
         # record
-        self.sent.append((channel, data))
+        self.sent.append((channel, data, raw))
         # all done
         return
 
@@ -111,12 +115,18 @@ def test():
     assert server.hub.subscriptions == [(channel, "journal")]
     # two deliveries were queued, both for this channel
     assert [entry[0] for entry in server.hub.sent] == [channel, channel]
-    # the first is the preamble
+    # the hub was asked to wrap the body in the chunked coding
+    assert server.hub.framing(b"abc") == b"3\r\nabc\r\n"
+    # the first delivery is the preamble
     preamble = server.hub.sent[0][1]
     assert preamble.startswith(b"HTTP/1.1 200 OK\r\n")
     assert preamble.endswith(b"\r\n\r\n")
+    # which precedes the body, so it bypasses the coding
+    assert server.hub.sent[0][2] is True
     # the second is the opening payload, verbatim
     assert server.hub.sent[1][1] == opening
+    # which is part of the body, so the hub gets to wrap it
+    assert server.hub.sent[1][2] is False
 
     # a response without an opening payload queues only the preamble
     server = Stub()
