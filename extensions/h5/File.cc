@@ -111,6 +111,36 @@ pyre::h5::py::file(py::module & m)
         // the docstring
         "get my access property list");
 
+    // what i have open
+    cls.def(
+        // the name
+        "handles",
+        // the implementation
+        [](const File & self) -> py::dict {
+            // the kinds of handle that keep a file open, by name
+            const std::vector<std::pair<const char *, unsigned int>> kinds {
+                { "file", H5F_OBJ_FILE },       { "group", H5F_OBJ_GROUP },
+                { "dataset", H5F_OBJ_DATASET }, { "datatype", H5F_OBJ_DATATYPE },
+                { "attribute", H5F_OBJ_ATTR },
+            };
+            // make a table
+            auto census = py::dict();
+            // go through the kinds
+            for (const auto & [name, kind] : kinds) {
+                // count the open handles of this kind
+                const auto count = self.handles(kind);
+                // and record the ones that exist
+                if (count > 0) {
+                    census[name] = count;
+                }
+            }
+            // hand it off
+            return census;
+        },
+        // the docstring
+        "count the open handles that refer to me or to my contents, by kind; i stay open for "
+        "as long as any of them is alive");
+
     // close the file
     cls.def(
         // the name

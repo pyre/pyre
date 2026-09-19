@@ -50,4 +50,13 @@ pyre::h5::File::fapl() const -> properties::FAPL
 }
 
 
+// the number of open handles of the given {kinds} that refer to me or to my contents
+auto
+pyre::h5::File::handles(unsigned int kinds) const -> long
+{
+    // ask the library; it answers with a negative number when it cannot tell
+    return static_cast<long>(H5Fget_obj_count(id(), kinds));
+}
+
+
 // end of file
