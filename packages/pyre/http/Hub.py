@@ -22,9 +22,13 @@ class Hub:
     """
 
     # interface
-    def subscribe(self, channel, topic=""):
+    def subscribe(self, channel, topic="", framing=None):
         """
         Record {channel} as a subscriber to {topic} and prepare its outbound queue
+
+        When {framing} is given, it is a callable that wraps outbound bytes in whatever
+        transfer coding the connection promised its peer; it is applied to everything sent to
+        {channel} from here on, so no publisher has to know what the wire looks like.
         """
         # add the channel to the topic's subscriber set
         self._subscribers[topic].add(channel)
@@ -33,6 +37,10 @@ class Hub:
         self._topics.setdefault(channel, set()).add(topic)
         # make sure it has an outbound queue
         self._queues.setdefault(channel, collections.deque())
+        # if the connection has a transfer coding
+        if framing is not None:
+            # remember it, so every delivery to this channel is wrapped the same way
+            self._framings[channel] = framing
         # make sure the keep-alive timer is running, now that there is someone to feed
         self._beat()
         # all done
@@ -56,6 +64,8 @@ class Hub:
                     del self._subscribers[topic]
         # discard its outbound queue
         self._queues.pop(channel, None)
+        # its transfer coding
+        self._framings.pop(channel, None)
         # and its armed flag
         self._armed.discard(channel)
         # all done
@@ -76,13 +86,15 @@ class Hub:
         # all done
         return
 
-    def send(self, channel, data, coalesce=False):
+    def send(self, channel, data, coalesce=False, raw=False):
         """
         Append the {data} bytes to {channel}'s outbound queue and arm it for delivery
 
         When {coalesce} is set and {data} already sits at the tail of the queue, the append is
         skipped. A subscriber whose queue is full is dropped, so it reconnects and resynchronizes
-        rather than growing the buffer without bound.
+        rather than growing the buffer without bound. The {data} is wrapped in the transfer
+        coding of {channel}, if it has one, unless {raw} is set, which is how the part of a
+        response that precedes its body, i.e. the status line and the headers, gets through.
         """
         # attempt to
         try:
@@ -92,6 +104,13 @@ class Hub:
         except KeyError:
             # there is nothing to do
             return
+        # look up the transfer coding of this channel
+        framing = self._framings.get(channel)
+        # if there is one, and the caller has not asked for the bytes to go out as they are
+        if framing is not None and not raw:
+            # wrap the payload now, exactly once: a partially delivered entry goes back on the
+            # queue as its unsent remainder, so the queue must hold what the wire carries
+            data = framing(data)
         # if we are coalescing and this exact frame is already pending at the tail
         if coalesce and queue and queue[-1] == data:
             # there is no point queuing it twice
@@ -175,6 +194,8 @@ class Hub:
         self._topics = {}
         # the channel -> outbound byte queue map
         self._queues = {}
+        # the channel -> transfer coding map, for the connections that have one
+        self._framings = {}
         # the set of channels currently registered for write-readiness
         self._armed = set()
         # whether the keep-alive timer is currently scheduled
@@ -260,6 +281,7 @@ class Hub:
     _subscribers = None
     _topics = None
     _queues = None
+    _framings = None
     _armed = None
     _beating = False
 
