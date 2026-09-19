@@ -9,9 +9,12 @@
 import os
 import signal
 import sys
+import time
+import traceback
 
 # support
 import pyre
+from ..units.SI import second
 
 # my protocol
 from .Recruiter import Recruiter
@@ -77,6 +80,9 @@ class Fork(pyre.component, family="pyre.nexus.recruiters.fork", implements=Recru
     journal = pyre.properties.bool(default=True)
     journal.doc = "whether the journal entries of each crew member are routed back to the team"
 
+    grace = pyre.properties.dimensional(default=2 * second)
+    grace.doc = "how long a dismissed crew member gets to leave before it is made to"
+
     # protocol obligations
     @pyre.provides
     def recruit(self, team, **kwds):
@@ -133,16 +139,35 @@ class Fork(pyre.component, family="pyre.nexus.recruiters.fork", implements=Recru
                 crew.courier = self.route(channel=childJournal)
             # ask it to register with the team
             crew.register()
+            # assume the worst, so that anything that goes wrong is reported as a failure
+            status = 1
+            # and keep track of whether the member got to finish; asking the interpreter
+            # whether an exception is in flight does not work here: a replacement member is
+            # forked from within the handler of the failure of the one it replaces, so it
+            # inherits an exception that is the team's business, not its own
+            crashed = True
             # carefully, since an interrupt may have landed before it was set aside
             try:
                 # spin up and carry out tasks until there is nothing more to do
                 status = crew.run()
+                # the member ran its course
+                crashed = False
             # if it did
             except KeyboardInterrupt:
                 # leave quietly; the team reports the interruption
                 status = 1
-            # at which point, this process must terminate
-            raise SystemExit(status)
+                # and this is not a crash
+                crashed = False
+            # a request to exit
+            except SystemExit as request:
+                # carries the status it asks for
+                status = request.code
+                # and is not a crash either
+                crashed = False
+            # whatever happened, this process must terminate, and it must do so here
+            finally:
+                # so leave; this does not return
+                self.leave(crew=crew, status=status, crashed=crashed)
 
         # on the team side, release the worker's end for the same reason
         child.close()
@@ -163,11 +188,119 @@ class Fork(pyre.component, family="pyre.nexus.recruiters.fork", implements=Recru
     def dismiss(self, team, crew, **kwds):
         """
         The {team} manager has dismissed the given {member}
+
+        The member is expected to leave on its own, and gets a grace period to do so. One that
+        is still around when the period is over is told to go, and one that ignores that is
+        removed: a team must never wait forever on a member, since the team lives in the
+        process that serves everybody else, and a member stuck on its way out, e.g. in an
+        exit handler that waits for a thread that does not exist on its side of the fork,
+        would otherwise hold that process, and whatever ports it has open, hostage
         """
-        # harvest the status
-        status = os.waitpid(crew.pid, 0)
+        # get the process id of the member
+        pid = crew.pid
+        # and the grace period, in seconds
+        grace = self.grace / second
+        # give it a chance to leave on its own
+        if self.reap(pid=pid, patience=grace):
+            # which is how this is supposed to go
+            return
+        # go through the ways to insist, from polite to final
+        for reminder in (signal.SIGTERM, signal.SIGKILL):
+            # carefully
+            try:
+                # remind it
+                os.kill(pid, reminder)
+            # if it is already gone
+            except ProcessLookupError:
+                # there is nobody to remind
+                break
+            # and wait again
+            if self.reap(pid=pid, patience=grace):
+                # it left
+                return
+        # nothing survives the last reminder, so this cannot block for long
+        self.reap(pid=pid, patience=None)
         # all done
         return
+
+    # implementation details
+    def reap(self, pid, patience):
+        """
+        Harvest the exit status of the child {pid}, waiting up to {patience} seconds for it to
+        leave; with no {patience}, wait for as long as it takes. Report whether it is gone
+        """
+        # with no deadline
+        if patience is None:
+            # carefully
+            try:
+                # wait for as long as it takes
+                os.waitpid(pid, 0)
+            # a child that somebody else already harvested
+            except ChildProcessError:
+                # is just as gone
+                pass
+            # either way
+            return True
+        # otherwise, set the deadline
+        deadline = time.monotonic() + patience
+        # and keep checking
+        while True:
+            # carefully
+            try:
+                # ask, without waiting
+                gone, _ = os.waitpid(pid, os.WNOHANG)
+            # a child that somebody else already harvested
+            except ChildProcessError:
+                # is just as gone
+                return True
+            # if it left
+            if gone:
+                # we are done
+                return True
+            # if time is up
+            if time.monotonic() >= deadline:
+                # it is still here
+                return False
+            # otherwise, check back soon
+            time.sleep(0.01)
+
+    def leave(self, crew, status, crashed=False):
+        """
+        End the process of a {crew} member with the given exit {status}; {crashed} says that
+        the member is on its way out because of an exception nobody handled
+
+        A crew member is a fork of the team's process, so the exit handlers it would run on
+        the way out are the team's: registered by libraries in a process that had state the
+        member does not share, e.g. threads, which do not survive a fork. Such a handler may
+        wait forever for something that exists only on the other side of the fork, and then
+        the member never leaves. So the member ends its process directly, after putting its
+        own affairs in order, and the inherited handlers never run
+        """
+        # if i got here because something went wrong that nobody handled
+        if crashed:
+            # say what it was, since the interpreter will not get the chance
+            traceback.print_exc()
+        # carefully, since nothing must get in the way of leaving
+        try:
+            # let the member put its affairs in order, e.g. close what it has open for writing
+            crew.retire()
+        # and whatever happens
+        finally:
+            # go through the standard streams
+            for stream in (sys.stdout, sys.stderr):
+                # carefully, since they may be closed or broken
+                try:
+                    # deliver what is pending; nothing else will
+                    stream.flush()
+                # if that fails
+                except (OSError, ValueError):
+                    # there is nothing to be done about it
+                    pass
+            # normalize the status the way the interpreter does: nothing means success, a
+            # number is itself, and anything else is a failure
+            code = 0 if status is None else status if isinstance(status, int) else 1
+            # and end the process without running the exit handlers
+            os._exit(code)
 
     # implementation details
     def route(self, channel):
