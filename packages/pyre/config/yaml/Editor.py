@@ -92,7 +92,14 @@ class Editor:
         # the blank lines that opened the block, which stay behind
         tail, _ = self._tail(node=container)
         residue = container is self.document and tail is not container
+        # a document that does not end with such a block has no blank lines to leave behind, so
+        # find out how it sets its sections apart while it is still in its original state
+        gap = self._gap() if residue else 0
         token = self._take(node=container, residue=residue) or self._release(node=container)
+        # if this is a new section and nothing was left behind to set it apart
+        if residue and not self._trails(node=container):
+            # separate it from the section before it the way the document separates the rest
+            self._space(node=container, blanks=gap)
         # add the entry
         container[key] = value
         # and place the comment after it
@@ -230,8 +237,7 @@ class Editor:
                 )
                 # and on to the next one
                 continue
-            # otherwise, the comment settles near the container, after the entry that
-            # precedes it, as if it trailed an entry removed from that spot
+            # otherwise, unpack the place of the empty collection
             container, key = fallback
             siblings = (
                 list(container.keys())
@@ -239,6 +245,17 @@ class Editor:
                 else list(range(len(container)))
             )
             index = siblings.index(key)
+            # the block followed the collection, so it belongs between it and the entry after
+            # it; the backend keeps such a block with the entry that follows, as the lines
+            # that lead its key, which is where it puts them when it reads a document that
+            # has comments after an empty collection
+            if isinstance(container, self.Map) and index + 1 < len(siblings):
+                # so that is where it goes
+                self._precede(container=container, key=siblings[index + 1], token=token)
+                # and on to the next one
+                continue
+            # without an entry to follow it, the comment settles after the entry that precedes
+            # the collection, as if it trailed an entry removed from that spot
             self._settle(
                 container=container,
                 previous=siblings[index - 1] if index > 0 else None,
@@ -664,13 +681,25 @@ class Editor:
                 # all done
                 return
             # an emptied list keeps its brackets, since a bare key would not mean an empty
-            # list; the comments move above it, after the entry that precedes it
+            # list; find its place among its siblings
             siblings = (
                 list(grandparent.keys())
                 if isinstance(grandparent, self.Map)
                 else list(range(len(grandparent)))
             )
             index = siblings.index(key)
+            # the comments followed the entries of the list, so they belong between the list
+            # and the entry after it, where the backend keeps them as the lines that lead
+            # that entry
+            if isinstance(grandparent, self.Map) and index + 1 < len(siblings):
+                # go through them, last first, since each one goes ahead of the rest
+                for item in reversed(tokens):
+                    # and place each one
+                    self._precede(container=grandparent, key=siblings[index + 1], token=item)
+                # all done
+                return
+            # without an entry to follow the list, the comments move above it, after the
+            # entry that precedes it
             before = siblings[index - 1] if index > 0 else None
             # and settle there, as if the list itself had been removed
             self._settle(
@@ -699,6 +728,107 @@ class Editor:
             self._append(container=tail, key=key, token=item)
         # all done
         return
+
+    def _precede(self, container, key, token):
+        """
+        Add {token} to the lines that lead {key} in {container}, ahead of whatever is there
+        """
+        # the token opens with the newline that ended the line of the entry it trailed; the
+        # backend ends that line on its own, so that newline goes
+        token.value = token.value[1:] if token.value.startswith("\n") else token.value
+        # get the record
+        slot = self._slot(container=container, key=key)
+        # the lines that lead a key sit second, as a pile
+        slot[1] = [token] + (slot[1] or [])
+        # all done
+        return
+
+    def _trails(self, node):
+        """
+        Check whether a comment block, or the blank lines one left behind, trails the deepest
+        last entry of {node}
+        """
+        # find the tail
+        container, key = self._tail(node=node)
+        # a node without entries has nothing trailing it
+        if container is None:
+            # so say so
+            return False
+        # get the record
+        slot = container.ca.items.get(key)
+        # and check the position of the trailing comment
+        return slot is not None and slot[self._position(container=container)] is not None
+
+    def _space(self, node, blanks):
+        """
+        Place {blanks} empty lines after the deepest last entry of {node}
+        """
+        # nothing to place
+        if blanks < 1:
+            # is nothing to do
+            return
+        # find the tail
+        container, key = self._tail(node=node)
+        # a node without entries has nothing to set apart
+        if container is None:
+            # so there is nothing to do
+            return
+        # get the token factory and the marker of its location
+        from ruamel.yaml.error import CommentMark
+        from ruamel.yaml.tokens import CommentToken
+
+        # the newline that ends the line of the entry, then the empty lines
+        token = CommentToken("\n" * (blanks + 1), CommentMark(0), None)
+        # place it
+        self._slot(container=container, key=key)[self._position(container=container)] = token
+        # all done
+        return
+
+    def _gap(self):
+        """
+        Measure how the document sets its top level sections apart: the number of empty lines
+        ahead of a section, counting from the comments that lead it, that occurs most often
+        """
+        # render the document as it stands; this is a dump, not {render}, which settles the
+        # comments that are being held and must not happen before the document is complete
+        buffer = io.StringIO()
+        self.backend.dump(self.document, buffer)
+        lines = buffer.getvalue().splitlines()
+        # the tally
+        tally = {}
+        # whether the first section has been seen
+        seen = False
+        # go through the lines
+        for index, line in enumerate(lines):
+            # anything but the key of a top level section
+            if not line or line[0] in " #-" or ":" not in line:
+                # is of no interest
+                continue
+            # the first section has nothing ahead of it to be set apart from
+            if not seen:
+                # so just note it
+                seen = True
+                # and move on
+                continue
+            # walk up past the comments that lead the section
+            cursor = index - 1
+            while cursor >= 0 and lines[cursor].startswith("#"):
+                # one line at a time
+                cursor -= 1
+            # and count the empty lines above them
+            blanks = 0
+            while cursor >= 0 and not lines[cursor].strip():
+                # one line at a time
+                blanks += 1
+                cursor -= 1
+            # record
+            tally[blanks] = tally.get(blanks, 0) + 1
+        # a document with one section, or none, has no habit to follow
+        if not tally:
+            # so use one empty line
+            return 1
+        # otherwise, go with the habit of the document, preferring more room when it is torn
+        return max(tally, key=lambda blanks: (tally[blanks], blanks))
 
     def _append(self, container, key, token):
         """
