@@ -524,6 +524,15 @@ class Crew(Peer, family="pyre.nexus.peers.crew"):
         # all done; don't reschedule
         return False
 
+    def retire(self):
+        """
+        Put my affairs in order: my process is about to end, and it will not run exit
+        handlers or finalize what i still hold, so whatever must not be lost, e.g. a file
+        open for writing, gets closed here. This runs on the crew side only
+        """
+        # i hold nothing of the sort
+        return self
+
     def resign(self):
         # record my finish time; don't mess with the timer too much as it might not belong to me
         self.finish = self.timer.read()
