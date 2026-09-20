@@ -248,10 +248,14 @@ class Editor:
             # the block followed the collection, so it belongs between it and the entry after
             # it; the backend keeps such a block with the entry that follows, as the lines
             # that lead its key, which is where it puts them when it reads a document that
-            # has comments after an empty collection
-            if isinstance(container, self.Map) and index + 1 < len(siblings):
-                # so that is where it goes
-                self._precede(container=container, key=siblings[index + 1], token=token)
+            # has comments after an empty collection. the entry that follows need not be a
+            # sibling: a collection that is the last entry of its section is followed by
+            # whatever follows the section
+            successor = self._successor(container=container, key=key)
+            # if there is one, and it has a key that can carry the lines
+            if successor is not None and isinstance(successor[0], self.Map):
+                # that is where the block goes
+                self._precede(container=successor[0], key=successor[1], token=token)
                 # and on to the next one
                 continue
             # without an entry to follow it, the comment settles after the entry that precedes
@@ -620,8 +624,16 @@ class Editor:
         # a block starts on the line after the entry
         cut = text.find("\n")
         # if the token holds nothing but an inline comment
-        if cut < 0 or not text[cut:].strip():
+        if cut < 0:
             # there is no block
+            return None
+        # get the block
+        block = text[cut:]
+        # a block with nothing in it but the end of the line of the entry carries nothing; one
+        # with empty lines does: they set apart whatever follows, and that survives the
+        # removal of the entry just as a comment would
+        if not block.strip() and block.count("\n") < 2:
+            # so only the former is dropped
             return None
         # otherwise, keep the block
         token.value = text[cut:]
@@ -690,12 +702,15 @@ class Editor:
             index = siblings.index(key)
             # the comments followed the entries of the list, so they belong between the list
             # and the entry after it, where the backend keeps them as the lines that lead
-            # that entry
-            if isinstance(grandparent, self.Map) and index + 1 < len(siblings):
+            # that entry; when the list is the last entry of its section, that is whatever
+            # follows the section
+            successor = self._successor(container=grandparent, key=key)
+            # if there is one, and it has a key that can carry the lines
+            if successor is not None and isinstance(successor[0], self.Map):
                 # go through them, last first, since each one goes ahead of the rest
                 for item in reversed(tokens):
                     # and place each one
-                    self._precede(container=grandparent, key=siblings[index + 1], token=item)
+                    self._precede(container=successor[0], key=successor[1], token=item)
                 # all done
                 return
             # without an entry to follow the list, the comments move above it, after the
@@ -728,6 +743,64 @@ class Editor:
             self._append(container=tail, key=key, token=item)
         # all done
         return
+
+    def _successor(self, container, key):
+        """
+        Find the container and key of the entry that follows {key} of {container} in the order
+        of the document, or nothing when the document ends there
+
+        The entry that follows the last entry of a collection is whatever follows the
+        collection itself, so the search climbs out of every collection that ends here
+        """
+        # climb for as long as it takes
+        while True:
+            # get the entries at this level
+            siblings = (
+                list(container.keys())
+                if isinstance(container, self.Map)
+                else list(range(len(container)))
+            )
+            # find my place among them
+            index = siblings.index(key)
+            # if somebody follows
+            if index + 1 < len(siblings):
+                # that's the one
+                return container, siblings[index + 1]
+            # otherwise, this collection ends here; find where it is filed
+            parent = self._parent(target=container)
+            # the document itself is filed nowhere
+            if parent is None:
+                # so nothing follows
+                return None
+            # continue with whatever follows the collection
+            container, key = parent
+
+    def _parent(self, target):
+        """
+        Find the container that holds the collection {target}, and the key it is filed under
+        """
+        # start at the top
+        todo = [self.document]
+        # go through the collections of the document
+        while todo:
+            # get the next one
+            node = todo.pop()
+            # and its entries
+            keys = list(node.keys()) if isinstance(node, self.Map) else list(range(len(node)))
+            # go through them
+            for key in keys:
+                # get the value
+                child = node[key]
+                # if this is the one; identity matters here, since equal collections abound
+                if child is target:
+                    # report where it is filed
+                    return node, key
+                # other collections get searched in turn
+                if isinstance(child, (self.Map, self.Seq)):
+                    # so add them to the pile
+                    todo.append(child)
+        # not in this document
+        return None
 
     def _precede(self, container, key, token):
         """
