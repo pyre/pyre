@@ -150,6 +150,26 @@ class Editor:
             token=token,
             parent=parent,
         )
+        # if the entry was the last section of the document and nothing trailed it, the empty
+        # lines after the section before it were there to set the two apart, and only that;
+        # with the entry gone they separate nothing, and a document does not end with them.
+        # empty lines that trailed the entry itself are another matter: they were the end of
+        # the document as its author wrote it, and they settled with everything else
+        if container is self.document and index == len(siblings) - 1 and token is None:
+            # find what is now the end of the document
+            tail, last = self._tail(node=self.document)
+            # if there is anything left
+            if tail is not None:
+                # get the record of its last entry
+                slot = tail.ca.items.get(last)
+                # and what trails it
+                position = self._position(container=tail)
+                # if that is nothing but empty lines
+                if slot is not None and slot[position] is not None:
+                    # check
+                    if not slot[position].value.strip():
+                        # and let them go
+                        slot[position] = None
         # all done
         return True
 
@@ -919,7 +939,24 @@ class Editor:
         # otherwise, join the texts; the token opens with the newline that ended the line of
         # its old entry, and the block it joins already ends its line, so that newline goes
         text = token.value[1:] if token.value.startswith("\n") else token.value
-        slot[position].value = slot[position].value + text
+        # get what is there
+        existing = slot[position].value
+        # if it is nothing but empty lines, it is a separation: the one that was left behind
+        # when a section was added after this entry. the token brings the separation that
+        # stood between that section and whatever followed it. now that the section is gone,
+        # these are one separation, not two, so the wider of them stands; adding them up
+        # would grow the document by a few empty lines every time a section came and went
+        if not existing.strip():
+            # the empty lines that are there, past the newline that ends the line of the entry
+            there = existing.count("\n") - 1
+            # the ones the token opens with
+            coming = len(text) - len(text.lstrip("\n"))
+            # keep the wider separation, ahead of whatever the token carries past its own
+            slot[position].value = "\n" * (max(there, coming) + 1) + text.lstrip("\n")
+            # all done
+            return
+        # otherwise, the block that is there has something to say, and the token follows it
+        slot[position].value = existing + text
         # all done
         return
 
