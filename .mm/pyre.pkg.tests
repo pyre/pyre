@@ -21,6 +21,7 @@ tests.pyre.pkg.h5.api.writer.clean := writer.h5
 tests.pyre.pkg.h5.api.file_create_empty.clean := file_create_empty.h5
 tests.pyre.pkg.h5.api.raster_roundtrip.clean := raster_roundtrip.h5
 tests.pyre.pkg.h5.api.raster_value.clean := raster_value.h5
+tests.pyre.pkg.h5.api.access_errors.clean := access_errors.h5 access_errors_junk.h5
 tests.pyre.pkg.memory.ordered.clean := memory_ordered_test.dat
 tests.pyre.pkg.envi.write.clean := envi_write_test.hdr
 tests.pyre.pkg.config.yaml_editor_save.clean := yaml_editor_save.yaml
