@@ -7,8 +7,9 @@
 
 """
 Check that a recipe says what was configured and nothing else: properties set in a file or
-at construction appear as plain values, defaults are left out, owned parts get their own
-sections, shared components appear by specification, and transient traits never appear
+at construction appear as plain values, defaults are left out, owned parts appear by family
+and get their own sections, shared components appear by specification, and transient traits
+never appear
 """
 
 # support
@@ -95,8 +96,9 @@ def test():
     assert section["friend"] == "recipe.things.shared#recipe.shared"
     # the defaults are absent
     assert "site" not in section
-    # the part was bound by default, so the binding is not recorded
-    assert "part" not in section
+    # the part was bound by default; the binding is recorded anyway, by family, since it
+    # decides what the section of the part means
+    assert section["part"] == "recipe.things.part"
     # and the transient state is absent
     assert "derived" not in section
     # the part has its own section, with what the file configured
