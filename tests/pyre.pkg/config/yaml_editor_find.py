@@ -38,6 +38,17 @@ def test():
     # a name spelled partly by a key with a family
     doc.set("qed.archives.earth#crete", "count", value=3)
     assert doc.find("crete.count") == ("qed.archives.earth#crete", "count")
+    # a name spelled twice: by the entry that binds a component, and by its section
+    doc.set("qed.app", "renderer", value="qed.renderers.plain")
+    doc.set("qed.app.renderer", "width", value=80)
+    # the first entry that spells it is the binding
+    assert doc.find("qed.app.renderer") == ("qed.app", "renderer")
+    # the section is there for the asking
+    assert doc.find("qed.app.renderer", section=True) == ("qed.app.renderer",)
+    # and its traits are found either way
+    assert doc.find("qed.app.renderer.width") == ("qed.app.renderer", "width")
+    # a binding without a section has none
+    assert doc.find("crete.polygon", section=True) is None
     # names the document does not configure
     assert doc.find("crete.missing") is None
     assert doc.find("nowhere") is None
