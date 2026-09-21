@@ -13,19 +13,35 @@ class Recipe:
 
     Each section records the configured traits of one component, keyed by the component's
     name. Properties appear as plain values: scalars as they are, containers as lists, paths
-    and uris as strings. Facilities appear as the specification, family and name, of the
-    component they are bound to, which then gets a section of its own, so the recipe follows
-    references until it has described everything the components lean on. Traits that took
-    their default are left out, so the recipe says what was configured rather than freezing
-    every default, and so are traits marked as not persistent, e.g. state a component derives
-    at runtime and would derive again
+    and uris as strings. Facilities always appear, as the specification of the component they
+    are bound to: a binding decides which class gets built, and therefore what the section of
+    the bound component means, so it is recorded whether it was configured or came from the
+    default. A part the component owns appears by family alone, since its name is the name of
+    the slot being bound; anything else appears by family and name. The bound component then
+    gets a section of its own, so the recipe follows references until it has described
+    everything the components lean on. Properties that took their default are left out, so
+    the recipe says what was configured rather than freezing every default, and so are traits
+    marked as not persistent, e.g. state a component derives at runtime and would derive
+    again. Components without a name or a family stay outside the configuration store, so
+    they cannot be described: one that is bound to a facility is left out, and asking for the
+    recipe of one is an error
     """
+
+    # exceptions
+    from .exceptions import PersistenceError
 
     # interface
     def add(self, component):
         """
         Describe {component} and everything it references
         """
+        # a component without a name or a family has elected to stay outside the configuration
+        # store, so no configuration file can say how to rebuild it
+        if not component.pyre_name or not component.pyre_family():
+            # and the request cannot be honored
+            raise self.PersistenceError(
+                component=component, reason="it has no name, or its class has no family"
+            )
         # the workload: the components still to describe
         workload = [component]
         # while there is work
@@ -121,31 +137,33 @@ class Recipe:
             if not getattr(trait, "persistent", True):
                 # so leave it out
                 continue
-            # find out whether the trait was configured; this must come before the value is
-            # read, since reading a facility that is still unbound binds its default and
-            # restamps the slot
+            # find out whether the trait was configured
             configured = self._configured(inventory=inventory, trait=trait)
-            # then get the value
+            # and get the value
             value = inventory.getTraitValue(trait=trait)
             # facilities
             if trait.isFacility:
-                # bound to a component
-                if value is not None and hasattr(value, "pyre_name"):
-                    # are followed, so what the component was configured with is described
-                    workload.append(value)
-                    # and appear by specification, when the binding itself was configured
-                    if configured:
-                        # a part the component owns is named after the trait that holds it,
-                        # so its name leads the loader back to the very slot being bound
-                        owned = value.pyre_name == f"{component.pyre_name}.{trait.name}"
-                        # its family says all there is to say; anything else is specified
-                        # in full, so the loader binds the same component
-                        spec = value.pyre_family() if owned else value.pyre_spec
-                        # a part without a family has nothing to record
-                        if spec:
-                            # the rest appear by specification
-                            section[trait.name] = spec
-                # either way, move on
+                # that are not bound to a component have nothing to say
+                if value is None or not hasattr(value, "pyre_name"):
+                    # so move on
+                    continue
+                # components without a name or a family have elected to stay outside the
+                # configuration store, so there is no way to say how to rebuild them
+                if not value.pyre_name or not value.pyre_family():
+                    # and they are left out
+                    continue
+                # the rest are followed, so what the component was configured with is described
+                workload.append(value)
+                # a part the component owns is named after the trait that holds it, so its
+                # name leads the loader back to the very slot being bound
+                owned = value.pyre_name == f"{component.pyre_name}.{trait.name}"
+                # the binding is always recorded, whether it was configured or came from the
+                # default: it decides which class gets built, and therefore what the section
+                # of the bound component means. the family of an owned part says all there is
+                # to say; anything else is specified in full, so the loader binds the same
+                # component
+                section[trait.name] = value.pyre_family() if owned else value.pyre_spec
+                # and move on
                 continue
             # properties that took their default
             if not configured:
