@@ -8,6 +8,9 @@
 import journal
 from .. import libh5
 
+# the local exceptions
+from . import exceptions
+
 # superclass
 from .Group import Group
 
@@ -112,8 +115,47 @@ class File(Group):
             token=token,
             authenticate=authenticate,
         )
-        # and delegate to the opener
-        return self._pyre_open(uri=s3, mode="r", fapl=fapl, **kwds)
+        # delegate to the opener, which hands the driver the address it understands
+        self._pyre_open(uri=s3, mode="r", fapl=fapl, **kwds)
+        # but remember the uri the caller wrote, since that is the one they can act on
+        # when something goes wrong; the rewritten https address names a bucket endpoint
+        # nobody typed and would send them looking in the wrong place
+        self._pyre_uri = uri
+        # all done
+        return self
+
+    # diagnostics
+    def _pyre_live(self) -> bool:
+        """
+        Check whether i am attached to a file the library is willing to talk about
+        """
+        # get my handle
+        h5id = self._pyre_id
+        # one i never made, or one i have since closed, is not a file
+        if h5id is None:
+            # so say so
+            return False
+        # otherwise, the library is the authority on whether the handle is still good
+        return libh5.valid(h5id.hid)
+
+    def _pyre_diagnose(self, path: typing.Optional[pyre.primitives.pathlike] = None) -> Exception:
+        """
+        Explain why i have nothing to offer at {path}
+
+        An open that fails leaves me holding an empty handle rather than raising, and the
+        library reports its reasons on an error stack of its own that the caller never
+        sees. So whoever finds nothing here has to work out which of two things happened,
+        and this is where that is decided: either i never opened, or i am open and simply
+        hold nothing at the path that was asked for
+        """
+        # a handle the library will not vouch for means the open is what failed: a product
+        # that is missing or unreadable, one that is not h5 at all, or, for a product in a
+        # bucket, credentials that are wrong or no longer current
+        if not self._pyre_live():
+            # so name the file rather than the path
+            return exceptions.OpenError(uri=self._pyre_uri)
+        # otherwise i am attached to a real file that holds nothing there
+        return exceptions.PathError(uri=self._pyre_uri, path=path)
 
     # structural
     def _pyre_root(self) -> schema.group:

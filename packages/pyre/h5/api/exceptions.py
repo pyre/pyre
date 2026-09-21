@@ -20,6 +20,58 @@ class APIError(H5Error):
     """
 
 
+# access
+class OpenError(APIError):
+    """
+    Exception raised when the library could not attach to the file at a given uri
+    """
+
+    # the message template
+    description = "could not open '{0.uri}': the h5 library handed back an empty handle"
+
+    # metamethods
+    def __init__(self, uri, **kwds):
+        # chain up
+        super().__init__(**kwds)
+        # save the error information
+        self.uri = uri
+        # all done
+        return
+
+    # framework hooks
+    def _pyre_report(self, **kwds):
+        """
+        Generate a detailed report
+        """
+        # chain up to prime the report
+        yield from super()._pyre_report()
+        # the library says nothing beyond the stack it prints on its own, so name the
+        # things it could have been
+        yield "the product may be missing, unreadable, or not an h5 file at all"
+        yield "one that lives in a bucket also needs credentials that are current"
+        # all done
+        return
+
+
+class PathError(APIError):
+    """
+    Exception raised when an open file holds nothing at the requested path
+    """
+
+    # the message template
+    description = "'{0.uri}' holds nothing at '{0.path}'"
+
+    # metamethods
+    def __init__(self, uri, path, **kwds):
+        # chain up
+        super().__init__(**kwds)
+        # save the error information
+        self.uri = uri
+        self.path = path
+        # all done
+        return
+
+
 # datatypes
 class UnsupportedTypeError(APIError):
     """
@@ -86,7 +138,7 @@ class UnsupportedCompoundTypeError(APIError):
 # type mismatch
 class TypeMismatchError(APIError):
     """
-    Exception raised whet the on-disk type of a dataset is not compatible with its specification
+    Exception raised when the on-disk type of a dataset is not compatible with its specification
     """
 
     # the message template

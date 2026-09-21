@@ -59,8 +59,18 @@ class Writer:
             assembler = Assembler()
             # using the structure we are traversing
             data = assembler.visit(descriptor=query)
-        # the destination handle; assume i am attached to a valid {file}
-        dst = self._file._pyre_id
+        # get my file
+        file = self._file
+        # an opener that turned me down has already said why
+        if file is None:
+            # so there is nothing to add, and nowhere to write
+            return None
+        # a file that never opened holds an empty handle rather than a destination
+        if not file._pyre_live():
+            # so let it say what went wrong, rather than writing into a hole
+            raise file._pyre_diagnose()
+        # the destination handle
+        dst = file._pyre_id
         # the presented node may mount deep in the hierarchy; create the groups above it
         location = data._pyre_location
         for part in location.parent.names:
