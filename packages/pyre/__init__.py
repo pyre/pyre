@@ -56,6 +56,24 @@ def loadConfiguration(uri):
     return executive.loadConfiguration(uri=uri, locator=here)
 
 
+def saveConfiguration(uri, components):
+    """
+    Record the configuration of {components}, and of everything they reference, in the
+    configuration file at {uri}, so that {loadConfiguration} can rebuild their state
+    """
+    # get the recipe factory
+    from .config import newRecipe
+
+    # make a recipe
+    recipe = newRecipe()
+    # go through the components
+    for component in components:
+        # and describe each one
+        recipe.add(component)
+    # save the descriptions
+    return recipe.save(uri=uri)
+
+
 # version dependent constants
 def computeCallerStackDepth():
     """
