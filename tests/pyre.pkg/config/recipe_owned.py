@@ -6,9 +6,10 @@
 
 
 """
-Check that a recipe never records an owned part by its name: reading a facility stamps its
-slot, so the binding looks configured, and a specification that carries the name of the part
-leads the loader back to the slot it is trying to bind
+Check that a recipe always records the binding of an owned part, by family and never by
+name: a specification that carries the name of the part leads the loader back to the slot it
+is trying to bind. Components without a family stay out of recipes, and asking for the
+recipe of one is an error
 """
 
 # support
@@ -48,7 +49,23 @@ class Holder(pyre.component, family="recipe.holder"):
     gadget = Gadget()
 
 
+# a component class without a family
+class Loner(pyre.component, implements=Gadget):
+    """
+    A gadget that stays outside the configuration store
+    """
+
+    level = pyre.properties.int(default=1)
+
+
 def test():
+    # a holder nobody has looked into
+    fresh = Holder(name="recipe.fresh")
+    # records the binding of its part, even though it came from the default
+    assert pyre.config.newRecipe().add(fresh).section("recipe.fresh") == {
+        "gadget": "recipe.gadgets.widget"
+    }
+
     # make a holder
     holder = Holder(name="recipe.holder")
     # read its part, the way any client would before persisting
@@ -70,6 +87,35 @@ def test():
     # and check that its part is what the recipe said
     assert isinstance(other.gadget, Widget)
     assert other.gadget.pyre_name == "recipe.other.gadget"
+
+    # a holder bound to a gadget without a family
+    private = Holder(name="recipe.private", gadget=Loner(name="recipe.loner"))
+    # describes itself
+    recipe = pyre.config.newRecipe().add(private)
+    # and leaves the gadget out, since no configuration file can say how to rebuild it
+    assert recipe.section("recipe.private") == {}
+    assert recipe.section("recipe.loner") is None
+    # asking for the recipe of the gadget itself
+    try:
+        # is an error
+        pyre.config.newRecipe().add(private.gadget)
+        # so we should not get here
+        assert False, "unreachable"
+    # if all goes well
+    except pyre.config.exceptions.PersistenceError as error:
+        # check that the report names the culprit
+        assert error.component is private.gadget
+    # and so is persisting it
+    try:
+        # which must fail before it touches the file system
+        private.gadget.pyre_persist(uri="recipe-unreachable.yaml")
+        # so we should not get here
+        assert False, "unreachable"
+    # if all goes well
+    except pyre.config.exceptions.PersistenceError:
+        # check that no file was made
+        assert not pyre.primitives.path("recipe-unreachable.yaml").exists()
+
     # all done
     return recipe
 
