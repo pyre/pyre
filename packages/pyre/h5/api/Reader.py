@@ -47,13 +47,23 @@ class Reader:
         """
         # get my file
         file = self._file
-        # ask the file for its inspector
-        inspector = file._pyre_inspector
+        # an opener that turned me down has already said why
+        if file is None:
+            # so there is nothing to add, and nothing to read
+            return None
         # normalize the target path
         path = pyre.primitives.path(path)
-        # find the container group
-        anchor = file._pyre_id.get(path=str(path))
-        # and ask the inspector to infer the layout
+        # find the container group; a file that never opened hands back nothing here, and
+        # so does one that is open but holds nothing at {path}
+        anchor = file._pyre_id.get(path=str(path)) if file._pyre_id is not None else None
+        # either way, there is no hierarchy to infer
+        if anchor is None:
+            # so let the file say which of the two it was, rather than handing the
+            # inspector a hole to walk into
+            raise file._pyre_diagnose(path=path)
+        # ask the file for its inspector
+        inspector = file._pyre_inspector
+        # and ask it to infer the layout
         return inspector._pyre_inspect(h5id=anchor, path=path, query=query)
 
     # metamethods
