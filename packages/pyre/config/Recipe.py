@@ -59,6 +59,40 @@ class Recipe:
         # a component without a family is specified by its name alone
         return name if not family else f"{family}#{name}"
 
+    def record(self, document):
+        """
+        Store my sections in {document}, an editor of configuration files, leaving everything
+        else in it as it is
+        """
+        # go through the sections
+        for name, section in self.sections.items():
+            # find where the document configures this component, however it spells the name
+            path = document.find(name, section=True)
+            # a component that is new to the document
+            if path is None:
+                # gets a top level section
+                path = (name,)
+            # go through the configured traits
+            for trait, value in section.items():
+                # and store each one in place
+                document.set(*path, trait, value=value)
+        # all done
+        return document
+
+    def save(self, uri):
+        """
+        Record my sections in the configuration file at {uri}, which need not exist yet
+        """
+        # get the editor factory
+        from .yaml.Editor import Editor
+
+        # open the document; one that does not exist yet starts out empty
+        document = Editor(uri=uri)
+        # record my sections
+        self.record(document=document)
+        # and write the document back, all at once
+        return document.save()
+
     # metamethods
     def __init__(self, **kwds):
         # chain up
@@ -101,8 +135,16 @@ class Recipe:
                     workload.append(value)
                     # and appear by specification, when the binding itself was configured
                     if configured:
-                        # so the loader binds the same component
-                        section[trait.name] = value.pyre_spec
+                        # a part the component owns is named after the trait that holds it,
+                        # so its name leads the loader back to the very slot being bound
+                        owned = value.pyre_name == f"{component.pyre_name}.{trait.name}"
+                        # its family says all there is to say; anything else is specified
+                        # in full, so the loader binds the same component
+                        spec = value.pyre_family() if owned else value.pyre_spec
+                        # a part without a family has nothing to record
+                        if spec:
+                            # the rest appear by specification
+                            section[trait.name] = spec
                 # either way, move on
                 continue
             # properties that took their default
