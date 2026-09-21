@@ -18,6 +18,25 @@ class ConfigurationError(FrameworkError):
     """
 
 
+class PersistenceError(ConfigurationError):
+    """
+    Exception raised when the configuration of a component cannot be recorded
+    """
+
+    # public data
+    description = "cannot persist {0.component}: {0.reason}"
+
+    # meta-methods
+    def __init__(self, component, reason, **kwds):
+        # chain up
+        super().__init__(**kwds)
+        # save the error info
+        self.component = component
+        self.reason = reason
+        # all done
+        return
+
+
 class CodecError(ConfigurationError):
     """
     Base class for codec errors
