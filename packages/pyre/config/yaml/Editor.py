@@ -220,16 +220,18 @@ class Editor:
         # not there
         return False
 
-    def find(self, name):
+    def find(self, name, section=False):
         """
         Find the key path of the entry that configures {name}, a dotted pyre name, resolving
         the scoping of configuration files: a key may spell several levels of the name, and
-        may carry a family before a '#'
+        may carry a family before a '#'. The name of a component may be spelled twice, once
+        by the entry in its owner's section that binds it and once by the section with its
+        traits; ask for the {section} to get the latter
         """
         # the levels of the name
         levels = name.split(".")
         # start at the top
-        return self._find(node=self.document, levels=levels, path=())
+        return self._find(node=self.document, levels=levels, path=(), section=section)
 
     def locate(self, line):
         """
@@ -361,9 +363,10 @@ class Editor:
         return
 
     # implementation details
-    def _find(self, node, levels, path):
+    def _find(self, node, levels, path, section=False):
         """
-        Look for the entry that spells {levels} within {node}, a mapping at {path}
+        Look for the entry that spells {levels} within {node}, a mapping at {path}; when
+        looking for a {section}, entries that hold anything but a mapping do not qualify
         """
         # anything but a mapping holds no entries
         if not isinstance(node, self.Map):
@@ -383,10 +386,19 @@ class Editor:
                 continue
             # if it spells the whole name
             if len(spelled) == len(levels):
+                # an entry that binds a component is not the section with its traits
+                if section and not isinstance(node[key], self.Map):
+                    # so keep looking
+                    continue
                 # this is the entry
                 return path + (key,)
             # otherwise, the rest of the name is spelled below it
-            found = self._find(node=node[key], levels=levels[len(spelled) :], path=path + (key,))
+            found = self._find(
+                node=node[key],
+                levels=levels[len(spelled) :],
+                path=path + (key,),
+                section=section,
+            )
             # if it was found there
             if found is not None:
                 # hand it off
