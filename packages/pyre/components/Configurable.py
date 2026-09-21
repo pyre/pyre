@@ -110,6 +110,18 @@ class Configurable(Dashboard):
         # all done
         return
 
+    def pyre_persist(self, uri):
+        """
+        Record my configuration, and that of everything i reference, in the configuration file
+        at {uri}, so that loading the file rebuilds my state; the file need not exist, and
+        whatever else it holds is left as it is
+        """
+        # get the recipe factory
+        from ..config import newRecipe
+
+        # describe me and save the description
+        return newRecipe().add(self).save(uri=uri)
+
     def pyre_renderConfiguration(self, deep=True):
         """
         Traverse my configuration and represent it in a JSON friendly way
