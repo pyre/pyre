@@ -48,6 +48,10 @@ class PyreError(Exception):
         if self.locator:
             # add its contents to the report
             yield str(self.locator)
+        # if an underlying error is what brought this about
+        if self.error is not None:
+            # pass along its reason
+            yield f"reason: {self.error}"
         # all done
         return
 
