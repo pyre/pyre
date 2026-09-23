@@ -7,10 +7,12 @@
 function(pyre_cudaPackage)
   # if the user requested CUDA support
   if(WITH_CUDA)
-    # install the sources straight from the source directory
+    # install the sources straight from the source directory; the package lives under the
+    # {pyre} namespace, not bare {cuda}, so it doesn't collide with nvidia's own {cuda-python}
+    # package, which claims that top-level name
     install(
-      DIRECTORY packages/cuda
-      DESTINATION ${PYRE_DEST_PACKAGES}
+      DIRECTORY packages/pyre/cuda
+      DESTINATION ${PYRE_DEST_PACKAGES}/pyre
       FILES_MATCHING PATTERN *.py
       )
   endif()
@@ -92,11 +94,12 @@ function(pyre_cudaModule)
       extensions/cuda/metadata.cc
     )
 
-    # install the cuda extensions
+    # install the cuda extensions; under {pyre/cuda}, alongside the python sources, not the
+    # bare top-level {cuda} name nvidia's own {cuda-python} package claims
     install(
       TARGETS cudamodule
       LIBRARY
-      DESTINATION ${PYRE_DEST_PACKAGES}/cuda
+      DESTINATION ${PYRE_DEST_PACKAGES}/pyre/cuda
       )
   endif()
 endfunction(pyre_cudaModule)

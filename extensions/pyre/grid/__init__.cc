@@ -16,6 +16,11 @@
 // and the type-erased mosaic, its out-of-core sibling
 #include <pyre/py/grid/AnyMosaic.h>
 
+// the cuda storage strategies, when built with cuda support
+#ifdef WITH_CUDA
+#include <pyre/cuda/memory.h>
+#endif
+
 
 // the type-erased grid measures with a signed integer, matching the c++ library
 using size_type = pyre::py::grid::AnyGrid::size_type;
@@ -126,6 +131,34 @@ namespace pyre::py::grid {
         // dispatch on the cell type
         return dispatchCell(cell, [&]<class T>() { return makeHeap<T>(shape); });
     }
+
+
+#ifdef WITH_CUDA
+    // a managed grid: allocate a fresh block of {shape} cells of type {cellT} on cuda managed
+    // (unified) memory, accessible from both the host and whichever device is current
+    template <class cellT>
+    auto makeManaged(const shape_t & shape) -> AnyGrid
+    {
+        // the storage and the grid over it
+        using storage_t = pyre::cuda::memory::managed_t<cellT>;
+        using grid_t = pyre::grid::grid_t<packing_t, storage_t>;
+        // lay out the shape
+        auto packing = packing_t(shape);
+        // put enough cells on managed memory
+        auto storage = storage_t { packing.cells() };
+        // make the grid and type-erase it; managed storage owns its cells, exactly like heap
+        return anyGrid(grid_t { packing, storage }, "managed");
+    }
+
+    // the managed factory python calls
+    auto managed(const std::vector<size_type> & extents, const string_t & cell) -> AnyGrid
+    {
+        // adopt the extents as a shape
+        auto shape = shape_t(extents.begin(), extents.end());
+        // dispatch on the cell type
+        return dispatchCell(cell, [&]<class T>() { return makeManaged<T>(shape); });
+    }
+#endif
 
 
     // a file-backed grid: lay {shape} cells of {cellT} over the product at {uri}
@@ -390,6 +423,28 @@ pyre::py::grid::__init__(py::module & m) -> void
         // the docstring
         "the storage strategy that holds my cells");
 
+    // dlpack support: the device i live on, as the {(device_type, device_id)} pair the
+    // protocol specifies
+    cls.def(
+        // the name
+        "__dlpack_device__",
+        // the implementation
+        &AnyGrid::dlpackDevice,
+        // the docstring
+        "the (device_type, device_id) pair identifying where my cells live");
+
+    // dlpack support: a capsule any consumer that speaks the protocol can import with no copy
+    cls.def(
+        // the name
+        "__dlpack__",
+        // the implementation; {stream}/{max_version}/{dl_device}/{copy} are accepted, as the
+        // protocol requires, but not yet acted on -- i always hand back my own memory, on my
+        // own device, describing the current version i produce
+        [](const AnyGrid & self, py::kwargs) { return self.dlpack(); },
+        // the docstring
+        "a dlpack capsule describing my cells, importable with no copy by numpy, pytorch, "
+        "jax, cupy, or cuda.core alike");
+
     // read access: {g[i, j, ...]}
     cls.def(
         // the name
@@ -635,6 +690,20 @@ pyre::py::grid::__init__(py::module & m) -> void
         "shape"_a, "cell"_a,
         // the docstring
         "make a grid over a fresh block of heap memory of the given {shape} and {cell}");
+
+#ifdef WITH_CUDA
+    // the factory that allocates a fresh grid on cuda managed memory
+    grid.def(
+        // the name
+        "managed",
+        // the implementation
+        &managed,
+        // the signature
+        "shape"_a, "cell"_a,
+        // the docstring
+        "make a grid over a fresh block of cuda managed (unified) memory of the given "
+        "{shape} and {cell}, accessible from both the host and the current device");
+#endif
 
     // the factory that maps a file-backed grid
     grid.def(

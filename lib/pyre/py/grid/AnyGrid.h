@@ -54,6 +54,15 @@ public:
     // which storage strategy backs me, kept for clients that care how my cells are held
     auto strategy() const -> const string_t &;
 
+    // dlpack support: any consumer that speaks the protocol -- numpy, pytorch, jax, cupy,
+    // cuda.core -- can share my cells with no copy, on cpu or cuda alike
+public:
+    // the {(device_type, device_id)} pair {__dlpack_device__} reports
+    auto dlpackDevice() const -> std::pair<std::int32_t, std::int32_t>;
+    // a {DLManagedTensorVersioned} capsule describing my cells, named per the protocol so
+    // {__dlpack__}'s caller can hand it straight to {PyCapsule_New}'s counterpart
+    auto dlpack() const -> py::capsule;
+
     // item access
 public:
     // {g[i, j, ...]}: a full integer index yields the cell there; any slice, or fewer indices

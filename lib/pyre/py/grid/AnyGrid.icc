@@ -341,4 +341,160 @@ pyre::py::grid::AnyGrid::setitem(const py::object & key, const py::object & valu
 }
 
 
+// dlpack support
+namespace pyre::py::grid {
+    // implementation details, not part of the public interface
+    namespace {
+        // translate my storage strategy name into the dlpack device it describes; cpu-side
+        // strategies (heap, map, view) are {kDLCPU}; cuda ones are {kDLCUDAManaged} for
+        // managed memory and {kDLCUDAHost} for pinned memory, both of which dlpack defines as
+        // always living at device index 0, exactly like ordinary cpu memory
+        inline auto
+        dlpackDeviceType(const string_t & strategy) -> DLDeviceType
+        {
+            if (strategy == "managed") {
+                return kDLCUDAManaged;
+            }
+            if (strategy == "pinned") {
+                return kDLCUDAHost;
+            }
+            // heap, map, view, and anything else not yet cuda-aware: ordinary host memory
+            return kDLCPU;
+        }
+
+        // translate my buffer protocol format code into the dlpack type code and bit width;
+        // the twelve cell types {dispatchCell} in the extension module knows about are the
+        // only ones this needs to cover
+        inline auto
+        dlpackDType(string_t format) -> DLDataType
+        {
+            // a leading order marker only makes sense for the byte order the host already
+            // uses; dlpack has no way to describe a foreign order, so a byte-swapped cell
+            // cannot be exported this way
+            if (!format.empty() && (format.front() == '<' || format.front() == '>')) {
+                // native order, spelled the way the host would spell it
+                const char native = std::endian::native == std::endian::big ? '>' : '<';
+                // a marker that disagrees with the host is the one case this can't handle
+                if (format.front() != native) {
+                    throw std::runtime_error(
+                        "dlpack cannot describe a cell in non-native byte order");
+                }
+                // the marker adds nothing dlpack needs; drop it
+                format.erase(0, 1);
+            }
+
+            // signed integers
+            if (format == "b") return { kDLInt, 8, 1 };
+            if (format == "h") return { kDLInt, 16, 1 };
+            if (format == "i") return { kDLInt, 32, 1 };
+            if (format == "q" || format == "l") return { kDLInt, 64, 1 };
+            // unsigned integers
+            if (format == "B") return { kDLUInt, 8, 1 };
+            if (format == "H") return { kDLUInt, 16, 1 };
+            if (format == "I") return { kDLUInt, 32, 1 };
+            if (format == "Q" || format == "L") return { kDLUInt, 64, 1 };
+            // floating point
+            if (format == "f") return { kDLFloat, 32, 1 };
+            if (format == "d") return { kDLFloat, 64, 1 };
+            // complex, in pybind11's own spelling of the struct module's extension for it
+            if (format == "Zf") return { kDLComplex, 64, 1 };
+            if (format == "Zd") return { kDLComplex, 128, 1 };
+
+            // anything else is a cell type the grid factories never produce
+            throw std::runtime_error("dlpack: unsupported cell format '" + format + "'");
+        }
+
+        // what a {DLManagedTensorVersioned} capsule needs kept alive behind it: the handle
+        // that owns the cells, plus the shape/strides arrays dlpack requires as raw pointers
+        struct DLPackContext {
+            std::shared_ptr<void> owner;
+            std::vector<int64_t> shape;
+            std::vector<int64_t> strides;
+        };
+
+        // the tensor's own deleter: releases the context and the tensor struct together
+        inline auto
+        dlpackDeleter(DLManagedTensorVersioned * self) -> void
+        {
+            // reclaim the context this tensor's {manager_ctx} was keeping alive
+            delete static_cast<DLPackContext *>(self->manager_ctx);
+            // and the tensor struct itself
+            delete self;
+            // all done
+            return;
+        }
+
+        // the capsule's own destructor: dlpack's consumption protocol has an importer rename
+        // the capsule to "used_dltensor_versioned" once it has taken ownership, so only a
+        // capsule nobody imported still needs its tensor's deleter invoked here
+        inline auto
+        dlpackCapsuleDestructor(PyObject * capsule) -> void
+        {
+            // an importer that already renamed the capsule owns the tensor now
+            if (PyCapsule_IsValid(capsule, "used_dltensor_versioned")) {
+                // nothing left for me to do
+                return;
+            }
+            // otherwise, nobody imported this capsule; reclaim the tensor myself
+            auto * tensor = static_cast<DLManagedTensorVersioned *>(
+                PyCapsule_GetPointer(capsule, "dltensor_versioned"));
+            // a null pointer here would mean the capsule was already invalid; guard anyway
+            if (tensor != nullptr) {
+                // invoke its own deleter
+                dlpackDeleter(tensor);
+            }
+            // all done
+            return;
+        }
+    } // namespace
+} // namespace pyre::py::grid
+
+
+// the {(device_type, device_id)} pair {__dlpack_device__} reports
+inline auto
+pyre::py::grid::AnyGrid::dlpackDevice() const -> std::pair<std::int32_t, std::int32_t>
+{
+    // every strategy i support today lives at device index 0, whether that means the host or
+    // the single cuda device the process is attached to
+    return { static_cast<std::int32_t>(dlpackDeviceType(_strategy)), 0 };
+}
+
+
+// a {DLManagedTensorVersioned} capsule describing my cells
+inline auto
+pyre::py::grid::AnyGrid::dlpack() const -> py::capsule
+{
+    // build the context that keeps my cells (and the arrays below) alive for as long as the
+    // capsule survives
+    auto * context = new DLPackContext {
+        // a copy of my own handle, so the block outlives me if i am a temporary sub-grid
+        _owner,
+        // my shape, widened to the type dlpack wants
+        std::vector<int64_t>(_shape.begin(), _shape.end()),
+        // my strides are in cells already, exactly what dlpack expects; only the protocol's
+        // buffer_info wants them in bytes
+        std::vector<int64_t>(_strides.begin(), _strides.end()),
+    };
+
+    // the tensor itself
+    auto * tensor = new DLManagedTensorVersioned {};
+    tensor->version = { DLPACK_MAJOR_VERSION, DLPACK_MINOR_VERSION };
+    tensor->manager_ctx = context;
+    tensor->deleter = dlpackDeleter;
+    tensor->flags = _writable ? 0 : DLPACK_FLAG_BITMASK_READ_ONLY;
+    tensor->dl_tensor.data = _data;
+    auto [deviceType, deviceId] = dlpackDevice();
+    tensor->dl_tensor.device = { static_cast<DLDeviceType>(deviceType), deviceId };
+    tensor->dl_tensor.ndim = static_cast<std::int32_t>(context->shape.size());
+    tensor->dl_tensor.dtype = dlpackDType(_format);
+    tensor->dl_tensor.shape = context->shape.data();
+    tensor->dl_tensor.strides = context->strides.data();
+    tensor->dl_tensor.byte_offset = 0;
+
+    // wrap it in a capsule named per the protocol, so the consumer's own {from_dlpack} finds
+    // it, with a destructor that only cleans up if nobody actually imported it
+    return py::capsule(tensor, "dltensor_versioned", dlpackCapsuleDestructor);
+}
+
+
 // end of file

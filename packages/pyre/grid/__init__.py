@@ -44,6 +44,7 @@ if pyre.libpyre is None:
     heap = None
     map = None
     view = None
+    managed = None
 # otherwise reach into the bindings by attribute, the way the rest of pyre does
 else:
     # the type-erased grid class, for type checks
@@ -54,6 +55,9 @@ else:
     map = pyre.libpyre.grid.map
     # the factory that lays a grid over memory python already holds, without copying
     view = pyre.libpyre.grid.view
+    # the factory that allocates a grid over a fresh block of cuda managed memory; only
+    # present when the extension was built with {WITH_CUDA}
+    managed = getattr(pyre.libpyre.grid, "managed", None)
 
 
 # end of file

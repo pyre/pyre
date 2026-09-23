@@ -169,6 +169,13 @@ function(pyre_pyreModule)
   pyre_library_directory(pyremodule extensions)
   # set the libraries to link against
   target_link_libraries(pyremodule PRIVATE pyre journal pybind11::module)
+  # if the user requested cuda support, the grid submodule grows a {managed} factory over
+  # cuda managed memory; it needs the runtime headers/library, and the compile-time flag
+  # {extensions/pyre/grid/__init__.cc} gates that code behind
+  if(WITH_CUDA)
+    target_link_libraries(pyremodule PRIVATE CUDA::cudart)
+    target_compile_definitions(pyremodule PRIVATE WITH_CUDA)
+  endif()
   # add the sources
   target_sources(pyremodule PRIVATE
     extensions/pyre/__init__.cc
