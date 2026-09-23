@@ -30,6 +30,13 @@ class MPI(Tool, Library, family="pyre.externals.mpi"):
     launcher.doc = "the name of the launcher of parallel jobs"
 
     # interface
+    @pyre.provides
+    def machinefile(self, path):
+        """
+        Build the command line arguments that hand {path}, a file that describes the machine,
+        to my launcher; the spelling is not standard and differs across flavors
+        """
+
     @classmethod
     def recipes(cls):
         """
