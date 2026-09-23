@@ -28,21 +28,18 @@ authors = [
 maintainers = [
     { name = "Michael A.G. Aïvázis", email = "michael.aivazis@para-sim.com" },
 ]
-# NOTE: this declared floor and the classifiers below are stale. CI exercises only
-# python 3.12, 3.13, and 3.14 (see .github/workflows/mm.yaml); nothing older than 3.12
-# is tested, so support for it is unverified and likely broken. tighten the floor and
-# refresh the classifiers once the python support policy is settled.
-requires-python = ">3.7.2"
+# the floor: the oldest interpreter the test suite is known to pass under; CI exercises it and
+# everything newer (see .github/workflows/mm.yaml)
+requires-python = ">=3.11"
 keywords = ["science", "framework"]
 classifiers = [
     "Development Status :: 6 - Mature",
     "License :: OSI Approved :: BSD License",
     "Programming Language :: Python :: 3 :: Only",
-    "Programming Language :: Python :: 3.7",
-    "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.9",
-    "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
 ]
 dependencies = ["PyYAML"]
 
