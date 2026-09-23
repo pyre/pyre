@@ -54,10 +54,10 @@ class Time(Schema):
         try:
             # assume it is a string; strip it and convert it
             return datetime.datetime.strptime(value, self.format).time()
-        # if anything goes wrong
-        except Exception as error:
-            # complain
-            raise self.CastingError(value=value, description=self.complaint)
+        # if the parser refuses
+        except (TypeError, ValueError) as error:
+            # complain, passing along the parser's reason
+            raise self.CastingError(value=value, description=self.complaint, error=error)
 
     def string(self, value):
         """

@@ -42,7 +42,7 @@ class Dimensional(Number):
         # if anything whatsoever goes wring
         except Exception as error:
             # complain
-            raise self.CastingError(value=value, description=self.complaint)
+            raise self.CastingError(value=value, description=self.complaint, error=error)
 
     def json(self, value):
         """

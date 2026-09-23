@@ -35,7 +35,7 @@ class Integer(Number):
         # if anything whatsoever goes wrong
         except Exception as error:
             # complain
-            raise self.CastingError(value=value, description=self.complaint)
+            raise self.CastingError(value=value, description=self.complaint, error=error)
 
     # meta-methods
     def __init__(self, default=int(), **kwds):

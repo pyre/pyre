@@ -19,6 +19,7 @@ class Decimal(Number):
 
     # constants
     typename = "decimal"  # the name of my type
+    complaint = "could not coerce {0.value!r} into a decimal"  # the error message
 
     # interface
     def coerce(self, value, **kwds):
@@ -32,7 +33,7 @@ class Decimal(Number):
         # if anything goes wrong
         except decimal.InvalidOperation as error:
             # convert it into a configuration error
-            raise self.CastingError(value=value, description=str(error))
+            raise self.CastingError(value=value, description=self.complaint, error=error)
 
     def json(self, value):
         """
