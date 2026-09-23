@@ -138,8 +138,8 @@ class Launcher(Script, family="mpi.shells.mpirun"):
         argv += ["-n", str(hosts * tasks)]
         # if the user supplied a host file
         if hostfile:
-            # add it to the pile
-            argv += ["--hostfile", str(hostfile)]
+            # hand it over the way this flavor of mpi spells it
+            argv += self.mpi.machinefile(path=hostfile)
         # if the user has anything else to say to mpi
         if extra:
             # add them as well
