@@ -24,7 +24,10 @@ order it must happen, with the reason for each step and how to check it.
    ```
 
 2. **No open pull requests are meant for this release.** Anything half landed waits for the
-   next one.
+   next one. When cleaning up after a merge, confirm the merge before deleting the branch:
+   `gh pr view N --json mergedAt` must show a time, and `git cherry origin/main <branch>` must
+   print nothing. A check that prints nothing after a failed fetch has not run; deleting the
+   head branch of an unmerged pull request closes it.
 
 3. **The bootstrap pins name the release about to be cut.** Two scripts download the boot
    bundle from the GitHub release when `pyre` is not importable, and each pins the release it
