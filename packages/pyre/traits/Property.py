@@ -45,6 +45,21 @@ class Property(Slotted):
             """
             return self.pyre_nameserver.variable
 
+    class array:
+        """Mixin for arrays, whose items are numbers"""
+
+        # metamethods
+        def __init__(self, schema=None, **kwds):
+            # an unspecified schema for my items is the trait counterpart of the schemata
+            # default, which is a float
+            if schema is None:
+                # so make one
+                schema = self.float()
+            # chain up
+            super().__init__(schema=schema, **kwds)
+            # all done
+            return
+
     class numbers:
         """Mixin for handling numeric types"""
 
@@ -59,6 +74,20 @@ class Property(Slotted):
 
     class sequences:
         """Mixin for handling typed containers"""
+
+        # metamethods
+        def __init__(self, schema=None, **kwds):
+            # the schema of my items must come from the trait layer, since the configuration
+            # store asks it for the {macro} and {native} strategies; the schemata ancestors
+            # default to bare declarators that have neither, so an unspecified schema is
+            # replaced by the trait counterpart of theirs: items are passed through as they are
+            if schema is None:
+                # so make an identity trait
+                schema = self.identity()
+            # chain up
+            super().__init__(schema=schema, **kwds)
+            # all done
+            return
 
         # override the default expression handler
         @property
