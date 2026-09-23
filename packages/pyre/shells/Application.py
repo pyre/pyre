@@ -557,6 +557,38 @@ class Application(pyre.component, metaclass=Director):
 
         # my public state
         yield from self.pyre_showConfigurables(indent=indent, **kwds)
+        # the options that are not traits
+        yield from self.pyre_showSpecialOptions(indent=indent, **kwds)
+        # all done
+        return
+
+    def pyre_showSpecialOptions(self, indent="", **kwds):
+        """
+        Generate a description of the command line options that are not traits: the ones the
+        framework and the shell consume before the application sees them
+        """
+        # the pile
+        special = []
+        # the help markers, from the shell that hosts me
+        markers = getattr(self.shell, "helpon", None)
+        # if there are any
+        if markers:
+            # spell them as the flags they are
+            flags = ", ".join(f"--{marker}" for marker in markers)
+            # and describe them
+            special.append((flags, "show this help screen"))
+        # the configuration loader is registered by the framework, on every command line
+        special.append(("--config=<uri>[,<uri>...]", "load configuration from the given files"))
+        # figure out how much space we need
+        width = max(len(flags) for flags, _ in special)
+        # the section
+        yield "special options:"
+        # go through the pile
+        for flags, tip in special:
+            # and show each one
+            yield f"{indent}{flags:>{width}}: {tip}"
+        # leave some space
+        yield ""
         # all done
         return
 
