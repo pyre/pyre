@@ -100,6 +100,28 @@ class Launcher(Script, family="mpi.shells.mpirun"):
         """
         Invoke {mpirun} with the correct arguments to create the  parallel machine
         """
+        # without an mpi installation there is no launcher to invoke
+        if self.mpi is None:
+            # get the journal
+            import journal
+
+            # make a channel
+            channel = journal.error("mpi.launcher")
+            # explain what is missing, and how to say where it is
+            channel.line("could not find an mpi installation")
+            channel.line("if one is installed where the package managers do not look,")
+            channel.line("point the launcher at it, e.g. in {~/.pyre/pyre.yaml}:")
+            channel.line("")
+            channel.line("    mpi.shells.mpirun.mpi: pyre.externals.mpi.openmpi#local")
+            channel.line("    local:")
+            channel.line("        prefix: /path/to/the/installation")
+            channel.line("")
+            channel.line("with {mpich} in place of {openmpi} for that flavor; the launcher,")
+            channel.line("{bindir}, {incdir}, {libdir}, and {libraries} can be set the same way")
+            # complain
+            channel.log()
+            # and bail with an error code, in case the channel is not fatal
+            return 1
         # get the command line
         argv = self.buildCommandLine()
         # prep the subprocess options
