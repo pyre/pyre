@@ -252,6 +252,11 @@ function(pyre_pyreDefaults)
     DIRECTORY defaults/pyre defaults/merlin
     DESTINATION share
   )
+  # and the project templates, next to the configuration files of the package
+  install(
+    DIRECTORY templates
+    DESTINATION share/pyre
+  )
   # all done
 endfunction(pyre_pyreDefaults)
 
