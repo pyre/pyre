@@ -72,7 +72,7 @@ class Reader(xml.sax.ContentHandler):
                 unsupported.append(feature)
         # raise an exception if any requests could not be satisfied
         if unsupported:
-            raise self.UnsupportedFeatureError(self, document, unsupported)
+            raise self.UnsupportedFeatureError(parser=self, document=document, features=unsupported)
 
         # parse
         parser.setContentHandler(self)
