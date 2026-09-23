@@ -24,8 +24,12 @@ pyre::h5::Location::attributeCount() const -> int
 {
     // ask the library for just the attribute count
     H5O_info2_t info;
-    H5Oget_info3(id(), &info, H5O_INFO_NUM_ATTRS);
-    // and report it
+    // an object the library will not describe carries no attributes
+    if (H5Oget_info3(id(), &info, H5O_INFO_NUM_ATTRS) < 0) {
+        // so say so, rather than reading an answer nobody wrote
+        return 0;
+    }
+    // otherwise, report the count
     return static_cast<int>(info.num_attrs);
 }
 

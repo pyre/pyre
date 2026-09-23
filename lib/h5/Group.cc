@@ -27,9 +27,12 @@ pyre::h5::Group::memberCount() const -> hsize_t
 {
     // make room for the metadata
     H5G_info_t info;
-    // ask the library
-    H5Gget_info(id(), &info);
-    // and report the number of links
+    // ask the library; a group the library will not describe holds nothing
+    if (H5Gget_info(id(), &info) < 0) {
+        // so say so, rather than reading an answer nobody wrote
+        return 0;
+    }
+    // otherwise, report the number of links
     return info.nlinks;
 }
 
@@ -67,8 +70,13 @@ pyre::h5::Group::childType(const string_t & name) const -> object_type
 {
     // ask the library for just the basic info
     H5O_info2_t info;
-    H5Oget_info_by_name3(id(), name.data(), &info, H5O_INFO_BASIC, H5P_DEFAULT);
-    // and report the object kind
+    // a member the library will not describe, e.g. one asked of a file that never opened, has
+    // no kind; the answer must come from the library and never from an unwritten {info}
+    if (H5Oget_info_by_name3(id(), name.data(), &info, H5O_INFO_BASIC, H5P_DEFAULT) < 0) {
+        // so say so
+        return H5O_TYPE_UNKNOWN;
+    }
+    // otherwise, report the object kind
     return info.type;
 }
 
